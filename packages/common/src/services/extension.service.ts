@@ -1,22 +1,23 @@
 import { Column, Extension, ExtensionModel, GridOption, SlickRowDetailView, } from '../interfaces/index';
 import { ColumnReorderFunction, ExtensionList, ExtensionName, SlickControlList, SlickPluginList } from '../enums/index';
-import { ExtensionUtility } from '../extensions/index';
 import { SharedService } from './shared.service';
 import { TranslaterService } from './translater.service';
-import { SlickColumnPicker, SlickGridMenu } from '../controls/index';
 import {
+  ExtensionUtility,
   SlickAutoTooltip,
   SlickCellExcelCopyManager,
   SlickCellMenu,
   SlickCheckboxSelectColumn,
+  SlickColumnPicker,
   SlickContextMenu,
   SlickDraggableGrouping,
+  SlickGridMenu,
   SlickGroupItemMetadataProvider,
   SlickHeaderButtons,
   SlickHeaderMenu,
   SlickRowMoveManager,
   SlickRowSelectionModel
-} from '../plugins/index';
+} from '../extensions/index';
 import { FilterService } from './filter.service';
 import { PubSubService } from './pubSub.service';
 import { SortService } from './sort.service';
@@ -124,7 +125,13 @@ export class ExtensionService {
     return undefined;
   }
 
+  /** Get Extension Instance by its name */
+  getExtensionInstanceByName(name: ExtensionName): SlickControlList | SlickPluginList | undefined {
+    return this.getExtensionByName(name)?.instance;
+  }
+
   /**
+   * @deprecated @use `getExtensionInstanceByName`
    * Get the instance of the SlickGrid addon (control or plugin).
    * This is the raw addon coming directly from SlickGrid itself, not to confuse with Slickgrid-Universal extension
    *  @param name

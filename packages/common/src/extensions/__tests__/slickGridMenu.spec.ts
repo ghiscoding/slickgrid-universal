@@ -2,8 +2,7 @@ import 'jest-extended';
 import { DelimiterType, FileType } from '../../enums/index';
 import { Column, DOMEvent, GridMenu, GridOption, SlickDataView, SlickGrid, SlickNamespace, } from '../../interfaces/index';
 import { SlickGridMenu } from '../slickGridMenu';
-import { SharedService } from '../../services/shared.service';
-import { BackendUtilityService, ExcelExportService, FilterService, PubSubService, SortService, TextExportService, } from '../../services';
+import { BackendUtilityService, ExcelExportService, FilterService, PubSubService, SharedService, SortService, TextExportService, } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 

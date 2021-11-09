@@ -4,7 +4,7 @@ import {
   MenuFromCellCallbackArgs,
   MenuOptionItemCallbackArgs,
 } from './index';
-import { SlickCellMenu } from '../plugins/slickCellMenu';
+import { SlickCellMenu } from '../extensions/slickCellMenu';
 
 export interface CellMenu extends CellMenuOption {
 

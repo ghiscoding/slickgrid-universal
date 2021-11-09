@@ -11,9 +11,10 @@ import {
 } from '../interfaces/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { calculateAvailableSpace, findWidthOrDefault, getHtmlElementOffset, } from '../services/domUtilities';
+import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
-import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
+import { titleCase } from '../services/utilities';
 
 export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends MenuBaseClass<M> {
   protected _currentCell = -1;
@@ -73,7 +74,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
 
       // execute optional callback method defined by the user, if it returns false then we won't go further and not open the Menu
       if (typeof event.stopPropagation === 'function') {
-        this.pubSubService.publish(`${this._camelPluginName}:onBeforeMenuShow`, callbackArgs);
+        this.pubSubService.publish(`on${titleCase(this._camelPluginName)}BeforeMenuShow`, callbackArgs);
         if (typeof this.addonOptions?.onBeforeMenuShow === 'function' && (this.addonOptions as CellMenu | ContextMenu).onBeforeMenuShow!(event, callbackArgs) === false) {
           return;
         }
@@ -147,7 +148,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       document.body.appendChild(this._menuElm);
 
       // execute optional callback method defined by the user
-      this.pubSubService.publish(`${this._camelPluginName}:onAfterMenuShow`, callbackArgs);
+      this.pubSubService.publish(`on${titleCase(this._camelPluginName)}AfterMenuShow`, callbackArgs);
       if (typeof this.addonOptions?.onAfterMenuShow === 'function' && (this.addonOptions as CellMenu | ContextMenu).onAfterMenuShow!(event, callbackArgs) === false) {
         return;
       }

@@ -14,7 +14,7 @@ import {
   SlickHeaderMenu,
   SlickRowMoveManager,
   SlickRowSelectionModel,
-} from '../plugins/index';
+} from '../extensions/index';
 
 export type SlickPluginList =
   SlickAutoTooltip |

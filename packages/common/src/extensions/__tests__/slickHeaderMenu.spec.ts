@@ -307,7 +307,7 @@ describe('HeaderMenu Plugin', () => {
       ));
 
       commandElm.dispatchEvent(new Event('click'));
-      expect(publishSpy).not.toHaveBeenCalledWith('headerMenu:onCommand');
+      expect(publishSpy).not.toHaveBeenCalledWith('onHeaderMenuCommand');
     });
 
     it('should populate a Header Menu and a 2nd button is "disabled" and expect button to be disabled', () => {
@@ -707,7 +707,7 @@ describe('HeaderMenu Plugin', () => {
 
         expect(clearFilterSpy).toHaveBeenCalledWith(clickEvent, 'field2');
         expect(onAfterSpy).toHaveBeenCalled();
-        expect(pubSubSpy).toHaveBeenCalledWith('headerMenu:onAfterMenuShow', {
+        expect(pubSubSpy).toHaveBeenCalledWith('onHeaderMenuAfterMenuShow', {
           grid: gridStub,
           menu: { items: headerMenuExpected },
           column: columnsMock[1]

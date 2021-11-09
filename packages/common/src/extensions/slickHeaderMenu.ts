@@ -3,7 +3,6 @@ import {
   Column,
   CurrentSorter,
   DOMEvent,
-  GetSlickEventType,
   HeaderMenu,
   HeaderMenuCommandItemCallbackArgs,
   HeaderMenuItems,
@@ -13,7 +12,6 @@ import {
   MenuOptionItem,
   MultiColumnSort,
   OnHeaderCellRenderedEventArgs,
-  SlickEventHandler,
 } from '../interfaces/index';
 import { arrayRemoveItemByIndex, emptyElement, getElementOffsetRelativeToParent, getTranslationPrefix } from '../services/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
@@ -70,16 +68,11 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
     // when setColumns is called (could be via toggle filtering/sorting or anything else),
     // we need to recreate header menu items custom commands array before the `onHeaderCellRendered` gets called
-    const onBeforeSetColumnsHandler = this.grid.onBeforeSetColumns;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeSetColumnsHandler>>).subscribe(onBeforeSetColumnsHandler, (e, args) => {
+    this._eventHandler.subscribe(this.grid.onBeforeSetColumns, (e, args) => {
       this.sharedService.gridOptions.headerMenu = this.addHeaderMenuCustomCommands(args.newColumns);
     });
-
-    const onHeaderCellRenderedHandler = this.grid.onHeaderCellRendered;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderCellRenderedHandler>>).subscribe(onHeaderCellRenderedHandler, this.handleHeaderCellRendered.bind(this));
-
-    const onBeforeHeaderCellDestroyHandler = this.grid.onBeforeHeaderCellDestroy;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeHeaderCellDestroyHandler>>).subscribe(onBeforeHeaderCellDestroyHandler, this.handleBeforeHeaderCellDestroy.bind(this));
+    this._eventHandler.subscribe(this.grid.onHeaderCellRendered, this.handleHeaderCellRendered.bind(this));
+    this._eventHandler.subscribe(this.grid.onBeforeHeaderCellDestroy, this.handleBeforeHeaderCellDestroy.bind(this));
 
     // force the grid to re-render the header after the events are hooked up.
     this.grid.setColumns(this.grid.getColumns());
@@ -141,7 +134,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
     // execute optional callback method defined by the user, if it returns false then we won't go further and not open the grid menu
     if (typeof e.stopPropagation === 'function') {
-      this.pubSubService.publish('headerMenu:onBeforeMenuShow', callbackArgs);
+      this.pubSubService.publish('onHeaderMenuBeforeMenuShow', callbackArgs);
       if (typeof this.addonOptions?.onBeforeMenuShow === 'function' && this.addonOptions?.onBeforeMenuShow(e, callbackArgs) === false) {
         return;
       }
@@ -245,7 +238,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     // execute Grid Menu callback with command,
     // we'll also execute optional user defined onCommand callback when provided
     this.executeHeaderMenuInternalCommands(event, callbackArgs);
-    this.pubSubService.publish('headerMenu:onCommand', callbackArgs);
+    this.pubSubService.publish('onHeaderMenuCommand', callbackArgs);
     if (typeof this.addonOptions?.onCommand === 'function') {
       this.addonOptions.onCommand(event, callbackArgs);
     }
@@ -479,7 +472,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     this.repositionMenu(e);
 
     // execute optional callback method defined by the user
-    this.pubSubService.publish('headerMenu:onAfterMenuShow', args);
+    this.pubSubService.publish('onHeaderMenuAfterMenuShow', args);
     if (typeof this.addonOptions?.onAfterMenuShow === 'function' && this.addonOptions?.onAfterMenuShow(e, args) === false) {
       return;
     }

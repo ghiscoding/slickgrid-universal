@@ -19,7 +19,7 @@ import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
 import { SortService } from './sort.service';
 import { TreeDataService } from './treeData.service';
-import { SlickRowSelectionModel } from '../plugins/slickRowSelectionModel';
+import { SlickRowSelectionModel } from '../extensions/slickRowSelectionModel';
 
 let highlightTimerEnd: any;
 

@@ -4,7 +4,7 @@ import {
   FormatterResultObject,
   SlickEventData,
 } from './index';
-import { SlickCellExcelCopyManager, } from '../plugins/slickCellExcelCopyManager';
+import { SlickCellExcelCopyManager, } from '../extensions/slickCellExcelCopyManager';
 
 export interface ExcelCopyBufferOption<T = any> {
   /** defaults to 2000(ms), delay in ms to wait before clearing the selection after a paste action */

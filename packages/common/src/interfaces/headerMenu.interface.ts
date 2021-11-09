@@ -1,5 +1,5 @@
 import { MenuCommandItem } from '../index';
-import { SlickHeaderMenu } from '../plugins/slickHeaderMenu';
+import { SlickHeaderMenu } from '../extensions/slickHeaderMenu';
 import {
   Column,
   HeaderMenuOption,

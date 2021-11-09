@@ -1,7 +1,6 @@
 import {
   AutoTooltipOption,
   Column,
-  GetSlickEventType,
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
@@ -48,12 +47,10 @@ export class SlickAutoTooltip {
     this._addonOptions = { ...this._defaults, ...this.addonOptions };
     this._grid = grid;
     if (this._addonOptions.enableForCells) {
-      const onMouseEnterHandler = this._grid.onMouseEnter;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onMouseEnterHandler>>).subscribe(onMouseEnterHandler, this.handleMouseEnter.bind(this));
+      this._eventHandler.subscribe(this._grid.onMouseEnter, this.handleMouseEnter.bind(this));
     }
     if (this._addonOptions.enableForHeaderCells) {
-      const onHeaderMouseEnterHandler = this._grid.onHeaderMouseEnter;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderMouseEnterHandler>>).subscribe(onHeaderMouseEnterHandler, this.handleHeaderMouseEnter.bind(this));
+      this._eventHandler.subscribe(this._grid.onHeaderMouseEnter, this.handleHeaderMouseEnter.bind(this));
     }
   }
 

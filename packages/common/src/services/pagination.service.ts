@@ -4,11 +4,9 @@ import {
   BackendServiceApi,
   CurrentPagination,
   EventSubscription,
-  GetSlickEventType,
   Pagination,
   ServicePagination,
   SlickDataView,
-  SlickEventHandler,
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
@@ -106,8 +104,7 @@ export class PaginationService {
     }
 
     if (this._isLocalGrid && this.dataView) {
-      const onPagingInfoChangedHandler = this.dataView.onPagingInfoChanged;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onPagingInfoChangedHandler>>).subscribe(onPagingInfoChangedHandler, (_e, pagingInfo) => {
+      this._eventHandler.subscribe(this.dataView.onPagingInfoChanged, (_e, pagingInfo) => {
         if (this._totalItems !== pagingInfo.totalRows) {
           this.updateTotalItems(pagingInfo.totalRows);
           this._previousPagination = { pageNumber: pagingInfo.pageNum, pageSize: pagingInfo.pageSize, pageSizes: this.availablePageSizes, totalItems: pagingInfo.totalRows };

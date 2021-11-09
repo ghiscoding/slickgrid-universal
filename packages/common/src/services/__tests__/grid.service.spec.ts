@@ -1,6 +1,6 @@
 import { FilterService, GridService, GridStateService, PaginationService, PubSubService, SharedService, SortService, TreeDataService } from '../index';
 import { GridOption, CellArgs, Column, OnEventArgs, SlickGrid, SlickDataView, SlickNamespace } from '../../interfaces/index';
-import { SlickRowSelectionModel } from '../../plugins/slickRowSelectionModel';
+import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
 
 declare const Slick: SlickNamespace;
 jest.useFakeTimers();
@@ -18,7 +18,7 @@ const mockRowSelectionModel = {
   onSelectedRangesChanged: new Slick.Event(),
 } as unknown as SlickRowSelectionModel;
 
-jest.mock('../../plugins/slickRowSelectionModel', () => ({
+jest.mock('../../extensions/slickRowSelectionModel', () => ({
   SlickRowSelectionModel: jest.fn().mockImplementation(() => mockRowSelectionModel),
 }));
 jest.mock('flatpickr', () => { });

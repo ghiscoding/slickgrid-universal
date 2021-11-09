@@ -922,9 +922,9 @@ export function thousandSeparatorFormatted(inputValue: string | number | null, s
  * @param inputStr
  * @returns string
  */
-export function titleCase(inputStr: string, caseEveryWords = false): string {
+export function titleCase(inputStr: string, shouldTitleCaseEveryWords = false): string {
   if (typeof inputStr === 'string') {
-    if (caseEveryWords) {
+    if (shouldTitleCaseEveryWords) {
       return inputStr.replace(/\w\S*/g, (outputStr) => {
         return outputStr.charAt(0).toUpperCase() + outputStr.substr(1).toLowerCase();
       });

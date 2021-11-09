@@ -12,11 +12,9 @@ import {
   CurrentRowSelection,
   CurrentSorter,
   EventSubscription,
-  GetSlickEventType,
   GridOption,
   GridState,
   SlickDataView,
-  SlickEventHandler,
   SlickGrid,
   SlickNamespace,
   TreeToggleStateChange,
@@ -503,7 +501,7 @@ export class GridStateService {
     const slickEvent = extension?.instance?.[eventName];
 
     if (slickEvent && typeof slickEvent.subscribe === 'function') {
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof slickEvent>>).subscribe(slickEvent, (_e, args) => {
+      this._eventHandler.subscribe(slickEvent, (_e, args) => {
         const columns: Column[] = args?.columns;
         const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(columns);
         this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentColumns, type: GridStateType.columns }, gridState: this.getCurrentGridState() });
@@ -520,7 +518,7 @@ export class GridStateService {
     const slickGridEvent = (grid as any)?.[eventName];
 
     if (slickGridEvent && typeof slickGridEvent.subscribe === 'function') {
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof slickGridEvent>>).subscribe(slickGridEvent, () => {
+      this._eventHandler.subscribe(slickGridEvent, () => {
         const columns: Column[] = grid.getColumns();
         const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(columns);
         this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentColumns, type: GridStateType.columns }, gridState: this.getCurrentGridState() });
@@ -534,7 +532,7 @@ export class GridStateService {
    */
   protected bindSlickGridOnSetOptionsEventToGridStateChange(grid: SlickGrid) {
     const onSetOptionsHandler = grid.onSetOptions;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetOptionsHandler>>).subscribe(onSetOptionsHandler, (_e, args) => {
+    this._eventHandler.subscribe(onSetOptionsHandler, (_e, args) => {
       const { frozenBottom: frozenBottomBefore, frozenColumn: frozenColumnBefore, frozenRow: frozenRowBefore } = args.optionsBefore;
       const { frozenBottom: frozenBottomAfter, frozenColumn: frozenColumnAfter, frozenRow: frozenRowAfter } = args.optionsAfter;
 
@@ -557,13 +555,11 @@ export class GridStateService {
    */
   protected bindSlickGridRowSelectionToGridStateChange() {
     if (this._grid && this._gridOptions && this._dataView) {
-      const onBeforePagingInfoChangedHandler = this._dataView.onBeforePagingInfoChanged;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforePagingInfoChangedHandler>>).subscribe(onBeforePagingInfoChangedHandler, () => {
+      this._eventHandler.subscribe(this._dataView.onBeforePagingInfoChanged, () => {
         this._wasRecheckedAfterPageChange = false; // reset the page check flag, to skip deletions on page change (used in code below)
       });
 
-      const onPagingInfoChangedHandler = this._dataView.onPagingInfoChanged;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onPagingInfoChangedHandler>>).subscribe(onPagingInfoChangedHandler, () => {
+      this._eventHandler.subscribe(this._dataView.onPagingInfoChanged, () => {
         // when user changes page, the selected row indexes might not show up
         // we can check to make sure it is but it has to be in a delay so it happens after the first "onSelectedRowsChanged" is triggered
         setTimeout(() => {
@@ -575,8 +571,7 @@ export class GridStateService {
         });
       });
 
-      const onSelectedRowsChangedHandler = this._grid.onSelectedRowsChanged;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSelectedRowsChangedHandler>>).subscribe(onSelectedRowsChangedHandler, (_e, args) => {
+      this._eventHandler.subscribe(this._grid.onSelectedRowsChanged, (_e, args) => {
         if (Array.isArray(args.rows) && Array.isArray(args.previousSelectedRows)) {
           const newSelectedRows = args.rows as number[];
           const prevSelectedRows = args.previousSelectedRows as number[];

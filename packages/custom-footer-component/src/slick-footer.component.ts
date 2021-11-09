@@ -4,7 +4,6 @@ const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "m
 import {
   Constants,
   CustomFooterOption,
-  GetSlickEventType,
   GridOption,
   Locale,
   Metrics,
@@ -288,8 +287,7 @@ export class SlickFooterComponent {
       const selectedCountText = customFooterOptions.metricTexts?.itemsSelected ?? this.locales?.TEXT_ITEMS_SELECTED ?? 'TEXT_ITEMS_SELECTED';
       customFooterOptions.leftFooterText = `0 ${selectedCountText}`;
 
-      const onSelectedRowsChangedHandler = this.grid.onSelectedRowsChanged;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSelectedRowsChangedHandler>>).subscribe(onSelectedRowsChangedHandler, (_e, args) => {
+      this._eventHandler.subscribe(this.grid.onSelectedRowsChanged, (_e, args) => {
         this._selectedRowCount = args.rows.length;
         const selectedCountText2 = customFooterOptions.metricTexts?.itemsSelected ?? this.locales?.TEXT_ITEMS_SELECTED ?? 'TEXT_ITEMS_SELECTED';
         this.leftFooterText = `${this._selectedRowCount} ${selectedCountText2}`;

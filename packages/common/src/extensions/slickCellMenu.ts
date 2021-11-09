@@ -3,11 +3,9 @@ import {
   CellMenuOption,
   Column,
   DOMMouseEvent,
-  GetSlickEventType,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
   MenuOptionItem,
-  SlickEventHandler,
 } from '../interfaces/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { PubSubService } from '../services/pubSub.service';
@@ -63,12 +61,10 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
     // sort all menu items by their position order when defined
     this.sortMenuItems(this.sharedService.allColumns);
 
-    const onClickHandler = this.grid.onClick;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onClickHandler>>).subscribe(onClickHandler, this.handleCellClick.bind(this) as EventListener);
+    this._eventHandler.subscribe(this.grid.onClick, this.handleCellClick.bind(this) as EventListener);
 
     if (this._addonOptions.hideMenuOnScroll) {
-      const onScrollHandler = this.grid.onScroll;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onScrollHandler>>).subscribe(onScrollHandler, this.closeMenu.bind(this) as EventListener);
+      this._eventHandler.subscribe(this.grid.onScroll, this.closeMenu.bind(this) as EventListener);
     }
   }
 

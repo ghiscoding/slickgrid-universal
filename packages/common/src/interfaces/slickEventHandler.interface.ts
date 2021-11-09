@@ -14,13 +14,13 @@ export type GetSlickEventType<T> =
 
 type Handler<H> = (e: SlickEventData, data: H) => void
 
-export interface SlickEventHandler<T = any> {
+export interface SlickEventHandler {
   /** Subscribe to a SlickGrid Event and execute its handler callback */
-  subscribe: (slickEvent: SlickEvent<T>, handler: Handler<T>) => SlickEventHandler<T>;
+  subscribe: <T = any>(slickEvent: SlickEvent<T>, handler: Handler<T>) => this;
 
   /** Unsubscribe to a SlickGrid Event and execute its handler callback */
-  unsubscribe: (slickEvent: SlickEvent<T>, handler: Handler<T>) => SlickEventHandler<T>;
+  unsubscribe: <T = any>(slickEvent: SlickEvent<T>, handler: Handler<T>) => this;
 
   /** Unsubscribe and remove all SlickGrid Event Handlers */
-  unsubscribeAll: () => SlickEventHandler<T>;
+  unsubscribeAll: () => void;
 }

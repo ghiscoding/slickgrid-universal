@@ -1,4 +1,4 @@
-import { SlickContextMenu } from '../plugins/slickContextMenu';
+import { SlickContextMenu } from '../extensions/slickContextMenu';
 import {
   ContextMenuOption,
   MenuCommandItemCallbackArgs,

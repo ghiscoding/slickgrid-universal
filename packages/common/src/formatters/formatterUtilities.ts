@@ -1,5 +1,6 @@
 import { FieldType } from '../enums/fieldType.enum';
 import { Column, ExcelExportOption, Formatter, GridOption, SlickGrid, TextExportOption } from '../interfaces/index';
+import { sanitizeHtmlToText } from '../services/domUtilities';
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import * as moment_ from 'moment-mini';
 import { multipleFormatter } from './multipleFormatter';
@@ -113,7 +114,8 @@ export function exportWithFormatterWhenDefined<T = any>(row: number, col: number
     formatter = columnDef.formatter;
   }
 
-  return parseFormatterWhenExist(formatter, row, col, columnDef, dataContext, grid);
+  const output = parseFormatterWhenExist(formatter, row, col, columnDef, dataContext, grid);
+  return exportOptions?.sanitizeDataExport ? sanitizeHtmlToText(output) : output;
 }
 
 /**

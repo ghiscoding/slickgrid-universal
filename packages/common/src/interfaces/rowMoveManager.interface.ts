@@ -3,7 +3,7 @@ import {
   SlickEventData,
   SlickGrid,
 } from './index';
-import { SlickRowMoveManager } from '../plugins/slickRowMoveManager';
+import { SlickRowMoveManager } from '../extensions/slickRowMoveManager';
 
 export interface RowMoveManager extends RowMoveManagerOption {
   //

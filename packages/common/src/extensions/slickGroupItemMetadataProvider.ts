@@ -1,5 +1,15 @@
 import { KeyCode } from '../enums/keyCode.enum';
-import { Column, DOMEvent, GetSlickEventType, GroupingFormatterItem, GroupItemMetadataProviderOption, OnClickEventArgs, SlickDataView, SlickEventHandler, SlickGrid, SlickNamespace } from '../interfaces/index';
+import {
+  Column,
+  DOMEvent,
+  GroupingFormatterItem,
+  GroupItemMetadataProviderOption,
+  OnClickEventArgs,
+  SlickDataView,
+  SlickEventHandler,
+  SlickGrid,
+  SlickNamespace,
+} from '../interfaces/index';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -55,11 +65,8 @@ export class SlickGroupItemMetadataProvider {
     this._grid = grid;
     this._options = { ...this._defaults, ...inputOptions };
 
-    const onClickHandler = grid.onClick;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onClickHandler>>).subscribe(onClickHandler, this.handleGridClick.bind(this) as EventListener);
-
-    const onKeyDownHandler = grid.onKeyDown;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onKeyDownHandler>>).subscribe(onKeyDownHandler, this.handleGridKeyDown.bind(this) as EventListener);
+    this._eventHandler.subscribe(grid.onClick, this.handleGridClick.bind(this) as EventListener);
+    this._eventHandler.subscribe(grid.onKeyDown, this.handleGridKeyDown.bind(this) as EventListener);
   }
 
   dispose() {

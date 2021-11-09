@@ -1,7 +1,6 @@
 import {
   Column,
   DOMEvent,
-  GetSlickEventType,
   GridMenu,
   GridMenuCommandItemCallbackArgs,
   GridMenuEventWithElementCallbackArgs,
@@ -9,7 +8,6 @@ import {
   GridMenuOption,
   GridOption,
   MenuCommandItem,
-  SlickEventHandler,
   SlickNamespace,
 } from '../interfaces/index';
 import { DelimiterType, FileType } from '../enums/index';
@@ -22,7 +20,7 @@ import { SharedService } from '../services/shared.service';
 import { SortService } from '../services/sort.service';
 import { TextExportService } from '../services/textExport.service';
 import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
-import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from '../plugins/menuBaseClass';
+import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from '../extensions/menuBaseClass';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -107,17 +105,14 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
   initEventHandlers() {
     // when grid columns are reordered then we also need to update/resync our picker column in the same order
-    const onColumnsReorderedHandler = this.grid.onColumnsReordered;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onColumnsReorderedHandler>>).subscribe(onColumnsReorderedHandler, updateColumnPickerOrder.bind(this));
+    this._eventHandler.subscribe(this.grid.onColumnsReordered, updateColumnPickerOrder.bind(this));
 
     // subscribe to the grid, when it's destroyed, we should also destroy the Grid Menu
-    const onBeforeDestroyHandler = this.grid.onBeforeDestroy;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeDestroyHandler>>).subscribe(onBeforeDestroyHandler, this.dispose.bind(this));
+    this._eventHandler.subscribe(this.grid.onBeforeDestroy, this.dispose.bind(this));
 
     // when a grid optionally changes from a regular grid to a frozen grid, we need to destroy & recreate the grid menu
     // we do this change because the Grid Menu is on the left container for a regular grid, it should however be displayed on the right container for a frozen grid
-    const onSetOptionsHandler = this.grid.onSetOptions;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetOptionsHandler>>).subscribe(onSetOptionsHandler, (_e, args) => {
+    this._eventHandler.subscribe(this.grid.onSetOptions, (_e, args) => {
       if (args && args.optionsBefore && args.optionsAfter) {
         const switchedFromRegularToFrozen = (args.optionsBefore.frozenColumn! >= 0 && args.optionsAfter.frozenColumn === -1);
         const switchedFromFrozenToRegular = (args.optionsBefore.frozenColumn === -1 && args.optionsAfter.frozenColumn! >= 0);
