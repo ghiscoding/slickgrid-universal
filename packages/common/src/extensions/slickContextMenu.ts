@@ -381,13 +381,13 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     try {
       if (args && args.grid && args.command) {
         // get the value, if "exportWithFormatter" is set then we'll use the formatter output
-        const gridOptions = this.sharedService && this.sharedService.gridOptions || {};
-        const cell = args && args.cell || 0;
-        const row = args && args.row || 0;
+        const gridOptions = this.sharedService?.gridOptions ?? {};
+        const cell = args?.cell ?? 0;
+        const row = args?.row ?? 0;
         const columnDef = args?.column;
         const dataContext = args?.dataContext;
-        const grid = this.sharedService && this.sharedService.slickGrid;
-        const exportOptions = gridOptions && (gridOptions.excelExportOptions || { ...gridOptions.exportOptions, ...gridOptions.textExportOptions });
+        const grid = this.sharedService?.slickGrid;
+        const exportOptions = gridOptions && ((gridOptions.excelExportOptions || { ...gridOptions.exportOptions, ...gridOptions.textExportOptions }));
         let textToCopy = exportWithFormatterWhenDefined(row, cell, columnDef, dataContext, grid, exportOptions);
 
         if (typeof columnDef.queryFieldNameGetterFn === 'function') {
@@ -395,7 +395,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
         }
 
         // remove any unwanted Tree Data/Grouping symbols from the beginning of the string before copying (e.g.: "⮟  Task 21" or "·   Task 2")
-        const finalTextToCopy = textToCopy.replace(/^([·|⮞|⮟]\s*)|([·|⮞|⮟])\s*/g, '');
+        const finalTextToCopy = textToCopy.replace(/^([\u00b7|\u034f|·|⮞|⮟]\s*)|([·|⮞|⮟])\s*/gi, '').replace(/[\u00b7|\u034f]/gi, '').trim();
 
         // create fake <textarea> (positioned outside of the screen) to copy into clipboard & delete it from the DOM once we're done
         const tmpElem = document.createElement('textarea') as HTMLTextAreaElement;
@@ -405,8 +405,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           tmpElem.value = finalTextToCopy;
           document.body.appendChild(tmpElem);
           tmpElem.select();
-          const success = document.execCommand('copy', false, textToCopy);
-          if (success) {
+          if (document.execCommand('copy', false, finalTextToCopy)) {
             tmpElem.remove();
           }
         }
