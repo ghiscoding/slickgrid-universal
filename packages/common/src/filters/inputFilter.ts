@@ -9,7 +9,7 @@ import {
 } from '../interfaces/index';
 import { OperatorType, OperatorString, SearchTerm } from '../enums/index';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { emptyElement, toSentenceCase } from '../services';
+import { createDomElement, emptyElement, toSentenceCase } from '../services';
 
 export class InputFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -195,16 +195,16 @@ export class InputFilter implements Filter {
       placeholder = this.columnFilter.placeholder;
     }
 
-    const inputElm = document.createElement('input');
-    inputElm.type = this._inputType || 'text';
-    inputElm.className = `form-control search-filter filter-${columnId}`;
-    inputElm.autocomplete = 'off';
-    inputElm.placeholder = placeholder;
+    const inputElm = createDomElement('input', {
+      type: this._inputType || 'text',
+      autocomplete: 'off', placeholder,
+      className: `form-control search-filter filter-${columnId}`,
+      value: (searchTerm ?? '') as string,
+      dataset: { columnid: `${columnId}` }
+    });
     inputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
     inputElm.setAttribute('role', 'presentation');
 
-    inputElm.value = (searchTerm ?? '') as string;
-    inputElm.dataset.columnid = `${columnId}`;
 
     // if there's a search term, we will add the "filled" class for styling purposes
     if (searchTerm) {

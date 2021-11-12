@@ -1,0 +1,1 @@
+export type InferType<T> = T extends infer R ? R : any;

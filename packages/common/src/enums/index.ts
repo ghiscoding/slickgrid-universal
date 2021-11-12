@@ -12,6 +12,7 @@ export * from './filterMultiplePassType.enum';
 export * from './filterMultiplePassTypeString.type';
 export * from './gridAutosizeColsMode.enum';
 export * from './gridStateType.enum';
+export * from './infer.type';
 export * from './keyCode.enum';
 export * from './operatorString.type';
 export * from './operatorType.enum';

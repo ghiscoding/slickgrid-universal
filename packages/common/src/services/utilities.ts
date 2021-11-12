@@ -280,6 +280,15 @@ export function isEmptyObject(obj: any): boolean {
 }
 
 /**
+ * Simple object check.
+ * @param item
+ * @returns {boolean}
+ */
+export function isObject(item: any) {
+  return (item && typeof item === 'object' && !Array.isArray(item));
+}
+
+/**
  * @deprecated use `findItemInTreeStructure()` instead. Find an item from a hierarchical (tree) view structure (a parent that can have children array which themseleves can children and so on)
  * @param treeArray
  * @param predicate
@@ -824,6 +833,33 @@ export function mapOperatorByFieldType(fieldType: typeof FieldType[keyof typeof 
   }
 
   return map;
+}
+
+/**
+ * Deep merge two objects.
+ * @param {*} target
+ * @param {*} ...sources
+ */
+export function mergeDeep(target: any, ...sources: any[]): any {
+  if (!sources.length) {
+    return target;
+  }
+  const source = sources.shift();
+
+  if (isObject(target) && isObject(source)) {
+    for (const key in source) {
+      if (isObject(source[key])) {
+        if (!target[key]) {
+          Object.assign(target, { [key]: {} });
+        }
+        mergeDeep(target[key], source[key]);
+      } else {
+        Object.assign(target, { [key]: source[key] });
+      }
+    }
+  }
+
+  return mergeDeep(target, ...sources);
 }
 
 /**

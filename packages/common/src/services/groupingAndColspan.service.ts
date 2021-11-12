@@ -10,7 +10,7 @@ import {
 } from './../interfaces/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { PubSubService } from './pubSub.service';
-import { emptyElement } from './domUtilities';
+import { createDomElement, emptyElement } from './domUtilities';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -154,13 +154,10 @@ export class GroupingAndColspanService {
           }
         } else {
           widthTotal = colDef.width || 0;
-          headerElm = document.createElement('div');
-          headerElm.className = `ui-state-default slick-header-column ${isFrozenGrid ? 'frozen' : ''}`;
+          headerElm = createDomElement('div', { className: `ui-state-default slick-header-column ${isFrozenGrid ? 'frozen' : ''}` });
           headerElm.style.width = `${widthTotal - headerColumnWidthDiff}px`;
 
-          const spanColumnNameElm = document.createElement('span');
-          spanColumnNameElm.className = 'slick-column-name';
-          spanColumnNameElm.textContent = colDef.columnGroup || '';
+          const spanColumnNameElm = createDomElement('span', { className: 'slick-column-name', textContent: colDef.columnGroup || '' });
 
           headerElm.appendChild(spanColumnNameElm);
           preHeaderPanel.appendChild(headerElm);

@@ -11,7 +11,7 @@ import { ExtensionUtility } from '../extensions/extensionUtility';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
-import { emptyElement, findWidthOrDefault } from '../services/domUtilities';
+import { createDomElement, emptyElement, findWidthOrDefault } from '../services/domUtilities';
 import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
 
 // using external SlickGrid JS libraries
@@ -101,8 +101,7 @@ export class SlickColumnPicker {
     this._eventHandler.subscribe(this.grid.onHeaderContextMenu, this.handleHeaderContextMenu.bind(this) as EventListener);
     this._eventHandler.subscribe(this.grid.onColumnsReordered, updateColumnPickerOrder.bind(this) as EventListener);
 
-    this._menuElm = document.createElement('div');
-    this._menuElm.className = `slick-columnpicker ${this._gridUid}`;
+    this._menuElm = createDomElement('div', { className: `slick-columnpicker ${this._gridUid}` });
     this._menuElm.setAttribute('aria-expanded', 'false');
     this._menuElm.style.display = 'none';
 
@@ -110,10 +109,8 @@ export class SlickColumnPicker {
     addCloseButtomElement.call(this, this._menuElm);
     addColumnTitleElementWhenDefined.call(this, this._menuElm);
 
+    this._listElm = createDomElement('span', { className: 'slick-columnpicker-list' });
     this._bindEventService.bind(this._menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener);
-
-    this._listElm = document.createElement('span');
-    this._listElm.className = 'slick-columnpicker-list';
 
     // Hide the menu on outside click.
     this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener);
