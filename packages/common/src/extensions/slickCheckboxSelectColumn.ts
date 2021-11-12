@@ -1,7 +1,7 @@
 import { KeyCode } from '../enums/keyCode.enum';
 import { CheckboxSelectorOption, Column, GridOption, SelectableOverrideCallback, SlickEventData, SlickEventHandler, SlickGrid, SlickNamespace } from '../interfaces/index';
 import { SlickRowSelectionModel } from './slickRowSelectionModel';
-import { emptyElement } from '../services/domUtilities';
+import { createDomElement, emptyElement } from '../services/domUtilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 
 // using external SlickGrid JS libraries
@@ -236,18 +236,13 @@ export class SlickCheckboxSelectColumn<T = any> {
         emptyElement(args.node);
 
         // <span class="container"><input type="checkbox"><label for="checkbox"></label></span>
-        const spanElm = document.createElement('span');
-        spanElm.id = 'filter-checkbox-selectall-container';
-
-        const inputElm = document.createElement('input');
-        inputElm.type = 'checkbox';
-        inputElm.id = `header-filter-selector${this._selectAll_UID}`;
-
-        const labelElm = document.createElement('label');
-        labelElm.htmlFor = `header-filter-selector${this._selectAll_UID}`;
-
-        spanElm.appendChild(inputElm);
-        spanElm.appendChild(labelElm);
+        const spanElm = createDomElement('span', { id: 'filter-checkbox-selectall-container' });
+        spanElm.appendChild(
+          createDomElement('input', { type: 'checkbox', id: `header-filter-selector${this._selectAll_UID}` })
+        );
+        spanElm.appendChild(
+          createDomElement('label', { htmlFor: `header-filter-selector${this._selectAll_UID}` })
+        );
         args.node.appendChild(spanElm);
         this._headerRowNode = args.node;
 

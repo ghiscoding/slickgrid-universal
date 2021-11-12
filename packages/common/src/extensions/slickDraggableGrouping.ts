@@ -18,7 +18,7 @@ import {
 import { BindingEventService } from '../services/bindingEvent.service';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
-import { emptyElement } from '../services/domUtilities';
+import { createDomElement, emptyElement } from '../services/domUtilities';
 import { isEmptyObject } from '../services/utilities';
 
 // using external SlickGrid JS libraries
@@ -155,11 +155,9 @@ export class SlickDraggableGrouping {
 
       // add optional group "Toggle All" with its button & text when provided
       if (!this._addonOptions.hideToggleAllButton) {
-        this._groupToggler = document.createElement('div');
-        this._groupToggler.className = 'slick-group-toggle-all';
+        this._groupToggler = createDomElement('div', { className: 'slick-group-toggle-all', title: this._addonOptions.toggleAllPlaceholderText ?? '' });
         this._groupToggler.style.display = 'none';
-        const groupTogglerIconElm = document.createElement('span');
-        groupTogglerIconElm.className = 'slick-group-toggle-all-icon expanded mdi mdi-close';
+        const groupTogglerIconElm = createDomElement('span', { className: 'slick-group-toggle-all-icon expanded mdi mdi-close' });
         this._groupToggler.appendChild(groupTogglerIconElm);
 
         if (this.gridOptions.enableTranslate && this._addonOptions.toggleAllButtonTextKey) {
@@ -171,10 +169,12 @@ export class SlickDraggableGrouping {
         this._groupToggler.title = this._addonOptions.toggleAllPlaceholderText ?? '';
 
         if (this._addonOptions.toggleAllButtonText) {
-          const groupTogglerTextElm = document.createElement('span');
-          groupTogglerTextElm.className = 'slick-group-toggle-all-text';
-          groupTogglerTextElm.textContent = this._addonOptions.toggleAllButtonText || '';
-          this._groupToggler.appendChild(groupTogglerTextElm);
+          this._groupToggler.appendChild(
+            createDomElement('span', {
+              className: 'slick-group-toggle-all-text',
+              textContent: this._addonOptions.toggleAllButtonText || ''
+            })
+          );
         }
         this._dropboxElm.appendChild(this._groupToggler);
 
@@ -185,8 +185,7 @@ export class SlickDraggableGrouping {
         );
       }
 
-      this._dropboxPlaceholderElm = document.createElement('div');
-      this._dropboxPlaceholderElm.className = 'slick-draggable-dropbox-toggle-placeholder';
+      this._dropboxPlaceholderElm = createDomElement('div', { className: 'slick-draggable-dropbox-toggle-placeholder' });
       if (this.gridOptions.enableTranslate && this._addonOptions?.dropPlaceHolderTextKey) {
         this._addonOptions.dropPlaceHolderText = this.extensionUtility.translateWhenEnabledAndServiceExist(this._addonOptions.dropPlaceHolderTextKey, 'TEXT_TOGGLE_ALL_GROUPS');
       }
@@ -196,16 +195,14 @@ export class SlickDraggableGrouping {
       this.setupColumnDropbox();
 
       this._eventHandler.subscribe(grid.onHeaderCellRendered, (_e, args) => {
-        const column = args.column;
         const node = args.node;
 
-        if (!isEmptyObject(column.grouping)) {
+        if (!isEmptyObject(args.column?.grouping) && node) {
           node.style.cursor = 'pointer'; // add the pointer cursor on each column title
 
           // also optionally add an icon beside each column title that can be dragged
           if (this._addonOptions.groupIconCssClass || this._addonOptions.groupIconImage) {
-            const groupableIconElm = document.createElement('span');
-            groupableIconElm.className = 'slick-column-groupable';
+            const groupableIconElm = createDomElement('span', { className: 'slick-column-groupable' });
             if (this._addonOptions.groupIconCssClass) {
               groupableIconElm.classList.add(...this._addonOptions.groupIconCssClass.split(' '));
             }
@@ -375,17 +372,14 @@ export class SlickDraggableGrouping {
       this._gridColumns.forEach(col => {
         if (col.id === columnid) {
           if (col.grouping !== null && !isEmptyObject(col.grouping)) {
-            const entryElm = document.createElement('div');
-            entryElm.id = `${this._gridUid}_${col.id}_entry`;
-            entryElm.dataset.id = `${col.id}`;
-            entryElm.className = 'slick-dropped-grouping';
             const columnName = column.children('.slick-column-name').first();
+            const entryElm = createDomElement('div', { id: `${this._gridUid}_${col.id}_entry`, className: 'slick-dropped-grouping', dataset: { id: `${col.id}` } });
             const groupTextElm = document.createElement('div');
             groupTextElm.style.display = 'inline-flex';
             groupTextElm.textContent = columnName.length ? columnName.text() : column.text();
             entryElm.appendChild(groupTextElm);
-            const groupRemoveIconElm = document.createElement('div');
-            groupRemoveIconElm.className = 'slick-groupby-remove';
+
+            const groupRemoveIconElm = createDomElement('div', { className: 'slick-groupby-remove' });
             if (this._addonOptions.deleteIconCssClass) {
               groupRemoveIconElm.classList.add(...this._addonOptions.deleteIconCssClass.split(' '));
             }
@@ -395,6 +389,7 @@ export class SlickDraggableGrouping {
             if (!this._addonOptions.deleteIconCssClass && !this._addonOptions.deleteIconImage) {
               groupRemoveIconElm.classList.add('slick-groupby-remove-image');
             }
+
             entryElm.appendChild(groupRemoveIconElm);
             entryElm.appendChild(document.createElement('div'));
             container.appendChild(entryElm);

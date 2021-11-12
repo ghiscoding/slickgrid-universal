@@ -13,7 +13,7 @@ import {
   MultiColumnSort,
   OnHeaderCellRenderedEventArgs,
 } from '../interfaces/index';
-import { arrayRemoveItemByIndex, emptyElement, getElementOffsetRelativeToParent, getTranslationPrefix } from '../services/index';
+import { arrayRemoveItemByIndex, createDomElement, emptyElement, getElementOffsetRelativeToParent, getTranslationPrefix } from '../services/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { FilterService } from '../services/filter.service';
 import { PubSubService } from '../services/pubSub.service';
@@ -141,8 +141,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     }
 
     if (!this._menuElm) {
-      this._menuElm = document.createElement('div');
-      this._menuElm.className = 'slick-header-menu';
+      this._menuElm = createDomElement('div', { className: 'slick-header-menu' });
       this._menuElm.style.minWidth = `${this.addonOptions.minWidth}px`;
       this._menuElm.setAttribute('aria-expanded', 'true');
       this.grid.getContainerNode()?.appendChild(this._menuElm);
@@ -179,8 +178,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         return;
       }
 
-      const headerButtonDivElm = document.createElement('div');
-      headerButtonDivElm.className = 'slick-header-menu-button';
+      const headerButtonDivElm = createDomElement('div', { className: 'slick-header-menu-button' });
 
       if (this.addonOptions.buttonCssClass) {
         headerButtonDivElm.classList.add(...this.addonOptions.buttonCssClass.split(' '));

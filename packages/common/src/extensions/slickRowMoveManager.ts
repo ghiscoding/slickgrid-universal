@@ -11,7 +11,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { findWidthOrDefault, getHtmlElementOffset } from '../services/domUtilities';
+import { createDomElement, findWidthOrDefault, getHtmlElementOffset } from '../services/domUtilities';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -268,8 +268,7 @@ export class SlickRowMoveManager {
       const rowHeight = this.gridOptions.rowHeight as number;
       dd.selectedRows = selectedRows;
 
-      const reorderProxyElm = document.createElement('div');
-      reorderProxyElm.className = 'slick-reorder-proxy';
+      const reorderProxyElm = createDomElement('div', { className: 'slick-reorder-proxy' });
       reorderProxyElm.style.display = 'none';
       reorderProxyElm.style.position = 'absolute';
       reorderProxyElm.style.zIndex = '99999';
@@ -278,8 +277,7 @@ export class SlickRowMoveManager {
       dd.selectionProxy = reorderProxyElm;
       this._canvas.appendChild(reorderProxyElm);
 
-      const reorderGuideElm = document.createElement('div');
-      reorderGuideElm.className = 'slick-reorder-guide';
+      const reorderGuideElm = createDomElement('div', { className: 'slick-reorder-guide' });
       reorderGuideElm.style.position = 'absolute';
       reorderGuideElm.style.zIndex = '99999';
       reorderGuideElm.style.width = `${this._canvas.clientWidth}px`;

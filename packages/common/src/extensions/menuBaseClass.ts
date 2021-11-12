@@ -18,6 +18,7 @@ import { BindingEventService } from '../services/bindingEvent.service';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
+import { createDomElement } from '../services/domUtilities';
 import { hasData, toSentenceCase } from '../services/utilities';
 
 // using external SlickGrid JS libraries
@@ -121,9 +122,10 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       // user could pass a title on top of the Commands/Options section
       const titleProp = itemType === 'command' ? 'commandTitle' : 'optionTitle';
       if ((menuOptions as CellMenu | ContextMenu)?.[titleProp]) {
-        this[`_${itemType}TitleElm`] = document.createElement('div');
-        this[`_${itemType}TitleElm`]!.className = 'title';
-        this[`_${itemType}TitleElm`]!.textContent = (menuOptions as never)[titleProp];
+        this[`_${itemType}TitleElm`] = createDomElement('div', {
+          className: 'title',
+          textContent: (menuOptions as never)[titleProp],
+        });
         commandOrOptionMenuElm.appendChild(this[`_${itemType}TitleElm`]!);
       }
       for (const item of commandOrOptionItems) {
@@ -166,8 +168,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
         item.disabled = isItemUsable ? false : true;
       }
 
-      commandLiElm = document.createElement('li');
-      commandLiElm.className = menuCssPrefix;
+      commandLiElm = createDomElement('li', { className: menuCssPrefix });
       if (typeof item === 'object' && hasData((item as never)[itemType])) {
         commandLiElm.dataset[itemType] = (item as never)?.[itemType];
       }
@@ -203,8 +204,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
         }
       } else {
         // any other Menu plugin will have icon & content elements
-        const iconElm = document.createElement('div');
-        iconElm.className = `${this._menuCssPrefix}-icon`;
+        const iconElm = createDomElement('div', { className: `${this._menuCssPrefix}-icon` });
         commandLiElm.appendChild(iconElm);
 
         if ((item as MenuCommandItem | MenuOptionItem).iconCssClass) {
@@ -216,9 +216,10 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
           iconElm.style.backgroundImage = `url(${(item as MenuCommandItem | MenuOptionItem).iconImage})`;
         }
 
-        const textElm = document.createElement('span');
-        textElm.className = `${this._menuCssPrefix}-content`;
-        textElm.textContent = typeof item === 'object' && (item as MenuCommandItem | MenuOptionItem).title || '';
+        const textElm = createDomElement('span', {
+          className: `${this._menuCssPrefix}-content`,
+          textContent: typeof item === 'object' && (item as MenuCommandItem | MenuOptionItem).title || ''
+        });
         commandLiElm.appendChild(textElm);
 
         if ((item as MenuCommandItem | MenuOptionItem).textCssClass) {

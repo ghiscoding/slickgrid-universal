@@ -2,6 +2,7 @@ import * as assign_ from 'assign-deep';
 const assign = (assign_ as any)['default'] || assign_;
 
 import { CellRange, CellRangeDecoratorOption, CSSStyleDeclarationWritable, SlickGrid } from '../interfaces/index';
+import { createDomElement } from '../services/domUtilities';
 
 /**
  * Displays an overlay on top of a given cell range.
@@ -54,8 +55,7 @@ export class SlickCellRangeDecorator {
 
   show(range: CellRange) {
     if (!this._elem) {
-      this._elem = document.createElement('div');
-      this._elem.className = this._addonOptions.selectionCssClass;
+      this._elem = createDomElement('div', { className: this._addonOptions.selectionCssClass });
       Object.keys(this._addonOptions.selectionCss as CSSStyleDeclaration).forEach((cssStyleKey) => {
         this._elem!.style[cssStyleKey as CSSStyleDeclarationWritable] = this._addonOptions.selectionCss[cssStyleKey as CSSStyleDeclarationWritable];
       });

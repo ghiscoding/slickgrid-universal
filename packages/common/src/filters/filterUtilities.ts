@@ -1,7 +1,7 @@
 import { OperatorString } from '../enums/operatorString.type';
 import { Column, GridOption } from '../interfaces/index';
 import { Observable, RxJsFacade, Subject, Subscription } from '../services/rxjsFacade';
-import { htmlEncodedStringWithPadding, sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
+import { createDomElement, htmlEncodedStringWithPadding, sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 import { castObservableToPromise, getDescendantProperty, } from '../services/utilities';
 
 /**
@@ -10,14 +10,15 @@ import { castObservableToPromise, getDescendantProperty, } from '../services/uti
  * @returns {Object} selectElm - Select Dropdown HTML Element
  */
 export function buildSelectOperator(optionValues: Array<{ operator: OperatorString, description: string }>, gridOptions: GridOption): HTMLSelectElement {
-  const selectElm = document.createElement('select');
-  selectElm.className = 'form-control';
+  const selectElm = createDomElement('select', { className: 'form-control' });
 
   for (const option of optionValues) {
-    const selectOption = document.createElement('option');
-    selectOption.value = option.operator;
-    selectOption.innerHTML = sanitizeTextByAvailableSanitizer(gridOptions, `${htmlEncodedStringWithPadding(option.operator, 3)}${option.description}`);
-    selectElm.appendChild(selectOption);
+    selectElm.appendChild(
+      createDomElement('option', {
+        value: option.operator,
+        innerHTML: sanitizeTextByAvailableSanitizer(gridOptions, `${htmlEncodedStringWithPadding(option.operator, 3)}${option.description}`)
+      })
+    );
   }
 
   return selectElm;

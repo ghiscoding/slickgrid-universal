@@ -1,9 +1,10 @@
 import * as DOMPurify_ from 'dompurify';
 const DOMPurify = DOMPurify_; // patch to fix rollup to work
 
-import { SearchTerm } from '../enums/index';
+import { InferType, SearchTerm } from '../enums/index';
 import { Column, GridOption, HtmlElementPosition, SelectOption, SlickGrid, } from '../interfaces/index';
 import { TranslaterService } from './translater.service';
+import { mergeDeep } from './utilities';
 
 /**
  * Create the HTML DOM Element for a Select Editor or Filter, this is specific to these 2 types only and the unit tests are directly under them
@@ -155,6 +156,22 @@ export function calculateAvailableSpace(element: HTMLElement): { top: number; bo
   return { top, bottom, left, right };
 }
 
+/** Create a DOM Element with any optional attributes or properties */
+export function createDomElement<T extends keyof HTMLElementTagNameMap, K extends keyof HTMLElementTagNameMap[T]>(tagName: T, elementOptions?: { [P in K]: InferType<HTMLElementTagNameMap[T][P]> }): HTMLElementTagNameMap[T] {
+  const elm = document.createElement<T>(tagName);
+
+  if (elementOptions) {
+    Object.keys(elementOptions).forEach((elmOptionKey) => {
+      const elmValue = (elementOptions as any)[elmOptionKey];
+      if (typeof elmValue === 'object') {
+        mergeDeep(elm[elmOptionKey as K], elmValue);
+      } else {
+        elm[elmOptionKey as K] = (elementOptions as any)[elmOptionKey];
+      }
+    });
+  }
+  return elm;
+}
 
 /**
  * Loop through all properties of an object and nullify any properties that are instanceof HTMLElement,

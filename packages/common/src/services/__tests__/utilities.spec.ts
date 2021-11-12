@@ -1,3 +1,4 @@
+import 'jest-extended';
 import { of } from 'rxjs';
 
 import { FieldType, OperatorType } from '../../enums/index';
@@ -9,6 +10,7 @@ import {
   addWhiteSpaces,
   arrayRemoveItemByIndex,
   cancellablePromise,
+  CancelledException,
   castObservableToPromise,
   flattenToParentChildArray,
   unflattenParentChildArrayToTree,
@@ -29,6 +31,7 @@ import {
   mapOperatorByFieldType,
   mapOperatorToShorthandDesignation,
   mapOperatorType,
+  mergeDeep,
   parseBoolean,
   parseUtcDate,
   removeAccentFromText,
@@ -42,7 +45,6 @@ import {
   unsubscribeAll,
   uniqueArray,
   uniqueObjectArray,
-  CancelledException,
 } from '../utilities';
 
 describe('Service/Utilies', () => {
@@ -1197,6 +1199,32 @@ describe('Service/Utilies', () => {
     it('should return default OperatoryType associated to contains', () => {
       const output = mapOperatorByFieldType('' as any);
       expect(output).toBe(OperatorType.equal);
+    });
+  });
+
+  describe('mergeDeep method', () => {
+    it('should have undefined object when input object is also undefined', () => {
+      const inputObj = undefined;
+      mergeDeep(inputObj, { firstName: 'John' });
+      expect(inputObj).toEqual(undefined);
+    });
+
+    it('should provide empty object as input and expect output object to include 2nd object', () => {
+      const inputObj = {};
+      mergeDeep(inputObj, { firstName: 'John' });
+      expect(inputObj).toEqual({ firstName: 'John' });
+    });
+
+    it('should provide filled object and return same object when 2nd object is also an object', () => {
+      const inputObj = { firstName: 'Jane' };
+      mergeDeep(inputObj, { firstName: { name: 'John' } });
+      expect(inputObj).toEqual({ firstName: 'Jane' });
+    });
+
+    it('should provide input object with undefined property and expect output object to return merged object from 2nd object when that one is filled', () => {
+      const inputObj = { firstName: undefined };
+      mergeDeep(inputObj, { firstName: {} });
+      expect(inputObj).toEqual({ firstName: {} });
     });
   });
 

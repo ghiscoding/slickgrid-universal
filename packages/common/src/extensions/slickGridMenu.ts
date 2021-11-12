@@ -12,7 +12,7 @@ import {
 } from '../interfaces/index';
 import { DelimiterType, FileType } from '../enums/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
-import { emptyElement, findWidthOrDefault, getHtmlElementOffset, getTranslationPrefix, } from '../services/index';
+import { createDomElement, emptyElement, findWidthOrDefault, getHtmlElementOffset, getTranslationPrefix, } from '../services/index';
 import { ExcelExportService } from '../services/excelExport.service';
 import { FilterService } from '../services/filter.service';
 import { PubSubService } from '../services/pubSub.service';
@@ -46,6 +46,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   protected _commandMenuElm!: HTMLDivElement;
   protected _gridMenuOptions: GridMenu | null = null;
   protected _gridMenuButtonElm!: HTMLButtonElement;
+  protected _headerElm: HTMLDivElement | null = null;
   protected _isMenuOpen = false;
   protected _listElm!: HTMLSpanElement;
   protected _userOriginalGridMenu!: GridMenu;
@@ -157,6 +158,10 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     if (gridMenuElm) {
       gridMenuElm.style.display = 'none';
     }
+    if (this._headerElm) {
+      // put back original width (fixes width and frozen+gridMenu on left header)
+      this._headerElm.style.width = '100%';
+    }
     this._gridMenuButtonElm?.remove();
     this._menuElm?.remove();
     this._commandMenuElm?.remove();
@@ -167,8 +172,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       // user could pass a title on top of the columns list
       addColumnTitleElementWhenDefined.call(this, this._menuElm);
 
-      this._listElm = document.createElement('span');
-      this._listElm.className = 'slick-grid-menu-list';
+      this._listElm = createDomElement('span', { className: 'slick-grid-menu-list' });
 
       // update all columns on any of the column title button click from column picker
       this._bindEventService.bind(this._menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener);
@@ -180,14 +184,14 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     const gridUidSelector = this._gridUid ? `.${this._gridUid}` : '';
     const gridMenuWidth = this._gridMenuOptions?.menuWidth || this._defaults.menuWidth;
     const headerSide = (this.gridOptions.hasOwnProperty('frozenColumn') && this.gridOptions.frozenColumn! >= 0) ? 'right' : 'left';
-    this._menuElm = document.querySelector(`${gridUidSelector} .slick-header-${headerSide}`) as HTMLDivElement;
+    this._headerElm = document.querySelector<HTMLDivElement>(`${gridUidSelector} .slick-header-${headerSide}`);
 
-    if (this._menuElm && this._gridMenuOptions) {
+    if (this._headerElm && this._gridMenuOptions) {
       // resize the header row to include the hamburger menu icon
-      this._menuElm.style.width = `calc(100% - ${gridMenuWidth}px)`;
+      this._headerElm.style.width = `calc(100% - ${gridMenuWidth}px)`;
 
       // if header row is enabled, we also need to resize its width
-      const enableResizeHeaderRow = (this._gridMenuOptions && this._gridMenuOptions.resizeOnShowHeaderRow !== undefined) ? this._gridMenuOptions.resizeOnShowHeaderRow : this._defaults.resizeOnShowHeaderRow;
+      const enableResizeHeaderRow = this._gridMenuOptions.resizeOnShowHeaderRow ?? this._defaults.resizeOnShowHeaderRow;
       if (enableResizeHeaderRow && this.gridOptions.showHeaderRow) {
         const headerRowElm = document.querySelector<HTMLDivElement>(`${gridUidSelector} .slick-headerrow`);
         if (headerRowElm) {
@@ -195,19 +199,17 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         }
       }
 
-      const showButton = (this._gridMenuOptions?.showButton !== undefined) ? this._gridMenuOptions.showButton : this._defaults.showButton;
+      const showButton = this._gridMenuOptions.showButton ?? this._defaults.showButton;
       if (showButton) {
-        this._gridMenuButtonElm = document.createElement('button');
-        this._gridMenuButtonElm.className = 'slick-grid-menu-button';
-        if (this._gridMenuOptions && this._gridMenuOptions.iconCssClass) {
+        this._gridMenuButtonElm = createDomElement('button', { className: 'slick-grid-menu-button' });
+        if (this._gridMenuOptions?.iconCssClass) {
           this._gridMenuButtonElm.classList.add(...this._gridMenuOptions.iconCssClass.split(' '));
         } else {
-          const iconImage = (this._gridMenuOptions && this._gridMenuOptions.iconImage) ? this._gridMenuOptions.iconImage : '';
-          const iconImageElm = document.createElement('img');
-          iconImageElm.src = iconImage;
+          const iconImage = this._gridMenuOptions?.iconImage ?? '';
+          const iconImageElm = createDomElement('img', { src: iconImage });
           this._gridMenuButtonElm.appendChild(iconImageElm);
         }
-        this._menuElm.parentElement!.insertBefore(this._gridMenuButtonElm, this._menuElm.parentElement!.firstChild);
+        this._headerElm.parentElement!.insertBefore(this._gridMenuButtonElm, this._headerElm.parentElement!.firstChild);
 
         // show the Grid Menu when hamburger menu is clicked
         this._gridMenuOptions.commandTitle = this._gridMenuOptions.customTitle || this._gridMenuOptions.commandTitle;
@@ -227,8 +229,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       // add Close button
       addCloseButtomElement.call(this, this._menuElm);
 
-      this._commandMenuElm = document.createElement('div');
-      this._commandMenuElm.className = 'slick-grid-menu-command-list';
+      this._commandMenuElm = createDomElement('div', { className: 'slick-grid-menu-command-list' });
       this._menuElm.appendChild(this._commandMenuElm);
 
       this.populateCommandOrOptionItems(

@@ -17,6 +17,7 @@ import {
 import { getDescendantProperty, setDeepValue, toSentenceCase } from '../services/utilities';
 import { floatValidator, integerValidator, textValidator } from '../editorValidators';
 import { BindingEventService } from '../services/bindingEvent.service';
+import { createDomElement } from '../services/domUtilities';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -187,20 +188,22 @@ export class DualInputEditor implements Editor {
       fieldType = 'number';
     }
 
-    const input = document.createElement('input') as HTMLInputElement;
-    input.id = `item-${itemId}-${position}`;
-    input.className = `dual-editor-text editor-${columnId} ${position.replace(/input/gi, '')}`;
+    const input = createDomElement('input', {
+      type: fieldType || 'text',
+      id: `item-${itemId}-${position}`,
+      className: `dual-editor-text editor-${columnId} ${position.replace(/input/gi, '')}`,
+      autocomplete: 'off',
+      placeholder: editorSideParams.placeholder || '',
+      title: editorSideParams.title || '',
+    });
+    input.setAttribute('role', 'presentation');
+    input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Input Editor`);
+
     if (fieldType === 'readonly') {
       // when the custom type is defined as readonly, we'll make a readonly text input
       input.readOnly = true;
       fieldType = 'text';
     }
-    input.type = fieldType || 'text';
-    input.setAttribute('role', 'presentation');
-    input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Input Editor`);
-    input.autocomplete = 'off';
-    input.placeholder = editorSideParams.placeholder || '';
-    input.title = editorSideParams.title || '';
     if (fieldType === 'number') {
       input.step = this.getInputDecimalSteps(position);
     }

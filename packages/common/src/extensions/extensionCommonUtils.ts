@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 import { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../interfaces/index';
-import { sanitizeTextByAvailableSanitizer } from '../services/domUtilities';
+import { createDomElement, sanitizeTextByAvailableSanitizer } from '../services/domUtilities';
 import { SlickColumnPicker } from './slickColumnPicker';
 import { SlickGridMenu } from './slickGridMenu';
 import { titleCase } from '../services/utilities';
@@ -8,15 +8,13 @@ import { titleCase } from '../services/utilities';
 /** Create a Close button element and add it to the Menu element */
 export function addCloseButtomElement(this: SlickColumnPicker | SlickGridMenu, menuElm: HTMLDivElement) {
   const context: any = this;
-  const closePickerButtonElm = document.createElement('button');
-  closePickerButtonElm.className = 'close';
-  closePickerButtonElm.type = 'button';
-  closePickerButtonElm.dataset.dismiss = context instanceof SlickColumnPicker ? 'slick-columnpicker' : 'slick-grid-menu';
+  const closePickerButtonElm = createDomElement('button', {
+    type: 'button', className: 'close',
+    dataset: { dismiss: context instanceof SlickColumnPicker ? 'slick-columnpicker' : 'slick-grid-menu' }
+  });
   closePickerButtonElm.setAttribute('aria-label', 'Close');
 
-  const closeSpanElm = document.createElement('span');
-  closeSpanElm.className = 'close';
-  closeSpanElm.innerHTML = '&times;';
+  const closeSpanElm = createDomElement('span', { className: 'close', innerHTML: '&times;' });
   closeSpanElm.setAttribute('aria-hidden', 'true');
   closePickerButtonElm.appendChild(closeSpanElm);
   menuElm.appendChild(closePickerButtonElm);
@@ -26,9 +24,7 @@ export function addCloseButtomElement(this: SlickColumnPicker | SlickGridMenu, m
 export function addColumnTitleElementWhenDefined(this: SlickColumnPicker | SlickGridMenu, menuElm: HTMLDivElement) {
   const context: any = this;
   if (context.addonOptions?.columnTitle) {
-    context._columnTitleElm = document.createElement('div');
-    context._columnTitleElm.className = 'title';
-    context._columnTitleElm.textContent = context.addonOptions?.columnTitle ?? context._defaults.columnTitle;
+    context._columnTitleElm = createDomElement('div', { className: 'title', textContent: context.addonOptions?.columnTitle ?? context._defaults.columnTitle });
     menuElm.appendChild(context._columnTitleElm);
   }
 }
@@ -121,13 +117,12 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
 
   for (const column of context.columns) {
     const columnId = column.id;
-    const columnLiElm = document.createElement('li');
-    columnLiElm.className = column.excludeFromColumnPicker ? 'hidden' : '';
+    const columnLiElm = createDomElement('li', { className: column.excludeFromColumnPicker ? 'hidden' : '' });
 
-    const colInputElm = document.createElement('input');
-    colInputElm.type = 'checkbox';
-    colInputElm.id = `${context._gridUid}-${menuPrefix}colpicker-${columnId}`;
-    colInputElm.dataset.columnid = `${columnId}`;
+    const colInputElm = createDomElement('input', {
+      type: 'checkbox', id: `${context._gridUid}-${menuPrefix}colpicker-${columnId}`,
+      dataset: { columnid: `${columnId}` }
+    });
     const colIndex = context.grid.getColumnIndex(columnId);
     if (colIndex >= 0) {
       colInputElm.checked = true;
@@ -138,10 +133,12 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
     const headerColumnValueExtractorFn = typeof addonOptions?.headerColumnValueExtractor === 'function' ? addonOptions.headerColumnValueExtractor : context._defaults.headerColumnValueExtractor;
     const columnLabel = headerColumnValueExtractorFn!(column, context.gridOptions);
 
-    const labelElm = document.createElement('label');
-    labelElm.htmlFor = `${context._gridUid}-${menuPrefix}colpicker-${columnId}`;
-    labelElm.innerHTML = sanitizeTextByAvailableSanitizer(context.gridOptions, columnLabel);
-    columnLiElm.appendChild(labelElm);
+    columnLiElm.appendChild(
+      createDomElement('label', {
+        htmlFor: `${context._gridUid}-${menuPrefix}colpicker-${columnId}`,
+        innerHTML: sanitizeTextByAvailableSanitizer(context.gridOptions, columnLabel),
+      })
+    );
     context._listElm.appendChild(columnLiElm);
   }
 
@@ -150,43 +147,38 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
   }
 
   if (!(addonOptions?.hideForceFitButton)) {
-    const forceFitTitle = addonOptions?.forceFitTitle;
-
-    const fitInputElm = document.createElement('input');
-    fitInputElm.type = 'checkbox';
-    fitInputElm.id = `${context._gridUid}-${menuPrefix}colpicker-forcefit`;
-    fitInputElm.dataset.option = 'autoresize';
-
-    const labelElm = document.createElement('label');
-    labelElm.htmlFor = `${context._gridUid}-${menuPrefix}colpicker-forcefit`;
-    labelElm.textContent = forceFitTitle ?? '';
-    if (context.gridOptions.forceFitColumns) {
-      fitInputElm.checked = true;
-    }
-
-    const fitLiElm = document.createElement('li');
-    fitLiElm.appendChild(fitInputElm);
-    fitLiElm.appendChild(labelElm);
+    const fitLiElm = createDomElement('li');
+    fitLiElm.appendChild(
+      createDomElement('input', {
+        type: 'checkbox', id: `${context._gridUid}-${menuPrefix}colpicker-forcefit`,
+        checked: context.gridOptions.forceFitColumns,
+        dataset: { option: 'autoresize' }
+      })
+    );
+    fitLiElm.appendChild(
+      createDomElement('label', {
+        htmlFor: `${context._gridUid}-${menuPrefix}colpicker-forcefit`,
+        textContent: addonOptions?.forceFitTitle ?? '',
+      })
+    );
     context._listElm.appendChild(fitLiElm);
   }
 
   if (!(addonOptions?.hideSyncResizeButton)) {
-    const syncResizeTitle = (addonOptions?.syncResizeTitle) || addonOptions.syncResizeTitle;
-    const labelElm = document.createElement('label');
-    labelElm.htmlFor = `${context._gridUid}-${menuPrefix}colpicker-syncresize`;
-    labelElm.textContent = syncResizeTitle ?? '';
-
-    const syncInputElm = document.createElement('input');
-    syncInputElm.type = 'checkbox';
-    syncInputElm.id = `${context._gridUid}-${menuPrefix}colpicker-syncresize`;
-    syncInputElm.dataset.option = 'syncresize';
-    if (context.gridOptions.syncColumnCellResize) {
-      syncInputElm.checked = true;
-    }
-
     const syncLiElm = document.createElement('li');
-    syncLiElm.appendChild(syncInputElm);
-    syncLiElm.appendChild(labelElm);
+    syncLiElm.appendChild(
+      createDomElement('input', {
+        type: 'checkbox', id: `${context._gridUid}-${menuPrefix}colpicker-syncresize`,
+        checked: context.gridOptions.syncColumnCellResize,
+        dataset: { option: 'syncresize' }
+      })
+    );
+    syncLiElm.appendChild(
+      createDomElement('label', {
+        htmlFor: `${context._gridUid}-${menuPrefix}colpicker-syncresize`,
+        textContent: addonOptions?.syncResizeTitle ?? ''
+      })
+    );
     context._listElm.appendChild(syncLiElm);
   }
 }

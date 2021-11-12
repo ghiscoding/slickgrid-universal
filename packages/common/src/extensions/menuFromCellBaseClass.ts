@@ -10,7 +10,7 @@ import {
   MenuOptionItemCallbackArgs,
 } from '../interfaces/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
-import { calculateAvailableSpace, findWidthOrDefault, getHtmlElementOffset, } from '../services/domUtilities';
+import { calculateAvailableSpace, createDomElement, findWidthOrDefault, getHtmlElementOffset, } from '../services/domUtilities';
 import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
@@ -94,22 +94,16 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       this._menuElm.style.left = `${event.pageX}px`;
       this._menuElm.style.display = 'none';
 
-      const closeButtonElm = document.createElement('button');
-      closeButtonElm.className = 'close';
-      closeButtonElm.type = 'button';
-      closeButtonElm.dataset.dismiss = this._menuCssPrefix;
+      const closeButtonElm = createDomElement('button', { className: 'close', type: 'button', dataset: { dismiss: this._menuCssPrefix } });
       closeButtonElm.setAttribute('aria-label', 'Close');
 
-      const closeSpanElm = document.createElement('span');
-      closeSpanElm.className = 'close';
-      closeSpanElm.innerHTML = '&times;';
+      const closeSpanElm = createDomElement('span', { className: 'close', innerHTML: '&times;' });
       closeSpanElm.setAttribute('aria-hidden', 'true');
       closeButtonElm.appendChild(closeSpanElm);
 
       // -- Option List section
       if (!(this.addonOptions as CellMenu | ContextMenu).hideOptionSection && isColumnOptionAllowed && optionItems.length > 0) {
-        const optionMenuElm = document.createElement('div');
-        optionMenuElm.className = `${this._menuCssPrefix}-option-list`;
+        const optionMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-option-list` });
         if (!this.addonOptions.hideCloseButton) {
           this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener);
           this._menuElm.appendChild(closeButtonElm);
@@ -127,8 +121,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
 
       // -- Command List section
       if (!(this.addonOptions as CellMenu | ContextMenu).hideCommandSection && isColumnCommandAllowed && commandItems.length > 0) {
-        const commandMenuElm = document.createElement('div');
-        commandMenuElm.className = `${this._menuCssPrefix}-command-list`;
+        const commandMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-command-list` });
         if (!this.addonOptions.hideCloseButton && (!isColumnOptionAllowed || optionItems.length === 0 || (this.addonOptions as CellMenu | ContextMenu).hideOptionSection)) {
           this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener);
           this._menuElm.appendChild(closeButtonElm);
