@@ -1,6 +1,3 @@
-import * as assign_ from 'assign-deep';
-const assign = (assign_ as any)['default'] || assign_;
-
 import {
   BindingEventService,
   Column,
@@ -13,6 +10,7 @@ import {
   createDomElement,
   CurrentRowSelection,
   deepCopy,
+  deepMerge,
   DOMEvent,
   Editor,
   EditorValidationResult,
@@ -218,7 +216,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       this._formValues = { ...this._formValues, [columnId]: newValue };
     }
 
-    this._formValues = assign({}, this._itemDataContext, this._formValues);
+    this._formValues = deepMerge({}, this._itemDataContext, this._formValues);
   }
 
   /**

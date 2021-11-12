@@ -71,7 +71,6 @@
     "not dead"
   ],
   "dependencies": {
-    "assign-deep": "^1.0.1",
     "dequal": "^2.0.2",
     "dompurify": "^2.3.3",
     "flatpickr": "^4.6.9",

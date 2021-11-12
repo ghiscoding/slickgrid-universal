@@ -1,8 +1,6 @@
-import * as assign_ from 'assign-deep';
-const assign = (assign_ as any)['default'] || assign_;
-
 import { CellRange, CellRangeDecoratorOption, CSSStyleDeclarationWritable, SlickGrid } from '../interfaces/index';
 import { createDomElement } from '../services/domUtilities';
+import { deepMerge } from '../services/utilities';
 
 /**
  * Displays an overlay on top of a given cell range.
@@ -26,7 +24,7 @@ export class SlickCellRangeDecorator {
   pluginName = 'CellRangeDecorator';
 
   constructor(grid: SlickGrid, options?: Partial<CellRangeDecoratorOption>) {
-    this._addonOptions = assign({}, this._defaults, options);
+    this._addonOptions = deepMerge(this._defaults, options);
     this._grid = grid;
   }
 

@@ -4,7 +4,7 @@ const DOMPurify = DOMPurify_; // patch to fix rollup to work
 import { InferType, SearchTerm } from '../enums/index';
 import { Column, GridOption, HtmlElementPosition, SelectOption, SlickGrid, } from '../interfaces/index';
 import { TranslaterService } from './translater.service';
-import { mergeDeep } from './utilities';
+import { deepMerge } from './utilities';
 
 /**
  * Create the HTML DOM Element for a Select Editor or Filter, this is specific to these 2 types only and the unit tests are directly under them
@@ -164,7 +164,7 @@ export function createDomElement<T extends keyof HTMLElementTagNameMap, K extend
     Object.keys(elementOptions).forEach((elmOptionKey) => {
       const elmValue = (elementOptions as any)[elmOptionKey];
       if (typeof elmValue === 'object') {
-        mergeDeep(elm[elmOptionKey as K], elmValue);
+        deepMerge(elm[elmOptionKey as K], elmValue);
       } else {
         elm[elmOptionKey as K] = (elementOptions as any)[elmOptionKey];
       }

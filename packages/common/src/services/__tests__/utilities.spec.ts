@@ -16,6 +16,7 @@ import {
   unflattenParentChildArrayToTree,
   decimalFormatted,
   deepCopy,
+  deepMerge,
   emptyObject,
   findItemInHierarchicalStructure,
   findItemInTreeStructure,
@@ -31,7 +32,6 @@ import {
   mapOperatorByFieldType,
   mapOperatorToShorthandDesignation,
   mapOperatorType,
-  mergeDeep,
   parseBoolean,
   parseUtcDate,
   removeAccentFromText,
@@ -456,6 +456,95 @@ describe('Service/Utilies', () => {
       expect(arr1[1].address.zip).toBe(222222);
       expect(arr2[0].address.zip).toBe(888888);
       expect(arr2[1].address.zip).toBe(999999);
+    });
+  });
+
+  describe('deepMerge method', () => {
+    it('should return undefined when both inputs are undefined', () => {
+      const obj1 = undefined;
+      const obj2 = null;
+      const output = deepMerge(obj1, obj2);
+      expect(output).toEqual(undefined);
+    });
+
+    it('should merge object even when 1st input is undefined because 2nd input is an object', () => {
+      const input1 = undefined;
+      const input2 = { firstName: 'John' };
+      const output = deepMerge(input1, input2);
+      expect(output).toEqual({ firstName: 'John' });
+    });
+
+    it('should merge object even when 1st input is undefined because 2nd input is an object', () => {
+      const input1 = { firstName: 'John' };
+      const input2 = undefined;
+      const output = deepMerge(input1, input2);
+      expect(output).toEqual({ firstName: 'John' });
+    });
+
+    it('should provide empty object as input and expect output object to include 2nd object', () => {
+      const input1 = {};
+      const input2 = { firstName: 'John' };
+      const output = deepMerge(input1, input2);
+      expect(output).toEqual({ firstName: 'John' });
+    });
+
+    it('should provide filled object and return same object when 2nd object is also an object', () => {
+      const input1 = { firstName: 'Jane' };
+      const input2 = { firstName: { name: 'John' } };
+      const output = deepMerge(input1, input2);
+      expect(output).toEqual({ firstName: { name: 'John' } });
+    });
+
+    it('should provide input object with undefined property and expect output object to return merged object from 2nd object when that one is filled', () => {
+      const input1 = { firstName: undefined };
+      const input2 = { firstName: {} };
+      const output = deepMerge(input1, input2);
+      expect(output).toEqual({ firstName: {} });
+    });
+
+    it('should provide input object with undefined property and expect output object to return merged object from 2nd object when that one is filled', () => {
+      const input1 = { firstName: { name: 'John' } };
+      const input2 = { firstName: undefined };
+      const output = deepMerge(input1, input2);
+      expect(output).toEqual({ firstName: undefined });
+    });
+
+    it('should merge 2 objects and expect objects to be merged with both side', () => {
+      const input1 = { a: 1, b: 1, c: { x: 1, y: 1 }, d: [1, 1] };
+      const input2 = { b: 2, c: { y: 2, z: 2 }, d: [2, 2], e: 2 };
+
+      const output = deepMerge(input1, input2);
+      expect(output).toEqual({
+        a: 1, b: 2, c: { x: 1, y: 2, z: 2 },
+        d: [1, 1, 2, 2],
+        e: 2
+      });
+    });
+
+    it('should merge 3 objects and expect objects to be merged with both side', () => {
+      const input1 = { a: 1, b: 1, c: { x: 1, y: 1 }, d: [1, 1] };
+      const input2 = { b: 2, c: { y: 2, z: 2 } };
+      const input3 = { d: [2, 2], e: 2 };
+
+      const output = deepMerge(input1, input2, input3);
+      expect(output).toEqual({
+        a: 1, b: 2, c: { x: 1, y: 2, z: 2 },
+        d: [1, 1, 2, 2],
+        e: 2
+      });
+    });
+
+    it('should merge 3 objects, by calling deepMerge 2 times, and expect objects to be merged with both side', () => {
+      const input1 = { a: 1, b: 1, c: { x: 1, y: 1 }, d: [1, 1] };
+      const input2 = { b: 2, c: { y: 2, z: 2 } };
+      const input3 = { d: [2, 2], e: 2 };
+
+      const output = deepMerge(deepMerge(input1, input2), input3);
+      expect(output).toEqual({
+        a: 1, b: 2, c: { x: 1, y: 2, z: 2 },
+        d: [1, 1, 2, 2],
+        e: 2
+      });
     });
   });
 
@@ -1199,32 +1288,6 @@ describe('Service/Utilies', () => {
     it('should return default OperatoryType associated to contains', () => {
       const output = mapOperatorByFieldType('' as any);
       expect(output).toBe(OperatorType.equal);
-    });
-  });
-
-  describe('mergeDeep method', () => {
-    it('should have undefined object when input object is also undefined', () => {
-      const inputObj = undefined;
-      mergeDeep(inputObj, { firstName: 'John' });
-      expect(inputObj).toEqual(undefined);
-    });
-
-    it('should provide empty object as input and expect output object to include 2nd object', () => {
-      const inputObj = {};
-      mergeDeep(inputObj, { firstName: 'John' });
-      expect(inputObj).toEqual({ firstName: 'John' });
-    });
-
-    it('should provide filled object and return same object when 2nd object is also an object', () => {
-      const inputObj = { firstName: 'Jane' };
-      mergeDeep(inputObj, { firstName: { name: 'John' } });
-      expect(inputObj).toEqual({ firstName: 'Jane' });
-    });
-
-    it('should provide input object with undefined property and expect output object to return merged object from 2nd object when that one is filled', () => {
-      const inputObj = { firstName: undefined };
-      mergeDeep(inputObj, { firstName: {} });
-      expect(inputObj).toEqual({ firstName: {} });
     });
   });
 
