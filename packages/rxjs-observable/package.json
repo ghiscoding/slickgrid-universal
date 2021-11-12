@@ -24,8 +24,8 @@
     "bundle:esm": "cross-env tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "prebundle": "npm-run-all delete:dist",
     "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
-    "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=empty-warning-component",
-    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=empty-warning-component"
+    "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=rxjs-observable",
+    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=rxjs-observable"
   },
   "license": "MIT",
   "author": "Ghislain B.",
