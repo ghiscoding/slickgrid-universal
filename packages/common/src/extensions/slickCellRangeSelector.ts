@@ -1,9 +1,7 @@
-import * as assign_ from 'assign-deep';
-const assign = (assign_ as any)['default'] || assign_;
-
 import { emptyElement, getHtmlElementOffset, } from '../services/domUtilities';
 import { CellRange, CellRangeSelectorOption, DOMMouseEvent, DragPosition, DragRange, GridOption, OnScrollEventArgs, SlickEventHandler, SlickGrid, SlickNamespace } from '../interfaces/index';
 import { SlickCellRangeDecorator } from './index';
+import { deepMerge } from '../services/utilities';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -40,7 +38,7 @@ export class SlickCellRangeSelector {
 
   constructor(options?: Partial<CellRangeSelectorOption>) {
     this._eventHandler = new Slick.EventHandler();
-    this._addonOptions = assign({}, this._defaults, options);
+    this._addonOptions = deepMerge(this._defaults, options);
   }
 
   get addonOptions() {

@@ -252,6 +252,51 @@ export function deepCopy(objectOrArray: any | any[]): any | any[] {
 }
 
 /**
+ * Performs a deep merge of objects and returns new object, it does not modify the source object, objects (immutable) and merges arrays via concatenation.
+ * Also, if first argument is undefined/null but next argument is an object then it will proceed and output will be an object
+ * @param {...object} objects - Objects to merge
+ * @returns {object} New object with merged key/values
+ */
+export function deepMerge(target: any, ...sources: any[]): any {
+  if (!sources.length) {
+    return target;
+  }
+  const source = sources.shift();
+
+  // when target is not an object but source is an object, then we'll assign as object
+  target = (!isObject(target) && isObject(source)) ? {} : target;
+
+  if (isObject(target) && isObject(source)) {
+    for (const prop in source) {
+      if (source.hasOwnProperty(prop)) {
+        if (prop in target) {
+          // handling merging of two properties with equal names
+          if (typeof target[prop] !== 'object') {
+            target[prop] = source[prop];
+          } else {
+            if (typeof source[prop] !== 'object') {
+              target[prop] = source[prop];
+            } else {
+              if (target[prop].concat && source[prop].concat) {
+                // two arrays get concatenated
+                target[prop] = target[prop].concat(source[prop]);
+              } else {
+                // two objects get merged recursively
+                target[prop] = deepMerge(target[prop], source[prop]);
+              }
+            }
+          }
+        } else {
+          // new properties get added to target
+          target[prop] = source[prop];
+        }
+      }
+    }
+  }
+  return deepMerge(target, ...sources);
+}
+
+/**
  * Empty an object properties by looping through them all and deleting them
  * @param obj - input object
  */
@@ -833,33 +878,6 @@ export function mapOperatorByFieldType(fieldType: typeof FieldType[keyof typeof 
   }
 
   return map;
-}
-
-/**
- * Deep merge two objects.
- * @param {*} target
- * @param {*} ...sources
- */
-export function mergeDeep(target: any, ...sources: any[]): any {
-  if (!sources.length) {
-    return target;
-  }
-  const source = sources.shift();
-
-  if (isObject(target) && isObject(source)) {
-    for (const key in source) {
-      if (isObject(source[key])) {
-        if (!target[key]) {
-          Object.assign(target, { [key]: {} });
-        }
-        mergeDeep(target[key], source[key]);
-      } else {
-        Object.assign(target, { [key]: source[key] });
-      }
-    }
-  }
-
-  return mergeDeep(target, ...sources);
 }
 
 /**
