@@ -1,5 +1,5 @@
 import { Column, Extension, ExtensionModel, GridOption, SlickRowDetailView, } from '../interfaces/index';
-import { ColumnReorderFunction, ExtensionList, ExtensionName, SlickControlList, SlickPluginList } from '../enums/index';
+import { ColumnReorderFunction, ExtensionList, ExtensionName, InferExtensionByName, SlickControlList, SlickPluginList } from '../enums/index';
 import { SharedService } from './shared.service';
 import { TranslaterService } from './translater.service';
 import {
@@ -126,8 +126,8 @@ export class ExtensionService {
   }
 
   /** Get Extension Instance by its name */
-  getExtensionInstanceByName(name: ExtensionName): SlickControlList | SlickPluginList | undefined {
-    return this.getExtensionByName(name)?.instance;
+  getExtensionInstanceByName<T extends ExtensionName>(name: T): InferExtensionByName<T> {
+    return this.getExtensionByName(name)?.instance as InferExtensionByName<T>;
   }
 
   /**
