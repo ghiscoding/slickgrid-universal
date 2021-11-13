@@ -170,9 +170,13 @@ export class SlickFooterComponent {
 
   /** Create the Footer Container */
   protected createFooterContainer(gridParentContainerElm: HTMLElement) {
-    const footerElm = createDomElement('div', { className: `slick-custom-footer ${this.gridUid}` });
-    footerElm.style.width = '100%';
-    footerElm.style.height = `${this.customFooterOptions.footerHeight || 20}px`;
+    const footerElm = createDomElement('div', {
+      className: `slick-custom-footer ${this.gridUid}`,
+      style: {
+        width: '100%',
+        height: `${this.customFooterOptions.footerHeight || 20}px`,
+      }
+    });
 
     footerElm.appendChild(
       createDomElement('div', {

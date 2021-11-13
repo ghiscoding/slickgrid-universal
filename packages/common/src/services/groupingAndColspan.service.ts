@@ -154,8 +154,10 @@ export class GroupingAndColspanService {
           }
         } else {
           widthTotal = colDef.width || 0;
-          headerElm = createDomElement('div', { className: `ui-state-default slick-header-column ${isFrozenGrid ? 'frozen' : ''}` });
-          headerElm.style.width = `${widthTotal - headerColumnWidthDiff}px`;
+          headerElm = createDomElement('div', {
+            className: `ui-state-default slick-header-column ${isFrozenGrid ? 'frozen' : ''}`,
+            style: { width: `${widthTotal - headerColumnWidthDiff}px` }
+          });
 
           const spanColumnNameElm = createDomElement('span', { className: 'slick-column-name', textContent: colDef.columnGroup || '' });
 

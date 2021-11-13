@@ -123,8 +123,10 @@ export class LongTextEditor implements Editor {
     const textAreaRows = this.editorOptions?.rows ?? 4;
 
     const containerElm = compositeEditorOptions ? this.args.container : document.body;
-    this._wrapperElm = createDomElement('div', { className: `slick-large-editor-text editor-${columnId}` });
-    this._wrapperElm.style.position = compositeEditorOptions ? 'relative' : 'absolute';
+    this._wrapperElm = createDomElement('div', {
+      className: `slick-large-editor-text editor-${columnId}`,
+      style: { position: compositeEditorOptions ? 'relative' : 'absolute' }
+    });
     containerElm.appendChild(this._wrapperElm);
 
     // use textarea row if defined but don't go over 3 rows with composite editor modal

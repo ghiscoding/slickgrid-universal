@@ -268,22 +268,28 @@ export class SlickRowMoveManager {
       const rowHeight = this.gridOptions.rowHeight as number;
       dd.selectedRows = selectedRows;
 
-      const reorderProxyElm = createDomElement('div', { className: 'slick-reorder-proxy' });
-      reorderProxyElm.style.display = 'none';
-      reorderProxyElm.style.position = 'absolute';
-      reorderProxyElm.style.zIndex = '99999';
-      reorderProxyElm.style.width = `${this._canvas.clientWidth}px`;
-      reorderProxyElm.style.height = `${rowHeight * selectedRows.length}px`;
-      dd.selectionProxy = reorderProxyElm;
-      this._canvas.appendChild(reorderProxyElm);
+      dd.selectionProxy = createDomElement('div', {
+        className: 'slick-reorder-proxy',
+        style: {
+          display: 'none',
+          position: 'absolute',
+          zIndex: '99999',
+          width: `${this._canvas.clientWidth}px`,
+          height: `${rowHeight * selectedRows.length}px`,
+        }
+      });
+      this._canvas.appendChild(dd.selectionProxy);
 
-      const reorderGuideElm = createDomElement('div', { className: 'slick-reorder-guide' });
-      reorderGuideElm.style.position = 'absolute';
-      reorderGuideElm.style.zIndex = '99999';
-      reorderGuideElm.style.width = `${this._canvas.clientWidth}px`;
-      reorderGuideElm.style.top = `-1000px`;
-      dd.guide = reorderGuideElm;
-      this._canvas.appendChild(reorderGuideElm);
+      dd.guide = createDomElement('div', {
+        className: 'slick-reorder-guide',
+        style: {
+          position: 'absolute',
+          zIndex: '99999',
+          width: `${this._canvas.clientWidth}px`,
+          top: `-1000px`,
+        }
+      });
+      this._canvas.appendChild(dd.guide);
 
       dd.insertBefore = -1;
     }

@@ -8,6 +8,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
+import { createDomElement } from '../services/domUtilities';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -163,11 +164,14 @@ export class SlickCellExternalCopyManager {
   // ---------------------
 
   protected createTextBox(innerText: string) {
-    const textAreaElm = document.createElement('textarea');
-    textAreaElm.style.position = 'absolute';
-    textAreaElm.style.left = '-1000px';
-    textAreaElm.style.top = `${document.body.scrollTop}px`;
-    textAreaElm.value = innerText;
+    const textAreaElm = createDomElement('textarea', {
+      value: innerText,
+      style: {
+        position: 'absolute',
+        left: '-1000px',
+        top: `${document.body.scrollTop}px`,
+      }
+    });
     this._bodyElement.appendChild(textAreaElm);
     textAreaElm.select();
 

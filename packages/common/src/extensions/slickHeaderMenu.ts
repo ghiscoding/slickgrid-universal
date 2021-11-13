@@ -141,8 +141,10 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     }
 
     if (!this._menuElm) {
-      this._menuElm = createDomElement('div', { className: 'slick-header-menu' });
-      this._menuElm.style.minWidth = `${this.addonOptions.minWidth}px`;
+      this._menuElm = createDomElement('div', {
+        className: 'slick-header-menu',
+        style: { minWidth: `${this.addonOptions.minWidth}px` },
+      });
       this._menuElm.setAttribute('aria-expanded', 'true');
       this.grid.getContainerNode()?.appendChild(this._menuElm);
     }

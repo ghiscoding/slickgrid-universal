@@ -1,7 +1,7 @@
 import * as DOMPurify_ from 'dompurify';
 const DOMPurify = DOMPurify_; // patch to fix rollup to work
 
-import { InferType, SearchTerm } from '../enums/index';
+import { InferDOMType, SearchTerm } from '../enums/index';
 import { Column, GridOption, HtmlElementPosition, SelectOption, SlickGrid, } from '../interfaces/index';
 import { TranslaterService } from './translater.service';
 import { deepMerge } from './utilities';
@@ -33,8 +33,7 @@ export function buildSelectEditorOrFilterDomElement(type: 'editor' | 'filter', c
   const optionLabel = columnFilterOrEditor?.customStructure?.optionLabel ?? 'value';
   const valueName = columnFilterOrEditor?.customStructure?.value ?? 'value';
 
-  const selectElement = document.createElement('select');
-  selectElement.className = 'ms-filter search-filter';
+  const selectElement = createDomElement('select', { className: 'ms-filter search-filter' });
   const extraCssClasses = type === 'filter' ? ['search-filter', `filter-${columnId}`] : ['select-editor', `editor-${columnId}`];
   selectElement.classList.add(...extraCssClasses);
 
@@ -50,13 +49,12 @@ export function buildSelectEditorOrFilterDomElement(type: 'editor' | 'filter', c
   if (Array.isArray(collection)) {
     if (collection.every((x: any) => typeof x === 'string')) {
       for (const option of collection) {
-        const selectOptionElm = document.createElement('option');
+        const selectOptionElm = createDomElement('option', {
+          label: option, value: option, textContent: option,
+        });
         if (type === 'filter' && Array.isArray(searchTerms)) {
           selectOptionElm.selected = (searchTerms.findIndex(term => term === option) >= 0); // when filter search term is found then select it in dropdown
         }
-        selectOptionElm.value = option;
-        selectOptionElm.label = option;
-        selectOptionElm.textContent = option;
         selectOptionsFragment.appendChild(selectOptionElm);
 
         // if there's at least 1 Filter search term found, we will add the "filled" class for styling purposes
@@ -157,7 +155,7 @@ export function calculateAvailableSpace(element: HTMLElement): { top: number; bo
 }
 
 /** Create a DOM Element with any optional attributes or properties */
-export function createDomElement<T extends keyof HTMLElementTagNameMap, K extends keyof HTMLElementTagNameMap[T]>(tagName: T, elementOptions?: { [P in K]: InferType<HTMLElementTagNameMap[T][P]> }): HTMLElementTagNameMap[T] {
+export function createDomElement<T extends keyof HTMLElementTagNameMap, K extends keyof HTMLElementTagNameMap[T]>(tagName: T, elementOptions?: { [P in K]: InferDOMType<HTMLElementTagNameMap[T][P]> }): HTMLElementTagNameMap[T] {
   const elm = document.createElement<T>(tagName);
 
   if (elementOptions) {

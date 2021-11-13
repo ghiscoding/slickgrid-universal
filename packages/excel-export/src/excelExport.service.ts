@@ -210,7 +210,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     } else {
       // this trick will generate a temp <a /> tag
       // the code will then trigger a hidden click for it to start downloading
-      const link = document && document.createElement('a');
+      const link = document.createElement('a');
       const url = URL.createObjectURL(options.blob);
 
       if (link && document) {

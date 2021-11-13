@@ -255,8 +255,10 @@ export class SlickPaginationComponent {
 
   /** Create the Pagination Container */
   protected createPaginationContainer() {
-    const paginationContainerElm = createDomElement('div', { id: 'pager', className: `slick-pagination-container ${this.gridUid} pager` });
-    paginationContainerElm.style.width = '100%';
+    const paginationContainerElm = createDomElement('div', {
+      id: 'pager', className: `slick-pagination-container ${this.gridUid} pager`,
+      style: { width: '100%' },
+    });
 
     const paginationElm = createDomElement('div', { className: 'slick-pagination' });
     paginationContainerElm.appendChild(paginationElm);

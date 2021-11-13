@@ -101,9 +101,11 @@ export class SlickColumnPicker {
     this._eventHandler.subscribe(this.grid.onHeaderContextMenu, this.handleHeaderContextMenu.bind(this) as EventListener);
     this._eventHandler.subscribe(this.grid.onColumnsReordered, updateColumnPickerOrder.bind(this) as EventListener);
 
-    this._menuElm = createDomElement('div', { className: `slick-columnpicker ${this._gridUid}` });
+    this._menuElm = createDomElement('div', {
+      className: `slick-columnpicker ${this._gridUid}`,
+      style: { display: 'none' },
+    });
     this._menuElm.setAttribute('aria-expanded', 'false');
-    this._menuElm.style.display = 'none';
 
     // add Close button and optiona a Column list title
     addCloseButtomElement.call(this, this._menuElm);

@@ -83,16 +83,18 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       const maxHeight = isNaN(this.addonOptions.maxHeight as any) ? this.addonOptions.maxHeight : `${this.addonOptions.maxHeight ?? 0}px`;
 
       // create a new Menu
-      this._menuElm = document.createElement('div');
+      this._menuElm = createDomElement('div', {
+        style: {
+          display: 'none',
+          left: `${event.pageX}px`, top: `${event.pageY + 5}px`,
+          width: findWidthOrDefault(this.addonOptions?.width),
+        }
+      });
       this._menuElm.classList.add(this._menuCssPrefix);
       this._menuElm.classList.add(this.gridUid);
       if (maxHeight) {
         this._menuElm.style.maxHeight = maxHeight as string;
       }
-      this._menuElm.style.width = findWidthOrDefault(this.addonOptions?.width);
-      this._menuElm.style.top = `${event.pageY + 5}px`;
-      this._menuElm.style.left = `${event.pageX}px`;
-      this._menuElm.style.display = 'none';
 
       const closeButtonElm = createDomElement('button', { className: 'close', type: 'button', dataset: { dismiss: this._menuCssPrefix } });
       closeButtonElm.setAttribute('aria-label', 'Close');
