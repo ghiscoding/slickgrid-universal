@@ -70,8 +70,7 @@ export class CheckboxEditor implements Editor {
     const columnId = this.columnDef?.id ?? '';
     const compositeEditorOptions = this.args.compositeEditorOptions;
 
-    this._checkboxContainerElm = document.createElement('div');
-    this._checkboxContainerElm.className = `checkbox-editor-container editor-${columnId}`;
+    this._checkboxContainerElm = createDomElement('div', { className: `checkbox-editor-container editor-${columnId}` });
 
     this._input = createDomElement('input', {
       type: 'checkbox', value: 'true',

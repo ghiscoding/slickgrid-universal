@@ -155,8 +155,11 @@ export class SlickDraggableGrouping {
 
       // add optional group "Toggle All" with its button & text when provided
       if (!this._addonOptions.hideToggleAllButton) {
-        this._groupToggler = createDomElement('div', { className: 'slick-group-toggle-all', title: this._addonOptions.toggleAllPlaceholderText ?? '' });
-        this._groupToggler.style.display = 'none';
+        this._groupToggler = createDomElement('div', {
+          className: 'slick-group-toggle-all',
+          title: this._addonOptions.toggleAllPlaceholderText ?? '',
+          style: { display: 'none' },
+        });
         const groupTogglerIconElm = createDomElement('span', { className: 'slick-group-toggle-all-icon expanded mdi mdi-close' });
         this._groupToggler.appendChild(groupTogglerIconElm);
 
@@ -374,9 +377,10 @@ export class SlickDraggableGrouping {
           if (col.grouping !== null && !isEmptyObject(col.grouping)) {
             const columnName = column.children('.slick-column-name').first();
             const entryElm = createDomElement('div', { id: `${this._gridUid}_${col.id}_entry`, className: 'slick-dropped-grouping', dataset: { id: `${col.id}` } });
-            const groupTextElm = document.createElement('div');
-            groupTextElm.style.display = 'inline-flex';
-            groupTextElm.textContent = columnName.length ? columnName.text() : column.text();
+            const groupTextElm = createDomElement('div', {
+              textContent: columnName.length ? columnName.text() : column.text(),
+              style: { display: 'inline-flex' },
+            });
             entryElm.appendChild(groupTextElm);
 
             const groupRemoveIconElm = createDomElement('div', { className: 'slick-groupby-remove' });

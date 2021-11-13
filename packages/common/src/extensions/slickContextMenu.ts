@@ -398,7 +398,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
         const finalTextToCopy = textToCopy.replace(/^([·|⮞|⮟]\s*)|([·|⮞|⮟])\s*/gi, '').replace(/[\u00b7|\u034f]/gi, '').trim();
 
         // create fake <textarea> (positioned outside of the screen) to copy into clipboard & delete it from the DOM once we're done
-        const tmpElem = document.createElement('textarea') as HTMLTextAreaElement;
+        const tmpElem = document.createElement('textarea');
         if (tmpElem && document.body) {
           tmpElem.style.position = 'absolute';
           tmpElem.style.opacity = '0';

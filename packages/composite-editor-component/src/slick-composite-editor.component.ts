@@ -384,8 +384,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
         const modalBodyElm = createDomElement('div', { className: 'slick-editor-modal-body' });
 
-        this._modalBodyTopValidationElm = createDomElement('div', { className: 'validation-summary' });
-        this._modalBodyTopValidationElm.style.display = 'none';
+        this._modalBodyTopValidationElm = createDomElement('div', { className: 'validation-summary', style: { display: 'none' } });
         modalBodyElm.appendChild(this._modalBodyTopValidationElm);
 
         const modalFooterElm = createDomElement('div', { className: 'slick-editor-modal-footer' });
