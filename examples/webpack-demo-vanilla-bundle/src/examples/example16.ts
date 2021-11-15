@@ -3,7 +3,6 @@ import {
   Column,
   Editors,
   FieldType,
-  FileType,
   Filters,
   Formatters,
   GridOption,
@@ -11,6 +10,7 @@ import {
 } from '@slickgrid-universal/common';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
@@ -98,6 +98,7 @@ export class Example16 {
           minLength: 5,
           maxLength: 255,
         },
+        exportWithFormatter: false,
         formatter: (row, cell, value, column, dataContext) => `<span title="regular tooltip (from title attribute)\r${dataContext.title} cell value:\r${value || ''}">${value || ''}</span>`,
         // define tooltip options here OR for the entire grid via the grid options (cell tooltip options will have precedence over grid options)
         customTooltip: {
@@ -113,6 +114,7 @@ export class Example16 {
           minLength: 5,
           maxLength: 255,
         },
+        exportWithFormatter: false,
         formatter: (row, cell, value, column, dataContext) => `<span title="regular tooltip (from title attribute)\r${dataContext.title} cell value:\r\r${value || ''}">${value || ''}</span>`,
         // define tooltip options here OR for the entire grid via the grid options (cell tooltip options will have precedence over grid options)
         customTooltip: {
@@ -128,6 +130,7 @@ export class Example16 {
         width: 90,
         sortable: true,
         filterable: true,
+        exportWithFormatter: false,
         // filter: { model: Filters.compoundInput },
         // formatter: Formatters.dollar,
         formatter: Formatters.multiple,
@@ -147,6 +150,7 @@ export class Example16 {
           maxValue: 100,
           // params: { hideSliderNumber: true },
         },
+        exportWithFormatter: false,
         formatter: Formatters.percentCompleteBar,
         sortable: true, filterable: true,
         filter: { model: Filters.slider, operator: '>=' },
@@ -315,8 +319,12 @@ export class Example16 {
       excelExportOptions: {
         exportWithFormatter: true
       },
+      enableTextExport: true,
+      textExportOptions: {
+        exportWithFormatter: true
+      },
       // Custom Tooltip options can be defined in a Column or Grid Options or a mixed of both (first options found wins)
-      registerExternalResources: [new SlickCustomTooltip(), new ExcelExportService()],
+      registerExternalResources: [new SlickCustomTooltip(), new ExcelExportService(), new TextExportService()],
       customTooltip: {
         formatter: this.tooltipFormatter.bind(this),
         headerFormatter: this.headerFormatter,

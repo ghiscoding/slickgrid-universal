@@ -210,7 +210,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     } else {
       // this trick will generate a temp <a /> tag
       // the code will then trigger a hidden click for it to start downloading
-      const link = document && document.createElement('a');
+      const link = document.createElement('a');
       const url = URL.createObjectURL(options.blob);
 
       if (link && document) {
@@ -267,7 +267,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         }
         break;
       case FieldType.number:
-        const val = isNaN(+data) ? null : +data;
+        const num = parseFloat(data as string);
+        const val = isNaN(num) ? null : num;
         outputData = { value: val, metadata: { style: this._stylesheetFormats.numberFormatter.id } };
         break;
       default:
@@ -374,7 +375,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     this._columnHeaders = this.getColumnHeaders(columns) || [];
     if (this._columnHeaders && Array.isArray(this._columnHeaders) && this._columnHeaders.length > 0) {
       // add the header row + add a new line at the end of the row
-      outputHeaderTitles = this._columnHeaders.map((header) => ({ value: header.title, metadata }));
+      outputHeaderTitles = this._columnHeaders.map((header) => ({ value: sanitizeHtmlToText(header.title), metadata }));
     }
 
     // do we have a Group by title?
