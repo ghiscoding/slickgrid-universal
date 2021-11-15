@@ -228,7 +228,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     this._columnHeaders = this.getColumnHeaders(columns) || [];
     if (this._columnHeaders && Array.isArray(this._columnHeaders) && this._columnHeaders.length > 0) {
       // add the header row + add a new line at the end of the row
-      const outputHeaderTitles = this._columnHeaders.map((header) => `${this._exportQuoteWrapper}${header.title}${this._exportQuoteWrapper}`);
+      const outputHeaderTitles = this._columnHeaders.map((header) => sanitizeHtmlToText(`${this._exportQuoteWrapper}${header.title}${this._exportQuoteWrapper}`));
       outputDataString += (outputHeaderTitles.join(this._delimiter) + this._lineCarriageReturn);
     }
 
