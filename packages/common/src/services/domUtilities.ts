@@ -160,11 +160,11 @@ export function createDomElement<T extends keyof HTMLElementTagNameMap, K extend
 
   if (elementOptions) {
     Object.keys(elementOptions).forEach((elmOptionKey) => {
-      const elmValue = (elementOptions as any)[elmOptionKey];
+      const elmValue = elementOptions[elmOptionKey as keyof typeof elementOptions];
       if (typeof elmValue === 'object') {
         deepMerge(elm[elmOptionKey as K], elmValue);
       } else {
-        elm[elmOptionKey as K] = (elementOptions as any)[elmOptionKey];
+        elm[elmOptionKey as K] = (elementOptions as any)[elmOptionKey as keyof typeof elementOptions];
       }
     });
   }
