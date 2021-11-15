@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/pagination-component",
-  "version": "0.19.0",
+  "version": "0.19.1",
   "description": "Slick Pagination Component - Vanilla Implementation of a Pagination Component",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
@@ -53,7 +53,7 @@
   ],
   "dependencies": {
     "@slickgrid-universal/binding": "^0.19.0",
-    "@slickgrid-universal/common": "^0.19.0"
+    "@slickgrid-universal/common": "^0.19.1"
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",
