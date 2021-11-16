@@ -613,6 +613,18 @@ describe('Resizer Service', () => {
         expect(mockColDefs[7].width).toBeLessThan(30);
       });
 
+      it('should call the resize and expect to call "autosizeColumns" when total column widths is smaller than the grid viewport', () => {
+        Object.defineProperty(divContainer, 'offsetWidth', { writable: true, configurable: true, value: 2500 });
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        const autosizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
+        service.resizeColumnsByCellContent(false);
+
+        expect(autosizeSpy).toHaveBeenCalled();
+      });
+
       it('should call the resize and expect first column have a fixed width while other will have a calculated width when resizing by their content', () => {
         const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
         const reRenderColumnsSpy = jest.spyOn(gridStub, 'reRenderColumns');
