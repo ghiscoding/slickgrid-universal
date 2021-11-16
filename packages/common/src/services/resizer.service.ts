@@ -398,6 +398,13 @@ export class ResizerService {
     const columnWidths: { [columnId in string | number]: number; } = {};
     let reRender = false;
     let readItemCount = 0;
+    const viewportWidth = this._gridParentContainerElm?.offsetWidth ?? 0;
+
+    // if our columns total width is smaller than the grid viewport, we can call the column autosize directly without the need to recalculate all column widths
+    if (!recalculateColumnsTotalWidth && this._totalColumnsWidthByContent > 0 && this._totalColumnsWidthByContent < viewportWidth) {
+      this._grid.autosizeColumns();
+      return;
+    }
 
     if ((!Array.isArray(dataset) || dataset.length === 0) || (this._hasResizedByContentAtLeastOnce && this.gridOptions?.resizeByContentOnlyOnFirstLoad && !recalculateColumnsTotalWidth)) {
       return;
@@ -449,7 +456,6 @@ export class ResizerService {
 
     // get the grid container viewport width and if our viewport calculated total columns is greater than the viewport width
     // then we'll call reRenderColumns() when getting wider than viewport or else the default autosizeColumns() when we know we have plenty of space to shrink the columns
-    const viewportWidth = this._gridParentContainerElm?.offsetWidth ?? 0;
     this._totalColumnsWidthByContent > viewportWidth ? this._grid.reRenderColumns(reRender) : this._grid.autosizeColumns();
     this.pubSubService.publish('onAfterResizeByContent', { readItemCount, calculateColumnWidths });
   }
