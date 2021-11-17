@@ -247,10 +247,11 @@ export class GridMenuExtension implements Extension {
     if (this.sharedService.gridOptions && this._gridMenuOptions && !this._gridMenuOptions.hideClearFrozenColumnsCommand) {
       const commandName = 'clear-pinning';
       if (!originalCustomItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+        const translationKey = commandLabels?.clearFrozenColumnsCommandKey ?? 'CLEAR_PINNING';
         gridMenuCustomItems.push(
           {
             iconCssClass: this._gridMenuOptions.iconClearFrozenColumnsCommand || 'fa fa-times',
-            title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}${commandLabels?.clearFrozenColumnsCommandKey}`, 'TEXT_CLEAR_PINNING', commandLabels?.clearFrozenColumnsCommand),
+            title: this.extensionUtility.translateWhenEnabledAndServiceExist(`${translationPrefix}${translationKey}`, `TEXT_${translationKey}`, commandLabels?.clearFrozenColumnsCommand),
             disabled: false,
             command: commandName,
             positionOrder: 52
