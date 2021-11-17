@@ -43,7 +43,7 @@ export const SalesforceGlobalGridOptions = {
   },
   gridMenu: {
     commandLabels: {
-      clearFrozenColumnsCommand: 'Unfreeze Columns',
+      clearFrozenColumnsCommandKey: 'UNFREEZE_COLUMNS',
     },
     hideTogglePreHeaderCommand: true,
     hideRefreshDatasetCommand: true,
