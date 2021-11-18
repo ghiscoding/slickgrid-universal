@@ -72,7 +72,6 @@ export const GlobalGridOptions: GridOption = {
     iconExportCsvCommand: 'fa fa-download mdi mdi-download',
     iconExportExcelCommand: 'fa fa-file-excel-o mdi mdi-file-excel-outline',
     iconExportTextDelimitedCommand: 'fa fa-download mdi mdi-download',
-    width: 200,
   },
   customFooterOptions: {
     dateFormat: 'YYYY-MM-DD, hh:mm a',
