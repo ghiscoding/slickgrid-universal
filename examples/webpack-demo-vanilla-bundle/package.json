@@ -1,6 +1,6 @@
 {
   "name": "webpack-demo-vanilla-bundle",
-  "version": "0.19.1",
+  "version": "0.19.2",
   "private": true,
   "description": "SlickGrid-Universal demo",
   "directories": {
@@ -34,10 +34,10 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.19.1",
-    "@slickgrid-universal/excel-export": "^0.19.1",
-    "@slickgrid-universal/text-export": "^0.19.1",
-    "@slickgrid-universal/vanilla-bundle": "^0.19.1",
+    "@slickgrid-universal/common": "^0.19.2",
+    "@slickgrid-universal/excel-export": "^0.19.2",
+    "@slickgrid-universal/text-export": "^0.19.2",
+    "@slickgrid-universal/vanilla-bundle": "^0.19.2",
     "bulma": "^0.9.3",
     "moment-mini": "^2.24.0",
     "whatwg-fetch": "^3.6.2"
