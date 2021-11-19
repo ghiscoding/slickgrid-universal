@@ -1,5 +1,5 @@
 import * as DOMPurify_ from 'dompurify';
-const DOMPurify = DOMPurify_; // patch to fix rollup to work
+const DOMPurify = (DOMPurify_ as any)['default'] || DOMPurify_; // patch to fix rollup to work
 
 import { InferDOMType, SearchTerm } from '../enums/index';
 import { Column, GridOption, HtmlElementPosition, SelectOption, SlickGrid, } from '../interfaces/index';
@@ -320,9 +320,9 @@ export function sanitizeHtmlToText(htmlString: string): string {
  */
 export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyHtml: string, domPurifyOptions?: DOMPurify.Config): string {
   let sanitizedText = dirtyHtml;
-  if (gridOptions && typeof gridOptions.sanitizer === 'function') {
+  if (typeof gridOptions?.sanitizer === 'function') {
     sanitizedText = gridOptions.sanitizer(dirtyHtml || '');
-  } else if (typeof DOMPurify.sanitize === 'function') {
+  } else if (typeof DOMPurify?.sanitize === 'function') {
     sanitizedText = (DOMPurify.sanitize(dirtyHtml || '', domPurifyOptions || {}) || '').toString();
   }
 
