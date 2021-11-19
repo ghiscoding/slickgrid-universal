@@ -943,9 +943,9 @@ export function sanitizeHtmlToText(htmlString: string): string {
  */
 export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyHtml: string, domPurifyOptions?: DOMPurify.Config): string {
   let sanitizedText = dirtyHtml;
-  if (gridOptions && typeof gridOptions.sanitizer === 'function') {
+  if (typeof gridOptions?.sanitizer === 'function') {
     sanitizedText = gridOptions.sanitizer(dirtyHtml || '');
-  } else if (typeof DOMPurify.sanitize === 'function') {
+  } else if (typeof DOMPurify?.sanitize === 'function') {
     sanitizedText = (DOMPurify.sanitize(dirtyHtml || '', domPurifyOptions || {}) || '').toString();
   }
 
