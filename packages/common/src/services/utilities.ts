@@ -1,7 +1,7 @@
 import { flatten } from 'un-flatten-tree';
 import * as DOMPurify_ from 'dompurify';
 import * as moment_ from 'moment-mini';
-const DOMPurify = DOMPurify_; // patch to fix rollup to work
+const DOMPurify = (DOMPurify_ as any)['default'] || DOMPurify_; // patch to fix rollup to work
 const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import { Constants } from '../constants';
