@@ -1,12 +1,18 @@
 {
   "files": [],
   "references": [
+    { "path": "binding" },
     { "path": "common" },
     { "path": "composite-editor-component" },
+    { "path": "custom-footer-component" },
+    { "path": "custom-tooltip-plugin" },
     { "path": "empty-warning-component" },
+    { "path": "event-pub-sub" },
     { "path": "excel-export" },
     { "path": "graphql" },
     { "path": "odata" },
+    { "path": "pagination-component" },
+    { "path": "rxjs-observable" },
     { "path": "text-export" },
     { "path": "vanilla-bundle" }
   ]
