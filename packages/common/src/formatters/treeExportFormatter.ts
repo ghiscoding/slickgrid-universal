@@ -1,6 +1,7 @@
 import { Constants } from '../constants';
 import { Formatter } from './../interfaces/index';
-import { addWhiteSpaces, getDescendantProperty, sanitizeHtmlToText, } from '../services/utilities';
+import { sanitizeHtmlToText, } from '../services/domUtilities';
+import { addWhiteSpaces, getCellValueFromQueryFieldGetter, } from '../services/utilities';
 import { parseFormatterWhenExist } from './formatterUtilities';
 
 /** Formatter that must be use with a Tree Data column */
@@ -17,14 +18,9 @@ export const treeExportFormatter: Formatter = (row, cell, value, columnDef, data
   const groupExpandedSymbol = gridOptions?.excelExportOptions?.groupExpandedSymbol ?? '⮟';
   let outputValue = value;
 
-  if (typeof columnDef.queryFieldNameGetterFn === 'function') {
-    const fieldName = columnDef.queryFieldNameGetterFn(dataContext);
-    if (fieldName?.indexOf('.') >= 0) {
-      outputValue = getDescendantProperty(dataContext, fieldName);
-    } else {
-      outputValue = dataContext.hasOwnProperty(fieldName) ? dataContext[fieldName] : value;
-    }
-  }
+  // when a queryFieldNameGetterFn is defined, then get the value from that getter callback function
+  outputValue = getCellValueFromQueryFieldGetter(columnDef, dataContext, value);
+
   if (outputValue === null || outputValue === undefined || dataContext === undefined) {
     return '';
   }

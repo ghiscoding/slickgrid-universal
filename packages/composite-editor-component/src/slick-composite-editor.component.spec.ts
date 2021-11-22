@@ -116,7 +116,7 @@ const rowSelectionModelStub = {
   getSelectedRows: jest.fn(),
   setSelectedRows: jest.fn(),
   onSelectedRangesChanged: new Slick.Event(),
-} as SlickRowSelectionModel;
+} as unknown as SlickRowSelectionModel;
 
 function createNewColumDefinitions(count) {
   const columnsMock: Column[] = [];

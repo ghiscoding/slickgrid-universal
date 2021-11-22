@@ -1,7 +1,10 @@
-import { SearchTerm } from '../enums/index';
-import { Column, SelectOption, SlickGrid } from '../interfaces/index';
+import * as DOMPurify_ from 'dompurify';
+const DOMPurify = (DOMPurify_ as any)['default'] || DOMPurify_; // patch to fix rollup to work
+
+import { InferDOMType, SearchTerm } from '../enums/index';
+import { Column, GridOption, HtmlElementPosition, SelectOption, SlickGrid, } from '../interfaces/index';
 import { TranslaterService } from './translater.service';
-import { getHtmlElementOffset, htmlEncode, sanitizeTextByAvailableSanitizer } from './utilities';
+import { deepMerge } from './utilities';
 
 /**
  * Create the HTML DOM Element for a Select Editor or Filter, this is specific to these 2 types only and the unit tests are directly under them
@@ -30,8 +33,7 @@ export function buildSelectEditorOrFilterDomElement(type: 'editor' | 'filter', c
   const optionLabel = columnFilterOrEditor?.customStructure?.optionLabel ?? 'value';
   const valueName = columnFilterOrEditor?.customStructure?.value ?? 'value';
 
-  const selectElement = document.createElement('select');
-  selectElement.className = 'ms-filter search-filter';
+  const selectElement = createDomElement('select', { className: 'ms-filter search-filter' });
   const extraCssClasses = type === 'filter' ? ['search-filter', `filter-${columnId}`] : ['select-editor', `editor-${columnId}`];
   selectElement.classList.add(...extraCssClasses);
 
@@ -47,13 +49,12 @@ export function buildSelectEditorOrFilterDomElement(type: 'editor' | 'filter', c
   if (Array.isArray(collection)) {
     if (collection.every((x: any) => typeof x === 'string')) {
       for (const option of collection) {
-        const selectOptionElm = document.createElement('option');
+        const selectOptionElm = createDomElement('option', {
+          label: option, value: option, textContent: option,
+        });
         if (type === 'filter' && Array.isArray(searchTerms)) {
           selectOptionElm.selected = (searchTerms.findIndex(term => term === option) >= 0); // when filter search term is found then select it in dropdown
         }
-        selectOptionElm.value = option;
-        selectOptionElm.label = option;
-        selectOptionElm.textContent = option;
         selectOptionsFragment.appendChild(selectOptionElm);
 
         // if there's at least 1 Filter search term found, we will add the "filled" class for styling purposes
@@ -127,8 +128,8 @@ export function buildSelectEditorOrFilterDomElement(type: 'editor' | 'filter', c
   return { selectElement, hasFoundSearchTerm };
 }
 
+/** calculate available space for each side of the DOM element */
 export function calculateAvailableSpace(element: HTMLElement): { top: number; bottom: number; left: number; right: number; } {
-  // available space for each side
   let bottom = 0;
   let top = 0;
   let left = 0;
@@ -153,6 +154,91 @@ export function calculateAvailableSpace(element: HTMLElement): { top: number; bo
   return { top, bottom, left, right };
 }
 
+/** Create a DOM Element with any optional attributes or properties */
+export function createDomElement<T extends keyof HTMLElementTagNameMap, K extends keyof HTMLElementTagNameMap[T]>(tagName: T, elementOptions?: { [P in K]: InferDOMType<HTMLElementTagNameMap[T][P]> }): HTMLElementTagNameMap[T] {
+  const elm = document.createElement<T>(tagName);
+
+  if (elementOptions) {
+    Object.keys(elementOptions).forEach((elmOptionKey) => {
+      const elmValue = elementOptions[elmOptionKey as keyof typeof elementOptions];
+      if (typeof elmValue === 'object') {
+        deepMerge(elm[elmOptionKey as K], elmValue);
+      } else {
+        elm[elmOptionKey as K] = (elementOptions as any)[elmOptionKey as keyof typeof elementOptions];
+      }
+    });
+  }
+  return elm;
+}
+
+/**
+ * Loop through all properties of an object and nullify any properties that are instanceof HTMLElement,
+ * if we detect an array then use recursion to go inside it and apply same logic
+ * @param obj - object containing 1 or more properties with DOM Elements
+ */
+export function destroyObjectDomElementProps(obj: any) {
+  if (obj) {
+    for (const key of Object.keys(obj)) {
+      if (Array.isArray(obj[key])) {
+        destroyObjectDomElementProps(obj[key]);
+      }
+      if (obj[key] instanceof HTMLElement) {
+        obj[key] = null;
+      }
+    }
+  }
+}
+
+/**
+ * Empty a DOM element by removing all of its DOM element children leaving with an empty element (basically an empty shell)
+ * @return {object} element - updated element
+ */
+export function emptyElement<T extends Element = Element>(element?: T | null): T | undefined | null {
+  if (element?.firstChild) {
+    while (element.firstChild) {
+      if (element.lastChild) {
+        element.removeChild(element.lastChild);
+      }
+    }
+  }
+  return element;
+}
+
+/** Get offset of HTML element relative to a parent element */
+export function getElementOffsetRelativeToParent(parentElm: HTMLElement | null, childElm: HTMLElement | null) {
+  if (!parentElm || !childElm) {
+    return undefined;
+  }
+  const parentPos = parentElm.getBoundingClientRect();
+  const childPos = childElm.getBoundingClientRect();
+  return {
+    top: childPos.top - parentPos.top,
+    right: childPos.right - parentPos.right,
+    bottom: childPos.bottom - parentPos.bottom,
+    left: childPos.left - parentPos.left,
+  };
+}
+
+/** Get HTML element offset with pure JS */
+export function getHtmlElementOffset(element?: HTMLElement): HtmlElementPosition | undefined {
+  if (!element) {
+    return undefined;
+  }
+  const rect = element?.getBoundingClientRect?.();
+  let top = 0;
+  let left = 0;
+  let bottom = 0;
+  let right = 0;
+
+  if (rect?.top !== undefined && rect.left !== undefined) {
+    top = rect.top + window.pageYOffset;
+    left = rect.left + window.pageXOffset;
+    right = rect.right;
+    bottom = rect.bottom;
+  }
+  return { top, left, bottom, right };
+}
+
 export function findFirstElementAttribute(inputElm: Element | null | undefined, attributes: string[]): string | null {
   if (inputElm) {
     for (const attribute of attributes) {
@@ -163,6 +249,84 @@ export function findFirstElementAttribute(inputElm: Element | null | undefined, 
     }
   }
   return null;
+}
+
+export function findWidthOrDefault(inputWidth?: number | string, defaultVal = 'auto'): string {
+  return (/^[0-9]+$/i.test(`${inputWidth}`) ? `${+(inputWidth as number)}px` : inputWidth as string) || defaultVal;
+}
+
+/**
+ * HTML encode using jQuery with a <div>
+ * Create a in-memory div, set it's inner text(which jQuery automatically encodes)
+ * then grab the encoded contents back out.  The div never exists on the page.
+ */
+export function htmlEncode(inputValue: string): string {
+  const entityMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    '\'': '&#39;'
+  };
+  return (inputValue || '').toString().replace(/[&<>"']/g, (s) => (entityMap as any)[s]);
+}
+
+/**
+ * Decode text into html entity
+ * @param string text: input text
+ * @param string text: output text
+ */
+export function htmlEntityDecode(input: string): string {
+  return input.replace(/&#(\d+);/g, (_match, dec) => {
+    return String.fromCharCode(dec);
+  });
+}
+
+/**
+ * Encode string to html special char and add html space padding defined
+ * @param {string} inputStr - input string
+ * @param {number} paddingLength - padding to add
+ */
+export function htmlEncodedStringWithPadding(inputStr: string, paddingLength: number): string {
+  const inputStrLn = inputStr.length;
+  let outputStr = htmlEncode(inputStr);
+
+  if (inputStrLn < paddingLength) {
+    for (let i = inputStrLn; i < paddingLength; i++) {
+      outputStr += `&nbsp;`;
+    }
+  }
+  return outputStr;
+}
+
+/**
+ * Sanitize, return only the text without HTML tags
+ * @input htmlString
+ * @return text
+ */
+export function sanitizeHtmlToText(htmlString: string): string {
+  const temp = document.createElement('div');
+  temp.innerHTML = htmlString;
+  return temp.textContent || temp.innerText || '';
+}
+
+/**
+ * Sanitize possible dirty html string (remove any potential XSS code like scripts and others), we will use 2 possible sanitizer
+ * 1. optional sanitizer method defined in the grid options
+ * 2. DOMPurify sanitizer (defaults)
+ * @param gridOptions: grid options
+ * @param dirtyHtml: dirty html string
+ * @param domPurifyOptions: optional DOMPurify options when using that sanitizer
+ */
+export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyHtml: string, domPurifyOptions?: DOMPurify.Config): string {
+  let sanitizedText = dirtyHtml;
+  if (typeof gridOptions?.sanitizer === 'function') {
+    sanitizedText = gridOptions.sanitizer(dirtyHtml || '');
+  } else if (typeof DOMPurify?.sanitize === 'function') {
+    sanitizedText = (DOMPurify.sanitize(dirtyHtml || '', domPurifyOptions || {}) || '').toString();
+  }
+
+  return sanitizedText;
 }
 
 /**

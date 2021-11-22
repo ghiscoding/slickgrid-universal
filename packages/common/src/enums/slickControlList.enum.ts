@@ -1,3 +1,3 @@
-import { SlickColumnPicker, SlickGridMenu } from '../interfaces/index';
+import { SlickColumnPicker, SlickGridMenu } from '../extensions/index';
 
 export type SlickControlList = SlickColumnPicker | SlickGridMenu;

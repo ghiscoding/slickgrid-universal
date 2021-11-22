@@ -3,7 +3,6 @@ import {
   AutoResizeOption,
   Column,
   EventSubscription,
-  GetSlickEventType,
   GridOption,
   GridSize,
   ResizeByContentOption,
@@ -12,7 +11,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { getHtmlElementOffset, sanitizeHtmlToText, } from '../services/utilities';
+import { getHtmlElementOffset, sanitizeHtmlToText, } from '../services/index';
 import { parseFormatterWhenExist } from '../formatters/formatterUtilities';
 import { PubSubService, } from '../services/pubSub.service';
 
@@ -88,7 +87,6 @@ export class ResizerService {
     // unsubscribe all SlickGrid events
     this._eventHandler?.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);
-
     if (this._intervalId) {
       clearInterval(this._intervalId);
     }
@@ -156,8 +154,7 @@ export class ResizerService {
         }))
       );
 
-      const onColumnsResizeDblClickHandler = this._grid.onColumnsResizeDblClick;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onColumnsResizeDblClickHandler>>).subscribe(onColumnsResizeDblClickHandler, (_e, args) => {
+      this._eventHandler.subscribe(this._grid.onColumnsResizeDblClick, (_e, args) => {
         this.handleSingleColumnResizeByContent(args.triggeredByColumn);
       });
     }

@@ -1,4 +1,4 @@
-import { Column, GridMenuItem, GridMenuLabel, GridOption, MenuCallbackArgs, } from './index';
+import { Column, GridMenuCallbackArgs, GridMenuCommandItemCallbackArgs, GridMenuLabel, GridOption, MenuCallbackArgs, MenuCommandItem, } from './index';
 
 export interface GridMenuOption {
   /**
@@ -7,16 +7,25 @@ export interface GridMenuOption {
    */
   commandLabels?: GridMenuLabel;
 
+  /** Defaults to "Commands" which is the title that shows up over the custom commands list */
+  commandTitle?: string;
+
+  /** Same as "commandTitle", except that it's a translation key which can be used on page load and/or when switching locale */
+  commandTitleKey?: string;
+
+  /** Array of Custom Items (title, command, disabled, ...) */
+  commandItems?: Array<MenuCommandItem<GridMenuCommandItemCallbackArgs, GridMenuCallbackArgs> | 'divider'>;
+
   /** Defaults to 0 (auto), minimum width of grid menu content (command, column list) */
   contentMinWidth?: number;
 
-  /** Array of Custom Items (title, command, disabled, ...) */
-  customItems?: Array<GridMenuItem | 'divider'>;
+  /** @deprecated @use `commandItems` Array of Custom Items (title, command, disabled, ...) */
+  customItems?: Array<MenuCommandItem<GridMenuCommandItemCallbackArgs, GridMenuCallbackArgs> | 'divider'>;
 
-  /** Defaults to "Commands" which is the title that shows up over the custom commands list */
+  /** @deprecated @use `commandTitle` Defaults to "Commands" which is the title that shows up over the custom commands list */
   customTitle?: string;
 
-  /** Same as "customTitle", except that it's a translation key which can be used on page load and/or when switching locale */
+  /** @deprecated @use `commandTitleKey` Same as "customTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   customTitleKey?: string;
 
   /** Defaults to "Columns" which is the title that shows up over the columns */
@@ -25,14 +34,20 @@ export interface GridMenuOption {
   /** Same as "columnTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   columnTitleKey?: string;
 
+  /** Defaults to "left", which side to align the grid menu dropdown? */
+  dropSide?: 'left' | 'right';
+
   /** Defaults to "Force fit columns" which is 1 of the last 2 checkbox title shown at the end of the picker list */
   forceFitTitle?: string;
 
   /** Same as "forceFitTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   forceFitTitleKey?: string;
 
-  /** Defaults to undefined, fixed height of the Grid Menu content, when provided it will be used instead of the max-height */
-  height?: number;
+  /**
+   * Defaults to undefined, fixed height of the Grid Menu content, when provided it will be used instead of the max-height.
+   * Can be a number or a string, if a number is provided it will add the `px` suffix for pixels, or if a string is passed it will use it as is.
+   */
+  height?: number | string;
 
   /** Defaults to false, which will hide the "Clear all Filters" command in the Grid Menu (Grid Option "enableFiltering: true" has to be enabled) */
   hideClearAllFiltersCommand?: boolean;
@@ -42,6 +57,9 @@ export interface GridMenuOption {
 
   /** Defaults to true, which will hide the "Unfreeze Columns/Rows" command in the Grid Menu */
   hideClearFrozenColumnsCommand?: boolean;
+
+  /** Defaults to false, hide the Close button on top right */
+  hideCloseButton?: boolean;
 
   /** Defaults to false, which will hide the "Export to CSV" command in the Grid Menu (Grid Option "enableTextExport: true" has to be enabled) */
   hideExportCsvCommand?: boolean;
@@ -67,7 +85,7 @@ export interface GridMenuOption {
   /** Defaults to true, which will hide the "Toggle Pre-Header Row" (used by draggable grouping) command in the Grid Menu (Grid Option "showPreHeaderPanel: true" has to be enabled) */
   hideTogglePreHeaderCommand?: boolean;
 
-  /** CSS class for the displaying the Grid menu icon image (basically the hamburger menu) */
+  /** CSS class for the displaying the Grid menu icon (basically the hamburger menu) */
   iconCssClass?: string;
 
   /** icon for the "Clear all Filters" command */
@@ -88,7 +106,10 @@ export interface GridMenuOption {
   /** icon for the "Export to Text Delimited" command */
   iconExportTextDelimitedCommand?: string;
 
-  /** Link for the displaying the Grid menu icon image (basically the hamburger menu) */
+  /**
+   * @deprecated @use `iconCssClass`
+   * URL pointing to the displaying the Grid menu icon image (basically the hamburger menu).
+   */
   iconImage?: string;
 
   /** icon for the "Refresh Dataset" command */
@@ -106,8 +127,20 @@ export interface GridMenuOption {
   /** Defaults to 15, margin to use at the bottom of the grid menu to deduce from the max-height, only in effect when height is undefined */
   marginBottom?: number;
 
+  /**
+   * Defaults to available space at the bottom, Grid Menu minimum height.
+   * Can be a number or a string, if a number is provided it will add the `px` suffix for pixels, or if a string is passed it will use it as is.
+   */
+  maxHeight?: number | string;
+
   /** Defaults to 16 pixels (only the number), which is the width in pixels of the Grid Menu icon container */
   menuWidth?: number;
+
+  /**
+   * Defaults to 200(px), Grid Menu minimum height.
+   * Can be a number or a string, if a number is provided it will add the `px` suffix for pixels, or if a string is passed it will use it as is.
+   */
+  minHeight?: number | string;
 
   /** Defaults to False, which will resize the Header Row and remove the width of the Grid Menu icon from it's total width. */
   resizeOnShowHeaderRow?: boolean;
@@ -121,8 +154,11 @@ export interface GridMenuOption {
   /** Same as "syncResizeTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   syncResizeTitleKey?: string;
 
-  /** Defaults to true, Use the Click offset to reposition the Grid Menu, when set to False it will use the icon offset to reposition the grid menu */
-  useClickToRepositionMenu?: boolean;
+  /**
+   * Width (alias to `menuWidth`) that the drop menu can have.
+   * NOTE: the menu also has a "min-width" defined in CSS/SASS and setting a "width" below that threshold won't work, you change this min-width via SASS `$context-menu-min-width`
+   */
+  width?: number | string;
 
   // --
   // action/override callbacks

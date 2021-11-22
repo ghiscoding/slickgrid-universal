@@ -1,4 +1,10 @@
 export interface DOMEvent<T extends EventTarget> extends Event {
-  target: T
-  relatedTarget: T
+  currentTarget: T;
+  target: T;
+  relatedTarget: T;
+}
+export interface DOMMouseEvent<T extends EventTarget> extends MouseEvent {
+  currentTarget: T;
+  target: T;
+  relatedTarget: T;
 }

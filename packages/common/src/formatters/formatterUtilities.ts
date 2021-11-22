@@ -1,8 +1,9 @@
 import { FieldType } from '../enums/fieldType.enum';
 import { Column, ExcelExportOption, Formatter, GridOption, SlickGrid, TextExportOption } from '../interfaces/index';
-import { mapMomentDateFormatWithFieldType, sanitizeHtmlToText } from '../services/utilities';
-import * as moment_ from 'moment-mini';
+import { sanitizeHtmlToText } from '../services/domUtilities';
+import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { multipleFormatter } from './multipleFormatter';
+import * as moment_ from 'moment-mini';
 const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 /**

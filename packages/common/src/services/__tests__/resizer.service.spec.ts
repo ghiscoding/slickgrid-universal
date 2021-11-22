@@ -710,7 +710,6 @@ describe('Resizer Service', () => {
           expect(resizeSpy).toHaveBeenCalled();
           expect(resizeSpy).toHaveBeenNthCalledWith(2, 10, undefined);
           expect(resizeSpy).toHaveBeenNthCalledWith(3);
-          expect(resizeSpy).toHaveBeenNthCalledWith(4);
           done();
         }, 25);
       });
@@ -796,7 +795,7 @@ describe('Resizer Service', () => {
           expect(resizeSpy).toHaveBeenNthCalledWith(4);
           done();
           service.requestStopOfAutoFixResizeGrid();
-        }, 20);
+        }, 25);
       });
 
       it('should try to resize grid when its UI is deemed broken but expect an error shown in the console when "resizeGrid" throws an error', (done) => {

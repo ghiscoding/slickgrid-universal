@@ -35,7 +35,7 @@ const gridOptionMock = {
     postProcess: jest.fn(),
   },
   gridMenu: {
-    customItems: [{
+    commandItems: [{
       command: 'clear-sorting',
       disabled: false,
       hidden: true,
@@ -619,7 +619,7 @@ describe('SortService', () => {
       mockColumns.forEach(col => col.header!.menu!.items.forEach(item => {
         expect((item as MenuCommandItem).hidden).toBeTruthy();
       }));
-      gridOptionMock.gridMenu!.customItems!.forEach(item => {
+      gridOptionMock.gridMenu!.commandItems!.forEach(item => {
         expect((item as GridMenuItem).hidden).toBeTruthy();
       });
     });
@@ -640,7 +640,7 @@ describe('SortService', () => {
       mockColumns.forEach(col => col.header!.menu!.items.forEach(item => {
         expect((item as MenuCommandItem).hidden).toBeTruthy();
       }));
-      gridOptionMock.gridMenu!.customItems!.forEach(item => {
+      gridOptionMock.gridMenu!.commandItems!.forEach(item => {
         expect((item as GridMenuItem).hidden).toBeTruthy();
       });
     });
@@ -659,7 +659,7 @@ describe('SortService', () => {
       mockColumns.forEach(col => col.header!.menu!.items.forEach(item => {
         expect((item as MenuCommandItem).hidden).toBeFalsy();
       }));
-      gridOptionMock.gridMenu!.customItems!.forEach(item => {
+      gridOptionMock.gridMenu!.commandItems!.forEach(item => {
         expect((item as GridMenuItem).hidden).toBeFalsy();
       });
 

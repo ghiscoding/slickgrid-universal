@@ -1,0 +1,350 @@
+import { Column, GridOption, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import { SlickHeaderButtons } from '../slickHeaderButtons';
+import { BackendUtilityService, PubSubService } from '../../services';
+import { SharedService } from '../../services/shared.service';
+import { ExtensionUtility } from '../../extensions/extensionUtility';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+
+declare const Slick: SlickNamespace;
+
+const removeExtraSpaces = (textS) => `${textS}`.replace(/[\n\r]\s+/g, '');
+
+const gridStub = {
+  getCellNode: jest.fn(),
+  getCellFromEvent: jest.fn(),
+  getColumns: jest.fn(),
+  getOptions: jest.fn(),
+  getUID: () => 'slickgrid12345',
+  registerPlugin: jest.fn(),
+  setColumns: jest.fn(),
+  updateColumnHeader: jest.fn(),
+  onBeforeHeaderCellDestroy: new Slick.Event(),
+  onHeaderCellRendered: new Slick.Event(),
+  onHeaderMouseEnter: new Slick.Event(),
+  onMouseEnter: new Slick.Event(),
+} as unknown as SlickGrid;
+
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as PubSubService;
+
+const headerMock = {
+  buttons: [
+    {
+      cssClass: 'mdi mdi-lightbulb-outline',
+      command: 'show-positive-numbers',
+    },
+    {
+      cssClass: 'mdi mdi-lightbulb-on',
+      command: 'show-negative-numbers',
+      tooltip: 'Highlight negative numbers.',
+    }
+  ]
+};
+
+const columnsMock: Column[] = [
+  { id: 'field1', field: 'field1', name: 'Field 1', width: 100, header: headerMock },
+  { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
+  { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing' },
+];
+
+describe('HeaderButton Plugin', () => {
+  const consoleWarnSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
+  let backendUtilityService: BackendUtilityService;
+  let extensionUtility: ExtensionUtility;
+  let translateService: TranslateServiceStub;
+  let plugin: SlickHeaderButtons;
+  let sharedService: SharedService;
+  const mockEventCallback = () => { };
+  const gridOptionsMock = {
+    enableHeaderButton: true,
+    headerButton: {
+      onExtensionRegistered: jest.fn(),
+      onCommand: mockEventCallback
+    }
+  } as GridOption;
+
+  beforeEach(() => {
+    backendUtilityService = new BackendUtilityService();
+    sharedService = new SharedService();
+    translateService = new TranslateServiceStub();
+    extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
+    jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+    jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+    plugin = new SlickHeaderButtons(extensionUtility, pubSubServiceStub, sharedService);
+  });
+
+  afterEach(() => {
+    plugin.dispose();
+  });
+
+  it('should create the plugin', () => {
+    expect(plugin).toBeTruthy();
+    expect(plugin.eventHandler).toBeTruthy();
+  });
+
+  it('should dispose of the addon', () => {
+    const disposeSpy = jest.spyOn(plugin, 'dispose');
+    plugin.destroy();
+    expect(disposeSpy).toHaveBeenCalled();
+  });
+
+  it('should use default options when instantiating the plugin without passing any arguments', () => {
+    plugin.init();
+
+    expect(plugin.addonOptions).toEqual({
+      buttonCssClass: 'slick-header-button',
+    });
+  });
+
+  it('should be able to change Header Button options', () => {
+    plugin.init();
+    plugin.addonOptions = {
+      buttonCssClass: 'some-class'
+    }
+
+    expect(plugin.addonOptions).toEqual({
+      buttonCssClass: 'some-class',
+    });
+  });
+
+  describe('plugins - Header Button', () => {
+    beforeEach(() => {
+      jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
+      columnsMock[0].header.buttons[1] = undefined;
+      columnsMock[0].header.buttons[1] = {
+        cssClass: 'mdi mdi-lightbulb-on',
+        command: 'show-negative-numbers',
+        tooltip: 'Highlight negative numbers.',
+      };
+    });
+
+    it('should populate 1x Header Button when cell is being rendered and a 2nd button item visibility callback returns undefined', () => {
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'slick-header-column';
+
+      plugin.dispose();
+      plugin.init();
+      columnsMock[0].header.buttons[1].itemVisibilityOverride = () => undefined;
+
+      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+
+      // add Header Buttons which are visible (only 1x)
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
+        `<li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
+
+      gridStub.onBeforeHeaderCellDestroy.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      expect(headerDiv.innerHTML).toBe('');
+    });
+
+    it('should populate 1x Header Button when cell is being rendered and a 2nd button item visibility callback returns false', () => {
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'slick-header-column';
+
+      plugin.dispose();
+      plugin.init();
+      columnsMock[0].header.buttons[1].itemVisibilityOverride = () => false;
+
+      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+
+      // add Header Buttons which are visible (only 1x)
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
+        `<li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
+    });
+
+    it('should populate 2x Header Buttons when cell is being rendered and a 2nd button item visibility & usability callbacks returns true', () => {
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'slick-header-column';
+
+      plugin.dispose();
+      plugin.init();
+      columnsMock[0].header.buttons[1].itemVisibilityOverride = () => true;
+      columnsMock[0].header.buttons[1].itemUsabilityOverride = () => true;
+
+      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+
+      // add Header Buttons which are visible (2x buttons)
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
+        `<li class="slick-header-button mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>
+        <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
+    });
+
+    it('should populate 2x Header Buttons and a 2nd button item usability callback returns false and expect button to be disabled', () => {
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'slick-header-column';
+
+      plugin.dispose();
+      plugin.init();
+      columnsMock[0].header.buttons[1].itemVisibilityOverride = () => true;
+      columnsMock[0].header.buttons[1].itemUsabilityOverride = () => false;
+
+      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+
+      // add Header Buttons which are visible (2x buttons)
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
+        `<li class="slick-header-button slick-header-button-disabled mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>
+        <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
+    });
+
+    it('should populate 2x Header Buttons and a 2nd button is "disabled" and expect button to be disabled', () => {
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'slick-header-column';
+
+      plugin.dispose();
+      plugin.init();
+      columnsMock[0].header.buttons[1].itemVisibilityOverride = undefined;
+      columnsMock[0].header.buttons[1].disabled = true;
+
+      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+
+      // add Header Buttons which are visible (2x buttons)
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
+        `<li class="slick-header-button slick-header-button-disabled mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>
+        <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
+    });
+
+    it('should populate 2x Header Buttons and a 2nd button and property "showOnHover" is enabled and expect button to be hidden until we hover it', () => {
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'slick-header-column';
+
+      plugin.dispose();
+      plugin.init();
+      columnsMock[0].header.buttons[1].itemVisibilityOverride = undefined;
+      columnsMock[0].header.buttons[1].showOnHover = true;
+
+      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+
+      // add Header Buttons which are visible (2x buttons)
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
+        `<li class="slick-header-button slick-header-button-hidden mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>
+        <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
+    });
+
+    it('should populate 2x Header Buttons and a 2nd button and property "image" is filled and expect button to include an image background', () => {
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'slick-header-column';
+
+      plugin.dispose();
+      plugin.init();
+      columnsMock[0].header.buttons[1].image = '/images/some-image.png';
+
+      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+
+      // add Header Buttons which are visible (2x buttons)
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
+        `<li class="slick-header-button mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers." style="background-image: url(/images/some-image.png);"></li>
+          <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
+      expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] The "image" property of a Header Button is now deprecated and will be removed in future version, consider using "cssClass" instead.');
+    });
+
+    it('should populate 2x Header Buttons and a 2nd button and property "tooltip" is filled and expect button to include a "title" attribute for the tooltip', () => {
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'slick-header-column';
+
+      plugin.dispose();
+      plugin.init();
+      columnsMock[0].header.buttons[1].tooltip = 'Some Tooltip';
+
+      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+
+      // add Header Buttons which are visible (2x buttons)
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
+        `<li class="slick-header-button mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Some Tooltip"></li>
+          <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
+      expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] The "image" property of a Header Button is now deprecated and will be removed in future version, consider using "cssClass" instead.');
+    });
+
+    it('should populate 2x Header Buttons and a 2nd button and a "handler" callback to be executed when defined', () => {
+      const handlerMock = jest.fn();
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'slick-header-column';
+
+      plugin.dispose();
+      plugin.init();
+      columnsMock[0].header.buttons[1].handler = handlerMock;
+
+      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      headerDiv.querySelector('.slick-header-button.mdi-lightbulb-on').dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+      // add Header Buttons which are visible (2x buttons)
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
+        `<li class="slick-header-button mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>
+          <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
+      expect(handlerMock).toHaveBeenCalled();
+    });
+
+    it('should populate 2x Header Buttons and a 2nd button and expect the button click handler & action callback to be executed when defined', () => {
+      const actionMock = jest.fn();
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'slick-header-column';
+
+      plugin.dispose();
+      plugin.init();
+      columnsMock[0].header.buttons[1].action = actionMock;
+
+      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      headerDiv.querySelector('.slick-header-button.mdi-lightbulb-on').dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+      // add Header Buttons which are visible (2x buttons)
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
+        `<li class="slick-header-button mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>
+          <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
+      expect(actionMock).toHaveBeenCalled();
+    });
+
+    it('should populate 2x Header Buttons and a 2nd button and expect the "onCommand" handler to be executed when defined', () => {
+      const onCommandMock = jest.fn();
+      const updateColSpy = jest.spyOn(gridStub, 'updateColumnHeader');
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'slick-header-column';
+
+      plugin.dispose();
+      plugin.init();
+      plugin.addonOptions.onCommand = onCommandMock;
+
+      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      headerDiv.querySelector('.slick-header-button.mdi-lightbulb-on').dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+      // add Header Buttons which are visible (2x buttons)
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
+        `<li class="slick-header-button mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>
+          <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
+      expect(onCommandMock).toHaveBeenCalled();
+      expect(updateColSpy).toHaveBeenCalledWith('field1');
+    });
+
+    it('should populate 2x Header Buttons and a 2nd button is "disabled" but still expect the button NOT to be disabled because the "itemUsabilityOverride" has priority over the "disabled" property', () => {
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'slick-header-column';
+
+      plugin.dispose();
+      plugin.init();
+      columnsMock[0].header.buttons[1].itemVisibilityOverride = () => true;
+      columnsMock[0].header.buttons[1].itemUsabilityOverride = () => true;
+      delete columnsMock[0].header.buttons[1].showOnHover;
+      columnsMock[0].header.buttons[1].disabled = true;
+
+      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+
+      // add Header Buttons which are visible (2x buttons)
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
+        `<li class="slick-header-button mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>
+        <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
+    });
+  });
+});

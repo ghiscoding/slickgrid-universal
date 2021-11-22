@@ -1,9 +1,9 @@
 import {
   RowMoveManagerOption,
-  SlickRowMoveManager,
   SlickEventData,
   SlickGrid,
 } from './index';
+import { SlickRowMoveManager } from '../extensions/slickRowMoveManager';
 
 export interface RowMoveManager extends RowMoveManagerOption {
   //

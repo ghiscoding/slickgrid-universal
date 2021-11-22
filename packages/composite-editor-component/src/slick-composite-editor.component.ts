@@ -1,6 +1,3 @@
-import * as assign_ from 'assign-deep';
-const assign = (assign_ as any)['default'] || assign_;
-
 import {
   BindingEventService,
   Column,
@@ -10,15 +7,16 @@ import {
   CompositeEditorOption,
   Constants,
   ContainerService,
+  createDomElement,
   CurrentRowSelection,
   deepCopy,
+  deepMerge,
   DOMEvent,
   Editor,
   EditorValidationResult,
   emptyObject,
   ExternalResource,
   getDescendantProperty,
-  GetSlickEventType,
   GridOption,
   GridService,
   GridStateService,
@@ -218,7 +216,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       this._formValues = { ...this._formValues, [columnId]: newValue };
     }
 
-    this._formValues = assign({}, this._itemDataContext, this._formValues);
+    this._formValues = deepMerge({}, this._itemDataContext, this._formValues);
   }
 
   /**
@@ -360,55 +358,44 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         const parsedHeaderTitle = headerTitle.replace(/\{\{(.*?)\}\}/g, (_match, group) => getDescendantProperty(dataContext, group));
         const layoutColCount = viewColumnLayout === 'auto' ? this.autoCalculateLayoutColumnCount(modalColumns.length) : viewColumnLayout;
 
-        this._modalElm = document.createElement('div');
-        this._modalElm.className = `slick-editor-modal ${gridUid}`;
-
-        const modalContentElm = document.createElement('div');
-        modalContentElm.className = 'slick-editor-modal-content';
+        this._modalElm = createDomElement('div', { className: `slick-editor-modal ${gridUid}` });
+        const modalContentElm = createDomElement('div', { className: 'slick-editor-modal-content' });
 
         if (viewColumnLayout > 1 || (viewColumnLayout === 'auto' && layoutColCount > 1)) {
           const splitClassName = layoutColCount === 2 ? 'split-view' : 'triple-split-view';
           modalContentElm.classList.add(splitClassName);
         }
 
-        const modalHeaderTitleElm = document.createElement('div');
-        modalHeaderTitleElm.className = 'slick-editor-modal-title';
-        modalHeaderTitleElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, parsedHeaderTitle);
-
-        const modalCloseButtonElm = document.createElement('button');
-        modalCloseButtonElm.type = 'button';
-        modalCloseButtonElm.textContent = '×';
-        modalCloseButtonElm.className = 'close';
-        modalCloseButtonElm.dataset.action = 'close';
+        const modalHeaderTitleElm = createDomElement('div', {
+          className: 'slick-editor-modal-title',
+          innerHTML: sanitizeTextByAvailableSanitizer(this.gridOptions, parsedHeaderTitle),
+        });
+        const modalCloseButtonElm = createDomElement('button', { type: 'button', textContent: '×', className: 'close', dataset: { action: 'close' } });
         modalCloseButtonElm.setAttribute('aria-label', 'Close');
         if (this._options.showCloseButtonOutside) {
           modalHeaderTitleElm?.classList?.add('outside');
           modalCloseButtonElm?.classList?.add('outside');
         }
 
-        const modalHeaderElm = document.createElement('div');
-        modalHeaderElm.className = 'slick-editor-modal-header';
+        const modalHeaderElm = createDomElement('div', { className: 'slick-editor-modal-header' });
         modalHeaderElm.setAttribute('aria-label', 'Close');
         modalHeaderElm.appendChild(modalHeaderTitleElm);
         modalHeaderElm.appendChild(modalCloseButtonElm);
 
-        const modalBodyElm = document.createElement('div');
-        modalBodyElm.className = 'slick-editor-modal-body';
+        const modalBodyElm = createDomElement('div', { className: 'slick-editor-modal-body' });
 
-        this._modalBodyTopValidationElm = document.createElement('div');
-        this._modalBodyTopValidationElm.className = 'validation-summary';
-        this._modalBodyTopValidationElm.style.display = 'none';
+        this._modalBodyTopValidationElm = createDomElement('div', { className: 'validation-summary', style: { display: 'none' } });
         modalBodyElm.appendChild(this._modalBodyTopValidationElm);
 
-        const modalFooterElm = document.createElement('div');
-        modalFooterElm.className = 'slick-editor-modal-footer';
+        const modalFooterElm = createDomElement('div', { className: 'slick-editor-modal-footer' });
 
-        const modalCancelButtonElm = document.createElement('button');
-        modalCancelButtonElm.type = 'button';
-        modalCancelButtonElm.className = 'btn btn-cancel btn-default btn-sm';
-        modalCancelButtonElm.dataset.action = 'cancel';
+        const modalCancelButtonElm = createDomElement('button', {
+          type: 'button',
+          className: 'btn btn-cancel btn-default btn-sm',
+          textContent: this.getLabelText('cancelButton', 'TEXT_CANCEL', 'Cancel'),
+          dataset: { action: 'cancel' },
+        });
         modalCancelButtonElm.setAttribute('aria-label', this.getLabelText('cancelButton', 'TEXT_CANCEL', 'Cancel'));
-        modalCancelButtonElm.textContent = this.getLabelText('cancelButton', 'TEXT_CANCEL', 'Cancel');
 
         let leftFooterText = '';
         let saveButtonText = '';
@@ -430,20 +417,18 @@ export class SlickCompositeEditorComponent implements ExternalResource {
             saveButtonText = this.getLabelText('saveButton', 'TEXT_SAVE', 'Save');
         }
 
-        const selectionCounterElm = document.createElement('div');
-        selectionCounterElm.className = 'footer-status-text';
-        selectionCounterElm.textContent = leftFooterText;
-
-        this._modalSaveButtonElm = document.createElement('button');
-        this._modalSaveButtonElm.type = 'button';
-        this._modalSaveButtonElm.className = 'btn btn-save btn-primary btn-sm';
-        this._modalSaveButtonElm.dataset.action = (modalType === 'create' || modalType === 'edit') ? 'save' : modalType;
-        this._modalSaveButtonElm.dataset.ariaLabel = saveButtonText;
-        this._modalSaveButtonElm.textContent = saveButtonText;
+        const selectionCounterElm = createDomElement('div', { className: 'footer-status-text', textContent: leftFooterText });
+        this._modalSaveButtonElm = createDomElement('button', {
+          type: 'button', className: 'btn btn-save btn-primary btn-sm',
+          textContent: saveButtonText,
+          dataset: {
+            action: (modalType === 'create' || modalType === 'edit') ? 'save' : modalType,
+            ariaLabel: saveButtonText
+          }
+        });
         this._modalSaveButtonElm.setAttribute('aria-label', saveButtonText);
 
-        const footerContainerElm = document.createElement('div');
-        footerContainerElm.className = 'footer-buttons';
+        const footerContainerElm = createDomElement('div', { className: 'footer-buttons' });
 
         if (modalType === 'mass-update' || modalType === 'mass-selection') {
           modalFooterElm.appendChild(selectionCounterElm);
@@ -459,8 +444,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
         for (const columnDef of modalColumns) {
           if (columnDef.editor) {
-            const itemContainer = document.createElement('div');
-            itemContainer.className = `item-details-container editor-${columnDef.id}`;
+            const itemContainer = createDomElement('div', { className: `item-details-container editor-${columnDef.id}` });
 
             if (layoutColCount === 1) {
               itemContainer.classList.add('slick-col-medium-12');
@@ -468,16 +452,15 @@ export class SlickCompositeEditorComponent implements ExternalResource {
               itemContainer.classList.add('slick-col-medium-6', `slick-col-xlarge-${12 / layoutColCount}`);
             }
 
-            const templateItemLabelElm = document.createElement('div');
-            templateItemLabelElm.className = `item-details-label editor-${columnDef.id}`;
-            templateItemLabelElm.textContent = this.getColumnLabel(columnDef) || 'n/a';
-
-            const templateItemEditorElm = document.createElement('div');
-            templateItemEditorElm.className = 'item-details-editor-container slick-cell';
-            templateItemEditorElm.dataset.editorid = `${columnDef.id}`;
-
-            const templateItemValidationElm = document.createElement('div');
-            templateItemValidationElm.className = `item-details-validation editor-${columnDef.id}`;
+            const templateItemLabelElm = createDomElement('div', {
+              className: `item-details-label editor-${columnDef.id}`,
+              textContent: this.getColumnLabel(columnDef) || 'n/a'
+            });
+            const templateItemEditorElm = createDomElement('div', {
+              className: 'item-details-editor-container slick-cell',
+              dataset: { editorid: `${columnDef.id}` },
+            });
+            const templateItemValidationElm = createDomElement('div', { className: `item-details-validation editor-${columnDef.id}` });
 
             // optionally add a reset button beside each editor
             if (this._options?.showResetButtonOnEachEditor) {
@@ -522,18 +505,14 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         this._bindEventService.bind(this._modalElm, 'blur', this.validateCurrentEditor.bind(this) as EventListener);
 
         // when any of the input of the composite editor form changes, we'll add/remove a "modified" CSS className for styling purposes
-        const onCompositeEditorChangeHandler = this.grid.onCompositeEditorChange;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onCompositeEditorChangeHandler>>)
-          .subscribe(onCompositeEditorChangeHandler, this.handleOnCompositeEditorChange.bind(this));
+        this._eventHandler.subscribe(this.grid.onCompositeEditorChange, this.handleOnCompositeEditorChange.bind(this));
 
         // when adding a new row to the grid, we need to invalidate that row and re-render the grid
-        const onAddNewRowHandler = this.grid.onAddNewRow;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onAddNewRowHandler>>)
-          .subscribe(onAddNewRowHandler, (_e, args) => {
-            this.insertNewItemInDataView(args.item);
-            this._originalDataContext = args.item; // this becomes the new data context
-            this.dispose();
-          });
+        this._eventHandler.subscribe(this.grid.onAddNewRow, (_e, args) => {
+          this.insertNewItemInDataView(args.item);
+          this._originalDataContext = args.item; // this becomes the new data context
+          this.dispose();
+        });
       }
       return this;
 
@@ -648,11 +627,11 @@ export class SlickCompositeEditorComponent implements ExternalResource {
    * @returns {Object} - html button
    */
   protected createEditorResetButtonElement(columnId: string): HTMLButtonElement {
-    const resetButtonElm = document.createElement('button');
-    resetButtonElm.type = 'button';
-    resetButtonElm.name = columnId;
-    resetButtonElm.title = this._options?.labels?.resetFormButton ?? 'Reset Form Input';
-    resetButtonElm.className = 'btn btn-xs btn-editor-reset';
+    const resetButtonElm = createDomElement('button', {
+      type: 'button', name: columnId,
+      title: this._options?.labels?.resetFormButton ?? 'Reset Form Input',
+      className: 'btn btn-xs btn-editor-reset'
+    });
     resetButtonElm.setAttribute('aria-label', 'Reset');
 
     if (this._options?.resetEditorButtonCssClass) {
@@ -671,15 +650,9 @@ export class SlickCompositeEditorComponent implements ExternalResource {
    * @returns {Object} - html button
    */
   protected createFormResetButtonElement(): HTMLDivElement {
-    const resetButtonContainerElm = document.createElement('div');
-    resetButtonContainerElm.className = 'reset-container';
-
-    const resetButtonElm = document.createElement('button');
-    resetButtonElm.type = 'button';
-    resetButtonElm.className = 'btn btn-sm reset-form';
-
-    const resetIconSpanElm = document.createElement('span');
-    resetIconSpanElm.className = this._options?.resetFormButtonIconCssClass ?? '';
+    const resetButtonContainerElm = createDomElement('div', { className: 'reset-container' });
+    const resetButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-sm reset-form' });
+    const resetIconSpanElm = createDomElement('span', { className: this._options?.resetFormButtonIconCssClass ?? '' });
     resetButtonElm.appendChild(resetIconSpanElm);
     resetButtonElm.appendChild(document.createTextNode(' Reset Form'));
     resetButtonContainerElm.appendChild(resetButtonElm);

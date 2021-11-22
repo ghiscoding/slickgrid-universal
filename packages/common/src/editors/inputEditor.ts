@@ -3,6 +3,7 @@ import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, E
 import { getDescendantProperty, setDeepValue, toSentenceCase } from '../services/utilities';
 import { textValidator } from '../editorValidators/textValidator';
 import { BindingEventService } from '../services/bindingEvent.service';
+import { createDomElement } from '../services/domUtilities';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -81,17 +82,16 @@ export class InputEditor implements Editor {
 
   init() {
     const columnId = this.columnDef?.id ?? '';
-    const placeholder = this.columnEditor?.placeholder ?? '';
-    const title = this.columnEditor?.title ?? '';
     const compositeEditorOptions = this.args.compositeEditorOptions;
 
-    this._input = document.createElement('input') as HTMLInputElement;
-    this._input.className = `editor-text editor-${columnId}`;
-    this._input.type = this._inputType || 'text';
+    this._input = createDomElement('input', {
+      type: this._inputType || 'text',
+      autocomplete: 'off',
+      placeholder: this.columnEditor?.placeholder ?? '',
+      title: this.columnEditor?.title ?? '',
+      className: `editor-text editor-${columnId}`,
+    });
     this._input.setAttribute('role', 'presentation');
-    this._input.autocomplete = 'off';
-    this._input.placeholder = placeholder;
-    this._input.title = title;
     this._input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Input Editor`);
     const cellContainer = this.args.container;
     if (cellContainer && typeof cellContainer.appendChild === 'function') {

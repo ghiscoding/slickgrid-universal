@@ -8,8 +8,7 @@ import {
   Formatter,
   Grouping,
   GroupTotalsFormatter,
-  HeaderButtonItem,
-  MenuCommandItem,
+  HeaderButtonsOrMenu,
   OnEventArgs,
   SlickEventData,
   SortComparer,
@@ -30,6 +29,9 @@ type Join<T extends any[], D extends string> =
 /* eslint-enable @typescript-eslint/indent */
 
 export interface Column<T = any> {
+  /** do we want to always render the column? */
+  alwaysRenderColumn?: boolean;
+
   /** async background post-rendering formatter */
   asyncPostRender?: (domCellNode: any, row: number, dataContext: T, columnDef: Column) => void;
 
@@ -66,6 +68,8 @@ export interface Column<T = any> {
   /** Do we want default sort to be ascending? True by default */
   defaultSortAsc?: boolean;
 
+  /** Defaults to false, do we want to deny executing a Paste (from a Copy of CellExternalCopyManager)? */
+  denyPaste?: boolean;
   /**
    * defaults to False, optionally enable/disable tooltip.
    * This is typically used on a specific column that you would like to completely disable the custom/regular tooltip.
@@ -156,11 +160,7 @@ export interface Column<T = any> {
   groupTotalsFormatter?: GroupTotalsFormatter;
 
   /** Options that can be provided to the Header Menu Plugin */
-  header?: {
-    /** list of Buttons to show in the header */
-    buttons?: Array<HeaderButtonItem | 'divider'>;
-    menu?: { items: Array<MenuCommandItem | 'divider'> };
-  };
+  header?: HeaderButtonsOrMenu;
 
   /** CSS class that can be added to the column header */
   headerCssClass?: string;

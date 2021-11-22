@@ -7,6 +7,7 @@ import {
   ColumnFilters,
   CurrentFilter,
   CurrentPagination,
+  CurrentPinning,
   CurrentSorter,
   Editor,
   Editors,
@@ -32,15 +33,13 @@ import {
   ServicePagination,
   SharedService,
   SlickDataView,
-  SlickDraggableGrouping,
   SlickEventHandler,
+  SlickEditorLock,
   SlickGrid,
   SlickGroupItemMetadataProvider,
   SortService,
   TreeDataService,
   TranslaterService,
-  SlickEditorLock,
-  CurrentPinning,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
@@ -68,6 +67,7 @@ const extensionServiceStub = {
   createExtensionsBeforeGridCreation: jest.fn(),
   dispose: jest.fn(),
   renderColumnHeaders: jest.fn(),
+  translateAllExtensions: jest.fn(),
   translateCellMenu: jest.fn(),
   translateColumnHeaders: jest.fn(),
   translateColumnPicker: jest.fn(),
@@ -187,17 +187,6 @@ const treeDataServiceStub = {
   toggleTreeDataCollapse: jest.fn(),
 } as unknown as TreeDataService;
 
-const mockGroupItemMetaProvider = {
-  init: jest.fn(),
-  destroy: jest.fn(),
-  defaultGroupCellFormatter: jest.fn(),
-  defaultTotalsCellFormatter: jest.fn(),
-  handleGridClick: jest.fn(),
-  handleGridKeyDown: jest.fn(),
-  getGroupRowMetadata: jest.fn(),
-  getTotalsRowMetadata: jest.fn(),
-} as unknown as SlickGroupItemMetadataProvider;
-
 const mockDataView = {
   constructor: jest.fn(),
   init: jest.fn(),
@@ -220,12 +209,6 @@ const mockDataView = {
   setItems: jest.fn(),
   syncGridSelection: jest.fn(),
 } as unknown as SlickDataView;
-
-const mockDraggableGroupingExtension = {
-  constructor: jest.fn(),
-  init: jest.fn(),
-  destroy: jest.fn(),
-} as unknown as SlickDraggableGrouping;
 
 const mockEventPubSub = {
   notify: jest.fn(),
@@ -296,18 +279,14 @@ jest.mock('@slickgrid-universal/text-export', () => ({
 
 const mockSlickEventHandlerImplementation = jest.fn().mockImplementation(() => mockSlickEventHandler);
 const mockDataViewImplementation = jest.fn().mockImplementation(() => mockDataView);
-const mockGroupItemMetaProviderImplementation = jest.fn().mockImplementation(() => mockGroupItemMetaProvider);
 const mockGridImplementation = jest.fn().mockImplementation(() => mockGrid);
-const mockDraggableGroupingImplementation = jest.fn().mockImplementation(() => mockDraggableGroupingExtension);
 const template = `<div class="demo-container"><div class="grid1"></div></div>`;
 
 describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () => {
   jest.mock('slickgrid/slick.grid', () => mockGridImplementation);
-  jest.mock('slickgrid/plugins/slick.draggablegrouping', () => mockDraggableGroupingImplementation);
   Slick.Grid = mockGridImplementation;
   Slick.EventHandler = slickEventHandler;
-  Slick.Data = { DataView: mockDataViewImplementation, GroupItemMetadataProvider: mockGroupItemMetaProviderImplementation };
-  Slick.DraggableGrouping = mockDraggableGroupingImplementation;
+  Slick.Data = { DataView: mockDataViewImplementation, };
 
   let component: SlickVanillaGridBundle;
   let divContainer: HTMLDivElement;
@@ -826,7 +805,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('use grouping', () => {
       it('should load groupItemMetaProvider to the DataView when using "draggableGrouping" feature', () => {
         const dataviewSpy = jest.spyOn(mockDataViewImplementation.prototype, 'constructor');
-        const groupMetaSpy = jest.spyOn(mockGroupItemMetaProviderImplementation.prototype, 'constructor');
         const sharedMetaSpy = jest.spyOn(SharedService.prototype, 'groupItemMetadataProvider', 'set');
         jest.spyOn(extensionServiceStub, 'extensionList', 'get').mockReturnValue({ draggableGrouping: { pluginName: 'DraggableGrouping' } } as unknown as ExtensionList<any, any>);
 
@@ -836,23 +814,22 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(Object.keys(extensions).length).toBe(1);
         expect(dataviewSpy).toHaveBeenCalledWith({ inlineFilters: false, groupItemMetadataProvider: expect.anything() });
-        expect(groupMetaSpy).toHaveBeenCalledWith();
-        expect(sharedMetaSpy).toHaveBeenCalledWith(mockGroupItemMetaProvider);
+        expect(sharedService.groupItemMetadataProvider instanceof SlickGroupItemMetadataProvider).toBeTruthy();
+        expect(sharedMetaSpy).toHaveBeenCalledWith(expect.toBeObject());
 
         component.dispose();
       });
 
       it('should load groupItemMetaProvider to the DataView when using "enableGrouping" feature', () => {
         const dataviewSpy = jest.spyOn(mockDataViewImplementation.prototype, 'constructor');
-        const groupMetaSpy = jest.spyOn(mockGroupItemMetaProviderImplementation.prototype, 'constructor');
         const sharedMetaSpy = jest.spyOn(SharedService.prototype, 'groupItemMetadataProvider', 'set');
 
         component.gridOptions = { enableGrouping: true };
         component.initialization(divContainer, slickEventHandler);
 
         expect(dataviewSpy).toHaveBeenCalledWith({ inlineFilters: false, groupItemMetadataProvider: expect.anything() });
-        expect(groupMetaSpy).toHaveBeenCalledWith();
-        expect(sharedMetaSpy).toHaveBeenCalledWith(mockGroupItemMetaProvider);
+        expect(sharedMetaSpy).toHaveBeenCalledWith(expect.toBeObject());
+        expect(sharedService.groupItemMetadataProvider instanceof SlickGroupItemMetadataProvider).toBeTruthy();
 
         component.dispose();
       });
@@ -1394,12 +1371,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should call multiple translate methods when locale changes', (done) => {
-        const transCellMenuSpy = jest.spyOn(extensionServiceStub, 'translateCellMenu');
-        const transColHeaderSpy = jest.spyOn(extensionServiceStub, 'translateColumnHeaders');
-        const transColPickerSpy = jest.spyOn(extensionServiceStub, 'translateColumnPicker');
-        const transContextMenuSpy = jest.spyOn(extensionServiceStub, 'translateContextMenu');
-        const transGridMenuSpy = jest.spyOn(extensionServiceStub, 'translateGridMenu');
-        const transHeaderMenuSpy = jest.spyOn(extensionServiceStub, 'translateHeaderMenu');
+        const transExtensionSpy = jest.spyOn(extensionServiceStub, 'translateAllExtensions');
         const transGroupingColSpanSpy = jest.spyOn(groupingAndColspanServiceStub, 'translateGroupingAndColSpan');
         const setHeaderRowSpy = jest.spyOn(mockGrid, 'setHeaderRowVisibility');
 
@@ -1411,24 +1383,14 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         setTimeout(() => {
           expect(setHeaderRowSpy).not.toHaveBeenCalled();
           expect(transGroupingColSpanSpy).not.toHaveBeenCalled();
-          expect(transCellMenuSpy).toHaveBeenCalled();
-          expect(transColHeaderSpy).toHaveBeenCalled();
-          expect(transColPickerSpy).toHaveBeenCalled();
-          expect(transContextMenuSpy).toHaveBeenCalled();
-          expect(transGridMenuSpy).toHaveBeenCalled();
-          expect(transHeaderMenuSpy).toHaveBeenCalled();
+          expect(transExtensionSpy).toHaveBeenCalled();
           done();
         });
       });
 
       it('should call "setHeaderRowVisibility", "translateGroupingAndColSpan" and other methods when locale changes', (done) => {
         component.columnDefinitions = [{ id: 'firstName', field: 'firstName', filterable: true }];
-        const transCellMenuSpy = jest.spyOn(extensionServiceStub, 'translateCellMenu');
-        const transColHeaderSpy = jest.spyOn(extensionServiceStub, 'translateColumnHeaders');
-        const transColPickerSpy = jest.spyOn(extensionServiceStub, 'translateColumnPicker');
-        const transContextMenuSpy = jest.spyOn(extensionServiceStub, 'translateContextMenu');
-        const transGridMenuSpy = jest.spyOn(extensionServiceStub, 'translateGridMenu');
-        const transHeaderMenuSpy = jest.spyOn(extensionServiceStub, 'translateHeaderMenu');
+        const transExtensionSpy = jest.spyOn(extensionServiceStub, 'translateAllExtensions');
         const transGroupingColSpanSpy = jest.spyOn(groupingAndColspanServiceStub, 'translateGroupingAndColSpan');
 
         component.gridOptions = { enableTranslate: true, createPreHeaderPanel: true, enableDraggableGrouping: false } as unknown as GridOption;
@@ -1438,12 +1400,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         setTimeout(() => {
           expect(transGroupingColSpanSpy).toHaveBeenCalled();
-          expect(transCellMenuSpy).toHaveBeenCalled();
-          expect(transColHeaderSpy).toHaveBeenCalled();
-          expect(transColPickerSpy).toHaveBeenCalled();
-          expect(transContextMenuSpy).toHaveBeenCalled();
-          expect(transGridMenuSpy).toHaveBeenCalled();
-          expect(transHeaderMenuSpy).toHaveBeenCalled();
+          expect(transExtensionSpy).toHaveBeenCalled();
           done();
         });
       });
@@ -2145,10 +2102,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
 describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with a Hierarchical Dataset', () => {
   jest.mock('slickgrid/slick.grid', () => mockGridImplementation);
-  jest.mock('slickgrid/plugins/slick.draggablegrouping', () => mockDraggableGroupingImplementation);
   Slick.Grid = mockGridImplementation;
-  Slick.Data = { DataView: mockDataViewImplementation, GroupItemMetadataProvider: mockGroupItemMetaProviderImplementation };
-  Slick.DraggableGrouping = mockDraggableGroupingImplementation;
+  Slick.Data = { DataView: mockDataViewImplementation, };
 
   let component: SlickVanillaGridBundle;
   let divContainer: HTMLDivElement;
@@ -2229,11 +2184,9 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
 
 describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with a Slickgrid Container that already exist', () => {
   jest.mock('slickgrid/slick.grid', () => mockGridImplementation);
-  jest.mock('slickgrid/plugins/slick.draggablegrouping', () => mockDraggableGroupingImplementation);
   Slick.Grid = mockGridImplementation;
   Slick.EventHandler = mockSlickEventHandlerImplementation;
-  Slick.Data = { DataView: mockDataViewImplementation, GroupItemMetadataProvider: mockGroupItemMetaProviderImplementation };
-  Slick.DraggableGrouping = mockDraggableGroupingImplementation;
+  Slick.Data = { DataView: mockDataViewImplementation, };
 
   let component: SlickVanillaGridBundle;
   let divContainer: HTMLDivElement;

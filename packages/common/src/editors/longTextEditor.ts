@@ -16,7 +16,8 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { getDescendantProperty, getHtmlElementOffset, getTranslationPrefix, setDeepValue, toSentenceCase, } from '../services/utilities';
+import { createDomElement, getHtmlElementOffset, } from '../services/domUtilities';
+import { getDescendantProperty, getTranslationPrefix, setDeepValue, toSentenceCase, } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 import { textValidator } from '../editorValidators/textValidator';
@@ -118,57 +119,44 @@ export class LongTextEditor implements Editor {
 
     const compositeEditorOptions = this.args.compositeEditorOptions;
     const columnId = this.columnDef?.id ?? '';
-    const placeholder = this.columnEditor?.placeholder ?? '';
-    const title = this.columnEditor?.title ?? '';
     const maxLength = this.columnEditor?.maxLength;
-    const textAreaCols = this.editorOptions?.cols ?? 40;
     const textAreaRows = this.editorOptions?.rows ?? 4;
 
     const containerElm = compositeEditorOptions ? this.args.container : document.body;
-    this._wrapperElm = document.createElement('div');
-    this._wrapperElm.className = `slick-large-editor-text editor-${columnId}`;
-    this._wrapperElm.style.position = compositeEditorOptions ? 'relative' : 'absolute';
+    this._wrapperElm = createDomElement('div', {
+      className: `slick-large-editor-text editor-${columnId}`,
+      style: { position: compositeEditorOptions ? 'relative' : 'absolute' }
+    });
     containerElm.appendChild(this._wrapperElm);
 
-    this._textareaElm = document.createElement('textarea');
-    this._textareaElm.cols = textAreaCols;
     // use textarea row if defined but don't go over 3 rows with composite editor modal
-    this._textareaElm.rows = (compositeEditorOptions && textAreaRows > 3) ? 3 : textAreaRows;
-    this._textareaElm.placeholder = placeholder;
-    this._textareaElm.title = title;
+    this._textareaElm = createDomElement('textarea', {
+      cols: this.editorOptions?.cols ?? 40,
+      rows: (compositeEditorOptions && textAreaRows > 3) ? 3 : textAreaRows,
+      placeholder: this.columnEditor?.placeholder ?? '',
+      title: this.columnEditor?.title ?? '',
+    });
     this._textareaElm.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Text Editor`);
     this._wrapperElm.appendChild(this._textareaElm);
 
-    const editorFooterElm = document.createElement('div');
-    editorFooterElm.className = 'editor-footer';
-
-    const countContainerElm = document.createElement('span');
-    countContainerElm.className = 'counter';
-
-    this._currentLengthElm = document.createElement('span');
-    this._currentLengthElm.className = 'text-length';
-    this._currentLengthElm.textContent = '0';
+    const editorFooterElm = createDomElement('div', { className: 'editor-footer' });
+    const countContainerElm = createDomElement('span', { className: 'counter' });
+    this._currentLengthElm = createDomElement('span', { className: 'text-length', textContent: '0' });
     countContainerElm.appendChild(this._currentLengthElm);
 
     if (maxLength !== undefined) {
-      const maxLengthSeparatorElm = document.createElement('span');
-      maxLengthSeparatorElm.className = 'separator';
-      maxLengthSeparatorElm.textContent = '/';
-      const maxLengthElm = document.createElement('span');
-      maxLengthElm.className = 'max-length';
-      maxLengthElm.textContent = `${maxLength}`;
-      countContainerElm.appendChild(maxLengthSeparatorElm);
-      countContainerElm.appendChild(maxLengthElm);
+      countContainerElm.appendChild(
+        createDomElement('span', { className: 'separator', textContent: '/' })
+      );
+      countContainerElm.appendChild(
+        createDomElement('span', { className: 'max-length', textContent: `${maxLength}` })
+      );
     }
     editorFooterElm.appendChild(countContainerElm);
 
     if (!compositeEditorOptions) {
-      const cancelBtnElm = document.createElement('button');
-      cancelBtnElm.className = 'btn btn-cancel btn-default btn-xs';
-      cancelBtnElm.textContent = cancelText;
-      const saveBtnElm = document.createElement('button');
-      saveBtnElm.className = 'btn btn-save btn-primary btn-xs';
-      saveBtnElm.textContent = saveText;
+      const cancelBtnElm = createDomElement('button', { className: 'btn btn-cancel btn-default btn-xs', textContent: cancelText });
+      const saveBtnElm = createDomElement('button', { className: 'btn btn-save btn-primary btn-xs', textContent: saveText });
       editorFooterElm.appendChild(cancelBtnElm);
       editorFooterElm.appendChild(saveBtnElm);
       this._bindEventService.bind(cancelBtnElm, 'click', this.cancel.bind(this) as EventListener);

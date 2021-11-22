@@ -21,8 +21,11 @@ import {
   SlickNamespace,
 } from './../interfaces/index';
 import {
+  createDomElement,
   destroyObjectDomElementProps,
   emptyElement,
+} from '../services/domUtilities';
+import {
   getDescendantProperty,
   mapFlatpickrDateFormatWithFieldType,
   mapMomentDateFormatWithFieldType,
@@ -119,8 +122,6 @@ export class DateEditor implements Editor {
     if (this.args && this.columnDef) {
       const compositeEditorOptions = this.args.compositeEditorOptions;
       const columnId = this.columnDef?.id ?? '';
-      const placeholder = this.columnEditor?.placeholder ?? '';
-      const title = this.columnEditor && this.columnEditor.title || '';
       const gridOptions = (this.args.grid.getOptions() || {}) as GridOption;
       this.defaultDate = (this.args.item) ? this.args.item[this.columnDef.field] : null;
       const inputFormat = mapFlatpickrDateFormatWithFieldType(this.columnEditor.type || this.columnDef.type || FieldType.dateUtc);
@@ -156,23 +157,15 @@ export class DateEditor implements Editor {
         this._pickerMergedOptions.altInputClass = 'flatpickr-alt-input form-control';
       }
 
-      this._editorInputGroupElm = document.createElement('div');
-      this._editorInputGroupElm.className = 'flatpickr input-group';
-
-      const closeButtonGroupElm = document.createElement('span');
-      closeButtonGroupElm.className = 'input-group-btn input-group-append';
-      closeButtonGroupElm.dataset.clear = '';
-
-      this._closeButtonElm = document.createElement('button');
-      this._closeButtonElm.type = 'button';
-      this._closeButtonElm.className = 'btn btn-default icon-clear';
-
-      this._inputElm = document.createElement('input');
-      this._inputElm.dataset.input = '';
-      this._inputElm.dataset.defaultdate = this.defaultDate;
-      this._inputElm.className = inputCssClasses.replace(/\./g, ' ');
-      this._inputElm.placeholder = placeholder;
-      this._inputElm.title = title;
+      this._editorInputGroupElm = createDomElement('div', { className: 'flatpickr input-group' });
+      const closeButtonGroupElm = createDomElement('span', { className: 'input-group-btn input-group-append', dataset: { clear: '' } });
+      this._closeButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default icon-clear' });
+      this._inputElm = createDomElement('input', {
+        placeholder: this.columnEditor?.placeholder ?? '',
+        title: this.columnEditor && this.columnEditor.title || '',
+        className: inputCssClasses.replace(/\./g, ' '),
+        dataset: { input: '', defaultdate: this.defaultDate }
+      });
 
       this._editorInputGroupElm.appendChild(this._inputElm);
 

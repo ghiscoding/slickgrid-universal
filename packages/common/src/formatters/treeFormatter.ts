@@ -1,7 +1,8 @@
 import { Constants } from '../constants';
 import { Formatter } from './../interfaces/index';
 import { parseFormatterWhenExist } from './formatterUtilities';
-import { getDescendantProperty, sanitizeTextByAvailableSanitizer } from '../services/utilities';
+import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
+import { getCellValueFromQueryFieldGetter, } from '../services/utilities';
 
 /** Formatter that must be use with a Tree Data column */
 export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
@@ -13,14 +14,9 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
   const treeLevelPropName = treeDataOptions?.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
   let outputValue = value;
 
-  if (typeof columnDef.queryFieldNameGetterFn === 'function') {
-    const fieldName = columnDef.queryFieldNameGetterFn(dataContext);
-    if (fieldName?.indexOf('.') >= 0) {
-      outputValue = getDescendantProperty(dataContext, fieldName);
-    } else {
-      outputValue = dataContext.hasOwnProperty(fieldName) ? dataContext[fieldName] : value;
-    }
-  }
+  // when a queryFieldNameGetterFn is defined, then get the value from that getter callback function
+  outputValue = getCellValueFromQueryFieldGetter(columnDef, dataContext, value);
+
   if (outputValue === null || outputValue === undefined || dataContext === undefined) {
     return '';
   }
@@ -43,6 +39,6 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
   }
   const sanitizedOutputValue = sanitizeTextByAvailableSanitizer(gridOptions, outputValue, { ADD_ATTR: ['target'] });
   const spanToggleClass = `slick-group-toggle ${toggleClass}`.trim();
-  const outputHtml = `${indentSpacer}<span class="${spanToggleClass}"></span><span class="slick-tree-title" level="${treeLevel}">${sanitizedOutputValue}</span>`;
+  const outputHtml = `${indentSpacer}<span class="${spanToggleClass}" aria-expanded="${toggleClass === 'expanded'}"></span><span class="slick-tree-title" level="${treeLevel}">${sanitizedOutputValue}</span>`;
   return { addClasses: slickTreeLevelClass, text: outputHtml };
 };

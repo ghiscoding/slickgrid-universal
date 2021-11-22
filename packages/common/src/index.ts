@@ -3,12 +3,12 @@ import * as BackendUtilities from './services/backendUtility.service';
 import * as Observers from './services/observers';
 import * as ServiceUtilities from './services/utilities';
 import * as SortUtilities from './sortComparers/sortUtilities';
-import * as assign_ from 'assign-deep';
-const deepAssign = (assign_ as any)['default'] || assign_;
+import { deepMerge as deepAssign } from './services/utilities';
 
 // Public classes.
 export * from './constants';
 export * from './global-grid-options';
+
 export * from './enums/index';
 export * from './interfaces/index';
 export * from './aggregators/index';

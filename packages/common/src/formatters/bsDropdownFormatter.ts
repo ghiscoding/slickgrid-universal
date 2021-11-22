@@ -1,6 +1,9 @@
 import { Formatter } from '../interfaces/formatter.interface';
 
-/** A simple Bootstrap Dropdown Formatter which requires a Formatter Label */
+/**
+ * @deprecated @use `CellMenu`, which is a lot more generic instead of `bsDropdownFormatter`.
+ * A simple Bootstrap Dropdown Formatter which requires a Formatter Label.
+ */
 export const bsDropdownFormatter: Formatter = (row, cell, _val, columnDef) => {
   const columnParams = columnDef && columnDef.params || {};
   const label = columnParams.label || columnParams.formatterLabel;

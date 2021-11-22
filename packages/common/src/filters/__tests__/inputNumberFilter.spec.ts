@@ -1,6 +1,6 @@
 import { InputNumberFilter } from '../inputNumberFilter';
 import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
-import { Filters } from '..';
+import { Filters } from '../filters.index';
 
 const containerId = 'demo-container';
 

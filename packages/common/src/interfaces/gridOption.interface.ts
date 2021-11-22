@@ -21,6 +21,7 @@ import {
   FormatterOption,
   GridMenu,
   GridState,
+  GroupItemMetadataProviderOption,
   HeaderButton,
   HeaderMenu,
   ItemMetadata,
@@ -449,9 +450,12 @@ export interface GridOption {
 
   /**
    * When using a fixed grid width, can be a number or a string.
-   * if a number is provided it will add the `px` suffix for pixels, or if a string is passed it will use it as is.
+   * if a number is provided it will add the `px` suffix for pixels, or if a string is passed it will use it as it is.
    */
   gridWidth?: number | string;
+
+  /** Optional option to provide to the GroupItemMetadataProvider */
+  groupItemMetadataOption?: GroupItemMetadataProviderOption;
 
   /** Header row height in pixels (only type the number). Header row is where the filters are. */
   headerRowHeight?: number;

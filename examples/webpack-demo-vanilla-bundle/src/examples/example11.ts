@@ -333,7 +333,7 @@ export class Example11 {
       },
       gridMenu: {
         hideClearFrozenColumnsCommand: false,
-        customItems: [
+        commandItems: [
           {
             command: 'modal',
             title: 'Mass Update',

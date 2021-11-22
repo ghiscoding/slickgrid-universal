@@ -25,6 +25,7 @@ describe('BindingEvent Service', () => {
 
     service.bind(mockElm, 'click', mockCallback);
 
+    expect(service.boundedEvents.length).toBe(1);
     expect(addEventSpy).toHaveBeenCalledWith('click', mockCallback, undefined);
   });
 
@@ -37,6 +38,7 @@ describe('BindingEvent Service', () => {
 
     service.bind(mockElm, 'click', mockCallback, { capture: true, passive: true });
 
+    expect(service.boundedEvents.length).toBe(1);
     expect(addEventSpy).toHaveBeenCalledWith('click', mockCallback, { capture: true, passive: true });
   });
 
@@ -50,8 +52,11 @@ describe('BindingEvent Service', () => {
     service = new BindingEventService();
     service.bind(mockElm, 'keyup', mockCallback1);
     service.bind(mockElm, 'click', mockCallback2, { capture: true, passive: true });
+    expect(service.boundedEvents.length).toBe(2);
+
     service.unbindAll();
 
+    expect(service.boundedEvents.length).toBe(0);
     expect(addEventSpy).toHaveBeenCalledWith('keyup', mockCallback1, undefined);
     expect(addEventSpy).toHaveBeenCalledWith('click', mockCallback2, { capture: true, passive: true });
     expect(removeEventSpy).toHaveBeenCalledWith('keyup', mockCallback1);

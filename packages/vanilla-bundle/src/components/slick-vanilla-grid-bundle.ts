@@ -9,7 +9,6 @@ import 'slickgrid/lib/jquery.mousewheel';
 import 'slickgrid/slick.core';
 import 'slickgrid/slick.grid';
 import 'slickgrid/slick.dataview';
-import 'slickgrid/slick.groupitemmetadataprovider';
 import {
   autoAddEditorFormatterToColumnsWithEditor,
   AutoCompleteEditor,
@@ -34,27 +33,11 @@ import {
   SlickGroupItemMetadataProvider,
   SlickNamespace,
   Subscription,
-
-  // extensions
-  AutoTooltipExtension,
-  CheckboxSelectorExtension,
-  CellExternalCopyManagerExtension,
-  CellMenuExtension,
-  ColumnPickerExtension,
-  ContextMenuExtension,
-  DraggableGroupingExtension,
-  ExtensionUtility,
-  GridMenuExtension,
-  GroupItemMetaProviderExtension,
-  HeaderMenuExtension,
-  HeaderButtonExtension,
-  RowDetailViewExtension,
-  RowSelectionExtension,
-
   // services
   BackendUtilityService,
   CollectionService,
   ExtensionService,
+  ExtensionUtility,
   FilterFactory,
   FilterService,
   GridEventService,
@@ -64,7 +47,6 @@ import {
   Observable,
   PaginationService,
   ResizerService,
-  RowMoveManagerExtension,
   RxJsFacade,
   SharedService,
   SortService,
@@ -74,7 +56,6 @@ import {
 
   // utilities
   emptyElement,
-  GetSlickEventType,
 } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
@@ -356,7 +337,7 @@ export class SlickVanillaGridBundle {
     this.gridEventService = services?.gridEventService ?? new GridEventService();
     this.sharedService = services?.sharedService ?? new SharedService();
     this.collectionService = services?.collectionService ?? new CollectionService(this.translaterService);
-    this.extensionUtility = services?.extensionUtility ?? new ExtensionUtility(this.sharedService, this.translaterService);
+    this.extensionUtility = services?.extensionUtility ?? new ExtensionUtility(this.sharedService, this.backendUtilityService, this.translaterService);
     this.filterFactory = new FilterFactory(slickgridConfig, this.translaterService, this.collectionService);
     this.filterService = services?.filterService ?? new FilterService(this.filterFactory, this._eventPubSubService, this.sharedService, this.backendUtilityService);
     this.resizerService = services?.resizerService ?? new ResizerService(this._eventPubSubService);
@@ -364,44 +345,19 @@ export class SlickVanillaGridBundle {
     this.treeDataService = services?.treeDataService ?? new TreeDataService(this._eventPubSubService, this.sharedService, this.sortService);
     this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService, this.backendUtilityService);
 
-    // extensions
-    const autoTooltipExtension = new AutoTooltipExtension(this.sharedService);
-    const cellExternalCopyManagerExtension = new CellExternalCopyManagerExtension(this.extensionUtility, this.sharedService);
-    const cellMenuExtension = new CellMenuExtension(this.extensionUtility, this.sharedService, this.translaterService);
-    const contextMenuExtension = new ContextMenuExtension(this.extensionUtility, this._eventPubSubService, this.sharedService, this.treeDataService, this.translaterService);
-    const columnPickerExtension = new ColumnPickerExtension(this.extensionUtility, this.sharedService);
-    const checkboxExtension = new CheckboxSelectorExtension(this.sharedService);
-    const draggableGroupingExtension = new DraggableGroupingExtension(this.extensionUtility, this._eventPubSubService, this.sharedService);
-    const gridMenuExtension = new GridMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.backendUtilityService, this.translaterService);
-    const groupItemMetaProviderExtension = new GroupItemMetaProviderExtension(this.sharedService);
-    const headerButtonExtension = new HeaderButtonExtension(this.extensionUtility, this.sharedService);
-    const headerMenuExtension = new HeaderMenuExtension(this.extensionUtility, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.translaterService);
-    const rowDetailViewExtension = new RowDetailViewExtension();
-    const rowMoveManagerExtension = new RowMoveManagerExtension(this.sharedService);
-    const rowSelectionExtension = new RowSelectionExtension(this.sharedService);
-
     this.extensionService = services?.extensionService ?? new ExtensionService(
-      autoTooltipExtension,
-      cellExternalCopyManagerExtension,
-      cellMenuExtension,
-      checkboxExtension,
-      columnPickerExtension,
-      contextMenuExtension,
-      draggableGroupingExtension,
-      gridMenuExtension,
-      groupItemMetaProviderExtension,
-      headerButtonExtension,
-      headerMenuExtension,
-      rowDetailViewExtension,
-      rowMoveManagerExtension,
-      rowSelectionExtension,
+      this.extensionUtility,
+      this.filterService,
+      this._eventPubSubService,
       this.sharedService,
+      this.sortService,
+      this.treeDataService,
       this.translaterService,
     );
 
     this.gridStateService = services?.gridStateService ?? new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.treeDataService);
     this.gridService = services?.gridService ?? new GridService(this.gridStateService, this.filterService, this._eventPubSubService, this.paginationService, this.sharedService, this.sortService, this.treeDataService);
-    this.groupingService = services?.groupingAndColspanService ?? new GroupingAndColspanService(this.extensionUtility, this.extensionService, this._eventPubSubService);
+    this.groupingService = services?.groupingAndColspanService ?? new GroupingAndColspanService(this.extensionUtility, this._eventPubSubService);
 
     if (hierarchicalDataset) {
       this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
@@ -529,7 +485,7 @@ export class SlickVanillaGridBundle {
       let dataViewOptions: DataViewOption = { inlineFilters: dataviewInlineFilters };
 
       if (this.gridOptions.draggableGrouping || this.gridOptions.enableGrouping) {
-        this.groupItemMetadataProvider = new Slick.Data.GroupItemMetadataProvider();
+        this.groupItemMetadataProvider = new SlickGroupItemMetadataProvider();
         this.sharedService.groupItemMetadataProvider = this.groupItemMetadataProvider;
         dataViewOptions = { ...dataViewOptions, groupItemMetadataProvider: this.groupItemMetadataProvider };
       }
@@ -565,6 +521,7 @@ export class SlickVanillaGridBundle {
     this.slickGrid = new Slick.Grid(gridContainerElm, this.dataView as SlickDataView, this._columnDefinitions, this._gridOptions);
     this.sharedService.dataView = this.dataView as SlickDataView;
     this.sharedService.slickGrid = this.slickGrid;
+    this.sharedService.gridContainerElement = this._gridContainerElm;
 
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.slickGrid, this._gridOptions, this.dataView as SlickDataView);
@@ -754,8 +711,9 @@ export class SlickVanillaGridBundle {
       this.translaterService.addPubSubMessaging(this._eventPubSubService);
     }
 
-    // translate some of them on first load, then on each language change
+    // translate them all on first load, then on each language change
     if (gridOptions.enableTranslate) {
+      this.extensionService.translateAllExtensions();
       this.translateColumnHeaderTitleKeys();
       this.translateColumnGroupKeys();
     }
@@ -764,12 +722,7 @@ export class SlickVanillaGridBundle {
     this.subscriptions.push(
       this._eventPubSubService.subscribe('onLanguageChange', () => {
         if (gridOptions.enableTranslate) {
-          this.extensionService.translateCellMenu();
-          this.extensionService.translateColumnHeaders();
-          this.extensionService.translateColumnPicker();
-          this.extensionService.translateContextMenu();
-          this.extensionService.translateGridMenu();
-          this.extensionService.translateHeaderMenu();
+          this.extensionService.translateAllExtensions();
           this.translateColumnHeaderTitleKeys();
           this.translateColumnGroupKeys();
           if (gridOptions.createPreHeaderPanel && !gridOptions.enableDraggableGrouping) {
@@ -792,8 +745,7 @@ export class SlickVanillaGridBundle {
       // expose all Slick Grid Events through dispatch
       for (const prop in grid) {
         if (grid.hasOwnProperty(prop) && prop.startsWith('on')) {
-          const gridEventHandler = (grid as any)[prop];
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof gridEventHandler>>).subscribe(gridEventHandler, (event, args) => {
+          this._eventHandler.subscribe((grid as any)[prop], (event, args) => {
             const gridEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions?.defaultSlickgridEventPrefix ?? '');
             return this._eventPubSubService.dispatchCustomEvent(gridEventName, { eventData: event, args });
           });
@@ -803,8 +755,7 @@ export class SlickVanillaGridBundle {
       // expose all Slick DataView Events through dispatch
       for (const prop in dataView) {
         if (dataView.hasOwnProperty(prop) && prop.startsWith('on')) {
-          const dataViewEventHandler = (dataView as any)[prop];
-          (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof dataViewEventHandler>>).subscribe(dataViewEventHandler, (event, args) => {
+          this._eventHandler.subscribe((dataView as any)[prop], (event, args) => {
             const dataViewEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions?.defaultSlickgridEventPrefix ?? '');
             return this._eventPubSubService.dispatchCustomEvent(dataViewEventName, { eventData: event, args });
           });
@@ -835,13 +786,11 @@ export class SlickVanillaGridBundle {
       }
 
       // When data changes in the DataView, we need to refresh the metrics and/or display a warning if the dataset is empty
-      const onRowCountChangedHandler = dataView.onRowCountChanged;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowCountChangedHandler>>).subscribe(onRowCountChangedHandler, () => {
+      this._eventHandler.subscribe(dataView.onRowCountChanged, () => {
         grid.invalidate();
         this.handleOnItemCountChanged(this.dataView?.getFilteredItemCount() || 0, this.dataView?.getItemCount() ?? 0);
       });
-      const onSetItemsCalledHandler = dataView.onSetItemsCalled;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetItemsCalledHandler>>).subscribe(onSetItemsCalledHandler, (_e, args) => {
+      this._eventHandler.subscribe(dataView.onSetItemsCalled, (_e, args) => {
         this.handleOnItemCountChanged(this.dataView?.getFilteredItemCount() || 0, args.itemCount);
 
         // when user has resize by content enabled, we'll force a full width calculation since we change our entire dataset
@@ -853,8 +802,7 @@ export class SlickVanillaGridBundle {
       // when filtering data with local dataset, we need to update each row else it will not always show correctly in the UI
       // also don't use "invalidateRows" since it destroys the entire row and as bad user experience when updating a row
       if (gridOptions && gridOptions.enableFiltering && !gridOptions.enableRowDetailView) {
-        const onRowsChangedHandler = dataView.onRowsChanged;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onRowsChangedHandler>>).subscribe(onRowsChangedHandler, (_e, args) => {
+        this._eventHandler.subscribe(dataView.onRowsChanged, (_e, args) => {
           if (args?.rows && Array.isArray(args.rows)) {
             args.rows.forEach((row: number) => grid.updateRow(row));
             grid.render();
@@ -863,8 +811,7 @@ export class SlickVanillaGridBundle {
       }
 
       // when column are reordered, we need to update the visibleColumn array
-      const onColumnsReorderedHandler = grid.onColumnsReordered;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onColumnsReorderedHandler>>).subscribe(onColumnsReorderedHandler, (_e, args) => {
+      this._eventHandler.subscribe(grid.onColumnsReordered, (_e, args) => {
         this.sharedService.hasColumnsReordered = true;
         this.sharedService.visibleColumns = args.impactedColumns;
       });

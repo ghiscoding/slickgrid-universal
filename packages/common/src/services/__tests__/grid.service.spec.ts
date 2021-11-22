@@ -1,16 +1,26 @@
 import { FilterService, GridService, GridStateService, PaginationService, PubSubService, SharedService, SortService, TreeDataService } from '../index';
 import { GridOption, CellArgs, Column, OnEventArgs, SlickGrid, SlickDataView, SlickNamespace } from '../../interfaces/index';
-
-jest.useFakeTimers();
+import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
 
 declare const Slick: SlickNamespace;
+jest.useFakeTimers();
+jest.mock('flatpickr', () => { });
 
-const mockSelectionModel = {
+const mockRowSelectionModel = {
+  constructor: jest.fn(),
   init: jest.fn(),
-  destroy: jest.fn()
-};
-const mockSelectionModelImplementation = jest.fn().mockImplementation(() => mockSelectionModel);
+  destroy: jest.fn(),
+  dispose: jest.fn(),
+  getSelectedRows: jest.fn(),
+  setSelectedRows: jest.fn(),
+  getSelectedRanges: jest.fn(),
+  setSelectedRanges: jest.fn(),
+  onSelectedRangesChanged: new Slick.Event(),
+} as unknown as SlickRowSelectionModel;
 
+jest.mock('../../extensions/slickRowSelectionModel', () => ({
+  SlickRowSelectionModel: jest.fn().mockImplementation(() => mockRowSelectionModel),
+}));
 jest.mock('flatpickr', () => { });
 
 const filterServiceStub = {
@@ -91,9 +101,6 @@ const treeDataServiceStub = {
 } as unknown as TreeDataService;
 
 describe('Grid Service', () => {
-  jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockSelectionModelImplementation);
-  Slick.RowSelectionModel = mockSelectionModelImplementation;
-
   let service: GridService;
   const sharedService = new SharedService();
   const mockGridOptions = { enableAutoResize: true } as GridOption;
@@ -114,12 +121,12 @@ describe('Grid Service', () => {
   });
 
   it('should dispose of the service', () => {
-    const destroySpy = jest.spyOn(mockSelectionModel, 'destroy');
+    const disposeSpy = jest.spyOn(mockRowSelectionModel, 'dispose');
 
     service.highlightRow(0, 10, 15);
     service.dispose();
 
-    expect(destroySpy).toHaveBeenCalled();
+    expect(disposeSpy).toHaveBeenCalled();
   });
 
   describe('getAllColumnDefinitions method', () => {

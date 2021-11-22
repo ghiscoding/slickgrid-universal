@@ -1,7 +1,7 @@
-import { ExtensionName } from '../../enums/index';
-import { Column, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, GridOption, MenuCommandItem, SlickGrid } from '../../interfaces/index';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
+import { BackendUtilityService } from '../../services/backendUtility.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const gridStub = {
@@ -11,46 +11,12 @@ const gridStub = {
   registerPlugin: jest.fn(),
 } as unknown as SlickGrid;
 
-const mockAddon = jest.fn().mockImplementation(() => ({
-  init: jest.fn(),
-  destroy: jest.fn()
-}));
-
-jest.mock('slickgrid/slick.groupitemmetadataprovider', () => mockAddon);
-jest.mock('slickgrid/controls/slick.columnpicker', () => mockAddon);
-jest.mock('slickgrid/controls/slick.gridmenu', () => mockAddon);
-jest.mock('slickgrid/plugins/slick.autotooltips', () => mockAddon);
-jest.mock('slickgrid/plugins/slick.cellmenu', () => mockAddon);
-jest.mock('slickgrid/plugins/slick.cellexternalcopymanager', () => mockAddon);
-jest.mock('slickgrid/plugins/slick.contextmenu', () => mockAddon);
-jest.mock('slickgrid/plugins/slick.draggablegrouping', () => mockAddon);
-jest.mock('slickgrid/plugins/slick.headerbuttons', () => mockAddon);
-jest.mock('slickgrid/plugins/slick.headermenu', () => mockAddon);
-jest.mock('slickgrid/plugins/slick.rowselectionmodel', () => mockAddon);
-jest.mock('slickgrid/plugins/slick.rowdetailview', () => mockAddon);
-jest.mock('slickgrid/plugins/slick.rowmovemanager', () => mockAddon);
-
-const Slick = {
-  AutoTooltips: mockAddon,
-  DraggableGrouping: mockAddon,
-  RowMoveManager: mockAddon,
-  RowSelectionModel: mockAddon,
-  Controls: {
-    ColumnPicker: mockAddon,
-    GridMenu: mockAddon,
-  },
-  Data: {
-    GroupItemMetadataProvider: mockAddon
-  },
-  Plugins: {
-    CellMenu: mockAddon,
-    ContextMenu: mockAddon,
-    CellExternalCopyManager: mockAddon,
-    HeaderButtons: mockAddon,
-    HeaderMenu: mockAddon,
-    RowDetailView: mockAddon,
-  }
-};
+const backendUtilityServiceStub = {
+  executeBackendProcessesCallback: jest.fn(),
+  executeBackendCallback: jest.fn(),
+  onBackendError: jest.fn(),
+  refreshBackendDataset: jest.fn(),
+} as unknown as BackendUtilityService;
 
 describe('extensionUtility', () => {
   let sharedService: SharedService;
@@ -61,7 +27,7 @@ describe('extensionUtility', () => {
     beforeEach(async () => {
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
-      utility = new ExtensionUtility(sharedService, translateService);
+      utility = new ExtensionUtility(sharedService, backendUtilityServiceStub, translateService);
       await translateService.use('fr');
     });
 
@@ -85,6 +51,27 @@ describe('extensionUtility', () => {
       });
     });
 
+    describe('refreshBackendDataset method', () => {
+      let gridOptionsMock;
+
+      beforeEach(() => {
+        gridOptionsMock = { enableTranslate: true, enableGridMenu: true } as GridOption;
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      });
+
+      it('should call refresh of backend when method is called', () => {
+        const refreshSpy = jest.spyOn(backendUtilityServiceStub, 'refreshBackendDataset');
+        utility.refreshBackendDataset();
+        expect(refreshSpy).toHaveBeenCalledWith(gridOptionsMock);
+      });
+
+      it('should call refresh of backend when method is called', () => {
+        const refreshSpy = jest.spyOn(backendUtilityServiceStub, 'refreshBackendDataset');
+        utility.refreshBackendDataset({ enablePagination: true });
+        expect(refreshSpy).toHaveBeenCalledWith({ ...gridOptionsMock, enablePagination: true });
+      });
+    });
+
     describe('sortItems method', () => {
       it('should sort the items by their order property', () => {
         const inputArray = [{ field: 'field1', order: 3 }, { field: 'field2', order: 1 }, { field: 'field3', order: 2 }];
@@ -102,6 +89,18 @@ describe('extensionUtility', () => {
         utility.sortItems(inputArray, 'order');
 
         expect(inputArray).toEqual(expectedArray);
+      });
+    });
+
+    describe('translateMenuItemsFromTitleKey method', () => {
+      it('should translate using the Translate Service', () => {
+        const commandItem1 = { command: 'clear-filter', titleKey: 'CLEAR_ALL_FILTERS' } as MenuCommandItem;
+        const commandItem2 = { command: 'clear-sorting', titleKey: 'CLEAR_ALL_SORTING' } as MenuCommandItem;
+
+        utility.translateMenuItemsFromTitleKey([commandItem1, commandItem2]);
+
+        expect(commandItem1.title).toBe('Supprimer tous les filtres');
+        expect(commandItem2.title).toBe('Supprimer tous les tris');
       });
     });
 
@@ -181,7 +180,7 @@ describe('extensionUtility', () => {
   describe('without Translate Service', () => {
     beforeEach(() => {
       translateService = undefined as any;
-      utility = new ExtensionUtility(sharedService, translateService);
+      utility = new ExtensionUtility(sharedService, backendUtilityServiceStub, translateService);
     });
 
     it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {

@@ -1,6 +1,6 @@
 import { FieldType } from '../../enums/index';
 import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
-import { Filters } from '..';
+import { Filters } from '../filters.index';
 import { DateRangeFilter } from '../dateRangeFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 

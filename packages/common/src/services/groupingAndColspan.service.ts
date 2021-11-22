@@ -1,20 +1,16 @@
 import {
   Column,
   EventSubscription,
-  GetSlickEventType,
   GridOption,
-  SlickColumnPicker,
   SlickDataView,
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
   SlickResizer,
 } from './../interfaces/index';
-import { ExtensionName } from '../enums/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
-import { ExtensionService } from '../services/extension.service';
 import { PubSubService } from './pubSub.service';
-import { emptyElement } from './utilities';
+import { createDomElement, emptyElement } from './domUtilities';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -24,7 +20,7 @@ export class GroupingAndColspanService {
   protected _grid!: SlickGrid;
   protected _subscriptions: EventSubscription[] = [];
 
-  constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly extensionService: ExtensionService, protected readonly pubSubService: PubSubService,) {
+  constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: PubSubService,) {
     this._eventHandler = new Slick.EventHandler();
   }
 
@@ -73,19 +69,12 @@ export class GroupingAndColspanService {
         this._eventHandler.subscribe(this._dataView.onRowCountChanged, () => this.delayRenderPreHeaderRowGroupingTitles(0));
 
         // for both picker (columnPicker/gridMenu) we also need to re-create after hiding/showing columns
-        const columnPickerExtension = this.extensionService.getExtensionByName<SlickColumnPicker>(ExtensionName.columnPicker);
-        if (columnPickerExtension?.instance?.onColumnsChanged) {
-          this._eventHandler.subscribe(columnPickerExtension.instance.onColumnsChanged, () => this.renderPreHeaderRowGroupingTitles());
-        }
         this._subscriptions.push(
-          this.pubSubService.subscribe('onHeaderMenuHideColumns', () => this.delayRenderPreHeaderRowGroupingTitles(0))
+          this.pubSubService.subscribe(`onColumnPickerColumnsChanged`, () => this.renderPreHeaderRowGroupingTitles()),
+          this.pubSubService.subscribe('onHeaderMenuHideColumns', () => this.delayRenderPreHeaderRowGroupingTitles(0)),
+          this.pubSubService.subscribe(`onGridMenuColumnsChanged`, () => this.renderPreHeaderRowGroupingTitles()),
+          this.pubSubService.subscribe(`onGridMenuMenuClose`, () => this.renderPreHeaderRowGroupingTitles()),
         );
-
-        const gridMenuExtension = this.extensionService.getExtensionByName(ExtensionName.gridMenu);
-        if (gridMenuExtension && gridMenuExtension.instance && gridMenuExtension.instance.onColumnsChanged && gridMenuExtension.instance.onMenuClose) {
-          this._eventHandler.subscribe(gridMenuExtension.instance.onColumnsChanged, () => this.renderPreHeaderRowGroupingTitles());
-          this._eventHandler.subscribe(gridMenuExtension.instance.onMenuClose, () => this.renderPreHeaderRowGroupingTitles());
-        }
 
         // we also need to re-create after a grid resize
         const resizerPlugin = grid.getPluginByName<SlickResizer>('Resizer');
@@ -94,8 +83,7 @@ export class GroupingAndColspanService {
         }
 
         // and finally we need to re-create after user calls the Grid "setOptions" when changing from regular to frozen grid (and vice versa)
-        const onSetOptionsHandler = grid.onSetOptions;
-        (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSetOptionsHandler>>).subscribe(onSetOptionsHandler, (_e, args) => {
+        this._eventHandler.subscribe(grid.onSetOptions, (_e, args) => {
           // when user changes frozen columns dynamically (e.g. from header menu), we need to re-render the pre-header of the grouping titles
           if (args?.optionsBefore?.frozenColumn !== args?.optionsAfter?.frozenColumn) {
             this.delayRenderPreHeaderRowGroupingTitles(0);
@@ -166,13 +154,12 @@ export class GroupingAndColspanService {
           }
         } else {
           widthTotal = colDef.width || 0;
-          headerElm = document.createElement('div');
-          headerElm.className = `ui-state-default slick-header-column ${isFrozenGrid ? 'frozen' : ''}`;
-          headerElm.style.width = `${widthTotal - headerColumnWidthDiff}px`;
+          headerElm = createDomElement('div', {
+            className: `ui-state-default slick-header-column ${isFrozenGrid ? 'frozen' : ''}`,
+            style: { width: `${widthTotal - headerColumnWidthDiff}px` }
+          });
 
-          const spanColumnNameElm = document.createElement('span');
-          spanColumnNameElm.className = 'slick-column-name';
-          spanColumnNameElm.textContent = colDef.columnGroup || '';
+          const spanColumnNameElm = createDomElement('span', { className: 'slick-column-name', textContent: colDef.columnGroup || '' });
 
           headerElm.appendChild(spanColumnNameElm);
           preHeaderPanel.appendChild(headerElm);

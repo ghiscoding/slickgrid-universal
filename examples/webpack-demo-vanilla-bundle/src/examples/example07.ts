@@ -21,9 +21,18 @@ export class Example7 {
   dataset: any[];
   sgb: SlickVanillaGridBundle;
   duplicateTitleHeaderCount = 1;
+  filteringEnabledClass = '';
+  sortingEnabledClass = '';
   selectedLanguage: string;
   selectedLanguageFile: string;
   translateService: TranslateService;
+
+  set isFilteringEnabled(enabled: boolean) {
+    this.filteringEnabledClass = enabled ? 'icon mdi mdi-toggle-switch' : 'icon mdi mdi-toggle-switch-off-outline';
+  }
+  set isSortingEnabled(enabled: boolean) {
+    this.sortingEnabledClass = enabled ? 'icon mdi mdi-toggle-switch' : 'icon mdi mdi-toggle-switch-off-outline';
+  }
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -32,6 +41,8 @@ export class Example7 {
     this.translateService = (<any>window).TranslateService;
     this.selectedLanguage = this.translateService.getCurrentLanguage();
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;
+    this.isFilteringEnabled = true;
+    this.isSortingEnabled = true;
   }
 
   attached() {
@@ -51,12 +62,44 @@ export class Example7 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', nameKey: 'TITLE', field: 'title', filterable: true, editor: { model: Editors.longText, required: true, alwaysSaveOnEnterKey: true },
+        id: 'title', nameKey: 'TITLE', field: 'title', filterable: true,
+        editor: { model: Editors.longText, required: true, alwaysSaveOnEnterKey: true },
+        // formatter: this.taskTranslateFormatter.bind(this),
+        // params: { useFormatterOuputToFilter: true }
+      },
+      {
+        id: 'action', name: 'Action', field: 'action', minWidth: 60, maxWidth: 60,
+        excludeFromExport: true, excludeFromHeaderMenu: true,
+        formatter: () => `<div class="button-style margin-auto" style="width: 35px; margin-top: -1px;"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
+        cellMenu: {
+          commandTitleKey: 'COMMANDS',
+          commandItems: [
+            {
+              command: 'command1', titleKey: 'DELETE_ROW',
+              iconCssClass: 'mdi mdi-close color-danger', cssClass: 'has-text-danger', textCssClass: 'bold',
+              action: (_e, args) => {
+                if (confirm(`Do you really want to delete row (${args.row + 1}) with "${args.dataContext.title}"?`)) {
+                  this.sgb?.gridService.deleteItemById(args.dataContext.id);
+                }
+              }
+            },
+            'divider',
+            {
+              command: 'help', titleKey: 'HELP', iconCssClass: 'mdi mdi-help-circle',
+              action: () => alert('Please help!')
+            },
+          ],
+          optionTitleKey: 'CHANGE_COMPLETED_FLAG',
+          optionItems: [
+            { option: true, titleKey: 'TRUE', iconCssClass: 'mdi mdi-check-box-outline', action: (e, args) => this.changeCompletedOption(args.dataContext, args.item.option) },
+            { option: false, titleKey: 'FALSE', iconCssClass: 'mdi mdi-checkbox-blank-outline', action: (e, args) => this.changeCompletedOption(args.dataContext, args.item.option) },
+          ]
+        }
       },
       {
         id: 'duration', nameKey: 'DURATION', field: 'duration', sortable: true, filterable: true,
         type: 'number', editor: { model: Editors.text, alwaysSaveOnEnterKey: true, },
-        formatter: (_row: number, _cell: number, value: any) => value > 1 ? `${value} days` : `${value} day`,
+        formatter: this.dayDurationTranslateFormatter.bind(this)
       },
       {
         id: 'percentComplete', nameKey: 'PERCENT_COMPLETE', field: 'percentComplete', type: 'number',
@@ -75,7 +118,7 @@ export class Example7 {
         editor: { model: Editors.date }, type: FieldType.dateIso, saveOutputType: FieldType.dateUtc,
       },
       {
-        id: 'effort-driven', nameKey: 'COMPLETED', field: 'effortDriven', formatter: Formatters.checkmarkMaterial,
+        id: 'completed', nameKey: 'COMPLETED', field: 'completed', formatter: Formatters.checkmarkMaterial,
         filterable: true, sortable: true,
         filter: {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
@@ -176,6 +219,9 @@ export class Example7 {
         container: '.demo-container',
         rightPadding: 10
       },
+      gridMenu: {
+        customTitleKey: 'CUSTOM_COMMANDS',
+      },
       autoEdit: true,
       autoCommitEdit: true,
       editable: true,
@@ -185,6 +231,7 @@ export class Example7 {
         exportWithFormatter: true,
         sanitizeDataExport: true
       },
+      enableCellMenu: true,
       enableFiltering: true,
       enableTranslate: true,
       translater: this.translateService, // pass the TranslateService instance to the grid
@@ -266,6 +313,14 @@ export class Example7 {
     this.sgb.filterService.clearFilters();
   }
 
+  changeCompletedOption(dataContext: any, newValue: boolean) {
+    console.log('change', dataContext, newValue);
+    if (dataContext && dataContext.hasOwnProperty('completed')) {
+      dataContext.completed = newValue;
+      this.sgb?.gridService.updateItem(dataContext);
+    }
+  }
+
   /** Delete last inserted row */
   deleteItem() {
     const requisiteColumnDef = this.columnDefinitions.find((column: Column) => column.id === 'prerequisites');
@@ -289,11 +344,11 @@ export class Example7 {
       tempDataset.push({
         id: i,
         title: 'Task ' + i,
-        duration: Math.round(Math.random() * 25),
+        duration: i === 4 ? 0 : Math.round(Math.random() * 25),
         percentComplete: Math.round(Math.random() * 100),
         start: new Date(2009, 0, 1),
         finish: new Date(2009, 0, 5),
-        effortDriven: (i % 5 === 0),
+        completed: (i % 5 === 0),
         prerequisites: (i % 2 === 0) && i !== 0 && i < 50 ? [i, i - 1] : [],
       });
     }
@@ -383,6 +438,14 @@ export class Example7 {
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;
   }
 
+  dayDurationTranslateFormatter(_row, _cell, value) {
+    return this.translateService.translate('X_DAY_PLURAL', { x: value, plural: value > 1 ? 's' : '' }) ?? '';
+  }
+
+  taskTranslateFormatter(_row, _cell, value) {
+    return this.translateService.translate('TASK_X', { x: value }) ?? '';
+  }
+
   dynamicallyAddTitleHeader() {
     const newCol = {
       id: `title${this.duplicateTitleHeaderCount++}`,
@@ -394,6 +457,8 @@ export class Example7 {
         // validator: myCustomTitleValidator, // use a custom validator
       },
       sortable: true, minWidth: 100, filterable: true,
+      // formatter: this.taskTranslateFormatter.bind(this),
+      // params: { useFormatterOuputToFilter: true },
     };
 
     // you can dynamically add your column to your column definitions
@@ -431,12 +496,12 @@ export class Example7 {
     */
   }
 
-  hideDurationColumnDynamically() {
+  hideFinishColumnDynamically() {
     // -- you can hide by one Id or multiple Ids:
     // hideColumnById(id, options), hideColumnByIds([ids], options)
     // you can also provide options, defaults are: { autoResizeColumns: true, triggerEvent: true, hideFromColumnPicker: false, hideFromGridMenu: false }
 
-    this.sgb.gridService.hideColumnById('duration');
+    this.sgb.gridService.hideColumnById('finish');
 
     // or with multiple Ids and extra options
     // this.sgb.gridService.hideColumnByIds(['duration', 'finish'], { autoResizeColumns: false, hideFromColumnPicker: true, hideFromGridMenu: false });
@@ -446,10 +511,12 @@ export class Example7 {
   // --------------------------------------------------
 
   disableFilters() {
+    this.isFilteringEnabled = false;
     this.sgb.filterService.disableFilterFunctionality(true);
   }
 
   disableSorting() {
+    this.isSortingEnabled = false;
     this.sgb.sortService.disableSortFunctionality(true);
   }
 
@@ -458,9 +525,11 @@ export class Example7 {
 
   toggleFilter() {
     this.sgb.filterService.toggleFilterFunctionality();
+    this.isFilteringEnabled = this.sgb.slickGrid.getOptions().enableFiltering;
   }
 
   toggleSorting() {
     this.sgb.sortService.toggleSortFunctionality();
+    this.isSortingEnabled = this.sgb.slickGrid.getOptions().enableSorting;
   }
 }

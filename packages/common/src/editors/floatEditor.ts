@@ -2,6 +2,7 @@ import { KeyCode } from '../enums/index';
 import { EditorArguments, EditorValidationResult } from '../interfaces/index';
 import { floatValidator } from '../editorValidators/floatValidator';
 import { InputEditor } from './inputEditor';
+import { createDomElement } from '../services/domUtilities';
 import { getDescendantProperty, toSentenceCase } from '../services/utilities';
 
 const DEFAULT_DECIMAL_PLACES = 0;
@@ -15,19 +16,16 @@ export class FloatEditor extends InputEditor {
   init() {
     if (this.columnDef && this.columnEditor && this.args) {
       const columnId = this.columnDef?.id ?? '';
-      const placeholder = this.columnEditor?.placeholder ?? '';
-      const title = this.columnEditor?.title ?? '';
-      const inputStep = (this.columnEditor.valueStep !== undefined) ? this.columnEditor.valueStep : this.getInputDecimalSteps();
       const compositeEditorOptions = this.args.compositeEditorOptions;
 
-      this._input = document.createElement('input') as HTMLInputElement;
-      this._input.className = `editor-text editor-${columnId}`;
-      this._input.type = 'number';
+      this._input = createDomElement('input', {
+        type: 'number', autocomplete: 'off',
+        className: `editor-text editor-${columnId}`,
+        placeholder: this.columnEditor?.placeholder ?? '',
+        title: this.columnEditor?.title ?? '',
+        step: `${(this.columnEditor.valueStep !== undefined) ? this.columnEditor.valueStep : this.getInputDecimalSteps()}`,
+      });
       this._input.setAttribute('role', 'presentation');
-      this._input.autocomplete = 'off';
-      this._input.placeholder = placeholder;
-      this._input.title = title;
-      this._input.step = `${inputStep}`;
       this._input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Number Editor`);
       const cellContainer = this.args.container;
       if (cellContainer && typeof cellContainer.appendChild === 'function') {

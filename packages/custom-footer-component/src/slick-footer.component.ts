@@ -3,8 +3,8 @@ const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "m
 
 import {
   Constants,
+  createDomElement,
   CustomFooterOption,
-  GetSlickEventType,
   GridOption,
   Locale,
   Metrics,
@@ -170,19 +170,21 @@ export class SlickFooterComponent {
 
   /** Create the Footer Container */
   protected createFooterContainer(gridParentContainerElm: HTMLElement) {
-    const footerElm = document.createElement('div');
-    footerElm.className = `slick-custom-footer ${this.gridUid}`;
-    footerElm.style.width = '100%';
-    footerElm.style.height = `${this.customFooterOptions.footerHeight || 20}px`;
+    const footerElm = createDomElement('div', {
+      className: `slick-custom-footer ${this.gridUid}`,
+      style: {
+        width: '100%',
+        height: `${this.customFooterOptions.footerHeight || 20}px`,
+      }
+    });
 
-    const leftFooterElm = document.createElement('div');
-    leftFooterElm.className = `left-footer ${this.customFooterOptions.leftContainerClass}`;
-    leftFooterElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, this.customFooterOptions.leftFooterText || '');
-
-    const rightFooterElm = this.createFooterRightContainer();
-
-    footerElm.appendChild(leftFooterElm);
-    footerElm.appendChild(rightFooterElm);
+    footerElm.appendChild(
+      createDomElement('div', {
+        className: `left-footer ${this.customFooterOptions.leftContainerClass}`,
+        innerHTML: sanitizeTextByAvailableSanitizer(this.gridOptions, this.customFooterOptions.leftFooterText || '')
+      })
+    );
+    footerElm.appendChild(this.createFooterRightContainer());
     this._footerElement = footerElm;
 
     if (gridParentContainerElm?.appendChild && this._footerElement) {
@@ -192,15 +194,13 @@ export class SlickFooterComponent {
 
   /** Create the Right Section Footer */
   protected createFooterRightContainer(): HTMLDivElement {
-    const rightFooterElm = document.createElement('div');
-    rightFooterElm.className = `right-footer ${this.customFooterOptions.rightContainerClass || ''}`;
+    const rightFooterElm = createDomElement('div', { className: `right-footer ${this.customFooterOptions.rightContainerClass || ''}` });
 
     if (!this._isRightFooterOriginallyEmpty) {
       rightFooterElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, this.customFooterOptions.rightFooterText || '');
     } else if (!this.customFooterOptions.hideMetrics) {
       rightFooterElm.classList.add('metrics');
-      const lastUpdateElm = document.createElement('span');
-      lastUpdateElm.className = 'timestamp';
+      const lastUpdateElm = createDomElement('span', { className: 'timestamp' });
 
       if (!this.customFooterOptions.hideLastUpdateTimestamp) {
         const footerLastUpdateElm = this.createFooterLastUpdate();
@@ -209,41 +209,32 @@ export class SlickFooterComponent {
         }
       }
 
-      const itemCountElm = document.createElement('span');
-      itemCountElm.className = 'item-count';
-      itemCountElm.textContent = `${this.metrics?.itemCount ?? '0'}`;
-
       // last update elements
       rightFooterElm.appendChild(lastUpdateElm);
-      rightFooterElm.appendChild(itemCountElm);
+      rightFooterElm.appendChild(
+        createDomElement('span', { className: 'item-count', textContent: `${this.metrics?.itemCount ?? '0'}` })
+      );
 
       // total count element (unless hidden)
       if (!this.customFooterOptions.hideTotalItemCount) {
         // add carriage return which will add a space before the span
         rightFooterElm.appendChild(document.createTextNode('\r\n'));
-
-        const textOfElm = document.createElement('span');
-        textOfElm.className = 'text-of';
-        textOfElm.textContent = ` ${this.customFooterOptions.metricTexts?.of ?? 'of'} `;
-        rightFooterElm.appendChild(textOfElm);
+        rightFooterElm.appendChild(
+          createDomElement('span', { className: 'text-of', textContent: ` ${this.customFooterOptions.metricTexts?.of ?? 'of'} ` })
+        );
 
         // add another carriage return which will add a space after the span
         rightFooterElm.appendChild(document.createTextNode('\r\n'));
-
-        const totalCountElm = document.createElement('span');
-        totalCountElm.className = 'total-count';
-        totalCountElm.textContent = `${this.metrics?.totalItemCount ?? '0'}`;
-
-        rightFooterElm.appendChild(totalCountElm);
+        rightFooterElm.appendChild(
+          createDomElement('span', { className: 'total-count', textContent: `${this.metrics?.totalItemCount ?? '0'}` })
+        );
       }
 
       // add carriage return which will add a space before the span
       rightFooterElm.appendChild(document.createTextNode('\r\n'));
-
-      const textItemsElm = document.createElement('span');
-      textItemsElm.className = 'text-items';
-      textItemsElm.textContent = ` ${this.customFooterOptions.metricTexts?.items ?? 'items'} `;
-      rightFooterElm.appendChild(textItemsElm);
+      rightFooterElm.appendChild(
+        createDomElement('span', { className: 'text-items', textContent: ` ${this.customFooterOptions.metricTexts?.items ?? 'items'} ` })
+      );
     }
 
     return rightFooterElm;
@@ -254,24 +245,17 @@ export class SlickFooterComponent {
     // get translated text & last timestamp
     const lastUpdateText = this.customFooterOptions?.metricTexts?.lastUpdate ?? 'Last Update';
     const lastUpdateTimestamp = moment(this.metrics?.endTime).format(this.customFooterOptions.dateFormat);
+    const lastUpdateContainerElm = createDomElement('span');
 
-    const lastUpdateElm = document.createElement('span');
-    lastUpdateElm.className = 'text-last-update';
-    lastUpdateElm.textContent = lastUpdateText;
-
-    const lastUpdateTimestampElm = document.createElement('span');
-    lastUpdateTimestampElm.className = 'last-update-timestamp';
-    lastUpdateTimestampElm.textContent = lastUpdateTimestamp;
-
-    const separatorElm = document.createElement('span');
-    separatorElm.className = 'separator';
-    separatorElm.textContent = ` ${this.customFooterOptions.metricSeparator || ''} `;
-
-    const lastUpdateContainerElm = document.createElement('span');
-    lastUpdateContainerElm.appendChild(lastUpdateElm);
+    lastUpdateContainerElm.appendChild(
+      createDomElement('span', { className: 'text-last-update', textContent: lastUpdateText }));
     lastUpdateContainerElm.appendChild(document.createTextNode('\r\n'));
-    lastUpdateContainerElm.appendChild(lastUpdateTimestampElm);
-    lastUpdateContainerElm.appendChild(separatorElm);
+    lastUpdateContainerElm.appendChild(
+      createDomElement('span', { className: 'last-update-timestamp', textContent: lastUpdateTimestamp })
+    );
+    lastUpdateContainerElm.appendChild(
+      createDomElement('span', { className: 'separator', textContent: ` ${this.customFooterOptions.metricSeparator || ''} ` })
+    );
 
     return lastUpdateContainerElm;
   }
@@ -288,8 +272,7 @@ export class SlickFooterComponent {
       const selectedCountText = customFooterOptions.metricTexts?.itemsSelected ?? this.locales?.TEXT_ITEMS_SELECTED ?? 'TEXT_ITEMS_SELECTED';
       customFooterOptions.leftFooterText = `0 ${selectedCountText}`;
 
-      const onSelectedRowsChangedHandler = this.grid.onSelectedRowsChanged;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSelectedRowsChangedHandler>>).subscribe(onSelectedRowsChangedHandler, (_e, args) => {
+      this._eventHandler.subscribe(this.grid.onSelectedRowsChanged, (_e, args) => {
         this._selectedRowCount = args.rows.length;
         const selectedCountText2 = customFooterOptions.metricTexts?.itemsSelected ?? this.locales?.TEXT_ITEMS_SELECTED ?? 'TEXT_ITEMS_SELECTED';
         this.leftFooterText = `${this._selectedRowCount} ${selectedCountText2}`;

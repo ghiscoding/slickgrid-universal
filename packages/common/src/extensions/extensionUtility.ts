@@ -1,12 +1,16 @@
 import { Constants } from '../constants';
-import { Column } from '../interfaces/column.interface';
+import { Column, GridMenuItem, GridOption, Locale, MenuCommandItem, MenuOptionItem, } from '../interfaces/index';
+import { BackendUtilityService } from '../services/backendUtility.service';
 import { SharedService } from '../services/shared.service';
-import { TranslaterService } from '../services';
+import { TranslaterService } from '../services/translater.service';
 import { getTranslationPrefix } from '../services/utilities';
-import { Locale } from '../interfaces/locale.interface';
 
 export class ExtensionUtility {
-  constructor(private readonly sharedService: SharedService, private readonly translaterService?: TranslaterService) { }
+  constructor(
+    private readonly sharedService: SharedService,
+    private readonly backendUtilities?: BackendUtilityService,
+    private readonly translaterService?: TranslaterService
+  ) { }
 
   /**
    * From a Grid Menu object property name, we will return the correct title output string following this order
@@ -35,6 +39,7 @@ export class ExtensionUtility {
       output = this.translaterService.translate(titleKey || ' ');
     } else {
       switch (propName) {
+        case 'commandTitle':
         case 'customTitle':
           output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}COMMANDS` || ' ') || locales?.TEXT_COMMANDS;
           break;
@@ -53,20 +58,6 @@ export class ExtensionUtility {
       }
     }
     return output;
-  }
-
-  /**
-   * Loop through object provided and set to null any property found starting with "onX"
-   * @param {Object}: obj
-   */
-  nullifyFunctionNameStartingWithOn(obj?: any) {
-    if (obj) {
-      for (const prop of Object.keys(obj)) {
-        if (prop.startsWith('on')) {
-          obj[prop] = null;
-        }
-      }
-    }
   }
 
   /**
@@ -93,6 +84,25 @@ export class ExtensionUtility {
     }
   }
 
+  /** Refresh the dataset through the Backend Service */
+  refreshBackendDataset(inputGridOptions?: GridOption) {
+    // user can pass new set of grid options which will override current ones
+    let gridOptions = this.sharedService.gridOptions;
+    if (inputGridOptions) {
+      gridOptions = { ...this.sharedService.gridOptions, ...inputGridOptions };
+      this.sharedService.gridOptions = gridOptions;
+    }
+    this.backendUtilities?.refreshBackendDataset(gridOptions);
+  }
+
+  /** Run the Override function when it exists, if it returns True then it is usable/visible */
+  runOverrideFunctionWhenExists<T = any>(overrideFn: ((args: any) => boolean) | undefined, args: T): boolean {
+    if (typeof overrideFn === 'function') {
+      return !!(overrideFn.call(this, args));
+    }
+    return true;
+  }
+
   /**
    * Sort items (by pointers) in an array by a property name
    * @param {Array<Object>} items array
@@ -110,13 +120,27 @@ export class ExtensionUtility {
     }
   }
 
-  /** Translate the an array of items from an input key and assign to the output key */
+  /** Translate the array of items from an input key and assign them to their output key */
   translateItems<T = any>(items: T[], inputKey: string, outputKey: string) {
     if (Array.isArray(items)) {
       for (const item of items) {
-        if ((item as any)[inputKey]) {
-          (item as any)[outputKey] = this.translaterService && this.translaterService.getCurrentLanguage && this.translaterService.translate && this.translaterService.translate((item as any)[inputKey]);
+        if ((item as any).hasOwnProperty(inputKey)) {
+          (item as any)[outputKey] = this.translaterService?.translate?.((item as any)[inputKey]);
         }
+      }
+    }
+  }
+
+  /**
+   * Loop through all Menu Command Items and use `titleKey` property to translate (or use Locale) appropriate `title` property
+   * @param {Array<MenuCommandItem | String>} items - Menu Command Items array
+   * @param {Object} gridOptions - Grid Options
+   */
+  translateMenuItemsFromTitleKey(items: Array<MenuCommandItem | MenuOptionItem | GridMenuItem | 'divider'>) {
+    const translationPrefix = getTranslationPrefix(this.sharedService.gridOptions);
+    for (const item of items) {
+      if (typeof item === 'object' && item.titleKey) {
+        item.title = this.translateWhenEnabledAndServiceExist(`${translationPrefix}${item.titleKey}`, `TEXT_${item.titleKey}`);
       }
     }
   }

@@ -11,7 +11,7 @@ export interface SlickEvent<T = any> {
    *      The scope ("this") within which the handler will be executed.
    *      If not specified, the scope will be set to the Event instance.
    */
-  notify: (args: T, eventData?: SlickEventData, scope?: any) => any;
+  notify: (args: T, eventData?: SlickEventData | Event | null, scope?: any) => any;
 
   /**
    * Adds an event handler to be called when the event is fired.
@@ -19,11 +19,11 @@ export interface SlickEvent<T = any> {
    * object the event was fired with.
    * @param fn {Function} Event handler.
    */
-  subscribe: (fn: (e: SlickEventData, data: Partial<T>) => void) => Promise<any>;
+  subscribe: (fn: (e: SlickEventData | Event, data: T) => void) => Promise<any>;
 
   /**
    * Removes an event handler added with <code>subscribe(fn).
    * @param fn {Function} Event handler to be removed.
    */
-  unsubscribe: (fn: (e: SlickEventData, data?: any) => void) => void;
+  unsubscribe: (fn?: (e: SlickEventData | Event, data?: any) => void) => void;
 }

@@ -61,9 +61,10 @@ export class TranslateServiceStub implements TranslaterService {
       case 'ITEMS_SELECTED': output = this._locale === 'en' ? 'items selected' : 'éléments sélectionnés'; break;
       case 'NOT_CONTAINS': output = this._locale === 'en' ? 'Not contains' : 'Ne contient pas'; break;
       case 'NOT_EQUAL_TO': output = this._locale === 'en' ? 'Not equal to' : 'Non égal à'; break;
+      case 'NONE': output = this._locale === 'en' ? 'None' : 'Aucun'; break;
       case 'OF': output = this._locale === 'en' ? 'of' : 'de'; break;
       case 'OK': output = this._locale === 'en' ? 'OK' : 'Terminé'; break;
-      case 'OPTIONS_LIST': output = this._locale === 'en' ? 'Options List' : 'Liste d\'options'; break;
+      case 'OPTIONS_LIST': output = this._locale === 'en' ? 'Options List' : `Liste d'options`; break;
       case 'OTHER': output = this._locale === 'en' ? 'Other' : 'Autre'; break;
       case 'PAGE': output = this._locale === 'en' ? 'Page' : 'Page'; break;
       case 'PRODUCT': output = this._locale === 'en' ? 'Product' : 'Produit'; break;
@@ -86,6 +87,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'SALES': output = this._locale === 'en' ? 'Sales' : 'Ventes'; break;
       case 'SALES_REP': output = this._locale === 'en' ? 'Sales Rep.' : 'Représentant des ventes'; break;
       case 'SELECT_ALL': output = this._locale === 'en' ? 'Select All' : 'Sélectionner tout'; break;
+      case 'TOGGLE_ALL_GROUPS': output = this._locale === 'en' ? 'Toggle all Groups' : 'Basculer tous les groupes'; break;
       case 'FINANCE_MANAGER': output = this._locale === 'en' ? 'Finance Manager' : 'Responsable des finances'; break;
       case 'HUMAN_RESOURCES': output = this._locale === 'en' ? 'Human Resources' : 'Ressources humaines'; break;
       case 'IT_ADMIN': output = this._locale === 'en' ? 'IT Admin' : 'Administrateur IT'; break;

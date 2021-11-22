@@ -18,13 +18,8 @@ import {
 import { FieldType, OperatorString, OperatorType, SearchTerm } from '../enums/index';
 import { Constants } from '../constants';
 import { buildSelectOperator } from './filterUtilities';
-import {
-  destroyObjectDomElementProps,
-  emptyElement,
-  getTranslationPrefix,
-  mapFlatpickrDateFormatWithFieldType,
-  mapOperatorToShorthandDesignation
-} from '../services/utilities';
+import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
+import { getTranslationPrefix, mapFlatpickrDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 import { BindingEventService } from '../services/bindingEvent.service';
 
@@ -250,16 +245,13 @@ export class CompoundDateFilter implements Filter {
       placeholder = this.columnFilter.placeholder;
     }
 
-    const filterDivInputElm = document.createElement('div');
-    filterDivInputElm.className = 'flatpickr';
-
-    const inputElm = document.createElement('input');
-    inputElm.type = 'text';
-    inputElm.className = 'form-control';
-    inputElm.dataset.input = '';
-    inputElm.placeholder = placeholder;
-
-    filterDivInputElm.appendChild(inputElm);
+    const filterDivInputElm = createDomElement('div', { className: 'flatpickr' });
+    filterDivInputElm.appendChild(
+      createDomElement('input', {
+        type: 'text', className: 'form-control',
+        placeholder, dataset: { input: '' }
+      })
+    );
     this.flatInstance = flatpickr(filterDivInputElm, this._flatpickrOptions as unknown as Partial<FlatpickrBaseOptions>);
 
     return filterDivInputElm;
@@ -303,14 +295,9 @@ export class CompoundDateFilter implements Filter {
     // create the DOM Select dropdown for the Operator
     this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.gridOptions);
     this._filterDivInputElm = this.buildDatePickerInput(searchTerm);
-    const filterContainerElm = document.createElement('div');
-    filterContainerElm.className = `form-group search-filter filter-${columnId}`;
-
-    const containerInputGroupElm = document.createElement('div');
-    containerInputGroupElm.className = 'input-group flatpickr';
-
-    const operatorInputGroupAddonElm = document.createElement('div');
-    operatorInputGroupAddonElm.className = 'input-group-addon input-group-prepend operator';
+    const filterContainerElm = createDomElement('div', { className: `form-group search-filter filter-${columnId}` });
+    const containerInputGroupElm = createDomElement('div', { className: 'input-group flatpickr' });
+    const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' });
 
     /* the DOM element final structure will be
       <div class="input-group">

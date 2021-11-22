@@ -17,10 +17,10 @@ import {
   SlickNamespace,
 } from './../interfaces/index';
 import { textValidator } from '../editorValidators/textValidator';
+import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 import {
   findOrDefault,
   getDescendantProperty,
-  sanitizeTextByAvailableSanitizer,
   setDeepValue,
   toKebabCase
 } from '../services/utilities';
@@ -135,7 +135,7 @@ export class AutoCompleteEditor implements Editor {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+    return this.grid?.getOptions?.() ?? {};
   }
 
   /** jQuery UI AutoComplete instance */

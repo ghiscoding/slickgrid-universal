@@ -1,3 +1,4 @@
+import 'jest-extended';
 import { of } from 'rxjs';
 
 import { FieldType, OperatorType } from '../../enums/index';
@@ -9,22 +10,21 @@ import {
   addWhiteSpaces,
   arrayRemoveItemByIndex,
   cancellablePromise,
+  CancelledException,
   castObservableToPromise,
   flattenToParentChildArray,
   unflattenParentChildArrayToTree,
   decimalFormatted,
   deepCopy,
-  emptyElement,
+  deepMerge,
   emptyObject,
   findItemInHierarchicalStructure,
   findItemInTreeStructure,
   findOrDefault,
   formatNumber,
   getDescendantProperty,
-  getHtmlElementOffset,
   getTranslationPrefix,
-  htmlEncode,
-  htmlEntityDecode,
+  isEmptyObject,
   isNumber,
   isObjectEmpty,
   mapMomentDateFormatWithFieldType,
@@ -35,8 +35,6 @@ import {
   parseBoolean,
   parseUtcDate,
   removeAccentFromText,
-  sanitizeHtmlToText,
-  sanitizeTextByAvailableSanitizer,
   setDeepValue,
   thousandSeparatorFormatted,
   titleCase,
@@ -47,7 +45,6 @@ import {
   unsubscribeAll,
   uniqueArray,
   uniqueObjectArray,
-  CancelledException,
 } from '../utilities';
 
 describe('Service/Utilies', () => {
@@ -108,27 +105,20 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('htmlEncode method', () => {
-    it('should return a encoded HTML string', () => {
-      const result = htmlEncode(`<div class="color: blue">Something</div>`);
-      expect(result).toBe(`&lt;div class=&quot;color: blue&quot;&gt;Something&lt;/div&gt;`);
+  describe('isEmptyObject method', () => {
+    it('should return True when comparing against an object that has properties', () => {
+      const result = isEmptyObject({ firstName: 'John', lastName: 'Doe' });
+      expect(result).toBeFalse();
     });
 
-    it('should return a encoded HTML string with single quotes encoded as well', () => {
-      const result = htmlEncode(`<div class='color: blue'>Something</div>`);
-      expect(result).toBe(`&lt;div class=&#39;color: blue&#39;&gt;Something&lt;/div&gt;`);
-    });
-  });
+    it('should return False when comparing against an object is either empty, null or undefined', () => {
+      const result1 = isEmptyObject({});
+      const result2 = isEmptyObject(null);
+      const result3 = isEmptyObject(undefined);
 
-  describe('htmlEntityDecode method', () => {
-    it('should be able to decode HTML entity of an HTML string', () => {
-      const result = htmlEntityDecode(`&#60;&#100;&#105;&#118;&#62;&#97;&#60;&#47;&#100;&#105;&#118;&#62;`);
-      expect(result).toBe(`<div>a</div>`);
-    });
-
-    it('should be able to decode unicode characters and also latin accents', () => {
-      const result = htmlEntityDecode(`&#83;&#97;&#109;&#39;&#115;&#32;&#55357;&#56960;&#55358;&#56708;&#32;&#101;&#115;&#112;&#97;&#241;&#111;&#108;`);
-      expect(result).toBe(`Sam's 🚀🦄 español`);
+      expect(result1).toBeTrue();
+      expect(result2).toBeTrue();
+      expect(result3).toBeTrue();
     });
   });
 
@@ -469,15 +459,92 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('emptyElement method', () => {
-    const div = document.createElement('div');
-    div.innerHTML = `<ul><li>Item 1</li><li>Item 2</li></ul>`;
-    document.body.appendChild(div);
+  describe('deepMerge method', () => {
+    it('should return undefined when both inputs are undefined', () => {
+      const obj1 = undefined;
+      const obj2 = null;
+      const output = deepMerge(obj1, obj2);
+      expect(output).toEqual(undefined);
+    });
 
-    it('should empty the DOM element', () => {
-      expect(div.outerHTML).toBe('<div><ul><li>Item 1</li><li>Item 2</li></ul></div>');
-      emptyElement(div);
-      expect(div.outerHTML).toBe('<div></div>');
+    it('should merge object even when 1st input is undefined because 2nd input is an object', () => {
+      const input1 = undefined;
+      const input2 = { firstName: 'John' };
+      const output = deepMerge(input1, input2);
+      expect(output).toEqual({ firstName: 'John' });
+    });
+
+    it('should merge object even when 1st input is undefined because 2nd input is an object', () => {
+      const input1 = { firstName: 'John' };
+      const input2 = undefined;
+      const output = deepMerge(input1, input2);
+      expect(output).toEqual({ firstName: 'John' });
+    });
+
+    it('should provide empty object as input and expect output object to include 2nd object', () => {
+      const input1 = {};
+      const input2 = { firstName: 'John' };
+      const output = deepMerge(input1, input2);
+      expect(output).toEqual({ firstName: 'John' });
+    });
+
+    it('should provide filled object and return same object when 2nd object is also an object', () => {
+      const input1 = { firstName: 'Jane' };
+      const input2 = { firstName: { name: 'John' } };
+      const output = deepMerge(input1, input2);
+      expect(output).toEqual({ firstName: { name: 'John' } });
+    });
+
+    it('should provide input object with undefined property and expect output object to return merged object from 2nd object when that one is filled', () => {
+      const input1 = { firstName: undefined };
+      const input2 = { firstName: {} };
+      const output = deepMerge(input1, input2);
+      expect(output).toEqual({ firstName: {} });
+    });
+
+    it('should provide input object with undefined property and expect output object to return merged object from 2nd object when that one is filled', () => {
+      const input1 = { firstName: { name: 'John' } };
+      const input2 = { firstName: undefined };
+      const output = deepMerge(input1, input2);
+      expect(output).toEqual({ firstName: undefined });
+    });
+
+    it('should merge 2 objects and expect objects to be merged with both side', () => {
+      const input1 = { a: 1, b: 1, c: { x: 1, y: 1 }, d: [1, 1] };
+      const input2 = { b: 2, c: { y: 2, z: 2 }, d: [2, 2], e: 2 };
+
+      const output = deepMerge(input1, input2);
+      expect(output).toEqual({
+        a: 1, b: 2, c: { x: 1, y: 2, z: 2 },
+        d: [1, 1, 2, 2],
+        e: 2
+      });
+    });
+
+    it('should merge 3 objects and expect objects to be merged with both side', () => {
+      const input1 = { a: 1, b: 1, c: { x: 1, y: 1 }, d: [1, 1] };
+      const input2 = { b: 2, c: { y: 2, z: 2 } };
+      const input3 = { d: [2, 2], e: 2 };
+
+      const output = deepMerge(input1, input2, input3);
+      expect(output).toEqual({
+        a: 1, b: 2, c: { x: 1, y: 2, z: 2 },
+        d: [1, 1, 2, 2],
+        e: 2
+      });
+    });
+
+    it('should merge 3 objects, by calling deepMerge 2 times, and expect objects to be merged with both side', () => {
+      const input1 = { a: 1, b: 1, c: { x: 1, y: 1 }, d: [1, 1] };
+      const input2 = { b: 2, c: { y: 2, z: 2 } };
+      const input3 = { d: [2, 2], e: 2 };
+
+      const output = deepMerge(deepMerge(input1, input2), input3);
+      expect(output).toEqual({
+        a: 1, b: 2, c: { x: 1, y: 2, z: 2 },
+        d: [1, 1, 2, 2],
+        e: 2
+      });
     });
   });
 
@@ -646,26 +713,6 @@ describe('Service/Utilies', () => {
       const thousandSeparator = '_';
       const output = formatNumber(input, null as any, null as any, displayNegativeNumberWithParentheses, currencyPrefix, currencySuffix, decimalSeparator, thousandSeparator);
       expect(output).toBe('($12_345_678 CAD)');
-    });
-  });
-
-  describe('getHtmlElementOffset method', () => {
-    const div = document.createElement('div');
-    div.innerHTML = `<span></span>`;
-    document.body.appendChild(div);
-
-    it('should return top/left 0 when creating a new element in the document without positions', () => {
-      const output = getHtmlElementOffset(div);
-      expect(output).toEqual({ top: 0, left: 0 });
-    });
-
-    it('should return same top/left positions as defined in the document/window', () => {
-      jest.spyOn(div, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 25 } as any);
-      div.style.top = '10px';
-      div.style.left = '25px';
-
-      const output = getHtmlElementOffset(div);
-      expect(output).toEqual({ top: 10, left: 25 });
     });
   });
 
@@ -1322,92 +1369,6 @@ describe('Service/Utilies', () => {
       expect(removeAccentFromText(input1, true)).toBe('jose');
       expect(removeAccentFromText(input2, true)).toBe('chevre');
       expect(removeAccentFromText(input3, true)).toBe('aaaaaaaeeeeeiiiiiioooooo');
-    });
-  });
-
-  describe('sanitizeHtmlToText method', () => {
-    it('should return original value when input does not include any HTML tags', () => {
-      const input = 'foo bar';
-      const output = sanitizeHtmlToText(input);
-      expect(output).toBe('foo bar');
-    });
-
-    it('should return a string with only the HTML text content without any HTML tags', () => {
-      const input = '<div class="color: blue">Something</div>';
-      const output = sanitizeHtmlToText(input);
-      expect(output).toBe('Something');
-    });
-
-    it('should return the script content without javascript script tags when a script is provided', () => {
-      const input = '<script>alert("Hello World")</script>';
-      const output = sanitizeHtmlToText(input);
-      expect(output).toBe('alert("Hello World")');
-    });
-  });
-
-  describe('sanitizeTextByAvailableSanitizer method', () => {
-    describe('use default DOMPurify sanitizer when no sanitizer exist', () => {
-      const gridOptions = {} as GridOption;
-
-      it('should return original value when input does not include any HTML tags', () => {
-        const input = 'foo bar';
-        const output = sanitizeTextByAvailableSanitizer(gridOptions, input);
-        expect(output).toBe('foo bar');
-      });
-
-      it('should return original value when input does not include any bad HTML tags', () => {
-        const input = '<div class="color: blue">Something</div>';
-        const output = sanitizeTextByAvailableSanitizer(gridOptions, input);
-        expect(output).toBe('<div class="color: blue">Something</div>');
-      });
-
-      it('should return empty string when some javascript script tags are included', () => {
-        const input = '<script>alert("Hello World")</script>';
-        const output = sanitizeTextByAvailableSanitizer(gridOptions, input);
-        expect(output).toBe('');
-      });
-
-      it('should return an empty <a> link tag when "javascript:" is part of the dirty html', () => {
-        const input = '<a href="javascript:alert(\"Hello World\")"></a>';
-        const output = sanitizeTextByAvailableSanitizer(gridOptions, input);
-        expect(output).toBe('<a></a>');
-      });
-    });
-
-    describe('use custom sanitizer when provided in the grid options', () => {
-      const gridOptions = {
-        sanitizer: (dirtyHtml) => (dirtyHtml.replace(/(\b)(on\S+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script([<>]*)/gi, '')),
-      } as GridOption;
-
-      it('should return original value when input does not include any HTML tags', () => {
-        const input = 'foo bar';
-        const output = sanitizeTextByAvailableSanitizer(gridOptions, input);
-        expect(output).toBe('foo bar');
-      });
-
-      it('should return original value when input does not include any bad HTML tags', () => {
-        const input = '<div class="color: blue">Something</div>';
-        const output = sanitizeTextByAvailableSanitizer(gridOptions, input);
-        expect(output).toBe('<div class="color: blue">Something</div>');
-      });
-
-      it('should return empty string when some javascript script tags are included', () => {
-        const input = '<script>alert("Hello World")</script>';
-        const output = sanitizeTextByAvailableSanitizer(gridOptions, input);
-        expect(output).toBe('');
-      });
-
-      it('should return text without the word "javascript:" when that is part of the dirty html', () => {
-        const input = 'javascript:alert("Hello World")';
-        const output = sanitizeTextByAvailableSanitizer(gridOptions, input);
-        expect(output).toBe('');
-      });
-
-      it('should return an empty <a> link tag when "javascript:" is part of the dirty html', () => {
-        const input = '<a href="javascript:alert(\"Hello World\")"></a>';
-        const output = sanitizeTextByAvailableSanitizer(gridOptions, input);
-        expect(output).toBe('<a href="></a>');
-      });
     });
   });
 

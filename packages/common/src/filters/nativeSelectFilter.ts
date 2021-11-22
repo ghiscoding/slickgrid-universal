@@ -8,7 +8,8 @@ import {
   SlickGrid,
 } from '../interfaces/index';
 import { OperatorType, OperatorString, SearchTerm } from '../enums/index';
-import { emptyElement, toSentenceCase } from '../services/utilities';
+import { createDomElement, emptyElement, } from '../services/domUtilities';
+import { toSentenceCase } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 import { BindingEventService } from '../services/bindingEvent.service';
 
@@ -145,9 +146,8 @@ export class NativeSelectFilter implements Filter {
    */
   buildFilterSelectFromCollection(collection: any[]): HTMLSelectElement {
     const columnId = this.columnDef?.id ?? '';
-    const selectElm = document.createElement('select');
+    const selectElm = createDomElement('select', { className: `form-control search-filter filter-${columnId}` });
     selectElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
-    selectElm.className = `form-control search-filter filter-${columnId}`;
 
     const labelName = this.columnFilter.customStructure?.label ?? 'label';
     const valueName = this.columnFilter.customStructure?.value ?? 'value';
@@ -156,11 +156,9 @@ export class NativeSelectFilter implements Filter {
     // collection could be an Array of Strings OR Objects
     if (collection.every(x => typeof x === 'string')) {
       for (const option of collection) {
-        const selectOption = document.createElement('option');
-        selectOption.value = option;
-        selectOption.label = option;
-        selectOption.textContent = option;
-        selectElm.appendChild(selectOption);
+        selectElm.appendChild(
+          createDomElement('option', { value: option, label: option, textContent: option })
+        );
       }
     } else {
       for (const option of collection) {
@@ -171,10 +169,9 @@ export class NativeSelectFilter implements Filter {
         const labelKey = option.labelKey || option[labelName];
         const textLabel = ((option.labelKey || isEnabledTranslate) && this.translater && this.translater.translate && this.translater.getCurrentLanguage && this.translater.getCurrentLanguage()) ? this.translater.translate(labelKey || ' ') : labelKey;
 
-        const selectOption = document.createElement('option');
-        selectOption.value = option[valueName];
-        selectOption.textContent = textLabel;
-        selectElm.appendChild(selectOption);
+        selectElm.appendChild(
+          createDomElement('option', { value: option[valueName], textContent: textLabel })
+        );
       }
     }
 

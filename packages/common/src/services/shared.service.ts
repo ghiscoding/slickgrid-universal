@@ -1,10 +1,12 @@
-import { Column, CurrentPagination, GridOption, SlickDataView, SlickGrid, SlickGroupItemMetadataProvider } from '../interfaces/index';
+import { Column, CurrentPagination, GridOption, SlickDataView, SlickGrid, } from '../interfaces/index';
+import { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider';
 
 export class SharedService {
   protected _allColumns!: Column[];
   protected _dataView!: SlickDataView;
   protected _groupItemMetadataProvider!: SlickGroupItemMetadataProvider;
   protected _grid!: SlickGrid;
+  protected _gridContainerElm!: HTMLElement;
   protected _gridOptions!: GridOption;
   protected _hasColumnsReordered = false;
   protected _currentPagination!: CurrentPagination;
@@ -78,8 +80,18 @@ export class SharedService {
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
+  get gridContainerElement(): HTMLElement {
+    return this._gridContainerElm;
+  }
+
+  /** Setter for the Grid Options pulled through the Grid Object */
+  set gridContainerElement(gridContainerElm: HTMLElement) {
+    this._gridContainerElm = gridContainerElm;
+  }
+
+  /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return this._gridOptions || this._grid?.getOptions && this._grid.getOptions() || {};
+    return this._gridOptions || this._grid?.getOptions() || {};
   }
 
   /** Setter for the Grid Options pulled through the Grid Object */

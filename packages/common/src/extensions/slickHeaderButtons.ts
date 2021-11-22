@@ -1,0 +1,165 @@
+import {
+  Column,
+  DOMEvent,
+  HeaderButton,
+  HeaderButtonItem,
+  HeaderButtonOnCommandArgs,
+  HeaderButtonOption,
+  OnHeaderCellRenderedEventArgs,
+  SlickEventHandler,
+  SlickGrid,
+  SlickNamespace,
+} from '../interfaces/index';
+import { BindingEventService } from '../services/bindingEvent.service';
+import { ExtensionUtility } from '../extensions/extensionUtility';
+import { PubSubService } from '../services/pubSub.service';
+import { SharedService } from '../services/shared.service';
+import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
+
+// using external SlickGrid JS libraries
+declare const Slick: SlickNamespace;
+
+/**
+ * A plugin to add custom buttons to column headers.
+ * To specify a custom button in a column header, extend the column definition like so:
+ *   this.columnDefinitions = [{
+ *     id: 'myColumn', name: 'My column',
+ *     header: {
+ *       buttons: [{ ...button options... }, { ...button options... }]
+ *     }
+ *   }];
+ */
+export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
+  protected _buttonElms: HTMLLIElement[] = [];
+  protected _defaults = {
+    buttonCssClass: 'slick-header-button',
+  } as HeaderButtonOption;
+  pluginName: 'HeaderButtons' = 'HeaderButtons';
+
+  /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
+  constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService) {
+    super(extensionUtility, pubSubService, sharedService);
+    this._menuCssPrefix = 'slick-header-button';
+    this._camelPluginName = 'headerButtons';
+    this._bindEventService = new BindingEventService();
+    this._eventHandler = new Slick.EventHandler();
+    this.init(sharedService.gridOptions.headerButton);
+  }
+
+  get addonOptions(): HeaderButton {
+    return this._addonOptions as HeaderButton;
+  }
+  set addonOptions(newOptions: HeaderButton) {
+    this._addonOptions = newOptions;
+  }
+
+  get eventHandler(): SlickEventHandler {
+    return this._eventHandler;
+  }
+
+  get grid(): SlickGrid {
+    return this.sharedService.slickGrid;
+  }
+
+  /** Initialize plugin. */
+  init(headerButtonOptions?: HeaderButton) {
+    this._addonOptions = { ...this._defaults, ...headerButtonOptions };
+
+    this._eventHandler.subscribe(this.grid.onHeaderCellRendered, this.handleHeaderCellRendered.bind(this));
+    this._eventHandler.subscribe(this.grid.onBeforeHeaderCellDestroy, this.handleBeforeHeaderCellDestroy.bind(this));
+
+    // force the grid to re-render the header after the events are hooked up.
+    this.grid.setColumns(this.grid.getColumns());
+  }
+
+  /** @deprecated @use `dispose` Destroy plugin. */
+  destroy() {
+    this.dispose();
+  }
+
+  /** Dispose (destroy) the SlickGrid 3rd party plugin */
+  dispose() {
+    super.dispose();
+    this._buttonElms.forEach(elm => elm.remove());
+  }
+
+  // --
+  // event handlers
+  // ------------------
+
+  /**
+   * Event handler when column title header are being rendered
+   * @param {Object} event - The event
+   * @param {Object} args - object arguments
+   */
+  protected handleHeaderCellRendered(_e: Event, args: OnHeaderCellRenderedEventArgs) {
+    const column = args.column;
+
+    if (column.header?.buttons && Array.isArray(column.header.buttons)) {
+      let i = column.header.buttons.length;
+      while (i--) {
+        const buttonItem = column.header.buttons[i];
+        const itemElm = this.populateSingleCommandOrOptionItem('command', this.addonOptions, null, buttonItem, args, this.handleButtonClick.bind(this));
+
+        if (itemElm) {
+          this._buttonElms.push(itemElm);
+          args.node.appendChild(itemElm);
+        }
+      }
+    }
+  }
+
+  /**
+   * Event handler before the header cell is being destroyed
+   * @param {Object} event - The event
+   * @param {Object} args.column - The column definition
+   */
+  protected handleBeforeHeaderCellDestroy(_e: Event, args: { column: Column; node: HTMLElement; }) {
+    const column = args.column;
+
+    if (column.header?.buttons && this._addonOptions?.buttonCssClass) {
+      // Removing buttons will also clean up any event handlers and data.
+      // NOTE: If you attach event handlers directly or using a different framework,
+      //       you must also clean them up here to avoid memory leaks.
+      const buttonCssClass = (this._addonOptions?.buttonCssClass || '').replace(/(\s+)/g, '.');
+      if (buttonCssClass) {
+        args.node.querySelectorAll(`.${buttonCssClass}`).forEach(elm => elm.remove());
+      }
+    }
+  }
+
+  protected handleButtonClick(event: DOMEvent<HTMLDivElement>, _type: MenuType, button: ExtractMenuType<ExtendableItemTypes, MenuType>, columnDef?: Column) {
+    if ((button as HeaderButtonItem).command && !(button as HeaderButtonItem).disabled) {
+      const command = (button as HeaderButtonItem).command || '';
+
+      const callbackArgs = {
+        grid: this.grid,
+        column: columnDef,
+        button,
+      } as HeaderButtonOnCommandArgs;
+
+      if (command) {
+        callbackArgs.command = command;
+      }
+
+      // execute action callback when defined
+      if (typeof (button as HeaderButtonItem).action === 'function' && !(button as HeaderButtonItem).disabled) {
+        (button as HeaderButtonItem).action!.call(this, event, callbackArgs);
+      }
+
+      if (command !== null && !(button as HeaderButtonItem).disabled && this._addonOptions?.onCommand) {
+        this.pubSubService.publish('onHeaderButtonCommand', callbackArgs);
+        this._addonOptions.onCommand(event as any, callbackArgs);
+
+        // Update the header in case the user updated the button definition in the handler.
+        if (columnDef?.id) {
+          this.grid.updateColumnHeader(columnDef.id);
+        }
+      }
+    }
+
+    // Stop propagation so that it doesn't register as a header click event.
+    event.preventDefault();
+    event.stopPropagation();
+  }
+}

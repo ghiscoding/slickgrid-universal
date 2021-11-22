@@ -20,7 +20,6 @@ import {
   FilterCallbackArg,
   FilterChangedArgs,
   FilterConditionOption,
-  GetSlickEventType,
   GridOption,
   SearchColumnFilter,
   SlickEvent,
@@ -30,7 +29,8 @@ import {
   SlickNamespace,
 } from './../interfaces/index';
 import { BackendUtilityService } from './backendUtility.service';
-import { deepCopy, getDescendantProperty, mapOperatorByFieldType, sanitizeHtmlToText } from './utilities';
+import { sanitizeHtmlToText, } from '../services/domUtilities';
+import { deepCopy, getDescendantProperty, mapOperatorByFieldType, } from './utilities';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
 import { RxJsFacade, Subject } from './rxjsFacade';
@@ -154,8 +154,7 @@ export class FilterService {
     this._filtersMetadata = [];
 
     // subscribe to SlickGrid onHeaderRowCellRendered event to create filter template
-    const onHeaderRowCellRenderedHandler = grid.onHeaderRowCellRendered;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderRowCellRenderedHandler>>).subscribe(onHeaderRowCellRenderedHandler, (_e, args) => {
+    this._eventHandler.subscribe(grid.onHeaderRowCellRendered, (_e, args) => {
       // firstColumnIdRendered is null at first, so if it changes to being filled and equal, then we would know that it was already rendered
       // this is to avoid rendering the filter twice (only the Select Filter for now), rendering it again also clears the filter which has unwanted side effect
       if (args.column.id === this._firstColumnIdRendered) {
@@ -172,8 +171,7 @@ export class FilterService {
 
     // subscribe to the SlickGrid event and call the backend execution
     if (this._onSearchChange) {
-      const onSearchChangeHandler = this._onSearchChange;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSearchChangeHandler>>).subscribe(onSearchChangeHandler, this.onBackendFilterChange.bind(this));
+      this._eventHandler.subscribe(this._onSearchChange, this.onBackendFilterChange.bind(this));
     }
   }
 
@@ -190,8 +188,7 @@ export class FilterService {
 
     // bind any search filter change (e.g. input filter input change event)
     if (this._onSearchChange) {
-      const onSearchChangeHandler = this._onSearchChange;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSearchChangeHandler>>).subscribe(this._onSearchChange, async (_e, args) => {
+      this._eventHandler.subscribe(this._onSearchChange, async (_e, args) => {
         const isClearFilterEvent = args?.clearFilterTriggered ?? false;
 
         // emit an onBeforeFilterChange event except when it's called by a clear filter
@@ -221,8 +218,7 @@ export class FilterService {
     }
 
     // subscribe to SlickGrid onHeaderRowCellRendered event to create filter template
-    const onHeaderRowCellRenderedHandler = grid.onHeaderRowCellRendered;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onHeaderRowCellRenderedHandler>>).subscribe(onHeaderRowCellRenderedHandler, (_e, args) => {
+    this._eventHandler.subscribe(grid.onHeaderRowCellRendered, (_e, args) => {
       this.addFilterTemplateToHeaderRow(args);
     });
 
@@ -1144,8 +1140,9 @@ export class FilterService {
     });
 
     // loop through column definition to hide/show grid menu commands
-    if (this._gridOptions?.gridMenu?.customItems) {
-      this._gridOptions.gridMenu.customItems.forEach((menuItem) => {
+    const commandItems = this._gridOptions?.gridMenu?.commandItems ?? this._gridOptions?.gridMenu?.customItems;
+    if (commandItems) {
+      commandItems.forEach((menuItem) => {
         if (menuItem && typeof menuItem !== 'string') {
           const menuCommand = menuItem.command;
           if (menuCommand === 'clear-filter' || menuCommand === 'toggle-filter') {
@@ -1194,8 +1191,7 @@ export class FilterService {
    * @param {Object} grid - Slick Grid object
    */
   protected subscribeToOnHeaderRowCellRendered(grid: SlickGrid) {
-    const onBeforeHeaderRowCellDestroyHandler = grid.onBeforeHeaderRowCellDestroy;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onBeforeHeaderRowCellDestroyHandler>>).subscribe(onBeforeHeaderRowCellDestroyHandler, (_e, args) => {
+    this._eventHandler.subscribe(grid.onBeforeHeaderRowCellDestroy, (_e, args) => {
       const colFilter: Filter | undefined = this._filtersMetadata.find((filter: Filter) => filter.columnDef.id === args.column.id);
       colFilter?.destroy?.();
     });

@@ -1,5 +1,6 @@
 import { Constants } from './../constants';
 import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption, SlickGrid, SlickNamespace } from './../interfaces/index';
+import { createDomElement } from '../services/domUtilities';
 import { getDescendantProperty, setDeepValue, toSentenceCase } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 
@@ -67,17 +68,15 @@ export class CheckboxEditor implements Editor {
 
   init(): void {
     const columnId = this.columnDef?.id ?? '';
-    const title = this.columnEditor?.title ?? '';
     const compositeEditorOptions = this.args.compositeEditorOptions;
 
-    this._checkboxContainerElm = document.createElement('div');
-    this._checkboxContainerElm.className = `checkbox-editor-container editor-${columnId}`;
+    this._checkboxContainerElm = createDomElement('div', { className: `checkbox-editor-container editor-${columnId}` });
 
-    this._input = document.createElement('input');
-    this._input.className = `editor-checkbox editor-${columnId}`;
-    this._input.title = title;
-    this._input.type = 'checkbox';
-    this._input.value = 'true';
+    this._input = createDomElement('input', {
+      type: 'checkbox', value: 'true',
+      className: `editor-checkbox editor-${columnId}`,
+      title: this.columnEditor?.title ?? '',
+    });
     this._input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Checkbox Editor`);
 
     const cellContainer = this.args?.container;

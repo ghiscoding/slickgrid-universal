@@ -1,22 +1,22 @@
-import {
-  Column,
-  RowDetailViewOption,
-  SlickEvent,
-  SlickGrid,
-} from './index';
+import { Column, GridOption, RowDetailViewOption, SlickEvent, SlickGrid, } from './index';
+import { ContainerService } from '../services/container.service';
+import { UsabilityOverrideFn } from '../enums';
 
 /** A plugin to add row detail panel. */
 export interface SlickRowDetailView {
   pluginName: 'RowDetailView';
 
-  /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
-  constructor: (options: RowDetailViewOption) => void;
-
   /** Initialize the SlickGrid 3rd party plugin */
-  init(grid: SlickGrid): void;
+  init(grid: SlickGrid, containerService?: ContainerService): void;
+
+  /** @deprecated @use `dispose` Destroy (dispose) the SlickGrid 3rd party plugin */
+  destroy(): void;
 
   /** Destroy (dispose) the SlickGrid 3rd party plugin */
-  destroy(): void;
+  dispose(): void;
+
+  /** Create the plugin */
+  create(columnDefinitions: Column[], gridOptions: GridOption): SlickRowDetailView | null;
 
   /** Collapse all of the open items */
   collapseAll(): void;
@@ -28,10 +28,13 @@ export interface SlickRowDetailView {
   expandDetailView(item: any): void;
 
   /** Override the logic for showing (or not) the expand icon (use case example: only every 2nd row is expandable) */
-  expandableOverride?: (row: number, dataContext: any, grid: SlickGrid) => boolean;
+  expandableOverride(overrideFn: UsabilityOverrideFn): void;
 
   /** Get the Column Definition of the first column dedicated to toggling the Row Detail View */
   getColumnDefinition(): Column;
+
+  /** Get the row expandable Override function */
+  getExpandableOverride(): UsabilityOverrideFn | null;
 
   /** return the currently expanded rows */
   getExpandedRows(): Array<number | string>;

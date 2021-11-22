@@ -1,10 +1,11 @@
-import { Column, Formatters, GridOption } from '@slickgrid-universal/common';
+import { Column, ExtensionName, Formatters, GridOption } from '@slickgrid-universal/common';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 
 // use any of the Styling Theme
 // import '../material-styles.scss';
 import '../salesforce-styles.scss';
+import './example01.scss';
 
 const NB_ITEMS = 995;
 
@@ -63,8 +64,30 @@ export class Example1 {
       ...this.gridOptions1,
       ...{
         gridHeight: 255,
-        enablePagination: true,
+        columnPicker: {
+          onColumnsChanged: (e, args) => console.log('onColumnPickerColumnsChanged - visible columns count', args.visibleColumns.length),
+        },
+        gridMenu: {
+          // commandItems: [
+          //   { command: 'help', title: 'Help', positionOrder: 70, action: (e, args) => console.log(args) },
+          //   { command: '', divider: true, positionOrder: 72 },
+          //   { command: 'hello', title: 'Hello', positionOrder: 69, action: (e, args) => alert('Hello World'), cssClass: 'red', tooltip: 'Hello World', iconCssClass: 'mdi mdi-close' },
+          // ],
+          // menuUsabilityOverride: () => false,
+          onBeforeMenuShow: () => {
+            console.log('onGridMenuBeforeMenuShow');
+            // return false; // returning false would prevent the grid menu from opening
+          },
+          onAfterMenuShow: () => console.log('onGridMenuAfterMenuShow'),
+          onColumnsChanged: (_e, args) => console.log('onGridMenuColumnsChanged', args),
+          onCommand: (e, args) => {
+            // e.preventDefault(); // preventing default event would keep the menu open after the execution
+            console.log('onGridMenuCommand', args.command);
+          },
+          onMenuClose: (e, args) => console.log('onGridMenuMenuClose - visible columns count', args.visibleColumns.length),
+        },
         enableFiltering: true,
+        enablePagination: true,
         pagination: {
           pageSizes: [5, 10, 15, 20, 25, 50, 75, 100],
           pageSize: 5
@@ -113,5 +136,14 @@ export class Example1 {
   togglePaginationGrid2() {
     this.isGrid2WithPagination = !this.isGrid2WithPagination;
     this.sgb2.paginationService!.togglePaginationVisibility(this.isGrid2WithPagination);
+  }
+
+  toggleGridMenu(e: Event) {
+    if (this.sgb2?.extensionService) {
+      const gridMenuInstance = this.sgb2.extensionService.getSlickgridAddonInstance(ExtensionName.gridMenu);
+      // open the external button Grid Menu, you can also optionally pass Grid Menu options as 2nd argument
+      // for example we want to align our external button on the right without affecting the menu within the grid which will stay aligned on the left
+      gridMenuInstance.showGridMenu(e, { dropSide: 'right' });
+    }
   }
 }

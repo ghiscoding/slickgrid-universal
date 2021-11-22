@@ -1,7 +1,7 @@
 import { Column } from '../../interfaces/index';
 import { FieldType, SortDirectionNumber } from '../../enums/index';
 import { sortByFieldType } from '../sortUtilities';
-import { SortComparers } from '..';
+import { SortComparers } from '../sortComparers.index';
 
 describe('sortUtilities', () => {
   it('should call the SortComparers.numeric when FieldType is number', () => {

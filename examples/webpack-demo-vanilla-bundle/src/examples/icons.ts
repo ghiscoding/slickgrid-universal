@@ -109,6 +109,7 @@ export class Icons {
       '.mdi.mdi-database-refresh',
       '.mdi.mdi-delete',
       '.mdi.mdi-delete-outline',
+      '.mdi.mdi-dots-grid',
       '.mdi.mdi-dots-vertical',
       '.mdi.mdi-download',
       '.mdi.mdi-drag',

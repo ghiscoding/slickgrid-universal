@@ -192,7 +192,7 @@ export class Example3 {
         }
       },
       {
-        id: 'effortDriven', name: 'Effort Driven', field: 'effortDriven',
+        id: 'effortDriven', name: 'Effort-Driven', field: 'effortDriven',
         width: 80, minWidth: 20, maxWidth: 100,
         cssClass: 'cell-effort-driven',
         sortable: true,
@@ -267,7 +267,7 @@ export class Example3 {
             },
             { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, }
           ],
-          optionTitle: 'Change Complete Flag',
+          optionTitle: 'Change Effort-Driven Flag',
           optionItems: [
             { option: true, title: 'True', iconCssClass: 'mdi mdi-check-box-outline' },
             { option: false, title: 'False', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
@@ -309,6 +309,7 @@ export class Example3 {
         deleteIconCssClass: 'mdi mdi-close color-danger',
         onGroupChanged: (_e, args) => this.onGroupChanged(args),
         onExtensionRegistered: (extension) => this.draggableGroupingPlugin = extension,
+        // groupIconCssClass: 'mdi mdi-drag-vertical',
       },
       enableCheckboxSelector: true,
       enableRowSelection: true,
@@ -327,10 +328,10 @@ export class Example3 {
         // are available under the grid options as shown below
         onCommand: (e, args) => this.executeCommand(e, args),
         onOptionSelected: (_e, args) => {
-          // change "Completed" property with new option selected from the Cell Menu
+          // change "Effort-Driven" property with new option selected from the Cell Menu
           const dataContext = args && args.dataContext;
-          if (dataContext && dataContext.hasOwnProperty('completed')) {
-            dataContext.completed = args.item.option;
+          if (dataContext && dataContext.hasOwnProperty('effortDriven')) {
+            dataContext.effortDriven = args.item.option;
             this.sgb.gridService.updateItem(dataContext);
           }
         },
@@ -380,7 +381,7 @@ export class Example3 {
   }
 
   clearGrouping() {
-    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
+    if (this.draggableGroupingPlugin?.setDroppedGroups) {
       this.draggableGroupingPlugin.clearDroppedGroups();
     }
     this.sgb?.slickGrid.invalidate(); // invalidate all rows and re-render
@@ -403,7 +404,7 @@ export class Example3 {
 
   groupByDuration() {
     this.clearGrouping();
-    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
+    if (this.draggableGroupingPlugin?.setDroppedGroups) {
       this.showPreHeader();
       this.draggableGroupingPlugin.setDroppedGroups('duration');
       this.sgb?.slickGrid.invalidate(); // invalidate all rows and re-render
@@ -423,20 +424,16 @@ export class Example3 {
 
   groupByDurationEffortDriven() {
     this.clearGrouping();
-    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
+    if (this.draggableGroupingPlugin?.setDroppedGroups) {
       this.showPreHeader();
       this.draggableGroupingPlugin.setDroppedGroups(['duration', 'effortDriven']);
       this.sgb?.slickGrid.invalidate(); // invalidate all rows and re-render
-
-      // you need to manually add the sort icon(s) in UI
-      const sortColumns = [{ columnId: 'duration', sortAsc: true }];
-      this.sgb?.slickGrid.setSortColumns(sortColumns);
     }
   }
 
   groupByFieldName(_fieldName, _index) {
     this.clearGrouping();
-    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
+    if (this.draggableGroupingPlugin?.setDroppedGroups) {
       this.showPreHeader();
 
       // get the field names from Group By select(s) dropdown, but filter out any empty fields

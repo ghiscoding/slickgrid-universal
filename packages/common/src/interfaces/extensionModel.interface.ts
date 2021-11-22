@@ -8,6 +8,9 @@ export interface ExtensionModel<P extends (SlickControlList | SlickPluginList), 
   /** Instance of the Addon (3rd party SlickGrid Control or Plugin) */
   instance: P;
 
-  /** Extension Service (in Slickgrid-Universal) */
+  /**
+   * @deprecated @use `instance`, the `class` is deprecated because it points to the same reference as `instance` and so will be removed in future release.
+   * Class instance of Extension Service (in Slickgrid-Universal)
+   */
   class: E;
 }

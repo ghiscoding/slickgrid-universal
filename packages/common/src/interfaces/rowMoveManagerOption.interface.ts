@@ -1,4 +1,4 @@
-import { SlickGrid } from './slickGrid.interface';
+import { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
 
 export interface RowMoveManagerOption {
   /** Defaults to false, option to cancel editing while dragging a row */
@@ -20,7 +20,20 @@ export interface RowMoveManagerOption {
   /**  Defaults to False, do we want to disable the row selection?  */
   disableRowSelection?: boolean;
 
+  /** Defaults to True, do we want to hide the row move shadow of what we're dragging? */
   hideRowMoveShadow?: boolean;
+
+  /** Defaults to 0, optional left margin of the row move shadown element when enabled */
+  rowMoveShadowMarginLeft?: number | string;
+
+  /** Defaults to 0, optional top margin of the row move shadown element when enabled */
+  rowMoveShadowMarginTop?: number | string;
+
+  /** Defaults to 0.9, opacity of row move shadow element (requires shadow to be shown via option: `hideRowMoveShadow: false`) */
+  rowMoveShadowOpacity?: number | string;
+
+  /** Defaults to 0.75, scale size of row move shadow element (requires shadow to be shown via option: `hideRowMoveShadow: false`) */
+  rowMoveShadowScale?: number | string;
 
   /**  Defaults to False, do we want a single row move? Setting this to false means that 1 or more rows can be selected to move together.  */
   singleRowMove?: boolean;
@@ -29,5 +42,5 @@ export interface RowMoveManagerOption {
   width?: number;
 
   /** Override the logic for showing (or not) the move icon (use case example: only every 2nd row is moveable) */
-  usabilityOverride?: (row: number, dataContext: any, grid: SlickGrid) => boolean;
+  usabilityOverride?: UsabilityOverrideFn;
 }

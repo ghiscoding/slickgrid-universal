@@ -3,6 +3,7 @@ import {
   CellMenuOption,
   CheckboxSelectorOption,
   Column,
+  CompositeEditorOption,
   ContextMenuOption,
   DataViewOption,
   DraggableGroupingOption,
@@ -15,35 +16,36 @@ import {
   RowDetailViewOption,
   RowMoveManagerOption,
   RowSelectionModelOption,
-  SlickAutoTooltips,
+  SlickCompositeEditor,
+  SlickDataView,
+  SlickEditorLock,
+  SlickEvent,
+  SlickEventData,
+  SlickEventHandler,
+  SlickGrid,
+  SlickGroup,
+  SlickRange,
+  SlickRemoteModel,
+  SlickResizer,
+  SlickRowDetailView,
+} from './index';
+import {
+  SlickAutoTooltip,
   SlickCellExternalCopyManager,
   SlickCellMenu,
   SlickCellRangeDecorator,
   SlickCellRangeSelector,
   SlickCellSelectionModel,
   SlickCheckboxSelectColumn,
-  SlickColumnPicker,
-  SlickCompositeEditor,
   SlickContextMenu,
-  SlickDataView,
   SlickDraggableGrouping,
-  SlickEditorLock,
-  SlickEvent,
-  SlickEventData,
-  SlickEventHandler,
-  SlickGrid,
   SlickGridMenu,
   SlickGroupItemMetadataProvider,
   SlickHeaderButtons,
   SlickHeaderMenu,
-  SlickRange,
-  SlickRemoteModel,
-  SlickResizer,
-  SlickRowDetailView,
   SlickRowMoveManager,
   SlickRowSelectionModel,
-} from './index';
-import { CompositeEditorOption } from './compositeEditorOption.interface';
+} from '../extensions/index';
 
 /**
  * Slick Grid class interface of the entire library and it's multiple controls/plugins.
@@ -77,6 +79,8 @@ export interface SlickNamespace {
   /** Slick Grid is a data grid library and this class is the core of the library */
   Grid: new (gridContainer: HTMLElement | string, data: SlickDataView | Array<any>, columnDefinitions: Column[], gridOptions: GridOption) => SlickGrid;
 
+  /** Information about a group of rows. */
+  Group: new () => SlickGroup;
 
   // --
   // Slick Core
@@ -86,7 +90,7 @@ export interface SlickNamespace {
   CompositeEditor: new (modalColumns: Column[], containers: Array<HTMLElement | JQuery<HTMLElement> | null>, options?: CompositeEditorOption) => SlickCompositeEditor;
 
   /** Event is a Pub/Sub SlickGrid Event */
-  Event: new () => SlickEvent;
+  Event: new <T = any> () => SlickEvent<T>;
 
   /**
    * An event object for passing data to event handlers and letting them control propagation.
@@ -101,7 +105,7 @@ export interface SlickNamespace {
   GlobalEditorLock: SlickEditorLock;
 
   /** A structure containing a range of cells. */
-  Range: new () => SlickRange;
+  Range: new (fromRow?: number, fromCell?: number, toRow?: number, toCell?: number) => SlickRange;
 
 
   // --
@@ -109,7 +113,7 @@ export interface SlickNamespace {
   // -------------------------------
 
   /** AutoTooltips is a 3rd party plugin (addon) to show/hide tooltips when columns are too narrow to fit content. */
-  AutoTooltips: new (options?: AutoTooltipOption) => SlickAutoTooltips;
+  AutoTooltips: new (options?: AutoTooltipOption) => SlickAutoTooltip;
 
   /** Cell External Copy Manager is a 3rd party plugin (addon) which is an Excel like copy cell range addon */
   CellExternalCopyManager: new (options?: ExcelCopyBufferOption) => SlickCellExternalCopyManager;
@@ -137,9 +141,6 @@ export interface SlickNamespace {
 
   // all of the controls are under the Controls namespace
   Controls: {
-    /** A control to add a Column Picker (right+click on any column header to reveal the column picker) */
-    ColumnPicker: new (columns: Column[], grid: SlickGrid, options?: GridOption) => SlickColumnPicker;
-
     /** A control to add a Grid Menu (hambuger menu on top-right of the grid) */
     GridMenu: new (columns: Column[], grid: SlickGrid, options?: GridOption) => SlickGridMenu;
   },

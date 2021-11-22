@@ -1,11 +1,22 @@
+import { MenuCommandItem } from '../index';
+import { SlickHeaderMenu } from '../extensions/slickHeaderMenu';
 import {
   Column,
   HeaderMenuOption,
   MenuCommandItemCallbackArgs,
-  SlickEventData,
   SlickGrid,
 } from './index';
-import { SlickHeaderMenu } from './slickHeaderMenu.interface';
+
+export interface HeaderMenuCommandItemCallbackArgs {
+  /** Column definition */
+  column: Column;
+
+  /** Slick Grid object */
+  grid: SlickGrid;
+
+  /** html DOM element of the menu */
+  menu: Array<MenuCommandItem | 'divider'>;
+}
 
 export interface HeaderMenu extends HeaderMenuOption {
   // --
@@ -16,11 +27,11 @@ export interface HeaderMenu extends HeaderMenuOption {
   onExtensionRegistered?: (plugin: SlickHeaderMenu) => void;
 
   /** Fired After the header menu shows up. */
-  onAfterMenuShow?: (e: SlickEventData, args: { grid: SlickGrid; column: Column; menu: HTMLElement; }) => void;
+  onAfterMenuShow?: (e: Event, args: HeaderMenuCommandItemCallbackArgs) => boolean | void;
 
   /** Fired Before the header menu shows up. */
-  onBeforeMenuShow?: (e: SlickEventData, args: { grid: SlickGrid; column: Column; menu: HTMLElement; }) => void;
+  onBeforeMenuShow?: (e: Event, args: HeaderMenuCommandItemCallbackArgs) => boolean | void;
 
   /** Fired when a command is clicked */
-  onCommand?: (e: SlickEventData, args: MenuCommandItemCallbackArgs) => void;
+  onCommand?: (e: Event, args: MenuCommandItemCallbackArgs) => void;
 }

@@ -1,12 +1,18 @@
+import { UsabilityOverrideFn } from '../index';
 import { Observable, Subject } from '../services/rxjsFacade';
-import { SlickGrid } from './slickGrid.interface';
 
 export interface RowDetailViewOption {
+  /** Defaults to True, do we always render/reRender the column */
+  alwaysRenderColumn?: boolean;
+
   /** Defaults to true, which will collapse all row detail views when user calls a sort. Unless user implements a sort to deal with padding */
   collapseAllOnSort?: boolean;
 
   /** Extra classes to be added to the collapse Toggle */
   collapsedClass?: string;
+
+  /** Defaults to "_detail_selector", Row Detail column Id */
+  columnId?: string;
 
   /**
    * Defaults to 0, the column index position in the grid by default it will show as the first column (index 0).
@@ -26,6 +32,9 @@ export interface RowDetailViewOption {
 
   /** Defaults to false, when True will load the data once and then reuse it. */
   loadOnce?: boolean;
+
+  /** Defaults to null, do we want to defined a maximum number of rows to show. */
+  maxRows?: number;
 
   /**
    * How many grid rows do we want to use for the detail panel view
@@ -55,6 +64,12 @@ export interface RowDetailViewOption {
    */
   useSimpleViewportCalc?: boolean;
 
+  /** no defaults, show a tooltip text while hovering the row detail icon */
+  toolTip?: string;
+
+  /** no defaults, width of the icon column */
+  width?: number;
+
   // --
   // Callback Methods
 
@@ -63,7 +78,7 @@ export interface RowDetailViewOption {
    * It's preferable to use the "preloadView" property to use a framework View instead of plain HTML.
    * If you still wish to use these methods, we strongly suggest you to sanitize your HTML, e.g. "DOMPurify.sanitize()"
    */
-  preTemplate?: () => string;
+  preTemplate?: (item?: any) => string;
 
   /**
    * HTML Post Template (when Row Detail data is available) that will be loaded once the async function finishes
@@ -76,5 +91,5 @@ export interface RowDetailViewOption {
   process: (item: any) => Promise<any> | Observable<any> | Subject<any>;
 
   /** Override the logic for showing (or not) the expand icon (use case example: only every 2nd row is expandable) */
-  expandableOverride?: (row: number, dataContext: any, grid: SlickGrid) => boolean;
+  expandableOverride?: UsabilityOverrideFn;
 }

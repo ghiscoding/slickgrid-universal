@@ -50,7 +50,7 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, dataset[3]['firstName'], {} as Column, dataset[3], gridStub);
     expect(output).toEqual({
       addClasses: 'slick-tree-level-0',
-      text: `<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle"></span><span class="slick-tree-title" level="0">Barbara</span>`
+      text: `<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle" aria-expanded="false"></span><span class="slick-tree-title" level="0">Barbara</span>`
     });
   });
 
@@ -58,7 +58,7 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, dataset[6]['firstName'], {} as Column, dataset[6], gridStub);
     expect(output).toEqual({
       addClasses: 'slick-tree-level-1',
-      text: `<span style="display:inline-block; width:15px;"></span><span class="slick-group-toggle"></span><span class="slick-tree-title" level="1">Bobby</span>`
+      text: `<span style="display:inline-block; width:15px;"></span><span class="slick-group-toggle" aria-expanded="false"></span><span class="slick-tree-title" level="1">Bobby</span>`
     });
   });
 
@@ -66,7 +66,7 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, dataset[5]['firstName'], {} as Column, dataset[5], gridStub);
     expect(output).toEqual({
       addClasses: 'slick-tree-level-3',
-      text: `<span style="display:inline-block; width:45px;"></span><span class="slick-group-toggle"></span><span class="slick-tree-title" level="3">Sponge</span>`
+      text: `<span style="display:inline-block; width:45px;"></span><span class="slick-group-toggle" aria-expanded="false"></span><span class="slick-tree-title" level="3">Sponge</span>`
     });
   });
 
@@ -74,7 +74,7 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, dataset[1]['firstName'], {} as Column, dataset[1], gridStub);
     expect(output).toEqual({
       addClasses: 'slick-tree-level-1',
-      text: `<span style="display:inline-block; width:15px;"></span><span class="slick-group-toggle expanded"></span><span class="slick-tree-title" level="1">Jane</span>`
+      text: `<span style="display:inline-block; width:15px;"></span><span class="slick-group-toggle expanded" aria-expanded="true"></span><span class="slick-tree-title" level="1">Jane</span>`
     });
   });
 
@@ -82,7 +82,7 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, dataset[4]['firstName'], {} as Column, dataset[4], gridStub);
     expect(output).toEqual({
       addClasses: 'slick-tree-level-0',
-      text: `<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle collapsed"></span><span class="slick-tree-title" level="0">Anonymous</span>`
+      text: `<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle collapsed" aria-expanded="false"></span><span class="slick-tree-title" level="0">Anonymous</span>`
     });
   });
 
@@ -98,7 +98,7 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, { ...dataset[1]['firstName'], indent: 1 }, { field: 'firstName' } as Column, dataset[1], gridStub);
     expect(output).toEqual({
       addClasses: 'slick-tree-level-1',
-      text: `<span style="display:inline-block; width:15px;"></span><span class="slick-group-toggle expanded"></span><span class="slick-tree-title" level="1"><span class="mdi mdi-subdirectory-arrow-right"></span>Jane</span>`
+      text: `<span style="display:inline-block; width:15px;"></span><span class="slick-group-toggle expanded" aria-expanded="true"></span><span class="slick-tree-title" level="1"><span class="mdi mdi-subdirectory-arrow-right"></span>Jane</span>`
     });
   });
 
@@ -107,7 +107,7 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[3], gridStub);
     expect(output).toEqual({
       addClasses: 'slick-tree-level-0',
-      text: `<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle"></span><span class="slick-tree-title" level="0">Barbara Cane</span>`
+      text: `<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle" aria-expanded="false"></span><span class="slick-tree-title" level="0">Barbara Cane</span>`
     });
   });
 
@@ -116,7 +116,7 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[4], gridStub);
     expect(output).toEqual({
       addClasses: 'slick-tree-level-0',
-      text: `<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle collapsed"></span><span class="slick-tree-title" level="0">Anonymous &lt; Doe</span>`
+      text: `<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle collapsed" aria-expanded="false"></span><span class="slick-tree-title" level="0">Anonymous &lt; Doe</span>`
     });
   });
 
@@ -125,7 +125,7 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[3], gridStub);
     expect(output).toEqual({
       addClasses: 'slick-tree-level-0',
-      text: `<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle"></span><span class="slick-tree-title" level="0">444444</span>`
+      text: `<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle" aria-expanded="false"></span><span class="slick-tree-title" level="0">444444</span>`
     });
   });
 });

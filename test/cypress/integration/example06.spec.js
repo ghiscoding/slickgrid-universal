@@ -134,16 +134,16 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
 
   it('should Clear all Filters and default list', () => {
     cy.get('.grid6')
-      .find('button.slick-gridmenu-button')
+      .find('button.slick-grid-menu-button')
       .trigger('click')
-      .click();
+      .click({ force: true });
 
-    cy.get(`.slick-gridmenu:visible`)
-      .find('.slick-gridmenu-item')
+    cy.get(`.slick-grid-menu:visible`)
+      .find('.slick-grid-menu-item')
       .first()
       .find('span')
       .contains('Clear all Filters')
-      .click();
+      .click({ force: true });
 
     defaultSortAscList.forEach((_colName, rowIdx) => {
       if (rowIdx < defaultSortAscList.length - 1) {

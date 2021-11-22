@@ -10,8 +10,6 @@ import {
   HideColumnOption,
   OnEventArgs,
   SlickGrid,
-  SlickNamespace,
-  SlickRowSelectionModel,
 } from '../interfaces/index';
 import { arrayRemoveItemByIndex, isObjectEmpty } from './utilities';
 import { FilterService } from './filter.service';
@@ -21,9 +19,8 @@ import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
 import { SortService } from './sort.service';
 import { TreeDataService } from './treeData.service';
+import { SlickRowSelectionModel } from '../extensions/slickRowSelectionModel';
 
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
 let highlightTimerEnd: any;
 
 const GridServiceDeleteOptionDefaults: GridServiceDeleteOption = { triggerEvent: true };
@@ -56,9 +53,7 @@ export class GridService {
   }
 
   dispose() {
-    if (this._rowSelectionPlugin?.destroy) {
-      this._rowSelectionPlugin.destroy();
-    }
+    this._rowSelectionPlugin?.dispose();
   }
 
   init(grid: SlickGrid): void {
@@ -295,8 +290,8 @@ export class GridService {
    */
   highlightRow(rowNumber: number | number[], fadeDelay = 1500, fadeOutDelay = 300) {
     // create a SelectionModel if there's not one yet
-    if (!this._grid.getSelectionModel() && Slick && Slick.RowSelectionModel) {
-      this._rowSelectionPlugin = new Slick.RowSelectionModel(this._gridOptions.rowSelectionOptions);
+    if (!this._grid.getSelectionModel()) {
+      this._rowSelectionPlugin = new SlickRowSelectionModel(this._gridOptions.rowSelectionOptions);
       this._grid.setSelectionModel(this._rowSelectionPlugin);
     }
 

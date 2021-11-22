@@ -7,7 +7,8 @@ import {
   FilterCallback,
   SlickGrid,
 } from './../interfaces/index';
-import { emptyElement, hasData, toSentenceCase } from '../services/utilities';
+import { createDomElement, emptyElement, } from '../services/domUtilities';
+import { hasData, toSentenceCase } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 
 const DEFAULT_MIN_VALUE = 0;
@@ -193,31 +194,23 @@ export class SliderFilter implements Filter {
     this._currentValue = +searchTermInput;
 
     // create the DOM element
-    this.filterInputElm = document.createElement('input');
-    this.filterInputElm.type = 'range';
-    this.filterInputElm.className = `form-control slider-filter-input range ${this._elementRangeInputId}`;
-    this.filterInputElm.defaultValue = defaultValue;
-    this.filterInputElm.value = searchTermInput;
-    this.filterInputElm.min = `${minValue}`;
-    this.filterInputElm.max = `${maxValue}`;
-    this.filterInputElm.step = `${step}`;
-    this.filterInputElm.name = this._elementRangeInputId;
+    this.filterInputElm = createDomElement('input', {
+      type: 'range', name: this._elementRangeInputId,
+      className: `form-control slider-filter-input range ${this._elementRangeInputId}`,
+      defaultValue, value: searchTermInput,
+      min: `${minValue}`, max: `${maxValue}`, step: `${step}`,
+    });
     this.filterInputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
 
-    this.divContainerFilterElm = document.createElement('div');
-    this.divContainerFilterElm.className = `search-filter slider-container filter-${columnId}`;
+    this.divContainerFilterElm = createDomElement('div', { className: `search-filter slider-container filter-${columnId}` });
     this.divContainerFilterElm.appendChild(this.filterInputElm);
 
     if (!this.filterParams.hideSliderNumber) {
       this.divContainerFilterElm.classList.add('input-group');
       this.filterInputElm.value = searchTermInput;
 
-      const divGroupAppendElm = document.createElement('div');
-      divGroupAppendElm.className = 'input-group-addon input-group-append slider-value';
-
-      this.filterNumberElm = document.createElement('span');
-      this.filterNumberElm.className = `input-group-text ${this._elementRangeOutputId}`;
-      this.filterNumberElm.textContent = searchTermInput;
+      const divGroupAppendElm = createDomElement('div', { className: 'input-group-addon input-group-append slider-value' });
+      this.filterNumberElm = createDomElement('span', { className: `input-group-text ${this._elementRangeOutputId}`, textContent: searchTermInput });
       divGroupAppendElm.appendChild(this.filterNumberElm);
       this.divContainerFilterElm.appendChild(divGroupAppendElm);
     }

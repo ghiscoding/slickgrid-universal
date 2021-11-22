@@ -10,7 +10,6 @@ import {
   SlickGrid,
   TreeDataOption,
   SlickNamespace,
-  GetSlickEventType,
   SlickEventData,
 } from '../interfaces/index';
 import {
@@ -86,8 +85,7 @@ export class SortService {
     this._dataView = grid?.getData?.() ?? {} as SlickDataView;
 
     // subscribe to the SlickGrid event and call the backend execution
-    const onSortHandler = grid.onSort;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSortHandler>>).subscribe(onSortHandler, this.onBackendSortChanged.bind(this) as EventListener);
+    this._eventHandler.subscribe(grid.onSort, this.onBackendSortChanged.bind(this) as EventListener);
   }
 
   /**
@@ -102,9 +100,7 @@ export class SortService {
     this._dataView = grid.getData() as SlickDataView;
 
     this.processTreeDataInitialSort();
-
-    const onSortHandler = grid.onSort;
-    (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSortHandler>>).subscribe(onSortHandler, this.handleLocalOnSort.bind(this) as EventListener);
+    this._eventHandler.subscribe(grid.onSort, this.handleLocalOnSort.bind(this) as EventListener);
   }
 
   handleLocalOnSort(_e: SlickEventData, args: SingleColumnSort | MultiColumnSort) {
@@ -221,8 +217,7 @@ export class SortService {
       updatedColumnDefinitions = this.disableAllSortingCommands(true);
     } else {
       updatedColumnDefinitions = this.disableAllSortingCommands(false);
-      const onSortHandler = this._grid.onSort;
-      (this._eventHandler as SlickEventHandler<GetSlickEventType<typeof onSortHandler>>).subscribe(onSortHandler, (e, args) => this.handleLocalOnSort(e, args as SingleColumnSort | MultiColumnSort));
+      this._eventHandler.subscribe(this._grid.onSort, (e, args) => this.handleLocalOnSort(e, args as SingleColumnSort | MultiColumnSort));
     }
     this._grid.setOptions({ enableSorting: this._gridOptions.enableSorting }, false, true);
     this.sharedService.gridOptions = this._gridOptions;
@@ -613,8 +608,9 @@ export class SortService {
     });
 
     // loop through column definition to hide/show grid menu commands
-    if (this._gridOptions?.gridMenu?.customItems) {
-      this._gridOptions.gridMenu.customItems.forEach((menuItem) => {
+    const commandItems = this._gridOptions?.gridMenu?.commandItems ?? this._gridOptions?.gridMenu?.customItems;
+    if (commandItems) {
+      commandItems.forEach((menuItem) => {
         if (menuItem && typeof menuItem !== 'string') {
           const menuCommand = menuItem.command;
           if (menuCommand === 'clear-sorting') {

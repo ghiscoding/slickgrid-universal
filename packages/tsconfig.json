@@ -12,6 +12,7 @@
     { "path": "graphql" },
     { "path": "odata" },
     { "path": "pagination-component" },
+    { "path": "row-detail-view-plugin" },
     { "path": "rxjs-observable" },
     { "path": "text-export" },
     { "path": "vanilla-bundle" }

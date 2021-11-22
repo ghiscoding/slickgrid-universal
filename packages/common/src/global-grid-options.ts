@@ -72,7 +72,6 @@ export const GlobalGridOptions: GridOption = {
     iconExportCsvCommand: 'fa fa-download mdi mdi-download',
     iconExportExcelCommand: 'fa fa-file-excel-o mdi mdi-file-excel-outline',
     iconExportTextDelimitedCommand: 'fa fa-download mdi mdi-download',
-    width: 200,
   },
   customFooterOptions: {
     dateFormat: 'YYYY-MM-DD, hh:mm a',
@@ -109,6 +108,11 @@ export const GlobalGridOptions: GridOption = {
   defaultColumnSortFieldId: 'id',
   defaultComponentEventPrefix: '',
   defaultSlickgridEventPrefix: '',
+  draggableGrouping: {
+    hideToggleAllButton: false,
+    toggleAllButtonText: '',
+    dropPlaceHolderTextKey: 'DROP_COLUMN_HEADER_TO_GROUP_BY',
+  },
   editable: false,
   editorTypingDebounce: 450,
   filterTypingDebounce: 0,
@@ -165,6 +169,7 @@ export const GlobalGridOptions: GridOption = {
   forceFitColumns: false,
   frozenHeaderWidthCalcDifferential: 1,
   gridMenu: {
+    dropSide: 'left',
     commandLabels: {
       clearAllFiltersCommandKey: 'CLEAR_ALL_FILTERS',
       clearAllSortingCommandKey: 'CLEAR_ALL_SORTING',
@@ -199,12 +204,11 @@ export const GlobalGridOptions: GridOption = {
     iconTogglePreHeaderCommand: 'fa fa-random mdi mdi-flip-vertical',
     menuWidth: 16,
     resizeOnShowHeaderRow: true,
-    useClickToRepositionMenu: false, // use icon location to reposition instead
     headerColumnValueExtractor: pickerHeaderColumnValueExtractor
   },
   headerMenu: {
     autoAlign: true,
-    autoAlignOffset: 12,
+    autoAlignOffset: 4,
     minWidth: 140,
     iconClearFilterCommand: 'fa fa-filter mdi mdi mdi-filter-remove-outline',
     iconClearSortCommand: 'fa fa-unsorted mdi mdi-swap-vertical',
@@ -231,15 +235,6 @@ export const GlobalGridOptions: GridOption = {
     pageSize: 25,
     totalItems: 0
   },
-  //   // technically speaking the Row Detail requires the process & viewComponent but we'll ignore it just to set certain options
-  //   rowDetailView: {
-  //     cssClass: 'detail-view-toggle',
-  //     panelRows: 1,
-  //     keyPrefix: '__',
-  //     useRowClick: false,
-  //     useSimpleViewportCalc: true,
-  //     saveDetailViewOnScroll: false,
-  //   },
   headerRowHeight: 35,
   rowHeight: 35,
   topPanelHeight: 30,

@@ -12,7 +12,8 @@ import {
   SlickGrid,
 } from '../interfaces/index';
 import { buildSelectOperator } from './filterUtilities';
-import { emptyElement, getTranslationPrefix, mapOperatorToShorthandDesignation, toSentenceCase } from '../services/utilities';
+import { createDomElement, emptyElement } from '../services/domUtilities';
+import { getTranslationPrefix, mapOperatorToShorthandDesignation, toSentenceCase } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 
@@ -176,11 +177,11 @@ export class CompoundInputFilter implements Filter {
       placeholder = this.columnFilter.placeholder;
     }
 
-    const inputElm = document.createElement('input');
-    inputElm.type = this._inputType || 'text';
-    inputElm.className = `form-control compound-input filter-${columnId}`;
-    inputElm.autocomplete = 'off';
-    inputElm.placeholder = placeholder;
+    const inputElm = createDomElement('input', {
+      type: this._inputType || 'text',
+      autocomplete: 'off', placeholder,
+      className: `form-control compound-input filter-${columnId}`,
+    });
     inputElm.setAttribute('role', 'presentation');
     inputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
 
@@ -246,16 +247,11 @@ export class CompoundInputFilter implements Filter {
     // create the DOM Select dropdown for the Operator
     this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.gridOptions);
     this._filterInputElm = this.buildInputElement();
-    const emptySpanElm = document.createElement('span');
+    const emptySpanElm = createDomElement('span');
 
-    const filterContainerElm = document.createElement('div');
-    filterContainerElm.className = `form-group search-filter filter-${columnId}`;
-
-    const containerInputGroupElm = document.createElement('div');
-    containerInputGroupElm.className = 'input-group';
-
-    const operatorInputGroupAddonElm = document.createElement('div');
-    operatorInputGroupAddonElm.className = 'input-group-addon input-group-prepend operator';
+    const filterContainerElm = createDomElement('div', { className: `form-group search-filter filter-${columnId}` });
+    const containerInputGroupElm = createDomElement('div', { className: 'input-group' });
+    const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' });
 
     /* the DOM element final structure will be
       <div class="input-group">

@@ -1,6 +1,5 @@
-import { Column } from './column.interface';
-import { GridOption } from './gridOption.interface';
-import { SlickColumnPicker } from './slickColumnPicker.interface';
+import { Column, GridOption, SlickGrid } from './index';
+import { SlickColumnPicker } from '../extensions/slickColumnPicker';
 
 export interface ColumnPicker extends ColumnPickerOption {
 
@@ -27,6 +26,18 @@ export interface ColumnPickerOption {
   /** Defaults to True, show/hide 1 of the last 2 checkbox at the end of the picker list */
   hideSyncResizeButton?: boolean;
 
+  /**
+   * Defaults to available space at the bottom, Grid Menu minimum height.
+   * Can be a number or a string, if a number is provided it will add the `px` suffix for pixels, or if a string is passed it will use it as is.
+   */
+  maxHeight?: number | string;
+
+  /**
+   * Defaults to 200(px), Grid Menu minimum height.
+   * Can be a number or a string, if a number is provided it will add the `px` suffix for pixels, or if a string is passed it will use it as is.
+   */
+  minHeight?: number | string;
+
   /** Defaults to "Synchronous resize" which is 1 of the last 2 checkbox title shown at the end of the picker list */
   syncResizeTitle?: string;
 
@@ -37,5 +48,23 @@ export interface ColumnPickerOption {
   // Events
 
   /** SlickGrid Event fired when any of the columns checkbox selection changes. */
-  onColumnsChanged?: (e: Event, args: any) => void;
+  onColumnsChanged?: (e: Event, args: {
+    /** column definition id */
+    columnId: string;
+
+    /** last command, are we showing or not the column? */
+    showing: boolean;
+
+    /** slick grid object */
+    grid: SlickGrid;
+
+    /** list of all column definitions (visible & hidden) */
+    allColumns: Column[];
+
+    /** list of visible column definitions */
+    visibleColumns: Column[];
+
+    /** @deprecated @use `visibleColumns` */
+    columns?: Column[];
+  }) => void;
 }

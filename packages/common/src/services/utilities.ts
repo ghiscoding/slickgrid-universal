@@ -1,12 +1,10 @@
 import { flatten } from 'un-flatten-tree';
-import * as DOMPurify_ from 'dompurify';
 import * as moment_ from 'moment-mini';
-const DOMPurify = (DOMPurify_ as any)['default'] || DOMPurify_; // patch to fix rollup to work
 const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import { Constants } from '../constants';
 import { FieldType, OperatorString, OperatorType } from '../enums/index';
-import { CancellablePromiseWrapper, EventSubscription, GridOption } from '../interfaces/index';
+import { CancellablePromiseWrapper, Column, EventSubscription, GridOption, } from '../interfaces/index';
 import { Observable, RxJsFacade, Subject, Subscription } from './rxjsFacade';
 
 /**
@@ -254,18 +252,48 @@ export function deepCopy(objectOrArray: any | any[]): any | any[] {
 }
 
 /**
- * Empty a DOM element by removing all of its DOM element children leaving with an empty element (basically an empty shell)
- * @return {object} element - updated element
+ * Performs a deep merge of objects and returns new object, it does not modify the source object, objects (immutable) and merges arrays via concatenation.
+ * Also, if first argument is undefined/null but next argument is an object then it will proceed and output will be an object
+ * @param {...object} objects - Objects to merge
+ * @returns {object} New object with merged key/values
  */
-export function emptyElement<T extends Element = Element>(element?: T | null): T | undefined | null {
-  if (element?.firstChild) {
-    while (element.firstChild) {
-      if (element.lastChild) {
-        element.removeChild(element.lastChild);
+export function deepMerge(target: any, ...sources: any[]): any {
+  if (!sources.length) {
+    return target;
+  }
+  const source = sources.shift();
+
+  // when target is not an object but source is an object, then we'll assign as object
+  target = (!isObject(target) && isObject(source)) ? {} : target;
+
+  if (isObject(target) && isObject(source)) {
+    for (const prop in source) {
+      if (source.hasOwnProperty(prop)) {
+        if (prop in target) {
+          // handling merging of two properties with equal names
+          if (typeof target[prop] !== 'object') {
+            target[prop] = source[prop];
+          } else {
+            if (typeof source[prop] !== 'object') {
+              target[prop] = source[prop];
+            } else {
+              if (target[prop].concat && source[prop].concat) {
+                // two arrays get concatenated
+                target[prop] = target[prop].concat(source[prop]);
+              } else {
+                // two objects get merged recursively
+                target[prop] = deepMerge(target[prop], source[prop]);
+              }
+            }
+          }
+        } else {
+          // new properties get added to target
+          target[prop] = source[prop];
+        }
       }
     }
   }
-  return element;
+  return deepMerge(target, ...sources);
 }
 
 /**
@@ -282,6 +310,27 @@ export function emptyObject(obj: any) {
   obj = {};
 
   return obj;
+}
+
+/**
+ * Check if an object is empty
+ * @param obj - input object
+ * @returns - boolean
+ */
+export function isEmptyObject(obj: any): boolean {
+  if (obj === null || obj === undefined) {
+    return true;
+  }
+  return Object.entries(obj).length === 0;
+}
+
+/**
+ * Simple object check.
+ * @param item
+ * @returns {boolean}
+ */
+export function isObject(item: any) {
+  return (item && typeof item === 'object' && !Array.isArray(item));
 }
 
 /**
@@ -326,54 +375,10 @@ export function hasData(value: any): boolean {
 }
 
 /**
- * HTML encode using jQuery with a <div>
- * Create a in-memory div, set it's inner text(which jQuery automatically encodes)
- * then grab the encoded contents back out.  The div never exists on the page.
- */
-export function htmlEncode(inputValue: string): string {
-  const entityMap = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    '\'': '&#39;'
-  };
-  return (inputValue || '').toString().replace(/[&<>"']/g, (s) => (entityMap as any)[s]);
-}
-
-/**
- * Decode text into html entity
- * @param string text: input text
- * @param string text: output text
- */
-export function htmlEntityDecode(input: string): string {
-  return input.replace(/&#(\d+);/g, (_match, dec) => {
-    return String.fromCharCode(dec);
-  });
-}
-
-/**
- * Encode string to html special char and add html space padding defined
- * @param {string} inputStr - input string
- * @param {number} paddingLength - padding to add
- */
-export function htmlEncodedStringWithPadding(inputStr: string, paddingLength: number): string {
-  const inputStrLn = inputStr.length;
-  let outputStr = htmlEncode(inputStr);
-
-  if (inputStrLn < paddingLength) {
-    for (let i = inputStrLn; i < paddingLength; i++) {
-      outputStr += `&nbsp;`;
-    }
-  }
-  return outputStr;
-}
-
-/**
  * Check if input value is a number, by default it won't be a strict checking
  * but optionally we could check for strict equality, for example in strict "3" will return False but without strict it will return True
  * @param value - input value of any type
- * @param strict - when using strict it also check for strict equality, for example in strict "3" will return but without strict it will return true
+ * @param strict - when using strict it also check for strict equality, for example in strict "3" would return False but without strict it would return True
  */
 export function isNumber(value: any, strict = false) {
   if (strict) {
@@ -437,24 +442,6 @@ export function decimalFormatted(input: number | string, minDecimal?: number, ma
 }
 
 /**
- * Loop through all properties of an object and nullify any properties that are instanceof HTMLElement,
- * if we detect an array then use recursion to go inside it and apply same logic
- * @param obj - object containing 1 or more properties with DOM Elements
- */
-export function destroyObjectDomElementProps(obj: any) {
-  if (obj) {
-    for (const key of Object.keys(obj)) {
-      if (Array.isArray(obj[key])) {
-        destroyObjectDomElementProps(obj[key]);
-      }
-      if (obj[key] instanceof HTMLElement) {
-        obj[key] = null;
-      }
-    }
-  }
-}
-
-/**
  * Format a number following options passed as arguments (decimals, separator, ...)
  * @param input
  * @param minDecimal
@@ -494,6 +481,28 @@ export function formatNumber(input: number | string, minDecimal?: number, maxDec
     const formattedValue = thousandSeparatorFormatted(`${input}`, thousandSeparator);
     return `${symbolPrefix}${formattedValue}${symbolSuffix}`;
   }
+}
+
+/**
+ * When a queryFieldNameGetterFn is defined, then get the value from that getter callback function
+ * @param {Column} columnDef
+ * @param {Object} dataContext
+ * @param {String} defaultValue - optional value to use if value isn't found in data context
+ * @return outputValue
+ */
+export function getCellValueFromQueryFieldGetter(columnDef: Column, dataContext: any, defaultValue: any): string {
+  if (typeof columnDef.queryFieldNameGetterFn === 'function') {
+    const queryFieldName = columnDef.queryFieldNameGetterFn(dataContext);
+
+    // get the cell value from the item or when it's a dot notation then exploded the item and get the final value
+    if (queryFieldName?.indexOf('.') >= 0) {
+      defaultValue = getDescendantProperty(dataContext, queryFieldName);
+    } else {
+      defaultValue = dataContext.hasOwnProperty(queryFieldName) ? dataContext[queryFieldName] : defaultValue;
+    }
+  }
+
+  return defaultValue;
 }
 
 /**
@@ -922,36 +931,6 @@ export function removeAccentFromText(text: string, shouldLowerCase = false) {
   return shouldLowerCase ? normalizedText.toLowerCase() : normalizedText;
 }
 
-/**
- * Sanitize, return only the text without HTML tags
- * @input htmlString
- * @return text
- */
-export function sanitizeHtmlToText(htmlString: string): string {
-  const temp = document.createElement('div');
-  temp.innerHTML = htmlString;
-  return temp.textContent || temp.innerText || '';
-}
-
-/**
- * Sanitize possible dirty html string (remove any potential XSS code like scripts and others), we will use 2 possible sanitizer
- * 1. optional sanitizer method defined in the grid options
- * 2. DOMPurify sanitizer (defaults)
- * @param gridOptions: grid options
- * @param dirtyHtml: dirty html string
- * @param domPurifyOptions: optional DOMPurify options when using that sanitizer
- */
-export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyHtml: string, domPurifyOptions?: DOMPurify.Config): string {
-  let sanitizedText = dirtyHtml;
-  if (typeof gridOptions?.sanitizer === 'function') {
-    sanitizedText = gridOptions.sanitizer(dirtyHtml || '');
-  } else if (typeof DOMPurify?.sanitize === 'function') {
-    sanitizedText = (DOMPurify.sanitize(dirtyHtml || '', domPurifyOptions || {}) || '').toString();
-  }
-
-  return sanitizedText;
-}
-
 /** Set the object value of deeper node from a given dot (.) notation path (e.g.: "user.firstName") */
 export function setDeepValue<T = any>(obj: T, path: string | string[], value: any) {
   if (typeof path === 'string') {
@@ -997,9 +976,9 @@ export function thousandSeparatorFormatted(inputValue: string | number | null, s
  * @param inputStr
  * @returns string
  */
-export function titleCase(inputStr: string, caseEveryWords = false): string {
+export function titleCase(inputStr: string, shouldTitleCaseEveryWords = false): string {
   if (typeof inputStr === 'string') {
-    if (caseEveryWords) {
+    if (shouldTitleCaseEveryWords) {
       return inputStr.replace(/\w\S*/g, (outputStr) => {
         return outputStr.charAt(0).toUpperCase() + outputStr.substr(1).toLowerCase();
       });
@@ -1066,19 +1045,6 @@ export function findOrDefault<T = any>(array: T[], logic: (item: T) => boolean, 
     return array.find(logic) || defaultVal;
   }
   return array;
-}
-
-/** Get HTML Element position offset (without jQuery) */
-export function getHtmlElementOffset(element: HTMLElement): { top: number; left: number; } {
-  const rect = element?.getBoundingClientRect?.();
-  let top = 0;
-  let left = 0;
-
-  if (rect && rect.top !== undefined && rect.left !== undefined) {
-    top = rect.top + window.pageYOffset;
-    left = rect.left + window.pageXOffset;
-  }
-  return { top, left };
 }
 
 /**

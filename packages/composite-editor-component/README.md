@@ -22,8 +22,5 @@ Vanilla Bundle implementation of a Composite Editor Modal Window which can do th
 ### Internal Dependencies
 - [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
 
-### External Dependencies
-- [assign-deep](https://github.com/jonschlinkert/assign-deep) to deeply assign Object properties/values
-
 ### Installation
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation).

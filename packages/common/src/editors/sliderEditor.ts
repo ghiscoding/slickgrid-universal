@@ -2,6 +2,7 @@ import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, E
 import { getDescendantProperty, setDeepValue, toSentenceCase } from '../services/utilities';
 import { sliderValidator } from '../editorValidators/sliderValidator';
 import { BindingEventService } from '../services/bindingEvent.service';
+import { createDomElement } from '../services/domUtilities';
 
 const DEFAULT_MIN_VALUE = 0;
 const DEFAULT_MAX_VALUE = 100;
@@ -305,36 +306,27 @@ export class SliderEditor implements Editor {
     const minValue = this.columnEditor.hasOwnProperty('minValue') ? this.columnEditor.minValue : DEFAULT_MIN_VALUE;
     const maxValue = this.columnEditor.hasOwnProperty('maxValue') ? this.columnEditor.maxValue : DEFAULT_MAX_VALUE;
     const defaultValue = this.editorParams.hasOwnProperty('sliderStartValue') ? this.editorParams.sliderStartValue : minValue;
-    const step = this.columnEditor.hasOwnProperty('valueStep') ? this.columnEditor.valueStep : DEFAULT_STEP;
     this._defaultValue = defaultValue;
 
-    const inputElm = document.createElement('input');
-    inputElm.name = this._elementRangeInputId;
-    inputElm.title = title;
-    inputElm.type = 'range';
-    inputElm.defaultValue = defaultValue;
-    inputElm.value = defaultValue;
-    inputElm.min = `${minValue}`;
-    inputElm.max = `${maxValue}`;
-    inputElm.step = `${step}`;
-    inputElm.className = `form-control slider-editor-input editor-${columnId} range ${this._elementRangeInputId}`;
+    const inputElm = createDomElement('input', {
+      type: 'range', name: this._elementRangeInputId, title,
+      defaultValue, value: defaultValue, min: `${minValue}`, max: `${maxValue}`,
+      step: `${this.columnEditor.hasOwnProperty('valueStep') ? this.columnEditor.valueStep : DEFAULT_STEP}`,
+      className: `form-control slider-editor-input editor-${columnId} range ${this._elementRangeInputId}`,
+    });
     inputElm.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Slider Editor`);
 
-    const divContainerElm = document.createElement('div');
-    divContainerElm.className = 'slider-container slider-editor';
+    const divContainerElm = createDomElement('div', { className: 'slider-container slider-editor' });
     divContainerElm.appendChild(inputElm);
 
     if (!this.editorParams.hideSliderNumber) {
       divContainerElm.classList.add('input-group');
 
       // <div class="input-group-addon input-group-append slider-value"><span class="input-group-text ${this._elementRangeOutputId}">${defaultValue}</span></div>
-      const spanGroupElm = document.createElement('span');
-      spanGroupElm.className = `input-group-text ${this._elementRangeOutputId}`;
-      spanGroupElm.textContent = `${defaultValue}`;
-
-      const divGroupAddonElm = document.createElement('div');
-      divGroupAddonElm.className = 'input-group-addon input-group-append slider-value';
-      divGroupAddonElm.appendChild(spanGroupElm);
+      const divGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-append slider-value' });
+      divGroupAddonElm.appendChild(
+        createDomElement('span', { className: `input-group-text ${this._elementRangeOutputId}`, textContent: `${defaultValue}` })
+      );
       divContainerElm.appendChild(divGroupAddonElm);
     }
 

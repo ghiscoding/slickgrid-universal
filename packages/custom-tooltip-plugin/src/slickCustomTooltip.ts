@@ -5,6 +5,7 @@ import {
   CancelledException,
   Column,
   ContainerService,
+  createDomElement,
   CustomTooltipOption,
   findFirstElementAttribute,
   Formatter,
@@ -300,8 +301,7 @@ export class SlickCustomTooltip {
    * also clear the "title" attribute from the grid div text content so that it won't show also as a 2nd browser tooltip
    */
   protected renderRegularTooltip(formatterOrText: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: any) {
-    const tmpDiv = document.createElement('div');
-    tmpDiv.innerHTML = this.parseFormatterAndSanitize(formatterOrText, cell, value, columnDef, item);
+    const tmpDiv = createDomElement('div', { innerHTML: this.parseFormatterAndSanitize(formatterOrText, cell, value, columnDef, item) });
 
     let tooltipText = columnDef?.toolTip ?? '';
     let tmpTitleElm: HTMLDivElement | null | undefined;
@@ -338,8 +338,7 @@ export class SlickCustomTooltip {
 
   protected renderTooltipFormatter(formatter: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown, tooltipText?: string, inputTitleElm?: Element | null) {
     // create the tooltip DOM element with the text returned by the Formatter
-    this._tooltipElm = document.createElement('div');
-    this._tooltipElm.className = this.className;
+    this._tooltipElm = createDomElement('div', { className: this.className });
     this._tooltipElm.classList.add(this.gridUid);
     this._tooltipElm.classList.add('l' + cell.cell);
     this._tooltipElm.classList.add('r' + cell.cell);
@@ -400,8 +399,8 @@ export class SlickCustomTooltip {
       const calculatedBodyWidth = document.body.offsetWidth || window.innerWidth;
 
       // first calculate the default (top/left) position
-      let newPositionTop = cellPosition.top - this._tooltipElm.offsetHeight - (this._cellAddonOptions?.offsetTopBottom ?? 0);
-      let newPositionLeft = cellPosition.left - (this._cellAddonOptions?.offsetLeft ?? 0);
+      let newPositionTop = (cellPosition.top || 0) - this._tooltipElm.offsetHeight - (this._cellAddonOptions?.offsetTopBottom ?? 0);
+      let newPositionLeft = (cellPosition.left || 0) - (this._cellAddonOptions?.offsetLeft ?? 0);
 
       // user could explicitely use a "left-align" arrow position, (when user knows his column is completely on the right)
       // or when using "auto" and we detect not enough available space then we'll position to the "left" of the cell
@@ -419,7 +418,7 @@ export class SlickCustomTooltip {
       // do the same calculation/reposition with top/bottom (default is top of the cell or in other word starting from the cell going down)
       // NOTE the class name is for the arrow and is inverse compare to the tooltip itself, so if user ask for "bottom", then the arrow will in fact be "arrow-top"
       if (position === 'bottom' || ((position === 'auto' || position !== 'top') && calculatedTooltipHeight > calculateAvailableSpace(this._cellNodeElm).top)) {
-        newPositionTop = cellPosition.top + (this.gridOptions.rowHeight ?? 0) + (this._cellAddonOptions?.offsetTopBottom ?? 0);
+        newPositionTop = (cellPosition.top || 0) + (this.gridOptions.rowHeight ?? 0) + (this._cellAddonOptions?.offsetTopBottom ?? 0);
         this._tooltipElm.classList.remove('arrow-down');
         this._tooltipElm.classList.add('arrow-up');
       } else {

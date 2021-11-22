@@ -216,6 +216,13 @@ describe('Shared Service', () => {
     expect(service.frozenVisibleColumnId).toEqual('field1');
   });
 
+  it('should call "gridContainerElement" GETTER and SETTER expect same value to be returned', () => {
+    const divMock = document.createElement('div');
+    divMock.className = 'some-class';
+    service.gridContainerElement = divMock;
+    expect(service.gridContainerElement).toEqual(divMock);
+  });
+
   it('should call "hasColumnsReordered" GETTER and expect a boolean value to be returned', () => {
     const flag = service.hasColumnsReordered;
     expect(flag).toEqual(false);

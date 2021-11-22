@@ -342,6 +342,10 @@ export class Example4 {
       autoResize: {
         container: '.demo-container',
       },
+      enableAutoTooltip: true,
+      autoTooltipOptions: {
+        enableForHeaderCells: true
+      },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableCellNavigation: true,
@@ -373,7 +377,7 @@ export class Example4 {
         onCommand: (e, args) => this.executeCommand(e, args),
         onOptionSelected: (_e, args) => {
           // change "Completed" property with new option selected from the Cell Menu
-          const dataContext = args && args.dataContext;
+          const dataContext = args?.dataContext;
           if (dataContext && dataContext.hasOwnProperty('completed')) {
             dataContext.completed = args.item.option;
             this.sgb?.gridService.updateItem(dataContext);
@@ -482,7 +486,7 @@ export class Example4 {
         alert('Please help!');
         break;
       case 'delete-row':
-        if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"`)) {
+        if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"?`)) {
           this.sgb?.gridService.deleteItemById(dataContext.id);
         }
         break;

@@ -1,52 +1,16 @@
-import { Column } from './column.interface';
-import { SlickGrid } from './slickGrid.interface';
+import { GridMenuCallbackArgs, GridMenuCommandItemCallbackArgs } from './gridMenuCommandItemCallbackArgs.interface';
+import { MenuCommandItem } from './menuCommandItem.interface';
 
-export interface GridMenuItem {
-  /** A command identifier to be passed to the onCommand event callback handlers. */
-  command: string;
-
-  /** A CSS class to be added to the menu item container. */
-  cssClass?: string;
-
-  /** Defaults to false, whether the item/command is disabled. */
-  disabled?: boolean;
-
-  /** Defaults to false, whether the item/command is hidden. */
-  hidden?: boolean;
-
-  /** Defaults to false, whether the command is actually a divider (separator). */
-  divider?: boolean;
-
-  /** CSS class to be added to the menu item icon. */
-  iconCssClass?: string;
-
-  /** URL pointing to the icon image. */
-  iconImage?: string;
-
-  /** position order in the list, a lower number will make it on top of the list. Internal commands starts at 50. */
-  positionOrder?: number;
-
-  /** CSS class to be added to the menu item text. */
-  textCssClass?: string;
-
-  /** Menu item text to show in the list. */
-  title?: string;
-
-  /** Same as "title", except that it's a translation key which can be used on page load and/or when switching locale */
-  titleKey?: string;
-
-  /** Item tooltip to show while hovering the command. */
-  tooltip?: string;
-
+export interface GridMenuItem extends MenuCommandItem<GridMenuCommandItemCallbackArgs, GridMenuCallbackArgs> {
   // --
   // action/override callbacks
 
   /** Optionally define a callback function that gets executed when item is chosen (and/or use the onCommand event) */
-  action?: (event: Event, callbackArgs: { command: string; grid: SlickGrid; menu: any; columns: Column[]; visibleColumns: Column[] }) => void;
+  action?: (event: Event, callbackArgs: GridMenuCommandItemCallbackArgs) => void;
 
   /** Callback method that user can override the default behavior of showing/hiding an item from the list. */
-  itemVisibilityOverride?: (args: { grid: SlickGrid; menu: any; columns: Column[]; visibleColumns: Column[] }) => boolean;
+  itemVisibilityOverride?: (args: GridMenuCallbackArgs) => boolean;
 
   /** Callback method that user can override the default behavior of enabling/disabling an item from the list. */
-  itemUsabilityOverride?: (args: { grid: SlickGrid; menu: any; columns: Column[]; visibleColumns: Column[] }) => boolean;
+  itemUsabilityOverride?: (args: GridMenuCallbackArgs) => boolean;
 }

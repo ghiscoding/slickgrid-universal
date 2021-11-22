@@ -21,12 +21,8 @@ import {
   GridOption,
   SlickGrid,
 } from '../interfaces/index';
-import {
-  destroyObjectDomElementProps,
-  emptyElement,
-  mapFlatpickrDateFormatWithFieldType,
-  mapMomentDateFormatWithFieldType
-} from '../services/utilities';
+import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
+import { mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 
@@ -261,16 +257,10 @@ export class DateRangeFilter implements Filter {
       placeholder = this.columnFilter.placeholder;
     }
 
-    const filterDivInputElm = document.createElement('div');
-    filterDivInputElm.className = `flatpickr search-filter filter-${columnId}`;
-
-    const inputElm = document.createElement('input');
-    inputElm.type = 'text';
-    inputElm.className = 'form-control';
-    inputElm.dataset.input = '';
-    inputElm.placeholder = placeholder;
-
-    filterDivInputElm.appendChild(inputElm);
+    const filterDivInputElm = createDomElement('div', { className: `flatpickr search-filter filter-${columnId}` });
+    filterDivInputElm.appendChild(
+      createDomElement('input', { type: 'text', className: 'form-control', placeholder, dataset: { input: '' } })
+    );
     this.flatInstance = flatpickr(filterDivInputElm, this._flatpickrOptions as unknown as Partial<FlatpickrBaseOptions>);
 
     return filterDivInputElm;

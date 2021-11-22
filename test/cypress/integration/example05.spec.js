@@ -130,9 +130,9 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
 
   it('should open the Grid Menu "Clear all Filters" command', () => {
     cy.get('.grid5')
-      .find('button.slick-gridmenu-button')
+      .find('button.slick-grid-menu-button')
       .trigger('click')
-      .click();
+      .click({ force: true });
 
     let gridUid = '';
 
@@ -143,8 +143,8 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
-        cy.get(`.slick-gridmenu.${gridUid}`)
-          .find('.slick-gridmenu-item:nth(0)')
+        cy.get(`.slick-grid-menu.${gridUid}`)
+          .find('.slick-grid-menu-item:nth(0)')
           .find('span')
           .contains('Clear all Filters')
           .click();
@@ -191,7 +191,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
 
   it('should open the Grid Menu "Clear all Filters" command', () => {
     cy.get('.grid5')
-      .find('button.slick-gridmenu-button')
+      .find('button.slick-grid-menu-button')
       .trigger('click')
       .click();
 
@@ -204,8 +204,8 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
-        cy.get(`.slick-gridmenu.${gridUid}`)
-          .find('.slick-gridmenu-item:nth(0)')
+        cy.get(`.slick-grid-menu.${gridUid}`)
+          .find('.slick-grid-menu-item:nth(0)')
           .find('span')
           .contains('Clear all Filters')
           .click();
@@ -237,7 +237,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
 
   it('should open the Grid Menu "Clear all Filters" command', () => {
     cy.get('.grid5')
-      .find('button.slick-gridmenu-button')
+      .find('button.slick-grid-menu-button')
       .trigger('click')
       .click();
 
@@ -250,8 +250,8 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
-        cy.get(`.slick-gridmenu.${gridUid}`)
-          .find('.slick-gridmenu-item:nth(0)')
+        cy.get(`.slick-grid-menu.${gridUid}`)
+          .find('.slick-grid-menu-item:nth(0)')
           .find('span')
           .contains('Clear all Filters')
           .click();

@@ -12,7 +12,8 @@ import {
 import { Constants } from '../constants';
 import { OperatorString, OperatorType, SearchTerm } from '../enums/index';
 import { buildSelectOperator } from './filterUtilities';
-import { emptyElement, getTranslationPrefix, hasData, mapOperatorToShorthandDesignation, toSentenceCase } from '../services/utilities';
+import { createDomElement, emptyElement } from '../services/domUtilities';
+import { getTranslationPrefix, hasData, mapOperatorToShorthandDesignation, toSentenceCase } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 
@@ -253,27 +254,20 @@ export class CompoundSliderFilter implements Filter {
     // create the DOM Select dropdown for the Operator
     this.selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.gridOptions);
 
-    const spanPrependElm = document.createElement('span');
-    spanPrependElm.className = 'input-group-addon input-group-prepend operator';
+    const spanPrependElm = createDomElement('span', { className: 'input-group-addon input-group-prepend operator' });
     spanPrependElm.appendChild(this.selectOperatorElm);
 
     // create the DOM element
-    this.filterInputElm = document.createElement('input');
-    this.filterInputElm.type = 'range';
-    this.filterInputElm.className = `form-control slider-filter-input range compound-slider ${this._elementRangeInputId}`;
-    this.filterInputElm.defaultValue = defaultValue;
-    this.filterInputElm.value = searchTermInput;
-    this.filterInputElm.min = `${minValue}`;
-    this.filterInputElm.max = `${maxValue}`;
-    this.filterInputElm.step = `${step}`;
-    this.filterInputElm.name = this._elementRangeInputId;
+    this.filterInputElm = createDomElement('input', {
+      type: 'range', name: this._elementRangeInputId,
+      className: `form-control slider-filter-input range compound-slider ${this._elementRangeInputId}`,
+      defaultValue, value: searchTermInput,
+      min: `${minValue}`, max: `${maxValue}`, step: `${step}`,
+    });
     this.filterInputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
 
-    this.divContainerFilterElm = document.createElement('div');
-    this.divContainerFilterElm.className = `form-group search-filter slider-container filter-${columnId}`;
-
-    this.containerInputGroupElm = document.createElement('div');
-    this.containerInputGroupElm.className = `input-group search-filter filter-${columnId}`;
+    this.divContainerFilterElm = createDomElement('div', { className: `form-group search-filter slider-container filter-${columnId}` });
+    this.containerInputGroupElm = createDomElement('div', { className: `input-group search-filter filter-${columnId}` });
     this.containerInputGroupElm.appendChild(spanPrependElm);
     this.containerInputGroupElm.appendChild(this.filterInputElm);
     this.divContainerFilterElm.appendChild(this.containerInputGroupElm);
@@ -282,12 +276,11 @@ export class CompoundSliderFilter implements Filter {
       this.containerInputGroupElm.classList.add('input-group');
       this.filterInputElm.value = searchTermInput;
 
-      const divGroupAppendElm = document.createElement('div');
-      divGroupAppendElm.className = 'input-group-addon input-group-append slider-value';
-
-      this.filterNumberElm = document.createElement('span');
-      this.filterNumberElm.className = `input-group-text ${this._elementRangeOutputId}`;
-      this.filterNumberElm.textContent = searchTermInput;
+      const divGroupAppendElm = createDomElement('div', { className: 'input-group-addon input-group-append slider-value' });
+      this.filterNumberElm = createDomElement('span', {
+        className: `input-group-text ${this._elementRangeOutputId}`,
+        textContent: searchTermInput
+      });
       divGroupAppendElm.appendChild(this.filterNumberElm);
       this.containerInputGroupElm.appendChild(divGroupAppendElm);
     }

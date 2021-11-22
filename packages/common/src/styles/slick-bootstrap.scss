@@ -273,6 +273,7 @@ ul {
         margin-left: 0;
       }
     }
+
     .slick-header-column {
       height: var(--slick-header-column-height, $header-column-height);
       line-height: var(--slick-font-size-base, $font-size-base);
@@ -284,6 +285,9 @@ ul {
       white-space: normal;
       &.ui-state-default {
         @include resetSlickCell();
+      }
+      .slick-column-name {
+        margin-right: var(--slick-header-column-name-margin-right, $header-column-name-margin-right);
       }
 
       $slickgridHoverHeaderColor: var(--slick-text-color, $text-color);

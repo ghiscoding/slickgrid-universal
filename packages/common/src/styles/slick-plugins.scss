@@ -329,6 +329,7 @@
   * This makes all "float:right" elements after it that spill over to the next line
   * display way below the lower boundary of the column thus hiding them.
   */
+  display: inline;
   float: var(--slick-header-button-float, $header-button-float);
   vertical-align: var(--slick-header-button-vertical-align, $header-button-vertical-align);
   margin: var(--slick-header-button-margin, $header-button-margin);
@@ -353,7 +354,7 @@
 // Header Menu Plugin - Excel-like header
 // ----------------------------------------------
 
-.slick-header-menubutton {
+.slick-header-menu-button {
   background-position: center center;
   background-repeat: no-repeat;
   cursor: pointer;
@@ -371,7 +372,7 @@
   top: 0;
   width: var(--slick-header-menu-button-width, $header-menu-button-width);
 }
-.slick-header-menubutton:before {
+.slick-header-menu-button:before {
   display: inline-block;
   content: var(--slick-header-menu-button-icon, $header-menu-button-icon);
   font-family: var(--slick-icon-font-family, $icon-font-family);
@@ -382,11 +383,11 @@
 
 .slick-header-column {
   // if user when to show header menu only while hovering, then the display var will be "none" else it could be "inline-block"
-  .slick-header-menubutton {
+  .slick-header-menu-button {
     display: var(--slick-header-menu-display, $header-menu-display);
   }
   &:hover {
-    .slick-header-menubutton {
+    .slick-header-menu-button {
       display: inline-block;
     }
   }
@@ -428,7 +429,7 @@
   }
 }
 
-.slick-header-menuitem {
+.slick-header-menu-item {
   cursor: pointer;
   display: block;
   border: var(--slick-header-menu-item-border, $header-menu-item-border);
@@ -441,7 +442,7 @@
     background-color: var(--slick-header-menu-item-hover-color, $header-menu-item-hover-color);
   }
 
-  &.slick-header-menuitem-divider {
+  &.slick-header-menu-item-divider {
     cursor: default;
     border: none;
     overflow: hidden;
@@ -459,12 +460,12 @@
     }
   }
 }
-.slick-header-menuitem-divider.slick-header-menuitem:hover {
+.slick-header-menu-item-divider.slick-header-menu-item:hover {
   background-color: var(--slick-header-menu-divider-color, $header-menu-divider-color);
 }
 
 
-.slick-header-menuicon {
+.slick-header-menu-icon {
   background-position: center center;
   background-repeat: no-repeat;
   display: inline-block;
@@ -486,22 +487,22 @@
   }
 }
 
-.slick-header-menucontent {
+.slick-header-menu-content {
   display: inline-block;
   vertical-align: middle;
 }
 
 /* Disabled */
-.slick-header-menuitem-disabled {
+.slick-header-menu-item-disabled {
   border-color: transparent !important;
   background: inherit !important;
   color: var(--slick-header-menu-item-disabled-color, $header-menu-item-disabled-color);
   cursor: inherit;
-  .slick-header-menuicon, .slick-header-menucontent {
+  .slick-header-menu-icon, .slick-header-menu-content {
     color: var(--slick-header-menu-item-disabled-color, $header-menu-item-disabled-color);
   }
 }
-.slick-header-menuitem-hidden {
+.slick-header-menu-item-hidden {
   display: none;
 }
 
@@ -863,6 +864,8 @@ input.flatpickr.form-control {
 
 .slick-preheader-panel {
   .ui-droppable, .ui-droppable-hover {
+    display: flex;
+    align-items: center;
     padding: var(--slick-draggable-group-drop-padding, $draggable-group-drop-padding);
     height: var(--slick-draggable-group-drop-height, $draggable-group-drop-height);
     border-top: var(--slick-draggable-group-drop-border-top, $draggable-group-drop-border-top) !important;
@@ -873,25 +876,37 @@ input.flatpickr.form-control {
     border-radius: var(--slick-draggable-group-drop-radius, $draggable-group-drop-radius);
     background-color: var(--slick-draggable-group-drop-bgcolor, $draggable-group-drop-bgcolor);
 
-    .slick-placeholder {
+    .slick-draggable-dropbox-toggle-placeholder {
       font-style: var(--slick-draggable-group-placeholder-font-style, $draggable-group-placeholder-font-style);
       color: var(--slick-draggable-group-placeholder-color, $draggable-group-placeholder-color);
     }
 
     .slick-group-toggle-all {
-      position: absolute;
       cursor: pointer;
-      font-family: var(--slick-icon-font-family, $icon-font-family);
-      color: var(--slick-draggable-group-toggle-all-color, $draggable-group-toggle-all-color);
-      display: var(--slick-draggable-group-toggle-all-display, $draggable-group-toggle-all-display) !important;
-      top: var(--slick-draggable-group-toggle-all-pos-top, $draggable-group-toggle-all-pos-top);
-      right: var(--slick-draggable-group-toggle-all-pos-right, $draggable-group-toggle-all-pos-right);
+      border: var(--draggable-group-toggle-all-border, $draggable-group-toggle-all-border);
+      border-radius: var(--draggable-group-toggle-all-border-radius, $draggable-group-toggle-all-border-radius);
+      display: var(--slick-draggable-group-toggle-all-display, $draggable-group-toggle-all-display);
+      margin-right: var(--slick-draggable-group-toggle-all-margin-right, $draggable-group-toggle-all-margin-right);
+      padding: var(--slick-draggable-group-toggle-all-padding, $draggable-group-toggle-all-padding);
+      position: var(--draggable-group-toggle-all-position, $draggable-group-toggle-all-position);
+      top: var(--slick-draggable-group-toggle-all-top, $draggable-group-toggle-all-top);
+      right: var(--slick-draggable-group-toggle-all-right, $draggable-group-toggle-all-right);
 
-      &.expanded:before {
+      .slick-group-toggle-all-icon.expanded:before {
         content: var(--slick-draggable-group-toggle-expanded-icon, $draggable-group-toggle-expanded-icon);
       }
-      &.collapsed:before {
+      .slick-group-toggle-all-icon.collapsed:before {
         content: var(--slick-draggable-group-toggle-collapsed-icon, $draggable-group-toggle-collapsed-icon);
+      }
+      .slick-group-toggle-all-icon.collapsed:before,
+      .slick-group-toggle-all-icon.expanded:before {
+        color: var(--slick-draggable-group-toggle-all-color, $draggable-group-toggle-all-color);
+        font-family: var(--slick-icon-font-family, $icon-font-family);
+        vertical-align: var(--slick-draggable-group-toggle-all-icon-vertical-align, $draggable-group-toggle-all-icon-vertical-align);
+      }
+      .slick-group-toggle-all-text {
+        font-size: var(--slick-draggable-group-toggle-all-text-font-size, $draggable-group-toggle-all-text-font-size);
+        margin: var(--slick-draggable-group-toggle-all-text-margin, $draggable-group-toggle-all-text-margin);
       }
     }
 

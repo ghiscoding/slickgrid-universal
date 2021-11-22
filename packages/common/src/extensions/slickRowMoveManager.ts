@@ -1,0 +1,312 @@
+import { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
+import {
+  Column,
+  DragRowMove,
+  FormatterResultObject,
+  GridOption,
+  RowMoveManager,
+  RowMoveManagerOption,
+  SlickEventData,
+  SlickEventHandler,
+  SlickGrid,
+  SlickNamespace,
+} from '../interfaces/index';
+import { createDomElement, findWidthOrDefault, getHtmlElementOffset } from '../services/domUtilities';
+
+// using external SlickGrid JS libraries
+declare const Slick: SlickNamespace;
+
+/**
+ * Row Move Manager options:
+ *    cssClass:             A CSS class to be added to the menu item container.
+ *    columnId:             Column definition id (defaults to "_move")
+ *    cancelEditOnDrag:     Do we want to cancel any Editing while dragging a row (defaults to false)
+ *    disableRowSelection:  Do we want to disable the row selection? (defaults to false)
+ *    singleRowMove:        Do we want a single row move? Setting this to false means that it's a multple row move (defaults to false)
+ *    width:                Width of the column
+ *    usabilityOverride:    Callback method that user can override the default behavior of the row being moveable or not
+ *
+ */
+export class SlickRowMoveManager {
+  protected _addonOptions!: RowMoveManager;
+  protected _canvas!: HTMLElement;
+  protected _dragging = false;
+  protected _eventHandler: SlickEventHandler;
+  protected _grid!: SlickGrid;
+  protected _handler = new Slick.EventHandler();
+  protected _usabilityOverride?: UsabilityOverrideFn;
+  protected _defaults = {
+    columnId: '_move',
+    cssClass: 'slick-row-move-column',
+    cancelEditOnDrag: false,
+    disableRowSelection: false,
+    hideRowMoveShadow: true,
+    rowMoveShadowMarginTop: 0,
+    rowMoveShadowMarginLeft: 0,
+    rowMoveShadowOpacity: 0.9,
+    rowMoveShadowScale: 0.75,
+    singleRowMove: false,
+    width: 40,
+  } as RowMoveManagerOption;
+  onBeforeMoveRows = new Slick.Event<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>();
+  onMoveRows = new Slick.Event<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>();
+  pluginName: 'RowMoveManager' = 'RowMoveManager';
+
+  /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
+  constructor() {
+    this._eventHandler = new Slick.EventHandler();
+  }
+
+  get addonOptions(): RowMoveManagerOption {
+    return this._addonOptions as RowMoveManagerOption;
+  }
+
+  get eventHandler(): SlickEventHandler {
+    return this._eventHandler;
+  }
+
+  /** Getter for the Grid Options pulled through the Grid Object */
+  get gridOptions(): GridOption {
+    return this._grid?.getOptions?.() ?? {};
+  }
+
+  /** Initialize plugin. */
+  init(grid: SlickGrid, options?: RowMoveManager) {
+    this._addonOptions = { ...this._defaults, ...options };
+    this._grid = grid;
+    this._canvas = this._grid.getCanvasNode();
+    this._eventHandler.subscribe(this._grid.onDragInit, this.handleDragInit.bind(this))
+      .subscribe(this._grid.onDragStart, this.handleDragStart.bind(this))
+      .subscribe(this._grid.onDrag, this.handleDrag.bind(this))
+      .subscribe(this._grid.onDragEnd, this.handleDragEnd.bind(this));
+  }
+
+  /** @deprecated @use `dispose` Destroy plugin. */
+  destroy() {
+    this.dispose();
+  }
+
+  /** Dispose (destroy) the SlickGrid 3rd party plugin */
+  dispose() {
+    this._eventHandler?.unsubscribeAll();
+  }
+
+  /**
+   * Create the plugin before the Grid creation to avoid having odd behaviors.
+   * Mostly because the column definitions might change after the grid creation, so we want to make sure to add it before then
+   */
+  create(columnDefinitions: Column[], gridOptions: GridOption): SlickRowMoveManager | null {
+    this._addonOptions = { ...this._defaults, ...gridOptions.rowMoveManager } as RowMoveManagerOption;
+    if (Array.isArray(columnDefinitions) && gridOptions) {
+      const newRowMoveColumn: Column = this.getColumnDefinition();
+      const rowMoveColDef = Array.isArray(columnDefinitions) && columnDefinitions.find((col: Column) => col && col.behavior === 'selectAndMove');
+      const finalRowMoveColumn = rowMoveColDef ? rowMoveColDef : newRowMoveColumn;
+
+      // column index position in the grid
+      const columnPosition = gridOptions?.rowMoveManager?.columnIndexPosition ?? 0;
+      if (columnPosition > 0) {
+        columnDefinitions.splice(columnPosition, 0, finalRowMoveColumn);
+      } else {
+        columnDefinitions.unshift(finalRowMoveColumn);
+      }
+    }
+    return this;
+  }
+
+  getColumnDefinition(): Column {
+    return {
+      id: this._addonOptions.columnId || '_move',
+      name: '',
+      behavior: 'selectAndMove',
+      cssClass: this._addonOptions.cssClass,
+      excludeFromExport: true,
+      excludeFromColumnPicker: true,
+      excludeFromGridMenu: true,
+      excludeFromQuery: true,
+      excludeFromHeaderMenu: true,
+      field: 'move',
+      resizable: false,
+      selectable: false,
+      width: this._addonOptions.width || 40,
+      formatter: this.moveIconFormatter.bind(this),
+    };
+  }
+
+  /**
+   * Method that user can pass to override the default behavior or making every row moveable.
+   * In order word, user can choose which rows to be an available as moveable (or not) by providing his own logic show/hide icon and usability.
+   * @param overrideFn: override function callback
+   */
+  usabilityOverride(overrideFn: UsabilityOverrideFn) {
+    this._usabilityOverride = overrideFn;
+  }
+
+  setOptions(newOptions: RowMoveManagerOption) {
+    this._addonOptions = { ...this._addonOptions, ...newOptions };
+  }
+
+  // --
+  // protected functions
+  // ------------------
+
+  protected handleDragInit(e: SlickEventData) {
+    // prevent the grid from cancelling drag'n'drop by default
+    e.stopImmediatePropagation();
+  }
+
+  protected handleDragEnd(e: SlickEventData, dd: DragRowMove) {
+    if (!this._dragging) {
+      return;
+    }
+    this._dragging = false;
+    e.stopImmediatePropagation();
+
+    dd.guide?.remove();
+    dd.selectionProxy?.remove();
+    dd.clonedSlickRow?.remove();
+
+    if (dd.canMove) {
+      const eventData = {
+        grid: this._grid,
+        rows: dd.selectedRows,
+        insertBefore: dd.insertBefore,
+      };
+      // TODO:  this._grid.remapCellCssClasses ?
+      if (typeof this._addonOptions.onMoveRows === 'function') {
+        this._addonOptions.onMoveRows(e, eventData);
+      }
+      this.onMoveRows.notify(eventData);
+    }
+  }
+  protected handleDrag(e: SlickEventData, dd: DragRowMove): boolean | void {
+    if (this._dragging) {
+      e.stopImmediatePropagation();
+
+      const top = e.pageY - (getHtmlElementOffset(this._canvas)?.top ?? 0);
+      dd.selectionProxy.style.top = `${top - 5}px`;
+      dd.selectionProxy.style.display = 'block';
+
+      // if the row move shadow is enabled, we'll also make it follow the mouse cursor
+      if (dd.clonedSlickRow) {
+        dd.clonedSlickRow.style.top = `${top - 6}px`;
+        dd.clonedSlickRow.style.display = 'block';
+      }
+
+      const insertBefore = Math.max(0, Math.min(Math.round(top / (this.gridOptions.rowHeight || 0)), this._grid.getDataLength()));
+      if (insertBefore !== dd.insertBefore) {
+        const eventData = {
+          grid: this._grid,
+          rows: dd.selectedRows,
+          insertBefore,
+        };
+
+        if (this._addonOptions?.onBeforeMoveRows?.(e, eventData) === false || this.onBeforeMoveRows.notify(eventData) === false) {
+          dd.canMove = false;
+        } else {
+          dd.canMove = true;
+        }
+
+        // if there's a UsabilityOverride defined, we also need to verify that the condition is valid
+        if (this._usabilityOverride && dd.canMove) {
+          const insertBeforeDataContext = this._grid.getDataItem(insertBefore);
+          dd.canMove = this.checkUsabilityOverride(insertBefore, insertBeforeDataContext, this._grid);
+        }
+
+        // if the new target is possible we'll display the dark blue bar (representing the acceptability) at the target position
+        // else it won't show up (it will be off the screen)
+        if (!dd.canMove) {
+          dd.guide.style.top = '-1000px';
+        } else {
+          dd.guide.style.top = `${insertBefore * (this.gridOptions.rowHeight || 0)}px`;
+        }
+
+        dd.insertBefore = insertBefore;
+      }
+    }
+  }
+
+  protected handleDragStart(event: SlickEventData, dd: DragRowMove): boolean | void {
+    const cell = this._grid.getCellFromEvent(event) || { cell: -1, row: -1 };
+    const currentRow = cell.row;
+    const dataContext = this._grid.getDataItem(currentRow);
+
+    if (this.checkUsabilityOverride(currentRow, dataContext, this._grid)) {
+      if (this._addonOptions.cancelEditOnDrag && this._grid.getEditorLock().isActive()) {
+        this._grid.getEditorLock().cancelCurrentEdit();
+      }
+
+      if (this._grid.getEditorLock().isActive() || !/move|selectAndMove/.test(this._grid.getColumns()[cell.cell].behavior || '')) {
+        return false;
+      }
+
+      this._dragging = true;
+      event.stopImmediatePropagation();
+
+      // optionally create a shadow element of the row item that we're moving/dragging so that we can see it all the time exactly which row is being dragged
+      if (!this.addonOptions.hideRowMoveShadow) {
+        const slickRowElm = this._grid.getCellNode(cell.row, cell.cell)?.closest<HTMLDivElement>('.slick-row');
+        if (slickRowElm) {
+          dd.clonedSlickRow = slickRowElm.cloneNode(true) as HTMLDivElement;
+          dd.clonedSlickRow.classList.add('slick-reorder-shadow-row');
+          dd.clonedSlickRow.style.display = 'none';
+          dd.clonedSlickRow.style.marginLeft = findWidthOrDefault(this._addonOptions?.rowMoveShadowMarginLeft, '0px');
+          dd.clonedSlickRow.style.marginTop = findWidthOrDefault(this._addonOptions?.rowMoveShadowMarginTop, '0px');
+          dd.clonedSlickRow.style.opacity = `${this._addonOptions?.rowMoveShadowOpacity ?? 0.95}`;
+          dd.clonedSlickRow.style.transform = `scale(${this.addonOptions?.rowMoveShadowScale ?? 0.75})`;
+          this._canvas.appendChild(dd.clonedSlickRow);
+        }
+      }
+
+      let selectedRows = this._addonOptions.singleRowMove ? [cell.row] : this._grid.getSelectedRows();
+      if (selectedRows.length === 0 || !selectedRows.some(selectedRow => selectedRow === cell.row)) {
+        selectedRows = [cell.row];
+        if (!this._addonOptions.disableRowSelection) {
+          this._grid.setSelectedRows(selectedRows);
+        }
+      }
+
+      const rowHeight = this.gridOptions.rowHeight as number;
+      dd.selectedRows = selectedRows;
+
+      dd.selectionProxy = createDomElement('div', {
+        className: 'slick-reorder-proxy',
+        style: {
+          display: 'none',
+          position: 'absolute',
+          zIndex: '99999',
+          width: `${this._canvas.clientWidth}px`,
+          height: `${rowHeight * selectedRows.length}px`,
+        }
+      });
+      this._canvas.appendChild(dd.selectionProxy);
+
+      dd.guide = createDomElement('div', {
+        className: 'slick-reorder-guide',
+        style: {
+          position: 'absolute',
+          zIndex: '99999',
+          width: `${this._canvas.clientWidth}px`,
+          top: `-1000px`,
+        }
+      });
+      this._canvas.appendChild(dd.guide);
+
+      dd.insertBefore = -1;
+    }
+  }
+
+  protected checkUsabilityOverride(row: number, dataContext: any, grid: SlickGrid) {
+    if (typeof this._usabilityOverride === 'function') {
+      return this._usabilityOverride(row, dataContext, grid);
+    }
+    return true;
+  }
+
+  protected moveIconFormatter(row: number, cell: number, value: any, column: Column, dataContext: any, grid: SlickGrid): FormatterResultObject | string {
+    if (!this.checkUsabilityOverride(row, dataContext, grid)) {
+      return '';
+    } else {
+      return { addClasses: 'cell-reorder dnd', text: '' };
+    }
+  }
+}

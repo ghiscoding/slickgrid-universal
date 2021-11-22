@@ -29,6 +29,12 @@ export interface ContextMenuOption {
   /** Same as "commandTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   commandTitleKey?: string;
 
+  /** Defaults to "bottom", user can optionally force the Cell Menu drop to be aligned to the top or bottom. */
+  dropDirection?: 'top' | 'bottom';
+
+  /** Defaults to "right", user can optionally force the Cell Menu drop to be aligned to the left or right. */
+  dropSide?: 'left' | 'right';
+
   /** Defaults to false, hide the "Clear Grouping" command in the menu (Grid Option "enableGrouping: true" has to be enabled) */
   hideClearAllGrouping?: boolean;
 

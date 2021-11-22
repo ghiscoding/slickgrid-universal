@@ -2,11 +2,17 @@ import {
   Column,
   CellRange,
   FormatterResultObject,
-  SlickCellExternalCopyManager,
   SlickEventData,
 } from './index';
+import { SlickCellExcelCopyManager, } from '../extensions/slickCellExcelCopyManager';
 
 export interface ExcelCopyBufferOption<T = any> {
+  /** defaults to 2000(ms), delay in ms to wait before clearing the selection after a paste action */
+  clearCopySelectionDelay?: number;
+
+  /** defaults to 100(ms), delay in ms to wait before executing focus/paste */
+  clipboardPasteDelay?: number;
+
   /** defaults to "copied", sets the css className used for copied cells. */
   copiedCellStyle?: string;
 
@@ -48,7 +54,7 @@ export interface ExcelCopyBufferOption<T = any> {
   // ------------
 
   /** Fired after extension (plugin) is registered by SlickGrid */
-  onExtensionRegistered?: (plugin: SlickCellExternalCopyManager) => void;
+  onExtensionRegistered?: (plugin: SlickCellExcelCopyManager) => void;
 
   /** Fired when a copy cell is triggered */
   onCopyCells?: (e: SlickEventData, args: { ranges: CellRange[] }) => void;
