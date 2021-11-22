@@ -38,7 +38,7 @@
   .slick-footerrow {
     position: relative;
     width: 100%;
-    border: 1px solid $grid-border-color;
+    border: 1px solid $slick-grid-border-color;
     border-right-color: transparent;
     border-bottom-color: transparent;
     border-right-width: 0;
@@ -60,13 +60,13 @@
 
   .slick-pane-header {
     display: block;
-    background-color: var(--slick-header-background-color, $header-background-color);
-    border-bottom: var(--slick-header-border-bottom, $header-border-bottom);
+    background-color: var(--slick-header-background-color, $slick-header-background-color);
+    border-bottom: var(--slick-header-border-bottom, $slick-header-border-bottom);
   }
 
   .slick-pane-top {
     box-sizing: border-box;
-    border-top: var(--slick-slick-pane-top-border-top, $slick-pane-top-border-top);
+    border-top: var(--slick-pane-top-border-top, $slick-pane-top-border-top);
   }
 
   .slick-viewport {
@@ -144,7 +144,7 @@
     line-height: 16px;
     margin: 0;
     padding: 4px;
-    border-right: 1px solid $grid-border-color;
+    border-right: 1px solid $slick-grid-border-color;
     border-left: 0px !important;
     border-top: 0px !important;
     border-bottom: 0px !important;
@@ -154,12 +154,12 @@
 
   .slick-cell {
     box-sizing: border-box;
-    border-style: var(--slick-grid-border-style, $grid-border-style);
+    border-style: var(--slick-grid-border-style, $slick-grid-border-style);
     padding: 1px 2px 1px 2px;
   }
 
   .slick-header-column {
-    padding: var(--slick-header-padding, $header-padding);
+    padding: var(--slick-header-padding, $slick-header-padding);
   }
 
   .grid-canvas {
@@ -207,7 +207,7 @@
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: var(--slick-header-row-count, $header-row-count);
+    -webkit-line-clamp: var(--slick-header-row-count, $slick-header-row-count);
   }
 
   .slick-resizable-handle {
@@ -260,21 +260,21 @@
   .slick-reorder-proxy {
     cursor: move;
     display: inline-block;
-    background: var(--slick-row-move-plugin-proxy-bg-color, $row-move-plugin-proxy-bg-color);
-    opacity: var(--row-move-plugin-proxy-opacity, $row-move-plugin-proxy-opacity);
+    background: var(--slick-row-move-plugin-proxy-bg-color, $slick-row-move-plugin-proxy-bg-color);
+    opacity: var(--row-move-plugin-proxy-opacity, $slick-row-move-plugin-proxy-opacity);
   }
 
   .slick-reorder-guide {
     display: inline-block;
-    height: var(--slick-row-move-plugin-guide-height, $row-move-plugin-guide-height);
-    background: var(--slick-row-move-plugin-guide-bg-color, $row-move-plugin-guide-bg-color);
-    opacity: var(--slick-row-move-plugin-guide-opacity, $row-move-plugin-guide-opacity);
+    height: var(--slick-row-move-plugin-guide-height, $slick-row-move-plugin-guide-height);
+    background: var(--slick-row-move-plugin-guide-bg-color, $slick-row-move-plugin-guide-bg-color);
+    opacity: var(--slick-row-move-plugin-guide-opacity, $slick-row-move-plugin-guide-opacity);
   }
 
   .slick-reorder-shadow-row {
     position: absolute;
     z-index: 999999;
-    box-shadow: var(--slick-row-move-plugin-shadow-row-box-shadow, $row-move-plugin-shadow-row-box-shadow);
+    box-shadow: var(--slick-row-move-plugin-shadow-row-box-shadow, $slick-row-move-plugin-shadow-row-box-shadow);
   }
 
   .slick-reorder-shadow-row {

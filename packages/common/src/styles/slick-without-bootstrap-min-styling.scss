@@ -1,14 +1,14 @@
 @import './variables';
 
-$form-control-border: 1px solid #ccc !default;
-$form-control-focus-border-color: lighten($primary-color, 10%) !default;
-$form-control-focus-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(lighten($primary-color, 3%), .3) !default;
+$slick-form-control-border: 1px solid #ccc !default;
+$slick-form-control-focus-border-color: lighten($slick-primary-color, 10%) !default;
+$slick-form-control-focus-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(lighten($slick-primary-color, 3%), .3) !default;
 
 /** Bootstrap buttons styling copied and changed slightly for Material Design */
 .slick-editor-modal, .slick-large-editor-text {
   .btn {
     cursor: pointer;
-    font-family: var(--slick-font-family, $font-family);
+    font-family: var(--slick-font-family, $slick-font-family);
     display: inline-block;
     margin-bottom: 0;
     text-align: center;
@@ -19,14 +19,14 @@ $form-control-focus-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(l
   }
 
   .btn-default {
-    color: var(--slick-button-primary-color, $button-primary-color);
+    color: var(--slick-button-primary-color, $slick-button-primary-color);
     background-color: #fff;
     border-color: #ccc;
   }
 
   .btn-primary {
     color: #fff;
-    background-color: var(--slick-button-primary-bg-color, $button-primary-bg-color);
+    background-color: var(--slick-button-primary-bg-color, $slick-button-primary-bg-color);
   }
 
   .btn-xs,
@@ -45,12 +45,12 @@ $form-control-focus-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(l
 }
 
 .gridPane, .grid-pane, .slick-editor-modal {
-  font-family: var(--slick-font-family, $font-family);
+  font-family: var(--slick-font-family, $slick-font-family);
 
   .form-control {
     display: block;
     width: 100%;
-    font-size: var(--slick-font-size-base, $font-size-base);
+    font-size: var(--slick-font-size-base, $slick-font-size-base);
     line-height: 1.42857143;
     color: #555;
     background-color: #fff;
@@ -138,8 +138,8 @@ $form-control-focus-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(l
 
   .form-control:focus {
     outline: 0;
-    border-color: var(--slick-form-control-focus-border-color, $form-control-focus-border-color);
-    box-shadow: var(--slick-form-control-focus-box-shadow, $form-control-focus-box-shadow);
+    border-color: var(--slick-form-control-focus-border-color, $slick-form-control-focus-border-color);
+    box-shadow: var(--slick-form-control-focus-box-shadow, $slick-form-control-focus-box-shadow);
   }
 
   .slick-pagination {

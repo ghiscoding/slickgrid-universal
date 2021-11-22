@@ -9,13 +9,13 @@
 }
 .ui-autocomplete {
   .ui-menu-item {
-    color: var(--slick-autocomplete-text-color, $autocomplete-text-color);
+    color: var(--slick-autocomplete-text-color, $slick-autocomplete-text-color);
     .ui-state-active {
-      color: var(--slick-autocomplete-text-color, $autocomplete-text-color);
+      color: var(--slick-autocomplete-text-color, $slick-autocomplete-text-color);
       &:hover {
         margin: 0;
         border: 0;
-        color: var(--slick-autocomplete-text-color, $autocomplete-text-color);
+        color: var(--slick-autocomplete-text-color, $slick-autocomplete-text-color);
       }
     }
   }
@@ -23,27 +23,27 @@
 .ui-autocomplete {
   background: none;
   position: absolute;
-  z-index: var(--slick-autocomplete-z-index, $autocomplete-z-index);
+  z-index: var(--slick-autocomplete-z-index, $slick-autocomplete-z-index);
   padding: 0;
   margin-top: 2px;
   list-style: none;
-  background-color: var(--slick-autocomplete-bg-color, $autocomplete-bg-color);
-  border: var(--slick-autocomplete-border, $autocomplete-border);
-  border-radius: var(--slick-autocomplete-border-radius, $autocomplete-border-radius);
-  box-shadow: var(--slick-autocomplete-box-shadow, $autocomplete-box-shadow);
+  background-color: var(--slick-autocomplete-bg-color, $slick-autocomplete-bg-color);
+  border: var(--slick-autocomplete-border, $slick-autocomplete-border);
+  border-radius: var(--slick-autocomplete-border-radius, $slick-autocomplete-border-radius);
+  box-shadow: var(--slick-autocomplete-box-shadow, $slick-autocomplete-box-shadow);
   background-clip: padding-box;
-  max-height: var(--slick-autocomplete-max-height, $autocomplete-max-height);
-  min-height: var(--slick-autocomplete-min-height, $autocomplete-min-height);
-  min-width: var(--slick-autocomplete-min-width, $autocomplete-min-width);
-  overflow-y: var(--slick-autocomplete-overflow-y, $autocomplete-overflow-y);
-  overflow-x: var(--slick-autocomplete-overflow-x, $autocomplete-overflow-x);
-  text-overflow: var(--slick-autocomplete-text-overflow, $autocomplete-text-overflow);
+  max-height: var(--slick-autocomplete-max-height, $slick-autocomplete-max-height);
+  min-height: var(--slick-autocomplete-min-height, $slick-autocomplete-min-height);
+  min-width: var(--slick-autocomplete-min-width, $slick-autocomplete-min-width);
+  overflow-y: var(--slick-autocomplete-overflow-y, $slick-autocomplete-overflow-y);
+  overflow-x: var(--slick-autocomplete-overflow-x, $slick-autocomplete-overflow-x);
+  text-overflow: var(--slick-autocomplete-text-overflow, $slick-autocomplete-text-overflow);
 
   li {
     div {
       display: block;
-      color: var(--slick-autocomplete-text-color, $autocomplete-text-color);
-      padding: var(--slick-autocomplete-text-padding, $autocomplete-text-padding);
+      color: var(--slick-autocomplete-text-color, $slick-autocomplete-text-color);
+      padding: var(--slick-autocomplete-text-padding, $slick-autocomplete-text-padding);
       font-weight: normal;
       line-height: 1.42857143;
       white-space: nowrap;
@@ -58,18 +58,18 @@
   100% { transform: rotate(360deg); }
 }
 .ui-autocomplete-loading {
-  background-color: var(--slick-autocomplete-loading-input-bg-color, $autocomplete-loading-input-bg-color) !important;
+  background-color: var(--slick-autocomplete-loading-input-bg-color, $slick-autocomplete-loading-input-bg-color) !important;
 
   & + span:after {
     animation: md-spin 2s infinite linear;
     display: inline-block;
-    font-family: var(--slick-icon-font-family, $icon-font-family);
-    color: var(--slick-autocomplete-loading-icon-color, $autocomplete-loading-icon-color);
-    content: var(--slick-autocomplete-loading-icon, $autocomplete-loading-icon) !important; /* important is required to override default jquery-ui styling */
-    width: var(--slick-autocomplete-loading-icon-width, $autocomplete-loading-icon-width);
-    margin: var(--slick-autocomplete-loading-icon-margin, $autocomplete-loading-icon-margin);
-    line-height: var(--slick-autocomplete-loading-icon-line-height, $autocomplete-loading-icon-line-height);
-    vertical-align: var(--slick-autocomplete-loading-icon-vertical-align, $autocomplete-loading-icon-vertical-align);
+    font-family: var(--slick-icon-font-family, $slick-icon-font-family);
+    color: var(--slick-autocomplete-loading-icon-color, $slick-autocomplete-loading-icon-color);
+    content: var(--slick-autocomplete-loading-icon, $slick-autocomplete-loading-icon) !important; /* important is required to override default jquery-ui styling */
+    width: var(--slick-autocomplete-loading-icon-width, $slick-autocomplete-loading-icon-width);
+    margin: var(--slick-autocomplete-loading-icon-margin, $slick-autocomplete-loading-icon-margin);
+    line-height: var(--slick-autocomplete-loading-icon-line-height, $slick-autocomplete-loading-icon-line-height);
+    vertical-align: var(--slick-autocomplete-loading-icon-vertical-align, $slick-autocomplete-loading-icon-vertical-align);
   }
 }
 
@@ -78,8 +78,8 @@
 .ui-state-focus {
   cursor: pointer;
   text-decoration: none;
-  color: var(--slick-autocomplete-hover-color, $autocomplete-hover-color);
-  background-color: var(--slick-autocomplete-hover-bg-color, $autocomplete-hover-bg-color);
+  color: var(--slick-autocomplete-hover-color, $slick-autocomplete-hover-color);
+  background-color: var(--slick-autocomplete-hover-bg-color, $slick-autocomplete-hover-bg-color);
 }
 
 .ui-helper-hidden-accessible {
@@ -99,11 +99,11 @@
 
 /* autocomplete custom styling */
 .ui-autocomplete.autocomplete-custom-four-corners {
-  width: var(--slick-autocomplete-tpl4-width, $autocomplete-tpl4-width);
+  width: var(--slick-autocomplete-tpl4-width, $slick-autocomplete-tpl4-width);
 }
 .ui-autocomplete.autocomplete-custom-four-corners li div.autocomplete-container-list {
-  width: var(--slick-autocomplete-tpl4-container-list-width, $autocomplete-tpl4-container-list-width);
-  padding: var(--slick-autocomplete-tpl4-container-list-padding, $autocomplete-tpl4-container-list-padding);
+  width: var(--slick-autocomplete-tpl4-container-list-width, $slick-autocomplete-tpl4-container-list-width);
+  padding: var(--slick-autocomplete-tpl4-container-list-padding, $slick-autocomplete-tpl4-container-list-padding);
 
   div {
     margin: 0;
@@ -119,19 +119,19 @@
   }
 
   .autocomplete-left > img {
-    height: var(--slick-autocomplete-tpl4-icon-left-height, $autocomplete-tpl4-icon-left-height);
-    width: var(--slick-autocomplete-tpl4-icon-left-width, $autocomplete-tpl4-icon-left-width);
+    height: var(--slick-autocomplete-tpl4-icon-left-height, $slick-autocomplete-tpl4-icon-left-height);
+    width: var(--slick-autocomplete-tpl4-icon-left-width, $slick-autocomplete-tpl4-icon-left-width);
     margin-top: 0px;
     background-color: #ffffff;
     background-clip: content-box;
   }
 
   .autocomplete-bottom-left {
-    color: var(--slick-autocomplete-tpl4-bottom-left-text-color, $autocomplete-tpl4-bottom-left-text-color);
-    font-size: var(--slick-autocomplete-tpl4-bottom-left-font-size, $autocomplete-tpl4-bottom-left-font-size);
-    font-style: var(--slick-autocomplete-tpl4-bottom-left-font-style, $autocomplete-tpl4-bottom-left-font-style);
-    font-weight: var(--slick-autocomplete-tpl4-bottom-left-font-weight, $autocomplete-tpl4-bottom-left-font-weight);
-    max-width: var(--slick-autocomplete-tpl4-bottom-left-max-width, $autocomplete-tpl4-bottom-left-max-width);
+    color: var(--slick-autocomplete-tpl4-bottom-left-text-color, $slick-autocomplete-tpl4-bottom-left-text-color);
+    font-size: var(--slick-autocomplete-tpl4-bottom-left-font-size, $slick-autocomplete-tpl4-bottom-left-font-size);
+    font-style: var(--slick-autocomplete-tpl4-bottom-left-font-style, $slick-autocomplete-tpl4-bottom-left-font-style);
+    font-weight: var(--slick-autocomplete-tpl4-bottom-left-font-weight, $slick-autocomplete-tpl4-bottom-left-font-weight);
+    max-width: var(--slick-autocomplete-tpl4-bottom-left-max-width, $slick-autocomplete-tpl4-bottom-left-max-width);
     display: inline-block;
     /*margin-left: 30px;*/
     overflow: hidden;
@@ -141,21 +141,21 @@
   .autocomplete-bottom-right {
     // margin-right: 12px;
     float: right;
-    color: var(--slick-autocomplete-tpl4-bottom-right-text-color, $autocomplete-tpl4-bottom-right-text-color);
-    font-size: var(--slick-autocomplete-tpl4-bottom-right-font-size, $autocomplete-tpl4-bottom-right-font-size);
-    font-style: var(--slick-autocomplete-tpl4-bottom-right-font-style, $autocomplete-tpl4-bottom-right-font-style);
-    font-weight: var(--slick-autocomplete-tpl4-bottom-right-font-weight, $autocomplete-tpl4-bottom-right-font-weight);
+    color: var(--slick-autocomplete-tpl4-bottom-right-text-color, $slick-autocomplete-tpl4-bottom-right-text-color);
+    font-size: var(--slick-autocomplete-tpl4-bottom-right-font-size, $slick-autocomplete-tpl4-bottom-right-font-size);
+    font-style: var(--slick-autocomplete-tpl4-bottom-right-font-style, $slick-autocomplete-tpl4-bottom-right-font-style);
+    font-weight: var(--slick-autocomplete-tpl4-bottom-right-font-weight, $slick-autocomplete-tpl4-bottom-right-font-weight);
     /*margin-left: 30px;*/
     text-overflow: ellipsis;
-    max-width: var(--slick-autocomplete-tpl4-bottom-right-max-width, $autocomplete-tpl4-bottom-right-max-width);
+    max-width: var(--slick-autocomplete-tpl4-bottom-right-max-width, $slick-autocomplete-tpl4-bottom-right-max-width);
   }
 
   .autocomplete-top-left {
-    color: var(--slick-autocomplete-tpl4-top-left-text-color, $autocomplete-tpl4-top-left-text-color);
-    font-style: var(--slick-autocomplete-tpl4-top-left-font-style, $autocomplete-tpl4-top-left-font-style);
-    font-size: var(--slick-autocomplete-tpl4-top-left-font-size, $autocomplete-tpl4-top-left-font-size);
-    font-weight: var(--slick-autocomplete-tpl4-top-left-font-weight, $autocomplete-tpl4-top-left-font-weight);
-    max-width: var(--slick-autocomplete-tpl4-top-left-max-width, $autocomplete-tpl4-top-left-max-width);
+    color: var(--slick-autocomplete-tpl4-top-left-text-color, $slick-autocomplete-tpl4-top-left-text-color);
+    font-style: var(--slick-autocomplete-tpl4-top-left-font-style, $slick-autocomplete-tpl4-top-left-font-style);
+    font-size: var(--slick-autocomplete-tpl4-top-left-font-size, $slick-autocomplete-tpl4-top-left-font-size);
+    font-weight: var(--slick-autocomplete-tpl4-top-left-font-weight, $slick-autocomplete-tpl4-top-left-font-weight);
+    max-width: var(--slick-autocomplete-tpl4-top-left-max-width, $slick-autocomplete-tpl4-top-left-max-width);
     display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -165,11 +165,11 @@
   .autocomplete-top-right {
     // margin-right: 12px;
     float: right;
-    color: var(--slick-autocomplete-tpl4-top-right-text-color, $autocomplete-tpl4-top-right-text-color);
-    font-style: var(--slick-autocomplete-tpl4-top-right-font-style, $autocomplete-tpl4-top-right-font-style);
-    font-size: var(--slick-autocomplete-tpl4-top-right-font-size, $autocomplete-tpl4-top-right-font-size);
-    font-weight: var(--slick-autocomplete-tpl4-top-right-font-weight, $autocomplete-tpl4-top-right-font-weight);
-    max-width: var(--slick-autocomplete-tpl4-top-right-max-width, $autocomplete-tpl4-top-right-max-width);
+    color: var(--slick-autocomplete-tpl4-top-right-text-color, $slick-autocomplete-tpl4-top-right-text-color);
+    font-style: var(--slick-autocomplete-tpl4-top-right-font-style, $slick-autocomplete-tpl4-top-right-font-style);
+    font-size: var(--slick-autocomplete-tpl4-top-right-font-size, $slick-autocomplete-tpl4-top-right-font-size);
+    font-weight: var(--slick-autocomplete-tpl4-top-right-font-weight, $slick-autocomplete-tpl4-top-right-font-weight);
+    max-width: var(--slick-autocomplete-tpl4-top-right-max-width, $slick-autocomplete-tpl4-top-right-max-width);
   }
 }
 
@@ -180,11 +180,11 @@
 
 /* autocomplete custom styling */
 .ui-autocomplete.autocomplete-custom-two-rows {
-  width: var(--slick-autocomplete-tpl2-width, $autocomplete-tpl2-width);
+  width: var(--slick-autocomplete-tpl2-width, $slick-autocomplete-tpl2-width);
 }
 .ui-autocomplete.autocomplete-custom-two-rows li div.autocomplete-container-list {
-  width: var(--slick-autocomplete-tpl2-container-list-width, $autocomplete-tpl2-container-list-width);
-  padding: var(--slick-autocomplete-tpl2-container-list-padding, $autocomplete-tpl2-container-list-padding);
+  width: var(--slick-autocomplete-tpl2-container-list-width, $slick-autocomplete-tpl2-container-list-width);
+  padding: var(--slick-autocomplete-tpl2-container-list-padding, $slick-autocomplete-tpl2-container-list-padding);
 
   div {
     margin: 0;
@@ -194,8 +194,8 @@
 
   .autocomplete-left {
     float: left;
-    height: var(--slick-autocomplete-tpl2-icon-left-height, $autocomplete-tpl2-icon-left-height);
-    width: var(--slick-autocomplete-tpl2-icon-left-width, $autocomplete-tpl2-icon-left-width);
+    height: var(--slick-autocomplete-tpl2-icon-left-height, $slick-autocomplete-tpl2-icon-left-height);
+    width: var(--slick-autocomplete-tpl2-icon-left-width, $slick-autocomplete-tpl2-icon-left-width);
     padding-right: 3px;
   }
 
@@ -207,11 +207,11 @@
   }
 
   .autocomplete-bottom-left {
-    color: var(--slick-autocomplete-tpl2-bottom-left-text-color, $autocomplete-tpl2-bottom-left-text-color);
-    font-size: var(--slick-autocomplete-tpl2-bottom-left-font-size, $autocomplete-tpl2-bottom-left-font-size);
-    font-style: var(--slick-autocomplete-tpl2-bottom-left-font-style, $autocomplete-tpl2-bottom-left-font-style);
-    font-weight: var(--slick-autocomplete-tpl2-bottom-left-font-weight, $autocomplete-tpl2-bottom-left-font-weight);
-    max-width: var(--slick-autocomplete-tpl2-bottom-left-max-width, $autocomplete-tpl2-bottom-left-max-width);
+    color: var(--slick-autocomplete-tpl2-bottom-left-text-color, $slick-autocomplete-tpl2-bottom-left-text-color);
+    font-size: var(--slick-autocomplete-tpl2-bottom-left-font-size, $slick-autocomplete-tpl2-bottom-left-font-size);
+    font-style: var(--slick-autocomplete-tpl2-bottom-left-font-style, $slick-autocomplete-tpl2-bottom-left-font-style);
+    font-weight: var(--slick-autocomplete-tpl2-bottom-left-font-weight, $slick-autocomplete-tpl2-bottom-left-font-weight);
+    max-width: var(--slick-autocomplete-tpl2-bottom-left-max-width, $slick-autocomplete-tpl2-bottom-left-max-width);
     /*margin-left: 30px;*/
     display: inline-block;
     overflow: hidden;
@@ -219,11 +219,11 @@
   }
 
   .autocomplete-top-left {
-    color: var(--slick-autocomplete-tpl2-top-left-text-color, $autocomplete-tpl2-top-left-text-color);
-    font-style: var(--slick-autocomplete-tpl2-top-left-font-style, $autocomplete-tpl2-top-left-font-style);
-    font-size: var(--slick-autocomplete-tpl2-top-left-font-size, $autocomplete-tpl2-top-left-font-size);
-    font-weight: var(--slick-autocomplete-tpl2-top-left-font-weight, $autocomplete-tpl2-top-left-font-weight);
-    max-width: var(--slick-autocomplete-tpl2-top-left-max-width, $autocomplete-tpl2-top-left-max-width);
+    color: var(--slick-autocomplete-tpl2-top-left-text-color, $slick-autocomplete-tpl2-top-left-text-color);
+    font-style: var(--slick-autocomplete-tpl2-top-left-font-style, $slick-autocomplete-tpl2-top-left-font-style);
+    font-size: var(--slick-autocomplete-tpl2-top-left-font-size, $slick-autocomplete-tpl2-top-left-font-size);
+    font-weight: var(--slick-autocomplete-tpl2-top-left-font-weight, $slick-autocomplete-tpl2-top-left-font-weight);
+    max-width: var(--slick-autocomplete-tpl2-top-left-max-width, $slick-autocomplete-tpl2-top-left-max-width);
     display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;

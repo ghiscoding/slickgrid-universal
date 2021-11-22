@@ -27,6 +27,6 @@
  @import './material-svg-icons';
  @import './material-svg-utilities';
 
- $link-color: var(--slick-primary-color, $primary-color) !default;
+ $link-color: var(--slick-primary-color, $slick-primary-color) !default;
  @import './colors.scss';
  @import './extra-styling.scss';
