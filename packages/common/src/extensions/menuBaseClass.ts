@@ -192,23 +192,13 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
         commandLiElm.title = item.tooltip;
       }
 
-      if (this._camelPluginName === 'headerButtons') {
-        if ((item as HeaderButtonItem).image) {
-          console.warn('[Slickgrid-Universal] The "image" property of a Header Button is now deprecated and will be removed in future version, consider using "cssClass" instead.');
-          commandLiElm.style.backgroundImage = `url(${(item as HeaderButtonItem).image})`;
-        }
-      } else {
-        // any other Menu plugin will have icon & content elements
+      if (this._camelPluginName !== 'headerButtons') {
+        // Menu plugin can use optional icon & content elements
         const iconElm = createDomElement('div', { className: `${this._menuCssPrefix}-icon` });
         commandLiElm.appendChild(iconElm);
 
         if ((item as MenuCommandItem | MenuOptionItem).iconCssClass) {
           iconElm.classList.add(...(item as MenuCommandItem | MenuOptionItem).iconCssClass!.split(' '));
-        }
-
-        if ((item as MenuCommandItem | MenuOptionItem).iconImage) {
-          console.warn(`[Slickgrid-Universal] The "iconImage" property of a ${toSentenceCase(this._camelPluginName)} item is now deprecated and will be removed in future version, consider using "iconCssClass" instead.`);
-          iconElm.style.backgroundImage = `url(${(item as MenuCommandItem | MenuOptionItem).iconImage})`;
         }
 
         const textElm = createDomElement('span', {

@@ -204,10 +204,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         this._gridMenuButtonElm = createDomElement('button', { className: 'slick-grid-menu-button' });
         if (this._gridMenuOptions?.iconCssClass) {
           this._gridMenuButtonElm.classList.add(...this._gridMenuOptions.iconCssClass.split(' '));
-        } else {
-          const iconImage = this._gridMenuOptions?.iconImage ?? '';
-          const iconImageElm = createDomElement('img', { src: iconImage });
-          this._gridMenuButtonElm.appendChild(iconImageElm);
         }
         this._headerElm.parentElement!.insertBefore(this._gridMenuButtonElm, this._headerElm.parentElement!.firstChild);
 

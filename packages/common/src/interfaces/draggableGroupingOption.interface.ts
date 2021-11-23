@@ -5,12 +5,6 @@ export interface DraggableGroupingOption {
   /** an extra CSS class to add to the delete button (default undefined), if deleteIconCssClass is undefined then slick-groupby-remove-image class will be added */
   deleteIconCssClass?: string;
 
-  /**
-   * @deprecated @use `deleteIconCssClass`
-   *  a url to the delete button image (default undefined)
-   */
-  deleteIconImage?: string;
-
   /** option to specify set own placeholder note text */
   dropPlaceHolderText?: string;
 
@@ -19,12 +13,6 @@ export interface DraggableGroupingOption {
 
   /** an extra CSS class to add to the grouping field hint  (default undefined) */
   groupIconCssClass?: string;
-
-  /**
-   * @deprecated @use `groupIconCssClass`
-   *  a url to the grouping field hint image (default undefined)
-   */
-  groupIconImage?: string;
 
   /** Defaults to False, should we display a toggle all button (typically aligned on the left before any of the column group) */
   hideToggleAllButton?: boolean;

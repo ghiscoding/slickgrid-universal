@@ -138,9 +138,9 @@ export class Example1 {
     this.sgb2.paginationService!.togglePaginationVisibility(this.isGrid2WithPagination);
   }
 
-  toggleGridMenu(e: Event) {
+  toggleGridMenu(e: MouseEvent) {
     if (this.sgb2?.extensionService) {
-      const gridMenuInstance = this.sgb2.extensionService.getSlickgridAddonInstance(ExtensionName.gridMenu);
+      const gridMenuInstance = this.sgb2.extensionService.getExtensionInstanceByName(ExtensionName.gridMenu);
       // open the external button Grid Menu, you can also optionally pass Grid Menu options as 2nd argument
       // for example we want to align our external button on the right without affecting the menu within the grid which will stay aligned on the left
       gridMenuInstance.showGridMenu(e, { dropSide: 'right' });

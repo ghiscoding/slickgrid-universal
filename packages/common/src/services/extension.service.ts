@@ -112,14 +112,18 @@ export class ExtensionService {
   }
 
   /**
-   * Get an Extension by it's name
-   *  @param name
+   * Get an Extension by it's name.
+   * NOTE: it's preferable to @use `getExtensionInstanceByName` if you just want the instance since it will automatically infer the extension.
+   * @param name
    */
   getExtensionByName<P extends (SlickControlList | SlickPluginList) = any>(name: ExtensionName): ExtensionModel<P> | undefined {
     return this._extensionList?.[name];
   }
 
-  /** Get Extension Instance by its name */
+  /**
+   * Get Extension Instance by its name.
+   * @param name
+   */
   getExtensionInstanceByName<T extends ExtensionName>(name: T): InferExtensionByName<T> {
     return this.getExtensionByName(name)?.instance as InferExtensionByName<T>;
   }

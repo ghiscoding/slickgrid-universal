@@ -16,12 +16,6 @@ export interface MenuItem<O = MenuCallbackArgs> {
   /** CSS class to be added to the menu item icon. */
   iconCssClass?: string;
 
-  /**
-   * @deprecated @use `iconCssClass`
-   * URL pointing to the Menu icon image.
-   */
-  iconImage?: string;
-
   /** position order in the list, a lower number will make it on top of the list. Internal commands starts at 50. */
   positionOrder?: number;
 

@@ -106,12 +106,6 @@ export interface GridMenuOption {
   /** icon for the "Export to Text Delimited" command */
   iconExportTextDelimitedCommand?: string;
 
-  /**
-   * @deprecated @use `iconCssClass`
-   * URL pointing to the displaying the Grid menu icon image (basically the hamburger menu).
-   */
-  iconImage?: string;
-
   /** icon for the "Refresh Dataset" command */
   iconRefreshDatasetCommand?: string;
 

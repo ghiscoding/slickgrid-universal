@@ -181,10 +181,6 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         headerButtonDivElm.classList.add(...this.addonOptions.buttonCssClass.split(' '));
       }
 
-      if (this.addonOptions.buttonImage) {
-        headerButtonDivElm.style.backgroundImage = `url(${this.addonOptions.buttonImage})`;
-      }
-
       if (this.addonOptions.tooltip) {
         headerButtonDivElm.title = this.addonOptions.tooltip;
       }

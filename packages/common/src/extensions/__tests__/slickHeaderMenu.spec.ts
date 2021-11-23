@@ -202,18 +202,6 @@ describe('HeaderMenu Plugin', () => {
         `<div class="slick-header-menu-button mdi mdi-chevron-down"></div>`));
     });
 
-    it('should populate a Header Menu button with extra button image when header menu option "buttonImage" and cell is being rendered', () => {
-      plugin.dispose();
-      plugin.init({ buttonImage: '/image.png' });
-      (columnsMock[0].header.menu.items[1] as MenuCommandItem).itemVisibilityOverride = () => undefined;
-
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
-
-      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-menu-button" style="background-image: url(/image.png);"></div>`));
-    });
-
     it('should populate a Header Menu button with extra tooltip title attribute when header menu option "tooltip" and cell is being rendered', () => {
       plugin.dispose();
       plugin.init({ tooltip: 'some tooltip text' });
@@ -343,49 +331,6 @@ describe('HeaderMenu Plugin', () => {
             <span class="slick-header-menu-content"></span>
           </li>`
       ));
-    });
-
-    it('should populate a Header Menu and a 2nd button and property "iconImage" is filled and expect button to include an image background', () => {
-      plugin.dispose();
-      plugin.init();
-      (columnsMock[0].header.menu.items[1] as MenuCommandItem).iconImage = '/images/some-image.png';
-
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
-      const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
-      headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-      const commandElm = gridContainerDiv.querySelector('.slick-header-menu-item[data-command="show-negative-numbers"]');
-
-      expect(commandElm).toBeTruthy();
-      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-header-menu-item mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers.">
-            <div class="slick-header-menu-icon" style="background-image: url(/images/some-image.png);"></div>
-            <span class="slick-header-menu-content"></span>
-          </li>`
-      ));
-      expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] The "iconImage" property of a Header Menu item is now deprecated and will be removed in future version, consider using "iconCssClass" instead.');
-    });
-
-    it('should populate a Header Menu and a 2nd button and property "image" is filled and expect button to include an image background', () => {
-      plugin.dispose();
-      plugin.init();
-      (columnsMock[0].header.menu.items[1] as MenuCommandItem).title = 'Some Title';
-      (columnsMock[0].header.menu.items[1] as MenuCommandItem).textCssClass = 'bold red';
-
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
-      const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
-      headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-      const commandElm = gridContainerDiv.querySelector('.slick-header-menu-item[data-command="show-negative-numbers"]');
-
-      expect(commandElm).toBeTruthy();
-      expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-header-menu-item mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers.">
-            <div class="slick-header-menu-icon"></div>
-            <span class="slick-header-menu-content bold red">Some Title</span>
-          </li>`
-      ));
-      expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] The "iconImage" property of a Header Menu item is now deprecated and will be removed in future version, consider using "iconCssClass" instead.');
     });
 
     it('should populate a Header Menu and a 2nd button and property "tooltip" is filled and expect button to include a "title" attribute for the tooltip', () => {

@@ -10,12 +10,6 @@ export interface HeaderMenuOption {
   /** an extra CSS class to add to the menu button */
   buttonCssClass?: string;
 
-  /**
-   * @deprecated @use `buttonCssClass`
-   * URL pointing to the Header Menu button image.
-   */
-  buttonImage?: string;
-
   /** Defaults to false, which will hide the "Column Resize by Content" command in the Header Menu (Grid Option "enableColumnResizeOnDoubleClick" has to also be enabled) */
   hideColumnResizeByContentCommand?: boolean;
 
@@ -45,12 +39,6 @@ export interface HeaderMenuOption {
 
   /** A CSS class to be added to the menu item icon. */
   iconCssClass?: string;
-
-  /**
-   * @deprecated @use `iconCssClass`
-   * URL pointing to the Header Menu icon image.
-   */
-  iconImage?: string;
 
   /** icon for the "Remove Filter" command */
   iconClearFilterCommand?: string;
