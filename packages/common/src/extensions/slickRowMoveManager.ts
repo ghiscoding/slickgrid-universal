@@ -75,6 +75,12 @@ export class SlickRowMoveManager {
     this._addonOptions = { ...this._defaults, ...options };
     this._grid = grid;
     this._canvas = this._grid.getCanvasNode();
+
+    // user could override the expandable icon logic from within the options or after instantiating the plugin
+    if (this._addonOptions && typeof this._addonOptions.usabilityOverride === 'function') {
+      this.usabilityOverride(this._addonOptions.usabilityOverride);
+    }
+
     this._eventHandler.subscribe(this._grid.onDragInit, this.handleDragInit.bind(this))
       .subscribe(this._grid.onDragStart, this.handleDragStart.bind(this))
       .subscribe(this._grid.onDrag, this.handleDrag.bind(this))
