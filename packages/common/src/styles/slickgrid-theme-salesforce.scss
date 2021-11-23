@@ -29,25 +29,25 @@
 @import './material-svg-icons';
 @import './material-svg-utilities';
 
-$editable-field-bg-color: rgba(227, 240, 251, 0.569) !default;
-$editable-field-hover-icon-color: #b0adab !default;
-$editable-field-hover-icon: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($editable-field-hover-icon-color)}" viewBox="0 0 52 52"><path d="M9.5 33.4l8.9 8.9c.4.4 1 .4 1.4 0L42 20c.4-.4.4-1 0-1.4l-8.8-8.8c-.4-.4-1-.4-1.4 0L9.5 32.1c-.4.4-.4 1 0 1.3zM36.1 5.7c-.4.4-.4 1 0 1.4l8.8 8.8c.4.4 1 .4 1.4 0l2.5-2.5c1.6-1.5 1.6-3.9 0-5.5l-4.7-4.7c-1.6-1.6-4.1-1.6-5.7 0l-2.3 2.5zM2.1 48.2c-.2 1 .7 1.9 1.7 1.7l10.9-2.6c.4-.1.7-.3.9-.5l.2-.2c.2-.2.3-.9-.1-1.3l-9-9c-.4-.4-1.1-.3-1.3-.1l-.2.2c-.3.3-.4.6-.5.9L2.1 48.2z"></path></svg>')  !default;
-$editable-field-hover-icon-margin-right: 8px !default;
-$editable-field-hover-icon-margin-top: 8px !default;
-$editable-field-hover-icon-width: 14px !default;
-$editor-grid-cell-border-width-modified: 1px 6px 1px 1px !default;
+$slick-editable-field-bg-color: rgba(227, 240, 251, 0.569) !default;
+$slick-editable-field-hover-icon-color: #b0adab !default;
+$slick-editable-field-hover-icon: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-editable-field-hover-icon-color)}" viewBox="0 0 52 52"><path d="M9.5 33.4l8.9 8.9c.4.4 1 .4 1.4 0L42 20c.4-.4.4-1 0-1.4l-8.8-8.8c-.4-.4-1-.4-1.4 0L9.5 32.1c-.4.4-.4 1 0 1.3zM36.1 5.7c-.4.4-.4 1 0 1.4l8.8 8.8c.4.4 1 .4 1.4 0l2.5-2.5c1.6-1.5 1.6-3.9 0-5.5l-4.7-4.7c-1.6-1.6-4.1-1.6-5.7 0l-2.3 2.5zM2.1 48.2c-.2 1 .7 1.9 1.7 1.7l10.9-2.6c.4-.1.7-.3.9-.5l.2-.2c.2-.2.3-.9-.1-1.3l-9-9c-.4-.4-1.1-.3-1.3-.1l-.2.2c-.3.3-.4.6-.5.9L2.1 48.2z"></path></svg>')  !default;
+$slick-editable-field-hover-icon-margin-right: 8px !default;
+$slick-editable-field-hover-icon-margin-top: 8px !default;
+$slick-editable-field-hover-icon-width: 14px !default;
+$slick-editor-grid-cell-border-width-modified: 1px 6px 1px 1px !default;
 
 .grid-canvas {
   .slick-row, .slick-row.odd {
     /* editable field with blue background */
     .slick-cell.editable-field, .slick-cell.selected.editable-field {
-      background-color: var(--slick-editable-field-bg-color, $editable-field-bg-color);
+      background-color: var(--slick-editable-field-bg-color, $slick-editable-field-bg-color);
       &:hover:after {
-        content: var(--slick-editable-field-hover-icon, $editable-field-hover-icon);
+        content: var(--slick-editable-field-hover-icon, $slick-editable-field-hover-icon);
         position: absolute;
-        top: var(--slick-editable-field-hover-icon-margin-top, $editable-field-hover-icon-margin-top);
-        right: var(--slick-editable-field-hover-icon-margin-right, $editable-field-hover-icon-margin-right);
-        width: var(--slick-editable-field-hover-icon-width, $editable-field-hover-icon-width);
+        top: var(--slick-editable-field-hover-icon-margin-top, $slick-editable-field-hover-icon-margin-top);
+        right: var(--slick-editable-field-hover-icon-margin-right, $slick-editable-field-hover-icon-margin-right);
+        width: var(--slick-editable-field-hover-icon-width, $slick-editable-field-hover-icon-width);
       }
       &.active:hover:after {
         content: none;
@@ -73,11 +73,11 @@ $editor-grid-cell-border-width-modified: 1px 6px 1px 1px !default;
         clear: both;
       }
       &:hover:after {
-        content: var(--slick-editable-field-hover-icon, $editable-field-hover-icon);
+        content: var(--slick-editable-field-hover-icon, $slick-editable-field-hover-icon);
         position: absolute;
-        top: var(--slick-editable-field-hover-icon-margin-top, $editable-field-hover-icon-margin-top);
-        right: var(--slick-editable-field-hover-icon-margin-right, $editable-field-hover-icon-margin-right);
-        width: var(--slick-editable-field-hover-icon-width, $editable-field-hover-icon-width);
+        top: var(--slick-editable-field-hover-icon-margin-top, $slick-editable-field-hover-icon-margin-top);
+        right: var(--slick-editable-field-hover-icon-margin-right, $slick-editable-field-hover-icon-margin-right);
+        width: var(--slick-editable-field-hover-icon-width, $slick-editable-field-hover-icon-width);
       }
       &.active:hover:after {
         content: none;
@@ -86,14 +86,14 @@ $editor-grid-cell-border-width-modified: 1px 6px 1px 1px !default;
 
     .slick-cell.unsaved-editable-field {
       .editing-field {
-        border: var(--slick-editor-modal-detail-container-border-modified, $editor-modal-detail-container-border-modified);
-        border-width: var(--slick-editor-grid-cell-border-width-modified, $editor-grid-cell-border-width-modified);
+        border: var(--slick-editor-modal-detail-container-border-modified, $slick-editor-modal-detail-container-border-modified);
+        border-width: var(--slick-editor-grid-cell-border-width-modified, $slick-editor-grid-cell-border-width-modified);
       }
     }
   }
 }
 
-$link-color: var(--slick-primary-color, $primary-color) !default;
+$link-color: var(--slick-primary-color, $slick-primary-color) !default;
 @import './colors';
 @import './colors-from-filters';
 @import './extra-styling';

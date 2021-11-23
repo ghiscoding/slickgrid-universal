@@ -6,7 +6,7 @@
 // since our icon are not pure black, we also need to prepend "brightness(0) saturate(100%)" to the filter
 // NOTE: remember that we are using CSS "filter" and that is NOT the same as a using regular color/background-color, it behaves differently
 
-$color-primary: $primary-color !default;
+$color-primary: $slick-primary-color !default;
 $color-secondary: #6c757d !default;
 $color-success: #28a745 !default;
 $color-danger: #dc3545 !default;
