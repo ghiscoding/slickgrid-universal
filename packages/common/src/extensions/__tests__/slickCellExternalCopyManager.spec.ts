@@ -37,7 +37,7 @@ const gridStub = {
 const mockCellSelectionModel = {
   constructor: jest.fn(),
   init: jest.fn(),
-  destroy: jest.fn(),
+  dispose: jest.fn(),
   getSelectedRanges: jest.fn(),
   setSelectedRanges: jest.fn(),
   getSelectedRows: jest.fn(),
@@ -90,12 +90,6 @@ describe('CellExternalCopyManager', () => {
   it('should create the plugin', () => {
     expect(plugin).toBeTruthy();
     expect(plugin.eventHandler).toBeTruthy();
-  });
-
-  it('should dispose of the addon', () => {
-    const disposeSpy = jest.spyOn(plugin, 'dispose');
-    plugin.destroy();
-    expect(disposeSpy).toHaveBeenCalled();
   });
 
   describe('registered addon', () => {

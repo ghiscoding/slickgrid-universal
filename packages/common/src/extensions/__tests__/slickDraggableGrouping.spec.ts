@@ -125,7 +125,7 @@ describe('Draggable Grouping Plugin', () => {
     const disposeSpy = jest.spyOn(plugin, 'dispose');
     expect(plugin).toBeTruthy();
 
-    plugin.destroy();
+    plugin.dispose();
 
     expect(plugin.eventHandler).toBeTruthy();
     expect(disposeSpy).toHaveBeenCalled();
@@ -255,7 +255,7 @@ describe('Draggable Grouping Plugin', () => {
 
     it('should execute the "start" callback of the jQueryUI Sortable and expect css classes to be updated', () => {
       plugin.init(gridStub, { ...addonOptions });
-      const droppableOptions = $(plugin.dropboxElement).droppable('option') as any;
+      const droppableOptions = ($(plugin.dropboxElement) as any).droppable('option') as any;
       droppableOptions.drop(dropEvent, { draggable: $headerColumnElm });
       const fn = plugin.setupColumnReorder(gridStub, $mockDivPaneContainer1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
       let placeholderElm = preHeaderDiv.querySelector('.slick-draggable-dropbox-toggle-placeholder') as HTMLDivElement;
@@ -287,7 +287,7 @@ describe('Draggable Grouping Plugin', () => {
 
     it('should execute the "beforeStop" callback of the jQueryUI Sortable and expect css classes to be updated', () => {
       plugin.init(gridStub, { ...addonOptions, deleteIconCssClass: 'mdi mdi-close' });
-      const droppableOptions = $(plugin.dropboxElement).droppable('option') as any;
+      const droppableOptions = ($(plugin.dropboxElement) as any).droppable('option') as any;
       droppableOptions.drop(dropEvent, { draggable: $headerColumnElm });
       const fn = plugin.setupColumnReorder(gridStub, $mockDivPaneContainer1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
       const beforeStopFn = fn.sortable('option', 'beforeStop');
@@ -301,7 +301,7 @@ describe('Draggable Grouping Plugin', () => {
 
     it('should execute the "stop" callback of the jQueryUI Sortable and expect sortable to be cancelled', () => {
       plugin.init(gridStub, { ...addonOptions, deleteIconCssClass: 'mdi mdi-close' });
-      const droppableOptions = $(plugin.dropboxElement).droppable('option') as any;
+      const droppableOptions = ($(plugin.dropboxElement) as any).droppable('option') as any;
       droppableOptions.drop(dropEvent, { draggable: $headerColumnElm });
       jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(false);
       const fn = plugin.setupColumnReorder(gridStub, $mockDivPaneContainer1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
@@ -320,7 +320,7 @@ describe('Draggable Grouping Plugin', () => {
     it('should execute the "stop" callback of the jQueryUI Sortable and expect css classes to be updated', () => {
       plugin.init(gridStub, { ...addonOptions, deleteIconImage: '/images/delete.png' });
       plugin.setColumns(mockColumns);
-      const droppableOptions = $(plugin.dropboxElement).droppable('option') as any;
+      const droppableOptions = ($(plugin.dropboxElement) as any).droppable('option') as any;
       droppableOptions.drop(dropEvent, { draggable: $headerColumnElm });
       jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
       getColumnIndexSpy.mockReturnValue(2);
@@ -385,7 +385,7 @@ describe('Draggable Grouping Plugin', () => {
           Object.defineProperty(updateEvent, 'target', { writable: true, configurable: true, value: $mockDivPaneContainer1.get(0) });
 
           plugin.init(gridStub, { ...addonOptions, deleteIconCssClass: 'mdi mdi-close' });
-          const droppableOptions = $(plugin.dropboxElement).droppable('option') as any;
+          const droppableOptions = ($(plugin.dropboxElement) as any).droppable('option') as any;
           droppableOptions.drop(dropEvent, { draggable: $headerColumnElm });
           jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(false);
           const fn = plugin.setupColumnReorder(gridStub, $mockDivPaneContainer1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);

@@ -87,11 +87,6 @@ export class SlickRowMoveManager {
       .subscribe(this._grid.onDragEnd, this.handleDragEnd.bind(this));
   }
 
-  /** @deprecated @use `dispose` Destroy plugin. */
-  destroy() {
-    this.dispose();
-  }
-
   /** Dispose (destroy) the SlickGrid 3rd party plugin */
   dispose() {
     this._eventHandler?.unsubscribeAll();

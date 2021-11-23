@@ -36,11 +36,6 @@ export class SlickCellRangeDecorator {
     return this._elem;
   }
 
-  /** @deprecated @use `dispose` Destroy plugin. */
-  destroy() {
-    this.dispose();
-  }
-
   /** Dispose the plugin. */
   dispose() {
     this.hide();

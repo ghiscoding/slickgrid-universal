@@ -41,11 +41,6 @@ export class SlickRowSelectionModel {
       .subscribe(this._grid.onKeyDown, this.handleKeyDown.bind(this) as EventListener);
   }
 
-  /** @deprecated @use `dispose` Destroy plugin. */
-  destroy() {
-    this.dispose();
-  }
-
   dispose() {
     this._eventHandler.unsubscribeAll();
   }

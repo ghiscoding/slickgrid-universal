@@ -54,7 +54,4 @@ export interface onGridMenuColumnsChangedCallbackArgs extends GridMenuEventBaseC
 
   /** last command, are we showing or not the column? */
   showing: boolean;
-
-  /** @deprecated @use `visibleColumns` */
-  columns?: Column[];
 }

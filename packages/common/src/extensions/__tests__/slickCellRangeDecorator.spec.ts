@@ -49,7 +49,7 @@ describe('CellRangeDecorator Plugin', () => {
   it('should dispose of the addon', () => {
     const disposeSpy = jest.spyOn(plugin, 'dispose');
     const hideSpy = jest.spyOn(plugin, 'hide');
-    plugin.destroy();
+    plugin.dispose();
     expect(disposeSpy).toHaveBeenCalled();
     expect(hideSpy).toHaveBeenCalled();
   });

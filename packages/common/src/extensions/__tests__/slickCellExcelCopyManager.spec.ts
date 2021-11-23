@@ -20,7 +20,6 @@ const gridStub = {
 const mockCellExternalCopyManager = {
   constructor: jest.fn(),
   init: jest.fn(),
-  destroy: jest.fn(),
   dispose: jest.fn(),
   getHeaderValueForColumn: jest.fn(),
   getDataItemValueForColumn: jest.fn(),
@@ -33,7 +32,7 @@ const mockCellExternalCopyManager = {
 const mockCellSelectionModel = {
   constructor: jest.fn(),
   init: jest.fn(),
-  destroy: jest.fn(),
+  dispose: jest.fn(),
   getSelectedRanges: jest.fn(),
   setSelectedRanges: jest.fn(),
   getSelectedRows: jest.fn(),
@@ -167,12 +166,6 @@ describe('CellExcelCopyManager', () => {
       expect(mockOnCopy).not.toHaveBeenCalledWith(expect.anything(), mockSelectRangeEvent);
       expect(mockOnCopyCancel).not.toHaveBeenCalled();
       expect(mockOnPasteCell).toHaveBeenCalled();
-    });
-
-    it('should dispose of the addon', () => {
-      const disposeSpy = jest.spyOn(plugin, 'dispose');
-      plugin.destroy();
-      expect(disposeSpy).toHaveBeenCalled();
     });
   });
 

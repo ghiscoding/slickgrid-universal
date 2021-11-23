@@ -89,11 +89,6 @@ export class SlickCellExcelCopyManager {
     });
   }
 
-  /** @deprecated @use `dispose` Destroy plugin. */
-  destroy() {
-    this.dispose();
-  }
-
   /** Dispose of the 3rd party addon (plugin) */
   dispose() {
     // unsubscribe all SlickGrid events

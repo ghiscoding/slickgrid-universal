@@ -179,11 +179,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
   }
 
-  /** @deprecated use `dispose` Destroy the Slick Row Detail View */
-  destroy() {
-    this.dispose();
-  }
-
   /** Dispose of the Slick Row Detail View */
   dispose() {
     this._eventHandler?.unsubscribeAll();

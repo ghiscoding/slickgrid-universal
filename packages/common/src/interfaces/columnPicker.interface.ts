@@ -63,8 +63,5 @@ export interface ColumnPickerOption {
 
     /** list of visible column definitions */
     visibleColumns: Column[];
-
-    /** @deprecated @use `visibleColumns` */
-    columns?: Column[];
   }) => void;
 }

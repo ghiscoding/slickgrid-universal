@@ -140,12 +140,6 @@ describe('HeaderMenu Plugin', () => {
     expect(plugin.eventHandler).toBeTruthy();
   });
 
-  it('should dispose of the addon', () => {
-    const disposeSpy = jest.spyOn(plugin, 'dispose');
-    plugin.destroy();
-    expect(disposeSpy).toHaveBeenCalled();
-  });
-
   it('should use default options when instantiating the plugin without passing any arguments', () => {
     plugin.init();
 

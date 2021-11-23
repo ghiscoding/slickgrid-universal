@@ -18,7 +18,6 @@ import {
   deepCopy,
   deepMerge,
   emptyObject,
-  findItemInHierarchicalStructure,
   findItemInTreeStructure,
   findOrDefault,
   formatNumber,
@@ -293,7 +292,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('findItemInHierarchicalStructure method', () => {
+  describe('findItemInTreeStructure method', () => {
     let mockColumns;
 
     beforeEach(() => {
@@ -311,7 +310,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should throw an error when the children property name argument is missing', () => {
-      expect(() => findItemInHierarchicalStructure(mockColumns, x => x.file === 'pop', '')).toThrowError('findRecursive requires parameter "childrenPropertyName"');
+      expect(() => findItemInTreeStructure(mockColumns, x => x.file === 'pop', '')).toThrowError('findRecursive requires parameter "childrenPropertyName"');
     });
 
     it('should find an item from a hierarchical array', () => {

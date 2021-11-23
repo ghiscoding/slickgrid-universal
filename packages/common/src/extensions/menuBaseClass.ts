@@ -86,11 +86,6 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     return this._menuElm || document.querySelector(`.${this._menuCssPrefix}${this.gridUidSelector}`);
   }
 
-  /** @deprecated @use `dispose` Destroy plugin. */
-  destroy() {
-    this.dispose();
-  }
-
   /** Dispose (destroy) of the plugin */
   dispose() {
     this._eventHandler?.unsubscribeAll();

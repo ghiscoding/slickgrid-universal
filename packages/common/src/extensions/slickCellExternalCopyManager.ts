@@ -78,11 +78,6 @@ export class SlickCellExternalCopyManager {
     this._eventHandler.subscribe(cellSelectionModel.onSelectedRangesChanged, () => this._grid.focus());
   }
 
-  /** @deprecated @use `dispose` Destroy plugin. */
-  destroy() {
-    this.dispose();
-  }
-
   dispose() {
     this._eventHandler.unsubscribeAll();
   }

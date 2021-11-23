@@ -86,7 +86,7 @@ export class SlickVanillaGridBundle {
   private _isLocalGrid = true;
   private _isPaginationInitialized = false;
   private _eventHandler!: SlickEventHandler;
-  private _extensions: ExtensionList<any, any> | undefined;
+  private _extensions: ExtensionList<any> | undefined;
   private _paginationOptions: Pagination | undefined;
   private _registeredResources: ExternalResource[] = [];
   private _slickgridInitialized = false;
@@ -256,7 +256,7 @@ export class SlickVanillaGridBundle {
     return this._slickerGridInstances;
   }
 
-  get extensions(): ExtensionList<any, any> | undefined {
+  get extensions(): ExtensionList<any> | undefined {
     return this._extensions;
   }
 

@@ -109,12 +109,6 @@ describe('SlickRowMoveManager Plugin', () => {
     expect(plugin.eventHandler).toBeTruthy();
   });
 
-  it('should dispose of the addon', () => {
-    const disposeSpy = jest.spyOn(plugin, 'dispose');
-    plugin.destroy();
-    expect(disposeSpy).toHaveBeenCalled();
-  });
-
   it('should create the plugin and initialize it', () => {
     plugin.init(gridStub);
 

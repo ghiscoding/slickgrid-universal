@@ -228,11 +228,6 @@ export class SlickDraggableGrouping {
     return this;
   }
 
-  /** @deprecated @use `dispose` Destroy plugin. */
-  destroy() {
-    this.dispose();
-  }
-
   /** Dispose the plugin. */
   dispose() {
     this.onGroupChanged.unsubscribe();
