@@ -146,6 +146,9 @@ export interface Locale {
   /** Text "Page" displayed in the Pagination (when enabled) */
   TEXT_PAGE?: string;
 
+  /** Text "records selected" optionally shown in the Footer (when enabled) */
+  TEXT_RECORDS_SELECTED?: string;
+
   /** Text "Refresh Dataset" displayed in the Grid Menu (when enabled) */
   TEXT_REFRESH_DATASET?: string;
 

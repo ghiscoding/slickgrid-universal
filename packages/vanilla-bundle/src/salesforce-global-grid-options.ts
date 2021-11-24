@@ -62,7 +62,7 @@ export const SalesforceGlobalGridOptions = {
     hideTotalItemCount: false,
     hideLastUpdateTimestamp: true,
     metricTexts: {
-      itemsSelected: 'records selected',
+      itemsSelectedKey: 'RECORDS_SELECTED',
     }
   },
   headerRowHeight: 35,
