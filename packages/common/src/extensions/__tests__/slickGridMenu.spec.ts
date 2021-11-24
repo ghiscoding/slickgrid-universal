@@ -105,8 +105,6 @@ describe('GridMenuControl', () => {
       togglePreHeaderCommandKey: 'TOGGLE_PRE_HEADER_ROW',
     },
     commandTitleKey: 'COMMANDS',
-    customTitleKey: 'COMMANDS',
-    customItems: [],
     commandItems: [],
     hideClearAllFiltersCommand: false,
     hideClearFrozenColumnsCommand: true,
@@ -874,11 +872,10 @@ describe('GridMenuControl', () => {
         expect(helpTextElm.className).toBe('slick-grid-menu-content red bold');
       });
 
-      it('should add a custom Grid Menu item and provide a custom title for the custom items list', () => {
+      it('should add a custom Grid Menu item and provide a custom title for the command items list', () => {
         gridOptionsMock.gridMenu.commandItems = [{ command: 'help', title: 'Help', textCssClass: 'red bold' }];
         control.columns = columnsMock;
         control.init();
-        gridOptionsMock.gridMenu.customTitle = 'Custom Title';
         gridOptionsMock.gridMenu.commandTitle = 'Custom Title';
         control.updateAllTitles(gridOptionsMock.gridMenu);
         const buttonElm = document.querySelector('.slick-grid-menu-button');

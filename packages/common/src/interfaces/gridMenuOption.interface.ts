@@ -13,20 +13,11 @@ export interface GridMenuOption {
   /** Same as "commandTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   commandTitleKey?: string;
 
-  /** Array of Custom Items (title, command, disabled, ...) */
+  /** Array of command items (title, command, disabled, ...) */
   commandItems?: Array<MenuCommandItem<GridMenuCommandItemCallbackArgs, GridMenuCallbackArgs> | 'divider'>;
 
   /** Defaults to 0 (auto), minimum width of grid menu content (command, column list) */
   contentMinWidth?: number;
-
-  /** @deprecated @use `commandItems` Array of Custom Items (title, command, disabled, ...) */
-  customItems?: Array<MenuCommandItem<GridMenuCommandItemCallbackArgs, GridMenuCallbackArgs> | 'divider'>;
-
-  /** @deprecated @use `commandTitle` Defaults to "Commands" which is the title that shows up over the custom commands list */
-  customTitle?: string;
-
-  /** @deprecated @use `commandTitleKey` Same as "customTitle", except that it's a translation key which can be used on page load and/or when switching locale */
-  customTitleKey?: string;
 
   /** Defaults to "Columns" which is the title that shows up over the columns */
   columnTitle?: string;
