@@ -193,18 +193,6 @@ describe('Draggable Grouping Plugin', () => {
     expect(groupableElm.classList.contains('mdi-drag')).toBeTruthy();
   });
 
-  it('should add an icon beside each column title when "groupIconImage" is provided', () => {
-    jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableTranslate: true });
-    translateService.use('fr');
-    plugin.init(gridStub, { ...addonOptions, groupIconImage: '/images/some-image.png' });
-    const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-    gridStub.onHeaderCellRendered.notify({ column: mockColumns[2], node: headerDiv, grid: gridStub }, eventData, gridStub);
-    const groupableElm = headerDiv.querySelector('.slick-column-groupable') as HTMLSpanElement;
-
-    expect(headerDiv.style.cursor).toBe('pointer');
-    expect(groupableElm.style.background).toBe('url(/images/some-image.png) no-repeat center');
-  });
-
   describe('setupColumnReorder definition', () => {
     let dropEvent;
     let dropTargetElm: HTMLSpanElement;
@@ -318,7 +306,7 @@ describe('Draggable Grouping Plugin', () => {
     });
 
     it('should execute the "stop" callback of the jQueryUI Sortable and expect css classes to be updated', () => {
-      plugin.init(gridStub, { ...addonOptions, deleteIconImage: '/images/delete.png' });
+      plugin.init(gridStub, { ...addonOptions, deleteIconCssClass: 'mdi mdi-close' });
       plugin.setColumns(mockColumns);
       const droppableOptions = ($(plugin.dropboxElement) as any).droppable('option') as any;
       droppableOptions.drop(dropEvent, { draggable: $headerColumnElm });
@@ -327,8 +315,8 @@ describe('Draggable Grouping Plugin', () => {
       const fn = plugin.setupColumnReorder(gridStub, $mockDivPaneContainer1.add($mockDivPaneContainer2), {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
       const stopFn = fn.sortable('option', 'stop');
 
-      const groupByRemoveElm = document.querySelector('.slick-groupby-remove') as HTMLDivElement;
-      expect(groupByRemoveElm.style.background).toBe('url(/images/delete.png) no-repeat right');
+      const groupByRemoveElm = document.querySelector('.slick-groupby-remove.mdi-close');
+      expect(groupByRemoveElm).toBeTruthy();
 
       stopFn(new Event('click'), { helper: mockHelperElm });
 
