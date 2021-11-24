@@ -51,6 +51,7 @@ export class Constants {
     TEXT_NOT_CONTAINS: 'Not contains',
     TEXT_NOT_EQUAL_TO: 'Not equal to',
     TEXT_PAGE: 'Page',
+    TEXT_RECORDS_SELECTED: 'records selected',
     TEXT_REFRESH_DATASET: 'Refresh Dataset',
     TEXT_REMOVE_FILTER: 'Remove Filter',
     TEXT_REMOVE_SORT: 'Remove Sort',

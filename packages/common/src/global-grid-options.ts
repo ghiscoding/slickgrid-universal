@@ -1,5 +1,5 @@
 import { DelimiterType, EventNamingStyle, FileType, GridAutosizeColsMode, OperatorType } from './enums/index';
-import { Column, GridOption, TreeDataOption } from './interfaces/index';
+import { Column, EmptyWarning, GridOption, TreeDataOption } from './interfaces/index';
 import { Filters } from './filters';
 
 /** Global Grid Options Defaults */
@@ -83,11 +83,8 @@ export const GlobalGridOptions: GridOption = {
     rightContainerClass: 'col-xs-6 col-sm-7',
     metricSeparator: '|',
     metricTexts: {
-      items: 'items',
       itemsKey: 'ITEMS',
-      of: 'of',
       ofKey: 'OF',
-      itemsSelected: 'items selected',
       itemsSelectedKey: 'ITEMS_SELECTED'
     }
   },
@@ -119,7 +116,6 @@ export const GlobalGridOptions: GridOption = {
   enableEmptyDataWarningMessage: true,
   emptyDataWarning: {
     className: 'slick-empty-data-warning',
-    message: 'No data to display.',
     messageKey: 'EMPTY_DATA_WARNING_MESSAGE',
     hideFrozenLeftWarning: false,
     hideFrozenRightWarning: false,
@@ -127,7 +123,7 @@ export const GlobalGridOptions: GridOption = {
     rightViewportMarginLeft: '40%',
     frozenLeftViewportMarginLeft: '0px',
     frozenRightViewportMarginLeft: '40%',
-  },
+  } as unknown as EmptyWarning,
   enableAutoResize: true,
   enableAutoSizeColumns: true,
   enableCellNavigation: false,
