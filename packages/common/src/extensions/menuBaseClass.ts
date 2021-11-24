@@ -19,7 +19,7 @@ import { ExtensionUtility } from '../extensions/extensionUtility';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 import { createDomElement } from '../services/domUtilities';
-import { hasData, toSentenceCase } from '../services/utilities';
+import { hasData } from '../services/utilities';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
