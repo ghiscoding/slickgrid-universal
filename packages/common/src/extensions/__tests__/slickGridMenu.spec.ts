@@ -880,11 +880,11 @@ describe('GridMenuControl', () => {
         control.updateAllTitles(gridOptionsMock.gridMenu);
         const buttonElm = document.querySelector('.slick-grid-menu-button');
         buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-        const customTitleElm = control.menuElement.querySelector<HTMLInputElement>('.slick-grid-menu-command-list .title');
+        const commandTitleElm = control.menuElement.querySelector<HTMLInputElement>('.slick-grid-menu-command-list .title');
         const helpCommandElm = control.menuElement.querySelector<HTMLInputElement>('.slick-grid-menu-item[data-command=help]');
         const helpTextElm = helpCommandElm.querySelector<HTMLInputElement>('.slick-grid-menu-content');
 
-        expect(customTitleElm.textContent).toBe('Custom Title');
+        expect(commandTitleElm.textContent).toBe('Custom Title');
         expect(helpTextElm.textContent).toBe('Help');
         expect(helpTextElm.classList.contains('red')).toBeTrue();
         expect(helpTextElm.classList.contains('bold')).toBeTrue();

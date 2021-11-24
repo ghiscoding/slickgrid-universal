@@ -40,7 +40,6 @@ export class ExtensionUtility {
     } else {
       switch (propName) {
         case 'commandTitle':
-        case 'customTitle':
           output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}COMMANDS` || ' ') || locales?.TEXT_COMMANDS;
           break;
         case 'columnTitle':

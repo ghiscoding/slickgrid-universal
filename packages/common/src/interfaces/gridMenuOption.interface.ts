@@ -3,7 +3,7 @@ import { Column, GridMenuCallbackArgs, GridMenuCommandItemCallbackArgs, GridMenu
 export interface GridMenuOption {
   /**
    * All the commands text labels
-   * NOTE: some of the text have other properties outside of this option (like 'customTitle', 'forceFitTitle', ...) and that is because they were created prior to this refactoring of labels
+   * NOTE: some of the text have other properties outside of this option (like 'commandTitle', 'forceFitTitle', ...) and that is because they were created prior to this refactoring of labels
    */
   commandLabels?: GridMenuLabel;
 
