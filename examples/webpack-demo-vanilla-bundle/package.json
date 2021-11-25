@@ -39,6 +39,7 @@
     "@slickgrid-universal/text-export": "^0.19.2",
     "@slickgrid-universal/vanilla-bundle": "^0.19.2",
     "bulma": "^0.9.3",
+    "esbuild-loader": "^2.16.0",
     "moment-mini": "^2.24.0",
     "whatwg-fetch": "^3.6.2"
   },
@@ -59,7 +60,6 @@
     "sass": "^1.43.4",
     "sass-loader": "^12.3.0",
     "style-loader": "^3.3.1",
-    "ts-loader": "^9.2.6",
     "ts-node": "^10.4.0",
     "url-loader": "^4.1.1",
     "webpack": "^5.64.0",

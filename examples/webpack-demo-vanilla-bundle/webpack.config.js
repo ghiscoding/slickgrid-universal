@@ -1,6 +1,7 @@
 const { HotModuleReplacementPlugin, ProvidePlugin } = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const { ESBuildMinifyPlugin } = require('esbuild-loader');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -57,8 +58,20 @@ module.exports = ({ production } = {}) => ({
       { test: /\.(sass|scss)$/, use: ['style-loader', 'css-loader', 'sass-loader'], issuer: /\.[tj]s$/i },
       { test: /\.(sass|scss)$/, use: ['css-loader', 'sass-loader'], issuer: /\.html?$/i },
       { test: /\.html$/i, loader: 'html-loader', options: { esModule: false } },
-      { test: /\.ts?$/, use: [{ loader: 'ts-loader', options: { transpileOnly: true } }] }
+      {
+        test: /\.ts?$/,
+        loader: 'esbuild-loader',
+        options: { loader: 'ts', target: 'es2018' }
+      },
     ],
+  },
+  optimization: {
+    minimizer: [
+      new ESBuildMinifyPlugin({
+        target: 'es2018',
+        css: true,
+      })
+    ]
   },
   plugins: [
     new ProvidePlugin({
