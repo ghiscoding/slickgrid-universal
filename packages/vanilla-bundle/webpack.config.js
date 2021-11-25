@@ -39,7 +39,7 @@ module.exports = ({ production } = {}) => ({
     rules: [
       { test: /\.html$/i, loader: 'html-loader', options: { esModule: false } },
       {
-        test: /\.tsx?$/,
+        test: /\.ts?$/,
         loader: 'esbuild-loader',
         exclude: nodeModulesDir,
         options: { loader: 'ts', target: 'es2018' }
