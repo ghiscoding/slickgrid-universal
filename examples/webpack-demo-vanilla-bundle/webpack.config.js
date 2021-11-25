@@ -57,7 +57,11 @@ module.exports = ({ production } = {}) => ({
       { test: /\.(sass|scss)$/, use: ['style-loader', 'css-loader', 'sass-loader'], issuer: /\.[tj]s$/i },
       { test: /\.(sass|scss)$/, use: ['css-loader', 'sass-loader'], issuer: /\.html?$/i },
       { test: /\.html$/i, loader: 'html-loader', options: { esModule: false } },
-      { test: /\.ts?$/, use: [{ loader: 'ts-loader', options: { transpileOnly: true } }] }
+      {
+        test: /\.tsx?$/,
+        loader: 'esbuild-loader',
+        options: { loader: 'ts', target: 'es2018' }
+      },
     ],
   },
   plugins: [
