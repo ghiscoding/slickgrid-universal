@@ -1,5 +1,5 @@
-$icon-width-min-size: 8;
-$icon-width-max-size: 50;
+$slick-icon-width-min-size: 8;
+$slick-icon-width-max-size: 50;
 
 @-webkit-keyframes md-spin {
   0% { transform: rotate(0deg); }
@@ -71,7 +71,7 @@ $icon-width-max-size: 50;
     filter: none;
   }
 
-  @for $i from $icon-width-min-size through $icon-width-max-size {
+  @for $i from $slick-icon-width-min-size through $slick-icon-width-max-size {
     &.mdi-#{$i}px {
       &:before {
         height: #{$i}px;

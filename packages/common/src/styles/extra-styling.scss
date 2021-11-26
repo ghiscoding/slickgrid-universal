@@ -1,14 +1,14 @@
-$button-border-color: #c7c7c7 !default;
-$font-size-count: 50;
-$margin-max-count: 50;
-$padding-max-count: 30;
+$slick-button-border-color: #c7c7c7 !default;
+$slick-font-size-count: 50;
+$slick-margin-max-count: 50;
+$slick-padding-max-count: 30;
 
 .pointer { cursor: pointer; }
 .bold { font-weight: bold; }
 
 .fake-hyperlink {
   cursor: pointer;
-  color: $link-color;
+  color: $slick-link-color;
   &:hover {
       text-decoration: underline;
   }
@@ -17,12 +17,12 @@ $padding-max-count: 30;
 .button-style {
   cursor: pointer;
   background-color: white;
-  border: 1px solid #{$button-border-color};
+  border: 1px solid #{$slick-button-border-color};
   border-radius: 2px;
   justify-content: center;
   text-align: center;
   &:hover {
-    border-color: darken($button-border-color, 15%);
+    border-color: darken($slick-button-border-color, 15%);
   }
 }
 
@@ -39,18 +39,18 @@ $padding-max-count: 30;
 }
 
 // margin-0px up to margin-30px
-@for $i from 0 through $margin-max-count {
-  .margin-#{$i}px { margin: #{$i}px; }
+@for $slick-i from 0 through $slick-margin-max-count {
+  .margin-#{$slick-i}px { margin: #{$slick-i}px; }
 }
 
 // padding-0px up to padding-30px
-@for $i from 0 through $padding-max-count {
-  .padding-#{$i}px { padding: #{$i}px; }
+@for $slick-i from 0 through $slick-padding-max-count {
+  .padding-#{$slick-i}px { padding: #{$slick-i}px; }
 }
 
 // font-5px up to font-50px
-@for $i from 5 through $font-size-count {
-  .font-#{$i}px { font-size: #{$i}px; }
+@for $slick-i from 5 through $slick-font-size-count {
+  .font-#{$slick-i}px { font-size: #{$slick-i}px; }
 }
 
 .margin-auto {

@@ -1,7 +1,7 @@
-$filled-filter-color:                                 $form-control-focus-border-color !default;
-$filled-filter-border:                                $form-control-border !default;
-$filled-filter-box-shadow:                            $form-control-focus-border-color !default;
-$filled-filter-font-weight:                           400 !default;
+$slick-filled-filter-color:                                 $slick-form-control-focus-border-color !default;
+$slick-filled-filter-border:                                $slick-form-control-border !default;
+$slick-filled-filter-box-shadow:                            $slick-form-control-focus-border-color !default;
+$slick-filled-filter-font-weight:                           400 !default;
 
 .slick-headerrow {
   input.search-filter.filled,
@@ -9,21 +9,21 @@ $filled-filter-font-weight:                           400 !default;
     .search-filter.filled input.flatpickr-input,
     .search-filter.filled .input-group-addon.slider-value,
     .search-filter.filled .input-group-addon select {
-      color: var(--filled-filter-color, $filled-filter-color);
-      font-weight: var(--filled-filter-font-weight, $filled-filter-font-weight);
-      border: var(--filled-filter-border, $filled-filter-border);
-      box-shadow: var(--filled-filter-box-shadow, $filled-filter-box-shadow);
+      color: var(--slick-filled-filter-color, $slick-filled-filter-color);
+      font-weight: var(--slick-filled-filter-font-weight, $slick-filled-filter-font-weight);
+      border: var(--slick-filled-filter-border, $slick-filled-filter-border);
+      box-shadow: var(--slick-filled-filter-box-shadow, $slick-filled-filter-box-shadow);
     }
     .search-filter.filled .input-group-addon select {
       border-right: 0px;
     }
     .search-filter.filled {
       .ms-choice {
-        box-shadow: var(--filled-filter-box-shadow, $filled-filter-box-shadow);
-        border: var(--filled-filter-border, $filled-filter-border);
+        box-shadow: var(--slick-filled-filter-box-shadow, $slick-filled-filter-box-shadow);
+        border: var(--slick-filled-filter-border, $slick-filled-filter-border);
         span {
-          font-weight: var(--filled-filter-font-weight, $filled-filter-font-weight);
-          color: var(--filled-filter-color, $filled-filter-color);
+          font-weight: var(--slick-filled-filter-font-weight, $slick-filled-filter-font-weight);
+          color: var(--slick-filled-filter-color, $slick-filled-filter-color);
         }
       }
     }

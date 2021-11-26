@@ -1,6 +1,6 @@
 @import './variables';
 
-@keyframes slickgrid-invalid-hilite {
+@keyframes slickgrid-invalid-highlight {
   from {
     box-shadow: 0 0 6px red;
   }
@@ -25,15 +25,15 @@
      box-sizing: content-box !important; /* this here only for Firefox! */
    }
    .slick-header-column:hover {
-     background: $header-column-background-hover
+     background: $slick-header-column-background-hover
    }
 
    .slick-header-column-active {
-     background: $header-column-background-active !important;
+     background: $slick-header-column-background-active !important;
    }
 
    .slick-headerrow {
-     background: $grid-header-background;
+     background: $slick-grid-header-background;
    }
    .grid-canvas {
      background: white;
@@ -52,16 +52,16 @@
        &.invalid {
          border-color: red;
          animation-duration: 0.2s;
-         animation-name: slickgrid-invalid-hilite;
+         animation-name: slickgrid-invalid-highlight;
        }
 
        &.active {
-         box-shadow: $cell-active-box-shadow;
-         border: $cell-active-border;
-         z-index: $cell-active-z-index;
+         box-shadow: $slick-cell-active-box-shadow;
+         border: $slick-cell-active-border;
+         z-index: $slick-cell-active-z-index;
 
          // We compensate for the all-around border (now 1px at top and left too!)
-         padding: $cell-padding;
+         padding: $slick-cell-padding;
 
          input.dual-editor-text {
            width: calc(50% + 1px - 5px); // 1px (is 2px / 2) and 5px (is space between the 2 inputs)
@@ -78,7 +78,7 @@
      }
 
      &.active-row.odd .slick-cell {
-       background-color: $cell-odd-active-background-color;
+       background-color: $slick-cell-odd-active-background-color;
      }
    }
 

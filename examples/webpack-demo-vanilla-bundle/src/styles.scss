@@ -1,5 +1,5 @@
-$primary-color:#009530;
-$link-color: #2cad56;
+$slick-primary-color:#009530;
+$slick-link-color: #2cad56;
 
 /* make sure to add the @import the SlickGrid Bootstrap Theme AFTER the variables changes */
 @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
@@ -11,7 +11,7 @@ $link-color: #2cad56;
 
 .fake-hyperlink {
     cursor: pointer;
-    color: $link-color;
+    color: $slick-link-color;
     &:hover {
       text-decoration: underline;
     }

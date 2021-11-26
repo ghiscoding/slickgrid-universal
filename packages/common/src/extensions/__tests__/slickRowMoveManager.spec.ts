@@ -1,6 +1,6 @@
 import 'jest-extended';
 
-import { Column, GridOption, OnDragEventArgs, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import { Column, DragRowMove, GridOption, OnDragEventArgs, SlickGrid, SlickNamespace, } from '../../interfaces/index';
 import { SlickRowMoveManager } from '../slickRowMoveManager';
 
 declare const Slick: SlickNamespace;
@@ -196,7 +196,15 @@ describe('SlickRowMoveManager Plugin', () => {
     });
   });
 
-  it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return null when selectableOverride is returning False', () => {
+  it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return null when usabilityOverride is provided as plugin option and is returning False', () => {
+    plugin.init(gridStub, { usabilityOverride: () => false });
+    const output = plugin.getColumnDefinition().formatter(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
+
+    expect(plugin).toBeTruthy();
+    expect(output).toEqual('');
+  });
+
+  it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return null when usabilityOverride is defined and returning False', () => {
     plugin.usabilityOverride(() => false);
     plugin.create(mockColumns, {});
     const output = plugin.getColumnDefinition().formatter(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
@@ -231,7 +239,7 @@ describe('SlickRowMoveManager Plugin', () => {
     const stopImmediatePropagationSpy = jest.spyOn(mouseEvent, 'stopImmediatePropagation');
     gridStub.onDragInit.notify({
       count: 1, deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3, proxy: document.createElement('div'), guide: document.createElement('div'), row: 2, rows: [2],
-    } as unknown as OnDragEventArgs, mouseEvent);
+    } as unknown as DragRowMove, mouseEvent);
 
     expect(stopImmediatePropagationSpy).toHaveBeenCalled();
   });
@@ -250,7 +258,7 @@ describe('SlickRowMoveManager Plugin', () => {
       guide: document.createElement('div'),
       selectionProxy: document.createElement('div'),
       clonedSlickRow: document.createElement('div'),
-    } as unknown as OnDragEventArgs;
+    } as unknown as DragRowMove;
     gridStub.onDragEnd.notify(mockArgs, mouseEvent);
 
     expect(stopImmediatePropagationSpy).not.toHaveBeenCalled();
