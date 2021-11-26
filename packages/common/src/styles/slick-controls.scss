@@ -160,36 +160,43 @@
 	overflow: auto;
   width: max-content;
 
-  > .close {
-    float: right;
-    position: absolute;
-    color: var(--slick-grid-menu-close-btn-color, $grid-menu-close-btn-color);
-    cursor: var(--slick-grid-menu-close-btn-cursor, $grid-menu-close-btn-cursor);
-    width: var(--slick-grid-menu-close-btn-width, $grid-menu-close-btn-width);
-    height: var(--slick-grid-menu-close-btn-height, $grid-menu-close-btn-height);
-    margin: var(--slick-grid-menu-close-btn-margin, $grid-menu-close-btn-margin);
-    padding: var(--slick-grid-menu-close-btn-padding, $grid-menu-close-btn-padding);
-    font-family: var(--slick-grid-menu-close-btn-font-family, $grid-menu-close-btn-font-family);
-    font-size: var(--slick-grid-menu-close-btn-font-size, $grid-menu-close-btn-font-size);
-    background-color: var(--slick-grid-menu-close-btn-bg-color, $grid-menu-close-btn-bg-color);
-    border: var(--slick-grid-menu-close-btn-border, $grid-menu-close-btn-border);
-    right: var(--slick-grid-menu-close-btn-position-right, $grid-menu-close-btn-position-right);
-    top: var(--slick-grid-menu-close-btn-position-top, $grid-menu-close-btn-position-top);
-
-    &:hover {
-      color: var(--slick-grid-menu-close-btn-color-hover, $grid-menu-close-btn-color-hover);
+  .slick-grid-menu-option-list,
+  .slick-grid-menu-command-list {
+    .command-header, .option-header {
+      overflow-y: hidden;
     }
-    > span {
+    .command-header.with-title, .option-header.with-title {
+      overflow-y: auto;
+    }
+
+    .close {
+      cursor: pointer;
+      float: right;
+      background-color: var(--slick-grid-menu-close-btn-bg-color, $grid-menu-close-btn-bg-color);
+      border: var(--slick-grid-menu-close-btn-border, $grid-menu-close-btn-border);
+      color: var(--slick-grid-menu-close-btn-color, $grid-menu-close-btn-color);
+      font-family: var(--slick-grid-menu-close-btn-font-family, $grid-menu-close-btn-font-family);
+      font-size: var(--slick-grid-menu-close-btn-font-size, $grid-menu-close-btn-font-size);
+      height: var(--slick-grid-menu-close-btn-height, $grid-menu-close-btn-height);
+      line-height: calc(var(--slick-grid-menu-close-btn-height, $grid-menu-close-btn-height) - 2px);
+      margin: var(--slick-grid-menu-close-btn-margin, $grid-menu-close-btn-margin);
+      padding: var(--slick-grid-menu-close-btn-padding, $grid-menu-close-btn-padding);
+      width: var(--slick-grid-menu-close-btn-width, $grid-menu-close-btn-width);
       opacity: var(--slick-grid-menu-close-btn-opacity, $grid-menu-close-btn-opacity);
+      &:hover {
+        opacity: var(--slick-grid-menu-close-btn-opacity-hover, $grid-menu-close-btn-opacity-hover);
+      }
     }
   }
 
-  div.title {
+  span.title, div.title {
+    display: inline-block;
     font-size: var(--slick-grid-menu-title-font-size, $grid-menu-title-font-size);
     font-weight: var(--slick-grid-menu-title-font-weight, $grid-menu-title-font-weight);
     width: var(--slick-grid-menu-title-width, $grid-menu-title-width);
     border-bottom: var(--slick-grid-menu-title-border-bottom, $grid-menu-title-border-bottom);
     margin-bottom: var(--slick-grid-menu-title-margin-bottom, $grid-menu-title-margin-bottom);
+    margin-right: var(--grid-menu-title-margin-right, $grid-menu-title-margin-right);
   }
 
   li {

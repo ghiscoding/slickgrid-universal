@@ -44,8 +44,11 @@ export interface CellMenuOption {
   /** Defaults to false, Hide the Options section even when the optionItems array is filled */
   hideOptionSection?: boolean;
 
-  /** Maximum height that the drop menu will have, can be a number (250) or text ("none") */
+  /** Maximum height that the drop menu can have, it could be a number (250) or text ("none") */
   maxHeight?: number | string;
+
+  /** Maximum width that the drop menu can have, it could be a number (250) or text ("none") */
+  maxWidth?: number | string;
 
   /**
    * Width that the drop menu can have.

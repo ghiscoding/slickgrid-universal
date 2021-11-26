@@ -80,35 +80,38 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
         }
       }
 
-      const maxHeight = isNaN(this.addonOptions.maxHeight as any) ? this.addonOptions.maxHeight : `${this.addonOptions.maxHeight ?? 0}px`;
-
       // create a new Menu
       this._menuElm = createDomElement('div', {
+        className: `${this._menuCssPrefix} ${this.gridUid}`,
         style: {
           display: 'none',
           left: `${event.pageX}px`, top: `${event.pageY + 5}px`,
           width: findWidthOrDefault(this.addonOptions?.width),
         }
       });
-      this._menuElm.classList.add(this._menuCssPrefix);
-      this._menuElm.classList.add(this.gridUid);
+
+      const maxHeight = isNaN(this.addonOptions.maxHeight as any) ? this.addonOptions.maxHeight : `${this.addonOptions.maxHeight ?? 0}px`;
+      const maxWidth = isNaN(this.addonOptions.maxWidth as any) ? this.addonOptions.maxWidth : `${this.addonOptions.maxWidth ?? 0}px`;
+
       if (maxHeight) {
         this._menuElm.style.maxHeight = maxHeight as string;
       }
+      if (maxWidth) {
+        this._menuElm.style.maxWidth = maxWidth as string;
+      }
 
-      const closeButtonElm = createDomElement('button', { className: 'close', type: 'button', dataset: { dismiss: this._menuCssPrefix } });
+      const closeButtonElm = createDomElement('button', { className: 'close', type: 'button', innerHTML: '&times;', dataset: { dismiss: this._menuCssPrefix } });
       closeButtonElm.setAttribute('aria-label', 'Close');
-
-      const closeSpanElm = createDomElement('span', { className: 'close', innerHTML: '&times;' });
-      closeSpanElm.setAttribute('aria-hidden', 'true');
-      closeButtonElm.appendChild(closeSpanElm);
 
       // -- Option List section
       if (!(this.addonOptions as CellMenu | ContextMenu).hideOptionSection && isColumnOptionAllowed && optionItems.length > 0) {
         const optionMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-option-list` });
         if (!this.addonOptions.hideCloseButton) {
           this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener);
-          this._menuElm.appendChild(closeButtonElm);
+          const optionMenuHeaderElm = createDomElement('div', { className: 'option-header' });
+          optionMenuHeaderElm?.appendChild(closeButtonElm);
+          optionMenuElm.appendChild(optionMenuHeaderElm);
+          optionMenuHeaderElm.classList.add('with-close');
         }
         this._menuElm.appendChild(optionMenuElm);
         this.populateCommandOrOptionItems(
@@ -126,7 +129,10 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
         const commandMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-command-list` });
         if (!this.addonOptions.hideCloseButton && (!isColumnOptionAllowed || optionItems.length === 0 || (this.addonOptions as CellMenu | ContextMenu).hideOptionSection)) {
           this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener);
-          this._menuElm.appendChild(closeButtonElm);
+          const commandMenuHeaderElm = createDomElement('div', { className: 'command-header' });
+          commandMenuHeaderElm?.appendChild(closeButtonElm);
+          commandMenuElm.appendChild(commandMenuHeaderElm);
+          commandMenuHeaderElm.classList.add('with-close');
         }
         this._menuElm.appendChild(commandMenuElm);
         this.populateCommandOrOptionItems(

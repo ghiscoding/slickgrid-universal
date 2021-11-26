@@ -180,7 +180,6 @@ describe('ContextMenu Plugin', () => {
       autoAlignSideOffset: 0,
       commandItems: [],
       hideMenuOnScroll: false,
-      maxHeight: 'none',
       width: 'auto',
       optionShownOverColumnIds: [],
       commandShownOverColumnIds: [],
@@ -304,11 +303,11 @@ describe('ContextMenu Plugin', () => {
         expect(contextMenuElm.classList.contains('dropright'));
         expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div style="display: block; width: auto; max-height: none; top: 0px; left: 0px;" class="slick-context-menu slickgrid12345 dropdown dropright" aria-expanded="true">
-            <button class="close" type="button" data-dismiss="slick-context-menu" aria-label="Close">
-              <span class="close" aria-hidden="true">×</span>
-            </button>
+          `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="display: block; width: auto; top: 0px; left: 0px;" aria-expanded="true">
             <div class="slick-context-menu-command-list">
+              <div class="command-header with-close no-title">
+                <button class="close" type="button" data-dismiss="slick-context-menu" aria-label="Close">×</button>
+              </div>
               <li class="slick-context-menu-item orange" data-command="command1">
                 <div class="slick-context-menu-icon"></div>
                 <span class="slick-context-menu-content">Command 1</span>
@@ -415,7 +414,7 @@ describe('ContextMenu Plugin', () => {
 
       it('should create a Context Menu and a 2nd item is "disabled" and expect button to be disabled', () => {
         plugin.dispose();
-        plugin.init({ commandItems: deepCopy(commandItemsMock) });
+        plugin.init({ commandItems: deepCopy(commandItemsMock), maxHeight: 290 });
         (gridOptionsMock.contextMenu.commandItems[1] as MenuCommandItem).disabled = true;
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
@@ -424,6 +423,7 @@ describe('ContextMenu Plugin', () => {
         const commandItemElm2 = commandListElm.querySelector('[data-command="command2"]') as HTMLDivElement;
         const commandContentElm2 = commandItemElm2.querySelector('.slick-context-menu-content') as HTMLDivElement;
 
+        expect(contextMenuElm.style.maxHeight).toBe('290px');
         expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
         expect(commandContentElm2.textContent).toBe('Command 2');
         expect(commandItemElm2.classList.contains('slick-context-menu-item-disabled')).toBeTruthy();
@@ -431,7 +431,7 @@ describe('ContextMenu Plugin', () => {
 
       it('should create a Context Menu and expect button to be disabled when command property is hidden', () => {
         plugin.dispose();
-        plugin.init({ commandItems: deepCopy(commandItemsMock) });
+        plugin.init({ commandItems: deepCopy(commandItemsMock), maxWidth: 310 });
         (gridOptionsMock.contextMenu.commandItems[1] as MenuCommandItem).hidden = true;
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
@@ -440,6 +440,7 @@ describe('ContextMenu Plugin', () => {
         const commandItemElm2 = commandListElm.querySelector('[data-command="command2"]') as HTMLDivElement;
         const commandContentElm2 = commandItemElm2.querySelector('.slick-context-menu-content') as HTMLDivElement;
 
+        expect(contextMenuElm.style.maxWidth).toBe('310px');
         expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
         expect(commandContentElm2.textContent).toBe('Command 2');
         expect(commandItemElm2.classList.contains('slick-context-menu-item-hidden')).toBeTruthy();
@@ -1226,11 +1227,11 @@ describe('ContextMenu Plugin', () => {
 
         expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div style="display: block; width: auto; max-height: none; top: 0px; left: 0px;" class="slick-context-menu slickgrid12345 dropdown dropright" aria-expanded="true">
-            <button class="close" type="button" data-dismiss="slick-context-menu" aria-label="Close">
-              <span class="close" aria-hidden="true">×</span>
-            </button>
+          `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="display: block; width: auto; top: 0px; left: 0px;" aria-expanded="true">
             <div class="slick-context-menu-option-list">
+              <div class="option-header with-close no-title">
+                <button class="close" type="button" data-dismiss="slick-context-menu" aria-label="Close">×</button>
+              </div>
               <li class="slick-context-menu-item purple" data-option="option1">
                 <div class="slick-context-menu-icon"></div>
                 <span class="slick-context-menu-content">Option 1</span>

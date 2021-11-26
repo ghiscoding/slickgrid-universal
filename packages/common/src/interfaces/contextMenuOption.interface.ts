@@ -89,8 +89,11 @@ export interface ContextMenuOption {
   /** icon for the "Export to Text Delimited" command */
   iconExportTextDelimitedCommand?: string;
 
-  /** Maximum height that the drop menu will have, can be a number (250) or text ("none") */
+  /** Maximum height that the drop menu can have, it could be a number (250) or text ("none") */
   maxHeight?: number | string;
+
+  /** Maximum width that the drop menu can have, it could be a number (250) or text ("none") */
+  maxWidth?: number | string;
 
   /**
    * Width that the drop menu can have.

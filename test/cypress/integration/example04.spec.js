@@ -77,7 +77,7 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
 
     cy.get('.grid4')
       .get('.slick-grid-menu:visible')
-      .find('span.close')
+      .find('.close')
       .click({ force: true });
 
     cy.get('.grid4')
@@ -106,7 +106,7 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
 
     cy.get('.slick-header-menu')
       .should('be.visible')
-      .children('.slick-header-menu-item:nth-child(9)')
+      .children('.slick-header-menu-item:nth-of-type(9)')
       .children('.slick-header-menu-content')
       .should('contain', 'Hide Column')
       .click();
@@ -134,13 +134,13 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
 
     cy.get('.slick-columnpicker')
       .find('.slick-columnpicker-list')
-      .children('li:nth-child(2)')
+      .children('li:nth-of-type(2)')
       .children('label')
       .should('contain', 'Title')
       .click();
 
     cy.get('.slick-columnpicker:visible')
-      .find('span.close')
+      .find('.close')
       .trigger('click')
       .click();
 
