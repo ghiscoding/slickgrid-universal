@@ -251,8 +251,14 @@ export function findFirstElementAttribute(inputElm: Element | null | undefined, 
   return null;
 }
 
-export function findWidthOrDefault(inputWidth?: number | string, defaultVal = 'auto'): string {
-  return (/^[0-9]+$/i.test(`${inputWidth}`) ? `${+(inputWidth as number)}px` : inputWidth as string) || defaultVal;
+/**
+ * Provide a width as a number or a string and find associated value in valid css style format or use default value when provided (or "auto" otherwise).
+ * @param {Number|String} inputWidth - input width, could be a string or number
+ * @param {Number | String} defaultValue [defaultValue=auto] - optional default value or use "auto" when nothing is provided
+ * @returns {String} string output
+ */
+export function findWidthOrDefault(inputWidth?: number | string, defaultValue = 'auto'): string {
+  return (/^[0-9]+$/i.test(`${inputWidth}`) ? `${+(inputWidth as number)}px` : inputWidth as string) || defaultValue;
 }
 
 /**

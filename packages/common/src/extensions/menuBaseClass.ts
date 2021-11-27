@@ -38,12 +38,12 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   protected _addonOptions: M = {} as unknown as M;
   protected _bindEventService: BindingEventService;
   protected _camelPluginName = '';
-  protected _commandTitleElm?: HTMLDivElement;
+  protected _commandTitleElm?: HTMLSpanElement;
   protected _eventHandler: SlickEventHandler;
   protected _gridUid = '';
   protected _menuElm?: HTMLDivElement | null;
   protected _menuCssPrefix = '';
-  protected _optionTitleElm?: HTMLDivElement;
+  protected _optionTitleElm?: HTMLSpanElement;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
@@ -114,15 +114,17 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     itemClickCallback: (event: DOMMouseEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, columnDef?: Column) => void
   ) {
     if (args && commandOrOptionItems && menuOptions) {
+      const menuHeaderElm = this._menuElm?.querySelector(`.${itemType}-header`) ?? createDomElement('div', { className: `${itemType}-header` });
       // user could pass a title on top of the Commands/Options section
-      const titleProp = itemType === 'command' ? 'commandTitle' : 'optionTitle';
+      const titleProp: 'commandTitle' | 'optionTitle' = `${itemType}Title`;
       if ((menuOptions as CellMenu | ContextMenu)?.[titleProp]) {
-        this[`_${itemType}TitleElm`] = createDomElement('div', {
-          className: 'title',
-          textContent: (menuOptions as never)[titleProp],
-        });
-        commandOrOptionMenuElm.appendChild(this[`_${itemType}TitleElm`]!);
+        this[`_${itemType}TitleElm`] = createDomElement('span', { className: 'title', textContent: (menuOptions as never)[titleProp] });
+        menuHeaderElm.appendChild(this[`_${itemType}TitleElm`]!);
+        menuHeaderElm.classList.add('with-title');
+      } else {
+        menuHeaderElm.classList.add('no-title');
       }
+      commandOrOptionMenuElm.appendChild(menuHeaderElm);
       for (const item of commandOrOptionItems) {
         this.populateSingleCommandOrOptionItem(itemType, menuOptions, commandOrOptionMenuElm, item, args, itemClickCallback);
       }
@@ -199,6 +201,8 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
 
         if ((item as MenuCommandItem | MenuOptionItem).iconCssClass) {
           iconElm.classList.add(...(item as MenuCommandItem | MenuOptionItem).iconCssClass!.split(' '));
+        } else {
+          iconElm.textContent = '◦';
         }
 
         const textElm = createDomElement('span', {

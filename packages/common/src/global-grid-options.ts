@@ -37,6 +37,7 @@ export const GlobalGridOptions: GridOption = {
     hideCloseButton: true,
     hideCommandSection: false,
     hideOptionSection: false,
+    showBulletWhenIconMissing: true,
   },
   compositeEditorOptions: {
     labels: {
@@ -72,6 +73,7 @@ export const GlobalGridOptions: GridOption = {
     iconExportCsvCommand: 'fa fa-download mdi mdi-download',
     iconExportExcelCommand: 'fa fa-file-excel-o mdi mdi-file-excel-outline',
     iconExportTextDelimitedCommand: 'fa fa-download mdi mdi-download',
+    showBulletWhenIconMissing: true,
   },
   customFooterOptions: {
     dateFormat: 'YYYY-MM-DD, hh:mm a',
@@ -200,6 +202,7 @@ export const GlobalGridOptions: GridOption = {
     iconTogglePreHeaderCommand: 'fa fa-random mdi mdi-flip-vertical',
     menuWidth: 16,
     resizeOnShowHeaderRow: true,
+    showBulletWhenIconMissing: true,
     headerColumnValueExtractor: pickerHeaderColumnValueExtractor
   },
   headerMenu: {

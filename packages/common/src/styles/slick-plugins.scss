@@ -27,35 +27,41 @@
     position: absolute;
   }
 
-  > .close {
-    float: right;
-    cursor: pointer;
-    color: var(--slick-cell-menu-close-btn-color, $slick-cell-menu-close-btn-color);
-    background-color: var(--slick-cell-menu-close-btn-bg-color, $slick-cell-menu-close-btn-bg-color);
-    width: var(--slick-cell-menu-close-btn-width, $slick-cell-menu-close-btn-width);
-    height: var(--slick-cell-menu-close-btn-height, $slick-cell-menu-close-btn-height);
-    margin: var(--slick-cell-menu-close-btn-margin, $slick-cell-menu-close-btn-margin);
-    padding: var(--slick-cell-menu-close-btn-padding, $slick-cell-menu-close-btn-padding);
-    border: var(--slick-cell-menu-close-btn-border, $slick-cell-menu-close-btn-border);
-    font-family: var(--slick-cell-menu-close-btn-font-family, $slick-cell-menu-close-btn-font-family);
-    font-size: var(--slick-cell-menu-close-btn-font-size, $slick-cell-menu-close-btn-font-size);
-
-    &:hover {
-      color: var(--slick-cell-menu-close-btn-color-hover, $slick-cell-menu-close-btn-color-hover);
-    }
-    > span {
-      opacity: var(--slick-cell-menu-close-btn-opacity, $slick-cell-menu-close-btn-opacity);
-    }
-  }
-
   .slick-cell-menu-option-list,
   .slick-cell-menu-command-list {
+    .command-header, .option-header {
+      overflow-y: hidden;
+    }
+    .command-header.with-title, .option-header.with-title {
+      overflow-y: auto;
+      border-bottom: var(--slick-cell-menu-title-border-bottom, $slick-cell-menu-title-border-bottom);
+      margin-bottom: var(--slick-cell-menu-title-margin-bottom, $slick-cell-menu-title-margin-bottom);
+    }
+
+    .close {
+      cursor: pointer;
+      float: right;
+      background-color: var(--slick-cell-menu-close-btn-bg-color, $slick-cell-menu-close-btn-bg-color);
+      border: var(--slick-cell-menu-close-btn-border, $slick-cell-menu-close-btn-border);
+      color: var(--slick-cell-menu-close-btn-color, $slick-cell-menu-close-btn-color);
+      font-family: var(--slick-cell-menu-close-btn-font-family, $slick-cell-menu-close-btn-font-family);
+      font-size: var(--slick-cell-menu-close-btn-font-size, $slick-cell-menu-close-btn-font-size);
+      height: var(--slick-cell-menu-close-btn-height, $slick-cell-menu-close-btn-height);
+      line-height: calc(var(--slick-cell-menu-close-btn-height, $slick-cell-menu-close-btn-height) - 2px);
+      margin: var(--slick-cell-menu-close-btn-margin, $slick-cell-menu-close-btn-margin);
+      padding: var(--slick-cell-menu-close-btn-padding, $slick-cell-menu-close-btn-padding);
+      width: var(--slick-cell-menu-close-btn-width, $slick-cell-menu-close-btn-width);
+      opacity: var(--slick-cell-menu-close-btn-opacity, $slick-cell-menu-close-btn-opacity);
+      &:hover {
+        opacity: var(--slick-cell-menu-close-btn-opacity-hover, $slick-cell-menu-close-btn-opacity-hover);
+      }
+    }
+
     .title {
       font-size: var(--slick-cell-menu-title-font-size, $slick-cell-menu-title-font-size);
       font-weight: var(--slick-cell-menu-title-font-weight, $slick-cell-menu-title-font-weight);
+      margin-right: var(--cell-menu-title-margin-right, $slick-cell-menu-title-margin-right);
       width: var(--slick-cell-menu-title-width, $slick-cell-menu-title-width);
-      border-bottom: var(--slick-cell-menu-title-border-bottom, $slick-cell-menu-title-border-bottom);
-      margin-bottom: var(--slick-cell-menu-title-margin-bottom, $slick-cell-menu-title-margin-bottom);
     }
   }
 
@@ -96,6 +102,7 @@
     }
 
     .slick-cell-menu-icon {
+      text-align: center;
       font-size: var(--slick-cell-menu-icon-font-size, $slick-cell-menu-icon-font-size);
       background-position: center center;
       background-repeat: no-repeat;
@@ -129,12 +136,6 @@
   .slick-cell-menu-option-list {
     margin-bottom: var(--slick-cell-menu-option-list-margin-bottom, $slick-cell-menu-option-list-margin-bottom);
   }
-
-  /* resize cell menu item width when there's a close button on same line */
-  button + .slick-cell-menu-command-list .slick-cell-menu-item:first-child,
-  button + .slick-cell-menu-option-list .slick-cell-menu-item:first-child {
-    width: var(--slick-cell-menu-item-width-when-button, $slick-cell-menu-item-width-when-button);
-  }
 }
 
 // ----------------------------------------------
@@ -162,32 +163,42 @@
     position: absolute;
   }
 
-  > .close {
-    float: right;
-    color: var(--slick-context-menu-close-btn-color, $slick-context-menu-close-btn-color);
-    background-color: var(--slick-context-menu-close-btn-bg-color, $slick-context-menu-close-btn-bg-color);
-    width: var(--slick-context-menu-close-btn-width, $slick-context-menu-close-btn-width);
-    height: var(--slick-context-menu-close-btn-height, $slick-context-menu-close-btn-height);
-    margin: var(--slick-context-menu-close-btn-margin, $slick-context-menu-close-btn-margin);
-    padding: var(--slick-context-menu-close-btn-padding, $slick-context-menu-close-btn-padding);
-    border: var(--slick-context-menu-close-btn-border, $slick-context-menu-close-btn-border);
-    font-family: var(--slick-context-menu-close-btn-font-family, $slick-context-menu-close-btn-font-family);
-    font-size: var(--slick-context-menu-close-btn-font-size, $slick-context-menu-close-btn-font-size);
-
-    &:hover {
-      color: var(--slick-context-menu-close-btn-color-hover, $slick-context-menu-close-btn-color-hover);
+  .slick-context-menu-option-list,
+  .slick-context-menu-command-list {
+    .command-header, .option-header {
+      overflow-y: hidden;
     }
-    > span {
+    .command-header.with-title, .option-header.with-title {
+      overflow-y: auto;
+      border-bottom: var(--slick-context-menu-title-border-bottom, $slick-context-menu-title-border-bottom);
+      margin-bottom: var(--slick-context-menu-title-margin-bottom, $slick-context-menu-title-margin-bottom);
+    }
+
+    .close {
+      cursor: pointer;
+      float: right;
+      background-color: var(--slick-context-menu-close-btn-bg-color, $slick-context-menu-close-btn-bg-color);
+      border: var(--slick-context-menu-close-btn-border, $slick-context-menu-close-btn-border);
+      color: var(--slick-context-menu-close-btn-color, $slick-context-menu-close-btn-color);
+      font-family: var(--slick-context-menu-close-btn-font-family, $slick-context-menu-close-btn-font-family);
+      font-size: var(--slick-context-menu-close-btn-font-size, $slick-context-menu-close-btn-font-size);
+      height: var(--slick-context-menu-close-btn-height, $slick-context-menu-close-btn-height);
+      line-height: calc(var(--slick-context-menu-close-btn-height, $slick-context-menu-close-btn-height) - 2px);
+      margin: var(--slick-context-menu-close-btn-margin, $slick-context-menu-close-btn-margin);
+      padding: var(--slick-context-menu-close-btn-padding, $slick-context-menu-close-btn-padding);
+      width: var(--slick-context-menu-close-btn-width, $slick-context-menu-close-btn-width);
       opacity: var(--slick-context-menu-close-btn-opacity, $slick-context-menu-close-btn-opacity);
+      &:hover {
+        opacity: var(--slick-context-menu-close-btn-opacity-hover, $slick-context-menu-close-btn-opacity-hover);
+      }
     }
-  }
 
-  .title {
-    font-size: var(--slick-context-menu-title-font-size, $slick-context-menu-title-font-size);
-    font-weight: var(--slick-context-menu-title-font-weight, $slick-context-menu-title-font-weight);
-    width: var(--slick-context-menu-title-width, $slick-context-menu-title-width);
-    border-bottom: var(--slick-context-menu-title-border-bottom, $slick-context-menu-title-border-bottom);
-    margin-bottom: var(--slick-context-menu-title-margin-bottom, $slick-context-menu-title-margin-bottom);
+    .title {
+      font-size: var(--slick-context-menu-title-font-size, $slick-context-menu-title-font-size);
+      font-weight: var(--slick-context-menu-title-font-weight, $slick-context-menu-title-font-weight);
+      margin-right: var(--context-menu-title-margin-right, $slick-context-menu-title-margin-right);
+      width: var(--slick-context-menu-title-width, $slick-context-menu-title-width);
+    }
   }
 
   .slick-context-menu-item {
@@ -228,6 +239,7 @@
       background-position: center center;
       background-repeat: no-repeat;
       display: inline-block;
+      text-align: center;
       font-size: var(--slick-context-menu-icon-font-size, $slick-context-menu-icon-font-size);
       height: var(--slick-context-menu-icon-height, $slick-context-menu-icon-height);
       line-height: var(--slick-context-menu-icon-line-height, $slick-context-menu-icon-line-height);
@@ -258,12 +270,6 @@
 
   .slick-context-menu-option-list {
     margin-bottom: var(--slick-context-menu-option-list-margin-bottom, $slick-context-menu-option-list-margin-bottom);
-  }
-
-  /* resize context menu item width when there's a close button on same line */
-  button + .slick-context-menu-command-list .slick-context-menu-item:first-child,
-  button + .slick-context-menu-option-list .slick-context-menu-item:first-child {
-    width: var(--slick-context-menu-item-width-when-button, $slick-context-menu-item-width-when-button);
   }
 }
 
@@ -469,6 +475,7 @@
   background-position: center center;
   background-repeat: no-repeat;
   display: inline-block;
+  text-align: center;
   color: var(--slick-header-menu-icon-font-color, $slick-header-menu-icon-font-color);
   font-size: var(--slick-header-menu-icon-font-size, $slick-header-menu-icon-font-size);
   font-weight: var(--slick-header-menu-icon-font-weight, $slick-header-menu-icon-font-weight);

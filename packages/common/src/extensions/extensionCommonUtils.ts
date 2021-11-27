@@ -10,13 +10,10 @@ export function addCloseButtomElement(this: SlickColumnPicker | SlickGridMenu, m
   const context: any = this;
   const closePickerButtonElm = createDomElement('button', {
     type: 'button', className: 'close',
+    innerHTML: '&times;',
     dataset: { dismiss: context instanceof SlickColumnPicker ? 'slick-columnpicker' : 'slick-grid-menu' }
   });
   closePickerButtonElm.setAttribute('aria-label', 'Close');
-
-  const closeSpanElm = createDomElement('span', { className: 'close', innerHTML: '&times;' });
-  closeSpanElm.setAttribute('aria-hidden', 'true');
-  closePickerButtonElm.appendChild(closeSpanElm);
   menuElm.appendChild(closePickerButtonElm);
 }
 

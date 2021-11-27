@@ -263,7 +263,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .find('input[type="checkbox"]:checked')
       .should('have.length', 11 - 2);
 
-    cy.get('.slick-columnpicker > button.close > .close')
+    cy.get('.slick-columnpicker > button.close')
       .click();
   });
 
@@ -521,7 +521,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .find('input[type="checkbox"]:checked')
       .should('have.length', 11);
 
-    cy.get('.slick-columnpicker > button.close > .close')
+    cy.get('.slick-columnpicker > button.close')
       .click();
   });
 
@@ -608,7 +608,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
 
     cy.get('.slick-header-menu')
       .should('be.visible')
-      .children('.slick-header-menu-item:nth-child(1)')
+      .children('.slick-header-menu-item:nth-of-type(1)')
       .children('.slick-header-menu-content')
       .should('contain', 'Freeze Column')
       .click();

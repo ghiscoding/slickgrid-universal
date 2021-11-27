@@ -64,7 +64,7 @@ describe('Example 14 - Columns Resize by Content', { retries: 1 }, () => {
   it('should double-click on the "Complexity" column resize handle and expect the column to become wider and show all text', () => {
     cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.lt', 80);
 
-    cy.get('.slick-header-column:nth-child(6) .slick-resizable-handle')
+    cy.get('.slick-header-column:nth-of-type(6) .slick-resizable-handle')
       .dblclick();
 
     cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.gt', 95);
@@ -74,7 +74,7 @@ describe('Example 14 - Columns Resize by Content', { retries: 1 }, () => {
     cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.lt', 120);
 
     cy.get('.grid14')
-      .find('.slick-header-column:nth-child(10)')
+      .find('.slick-header-column:nth-of-type(10)')
       .trigger('mouseover')
       .children('.slick-header-menu-button')
       .invoke('show')
@@ -82,7 +82,7 @@ describe('Example 14 - Columns Resize by Content', { retries: 1 }, () => {
 
     cy.get('.slick-header-menu')
       .should('be.visible')
-      .children('.slick-header-menu-item:nth-child(2)')
+      .children('.slick-header-menu-item:nth-of-type(2)')
       .children('.slick-header-menu-content')
       .should('contain', 'Resize by Content')
       .click();

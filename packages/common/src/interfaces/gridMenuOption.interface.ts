@@ -133,6 +133,9 @@ export interface GridMenuOption {
   /** Defaults to true, allows the user to control if the default gridMenu button (located on the top right corner by default CSS) should be created or omitted */
   showButton?: boolean;
 
+  /** Defaults to True, should we show bullets when icons are missing? */
+  showBulletWhenIconMissing?: boolean;
+
   /** Defaults to "Synchronous resize" which is 1 of the last 2 checkbox title shown at the end of the picker list */
   syncResizeTitle?: string;
 
@@ -141,7 +144,7 @@ export interface GridMenuOption {
 
   /**
    * Width (alias to `menuWidth`) that the drop menu can have.
-   * NOTE: the menu also has a "min-width" defined in CSS/SASS and setting a "width" below that threshold won't work, you change this min-width via SASS `$context-menu-min-width`
+   * NOTE: the menu also has a "min-width" defined in CSS/SASS and setting a "width" below that threshold won't work, you change this min-width via SASS `$slick-context-menu-min-width`
    */
   width?: number | string;
 

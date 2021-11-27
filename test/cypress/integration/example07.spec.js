@@ -251,7 +251,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
 
     cy.get('.slick-header-menu')
       .should('be.visible')
-      .children('.slick-header-menu-item:nth-child(6)')
+      .children('.slick-header-menu-item:nth-of-type(6)')
       .children('.slick-header-menu-content')
       .should('contain', 'Remove Filter')
       .click();
@@ -421,7 +421,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .click();
 
     cy.get('.slick-header-menu')
-      .children()
+      .children('.slick-header-menu-item')
       .each(($child, index) => {
         const commandTitle = $child.text();
         expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
@@ -464,13 +464,13 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     cy.get('.slick-sort-indicator').should('have.length.greaterThan', 0);
 
     cy.get('.grid7')
-      .find('.slick-header-column:nth(8)')
+      .find('.slick-header-column:nth-of-type(8)')
       .trigger('mouseover')
       .children('.slick-header-menu-button')
       .click();
 
     cy.get('.slick-header-menu')
-      .children()
+      .children('.slick-header-menu-item')
       .each(($child, index) => {
         const commandTitle = $child.text();
         expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
@@ -515,7 +515,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .click();
 
     cy.get('.slick-header-menu')
-      .children()
+      .children('.slick-header-menu-item')
       .each(($child, index) => {
         const commandTitle = $child.text();
         expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
@@ -539,7 +539,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .click();
 
     cy.get('.slick-header-menu')
-      .children()
+      .children('.slick-header-menu-item')
       .each(($child, index) => {
         const commandTitle = $child.text();
         expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
@@ -594,14 +594,14 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
 
     cy.get('.slick-columnpicker')
       .find('.slick-columnpicker-list')
-      .children('li:nth-child(7)')
+      .children('li:nth-of-type(7)')
       .children('label')
       .should('contain', 'Finish')
       .click();
 
     cy.get('.grid7')
       .get('.slick-columnpicker:visible')
-      .find('span.close')
+      .find('.close')
       .trigger('click')
       .click();
 
@@ -762,13 +762,13 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
 
     cy.get('.slick-columnpicker')
       .find('.slick-columnpicker-list')
-      .children('li:nth-child(6)')
+      .children('li:nth-of-type(6)')
       .children('label')
       .should('contain', 'Finish')
       .click();
 
     cy.get('.slick-columnpicker:visible')
-      .find('span.close')
+      .find('.close')
       .trigger('click')
       .click();
   });
@@ -831,7 +831,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .click();
 
     cy.get('.slick-header-menu')
-      .children()
+      .children('.slick-header-menu-item')
       .each(($child, index) => {
         const commandTitle = $child.text();
         expect(commandTitle).to.eq(expectedFullHeaderMenuCommands[index]);
@@ -870,7 +870,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       });
 
     cy.get('.slick-grid-menu')
-      .find('span.close')
+      .find('.close')
       .click();
   });
 
@@ -949,7 +949,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
   });
 
   it('should click on Select All checkbox in filter header row and expect all 500 items to be selected and full selection count show in left footer', () => {
-    cy.get('.slick-header-column:nth-child(2)')
+    cy.get('.slick-header-column:nth-of-type(2)')
       .find('label')
       .click({ force: true });
 
