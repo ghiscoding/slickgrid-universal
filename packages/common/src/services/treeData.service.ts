@@ -370,7 +370,7 @@ export class TreeDataService {
       const collapsedPropName = this.getTreeDataOptionPropName('collapsedPropName');
       const childrenPropName = this.getTreeDataOptionPropName('childrenPropName');
 
-      if (targetElm?.className) {
+      if (typeof targetElm?.className === 'string') {
         const hasToggleClass = targetElm.className.indexOf('toggle') >= 0 || false;
         if (hasToggleClass) {
           const item = this.dataView.getItem(args.row);
