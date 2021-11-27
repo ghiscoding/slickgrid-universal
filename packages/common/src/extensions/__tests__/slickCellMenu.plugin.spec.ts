@@ -279,11 +279,11 @@ describe('CellMenu Plugin', () => {
                 <button class="close" type="button" data-dismiss="slick-cell-menu" aria-label="Close">×</button>
               </div>
               <li class="slick-cell-menu-item orange" data-command="command1">
-                <div class="slick-cell-menu-icon"></div>
+                <div class="slick-cell-menu-icon">◦</div>
                 <span class="slick-cell-menu-content">Command 1</span>
               </li>
               <li class="slick-cell-menu-item" data-command="command2">
-                <div class="slick-cell-menu-icon"></div>
+                <div class="slick-cell-menu-icon">◦</div>
                 <span class="slick-cell-menu-content">Command 2</span>
               </li>
               <li class="slick-cell-menu-item slick-cell-menu-item-divider"></li>
@@ -670,11 +670,11 @@ describe('CellMenu Plugin', () => {
                 <button class="close" type="button" data-dismiss="slick-cell-menu" aria-label="Close">×</button>
               </div>
               <li class="slick-cell-menu-item purple" data-option="option1">
-                <div class="slick-cell-menu-icon"></div>
+                <div class="slick-cell-menu-icon">◦</div>
                 <span class="slick-cell-menu-content">Option 1</span>
               </li>
               <li class="slick-cell-menu-item" data-option="option2">
-                <div class="slick-cell-menu-icon"></div>
+                <div class="slick-cell-menu-icon">◦</div>
                 <span class="slick-cell-menu-content">Option 2</span>
               </li>
               <li class="slick-cell-menu-item slick-cell-menu-item-divider"></li>

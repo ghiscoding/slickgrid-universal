@@ -113,6 +113,9 @@ export interface ContextMenuOption {
   /** Same as "optionTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   optionTitleKey?: string;
 
+  /** Defaults to True, should we show bullets when icons are missing? */
+  showBulletWhenIconMissing?: boolean;
+
   // --
   // action/override callbacks
 

@@ -211,6 +211,8 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
 
         if ((item as MenuCommandItem | MenuOptionItem).iconCssClass) {
           iconElm.classList.add(...(item as MenuCommandItem | MenuOptionItem).iconCssClass!.split(' '));
+        } else {
+          iconElm.textContent = '◦';
         }
 
         if ((item as MenuCommandItem | MenuOptionItem).iconImage) {

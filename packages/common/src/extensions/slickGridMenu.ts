@@ -423,7 +423,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   /** Update the Titles of each sections (command, commandTitle, ...) */
   updateAllTitles(options: GridMenuOption) {
     if (this._commandTitleElm?.textContent && (options.customTitle || options.commandTitle)) {
-      this._commandTitleElm.textContent = (options.customTitle || options.commandTitle) as string;
+      this._commandTitleElm.textContent = this._gridMenuOptions?.commandItems?.length ? (options.customTitle || options.commandTitle) as string : '';
       this._gridMenuOptions!.commandTitle = this._commandTitleElm.textContent;
     }
     if (this._columnTitleElm?.textContent && options.columnTitle) {

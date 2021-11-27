@@ -102,6 +102,7 @@
     }
 
     .slick-cell-menu-icon {
+      text-align: center;
       font-size: var(--slick-cell-menu-icon-font-size, $slick-cell-menu-icon-font-size);
       background-position: center center;
       background-repeat: no-repeat;
@@ -238,6 +239,7 @@
       background-position: center center;
       background-repeat: no-repeat;
       display: inline-block;
+      text-align: center;
       font-size: var(--slick-context-menu-icon-font-size, $slick-context-menu-icon-font-size);
       height: var(--slick-context-menu-icon-height, $slick-context-menu-icon-height);
       line-height: var(--slick-context-menu-icon-line-height, $slick-context-menu-icon-line-height);
@@ -473,6 +475,7 @@
   background-position: center center;
   background-repeat: no-repeat;
   display: inline-block;
+  text-align: center;
   color: var(--slick-header-menu-icon-font-color, $slick-header-menu-icon-font-color);
   font-size: var(--slick-header-menu-icon-font-size, $slick-header-menu-icon-font-size);
   font-weight: var(--slick-header-menu-icon-font-weight, $slick-header-menu-icon-font-weight);

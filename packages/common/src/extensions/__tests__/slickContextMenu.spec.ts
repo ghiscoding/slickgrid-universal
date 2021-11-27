@@ -309,11 +309,11 @@ describe('ContextMenu Plugin', () => {
                 <button class="close" type="button" data-dismiss="slick-context-menu" aria-label="Close">×</button>
               </div>
               <li class="slick-context-menu-item orange" data-command="command1">
-                <div class="slick-context-menu-icon"></div>
+                <div class="slick-context-menu-icon">◦</div>
                 <span class="slick-context-menu-content">Command 1</span>
               </li>
               <li class="slick-context-menu-item" data-command="command2">
-                <div class="slick-context-menu-icon"></div>
+                <div class="slick-context-menu-icon">◦</div>
                 <span class="slick-context-menu-content">Command 2</span>
               </li>
               <li class="slick-context-menu-item slick-context-menu-item-divider"></li>
@@ -480,6 +480,24 @@ describe('ContextMenu Plugin', () => {
         expect(commandContentElm2.textContent).toBe('Command 2');
         expect(commandIconElm2.classList.contains('bold')).toBeTruthy();
         expect(commandIconElm2.classList.contains('red')).toBeTruthy();
+      });
+
+      it('should create a Context Menu item with a bullet character when "iconCssClass" is not provided', () => {
+        plugin.dispose();
+        plugin.init({ commandItems: deepCopy(commandItemsMock) });
+        (gridOptionsMock.contextMenu.commandItems[1] as MenuCommandItem).title = 'Help';
+        (gridOptionsMock.contextMenu.commandItems[1] as MenuCommandItem).iconCssClass = undefined;
+        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+
+        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
+        const commandItemElm2 = commandListElm.querySelector('[data-command="command2"]') as HTMLDivElement;
+        const commandContentElm2 = commandItemElm2.querySelector('.slick-context-menu-content') as HTMLDivElement;
+        const commandIconElm2 = commandItemElm2.querySelector('.slick-context-menu-icon') as HTMLDivElement;
+
+        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(commandContentElm2.textContent).toBe('Help');
+        expect(commandIconElm2.textContent).toBe('◦');
       });
 
       it('should create a Context Menu item with "textCssClass" and expect extra css classes added to the item text DOM element', () => {
@@ -1233,11 +1251,11 @@ describe('ContextMenu Plugin', () => {
                 <button class="close" type="button" data-dismiss="slick-context-menu" aria-label="Close">×</button>
               </div>
               <li class="slick-context-menu-item purple" data-option="option1">
-                <div class="slick-context-menu-icon"></div>
+                <div class="slick-context-menu-icon">◦</div>
                 <span class="slick-context-menu-content">Option 1</span>
               </li>
               <li class="slick-context-menu-item" data-option="option2">
-                <div class="slick-context-menu-icon"></div>
+                <div class="slick-context-menu-icon">◦</div>
                 <span class="slick-context-menu-content">Option 2</span>
               </li>
               <li class="slick-context-menu-item slick-context-menu-item-divider"></li>
