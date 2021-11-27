@@ -89,12 +89,15 @@ export interface ContextMenuOption {
   /** icon for the "Export to Text Delimited" command */
   iconExportTextDelimitedCommand?: string;
 
-  /** Maximum height that the drop menu will have, can be a number (250) or text ("none") */
+  /** Maximum height that the drop menu can have, it could be a number (250) or text ("none") */
   maxHeight?: number | string;
+
+  /** Maximum width that the drop menu can have, it could be a number (250) or text ("none") */
+  maxWidth?: number | string;
 
   /**
    * Width that the drop menu can have.
-   * NOTE: the menu also has a "min-width" defined in CSS/SASS and setting a "width" below that threshold won't work, you change this min-width via SASS `$context-menu-min-width`
+   * NOTE: the menu also has a "min-width" defined in CSS/SASS and setting a "width" below that threshold won't work, you change this min-width via SASS `$slick-context-menu-min-width`
    */
   width?: number | string;
 
@@ -109,6 +112,9 @@ export interface ContextMenuOption {
 
   /** Same as "optionTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   optionTitleKey?: string;
+
+  /** Defaults to True, should we show bullets when icons are missing? */
+  showBulletWhenIconMissing?: boolean;
 
   // --
   // action/override callbacks

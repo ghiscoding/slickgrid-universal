@@ -279,7 +279,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
         `<li class="slick-header-menu-item mdi mdi-lightbulb-outline" data-command="show-positive-numbers">
-            <div class="slick-header-menu-icon"></div>
+            <div class="slick-header-menu-icon">◦</div>
             <span class="slick-header-menu-content"></span>
           </li>`
       ));
@@ -301,7 +301,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
         `<li class="slick-header-menu-item slick-header-menu-item-disabled mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers.">
-            <div class="slick-header-menu-icon"></div>
+            <div class="slick-header-menu-icon">◦</div>
             <span class="slick-header-menu-content"></span>
           </li>`
       ));
@@ -325,7 +325,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
         `<li class="slick-header-menu-item slick-header-menu-item-disabled mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers.">
-            <div class="slick-header-menu-icon"></div>
+            <div class="slick-header-menu-icon">◦</div>
             <span class="slick-header-menu-content"></span>
           </li>`
       ));
@@ -345,7 +345,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
         `<li class="slick-header-menu-item slick-header-menu-item-hidden mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers.">
-            <div class="slick-header-menu-icon"></div>
+            <div class="slick-header-menu-icon">◦</div>
             <span class="slick-header-menu-content"></span>
           </li>`
       ));
@@ -365,7 +365,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
         `<li class="slick-header-menu-item mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers.">
-            <div class="slick-header-menu-icon" style="background-image: url(/images/some-image.png);"></div>
+            <div class="slick-header-menu-icon" style="background-image: url(/images/some-image.png);">◦</div>
             <span class="slick-header-menu-content"></span>
           </li>`
       ));
@@ -387,7 +387,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
         `<li class="slick-header-menu-item mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers.">
-            <div class="slick-header-menu-icon"></div>
+            <div class="slick-header-menu-icon">◦</div>
             <span class="slick-header-menu-content bold red">Some Title</span>
           </li>`
       ));
@@ -408,7 +408,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
         `<li class="slick-header-menu-item mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Some Tooltip">
-            <div class="slick-header-menu-icon"></div>
+            <div class="slick-header-menu-icon">◦</div>
             <span class="slick-header-menu-content"></span>
           </li>`
       ));
@@ -430,7 +430,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
         `<li class="slick-header-menu-item mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers.">
-            <div class="slick-header-menu-icon"></div>
+            <div class="slick-header-menu-icon">◦</div>
             <span class="slick-header-menu-content"></span>
           </li>`
       ));
@@ -456,7 +456,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
         `<li class="slick-header-menu-item mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers.">
-            <div class="slick-header-menu-icon"></div>
+            <div class="slick-header-menu-icon">◦</div>
             <span class="slick-header-menu-content"></span>
           </li>`
       ));
@@ -485,7 +485,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
         `<li class="slick-header-menu-item mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers.">
-            <div class="slick-header-menu-icon"></div>
+            <div class="slick-header-menu-icon">◦</div>
             <span class="slick-header-menu-content"></span>
           </li>`
       ));
@@ -514,7 +514,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
         `<li class="slick-header-menu-item mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers.">
-            <div class="slick-header-menu-icon"></div>
+            <div class="slick-header-menu-icon">◦</div>
             <span class="slick-header-menu-content"></span>
           </li>`
       ));
@@ -569,7 +569,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
         `<li class="slick-header-menu-item mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers.">
-            <div class="slick-header-menu-icon"></div>
+            <div class="slick-header-menu-icon">◦</div>
             <span class="slick-header-menu-content"></span>
           </li>`
       ));

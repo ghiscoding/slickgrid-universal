@@ -52,7 +52,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
 
     cy.get('.slick-header-menu')
       .should('be.visible')
-      .children('.slick-header-menu-item:nth-child(4)')
+      .children('.slick-header-menu-item:nth-of-type(4)')
       .children('.slick-header-menu-content')
       .should('contain', 'Sort Descending')
       .click();
@@ -87,7 +87,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
 
     cy.get('.slick-header-menu')
       .should('be.visible')
-      .children('.slick-header-menu-item:nth-child(3)')
+      .children('.slick-header-menu-item:nth-of-type(3)')
       .children('.slick-header-menu-content')
       .should('contain', 'Sort Ascending')
       .click();
@@ -101,7 +101,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
 
   it('should hover over the "Duration" column of 2nd grid, Sort Ascending and have 2 sorts', () => {
     cy.get('.grid2')
-      .find('.slick-header-column:nth-child(2)')
+      .find('.slick-header-column:nth-of-type(2)')
       .trigger('mouseover')
       .children('.slick-header-menu-button')
       .invoke('show')
@@ -110,7 +110,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
     cy.get('.grid2')
       .find('.slick-header-menu')
       .should('be.visible')
-      .children('.slick-header-menu-item:nth-child(4)')
+      .children('.slick-header-menu-item:nth-of-type(4)')
       .click();
 
     cy.get('.grid2')
@@ -283,7 +283,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
 
     cy.get('.grid1')
       .get('.slick-grid-menu:visible')
-      .find('span.close')
+      .find('.close')
       .click({ force: true });
 
     cy.get('.grid1')
@@ -331,7 +331,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
 
     cy.get('.grid2')
       .get('.slick-grid-menu:visible')
-      .find('span.close')
+      .find('.close')
       .click({ force: true });
 
     cy.get('.grid2')
@@ -373,7 +373,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
 
     cy.get('.grid1')
       .get('.slick-grid-menu:visible')
-      .find('span.close')
+      .find('.close')
       .click({ force: true });
 
     cy.get('.grid1')
@@ -401,14 +401,14 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
 
     cy.get('.slick-columnpicker')
       .find('.slick-columnpicker-list')
-      .children('li:nth-child(3)')
+      .children('li:nth-of-type(3)')
       .children('label')
       .should('contain', '% Complete')
       .click();
 
     cy.get('.grid2')
       .get('.slick-columnpicker:visible')
-      .find('span.close')
+      .find('.close')
       .click();
 
     cy.get('.grid2')
@@ -494,7 +494,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
 
     cy.get('.grid1')
       .get('.slick-grid-menu:visible')
-      .find('span.close')
+      .find('.close')
       .click({ force: true });
   });
 
