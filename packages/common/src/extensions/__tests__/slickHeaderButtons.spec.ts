@@ -86,12 +86,6 @@ describe('HeaderButton Plugin', () => {
     expect(plugin.eventHandler).toBeTruthy();
   });
 
-  it('should dispose of the addon', () => {
-    const disposeSpy = jest.spyOn(plugin, 'dispose');
-    plugin.destroy();
-    expect(disposeSpy).toHaveBeenCalled();
-  });
-
   it('should use default options when instantiating the plugin without passing any arguments', () => {
     plugin.init();
 
@@ -227,42 +221,6 @@ describe('HeaderButton Plugin', () => {
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
         `<li class="slick-header-button slick-header-button-hidden mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers."></li>
         <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
-    });
-
-    it('should populate 2x Header Buttons and a 2nd button and property "image" is filled and expect button to include an image background', () => {
-      const headerDiv = document.createElement('div');
-      headerDiv.className = 'slick-header-column';
-
-      plugin.dispose();
-      plugin.init();
-      columnsMock[0].header.buttons[1].image = '/images/some-image.png';
-
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
-
-      // add Header Buttons which are visible (2x buttons)
-      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-header-button mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers." style="background-image: url(/images/some-image.png);"></li>
-          <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
-      expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] The "image" property of a Header Button is now deprecated and will be removed in future version, consider using "cssClass" instead.');
-    });
-
-    it('should populate 2x Header Buttons and a 2nd button and property "tooltip" is filled and expect button to include a "title" attribute for the tooltip', () => {
-      const headerDiv = document.createElement('div');
-      headerDiv.className = 'slick-header-column';
-
-      plugin.dispose();
-      plugin.init();
-      columnsMock[0].header.buttons[1].tooltip = 'Some Tooltip';
-
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
-
-      // add Header Buttons which are visible (2x buttons)
-      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-header-button mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Some Tooltip"></li>
-          <li class="slick-header-button mdi mdi-lightbulb-outline" data-command="show-positive-numbers"></li>`));
-      expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] The "image" property of a Header Button is now deprecated and will be removed in future version, consider using "cssClass" instead.');
     });
 
     it('should populate 2x Header Buttons and a 2nd button and a "handler" callback to be executed when defined', () => {

@@ -64,11 +64,6 @@ export class SlickCellSelectionModel {
     this._canvas = this._grid.getCanvasNode();
   }
 
-  /** @deprecated @use `dispose` Destroy plugin. */
-  destroy() {
-    this.dispose();
-  }
-
   dispose() {
     this._canvas = null;
     this._eventHandler.unsubscribeAll();

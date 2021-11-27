@@ -40,7 +40,6 @@ export class ExtensionUtility {
     } else {
       switch (propName) {
         case 'commandTitle':
-        case 'customTitle':
           output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}COMMANDS` || ' ') || locales?.TEXT_COMMANDS;
           break;
         case 'columnTitle':
@@ -109,7 +108,7 @@ export class ExtensionUtility {
    * @param {String} property name to sort with
    */
   sortItems(items: any[], propertyName: string) {
-    // sort the custom items by their position in the list
+    // sort the command items by their position in the list
     if (Array.isArray(items)) {
       items.sort((itemA: any, itemB: any) => {
         if (itemA && itemB && itemA.hasOwnProperty(propertyName) && itemB.hasOwnProperty(propertyName)) {

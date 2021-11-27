@@ -48,7 +48,7 @@ const gridStub = {
 
 const mockAddon = jest.fn().mockImplementation(() => ({
   init: jest.fn(),
-  destroy: jest.fn(),
+  dispose: jest.fn(),
   getColumnDefinition: jest.fn(),
   onBeforeMoveRows: new Slick.Event(),
   onMoveRows: new Slick.Event(),
@@ -57,7 +57,6 @@ const mockAddon = jest.fn().mockImplementation(() => ({
 const mockRowSelectionModel = {
   constructor: jest.fn(),
   init: jest.fn(),
-  destroy: jest.fn(),
   dispose: jest.fn(),
   getSelectedRows: jest.fn(),
   setSelectedRows: jest.fn(),
@@ -106,12 +105,6 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(plugin).toBeTruthy();
     expect(plugin.addonOptions).toEqual(expectedOptions);
     expect(plugin.getOptions()).toEqual(expectedOptions);
-  });
-
-  it('should dispose of the addon', () => {
-    const disposeSpy = jest.spyOn(plugin, 'dispose');
-    plugin.destroy();
-    expect(disposeSpy).toHaveBeenCalled();
   });
 
   it('should create the plugin and call "setOptions" and expect options changed and hide both Select All toggle when setting "hideSelectAllCheckbox: true"', () => {

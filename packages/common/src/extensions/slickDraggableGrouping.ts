@@ -204,13 +204,10 @@ export class SlickDraggableGrouping {
           node.style.cursor = 'pointer'; // add the pointer cursor on each column title
 
           // also optionally add an icon beside each column title that can be dragged
-          if (this._addonOptions.groupIconCssClass || this._addonOptions.groupIconImage) {
+          if (this._addonOptions.groupIconCssClass) {
             const groupableIconElm = createDomElement('span', { className: 'slick-column-groupable' });
             if (this._addonOptions.groupIconCssClass) {
               groupableIconElm.classList.add(...this._addonOptions.groupIconCssClass.split(' '));
-            }
-            if (this._addonOptions.groupIconImage) {
-              groupableIconElm.style.background = `url(${this._addonOptions.groupIconImage}) no-repeat center center`;
             }
             node.appendChild(groupableIconElm);
           }
@@ -226,11 +223,6 @@ export class SlickDraggableGrouping {
       }
     }
     return this;
-  }
-
-  /** @deprecated @use `dispose` Destroy plugin. */
-  destroy() {
-    this.dispose();
   }
 
   /** Dispose the plugin. */
@@ -387,10 +379,7 @@ export class SlickDraggableGrouping {
             if (this._addonOptions.deleteIconCssClass) {
               groupRemoveIconElm.classList.add(...this._addonOptions.deleteIconCssClass.split(' '));
             }
-            if (this._addonOptions.deleteIconImage) {
-              groupRemoveIconElm.style.background = `url(${this._addonOptions.deleteIconImage}) no-repeat center right`;
-            }
-            if (!this._addonOptions.deleteIconCssClass && !this._addonOptions.deleteIconImage) {
+            if (!this._addonOptions.deleteIconCssClass) {
               groupRemoveIconElm.classList.add('slick-groupby-remove-image');
             }
 

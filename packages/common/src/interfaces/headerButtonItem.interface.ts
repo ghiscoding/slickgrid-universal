@@ -14,12 +14,6 @@ export interface HeaderButtonItem {
   /** Button click handler. */
   handler?: (e: Event) => void;
 
-  /**
-   * @deprecated @use `cssClass`
-   * Relative button image path.
-   */
-  image?: string;
-
   /** Only show the button on hover. */
   showOnHover?: boolean;
 

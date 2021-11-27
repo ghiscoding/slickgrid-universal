@@ -72,11 +72,6 @@ export class SlickCellRangeSelector {
       .subscribe(this._grid.onScroll, this.handleScroll.bind(this) as EventListener);
   }
 
-  /** @deprecated @use `dispose` Destroy plugin. */
-  destroy() {
-    this.dispose();
-  }
-
   /** Dispose the plugin. */
   dispose() {
     this._eventHandler?.unsubscribeAll();

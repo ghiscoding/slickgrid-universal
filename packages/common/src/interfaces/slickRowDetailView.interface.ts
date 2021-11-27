@@ -9,9 +9,6 @@ export interface SlickRowDetailView {
   /** Initialize the SlickGrid 3rd party plugin */
   init(grid: SlickGrid, containerService?: ContainerService): void;
 
-  /** @deprecated @use `dispose` Destroy (dispose) the SlickGrid 3rd party plugin */
-  destroy(): void;
-
   /** Destroy (dispose) the SlickGrid 3rd party plugin */
   dispose(): void;
 

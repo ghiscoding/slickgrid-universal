@@ -97,12 +97,6 @@ describe('CellSelectionModel Plugin', () => {
     expect(plugin.cellRangeSelector).toBeTruthy();
   });
 
-  it('should dispose of the addon', () => {
-    const disposeSpy = jest.spyOn(plugin, 'dispose');
-    plugin.destroy();
-    expect(disposeSpy).toHaveBeenCalled();
-  });
-
   it('should create the plugin and initialize it', () => {
     const registerSpy = jest.spyOn(gridStub, 'registerPlugin');
 

@@ -162,7 +162,7 @@ export class SlickColumnPicker {
     // translate all columns (including hidden columns)
     this.extensionUtility.translateItems(this._columns, 'nameKey', 'name');
 
-    // update the Titles of each sections (command, customTitle, ...)
+    // update the Titles of each sections (command, commandTitle, ...)
     if (this.addonOptions) {
       this.updateAllTitles(this.addonOptions);
     }
@@ -201,7 +201,7 @@ export class SlickColumnPicker {
     this._menuElm.appendChild(this._listElm);
   }
 
-  /** Update the Titles of each sections (command, customTitle, ...) */
+  /** Update the Titles of each sections (command, commandTitle, ...) */
   protected updateAllTitles(options: ColumnPickerOption) {
     if (this._columnTitleElm?.textContent && options.columnTitle) {
       this._columnTitleElm.textContent = options.columnTitle;

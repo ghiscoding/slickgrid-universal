@@ -91,11 +91,6 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
-  /** @deprecated @use `dispose` Destroy plugin. */
-  destroy() {
-    this.dispose();
-  }
-
   dispose() {
     this._bindEventService.unbindAll();
     this._eventHandler.unsubscribeAll();

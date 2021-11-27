@@ -142,12 +142,6 @@ describe('CellMenu Plugin', () => {
     expect(plugin.eventHandler).toBeTruthy();
   });
 
-  it('should dispose of the addon', () => {
-    const disposeSpy = jest.spyOn(plugin, 'dispose');
-    plugin.destroy();
-    expect(disposeSpy).toHaveBeenCalled();
-  });
-
   it('should use default options when instantiating the plugin without passing any arguments', () => {
     plugin.init();
 
@@ -402,24 +396,6 @@ describe('CellMenu Plugin', () => {
         expect(commandListElm.querySelectorAll('.slick-cell-menu-item').length).toBe(5);
         expect(commandContentElm2.textContent).toBe('Command 2');
         expect(commandItemElm2.classList.contains('slick-cell-menu-item-hidden')).toBeTruthy();
-      });
-
-      it('should create a Cell Menu with an icon having a background image when property "iconImage" is filled', () => {
-        plugin.dispose();
-        plugin.init();
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).iconImage = '/images/some-image.png';
-        gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
-        const commandListElm = cellMenuElm.querySelector('.slick-cell-menu-command-list') as HTMLDivElement;
-        const commandItemElm2 = commandListElm.querySelector('[data-command="command2"]') as HTMLDivElement;
-        const commandContentElm2 = commandItemElm2.querySelector('.slick-cell-menu-content') as HTMLDivElement;
-        const commandIconElm2 = commandItemElm2.querySelector('.slick-cell-menu-icon') as HTMLDivElement;
-
-        expect(commandListElm.querySelectorAll('.slick-cell-menu-item').length).toBe(5);
-        expect(commandContentElm2.textContent).toBe('Command 2');
-        expect(commandIconElm2.style.backgroundImage).toBe('url(/images/some-image.png)');
-        expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] The "iconImage" property of a Cell Menu item is now deprecated and will be removed in future version, consider using "iconCssClass" instead.');
       });
 
       it('should create a Cell Menu item with "iconCssClass" and expect extra css classes added to the icon element', () => {
@@ -791,24 +767,6 @@ describe('CellMenu Plugin', () => {
         expect(optionListElm.querySelectorAll('.slick-cell-menu-item').length).toBe(5);
         expect(optionContentElm2.textContent).toBe('Option 2');
         expect(optionItemElm2.classList.contains('slick-cell-menu-item-hidden')).toBeTruthy();
-      });
-
-      it('should create a Cell Menu with an icon having a background image when property "iconImage" is filled', () => {
-        plugin.dispose();
-        plugin.init();
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).iconImage = '/images/some-image.png';
-        gridStub.onClick.notify({ cell: 4, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = cellMenuElm.querySelector('.slick-cell-menu-option-list') as HTMLDivElement;
-        const optionItemElm2 = optionListElm.querySelector('[data-option="option2"]') as HTMLDivElement;
-        const optionContentElm2 = optionItemElm2.querySelector('.slick-cell-menu-content') as HTMLDivElement;
-        const optionIconElm2 = optionItemElm2.querySelector('.slick-cell-menu-icon') as HTMLDivElement;
-
-        expect(optionListElm.querySelectorAll('.slick-cell-menu-item').length).toBe(5);
-        expect(optionContentElm2.textContent).toBe('Option 2');
-        expect(optionIconElm2.style.backgroundImage).toBe('url(/images/some-image.png)');
-        expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] The "iconImage" property of a Cell Menu item is now deprecated and will be removed in future version, consider using "iconCssClass" instead.');
       });
 
       it('should create a Cell Menu item with "iconCssClass" and expect extra css classes added to the icon element', () => {

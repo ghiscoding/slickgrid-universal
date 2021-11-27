@@ -81,11 +81,6 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener);
   }
 
-  /** @deprecated @use `dispose` Destroy plugin. */
-  destroy() {
-    this.dispose();
-  }
-
   /** Dispose (destroy) of the plugin */
   dispose() {
     super.dispose();
@@ -184,10 +179,6 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
       if (this.addonOptions.buttonCssClass) {
         headerButtonDivElm.classList.add(...this.addonOptions.buttonCssClass.split(' '));
-      }
-
-      if (this.addonOptions.buttonImage) {
-        headerButtonDivElm.style.backgroundImage = `url(${this.addonOptions.buttonImage})`;
       }
 
       if (this.addonOptions.tooltip) {

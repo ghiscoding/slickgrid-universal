@@ -134,13 +134,13 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     this.sharedService.gridOptions.gridMenu = this._gridMenuOptions;
 
     // merge original user grid menu items with internal items
-    // then sort all Grid Menu Custom Items (sorted by pointer, no need to use the return)
-    const gridMenuCommandItems = this._userOriginalGridMenu.commandItems || this._userOriginalGridMenu.customItems;
+    // then sort all Grid Menu command items (sorted by pointer, no need to use the return)
+    const gridMenuCommandItems = this._userOriginalGridMenu.commandItems;
     const originalCommandItems = this._userOriginalGridMenu && Array.isArray(gridMenuCommandItems) ? gridMenuCommandItems : [];
     this._gridMenuOptions.commandItems = [...originalCommandItems, ...this.addGridMenuCustomCommands(originalCommandItems)];
     this.extensionUtility.translateMenuItemsFromTitleKey(this._gridMenuOptions.commandItems || []);
     this.extensionUtility.sortItems(this._gridMenuOptions.commandItems, 'positionOrder');
-    this._gridMenuOptions.customItems = this._gridMenuOptions.commandItems;
+    this._gridMenuOptions.commandItems = this._gridMenuOptions.commandItems;
 
     // create the Grid Menu DOM element
     this.createGridMenu();
@@ -204,15 +204,10 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         this._gridMenuButtonElm = createDomElement('button', { className: 'slick-grid-menu-button' });
         if (this._gridMenuOptions?.iconCssClass) {
           this._gridMenuButtonElm.classList.add(...this._gridMenuOptions.iconCssClass.split(' '));
-        } else {
-          const iconImage = this._gridMenuOptions?.iconImage ?? '';
-          const iconImageElm = createDomElement('img', { src: iconImage });
-          this._gridMenuButtonElm.appendChild(iconImageElm);
         }
         this._headerElm.parentElement!.insertBefore(this._gridMenuButtonElm, this._headerElm.parentElement!.firstChild);
 
         // show the Grid Menu when hamburger menu is clicked
-        this._gridMenuOptions.commandTitle = this._gridMenuOptions.customTitle || this._gridMenuOptions.commandTitle;
         this._bindEventService.bind(this._gridMenuButtonElm, 'click', this.showGridMenu.bind(this) as EventListener);
       }
 
@@ -383,7 +378,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       } as GridMenuEventWithElementCallbackArgs;
 
       const addonOptions: GridMenu = { ...this._gridMenuOptions, ...options }; // merge optional picker option
-      addonOptions.customTitle = addonOptions.commandTitle;
 
       this.recreateCommandList(addonOptions, callbackArgs);
 
@@ -422,8 +416,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
   /** Update the Titles of each sections (command, commandTitle, ...) */
   updateAllTitles(options: GridMenuOption) {
-    if (this._commandTitleElm?.textContent && (options.customTitle || options.commandTitle)) {
-      this._commandTitleElm.textContent = this._gridMenuOptions?.commandItems?.length ? (options.customTitle || options.commandTitle) as string : '';
+    if (this._commandTitleElm?.textContent && options.commandTitle) {
+      this._commandTitleElm.textContent = this._gridMenuOptions?.commandItems?.length ? options.commandTitle as string : '';
       this._gridMenuOptions!.commandTitle = this._commandTitleElm.textContent;
     }
     if (this._columnTitleElm?.textContent && options.columnTitle) {
@@ -438,15 +432,13 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     // we also need to call the control init so that it takes the new Grid object with latest values
     if (this.sharedService.gridOptions.gridMenu) {
       this.sharedService.gridOptions.gridMenu.commandItems = [];
-      this.sharedService.gridOptions.gridMenu.customItems = [];
       this.sharedService.gridOptions.gridMenu.commandTitle = '';
-      this.sharedService.gridOptions.gridMenu.customTitle = '';
       this.sharedService.gridOptions.gridMenu.columnTitle = '';
       this.sharedService.gridOptions.gridMenu.forceFitTitle = '';
       this.sharedService.gridOptions.gridMenu.syncResizeTitle = '';
 
       // merge original user grid menu items with internal items
-      // then sort all Grid Menu Custom Items (sorted by pointer, no need to use the return)
+      // then sort all Grid Menu command items (sorted by pointer, no need to use the return)
       const originalCommandItems = this._userOriginalGridMenu && Array.isArray(this._userOriginalGridMenu.commandItems) ? this._userOriginalGridMenu.commandItems : [];
       this.sharedService.gridOptions.gridMenu.commandItems = [...originalCommandItems, ...this.addGridMenuCustomCommands(originalCommandItems)];
       this.extensionUtility.translateMenuItemsFromTitleKey(this._gridMenuOptions?.commandItems || []);
@@ -459,7 +451,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
       // update the Titles of each sections (command, commandTitle, ...)
       this.updateAllTitles(this.sharedService.gridOptions.gridMenu);
-      this.sharedService.gridOptions.gridMenu.customItems = this.sharedService.gridOptions.gridMenu.commandItems;
     }
   }
 
@@ -635,10 +626,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     }
 
     // add the custom "Commands" title if there are any commands
-    const commandItems = (this._gridMenuOptions?.commandItems ?? this._gridMenuOptions?.customItems) || [];
+    const commandItems = this._gridMenuOptions?.commandItems || [];
     if (this.gridOptions && this._gridMenuOptions && (Array.isArray(gridMenuCommandItems) && gridMenuCommandItems.length > 0 || (Array.isArray(commandItems) && commandItems.length > 0))) {
-      this._gridMenuOptions.commandTitleKey = this._gridMenuOptions?.customTitleKey;
-      this._gridMenuOptions.commandTitle = this._gridMenuOptions.customTitle || this._gridMenuOptions.commandTitle || this.extensionUtility.getPickerTitleOutputString('commandTitle', 'gridMenu');
+      this._gridMenuOptions.commandTitle = this._gridMenuOptions.commandTitle || this.extensionUtility.getPickerTitleOutputString('commandTitle', 'gridMenu');
     }
 
     return gridMenuCommandItems;
@@ -744,14 +734,12 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   /** @return default Grid Menu options */
   protected getDefaultGridMenuOptions(): GridMenu {
     return {
-      customTitle: undefined,
       commandTitle: undefined,
       columnTitle: this.extensionUtility.getPickerTitleOutputString('columnTitle', 'gridMenu'),
       forceFitTitle: this.extensionUtility.getPickerTitleOutputString('forceFitTitle', 'gridMenu'),
       syncResizeTitle: this.extensionUtility.getPickerTitleOutputString('syncResizeTitle', 'gridMenu'),
       iconCssClass: 'fa fa-bars',
       menuWidth: 18,
-      customItems: [],
       commandItems: [],
       hideClearAllFiltersCommand: false,
       hideRefreshDatasetCommand: false,
@@ -816,7 +804,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       'command',
       addonOptions,
       this._commandMenuElm,
-      (addonOptions?.commandItems || addonOptions?.customItems) || [] as any[],
+      addonOptions?.commandItems || [] as any[],
       callbackArgs,
       this.handleMenuItemCommandClick,
     );

@@ -48,13 +48,13 @@ const gridStub = {
   onSort: new Slick.Event(),
 } as unknown as SlickGrid;
 
-const mockColumns = [      // The column definitions
+const mockColumns = [
   { id: 'firstName', name: 'First Name', field: 'firstName', width: 100 },
   { id: 'lasstName', name: 'Last Name', field: 'lasstName', width: 100 },
 ];
 
 describe('SlickRowDetailView plugin', () => {
-  let divContainer = document.createElement('div');
+  const divContainer = document.createElement('div');
   let plugin: SlickRowDetailView;
   const gridContainerElm = document.createElement('div');
   gridContainerElm.className = GRID_UID;
@@ -112,7 +112,7 @@ describe('SlickRowDetailView plugin', () => {
     const disposeSpy = jest.spyOn(plugin, 'dispose');
     expect(plugin).toBeTruthy();
 
-    plugin.destroy();
+    plugin.dispose();
 
     expect(plugin.eventHandler).toBeTruthy();
     expect(disposeSpy).toHaveBeenCalled();

@@ -105,8 +105,6 @@ describe('GridMenuControl', () => {
       togglePreHeaderCommandKey: 'TOGGLE_PRE_HEADER_ROW',
     },
     commandTitleKey: 'COMMANDS',
-    customTitleKey: 'COMMANDS',
-    customItems: [],
     commandItems: [],
     hideClearAllFiltersCommand: false,
     hideClearFrozenColumnsCommand: true,
@@ -848,26 +846,6 @@ describe('GridMenuControl', () => {
         expect(helpIconElm.className).toBe('slick-grid-menu-icon mdi mdi-close');
       });
 
-      it('should add a custom Grid Menu item with "iconImage" and expect an icon to be included on the item DOM element', () => {
-        gridOptionsMock.gridMenu.commandItems = [{ command: 'help', title: 'Help', iconImage: '/images/some-image.png' }];
-        gridOptionsMock.gridMenu.iconCssClass = undefined;
-        gridOptionsMock.gridMenu.iconImage = '/images/some-image.png';
-
-        control.columns = columnsMock;
-        control.init();
-        const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLButtonElement;
-        const buttonImageElm = buttonElm.querySelector('img') as HTMLImageElement;
-        buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-        const helpCommandElm = control.menuElement.querySelector<HTMLInputElement>('.slick-grid-menu-item[data-command=help]');
-        const helpIconElm = helpCommandElm.querySelector<HTMLInputElement>('.slick-grid-menu-icon');
-        const helpTextElm = helpCommandElm.querySelector<HTMLInputElement>('.slick-grid-menu-content');
-
-        expect(buttonImageElm.src).toBe('/images/some-image.png');
-        expect(helpTextElm.textContent).toBe('Help');
-        expect(helpIconElm.style.backgroundImage).toBe('url(/images/some-image.png)')
-        expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] The "iconImage" property of a Grid Menu item is now deprecated and will be removed in future version, consider using "iconCssClass" instead.');
-      });
-
       it('should add a custom Grid Menu item with "tooltip" and expect the item title attribute to be part of the item DOM element', () => {
         gridOptionsMock.gridMenu.commandItems = [{ command: 'help', title: 'Help', tooltip: 'some tooltip text' }];
         control.columns = columnsMock;
@@ -894,20 +872,19 @@ describe('GridMenuControl', () => {
         expect(helpTextElm.className).toBe('slick-grid-menu-content red bold');
       });
 
-      it('should add a custom Grid Menu item and provide a custom title for the custom items list', () => {
+      it('should add a custom Grid Menu item and provide a custom title for the command items list', () => {
         gridOptionsMock.gridMenu.commandItems = [{ command: 'help', title: 'Help', textCssClass: 'red bold' }];
         control.columns = columnsMock;
         control.init();
-        gridOptionsMock.gridMenu.customTitle = 'Custom Title';
         gridOptionsMock.gridMenu.commandTitle = 'Custom Title';
         control.updateAllTitles(gridOptionsMock.gridMenu);
         const buttonElm = document.querySelector('.slick-grid-menu-button');
         buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-        const customTitleElm = control.menuElement.querySelector<HTMLInputElement>('.slick-grid-menu-command-list .title');
+        const commandTitleElm = control.menuElement.querySelector<HTMLInputElement>('.slick-grid-menu-command-list .title');
         const helpCommandElm = control.menuElement.querySelector<HTMLInputElement>('.slick-grid-menu-item[data-command=help]');
         const helpTextElm = helpCommandElm.querySelector<HTMLInputElement>('.slick-grid-menu-content');
 
-        expect(customTitleElm.textContent).toBe('Custom Title');
+        expect(commandTitleElm.textContent).toBe('Custom Title');
         expect(helpTextElm.textContent).toBe('Help');
         expect(helpTextElm.classList.contains('red')).toBeTrue();
         expect(helpTextElm.classList.contains('bold')).toBeTrue();

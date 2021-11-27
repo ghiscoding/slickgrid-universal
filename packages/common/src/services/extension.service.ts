@@ -1,4 +1,4 @@
-import { Column, Extension, ExtensionModel, GridOption, SlickRowDetailView, } from '../interfaces/index';
+import { Column, ExtensionModel, GridOption, SlickRowDetailView, } from '../interfaces/index';
 import { ColumnReorderFunction, ExtensionList, ExtensionName, InferExtensionByName, SlickControlList, SlickPluginList } from '../enums/index';
 import { SharedService } from './shared.service';
 import { TranslaterService } from './translater.service';
@@ -30,8 +30,8 @@ interface ExtensionWithColumnIndexPosition {
 }
 
 export class ExtensionService {
-  protected _extensionCreatedList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
-  protected _extensionList: ExtensionList<any, any> = {} as ExtensionList<any, any>;
+  protected _extensionCreatedList: ExtensionList<any> = {} as ExtensionList<any>;
+  protected _extensionList: ExtensionList<any> = {} as ExtensionList<any>;
 
   protected _cellMenuPlugin?: SlickCellMenu;
   protected _cellExcelCopyManagerPlugin?: SlickCellExcelCopyManager;
@@ -70,17 +70,14 @@ export class ExtensionService {
     // dispose of each control/plugin & reset the list
     for (const extensionName of Object.keys(this._extensionList)) {
       if (this._extensionList.hasOwnProperty(extensionName)) {
-        const extension = this._extensionList[extensionName as keyof Record<ExtensionName, ExtensionModel<any, any>>] as ExtensionModel<any, any>;
-        if (extension?.class?.dispose) {
-          extension.class.dispose();
-        }
+        const extension = this._extensionList[extensionName as keyof Record<ExtensionName, ExtensionModel<any>>] as ExtensionModel<any>;
         if (extension?.instance?.dispose) {
           extension.instance.dispose();
         }
       }
     }
     for (const key of Object.keys(this._extensionList)) {
-      delete this._extensionList[key as keyof Record<ExtensionName, ExtensionModel<any, any>>];
+      delete this._extensionList[key as keyof Record<ExtensionName, ExtensionModel<any>>];
     }
   }
 
@@ -89,7 +86,7 @@ export class ExtensionService {
    * @param {String} name
    * @param {Object} extension
    */
-  addExtensionToList(name: ExtensionName, extension: { name: ExtensionName; class: any; instance: any; }) {
+  addExtensionToList<T = any>(name: ExtensionName, extension: { name: ExtensionName; instance: T; }) {
     this._extensionList[name] = extension;
   }
 
@@ -107,7 +104,7 @@ export class ExtensionService {
    * Get an Extension that was created by calling its "create" method (there are only 3 extensions which uses this method)
    *  @param name
    */
-  getCreatedExtensionByName<P extends (SlickControlList | SlickPluginList) = any, E extends Extension = any>(name: ExtensionName): ExtensionModel<P, E> | undefined {
+  getCreatedExtensionByName<P extends (SlickControlList | SlickPluginList) = any>(name: ExtensionName): ExtensionModel<P> | undefined {
     if (this._extensionCreatedList?.hasOwnProperty(name)) {
       return this._extensionCreatedList[name];
     }
@@ -115,33 +112,20 @@ export class ExtensionService {
   }
 
   /**
-   * Get an Extension by it's name
-   *  @param name
+   * Get an Extension by it's name.
+   * NOTE: it's preferable to @use `getExtensionInstanceByName` if you just want the instance since it will automatically infer the extension.
+   * @param name
    */
-  getExtensionByName<P extends (SlickControlList | SlickPluginList) = any, E extends Extension = Extension>(name: ExtensionName): ExtensionModel<P, E> | undefined {
-    if (this._extensionList?.[name]) {
-      return this._extensionList[name];
-    }
-    return undefined;
-  }
-
-  /** Get Extension Instance by its name */
-  getExtensionInstanceByName<T extends ExtensionName>(name: T): InferExtensionByName<T> {
-    return this.getExtensionByName(name)?.instance as InferExtensionByName<T>;
+  getExtensionByName<P extends (SlickControlList | SlickPluginList) = any>(name: ExtensionName): ExtensionModel<P> | undefined {
+    return this._extensionList?.[name];
   }
 
   /**
-   * @deprecated @use `getExtensionInstanceByName`
-   * Get the instance of the SlickGrid addon (control or plugin).
-   * This is the raw addon coming directly from SlickGrid itself, not to confuse with Slickgrid-Universal extension
-   *  @param name
+   * Get Extension Instance by its name.
+   * @param name
    */
-  getSlickgridAddonInstance(name: ExtensionName): any {
-    const extension = this.getExtensionByName(name);
-    if (extension && extension.class && (extension.instance)) {
-      return extension.class?.getAddonInstance?.() ?? extension.instance;
-    }
-    return null;
+  getExtensionInstanceByName<T extends ExtensionName>(name: T): InferExtensionByName<T> {
+    return this.getExtensionByName(name)?.instance as InferExtensionByName<T>;
   }
 
   /** Auto-resize all the column in the grid to fit the grid width */
@@ -162,7 +146,7 @@ export class ExtensionService {
       if (this.gridOptions.enableAutoTooltip) {
         const instance = new SlickAutoTooltip(this.gridOptions?.autoTooltipOptions);
         this.sharedService.slickGrid.registerPlugin<SlickAutoTooltip>(instance);
-        this._extensionList[ExtensionName.autoTooltip] = { name: ExtensionName.autoTooltip, class: instance, instance };
+        this._extensionList[ExtensionName.autoTooltip] = { name: ExtensionName.autoTooltip, instance };
       }
 
       // Cell External Copy Manager Plugin (Excel Like)
@@ -172,7 +156,7 @@ export class ExtensionService {
         if (this.gridOptions.excelCopyBufferOptions?.onExtensionRegistered) {
           this.gridOptions.excelCopyBufferOptions.onExtensionRegistered(this._cellExcelCopyManagerPlugin);
         }
-        this._extensionList[ExtensionName.cellExternalCopyManager] = { name: ExtensionName.cellExternalCopyManager, class: this._cellExcelCopyManagerPlugin, instance: this._cellExcelCopyManagerPlugin };
+        this._extensionList[ExtensionName.cellExternalCopyManager] = { name: ExtensionName.cellExternalCopyManager, instance: this._cellExcelCopyManagerPlugin };
       }
 
       // (Action) Cell Menu Plugin
@@ -181,7 +165,7 @@ export class ExtensionService {
         if (this.gridOptions.cellMenu?.onExtensionRegistered) {
           this.gridOptions.cellMenu.onExtensionRegistered(this._cellMenuPlugin);
         }
-        this._extensionList[ExtensionName.cellMenu] = { name: ExtensionName.cellMenu, class: this._cellMenuPlugin, instance: this._cellMenuPlugin };
+        this._extensionList[ExtensionName.cellMenu] = { name: ExtensionName.cellMenu, instance: this._cellMenuPlugin };
       }
 
       // Row Selection Plugin
@@ -191,7 +175,7 @@ export class ExtensionService {
           this._rowSelectionModel = new SlickRowSelectionModel(this.sharedService.gridOptions.rowSelectionOptions);
           this.sharedService.slickGrid.setSelectionModel(this._rowSelectionModel);
         }
-        this._extensionList[ExtensionName.rowSelection] = { name: ExtensionName.rowSelection, class: this._rowSelectionModel, instance: this._rowSelectionModel };
+        this._extensionList[ExtensionName.rowSelection] = { name: ExtensionName.rowSelection, instance: this._rowSelectionModel };
       }
 
       // Checkbox Selector Plugin
@@ -201,7 +185,7 @@ export class ExtensionService {
         const createdExtension = this.getCreatedExtensionByName(ExtensionName.checkboxSelector); // get the instance from when it was really created earlier
         const instance = createdExtension && createdExtension.instance;
         if (instance) {
-          this._extensionList[ExtensionName.checkboxSelector] = { name: ExtensionName.checkboxSelector, class: this._checkboxSelectColumn, instance: this._checkboxSelectColumn };
+          this._extensionList[ExtensionName.checkboxSelector] = { name: ExtensionName.checkboxSelector, instance: this._checkboxSelectColumn };
         }
       }
 
@@ -211,7 +195,7 @@ export class ExtensionService {
         if (this.gridOptions.columnPicker?.onExtensionRegistered) {
           this.gridOptions.columnPicker.onExtensionRegistered(this._columnPickerControl);
         }
-        this._extensionList[ExtensionName.columnPicker] = { name: ExtensionName.columnPicker, class: this._columnPickerControl, instance: this._columnPickerControl };
+        this._extensionList[ExtensionName.columnPicker] = { name: ExtensionName.columnPicker, instance: this._columnPickerControl };
       }
 
       // Context Menu Control
@@ -220,7 +204,7 @@ export class ExtensionService {
         if (this.gridOptions.contextMenu?.onExtensionRegistered) {
           this.gridOptions.contextMenu.onExtensionRegistered(this._contextMenuPlugin);
         }
-        this._extensionList[ExtensionName.contextMenu] = { name: ExtensionName.contextMenu, class: this._contextMenuPlugin, instance: this._contextMenuPlugin };
+        this._extensionList[ExtensionName.contextMenu] = { name: ExtensionName.contextMenu, instance: this._contextMenuPlugin };
       }
 
       // Draggable Grouping Plugin
@@ -230,9 +214,9 @@ export class ExtensionService {
           if (this.gridOptions.draggableGrouping?.onExtensionRegistered) {
             this.gridOptions.draggableGrouping.onExtensionRegistered(this._draggleGroupingPlugin);
           }
-          this._extensionList[ExtensionName.contextMenu] = { name: ExtensionName.contextMenu, class: this._draggleGroupingPlugin, instance: this._draggleGroupingPlugin };
+          this._extensionList[ExtensionName.contextMenu] = { name: ExtensionName.contextMenu, instance: this._draggleGroupingPlugin };
         }
-        this._extensionList[ExtensionName.draggableGrouping] = { name: ExtensionName.draggableGrouping, class: this._draggleGroupingPlugin, instance: this._draggleGroupingPlugin };
+        this._extensionList[ExtensionName.draggableGrouping] = { name: ExtensionName.draggableGrouping, instance: this._draggleGroupingPlugin };
       }
 
       // Grid Menu Control
@@ -241,7 +225,7 @@ export class ExtensionService {
         if (this.gridOptions.gridMenu?.onExtensionRegistered) {
           this.gridOptions.gridMenu.onExtensionRegistered(this._gridMenuControl);
         }
-        this._extensionList[ExtensionName.gridMenu] = { name: ExtensionName.gridMenu, class: this._gridMenuControl, instance: this._gridMenuControl };
+        this._extensionList[ExtensionName.gridMenu] = { name: ExtensionName.gridMenu, instance: this._gridMenuControl };
       }
 
       // Grouping Plugin
@@ -249,7 +233,7 @@ export class ExtensionService {
       if (this.gridOptions.enableDraggableGrouping || this.gridOptions.enableGrouping) {
         this._groupItemMetadataProviderService = this._groupItemMetadataProviderService ? this._groupItemMetadataProviderService : new SlickGroupItemMetadataProvider();
         this._groupItemMetadataProviderService.init(this.sharedService.slickGrid);
-        this._extensionList[ExtensionName.groupItemMetaProvider] = { name: ExtensionName.groupItemMetaProvider, class: this._groupItemMetadataProviderService, instance: this._groupItemMetadataProviderService };
+        this._extensionList[ExtensionName.groupItemMetaProvider] = { name: ExtensionName.groupItemMetaProvider, instance: this._groupItemMetadataProviderService };
       }
 
       // Header Button Plugin
@@ -258,7 +242,7 @@ export class ExtensionService {
         if (this.gridOptions.headerButton?.onExtensionRegistered) {
           this.gridOptions.headerButton.onExtensionRegistered(headerButtonPlugin);
         }
-        this._extensionList[ExtensionName.headerButton] = { name: ExtensionName.headerButton, class: headerButtonPlugin, instance: headerButtonPlugin };
+        this._extensionList[ExtensionName.headerButton] = { name: ExtensionName.headerButton, instance: headerButtonPlugin };
       }
 
       // Header Menu Plugin
@@ -267,7 +251,7 @@ export class ExtensionService {
         if (this.gridOptions.headerMenu?.onExtensionRegistered) {
           this.gridOptions.headerMenu.onExtensionRegistered(this._headerMenuPlugin);
         }
-        this._extensionList[ExtensionName.headerMenu] = { name: ExtensionName.headerMenu, class: this._headerMenuPlugin, instance: this._headerMenuPlugin };
+        this._extensionList[ExtensionName.headerMenu] = { name: ExtensionName.headerMenu, instance: this._headerMenuPlugin };
       }
 
       // Row Move Manager Plugin
@@ -281,7 +265,7 @@ export class ExtensionService {
         const createdExtension = this.getCreatedExtensionByName(ExtensionName.rowMoveManager); // get the instance from when it was really created earlier
         const instance = createdExtension?.instance;
         if (instance) {
-          this._extensionList[ExtensionName.rowMoveManager] = { name: ExtensionName.rowMoveManager, class: this._rowMoveManagerPlugin, instance: this._rowMoveManagerPlugin };
+          this._extensionList[ExtensionName.rowMoveManager] = { name: ExtensionName.rowMoveManager, instance: this._rowMoveManagerPlugin };
         }
       }
     }
@@ -319,7 +303,7 @@ export class ExtensionService {
         this._draggleGroupingPlugin = new SlickDraggableGrouping(this.extensionUtility, this.pubSubService, this.sharedService);
         if (this._draggleGroupingPlugin) {
           gridOptions.enableColumnReorder = this._draggleGroupingPlugin.setupColumnReorder as ColumnReorderFunction;
-          this._extensionCreatedList[ExtensionName.draggableGrouping] = { name: ExtensionName.draggableGrouping, instance: this._draggleGroupingPlugin, class: this._draggleGroupingPlugin };
+          this._extensionCreatedList[ExtensionName.draggableGrouping] = { name: ExtensionName.draggableGrouping, instance: this._draggleGroupingPlugin };
         }
       }
     }
@@ -468,7 +452,7 @@ export class ExtensionService {
     featureWithIndexPositions.forEach(feature => {
       const instance = feature.extension.create(columnDefinitions, gridOptions);
       if (instance) {
-        this._extensionCreatedList[feature.name] = { name: feature.name, instance, class: feature.extension };
+        this._extensionCreatedList[feature.name] = { name: feature.name, instance };
       }
     });
   }

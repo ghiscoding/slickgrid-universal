@@ -164,12 +164,6 @@ describe('ContextMenu Plugin', () => {
     expect(plugin.eventHandler).toBeTruthy();
   });
 
-  it('should dispose of the addon', () => {
-    const disposeSpy = jest.spyOn(plugin, 'dispose');
-    plugin.destroy();
-    expect(disposeSpy).toHaveBeenCalled();
-  });
-
   it('should use default options when instantiating the plugin without passing any arguments', () => {
     plugin.init();
 
@@ -444,24 +438,6 @@ describe('ContextMenu Plugin', () => {
         expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
         expect(commandContentElm2.textContent).toBe('Command 2');
         expect(commandItemElm2.classList.contains('slick-context-menu-item-hidden')).toBeTruthy();
-      });
-
-      it('should create a Context Menu with an icon having a background image when property "iconImage" is filled', () => {
-        plugin.dispose();
-        plugin.init({ commandItems: deepCopy(commandItemsMock) });
-        (gridOptionsMock.contextMenu.commandItems[1] as MenuCommandItem).iconImage = '/images/some-image.png';
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
-
-        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
-        const commandItemElm2 = commandListElm.querySelector('[data-command="command2"]') as HTMLDivElement;
-        const commandContentElm2 = commandItemElm2.querySelector('.slick-context-menu-content') as HTMLDivElement;
-        const commandIconElm2 = commandItemElm2.querySelector('.slick-context-menu-icon') as HTMLDivElement;
-
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
-        expect(commandContentElm2.textContent).toBe('Command 2');
-        expect(commandIconElm2.style.backgroundImage).toBe('url(/images/some-image.png)');
-        expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] The "iconImage" property of a Context Menu item is now deprecated and will be removed in future version, consider using "iconCssClass" instead.');
       });
 
       it('should create a Context Menu item with "iconCssClass" and expect extra css classes added to the icon element', () => {
@@ -1384,24 +1360,6 @@ describe('ContextMenu Plugin', () => {
         expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
         expect(optionContentElm2.textContent).toBe('Option 2');
         expect(optionItemElm2.classList.contains('slick-context-menu-item-hidden')).toBeTruthy();
-      });
-
-      it('should create a Context Menu with an icon having a background image when property "iconImage" is filled', () => {
-        plugin.dispose();
-        plugin.init({ optionItems: deepCopy(optionItemsMock) });
-        (gridOptionsMock.contextMenu.optionItems[1] as MenuOptionItem).iconImage = '/images/some-image.png';
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
-
-        const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-context-menu-option-list') as HTMLDivElement;
-        const optionItemElm2 = optionListElm.querySelector('[data-option="option2"]') as HTMLDivElement;
-        const optionContentElm2 = optionItemElm2.querySelector('.slick-context-menu-content') as HTMLDivElement;
-        const optionIconElm2 = optionItemElm2.querySelector('.slick-context-menu-icon') as HTMLDivElement;
-
-        expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
-        expect(optionContentElm2.textContent).toBe('Option 2');
-        expect(optionIconElm2.style.backgroundImage).toBe('url(/images/some-image.png)');
-        expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] The "iconImage" property of a Context Menu item is now deprecated and will be removed in future version, consider using "iconCssClass" instead.');
       });
 
       it('should create a Context Menu item with "iconCssClass" and expect extra css classes added to the icon element', () => {

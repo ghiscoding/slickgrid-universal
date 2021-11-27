@@ -334,16 +334,6 @@ export function isObject(item: any) {
 }
 
 /**
- * @deprecated use `findItemInTreeStructure()` instead. Find an item from a hierarchical (tree) view structure (a parent that can have children array which themseleves can children and so on)
- * @param treeArray
- * @param predicate
- * @param childrenPropertyName
- */
-export function findItemInHierarchicalStructure<T = any>(treeArray: T[], predicate: (item: T) => boolean, childrenPropertyName: string): T | undefined {
-  return findItemInTreeStructure(treeArray, predicate, childrenPropertyName);
-}
-
-/**
  * Find an item from a tree (hierarchical) view structure (a parent that can have children array which themseleves can children and so on)
  * @param {Array<Object>} treeArray - hierarchical tree dataset
  * @param {Function} predicate - search predicate to find the item in the hierarchical tree structure

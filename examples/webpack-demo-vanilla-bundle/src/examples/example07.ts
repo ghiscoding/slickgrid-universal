@@ -221,7 +221,7 @@ export class Example7 {
         rightPadding: 10
       },
       gridMenu: {
-        customTitleKey: 'CUSTOM_COMMANDS',
+        commandTitleKey: 'CUSTOM_COMMANDS',
       },
       autoEdit: true,
       autoCommitEdit: true,
