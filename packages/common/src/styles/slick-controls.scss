@@ -6,24 +6,24 @@
 // ----------------------------------------------
 
 .slick-column-picker {
+  cursor: default;
   list-style-type: none;
+  position: absolute;
+	overflow: auto;
+  resize: both;
   font-family: var(--slick-font-family, $slick-font-family);
   background-color: var(--slick-column-picker-background-color, $slick-column-picker-background-color);
   border: var(--slick-column-picker-border, $slick-column-picker-border);
   border-radius: var(--slick-column-picker-border-radius, $slick-column-picker-border-radius);
-  padding: 6px;
+  min-width: var(--slick-column-picker-min-width, $slick-column-picker-min-width);
+  padding: var(--slick-column-picker-padding, $slick-column-picker-padding);
   box-shadow: var(--slick-column-picker-box-shadow, $slick-column-picker-box-shadow);
-  min-width: 150px;
-  cursor: default;
-  position: absolute;
-  z-index: 2000;
-	overflow: auto;
-  resize: both;
-  width: auto;
+  z-index: var(--slick-column-picker-z-index, $slick-column-picker-z-index);
+
   /* trick to cheat the width to include extra scrollbar width in addition to auto width */
   padding-right: var(--slick-column-picker-padding-right-patch, $slick-column-picker-padding-right-patch);
 
-  > .close {
+  .close {
     float: right;
     position: absolute;
     color: var(--slick-column-picker-close-btn-color, $slick-column-picker-close-btn-color);
@@ -31,6 +31,7 @@
     width: var(--slick-column-picker-close-btn-width, $slick-column-picker-close-btn-width);
     height: var(--slick-column-picker-close-btn-height, $slick-column-picker-close-btn-height);
     margin: var(--slick-column-picker-close-btn-margin, $slick-column-picker-close-btn-margin);
+    opacity: var(--slick-column-picker-close-btn-opacity, $slick-column-picker-close-btn-opacity);
     padding: var(--slick-column-picker-close-btn-padding, $slick-column-picker-close-btn-padding);
     font-family: var(--slick-column-picker-close-btn-font-family, $slick-column-picker-close-btn-font-family);
     font-size: var(--slick-column-picker-close-btn-font-size, $slick-column-picker-close-btn-font-size);
@@ -40,10 +41,7 @@
     top: var(--slick-column-picker-close-btn-position-top, $slick-column-picker-close-btn-position-top);
 
     &:hover {
-      color: var(--slick-column-picker-close-btn-color-hover, $slick-column-picker-close-btn-color-hover);
-    }
-    > span {
-      opacity: var(--slick-column-picker-close-btn-opacity, $slick-column-picker-close-btn-opacity);
+      opacity: var(--slick-column-picker-close-btn-opacity-hover, $slick-column-picker-close-btn-opacity-hover);
     }
   }
 
@@ -74,9 +72,20 @@
     margin-bottom: var(--slick-column-picker-title-margin-bottom, $slick-column-picker-title-margin-bottom);
   }
 }
+.slick-column-picker, .slick-grid-menu {
+  width: max-content;
 
-.slick-column-picker-list,
-.slick-grid-menu-list {
+  .slick-menu-title {
+    font-size: var(--slick-menu-title-font-size, $slick-menu-title-font-size);
+    font-weight: var(--slick-menu-title-font-weight, $slick-menu-title-font-weight);
+    border-bottom: var(--slick-column-picker-title-border-bottom, $slick-column-picker-title-border-bottom);
+    margin-bottom: var(--slick-menu-title-margin-bottom, $slick-menu-title-margin-bottom);
+  }
+}
+
+.slick-column-picker-list, .slick-grid-menu-list {
+  width: 100%;
+
   /** make sure the hidden class exist, it was removed in BS4 */
   li.hidden {
     display: none;
@@ -98,7 +107,6 @@
     }
     label {
       cursor: pointer;
-      width: 100%;
       margin-bottom: 0px;
     }
   }
@@ -152,7 +160,7 @@
 
 .slick-grid-menu {
   .slick-menu-command-list {
-    margin-bottom: 10px;
+    margin-bottom: var(--slick-column-picker-list-margin-bottom, $slick-column-picker-list-margin-bottom);
   }
 
   // list-style-type: none;
@@ -243,11 +251,6 @@
   width: 22px;
   font-size: var(--slick-grid-menu-icon-font-size, $slick-grid-menu-icon-font-size);
   z-index: 2;
-}
-
-.slick-menu-title {
-  border-bottom: var(--slick-column-picker-title-border-bottom, $slick-column-picker-title-border-bottom);
-  margin-bottom: var(--slick-menu-title-margin-bottom, $slick-menu-title-margin-bottom);
 }
 
 .slick-grid-menu-list {

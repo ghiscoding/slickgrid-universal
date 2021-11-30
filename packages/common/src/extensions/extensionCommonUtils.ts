@@ -114,7 +114,10 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
 
   for (const column of context.columns) {
     const columnId = column.id;
-    const columnLiElm = createDomElement('li', { className: column.excludeFromColumnPicker ? 'hidden' : '' });
+    const columnLiElm = document.createElement('li');
+    if (column.excludeFromColumnPicker) {
+      columnLiElm.className = 'hidden';
+    }
 
     const colInputElm = createDomElement('input', {
       type: 'checkbox', id: `${context._gridUid}-${menuPrefix}colpicker-${columnId}`,
@@ -144,7 +147,7 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
   }
 
   if (!(addonOptions?.hideForceFitButton)) {
-    const fitLiElm = createDomElement('li');
+    const fitLiElm = document.createElement('li');
     fitLiElm.appendChild(
       createDomElement('input', {
         type: 'checkbox', id: `${context._gridUid}-${menuPrefix}colpicker-forcefit`,

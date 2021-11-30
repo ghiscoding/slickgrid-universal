@@ -4,11 +4,7 @@
 .slick-cell-menu, .slick-context-menu, .slick-grid-menu, .slick-header-menu {
   .slick-menu-option-list,
   .slick-menu-command-list {
-    .slick-command-header, .slick-option-header {
-      overflow-y: hidden;
-    }
     .slick-command-header.with-title, .slick-option-header.with-title {
-      overflow-y: auto;
       border-bottom: var(--slick-menu-title-border-bottom, $slick-menu-title-border-bottom);
       margin-bottom: var(--slick-menu-title-margin-bottom, $slick-menu-title-margin-bottom);
       .slick-menu-title {

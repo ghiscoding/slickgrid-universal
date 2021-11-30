@@ -277,7 +277,7 @@ $slick-column-picker-checkbox-opacity:                      0.15 !default;
 $slick-column-picker-checkbox-opacity-hover:                0.35 !default;
 $slick-column-picker-checkbox-width:                        13px !default;
 $slick-column-picker-close-btn-bg-color:                    #ffffff !default;
-$slick-column-picker-close-btn-color:                       #c3c3c3 !default;
+$slick-column-picker-close-btn-color:                       #909090 !default;
 $slick-column-picker-close-btn-color-hover:                 darken($slick-column-picker-close-btn-color, 25%) !default;
 $slick-column-picker-close-btn-cursor:                      pointer !default;
 $slick-column-picker-close-btn-font-family:                 "Calibri Light", "Helvetica Neue", Arial, sans-serif !default;
@@ -287,27 +287,32 @@ $slick-column-picker-close-btn-height:                      21px !default;
 $slick-column-picker-close-btn-width:                       15px !default;
 $slick-column-picker-close-btn-margin:                      1px !default;
 $slick-column-picker-close-btn-padding:                     0px !default;
-$slick-column-picker-close-btn-opacity:                     0.9 !default;
+$slick-column-picker-close-btn-opacity:                     0.5 !default;
+$slick-column-picker-close-btn-opacity-hover:               1 !default;
 $slick-column-picker-close-btn-position-right:              5px !default;
 $slick-column-picker-close-btn-position-top:                0px !default;
+$slick-column-picker-min-width:                             150px !default; /* trick to cheat the width to include extra scrollbar width in addition to auto width */
+$slick-column-picker-padding:                               6px !default; /* trick to cheat the width to include extra scrollbar width in addition to auto width */
 $slick-column-picker-padding-right-patch:                   24px !default; /* trick to cheat the width to include extra scrollbar width in addition to auto width */
 $slick-column-picker-divider-width:                         calc(100% + #{$slick-column-picker-padding-right-patch} - 10px) !default;
 $slick-column-picker-item-border:                           1px solid transparent !default;
 $slick-column-picker-item-border-radius:                    0px !default;
 $slick-column-picker-item-font-size:                        $slick-font-size-base !default;
 $slick-column-picker-item-height:                           28px !default;
-$slick-column-picker-item-line-height:                      24px !default;
+$slick-column-picker-item-line-height:                      calc(#{$slick-column-picker-item-font-size} + 2px) !default;
 $slick-column-picker-item-padding:                          2px 4px !default;
 $slick-column-picker-item-hover-border:                     1px solid #BFBDBD !default;
 $slick-column-picker-item-hover-color:                      #fafafa !default;
 $slick-column-picker-label-margin:                          4px !default;
 $slick-column-picker-label-font-weight:                     normal !default;
 $slick-column-picker-link-background-color:                 #ffffff !default;
+$slick-column-picker-list-margin-bottom:                    8px !default;
 $slick-column-picker-title-border-bottom:                   1px solid #d6d6d6 !default;
 $slick-column-picker-title-font-size:                       calc(#{$slick-column-picker-item-font-size} + 2px) !default;
 $slick-column-picker-title-font-weight:                     normal !default;
-$slick-column-picker-title-margin-bottom:                   10px !default;
+$slick-column-picker-title-margin-bottom:                   6px !default;
 $slick-column-picker-title-width:                           calc(100% - #{$slick-column-picker-close-btn-width} - 10px) !default;
+$slick-column-picker-z-index:                               9000 !default;
 
 /* Grid Menu - hamburger menu */
 $slick-grid-menu-button-padding:                            0 2px !default;
@@ -373,7 +378,7 @@ $slick-menu-border:                                         1px solid #BFBDBD !d
 $slick-menu-border-radius:                                  2px !default;
 $slick-menu-close-btn-bg-color:                             #ffffff !default;
 $slick-menu-close-btn-border:                               0px solid #dfdfdf !default;
-$slick-menu-close-btn-color:                                darken($slick-column-picker-close-btn-color, 20%) !default;
+$slick-menu-close-btn-color:                                #909090 !default;
 $slick-menu-close-btn-font-family:                          $slick-column-picker-close-btn-font-family !default;
 $slick-menu-close-btn-font-size:                            $slick-column-picker-close-btn-font-size !default;
 $slick-menu-close-btn-height:                               18px !default;
@@ -402,12 +407,12 @@ $slick-menu-icon-margin-right:                              4px !default;
 $slick-menu-icon-width:                                     16px !default;
 $slick-menu-line-height:                                    24px !default;
 $slick-menu-min-width:                                      125px !default;
-$slick-menu-option-list-margin-bottom:                      10px !default;
+$slick-menu-option-list-margin-bottom:                      6px !default;
 $slick-menu-padding:                                        6px !default;
 $slick-menu-title-border-bottom:                            1px solid #d6d6d6 !default;
 $slick-menu-title-font-size:                                calc(#{$slick-font-size-base} + 2px) !default;
 $slick-menu-title-font-weight:                              normal !default;
-$slick-menu-title-margin-bottom:                            10px !default;
+$slick-menu-title-margin-bottom:                            6px !default;
 $slick-menu-title-margin-right:                             7px !default;
 $slick-menu-title-width:                                    calc(100% - #{$slick-menu-close-btn-width} - 10px) !default;
 
