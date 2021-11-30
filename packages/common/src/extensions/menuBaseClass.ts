@@ -43,6 +43,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   protected _gridUid = '';
   protected _menuElm?: HTMLDivElement | null;
   protected _menuCssPrefix = '';
+  protected _menuPluginCssPrefix = '';
   protected _optionTitleElm?: HTMLSpanElement;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
@@ -83,7 +84,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   }
 
   get menuElement(): HTMLDivElement | null {
-    return this._menuElm || document.querySelector(`.${this._menuCssPrefix}${this.gridUidSelector}`);
+    return this._menuElm || document.querySelector(`.${this._menuPluginCssPrefix || this._menuCssPrefix}${this.gridUidSelector}`);
   }
 
   /** Dispose (destroy) of the plugin */
@@ -114,11 +115,11 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     itemClickCallback: (event: DOMMouseEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, columnDef?: Column) => void
   ) {
     if (args && commandOrOptionItems && menuOptions) {
-      const menuHeaderElm = this._menuElm?.querySelector(`.${itemType}-header`) ?? createDomElement('div', { className: `${itemType}-header` });
+      const menuHeaderElm = this._menuElm?.querySelector(`.slick-${itemType}-header`) ?? createDomElement('div', { className: `slick-${itemType}-header` });
       // user could pass a title on top of the Commands/Options section
       const titleProp: 'commandTitle' | 'optionTitle' = `${itemType}Title`;
       if ((menuOptions as CellMenu | ContextMenu)?.[titleProp]) {
-        this[`_${itemType}TitleElm`] = createDomElement('span', { className: 'title', textContent: (menuOptions as never)[titleProp] });
+        this[`_${itemType}TitleElm`] = createDomElement('span', { className: 'slick-menu-title', textContent: (menuOptions as never)[titleProp] });
         menuHeaderElm.appendChild(this[`_${itemType}TitleElm`]!);
         menuHeaderElm.classList.add('with-title');
       } else {

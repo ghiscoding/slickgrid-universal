@@ -56,7 +56,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
   ) {
     super(extensionUtility, pubSubService, sharedService);
     this._camelPluginName = 'contextMenu';
-    this._menuCssPrefix = 'slick-context-menu';
+    this._menuCssPrefix = 'slick-menu';
+    this._menuPluginCssPrefix = 'slick-context-menu';
     this.init(sharedService.gridOptions.contextMenu);
   }
 

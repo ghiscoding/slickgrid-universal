@@ -82,7 +82,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
 
       // create a new Menu
       this._menuElm = createDomElement('div', {
-        className: `${this._menuCssPrefix} ${this.gridUid}`,
+        className: `${this._menuPluginCssPrefix || this._menuCssPrefix} ${this.gridUid}`,
         style: {
           display: 'none',
           left: `${event.pageX}px`, top: `${event.pageY + 5}px`,
@@ -108,7 +108,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
         const optionMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-option-list` });
         if (!this.addonOptions.hideCloseButton) {
           this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener);
-          const optionMenuHeaderElm = createDomElement('div', { className: 'option-header' });
+          const optionMenuHeaderElm = createDomElement('div', { className: 'slick-option-header' });
           optionMenuHeaderElm?.appendChild(closeButtonElm);
           optionMenuElm.appendChild(optionMenuHeaderElm);
           optionMenuHeaderElm.classList.add('with-close');
@@ -129,7 +129,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
         const commandMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-command-list` });
         if (!this.addonOptions.hideCloseButton && (!isColumnOptionAllowed || optionItems.length === 0 || (this.addonOptions as CellMenu | ContextMenu).hideOptionSection)) {
           this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener);
-          const commandMenuHeaderElm = createDomElement('div', { className: 'command-header' });
+          const commandMenuHeaderElm = createDomElement('div', { className: 'slick-command-header' });
           commandMenuHeaderElm?.appendChild(closeButtonElm);
           commandMenuElm.appendChild(commandMenuHeaderElm);
           commandMenuHeaderElm.classList.add('with-close');

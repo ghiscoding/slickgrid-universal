@@ -299,7 +299,7 @@ describe('ContextMenu Plugin', () => {
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
           `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="display: block; width: auto; top: 0px; left: 0px;" aria-expanded="true">
             <div class="slick-context-menu-command-list">
-              <div class="command-header with-close no-title">
+              <div class="slick-command-header with-close no-title">
                 <button class="close" type="button" data-dismiss="slick-context-menu" aria-label="Close">×</button>
               </div>
               <li class="slick-context-menu-item orange" data-command="command1">
@@ -1223,7 +1223,7 @@ describe('ContextMenu Plugin', () => {
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
           `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="display: block; width: auto; top: 0px; left: 0px;" aria-expanded="true">
             <div class="slick-context-menu-option-list">
-              <div class="option-header with-close no-title">
+              <div class="slick-option-header with-close no-title">
                 <button class="close" type="button" data-dismiss="slick-context-menu" aria-label="Close">×</button>
               </div>
               <li class="slick-context-menu-item purple" data-option="option1">

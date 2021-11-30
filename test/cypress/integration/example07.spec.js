@@ -583,8 +583,8 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .trigger('contextmenu')
       .invoke('show');
 
-    cy.get('.slick-columnpicker')
-      .find('.slick-columnpicker-list')
+    cy.get('.slick-column-picker')
+      .find('.slick-column-picker-list')
       .children()
       .each(($child, index) => {
         if (index < expectedFullPickerTitles.length) {
@@ -592,15 +592,15 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
         }
       });
 
-    cy.get('.slick-columnpicker')
-      .find('.slick-columnpicker-list')
+    cy.get('.slick-column-picker')
+      .find('.slick-column-picker-list')
       .children('li:nth-of-type(7)')
       .children('label')
       .should('contain', 'Finish')
       .click();
 
     cy.get('.grid7')
-      .get('.slick-columnpicker:visible')
+      .get('.slick-column-picker:visible')
       .find('.close')
       .trigger('click')
       .click();
@@ -751,8 +751,8 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .trigger('contextmenu')
       .invoke('show');
 
-    cy.get('.slick-columnpicker')
-      .find('.slick-columnpicker-list')
+    cy.get('.slick-column-picker')
+      .find('.slick-column-picker-list')
       .children()
       .each(($child, index) => {
         if (index < originalColumns.length) {
@@ -760,14 +760,14 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
         }
       });
 
-    cy.get('.slick-columnpicker')
-      .find('.slick-columnpicker-list')
+    cy.get('.slick-column-picker')
+      .find('.slick-column-picker-list')
       .children('li:nth-of-type(6)')
       .children('label')
       .should('contain', 'Finish')
       .click();
 
-    cy.get('.slick-columnpicker:visible')
+    cy.get('.slick-column-picker:visible')
       .find('.close')
       .trigger('click')
       .click();

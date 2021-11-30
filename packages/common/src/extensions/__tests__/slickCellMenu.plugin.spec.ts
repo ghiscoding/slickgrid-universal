@@ -269,7 +269,7 @@ describe('CellMenu Plugin', () => {
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
           `<div class="slick-cell-menu slickgrid12345 dropdown dropright" style="display: block; width: auto; top: 0px; left: 0px;" aria-expanded="true">
             <div class="slick-cell-menu-command-list">
-              <div class="command-header with-close no-title">
+              <div class="slick-command-header with-close no-title">
                 <button class="close" type="button" data-dismiss="slick-cell-menu" aria-label="Close">×</button>
               </div>
               <li class="slick-cell-menu-item orange" data-command="command1">
@@ -642,7 +642,7 @@ describe('CellMenu Plugin', () => {
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
           `<div class="slick-cell-menu slickgrid12345 dropdown dropright" style="display: block; width: auto; top: 0px; left: 0px;" aria-expanded="true">
             <div class="slick-cell-menu-option-list">
-              <div class="option-header with-close no-title">
+              <div class="slick-option-header with-close no-title">
                 <button class="close" type="button" data-dismiss="slick-cell-menu" aria-label="Close">×</button>
               </div>
               <li class="slick-cell-menu-item purple" data-option="option1">

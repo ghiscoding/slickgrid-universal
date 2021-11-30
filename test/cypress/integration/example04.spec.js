@@ -132,14 +132,14 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
       .trigger('contextmenu')
       .invoke('show');
 
-    cy.get('.slick-columnpicker')
-      .find('.slick-columnpicker-list')
+    cy.get('.slick-column-picker')
+      .find('.slick-column-picker-list')
       .children('li:nth-of-type(2)')
       .children('label')
       .should('contain', 'Title')
       .click();
 
-    cy.get('.slick-columnpicker:visible')
+    cy.get('.slick-column-picker:visible')
       .find('.close')
       .trigger('click')
       .click();

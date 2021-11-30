@@ -52,7 +52,7 @@ export interface CellMenuOption {
 
   /**
    * Width that the drop menu can have.
-   * NOTE: the menu also has a "min-width" defined in CSS/SASS and setting a "width" below that threshold won't work, you change this min-width via SASS `$slick-cell-menu-min-width`
+   * NOTE: the menu also has a "min-width" defined in CSS/SASS and setting a "width" below that threshold won't work, you change this min-width via SASS `$slick-menu-min-width`
    */
   width?: number | string;
 

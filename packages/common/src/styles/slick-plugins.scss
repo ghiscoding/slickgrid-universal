@@ -1,19 +1,135 @@
 /* plugin variables */
 @import './variables';
 
-// ----------------------------------------------
-// Cell Menu Plugin (Action menu
-// ----------------------------------------------
+.slick-cell-menu, .slick-context-menu, .slick-grid-menu, .slick-header-menu {
+  .slick-menu-option-list,
+  .slick-menu-command-list {
+    .slick-command-header, .slick-option-header {
+      overflow-y: hidden;
+    }
+    .slick-command-header.with-title, .slick-option-header.with-title {
+      overflow-y: auto;
+      border-bottom: var(--slick-menu-title-border-bottom, $slick-menu-title-border-bottom);
+      margin-bottom: var(--slick-menu-title-margin-bottom, $slick-menu-title-margin-bottom);
+      .slick-menu-title {
+        border-bottom: 0;
+        margin-bottom: 0;
+      }
+    }
 
-.slick-cell-menu {
+    .close {
+      cursor: pointer;
+      float: right;
+      background-color: var(--slick-menu-close-btn-bg-color, $slick-menu-close-btn-bg-color);
+      border: var(--slick-menu-close-btn-border, $slick-menu-close-btn-border);
+      color: var(--slick-menu-close-btn-color, $slick-menu-close-btn-color);
+      font-family: var(--slick-menu-close-btn-font-family, $slick-menu-close-btn-font-family);
+      font-size: var(--slick-menu-close-btn-font-size, $slick-menu-close-btn-font-size);
+      height: var(--slick-menu-close-btn-height, $slick-menu-close-btn-height);
+      line-height: calc(var(--slick-menu-close-btn-height, $slick-menu-close-btn-height) - 2px);
+      margin: var(--slick-menu-close-btn-margin, $slick-menu-close-btn-margin);
+      padding: var(--slick-menu-close-btn-padding, $slick-menu-close-btn-padding);
+      width: var(--slick-menu-close-btn-width, $slick-menu-close-btn-width);
+      opacity: var(--slick-menu-close-btn-opacity, $slick-menu-close-btn-opacity);
+      &:hover {
+        opacity: var(--slick-menu-close-btn-opacity-hover, $slick-menu-close-btn-opacity-hover);
+      }
+    }
+  }
+
+  .slick-menu-title {
+    font-size: var(--slick-menu-title-font-size, $slick-menu-title-font-size);
+    font-weight: var(--slick-menu-title-font-weight, $slick-menu-title-font-weight);
+    margin-right: var(--cell-menu-title-margin-right, $slick-menu-title-margin-right);
+    width: var(--slick-menu-title-width, $slick-menu-title-width);
+  }
+
+  .slick-menu-item {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    border: var(--slick-menu-item-border, $slick-menu-item-border);
+    border-radius: var(--slick-menu-item-border-radius, $slick-menu-item-border-radius);
+    font-size: var(--slick-menu-item-font-size, $slick-menu-item-font-size);
+    height: var(--slick-menu-item-height, $slick-menu-item-height);
+    line-height: var(--slick-menu-line-height, $slick-menu-line-height);
+    list-style: none outside none;
+    padding: var(--slick-menu-item-padding, $slick-menu-item-padding);
+    width: var(--slick-menu-item-width, $slick-menu-item-width);
+
+    &:hover {
+      border: var(--slick-menu-item-hover-border, $slick-menu-item-hover-border);
+      background-color: var(--slick-menu-item-hover-color, $slick-menu-item-hover-color);
+    }
+
+    &.slick-menu-item-divider {
+      cursor: default;
+      border: none;
+      overflow: hidden;
+      padding: 0;
+      height: var(--slick-menu-divider-height, $slick-menu-divider-height);
+      margin: var(--slick-menu-divider-margin, $slick-menu-divider-margin);
+      background-color: var(--slick-menu-divider-color, $slick-menu-divider-color);
+      width: var(--slick-menu-divider-width, $slick-menu-divider-width);
+      margin-left: auto;
+      margin-right: auto;
+
+      &:hover {
+        border: none;
+        background-color: var(--slick-menu-divider-color, $slick-menu-divider-color);
+      }
+    }
+
+    .slick-menu-icon {
+      text-align: center;
+      font-size: var(--slick-menu-icon-font-size, $slick-menu-icon-font-size);
+      background-position: center center;
+      background-repeat: no-repeat;
+      display: inline-block;
+      line-height: var(--slick-menu-icon-line-height, $slick-menu-icon-line-height);
+      margin-right: var(--slick-menu-icon-margin-right, $slick-menu-icon-margin-right);
+      vertical-align: middle;
+      width: var(--slick-menu-icon-width, $slick-menu-icon-width);
+    }
+
+    .slick-menu-content {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    /* Disabled item */
+    &.slick-menu-item-disabled {
+      border-color: transparent !important;
+      background: inherit !important;
+      color: var(--slick-menu-item-disabled-color, $slick-menu-item-disabled-color);
+      cursor: inherit;
+      .slick-menu-icon, .slick-menu-content {
+        color: var(--slick-menu-item-disabled-color, $slick-menu-item-disabled-color);
+      }
+    }
+    &.slick-menu-item-hidden {
+      display: none;
+    }
+  }
+
+  .slick-menu-option-list {
+    margin-bottom: var(--slick-menu-option-list-margin-bottom, $slick-menu-option-list-margin-bottom);
+  }
+}
+
+.slick-cell-menu,
+.slick-context-menu,
+.slick-grid-menu,
+.slick-header-menu {
   list-style-type: none;
   position: absolute;
   font-family: var(--slick-font-family, $slick-font-family);
-  background: var(--slick-cell-menu-bg-color, $slick-cell-menu-bg-color);
-  border: var(--slick-cell-menu-border, $slick-cell-menu-border);
-  border-radius: var(--slick-cell-menu-border-radius, $slick-cell-menu-border-radius);
-  min-width: var(--slick-cell-menu-min-width, $slick-cell-menu-min-width);
-  padding: var(--slick-cell-menu-padding, $slick-cell-menu-padding);
+  background: var(--slick-menu-bg-color, $slick-menu-bg-color);
+  border: var(--slick-menu-border, $slick-menu-border);
+  border-radius: var(--slick-menu-border-radius, $slick-menu-border-radius);
+  min-width: var(--slick-menu-min-width, $slick-menu-min-width);
+  padding: var(--slick-menu-padding, $slick-menu-padding);
   z-index: 100000;
   cursor: default;
   display: inline-block;
@@ -26,252 +142,280 @@
     display: inline-block;
     position: absolute;
   }
-
-  .slick-cell-menu-option-list,
-  .slick-cell-menu-command-list {
-    .command-header, .option-header {
-      overflow-y: hidden;
-    }
-    .command-header.with-title, .option-header.with-title {
-      overflow-y: auto;
-      border-bottom: var(--slick-cell-menu-title-border-bottom, $slick-cell-menu-title-border-bottom);
-      margin-bottom: var(--slick-cell-menu-title-margin-bottom, $slick-cell-menu-title-margin-bottom);
-    }
-
-    .close {
-      cursor: pointer;
-      float: right;
-      background-color: var(--slick-cell-menu-close-btn-bg-color, $slick-cell-menu-close-btn-bg-color);
-      border: var(--slick-cell-menu-close-btn-border, $slick-cell-menu-close-btn-border);
-      color: var(--slick-cell-menu-close-btn-color, $slick-cell-menu-close-btn-color);
-      font-family: var(--slick-cell-menu-close-btn-font-family, $slick-cell-menu-close-btn-font-family);
-      font-size: var(--slick-cell-menu-close-btn-font-size, $slick-cell-menu-close-btn-font-size);
-      height: var(--slick-cell-menu-close-btn-height, $slick-cell-menu-close-btn-height);
-      line-height: calc(var(--slick-cell-menu-close-btn-height, $slick-cell-menu-close-btn-height) - 2px);
-      margin: var(--slick-cell-menu-close-btn-margin, $slick-cell-menu-close-btn-margin);
-      padding: var(--slick-cell-menu-close-btn-padding, $slick-cell-menu-close-btn-padding);
-      width: var(--slick-cell-menu-close-btn-width, $slick-cell-menu-close-btn-width);
-      opacity: var(--slick-cell-menu-close-btn-opacity, $slick-cell-menu-close-btn-opacity);
-      &:hover {
-        opacity: var(--slick-cell-menu-close-btn-opacity-hover, $slick-cell-menu-close-btn-opacity-hover);
-      }
-    }
-
-    .title {
-      font-size: var(--slick-cell-menu-title-font-size, $slick-cell-menu-title-font-size);
-      font-weight: var(--slick-cell-menu-title-font-weight, $slick-cell-menu-title-font-weight);
-      margin-right: var(--cell-menu-title-margin-right, $slick-cell-menu-title-margin-right);
-      width: var(--slick-cell-menu-title-width, $slick-cell-menu-title-width);
-    }
-  }
-
-  .slick-cell-menu-item {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    border: var(--slick-cell-menu-item-border, $slick-cell-menu-item-border);
-    border-radius: var(--slick-cell-menu-item-border-radius, $slick-cell-menu-item-border-radius);
-    font-size: var(--slick-cell-menu-item-font-size, $slick-cell-menu-item-font-size);
-    padding: var(--slick-cell-menu-item-padding, $slick-cell-menu-item-padding);
-    list-style: none outside none;
-    margin: 0;
-    width: var(--slick-cell-menu-item-width, $slick-cell-menu-item-width);
-    height: var(--slick-cell-menu-item-height, $slick-cell-menu-item-height);
-
-    &:hover {
-      border: var(--slick-cell-menu-item-hover-border, $slick-cell-menu-item-hover-border);
-      background-color: var(--slick-cell-menu-item-hover-color, $slick-cell-menu-item-hover-color);
-    }
-
-    &.slick-cell-menu-item-divider {
-      cursor: default;
-      border: none;
-      overflow: hidden;
-      padding: 0;
-      height: var(--slick-cell-menu-divider-height, $slick-cell-menu-divider-height);
-      margin: var(--slick-cell-menu-divider-margin, $slick-cell-menu-divider-margin);
-      background-color: var(--slick-cell-menu-divider-color, $slick-cell-menu-divider-color);
-      width: var(--slick-cell-menu-divider-width, $slick-cell-menu-divider-width);
-      margin-left: auto;
-      margin-right: auto;
-
-      &:hover {
-        border: none;
-        background-color: var(--slick-cell-menu-divider-color, $slick-cell-menu-divider-color);
-      }
-    }
-
-    .slick-cell-menu-icon {
-      text-align: center;
-      font-size: var(--slick-cell-menu-icon-font-size, $slick-cell-menu-icon-font-size);
-      background-position: center center;
-      background-repeat: no-repeat;
-      display: inline-block;
-      line-height: var(--slick-cell-menu-icon-line-height, $slick-cell-menu-icon-line-height);
-      margin-right: var(--slick-cell-menu-icon-margin-right, $slick-cell-menu-icon-margin-right);
-      vertical-align: middle;
-      width: var(--slick-cell-menu-icon-width, $slick-cell-menu-icon-width);
-    }
-
-    .slick-cell-menu-content {
-      display: inline-block;
-      vertical-align: middle;
-    }
-
-    /* Disabled item */
-    &.slick-cell-menu-item-disabled {
-      border-color: transparent !important;
-      background: inherit !important;
-      color: var(--slick-cell-menu-item-disabled-color, $slick-cell-menu-item-disabled-color);
-      cursor: inherit;
-      .slick-cell-menu-icon, .slick-cell-menu-content {
-        color: var(--slick-cell-menu-item-disabled-color, $slick-cell-menu-item-disabled-color);
-      }
-    }
-    &.slick-cell-menu-item-hidden {
-      display: none;
-    }
-  }
-
-  .slick-cell-menu-option-list {
-    margin-bottom: var(--slick-cell-menu-option-list-margin-bottom, $slick-cell-menu-option-list-margin-bottom);
-  }
 }
+
+
+// ----------------------------------------------
+// Cell Menu Plugin (Action menu
+// ----------------------------------------------
+
+// .slick-cell-menu {
+//   list-style-type: none;
+//   position: absolute;
+//   font-family: var(--slick-font-family, $slick-font-family);
+//   background: var(--slick-cell-menu-bg-color, $slick-cell-menu-bg-color);
+//   border: var(--slick-cell-menu-border, $slick-cell-menu-border);
+//   border-radius: var(--slick-cell-menu-border-radius, $slick-cell-menu-border-radius);
+//   min-width: var(--slick-cell-menu-min-width, $slick-cell-menu-min-width);
+//   padding: var(--slick-cell-menu-padding, $slick-cell-menu-padding);
+//   z-index: 100000;
+//   cursor: default;
+//   display: inline-block;
+//   overflow: auto;
+//   resize: both;
+
+//   /* make sure that other UI frameworks aren't overriding our properties (Bulma was one of them affecting this) */
+//   &.dropdown,
+//   &.dropup {
+//     display: inline-block;
+//     position: absolute;
+//   }
+
+//   .slick-cell-menu-option-list,
+//   .slick-cell-menu-command-list {
+//     .command-header, .option-header {
+//       overflow-y: hidden;
+//     }
+//     .command-header.with-title, .option-header.with-title {
+//       overflow-y: auto;
+//       border-bottom: var(--slick-cell-menu-title-border-bottom, $slick-cell-menu-title-border-bottom);
+//       margin-bottom: var(--slick-cell-menu-title-margin-bottom, $slick-cell-menu-title-margin-bottom);
+//     }
+
+//     .close {
+//       cursor: pointer;
+//       float: right;
+//       background-color: var(--slick-cell-menu-close-btn-bg-color, $slick-cell-menu-close-btn-bg-color);
+//       border: var(--slick-cell-menu-close-btn-border, $slick-cell-menu-close-btn-border);
+//       color: var(--slick-cell-menu-close-btn-color, $slick-cell-menu-close-btn-color);
+//       font-family: var(--slick-cell-menu-close-btn-font-family, $slick-cell-menu-close-btn-font-family);
+//       font-size: var(--slick-cell-menu-close-btn-font-size, $slick-cell-menu-close-btn-font-size);
+//       height: var(--slick-cell-menu-close-btn-height, $slick-cell-menu-close-btn-height);
+//       line-height: calc(var(--slick-cell-menu-close-btn-height, $slick-cell-menu-close-btn-height) - 2px);
+//       margin: var(--slick-cell-menu-close-btn-margin, $slick-cell-menu-close-btn-margin);
+//       padding: var(--slick-cell-menu-close-btn-padding, $slick-cell-menu-close-btn-padding);
+//       width: var(--slick-cell-menu-close-btn-width, $slick-cell-menu-close-btn-width);
+//       opacity: var(--slick-cell-menu-close-btn-opacity, $slick-cell-menu-close-btn-opacity);
+//       &:hover {
+//         opacity: var(--slick-cell-menu-close-btn-opacity-hover, $slick-cell-menu-close-btn-opacity-hover);
+//       }
+//     }
+
+//     .title {
+//       font-size: var(--slick-cell-menu-title-font-size, $slick-cell-menu-title-font-size);
+//       font-weight: var(--slick-cell-menu-title-font-weight, $slick-cell-menu-title-font-weight);
+//       margin-right: var(--cell-menu-title-margin-right, $slick-cell-menu-title-margin-right);
+//       width: var(--slick-cell-menu-title-width, $slick-cell-menu-title-width);
+//     }
+//   }
+
+//   .slick-cell-menu-item {
+//     cursor: pointer;
+//     display: flex;
+//     align-items: center;
+//     border: var(--slick-cell-menu-item-border, $slick-cell-menu-item-border);
+//     border-radius: var(--slick-cell-menu-item-border-radius, $slick-cell-menu-item-border-radius);
+//     font-size: var(--slick-cell-menu-item-font-size, $slick-cell-menu-item-font-size);
+//     padding: var(--slick-cell-menu-item-padding, $slick-cell-menu-item-padding);
+//     list-style: none outside none;
+//     margin: 0;
+//     width: var(--slick-cell-menu-item-width, $slick-cell-menu-item-width);
+//     height: var(--slick-cell-menu-item-height, $slick-cell-menu-item-height);
+
+//     &:hover {
+//       border: var(--slick-cell-menu-item-hover-border, $slick-cell-menu-item-hover-border);
+//       background-color: var(--slick-cell-menu-item-hover-color, $slick-cell-menu-item-hover-color);
+//     }
+
+//     &.slick-cell-menu-item-divider {
+//       cursor: default;
+//       border: none;
+//       overflow: hidden;
+//       padding: 0;
+//       height: var(--slick-cell-menu-divider-height, $slick-cell-menu-divider-height);
+//       margin: var(--slick-cell-menu-divider-margin, $slick-cell-menu-divider-margin);
+//       background-color: var(--slick-cell-menu-divider-color, $slick-cell-menu-divider-color);
+//       width: var(--slick-cell-menu-divider-width, $slick-cell-menu-divider-width);
+//       margin-left: auto;
+//       margin-right: auto;
+
+//       &:hover {
+//         border: none;
+//         background-color: var(--slick-cell-menu-divider-color, $slick-cell-menu-divider-color);
+//       }
+//     }
+
+//     .slick-cell-menu-icon {
+//       text-align: center;
+//       font-size: var(--slick-cell-menu-icon-font-size, $slick-cell-menu-icon-font-size);
+//       background-position: center center;
+//       background-repeat: no-repeat;
+//       display: inline-block;
+//       line-height: var(--slick-cell-menu-icon-line-height, $slick-cell-menu-icon-line-height);
+//       margin-right: var(--slick-cell-menu-icon-margin-right, $slick-cell-menu-icon-margin-right);
+//       vertical-align: middle;
+//       width: var(--slick-cell-menu-icon-width, $slick-cell-menu-icon-width);
+//     }
+
+//     .slick-cell-menu-content {
+//       display: inline-block;
+//       vertical-align: middle;
+//     }
+
+//     /* Disabled item */
+//     &.slick-cell-menu-item-disabled {
+//       border-color: transparent !important;
+//       background: inherit !important;
+//       color: var(--slick-cell-menu-item-disabled-color, $slick-cell-menu-item-disabled-color);
+//       cursor: inherit;
+//       .slick-cell-menu-icon, .slick-cell-menu-content {
+//         color: var(--slick-cell-menu-item-disabled-color, $slick-cell-menu-item-disabled-color);
+//       }
+//     }
+//     &.slick-cell-menu-item-hidden {
+//       display: none;
+//     }
+//   }
+
+//   .slick-cell-menu-option-list {
+//     margin-bottom: var(--slick-cell-menu-option-list-margin-bottom, $slick-cell-menu-option-list-margin-bottom);
+//   }
+// }
 
 // ----------------------------------------------
 // Context Menu Plugin (mouse right+click)
 // ----------------------------------------------
 
-.slick-context-menu {
-  list-style-type: none;
-  position: absolute;
-  background: var(--slick-context-menu-bg-color, $slick-context-menu-bg-color);
-  border: var(--slick-context-menu-border, $slick-context-menu-border);
-  border-radius: var(--slick-context-menu-border-radius, $slick-context-menu-border-radius);
-  min-width: var(--slick-context-menu-min-width, $slick-context-menu-min-width);
-  padding: var(--slick-context-menu-padding, $slick-context-menu-padding);
-  z-index: 100000;
-  cursor: default;
-  display: inline-block;
-  overflow: auto;
-  resize: both;
+// .slick-context-menu {
+//   list-style-type: none;
+//   position: absolute;
+//   background: var(--slick-context-menu-bg-color, $slick-context-menu-bg-color);
+//   border: var(--slick-context-menu-border, $slick-context-menu-border);
+//   border-radius: var(--slick-context-menu-border-radius, $slick-context-menu-border-radius);
+//   min-width: var(--slick-context-menu-min-width, $slick-context-menu-min-width);
+//   padding: var(--slick-context-menu-padding, $slick-context-menu-padding);
+//   z-index: 100000;
+//   cursor: default;
+//   display: inline-block;
+//   overflow: auto;
+//   resize: both;
 
-  /* make sure that other UI frameworks aren't overriding our properties (Bulma was one of them affecting this) */
-  &.dropdown,
-  &.dropup {
-    display: inline-block;
-    position: absolute;
-  }
+//   /* make sure that other UI frameworks aren't overriding our properties (Bulma was one of them affecting this) */
+//   &.dropdown,
+//   &.dropup {
+//     display: inline-block;
+//     position: absolute;
+//   }
 
-  .slick-context-menu-option-list,
-  .slick-context-menu-command-list {
-    .command-header, .option-header {
-      overflow-y: hidden;
-    }
-    .command-header.with-title, .option-header.with-title {
-      overflow-y: auto;
-      border-bottom: var(--slick-context-menu-title-border-bottom, $slick-context-menu-title-border-bottom);
-      margin-bottom: var(--slick-context-menu-title-margin-bottom, $slick-context-menu-title-margin-bottom);
-    }
+//   .slick-context-menu-option-list,
+//   .slick-context-menu-command-list {
+//     .command-header, .option-header {
+//       overflow-y: hidden;
+//     }
+//     .command-header.with-title, .option-header.with-title {
+//       overflow-y: auto;
+//       border-bottom: var(--slick-context-menu-title-border-bottom, $slick-context-menu-title-border-bottom);
+//       margin-bottom: var(--slick-context-menu-title-margin-bottom, $slick-context-menu-title-margin-bottom);
+//     }
 
-    .close {
-      cursor: pointer;
-      float: right;
-      background-color: var(--slick-context-menu-close-btn-bg-color, $slick-context-menu-close-btn-bg-color);
-      border: var(--slick-context-menu-close-btn-border, $slick-context-menu-close-btn-border);
-      color: var(--slick-context-menu-close-btn-color, $slick-context-menu-close-btn-color);
-      font-family: var(--slick-context-menu-close-btn-font-family, $slick-context-menu-close-btn-font-family);
-      font-size: var(--slick-context-menu-close-btn-font-size, $slick-context-menu-close-btn-font-size);
-      height: var(--slick-context-menu-close-btn-height, $slick-context-menu-close-btn-height);
-      line-height: calc(var(--slick-context-menu-close-btn-height, $slick-context-menu-close-btn-height) - 2px);
-      margin: var(--slick-context-menu-close-btn-margin, $slick-context-menu-close-btn-margin);
-      padding: var(--slick-context-menu-close-btn-padding, $slick-context-menu-close-btn-padding);
-      width: var(--slick-context-menu-close-btn-width, $slick-context-menu-close-btn-width);
-      opacity: var(--slick-context-menu-close-btn-opacity, $slick-context-menu-close-btn-opacity);
-      &:hover {
-        opacity: var(--slick-context-menu-close-btn-opacity-hover, $slick-context-menu-close-btn-opacity-hover);
-      }
-    }
+//     .close {
+//       cursor: pointer;
+//       float: right;
+//       background-color: var(--slick-context-menu-close-btn-bg-color, $slick-context-menu-close-btn-bg-color);
+//       border: var(--slick-context-menu-close-btn-border, $slick-context-menu-close-btn-border);
+//       color: var(--slick-context-menu-close-btn-color, $slick-context-menu-close-btn-color);
+//       font-family: var(--slick-context-menu-close-btn-font-family, $slick-context-menu-close-btn-font-family);
+//       font-size: var(--slick-context-menu-close-btn-font-size, $slick-context-menu-close-btn-font-size);
+//       height: var(--slick-context-menu-close-btn-height, $slick-context-menu-close-btn-height);
+//       line-height: calc(var(--slick-context-menu-close-btn-height, $slick-context-menu-close-btn-height) - 2px);
+//       margin: var(--slick-context-menu-close-btn-margin, $slick-context-menu-close-btn-margin);
+//       padding: var(--slick-context-menu-close-btn-padding, $slick-context-menu-close-btn-padding);
+//       width: var(--slick-context-menu-close-btn-width, $slick-context-menu-close-btn-width);
+//       opacity: var(--slick-context-menu-close-btn-opacity, $slick-context-menu-close-btn-opacity);
+//       &:hover {
+//         opacity: var(--slick-context-menu-close-btn-opacity-hover, $slick-context-menu-close-btn-opacity-hover);
+//       }
+//     }
 
-    .title {
-      font-size: var(--slick-context-menu-title-font-size, $slick-context-menu-title-font-size);
-      font-weight: var(--slick-context-menu-title-font-weight, $slick-context-menu-title-font-weight);
-      margin-right: var(--context-menu-title-margin-right, $slick-context-menu-title-margin-right);
-      width: var(--slick-context-menu-title-width, $slick-context-menu-title-width);
-    }
-  }
+//     .title {
+//       font-size: var(--slick-context-menu-title-font-size, $slick-context-menu-title-font-size);
+//       font-weight: var(--slick-context-menu-title-font-weight, $slick-context-menu-title-font-weight);
+//       margin-right: var(--context-menu-title-margin-right, $slick-context-menu-title-margin-right);
+//       width: var(--slick-context-menu-title-width, $slick-context-menu-title-width);
+//     }
+//   }
 
-  .slick-context-menu-item {
-    cursor: pointer;
-    border: var(--slick-context-menu-item-border, $slick-context-menu-item-border);
-    border-radius: var(--slick-context-menu-item-border-radius, $slick-context-menu-item-border-radius);
-    font-size: var(--slick-context-menu-item-font-size, $slick-context-menu-item-font-size);
-    padding: var(--slick-context-menu-item-padding, $slick-context-menu-item-padding);
-    list-style: none outside none;
-    margin: 0;
-    width: var(--slick-context-menu-item-width, $slick-context-menu-item-width);
+//   .slick-context-menu-item {
+//     cursor: pointer;
+//     border: var(--slick-context-menu-item-border, $slick-context-menu-item-border);
+//     border-radius: var(--slick-context-menu-item-border-radius, $slick-context-menu-item-border-radius);
+//     font-size: var(--slick-context-menu-item-font-size, $slick-context-menu-item-font-size);
+//     padding: var(--slick-context-menu-item-padding, $slick-context-menu-item-padding);
+//     list-style: none outside none;
+//     margin: 0;
+//     width: var(--slick-context-menu-item-width, $slick-context-menu-item-width);
 
-    &:hover {
-      border: var(--slick-context-menu-item-hover-border, $slick-context-menu-item-hover-border);
-      background-color: var(--slick-context-menu-item-hover-color, $slick-context-menu-item-hover-color);
-    }
+//     &:hover {
+//       border: var(--slick-context-menu-item-hover-border, $slick-context-menu-item-hover-border);
+//       background-color: var(--slick-context-menu-item-hover-color, $slick-context-menu-item-hover-color);
+//     }
 
-    &.slick-context-menu-item-divider {
-      cursor: default;
-      display: block;
-      border: none;
-      overflow: hidden;
-      padding: 0;
-      height: var(--slick-context-menu-divider-height, $slick-context-menu-divider-height);
-      margin: var(--slick-context-menu-divider-margin, $slick-context-menu-divider-margin);
-      background-color: var(--slick-context-menu-divider-color, $slick-context-menu-divider-color);
-      width: var(--slick-context-menu-divider-width, $slick-context-menu-divider-width);
-      margin-left: auto;
-      margin-right: auto;
+//     &.slick-context-menu-item-divider {
+//       cursor: default;
+//       display: block;
+//       border: none;
+//       overflow: hidden;
+//       padding: 0;
+//       height: var(--slick-context-menu-divider-height, $slick-context-menu-divider-height);
+//       margin: var(--slick-context-menu-divider-margin, $slick-context-menu-divider-margin);
+//       background-color: var(--slick-context-menu-divider-color, $slick-context-menu-divider-color);
+//       width: var(--slick-context-menu-divider-width, $slick-context-menu-divider-width);
+//       margin-left: auto;
+//       margin-right: auto;
 
-      &:hover {
-        border: none;
-        background-color: var(--slick-context-menu-divider-color, $slick-context-menu-divider-color);
-      }
-    }
+//       &:hover {
+//         border: none;
+//         background-color: var(--slick-context-menu-divider-color, $slick-context-menu-divider-color);
+//       }
+//     }
 
-    .slick-context-menu-icon {
-      background-position: center center;
-      background-repeat: no-repeat;
-      display: inline-block;
-      text-align: center;
-      font-size: var(--slick-context-menu-icon-font-size, $slick-context-menu-icon-font-size);
-      height: var(--slick-context-menu-icon-height, $slick-context-menu-icon-height);
-      line-height: var(--slick-context-menu-icon-line-height, $slick-context-menu-icon-line-height);
-      margin-right: var(--slick-context-menu-icon-margin-right, $slick-context-menu-icon-margin-right);
-      vertical-align: middle;
-      width: var(--slick-context-menu-icon-width, $slick-context-menu-icon-width);
-    }
+//     .slick-context-menu-icon {
+//       background-position: center center;
+//       background-repeat: no-repeat;
+//       display: inline-block;
+//       text-align: center;
+//       font-size: var(--slick-context-menu-icon-font-size, $slick-context-menu-icon-font-size);
+//       height: var(--slick-context-menu-icon-height, $slick-context-menu-icon-height);
+//       line-height: var(--slick-context-menu-icon-line-height, $slick-context-menu-icon-line-height);
+//       margin-right: var(--slick-context-menu-icon-margin-right, $slick-context-menu-icon-margin-right);
+//       vertical-align: middle;
+//       width: var(--slick-context-menu-icon-width, $slick-context-menu-icon-width);
+//     }
 
-    .slick-context-menu-content {
-      display: inline-block;
-      vertical-align: middle;
-    }
+//     .slick-context-menu-content {
+//       display: inline-block;
+//       vertical-align: middle;
+//     }
 
-    /* Disabled item */
-    &.slick-context-menu-item-disabled {
-      border-color: transparent !important;
-      background: inherit !important;
-      color: var(--slick-context-menu-item-disabled-color, $slick-context-menu-item-disabled-color);
-      cursor: inherit;
-      .slick-context-menu-icon, .slick-context-menu-content {
-        color: var(--slick-context-menu-item-disabled-color, $slick-context-menu-item-disabled-color);
-      }
-    }
-    &.slick-context-menu-item-hidden {
-      display: none;
-    }
-  }
+//     /* Disabled item */
+//     &.slick-context-menu-item-disabled {
+//       border-color: transparent !important;
+//       background: inherit !important;
+//       color: var(--slick-context-menu-item-disabled-color, $slick-context-menu-item-disabled-color);
+//       cursor: inherit;
+//       .slick-context-menu-icon, .slick-context-menu-content {
+//         color: var(--slick-context-menu-item-disabled-color, $slick-context-menu-item-disabled-color);
+//       }
+//     }
+//     &.slick-context-menu-item-hidden {
+//       display: none;
+//     }
+//   }
 
-  .slick-context-menu-option-list {
-    margin-bottom: var(--slick-context-menu-option-list-margin-bottom, $slick-context-menu-option-list-margin-bottom);
-  }
-}
+//   .slick-context-menu-option-list {
+//     margin-bottom: var(--slick-context-menu-option-list-margin-bottom, $slick-context-menu-option-list-margin-bottom);
+//   }
+// }
 
 // ----------------------------------------------
 // Slick Tooltip Component
@@ -400,118 +544,118 @@
 }
 
 .slick-header-menu {
-  position: absolute;
-  margin: 0;
-  background: var(--slick-header-menu-bg, $slick-header-menu-bg);
-  border: var(--slick-header-menu-border, $slick-header-menu-border);
-  border-radius: var(--slick-header-menu-border-radius, $slick-header-menu-border-radius);
-  min-width: var(--slick-header-menu-min-width, $slick-header-menu-min-width);
-  padding: var(--slick-header-menu-padding, $slick-header-menu-padding);
-  z-index: 100000;
-  cursor: default;
-  display: inline-block;
+  // cursor: default;
+  // display: inline-block;
+  // position: absolute;
+  // margin: 0;
+  // background: var(--slick-header-menu-bg, $slick-header-menu-bg);
+  // border: var(--slick-header-menu-border, $slick-header-menu-border);
+  // border-radius: var(--slick-header-menu-border-radius, $slick-header-menu-border-radius);
+  // min-width: var(--slick-header-menu-min-width, $slick-header-menu-min-width);
+  // padding: var(--slick-header-menu-padding, $slick-header-menu-padding);
+  // z-index: 100000;
 
-  .filter {
-    border: 1px solid #BFBDBD;
-    font-size: 8pt;
-    height: 400px;
-    margin-top: 6px;
-    overflow: scroll;
-    padding: 4px;
-    white-space: nowrap;
-    width: 200px;
-  }
+  // .filter {
+  //   border: 1px solid #BFBDBD;
+  //   font-size: 8pt;
+  //   height: 400px;
+  //   margin-top: 6px;
+  //   overflow: scroll;
+  //   padding: 4px;
+  //   white-space: nowrap;
+  //   width: 200px;
+  // }
 
-  .textfilter {
-    & > label {
-      display: inline-block;
-      margin-left: 5px;
-      margin-right: 10px;
-    }
+  // .textfilter {
+  //   & > label {
+  //     display: inline-block;
+  //     margin-left: 5px;
+  //     margin-right: 10px;
+  //   }
 
-    & > input[type=text] {
-      width: 70%;
-    }
-  }
+  //   & > input[type=text] {
+  //     width: 70%;
+  //   }
+  // }
 }
 
-.slick-header-menu-item {
-  cursor: pointer;
-  display: block;
-  border: var(--slick-header-menu-item-border, $slick-header-menu-item-border);
-  border-radius: var(--slick-header-menu-item-border-radius, $slick-header-menu-item-border-radius);
-  padding: var(--slick-header-menu-item-padding, $slick-header-menu-item-padding);
-  list-style: none outside none;
-  margin: 0;
-  &:hover {
-    border: var(--slick-header-menu-item-hover-border, $slick-header-menu-item-hover-border);
-    background-color: var(--slick-header-menu-item-hover-color, $slick-header-menu-item-hover-color);
-  }
+// .slick-header-menu-item {
+//   cursor: pointer;
+//   display: block;
+//   border: var(--slick-header-menu-item-border, $slick-header-menu-item-border);
+//   border-radius: var(--slick-header-menu-item-border-radius, $slick-header-menu-item-border-radius);
+//   padding: var(--slick-header-menu-item-padding, $slick-header-menu-item-padding);
+//   list-style: none outside none;
+//   margin: 0;
+//   &:hover {
+//     border: var(--slick-header-menu-item-hover-border, $slick-header-menu-item-hover-border);
+//     background-color: var(--slick-header-menu-item-hover-color, $slick-header-menu-item-hover-color);
+//   }
 
-  &.slick-header-menu-item-divider {
-    cursor: default;
-    border: none;
-    overflow: hidden;
-    padding: 0;
-    height: var(--slick-header-menu-divider-height, $slick-header-menu-divider-height);
-    margin: var(--slick-header-menu-divider-margin, $slick-header-menu-divider-margin);
-    background-color: var(--slick-header-menu-divider-color, $slick-header-menu-divider-color);
-    width: var(--slick-header-menu-divider-width, $slick-header-menu-divider-width);
-    margin-left: auto;
-    margin-right: auto;
+//   &.slick-header-menu-item-divider {
+//     cursor: default;
+//     border: none;
+//     overflow: hidden;
+//     padding: 0;
+//     height: var(--slick-header-menu-divider-height, $slick-header-menu-divider-height);
+//     margin: var(--slick-header-menu-divider-margin, $slick-header-menu-divider-margin);
+//     background-color: var(--slick-header-menu-divider-color, $slick-header-menu-divider-color);
+//     width: var(--slick-header-menu-divider-width, $slick-header-menu-divider-width);
+//     margin-left: auto;
+//     margin-right: auto;
 
-    &:hover {
-      border: none;
-      background-color: var(--slick-header-menu-item-disabled-color, $slick-header-menu-item-disabled-color);
-    }
-  }
-}
-.slick-header-menu-item-divider.slick-header-menu-item:hover {
-  background-color: var(--slick-header-menu-divider-color, $slick-header-menu-divider-color);
-}
+//     &:hover {
+//       border: none;
+//       background-color: var(--slick-header-menu-item-disabled-color, $slick-header-menu-item-disabled-color);
+//     }
+//   }
+// }
+// .slick-header-menu-item-divider.slick-header-menu-item:hover {
+//   background-color: var(--slick-header-menu-divider-color, $slick-header-menu-divider-color);
+// }
 
 
-.slick-header-menu-icon {
-  background-position: center center;
-  background-repeat: no-repeat;
-  display: inline-block;
-  text-align: center;
-  color: var(--slick-header-menu-icon-font-color, $slick-header-menu-icon-font-color);
-  font-size: var(--slick-header-menu-icon-font-size, $slick-header-menu-icon-font-size);
-  font-weight: var(--slick-header-menu-icon-font-weight, $slick-header-menu-icon-font-weight);
-  line-height: var(--slick-header-menu-icon-line-height, $slick-header-menu-icon-line-height);
-  height: var(--slick-header-menu-icon-height, $slick-header-menu-icon-height);
-  margin-right: var(--slick-header-menu-icon-margin-right, $slick-header-menu-icon-margin-right);
-  vertical-align: middle;
-  width: var(--slick-header-menu-icon-width, $slick-header-menu-icon-width);
+// .slick-header-menu-icon {
+//   background-position: center center;
+//   background-repeat: no-repeat;
+//   display: inline-block;
+//   text-align: center;
+//   color: var(--slick-header-menu-icon-font-color, $slick-header-menu-icon-font-color);
+//   font-size: var(--slick-header-menu-icon-font-size, $slick-header-menu-icon-font-size);
+//   font-weight: var(--slick-header-menu-icon-font-weight, $slick-header-menu-icon-font-weight);
+//   line-height: var(--slick-header-menu-icon-line-height, $slick-header-menu-icon-line-height);
+//   height: var(--slick-header-menu-icon-height, $slick-header-menu-icon-height);
+//   margin-right: var(--slick-header-menu-icon-margin-right, $slick-header-menu-icon-margin-right);
+//   vertical-align: middle;
+//   width: var(--slick-header-menu-icon-width, $slick-header-menu-icon-width);
 
-  /* Font Awesome sorting icons are not aligned in middle, let's align them ourselves */
-  &.fa-sort-asc {
-    transform: translateY(3px);
-  }
-  &.fa-sort-desc {
-    transform: translateY(-2px);
-  }
-}
+//   /* Font Awesome sorting icons are not aligned in middle, let's align them ourselves */
+//   &.fa-sort-asc {
+//     transform: translateY(3px);
+//   }
+//   &.fa-sort-desc {
+//     transform: translateY(-2px);
+//   }
+// }
 
-.slick-header-menu-content {
-  display: inline-block;
-  vertical-align: middle;
-}
+// .slick-header-menu-content {
+//   display: inline-block;
+//   vertical-align: middle;
+// }
 
-/* Disabled */
-.slick-header-menu-item-disabled {
-  border-color: transparent !important;
-  background: inherit !important;
-  color: var(--slick-header-menu-item-disabled-color, $slick-header-menu-item-disabled-color);
-  cursor: inherit;
-  .slick-header-menu-icon, .slick-header-menu-content {
-    color: var(--slick-header-menu-item-disabled-color, $slick-header-menu-item-disabled-color);
-  }
-}
-.slick-header-menu-item-hidden {
-  display: none;
-}
+// /* Disabled */
+// .slick-header-menu-item-disabled {
+//   border-color: transparent !important;
+//   background: inherit !important;
+//   color: var(--slick-header-menu-item-disabled-color, $slick-header-menu-item-disabled-color);
+//   cursor: inherit;
+//   .slick-header-menu-icon, .slick-header-menu-content {
+//     color: var(--slick-header-menu-item-disabled-color, $slick-header-menu-item-disabled-color);
+//   }
+// }
+// .slick-header-menu-item-hidden {
+//   display: none;
+// }
 
 // ----------------------------------------------
 // Row Move Manager Plugin

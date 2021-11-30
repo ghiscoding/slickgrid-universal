@@ -11,7 +11,7 @@ export function addCloseButtomElement(this: SlickColumnPicker | SlickGridMenu, m
   const closePickerButtonElm = createDomElement('button', {
     type: 'button', className: 'close',
     innerHTML: '&times;',
-    dataset: { dismiss: context instanceof SlickColumnPicker ? 'slick-columnpicker' : 'slick-grid-menu' }
+    dataset: { dismiss: context instanceof SlickColumnPicker ? 'slick-column-picker' : 'slick-grid-menu' }
   });
   closePickerButtonElm.setAttribute('aria-label', 'Close');
   menuElm.appendChild(closePickerButtonElm);
@@ -21,7 +21,7 @@ export function addCloseButtomElement(this: SlickColumnPicker | SlickGridMenu, m
 export function addColumnTitleElementWhenDefined(this: SlickColumnPicker | SlickGridMenu, menuElm: HTMLDivElement) {
   const context: any = this;
   if (context.addonOptions?.columnTitle) {
-    context._columnTitleElm = createDomElement('div', { className: 'title', textContent: context.addonOptions?.columnTitle ?? context._defaults.columnTitle });
+    context._columnTitleElm = createDomElement('div', { className: 'slick-menu-title', textContent: context.addonOptions?.columnTitle ?? context._defaults.columnTitle });
     menuElm.appendChild(context._columnTitleElm);
   }
 }

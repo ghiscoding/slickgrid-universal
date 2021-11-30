@@ -80,7 +80,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     protected readonly sortService: SortService,
   ) {
     super(extensionUtility, pubSubService, sharedService);
-    this._menuCssPrefix = 'slick-grid-menu';
+    this._menuCssPrefix = 'slick-menu';
+    this._menuPluginCssPrefix = 'slick-grid-menu';
     this._camelPluginName = 'gridMenu';
     this._columns = this.sharedService.allColumns ?? [];
     this._gridUid = this.grid?.getUID?.() ?? '';
@@ -221,7 +222,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       this._menuElm.classList.add('slick-grid-menu', this._gridUid);
       this._menuElm.style.display = 'none';
 
-      this._commandMenuElm = createDomElement('div', { className: 'slick-grid-menu-command-list' });
+      this._commandMenuElm = createDomElement('div', { className: 'slick-menu-command-list' });
       this._menuElm.appendChild(this._commandMenuElm);
 
       this.recreateCommandList(this._gridMenuOptions, {
@@ -794,7 +795,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   /** Re/Create Command List by adding title, close & list of commands */
   recreateCommandList(addonOptions: GridMenu, callbackArgs: GridMenuEventWithElementCallbackArgs) {
     // add Close button
-    const commandMenuHeaderElm = createDomElement('div', { className: 'command-header' });
+    const commandMenuHeaderElm = createDomElement('div', { className: 'slick-command-header' });
     commandMenuHeaderElm.classList.add('with-close');
     addCloseButtomElement.call(this, commandMenuHeaderElm);
     this._commandMenuElm.appendChild(commandMenuHeaderElm);

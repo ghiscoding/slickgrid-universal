@@ -49,7 +49,8 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   ) {
     super(extensionUtility, pubSubService, sharedService);
     this._camelPluginName = 'cellMenu';
-    this._menuCssPrefix = 'slick-cell-menu';
+    this._menuCssPrefix = 'slick-menu';
+    this._menuPluginCssPrefix = 'slick-cell-menu';
     this.init(sharedService.gridOptions.cellMenu);
   }
 

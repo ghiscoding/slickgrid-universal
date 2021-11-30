@@ -390,8 +390,8 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
       .trigger('contextmenu')
       .invoke('show');
 
-    cy.get('.slick-columnpicker')
-      .find('.slick-columnpicker-list')
+    cy.get('.slick-column-picker')
+      .find('.slick-column-picker-list')
       .children()
       .each(($child, index) => {
         if (index <= 5) {
@@ -399,15 +399,15 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
         }
       });
 
-    cy.get('.slick-columnpicker')
-      .find('.slick-columnpicker-list')
+    cy.get('.slick-column-picker')
+      .find('.slick-column-picker-list')
       .children('li:nth-of-type(3)')
       .children('label')
       .should('contain', '% Complete')
       .click();
 
     cy.get('.grid2')
-      .get('.slick-columnpicker:visible')
+      .get('.slick-column-picker:visible')
       .find('.close')
       .click();
 
