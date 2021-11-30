@@ -44,26 +44,26 @@
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
-    "@types/jquery": "^3.5.8",
+    "@types/jquery": "^3.5.9",
     "@types/moment": "^2.13.0",
-    "@types/node": "^16.11.7",
+    "@types/node": "^16.11.11",
     "@types/webpack": "^5.28.0",
     "clean-webpack-plugin": "4.0.0",
-    "copy-webpack-plugin": "^9.1.0",
+    "copy-webpack-plugin": "^10.0.0",
     "css-loader": "^6.5.1",
     "file-loader": "^6.2.0",
-    "fork-ts-checker-webpack-plugin": "^6.4.0",
+    "fork-ts-checker-webpack-plugin": "^6.5.0",
     "html-loader": "^3.0.1",
     "html-webpack-plugin": "5.5.0",
-    "mini-css-extract-plugin": "^2.4.4",
+    "mini-css-extract-plugin": "^2.4.5",
     "rxjs": "^7.4.0",
-    "sass": "^1.43.4",
+    "sass": "^1.44.0",
     "sass-loader": "^12.3.0",
     "style-loader": "^3.3.1",
     "ts-node": "^10.4.0",
     "url-loader": "^4.1.1",
-    "webpack": "^5.64.0",
+    "webpack": "^5.64.4",
     "webpack-cli": "^4.9.1",
-    "webpack-dev-server": "^4.5.0"
+    "webpack-dev-server": "^4.6.0"
   }
 }
