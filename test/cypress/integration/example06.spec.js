@@ -139,7 +139,7 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
       .click({ force: true });
 
     cy.get(`.slick-grid-menu:visible`)
-      .find('.slick-grid-menu-item')
+      .find('.slick-menu-item')
       .first()
       .find('span')
       .contains('Clear all Filters')

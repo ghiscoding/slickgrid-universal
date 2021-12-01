@@ -24,9 +24,9 @@ describe('Example 03 - Draggable Grouping', { retries: 1 }, () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(8)`).find('.checkmark-icon').should('have.length', 0);
 
     cy.get('.grid3').find(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
-    cy.get('.slick-cell-menu .slick-cell-menu-option-list .slick-cell-menu-item').contains('True').click();
+    cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
     cy.get('.grid3').find(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
-    cy.get('.slick-cell-menu .slick-cell-menu-option-list .slick-cell-menu-item').contains('True').click();
+    cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 1);
@@ -116,9 +116,9 @@ describe('Example 03 - Draggable Grouping', { retries: 1 }, () => {
         .find('.slick-row .slick-cell:nth(1)')
         .rightclick({ force: true });
 
-      cy.get('.slick-context-menu.dropright .slick-context-menu-command-list')
-        .find('.slick-context-menu-item')
-        .find('.slick-context-menu-content')
+      cy.get('.slick-context-menu.dropright .slick-menu-command-list')
+        .find('.slick-menu-item')
+        .find('.slick-menu-content')
         .contains('Expand all Groups')
         .click();
 
@@ -139,9 +139,9 @@ describe('Example 03 - Draggable Grouping', { retries: 1 }, () => {
         .find('.slick-row .slick-cell:nth(1)')
         .rightclick({ force: true });
 
-      cy.get('.slick-context-menu.dropright .slick-context-menu-command-list')
-        .find('.slick-context-menu-item')
-        .find('.slick-context-menu-content')
+      cy.get('.slick-context-menu.dropright .slick-menu-command-list')
+        .find('.slick-menu-item')
+        .find('.slick-menu-content')
         .contains('Collapse all Groups')
         .click();
 
@@ -182,9 +182,9 @@ describe('Example 03 - Draggable Grouping', { retries: 1 }, () => {
         .find('.slick-row .slick-cell:nth(1)')
         .rightclick({ force: true });
 
-      cy.get('.slick-context-menu.dropright .slick-context-menu-command-list')
-        .find('.slick-context-menu-item')
-        .find('.slick-context-menu-content')
+      cy.get('.slick-context-menu.dropright .slick-menu-command-list')
+        .find('.slick-menu-item')
+        .find('.slick-menu-content')
         .contains('Clear all Grouping')
         .click();
 

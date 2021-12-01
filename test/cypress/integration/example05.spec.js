@@ -72,9 +72,9 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
       .find('.slick-row .slick-cell:nth(1)')
       .rightclick({ force: true });
 
-    cy.get('.slick-context-menu.dropright .slick-context-menu-command-list')
-      .find('.slick-context-menu-item')
-      .find('.slick-context-menu-content')
+    cy.get('.slick-context-menu.dropright .slick-menu-command-list')
+      .find('.slick-menu-item')
+      .find('.slick-menu-content')
       .contains('Collapse all Groups')
       .click();
 
@@ -95,9 +95,9 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
       .find('.slick-row .slick-cell:nth(1)')
       .rightclick({ force: true });
 
-    cy.get('.slick-context-menu.dropright .slick-context-menu-command-list')
-      .find('.slick-context-menu-item')
-      .find('.slick-context-menu-content')
+    cy.get('.slick-context-menu.dropright .slick-menu-command-list')
+      .find('.slick-menu-item')
+      .find('.slick-menu-content')
       .contains('Expand all Groups')
       .click();
 
@@ -144,7 +144,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
       })
       .then(() => {
         cy.get(`.slick-grid-menu.${gridUid}`)
-          .find('.slick-grid-menu-item:nth(0)')
+          .find('.slick-menu-item:nth(0)')
           .find('span')
           .contains('Clear all Filters')
           .click();
@@ -205,7 +205,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
       })
       .then(() => {
         cy.get(`.slick-grid-menu.${gridUid}`)
-          .find('.slick-grid-menu-item:nth(0)')
+          .find('.slick-menu-item:nth(0)')
           .find('span')
           .contains('Clear all Filters')
           .click();
@@ -251,7 +251,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
       })
       .then(() => {
         cy.get(`.slick-grid-menu.${gridUid}`)
-          .find('.slick-grid-menu-item:nth(0)')
+          .find('.slick-menu-item:nth(0)')
           .find('span')
           .contains('Clear all Filters')
           .click();

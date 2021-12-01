@@ -36,6 +36,7 @@ describe('ColumnPickerControl', () => {
     { id: 'field1', field: 'field1', name: 'Field 1', width: 100, nameKey: 'TITLE' },
     { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
     { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing' },
+    { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true },
   ];
 
   let control: SlickColumnPicker;
@@ -296,11 +297,13 @@ describe('ColumnPickerControl', () => {
           { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
           { id: 'field1', field: 'field1', name: 'Field 1', width: 100, nameKey: 'TITLE' },
           { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing' },
+          { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true, }
         ];
         const columnsMock: Column[] = [
           { id: 'field1', field: 'field1', name: 'Field 1', width: 100, nameKey: 'TITLE' },
           { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
           { id: 'field3', field: 'field3', name: 'Field 3', width: 75, columnGroup: 'Billing' },
+          { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true, }
         ];
         jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined).mockReturnValueOnce(0).mockReturnValueOnce(1);
         const handlerSpy = jest.spyOn(control.eventHandler, 'subscribe');
@@ -311,11 +314,13 @@ describe('ColumnPickerControl', () => {
         gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
         gridStub.onColumnsReordered.notify({ impactedColumns: columnsUnorderedMock, grid: gridStub }, eventData, gridStub);
         control.menuElement.querySelector<HTMLInputElement>('input[type="checkbox"]').dispatchEvent(new Event('click', { bubbles: true }));
+        const col4 = control.menuElement.querySelector<HTMLInputElement>('li.hidden input[data-columnid=field4]');
 
         expect(handlerSpy).toHaveBeenCalledTimes(2);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
         expect(control.columns).toEqual(columnsMock);
+        expect(col4).toBeTruthy();
       });
     });
   });
@@ -351,6 +356,7 @@ describe('ColumnPickerControl', () => {
         { id: 'field1', field: 'field1', name: 'Titre', width: 100, nameKey: 'TITLE' },
         { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
         { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', width: 75 },
+        { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true, }
       ]);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);

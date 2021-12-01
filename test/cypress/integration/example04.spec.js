@@ -46,7 +46,7 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
 
     cy.get('.grid4')
       .get('.slick-grid-menu:visible')
-      .find('.slick-grid-menu-list')
+      .find('.slick-column-picker-list')
       .children('li:visible:nth(0)')
       .children('label')
       .should('contain', 'Title')
@@ -69,7 +69,7 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
   it('should show again "Title" column from Grid Menu and expect last frozen column to still be "% Complete"', () => {
     cy.get('.grid4')
       .get('.slick-grid-menu:visible')
-      .find('.slick-grid-menu-list')
+      .find('.slick-column-picker-list')
       .children('li:visible:nth(0)')
       .children('label')
       .should('contain', 'Title')
@@ -106,8 +106,8 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
 
     cy.get('.slick-header-menu')
       .should('be.visible')
-      .children('.slick-header-menu-item:nth-of-type(9)')
-      .children('.slick-header-menu-content')
+      .children('.slick-menu-item:nth-of-type(9)')
+      .children('.slick-menu-content')
       .should('contain', 'Hide Column')
       .click();
 
@@ -227,9 +227,9 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(8)`).find('.checkmark-icon').should('have.length', 0);
 
     cy.get('.grid4').find(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
-    cy.get('.slick-cell-menu .slick-cell-menu-option-list .slick-cell-menu-item').contains('True').click();
+    cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
     cy.get('.grid4').find(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
-    cy.get('.slick-cell-menu .slick-cell-menu-option-list .slick-cell-menu-item').contains('True').click();
+    cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(5)`).find('.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(5)`).find('.checkmark-icon').should('have.length', 1);
@@ -240,9 +240,9 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(5)`).find('.checkmark-icon').should('have.length', 1);
 
     cy.get('.grid4').find(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
-    cy.get('.slick-cell-menu .slick-cell-menu-option-list .slick-cell-menu-item').contains('False').click();
+    cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('False').click();
     cy.get('.grid4').find(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
-    cy.get('.slick-cell-menu .slick-cell-menu-option-list .slick-cell-menu-item').contains('False').click();
+    cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('False').click();
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(5)`).find('.checkmark-icon').should('have.length', 0);
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(5)`).find('.checkmark-icon').should('have.length', 0);
@@ -256,7 +256,7 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(1)`).should('contain', 'Task 4');
 
     cy.get('.grid4').find(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(8)`).contains('Action').click({ force: true });
-    cy.get('.slick-cell-menu .slick-cell-menu-command-list .slick-cell-menu-item').contains('Delete Row').click()
+    cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-item').contains('Delete Row').click()
       .then(() => expect(confirmStub.getCall(0)).to.be.calledWith('Do you really want to delete row (4) with "Task 3"?'));
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1)`).should('contain', 'Task 4');
