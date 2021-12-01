@@ -846,10 +846,7 @@ $slick-multiselect-dropdown-border:                         1px solid #bbb !defa
 $slick-multiselect-dropdown-max-width:                      250px !default;
 $slick-multiselect-dropdown-z-index:                        9999 !default;
 $slick-multiselect-checkbox-margin-left:                    4px !default;
-$slick-multiselect-checkbox-hover-bg-color:                 $slick-row-mouse-hover-color !default;
-$slick-multiselect-select-all-border-bottom:                1px solid #ddd !default;
-$slick-multiselect-select-all-text-color:                   darken($slick-primary-color, 5%) !default;
-$slick-multiselect-select-all-text-hover-color:             darken($slick-primary-color, 10%) !default;
+$slick-multiselect-checkbox-hover-bg-color:                 #fafafa !default;
 $slick-multiselect-icon-font-size:                          16px !default;
 $slick-multiselect-icon-arrow-font-size:                    $slick-multiselect-icon-font-size !default;
 $slick-multiselect-icon-color:                              $slick-primary-color !default;
@@ -857,7 +854,7 @@ $slick-multiselect-icon-checked:                            "\f14a" !default;
 $slick-multiselect-icon-checked-color:                      $slick-multiselect-icon-color !default;
 $slick-multiselect-icon-border:                             none !default;
 $slick-multiselect-icon-border-radius:                      none !default;
-$slick-multiselect-icon-height:                             $slick-icon-font-size !default;
+$slick-multiselect-icon-height:                             20px !default;
 $slick-multiselect-icon-margin:                             0 !default;
 $slick-multiselect-icon-vertical-align:                     middle !default;
 $slick-multiselect-icon-width:                              20px !default;
@@ -873,8 +870,11 @@ $slick-multiselect-icon-radio-unchecked:                    "\f10c" !default;
 $slick-multiselect-icon-radio-width:                        $slick-multiselect-icon-width !default;
 $slick-multiselect-icon-search-margin-right:                8px !default;
 $slick-multiselect-ok-button-font-weight:                   600 !default;
-$slick-multiselect-label-margin-bottom:                     6px !default;
-$slick-multiselect-label-line-height:                       18px !default;
+$slick-multiselect-item-height:                             26px !default;
+$slick-multiselect-item-border:                             1px solid transparent !default;
+$slick-multiselect-item-hover-border:                       1px solid #BFBDBD !default;
+$slick-multiselect-item-line-height:                        calc(#{$slick-multiselect-icon-font-size} + 2px) !default;
+$slick-multiselect-item-padding:                            2px 4px !default;
 $slick-multiselect-unchecked-opacity:                       0.6 !default;
 $slick-multiselect-placeholder-bg-color:                    transparent !default;
 $slick-multiselect-placeholder-color:                       $slick-editor-placeholder-color !default;
@@ -888,6 +888,11 @@ $slick-multiselect-ok-button-border:                        1px solid #ccc !defa
 $slick-multiselect-ok-button-height:                        26px !default;
 $slick-multiselect-ok-button-width:                         100% !default;
 $slick-multiselect-ok-button-text-align:                    center !default;
+$slick-multiselect-select-all-border-bottom:                1px solid #ddd !default;
+$slick-multiselect-select-all-line-height:                  calc(#{$slick-multiselect-icon-font-size} + 2px) !default;
+$slick-multiselect-select-all-text-color:                   darken($slick-primary-color, 5%) !default;
+$slick-multiselect-select-all-padding:                      2px 4px !default;
+$slick-multiselect-select-all-text-hover-color:             darken($slick-multiselect-checkbox-hover-bg-color, 2%) !default;
 
 /* pagination variables */
 $slick-pagination-border-color:                             #ddd !default;
