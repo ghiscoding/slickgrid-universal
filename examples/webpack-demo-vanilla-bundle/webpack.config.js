@@ -69,6 +69,7 @@ module.exports = ({ production } = {}) => ({
     minimizer: [
       new ESBuildMinifyPlugin({
         target: 'es2018',
+        format: 'iife',
         css: true,
       })
     ]
