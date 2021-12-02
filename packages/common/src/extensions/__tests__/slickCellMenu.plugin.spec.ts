@@ -151,7 +151,6 @@ describe('CellMenu Plugin', () => {
       autoAdjustDropOffset: 0,
       autoAlignSideOffset: 0,
       hideMenuOnScroll: true,
-      width: 'auto',
     });
   });
 
@@ -267,7 +266,7 @@ describe('CellMenu Plugin', () => {
         expect(cellMenuElm.classList.contains('dropright'));
         expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-cell-menu slickgrid12345 dropdown dropright" style="display: block; width: auto; top: 0px; left: 0px;" aria-expanded="true">
+          `<div class="slick-cell-menu slickgrid12345 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
             <div class="slick-menu-command-list">
               <div class="slick-command-header with-close no-title">
                 <button class="close" type="button" data-dismiss="slick-menu" aria-label="Close">×</button>
@@ -322,7 +321,7 @@ describe('CellMenu Plugin', () => {
 
       it('should expect a Cell Menu to be created when cell is clicked with a list of commands defined but without "Command 1" when "itemVisibilityOverride" and "itemUsabilityOverride" return false', () => {
         plugin.dispose();
-        plugin.init({ maxHeight: 290 });
+        plugin.init({ maxHeight: 290, width: 400 });
         (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).itemVisibilityOverride = () => false;
         (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).itemUsabilityOverride = () => false;
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
@@ -336,6 +335,7 @@ describe('CellMenu Plugin', () => {
 
         expect(closeBtnElm).toBeTruthy();
         expect(cellMenuElm.style.maxHeight).toBe('290px');
+        expect(cellMenuElm.style.width).toBe('400px');
         expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(4);
         expect(commandItemElm1.classList.contains('orange')).toBeTruthy();
         expect(commandIconElm1.className).toBe('slick-menu-icon');
@@ -345,7 +345,7 @@ describe('CellMenu Plugin', () => {
 
       it('should create a Cell Menu and a 2nd button item usability callback returns false and expect button to be disabled', () => {
         plugin.dispose();
-        plugin.init({ maxWidth: 310 });
+        plugin.init({ maxWidth: 310, width: 'auto' });
         (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).itemVisibilityOverride = () => true;
         (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).itemUsabilityOverride = () => false;
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
@@ -359,6 +359,7 @@ describe('CellMenu Plugin', () => {
 
         expect(closeBtnElm).toBeTruthy();
         expect(cellMenuElm.style.maxWidth).toBe('310px');
+        expect(cellMenuElm.style.width).toBe('auto');
         expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(commandItemElm1.classList.contains('orange')).toBeTruthy();
         expect(commandIconElm1.className).toBe('slick-menu-icon');
@@ -640,7 +641,7 @@ describe('CellMenu Plugin', () => {
 
         expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-cell-menu slickgrid12345 dropdown dropright" style="display: block; width: auto; top: 0px; left: 0px;" aria-expanded="true">
+          `<div class="slick-cell-menu slickgrid12345 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
             <div class="slick-menu-option-list">
               <div class="slick-option-header with-close no-title">
                 <button class="close" type="button" data-dismiss="slick-menu" aria-label="Close">×</button>

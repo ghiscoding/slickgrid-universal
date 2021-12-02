@@ -159,6 +159,11 @@
 // ----------------------------------------------
 
 .slick-grid-menu {
+  .slick-column-picker-list {
+    li, hr {
+      width: auto;
+    }
+  }
   .slick-menu-command-list {
     margin-bottom: var(--slick-column-picker-list-margin-bottom, $slick-column-picker-list-margin-bottom);
   }

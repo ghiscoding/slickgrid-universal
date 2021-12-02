@@ -174,7 +174,6 @@ describe('ContextMenu Plugin', () => {
       autoAlignSideOffset: 0,
       commandItems: [],
       hideMenuOnScroll: false,
-      width: 'auto',
       optionShownOverColumnIds: [],
       commandShownOverColumnIds: [],
     });
@@ -297,7 +296,7 @@ describe('ContextMenu Plugin', () => {
         expect(contextMenuElm.classList.contains('dropright'));
         expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="display: block; width: auto; top: 0px; left: 0px;" aria-expanded="true">
+          `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
             <div class="slick-menu-command-list">
               <div class="slick-command-header with-close no-title">
                 <button class="close" type="button" data-dismiss="slick-menu" aria-label="Close">×</button>
@@ -1221,7 +1220,7 @@ describe('ContextMenu Plugin', () => {
 
         expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="display: block; width: auto; top: 0px; left: 0px;" aria-expanded="true">
+          `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
             <div class="slick-menu-option-list">
               <div class="slick-option-header with-close no-title">
                 <button class="close" type="button" data-dismiss="slick-menu" aria-label="Close">×</button>

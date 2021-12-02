@@ -37,7 +37,6 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
     autoAdjustDropOffset: 0,
     autoAlignSideOffset: 0,
     hideMenuOnScroll: true,
-    width: 'auto',
   } as unknown as CellMenuOption;
   pluginName: 'CellMenu' = 'CellMenu';
 

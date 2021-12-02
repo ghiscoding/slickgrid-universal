@@ -41,7 +41,6 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     autoAdjustDropOffset: 0,
     autoAlignSideOffset: 0,
     hideMenuOnScroll: false,
-    width: 'auto',
     optionShownOverColumnIds: [],
     commandShownOverColumnIds: [],
   } as unknown as ContextMenuOption;

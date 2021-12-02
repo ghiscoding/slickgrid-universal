@@ -83,11 +83,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       // create a new Menu
       this._menuElm = createDomElement('div', {
         className: `${this._menuPluginCssPrefix || this._menuCssPrefix} ${this.gridUid}`,
-        style: {
-          display: 'none',
-          left: `${event.pageX}px`, top: `${event.pageY + 5}px`,
-          width: findWidthOrDefault(this.addonOptions?.width),
-        }
+        style: { display: 'none', left: `${event.pageX}px`, top: `${event.pageY + 5}px` }
       });
 
       const maxHeight = isNaN(this.addonOptions.maxHeight as any) ? this.addonOptions.maxHeight : `${this.addonOptions.maxHeight ?? 0}px`;
@@ -98,6 +94,9 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       }
       if (maxWidth) {
         this._menuElm.style.maxWidth = maxWidth as string;
+      }
+      if (this.addonOptions?.width) {
+        this._menuElm.style.width = findWidthOrDefault(this.addonOptions?.width);
       }
 
       const closeButtonElm = createDomElement('button', { className: 'close', type: 'button', innerHTML: '&times;', dataset: { dismiss: this._menuCssPrefix } });

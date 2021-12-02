@@ -839,7 +839,6 @@
     border: var(--slick-multiselect-item-border, $slick-multiselect-item-border);
     width: 100%;
     &:hover {
-      cursor: pointer;
       border: var(--slick-multiselect-item-hover-border, $slick-multiselect-item-hover-border);
       background-color: var(--slick-multiselect-checkbox-hover-bg-color, $slick-multiselect-checkbox-hover-bg-color);
     }
@@ -864,22 +863,28 @@
     label {
       display: inline-block;
       font-weight: normal;
-      padding: 5px 8px;
+      padding: var(--slick-multiselect-select-all-label-padding, $slick-multiselect-select-all-label-padding);
+      border: var(--slick-multiselect-select-all-label-border, $slick-multiselect-select-all-label-border);
       color: var(--slick-multiselect-select-all-text-color, $slick-multiselect-select-all-text-color);
+      &:hover {
+        cursor: pointer;
+        border: var(--slick-multiselect-select-all-label-hover-border, $slick-multiselect-select-all-label-hover-border);
+        background-color: var(--slick-multiselect-select-all-label-hover-bg-color, $slick-multiselect-select-all-label-hover-bg-color);
+      }
     }
   }
   .ms-ok-button {
     cursor: pointer;
     display: block;
+    padding: 0;
     width: var(--slick-multiselect-ok-button-width, $slick-multiselect-ok-button-width);
     height: var(--slick-multiselect-ok-button-height, $slick-multiselect-ok-button-height);
-    padding: 0;
-    border: var(--slick-multiselect-ok-button-border, $slick-multiselect-ok-button-border);
+    border-color: var(--slick-multiselect-ok-button-border-color, $slick-multiselect-ok-button-border-color);
+    border-radius: var(--slick-multiselect-ok-button-border-radius, $slick-multiselect-ok-button-border-radius);
+    border-width: var(--slick-multiselect-ok-button-border-width, $slick-multiselect-ok-button-border-width);
     text-align: var(--slick-multiselect-ok-button-text-align, $slick-multiselect-ok-button-text-align);
     color: var(--slick-multiselect-ok-button-text-color, $slick-multiselect-ok-button-text-color);
     font-weight: var(--slick-multiselect-ok-button-font-weight, $slick-multiselect-ok-button-font-weight);
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
     background-color: var(--slick-multiselect-ok-button-bg-color, $slick-multiselect-ok-button-bg-color);
     &:hover {
       background-color: var(--slick-multiselect-ok-button-bg-hover-color, $slick-multiselect-ok-button-bg-hover-color);
