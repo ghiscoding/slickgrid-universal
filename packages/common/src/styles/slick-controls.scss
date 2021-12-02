@@ -11,6 +11,7 @@
   position: absolute;
 	overflow: auto;
   resize: both;
+  width: max-content;
   font-family: var(--slick-font-family, $slick-font-family);
   background-color: var(--slick-column-picker-background-color, $slick-column-picker-background-color);
   border: var(--slick-column-picker-border, $slick-column-picker-border);
@@ -19,9 +20,6 @@
   padding: var(--slick-column-picker-padding, $slick-column-picker-padding);
   box-shadow: var(--slick-column-picker-box-shadow, $slick-column-picker-box-shadow);
   z-index: var(--slick-column-picker-z-index, $slick-column-picker-z-index);
-
-  /* trick to cheat the width to include extra scrollbar width in addition to auto width */
-  padding-right: var(--slick-column-picker-padding-right-patch, $slick-column-picker-padding-right-patch);
 
   .close {
     float: right;
@@ -73,8 +71,6 @@
   }
 }
 .slick-column-picker, .slick-grid-menu {
-  width: max-content;
-
   .slick-menu-title {
     font-size: var(--slick-menu-title-font-size, $slick-menu-title-font-size);
     font-weight: var(--slick-menu-title-font-weight, $slick-menu-title-font-weight);
@@ -92,7 +88,6 @@
   }
 
   li {
-    width: calc(100% + 24px - 6px); /* trick to cheat the width to include extra scrollbar width in addition to auto width */
     border: var(--slick-column-picker-item-border, $slick-column-picker-item-border);
     border-radius: var(--slick-column-picker-item-border-radius, $slick-column-picker-item-border-radius);
     font-size: var(--slick-column-picker-item-font-size, $slick-column-picker-item-font-size);
@@ -101,6 +96,7 @@
     list-style: none outside none;
     margin: 0;
     padding: var(--slick-column-picker-item-padding, $slick-column-picker-item-padding);
+    width: auto;
     &:hover {
       border: var(--slick-column-picker-item-hover-border, $slick-column-picker-item-hover-border);
       background-color: var(--slick-column-picker-item-hover-color, $slick-column-picker-item-hover-color);
@@ -118,6 +114,7 @@
     width: var(--slick-column-picker-divider-width, $slick-column-picker-divider-width);
     margin-left: auto;
     margin-right: auto;
+    width: auto;
   }
 
   /* replace checkboxes by Font-Awesome icons */
@@ -159,11 +156,6 @@
 // ----------------------------------------------
 
 .slick-grid-menu {
-  .slick-column-picker-list {
-    li, hr {
-      width: auto;
-    }
-  }
   .slick-menu-command-list {
     margin-bottom: var(--slick-column-picker-list-margin-bottom, $slick-column-picker-list-margin-bottom);
   }
