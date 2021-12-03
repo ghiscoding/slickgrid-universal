@@ -174,7 +174,6 @@ describe('ContextMenu Plugin', () => {
       autoAlignSideOffset: 0,
       commandItems: [],
       hideMenuOnScroll: false,
-      width: 'auto',
       optionShownOverColumnIds: [],
       commandShownOverColumnIds: [],
     });
@@ -291,31 +290,31 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
 
         expect(contextMenuElm.classList.contains('dropdown'));
         expect(contextMenuElm.classList.contains('dropright'));
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="display: block; width: auto; top: 0px; left: 0px;" aria-expanded="true">
-            <div class="slick-context-menu-command-list">
-              <div class="command-header with-close no-title">
-                <button class="close" type="button" data-dismiss="slick-context-menu" aria-label="Close">×</button>
+          `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
+            <div class="slick-menu-command-list">
+              <div class="slick-command-header with-close no-title">
+                <button class="close" type="button" data-dismiss="slick-menu" aria-label="Close">×</button>
               </div>
-              <li class="slick-context-menu-item orange" data-command="command1">
-                <div class="slick-context-menu-icon">◦</div>
-                <span class="slick-context-menu-content">Command 1</span>
+              <li class="slick-menu-item orange" data-command="command1">
+                <div class="slick-menu-icon">◦</div>
+                <span class="slick-menu-content">Command 1</span>
               </li>
-              <li class="slick-context-menu-item" data-command="command2">
-                <div class="slick-context-menu-icon">◦</div>
-                <span class="slick-context-menu-content">Command 2</span>
+              <li class="slick-menu-item" data-command="command2">
+                <div class="slick-menu-icon">◦</div>
+                <span class="slick-menu-content">Command 2</span>
               </li>
-              <li class="slick-context-menu-item slick-context-menu-item-divider"></li>
-              <li class="slick-context-menu-item red" data-command="delete-row">
-                <div class="slick-context-menu-icon mdi mdi-close"></div>
-                <span class="slick-context-menu-content bold">Delete Row</span>
+              <li class="slick-menu-item slick-menu-item-divider"></li>
+              <li class="slick-menu-item red" data-command="delete-row">
+                <div class="slick-menu-icon mdi mdi-close"></div>
+                <span class="slick-menu-content bold">Delete Row</span>
               </li>
-              <li class="slick-context-menu-item slick-context-menu-item-divider"></li>
+              <li class="slick-menu-item slick-menu-item-divider"></li>
           </div>
         </div>`));
       });
@@ -341,22 +340,22 @@ describe('ContextMenu Plugin', () => {
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
-        const commandItemElm1 = commandListElm.querySelectorAll('.slick-context-menu-item')[0] as HTMLDivElement;
-        const commandItemElm2 = commandListElm.querySelectorAll('.slick-context-menu-item')[1] as HTMLDivElement;
-        const commandItemElm3 = commandListElm.querySelectorAll('.slick-context-menu-item')[2] as HTMLDivElement;
-        const commandLabelElm1 = commandItemElm1.querySelector('.slick-context-menu-content') as HTMLSpanElement;
-        const commandIconElm1 = commandItemElm1.querySelector('.slick-context-menu-icon') as HTMLDivElement;
-        const commandLabelElm3 = commandItemElm3.querySelector('.slick-context-menu-content') as HTMLSpanElement;
-        const commandIconElm3 = commandItemElm3.querySelector('.slick-context-menu-icon') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const commandItemElm1 = commandListElm.querySelectorAll('.slick-menu-item')[0] as HTMLDivElement;
+        const commandItemElm2 = commandListElm.querySelectorAll('.slick-menu-item')[1] as HTMLDivElement;
+        const commandItemElm3 = commandListElm.querySelectorAll('.slick-menu-item')[2] as HTMLDivElement;
+        const commandLabelElm1 = commandItemElm1.querySelector('.slick-menu-content') as HTMLSpanElement;
+        const commandIconElm1 = commandItemElm1.querySelector('.slick-menu-icon') as HTMLDivElement;
+        const commandLabelElm3 = commandItemElm3.querySelector('.slick-menu-content') as HTMLSpanElement;
+        const commandIconElm3 = commandItemElm3.querySelector('.slick-menu-icon') as HTMLDivElement;
 
         expect(plugin.menuElement).toBeTruthy();
         expect(closeBtnElm).toBeTruthy();
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(4);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(4);
         expect(commandItemElm1.classList.contains('orange')).toBeTruthy();
-        expect(commandIconElm1.className).toBe('slick-context-menu-icon');
+        expect(commandIconElm1.className).toBe('slick-menu-icon');
         expect(commandLabelElm1.textContent).toBe('Command 1');
-        expect(commandItemElm2.classList.contains('slick-context-menu-item-divider')).toBeTruthy();
+        expect(commandItemElm2.classList.contains('slick-menu-item-divider')).toBeTruthy();
         expect(commandItemElm2.innerHTML).toBe('');
         expect(commandIconElm3.classList.contains('mdi-close')).toBeTruthy();
         expect(commandLabelElm3.textContent).toBe('Delete Row');
@@ -371,15 +370,15 @@ describe('ContextMenu Plugin', () => {
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
-        const commandItemElm1 = commandListElm.querySelectorAll('.slick-context-menu-item')[0] as HTMLDivElement;
-        const commandLabelElm1 = commandItemElm1.querySelector('.slick-context-menu-content') as HTMLSpanElement;
-        const commandIconElm1 = commandItemElm1.querySelector('.slick-context-menu-icon') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const commandItemElm1 = commandListElm.querySelectorAll('.slick-menu-item')[0] as HTMLDivElement;
+        const commandLabelElm1 = commandItemElm1.querySelector('.slick-menu-content') as HTMLSpanElement;
+        const commandIconElm1 = commandItemElm1.querySelector('.slick-menu-icon') as HTMLDivElement;
 
         expect(closeBtnElm).toBeTruthy();
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(4);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(4);
         expect(commandItemElm1.classList.contains('orange')).toBeTruthy();
-        expect(commandIconElm1.className).toBe('slick-context-menu-icon');
+        expect(commandIconElm1.className).toBe('slick-menu-icon');
         expect(commandLabelElm1.textContent).toBe('Command 1');
         expect(document.body.innerHTML.includes('Command 2')).not.toBeTruthy();
       });
@@ -393,15 +392,15 @@ describe('ContextMenu Plugin', () => {
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
-        const commandItemElm1 = commandListElm.querySelectorAll('.slick-context-menu-item')[0] as HTMLDivElement;
-        const commandLabelElm1 = commandItemElm1.querySelector('.slick-context-menu-content') as HTMLSpanElement;
-        const commandIconElm1 = commandItemElm1.querySelector('.slick-context-menu-icon') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const commandItemElm1 = commandListElm.querySelectorAll('.slick-menu-item')[0] as HTMLDivElement;
+        const commandLabelElm1 = commandItemElm1.querySelector('.slick-menu-content') as HTMLSpanElement;
+        const commandIconElm1 = commandItemElm1.querySelector('.slick-menu-icon') as HTMLDivElement;
 
         expect(closeBtnElm).toBeTruthy();
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(commandItemElm1.classList.contains('orange')).toBeTruthy();
-        expect(commandIconElm1.className).toBe('slick-context-menu-icon');
+        expect(commandIconElm1.className).toBe('slick-menu-icon');
         expect(commandLabelElm1.textContent).toBe('Command 1');
         expect(document.body.innerHTML.includes('Command 2')).toBeTruthy();
       });
@@ -413,14 +412,14 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         const commandItemElm2 = commandListElm.querySelector('[data-command="command2"]') as HTMLDivElement;
-        const commandContentElm2 = commandItemElm2.querySelector('.slick-context-menu-content') as HTMLDivElement;
+        const commandContentElm2 = commandItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
 
         expect(contextMenuElm.style.maxHeight).toBe('290px');
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(commandContentElm2.textContent).toBe('Command 2');
-        expect(commandItemElm2.classList.contains('slick-context-menu-item-disabled')).toBeTruthy();
+        expect(commandItemElm2.classList.contains('slick-menu-item-disabled')).toBeTruthy();
       });
 
       it('should create a Context Menu and expect button to be disabled when command property is hidden', () => {
@@ -430,14 +429,14 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         const commandItemElm2 = commandListElm.querySelector('[data-command="command2"]') as HTMLDivElement;
-        const commandContentElm2 = commandItemElm2.querySelector('.slick-context-menu-content') as HTMLDivElement;
+        const commandContentElm2 = commandItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
 
         expect(contextMenuElm.style.maxWidth).toBe('310px');
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(commandContentElm2.textContent).toBe('Command 2');
-        expect(commandItemElm2.classList.contains('slick-context-menu-item-hidden')).toBeTruthy();
+        expect(commandItemElm2.classList.contains('slick-menu-item-hidden')).toBeTruthy();
       });
 
       it('should create a Context Menu item with "iconCssClass" and expect extra css classes added to the icon element', () => {
@@ -447,12 +446,12 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         const commandItemElm2 = commandListElm.querySelector('[data-command="command2"]') as HTMLDivElement;
-        const commandContentElm2 = commandItemElm2.querySelector('.slick-context-menu-content') as HTMLDivElement;
-        const commandIconElm2 = commandItemElm2.querySelector('.slick-context-menu-icon') as HTMLDivElement;
+        const commandContentElm2 = commandItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
+        const commandIconElm2 = commandItemElm2.querySelector('.slick-menu-icon') as HTMLDivElement;
 
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(commandContentElm2.textContent).toBe('Command 2');
         expect(commandIconElm2.classList.contains('bold')).toBeTruthy();
         expect(commandIconElm2.classList.contains('red')).toBeTruthy();
@@ -466,12 +465,12 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         const commandItemElm2 = commandListElm.querySelector('[data-command="command2"]') as HTMLDivElement;
-        const commandContentElm2 = commandItemElm2.querySelector('.slick-context-menu-content') as HTMLDivElement;
-        const commandIconElm2 = commandItemElm2.querySelector('.slick-context-menu-icon') as HTMLDivElement;
+        const commandContentElm2 = commandItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
+        const commandIconElm2 = commandItemElm2.querySelector('.slick-menu-icon') as HTMLDivElement;
 
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(commandContentElm2.textContent).toBe('Help');
         expect(commandIconElm2.textContent).toBe('◦');
       });
@@ -484,11 +483,11 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         const commandItemElm2 = commandListElm.querySelector('[data-command="command2"]') as HTMLDivElement;
-        const commandContentElm2 = commandItemElm2.querySelector('.slick-context-menu-content') as HTMLDivElement;
+        const commandContentElm2 = commandItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
 
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(commandContentElm2.textContent).toBe('Help');
         expect(commandContentElm2.classList.contains('italic')).toBeTruthy();
         expect(commandContentElm2.classList.contains('blue')).toBeTruthy();
@@ -501,11 +500,11 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         const commandItemElm2 = commandListElm.querySelector('[data-command="command2"]') as HTMLDivElement;
-        const commandContentElm2 = commandItemElm2.querySelector('.slick-context-menu-content') as HTMLDivElement;
+        const commandContentElm2 = commandItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
 
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(commandContentElm2.textContent).toBe('Command 2');
         expect(commandItemElm2.title).toBe('some tooltip');
       });
@@ -518,10 +517,10 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
-        const commandListTitleElm = commandListElm.querySelector('.title') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const commandListTitleElm = commandListElm.querySelector('.slick-menu-title') as HTMLDivElement;
 
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(commandListTitleElm.textContent).toBe('The Commands!');
       });
 
@@ -536,12 +535,12 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         const commandItemElm = commandListElm.querySelector('[data-command="help"]') as HTMLDivElement;
-        const commandContentElm = commandItemElm.querySelector('.slick-context-menu-content') as HTMLDivElement;
-        const commandListTitleElm = commandListElm.querySelector('.title') as HTMLDivElement;
+        const commandContentElm = commandItemElm.querySelector('.slick-menu-content') as HTMLDivElement;
+        const commandListTitleElm = commandListElm.querySelector('.slick-menu-title') as HTMLDivElement;
 
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(commandListTitleElm.textContent).toBe('Commandes');
         expect(commandContentElm.textContent).toBe('Aide');
       });
@@ -573,9 +572,9 @@ describe('ContextMenu Plugin', () => {
         plugin.closeMenu(new Event('click') as any, {} as any);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
 
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(onBeforeSpy).toHaveBeenCalled();
         expect(hideSpy).not.toHaveBeenCalled();
       });
@@ -618,9 +617,9 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
 
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(onBeforeSpy).toHaveBeenCalled();
         expect(onAfterSpy).toHaveBeenCalled();
       });
@@ -634,10 +633,10 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         commandListElm.querySelector('[data-command="command2"]').dispatchEvent(new Event('click'));
 
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(actionMock).toHaveBeenCalled();
       });
 
@@ -650,10 +649,10 @@ describe('ContextMenu Plugin', () => {
         plugin.addonOptions.onCommand = onCommandMock;
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         commandListElm.querySelector('[data-command="command2"]').dispatchEvent(new Event('click'));
 
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(onCommandMock).toHaveBeenCalled();
       });
 
@@ -721,15 +720,15 @@ describe('ContextMenu Plugin', () => {
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
-        const commandItemElm1 = commandListElm.querySelector('.slick-context-menu-item') as HTMLDivElement;
-        const commandLabelElm1 = commandItemElm1.querySelector('.slick-context-menu-content') as HTMLSpanElement;
-        const commandIconElm1 = commandItemElm1.querySelector('.slick-context-menu-icon') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const commandItemElm1 = commandListElm.querySelector('.slick-menu-item') as HTMLDivElement;
+        const commandLabelElm1 = commandItemElm1.querySelector('.slick-menu-content') as HTMLSpanElement;
+        const commandIconElm1 = commandItemElm1.querySelector('.slick-menu-icon') as HTMLDivElement;
 
         expect(plugin.menuElement).toBeTruthy();
         expect(closeBtnElm).toBeTruthy();
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(1);
-        expect(commandItemElm1.classList.contains('slick-context-menu-item-disabled')).toBeFalsy();
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(1);
+        expect(commandItemElm1.classList.contains('slick-menu-item-disabled')).toBeFalsy();
         expect(commandIconElm1.classList.contains('fa-clone')).toBeTruthy();
         expect(commandLabelElm1.textContent).toBe('Copy');
 
@@ -776,13 +775,13 @@ describe('ContextMenu Plugin', () => {
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
-        const commandListElm = contextMenuElm.querySelector('.slick-context-menu-command-list') as HTMLDivElement;
-        const commandItemElm1 = commandListElm.querySelector('.slick-context-menu-item') as HTMLDivElement;
+        const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const commandItemElm1 = commandListElm.querySelector('.slick-menu-item') as HTMLDivElement;
 
         expect(plugin.menuElement).toBeTruthy();
         expect(closeBtnElm).toBeTruthy();
-        expect(commandListElm.querySelectorAll('.slick-context-menu-item').length).toBe(1);
-        expect(commandItemElm1.classList.contains('slick-context-menu-item-disabled')).toBeFalsy();
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(1);
+        expect(commandItemElm1.classList.contains('slick-menu-item-disabled')).toBeFalsy();
 
         commandItemElm1.dispatchEvent(new CustomEvent('click'));
         expect(execSpy).toHaveBeenCalledWith('copy', false, 'Doe');
@@ -1217,29 +1216,29 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-context-menu-option-list') as HTMLDivElement;
+        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
 
-        expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="display: block; width: auto; top: 0px; left: 0px;" aria-expanded="true">
-            <div class="slick-context-menu-option-list">
-              <div class="option-header with-close no-title">
-                <button class="close" type="button" data-dismiss="slick-context-menu" aria-label="Close">×</button>
+          `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
+            <div class="slick-menu-option-list">
+              <div class="slick-option-header with-close no-title">
+                <button class="close" type="button" data-dismiss="slick-menu" aria-label="Close">×</button>
               </div>
-              <li class="slick-context-menu-item purple" data-option="option1">
-                <div class="slick-context-menu-icon">◦</div>
-                <span class="slick-context-menu-content">Option 1</span>
+              <li class="slick-menu-item purple" data-option="option1">
+                <div class="slick-menu-icon">◦</div>
+                <span class="slick-menu-content">Option 1</span>
               </li>
-              <li class="slick-context-menu-item" data-option="option2">
-                <div class="slick-context-menu-icon">◦</div>
-                <span class="slick-context-menu-content">Option 2</span>
+              <li class="slick-menu-item" data-option="option2">
+                <div class="slick-menu-icon">◦</div>
+                <span class="slick-menu-content">Option 2</span>
               </li>
-              <li class="slick-context-menu-item slick-context-menu-item-divider"></li>
-              <li class="slick-context-menu-item sky" data-option="delete-row">
-                <div class="slick-context-menu-icon mdi mdi-checked"></div>
-                <span class="slick-context-menu-content underline">Delete Row</span>
+              <li class="slick-menu-item slick-menu-item-divider"></li>
+              <li class="slick-menu-item sky" data-option="delete-row">
+                <div class="slick-menu-icon mdi mdi-checked"></div>
+                <span class="slick-menu-content underline">Delete Row</span>
               </li>
-              <li class="slick-context-menu-item slick-context-menu-item-divider"></li>
+              <li class="slick-menu-item slick-menu-item-divider"></li>
           </div>
         </div>`));
       });
@@ -1253,22 +1252,22 @@ describe('ContextMenu Plugin', () => {
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-context-menu-option-list') as HTMLDivElement;
-        const optionItemElm1 = optionListElm.querySelectorAll('.slick-context-menu-item')[0] as HTMLDivElement;
-        const optionItemElm2 = optionListElm.querySelectorAll('.slick-context-menu-item')[1] as HTMLDivElement;
-        const optionItemElm3 = optionListElm.querySelectorAll('.slick-context-menu-item')[2] as HTMLDivElement;
-        const optionLabelElm1 = optionItemElm1.querySelector('.slick-context-menu-content') as HTMLSpanElement;
-        const optionIconElm1 = optionItemElm1.querySelector('.slick-context-menu-icon') as HTMLDivElement;
-        const optionLabelElm3 = optionItemElm3.querySelector('.slick-context-menu-content') as HTMLSpanElement;
-        const optionIconElm3 = optionItemElm3.querySelector('.slick-context-menu-icon') as HTMLDivElement;
+        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
+        const optionItemElm1 = optionListElm.querySelectorAll('.slick-menu-item')[0] as HTMLDivElement;
+        const optionItemElm2 = optionListElm.querySelectorAll('.slick-menu-item')[1] as HTMLDivElement;
+        const optionItemElm3 = optionListElm.querySelectorAll('.slick-menu-item')[2] as HTMLDivElement;
+        const optionLabelElm1 = optionItemElm1.querySelector('.slick-menu-content') as HTMLSpanElement;
+        const optionIconElm1 = optionItemElm1.querySelector('.slick-menu-icon') as HTMLDivElement;
+        const optionLabelElm3 = optionItemElm3.querySelector('.slick-menu-content') as HTMLSpanElement;
+        const optionIconElm3 = optionItemElm3.querySelector('.slick-menu-icon') as HTMLDivElement;
 
         expect(plugin.menuElement).toBeTruthy();
         expect(closeBtnElm).toBeTruthy();
-        expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(4);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(4);
         expect(optionItemElm1.classList.contains('purple')).toBeTruthy();
-        expect(optionIconElm1.className).toBe('slick-context-menu-icon');
+        expect(optionIconElm1.className).toBe('slick-menu-icon');
         expect(optionLabelElm1.textContent).toBe('Option 1');
-        expect(optionItemElm2.classList.contains('slick-context-menu-item-divider')).toBeTruthy();
+        expect(optionItemElm2.classList.contains('slick-menu-item-divider')).toBeTruthy();
         expect(optionItemElm2.innerHTML).toBe('');
         expect(optionIconElm3.classList.contains('mdi-checked')).toBeTruthy();
         expect(optionLabelElm3.textContent).toBe('Delete Row');
@@ -1295,15 +1294,15 @@ describe('ContextMenu Plugin', () => {
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-context-menu-option-list') as HTMLDivElement;
-        const optionItemElm1 = optionListElm.querySelectorAll('.slick-context-menu-item')[0] as HTMLDivElement;
-        const optionLabelElm1 = optionItemElm1.querySelector('.slick-context-menu-content') as HTMLSpanElement;
-        const optionIconElm1 = optionItemElm1.querySelector('.slick-context-menu-icon') as HTMLDivElement;
+        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
+        const optionItemElm1 = optionListElm.querySelectorAll('.slick-menu-item')[0] as HTMLDivElement;
+        const optionLabelElm1 = optionItemElm1.querySelector('.slick-menu-content') as HTMLSpanElement;
+        const optionIconElm1 = optionItemElm1.querySelector('.slick-menu-icon') as HTMLDivElement;
 
         expect(closeBtnElm).toBeTruthy();
-        expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(4);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(4);
         expect(optionItemElm1.classList.contains('purple')).toBeTruthy();
-        expect(optionIconElm1.className).toBe('slick-context-menu-icon');
+        expect(optionIconElm1.className).toBe('slick-menu-icon');
         expect(optionLabelElm1.textContent).toBe('Option 1');
         expect(document.body.innerHTML.includes('Option 2')).not.toBeTruthy();
       });
@@ -1317,15 +1316,15 @@ describe('ContextMenu Plugin', () => {
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-context-menu-option-list') as HTMLDivElement;
-        const optionItemElm1 = optionListElm.querySelectorAll('.slick-context-menu-item')[0] as HTMLDivElement;
-        const optionLabelElm1 = optionItemElm1.querySelector('.slick-context-menu-content') as HTMLSpanElement;
-        const optionIconElm1 = optionItemElm1.querySelector('.slick-context-menu-icon') as HTMLDivElement;
+        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
+        const optionItemElm1 = optionListElm.querySelectorAll('.slick-menu-item')[0] as HTMLDivElement;
+        const optionLabelElm1 = optionItemElm1.querySelector('.slick-menu-content') as HTMLSpanElement;
+        const optionIconElm1 = optionItemElm1.querySelector('.slick-menu-icon') as HTMLDivElement;
 
         expect(closeBtnElm).toBeTruthy();
-        expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(optionItemElm1.classList.contains('purple')).toBeTruthy();
-        expect(optionIconElm1.className).toBe('slick-context-menu-icon');
+        expect(optionIconElm1.className).toBe('slick-menu-icon');
         expect(optionLabelElm1.textContent).toBe('Option 1');
         expect(document.body.innerHTML.includes('Option 2')).toBeTruthy();
       });
@@ -1337,13 +1336,13 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-context-menu-option-list') as HTMLDivElement;
+        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
         const optionItemElm2 = optionListElm.querySelector('[data-option="option2"]') as HTMLDivElement;
-        const optionContentElm2 = optionItemElm2.querySelector('.slick-context-menu-content') as HTMLDivElement;
+        const optionContentElm2 = optionItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
 
-        expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(optionContentElm2.textContent).toBe('Option 2');
-        expect(optionItemElm2.classList.contains('slick-context-menu-item-disabled')).toBeTruthy();
+        expect(optionItemElm2.classList.contains('slick-menu-item-disabled')).toBeTruthy();
       });
 
       it('should create a Context Menu and expect button to be disabled when option property is hidden', () => {
@@ -1353,13 +1352,13 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-context-menu-option-list') as HTMLDivElement;
+        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
         const optionItemElm2 = optionListElm.querySelector('[data-option="option2"]') as HTMLDivElement;
-        const optionContentElm2 = optionItemElm2.querySelector('.slick-context-menu-content') as HTMLDivElement;
+        const optionContentElm2 = optionItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
 
-        expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(optionContentElm2.textContent).toBe('Option 2');
-        expect(optionItemElm2.classList.contains('slick-context-menu-item-hidden')).toBeTruthy();
+        expect(optionItemElm2.classList.contains('slick-menu-item-hidden')).toBeTruthy();
       });
 
       it('should create a Context Menu item with "iconCssClass" and expect extra css classes added to the icon element', () => {
@@ -1369,12 +1368,12 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-context-menu-option-list') as HTMLDivElement;
+        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
         const optionItemElm2 = optionListElm.querySelector('[data-option="option2"]') as HTMLDivElement;
-        const optionContentElm2 = optionItemElm2.querySelector('.slick-context-menu-content') as HTMLDivElement;
-        const optionIconElm2 = optionItemElm2.querySelector('.slick-context-menu-icon') as HTMLDivElement;
+        const optionContentElm2 = optionItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
+        const optionIconElm2 = optionItemElm2.querySelector('.slick-menu-icon') as HTMLDivElement;
 
-        expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(optionContentElm2.textContent).toBe('Option 2');
         expect(optionIconElm2.classList.contains('underline')).toBeTruthy();
         expect(optionIconElm2.classList.contains('sky')).toBeTruthy();
@@ -1388,11 +1387,11 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-context-menu-option-list') as HTMLDivElement;
+        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
         const optionItemElm2 = optionListElm.querySelector('[data-option="option2"]') as HTMLDivElement;
-        const optionContentElm2 = optionItemElm2.querySelector('.slick-context-menu-content') as HTMLDivElement;
+        const optionContentElm2 = optionItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
 
-        expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(optionContentElm2.textContent).toBe('Help');
         expect(optionContentElm2.classList.contains('italic')).toBeTruthy();
         expect(optionContentElm2.classList.contains('blue')).toBeTruthy();
@@ -1405,11 +1404,11 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-context-menu-option-list') as HTMLDivElement;
+        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
         const optionItemElm2 = optionListElm.querySelector('[data-option="option2"]') as HTMLDivElement;
-        const optionContentElm2 = optionItemElm2.querySelector('.slick-context-menu-content') as HTMLDivElement;
+        const optionContentElm2 = optionItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
 
-        expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(optionContentElm2.textContent).toBe('Option 2');
         expect(optionItemElm2.title).toBe('some tooltip');
       });
@@ -1423,10 +1422,10 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-context-menu-option-list') as HTMLDivElement;
-        const optionListTitleElm = optionListElm.querySelector('.title') as HTMLDivElement;
+        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
+        const optionListTitleElm = optionListElm.querySelector('.slick-menu-title') as HTMLDivElement;
 
-        expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(optionListTitleElm.textContent).toBe('The Options!');
       });
 
@@ -1442,12 +1441,12 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-context-menu-option-list') as HTMLDivElement;
+        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
         const optionItemElm = optionListElm.querySelector('[data-option="none"]') as HTMLDivElement;
-        const optionContentElm = optionItemElm.querySelector('.slick-context-menu-content') as HTMLDivElement;
-        const optionListTitleElm = optionListElm.querySelector('.title') as HTMLDivElement;
+        const optionContentElm = optionItemElm.querySelector('.slick-menu-content') as HTMLDivElement;
+        const optionListTitleElm = optionListElm.querySelector('.slick-menu-title') as HTMLDivElement;
 
-        expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(optionListTitleElm.textContent).toBe(`Liste d'options`);
         expect(optionContentElm.textContent).toBe(`Aucun`);
       });
@@ -1479,10 +1478,10 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-context-menu-option-list') as HTMLDivElement;
+        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
         optionListElm.querySelector('[data-option="option2"]').dispatchEvent(new Event('click'));
 
-        expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(actionMock).toHaveBeenCalled();
       });
 
@@ -1496,10 +1495,10 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-context-menu-option-list') as HTMLDivElement;
+        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
         optionListElm.querySelector('[data-option="option2"]').dispatchEvent(new Event('click'));
 
-        expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(onOptionSelectedMock).toHaveBeenCalled();
       });
 
@@ -1513,10 +1512,10 @@ describe('ContextMenu Plugin', () => {
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-        const optionListElm = contextMenuElm.querySelector('.slick-context-menu-option-list') as HTMLDivElement;
+        const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
         optionListElm.querySelector('[data-option="option2"]').dispatchEvent(new Event('click'));
 
-        expect(optionListElm.querySelectorAll('.slick-context-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(onOptionSelectedMock).not.toHaveBeenCalled();
       });
     });

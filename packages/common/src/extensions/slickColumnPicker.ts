@@ -102,7 +102,7 @@ export class SlickColumnPicker {
     this._eventHandler.subscribe(this.grid.onColumnsReordered, updateColumnPickerOrder.bind(this) as EventListener);
 
     this._menuElm = createDomElement('div', {
-      className: `slick-columnpicker ${this._gridUid}`,
+      className: `slick-column-picker ${this._gridUid}`,
       style: { display: 'none' },
     });
     this._menuElm.setAttribute('aria-expanded', 'false');
@@ -111,7 +111,7 @@ export class SlickColumnPicker {
     addCloseButtomElement.call(this, this._menuElm);
     addColumnTitleElementWhenDefined.call(this, this._menuElm);
 
-    this._listElm = createDomElement('span', { className: 'slick-columnpicker-list' });
+    this._listElm = createDomElement('span', { className: 'slick-column-picker-list' });
     this._bindEventService.bind(this._menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener);
 
     // Hide the menu on outside click.

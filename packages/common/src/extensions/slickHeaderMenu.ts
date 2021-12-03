@@ -56,7 +56,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     protected readonly sortService: SortService,
   ) {
     super(extensionUtility, pubSubService, sharedService);
-    this._menuCssPrefix = 'slick-header-menu';
+    this._menuCssPrefix = 'slick-menu';
+    this._menuPluginCssPrefix = 'slick-header-menu';
     this._camelPluginName = 'headerMenu';
     this.sharedService.gridOptions.headerMenu = this.addHeaderMenuCustomCommands(this.sharedService.columnDefinitions);
     this.init(sharedService.gridOptions.headerMenu);

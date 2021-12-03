@@ -52,8 +52,8 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
 
     cy.get('.slick-header-menu')
       .should('be.visible')
-      .children('.slick-header-menu-item:nth-of-type(4)')
-      .children('.slick-header-menu-content')
+      .children('.slick-menu-item:nth-of-type(4)')
+      .children('.slick-menu-content')
       .should('contain', 'Sort Descending')
       .click();
 
@@ -87,8 +87,8 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
 
     cy.get('.slick-header-menu')
       .should('be.visible')
-      .children('.slick-header-menu-item:nth-of-type(3)')
-      .children('.slick-header-menu-content')
+      .children('.slick-menu-item:nth-of-type(3)')
+      .children('.slick-menu-content')
       .should('contain', 'Sort Ascending')
       .click();
 
@@ -110,7 +110,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
     cy.get('.grid2')
       .find('.slick-header-menu')
       .should('be.visible')
-      .children('.slick-header-menu-item:nth-of-type(4)')
+      .children('.slick-menu-item:nth-of-type(4)')
       .click();
 
     cy.get('.grid2')
@@ -141,7 +141,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
       })
       .then(() => {
         cy.get(`.slick-grid-menu.${gridUid}.dropleft`)
-          .find('.slick-grid-menu-item:nth(1)')
+          .find('.slick-menu-item:nth(1)')
           .find('span')
           .contains('Clear all Sorting')
           .click();
@@ -210,7 +210,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
       })
       .then(() => {
         cy.get(`.slick-grid-menu.${gridUid}.dropright`)
-          .find('.slick-grid-menu-item:nth(0)')
+          .find('.slick-menu-item:nth(0)')
           .find('span')
           .contains('Clear all Filters')
           .click();
@@ -258,7 +258,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
       })
       .then(() => {
         cy.get(`.slick-grid-menu.${gridUid}`)
-          .find('.slick-grid-menu-list')
+          .find('.slick-column-picker-list')
           .children('li')
           .each(($child, index) => {
             if (index <= 5) {
@@ -275,7 +275,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
     const newColumnList = ['Duration (days)', '% Complete', 'Start', 'Finish', 'Effort Driven'];
     cy.get('.grid1')
       .get('.slick-grid-menu:visible')
-      .find('.slick-grid-menu-list')
+      .find('.slick-column-picker-list')
       .children('li:visible:nth(0)')
       .children('label')
       .should('contain', 'Title')
@@ -306,7 +306,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
       })
       .then(() => {
         cy.get(`.slick-grid-menu.${gridUid}`)
-          .find('.slick-grid-menu-list')
+          .find('.slick-column-picker-list')
           .children('li')
           .each(($child, index) => {
             if (index <= 5) {
@@ -323,7 +323,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
     const newColumnList = ['Title', 'Duration (days)', 'Start', 'Finish', 'Effort Driven'];
     cy.get('.grid2')
       .get('.slick-grid-menu:visible')
-      .find('.slick-grid-menu-list')
+      .find('.slick-column-picker-list')
       .children('li:visible:nth(2)')
       .children('label')
       .should('contain', '% Complete')
@@ -345,7 +345,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
       .find('button.slick-grid-menu-button')
       .click({ force: true });
 
-    cy.get('.slick-grid-menu-list')
+    cy.get('.slick-column-picker-list')
       .children('li')
       .each(($child, index) => {
         if (index <= 5) {
@@ -365,7 +365,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
     const newColumnList = ['Duration (days)', '% Complete', 'Finish', 'Effort Driven'];
     cy.get('.grid1')
       .get('.slick-grid-menu:visible')
-      .find('.slick-grid-menu-list')
+      .find('.slick-column-picker-list')
       .children('li:visible:nth(3)')
       .children('label')
       .should('contain', 'Start')
@@ -390,8 +390,8 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
       .trigger('contextmenu')
       .invoke('show');
 
-    cy.get('.slick-columnpicker')
-      .find('.slick-columnpicker-list')
+    cy.get('.slick-column-picker')
+      .find('.slick-column-picker-list')
       .children()
       .each(($child, index) => {
         if (index <= 5) {
@@ -399,15 +399,15 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
         }
       });
 
-    cy.get('.slick-columnpicker')
-      .find('.slick-columnpicker-list')
+    cy.get('.slick-column-picker')
+      .find('.slick-column-picker-list')
       .children('li:nth-of-type(3)')
       .children('label')
       .should('contain', '% Complete')
       .click();
 
     cy.get('.grid2')
-      .get('.slick-columnpicker:visible')
+      .get('.slick-column-picker:visible')
       .find('.close')
       .click();
 
@@ -440,7 +440,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
       })
       .then(() => {
         cy.get(`.slick-grid-menu.${gridUid}`)
-          .find('.slick-grid-menu-list')
+          .find('.slick-column-picker-list')
           .children('li')
           .each(($child, index) => {
             if (index <= 5) {
@@ -476,7 +476,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
       })
       .then(() => {
         cy.get(`.slick-grid-menu.${gridUid}`)
-          .find('.slick-grid-menu-list')
+          .find('.slick-column-picker-list')
           .children('li')
           .each(($child, index) => {
             if (index <= 5) {

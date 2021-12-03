@@ -259,11 +259,11 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .trigger('contextmenu')
       .invoke('show');
 
-    cy.get('.slick-columnpicker-list')
+    cy.get('.slick-column-picker-list')
       .find('input[type="checkbox"]:checked')
       .should('have.length', 11 - 2);
 
-    cy.get('.slick-columnpicker > button.close')
+    cy.get('.slick-column-picker > button.close')
       .click();
   });
 
@@ -517,11 +517,11 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .trigger('contextmenu')
       .invoke('show');
 
-    cy.get('.slick-columnpicker-list')
+    cy.get('.slick-column-picker-list')
       .find('input[type="checkbox"]:checked')
       .should('have.length', 11);
 
-    cy.get('.slick-columnpicker > button.close')
+    cy.get('.slick-column-picker > button.close')
       .click();
   });
 
@@ -608,8 +608,8 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
 
     cy.get('.slick-header-menu')
       .should('be.visible')
-      .children('.slick-header-menu-item:nth-of-type(1)')
-      .children('.slick-header-menu-content')
+      .children('.slick-menu-item:nth-of-type(1)')
+      .children('.slick-menu-content')
       .should('contain', 'Freeze Column')
       .click();
   });
