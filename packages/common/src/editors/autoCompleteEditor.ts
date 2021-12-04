@@ -560,7 +560,10 @@ export class AutoCompleteEditor implements Editor {
     }
 
     // user might pass his own autocomplete options
-    const autoCompleteOptions: AutocompleteOption = this.columnEditor.editorOptions;
+    const autoCompleteOptions: AutocompleteOption = {
+      position: { of: this._$editorInputGroupElm ?? this._$input },
+      ...this.columnEditor.editorOptions,
+    };
 
     // assign the collection to a temp variable before filtering/sorting the collection
     let finalCollection = collection;

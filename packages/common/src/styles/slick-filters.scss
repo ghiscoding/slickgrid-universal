@@ -3,6 +3,10 @@ $slick-filled-filter-border:                                $slick-form-control-
 $slick-filled-filter-box-shadow:                            $slick-form-control-focus-border-color !default;
 $slick-filled-filter-font-weight:                           400 !default;
 
+// ----------------------------------------------
+// applied stylinh when Filters are filled in
+// ----------------------------------------------
+
 .slick-headerrow {
   input.search-filter.filled,
     .search-filter.filled input,

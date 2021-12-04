@@ -319,11 +319,12 @@ export class Example11 {
       },
       enableContextMenu: true,
       contextMenu: {
+        hideCloseButton: false,
         commandItems: [
           {
             command: 'modal',
             title: 'Mass Update',
-            // iconCssClass: 'mdi mdi-table-edit',
+            iconCssClass: 'mdi mdi-table-edit',
           },
         ],
         onCommand: (e, args) => this.executeCommand(e, args)
