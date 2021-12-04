@@ -216,6 +216,9 @@ li.hidden {
         margin-bottom: 0;
       }
     }
+    .slick-command-header.with-close.no-title {
+      margin: var(--slick-menu-close-btn-margin-without-title, $slick-menu-close-btn-margin-without-title);
+    }
 
     .close {
       cursor: pointer;
