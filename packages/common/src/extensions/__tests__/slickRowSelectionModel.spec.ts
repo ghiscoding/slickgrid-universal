@@ -140,7 +140,7 @@ describe('SlickRowSelectionModel Plugin', () => {
       fromCell: 0, fromRow: 2, toCell: 2, toRow: 2,
       contains: expect.toBeFunction(), toString: expect.toBeFunction(), isSingleCell: expect.toBeFunction(), isSingleRow: expect.toBeFunction(),
     }];
-    expect(setSelectedRangeSpy).toHaveBeenCalledWith(expectedRanges);
+    expect(setSelectedRangeSpy).toHaveBeenCalledWith(expectedRanges, 'SlickRowSelectionModel.setSelectedRows');
     expect(plugin.getSelectedRanges()).toEqual(expectedRanges);
     expect(plugin.getSelectedRows()).toEqual([0, 2]);
   });
@@ -153,8 +153,14 @@ describe('SlickRowSelectionModel Plugin', () => {
 
   it('should call "setSelectedRanges" with valid ranges input and expect to "onSelectedRangesChanged" to be triggered', () => {
     const onSelectedRangeSpy = jest.spyOn(plugin.onSelectedRangesChanged, 'notify');
+
     plugin.setSelectedRanges([{ fromCell: 0, fromRow: 0, toCell: 2, toRow: 0, }]);
-    expect(onSelectedRangeSpy).toHaveBeenCalledWith([{ fromCell: 0, fromRow: 0, toCell: 2, toRow: 0, }]);
+
+    expect(onSelectedRangeSpy).toHaveBeenCalledWith(
+      [{ fromCell: 0, fromRow: 0, toCell: 2, toRow: 0, }],
+      expect.objectContaining({
+        detail: { caller: 'SlickRowSelectionModel.setSelectedRanges' }
+      }));
   });
 
   it('should call "setSelectedRanges" with Slick Ranges when triggered by "onActiveCellChanged" and "selectActiveRow" is True', () => {

@@ -435,9 +435,10 @@ export interface SlickGrid {
 
   /**
    * Accepts an array of row indices and applies the current selectedCellCssClass to the cells in the row, respecting whether cells have been flagged as selectable.
-   * @param rowsArray An array of row numbers.
+   * @param {Array<number>} rowsArray - an array of row numbers.
+   * @param {String} caller - an optional string to identify who called the method
    */
-  setSelectedRows(rowsArray: number[]): void;
+  setSelectedRows(rowsArray: number[], caller?: string): void;
 
   /**
    * Unregisters a current selection model and registers a new one. See the definition of SelectionModel for more information.
@@ -571,7 +572,7 @@ export interface OnHeaderRowCellRenderedEventArgs extends SlickGridEventData { n
 export interface OnKeyDownEventArgs extends SlickGridEventData { row: number; cell: number; }
 export interface OnValidationErrorEventArgs extends SlickGridEventData { row: number; cell: number; validationResults: EditorValidationResult; column: Column; editor: Editor; cellNode: HTMLDivElement; }
 export interface OnRenderedEventArgs extends SlickGridEventData { startRow: number; endRow: number; }
-export interface OnSelectedRowsChangedEventArgs extends SlickGridEventData { rows: number[]; previousSelectedRows: number[]; }
+export interface OnSelectedRowsChangedEventArgs extends SlickGridEventData { rows: number[]; previousSelectedRows: number[]; changedSelectedRows: number[]; changedUnselectedRows: number[]; caller: string; }
 export interface OnSetOptionsEventArgs extends SlickGridEventData { optionsBefore: GridOption; optionsAfter: GridOption; }
 
 export interface OnScrollEventArgs extends SlickGridEventData { scrollLeft: number; scrollTop: number; }

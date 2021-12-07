@@ -54,16 +54,18 @@ export class SlickRowSelectionModel {
   }
 
   setSelectedRows(rows: number[]) {
-    this.setSelectedRanges(this.rowsToRanges(rows));
+    this.setSelectedRanges(this.rowsToRanges(rows), 'SlickRowSelectionModel.setSelectedRows');
   }
 
-  setSelectedRanges(ranges: CellRange[]) {
+  setSelectedRanges(ranges: CellRange[], caller = 'SlickRowSelectionModel.setSelectedRanges') {
     // simple check for: empty selection didn't change, prevent firing onSelectedRangesChanged
     if ((!this._ranges || this._ranges.length === 0) && (!ranges || ranges.length === 0)) {
       return;
     }
     this._ranges = ranges;
-    this.onSelectedRangesChanged.notify(this._ranges);
+    const eventData = new Slick.EventData();
+    Object.defineProperty(eventData, 'detail', { writable: true, configurable: true, value: { caller } });
+    this.onSelectedRangesChanged.notify(this._ranges, eventData);
   }
 
   //

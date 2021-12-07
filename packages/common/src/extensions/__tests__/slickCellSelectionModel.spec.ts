@@ -259,6 +259,7 @@ describe('CellSelectionModel Plugin', () => {
     jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
     const scrollRowSpy = jest.spyOn(gridStub, 'scrollRowIntoView');
     const scrollCellSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
+    const onSelectedRangeSpy = jest.spyOn(plugin.onSelectedRangesChanged, 'notify');
 
     plugin.init(gridStub);
     plugin.setSelectedRanges([
@@ -269,15 +270,17 @@ describe('CellSelectionModel Plugin', () => {
     const keyDownEvent = addJQueryEventPropagation(new Event('keydown'), 'shiftKey', 'ArrowDown');
     gridStub.onKeyDown.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
 
-    expect(setSelectRangeSpy).toHaveBeenCalledWith([
+    const expectedRangeCalled = [
       { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4, contains: expect.toBeFunction(), } as unknown as SlickRange,
       {
         fromCell: 2, fromRow: 3, toCell: 2, toRow: 4,
         contains: expect.toBeFunction(), toString: expect.toBeFunction(), isSingleCell: expect.toBeFunction(), isSingleRow: expect.toBeFunction(),
       },
-    ]);
+    ];
+    expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
     expect(scrollCellSpy).toHaveBeenCalledWith(4, 2, false);
     expect(scrollRowSpy).toHaveBeenCalledWith(4);
+    expect(onSelectedRangeSpy).toHaveBeenCalledWith(expectedRangeCalled, expect.objectContaining({ detail: { caller: 'SlickCellSelectionModel.setSelectedRanges' } }));
   });
 
   it('should call "rangesAreEqual" and expect True when both ranges are equal', () => {

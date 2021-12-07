@@ -1,5 +1,5 @@
 import { SlickCheckboxSelectColumn } from '../slickCheckboxSelectColumn';
-import { Column, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import { Column, OnSelectedRowsChangedEventArgs, SlickGrid, SlickNamespace, } from '../../interfaces/index';
 import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
 
 declare const Slick: SlickNamespace;
@@ -189,7 +189,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(plugin).toBeTruthy();
     expect(stopPropagationSpy).toHaveBeenCalled();
     expect(stopImmediatePropagationSpy).toHaveBeenCalled();
-    expect(setSelectedRowSpy).toHaveBeenCalledWith([0, 1, 2]);
+    expect(setSelectedRowSpy).toHaveBeenCalledWith([0, 1, 2], 'click.selectAll');
   });
 
   it('should create the plugin and call "setOptions" and expect options changed and hide both Select All toggle when setting "hideSelectAllCheckbox: false" and "hideInColumnTitleRow: true"', () => {
@@ -221,7 +221,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin.selectRows([1, 2, 3]);
     plugin.deSelectRows([1, 2, 3, 6, -1]);
 
-    expect(setSelectedRowSpy).toHaveBeenNthCalledWith(2, [1]); // only 1 is found which was previous false
+    expect(setSelectedRowSpy).toHaveBeenNthCalledWith(2, [1], 'SlickCheckboxSelectColumn.deSelectRows'); // only 1 is found which was previous false
   });
 
   it('should pre-select some rows in a delay when "preselectedRows" is defined with a row selection model', (done) => {
@@ -250,7 +250,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin.toggleRowSelection(2);
 
     expect(setActiveCellSpy).toHaveBeenCalledWith(2, 0);
-    expect(setSelectedRowSpy).toHaveBeenNthCalledWith(2, [1, 2, 2]);
+    expect(setSelectedRowSpy).toHaveBeenNthCalledWith(2, [1, 2, 2], 'click.toggle');
   });
 
   it('should call "toggleRowSelection" and expect "setActiveCell" not being called when the selectableOverride is returning false', () => {
@@ -279,7 +279,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin.selectRows([2, 3]);
     plugin.toggleRowSelection(2);
 
-    expect(setSelectedRowSpy).toHaveBeenNthCalledWith(2, [1]);
+    expect(setSelectedRowSpy).toHaveBeenNthCalledWith(2, [1], 'click.toggle');
     expect(setActiveCellSpy).toHaveBeenCalledWith(2, 0);
   });
 
@@ -336,7 +336,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     inputCheckboxElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
 
     expect(inputCheckboxElm).toBeTruthy();
-    expect(setSelectedRowSpy).toHaveBeenCalledWith([]);
+    expect(setSelectedRowSpy).toHaveBeenCalledWith([], 'click.selectAll');
   });
 
   it('should call the "create" method and expect plugin to be created with checkbox column to be created at position 0 when using default', () => {
@@ -488,7 +488,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
     const clickEvent = addJQueryEventPropagation(new Event('keyDown'), '', ' ', checkboxElm);
-    gridStub.onSelectedRowsChanged.notify({ rows: [2, 3], previousSelectedRows: [0, 1], grid: gridStub }, clickEvent);
+    gridStub.onSelectedRowsChanged.notify({ rows: [2, 3], previousSelectedRows: [0, 1], grid: gridStub } as OnSelectedRowsChangedEventArgs, clickEvent);
 
     expect(plugin).toBeTruthy();
     expect(invalidateRowSpy).toHaveBeenCalled();
@@ -519,7 +519,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
     const clickEvent = addJQueryEventPropagation(new Event('keyDown'), '', ' ', checkboxElm);
-    gridStub.onSelectedRowsChanged.notify({ rows: [2, 3], previousSelectedRows: [0, 1], grid: gridStub }, clickEvent);
+    gridStub.onSelectedRowsChanged.notify({ rows: [2, 3], previousSelectedRows: [0, 1], grid: gridStub } as OnSelectedRowsChangedEventArgs, clickEvent);
 
     expect(plugin).toBeTruthy();
     expect(invalidateRowSpy).toHaveBeenCalled();
