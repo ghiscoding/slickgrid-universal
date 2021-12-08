@@ -41,6 +41,7 @@ export class DateRangeFilter implements Filter {
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
+  filterContainerElm!: HTMLDivElement;
 
   constructor(protected readonly translaterService: TranslaterService) {
     this._bindEventService = new BindingEventService();
@@ -95,6 +96,7 @@ export class DateRangeFilter implements Filter {
     this.callback = args.callback;
     this.columnDef = args.columnDef;
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
+    this.filterContainerElm = args.filterContainerElm;
 
     // step 1, create the DOM Element of the filter which contain the compound Operator+Input
     this._filterElm = this.createDomElement(this.searchTerms);
@@ -272,8 +274,7 @@ export class DateRangeFilter implements Filter {
    */
   protected createDomElement(searchTerms?: SearchTerm[]): HTMLDivElement {
     const columnId = this.columnDef?.id ?? '';
-    const headerElm = this.grid.getHeaderRowColumn(columnId);
-    emptyElement(headerElm);
+    emptyElement(this.filterContainerElm);
 
     // create the DOM Select dropdown for the Operator
     this._filterDivInputElm = this.buildDatePickerInput(searchTerms);
@@ -296,7 +297,7 @@ export class DateRangeFilter implements Filter {
 
     // append the new DOM element to the header row
     if (this._filterDivInputElm) {
-      headerElm.appendChild(this._filterDivInputElm);
+      this.filterContainerElm.appendChild(this._filterDivInputElm);
     }
 
     return this._filterDivInputElm;

@@ -36,7 +36,8 @@ describe('InputPasswordFilter', () => {
     filterArguments = {
       grid: gridStub,
       columnDef: mockColumn,
-      callback: jest.fn()
+      callback: jest.fn(),
+      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
 
     filter = new InputPasswordFilter();

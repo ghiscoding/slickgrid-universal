@@ -26,6 +26,7 @@ export class InputMaskFilter extends InputFilter {
     this.callback = args.callback;
     this.columnDef = args.columnDef;
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
+    this.filterContainerElm = args.filterContainerElm;
 
     // get input mask from params (can be in columnDef or columnFilter params)
     if (this.columnDef?.params?.mask) {

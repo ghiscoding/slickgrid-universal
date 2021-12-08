@@ -1611,6 +1611,47 @@ describe('FilterService', () => {
     });
   });
 
+
+  describe('drawFilterTemplate method', () => {
+    let mockColumn1: Column;
+    let mockColumn2: Column;
+    let mockColumn3: Column;
+    let mockArgs1;
+    let mockArgs2;
+    let mockNewFilters: CurrentFilter[];
+
+    beforeEach(() => {
+      gridOptionMock.enableFiltering = true;
+      gridOptionMock.enableTreeData = false;
+      gridOptionMock.backendServiceApi = undefined;
+      mockColumn1 = { id: 'firstName', name: 'firstName', field: 'firstName', filterable: true, filter: { model: Filters.inputText } };
+      mockColumn2 = { id: 'isActive', name: 'isActive', field: 'isActive', type: FieldType.boolean, filterable: true, filter: { model: Filters.select, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], } };
+      mockColumn3 = { id: 'name', field: 'name', filterable: true, filter: { model: Filters.inputText }  };
+      mockArgs1 = { grid: gridStub, column: mockColumn1, node: document.getElementById(DOM_ELEMENT_ID) };
+      mockArgs2 = { grid: gridStub, column: mockColumn2, node: document.getElementById(DOM_ELEMENT_ID) };
+      mockNewFilters = [
+        { columnId: 'firstName', searchTerms: ['Jane'], operator: 'StartsWith' },
+        { columnId: 'isActive', searchTerms: [false] }
+      ];
+      sharedService.allColumns = [mockColumn1, mockColumn2, mockColumn3];
+    });
+    it('should Draw DOM Element Filter on custom HTML element',  async () => {
+      service.init(gridStub);
+      service.bindLocalOnFilter(gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
+      await service.updateFilters(mockNewFilters);
+
+      const filterContainerElm:HTMLDivElement = document.querySelector('#'+DOM_ELEMENT_ID);
+      const output1 = service.drawFilterTemplate('firstName','#'+DOM_ELEMENT_ID);
+      const output2 = service.drawFilterTemplate('isActive',filterContainerElm);
+      const output3 = service.drawFilterTemplate('selector',filterContainerElm);
+      const output4 = service.drawFilterTemplate('name',filterContainerElm);
+            
+      //expect(output).toBe(output.columnDef.id);
+    });
+  });
+
   describe('Tree Data View', () => {
     beforeEach(() => {
       gridOptionMock.enableTreeData = true;

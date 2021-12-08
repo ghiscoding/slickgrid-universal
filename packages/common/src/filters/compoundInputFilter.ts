@@ -32,6 +32,7 @@ export class CompoundInputFilter implements Filter {
   columnDef!: Column;
   callback!: FilterCallback;
   timer?: NodeJS.Timeout;
+  filterContainerElm!: HTMLDivElement;
 
   constructor(protected readonly translaterService: TranslaterService) {
     this._bindEventService = new BindingEventService();
@@ -90,6 +91,7 @@ export class CompoundInputFilter implements Filter {
     this.columnDef = args.columnDef;
     this.operator = args.operator as OperatorString;
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
+    this.filterContainerElm = args.filterContainerElm;
 
     // analyze if we have any keyboard debounce delay (do we wait for user to finish typing before querying)
     // it is used by default for a backend service but is optional when using local dataset
@@ -241,8 +243,7 @@ export class CompoundInputFilter implements Filter {
    */
   protected createDomElement(searchTerm?: SearchTerm) {
     const columnId = this.columnDef?.id ?? '';
-    const headerElm = this.grid.getHeaderRowColumn(columnId);
-    emptyElement(headerElm);
+    emptyElement(this.filterContainerElm);
 
     // create the DOM Select dropdown for the Operator
     this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.gridOptions);
@@ -284,7 +285,7 @@ export class CompoundInputFilter implements Filter {
 
     // append the new DOM element to the header row
     if (filterContainerElm) {
-      headerElm.appendChild(filterContainerElm);
+      this.filterContainerElm.appendChild(filterContainerElm);
     }
 
     return filterContainerElm;

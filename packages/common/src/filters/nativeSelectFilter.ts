@@ -23,6 +23,7 @@ export class NativeSelectFilter implements Filter {
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
+  filterContainerElm!: HTMLDivElement;
 
   constructor(protected readonly translater: TranslaterService) {
     this._bindEventService = new BindingEventService();
@@ -66,6 +67,7 @@ export class NativeSelectFilter implements Filter {
     this.callback = args.callback;
     this.columnDef = args.columnDef;
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
+    this.filterContainerElm = args.filterContainerElm;
 
     if (!this.grid || !this.columnDef || !this.columnFilter || !this.columnFilter.collection) {
       throw new Error(`[Slickgrid-Universal] You need to pass a "collection" for the Native Select Filter to work correctly.`);
@@ -184,8 +186,7 @@ export class NativeSelectFilter implements Filter {
    */
   protected createDomElement(searchTerm?: SearchTerm): HTMLSelectElement {
     const columnId = this.columnDef?.id ?? '';
-    const headerElm = this.grid.getHeaderRowColumn(columnId);
-    emptyElement(headerElm);
+    emptyElement(this.filterContainerElm);
 
     // create the DOM element & add an ID and filter class
     const searchTermInput = (searchTerm || '') as string;
@@ -203,7 +204,7 @@ export class NativeSelectFilter implements Filter {
       this._currentValues = [searchTermInput];
     }
 
-    headerElm.appendChild(selectElm);
+    this.filterContainerElm.appendChild(selectElm);
 
     return selectElm;
   }

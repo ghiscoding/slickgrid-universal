@@ -29,6 +29,7 @@ export class SliderRangeFilter implements Filter {
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
+  filterContainerElm!: HTMLDivElement;
 
   /** Getter for the Filter Generic Params */
   protected get filterParams(): any {
@@ -88,6 +89,7 @@ export class SliderRangeFilter implements Filter {
     this.callback = args.callback;
     this.columnDef = args.columnDef;
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
+    this.filterContainerElm = args.filterContainerElm;
 
     // step 1, create the DOM Element of the filter & initialize it if searchTerm is filled
     this.$filterElm = this.createDomElement(this.searchTerms);
@@ -188,7 +190,6 @@ export class SliderRangeFilter implements Filter {
         since they are used in SliderRange Filter itself, however any other methods can be used for example the "create", "start", "stop" methods.`);
     }
     const columnId = this.columnDef?.id ?? '';
-    const $headerElm = this.grid.getHeaderRowColumn(columnId);
     const minValue = this.filterProperties.hasOwnProperty('minValue') ? this.filterProperties.minValue : DEFAULT_MIN_VALUE;
     const maxValue = this.filterProperties.hasOwnProperty('maxValue') ? this.filterProperties.maxValue : DEFAULT_MAX_VALUE;
     const step = this.filterProperties.hasOwnProperty('valueStep') ? this.filterProperties.valueStep : DEFAULT_STEP;
@@ -203,7 +204,7 @@ export class SliderRangeFilter implements Filter {
       defaultEndValue = +(this.filterParams.hasOwnProperty('sliderEndValue') ? this.filterParams.sliderEndValue : maxValue);
     }
 
-    $($headerElm).empty();
+    $( this.filterContainerElm).empty();
 
     // create the DOM element & add an ID and filter class
     const $lowestSliderValueElm = $(`
@@ -254,7 +255,7 @@ export class SliderRangeFilter implements Filter {
 
     // append the new DOM element to the header row
     if (this.$filterContainerElm && typeof this.$filterContainerElm.appendTo === 'function') {
-      this.$filterContainerElm.appendTo($headerElm);
+      this.$filterContainerElm.appendTo(this.filterContainerElm);
     }
 
     return this.$filterElm;
