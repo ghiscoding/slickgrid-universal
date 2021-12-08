@@ -21,7 +21,8 @@ import {
   formatNumber,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { SlickerGridInstance } from '@slickgrid-universal/vanilla-bundle';
+import { SalesforceVanillaGridBundle, Slicker } from '@slickgrid-universal/salesforce-vanilla-bundle';
 import { CompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 
 import { ExampleGridOptions } from './example-grid-options';
@@ -90,7 +91,6 @@ export class Example12 {
   editedItems = {};
   isCompositeDisabled = false;
   isMassSelectionDisabled = true;
-  sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
   complexityLevelList = [
     { value: 0, label: 'Very Simple' },
@@ -99,6 +99,9 @@ export class Example12 {
     { value: 3, label: 'Complex' },
     { value: 4, label: 'Very Complex' },
   ];
+
+  // you would typically use `SlickVanillaGridBundle` instead, we use `SalesforceVanillaGridBundle` just to test that Salesforce package
+  sgb: SalesforceVanillaGridBundle;
 
   get slickerGridInstance(): SlickerGridInstance {
     return this.sgb?.instances;
