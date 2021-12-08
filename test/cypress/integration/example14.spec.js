@@ -16,7 +16,7 @@ describe('Example 14 - Columns Resize by Content', { retries: 1 }, () => {
   });
 
   it('should have cell that fit the text content', () => {
-    cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('equal', 79);
+    cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('equal', 83);
     cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('equal', 98);
     cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('equal', 67);
     cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('equal', 110);
@@ -32,7 +32,7 @@ describe('Example 14 - Columns Resize by Content', { retries: 1 }, () => {
   it('should make the grid readonly and export to fit the text by content and expect column width to be a bit smaller', () => {
     cy.get('[data-test="toggle-readonly-btn"]').click();
 
-    cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('equal', 71);
+    cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('equal', 75);
     cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('equal', 98);
     cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('equal', 67);
     cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('equal', 102);
@@ -82,7 +82,7 @@ describe('Example 14 - Columns Resize by Content', { retries: 1 }, () => {
 
     cy.get('.slick-header-menu')
       .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(2)')
+      .children('.slick-menu-item:nth-of-type(1)')
       .children('.slick-menu-content')
       .should('contain', 'Resize by Content')
       .click();

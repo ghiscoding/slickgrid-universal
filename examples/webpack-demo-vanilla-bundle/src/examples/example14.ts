@@ -343,8 +343,6 @@ export class Example14 {
     ];
 
     this.gridOptions = {
-      useSalesforceDefaultGridOptions: true,
-      datasetIdPropertyName: 'id',
       eventNamingStyle: EventNamingStyle.lowerCase,
       editable: true,
       autoAddCustomEditorFormatter: customEditableInputFormatter,
