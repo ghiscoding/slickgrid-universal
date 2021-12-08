@@ -357,7 +357,7 @@ export class AutoCompleteFilter implements Filter {
   protected createDomElement(filterTemplate: string, collection: any[], searchTerm?: SearchTerm) {
     this._collection = collection;
     const columnId = this.columnDef?.id ?? '';
-    
+
     $(this.filterContainerElm).empty();
 
     // create the DOM element & add an ID and filter class
