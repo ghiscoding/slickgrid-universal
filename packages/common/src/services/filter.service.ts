@@ -989,14 +989,12 @@ export class FilterService {
    * @param column - column id or column object
    * @param filterContainer - id element HTML or DOM element filter
    */
-  drawFilterTemplate(column: Column|string, filterContainer:HTMLDivElement|string) {
+  drawFilterTemplate( column: Column|string, filterContainer:HTMLDivElement|string){
     let filterContainerElm : HTMLDivElement|null;
     if (typeof filterContainer === 'string') {
-      filterContainerElm = document.querySelector(filterContainer);
-      if (filterContainerElm === null) {
-         return null;
-      }
-    } else {
+      filterContainerElm = document.querySelector(filterContainer); 
+      if (filterContainerElm === null) return null;
+    }else{
       filterContainerElm = filterContainer;
     }
     const columnDef = typeof column === 'string' ? this.sharedService.allColumns.find(col => col.id === column) :column;
