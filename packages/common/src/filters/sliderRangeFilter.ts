@@ -204,7 +204,7 @@ export class SliderRangeFilter implements Filter {
       defaultEndValue = +(this.filterParams.hasOwnProperty('sliderEndValue') ? this.filterParams.sliderEndValue : maxValue);
     }
 
-    $( this.filterContainerElm).empty();
+    $(this.filterContainerElm).empty();
 
     // create the DOM element & add an ID and filter class
     const $lowestSliderValueElm = $(`
