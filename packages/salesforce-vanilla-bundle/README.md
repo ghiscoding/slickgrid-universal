@@ -1,25 +1,30 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
-[![npm](https://img.shields.io/npm/v/@slickgrid-universal/vanilla-bundle.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-bundle)
-[![npm](https://img.shields.io/npm/dy/@slickgrid-universal/vanilla-bundle?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-bundle)
+[![npm](https://img.shields.io/npm/v/@slickgrid-universal/salesforce-vanilla-bundle.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/salesforce-vanilla-bundle)
+[![npm](https://img.shields.io/npm/dy/@slickgrid-universal/salesforce-vanilla-bundle?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/salesforce-vanilla-bundle)
 
 [![Actions Status](https://github.com/ghiscoding/slickgrid-universal/workflows/CI%20Build/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions)
 [![Cypress.io](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
-## Vanilla Bundle
-#### @slickgrid-universal/vanilla-bundle
+## Salesforce Vanilla Bundle
+#### @slickgrid-universal/salesforce-vanilla-bundle
 
-Vanilla Bundle implementation (no framework, plain TypeSript implementation). This package does what other framework would do, that is to make all the features usable in 1 bundle so that it could then be used by other Apps/Projects
+Vanilla Bundle implementation (no framework, plain TypeSript implementation). This package is similar to the [@slickgrid-universal/vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle), it actually extends it, with the small exception that it adds 3 extra packages that are optional in the `vanilla-bundle` but required here and those are: CompositeEditor, CustomTooltip, TextExport (CSV)).
+
+This package does what other framework would do, that is to make all the features usable in 1 bundle so that it could then be used by other Apps/Projects, for example we use this bundle in our SalesForce (with Lighning Web Component) App and it requires plain ES6 JavaScript which this bundle also produce (for that there's a [dist-grid-bundle-zip](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/salesforce-vanilla-bundle/dist-grid-bundle-zip) folder which will zip the ES6 `dist` folder which we then import in SalesForce as a static resource).
 
 ### Internal Dependencies
 - [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
+- [@slickgrid-universal/composite-editor-component](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/composite-editor-component)
+- [@slickgrid-universal/custom-tooltip-plugin](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/custom-tooltip-plugin)
 - [@slickgrid-universal/event-pub-sub](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/event-pub-sub)
 - [@slickgrid-universal/custom-footer-component](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/custom-footer-component)
 - [@slickgrid-universal/empty-warning-component](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/empty-warning-component)
 - [@slickgrid-universal/pagination-component](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/pagination-component)
+- [@slickgrid-universal/text-export](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/text-export)
 
 ### External Dependencies
 - [whatwg-fetch](https://github.com/whatwg/fetch) - Fetch Standard

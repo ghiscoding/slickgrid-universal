@@ -43,9 +43,6 @@ import {
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
-import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
-import { TextExportService } from '@slickgrid-universal/text-export';
 import * as formatterUtilities from '@slickgrid-universal/common/dist/commonjs/formatters/formatterUtilities';
 
 import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle';
@@ -260,22 +257,6 @@ const mockGrid = {
   onScroll: jest.fn(),
   onDataviewCreated: new MockSlickEvent(),
 } as unknown as SlickGrid;
-
-const mockSlickCustomTooltip = {
-  init: jest.fn(),
-} as unknown as SlickCustomTooltip;
-
-jest.mock('@slickgrid-universal/custom-tooltip-plugin', () => ({
-  SlickCustomTooltip: jest.fn().mockImplementation(() => mockSlickCustomTooltip),
-}));
-
-const mockTextExportService = {
-  init: jest.fn(),
-} as unknown as TextExportService;
-
-jest.mock('@slickgrid-universal/text-export', () => ({
-  TextExportService: jest.fn().mockImplementation(() => mockTextExportService),
-}));
 
 const mockSlickEventHandlerImplementation = jest.fn().mockImplementation(() => mockSlickEventHandler);
 const mockDataViewImplementation = jest.fn().mockImplementation(() => mockDataView);
@@ -806,7 +787,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       it('should load groupItemMetaProvider to the DataView when using "draggableGrouping" feature', () => {
         const dataviewSpy = jest.spyOn(mockDataViewImplementation.prototype, 'constructor');
         const sharedMetaSpy = jest.spyOn(SharedService.prototype, 'groupItemMetadataProvider', 'set');
-        jest.spyOn(extensionServiceStub, 'extensionList', 'get').mockReturnValue({ draggableGrouping: { pluginName: 'DraggableGrouping' } } as unknown as ExtensionList<any, any>);
+        jest.spyOn(extensionServiceStub, 'extensionList', 'get').mockReturnValue({ draggableGrouping: { pluginName: 'DraggableGrouping' } } as unknown as ExtensionList<any>);
 
         component.gridOptions = { draggableGrouping: {} };
         component.initialization(divContainer, slickEventHandler);
@@ -979,22 +960,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
 
         expect(spy).toHaveBeenCalled();
-      });
-
-      it('should initialize SlickCompositeEditorComponent when "enableCompositeEditor" is set', () => {
-        component.gridOptions = { enableCompositeEditor: true, useSalesforceDefaultGridOptions: true } as unknown as GridOption;
-        component.initialization(divContainer, slickEventHandler);
-
-        expect(component.slickCompositeEditor instanceof SlickCompositeEditorComponent).toBeTrue();
-      });
-
-      it('should initialize ExportService when "enableTextExport" is set when using Salesforce', () => {
-        component.gridOptions = { enableTextExport: true, useSalesforceDefaultGridOptions: true } as unknown as GridOption;
-        component.initialization(divContainer, slickEventHandler);
-
-        expect(TextExportService).toHaveBeenCalled();
-        expect(SlickCustomTooltip).toHaveBeenCalled();
-        expect(component.registeredResources.length).toBe(5); // TextExportService, SlickCustomTooltip, GridService, GridStateService, SlickEmptyCompositeEditorComponent
       });
 
       it('should add RxJS resource to all necessary Services when RxJS external resource is registered', () => {
