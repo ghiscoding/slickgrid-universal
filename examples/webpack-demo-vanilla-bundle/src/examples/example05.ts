@@ -228,6 +228,8 @@ export class Example5 {
       // checkboxSelector: {
       //   hideInFilterHeaderRow: false,
       //   hideInColumnTitleRow: true,
+      //   onRowToggleStart: (e, args) => console.log('onBeforeRowToggle', args),
+      //   onSelectAllToggleStart: () => this.sgb.treeDataService.toggleTreeDataCollapse(false, false),
       // },
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       treeDataOptions: {
