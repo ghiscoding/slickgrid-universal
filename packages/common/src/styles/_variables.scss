@@ -4,7 +4,7 @@
  * Licensed under MIT (https://github.com/ghiscoding/slickgrid-universal/blob/master/LICENSE)
  */
 
-/* this is the only variable without $slick prefix and is there so that it can use Bootstrap primary color without declaring $slick-primary-color variable */
+/* this is the only variable without $slick prefix and exists so that user could use the same Bootstrap primary color without declaring $slick-primary-color variable (which also exists) */
 $primary-color:                                             #31708F !default;
 
 $slick-border-color:                                        #dddddd !default;
@@ -30,6 +30,12 @@ $slick-grid-border-color:                                   fade(black, 3%) !def
 $slick-grid-border-style:                                   solid !default;
 $slick-grid-header-background:                              rgba(255, 255, 255, .6) !default;
 $slick-grid-cell-color:                                     rgb(255, 255, 255) !default;
+$slick-gray-dark:              			                        #333 !default;
+$slick-link-color:        				                          #08c !default;
+$slick-link-color-hover:                                    darker($slick-link-color, 15%) !default;
+$slick-navbar-default-link-hover-color:	                    $slick-gray-dark !default;
+$slick-text-color:             			                        $slick-gray-dark !default;
+$slick-table-background:                                    transparent !default;
 
 /* cell */
 $slick-cell-active-border:                                  none !default;
@@ -50,8 +56,8 @@ $slick-cell-padding-top-bottom:                             5px !default;
 $slick-cell-padding-left-right:                             6px !default;
 $slick-cell-padding:                                        $slick-cell-padding-top-bottom $slick-cell-padding-left-right !default;
 
-/** 4x available slick-pane (top, bottom, left,       right) */
-$slick-pane-top-border-top:                           none !default;
+/** 4x available slick-pane (top, bottom, left, right) */
+$slick-pane-top-border-top:                                 none !default;
 
 /* row */
 $slick-row-mouse-hover-color:                               #eff5fc !default;
@@ -77,28 +83,16 @@ $slick-preheader-grouped-title-display:                     inline-grid !default
 $slick-preheader-grouped-title-justify:                     left !default;
 
 /* header */
-$slick-header-background-color:                             #ffffff !default;
-$slick-header-font-size:                                    $slick-font-size-base !default;
-$slick-header-font-weight:                                  bold !default;
-$slick-header-text-color:                                   #000000 !default;
-$slick-header-padding-top:                                  4px !default;
-$slick-header-padding-right:                                4px !default;
-$slick-header-padding-bottom:                               4px !default;
-$slick-header-padding-left:                                 4px !default;
-$slick-header-padding:                                      $slick-header-padding-top $slick-header-padding-right $slick-header-padding-bottom $slick-header-padding-left !default;
-$slick-header-input-height:                                 27px !default;                        // height of the filter form element (input, textarea, select)
-$slick-header-input-padding:                                0 6px !default;                       // padding of the filter form element (input, textarea, select)
-$slick-header-row-background-color:                         #ffffff !default;
 $slick-header-row-count:                                    2 !default;                           // how many rows to display on the header
-$slick-header-row-filter-padding:                           4px !default;
-$slick-header-column-height:                                calc(17px * #{$slick-header-row-count}) !default;  // header is calculated by rows to show
-$slick-header-column-background-active:                     darken($slick-grid-header-background, 5%) !default;
-$slick-header-column-background-hover:                      darken($slick-grid-header-background, 2%) !default;
-$slick-header-column-name-margin-right:                     5px !default;
+$slick-header-background-color:                             #ffffff !default;
 $slick-header-border-top:                                   0 none !default;                      // header, column titles, that is without the Filters
 $slick-header-border-right:                                 0 none !default;
 $slick-header-border-bottom:                                0 none !default;
 $slick-header-border-left:                                  0 none !default;
+$slick-header-column-height:                                calc(17px * #{$slick-header-row-count}) !default;  // header is calculated by rows to show
+$slick-header-column-background-active:                     darken($slick-grid-header-background, 5%) !default;
+$slick-header-column-background-hover:                      darken($slick-grid-header-background, 2%) !default;
+$slick-header-column-name-margin-right:                     5px !default;
 $slick-header-column-border-top:                            0 none !default;                      // header, column titles, that is without the Filters
 $slick-header-column-border-right:                          0 none !default;
 $slick-header-column-border-bottom:                         0 none !default;
@@ -107,6 +101,18 @@ $slick-header-filter-row-border-top:                        0 none !default;    
 $slick-header-filter-row-border-right:                      0 none !default;
 $slick-header-filter-row-border-bottom:                     0 none !default;
 $slick-header-filter-row-border-left:                       0 none !default;
+$slick-header-font-size:                                    $slick-font-size-base !default;
+$slick-header-font-weight:                                  bold !default;
+$slick-header-input-height:                                 27px !default;                        // height of the filter form element (input, textarea, select)
+$slick-header-input-padding:                                0 6px !default;                       // padding of the filter form element (input, textarea, select)
+$slick-header-padding-top:                                  4px !default;
+$slick-header-padding-right:                                4px !default;
+$slick-header-padding-bottom:                               4px !default;
+$slick-header-padding-left:                                 4px !default;
+$slick-header-padding:                                      $slick-header-padding-top $slick-header-padding-right $slick-header-padding-bottom $slick-header-padding-left !default;
+$slick-header-row-background-color:                         #ffffff !default;
+$slick-header-row-filter-padding:                           4px !default;
+$slick-header-text-color:                                   #000000 !default;
 $slick-header-resizable-width:                              7px !default;
 $slick-header-resizable-hover:                              1px solid #d0d0d0 !default;
 $slick-header-resizable-hover-border-bottom:                0 none !default;
@@ -129,7 +135,7 @@ $slick-frozen-header-row-border-right:                      $slick-frozen-border
 $slick-frozen-filter-row-border-right:                      $slick-frozen-border-right !default;
 $slick-frozen-overflow-right:                               scroll !default;                      // typically we would like to always have the scroll displayed when using hamburger menu (top right)
 
-/* icon font is using Font-Awesome by default bu      t could be changed to any other icon package like Glyphicons, ... */
+/* icon font is using Font-Awesome by default but could be changed to any other icon package like Glyphicons, ... */
 $slick-icon-color:                                          #4a4a4a !default;
 $slick-icon-font-family:                                    "FontAwesome" !default;               // or Glyphicons Halflings */
 $slick-icon-font-size:                                      14px !default;
@@ -142,12 +148,6 @@ $slick-icon-group-margin-right:                             2px !default;
 $slick-icon-group-height:                                   20px !default;
 $slick-icon-group-vertical-align:                           middle !default;
 $slick-icon-group-width:                                    14px !default;
-$slick-table-background:                                    transparent !default;
-$slick-link-color:        				                          #08c !default;
-$slick-link-color-hover:                                    darker($slick-link-color, 15%) !default;
-$slick-gray-dark:              			                        #333 !default;
-$slick-text-color:             			                        $slick-gray-dark !default;
-$slick-navbar-default-link-hover-color:	                    $slick-gray-dark !default;
 
 /* AutoComplete */
 $slick-autocomplete-bg-color:	                              #ffffff !default;
@@ -174,7 +174,7 @@ $slick-autocomplete-text-overflow:	                        ellipsis !default;
 $slick-autocomplete-text-padding:	                          3px 15px !default;
 $slick-autocomplete-z-index:	                              9999 !default;
 
-/** AutoComplte with Custom Styling (2 rows) */
+/** AutoComplete with Custom Styling (2 rows) */
 $slick-autocomplete-tpl2-font-size:                         12px !default;
 $slick-autocomplete-tpl2-width:                             285px !default;
 $slick-autocomplete-tpl2-container-list-width:              calc(#{$slick-autocomplete-tpl2-width} - 15px) !default;
@@ -194,7 +194,7 @@ $slick-autocomplete-tpl2-top-left-font-style:               normal !default;
 $slick-autocomplete-tpl2-top-left-font-weight:              bold !default;
 $slick-autocomplete-tpl2-top-left-max-width:                $slick-autocomplete-tpl2-bottom-left-max-width !default;
 
-/** AutoComplte with Custom Styling (4 corners)       */
+/** AutoComplete with Custom Styling (4 corners) */
 $slick-autocomplete-tpl4-font-size:                         12px !default;
 $slick-autocomplete-tpl4-width:                             385px !default;
 $slick-autocomplete-tpl4-container-list-width:              calc(#{$slick-autocomplete-tpl4-width} - 15px) !default;
@@ -322,7 +322,7 @@ $slick-grid-menu-icon-font-size:                            $slick-icon-font-siz
 $slick-grid-menu-icon-top-margin:                           5px !default;
 $slick-grid-menu-divider-width:                             calc(100% - 10px) !default;
 
-/* Menu Plugin */
+/* Menu Plugins */
 $slick-menu-bg-color:                                       #ffffff !default;
 $slick-menu-border:                                         1px solid #BFBDBD !default;
 $slick-menu-border-radius:                                  2px !default;
@@ -798,7 +798,7 @@ $slick-row-move-plugin-shadow-row-box-shadow:               rgb(0 0 0 / 20%) 8px
 $slick-selector-border-right:                               1px solid rgb(196, 196, 196) !default;
 
 /* Viewport */
-$slick-viewport-border-top:                                 0 none !default;                      // header row is where the Filters are showing
+$slick-viewport-border-top:                                 0 none !default; // header row is where the Filters are showing
 $slick-viewport-border-right:                               0 none !default;
 $slick-viewport-border-bottom:                              0 none !default;
 $slick-viewport-border-left:                                0 none !default;
@@ -828,26 +828,26 @@ $slick-footer-right-text-color:                             $slick-footer-text-c
 $slick-footer-right-width:                                  50% !default;
 
 /** Custom Tooltip */
-$slick-tooltip-background-color:                      #ffffff !default;
-$slick-tooltip-border-color:                          #BFBDBD !default;
-$slick-tooltip-border:                                2px solid #{$slick-tooltip-border-color} !default;
-$slick-tooltip-border-radius:                         4px !default;
-$slick-tooltip-font-size:                             calc(#{$slick-font-size-base} - 1px) !default;
-$slick-tooltip-color:                                 inherit !default;
-$slick-tooltip-height:                                auto !default;
-$slick-tooltip-padding:                               7px !default;
-$slick-tooltip-width:                                 auto !default;
-$slick-tooltip-overflow:                              inherit !default;
-$slick-tooltip-text-overflow:                         ellipsis !default;
-$slick-tooltip-white-space:                           normal !default;
-$slick-tooltip-z-index:                               9999 !default;
+$slick-tooltip-background-color:                            #ffffff !default;
+$slick-tooltip-border-color:                                #BFBDBD !default;
+$slick-tooltip-border:                                      2px solid #{$slick-tooltip-border-color} !default;
+$slick-tooltip-border-radius:                               4px !default;
+$slick-tooltip-font-size:                                   calc(#{$slick-font-size-base} - 1px) !default;
+$slick-tooltip-color:                                       inherit !default;
+$slick-tooltip-height:                                      auto !default;
+$slick-tooltip-padding:                                     7px !default;
+$slick-tooltip-width:                                       auto !default;
+$slick-tooltip-overflow:                                    inherit !default;
+$slick-tooltip-text-overflow:                               ellipsis !default;
+$slick-tooltip-white-space:                                 normal !default;
+$slick-tooltip-z-index:                                     9999 !default;
 // tooltip arrow
-$slick-tooltip-arrow-color:                           darken($slick-tooltip-border-color, 5%) !default;
-$slick-tooltip-arrow-size:                            8px !default;
-$slick-tooltip-down-arrow-top-margin:                 100% !default;
-$slick-tooltip-up-arrow-top-margin:                   -($slick-tooltip-arrow-size * 2) !default;
-$slick-tooltip-arrow-side-margin:                     9px !default;
-$slick-tooltip-right-arrow-side-margin:               calc(100% - #{($slick-tooltip-arrow-size * 2)} - #{$slick-tooltip-arrow-side-margin}) !default;
+$slick-tooltip-arrow-color:                                 darken($slick-tooltip-border-color, 5%) !default;
+$slick-tooltip-arrow-size:                                  8px !default;
+$slick-tooltip-down-arrow-top-margin:                       100% !default;
+$slick-tooltip-up-arrow-top-margin:                         -($slick-tooltip-arrow-size * 2) !default;
+$slick-tooltip-arrow-side-margin:                           9px !default;
+$slick-tooltip-right-arrow-side-margin:                     calc(100% - #{($slick-tooltip-arrow-size * 2)} - #{$slick-tooltip-arrow-side-margin}) !default;
 
 /** Empty Data Warning element */
 $slick-empty-data-warning-color:                            $slick-cell-text-color !default;
