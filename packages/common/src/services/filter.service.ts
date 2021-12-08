@@ -994,7 +994,7 @@ export class FilterService {
     if (typeof filterContainer === 'string') {
       filterContainerElm = document.querySelector(filterContainer);
       if (filterContainerElm === null) {
-         return null;
+        return null;
       }
     } else {
       filterContainerElm = filterContainer;
