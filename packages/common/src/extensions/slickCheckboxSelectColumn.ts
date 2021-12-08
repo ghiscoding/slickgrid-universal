@@ -155,7 +155,7 @@ export class SlickCheckboxSelectColumn<T = any> {
         removeRows[removeRows.length] = row;
       }
     }
-    this._grid.setSelectedRows(this._grid.getSelectedRows().filter((n) => removeRows.indexOf(n) < 0));
+    this._grid.setSelectedRows(this._grid.getSelectedRows().filter((n) => removeRows.indexOf(n) < 0), 'SlickCheckboxSelectColumn.deSelectRows');
   }
 
   selectRows(rowArray: number[]) {
@@ -207,7 +207,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
 
     const newSelectedRows = this._selectedRowsLookup[row] ? this._grid.getSelectedRows().filter((n) => n !== row) : this._grid.getSelectedRows().concat(row);
-    this._grid.setSelectedRows(newSelectedRows);
+    this._grid.setSelectedRows(newSelectedRows, 'click.toggle');
     this._grid.setActiveCell(row, this.getCheckboxColumnCellIndex());
   }
 
@@ -312,9 +312,9 @@ export class SlickCheckboxSelectColumn<T = any> {
             rows.push(i);
           }
         }
-        this._grid.setSelectedRows(rows);
+        this._grid.setSelectedRows(rows, 'click.selectAll');
       } else {
-        this._grid.setSelectedRows([]);
+        this._grid.setSelectedRows([], 'click.selectAll');
       }
       e.stopPropagation();
       e.stopImmediatePropagation();
@@ -392,7 +392,7 @@ export class SlickCheckboxSelectColumn<T = any> {
         const remIdx = selectedRows.indexOf(itemToRemove);
         selectedRows.splice(remIdx, 1);
       }
-      this._grid.setSelectedRows(selectedRows);
+      this._grid.setSelectedRows(selectedRows, 'click.toggle');
     }
   }
 
