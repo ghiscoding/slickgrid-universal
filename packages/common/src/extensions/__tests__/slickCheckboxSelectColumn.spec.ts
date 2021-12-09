@@ -1,3 +1,4 @@
+import 'jest-extended';
 import { SlickCheckboxSelectColumn } from '../slickCheckboxSelectColumn';
 import { Column, OnSelectedRowsChangedEventArgs, SlickGrid, SlickNamespace, } from '../../interfaces/index';
 import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
@@ -173,10 +174,12 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       .mockReturnValueOnce({ firstName: 'Jane', lastName: 'Doe', age: 28 })
       .mockReturnValueOnce({ __group: true, __groupTotals: { age: { sum: 58 } } });
     const setSelectedRowSpy = jest.spyOn(gridStub, 'setSelectedRows');
+    const onToggleEndMock = jest.fn();
+    const onToggleStartMock = jest.fn();
 
     plugin.selectedRowsLookup = { 1: false, 2: true };
     plugin.init(gridStub);
-    plugin.setOptions({ hideInColumnTitleRow: false, hideInFilterHeaderRow: true, hideSelectAllCheckbox: false, });
+    plugin.setOptions({ hideInColumnTitleRow: false, hideInFilterHeaderRow: true, hideSelectAllCheckbox: false, onSelectAllToggleStart: onToggleStartMock, onSelectAllToggleEnd: onToggleEndMock });
 
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
@@ -190,6 +193,9 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(stopPropagationSpy).toHaveBeenCalled();
     expect(stopImmediatePropagationSpy).toHaveBeenCalled();
     expect(setSelectedRowSpy).toHaveBeenCalledWith([0, 1, 2], 'click.selectAll');
+    expect(onToggleStartMock).toHaveBeenCalledWith(expect.anything(), { caller: 'click.selectAll', previousSelectedRows: undefined, });
+    expect(onToggleEndMock).toHaveBeenCalledWith(expect.anything(), { caller: 'click.selectAll', previousSelectedRows: undefined, rows: [0, 2] });
+
   });
 
   it('should create the plugin and call "setOptions" and expect options changed and hide both Select All toggle when setting "hideSelectAllCheckbox: false" and "hideInColumnTitleRow: true"', () => {
@@ -336,7 +342,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     inputCheckboxElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
 
     expect(inputCheckboxElm).toBeTruthy();
-    expect(setSelectedRowSpy).toHaveBeenCalledWith([], 'click.selectAll');
+    expect(setSelectedRowSpy).toHaveBeenCalledWith([], 'click.unselectAll');
   });
 
   it('should call the "create" method and expect plugin to be created with checkbox column to be created at position 0 when using default', () => {
@@ -405,7 +411,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   });
 
   it('should trigger "onClick" event and expect toggleRowSelection to be called', () => {
-    const toggleRowSpy = jest.spyOn(plugin, 'toggleRowSelection');
+    const toggleRowSpy = jest.spyOn(plugin, 'toggleRowSelectionWithEvent');
 
     plugin.init(gridStub);
     const checkboxElm = document.createElement('input');
@@ -416,13 +422,53 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     gridStub.onClick.notify({ cell: 0, row: 2, grid: gridStub }, clickEvent);
 
     expect(plugin).toBeTruthy();
-    expect(toggleRowSpy).toHaveBeenCalledWith(2);
+    expect(toggleRowSpy).toHaveBeenCalledWith(expect.anything(), 2);
+    expect(stopPropagationSpy).toHaveBeenCalled();
+    expect(stopImmediatePropagationSpy).toHaveBeenCalled();
+  });
+
+  it('should trigger "onClick" event and expect toggleRowSelection and "onRowToggleStart" be called when defined', () => {
+    const toggleRowSpy = jest.spyOn(plugin, 'toggleRowSelectionWithEvent');
+    const onToggleStartMock = jest.fn();
+
+    plugin.init(gridStub);
+    plugin.setOptions({ onRowToggleStart: onToggleStartMock });
+    const checkboxElm = document.createElement('input');
+    checkboxElm.type = 'checkbox';
+    const clickEvent = addJQueryEventPropagation(new Event('click'), '', '', checkboxElm);
+    const stopPropagationSpy = jest.spyOn(clickEvent, 'stopPropagation');
+    const stopImmediatePropagationSpy = jest.spyOn(clickEvent, 'stopImmediatePropagation');
+    gridStub.onClick.notify({ cell: 0, row: 2, grid: gridStub }, clickEvent);
+
+    expect(plugin).toBeTruthy();
+    expect(onToggleStartMock).toHaveBeenCalledWith(expect.anything(), { previousSelectedRows: [1, 2], row: 2, });
+    expect(toggleRowSpy).toHaveBeenCalledWith(expect.anything(), 2);
+    expect(stopPropagationSpy).toHaveBeenCalled();
+    expect(stopImmediatePropagationSpy).toHaveBeenCalled();
+  });
+
+  it('should trigger "onClick" event and expect toggleRowSelection and "onRowToggleEnd" be called when defined', () => {
+    const toggleRowSpy = jest.spyOn(plugin, 'toggleRowSelectionWithEvent');
+    const onToggleEndMock = jest.fn();
+
+    plugin.init(gridStub);
+    plugin.setOptions({ onRowToggleEnd: onToggleEndMock });
+    const checkboxElm = document.createElement('input');
+    checkboxElm.type = 'checkbox';
+    const clickEvent = addJQueryEventPropagation(new Event('click'), '', '', checkboxElm);
+    const stopPropagationSpy = jest.spyOn(clickEvent, 'stopPropagation');
+    const stopImmediatePropagationSpy = jest.spyOn(clickEvent, 'stopImmediatePropagation');
+    gridStub.onClick.notify({ cell: 0, row: 2, grid: gridStub }, clickEvent);
+
+    expect(plugin).toBeTruthy();
+    expect(onToggleEndMock).toHaveBeenCalledWith(expect.anything(), { previousSelectedRows: [1, 2], row: 2, });
+    expect(toggleRowSpy).toHaveBeenCalledWith(expect.anything(), 2);
     expect(stopPropagationSpy).toHaveBeenCalled();
     expect(stopImmediatePropagationSpy).toHaveBeenCalled();
   });
 
   it('should trigger "onClick" event and NOT expect toggleRowSelection to be called when editor "isActive" returns True and "commitCurrentEdit" returns False', () => {
-    const toggleRowSpy = jest.spyOn(plugin, 'toggleRowSelection');
+    const toggleRowSpy = jest.spyOn(plugin, 'toggleRowSelectionWithEvent');
     jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
     jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(false);
 
@@ -441,7 +487,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   });
 
   it('should trigger "onKeyDown" event and expect toggleRowSelection to be called when editor "isActive" returns False', () => {
-    const toggleRowSpy = jest.spyOn(plugin, 'toggleRowSelection');
+    const toggleRowSpy = jest.spyOn(plugin, 'toggleRowSelectionWithEvent');
     jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(false);
 
     plugin.init(gridStub);
@@ -453,13 +499,13 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     gridStub.onKeyDown.notify({ cell: 0, row: 2, grid: gridStub }, keyboardEvent);
 
     expect(plugin).toBeTruthy();
-    expect(toggleRowSpy).toHaveBeenCalledWith(2);
+    expect(toggleRowSpy).toHaveBeenCalledWith(expect.anything(), 2);
     expect(preventDefaultSpy).toHaveBeenCalled();
     expect(stopImmediatePropagationSpy).toHaveBeenCalled();
   });
 
   it('should trigger "onKeyDown" event and expect toggleRowSelection to be called when editor "commitCurrentEdit" returns True', () => {
-    const toggleRowSpy = jest.spyOn(plugin, 'toggleRowSelection');
+    const toggleRowSpy = jest.spyOn(plugin, 'toggleRowSelectionWithEvent');
     jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
 
     plugin.init(gridStub);
@@ -471,7 +517,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     gridStub.onKeyDown.notify({ cell: 0, row: 2, grid: gridStub }, keyboardEvent);
 
     expect(plugin).toBeTruthy();
-    expect(toggleRowSpy).toHaveBeenCalledWith(2);
+    expect(toggleRowSpy).toHaveBeenCalledWith(expect.anything(), 2);
     expect(preventDefaultSpy).toHaveBeenCalled();
     expect(stopImmediatePropagationSpy).toHaveBeenCalled();
   });

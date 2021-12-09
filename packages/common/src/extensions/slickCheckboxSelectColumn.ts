@@ -1,5 +1,5 @@
 import { KeyCode } from '../enums/keyCode.enum';
-import { CheckboxSelectorOption, Column, GridOption, SelectableOverrideCallback, SlickEventData, SlickEventHandler, SlickGrid, SlickNamespace } from '../interfaces/index';
+import { CheckboxSelectorOption, Column, DOMMouseEvent, GridOption, SelectableOverrideCallback, SlickEventData, SlickEventHandler, SlickGrid, SlickNamespace } from '../interfaces/index';
 import { SlickRowSelectionModel } from './slickRowSelectionModel';
 import { createDomElement, emptyElement } from '../services/domUtilities';
 import { BindingEventService } from '../services/bindingEvent.service';
@@ -200,15 +200,40 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
+  /**
+   * Toggle a row selection by providing a row number
+   * @param {Number} row - grid row number to toggle
+   */
   toggleRowSelection(row: number) {
+    this.toggleRowSelectionWithEvent(null, row);
+  }
+
+  /**
+   *  Toggle a row selection and also provide the event that triggered it
+   * @param {Object} event - event that triggered the row selection change
+   * @param {Number} row - grid row number to toggle
+   * @returns
+   */
+  toggleRowSelectionWithEvent(event: Event | null, row: number) {
     const dataContext = this._grid.getDataItem(row);
     if (!this.checkSelectableOverride(row, dataContext, this._grid)) {
       return;
     }
 
+    // user can optionally execute a callback defined in its grid options prior to toggling the row
+    const previousSelectedRows = this._grid.getSelectedRows();
+    if (this._addonOptions.onRowToggleStart) {
+      this._addonOptions.onRowToggleStart(event, { row, previousSelectedRows });
+    }
+
     const newSelectedRows = this._selectedRowsLookup[row] ? this._grid.getSelectedRows().filter((n) => n !== row) : this._grid.getSelectedRows().concat(row);
     this._grid.setSelectedRows(newSelectedRows, 'click.toggle');
     this._grid.setActiveCell(row, this.getCheckboxColumnCellIndex());
+
+    // user can optionally execute a callback defined in its grid options after the row toggle is completed
+    if (this._addonOptions.onRowToggleEnd) {
+      this._addonOptions.onRowToggleEnd(event, { row, previousSelectedRows });
+    }
   }
 
 
@@ -241,7 +266,7 @@ export class SlickCheckboxSelectColumn<T = any> {
         args.node.appendChild(spanElm);
         this._headerRowNode = args.node;
 
-        this._bindEventService.bind(spanElm, 'click', ((evnt: Event) => this.handleHeaderClick(evnt, args)) as EventListener);
+        this._bindEventService.bind(spanElm, 'click', ((e: DOMMouseEvent<HTMLInputElement>) => this.handleHeaderClick(e, args)) as EventListener);
       }
     });
   }
@@ -278,7 +303,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     return this._checkboxColumnCellIndex;
   }
 
-  protected handleClick(e: any, args: any) {
+  protected handleClick(e: DOMMouseEvent<HTMLInputElement>, args: { row: number; cell: number; grid: SlickGrid; }) {
     // clicking on a row select checkbox
     if (this._grid.getColumns()[args.cell].id === this._addonOptions.columnId && e.target.type === 'checkbox') {
       // if editing, try to commit
@@ -288,13 +313,13 @@ export class SlickCheckboxSelectColumn<T = any> {
         return;
       }
 
-      this.toggleRowSelection(args.row);
+      this.toggleRowSelectionWithEvent(e, args.row);
       e.stopPropagation();
       e.stopImmediatePropagation();
     }
   }
 
-  protected handleHeaderClick(e: any, args: any) {
+  protected handleHeaderClick(e: DOMMouseEvent<HTMLInputElement>, args: { column: Column; node: HTMLDivElement; grid: SlickGrid; }) {
     if (args.column.id === this._addonOptions.columnId && e.target.type === 'checkbox') {
       // if editing, try to commit
       if (this._grid.getEditorLock().isActive() && !this._grid.getEditorLock().commitCurrentEdit()) {
@@ -303,7 +328,20 @@ export class SlickCheckboxSelectColumn<T = any> {
         return;
       }
 
-      if (e.target.checked) {
+      // who called the selection?
+      const isExecutingSelectAll = e.target.checked;
+      const caller = isExecutingSelectAll ? 'click.selectAll' : 'click.unselectAll';
+
+      // trigger event before the real selection so that we have an event before & the next one after the change
+      const previousSelectedRows = this._grid.getSelectedRows();
+
+      // user can optionally execute a callback defined in its grid options prior to the Select All toggling
+      if (this._addonOptions.onSelectAllToggleStart) {
+        this._addonOptions.onSelectAllToggleStart(e, { previousSelectedRows, caller });
+      }
+
+      let newSelectedRows: number[] = []; // when unselecting all, the array will become empty
+      if (isExecutingSelectAll) {
         const rows = [];
         for (let i = 0; i < this._grid.getDataLength(); i++) {
           // Get the row and check it's a selectable row before pushing it onto the stack
@@ -312,10 +350,17 @@ export class SlickCheckboxSelectColumn<T = any> {
             rows.push(i);
           }
         }
-        this._grid.setSelectedRows(rows, 'click.selectAll');
-      } else {
-        this._grid.setSelectedRows([], 'click.selectAll');
+        newSelectedRows = rows;
       }
+
+      // we finally need to call the actual row selection from SlickGrid method
+      this._grid.setSelectedRows(newSelectedRows, caller);
+
+      // user can optionally execute a callback defined in its grid options after the Select All toggling is completed
+      if (this._addonOptions.onSelectAllToggleEnd) {
+        this._addonOptions.onSelectAllToggleEnd(e, { rows: newSelectedRows, previousSelectedRows, caller });
+      }
+
       e.stopPropagation();
       e.stopImmediatePropagation();
     }
@@ -326,7 +371,7 @@ export class SlickCheckboxSelectColumn<T = any> {
       if (this._grid.getColumns()[args.cell].id === this._addonOptions.columnId) {
         // if editing, try to commit
         if (!this._grid.getEditorLock().isActive() || this._grid.getEditorLock().commitCurrentEdit()) {
-          this.toggleRowSelection(args.row);
+          this.toggleRowSelectionWithEvent(e, args.row);
         }
         e.preventDefault();
         e.stopImmediatePropagation();
