@@ -85,7 +85,7 @@ li.hidden {
 }
 
 .slick-column-picker-list, .slick-grid-menu-list {
-  width: 100%;
+  width: var(--slick-column-picker-list-width, $slick-column-picker-list-width);
 
   li {
     border: var(--slick-column-picker-item-border, $slick-column-picker-item-border);
@@ -96,7 +96,6 @@ li.hidden {
     list-style: none outside none;
     margin: 0;
     padding: var(--slick-column-picker-item-padding, $slick-column-picker-item-padding);
-    width: auto;
     &:hover {
       border: var(--slick-column-picker-item-hover-border, $slick-column-picker-item-hover-border);
       background-color: var(--slick-column-picker-item-hover-color, $slick-column-picker-item-hover-color);
@@ -208,6 +207,12 @@ li.hidden {
 .slick-cell-menu, .slick-context-menu, .slick-grid-menu, .slick-header-menu {
   .slick-menu-option-list,
   .slick-menu-command-list {
+    .slick-command-header, .slick-option-header {
+      display: var(--slick-menu-title-container-display, $slick-menu-title-container-display);
+      align-items: var(--slick-menu-title-container-align-items, $slick-menu-title-container-align-items);
+      justify-content: var(--slick-menu-title-container-justify-content, $slick-menu-title-container-justify-content);
+    }
+
     .slick-command-header.with-title, .slick-option-header.with-title {
       border-bottom: var(--slick-menu-title-border-bottom, $slick-menu-title-border-bottom);
       margin-bottom: var(--slick-menu-title-margin-bottom, $slick-menu-title-margin-bottom);
@@ -229,7 +234,7 @@ li.hidden {
       font-family: var(--slick-menu-close-btn-font-family, $slick-menu-close-btn-font-family);
       font-size: var(--slick-menu-close-btn-font-size, $slick-menu-close-btn-font-size);
       height: var(--slick-menu-close-btn-height, $slick-menu-close-btn-height);
-      line-height: calc(var(--slick-menu-close-btn-height, $slick-menu-close-btn-height) - 2px);
+      line-height: var(--slick-menu-close-btn-line-height, $slick-menu-close-btn-line-height);
       margin: var(--slick-menu-close-btn-margin, $slick-menu-close-btn-margin);
       padding: var(--slick-menu-close-btn-padding, $slick-menu-close-btn-padding);
       width: var(--slick-menu-close-btn-width, $slick-menu-close-btn-width);

@@ -73,6 +73,7 @@ export class Example7 {
         formatter: () => `<div class="button-style margin-auto" style="width: 35px; margin-top: -1px;"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
         cellMenu: {
           width: 185,
+          hideCloseButton: false,
           commandTitleKey: 'COMMANDS',
           commandItems: [
             {

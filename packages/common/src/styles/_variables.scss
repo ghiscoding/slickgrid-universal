@@ -306,6 +306,7 @@ $slick-column-picker-label-margin:                          4px !default;
 $slick-column-picker-label-font-weight:                     normal !default;
 $slick-column-picker-link-background-color:                 #ffffff !default;
 $slick-column-picker-list-margin-bottom:                    8px !default;
+$slick-column-picker-list-width:                            max-content !default;
 $slick-column-picker-title-border-bottom:                   1px solid #d6d6d6 !default;
 $slick-column-picker-title-font-size:                       calc(#{$slick-column-picker-item-font-size} + 2px) !default;
 $slick-column-picker-title-font-weight:                     normal !default;
@@ -332,6 +333,7 @@ $slick-menu-close-btn-color:                                #909090 !default;
 $slick-menu-close-btn-font-family:                          $slick-column-picker-close-btn-font-family !default;
 $slick-menu-close-btn-font-size:                            $slick-column-picker-close-btn-font-size !default;
 $slick-menu-close-btn-height:                               18px !default;
+$slick-menu-close-btn-line-height:                          16px !default;
 $slick-menu-close-btn-width:                                18px !default;
 $slick-menu-close-btn-margin:                               0px !default;
 $slick-menu-close-btn-padding:                              0px !default;
@@ -357,15 +359,18 @@ $slick-menu-item-width-when-button:                         calc(100% - #{$slick
 $slick-menu-icon-margin-right:                              4px !default;
 $slick-menu-icon-width:                                     16px !default;
 $slick-menu-line-height:                                    24px !default;
-$slick-menu-min-width:                                      125px !default;
+$slick-menu-min-width:                                      140px !default;
 $slick-menu-option-list-margin-bottom:                      6px !default;
 $slick-menu-padding:                                        6px !default;
+$slick-menu-title-container-display:                        flex !default;
+$slick-menu-title-container-align-items:                    flex-start !default;
+$slick-menu-title-container-justify-content:                flex-end !default;
 $slick-menu-title-border-bottom:                            1px solid #d6d6d6 !default;
 $slick-menu-title-font-size:                                calc(#{$slick-font-size-base} + 2px) !default;
 $slick-menu-title-font-weight:                              normal !default;
 $slick-menu-title-margin-bottom:                            6px !default;
 $slick-menu-title-margin-right:                             7px !default;
-$slick-menu-title-width:                                    calc(100% - #{$slick-menu-close-btn-width} - 10px) !default;
+$slick-menu-title-width:                                    100% !default;
 
 /* Header Button Plugin */
 $slick-header-button-float:                                 right !default;

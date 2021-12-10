@@ -111,10 +111,19 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     menuOptions: M,
     commandOrOptionMenuElm: HTMLElement,
     commandOrOptionItems: Array<ExtractMenuType<ExtendableItemTypes, MenuType>>,
-    args: any,
+    args: unknown,
     itemClickCallback: (event: DOMMouseEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, columnDef?: Column) => void
   ) {
     if (args && commandOrOptionItems && menuOptions) {
+      for (const item of commandOrOptionItems) {
+        this.populateSingleCommandOrOptionItem(itemType, menuOptions, commandOrOptionMenuElm, item, args, itemClickCallback);
+      }
+    }
+  }
+
+  /** Add the Command/Options Title when necessary. */
+  protected populateCommandOrOptionTitle(itemType: MenuType, menuOptions: M, commandOrOptionMenuElm: HTMLElement) {
+    if (menuOptions) {
       const menuHeaderElm = this._menuElm?.querySelector(`.slick-${itemType}-header`) ?? createDomElement('div', { className: `slick-${itemType}-header` });
       // user could pass a title on top of the Commands/Options section
       const titleProp: 'commandTitle' | 'optionTitle' = `${itemType}Title`;
@@ -126,9 +135,6 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
         menuHeaderElm.classList.add('no-title');
       }
       commandOrOptionMenuElm.appendChild(menuHeaderElm);
-      for (const item of commandOrOptionItems) {
-        this.populateSingleCommandOrOptionItem(itemType, menuOptions, commandOrOptionMenuElm, item, args, itemClickCallback);
-      }
     }
   }
 
