@@ -4,10 +4,10 @@ import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
-import { SalesforceVanillaGridBundle } from './salesforce-vanilla-grid-bundle';
+import { VanillaForceGridBundle } from './vanilla-force-bundle';
 
 const Slicker = {
-  GridBundle: SalesforceVanillaGridBundle,
+  GridBundle: VanillaForceGridBundle,
   Aggregators,
   BindingService,
   Editors,
@@ -26,5 +26,5 @@ if (typeof window !== 'undefined') {
 
 export { BindingService };
 export { Aggregators, Editors, Enums, EventPubSubService, Filters, Formatters, GroupTotalFormatters, SortComparers, Utilities };
-export { SlickCompositeEditorComponent, SlickEmptyWarningComponent, SlickPaginationComponent, SalesforceVanillaGridBundle }; // export the custom components & interfaces
+export { SlickCompositeEditorComponent, SlickEmptyWarningComponent, SlickPaginationComponent, VanillaForceGridBundle }; // export the custom components & interfaces
 export { Slicker };

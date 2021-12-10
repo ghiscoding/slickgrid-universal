@@ -25,6 +25,6 @@ Vanilla Bundle implementation (no framework, plain TypeSript implementation). Th
 - [whatwg-fetch](https://github.com/whatwg/fetch) - Fetch Standard
 
 ### Installation
-This Vanilla Bundle is used in our SalesForce implementation (since it requires plain ES6) and is also used by the standalone `webpack-demo-vanilla-bundle` which serves for demo purposes.
+This Vanilla Bundle is used used by the standalone [webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle) which serves for demo purposes.
 
 Go to the root of the repo and follow the instructions provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)

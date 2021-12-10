@@ -1,7 +1,7 @@
 {
-  "name": "@slickgrid-universal/salesforce-vanilla-bundle",
+  "name": "@slickgrid-universal/vanilla-force-bundle",
   "version": "0.19.2",
-  "description": "Salesforce Vanilla Slick Grid Bundle - Similar to Vanilla Bundle, the only difference is that it adds extra packages within its bundle (CustomTooltip, CompositeEditor & TextExport)",
+  "description": "Vanilla Slick Grid Bundle (mostly exist for our Salesforce implementation) - Similar to Vanilla Bundle, the only difference is that it adds extra packages within its bundle (CustomTooltip, CompositeEditor & TextExport)",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
   "module": "dist/esm/index.js",
@@ -14,7 +14,7 @@
     "/dist"
   ],
   "scripts": {
-    "test": "echo testing slickgrid-universal salesforce-vanilla-bundle code",
+    "test": "echo testing slickgrid-universal vanilla-force-bundle code",
     "dev": "webpack --env development",
     "dev:watch": "run-p build:watch",
     "build": "cross-env tsc --build",
@@ -31,8 +31,8 @@
     "webpack:prod": "webpack --env production",
     "zip:dist:dev": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle-DEV --output-folder=\"dist-grid-bundle-zip/\"",
     "zip:dist": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle --output-folder=\"dist-grid-bundle-zip/\"",
-    "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=salesforce-vanilla-bundle",
-    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=salesforce-vanilla-bundle"
+    "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=vanilla-force-bundle",
+    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=vanilla-force-bundle"
   },
   "license": "MIT",
   "author": "Ghislain B.",
@@ -40,7 +40,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/ghiscoding/slickgrid-universal.git",
-    "directory": "packages/salesforce-vanilla-bundle"
+    "directory": "packages/vanilla-force-bundle"
   },
   "bugs": {
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"

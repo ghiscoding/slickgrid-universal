@@ -22,7 +22,7 @@ describe('Testing library entry point', () => {
     expect(typeof entry.SlickCompositeEditorComponent).toBe('function');
     expect(typeof entry.SlickEmptyWarningComponent).toBe('function');
     expect(typeof entry.SlickPaginationComponent).toBe('function');
-    expect(typeof entry.SalesforceVanillaGridBundle).toBe('function');
+    expect(typeof entry.VanillaForceGridBundle).toBe('function');
     expect(typeof entry.Aggregators).toBe('object');
     expect(typeof entry.Editors).toBe('object');
     expect(typeof entry.Enums).toBe('object');
