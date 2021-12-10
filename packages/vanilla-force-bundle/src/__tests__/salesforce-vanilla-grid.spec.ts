@@ -33,7 +33,7 @@ import { TextExportService } from '@slickgrid-universal/text-export';
 import { UniversalContainerService } from '@slickgrid-universal/vanilla-bundle';
 import * as formatterUtilities from '@slickgrid-universal/common/dist/commonjs/formatters/formatterUtilities';
 
-import { SalesforceVanillaGridBundle } from '../salesforce-vanilla-grid-bundle';
+import { VanillaForceGridBundle } from '../vanilla-force-bundle';
 import { TranslateServiceStub } from '../../../../test/translateServiceStub';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../test/mockSlickEvent';
 import { RxJsResourceStub } from '../../../../test/rxjsResourceStub';
@@ -256,13 +256,13 @@ const mockDataViewImplementation = jest.fn().mockImplementation(() => mockDataVi
 const mockGridImplementation = jest.fn().mockImplementation(() => mockGrid);
 const template = `<div class="demo-container"><div class="grid1"></div></div>`;
 
-describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () => {
+describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () => {
   jest.mock('slickgrid/slick.grid', () => mockGridImplementation);
   Slick.Grid = mockGridImplementation;
   Slick.EventHandler = mockSlickEventHandlerImplementation;
   Slick.Data = { DataView: mockDataViewImplementation, };
 
-  let component: SalesforceVanillaGridBundle;
+  let component: VanillaForceGridBundle;
   let divContainer: HTMLDivElement;
   let cellDiv: HTMLDivElement;
   let columnDefinitions: Column[];
@@ -298,7 +298,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     jest.spyOn(mockGrid, 'getOptions').mockReturnValue(gridOptions);
     dataset = [];
 
-    component = new SalesforceVanillaGridBundle(
+    component = new VanillaForceGridBundle(
       divContainer,
       columnDefinitions,
       gridOptions,
@@ -525,7 +525,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(filterServiceSpy).toHaveBeenCalled();
         expect(sortServiceSpy).toHaveBeenCalled();
         expect(paginationServiceSpy).toHaveBeenCalled();
-        expect(component.registeredResources.length).toBe(4); // RxJsResourceStub, GridService, GridStateService, SlickEmptyCompositeEditorComponent
+        expect(component.registeredResources.length).toBe(5); // RxJsResourceStub, GridService, GridStateService, CustomTooltip, SlickEmptyCompositeEditorComponent
         expect(component.registeredResources[0] instanceof RxJsResourceStub).toBeTrue();
       });
 

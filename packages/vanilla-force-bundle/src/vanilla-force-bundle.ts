@@ -29,7 +29,7 @@ import { SlickVanillaGridBundle, UniversalContainerService } from '@slickgrid-un
 
 import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options';
 
-export class SalesforceVanillaGridBundle extends SlickVanillaGridBundle {
+export class VanillaForceGridBundle extends SlickVanillaGridBundle {
   slickCompositeEditor: SlickCompositeEditorComponent | undefined;
 
   /**
@@ -107,12 +107,10 @@ export class SalesforceVanillaGridBundle extends SlickVanillaGridBundle {
 
   protected registerResources() {
     // when using Salesforce, we want the Export to CSV always enabled without registering it
-    if (this.gridOptions.enableTextExport && this.gridOptions.useSalesforceDefaultGridOptions) {
+    if (this.gridOptions.enableTextExport) {
       this._registeredResources.push(new TextExportService());
     }
-    if (this.gridOptions.useSalesforceDefaultGridOptions) {
-      this._registeredResources.push(new SlickCustomTooltip());
-    }
+    this._registeredResources.push(new SlickCustomTooltip());
 
     // at this point, we consider all the registered services as external services, anything else registered afterward aren't external
     if (Array.isArray(this._registeredResources)) {
@@ -143,7 +141,7 @@ export class SalesforceVanillaGridBundle extends SlickVanillaGridBundle {
 
     // also initialize (render) the pagination component when using the salesforce default options
     // however before adding a new instance, just make sure there isn't one that might have been loaded by calling "registerExternalResources"
-    if (this.gridOptions.enableCompositeEditor && this.gridOptions.useSalesforceDefaultGridOptions) {
+    if (this.gridOptions.enableCompositeEditor) {
       if (!this._registeredResources.some((resource => resource instanceof SlickCompositeEditorComponent))) {
         this.slickCompositeEditor = new SlickCompositeEditorComponent();
         this._registeredResources.push(this.slickCompositeEditor);

@@ -22,7 +22,7 @@ import {
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { SlickerGridInstance } from '@slickgrid-universal/vanilla-bundle';
-import { SalesforceVanillaGridBundle, Slicker } from '@slickgrid-universal/salesforce-vanilla-bundle';
+import { VanillaForceGridBundle, Slicker } from '@slickgrid-universal/vanilla-force-bundle';
 import { CompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 
 import { ExampleGridOptions } from './example-grid-options';
@@ -100,8 +100,8 @@ export class Example12 {
     { value: 4, label: 'Very Complex' },
   ];
 
-  // you would typically use `SlickVanillaGridBundle` instead, we use `SalesforceVanillaGridBundle` just to test that Salesforce package
-  sgb: SalesforceVanillaGridBundle;
+  // you would typically use `SlickVanillaGridBundle` instead, we use `VanillaForceGridBundle` just to test that Salesforce package
+  sgb: VanillaForceGridBundle;
 
   get slickerGridInstance(): SlickerGridInstance {
     return this.sgb?.instances;
