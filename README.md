@@ -31,11 +31,11 @@ You might be wondering why was this monorepo created? Here are a few of the reas
    - you can use it in plain JavaScript (ES6) or TypeScript, on our side we use it with plain JS (ES6) in our Salesforce environment with LWC (Lightning Web Component)
 
 ### Frameworks using this monorepo
-  - [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) `3.x` now uses Slickgrid-Universal
-  - [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) `3.x` now uses Slickgrid-Universal
+  - [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) starting with version `3.x` is now using Slickgrid-Universal
+  - [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) starting with version `3.x` is now using Slickgrid-Universal
   - [Vanilla bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) is to use it with plain JavaScript or TypeScript without targeting any particular framework.
 
-The Vanilla Implementation (not associated to any framework) is built with [WebPack](https://webpack.js.org/) and is also used to test all the UI functionalities [Cypress](https://www.cypress.io/) (E2E tests). This [Vanilla bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package is also what we use in our SalesForce implementation (with Lightning Web Component), hence the creation of this monorepo library.
+The Vanilla Implementation (not associated to any framework) is built with [WebPack](https://webpack.js.org/) and is also used to test all the UI functionalities [Cypress](https://www.cypress.io/) (E2E tests). The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle), which extends the `vanilla-bundle` package is what we use in our SalesForce implementation (with Lightning Web Component), hence the creation of this monorepo library.
 
 ### Fully Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
 Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +15,000 lines of code (+3,700 unit tests) that are fully tested with [Jest](https://jestjs.io/). There are also +400 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (there's also an additional +500 tests in Aurelia-Slickgrid)
@@ -72,7 +72,7 @@ Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +15,00
 ## Installation
 To get going and do development with this monorepo, you will need to clone the repo and then follow the steps below
 
-1. Install npm packages with Yarn classic (`1.x` version) since this lib uses Yarn Workspaces and so you need to use Yarn to install all packages
+1. Install npm packages with [Yarn classic 1.x](https://classic.yarnpkg.com/lang/en/) since this lib uses Yarn version 1.x Workspaces and so you need to use Yarn to install all packages
 ```bash
 yarn install
 ```
