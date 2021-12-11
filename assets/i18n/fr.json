@@ -15,6 +15,7 @@
   "COMMANDS": "Commandes",
   "CONTAINS": "Contient",
   "COPY": "Copier",
+  "DROP_COLUMN_HEADER_TO_GROUP_BY": "Glisser une en-tête de colonne ici pour grouper par cet colonne",
   "EMPTY_DATA_WARNING_MESSAGE": "Aucune donnée à afficher.",
   "ENDS_WITH": "Se termine par",
   "EQUALS": "Égale",
@@ -46,6 +47,7 @@
   "OK": "Terminé",
   "PAGE": "Page",
   "PAGE_X_OF_Y": "page {{x}} de {{y}}",
+  "RECORDS_SELECTED": "enregistrements sélectionnés",
   "REFRESH_DATASET": "Rafraîchir les données",
   "REMOVE_FILTER": "Supprimer le filtre",
   "REMOVE_SORT": "Supprimer le tri",
@@ -57,6 +59,7 @@
   "SORT_DESCENDING": "Trier par ordre décroissant",
   "STARTS_WITH": "Commence par",
   "SYNCHRONOUS_RESIZE": "Redimension synchrone",
+  "TOGGLE_ALL_GROUPS": "Basculer tous les groupes",
   "TOGGLE_FILTER_ROW": "Basculer la ligne des filtres",
   "TOGGLE_PRE_HEADER_ROW": "Basculer la ligne de pré-en-tête",
   "UNFREEZE_COLUMNS": "Dégeler les colonnes",
@@ -95,5 +98,6 @@
   "TASK_X": "Tâche {{x}}",
   "TITLE": "Titre",
   "TITLE.NAME": "Nom du Titre",
-  "TRUE": "Vrai"
+  "TRUE": "Vrai",
+  "X_DAY_PLURAL": "{{x}} journée{{plural}}"
 }
