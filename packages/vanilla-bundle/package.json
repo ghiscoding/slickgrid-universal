@@ -49,11 +49,11 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.19.2",
-    "@slickgrid-universal/custom-footer-component": "^0.19.2",
-    "@slickgrid-universal/empty-warning-component": "^0.19.2",
-    "@slickgrid-universal/event-pub-sub": "^0.19.2",
-    "@slickgrid-universal/pagination-component": "^0.19.2",
+    "@slickgrid-universal/common": "^1.1.0",
+    "@slickgrid-universal/custom-footer-component": "^1.1.0",
+    "@slickgrid-universal/empty-warning-component": "^1.1.0",
+    "@slickgrid-universal/event-pub-sub": "^1.1.0",
+    "@slickgrid-universal/pagination-component": "^1.1.0",
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {

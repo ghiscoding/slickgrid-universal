@@ -52,8 +52,8 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/binding": "^0.19.2",
-    "@slickgrid-universal/common": "^0.19.2"
+    "@slickgrid-universal/binding": "^1.1.0",
+    "@slickgrid-universal/common": "^1.1.0"
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",
