@@ -105,12 +105,9 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       // -- Option List section
       if (!(this.addonOptions as CellMenu | ContextMenu).hideOptionSection && isColumnOptionAllowed && optionItems.length > 0) {
         const optionMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-option-list` });
+        this.populateCommandOrOptionTitle('option', this.addonOptions, optionMenuElm);
         if (!this.addonOptions.hideCloseButton) {
-          this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener);
-          const optionMenuHeaderElm = createDomElement('div', { className: 'slick-option-header' });
-          optionMenuHeaderElm?.appendChild(closeButtonElm);
-          optionMenuElm.appendChild(optionMenuHeaderElm);
-          optionMenuHeaderElm.classList.add('with-close');
+          this.populateCommandOrOptionCloseBtn('option', closeButtonElm, optionMenuElm);
         }
         this._menuElm.appendChild(optionMenuElm);
         this.populateCommandOrOptionItems(
@@ -126,12 +123,9 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       // -- Command List section
       if (!(this.addonOptions as CellMenu | ContextMenu).hideCommandSection && isColumnCommandAllowed && commandItems.length > 0) {
         const commandMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-command-list` });
+        this.populateCommandOrOptionTitle('command', this.addonOptions, commandMenuElm);
         if (!this.addonOptions.hideCloseButton && (!isColumnOptionAllowed || optionItems.length === 0 || (this.addonOptions as CellMenu | ContextMenu).hideOptionSection)) {
-          this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener);
-          const commandMenuHeaderElm = createDomElement('div', { className: 'slick-command-header' });
-          commandMenuHeaderElm?.appendChild(closeButtonElm);
-          commandMenuElm.appendChild(commandMenuHeaderElm);
-          commandMenuHeaderElm.classList.add('with-close');
+          this.populateCommandOrOptionCloseBtn('command', closeButtonElm, commandMenuElm);
         }
         this._menuElm.appendChild(commandMenuElm);
         this.populateCommandOrOptionItems(
@@ -237,6 +231,14 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
         this.closeMenu(event, { cell, row, grid: this.grid });
       }
     }
+  }
+
+  protected populateCommandOrOptionCloseBtn(itemType: MenuType, closeButtonElm: HTMLButtonElement, commandOrOptionMenuElm: HTMLDivElement) {
+    this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener);
+    const commandOrOptionMenuHeaderElm = commandOrOptionMenuElm.querySelector<HTMLDivElement>(`.slick-${itemType}-header`) ?? createDomElement('div', { className: `slick-${itemType}-header` });
+    commandOrOptionMenuHeaderElm?.appendChild(closeButtonElm);
+    commandOrOptionMenuElm.appendChild(commandOrOptionMenuHeaderElm);
+    commandOrOptionMenuHeaderElm.classList.add('with-close');
   }
 
   protected repositionMenu(event: DOMMouseEvent<HTMLDivElement>) {

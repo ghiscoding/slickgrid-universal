@@ -1,6 +1,5 @@
 /* eslint-disable no-bitwise */
-import * as DOMPurify_ from 'dompurify';
-const DOMPurify = (DOMPurify_ as any)['default'] || DOMPurify_; // patch to fix rollup to work
+import * as DOMPurify from 'dompurify';
 
 interface Binding {
   variable: any;

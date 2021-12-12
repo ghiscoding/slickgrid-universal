@@ -7,6 +7,7 @@ import {
   GridOption,
   GridStateChange,
   GridStateType,
+  OnSelectedRowsChangedEventArgs,
   TreeToggledItem,
   TreeToggleStateChange,
 } from '@slickgrid-universal/common';
@@ -58,6 +59,10 @@ export class Example5 {
     this._bindingEventService.bind(gridContainerElm, 'ontreeitemtoggled', this.handleOnTreeItemToggled.bind(this));
     // or use the Grid State change event
     // this._bindingEventService.bind(gridContainerElm, 'ongridstatechanged', this.handleOnGridStateChanged.bind(this));
+
+    // the following event is a special use case for our project and is commented out
+    // so that we still have code ref if we still need to test the use case
+    // this._bindingEventService.bind(gridContainerElm, 'onselectedrowschanged', this.handleOnSelectedRowsChanged.bind(this));
   }
 
   dispose() {
@@ -71,6 +76,93 @@ export class Example5 {
   showSpinner() {
     if (this.isLargeDataset) {
       this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-24px color-alt-success';
+    }
+  }
+
+  /**
+   * From an item object, we'll first check if item is a parent at level 0 and if so we'll return an array of all of its children Ids (including parent Id itself)
+   * @param {Object} itemObj - selected item object
+   * @returns {Array<number>}
+   */
+  getTreeIds(itemObj) {
+    let treeIds = [];
+    if (itemObj.__hasChildren && itemObj.treeLevel === 0) {
+      treeIds = this.sgb.dataset
+        .filter(item => item.parentId === itemObj.id)
+        .map(child => child.id);
+      treeIds.push(itemObj.id); // also add parent Id into the list for the complete tree Ids
+    }
+    return treeIds;
+  }
+
+  /**
+   * From an item object, find how many item(s) are selected in its tree.
+   * @param {Object} itemObj - selected item object
+   * @param {Array<number>} - we must provide the selected rows prior to the checkbox toggling, we can get this directly from the `onselectedrowschanged` event
+   */
+  getTreeSelectedCount(rootParentItemObj, previousSelectedRows: number[]) {
+    let treeIds = [];
+    const selectedIds = this.sgb.dataView.mapRowsToIds(previousSelectedRows);
+    if (rootParentItemObj.__hasChildren && rootParentItemObj.treeLevel === 0) {
+      treeIds = this.sgb.dataset.filter(item => item.parentId === rootParentItemObj.id)
+        .filter(item => selectedIds.some(selectedId => selectedId === item.id))
+        .map(child => child.id);
+    }
+    return treeIds.length;
+  }
+
+  /** Testing of a use case we had in our environment which is to select all child items of the tree being selected */
+  handleOnSelectedRowsChanged(event) {
+    const args = event.detail.args as OnSelectedRowsChangedEventArgs;
+
+    if (args.caller === 'click.toggle') {
+      let treeIds: Array<number> = [];
+      const childItemsIdxAndIds: Array<{ itemId: number; rowIdx: number; }> = [];
+      const allSelectionChanges = args.changedSelectedRows.concat(args.changedUnselectedRows);
+      let changedRowIndex = allSelectionChanges.length > 0 ? allSelectionChanges[0] : null;
+
+      if (changedRowIndex !== null) {
+        const isRowBeingUnselected = (args.changedUnselectedRows.length && changedRowIndex === args.changedUnselectedRows[0]);
+        let selectedRowItemObj = this.sgb.dataView.getItem(changedRowIndex);
+
+        // the steps we'll do below are the same for both the if/else
+        // 1. we will find all of its children Ids
+        // 2. we will toggle all of its underlying child (only on first treeLevel though)
+
+        // step 1) if it's a parent item (or none of the tree items are selected) we'll select (or unselect) its entire tree, basically the children must follow what the parent does (selected or unselected)
+        if (selectedRowItemObj.__hasChildren && selectedRowItemObj.treeLevel === 0) {
+          // when it's a parent we'll make sure to expand the current tree on first level (if not yet expanded) and then return all tree Ids
+          this.sgb.treeDataService.dynamicallyToggleItemState([{ itemId: selectedRowItemObj.id, isCollapsed: false }]);
+          treeIds = this.getTreeIds(selectedRowItemObj);
+        } else if ((selectedRowItemObj.__hasChildren && selectedRowItemObj.treeLevel === 1) || (!selectedRowItemObj.__hasChildren && selectedRowItemObj.parentId && !this.getTreeSelectedCount(this.sgb.dataView.getItemById(selectedRowItemObj.parentId), args.previousSelectedRows))) {
+          // if we're toggling a child item that is also a parent item (e.g. a switchboard inside an INEQ) then we'll do the following
+          // circle back to its root parent and perform (in other word use the parent of this parent)
+          // then same as previous condition, we'll return the Ids of that that tree
+          const selectedItem = this.sgb.dataView.getItem(changedRowIndex);
+          selectedRowItemObj = this.sgb.dataView.getItemById(selectedItem.parentId);
+          changedRowIndex = this.sgb.dataView.mapIdsToRows([selectedItem.parentId])?.[0];
+          treeIds = this.getTreeIds(selectedRowItemObj);
+        }
+
+        // step 2) do the toggle select/unselect of that tree when necessary (we only toggle on a parent item)
+        if (treeIds.length > 0) {
+          const currentSelectedRows = this.sgb.slickGrid.getSelectedRows();
+          for (const leafId of treeIds) {
+            const childIndexes = this.sgb.dataView.mapIdsToRows([leafId]);
+            if (Array.isArray(childIndexes) && childIndexes.length > 0) {
+              childItemsIdxAndIds.push({ itemId: leafId, rowIdx: childIndexes[0] });
+            }
+          }
+          const childrenRowIndexes = childItemsIdxAndIds.map(childItem => childItem.rowIdx);
+          const currentSelectionPlusChildrenIndexes: number[] = Array.from(new Set(currentSelectedRows.concat(childrenRowIndexes))); // use Set to remove duplicates
+
+          // if we are unselecting the row then we'll remove the children from the final list of selections else just use that entire tree Ids
+          const finalSelection = isRowBeingUnselected
+            ? currentSelectionPlusChildrenIndexes.filter(rowIdx => !childrenRowIndexes.includes(rowIdx))
+            : currentSelectionPlusChildrenIndexes;
+          this.sgb.slickGrid.setSelectedRows(finalSelection);
+        }
+      }
     }
   }
 
@@ -130,6 +222,15 @@ export class Example5 {
         // optionally display some text on the left footer container
         leftFooterText: 'Grid created with <a href="https://github.com/ghiscoding/slickgrid-universal" target="_blank">Slickgrid-Universal</a> <i class="mdi mdi-github"></i>',
       },
+      // enableCheckboxSelector: true,
+      // enableRowSelection: true,
+      // multiSelect: false,
+      // checkboxSelector: {
+      //   hideInFilterHeaderRow: false,
+      //   hideInColumnTitleRow: true,
+      //   onRowToggleStart: (e, args) => console.log('onBeforeRowToggle', args),
+      //   onSelectAllToggleStart: () => this.sgb.treeDataService.toggleTreeDataCollapse(false, false),
+      // },
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       treeDataOptions: {
         columnId: 'title',

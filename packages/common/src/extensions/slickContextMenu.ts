@@ -388,13 +388,18 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
         const grid = this.sharedService?.slickGrid;
         const exportOptions = gridOptions && ((gridOptions.excelExportOptions || { ...gridOptions.exportOptions, ...gridOptions.textExportOptions }));
         let textToCopy = exportWithFormatterWhenDefined(row, cell, columnDef, dataContext, grid, exportOptions);
-
         if (typeof columnDef.queryFieldNameGetterFn === 'function') {
           textToCopy = getCellValueFromQueryFieldGetter(columnDef, dataContext, '');
         }
+        let finalTextToCopy = textToCopy;
 
-        // remove any unwanted Tree Data/Grouping symbols from the beginning of the string before copying (e.g.: "⮟  Task 21" or "·   Task 2")
-        const finalTextToCopy = textToCopy.replace(/^([·|⮞|⮟]\s*)|([·|⮞|⮟])\s*/gi, '').replace(/[\u00b7|\u034f]/gi, '').trim();
+        // when it's a string, we'll remove any unwanted Tree Data/Grouping symbols from the beginning (if exist) from the string before copying (e.g.: "⮟  Task 21" or "·   Task 2")
+        if (typeof textToCopy === 'string') {
+          finalTextToCopy = textToCopy
+            .replace(/^([·|⮞|⮟]\s*)|([·|⮞|⮟])\s*/gi, '')
+            .replace(/[\u00b7|\u034f]/gi, '')
+            .trim();
+        }
 
         // create fake <textarea> (positioned outside of the screen) to copy into clipboard & delete it from the DOM once we're done
         const tmpElem = document.createElement('textarea');

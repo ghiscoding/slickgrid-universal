@@ -298,7 +298,7 @@ describe('ContextMenu Plugin', () => {
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
           `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
             <div class="slick-menu-command-list">
-              <div class="slick-command-header with-close no-title">
+              <div class="slick-command-header no-title with-close">
                 <button class="close" type="button" data-dismiss="slick-menu" aria-label="Close">×</button>
               </div>
               <li class="slick-menu-item orange" data-command="command1">
@@ -762,6 +762,31 @@ describe('ContextMenu Plugin', () => {
         expect(execSpy).toHaveBeenCalledWith('copy', false, 'JOHN');
       });
 
+      it('should call "copyToClipboard", with a number when the command triggered is "copy" and expect it to be copied without transformation', () => {
+        const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: false, enableTextExport: false, exportOptions: { exportWithFormatter: true } } as GridOption;
+        const columnMock = { id: 'age', name: 'Age', field: 'age' } as Column;
+        const dataContextMock = { id: 123, firstName: 'John', lastName: 'Doe', age: 50 };
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        const execSpy = jest.spyOn(window.document, 'execCommand');
+        plugin.dispose();
+        plugin.init({ commandItems: [] });
+        plugin.init({ commandItems: [] });
+
+        const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find((item: MenuCommandItem) => item.command === 'copy') as MenuCommandItem;
+        menuItemCommand.action!(new CustomEvent('change'), {
+          command: 'copy',
+          cell: 2,
+          row: 5,
+          grid: gridStub,
+          column: columnMock,
+          dataContext: dataContextMock,
+          item: menuItemCommand,
+          value: 50
+        });
+
+        expect(execSpy).toHaveBeenCalledWith('copy', false, 50);
+      });
+
       it('should call "copyToClipboard" and get the value even when there is a "queryFieldNameGetterFn" callback defined when the command triggered is "copy"', () => {
         const firstNameColIdx = 0;
         const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: false, enableTextExport: false, contextMenu: { hideCopyCellValueCommand: false } } as GridOption;
@@ -1222,7 +1247,7 @@ describe('ContextMenu Plugin', () => {
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
           `<div class="slick-context-menu slickgrid12345 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
             <div class="slick-menu-option-list">
-              <div class="slick-option-header with-close no-title">
+              <div class="slick-option-header no-title with-close">
                 <button class="close" type="button" data-dismiss="slick-menu" aria-label="Close">×</button>
               </div>
               <li class="slick-menu-item purple" data-option="option1">

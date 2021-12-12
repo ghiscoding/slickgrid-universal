@@ -108,10 +108,10 @@ export class SlickColumnPicker {
     this._menuElm.setAttribute('aria-expanded', 'false');
 
     // add Close button and optiona a Column list title
-    addCloseButtomElement.call(this, this._menuElm);
     addColumnTitleElementWhenDefined.call(this, this._menuElm);
+    addCloseButtomElement.call(this, this._menuElm);
 
-    this._listElm = createDomElement('span', { className: 'slick-column-picker-list' });
+    this._listElm = createDomElement('div', { className: 'slick-column-picker-list' });
     this._bindEventService.bind(this._menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener);
 
     // Hide the menu on outside click.

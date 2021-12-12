@@ -173,7 +173,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       // user could pass a title on top of the columns list
       addColumnTitleElementWhenDefined.call(this, this._menuElm);
 
-      this._listElm = createDomElement('span', { className: 'slick-column-picker-list' });
+      this._listElm = createDomElement('div', { className: 'slick-column-picker-list' });
 
       // update all columns on any of the column title button click from column picker
       this._bindEventService.bind(this._menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener);
@@ -795,7 +795,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   /** Re/Create Command List by adding title, close & list of commands */
   recreateCommandList(addonOptions: GridMenu, callbackArgs: GridMenuEventWithElementCallbackArgs) {
     // add Close button
-    const commandMenuHeaderElm = createDomElement('div', { className: 'slick-command-header' });
+    this.populateCommandOrOptionTitle('command', addonOptions, this._commandMenuElm);
+    const commandMenuHeaderElm = this._commandMenuElm.querySelector<HTMLDivElement>(`.slick-command-header`) ?? createDomElement('div', { className: 'slick-command-header' });
     commandMenuHeaderElm.classList.add('with-close');
     addCloseButtomElement.call(this, commandMenuHeaderElm);
     this._commandMenuElm.appendChild(commandMenuHeaderElm);

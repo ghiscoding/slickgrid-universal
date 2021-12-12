@@ -103,7 +103,7 @@ export class SlickCellSelectionModel {
     return result;
   }
 
-  setSelectedRanges(ranges: CellRange[]) {
+  setSelectedRanges(ranges: CellRange[], caller = 'SlickCellSelectionModel.setSelectedRanges') {
     // simple check for: empty selection didn't change, prevent firing onSelectedRangesChanged
     if ((!this._ranges || this._ranges.length === 0) && (!ranges || ranges.length === 0)) {
       return;
@@ -114,7 +114,9 @@ export class SlickCellSelectionModel {
 
     this._ranges = this.removeInvalidRanges(ranges);
     if (rangeHasChanged) {
-      this.onSelectedRangesChanged.notify(this._ranges);
+      const eventData = new Slick.EventData();
+      Object.defineProperty(eventData, 'detail', { writable: true, configurable: true, value: { caller } });
+      this.onSelectedRangesChanged.notify(this._ranges, eventData);
     }
   }
 

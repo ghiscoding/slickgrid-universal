@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/vanilla-bundle",
-  "version": "0.19.2",
+  "version": "1.1.1",
   "description": "Vanilla Slick Grid Bundle - Framework agnostic the output is to be used in vanilla JS/TS - Written in TypeScript and we also use WebPack to bundle everything into 1 JS file.",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
@@ -15,22 +15,16 @@
   ],
   "scripts": {
     "test": "echo testing slickgrid-universal slickgrid-vanilla-bundle code",
-    "dev": "webpack --env development",
+    "dev": "run-s build",
     "dev:watch": "run-p build:watch",
     "build": "cross-env tsc --build",
     "postbuild": "npm run bundle:commonjs",
     "build:watch": "cross-env tsc --incremental --watch",
     "prebundle": "npm run delete:dist",
-    "bundle": "npm-run-all bundle:commonjs bundle:esm webpack:prod",
+    "bundle": "npm-run-all bundle:commonjs bundle:esm",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "cross-env tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
-    "prebundle:zip": "npm run delete:zip",
-    "bundle:zip": "npm run zip:dist",
     "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
-    "delete:zip": "cross-env rimraf --maxBusyTries=10 dist-bundle-zip",
-    "webpack:prod": "webpack --env production",
-    "zip:dist:dev": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle-DEV --output-folder=\"dist-grid-bundle-zip/\"",
-    "zip:dist": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle --output-folder=\"dist-grid-bundle-zip/\"",
     "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=vanilla-bundle",
     "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=vanilla-bundle"
   },
@@ -55,24 +49,16 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^0.19.2",
-    "@slickgrid-universal/composite-editor-component": "^0.19.2",
-    "@slickgrid-universal/custom-footer-component": "^0.19.2",
-    "@slickgrid-universal/custom-tooltip-plugin": "^0.19.2",
-    "@slickgrid-universal/empty-warning-component": "^0.19.2",
-    "@slickgrid-universal/event-pub-sub": "^0.19.2",
-    "@slickgrid-universal/pagination-component": "^0.19.2",
-    "@slickgrid-universal/text-export": "^0.19.2",
+    "@slickgrid-universal/common": "^1.1.0",
+    "@slickgrid-universal/custom-footer-component": "^1.1.1",
+    "@slickgrid-universal/empty-warning-component": "^1.1.1",
+    "@slickgrid-universal/event-pub-sub": "^1.1.1",
+    "@slickgrid-universal/pagination-component": "^1.1.1",
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
-    "@types/webpack": "^5.28.0",
-    "archiver": "^5.3.0",
     "cross-env": "^7.0.3",
-    "dts-bundle-webpack": "^1.0.2",
-    "html-loader": "^3.0.1",
     "npm-run-all": "^4.1.5",
-    "rimraf": "^3.0.2",
-    "webpack": "^5.64.4"
+    "rimraf": "^3.0.2"
   }
 }
