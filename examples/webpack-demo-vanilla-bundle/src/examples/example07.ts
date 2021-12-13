@@ -315,6 +315,64 @@ export class Example7 {
     this.sgb.filterService.clearFilters();
   }
 
+  
+  allFilters() {
+    const grid = this.sgb;
+    $(`<div id="modal-allFilter" class="modal is-active" >
+        <style type="text/css">
+            .table {
+                display: table;
+            }
+
+            .row {
+                display: table-row;
+            }
+
+            .column {
+                display: table-cell;
+                vertical-align: top;
+                width: 40%;
+            }
+        </style>
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Filter</p>
+                <button id="btn-close" class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+              <div class="slickgrid-container grid-pane">
+                <div id="modal-allFilter-content">
+                  <div id="modal-allFilter-table" class="table slick-headerrow ui-state-default">
+                  </div>
+                </div>
+              </div>
+            </section>
+        </div>
+    </div>`).appendTo('body');
+
+    $("#btn-close").on('click',function() {
+      grid?.filterService.toggleHeaderFilterRow();
+      document.getElementById("modal-allFilter").remove();
+    });
+
+
+    for (const columnFilter of grid?.columnDefinitions){
+      if (columnFilter.filterable){
+        const filterElm = `modal-allfilter-${columnFilter.id}`;
+        $('#modal-allFilter-table').append(`
+        <div class="row slick-headerrow-columns">
+          <div class="column">${columnFilter.name}</div><div id="${filterElm}" class="column ui-state-default slick-headerrow-column"></div>
+        </div>
+        `);
+        grid?.filterService.drawFilterTemplate(columnFilter,`#${filterElm}`);
+      }
+    }
+
+    grid?.filterService.toggleHeaderFilterRow();
+
+  }
+
   changeCompletedOption(dataContext: any, newValue: boolean) {
     console.log('change', dataContext, newValue);
     if (dataContext && dataContext.hasOwnProperty('completed')) {
