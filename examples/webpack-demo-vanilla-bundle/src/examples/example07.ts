@@ -338,7 +338,7 @@ export class Example7 {
         <div class="modal-card">
             <header class="modal-card-head">
                 <p class="modal-card-title">Filter</p>
-                <button id="btn-close" class="delete" aria-label="close"></button>
+                <button class="delete btn-close" aria-label="close"></button>
             </header>
             <section class="modal-card-body">
               <div class="slickgrid-container grid-pane">
@@ -348,14 +348,23 @@ export class Example7 {
                 </div>
               </div>
             </section>
+            <footer class="modal-card-foot">
+              <button class="button btn-close">Close</button>
+              <button id="btn-clear-all" class="button">Clear All Filter</button>
+              <button class="button btn-close is-success">Search</button>
+            </footer>
         </div>
     </div>`).appendTo('body');
 
-    $("#btn-close").on('click',function() {
+    $(".btn-close").on('click',function() {
       grid?.filterService.toggleHeaderFilterRow();
       document.getElementById("modal-allFilter").remove();
     });
-
+    $("#btn-clear-all").on('click',function() {
+      grid?.filterService.toggleHeaderFilterRow();
+      document.getElementById("modal-allFilter").remove();
+      grid?.filterService.clearFilters();
+    });
 
     for (const columnFilter of grid?.columnDefinitions){
       if (columnFilter.filterable){
