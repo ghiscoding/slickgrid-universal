@@ -229,8 +229,14 @@ export class SelectFilter implements Filter {
       values = Array.isArray(values) ? values : [values];
       this.$filterElm.multipleSelect('setSelects', values);
     }
-    this.getValues().length > 0 ? this.$filterElm.addClass('filled') : this.$filterElm.removeClass('filled');
-
+    if (this.getValues().length > 0 ) {
+      this.isFilled = true;
+      this.$filterElm?.addClass('filled').siblings('div .search-filter').addClass('filled');
+    } else {
+      this.isFilled = false;
+      this.$filterElm.removeClass('filled');
+      this.$filterElm.siblings('div .search-filter').removeClass('filled');
+    }
     // set the operator when defined
     this.operator = operator || this.defaultOperator;
   }
@@ -398,7 +404,7 @@ export class SelectFilter implements Filter {
 
     // if there's a search term, we will add the "filled" class for styling purposes
     if (this.isFilled) {
-      this.$filterElm.addClass('filled');
+      this.$filterElm?.addClass('filled').siblings('div .search-filter').addClass('filled');
     }
 
     // append the new DOM element to the header row
