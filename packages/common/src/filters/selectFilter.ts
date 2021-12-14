@@ -229,7 +229,7 @@ export class SelectFilter implements Filter {
       values = Array.isArray(values) ? values : [values];
       this.$filterElm.multipleSelect('setSelects', values);
     }
-    if (this.getValues().length > 0 ) {
+    if (this.getValues().length > 0) {
       this.isFilled = true;
       this.$filterElm?.addClass('filled').siblings('div .search-filter').addClass('filled');
     } else {
