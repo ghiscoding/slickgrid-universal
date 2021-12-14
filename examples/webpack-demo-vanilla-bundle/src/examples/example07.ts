@@ -11,7 +11,7 @@ import {
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { TranslateService } from '../translate.service';
-
+import * as DOMPurify from 'dompurify';
 import { ExampleGridOptions } from './example-grid-options';
 
 export class Example7 {
@@ -318,7 +318,7 @@ export class Example7 {
   
   allFilters() {
     const grid = this.sgb;
-    $(`<div id="modal-allFilter" class="modal is-active" >
+    const modalHtml:string =`<div id="modal-allFilter" class="modal is-active" >
         <style type="text/css">
             .table {
                 display: table;
@@ -354,7 +354,9 @@ export class Example7 {
               <button class="button btn-close is-success">Search</button>
             </footer>
         </div>
-    </div>`).appendTo('body');
+    </div>`;
+    
+    document.body.appendChild(DOMPurify.sanitize(modalHtml,{ RETURN_DOM: true }));
 
     $(".btn-close").on('click',function() {
       grid?.filterService.toggleHeaderFilterRow();
@@ -377,8 +379,9 @@ export class Example7 {
         grid?.filterService.drawFilterTemplate(columnFilter,`#${filterElm}`);
       }
     }
-
-    grid?.filterService.toggleHeaderFilterRow();
+    if (grid?.slickGrid.getOptions().showHeaderRow){
+      grid?.filterService.toggleHeaderFilterRow();
+    }
 
   }
 
