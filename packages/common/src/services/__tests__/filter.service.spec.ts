@@ -1642,6 +1642,20 @@ describe('FilterService', () => {
       gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
       await service.updateFilters(mockNewFilters);
 
+      const columnFilterMetadada = service.drawFilterTemplate('name',`#${DOM_ELEMENT_ID}`);
+
+      const filterElm = document.body.querySelector<HTMLDivElement>(`#${DOM_ELEMENT_ID}`);
+      expect(filterElm).toBeTruthy();
+
+      expect(columnFilterMetadada.columnDef.id).toBe('name');
+    });
+    it('should Draw DOM Element Filter on custom HTML element by string id with searchTerms',  async () => {
+      service.init(gridStub);
+      service.bindLocalOnFilter(gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
+      await service.updateFilters(mockNewFilters);
+
       const columnFilterMetadada = service.drawFilterTemplate('firstName',`#${DOM_ELEMENT_ID}`);
 
       const filterElm = document.body.querySelector<HTMLDivElement>(`#${DOM_ELEMENT_ID}`);
@@ -1664,8 +1678,9 @@ describe('FilterService', () => {
 
       expect(columnFilterMetadada.columnDef.id).toBe('isActive');
     });
+
     
-    it('should Draw DOM Element Filter on custom HTML element',  async () => {
+    it('should Draw DOM Element Filter on custom HTML element return null',  async () => {
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
@@ -1674,14 +1689,12 @@ describe('FilterService', () => {
 
       const filterContainerElm:HTMLDivElement = document.querySelector(`#${DOM_ELEMENT_ID}`);
       const columnFilterMetadada1 = service.drawFilterTemplate('selector',filterContainerElm);
-      const columnFilterMetadada2 = service.drawFilterTemplate('name',`#notExist`);
-      const columnFilterMetadada3 = service.drawFilterTemplate('name',`#${DOM_ELEMENT_ID}`);
+      const columnFilterMetadada2 = service.drawFilterTemplate('name',`#not-exists`);
+      const columnFilterMetadada3 = service.drawFilterTemplate('invalid-column',filterContainerElm);
 
-      const filterElm = document.body.querySelector<HTMLDivElement>(`#${DOM_ELEMENT_ID}`);
-      expect(filterElm).toBeTruthy();
-
-      expect(columnFilterMetadada1).toBe(null);
-      expect(columnFilterMetadada2).toBe(null);
+      expect(columnFilterMetadada1).toBeNull();
+      expect(columnFilterMetadada2).toBeNull();
+      expect(columnFilterMetadada3).toBeNull();
 
     });
   });
