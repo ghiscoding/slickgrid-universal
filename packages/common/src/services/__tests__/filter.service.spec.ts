@@ -1635,6 +1635,36 @@ describe('FilterService', () => {
       ];
       sharedService.allColumns = [mockColumn1, mockColumn2, mockColumn3];
     });
+    it('should Draw DOM Element Filter on custom HTML element by string id',  async () => {
+      service.init(gridStub);
+      service.bindLocalOnFilter(gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
+      await service.updateFilters(mockNewFilters);
+
+      const columnFilterMetadada = service.drawFilterTemplate('firstName',`#${DOM_ELEMENT_ID}`);
+
+      const filterElm = document.body.querySelector<HTMLDivElement>(`#${DOM_ELEMENT_ID}`);
+      expect(filterElm).toBeTruthy();
+
+      expect(columnFilterMetadada.columnDef.id).toBe('firstName');
+    });
+    it('should Draw DOM Element Filter on custom HTML element by HTMLDivElement',  async () => {
+      service.init(gridStub);
+      service.bindLocalOnFilter(gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+      gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
+      await service.updateFilters(mockNewFilters);
+
+      const filterContainerElm:HTMLDivElement = document.querySelector(`#${DOM_ELEMENT_ID}`);
+      const columnFilterMetadada = service.drawFilterTemplate('isActive',filterContainerElm);
+
+      const filterElm = document.body.querySelector<HTMLDivElement>(`#${DOM_ELEMENT_ID}`);
+      expect(filterElm).toBeTruthy();
+
+      expect(columnFilterMetadada.columnDef.id).toBe('isActive');
+    });
+    
     it('should Draw DOM Element Filter on custom HTML element',  async () => {
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
@@ -1642,13 +1672,17 @@ describe('FilterService', () => {
       gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
       await service.updateFilters(mockNewFilters);
 
-      const filterContainerElm:HTMLDivElement = document.querySelector('#'+DOM_ELEMENT_ID);
-      const output1 = service.drawFilterTemplate('firstName','#'+DOM_ELEMENT_ID);
-      const output2 = service.drawFilterTemplate('isActive',filterContainerElm);
-      const output3 = service.drawFilterTemplate('selector',filterContainerElm);
-      const output4 = service.drawFilterTemplate('name',filterContainerElm);
-            
-      //expect(output).toBe(output.columnDef.id);
+      const filterContainerElm:HTMLDivElement = document.querySelector(`#${DOM_ELEMENT_ID}`);
+      const columnFilterMetadada1 = service.drawFilterTemplate('selector',filterContainerElm);
+      const columnFilterMetadada2 = service.drawFilterTemplate('name',`#notExist`);
+      const columnFilterMetadada3 = service.drawFilterTemplate('name',`#${DOM_ELEMENT_ID}`);
+
+      const filterElm = document.body.querySelector<HTMLDivElement>(`#${DOM_ELEMENT_ID}`);
+      expect(filterElm).toBeTruthy();
+
+      expect(columnFilterMetadada1).toBe(null);
+      expect(columnFilterMetadada2).toBe(null);
+
     });
   });
 
