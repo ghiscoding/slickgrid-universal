@@ -315,10 +315,10 @@ export class Example7 {
     this.sgb.filterService.clearFilters();
   }
 
-  
+
   allFilters() {
     const grid = this.sgb;
-    const modalHtml:string =`<div id="modal-allFilter" class="modal is-active" >
+    const modalHtml: string = `<div id="modal-allFilter" class="modal is-active" >
         <style type="text/css">
             .table {
                 display: table;
@@ -355,31 +355,31 @@ export class Example7 {
             </footer>
         </div>
     </div>`;
-    
-    document.body.appendChild(DOMPurify.sanitize(modalHtml,{ RETURN_DOM: true }));
 
-    $(".btn-close").on('click',function() {
+    document.body.appendChild(DOMPurify.sanitize(modalHtml, { RETURN_DOM: true }));
+
+    $(".btn-close").on('click', function () {
       grid?.filterService.toggleHeaderFilterRow();
       document.getElementById("modal-allFilter").remove();
     });
-    $("#btn-clear-all").on('click',function() {
+    $("#btn-clear-all").on('click', function () {
       grid?.filterService.toggleHeaderFilterRow();
       document.getElementById("modal-allFilter").remove();
       grid?.filterService.clearFilters();
     });
 
-    for (const columnFilter of grid?.columnDefinitions){
-      if (columnFilter.filterable){
+    for (const columnFilter of grid?.columnDefinitions) {
+      if (columnFilter.filterable) {
         const filterElm = `modal-allfilter-${columnFilter.id}`;
         $('#modal-allFilter-table').append(`
         <div class="row slick-headerrow-columns">
           <div class="column">${columnFilter.name}</div><div id="${filterElm}" class="column ui-state-default slick-headerrow-column"></div>
         </div>
         `);
-        grid?.filterService.drawFilterTemplate(columnFilter,`#${filterElm}`);
+        grid?.filterService.drawFilterTemplate(columnFilter, `#${filterElm}`);
       }
     }
-    if (grid?.slickGrid.getOptions().showHeaderRow){
+    if (grid?.slickGrid.getOptions().showHeaderRow) {
       grid?.filterService.toggleHeaderFilterRow();
     }
 
