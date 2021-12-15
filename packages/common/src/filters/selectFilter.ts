@@ -229,8 +229,7 @@ export class SelectFilter implements Filter {
       values = Array.isArray(values) ? values : [values];
       this.$filterElm.multipleSelect('setSelects', values);
     }
-    this.getValues().length > 0 ? this.$filterElm.addClass('filled') : this.$filterElm.removeClass('filled');
-
+    this.updateFilterStyle(this.getValues().length > 0);
     // set the operator when defined
     this.operator = operator || this.defaultOperator;
   }
@@ -397,9 +396,7 @@ export class SelectFilter implements Filter {
     this.$filterElm.data('columnId', columnId);
 
     // if there's a search term, we will add the "filled" class for styling purposes
-    if (this.isFilled) {
-      this.$filterElm.addClass('filled');
-    }
+    this.updateFilterStyle(this.isFilled);
 
     // append the new DOM element to the header row
     if (this.$filterElm && typeof this.$filterElm.appendTo === 'function') {
@@ -451,20 +448,23 @@ export class SelectFilter implements Filter {
   protected onTriggerEvent() {
     if (this.$filterElm) {
       const selectedItems = this.getValues();
-
-      if (Array.isArray(selectedItems) && selectedItems.length > 1 || (selectedItems.length === 1 && selectedItems[0] !== '')) {
-        this.isFilled = true;
-        this.$filterElm?.addClass('filled').siblings('div .search-filter').addClass('filled');
-      } else {
-        this.isFilled = false;
-        this.$filterElm.removeClass('filled');
-        this.$filterElm.siblings('div .search-filter').removeClass('filled');
-      }
-
+      this.updateFilterStyle(Array.isArray(selectedItems) && selectedItems.length > 1 || (selectedItems.length === 1 && selectedItems[0] !== ''));
       this.searchTerms = selectedItems;
       this.callback(undefined, { columnDef: this.columnDef, operator: this.operator, searchTerms: selectedItems, shouldTriggerQuery: this._shouldTriggerQuery });
       // reset flag for next use
       this._shouldTriggerQuery = true;
+    }
+  }
+
+  /** Set value(s) on the DOM element */
+  protected updateFilterStyle(isFilled: boolean) {
+    if (isFilled) {
+      this.isFilled = true;
+      this.$filterElm?.addClass('filled').siblings('div .search-filter').addClass('filled');
+    } else {
+      this.isFilled = false;
+      this.$filterElm.removeClass('filled');
+      this.$filterElm.siblings('div .search-filter').removeClass('filled');
     }
   }
 }
