@@ -458,13 +458,13 @@ export class SelectFilter implements Filter {
 
   /** Set value(s) on the DOM element */
   protected updateFilterStyle(isFilled: boolean) {
-      if (isFilled) {
-        this.isFilled = true;
-        this.$filterElm?.addClass('filled').siblings('div .search-filter').addClass('filled');
-      } else {
-        this.isFilled = false;
-        this.$filterElm.removeClass('filled');
-        this.$filterElm.siblings('div .search-filter').removeClass('filled');
-      }
+    if (isFilled) {
+      this.isFilled = true;
+      this.$filterElm?.addClass('filled').siblings('div .search-filter').addClass('filled');
+    } else {
+      this.isFilled = false;
+      this.$filterElm.removeClass('filled');
+      this.$filterElm.siblings('div .search-filter').removeClass('filled');
+    }
   }
 }
