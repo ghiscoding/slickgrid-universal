@@ -320,15 +320,15 @@ export class Example7 {
     const grid = this.sgb;
     const modalHtml: string = `<div id="modal-allFilter" class="modal is-active" >
         <style type="text/css">
-            .table {
-                display: table;
+            #modal-allFilter-table {
+              display: table;
             }
 
-            .row {
+            #modal-allFilter-table .row {
                 display: table-row;
             }
 
-            .column {
+            #modal-allFilter-table .column {
                 display: table-cell;
                 vertical-align: top;
                 width: 40%;
@@ -343,7 +343,7 @@ export class Example7 {
             <section class="modal-card-body">
               <div class="slickgrid-container grid-pane">
                 <div id="modal-allFilter-content">
-                  <div id="modal-allFilter-table" class="table slick-headerrow ui-state-default">
+                  <div id="modal-allFilter-table" class="slick-headerrow ui-state-default">
                   </div>
                 </div>
               </div>
@@ -359,11 +359,12 @@ export class Example7 {
     document.body.appendChild(DOMPurify.sanitize(modalHtml, { RETURN_DOM: true }));
 
     $(".btn-close").on('click', function () {
-      grid?.filterService.toggleHeaderFilterRow();
+      if (grid?.slickGrid.getOptions().showHeaderRow) {
+        grid?.showHeaderRow(true);
+      }
       document.getElementById("modal-allFilter").remove();
     });
     $("#btn-clear-all").on('click', function () {
-      grid?.filterService.toggleHeaderFilterRow();
       document.getElementById("modal-allFilter").remove();
       grid?.filterService.clearFilters();
     });
@@ -378,9 +379,6 @@ export class Example7 {
         `);
         grid?.filterService.drawFilterTemplate(columnFilter, `#${filterElm}`);
       }
-    }
-    if (grid?.slickGrid.getOptions().showHeaderRow) {
-      grid?.filterService.toggleHeaderFilterRow();
     }
 
   }
