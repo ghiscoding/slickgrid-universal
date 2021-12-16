@@ -984,6 +984,63 @@ export class FilterService {
     return true;
   }
 
+  /**
+   * Draw DOM Element Filter on custom HTML element
+   * @param column - column id or column object
+   * @param filterContainer - id element HTML or DOM element filter
+   */
+  drawFilterTemplate(column: Column | string, filterContainer: HTMLDivElement | string) {
+    let filterContainerElm: HTMLDivElement | null;
+    if (typeof filterContainer === 'string') {
+      filterContainerElm = document.querySelector(filterContainer);
+      if (filterContainerElm === null) {
+        return null;
+      }
+    } else {
+      filterContainerElm = filterContainer;
+    }
+    const columnDef = typeof column === 'string' ? this.sharedService.allColumns.find(col => col.id === column) : column;
+    const columnId = columnDef?.id ?? '';
+
+    if (columnId !== 'selector' && columnDef?.filterable) {
+      let searchTerms: SearchTerm[] | undefined;
+      let operator: OperatorString | OperatorType | undefined;
+      const newFilter: Filter | undefined = this.filterFactory.createFilter(columnDef.filter);
+      operator = (columnDef && columnDef.filter && columnDef.filter.operator) || (newFilter && newFilter.operator);
+
+      if (this._columnFilters[columnDef.id]) {
+        searchTerms = this._columnFilters[columnDef.id].searchTerms || undefined;
+        operator = this._columnFilters[columnDef.id].operator || undefined;
+      } else if (columnDef.filter) {
+        // when hiding/showing (with Column Picker or Grid Menu), it will try to re-create yet again the filters (since SlickGrid does a re-render)
+        // because of that we need to first get searchTerm(s) from the columnFilters (that is what the user last typed in a filter search input)
+        searchTerms = columnDef.filter.searchTerms || undefined;
+        this.updateColumnFilters(searchTerms, columnDef, operator);
+      }
+
+      const filterArguments: FilterArguments = {
+        grid: this._grid,
+        operator,
+        searchTerms,
+        columnDef,
+        filterContainerElm,
+        callback: this.callbackSearchEvent.bind(this)
+      };
+
+      if (newFilter) {
+        newFilter.init(filterArguments);
+
+        // when hiding/showing (with Column Picker or Grid Menu), it will try to re-create yet again the filters (since SlickGrid does a re-render)
+        // we need to also set again the values in the DOM elements if the values were set by a searchTerm(s)
+        if (searchTerms && newFilter.setValues) {
+          newFilter.setValues(searchTerms, operator);
+        }
+      }
+      return newFilter;
+    }
+    return null;
+  }
+
   // --
   // protected functions
   // -------------------
@@ -1014,6 +1071,7 @@ export class FilterService {
         operator,
         searchTerms,
         columnDef,
+        filterContainerElm: this._grid.getHeaderRowColumn(columnId),
         callback: this.callbackSearchEvent.bind(this)
       };
 

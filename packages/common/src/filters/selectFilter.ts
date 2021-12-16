@@ -47,6 +47,7 @@ export class SelectFilter implements Filter {
   valueName!: string;
   enableTranslateLabel = false;
   subscriptions: Subscription[] = [];
+  filterContainerElm!: HTMLDivElement;
 
   /**
    * Initialize the Filter
@@ -113,6 +114,7 @@ export class SelectFilter implements Filter {
     this.callback = args.callback;
     this.columnDef = args.columnDef;
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
+    this.filterContainerElm = args.filterContainerElm;
 
     if (!this.grid || !this.columnDef || !this.columnFilter || (!this.columnFilter.collection && !this.columnFilter.collectionAsync)) {
       throw new Error(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the MultipleSelect/SingleSelect Filter to work correctly. Also each option should include a value/label pair (or value/labelKey when using Locale). For example:: { filter: model: Filters.multipleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False'}] }`);
@@ -385,8 +387,7 @@ export class SelectFilter implements Filter {
     this.elementName = `filter-${columnId}`;
     this.defaultOptions.name = this.elementName;
 
-    const $headerElm = this.grid.getHeaderRowColumn(columnId);
-    $($headerElm).empty();
+    $(this.filterContainerElm).empty();
 
     // create the DOM element & add an ID and filter class
     this.$filterElm = $(selectElement);
@@ -400,7 +401,7 @@ export class SelectFilter implements Filter {
 
     // append the new DOM element to the header row
     if (this.$filterElm && typeof this.$filterElm.appendTo === 'function') {
-      this.$filterElm.appendTo($headerElm);
+      this.$filterElm.appendTo(this.filterContainerElm);
     }
 
     // merge options & attach multiSelect

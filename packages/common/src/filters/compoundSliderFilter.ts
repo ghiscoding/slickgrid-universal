@@ -39,6 +39,7 @@ export class CompoundSliderFilter implements Filter {
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
+  filterContainerElm!: HTMLDivElement;
 
   constructor(protected readonly translaterService: TranslaterService) {
     this._bindEventService = new BindingEventService();
@@ -96,6 +97,7 @@ export class CompoundSliderFilter implements Filter {
     this.columnDef = args.columnDef;
     this.operator = args.operator || '';
     this.searchTerms = args?.searchTerms ?? [];
+    this.filterContainerElm = args.filterContainerElm;
 
     // define the input & slider number IDs
     this._elementRangeInputId = `rangeInput_${this.columnDef.field}`;
@@ -224,8 +226,8 @@ export class CompoundSliderFilter implements Filter {
     const defaultValue = this.filterParams?.sliderStartValue ?? minValue;
     const step = this.filterProperties?.valueStep ?? DEFAULT_STEP;
     const startValue = +(this.filterParams?.sliderStartValue ?? minValue);
-    const headerElm = this.grid.getHeaderRowColumn(this.columnDef.id);
-    emptyElement(headerElm);
+
+    emptyElement(this.filterContainerElm);
 
     let searchTermInput = (searchTerm || '0') as string;
     if (+searchTermInput < minValue) {
@@ -298,7 +300,7 @@ export class CompoundSliderFilter implements Filter {
     }
 
     // append the new DOM element to the header row
-    headerElm.appendChild(this.divContainerFilterElm);
+    this.filterContainerElm.appendChild(this.divContainerFilterElm);
 
     return this.divContainerFilterElm;
   }

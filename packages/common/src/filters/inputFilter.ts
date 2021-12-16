@@ -23,6 +23,7 @@ export class InputFilter implements Filter {
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
+  filterContainerElm!: HTMLDivElement;
 
   constructor() {
     this._bindEventService = new BindingEventService();
@@ -76,6 +77,7 @@ export class InputFilter implements Filter {
     this.callback = args.callback;
     this.columnDef = args.columnDef;
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
+    this.filterContainerElm = args.filterContainerElm;
 
     // analyze if we have any keyboard debounce delay (do we wait for user to finish typing before querying)
     // it is used by default for a backend service but is optional when using local dataset
@@ -186,8 +188,7 @@ export class InputFilter implements Filter {
    */
   protected createDomElement(searchTerm?: SearchTerm) {
     const columnId = this.columnDef?.id ?? '';
-    const headerElm = this.grid.getHeaderRowColumn(columnId);
-    emptyElement(headerElm);
+    emptyElement(this.filterContainerElm);
 
     // create the DOM element & add an ID and filter class
     let placeholder = this.gridOptions?.defaultFilterPlaceholder ?? '';
@@ -212,8 +213,8 @@ export class InputFilter implements Filter {
     }
 
     // append the new DOM element to the header row & an empty span
-    headerElm.appendChild(inputElm);
-    headerElm.appendChild(document.createElement('span'));
+    this.filterContainerElm.appendChild(inputElm);
+    this.filterContainerElm.appendChild(document.createElement('span'));
 
     return inputElm;
   }

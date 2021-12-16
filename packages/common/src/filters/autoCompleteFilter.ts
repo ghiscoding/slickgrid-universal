@@ -43,6 +43,7 @@ export class AutoCompleteFilter implements Filter {
   columnDef!: Column;
   callback!: FilterCallback;
   isFilled = false;
+  filterContainerElm!: HTMLDivElement;
 
   /** The property name for labels in the collection */
   labelName!: string;
@@ -151,6 +152,7 @@ export class AutoCompleteFilter implements Filter {
     this.callback = args.callback;
     this.columnDef = args.columnDef;
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
+    this.filterContainerElm = args.filterContainerElm;
 
     if (!this.grid || !this.columnDef || !this.columnFilter || (!this.columnFilter.collection && !this.columnFilter.collectionAsync && !this.columnFilter.filterOptions)) {
       throw new Error(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the AutoComplete Filter to work correctly. Also each option should include a value/label pair (or value/labelKey when using Locale). For example:: { filter: model: Filters.autoComplete, collection: [{ value: true, label: 'True' }, { value: false, label: 'False'}] }`);
@@ -355,8 +357,8 @@ export class AutoCompleteFilter implements Filter {
   protected createDomElement(filterTemplate: string, collection: any[], searchTerm?: SearchTerm) {
     this._collection = collection;
     const columnId = this.columnDef?.id ?? '';
-    const $headerElm = this.grid.getHeaderRowColumn(columnId);
-    $($headerElm).empty();
+
+    $(this.filterContainerElm).empty();
 
     // create the DOM element & add an ID and filter class
     this.$filterElm = $(filterTemplate) as any;
@@ -417,7 +419,7 @@ export class AutoCompleteFilter implements Filter {
     // append the new DOM element to the header row
     if (this.$filterElm && typeof this.$filterElm.appendTo === 'function') {
       const $container = $(`<div class="autocomplete-container"></div>`);
-      $container.appendTo($headerElm);
+      $container.appendTo(this.filterContainerElm);
       this.$filterElm.appendTo($container);
 
       // add a <span> in order to add spinner styling

@@ -59,7 +59,8 @@ describe('SelectFilter', () => {
     filterArguments = {
       grid: gridStub,
       columnDef: mockColumn,
-      callback: jest.fn()
+      callback: jest.fn(),
+      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
 
     filter = new SelectFilter(translateService, collectionService);
@@ -840,7 +841,8 @@ describe('SelectFilter', () => {
       filterArguments = {
         grid: gridStub,
         columnDef: mockColumn,
-        callback: jest.fn()
+        callback: jest.fn(),
+        filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
       };
 
       filter = new SelectFilter(translateService, collectionService, rxjs);

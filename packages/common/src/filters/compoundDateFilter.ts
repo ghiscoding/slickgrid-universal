@@ -39,6 +39,7 @@ export class CompoundDateFilter implements Filter {
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
+  filterContainerElm!: HTMLDivElement;
 
   constructor(protected readonly translaterService: TranslaterService) {
     this._bindEventService = new BindingEventService();
@@ -96,6 +97,7 @@ export class CompoundDateFilter implements Filter {
     this.columnDef = args.columnDef;
     this.operator = args.operator || '';
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
+    this.filterContainerElm = args.filterContainerElm;
 
     // date input can only have 1 search term, so we will use the 1st array index if it exist
     const searchTerm = (Array.isArray(this.searchTerms) && this.searchTerms.length >= 0) ? this.searchTerms[0] : '';
@@ -288,8 +290,7 @@ export class CompoundDateFilter implements Filter {
    */
   protected createDomElement(searchTerm?: SearchTerm): HTMLDivElement {
     const columnId = this.columnDef?.id ?? '';
-    const headerElm = this.grid.getHeaderRowColumn(columnId);
-    emptyElement(headerElm);
+    emptyElement(this.filterContainerElm);
 
 
     // create the DOM Select dropdown for the Operator
@@ -331,7 +332,7 @@ export class CompoundDateFilter implements Filter {
 
     // append the new DOM element to the header row
     if (filterContainerElm) {
-      headerElm.appendChild(filterContainerElm);
+      this.filterContainerElm.appendChild(filterContainerElm);
     }
 
     return filterContainerElm;

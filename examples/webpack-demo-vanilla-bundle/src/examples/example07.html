@@ -1,9 +1,8 @@
 <h3 class="title is-3">
   Example 07 - Row Move &amp; Row Selections
   <div class="subtitle" style="float: right; margin-top: -20px">
-    <a class="is-size-5"
-       target="_blank"
-       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example07.ts">
+    <a class="is-size-5" target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example07.ts">
       <span class="mdi mdi-link mdi-v-align-sub"></span> code
     </a>
   </div>
@@ -23,7 +22,7 @@
     <span>Dynamically Hide "Finish"</span>
   </button>
   <button class="button is-small" data-test="add-item-btn" onclick.delegate="addItem()"
-          title="Clear Filters &amp; Sorting to see it better">
+    title="Clear Filters &amp; Sorting to see it better">
     <span class="icon mdi mdi-plus"></span>
     <span>Add item</span>
   </button>
@@ -53,6 +52,10 @@
   <button class="button is-small" data-test="clear-filters-btn" onclick.delegate="clearFilters()">
     <span class="icon mdi mdi-close"></span>
     <span>Clear Filters</span>
+  </button>
+  <button class="button is-small" data-test="modal-filters-btn" onclick.delegate="allFilters()">
+    <span class="icon mdi mdi-text-box-search-outline"></span>
+    <span>Modal Filters</span>
   </button>
   <span style="margin-left: 20px">
     <button class="button is-small" onclick.delegate="switchLanguage()" data-test="language-button">
