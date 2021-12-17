@@ -1,0 +1,11 @@
+#modal-allFilter-table {
+  display: table;
+}
+#modal-allFilter-table .row {
+    display: table-row;
+}
+#modal-allFilter-table .column {
+    display: table-cell;
+    vertical-align: top;
+    width: 40%;
+}
