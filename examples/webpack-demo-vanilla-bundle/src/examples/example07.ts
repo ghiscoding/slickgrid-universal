@@ -10,9 +10,11 @@ import {
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { TranslateService } from '../translate.service';
 import * as DOMPurify from 'dompurify';
+
+import { TranslateService } from '../translate.service';
 import { ExampleGridOptions } from './example-grid-options';
+import './example07.scss';
 
 export class Example7 {
   private _bindingEventService: BindingEventService;
@@ -318,69 +320,56 @@ export class Example7 {
 
   allFilters() {
     const grid = this.sgb;
-    const modalHtml: string = `<div id="modal-allFilter" class="modal is-active" >
-        <style type="text/css">
-            #modal-allFilter-table {
-              display: table;
-            }
-
-            #modal-allFilter-table .row {
-                display: table-row;
-            }
-
-            #modal-allFilter-table .column {
-                display: table-cell;
-                vertical-align: top;
-                width: 40%;
-            }
-        </style>
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Filter</p>
-                <button class="delete btn-close" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-              <div class="slickgrid-container grid-pane">
-                <div id="modal-allFilter-content">
-                  <div id="modal-allFilter-table" class="slick-headerrow ui-state-default">
-                  </div>
-                </div>
+    const modalHtml = `<div id="modal-allFilter" class="modal is-active">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Filter</p>
+          <button class="delete btn-close" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+          <div class="slickgrid-container grid-pane">
+            <div id="modal-allFilter-content">
+              <div id="modal-allFilter-table" class="slick-headerrow ui-state-default">
               </div>
-            </section>
-            <footer class="modal-card-foot">
-              <button class="button btn-close">Close</button>
-              <button id="btn-clear-all" class="button">Clear All Filter</button>
-              <button class="button btn-close is-success">Search</button>
-            </footer>
-        </div>
+            </div>
+          </div>
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button btn-close">Close</button>
+          <button id="btn-clear-all" class="button">Clear All Filter</button>
+          <button class="button btn-close is-success">Search</button>
+        </footer>
+      </div>
     </div>`;
 
-    document.body.appendChild(DOMPurify.sanitize(modalHtml, { RETURN_DOM: true }));
+    $(DOMPurify.sanitize(modalHtml)).appendTo('body');
 
-    $(".btn-close").on('click', function () {
+    $('.btn-close').on('click', function () {
       if (grid?.slickGrid.getOptions().showHeaderRow) {
         grid?.showHeaderRow(true);
       }
-      document.getElementById("modal-allFilter").remove();
+      document.getElementById('modal-allFilter').remove();
     });
-    $("#btn-clear-all").on('click', function () {
-      document.getElementById("modal-allFilter").remove();
+
+    $('#btn-clear-all').on('click', function () {
+      document.getElementById('modal-allFilter').remove();
       grid?.filterService.clearFilters();
     });
 
     for (const columnFilter of grid?.columnDefinitions) {
       if (columnFilter.filterable) {
         const filterElm = `modal-allfilter-${columnFilter.id}`;
-        $('#modal-allFilter-table').append(`
-        <div class="row slick-headerrow-columns">
-          <div class="column">${columnFilter.name}</div><div id="${filterElm}" class="column ui-state-default slick-headerrow-column"></div>
-        </div>
-        `);
+        $('#modal-allFilter-table')
+          .append(
+            `<div class="row slick-headerrow-columns">
+              <div class="column">${columnFilter.name}</div>
+              <div id="${filterElm}" class="column ui-state-default slick-headerrow-column"></div>
+            </div>`
+          );
         grid?.filterService.drawFilterTemplate(columnFilter, `#${filterElm}`);
       }
     }
-
   }
 
   changeCompletedOption(dataContext: any, newValue: boolean) {

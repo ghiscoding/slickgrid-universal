@@ -1635,6 +1635,7 @@ describe('FilterService', () => {
       ];
       sharedService.allColumns = [mockColumn1, mockColumn2, mockColumn3];
     });
+
     it('should Draw DOM Element Filter on custom HTML element by string id', async () => {
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
@@ -1643,12 +1644,12 @@ describe('FilterService', () => {
       await service.updateFilters(mockNewFilters);
 
       const columnFilterMetadada = service.drawFilterTemplate('name', `#${DOM_ELEMENT_ID}`);
-
       const filterElm = document.body.querySelector<HTMLDivElement>(`#${DOM_ELEMENT_ID}`);
-      expect(filterElm).toBeTruthy();
 
+      expect(filterElm).toBeTruthy();
       expect(columnFilterMetadada.columnDef.id).toBe('name');
     });
+
     it('should Draw DOM Element Filter on custom HTML element by string id with searchTerms', async () => {
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
@@ -1657,12 +1658,12 @@ describe('FilterService', () => {
       await service.updateFilters(mockNewFilters);
 
       const columnFilterMetadada = service.drawFilterTemplate('firstName', `#${DOM_ELEMENT_ID}`);
-
       const filterElm = document.body.querySelector<HTMLDivElement>(`#${DOM_ELEMENT_ID}`);
-      expect(filterElm).toBeTruthy();
 
+      expect(filterElm).toBeTruthy();
       expect(columnFilterMetadada.columnDef.id).toBe('firstName');
     });
+
     it('should Draw DOM Element Filter on custom HTML element by HTMLDivElement', async () => {
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
@@ -1672,13 +1673,11 @@ describe('FilterService', () => {
 
       const filterContainerElm: HTMLDivElement = document.querySelector(`#${DOM_ELEMENT_ID}`);
       const columnFilterMetadada = service.drawFilterTemplate('isActive', filterContainerElm);
-
       const filterElm = document.body.querySelector<HTMLDivElement>(`#${DOM_ELEMENT_ID}`);
-      expect(filterElm).toBeTruthy();
 
+      expect(filterElm).toBeTruthy();
       expect(columnFilterMetadada.columnDef.id).toBe('isActive');
     });
-
 
     it('should Draw DOM Element Filter on custom HTML element return null', async () => {
       service.init(gridStub);
@@ -1695,7 +1694,6 @@ describe('FilterService', () => {
       expect(columnFilterMetadada1).toBeNull();
       expect(columnFilterMetadada2).toBeNull();
       expect(columnFilterMetadada3).toBeNull();
-
     });
   });
 
