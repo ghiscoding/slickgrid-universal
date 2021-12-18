@@ -12,17 +12,16 @@
 ## Common Filters/Editors/Extensions/Services
 #### @slickgrid-universal/common
 
-This package is regrouping the most common features or pieces that could be used by any other Framework (it is framework agnostic). It includes all Editors, Filters, Extensions and Services as can be seen below.
+This package is regrouping the most common features, extensions, interfaces that can be used by other Frameworks (it is framework agnostic). It includes all Editors, Filters, Formatters, Grouping, Extensions and Services as can be seen below.
 
 ### Installation
 Go to the root of the repo and follow the instructions provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)
 
 ### What is included?
 - **Aggregators** (min, max, avg, sum, ...)
-- **Editors** (input, singleSelect, multipleSelect, date, slider, ...)
-- **Filters** (input, singleSelect, multipleSelect, date, slider, ...)
-- **Formatters** (date formats, decimal, dollars, percent, bold, checkmark, ...)
+- **Editors & Filters** (input, singleSelect, multipleSelect, date, slider, ...)
 - **Extensions** (SlickGrid 3rd party controls/plugins)
+- **Formatters** (date formats, decimal, dollars, percent, bold, checkmark, ...)
 - **Grouping** Formatters (min, max, avg, sum, ...)
-- **SortComparers** (date, numeric, string, ...)
 - **Services** (filter, sort, grid state, ...)
+- **SortComparers** (date, numeric, string, ...)

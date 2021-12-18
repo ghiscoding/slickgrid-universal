@@ -12,7 +12,7 @@
 ## Vanilla Bundle
 #### @slickgrid-universal/vanilla-bundle
 
-Vanilla Bundle implementation (no framework, plain TypeSript implementation). This package does what other framework would do, that is to make all the features usable in 1 bundle so that it could then be used by other Apps/Projects
+Vanilla Bundle implementation (no framework, plain TypeSript implementation). This package does what other framework would do which is to make all these features usable into 1 bundle so that it could then be used by other Apps/Projects.
 
 ### Internal Dependencies
 - [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)

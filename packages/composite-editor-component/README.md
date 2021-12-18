@@ -15,7 +15,7 @@
 Vanilla Bundle implementation of a Composite Editor Modal Window which can do the following
 - Create
 - Clone (allows you to clone & edit a row, it's like a copy+edit in a single action)
-- Update
+- Edit / Update
 - Mass Update Changes
 - Mass Selection Changes (similar to Mass Update but only for the selected items/rows)
 

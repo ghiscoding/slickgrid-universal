@@ -36,7 +36,7 @@ export class MyExample {
       backendServiceApi: {
         service: new GridOdataService(),
         options: {
-          version: 4 // OData v4
+          version: 4 // OData v2 or v4
         },
         preProcess: () => this.displaySpinner(true),
         process: (query) => this.getCustomerApiCall(query),

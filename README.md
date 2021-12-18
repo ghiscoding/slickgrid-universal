@@ -31,8 +31,8 @@ You might be wondering why was this monorepo created? Here are a few of the reas
    - you can use it in plain JavaScript (ES6) or TypeScript, on our side we use it with plain JS (ES6) in our Salesforce environment with LWC (Lightning Web Component)
 
 ### Frameworks using this monorepo
-  - [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) starting with version `3.x` is now using Slickgrid-Universal
-  - [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) starting with version `3.x` is now using Slickgrid-Universal
+  - [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) starting with version `>=3.x` is now using Slickgrid-Universal
+  - [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) starting with version `>=3.x` is now using Slickgrid-Universal
   - [Vanilla bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) is to use it with plain JavaScript or TypeScript without targeting any particular framework.
 
 The Vanilla Implementation (not associated to any framework) is built with [WebPack](https://webpack.js.org/) and is also used to test all the UI functionalities [Cypress](https://www.cypress.io/) (E2E tests). The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle), which extends the `vanilla-bundle` package is what we use in our SalesForce implementation (with Lightning Web Component), hence the creation of this monorepo library.
@@ -70,7 +70,9 @@ Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +15,00
 | [@slickgrid-universal/vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle) | [![npm](https://img.shields.io/npm/v/@slickgrid-universal/vanilla-force-bundle.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-force-bundle) | Vanilla TypeScript/ES6 for Salesforce implementation | [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/vanilla-force-bundle/CHANGELOG.md) 
 
 ## Installation
-To get going and do development with this monorepo, you will need to clone the repo and then follow the steps below
+**NOTE:** the installation instructions below are **only** required if you want to contribute to this project, if on the other hand you just want to use Slickgrid-Universal then take a look at [webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle)
+
+To get going and do development with this monorepo, you will need to clone the repo and then follow the steps below.
 
 1. Install npm packages with [Yarn classic 1.x](https://classic.yarnpkg.com/lang/en/) since this lib uses Yarn version 1.x Workspaces and so you need to use Yarn to install all packages
 ```bash

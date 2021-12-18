@@ -12,12 +12,12 @@
 ## Vanilla Force Bundle
 #### @slickgrid-universal/vanilla-force-bundle
 
-Vanilla Force Bundle is similar to the Vanilla Bundle but oriented towards a Salesforce (LWC) implementation which requires an all-in-1 bundle (zip) with all necessary package loaded at once. So this package is very similar to the [@slickgrid-universal/vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle), it actually extends it, with the difference that it adds and imports 3 extra packages (which are optional in the `vanilla-bundle` but required for our Salesforce implementation) and those are: 
+Vanilla Force Bundle is similar to the Vanilla Bundle but oriented towards a Salesforce (LWC) implementation which requires an all-in-1 bundle (zip) with all necessary package loaded at once. So this package is very similar to the [@slickgrid-universal/vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle), it actually extends from it, with the only difference that it imports and includes 3 extra packages (which are optional in the `vanilla-bundle` but required for our Salesforce implementation) and those are: 
 - CompositeEditor
 - CustomTooltip
 - TextExport (CSV))
 
-This package does what other framework would do, that is to make all the features usable in 1 bundle so that it could then be used by other Apps/Projects, for example we use this bundle in our SalesForce (with Lighning Web Component) App and it requires plain ES6 JavaScript which this bundle also produce (for that there's a [dist-grid-bundle-zip](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle/dist-grid-bundle-zip) folder which will zip the ES6 `dist` folder which we then import in SalesForce as a static resource).
+This package does what other framework would do, that is to make all the features usable into 1 bundle so that it could then be used by other Apps/Projects, for example we use this bundle in our SalesForce (with Lighning Web Component) App and it requires plain ES6 JavaScript which this bundle also produce (for that there's a [dist-grid-bundle-zip](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle/dist-grid-bundle-zip) folder which will zip the ES6 `dist` folder which we then import in our SalesForce implementation as a static resource).
 
 ### Internal Dependencies
 - [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
