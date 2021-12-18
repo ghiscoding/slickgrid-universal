@@ -42,6 +42,26 @@ describe('BindingEvent Service', () => {
     expect(addEventSpy).toHaveBeenCalledWith('click', mockCallback, { capture: true, passive: true });
   });
 
+  it('should be able to bind an event with single listener and options to multiple elements', () => {
+    const mockElm = { addEventListener: jest.fn() } as unknown as HTMLElement;
+    const mockCallback = jest.fn();
+    const elm1 = document.createElement('input');
+    const elm2 = document.createElement('input');
+    elm1.className = 'custom-class';
+    elm2.className = 'custom-class';
+    div.appendChild(elm1);
+    div.appendChild(elm2);
+
+    const btns = div.querySelectorAll('.custom-class');
+    const addEventSpy1 = jest.spyOn(btns[0], 'addEventListener');
+    const addEventSpy2 = jest.spyOn(btns[1], 'addEventListener');
+    service.bind(btns, 'click', mockCallback, { capture: true, passive: true });
+
+    expect(service.boundedEvents.length).toBe(2);
+    expect(addEventSpy1).toHaveBeenCalledWith('click', mockCallback, { capture: true, passive: true });
+    expect(addEventSpy2).toHaveBeenCalledWith('click', mockCallback, { capture: true, passive: true });
+  });
+
   it('should call unbindAll and expect as many removeEventListener be called', () => {
     const mockElm = { addEventListener: jest.fn(), removeEventListener: jest.fn() } as unknown as HTMLElement;
     const addEventSpy = jest.spyOn(mockElm, 'addEventListener');

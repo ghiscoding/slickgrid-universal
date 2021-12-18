@@ -92,13 +92,13 @@ export class BindingService {
    * 2- when an event is provided, we will replace the DOM element (by an attribute) every time an event is triggered
    *    2.1- we could also provide an extra callback method to execute when the event gets triggered
    */
-  bind(elements: Element | NodeListOf<HTMLElement> | null, attribute: string, eventName?: string, callback?: (val: any) => any) {
-    if (elements && (elements as NodeListOf<HTMLElement>).forEach) {
+  bind<T extends Element = Element>(elements: T | NodeListOf<T> | null, attribute: string, eventName?: string, callback?: (val: any) => any) {
+    if (elements && (elements as NodeListOf<T>).forEach) {
       // multiple DOM elements coming from a querySelectorAll() call
-      (elements as NodeListOf<HTMLElement>).forEach(elm => this.bindSingleElement(elm, attribute, eventName, callback));
+      (elements as NodeListOf<T>).forEach(elm => this.bindSingleElement(elm, attribute, eventName, callback));
     } else if (elements) {
       // single DOM element coming from a querySelector() call
-      this.bindSingleElement(elements as Element, attribute, eventName, callback);
+      this.bindSingleElement(elements as T, attribute, eventName, callback);
     }
 
     return this;
@@ -132,12 +132,15 @@ export class BindingService {
    * 2- when an event is provided, we will replace the DOM element (by an attribute) every time an event is triggered
    *    2.1- we could also provide an extra callback method to execute when the event gets triggered
    */
-  protected bindSingleElement(element: Element | null, attribute: string, eventName?: string, callback?: (val: any) => any) {
+  protected bindSingleElement<T extends Element = Element>(element: T | null, attribute: string, eventName?: string, callback?: (val: any) => any) {
     const binding: ElementBinding | ElementBindingWithListener = { element, attribute };
     if (element) {
       if (eventName) {
         const listener = () => {
-          const elmValue = element[attribute as keyof Element];
+          let elmValue: any = element[attribute as keyof T];
+          if (this.hasData(elmValue) && (element as any)?.type === 'number') {
+            elmValue = +elmValue; // input is always string but we can parse to number when its type is number
+          }
           this.valueSetter(elmValue);
           if (this._binding.variable.hasOwnProperty(this._binding.property) || this._binding.property in this._binding.variable) {
             this._binding.variable[this._binding.property] = this.valueGetter();
@@ -165,6 +168,10 @@ export class BindingService {
       const v = c === 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
+  }
+
+  protected hasData(value: any): boolean {
+    return value !== undefined && value !== null && value !== '';
   }
 
   protected sanitizeText(dirtyText: string): string {

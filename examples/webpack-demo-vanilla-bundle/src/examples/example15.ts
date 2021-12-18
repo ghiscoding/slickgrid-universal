@@ -6,7 +6,6 @@ import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bu
 import { delay, Observable, of, Subject } from 'rxjs';
 
 import { ExampleGridOptions } from './example-grid-options';
-import '../salesforce-styles.scss';
 import './example15.scss';
 
 const defaultPageSize = 20;

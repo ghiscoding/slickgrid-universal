@@ -41,8 +41,7 @@ export class EventPubSubService implements PubSubService {
 
     if (delay) {
       return new Promise(resolve => {
-        const isDispatched = this.dispatchCustomEvent<T>(eventNameByConvention, data, true, true);
-        setTimeout(() => resolve(isDispatched), delay);
+        setTimeout(() => resolve(this.dispatchCustomEvent<T>(eventNameByConvention, data, true, true)), delay);
       });
     } else {
       return this.dispatchCustomEvent<T>(eventNameByConvention, data, true, true);

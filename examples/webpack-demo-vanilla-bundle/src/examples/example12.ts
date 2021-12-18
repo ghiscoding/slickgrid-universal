@@ -26,7 +26,6 @@ import { VanillaForceGridBundle, Slicker } from '@slickgrid-universal/vanilla-fo
 import { CompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 
 import { ExampleGridOptions } from './example-grid-options';
-import '../salesforce-styles.scss';
 import './example12.scss';
 
 // using external SlickGrid JS libraries
