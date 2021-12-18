@@ -27,7 +27,6 @@ import * as moment from 'moment-mini';
 
 import { ExampleGridOptions } from './example-grid-options';
 import { loadComponent } from 'examples/utilities';
-import '../salesforce-styles.scss';
 import './example11.scss';
 
 // using external SlickGrid JS libraries
