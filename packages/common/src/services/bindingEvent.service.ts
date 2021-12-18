@@ -8,20 +8,33 @@ export class BindingEventService {
   }
 
   /** Bind an event listener to any element */
-  bind(element: Element, eventNameOrNames: string | string[], listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) {
+  bind(elementOrElements: Element | NodeListOf<Element>, eventNameOrNames: string | string[], listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) {
     const eventNames = (Array.isArray(eventNameOrNames)) ? eventNameOrNames : [eventNameOrNames];
-    for (const eventName of eventNames) {
-      element.addEventListener(eventName, listener, options);
-      this._boundedEvents.push({ element, eventName, listener });
+
+    if ((elementOrElements as NodeListOf<HTMLElement>)?.forEach) {
+      (elementOrElements as NodeListOf<HTMLElement>)?.forEach(element => {
+        for (const eventName of eventNames) {
+          element.addEventListener(eventName, listener, options);
+          this._boundedEvents.push({ element, eventName, listener });
+        }
+      });
+    } else {
+      for (const eventName of eventNames) {
+        (elementOrElements as Element).addEventListener(eventName, listener, options);
+        this._boundedEvents.push({ element: (elementOrElements as Element), eventName, listener });
+      }
     }
   }
 
   /** Unbind all will remove every every event handlers that were bounded earlier */
-  unbind(element: Element, eventNameOrNames: string | string[], listener: EventListenerOrEventListenerObject) {
+  unbind(elementOrElements: Element | NodeListOf<Element>, eventNameOrNames: string | string[], listener: EventListenerOrEventListenerObject) {
+    const elements = (Array.isArray(elementOrElements)) ? elementOrElements : [elementOrElements];
     const eventNames = Array.isArray(eventNameOrNames) ? eventNameOrNames : [eventNameOrNames];
     for (const eventName of eventNames) {
-      if (element?.removeEventListener) {
-        element.removeEventListener(eventName, listener);
+      for (const element of elements) {
+        if (element?.removeEventListener) {
+          element.removeEventListener(eventName, listener);
+        }
       }
     }
   }

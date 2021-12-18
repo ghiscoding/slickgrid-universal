@@ -1,3 +1,4 @@
+import 'jest-extended';
 import { BindingService } from '../binding.service';
 
 describe('Binding Service', () => {
@@ -32,18 +33,40 @@ describe('Binding Service', () => {
     expect(mockCallback).toHaveBeenCalled();
   });
 
-  it('should return same input value when object property is not found', () => {
+  it('should add a binding for an input type number and call a value change and expect a mocked object to have the reflected value AND parsed as a number', () => {
     const mockCallback = jest.fn();
     const mockObj = { name: 'John', age: 20 };
     const elm = document.createElement('input');
+    elm.type = 'number';
     elm.className = 'custom-class';
     div.appendChild(elm);
 
-    service = new BindingService({ variable: mockObj, property: 'invalidProperty' });
+    service = new BindingService({ variable: mockObj, property: 'age' });
     service.bind(elm, 'value', 'change', mockCallback);
-    elm.value = 'Jane';
-    const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: 'Jane' } } });
+    elm.value = '30';
+    const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: '30' } } });
     elm.dispatchEvent(mockEvent);
+
+    expect(service.property).toBe('age');
+    expect(mockObj.age).toBe(30);
+    expect(mockCallback).toHaveBeenCalled();
+  });
+
+  it('should return same input value when object property is not found', () => {
+    const mockCallback = jest.fn();
+    const mockObj = { name: 'John', age: 20 };
+    const elm1 = document.createElement('input');
+    const elm2 = document.createElement('span');
+    elm1.className = 'custom-class';
+    elm2.className = 'custom-class';
+    div.appendChild(elm1);
+    div.appendChild(elm2);
+
+    service = new BindingService({ variable: mockObj, property: 'invalidProperty' });
+    service.bind(div.querySelectorAll('.custom-class'), 'value', 'change', mockCallback);
+    elm1.value = 'Jane';
+    const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: 'Jane' } } });
+    elm1.dispatchEvent(mockEvent);
 
     expect(service.property).toBe('invalidProperty');
     expect(mockObj.name).toBe('John');
