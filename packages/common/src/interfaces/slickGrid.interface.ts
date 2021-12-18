@@ -88,6 +88,9 @@ export interface SlickGrid {
   /** Set focus */
   focus(): void;
 
+  /** Get the absolute column minimum width */
+  getAbsoluteColumnMinWidth(): number;
+
   /** Get the canvas DOM element */
   getActiveCanvasNode(element?: HTMLElement | JQuery<HTMLElement>): HTMLElement;
 
@@ -108,7 +111,10 @@ export interface SlickGrid {
   getActiveCellPosition(): ElementPosition;
 
   /** Get the active Viewport DOM node element */
-  getActiveViewportNode(): HTMLDivElement;
+  getActiveViewportNode(elm?: HTMLElement): HTMLDivElement;
+
+  /** Get the displayed scrollbar dimensions */
+  getDisplayedScrollbarDimensions(): { height: number; width: number; }
 
   /** Get the canvas DOM element */
   getCanvases(): HTMLDivElement;
@@ -351,7 +357,7 @@ export interface SlickGrid {
   resizeCanvas(): void;
 
   /** Scroll to a specific cell and make it into the view */
-  scrollCellIntoView(row: number, cell: number, doPaging: boolean): void;
+  scrollCellIntoView(row: number, cell: number, doPaging?: boolean): void;
 
   /** Scroll to a specific column and show it into the viewport */
   scrollColumnIntoView(cell: number): void;
