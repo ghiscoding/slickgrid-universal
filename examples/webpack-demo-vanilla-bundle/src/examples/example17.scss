@@ -1,0 +1,39 @@
+$control-height: 2.4em;
+@import 'bulma/bulma';
+
+:root {
+  --slick-header-row-count: 1;
+  --slick-header-column-height: 17px;
+}
+
+.scroll-configs input {
+  width: 50px;
+}
+.cell-effort-driven {
+  text-align: center;
+}
+.slick-group-title[level='0'] {
+  font-weight: bold;
+}
+.slick-group-title[level='1'] {
+  text-decoration: underline;
+}
+.slick-group-title[level='2'] {
+  font-style: italic;
+}
+.slick-row:not(.slick-group) >.cell-unselectable {
+  background: #ececec !important;
+}
+.slick-row .slick-cell.frozen:last-child,
+.slick-header-column.frozen:last-child,
+.slick-headerrow-column.frozen:last-child,
+.slick-footerrow-column.frozen:last-child {
+  border-right: 1px solid red;
+}
+
+.slick-row.frozen:last-child .slick-cell {
+  border-bottom: 1px solid red;
+}
+.option-item {
+  padding: 6px;
+}

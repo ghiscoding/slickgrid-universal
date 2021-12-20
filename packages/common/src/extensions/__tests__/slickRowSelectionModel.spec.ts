@@ -1,6 +1,7 @@
 import 'jest-extended';
 
 import { Column, GridOption, SlickGrid, SlickNamespace, SlickRange, } from '../../interfaces/index';
+import { SlickCellRangeSelector } from '../slickCellRangeSelector';
 import { SlickRowSelectionModel } from '../slickRowSelectionModel';
 
 declare const Slick: SlickNamespace;
@@ -104,6 +105,12 @@ describe('SlickRowSelectionModel Plugin', () => {
   it('should create the plugin', () => {
     expect(plugin).toBeTruthy();
     expect(plugin.eventHandler).toBeTruthy();
+  });
+
+  it('should dispose the plugin when calling destroy', () => {
+    const disposeSpy = jest.spyOn(plugin, 'dispose');
+    plugin.destroy();
+    expect(disposeSpy).toHaveBeenCalled();
   });
 
   it('should create the plugin and initialize it', () => {
@@ -440,5 +447,66 @@ describe('SlickRowSelectionModel Plugin', () => {
       fromCell: 0, fromRow: 1, toCell: 2, toRow: 1,
       contains: expect.toBeFunction(), toString: expect.toBeFunction(), isSingleCell: expect.toBeFunction(), isSingleRow: expect.toBeFunction(),
     }]);
+  });
+
+  describe('with Selector', () => {
+    beforeEach(() => {
+      plugin.addonOptions.cellRangeSelector = new SlickCellRangeSelector({
+        selectionCss: {
+          border: 'none'
+        } as CSSStyleDeclaration,
+        autoScroll: true,
+        minIntervalToShowNextCell: 30,
+        maxIntervalToShowNextCell: 500,
+        accelerateInterval: 5
+      })
+    });
+
+    it('should call "setSelectedRanges" when "onCellRangeSelected" event is triggered', () => {
+      const setSelectedRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
+
+      plugin.init(gridStub);
+      const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+      plugin.getCellRangeSelector().onCellRangeSelected.notify({ range: { fromCell: 2, fromRow: 3, toCell: 4, toRow: 5 } }, scrollEvent, gridStub);
+
+      expect(setSelectedRangeSpy).toHaveBeenCalledWith([{
+        fromCell: 0, fromRow: 3, toCell: 2, toRow: 5,
+        contains: expect.toBeFunction(), isSingleCell: expect.toBeFunction(), isSingleRow: expect.toBeFunction(), toString: expect.toBeFunction()
+      }]);
+    });
+
+    it('should call "setSelectedRanges" when "onCellRangeSelected" event is triggered', () => {
+      const setSelectedRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
+      mockGridOptions.multiSelect = false;
+
+      plugin.init(gridStub);
+      const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+      plugin.getCellRangeSelector().onCellRangeSelected.notify({ range: { fromCell: 2, fromRow: 3, toCell: 4, toRow: 5 } }, scrollEvent, gridStub);
+
+      expect(setSelectedRangeSpy).not.toHaveBeenCalled();
+    });
+
+    it('should call "setActiveCell" when "onBeforeCellRangeSelected" event is triggered', () => {
+      const setActiveCellSpy = jest.spyOn(gridStub, 'setActiveCell');
+      mockGridOptions.multiSelect = false;
+
+      plugin.init(gridStub);
+      const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+      plugin.getCellRangeSelector().onBeforeCellRangeSelected.notify({ row: 2, cell: 4 }, scrollEvent, gridStub);
+
+      expect(setActiveCellSpy).toHaveBeenCalledWith(2, 4);
+    });
+
+    it('should NOT call "setActiveCell" when EditorLock isActive is returning True', () => {
+      const setActiveCellSpy = jest.spyOn(gridStub, 'setActiveCell');
+      jest.spyOn(getEditorLockMock, 'isActive').mockReturnValue(true)
+      mockGridOptions.multiSelect = false;
+
+      plugin.init(gridStub);
+      const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+      plugin.getCellRangeSelector().onBeforeCellRangeSelected.notify({ row: 2, cell: 4 }, scrollEvent, gridStub);
+
+      expect(setActiveCellSpy).not.toHaveBeenCalled();
+    });
   });
 });

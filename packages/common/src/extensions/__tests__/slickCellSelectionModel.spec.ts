@@ -97,6 +97,12 @@ describe('CellSelectionModel Plugin', () => {
     expect(plugin.cellRangeSelector).toBeTruthy();
   });
 
+  it('should dispose the plugin when calling destroy', () => {
+    const disposeSpy = jest.spyOn(plugin, 'dispose');
+    plugin.destroy();
+    expect(disposeSpy).toHaveBeenCalled();
+  });
+
   it('should create the plugin and initialize it', () => {
     const registerSpy = jest.spyOn(gridStub, 'registerPlugin');
 
@@ -139,7 +145,7 @@ describe('CellSelectionModel Plugin', () => {
     const stopPropSpy = jest.spyOn(mouseEvent, 'stopPropagation');
 
     plugin.init(gridStub);
-    const output = plugin.cellRangeSelector.onBeforeCellRangeSelected.notify({ cell: 2, row: 3, grid: gridStub }, mouseEvent, gridStub);
+    const output = plugin.cellRangeSelector.onBeforeCellRangeSelected.notify({ cell: 2, row: 3 }, mouseEvent, gridStub);
 
     expect(output).toBeFalsy();
     expect(stopPropSpy).toHaveBeenCalled();

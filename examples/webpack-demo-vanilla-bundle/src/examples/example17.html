@@ -1,0 +1,56 @@
+<h3 class="title is-3">Example 17 - Auto-Scroll with Range Selector
+  <span class="subtitle">(with Salesforce Theme)</span>
+  <div class="subtitle" style="float: right; margin-top: -20px">
+    <a class="is-size-5" target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example17.ts">
+      <span class="mdi mdi-link mdi-v-align-sub"></span> code
+    </a>
+  </div>
+</h3>
+<h6 class="title is-6 italic">
+  Dragging from 2nd column to make a selection, and the viewport will auto scroll.
+</h6>
+
+<div style="min-height: 975px">
+  <div class="row scroll-configs">
+    <span>
+      <label for="min-internal">MIN interval to show next cell (ms): </label>
+      <input id="min-internal" type="number" data-test="min-interval-input" value.bind="minInterval" />
+      <label for="max-internal" style="margin-left: 15px;">MAX delay to show next cell (ms): </label>
+      <input id="max-internal" type="number" data-test="max-interval-input" value.bind="maxInterval" />
+      <label for="delay-cursor" style="margin-left: 15px;">Delay when cursor outside 1px (ms): </label>
+      <input id="delay-cursor" type="number" data-test="delay-cursor-input" value.bind="delayCursor" />
+    </span>
+  </div>
+  <div class="row" style="margin-bottom: 15px;">
+    <label for="is-autoscroll">Auto Scroll: (need click Set Options): </label>
+    <input id="is-autoscroll" type="checkbox" data-test="is-autoscroll-chk" checked.bind="isAutoScroll" />
+
+    <span style="margin-left: 20px;">
+      <button class="btn btn-default btn-xs" data-test="set-options-btn" onclick.delegate="setOptions()">
+        Set Options
+      </button>
+      <button class="btn btn-default btn-xs" data-test="default-options-btn" onclick.delegate="setDefaultOptions()">
+        Set Default Options
+      </button>
+      <button class="btn btn-default btn-xs" data-test="set-clear-frozen-btn" onclick.delegate="toggleFrozen()">
+        Set/Clear Frozen
+      </button>
+      <button class="btn btn-default btn-xs" data-test="set-clear-grouping-btn" onclick.delegate="toggleGroup()">
+        Set/Clear Grouping by Duration
+      </button>
+    </span>
+  </div>
+
+  <h5 class="title is-5">Grid 1 - Using <code>SlickCellRangeSelector</code></h5>
+  <div class="grid17-1">
+  </div>
+
+  <div class="column is-half">
+    <hr style="margin: 16px 0" />
+  </div>
+
+  <h5 class="title is-5">Grid 2 - Using <code>SlickCellRangeSelector</code> and <code>SlickRowSelectionModel</code></h5>
+  <div class="grid17-2">
+  </div>
+</div>

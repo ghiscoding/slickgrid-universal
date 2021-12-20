@@ -6,7 +6,7 @@ import { SlickCellRangeSelector } from './index';
 declare const Slick: SlickNamespace;
 
 export interface CellSelectionModelOption {
-  selectActiveCell: boolean;
+  selectActiveCell?: boolean;
   cellRangeSelector: SlickCellRangeSelector;
 }
 
@@ -20,13 +20,13 @@ export class SlickCellSelectionModel {
   protected _defaults = {
     selectActiveCell: true,
   };
-  onSelectedRangesChanged = new Slick.Event();
+  onSelectedRangesChanged = new Slick.Event<CellRange[]>();
   pluginName = 'CellSelectionModel';
 
   constructor(options?: { selectActiveCell: boolean; cellRangeSelector: SlickCellRangeSelector; }) {
     this._eventHandler = new Slick.EventHandler();
     if (options === undefined || options.cellRangeSelector === undefined) {
-      this._selector = new SlickCellRangeSelector({ selectionCss: { border: '2px solid black' } as unknown as CSSStyleDeclaration });
+      this._selector = new SlickCellRangeSelector({ selectionCss: { border: '2px solid black' } as CSSStyleDeclaration });
     } else {
       this._selector = options.cellRangeSelector;
     }
@@ -64,8 +64,16 @@ export class SlickCellSelectionModel {
     this._canvas = this._grid.getCanvasNode();
   }
 
+  destroy() {
+    this.dispose();
+  }
+
   dispose() {
     this._canvas = null;
+    if (this._selector) {
+      this._selector.onBeforeCellRangeSelected.unsubscribe(this.handleBeforeCellRangeSelected.bind(this) as EventListener);
+      this._selector.onCellRangeSelected.unsubscribe(this.handleCellRangeSelected.bind(this) as EventListener);
+    }
     this._eventHandler.unsubscribeAll();
     this._grid?.unregisterPlugin(this._selector);
     this._selector?.dispose();
