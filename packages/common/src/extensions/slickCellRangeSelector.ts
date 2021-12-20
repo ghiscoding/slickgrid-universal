@@ -274,8 +274,7 @@ export class SlickCellRangeSelector {
         const endCellBox = this._grid.getCellNodeBox(end.row, end.cell);
         if (endCellBox) {
           const viewport = this._draggingMouseOffset.viewport;
-          if (endCellBox.left < viewport.left || endCellBox.right > viewport.right
-            || endCellBox.top < viewport.top || endCellBox.bottom > viewport.bottom) {
+          if (endCellBox.left < viewport.left || endCellBox.right > viewport.right || endCellBox.top < viewport.top || endCellBox.bottom > viewport.bottom) {
             this._grid.scrollCellIntoView(end.row, end.cell);
           }
         }
