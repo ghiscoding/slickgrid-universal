@@ -1,6 +1,11 @@
 $control-height: 2.4em;
 @import 'bulma/bulma';
 
+:root {
+  --slick-header-row-count: 1;
+  --slick-header-column-height: 17px;
+}
+
 .scroll-configs input {
   width: 50px;
 }
@@ -17,7 +22,7 @@ $control-height: 2.4em;
   font-style: italic;
 }
 .slick-row:not(.slick-group) >.cell-unselectable {
-  background: #efefef;
+  background: #ececec !important;
 }
 .slick-row .slick-cell.frozen:last-child,
 .slick-header-column.frozen:last-child,

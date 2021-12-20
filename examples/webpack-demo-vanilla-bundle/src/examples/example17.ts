@@ -1,4 +1,4 @@
-import { Column, Formatters, GridOption, SlickCellRangeSelector, SlickCellSelectionModel, SlickRowSelectionModel } from '@slickgrid-universal/common';
+import { Aggregators, Column, Formatters, GridOption, Grouping, GroupTotalFormatters, SlickCellRangeSelector, SlickCellSelectionModel, SlickRowSelectionModel } from '@slickgrid-universal/common';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 
@@ -7,7 +7,7 @@ import '../material-styles.scss';
 // import '../salesforce-styles.scss';
 import './example17.scss';
 
-const NB_ITEMS = 995;
+const NB_ITEMS = 300;
 
 export class Example17 {
   gridOptions1: GridOption;
@@ -30,8 +30,8 @@ export class Example17 {
     this.dataset1 = this.mockData(NB_ITEMS);
     this.dataset2 = this.mockData(NB_ITEMS);
 
-    this.sgb1 = new Slicker.GridBundle(document.querySelector<HTMLDivElement>(`.grid1`), this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
-    this.sgb2 = new Slicker.GridBundle(document.querySelector<HTMLDivElement>(`.grid2`), this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
+    this.sgb1 = new Slicker.GridBundle(document.querySelector<HTMLDivElement>(`.grid17-1`), this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
+    this.sgb2 = new Slicker.GridBundle(document.querySelector<HTMLDivElement>(`.grid17-2`), this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
 
     this.setOptions();
   }
@@ -44,36 +44,46 @@ export class Example17 {
   /* Define grid Options and Columns */
   defineGrids() {
     this.columnDefinitions1 = [
-      { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100, filterable: true },
-      { id: 'duration', name: 'Duration', field: 'duration', sortable: true, minWidth: 100, filterable: true },
-      { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100, filterable: true, formatter: Formatters.percentCompleteBar },
-      { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso, minWidth: 120, exportWithFormatter: true, filterable: true },
-      { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso, minWidth: 120, exportWithFormatter: true, filterable: true },
-      { id: 'cost', name: 'Cost', field: 'cost', formatter: Formatters.dollar, minWidth: 75, exportWithFormatter: true, filterable: true },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', formatter: Formatters.checkmarkMaterial, sortable: true, minWidth: 75, filterable: true }
+      { id: 'sel', name: '#', field: 'id', cssClass: 'cell-unselectable', resizable: false, selectable: false, focusable: false, width: 40 },
+      { id: 'title', name: 'Title', field: 'title', cssClass: 'cell-title', sortable: true, width: 90, filterable: true },
+      { id: 'duration', name: 'Duration', field: 'duration', width: 90, sortable: true, filterable: true, groupTotalsFormatter: GroupTotalFormatters.sumTotals },
+      { id: '%', name: '% Complete', field: 'percentComplete', width: 90, sortable: true, filterable: true, formatter: Formatters.percentCompleteBar },
+      { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso, width: 90, exportWithFormatter: true, filterable: true },
+      { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso, width: 90, exportWithFormatter: true, filterable: true },
+      { id: 'cost', name: 'Cost', field: 'cost', formatter: Formatters.dollar, width: 90, exportWithFormatter: true, filterable: true },
+      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', cssClass: 'cell-effort-driven', width: 90, formatter: Formatters.checkmarkMaterial, sortable: true, filterable: true }
     ];
 
     for (let i = 0; i < 30; i++) {
-      this.columnDefinitions1.push({ id: `mock${i}`, name: `Mock${i}`, field: `mock${i}`, minWidth: 75 });
+      this.columnDefinitions1.push({ id: `mock${i}`, name: `Mock${i}`, field: `mock${i}`, width: 90 });
     }
 
     this.gridOptions1 = {
       enableAutoResize: false,
+      enableAutoSizeColumns: false,
+      autoFitColumnsOnFirstLoad: false,
+      autosizeColumnsByCellContentOnFirstLoad: true,
+      enableAutoResizeColumnsByCellContent: true,
       enableCellNavigation: true,
-      gridHeight: 225,
+      enableColumnReorder: false,
+      editable: true,
+      asyncEditorLoading: false,
+      autoEdit: false,
+      enableGrouping: true,
+      gridHeight: 350,
       gridWidth: 800,
-      rowHeight: 33,
+      rowHeight: 35,
+      frozenColumn: -1,
+      frozenRow: -1,
       // enableExcelCopyBuffer: true,
     };
 
     // copy the same Grid Options and Column Definitions to 2nd grid
-    this.columnDefinitions2 = this.columnDefinitions1;
+    this.columnDefinitions2 = this.columnDefinitions1.slice();
     this.gridOptions2 = {
       ...this.gridOptions1,
       ...{
-        enableCheckboxSelector: true,
-        // enableExcelCopyBuffer: false,
-        gridHeight: 255,
+        // enableCheckboxSelector: true,
       }
     };
   }
@@ -82,18 +92,14 @@ export class Example17 {
     // mock a dataset
     const mockDataset = [];
     for (let i = 0; i < count; i++) {
-      const randomYear = 2000 + Math.floor(Math.random() * 10);
-      const randomMonth = Math.floor(Math.random() * 11);
-      const randomDay = Math.floor((Math.random() * 29));
-      const randomPercent = Math.round(Math.random() * 100);
-
+      const someDates = ['2009-01-01', '2009-02-02', '2009-03-03'];
       mockDataset[i] = {
         id: i,
         title: 'Task ' + i,
-        duration: Math.round(Math.random() * 100) + '',
-        percentComplete: randomPercent,
-        start: new Date(randomYear, randomMonth + 1, randomDay),
-        finish: new Date(randomYear + 1, randomMonth + 1, randomDay),
+        duration: i % 20,
+        percentComplete: Math.round(Math.random() * 100),
+        start: someDates[Math.floor((Math.random() * 2))],
+        finish: someDates[Math.floor((Math.random() * 2))],
         cost: Math.round(Math.random() * 10000) / 100,
         effortDriven: (i % 5 === 0)
       };
@@ -105,16 +111,30 @@ export class Example17 {
     return mockDataset;
   }
 
-  toggleFrozen() {
-    const option = this.sgb1.slickGrid.getOptions();
-    const frozenRow = option.frozenRow;
-    const frozenColumn = option.frozenColumn;
-    const newOption = {
-      frozenColumn: frozenColumn === -1 ? 1 : -1,
-      frozenRow: frozenRow === -1 ? 3 : -1
-    };
-    this.sgb1.slickGrid.setOptions(newOption);
-    this.sgb2.slickGrid.setOptions(newOption);
+  groupByDuration1() {
+    this.sgb1.dataView.setGrouping({
+      getter: 'duration',
+      formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+      aggregators: [
+        new Aggregators.Avg('percentComplete'),
+        new Aggregators.Sum('cost')
+      ],
+      aggregateCollapsed: false,
+      lazyTotalsCalculation: true
+    } as Grouping);
+  }
+
+  groupByDuration2() {
+    this.sgb2.dataView.setGrouping({
+      getter: 'duration',
+      formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+      aggregators: [
+        new Aggregators.Avg('percentComplete'),
+        new Aggregators.Sum('cost')
+      ],
+      aggregateCollapsed: false,
+      lazyTotalsCalculation: true
+    } as Grouping);
   }
 
   setDefaultOptions() {
@@ -152,5 +172,22 @@ export class Example17 {
     }));
     this.sgb1.slickGrid.invalidate();
     this.sgb2.slickGrid.invalidate();
+  }
+
+  toggleGroup() {
+    (this.sgb1.dataView.getGrouping() && this.sgb1.dataView.getGrouping().length > 0) ? this.sgb1.dataView.setGrouping([]) : this.groupByDuration1();
+    (this.sgb2.dataView.getGrouping() && this.sgb2.dataView.getGrouping().length > 0) ? this.sgb2.dataView.setGrouping([]) : this.groupByDuration2();
+  }
+
+  toggleFrozen() {
+    const option = this.sgb1.slickGrid.getOptions();
+    const frozenRow = option.frozenRow;
+    const frozenColumn = option.frozenColumn;
+    const newOption = {
+      frozenColumn: frozenColumn === -1 ? 1 : -1,
+      frozenRow: frozenRow === -1 ? 3 : -1
+    };
+    this.sgb1.slickGrid.setOptions(newOption);
+    this.sgb2.slickGrid.setOptions(newOption);
   }
 }
