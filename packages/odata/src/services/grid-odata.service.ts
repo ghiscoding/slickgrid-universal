@@ -94,10 +94,55 @@ export class GridOdataService implements BackendService {
       const tmpColumnDefinitions = sharedService?.allColumns ?? grid.getColumns() ?? [];
       this._columnDefinitions = tmpColumnDefinitions.filter((column: Column) => !column.excludeFromQuery);
     }
+
+    this._odataService.columnDefinitions = this._columnDefinitions;
   }
 
   buildQuery(): string {
     return this._odataService.buildQuery();
+  }
+
+  postProcess(processResult: any): void {
+    const odataVersion = this._odataService?.options?.version ?? 2;
+    const dataset = odataVersion === 4 ? processResult.value : processResult.d.results;
+    const count = odataVersion === 4 ? processResult['@odata.count'] : processResult.d.results['__count'];
+
+    if (this.pagination && typeof count === 'number') {
+      this.pagination.totalItems = count;
+    }
+
+    if (Array.isArray(dataset)) {
+      // Flatten navigation fields (fields containing /) in the dataset (regardless of enableExpand).
+      // E.g. given columndefinition 'product/name' and dataset [{id: 1,product:{'name':'flowers'}}], then flattens to [{id:1,'product/name':'flowers'}]
+      const navigationFields = new Set(this._columnDefinitions.flatMap(x => x.fields ?? [x.field]).filter(x => x.includes('/')));
+      if (navigationFields.size > 0) {
+        const navigations = new Set<string>();
+        for (const item of dataset) {
+          for (const field of navigationFields) {
+            const names = field.split('/');
+            const navigation = names[0];
+            navigations.add(navigation);
+
+            let val = item[navigation];
+            for (let i = 1; i < names.length; i++) {
+              const mappedName = names[i];
+              if (val && typeof val === 'object' && mappedName in val) {
+                val = val[mappedName];
+              }
+            }
+
+            item[field] = val;
+          }
+
+          // Remove navigation objects from the dataset to free memory and make sure we never work with them.
+          for (const navigation of navigations) {
+            if (typeof item[navigation] === 'object') {
+              delete item[navigation];
+            }
+          }
+        }
+      }
+    }
   }
 
   clearFilters() {

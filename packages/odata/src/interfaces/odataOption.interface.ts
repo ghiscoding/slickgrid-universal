@@ -7,6 +7,21 @@ export interface OdataOption extends BackendServiceOption {
   /** Add the total count $inlinecount (OData v2) or $count (OData v4) to the OData query */
   enableCount?: boolean;
 
+  /**
+   * Query fields using $select. The row identifier field is always added.
+   * E.g.: columns [{ field: 'date' }] results in $select=id,date
+   */
+  enableSelect?: boolean;
+
+  /** Which field to use as the row identifier when using enableSelect */
+  rowId?: string;
+
+  /**
+   * Query navigation fields (containing '/') using $expand.
+   * E.g.: with odata v4 and columns [{ field: 'date' }, { field: 'products/name' }] result in $select=id,date&$expand=products($select=name)
+   */
+  enableExpand?: boolean;
+
   /** How many rows to pull? */
   top?: number;
 

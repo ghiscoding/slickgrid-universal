@@ -14,7 +14,9 @@ export class Example09 {
   sgb: SlickVanillaGridBundle;
 
   isCountEnabled = true;
-  odataVersion = 2;
+  isSelectEnabled = true;
+  isExpandEnabled = true;
+  odataVersion = 4;
   odataQuery = '';
   processing = false;
   errorStatus = '';
@@ -78,13 +80,14 @@ export class Example09 {
         }
       },
       {
-        id: 'gender', name: 'Gender', field: 'gender', filterable: true,
+        id: 'gender', name: 'Gender', field: 'gender', filterable: true, sortable: true,
         filter: {
           model: Filters.singleSelect,
           collection: [{ value: '', label: '' }, { value: 'male', label: 'male' }, { value: 'female', label: 'female' }]
         }
       },
       { id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true },
+      { id: 'category/name', name: 'Category', field: 'category/name', filterable: true, sortable: true}
     ];
 
     this.gridOptions = {
@@ -122,7 +125,9 @@ export class Example09 {
       backendServiceApi: {
         service: new GridOdataService(),
         options: {
-          enableCount: this.isCountEnabled, // add the count in the OData query, which will return a property named "odata.count" (v2) or "@odata.count" (v4)
+          enableCount: this.isCountEnabled, // add the count in the OData query, which will return a property named "__count" (v2) or "@odata.count" (v4)
+          enableSelect: this.isSelectEnabled,
+          enableExpand: this.isExpandEnabled,
           version: this.odataVersion        // defaults to 2, the query string is slightly different between OData 2 and 4
         },
         onError: (error: Error) => {
@@ -158,20 +163,12 @@ export class Example09 {
   }
 
   getCustomerCallback(data) {
-    // totalItems property needs to be filled for pagination to work correctly
-    // however we need to force Aurelia to do a dirty check, doing a clone object will do just that
-    let countPropName = 'totalRecordCount'; // you can use "totalRecordCount" or any name or "odata.count" when "enableCount" is set
-    if (this.isCountEnabled) {
-      countPropName = (this.odataVersion === 4) ? '@odata.count' : 'odata.count';
-    }
-    if (this.metrics) {
-      this.metrics.totalItemCount = data[countPropName];
-    }
-
-    // once pagination totalItems is filled, we can update the dataset
-    this.sgb.paginationOptions.totalItems = data[countPropName];
-    this.sgb.dataset = data['items'];
+    this.sgb.dataset = this.odataVersion === 4 ? data.value : data.d.results;
+    this.sgb.paginationOptions.totalItems = this.isCountEnabled ? (this.odataVersion === 4 ? data['@odata.count'] : data.d['__count']) : data['totalRecordCount'];
     this.odataQuery = data['query'];
+    if (this.metrics) {
+      this.metrics.totalItemCount = this.sgb.paginationOptions.totalItems;
+    }
   }
 
   getCustomerApiCall(query) {
@@ -222,7 +219,7 @@ export class Example09 {
             columnFilters[fieldName] = { type: 'substring', term: filterMatch[2].trim() };
           }
           if (filterBy.includes('substringof')) {
-            const filterMatch = filterBy.match(/substringof\('(.*?)',([a-zA-Z ]*)/);
+            const filterMatch = filterBy.match(/substringof\('(.*?)',\s([a-zA-Z\/]+)/);
             const fieldName = filterMatch[2].trim();
             columnFilters[fieldName] = { type: 'substring', term: filterMatch[1].trim() };
           }
@@ -256,23 +253,35 @@ export class Example09 {
         throw new Error('Server could not sort using the field "Company"');
       }
 
-      const sort = orderBy.includes('asc')
-        ? 'ASC'
-        : orderBy.includes('desc')
-          ? 'DESC'
-          : '';
+      // read the json and create a fresh copy of the data that we are free to modify
+      let data = require('./data/customers_100.json') as { name: string; gender: string; company: string; id: string, category: { id: string; name: string } }[];
+      data = JSON.parse(JSON.stringify(data));
 
-      let data;
-      switch (sort) {
-        case 'ASC':
-          data = require('./data/customers_100_ASC.json');
-          break;
-        case 'DESC':
-          data = require('./data/customers_100_DESC.json');
-          break;
-        default:
-          data = require('./data/customers_100.json');
-          break;
+      // Sort the data
+      if (orderBy && orderBy.length > 0) {
+        const orderByClauses = orderBy.split(',');
+        for (const orderByClause of orderByClauses) {
+          const orderByParts = orderByClause.split(' ');
+          const orderByField = orderByParts[0];
+
+          let selector = (obj: any): string => obj;
+          for (const orderByFieldPart of orderByField.split('/')) {
+            const prevSelector = selector;
+            selector = (obj: any) => {
+              return prevSelector(obj)[orderByFieldPart];
+            };
+          }
+
+          const sort = orderByParts[1] ?? 'asc';
+          switch (sort.toLocaleLowerCase()) {
+            case 'asc':
+              data = data.sort((a, b) => selector(a).localeCompare(selector(b)));
+              break;
+            case 'desc':
+              data = data.sort((a, b) => selector(b).localeCompare(selector(a)));
+              break;
+          }
+        }
       }
 
       // Read the result field from the JSON response.
@@ -289,7 +298,14 @@ export class Example09 {
                 const splitIds = columnId.split(' ');
                 colId = splitIds[splitIds.length - 1];
               }
-              const filterTerm = column[colId];
+
+              let filterTerm;
+              let col = column;
+              for (const part of colId.split('/')) {
+                filterTerm = col[part];
+                col = filterTerm;
+              }
+
               if (filterTerm) {
                 switch (filterType) {
                   case 'equal': return filterTerm.toLowerCase() === searchTerm;
@@ -308,9 +324,11 @@ export class Example09 {
       setTimeout(() => {
         let countPropName = 'totalRecordCount';
         if (this.isCountEnabled) {
-          countPropName = (this.odataVersion === 4) ? '@odata.count' : 'odata.count';
+          countPropName = (this.odataVersion === 4) ? '@odata.count' : '__count';
         }
-        const backendResult = { items: updatedData, [countPropName]: countTotalItems, query };
+
+        const backendResult = this.odataVersion === 4 ? { value: updatedData, [countPropName]: countTotalItems, query } :
+          { d: { results: updatedData, [countPropName]: countTotalItems }, query };
         // console.log('Backend Result', backendResult);
         resolve(backendResult);
       }, 150);
@@ -366,6 +384,24 @@ export class Example09 {
     this.isCountEnabled = !this.isCountEnabled;
     const odataService = this.gridOptions.backendServiceApi.service;
     odataService.updateOptions({ enableCount: this.isCountEnabled } as OdataOption);
+    odataService.clearFilters();
+    this.sgb?.filterService.clearFilters();
+    return true;
+  }
+
+  changeEnableSelectFlag() {
+    this.isSelectEnabled = !this.isSelectEnabled;
+    const odataService = this.gridOptions.backendServiceApi.service;
+    odataService.updateOptions({ enableSelect: this.isSelectEnabled } as OdataOption);
+    odataService.clearFilters();
+    this.sgb?.filterService.clearFilters();
+    return true;
+  }
+
+  changeEnableExpandFlag() {
+    this.isExpandEnabled = !this.isExpandEnabled;
+    const odataService = this.gridOptions.backendServiceApi.service;
+    odataService.updateOptions({ enableExpand: this.isExpandEnabled } as OdataOption);
     odataService.clearFilters();
     this.sgb?.filterService.clearFilters();
     return true;

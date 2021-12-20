@@ -1,4 +1,4 @@
-import { CaseType, titleCase } from '@slickgrid-universal/common';
+import { CaseType, Column, titleCase } from '@slickgrid-universal/common';
 import { OdataOption } from '../interfaces/odataOption.interface';
 
 export class OdataQueryBuilderService {
@@ -6,6 +6,11 @@ export class OdataQueryBuilderService {
   _defaultSortBy: string;
   _filterCount = 0;
   _odataOptions: Partial<OdataOption>;
+
+  private _columnDefinitions: Column[] = [];
+  public set columnDefinitions(columnDefinitions: Column[]) {
+    this._columnDefinitions = columnDefinitions;
+  }
 
   constructor() {
     this._odataOptions = {
@@ -72,6 +77,20 @@ export class OdataQueryBuilderService {
       const query = this._odataOptions.filterQueue.join(` ${this._odataOptions.filterBySeparator || 'and'} `);
       this._odataOptions.filter = query; // overwrite with
       queryTmpArray.push(`$filter=${query}`);
+    }
+
+    if (this._odataOptions.enableSelect || this._odataOptions.enableExpand) {
+      const fields = this._columnDefinitions.flatMap(x => x.fields ?? [x.field]);
+      fields.push(this._odataOptions.rowId ?? 'id');
+      const selectExpand = this.buildSelectExpand([...new Set(fields)]);
+      if (this._odataOptions.enableSelect) {
+        const select = selectExpand.selectParts.join(',');
+        queryTmpArray.push(`$select=${select}`);
+      }
+      if (this._odataOptions.enableExpand) {
+        const expand = selectExpand.expandParts.join(',');
+        queryTmpArray.push(`$expand=${expand}`);
+      }
     }
 
     // join all the odata functions by a '&'
@@ -146,5 +165,54 @@ export class OdataQueryBuilderService {
     if (this._odataOptions.filterQueue && this._odataOptions.filterQueue.indexOf(filterStr) === -1) {
       this._odataOptions.filterQueue.push(filterStr);
     }
+  }
+
+  //
+  // private functions
+  // -------------------
+
+  private buildSelectExpand(selectFields: string[]): { selectParts: string[]; expandParts: string[] } {
+    const navigations: { [navigation: string]: string[] } = {};
+    const selectItems: string[] = [];
+
+    for (const field of selectFields) {
+      const splits = field.split('/');
+      if (splits.length === 1) {
+        selectItems.push(field);
+      } else {
+        const navigation = splits[0];
+        const properties = splits.splice(1).join('/');
+
+        if (!navigations[navigation]) {
+          navigations[navigation] = [];
+        }
+
+        navigations[navigation].push(properties);
+
+        if (this._odataOptions.version === 2 && this._odataOptions.enableExpand) {
+          selectItems.push(navigation);
+        }
+      }
+    }
+
+    return {
+      selectParts: selectItems,
+      expandParts: this.buildExpand(navigations)
+    };
+  }
+
+  private buildExpand(navigations: { [navigation: string]: string[] }): string[] {
+    const expandParts = [];
+    for (const navigation of Object.keys(navigations)) {
+      if (this._odataOptions.version === 2 || !this._odataOptions.enableSelect) {
+        expandParts.push(navigation);
+      } else {
+        const subSelectExpand = this.buildSelectExpand(navigations[navigation]);
+        const subSelect = subSelectExpand.selectParts.join(';');
+        expandParts.push(navigation + '($select=' + subSelect + ')');
+      }
+    }
+
+    return expandParts;
   }
 }

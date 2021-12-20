@@ -20,6 +20,11 @@ export class BackendUtilityService {
   executeBackendProcessesCallback(startTime: Date, processResult: any, backendApi: BackendServiceApi, totalItems: number): any {
     const endTime = new Date();
 
+    // allow the backend service to change the result.
+    if (processResult && backendApi.service.postProcess) {
+      backendApi.service.postProcess(processResult);
+    }
+
     // define what our internal Post Process callback, only available for GraphQL Service for now
     // it will basically refresh the Dataset & Pagination removing the need for the user to always create his own PostProcess every time
     if (processResult && backendApi?.internalPostProcess) {
