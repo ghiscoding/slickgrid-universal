@@ -1,8 +1,21 @@
 import { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
+import { SlickCellRangeSelector } from '../extensions/slickCellRangeSelector';
 
 export interface RowMoveManagerOption {
+  /**
+   * Defaults to True, do we want to disable auto-scroll feature (which comes from CellRangeSelector).
+   * NOTE: this flag has no effect when a `cellRangeSelector` is provided, you could however turn `autoScroll: false` inside the `cellRangeSelector`
+   */
+  autoScrollWhenDrag?: boolean;
+
   /** Defaults to false, option to cancel editing while dragging a row */
   cancelEditOnDrag?: boolean;
+
+  /**
+   * Optional Cell Range Selector.
+   * NOTE: for an even simpler approach, we could use `enableCellRangeSelector` which the lib will take care of creating the instance by itself.
+   */
+  cellRangeSelector?: SlickCellRangeSelector;
 
   /**  A CSS class to be added to the menu item container. */
   cssClass?: string;
@@ -17,8 +30,11 @@ export interface RowMoveManagerOption {
  */
   columnIndexPosition?: number;
 
-  /**  Defaults to False, do we want to disable the row selection?  */
+  /** Defaults to False, do we want to disable the row selection? */
   disableRowSelection?: boolean;
+
+  /** Defaults to False, should we select when dragging? */
+  dragToSelect?: boolean;
 
   /** Defaults to True, do we want to hide the row move shadow of what we're dragging? */
   hideRowMoveShadow?: boolean;

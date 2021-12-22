@@ -36,6 +36,7 @@ export class SlickRowMoveManager {
   protected _handler = new Slick.EventHandler();
   protected _usabilityOverride?: UsabilityOverrideFn;
   protected _defaults = {
+    autoScroll: true,
     columnId: '_move',
     cssClass: 'slick-row-move-column',
     cancelEditOnDrag: false,
@@ -77,7 +78,7 @@ export class SlickRowMoveManager {
     this._canvas = this._grid.getCanvasNode();
 
     // user could override the expandable icon logic from within the options or after instantiating the plugin
-    if (this._addonOptions && typeof this._addonOptions.usabilityOverride === 'function') {
+    if (typeof this._addonOptions?.usabilityOverride === 'function') {
       this.usabilityOverride(this._addonOptions.usabilityOverride);
     }
 
@@ -100,7 +101,7 @@ export class SlickRowMoveManager {
     this._addonOptions = { ...this._defaults, ...gridOptions.rowMoveManager } as RowMoveManagerOption;
     if (Array.isArray(columnDefinitions) && gridOptions) {
       const newRowMoveColumn: Column = this.getColumnDefinition();
-      const rowMoveColDef = Array.isArray(columnDefinitions) && columnDefinitions.find((col: Column) => col && col.behavior === 'selectAndMove');
+      const rowMoveColDef = Array.isArray(columnDefinitions) && columnDefinitions.find((col: Column) => col?.behavior === 'selectAndMove');
       const finalRowMoveColumn = rowMoveColDef ? rowMoveColDef : newRowMoveColumn;
 
       // column index position in the grid

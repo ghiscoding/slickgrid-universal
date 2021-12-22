@@ -173,10 +173,12 @@ export class SlickCellRangeSelector {
   // ---------------------
 
   protected handleDrag(e: SlickEventData, dd: DragPosition) {
-    if (!this._dragging) {
+    if (!this._dragging && !this._gridOptions.enableRowMoveManager) {
       return;
     }
-    e.stopImmediatePropagation();
+    if (!this._gridOptions.enableRowMoveManager) {
+      e.stopImmediatePropagation();
+    }
 
     if (this.addonOptions.autoScroll) {
       this._draggingMouseOffset = this.getMouseOffsetViewport(e, dd);
@@ -285,10 +287,12 @@ export class SlickCellRangeSelector {
         return;
       }
 
-      dd.range.end = end;
-      const range = new Slick.Range(dd.range.start.row, dd.range.start.cell, end.row, end.cell);
-      this._decorator.show(range);
-      this.onCellRangeSelecting.notify({ range });
+      if (dd?.range) {
+        dd.range.end = end;
+        const range = new Slick.Range(dd.range.start.row, dd.range.start.cell, end.row, end.cell);
+        this._decorator.show(range);
+        this.onCellRangeSelecting.notify({ range });
+      }
     }
   }
 

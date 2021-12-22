@@ -35,7 +35,7 @@ export interface Column<T = any> {
   /** async background post-rendering formatter */
   asyncPostRender?: (domCellNode: any, row: number, dataContext: T, columnDef: Column) => void;
 
-  /** Row Move Behavior, used by the Row Move Manager Plugin */
+  /** optional Behavior of a column with action, for example it's used by the Row Move Manager Plugin */
   behavior?: string;
 
   /** Block event triggering of an insert? */

@@ -170,9 +170,13 @@ export class ExtensionService {
 
       // Row Selection Plugin
       // this extension should be registered BEFORE the CheckboxSelector, RowDetail or RowMoveManager since it can be use by these 2 plugins
-      if (!this._rowSelectionModel && (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector || this.sharedService.gridOptions.enableRowDetailView || this.sharedService.gridOptions.enableRowMoveManager)) {
+      if (!this._rowSelectionModel && (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowDetailView || this.gridOptions.enableRowMoveManager)) {
         if (!this._rowSelectionModel || !this.sharedService.slickGrid.getSelectionModel()) {
-          this._rowSelectionModel = new SlickRowSelectionModel(this.sharedService.gridOptions.rowSelectionOptions);
+          const rowSelectionOptions = this.gridOptions.rowSelectionOptions ?? {};
+          if (this.gridOptions.enableRowMoveManager && this.gridOptions.rowMoveManager?.dragToSelect !== false) {
+            rowSelectionOptions.dragToSelect = true;
+          }
+          this._rowSelectionModel = new SlickRowSelectionModel(rowSelectionOptions);
           this.sharedService.slickGrid.setSelectionModel(this._rowSelectionModel);
         }
         this._extensionList[ExtensionName.rowSelection] = { name: ExtensionName.rowSelection, instance: this._rowSelectionModel };
@@ -180,7 +184,7 @@ export class ExtensionService {
 
       // Checkbox Selector Plugin
       if (this.gridOptions.enableCheckboxSelector) {
-        this._checkboxSelectColumn = this._checkboxSelectColumn || new SlickCheckboxSelectColumn(this.sharedService.gridOptions.checkboxSelector);
+        this._checkboxSelectColumn = this._checkboxSelectColumn || new SlickCheckboxSelectColumn(this.gridOptions.checkboxSelector);
         this._checkboxSelectColumn.init(this.sharedService.slickGrid);
         const createdExtension = this.getCreatedExtensionByName(ExtensionName.checkboxSelector); // get the instance from when it was really created earlier
         const instance = createdExtension && createdExtension.instance;
@@ -257,11 +261,7 @@ export class ExtensionService {
       // Row Move Manager Plugin
       if (this.gridOptions.enableRowMoveManager) {
         this._rowMoveManagerPlugin = this._rowMoveManagerPlugin || new SlickRowMoveManager();
-        this._rowMoveManagerPlugin.init(this.sharedService.slickGrid, this.sharedService.gridOptions.rowMoveManager);
-        if (!this._rowSelectionModel || !this.sharedService.slickGrid.getSelectionModel()) {
-          this._rowSelectionModel = new SlickRowSelectionModel(this.sharedService.gridOptions.rowSelectionOptions);
-          this.sharedService.slickGrid.setSelectionModel(this._rowSelectionModel);
-        }
+        this._rowMoveManagerPlugin.init(this.sharedService.slickGrid, this.gridOptions.rowMoveManager);
         const createdExtension = this.getCreatedExtensionByName(ExtensionName.rowMoveManager); // get the instance from when it was really created earlier
         const instance = createdExtension?.instance;
         if (instance) {
