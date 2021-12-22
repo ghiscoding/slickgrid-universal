@@ -173,12 +173,12 @@ export class OdataQueryBuilderService {
 
   private buildSelectExpand(selectFields: string[]): { selectParts: string[]; expandParts: string[] } {
     const navigations: { [navigation: string]: string[] } = {};
-    const selectItems: string[] = [];
+    const selectItems = new Set<string>();
 
     for (const field of selectFields) {
       const splits = field.split('/');
       if (splits.length === 1) {
-        selectItems.push(field);
+        selectItems.add(field);
       } else {
         const navigation = splits[0];
         const properties = splits.splice(1).join('/');
@@ -189,27 +189,36 @@ export class OdataQueryBuilderService {
 
         navigations[navigation].push(properties);
 
-        if (this._odataOptions.version === 2 && this._odataOptions.enableExpand) {
-          selectItems.push(navigation);
+        if (this._odataOptions.enableExpand && !(this._odataOptions.version && this._odataOptions.version >= 4)) {
+          selectItems.add(navigation);
         }
       }
     }
 
     return {
-      selectParts: selectItems,
-      expandParts: this.buildExpand(navigations)
+      selectParts: [...selectItems],
+      expandParts: this._odataOptions.enableExpand ? this.buildExpand(navigations) : []
     };
   }
 
   private buildExpand(navigations: { [navigation: string]: string[] }): string[] {
     const expandParts = [];
     for (const navigation of Object.keys(navigations)) {
-      if (this._odataOptions.version === 2 || !this._odataOptions.enableSelect) {
-        expandParts.push(navigation);
-      } else {
+      if (this._odataOptions.enableSelect && this._odataOptions.version && this._odataOptions.version >= 4) {
         const subSelectExpand = this.buildSelectExpand(navigations[navigation]);
-        const subSelect = subSelectExpand.selectParts.join(';');
-        expandParts.push(navigation + '($select=' + subSelect + ')');
+        let subSelect = subSelectExpand.selectParts.join(',');
+        if (subSelect.length > 0) {
+          subSelect = '$select=' + subSelect;
+        }
+        if (this._odataOptions.enableExpand && subSelectExpand.expandParts.length > 0) {
+          subSelect += (subSelect.length > 0 ? ';' : '') + '$expand=' + subSelectExpand.expandParts.join(',');
+        }
+        if (subSelect.length > 0) {
+          subSelect = '(' + subSelect + ')';
+        }
+        expandParts.push(navigation + subSelect);
+      } else {
+        expandParts.push(navigation);
       }
     }
 

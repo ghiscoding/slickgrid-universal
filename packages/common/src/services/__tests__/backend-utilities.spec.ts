@@ -69,6 +69,15 @@ describe('Backend Utility Service', () => {
 
       expect(spy).toHaveBeenCalledWith(expectaction);
     });
+
+    it('should execute the service "postProcess" when it is defined', () => {
+      const now = new Date();
+      gridOptionMock.backendServiceApi!.service.postProcess = jest.fn();
+      const spy = jest.spyOn(gridOptionMock.backendServiceApi as BackendServiceApi, 'postProcess');
+      service.executeBackendProcessesCallback(now, { data: {} }, gridOptionMock.backendServiceApi as BackendServiceApi, 0);
+
+      expect(spy).toHaveBeenCalled();
+    });
   });
 
   describe('onBackendError method', () => {

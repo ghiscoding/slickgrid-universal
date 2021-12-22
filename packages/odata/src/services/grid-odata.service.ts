@@ -103,14 +103,27 @@ export class GridOdataService implements BackendService {
   }
 
   postProcess(processResult: any): void {
+    if (!processResult) {
+      return;
+    }
     const odataVersion = this._odataService?.options?.version ?? 2;
-    const dataset = odataVersion === 4 ? processResult.value : processResult.d.results;
-    const count = odataVersion === 4 ? processResult['@odata.count'] : processResult.d.results['__count'];
 
-    if (this.pagination && typeof count === 'number') {
-      this.pagination.totalItems = count;
+    if (this.pagination) {
+      const countExtractor = this._odataService?.options?.countExtractor ??
+        odataVersion >= 4 ? (r: any) => r['@odata.count'] :
+        odataVersion === 3 ? (r: any) => r['__count'] :
+          (r: any) => r.d ? r.d['__count'] : undefined;
+      const count = countExtractor(processResult);
+      if (typeof count === 'number') {
+        this.pagination.totalItems = count;
+      }
     }
 
+    const datasetExtractor = this._odataService?.options?.datasetExtractor ??
+      odataVersion >= 4 ? (r: any) => r.value :
+      odataVersion === 3 ? (r: any) => r.results :
+        (r: any) => r.d?.results;
+    const dataset = datasetExtractor(processResult);
     if (Array.isArray(dataset)) {
       // Flatten navigation fields (fields containing /) in the dataset (regardless of enableExpand).
       // E.g. given columndefinition 'product/name' and dataset [{id: 1,product:{'name':'flowers'}}], then flattens to [{id:1,'product/name':'flowers'}]

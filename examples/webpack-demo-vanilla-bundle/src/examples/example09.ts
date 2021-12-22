@@ -120,7 +120,7 @@ export class Example09 {
           // direction can be written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
           { columnId: 'name', direction: 'asc' },
         ],
-        pagination: { pageNumber: 2, pageSize: 20 }
+        pagination: { pageNumber: 1, pageSize: 20 }
       },
       backendServiceApi: {
         service: new GridOdataService(),
@@ -248,7 +248,7 @@ export class Example09 {
         }
       }
 
-      // simular a backend error when trying to sort on the "Company" field
+      // simulate a backend error when trying to sort on the "Company" field
       if (orderBy.includes('company')) {
         throw new Error('Server could not sort using the field "Company"');
       }
@@ -258,7 +258,7 @@ export class Example09 {
       data = JSON.parse(JSON.stringify(data));
 
       // Sort the data
-      if (orderBy && orderBy.length > 0) {
+      if (orderBy?.length > 0) {
         const orderByClauses = orderBy.split(',');
         for (const orderByClause of orderByClauses) {
           const orderByParts = orderByClause.split(' ');
