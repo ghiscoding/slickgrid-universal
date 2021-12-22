@@ -158,8 +158,8 @@ describe('Example 17 - Auto-Scroll with Range Selector', { retries: 1 }, () => {
       testInterval(0, 9).then(newInterval => {
 
         // min scrolling speed is quicker than before
-        expect(0.9 * newInterval.cell).to.be.lessThan(defaultInterval.cell);
-        expect(0.9 * newInterval.row).to.be.lessThan(defaultInterval.row);
+        expect(0.8 * newInterval.cell).to.be.lessThan(defaultInterval.cell);
+        expect(0.8 * newInterval.row).to.be.lessThan(defaultInterval.row);
 
         cy.get('[data-test="default-options-btn"]').click();
         cy.get('[data-test="max-interval-input"]').should('have.value', '600');
