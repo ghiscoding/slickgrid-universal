@@ -125,8 +125,8 @@ export class PaginationService {
     // Subscribe to any dataview row count changed so that when Adding/Deleting item(s) through the DataView
     // that would trigger a refresh of the pagination numbers
     if (this.dataView) {
-      this._subscriptions.push(this.pubSubService.subscribe(`onItemAdded`, (items: any | any[]) => this.processOnItemAddedOrRemoved(items, true)));
-      this._subscriptions.push(this.pubSubService.subscribe(`onItemDeleted`, (items: any | any[]) => this.processOnItemAddedOrRemoved(items, false)));
+      this._subscriptions.push(this.pubSubService.subscribe<any | any[]>(`onItemAdded`, items => this.processOnItemAddedOrRemoved(items, true)));
+      this._subscriptions.push(this.pubSubService.subscribe<any | any[]>(`onItemDeleted`, items => this.processOnItemAddedOrRemoved(items, false)));
     }
 
     this.refreshPagination(false, false, true);

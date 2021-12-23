@@ -1,8 +1,8 @@
-import { EventNamingStyle, EventSubscription, PubSubService, titleCase, toKebabCase } from '@slickgrid-universal/common';
+import { EventNamingStyle, EventSubscription, PubSubService, Subscription, titleCase, toKebabCase } from '@slickgrid-universal/common';
 
-interface PubSubEvent {
+interface PubSubEvent<T = any> {
   name: string;
-  listener: (event: CustomEventInit) => void;
+  listener: (event: T | CustomEventInit<T>) => void;
 }
 
 export class EventPubSubService implements PubSubService {
@@ -10,6 +10,13 @@ export class EventPubSubService implements PubSubService {
   protected _subscribedEvents: PubSubEvent[] = [];
 
   eventNamingStyle = EventNamingStyle.camelCase;
+
+  get elementSource() {
+    return this._elementSource;
+  }
+  set elementSource(element: Element) {
+    this._elementSource = element;
+  }
 
   get subscribedEvents(): PubSubEvent[] {
     return this._subscribedEvents;
@@ -54,13 +61,18 @@ export class EventPubSubService implements PubSubService {
    * @param callback The callback to be invoked when the specified message is published.
    * @return possibly a Subscription
    */
-  subscribe<T = any>(eventName: string, callback: (data: any) => void): any {
+  subscribe<T = any>(eventName: string, callback: (data: T) => void): Subscription {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
 
     // the event listener will return the data in the "event.detail", so we need to return its content to the final callback
     // basically we substitute the "data" with "event.detail" so that the user ends up with only the "data" result
     this._elementSource.addEventListener(eventNameByConvention, (event: CustomEventInit<T>) => callback.call(null, event.detail as T));
     this._subscribedEvents.push({ name: eventNameByConvention, listener: callback });
+
+    // return a subscription that we can unsubscribe
+    return {
+      unsubscribe: () => this.unsubscribe(eventNameByConvention, callback as never)
+    };
   }
 
   /**
@@ -70,10 +82,15 @@ export class EventPubSubService implements PubSubService {
    * @param callback The callback to be invoked when the specified message is published.
    * @return possibly a Subscription
    */
-  subscribeEvent<T = any>(eventName: string, listener: (event: CustomEventInit<T>) => void): any | void {
+  subscribeEvent<T = any>(eventName: string, listener: (event: CustomEventInit<T>) => void): Subscription {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
     this._elementSource.addEventListener(eventNameByConvention, listener);
     this._subscribedEvents.push({ name: eventNameByConvention, listener });
+
+    // return a subscription that we can unsubscribe
+    return {
+      unsubscribe: () => this.unsubscribe(eventNameByConvention, listener as never)
+    };
   }
 
   /**
@@ -81,24 +98,29 @@ export class EventPubSubService implements PubSubService {
    * @param event The event name
    * @return possibly a Subscription
    */
-  unsubscribe(eventName: string, listener: (event: CustomEventInit) => void) {
+  unsubscribe<T = any>(eventName: string, listener: (event: T | CustomEventInit<T>) => void) {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
     this._elementSource.removeEventListener(eventNameByConvention, listener);
+    this.removeSubscribedEventWhenFound(eventName, listener);
   }
 
   /** Unsubscribes all subscriptions that currently exists */
   unsubscribeAll(subscriptions?: EventSubscription[]) {
     if (Array.isArray(subscriptions)) {
-      for (const subscription of subscriptions) {
+      let subscription = subscriptions.pop();
+      while (subscription) {
         if (subscription?.dispose) {
           subscription.dispose();
         } else if (subscription?.unsubscribe) {
           subscription.unsubscribe();
         }
+        subscription = subscriptions.pop();
       }
     } else {
-      for (const pubSubEvent of this._subscribedEvents) {
+      let pubSubEvent = this._subscribedEvents.pop();
+      while (pubSubEvent) {
         this.unsubscribe(pubSubEvent.name, pubSubEvent.listener);
+        pubSubEvent = this._subscribedEvents.pop();
       }
     }
   }
@@ -131,5 +153,12 @@ export class EventPubSubService implements PubSubService {
         break;
     }
     return outputEventName;
+  }
+
+  protected removeSubscribedEventWhenFound<T>(eventName: string, listener: (event: T | CustomEventInit<T>) => void) {
+    const eventIdx = this._subscribedEvents.findIndex(evt => evt.name === eventName && evt.listener === listener);
+    if (eventIdx >= 0) {
+      this._subscribedEvents.splice(eventIdx, 1);
+    }
   }
 }
