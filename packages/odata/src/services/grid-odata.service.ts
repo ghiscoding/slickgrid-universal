@@ -108,7 +108,7 @@ export class GridOdataService implements BackendService {
     }
     const odataVersion = this._odataService?.options?.version ?? 2;
 
-    if (this.pagination) {
+    if (this.pagination && this._odataService?.options?.enableCount) {
       const countExtractor = this._odataService?.options?.countExtractor ??
         odataVersion >= 4 ? (r: any) => r['@odata.count'] :
         odataVersion === 3 ? (r: any) => r['__count'] :

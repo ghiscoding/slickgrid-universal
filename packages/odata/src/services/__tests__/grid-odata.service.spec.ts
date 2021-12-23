@@ -1738,6 +1738,7 @@ describe('GridOdataService', () => {
 
   describe('postProcess method', () => {
     it('should not fail when the result is not an object', () => {
+      serviceOptions.enableCount = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
       service.postProcess(undefined);
@@ -1745,6 +1746,7 @@ describe('GridOdataService', () => {
     });
 
     it('should extract d.results[\'__count\'] when oData version is not specified', () => {
+      serviceOptions.enableCount = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
       service.postProcess({ d: { '__count': 20 } });
@@ -1754,6 +1756,7 @@ describe('GridOdataService', () => {
 
     it('should set pagination totalItems from d.results[\'__count\'] with oData version 2', () => {
       serviceOptions.version = 2;
+      serviceOptions.enableCount = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
       service.postProcess({ d: { '__count': 20 } });
@@ -1763,6 +1766,7 @@ describe('GridOdataService', () => {
 
     it('should set pagination totalItems from __count with oData version 3', () => {
       serviceOptions.version = 3;
+      serviceOptions.enableCount = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
       service.postProcess({ '__count': 20 } );
@@ -1772,11 +1776,22 @@ describe('GridOdataService', () => {
 
     it('should set pagination totalItems from @odata.count with oData version 4', () => {
       serviceOptions.version = 4;
+      serviceOptions.enableCount = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
       service.postProcess({ '@odata.count': 20 });
 
       expect(paginationOptions.totalItems).toBe(20);
+    });
+
+    it('should not set pagination totalItems when "enableCount" is not set', () => {
+      serviceOptions.version = 4;
+      serviceOptions.enableCount = false;
+      service.init(serviceOptions, paginationOptions, gridStub);
+
+      service.postProcess({ '@odata.count': 20 });
+
+      expect(paginationOptions.totalItems).toBe(100);
     });
 
     it('should flatten navigation fields when oData version is not specified', () => {

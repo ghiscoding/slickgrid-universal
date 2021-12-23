@@ -14,9 +14,9 @@ export class Example09 {
   sgb: SlickVanillaGridBundle;
 
   isCountEnabled = true;
-  isSelectEnabled = true;
-  isExpandEnabled = true;
-  odataVersion = 4;
+  isSelectEnabled = false;
+  isExpandEnabled = false;
+  odataVersion = 2;
   odataQuery = '';
   processing = false;
   errorStatus = '';
@@ -87,7 +87,7 @@ export class Example09 {
         }
       },
       { id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true },
-      { id: 'category/name', name: 'Category', field: 'category/name', filterable: true, sortable: true}
+      { id: 'category_name', name: 'Category', field: 'category/name', filterable: true, sortable: true}
     ];
 
     this.gridOptions = {
@@ -120,7 +120,7 @@ export class Example09 {
           // direction can be written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
           { columnId: 'name', direction: 'asc' },
         ],
-        pagination: { pageNumber: 1, pageSize: 20 }
+        pagination: { pageNumber: 2, pageSize: 20 }
       },
       backendServiceApi: {
         service: new GridOdataService(),
@@ -163,12 +163,20 @@ export class Example09 {
   }
 
   getCustomerCallback(data) {
-    this.sgb.dataset = this.odataVersion === 4 ? data.value : data.d.results;
-    this.sgb.paginationOptions.totalItems = this.isCountEnabled ? (this.odataVersion === 4 ? data['@odata.count'] : data.d['__count']) : data['totalRecordCount'];
-    this.odataQuery = data['query'];
-    if (this.metrics) {
-      this.metrics.totalItemCount = this.sgb.paginationOptions.totalItems;
+    // totalItems property needs to be filled for pagination to work correctly
+    // however we need to force Aurelia to do a dirty check, doing a clone object will do just that
+    let totalItemCount: number = data['totalRecordCount']; // you can use "totalRecordCount" or any name or "odata.count" when "enableCount" is set
+    if (this.isCountEnabled) {
+      totalItemCount = (this.odataVersion === 4) ? data['@odata.count'] : data['d']['__count'];
     }
+    if (this.metrics) {
+      this.metrics.totalItemCount = totalItemCount;
+    }
+
+    // once pagination totalItems is filled, we can update the dataset
+    this.sgb.paginationOptions.totalItems = totalItemCount;
+    this.sgb.dataset = this.odataVersion === 4 ? data.value : data.d.results;
+    this.odataQuery = data['query'];
   }
 
   getCustomerApiCall(query) {
@@ -322,13 +330,23 @@ export class Example09 {
       const updatedData = filteredData.slice(firstRow, firstRow + top);
 
       setTimeout(() => {
-        let countPropName = 'totalRecordCount';
-        if (this.isCountEnabled) {
-          countPropName = (this.odataVersion === 4) ? '@odata.count' : '__count';
+        const backendResult = { query };
+        if (!this.isCountEnabled) {
+          backendResult['totalRecordCount'] = countTotalItems;
         }
 
-        const backendResult = this.odataVersion === 4 ? { value: updatedData, [countPropName]: countTotalItems, query } :
-          { d: { results: updatedData, [countPropName]: countTotalItems }, query };
+        if (this.odataVersion === 4) {
+          backendResult['value'] = updatedData;
+          if (this.isCountEnabled) {
+            backendResult['@odata.count'] = countTotalItems;
+          }
+        } else {
+          backendResult['d'] = { results: updatedData };
+          if (this.isCountEnabled) {
+            backendResult['d']['__count'] = countTotalItems;
+          }
+        }
+
         // console.log('Backend Result', backendResult);
         resolve(backendResult);
       }, 150);
@@ -382,37 +400,32 @@ export class Example09 {
 
   changeCountEnableFlag() {
     this.isCountEnabled = !this.isCountEnabled;
-    const odataService = this.gridOptions.backendServiceApi.service;
-    odataService.updateOptions({ enableCount: this.isCountEnabled } as OdataOption);
-    odataService.clearFilters();
-    this.sgb?.filterService.clearFilters();
+    this.resetOptions({ enableCount: this.isCountEnabled });
     return true;
   }
 
   changeEnableSelectFlag() {
     this.isSelectEnabled = !this.isSelectEnabled;
-    const odataService = this.gridOptions.backendServiceApi.service;
-    odataService.updateOptions({ enableSelect: this.isSelectEnabled } as OdataOption);
-    odataService.clearFilters();
-    this.sgb?.filterService.clearFilters();
+    this.resetOptions({ enableSelect: this.isSelectEnabled });
     return true;
   }
 
   changeEnableExpandFlag() {
     this.isExpandEnabled = !this.isExpandEnabled;
-    const odataService = this.gridOptions.backendServiceApi.service;
-    odataService.updateOptions({ enableExpand: this.isExpandEnabled } as OdataOption);
-    odataService.clearFilters();
-    this.sgb?.filterService.clearFilters();
+    this.resetOptions({ enableExpand: this.isExpandEnabled });
     return true;
   }
 
   setOdataVersion(version: number) {
     this.odataVersion = version;
+    this.resetOptions({ version: this.odataVersion });
+    return true;
+  }
+
+  private resetOptions(options: Partial<OdataOption>) {
     const odataService = this.gridOptions.backendServiceApi.service;
-    odataService.updateOptions({ version: this.odataVersion } as OdataOption);
+    odataService.updateOptions(options);
     odataService.clearFilters();
     this.sgb?.filterService.clearFilters();
-    return true;
   }
 }
