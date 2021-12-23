@@ -53,7 +53,7 @@ export class SlickPaginationComponent {
     // Anytime the pagination is initialized or has changes,
     // we'll copy the data into a local object so that we can add binding to this local object
     this._subscriptions.push(
-      this.pubSubService.subscribe('onPaginationRefreshed', (paginationChanges: ServicePagination) => {
+      this.pubSubService.subscribe<ServicePagination>('onPaginationRefreshed', paginationChanges => {
         for (const key of Object.keys(paginationChanges)) {
           (this.currentPagination as any)[key] = (paginationChanges as any)[key];
         }

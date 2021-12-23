@@ -1120,8 +1120,8 @@ export class SlickVanillaGridBundle {
       this.paginationService.totalItems = this.totalItems;
       this.paginationService.init(this.slickGrid, paginationOptions, this.backendServiceApi);
       this.subscriptions.push(
-        this._eventPubSubService.subscribe('onPaginationChanged', (paginationChanges: ServicePagination) => this.paginationChanged(paginationChanges)),
-        this._eventPubSubService.subscribe('onPaginationVisibilityChanged', (visibility: { visible: boolean }) => {
+        this._eventPubSubService.subscribe<ServicePagination>('onPaginationChanged', paginationChanges => this.paginationChanged(paginationChanges)),
+        this._eventPubSubService.subscribe<{ visible: boolean; }>('onPaginationVisibilityChanged', visibility => {
           this.showPagination = visibility?.visible ?? false;
           if (this.gridOptions?.backendServiceApi) {
             this.backendUtilityService?.refreshBackendDataset(this.gridOptions);

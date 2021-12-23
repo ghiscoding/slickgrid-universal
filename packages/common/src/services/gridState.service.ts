@@ -392,7 +392,7 @@ export class GridStateService {
   subscribeToAllGridChanges(grid: SlickGrid) {
     // Subscribe to Event Emitter of Filter changed
     this._subscriptions.push(
-      this.pubSubService.subscribe('onFilterChanged', (currentFilters: CurrentFilter[]) => {
+      this.pubSubService.subscribe<CurrentFilter[]>('onFilterChanged', currentFilters => {
         this.resetRowSelectionWhenRequired();
         this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentFilters, type: GridStateType.filter }, gridState: this.getCurrentGridState({ requestRefreshRowFilteredRow: !this.hasRowSelectionEnabled() }) });
 
@@ -412,7 +412,7 @@ export class GridStateService {
 
     // Subscribe to Event Emitter of Sort changed
     this._subscriptions.push(
-      this.pubSubService.subscribe('onSortChanged', (currentSorters: CurrentSorter[]) => {
+      this.pubSubService.subscribe<CurrentSorter[]>('onSortChanged', currentSorters => {
         this.resetRowSelectionWhenRequired();
         this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentSorters, type: GridStateType.sorter }, gridState: this.getCurrentGridState() });
       })
@@ -441,7 +441,7 @@ export class GridStateService {
 
     // subscribe to HeaderMenu (hide column)
     this._subscriptions.push(
-      this.pubSubService.subscribe('onHeaderMenuHideColumns', (visibleColumns: Column[]) => {
+      this.pubSubService.subscribe<Column[]>('onHeaderMenuHideColumns', visibleColumns => {
         const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(visibleColumns);
         this.pubSubService.publish('onGridStateChanged', { change: { newValues: currentColumns, type: GridStateType.columns }, gridState: this.getCurrentGridState() });
       })
@@ -449,14 +449,14 @@ export class GridStateService {
 
     // subscribe to Tree Data toggle items changes
     this._subscriptions.push(
-      this.pubSubService.subscribe('onTreeItemToggled', (toggleChange: TreeToggleStateChange) => {
+      this.pubSubService.subscribe<TreeToggleStateChange>('onTreeItemToggled', toggleChange => {
         this.pubSubService.publish('onGridStateChanged', { change: { newValues: toggleChange, type: GridStateType.treeData }, gridState: this.getCurrentGridState() });
       })
     );
 
     // subscribe to Tree Data full tree toggle changes
     this._subscriptions.push(
-      this.pubSubService.subscribe('onTreeFullToggleEnd', (toggleChange: Omit<TreeToggleStateChange, 'fromItemId'>) => {
+      this.pubSubService.subscribe<Omit<TreeToggleStateChange, 'fromItemId'>>('onTreeFullToggleEnd', toggleChange => {
         this.pubSubService.publish('onGridStateChanged', { change: { newValues: toggleChange, type: GridStateType.treeData }, gridState: this.getCurrentGridState() });
       })
     );

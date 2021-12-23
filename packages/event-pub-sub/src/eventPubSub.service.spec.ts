@@ -17,6 +17,15 @@ describe('EventPubSub Service', () => {
 
   it('should create the service', () => {
     expect(service).toBeTruthy();
+    expect(service.elementSource).toBeTruthy();
+  });
+
+  it('should be able to change the service element source afterward', () => {
+    const div = document.createElement('div');
+    div.className = 'test';
+    service.elementSource = div;
+
+    expect(service.elementSource).toEqual(div);
   });
 
   describe('publish method', () => {
@@ -137,7 +146,7 @@ describe('EventPubSub Service', () => {
       const mockCallback = jest.fn();
 
       service.eventNamingStyle = EventNamingStyle.kebabCase;
-      service.subscribeEvent('onClick', mockCallback);
+      const subscription = service.subscribeEvent('onClick', mockCallback);
       divContainer.dispatchEvent(new CustomEvent('on-click', { composed: true, detail: { name: 'John' } }));
 
       expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');
@@ -146,6 +155,9 @@ describe('EventPubSub Service', () => {
       expect(addEventSpy).toHaveBeenCalledWith('on-click', expect.any(Function));
       expect(mockCallback).toHaveBeenCalledTimes(1);
       // expect(mockCallback).toHaveBeenCalledWith({ detail: { name: 'John' } });
+
+      subscription.unsubscribe();
+      expect(service.subscribedEvents.length).toBe(0);
     });
   });
 
@@ -157,14 +169,35 @@ describe('EventPubSub Service', () => {
 
       service.subscribe('onClick', mockCallback);
       divContainer.dispatchEvent(new CustomEvent('onClick', { detail: { name: 'John' } }));
-      service.unsubscribe('onClick', mockCallback);
 
       expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');
       expect(service.subscribedEventNames).toEqual(['onClick']);
       expect(service.subscribedEvents.length).toBe(1);
-      expect(removeEventSpy).toHaveBeenCalledWith('onClick', mockCallback);
       expect(mockCallback).toHaveBeenCalledTimes(1);
       expect(mockCallback).toHaveBeenCalledWith({ name: 'John' });
+
+      service.unsubscribe('onClick', mockCallback);
+      expect(removeEventSpy).toHaveBeenCalledWith('onClick', mockCallback);
+      expect(service.subscribedEvents.length).toBe(0);
+    });
+
+    it('should be able to unsubscribe directly from the subscription', () => {
+      const removeEventSpy = jest.spyOn(divContainer, 'removeEventListener');
+      const getEventNameSpy = jest.spyOn(service, 'getEventNameByNamingConvention');
+      const mockCallback = jest.fn();
+
+      const subscription = service.subscribe('onClick', mockCallback);
+      divContainer.dispatchEvent(new CustomEvent('onClick', { detail: { name: 'John' } }));
+
+      expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');
+      expect(service.subscribedEventNames).toEqual(['onClick']);
+      expect(service.subscribedEvents.length).toBe(1);
+      expect(mockCallback).toHaveBeenCalledTimes(1);
+      expect(mockCallback).toHaveBeenCalledWith({ name: 'John' });
+
+      subscription.unsubscribe();
+      expect(removeEventSpy).toHaveBeenCalledWith('onClick', mockCallback);
+      expect(service.subscribedEvents.length).toBe(0);
     });
 
     it('should unsubscribeAll events', () => {
@@ -177,17 +210,19 @@ describe('EventPubSub Service', () => {
       service.subscribe('onClick', mockCallback);
       service.subscribe('onDblClick', mockDblCallback);
       divContainer.dispatchEvent(new CustomEvent('onClick', { detail: { name: 'John' } }));
-      service.unsubscribeAll();
 
       expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');
       expect(getEventNameSpy).toHaveBeenCalledWith('onDblClick', '');
       expect(service.subscribedEventNames).toEqual(['onClick', 'onDblClick']);
       expect(service.subscribedEvents.length).toBe(2);
+      expect(mockCallback).toHaveBeenCalledTimes(1);
+      expect(mockCallback).toHaveBeenCalledWith({ name: 'John' });
+
+      service.unsubscribeAll();
       expect(removeEventSpy).toHaveBeenCalledWith('onClick', mockCallback);
       expect(removeEventSpy).toHaveBeenCalledWith('onDblClick', mockDblCallback);
-      expect(mockCallback).toHaveBeenCalledTimes(1);
       expect(unsubscribeSpy).toHaveBeenCalledTimes(2);
-      expect(mockCallback).toHaveBeenCalledWith({ name: 'John' });
+      expect(service.subscribedEvents.length).toBe(0);
     });
 
     it('should unsubscribe all PubSub by disposing all of them', () => {
@@ -201,6 +236,7 @@ describe('EventPubSub Service', () => {
 
       expect(mockDispose1).toHaveBeenCalledTimes(1);
       expect(mockDispose2).toHaveBeenCalledTimes(1);
+      expect(service.subscribedEvents.length).toBe(0);
     });
 
     it('should unsubscribe all PubSub by unsubscribing all of them', () => {
@@ -214,6 +250,7 @@ describe('EventPubSub Service', () => {
 
       expect(mockUnsubscribe1).toHaveBeenCalledTimes(1);
       expect(mockUnsubscribe2).toHaveBeenCalledTimes(1);
+      expect(service.subscribedEvents.length).toBe(0);
     });
   });
 });
