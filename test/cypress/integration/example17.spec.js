@@ -1,7 +1,7 @@
 /// <reference types='cypress' />
 import { getScrollDistanceWhenDragOutsideGrid } from '../support/drag';
 
-describe('Example 17 - Auto-Scroll with Range Selector', { retries: 0 }, () => {
+describe('Example 17 - Auto-Scroll with Range Selector', { retries: 1 }, () => {
   // NOTE:  everywhere there's a * 2 is because we have a top+bottom (frozen rows) containers even after Unfreeze Columns/Rows
   const CELL_WIDTH = 80;
   const CELL_HEIGHT = 35;
@@ -158,8 +158,8 @@ describe('Example 17 - Auto-Scroll with Range Selector', { retries: 0 }, () => {
       testInterval(0, 9).then(newInterval => {
 
         // min scrolling speed is quicker than before
-        expect(0.9 * newInterval.cell).to.be.lessThan(defaultInterval.cell);
-        expect(0.9 * newInterval.row).to.be.lessThan(defaultInterval.row);
+        expect(0.8 * newInterval.cell).to.be.lessThan(defaultInterval.cell);
+        expect(0.8 * newInterval.row).to.be.lessThan(defaultInterval.row);
 
         cy.get('[data-test="default-options-btn"]').click();
         cy.get('[data-test="max-interval-input"]').should('have.value', '600');
@@ -181,8 +181,8 @@ describe('Example 17 - Auto-Scroll with Range Selector', { retries: 0 }, () => {
       testInterval(SCROLLBAR_DIMENSION).then(newInterval => {
 
         // scrolling speed is quicker than before
-        expect(3.2 * newInterval.cell).to.be.lessThan(defaultInterval.cell);
-        expect(3.2 * newInterval.row).to.be.lessThan(defaultInterval.row);
+        expect(3.0 * newInterval.cell).to.be.lessThan(defaultInterval.cell);
+        expect(3.0 * newInterval.row).to.be.lessThan(defaultInterval.row);
 
         cy.get('[data-test="default-options-btn"]').click();
         cy.get('[data-test="delay-cursor-input"]').should('have.value', '5');

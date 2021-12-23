@@ -113,6 +113,7 @@ describe('SlickRowMoveManager Plugin', () => {
     plugin.init(gridStub);
 
     expect(plugin.addonOptions).toEqual({
+      autoScroll: true,
       cancelEditOnDrag: false,
       columnId: '_move',
       cssClass: 'slick-row-move-column',
@@ -154,6 +155,7 @@ describe('SlickRowMoveManager Plugin', () => {
     plugin.setOptions({ cssClass: 'some-class', hideRowMoveShadow: false, rowMoveShadowMarginLeft: 2, rowMoveShadowMarginTop: 5, rowMoveShadowOpacity: 1, rowMoveShadowScale: 0.9, singleRowMove: true, width: 20 });
 
     expect(plugin.addonOptions).toEqual({
+      autoScroll: true,
       cancelEditOnDrag: false,
       columnId: '_move',
       cssClass: 'some-class',
