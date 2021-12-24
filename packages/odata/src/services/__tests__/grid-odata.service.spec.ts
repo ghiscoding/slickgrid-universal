@@ -1741,7 +1741,6 @@ describe('GridOdataService', () => {
       serviceOptions.enableCount = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
-      service.postProcess(undefined);
       service.postProcess([]);
     });
 
@@ -1797,6 +1796,7 @@ describe('GridOdataService', () => {
     it('should flatten navigation fields when oData version is not specified', () => {
       const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
       const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      serviceOptions.enableExpand = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
       const processResult = { d: { 'results': [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] } };
@@ -1808,10 +1808,26 @@ describe('GridOdataService', () => {
       expect(processResult.d.results[0]['nav/fld2']).toBe('val2');
     });
 
+    it('should not flatten navigation fields when "enableExpand" is not set', () => {
+      const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
+      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      serviceOptions.enableExpand = false;
+      service.init(serviceOptions, paginationOptions, gridStub);
+
+      const processResult = { d: { 'results': [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] } };
+      service.postProcess(processResult);
+
+      expect(spy).toHaveBeenCalled();
+      expect(processResult.d.results[0].nav).toBeDefined();
+      expect(processResult.d.results[0]['nav/fld1']).toBeUndefined();
+      expect(processResult.d.results[0]['nav/fld2']).toBeUndefined();
+    });
+
     it('should flatten navigation fields when oData version is v2', () => {
       const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
       const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       serviceOptions.version = 2;
+      serviceOptions.enableExpand = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
       const processResult = { d: { 'results': [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] } };
@@ -1827,6 +1843,7 @@ describe('GridOdataService', () => {
       const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
       const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       serviceOptions.version = 3;
+      serviceOptions.enableExpand = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
       const processResult = { 'results': [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] };
@@ -1842,6 +1859,7 @@ describe('GridOdataService', () => {
       const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
       const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       serviceOptions.version = 4;
+      serviceOptions.enableExpand = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
       const processResult = { 'value': [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] };
@@ -1857,6 +1875,7 @@ describe('GridOdataService', () => {
       const columns = [{ id: 'id1', field: 'nav/subnav/fld1' }];
       const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       serviceOptions.version = 4;
+      serviceOptions.enableExpand = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
       const processResult = { 'value': [{ nav: { subnav: { fld1: 'val1' } } }] };
@@ -1871,6 +1890,7 @@ describe('GridOdataService', () => {
       const columns = [{ id: 'id1', field: 'complex_obj' }];
       const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       serviceOptions.version = 4;
+      serviceOptions.enableExpand = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
       const processResult = { 'value': [{ complex_obj: { fld1: 'val1' } }] };

@@ -13,9 +13,6 @@ export interface OdataOption extends BackendServiceOption {
    */
   enableSelect?: boolean;
 
-  /** Which field to use as the row identifier when using enableSelect */
-  rowId?: string;
-
   /**
    * Query navigation fields (containing '/') using $expand.
    * E.g.: with odata v4 and columns [{ field: 'date' }, { field: 'products/name' }] result in $select=id,date&$expand=products($select=name)
@@ -46,9 +43,9 @@ export interface OdataOption extends BackendServiceOption {
   /** OData (or any other) version number (the query string is different between versions) */
   version?: number;
 
-  /** Howto extract the count from the backend's response. Defaults to 'd.__count' for v2, '__count' for v3 and '@odata.count' for v4. */
+  /** A callback which will extract and return the count from the data queried. Defaults to 'd.__count' for v2, '__count' for v3 and '@odata.count' for v4. */
   countExtractor?: (response: any) => number;
 
-  /** Howto extract the dataset from the backend's response. Defaults to 'd.results' for v2, 'results' for v3 and 'value' for v4. */
+  /** A callback which will extract and return the dataset from the data queried. Defaults to 'd.results' for v2, 'results' for v3 and 'value' for v4. */
   datasetExtractor?: (response: any) => number;
 }

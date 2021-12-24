@@ -7,7 +7,7 @@ export class OdataQueryBuilderService {
   _filterCount = 0;
   _odataOptions: Partial<OdataOption>;
 
-  private _columnDefinitions: Column[] = [];
+  protected _columnDefinitions: Column[] = [];
   public set columnDefinitions(columnDefinitions: Column[]) {
     this._columnDefinitions = columnDefinitions;
   }
@@ -81,7 +81,6 @@ export class OdataQueryBuilderService {
 
     if (this._odataOptions.enableSelect || this._odataOptions.enableExpand) {
       const fields = this._columnDefinitions.flatMap(x => x.fields ?? [x.field]);
-      fields.push(this._odataOptions.rowId ?? 'id');
       const selectExpand = this.buildSelectExpand([...new Set(fields)]);
       if (this._odataOptions.enableSelect) {
         const select = selectExpand.selectParts.join(',');

@@ -832,7 +832,7 @@ describe('Example 09 - OData Grid', { retries: 1 }, () => {
 
       cy.get('[data-test=odata-query-result]')
         .should(($span) => {
-          expect($span.text()).to.eq(`$top=10&$orderby=Name desc&$select=name,gender,company,id&$expand=category($select=name)`);
+          expect($span.text()).to.eq(`$top=10&$orderby=Name desc&$select=name,gender,company&$expand=category($select=name)`);
         });
     });
 
@@ -853,7 +853,7 @@ describe('Example 09 - OData Grid', { retries: 1 }, () => {
 
       cy.get('[data-test=odata-query-result]')
         .should(($span) => {
-          expect($span.text()).to.eq(`$top=10&$orderby=Category/name asc&$select=name,gender,company,id&$expand=category($select=name)`);
+          expect($span.text()).to.eq(`$top=10&$orderby=Category/name asc&$select=name,gender,company&$expand=category($select=name)`);
         });
 
       cy.get('input.search-filter.filter-category_name')
@@ -864,7 +864,7 @@ describe('Example 09 - OData Grid', { retries: 1 }, () => {
 
       cy.get('[data-test=odata-query-result]')
         .should(($span) => {
-          expect($span.text()).to.eq(`$top=10&$orderby=Category/name asc&$filter=(contains(Category/name, 'Silver'))&$select=name,gender,company,id&$expand=category($select=name)`);
+          expect($span.text()).to.eq(`$top=10&$orderby=Category/name asc&$filter=(contains(Category/name, 'Silver'))&$select=name,gender,company&$expand=category($select=name)`);
         });
 
       cy.get('[data-test=page-number-input]')
