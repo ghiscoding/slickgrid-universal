@@ -1,6 +1,6 @@
 import { SlickEvent, SlickEventData } from './index';
 
-type Handler<H> = (e: SlickEventData, data: H) => void;
+export type Handler<H> = (e: SlickEventData, data: H) => void;
 
 export interface SlickEventHandler {
   /** Subscribe to a SlickGrid Event and execute its handler callback */
