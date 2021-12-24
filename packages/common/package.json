@@ -83,7 +83,7 @@
   },
   "devDependencies": {
     "@types/dompurify": "^2.3.2",
-    "@types/jquery": "^3.5.10",
+    "@types/jquery": "^3.5.11",
     "@types/moment": "^2.13.0",
     "autoprefixer": "^10.4.0",
     "copyfiles": "^2.4.1",
@@ -94,7 +94,7 @@
     "postcss": "^8.4.5",
     "postcss-cli": "^9.1.0",
     "rimraf": "^3.0.2",
-    "sass": "^1.45.0"
+    "sass": "^1.45.1"
   },
   "engines": {
     "node": ">=14.17.0",
