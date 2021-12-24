@@ -1,6 +1,6 @@
 import { EventNamingStyle, EventSubscription, PubSubService, Subscription, titleCase, toKebabCase } from '@slickgrid-universal/common';
 
-interface PubSubEvent<T = any> {
+export interface PubSubEvent<T = any> {
   name: string;
   listener: (event: T | CustomEventInit<T>) => void;
 }
@@ -30,6 +30,48 @@ export class EventPubSubService implements PubSubService {
     // use the provided element
     // or create a "phantom DOM node" (a div element that is never rendered) to set up a custom event dispatching
     this._elementSource = elementSource || document.createElement('div');
+  }
+
+  /**
+   * Dispatch of Custom Event, which by default will bubble up & is cancelable
+   * @param {String} eventName - event name to dispatch
+   * @param {*} data - optional data to include in the dispatching
+   * @param {Boolean} isBubbling - is the event bubbling up?
+   * @param {Boolean} isCancelable - is the event cancellable?
+   * @returns {Boolean} returns true if either event's cancelable attribute value is false or its preventDefault() method was not invoked, and false otherwise.
+   */
+  dispatchCustomEvent<T = any>(eventName: string, data?: T, isBubbling = true, isCancelable = true) {
+    const eventInit: CustomEventInit<T> = { bubbles: isBubbling, cancelable: isCancelable };
+    if (data) {
+      eventInit.detail = data;
+    }
+    return this._elementSource.dispatchEvent(new CustomEvent<T>(eventName, eventInit));
+  }
+
+  /**
+   * Get the event name by the convention defined, it could be: all lower case, camelCase, PascalCase or kebab-case
+   * @param {String} inputEventName - name of the event
+   * @param {String} eventNamePrefix - prefix to use in the event name
+   * @returns {String} - output event name
+   */
+  getEventNameByNamingConvention(inputEventName: string, eventNamePrefix: string) {
+    let outputEventName = '';
+
+    switch (this.eventNamingStyle) {
+      case EventNamingStyle.camelCase:
+        outputEventName = (eventNamePrefix !== '') ? `${eventNamePrefix}${titleCase(inputEventName)}` : inputEventName;
+        break;
+      case EventNamingStyle.kebabCase:
+        outputEventName = (eventNamePrefix !== '') ? `${eventNamePrefix}-${toKebabCase(inputEventName)}` : toKebabCase(inputEventName);
+        break;
+      case EventNamingStyle.lowerCase:
+        outputEventName = `${eventNamePrefix}${inputEventName}`.toLowerCase();
+        break;
+      case EventNamingStyle.lowerCaseWithoutOnPrefix:
+        outputEventName = `${eventNamePrefix}${inputEventName.replace(/^on/, '')}`.toLowerCase();
+        break;
+    }
+    return outputEventName;
   }
 
   /**
@@ -95,65 +137,43 @@ export class EventPubSubService implements PubSubService {
 
   /**
    * Unsubscribes a message name
-   * @param event The event name
+   * @param {String} event - the event name
+   * @param {*} listener - event listener callback
+   * @param {Boolean} shouldRemoveFromEventList - should we also remove the event from the subscriptions array?
    * @return possibly a Subscription
    */
-  unsubscribe<T = any>(eventName: string, listener: (event: T | CustomEventInit<T>) => void) {
+  unsubscribe<T = any>(eventName: string, listener: (event: T | CustomEventInit<T>) => void, shouldRemoveFromEventList = true) {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
     this._elementSource.removeEventListener(eventNameByConvention, listener);
-    this.removeSubscribedEventWhenFound(eventName, listener);
+    if (shouldRemoveFromEventList) {
+      this.removeSubscribedEventWhenFound(eventName, listener);
+    }
   }
 
-  /** Unsubscribes all subscriptions that currently exists */
+  /** Unsubscribes all subscriptions/events that currently exists */
   unsubscribeAll(subscriptions?: EventSubscription[]) {
     if (Array.isArray(subscriptions)) {
-      let subscription = subscriptions.pop();
-      while (subscription) {
+      let subscription;
+      do {
+        subscription = subscriptions.pop();
         if (subscription?.dispose) {
           subscription.dispose();
         } else if (subscription?.unsubscribe) {
           subscription.unsubscribe();
         }
-        subscription = subscriptions.pop();
-      }
+      } while (subscription);
     } else {
       let pubSubEvent = this._subscribedEvents.pop();
       while (pubSubEvent) {
-        this.unsubscribe(pubSubEvent.name, pubSubEvent.listener);
+        this.unsubscribe(pubSubEvent.name, pubSubEvent.listener, false);
         pubSubEvent = this._subscribedEvents.pop();
       }
     }
   }
 
-  /** Dispatch of Custom Event, which by default will bubble up & is cancelable */
-  dispatchCustomEvent<T = any>(eventName: string, data?: T, isBubbling = true, isCancelable = true) {
-    const eventInit: CustomEventInit<T> = { bubbles: isBubbling, cancelable: isCancelable };
-    if (data) {
-      eventInit.detail = data;
-    }
-    return this._elementSource.dispatchEvent(new CustomEvent<T>(eventName, eventInit));
-  }
-
-  /** Get the event name by the convention defined, it could be: all lower case, camelCase, PascalCase or kebab-case */
-  getEventNameByNamingConvention(inputEventName: string, eventNamePrefix: string) {
-    let outputEventName = '';
-
-    switch (this.eventNamingStyle) {
-      case EventNamingStyle.camelCase:
-        outputEventName = (eventNamePrefix !== '') ? `${eventNamePrefix}${titleCase(inputEventName)}` : inputEventName;
-        break;
-      case EventNamingStyle.kebabCase:
-        outputEventName = (eventNamePrefix !== '') ? `${eventNamePrefix}-${toKebabCase(inputEventName)}` : toKebabCase(inputEventName);
-        break;
-      case EventNamingStyle.lowerCase:
-        outputEventName = `${eventNamePrefix}${inputEventName}`.toLowerCase();
-        break;
-      case EventNamingStyle.lowerCaseWithoutOnPrefix:
-        outputEventName = `${eventNamePrefix}${inputEventName.replace(/^on/, '')}`.toLowerCase();
-        break;
-    }
-    return outputEventName;
-  }
+  // --
+  // protected functions
+  // --------------------
 
   protected removeSubscribedEventWhenFound<T>(eventName: string, listener: (event: T | CustomEventInit<T>) => void) {
     const eventIdx = this._subscribedEvents.findIndex(evt => evt.name === eventName && evt.listener === listener);
