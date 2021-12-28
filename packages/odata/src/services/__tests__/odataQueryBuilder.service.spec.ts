@@ -103,9 +103,20 @@ describe('OdataService', () => {
     describe('enableSelect and enableExpand flags', () => {
       it('should return a query with $select when "enableSelect" is set', () => {
         service.columnDefinitions = [{ id: 'id1', field: 'fld1' }, { id: 'id2', field: 'fld2' }, { id: 'id3', field: '', fields: ['fld2', 'fld3'] }];
-        const expectation = `$select=fld1,fld2,fld3`;
+        const expectation = `$select=id,fld1,fld2,fld3`;
 
         service.options = { enableSelect: true };
+        const query = service.buildQuery();
+
+        expect(query).toBe(expectation);
+      });
+
+      it('should return a query with $select when "enableSelect" is set and a custom "datasetIdPropName" is set', () => {
+        service.columnDefinitions = [{ id: 'id1', field: 'fld1' }];
+        const expectation = `$select=custid,fld1`;
+
+        service.options = { enableSelect: true };
+        service.datasetIdPropName = "custid";
         const query = service.buildQuery();
 
         expect(query).toBe(expectation);
@@ -123,7 +134,7 @@ describe('OdataService', () => {
 
       it('should return a query with $select and $expand when "enableSelect" and "enableExpand" are set and no OData version provided, or oData version 2 or 3', () => {
         service.columnDefinitions = [{ id: 'id1', field: 'fld1' }, { id: 'id2', field: 'nav1/fld1' }, { id: 'id3', field: 'nav1/fld2' }, { id: 'id4', field: 'nav2/nav3/fld1' }];
-        const expectation = `$select=fld1,nav1,nav2&$expand=nav1,nav2`;
+        const expectation = `$select=id,fld1,nav1,nav2&$expand=nav1,nav2`;
 
         service.options = { enableSelect: true, enableExpand: true };
         const query1 = service.buildQuery();
@@ -141,7 +152,7 @@ describe('OdataService', () => {
 
       it('should return a query with $select and $expand when "enableSelect" and "enableExpand" are set with OData version 4 or higher', () => {
         service.columnDefinitions = [{ id: 'id1', field: 'fld1' }, { id: 'id2', field: 'nav1/fld1' }, { id: 'id3', field: 'nav1/fld2' }, { id: 'id4', field: 'nav2/nav3/fld1' }];
-        const expectation = `$select=fld1&$expand=nav1($select=fld1,fld2),nav2($expand=nav3($select=fld1))`;
+        const expectation = `$select=id,fld1&$expand=nav1($select=fld1,fld2),nav2($expand=nav3($select=fld1))`;
 
         service.options = { enableSelect: true, enableExpand: true, version: 4 };
         const query1 = service.buildQuery();

@@ -96,6 +96,7 @@ export class GridOdataService implements BackendService {
     }
 
     this._odataService.columnDefinitions = this._columnDefinitions;
+    this._odataService.datasetIdPropName = this._gridOptions.datasetIdPropertyName || 'id';
   }
 
   buildQuery(): string {

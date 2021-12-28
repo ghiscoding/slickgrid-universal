@@ -12,6 +12,11 @@ export class OdataQueryBuilderService {
     this._columnDefinitions = columnDefinitions;
   }
 
+  protected _datasetIdPropName = 'id';
+  public set datasetIdPropName(datasetIdPropName: string) {
+    this._datasetIdPropName = datasetIdPropName;
+  }
+
   constructor() {
     this._odataOptions = {
       filterQueue: [],
@@ -81,6 +86,7 @@ export class OdataQueryBuilderService {
 
     if (this._odataOptions.enableSelect || this._odataOptions.enableExpand) {
       const fields = this._columnDefinitions.flatMap(x => x.fields ?? [x.field]);
+      fields.unshift(this._datasetIdPropName);
       const selectExpand = this.buildSelectExpand([...new Set(fields)]);
       if (this._odataOptions.enableSelect) {
         const select = selectExpand.selectParts.join(',');
