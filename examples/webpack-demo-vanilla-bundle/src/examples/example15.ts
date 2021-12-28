@@ -318,16 +318,13 @@ export class Example15 {
           ? 'DESC'
           : '';
 
-      let data;
+      let data = require('./data/customers_100.json') as { name: string; gender: string; company: string; id: string, category: { id: string; name: string} }[];
       switch (sort) {
         case 'ASC':
-          data = require('./data/customers_100_ASC.json');
+          data = data.sort((a, b) => a.name.localeCompare(b.name)); // ..order require('./data/customers_100_ASC.json');
           break;
         case 'DESC':
-          data = require('./data/customers_100_DESC.json');
-          break;
-        default:
-          data = require('./data/customers_100.json');
+          data = data.sort((a, b) => b.name.localeCompare(a.name));
           break;
       }
 

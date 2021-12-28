@@ -94,10 +94,68 @@ export class GridOdataService implements BackendService {
       const tmpColumnDefinitions = sharedService?.allColumns ?? grid.getColumns() ?? [];
       this._columnDefinitions = tmpColumnDefinitions.filter((column: Column) => !column.excludeFromQuery);
     }
+
+    this._odataService.columnDefinitions = this._columnDefinitions;
+    this._odataService.datasetIdPropName = this._gridOptions.datasetIdPropertyName || 'id';
   }
 
   buildQuery(): string {
     return this._odataService.buildQuery();
+  }
+
+  postProcess(processResult: any): void {
+    const odataVersion = this._odataService?.options?.version ?? 2;
+
+    if (this.pagination && this._odataService?.options?.enableCount) {
+      const countExtractor = this._odataService?.options?.countExtractor ??
+        odataVersion >= 4 ? (r: any) => r?.['@odata.count'] :
+        odataVersion === 3 ? (r: any) => r?.['__count'] :
+          (r: any) => r?.d?.['__count'];
+      const count = countExtractor(processResult);
+      if (typeof count === 'number') {
+        this.pagination.totalItems = count;
+      }
+    }
+
+    if (this._odataService?.options?.enableExpand) {
+      const datasetExtractor = this._odataService?.options?.datasetExtractor ??
+        odataVersion >= 4 ? (r: any) => r?.value :
+        odataVersion === 3 ? (r: any) => r?.results :
+          (r: any) => r?.d?.results;
+      const dataset = datasetExtractor(processResult);
+      if (Array.isArray(dataset)) {
+        // Flatten navigation fields (fields containing /) in the dataset (regardless of enableExpand).
+        // E.g. given columndefinition 'product/name' and dataset [{id: 1,product:{'name':'flowers'}}], then flattens to [{id:1,'product/name':'flowers'}]
+        const navigationFields = new Set(this._columnDefinitions.flatMap(x => x.fields ?? [x.field]).filter(x => x.includes('/')));
+        if (navigationFields.size > 0) {
+          const navigations = new Set<string>();
+          for (const item of dataset) {
+            for (const field of navigationFields) {
+              const names = field.split('/');
+              const navigation = names[0];
+              navigations.add(navigation);
+
+              let val = item[navigation];
+              for (let i = 1; i < names.length; i++) {
+                const mappedName = names[i];
+                if (val && typeof val === 'object' && mappedName in val) {
+                  val = val[mappedName];
+                }
+              }
+
+              item[field] = val;
+            }
+
+            // Remove navigation objects from the dataset to free memory and make sure we never work with them.
+            for (const navigation of navigations) {
+              if (typeof item[navigation] === 'object') {
+                delete item[navigation];
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   clearFilters() {

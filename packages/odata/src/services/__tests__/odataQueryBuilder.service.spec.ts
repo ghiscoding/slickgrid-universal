@@ -99,6 +99,86 @@ describe('OdataService', () => {
       expect(query).toBe(expectation);
       expect(filterCount).toBe(2);
     });
+
+    describe('enableSelect and enableExpand flags', () => {
+      it('should return a query with $select when "enableSelect" is set', () => {
+        service.columnDefinitions = [{ id: 'id1', field: 'fld1' }, { id: 'id2', field: 'fld2' }, { id: 'id3', field: '', fields: ['fld2', 'fld3'] }];
+        const expectation = `$select=id,fld1,fld2,fld3`;
+
+        service.options = { enableSelect: true };
+        const query = service.buildQuery();
+
+        expect(query).toBe(expectation);
+      });
+
+      it('should return a query with $select when "enableSelect" is set and a custom "datasetIdPropName" is set', () => {
+        service.columnDefinitions = [{ id: 'id1', field: 'fld1' }];
+        const expectation = `$select=custid,fld1`;
+
+        service.options = { enableSelect: true };
+        service.datasetIdPropName = "custid";
+        const query = service.buildQuery();
+
+        expect(query).toBe(expectation);
+      });
+
+      it('should return a query with $expand when "enableExpand" is set', () => {
+        service.columnDefinitions = [{ id: 'id1', field: 'fld1' }, { id: 'id2', field: 'nav1/fld1' }, { id: 'id3', field: 'nav1/fld2' }, { id: 'id4', field: 'nav2/nav3/fld1' }];
+        const expectation = `$expand=nav1,nav2`;
+
+        service.options = { enableExpand: true };
+        const query = service.buildQuery();
+
+        expect(query).toBe(expectation);
+      });
+
+      it('should return a query with $select and $expand when "enableSelect" and "enableExpand" are set and no OData version provided, or oData version 2 or 3', () => {
+        service.columnDefinitions = [{ id: 'id1', field: 'fld1' }, { id: 'id2', field: 'nav1/fld1' }, { id: 'id3', field: 'nav1/fld2' }, { id: 'id4', field: 'nav2/nav3/fld1' }];
+        const expectation = `$select=id,fld1,nav1,nav2&$expand=nav1,nav2`;
+
+        service.options = { enableSelect: true, enableExpand: true };
+        const query1 = service.buildQuery();
+
+        service.options = { enableSelect: true, enableExpand: true, version: 2 };
+        const query2 = service.buildQuery();
+
+        service.options = { enableSelect: true, enableExpand: true, version: 3 };
+        const query3 = service.buildQuery();
+
+        expect(query1).toBe(expectation);
+        expect(query2).toBe(expectation);
+        expect(query3).toBe(expectation);
+      });
+
+      it('should return a query with $select and $expand when "enableSelect" and "enableExpand" are set with OData version 4 or higher', () => {
+        service.columnDefinitions = [{ id: 'id1', field: 'fld1' }, { id: 'id2', field: 'nav1/fld1' }, { id: 'id3', field: 'nav1/fld2' }, { id: 'id4', field: 'nav2/nav3/fld1' }];
+        const expectation = `$select=id,fld1&$expand=nav1($select=fld1,fld2),nav2($expand=nav3($select=fld1))`;
+
+        service.options = { enableSelect: true, enableExpand: true, version: 4 };
+        const query1 = service.buildQuery();
+
+        service.options = { enableSelect: true, enableExpand: true, version: 5 };
+        const query2 = service.buildQuery();
+
+        expect(query1).toBe(expectation);
+        expect(query2).toBe(expectation);
+      });
+
+      it('should return a query with $select and $expand when "enableSelect" and "enableExpand" are set with OData version 4 or higher and selecting both a field and a navigation from a navigation', () => {
+        service.columnDefinitions = [{ id: 'id', field: 'id' }, { id: 'id1', field: 'nav/fld1' }, { id: 'id2', field: 'nav/fld2' }, { id: 'id3', field: 'nav/nav2/fld2' }];
+        const expectation = `$select=id&$expand=nav($select=fld1,fld2;$expand=nav2($select=fld2))`;
+
+        service.options = { enableSelect: true, enableExpand: true, version: 4 };
+        const query1 = service.buildQuery();
+
+        service.options = { enableSelect: true, enableExpand: true, version: 5 };
+        const query2 = service.buildQuery();
+
+        expect(query1).toBe(expectation);
+        expect(query2).toBe(expectation);
+      });
+    });
+
   });
 
   describe('saveColumnFilter method', () => {

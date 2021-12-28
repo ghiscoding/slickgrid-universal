@@ -20,6 +20,9 @@ export interface BackendService {
   /** Build and the return the backend service query string */
   buildQuery: (serviceOptions?: BackendServiceOption) => string;
 
+  /** Allow to process/change the result */
+  postProcess?: (processResult: unknown) => void;
+
   /** Clear all sorts */
   clearFilters?: () => void;
 

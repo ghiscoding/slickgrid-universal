@@ -1735,4 +1735,169 @@ describe('GridOdataService', () => {
       expect(output3).toBe('eq');
     });
   });
+
+  describe('postProcess method', () => {
+    it('should not fail when the result is not an object', () => {
+      serviceOptions.enableCount = true;
+      service.init(serviceOptions, paginationOptions, gridStub);
+
+      service.postProcess([]);
+    });
+
+    it('should extract d.results[\'__count\'] when oData version is not specified', () => {
+      serviceOptions.enableCount = true;
+      service.init(serviceOptions, paginationOptions, gridStub);
+
+      service.postProcess({ d: { '__count': 20 } });
+
+      expect(paginationOptions.totalItems).toBe(20);
+    });
+
+    it('should set pagination totalItems from d.results[\'__count\'] with oData version 2', () => {
+      serviceOptions.version = 2;
+      serviceOptions.enableCount = true;
+      service.init(serviceOptions, paginationOptions, gridStub);
+
+      service.postProcess({ d: { '__count': 20 } });
+
+      expect(paginationOptions.totalItems).toBe(20);
+    });
+
+    it('should set pagination totalItems from __count with oData version 3', () => {
+      serviceOptions.version = 3;
+      serviceOptions.enableCount = true;
+      service.init(serviceOptions, paginationOptions, gridStub);
+
+      service.postProcess({ '__count': 20 } );
+
+      expect(paginationOptions.totalItems).toBe(20);
+    });
+
+    it('should set pagination totalItems from @odata.count with oData version 4', () => {
+      serviceOptions.version = 4;
+      serviceOptions.enableCount = true;
+      service.init(serviceOptions, paginationOptions, gridStub);
+
+      service.postProcess({ '@odata.count': 20 });
+
+      expect(paginationOptions.totalItems).toBe(20);
+    });
+
+    it('should not set pagination totalItems when "enableCount" is not set', () => {
+      serviceOptions.version = 4;
+      serviceOptions.enableCount = false;
+      service.init(serviceOptions, paginationOptions, gridStub);
+
+      service.postProcess({ '@odata.count': 20 });
+
+      expect(paginationOptions.totalItems).toBe(100);
+    });
+
+    it('should flatten navigation fields when oData version is not specified', () => {
+      const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
+      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      serviceOptions.enableExpand = true;
+      service.init(serviceOptions, paginationOptions, gridStub);
+
+      const processResult = { d: { 'results': [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] } };
+      service.postProcess(processResult);
+
+      expect(spy).toHaveBeenCalled();
+      expect(processResult.d.results[0].nav).toBeUndefined();
+      expect(processResult.d.results[0]['nav/fld1']).toBe('val1');
+      expect(processResult.d.results[0]['nav/fld2']).toBe('val2');
+    });
+
+    it('should not flatten navigation fields when "enableExpand" is not set', () => {
+      const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
+      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      serviceOptions.enableExpand = false;
+      service.init(serviceOptions, paginationOptions, gridStub);
+
+      const processResult = { d: { 'results': [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] } };
+      service.postProcess(processResult);
+
+      expect(spy).toHaveBeenCalled();
+      expect(processResult.d.results[0].nav).toBeDefined();
+      expect(processResult.d.results[0]['nav/fld1']).toBeUndefined();
+      expect(processResult.d.results[0]['nav/fld2']).toBeUndefined();
+    });
+
+    it('should flatten navigation fields when oData version is v2', () => {
+      const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
+      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      serviceOptions.version = 2;
+      serviceOptions.enableExpand = true;
+      service.init(serviceOptions, paginationOptions, gridStub);
+
+      const processResult = { d: { 'results': [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] } };
+      service.postProcess(processResult);
+
+      expect(spy).toHaveBeenCalled();
+      expect(processResult.d.results[0].nav).toBeUndefined();
+      expect(processResult.d.results[0]['nav/fld1']).toBe('val1');
+      expect(processResult.d.results[0]['nav/fld2']).toBe('val2');
+    });
+
+    it('should flatten navigation fields when oData version is v3', () => {
+      const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
+      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      serviceOptions.version = 3;
+      serviceOptions.enableExpand = true;
+      service.init(serviceOptions, paginationOptions, gridStub);
+
+      const processResult = { 'results': [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] };
+      service.postProcess(processResult);
+
+      expect(spy).toHaveBeenCalled();
+      expect(processResult.results[0].nav).toBeUndefined();
+      expect(processResult.results[0]['nav/fld1']).toBe('val1');
+      expect(processResult.results[0]['nav/fld2']).toBe('val2');
+    });
+
+    it('should flatten navigation fields when oData version is v4', () => {
+      const columns = [{ id: 'id1', field: 'nav/fld1' }, { id: 'id1', field: 'nav/fld2' }];
+      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      serviceOptions.version = 4;
+      serviceOptions.enableExpand = true;
+      service.init(serviceOptions, paginationOptions, gridStub);
+
+      const processResult = { 'value': [{ nav: { fld1: 'val1', fld2: 'val2', fld3: 'val3' } }] };
+      service.postProcess(processResult);
+
+      expect(spy).toHaveBeenCalled();
+      expect(processResult.value[0].nav).toBeUndefined();
+      expect(processResult.value[0]['nav/fld1']).toBe('val1');
+      expect(processResult.value[0]['nav/fld2']).toBe('val2');
+    });
+
+    it('should flatten navigation fields within navigations', () => {
+      const columns = [{ id: 'id1', field: 'nav/subnav/fld1' }];
+      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      serviceOptions.version = 4;
+      serviceOptions.enableExpand = true;
+      service.init(serviceOptions, paginationOptions, gridStub);
+
+      const processResult = { 'value': [{ nav: { subnav: { fld1: 'val1' } } }] };
+      service.postProcess(processResult);
+
+      expect(spy).toHaveBeenCalled();
+      expect(processResult.value[0].nav).toBeUndefined();
+      expect(processResult.value[0]['nav/subnav/fld1']).toBe('val1');
+    });
+
+    it('should not flatten non navigation fields', () => {
+      const columns = [{ id: 'id1', field: 'complex_obj' }];
+      const spy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+      serviceOptions.version = 4;
+      serviceOptions.enableExpand = true;
+      service.init(serviceOptions, paginationOptions, gridStub);
+
+      const processResult = { 'value': [{ complex_obj: { fld1: 'val1' } }] };
+      service.postProcess(processResult);
+
+      expect(spy).toHaveBeenCalled();
+      expect(processResult.value[0].complex_obj.fld1).toBe('val1');
+    });
+  });
 });

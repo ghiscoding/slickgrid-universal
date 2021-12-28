@@ -14,6 +14,8 @@ export class Example09 {
   sgb: SlickVanillaGridBundle;
 
   isCountEnabled = true;
+  isSelectEnabled = false;
+  isExpandEnabled = false;
   odataVersion = 2;
   odataQuery = '';
   processing = false;
@@ -78,13 +80,14 @@ export class Example09 {
         }
       },
       {
-        id: 'gender', name: 'Gender', field: 'gender', filterable: true,
+        id: 'gender', name: 'Gender', field: 'gender', filterable: true, sortable: true,
         filter: {
           model: Filters.singleSelect,
           collection: [{ value: '', label: '' }, { value: 'male', label: 'male' }, { value: 'female', label: 'female' }]
         }
       },
       { id: 'company', name: 'Company', field: 'company', filterable: true, sortable: true },
+      { id: 'category_name', name: 'Category', field: 'category/name', filterable: true, sortable: true}
     ];
 
     this.gridOptions = {
@@ -122,7 +125,9 @@ export class Example09 {
       backendServiceApi: {
         service: new GridOdataService(),
         options: {
-          enableCount: this.isCountEnabled, // add the count in the OData query, which will return a property named "odata.count" (v2) or "@odata.count" (v4)
+          enableCount: this.isCountEnabled, // add the count in the OData query, which will return a property named "__count" (v2) or "@odata.count" (v4)
+          enableSelect: this.isSelectEnabled,
+          enableExpand: this.isExpandEnabled,
           version: this.odataVersion        // defaults to 2, the query string is slightly different between OData 2 and 4
         },
         onError: (error: Error) => {
@@ -160,17 +165,17 @@ export class Example09 {
   getCustomerCallback(data) {
     // totalItems property needs to be filled for pagination to work correctly
     // however we need to force Aurelia to do a dirty check, doing a clone object will do just that
-    let countPropName = 'totalRecordCount'; // you can use "totalRecordCount" or any name or "odata.count" when "enableCount" is set
+    let totalItemCount: number = data['totalRecordCount']; // you can use "totalRecordCount" or any name or "odata.count" when "enableCount" is set
     if (this.isCountEnabled) {
-      countPropName = (this.odataVersion === 4) ? '@odata.count' : 'odata.count';
+      totalItemCount = (this.odataVersion === 4) ? data['@odata.count'] : data['d']['__count'];
     }
     if (this.metrics) {
-      this.metrics.totalItemCount = data[countPropName];
+      this.metrics.totalItemCount = totalItemCount;
     }
 
     // once pagination totalItems is filled, we can update the dataset
-    this.sgb.paginationOptions.totalItems = data[countPropName];
-    this.sgb.dataset = data['items'];
+    this.sgb.paginationOptions.totalItems = totalItemCount;
+    this.sgb.dataset = this.odataVersion === 4 ? data.value : data.d.results;
     this.odataQuery = data['query'];
   }
 
@@ -222,7 +227,7 @@ export class Example09 {
             columnFilters[fieldName] = { type: 'substring', term: filterMatch[2].trim() };
           }
           if (filterBy.includes('substringof')) {
-            const filterMatch = filterBy.match(/substringof\('(.*?)',([a-zA-Z ]*)/);
+            const filterMatch = filterBy.match(/substringof\('(.*?)',\s([a-zA-Z\/]+)/);
             const fieldName = filterMatch[2].trim();
             columnFilters[fieldName] = { type: 'substring', term: filterMatch[1].trim() };
           }
@@ -251,28 +256,40 @@ export class Example09 {
         }
       }
 
-      // simular a backend error when trying to sort on the "Company" field
+      // simulate a backend error when trying to sort on the "Company" field
       if (orderBy.includes('company')) {
         throw new Error('Server could not sort using the field "Company"');
       }
 
-      const sort = orderBy.includes('asc')
-        ? 'ASC'
-        : orderBy.includes('desc')
-          ? 'DESC'
-          : '';
+      // read the json and create a fresh copy of the data that we are free to modify
+      let data = require('./data/customers_100.json') as { name: string; gender: string; company: string; id: string, category: { id: string; name: string } }[];
+      data = JSON.parse(JSON.stringify(data));
 
-      let data;
-      switch (sort) {
-        case 'ASC':
-          data = require('./data/customers_100_ASC.json');
-          break;
-        case 'DESC':
-          data = require('./data/customers_100_DESC.json');
-          break;
-        default:
-          data = require('./data/customers_100.json');
-          break;
+      // Sort the data
+      if (orderBy?.length > 0) {
+        const orderByClauses = orderBy.split(',');
+        for (const orderByClause of orderByClauses) {
+          const orderByParts = orderByClause.split(' ');
+          const orderByField = orderByParts[0];
+
+          let selector = (obj: any): string => obj;
+          for (const orderByFieldPart of orderByField.split('/')) {
+            const prevSelector = selector;
+            selector = (obj: any) => {
+              return prevSelector(obj)[orderByFieldPart];
+            };
+          }
+
+          const sort = orderByParts[1] ?? 'asc';
+          switch (sort.toLocaleLowerCase()) {
+            case 'asc':
+              data = data.sort((a, b) => selector(a).localeCompare(selector(b)));
+              break;
+            case 'desc':
+              data = data.sort((a, b) => selector(b).localeCompare(selector(a)));
+              break;
+          }
+        }
       }
 
       // Read the result field from the JSON response.
@@ -289,7 +306,14 @@ export class Example09 {
                 const splitIds = columnId.split(' ');
                 colId = splitIds[splitIds.length - 1];
               }
-              const filterTerm = column[colId];
+
+              let filterTerm;
+              let col = column;
+              for (const part of colId.split('/')) {
+                filterTerm = col[part];
+                col = filterTerm;
+              }
+
               if (filterTerm) {
                 switch (filterType) {
                   case 'equal': return filterTerm.toLowerCase() === searchTerm;
@@ -306,11 +330,23 @@ export class Example09 {
       const updatedData = filteredData.slice(firstRow, firstRow + top);
 
       setTimeout(() => {
-        let countPropName = 'totalRecordCount';
-        if (this.isCountEnabled) {
-          countPropName = (this.odataVersion === 4) ? '@odata.count' : 'odata.count';
+        const backendResult = { query };
+        if (!this.isCountEnabled) {
+          backendResult['totalRecordCount'] = countTotalItems;
         }
-        const backendResult = { items: updatedData, [countPropName]: countTotalItems, query };
+
+        if (this.odataVersion === 4) {
+          backendResult['value'] = updatedData;
+          if (this.isCountEnabled) {
+            backendResult['@odata.count'] = countTotalItems;
+          }
+        } else {
+          backendResult['d'] = { results: updatedData };
+          if (this.isCountEnabled) {
+            backendResult['d']['__count'] = countTotalItems;
+          }
+        }
+
         // console.log('Backend Result', backendResult);
         resolve(backendResult);
       }, 150);
@@ -364,19 +400,32 @@ export class Example09 {
 
   changeCountEnableFlag() {
     this.isCountEnabled = !this.isCountEnabled;
-    const odataService = this.gridOptions.backendServiceApi.service;
-    odataService.updateOptions({ enableCount: this.isCountEnabled } as OdataOption);
-    odataService.clearFilters();
-    this.sgb?.filterService.clearFilters();
+    this.resetOptions({ enableCount: this.isCountEnabled });
+    return true;
+  }
+
+  changeEnableSelectFlag() {
+    this.isSelectEnabled = !this.isSelectEnabled;
+    this.resetOptions({ enableSelect: this.isSelectEnabled });
+    return true;
+  }
+
+  changeEnableExpandFlag() {
+    this.isExpandEnabled = !this.isExpandEnabled;
+    this.resetOptions({ enableExpand: this.isExpandEnabled });
     return true;
   }
 
   setOdataVersion(version: number) {
     this.odataVersion = version;
+    this.resetOptions({ version: this.odataVersion });
+    return true;
+  }
+
+  private resetOptions(options: Partial<OdataOption>) {
     const odataService = this.gridOptions.backendServiceApi.service;
-    odataService.updateOptions({ version: this.odataVersion } as OdataOption);
+    odataService.updateOptions(options);
     odataService.clearFilters();
     this.sgb?.filterService.clearFilters();
-    return true;
   }
 }
