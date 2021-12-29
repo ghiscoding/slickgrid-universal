@@ -60,9 +60,9 @@
   },
   "devDependencies": {
     "@types/jest": "^27.0.3",
-    "@types/node": "^17.0.4",
-    "@typescript-eslint/eslint-plugin": "^5.8.0",
-    "@typescript-eslint/parser": "^5.8.0",
+    "@types/node": "^17.0.5",
+    "@typescript-eslint/eslint-plugin": "^5.8.1",
+    "@typescript-eslint/parser": "^5.8.1",
     "cypress": "^9.2.0",
     "eslint": "^8.5.0",
     "eslint-plugin-import": "^2.25.3",
@@ -77,7 +77,7 @@
     "mocha": "^9.1.3",
     "mochawesome": "^7.0.1",
     "npm-run-all": "^4.1.5",
-    "rxjs": "^7.4.0",
+    "rxjs": "^7.5.1",
     "serve": "^13.0.2",
     "ts-jest": "^27.1.2",
     "typescript": "^4.5.4"
