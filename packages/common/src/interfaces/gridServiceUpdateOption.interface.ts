@@ -8,6 +8,9 @@ export interface GridServiceUpdateOption {
   /** Defaults to false, scroll to the row so that it shows up in the Viewport (UI) */
   scrollRowIntoView?: boolean;
 
+  /** Defaults to false, should we skip error thrown? */
+  skipError?: boolean;
+
   /** Defaults to true, trigger an onItemUpdated event after the update */
   triggerEvent?: boolean;
 }
