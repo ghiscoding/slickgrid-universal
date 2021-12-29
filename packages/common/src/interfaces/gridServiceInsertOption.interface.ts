@@ -11,6 +11,9 @@ export interface GridServiceInsertOption {
   /** Defaults to false, select the row(s) in the grid after insert */
   selectRow?: boolean;
 
+  /** Defaults to false, should we skip error thrown? */
+  skipError?: boolean;
+
   /** Defaults to true, trigger an onItemAdded event after the insert */
   triggerEvent?: boolean;
 }

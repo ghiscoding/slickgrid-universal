@@ -162,6 +162,10 @@ describe('Grid Service', () => {
       expect(() => service.upsertItem(null as any)).toThrowError('Calling Upsert of an item requires the item to include an "id" property');
     });
 
+    it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing', () => {
+      expect(() => service.upsertItem(null as any, { skipError: true })).not.toThrowError('Calling Upsert of an item requires the item to include an "id" property');
+    });
+
     it('should expect the service to call the "addItem" when calling "upsertItem" with the item not being found in the grid', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
       const dataviewSpy = jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
@@ -173,7 +177,7 @@ describe('Grid Service', () => {
       expect(upsertRow).toEqual({ added: 0, updated: undefined });
       expect(serviceSpy).toHaveBeenCalledTimes(1);
       expect(dataviewSpy).toHaveBeenCalledWith(0);
-      expect(serviceSpy).toHaveBeenCalledWith(mockItem, { highlightRow: true, position: 'top', resortGrid: false, selectRow: false, triggerEvent: true });
+      expect(serviceSpy).toHaveBeenCalledWith(mockItem, { highlightRow: true, position: 'top', resortGrid: false, selectRow: false, skipError: false, triggerEvent: true });
       expect(pubSubSpy).toHaveBeenCalledWith(`onItemUpserted`, mockItem);
     });
 
@@ -210,8 +214,8 @@ describe('Grid Service', () => {
       expect(upsertRows).toEqual([{ added: undefined as any, updated: 0 }, { added: undefined as any, updated: 1 }]);
       expect(dataviewSpy).toHaveBeenCalledTimes(4); // called 4x times, 2x by the upsert itself and 2x by the updateItem
       expect(serviceUpsertSpy).toHaveBeenCalledTimes(2);
-      expect(serviceUpsertSpy).toHaveBeenNthCalledWith(1, mockItems[0], { highlightRow: false, position: 'top', resortGrid: false, selectRow: false, triggerEvent: false });
-      expect(serviceUpsertSpy).toHaveBeenNthCalledWith(2, mockItems[1], { highlightRow: false, position: 'top', resortGrid: false, selectRow: false, triggerEvent: false });
+      expect(serviceUpsertSpy).toHaveBeenNthCalledWith(1, mockItems[0], { highlightRow: false, position: 'top', resortGrid: false, selectRow: false, skipError: false, triggerEvent: false });
+      expect(serviceUpsertSpy).toHaveBeenNthCalledWith(2, mockItems[1], { highlightRow: false, position: 'top', resortGrid: false, selectRow: false, skipError: false, triggerEvent: false });
       expect(serviceHighlightSpy).toHaveBeenCalledWith([0, 1]);
       expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onItemUpserted`, mockItems);
       expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onItemUpdated`, [{ added: undefined as any, updated: 0 }, { added: undefined as any, updated: 1 }]);
@@ -235,8 +239,8 @@ describe('Grid Service', () => {
       expect(upsertRows).toEqual([{ added: 0, updated: undefined }, { added: undefined as any, updated: 15 }]);
       expect(dataviewSpy).toHaveBeenCalledTimes(3); // called 4x times, 2x by the upsert itself and 2x by the updateItem
       expect(serviceUpsertSpy).toHaveBeenCalledTimes(2);
-      expect(serviceUpsertSpy).toHaveBeenNthCalledWith(1, mockItems[0], { highlightRow: false, position: 'top', resortGrid: false, selectRow: false, triggerEvent: false });
-      expect(serviceUpsertSpy).toHaveBeenNthCalledWith(2, mockItems[1], { highlightRow: false, position: 'top', resortGrid: false, selectRow: false, triggerEvent: false });
+      expect(serviceUpsertSpy).toHaveBeenNthCalledWith(1, mockItems[0], { highlightRow: false, position: 'top', resortGrid: false, selectRow: false, skipError: false, triggerEvent: false });
+      expect(serviceUpsertSpy).toHaveBeenNthCalledWith(2, mockItems[1], { highlightRow: false, position: 'top', resortGrid: false, selectRow: false, skipError: false, triggerEvent: false });
       expect(serviceHighlightSpy).toHaveBeenCalledWith([0, 15]);
       expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onItemUpserted`, mockItems);
       expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onItemAdded`, [{ added: 0, updated: undefined }]);
@@ -261,7 +265,7 @@ describe('Grid Service', () => {
       expect(upsertRows).toEqual([{ added: undefined as any, updated: 0 }]);
       expect(dataviewSpy).toHaveBeenCalledTimes(2);
       expect(serviceUpsertSpy).toHaveBeenCalledTimes(1);
-      expect(serviceUpsertSpy).toHaveBeenCalledWith(mockItem, { highlightRow: true, position: 'top', resortGrid: true, selectRow: false, triggerEvent: false });
+      expect(serviceUpsertSpy).toHaveBeenCalledWith(mockItem, { highlightRow: true, position: 'top', resortGrid: true, selectRow: false, skipError: false, triggerEvent: false });
       expect(serviceHighlightSpy).not.toHaveBeenCalled();
       expect(pubSubSpy).toHaveBeenCalledTimes(0);
       expect(pubSubSpy).not.toHaveBeenLastCalledWith(`onItemUpserted`, mockItem);
@@ -284,7 +288,7 @@ describe('Grid Service', () => {
       expect(endUpdateSpy).toHaveBeenCalled();
       expect(dataviewSpy).toHaveBeenCalledTimes(2);
       expect(serviceUpsertSpy).toHaveBeenCalledTimes(1);
-      expect(serviceUpsertSpy).toHaveBeenCalledWith(mockItem, { highlightRow: false, position: 'top', resortGrid: false, selectRow: false, triggerEvent: false });
+      expect(serviceUpsertSpy).toHaveBeenCalledWith(mockItem, { highlightRow: false, position: 'top', resortGrid: false, selectRow: false, skipError: false, triggerEvent: false });
       expect(serviceHighlightSpy).toHaveBeenCalled();
       expect(selectSpy).toHaveBeenCalledWith([1]);
     });
@@ -292,6 +296,11 @@ describe('Grid Service', () => {
     it('should throw an error when calling "upsertItemById" without a valid "id"', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
       expect(() => service.upsertItemById(undefined as any, mockItem)).toThrowError('Calling Upsert of an item requires the item to include a valid and unique "id" property');
+    });
+
+    it('should NOT throw an error when "skipError" is enabled even when calling "upsertItemById" without a valid "id"', () => {
+      const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
+      expect(() => service.upsertItemById(undefined as any, mockItem, { skipError: true })).not.toThrowError('Calling Upsert of an item requires the item to include a valid and unique "id" property');
     });
 
     it('should call the "upsertItemById" method and expect it to call the "addItem" with default boolean flags', () => {
@@ -305,7 +314,7 @@ describe('Grid Service', () => {
 
       expect(dataviewSpy).toHaveBeenCalledWith(0);
       expect(serviceAddItemSpy).toHaveBeenCalled();
-      expect(serviceAddItemSpy).toHaveBeenCalledWith(mockItem, { highlightRow: true, position: 'top', resortGrid: false, selectRow: false, triggerEvent: true });
+      expect(serviceAddItemSpy).toHaveBeenCalledWith(mockItem, { highlightRow: true, position: 'top', resortGrid: false, selectRow: false, skipError: false, triggerEvent: true });
       expect(serviceHighlightSpy).toHaveBeenCalledWith(0);
       expect(pubSubSpy).toHaveBeenCalledWith(`onItemUpserted`, mockItem);
     });
@@ -321,7 +330,7 @@ describe('Grid Service', () => {
 
       expect(dataviewSpy).toHaveBeenCalledWith(0);
       expect(serviceAddItemSpy).toHaveBeenCalled();
-      expect(serviceAddItemSpy).toHaveBeenCalledWith(mockItem, { highlightRow: false, position: 'top', resortGrid: true, selectRow: true, triggerEvent: false });
+      expect(serviceAddItemSpy).toHaveBeenCalledWith(mockItem, { highlightRow: false, position: 'top', resortGrid: true, selectRow: true, skipError: false, triggerEvent: false });
       expect(serviceHighlightSpy).not.toHaveBeenCalled();
       expect(pubSubSpy).not.toHaveBeenLastCalledWith(`onItemUpserted`, mockItem);
     });
@@ -354,6 +363,10 @@ describe('Grid Service', () => {
       expect(() => service.updateItem(null as any)).toThrowError('Calling Update of an item requires the item to include an "id" property');
     });
 
+    it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing', () => {
+      expect(() => service.updateItem(null as any, { skipError: true })).not.toThrowError('Calling Update of an item requires the item to include an "id" property');
+    });
+
     it('should expect the service to call the "updateItemById" when calling "updateItem"', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
       const getRowIdSpy = jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(mockItem.id);
@@ -366,7 +379,7 @@ describe('Grid Service', () => {
       expect(updateSpy).toHaveBeenCalledTimes(1);
       expect(getRowIdSpy).toHaveBeenCalledWith(0);
       expect(getRowIndexSpy).toHaveBeenCalledWith(0);
-      expect(updateSpy).toHaveBeenCalledWith(mockItem.id, mockItem, { highlightRow: true, selectRow: false, scrollRowIntoView: false, triggerEvent: true });
+      expect(updateSpy).toHaveBeenCalledWith(mockItem.id, mockItem, { highlightRow: true, selectRow: false, scrollRowIntoView: false, skipError: false, triggerEvent: true });
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
     });
 
@@ -402,7 +415,7 @@ describe('Grid Service', () => {
       expect(getRowIdSpy).toHaveBeenCalledTimes(1);
       expect(getRowIndexSpy).toHaveBeenCalledTimes(1);
       expect(serviceUpdateSpy).toHaveBeenCalledTimes(1);
-      expect(serviceUpdateSpy).toHaveBeenCalledWith(mockItem, { highlightRow: true, selectRow: false, scrollRowIntoView: false, triggerEvent: true });
+      expect(serviceUpdateSpy).toHaveBeenCalledWith(mockItem, { highlightRow: true, selectRow: false, scrollRowIntoView: false, skipError: false, triggerEvent: true });
       expect(serviceHighlightSpy).toHaveBeenCalledWith(0);
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
     });
@@ -449,7 +462,7 @@ describe('Grid Service', () => {
       expect(getRowIndexSpy).toHaveBeenCalledWith(mockItemId);
       expect(scrollSpy).toHaveBeenCalledWith(mockRowNumber);
       expect(updateByIdSpy).toHaveBeenCalled();
-      expect(updateByIdSpy).toHaveBeenCalledWith(mockItem.id, mockItem, { highlightRow: false, selectRow: true, scrollRowIntoView: true, triggerEvent: true });
+      expect(updateByIdSpy).toHaveBeenCalledWith(mockItem.id, mockItem, { highlightRow: false, selectRow: true, scrollRowIntoView: true, skipError: false, triggerEvent: true });
       expect(serviceHighlightSpy).not.toHaveBeenCalled();
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
     });
@@ -467,7 +480,7 @@ describe('Grid Service', () => {
       expect(updateSpy).toHaveBeenCalledTimes(1);
       expect(getRowIdSpy).toHaveBeenCalledWith(0);
       expect(getRowIndexSpy).toHaveBeenCalledWith(0);
-      expect(updateSpy).toHaveBeenCalledWith(mockItem.customId, mockItem, { highlightRow: false, selectRow: false, scrollRowIntoView: false, triggerEvent: true });
+      expect(updateSpy).toHaveBeenCalledWith(mockItem.customId, mockItem, { highlightRow: false, selectRow: false, scrollRowIntoView: false, skipError: false, triggerEvent: true });
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
 
       delete mockGridOptions.datasetIdPropertyName;
@@ -479,15 +492,34 @@ describe('Grid Service', () => {
       expect(() => service.updateItemById(undefined as any, mockItem)).toThrowError('Cannot update a row without a valid "id"');
     });
 
+    it('should NOT throw an error when "skipError" is enabled even when calling "updateItemById" without a valid "id"', () => {
+      const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
+      expect(() => service.updateItemById(undefined as any, mockItem, { skipError: true })).not.toThrowError('Cannot update a row without a valid "id"');
+    });
+
     it('should throw an error when calling "updateItemById" and not finding the item in the grid', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
       jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
       expect(() => service.updateItemById(5, mockItem)).toThrowError('The item to update in the grid was not found with id: 5');
     });
 
+    it('should NOT throw an error when "skipError" is enabled even when calling "updateItemById" and not finding the item in the grid', () => {
+      const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
+      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
+      expect(() => service.updateItemById(5, mockItem, { skipError: true })).not.toThrowError('The item to update in the grid was not found with id: 5');
+    });
+
     it('should throw an error when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
       expect(() => service.updateItem(null as any)).toThrowError('Calling Update of an item requires the item to include an "customId" property');
+
+      // reset mock
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue({});
+    });
+
+    it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
+      expect(() => service.updateItem(null as any, { skipError: true })).not.toThrowError('Calling Update of an item requires the item to include an "customId" property');
 
       // reset mock
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({});
@@ -554,16 +586,36 @@ describe('Grid Service', () => {
       expect(() => service.addItem(null as any)).toThrowError('We could not find SlickGrid Grid, DataView objects');
     });
 
+    it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing', () => {
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue(undefined as any);
+      expect(() => service.addItem(null as any, { skipError: true })).not.toThrowError('We could not find SlickGrid Grid, DataView objects');
+    });
+
     it('should throw an error when 1st argument for the item object is missing or "id" is missing', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true } as GridOption);
       expect(() => service.addItem(null as any)).toThrowError('Adding an item requires the item to include an "id" property');
       expect(() => service.addItem({ user: 'John' })).toThrowError('Adding an item requires the item to include an "id" property');
     });
 
+    it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing or "id" is missing', () => {
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true } as GridOption);
+      expect(() => service.addItem(null as any, { skipError: true })).not.toThrowError('Adding an item requires the item to include an "id" property');
+      expect(() => service.addItem({ user: 'John' }, { skipError: true })).not.toThrowError('Adding an item requires the item to include an "id" property');
+    });
+
     it('should throw an error when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
       expect(() => service.addItem(null as any)).toThrowError('Adding an item requires the item to include an "customId" property');
       expect(() => service.addItem({ user: 'John' })).toThrowError('Adding an item requires the item to include an "customId" property');
+
+      // reset mock
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue({});
+    });
+
+    it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
+      expect(() => service.addItem(null as any, { skipError: true })).not.toThrowError('Adding an item requires the item to include an "customId" property');
+      expect(() => service.addItem({ user: 'John' }, { skipError: true })).not.toThrowError('Adding an item requires the item to include an "customId" property');
 
       // reset mock
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({});
@@ -744,7 +796,7 @@ describe('Grid Service', () => {
       expect(beginUpdateSpy).not.toHaveBeenCalled();
       expect(endUpdateSpy).not.toHaveBeenCalled();
       expect(serviceAddSpy).toHaveBeenCalledTimes(1);
-      expect(serviceAddSpy).toHaveBeenCalledWith(mockItem, { highlightRow: true, position: 'top', selectRow: false, resortGrid: false, triggerEvent: true });
+      expect(serviceAddSpy).toHaveBeenCalledWith(mockItem, { highlightRow: true, position: 'top', selectRow: false, resortGrid: false, skipError: false, triggerEvent: true });
       expect(serviceHighlightSpy).toHaveBeenCalledTimes(1);
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
     });
@@ -764,7 +816,7 @@ describe('Grid Service', () => {
       expect(endUpdateSpy).not.toHaveBeenCalled();
       expect(serviceAddSpy).toHaveBeenCalled();
       expect(resortSpy).toHaveBeenCalled();
-      expect(serviceAddSpy).toHaveBeenCalledWith(mockItem, { highlightRow: false, position: 'top', resortGrid: true, selectRow: false, triggerEvent: false });
+      expect(serviceAddSpy).toHaveBeenCalledWith(mockItem, { highlightRow: false, position: 'top', resortGrid: true, selectRow: false, skipError: false, triggerEvent: false });
       expect(serviceHighlightSpy).not.toHaveBeenCalled();
       expect(pubSubSpy).not.toHaveBeenLastCalledWith(`onItemAdded`);
     });
@@ -918,6 +970,16 @@ describe('Grid Service', () => {
       delete mockGridOptions.datasetIdPropertyName;
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
     });
+
+    it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
+      expect(() => service.addItem(null as any, { skipError: true })).not.toThrowError('Adding an item requires the item to include an "customId" property');
+      expect(() => service.addItem({ user: 'John' }, { skipError: true })).not.toThrowError('Adding an item requires the item to include an "customId" property');
+
+      // reset mock
+      delete mockGridOptions.datasetIdPropertyName;
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+    });
   });
 
   describe('deleteItem methods', () => {
@@ -926,9 +988,19 @@ describe('Grid Service', () => {
       expect(() => service.deleteItem({ user: 'John' })).toThrowError('Deleting an item requires the item to include an "id" property');
     });
 
+    it('should NOT throw an error when "skipError" is enabled even when calling "deleteItem" method and 1st argument for the item object is missing or "id" is missing', () => {
+      expect(() => service.deleteItem(null as any, { skipError: true })).not.toThrowError('Deleting an item requires the item to include an "id" property');
+      expect(() => service.deleteItem({ user: 'John' }, { skipError: true })).not.toThrowError('Deleting an item requires the item to include an "id" property');
+    });
+
     it('should throw an error when calling "deleteItemById" without a valid "id" as argument', () => {
       expect(() => service.deleteItemById(null as any)).toThrowError('Cannot delete a row without a valid "id"');
       expect(() => service.deleteItemById(undefined as any)).toThrowError('Cannot delete a row without a valid "id"');
+    });
+
+    it('should NOT throw an error when "skipError" is enabled even when calling "deleteItemById" without a valid "id" as argument', () => {
+      expect(() => service.deleteItemById(null as any, { skipError: true })).not.toThrowError('Cannot delete a row without a valid "id"');
+      expect(() => service.deleteItemById(undefined as any, { skipError: true })).not.toThrowError('Cannot delete a row without a valid "id"');
     });
 
     it('should expect the service to call "deleteItemById" method when calling "deleteItem" with an item', () => {
@@ -1004,7 +1076,7 @@ describe('Grid Service', () => {
       expect(endUpdateSpy).not.toHaveBeenCalled();
       expect(output).toEqual([4]);
       expect(serviceDeleteSpy).toHaveBeenCalledTimes(1);
-      expect(serviceDeleteSpy).toHaveBeenCalledWith(mockItem, { triggerEvent: true });
+      expect(serviceDeleteSpy).toHaveBeenCalledWith(mockItem, { skipError: false, triggerEvent: true });
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemDeleted`, mockItem.id);
     });
 
@@ -1021,7 +1093,7 @@ describe('Grid Service', () => {
       expect(endUpdateSpy).not.toHaveBeenCalled();
       expect(output).toEqual([0]);
       expect(serviceDeleteSpy).toHaveBeenCalled();
-      expect(serviceDeleteSpy).toHaveBeenCalledWith(mockItem, { triggerEvent: false });
+      expect(serviceDeleteSpy).toHaveBeenCalledWith(mockItem, { skipError: false, triggerEvent: false });
       expect(pubSubSpy).not.toHaveBeenLastCalledWith(`onItemDeleted`);
     });
 
@@ -1103,6 +1175,16 @@ describe('Grid Service', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
       expect(() => service.deleteItem(null as any)).toThrowError('Deleting an item requires the item to include an "customId" property');
       expect(() => service.deleteItem({ user: 'John' })).toThrowError('Deleting an item requires the item to include an "customId" property');
+
+      // reset mock
+      delete mockGridOptions.datasetIdPropertyName;
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+    });
+
+    it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing the Id defined by the "datasetIdPropertyName" property', () => {
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, datasetIdPropertyName: 'customId' } as GridOption);
+      expect(() => service.deleteItem(null as any, { skipError: true })).not.toThrowError('Deleting an item requires the item to include an "customId" property');
+      expect(() => service.deleteItem({ user: 'John' }, { skipError: true })).not.toThrowError('Deleting an item requires the item to include an "customId" property');
 
       // reset mock
       delete mockGridOptions.datasetIdPropertyName;

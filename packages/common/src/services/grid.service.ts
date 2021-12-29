@@ -23,9 +23,9 @@ import { SlickRowSelectionModel } from '../extensions/slickRowSelectionModel';
 
 let highlightTimerEnd: any;
 
-const GridServiceDeleteOptionDefaults: GridServiceDeleteOption = { triggerEvent: true };
-const GridServiceInsertOptionDefaults: GridServiceInsertOption = { highlightRow: true, position: 'top', resortGrid: false, selectRow: false, triggerEvent: true };
-const GridServiceUpdateOptionDefaults: GridServiceUpdateOption = { highlightRow: false, selectRow: false, scrollRowIntoView: false, triggerEvent: true };
+const GridServiceDeleteOptionDefaults: GridServiceDeleteOption = { skipError: false, triggerEvent: true };
+const GridServiceInsertOptionDefaults: GridServiceInsertOption = { highlightRow: true, position: 'top', resortGrid: false, selectRow: false, skipError: false, triggerEvent: true };
+const GridServiceUpdateOptionDefaults: GridServiceUpdateOption = { highlightRow: false, selectRow: false, scrollRowIntoView: false, skipError: false, triggerEvent: true };
 const HideColumnOptionDefaults: HideColumnOption = { autoResizeColumns: true, triggerEvent: true, hideFromColumnPicker: false, hideFromGridMenu: false };
 
 export class GridService {
@@ -397,11 +397,11 @@ export class GridService {
     options = { ...GridServiceInsertOptionDefaults, ...options };
     const insertPosition = options?.position ?? 'top';
 
-    if (!this._grid || !this._gridOptions || !this._dataView) {
+    if (!options?.skipError && (!this._grid || !this._gridOptions || !this._dataView)) {
       throw new Error('We could not find SlickGrid Grid, DataView objects');
     }
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
-    if (!item || !(idPropName in item)) {
+    if (!options?.skipError && (!item || !(idPropName in item))) {
       throw new Error(`Adding an item requires the item to include an "${idPropName}" property`);
     }
 
@@ -535,7 +535,7 @@ export class GridService {
     options = { ...GridServiceDeleteOptionDefaults, ...options };
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
 
-    if (!item || !(idPropName in item)) {
+    if (!options?.skipError && (!item || !(idPropName in item))) {
       throw new Error(`Deleting an item requires the item to include an "${idPropName}" property`);
     }
     return this.deleteItemById((item as any)[idPropName], options);
@@ -589,7 +589,7 @@ export class GridService {
   deleteItemById(itemId: string | number, options?: GridServiceDeleteOption): number | string {
     options = { ...GridServiceDeleteOptionDefaults, ...options };
 
-    if (itemId === null || itemId === undefined) {
+    if (!options?.skipError && (itemId === null || itemId === undefined)) {
       throw new Error(`Cannot delete a row without a valid "id"`);
     }
 
@@ -651,7 +651,7 @@ export class GridService {
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
     const itemId = (!item || !(idPropName in item)) ? undefined : (item as any)[idPropName];
 
-    if (itemId === undefined) {
+    if (!options?.skipError && itemId === undefined) {
       throw new Error(`Calling Update of an item requires the item to include an "${idPropName}" property`);
     }
 
@@ -732,13 +732,13 @@ export class GridService {
    */
   updateItemById<T = any>(itemId: number | string, item: T, options?: GridServiceUpdateOption): number {
     options = { ...GridServiceUpdateOptionDefaults, ...options };
-    if (itemId === undefined) {
+    if (!options?.skipError && itemId === undefined) {
       throw new Error(`Cannot update a row without a valid "id"`);
     }
     const rowNumber = this._dataView.getRowById(itemId) as number;
 
     // when using pagination the item to update might not be on current page, so we bypass this condition
-    if ((!item || rowNumber === undefined) && !this._gridOptions.enablePagination) {
+    if (!options?.skipError && ((!item || rowNumber === undefined) && !this._gridOptions.enablePagination)) {
       throw new Error(`The item to update in the grid was not found with id: ${itemId}`);
     }
 
@@ -785,7 +785,7 @@ export class GridService {
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
     const itemId = (!item || !(idPropName in item)) ? undefined : (item as any)[idPropName];
 
-    if (itemId === undefined) {
+    if (!options?.skipError && itemId === undefined) {
       throw new Error(`Calling Upsert of an item requires the item to include an "${idPropName}" property`);
     }
 
@@ -854,10 +854,8 @@ export class GridService {
   upsertItemById<T = any>(itemId: number | string, item: T, options?: GridServiceInsertOption): { added: number | undefined, updated: number | undefined } {
     let isItemAdded = false;
     options = { ...GridServiceInsertOptionDefaults, ...options };
-    if (itemId === undefined) {
-      if (!this.hasRowSelectionEnabled()) {
-        throw new Error(`Calling Upsert of an item requires the item to include a valid and unique "id" property`);
-      }
+    if (!options?.skipError && (itemId === undefined && !this.hasRowSelectionEnabled())) {
+      throw new Error(`Calling Upsert of an item requires the item to include a valid and unique "id" property`);
     }
 
     let rowNumberAdded: number | undefined;
