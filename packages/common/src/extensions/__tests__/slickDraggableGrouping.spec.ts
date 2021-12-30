@@ -65,6 +65,7 @@ const mockColumns = [      // The column definitions
     grouping: {
       getter: 'age', aggregators: [new Aggregators.Avg('age')],
       formatter: (g) => `Age: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+      collapsed: true
     }
   },
   {
@@ -360,6 +361,7 @@ describe('Draggable Grouping Plugin', () => {
           mockHeaderColumnDiv1.className = 'slick-dropped-grouping';
           mockHeaderColumnDiv1.id = 'age';
           mockHeaderColumnDiv1.dataset.id = 'age';
+          mockColumns[2].grouping.collapsed = false;
 
           mockHeaderColumnDiv2 = document.createElement('div');
           mockHeaderColumnDiv2.className = 'slick-dropped-grouping';
@@ -389,7 +391,7 @@ describe('Draggable Grouping Plugin', () => {
           expect(plugin.columnsGroupBy.length).toBeGreaterThan(0);
           expect(groupChangedSpy).toHaveBeenCalledWith({
             caller: 'sort-group',
-            groupColumns: [{ aggregators: expect.toBeArray(), formatter: mockColumns[2].grouping.formatter, getter: 'age' }],
+            groupColumns: [{ aggregators: expect.toBeArray(), formatter: mockColumns[2].grouping.formatter, getter: 'age', collapsed: false, }],
           });
 
           jest.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(mockHeaderColumnDiv1);
@@ -415,22 +417,22 @@ describe('Draggable Grouping Plugin', () => {
           const clickEvent = new Event('click');
           Object.defineProperty(clickEvent, 'target', { writable: true, configurable: true, value: toggleAllIconElm });
 
-          // initially expanded
-          expect(toggleAllIconElm.classList.contains('expanded')).toBeTruthy();
+          // initially collapsed
           expect(toggleAllIconElm.classList.contains('collapsed')).toBeFalsy();
+          expect(toggleAllIconElm.classList.contains('expanded')).toBeTruthy();
 
           // collapsed after toggle
           toggleAllElm.dispatchEvent(clickEvent);
           toggleAllElm = document.querySelector('.slick-group-toggle-all');
-          expect(toggleAllIconElm.classList.contains('expanded')).toBeFalsy();
           expect(toggleAllIconElm.classList.contains('collapsed')).toBeTruthy();
+          expect(toggleAllIconElm.classList.contains('expanded')).toBeFalsy();
           expect(dvCollapseSpy).toHaveBeenCalled();
 
           // expanded after toggle
           toggleAllElm.dispatchEvent(clickEvent);
           toggleAllElm = document.querySelector('.slick-group-toggle-all');
-          expect(toggleAllIconElm.classList.contains('expanded')).toBeTruthy();
           expect(toggleAllIconElm.classList.contains('collapsed')).toBeFalsy();
+          expect(toggleAllIconElm.classList.contains('expanded')).toBeTruthy();
           expect(dvExpandSpy).toHaveBeenCalled();
         });
 
