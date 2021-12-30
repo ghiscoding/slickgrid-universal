@@ -885,11 +885,13 @@ input.flatpickr.form-control {
       .slick-group-toggle-all-icon.collapsed:before {
         content: var(--slick-draggable-group-toggle-collapsed-icon, $slick-draggable-group-toggle-collapsed-icon);
       }
-      .slick-group-toggle-all-icon.collapsed:before,
-      .slick-group-toggle-all-icon.expanded:before {
+      .slick-group-toggle-all-icon:before {
+        display: inline-block;
         color: var(--slick-draggable-group-toggle-all-color, $slick-draggable-group-toggle-all-color);
         font-family: var(--slick-icon-font-family, $slick-icon-font-family);
         vertical-align: var(--slick-draggable-group-toggle-all-icon-vertical-align, $slick-draggable-group-toggle-all-icon-vertical-align);
+        height: var(--slick-draggable-group-toggle-all-icon-height, $slick-draggable-group-toggle-all-icon-height);
+        width: var(--slick-draggable-group-toggle-all-icon-width, $slick-draggable-group-toggle-all-icon-width);
       }
       .slick-group-toggle-all-text {
         font-size: var(--slick-draggable-group-toggle-all-text-font-size, $slick-draggable-group-toggle-all-text-font-size);
@@ -898,9 +900,14 @@ input.flatpickr.form-control {
     }
 
     .slick-dropped-grouping {
-      display: inline-block;
-      vertical-align: middle;
       cursor: move;
+      display: flex;
+      align-items: center;
+      background-color: var(--slick-draggable-group-column-background-color, $slick-draggable-group-column-background-color);
+      border: var(--slick-draggable-group-column-border, $slick-draggable-group-column-border);
+      border-radius: var(--slick-draggable-group-column-border-radius, $slick-draggable-group-column-border-radius);
+      padding: var(--slick-draggable-group-column-padding, $slick-draggable-group-column-padding);
+      margin-right: var(--slick-draggable-group-column-margin-right, $slick-draggable-group-column-margin-right);
     }
 
     .slick-groupby-remove {

@@ -79,7 +79,7 @@ export class SlickDraggableGrouping {
   protected _grid?: SlickGrid;
   protected _gridColumns: Column[] = [];
   protected _gridUid = '';
-  protected _groupToggler!: HTMLDivElement;
+  protected _groupToggler?: HTMLDivElement;
   protected _sortableInstance: any;
   protected _subscriptions: EventSubscription[] = [];
   protected _defaults = {
@@ -160,7 +160,7 @@ export class SlickDraggableGrouping {
           title: this._addonOptions.toggleAllPlaceholderText ?? '',
           style: { display: 'none' },
         });
-        const groupTogglerIconElm = createDomElement('span', { className: 'slick-group-toggle-all-icon expanded mdi mdi-close' });
+        const groupTogglerIconElm = createDomElement('span', { className: 'slick-group-toggle-all-icon' });
         this._groupToggler.appendChild(groupTogglerIconElm);
 
         if (this.gridOptions.enableTranslate && this._addonOptions.toggleAllButtonTextKey) {
@@ -341,7 +341,7 @@ export class SlickDraggableGrouping {
     this.updateGroupBy('add-group');
   }
 
-  protected addGroupByRemoveClickHandler(id: string | number, _container: HTMLDivElement, column: Column, entry: any) {
+  protected addGroupByRemoveClickHandler(id: string | number, _container: HTMLDivElement, headerColumn: JQuery<HTMLDivElement>, entry: any) {
     const groupRemoveElm = document.querySelector(`${this.gridUidSelector}_${id}_entry > .slick-groupby-remove`);
     if (groupRemoveElm) {
       this._bindEventService.bind(groupRemoveElm, 'click', () => {
@@ -349,13 +349,13 @@ export class SlickDraggableGrouping {
         for (const boundedEvent of boundedElms) {
           this._bindEventService.unbind(boundedEvent.element, 'click', boundedEvent.listener);
         }
-        this.removeGroupBy(id, column, entry);
+        this.removeGroupBy(id, headerColumn, entry);
       });
     }
   }
 
-  protected handleGroupByDrop(container: any, column: any) {
-    const columnid = column.attr('id').replace(this._gridUid, '');
+  protected handleGroupByDrop(container: HTMLDivElement, headerColumn: JQuery<HTMLDivElement>) {
+    const columnid = headerColumn.attr('id')!.replace(this._gridUid, '');
     let columnAllowed = true;
     this.columnsGroupBy.forEach(col => {
       if (col.id === columnid) {
@@ -367,10 +367,10 @@ export class SlickDraggableGrouping {
       this._gridColumns.forEach(col => {
         if (col.id === columnid) {
           if (col.grouping !== null && !isEmptyObject(col.grouping)) {
-            const columnName = column.children('.slick-column-name').first();
+            const columnName = headerColumn.children('.slick-column-name').first();
             const entryElm = createDomElement('div', { id: `${this._gridUid}_${col.id}_entry`, className: 'slick-dropped-grouping', dataset: { id: `${col.id}` } });
             const groupTextElm = createDomElement('div', {
-              textContent: columnName.length ? columnName.text() : column.text(),
+              textContent: columnName.length ? columnName.text() : headerColumn.text(),
               style: { display: 'inline-flex' },
             });
             entryElm.appendChild(groupTextElm);
@@ -386,14 +386,27 @@ export class SlickDraggableGrouping {
             entryElm.appendChild(groupRemoveIconElm);
             entryElm.appendChild(document.createElement('div'));
             container.appendChild(entryElm);
+
+            // if we're grouping by only 1 group, at the root, we'll analyze Toggle All and add collapsed/expanded class
+            if (this._groupToggler && this.columnsGroupBy.length === 0) {
+              const togglerIcon = this._groupToggler.querySelector<HTMLSpanElement>('.slick-group-toggle-all-icon');
+              if (col.grouping?.collapsed) {
+                togglerIcon?.classList.add('collapsed');
+                togglerIcon?.classList.remove('expanded');
+              } else {
+                togglerIcon?.classList.add('expanded');
+                togglerIcon?.classList.remove('collapsed');
+              }
+            }
+
             this.addColumnGroupBy(col);
-            this.addGroupByRemoveClickHandler(col.id, container, column, entryElm);
+            this.addGroupByRemoveClickHandler(col.id, container, headerColumn, entryElm);
           }
         }
       });
 
       // show the "Toggle All" when feature is enabled
-      if (this._groupToggler) {
+      if (this._groupToggler && this.columnsGroupBy.length > 0) {
         this._groupToggler.style.display = 'inline-block';
       }
     }
@@ -409,10 +422,10 @@ export class SlickDraggableGrouping {
     return arrayToModify;
   }
 
-  protected removeGroupBy(id: string | number, _column: Column, entry: any) {
+  protected removeGroupBy(id: string | number, _hdrColumn: JQuery<HTMLDivElement>, entry: any) {
     entry.remove();
     const groupByColumns: Column[] = [];
-    this._gridColumns.forEach((col: any) => groupByColumns[col.id] = col);
+    this._gridColumns.forEach(col => groupByColumns[col.id as number] = col);
     this.removeFromArray(this.columnsGroupBy, groupByColumns[id as any]);
     if (this.columnsGroupBy.length === 0) {
       // show placeholder text & hide the "Toggle All" when that later feature is enabled
