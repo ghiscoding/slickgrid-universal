@@ -57,7 +57,7 @@
     "html-webpack-plugin": "5.5.0",
     "mini-css-extract-plugin": "^2.4.5",
     "rxjs": "^7.5.1",
-    "sass": "^1.45.1",
+    "sass": "^1.45.2",
     "sass-loader": "^12.4.0",
     "style-loader": "^3.3.1",
     "ts-node": "^10.4.0",
