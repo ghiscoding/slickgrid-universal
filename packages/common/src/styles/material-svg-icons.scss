@@ -757,6 +757,16 @@ $slick-icon-height: $slick-icon-width;
   encodecolor($slick-icon-color), $slick-icon-height, $slick-icon-width, inline-block);
 
 @include loadsvg(
+  ".mdi.mdi-minus-circle",
+  "M17,13H7V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z",
+  encodecolor($slick-icon-color), $slick-icon-height, $slick-icon-width, inline-block);
+
+@include loadsvg(
+  ".mdi.mdi-minus-circle-outline",
+  "M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M7,13H17V11H7",
+  encodecolor($slick-icon-color), $slick-icon-height, $slick-icon-width, inline-block);
+
+@include loadsvg(
   ".mdi.mdi-order-bool-ascending-variant",
   "M4 13C2.89 13 2 13.89 2 15V19C2 20.11 2.89 21 4 21H8C9.11 21 10 20.11 10 19V15C10 13.89 9.11 13 8 13M8.2 14.5L9.26 15.55L5.27 19.5L2.74 16.95L3.81 15.9L5.28 17.39M4 3C2.89 3 2 3.89 2 5V9C2 10.11 2.89 11 4 11H8C9.11 11 10 10.11 10 9V5C10 3.89 9.11 3 8 3M4 5H8V9H4M12 5H22V7H12M12 19V17H22V19M12 11H22V13H12Z",
   encodecolor($slick-icon-color), $slick-icon-height, $slick-icon-width, inline-block);
@@ -822,8 +832,23 @@ $slick-icon-height: $slick-icon-width;
   encodecolor($slick-icon-color), $slick-icon-height, $slick-icon-width, inline-block);
 
 @include loadsvg(
+  ".mdi.mdi-play-circle-outline",
+  "M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M10,16.5L16,12L10,7.5V16.5Z",
+  encodecolor($slick-icon-color), $slick-icon-height, $slick-icon-width, inline-block);
+
+@include loadsvg(
   ".mdi.mdi-playlist-remove",
   "M2,6V8H14V6H2M2,10V12H11V10H2M14.17,10.76L12.76,12.17L15.59,15L12.76,17.83L14.17,19.24L17,16.41L19.83,19.24L21.24,17.83L18.41,15L21.24,12.17L19.83,10.76L17,13.59L14.17,10.76M2,14V16H11V14H2Z",
+  encodecolor($slick-icon-color), $slick-icon-height, $slick-icon-width, inline-block);
+
+@include loadsvg(
+  ".mdi.mdi-plus-circle",
+  "M17,13H13V17H11V13H7V11H11V7H13V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z",
+  encodecolor($slick-icon-color), $slick-icon-height, $slick-icon-width, inline-block);
+
+@include loadsvg(
+  ".mdi.mdi-plus-circle-outline",
+  "M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M13,7H11V11H7V13H11V17H13V13H17V11H13V7Z",
   encodecolor($slick-icon-color), $slick-icon-height, $slick-icon-width, inline-block);
 
 @include loadsvg(
@@ -874,6 +899,11 @@ $slick-icon-height: $slick-icon-width;
 @include loadsvg(
   ".mdi.mdi-square-edit-outline",
   "M5,3C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19H5V5H12V3H5M17.78,4C17.61,4 17.43,4.07 17.3,4.2L16.08,5.41L18.58,7.91L19.8,6.7C20.06,6.44 20.06,6 19.8,5.75L18.25,4.2C18.12,4.07 17.95,4 17.78,4M15.37,6.12L8,13.5V16H10.5L17.87,8.62L15.37,6.12Z",
+  encodecolor($slick-icon-color), $slick-icon-height, $slick-icon-width, inline-block);
+
+@include loadsvg(
+  ".mdi.mdi-stop-circle-outline",
+  "M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4M9,9V15H15V9",
   encodecolor($slick-icon-color), $slick-icon-height, $slick-icon-width, inline-block);
 
 @include loadsvg(

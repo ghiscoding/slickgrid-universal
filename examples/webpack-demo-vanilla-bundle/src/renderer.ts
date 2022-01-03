@@ -118,6 +118,8 @@ export class Renderer {
           observer.bind(elements, attribute, 'change').bind(elements, attribute, 'keyup');
           break;
         case 'checked':
+        case 'min':
+        case 'max':
         default:
           observer.bind(elements, attribute, 'change');
           break;
