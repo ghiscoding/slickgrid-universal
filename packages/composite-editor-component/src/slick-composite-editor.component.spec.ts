@@ -1,3 +1,4 @@
+import 'jest-extended';
 import {
   Column,
   CompositeEditorOpenDetailOption,
@@ -336,7 +337,8 @@ describe('CompositeEditorService', () => {
       expect(compositeContainerElm).toBeFalsy();
     });
 
-    it('should make sure Slick-Composite-Editor is being created and rendered with 1 column layout', () => {
+    it('should make sure Slick-Composite-Editor is being created and rendered with 1 column layout & also expect column name html to be rendered as well', () => {
+      columnsMock[2].name = '<span class="mdi mdi-alert-circle" title="tooltip text"></span> Field 3'; // add tooltip
       const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
       jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
@@ -361,7 +363,7 @@ describe('CompositeEditorService', () => {
       expect(compositeContainerElm).toBeTruthy();
       expect(compositeHeaderElm).toBeTruthy();
       expect(productNameLabelElm.textContent).toBe('Product'); // regular, without column group
-      expect(field3LabelElm.textContent).toBe('Group Name - Field 3'); // with column group
+      expect(field3LabelElm.innerHTML).toBe('Group Name - <span title="tooltip text" class="mdi mdi-alert-circle"></span> Field 3'); // with column group
       expect(compositeTitleElm).toBeTruthy();
       expect(compositeTitleElm.textContent).toBe('Details');
       expect(compositeBodyElm).toBeTruthy();
@@ -369,6 +371,9 @@ describe('CompositeEditorService', () => {
       expect(compositeFooterCancelBtnElm).toBeTruthy();
       expect(compositeFooterSaveBtnElm).toBeTruthy();
       expect(productNameDetailContainerElm).toBeTruthy();
+
+      // reset Field 3 column name
+      columnsMock[2].name = 'Field 3';
     });
 
     it('should make sure Slick-Composite-Editor is being created and expect form inputs to be in specific order when user provides column def "compositeEditorFormOrder"', () => {
@@ -546,7 +551,7 @@ describe('CompositeEditorService', () => {
     });
 
     it('should execute "onClose" callback when user confirms the closing of the modal when "onClose" callback is defined', (done) => {
-      const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
+      const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55, field2: 'Test' };
       jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
       const getEditSpy = jest.spyOn(gridStub, 'getEditController');
       const cancelSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
@@ -1183,6 +1188,11 @@ describe('CompositeEditorService', () => {
     });
 
     describe('Form Logics', () => {
+      beforeEach(() => {
+        // reset Field 3 column name
+        columnsMock[2].name = 'Field 3';
+      });
+
       it('should make sure Slick-Composite-Editor is being created and then call "changeFormInputValue" to change dynamically any of the form input value', () => {
         const mockEditor = { setValue: jest.fn(), disable: jest.fn(), } as unknown as Editor;
         const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
@@ -1772,6 +1782,64 @@ describe('CompositeEditorService', () => {
         expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
         expect(getEditSpy).toHaveBeenCalledTimes(2);
         expect(mockOnSave).toHaveBeenCalledWith({ field3: 'test' }, { gridRowIndexes: [0], dataContextIds: [222] }, undefined);
+        expect(setItemsSpy).toHaveBeenCalled();
+        expect(cancelCommitSpy).toHaveBeenCalled();
+        expect(setActiveCellSpy).toHaveBeenCalledWith(0, 0, false);
+        expect(validationSummaryElm.style.display).toBe('none');
+        expect(validationSummaryElm.textContent).toBe('');
+        expect(clearSelectionSpy).not.toHaveBeenCalled(); // shouldClearRowSelectionAfterMassAction is false
+        done();
+      });
+    });
+
+    it('should handle saving and expect a dataset preview of the change when "shouldPreviewMassChangeDataset" is enabled and grid changes when "Mass Update" save button is clicked and user provides a custom "onSave" async function', (done) => {
+      const mockProduct1 = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+      const mockProduct2 = { id: 333, field3: 'else', address: { zip: 789123 }, product: { name: 'Product XYZ', price: 33.44 } };
+      const currentEditorMock = { validate: jest.fn() };
+      jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
+      jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
+      jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
+      jest.spyOn(gridStateServiceStub, 'getCurrentRowSelections').mockReturnValue({ gridRowIndexes: [0], dataContextIds: [222] });
+      const getEditSpy = jest.spyOn(gridStub, 'getEditController');
+      const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+      const setActiveCellSpy = jest.spyOn(gridStub, 'setActiveCell');
+      const clearSelectionSpy = jest.spyOn(gridStub, 'setSelectedRows');
+      const setItemsSpy = jest.spyOn(dataViewStub, 'setItems');
+
+      const mockOnSave = jest.fn();
+      mockOnSave.mockResolvedValue(Promise.resolve(true));
+      const mockModalOptions = { headerTitle: 'Details', modalType: 'mass-update', onSave: mockOnSave, shouldClearRowSelectionAfterMassAction: false, shouldPreviewMassChangeDataset: true } as CompositeEditorOpenDetailOption;
+      component = new SlickCompositeEditorComponent();
+      component.init(gridStub, container);
+      component.openDetails(mockModalOptions);
+
+      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
+      const compositeHeaderElm = document.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
+      const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
+      const compositeBodyElm = document.querySelector('.slick-editor-modal-body') as HTMLSelectElement;
+      const field3DetailContainerElm = compositeBodyElm.querySelector('.item-details-container.editor-field3.slick-col-medium-12') as HTMLSelectElement;
+      const field3LabelElm = field3DetailContainerElm.querySelector('.item-details-label.editor-field3') as HTMLSelectElement;
+      const validationSummaryElm = compositeContainerElm.querySelector('.validation-summary') as HTMLSelectElement;
+
+      gridStub.onCompositeEditorChange.notify({ row: 0, cell: 0, column: columnsMock[0], item: mockProduct1, formValues: { field3: 'test' }, editors: {}, grid: gridStub });
+
+      compositeFooterSaveBtnElm.click();
+
+      setTimeout(() => {
+        expect(component).toBeTruthy();
+        expect(component.constructor).toBeDefined();
+        expect(compositeContainerElm).toBeTruthy();
+        expect(compositeHeaderElm).toBeTruthy();
+        expect(compositeTitleElm).toBeTruthy();
+        expect(compositeTitleElm.textContent).toBe('Details');
+        expect(field3LabelElm.textContent).toBe('Group Name - Field 3');
+        expect(getEditSpy).toHaveBeenCalledTimes(2);
+        expect(mockOnSave).toHaveBeenCalledWith(
+          { field3: 'test' },
+          { gridRowIndexes: [0], dataContextIds: [222] },
+          [{ address: { zip: 123456 }, field3: 'test', id: 222, product: { name: 'Product ABC', price: 12.55 } }, { address: { zip: 789123 }, field3: 'test', id: 333, product: { name: 'Product XYZ', price: 33.44 } }]
+        );
         expect(setItemsSpy).toHaveBeenCalled();
         expect(cancelCommitSpy).toHaveBeenCalled();
         expect(setActiveCellSpy).toHaveBeenCalledWith(0, 0, false);

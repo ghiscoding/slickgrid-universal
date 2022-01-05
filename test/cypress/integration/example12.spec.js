@@ -3,7 +3,7 @@ import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
 describe('Example 12 - Composite Editor Modal', { retries: 1 }, () => {
   const fullPreTitles = ['', 'Common Factor', 'Analysis', 'Period', 'Item', ''];
-  const fullTitles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Complexity', 'Start', 'Completed', 'Finish', 'Product', 'Country of Origin', 'Action'];
+  const fullTitles = ['', ' Title', 'Duration', 'Cost', '% Complete', 'Complexity', 'Start', 'Completed', 'Finish', 'Product', 'Country of Origin', 'Action'];
 
   const GRID_ROW_HEIGHT = 33;
   const UNSAVED_RGB_COLOR = 'rgb(221, 219, 218)';
@@ -336,14 +336,14 @@ describe('Example 12 - Composite Editor Modal', { retries: 1 }, () => {
     cy.get('.item-details-container.editor-origin .modified').should('have.length', 1);
     cy.get('.item-details-container.editor-origin .autocomplete').invoke('val').then(text => expect(text).to.eq('Belgium'));
 
-    cy.get('.btn-save').contains('Apply to All & Save').click();
+    cy.get('.btn-save').contains('Apply Mass Update').click();
     cy.get('.validation-summary').contains('Unfortunately we only accept a minimum of 50% Completion...');
 
     cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 5).trigger('change');
     cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 51).trigger('change');
     cy.get('.item-details-editor-container .input-group-text').contains('51');
 
-    cy.get('.btn-save').contains('Apply to All & Save').click();
+    cy.get('.btn-save').contains('Apply Mass Update').click();
     cy.get('.slick-editor-modal').should('not.exist');
   });
 
@@ -448,12 +448,12 @@ describe('Example 12 - Composite Editor Modal', { retries: 1 }, () => {
     cy.get('.item-details-container.editor-origin .modified').should('have.length', 1);
     cy.get('.item-details-container.editor-origin .autocomplete').invoke('val').then(text => expect(text).to.eq('Belize'));
 
-    cy.get('.btn-save').contains('Apply to Selected & Save').click();
+    cy.get('.btn-save').contains('Update Selection').click();
     cy.get('.validation-summary').contains('Unfortunately we only accept a minimum of 50% Completion...');
 
     cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 77).trigger('change');
     cy.get('.item-details-editor-container .input-group-text').contains('77');
-    cy.get('.btn-save').contains('Apply to Selected & Save').click();
+    cy.get('.btn-save').contains('Update Selection').click();
 
     cy.get('.slick-editor-modal').should('not.exist');
   });

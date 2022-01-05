@@ -65,6 +65,13 @@ export interface CompositeEditorOpenDetailOption {
   /** Optionally provide a CSS class by the form reset button */
   resetFormButtonIconCssClass?: string;
 
+  /**
+   * Defaults to false, do we want to provide a preview of what the dataset with the applied Mass changes (works for both Mass Update and/or Mass Selection)?
+   * If set to true, then it would provide a 4th argument to the `onSave` callback even before sending the data to the server.
+   * This could be useful to actually use this dataset preview to send directly to the backend server.
+   */
+  shouldPreviewMassChangeDataset?: boolean;
+
   /** Defaults to true, do we want the close button outside the modal (true) or inside the header modal (false)?  */
   showCloseButtonOutside?: boolean;
 
@@ -83,6 +90,10 @@ export interface CompositeEditorOpenDetailOption {
    * The 'auto' mode will display a 1 column layout for 8 or less Editors, 2 columns layout for less than 15 Editors or 3 columns when more than 15 Editors
    */
   viewColumnLayout?: 1 | 2 | 3 | 'auto';
+
+  // ---------
+  // Methods
+  // ---------
 
   /** onBeforeOpen callback allows the user to optionally execute something before opening the modal (for example cancel any batch edits, or change/reset some validations in column definitions) */
   onBeforeOpen?: () => void;
@@ -107,7 +118,23 @@ export interface CompositeEditorOpenDetailOption {
     /** current selection of row indexes & data context Ids */
     selection: CompositeEditorSelection,
 
-    /** optional item data context that is returned, this is only provided when the modal type is (clone, create or edit) */
-    dataContext?: any
+    /**
+     * optional item data context when the modal type is (clone, create or edit)
+     * OR a preview of the updated dataset when modal type is (mass-update or mass-selection).
+     * NOTE: the later requires `shouldPreviewMassChangeDataset` to be enabled since it could be resource heavy with large dataset.
+     */
+    dataContextOrUpdatedDatasetPreview?: any | any[],
   ) => Promise<boolean>;
+
+  /**
+   * Optional callback that the user can add before applying the change to all item rows,
+   * if this callback returns False then the change will NOT be applied to the given field,
+   * or if on the other end it returns True or `undefined` then it assumes that it is valid and it should apply the change to the item dataContext.
+   * This callback works for both Mass Selection & Mass Update.
+   * @param {String} fieldName - field property name being validated
+   * @param {*} dataContext - item object data context
+   * @param {*} formValues - all form input and values that were changed
+   * @returns {Boolean} - returning False means we can't apply the change, else we go ahead and apply the change
+   */
+  validateMassUpdateChange?: (fieldName: string, dataContext: any, formValues: any) => boolean;
 }
