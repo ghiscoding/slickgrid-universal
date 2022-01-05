@@ -8,6 +8,9 @@ export const SalesforceGlobalGridOptions = {
   autoFixResizeRequiredGoodCount: 5 * 60 * 60, // make it the same as the interval timeout, this is equivalent to say don't stop until the timeout is over
   autoFixResizeWhenBrokenStyleDetected: true,
   cellValueCouldBeUndefined: true,
+  contextMenu: {
+    hideCloseButton: false,
+  },
   eventNamingStyle: EventNamingStyle.lowerCaseWithoutOnPrefix,
   compositeEditorOptions: {
     resetEditorButtonCssClass: 'mdi mdi-refresh mdi-15px mdi-v-align-text-top',
