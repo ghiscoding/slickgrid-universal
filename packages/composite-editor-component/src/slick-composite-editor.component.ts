@@ -44,8 +44,14 @@ const DEFAULT_ON_ERROR = (error: OnErrorOption) => console.log(error.message);
 
 type ApplyChangesCallbackFn = (
   formValues: { [columnId: string]: any; } | null,
-  selection: { gridRowIndexes: number[]; dataContextIds: Array<number | string>; }
-) => void;
+  selection: { gridRowIndexes: number[]; dataContextIds: Array<number | string>; },
+  applyToDataview?: boolean,
+) => any[] | void | undefined;
+
+type DataSelection = {
+  gridRowIndexes: number[];
+  dataContextIds: Array<number | string>;
+};
 
 export class SlickCompositeEditorComponent implements ExternalResource {
   protected _bindEventService: BindingEventService;
@@ -454,7 +460,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
             const templateItemLabelElm = createDomElement('div', {
               className: `item-details-label editor-${columnDef.id}`,
-              textContent: this.getColumnLabel(columnDef) || 'n/a'
+              innerHTML: sanitizeTextByAvailableSanitizer(this.gridOptions, this.getColumnLabel(columnDef) || 'n/a')
             });
             const templateItemEditorElm = createDomElement('div', {
               className: 'item-details-editor-container slick-cell',
@@ -565,15 +571,16 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   // ----------------
 
   /** Apply Mass Update Changes (form values) to the entire dataset */
-  protected applySaveMassUpdateChanges(formValues: any) {
-    const data = this.dataView.getItems();
+  protected applySaveMassUpdateChanges(formValues: any, _selection: DataSelection, applyToDataview = true): any[] {
+    // not applying to dataView means that we're doing a preview of dataset and we should use a deep copy of it instead of applying changes directly to it
+    const data = applyToDataview ? this.dataView.getItems() : deepCopy(this.dataView.getItems());
 
     // from the "lastCompositeEditor" object that we kept as reference, it contains all the changes inside the "formValues" property
     // we can loop through these changes and apply them on the selected row indexes
     for (const itemProp in formValues) {
       if (itemProp in formValues) {
-        data.forEach(dataContext => {
-          if (itemProp in formValues) {
+        data.forEach((dataContext: any) => {
+          if (itemProp in formValues && (this._options?.validateMassUpdateChange === undefined || this._options.validateMassUpdateChange(itemProp, dataContext, formValues) !== false)) {
             dataContext[itemProp] = formValues[itemProp];
           }
         });
@@ -581,21 +588,27 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     }
 
     // change the entire dataset with our updated dataset
-    this.dataView.setItems(data, this.gridOptions.datasetIdPropertyName);
-    this.grid.invalidate();
+    if (applyToDataview) {
+      this.dataView.setItems(data, this.gridOptions.datasetIdPropertyName);
+      this.grid.invalidate();
+    }
+    return data;
   }
 
   /** Apply Mass Changes to the Selected rows in the grid (form values) */
-  protected applySaveMassSelectionChanges(formValues: any, selection: { gridRowIndexes: number[]; dataContextIds: Array<number | string>; }) {
+  protected applySaveMassSelectionChanges(formValues: any, selection: DataSelection, applyToDataview = true): any[] {
     const selectedItemIds = selection?.dataContextIds ?? [];
-    const selectedItems = selectedItemIds.map(itemId => this.dataView.getItemById(itemId));
+    const selectedTmpItems = selectedItemIds.map(itemId => this.dataView.getItemById(itemId));
+
+    // not applying to dataView means that we're doing a preview of dataset and we should use a deep copy of it instead of applying changes directly to it
+    const selectedItems = applyToDataview ? selectedTmpItems : deepCopy(selectedTmpItems);
 
     // from the "lastCompositeEditor" object that we kept as reference, it contains all the changes inside the "formValues" property
     // we can loop through these changes and apply them on the selected row indexes
     for (const itemProp in formValues) {
       if (itemProp in formValues) {
-        selectedItems.forEach(dataContext => {
-          if (itemProp in formValues) {
+        selectedItems.forEach((dataContext: any) => {
+          if (itemProp in formValues && (this._options?.validateMassUpdateChange === undefined || this._options.validateMassUpdateChange(itemProp, dataContext, formValues) !== false)) {
             dataContext[itemProp] = formValues[itemProp];
           }
         });
@@ -603,7 +616,10 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     }
 
     // update all items in the grid with the grid service
-    this.gridService?.updateItems(selectedItems);
+    if (applyToDataview) {
+      this.gridService?.updateItems(selectedItems);
+    }
+    return selectedItems;
   }
 
   /**
@@ -675,7 +691,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
    * @param {Function} applyChangesCallback - first callback to apply the changes into the grid (this could be a user custom callback)
    * @param {Function} executePostCallback - second callback to execute right after the "onSave"
    * @param {Function} beforeClosingCallback - third and last callback to execute after Saving but just before closing the modal window
-   * @param {Object} itemDataContext - item data context, only provided for modal type (create/clone/edit)
+   * @param {Object} itemDataContext - item data context when modal type is (create/clone/edit)
    */
   protected async executeOnSave(applyChangesCallback: ApplyChangesCallbackFn, executePostCallback: PlainFunc, beforeClosingCallback?: PlainFunc, itemDataContext?: any) {
     try {
@@ -687,11 +703,19 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         this._modalSaveButtonElm.disabled = true;
 
         if (typeof this._options?.onSave === 'function') {
+          const isMassChange = (this._options.modalType === 'mass-update' || this._options.modalType === 'mass-selection');
+
+          // apply the changes in the grid early when that option is enabled (that is before the await of `onSave`)
+          let updatedDataset;
+          if (isMassChange && this._options?.shouldPreviewMassChangeDataset) {
+            updatedDataset = applyChangesCallback(this.formValues, this.getCurrentRowSelections(), false) as any[];
+          }
           // call the custon onSave callback when defined and note that the item data context will only be filled for create/clone/edit
-          const successful = await this._options?.onSave(this.formValues, this.getCurrentRowSelections(), itemDataContext);
+          const dataContextOrUpdatedDatasetPreview = isMassChange ? updatedDataset : itemDataContext;
+          const successful = await this._options?.onSave(this.formValues, this.getCurrentRowSelections(), dataContextOrUpdatedDatasetPreview);
 
           if (successful) {
-            // apply the changes in the grid
+            // apply the changes in the grid (if it's not yet applied)
             applyChangesCallback(this.formValues, this.getCurrentRowSelections());
 
             // once we're done doing the mass update, we can cancel the current editor since we don't want to add any new row

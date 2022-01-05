@@ -141,7 +141,7 @@ export class Example12 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string, minWidth: 75,
+        id: 'title', name: '<span title="Task must always be followed by a number" class="color-info mdi mdi-alert-circle"></span> Title', field: 'title', sortable: true, type: FieldType.string, minWidth: 75,
         filterable: true, columnGroup: 'Common Factor',
         filter: { model: Filters.compoundInputText },
         formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
@@ -943,29 +943,39 @@ export class Example12 {
         // backdrop: null,
         // viewColumnLayout: 2, // responsive layout, choose from 'auto', 1, 2, or 3 (defaults to 'auto')
         showFormResetButton: true,
+
+        // you can validate each row item dataContext before apply Mass Update/Selection changes via this validation callback (returning false would skip the change)
+        // validateMassUpdateChange: (fieldName, dataContext, formValues) => {
+        //   const levelComplex = this.complexityLevelList.find(level => level.label === 'Complex');
+        //   if (fieldName === 'duration' && (dataContext.complexity === levelComplex?.value || formValues.complexity === levelComplex?.value) && formValues.duration < 5) {
+        //     // not good, do not apply the change because when it's "Complex", we assume the user has to be choose at least 5 days of work (duration)
+        //     return false;
+        //   }
+        //   return true;
+        // },
+
         // showResetButtonOnEachEditor: true,
         onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),
         onError: (error) => alert(error.message),
-        onSave: (formValues, _selection, dataContext) => {
+        onSave: (formValues, _selection, dataContextOrUpdatedDatasetPreview) => {
           const serverResponseDelay = 50;
 
-          // simulate a backend server call which will reject if the "% Complete" is below 50%
           // when processing a mass update or mass selection
           if (modalType === 'mass-update' || modalType === 'mass-selection') {
+            console.log(`${modalType} dataset preview`, dataContextOrUpdatedDatasetPreview);
+
+            // simulate a backend server call which will reject if the "% Complete" is below 50%
             return new Promise((resolve, reject) => {
-              setTimeout(() => {
-                if (formValues.percentComplete >= 50) {
-                  resolve(true);
-                } else {
-                  reject('Unfortunately we only accept a minimum of 50% Completion...');
-                }
-              }, serverResponseDelay);
+              setTimeout(
+                () => (formValues.percentComplete >= 50) ? resolve(true) : reject('Unfortunately we only accept a minimum of 50% Completion...'),
+                serverResponseDelay
+              );
             });
           } else {
             // also simulate a server cal for any other modal type (create/clone/edit)
             // we'll just apply the change without any rejection from the server and
             // note that we also have access to the "dataContext" which is only available for these modal
-            console.log(`${modalType} item data context`, dataContext);
+            console.log(`${modalType} item data context`, dataContextOrUpdatedDatasetPreview);
             return new Promise(resolve => setTimeout(() => resolve(true), serverResponseDelay));
           }
         }
