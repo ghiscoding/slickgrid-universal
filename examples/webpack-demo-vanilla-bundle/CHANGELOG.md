@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v1.1.1...v1.2.0) (2022-01-06)
+
+
+### Bug Fixes
+
+* **demo:** latest change with Filter container breaks other demos ([129cc78](https://github.com/ghiscoding/slickgrid-universal/commit/129cc78ac34ad632f2a265d49a631e04b119250b))
+* **dev:** optimize webpack dev watch ([1340c51](https://github.com/ghiscoding/slickgrid-universal/commit/1340c51b7e2554e9c29ebb9b8ab9b27a3f20cfe9))
+* **filter:** update multiple-select to fix select filtering ([63dcd08](https://github.com/ghiscoding/slickgrid-universal/commit/63dcd0873026fb8ba036ca52ba31f583d6ad136f)), closes [#865](https://github.com/ghiscoding/slickgrid-universal/issues/865)
+
+
+### Features
+
+* **composite:** add new `validateMassUpdateChange` callback & bug fixes ([#603](https://github.com/ghiscoding/slickgrid-universal/issues/603)) ([2c1559b](https://github.com/ghiscoding/slickgrid-universal/commit/2c1559b7a3b0b1a642a664e59a025ce78a747946))
+* **demo:** add new Example to demo Real-time Market Trading ([e50434a](https://github.com/ghiscoding/slickgrid-universal/commit/e50434ac3dab98644e23266c81d09b3789ea7de4))
+* **filters:** change-filter-element-Container-ajust-code-format ([efb0189](https://github.com/ghiscoding/slickgrid-universal/commit/efb0189b0ce357b07025e2f9f29717a41128ab6b))
+* **filters:** change-filter-element-Container-data-test ([78c3ec7](https://github.com/ghiscoding/slickgrid-universal/commit/78c3ec757a71388eafd0b90e6c48d86f85b0e9db))
+* **filters:** change-filter-element-Container-Example ([369c6ef](https://github.com/ghiscoding/slickgrid-universal/commit/369c6ef27e639147a755fb1289abcb2eed307153))
+* **filters:** filter-element-Container- DOMPurify ([3749fc4](https://github.com/ghiscoding/slickgrid-universal/commit/3749fc48387412abefe69414db6060d947a704b5))
+* **filters:** inclusion of the modal filter in example 7 ([1ac2da9](https://github.com/ghiscoding/slickgrid-universal/commit/1ac2da9da5540a5653ac72b825ad6624b331aa8f))
+* **filters:** modal-filter-example ([ab46202](https://github.com/ghiscoding/slickgrid-universal/commit/ab46202bfbd99497af39830cf59068682f5f8bd1))
+* **selection:** auto-scroll the viewport when dragging with selection ([ecd9c57](https://github.com/ghiscoding/slickgrid-universal/commit/ecd9c57bd6c1315e2358722785a87582ec939f85)), closes [#656](https://github.com/ghiscoding/slickgrid-universal/issues/656)
+
+
+
+
+
 ## [1.1.1](https://github.com/ghiscoding/slickgrid-universal/compare/v1.1.0...v1.1.1) (2021-12-11)
 
 
