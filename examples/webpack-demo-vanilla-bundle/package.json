@@ -34,17 +34,16 @@
     "not dead"
   ],
   "dependencies": {
+    "@fnando/sparkline": "^0.3.10",
     "@slickgrid-universal/common": "^1.2.0",
     "@slickgrid-universal/excel-export": "^1.2.0",
     "@slickgrid-universal/text-export": "^1.2.0",
     "@slickgrid-universal/vanilla-bundle": "^1.2.0",
     "bulma": "^0.9.3",
-    "esbuild-loader": "^2.18.0",
     "moment-mini": "^2.24.0",
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
-    "@fnando/sparkline": "^0.3.10",
     "@types/faker": "^5.5.9",
     "@types/fnando__sparkline": "^0.3.4",
     "@types/jquery": "^3.5.11",
@@ -54,6 +53,7 @@
     "clean-webpack-plugin": "4.0.0",
     "copy-webpack-plugin": "^10.2.0",
     "css-loader": "^6.5.1",
+    "esbuild-loader": "^2.18.0",
     "faker": "^5.5.3",
     "file-loader": "^6.2.0",
     "fork-ts-checker-webpack-plugin": "^6.5.0",
