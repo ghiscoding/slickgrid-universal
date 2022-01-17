@@ -49,7 +49,7 @@
   ],
   "dependencies": {
     "@slickgrid-universal/common": "^1.2.0",
-    "rxjs": "^7.5.1"
+    "rxjs": "^7.5.2"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

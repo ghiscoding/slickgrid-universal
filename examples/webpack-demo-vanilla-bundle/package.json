@@ -41,6 +41,7 @@
     "@slickgrid-universal/vanilla-bundle": "^1.2.0",
     "bulma": "^0.9.3",
     "moment-mini": "^2.24.0",
+    "rxjs": "^7.5.2",
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
@@ -60,7 +61,6 @@
     "html-loader": "^3.0.1",
     "html-webpack-plugin": "5.5.0",
     "mini-css-extract-plugin": "^2.4.5",
-    "rxjs": "^7.5.1",
     "sass": "^1.45.2",
     "sass-loader": "^12.4.0",
     "style-loader": "^3.3.1",
