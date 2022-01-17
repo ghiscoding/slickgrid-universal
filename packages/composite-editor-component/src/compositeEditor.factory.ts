@@ -5,6 +5,7 @@ import {
   EditorArguments,
   EditorValidationResult,
   ElementPosition,
+  emptyElement,
   getHtmlElementOffset,
   HtmlElementPosition,
   SlickNamespace
@@ -64,8 +65,8 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
   const getContainerBox = (i: number): ElementPosition => {
     const container = containers[i];
     const offset = getHtmlElementOffset(container);
-    const width = container.clientWidth || 0;
-    const height = container.clientHeight || 0;
+    const width = container?.clientWidth ?? 0;
+    const height = container?.clientHeight ?? 0;
 
     return {
       top: offset?.top ?? 0,
@@ -119,14 +120,22 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
     };
 
     context.destroy = () => {
-      let idx = 0;
-      while (idx < editors.length) {
-        editors[idx].destroy();
-        idx++;
+      let tmpEditor = editors.pop();
+      while (tmpEditor) {
+        tmpEditor?.destroy();
+        tmpEditor = editors.pop();
+      }
+
+      let tmpContainer = containers.pop();
+      while (tmpContainer) {
+        emptyElement(tmpContainer);
+        tmpContainer?.remove();
+        tmpContainer = containers.pop();
       }
 
       options?.destroy?.();
       editors = [];
+      containers = null as any;
     };
 
     context.focus = () => {

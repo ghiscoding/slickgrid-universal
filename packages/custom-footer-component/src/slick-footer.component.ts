@@ -95,11 +95,11 @@ export class SlickFooterComponent {
 
   dispose() {
     // also dispose of all Subscriptions
+    this._eventHandler.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);
 
     this._bindingHelper.dispose();
     this._footerElement?.remove();
-    this._eventHandler.unsubscribeAll();
   }
 
   /**

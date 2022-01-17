@@ -79,6 +79,19 @@ export class ExtensionService {
     for (const key of Object.keys(this._extensionList)) {
       delete this._extensionList[key as keyof Record<ExtensionName, ExtensionModel<any>>];
     }
+    this._cellMenuPlugin = null as any;
+    this._cellExcelCopyManagerPlugin = null as any;
+    this._checkboxSelectColumn = null as any;
+    this._contextMenuPlugin = null as any;
+    this._columnPickerControl = null as any;
+    this._draggleGroupingPlugin = null as any;
+    this._gridMenuControl = null as any;
+    this._groupItemMetadataProviderService = null as any;
+    this._headerMenuPlugin = null as any;
+    this._rowMoveManagerPlugin = null as any;
+    this._rowSelectionModel = null as any;
+    this._extensionCreatedList = null as any;
+    this._extensionList = null as any;
   }
 
   /**

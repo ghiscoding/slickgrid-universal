@@ -92,7 +92,6 @@ const container1 = document.createElement('div');
 const container2 = document.createElement('div');
 const container3 = document.createElement('div');
 const container4 = document.createElement('div');
-const containers = [container1, container2, container3, container4];
 
 describe('Composite Editor Factory', () => {
   let factory: any;
@@ -102,6 +101,7 @@ describe('Composite Editor Factory', () => {
   let editors;
   let compositeOptions;
   let textEditorArgs;
+  let containers;
 
   beforeEach(() => {
     cancelChangeMock = jest.fn();
@@ -126,6 +126,7 @@ describe('Composite Editor Factory', () => {
     editors = columnsMock.map(col => col.editor);
     compositeOptions = { destroy: destroyMock, modalType: 'create', validationMsgPrefix: '* ', formValues: {}, editors };
 
+    containers = [container1, container2, container3, container4];
     factory = new (CompositeEditor as any)(columnsMock, containers, compositeOptions);
   });
 

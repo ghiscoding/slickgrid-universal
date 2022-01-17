@@ -56,6 +56,7 @@ import {
 
   // utilities
   emptyElement,
+  unsubscribeAll,
 } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
@@ -201,6 +202,10 @@ export class SlickVanillaGridBundle {
     }
 
     this._isDatasetHierarchicalInitialized = true;
+  }
+
+  set eventPubSubService(pubSub: EventPubSubService) {
+    this._eventPubSubService = pubSub;
   }
 
   get gridOptions(): GridOption {
@@ -425,6 +430,7 @@ export class SlickVanillaGridBundle {
     this.slickEmptyWarning?.dispose();
     this.slickPagination?.dispose();
 
+    unsubscribeAll(this.subscriptions);
     this._eventPubSubService?.unsubscribeAll();
     this.dataView?.setItems([]);
     if (this.dataView?.destroy) {
@@ -435,6 +441,8 @@ export class SlickVanillaGridBundle {
 
     emptyElement(this._gridContainerElm);
     emptyElement(this._gridParentContainerElm);
+    this._gridContainerElm?.remove();
+    this._gridParentContainerElm?.remove();
 
     if (this.backendServiceApi) {
       for (const prop of Object.keys(this.backendServiceApi)) {
@@ -455,6 +463,9 @@ export class SlickVanillaGridBundle {
     if (shouldEmptyDomElementContainer) {
       this.emptyGridContainerElm();
     }
+    this._eventPubSubService?.dispose();
+    this._slickerGridInstances = null as any;
+    delete (window as any).Slicker;
   }
 
   initialization(gridContainerElm: HTMLElement, eventHandler: SlickEventHandler) {

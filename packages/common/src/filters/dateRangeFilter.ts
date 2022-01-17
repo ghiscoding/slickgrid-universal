@@ -134,7 +134,12 @@ export class DateRangeFilter implements Filter {
         destroyObjectDomElementProps(this.flatInstance);
       }
     }
-    this._filterElm?.remove?.();
+    emptyElement(this.filterContainerElm);
+    emptyElement(this._filterDivInputElm);
+    this._filterDivInputElm?.remove();
+    this.filterContainerElm?.remove();
+    this._filterElm?.remove();
+    this.grid = null as any;
   }
 
   hide() {

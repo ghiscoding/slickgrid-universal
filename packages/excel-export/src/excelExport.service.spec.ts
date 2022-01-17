@@ -102,6 +102,7 @@ describe('ExcelExportService', () => {
 
     afterEach(() => {
       delete mockGridOptions.backendServiceApi;
+      service?.dispose();
       jest.clearAllMocks();
     });
 

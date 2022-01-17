@@ -107,6 +107,7 @@ describe('ExportService', () => {
 
     afterEach(() => {
       delete mockGridOptions.backendServiceApi;
+      service?.dispose();
       jest.clearAllMocks();
     });
 

@@ -8,6 +8,7 @@ export interface PubSubEvent<T = any> {
 export class EventPubSubService implements PubSubService {
   protected _elementSource: Element;
   protected _subscribedEvents: PubSubEvent[] = [];
+  protected _timer: any;
 
   eventNamingStyle = EventNamingStyle.camelCase;
 
@@ -32,6 +33,14 @@ export class EventPubSubService implements PubSubService {
     this._elementSource = elementSource || document.createElement('div');
   }
 
+  dispose() {
+    this.unsubscribeAll();
+    this._subscribedEvents = [];
+    clearTimeout(this._timer);
+    this._elementSource?.remove();
+    this._elementSource = null as any;
+  }
+
   /**
    * Dispatch of Custom Event, which by default will bubble up & is cancelable
    * @param {String} eventName - event name to dispatch
@@ -45,7 +54,7 @@ export class EventPubSubService implements PubSubService {
     if (data) {
       eventInit.detail = data;
     }
-    return this._elementSource.dispatchEvent(new CustomEvent<T>(eventName, eventInit));
+    return this._elementSource?.dispatchEvent(new CustomEvent<T>(eventName, eventInit));
   }
 
   /**
@@ -90,7 +99,7 @@ export class EventPubSubService implements PubSubService {
 
     if (delay) {
       return new Promise(resolve => {
-        setTimeout(() => resolve(this.dispatchCustomEvent<T>(eventNameByConvention, data, true, true)), delay);
+        this._timer = setTimeout(() => resolve(this.dispatchCustomEvent<T>(eventNameByConvention, data, true, true)), delay);
       });
     } else {
       return this.dispatchCustomEvent<T>(eventNameByConvention, data, true, true);

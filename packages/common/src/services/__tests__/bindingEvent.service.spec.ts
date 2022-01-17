@@ -13,6 +13,7 @@ describe('BindingEvent Service', () => {
   afterEach(() => {
     div.remove();
     service.unbindAll();
+    service?.dispose();
     jest.clearAllMocks();
   });
 

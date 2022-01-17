@@ -140,12 +140,17 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
   /** Dispose of the Component without unsubscribing any events */
   disposeComponent() {
+    // protected _editorContainers!: Array<HTMLElement | null>;
+    this._modalBodyTopValidationElm?.remove();
+    this._modalSaveButtonElm?.remove();
+
     if (typeof this._modalElm?.remove === 'function') {
       this._modalElm.remove();
 
       // remove the body backdrop click listener, every other listeners will be dropped automatically since we destroy the component
       document.body.classList.remove('slick-modal-open');
     }
+    this._editorContainers = [];
   }
 
   /**

@@ -75,6 +75,10 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     return (this._grid?.getOptions) ? this._grid.getOptions() : {};
   }
 
+  dispose() {
+    this._pubSubService?.unsubscribeAll();
+  }
+
   /**
    * Initialize the Service
    * @param grid

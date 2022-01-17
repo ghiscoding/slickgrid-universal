@@ -141,8 +141,13 @@ export class CompoundDateFilter implements Filter {
         destroyObjectDomElementProps(this.flatInstance);
       }
     }
-    this._filterElm?.remove?.();
-    this._selectOperatorElm?.remove?.();
+    emptyElement(this.filterContainerElm);
+    emptyElement(this._filterDivInputElm);
+    this._filterDivInputElm?.remove();
+    this.filterContainerElm?.remove();
+    this._selectOperatorElm?.remove();
+    this._filterElm?.remove();
+    this.grid = null as any;
   }
 
   hide() {
