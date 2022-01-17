@@ -285,13 +285,13 @@ export class Example34 {
         this.sgb.slickGrid.setCellCssStyles(`highlight_${[column.id]}${row}`, hash);
 
         // remove highlight after x amount of time
-        setTimeout(() => this.removeUnsavedStylingFromCell(item, column, row), this.highlightDuration);
+        setTimeout(() => this.removeCellStyling(item, column, row), this.highlightDuration);
       }
     }
   }
 
   /** remove change highlight css class from that cell */
-  removeUnsavedStylingFromCell(_item: any, column: Column, row: number) {
+  removeCellStyling(_item: any, column: Column, row: number) {
     this.sgb?.slickGrid?.removeCellCssStyles(`highlight_${[column.id]}${row}`);
   }
 
