@@ -78,6 +78,10 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     return (this._grid && this._grid.getOptions) ? this._grid.getOptions() : {};
   }
 
+  dispose() {
+    this._pubSubService?.unsubscribeAll();
+  }
+
   /**
    * Initialize the Export Service
    * @param grid

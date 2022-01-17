@@ -7,6 +7,11 @@ export class BindingEventService {
     return this._boundedEvents;
   }
 
+  dispose() {
+    this.unbindAll();
+    this._boundedEvents = [];
+  }
+
   /** Bind an event listener to any element */
   bind(elementOrElements: Element | NodeListOf<Element>, eventNameOrNames: string | string[], listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) {
     const eventNames = (Array.isArray(eventNameOrNames)) ? eventNameOrNames : [eventNameOrNames];

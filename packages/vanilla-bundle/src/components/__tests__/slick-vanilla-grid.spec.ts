@@ -1941,6 +1941,9 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     });
 
     describe('Tree Data View', () => {
+      beforeEach(() => {
+        component.eventPubSubService = new EventPubSubService(divContainer);
+      });
       afterEach(() => {
         component.dispose();
         jest.clearAllMocks();
@@ -2021,6 +2024,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.dispose();
         component.gridOptions = { enableTreeData: true, treeDataOptions: { columnId: 'file', initialSort: { columndId: 'file', direction: 'ASC' } } } as unknown as GridOption;
         component.datasetHierarchical = mockHierarchical;
+        component.eventPubSubService = new EventPubSubService(divContainer);
         component.initialization(divContainer, slickEventHandler);
 
         expect(hierarchicalSpy).toHaveBeenCalledWith(mockHierarchical);

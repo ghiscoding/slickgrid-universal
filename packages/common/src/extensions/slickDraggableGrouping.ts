@@ -231,6 +231,7 @@ export class SlickDraggableGrouping {
     this._eventHandler.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);
     emptyElement(document.querySelector('.slick-preheader-panel'));
+    this._grid = undefined as any;
   }
 
   clearDroppedGroups() {

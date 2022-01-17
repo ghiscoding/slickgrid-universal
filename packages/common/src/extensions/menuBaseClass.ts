@@ -18,7 +18,7 @@ import { BindingEventService } from '../services/bindingEvent.service';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
-import { createDomElement } from '../services/domUtilities';
+import { createDomElement, emptyElement } from '../services/domUtilities';
 import { hasData } from '../services/utilities';
 
 // using external SlickGrid JS libraries
@@ -95,6 +95,8 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     this._commandTitleElm?.remove();
     this._optionTitleElm?.remove();
     this.menuElement?.remove();
+    emptyElement(this._menuElm);
+    this._menuElm?.remove();
   }
 
   setOptions(newOptions: M) {

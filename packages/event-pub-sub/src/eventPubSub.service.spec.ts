@@ -13,6 +13,7 @@ describe('EventPubSub Service', () => {
 
   afterEach(() => {
     service.unsubscribeAll();
+    service?.dispose();
   });
 
   it('should create the service', () => {

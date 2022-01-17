@@ -128,6 +128,7 @@ export class FilterService {
     }
     this.disposeColumnFilters();
     this._onSearchChange = null;
+    this._grid = null as any;
   }
 
   /**
@@ -138,11 +139,11 @@ export class FilterService {
 
     // also destroy each Filter instances
     if (Array.isArray(this._filtersMetadata)) {
-      this._filtersMetadata.forEach(filter => {
-        if (filter?.destroy) {
-          filter.destroy();
-        }
-      });
+      let filter = this._filtersMetadata.pop();
+      while (filter) {
+        filter?.destroy();
+        filter = this._filtersMetadata.pop();
+      }
     }
   }
 

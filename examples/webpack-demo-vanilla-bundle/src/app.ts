@@ -81,6 +81,11 @@ export class App {
       const viewModel = this.viewModelObj[vmKey];
       if (viewModel?.dispose) {
         viewModel?.dispose();
+
+        // also clear all of its variable references to avoid detached elements
+        for (const ref of Object.keys(viewModel)) {
+          viewModel[ref] = null;
+        }
       }
       // nullify the object and then delete them to make sure it's picked by the garbage collector
       window[vmKey] = null;

@@ -292,7 +292,7 @@ export class Example34 {
 
   /** remove change highlight css class from that cell */
   removeUnsavedStylingFromCell(_item: any, column: Column, row: number) {
-    this.sgb.slickGrid.removeCellCssStyles(`highlight_${[column.id]}${row}`);
+    this.sgb?.slickGrid?.removeCellCssStyles(`highlight_${[column.id]}${row}`);
   }
 
   toggleFullScreen() {
