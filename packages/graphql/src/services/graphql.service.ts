@@ -417,8 +417,8 @@ export class GraphqlService implements BackendService {
         }
 
         if (Array.isArray(searchTerms) && searchTerms.length === 1 && typeof searchTerms[0] === 'string' && searchTerms[0].indexOf('..') >= 0) {
-          if (!operator) {
-            operator = this._gridOptions.defaultFilterRangeOperator as OperatorString;
+          if (operator !== OperatorType.rangeInclusive && operator !== OperatorType.rangeExclusive) {
+            operator = this._gridOptions.defaultFilterRangeOperator ?? OperatorType.rangeInclusive;
           }
           searchTerms = searchTerms[0].split('..', 2);
           if (searchTerms[0] === '') {
