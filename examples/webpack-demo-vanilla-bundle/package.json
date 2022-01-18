@@ -1,6 +1,6 @@
 {
   "name": "webpack-demo-vanilla-bundle",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "description": "SlickGrid-Universal demo",
   "directories": {
@@ -35,10 +35,10 @@
   ],
   "dependencies": {
     "@fnando/sparkline": "^0.3.10",
-    "@slickgrid-universal/common": "^1.2.0",
-    "@slickgrid-universal/excel-export": "^1.2.0",
-    "@slickgrid-universal/text-export": "^1.2.0",
-    "@slickgrid-universal/vanilla-bundle": "^1.2.0",
+    "@slickgrid-universal/common": "^1.2.1",
+    "@slickgrid-universal/excel-export": "^1.2.1",
+    "@slickgrid-universal/text-export": "^1.2.1",
+    "@slickgrid-universal/vanilla-bundle": "^1.2.1",
     "bulma": "^0.9.3",
     "moment-mini": "^2.24.0",
     "rxjs": "^7.5.2",

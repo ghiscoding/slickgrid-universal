@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/vanilla-force-bundle",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Vanilla Slick Grid Bundle (mostly exist for our Salesforce implementation) - Similar to Vanilla Bundle, the only difference is that it adds extra packages within its bundle (CustomTooltip, CompositeEditor & TextExport)",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
@@ -55,15 +55,15 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^1.2.0",
-    "@slickgrid-universal/composite-editor-component": "^1.2.0",
-    "@slickgrid-universal/custom-footer-component": "^1.2.0",
-    "@slickgrid-universal/custom-tooltip-plugin": "^1.2.0",
-    "@slickgrid-universal/empty-warning-component": "^1.2.0",
-    "@slickgrid-universal/event-pub-sub": "^1.2.0",
-    "@slickgrid-universal/pagination-component": "^1.2.0",
-    "@slickgrid-universal/text-export": "^1.2.0",
-    "@slickgrid-universal/vanilla-bundle": "^1.2.0",
+    "@slickgrid-universal/common": "^1.2.1",
+    "@slickgrid-universal/composite-editor-component": "^1.2.1",
+    "@slickgrid-universal/custom-footer-component": "^1.2.1",
+    "@slickgrid-universal/custom-tooltip-plugin": "^1.2.1",
+    "@slickgrid-universal/empty-warning-component": "^1.2.1",
+    "@slickgrid-universal/event-pub-sub": "^1.2.1",
+    "@slickgrid-universal/pagination-component": "^1.2.1",
+    "@slickgrid-universal/text-export": "^1.2.1",
+    "@slickgrid-universal/vanilla-bundle": "^1.2.1",
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {

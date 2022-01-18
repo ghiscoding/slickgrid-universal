@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/vanilla-bundle",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Vanilla Slick Grid Bundle - Framework agnostic the output is to be used in vanilla JS/TS - Written in TypeScript and we also use WebPack to bundle everything into 1 JS file.",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
@@ -49,11 +49,11 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^1.2.0",
-    "@slickgrid-universal/custom-footer-component": "^1.2.0",
-    "@slickgrid-universal/empty-warning-component": "^1.2.0",
-    "@slickgrid-universal/event-pub-sub": "^1.2.0",
-    "@slickgrid-universal/pagination-component": "^1.2.0",
+    "@slickgrid-universal/common": "^1.2.1",
+    "@slickgrid-universal/custom-footer-component": "^1.2.1",
+    "@slickgrid-universal/empty-warning-component": "^1.2.1",
+    "@slickgrid-universal/event-pub-sub": "^1.2.1",
+    "@slickgrid-universal/pagination-component": "^1.2.1",
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
