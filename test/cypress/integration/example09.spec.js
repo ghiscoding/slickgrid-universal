@@ -329,10 +329,34 @@ describe('Example 09 - OData Grid', { retries: 1 }, () => {
         .find('.slick-row')
         .should('have.length', 5);
     });
+
+    it('should use a range filter when searching with ".."', () => {
+      cy.get('.slick-header-columns')
+        .children('.slick-header-column:nth(1)')
+        .contains('Name')
+        .click();
+
+      cy.get('.search-filter.filter-name')
+        .find('input')
+        .clear()
+        .type('Anthony Joyner..Ayers Hood');
+
+      // wait for the query to finish
+      cy.get('[data-test=status]').should('contain', 'finished');
+
+      cy.get('[data-test=odata-query-result]')
+        .should(($span) => {
+          expect($span.text()).to.eq(`$count=true&$top=10&$orderby=Name asc&$filter=(Name ge 'Anthony%20Joyner' and Name le 'Ayers%20Hood')`);
+        });
+
+      cy.get('.grid9')
+        .find('.slick-row')
+        .should('have.length', 3);
+    });
   });
 
   describe('when "enableCount" is unchecked (not set)', () => {
-    it('should Clear all Filters, set 20 items per page & uncheck "enableCount"', () => {
+    it('should Clear all Filters and Sortings, set 20 items per page & uncheck "enableCount"', () => {
       cy.get('.grid9')
         .find('button.slick-grid-menu-button')
         .trigger('click')
@@ -343,6 +367,17 @@ describe('Example 09 - OData Grid', { retries: 1 }, () => {
         .first()
         .find('span')
         .contains('Clear all Filters')
+        .click();
+
+      cy.get('.grid9')
+        .find('button.slick-grid-menu-button')
+        .trigger('click')
+        .click()
+
+      cy.get(`.slick-grid-menu:visible`)
+        .find('.slick-menu-item:nth(1)')
+        .find('span')
+        .contains('Clear all Sorting')
         .click();
 
       cy.get('#items-per-page-label').select('20');

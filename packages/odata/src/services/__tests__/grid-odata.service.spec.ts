@@ -22,16 +22,7 @@ import { OdataOption } from '../../interfaces/odataOption.interface';
 const DEFAULT_ITEMS_PER_PAGE = 25;
 const DEFAULT_PAGE_SIZE = 20;
 
-const gridOptionMock = {
-  enablePagination: true,
-  defaultFilterRangeOperator: OperatorType.rangeInclusive,
-  backendServiceApi: {
-    service: undefined,
-    preProcess: jest.fn(),
-    process: jest.fn(),
-    postProcess: jest.fn(),
-  }
-} as unknown as GridOption;
+let gridOptionMock: GridOption;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
@@ -65,8 +56,17 @@ describe('GridOdataService', () => {
       pageSize: 10,
       totalItems: 100
     };
-    gridOptionMock.enablePagination = true;
-    gridOptionMock.backendServiceApi!.service = service as BackendService;
+
+    gridOptionMock = {
+      enablePagination: true,
+      defaultFilterRangeOperator: OperatorType.rangeInclusive,
+      backendServiceApi: {
+        service: service as BackendService,
+        preProcess: jest.fn(),
+        process: jest.fn(),
+        postProcess: jest.fn(),
+      }
+    } as unknown as GridOption;
   });
 
   afterEach(() => {
@@ -1062,6 +1062,36 @@ describe('GridOdataService', () => {
         company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
         updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20', '2001-02-28'], operator: 'RangeExclusive', type: FieldType.dateIso },
       } as ColumnFilters;
+
+      service.init(serviceOptions, paginationOptions, gridStub);
+      service.updateFilters(mockColumnFilters, false);
+      const query = service.buildQuery();
+
+      expect(query).toBe(expectation);
+    });
+
+    it('should return a query to filter a search value between an inclusive range of numbers using the 2 dots (..) separator, "defaultFilterRangeOperator" is not set and operator is not set to "RangeInclusive" or "RangeExclusive"', () => {
+      const expectation = `$top=10&$filter=(Duration le 5)`;
+      const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
+      const mockColumnFilters = {
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: OperatorType.contains, type: FieldType.number },
+      } as ColumnFilters;
+      gridOptionMock.defaultFilterRangeOperator = undefined;
+
+      service.init(serviceOptions, paginationOptions, gridStub);
+      service.updateFilters(mockColumnFilters, false);
+      const query = service.buildQuery();
+
+      expect(query).toBe(expectation);
+    });
+
+    it('should return a query to filter a search value between an exclusive range of numbers using the 2 dots (..) separator, "defaultFilterRangeOperator" is set to "rangeExclusive" and operator is not set to "RangeInclusive" or "RangeExclusive"', () => {
+      const expectation = `$top=10&$filter=(Duration lt 5)`;
+      const mockColumnDuration = { id: 'duration', field: 'duration', type: FieldType.number } as Column;
+      const mockColumnFilters = {
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: OperatorType.contains, type: FieldType.number },
+      } as ColumnFilters;
+      gridOptionMock.defaultFilterRangeOperator = OperatorType.rangeExclusive;
 
       service.init(serviceOptions, paginationOptions, gridStub);
       service.updateFilters(mockColumnFilters, false);
