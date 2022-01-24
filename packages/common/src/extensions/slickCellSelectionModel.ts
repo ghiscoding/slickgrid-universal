@@ -100,6 +100,10 @@ export class SlickCellSelectionModel {
     return !areDifferent;
   }
 
+  refreshSelections() {
+    this.setSelectedRanges(this.getSelectedRanges());
+  }
+
   removeInvalidRanges(ranges: CellRange[]) {
     const result = [];
     for (let i = 0; i < ranges.length; i++) {

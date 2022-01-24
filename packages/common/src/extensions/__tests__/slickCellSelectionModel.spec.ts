@@ -139,6 +139,28 @@ describe('CellSelectionModel Plugin', () => {
     expect(registerSpy).toHaveBeenCalledWith(plugin.cellRangeSelector);
   });
 
+  it('should expect that "setSelectedRanges" is being triggered when "refreshSelections" is called', () => {
+    const registerSpy = jest.spyOn(gridStub, 'registerPlugin');
+
+    plugin = new SlickCellSelectionModel({ selectActiveCell: false, cellRangeSelector: undefined });
+    plugin.init(gridStub);
+
+    jest.spyOn(plugin, 'getSelectedRanges').mockReturnValue([
+      { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 },
+      { fromCell: 2, fromRow: 3, toCell: 3, toRow: 4 }
+    ]);
+    const setSelectedRangesSpy = jest.spyOn(plugin, 'setSelectedRanges');
+    plugin.refreshSelections();
+
+    expect(plugin.cellRangeSelector).toBeTruthy();
+    expect(plugin.canvas).toBeTruthy();
+    expect(registerSpy).toHaveBeenCalledWith(plugin.cellRangeSelector);
+    expect(setSelectedRangesSpy).toHaveBeenCalledWith([
+      { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 },
+      { fromCell: 2, fromRow: 3, toCell: 3, toRow: 4 }
+    ]);
+  });
+
   it('should return False when onBeforeCellRangeSelected is called and getEditorLock returns False', () => {
     const mouseEvent = addJQueryEventPropagation(new Event('mouseenter'));
     jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);

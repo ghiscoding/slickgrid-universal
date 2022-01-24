@@ -148,6 +148,18 @@ describe('SlickRowSelectionModel Plugin', () => {
     });
   });
 
+  it('should expect that "setSelectedRows" is being triggered when "refreshSelections" is called', () => {
+    jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
+    plugin = new SlickRowSelectionModel({ selectActiveRow: false, });
+    plugin.init(gridStub);
+
+    jest.spyOn(plugin, 'getSelectedRows').mockReturnValue([0, 1]);
+    const setSelectedRowsSpy = jest.spyOn(plugin, 'setSelectedRows');
+    plugin.refreshSelections();
+
+    expect(setSelectedRowsSpy).toHaveBeenCalledWith([0, 1]);
+  });
+
   it('should call "setSelectedRanges" when "setSelectedRows" is called', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
     const setSelectedRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
