@@ -24,7 +24,7 @@
     "rebuild": "run-s clean lint build",
     "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",
     "cypress": "cypress open --config-file test/cypress.json",
-    "cypress:ci": "cypress run --config-file test/cypress.json --reporter mochawesome",
+    "cypress:ci": "cypress run --config-file test/cypress.json",
     "dev:watch": "cross-env TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling lerna run dev:watch --parallel",
     "diff": "lerna diff",
     "updated": "lerna updated",
@@ -48,8 +48,6 @@
       "packages/*"
     ],
     "nohoist": [
-      "**/mochawesome",
-      "**/mochawesome/**",
       "**/mocha",
       "**/mocha/**",
       "**/jest",
@@ -74,8 +72,6 @@
     "jsdom": "^19.0.0",
     "jsdom-global": "^3.0.2",
     "lerna": "^3.22.1",
-    "mocha": "^9.1.4",
-    "mochawesome": "^7.0.1",
     "npm-run-all": "^4.1.5",
     "rxjs": "^7.5.2",
     "serve": "^13.0.2",

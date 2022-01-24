@@ -5,7 +5,6 @@
   "projectId": "p5zxx6",
   "viewportWidth": 1000,
   "viewportHeight": 950,
-  "reporter": "mochawesome",
   "fixturesFolder": "test/cypress/fixtures",
   "integrationFolder": "test/cypress/integration",
   "pluginsFile": "test/cypress/plugins/index.js",
