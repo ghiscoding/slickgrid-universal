@@ -106,6 +106,10 @@ export class SlickRowSelectionModel {
     return this.rangesToRows(this._ranges);
   }
 
+  refreshSelections() {
+    this.setSelectedRows(this.getSelectedRows());
+  }
+
   setSelectedRows(rows: number[]) {
     this.setSelectedRanges(this.rowsToRanges(rows), 'SlickRowSelectionModel.setSelectedRows');
   }
