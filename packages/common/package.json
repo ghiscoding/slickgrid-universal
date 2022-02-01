@@ -72,7 +72,7 @@
   ],
   "dependencies": {
     "dequal": "^2.0.2",
-    "dompurify": "^2.3.4",
+    "dompurify": "^2.3.5",
     "flatpickr": "^4.6.9",
     "jquery": "~3.5.1",
     "jquery-ui-dist": "^1.12.1",
