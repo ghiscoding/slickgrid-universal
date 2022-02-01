@@ -55,7 +55,7 @@
     "copy-webpack-plugin": "^10.2.1",
     "css-loader": "^6.5.1",
     "esbuild-loader": "^2.18.0",
-    "faker": "^5.5.3",
+    "faker": "^6.6.6",
     "file-loader": "^6.2.0",
     "fork-ts-checker-webpack-plugin": "^6.5.0",
     "html-loader": "^3.1.0",
