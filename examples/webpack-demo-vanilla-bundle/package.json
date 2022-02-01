@@ -45,7 +45,7 @@
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
-    "@types/faker": "^5.5.9",
+    "@types/faker": "^6.6.9",
     "@types/fnando__sparkline": "^0.3.4",
     "@types/jquery": "^3.5.13",
     "@types/moment": "^2.13.0",
