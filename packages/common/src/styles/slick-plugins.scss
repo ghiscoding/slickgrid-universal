@@ -596,8 +596,13 @@ li.hidden {
     font-size: var(--slick-header-font-size, $slick-header-font-size);
   }
 }
-.ms-filter.search-filter {
-  width: 100% !important;
+.ms-filter {
+  &.search-filter {
+    width: 100% !important;
+  }
+  .placeholder {
+    cursor: pointer;
+  }
 }
 .ms-drop {
   max-width: var(--slick-multiselect-dropdown-max-width, $slick-multiselect-dropdown-max-width);
