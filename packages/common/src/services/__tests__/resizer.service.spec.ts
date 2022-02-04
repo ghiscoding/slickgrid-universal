@@ -646,6 +646,25 @@ describe('Resizer Service', () => {
         expect(reRenderColumnsSpy).toHaveBeenCalledWith(true);
       });
 
+      it('should not return without resizing if "resizeByContentOnlyOnFirstLoad" is set to True and we already resized once', () => {
+        const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
+        const reRenderColumnsSpy = jest.spyOn(gridStub, 'reRenderColumns');
+        const pubSubSpy = jest.spyOn(eventPubSubService, 'publish');
+
+        service.init(gridStub, divContainer);
+        service.resizeColumnsByCellContent(true);
+
+        expect(setColumnsSpy).toHaveBeenCalled();
+        expect(reRenderColumnsSpy).toHaveBeenCalledWith(true);
+        expect(pubSubSpy).toHaveBeenCalledWith('onBeforeResizeByContent', undefined, 0);
+
+        // calling a 2nd time should cancel any resize
+        // so we shouldn't expect the grid.setColumns to be called again
+        mockGridOptions.resizeByContentOnlyOnFirstLoad = true;
+        service.resizeColumnsByCellContent(false);
+        expect(setColumnsSpy).toHaveBeenCalledTimes(1);
+      });
+
       it('should call the resize and expect first column have a fixed width while other will have a calculated width when resizing by their content and grid is editable', () => {
         const setColumnsSpy = jest.spyOn(gridStub, 'setColumns');
         const reRenderColumnsSpy = jest.spyOn(gridStub, 'reRenderColumns');

@@ -398,12 +398,12 @@ export class ResizerService {
     const viewportWidth = this._gridParentContainerElm?.offsetWidth ?? 0;
 
     // if our columns total width is smaller than the grid viewport, we can call the column autosize directly without the need to recalculate all column widths
-    if (!recalculateColumnsTotalWidth && this._totalColumnsWidthByContent > 0 && this._totalColumnsWidthByContent < viewportWidth) {
+    if ((!Array.isArray(dataset) || dataset.length === 0) || (!recalculateColumnsTotalWidth && this._totalColumnsWidthByContent > 0 && this._totalColumnsWidthByContent < viewportWidth)) {
       this._grid.autosizeColumns();
       return;
     }
 
-    if ((!Array.isArray(dataset) || dataset.length === 0) || (this._hasResizedByContentAtLeastOnce && this.gridOptions?.resizeByContentOnlyOnFirstLoad && !recalculateColumnsTotalWidth)) {
+    if ((this._hasResizedByContentAtLeastOnce && this.gridOptions?.resizeByContentOnlyOnFirstLoad && !recalculateColumnsTotalWidth)) {
       return;
     }
 
