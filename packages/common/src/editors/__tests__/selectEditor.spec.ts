@@ -539,8 +539,23 @@ describe('SelectEditor', () => {
         editor.loadValue(mockItemData);
         editor.destroy();
 
+        expect(saveSpy).toHaveBeenCalledTimes(1);
         expect(saveSpy).toHaveBeenCalledWith(true);
         expect(lockSpy).toHaveBeenCalled();
+      });
+
+      it('should call "save" only once even when both "onClose" and "destroy" are called', () => {
+        mockItemData = { id: 1, gender: 'male', isActive: true };
+        gridOptionMock.autoCommitEdit = true;
+
+        editor = new SelectEditor(editorArguments, true);
+        const saveSpy = jest.spyOn(editor, 'save');
+
+        editor.loadValue(mockItemData);
+        editor.editorDomElement.multipleSelect('close');
+        editor.destroy();
+
+        expect(saveSpy).toHaveBeenCalledTimes(1);
       });
 
       it('should not call "commitCurrentEdit" when "hasAutoCommitEdit" is disabled', () => {
