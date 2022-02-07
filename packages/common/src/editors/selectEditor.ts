@@ -37,7 +37,7 @@ export class SelectEditor implements Editor {
 
   // flag to signal that the editor is destroying itself, helps prevent
   // commit changes from being called twice and erroring
-  protected _isDisposing = false;
+  protected _isDisposingOrCallingSave = false;
 
   /** Collection Service */
   protected _collectionService!: CollectionService;
@@ -129,7 +129,8 @@ export class SelectEditor implements Editor {
         if (compositeEditorOptions) {
           this.handleChangeOnCompositeEditor(compositeEditorOptions);
         } else {
-          this.save();
+          this._isDisposingOrCallingSave = true;
+          this.save(this.hasAutoCommitEdit);
         }
       },
     };
@@ -403,12 +404,12 @@ export class SelectEditor implements Editor {
   destroy() {
     // when autoCommitEdit is enabled, we might end up leaving an editor without it being saved, if so do call a save before destroying
     // this mainly happens doing a blur or focusing on another cell in the grid (it won't come here if we click outside the grid, in the body)
-    if (this.$editorElm && this.hasAutoCommitEdit && this.isValueChanged() && !this._isDisposing && !this.isCompositeEditor) {
-      this._isDisposing = true; // change destroying flag to avoid infinite loop
+    if (this.$editorElm && this.hasAutoCommitEdit && this.isValueChanged() && !this._isDisposingOrCallingSave && !this.isCompositeEditor) {
+      this._isDisposingOrCallingSave = true; // change destroying flag to avoid infinite loop
       this.save(true);
     }
 
-    this._isDisposing = true;
+    this._isDisposingOrCallingSave = true;
     if (this.$editorElm && typeof this.$editorElm.multipleSelect === 'function') {
       this.$editorElm.multipleSelect('destroy');
       this.$editorElm.remove();
@@ -548,7 +549,7 @@ export class SelectEditor implements Editor {
     const validation = this.validate();
     const isValid = validation?.valid ?? false;
 
-    if ((!this._isDisposing || forceCommitCurrentEdit) && this.hasAutoCommitEdit && isValid) {
+    if ((!this._isDisposingOrCallingSave || forceCommitCurrentEdit) && this.hasAutoCommitEdit && isValid) {
       // do not use args.commitChanges() as this sets the focus to the next row.
       // also the select list will stay shown when clicking off the grid
       this.grid.getEditorLock().commitCurrentEdit();
