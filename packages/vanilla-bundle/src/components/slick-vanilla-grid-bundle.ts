@@ -465,7 +465,6 @@ export class SlickVanillaGridBundle {
     }
     this._eventPubSubService?.dispose();
     this._slickerGridInstances = null as any;
-    delete (window as any).Slicker;
   }
 
   initialization(gridContainerElm: HTMLElement, eventHandler: SlickEventHandler) {
