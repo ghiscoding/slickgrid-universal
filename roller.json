@@ -11,7 +11,7 @@
       "conventionalCommits": true,
       "createRelease": "github",
       "message": "chore(release): publish new version %v",
-      "gitDryRun": true
+      "gitDryRun": false
     }
   }
 }
