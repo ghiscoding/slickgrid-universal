@@ -26,13 +26,13 @@
   ],
   "scripts": {
     "build": "cross-env tsc --build",
-    "postbuild": "npm-run-all bundle:commonjs",
+    "postbuild": "npm-run-all bundle:commonjs --npm-path npm",
     "build:watch": "cross-env tsc --incremental --watch",
-    "dev": "run-s build sass:build sass:copy",
-    "dev:watch": "run-p build:watch sass:watch",
-    "bundle": "npm-run-all bundle:commonjs bundle:esm",
-    "prebundle": "npm-run-all delete:dist",
-    "postbundle": "npm-run-all sass:build sass:copy",
+    "dev": "run-s build sass:build sass:copy --npm-path npm",
+    "dev:watch": "run-p build:watch sass:watch --npm-path npm",
+    "bundle": "npm-run-all bundle:commonjs bundle:esm --npm-path npm",
+    "prebundle": "npm-run-all delete:dist --npm-path npm",
+    "postbundle": "npm-run-all sass:build sass:copy --npm-path npm",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "cross-env tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
@@ -52,7 +52,7 @@
     "postsass-build-task:scss-compile:salesforce-bare": "postcss --no-map --use autoprefixer --output dist/styles/css/slickgrid-theme-salesforce.bare.css dist/styles/css/slickgrid-theme-salesforce.bare.css --style=compressed",
     "sass-build-task:scss-compile:salesforce-lite": "sass src/styles/slickgrid-theme-salesforce.lite.scss dist/styles/css/slickgrid-theme-salesforce.lite.css --style=compressed --quiet-deps --no-source-map",
     "postsass-build-task:scss-compile:salesforce-lite": "postcss --no-map --use autoprefixer --output dist/styles/css/slickgrid-theme-salesforce.lite.css dist/styles/css/slickgrid-theme-salesforce.lite.css --style=compressed",
-    "sass:build": "run-p sass-build-task:scss-compile:*",
+    "sass:build": "run-p sass-build-task:scss-compile:* --npm-path npm",
     "presass:copy": "cross-env copyfiles -f src/styles/*.png dist/styles/css",
     "sass:copy": "cross-env copyfiles -f src/styles/*.scss dist/styles/sass",
     "postsass:copy": "cross-env copyfiles -f src/styles/*.png dist/styles/sass",
@@ -62,7 +62,7 @@
     "sass:watch:material": "cross-env npm run sass-build-task:scss-compile:material -- --watch",
     "presass:watch:salesforce": "cross-env npm run sass-build-task:scss-compile:salesforce",
     "sass:watch:salesforce": "cross-env npm run sass-build-task:scss-compile:salesforce -- --watch",
-    "sass:watch": "run-p sass:watch:bootstrap sass:watch:material sass:watch:salesforce sass:copy:watch",
+    "sass:watch": "run-p sass:watch:bootstrap sass:watch:material sass:watch:salesforce sass:copy:watch --npm-path npm",
     "sass:copy:watch": "nodemon --ext scss --watch src/styles/*.scss --exec \"npm run sass:copy\""
   },
   "browserslist": [
@@ -97,7 +97,11 @@
     "sass": "^1.49.4"
   },
   "engines": {
-    "node": ">=14.17.0",
-    "npm": ">=6.14.8"
+    "node": ">=16.11.0",
+    "npm": ">=8.0.0"
+  },
+  "funding": {
+    "type": "ko_fi",
+    "url": "https://ko-fi.com/N4N679OT"
   }
 }

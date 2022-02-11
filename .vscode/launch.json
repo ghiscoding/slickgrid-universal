@@ -37,6 +37,23 @@
       "windows": {
         "program": "${workspaceFolder}/node_modules/jest/bin/jest"
       }
+    },
+    {
+      "name": "Launch Ws-Runner",
+      "program": "${workspaceFolder}/node_modules/@ws-conventional-version-roller/run/dist/index-run.js",
+      "args": [
+        "${relativeFile}",
+        "--script bundle --stream"
+      ],
+      "console": "integratedTerminal",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "pwa-node",
+      "protocol": "inspector",
+      "stopOnEntry": true,
+      "internalConsoleOptions": "openOnSessionStart"
     }
   ]
 }

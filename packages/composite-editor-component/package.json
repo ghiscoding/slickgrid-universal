@@ -15,14 +15,14 @@
   ],
   "scripts": {
     "build": "cross-env tsc --build",
-    "postbuild": "npm-run-all bundle:commonjs",
+    "postbuild": "npm-run-all bundle:commonjs --npm-path npm",
     "build:watch": "cross-env tsc --incremental --watch",
-    "dev": "run-s build",
-    "dev:watch": "run-p build:watch",
-    "bundle": "run-p bundle:commonjs bundle:esm",
+    "dev": "npm run build",
+    "dev:watch": "run-p build:watch --npm-path npm",
+    "bundle": "run-p bundle:commonjs bundle:esm --npm-path npm",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "cross-env tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
-    "prebundle": "npm-run-all delete:dist",
+    "prebundle": "npm-run-all delete:dist --npm-path npm",
     "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
     "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=composite-editor-component",
     "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=composite-editor-component"
@@ -39,8 +39,8 @@
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "engines": {
-    "node": ">=14.17.0",
-    "npm": ">=6.14.8"
+    "node": ">=16.11.0",
+    "npm": ">=8.0.0"
   },
   "browserslist": [
     "last 2 version",
