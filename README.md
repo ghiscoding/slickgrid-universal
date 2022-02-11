@@ -21,6 +21,11 @@ The GitHub [demo page](https://ghiscoding.github.io/slickgrid-universal) uses 2 
 - [Aurelia-Slickgrid](https://ghiscoding.github.io/aurelia-slickgrid/) - External Library
 - [Webpack-Demo-Vanilla-Bundle](https://ghiscoding.github.io/slickgrid-universal) - internal with Material Design theme & Salesforce themes
 
+### Like my work? 
+You can support me with cafeine :coffee: and also :star: the lib. Thanks.
+
+[![ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/N4N679OT)
+
 ### Why create this monorepo?
 You might be wondering why was this monorepo created? Here are a few of the reasons:
 1. it removes a lot of duplicate code that exist in both
@@ -70,9 +75,9 @@ Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +15,00
 | [@slickgrid-universal/vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle) | [![npm](https://img.shields.io/npm/v/@slickgrid-universal/vanilla-force-bundle.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-force-bundle) | Vanilla TypeScript/ES6 for Salesforce implementation | [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/vanilla-force-bundle/CHANGELOG.md) 
 
 ## Installation
-**NOTE:** the installation instructions below are **only** required if you want to contribute to this project, if on the other hand you just want to use Slickgrid-Universal then take a look at [webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle)
+**NOTE:** the installation instructions below are **only** required if you want to contribute to this project, if on the other hand you just want to do a quick demo and use Slickgrid-Universal then take a look at [webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle). There is no need to clone and install the entire library, just create an empty project with the content of [webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle) (perhaps clone it and copy only that folder to an empty project would be the easiest).
 
-To get going and do development with this monorepo, you will need to clone the repo and then follow the steps below.
+To get going and do development with this monorepo, you will need to clone the repo and then follow the steps below. You must be at the root of your project to run the following commands.
 
 1. Install npm packages with [Yarn classic 1.x](https://classic.yarnpkg.com/lang/en/) since this lib uses Yarn version 1.x Workspaces and so you need to use Yarn to install all packages
 ```bash
@@ -100,7 +105,7 @@ yarn run dev:watch
 ```
 
 ### Tests
-You must go through Installation Steps 1-3 prior to run the unit tests OR Steps 1-4 when running E2E tests.
+You must go through Installation Steps 1-2 prior to run the unit tests OR Steps 1-3 when running E2E tests.
 
 #### Jest Unit Tests
 To run all unit tests (with Jest), you can run these commands
