@@ -26,7 +26,7 @@
     "cypress:ci": "cypress run --config-file test/cypress.json",
     "dev:watch": "cross-env TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling ws-runner run dev:watch --parallel",
     "clean:tsconfig-build-cache": "rimraf --maxBusyTries=10 packages/*/dist/tsconfig.tsbuildinfo",
-    "new-version": "ws-roller version --conventional-commits",
+    "roll-version": "ws-roller version --conventional-commits",
     "prepublishOnly": "ws-runner run package:remove-browser-prop",
     "publish": "ws-roller publish --bump from-package",
     "postpublish": "ws-runner run package:add-browser-prop",
@@ -37,7 +37,7 @@
     "test:watch": "cross-env TZ='America/New_York' jest --watch --config ./test/jest.config.js"
   },
   "comments": {
-    "create-new-version": "To create a new version with ws-roller, run the following scripts (1) 'bundle', (2) 'new-version' and (3) 'publish' to finally push to NPM."
+    "roll-new-version": "To create a new version with ws-roller, run the following scripts (1) 'bundle', (2) 'roll-version' and (3) 'publish' to finally push to NPM."
   },
   "workspaces": {
     "packages": [
@@ -58,8 +58,8 @@
     "@types/node": "^17.0.14",
     "@typescript-eslint/eslint-plugin": "^5.10.2",
     "@typescript-eslint/parser": "^5.10.2",
-    "@ws-conventional-version-roller/cli": "^0.2.1",
-    "@ws-conventional-version-roller/run": "^0.2.1",
+    "@ws-conventional-version-roller/cli": "^0.2.2",
+    "@ws-conventional-version-roller/run": "^0.2.2",
     "cypress": "^9.4.1",
     "eslint": "^8.8.0",
     "eslint-plugin-import": "^2.25.4",
