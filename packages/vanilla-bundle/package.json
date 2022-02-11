@@ -15,13 +15,13 @@
   ],
   "scripts": {
     "test": "echo testing slickgrid-universal slickgrid-vanilla-bundle code",
-    "dev": "run-s build",
-    "dev:watch": "run-p build:watch",
+    "dev": "npm run build",
+    "dev:watch": "run-p build:watch --npm-path npm",
     "build": "cross-env tsc --build",
     "postbuild": "npm run bundle:commonjs",
     "build:watch": "cross-env tsc --incremental --watch",
     "prebundle": "npm run delete:dist",
-    "bundle": "npm-run-all bundle:commonjs bundle:esm",
+    "bundle": "npm-run-all bundle:commonjs bundle:esm --npm-path npm",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "cross-env tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
@@ -40,8 +40,8 @@
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "engines": {
-    "node": ">=14.17.0",
-    "npm": ">=6.14.8"
+    "node": ">=16.11.0",
+    "npm": ">=8.0.0"
   },
   "browserslist": [
     "last 2 version",

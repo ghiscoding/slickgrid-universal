@@ -12,35 +12,32 @@
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "scripts": {
-    "bootstrap": "lerna bootstrap --use-workspaces",
     "prebundle": "npm run lint",
-    "bundle": "lerna run bundle --stream",
+    "bundle": "ws-runner run bundle --stream",
     "prebundle:zip": "npm run bundle",
-    "bundle:zip": "lerna run bundle:zip --stream",
+    "bundle:zip": "ws-runner run bundle:zip --stream",
     "prebundle:with-tests": "npm run bundle",
     "bundle:with-tests": "npm run test",
-    "build": "lerna run build --stream",
-    "build:demo": "lerna run build:demo --stream",
-    "rebuild": "run-s clean lint build",
+    "build": "ws-runner run build --stream",
+    "build:demo": "ws-runner run build:demo --stream",
+    "rebuild": "run-s clean lint build --npm-path npm",
     "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",
     "cypress": "cypress open --config-file test/cypress.json",
     "cypress:ci": "cypress run --config-file test/cypress.json",
-    "dev:watch": "cross-env TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling lerna run dev:watch --parallel",
-    "diff": "lerna diff",
-    "updated": "lerna updated",
+    "dev:watch": "cross-env TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling ws-runner run dev:watch --parallel",
     "clean:tsconfig-build-cache": "rimraf --maxBusyTries=10 packages/*/dist/tsconfig.tsbuildinfo",
-    "new-version": "lerna version --conventional-commits",
-    "prepublishOnly": "lerna run package:remove-browser-prop",
-    "publish": "lerna publish from-package --registry=https://registry.npmjs.org/",
-    "postpublish": "lerna run package:add-browser-prop",
+    "roll-version": "ws-roller version --conventional-commits",
+    "roll-publish": "ws-roller publish --bump from-package --registry=https://registry.npmjs.org/",
+    "prepublishOnly": "ws-runner run package:remove-browser-prop",
+    "postroll-publish": "ws-runner run package:add-browser-prop",
     "serve:demo": "serve ./docs -l 8888",
     "lint": "eslint packages/** --ext .ts",
-    "test": "npx jest --runInBand --coverage=true --config ./test/jest.config.js",
-    "test:ci": "npx jest --runInBand --coverage=true --ci --config ./test/jest.config.js",
+    "test": "jest --runInBand --coverage=true --config ./test/jest.config.js",
+    "test:ci": "jest --runInBand --coverage=true --ci --config ./test/jest.config.js",
     "test:watch": "cross-env TZ='America/New_York' jest --watch --config ./test/jest.config.js"
   },
   "comments": {
-    "create-new-version": "To create a new version with Lerna, run the following scripts (1) 'bundle', (2) 'new-version' and (3) 'publish' to finally push to NPM."
+    "roll-new-version": "To create a new version with ws-roller, run the following scripts (1) 'bundle', (2) 'roll-version' and (3) 'roll-publish' to send it over to NPM."
   },
   "workspaces": {
     "packages": [
@@ -58,20 +55,21 @@
   },
   "devDependencies": {
     "@types/jest": "^27.4.0",
-    "@types/node": "^17.0.14",
-    "@typescript-eslint/eslint-plugin": "^5.10.2",
-    "@typescript-eslint/parser": "^5.10.2",
+    "@types/node": "^17.0.17",
+    "@typescript-eslint/eslint-plugin": "^5.11.0",
+    "@typescript-eslint/parser": "^5.11.0",
+    "@ws-conventional-version-roller/cli": "^0.2.3",
+    "@ws-conventional-version-roller/run": "^0.2.3",
     "cypress": "^9.4.1",
     "eslint": "^8.8.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-prefer-arrow": "^1.2.3",
-    "jest": "^27.4.7",
-    "jest-cli": "^27.4.7",
-    "jest-environment-jsdom": "^27.4.6",
+    "jest": "^27.5.1",
+    "jest-cli": "^27.5.1",
+    "jest-environment-jsdom": "^27.5.1",
     "jest-extended": "^2.0.0",
     "jsdom": "^19.0.0",
     "jsdom-global": "^3.0.2",
-    "lerna": "^3.22.1",
     "npm-run-all": "^4.1.5",
     "rxjs": "^7.5.2",
     "serve": "^13.0.2",
@@ -79,7 +77,7 @@
     "typescript": "^4.5.5"
   },
   "engines": {
-    "node": ">=14.17.0",
-    "npm": ">=6.14.8"
+    "node": ">=16.11.0",
+    "npm": ">=8.0.0"
   }
 }

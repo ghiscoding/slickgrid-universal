@@ -30,8 +30,9 @@
 /connect.lock
 /coverage
 /libpeerconnection.log
-lerna-debug.log
 npm-debug.log
+lerna-debug.log
+roller-debug.log
 testem.log
 /typings
 yarn-error.log
@@ -56,3 +57,6 @@ docs
 **/testresult.xml
 **/test-results.xml
 test/cypress/screenshots/*.png
+
+# Environment variables
+.env

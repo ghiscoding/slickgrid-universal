@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
-[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
+[![ws--conventional--version--roller](https://img.shields.io/badge/rolled%20with-ws--conventional--version--roller-blueviolet)](https://github.com/ghiscoding/ws-conventional-version-roller)
 [![NPM downloads](https://img.shields.io/npm/dy/@slickgrid-universal/common.svg)](https://www.npmjs.com/package/@slickgrid-universal/common)
 
 [![Actions Status](https://github.com/ghiscoding/slickgrid-universal/workflows/CI%20Build/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions)
@@ -10,7 +10,7 @@
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
-This is a monorepo project (using Lerna) which is regrouping a few packages under a single repository. It is using SlickGrid (more specifically the [6pac/SlickGrid](https://github.com/6pac/SlickGrid/) fork) behind the scene (there is no need to rewrite the core library itself, in other words this is a wrapper library). The main goal of this library is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It's also a good opportunity to decouple some features/services that not every project require at all time, this will also help in getting smaller bundle size depending on which features (packages) you use. For example, not every project requires backend services (OData, GraphQL) and export services (Excel Export, Text Export), which is why they are better handled with a monorepo structure.
+This is a monorepo project (using yarn workspaces) which is regrouping a few packages under a single repository. It is using SlickGrid (more specifically the [6pac/SlickGrid](https://github.com/6pac/SlickGrid/) fork) behind the scene (there is no need to rewrite the core library itself, in other words this is a wrapper library). The main goal of this library is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It's also a good opportunity to decouple some features/services that not every project require at all time, this will also help in getting smaller bundle size depending on which features (packages) you use. For example, not every project requires backend services (OData, GraphQL) and export services (Excel Export, Text Export), which is why they are better handled with a monorepo structure.
 
 ## Latest News & Releases
 Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all latest News & Version Releases.
@@ -76,26 +76,20 @@ To get going and do development with this monorepo, you will need to clone the r
 
 1. Install npm packages with [Yarn classic 1.x](https://classic.yarnpkg.com/lang/en/) since this lib uses Yarn version 1.x Workspaces and so you need to use Yarn to install all packages
 ```bash
+# from the root
 yarn install
 ```
 
-2. Lerna Bootstrap
+2. Build (bundle)
 
-Run it **only once**, this will install all dependencies and add necessary monorepo symlinks
-```bash
-yarn run bootstrap
-```
-
-3. Build (bundle)
-
-To get started you must run at least once the initial TS build so that all necessary `dist` are created and bundled for all the Lerna packages to work together.
+To get started you must run at least once the initial TS build so that all necessary `dist` are created and bundled for all the workspace packages to work together.
 
 ```bash
 yarn run bundle
 ```
 NOTE: this will also have to be re-executed if you change any of the interfaces in the `common` package (since that package is a dependency of all other packages).
 
-4. Run Dev (Vanilla Implementation)
+3. Run Dev (Vanilla Implementation)
 
 There is a Vanilla flavour implementation of this monorepo, vanilla means that it is not associated to any framework
 and is written in plain TypeScript without being bound to any framework. The implementation is very similar to Angular and Aurelia.
