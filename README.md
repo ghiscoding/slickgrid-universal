@@ -22,9 +22,9 @@ The GitHub [demo page](https://ghiscoding.github.io/slickgrid-universal) uses 2 
 - [Webpack-Demo-Vanilla-Bundle](https://ghiscoding.github.io/slickgrid-universal) - internal with Material Design theme & Salesforce themes
 
 ### Like my work? 
-You can support me with cafeine :coffee: and also :star: the lib. Thanks.
+You could :star: the lib and maybe support me with cafeine :coffee:. Thanks.
 
-[![ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/N4N679OT)
+[![ko-fi](https://img.shields.io/badge/Buy%20me%20a%20Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white&text=Buy)](https://ko-fi.com/N4N679OT)
 
 ### Why create this monorepo?
 You might be wondering why was this monorepo created? Here are a few of the reasons:
