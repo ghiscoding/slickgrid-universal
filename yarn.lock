@@ -1730,23 +1730,23 @@
   resolved "https://registry.yarnpkg.com/@webpack-cli/serve/-/serve-1.6.1.tgz#0de2875ac31b46b6c5bb1ae0a7d7f0ba5678dffe"
   integrity sha512-gNGTiTrjEVQ0OcVnzsRSqTxaBSr+dmTfm+qJsCDluky8uhdLWep7Gcr62QsAKHTMxjCS/8nEITsmFAhfIx+QSw==
 
-"@ws-conventional-version-roller/cli@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@ws-conventional-version-roller/cli/-/cli-0.2.0.tgz#6ea14f5fd88f110b32d9cf8c6899f43af4b01044"
-  integrity sha512-3VzSdyOg+AVJWDIS888TySqdwuurcYVtHsLim+CRR32Xnn9JYJuQ8kND55QkgOcqsZII9A8tYOdsflfFpqK+yg==
+"@ws-conventional-version-roller/cli@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@ws-conventional-version-roller/cli/-/cli-0.2.1.tgz#b51610714e78582fe09a3c14c9d2bd4ff1949bee"
+  integrity sha512-h/fg0zn2OmMQnOiyToRbPdM0yQbn1QAiOT/A5FzJlyMEjd9xYERkxgFuQA4NEoqCiaDcGp2Fj+JYN1f9Ao0R0A==
   dependencies:
-    "@ws-conventional-version-roller/core" "^0.2.0"
-    "@ws-conventional-version-roller/publish" "^0.2.0"
-    "@ws-conventional-version-roller/version" "^0.2.0"
+    "@ws-conventional-version-roller/core" "^0.2.1"
+    "@ws-conventional-version-roller/publish" "^0.2.1"
+    "@ws-conventional-version-roller/version" "^0.2.1"
     dedent "^0.7.0"
     dotenv "^14.2.0"
     npmlog "^6.0.0"
     yargs "^17.3.1"
 
-"@ws-conventional-version-roller/core@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@ws-conventional-version-roller/core/-/core-0.2.0.tgz#71cd0585874e4eba8ff0cd0f0128cc5d87e35f55"
-  integrity sha512-MhU7tVh++BX0tFWEDl4nfadVzGrMWuaB5C924n9rekyK6UvfGauwGis6MRwlJe9tfhwgwHmSHoL5f6q87IpcTQ==
+"@ws-conventional-version-roller/core@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@ws-conventional-version-roller/core/-/core-0.2.1.tgz#f433336c8c19d3cf7181c693bd23869733b99e7a"
+  integrity sha512-4sH1Ue3+bS9WLno0yAPHijeX9iCJnSwrAC+yUR4Nk/dR52zXnrjLT/kwRxjsOY8qgr+vhs1tnWq/0Ig/S6ggNA==
   dependencies:
     "@octokit/rest" "^18.12.0"
     async "^3.2.3"
@@ -1797,13 +1797,13 @@
     write-pkg "^4.0.0"
     yargs "^17.3.1"
 
-"@ws-conventional-version-roller/publish@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@ws-conventional-version-roller/publish/-/publish-0.2.0.tgz#fca80ebf8ce0629075a2518f9fffc624acd51eec"
-  integrity sha512-LlKcycf+94R/5+YeAQy9prSyE7iIYrkIB7+/xvhNBTIn4zh65mcvjiTeNnNrnvf+NGUsRkdBc6PTsZwHqdRTRg==
+"@ws-conventional-version-roller/publish@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@ws-conventional-version-roller/publish/-/publish-0.2.1.tgz#7bcb14d7a6d57da430cd61a7797e65a347b49e19"
+  integrity sha512-rqpSLtVRLPw+a0Fczh9TR8SXRQlYXW9NGsyGgLIZtpPqN97DwKCShCiz6ZrBwMXOg5V1Jz5bKO88hp0RWJftqA==
   dependencies:
-    "@ws-conventional-version-roller/core" "^0.2.0"
-    "@ws-conventional-version-roller/version" "^0.2.0"
+    "@ws-conventional-version-roller/core" "^0.2.1"
+    "@ws-conventional-version-roller/version" "^0.2.1"
     byte-size "^8.1.0"
     columnify "^1.5.4"
     fs-extra "^10.0.0"
@@ -1835,12 +1835,12 @@
     write-pkg "^4.0.0"
     yargs "^17.3.1"
 
-"@ws-conventional-version-roller/run@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@ws-conventional-version-roller/run/-/run-0.2.0.tgz#6151c6d33e7cf18f40ff18e2ecea368a7f66c2cc"
-  integrity sha512-hvN3zgdTB0CFH5vlNhc0PgMkgEFWn+o53WHwByGRqNR1RoecgNrk40Fu8LApjh+oiiG/lC7wS16W5YJOP7/VRg==
+"@ws-conventional-version-roller/run@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@ws-conventional-version-roller/run/-/run-0.2.1.tgz#08be84325513624dca1ac20b8845d545b8824b6b"
+  integrity sha512-PK3B6+1Et13P8vrpviYnCAR+uWgoHjfGuK6VqfRITK+P61APWVytNh8FYf7ZmyoMSUpVsh5p9XQOxiKX2wtACg==
   dependencies:
-    "@ws-conventional-version-roller/core" "^0.2.0"
+    "@ws-conventional-version-roller/core" "^0.2.1"
     dedent "^0.7.0"
     fs-extra "^10.0.0"
     multimatch "^5.0.0"
@@ -1849,12 +1849,12 @@
     upath "^2.0.1"
     yargs "^17.3.1"
 
-"@ws-conventional-version-roller/version@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@ws-conventional-version-roller/version/-/version-0.2.0.tgz#4de380a6f90b49a6fe213559662c3f29f4fbb580"
-  integrity sha512-yiBx2MqVYJSdO0Zn7qukzNEzwbBZN6IcFtEi/UMoy8wrh6/POAdPh1r1tL1xKolFKuSUrzJM/vRG6k8F2QBggw==
+"@ws-conventional-version-roller/version@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@ws-conventional-version-roller/version/-/version-0.2.1.tgz#146da78f26fbcc6c368aa53cc2656f356b244600"
+  integrity sha512-tvHDufhMw3SIFCgbdF/eHCw6d+7wvWIQBTNrISYtvgBydGB3k8pIkWliD+ofYLPKLWCh9UjXcp60R7ZEhANojw==
   dependencies:
-    "@ws-conventional-version-roller/core" "^0.2.0"
+    "@ws-conventional-version-roller/core" "^0.2.1"
     chalk "^4.1.2"
     dedent "^0.7.0"
     load-json-file "^6.2.0"
