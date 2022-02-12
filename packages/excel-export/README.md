@@ -1,6 +1,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
-[![ws--conventional--version--roller](https://img.shields.io/badge/rolled%20with-ws--conventional--version--roller-blueviolet)](https://github.com/ghiscoding/ws-conventional-version-roller)
+[![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-blueviolet)](https://github.com/ghiscoding/lerna-lite)
 [![npm](https://img.shields.io/npm/v/@slickgrid-universal/excel-export.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/excel-export)
 [![npm](https://img.shields.io/npm/dy/@slickgrid-universal/excel-export?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/excel-export)
 
