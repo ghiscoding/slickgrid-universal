@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.3](https://github.com/ghiscoding/slickgrid-universal/compare/v1.2.1...v1.2.3) (2022-02-14)
+
+### Bug Fixes
+
+* **core:** deleting Slicker object caused issue with cache ([3f3e261](https://github.com/ghiscoding/slickgrid-universal/commit/3f3e261c1855e7eb695e00a105b7c797462ed298)), closes [#606](https://github.com/ghiscoding/slickgrid-universal/issues/606)
+* **editors:** select editor should call save only once ([d111c2f](https://github.com/ghiscoding/slickgrid-universal/commit/d111c2f7799151236c6053d7a5288d1fdd530550))
+* **resizer:** use default resize when resizeByContent has no data ([8499b61](https://github.com/ghiscoding/slickgrid-universal/commit/8499b61b5cc6365af0035d254a9487c79b74bd7f))
+* **selections:** selected rows doesn't update when hidden column shown ([0d1cf29](https://github.com/ghiscoding/slickgrid-universal/commit/0d1cf294e8ae944672a9c9a2cece1de553c2f973)), closes [#661](https://github.com/ghiscoding/slickgrid-universal/issues/661)
+* **styling:** add pointer cursor on ms-filter, avoid Bootstrap override ([11e1e12](https://github.com/ghiscoding/slickgrid-universal/commit/11e1e12115896e73096e10b34575e4e8ebe5b819))
+
+
 ## [1.2.1](https://github.com/ghiscoding/slickgrid-universal/compare/v1.2.0...v1.2.1) (2022-01-18)
 
 
