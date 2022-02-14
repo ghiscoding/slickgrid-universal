@@ -24,7 +24,7 @@ The GitHub [demo page](https://ghiscoding.github.io/slickgrid-universal) uses 2 
 ### Like my work? 
 You could :star: the lib and maybe support me with cafeine :coffee:. Thanks.
 
-<a href='https://ko-fi.com/N4N679OT' target='_blank'><img height='30' style='border:0px;height:30px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' />
+<a href='https://ko-fi.com/N4N679OT' target='_blank'><img height='32' style='border:0px;height:32px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' />
 
 ### Why create this monorepo?
 You might be wondering why was this monorepo created? Here are a few of the reasons:
