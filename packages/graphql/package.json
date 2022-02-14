@@ -52,5 +52,9 @@
   },
   "devDependencies": {
     "moment-mini": "^2.24.0"
+  },
+  "funding": {
+    "type": "ko_fi",
+    "url": "https://ko-fi.com/N4N679OT"
   }
 }

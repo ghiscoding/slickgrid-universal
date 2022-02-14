@@ -49,5 +49,9 @@
   ],
   "dependencies": {
     "@slickgrid-universal/common": "^1.2.1"
+  },
+  "funding": {
+    "type": "ko_fi",
+    "url": "https://ko-fi.com/N4N679OT"
   }
 }
