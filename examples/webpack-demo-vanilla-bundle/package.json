@@ -41,7 +41,7 @@
     "@slickgrid-universal/vanilla-bundle": "^1.2.3",
     "bulma": "^0.9.3",
     "moment-mini": "^2.24.0",
-    "rxjs": "^7.5.2",
+    "rxjs": "^7.5.4",
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
@@ -49,25 +49,25 @@
     "@types/fnando__sparkline": "^0.3.4",
     "@types/jquery": "^3.5.13",
     "@types/moment": "^2.13.0",
-    "@types/node": "^17.0.14",
+    "@types/node": "^17.0.18",
     "@types/webpack": "^5.28.0",
     "clean-webpack-plugin": "4.0.0",
     "copy-webpack-plugin": "^10.2.4",
-    "css-loader": "^6.5.1",
+    "css-loader": "^6.6.0",
     "esbuild-loader": "^2.18.0",
     "faker": "^5.5.3",
     "file-loader": "^6.2.0",
-    "fork-ts-checker-webpack-plugin": "^7.0.0",
+    "fork-ts-checker-webpack-plugin": "^7.2.1",
     "html-loader": "^3.1.0",
     "html-webpack-plugin": "5.5.0",
     "mini-css-extract-plugin": "^2.5.3",
-    "sass": "^1.49.4",
-    "sass-loader": "^12.4.0",
+    "sass": "^1.49.7",
+    "sass-loader": "^12.5.0",
     "style-loader": "^3.3.1",
-    "ts-node": "^10.4.0",
+    "ts-node": "^10.5.0",
     "url-loader": "^4.1.1",
     "webpack": "^5.68.0",
     "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.7.3"
+    "webpack-dev-server": "^4.7.4"
   }
 }
