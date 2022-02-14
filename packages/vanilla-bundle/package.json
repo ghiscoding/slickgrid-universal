@@ -60,5 +60,9 @@
     "cross-env": "^7.0.3",
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.2"
+  },
+  "funding": {
+    "type": "ko_fi",
+    "url": "https://ko-fi.com/N4N679OT"
   }
 }
