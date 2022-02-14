@@ -24,8 +24,8 @@
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "engines": {
-    "node": ">=16.11.0",
-    "npm": ">=8.0.0"
+    "node": ">=14.17.0",
+    "npm": ">=6.14.8"
   },
   "main": "src/slickgrid-universal/index",
   "browserslist": [
