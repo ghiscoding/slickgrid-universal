@@ -72,7 +72,7 @@
   ],
   "dependencies": {
     "dequal": "^2.0.2",
-    "dompurify": "^2.3.5",
+    "dompurify": "^2.3.6",
     "flatpickr": "^4.6.9",
     "jquery": "^3.5.1",
     "jquery-ui-dist": "^1.12.1",
@@ -94,7 +94,7 @@
     "postcss": "^8.4.6",
     "postcss-cli": "^9.1.0",
     "rimraf": "^3.0.2",
-    "sass": "^1.49.7"
+    "sass": "^1.49.8"
   },
   "engines": {
     "node": ">=14.17.0",
