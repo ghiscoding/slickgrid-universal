@@ -905,23 +905,23 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
-"@lerna-lite/cli@^0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/cli/-/cli-0.3.3.tgz#5f63ec3017f2baba854333e4d989bce4be374e51"
-  integrity sha512-Ax2THDlW4t1RtasaAjrB0Zp6r0BSPPGyMgZQOgbprPrA8aQlKbh/Ib97OSMtZObE1jj69NefO2H4BbdUk+iI3A==
+"@lerna-lite/cli@^0.3.6":
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/@lerna-lite/cli/-/cli-0.3.6.tgz#ed66060213c0e6caefbc78badd46bfd3b821cdda"
+  integrity sha512-gx7ILnoa/daVa8f1S2BBj8g2f3J8A7GMLIr8rCbeEio6IfMAdWdpEOfDC1zmUmi2MpN8OJyUFDUhERIoeNkVhw==
   dependencies:
-    "@lerna-lite/core" "^0.3.3"
-    "@lerna-lite/publish" "^0.3.3"
-    "@lerna-lite/version" "^0.3.3"
+    "@lerna-lite/core" "^0.3.6"
+    "@lerna-lite/publish" "^0.3.6"
+    "@lerna-lite/version" "^0.3.6"
     dedent "^0.7.0"
     dotenv "^14.3.2"
     npmlog "^6.0.1"
     yargs "^17.3.1"
 
-"@lerna-lite/core@^0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/core/-/core-0.3.3.tgz#50507a6cb11441d25d2905c79f8c3266c6058d9f"
-  integrity sha512-XlRKBMXEOmBNzCcNzY3Y6eggfz+5izENOB0oxT0YpZ2n4JohvFzn0aw07tt8A0Nt3UnFlA553k/2u9T2yPbVvQ==
+"@lerna-lite/core@^0.3.6":
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/@lerna-lite/core/-/core-0.3.6.tgz#f1bcf6d9aa206316d16ed2859a0fac65675d6c18"
+  integrity sha512-HNPg8j2k3+a/DVXxxK/Z+ieWl2Ox4YHfHhxPFXQaSbUnSP831WHDLclJ4YRNGyD9XCk31qGgTGhs6U58mrrbww==
   dependencies:
     "@octokit/plugin-enterprise-rest" "^6.0.1"
     "@octokit/rest" "^18.12.0"
@@ -935,7 +935,7 @@
     cosmiconfig "^7.0.1"
     dedent "^0.7.0"
     execa "^5.1.1"
-    fs-extra "^10.0.0"
+    fs-extra "^10.0.1"
     get-stream "^6.0.1"
     git-url-parse "^11.6.0"
     glob-parent "^6.0.2"
@@ -945,8 +945,8 @@
     libnpmaccess "^5.0.1"
     libnpmpublish "^5.0.1"
     load-json-file "^6.2.0"
-    minimatch "^3.0.4"
-    node-fetch "^2.6.6"
+    minimatch "^3.1.2"
+    node-fetch "^2.6.7"
     npm-lifecycle "^3.1.5"
     npm-package-arg "^8.1.5"
     npm-packlist "^3.0.0"
@@ -966,20 +966,20 @@
     strong-log-transformer "^2.1.0"
     tar "^6.1.11"
     temp-write "^4.0.0"
-    ts-node "^10.5.0"
+    ts-node "^10.6.0"
     whatwg-url "^11.0.0"
     write-file-atomic "^4.0.1"
     write-json-file "^4.3.0"
     write-pkg "^4.0.0"
     yargs "^17.3.1"
 
-"@lerna-lite/publish@^0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/publish/-/publish-0.3.3.tgz#330a3ae821831c06301cd0aff346c4bd3432315d"
-  integrity sha512-48VSum8BdZaJ6lxYP2ghUIHI50hS+ldjiD9Zz8AIbhrG8/XZnOhXhcOEbLnKu5GFz638sX0bJYa6oe8b0d4Eyw==
+"@lerna-lite/publish@^0.3.6":
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/@lerna-lite/publish/-/publish-0.3.6.tgz#0b5607dc601193cf7258e13d6b3599e4a12918bf"
+  integrity sha512-NpICDWT/B9PfcyPb0jZKH/RToQmWRmZFnCagl/zPMoCIv8n9i58pducmrsUgvjY8wUj9EvwdYIsA/vk8OW4FpA==
   dependencies:
-    "@lerna-lite/core" "^0.3.3"
-    "@lerna-lite/version" "^0.3.3"
+    "@lerna-lite/core" "^0.3.6"
+    "@lerna-lite/version" "^0.3.6"
     byte-size "^7.0.1"
     columnify "^1.6.0"
     fs-extra "^10.0.1"
@@ -1011,12 +1011,12 @@
     write-pkg "^4.0.0"
     yargs "^17.3.1"
 
-"@lerna-lite/run@^0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/run/-/run-0.3.3.tgz#8b1f6c56dfff54e3c696f0a2bab238b6f268334d"
-  integrity sha512-b/6DXKgSu/iQuev+C6qCNM3WvJK02k2u0VjEKw0WJs5ODaq0Y4WoLo4sFkOs/OUjFUzzu+eej93qT4uBSIswrg==
+"@lerna-lite/run@^0.3.6":
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/@lerna-lite/run/-/run-0.3.6.tgz#52c514a5458cdd5c741ac93349338066dbaf58c8"
+  integrity sha512-H7aJ64pwzper1rOVf7Q3I6XLlzPl6UuwbinCyJtOj1NO/b/dyfyTNQaHavTHUBKe85AJUc2nLaEllFm+u944Rw==
   dependencies:
-    "@lerna-lite/core" "^0.3.3"
+    "@lerna-lite/core" "^0.3.6"
     dedent "^0.7.0"
     fs-extra "^10.0.1"
     multimatch "^5.0.0"
@@ -1025,12 +1025,12 @@
     upath "^2.0.1"
     yargs "^17.3.1"
 
-"@lerna-lite/version@^0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/version/-/version-0.3.3.tgz#d8c6202f919c3396d297634420902c3ee5429942"
-  integrity sha512-mboOkdOVYrbG4nTKv1M0GyrArg7C+Dt1pm4Qrvxgg8HcZCSxCz3YNPMmL+5NI/ZQwCDrRBA+TQPlXdIPzTDm3w==
+"@lerna-lite/version@^0.3.6":
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/@lerna-lite/version/-/version-0.3.6.tgz#560011566a43fef4f87b36d1b78305b06740a09c"
+  integrity sha512-m+zPSAqhcPj4CERsUkhaUiHxWgIou/xAunFyQvnk2Sax1mSX+mKGty/lMQrQEQ6Gy30CdeeZ+zlkSQgI1QmZlA==
   dependencies:
-    "@lerna-lite/core" "^0.3.3"
+    "@lerna-lite/core" "^0.3.6"
     chalk "^4.1.2"
     dedent "^0.7.0"
     load-json-file "^6.2.0"
@@ -3325,13 +3325,13 @@ crypto-random-string@^2.0.0:
   resolved "https://registry.yarnpkg.com/crypto-random-string/-/crypto-random-string-2.0.0.tgz#ef2a7a966ec11083388369baa02ebead229b30d5"
   integrity sha512-v1plID3y9r/lPhviJ1wrXpLeyUIGAZ2SHNYTEapm7/8A9nLPoyvVp3RK/EPFqn5kEznyWgYZNsRtYYIWbuG8KA==
 
-css-loader@^6.6.0:
-  version "6.6.0"
-  resolved "https://registry.yarnpkg.com/css-loader/-/css-loader-6.6.0.tgz#c792ad5510bd1712618b49381bd0310574fafbd3"
-  integrity sha512-FK7H2lisOixPT406s5gZM1S3l8GrfhEBT3ZiL2UX1Ng1XWs0y2GPllz/OTyvbaHe12VgQrIXIzuEGVlbUhodqg==
+css-loader@^6.7.0:
+  version "6.7.0"
+  resolved "https://registry.yarnpkg.com/css-loader/-/css-loader-6.7.0.tgz#c1200da1dfffe6643b18bda20fdd84cad3e36d39"
+  integrity sha512-S7HCfCiDHLA+VXKqdZwyRZgoO0R9BnKDnVIoHMq5grl3N86zAu7MB+FBWHr5xOJC8SmvpTLha/2NpfFkFEN/ig==
   dependencies:
     icss-utils "^5.1.0"
-    postcss "^8.4.5"
+    postcss "^8.4.7"
     postcss-modules-extract-imports "^3.0.0"
     postcss-modules-local-by-default "^4.0.0"
     postcss-modules-scope "^3.0.0"
@@ -3908,6 +3908,14 @@ enhanced-resolve@^5.8.3:
   version "5.8.3"
   resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-5.8.3.tgz#6d552d465cce0423f5b3d718511ea53826a7b2f0"
   integrity sha512-EGAbGvH7j7Xt2nc0E7D99La1OiEs8LnyimkRgwExpUMScN6O+3x9tIWs7PLQZVNx4YD+00skHXPXi1yQHpAmZA==
+  dependencies:
+    graceful-fs "^4.2.4"
+    tapable "^2.2.0"
+
+enhanced-resolve@^5.9.2:
+  version "5.9.2"
+  resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-5.9.2.tgz#0224dcd6a43389ebfb2d55efee517e5466772dd9"
+  integrity sha512-GIm3fQfwLJ8YZx2smuHpBKkXC1yOk+OBEmKckVyL0i/ea8mqDEykK3ld5dgH1QYPNyT/lIllxV2LULnxCHaHkA==
   dependencies:
     graceful-fs "^4.2.4"
     tapable "^2.2.0"
@@ -7159,10 +7167,10 @@ min-indent@^1.0.0:
   resolved "https://registry.yarnpkg.com/min-indent/-/min-indent-1.0.1.tgz#a63f681673b30571fbe8bc25686ae746eefa9869"
   integrity sha512-I9jwMn07Sy/IwOj3zVkVik2JTvgpaykDZEigL6Rx6N9LbMywwUSMtxET+7lVoDLLd3O3IXwJwvuuns8UB/HeAg==
 
-mini-css-extract-plugin@^2.5.3:
-  version "2.5.3"
-  resolved "https://registry.yarnpkg.com/mini-css-extract-plugin/-/mini-css-extract-plugin-2.5.3.tgz#c5c79f9b22ce9b4f164e9492267358dbe35376d9"
-  integrity sha512-YseMB8cs8U/KCaAGQoqYmfUuhhGW0a9p9XvWXrxVOkE3/IiISTLw4ALNt7JR5B2eYauFM+PQGSbXMDmVbR7Tfw==
+mini-css-extract-plugin@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/mini-css-extract-plugin/-/mini-css-extract-plugin-2.6.0.tgz#578aebc7fc14d32c0ad304c2c34f08af44673f5e"
+  integrity sha512-ndG8nxCEnAemsg4FSgS+yNyHKgkTB4nPKqCOgh65j3/30qqC5RaSQQXMm++Y6sb6E1zRSxPkztj9fqxhS1Eo6w==
   dependencies:
     schema-utils "^4.0.0"
 
@@ -7364,11 +7372,6 @@ mute-stream@0.0.8:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
 
-nanoid@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.2.0.tgz#62667522da6673971cca916a6d3eff3f415ff80c"
-  integrity sha512-fmsZYa9lpn69Ad5eDn7FMcnnSR+8R34W9qJEijxYhTbfOWzr22n1QxCMzXLK+ODyW2973V3Fux959iQoUxzUIA==
-
 nanoid@^3.3.1:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.1.tgz#6347a18cac88af88f58af0b3594b723d5e99bb35"
@@ -7407,7 +7410,7 @@ no-case@^3.0.4:
     lower-case "^2.0.2"
     tslib "^2.0.3"
 
-node-fetch@^2.6.6, node-fetch@^2.6.7:
+node-fetch@^2.6.7:
   version "2.6.7"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
   integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
@@ -8318,15 +8321,6 @@ postcss-value-parser@^4.1.0, postcss-value-parser@^4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz#723c09920836ba6d3e5af019f92bc0971c02e514"
   integrity sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==
-
-postcss@^8.4.5:
-  version "8.4.6"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.6.tgz#c5ff3c3c457a23864f32cb45ac9b741498a09ae1"
-  integrity sha512-OovjwIzs9Te46vlEx7+uXB0PLijpwjXGKXjVGGPIGubGpq7uh5Xgf6D6FiJ/SzJMBosHDp6a2hiXOS97iBXcaA==
-  dependencies:
-    nanoid "^3.2.0"
-    picocolors "^1.0.0"
-    source-map-js "^1.0.2"
 
 postcss@^8.4.7:
   version "8.4.7"
@@ -9901,6 +9895,25 @@ ts-node@^10.5.0:
     v8-compile-cache-lib "^3.0.0"
     yn "3.1.1"
 
+ts-node@^10.6.0:
+  version "10.6.0"
+  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-10.6.0.tgz#c3f4195d5173ce3affdc8f2fd2e9a7ac8de5376a"
+  integrity sha512-CJen6+dfOXolxudBQXnVjRVvYTmTWbyz7cn+xq2XTsvnaXbHqr4gXSCNbS2Jj8yTZMuGwUoBESLaOkLascVVvg==
+  dependencies:
+    "@cspotcode/source-map-support" "0.7.0"
+    "@tsconfig/node10" "^1.0.7"
+    "@tsconfig/node12" "^1.0.7"
+    "@tsconfig/node14" "^1.0.0"
+    "@tsconfig/node16" "^1.0.2"
+    acorn "^8.4.1"
+    acorn-walk "^8.1.1"
+    arg "^4.1.0"
+    create-require "^1.1.0"
+    diff "^4.0.1"
+    make-error "^1.1.1"
+    v8-compile-cache-lib "^3.0.0"
+    yn "3.1.1"
+
 tsconfig-paths@^3.12.0:
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/tsconfig-paths/-/tsconfig-paths-3.12.0.tgz#19769aca6ee8f6a1a341e38c8fa45dd9fb18899b"
@@ -10442,10 +10455,10 @@ webpack@^5:
     watchpack "^2.3.1"
     webpack-sources "^3.2.3"
 
-webpack@^5.69.1:
-  version "5.69.1"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.69.1.tgz#8cfd92c192c6a52c99ab00529b5a0d33aa848dc5"
-  integrity sha512-+VyvOSJXZMT2V5vLzOnDuMz5GxEqLk7hKWQ56YxPW/PQRUuKimPqmEIJOx8jHYeyo65pKbapbW464mvsKbaj4A==
+webpack@^5.70.0:
+  version "5.70.0"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.70.0.tgz#3461e6287a72b5e6e2f4872700bc8de0d7500e6d"
+  integrity sha512-ZMWWy8CeuTTjCxbeaQI21xSswseF2oNOwc70QSKNePvmxE7XW36i7vpBMYZFAUHPwQiEbNGCEYIOOlyRbdGmxw==
   dependencies:
     "@types/eslint-scope" "^3.7.3"
     "@types/estree" "^0.0.51"
@@ -10456,7 +10469,7 @@ webpack@^5.69.1:
     acorn-import-assertions "^1.7.6"
     browserslist "^4.14.5"
     chrome-trace-event "^1.0.2"
-    enhanced-resolve "^5.8.3"
+    enhanced-resolve "^5.9.2"
     es-module-lexer "^0.9.0"
     eslint-scope "5.1.1"
     events "^3.2.0"
