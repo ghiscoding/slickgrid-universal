@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/custom-footer-component",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Slick Custom Footer Component - Vanilla Implementation of a Custom Footer Component",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
@@ -48,8 +48,8 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/binding": "^1.2.4",
-    "@slickgrid-universal/common": "^1.2.4"
+    "@slickgrid-universal/binding": "^1.2.5",
+    "@slickgrid-universal/common": "^1.2.5"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

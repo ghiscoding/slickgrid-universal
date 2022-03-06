@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.5](https://github.com/ghiscoding/slickgrid-universal/compare/v1.2.4...v1.2.5) (2022-03-06)
+
+**Note:** Version bump only for package webpack-demo-vanilla-bundle
+
 ## [1.2.4](https://github.com/ghiscoding/slickgrid-universal/compare/v1.2.3...v1.2.4) (2022-02-15)
 
 ### Bug Fixes
@@ -15,28 +19,20 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * **editors:** select editor should call save only once ([d111c2f](https://github.com/ghiscoding/slickgrid-universal/commit/d111c2f7799151236c6053d7a5288d1fdd530550))
 
-
 ## [1.2.1](https://github.com/ghiscoding/slickgrid-universal/compare/v1.2.0...v1.2.1) (2022-01-18)
-
 
 ### Bug Fixes
 
 * **memory:** clear & dispose of grid to avoid mem leaks & detached elm ([7035db5](https://github.com/ghiscoding/slickgrid-universal/commit/7035db5f878187f6fb8b9d2effacb7443f25e2c9))
 * **odata:** fix range filtering with ".." ([d14d3e9](https://github.com/ghiscoding/slickgrid-universal/commit/d14d3e9f92fad2c14a7227b8f822dffc79c8934c))
 
-
-
-
-
 # [1.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v1.1.1...v1.2.0) (2022-01-06)
-
 
 ### Bug Fixes
 
 * **demo:** latest change with Filter container breaks other demos ([129cc78](https://github.com/ghiscoding/slickgrid-universal/commit/129cc78ac34ad632f2a265d49a631e04b119250b))
 * **dev:** optimize webpack dev watch ([1340c51](https://github.com/ghiscoding/slickgrid-universal/commit/1340c51b7e2554e9c29ebb9b8ab9b27a3f20cfe9))
 * **filter:** update multiple-select to fix select filtering ([63dcd08](https://github.com/ghiscoding/slickgrid-universal/commit/63dcd0873026fb8ba036ca52ba31f583d6ad136f)), closes [#865](https://github.com/ghiscoding/slickgrid-universal/issues/865)
-
 
 ### Features
 
@@ -50,23 +46,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **filters:** modal-filter-example ([ab46202](https://github.com/ghiscoding/slickgrid-universal/commit/ab46202bfbd99497af39830cf59068682f5f8bd1))
 * **selection:** auto-scroll the viewport when dragging with selection ([ecd9c57](https://github.com/ghiscoding/slickgrid-universal/commit/ecd9c57bd6c1315e2358722785a87582ec939f85)), closes [#656](https://github.com/ghiscoding/slickgrid-universal/issues/656)
 
-
-
-
-
 ## [1.1.1](https://github.com/ghiscoding/slickgrid-universal/compare/v1.1.0...v1.1.1) (2021-12-11)
-
 
 ### Bug Fixes
 
 * **build:** bump version manually bcoz of previous force push ([5e9a610](https://github.com/ghiscoding/slickgrid-universal/commit/5e9a610ad01d752673856591f9b5de73b0ece0e9))
 
-
-
-
-
 # [1.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.19.2...v1.1.0) (2021-12-11)
-
 
 ### Bug Fixes
 
@@ -76,7 +62,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **styling:** slightly off Autocomplete position ([cd03f67](https://github.com/ghiscoding/slickgrid-universal/commit/cd03f67f50db301cfe74a1e20efd998102bcf3bf))
 * apply fixes & refactoring after testing in Aurelia-Slickgrid ([038fa3f](https://github.com/ghiscoding/slickgrid-universal/commit/038fa3f56f202465f2b40af57e8acf752fe31f60))
 * translation wasn't working with context menu ([889e443](https://github.com/ghiscoding/slickgrid-universal/commit/889e44387279c7834944600417c0c2da11b7991f))
-
 
 ### Features
 
@@ -96,37 +81,19 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **plugins:** show bullet when command menu icon missing ([cbe580a](https://github.com/ghiscoding/slickgrid-universal/commit/cbe580a97313b7b90e287586b4a6420f0a983f20))
 * **selection:** add `caller` property to `onSelectedRowsChanged` event ([cc5f4ae](https://github.com/ghiscoding/slickgrid-universal/commit/cc5f4aec7334b6d001bde55dacf83722c3b2763b))
 
-
-
-
-
-
 ## [0.19.2](https://github.com/ghiscoding/slickgrid-universal/compare/v0.19.1...v0.19.2) (2021-11-19)
-
 
 ### Bug Fixes
 
 * **translation:** add new UNFREEZE_COLUMNS to fix translation ([22ed231](https://github.com/ghiscoding/slickgrid-universal/commit/22ed2313c45587f2ebdb279c9e47df881c6f83d6))
 
-
-
-
-
-
 ## [0.19.1](https://github.com/ghiscoding/slickgrid-universal/compare/v0.19.0...v0.19.1) (2021-11-15)
-
 
 ### Bug Fixes
 
 * **export:** sanitize any html that could exist in header titles ([abdae52](https://github.com/ghiscoding/slickgrid-universal/commit/abdae52822c4496286a653ed84be964213e1d32f))
 
-
-
-
-
-
 # [0.19.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.18.0...v0.19.0) (2021-10-28)
-
 
 ### Features
 
@@ -135,32 +102,19 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * add auto-position depending on available space ([82d6134](https://github.com/ghiscoding/slickgrid-universal/commit/82d6134003900ca8e345bd02a35e3830476638e3))
 * **plugin:** create new Custom Tooltip plugin ([4c8c4f6](https://github.com/ghiscoding/slickgrid-universal/commit/4c8c4f62423665bc2e1dcf0675b1300607397b6a))
 
-
-
-
-
-
 # [0.18.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.17.0...v0.18.0) (2021-09-29)
-
 
 ### Features
 
 * **Resizer:** add useResizeObserver option ([bb33cdd](https://github.com/ghiscoding/slickgrid-universal/commit/bb33cdd716834913846ab2fcf74a84f8424acf92))
 * **tree:** new `excludeChildrenWhenFilteringTree` set as new default ([47df943](https://github.com/ghiscoding/slickgrid-universal/commit/47df943414f383a47062a7ad9245700a1bd8a24e))
 
-
-
-
-
-
 # [0.17.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.16.2...v0.17.0) (2021-09-09)
-
 
 ### Bug Fixes
 
 * **core:** potential event binding leaks not all removed when disposing ([3e61712](https://github.com/ghiscoding/slickgrid-universal/commit/3e61712156f3b76b48b04d66bb05f2533f041831))
 * **footer:** use `getFilteredItemCount` to show correct count, fix [#469](https://github.com/ghiscoding/slickgrid-universal/issues/469) ([963235c](https://github.com/ghiscoding/slickgrid-universal/commit/963235c017c28309460d2cb88de88c880ac0cb4f))
-
 
 ### Features
 
@@ -170,39 +124,21 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **composite:** move SlickGrid Composite Editor factory into universal ([c813cea](https://github.com/ghiscoding/slickgrid-universal/commit/c813ceac1ed6535963df15e7933a444de3a8790a))
 * **tree:** add `dynamicallyToggledItemState` method to toggle parent(s) ([26369f9](https://github.com/ghiscoding/slickgrid-universal/commit/26369f9b6c9e81ad5705f580896ab28cf362d090))
 
-
-
-
-
 ## [0.16.2](https://github.com/ghiscoding/slickgrid-universal/compare/v0.16.1...v0.16.2) (2021-07-23)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
-
-
-
-
 
 ## [0.16.1](https://github.com/ghiscoding/slickgrid-universal/compare/v0.16.0...v0.16.1) (2021-07-16)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
 
-
-
-
-
 # [0.16.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.15.0...v0.16.0) (2021-07-16)
-
 
 ### Bug Fixes
 
 * **examples:** onBeforeEditCell should return bool true/false ([382bfc8](https://github.com/ghiscoding/slickgrid-universal/commit/382bfc8d9f8bc2c176d617bd49e9b9b230c47be9))
 
-
-
-
-
 # [0.15.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.14.1...v0.15.0) (2021-07-06)
-
 
 ### Bug Fixes
 
@@ -212,7 +148,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **Pagination:** the Pagination wasn't showing when using dataset setter ([ac3f933](https://github.com/ghiscoding/slickgrid-universal/commit/ac3f933d9829edcf89e5ea15571da9a7e4b7c4ba))
 * **plugin:** row move shouldn't go further when onBefore returns false ([e9bfb5c](https://github.com/ghiscoding/slickgrid-universal/commit/e9bfb5ceba6a18a020b8b34f72abba6e3d13d8b8))
 * **styling:** address latest dart-sass math division deprecation warning ([b7317d8](https://github.com/ghiscoding/slickgrid-universal/commit/b7317d8fa619b35fb65789e12b268d65ff65968c))
-
 
 ### Features
 
@@ -224,21 +159,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **tree:** add Tree Collapse Grid State/Preset ([998b01a](https://github.com/ghiscoding/slickgrid-universal/commit/998b01a2f10ccee5636f616921dd86b35a4feaec))
 * **tree:** add ways to reapply Tree Collapse previous state ([3702ed3](https://github.com/ghiscoding/slickgrid-universal/commit/3702ed32629f84397349147c978ca650043c45eb))
 
-
-
-
-
-
 ## [0.14.1](https://github.com/ghiscoding/slickgrid-universal/compare/v0.14.0...v0.14.1) (2021-05-22)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
 
-
-
-
-
 # [0.14.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.13.0...v0.14.0) (2021-05-22)
-
 
 ### Bug Fixes
 
@@ -253,7 +178,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * return all onBeforeX events in delayed promise to fix spinner ([bb36d1a](https://github.com/ghiscoding/slickgrid-universal/commit/bb36d1af114031eb973cf9993bdb9be1dd050de3))
 * **tree:** couple of issues found in Tree Data, fixes [#307](https://github.com/ghiscoding/slickgrid-universal/issues/307) ([e684d1a](https://github.com/ghiscoding/slickgrid-universal/commit/e684d1af1c078a8861c3c94fe5486cbe68d57b85))
 
-
 ### Features
 
 * **editors:** add `compositeEditorFormOrder` option ([03f2d66](https://github.com/ghiscoding/slickgrid-universal/commit/03f2d662a69d71edf4b61cdda862fb4eef0f9b47))
@@ -266,13 +190,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * add optional child value prefix to Tree Formatter ([9da9662](https://github.com/ghiscoding/slickgrid-universal/commit/9da966298120686929ab3dd2f276574d7f6c8c7e))
 * **tree:** improve Tree Data speed considerably ([5487798](https://github.com/ghiscoding/slickgrid-universal/commit/548779801d06cc9ae7e319e72d351c8a868ed79f))
 
-
-
-
-
-
 # [0.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.12.0...v0.13.0) (2021-04-27)
-
 
 ### Bug Fixes
 
@@ -280,27 +198,19 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **exports:** grid with colspan should be export accordingly ([#311](https://github.com/ghiscoding/slickgrid-universal/issues/311)) ([e899fbb](https://github.com/ghiscoding/slickgrid-universal/commit/e899fbba3daa41261dcaa57b0555e37e9bdfafb4))
 * **footer:** add correct implemtation of locale usage in custom footer ([6e18bf9](https://github.com/ghiscoding/slickgrid-universal/commit/6e18bf9a8af070428bbb3cb429392df1eb19be54))
 
-
 ### Features
 
 * **footer:** add row selection count to the footer component ([8ba146c](https://github.com/ghiscoding/slickgrid-universal/commit/8ba146cd4cbdccdb61f3441918065fad4561ff84))
 * **resize:** add column resize by cell content ([#309](https://github.com/ghiscoding/slickgrid-universal/issues/309)) ([515a072](https://github.com/ghiscoding/slickgrid-universal/commit/515a072b3a16d3aca0f48e62c968ae89a1510669))
 * **styling:** switch from node-sass to dart-sass (sass) ([81f8d9f](https://github.com/ghiscoding/slickgrid-universal/commit/81f8d9fbd1381b4c877eeeb4992bdcc90c1cd677))
 
-
-
-
-
-
 # [0.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.11.2...v0.12.0) (2021-03-24)
-
 
 ### Bug Fixes
 
 * **filters:** SearchTerms shouldn't come back after calling clearFilters ([04f3d12](https://github.com/ghiscoding/slickgrid-universal/commit/04f3d1267de493b9dc1e922dca3b433b9cb34fde))
 * **filters:** string <> should be Not Contains instead of Not Equal ([#276](https://github.com/ghiscoding/slickgrid-universal/issues/276)) ([960884d](https://github.com/ghiscoding/slickgrid-universal/commit/960884ddf58b1e87ad5ef71e3713f8836e6190c0))
 * **pinning:** reordering cols position freezing cols shouldn't affect ([#275](https://github.com/ghiscoding/slickgrid-universal/issues/275)) ([a30665d](https://github.com/ghiscoding/slickgrid-universal/commit/a30665d54da583c47b1f533002173af99e9ab20d))
-
 
 ### Features
 
@@ -309,36 +219,21 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **resources:** add RxJS support into Slickgrid-Universal via external package ([#280](https://github.com/ghiscoding/slickgrid-universal/issues/280)) ([c10fc33](https://github.com/ghiscoding/slickgrid-universal/commit/c10fc339019c04ec0f7c4357ccdb3949a2358460))
 * **state:** add Pinning (frozen) to Grid State & Presets ([#292](https://github.com/ghiscoding/slickgrid-universal/issues/292)) ([ba703d8](https://github.com/ghiscoding/slickgrid-universal/commit/ba703d8353a243ffed4d40804c0f977119424f6c))
 
-
-
-
-
-
 ## [0.11.2](https://github.com/ghiscoding/slickgrid-universal/compare/v0.11.1...v0.11.2) (2021-02-27)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
-
-
-
-
 
 ## [0.11.1](https://github.com/ghiscoding/slickgrid-universal/compare/v0.11.0...v0.11.1) (2021-02-27)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
 
-
-
-
-
 # [0.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.10.2...v0.11.0) (2021-02-27)
-
 
 ### Bug Fixes
 
 * **build:** enable tsconfig strict mode tsconfig ([#269](https://github.com/ghiscoding/slickgrid-universal/issues/269)) ([095fc71](https://github.com/ghiscoding/slickgrid-universal/commit/095fc71052c1f4e776544781da5fe762cfa16238))
 * **filters:** use defaultFilterOperator in range when none provided ([#271](https://github.com/ghiscoding/slickgrid-universal/issues/271)) ([993675f](https://github.com/ghiscoding/slickgrid-universal/commit/993675f6b0d76e76010d5cadc6696134a73dad66))
 * **plugin:** recreate header menu when adding column dynamically ([#257](https://github.com/ghiscoding/slickgrid-universal/issues/257)) ([16c4984](https://github.com/ghiscoding/slickgrid-universal/commit/16c49845c5d3388502811c15f0a23daa1a01f850))
-
 
 ### Features
 
@@ -347,228 +242,125 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **filters:** add updateSingleFilter for a single external filter ([#265](https://github.com/ghiscoding/slickgrid-universal/issues/265)) ([20564a3](https://github.com/ghiscoding/slickgrid-universal/commit/20564a3096948626beada698460b72374a18ca7c))
 * **perf:** huge filtering speed improvements ([a101ed1](https://github.com/ghiscoding/slickgrid-universal/commit/a101ed1b62c2fbfec2712f64e08192a4852bce9d))
 
-
-
-
-
 ## [0.10.2](https://github.com/ghiscoding/slickgrid-universal/compare/v0.10.1...v0.10.2) (2021-01-28)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
-
-
-
-
 
 ## [0.10.1](https://github.com/ghiscoding/slickgrid-universal/compare/v0.10.0...v0.10.1) (2021-01-28)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
 
-
-
-
-
-
 # [0.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.9.0...v0.10.0) (2021-01-28)
-
 
 ### Bug Fixes
 
 * **editors:** add blank disabled fields in Composite Editor form values ([#233](https://github.com/ghiscoding/slickgrid-universal/issues/233)) ([b634902](https://github.com/ghiscoding/slickgrid-universal/commit/b6349029b705991b7ac2d1df99f5b330fe69ef36))
 * **lint:** add eslint as a pre task when bundling & fix linting errors ([#246](https://github.com/ghiscoding/slickgrid-universal/issues/246)) ([6f7ccd8](https://github.com/ghiscoding/slickgrid-universal/commit/6f7ccd8ee4cc5e005034965a2c2dcc0499f06a73))
 
-
 ### Features
 
 * **editors:** add Clone functionality to Composite Editor ([#236](https://github.com/ghiscoding/slickgrid-universal/issues/236)) ([df545e4](https://github.com/ghiscoding/slickgrid-universal/commit/df545e4ec64271307b1979feb5e786f449433639))
 * **formatters:** add grid option to auto add custom editor formatter ([#248](https://github.com/ghiscoding/slickgrid-universal/issues/248)) ([db77d46](https://github.com/ghiscoding/slickgrid-universal/commit/db77d464ee37eda573351e89d4c5acc9b5648649))
 
-
-
-
-
 # [0.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.8.0...v0.9.0) (2021-01-06)
-
 
 ### Bug Fixes
 
 * **build:** import Flatpickr Locale on demand via regular imports ([#227](https://github.com/ghiscoding/slickgrid-universal/issues/227)) ([6644822](https://github.com/ghiscoding/slickgrid-universal/commit/664482210557fc1a7a178856e2641f71b9580c44))
-
 
 ### Features
 
 * **build:** upgrade to WebPack 5 ([#225](https://github.com/ghiscoding/slickgrid-universal/issues/225)) ([c6b3ad3](https://github.com/ghiscoding/slickgrid-universal/commit/c6b3ad3eb6fb64306bfd8bd300fcc1e86b27e5a6))
 * **editors:** add Column Editor collectionOverride option ([#228](https://github.com/ghiscoding/slickgrid-universal/issues/228)) ([91421fc](https://github.com/ghiscoding/slickgrid-universal/commit/91421fc0154e432874fb2211e430a79032b996b8))
 
-
-
-
-
-
 # [0.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.7.7...v0.8.0) (2020-12-22)
-
 
 ### Features
 
 * **filters:** add Autocomplete/Select Filters collection observers ([#208](https://github.com/ghiscoding/slickgrid-universal/issues/208)) ([3b3b463](https://github.com/ghiscoding/slickgrid-universal/commit/3b3b4631e5d878ba72d5f2579c5a6b05cc1a7028))
 
-
-
-
-
 ## [0.7.7](https://github.com/ghiscoding/slickgrid-universal/compare/v0.7.6...v0.7.7) (2020-12-20)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
-
-
-
-
 
 ## [0.7.6](https://github.com/ghiscoding/slickgrid-universal/compare/v0.7.5...v0.7.6) (2020-12-20)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
 
-
-
-
-
 ## [0.7.5](https://github.com/ghiscoding/slickgrid-universal/compare/v0.7.4...v0.7.5) (2020-12-20)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
-
-
-
-
 
 ## [0.7.4](https://github.com/ghiscoding/slickgrid-universal/compare/v0.7.3...v0.7.4) (2020-12-20)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
 
-
-
-
-
 ## [0.7.3](https://github.com/ghiscoding/slickgrid-universal/compare/v0.7.2...v0.7.3) (2020-12-20)
-
 
 ### Bug Fixes
 
 * **exports:** should be able to change export file name ([#205](https://github.com/ghiscoding/slickgrid-universal/issues/205)) ([9d26213](https://github.com/ghiscoding/slickgrid-universal/commit/9d262134b12da46ef1fea970f092d96ce875ed78))
 
-
-
-
-
-
 ## [0.7.2](https://github.com/ghiscoding/slickgrid-universal/compare/v0.7.1...v0.7.2) (2020-12-17)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
-
-
-
-
-
 
 ## [0.7.1](https://github.com/ghiscoding/slickgrid-universal/compare/v0.7.0...v0.7.1) (2020-12-17)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
 
-
-
-
-
-
 # [0.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.6.0...v0.7.0) (2020-12-16)
-
 
 ### Features
 
 * **core:** methods to change column positions/visibilities dynamically ([#200](https://github.com/ghiscoding/slickgrid-universal/issues/200)) ([5048a4b](https://github.com/ghiscoding/slickgrid-universal/commit/5048a4b969f337f002dad552197d02f970590c73))
 
-
-
-
-
 # [0.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.5.1...v0.6.0) (2020-12-14)
-
 
 ### Bug Fixes
 
 * **demo:** changing page should remove unsaved cell styling ([17fa349](https://github.com/ghiscoding/slickgrid-universal/commit/17fa3499e298798fdeccf908feb0f0e5ee40436e))
 * **stylings:** re-align the svg icons & single/multiple-select icon+text ([#194](https://github.com/ghiscoding/slickgrid-universal/issues/194)) ([b730be7](https://github.com/ghiscoding/slickgrid-universal/commit/b730be7a75b3035c01aa7ca8f48a88df447ad461))
 
-
 ### Features
 
 * **core:** add registerExternalResources for Components/Services ([#196](https://github.com/ghiscoding/slickgrid-universal/issues/196)) ([ee02f1d](https://github.com/ghiscoding/slickgrid-universal/commit/ee02f1d62d1a0601421352e43d17bd8c89e4348c))
-
-
-
-
 
 ## [0.5.1](https://github.com/ghiscoding/slickgrid-universal/compare/v0.5.0...v0.5.1) (2020-12-10)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
 
-
-
-
-
 # [0.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.4.2...v0.5.0) (2020-12-10)
-
 
 ### Bug Fixes
 
 * **editors:** Select Editor option to return flat data w/complex object ([#189](https://github.com/ghiscoding/slickgrid-universal/issues/189)) ([4695cd3](https://github.com/ghiscoding/slickgrid-universal/commit/4695cd3b6871dc1ceca4036fd30935eca8011b7e))
 
-
 ### Features
 
 * **components:** extract CompositeEditor & EmptyWarning Components ([#191](https://github.com/ghiscoding/slickgrid-universal/issues/191)) ([00cf9a2](https://github.com/ghiscoding/slickgrid-universal/commit/00cf9a22e1924a46ed637d52bba8efc02ef7eea1))
-
-
-
-
 
 ## [0.4.2](https://github.com/ghiscoding/slickgrid-universal/compare/v0.4.1...v0.4.2) (2020-12-07)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
 
-
-
-
-
 ## [0.4.1](https://github.com/ghiscoding/slickgrid-universal/compare/v0.4.0...v0.4.1) (2020-12-07)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
 
-
-
-
-
 # [0.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.3.0...v0.4.0) (2020-12-07)
-
 
 ### Features
 
 * **editors:** add few editor options to LongText (textarea) Editor ([a975882](https://github.com/ghiscoding/slickgrid-universal/commit/a975882ce0772728a7bcd2bc75131d650b093144))
 
-
-
-
-
 # [0.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v0.2.15...v0.3.0) (2020-12-02)
-
 
 ### Bug Fixes
 
 * **core:** showing/hiding column shouldn't affect its freezing position ([#185](https://github.com/ghiscoding/slickgrid-universal/issues/185)) ([2a812ed](https://github.com/ghiscoding/slickgrid-universal/commit/2a812edb82c8004ab43df224c67ede228ab72c00))
 
-
-
-
-
 ## [0.2.15](https://github.com/ghiscoding/slickgrid-universal/compare/v0.2.0...v0.2.15) (2020-11-30)
-
 
 ### Bug Fixes
 
@@ -577,128 +369,66 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **examples:** queued edit cells style should follow page it was edited ([#167](https://github.com/ghiscoding/slickgrid-universal/issues/167)) ([bf72139](https://github.com/ghiscoding/slickgrid-universal/commit/bf7213994151c148e878d703ea21d8f8ffb43ca8))
 * **formatters:** date formatters should accept ISO input & output to US ([#172](https://github.com/ghiscoding/slickgrid-universal/issues/172)) ([85ce7cf](https://github.com/ghiscoding/slickgrid-universal/commit/85ce7cf3636d5bb43d3ef18ec6998bb0c423d218))
 
-
-
-
-
 ## [0.2.14](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.13...webpack-demo-vanilla-bundle@0.2.14) (2020-11-26)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
-
-
-
-
 
 ## [0.2.13](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.12...webpack-demo-vanilla-bundle@0.2.13) (2020-11-26)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
 
-
-
-
-
 ## [0.2.12](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.11...webpack-demo-vanilla-bundle@0.2.12) (2020-11-25)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
-
-
-
-
 
 ## [0.2.11](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.10...webpack-demo-vanilla-bundle@0.2.11) (2020-11-25)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
 
-
-
-
-
 ## [0.2.10](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.9...webpack-demo-vanilla-bundle@0.2.10) (2020-11-25)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
-
-
-
-
 
 ## [0.2.9](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.8...webpack-demo-vanilla-bundle@0.2.9) (2020-11-25)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
 
-
-
-
-
 ## [0.2.8](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.7...webpack-demo-vanilla-bundle@0.2.8) (2020-11-25)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
-
-
-
-
 
 ## [0.2.7](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.6...webpack-demo-vanilla-bundle@0.2.7) (2020-11-25)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
 
-
-
-
-
 ## [0.2.6](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.5...webpack-demo-vanilla-bundle@0.2.6) (2020-11-25)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
-
-
-
-
 
 ## [0.2.5](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.4...webpack-demo-vanilla-bundle@0.2.5) (2020-11-25)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
 
-
-
-
-
 ## [0.2.4](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.3...webpack-demo-vanilla-bundle@0.2.4) (2020-11-25)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
-
-
-
-
 
 ## [0.2.3](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.2...webpack-demo-vanilla-bundle@0.2.3) (2020-11-25)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
 
-
-
-
-
 ## [0.2.2](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.1...webpack-demo-vanilla-bundle@0.2.2) (2020-11-25)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
 
-
-
-
-
 ## [0.2.1](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.2.0...webpack-demo-vanilla-bundle@0.2.1) (2020-11-25)
-
 
 ### Bug Fixes
 
 * **core:** don't expose src folder on npm & update few npm package ([#168](https://github.com/ghiscoding/slickgrid-universal/issues/168)) ([3c05938](https://github.com/ghiscoding/slickgrid-universal/commit/3c059381b35bba88ea98d0206692c912c625f227))
 * **examples:** queued edit cells style should follow page it was edited ([#167](https://github.com/ghiscoding/slickgrid-universal/issues/167)) ([bf72139](https://github.com/ghiscoding/slickgrid-universal/commit/bf7213994151c148e878d703ea21d8f8ffb43ca8))
 
-
-
-
-
 # [0.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/webpack-demo-vanilla-bundle@0.1.0...webpack-demo-vanilla-bundle@0.2.0) (2020-11-20)
-
 
 ### Bug Fixes
 
@@ -712,7 +442,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **editors:** autocomplete editor spinner aligned right in mass update ([#162](https://github.com/ghiscoding/slickgrid-universal/issues/162)) ([6ae5189](https://github.com/ghiscoding/slickgrid-universal/commit/6ae51897979d80f5639fb095406e83e182649252))
 * **filters:** disregard time when filtering date only format ([#134](https://github.com/ghiscoding/slickgrid-universal/issues/134)) ([7bd2d19](https://github.com/ghiscoding/slickgrid-universal/commit/7bd2d1964de2e809d8b08c737231eec31d146fae))
 * **translations:** HeaderMenu & Date Filters not translating ([#58](https://github.com/ghiscoding/slickgrid-universal/issues/58)) ([9416c4d](https://github.com/ghiscoding/slickgrid-universal/commit/9416c4d2642894c5660473419623cee9bebcac4b))
-
 
 ### Features
 
@@ -736,18 +465,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **styling:** find way to add colors to SVGs used by the lib ([#73](https://github.com/ghiscoding/slickgrid-universal/issues/73)) ([8a07c16](https://github.com/ghiscoding/slickgrid-universal/commit/8a07c16ec3238533ab16fb22f8b748168cd5f18c))
 * **tests:** add more Cypress E2E tests for grouping ([#125](https://github.com/ghiscoding/slickgrid-universal/issues/125)) ([814dec0](https://github.com/ghiscoding/slickgrid-universal/commit/814dec0dbad7cf59e98654a732dbf6d46de37a1a))
 
-
-
-
-
-
 # 0.1.0 (2020-07-28)
-
 
 ### Bug Fixes
 
 * **components:** both Footer/Pagination should always be 100% width ([#27](https://github.com/ghiscoding/slickgrid-universal/issues/27)) ([e587ef5](https://github.com/ghiscoding/slickgrid-universal/commit/e587ef5084d469c6342c84c5c2f6a0dc65ae4493))
-
 
 ### Features
 
