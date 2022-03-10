@@ -73,7 +73,7 @@
   "dependencies": {
     "dequal": "^2.0.2",
     "dompurify": "^2.3.6",
-    "flatpickr": "^4.6.9",
+    "flatpickr": "^4.6.10",
     "jquery": "^3.5.1",
     "jquery-ui-dist": "^1.12.1",
     "moment-mini": "^2.24.0",
@@ -91,7 +91,7 @@
     "mini-css-extract-plugin": "^2.6.0",
     "nodemon": "^2.0.15",
     "npm-run-all": "^4.1.5",
-    "postcss": "^8.4.7",
+    "postcss": "^8.4.8",
     "postcss-cli": "^9.1.0",
     "rimraf": "^3.0.2",
     "sass": "^1.49.9"
