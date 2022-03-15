@@ -73,7 +73,7 @@
   "dependencies": {
     "dequal": "^2.0.2",
     "dompurify": "^2.3.6",
-    "flatpickr": "^4.6.10",
+    "flatpickr": "^4.6.11",
     "jquery": "^3.5.1",
     "jquery-ui-dist": "^1.12.1",
     "moment-mini": "^2.24.0",
@@ -102,6 +102,6 @@
   },
   "funding": {
     "type": "ko_fi",
-    "url": "https://ko-fi.com/N4N679OT"
+    "url": "https://ko-fi.com/ghiscoding"
   }
 }
