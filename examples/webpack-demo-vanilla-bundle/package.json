@@ -34,6 +34,7 @@
     "not dead"
   ],
   "dependencies": {
+    "@faker-js/faker": "^6.2.0",
     "@fnando/sparkline": "^0.3.10",
     "@slickgrid-universal/common": "^1.2.6",
     "@slickgrid-universal/excel-export": "^1.2.6",
@@ -45,28 +46,26 @@
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
-    "@types/faker": "^5.5.9",
     "@types/fnando__sparkline": "^0.3.4",
     "@types/jquery": "^3.5.14",
     "@types/moment": "^2.13.0",
-    "@types/node": "^17.0.23",
+    "@types/node": "^17.0.29",
     "@types/webpack": "^5.28.0",
     "clean-webpack-plugin": "4.0.0",
     "copy-webpack-plugin": "^10.2.4",
     "css-loader": "^6.7.1",
     "esbuild-loader": "^2.18.0",
-    "faker": "^5.5.3",
     "file-loader": "^6.2.0",
-    "fork-ts-checker-webpack-plugin": "^7.2.3",
+    "fork-ts-checker-webpack-plugin": "^7.2.7",
     "html-loader": "^3.1.0",
     "html-webpack-plugin": "5.5.0",
     "mini-css-extract-plugin": "^2.6.0",
-    "sass": "^1.49.11",
+    "sass": "^1.51.0",
     "sass-loader": "^12.6.0",
     "style-loader": "^3.3.1",
     "url-loader": "^4.1.1",
-    "webpack": "^5.71.0",
+    "webpack": "^5.72.0",
     "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.8.0"
+    "webpack-dev-server": "^4.8.1"
   }
 }

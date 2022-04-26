@@ -23,7 +23,7 @@ import {
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import * as moment from 'moment-mini';
+import moment from 'moment-mini';
 
 import { ExampleGridOptions } from './example-grid-options';
 import { loadComponent } from 'examples/utilities';

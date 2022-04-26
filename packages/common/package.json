@@ -73,7 +73,7 @@
   "dependencies": {
     "dequal": "^2.0.2",
     "dompurify": "^2.3.6",
-    "flatpickr": "^4.6.11",
+    "flatpickr": "^4.6.13",
     "jquery": "^3.5.1",
     "jquery-ui-dist": "^1.12.1",
     "moment-mini": "^2.24.0",
@@ -85,7 +85,7 @@
     "@types/dompurify": "^2.3.3",
     "@types/jquery": "^3.5.14",
     "@types/moment": "^2.13.0",
-    "autoprefixer": "^10.4.4",
+    "autoprefixer": "^10.4.5",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
     "mini-css-extract-plugin": "^2.6.0",
@@ -94,7 +94,7 @@
     "postcss": "^8.4.12",
     "postcss-cli": "^9.1.0",
     "rimraf": "^3.0.2",
-    "sass": "^1.49.11"
+    "sass": "^1.51.0"
   },
   "engines": {
     "node": ">=14.17.0",

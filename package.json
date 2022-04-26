@@ -57,12 +57,12 @@
     "@lerna-lite/cli": "^1.0.5",
     "@lerna-lite/run": "^1.0.5",
     "@types/jest": "^27.4.1",
-    "@types/node": "^17.0.23",
-    "@typescript-eslint/eslint-plugin": "^5.18.0",
-    "@typescript-eslint/parser": "^5.18.0",
-    "cypress": "^9.5.3",
-    "eslint": "^8.12.0",
-    "eslint-plugin-import": "^2.25.4",
+    "@types/node": "^17.0.29",
+    "@typescript-eslint/eslint-plugin": "^5.21.0",
+    "@typescript-eslint/parser": "^5.21.0",
+    "cypress": "^9.6.0",
+    "eslint": "^8.14.0",
+    "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "jest": "^27.5.1",
     "jest-cli": "^27.5.1",
@@ -79,5 +79,9 @@
   "engines": {
     "node": ">=14.17.0",
     "npm": ">=6.14.8"
+  },
+  "funding": {
+    "type": "ko_fi",
+    "url": "https://ko-fi.com/ghiscoding"
   }
 }
