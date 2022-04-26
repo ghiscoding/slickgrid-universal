@@ -13,7 +13,7 @@ import {
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, } from '@slickgrid-universal/graphql';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import * as moment from 'moment-mini';
+import moment from 'moment-mini';
 import { ExampleGridOptions } from './example-grid-options';
 import { TranslateService } from '../translate.service';
 import './example10.scss';
