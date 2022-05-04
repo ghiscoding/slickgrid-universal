@@ -85,7 +85,7 @@
     "@types/dompurify": "^2.3.3",
     "@types/jquery": "^3.5.14",
     "@types/moment": "^2.13.0",
-    "autoprefixer": "^10.4.5",
+    "autoprefixer": "^10.4.7",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
     "mini-css-extract-plugin": "^2.6.0",

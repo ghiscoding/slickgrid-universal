@@ -49,7 +49,7 @@
   ],
   "dependencies": {
     "@slickgrid-universal/common": "^1.2.6",
-    "excel-builder-webpacker": "^2.1.6",
+    "excel-builder-webpacker": "^2.1.7",
     "moment-mini": "^2.24.0"
   },
   "devDependencies": {
