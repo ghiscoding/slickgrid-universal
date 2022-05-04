@@ -31,7 +31,7 @@
     "prepublishOnly": "lerna run package:remove-browser-prop",
     "postroll-publish": "lerna run package:add-browser-prop",
     "serve:demo": "serve ./docs -l 8888",
-    "lint": "eslint packages/** --ext .ts",
+    "lint": "eslint packages --ext .ts",
     "test": "jest --runInBand --coverage=true --config ./test/jest.config.js",
     "test:ci": "jest --runInBand --coverage=true --ci --config ./test/jest.config.js",
     "test:watch": "cross-env TZ='America/New_York' jest --watch --config ./test/jest.config.js"
