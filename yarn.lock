@@ -849,25 +849,26 @@
   resolved "https://registry.yarnpkg.com/@leichtgewicht/ip-codec/-/ip-codec-2.0.3.tgz#0300943770e04231041a51bd39f0439b5c7ab4f0"
   integrity sha512-nkalE/f1RvRGChwBnEIoBfSEYOXnCRdleKuv6+lePbMDrMZXeDQnqak5XDOeBgrPPyPfAdcCu/B5z+v3VhplGg==
 
-"@lerna-lite/cli@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/cli/-/cli-1.2.0.tgz#938606470d5ca6294e6e6f5901b22588c2a38902"
-  integrity sha512-NLp3/JtDbRFz7xgowTwdQG5A3E9H5DrkC2AG9kDDaGMBXh63JOxqITHNwnsEGddiYtc7NrhaAwLWowuVvZ4Ghw==
+"@lerna-lite/cli@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@lerna-lite/cli/-/cli-1.3.0.tgz#831d07d2760632fd380e14948485dbeb4936c537"
+  integrity sha512-+NjArpz3neuEab+88LSYghWzmF4lsNeKEY2v2Pdz+fGQ/KvS3HEMUbBH+xk+TptuH3nQkJwGz3NE04+uUo269w==
   dependencies:
-    "@lerna-lite/core" "^1.2.0"
-    "@lerna-lite/info" "^1.2.0"
-    "@lerna-lite/publish" "^1.2.0"
-    "@lerna-lite/version" "^1.2.0"
+    "@lerna-lite/core" "^1.3.0"
+    "@lerna-lite/info" "^1.3.0"
+    "@lerna-lite/init" "^1.3.0"
+    "@lerna-lite/publish" "^1.3.0"
+    "@lerna-lite/version" "^1.3.0"
     dedent "^0.7.0"
     dotenv "^16.0.0"
     import-local "^3.1.0"
     npmlog "^6.0.2"
     yargs "^17.4.1"
 
-"@lerna-lite/core@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/core/-/core-1.2.0.tgz#821a046ac1aa6094e95c82b0e0d336bab4a4f085"
-  integrity sha512-/tfYyOnaSzfI/8HU1Ceawz0jUIPyFcmA7n9GXr7zWFrpYJ+B2q9v3/M4Ta4L/dEtYsCnXjm+nQWDUaqdR/FoOg==
+"@lerna-lite/core@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@lerna-lite/core/-/core-1.3.0.tgz#2d7f25e8649631dde40f7220b56a39f2ec820e22"
+  integrity sha512-HsB4h12sGdPMKnrnB0+muy6iHOPGRFO6N5NBruQ5qQp1DqcIeTTC9ANb6RNTRoiQ/YWFoUkNnveJFZ/ryk4lhA==
   dependencies:
     "@octokit/plugin-enterprise-rest" "^6.0.1"
     "@octokit/rest" "^18.12.0"
@@ -918,12 +919,12 @@
     write-pkg "^4.0.0"
     yargs "^17.4.1"
 
-"@lerna-lite/exec-run-common@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/exec-run-common/-/exec-run-common-1.2.0.tgz#5c5b33877efcb305cace7c3124946171b0314169"
-  integrity sha512-RciuT/f4wsRjqljrXWh+D/x0yF6p132c8j9yMxKd2sFbLJMi8LpeRNOJ8Q9UXEK5VFPnZ0DjwUoGk68JrM76RA==
+"@lerna-lite/exec-run-common@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@lerna-lite/exec-run-common/-/exec-run-common-1.3.0.tgz#31e20f27fb67f8f7c8c8eb65b74124532f5b181c"
+  integrity sha512-bIi6TLCN17E8qDUsQMY5f0GFOnudZeqJppPj77wz6G4ymadnnuGjr3Y8trSlGt1hqkHU7Be9di13vxVT/nEQCg==
   dependencies:
-    "@lerna-lite/core" "^1.2.0"
+    "@lerna-lite/core" "^1.3.0"
     fs-extra "^10.1.0"
     multimatch "^5.0.0"
     npmlog "^6.0.2"
@@ -931,23 +932,33 @@
     upath "^2.0.1"
     yargs "^17.4.1"
 
-"@lerna-lite/info@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/info/-/info-1.2.0.tgz#dcb496afe420cb1f5cbe191faf11ea5d6ef6fc14"
-  integrity sha512-f8g+hC2LorOrSzmn0FzObEFJk9QVQVh3xDf8jVSX6iiJLGnEWizIVVBnVSx+1C+QmtlAu4ykOp6Q/Efyx+vDaw==
+"@lerna-lite/info@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@lerna-lite/info/-/info-1.3.0.tgz#b535efcd285090ef4768502bbd3a27827ada2110"
+  integrity sha512-EHO5GU2QjZPDCeCVXiCYXjaBnTN6U+UIyShhTbTYcgZ/fNpiP/qLbPaQGTe5lxPW4/Vk7UeEA8P3WJzU1Dd0ag==
   dependencies:
-    "@lerna-lite/core" "^1.2.0"
+    "@lerna-lite/core" "^1.3.0"
     dedent "^0.7.0"
     envinfo "^7.8.1"
     yargs "^17.4.1"
 
-"@lerna-lite/publish@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/publish/-/publish-1.2.0.tgz#a2590b7919a36ee05aad56dedc1a4daff0a63115"
-  integrity sha512-Dk0ZTsqV4c56FtAy8YDCZsWMZPEliy1YtoADe/OwftdjUaeFf6i0uk9L38kinGcIBm8dQ+0eDTKsze3AwTPKlQ==
+"@lerna-lite/init@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@lerna-lite/init/-/init-1.3.0.tgz#d970491c23b2200265d69430d41a9c09a0a4dc10"
+  integrity sha512-+UPGftxkztDMs8KXAGODj5i2SeulO20zRusDT8CXfnpXZXX0B9vkciSXEC2OxiCmTC5IOAGmYLLBf3tS3rsenA==
   dependencies:
-    "@lerna-lite/core" "^1.2.0"
-    "@lerna-lite/version" "^1.2.0"
+    "@lerna-lite/core" "^1.3.0"
+    fs-extra "^10.1.0"
+    p-map "^4.0.0"
+    write-json-file "^4.3.0"
+
+"@lerna-lite/publish@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@lerna-lite/publish/-/publish-1.3.0.tgz#cce4a17d639f8618901b16beb01e2678e956303d"
+  integrity sha512-JyfEPTMhKAXRTHqm0LC2BSAbaz1yMM+oWe5o9z3lIjsopOSlBV8k17dP7Paz9t9XT/7EKOuwIoyn76KbDCRvRg==
+  dependencies:
+    "@lerna-lite/core" "^1.3.0"
+    "@lerna-lite/version" "^1.3.0"
     byte-size "^7.0.1"
     columnify "^1.6.0"
     fs-extra "^10.1.0"
@@ -978,13 +989,13 @@
     write-pkg "^4.0.0"
     yargs "^17.4.1"
 
-"@lerna-lite/run@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/run/-/run-1.2.0.tgz#6c6d10a22a13beab63046afc3f323af188e06cb2"
-  integrity sha512-gxIE1VFA5VSsvymiZz5d1HHQvAnu8bA9tnaAp3hRCh3FvE2kYKKou9B82hs9eTKxZYaOs1RK/m2ImSzYVZHKlg==
+"@lerna-lite/run@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@lerna-lite/run/-/run-1.3.0.tgz#4ed718b4ecaa691a094f0db176ebd1ebf0b4f259"
+  integrity sha512-5M1+tt8UE5fafYCGUlnChiVc9vUi2sRlYwWc6sc6BcWmR5Gfijr+np161G3v3lhMiZXSFSX6qV+kBjou1aLgnQ==
   dependencies:
-    "@lerna-lite/core" "^1.2.0"
-    "@lerna-lite/exec-run-common" "^1.2.0"
+    "@lerna-lite/core" "^1.3.0"
+    "@lerna-lite/exec-run-common" "^1.3.0"
     fs-extra "^10.1.0"
     multimatch "^5.0.0"
     npmlog "^6.0.2"
@@ -992,12 +1003,12 @@
     upath "^2.0.1"
     yargs "^17.4.1"
 
-"@lerna-lite/version@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/version/-/version-1.2.0.tgz#f8822fc46f2e57968965b76f259fee4230fffd8c"
-  integrity sha512-hsmOGwHd0inEE/fIDWm0pIy4P4rvWowewY1mL6EXirfgywH8WavTo64WGe259Uj9iNpPb2+tfS/PN7TmS1qBGQ==
+"@lerna-lite/version@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@lerna-lite/version/-/version-1.3.0.tgz#0c96276a564917411affd4780a388c3d337a1661"
+  integrity sha512-Va+2WexEtXqvULvdRU7ygKGRpoQibZaFKzcNtPdHX9IEvDj9N+xgfWEKgnve69enxwf5+IHnrzgCdeIImfBtSg==
   dependencies:
-    "@lerna-lite/core" "^1.2.0"
+    "@lerna-lite/core" "^1.3.0"
     chalk "^4.1.2"
     dedent "^0.7.0"
     load-json-file "^6.2.0"
@@ -1439,10 +1450,10 @@
   dependencies:
     "@types/istanbul-lib-report" "*"
 
-"@types/jest@^27.5.0":
-  version "27.5.0"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-27.5.0.tgz#e04ed1824ca6b1dd0438997ba60f99a7405d4c7b"
-  integrity sha512-9RBFx7r4k+msyj/arpfaa0WOOEcaAZNmN+j80KFbFCoSqCJGHTz7YMAMGQW9Xmqm5w6l5c25vbSjMwlikJi5+g==
+"@types/jest@^27.5.1":
+  version "27.5.1"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-27.5.1.tgz#2c8b6dc6ff85c33bcd07d0b62cb3d19ddfdb3ab9"
+  integrity sha512-fUy7YRpT+rHXto1YlL+J9rs0uLGyiqVt3ZOTQR+4ROc47yNl8WLdVLgUloBRhOxP1PZvguHl44T3H0wAWxahYQ==
   dependencies:
     jest-matcher-utils "^27.0.0"
     pretty-format "^27.0.0"
@@ -1515,10 +1526,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.17.1.tgz#5e07e0cb2ff793aa7a1b41deae76221e6166049f"
   integrity sha512-/tpUyFD7meeooTRwl3sYlihx2BrJE7q9XF71EguPFIySj9B7qgnRtHsHTho+0AUm4m1SvWGm6uSncrR94q6Vtw==
 
-"@types/node@^17.0.32":
-  version "17.0.32"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.32.tgz#51d59d7a90ef2d0ae961791e0900cad2393a0149"
-  integrity sha512-eAIcfAvhf/BkHcf4pkLJ7ECpBAhh9kcxRBpip9cTiO+hf+aJrsxYxBeS6OXvOd9WqNAJmavXVpZvY1rBjNsXmw==
+"@types/node@^17.0.33":
+  version "17.0.33"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.33.tgz#3c1879b276dc63e73030bb91165e62a4509cd506"
+  integrity sha512-miWq2m2FiQZmaHfdZNcbpp9PuXg34W5JZ5CrJ/BaS70VuhoJENBEQybeiYSaPBRNq6KQGnjfEnc/F3PN++D+XQ==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
@@ -3702,6 +3713,11 @@ dompurify@^2.3.6:
   version "2.3.6"
   resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.3.6.tgz#2e019d7d7617aacac07cbbe3d88ae3ad354cf875"
   integrity sha512-OFP2u/3T1R5CEgWCEONuJ1a5+MFKnOYpkywpUSxv/dj1LeBT1erK+JwM7zK0ROy2BRhqVCf0LRw/kHqKuMkVGg==
+
+dompurify@^2.3.8:
+  version "2.3.8"
+  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.3.8.tgz#224fe9ae57d7ebd9a1ae1ac18c1c1ca3f532226f"
+  integrity sha512-eVhaWoVibIzqdGYjwsBWodIQIaXFSB+cKDf4cfxLMsK0xiud6SE+/WCVx/Xw/UwQsa4cS3T2eITcdtmTg2UKcw==
 
 domutils@^2.5.2, domutils@^2.6.0:
   version "2.7.0"
