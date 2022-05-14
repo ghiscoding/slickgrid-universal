@@ -51,6 +51,7 @@
     "@slickgrid-universal/common": "^1.2.6"
   },
   "devDependencies": {
+    "@types/moment": "^2.13.0",
     "moment-mini": "^2.24.0"
   },
   "funding": {

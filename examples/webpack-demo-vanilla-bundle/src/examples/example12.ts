@@ -554,7 +554,7 @@ export class Example12 {
   handleOnCellChange(event) {
     const args = event && event.detail && event.detail.args;
     const dataContext = args && args.item;
-    console.log('cell change', args)
+    console.log('cell change', args);
 
     // when the field "completed" changes to false, we also need to blank out the "finish" date
     if (dataContext && !dataContext.completed) {

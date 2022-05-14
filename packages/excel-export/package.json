@@ -53,6 +53,7 @@
     "moment-mini": "^2.24.0"
   },
   "devDependencies": {
+    "@types/moment": "^2.13.0",
     "cross-env": "^7.0.3",
     "npm-run-all2": "^5.0.2",
     "rimraf": "^3.0.2"
