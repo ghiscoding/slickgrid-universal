@@ -47,6 +47,8 @@
     "@slickgrid-universal/vanilla-bundle": "^1.2.6",
     "@slickgrid-universal/vanilla-force-bundle": "^1.2.6",
     "bulma": "^0.9.4",
+    "dompurify": "^2.3.8",
+    "jquery": "^3.5.1",
     "moment-mini": "^2.24.0",
     "rxjs": "^7.5.5",
     "whatwg-fetch": "^3.6.2"

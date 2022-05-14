@@ -55,6 +55,11 @@
     "@slickgrid-universal/empty-warning-component": "^1.2.6",
     "@slickgrid-universal/event-pub-sub": "^1.2.6",
     "@slickgrid-universal/pagination-component": "^1.2.6",
+    "dequal/lite": "^2.0.2",
+    "flatpickr": "^4.6.13",
+    "jquery": "^3.5.1",
+    "jquery-ui": "^1.12.1",
+    "slickgrid": "^2.4.44",
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
