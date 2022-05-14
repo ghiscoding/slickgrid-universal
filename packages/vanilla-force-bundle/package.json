@@ -55,6 +55,7 @@
     "not dead"
   ],
   "dependencies": {
+    "@slickgrid-universal/binding": "^1.2.6",
     "@slickgrid-universal/common": "^1.2.6",
     "@slickgrid-universal/composite-editor-component": "^1.2.6",
     "@slickgrid-universal/custom-footer-component": "^1.2.6",
