@@ -14,14 +14,14 @@
     "/dist"
   ],
   "scripts": {
-    "build": "cross-env tsc --build",
+    "build": "tsc --build",
     "postbuild": "npm-run-all bundle:commonjs --npm-path npm",
-    "build:watch": "cross-env tsc --incremental --watch",
+    "build:watch": "tsc --incremental --watch",
     "dev": "npm run build",
     "dev:watch": "run-p build:watch --npm-path npm",
     "bundle": "run-p bundle:commonjs bundle:esm --npm-path npm",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
-    "bundle:esm": "cross-env tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
+    "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "prebundle": "npm-run-all delete:dist --npm-path npm",
     "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
     "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=rxjs-observable",

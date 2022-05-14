@@ -14,15 +14,15 @@
     "/dist"
   ],
   "scripts": {
-    "build": "cross-env tsc --build",
+    "build": "tsc --build",
     "postbuild": "npm-run-all bundle:commonjs --npm-path npm",
-    "build:watch": "cross-env tsc --incremental --watch",
+    "build:watch": "tsc --incremental --watch",
     "dev": "npm run build",
     "dev:watch": "run-p build:watch --npm-path npm",
     "bundle": "run-p bundle:commonjs bundle:esm --npm-path npm",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "postbundle:commonjs": "run-s copy:html:cjs --npm-path npm",
-    "bundle:esm": "cross-env tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
+    "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "postbundle:esm": "run-s copy:html:esm --npm-path npm",
     "copy:html:cjs": "cross-env copyfiles -f src/*.html dist/commonjs",
     "copy:html:esm": "cross-env copyfiles -f src/*.html dist/esm",
