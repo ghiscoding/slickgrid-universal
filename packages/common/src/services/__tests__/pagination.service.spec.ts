@@ -15,8 +15,8 @@ const mockPubSub = {
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
 };
-jest.mock('../pubSub.service', () => ({
-  PubSubService: () => mockPubSub
+jest.mock('@slickgrid-universal/event-pub-sub', () => ({
+  BasePubSubService: () => mockPubSub
 }));
 
 const backendUtilityServiceStub = {

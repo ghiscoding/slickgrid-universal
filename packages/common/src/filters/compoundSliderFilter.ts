@@ -1,3 +1,5 @@
+import { hasData, toSentenceCase } from '@slickgrid-universal/utils';
+
 import {
   Column,
   ColumnFilter,
@@ -13,7 +15,7 @@ import { Constants } from '../constants';
 import { OperatorString, OperatorType, SearchTerm } from '../enums/index';
 import { buildSelectOperator } from './filterUtilities';
 import { createDomElement, emptyElement } from '../services/domUtilities';
-import { getTranslationPrefix, hasData, mapOperatorToShorthandDesignation, toSentenceCase } from '../services/utilities';
+import { getTranslationPrefix, mapOperatorToShorthandDesignation, } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 

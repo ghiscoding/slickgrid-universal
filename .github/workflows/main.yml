@@ -29,12 +29,12 @@ jobs:
           node-version: 16.x
           # cache: pnpm
 
-      - name: Install pnpm
+      - name: Install pnpm itself
         uses: pnpm/action-setup@v2.2.0
         with:
           version: 7
 
-      - name: Install project
+      - name: Run pnpm install
         run: pnpm i
 
       - run: node --version

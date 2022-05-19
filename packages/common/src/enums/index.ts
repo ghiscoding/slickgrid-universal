@@ -3,7 +3,6 @@ export * from './columnReorderFunction.type';
 export * from './compositeEditorModalType.type';
 export * from './delimiterType.enum';
 export * from './emitterType.enum';
-export * from './eventNamingStyle.enum';
 export * from './extensionList.type';
 export * from './extensionName.enum';
 export * from './fieldType.enum';

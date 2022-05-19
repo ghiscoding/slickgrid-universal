@@ -4,13 +4,10 @@ const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "m
 
 import {
   // utility functions
-  addWhiteSpaces,
-  deepCopy,
   exportWithFormatterWhenDefined,
   getTranslationPrefix,
   mapMomentDateFormatWithFieldType,
   sanitizeHtmlToText,
-  titleCase,
 
   // interfaces
   Column,
@@ -28,6 +25,8 @@ import {
   SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
+import { addWhiteSpaces, deepCopy, titleCase } from '@slickgrid-universal/utils';
+
 
 import {
   ExcelCellFormat,

@@ -1,3 +1,5 @@
+import { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
+
 import {
   AutoResizeOption,
   AutoTooltipOption,
@@ -34,7 +36,7 @@ import {
   TextExportOption,
   TreeDataOption,
 } from './index';
-import { ColumnReorderFunction, EventNamingStyle, GridAutosizeColsMode, OperatorType, OperatorString, } from '../enums/index';
+import { ColumnReorderFunction, GridAutosizeColsMode, OperatorType, OperatorString, } from '../enums/index';
 import { TranslaterService } from '../services/translater.service';
 
 export interface GridOption {

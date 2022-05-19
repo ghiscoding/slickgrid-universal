@@ -1,3 +1,4 @@
+import { deepCopy, deepMerge, emptyObject, setDeepValue } from '@slickgrid-universal/utils';
 import {
   BindingEventService,
   Column,
@@ -9,12 +10,9 @@ import {
   ContainerService,
   createDomElement,
   CurrentRowSelection,
-  deepCopy,
-  deepMerge,
   DOMEvent,
   Editor,
   EditorValidationResult,
-  emptyObject,
   ExternalResource,
   getDescendantProperty,
   GridOption,
@@ -26,7 +24,6 @@ import {
   OnCompositeEditorChangeEventArgs,
   PlainFunc,
   sanitizeTextByAvailableSanitizer,
-  setDeepValue,
   SlickCompositeEditor,
   SlickDataView,
   SlickEventHandler,

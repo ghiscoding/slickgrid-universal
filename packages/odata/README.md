@@ -16,6 +16,7 @@ OData Service to sync a grid with an OData backend server, the service will cons
 
 ### Internal Dependencies
 - [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
+- [@slickgrid-universal/utils](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/utils)
 
 ### External Dependencies
 No external dependency

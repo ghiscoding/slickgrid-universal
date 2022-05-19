@@ -1,3 +1,4 @@
+import { setDeepValue } from '@slickgrid-universal/utils';
 import * as flatpickr_ from 'flatpickr';
 import * as moment_ from 'moment-mini';
 import { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
@@ -29,7 +30,6 @@ import {
   getDescendantProperty,
   mapFlatpickrDateFormatWithFieldType,
   mapMomentDateFormatWithFieldType,
-  setDeepValue
 } from './../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';

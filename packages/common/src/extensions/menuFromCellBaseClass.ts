@@ -1,3 +1,6 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { titleCase } from '@slickgrid-universal/utils';
+
 import {
   CellMenu,
   ContextMenu,
@@ -12,9 +15,7 @@ import {
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { calculateAvailableSpace, createDomElement, findWidthOrDefault, getHtmlElementOffset, } from '../services/domUtilities';
 import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
-import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
-import { titleCase } from '../services/utilities';
 
 export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends MenuBaseClass<M> {
   protected _currentCell = -1;
@@ -23,7 +24,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
     protected readonly extensionUtility: ExtensionUtility,
-    protected readonly pubSubService: PubSubService,
+    protected readonly pubSubService: BasePubSubService,
     protected readonly sharedService: SharedService,
   ) {
     super(extensionUtility, pubSubService, sharedService);

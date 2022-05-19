@@ -1,3 +1,4 @@
+import { toKebabCase } from '@slickgrid-universal/utils';
 import 'jquery-ui/ui/widgets/autocomplete';
 
 import {
@@ -21,7 +22,7 @@ import {
 import { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
 import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
-import { getDescendantProperty, toKebabCase, unsubscribeAll } from '../services/utilities';
+import { getDescendantProperty, unsubscribeAll } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 import { renderCollectionOptionsAsync } from './filterUtilities';
 import { RxJsFacade, Subscription } from '../services/rxjsFacade';

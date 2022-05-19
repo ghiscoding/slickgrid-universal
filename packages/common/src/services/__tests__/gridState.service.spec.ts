@@ -1,3 +1,5 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import { ExtensionService } from '../extension.service';
 import { FilterService } from '../filter.service';
 import { GridStateService } from '../gridState.service';
@@ -30,7 +32,6 @@ import {
 } from '../../interfaces/index';
 import { SharedService } from '../shared.service';
 import { TreeDataService } from '../treeData.service';
-import { PubSubService } from '../pubSub.service';
 
 declare const Slick: SlickNamespace;
 
@@ -40,8 +41,8 @@ const mockPubSub = {
   subscribe: (eventName, fn) => fnCallbacks[eventName as string] = fn,
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-} as PubSubService;
-jest.mock('../pubSub.service', () => ({
+} as BasePubSubService;
+jest.mock('@slickgrid-universal/event-pub-sub', () => ({
   PubSubService: () => mockPubSub
 }));
 

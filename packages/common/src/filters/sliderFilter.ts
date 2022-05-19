@@ -1,3 +1,5 @@
+import { hasData, toSentenceCase } from '@slickgrid-universal/utils';
+
 import { OperatorType, OperatorString, SearchTerm, } from '../enums/index';
 import {
   Column,
@@ -8,7 +10,6 @@ import {
   SlickGrid,
 } from './../interfaces/index';
 import { createDomElement, emptyElement, } from '../services/domUtilities';
-import { hasData, toSentenceCase } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 
 const DEFAULT_MIN_VALUE = 0;

@@ -1,4 +1,5 @@
 import moment = require('moment-mini');
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import {
   Column,
   ExcelExportOption,
@@ -10,7 +11,6 @@ import {
   GroupTotalsFormatter,
   GroupTotalFormatters,
   ItemMetadata,
-  PubSubService,
   SlickDataView,
   SlickGrid,
   SortComparers,
@@ -25,7 +25,7 @@ const pubSubServiceStub = {
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-} as PubSubService;
+} as BasePubSubService;
 
 // URL object is not supported in JSDOM, we can simply mock it
 (global as any).URL.createObjectURL = jest.fn();

@@ -1,3 +1,5 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import {
   Column,
   ColumnSort,
@@ -22,7 +24,6 @@ import {
 import { BackendUtilityService } from './backendUtility.service';
 import { getDescendantProperty, flattenToParentChildArray } from './utilities';
 import { sortByFieldType } from '../sortComparers/sortUtilities';
-import { PubSubService } from './pubSub.service';
 import { SharedService } from './shared.service';
 import { RxJsFacade, Subject } from './rxjsFacade';
 
@@ -37,7 +38,7 @@ export class SortService {
   protected _isBackendGrid = false;
   protected httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
 
-  constructor(protected readonly sharedService: SharedService, protected readonly pubSubService: PubSubService, protected readonly backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) {
+  constructor(protected readonly sharedService: SharedService, protected readonly pubSubService: BasePubSubService, protected readonly backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) {
     this._eventHandler = new Slick.EventHandler();
     if (this.rxjs) {
       this.httpCancelRequests$ = this.rxjs.createSubject<void>();

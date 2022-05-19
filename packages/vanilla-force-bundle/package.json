@@ -58,6 +58,7 @@
     "@slickgrid-universal/event-pub-sub": "^1.2.6",
     "@slickgrid-universal/pagination-component": "^1.2.6",
     "@slickgrid-universal/text-export": "^1.2.6",
+    "@slickgrid-universal/utils": "^1.2.6",
     "@slickgrid-universal/vanilla-bundle": "^1.2.6",
     "whatwg-fetch": "^3.6.2"
   },

@@ -1,10 +1,12 @@
+import { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
+import { isEmptyObject } from '@slickgrid-universal/utils';
+
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import {
   Column,
   DOMMouseEvent,
   DraggableGrouping,
   DraggableGroupingOption,
-  EventSubscription,
   GridOption,
   Grouping,
   GroupingGetterFunction,
@@ -16,10 +18,8 @@ import {
   SlickNamespace,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 import { createDomElement, emptyElement } from '../services/domUtilities';
-import { isEmptyObject } from '../services/utilities';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -95,7 +95,7 @@ export class SlickDraggableGrouping {
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
     protected readonly extensionUtility: ExtensionUtility,
-    protected readonly pubSubService: PubSubService,
+    protected readonly pubSubService: BasePubSubService,
     protected readonly sharedService: SharedService,
   ) {
     this._bindEventService = new BindingEventService();

@@ -1,3 +1,6 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { arrayRemoveItemByIndex } from '@slickgrid-universal/utils';
+
 import { EmitterType } from '../enums/index';
 import {
   Column,
@@ -13,10 +16,9 @@ import {
   MultiColumnSort,
   OnHeaderCellRenderedEventArgs,
 } from '../interfaces/index';
-import { arrayRemoveItemByIndex, createDomElement, emptyElement, getElementOffsetRelativeToParent, getTranslationPrefix } from '../services/index';
+import { createDomElement, emptyElement, getElementOffsetRelativeToParent, getTranslationPrefix } from '../services/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { FilterService } from '../services/filter.service';
-import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 import { SortService } from '../services/sort.service';
 import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
@@ -51,7 +53,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   constructor(
     protected readonly extensionUtility: ExtensionUtility,
     protected readonly filterService: FilterService,
-    protected readonly pubSubService: PubSubService,
+    protected readonly pubSubService: BasePubSubService,
     protected readonly sharedService: SharedService,
     protected readonly sortService: SortService,
   ) {

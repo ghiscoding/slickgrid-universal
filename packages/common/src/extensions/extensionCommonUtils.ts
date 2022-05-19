@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
+import { titleCase } from '@slickgrid-universal/utils';
+
 import { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../interfaces/index';
 import { createDomElement, sanitizeTextByAvailableSanitizer } from '../services/domUtilities';
 import { SlickColumnPicker } from './slickColumnPicker';
 import { SlickGridMenu } from './slickGridMenu';
-import { titleCase } from '../services/utilities';
 
 /** Create a Close button element and add it to the Menu element */
 export function addCloseButtomElement(this: SlickColumnPicker | SlickGridMenu, menuElm: HTMLDivElement) {

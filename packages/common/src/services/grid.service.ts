@@ -1,3 +1,6 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { arrayRemoveItemByIndex, isObjectEmpty } from '@slickgrid-universal/utils';
+
 import {
   CellArgs,
   Column,
@@ -11,11 +14,9 @@ import {
   OnEventArgs,
   SlickGrid,
 } from '../interfaces/index';
-import { arrayRemoveItemByIndex, isObjectEmpty } from './utilities';
 import { FilterService } from './filter.service';
 import { GridStateService } from './gridState.service';
 import { PaginationService } from '../services/pagination.service';
-import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from './shared.service';
 import { SortService } from './sort.service';
 import { TreeDataService } from './treeData.service';
@@ -35,7 +36,7 @@ export class GridService {
   constructor(
     protected readonly gridStateService: GridStateService,
     protected readonly filterService: FilterService,
-    protected readonly pubSubService: PubSubService,
+    protected readonly pubSubService: BasePubSubService,
     protected readonly paginationService: PaginationService,
     protected readonly sharedService: SharedService,
     protected readonly sortService: SortService,

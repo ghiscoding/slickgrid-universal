@@ -1,9 +1,10 @@
 import 'jest-extended';
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { ExtensionName } from '../../enums/index';
 import { Column, ExtensionModel, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { ExtensionUtility } from '../../extensions';
-import { ExtensionService, FilterService, PubSubService, SharedService, SortService, TreeDataService } from '../index';
+import { ExtensionService, FilterService, SharedService, SortService, TreeDataService } from '../index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import {
   SlickAutoTooltip,
@@ -130,7 +131,7 @@ const pubSubServiceStub = {
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-} as PubSubService;
+} as BasePubSubService;
 
 const sortServiceStub = {
   addRxJsResource: jest.fn(),

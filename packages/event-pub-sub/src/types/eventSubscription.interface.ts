@@ -5,3 +5,8 @@ export interface EventSubscription {
   /** Disposes the resources held by the subscription. */
   unsubscribe?: () => void;
 }
+
+export interface Subscription {
+  /** Disposes the resources held by the subscription. */
+  unsubscribe: () => void;
+}

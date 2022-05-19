@@ -1,9 +1,11 @@
+import { toSentenceCase } from '@slickgrid-universal/utils';
+
 import { KeyCode } from '../enums/index';
 import { EditorArguments, EditorValidationResult } from '../interfaces/index';
 import { integerValidator } from '../editorValidators/integerValidator';
 import { InputEditor } from './inputEditor';
 import { createDomElement } from '../services/domUtilities';
-import { getDescendantProperty, toSentenceCase } from '../services/utilities';
+import { getDescendantProperty } from '../services/utilities';
 
 export class IntegerEditor extends InputEditor {
   constructor(protected readonly args: EditorArguments) {

@@ -19,7 +19,6 @@ import {
   DataViewOption,
   ExtensionList,
   ExternalResource,
-  EventNamingStyle,
   GlobalGridOptions,
   GridOption,
   GridStateType,
@@ -58,7 +57,7 @@ import {
   emptyElement,
   unsubscribeAll,
 } from '@slickgrid-universal/common';
-import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
+import { EventNamingStyle, EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';

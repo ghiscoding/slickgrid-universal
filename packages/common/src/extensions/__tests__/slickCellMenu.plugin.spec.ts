@@ -1,6 +1,9 @@
-import { CellMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, SlickDataView, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { deepCopy } from '@slickgrid-universal/utils';
+
+import { CellMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, SlickGrid, SlickNamespace, } from '../../interfaces/index';
 import { SlickCellMenu } from '../slickCellMenu';
-import { BackendUtilityService, deepCopy, PubSubService, SharedService, } from '../../services';
+import { BackendUtilityService, SharedService, } from '../../services';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
@@ -78,7 +81,7 @@ const pubSubServiceStub = {
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-} as PubSubService;
+} as BasePubSubService;
 
 const commandItemsMock = [
   { command: 'command2', title: 'Command 2', positionOrder: 62, },

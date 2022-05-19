@@ -1,8 +1,9 @@
+import { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
+
 import { FieldType, } from '../enums/index';
 import {
   AutoResizeOption,
   Column,
-  EventSubscription,
   GridOption,
   GridSize,
   ResizeByContentOption,
@@ -11,7 +12,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { getHtmlElementOffset, PubSubService, sanitizeHtmlToText, } from '../services/index';
+import { getHtmlElementOffset, sanitizeHtmlToText, } from '../services/index';
 import { parseFormatterWhenExist } from '../formatters/formatterUtilities';
 
 // using external non-typed js libraries
@@ -77,7 +78,7 @@ export class ResizerService {
     return this.gridOptions?.resizeByContentOptions ?? {};
   }
 
-  constructor(protected readonly pubSubService: PubSubService) {
+  constructor(protected readonly pubSubService: BasePubSubService) {
     this._eventHandler = new Slick.EventHandler();
   }
 

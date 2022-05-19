@@ -1,8 +1,9 @@
+import { deepMerge } from '@slickgrid-universal/utils';
+
 import * as DOMPurify from 'dompurify';
 import { InferDOMType, SearchTerm } from '../enums/index';
 import { Column, GridOption, HtmlElementPosition, SelectOption, SlickGrid, } from '../interfaces/index';
 import { TranslaterService } from './translater.service';
-import { deepMerge } from './utilities';
 
 /**
  * Create the HTML DOM Element for a Select Editor or Filter, this is specific to these 2 types only and the unit tests are directly under them

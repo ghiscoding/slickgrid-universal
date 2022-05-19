@@ -1,3 +1,5 @@
+import { toSentenceCase } from '@slickgrid-universal/utils';
+
 import { Constants } from '../constants';
 import { FieldType, OperatorString, OperatorType, SearchTerm, } from '../enums/index';
 import {
@@ -13,7 +15,7 @@ import {
 } from '../interfaces/index';
 import { buildSelectOperator } from './filterUtilities';
 import { createDomElement, emptyElement } from '../services/domUtilities';
-import { getTranslationPrefix, mapOperatorToShorthandDesignation, toSentenceCase } from '../services/utilities';
+import { getTranslationPrefix, mapOperatorToShorthandDesignation } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 

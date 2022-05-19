@@ -1,5 +1,6 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import { SharedService } from '../shared.service';
-import { PubSubService } from '../pubSub.service';
 import { Column, CurrentPagination, SlickDataView, GridOption, SlickGrid, SlickGroupItemMetadataProvider } from '../../interfaces/index';
 import { ExcelExportService } from '../excelExport.service';
 
@@ -26,7 +27,7 @@ const pubSubServiceStub = {
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-} as PubSubService;
+} as BasePubSubService;
 
 describe('Shared Service', () => {
   let mockColumns: Column[];

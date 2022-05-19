@@ -1,3 +1,4 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { of, throwError } from 'rxjs';
 
 import { EmitterType, FieldType, } from '../../enums/index';
@@ -19,7 +20,6 @@ import {
 import { SortComparers } from '../../sortComparers';
 import { SortService } from '../sort.service';
 import { BackendUtilityService } from '../backendUtility.service';
-import { PubSubService } from '../pubSub.service';
 import { SharedService } from '../shared.service';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 

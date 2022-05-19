@@ -1,3 +1,6 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { hasData } from '@slickgrid-universal/utils';
+
 import {
   CellMenu,
   Column,
@@ -16,10 +19,8 @@ import {
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { ExtensionUtility } from '../extensions/extensionUtility';
-import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 import { createDomElement, emptyElement } from '../services/domUtilities';
-import { hasData } from '../services/utilities';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -49,7 +50,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
     protected readonly extensionUtility: ExtensionUtility,
-    protected readonly pubSubService: PubSubService,
+    protected readonly pubSubService: BasePubSubService,
     protected readonly sharedService: SharedService,
   ) {
     this._bindEventService = new BindingEventService();

@@ -1,3 +1,4 @@
+import { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { dequal } from 'dequal/lite';
 
 import {
@@ -11,7 +12,6 @@ import {
   CurrentPagination,
   CurrentRowSelection,
   CurrentSorter,
-  EventSubscription,
   GridOption,
   GridState,
   SlickDataView,
@@ -21,7 +21,6 @@ import {
 } from '../interfaces/index';
 import { ExtensionService } from './extension.service';
 import { FilterService } from './filter.service';
-import { PubSubService } from './pubSub.service';
 import { SharedService } from './shared.service';
 import { SortService } from './sort.service';
 import { TreeDataService } from './treeData.service';
@@ -41,7 +40,7 @@ export class GridStateService {
   constructor(
     protected readonly extensionService: ExtensionService,
     protected readonly filterService: FilterService,
-    protected readonly pubSubService: PubSubService,
+    protected readonly pubSubService: BasePubSubService,
     protected readonly sharedService: SharedService,
     protected readonly sortService: SortService,
     protected readonly treeDataService: TreeDataService,

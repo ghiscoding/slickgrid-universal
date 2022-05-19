@@ -1,5 +1,7 @@
+import { isNumber } from '@slickgrid-universal/utils';
+
 import { Formatter } from './../interfaces/index';
-import { formatNumber, isNumber } from './../services/utilities';
+import { formatNumber } from './../services/utilities';
 import { getValueFromParamsOrFormatterOptions } from './formatterUtilities';
 
 /** Takes a cell value number (between 0-100) and add the "%" after the number */

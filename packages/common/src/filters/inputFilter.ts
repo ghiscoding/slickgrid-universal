@@ -1,3 +1,5 @@
+import { toSentenceCase } from '@slickgrid-universal/utils';
+
 import {
   Column,
   ColumnFilter,
@@ -9,7 +11,7 @@ import {
 } from '../interfaces/index';
 import { OperatorType, OperatorString, SearchTerm } from '../enums/index';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { createDomElement, emptyElement, toSentenceCase } from '../services';
+import { createDomElement, emptyElement, } from '../services';
 
 export class InputFilter implements Filter {
   protected _bindEventService: BindingEventService;

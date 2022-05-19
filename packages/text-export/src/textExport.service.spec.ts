@@ -1,4 +1,4 @@
-import { TextExportService } from './textExport.service';
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import {
   Column,
   DelimiterType,
@@ -9,15 +9,16 @@ import {
   GridOption,
   GroupTotalFormatters,
   ItemMetadata,
-  PubSubService,
   SlickDataView,
   SlickGrid,
   SortComparers,
   SortDirectionNumber,
   TextExportOption,
 } from '@slickgrid-universal/common';
+
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
+import { TextExportService } from './textExport.service';
 
 function removeMultipleSpaces(inputText: string) {
   return `${inputText}`.replace(/  +/g, '');
@@ -28,7 +29,7 @@ const pubSubServiceStub = {
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-} as PubSubService;
+} as BasePubSubService;
 
 // URL object is not supported in JSDOM, we can simply mock it
 (global as any).URL.createObjectURL = jest.fn();

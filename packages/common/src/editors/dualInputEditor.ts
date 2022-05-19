@@ -1,3 +1,5 @@
+import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
+
 import { KeyCode } from '../enums/keyCode.enum';
 import {
   DOMEvent,
@@ -14,7 +16,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { getDescendantProperty, setDeepValue, toSentenceCase } from '../services/utilities';
+import { getDescendantProperty } from '../services/utilities';
 import { floatValidator, integerValidator, textValidator } from '../editorValidators';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { createDomElement } from '../services/domUtilities';

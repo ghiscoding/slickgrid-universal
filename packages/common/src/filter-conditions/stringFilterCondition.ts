@@ -1,6 +1,7 @@
+import { removeAccentFromText } from '@slickgrid-universal/utils';
+
 import { OperatorString, OperatorType, SearchTerm } from '../enums/index';
 import { FilterCondition, FilterConditionOption } from '../interfaces/index';
-import { removeAccentFromText } from '../services/utilities';
 import { testFilterCondition } from './filterUtilities';
 
 /** Execute filter condition check on each cell */

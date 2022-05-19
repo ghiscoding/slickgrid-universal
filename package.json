@@ -13,7 +13,7 @@
   },
   "scripts": {
     "prebundle": "run-s lint clean",
-    "bundle": "lerna run bundle --stream",
+    "bundle": "cross-env CI=true pnpm -r --stream run bundle",
     "prebundle:zip": "npm run bundle",
     "bundle:zip": "pnpm -r --stream --filter=./packages/** run bundle:zip",
     "build:demo": "lerna run build:demo --stream",

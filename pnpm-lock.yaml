@@ -155,6 +155,8 @@ importers:
 
   packages/common:
     specifiers:
+      '@slickgrid-universal/event-pub-sub': ^1.2.6
+      '@slickgrid-universal/utils': ^1.2.6
       '@types/dompurify': ^2.3.3
       '@types/jquery': ^3.5.14
       '@types/moment': ^2.13.0
@@ -178,6 +180,8 @@ importers:
       slickgrid: ^2.4.44
       un-flatten-tree: ^2.0.12
     dependencies:
+      '@slickgrid-universal/event-pub-sub': link:../event-pub-sub
+      '@slickgrid-universal/utils': link:../utils
       dequal: 2.0.2
       dompurify: 2.3.8
       flatpickr: 4.6.13
@@ -205,10 +209,12 @@ importers:
   packages/composite-editor-component:
     specifiers:
       '@slickgrid-universal/common': ^1.2.6
+      '@slickgrid-universal/utils': ^1.2.6
       cross-env: ^7.0.3
       npm-run-all2: ^5.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
+      '@slickgrid-universal/utils': link:../utils
     devDependencies:
       cross-env: 7.0.3
       npm-run-all2: 5.0.2
@@ -256,11 +262,11 @@ importers:
 
   packages/event-pub-sub:
     specifiers:
-      '@slickgrid-universal/common': ^1.2.6
+      '@slickgrid-universal/utils': ^1.2.6
       cross-env: ^7.0.3
       npm-run-all2: ^5.0.2
     dependencies:
-      '@slickgrid-universal/common': link:../common
+      '@slickgrid-universal/utils': link:../utils
     devDependencies:
       cross-env: 7.0.3
       npm-run-all2: 5.0.2
@@ -268,6 +274,7 @@ importers:
   packages/excel-export:
     specifiers:
       '@slickgrid-universal/common': ^1.2.6
+      '@slickgrid-universal/utils': ^1.2.6
       '@types/moment': ^2.13.0
       cross-env: ^7.0.3
       excel-builder-webpacker: ^2.1.7
@@ -275,6 +282,7 @@ importers:
       npm-run-all2: ^5.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
+      '@slickgrid-universal/utils': link:../utils
       excel-builder-webpacker: 2.1.7
       moment-mini: 2.24.0
     devDependencies:
@@ -300,10 +308,12 @@ importers:
   packages/odata:
     specifiers:
       '@slickgrid-universal/common': ^1.2.6
+      '@slickgrid-universal/utils': ^1.2.6
       cross-env: ^7.0.3
       npm-run-all2: ^5.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
+      '@slickgrid-universal/utils': link:../utils
     devDependencies:
       cross-env: 7.0.3
       npm-run-all2: 5.0.2
@@ -352,15 +362,25 @@ importers:
   packages/text-export:
     specifiers:
       '@slickgrid-universal/common': ^1.2.6
+      '@slickgrid-universal/utils': ^1.2.6
       '@types/text-encoding-utf-8': ^1.0.2
       cross-env: ^7.0.3
       npm-run-all2: ^5.0.2
       text-encoding-utf-8: ^1.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
+      '@slickgrid-universal/utils': link:../utils
       text-encoding-utf-8: 1.0.2
     devDependencies:
       '@types/text-encoding-utf-8': 1.0.2
+      cross-env: 7.0.3
+      npm-run-all2: 5.0.2
+
+  packages/utils:
+    specifiers:
+      cross-env: ^7.0.3
+      npm-run-all2: ^5.0.2
+    devDependencies:
       cross-env: 7.0.3
       npm-run-all2: 5.0.2
 
@@ -372,6 +392,7 @@ importers:
       '@slickgrid-universal/empty-warning-component': ^1.2.6
       '@slickgrid-universal/event-pub-sub': ^1.2.6
       '@slickgrid-universal/pagination-component': ^1.2.6
+      '@slickgrid-universal/utils': ^1.2.6
       cross-env: ^7.0.3
       dequal: ^2.0.2
       flatpickr: ^4.6.13
@@ -387,6 +408,7 @@ importers:
       '@slickgrid-universal/empty-warning-component': link:../empty-warning-component
       '@slickgrid-universal/event-pub-sub': link:../event-pub-sub
       '@slickgrid-universal/pagination-component': link:../pagination-component
+      '@slickgrid-universal/utils': link:../utils
       dequal: 2.0.2
       flatpickr: 4.6.13
       jquery: 3.5.1
@@ -408,6 +430,7 @@ importers:
       '@slickgrid-universal/event-pub-sub': ^1.2.6
       '@slickgrid-universal/pagination-component': ^1.2.6
       '@slickgrid-universal/text-export': ^1.2.6
+      '@slickgrid-universal/utils': ^1.2.6
       '@slickgrid-universal/vanilla-bundle': ^1.2.6
       '@types/webpack': ^5.28.0
       archiver: ^5.3.1
@@ -426,6 +449,7 @@ importers:
       '@slickgrid-universal/event-pub-sub': link:../event-pub-sub
       '@slickgrid-universal/pagination-component': link:../pagination-component
       '@slickgrid-universal/text-export': link:../text-export
+      '@slickgrid-universal/utils': link:../utils
       '@slickgrid-universal/vanilla-bundle': link:../vanilla-bundle
       whatwg-fetch: 3.6.2
     devDependencies:

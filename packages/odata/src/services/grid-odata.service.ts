@@ -2,7 +2,6 @@ import {
   // utilities
   parseUtcDate,
   mapOperatorByFieldType,
-  titleCase,
 
   // enums/interfaces
   BackendService,
@@ -29,6 +28,7 @@ import {
   SingleColumnSort,
   SlickGrid,
 } from '@slickgrid-universal/common';
+import { titleCase } from '@slickgrid-universal/utils';
 import { OdataQueryBuilderService } from './odataQueryBuilder.service';
 import { OdataOption, OdataSortingOption } from '../interfaces/index';
 

@@ -1,13 +1,10 @@
 import { TextEncoder } from 'text-encoding-utf-8';
 import {
   // utility functions
-  addWhiteSpaces,
-  deepCopy,
   exportWithFormatterWhenDefined,
   getTranslationPrefix,
   htmlEntityDecode,
   sanitizeHtmlToText,
-  titleCase,
 
   // interfaces
   Column,
@@ -26,6 +23,7 @@ import {
   TextExportService as BaseTextExportService,
   TranslaterService,
 } from '@slickgrid-universal/common';
+import { addWhiteSpaces, deepCopy, titleCase } from '@slickgrid-universal/utils';
 
 const DEFAULT_EXPORT_OPTIONS: TextExportOption = {
   delimiter: DelimiterType.comma,

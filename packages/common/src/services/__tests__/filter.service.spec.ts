@@ -1,6 +1,7 @@
 // import 3rd party lib multiple-select for the tests
 import 'multiple-select-modified';
 import { of, throwError } from 'rxjs';
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { FieldType } from '../../enums/index';
 import {
@@ -27,7 +28,6 @@ import { SharedService } from '../shared.service';
 import { BackendUtilityService } from '../backendUtility.service';
 import { CollectionService } from '../collection.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { PubSubService } from '../pubSub.service';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 
 declare const Slick: SlickNamespace;
@@ -111,7 +111,7 @@ const pubSubServiceStub = {
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-} as PubSubService;
+} as BasePubSubService;
 
 describe('FilterService', () => {
   let service: FilterService;

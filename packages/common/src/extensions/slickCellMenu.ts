@@ -1,3 +1,5 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import {
   CellMenu,
   CellMenuOption,
@@ -8,7 +10,6 @@ import {
   MenuOptionItem,
 } from '../interfaces/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
-import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 import { MenuFromCellBaseClass } from './menuFromCellBaseClass';
 
@@ -43,7 +44,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
     protected readonly extensionUtility: ExtensionUtility,
-    protected readonly pubSubService: PubSubService,
+    protected readonly pubSubService: BasePubSubService,
     protected readonly sharedService: SharedService,
   ) {
     super(extensionUtility, pubSubService, sharedService);

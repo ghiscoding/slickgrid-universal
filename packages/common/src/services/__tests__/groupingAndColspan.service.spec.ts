@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { GroupingAndColspanService } from '../groupingAndColspan.service';
-import { Column, SlickDataView, GridOption, SlickEventHandler, SlickGrid, SlickNamespace, SlickColumnPicker, SlickGridMenu } from '../../interfaces/index';
+import { Column, SlickDataView, GridOption, SlickEventHandler, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 
 declare const Slick: SlickNamespace;
@@ -15,8 +15,8 @@ const mockPubSub = {
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
 };
-jest.mock('../pubSub.service', () => ({
-  PubSubService: () => mockPubSub
+jest.mock('@slickgrid-universal/event-pub-sub', () => ({
+  BasePubSubService: () => mockPubSub
 }));
 
 const gridOptionMock = {

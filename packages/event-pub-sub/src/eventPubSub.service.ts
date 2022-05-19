@@ -1,11 +1,13 @@
-import { EventNamingStyle, EventSubscription, PubSubService, Subscription, titleCase, toKebabCase } from '@slickgrid-universal/common';
+import { titleCase, toKebabCase } from '@slickgrid-universal/utils';
+import { BasePubSubService } from './basePubSub.service';
+import { EventNamingStyle, EventSubscription, Subscription, } from './types';
 
 export interface PubSubEvent<T = any> {
   name: string;
   listener: (event: T | CustomEventInit<T>) => void;
 }
 
-export class EventPubSubService implements PubSubService {
+export class EventPubSubService implements BasePubSubService {
   protected _elementSource: Element;
   protected _subscribedEvents: PubSubEvent[] = [];
   protected _timer: any;
