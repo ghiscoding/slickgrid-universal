@@ -155,7 +155,6 @@ importers:
 
   packages/common:
     specifiers:
-      '@slickgrid-universal/event-pub-sub': ^1.2.6
       '@types/dompurify': ^2.3.3
       '@types/jquery': ^3.5.14
       '@types/moment': ^2.13.0
@@ -190,7 +189,6 @@ importers:
       slickgrid: 2.4.44
       un-flatten-tree: 2.0.12
     devDependencies:
-      '@slickgrid-universal/event-pub-sub': link:../event-pub-sub
       '@types/dompurify': 2.3.3
       '@types/jquery': 3.5.14
       '@types/moment': 2.13.0
