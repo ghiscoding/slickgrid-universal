@@ -10,8 +10,14 @@ on:
       - '**'
 
 jobs:
-  cache-and-install:
+   run:
+    name: Node ${{ matrix.node }}
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [16]
 
     steps:
       - name: Checkout
