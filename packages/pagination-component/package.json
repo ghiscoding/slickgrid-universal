@@ -46,11 +46,11 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/binding": "^1.2.6",
-    "@slickgrid-universal/common": "^1.2.6"
+    "@slickgrid-universal/binding": "workspace:^",
+    "@slickgrid-universal/common": "workspace:^"
   },
   "devDependencies": {
-    "@slickgrid-universal/event-pub-sub": "^1.2.6",
+    "@slickgrid-universal/event-pub-sub": "workspace:^",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
     "npm-run-all2": "^5.0.2"

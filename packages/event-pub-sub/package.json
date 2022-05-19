@@ -42,7 +42,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/utils": "^1.2.6"
+    "@slickgrid-universal/utils": "workspace:^"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

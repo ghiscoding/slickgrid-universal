@@ -42,7 +42,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^1.2.6"
+    "@slickgrid-universal/common": "workspace:^"
   },
   "devDependencies": {
     "@types/moment": "^2.13.0",
