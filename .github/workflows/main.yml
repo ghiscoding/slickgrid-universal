@@ -79,8 +79,8 @@ jobs:
       - name: Website Prod Build (GitHub demo site)
         run: pnpm build:demo
 
-      - name: Run pnpm install dependencies
-        run: pnpm install
+      - name: Reinstall Cypress
+        run: pnpm install cypress -w
 
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v2
