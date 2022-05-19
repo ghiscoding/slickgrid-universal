@@ -39,14 +39,6 @@ jobs:
       - run: node --version
       - run: pnpm --version
 
-      - name: Run pnpm install dependencies
-        run: pnpm install
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        run: |
-          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
-
       - uses: actions/cache@v3
         name: Setup pnpm cache
         with:
@@ -54,6 +46,14 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
+
+      - name: Run pnpm install dependencies
+        run: pnpm install
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
 
       - name: Cache TypeScript and Jest
         uses: actions/cache@v2
