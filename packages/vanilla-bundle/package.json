@@ -20,11 +20,9 @@
     "build": "tsc --build",
     "postbuild": "npm run bundle:commonjs",
     "build:watch": "tsc --incremental --watch",
-    "prebundle": "npm run delete:dist",
     "bundle": "npm-run-all bundle:commonjs bundle:esm --npm-path npm",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
-    "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
     "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=vanilla-bundle",
     "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=vanilla-bundle"
   },
@@ -60,8 +58,7 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "npm-run-all2": "^5.0.2",
-    "rimraf": "^3.0.2"
+    "npm-run-all2": "^5.0.2"
   },
   "funding": {
     "type": "ko_fi",

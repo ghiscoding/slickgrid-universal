@@ -22,8 +22,6 @@
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "bundle": "run-p bundle:commonjs bundle:esm --npm-path npm",
-    "prebundle": "npm-run-all delete:dist --npm-path npm",
-    "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
     "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=excel-export",
     "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=excel-export"
   },
@@ -51,8 +49,7 @@
   "devDependencies": {
     "@types/moment": "^2.13.0",
     "cross-env": "^7.0.3",
-    "npm-run-all2": "^5.0.2",
-    "rimraf": "^3.0.2"
+    "npm-run-all2": "^5.0.2"
   },
   "funding": {
     "type": "ko_fi",
