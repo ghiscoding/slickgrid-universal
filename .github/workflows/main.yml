@@ -62,7 +62,7 @@ jobs:
           path: |
             packages/*/lib
             packages/*/tsconfig.tsbuildinfo
-            .jest-cache
+            test/.jest-cache
           key: ts-jest-${{ matrix.platform }}-${{ matrix.node }}-${{ github.run_id }}
           restore-keys: ts-jest-${{ matrix.platform }}-${{ matrix.node }}-${{ github.run_id }}
 
