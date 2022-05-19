@@ -11,13 +11,15 @@ on:
 
 jobs:
   run:
-    name: Node ${{ matrix.node }}
-    runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
       matrix:
         node: [16]
+        platform:
+          - ubuntu-latest
+
+    name: '${{matrix.platform}} / Node.js ${{ matrix.node }}'
+    runs-on: ${{matrix.platform}}
 
     steps:
       - name: Checkout
@@ -27,7 +29,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          # cache: pnpm
+          cache: pnpm
 
       - name: Install pnpm itself
         uses: pnpm/action-setup@v2.2.0
