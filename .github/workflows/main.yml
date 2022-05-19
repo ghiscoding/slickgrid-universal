@@ -83,6 +83,7 @@ jobs:
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v2
         with:
+          install: false
           start: pnpm serve:demo
           wait-on: 'http://localhost:8888'
           config-file: test/cypress.json
