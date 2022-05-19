@@ -10,7 +10,7 @@ on:
       - '**'
 
 jobs:
-   run:
+  run:
     name: Node ${{ matrix.node }}
     runs-on: ubuntu-latest
 
