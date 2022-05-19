@@ -26,8 +26,6 @@
     "postbundle:esm": "run-s copy:html:esm --npm-path npm",
     "copy:html:cjs": "cross-env copyfiles -f src/*.html dist/commonjs",
     "copy:html:esm": "cross-env copyfiles -f src/*.html dist/esm",
-    "prebundle": "npm-run-all delete:dist --npm-path npm",
-    "delete:dist": "cross-env rimraf --maxBusyTries=10 dist",
     "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=pagination-component",
     "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=pagination-component"
   },
@@ -54,7 +52,6 @@
   "devDependencies": {
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
-    "npm-run-all2": "^5.0.2",
-    "rimraf": "^3.0.2"
+    "npm-run-all2": "^5.0.2"
   }
 }
