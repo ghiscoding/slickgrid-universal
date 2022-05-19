@@ -9,6 +9,7 @@ module.exports = {
     },
   },
   globalSetup: '<rootDir>/test/jest-global-setup.js',
+  cacheDirectory: '<rootDir>/test/.jest-cache',
   collectCoverage: false,
   collectCoverageFrom: [
     'packages/**/*.ts',

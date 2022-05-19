@@ -30,12 +30,15 @@
 /connect.lock
 /coverage
 /libpeerconnection.log
+.pnpm-debug.log
 npm-debug.log
+pnpm-debug.log
 lerna-debug.log
 roller-debug.log
 testem.log
 /typings
 yarn-error.log
+tsconfig.tsbuildinfo
 
 # System Files
 .DS_Store
@@ -49,6 +52,7 @@ docs
 # Tests Report & Coverage
 **/node_modules
 **/coverage
+**/.jest-cache
 **/jest-coverage
 **/dist
 **/*.tgz

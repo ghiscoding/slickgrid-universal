@@ -8,61 +8,76 @@ on:
   pull_request:
     branches:
       - '**'
-env:
-  CI: true
-  PREFERRED_WORKSPACE_MANAGER: yarn
 
 jobs:
-  run:
-    name: Node ${{ matrix.node }}
+  cache-and-install:
     runs-on: ubuntu-latest
 
-    strategy:
-      fail-fast: false
-      matrix:
-        node: [16]
-
     steps:
-      - name: Clone repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - uses: actions/cache@v2
+     - name: Set node
+        uses: actions/setup-node@v3
         with:
-          path: ~/.cache/yarn
-          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - name: Set Node.js version
-        uses: actions/setup-node@v2
+          node-version: 16.x
+          # cache: pnpm
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.2.0
         with:
-          node-version: ${{ matrix.node }}
+          version: 7
+
+      - name: Install project
+        run: pnpm i
 
       - run: node --version
-      - run: npm --version
+      - run: pnpm --version
 
-      - name: Install npm/yarn dependencies
-        run: yarn install
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Cache TypeScript and Jest
+        uses: actions/cache@v2
+        with:
+          path: |
+            packages/*/lib
+            packages/*/tsconfig.tsbuildinfo
+            .jest-cache
+          key: ts-jest-${{ matrix.platform }}-${{ matrix.node }}-${{ github.run_id }}
+          restore-keys: ts-jest-${{ matrix.platform }}-${{ matrix.node }}-
 
       - name: Build Full Bundle (all Bundler types)
-        run: yarn bundle
+        run: pnpm bundle
 
       - name: Run Jest unit tests
         if: "!contains(github.event.head_commit.message, 'chore(release)')"
-        run: yarn test:ci
+        run: pnpm test:ci
 
       - name: Upload Jest coverage to Codecov
         if: "!contains(github.event.head_commit.message, 'chore(release)')"
         run: bash <(curl -s https://codecov.io/bash)
 
       - name: Website Prod Build (GitHub demo site)
-        run: yarn build:demo
+        run: pnpm build:demo
 
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v2
         with:
-          start: yarn serve:demo
+          start: pnpm serve:demo
           wait-on: 'http://localhost:8888'
           config-file: test/cypress.json
           browser: chrome
