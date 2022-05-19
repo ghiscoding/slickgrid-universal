@@ -64,7 +64,7 @@ jobs:
             packages/*/tsconfig.tsbuildinfo
             .jest-cache
           key: ts-jest-${{ matrix.platform }}-${{ matrix.node }}-${{ github.run_id }}
-          restore-keys: ts-jest-${{ matrix.platform }}-${{ matrix.node }}-
+          restore-keys: ts-jest-${{ matrix.platform }}-${{ matrix.node }}-${{ github.run_id }}
 
       - name: Build Full Bundle (all Bundler types)
         run: pnpm bundle
