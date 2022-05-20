@@ -79,10 +79,13 @@ Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +15,00
 
 To get started and do development with this monorepo, you will need to clone the repo and then follow the steps below. You must be at the root of your project to run the following commands.
 
-1. Install pnpm workspace with [pnpm](https://pnpm.io/installation) or run it with `npx pnpm`
+1. Install pnpm workspace with [pnpm](https://pnpm.io/installation) or run it with `npx` or simply run the `install` npm script from the root `package.json`
 ```bash
 # from the root
 pnpm install
+
+# or with npx
+npx pnpm install
 ```
 
 2. Build
