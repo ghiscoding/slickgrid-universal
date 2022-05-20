@@ -1,4 +1,4 @@
-name: Cypress E2E Tests
+name: Cypress Tests
 
 on:
   push:
@@ -13,7 +13,7 @@ on:
 
 jobs:
   cypress:
-    name: E2E Tests
+    name: E2E Tests / NodeJS ${{ matrix.node }}'
     runs-on: ubuntu-latest
     # timeout-minutes: 8
     if: github.event.pull_request.draft != true
@@ -38,6 +38,8 @@ jobs:
         with:
           version: 7
           run_install: true
+
+      - run: pnpm --version
 
       - name: TSC Build (cjs)
         run: pnpm build

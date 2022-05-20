@@ -18,7 +18,7 @@ jobs:
         platform:
           - ubuntu-latest
 
-    name: 'Platform: ${{matrix.platform}} / NodeJS: ${{ matrix.node }}'
+    name: '${{matrix.platform}} / NodeJS ${{ matrix.node }}'
     runs-on: ${{matrix.platform}}
 
     steps:
