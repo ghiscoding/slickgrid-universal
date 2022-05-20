@@ -39,7 +39,7 @@ jobs:
           version: 7
           run_install: true
 
-      - name: TSC Build
+      - name: TSC Build (cjs)
         run: pnpm build
 
       - name: Website Prod Build (GitHub demo site)
