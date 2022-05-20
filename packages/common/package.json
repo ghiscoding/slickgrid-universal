@@ -25,13 +25,13 @@
     "/dist"
   ],
   "scripts": {
-    "build": "tsc --build",
-    "postbuild": "npm-run-all bundle:commonjs --npm-path npm",
+    "build": "pnpm run bundle:commonjs",
+    "postbuild": "pnpm run sass:build sass:copy",
     "build:watch": "tsc --incremental --watch",
     "dev": "run-s build sass:build sass:copy --npm-path npm",
     "dev:watch": "run-p build:watch sass:watch --npm-path npm",
     "bundle": "npm-run-all bundle:commonjs bundle:esm --npm-path npm",
-    "postbundle": "npm-run-all sass:build sass:copy --npm-path npm",
+    "postbundle": "pnpm run sass:build sass:copy",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=common",
