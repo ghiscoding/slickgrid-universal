@@ -74,7 +74,7 @@ importers:
       '@types/fnando__sparkline': ^0.3.4
       '@types/jquery': ^3.5.14
       '@types/moment': ^2.13.0
-      '@types/node': ^17.0.34
+      '@types/node': ^17.0.35
       '@types/webpack': ^5.28.0
       bulma: ^0.9.4
       clean-webpack-plugin: 4.0.0
@@ -90,9 +90,10 @@ importers:
       mini-css-extract-plugin: ^2.6.0
       moment-mini: ^2.24.0
       rxjs: ^7.5.5
-      sass: ^1.51.0
+      sass: ^1.52.0
       sass-loader: ^13.0.0
       style-loader: ^3.3.1
+      typescript: ^4.6.4
       url-loader: ^4.1.1
       webpack: ^5.72.1
       webpack-cli: ^4.9.2
@@ -121,20 +122,21 @@ importers:
       '@types/fnando__sparkline': 0.3.4
       '@types/jquery': 3.5.14
       '@types/moment': 2.13.0
-      '@types/node': 17.0.34
+      '@types/node': 17.0.35
       '@types/webpack': 5.28.0_webpack-cli@4.9.2
       clean-webpack-plugin: 4.0.0_webpack@5.72.1
       copy-webpack-plugin: 11.0.0_webpack@5.72.1
       css-loader: 6.7.1_webpack@5.72.1
       esbuild-loader: 2.19.0_webpack@5.72.1
       file-loader: 6.2.0_webpack@5.72.1
-      fork-ts-checker-webpack-plugin: 7.2.11_webpack@5.72.1
+      fork-ts-checker-webpack-plugin: 7.2.11_gp3atwgq76mgimstdygasg64n4
       html-loader: 3.1.0_webpack@5.72.1
       html-webpack-plugin: 5.5.0_webpack@5.72.1
       mini-css-extract-plugin: 2.6.0_webpack@5.72.1
-      sass: 1.51.0
-      sass-loader: 13.0.0_sass@1.51.0+webpack@5.72.1
+      sass: 1.52.1
+      sass-loader: 13.0.0_sass@1.52.1+webpack@5.72.1
       style-loader: 3.3.1_webpack@5.72.1
+      typescript: 4.6.4
       url-loader: 4.1.1_4spiask3fd7dtsm35bmnngyscq
       webpack: 5.72.1_webpack-cli@4.9.2
       webpack-cli: 4.9.2_cwh63z5eu3fmemh7flfnfpcp74
@@ -169,14 +171,13 @@ importers:
       jquery: 3.5.1
       jquery-ui: 1.12.1
       jquery-ui-dist: 1.12.1
-      mini-css-extract-plugin: ^2.6.0
       moment-mini: ^2.24.0
       multiple-select-modified: ^1.3.17
       nodemon: ^2.0.16
       npm-run-all2: ^5.0.2
       postcss: ^8.4.14
       postcss-cli: ^9.1.0
-      sass: ^1.51.0
+      sass: ^1.52.0
       slickgrid: ^2.4.44
       un-flatten-tree: ^2.0.12
     dependencies:
@@ -199,12 +200,11 @@ importers:
       autoprefixer: 10.4.7_postcss@8.4.14
       copyfiles: 2.4.1
       cross-env: 7.0.3
-      mini-css-extract-plugin: 2.6.0
       nodemon: 2.0.16
       npm-run-all2: 5.0.2
       postcss: 8.4.14
       postcss-cli: 9.1.0_postcss@8.4.14
-      sass: 1.51.0
+      sass: 1.52.1
 
   packages/composite-editor-component:
     specifiers:
@@ -1618,26 +1618,26 @@ packages:
     resolution: {integrity: sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g==}
     dependencies:
       '@types/connect': 3.4.35
-      '@types/node': 17.0.34
+      '@types/node': 17.0.35
     dev: true
 
   /@types/bonjour/3.5.10:
     resolution: {integrity: sha512-p7ienRMiS41Nu2/igbJxxLDWrSZ0WxM8UQgCeO9KhoVF7cOVFkrKsiDr1EsJIla8vV3oEEjGcz11jc5yimhzZw==}
     dependencies:
-      '@types/node': 17.0.34
+      '@types/node': 17.0.35
     dev: true
 
   /@types/connect-history-api-fallback/1.3.5:
     resolution: {integrity: sha512-h8QJa8xSb1WD4fpKBDcATDNGXghFj6/3GRWG6dhmRcu0RX1Ubasur2Uvx5aeEwlf0MwblEC2bMzzMQntxnw/Cw==}
     dependencies:
       '@types/express-serve-static-core': 4.17.28
-      '@types/node': 17.0.34
+      '@types/node': 17.0.35
     dev: true
 
   /@types/connect/3.4.35:
     resolution: {integrity: sha512-cdeYyv4KWoEgpBISTxWvqYsVy444DOqehiF3fM3ne10AmJ62RSyNkUnxMJXHQWRQQX2eR94m5y1IZyDwBjV9FQ==}
     dependencies:
-      '@types/node': 17.0.34
+      '@types/node': 17.0.35
     dev: true
 
   /@types/dompurify/2.3.3:
@@ -1667,7 +1667,7 @@ packages:
   /@types/express-serve-static-core/4.17.28:
     resolution: {integrity: sha512-P1BJAEAW3E2DJUlkgq4tOL3RyMunoWXqbSCygWo5ZIWTjUgN1YnaXWW4VWl/oc8vs/XoYibEGBKP0uZyF4AHig==}
     dependencies:
-      '@types/node': 17.0.34
+      '@types/node': 17.0.35
       '@types/qs': 6.9.7
       '@types/range-parser': 1.2.4
     dev: true
@@ -1689,7 +1689,7 @@ packages:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
     dependencies:
       '@types/minimatch': 3.0.5
-      '@types/node': 17.0.34
+      '@types/node': 17.0.35
     dev: true
 
   /@types/graceful-fs/4.1.5:
@@ -1705,7 +1705,7 @@ packages:
   /@types/http-proxy/1.17.9:
     resolution: {integrity: sha512-QsbSjA/fSk7xB+UXlCT3wHBy5ai9wOcNDWwZAtud+jXhwOM3l+EYZh8Lng4+/6n8uar0J7xILzqftJdJ/Wdfkw==}
     dependencies:
-      '@types/node': 17.0.34
+      '@types/node': 17.0.35
     dev: true
 
   /@types/istanbul-lib-coverage/2.0.4:
@@ -1786,10 +1786,6 @@ packages:
     resolution: {integrity: sha512-miWq2m2FiQZmaHfdZNcbpp9PuXg34W5JZ5CrJ/BaS70VuhoJENBEQybeiYSaPBRNq6KQGnjfEnc/F3PN++D+XQ==}
     dev: true
 
-  /@types/node/17.0.34:
-    resolution: {integrity: sha512-XImEz7XwTvDBtzlTnm8YvMqGW/ErMWBsKZ+hMTvnDIjGCKxwK5Xpc+c/oQjOauwq8M4OS11hEkpjX8rrI/eEgA==}
-    dev: true
-
   /@types/node/17.0.35:
     resolution: {integrity: sha512-vu1SrqBjbbZ3J6vwY17jBs8Sr/BKA+/a/WtjRG+whKg1iuLFOosq872EXS0eXWILdO36DHQQeku/ZcL6hz2fpg==}
     dev: true
@@ -1838,7 +1834,7 @@ packages:
     resolution: {integrity: sha512-nCkHGI4w7ZgAdNkrEu0bv+4xNV/XDqW+DydknebMOQwkpDGx8G+HTlj7R7ABI8i8nKxVw0wtKPi1D+lPOkh4YQ==}
     dependencies:
       '@types/mime': 1.3.2
-      '@types/node': 17.0.34
+      '@types/node': 17.0.35
     dev: true
 
   /@types/sinonjs__fake-timers/8.1.1:
@@ -1852,7 +1848,7 @@ packages:
   /@types/sockjs/0.3.33:
     resolution: {integrity: sha512-f0KEEe05NvUnat+boPTZ0dgaLZ4SfSouXUgv5noUiefG2ajgKjmETo9ZJyuqsl7dfl2aHlLJUiki6B4ZYldiiw==}
     dependencies:
-      '@types/node': 17.0.34
+      '@types/node': 17.0.35
     dev: true
 
   /@types/stack-utils/2.0.1:
@@ -1900,7 +1896,7 @@ packages:
   /@types/ws/8.5.3:
     resolution: {integrity: sha512-6YOoWjruKj1uLf3INHH7D3qTXwFfEsg1kf3c0uDdSBJwfa/llkwIjrAGV7j7mVgGNbzTQ3HiHKKDXl6bJPD97w==}
     dependencies:
-      '@types/node': 17.0.34
+      '@types/node': 17.0.35
     dev: true
 
   /@types/yargs-parser/21.0.0:
@@ -4888,7 +4884,7 @@ packages:
     resolution: {integrity: sha1-+8cfDEGt6zf5bFd60e1C2P2sypE=}
     dev: true
 
-  /fork-ts-checker-webpack-plugin/7.2.11_webpack@5.72.1:
+  /fork-ts-checker-webpack-plugin/7.2.11_gp3atwgq76mgimstdygasg64n4:
     resolution: {integrity: sha512-2e5+NyTUTE1Xq4fWo7KFEQblCaIvvINQwUX3jRmEGlgCTc1Ecqw/975EfQrQ0GEraxJTnp8KB9d/c8hlCHUMJA==}
     engines: {node: '>=12.13.0', yarn: '>=1.0.0'}
     peerDependencies:
@@ -4910,6 +4906,7 @@ packages:
       schema-utils: 3.1.1
       semver: 7.3.7
       tapable: 2.2.1
+      typescript: 4.6.4
       webpack: 5.72.1_webpack-cli@4.9.2
     dev: true
 
@@ -7168,15 +7165,6 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /mini-css-extract-plugin/2.6.0:
-    resolution: {integrity: sha512-ndG8nxCEnAemsg4FSgS+yNyHKgkTB4nPKqCOgh65j3/30qqC5RaSQQXMm++Y6sb6E1zRSxPkztj9fqxhS1Eo6w==}
-    engines: {node: '>= 12.13.0'}
-    peerDependencies:
-      webpack: ^5.0.0
-    dependencies:
-      schema-utils: 4.0.0
-    dev: true
-
   /mini-css-extract-plugin/2.6.0_webpack@5.72.1:
     resolution: {integrity: sha512-ndG8nxCEnAemsg4FSgS+yNyHKgkTB4nPKqCOgh65j3/30qqC5RaSQQXMm++Y6sb6E1zRSxPkztj9fqxhS1Eo6w==}
     engines: {node: '>= 12.13.0'}
@@ -8835,7 +8823,7 @@ packages:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
     dev: true
 
-  /sass-loader/13.0.0_sass@1.51.0+webpack@5.72.1:
+  /sass-loader/13.0.0_sass@1.52.1+webpack@5.72.1:
     resolution: {integrity: sha512-IHCFecI+rbPvXE2zO/mqdVFe8MU7ElGrwga9hh2H65Ru4iaBJAMRteum1c4Gsxi9Cq1FOtTEDd6+/AEYuQDM4Q==}
     engines: {node: '>= 14.15.0'}
     peerDependencies:
@@ -8856,12 +8844,12 @@ packages:
     dependencies:
       klona: 2.0.5
       neo-async: 2.6.2
-      sass: 1.51.0
+      sass: 1.52.1
       webpack: 5.72.1_webpack-cli@4.9.2
     dev: true
 
-  /sass/1.51.0:
-    resolution: {integrity: sha512-haGdpTgywJTvHC2b91GSq+clTKGbtkkZmVAb82jZQN/wTy6qs8DdFm2lhEQbEwrY0QDRgSQ3xDurqM977C3noA==}
+  /sass/1.52.1:
+    resolution: {integrity: sha512-fSzYTbr7z8oQnVJ3Acp9hV80dM1fkMN7mSD/25mpcct9F7FPBMOI8krEYALgU1aZoqGhQNhTPsuSmxjnIvAm4Q==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
