@@ -79,8 +79,26 @@ jobs:
       - name: Website Prod Build (GitHub demo site)
         run: pnpm build:demo
 
-      - name: Reinstall Cypress
-        run: pnpm install cypress -w
+      - name: Cache Cypress binary
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-cypress-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            cypress-${{ runner.os }}-cypress-
+      - name: install dependencies and verify Cypress
+        env:
+          # make sure every Cypress install prints minimal information
+          CI: 1
+        # print Cypress and OS info
+        run: |
+          npx cypress verify
+          npx cypress info
+          npx cypress version
+          npx cypress version --component package
+          npx cypress version --component binary
+          npx cypress version --component electron
+          npx cypress version --component nod
 
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v2
