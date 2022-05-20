@@ -1,4 +1,4 @@
-name: E2E Cypress Tests
+name: Cypress E2E Tests
 
 on:
   push:
