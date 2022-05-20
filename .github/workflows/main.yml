@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 2 # codecov-bash seems to require this
 
       - name: Install pnpm itself
         uses: pnpm/action-setup@v2.2.0
@@ -65,8 +67,8 @@ jobs:
           key: ts-jest-${{ matrix.platform }}-${{ matrix.node }}-${{ github.run_id }}
           restore-keys: ts-jest-${{ matrix.platform }}-${{ matrix.node }}-
 
-      - name: TSC Build (cjs)
-        run: pnpm build
+      - name: TSC Full Bundle (all Bundler types)
+        run: pnpm bundle
 
       - name: Run Jest unit tests
         if: "!contains(github.event.head_commit.message, 'chore(release)')"
