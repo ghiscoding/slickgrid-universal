@@ -39,6 +39,9 @@ jobs:
           version: 7
           run_install: true
 
+      - name: Build Full Bundle (all Bundler types)
+        run: pnpm bundle
+
       - name: Website Prod Build (GitHub demo site)
         run: pnpm build:demo
 
