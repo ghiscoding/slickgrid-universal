@@ -945,11 +945,11 @@ export class Example12 {
         // viewColumnLayout: 2, // responsive layout, choose from 'auto', 1, 2, or 3 (defaults to 'auto')
         showFormResetButton: true,
 
-        // you can validate each row item dataContext before apply Mass Update/Selection changes via this validation callback (returning false would skip the change)
+        // you can validate each row item dataContext before applying a Mass Update/Selection changes via this validation callback (returning false would skip the change)
         // validateMassUpdateChange: (fieldName, dataContext, formValues) => {
         //   const levelComplex = this.complexityLevelList.find(level => level.label === 'Complex');
         //   if (fieldName === 'duration' && (dataContext.complexity === levelComplex?.value || formValues.complexity === levelComplex?.value) && formValues.duration < 5) {
-        //     // not good, do not apply the change because when it's "Complex", we assume the user has to be choose at least 5 days of work (duration)
+        //     // doesn't pass condition, do not apply the change because when it's "Complex", we assume that the user has to choose at least 5 days of work (duration)
         //     return false;
         //   }
         //   return true;
