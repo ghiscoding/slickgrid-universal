@@ -194,7 +194,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
     // Group By text, it could be set in the export options or from translation or if nothing is found then use the English constant text
     let groupByColumnHeader = this._exportOptions.groupingColumnHeaderTitle;
-    if (!groupByColumnHeader && this._gridOptions.enableTranslate && this._translaterService && this._translaterService.translate && this._translaterService.getCurrentLanguage && this._translaterService.getCurrentLanguage()) {
+    if (!groupByColumnHeader && this._gridOptions.enableTranslate && this._translaterService?.translate && this._translaterService?.getCurrentLanguage?.()) {
       groupByColumnHeader = this._translaterService.translate(`${getTranslationPrefix(this._gridOptions)}GROUP_BY`);
     } else if (!groupByColumnHeader) {
       groupByColumnHeader = this._locales && this._locales.TEXT_GROUP_BY;
@@ -282,7 +282,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
       // Populate the Grouped Column Header, pull the columnGroup(Key) defined
       columns.forEach((columnDef) => {
         let groupedHeaderTitle = '';
-        if (columnDef.columnGroupKey && this._gridOptions.enableTranslate && this._translaterService && this._translaterService.translate && this._translaterService.getCurrentLanguage && this._translaterService.getCurrentLanguage()) {
+        if (columnDef.columnGroupKey && this._gridOptions.enableTranslate && this._translaterService?.translate && this._translaterService?.getCurrentLanguage?.()) {
           groupedHeaderTitle = this._translaterService.translate(columnDef.columnGroupKey);
         } else {
           groupedHeaderTitle = columnDef.columnGroup || '';
@@ -312,7 +312,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
       // Populate the Column Header, pull the name defined
       columns.forEach((columnDef) => {
         let headerTitle = '';
-        if ((columnDef.nameKey || columnDef.nameKey) && this._gridOptions.enableTranslate && this._translaterService && this._translaterService.translate && this._translaterService.getCurrentLanguage && this._translaterService.getCurrentLanguage()) {
+        if ((columnDef.nameKey || columnDef.nameKey) && this._gridOptions.enableTranslate && this._translaterService?.translate && this._translaterService?.getCurrentLanguage?.()) {
           headerTitle = this._translaterService.translate((columnDef.nameKey || columnDef.nameKey));
         } else {
           headerTitle = columnDef.name || titleCase(columnDef.field);

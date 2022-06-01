@@ -109,7 +109,7 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
 
       // focus on first input
       setTimeout(() => {
-        if (Array.isArray(editors) && editors.length > 0 && editors[0].focus) {
+        if (Array.isArray(editors) && editors.length > 0 && typeof editors[0].focus === 'function') {
           editors[0].focus();
         }
       }, 0);

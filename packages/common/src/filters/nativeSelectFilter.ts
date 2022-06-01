@@ -170,7 +170,7 @@ export class NativeSelectFilter implements Filter {
         }
 
         const labelKey = option.labelKey || option[labelName];
-        const textLabel = ((option.labelKey || isEnabledTranslate) && this.translater && this.translater.translate && this.translater.getCurrentLanguage && this.translater.getCurrentLanguage()) ? this.translater.translate(labelKey || ' ') : labelKey;
+        const textLabel = ((option.labelKey || isEnabledTranslate) && typeof this.translater !== undefined && this.translater.getCurrentLanguage?.()) ? this.translater.translate(labelKey || ' ') : labelKey;
 
         selectElm.appendChild(
           createDomElement('option', { value: option[valueName], textContent: textLabel })
