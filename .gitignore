@@ -26,7 +26,7 @@
 .chrome
 
 # misc
-/.sass-cache
+.sass-cache
 /connect.lock
 /coverage
 /libpeerconnection.log
@@ -50,6 +50,7 @@ dist-demo
 docs
 
 # Tests Report & Coverage
+.jest-cache
 **/node_modules
 **/coverage
 **/.jest-cache
