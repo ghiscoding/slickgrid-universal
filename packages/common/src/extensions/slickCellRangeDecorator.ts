@@ -1,6 +1,7 @@
+import { deepMerge } from '@slickgrid-universal/utils';
+
 import { CellRange, CellRangeDecoratorOption, CSSStyleDeclarationWritable, SlickGrid } from '../interfaces/index';
 import { createDomElement } from '../services/domUtilities';
-import { deepMerge } from '../services/utilities';
 
 /**
  * Displays an overlay on top of a given cell range.

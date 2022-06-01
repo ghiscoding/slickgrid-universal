@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { EventSubscription } from '../interfaces/index';
+import { EventSubscription } from './types';
 
-export abstract class PubSubService {
+export abstract class BasePubSubService {
   /**
    * Method to publish a message
    * @param event The event or channel to publish to.
    * @param data The data to publish on the channel.
    */
   publish<T = any>(_eventName: string | any, _data?: T, _delay?: number): void | boolean | Promise<boolean> {
-    throw new Error('PubSubService "publish" method must be implemented');
+    throw new Error('BasePubSubService "publish" method must be implemented');
   }
 
   /**
@@ -19,7 +19,7 @@ export abstract class PubSubService {
     */
   // eslint-disable-next-line @typescript-eslint/ban-types
   subscribe<T = any>(_eventName: string | Function, _callback: (data: T) => void): EventSubscription | any {
-    throw new Error('PubSubService "subscribe" method must be implemented');
+    throw new Error('BasePubSubService "subscribe" method must be implemented');
   }
 
   /**
@@ -31,7 +31,7 @@ export abstract class PubSubService {
     */
   // eslint-disable-next-line @typescript-eslint/ban-types
   subscribeEvent?<T = any>(_eventName: string | Function, _callback: (event: CustomEventInit<T>) => void): EventSubscription | any {
-    throw new Error('PubSubService "subscribeEvent" method must be implemented');
+    throw new Error('BasePubSubService "subscribeEvent" method must be implemented');
   }
 
   /**
@@ -40,11 +40,11 @@ export abstract class PubSubService {
     * @return possibly a Subscription
     */
   unsubscribe(_eventName: string, _callback: (event: CustomEventInit) => void): void {
-    throw new Error('PubSubService "unsubscribe" method must be implemented');
+    throw new Error('BasePubSubService "unsubscribe" method must be implemented');
   }
 
   /** Unsubscribes all subscriptions that currently exists */
   unsubscribeAll(_subscriptions?: EventSubscription[]): void {
-    throw new Error('PubSubService "unsubscribeAll" method must be implemented');
+    throw new Error('BasePubSubService "unsubscribeAll" method must be implemented');
   }
 }

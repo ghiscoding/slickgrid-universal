@@ -25,13 +25,13 @@
     "/dist"
   ],
   "scripts": {
-    "build": "tsc --build",
-    "postbuild": "npm-run-all bundle:commonjs --npm-path npm",
+    "build": "pnpm run bundle:commonjs",
+    "postbuild": "pnpm run sass:build sass:copy",
     "build:watch": "tsc --incremental --watch",
     "dev": "run-s build sass:build sass:copy --npm-path npm",
     "dev:watch": "run-p build:watch sass:watch --npm-path npm",
     "bundle": "npm-run-all bundle:commonjs bundle:esm --npm-path npm",
-    "postbundle": "npm-run-all sass:build sass:copy --npm-path npm",
+    "postbundle": "pnpm run sass:build sass:copy",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=common",
@@ -69,6 +69,8 @@
     "not dead"
   ],
   "dependencies": {
+    "@slickgrid-universal/event-pub-sub": "workspace:^",
+    "@slickgrid-universal/utils": "workspace:^",
     "dequal": "^2.0.2",
     "dompurify": "^2.3.8",
     "flatpickr": "^4.6.13",
@@ -87,12 +89,11 @@
     "autoprefixer": "^10.4.7",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
-    "mini-css-extract-plugin": "^2.6.0",
     "nodemon": "^2.0.16",
     "npm-run-all2": "^5.0.2",
     "postcss": "^8.4.14",
     "postcss-cli": "^9.1.0",
-    "sass": "^1.51.0"
+    "sass": "^1.52.1"
   },
   "engines": {
     "node": ">=14.17.0",

@@ -1,6 +1,7 @@
+import { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
+
 import {
   Column,
-  EventSubscription,
   GridOption,
   SlickDataView,
   SlickEventHandler,
@@ -9,7 +10,6 @@ import {
   SlickResizer,
 } from './../interfaces/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
-import { PubSubService } from './pubSub.service';
 import { createDomElement, emptyElement } from './domUtilities';
 
 // using external non-typed js libraries
@@ -20,7 +20,7 @@ export class GroupingAndColspanService {
   protected _grid!: SlickGrid;
   protected _subscriptions: EventSubscription[] = [];
 
-  constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: PubSubService,) {
+  constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: BasePubSubService) {
     this._eventHandler = new Slick.EventHandler();
   }
 

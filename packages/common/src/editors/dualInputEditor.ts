@@ -1,3 +1,5 @@
+import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
+
 import { KeyCode } from '../enums/keyCode.enum';
 import {
   DOMEvent,
@@ -14,7 +16,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { getDescendantProperty, setDeepValue, toSentenceCase } from '../services/utilities';
+import { getDescendantProperty } from '../services/utilities';
 import { floatValidator, integerValidator, textValidator } from '../editorValidators';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { createDomElement } from '../services/domUtilities';
@@ -334,7 +336,7 @@ export class DualInputEditor implements Editor {
       this[originalValuePosition] = itemValue;
       if (this.editorParams[position].type === 'float') {
         const decimalPlaces = this.getDecimalPlaces(position);
-        if (decimalPlaces !== null && (this[originalValuePosition] || this[originalValuePosition] === 0) && (+this[originalValuePosition]).toFixed) {
+        if (decimalPlaces !== null && (this[originalValuePosition] || this[originalValuePosition] === 0) && typeof this[originalValuePosition] !== undefined) {
           this[originalValuePosition] = (+this[originalValuePosition]).toFixed(decimalPlaces);
         }
       }

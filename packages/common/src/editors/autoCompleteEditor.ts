@@ -1,3 +1,4 @@
+import { setDeepValue, toKebabCase } from '@slickgrid-universal/utils';
 import 'jquery-ui/ui/widgets/autocomplete';
 
 import { FieldType, KeyCode, } from '../enums/index';
@@ -18,12 +19,7 @@ import {
 } from './../interfaces/index';
 import { textValidator } from '../editorValidators/textValidator';
 import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
-import {
-  findOrDefault,
-  getDescendantProperty,
-  setDeepValue,
-  toKebabCase
-} from '../services/utilities';
+import { findOrDefault, getDescendantProperty, } from '../services/utilities';
 
 // minimum length of chars to type before starting to start querying
 const MIN_LENGTH = 3;

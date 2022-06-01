@@ -4,31 +4,31 @@
     {
       "label": "Bundle Library",
       "type": "shell",
-      "command": "npm run bundle",
+      "command": "pnpm bundle",
       "problemMatcher": []
     },
     {
       "label": "Run Jest Unit Tests (watch)",
       "type": "shell",
-      "command": "npm run test:watch",
+      "command": "pnpm test:watch",
       "problemMatcher": []
     },
     {
       "label": "Run Jest Test Coverage",
       "type": "shell",
-      "command": "npm run test",
+      "command": "pnpm test",
       "problemMatcher": []
     },
     {
       "label": "Start Library Development",
       "type": "shell",
-      "command": "npm run dev:watch",
+      "command": "pnpm dev:watch",
       "problemMatcher": []
     },
     {
       "label": "Prepare New Release",
       "type": "shell",
-      "command": "npm run new-version",
+      "command": "pnpm new-version",
       "problemMatcher": []
     }
   ]

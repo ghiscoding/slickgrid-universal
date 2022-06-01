@@ -1,6 +1,8 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import { Column, ColumnSort, ElementPosition, GridOption, MenuCommandItem, SlickDataView, SlickEventData, SlickGrid, SlickNamespace, } from '../../interfaces/index';
 import { SlickHeaderMenu } from '../slickHeaderMenu';
-import { BackendUtilityService, FilterService, PubSubService, SharedService, SortService } from '../../services';
+import { BackendUtilityService, FilterService, SharedService, SortService } from '../../services';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
@@ -78,7 +80,7 @@ const pubSubServiceStub = {
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-} as PubSubService;
+} as BasePubSubService;
 
 const sortServiceStub = {
   clearSortByColumnId: jest.fn(),

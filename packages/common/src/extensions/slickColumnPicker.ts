@@ -1,3 +1,5 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import {
   Column,
   ColumnPickerOption,
@@ -9,7 +11,6 @@ import {
 } from '../interfaces/index';
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 import { createDomElement, emptyElement, findWidthOrDefault } from '../services/domUtilities';
 import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
@@ -52,7 +53,7 @@ export class SlickColumnPicker {
   } as ColumnPickerOption;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
-  constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService) {
+  constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: BasePubSubService, protected readonly sharedService: SharedService) {
     this._bindEventService = new BindingEventService();
     this._eventHandler = new Slick.EventHandler();
     this._columns = this.sharedService.allColumns ?? [];

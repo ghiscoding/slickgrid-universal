@@ -51,7 +51,6 @@ export * from './editUndoRedoBuffer.interface';
 export * from './elementEventListener.interface';
 export * from './elementPosition.interface';
 export * from './emptyWarning.interface';
-export * from './eventSubscription.interface';
 export * from './excelCellFormat.interface';
 export * from './excelCopyBufferOption.interface';
 export * from './excelExportOption.interface';

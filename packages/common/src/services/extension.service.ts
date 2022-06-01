@@ -1,3 +1,5 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import { Column, ExtensionModel, GridOption, SlickRowDetailView, } from '../interfaces/index';
 import { ColumnReorderFunction, ExtensionList, ExtensionName, InferExtensionByName, SlickControlList, SlickPluginList } from '../enums/index';
 import { SharedService } from './shared.service';
@@ -19,7 +21,6 @@ import {
   SlickRowSelectionModel
 } from '../extensions/index';
 import { FilterService } from './filter.service';
-import { PubSubService } from './pubSub.service';
 import { SortService } from './sort.service';
 import { TreeDataService } from './treeData.service';
 
@@ -56,7 +57,7 @@ export class ExtensionService {
   constructor(
     protected readonly extensionUtility: ExtensionUtility,
     protected readonly filterService: FilterService,
-    protected readonly pubSubService: PubSubService,
+    protected readonly pubSubService: BasePubSubService,
     protected readonly sharedService: SharedService,
     protected readonly sortService: SortService,
     protected readonly treeDataService: TreeDataService,

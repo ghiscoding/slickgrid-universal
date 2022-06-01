@@ -1,3 +1,5 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import {
   Column,
   DOMEvent,
@@ -12,7 +14,6 @@ import {
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { ExtensionUtility } from '../extensions/extensionUtility';
-import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
 
@@ -37,7 +38,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
   pluginName: 'HeaderButtons' = 'HeaderButtons';
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
-  constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService) {
+  constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: BasePubSubService, protected readonly sharedService: SharedService) {
     super(extensionUtility, pubSubService, sharedService);
     this._menuCssPrefix = 'slick-header-button';
     this._camelPluginName = 'headerButtons';

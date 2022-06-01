@@ -1,3 +1,5 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { deepCopy } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 
 import { FilterConditions, getParsedSearchTermsByFieldType } from './../filter-conditions/index';
@@ -30,8 +32,7 @@ import {
 } from './../interfaces/index';
 import { BackendUtilityService } from './backendUtility.service';
 import { sanitizeHtmlToText, } from '../services/domUtilities';
-import { deepCopy, getDescendantProperty, mapOperatorByFieldType, } from './utilities';
-import { PubSubService } from '../services/pubSub.service';
+import { getDescendantProperty, mapOperatorByFieldType, } from './utilities';
 import { SharedService } from './shared.service';
 import { RxJsFacade, Subject } from './rxjsFacade';
 import { Constants } from '../constants';
@@ -64,7 +65,7 @@ export class FilterService {
   protected _tmpPreFilteredData?: Set<number | string>;
   protected httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
 
-  constructor(protected filterFactory: FilterFactory, protected pubSubService: PubSubService, protected sharedService: SharedService, protected backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) {
+  constructor(protected filterFactory: FilterFactory, protected pubSubService: BasePubSubService, protected sharedService: SharedService, protected backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) {
     this._onSearchChange = new Slick.Event();
     this._eventHandler = new Slick.EventHandler();
     if (this.rxjs) {

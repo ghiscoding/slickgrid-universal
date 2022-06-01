@@ -1,4 +1,6 @@
-import { FilterService, GridService, GridStateService, PaginationService, PubSubService, SharedService, SortService, TreeDataService } from '../index';
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
+import { FilterService, GridService, GridStateService, PaginationService, SharedService, SortService, TreeDataService } from '../index';
 import { GridOption, CellArgs, Column, OnEventArgs, SlickGrid, SlickDataView, SlickNamespace } from '../../interfaces/index';
 import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
 
@@ -33,7 +35,7 @@ const pubSubServiceStub = {
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-} as PubSubService;
+} as BasePubSubService;
 
 const sortServiceStub = {
   clearSorting: jest.fn(),

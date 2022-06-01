@@ -10,7 +10,7 @@
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
-This is a monorepo project (using yarn workspaces) which is regrouping a few packages under a single repository. It is using SlickGrid (more specifically the [6pac/SlickGrid](https://github.com/6pac/SlickGrid/) fork) behind the scene (there is no need to rewrite the core library itself, in other words this is a wrapper library). The main goal of this library is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It was also a good opportunity to decouple some features/services that not every one need at all time, this will also help in getting smaller bundle size depending on which features (packages) you decide to use. For example, not every project require backend services (OData, GraphQL) and export services (Excel Export, Text Export), which is why they are better handled with a monorepo structure.
+This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces)) which is regrouping a few packages under a single repository. It is using SlickGrid (more specifically the [6pac/SlickGrid](https://github.com/6pac/SlickGrid/) fork) behind the scene (there is no need to rewrite the core library itself, in other words this is a wrapper library). The main goal of this library is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It was also a good opportunity to decouple some features/services that not every one need at all time, this will also help in getting smaller bundle size depending on which features (packages) you decide to use. For example, not every project require backend services (OData, GraphQL) and export services (Excel Export, Text Export), which is why they are better handled with a monorepo structure.
 
 ## Latest News & Releases
 Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all latest News & Version Releases.
@@ -79,18 +79,21 @@ Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +15,00
 
 To get started and do development with this monorepo, you will need to clone the repo and then follow the steps below. You must be at the root of your project to run the following commands.
 
-1. Install npm packages with [Yarn classic 1.x](https://classic.yarnpkg.com/lang/en/) since this lib uses Yarn version 1.x Workspaces and so you would need to use Yarn to install all the packages
+1. Install pnpm workspace with [pnpm](https://pnpm.io/installation) or run it with `npx`
 ```bash
 # from the root
-yarn install
+pnpm install
+
+# or with npx
+npx pnpm install
 ```
 
-2. Build (bundle)
+2. Build
 
 To get started you must run at least once the following script for the initial TS build so that all necessary `dist` folders are created and bundled for all the workspace packages to work together.
 
 ```bash
-yarn run bundle
+pnpm run build
 ```
 NOTE: this will also have to be re-executed if you change any of the interfaces in the `common` package (since that package is a dependency of all other packages).
 
@@ -101,7 +104,7 @@ and is written in plain TypeScript without being bound to any framework. The imp
 It could be used as a guideline to implement it for other framework ports.
 
 ```bash
-yarn run dev:watch
+pnpm run dev:watch
 ```
 
 ### Tests
@@ -110,18 +113,18 @@ You must go through Installation Steps 1-2 prior to run the unit tests OR Steps 
 #### Jest Unit Tests
 To run all unit tests (with Jest), you can run one of the following commands
 ```bash
-yarn run test
+pnpm run test
 
 # or run Jest in watch mode
-yarn run test:watch
+pnpm run test:watch
 ```
 
 #### Cypress E2E Tests
 To run all E2E tests (with Cypress), you can run one of the following commands
 ```bash
 # will open the Cypress UI
-yarn run cypress
+pnpm run cypress
 
 # or run in the shell like a CI/CD would
-yarn run cypress:ci
+pnpm run cypress:ci
 ```

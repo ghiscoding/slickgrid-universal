@@ -1,5 +1,7 @@
+import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
+
 import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption, SlickGrid, SlickNamespace } from '../interfaces/index';
-import { getDescendantProperty, setDeepValue, toSentenceCase } from '../services/utilities';
+import { getDescendantProperty } from '../services/utilities';
 import { sliderValidator } from '../editorValidators/sliderValidator';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { createDomElement } from '../services/domUtilities';

@@ -20,6 +20,7 @@ There are a couple of reasons to use this package (it could be used instead of t
 
 ### Internal Dependencies
 - [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
+- [@slickgrid-universal/utils](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/utils)
 
 ### External Dependencies
 This package requires [text-encoding-utf-8](https://www.npmjs.com/package/text-encoding-utf-8) which is use to ensure proper UTF-8 encoding, even emoji will be exported without issues.

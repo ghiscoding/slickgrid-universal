@@ -1,6 +1,8 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import { Column, GridOption, SlickGrid, SlickNamespace, } from '../../interfaces/index';
 import { SlickHeaderButtons } from '../slickHeaderButtons';
-import { BackendUtilityService, PubSubService } from '../../services';
+import { BackendUtilityService } from '../../services';
 import { SharedService } from '../../services/shared.service';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -29,7 +31,7 @@ const pubSubServiceStub = {
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-} as PubSubService;
+} as BasePubSubService;
 
 const headerMock = {
   buttons: [

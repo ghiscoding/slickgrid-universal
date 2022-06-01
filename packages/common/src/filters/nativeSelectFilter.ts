@@ -1,3 +1,5 @@
+import { toSentenceCase } from '@slickgrid-universal/utils';
+
 import {
   Column,
   ColumnFilter,
@@ -9,7 +11,6 @@ import {
 } from '../interfaces/index';
 import { OperatorType, OperatorString, SearchTerm } from '../enums/index';
 import { createDomElement, emptyElement, } from '../services/domUtilities';
-import { toSentenceCase } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 import { BindingEventService } from '../services/bindingEvent.service';
 
@@ -169,7 +170,7 @@ export class NativeSelectFilter implements Filter {
         }
 
         const labelKey = option.labelKey || option[labelName];
-        const textLabel = ((option.labelKey || isEnabledTranslate) && this.translater && this.translater.translate && this.translater.getCurrentLanguage && this.translater.getCurrentLanguage()) ? this.translater.translate(labelKey || ' ') : labelKey;
+        const textLabel = ((option.labelKey || isEnabledTranslate) && typeof this.translater !== undefined && this.translater.getCurrentLanguage?.()) ? this.translater.translate(labelKey || ' ') : labelKey;
 
         selectElm.appendChild(
           createDomElement('option', { value: option[valueName], textContent: textLabel })

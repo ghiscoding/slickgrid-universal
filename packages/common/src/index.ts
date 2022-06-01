@@ -1,9 +1,20 @@
 import 'multiple-select-modified';
+
 import * as BackendUtilities from './services/backendUtility.service';
 import * as Observers from './services/observers';
 import * as ServiceUtilities from './services/utilities';
 import * as SortUtilities from './sortComparers/sortUtilities';
-import { deepMerge as deepAssign } from './services/utilities';
+
+import * as Utils from '@slickgrid-universal/utils';
+export * from '@slickgrid-universal/utils';
+export {
+  // export nearly everything except the EventPubSubService because we want to force users to import from '@slickgrid-universal/event-pub-sub
+  // also export BasePubSubService as alias to avoid breaking users who might already use PubSubService from common
+  BasePubSubService as PubSubService,
+  EventNamingStyle,
+  EventSubscription,
+  PubSubEvent
+} from '@slickgrid-universal/event-pub-sub';
 
 // Public classes.
 export * from './constants';
@@ -30,6 +41,6 @@ export * from './sortComparers/sortComparers.index';
 export * from './services/index';
 export { Enums } from './enums/enums.index';
 
-const Utilities = { ...BackendUtilities, ...Observers, ...ServiceUtilities, ...SortUtilities, deepAssign };
+const Utilities = { ...BackendUtilities, ...Observers, ...ServiceUtilities, ...SortUtilities, ...Utils, deepAssign: Utils.deepMerge };
 export { Utilities };
 export { SlickgridConfig } from './slickgrid-config';

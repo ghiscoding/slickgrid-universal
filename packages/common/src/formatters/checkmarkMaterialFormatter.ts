@@ -1,5 +1,6 @@
+import { isNumber } from '@slickgrid-universal/utils';
+
 import { Formatter } from './../interfaces/index';
-import { isNumber } from '../services/utilities';
 
 /**
  * When value is filled, or if the value is a number and is bigger than 0, it will display a Material Design check icon (mdi-check).

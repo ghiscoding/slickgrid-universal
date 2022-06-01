@@ -1,3 +1,5 @@
+import { uniqueArray } from '@slickgrid-universal/utils';
+
 import {
   FilterMultiplePassType,
   FilterMultiplePassTypeString,
@@ -7,7 +9,6 @@ import {
 } from './../enums/index';
 import { CollectionFilterBy, CollectionSortBy, Column } from './../interfaces/index';
 import { sortByFieldType } from '../sortComparers/sortUtilities';
-import { uniqueArray } from './utilities';
 import { TranslaterService } from './translater.service';
 
 export class CollectionService<T = any> {

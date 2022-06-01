@@ -1,9 +1,9 @@
-import { PubSubService } from '../pubSub.service';
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { TranslaterService } from '../translater.service';
 
 describe('Translater Service', () => {
   it('should display a not implemented when calling "addPubSubMessaging" method', () => {
-    expect(() => TranslaterService.prototype.addPubSubMessaging!({} as unknown as PubSubService)).toThrow('TranslaterService "addPubSubMessaging" method must be implemented');
+    expect(() => TranslaterService.prototype.addPubSubMessaging!({} as unknown as BasePubSubService)).toThrow('TranslaterService "addPubSubMessaging" method must be implemented');
   });
 
   it('should display a not implemented when calling "getCurrentLanguage" method', () => {

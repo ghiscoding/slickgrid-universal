@@ -1,8 +1,10 @@
 import 'jest-extended';
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import { DelimiterType, FileType } from '../../enums/index';
 import { Column, DOMEvent, GridMenu, GridOption, SlickDataView, SlickGrid, SlickNamespace, } from '../../interfaces/index';
 import { SlickGridMenu } from '../slickGridMenu';
-import { BackendUtilityService, ExcelExportService, FilterService, PubSubService, SharedService, SortService, TextExportService, } from '../../services';
+import { BackendUtilityService, ExcelExportService, FilterService, SharedService, SortService, TextExportService, } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 
@@ -32,7 +34,7 @@ const pubSubServiceStub = {
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-} as PubSubService;
+} as BasePubSubService;
 
 const sortServiceStub = {
   clearSorting: jest.fn(),

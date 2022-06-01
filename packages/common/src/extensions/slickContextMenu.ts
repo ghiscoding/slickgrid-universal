@@ -1,3 +1,4 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import {
   ContextMenu,
   ContextMenuOption,
@@ -12,7 +13,6 @@ import { DelimiterType, FileType } from '../enums/index';
 import { ExcelExportService, getCellValueFromQueryFieldGetter, getTranslationPrefix, TextExportService } from '../services/index';
 import { exportWithFormatterWhenDefined } from '../formatters/formatterUtilities';
 import { ExtensionUtility } from '../extensions/extensionUtility';
-import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 import { TreeDataService } from '../services/treeData.service';
 import { MenuFromCellBaseClass } from './menuFromCellBaseClass';
@@ -49,7 +49,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
     protected readonly extensionUtility: ExtensionUtility,
-    protected readonly pubSubService: PubSubService,
+    protected readonly pubSubService: BasePubSubService,
     protected readonly sharedService: SharedService,
     protected readonly treeDataService: TreeDataService,
   ) {

@@ -1,7 +1,8 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import { Column, ColumnPicker, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { SlickColumnPicker } from '../slickColumnPicker';
 import { ExtensionUtility } from '../extensionUtility';
-import { PubSubService } from '../../services/pubSub.service';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { BackendUtilityService } from '../../services/backendUtility.service';
@@ -28,7 +29,7 @@ const pubSubServiceStub = {
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-} as PubSubService;
+} as BasePubSubService;
 
 describe('ColumnPickerControl', () => {
   const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };

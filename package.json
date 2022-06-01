@@ -12,19 +12,21 @@
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "scripts": {
-    "prebundle": "run-s lint clean --npm-path npm",
-    "bundle": "lerna run bundle --stream",
-    "prebundle:zip": "npm run bundle",
-    "bundle:zip": "lerna run bundle:zip --stream",
-    "build:demo": "lerna run build:demo --stream",
+    "prebuild": "run-s lint clean",
+    "build": "cross-env CI=true pnpm -r --stream run build",
+    "prebundle": "run-s lint clean",
+    "bundle": "cross-env CI=true lerna run bundle --stream",
+    "prebundle:zip": "pnpm bundle",
+    "bundle:zip": "pnpm -r --stream --filter=./packages/** run bundle:zip",
+    "build:demo": "pnpm -r --stream build:demo",
     "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",
     "cypress": "cypress open --config-file test/cypress.json",
     "cypress:ci": "cypress run --config-file test/cypress.json",
-    "dev:watch": "cross-env TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling lerna run dev:watch --parallel",
+    "dev:watch": "cross-env TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling pnpm -r --parallel run dev:watch",
     "new-version": "lerna version --conventional-commits",
     "new-publish": "lerna publish from-package --registry=https://registry.npmjs.org/",
-    "prepublishOnly": "lerna run package:remove-browser-prop",
-    "postnew-publish": "lerna run package:add-browser-prop",
+    "prepublishOnly": "pnpm -r package:remove-browser-prop",
+    "postnew-publish": "pnpm -r package:add-browser-prop",
     "serve:demo": "serve ./docs -l 8888",
     "lint": "eslint packages --ext .ts",
     "test": "jest --runInBand --coverage=true --config ./test/jest.config.js",
@@ -34,30 +36,16 @@
   "comments": {
     "new-version": "To create a new version with lerna, run the following scripts (1) 'bundle', (2) 'roll-version' and (3) 'roll-publish' to send it over to NPM."
   },
-  "workspaces": {
-    "packages": [
-      "examples/*",
-      "packages/*"
-    ],
-    "nohoist": [
-      "**/mocha",
-      "**/mocha/**",
-      "**/jest",
-      "**/jest/**",
-      "**/cypress",
-      "**/cypress/**"
-    ]
-  },
   "devDependencies": {
     "@lerna-lite/cli": "^1.4.0",
     "@lerna-lite/run": "^1.4.0",
     "@types/jest": "^27.5.1",
-    "@types/node": "^17.0.34",
-    "@typescript-eslint/eslint-plugin": "^5.25.0",
-    "@typescript-eslint/parser": "^5.25.0",
+    "@types/node": "^17.0.38",
+    "@typescript-eslint/eslint-plugin": "^5.27.0",
+    "@typescript-eslint/parser": "^5.27.0",
     "cross-env": "^7.0.3",
-    "cypress": "^9.6.1",
-    "eslint": "^8.15.0",
+    "cypress": "^9.7.0",
+    "eslint": "^8.16.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "jest": "^28.1.0",
@@ -67,12 +55,20 @@
     "jsdom": "^19.0.0",
     "jsdom-global": "^3.0.2",
     "npm-run-all2": "^5.0.2",
-    "rimraf": "^3.0.2",
+    "pnpm": "^7.1.7",
     "rxjs": "^7.5.5",
     "serve": "^13.0.2",
-    "ts-jest": "^28.0.2",
-    "typescript": "^4.6.4"
+    "ts-jest": "^28.0.3",
+    "typescript": "^4.7.2"
   },
+  "pnpm": {
+    "overrides": {
+      "jquery": "3.5.1",
+      "jquery-ui": "1.12.1",
+      "jquery-ui-dist": "1.12.1"
+    }
+  },
+  "packageManager": "pnpm@7.1.0",
   "engines": {
     "node": ">=14.17.0",
     "npm": ">=6.14.8"

@@ -1,9 +1,9 @@
+import { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { dequal } from 'dequal/lite';
 
 import {
   BackendServiceApi,
   CurrentPagination,
-  EventSubscription,
   Pagination,
   ServicePagination,
   SlickDataView,
@@ -12,7 +12,6 @@ import {
 } from '../interfaces/index';
 import { BackendUtilityService } from './backendUtility.service';
 import { SharedService } from './shared.service';
-import { PubSubService } from './pubSub.service';
 import { Observable, RxJsFacade } from './rxjsFacade';
 
 // using external non-typed js libraries
@@ -38,7 +37,7 @@ export class PaginationService {
   grid!: SlickGrid;
 
   /** Constructor */
-  constructor(protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService, protected readonly backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) { }
+  constructor(protected readonly pubSubService: BasePubSubService, protected readonly sharedService: SharedService, protected readonly backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) { }
 
   /** Getter of SlickGrid DataView object */
   get dataView(): SlickDataView | undefined {

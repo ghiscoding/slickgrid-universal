@@ -1,0 +1,47 @@
+{
+  "name": "@slickgrid-universal/utils",
+  "version": "1.2.6",
+  "description": "Common set of small utilities",
+  "main": "dist/commonjs/index.js",
+  "browser": "src/index.ts",
+  "module": "dist/esm/index.js",
+  "types": "dist/commonjs/index.d.ts",
+  "typings": "dist/commonjs/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "/dist"
+  ],
+  "scripts": {
+    "build": "pnpm run bundle:commonjs",
+    "build:watch": "tsc --incremental --watch",
+    "dev": "npm run build",
+    "dev:watch": "run-p build:watch --npm-path npm",
+    "bundle": "run-p bundle:commonjs bundle:esm --npm-path npm",
+    "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
+    "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
+    "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=utils",
+    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=utils"
+  },
+  "license": "MIT",
+  "author": "Ghislain B.",
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "packages/utils"
+  },
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+  },
+  "browserslist": [
+    "last 2 version",
+    "> 1%",
+    "not dead"
+  ],
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "npm-run-all2": "^5.0.2"
+  }
+}

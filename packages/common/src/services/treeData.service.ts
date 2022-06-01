@@ -1,9 +1,10 @@
+import { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
+
 import { Constants } from '../constants';
 import { ToggleStateChangeType, ToggleStateChangeTypeString } from '../enums/index';
 import {
   Column,
   ColumnSort,
-  EventSubscription,
   GridOption,
   OnClickEventArgs,
   SlickDataView,
@@ -16,7 +17,6 @@ import {
   TreeToggleStateChange,
 } from '../interfaces/index';
 import { findItemInTreeStructure, unflattenParentChildArrayToTree } from './utilities';
-import { PubSubService } from './pubSub.service';
 import { SharedService } from './shared.service';
 import { SortService } from './sort.service';
 
@@ -31,7 +31,7 @@ export class TreeDataService {
   protected _eventHandler: SlickEventHandler;
   protected _subscriptions: EventSubscription[] = [];
 
-  constructor(protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService, protected readonly sortService: SortService) {
+  constructor(protected readonly pubSubService: BasePubSubService, protected readonly sharedService: SharedService, protected readonly sortService: SortService) {
     this._eventHandler = new Slick.EventHandler();
   }
 

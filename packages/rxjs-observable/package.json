@@ -14,8 +14,7 @@
     "/dist"
   ],
   "scripts": {
-    "build": "tsc --build",
-    "postbuild": "npm-run-all bundle:commonjs --npm-path npm",
+    "build": "pnpm run bundle:commonjs",
     "build:watch": "tsc --incremental --watch",
     "dev": "npm run build",
     "dev:watch": "run-p build:watch --npm-path npm",
@@ -42,7 +41,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "^1.2.6",
+    "@slickgrid-universal/common": "workspace:^",
     "rxjs": "^7.5.5"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { PubSubService } from './pubSub.service';
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 export type TranslateServiceEventName = 'onLanguageChanged';
 
@@ -9,9 +9,9 @@ export abstract class TranslaterService {
   /**
    * Add an optional Pub/Sub Messaging Service,
    * when defined the Translate Service will call the publish method with "onLanguageChanged" event name whenever the "use()" method is called
-   * @param {PubSubService} pubSub
+   * @param {BasePubSubService} pubSub
    */
-  addPubSubMessaging?(_pubSubService: PubSubService) {
+  addPubSubMessaging?(_pubSubService: BasePubSubService) {
     throw new Error('TranslaterService "addPubSubMessaging" method must be implemented');
   }
 

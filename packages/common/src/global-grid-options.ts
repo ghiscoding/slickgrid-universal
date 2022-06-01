@@ -1,4 +1,6 @@
-import { DelimiterType, EventNamingStyle, FileType, GridAutosizeColsMode, OperatorType } from './enums/index';
+import { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
+
+import { DelimiterType, FileType, GridAutosizeColsMode, OperatorType } from './enums/index';
 import { Column, EmptyWarning, GridOption, TreeDataOption } from './interfaces/index';
 import { Filters } from './filters';
 

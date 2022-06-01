@@ -1,6 +1,9 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { deepCopy } from '@slickgrid-universal/utils';
+
 import { DelimiterType, FileType } from '../../enums/index';
 import { ContextMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, SlickDataView, SlickGrid, SlickNamespace, } from '../../interfaces/index';
-import { BackendUtilityService, deepCopy, ExcelExportService, PubSubService, SharedService, TextExportService, TreeDataService, } from '../../services/index';
+import { BackendUtilityService, ExcelExportService, SharedService, TextExportService, TreeDataService, } from '../../services/index';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { Formatters } from '../../formatters';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -123,7 +126,7 @@ const pubSubServiceStub = {
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-} as PubSubService;
+} as BasePubSubService;
 
 const treeDataServiceStub = {
   convertFlatParentChildToTreeDataset: jest.fn(),

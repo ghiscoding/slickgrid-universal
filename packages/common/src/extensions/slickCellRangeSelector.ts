@@ -1,3 +1,5 @@
+import { deepMerge } from '@slickgrid-universal/utils';
+
 import {
   CellRange,
   CellRangeSelectorOption,
@@ -13,7 +15,6 @@ import {
   SlickNamespace
 } from '../interfaces/index';
 import { emptyElement, getHtmlElementOffset, } from '../services/domUtilities';
-import { deepMerge } from '../services/utilities';
 import { SlickCellRangeDecorator } from './index';
 
 // using external SlickGrid JS libraries

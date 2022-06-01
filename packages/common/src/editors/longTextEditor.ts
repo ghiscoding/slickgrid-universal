@@ -1,3 +1,5 @@
+import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
+
 import { Constants } from './../constants';
 import { KeyCode } from '../enums/keyCode.enum';
 import {
@@ -17,7 +19,7 @@ import {
   SlickNamespace,
 } from '../interfaces/index';
 import { createDomElement, getHtmlElementOffset, } from '../services/domUtilities';
-import { getDescendantProperty, getTranslationPrefix, setDeepValue, toSentenceCase, } from '../services/utilities';
+import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 import { textValidator } from '../editorValidators/textValidator';

@@ -1,8 +1,7 @@
 {
   "version": "1.2.6",
-  "npmClient": "yarn",
+  "npmClient": "pnpm",
   "loglevel": "info",
-  "useWorkspaces": true,
   "command": {
     "publish": {
       "conventionalCommits": true
@@ -13,5 +12,9 @@
       "message": "chore(release): publish new version %v",
       "gitDryRun": false
     }
-  }
+  },
+  "packages": [
+    "examples/*",
+    "packages/*"
+  ]
 }

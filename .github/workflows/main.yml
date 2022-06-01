@@ -1,4 +1,4 @@
-name: CI Build
+name: CI Build & Jest Unit Tests
 on:
   # Trigger the workflow on push or pull request,
   # but only for the master branch on Push and any branches on PR
@@ -8,83 +8,72 @@ on:
   pull_request:
     branches:
       - '**'
-env:
-  CI: true
-  PREFERRED_WORKSPACE_MANAGER: yarn
 
 jobs:
   run:
-    name: Node ${{ matrix.node }}
-    runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
       matrix:
         node: [16]
+        platform:
+          - ubuntu-latest
+
+    name: '${{matrix.platform}} / NodeJS ${{ matrix.node }}'
+    runs-on: ${{matrix.platform}}
 
     steps:
-      - name: Clone repository
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
-          fetch-depth: 3
+          fetch-depth: 2 # codecov-bash seems to require this
 
-      - uses: actions/cache@v2
+      - name: Install pnpm itself
+        uses: pnpm/action-setup@v2.2.0
         with:
-          path: ~/.cache/yarn
-          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - name: Set Node.js version
-        uses: actions/setup-node@v2
+          version: 7
+
+      - name: Set NodeJS
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
+          cache: 'pnpm'
 
       - run: node --version
-      - run: npm --version
+      - run: pnpm --version
 
-      - name: Install npm/yarn dependencies
-        run: yarn install
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
 
-      - name: Build Full Bundle (all Bundler types)
-        run: yarn bundle
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Run pnpm install dependencies
+        run: pnpm install
+
+      - name: Cache TypeScript and Jest
+        uses: actions/cache@v2
+        with:
+          path: |
+            packages/*/lib
+            packages/*/tsconfig.tsbuildinfo
+            test/.jest-cache
+          key: ts-jest-${{ matrix.platform }}-${{ matrix.node }}-${{ github.run_id }}
+          restore-keys: ts-jest-${{ matrix.platform }}-${{ matrix.node }}-
+
+      - name: TSC Full Bundle (all Bundler types)
+        run: pnpm bundle
 
       - name: Run Jest unit tests
         if: "!contains(github.event.head_commit.message, 'chore(release)')"
-        run: yarn test:ci
+        run: pnpm test:ci
 
       - name: Upload Jest coverage to Codecov
         if: "!contains(github.event.head_commit.message, 'chore(release)')"
         run: bash <(curl -s https://codecov.io/bash)
-
-      - name: Website Prod Build (GitHub demo site)
-        run: yarn build:demo
-
-      - name: Run Cypress E2E tests
-        uses: cypress-io/github-action@v2
-        with:
-          start: yarn serve:demo
-          wait-on: 'http://localhost:8888'
-          config-file: test/cypress.json
-          browser: chrome
-          record: true
-        env:
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # pass GitHub token to allow accurately detecting a build vs a re-run build
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/upload-artifact@v1
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: cypress/screenshots
-
-      # deploy (re-publish) GitHub demo page with a Prod build but only when merging to "master" branch
-      # and the commit message contains the text "chore(release)"
-      - name: Deploy to gh-pages
-        if: |
-          github.ref == 'refs/heads/master' &&
-          contains(github.event.head_commit.message, 'chore(release)')
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs

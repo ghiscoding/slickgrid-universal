@@ -9,7 +9,6 @@ import {
   Locale,
   Metrics,
   MetricTexts,
-  PubSubService,
   sanitizeTextByAvailableSanitizer,
   SlickEventHandler,
   SlickGrid,
@@ -17,6 +16,7 @@ import {
   Subscription,
   TranslaterService,
 } from '@slickgrid-universal/common';
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { BindingHelper } from '@slickgrid-universal/binding';
 
 declare const Slick: SlickNamespace;
@@ -71,7 +71,7 @@ export class SlickFooterComponent {
     this.renderRightFooterText(text);
   }
 
-  constructor(protected readonly grid: SlickGrid, protected readonly customFooterOptions: CustomFooterOption, protected readonly pubSubService: PubSubService, protected readonly translaterService?: TranslaterService) {
+  constructor(protected readonly grid: SlickGrid, protected readonly customFooterOptions: CustomFooterOption, protected readonly pubSubService: BasePubSubService, protected readonly translaterService?: TranslaterService) {
     this._bindingHelper = new BindingHelper();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
     this._eventHandler = new Slick.EventHandler();

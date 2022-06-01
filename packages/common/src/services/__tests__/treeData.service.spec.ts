@@ -1,6 +1,6 @@
 import { Constants } from '../../constants';
 import { Column, SlickDataView, GridOption, SlickEventHandler, SlickGrid, SlickNamespace, BackendService } from '../../interfaces/index';
-import { PubSubService } from '../pubSub.service';
+import { PubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SharedService } from '../shared.service';
 import { SortService } from '../sort.service';
 import { TreeDataService } from '../treeData.service';
@@ -64,7 +64,7 @@ const mockPubSub = {
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
 } as PubSubService;
-jest.mock('../pubSub.service', () => ({
+jest.mock('@slickgrid-universal/event-pub-sub', () => ({
   PubSubService: () => mockPubSub
 }));
 

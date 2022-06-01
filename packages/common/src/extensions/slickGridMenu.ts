@@ -1,3 +1,5 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import {
   Column,
   DOMEvent,
@@ -15,7 +17,6 @@ import { ExtensionUtility } from '../extensions/extensionUtility';
 import { createDomElement, emptyElement, findWidthOrDefault, getHtmlElementOffset, getTranslationPrefix, } from '../services/index';
 import { ExcelExportService } from '../services/excelExport.service';
 import { FilterService } from '../services/filter.service';
-import { PubSubService } from '../services/pubSub.service';
 import { SharedService } from '../services/shared.service';
 import { SortService } from '../services/sort.service';
 import { TextExportService } from '../services/textExport.service';
@@ -75,7 +76,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   constructor(
     protected readonly extensionUtility: ExtensionUtility,
     protected readonly filterService: FilterService,
-    protected readonly pubSubService: PubSubService,
+    protected readonly pubSubService: BasePubSubService,
     protected readonly sharedService: SharedService,
     protected readonly sortService: SortService,
   ) {

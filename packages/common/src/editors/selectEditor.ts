@@ -1,3 +1,4 @@
+import { setDeepValue } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 
 import { Constants } from '../constants';
@@ -21,7 +22,7 @@ import {
   SlickNamespace,
 } from './../interfaces/index';
 import { buildSelectEditorOrFilterDomElement, CollectionService, findOrDefault, TranslaterService } from '../services/index';
-import { getDescendantProperty, getTranslationPrefix, setDeepValue } from '../services/utilities';
+import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
