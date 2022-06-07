@@ -28,7 +28,7 @@ jobs:
           fetch-depth: 2 # codecov-bash seems to require this
 
       - name: Install pnpm itself
-        uses: pnpm/action-setup@v2.2.0
+        uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
 
