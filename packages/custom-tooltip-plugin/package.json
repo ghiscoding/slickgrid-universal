@@ -41,7 +41,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/common": "workspace:^",
+    "@slickgrid-universal/common": "workspace:*",
     "dompurify": "^2.3.8"
   },
   "devDependencies": {

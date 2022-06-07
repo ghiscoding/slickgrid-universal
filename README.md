@@ -77,7 +77,7 @@ Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +15,00
 ## Installation
 **NOTE:** the installation instructions below are **only** required if you want to contribute to this project, if on the other hand you just want to do a quick demo and use Slickgrid-Universal then take a look at [webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle). There is no need to clone and install the entire library, you can just create an empty project with the content of [webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle) (perhaps clone it the lib and copy only that folder to an empty project would be the easiest to get started).
 
-To get started and do development with this monorepo, you will need to clone the repo and then follow the steps below. You must be at the root of your project to run the following commands.
+To get started and do development with this monorepo, you will need to clone the repo and then follow the steps below. You must be at the root of your project to run the following commands. This project uses `pnpm`, you can install it via `npm i -g pnpm` or follow their [installation](https://pnpm.io/installation)
 
 1. Install pnpm workspace with [pnpm](https://pnpm.io/installation) or run it with `npx`
 ```bash
