@@ -58,7 +58,7 @@ jobs:
         run: pnpm install
 
       - name: Cache TypeScript and Jest
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             packages/*/lib
