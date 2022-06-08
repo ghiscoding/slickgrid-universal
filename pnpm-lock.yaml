@@ -318,7 +318,6 @@ importers:
       '@slickgrid-universal/binding': workspace:*
       '@slickgrid-universal/common': workspace:*
       '@slickgrid-universal/event-pub-sub': workspace:*
-      copyfiles: ^2.4.1
       cross-env: ^7.0.3
       npm-run-all2: ^5.0.2
     dependencies:
@@ -326,7 +325,6 @@ importers:
       '@slickgrid-universal/common': link:../common
     devDependencies:
       '@slickgrid-universal/event-pub-sub': link:../event-pub-sub
-      copyfiles: 2.4.1
       cross-env: 7.0.3
       npm-run-all2: 5.0.2
 
@@ -5417,7 +5415,7 @@ packages:
     dependencies:
       html-minifier-terser: 6.1.0
       parse5: 6.0.1
-      webpack: 5.73.0_webpack-cli@4.9.2
+      webpack: 5.73.0
     dev: true
 
   /html-minifier-terser/6.1.0:
@@ -9411,7 +9409,7 @@ packages:
       serialize-javascript: 6.0.0
       source-map: 0.6.1
       terser: 5.13.1
-      webpack: 5.73.0_webpack-cli@4.9.2
+      webpack: 5.73.0
     dev: true
 
   /terser/5.13.1:

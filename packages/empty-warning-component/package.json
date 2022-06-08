@@ -16,8 +16,8 @@
   "scripts": {
     "build": "pnpm run bundle:commonjs",
     "build:watch": "tsc --incremental --watch",
-    "dev": "npm run build",
-    "dev:watch": "run-p build:watch --npm-path npm",
+    "dev": "pnpm run bundle:commonjs",
+    "dev:watch": "tsc --incremental --watch",
     "bundle": "run-p bundle:commonjs bundle:esm --npm-path npm",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",

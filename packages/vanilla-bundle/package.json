@@ -15,10 +15,10 @@
   ],
   "scripts": {
     "test": "echo testing slickgrid-universal slickgrid-vanilla-bundle code",
-    "dev": "npm run build",
-    "dev:watch": "run-p build:watch --npm-path npm",
+    "dev": "pnpm run bundle:commonjs",
+    "dev:watch": "tsc --incremental --watch",
     "build": "tsc --build",
-    "postbuild": "npm run bundle:commonjs",
+    "postbuild": "pnpm run bundle:commonjs",
     "build:watch": "tsc --incremental --watch",
     "bundle": "npm-run-all bundle:commonjs bundle:esm --npm-path npm",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
