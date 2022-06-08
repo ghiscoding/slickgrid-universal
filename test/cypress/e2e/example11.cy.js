@@ -18,7 +18,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
   });
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseExampleUrl')}/example11`);
+    cy.visit(`${Cypress.config('baseUrl')}/example11`);
     cy.get('h3').should('contain', 'Example 11 - Batch Editing');
   });
 

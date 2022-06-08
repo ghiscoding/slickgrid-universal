@@ -12,7 +12,7 @@ describe('Example 13 - Header Button Plugin', { retries: 1 }, () => {
 
   describe('Grid 1', () => {
     it('should display Example title', () => {
-      cy.visit(`${Cypress.config('baseExampleUrl')}/example13`);
+      cy.visit(`${Cypress.config('baseUrl')}/example13`);
       cy.get('h3').should('contain', 'Example 13 - Header Button Plugin');
     });
 

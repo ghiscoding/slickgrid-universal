@@ -12,7 +12,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', { retries: 1 }, () => {
   }
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseExampleUrl')}/example17`);
+    cy.visit(`${Cypress.config('baseUrl')}/example17`);
     cy.get('h3').should('contain', 'Example 17 - Auto-Scroll with Range Selector');
     cy.get('h3 span.subtitle').should('contain', '(with Salesforce Theme)');
   });

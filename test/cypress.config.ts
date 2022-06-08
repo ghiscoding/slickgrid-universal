@@ -2,7 +2,6 @@ import { defineConfig } from 'cypress';
 import fs from 'fs';
 
 export default defineConfig({
-  baseExampleUrl: 'http://localhost:8888/#',
   video: false,
   projectId: 'p5zxx6',
   viewportWidth: 1000,
@@ -22,7 +21,7 @@ export default defineConfig({
     // setupNodeEvents(on, config) {
     //   return require('./cypress/plugins/index.js')(on, config);
     // },
-    baseUrl: 'http://localhost:8888',
+    baseUrl: 'http://localhost:8888/#',
     specPattern: 'test/cypress/e2e/**/*.{js,ts}',
     supportFile: 'test/cypress/support/index.js',
     setupNodeEvents(on, config) {
