@@ -54,7 +54,7 @@ jobs:
           # working-directory: packages/dnd
           start: pnpm serve:demo
           wait-on: 'http://localhost:8888'
-          config-file: test/cypress.json
+          config-file: test/cypress.config.ts
           browser: chrome
           headless: true
         env:
