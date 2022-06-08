@@ -46,7 +46,6 @@
   },
   "devDependencies": {
     "@slickgrid-universal/event-pub-sub": "workspace:*",
-    "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
     "npm-run-all2": "^5.0.2"
   }
