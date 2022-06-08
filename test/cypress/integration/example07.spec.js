@@ -78,12 +78,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     cy.get('@moveIconTask3').should('have.length', 1);
 
     cy.get('@moveIconTask3')
-      .trigger('mousedown', { button: 0, force: true })
+      .trigger('mousedown', { which: 1, force: true })
       .trigger('mousemove', 'bottomRight');
 
     cy.get('@moveIconTask1')
       .trigger('mousemove', 'bottomRight')
-      .trigger('mouseup', 'bottomRight', { force: true });
+      .trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
     cy.get('input[type="checkbox"]:checked')
       .should('have.length', 4);
@@ -130,12 +130,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     cy.get('@moveIconTask3').should('have.length', 1);
 
     cy.get('@moveIconTask3')
-      .trigger('mousedown', { button: 0, force: true })
+      .trigger('mousedown', { which: 1, force: true })
       .trigger('mousemove', 'bottomRight');
 
     cy.get('@moveIconTask5')
       .trigger('mousemove', 'bottomRight')
-      .trigger('mouseup', 'bottomRight', { force: true });
+      .trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
     cy.get('.slick-viewport-top.slick-viewport-left')
       .scrollTo('top');
@@ -310,7 +310,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .children('.slick-header-column:nth(7)')
       .should('contain', 'Finish')
       .trigger('mousemove', 'bottomRight')
-      .trigger('mouseup', 'bottomRight', { force: true });
+      .trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
     cy.get('.grid7')
       .find('.slick-header-columns')
@@ -733,7 +733,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .children('.slick-header-column:nth(8)')
       .should('contain', 'Completed')
       .trigger('mousemove', 'bottomRight')
-      .trigger('mouseup', 'bottomRight', { force: true });
+      .trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
     cy.get('.grid7')
       .find('.slick-header-columns')
