@@ -11,7 +11,7 @@ describe('Example 14 - Columns Resize by Content', { retries: 1 }, () => {
   });
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseExampleUrl')}/example14`);
+    cy.visit(`${Cypress.config('baseUrl')}/example14`);
     cy.get('h3').should('contain', 'Example 14 - Columns Resize by Content');
   });
 

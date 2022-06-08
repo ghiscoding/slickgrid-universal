@@ -16,7 +16,7 @@ describe('Example 12 - Composite Editor Modal', { retries: 1 }, () => {
   });
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseExampleUrl')}/example12`);
+    cy.visit(`${Cypress.config('baseUrl')}/example12`);
     cy.get('h3').should('contain', 'Example 12 - Composite Editor Modal');
   });
 

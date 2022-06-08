@@ -7,7 +7,7 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 45;
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseExampleUrl')}/example04`);
+    cy.visit(`${Cypress.config('baseUrl')}/example04`);
     cy.get('h3').should('contain', 'Example 04 - Pinned (frozen) Columns/Rows');
   });
 

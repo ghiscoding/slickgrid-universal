@@ -5,7 +5,7 @@ describe('Example 03 - Draggable Grouping', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 33;
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseExampleUrl')}/example03`);
+    cy.visit(`${Cypress.config('baseUrl')}/example03`);
     cy.get('h3').should('contain', 'Example 03 - Draggable Grouping');
     cy.get('h3 span.subtitle').should('contain', '(with Salesforce Theme)');
   });

@@ -11,7 +11,7 @@ describe('Example 08 - Column Span & Header Grouping', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 33;
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseExampleUrl')}/example08`);
+    cy.visit(`${Cypress.config('baseUrl')}/example08`);
     cy.get('h3').should('contain', 'Example 08 - Column Span & Header Grouping');
   });
 

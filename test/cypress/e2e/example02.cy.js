@@ -10,7 +10,7 @@ describe('Example 02 - Grouping & Aggregators', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 45;
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseExampleUrl')}/example02`);
+    cy.visit(`${Cypress.config('baseUrl')}/example02`);
     cy.get('h3').should('contain', 'Example 02 - Grouping & Aggregators');
     cy.get('h3 span.subtitle').should('contain', '(with Material Theme)');
   });

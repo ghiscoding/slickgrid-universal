@@ -5,7 +5,7 @@ describe('Example 16 - Regular & Custom Tooltips', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 33;
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseExampleUrl')}/example16`);
+    cy.visit(`${Cypress.config('baseUrl')}/example16`);
     cy.get('h3').should('contain', 'Example 16 - Regular & Custom Tooltips');
     cy.get('h3 span.subtitle').should('contain', '(with Salesforce Theme)');
   });

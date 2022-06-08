@@ -5,7 +5,7 @@ describe('Example 18 - Real-Time Trading Platform', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 40;
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseExampleUrl')}/example18`);
+    cy.visit(`${Cypress.config('baseUrl')}/example18`);
     cy.get('h3').should('contain', 'Example 18 - Real-Time Trading Platform');
   });
 

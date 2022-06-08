@@ -9,7 +9,7 @@ describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
   });
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseExampleUrl')}/example15`);
+    cy.visit(`${Cypress.config('baseUrl')}/example15`);
     cy.get('h3').should('contain', 'Example 15 - Grid with OData Backend Service using RxJS Observables');
   });
 

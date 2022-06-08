@@ -5,7 +5,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
   const titles = ['Title', 'Duration', '% Complete', 'Start', 'Finish', 'Effort Driven'];
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseExampleUrl')}/example05`);
+    cy.visit(`${Cypress.config('baseUrl')}/example05`);
     cy.get('h3').should('contain', 'Example 05 - Tree Data');
     cy.get('h3 span.subtitle').should('contain', '(from a flat dataset with parentId references)');
   });
