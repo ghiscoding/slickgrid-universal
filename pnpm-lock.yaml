@@ -22,7 +22,7 @@ importers:
       jsdom: ^19.0.0
       jsdom-global: ^3.0.2
       npm-run-all2: ^6.0.0
-      pnpm: ^7.2.0
+      pnpm: ^7.2.1
       rxjs: ^7.5.5
       serve: ^13.0.2
       ts-jest: ^28.0.4
@@ -46,7 +46,7 @@ importers:
       jsdom: 19.0.0
       jsdom-global: 3.0.2_jsdom@19.0.0
       npm-run-all2: 6.0.0
-      pnpm: 7.2.0
+      pnpm: 7.2.1
       rxjs: 7.5.5
       serve: 13.0.2
       ts-jest: 28.0.4_vz6zla63wvofljfl6elifyg77e
@@ -8106,9 +8106,9 @@ packages:
       find-up: 4.1.0
     dev: true
 
-  /pnpm/7.2.0:
-    resolution: {integrity: sha512-bYRTXwdJDNJBSzzmWTGWldUDY1j4/2GFZJoIm8X2XNxSf3VRVxTcqnwddm22wTDsKN6suHtfAlsYeSvQ/xNK8g==}
-    engines: {node: '>=14.19'}
+  /pnpm/7.2.1:
+    resolution: {integrity: sha512-Z2Wg7YHxeit2U+0aSj+doBPF9+ER0e3VLOGuJOQbk8rzIxK6zMtrQ0ICieCUGPWRM0Vbwj8yIcTKzO22Yhs/Cg==}
+    engines: {node: '>=14.6'}
     hasBin: true
     dev: true
 
