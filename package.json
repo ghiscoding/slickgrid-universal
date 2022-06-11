@@ -54,7 +54,7 @@
     "jest-extended": "^2.0.0",
     "jsdom": "^19.0.0",
     "jsdom-global": "^3.0.2",
-    "npm-run-all2": "^5.0.2",
+    "npm-run-all2": "^6.0.0",
     "pnpm": "^7.2.0",
     "rxjs": "^7.5.5",
     "serve": "^13.0.2",

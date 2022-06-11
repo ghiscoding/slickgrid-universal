@@ -45,6 +45,6 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "npm-run-all2": "^5.0.2"
+    "npm-run-all2": "^6.0.0"
   }
 }
