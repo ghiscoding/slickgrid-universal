@@ -47,7 +47,7 @@
     "@types/moment": "^2.13.0",
     "cross-env": "^7.0.3",
     "moment-mini": "^2.24.0",
-    "npm-run-all2": "^6.0.0"
+    "npm-run-all2": "^6.0.1"
   },
   "funding": {
     "type": "ko_fi",
