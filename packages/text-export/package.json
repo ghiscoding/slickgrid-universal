@@ -48,7 +48,7 @@
   "devDependencies": {
     "@types/text-encoding-utf-8": "^1.0.2",
     "cross-env": "^7.0.3",
-    "npm-run-all2": "^6.0.0"
+    "npm-run-all2": "^6.0.1"
   },
   "funding": {
     "type": "ko_fi",
