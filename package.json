@@ -34,7 +34,7 @@
     "test:watch": "cross-env TZ='America/New_York' jest --watch --config ./test/jest.config.js"
   },
   "comments": {
-    "new-version": "To create a new version with lerna, run the following scripts (1) 'bundle', (2) 'roll-version' and (3) 'roll-publish' to send it over to NPM."
+    "new-version": "To create a new version with lerna, run the following scripts (1) 'bundle', (2) 'new-version' and (3) 'new-publish' to send it over to NPM."
   },
   "devDependencies": {
     "@lerna-lite/cli": "^1.5.1",
