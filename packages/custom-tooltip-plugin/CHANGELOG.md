@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v1.2.6...v1.3.0) (2022-06-18)
+
+### Bug Fixes
+
+* **deps:** add missing depency in vanilla bundle package ([fa08fe6](https://github.com/ghiscoding/slickgrid-universal/commit/fa08fe6f097461c2bf8029307e59631738b1654b))
+
 ## [1.2.6](https://github.com/ghiscoding/slickgrid-universal/compare/v1.2.5...v1.2.6) (2022-03-19)
 
 ### Bug Fixes

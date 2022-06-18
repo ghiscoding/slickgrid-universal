@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v1.2.6...v1.3.0) (2022-06-18)
+
+### Bug Fixes
+
+* **deps:** add missing depency in vanilla bundle package ([fa08fe6](https://github.com/ghiscoding/slickgrid-universal/commit/fa08fe6f097461c2bf8029307e59631738b1654b))
+* **deps:** add missing dependencies in child package ([97d0230](https://github.com/ghiscoding/slickgrid-universal/commit/97d02306899e583779c3b6d5b219b2798a5f9cfd))
+* **deps:** update all non-major dependencies ([5097cea](https://github.com/ghiscoding/slickgrid-universal/commit/5097ceae88c0ea212e0aa6ea2a5b1020368f3216))
+* **deps:** update yarn lock file ([0bd337f](https://github.com/ghiscoding/slickgrid-universal/commit/0bd337ffcae800ae91670b886ebfd1ef155c80c1))
+* **deps:** use chore dependency package name ([2fce29c](https://github.com/ghiscoding/slickgrid-universal/commit/2fce29c5e64f160203529b5bf9435562cf5f5941))
+* do not install Cypress from its github action because not yet supporting pnpm ([7ed0acb](https://github.com/ghiscoding/slickgrid-universal/commit/7ed0acb834c0248c676ee8d87080e994c7d6c072))
+* remove pnpm in engine because Cypress failed with it ([e2ae801](https://github.com/ghiscoding/slickgrid-universal/commit/e2ae801d2ec55719f0bcf413d0ee943a8c69a487))
+* use same Jest cache folder ([235e085](https://github.com/ghiscoding/slickgrid-universal/commit/235e0852864963d567e6cfb1fb39f3d61d78d656))
+
+### Features
+
+* **core:** upgrade to jQuery 3.6 and jQuery-UI 1.13 ([84b09dc](https://github.com/ghiscoding/slickgrid-universal/commit/84b09dc8ba7c78c14e0ae563cd560eec46973a4b))
+
 ## [1.2.6](https://github.com/ghiscoding/slickgrid-universal/compare/v1.2.5...v1.2.6) (2022-03-19)
 
 ### Bug Fixes

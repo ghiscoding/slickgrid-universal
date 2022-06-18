@@ -1,6 +1,6 @@
 {
   "name": "webpack-demo-vanilla-bundle",
-  "version": "1.2.6",
+  "version": "1.3.0",
   "private": true,
   "description": "SlickGrid-Universal demo",
   "directories": {
@@ -40,8 +40,8 @@
     "@slickgrid-universal/composite-editor-component": "workspace:*",
     "@slickgrid-universal/custom-tooltip-plugin": "workspace:*",
     "@slickgrid-universal/excel-export": "workspace:*",
-    "@slickgrid-universal/odata": "workspace:*",
     "@slickgrid-universal/graphql": "workspace:*",
+    "@slickgrid-universal/odata": "workspace:*",
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
     "@slickgrid-universal/vanilla-bundle": "workspace:*",
