@@ -4,11 +4,10 @@ import 'flatpickr/dist/flatpickr.min.css';
 import './styles.scss';
 
 // import all other 3rd party libs required by Slickgrid-Universal
-// also only import jQueryUI necessary widget (note autocomplete & slider are imported in their respective editors/filters)
 import { Renderer } from './renderer';
 import * as SlickerModule from '@slickgrid-universal/vanilla-bundle';
 import { App } from './app';
-import { TranslateService } from 'translate.service';
+import { TranslateService } from './translate.service';
 
 // load necessary Flatpickr Locale(s), but make sure it's imported AFTER the SlickerModule import
 import 'flatpickr/dist/l10n/fr';
