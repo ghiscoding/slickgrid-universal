@@ -53,7 +53,7 @@ Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +15,00
 | [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) | for Angular framework |
 | [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) | for Aurelia framework |
 | [slickgrid-universal/webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle) | standalone package written in plain TypeScript for demo and UI testing (**do not use in production**, this is only for demo/testing purpose). |
-| [Slickgrid-Universal-Vite-Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) | Vanilla Vite TS demo |
+| [Slickgrid-Universal-Vite-Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) | Slickgrid-Universal demo with Vite & TypeScript |
 
 ### Available Public Packages
 
