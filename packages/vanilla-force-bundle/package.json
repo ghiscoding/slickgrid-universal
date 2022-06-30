@@ -14,12 +14,13 @@
     "/dist"
   ],
   "scripts": {
-    "test": "echo testing slickgrid-universal vanilla-force-bundle code",
-    "dev": "webpack --env development",
-    "dev:watch": "tsc --incremental --watch",
     "build": "tsc --build",
     "postbuild": "pnpm run bundle:commonjs",
     "build:watch": "tsc --incremental --watch",
+    "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",
+    "dev": "webpack --env development",
+    "dev:watch": "tsc --incremental --watch",
+    "prebundle": "pnpm run clean",
     "bundle": "npm-run-all bundle:commonjs bundle:esm webpack:prod --npm-path npm",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
@@ -30,7 +31,8 @@
     "zip:dist:dev": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle-DEV --output-folder=\"dist-grid-bundle-zip/\"",
     "zip:dist": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle --output-folder=\"dist-grid-bundle-zip/\"",
     "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=vanilla-force-bundle",
-    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=vanilla-force-bundle"
+    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=vanilla-force-bundle",
+    "test": "echo testing slickgrid-universal vanilla-force-bundle code"
   },
   "license": "MIT",
   "author": "Ghislain B.",
