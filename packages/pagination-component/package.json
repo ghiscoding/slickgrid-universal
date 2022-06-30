@@ -16,8 +16,10 @@
   "scripts": {
     "build": "pnpm run bundle:commonjs",
     "build:watch": "tsc --incremental --watch",
+    "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",
     "dev": "pnpm run bundle:commonjs",
     "dev:watch": "tsc --incremental --watch",
+    "prebundle": "pnpm run clean",
     "bundle": "run-p bundle:commonjs bundle:esm --npm-path npm",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",

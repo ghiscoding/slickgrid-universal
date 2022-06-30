@@ -2,6 +2,7 @@
   "version": "1.3.0",
   "npmClient": "pnpm",
   "loglevel": "info",
+  "useNx": true,
   "command": {
     "publish": {
       "conventionalCommits": true

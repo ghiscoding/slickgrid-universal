@@ -14,17 +14,19 @@
     "/dist"
   ],
   "scripts": {
-    "test": "echo testing slickgrid-universal slickgrid-vanilla-bundle code",
-    "dev": "pnpm run bundle:commonjs",
-    "dev:watch": "tsc --incremental --watch",
     "build": "tsc --build",
     "postbuild": "pnpm run bundle:commonjs",
     "build:watch": "tsc --incremental --watch",
+    "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",
+    "dev": "pnpm run bundle:commonjs",
+    "dev:watch": "tsc --incremental --watch",
+    "prebundle": "pnpm run clean",
     "bundle": "npm-run-all bundle:commonjs bundle:esm --npm-path npm",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=vanilla-bundle",
-    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=vanilla-bundle"
+    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=vanilla-bundle",
+    "test": "echo testing slickgrid-universal slickgrid-vanilla-bundle code"
   },
   "license": "MIT",
   "author": "Ghislain B.",

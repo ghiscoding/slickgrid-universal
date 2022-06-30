@@ -16,10 +16,12 @@
   "scripts": {
     "build": "pnpm run bundle:commonjs",
     "build:watch": "tsc --incremental --watch",
+    "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",
     "dev": "pnpm run bundle:commonjs",
     "dev:watch": "tsc --incremental --watch",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
+    "prebundle": "pnpm run clean",
     "bundle": "run-p bundle:commonjs bundle:esm --npm-path npm",
     "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=excel-export",
     "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=excel-export"

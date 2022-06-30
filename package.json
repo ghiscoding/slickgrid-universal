@@ -12,9 +12,9 @@
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "scripts": {
-    "prebuild": "run-s lint clean",
-    "build": "cross-env CI=true pnpm -r --stream run build",
-    "prebundle": "run-s lint clean",
+    "prebuild": "pnpm lint",
+    "build": "cross-env CI=true lerna run build --stream",
+    "prebundle": "pnpm lint",
     "bundle": "cross-env CI=true lerna run bundle --stream",
     "prebundle:zip": "pnpm bundle",
     "bundle:zip": "pnpm -r --stream --filter=./packages/** run bundle:zip",
@@ -55,6 +55,7 @@
     "jsdom": "^20.0.0",
     "jsdom-global": "^3.0.2",
     "npm-run-all2": "^6.0.1",
+    "nx": "14.3.6",
     "pnpm": "^7.4.0",
     "rxjs": "^7.5.5",
     "serve": "^13.0.2",
