@@ -173,7 +173,7 @@ importers:
       nodemon: ^2.0.18
       npm-run-all2: ^6.0.1
       postcss: ^8.4.14
-      postcss-cli: ^9.1.0
+      postcss-cli: ^10.0.0
       sass: ^1.53.0
       slickgrid: ^2.4.44
       un-flatten-tree: ^2.0.12
@@ -200,7 +200,7 @@ importers:
       nodemon: 2.0.18
       npm-run-all2: 6.0.1
       postcss: 8.4.14
-      postcss-cli: 9.1.0_postcss@8.4.14
+      postcss-cli: 10.0.0_postcss@8.4.14
       sass: 1.53.0
 
   packages/composite-editor-component:
@@ -1929,7 +1929,7 @@ packages:
   /@types/webpack/5.28.0_webpack-cli@4.10.0:
     resolution: {integrity: sha512-8cP0CzcxUiFuA9xGJkfeVpqmWTk9nx6CWwamRGCj95ph1SmlRRk9KlCZ6avhCbZd4L68LvYT6l1kpdEnQXrF8w==}
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 17.0.33
       tapable: 2.2.1
       webpack: 5.73.0_webpack-cli@4.10.0
     transitivePeerDependencies:
@@ -2532,11 +2532,6 @@ packages:
   /array-union/2.1.0:
     resolution: {integrity: sha512-HGyxoOTYUyCM6stUe6EJgnd4EoewAI7zMdfqO+kGjnlZmBDz/cR5pf8r/cR4Wq60sL/p0IkcjUEEPwS3GFrIyw==}
     engines: {node: '>=8'}
-    dev: true
-
-  /array-union/3.0.1:
-    resolution: {integrity: sha512-1OvF9IbWwaeiM9VhzYXVQacMibxpXOMYVNIvMtKRyX9SImBXpKcFr8XvFDeEslCyuH/t6KRt7HEO94AlP8Iatw==}
-    engines: {node: '>=12'}
     dev: true
 
   /array-uniq/1.0.3:
@@ -5284,18 +5279,6 @@ packages:
       ignore: 5.2.0
       merge2: 1.4.1
       slash: 3.0.0
-    dev: true
-
-  /globby/12.2.0:
-    resolution: {integrity: sha512-wiSuFQLZ+urS9x2gGPl1H5drc5twabmm4m2gTR27XDFyjUHJUNsS8o/2aKyIF6IoBaR630atdher0XJ5g6OMmA==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-    dependencies:
-      array-union: 3.0.1
-      dir-glob: 3.0.1
-      fast-glob: 3.2.11
-      ignore: 5.2.0
-      merge2: 1.4.1
-      slash: 4.0.0
     dev: true
 
   /globby/13.1.1:
@@ -8180,9 +8163,9 @@ packages:
     hasBin: true
     dev: true
 
-  /postcss-cli/9.1.0_postcss@8.4.14:
-    resolution: {integrity: sha512-zvDN2ADbWfza42sAnj+O2uUWyL0eRL1V+6giM2vi4SqTR3gTYy8XzcpfwccayF2szcUif0HMmXiEaDv9iEhcpw==}
-    engines: {node: '>=12'}
+  /postcss-cli/10.0.0_postcss@8.4.14:
+    resolution: {integrity: sha512-Wjy/00wBBEgQqnSToznxLWDnATznokFGXsHtF/3G8glRZpz5KYlfHcBW/VMJmWAeF2x49zjgy4izjM3/Wx1dKA==}
+    engines: {node: '>=14'}
     hasBin: true
     peerDependencies:
       postcss: ^8.0.0
@@ -8191,22 +8174,22 @@ packages:
       dependency-graph: 0.11.0
       fs-extra: 10.1.0
       get-stdin: 9.0.0
-      globby: 12.2.0
+      globby: 13.1.1
       picocolors: 1.0.0
       postcss: 8.4.14
-      postcss-load-config: 3.1.4_postcss@8.4.14
+      postcss-load-config: 4.0.1_postcss@8.4.14
       postcss-reporter: 7.0.5_postcss@8.4.14
       pretty-hrtime: 1.0.3
       read-cache: 1.0.0
       slash: 4.0.0
-      yargs: 17.5.0
+      yargs: 17.5.1
     transitivePeerDependencies:
       - ts-node
     dev: true
 
-  /postcss-load-config/3.1.4_postcss@8.4.14:
-    resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
-    engines: {node: '>= 10'}
+  /postcss-load-config/4.0.1_postcss@8.4.14:
+    resolution: {integrity: sha512-vEJIc8RdiBRu3oRAI0ymerOn+7rPuMvRXslTvZUKZonDHFIczxztIyJ1urxM1x9JXEikvpWWTUUqal5j/8QgvA==}
+    engines: {node: '>= 14'}
     peerDependencies:
       postcss: '>=8.0.9'
       ts-node: '>=9.0.0'
@@ -8218,7 +8201,7 @@ packages:
     dependencies:
       lilconfig: 2.0.5
       postcss: 8.4.14
-      yaml: 1.10.2
+      yaml: 2.1.1
     dev: true
 
   /postcss-modules-extract-imports/3.0.0_postcss@8.4.13:
@@ -8350,7 +8333,7 @@ packages:
     dev: true
 
   /pretty-hrtime/1.0.3:
-    resolution: {integrity: sha1-t+PqQkNaTJsnWdmeDyAesZWALuE=}
+    resolution: {integrity: sha512-66hKPCr+72mlfiSjlEB1+45IjXSqvVAIy6mocupoww4tBFE9R9IhwwUGoI4G++Tc9Aq+2rxOt0RFU6gPcrte0A==}
     engines: {node: '>= 0.8'}
     dev: true
 
@@ -8523,7 +8506,7 @@ packages:
     dev: true
 
   /read-cache/1.0.0:
-    resolution: {integrity: sha1-5mTvMRYRZsl1HNvo28+GtftY93Q=}
+    resolution: {integrity: sha512-Owdv/Ft7IjOgm/i0xvNDZ1LrRANRfew4b2prF3OWMQLxLfu3bS8FVhCsrSCMK4lR56Y9ya+AThoTpDCTxCmpRA==}
     dependencies:
       pify: 2.3.0
     dev: true
@@ -10505,6 +10488,11 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
+  /yaml/2.1.1:
+    resolution: {integrity: sha512-o96x3OPo8GjWeSLF+wOAbrPfhFOGY0W00GNaxCDv+9hkcDJEnev1yh8S7pgHF0ik6zc8sQLuL8hjHjJULZp8bw==}
+    engines: {node: '>= 14'}
+    dev: true
+
   /yargs-parser/20.2.9:
     resolution: {integrity: sha512-y11nGElTIV+CT3Zv9t7VKl+Q3hTQoT9a1Qzezhhl6Rp21gJ/IVTW7Z3y9EWXhuUBC2Shnf+DX0antecpAwSP8w==}
     engines: {node: '>=10'}
@@ -10526,19 +10514,6 @@ packages:
       string-width: 4.2.3
       y18n: 5.0.8
       yargs-parser: 20.2.9
-    dev: true
-
-  /yargs/17.5.0:
-    resolution: {integrity: sha512-3sLxVhbAB5OC8qvVRebCLWuouhwh/rswsiDYx3WGxajUk/l4G20SKfrKKFeNIHboUFt2JFgv2yfn+5cgOr/t5A==}
-    engines: {node: '>=12'}
-    dependencies:
-      cliui: 7.0.4
-      escalade: 3.1.1
-      get-caller-file: 2.0.5
-      require-directory: 2.1.1
-      string-width: 4.2.3
-      y18n: 5.0.8
-      yargs-parser: 21.0.1
     dev: true
 
   /yargs/17.5.1:
