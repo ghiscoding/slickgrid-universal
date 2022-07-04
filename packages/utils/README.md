@@ -14,8 +14,5 @@
 
 A set of small common utils that can be installed separately and that do not have any dependencies.
 
-### External Dependencies
-- [DOM Purify](https://github.com/cure53/DOMPurify) to sanitize HTML text
-
 ### Installation
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)
