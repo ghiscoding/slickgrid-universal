@@ -82,6 +82,7 @@ importers:
       dompurify: ^2.3.8
       esbuild-loader: ^2.19.0
       file-loader: ^6.2.0
+      flatpickr: ^4.6.13
       fork-ts-checker-webpack-plugin: ^7.2.11
       html-loader: ^3.1.2
       html-webpack-plugin: 5.5.0
@@ -114,6 +115,7 @@ importers:
       '@slickgrid-universal/vanilla-force-bundle': link:../../packages/vanilla-force-bundle
       bulma: 0.9.4
       dompurify: 2.3.8
+      flatpickr: 4.6.13
       jquery: 3.6.0
       moment-mini: 2.24.0
       multiple-select-modified: 1.3.17
@@ -469,11 +471,13 @@ importers:
       '@slickgrid-universal/text-export': workspace:*
       '@slickgrid-universal/utils': workspace:*
       '@slickgrid-universal/vanilla-bundle': workspace:*
+      '@types/jquery': ^3.5.14
       '@types/webpack': ^5.28.0
       archiver: ^5.3.1
       cross-env: ^7.0.3
       esbuild-loader: ^2.19.0
       html-loader: ^3.1.2
+      jquery: ^3.6.0
       npm-run-all2: ^6.0.1
       rimraf: ^3.0.2
       webpack: ^5.73.0
@@ -490,8 +494,10 @@ importers:
       '@slickgrid-universal/text-export': link:../text-export
       '@slickgrid-universal/utils': link:../utils
       '@slickgrid-universal/vanilla-bundle': link:../vanilla-bundle
+      jquery: 3.6.0
       whatwg-fetch: 3.6.2
     devDependencies:
+      '@types/jquery': 3.5.14
       '@types/webpack': 5.28.0
       archiver: 5.3.1
       cross-env: 7.0.3
