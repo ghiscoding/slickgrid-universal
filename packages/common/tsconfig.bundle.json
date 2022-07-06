@@ -5,7 +5,13 @@
       "../typings",
       "../../node_modules/@types"
     ],
-    "outDir": "dist/commonjs"
+    "outDir": "dist/commonjs",
+    "types": [
+      "jest",
+      "jest-extended",
+      "jquery",
+      "node"
+    ]
   },
   "include": [
     "../typings",

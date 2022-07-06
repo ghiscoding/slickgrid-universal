@@ -7,6 +7,12 @@
     "outDir": "dist/esm",
     "typeRoots": [
       "typings"
+    ],
+    "types": [
+      "jest",
+      "jest-extended",
+      "jquery",
+      "node"
     ]
   },
   "exclude": [

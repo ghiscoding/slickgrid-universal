@@ -8,10 +8,6 @@
       "dom"
     ],
     "types": [
-      "jest",
-      "jest-extended",
-      "jquery",
-      "moment",
       "node"
     ],
     "noImplicitAny": true,
