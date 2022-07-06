@@ -424,6 +424,7 @@ importers:
       '@slickgrid-universal/event-pub-sub': workspace:*
       '@slickgrid-universal/pagination-component': workspace:*
       '@slickgrid-universal/utils': workspace:*
+      '@types/jquery': ^3.5.14
       cross-env: ^7.0.3
       dequal: ^2.0.2
       flatpickr: ^4.6.13
@@ -448,6 +449,7 @@ importers:
       slickgrid: 2.4.44
       whatwg-fetch: 3.6.2
     devDependencies:
+      '@types/jquery': 3.5.14
       cross-env: 7.0.3
       npm-run-all2: 6.0.1
       rimraf: 3.0.2
@@ -4237,7 +4239,7 @@ packages:
       json5: 2.2.1
       loader-utils: 2.0.2
       tapable: 2.2.1
-      webpack: 5.73.0
+      webpack: 5.73.0_webpack-cli@4.10.0
       webpack-sources: 2.3.1
     dev: true
 
@@ -5386,7 +5388,7 @@ packages:
     dependencies:
       html-minifier-terser: 6.1.0
       parse5: 6.0.1
-      webpack: 5.73.0
+      webpack: 5.73.0_webpack-cli@4.10.0
     dev: true
 
   /html-minifier-terser/6.1.0:
@@ -9334,7 +9336,7 @@ packages:
       schema-utils: 3.1.1
       serialize-javascript: 6.0.0
       terser: 5.14.1
-      webpack: 5.73.0
+      webpack: 5.73.0_webpack-cli@4.10.0
     dev: true
 
   /terser/5.14.1:
