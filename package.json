@@ -23,7 +23,7 @@
     "cypress": "cypress open --config-file test/cypress.config.ts",
     "cypress:ci": "cypress run --config-file test/cypress.config.ts",
     "dev:watch": "cross-env TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling pnpm -r --parallel run dev:watch",
-    "new-version": "lerna version --conventional-commits",
+    "new-version": "lerna version",
     "new-publish": "lerna publish from-package --registry=https://registry.npmjs.org/",
     "prepublishOnly": "pnpm -r package:remove-browser-prop",
     "postnew-publish": "pnpm -r package:add-browser-prop",
