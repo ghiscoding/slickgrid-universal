@@ -88,6 +88,7 @@ importers:
       jquery: ^3.6.0
       mini-css-extract-plugin: ^2.6.1
       moment-mini: ^2.24.0
+      multiple-select-modified: ^1.3.17
       rxjs: ^7.5.5
       sass: ^1.53.0
       sass-loader: ^13.0.2
@@ -115,6 +116,7 @@ importers:
       dompurify: 2.3.8
       jquery: 3.6.0
       moment-mini: 2.24.0
+      multiple-select-modified: 1.3.17
       rxjs: 7.5.5
       whatwg-fetch: 3.6.2
     devDependencies:
@@ -4239,7 +4241,7 @@ packages:
       json5: 2.2.1
       loader-utils: 2.0.2
       tapable: 2.2.1
-      webpack: 5.73.0_webpack-cli@4.10.0
+      webpack: 5.73.0
       webpack-sources: 2.3.1
     dev: true
 
@@ -5388,7 +5390,7 @@ packages:
     dependencies:
       html-minifier-terser: 6.1.0
       parse5: 6.0.1
-      webpack: 5.73.0_webpack-cli@4.10.0
+      webpack: 5.73.0
     dev: true
 
   /html-minifier-terser/6.1.0:
@@ -9336,7 +9338,7 @@ packages:
       schema-utils: 3.1.1
       serialize-javascript: 6.0.0
       terser: 5.14.1
-      webpack: 5.73.0_webpack-cli@4.10.0
+      webpack: 5.73.0
     dev: true
 
   /terser/5.14.1:
