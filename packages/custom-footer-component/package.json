@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/custom-footer-component",
-  "version": "1.3.1",
+  "version": "1.3.0",
   "description": "Slick Custom Footer Component - Vanilla Implementation of a Custom Footer Component",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
@@ -48,8 +48,8 @@
     "moment-mini": "^2.24.0"
   },
   "devDependencies": {
-    "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@types/moment": "^2.13.0",
+    "@slickgrid-universal/event-pub-sub": "workspace:*",
     "cross-env": "^7.0.3",
     "npm-run-all2": "^6.0.1",
     "rimraf": "^3.0.2"

@@ -3,20 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [1.3.1](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.0...v1.3.1) (2022-07-06)
-
-### Bug Fixes
-
-* **composite:** selected row count always 0 on mass-selected ([#712](https://github.com/ghiscoding/slickgrid-universal/issues/712)) ([ec42dc7](https://github.com/ghiscoding/slickgrid-universal/commit/ec42dc753fbf8c84040e252f328e51ea4a98cedf))
-
 # [1.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v1.2.6...v1.3.0) (2022-06-18)
 
 ### Bug Fixes
 
 * **deps:** add missing depency in vanilla bundle package ([fa08fe6](https://github.com/ghiscoding/slickgrid-universal/commit/fa08fe6f097461c2bf8029307e59631738b1654b))
-
 * **deps:** add missing dependencies in child package ([97d0230](https://github.com/ghiscoding/slickgrid-universal/commit/97d02306899e583779c3b6d5b219b2798a5f9cfd))
-
 * **deps:** use chore dependency package name ([2fce29c](https://github.com/ghiscoding/slickgrid-universal/commit/2fce29c5e64f160203529b5bf9435562cf5f5941))
 
 ### Features
