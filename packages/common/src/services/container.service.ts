@@ -9,6 +9,10 @@ export class ContainerService {
     throw new Error('ContainerService "get" method must be implemented');
   }
 
+  dispose() {
+    throw new Error('ContainerService "dispose" method must be implemented');
+  }
+
   registerInstance(_key: any, _instance: any) {
     throw new Error('ContainerService "registerInstance" method must be implemented');
   }
