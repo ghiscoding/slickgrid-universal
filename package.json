@@ -25,6 +25,8 @@
     "dev:watch": "cross-env TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling pnpm -r --parallel run dev:watch",
     "new-version": "lerna version --conventional-commits",
     "new-publish": "lerna publish from-package --registry=https://registry.npmjs.org/",
+    "prepublishOnly": "pnpm -r package:remove-browser-prop",
+    "postnew-publish": "pnpm -r package:add-browser-prop",
     "serve:demo": "serve ./docs -l 8888",
     "lint": "eslint packages --ext .ts",
     "test": "jest --runInBand --coverage=true --config ./test/jest.config.js",
