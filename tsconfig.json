@@ -9,7 +9,12 @@
       "es2018",
       "dom"
     ],
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": [
+      "jest",
+      "jest-extended",
+      "node"
+    ]
   },
   "exclude": [
     "dist/**/*.*",

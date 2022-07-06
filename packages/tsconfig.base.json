@@ -10,8 +10,6 @@
     "types": [
       "jest",
       "jest-extended",
-      "jquery",
-      "moment",
       "node"
     ],
     "typeRoots": [

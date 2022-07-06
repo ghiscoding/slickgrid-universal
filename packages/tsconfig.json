@@ -15,6 +15,7 @@
     { "path": "row-detail-view-plugin" },
     { "path": "rxjs-observable" },
     { "path": "text-export" },
+    { "path": "utils" },
     { "path": "vanilla-bundle" },
     { "path": "vanilla-force-bundle" }
   ]
