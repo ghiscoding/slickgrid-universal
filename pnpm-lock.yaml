@@ -7,6 +7,7 @@ importers:
       '@lerna-lite/cli': ^1.6.0
       '@lerna-lite/run': ^1.6.0
       '@types/jest': ^28.1.4
+      '@types/moment': ^2.13.0
       '@types/node': ^18.0.0
       '@typescript-eslint/eslint-plugin': ^5.30.0
       '@typescript-eslint/parser': ^5.30.0
@@ -21,6 +22,7 @@ importers:
       jest-extended: ^2.0.0
       jsdom: ^20.0.0
       jsdom-global: ^3.0.2
+      moment-mini: ^2.24.0
       npm-run-all2: ^6.0.1
       nx: 14.3.6
       pnpm: ^7.4.1
@@ -33,6 +35,7 @@ importers:
       '@lerna-lite/cli': 1.6.0
       '@lerna-lite/run': 1.6.0
       '@types/jest': 28.1.4
+      '@types/moment': 2.13.0
       '@types/node': 18.0.1
       '@typescript-eslint/eslint-plugin': 5.30.5_6zdoc3rn4mpiddqwhppni2mnnm
       '@typescript-eslint/parser': 5.30.5_4x5o4skxv6sl53vpwefgt23khm
@@ -47,6 +50,7 @@ importers:
       jest-extended: 2.0.0_jest@28.1.2
       jsdom: 20.0.0
       jsdom-global: 3.0.2_jsdom@20.0.0
+      moment-mini: 2.24.0
       npm-run-all2: 6.0.1
       nx: 14.3.6
       pnpm: 7.5.0
