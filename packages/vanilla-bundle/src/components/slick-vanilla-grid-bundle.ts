@@ -412,6 +412,7 @@ export class SlickVanillaGridBundle {
     this.resizerService?.dispose();
     this.sortService?.dispose();
     this.treeDataService?.dispose();
+    this.universalContainerService?.dispose();
 
     // dispose all registered external resources
     if (Array.isArray(this._registeredResources)) {
