@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.3](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.2...v1.3.3) (2022-07-07)
+
+### Bug Fixes
+
+* **common:** remove dispose method from container service abstract class ([838fc54](https://github.com/ghiscoding/slickgrid-universal/commit/838fc54f72782aa5187644a134063a125c01e12e))
+
 ## [1.3.2](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.0...v1.3.2) (2022-07-06)
 
 ### Bug Fixes
