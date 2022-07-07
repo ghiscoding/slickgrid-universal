@@ -9,11 +9,11 @@ importers:
       '@types/jest': ^28.1.4
       '@types/moment': ^2.13.0
       '@types/node': ^18.0.0
-      '@typescript-eslint/eslint-plugin': ^5.30.0
-      '@typescript-eslint/parser': ^5.30.0
+      '@typescript-eslint/eslint-plugin': ^5.30.5
+      '@typescript-eslint/parser': ^5.30.5
       cross-env: ^7.0.3
       cypress: ^10.3.0
-      eslint: ^8.18.0
+      eslint: ^8.19.0
       eslint-plugin-import: ^2.26.0
       eslint-plugin-prefer-arrow: ^1.2.3
       jest: ^28.1.2
@@ -24,11 +24,11 @@ importers:
       jsdom-global: ^3.0.2
       moment-mini: ^2.24.0
       npm-run-all2: ^6.0.1
-      nx: 14.3.6
-      pnpm: ^7.4.1
+      nx: 14.4.2
+      pnpm: ^7.5.0
       rimraf: ^3.0.2
       rxjs: ^7.5.5
-      serve: ^13.0.2
+      serve: ^13.0.4
       ts-jest: ^28.0.5
       typescript: ^4.7.4
     devDependencies:
@@ -52,11 +52,11 @@ importers:
       jsdom-global: 3.0.2_jsdom@20.0.0
       moment-mini: 2.24.0
       npm-run-all2: 6.0.1
-      nx: 14.3.6
+      nx: 14.4.2
       pnpm: 7.5.0
       rimraf: 3.0.2
       rxjs: 7.5.5
-      serve: 13.0.2
+      serve: 13.0.4
       ts-jest: 28.0.5_lt5llx2ti6zt4eclhanfli5ynu
       typescript: 4.7.4
 
@@ -182,7 +182,7 @@ importers:
       jquery-ui-dist: ^1.13.1
       moment-mini: ^2.24.0
       multiple-select-modified: ^1.3.17
-      nodemon: ^2.0.18
+      nodemon: ^2.0.19
       npm-run-all2: ^6.0.1
       postcss: ^8.4.14
       postcss-cli: ^10.0.0
@@ -1527,20 +1527,20 @@ packages:
       - supports-color
     dev: true
 
-  /@nrwl/cli/14.3.6:
-    resolution: {integrity: sha512-MNCBzM3ZDsujEc5crltH/kEyNBKx6DofLHdpzY1EoiY+yF57W7E1B6ERkVUGDc52sR4snEUKpQLXdVFjwP+z8A==}
+  /@nrwl/cli/14.4.2:
+    resolution: {integrity: sha512-JNV4kP9goZD4BlTQGKdKhCRc1bhiWYp1TaDJHdk4ZfhiLt1NzXNxxgc/eX2obFZ3Hw+KdM/gM5F7KfWBbtSGSw==}
     dependencies:
-      nx: 14.3.6
+      nx: 14.4.2
     transitivePeerDependencies:
       - '@swc-node/register'
       - '@swc/core'
     dev: true
 
-  /@nrwl/tao/14.3.6:
-    resolution: {integrity: sha512-g3y6VRq4wNtbFZIclJwRR/1hcTesx6h64g7h80VWtyRw0pVq/0zAjb8abeQSTDLM15uc1pQJYPEfsR/KgI3Sow==}
+  /@nrwl/tao/14.4.2:
+    resolution: {integrity: sha512-Ygw3skKZfFhi4MBHZKQ8A67pDQxeyDdY78tFWViMN0SEn9ExL41Q8V9aSMfir8VZYGca6ZOXX5MRhbeHdcgMLQ==}
     hasBin: true
     dependencies:
-      nx: 14.3.6
+      nx: 14.4.2
     transitivePeerDependencies:
       - '@swc-node/register'
       - '@swc/core'
@@ -3319,7 +3319,7 @@ packages:
     dev: true
 
   /content-disposition/0.5.2:
-    resolution: {integrity: sha1-DPaLud318r55YcOoUXjLhdunjLQ=}
+    resolution: {integrity: sha512-kRGRZw3bLlFISDBgwTSA1TMBFN6J6GWDeubmDE3AF+3+yXL8hTWv8r5rkLbqYXY4RjPk/EzHnClI3zQf1cFmHA==}
     engines: {node: '>= 0.6'}
     dev: true
 
@@ -4772,7 +4772,7 @@ packages:
     dev: true
 
   /fast-url-parser/1.1.3:
-    resolution: {integrity: sha1-9K8+qfNNiicc9YrSs3WfQx8LMY0=}
+    resolution: {integrity: sha512-5jOCVXADYNuRkKFzNJ0dCCewsZiYo0dz8QNYljkOpFC6r2U4OBmKtvm/Tsuh4w1YYdDqDb31a8TVhBJ2OJKdqQ==}
     dependencies:
       punycode: 1.4.1
     dev: true
@@ -5198,7 +5198,7 @@ packages:
       fs.realpath: 1.0.0
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 3.0.5
+      minimatch: 3.1.2
       once: 1.4.0
       path-is-absolute: 1.0.1
     dev: true
@@ -7541,8 +7541,8 @@ packages:
     resolution: {integrity: sha512-JYOWTeFoS0Z93587vRJgASD5Ut11fYl5NyihP3KrYBvMe1FRRs6RN7m20SA/16GM4P6hTnZjT+UmDOt38UeXNg==}
     dev: true
 
-  /nx/14.3.6:
-    resolution: {integrity: sha512-jBgqXEkRalo8PwXJzO4HVNN3P5pqyL5VawyNd34qPl+4t2XlDRqoK0J74i8liPGdKPBB1HjM2K1u+QNF2ROvQA==}
+  /nx/14.4.2:
+    resolution: {integrity: sha512-bYO//HuwQL4X8y+2BjUPtkPLDiYI1zMejQo6+uJl3+VdYPcsjwW/ca581tBPHiPH95XnHiBartnMrMJtn11grw==}
     hasBin: true
     requiresBuild: true
     peerDependencies:
@@ -7554,8 +7554,8 @@ packages:
       '@swc/core':
         optional: true
     dependencies:
-      '@nrwl/cli': 14.3.6
-      '@nrwl/tao': 14.3.6
+      '@nrwl/cli': 14.4.2
+      '@nrwl/tao': 14.4.2
       '@parcel/watcher': 2.0.4
       chalk: 4.1.0
       chokidar: 3.5.3
@@ -7920,7 +7920,7 @@ packages:
     dev: true
 
   /path-is-inside/1.0.2:
-    resolution: {integrity: sha1-NlQX3t5EQw0cEa9hAn+s8HS9/FM=}
+    resolution: {integrity: sha512-DUWJr3+ULp4zXmol/SZkFf3JGsS9/SIv+Y3Rt93/UjPpDpklB5f1er4O3POIbUuUJ3FXgqte2Q7SrU6zAqwk8w==}
     dev: true
 
   /path-key/2.0.1:
@@ -8508,7 +8508,7 @@ packages:
     dev: true
 
   /registry-url/3.1.0:
-    resolution: {integrity: sha1-PU74cPc93h138M+aOBQyRE4XSUI=}
+    resolution: {integrity: sha512-ZbgR5aZEdf4UKZVBPYIgaglBmSF2Hi94s2PcIHhRGFjKYu+chjJdYfHn4rt3hB6eCKLJ8giVIIfgMa1ehDfZKA==}
     engines: {node: '>=0.10.0'}
     dependencies:
       rc: 1.2.8
@@ -8825,8 +8825,8 @@ packages:
       - supports-color
     dev: true
 
-  /serve/13.0.2:
-    resolution: {integrity: sha512-71R6fKvNgKrqARAag6lYJNnxDzpH7DCNrMuvPY5PLVaC2PDhJsGTj/34o4o4tPWhTuLgEXqvgnAWbATQ9zGZTQ==}
+  /serve/13.0.4:
+    resolution: {integrity: sha512-Lj8rhXmphJCRQVv5qwu0NQZ2h+0MrRyRJxDZu5y3qLH2i/XY6a0FPj/VmjMUdkJb672MBfE8hJ274PU6JzBd0Q==}
     hasBin: true
     dependencies:
       '@zeit/schemas': 2.6.0
