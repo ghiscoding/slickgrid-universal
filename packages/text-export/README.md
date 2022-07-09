@@ -1,6 +1,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
-[![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-d428ff)](https://github.com/ghiscoding/lerna-lite)
+[![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-e137ff)](https://github.com/ghiscoding/lerna-lite)
 [![npm](https://img.shields.io/npm/v/@slickgrid-universal/text-export.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/text-export)
 [![npm](https://img.shields.io/npm/dy/@slickgrid-universal/text-export?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/text-export)
 
@@ -9,10 +9,10 @@
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
-## Text Export Service (text file) 
+## Text Export Service (text file)
 #### @slickgrid-universal/text-export
 
-Simple Export to File Service that allows to export as CSV or Text (`.csv` or `.txt`), user can also choose which data separator to use for the export (comma, colon, semicolon, ...). 
+Simple Export to File Service that allows to export as CSV or Text (`.csv` or `.txt`), user can also choose which data separator to use for the export (comma, colon, semicolon, ...).
 
 There are a couple of reasons to use this package (it could be used instead of the `excel-export`)
 - if you want to export to a text file with any type of separator (tab, colon, semicolon, comma)

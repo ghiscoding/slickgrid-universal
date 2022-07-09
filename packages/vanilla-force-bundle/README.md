@@ -1,6 +1,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
-[![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-d428ff)](https://github.com/ghiscoding/lerna-lite)
+[![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-e137ff)](https://github.com/ghiscoding/lerna-lite)
 [![npm](https://img.shields.io/npm/v/@slickgrid-universal/vanilla-force-bundle.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-force-bundle)
 [![npm](https://img.shields.io/npm/dy/@slickgrid-universal/vanilla-force-bundle?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-force-bundle)
 
@@ -12,7 +12,7 @@
 ## Vanilla Force Bundle
 #### @slickgrid-universal/vanilla-force-bundle
 
-Vanilla Force Bundle is similar to the Vanilla Bundle but oriented towards a Salesforce (LWC) implementation which requires an all-in-1 bundle (zip) with all necessary package loaded at once. So this package is very similar to the [@slickgrid-universal/vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle), it actually extends from it, with the only difference that it imports and includes 3 extra packages (which are optional in the `vanilla-bundle` but required for our Salesforce implementation) and those are: 
+Vanilla Force Bundle is similar to the Vanilla Bundle but oriented towards a Salesforce (LWC) implementation which requires an all-in-1 bundle (zip) with all necessary package loaded at once. So this package is very similar to the [@slickgrid-universal/vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle), it actually extends from it, with the only difference that it imports and includes 3 extra packages (which are optional in the `vanilla-bundle` but required for our Salesforce implementation) and those are:
 - CompositeEditor
 - CustomTooltip
 - TextExport (CSV))
