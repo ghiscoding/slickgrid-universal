@@ -52,7 +52,7 @@
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/pagination-component": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
-    "dequal": "^2.0.2",
+    "dequal": "^2.0.3",
     "flatpickr": "^4.6.13",
     "jquery": "^3.6.0",
     "jquery-ui": "^1.13.1",

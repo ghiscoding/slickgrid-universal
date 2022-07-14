@@ -73,8 +73,8 @@
   "dependencies": {
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
-    "dequal": "^2.0.2",
-    "dompurify": "^2.3.8",
+    "dequal": "^2.0.3",
+    "dompurify": "^2.3.9",
     "flatpickr": "^4.6.13",
     "jquery": "^3.6.0",
     "jquery-ui": "^1.13.1",
