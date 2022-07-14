@@ -88,7 +88,7 @@ importers:
       file-loader: ^6.2.0
       flatpickr: ^4.6.13
       fork-ts-checker-webpack-plugin: ^7.2.11
-      html-loader: ^3.1.2
+      html-loader: ^4.1.0
       html-webpack-plugin: 5.5.0
       jquery: ^3.6.0
       mini-css-extract-plugin: ^2.6.1
@@ -137,7 +137,7 @@ importers:
       esbuild-loader: 2.19.0_webpack@5.73.0
       file-loader: 6.2.0_webpack@5.73.0
       fork-ts-checker-webpack-plugin: 7.2.11_3o2jfq6vfqxns3sz6wn2nnc3ei
-      html-loader: 3.1.2_webpack@5.73.0
+      html-loader: 4.1.0_webpack@5.73.0
       html-webpack-plugin: 5.5.0_webpack@5.73.0
       mini-css-extract-plugin: 2.6.1_webpack@5.73.0
       sass: 1.53.0
@@ -482,7 +482,7 @@ importers:
       archiver: ^5.3.1
       cross-env: ^7.0.3
       esbuild-loader: ^2.19.0
-      html-loader: ^3.1.2
+      html-loader: ^4.1.0
       jquery: ^3.6.0
       npm-run-all2: ^6.0.1
       rimraf: ^3.0.2
@@ -508,7 +508,7 @@ importers:
       archiver: 5.3.1
       cross-env: 7.0.3
       esbuild-loader: 2.19.0_webpack@5.73.0
-      html-loader: 3.1.2_webpack@5.73.0
+      html-loader: 4.1.0_webpack@5.73.0
       npm-run-all2: 6.0.1
       rimraf: 3.0.2
       webpack: 5.73.0
@@ -5394,14 +5394,14 @@ packages:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
     dev: true
 
-  /html-loader/3.1.2_webpack@5.73.0:
-    resolution: {integrity: sha512-9WQlLiAV5N9fCna4MUmBW/ifaUbuFZ2r7IZmtXzhyfyi4zgPEjXsmsYCKs+yT873MzRj+f1WMjuAiPNA7C6Tcw==}
-    engines: {node: '>= 12.13.0'}
+  /html-loader/4.1.0_webpack@5.73.0:
+    resolution: {integrity: sha512-QDDNmLgn96NWtTPx/VXRerFXH0hn7cm4bruqsZ333GCb+rqiqGurcxtP/M52wcui1/iLiu0l5ms/McE7/Ik6aQ==}
+    engines: {node: '>= 14.15.0'}
     peerDependencies:
       webpack: ^5.0.0
     dependencies:
       html-minifier-terser: 6.1.0
-      parse5: 6.0.1
+      parse5: 7.0.0
       webpack: 5.73.0
     dev: true
 
