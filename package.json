@@ -24,6 +24,7 @@
     "cypress:ci": "cypress run --config-file test/cypress.config.ts",
     "dev:watch": "cross-env TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling pnpm -r --parallel run dev:watch",
     "prenew-version": "pnpm bundle",
+    "new-release": "run-s bundle new-version new-publish",
     "new-version": "lerna version",
     "new-publish": "lerna publish from-package --registry=https://registry.npmjs.org/",
     "prepublishOnly": "pnpm -r package:remove-browser-prop",
