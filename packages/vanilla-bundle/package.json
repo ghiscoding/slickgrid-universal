@@ -56,7 +56,7 @@
     "flatpickr": "^4.6.13",
     "jquery": "^3.6.0",
     "jquery-ui": "^1.13.2",
-    "slickgrid": "^2.4.44",
+    "slickgrid": "^2.4.45",
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
