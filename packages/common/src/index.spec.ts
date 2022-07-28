@@ -15,4 +15,13 @@ describe('Testing library entry point', () => {
     expect(entry.SlickgridConfig).toBeTruthy();
     expect(entry.Utilities).toBeTruthy();
   });
+
+  it('should have EventPubSub exports defined', () => {
+    expect(entry.PubSubService).toBeTruthy();
+    expect(typeof entry.EventNamingStyle).toBe('object');
+
+    // interface will be of type 'undefined' since it's actual code but should add full unit test coverage
+    expect(typeof entry.EventSubscription).toBeTruthy();
+    expect(typeof entry.PubSubEvent).toBeTruthy();
+  });
 });
