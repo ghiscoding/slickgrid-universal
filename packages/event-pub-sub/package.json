@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/event-pub-sub",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "Simple Vanilla Implementation of an Event PubSub Service to do simply publish/subscribe inter-communication while optionally providing data in the event",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
