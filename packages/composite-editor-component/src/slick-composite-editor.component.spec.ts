@@ -1494,7 +1494,7 @@ describe('CompositeEditorService', () => {
       });
 
       it('should expect that any error that are not defined as the built-in errors to still be caught then sent to the "onError"', (done) => {
-        (gridStub.getColumns as any).mockImplementation(() => { throw new Error('some error'); });
+        (gridStub.getColumns as jest.Mock).mockImplementation(() => { throw new Error('some error'); });
         const mockOnError = jest.fn();
 
         component = new SlickCompositeEditorComponent();
