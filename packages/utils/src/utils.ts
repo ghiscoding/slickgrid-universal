@@ -210,7 +210,7 @@ export function removeAccentFromText(text: string, shouldLowerCase = false) {
 }
 
 /** Set the object value of deeper node from a given dot (.) notation path (e.g.: "user.firstName") */
-export function setDeepValue<T = any>(obj: T, path: string | string[], value: any) {
+export function setDeepValue<T = unknown>(obj: T, path: string | string[], value: any) {
   if (typeof path === 'string') {
     path = path.split('.');
   }
@@ -219,13 +219,15 @@ export function setDeepValue<T = any>(obj: T, path: string | string[], value: an
     const e = path.shift();
     if (obj && e !== undefined) {
       setDeepValue(
-        (obj as any)[e] = Object.prototype.toString.call((obj as any)[e]) === '[object Object]' ? (obj as any)[e] : {},
+        (obj)[e as keyof T] = (Array.isArray(obj[e as keyof T]) || Object.prototype.toString.call((obj)[e as keyof T]) === '[object Object]')
+          ? (obj)[e as keyof T]
+          : {} as T[keyof T],
         path,
         value
       );
     }
   } else if (obj && path[0]) {
-    (obj as any)[path[0]] = value;
+    (obj)[path[0] as keyof T] = value;
   }
 }
 
