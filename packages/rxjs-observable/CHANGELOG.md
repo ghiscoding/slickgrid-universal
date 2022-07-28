@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.6](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.5...v1.3.6) (2022-07-28)
+
+### Bug Fixes
+
+* **deps:** loosen up RxJS min version to avoid interface out of sync ([54ef4ad](https://github.com/ghiscoding/slickgrid-universal/commit/54ef4ad72b441ea9eacb45f4d46da0b6965bb90c)) - by @ghiscoding
+
 ## [1.3.5](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.4...v1.3.5) (2022-07-28)
 
 ### Bug Fixes
