@@ -64,16 +64,16 @@ importers:
     specifiers:
       '@faker-js/faker': ^7.3.0
       '@fnando/sparkline': ^0.3.10
-      '@slickgrid-universal/common': workspace:*
-      '@slickgrid-universal/composite-editor-component': workspace:*
-      '@slickgrid-universal/custom-tooltip-plugin': workspace:*
-      '@slickgrid-universal/excel-export': workspace:*
-      '@slickgrid-universal/graphql': workspace:*
-      '@slickgrid-universal/odata': workspace:*
-      '@slickgrid-universal/rxjs-observable': workspace:*
-      '@slickgrid-universal/text-export': workspace:*
-      '@slickgrid-universal/vanilla-bundle': workspace:*
-      '@slickgrid-universal/vanilla-force-bundle': workspace:*
+      '@slickgrid-universal/common': workspace:~
+      '@slickgrid-universal/composite-editor-component': workspace:~
+      '@slickgrid-universal/custom-tooltip-plugin': workspace:~
+      '@slickgrid-universal/excel-export': workspace:~
+      '@slickgrid-universal/graphql': workspace:~
+      '@slickgrid-universal/odata': workspace:~
+      '@slickgrid-universal/rxjs-observable': workspace:~
+      '@slickgrid-universal/text-export': workspace:~
+      '@slickgrid-universal/vanilla-bundle': workspace:~
+      '@slickgrid-universal/vanilla-force-bundle': workspace:~
       '@types/fnando__sparkline': ^0.3.4
       '@types/jquery': ^3.5.14
       '@types/moment': ^2.13.0
@@ -166,8 +166,8 @@ importers:
 
   packages/common:
     specifiers:
-      '@slickgrid-universal/event-pub-sub': workspace:*
-      '@slickgrid-universal/utils': workspace:*
+      '@slickgrid-universal/event-pub-sub': workspace:~
+      '@slickgrid-universal/utils': workspace:~
       '@types/dompurify': ^2.3.3
       '@types/jquery': ^3.5.14
       '@types/moment': ^2.13.0
@@ -219,8 +219,8 @@ importers:
 
   packages/composite-editor-component:
     specifiers:
-      '@slickgrid-universal/common': workspace:*
-      '@slickgrid-universal/utils': workspace:*
+      '@slickgrid-universal/common': workspace:~
+      '@slickgrid-universal/utils': workspace:~
       cross-env: ^7.0.3
       npm-run-all2: ^6.0.1
       rimraf: ^3.0.2
@@ -234,9 +234,9 @@ importers:
 
   packages/custom-footer-component:
     specifiers:
-      '@slickgrid-universal/binding': workspace:*
-      '@slickgrid-universal/common': workspace:*
-      '@slickgrid-universal/event-pub-sub': workspace:*
+      '@slickgrid-universal/binding': workspace:~
+      '@slickgrid-universal/common': workspace:~
+      '@slickgrid-universal/event-pub-sub': workspace:~
       '@types/moment': ^2.13.0
       cross-env: ^7.0.3
       moment-mini: ^2.24.0
@@ -255,7 +255,7 @@ importers:
 
   packages/custom-tooltip-plugin:
     specifiers:
-      '@slickgrid-universal/common': workspace:*
+      '@slickgrid-universal/common': workspace:~
       '@types/dompurify': ^2.3.3
       cross-env: ^7.0.3
       dompurify: ^2.3.10
@@ -272,7 +272,7 @@ importers:
 
   packages/empty-warning-component:
     specifiers:
-      '@slickgrid-universal/common': workspace:*
+      '@slickgrid-universal/common': workspace:~
       cross-env: ^7.0.3
       npm-run-all2: ^6.0.1
       rimraf: ^3.0.2
@@ -285,7 +285,7 @@ importers:
 
   packages/event-pub-sub:
     specifiers:
-      '@slickgrid-universal/utils': workspace:*
+      '@slickgrid-universal/utils': workspace:~
       cross-env: ^7.0.3
       npm-run-all2: ^6.0.1
       rimraf: ^3.0.2
@@ -298,8 +298,8 @@ importers:
 
   packages/excel-export:
     specifiers:
-      '@slickgrid-universal/common': workspace:*
-      '@slickgrid-universal/utils': workspace:*
+      '@slickgrid-universal/common': workspace:~
+      '@slickgrid-universal/utils': workspace:~
       '@types/moment': ^2.13.0
       cross-env: ^7.0.3
       excel-builder-webpacker: ^2.1.7
@@ -319,7 +319,7 @@ importers:
 
   packages/graphql:
     specifiers:
-      '@slickgrid-universal/common': workspace:*
+      '@slickgrid-universal/common': workspace:~
       '@types/moment': ^2.13.0
       cross-env: ^7.0.3
       moment-mini: ^2.24.0
@@ -336,8 +336,8 @@ importers:
 
   packages/odata:
     specifiers:
-      '@slickgrid-universal/common': workspace:*
-      '@slickgrid-universal/utils': workspace:*
+      '@slickgrid-universal/common': workspace:~
+      '@slickgrid-universal/utils': workspace:~
       cross-env: ^7.0.3
       npm-run-all2: ^6.0.1
       rimraf: ^3.0.2
@@ -351,9 +351,9 @@ importers:
 
   packages/pagination-component:
     specifiers:
-      '@slickgrid-universal/binding': workspace:*
-      '@slickgrid-universal/common': workspace:*
-      '@slickgrid-universal/event-pub-sub': workspace:*
+      '@slickgrid-universal/binding': workspace:~
+      '@slickgrid-universal/common': workspace:~
+      '@slickgrid-universal/event-pub-sub': workspace:~
       cross-env: ^7.0.3
       npm-run-all2: ^6.0.1
       rimraf: ^3.0.2
@@ -368,7 +368,7 @@ importers:
 
   packages/row-detail-view-plugin:
     specifiers:
-      '@slickgrid-universal/common': workspace:*
+      '@slickgrid-universal/common': workspace:~
       cross-env: ^7.0.3
       npm-run-all2: ^6.0.1
       rimraf: ^3.0.2
@@ -381,7 +381,7 @@ importers:
 
   packages/rxjs-observable:
     specifiers:
-      '@slickgrid-universal/common': workspace:*
+      '@slickgrid-universal/common': workspace:~
       cross-env: ^7.0.3
       npm-run-all2: ^6.0.1
       rimraf: ^3.0.2
@@ -396,8 +396,8 @@ importers:
 
   packages/text-export:
     specifiers:
-      '@slickgrid-universal/common': workspace:*
-      '@slickgrid-universal/utils': workspace:*
+      '@slickgrid-universal/common': workspace:~
+      '@slickgrid-universal/utils': workspace:~
       '@types/text-encoding-utf-8': ^1.0.2
       cross-env: ^7.0.3
       npm-run-all2: ^6.0.1
@@ -427,13 +427,13 @@ importers:
 
   packages/vanilla-bundle:
     specifiers:
-      '@slickgrid-universal/binding': workspace:*
-      '@slickgrid-universal/common': workspace:*
-      '@slickgrid-universal/custom-footer-component': workspace:*
-      '@slickgrid-universal/empty-warning-component': workspace:*
-      '@slickgrid-universal/event-pub-sub': workspace:*
-      '@slickgrid-universal/pagination-component': workspace:*
-      '@slickgrid-universal/utils': workspace:*
+      '@slickgrid-universal/binding': workspace:~
+      '@slickgrid-universal/common': workspace:~
+      '@slickgrid-universal/custom-footer-component': workspace:~
+      '@slickgrid-universal/empty-warning-component': workspace:~
+      '@slickgrid-universal/event-pub-sub': workspace:~
+      '@slickgrid-universal/pagination-component': workspace:~
+      '@slickgrid-universal/utils': workspace:~
       '@types/jquery': ^3.5.14
       cross-env: ^7.0.3
       dequal: ^2.0.3
@@ -466,17 +466,17 @@ importers:
 
   packages/vanilla-force-bundle:
     specifiers:
-      '@slickgrid-universal/binding': workspace:*
-      '@slickgrid-universal/common': workspace:*
-      '@slickgrid-universal/composite-editor-component': workspace:*
-      '@slickgrid-universal/custom-footer-component': workspace:*
-      '@slickgrid-universal/custom-tooltip-plugin': workspace:*
-      '@slickgrid-universal/empty-warning-component': workspace:*
-      '@slickgrid-universal/event-pub-sub': workspace:*
-      '@slickgrid-universal/pagination-component': workspace:*
-      '@slickgrid-universal/text-export': workspace:*
-      '@slickgrid-universal/utils': workspace:*
-      '@slickgrid-universal/vanilla-bundle': workspace:*
+      '@slickgrid-universal/binding': workspace:~
+      '@slickgrid-universal/common': workspace:~
+      '@slickgrid-universal/composite-editor-component': workspace:~
+      '@slickgrid-universal/custom-footer-component': workspace:~
+      '@slickgrid-universal/custom-tooltip-plugin': workspace:~
+      '@slickgrid-universal/empty-warning-component': workspace:~
+      '@slickgrid-universal/event-pub-sub': workspace:~
+      '@slickgrid-universal/pagination-component': workspace:~
+      '@slickgrid-universal/text-export': workspace:~
+      '@slickgrid-universal/utils': workspace:~
+      '@slickgrid-universal/vanilla-bundle': workspace:~
       '@types/jquery': ^3.5.14
       '@types/webpack': ^5.28.0
       archiver: ^5.3.1

@@ -71,8 +71,8 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/event-pub-sub": "workspace:*",
-    "@slickgrid-universal/utils": "workspace:*",
+    "@slickgrid-universal/event-pub-sub": "workspace:~",
+    "@slickgrid-universal/utils": "workspace:~",
     "dequal": "^2.0.3",
     "dompurify": "^2.3.10",
     "flatpickr": "^4.6.13",

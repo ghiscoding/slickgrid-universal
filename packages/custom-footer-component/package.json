@@ -43,12 +43,12 @@
     "not dead"
   ],
   "dependencies": {
-    "@slickgrid-universal/binding": "workspace:*",
-    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/binding": "workspace:~",
+    "@slickgrid-universal/common": "workspace:~",
     "moment-mini": "^2.24.0"
   },
   "devDependencies": {
-    "@slickgrid-universal/event-pub-sub": "workspace:*",
+    "@slickgrid-universal/event-pub-sub": "workspace:~",
     "@types/moment": "^2.13.0",
     "cross-env": "^7.0.3",
     "npm-run-all2": "^6.0.1",
