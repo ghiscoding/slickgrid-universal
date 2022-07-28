@@ -353,24 +353,56 @@ describe('Service/Utilies', () => {
   });
 
   describe('setDeepValue method', () => {
-    let obj = {};
+    let obj: any = {};
     beforeEach(() => {
-      obj = { id: 1, user: { firstName: 'John', lastName: 'Doe', address: { number: 123, street: 'Broadway' } } };
+      obj = { id: 1, user: { firstName: 'John', lastName: 'Doe', age: null, address: { number: 123, street: 'Broadway' } } };
     });
 
     it('should be able to update an object at 2nd level deep property', () => {
       setDeepValue(obj, 'user.firstName', 'Jane');
-      expect(obj['user'].firstName).toBe('Jane');
+      expect(obj.user.firstName).toBe('Jane');
     });
 
     it('should be able to update an object at 3rd level deep property', () => {
       setDeepValue(obj, 'user.address.number', 78);
-      expect(obj['user']['address']['number']).toBe(78);
+      expect(obj.user.address.number).toBe(78);
     });
 
     it('should be able to update a property that is not a complex object', () => {
       setDeepValue(obj, 'id', 76);
-      expect(obj['id']).toBe(76);
+      expect(obj.id).toBe(76);
+    });
+
+    it('should be able to udpate a property even when its original value was undefined', () => {
+      setDeepValue(obj, 'user.age', 20);
+      expect(obj.user.age).toBe(20);
+    });
+
+    it('should be able to udpate a property even when its original value was null', () => {
+      obj.user.age = null;
+      setDeepValue(obj, 'user.age', 20);
+      expect(obj.user.age).toBe(20);
+    });
+
+    it('should be able to update a property that has some properties with array as value', () => {
+      obj = { id: 1, user: { firstName: 'John', lastName: 'Doe', addresses: [{ number: 123, street: 'Broadway' }, { number: 234, street: 'Beverly' }] } };
+      setDeepValue(obj, 'id', 76);
+      expect(obj.id).toBe(76);
+      expect(obj).toEqual({ id: 76, user: { firstName: 'John', lastName: 'Doe', addresses: [{ number: 123, street: 'Broadway' }, { number: 234, street: 'Beverly' }] } });
+    });
+
+    it('should be able to update a property of an array inside a complex object', () => {
+      obj = { id: 1, user: { firstName: 'John', lastName: 'Doe', addresses: [{ number: null, street: 'Broadway' }, { number: 234, street: 'Beverly' }] } };
+      setDeepValue(obj, 'user.addresses.0.number', 111);
+      expect(obj.user.addresses[0].number).toBe(111);
+      expect(obj).toEqual({ id: 1, user: { firstName: 'John', lastName: 'Doe', addresses: [{ number: 111, street: 'Broadway' }, { number: 234, street: 'Beverly' }] } });
+    });
+
+    it('should be able to update a property of an array inside a complex object', () => {
+      obj = { id: 1, user: { firstName: 'John', lastName: 'Doe', addresses: [{ doorNumber: 123, street: 'Broadway' }, { doorNumber: ['234-B'], street: 'Beverly' }] } };
+      setDeepValue(obj, 'user.addresses.1.doorNumber', ['234-AA', '234-B']);
+      expect(obj.user.addresses[1].doorNumber).toEqual(['234-AA', '234-B']);
+      expect(obj).toEqual({ id: 1, user: { firstName: 'John', lastName: 'Doe', addresses: [{ doorNumber: 123, street: 'Broadway' }, { doorNumber: ['234-AA', '234-B'], street: 'Beverly' }] } });
     });
   });
 
