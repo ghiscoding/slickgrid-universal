@@ -9,7 +9,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * **deps:** update dependency jquery-ui to ^1.13.2 ([#720](https://github.com/ghiscoding/slickgrid-universal/issues/720)) ([8351f14](https://github.com/ghiscoding/slickgrid-universal/commit/8351f144192ec5e91ad52678787a448cf42f975f)) - by @renovate-bot
-* **utils:** setDeepValue should accept array properties ([#728](https://github.com/ghiscoding/slickgrid-universal/issues/728)) ([0dedeba](https://github.com/ghiscoding/slickgrid-universal/commit/0dedeba76ac817f73320778e63c1987a1708360e)), closes [/stackoverflow.com/questions/62423893/in-slick-grid-inline-edit-i-cant-able-to-get-the-entire-object/73153946#73153946](https://github.com//stackoverflow.com/questions/62423893/in-slick-grid-inline-edit-i-cant-able-to-get-the-entire-object/73153946/issues/73153946) - by @ghiscoding
+* **utils:** setDeepValue should accept array properties ([#728](https://github.com/ghiscoding/slickgrid-universal/issues/728)) ([0dedeba](https://github.com/ghiscoding/slickgrid-universal/commit/0dedeba76ac817f73320778e63c1987a1708360e)), closes [SO](https://github.com//stackoverflow.com/questions/62423893/in-slick-grid-inline-edit-i-cant-able-to-get-the-entire-object/73153946/issues/73153946) - by @ghiscoding
 
 ## [1.3.3](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.2...v1.3.3) (2022-07-07)
 
