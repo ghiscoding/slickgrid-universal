@@ -1,3 +1,4 @@
+import 'jest-extended';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { FilterService, GridService, GridStateService, PaginationService, SharedService, SortService, TreeDataService } from '../index';
@@ -373,6 +374,7 @@ describe('Grid Service', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
       const getRowIdSpy = jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(mockItem.id);
       const getRowIndexSpy = jest.spyOn(dataviewStub, 'getIdxById').mockReturnValue(mockItem.id);
+      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
       const updateSpy = jest.spyOn(service, 'updateItemById');
       const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
@@ -381,7 +383,27 @@ describe('Grid Service', () => {
       expect(updateSpy).toHaveBeenCalledTimes(1);
       expect(getRowIdSpy).toHaveBeenCalledWith(0);
       expect(getRowIndexSpy).toHaveBeenCalledWith(0);
+      expect(serviceHighlightSpy).toHaveBeenCalled();
       expect(updateSpy).toHaveBeenCalledWith(mockItem.id, mockItem, { highlightRow: true, selectRow: false, scrollRowIntoView: false, skipError: false, triggerEvent: true });
+      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
+    });
+
+    it('should be able to update an item that exist in the dataview even when it is not showing in the grid (filtered from the grid) but will not highlight/selectRow since it is not in showing in the grid', () => {
+      const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
+      const getRowIdSpy = jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined);
+      const getRowIndexSpy = jest.spyOn(dataviewStub, 'getIdxById').mockReturnValue(mockItem.id);
+      const serviceHighlightSpy = jest.spyOn(service, 'highlightRow');
+      const updateRowSpy = jest.spyOn(gridStub, 'updateRow');
+      const selectSpy = jest.spyOn(service, 'setSelectedRows');
+      const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+
+      service.updateItemById(0, mockItem, { highlightRow: true, selectRow: true });
+
+      expect(getRowIdSpy).toHaveBeenCalledWith(0);
+      expect(getRowIndexSpy).toHaveBeenCalledWith(0);
+      expect(serviceHighlightSpy).not.toHaveBeenCalled();
+      expect(updateRowSpy).not.toHaveBeenCalled();
+      expect(selectSpy).not.toHaveBeenCalled();
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
     });
 
@@ -469,7 +491,7 @@ describe('Grid Service', () => {
       expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
     });
 
-    it('should expect the service to call the DataView "insertItem" when calling "addItem" with an item that has an Id defined by the "datasetIdPropertyName" property', () => {
+    it('should expect the service to call the DataView "updateItem" when calling "addItem" with an item that has an Id defined by the "datasetIdPropertyName" property', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...mockGridOptions, datasetIdPropertyName: 'customId' });
       const mockItem = { customId: 0, user: { firstName: 'John', lastName: 'Doe' } };
       const getRowIdSpy = jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(mockItem.customId);
@@ -494,15 +516,14 @@ describe('Grid Service', () => {
       expect(() => service.updateItemById(undefined as any, mockItem)).toThrowError('Cannot update a row without a valid "id"');
     });
 
+    it('should throw an error when calling "updateItemById" with an invalid/undefined item', () => {
+      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
+      expect(() => service.updateItemById(5, undefined)).toThrowError('The item to update in the grid was not found with id: 5');
+    });
+
     it('should NOT throw an error when "skipError" is enabled even when calling "updateItemById" without a valid "id"', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
       expect(() => service.updateItemById(undefined as any, mockItem, { skipError: true })).not.toThrowError('Cannot update a row without a valid "id"');
-    });
-
-    it('should throw an error when calling "updateItemById" and not finding the item in the grid', () => {
-      const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
-      expect(() => service.updateItemById(5, mockItem)).toThrowError('The item to update in the grid was not found with id: 5');
     });
 
     it('should NOT throw an error when "skipError" is enabled even when calling "updateItemById" and not finding the item in the grid', () => {
@@ -1237,7 +1258,7 @@ describe('Grid Service', () => {
       const clearPinningSpy = jest.spyOn(service, 'clearPinning');
       jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
 
-      service.setPinning(mockPinning);
+      service.setPinning(mockPinning as any);
 
       expect(clearPinningSpy).toHaveBeenCalled();
     });
@@ -1745,7 +1766,7 @@ describe('Grid Service', () => {
       service.highlightRow(0, 10, 15);
       jest.runAllTimers(); // fast-forward timer
 
-      expect(updateSpy).toHaveBeenCalledWith(0, mockItem)
+      expect(updateSpy).toHaveBeenCalledWith(0, mockItem);
       expect(renderSpy).toHaveBeenCalledTimes(3);
     });
   });

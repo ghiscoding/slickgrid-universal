@@ -647,7 +647,7 @@ export class GridService {
    * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, selectRow, triggerEvent)
    * @return grid row index
    */
-  updateItem<T = any>(item: T, options?: GridServiceUpdateOption): number {
+  updateItem<T = any>(item: T, options?: GridServiceUpdateOption): number | undefined {
     options = { ...GridServiceUpdateOptionDefaults, ...options };
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
     const itemId = (!item || !(idPropName in item)) ? undefined : (item as any)[idPropName];
@@ -665,7 +665,7 @@ export class GridService {
    * @param options: provide the possibility to do certain actions after or during the update (highlightRow, selectRow, triggerEvent)
    * @return grid row indexes
    */
-  updateItems<T = any>(items: T | T[], options?: GridServiceUpdateOption): number[] {
+  updateItems<T = any>(items: T | T[], options?: GridServiceUpdateOption): Array<number | undefined> {
     options = { ...GridServiceUpdateOptionDefaults, ...options };
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
 
@@ -731,7 +731,7 @@ export class GridService {
    * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, selectRow, triggerEvent)
    * @return grid row number
    */
-  updateItemById<T = any>(itemId: number | string, item: T, options?: GridServiceUpdateOption): number {
+  updateItemById<T = any>(itemId: number | string, item: T, options?: GridServiceUpdateOption): number | undefined {
     options = { ...GridServiceUpdateOptionDefaults, ...options };
     if (!options?.skipError && itemId === undefined) {
       throw new Error(`Cannot update a row without a valid "id"`);
@@ -739,14 +739,16 @@ export class GridService {
     const rowNumber = this._dataView.getRowById(itemId) as number;
 
     // when using pagination the item to update might not be on current page, so we bypass this condition
-    if (!options?.skipError && ((!item || rowNumber === undefined) && !this._gridOptions.enablePagination)) {
+    if (!options?.skipError && (!item && !this._gridOptions.enablePagination)) {
       throw new Error(`The item to update in the grid was not found with id: ${itemId}`);
     }
 
     if (this._dataView.getIdxById(itemId) !== undefined) {
       // Update the item itself inside the dataView
       this._dataView.updateItem<T>(itemId, item);
-      this._grid.updateRow(rowNumber);
+      if (rowNumber !== undefined) {
+        this._grid.updateRow(rowNumber);
+      }
 
       if (this._gridOptions?.enableTreeData) {
         // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
@@ -754,17 +756,17 @@ export class GridService {
       }
 
       // do we want to scroll to the row so that it shows in the Viewport (UI)
-      if (options.scrollRowIntoView) {
+      if (options.scrollRowIntoView && rowNumber !== undefined) {
         this._grid.scrollRowIntoView(rowNumber);
       }
 
       // highlight the row we just updated, if defined
-      if (options.highlightRow) {
+      if (options.highlightRow && rowNumber !== undefined) {
         this.highlightRow(rowNumber);
       }
 
       // select the row in the grid
-      if (options.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+      if (rowNumber !== undefined && options.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
         this.setSelectedRow(rowNumber);
       }
 
@@ -781,7 +783,7 @@ export class GridService {
    * @param item object which must contain a unique "id" property and any other suitable properties
    * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, resortGrid, selectRow, triggerEvent)
    */
-  upsertItem<T = any>(item: T, options?: GridServiceInsertOption): { added: number | undefined, updated: number | undefined } {
+  upsertItem<T = any>(item: T, options?: GridServiceInsertOption): { added: number | undefined; updated: number | undefined; } {
     options = { ...GridServiceInsertOptionDefaults, ...options };
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
     const itemId = (!item || !(idPropName in item)) ? undefined : (item as any)[idPropName];
@@ -799,7 +801,7 @@ export class GridService {
    * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, resortGrid, selectRow, triggerEvent)
    * @return row numbers in the grid
    */
-  upsertItems<T = any>(items: T | T[], options?: GridServiceInsertOption): { added: number | undefined, updated: number | undefined }[] {
+  upsertItems<T = any>(items: T | T[], options?: GridServiceInsertOption): { added: number | undefined; updated: number | undefined; }[] {
     options = { ...GridServiceInsertOptionDefaults, ...options };
     // when it's not an array, we can call directly the single item upsert
     if (!Array.isArray(items)) {
@@ -809,7 +811,7 @@ export class GridService {
     // begin bulk transaction
     this._dataView.beginUpdate(true);
 
-    const upsertedRows: { added: number | undefined, updated: number | undefined }[] = [];
+    const upsertedRows: { added: number | undefined, updated: number | undefined; }[] = [];
     items.forEach((item: T) => {
       upsertedRows.push(this.upsertItem<T>(item, { ...options, highlightRow: false, resortGrid: false, selectRow: false, triggerEvent: false }));
     });
@@ -852,7 +854,7 @@ export class GridService {
    * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, resortGrid, selectRow, triggerEvent)
    * @return grid row number in the grid
    */
-  upsertItemById<T = any>(itemId: number | string, item: T, options?: GridServiceInsertOption): { added: number | undefined, updated: number | undefined } {
+  upsertItemById<T = any>(itemId: number | string, item: T, options?: GridServiceInsertOption): { added: number | undefined; updated: number | undefined; } {
     let isItemAdded = false;
     options = { ...GridServiceInsertOptionDefaults, ...options };
     if (!options?.skipError && (itemId === undefined && !this.hasRowSelectionEnabled())) {
