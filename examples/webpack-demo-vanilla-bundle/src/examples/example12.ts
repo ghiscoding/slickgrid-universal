@@ -91,6 +91,7 @@ export class Example12 {
   isCompositeDisabled = false;
   isMassSelectionDisabled = true;
   gridContainerElm: HTMLDivElement;
+  cellCssStyleQueue = [];
   complexityLevelList = [
     { value: 0, label: 'Very Simple' },
     { value: 1, label: 'Simple' },
@@ -129,7 +130,8 @@ export class Example12 {
     this._bindingEventService.bind(this.gridContainerElm, 'ongridstatechanged', this.handleOnGridStateChanged.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'ondblclick', () => this.openCompositeModal('edit', 50));
     this._bindingEventService.bind(this.gridContainerElm, 'oncompositeeditorchange', this.handleOnCompositeEditorChange.bind(this));
-    this._bindingEventService.bind(this.gridContainerElm, 'onpaginationchanged', this.handlePaginationChanged.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onpaginationchanged', this.handleReRenderUnsavedStyling.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onfilterchanged', this.handleReRenderUnsavedStyling.bind(this));
   }
 
   dispose() {
@@ -609,7 +611,7 @@ export class Example12 {
     */
   }
 
-  handlePaginationChanged() {
+  handleReRenderUnsavedStyling() {
     this.removeAllUnsavedStylingFromCell();
     this.renderUnsavedStylingOnAllVisibleCells();
   }
@@ -638,19 +640,20 @@ export class Example12 {
 
   removeUnsavedStylingFromCell(_item: any, column: Column, row: number) {
     // remove unsaved css class from that cell
-    this.sgb.slickGrid.removeCellCssStyles(`unsaved_highlight_${[column.id]}${row}`);
+    const cssStyleKey = `unsaved_highlight_${[column.id]}${row}`;
+    this.sgb.slickGrid.removeCellCssStyles(cssStyleKey);
+    const foundIdx = this.cellCssStyleQueue.findIndex(styleKey => styleKey === cssStyleKey);
+    if (foundIdx >= 0) {
+      this.cellCssStyleQueue.splice(foundIdx, 1);
+    }
   }
 
   removeAllUnsavedStylingFromCell() {
-    for (const lastEdit of this.editQueue) {
-      const lastEditCommand = lastEdit?.editCommand;
-      if (lastEditCommand) {
-        // remove unsaved css class from that cell
-        for (const lastEditColumn of lastEdit.columns) {
-          this.removeUnsavedStylingFromCell(lastEdit.item, lastEditColumn, lastEditCommand.row);
-        }
-      }
-    }
+    let cssStyleKey;
+    do {
+      cssStyleKey = this.cellCssStyleQueue.pop();
+      this.sgb.slickGrid.removeCellCssStyles(cssStyleKey);
+    } while (cssStyleKey);
   }
 
   renderUnsavedStylingOnAllVisibleCells() {
@@ -671,7 +674,9 @@ export class Example12 {
       const row = this.sgb.dataView.getRowByItem(item);
       if (row >= 0) {
         const hash = { [row]: { [column.id]: 'unsaved-editable-field' } };
+        const cssStyleKey = `unsaved_highlight_${[column.id]}${row}`;
         this.sgb.slickGrid.setCellCssStyles(`unsaved_highlight_${[column.id]}${row}`, hash);
+        this.cellCssStyleQueue.push(cssStyleKey);
       }
     }
   }
