@@ -516,6 +516,11 @@ describe('Grid Service', () => {
       expect(() => service.updateItemById(undefined as any, mockItem)).toThrowError('Cannot update a row without a valid "id"');
     });
 
+    it('should throw an error when calling "updateItemById" with an invalid/undefined item', () => {
+      jest.spyOn(dataviewStub, 'getRowById').mockReturnValue(undefined as any);
+      expect(() => service.updateItemById(5, undefined)).toThrowError('The item to update in the grid was not found with id: 5');
+    });
+
     it('should NOT throw an error when "skipError" is enabled even when calling "updateItemById" without a valid "id"', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
       expect(() => service.updateItemById(undefined as any, mockItem, { skipError: true })).not.toThrowError('Cannot update a row without a valid "id"');
