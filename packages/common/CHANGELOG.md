@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.7](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.6...v1.3.7) (2022-08-02)
+
+### Bug Fixes
+
+* **service:** should be able to update dataview item not shown in grid ([#730](https://github.com/ghiscoding/slickgrid-universal/issues/730)) ([dc88c87](https://github.com/ghiscoding/slickgrid-universal/commit/dc88c870e046e904b160546239ab2d403237d98a)) - by @ghiscoding
+
 ## [1.3.5](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.4...v1.3.5) (2022-07-28)
 
 ### Bug Fixes

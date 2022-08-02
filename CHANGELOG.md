@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.7](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.6...v1.3.7) (2022-08-02)
+
+### Bug Fixes
+
+* **service:** should be able to update dataview item not shown in grid ([#730](https://github.com/ghiscoding/slickgrid-universal/issues/730)) ([dc88c87](https://github.com/ghiscoding/slickgrid-universal/commit/dc88c870e046e904b160546239ab2d403237d98a)) - by @ghiscoding
+* **uilts:** able to use setDeepValue on undefined/empty object ([#732](https://github.com/ghiscoding/slickgrid-universal/issues/732)) ([e370eef](https://github.com/ghiscoding/slickgrid-universal/commit/e370eef758a7e5fe20e87729bc407ca2bdd55504)) - by @ghiscoding
+
 ## [1.3.6](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.5...v1.3.6) (2022-07-28)
 
 ### Bug Fixes
