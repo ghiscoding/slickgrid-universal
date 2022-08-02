@@ -170,7 +170,10 @@ export function isObject(item: any) {
   return (item && typeof item === 'object' && !Array.isArray(item));
 }
 
-/** Check if a value has any data (undefined, null or empty string will return false... but false boolean is consider as valid data) */
+/**
+ * Check if a value has any data (undefined, null or empty string will return False...)
+ * NOTE: a `false` boolean is consider as having data so it will return True
+ */
 export function hasData(value: any): boolean {
   return value !== undefined && value !== null && value !== '';
 }
@@ -216,11 +219,11 @@ export function setDeepValue<T = unknown>(obj: T, path: string | string[], value
   }
 
   if (path.length > 1) {
-    const e = path.shift();
+    const e = path.shift() as keyof T;
     if (obj && e !== undefined) {
       setDeepValue(
-        (obj)[e as keyof T] = (Array.isArray(obj[e as keyof T]) || Object.prototype.toString.call((obj)[e as keyof T]) === '[object Object]')
-          ? (obj)[e as keyof T]
+        (obj)[e] = (hasData(obj[e]) && (Array.isArray(obj[e]) || Object.prototype.toString.call((obj)[e]) === '[object Object]'))
+          ? (obj)[e]
           : {} as T[keyof T],
         path,
         value

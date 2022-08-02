@@ -391,8 +391,14 @@ describe('Service/Utilies', () => {
       expect(obj).toEqual({ id: 76, user: { firstName: 'John', lastName: 'Doe', addresses: [{ number: 123, street: 'Broadway' }, { number: 234, street: 'Beverly' }] } });
     });
 
+    it('should be able to set a property even when its original value is undefined', () => {
+      obj = {};
+      setDeepValue(obj, 'user.name', 'John');
+      expect(obj.user.name).toBe('John');
+    });
+
     it('should be able to update a property of an array inside a complex object', () => {
-      obj = { id: 1, user: { firstName: 'John', lastName: 'Doe', addresses: [{ street: 'Broadway' }, { number: 234, street: 'Beverly' }] } };
+      obj = { id: 1, user: { firstName: 'John', lastName: 'Doe', addresses: [{ number: null, street: 'Broadway' }, { number: 234, street: 'Beverly' }] } };
       setDeepValue(obj, 'user.addresses.0.number', 111);
       expect(obj.user.addresses[0].number).toBe(111);
       expect(obj).toEqual({ id: 1, user: { firstName: 'John', lastName: 'Doe', addresses: [{ number: 111, street: 'Broadway' }, { number: 234, street: 'Beverly' }] } });
