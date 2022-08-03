@@ -179,7 +179,6 @@ importers:
       flatpickr: ^4.6.13
       jquery: ^3.6.0
       jquery-ui: ^1.13.2
-      jquery-ui-dist: ^1.13.1
       moment-mini: ^2.24.0
       multiple-select-modified: ^1.3.17
       nodemon: ^2.0.19
@@ -198,7 +197,6 @@ importers:
       flatpickr: 4.6.13
       jquery: 3.6.0
       jquery-ui: 1.13.2
-      jquery-ui-dist: 1.13.1
       moment-mini: 2.24.0
       multiple-select-modified: 1.3.17
       slickgrid: 2.4.45
@@ -6386,12 +6384,6 @@ packages:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
     engines: {node: '>=10'}
     dev: true
-
-  /jquery-ui-dist/1.13.1:
-    resolution: {integrity: sha512-Y711Pu4BRVrAlL58KSxX4ail74jaCJZaZcdNDLava+MgZeNwmVWmyYiK7KxyoJu1MB73eSunjJvYDbOuNrOA7w==}
-    dependencies:
-      jquery: 3.6.0
-    dev: false
 
   /jquery-ui/1.13.2:
     resolution: {integrity: sha512-wBZPnqWs5GaYJmo1Jj0k/mrSkzdQzKDwhXNtHKcBdAcKVxMM3KNYFq+iJ2i1rwiG53Z8M4mTn3Qxrm17uH1D4Q==}
