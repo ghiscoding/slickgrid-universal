@@ -649,11 +649,10 @@ export class Example12 {
   }
 
   removeAllUnsavedStylingFromCell() {
-    let cssStyleKey;
-    do {
-      cssStyleKey = this.cellCssStyleQueue.pop();
+    for (const cssStyleKey of this.cellCssStyleQueue) {
       this.sgb.slickGrid.removeCellCssStyles(cssStyleKey);
-    } while (cssStyleKey);
+    }
+    this.cellCssStyleQueue = [];
   }
 
   renderUnsavedStylingOnAllVisibleCells() {
