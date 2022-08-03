@@ -228,6 +228,9 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
       .contains('Update 1st Row Item')
       .click();
 
+    cy.get('.slick-viewport-top.slick-viewport-left')
+      .scrollTo('top');
+    
     const now = new Date();
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const today = changeTimezone(now, tz);
@@ -239,11 +242,11 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
     }
     const currentYear = today.getFullYear();
 
-    cy.get(`.grid5 [style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0)`).should('contain', 'Task 0');
-    cy.get(`.grid5 [style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', '11 days');
-    cy.get(`.grid5 [style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '77%');
-    cy.get(`.grid5 [style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`);
-    cy.get(`.grid5 [style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0)`).should('contain', 'Task 0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', '11 days');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '77%');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`);
   });
 
   it('should collapse the Tree and not expect to see the newly inserted item (Task 500) because all child will be collapsed', () => {
