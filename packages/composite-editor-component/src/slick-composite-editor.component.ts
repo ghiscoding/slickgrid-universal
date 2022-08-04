@@ -849,7 +849,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Retrieve the current selection of row indexes & data context Ids */
-  protected getCurrentRowSelections(): { gridRowIndexes: number[], dataContextIds: Array<string | number> } {
+  protected getCurrentRowSelections(): { gridRowIndexes: number[]; dataContextIds: Array<string | number>; } {
     const gridStateSelection = this.gridStateService?.getCurrentRowSelections() as CurrentRowSelection;
     const gridRowIndexes = gridStateSelection?.gridRowIndexes || [];
     const dataContextIds = gridStateSelection?.dataContextIds || [];
@@ -981,7 +981,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       default:
         // commit the changes into the grid
         // if it's a "create" then it will triggered the "onAddNewRow" event which will in term push it to the grid
-        // as for the an "edit" it will simply apply the changes directly on the same row
+        // while an "edit" will simply applies the changes directly on the same row
         this.grid.getEditController().commitCurrentEdit();
 
         // if the user provided the "onSave" callback, let's execute it with the item data context

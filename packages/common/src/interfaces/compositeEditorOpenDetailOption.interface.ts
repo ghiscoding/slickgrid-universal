@@ -67,7 +67,7 @@ export interface CompositeEditorOpenDetailOption {
 
   /**
    * Defaults to false, do we want to provide a preview of what the dataset with the applied Mass changes (works for both Mass Update and/or Mass Selection)?
-   * If set to true, then it would provide a 4th argument to the `onSave` callback even before sending the data to the server.
+   * If set to true, then it would provide a 3rd argument to the `onSave` callback even before sending the data to the server.
    * This could be useful to actually use this dataset preview to send directly to the backend server.
    */
   shouldPreviewMassChangeDataset?: boolean;
@@ -124,7 +124,7 @@ export interface CompositeEditorOpenDetailOption {
      * NOTE: the later requires `shouldPreviewMassChangeDataset` to be enabled since it could be resource heavy with large dataset.
      */
     dataContextOrUpdatedDatasetPreview?: any | any[],
-  ) => Promise<boolean>;
+  ) => Promise<boolean> | boolean;
 
   /**
    * Optional callback that the user can add before applying the change to all item rows,
