@@ -1434,7 +1434,7 @@ export class SlickVanillaGridBundle {
 
     if (this.slickGrid) {
       // find the new column reference pointer & re-assign the new editor to the internalColumnEditor
-      const columns = this.slickGrid.getColumns();
+      const columns = this._columnDefinitions;
       if (Array.isArray(columns)) {
         const columnRef = columns.find((col: Column) => col.id === column.id);
         if (columnRef) {
