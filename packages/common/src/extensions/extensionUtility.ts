@@ -139,7 +139,7 @@ export class ExtensionUtility {
     const translationPrefix = getTranslationPrefix(this.sharedService.gridOptions);
     for (const item of items) {
       if (typeof item === 'object' && item.titleKey) {
-        item.title = this.translateWhenEnabledAndServiceExist(`${translationPrefix}${item.titleKey}`, `TEXT_${item.titleKey}`);
+        item.title = this.translateWhenEnabledAndServiceExist(`${item.titleKey}`, `TEXT_${item.titleKey}`);
       }
     }
   }
