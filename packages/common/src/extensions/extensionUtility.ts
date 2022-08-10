@@ -136,7 +136,6 @@ export class ExtensionUtility {
    * @param {Object} gridOptions - Grid Options
    */
   translateMenuItemsFromTitleKey(items: Array<MenuCommandItem | MenuOptionItem | GridMenuItem | 'divider'>) {
-    const translationPrefix = getTranslationPrefix(this.sharedService.gridOptions);
     for (const item of items) {
       if (typeof item === 'object' && item.titleKey) {
         item.title = this.translateWhenEnabledAndServiceExist(`${item.titleKey}`, `TEXT_${item.titleKey}`);
