@@ -1,10 +1,11 @@
 import { FieldType, OperatorType } from '../../enums/index';
-import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { Filters } from '../index';
 import { CompoundSliderFilter } from '../compoundSliderFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';
+declare const Slick: SlickNamespace;
 
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
@@ -23,6 +24,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
+  onHeaderMouseLeave: new Slick.Event(),
 } as unknown as SlickGrid;
 
 describe('CompoundSliderFilter', () => {
@@ -76,7 +78,7 @@ describe('CompoundSliderFilter', () => {
 
   it('should call "setValues" with "operator" set in the filter arguments and expect that value to be in the callback when triggered', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
-    const filterArgs = { ...filterArguments, operator: '>' } as FilterArguments;
+    const filterArgs = { ...filterArguments, operator: '>', grid: gridStub } as FilterArguments;
 
     filter.init(filterArgs);
     filter.setValues(['2']);
@@ -88,7 +90,7 @@ describe('CompoundSliderFilter', () => {
 
   it('should call "setValues" with "operator" set in the filter arguments and expect that value, converted as a string, to be in the callback when triggered', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
-    const filterArgs = { ...filterArguments, operator: '<=' } as FilterArguments;
+    const filterArgs = { ...filterArguments, operator: '<=', grid: gridStub } as FilterArguments;
 
     filter.init(filterArgs);
     filter.setValues(3);
@@ -138,7 +140,7 @@ describe('CompoundSliderFilter', () => {
   });
 
   it('should create the input filter with default search terms range when passed as a filter argument', () => {
-    const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [3] } as FilterArguments;
+    const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [3], grid: gridStub } as FilterArguments;
 
     filter.init(filterArgs);
     const filterNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
@@ -150,7 +152,7 @@ describe('CompoundSliderFilter', () => {
   });
 
   it('should create the input filter with default search terms and a different step size when "valueStep" is provided', () => {
-    const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [15] } as FilterArguments;
+    const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [15], grid: gridStub } as FilterArguments;
     mockColumn.filter!.valueStep = 5;
 
     filter.init(filterArgs);
@@ -205,7 +207,7 @@ describe('CompoundSliderFilter', () => {
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
-    const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [3] } as FilterArguments;
+    const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [3], grid: gridStub } as FilterArguments;
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArgs);
@@ -216,7 +218,7 @@ describe('CompoundSliderFilter', () => {
   });
 
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
-    const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [3] } as FilterArguments;
+    const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [3], grid: gridStub } as FilterArguments;
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArgs);
@@ -227,7 +229,7 @@ describe('CompoundSliderFilter', () => {
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method and expect min slider values being with values of "sliderStartValue" when defined through the filter params', () => {
-    const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [3] } as FilterArguments;
+    const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [3], grid: gridStub, } as FilterArguments;
     const spyCallback = jest.spyOn(filterArguments, 'callback');
     mockColumn.filter = {
       params: {
@@ -262,7 +264,7 @@ describe('CompoundSliderFilter', () => {
   it('should have custom compound operator list showing up in the operator select dropdown options list', () => {
     mockColumn.outputType = null as any;
     filterArguments.searchTerms = ['9'];
-    mockColumn.filter.compoundOperatorList = [
+    mockColumn.filter!.compoundOperatorList = [
       { operator: '', description: '' },
       { operator: '=', description: 'Equal to' },
       { operator: '<', description: 'Less than' },
