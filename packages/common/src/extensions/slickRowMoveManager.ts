@@ -51,7 +51,7 @@ export class SlickRowMoveManager {
   } as RowMoveManagerOption;
   onBeforeMoveRows = new Slick.Event<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>();
   onMoveRows = new Slick.Event<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>();
-  pluginName: 'RowMoveManager' = 'RowMoveManager';
+  pluginName: 'RowMoveManager' = 'RowMoveManager' as const;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor() {

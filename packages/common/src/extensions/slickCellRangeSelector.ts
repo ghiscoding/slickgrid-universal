@@ -59,7 +59,7 @@ export class SlickCellRangeSelector {
       border: '2px dashed blue'
     }
   } as CellRangeSelectorOption;
-  pluginName = 'CellRangeSelector';
+  pluginName: 'CellRangeSelector' = 'CellRangeSelector' as const;
   onBeforeCellRangeSelected = new Slick.Event<{ row: number; cell: number; }>();
   onCellRangeSelecting = new Slick.Event<{ range: CellRange; }>();
   onCellRangeSelected = new Slick.Event<{ range: CellRange; }>();

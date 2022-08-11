@@ -21,7 +21,7 @@ export class SlickCellSelectionModel {
     selectActiveCell: true,
   };
   onSelectedRangesChanged = new Slick.Event<CellRange[]>();
-  pluginName = 'CellSelectionModel';
+  pluginName: 'CellSelectionModel' = 'CellSelectionModel' as const;
 
   constructor(options?: { selectActiveCell: boolean; cellRangeSelector: SlickCellRangeSelector; }) {
     this._eventHandler = new Slick.EventHandler();

@@ -26,7 +26,7 @@ export class SlickRowSelectionModel {
     dragToSelect: false,
     selectActiveRow: true
   } as RowSelectionModelOption;
-  pluginName = 'RowSelectionModel';
+  pluginName: 'RowSelectionModel' = 'RowSelectionModel' as const;
 
   /** triggered when selected ranges changes */
   onSelectedRangesChanged = new Slick.Event();
