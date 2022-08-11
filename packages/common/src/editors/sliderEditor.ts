@@ -111,9 +111,7 @@ export class SliderEditor implements Editor {
 
       // if user chose to display the slider number on the right side, then update it every time it changes
       // we need to use both "input" and "change" event to be all cross-browser
-      if (!this.editorParams.hideSliderNumber) {
-        this._bindEventService.bind(this._editorElm, ['input', 'change'], this.handleChangeSliderNumber.bind(this));
-      }
+      this._bindEventService.bind(this._editorElm, ['input', 'change'], this.handleChangeSliderNumber.bind(this));
     }
   }
 
@@ -229,6 +227,7 @@ export class SliderEditor implements Editor {
       this.originalValue = +value;
       if (this._inputElm) {
         this._inputElm.value = `${value}`;
+        this._inputElm.title = `${value}`;
       }
       if (this.sliderNumberElm) {
         this.sliderNumberElm.textContent = `${value}`;
@@ -357,8 +356,11 @@ export class SliderEditor implements Editor {
 
   protected handleChangeSliderNumber(event: Event) {
     const value = (<HTMLInputElement>event.target)?.value ?? '';
-    if (value !== '' && this.sliderNumberElm) {
-      this.sliderNumberElm.textContent = value;
+    if (value !== '') {
+      if (!this.editorParams.hideSliderNumber && this.sliderNumberElm) {
+        this.sliderNumberElm.textContent = value;
+      }
+      this._inputElm.title = value;
     }
   }
 

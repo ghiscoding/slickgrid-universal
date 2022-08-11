@@ -1,8 +1,9 @@
 import { Filters } from '../filters.index';
-import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { SliderFilter } from '../sliderFilter';
 
 const containerId = 'demo-container';
+declare const Slick: SlickNamespace;
 
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
@@ -17,12 +18,13 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
+  onHeaderMouseLeave: new Slick.Event(),
 } as unknown as SlickGrid;
 
 describe('SliderFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: SliderFilter;
-  let filterArguments: FilterArguments;
+  let filterArgs: FilterArguments;
   let spyGetHeaderRow;
   let mockColumn: Column;
 
@@ -33,7 +35,7 @@ describe('SliderFilter', () => {
     spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
     mockColumn = { id: 'duration', field: 'duration', filterable: true, filter: { model: Filters.slider } };
-    filterArguments = {
+    filterArgs = {
       grid: gridStub,
       columnDef: mockColumn,
       callback: jest.fn(),
@@ -52,7 +54,7 @@ describe('SliderFilter', () => {
   });
 
   it('should initialize the filter', () => {
-    filter.init(filterArguments);
+    filter.init(filterArgs);
     const filterCount = divContainer.querySelectorAll('.search-filter.slider-container.filter-duration').length;
 
     expect(spyGetHeaderRow).toHaveBeenCalled();
@@ -60,16 +62,16 @@ describe('SliderFilter', () => {
   });
 
   it('should have an aria-label when creating the filter', () => {
-    filter.init(filterArguments);
+    filter.init(filterArgs);
     const filterInputElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
 
     expect(filterInputElm.getAttribute('aria-label')).toBe('Duration Search Filter');
   });
 
   it('should call "setValues" and expect that value to be in the callback when triggered', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = jest.spyOn(filterArgs, 'callback');
 
-    filter.init(filterArguments);
+    filter.init(filterArgs);
     filter.setValues(['2']);
     const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
     filterElm.dispatchEvent(new CustomEvent('change'));
@@ -78,9 +80,9 @@ describe('SliderFilter', () => {
   });
 
   it('should call "setValues" and expect that value, converted as a string, to be in the callback when triggered', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = jest.spyOn(filterArgs, 'callback');
 
-    filter.init(filterArguments);
+    filter.init(filterArgs);
     filter.setValues(3);
     const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
     filterElm.dispatchEvent(new CustomEvent('change'));
@@ -94,7 +96,7 @@ describe('SliderFilter', () => {
   });
 
   it('should be able to call "setValues" and set empty values and the input to not have the "filled" css class', () => {
-    filter.init(filterArguments);
+    filter.init(filterArgs);
     filter.setValues(9);
     let filledInputElm = divContainer.querySelector('.search-filter.slider-container.filter-duration.filled') as HTMLInputElement;
 
@@ -106,9 +108,9 @@ describe('SliderFilter', () => {
   });
 
   it('should create the input filter with default search terms range when passed as a filter argument', () => {
-    filterArguments.searchTerms = [3];
+    filterArgs.searchTerms = [3];
 
-    filter.init(filterArguments);
+    filter.init(filterArgs);
     const filterNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
     const filterFilledElms = divContainer.querySelectorAll('.search-filter.slider-container.filter-duration.filled');
 
@@ -118,10 +120,10 @@ describe('SliderFilter', () => {
   });
 
   it('should create the input filter with default search terms and a different step size when "valueStep" is provided', () => {
-    filterArguments.searchTerms = [15];
+    filterArgs.searchTerms = [15];
     mockColumn.filter!.valueStep = 5;
 
-    filter.init(filterArguments);
+    filter.init(filterArgs);
     const filterNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
     const filterInputElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
 
@@ -136,7 +138,7 @@ describe('SliderFilter', () => {
       maxValue: 69,
     };
 
-    filter.init(filterArguments);
+    filter.init(filterArgs);
 
     const filterNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
 
@@ -152,7 +154,7 @@ describe('SliderFilter', () => {
       }
     };
 
-    filter.init(filterArguments);
+    filter.init(filterArgs);
 
     const filterNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
 
@@ -161,10 +163,10 @@ describe('SliderFilter', () => {
   });
 
   it('should create the input filter with default search terms range but without showing side numbers when "hideSliderNumber" is set in params', () => {
-    filterArguments.searchTerms = [3];
+    filterArgs.searchTerms = [3];
     mockColumn.filter!.params = { hideSliderNumber: true };
 
-    filter.init(filterArguments);
+    filter.init(filterArgs);
 
     const filterNumberElms = divContainer.querySelectorAll<HTMLInputElement>('.input-group-text');
 
@@ -173,10 +175,10 @@ describe('SliderFilter', () => {
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
-    filterArguments.searchTerms = [3];
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    filterArgs.searchTerms = [3];
+    const spyCallback = jest.spyOn(filterArgs, 'callback');
 
-    filter.init(filterArguments);
+    filter.init(filterArgs);
     filter.clear();
 
     expect(filter.getValues()).toBe(0);
@@ -184,10 +186,10 @@ describe('SliderFilter', () => {
   });
 
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
-    filterArguments.searchTerms = [3];
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    filterArgs.searchTerms = [3];
+    const spyCallback = jest.spyOn(filterArgs, 'callback');
 
-    filter.init(filterArguments);
+    filter.init(filterArgs);
     filter.clear(false);
 
     expect(filter.getValues()).toBe(0);
@@ -195,7 +197,7 @@ describe('SliderFilter', () => {
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method and expect min slider values being with values of "sliderStartValue" when defined through the filter params', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const spyCallback = jest.spyOn(filterArgs, 'callback');
     mockColumn.filter = {
       params: {
         sliderStartValue: 4,
@@ -203,7 +205,7 @@ describe('SliderFilter', () => {
       }
     };
 
-    filter.init(filterArguments);
+    filter.init(filterArgs);
     filter.clear(false);
 
     expect(filter.getValues()).toEqual(4);
