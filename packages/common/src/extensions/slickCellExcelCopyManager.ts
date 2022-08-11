@@ -33,7 +33,7 @@ export class SlickCellExcelCopyManager {
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
   protected _undoRedoBuffer!: EditUndoRedoBuffer;
-  pluginName = 'CellExcelCopyManager';
+  pluginName: 'CellExcelCopyManager' = 'CellExcelCopyManager' as const;
 
   constructor() {
     this._eventHandler = new Slick.EventHandler() as SlickEventHandler;

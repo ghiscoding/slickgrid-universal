@@ -70,7 +70,7 @@ export class SlickCustomTooltip {
   } as CustomTooltipOption;
   protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
-  name: 'CustomTooltip' = 'CustomTooltip';
+  name: 'CustomTooltip' = 'CustomTooltip' as const;
 
   constructor() {
     this._eventHandler = new Slick.EventHandler();

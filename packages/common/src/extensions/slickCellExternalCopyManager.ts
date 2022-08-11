@@ -35,7 +35,7 @@ export class SlickCellExternalCopyManager {
   protected _grid!: SlickGrid;
   protected _onCopyInit?: () => void;
   protected _onCopySuccess?: (rowCount: number) => void;
-  pluginName = 'CellExternalCopyManager';
+  pluginName: 'CellExternalCopyManager' = 'CellExternalCopyManager' as const;
   onCopyCells = new Slick.Event();
   onCopyCancelled = new Slick.Event();
   onPasteCells = new Slick.Event();
