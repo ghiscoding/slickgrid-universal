@@ -90,7 +90,7 @@ export class SlickDraggableGrouping {
   } as DraggableGroupingOption;
   columnsGroupBy: Column[] = [];
   onGroupChanged: SlickEvent;
-  pluginName: 'DraggableGrouping' = 'DraggableGrouping';
+  pluginName: 'DraggableGrouping' = 'DraggableGrouping' as const;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(

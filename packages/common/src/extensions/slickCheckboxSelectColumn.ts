@@ -8,7 +8,7 @@ import { BindingEventService } from '../services/bindingEvent.service';
 declare const Slick: SlickNamespace;
 
 export class SlickCheckboxSelectColumn<T = any> {
-  pluginName = 'CheckboxSelectColumn';
+  pluginName: 'CheckboxSelectColumn' = 'CheckboxSelectColumn' as const;
   protected _defaults = {
     columnId: '_checkbox_selector',
     cssClass: null,

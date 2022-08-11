@@ -47,7 +47,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     hideSortCommands: false,
     title: '',
   } as unknown as HeaderMenuOption;
-  pluginName: 'HeaderMenu' = 'HeaderMenu';
+  pluginName: 'HeaderMenu' = 'HeaderMenu' as const;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(

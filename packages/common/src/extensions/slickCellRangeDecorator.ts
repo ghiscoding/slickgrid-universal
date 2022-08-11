@@ -22,7 +22,7 @@ export class SlickCellRangeDecorator {
     },
     offset: { top: -1, left: -1, height: -2, width: -2 }
   } as CellRangeDecoratorOption;
-  pluginName = 'CellRangeDecorator';
+  pluginName: 'CellRangeDecorator' = 'CellRangeDecorator' as const;
 
   constructor(grid: SlickGrid, options?: Partial<CellRangeDecoratorOption>) {
     this._addonOptions = deepMerge(this._defaults, options);
