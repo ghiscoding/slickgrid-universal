@@ -10,6 +10,7 @@ import {
   hasData,
   isEmptyObject,
   isNumber,
+  isObject,
   isObjectEmpty,
   parseBoolean,
   removeAccentFromText,
@@ -109,6 +110,40 @@ describe('Service/Utilies', () => {
       expect(result1).toBeTrue();
       expect(result2).toBeTrue();
       expect(result3).toBeTrue();
+    });
+  });
+
+  describe('isObject method', () => {
+    it('should return false when input is undefined', () => {
+      expect(isObject(undefined)).toBeFalse();
+    });
+
+    it('should return false when input is null', () => {
+      expect(isObject(null)).toBeFalse();
+    });
+
+    it('should return false when input is empty string', () => {
+      expect(isObject('')).toBeFalse();
+    });
+
+    it('should return false when input is a string', () => {
+      expect(isObject('some text')).toBeFalse();
+    });
+
+    it('should return false when input is an empty array', () => {
+      expect(isObject([])).toBeFalse();
+    });
+
+    it('should return false when input a Date', () => {
+      expect(isObject(new Date())).toBeFalse();
+    });
+
+    it('should return true when input is an empty object', () => {
+      expect(isObject({})).toBeTrue();
+    });
+
+    it('should return true when input is an object', () => {
+      expect(isObject({ msg: 'hello workd' })).toBeTrue();
     });
   });
 

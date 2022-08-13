@@ -167,7 +167,7 @@ export function isEmptyObject(obj: any): boolean {
  * @returns {boolean}
  */
 export function isObject(item: any) {
-  return (item && typeof item === 'object' && !Array.isArray(item));
+  return item !== null && typeof item === 'object' && !Array.isArray(item) && !(item instanceof Date);
 }
 
 /**
