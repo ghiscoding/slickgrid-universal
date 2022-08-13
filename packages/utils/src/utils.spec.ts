@@ -138,10 +138,6 @@ describe('Service/Utilies', () => {
       expect(isObject(new Date())).toBeFalse();
     });
 
-    it('should return false when input is a Set', () => {
-      expect(isObject(new Set([1, 2, 4]))).toBeFalse();
-    });
-
     it('should return true when input is an empty object', () => {
       expect(isObject({})).toBeTrue();
     });
