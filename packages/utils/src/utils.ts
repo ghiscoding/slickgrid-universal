@@ -167,7 +167,7 @@ export function isEmptyObject(obj: any): boolean {
  * @returns {boolean}
  */
 export function isObject(item: any) {
-  return item !== null && Object.prototype.toString.call(item) === '[object Object]';
+  return item !== undefined && item !== null && item.constructor === Object;
 }
 
 /**
