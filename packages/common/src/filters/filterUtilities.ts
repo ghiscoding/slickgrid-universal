@@ -65,7 +65,7 @@ export async function renderCollectionOptionsAsync(collectionAsync: Promise<any 
 
     if (Array.isArray(response)) {
       awaitedCollection = response; // from Promise
-    } else if (response instanceof Response && typeof response['json'] === 'function') {
+    } else if (response?.status >= 200 && response.status < 300 && typeof response.json === 'function') {
       awaitedCollection = await response['json'](); // from Fetch
     } else if (response && response['content']) {
       awaitedCollection = response['content']; // from http-client
