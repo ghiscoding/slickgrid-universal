@@ -1,8 +1,25 @@
 # Change Log
-### All-in-One SlickGrid framework agnostic wrapper, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀
+## All-in-One SlickGrid framework agnostic wrapper, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀
 
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+# [1.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.7...v1.4.0) (2022-08-15)
+
+### Bug Fixes
+
+* **bundle:** fetch API isn't always an instance of Response ([#744](https://github.com/ghiscoding/slickgrid-universal/issues/744)) ([72a6f24](https://github.com/ghiscoding/slickgrid-universal/commit/72a6f2489a88974c8f5faf0041184ac78d6c7caa)) - by @ghiscoding
+* **collectionAsync:** hidden column does not load edit field selection ([#742](https://github.com/ghiscoding/slickgrid-universal/issues/742)) ([763c61c](https://github.com/ghiscoding/slickgrid-universal/commit/763c61cfa7e82dd82b88f22db3eb47dc274a5eb3)) - by @mcallegario
+* **common:** duplicate translation namespace prefix, fixes [#738](https://github.com/ghiscoding/slickgrid-universal/issues/738) ([#739](https://github.com/ghiscoding/slickgrid-universal/issues/739)) ([ed6b0cc](https://github.com/ghiscoding/slickgrid-universal/commit/ed6b0cc4f664e27830357ac45d523d0571c94bce)) - by @someusersomeuser
+* **demo:** edit outline should follow on filter/pagination changed ([3e9a6c7](https://github.com/ghiscoding/slickgrid-universal/commit/3e9a6c7538af5e714cc20ec5926f343912e63b20)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#740](https://github.com/ghiscoding/slickgrid-universal/issues/740)) ([c8acb65](https://github.com/ghiscoding/slickgrid-universal/commit/c8acb6542a768b2a2b4e0ea0e1f71533d7077927)) - by @renovate-bot
+* **filters:** fetch API isn't always an instance of Response ([#746](https://github.com/ghiscoding/slickgrid-universal/issues/746)) ([11be5c2](https://github.com/ghiscoding/slickgrid-universal/commit/11be5c2f9554c8fad2b984864ec7180698d02d19)), closes [#744](https://github.com/ghiscoding/slickgrid-universal/issues/744) - by @ghiscoding
+* **utils:** the `isObject` method was not always correct ([#745](https://github.com/ghiscoding/slickgrid-universal/issues/745)) ([9b09e4a](https://github.com/ghiscoding/slickgrid-universal/commit/9b09e4aa2ca102100a113d4e2996f80c75aa6c2f)) - by @ghiscoding
+
+### Features
+
+* **common:** remove jquery-ui-dist from deps, use jquery-ui only ([#733](https://github.com/ghiscoding/slickgrid-universal/issues/733)) ([b89d1f1](https://github.com/ghiscoding/slickgrid-universal/commit/b89d1f169bfde21d8a46520aed580c12db5f668f)) - by @ghiscoding
+* **common:** update title prop on change event for Slider Filter/Editor ([#743](https://github.com/ghiscoding/slickgrid-universal/issues/743)) ([0ca6f3f](https://github.com/ghiscoding/slickgrid-universal/commit/0ca6f3f4d8894d4bb9459cabca9a3492e7cca0ad)) - by @ghiscoding
 
 ## [1.3.7](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.6...v1.3.7) (2022-08-02)
 

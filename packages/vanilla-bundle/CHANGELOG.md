@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.7...v1.4.0) (2022-08-15)
+
+### Bug Fixes
+
+* **bundle:** fetch API isn't always an instance of Response ([#744](https://github.com/ghiscoding/slickgrid-universal/issues/744)) ([72a6f24](https://github.com/ghiscoding/slickgrid-universal/commit/72a6f2489a88974c8f5faf0041184ac78d6c7caa)) - by @ghiscoding
+* **collectionAsync:** hidden column does not load edit field selection ([#742](https://github.com/ghiscoding/slickgrid-universal/issues/742)) ([763c61c](https://github.com/ghiscoding/slickgrid-universal/commit/763c61cfa7e82dd82b88f22db3eb47dc274a5eb3)) - by @mcallegario
+
 ## [1.3.7](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.6...v1.3.7) (2022-08-02)
 
 **Note:** Version bump only for package @slickgrid-universal/vanilla-bundle
