@@ -524,7 +524,7 @@ export class AutoCompleteEditor implements Editor {
     const placeholder = this.columnEditor?.placeholder ?? '';
     const title = this.columnEditor?.title ?? '';
 
-    this._$input = $(`<input type="text" role="presentation" autocomplete="off" class="autocomplete form-control editor-text editor-${columnId}" placeholder="${placeholder}" title="${title}" />`)
+    this._$input = $(`<input type="text" autocomplete="none" class="autocomplete form-control editor-text editor-${columnId}" placeholder="${placeholder}" title="${title}" />`)
       .appendTo(this.args.container)
       .on('keydown.nav', (event: JQuery.Event) => {
         this._lastInputKeyEvent = event;

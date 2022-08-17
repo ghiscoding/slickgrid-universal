@@ -19,13 +19,12 @@ export class IntegerEditor extends InputEditor {
       const compositeEditorOptions = this.args.compositeEditorOptions;
 
       this._input = createDomElement('input', {
-        type: 'number', autocomplete: 'off',
+        type: 'number', autocomplete: 'none',
         placeholder: this.columnEditor?.placeholder ?? '',
         title: this.columnEditor?.title ?? '',
         step: `${(this.columnEditor.valueStep !== undefined) ? this.columnEditor.valueStep : '1'}`,
         className: `editor-text editor-${columnId}`,
       });
-      this._input.setAttribute('role', 'presentation');
       this._input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Slider Editor`);
       const cellContainer = this.args.container;
       if (cellContainer && typeof cellContainer.appendChild === 'function') {
