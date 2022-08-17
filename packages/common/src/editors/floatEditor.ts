@@ -21,13 +21,12 @@ export class FloatEditor extends InputEditor {
       const compositeEditorOptions = this.args.compositeEditorOptions;
 
       this._input = createDomElement('input', {
-        type: 'number', autocomplete: 'off',
+        type: 'number', autocomplete: 'none',
         className: `editor-text editor-${columnId}`,
         placeholder: this.columnEditor?.placeholder ?? '',
         title: this.columnEditor?.title ?? '',
         step: `${(this.columnEditor.valueStep !== undefined) ? this.columnEditor.valueStep : this.getInputDecimalSteps()}`,
       });
-      this._input.setAttribute('role', 'presentation');
       this._input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Number Editor`);
       const cellContainer = this.args.container;
       if (cellContainer && typeof cellContainer.appendChild === 'function') {

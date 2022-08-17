@@ -200,13 +200,12 @@ export class InputFilter implements Filter {
 
     const inputElm = createDomElement('input', {
       type: this._inputType || 'text',
-      autocomplete: 'off', placeholder,
+      autocomplete: 'none', placeholder,
       className: `form-control search-filter filter-${columnId}`,
       value: (searchTerm ?? '') as string,
       dataset: { columnid: `${columnId}` }
     });
     inputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
-    inputElm.setAttribute('role', 'presentation');
 
 
     // if there's a search term, we will add the "filled" class for styling purposes

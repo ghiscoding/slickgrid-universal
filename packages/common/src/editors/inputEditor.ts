@@ -88,12 +88,11 @@ export class InputEditor implements Editor {
 
     this._input = createDomElement('input', {
       type: this._inputType || 'text',
-      autocomplete: 'off',
+      autocomplete: 'none',
       placeholder: this.columnEditor?.placeholder ?? '',
       title: this.columnEditor?.title ?? '',
       className: `editor-text editor-${columnId}`,
     });
-    this._input.setAttribute('role', 'presentation');
     this._input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Input Editor`);
     const cellContainer = this.args.container;
     if (cellContainer && typeof cellContainer.appendChild === 'function') {

@@ -348,7 +348,7 @@ export class AutoCompleteFilter implements Filter {
     if (this.columnFilter?.placeholder) {
       placeholder = this.columnFilter.placeholder;
     }
-    return `<input type="text" role="presentation" autocomplete="off" class="form-control search-filter filter-${columnId}" placeholder="${placeholder}">`;
+    return `<input type="text" autocomplete="none" class="form-control search-filter filter-${columnId}" placeholder="${placeholder}">`;
   }
 
   /**

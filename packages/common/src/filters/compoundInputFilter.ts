@@ -183,10 +183,9 @@ export class CompoundInputFilter implements Filter {
 
     const inputElm = createDomElement('input', {
       type: this._inputType || 'text',
-      autocomplete: 'off', placeholder,
+      autocomplete: 'none', placeholder,
       className: `form-control compound-input filter-${columnId}`,
     });
-    inputElm.setAttribute('role', 'presentation');
     inputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
 
     return inputElm;
