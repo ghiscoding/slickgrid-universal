@@ -68,6 +68,13 @@
   .flatpickr.input-group {
     height: var(--slick-date-editor-height, $slick-date-editor-height);
     .input-group-btn {
+      &.input-group-append {
+        .btn {
+          border-top-left-radius: 0px;
+          border-bottom-left-radius: 0px;
+          margin-left: -1px;
+        }
+      }
       .btn {
         background-color: #eeeeee;
         border: 1px solid #cccccc;

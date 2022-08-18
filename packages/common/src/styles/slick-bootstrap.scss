@@ -442,6 +442,8 @@ ul {
     overflow-y: var(--slick-frozen-overflow-right, $slick-frozen-overflow-right) !important;
   }
   .input-group {
+    display: flex;
+
     > :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
       margin-left: 0;
       &.ui-slider-horizontal {
@@ -449,7 +451,17 @@ ul {
       }
     }
 
+    .input-group-append,
+    .input-group-prepend {
+      display: inline-flex;
+      width: auto;
+    }
+
     .input-group-addon {
+      input {
+        flex: 1 1 auto;
+        width: 1%;
+      }
       .input-group-text {
         height: 100%;
       }
