@@ -13,7 +13,7 @@ importers:
       '@typescript-eslint/eslint-plugin': ^5.33.1
       '@typescript-eslint/parser': ^5.33.1
       cross-env: ^7.0.3
-      cypress: ^10.4.0
+      cypress: ^10.6.0
       eslint: ^8.22.0
       eslint-plugin-import: ^2.26.0
       eslint-plugin-prefer-arrow: ^1.2.3
@@ -24,8 +24,8 @@ importers:
       jsdom: ^20.0.0
       jsdom-global: ^3.0.2
       moment-mini: ^2.29.4
-      npm-run-all2: ^6.0.1
-      pnpm: ^7.9.0
+      npm-run-all2: ^6.0.2
+      pnpm: ^7.9.3
       rimraf: ^3.0.2
       rxjs: ^7.5.6
       serve: ^14.0.1
@@ -41,7 +41,7 @@ importers:
       '@typescript-eslint/eslint-plugin': 5.33.1_vsoshirnpb7xw6mr7xomgfas2i
       '@typescript-eslint/parser': 5.33.1_4rv7y5c6xz3vfxwhbrcxxi73bq
       cross-env: 7.0.3
-      cypress: 10.4.0
+      cypress: 10.6.0
       eslint: 8.22.0
       eslint-plugin-import: 2.26.0_3bh5nkk7utn7e74vrwtv6rxmt4
       eslint-plugin-prefer-arrow: 1.2.3_eslint@8.22.0
@@ -52,8 +52,8 @@ importers:
       jsdom: 20.0.0
       jsdom-global: 3.0.2_jsdom@20.0.0
       moment-mini: 2.29.4
-      npm-run-all2: 6.0.1
-      pnpm: 7.9.0
+      npm-run-all2: 6.0.2
+      pnpm: 7.9.3
       rimraf: 3.0.2
       rxjs: 7.5.6
       serve: 14.0.1
@@ -154,14 +154,14 @@ importers:
       '@types/dompurify': ^2.3.3
       cross-env: ^7.0.3
       dompurify: ^2.3.10
-      npm-run-all2: ^6.0.1
+      npm-run-all2: ^6.0.2
       rimraf: ^3.0.2
     dependencies:
       dompurify: 2.3.10
     devDependencies:
       '@types/dompurify': 2.3.3
       cross-env: 7.0.3
-      npm-run-all2: 6.0.1
+      npm-run-all2: 6.0.2
       rimraf: 3.0.2
 
   packages/common:
@@ -182,7 +182,7 @@ importers:
       moment-mini: ^2.29.4
       multiple-select-modified: ^1.3.17
       nodemon: ^2.0.19
-      npm-run-all2: ^6.0.1
+      npm-run-all2: ^6.0.2
       postcss: ^8.4.16
       postcss-cli: ^10.0.0
       rimraf: ^3.0.2
@@ -209,7 +209,7 @@ importers:
       copyfiles: 2.4.1
       cross-env: 7.0.3
       nodemon: 2.0.19
-      npm-run-all2: 6.0.1
+      npm-run-all2: 6.0.2
       postcss: 8.4.16
       postcss-cli: 10.0.0_postcss@8.4.16
       rimraf: 3.0.2
@@ -220,14 +220,14 @@ importers:
       '@slickgrid-universal/common': workspace:~
       '@slickgrid-universal/utils': workspace:~
       cross-env: ^7.0.3
-      npm-run-all2: ^6.0.1
+      npm-run-all2: ^6.0.2
       rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
       '@slickgrid-universal/utils': link:../utils
     devDependencies:
       cross-env: 7.0.3
-      npm-run-all2: 6.0.1
+      npm-run-all2: 6.0.2
       rimraf: 3.0.2
 
   packages/custom-footer-component:
@@ -238,7 +238,7 @@ importers:
       '@types/moment': ^2.13.0
       cross-env: ^7.0.3
       moment-mini: ^2.29.4
-      npm-run-all2: ^6.0.1
+      npm-run-all2: ^6.0.2
       rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/binding': link:../binding
@@ -248,7 +248,7 @@ importers:
       '@slickgrid-universal/event-pub-sub': link:../event-pub-sub
       '@types/moment': 2.13.0
       cross-env: 7.0.3
-      npm-run-all2: 6.0.1
+      npm-run-all2: 6.0.2
       rimraf: 3.0.2
 
   packages/custom-tooltip-plugin:
@@ -257,7 +257,7 @@ importers:
       '@types/dompurify': ^2.3.3
       cross-env: ^7.0.3
       dompurify: ^2.3.10
-      npm-run-all2: ^6.0.1
+      npm-run-all2: ^6.0.2
       rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
@@ -265,33 +265,33 @@ importers:
     devDependencies:
       '@types/dompurify': 2.3.3
       cross-env: 7.0.3
-      npm-run-all2: 6.0.1
+      npm-run-all2: 6.0.2
       rimraf: 3.0.2
 
   packages/empty-warning-component:
     specifiers:
       '@slickgrid-universal/common': workspace:~
       cross-env: ^7.0.3
-      npm-run-all2: ^6.0.1
+      npm-run-all2: ^6.0.2
       rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
     devDependencies:
       cross-env: 7.0.3
-      npm-run-all2: 6.0.1
+      npm-run-all2: 6.0.2
       rimraf: 3.0.2
 
   packages/event-pub-sub:
     specifiers:
       '@slickgrid-universal/utils': workspace:~
       cross-env: ^7.0.3
-      npm-run-all2: ^6.0.1
+      npm-run-all2: ^6.0.2
       rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/utils': link:../utils
     devDependencies:
       cross-env: 7.0.3
-      npm-run-all2: 6.0.1
+      npm-run-all2: 6.0.2
       rimraf: 3.0.2
 
   packages/excel-export:
@@ -302,7 +302,7 @@ importers:
       cross-env: ^7.0.3
       excel-builder-webpacker: ^2.1.7
       moment-mini: ^2.29.4
-      npm-run-all2: ^6.0.1
+      npm-run-all2: ^6.0.2
       rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
@@ -312,7 +312,7 @@ importers:
     devDependencies:
       '@types/moment': 2.13.0
       cross-env: 7.0.3
-      npm-run-all2: 6.0.1
+      npm-run-all2: 6.0.2
       rimraf: 3.0.2
 
   packages/graphql:
@@ -321,7 +321,7 @@ importers:
       '@types/moment': ^2.13.0
       cross-env: ^7.0.3
       moment-mini: ^2.29.4
-      npm-run-all2: ^6.0.1
+      npm-run-all2: ^6.0.2
       rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
@@ -329,7 +329,7 @@ importers:
       '@types/moment': 2.13.0
       cross-env: 7.0.3
       moment-mini: 2.29.4
-      npm-run-all2: 6.0.1
+      npm-run-all2: 6.0.2
       rimraf: 3.0.2
 
   packages/odata:
@@ -337,14 +337,14 @@ importers:
       '@slickgrid-universal/common': workspace:~
       '@slickgrid-universal/utils': workspace:~
       cross-env: ^7.0.3
-      npm-run-all2: ^6.0.1
+      npm-run-all2: ^6.0.2
       rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
       '@slickgrid-universal/utils': link:../utils
     devDependencies:
       cross-env: 7.0.3
-      npm-run-all2: 6.0.1
+      npm-run-all2: 6.0.2
       rimraf: 3.0.2
 
   packages/pagination-component:
@@ -353,7 +353,7 @@ importers:
       '@slickgrid-universal/common': workspace:~
       '@slickgrid-universal/event-pub-sub': workspace:~
       cross-env: ^7.0.3
-      npm-run-all2: ^6.0.1
+      npm-run-all2: ^6.0.2
       rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/binding': link:../binding
@@ -361,27 +361,27 @@ importers:
     devDependencies:
       '@slickgrid-universal/event-pub-sub': link:../event-pub-sub
       cross-env: 7.0.3
-      npm-run-all2: 6.0.1
+      npm-run-all2: 6.0.2
       rimraf: 3.0.2
 
   packages/row-detail-view-plugin:
     specifiers:
       '@slickgrid-universal/common': workspace:~
       cross-env: ^7.0.3
-      npm-run-all2: ^6.0.1
+      npm-run-all2: ^6.0.2
       rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
     devDependencies:
       cross-env: 7.0.3
-      npm-run-all2: 6.0.1
+      npm-run-all2: 6.0.2
       rimraf: 3.0.2
 
   packages/rxjs-observable:
     specifiers:
       '@slickgrid-universal/common': workspace:~
       cross-env: ^7.0.3
-      npm-run-all2: ^6.0.1
+      npm-run-all2: ^6.0.2
       rimraf: ^3.0.2
       rxjs: '>=7.5.0'
     dependencies:
@@ -389,7 +389,7 @@ importers:
       rxjs: 7.5.6
     devDependencies:
       cross-env: 7.0.3
-      npm-run-all2: 6.0.1
+      npm-run-all2: 6.0.2
       rimraf: 3.0.2
 
   packages/text-export:
@@ -398,7 +398,7 @@ importers:
       '@slickgrid-universal/utils': workspace:~
       '@types/text-encoding-utf-8': ^1.0.2
       cross-env: ^7.0.3
-      npm-run-all2: ^6.0.1
+      npm-run-all2: ^6.0.2
       rimraf: ^3.0.2
       text-encoding-utf-8: ^1.0.2
     dependencies:
@@ -408,19 +408,19 @@ importers:
     devDependencies:
       '@types/text-encoding-utf-8': 1.0.2
       cross-env: 7.0.3
-      npm-run-all2: 6.0.1
+      npm-run-all2: 6.0.2
       rimraf: 3.0.2
 
   packages/utils:
     specifiers:
       '@types/jquery': ^3.5.14
       cross-env: ^7.0.3
-      npm-run-all2: ^6.0.1
+      npm-run-all2: ^6.0.2
       rimraf: ^3.0.2
     devDependencies:
       '@types/jquery': 3.5.14
       cross-env: 7.0.3
-      npm-run-all2: 6.0.1
+      npm-run-all2: 6.0.2
       rimraf: 3.0.2
 
   packages/vanilla-bundle:
@@ -438,7 +438,7 @@ importers:
       flatpickr: ^4.6.13
       jquery: ^3.6.0
       jquery-ui: ^1.13.2
-      npm-run-all2: ^6.0.1
+      npm-run-all2: ^6.0.2
       rimraf: ^3.0.2
       slickgrid: ^2.4.45
       whatwg-fetch: ^3.6.2
@@ -459,7 +459,7 @@ importers:
     devDependencies:
       '@types/jquery': 3.5.14
       cross-env: 7.0.3
-      npm-run-all2: 6.0.1
+      npm-run-all2: 6.0.2
       rimraf: 3.0.2
 
   packages/vanilla-force-bundle:
@@ -482,7 +482,7 @@ importers:
       esbuild-loader: ^2.19.0
       html-loader: ^4.1.0
       jquery: ^3.6.0
-      npm-run-all2: ^6.0.1
+      npm-run-all2: ^6.0.2
       rimraf: ^3.0.2
       webpack: ^5.74.0
       whatwg-fetch: ^3.6.2
@@ -507,7 +507,7 @@ importers:
       cross-env: 7.0.3
       esbuild-loader: 2.19.0_webpack@5.74.0
       html-loader: 4.1.0_webpack@5.74.0
-      npm-run-all2: 6.0.1
+      npm-run-all2: 6.0.2
       rimraf: 3.0.2
       webpack: 5.74.0
 
@@ -1960,7 +1960,7 @@ packages:
   /@types/webpack/5.28.0_webpack-cli@4.10.0:
     resolution: {integrity: sha512-8cP0CzcxUiFuA9xGJkfeVpqmWTk9nx6CWwamRGCj95ph1SmlRRk9KlCZ6avhCbZd4L68LvYT6l1kpdEnQXrF8w==}
     dependencies:
-      '@types/node': 18.7.5
+      '@types/node': 18.0.1
       tapable: 2.2.1
       webpack: 5.74.0_webpack-cli@4.10.0
     transitivePeerDependencies:
@@ -3404,8 +3404,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
-      is-text-path: 1.0.1
       JSONStream: 1.3.5
+      is-text-path: 1.0.1
       lodash: 4.17.21
       meow: 8.1.2
       split2: 3.2.2
@@ -3572,8 +3572,8 @@ packages:
       cssom: 0.3.8
     dev: true
 
-  /cypress/10.4.0:
-    resolution: {integrity: sha512-OM7F8MRE01SHQRVVzunid1ZK1m90XTxYnl+7uZfIrB4CYqUDCrZEeSyCXzIbsS6qcaijVCAhqDL60SxG8N6hew==}
+  /cypress/10.6.0:
+    resolution: {integrity: sha512-6sOpHjostp8gcLO34p6r/Ci342lBs8S5z9/eb3ZCQ22w2cIhMWGUoGKkosabPBfKcvRS9BE4UxybBtlIs8gTQA==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     requiresBuild: true
@@ -7422,8 +7422,8 @@ packages:
       - supports-color
     dev: true
 
-  /npm-run-all2/6.0.1:
-    resolution: {integrity: sha512-FbuTcpA2OOzMfubRaqII1hpHp0zxSl2BC6QPxVwdqsN38GyN1ohPqqm8KELK7vyvJByHVjuXvc7QpkluXM8EZA==}
+  /npm-run-all2/6.0.2:
+    resolution: {integrity: sha512-WqGO5qbXEhf3uF3vKZteue8cxa06E3yp5WixL+OBV0HWmkxFHJhK7NGZ2x/cDRklJ08w5iCVjoFCsIv5pEGxpw==}
     engines: {node: ^14.18.0 || >=16.0.0, npm: '>= 8'}
     hasBin: true
     dependencies:
@@ -7914,8 +7914,8 @@ packages:
       find-up: 4.1.0
     dev: true
 
-  /pnpm/7.9.0:
-    resolution: {integrity: sha512-xkIVw73yJm/h5M4VvFIS5Q+gQCRDrp3r92g58PtcCK86aZCa7EQ6q6ivdfTAz0KsAVgloA6Anub28n6wju5v3w==}
+  /pnpm/7.9.3:
+    resolution: {integrity: sha512-0hpAD1vtILw0i9gTN4ffagnScWMW9/avfZIKllBUd++fAvCss+hVgPPDd0HS9XcOT675gid4H9esGkbLdaFy+w==}
     engines: {node: '>=14.6'}
     hasBin: true
     dev: true
