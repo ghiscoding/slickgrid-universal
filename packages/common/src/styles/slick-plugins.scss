@@ -809,6 +809,12 @@ input.search-filter {
 // Date Picker Filter
 // ----------------------------------------------
 
+.search-filter.form-group {
+  .input-group.flatpickr  input.form-control {
+    border-bottom-left-radius: 0px;
+    border-top-left-radius: 0px;
+  }
+}
 .search-filter .flatpickr {
   input.form-control {
     border-left: none;
