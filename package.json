@@ -48,7 +48,7 @@
     "@typescript-eslint/eslint-plugin": "^5.33.1",
     "@typescript-eslint/parser": "^5.33.1",
     "cross-env": "^7.0.3",
-    "cypress": "^10.4.0",
+    "cypress": "^10.6.0",
     "eslint": "^8.22.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
@@ -59,15 +59,15 @@
     "jsdom": "^20.0.0",
     "jsdom-global": "^3.0.2",
     "moment-mini": "^2.29.4",
-    "npm-run-all2": "^6.0.1",
-    "pnpm": "^7.9.0",
+    "npm-run-all2": "^6.0.2",
+    "pnpm": "^7.9.3",
     "rimraf": "^3.0.2",
     "rxjs": "^7.5.6",
     "serve": "^14.0.1",
     "ts-jest": "^28.0.8",
     "typescript": "^4.7.4"
   },
-  "packageManager": "pnpm@7.9.0",
+  "packageManager": "pnpm@7.9.3",
   "engines": {
     "node": ">=14.17.0",
     "npm": ">=6.14.13"
