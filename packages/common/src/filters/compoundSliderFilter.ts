@@ -3,6 +3,7 @@ import { hasData, toSentenceCase } from '@slickgrid-universal/utils';
 import {
   Column,
   ColumnFilter,
+  DOMEvent,
   Filter,
   FilterArguments,
   FilterCallback,
@@ -114,14 +115,12 @@ export class CompoundSliderFilter implements Filter {
 
     // step 2, subscribe to the input change event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this._bindEventService.bind(this.filterInputElm, 'change', this.onTriggerEvent.bind(this));
-    this._bindEventService.bind(this.selectOperatorElm, 'change', this.onTriggerEvent.bind(this));
+    this._bindEventService.bind(this.filterInputElm, ['change', 'mouseup', 'touchend'], this.onTriggerEvent.bind(this) as EventListener);
+    this._bindEventService.bind(this.selectOperatorElm, ['change', 'mouseup', 'touchend'], this.onTriggerEvent.bind(this) as EventListener);
 
     // if user chose to display the slider number on the right side, then update it every time it changes
     // we need to use both "input" and "change" event to be all cross-browser
-    if (!this.filterParams.hideSliderNumber) {
-      this._bindEventService.bind(this.filterInputElm, ['input', 'change'], this.handleInputChange.bind(this));
-    }
+    this._bindEventService.bind(this.filterInputElm, ['input', 'change'], this.handleInputChange.bind(this));
   }
 
   /**
@@ -265,7 +264,7 @@ export class CompoundSliderFilter implements Filter {
     this.filterInputElm = createDomElement('input', {
       type: 'range', name: this._elementRangeInputId,
       className: `form-control slider-filter-input range compound-slider ${this._elementRangeInputId}`,
-      defaultValue, value: searchTermInput,
+      defaultValue, value: searchTermInput, title: searchTermInput,
       min: `${minValue}`, max: `${maxValue}`, step: `${step}`,
     });
     this.filterInputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
@@ -310,13 +309,14 @@ export class CompoundSliderFilter implements Filter {
   protected handleInputChange(event: Event) {
     const value = (event?.target as HTMLInputElement).value;
     if (value !== undefined && value !== null) {
-      if (this.filterNumberElm?.textContent) {
+      if (!this.filterParams.hideSliderNumber && this.filterNumberElm?.textContent) {
         this.filterNumberElm.textContent = value;
       }
+      this.filterInputElm.title = value;
     }
   }
 
-  protected onTriggerEvent(e: Event | undefined) {
+  protected onTriggerEvent(e?: DOMEvent<HTMLInputElement>) {
     const value = this.filterInputElm.value;
     this._currentValue = +value;
 
@@ -332,5 +332,8 @@ export class CompoundSliderFilter implements Filter {
     // reset both flags for next use
     this._clearFilterTriggered = false;
     this._shouldTriggerQuery = true;
+
+    // trigger leave event to avoid having previous value still being displayed with custom tooltip feat
+    this.grid?.onHeaderMouseLeave.notify({ column: this.columnDef, grid: this.grid });
   }
 }

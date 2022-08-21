@@ -43,7 +43,7 @@ declare const Slick: SlickNamespace;
  */
 export class DateEditor implements Editor {
   protected _bindEventService: BindingEventService;
-  protected _closeButtonElm!: HTMLButtonElement;
+  protected _clearButtonElm!: HTMLButtonElement;
   protected _editorInputGroupElm!: HTMLDivElement;
   protected _inputElm!: HTMLInputElement;
   protected _inputWithDataElm!: HTMLInputElement | null;
@@ -159,7 +159,7 @@ export class DateEditor implements Editor {
 
       this._editorInputGroupElm = createDomElement('div', { className: 'flatpickr input-group' });
       const closeButtonGroupElm = createDomElement('span', { className: 'input-group-btn input-group-append', dataset: { clear: '' } });
-      this._closeButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default icon-clear' });
+      this._clearButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default icon-clear' });
       this._inputElm = createDomElement('input', {
         placeholder: this.columnEditor?.placeholder ?? '',
         title: this.columnEditor && this.columnEditor.title || '',
@@ -171,9 +171,9 @@ export class DateEditor implements Editor {
 
       // show clear date button (unless user specifically doesn't want it)
       if (!this.columnEditor?.params?.hideClearButton) {
-        closeButtonGroupElm.appendChild(this._closeButtonElm);
+        closeButtonGroupElm.appendChild(this._clearButtonElm);
         this._editorInputGroupElm.appendChild(closeButtonGroupElm);
-        this._bindEventService.bind(this._closeButtonElm, 'click', () => this._lastTriggeredByClearDate = true);
+        this._bindEventService.bind(this._clearButtonElm, 'click', () => this._lastTriggeredByClearDate = true);
       }
 
       this.args.container.appendChild(this._editorInputGroupElm);
@@ -217,7 +217,7 @@ export class DateEditor implements Editor {
     if (this.flatInstance?._input) {
       if (isDisabled) {
         this.flatInstance._input.setAttribute('disabled', 'disabled');
-        this._closeButtonElm.disabled = true;
+        this._clearButtonElm.disabled = true;
 
         // clear picker when it's newly disabled and not empty
         const currentValue = this.getValue();
@@ -226,7 +226,7 @@ export class DateEditor implements Editor {
         }
       } else {
         this.flatInstance._input.removeAttribute('disabled');
-        this._closeButtonElm.disabled = false;
+        this._clearButtonElm.disabled = false;
       }
     }
   }

@@ -39,7 +39,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
     autoAlignSideOffset: 0,
     hideMenuOnScroll: true,
   } as unknown as CellMenuOption;
-  pluginName: 'CellMenu' = 'CellMenu';
+  pluginName: 'CellMenu' = 'CellMenu' as const;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
@@ -91,9 +91,6 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
           // translate both command/option items (whichever is provided)
           this.extensionUtility.translateMenuItemsFromTitleKey(columnCellMenuCommandItems);
           this.extensionUtility.translateMenuItemsFromTitleKey(columnCellMenuOptionItems);
-
-          this.extensionUtility.translateItems(columnCellMenuCommandItems, 'titleKey', 'title');
-          this.extensionUtility.translateItems(columnCellMenuOptionItems, 'titleKey', 'title');
         }
       });
     }

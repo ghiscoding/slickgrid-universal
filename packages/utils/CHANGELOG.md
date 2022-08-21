@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.7...v1.4.0) (2022-08-15)
+
+### Bug Fixes
+
+* **utils:** the `isObject` method was not always correct ([#745](https://github.com/ghiscoding/slickgrid-universal/issues/745)) ([9b09e4a](https://github.com/ghiscoding/slickgrid-universal/commit/9b09e4aa2ca102100a113d4e2996f80c75aa6c2f)) - by @ghiscoding
+
 ## [1.3.7](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.6...v1.3.7) (2022-08-02)
 
 ### Bug Fixes

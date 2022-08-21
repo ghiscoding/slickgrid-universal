@@ -659,12 +659,10 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockCollection = ['male', 'female'];
         const promise = new Promise(resolve => resolve(mockCollection));
         const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: promise } }] as Column[];
-        const getColSpy = jest.spyOn(mockGrid, 'getColumns').mockReturnValue(mockColDefs);
 
         component.columnDefinitions = mockColDefs;
 
         setTimeout(() => {
-          expect(getColSpy).toHaveBeenCalled();
           expect(component.columnDefinitions[0].editor).toBeTruthy();
           expect(component.columnDefinitions[0].editor.collection).toEqual(mockCollection);
           expect(component.columnDefinitions[0].internalColumnEditor.collection).toEqual(mockCollection);
@@ -682,7 +680,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           renderDomElement: jest.fn(),
         } as unknown as Editor;
         const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: promise } }] as Column[];
-        const getColSpy = jest.spyOn(mockGrid, 'getColumns').mockReturnValue(mockColDefs);
         jest.spyOn(mockGrid, 'getCellEditor').mockReturnValue(mockEditor);
         const disableSpy = jest.spyOn(mockEditor, 'disable');
         const destroySpy = jest.spyOn(mockEditor, 'destroy');
@@ -691,7 +688,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.columnDefinitions = mockColDefs;
 
         setTimeout(() => {
-          expect(getColSpy).toHaveBeenCalled();
           expect(component.columnDefinitions[0].editor).toBeTruthy();
           expect(component.columnDefinitions[0].editor.collection).toEqual(mockCollection);
           expect(component.columnDefinitions[0].internalColumnEditor.collection).toEqual(mockCollection);
@@ -707,12 +703,10 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockCollection = ['male', 'female'];
         const promise = new Promise(resolve => resolve({ content: mockCollection }));
         const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: promise } }] as Column[];
-        const getColSpy = jest.spyOn(mockGrid, 'getColumns').mockReturnValue(mockColDefs);
 
         component.columnDefinitions = mockColDefs;
 
         setTimeout(() => {
-          expect(getColSpy).toHaveBeenCalled();
           expect(component.columnDefinitions[0].editor.collection).toEqual(mockCollection);
           expect(component.columnDefinitions[0].internalColumnEditor.collection).toEqual(mockCollection);
           expect(component.columnDefinitions[0].internalColumnEditor.model).toEqual(Editors.text);
@@ -729,12 +723,10 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         http.responseHeaders = { accept: 'json' };
         const collectionAsync = http.fetch('http://locahost/api', { method: 'GET' });
         const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync } }] as Column[];
-        const getColSpy = jest.spyOn(mockGrid, 'getColumns').mockReturnValue(mockColDefs);
 
         component.columnDefinitions = mockColDefs;
 
         setTimeout(() => {
-          expect(getColSpy).toHaveBeenCalled();
           expect(component.columnDefinitions[0].editor.collection).toEqual(mockCollection);
           expect(component.columnDefinitions[0].internalColumnEditor.collection).toEqual(mockCollection);
           expect(component.columnDefinitions[0].internalColumnEditor.model).toEqual(Editors.text);
@@ -745,7 +737,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       it('should be able to load async editors with an Observable', (done) => {
         const mockCollection = ['male', 'female'];
         const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: of(mockCollection) } }] as Column[];
-        const getColSpy = jest.spyOn(mockGrid, 'getColumns').mockReturnValue(mockColDefs);
 
         const rxjsMock = new RxJsResourceStub();
         component.gridOptions = { registerExternalResources: [rxjsMock] } as unknown as GridOption;
@@ -753,7 +744,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.columnDefinitions = mockColDefs;
 
         setTimeout(() => {
-          expect(getColSpy).toHaveBeenCalled();
           expect(component.columnDefinitions[0].editor!.collection).toEqual(mockCollection);
           expect(component.columnDefinitions[0].internalColumnEditor!.collection).toEqual(mockCollection);
           expect(component.columnDefinitions[0].internalColumnEditor!.model).toEqual(Editors.text);
@@ -771,7 +761,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         http.responseHeaders = { accept: 'json' };
         const collectionAsync = http.fetch('http://localhost/invalid-url', { method: 'GET' });
         const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync } }] as Column[];
-        jest.spyOn(mockGrid, 'getColumns').mockReturnValue(mockColDefs);
         component.columnDefinitions = mockColDefs;
 
         component.initialization(divContainer, slickEventHandler);

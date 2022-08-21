@@ -1176,7 +1176,7 @@ export class SlickVanillaGridBundle {
       collectionAsync.then((response: any | any[]) => {
         if (Array.isArray(response)) {
           this.updateEditorCollection(column, response); // from Promise
-        } else if (response instanceof Response && typeof response.json === 'function') {
+        } else if (response?.status >= 200 && response.status < 300 && typeof response.json === 'function') {
           if (response.bodyUsed) {
             console.warn(`[SlickGrid-Universal] The response body passed to collectionAsync was already read.`
               + `Either pass the dataset from the Response or clone the response first using response.clone()`);
@@ -1184,7 +1184,7 @@ export class SlickVanillaGridBundle {
             // from Fetch
             (response as Response).json().then(data => this.updateEditorCollection(column, data));
           }
-        } else if (response && response['content']) {
+        } else if (response?.content) {
           this.updateEditorCollection(column, response['content']); // from http-client
         }
       });
@@ -1434,9 +1434,8 @@ export class SlickVanillaGridBundle {
 
     if (this.slickGrid) {
       // find the new column reference pointer & re-assign the new editor to the internalColumnEditor
-      const columns = this.slickGrid.getColumns();
-      if (Array.isArray(columns)) {
-        const columnRef = columns.find((col: Column) => col.id === column.id);
+      if (Array.isArray(this.columnDefinitions)) {
+        const columnRef = this.columnDefinitions.find((col: Column) => col.id === column.id);
         if (columnRef) {
           columnRef.internalColumnEditor = column.editor as ColumnEditor;
         }

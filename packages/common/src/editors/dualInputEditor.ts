@@ -194,11 +194,10 @@ export class DualInputEditor implements Editor {
       type: fieldType || 'text',
       id: `item-${itemId}-${position}`,
       className: `dual-editor-text editor-${columnId} ${position.replace(/input/gi, '')}`,
-      autocomplete: 'off',
+      autocomplete: 'none',
       placeholder: editorSideParams.placeholder || '',
       title: editorSideParams.title || '',
     });
-    input.setAttribute('role', 'presentation');
     input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Input Editor`);
 
     if (fieldType === 'readonly') {

@@ -1,16 +1,14 @@
 {
-  "version": "1.3.7",
+  "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
+  "version": "1.4.0",
   "npmClient": "pnpm",
   "loglevel": "info",
   "command": {
-    "publish": {
-      "conventionalCommits": true
-    },
     "version": {
       "conventionalCommits": true,
       "createRelease": "github",
       "changelogIncludeCommitsClientLogin": " - by @%l",
-      "changelogHeaderMessage": "### All-in-One SlickGrid framework agnostic wrapper, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀",
+      "changelogHeaderMessage": "## All-in-One SlickGrid framework agnostic wrapper, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀",
       "message": "chore(release): publish new version %v",
       "syncWorkspaceLock": true
     }

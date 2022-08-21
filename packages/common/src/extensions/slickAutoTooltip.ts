@@ -26,7 +26,7 @@ export class SlickAutoTooltip {
     maxToolTipLength: undefined,
     replaceExisting: true
   } as AutoTooltipOption;
-  pluginName: 'AutoTooltips' = 'AutoTooltips';
+  pluginName: 'AutoTooltips' = 'AutoTooltips' as const;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(options?: AutoTooltipOption) {

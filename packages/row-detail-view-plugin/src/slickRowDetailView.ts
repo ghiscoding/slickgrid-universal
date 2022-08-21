@@ -56,7 +56,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     toolTip: '',
     width: 30,
   } as unknown as RowDetailView;
-  pluginName: 'RowDetailView' = 'RowDetailView';
+  pluginName: 'RowDetailView' = 'RowDetailView' as const;
 
   /** Fired when the async response finished */
   onAsyncEndUpdate = new Slick.Event();
