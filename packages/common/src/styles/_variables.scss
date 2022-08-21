@@ -149,32 +149,25 @@ $slick-icon-group-height:                                   20px !default;
 $slick-icon-group-vertical-align:                           middle !default;
 $slick-icon-group-width:                                    14px !default;
 
-/* AutoComplete */
-$slick-autocomplete-bg-color:	                              #ffffff !default;
-$slick-autocomplete-border:	                                1px solid rgba(0, 0, 0, 0.15) !default;
-$slick-autocomplete-border-radius:	                        4px !default;
-$slick-autocomplete-box-shadow:	                            0 6px 12px rgba(0, 0, 0, 0.175) !default;
-$slick-autocomplete-hover-color:	                          #262626 !default;
-$slick-autocomplete-hover-bg-color:	                        darken($slick-row-mouse-hover-color, 3%) !default;
-$slick-autocomplete-hover-border-color:	                    1px solid #{$slick-autocomplete-hover-bg-color} !default;
-$slick-autocomplete-loading-input-bg-color:                 transparent !default;
-$slick-autocomplete-loading-icon:                           "\f021" !default;
-$slick-autocomplete-loading-icon-color:                     $slick-icon-color !default;
-$slick-autocomplete-loading-icon-width:                     inherit !default;
-$slick-autocomplete-loading-icon-margin:                    0 0 0 -16px !default;
-$slick-autocomplete-loading-icon-line-height:               0px !default;
-$slick-autocomplete-loading-icon-vertical-align:            inherit !default;
-$slick-autocomplete-max-height:	                            25vh !default;
-$slick-autocomplete-min-height:	                            75px !default;
-$slick-autocomplete-min-width:	                            50px !default;
-$slick-autocomplete-overflow-x:	                            hidden !default;
-$slick-autocomplete-overflow-y:	                            auto !default;
-$slick-autocomplete-text-color:	                            #333333 !default;
-$slick-autocomplete-text-overflow:	                        ellipsis !default;
-$slick-autocomplete-text-padding:	                          3px 15px !default;
+/* Kradeen AutoComplete */
+$slick-autocomplete-bg-color:	                            #ffffff !default;
+$slick-autocomplete-group-bg-color:	                      #eeeeee !default;
+$slick-autocomplete-border:	                              1px solid rgba(0, 0, 0, 0.15) !default;
+$slick-autocomplete-hover-bg-color:                       darken($slick-row-mouse-hover-color, 3%) !default;
+$slick-autocomplete-loading-input-bg-color:               transparent !default;
+$slick-autocomplete-loading-icon:                         "\f021" !default;
+$slick-autocomplete-loading-icon-color:                   $slick-icon-color !default;
+$slick-autocomplete-loading-icon-width:                   inherit !default;
+$slick-autocomplete-loading-icon-margin:                  0 0 0 -16px !default;
+$slick-autocomplete-loading-icon-line-height:             0px !default;
+$slick-autocomplete-loading-icon-vertical-align:          inherit !default;
+$slick-autocomplete-max-height:	                          25vh !default;
+$slick-autocomplete-min-height:	                          75px !default;
+$slick-autocomplete-text-color:	                          #333333 !default;
+$slick-autocomplete-width:     	                          auto !default;
 $slick-autocomplete-z-index:	                              9999 !default;
 
-/** AutoComplete with Custom Styling (2 rows) */
+/** Kradeen AutoComplete with Custom Styling (2 rows) */
 $slick-autocomplete-tpl2-font-size:                         12px !default;
 $slick-autocomplete-tpl2-width:                             285px !default;
 $slick-autocomplete-tpl2-container-list-width:              calc(#{$slick-autocomplete-tpl2-width} - 15px) !default;
@@ -194,7 +187,7 @@ $slick-autocomplete-tpl2-top-left-font-style:               normal !default;
 $slick-autocomplete-tpl2-top-left-font-weight:              bold !default;
 $slick-autocomplete-tpl2-top-left-max-width:                $slick-autocomplete-tpl2-bottom-left-max-width !default;
 
-/** AutoComplete with Custom Styling (4 corners) */
+/** Kradeen AutoComplete with Custom Styling (4 corners) */
 $slick-autocomplete-tpl4-font-size:                         12px !default;
 $slick-autocomplete-tpl4-width:                             385px !default;
 $slick-autocomplete-tpl4-container-list-width:              calc(#{$slick-autocomplete-tpl4-width} - 15px) !default;

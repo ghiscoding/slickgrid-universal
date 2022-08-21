@@ -1,5 +1,5 @@
 import {
-  AutocompleteOption,
+  AutocompleterOption,
   BindingEventService,
   Column,
   Editors,
@@ -249,16 +249,15 @@ export class Example14 {
         type: FieldType.object,
         sortComparer: SortComparers.objectString,
         editor: {
-          model: Editors.autoComplete,
+          model: Editors.autocompleter,
           alwaysSaveOnEnterKey: true,
 
           // example with a Remote API call
           editorOptions: {
             minLength: 1,
-            source: (request, response) => {
-              // const items = require('c://TEMP/items.json');
+            fetch: (searchText, updateCallback) => {
               const products = this.mockProducts();
-              response(products.filter(product => product.itemName.toLowerCase().includes(request.term.toLowerCase())));
+              updateCallback(products.filter(product => product.itemName.toLowerCase().includes(searchText.toLowerCase())));
             },
             renderItem: {
               // layout: 'twoRows',
@@ -267,7 +266,7 @@ export class Example14 {
               layout: 'fourCorners',
               templateCallback: (item: any) => this.renderItemCallbackWith4Corners(item),
             },
-          } as AutocompleteOption,
+          } as Partial<AutocompleterOption>,
         },
         filter: {
           model: Filters.inputText,
@@ -288,17 +287,17 @@ export class Example14 {
         sortable: true,
         minWidth: 100,
         editor: {
-          model: Editors.autoComplete,
+          model: Editors.autocompleter,
           alwaysSaveOnEnterKey: true,
           editorOptions: {
             minLength: 0,
-            openSearchListOnFocus: false,
-            source: (request, response) => {
+            showOnFocus: false,
+            fetch: (searchText, updateCallback) => {
               const countries: any[] = require('./data/countries.json');
-              const foundCountries = countries.filter((country) => country.name.toLowerCase().includes(request.term.toLowerCase()));
-              response(foundCountries.map(item => ({ label: item.name, value: item.code, })));
+              const foundCountries = countries.filter((country) => country.name.toLowerCase().includes(searchText.toLowerCase()));
+              updateCallback(foundCountries.map(item => ({ label: item.name, value: item.code, })));
             },
-          },
+          } as Partial<AutocompleterOption>,
         },
         filter: {
           model: Filters.inputText,

@@ -1,6 +1,6 @@
 // import { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
 import {
-  AutocompleteOption,
+  AutocompleterOption,
   BindingEventService,
   Column,
   CompositeEditorModalType,
@@ -291,17 +291,16 @@ export class Example12 {
         type: FieldType.object,
         sortComparer: SortComparers.objectString,
         editor: {
-          model: Editors.autoComplete,
+          model: Editors.autocompleter,
           alwaysSaveOnEnterKey: true,
           massUpdate: true,
 
           // example with a Remote API call
           editorOptions: {
             minLength: 1,
-            source: (request, response) => {
-              // const items = require('c://TEMP/items.json');
+            fetch: (searchTerm, callback) => {
               const products = this.mockProducts();
-              response(products.filter(product => product.itemName.toLowerCase().includes(request.term.toLowerCase())));
+              callback(products.filter(product => product.itemName.toLowerCase().includes(searchTerm.toLowerCase())));
             },
             renderItem: {
               // layout: 'twoRows',
@@ -310,11 +309,11 @@ export class Example12 {
               layout: 'fourCorners',
               templateCallback: (item: any) => this.renderItemCallbackWith4Corners(item),
             },
-          } as AutocompleteOption,
+          } as Partial<AutocompleterOption>,
         },
         filter: {
           model: Filters.inputText,
-          // placeholder: '🔎︎ search city',
+          // placeholder: '🔎︎ search product',
           type: FieldType.string,
           queryField: 'product.itemName',
         }
@@ -331,19 +330,18 @@ export class Example12 {
         sortable: true,
         minWidth: 100,
         editor: {
-          model: Editors.autoComplete,
+          model: Editors.autocompleter,
           alwaysSaveOnEnterKey: true,
           massUpdate: true,
           editorOptions: {
             minLength: 0,
-            openSearchListOnFocus: false,
-            // onSelect: (e, ui, row, cell, column, dataContext) => console.log(ui, column, dataContext),
-            source: (request, response) => {
+            showOnFocus: false,
+            fetch: (searchText, updateCallback) => {
               const countries: any[] = require('./data/countries.json');
-              const foundCountries = countries.filter((country) => country.name.toLowerCase().includes(request.term.toLowerCase()));
-              response(foundCountries.map(item => ({ label: item.name, value: item.code, })));
+              const foundCountries = countries.filter((country) => country.name.toLowerCase().includes(searchText.toLowerCase()));
+              updateCallback(foundCountries.map(item => ({ label: item.name, value: item.code, })));
             },
-          },
+          } as Partial<AutocompleterOption>,
         },
         filter: {
           model: Filters.inputText,
@@ -398,13 +396,13 @@ export class Example12 {
       autoFixResizeRequiredGoodCount: 1,
       datasetIdPropertyName: 'id',
       eventNamingStyle: EventNamingStyle.lowerCase,
-      editable: true,
       autoAddCustomEditorFormatter: customEditableInputFormatter,
       enableAddRow: true, // <-- this flag is required to work with the (create & clone) modal types
       enableCellNavigation: true,
       asyncEditorLoading: false,
       autoEdit: true,
       autoCommitEdit: true,
+      editable: true,
       autoResize: {
         container: '.demo-container',
       },
@@ -605,7 +603,6 @@ export class Example12 {
     /*
     if (columnDef.id === 'completed') {
       this.compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', true); // multiple-select.js, show filter in dropdown
-      this.compositeEditorInstance.changeFormEditorOption('product', 'minLength', 3);         // autocomplete, change minLength char to type
       this.compositeEditorInstance.changeFormEditorOption('finish', 'minDate', 'today');      // flatpickr, change minDate to today
     }
     */
@@ -889,31 +886,31 @@ export class Example12 {
           <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
           ${item.itemName}
         </span>
-      <div>
-    </div>
-    <div>
-      <div class="autocomplete-bottom-left">${item.itemNameTranslated}</div>
-    </div>`;
+        <div>
+        </div>
+        <div>
+        <div class="autocomplete-bottom-left">${item.itemNameTranslated}</div>
+      </div>`;
   }
 
   renderItemCallbackWith4Corners(item: any): string {
     return `<div class="autocomplete-container-list">
-          <div class="autocomplete-left">
-            <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
-            <span class="mdi ${item.icon} mdi-26px"></span>
-          </div>
-          <div>
-            <span class="autocomplete-top-left">
-              <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
-              ${item.itemName}
-            </span>
-            <span class="autocomplete-top-right">${formatNumber(item.listPrice, 2, 2, false, '$')}</span>
-          <div>
-        </div>
-        <div>
-          <div class="autocomplete-bottom-left">${item.itemNameTranslated}</div>
-          <span class="autocomplete-bottom-right">Type: <b>${item.itemTypeName === 'I' ? 'Item' : item.itemTypeName === 'C' ? 'PdCat' : 'Cat'}</b></span>
-        </div>`;
+      <div class="autocomplete-left">
+        <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
+        <span class="mdi ${item.icon} mdi-26px"></span>
+      </div>
+      <div>
+        <span class="autocomplete-top-left">
+          <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
+          ${item.itemName}
+        </span>
+        <span class="autocomplete-top-right">${formatNumber(item.listPrice, 2, 2, false, '$')}</span>
+      <div>
+    </div>
+    <div>
+      <div class="autocomplete-bottom-left">${item.itemNameTranslated}</div>
+      <span class="autocomplete-bottom-right">Type: <b>${item.itemTypeName === 'I' ? 'Item' : item.itemTypeName === 'C' ? 'PdCat' : 'Cat'}</b></span>
+    </div>`;
   }
 
   openCompositeModal(modalType: CompositeEditorModalType, openDelay = 0) {

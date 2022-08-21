@@ -20,20 +20,11 @@ export interface ColumnEditor {
   /** Optionally provide an aria-label for assistive scren reader, defaults to "{inputName} Input Editor" */
   ariaLabel?: string;
 
-  /**
-   * Some Editor could support callbacks from their jQuery instance (for now only AutoComplete supports this), for example:
-   * editor: { model:{ Editors.autoComplete }, callbacks: { _renderItem: (ul, item) => { ... } }}
-   *
-   * will be interpreted as $(#element).autocomplete("instance")._renderItem = (ul, item) => { ... }
-   * from jQuery UI doc: https://jqueryui.com/autocomplete/#custom-data
-   */
-  callbacks?: any;
-
-  /** A collection of items/options that will be loaded asynchronously (commonly used with AutoComplete & Single/Multi-Select Editors) */
+  /** A collection of items/options that will be loaded asynchronously (commonly used with Autocompleter & Single/Multi-Select Editors) */
   collectionAsync?: Promise<any> | Observable<any>;
 
   /**
-   * A collection of items/options (commonly used with AutoComplete & Single/Multi-Select Editors)
+   * A collection of items/options (commonly used with Autocompleter & Single/Multi-Select Editors)
    * It can be a collection of string or label/value pair (the pair can be customized via the "customStructure" option)
    */
   collection?: any[];
@@ -84,7 +75,7 @@ export interface ColumnEditor {
 
   /**
    * Defaults to false, when set it will render any HTML code instead of removing it (sanitized)
-   * Currently only supported by the following Editors: AutoComplete, MultipleSelect & SingleSelect
+   * Currently only supported by the following Editors: Autocompleter, MultipleSelect & SingleSelect
    */
   enableRenderHtml?: boolean;
 
@@ -100,13 +91,13 @@ export interface ColumnEditor {
    */
   massUpdate?: boolean;
 
-  /** Maximum length of the text value, works only with Editors supporting it (autoComplete, text, longText) */
+  /** Maximum length of the text value, works only with Editors supporting it (autocompleter, text, longText) */
   maxLength?: number;
 
   /** Maximum value of the editor, works only with Editors supporting it (number, float, slider) */
   maxValue?: number | string;
 
-  /** Minimum length of the text value, works only with Editors supporting it (autoComplete, text, longText) */
+  /** Minimum length of the text value, works only with Editors supporting it (autocompleter, text, longText) */
   minLength?: number;
 
   /** Minimum value of the editor, works only with Editors supporting it (number, float, slider) */
