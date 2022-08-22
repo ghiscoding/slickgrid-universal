@@ -721,7 +721,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         http.returnKey = 'date';
         http.returnValue = '6/24/1984';
         http.responseHeaders = { accept: 'json' };
-        const collectionAsync = http.fetch('/api', { method: 'GET' });
+        const collectionAsync = http.fetch('http://locahost/api', { method: 'GET' });
         const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync } }] as Column[];
 
         component.columnDefinitions = mockColDefs;
@@ -759,7 +759,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         http.returnKey = 'date';
         http.returnValue = '6/24/1984';
         http.responseHeaders = { accept: 'json' };
-        const collectionAsync = http.fetch('invalid-url', { method: 'GET' });
+        const collectionAsync = http.fetch('http://localhost/invalid-url', { method: 'GET' });
         const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync } }] as Column[];
         component.columnDefinitions = mockColDefs;
 
@@ -1127,7 +1127,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should invoke "updateFilters" method with filters returned from "getColumnFilters" of the Filter Service when there is no Presets defined', () => {
-        const mockColumnFilter = { name: { columnId: 'name', columnDef: { id: 'name', field: 'name', filter: { model: Filters.autoComplete } }, operator: 'EQ', searchTerms: ['john'] } };
+        const mockColumnFilter = { name: { columnId: 'name', columnDef: { id: 'name', field: 'name', filter: { model: Filters.autocompleter } }, operator: 'EQ', searchTerms: ['john'] } };
         jest.spyOn(filterServiceStub, 'getColumnFilters').mockReturnValue(mockColumnFilter as unknown as ColumnFilters);
         const backendSpy = jest.spyOn(mockGraphqlService, 'updateFilters');
 

@@ -1,63 +1,48 @@
 @import './variables';
 
-// ---------------------------------------------------------
-// jQuery UI AutoComplete for Bootstrap
-// ---------------------------------------------------------
-
-.ui-widget-content {
-  background: none;
-}
-.ui-autocomplete {
-  .ui-menu-item {
-    color: var(--slick-autocomplete-text-color, $slick-autocomplete-text-color);
-    .ui-state-active {
-      color: var(--slick-autocomplete-text-color, $slick-autocomplete-text-color);
-      &:hover {
-        margin: 0;
-        border: 0;
-        color: var(--slick-autocomplete-text-color, $slick-autocomplete-text-color);
-      }
-    }
-  }
-}
-.ui-autocomplete {
-  background: none;
-  position: absolute;
-  z-index: var(--slick-autocomplete-z-index, $slick-autocomplete-z-index);
-  padding: 0;
-  margin-top: 2px;
-  list-style: none;
+/**
+ * Kradeen Autocomplete https://github.com/kraaden/autocomplete/blob/master/autocomplete.ts
+ */
+.slick-autocomplete {
   background-color: var(--slick-autocomplete-bg-color, $slick-autocomplete-bg-color);
-  border: var(--slick-autocomplete-border, $slick-autocomplete-border);
-  border-radius: var(--slick-autocomplete-border-radius, $slick-autocomplete-border-radius);
-  box-shadow: var(--slick-autocomplete-box-shadow, $slick-autocomplete-box-shadow);
-  background-clip: padding-box;
+  color: var(--slick-autocomplete-text-color, $slick-autocomplete-text-color);
+  border: var(--slick-autocomplete-border, $slick-autocomplete-border); // 1px solid rgba(50, 50, 50, 0.6);
+  box-sizing: border-box;
   max-height: var(--slick-autocomplete-max-height, $slick-autocomplete-max-height);
   min-height: var(--slick-autocomplete-min-height, $slick-autocomplete-min-height);
-  min-width: var(--slick-autocomplete-min-width, $slick-autocomplete-min-width);
-  overflow-y: var(--slick-autocomplete-overflow-y, $slick-autocomplete-overflow-y);
-  overflow-x: var(--slick-autocomplete-overflow-x, $slick-autocomplete-overflow-x);
-  text-overflow: var(--slick-autocomplete-text-overflow, $slick-autocomplete-text-overflow);
-
-  li {
-    div {
-      display: block;
-      color: var(--slick-autocomplete-text-color, $slick-autocomplete-text-color);
-      padding: var(--slick-autocomplete-text-padding, $slick-autocomplete-text-padding);
-      font-weight: normal;
-      line-height: 1.42857143;
-      white-space: nowrap;
-      list-style-image: none;
-    }
-  }
+  overflow: auto;
+  width: var(--slick-autocomplete-width, $slick-autocomplete-width) !important;
+  z-index: var(--slick-autocomplete-z-index, $slick-autocomplete-z-index);
 }
 
-/* jquery ui loading spinner */
+.slick-autocomplete * {
+  font: inherit;
+}
+
+.slick-autocomplete > div {
+  padding: 0 4px;
+}
+
+.slick-autocomplete .group {
+  background: var(--slick-autocomplete-group-bg-color, $slick-autocomplete-group-bg-color);
+}
+
+.slick-autocomplete > div:hover:not(.group),
+.slick-autocomplete > div.selected {
+  background-color: var(--slick-autocomplete-hover-bg-color, $slick-autocomplete-hover-bg-color);
+  cursor: pointer;
+}
+
+/* autocomplete loading spinner */
 @keyframes md-spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-.ui-autocomplete-loading {
+
+.autocomplete-filter-container {
+  display: flex;
+}
+.slick-autocomplete-loading {
   background-color: var(--slick-autocomplete-loading-input-bg-color, $slick-autocomplete-loading-input-bg-color) !important;
 
   & + span:after {
@@ -73,35 +58,15 @@
   }
 }
 
-.ui-state-hover,
-.ui-state-active,
-.ui-state-focus {
-  cursor: pointer;
-  text-decoration: none;
-  color: var(--slick-autocomplete-hover-color, $slick-autocomplete-hover-color);
-  background-color: var(--slick-autocomplete-hover-bg-color, $slick-autocomplete-hover-bg-color);
-}
-
-.ui-helper-hidden-accessible {
-  border: 0;
-  clip: rect(0 0 0 0);
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  position: absolute;
-  padding: 0;
-  width: 1px;
-}
-
 // ---
 // AutoComplete Custom Template Styling with 4 corners
 // ---------------------------------------------------
 
 /* autocomplete custom styling */
-.ui-autocomplete.autocomplete-custom-four-corners {
+.slick-autocomplete.autocomplete-custom-four-corners {
   width: var(--slick-autocomplete-tpl4-width, $slick-autocomplete-tpl4-width);
 }
-.ui-autocomplete.autocomplete-custom-four-corners li div.autocomplete-container-list {
+.slick-autocomplete.autocomplete-custom-four-corners div div.autocomplete-container-list {
   width: var(--slick-autocomplete-tpl4-container-list-width, $slick-autocomplete-tpl4-container-list-width);
   padding: var(--slick-autocomplete-tpl4-container-list-padding, $slick-autocomplete-tpl4-container-list-padding);
 
@@ -179,10 +144,10 @@
 // ---------------------------------------------------
 
 /* autocomplete custom styling */
-.ui-autocomplete.autocomplete-custom-two-rows {
+.slick-autocomplete.autocomplete-custom-two-rows {
   width: var(--slick-autocomplete-tpl2-width, $slick-autocomplete-tpl2-width);
 }
-.ui-autocomplete.autocomplete-custom-two-rows li div.autocomplete-container-list {
+.slick-autocomplete.autocomplete-custom-two-rows div div.autocomplete-container-list {
   width: var(--slick-autocomplete-tpl2-container-list-width, $slick-autocomplete-tpl2-container-list-width);
   padding: var(--slick-autocomplete-tpl2-container-list-padding, $slick-autocomplete-tpl2-container-list-padding);
 

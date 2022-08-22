@@ -1,9 +1,9 @@
 import { of, Subject } from 'rxjs';
 
 import { Filters } from '../index';
-import { AutoCompleteFilter } from '../autoCompleteFilter';
+import { AutocompleterFilter } from '../autocompleterFilter';
 import { FieldType, OperatorType, KeyCode } from '../../enums/index';
-import { AutocompleteOption, Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { AutocompleterOption, Column, ColumnFilter, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { CollectionService } from '../../services/collection.service';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
@@ -28,13 +28,13 @@ const gridStub = {
   render: jest.fn(),
 } as unknown as SlickGrid;
 
-describe('AutoCompleteFilter', () => {
+describe('AutocompleterFilter', () => {
   let translaterService: TranslateServiceStub;
   let divContainer: HTMLDivElement;
-  let filter: AutoCompleteFilter;
+  let filter: AutocompleterFilter;
   let filterArguments: FilterArguments;
   let spyGetHeaderRow;
-  let mockColumn: Column;
+  let mockColumn: Column & { filter: ColumnFilter; };
   let collectionService: CollectionService;
   const http = new HttpStub();
 
@@ -50,7 +50,7 @@ describe('AutoCompleteFilter', () => {
     mockColumn = {
       id: 'gender', field: 'gender', filterable: true,
       filter: {
-        model: Filters.autoComplete,
+        model: Filters.autocompleter,
       }
     };
     filterArguments = {
@@ -60,7 +60,7 @@ describe('AutoCompleteFilter', () => {
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
 
-    filter = new AutoCompleteFilter(translaterService, collectionService);
+    filter = new AutocompleterFilter(translaterService, collectionService);
   });
 
   afterEach(() => {
@@ -74,7 +74,7 @@ describe('AutoCompleteFilter', () => {
 
   it('should throw an error when there is no collection provided in the filter property', (done) => {
     try {
-      mockColumn.filter!.collection = undefined;
+      mockColumn.filter.collection = undefined;
       filter.init(filterArguments);
     } catch (e) {
       expect(e.toString()).toContain(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the AutoComplete Filter to work correctly.`);
@@ -82,44 +82,30 @@ describe('AutoCompleteFilter', () => {
     }
   });
 
-  it('should throw an error when collection is not a valid array', (done) => {
-    try {
-      mockColumn.filter!.collection = { hello: 'world' } as any;
-      filter.init(filterArguments);
-    } catch (e) {
-      expect(e.toString()).toContain(`The "collection" passed to the Autocomplete Filter is not a valid array.`);
-      done();
-    }
-  });
-
   it('should initialize the filter', () => {
-    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     filter.init(filterArguments);
     const filterCount = divContainer.querySelectorAll('input.search-filter.filter-gender').length;
-    const autocompleteUlElms = document.body.querySelectorAll<HTMLUListElement>('ul.ui-autocomplete');
 
     expect(filter.instance).toBeTruthy();
-    expect(autocompleteUlElms.length).toBe(1);
     expect(spyGetHeaderRow).toHaveBeenCalled();
     expect(filterCount).toBe(1);
   });
 
   it('should initialize the filter even when user define his own filter options', () => {
-    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-    mockColumn.filter!.filterOptions = { minLength: 3 } as AutocompleteOption;
+    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.filterOptions = { minLength: 3 } as AutocompleterOption;
     filter.init(filterArguments);
     const filterCount = divContainer.querySelectorAll('input.search-filter.filter-gender').length;
-    const autocompleteUlElms = document.body.querySelectorAll<HTMLUListElement>('ul.ui-autocomplete');
 
-    expect(autocompleteUlElms.length).toBe(1);
     expect(spyGetHeaderRow).toHaveBeenCalled();
     expect(filterCount).toBe(1);
   });
 
   it('should have a placeholder when defined in its column definition', () => {
     const testValue = 'test placeholder';
-    mockColumn.filter!.placeholder = testValue;
-    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.placeholder = testValue;
+    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
     filter.init(filterArguments);
     const filterElm = divContainer.querySelector('input.search-filter.filter-gender') as HTMLInputElement;
@@ -127,9 +113,10 @@ describe('AutoCompleteFilter', () => {
     expect(filterElm.placeholder).toBe(testValue);
   });
 
-  it('should call "setValues" and expect that value to be in the callback when triggered', () => {
+  it('should call "setValues" and expect that value to be in the callback when triggered and triggerOnEveryKeyStroke is enabled', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
-    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
 
     filter.init(filterArguments);
     filter.setValues('male');
@@ -137,16 +124,17 @@ describe('AutoCompleteFilter', () => {
 
     filterElm.focus();
     filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 109, bubbles: true, cancelable: true }));
+    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.ENTER, bubbles: true, cancelable: true }));
     filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 109, bubbles: true, cancelable: true }));
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    // expect(autocompleteListElms.length).toBe(2);
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['male'], shouldTriggerQuery: true });
   });
 
-  it('should call "setValues" with extra spaces at the beginning of the searchTerms and trim value when "enableFilterTrimWhiteSpace" is enabled in grid options', () => {
-    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+  it('should call "setValues" with extra spaces at the beginning of the searchTerms and trim value when "enableFilterTrimWhiteSpace" is enabled in grid options and triggerOnEveryKeyStroke is enabled', () => {
+    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
     gridOptionMock.enableFilterTrimWhiteSpace = true;
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
@@ -162,10 +150,11 @@ describe('AutoCompleteFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['abc'], shouldTriggerQuery: true });
   });
 
-  it('should call "setValues" with extra spaces at the beginning of the searchTerms and trim value when "enableTrimWhiteSpace" is enabled in the column filter', () => {
-    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+  it('should call "setValues" with extra spaces at the beginning of the searchTerms and trim value when "enableTrimWhiteSpace" is enabled in the column filter and triggerOnEveryKeyStroke is enabled', () => {
+    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
     gridOptionMock.enableFilterTrimWhiteSpace = false;
-    mockColumn.filter!.enableTrimWhiteSpace = true;
+    mockColumn.filter.enableTrimWhiteSpace = true;
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
@@ -180,8 +169,9 @@ describe('AutoCompleteFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['abc'], shouldTriggerQuery: true });
   });
 
-  it('should trigger the callback method when user types something in the input', () => {
-    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+  it('should trigger the callback method when user types something in the input and triggerOnEveryKeyStroke is enabled', () => {
+    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
@@ -191,12 +181,11 @@ describe('AutoCompleteFilter', () => {
     filterElm.value = 'a';
     filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 97, bubbles: true, cancelable: true }));
 
-    // expect(autocompleteListElms.length).toBe(2);
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['a'], shouldTriggerQuery: true });
   });
 
   it('should create the input filter with a default search term when passed as a filter argument', () => {
-    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     filterArguments.searchTerms = ['xyz'];
 
     filter.init(filterArguments);
@@ -206,7 +195,7 @@ describe('AutoCompleteFilter', () => {
   });
 
   it('should expect the input not to have the "filled" css class when the search term provided is an empty string', () => {
-    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     filterArguments.searchTerms = [''];
 
     filter.init(filterArguments);
@@ -218,7 +207,7 @@ describe('AutoCompleteFilter', () => {
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
-    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     const spyCallback = jest.spyOn(filterArguments, 'callback');
     filterArguments.searchTerms = ['xyz'];
 
@@ -232,8 +221,26 @@ describe('AutoCompleteFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: true });
   });
 
+  it('should expect "clear" method be called when input "blur" event is triggered', () => {
+    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    filterArguments.searchTerms = ['xyz'];
+
+    filter.init(filterArguments);
+    const clearSpy = jest.spyOn(filter, 'clear');
+    const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
+
+    filterElm.dispatchEvent(new Event('blur', { bubbles: true, cancelable: true }));
+
+    jest.runAllTimers(); // fast-forward timer
+
+    expect(clearSpy).toHaveBeenCalled();
+    expect(filterElm.value).toBe('');
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: true });
+  });
+
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
-    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     const spyCallback = jest.spyOn(filterArguments, 'callback');
     filterArguments.searchTerms = ['xyz'];
 
@@ -247,49 +254,103 @@ describe('AutoCompleteFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
   });
 
-  it('should create the filter with a default search term when using "collectionAsync" as a Promise', async () => {
+  it('should create the filter with a default search term when using "collectionAsync" as a Promise and triggerOnEveryKeyStroke is enabled', async () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
-    mockColumn.filter!.collectionAsync = Promise.resolve(mockCollection);
+    mockColumn.filter.collectionAsync = Promise.resolve(mockCollection);
+    mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
 
     filterArguments.searchTerms = ['female'];
     await filter.init(filterArguments);
-
     const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
-    const autocompleteUlElms = document.body.querySelectorAll<HTMLUListElement>('ul.ui-autocomplete');
-    filter.setValues('male');
-
     filterElm.focus();
     filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 97, bubbles: true, cancelable: true }));
-    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
 
-    expect(autocompleteUlElms.length).toBe(1);
+    jest.runAllTimers(); // fast-forward timer
+
+    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
+    const autocompleteListElms = document.body.querySelectorAll<HTMLDivElement>('.slick-autocomplete div');
+    expect(autocompleteListElms.length).toBe(1);
     expect(filterFilledElms.length).toBe(1);
-    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['male'], shouldTriggerQuery: true });
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['female'], shouldTriggerQuery: true });
   });
 
-  it('should create the filter with a default search term when using "collectionAsync" as a Promise with content to simulate http-client', async () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
-    const mockCollection = ['male', 'female'];
-    mockColumn.filter!.collectionAsync = Promise.resolve({ content: mockCollection });
+  it('should add custom render callback and expect it to be called when a search is triggered', async () => {
+    const renderSpy = jest.spyOn(filter, 'renderDomElement');
+    const mockDataResponse = [{ value: 'female', label: 'Female' }, { value: 'male', label: 'Male' }];
+    const callbackMock = jest.fn().mockReturnValue(mockDataResponse);
+
+    mockColumn.filter = {
+      filterOptions: {
+        triggerOnEveryKeyStroke: true,
+        showOnFocus: true,
+        fetch: (searchText, updateCallback) => {
+          callbackMock(searchText);
+        }
+      }
+    };
 
     filterArguments.searchTerms = ['female'];
     await filter.init(filterArguments);
-
     const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
-    const autocompleteUlElms = document.body.querySelectorAll<HTMLUListElement>('ul.ui-autocomplete');
-    filter.setValues('male');
-
     filterElm.focus();
-    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 97, bubbles: true, cancelable: true }));
-    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
 
-    expect(autocompleteUlElms.length).toBe(1);
-    expect(filterFilledElms.length).toBe(1);
-    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['male'], shouldTriggerQuery: true });
+    jest.runAllTimers(); // fast-forward timer
+
+    expect(filter.filterDomElement.classList.contains('slick-autocomplete-loading')).toBeTrue();
+    expect(callbackMock).toHaveBeenCalledWith('female');
+    expect(renderSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('should create the filter with a default search term when using "collectionAsync" is a Fetch Promise', async () => {
+  it('should add custom "fetch" call and expect "renderRegularItem" callback be called when focusing on the autocomplete input', async () => {
+    const mockDataResponse = [{ value: 'female', label: 'Female' }, { value: 'undefined', label: 'Undefined' }];
+
+    mockColumn.filter = {
+      filterOptions: {
+        showOnFocus: true,
+        fetch: (searchText, updateCallback) => {
+          updateCallback(mockDataResponse);
+        }
+      }
+    };
+
+    filterArguments.searchTerms = ['female'];
+    await filter.init(filterArguments);
+    const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
+    filterElm.focus();
+
+    jest.runAllTimers(); // fast-forward timer
+
+    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
+    const autocompleteListElms = document.body.querySelectorAll<HTMLDivElement>('.slick-autocomplete div');
+    expect(autocompleteListElms.length).toBe(2);
+    expect(autocompleteListElms[0].textContent).toBe('Female');
+    expect(autocompleteListElms[1].textContent).toBe('Undefined');
+    expect(filterFilledElms.length).toBe(1);
+  });
+
+  it('should create the filter with a default search term when using "collectionAsync" as a Promise with content to simulate http-client and triggerOnEveryKeyStroke is enabled', async () => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const mockCollection = ['male', 'female'];
+    mockColumn.filter.collectionAsync = Promise.resolve({ content: mockCollection });
+    mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
+
+    filterArguments.searchTerms = ['female'];
+    await filter.init(filterArguments);
+    const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
+    filterElm.focus();
+    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 97, bubbles: true, cancelable: true }));
+
+    jest.runAllTimers(); // fast-forward time
+
+    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
+    const autocompleteListElms = document.body.querySelectorAll<HTMLDivElement>('.slick-autocomplete div');
+    expect(autocompleteListElms.length).toBe(1);
+    expect(filterFilledElms.length).toBe(1);
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['female'], shouldTriggerQuery: true });
+  });
+
+  it('should create the filter with a default search term when using "collectionAsync" is a Fetch Promise and triggerOnEveryKeyStroke is enabled', async () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
 
@@ -298,22 +359,22 @@ describe('AutoCompleteFilter', () => {
     http.returnKey = 'date';
     http.returnValue = '6/24/1984';
     http.responseHeaders = { accept: 'json' };
-    mockColumn.filter!.collectionAsync = http.fetch('/api', { method: 'GET' });
+    mockColumn.filter.collectionAsync = http.fetch('http://locahost/api', { method: 'GET' });
+    mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
 
     filterArguments.searchTerms = ['female'];
     await filter.init(filterArguments);
-
     const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
-    const autocompleteUlElms = document.body.querySelectorAll<HTMLUListElement>('ul.ui-autocomplete');
-    filter.setValues('male');
-
     filterElm.focus();
     filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 97, bubbles: true, cancelable: true }));
-    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
 
-    expect(autocompleteUlElms.length).toBe(1);
+    jest.runAllTimers(); // fast-forward time
+
+    const autocompleteListElms = document.body.querySelectorAll<HTMLDivElement>('.slick-autocomplete div');
+    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
+    expect(autocompleteListElms.length).toBe(1);
     expect(filterFilledElms.length).toBe(1);
-    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['male'], shouldTriggerQuery: true });
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['female'], shouldTriggerQuery: true });
   });
 
   it('should create the filter and filter the string collection when "collectionFilterBy" is set', () => {
@@ -461,66 +522,37 @@ describe('AutoCompleteFilter', () => {
     expect(filterCollection[2]).toEqual({ value: 'other', description: 'other' });
   });
 
-  describe('onSelect method', () => {
-    it('should expect "setValue" and "autoCommitEdit" to have been called with a string when item provided is a string', () => {
-      const spyCallback = jest.spyOn(filterArguments, 'callback');
-      mockColumn.filter!.collection = ['male', 'female'];
-      mockColumn.filter!.filterOptions = { source: [] } as AutocompleteOption;
+  describe('handleSelect method', () => {
+    it('should expect the "handleSelect" method to be called when the callback method is triggered when user provide his own filterOptions', () => {
+      const spy = jest.spyOn(filter, 'handleSelect');
 
+      mockColumn.filter.collection = [];
+      mockColumn.filter.filterOptions = { minLength: 3 } as AutocompleterOption;
       filter.init(filterArguments);
-      const spySetValue = jest.spyOn(filter, 'setValues');
-      const output = filter.onSelect(null as any, { item: 'female' });
+      filter.autocompleterOptions.onSelect({ item: 'fem' });
 
-      expect(output).toBe(false);
-      expect(spySetValue).toHaveBeenCalledWith('female');
-      expect(spyCallback).toHaveBeenCalledWith(null as any, { columnDef: mockColumn, operator: 'EQ', searchTerms: ['female'], shouldTriggerQuery: true });
+      expect(spy).toHaveBeenCalledWith({ item: 'fem' });
     });
 
-    it('should expect "setValue" and "autoCommitEdit" to have been called with the string label when item provided is an object', () => {
-      const spyCallback = jest.spyOn(filterArguments, 'callback');
-      mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    it('should expect the "handleSelect" method to be called when the callback method is triggered', () => {
+      const spy = jest.spyOn(filter, 'handleSelect');
 
+      mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
       filter.init(filterArguments);
-      const spySetValue = jest.spyOn(filter, 'setValues');
-      const output = filter.onSelect(null as any, { item: { value: 'f', label: 'Female' } });
+      filter.autocompleterOptions.onSelect({ item: 'fem' });
 
-      expect(output).toBe(false);
-      expect(spySetValue).toHaveBeenCalledWith('Female');
-      expect(spyCallback).toHaveBeenCalledWith(null as any, { columnDef: mockColumn, operator: 'EQ', searchTerms: ['f'], shouldTriggerQuery: true });
+      expect(spy).toHaveBeenCalledWith({ item: 'fem' });
     });
 
-    it('should expect the "onSelect" method to be called when the callback method is triggered when user provide his own filterOptions', () => {
-      const spy = jest.spyOn(filter, 'onSelect');
-      const event = new CustomEvent('change');
+    it('should initialize the filter with filterOptions and expect the "handleSelect" method to be called when the callback method is triggered', () => {
+      const spy = jest.spyOn(filter, 'handleSelect');
 
-      mockColumn.filter!.filterOptions = { source: [], minLength: 3 } as AutocompleteOption;
+      mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.filter.filterOptions = { minLength: 3 } as AutocompleterOption;
       filter.init(filterArguments);
-      filter.autoCompleteOptions!.select!(event, { item: 'fem' });
+      filter.autocompleterOptions.onSelect({ item: 'fem' });
 
-      expect(spy).toHaveBeenCalledWith(event, { item: 'fem' });
-    });
-
-    it('should expect the "onSelect" method to be called when the callback method is triggered', () => {
-      const spy = jest.spyOn(filter, 'onSelect');
-      const event = new CustomEvent('change');
-
-      mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-      filter.init(filterArguments);
-      filter.autoCompleteOptions!.select!(event, { item: 'fem' });
-
-      expect(spy).toHaveBeenCalledWith(event, { item: 'fem' });
-    });
-
-    it('should initialize the filter with filterOptions and expect the "onSelect" method to be called when the callback method is triggered', () => {
-      const spy = jest.spyOn(filter, 'onSelect');
-      const event = new CustomEvent('change');
-
-      mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-      mockColumn.filter!.filterOptions = { minLength: 3 } as AutocompleteOption;
-      filter.init(filterArguments);
-      filter.autoCompleteOptions!.select!(event, { item: 'fem' });
-
-      expect(spy).toHaveBeenCalledWith(event, { item: 'fem' });
+      expect(spy).toHaveBeenCalledWith({ item: 'fem' });
     });
 
     it('should trigger a re-render of the DOM element when collection is replaced by new collection', async () => {
@@ -535,10 +567,10 @@ describe('AutoCompleteFilter', () => {
       };
 
       await filter.init(filterArguments);
-      mockColumn.filter!.collection = newCollection;
-      mockColumn.filter!.collection!.push({ value: 'val3', label: 'label3' });
+      mockColumn.filter.collection = newCollection;
+      mockColumn.filter.collection.push({ value: 'val3', label: 'label3' });
 
-      jest.runAllTimers(); // fast-forward timer]
+      jest.runAllTimers(); // fast-forward timer
 
       expect(renderSpy).toHaveBeenCalledTimes(3);
       expect(renderSpy).toHaveBeenCalledWith(newCollection);
@@ -555,106 +587,45 @@ describe('AutoCompleteFilter', () => {
       };
 
       await filter.init(filterArguments);
-      mockColumn.filter!.collection!.push({ value: 'other', label: 'other' });
+      mockColumn.filter.collection!.push({ value: 'other', label: 'other' });
 
       jest.runAllTimers(); // fast-forward timer
 
       expect(renderSpy).toHaveBeenCalledTimes(2);
-      expect(renderSpy).toHaveBeenCalledWith(mockColumn.filter!.collection);
-    });
-  });
-
-  describe('openSearchListOnFocus flag', () => {
-    it('should open the search list by calling the AutoComplete "search" event with an empty string when there are no search term provided', () => {
-      mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-      mockColumn.filter!.filterOptions = { openSearchListOnFocus: true } as AutocompleteOption;
-
-      const event = new (window.window as any).KeyboardEvent('click', { keyCode: KeyCode.LEFT, bubbles: true, cancelable: true });
-
-      filter.init(filterArguments);
-      const autoCompleteSpy = jest.spyOn(filter.filterDomElement, 'autocomplete');
-      const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
-      filterElm.focus();
-      filterElm.dispatchEvent(event);
-
-      expect(filter.filterDomElement).toBeTruthy();
-      expect(autoCompleteSpy).toHaveBeenCalledWith('search', '');
-    });
-
-    it('should open the search list by calling the AutoComplete "search" event with the same search term string that was provided', () => {
-      mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-      mockColumn.filter!.filterOptions = { openSearchListOnFocus: true } as AutocompleteOption;
-
-      const event = new (window.window as any).KeyboardEvent('click', { keyCode: KeyCode.LEFT, bubbles: true, cancelable: true });
-
-      filter.init(filterArguments);
-      filter.setValues('female');
-      const autoCompleteSpy = jest.spyOn(filter.filterDomElement, 'autocomplete');
-      const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
-      filterElm.focus();
-      filterElm.dispatchEvent(event);
-
-      expect(filter.filterDomElement).toBeTruthy();
-      expect(autoCompleteSpy).toHaveBeenCalledWith('search', 'female');
+      expect(renderSpy).toHaveBeenCalledWith(mockColumn.filter.collection);
     });
   });
 
   describe('renderItem callback method', () => {
-    it('should be able to override any jQuery UI callback method', () => {
-      const mockCallback = (ul: HTMLElement, item: any) => {
-        return $('<li></li>')
-          .data('item.autocomplete', item)
-          .append(`<div>Hello World`)
-          .appendTo(ul);
-      };
-      mockColumn.filter!.filterOptions = {
-        source: [],
-        classes: { 'ui-autocomplete': 'autocomplete-custom-four-corners' },
-      } as AutocompleteOption;
-      mockColumn.filter!.callbacks = { _renderItem: mockCallback };
-
-      filter.init(filterArguments);
-      const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
-      filterElm.focus();
-
-      expect(filter.filterDomElement).toBeTruthy();
-      expect(filter.instance).toBeTruthy();
-      expect(filter.instance._renderItem).toEqual(mockCallback);
-    });
-
-    it('should provide "renderItem" in the "filterOptions" and expect the jQueryUI "_renderItem" to be overriden', () => {
+    it('should provide "renderItem" in the "filterOptions" and expect the autocomplete "render" to be overriden', () => {
       const mockTemplateString = `<div>Hello World</div>`;
       const mockTemplateCallback = () => mockTemplateString;
-      mockColumn.filter!.filterOptions = {
-        source: [],
+      mockColumn.filter.collection = ['male', 'female'];
+      mockColumn.filter.filterOptions = {
         renderItem: {
           layout: 'fourCorners',
           templateCallback: mockTemplateCallback
         },
-      } as AutocompleteOption;
+      } as AutocompleterOption;
 
       filter.init(filterArguments);
-      const autoCompleteSpy = jest.spyOn(filter.filterDomElement, 'autocomplete');
       const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
       filterElm.focus();
-      filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 109, bubbles: true, cancelable: true }));
+      filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 97, bubbles: true, cancelable: true }));
 
+      jest.runAllTimers(); // fast-forward timer
+
+      const autocompleteListElms = document.body.querySelectorAll<HTMLDivElement>('.autocomplete-custom-four-corners');
       expect(filter.filterDomElement).toBeTruthy();
       expect(filter.instance).toBeTruthy();
-      expect(filter.autoCompleteOptions).toEqual(expect.objectContaining({ classes: { 'ui-autocomplete': 'autocomplete-custom-four-corners' } }));
-      expect(autoCompleteSpy).toHaveBeenCalledWith('instance');
-      expect(filter.instance._renderItem).toEqual(expect.any(Function));
-
-      const ulElm = document.createElement('ul');
-      filter.instance._renderItem(ulElm, { name: 'John' });
-
-      const liElm = ulElm.querySelector('li') as HTMLLIElement;
-      expect(liElm.innerHTML).toBe(mockTemplateString);
+      expect(filter.autocompleterOptions.render).toEqual(expect.any(Function));
+      expect(autocompleteListElms.length).toBe(1);
+      expect(autocompleteListElms[0].innerHTML).toContain(mockTemplateString);
     });
 
     it('should throw an error when "collectionAsync" Promise does not return a valid array', (done) => {
       const promise = Promise.resolve({ hello: 'world' });
-      mockColumn.filter!.collectionAsync = promise;
+      mockColumn.filter.collectionAsync = promise;
       filter.init(filterArguments).catch((e) => {
         expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`);
         done();
@@ -662,12 +633,11 @@ describe('AutoCompleteFilter', () => {
     });
   });
 
-  describe('AutoCompleteFilter using RxJS Observables', () => {
+  describe('AutocompleterFilter using RxJS Observables', () => {
     let divContainer: HTMLDivElement;
-    let filter: AutoCompleteFilter;
+    let filter: AutocompleterFilter;
     let filterArguments: FilterArguments;
-    let spyGetHeaderRow;
-    let mockColumn: Column;
+    let mockColumn: Column & { filter: ColumnFilter; };
     let collectionService: CollectionService;
     let rxjs: RxJsResourceStub;
     let translaterService: TranslateServiceStub;
@@ -686,7 +656,7 @@ describe('AutoCompleteFilter', () => {
       mockColumn = {
         id: 'gender', field: 'gender', filterable: true,
         filter: {
-          model: Filters.autoComplete,
+          model: Filters.autocompleter,
         }
       };
       filterArguments = {
@@ -696,7 +666,7 @@ describe('AutoCompleteFilter', () => {
         filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
       };
 
-      filter = new AutoCompleteFilter(translaterService, collectionService, rxjs);
+      filter = new AutocompleterFilter(translaterService, collectionService, rxjs);
     });
 
     afterEach(() => {
@@ -704,47 +674,53 @@ describe('AutoCompleteFilter', () => {
       jest.clearAllMocks();
     });
 
-    it('should create the filter with a default search term when using "collectionAsync" as an Observable', async () => {
+    it('should create the filter with a default search term when using "collectionAsync" as an Observable and triggerOnEveryKeyStroke is enabled', async () => {
       const spyCallback = jest.spyOn(filterArguments, 'callback');
       mockColumn.filter.collectionAsync = of(['male', 'female']);
+      mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
 
       filterArguments.searchTerms = ['female'];
       await filter.init(filterArguments);
 
-      const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-gender');
-      const autocompleteUlElms = document.body.querySelectorAll<HTMLUListElement>('ul.ui-autocomplete');
-      filter.setValues('male');
+      const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
+      // filter.setValues('male');
 
       filterElm.focus();
       filterElm.dispatchEvent(new (window.window as any).Event('input', { keyCode: 97, bubbles: true, cancelable: true }));
-      const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
 
-      expect(autocompleteUlElms.length).toBe(1);
+      jest.runAllTimers(); // fast-forward time
+
+      const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
+      const autocompleteListElms = document.body.querySelectorAll<HTMLDivElement>('.slick-autocomplete div');
+      expect(autocompleteListElms.length).toBe(1);
       expect(filterFilledElms.length).toBe(1);
-      expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['male'], shouldTriggerQuery: true });
+      expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['female'], shouldTriggerQuery: true });
     });
 
-    it('should create the multi-select filter with a "collectionAsync" as an Observable and be able to call next on it', async () => {
+    it('should create the autocomplete filter with a "collectionAsync" as an Observable and be able to call next on it and triggerOnEveryKeyStroke is enabled', async () => {
       const mockCollection = ['male', 'female'];
       mockColumn.filter.collectionAsync = of(mockCollection);
 
       filterArguments.searchTerms = ['female'];
       await filter.init(filterArguments);
 
-      const filterElm = divContainer.querySelector<HTMLInputElement>('input.filter-gender');
-      filter.setValues('male');
+      const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
+      // filter.setValues('male');
 
       filterElm.focus();
       filterElm.dispatchEvent(new (window.window as any).Event('input', { keyCode: 97, bubbles: true, cancelable: true }));
+
 
       // after await (or timeout delay) we'll get the Subject Observable
       mockCollection.push('other');
       (mockColumn.filter.collectionAsync as Subject<any[]>).next(mockCollection);
 
-      const autocompleteUlElms = document.body.querySelectorAll<HTMLUListElement>('ul.ui-autocomplete');
+      jest.runAllTimers(); // fast-forward time
+
+      const autocompleteListElms = document.body.querySelectorAll<HTMLDivElement>('.slick-autocomplete div');
       const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
 
-      expect(autocompleteUlElms.length).toBe(1);
+      expect(autocompleteListElms.length).toBe(1);
       expect(filterFilledElms.length).toBe(1);
     });
 
@@ -761,8 +737,9 @@ describe('AutoCompleteFilter', () => {
       };
 
       await filter.init(filterArguments);
+      jest.runAllTimers(); // fast-forward time
 
-      const filterCollection = filter.collection;
+      const filterCollection = filter.collection as any[];
 
       expect(filterCollection.length).toBe(3);
       expect(filterCollection[0]).toEqual({ value: 'other', description: 'other' });

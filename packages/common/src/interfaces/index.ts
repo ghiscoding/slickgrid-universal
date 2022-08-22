@@ -1,5 +1,5 @@
 export * from './aggregator.interface';
-export * from './autocompleteOption.interface';
+export * from './autocompleterOption.interface';
 export * from './autoResizeOption.interface';
 export * from './autoTooltipOption.interface';
 export * from './backendService.interface';

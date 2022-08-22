@@ -11,7 +11,7 @@ import 'slickgrid/slick.grid';
 import 'slickgrid/slick.dataview';
 import {
   autoAddEditorFormatterToColumnsWithEditor,
-  AutoCompleteEditor,
+  AutocompleterEditor,
   BackendServiceApi,
   BackendServiceOption,
   Column,
@@ -1442,7 +1442,7 @@ export class SlickVanillaGridBundle {
       }
 
       // get current Editor, remove it from the DOm then re-enable it and re-render it with the new collection.
-      const currentEditor = this.slickGrid.getCellEditor() as AutoCompleteEditor | SelectEditor;
+      const currentEditor = this.slickGrid.getCellEditor() as AutocompleterEditor | SelectEditor;
       if (currentEditor?.disable && currentEditor?.renderDomElement) {
         currentEditor.destroy();
         currentEditor.disable(false);

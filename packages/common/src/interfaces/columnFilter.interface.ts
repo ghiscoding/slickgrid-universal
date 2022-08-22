@@ -18,15 +18,6 @@ export interface ColumnFilter {
   /** Do we want to bypass the Backend Query? Commonly used with an OData Backend Service, if we want to filter without calling the regular OData query. */
   bypassBackendQuery?: boolean;
 
-  /**
-   * Some Filter could support callbacks from their jQuery instance (for now only AutoComplete supports this), for example:
-   * filter: { model:{ Filters.autoComplete }, callbacks: { _renderItem: (ul, item) => { ... } }}
-   *
-   * will be interpreted as $(#element).autocomplete("instance")._renderItem = (ul, item) => { ... }
-   * from jQuery UI doc: https://jqueryui.com/autocomplete/#custom-data
-   */
-  callbacks?: any;
-
   /** Column ID */
   columnId?: string;
 

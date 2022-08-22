@@ -1,4 +1,4 @@
-import { AutoCompleteFilter } from './autoCompleteFilter';
+import { AutocompleterFilter } from './autocompleterFilter';
 import { CompoundDateFilter } from './compoundDateFilter';
 import { CompoundInputFilter } from './compoundInputFilter';
 import { CompoundInputNumberFilter } from './compoundInputNumberFilter';
@@ -16,8 +16,8 @@ import { SliderFilter } from './sliderFilter';
 import { SliderRangeFilter } from './sliderRangeFilter';
 
 export const Filters = {
-  /** AutoComplete Filter (using jQuery UI autocomplete feature) */
-  autoComplete: AutoCompleteFilter,
+  /** AutoComplete Filter (using https://github.com/kraaden/autocomplete) */
+  autocompleter: AutocompleterFilter,
 
   /** Compound Date Filter (compound of Operator + Date picker) */
   compoundDate: CompoundDateFilter,

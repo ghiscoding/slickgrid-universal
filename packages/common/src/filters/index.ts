@@ -1,4 +1,4 @@
-export * from './autoCompleteFilter';
+export * from './autocompleterFilter';
 export * from './compoundDateFilter';
 export * from './compoundInputFilter';
 export * from './compoundInputNumberFilter';
