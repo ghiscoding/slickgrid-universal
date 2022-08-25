@@ -74,7 +74,7 @@
     "@slickgrid-universal/event-pub-sub": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
     "dequal": "^2.0.3",
-    "dompurify": "^2.3.10",
+    "dompurify": "^2.4.0",
     "flatpickr": "^4.6.13",
     "jquery": "^3.6.0",
     "jquery-ui": "^1.13.2",
@@ -84,7 +84,7 @@
     "un-flatten-tree": "^2.0.12"
   },
   "devDependencies": {
-    "@types/dompurify": "^2.3.3",
+    "@types/dompurify": "^2.3.4",
     "@types/jquery": "^3.5.14",
     "@types/moment": "^2.13.0",
     "autoprefixer": "^10.4.8",
@@ -95,7 +95,7 @@
     "postcss": "^8.4.16",
     "postcss-cli": "^10.0.0",
     "rimraf": "^3.0.2",
-    "sass": "^1.54.4"
+    "sass": "^1.54.5"
   },
   "engines": {
     "node": ">=14.17.0",
