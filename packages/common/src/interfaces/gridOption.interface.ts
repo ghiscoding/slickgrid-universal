@@ -311,9 +311,6 @@ export interface GridOption {
   /** Do we want to enable the Excel Export? (if Yes, it will show up in the Grid Menu) */
   enableExcelExport?: boolean;
 
-  /** @deprecated Please use "enableTextExport", Do we want to enable the Export to File? (if Yes, it will show up in the Grid Menu) */
-  enableExport?: boolean;
-
   /** Do we want to enable Filters? */
   enableFiltering?: boolean;
 
@@ -387,9 +384,6 @@ export interface GridOption {
 
   /** Some default options to set for the Excel export service */
   excelExportOptions?: ExcelExportOption;
-
-  /** @deprecated Please use "textExportOptions" Some default options to set for the export service */
-  exportOptions?: TextExportOption;
 
   /**
    * Default to 0, how long to wait between each characters that the user types before processing the filtering process (only applies for local/in-memory grid).

@@ -426,7 +426,7 @@ export class SlickDraggableGrouping {
               groupRemoveIconElm.classList.add(...this._addonOptions.deleteIconCssClass.split(' '));
             }
             if (!this._addonOptions.deleteIconCssClass) {
-              groupRemoveIconElm.classList.add('slick-groupby-remove-image');
+              groupRemoveIconElm.classList.add('slick-groupby-remove-icon');
             }
 
             entryElm.appendChild(groupRemoveIconElm);

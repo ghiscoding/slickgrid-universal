@@ -297,7 +297,7 @@ describe('Draggable Grouping Plugin', () => {
       plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
 
       let groupByRemoveElm = preHeaderDiv.querySelector('.slick-groupby-remove') as HTMLDivElement;
-      const groupByRemoveImageElm = document.querySelector('.slick-groupby-remove-image') as HTMLDivElement;
+      const groupByRemoveImageElm = document.querySelector('.slick-groupby-remove-icon') as HTMLDivElement;
       let placeholderElm = preHeaderDiv.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
 
       expect(fn.sortableLeftInstance).toEqual(plugin.sortableLeftInstance);

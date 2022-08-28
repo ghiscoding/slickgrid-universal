@@ -580,7 +580,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     }
 
     // show grid menu: Export to file
-    if ((this.gridOptions?.enableExport || this.gridOptions?.enableTextExport) && this._gridMenuOptions && !this._gridMenuOptions.hideExportCsvCommand) {
+    if (this.gridOptions?.enableTextExport && this._gridMenuOptions && !this._gridMenuOptions.hideExportCsvCommand) {
       const commandName = 'export-csv';
       if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         gridMenuCommandItems.push(
@@ -612,7 +612,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     }
 
     // show grid menu: export to text file as tab delimited
-    if ((this.gridOptions?.enableExport || this.gridOptions?.enableTextExport) && this._gridMenuOptions && !this._gridMenuOptions.hideExportTextDelimitedCommand) {
+    if (this.gridOptions?.enableTextExport && this._gridMenuOptions && !this._gridMenuOptions.hideExportTextDelimitedCommand) {
       const commandName = 'export-text-delimited';
       if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         gridMenuCommandItems.push(

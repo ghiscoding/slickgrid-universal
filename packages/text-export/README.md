@@ -39,7 +39,7 @@ export class MyExample {
   initializeGrid {
     this.gridOptions = {
       enableTextExport: true,
-      exportOptions: {
+      textExportOptions: {
         sanitizeDataExport: true
       },
       registerExternalResources: [new TextExportService()],
@@ -62,7 +62,7 @@ export class MyExample {
   initializeGrid {
     this.gridOptions = {
       enableTextExport: true,
-      exportOptions: {
+      textExportOptions: {
         sanitizeDataExport: true
       },
       registerExternalResources: [this.exportService],
