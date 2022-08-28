@@ -1,4 +1,5 @@
 import 'jsdom-global/register';
+import Sortable from 'sortablejs';
 import 'whatwg-fetch';
 import * as jQuery from 'jquery';
 
@@ -7,8 +8,8 @@ import * as jQuery from 'jquery';
 // (global as any).Storage = window.localStorage;
 (global as any).navigator = { userAgent: 'node.js' };
 (global as any).Slick = (window as any).Slick = {};
+(global as any).Sortable = (window as any).Sortable = Sortable;
 
-require('jquery-ui/dist/jquery-ui.js');
 require('slickgrid/lib/jquery.event.drag-2.3.0');
 require('slickgrid/slick.core');
 require('slickgrid/slick.dataview');

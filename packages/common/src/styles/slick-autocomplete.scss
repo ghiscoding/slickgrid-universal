@@ -1,7 +1,7 @@
 @import './variables';
 
 /**
- * Kradeen Autocomplete https://github.com/kraaden/autocomplete/blob/master/autocomplete.ts
+ * Kraaden Autocomplete https://github.com/kraaden/autocomplete/blob/master/autocomplete.ts
  */
 .slick-autocomplete {
   background-color: var(--slick-autocomplete-bg-color, $slick-autocomplete-bg-color);
@@ -50,7 +50,7 @@
     display: inline-block;
     font-family: var(--slick-icon-font-family, $slick-icon-font-family);
     color: var(--slick-autocomplete-loading-icon-color, $slick-autocomplete-loading-icon-color);
-    content: var(--slick-autocomplete-loading-icon, $slick-autocomplete-loading-icon) !important; /* important is required to override default jquery-ui styling */
+    content: var(--slick-autocomplete-loading-icon, $slick-autocomplete-loading-icon);
     width: var(--slick-autocomplete-loading-icon-width, $slick-autocomplete-loading-icon-width);
     margin: var(--slick-autocomplete-loading-icon-margin, $slick-autocomplete-loading-icon-margin);
     line-height: var(--slick-autocomplete-loading-icon-line-height, $slick-autocomplete-loading-icon-line-height);

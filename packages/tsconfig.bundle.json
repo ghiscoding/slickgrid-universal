@@ -19,6 +19,7 @@
     "strictNullChecks": true,
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "noEmitHelpers": false,
     "stripInternal": true,

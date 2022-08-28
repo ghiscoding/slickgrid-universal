@@ -267,7 +267,11 @@ export interface GridOption {
   /** Defaults to true, when enabled will give the possibility to do a right+click on any header title which will open the list of column. User can show/hide a column by using the checkbox from that picker list. */
   enableColumnPicker?: boolean;
 
-  /** Defaults to true, which permits the user to move an entire column from a position to another. */
+  /**
+   * Defaults to true, this option can be a boolean or a Column Reorder function.
+   * When provided as a boolean, it will permits the user to move an entire column from a position to another.
+   * We could also provide a Column Reorder function, there's mostly only 1 use for this which is the SlickDraggableGrouping plugin.
+   */
   enableColumnReorder?: boolean | ColumnReorderFunction;
 
   /**

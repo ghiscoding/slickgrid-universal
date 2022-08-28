@@ -39,6 +39,7 @@
     "new-version": "To create a new version with lerna, run the following scripts (1) 'bundle', (2) 'new-version' and (3) 'new-publish' to send it over to NPM."
   },
   "devDependencies": {
+    "@4tw/cypress-drag-drop": "^2.2.1",
     "@jest/types": "^28.1.3",
     "@lerna-lite/cli": "^1.11.0",
     "@lerna-lite/run": "^1.11.0",

@@ -137,7 +137,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
   }
 
-  /** Kradeen AutoComplete instance */
+  /** Kraaden AutoComplete instance */
   get instance(): any {
     return this._instance;
   }
@@ -428,7 +428,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       this._autocompleterOptions.render = this._autocompleterOptions.render?.bind(this) ?? this.renderCollectionItem.bind(this);
     } else if (!this._autocompleterOptions.render) {
       // when no render callback is defined, we still need to define our own renderer for regular item
-      // because we accept string array but the Kradeen autocomplete doesn't by default and we can change that
+      // because we accept string array but the Kraaden autocomplete doesn't by default and we can change that
       this._autocompleterOptions.render = this.renderRegularItem.bind(this);
     }
 
@@ -438,7 +438,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       // add loading class by overriding user's fetch method
       addAutocompleteLoadingByOverridingFetch(this._filterElm, this._autocompleterOptions);
 
-      // create the Kradeen AutoComplete
+      // create the Kraaden AutoComplete
       this._instance = autocomplete(this._autocompleterOptions as AutocompleteSettings<any>);
     } else {
       this._instance = autocomplete({

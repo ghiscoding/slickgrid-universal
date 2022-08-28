@@ -302,6 +302,7 @@ export class Example3 {
       rowHeight: 33,
       headerRowHeight: 35,
       enableDraggableGrouping: true,
+      // frozenColumn: 2,
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by the column',
         // groupIconCssClass: 'fa fa-outdent',

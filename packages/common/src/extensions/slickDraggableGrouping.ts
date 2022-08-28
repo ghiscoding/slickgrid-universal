@@ -1,5 +1,8 @@
 import { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { isEmptyObject } from '@slickgrid-universal/utils';
+import SortableInstance, { Options as SortableOptions, SortableEvent } from 'sortablejs';
+import * as Sortable_ from 'sortablejs';
+const Sortable = ((Sortable_ as any)?.['default'] ?? Sortable_); // patch for rollup
 
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import {
@@ -10,7 +13,6 @@ import {
   GridOption,
   Grouping,
   GroupingGetterFunction,
-  HtmlElementPosition,
   SlickDataView,
   SlickEvent,
   SlickEventHandler,
@@ -24,28 +26,10 @@ import { createDomElement, emptyElement } from '../services/domUtilities';
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
 
-export interface JQueryUiDraggableOption {
-  draggable: any;
-  helper: any;
-  originalPosition: { left: number; top: number; };
-  placeholder?: string;
-  position?: HtmlElementPosition;
-  sender?: any;
-  offset?: HtmlElementPosition;
-}
-
-export interface JQueryUiSortableOptions {
-  distance?: number;
-  cursor?: string;
-  tolerance?: string;
-  helper?: string;
-  placeholder?: string;
-  forcePlaceholderSize?: boolean;
-  appendTo?: string;
-  start?: (e: Event, ui: JQueryUiDraggableOption) => void;
-  beforeStop?: (e: Event, ui: JQueryUiDraggableOption) => void;
-  stop?: (e: any) => void;
-}
+// use global variable because "setupColumnReorder()" method is used as static
+// and doesn't have access to anything inside the class and we need to dipose/destroy cleanly of all Sortable instances
+// let sortableLeftInstance: SortableInstance;
+// let sortableRightInstance: SortableInstance;
 
 /**
  *
@@ -72,15 +56,17 @@ export interface JQueryUiSortableOptions {
 export class SlickDraggableGrouping {
   protected _addonOptions!: DraggableGroupingOption;
   protected _bindEventService: BindingEventService;
-  protected _droppableInstance: any;
-  protected _dropboxElm!: HTMLDivElement;
-  protected _dropboxPlaceholderElm!: HTMLDivElement;
+  protected _droppableInstance?: SortableInstance;
+  protected _dropzoneElm!: HTMLDivElement;
+  protected _dropzonePlaceholderElm!: HTMLDivElement;
   protected _eventHandler!: SlickEventHandler;
   protected _grid?: SlickGrid;
   protected _gridColumns: Column[] = [];
   protected _gridUid = '';
   protected _groupToggler?: HTMLDivElement;
-  protected _sortableInstance: any;
+  protected _reorderedColumns: Column[] = [];
+  protected _sortableLeftInstance?: SortableInstance;
+  protected _sortableRightInstance?: SortableInstance;
   protected _subscriptions: EventSubscription[] = [];
   protected _defaults = {
     dropPlaceHolderText: 'Drop a column header here to group by the column',
@@ -113,15 +99,19 @@ export class SlickDraggableGrouping {
   }
 
   get dropboxElement() {
-    return this._dropboxElm;
+    return this._dropzoneElm;
   }
 
   get droppableInstance() {
     return this._droppableInstance;
   }
 
-  get sortableInstance() {
-    return this._sortableInstance;
+  get sortableLeftInstance() {
+    return this._sortableLeftInstance;
+  }
+
+  get sortableRightInstance() {
+    return this._sortableRightInstance;
   }
 
   get eventHandler(): SlickEventHandler {
@@ -151,7 +141,8 @@ export class SlickDraggableGrouping {
     if (grid) {
       this._gridUid = grid.getUID();
       this._gridColumns = grid.getColumns();
-      this._dropboxElm = grid.getPreHeaderPanel();
+      this._dropzoneElm = grid.getPreHeaderPanel();
+      this._dropzoneElm.classList.add('slick-dropzone');
 
       // add optional group "Toggle All" with its button & text when provided
       if (!this._addonOptions.hideToggleAllButton) {
@@ -179,7 +170,7 @@ export class SlickDraggableGrouping {
             })
           );
         }
-        this._dropboxElm.appendChild(this._groupToggler);
+        this._dropzoneElm.appendChild(this._groupToggler);
 
         // when calling Expand/Collapse All Groups from Context Menu, we also need to inform this plugin as well of the action
         this._subscriptions.push(
@@ -188,12 +179,12 @@ export class SlickDraggableGrouping {
         );
       }
 
-      this._dropboxPlaceholderElm = createDomElement('div', { className: 'slick-draggable-dropbox-toggle-placeholder' });
+      this._dropzonePlaceholderElm = createDomElement('div', { className: 'slick-draggable-dropzone-placeholder' });
       if (this.gridOptions.enableTranslate && this._addonOptions?.dropPlaceHolderTextKey) {
         this._addonOptions.dropPlaceHolderText = this.extensionUtility.translateWhenEnabledAndServiceExist(this._addonOptions.dropPlaceHolderTextKey, 'TEXT_TOGGLE_ALL_GROUPS');
       }
-      this._dropboxPlaceholderElm.textContent = this._addonOptions?.dropPlaceHolderText ?? this._defaults.dropPlaceHolderText ?? '';
-      this._dropboxElm.appendChild(this._dropboxPlaceholderElm);
+      this._dropzonePlaceholderElm.textContent = this._addonOptions?.dropPlaceHolderText ?? this._defaults.dropPlaceHolderText ?? '';
+      this._dropzoneElm.appendChild(this._dropzonePlaceholderElm);
 
       this.setupColumnDropbox();
 
@@ -227,9 +218,16 @@ export class SlickDraggableGrouping {
 
   /** Dispose the plugin. */
   dispose() {
+    if (this._sortableLeftInstance?.el) {
+      this._sortableLeftInstance?.destroy();
+    }
+    if (this._sortableRightInstance?.el) {
+      this._sortableRightInstance?.destroy();
+    }
     this.onGroupChanged.unsubscribe();
     this._eventHandler.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);
+    this._bindEventService.unbindAll();
     emptyElement(document.querySelector('.slick-preheader-panel'));
     this._grid = undefined as any;
   }
@@ -237,7 +235,7 @@ export class SlickDraggableGrouping {
   clearDroppedGroups() {
     this.columnsGroupBy = [];
     this.updateGroupBy('clear-all');
-    const allDroppedGroupingElms = this._dropboxElm.querySelectorAll('.slick-dropped-grouping');
+    const allDroppedGroupingElms = this._dropzoneElm.querySelectorAll('.slick-dropped-grouping');
     for (const groupElm of Array.from(allDroppedGroupingElms)) {
       const groupRemoveBtnElm = document.querySelector('.slick-groupby-remove');
       groupRemoveBtnElm?.remove();
@@ -245,10 +243,14 @@ export class SlickDraggableGrouping {
     }
 
     // show placeholder text & hide the "Toggle All" when that later feature is enabled
-    this._dropboxPlaceholderElm.style.display = 'inline-block';
+    this._dropzonePlaceholderElm.style.display = 'inline-block';
     if (this._groupToggler) {
       this._groupToggler.style.display = 'none';
     }
+  }
+
+  setAddonOptions(options: Partial<DraggableGroupingOption>) {
+    this._addonOptions = { ...this._addonOptions, ...options };
   }
 
   setColumns(cols: Column[]) {
@@ -256,81 +258,119 @@ export class SlickDraggableGrouping {
   }
 
   setDroppedGroups(groupingInfo: Array<string | GroupingGetterFunction> | string) {
+    this._dropzonePlaceholderElm.style.display = 'none';
     const groupingInfos = Array.isArray(groupingInfo) ? groupingInfo : [groupingInfo];
-    this._dropboxPlaceholderElm.style.display = 'none';
     for (const groupInfo of groupingInfos) {
-      const column = $(this.grid.getHeaderColumn(groupInfo as string));
-      this.handleGroupByDrop(this._dropboxElm, column);
+      const columnElm = this.grid.getHeaderColumn(groupInfo as string);
+      this.handleGroupByDrop(this._dropzoneElm, columnElm);
     }
   }
 
-  setupColumnReorder(grid: SlickGrid, $headers: any, _headerColumnWidthDiff: any, setColumns: (columns: Column[]) => void, setupColumnResize: () => void, columns: Column[], getColumnIndex: (column: Column) => number, uid: string, trigger: (slickEvent: SlickEvent, data?: any) => void) {
-    $headers.filter(':ui-sortable').sortable('destroy');
-    const headerDraggableGroupByElm = grid.getPreHeaderPanel();
+  /**
+   * Setup the column reordering
+   * NOTE: this function is a standalone function and is called externally and does not have access to `this` instance
+   * @param grid - slick grid object
+   * @param headers - slick grid column header elements
+   * @param _headerColumnWidthDiff - header column width difference
+   * @param setColumns - callback to reassign columns
+   * @param setupColumnResize - callback to setup the column resize
+   * @param columns - columns array
+   * @param getColumnIndex - callback to find index of a column
+   * @param uid - grid UID
+   * @param trigger - callback to execute when triggering a column grouping
+   */
+  setupColumnReorder(grid: SlickGrid, headers: any, _headerColumnWidthDiff: any, setColumns: (columns: Column[]) => void, setupColumnResize: () => void, columns: Column[], getColumnIndex: (columnId: string) => number, uid: string, trigger: (slickEvent: SlickEvent, data?: any) => void) {
+    let reorderedColumns = grid.getColumns();
+    const dropzoneElm = grid.getPreHeaderPanel();
+    const draggablePlaceholderElm = dropzoneElm.querySelector<HTMLDivElement>('.slick-draggable-dropzone-placeholder');
+    const groupTogglerElm = document.querySelector<HTMLDivElement>('.slick-group-toggle-all');
 
-    return $headers.sortable({
-      distance: 3,
-      cursor: 'default',
-      tolerance: 'intersection',
-      helper: 'clone',
-      placeholder: 'slick-sortable-placeholder ui-state-default slick-header-column',
-      forcePlaceholderSize: true,
-      appendTo: 'body',
-      start: (_e: Event, ui: JQueryUiDraggableOption) => {
-        $(ui.helper).addClass('slick-header-column-active');
-        const placeholderElm = headerDraggableGroupByElm.querySelector<HTMLDivElement>('.slick-draggable-dropbox-toggle-placeholder');
-        if (placeholderElm) {
-          placeholderElm.style.display = 'inline-block';
+    const sortableOptions = {
+      animation: 50,
+      chosenClass: 'slick-header-column-active',
+      ghostClass: 'slick-sortable-placeholder',
+      draggable: '.slick-header-column',
+      dataIdAttr: 'data-id',
+      group: {
+        name: 'shared',
+        pull: 'clone',
+        put: false,
+      },
+      revertClone: true,
+      // filter: function (_e, target) {
+      //   // block column from being able to be dragged if it's already a grouped column
+      //   // NOTE: need to disable for now since it also blocks the column reordering
+      //   return columnsGroupBy.some(c => c.id === target.getAttribute('data-id'));
+      // },
+      onStart: () => {
+        if (draggablePlaceholderElm) {
+          draggablePlaceholderElm.style.display = 'none';
         }
-        const droppedGroupingElm = headerDraggableGroupByElm.querySelector<HTMLDivElement>('.slick-dropped-grouping');
+        const droppedGroupingElm = dropzoneElm.querySelector<HTMLDivElement>('.slick-dropped-grouping');
         if (droppedGroupingElm) {
           droppedGroupingElm.style.display = 'none';
         }
+        if (groupTogglerElm) {
+          groupTogglerElm.style.display = 'none';
+        }
       },
-      beforeStop: (_e: Event, ui: JQueryUiDraggableOption) => {
-        $(ui.helper).removeClass('slick-header-column-active');
-        const hasDroppedColumn = headerDraggableGroupByElm.querySelectorAll('.slick-dropped-grouping').length;
-        if (hasDroppedColumn > 0) {
-          const placeholderElm = headerDraggableGroupByElm.querySelector<HTMLDivElement>('.slick-draggable-dropbox-toggle-placeholder');
-          if (placeholderElm) {
-            placeholderElm.style.display = 'none';
+      onEnd: (e: Event & { item: any; clone: HTMLElement; }) => {
+        dropzoneElm?.classList.remove('slick-dropzone-hover');
+        draggablePlaceholderElm?.parentElement?.classList.remove('slick-dropzone-placeholder-hover');
+
+        if (dropzoneElm.querySelectorAll('.slick-dropped-grouping').length) {
+          if (draggablePlaceholderElm) {
+            draggablePlaceholderElm.style.display = 'none';
           }
-          const droppedGroupingElm = headerDraggableGroupByElm.querySelector<HTMLDivElement>('.slick-dropped-grouping');
+          const droppedGroupingElm = dropzoneElm.querySelector<HTMLDivElement>('.slick-dropped-grouping');
           if (droppedGroupingElm) {
             droppedGroupingElm.style.display = 'inline-block';
           }
+          if (groupTogglerElm) {
+            groupTogglerElm.style.display = 'inline-block';
+          }
+        } else if (draggablePlaceholderElm) {
+          draggablePlaceholderElm.style.display = 'inline-block';
         }
-      },
-      stop: (e: DOMMouseEvent<HTMLDivElement>) => {
+
         if (!grid.getEditorLock().commitCurrentEdit()) {
-          ($(e.target) as any).sortable('cancel');
           return;
         }
-        const reorderedIds = $headers.sortable('toArray');
-        // If frozen columns are used, headers has more than one entry and we need the ids from all of them.
+
+        const reorderedIds = this.sortableLeftInstance?.toArray() ?? [];
+
+        // when frozen columns are used, headers has more than one entry and we need the ids from all of them.
         // though there is only really a left and right header, this will work even if that should change.
-        if ($headers.length > 1) {
-          for (let headerIdx = 1, ln = $headers.length; headerIdx < ln; headerIdx += 1) {
-            const $header = $($headers[headerIdx]);
-            const ids = ($header as any).sortable('toArray');
-            // Note: the loop below could be simplified with:
-            // reorderedIds.push.apply(reorderedIds,ids);
-            // However, the loop is more in keeping with way-backward compatibility
-            for (const id of ids) {
-              reorderedIds.push(id);
-            }
+        if (headers.length > 1) {
+          const ids = this._sortableRightInstance?.toArray() ?? [];
+
+          // Note: the loop below could be simplified with:
+          // reorderedIds.push.apply(reorderedIds,ids);
+          // However, the loop is more in keeping with way-backward compatibility
+          for (const id of ids) {
+            reorderedIds.push(id);
           }
         }
-        const reorderedColumns = [];
+
+        const finalReorderedColumns: Column[] = [];
         for (const reorderedId of reorderedIds) {
-          reorderedColumns.push(columns[getColumnIndex(reorderedId.replace(uid, ''))]);
+          finalReorderedColumns.push(reorderedColumns[getColumnIndex(reorderedId)]);
         }
-        setColumns(reorderedColumns);
-        trigger(grid.onColumnsReordered, { grid: this.grid });
+        setColumns(finalReorderedColumns);
+        trigger(grid.onColumnsReordered, { grid });
         e.stopPropagation();
         setupColumnResize();
+        reorderedColumns = finalReorderedColumns;
       }
-    } as JQueryUiSortableOptions);
+    } as SortableOptions;
+
+    this._sortableLeftInstance = Sortable.create(document.querySelector(`.${grid.getUID()} .slick-header-columns.slick-header-columns-left`) as HTMLDivElement, sortableOptions) as SortableInstance;
+    this._sortableRightInstance = Sortable.create(document.querySelector(`.${grid.getUID()} .slick-header-columns.slick-header-columns-right`) as HTMLDivElement, sortableOptions) as SortableInstance;
+
+    return {
+      sortableLeftInstance: this._sortableLeftInstance,
+      sortableRightInstance: this._sortableRightInstance
+    };
   }
 
   //
@@ -342,7 +382,7 @@ export class SlickDraggableGrouping {
     this.updateGroupBy('add-group');
   }
 
-  protected addGroupByRemoveClickHandler(id: string | number, _container: HTMLDivElement, headerColumn: JQuery<HTMLDivElement>, entry: any) {
+  protected addGroupByRemoveClickHandler(id: string | number, headerColumnElm: HTMLDivElement, entry: any) {
     const groupRemoveElm = document.querySelector(`${this.gridUidSelector}_${id}_entry > .slick-groupby-remove`);
     if (groupRemoveElm) {
       this._bindEventService.bind(groupRemoveElm, 'click', () => {
@@ -350,29 +390,34 @@ export class SlickDraggableGrouping {
         for (const boundedEvent of boundedElms) {
           this._bindEventService.unbind(boundedEvent.element, 'click', boundedEvent.listener);
         }
-        this.removeGroupBy(id, headerColumn, entry);
+        this.removeGroupBy(id, headerColumnElm, entry);
       });
     }
   }
 
-  protected handleGroupByDrop(container: HTMLDivElement, headerColumn: JQuery<HTMLDivElement>) {
-    const columnid = headerColumn.attr('id')!.replace(this._gridUid, '');
+  protected handleGroupByDrop(containerElm: HTMLDivElement, headerColumnElm: HTMLDivElement) {
+    const columnId = headerColumnElm.getAttribute('data-id')?.replace(this._gridUid, '');
     let columnAllowed = true;
-    this.columnsGroupBy.forEach(col => {
-      if (col.id === columnid) {
+    for (const colGroupBy of this.columnsGroupBy) {
+      if (colGroupBy.id === columnId) {
         columnAllowed = false;
       }
-    });
+    }
 
     if (columnAllowed) {
-      this._gridColumns.forEach(col => {
-        if (col.id === columnid) {
+      for (const col of this._gridColumns) {
+        if (col.id === columnId) {
           if (col.grouping !== null && !isEmptyObject(col.grouping)) {
-            const columnName = headerColumn.children('.slick-column-name').first();
-            const entryElm = createDomElement('div', { id: `${this._gridUid}_${col.id}_entry`, className: 'slick-dropped-grouping', dataset: { id: `${col.id}` } });
+            const columnNameElm = headerColumnElm.querySelector('.slick-column-name');
+            const entryElm = createDomElement('div', {
+              id: `${this._gridUid}_${col.id}_entry`,
+              className: 'slick-dropped-grouping',
+              dataset: { id: `${col.id}` }
+            });
             const groupTextElm = createDomElement('div', {
-              textContent: columnName.length ? columnName.text() : headerColumn.text(),
+              className: 'slick-dropped-grouping-title',
               style: { display: 'inline-flex' },
+              textContent: columnNameElm ? columnNameElm.textContent : headerColumnElm.textContent,
             });
             entryElm.appendChild(groupTextElm);
 
@@ -386,7 +431,7 @@ export class SlickDraggableGrouping {
 
             entryElm.appendChild(groupRemoveIconElm);
             entryElm.appendChild(document.createElement('div'));
-            container.appendChild(entryElm);
+            containerElm.appendChild(entryElm);
 
             // if we're grouping by only 1 group, at the root, we'll analyze Toggle All and add collapsed/expanded class
             if (this._groupToggler && this.columnsGroupBy.length === 0) {
@@ -401,10 +446,10 @@ export class SlickDraggableGrouping {
             }
 
             this.addColumnGroupBy(col);
-            this.addGroupByRemoveClickHandler(col.id, container, headerColumn, entryElm);
+            this.addGroupByRemoveClickHandler(col.id, headerColumnElm, entryElm);
           }
         }
-      });
+      }
 
       // show the "Toggle All" when feature is enabled
       if (this._groupToggler && this.columnsGroupBy.length > 0) {
@@ -423,14 +468,14 @@ export class SlickDraggableGrouping {
     return arrayToModify;
   }
 
-  protected removeGroupBy(id: string | number, _hdrColumn: JQuery<HTMLDivElement>, entry: any) {
+  protected removeGroupBy(id: string | number, _hdrColumnElm: HTMLDivElement, entry: any) {
     entry.remove();
     const groupByColumns: Column[] = [];
     this._gridColumns.forEach(col => groupByColumns[col.id as number] = col);
     this.removeFromArray(this.columnsGroupBy, groupByColumns[id as any]);
     if (this.columnsGroupBy.length === 0) {
       // show placeholder text & hide the "Toggle All" when that later feature is enabled
-      this._dropboxPlaceholderElm.style.display = 'inline-block';
+      this._dropzonePlaceholderElm.style.display = 'inline-block';
       if (this._groupToggler) {
         this._groupToggler.style.display = 'none';
       }
@@ -438,35 +483,34 @@ export class SlickDraggableGrouping {
     this.updateGroupBy('remove-group');
   }
 
-  protected setupColumnDropbox() {
-    this._droppableInstance = ($(this._dropboxElm) as any).droppable({
-      activeClass: 'ui-state-default',
-      hoverClass: 'ui-state-hover',
-      accept: ':not(.ui-sortable-helper)',
-      deactivate: () => {
-        this._dropboxElm.classList.remove('slick-header-column-denied');
-      },
-      drop: (e: DOMMouseEvent<HTMLDivElement>, ui: JQueryUiDraggableOption) => {
-        this.handleGroupByDrop(e.target, ui.draggable);
-      },
-      over: (_e: Event, ui: JQueryUiDraggableOption) => {
-        const id = (ui.draggable).attr('id').replace(this._gridUid, '');
-        for (const col of this._gridColumns) {
-          if (col.id === id && !col.grouping) {
-            this._dropboxElm.classList.add('slick-header-column-denied');
-          }
-        }
-      }
-    });
+  protected addDragOverDropzoneListeners() {
+    if (this._dropzoneElm) {
+      this._bindEventService.bind(this._dropzoneElm, 'dragover', (e: Event) => e.preventDefault);
+      this._bindEventService.bind(this._dropzoneElm, 'dragenter', () => this._dropzoneElm.classList.add('slick-dropzone-hover'));
+      this._bindEventService.bind(this._dropzoneElm, 'dragleave', () => this._dropzoneElm.classList.remove('slick-dropzone-hover'));
+    }
+  }
 
-    this._sortableInstance = ($(this._dropboxElm) as any).sortable({
-      items: 'div.slick-dropped-grouping',
-      cursor: 'default',
-      tolerance: 'pointer',
-      helper: 'clone',
-      update: (event: DOMMouseEvent<HTMLDivElement>) => {
-        const sortArray: string[] = ($(event.target) as any).sortable('toArray', { attribute: 'data-id' });
-        const newGroupingOrder = [];
+  protected setupColumnDropbox() {
+    const dropzoneElm = this._dropzoneElm;
+
+    this._droppableInstance = Sortable.create(dropzoneElm, {
+      group: 'shared',
+      // chosenClass: 'slick-header-column-active',
+      ghostClass: 'slick-droppable-sortitem-hover',
+      draggable: '.slick-dropped-grouping',
+      dragoverBubble: true,
+      onAdd: (evt: SortableEvent) => {
+        const el = evt.item;
+        if (el.getAttribute('id')?.replace(this._gridUid, '')) {
+          this.handleGroupByDrop(dropzoneElm, (Sortable.utils as any).clone(evt.item));
+        }
+        evt.clone.style.opacity = '.5';
+        el.parentNode?.removeChild(el);
+      },
+      onUpdate: () => {
+        const sortArray = this._droppableInstance?.toArray() ?? [];
+        const newGroupingOrder: Column[] = [];
         for (const sortGroupId of sortArray) {
           for (const groupByColumn of this.columnsGroupBy) {
             if (groupByColumn.id === sortGroupId) {
@@ -477,8 +521,11 @@ export class SlickDraggableGrouping {
         }
         this.columnsGroupBy = newGroupingOrder;
         this.updateGroupBy('sort-group');
-      }
+      },
     });
+
+    // Sortable doesn't have onOver, we need to implement it ourselves
+    this.addDragOverDropzoneListeners();
 
     if (this._groupToggler) {
       this._bindEventService.bind(this._groupToggler, 'click', ((event: DOMMouseEvent<HTMLDivElement>) => {
@@ -509,14 +556,14 @@ export class SlickDraggableGrouping {
   protected updateGroupBy(originator: string) {
     if (this.columnsGroupBy.length === 0) {
       this.dataView.setGrouping([]);
-      this._dropboxPlaceholderElm.style.display = 'inline-block';
+      this._dropzonePlaceholderElm.style.display = 'inline-block';
       this.onGroupChanged.notify({ caller: originator, groupColumns: [] });
       return;
     }
     const groupingArray: Grouping<any>[] = [];
     this.columnsGroupBy.forEach(element => groupingArray.push(element.grouping!));
     this.dataView.setGrouping(groupingArray);
-    this._dropboxPlaceholderElm.style.display = 'none';
+    this._dropzonePlaceholderElm.style.display = 'none';
     this.onGroupChanged.notify({ caller: originator, groupColumns: groupingArray });
   }
 }

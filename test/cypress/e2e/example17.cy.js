@@ -35,7 +35,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', { retries: 1 }, () => {
       .dragStart();
     cy.get('.grid17-1 .slick-range-decorator').should('be.exist').and('have.css', 'border-color').and('not.equal', 'none');
     cy.get('@cell1')
-      .drag(0, 5)
+      .dragCell(0, 5)
       .dragEnd('.grid17-1');
     cy.get('.grid17-1 .slick-range-decorator').should('not.be.exist');
     cy.get('.grid17-1 .slick-cell.selected').should('have.length', 6);
@@ -45,7 +45,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', { retries: 1 }, () => {
       .dragStart();
     cy.get('.grid17-2 .slick-range-decorator').should('be.exist').and('have.css', 'border-style').and('equal', 'none');
     cy.get('@cell2')
-      .drag(5, 1)
+      .dragCell(5, 1)
       .dragEnd('.grid17-2');
     cy.get('.grid17-2 .slick-range-decorator').should('not.be.exist');
     cy.get('.grid17-2 .slick-row:nth-child(-n+6)')
@@ -175,7 +175,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', { retries: 1 }, () => {
       cy.get('[data-test="delay-cursor-input"]').type('{selectall}50'); // 5ms/px -> 50ms/px
       cy.get('[data-test="set-options-btn"]').click();
 
-      // Ideally if we scrolling to same row, and set cursor to 17px, the new interval will be set to MIN interval (Math.max(30, 600 - 50 * 17) = 30ms),
+      // Ideally if we are scrolling to same row, and set cursor to 17px, the new interval will be set to MIN interval (Math.max(30, 600 - 50 * 17) = 30ms),
       // and the used time should be around 17 times faster than default.
       // Considering the threshold, 5 times faster than default is expected
       testInterval(SCROLLBAR_DIMENSION).then(newInterval => {
