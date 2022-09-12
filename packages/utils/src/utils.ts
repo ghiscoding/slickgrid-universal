@@ -6,7 +6,7 @@
  */
 export function addToArrayWhenNotExists<T = any>(inputArray: T[], inputItem: T, itemIdPropName = 'id') {
   let arrayRowIndex = -1;
-  if (typeof inputItem === 'object' && itemIdPropName in inputItem) {
+  if (inputItem && typeof inputItem === 'object' && itemIdPropName in inputItem) {
     arrayRowIndex = inputArray.findIndex((item) => (item as any)[itemIdPropName] === (inputItem as any)[itemIdPropName]);
   } else {
     arrayRowIndex = inputArray.findIndex((item) => item === inputItem);
@@ -224,7 +224,7 @@ export function setDeepValue<T = unknown>(obj: T, path: string | string[], value
       setDeepValue(
         (obj)[e] = (hasData(obj[e]) && (Array.isArray(obj[e]) || Object.prototype.toString.call((obj)[e]) === '[object Object]'))
           ? (obj)[e]
-          : {} as T[keyof T],
+          : {} as any,
         path,
         value
       );
