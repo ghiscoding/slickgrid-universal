@@ -62,7 +62,7 @@
     "@slickgrid-universal/text-export": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
     "@slickgrid-universal/vanilla-bundle": "workspace:~",
-    "jquery": "^3.6.0",
+    "jquery": "^3.6.1",
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
@@ -70,7 +70,7 @@
     "@types/webpack": "^5.28.0",
     "archiver": "^5.3.1",
     "cross-env": "^7.0.3",
-    "esbuild-loader": "^2.19.0",
+    "esbuild-loader": "^2.20.0",
     "html-loader": "^4.1.0",
     "npm-run-all2": "^6.0.2",
     "rimraf": "^3.0.2",
