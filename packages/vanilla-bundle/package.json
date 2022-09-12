@@ -54,7 +54,7 @@
     "@slickgrid-universal/utils": "workspace:~",
     "dequal": "^2.0.3",
     "flatpickr": "^4.6.13",
-    "jquery": "^3.6.0",
+    "jquery": "^3.6.1",
     "jquery-ui": "^1.13.2",
     "slickgrid": "^2.4.45",
     "whatwg-fetch": "^3.6.2"
