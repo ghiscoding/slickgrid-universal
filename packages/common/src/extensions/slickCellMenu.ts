@@ -4,7 +4,7 @@ import {
   CellMenu,
   CellMenuOption,
   Column,
-  DOMMouseEvent,
+  DOMMouseOrTouchEvent,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
   MenuOptionItem,
@@ -100,7 +100,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   // event handlers
   // ------------------
 
-  protected handleCellClick(event: DOMMouseEvent<HTMLDivElement>, args: MenuCommandItemCallbackArgs) {
+  protected handleCellClick(event: DOMMouseOrTouchEvent<HTMLDivElement>, args: MenuCommandItemCallbackArgs) {
     const cell = this.grid.getCellFromEvent(event);
     if (cell) {
       const dataContext = this.grid.getDataItem(cell.row);

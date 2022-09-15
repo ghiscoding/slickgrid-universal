@@ -431,22 +431,6 @@ export class Example3 {
     }
   }
 
-  groupByFieldName(_fieldName, _index) {
-    this.clearGrouping();
-    if (this.draggableGroupingPlugin?.setDroppedGroups) {
-      this.showPreHeader();
-
-      // get the field names from Group By select(s) dropdown, but filter out any empty fields
-      const groupedFields = this.selectedGroupingFields.filter((g) => g !== '');
-      if (groupedFields.length === 0) {
-        this.clearGrouping();
-      } else {
-        this.draggableGroupingPlugin.setDroppedGroups(groupedFields);
-      }
-      this.sgb?.slickGrid.invalidate(); // invalidate all rows and re-render
-    }
-  }
-
   showPreHeader() {
     this.sgb?.slickGrid.setPreHeaderPanelVisibility(true);
   }

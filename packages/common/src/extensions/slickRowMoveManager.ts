@@ -180,11 +180,13 @@ export class SlickRowMoveManager {
       this.onMoveRows.notify(eventData);
     }
   }
+
   protected handleDrag(e: SlickEventData, dd: DragRowMove): boolean | void {
     if (this._dragging) {
       e.stopImmediatePropagation();
 
-      const top = e.pageY - (getHtmlElementOffset(this._canvas)?.top ?? 0);
+      const targetEvent: MouseEvent | Touch = (e as TouchEvent)?.touches?.[0] ?? e;
+      const top = targetEvent.pageY - (getHtmlElementOffset(this._canvas)?.top ?? 0);
       dd.selectionProxy.style.top = `${top - 5}px`;
       dd.selectionProxy.style.display = 'block';
 

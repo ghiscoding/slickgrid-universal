@@ -3,7 +3,7 @@ export interface DOMEvent<T extends EventTarget> extends Event {
   target: T;
   relatedTarget: T;
 }
-export interface DOMMouseEvent<T extends EventTarget> extends MouseEvent {
+export interface DOMMouseOrTouchEvent<T extends EventTarget> extends MouseEvent, TouchEvent {
   currentTarget: T;
   target: T;
   relatedTarget: T;

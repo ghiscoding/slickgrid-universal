@@ -7,7 +7,7 @@ const Sortable = ((Sortable_ as any)?.['default'] ?? Sortable_); // patch for ro
 import { ExtensionUtility } from '../extensions/extensionUtility';
 import {
   Column,
-  DOMMouseEvent,
+  DOMMouseOrTouchEvent,
   DraggableGrouping,
   DraggableGroupingOption,
   GridOption,
@@ -528,7 +528,7 @@ export class SlickDraggableGrouping {
     this.addDragOverDropzoneListeners();
 
     if (this._groupToggler) {
-      this._bindEventService.bind(this._groupToggler, 'click', ((event: DOMMouseEvent<HTMLDivElement>) => {
+      this._bindEventService.bind(this._groupToggler, 'click', ((event: DOMMouseOrTouchEvent<HTMLDivElement>) => {
         const target = event.target.classList.contains('slick-group-toggle-all-icon') ? event.target : event.currentTarget.querySelector('.slick-group-toggle-all-icon');
         this.toggleGroupToggler(target, target?.classList.contains('expanded'));
       }) as EventListener);

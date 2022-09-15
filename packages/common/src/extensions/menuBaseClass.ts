@@ -5,7 +5,7 @@ import {
   CellMenu,
   Column,
   ContextMenu,
-  DOMMouseEvent,
+  DOMMouseOrTouchEvent,
   GridMenu,
   GridOption,
   HeaderButton,
@@ -115,7 +115,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     commandOrOptionMenuElm: HTMLElement,
     commandOrOptionItems: Array<ExtractMenuType<ExtendableItemTypes, MenuType>>,
     args: unknown,
-    itemClickCallback: (event: DOMMouseEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, columnDef?: Column) => void
+    itemClickCallback: (event: DOMMouseOrTouchEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, columnDef?: Column) => void
   ) {
     if (args && commandOrOptionItems && menuOptions) {
       for (const item of commandOrOptionItems) {
@@ -148,7 +148,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     commandOrOptionMenuElm: HTMLElement | null,
     item: ExtractMenuType<ExtendableItemTypes, MenuType>,
     args: any,
-    itemClickCallback: (event: DOMMouseEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, columnDef?: Column) => void
+    itemClickCallback: (event: DOMMouseOrTouchEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, columnDef?: Column) => void
   ): HTMLLIElement | null {
     let commandLiElm: HTMLLIElement | null = null;
 
@@ -227,12 +227,12 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       }
 
       // execute command on menu item clicked
-      this._bindEventService.bind(commandLiElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) =>
+      this._bindEventService.bind(commandLiElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLDivElement>) =>
         itemClickCallback.call(this, e, itemType, item, args?.column)) as EventListener);
 
       // Header Button can have an optional handler
       if ((item as HeaderButtonItem).handler && !(item as HeaderButtonItem).disabled) {
-        this._bindEventService.bind(commandLiElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) =>
+        this._bindEventService.bind(commandLiElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLDivElement>) =>
           (item as HeaderButtonItem).handler!.call(this, e)) as EventListener);
       }
     }

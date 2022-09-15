@@ -306,7 +306,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     this.init();
   }
 
-  repositionMenu(e: MouseEvent, addonOptions: GridMenu, showMenu = true) {
+  repositionMenu(e: MouseEvent | TouchEvent, addonOptions: GridMenu, showMenu = true) {
+    const targetEvent: MouseEvent | Touch = (e as TouchEvent)?.touches?.[0] ?? e;
     if (this._menuElm) {
       let buttonElm = (e.target as HTMLButtonElement).nodeName === 'BUTTON' ? (e.target as HTMLButtonElement) : (e.target as HTMLElement).querySelector('button') as HTMLButtonElement; // get button element
       if (!buttonElm) {
@@ -349,7 +350,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       if (addonOptions?.height !== undefined) {
         this._menuElm.style.height = findWidthOrDefault(addonOptions.height, '');
       } else {
-        this._menuElm.style.maxHeight = findWidthOrDefault(addonOptions.maxHeight, `${window.innerHeight - e.clientY - menuMarginBottom}px`);
+        this._menuElm.style.maxHeight = findWidthOrDefault(addonOptions.maxHeight, `${window.innerHeight - targetEvent.clientY - menuMarginBottom}px`);
       }
 
       this._menuElm.style.display = 'block';

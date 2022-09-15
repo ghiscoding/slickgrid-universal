@@ -3,7 +3,7 @@ import { deepMerge } from '@slickgrid-universal/utils';
 import {
   CellRange,
   CellRangeSelectorOption,
-  DOMMouseEvent,
+  DOMMouseOrTouchEvent,
   DragPosition,
   DragRange,
   GridOption,
@@ -122,6 +122,7 @@ export class SlickCellRangeSelector {
   }
 
   getMouseOffsetViewport(e: SlickEventData, dd: DragPosition): MouseOffsetViewport {
+    const targetEvent: MouseEvent | Touch = (e as TouchEvent)?.touches?.[0] ?? e;
     const viewportLeft = this._activeViewport.scrollLeft;
     const viewportTop = this._activeViewport.scrollTop;
     const viewportRight = viewportLeft + this._viewportWidth;
@@ -147,16 +148,16 @@ export class SlickCellRangeSelector {
     };
 
     // ... horizontal
-    if (e.pageX < viewportOffsetLeft) {
-      result.offset.x = e.pageX - viewportOffsetLeft;
-    } else if (e.pageX > viewportOffsetRight) {
-      result.offset.x = e.pageX - viewportOffsetRight;
+    if (targetEvent.pageX < viewportOffsetLeft) {
+      result.offset.x = targetEvent.pageX - viewportOffsetLeft;
+    } else if (targetEvent.pageX > viewportOffsetRight) {
+      result.offset.x = targetEvent.pageX - viewportOffsetRight;
     }
     // ... vertical
-    if (e.pageY < viewportOffsetTop) {
-      result.offset.y = viewportOffsetTop - e.pageY;
-    } else if (e.pageY > viewportOffsetBottom) {
-      result.offset.y = viewportOffsetBottom - e.pageY;
+    if (targetEvent.pageY < viewportOffsetTop) {
+      result.offset.y = viewportOffsetTop - targetEvent.pageY;
+    } else if (targetEvent.pageY > viewportOffsetBottom) {
+      result.offset.y = viewportOffsetBottom - targetEvent.pageY;
     }
     result.isOutsideViewport = !!result.offset.x || !!result.offset.y;
     return result;
@@ -256,9 +257,10 @@ export class SlickCellRangeSelector {
   }
 
   protected handleDragTo(e: { pageX: number; pageY: number; }, dd: DragPosition) {
+    const targetEvent: MouseEvent | Touch = (e as unknown as TouchEvent)?.touches?.[0] ?? e;
     const end = this._grid.getCellFromPoint(
-      e.pageX - (getHtmlElementOffset(this._activeCanvas)?.left ?? 0) + this._columnOffset,
-      e.pageY - (getHtmlElementOffset(this._activeCanvas)?.top ?? 0) + this._rowOffset
+      targetEvent.pageX - (getHtmlElementOffset(this._activeCanvas)?.left ?? 0) + this._columnOffset,
+      targetEvent.pageY - (getHtmlElementOffset(this._activeCanvas)?.top ?? 0) + this._rowOffset
     );
 
     if (end !== undefined) {
@@ -344,7 +346,7 @@ export class SlickCellRangeSelector {
     e.stopImmediatePropagation();
   }
 
-  protected handleDragStart(e: DOMMouseEvent<HTMLDivElement>, dd: DragPosition) {
+  protected handleDragStart(e: DOMMouseOrTouchEvent<HTMLDivElement>, dd: DragPosition) {
     const cellObj = this._grid.getCellFromEvent(e);
     if (cellObj && this.onBeforeCellRangeSelected.notify(cellObj) !== false && this._grid.canCellBeSelected(cellObj.row, cellObj.cell)) {
       this._dragging = true;
@@ -373,7 +375,7 @@ export class SlickCellRangeSelector {
     return this._decorator.show(new Slick.Range(start.row, start.cell));
   }
 
-  protected handleScroll(_e: DOMMouseEvent<HTMLDivElement>, args: OnScrollEventArgs) {
+  protected handleScroll(_e: DOMMouseOrTouchEvent<HTMLDivElement>, args: OnScrollEventArgs) {
     this._scrollTop = args.scrollTop;
     this._scrollLeft = args.scrollLeft;
   }
