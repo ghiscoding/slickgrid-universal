@@ -1,7 +1,6 @@
 import { dequal } from 'dequal/lite';
 import 'jquery';
 import 'flatpickr/dist/l10n/fr';
-import 'slickgrid/lib/jquery.mousewheel';
 import 'slickgrid/slick.core';
 import 'slickgrid/slick.interactions';
 import 'slickgrid/slick.grid';
