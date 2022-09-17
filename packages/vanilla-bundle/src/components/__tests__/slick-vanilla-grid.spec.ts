@@ -759,7 +759,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         http.returnKey = 'date';
         http.returnValue = '6/24/1984';
         http.responseHeaders = { accept: 'json' };
-        const collectionAsync = http.fetch('http://localhost/invalid-url', { method: 'GET' });
+        const collectionAsync = http.fetch('http://invalid-url', { method: 'GET' });
         const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync } }] as Column[];
         component.columnDefinitions = mockColDefs;
 

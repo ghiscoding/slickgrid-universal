@@ -261,7 +261,7 @@ export class Example4 {
                 }
               });
             },
-          } as Partial<AutocompleterOption>,
+          } as AutocompleterOption,
         },
         // filter: {
         //   model: Filters.autocompleter,
