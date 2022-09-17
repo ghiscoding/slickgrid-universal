@@ -699,6 +699,7 @@ describe('AutocompleterEditor', () => {
         mockColumn.internalColumnEditor = {
           collection: ['male', 'female'],
           editorOptions: {
+            showOnFocus: true,
             renderItem: {
               layout: 'fourCorners',
               templateCallback: mockTemplateCallback

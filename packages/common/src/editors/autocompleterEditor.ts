@@ -2,7 +2,7 @@ import * as autocompleter_ from 'autocompleter';
 const autocomplete = (autocompleter_ && autocompleter_['default'] || autocompleter_) as <T extends AutocompleteItem>(settings: AutocompleteSettings<T>) => AutocompleteResult; // patch for rollup
 
 import { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
-import { isObject, setDeepValue, toKebabCase } from '@slickgrid-universal/utils';
+import { isObject, isPrimmitive, setDeepValue, toKebabCase } from '@slickgrid-universal/utils';
 
 import { FieldType, KeyCode, } from '../enums/index';
 import {
@@ -576,19 +576,22 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       this.finalCollection = finalCollection;
     }
 
-    // user might provide his own custom structure
-    // autocomplete requires a label/value pair, so we must remap them when user provide different ones
-    if (Array.isArray(finalCollection) && (finalCollection.every(x => typeof x !== 'string'))) {
-      finalCollection = finalCollection.map((item) => ({
-        label: item?.[this.labelName],
-        value: item?.[this.valueName],
-        labelPrefix: item?.[this.labelPrefixName] ?? '',
-        labelSuffix: item?.[this.labelSuffixName] ?? ''
-      }));
-    }
+    // the kradeen autocomplete lib only works with label/value pair, make sure that our array is in accordance
+    if (Array.isArray(finalCollection)) {
+      if (this.collection.every(x => isPrimmitive(x))) {
+        // when detecting an array of primitives, we have to remap it to an array of value/pair objects
+        finalCollection = finalCollection.map(c => ({ label: c, value: c }));
+      } else {
+        // user might provide its own custom structures, if so remap them as the new label/value pair
+        finalCollection = finalCollection.map((item) => ({
+          label: item?.[this.labelName],
+          value: item?.[this.valueName],
+          labelPrefix: item?.[this.labelPrefixName] ?? '',
+          labelSuffix: item?.[this.labelSuffixName] ?? ''
+        }));
+      }
 
-    // keep the final source collection used in the AutoComplete as reference
-    if (finalCollection) {
+      // keep the final source collection used in the AutoComplete as reference
       this._elementCollection = finalCollection;
     }
 
@@ -626,7 +629,6 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     } else {
       this._instance = autocomplete({
         ...this._autocompleterOptions,
-        showOnFocus: true,
         fetch: (searchTerm, updateCallback) => {
           if (finalCollection) {
             // you can also use AJAX requests instead of preloaded data

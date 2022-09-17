@@ -229,13 +229,14 @@ export class Example4 {
         // formatter: (_, __, val) => typeof val === 'string' ? val : val.name,
         // editor: {
         //   model: Editors.autocompleter,
+        //   // collectionAsync: fetch(URL_COUNTRY_NAMES_COLLECTION),
         //   placeholder: '🔎︎ search country',
         //   customStructure: { label: 'name', value: 'code' },
-        //   // collection: require('./data/countries.json'),
-        //   collectionAsync: fetch(URL_COUNTRIES_COLLECTION),
-        //   // enableRenderHtml: true,
-        //   // collection: [{ code: true, name: 'True', labelPrefix: `<i class="mdi mdi-pin-outline"></i> ` }, { code: false, name: 'False', labelSuffix: '<i class="mdi mdi-close"></i>' }],
-        //   // editorOptions: { minLength: 1 }
+        //   // collectionAsync: fetch(URL_COUNTRIES_COLLECTION),
+
+        //   enableRenderHtml: true,
+        //   collection: [{ code: true, name: 'True', labelPrefix: `<i class="mdi mdi-pin-outline"></i> ` }, { code: false, name: 'False', labelSuffix: '<i class="mdi mdi-close"></i>' }],
+        //   editorOptions: { minLength: 1 }
         // },
         editor: {
           model: Editors.autocompleter,
@@ -246,6 +247,7 @@ export class Example4 {
           // here we use $.ajax just because I'm not sure how to configure HttpClient with JSONP and CORS
           editorOptions: {
             minLength: 3,
+            emptyMsg: 'No elements found',
             fetch: (searchText, updateCallback) => {
               $.ajax({
                 url: 'http://gd.geobytes.com/AutoCompleteCity',
@@ -254,12 +256,25 @@ export class Example4 {
                   q: searchText
                 },
                 success: (data) => {
-                  updateCallback(data);
+                  const finalData = (data.length === 1 && data[0] === '') ? [] : data; // invalid result should be [] instead of [''
+                  updateCallback(finalData);
                 }
               });
             },
           } as Partial<AutocompleterOption>,
         },
+        // filter: {
+        //   model: Filters.autocompleter,
+        //   // collectionAsync: fetch(URL_COUNTRY_NAMES_COLLECTION),
+        //   placeholder: '🔎︎ search country',
+        //   customStructure: { label: 'name', value: 'code' },
+        //   collectionAsync: fetch(URL_COUNTRIES_COLLECTION),
+        //   filterOptions: { emptyMsg: 'No elements found', }
+
+        //   // enableRenderHtml: true,
+        //   // collection: [{ code: true, name: 'True', labelPrefix: `<i class="mdi mdi-pin-outline"></i> ` }, { code: false, name: 'False', labelSuffix: '<i class="mdi mdi-close"></i>' }],
+        //   // filterOptions: { minLength: 1 }
+        // },
         filter: {
           model: Filters.autocompleter,
           // placeholder: '🔎︎ search city',
@@ -272,6 +287,7 @@ export class Example4 {
           // here we use $.ajax just because I'm not sure how to configure HttpClient with JSONP and CORS
           filterOptions: {
             minLength: 3,
+            emptyMsg: 'No elements found',
             fetch: (searchText, updateCallback) => {
               $.ajax({
                 url: 'http://gd.geobytes.com/AutoCompleteCity',
@@ -280,11 +296,12 @@ export class Example4 {
                   q: searchText
                 },
                 success: (data) => {
-                  updateCallback(data);
+                  const finalData = (data.length === 1 && data[0] === '') ? [] : data; // invalid result should be [] instead of ['']
+                  updateCallback(finalData);
                 }
               });
             },
-          } as Partial<AutocompleterOption>,
+          } as AutocompleterOption,
         }
       },
       {

@@ -2,7 +2,7 @@ import * as autocompleter_ from 'autocompleter';
 const autocomplete = (autocompleter_ && autocompleter_['default'] || autocompleter_) as <T extends AutocompleteItem>(settings: AutocompleteSettings<T>) => AutocompleteResult; // patch for rollup
 
 import { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
-import { toKebabCase, toSentenceCase } from '@slickgrid-universal/utils';
+import { isPrimmitive, toKebabCase, toSentenceCase } from '@slickgrid-universal/utils';
 
 import {
   FieldType,
@@ -395,15 +395,20 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     // create the DOM element & add an ID and filter class
     const searchTermInput = searchTerm as string;
 
-    // user might provide his own custom structure
-    // jQuery UI autocomplete requires a label/value pair, so we must remap them when user provide different ones
-    if (Array.isArray(collection) && (collection.every(x => typeof x !== 'string'))) {
-      collection = collection.map((item) => ({
-        label: item?.[this.labelName],
-        value: item?.[this.valueName],
-        labelPrefix: item?.[this.labelPrefixName] ?? '',
-        labelSuffix: item?.[this.labelSuffixName] ?? ''
-      }));
+    // the kradeen autocomplete lib only works with label/value pair, make sure that our array is in accordance
+    if (Array.isArray(collection)) {
+      if (collection.every(x => isPrimmitive(x))) {
+        // when detecting an array of primitives, we have to remap it to an array of value/pair objects
+        collection = collection.map(c => ({ label: c, value: c }));
+      } else {
+        // user might provide its own custom structures, if so remap them as the new label/value pair
+        collection = collection.map((item) => ({
+          label: item?.[this.labelName],
+          value: item?.[this.valueName],
+          labelPrefix: item?.[this.labelPrefixName] ?? '',
+          labelSuffix: item?.[this.labelSuffixName] ?? ''
+        }));
+      }
     }
 
     // user might pass his own autocomplete options
@@ -443,7 +448,6 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     } else {
       this._instance = autocomplete({
         ...this._autocompleterOptions,
-        showOnFocus: true,
         fetch: (searchText, updateCallback) => {
           if (collection) {
             // you can also use AJAX requests instead of preloaded data
