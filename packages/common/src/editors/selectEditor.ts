@@ -495,8 +495,8 @@ export class SelectEditor implements Editor {
         this.$editorElm.multipleSelect('disable');
 
         // clear select when it's newly disabled and not yet empty
-        const currentValues: any | any[] = this.getValue();
-        const isValueBlank = this.isMultipleSelect ? currentValues === [''] : currentValues === '';
+        const currentValues: string | number | Array<string | number> = this.getValue();
+        const isValueBlank = this.isMultipleSelect ? currentValues === [''] as Array<string | number> : currentValues === '';
         if (prevIsDisabled !== isDisabled && this.isCompositeEditor && !isValueBlank) {
           this.reset('', true, true);
         }
