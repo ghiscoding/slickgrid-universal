@@ -23,6 +23,7 @@ import {
   FilterCallback,
   FilterCallbackArg,
   GridOption,
+  Locale,
   SlickGrid,
 } from '../interfaces/index';
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter';
@@ -35,6 +36,7 @@ import { getDescendantProperty, unsubscribeAll } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 import { renderCollectionOptionsAsync } from './filterUtilities';
 import { RxJsFacade, Subscription } from '../services/rxjsFacade';
+import { Constants } from '../constants';
 
 export class AutocompleterFilter<T extends AutocompleteItem = any> implements Filter {
   protected _autocompleterOptions!: Partial<AutocompleterOption<T>>;
@@ -43,6 +45,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   protected _collection?: any[];
   protected _filterElm!: HTMLInputElement;
   protected _instance: any;
+  protected _locales!: Locale;
   protected _shouldTriggerQuery = true;
 
   /** DOM Element Name, useful for auto-detecting positioning (dropup / dropdown) */
@@ -180,6 +183,9 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     this.valueName = this.customStructure?.value ?? 'value';
     this.labelPrefixName = this.customStructure?.labelPrefix ?? 'labelPrefix';
     this.labelSuffixName = this.customStructure?.labelSuffix ?? 'labelSuffix';
+
+    // get locales provided by user in main file or else use default English locales via the Constants
+    this._locales = this.gridOptions?.locales ?? Constants.locales;
 
     // always render the DOM element
     const newCollection = this.columnFilter.collection;
@@ -416,6 +422,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       input: this._filterElm,
       debounceWaitMs: 200,
       className: `slick-autocomplete ${this.filterOptions?.className ?? ''}`.trim(),
+      emptyMsg: this.gridOptions.enableTranslate && this.translaterService?.translate ? this.translaterService.translate('NO_ELEMENTS_FOUND') : this._locales?.TEXT_NO_ELEMENTS_FOUND ?? 'No elements found',
       onSelect: (item: AutocompleteSearchItem) => {
         this.isItemSelected = true;
         this.handleSelect(item);

@@ -120,7 +120,7 @@ export class SelectFilter implements Filter {
       throw new Error(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the MultipleSelect/SingleSelect Filter to work correctly. Also each option should include a value/label pair (or value/labelKey when using Locale). For example:: { filter: model: Filters.multipleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False'}] }`);
     }
 
-    this.enableTranslateLabel = this.columnFilter && this.columnFilter.enableTranslateLabel || false;
+    this.enableTranslateLabel = this.columnFilter?.enableTranslateLabel ?? false;
     this.labelName = this.customStructure && this.customStructure.label || 'label';
     this.labelPrefixName = this.customStructure && this.customStructure.labelPrefix || 'labelPrefix';
     this.labelSuffixName = this.customStructure && this.customStructure.labelSuffix || 'labelSuffix';
@@ -132,7 +132,7 @@ export class SelectFilter implements Filter {
     }
 
     // get locales provided by user in main file or else use default English locales via the Constants
-    this._locales = this.gridOptions && this.gridOptions.locales || Constants.locales;
+    this._locales = this.gridOptions?.locales ?? Constants.locales;
 
     // create the multiple select element
     this.initMultipleSelectTemplate();
@@ -411,7 +411,7 @@ export class SelectFilter implements Filter {
   }
 
   protected initMultipleSelectTemplate() {
-    const isTranslateEnabled = this.gridOptions && this.gridOptions.enableTranslate;
+    const isTranslateEnabled = this.gridOptions?.enableTranslate ?? false;
 
     // default options used by this Filter, user can overwrite any of these by passing "otions"
     const options: MultipleSelectOption = {

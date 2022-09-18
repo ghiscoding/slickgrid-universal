@@ -247,7 +247,6 @@ export class Example4 {
           // here we use $.ajax just because I'm not sure how to configure HttpClient with JSONP and CORS
           editorOptions: {
             minLength: 3,
-            emptyMsg: 'No elements found',
             fetch: (searchText, updateCallback) => {
               $.ajax({
                 url: 'http://gd.geobytes.com/AutoCompleteCity',
@@ -269,7 +268,6 @@ export class Example4 {
         //   placeholder: '🔎︎ search country',
         //   customStructure: { label: 'name', value: 'code' },
         //   collectionAsync: fetch(URL_COUNTRIES_COLLECTION),
-        //   filterOptions: { emptyMsg: 'No elements found', }
 
         //   // enableRenderHtml: true,
         //   // collection: [{ code: true, name: 'True', labelPrefix: `<i class="mdi mdi-pin-outline"></i> ` }, { code: false, name: 'False', labelSuffix: '<i class="mdi mdi-close"></i>' }],
@@ -287,7 +285,6 @@ export class Example4 {
           // here we use $.ajax just because I'm not sure how to configure HttpClient with JSONP and CORS
           filterOptions: {
             minLength: 3,
-            emptyMsg: 'No elements found',
             fetch: (searchText, updateCallback) => {
               $.ajax({
                 url: 'http://gd.geobytes.com/AutoCompleteCity',

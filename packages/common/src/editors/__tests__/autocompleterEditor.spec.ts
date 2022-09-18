@@ -3,6 +3,7 @@ import { Editors } from '../index';
 import { AutocompleterEditor } from '../autocompleterEditor';
 import { KeyCode, FieldType } from '../../enums/index';
 import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 declare const Slick: SlickNamespace;
 const KEY_CHAR_A = 97;
@@ -43,8 +44,10 @@ describe('AutocompleterEditor', () => {
   let editorArguments: EditorArguments;
   let mockColumn: Column;
   let mockItemData: any;
+  let translateService: TranslateServiceStub;
 
   beforeEach(() => {
+    translateService = new TranslateServiceStub();
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
@@ -100,6 +103,8 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should initialize the editor with element being disabled in the DOM when passing a collectionAsync and an empty collection property', () => {
+      gridOptionMock.translater = translateService;
+      gridOptionMock.enableTranslate = true;
       const mockCollection = ['male', 'female'];
       const promise = new Promise(resolve => resolve(mockCollection));
       (mockColumn.internalColumnEditor as ColumnEditor).collection = null as any;
