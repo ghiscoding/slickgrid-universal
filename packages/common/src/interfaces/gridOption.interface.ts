@@ -345,6 +345,9 @@ export interface GridOption {
   /** Do we want to enable pagination? Currently only works with a Backend Service API */
   enablePagination?: boolean;
 
+  /** Odata case insensitive search */
+  caseInsensitiveOdataSearch?: boolean;
+
   /** Defaults to false, do we want to enable the Row Detail Plugin? */
   enableRowDetailView?: boolean;
 

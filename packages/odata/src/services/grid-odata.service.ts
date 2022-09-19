@@ -428,7 +428,16 @@ export class GridOdataService implements BackendService {
           } else if (operator === OperatorType.rangeExclusive || operator === OperatorType.rangeInclusive) {
             // example:: (Name >= 'Bob' and Name <= 'Jane')
             searchBy = this.filterBySearchTermRange(fieldName, operator, searchTerms);
-          } else if ((operator === '' || operator === OperatorType.contains || operator === OperatorType.notContains) &&
+          } else if (this._gridOptions && (this._gridOptions.caseInsensitiveOdataSearch || !this._gridOptions.hasOwnProperty('caseInsensitiveOdataSearch'))) {
+              if ((operator === '' || operator === OperatorType.contains || operator === OperatorType.notContains) &&
+              (fieldType === FieldType.string || fieldType === FieldType.text || fieldType === FieldType.readonly)) {
+              searchBy = odataVersion >= 4 ? `contains(tolower(${fieldName}), tolower(${searchValue}))` : `substringof(${searchValue}, ${fieldName})`;
+              if (operator === OperatorType.notContains) {
+                searchBy = `not ${searchBy}`;
+              }
+            }
+          }
+          else if ((operator === '' || operator === OperatorType.contains || operator === OperatorType.notContains) &&
             (fieldType === FieldType.string || fieldType === FieldType.text || fieldType === FieldType.readonly)) {
             searchBy = odataVersion >= 4 ? `contains(${fieldName}, ${searchValue})` : `substringof(${searchValue}, ${fieldName})`;
             if (operator === OperatorType.notContains) {
