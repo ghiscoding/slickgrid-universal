@@ -429,9 +429,9 @@ export class GridOdataService implements BackendService {
             // example:: (Name >= 'Bob' and Name <= 'Jane')
             searchBy = this.filterBySearchTermRange(fieldName, operator, searchTerms);
           } else if (this._gridOptions && (this._gridOptions.caseInsensitiveOdataSearch || !this._gridOptions.hasOwnProperty('caseInsensitiveOdataSearch'))) {
-              if ((operator === '' || operator === OperatorType.contains || operator === OperatorType.notContains) &&
-              (fieldType === FieldType.string || fieldType === FieldType.text || fieldType === FieldType.readonly)) {
-              searchBy = odataVersion >= 4 ? `contains(tolower(${fieldName}), tolower(${searchValue}))` : `substringof(${searchValue}, ${fieldName})`;
+            if ((operator === '' || operator === OperatorType.contains || operator === OperatorType.notContains) &&
+            (fieldType === FieldType.string || fieldType === FieldType.text || fieldType === FieldType.readonly)) {
+            searchBy = odataVersion >= 4 ? `contains(tolower(${fieldName}), tolower(${searchValue}))` : `substringof(${searchValue}, ${fieldName})`;
               if (operator === OperatorType.notContains) {
                 searchBy = `not ${searchBy}`;
               }
