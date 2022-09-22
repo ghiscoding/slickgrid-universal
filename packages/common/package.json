@@ -87,15 +87,15 @@
     "@types/dompurify": "^2.3.4",
     "@types/jquery": "^3.5.14",
     "@types/moment": "^2.13.0",
-    "autoprefixer": "^10.4.11",
+    "autoprefixer": "^10.4.12",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
-    "nodemon": "^2.0.19",
+    "nodemon": "^2.0.20",
     "npm-run-all2": "^6.0.2",
     "postcss": "^8.4.16",
     "postcss-cli": "^10.0.0",
     "rimraf": "^3.0.2",
-    "sass": "^1.54.9"
+    "sass": "^1.55.0"
   },
   "engines": {
     "node": ">=14.17.0",
