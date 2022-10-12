@@ -21,7 +21,7 @@ export class App {
   routerConfig: RouterConfig = {
     pushState: false,
     routes: []
-  }
+  };
 
   constructor() {
     this.appRouting = new AppRouting(this.routerConfig);
