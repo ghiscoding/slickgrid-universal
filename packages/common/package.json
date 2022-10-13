@@ -80,7 +80,7 @@
     "jquery-ui": "^1.13.2",
     "moment-mini": "^2.29.4",
     "multiple-select-modified": "^1.3.17",
-    "slickgrid": "^2.4.45",
+    "slickgrid": "^3.0.0",
     "un-flatten-tree": "^2.0.12"
   },
   "devDependencies": {
