@@ -30,8 +30,6 @@
     "webpack:prod": "webpack --env production",
     "zip:dist:dev": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle-DEV --output-folder=\"dist-grid-bundle-zip/\"",
     "zip:dist": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle --output-folder=\"dist-grid-bundle-zip/\"",
-    "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=vanilla-force-bundle",
-    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=vanilla-force-bundle",
     "test": "echo testing slickgrid-universal vanilla-force-bundle code"
   },
   "license": "MIT",
@@ -71,9 +69,10 @@
     "archiver": "^5.3.1",
     "cross-env": "^7.0.3",
     "esbuild-loader": "^2.20.0",
-    "html-loader": "^4.1.0",
+    "html-loader": "^4.2.0",
     "npm-run-all2": "^6.0.2",
     "rimraf": "^3.0.2",
-    "webpack": "^5.74.0"
+    "webpack": "^5.74.0",
+    "yargs": "^17.6.0"
   }
 }

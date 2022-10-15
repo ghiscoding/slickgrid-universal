@@ -4,6 +4,13 @@
   "npmClient": "pnpm",
   "loglevel": "info",
   "command": {
+    "publish": {
+      "removePackageFields": [
+        "browser",
+        "devDependencies",
+        "scripts"
+      ]
+    },
     "version": {
       "conventionalCommits": true,
       "createRelease": "github",
