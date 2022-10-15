@@ -741,7 +741,7 @@ describe('ContextMenu Plugin', () => {
       });
 
       it('should call "copyToClipboard", WITH export formatter, when the command triggered is "copy"', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: false, enableTextExport: false, exportOptions: { exportWithFormatter: true } } as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: false, enableTextExport: false, excelExportOptions: { exportWithFormatter: true } } as GridOption;
         const columnMock = { id: 'firstName', name: 'First Name', field: 'firstName', formatter: Formatters.uppercase } as Column;
         const dataContextMock = { id: 123, firstName: 'John', lastName: 'Doe', age: 50 };
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
@@ -766,7 +766,7 @@ describe('ContextMenu Plugin', () => {
       });
 
       it('should call "copyToClipboard", with a number when the command triggered is "copy" and expect it to be copied without transformation', () => {
-        const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: false, enableTextExport: false, exportOptions: { exportWithFormatter: true } } as GridOption;
+        const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: false, enableTextExport: false, excelExportOptions: { exportWithFormatter: true } } as GridOption;
         const columnMock = { id: 'age', name: 'Age', field: 'age' } as Column;
         const dataContextMock = { id: 123, firstName: 'John', lastName: 'Doe', age: 50 };
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);

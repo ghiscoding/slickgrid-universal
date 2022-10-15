@@ -55,12 +55,13 @@
     "dequal": "^2.0.3",
     "flatpickr": "^4.6.13",
     "jquery": "^3.6.0",
-    "jquery-ui": "^1.13.2",
-    "slickgrid": "^2.4.45",
+    "slickgrid": "^3.0.0",
+    "sortablejs": "^1.15.0",
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
     "@types/jquery": "^3.5.14",
+    "@types/sortablejs": "^1.13.0",
     "cross-env": "^7.0.3",
     "npm-run-all2": "^6.0.2",
     "rimraf": "^3.0.2"

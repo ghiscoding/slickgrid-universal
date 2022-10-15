@@ -258,7 +258,7 @@ describe('AutocompleterFilter', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
     mockColumn.filter.collectionAsync = Promise.resolve(mockCollection);
-    mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
+    mockColumn.filter.filterOptions = { showOnFocus: true, triggerOnEveryKeyStroke: true } as AutocompleterOption;
 
     filterArguments.searchTerms = ['female'];
     await filter.init(filterArguments);
@@ -333,7 +333,7 @@ describe('AutocompleterFilter', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
     mockColumn.filter.collectionAsync = Promise.resolve({ content: mockCollection });
-    mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
+    mockColumn.filter.filterOptions = { showOnFocus: true, triggerOnEveryKeyStroke: true } as AutocompleterOption;
 
     filterArguments.searchTerms = ['female'];
     await filter.init(filterArguments);
@@ -360,7 +360,7 @@ describe('AutocompleterFilter', () => {
     http.returnValue = '6/24/1984';
     http.responseHeaders = { accept: 'json' };
     mockColumn.filter.collectionAsync = http.fetch('http://locahost/api', { method: 'GET' });
-    mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
+    mockColumn.filter.filterOptions = { showOnFocus: true, triggerOnEveryKeyStroke: true } as AutocompleterOption;
 
     filterArguments.searchTerms = ['female'];
     await filter.init(filterArguments);
@@ -602,6 +602,7 @@ describe('AutocompleterFilter', () => {
       const mockTemplateCallback = () => mockTemplateString;
       mockColumn.filter.collection = ['male', 'female'];
       mockColumn.filter.filterOptions = {
+        showOnFocus: true,
         renderItem: {
           layout: 'fourCorners',
           templateCallback: mockTemplateCallback
@@ -626,6 +627,7 @@ describe('AutocompleterFilter', () => {
     it('should throw an error when "collectionAsync" Promise does not return a valid array', (done) => {
       const promise = Promise.resolve({ hello: 'world' });
       mockColumn.filter.collectionAsync = promise;
+      mockColumn.filter.filterOptions = { showOnFocus: true } as AutocompleterOption;
       filter.init(filterArguments).catch((e) => {
         expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`);
         done();
@@ -677,7 +679,7 @@ describe('AutocompleterFilter', () => {
     it('should create the filter with a default search term when using "collectionAsync" as an Observable and triggerOnEveryKeyStroke is enabled', async () => {
       const spyCallback = jest.spyOn(filterArguments, 'callback');
       mockColumn.filter.collectionAsync = of(['male', 'female']);
-      mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
+      mockColumn.filter.filterOptions = { showOnFocus: true, triggerOnEveryKeyStroke: true } as AutocompleterOption;
 
       filterArguments.searchTerms = ['female'];
       await filter.init(filterArguments);
@@ -700,6 +702,7 @@ describe('AutocompleterFilter', () => {
     it('should create the autocomplete filter with a "collectionAsync" as an Observable and be able to call next on it and triggerOnEveryKeyStroke is enabled', async () => {
       const mockCollection = ['male', 'female'];
       mockColumn.filter.collectionAsync = of(mockCollection);
+      mockColumn.filter.filterOptions = { showOnFocus: true } as AutocompleterOption;
 
       filterArguments.searchTerms = ['female'];
       await filter.init(filterArguments);

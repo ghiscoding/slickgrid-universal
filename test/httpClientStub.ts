@@ -39,7 +39,7 @@ export class HttpStub {
       } else {
         const data = JSON.stringify(this.object);
         const response = new Response(data, responseInit);
-        if (input === 'invalid-url') {
+        if (input.includes('invalid-url')) {
           Object.defineProperty(response, 'bodyUsed', { writable: true, configurable: true, value: true });
         }
         return this.status >= 200 && this.status < 300 ? Promise.resolve(response) : Promise.reject(response);

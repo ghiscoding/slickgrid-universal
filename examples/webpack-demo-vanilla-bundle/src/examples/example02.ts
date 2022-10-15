@@ -160,9 +160,6 @@ export class Example2 {
       enableTextExport: true,
       enableFiltering: true,
       enableGrouping: true,
-      exportOptions: {
-        sanitizeDataExport: true
-      },
       columnPicker: {
         onColumnsChanged: (e, args) => console.log(e, args)
       },

@@ -8,6 +8,7 @@
       "es2018"
     ],
     "types": [
+      "@4tw/cypress-drag-drop",
       "cypress",
       "jest",
       "jest-extended",

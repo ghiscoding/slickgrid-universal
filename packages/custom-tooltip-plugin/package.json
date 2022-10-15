@@ -44,10 +44,10 @@
   ],
   "dependencies": {
     "@slickgrid-universal/common": "workspace:~",
-    "dompurify": "^2.3.10"
+    "dompurify": "^2.4.0"
   },
   "devDependencies": {
-    "@types/dompurify": "^2.3.3",
+    "@types/dompurify": "^2.3.4",
     "cross-env": "^7.0.3",
     "npm-run-all2": "^6.0.2",
     "rimraf": "^3.0.2"

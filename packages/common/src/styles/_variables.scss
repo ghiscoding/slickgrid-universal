@@ -92,6 +92,7 @@ $slick-header-border-left:                                  0 none !default;
 $slick-header-column-height:                                calc(17px * #{$slick-header-row-count}) !default;  // header is calculated by rows to show
 $slick-header-column-background-active:                     darken($slick-grid-header-background, 5%) !default;
 $slick-header-column-background-hover:                      darken($slick-grid-header-background, 2%) !default;
+$slick-header-column-sortable-background-hover:             #e0e0e0 !default;
 $slick-header-column-name-margin-right:                     5px !default;
 $slick-header-column-border-top:                            0 none !default;                      // header, column titles, that is without the Filters
 $slick-header-column-border-right:                          0 none !default;
@@ -149,7 +150,7 @@ $slick-icon-group-height:                                   20px !default;
 $slick-icon-group-vertical-align:                           middle !default;
 $slick-icon-group-width:                                    14px !default;
 
-/* Kradeen AutoComplete */
+/* Kraaden AutoComplete */
 $slick-autocomplete-bg-color:	                            #ffffff !default;
 $slick-autocomplete-group-bg-color:	                      #eeeeee !default;
 $slick-autocomplete-border:	                              1px solid rgba(0, 0, 0, 0.15) !default;
@@ -167,7 +168,7 @@ $slick-autocomplete-text-color:	                          #333333 !default;
 $slick-autocomplete-width:     	                          auto !default;
 $slick-autocomplete-z-index:	                              9999 !default;
 
-/** Kradeen AutoComplete with Custom Styling (2 rows) */
+/** Kraaden AutoComplete with Custom Styling (2 rows) */
 $slick-autocomplete-tpl2-font-size:                         12px !default;
 $slick-autocomplete-tpl2-width:                             285px !default;
 $slick-autocomplete-tpl2-container-list-width:              calc(#{$slick-autocomplete-tpl2-width} - 15px) !default;
@@ -187,7 +188,7 @@ $slick-autocomplete-tpl2-top-left-font-style:               normal !default;
 $slick-autocomplete-tpl2-top-left-font-weight:              bold !default;
 $slick-autocomplete-tpl2-top-left-max-width:                $slick-autocomplete-tpl2-bottom-left-max-width !default;
 
-/** Kradeen AutoComplete with Custom Styling (4 corners) */
+/** Kraaden AutoComplete with Custom Styling (4 corners) */
 $slick-autocomplete-tpl4-font-size:                         12px !default;
 $slick-autocomplete-tpl4-width:                             385px !default;
 $slick-autocomplete-tpl4-container-list-width:              calc(#{$slick-autocomplete-tpl4-width} - 15px) !default;
@@ -233,9 +234,12 @@ $slick-sort-indicator-number-top:                           calc(13px * #{$slick
 $slick-sort-indicator-hint-opacity:                         0.5 !default;
 
 /* Grouping Totals Formatter */
+$slick-group-border-bottom:                                 2px solid silver !default;
 $slick-group-totals-formatter-color:                        gray !default;
 $slick-group-totals-formatter-bgcolor:                      #fff !default;
 $slick-group-totals-formatter-font-size:                    14px !default;
+$slick-group-totals-text-background:                        white !default;
+$slick-group-totals-text-color:                             gray !default;
 
 /** Detail View Plugin */
 $slick-detail-view-icon-collapse:                           "\f056" !default;
@@ -604,18 +608,20 @@ $slick-draggable-group-column-border:                       1px solid transparen
 $slick-draggable-group-column-border-radius:                6px !default;
 $slick-draggable-group-column-padding:                      0 5px !default;
 $slick-draggable-group-column-margin-right:                 2px !default;
+$slick-draggable-group-drop-border-hover:                   1px dashed #ff9e9e !default;
 $slick-draggable-group-drop-border:                         1px solid #e0e0e0 !default;
 $slick-draggable-group-drop-border-top:                     $slick-draggable-group-drop-border !default;
 $slick-draggable-group-drop-border-bottom:                  $slick-draggable-group-drop-border !default;
 $slick-draggable-group-drop-border-right:                   $slick-draggable-group-drop-border !default;
 $slick-draggable-group-drop-border-left:                    $slick-draggable-group-drop-border !default;
+$slick-draggable-group-drop-placeholder-hover-opacity:      0.6 !default;
 $slick-draggable-group-drop-bgcolor:                        #ffffff !default;
 $slick-draggable-group-drop-height:                         35px !default;
 $slick-draggable-group-drop-padding:                        5px 10px !default;
 $slick-draggable-group-drop-radius:                         4px !default;
 $slick-draggable-group-drop-width:                          calc(100% - 25px) !default;
 $slick-draggable-group-droppable-active-bgcolor:            #fafafa !default;
-$slick-draggable-group-droppable-hover-bgcolor:             darken($slick-draggable-group-droppable-active-bgcolor, 5%) !default;
+$slick-draggable-group-droppable-hover-bgcolor:             #ffffff !default;
 $slick-draggable-group-placeholder-font-style:              italic !default;
 $slick-draggable-group-placeholder-color:                   #616161 !default;
 $slick-draggable-group-delete-color:                        pink !default;

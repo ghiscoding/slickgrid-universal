@@ -1,14 +1,13 @@
 import { dequal } from 'dequal/lite';
 import 'jquery';
-import 'jquery-ui/ui/widgets/draggable';
-import 'jquery-ui/ui/widgets/droppable';
-import 'jquery-ui/ui/widgets/sortable';
 import 'flatpickr/dist/l10n/fr';
-import 'slickgrid/lib/jquery.event.drag-2.3.0';
-import 'slickgrid/lib/jquery.mousewheel';
 import 'slickgrid/slick.core';
+import 'slickgrid/slick.interactions';
 import 'slickgrid/slick.grid';
 import 'slickgrid/slick.dataview';
+import SortableInstance, * as Sortable_ from 'sortablejs';
+const Sortable = ((Sortable_ as any)?.['default'] ?? Sortable_); // patch for rollup
+
 import {
   autoAddEditorFormatterToColumnsWithEditor,
   AutocompleterEditor,
@@ -67,6 +66,9 @@ import { UniversalContainerService } from '../services/universalContainer.servic
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
+
+// add Sortable to the window object so that SlickGrid lib can use globally
+(window as any).Sortable = Sortable as SortableInstance;
 
 export class SlickVanillaGridBundle {
   protected _currentDatasetLength = 0;

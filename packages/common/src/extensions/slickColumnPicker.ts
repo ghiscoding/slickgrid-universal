@@ -3,7 +3,7 @@ import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import {
   Column,
   ColumnPickerOption,
-  DOMMouseEvent,
+  DOMMouseOrTouchEvent,
   GridOption,
   SlickEventHandler,
   SlickGrid,
@@ -174,7 +174,7 @@ export class SlickColumnPicker {
   // ------------------
 
   /** Mouse down handler when clicking anywhere in the DOM body */
-  protected handleBodyMouseDown(e: DOMMouseEvent<HTMLDivElement>) {
+  protected handleBodyMouseDown(e: DOMMouseOrTouchEvent<HTMLDivElement>) {
     if ((this._menuElm !== e.target && !this._menuElm.contains(e.target)) || e.target.className === 'close') {
       this._menuElm.setAttribute('aria-expanded', 'false');
       this._menuElm.style.display = 'none';
@@ -182,7 +182,7 @@ export class SlickColumnPicker {
   }
 
   /** Mouse header context handler when doing a right+click on any of the header column title */
-  protected handleHeaderContextMenu(e: DOMMouseEvent<HTMLDivElement>) {
+  protected handleHeaderContextMenu(e: DOMMouseOrTouchEvent<HTMLDivElement>) {
     e.preventDefault();
     emptyElement(this._listElm);
     updateColumnPickerOrder.call(this);
@@ -192,11 +192,12 @@ export class SlickColumnPicker {
     this.repositionMenu(e);
   }
 
-  protected repositionMenu(event: DOMMouseEvent<HTMLDivElement>) {
-    this._menuElm.style.top = `${event.pageY - 10}px`;
-    this._menuElm.style.left = `${event.pageX - 10}px`;
+  protected repositionMenu(event: DOMMouseOrTouchEvent<HTMLDivElement>) {
+    const targetEvent: MouseEvent | Touch = (event as TouchEvent)?.touches?.[0] ?? event;
+    this._menuElm.style.top = `${targetEvent.pageY - 10}px`;
+    this._menuElm.style.left = `${targetEvent.pageX - 10}px`;
     this._menuElm.style.minHeight = findWidthOrDefault(this.addonOptions.minHeight, '');
-    this._menuElm.style.maxHeight = findWidthOrDefault(this.addonOptions.maxHeight, `${window.innerHeight - event.clientY}px`);
+    this._menuElm.style.maxHeight = findWidthOrDefault(this.addonOptions.maxHeight, `${window.innerHeight - targetEvent.clientY}px`);
     this._menuElm.style.display = 'block';
     this._menuElm.setAttribute('aria-expanded', 'true');
     this._menuElm.appendChild(this._listElm);

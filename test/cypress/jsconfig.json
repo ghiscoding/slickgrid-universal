@@ -1,6 +1,7 @@
 {
   "typeAcquisition": {
     "include": [
+      "@4tw/cypress-drag-drop",
       "cypress"
     ]
   }

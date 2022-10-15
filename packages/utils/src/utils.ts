@@ -6,7 +6,7 @@
  */
 export function addToArrayWhenNotExists<T = any>(inputArray: T[], inputItem: T, itemIdPropName = 'id') {
   let arrayRowIndex = -1;
-  if (typeof inputItem === 'object' && itemIdPropName in inputItem) {
+  if (inputItem && typeof inputItem === 'object' && itemIdPropName in inputItem) {
     arrayRowIndex = inputArray.findIndex((item) => (item as any)[itemIdPropName] === (inputItem as any)[itemIdPropName]);
   } else {
     arrayRowIndex = inputArray.findIndex((item) => item === inputItem);
@@ -171,6 +171,15 @@ export function isObject(item: any) {
 }
 
 /**
+ * Simple check to detect if the value is a primitive type
+ * @param val
+ * @returns {boolean}
+ */
+export function isPrimmitive(val: any) {
+  return val === null || val === undefined || typeof val === 'boolean' || typeof val === 'number' || typeof val === 'string';
+}
+
+/**
  * Check if a value has any data (undefined, null or empty string will return False...)
  * NOTE: a `false` boolean is consider as having data so it will return True
  */
@@ -224,7 +233,7 @@ export function setDeepValue<T = unknown>(obj: T, path: string | string[], value
       setDeepValue(
         (obj)[e] = (hasData(obj[e]) && (Array.isArray(obj[e]) || Object.prototype.toString.call((obj)[e]) === '[object Object]'))
           ? (obj)[e]
-          : {} as T[keyof T],
+          : {} as any,
         path,
         value
       );

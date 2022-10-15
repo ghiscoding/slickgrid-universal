@@ -861,20 +861,20 @@ input.flatpickr.form-control {
 // ----------------------------------------------
 
 .slick-preheader-panel {
-  .ui-droppable, .ui-droppable-hover {
+  .slick-dropzone, .slick-dropzone-hover {
     display: flex;
     align-items: center;
     padding: var(--slick-draggable-group-drop-padding, $slick-draggable-group-drop-padding);
     height: var(--slick-draggable-group-drop-height, $slick-draggable-group-drop-height);
-    border-top: var(--slick-draggable-group-drop-border-top, $slick-draggable-group-drop-border-top) !important;
-    border-left: var(--slick-draggable-group-drop-border-left, $slick-draggable-group-drop-border-left) !important;
-    border-right: var(--slick-draggable-group-drop-border-right, $slick-draggable-group-drop-border-right) !important;
-    border-bottom: var(--slick-draggable-group-drop-border-bottom, $slick-draggable-group-drop-border-bottom) !important;
+    border-top: var(--slick-draggable-group-drop-border-top, $slick-draggable-group-drop-border-top);
+    border-left: var(--slick-draggable-group-drop-border-left, $slick-draggable-group-drop-border-left);
+    border-right: var(--slick-draggable-group-drop-border-right, $slick-draggable-group-drop-border-right);
+    border-bottom: var(--slick-draggable-group-drop-border-bottom, $slick-draggable-group-drop-border-bottom);
     width: var(--slick-draggable-group-drop-width, $slick-draggable-group-drop-width) !important;
     border-radius: var(--slick-draggable-group-drop-radius, $slick-draggable-group-drop-radius);
     background-color: var(--slick-draggable-group-drop-bgcolor, $slick-draggable-group-drop-bgcolor);
 
-    .slick-draggable-dropbox-toggle-placeholder {
+    .slick-draggable-dropzone-placeholder {
       font-style: var(--slick-draggable-group-placeholder-font-style, $slick-draggable-group-placeholder-font-style);
       color: var(--slick-draggable-group-placeholder-color, $slick-draggable-group-placeholder-color);
     }
@@ -919,11 +919,13 @@ input.flatpickr.form-control {
       border-radius: var(--slick-draggable-group-column-border-radius, $slick-draggable-group-column-border-radius);
       padding: var(--slick-draggable-group-column-padding, $slick-draggable-group-column-padding);
       margin-right: var(--slick-draggable-group-column-margin-right, $slick-draggable-group-column-margin-right);
+      z-index: 1;
     }
 
     .slick-groupby-remove {
       cursor: pointer;
       display: inline-flex;
+      margin-left: 5px;
       color: var(--slick-draggable-group-delete-color, $slick-draggable-group-delete-color);
       font-size: var(--slick-draggable-group-delete-font-size, $slick-draggable-group-delete-font-size);
       padding-left: var(--slick-draggable-group-delete-padding-left, $slick-draggable-group-delete-padding-left);
@@ -934,11 +936,16 @@ input.flatpickr.form-control {
       }
     }
   }
-  .ui-droppable-active {
-    background-color: var(--slick-draggable-group-droppable-active-bgcolor, $slick-draggable-group-droppable-active-bgcolor);
-  }
-  .ui-droppable-hover {
+  .slick-dropzone-hover {
     background-color: var(--slick-draggable-group-droppable-hover-bgcolor, $slick-draggable-group-droppable-hover-bgcolor);
+    border: var(--slick-draggable-group-drop-border-hover, $slick-draggable-group-drop-border-hover);
+  }
+  .slick-dropzone-placeholder-hover {
+    opacity: var(--slick-draggable-group-drop-placeholder-hover-opacity, $slick-draggable-group-drop-placeholder-hover-opacity);
+  }
+  .slick-header-column-active {
+    // do not display column clone when dragging a column hover dropzone because it adds to the far right and isn't needed
+    display: none !important;
   }
 }
 

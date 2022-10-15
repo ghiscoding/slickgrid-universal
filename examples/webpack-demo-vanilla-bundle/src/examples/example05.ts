@@ -213,7 +213,7 @@ export class Example5 {
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableExcelExport: true,
-      exportOptions: { exportWithFormatter: true },
+      textExportOptions: { exportWithFormatter: true },
       excelExportOptions: { exportWithFormatter: true },
       registerExternalResources: [new ExcelExportService()],
       enableFiltering: true,

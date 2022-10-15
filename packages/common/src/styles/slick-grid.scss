@@ -87,7 +87,7 @@
    }
 
    .slick-group {
-     border-bottom: 2px solid silver;
+     border-bottom: var(--slick-group-border-bottom, $slick-group-border-bottom);
    }
 
    .slick-group-toggle {
@@ -105,12 +105,12 @@
   }
 
    .slick-group-totals {
-     color: gray;
-     background: white;
+     background: var(--slick-group-totals-text-background, $slick-group-totals-text-background);
+     color: var(--slick-group-totals-text-color, $slick-group-totals-text-color);
    }
 
    .slick-sortable-placeholder {
-     background: silver !important;
+     background: var(--slick-header-column-sortable-background-hover, $slick-header-column-sortable-background-hover);
    }
  }
 
@@ -344,7 +344,7 @@
   }
 
   .slick-sortable-placeholder {
-    background: silver;
+    background: var(--slick-header-column-sortable-background-hover, $slick-header-column-sortable-background-hover);
   }
 
   .slick-group-toggle {

@@ -17,6 +17,7 @@
     ],
     "pretty": true,
     "importHelpers": true,
+    "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "noImplicitReturns": true,

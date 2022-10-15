@@ -107,7 +107,7 @@ export function flattenToParentChildArray<T>(treeArray: T[], options?: { parentP
     (node: T, parentNode?: T) => {
       return {
         [identifierPropName]: node[identifierPropName],
-        [parentPropName]: parentNode !== undefined ? parentNode[identifierPropName] : null,
+        [parentPropName]: parentNode !== undefined ? parentNode![identifierPropName] : null,
         [hasChildrenPropName]: !!node[childrenPropName],
         ...objectWithoutKey(node, childrenPropName as keyof T) // reuse the entire object except the children array property
       } as unknown as FlatParentChildArray;
@@ -683,7 +683,7 @@ export function mapOperatorByFieldType(fieldType: typeof FieldType[keyof typeof 
  * @returns {String} original object without the property that user wants to omit
  */
 export function objectWithoutKey<T = any>(obj: T, omitKey: keyof T): T {
-  return Object.keys(obj).reduce((result, objKey) => {
+  return Object.keys(obj as any).reduce((result, objKey) => {
     if (objKey !== omitKey) {
       (result as T)[objKey as keyof T] = obj[objKey as keyof T];
     }

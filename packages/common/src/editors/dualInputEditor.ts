@@ -183,7 +183,7 @@ export class DualInputEditor implements Editor {
     const editorSideParams = this.editorParams[position];
     const columnId = this.columnDef?.id ?? '';
     const idPropName = this.gridOptions.datasetIdPropertyName || 'id';
-    const itemId = this.args?.item[idPropName] || 0;
+    const itemId = this.args?.item?.[idPropName] ?? '';
 
     let fieldType: string = editorSideParams.type || 'text';
     if (fieldType === 'float' || fieldType === 'integer') {

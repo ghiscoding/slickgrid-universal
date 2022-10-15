@@ -309,7 +309,7 @@ export class Example12 {
               layout: 'fourCorners',
               templateCallback: (item: any) => this.renderItemCallbackWith4Corners(item),
             },
-          } as Partial<AutocompleterOption>,
+          } as AutocompleterOption,
         },
         filter: {
           model: Filters.inputText,
@@ -341,7 +341,7 @@ export class Example12 {
               const foundCountries = countries.filter((country) => country.name.toLowerCase().includes(searchText.toLowerCase()));
               updateCallback(foundCountries.map(item => ({ label: item.name, value: item.code, })));
             },
-          } as Partial<AutocompleterOption>,
+          } as AutocompleterOption,
         },
         filter: {
           model: Filters.inputText,
@@ -443,7 +443,7 @@ export class Example12 {
         const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
         const editorColumns = this.columnDefinitions.filter((col) => col.editor !== undefined);
 
-        const modifiedColumns = [];
+        const modifiedColumns: Column[] = [];
         prevSerializedValues.forEach((_val, index) => {
           const prevSerializedValue = prevSerializedValues[index];
           const serializedValue = serializedValues[index];
@@ -739,7 +739,7 @@ export class Example12 {
         listPrice: 2100.23,
         itemTypeName: 'I',
         image: 'http://i.stack.imgur.com/pC1Tv.jpg',
-        icon: `mdi ${this.getRandomIcon(0)}`,
+        icon: this.getRandomIcon(0)
       },
       {
         id: 1,
@@ -748,7 +748,7 @@ export class Example12 {
         listPrice: 3200.12,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/Fnm7j6h.jpg',
-        icon: `mdi ${this.getRandomIcon(1)}`,
+        icon: this.getRandomIcon(1)
       },
       {
         id: 2,
@@ -757,7 +757,7 @@ export class Example12 {
         listPrice: 15.00,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/RaVJuLr.jpg',
-        icon: `mdi ${this.getRandomIcon(2)}`,
+        icon: this.getRandomIcon(2)
       },
       {
         id: 3,
@@ -766,7 +766,7 @@ export class Example12 {
         listPrice: 25.76,
         itemTypeName: 'I',
         image: 'http://i.stack.imgur.com/pC1Tv.jpg',
-        icon: `mdi ${this.getRandomIcon(3)}`,
+        icon: this.getRandomIcon(3)
       },
       {
         id: 4,
@@ -775,7 +775,7 @@ export class Example12 {
         listPrice: 13.35,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/Fnm7j6h.jpg',
-        icon: `mdi ${this.getRandomIcon(4)}`,
+        icon: this.getRandomIcon(4)
       },
       {
         id: 5,
@@ -784,7 +784,7 @@ export class Example12 {
         listPrice: 23.33,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/RaVJuLr.jpg',
-        icon: `mdi ${this.getRandomIcon(5)}`,
+        icon: this.getRandomIcon(5)
       },
       {
         id: 6,
@@ -793,7 +793,7 @@ export class Example12 {
         listPrice: 71.21,
         itemTypeName: 'I',
         image: 'http://i.stack.imgur.com/pC1Tv.jpg',
-        icon: `mdi ${this.getRandomIcon(6)}`,
+        icon: this.getRandomIcon(6)
       },
       {
         id: 7,
@@ -802,7 +802,7 @@ export class Example12 {
         listPrice: 2.43,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/Fnm7j6h.jpg',
-        icon: `mdi ${this.getRandomIcon(7)}`,
+        icon: this.getRandomIcon(7)
       },
       {
         id: 8,
@@ -811,7 +811,7 @@ export class Example12 {
         listPrice: 31288.39,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/RaVJuLr.jpg',
-        icon: `mdi ${this.getRandomIcon(8)}`,
+        icon: this.getRandomIcon(8)
       },
     ];
   }

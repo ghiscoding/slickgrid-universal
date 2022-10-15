@@ -302,6 +302,7 @@ export class Example3 {
       rowHeight: 33,
       headerRowHeight: 35,
       enableDraggableGrouping: true,
+      // frozenColumn: 2,
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by the column',
         // groupIconCssClass: 'fa fa-outdent',
@@ -426,22 +427,6 @@ export class Example3 {
     if (this.draggableGroupingPlugin?.setDroppedGroups) {
       this.showPreHeader();
       this.draggableGroupingPlugin.setDroppedGroups(['duration', 'effortDriven']);
-      this.sgb?.slickGrid.invalidate(); // invalidate all rows and re-render
-    }
-  }
-
-  groupByFieldName(_fieldName, _index) {
-    this.clearGrouping();
-    if (this.draggableGroupingPlugin?.setDroppedGroups) {
-      this.showPreHeader();
-
-      // get the field names from Group By select(s) dropdown, but filter out any empty fields
-      const groupedFields = this.selectedGroupingFields.filter((g) => g !== '');
-      if (groupedFields.length === 0) {
-        this.clearGrouping();
-      } else {
-        this.draggableGroupingPlugin.setDroppedGroups(groupedFields);
-      }
       this.sgb?.slickGrid.invalidate(); // invalidate all rows and re-render
     }
   }

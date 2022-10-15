@@ -81,15 +81,13 @@ describe('Example 03 - Draggable Grouping', { retries: 1 }, () => {
       cy.get('.slick-dropped-grouping:nth(1) div').contains('Effort-Driven');
     });
 
-    it('should be able to drag and swap grouped column titles inside the pre-header', () => {
+    it('should be able to drag and swap pre-header grouped column titles (Effort-Driven, Duration)', () => {
       cy.get('.slick-dropped-grouping:nth(0) div')
         .contains('Duration')
-        .trigger('mousedown', 'center', { which: 1 });
+        .drag('.slick-dropped-grouping:nth(1) div');
 
-      cy.get('.slick-dropped-grouping:nth(1) div')
-        .contains('Effort-Driven')
-        .trigger('mousemove', 'bottomRight')
-        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+      cy.get('.slick-dropped-grouping:nth(0) div').contains('Effort-Driven');
+      cy.get('.slick-dropped-grouping:nth(1) div').contains('Duration');
     });
 
     it('should expect the grouping to be swapped as well in the grid', () => {
@@ -193,7 +191,7 @@ describe('Example 03 - Draggable Grouping', { retries: 1 }, () => {
         .should('be.hidden');
 
       cy.get('.grid3')
-        .find('.slick-draggable-dropbox-toggle-placeholder')
+        .find('.slick-draggable-dropzone-placeholder')
         .should('be.visible')
         .should('have.text', 'Drop a column header here to group by the column');
     });

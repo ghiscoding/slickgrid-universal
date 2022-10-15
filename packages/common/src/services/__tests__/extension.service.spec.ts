@@ -1,3 +1,5 @@
+jest.mock('../../extensions/slickDraggableGrouping');
+
 import 'jest-extended';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 

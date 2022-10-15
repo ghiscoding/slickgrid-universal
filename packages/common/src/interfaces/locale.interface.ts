@@ -134,6 +134,9 @@ export interface Locale {
   /** Text "Less than or equal to" shown in Compound Editors/Filters as an Operator */
   TEXT_LESS_THAN_OR_EQUAL_TO: string;
 
+  /** Text "Notelements found" that could show when nothing is returned in the Autocomplete */
+  TEXT_NO_ELEMENTS_FOUND?: string;
+
   /** Text "Not contains" shown in Compound Editors/Filters as an Operator */
   TEXT_NOT_CONTAINS: string;
 

@@ -1,5 +1,5 @@
 import { KeyCode } from '../enums/keyCode.enum';
-import { CheckboxSelectorOption, Column, DOMMouseEvent, GridOption, SelectableOverrideCallback, SlickEventData, SlickEventHandler, SlickGrid, SlickNamespace } from '../interfaces/index';
+import { CheckboxSelectorOption, Column, DOMMouseOrTouchEvent, GridOption, SelectableOverrideCallback, SlickEventData, SlickEventHandler, SlickGrid, SlickNamespace } from '../interfaces/index';
 import { SlickRowSelectionModel } from './slickRowSelectionModel';
 import { createDomElement, emptyElement } from '../services/domUtilities';
 import { BindingEventService } from '../services/bindingEvent.service';
@@ -266,7 +266,7 @@ export class SlickCheckboxSelectColumn<T = any> {
         args.node.appendChild(spanElm);
         this._headerRowNode = args.node;
 
-        this._bindEventService.bind(spanElm, 'click', ((e: DOMMouseEvent<HTMLInputElement>) => this.handleHeaderClick(e, args)) as EventListener);
+        this._bindEventService.bind(spanElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLInputElement>) => this.handleHeaderClick(e, args)) as EventListener);
       }
     });
   }
@@ -303,7 +303,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     return this._checkboxColumnCellIndex;
   }
 
-  protected handleClick(e: DOMMouseEvent<HTMLInputElement>, args: { row: number; cell: number; grid: SlickGrid; }) {
+  protected handleClick(e: DOMMouseOrTouchEvent<HTMLInputElement>, args: { row: number; cell: number; grid: SlickGrid; }) {
     // clicking on a row select checkbox
     if (this._grid.getColumns()[args.cell].id === this._addonOptions.columnId && e.target.type === 'checkbox') {
       // if editing, try to commit
@@ -319,7 +319,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
-  protected handleHeaderClick(e: DOMMouseEvent<HTMLInputElement>, args: { column: Column; node: HTMLDivElement; grid: SlickGrid; }) {
+  protected handleHeaderClick(e: DOMMouseOrTouchEvent<HTMLInputElement>, args: { column: Column; node: HTMLDivElement; grid: SlickGrid; }) {
     if (args.column.id === this._addonOptions.columnId && e.target.type === 'checkbox') {
       // if editing, try to commit
       if (this._grid.getEditorLock().isActive() && !this._grid.getEditorLock().commitCurrentEdit()) {

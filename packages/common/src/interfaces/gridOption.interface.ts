@@ -267,7 +267,11 @@ export interface GridOption {
   /** Defaults to true, when enabled will give the possibility to do a right+click on any header title which will open the list of column. User can show/hide a column by using the checkbox from that picker list. */
   enableColumnPicker?: boolean;
 
-  /** Defaults to true, which permits the user to move an entire column from a position to another. */
+  /**
+   * Defaults to true, this option can be a boolean or a Column Reorder function.
+   * When provided as a boolean, it will permits the user to move an entire column from a position to another.
+   * We could also provide a Column Reorder function, there's mostly only 1 use for this which is the SlickDraggableGrouping plugin.
+   */
   enableColumnReorder?: boolean | ColumnReorderFunction;
 
   /**
@@ -306,9 +310,6 @@ export interface GridOption {
 
   /** Do we want to enable the Excel Export? (if Yes, it will show up in the Grid Menu) */
   enableExcelExport?: boolean;
-
-  /** @deprecated Please use "enableTextExport", Do we want to enable the Export to File? (if Yes, it will show up in the Grid Menu) */
-  enableExport?: boolean;
 
   /** Do we want to enable Filters? */
   enableFiltering?: boolean;
@@ -383,9 +384,6 @@ export interface GridOption {
 
   /** Some default options to set for the Excel export service */
   excelExportOptions?: ExcelExportOption;
-
-  /** @deprecated Please use "textExportOptions" Some default options to set for the export service */
-  exportOptions?: TextExportOption;
 
   /**
    * Default to 0, how long to wait between each characters that the user types before processing the filtering process (only applies for local/in-memory grid).

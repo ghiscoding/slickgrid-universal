@@ -2,7 +2,7 @@ import * as autocompleter_ from 'autocompleter';
 const autocomplete = (autocompleter_ && autocompleter_['default'] || autocompleter_) as <T extends AutocompleteItem>(settings: AutocompleteSettings<T>) => AutocompleteResult; // patch for rollup
 
 import { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
-import { toKebabCase, toSentenceCase } from '@slickgrid-universal/utils';
+import { isPrimmitive, toKebabCase, toSentenceCase } from '@slickgrid-universal/utils';
 
 import {
   FieldType,
@@ -23,6 +23,7 @@ import {
   FilterCallback,
   FilterCallbackArg,
   GridOption,
+  Locale,
   SlickGrid,
 } from '../interfaces/index';
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter';
@@ -35,6 +36,7 @@ import { getDescendantProperty, unsubscribeAll } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 import { renderCollectionOptionsAsync } from './filterUtilities';
 import { RxJsFacade, Subscription } from '../services/rxjsFacade';
+import { Constants } from '../constants';
 
 export class AutocompleterFilter<T extends AutocompleteItem = any> implements Filter {
   protected _autocompleterOptions!: Partial<AutocompleterOption<T>>;
@@ -43,6 +45,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   protected _collection?: any[];
   protected _filterElm!: HTMLInputElement;
   protected _instance: any;
+  protected _locales!: Locale;
   protected _shouldTriggerQuery = true;
 
   /** DOM Element Name, useful for auto-detecting positioning (dropup / dropdown) */
@@ -137,7 +140,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
   }
 
-  /** Kradeen AutoComplete instance */
+  /** Kraaden AutoComplete instance */
   get instance(): any {
     return this._instance;
   }
@@ -180,6 +183,9 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     this.valueName = this.customStructure?.value ?? 'value';
     this.labelPrefixName = this.customStructure?.labelPrefix ?? 'labelPrefix';
     this.labelSuffixName = this.customStructure?.labelSuffix ?? 'labelSuffix';
+
+    // get locales provided by user in main file or else use default English locales via the Constants
+    this._locales = this.gridOptions?.locales ?? Constants.locales;
 
     // always render the DOM element
     const newCollection = this.columnFilter.collection;
@@ -395,15 +401,20 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     // create the DOM element & add an ID and filter class
     const searchTermInput = searchTerm as string;
 
-    // user might provide his own custom structure
-    // jQuery UI autocomplete requires a label/value pair, so we must remap them when user provide different ones
-    if (Array.isArray(collection) && (collection.every(x => typeof x !== 'string'))) {
-      collection = collection.map((item) => ({
-        label: item?.[this.labelName],
-        value: item?.[this.valueName],
-        labelPrefix: item?.[this.labelPrefixName] ?? '',
-        labelSuffix: item?.[this.labelSuffixName] ?? ''
-      }));
+    // the kradeen autocomplete lib only works with label/value pair, make sure that our array is in accordance
+    if (Array.isArray(collection)) {
+      if (collection.every(x => isPrimmitive(x))) {
+        // when detecting an array of primitives, we have to remap it to an array of value/pair objects
+        collection = collection.map(c => ({ label: c, value: c }));
+      } else {
+        // user might provide its own custom structures, if so remap them as the new label/value pair
+        collection = collection.map((item) => ({
+          label: item?.[this.labelName],
+          value: item?.[this.valueName],
+          labelPrefix: item?.[this.labelPrefixName] ?? '',
+          labelSuffix: item?.[this.labelSuffixName] ?? ''
+        }));
+      }
     }
 
     // user might pass his own autocomplete options
@@ -411,6 +422,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       input: this._filterElm,
       debounceWaitMs: 200,
       className: `slick-autocomplete ${this.filterOptions?.className ?? ''}`.trim(),
+      emptyMsg: this.gridOptions.enableTranslate && this.translaterService?.translate ? this.translaterService.translate('NO_ELEMENTS_FOUND') : this._locales?.TEXT_NO_ELEMENTS_FOUND ?? 'No elements found',
       onSelect: (item: AutocompleteSearchItem) => {
         this.isItemSelected = true;
         this.handleSelect(item);
@@ -428,7 +440,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       this._autocompleterOptions.render = this._autocompleterOptions.render?.bind(this) ?? this.renderCollectionItem.bind(this);
     } else if (!this._autocompleterOptions.render) {
       // when no render callback is defined, we still need to define our own renderer for regular item
-      // because we accept string array but the Kradeen autocomplete doesn't by default and we can change that
+      // because we accept string array but the Kraaden autocomplete doesn't by default and we can change that
       this._autocompleterOptions.render = this.renderRegularItem.bind(this);
     }
 
@@ -438,12 +450,11 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       // add loading class by overriding user's fetch method
       addAutocompleteLoadingByOverridingFetch(this._filterElm, this._autocompleterOptions);
 
-      // create the Kradeen AutoComplete
+      // create the Kraaden AutoComplete
       this._instance = autocomplete(this._autocompleterOptions as AutocompleteSettings<any>);
     } else {
       this._instance = autocomplete({
         ...this._autocompleterOptions,
-        showOnFocus: true,
         fetch: (searchText, updateCallback) => {
           if (collection) {
             // you can also use AJAX requests instead of preloaded data

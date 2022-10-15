@@ -266,7 +266,7 @@ export class Example14 {
               layout: 'fourCorners',
               templateCallback: (item: any) => this.renderItemCallbackWith4Corners(item),
             },
-          } as Partial<AutocompleterOption>,
+          } as AutocompleterOption,
         },
         filter: {
           model: Filters.inputText,
@@ -297,7 +297,7 @@ export class Example14 {
               const foundCountries = countries.filter((country) => country.name.toLowerCase().includes(searchText.toLowerCase()));
               updateCallback(foundCountries.map(item => ({ label: item.name, value: item.code, })));
             },
-          } as Partial<AutocompleterOption>,
+          } as AutocompleterOption,
         },
         filter: {
           model: Filters.inputText,

@@ -15,5 +15,4 @@ export * from './multipleSelectFilter';
 export * from './nativeSelectFilter';
 export * from './selectFilter';
 export * from './singleSelectFilter';
-export * from './sliderRangeFilter';
 export * from './sliderFilter';
