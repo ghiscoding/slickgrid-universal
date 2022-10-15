@@ -25,7 +25,7 @@
     "dev:watch": "cross-env TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling pnpm -r --parallel run dev:watch",
     "preview:publish": "lerna publish from-package --dry-run",
     "preview:version": "lerna version --dry-run",
-    "preview:roll-new-release": "pnpm build && pnpm new-version --dry-run && pnpm new-publish --dry-run",
+    "preview:roll-new-release": "pnpm bundle && pnpm new-version --dry-run && pnpm new-publish --dry-run",
     "new-version": "lerna version",
     "new-publish": "lerna publish from-package",
     "roll-new-release": "pnpm bundle && pnpm new-version && pnpm new-publish",
