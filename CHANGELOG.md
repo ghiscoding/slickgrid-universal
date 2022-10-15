@@ -11,9 +11,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **deps:** update all non-major dependencies ([#769](https://github.com/ghiscoding/slickgrid-universal/issues/769)) ([4e05a4b](https://github.com/ghiscoding/slickgrid-universal/commit/4e05a4b977c760511fc90903c0f62673859bd65f)) - by @renovate-bot
 * **styling:** fix some styling issues with input groups and Firefox ([#750](https://github.com/ghiscoding/slickgrid-universal/issues/750)) ([1aa849e](https://github.com/ghiscoding/slickgrid-universal/commit/1aa849ea81461dc9bbd7b3bc05a092bb14c88be2)) - by @ghiscoding
 
-### Features
+## ⚠️ Breaking Change
+### - Features
 
 * **common:** replace jQueryUI Autocomplete with Kradeen Autocomplete ([#752](https://github.com/ghiscoding/slickgrid-universal/issues/752)) ([991d29c](https://github.com/ghiscoding/slickgrid-universal/commit/991d29c4c8c85d800d69c4ba16d608d7a20d2a90)) - by @ghiscoding
+* **common:** remove & replace jQueryUI with SortableJS in common & SlickDraggableGrouping ([#756](https://github.com/ghiscoding/slickgrid-universal/issues/756)) ([b1c5a84](https://github.com/ghiscoding/slickgrid-universal/commit/b1c5a84bb9a10ff805dfd13996ecf60dae3ab609)) - by @ghiscoding
 
 # [1.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v1.3.7...v1.4.0) (2022-08-15)
 
