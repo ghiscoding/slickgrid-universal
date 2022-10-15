@@ -22,9 +22,7 @@
     "prebundle": "pnpm run clean",
     "bundle": "run-p bundle:commonjs bundle:esm --npm-path npm",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
-    "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
-    "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=utils",
-    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=utils"
+    "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018"
   },
   "license": "MIT",
   "author": "Ghislain B.",

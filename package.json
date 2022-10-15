@@ -29,8 +29,6 @@
     "new-version": "lerna version",
     "new-publish": "lerna publish from-package",
     "roll-new-release": "pnpm bundle && pnpm new-version && pnpm new-publish",
-    "prepublishOnly": "pnpm -r package:remove-browser-prop",
-    "postnew-publish": "pnpm -r package:add-browser-prop",
     "serve:demo": "serve ./docs -l 8888",
     "lint": "eslint packages --ext .ts",
     "test": "jest --runInBand --coverage=true --config ./test/jest.config.js",

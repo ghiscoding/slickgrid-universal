@@ -484,6 +484,7 @@ importers:
       rimraf: ^3.0.2
       webpack: ^5.74.0
       whatwg-fetch: ^3.6.2
+      yargs: ^17.6.0
     dependencies:
       '@slickgrid-universal/binding': link:../binding
       '@slickgrid-universal/common': link:../common
@@ -508,6 +509,7 @@ importers:
       npm-run-all2: 6.0.2
       rimraf: 3.0.2
       webpack: 5.74.0
+      yargs: 17.6.0
 
 packages:
 
@@ -6276,7 +6278,7 @@ packages:
       jest-util: 29.1.2
       jest-validate: 29.1.2
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.6.0
     transitivePeerDependencies:
       - '@types/node'
       - supports-color

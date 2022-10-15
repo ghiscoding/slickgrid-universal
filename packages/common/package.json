@@ -36,8 +36,6 @@
     "postbundle": "pnpm run sass:build sass:copy",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
-    "package:add-browser-prop": "cross-env node ../change-package-browser.js --add-browser=true --folder-name=common",
-    "package:remove-browser-prop": "cross-env node ../change-package-browser.js --remove-browser=true --folder-name=common",
     "sass-build-task:scss-compile:bootstrap": "sass src/styles/slickgrid-theme-bootstrap.scss dist/styles/css/slickgrid-theme-bootstrap.css --style=compressed --quiet-deps --no-source-map",
     "postsass-build-task:scss-compile:bootstrap": "postcss --no-map --use autoprefixer --output dist/styles/css/slickgrid-theme-bootstrap.css dist/styles/css/slickgrid-theme-bootstrap.css --style=compressed",
     "sass-build-task:scss-compile:material": "sass src/styles/slickgrid-theme-material.scss dist/styles/css/slickgrid-theme-material.css --style=compressed --quiet-deps --no-source-map",
