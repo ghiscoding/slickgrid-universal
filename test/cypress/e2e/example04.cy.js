@@ -261,4 +261,46 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1)`).should('contain', 'Task 4');
   });
+
+  it('should filter autocomplete by typing Vancouver in the "City of Origin" and expect only filtered rows to show up', () => {
+    cy.get('.search-filter.filter-cityOfOrigin')
+      .type('Vancouver')
+
+    cy.get('.slick-autocomplete').should('be.visible');
+    cy.get('.slick-autocomplete div').should('have.length', 2);
+    cy.get('.slick-autocomplete').find('div:nth(0)').click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', 'Task 1');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', 'Task 5');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).should('contain', 'Task 7');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1)`).should('contain', 'Task 9');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(1)`).should('contain', 'Task 11');
+  });
+
+  it('should Clear all Filters', () => {
+    cy.get('.grid4')
+      .find('button.slick-grid-menu-button')
+      .trigger('click')
+      .click({ force: true });
+
+    cy.get(`.slick-grid-menu:visible`)
+      .find('.slick-menu-item')
+      .first()
+      .find('span')
+      .contains('Clear all Filters')
+      .click();
+  });
+
+  it('should edit first row (Task 1) and change its city by choosing it inside the autocomplete editor list', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).click();
+    cy.get('input.autocomplete.editor-cityOfOrigin')
+      .type('Sydney')
+
+    cy.get('.slick-autocomplete').should('be.visible');
+    cy.get('.slick-autocomplete div').should('have.length', 3);
+    cy.get('.slick-autocomplete').find('div:nth(1)').click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', 'Task 0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).should('contain', 'Sydney, NS, Australia');
+  });
 });

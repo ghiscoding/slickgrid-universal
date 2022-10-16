@@ -1,17 +1,16 @@
 import { dequal } from 'dequal/lite';
 import 'jquery';
-import 'jquery-ui/ui/widgets/draggable';
-import 'jquery-ui/ui/widgets/droppable';
-import 'jquery-ui/ui/widgets/sortable';
 import 'flatpickr/dist/l10n/fr';
-import 'slickgrid/lib/jquery.event.drag-2.3.0';
-import 'slickgrid/lib/jquery.mousewheel';
 import 'slickgrid/slick.core';
+import 'slickgrid/slick.interactions';
 import 'slickgrid/slick.grid';
 import 'slickgrid/slick.dataview';
+import SortableInstance, * as Sortable_ from 'sortablejs';
+const Sortable = ((Sortable_ as any)?.['default'] ?? Sortable_); // patch for rollup
+
 import {
   autoAddEditorFormatterToColumnsWithEditor,
-  AutoCompleteEditor,
+  AutocompleterEditor,
   BackendServiceApi,
   BackendServiceOption,
   Column,
@@ -67,6 +66,9 @@ import { UniversalContainerService } from '../services/universalContainer.servic
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
+
+// add Sortable to the window object so that SlickGrid lib can use globally
+(window as any).Sortable = Sortable as SortableInstance;
 
 export class SlickVanillaGridBundle {
   protected _currentDatasetLength = 0;
@@ -1442,7 +1444,7 @@ export class SlickVanillaGridBundle {
       }
 
       // get current Editor, remove it from the DOm then re-enable it and re-render it with the new collection.
-      const currentEditor = this.slickGrid.getCellEditor() as AutoCompleteEditor | SelectEditor;
+      const currentEditor = this.slickGrid.getCellEditor() as AutocompleterEditor | SelectEditor;
       if (currentEditor?.disable && currentEditor?.renderDomElement) {
         currentEditor.destroy();
         currentEditor.disable(false);

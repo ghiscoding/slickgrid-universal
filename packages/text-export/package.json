@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/text-export",
-  "version": "1.4.0",
+  "version": "2.0.0-alpha.0",
   "description": "Export to Text File (csv/txt) Service.",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",

@@ -1,4 +1,4 @@
-import { AutoCompleteEditor } from './autoCompleteEditor';
+import { AutocompleterEditor } from './autocompleterEditor';
 import { CheckboxEditor } from './checkboxEditor';
 import { DateEditor } from './dateEditor';
 import { DualInputEditor } from './dualInputEditor';
@@ -12,8 +12,8 @@ import { SingleSelectEditor } from './singleSelectEditor';
 import { SliderEditor } from './sliderEditor';
 
 export const Editors = {
-  /** AutoComplete Editor (using jQuery UI autocomplete feature) */
-  autoComplete: AutoCompleteEditor,
+  /** Autocompleter Editor (using https://github.com/kraaden/autocomplete) */
+  autocompleter: AutocompleterEditor,
 
   /** Checkbox Editor (uses native checkbox DOM element) */
   checkbox: CheckboxEditor,

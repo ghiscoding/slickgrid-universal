@@ -1,4 +1,4 @@
-import { AutoCompleteFilter } from './autoCompleteFilter';
+import { AutocompleterFilter } from './autocompleterFilter';
 import { CompoundDateFilter } from './compoundDateFilter';
 import { CompoundInputFilter } from './compoundInputFilter';
 import { CompoundInputNumberFilter } from './compoundInputNumberFilter';
@@ -13,11 +13,10 @@ import { NativeSelectFilter } from './nativeSelectFilter';
 import { DateRangeFilter } from './dateRangeFilter';
 import { SingleSelectFilter } from './singleSelectFilter';
 import { SliderFilter } from './sliderFilter';
-import { SliderRangeFilter } from './sliderRangeFilter';
 
 export const Filters = {
-  /** AutoComplete Filter (using jQuery UI autocomplete feature) */
-  autoComplete: AutoCompleteFilter,
+  /** AutoComplete Filter (using https://github.com/kraaden/autocomplete) */
+  autocompleter: AutocompleterFilter,
 
   /** Compound Date Filter (compound of Operator + Date picker) */
   compoundDate: CompoundDateFilter,
@@ -69,7 +68,4 @@ export const Filters = {
 
   /** Slider Filter (only 1 value) */
   slider: SliderFilter,
-
-  /** Slider Range Filter, uses jQuery UI Range Slider (2 values, lowest/highest search range) */
-  sliderRange: SliderRangeFilter,
 };

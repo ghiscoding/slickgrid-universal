@@ -111,7 +111,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
     return new Promise(resolve => {
       this._pubSubService?.publish(`onBeforeExportToTextFile`, true);
-      this._exportOptions = deepCopy({ ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.exportOptions, ...this._gridOptions.textExportOptions, ...options });
+      this._exportOptions = deepCopy({ ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.textExportOptions, ...options });
       this._delimiter = this._exportOptions.delimiterOverride || this._exportOptions.delimiter || '';
       this._fileFormat = this._exportOptions.format || FileType.csv;
 

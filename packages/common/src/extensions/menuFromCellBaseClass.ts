@@ -4,7 +4,7 @@ import { titleCase } from '@slickgrid-universal/utils';
 import {
   CellMenu,
   ContextMenu,
-  DOMMouseEvent,
+  DOMMouseOrTouchEvent,
   MenuCallbackArgs,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
@@ -30,7 +30,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     super(extensionUtility, pubSubService, sharedService);
   }
 
-  createMenu(event: DOMMouseEvent<HTMLDivElement>) {
+  createMenu(event: DOMMouseOrTouchEvent<HTMLDivElement>) {
     this.menuElement?.remove();
     this._menuElm = undefined;
     const cell = this.grid.getCellFromEvent(event);
@@ -40,7 +40,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       this._currentRow = cell.row ?? 0;
       const columnDef = this.grid.getColumns()[this._currentCell];
       const dataContext = this.grid.getDataItem(this._currentRow);
-
+      const targetEvent: MouseEvent | Touch = (event as TouchEvent)?.touches?.[0] ?? event;
 
       const commandItems = this._addonOptions?.commandItems || [];
       const optionItems = this._addonOptions?.optionItems || [];
@@ -84,7 +84,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       // create a new Menu
       this._menuElm = createDomElement('div', {
         className: `${this._menuPluginCssPrefix || this._menuCssPrefix} ${this.gridUid}`,
-        style: { display: 'none', left: `${event.pageX}px`, top: `${event.pageY + 5}px` }
+        style: { display: 'none', left: `${targetEvent.pageX}px`, top: `${targetEvent.pageY + 5}px` }
       });
 
       const maxHeight = isNaN(this.addonOptions.maxHeight as any) ? this.addonOptions.maxHeight : `${this.addonOptions.maxHeight ?? 0}px`;
@@ -151,7 +151,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     return this._menuElm;
   }
 
-  closeMenu(e: DOMMouseEvent<HTMLDivElement>, args: MenuFromCellCallbackArgs) {
+  closeMenu(e: DOMMouseOrTouchEvent<HTMLDivElement>, args: MenuFromCellCallbackArgs) {
     if (this.menuElement) {
       if (typeof this.addonOptions?.onBeforeMenuClose === 'function' && (this.addonOptions as CellMenu | ContextMenu).onBeforeMenuClose!(e, args) === false) {
         return;
@@ -178,19 +178,19 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
   }
 
   /** Mouse down handler when clicking anywhere in the DOM body */
-  protected handleBodyMouseDown(e: DOMMouseEvent<HTMLDivElement>) {
+  protected handleBodyMouseDown(e: DOMMouseOrTouchEvent<HTMLDivElement>) {
     if ((this.menuElement !== e.target && !this.menuElement?.contains(e.target)) || e.target.className === 'close') {
       this.closeMenu(e, { cell: this._currentCell, row: this._currentRow, grid: this.grid });
     }
   }
 
-  protected handleCloseButtonClicked(e: DOMMouseEvent<HTMLDivElement>) {
+  protected handleCloseButtonClicked(e: DOMMouseOrTouchEvent<HTMLDivElement>) {
     if (!e.defaultPrevented) {
       this.closeMenu(e, { cell: 0, row: 0, grid: this.grid, });
     }
   }
 
-  protected handleMenuItemCommandClick(event: DOMMouseEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>) {
+  protected handleMenuItemCommandClick(event: DOMMouseOrTouchEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>) {
     if ((item as never)?.[type] !== undefined && item !== 'divider' && !item.disabled && !(item as MenuCommandItem | MenuOptionItem).divider && this._currentCell !== undefined && this._currentRow !== undefined) {
       if (type === 'option' && !this.grid.getEditorLock().commitCurrentEdit()) {
         return;
@@ -235,23 +235,24 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
   }
 
   protected populateCommandOrOptionCloseBtn(itemType: MenuType, closeButtonElm: HTMLButtonElement, commandOrOptionMenuElm: HTMLDivElement) {
-    this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMMouseEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener);
+    this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener);
     const commandOrOptionMenuHeaderElm = commandOrOptionMenuElm.querySelector<HTMLDivElement>(`.slick-${itemType}-header`) ?? createDomElement('div', { className: `slick-${itemType}-header` });
     commandOrOptionMenuHeaderElm?.appendChild(closeButtonElm);
     commandOrOptionMenuElm.appendChild(commandOrOptionMenuHeaderElm);
     commandOrOptionMenuHeaderElm.classList.add('with-close');
   }
 
-  protected repositionMenu(event: DOMMouseEvent<HTMLDivElement>) {
+  protected repositionMenu(event: DOMMouseOrTouchEvent<HTMLDivElement>) {
     if (this._menuElm && event.target) {
       // move to 0,0 before calulating height/width since it could be cropped values
       // when element is outside browser viewport
       this._menuElm.style.top = `0px`;
       this._menuElm.style.left = `0px`;
 
+      const targetEvent: MouseEvent | Touch = (event as TouchEvent)?.touches?.[0] ?? event;
       const parentElm = event.target.closest('.slick-cell') as HTMLDivElement;
-      let menuOffsetLeft = (parentElm && this._camelPluginName === 'cellMenu') ? getHtmlElementOffset(parentElm)?.left ?? 0 : event.pageX;
-      let menuOffsetTop = (parentElm && this._camelPluginName === 'cellMenu') ? getHtmlElementOffset(parentElm)?.top ?? 0 : event.pageY;
+      let menuOffsetLeft = (parentElm && this._camelPluginName === 'cellMenu') ? getHtmlElementOffset(parentElm)?.left ?? 0 : targetEvent.pageX;
+      let menuOffsetTop = (parentElm && this._camelPluginName === 'cellMenu') ? getHtmlElementOffset(parentElm)?.top ?? 0 : targetEvent.pageY;
       const parentCellWidth = parentElm.offsetWidth || 0;
       const menuHeight = this._menuElm?.offsetHeight || 0;
       const menuWidth = this._menuElm?.offsetWidth || this._addonOptions.width || 0;

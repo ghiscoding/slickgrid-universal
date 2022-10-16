@@ -558,7 +558,7 @@ describe('SelectFilter', () => {
     filter.clear();
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
 
-    expect(filter.searchTerms.length).toBe(0);
+    expect(filter.searchTerms!.length).toBe(0);
     expect(filterFilledElms.length).toBe(0);
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: true });
   });
@@ -572,7 +572,7 @@ describe('SelectFilter', () => {
     filter.clear(false);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
 
-    expect(filter.searchTerms.length).toBe(0);
+    expect(filter.searchTerms!.length).toBe(0);
     expect(filterFilledElms.length).toBe(0);
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
   });
@@ -696,7 +696,7 @@ describe('SelectFilter', () => {
     http.returnKey = 'date';
     http.returnValue = '6/24/1984';
     http.responseHeaders = { accept: 'json' };
-    mockColumn.filter!.collectionAsync = http.fetch('/api', { method: 'GET' });
+    mockColumn.filter!.collectionAsync = http.fetch('http://locahost/api', { method: 'GET' });
 
     filterArguments.searchTerms = ['female'];
     await filter.init(filterArguments);
@@ -881,7 +881,7 @@ describe('SelectFilter', () => {
       const spyCallback = jest.spyOn(filterArguments, 'callback');
       const mockCollection = ['male', 'female'];
       mockColumn.filter!.collection = undefined;
-      mockColumn.filter.collectionAsync = of(mockCollection);
+      mockColumn.filter!.collectionAsync = of(mockCollection);
 
       filterArguments.searchTerms = ['female'];
       await filter.init(filterArguments);
@@ -901,12 +901,12 @@ describe('SelectFilter', () => {
 
     it('should create the multi-select filter with a "collectionAsync" as an Observable and be able to call next on it', async () => {
       const mockCollection = ['male', 'female'];
-      mockColumn.filter.collectionAsync = of(mockCollection);
+      mockColumn.filter!.collectionAsync = of(mockCollection);
 
       filterArguments.searchTerms = ['female'];
       await filter.init(filterArguments);
 
-      const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+      const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
       const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
       filterBtnElm.click();
 
@@ -915,7 +915,7 @@ describe('SelectFilter', () => {
 
       // after await (or timeout delay) we'll get the Subject Observable
       mockCollection.push('other');
-      (mockColumn.filter.collectionAsync as Subject<any[]>).next(mockCollection);
+      (mockColumn.filter!.collectionAsync as Subject<any[]>).next(mockCollection);
 
       const filterUpdatedListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
       expect(filterUpdatedListElm.length).toBe(3);
@@ -937,7 +937,7 @@ describe('SelectFilter', () => {
       filterArguments.searchTerms = ['female'];
       await filter.init(filterArguments);
 
-      const filterBtnElm = divContainer.querySelector<HTMLButtonElement>('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice');
+      const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
       const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
       filterBtnElm.click();
 
@@ -946,14 +946,14 @@ describe('SelectFilter', () => {
 
       // after await (or timeout delay) we'll get the Subject Observable
       mockCollection.deep.myCollection.push('other');
-      (mockColumn.filter.collectionAsync as Subject<any[]>).next(mockCollection.deep.myCollection);
+      (mockColumn.filter!.collectionAsync as Subject<any[]>).next(mockCollection.deep.myCollection);
 
       const filterUpdatedListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
       expect(filterUpdatedListElm.length).toBe(3);
     });
 
     it('should throw an error when "collectionAsync" Observable does not return a valid array', (done) => {
-      mockColumn.filter.collectionAsync = of({ hello: 'world' });
+      mockColumn.filter!.collectionAsync = of({ hello: 'world' });
       filter.init(filterArguments).catch((e) => {
         expect(e.toString()).toContain(`Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`);
         done();

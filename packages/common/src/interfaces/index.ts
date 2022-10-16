@@ -1,5 +1,5 @@
 export * from './aggregator.interface';
-export * from './autocompleteOption.interface';
+export * from './autocompleterOption.interface';
 export * from './autoResizeOption.interface';
 export * from './autoTooltipOption.interface';
 export * from './backendService.interface';
@@ -99,8 +99,6 @@ export * from './headerMenuOption.interface';
 export * from './hideColumnOption.interface';
 export * from './htmlElementPosition.interface';
 export * from './itemMetadata.interface';
-export * from './jQueryUiSliderOption.interface';
-export * from './jQueryUiSliderResponse.interface';
 export * from './keyTitlePair.interface';
 export * from './locale.interface';
 export * from './longTextEditorOption.interface';

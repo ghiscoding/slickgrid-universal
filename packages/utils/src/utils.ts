@@ -171,6 +171,15 @@ export function isObject(item: any) {
 }
 
 /**
+ * Simple check to detect if the value is a primitive type
+ * @param val
+ * @returns {boolean}
+ */
+export function isPrimmitive(val: any) {
+  return val === null || val === undefined || typeof val === 'boolean' || typeof val === 'number' || typeof val === 'string';
+}
+
+/**
  * Check if a value has any data (undefined, null or empty string will return False...)
  * NOTE: a `false` boolean is consider as having data so it will return True
  */

@@ -2,7 +2,7 @@ import { ColumnReorderFunction } from '../enums/columnReorderFunction.type';
 import { GroupingGetterFunction } from './grouping.interface';
 
 export interface DraggableGroupingOption {
-  /** an extra CSS class to add to the delete button (default undefined), if deleteIconCssClass is undefined then slick-groupby-remove-image class will be added */
+  /** an extra CSS class to add to the delete button (default undefined), if deleteIconCssClass is undefined then slick-groupby-remove-icon class will be added */
   deleteIconCssClass?: string;
 
   /** option to specify set own placeholder note text */

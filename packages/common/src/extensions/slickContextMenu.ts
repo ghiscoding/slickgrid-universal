@@ -3,7 +3,7 @@ import {
   ContextMenu,
   ContextMenuOption,
   Column,
-  DOMMouseEvent,
+  DOMMouseOrTouchEvent,
   MenuCallbackArgs,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
@@ -108,7 +108,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
   // event handlers
   // ------------------
 
-  protected handleClick(event: DOMMouseEvent<HTMLDivElement>, args: MenuCommandItemCallbackArgs) {
+  protected handleClick(event: DOMMouseOrTouchEvent<HTMLDivElement>, args: MenuCommandItemCallbackArgs) {
     const cell = this.grid.getCellFromEvent(event);
     if (cell) {
       const dataContext = this.grid.getDataItem(cell.row);
@@ -189,7 +189,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     }
 
     // show context menu: Export to file
-    if ((gridOptions?.enableExport || gridOptions?.enableTextExport) && contextMenu && !contextMenu.hideExportCsvCommand) {
+    if (gridOptions?.enableTextExport && contextMenu && !contextMenu.hideExportCsvCommand) {
       const commandName = 'export-csv';
       if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         menuCommandItems.push(
@@ -242,7 +242,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     }
 
     // show context menu: export to text file as tab delimited
-    if ((gridOptions?.enableExport || gridOptions?.enableTextExport) && contextMenu && !contextMenu.hideExportTextDelimitedCommand) {
+    if (gridOptions?.enableTextExport && contextMenu && !contextMenu.hideExportTextDelimitedCommand) {
       const commandName = 'export-text-delimited';
       if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         menuCommandItems.push(
@@ -386,7 +386,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
         const columnDef = args?.column;
         const dataContext = args?.dataContext;
         const grid = this.sharedService?.slickGrid;
-        const exportOptions = gridOptions && ((gridOptions.excelExportOptions || { ...gridOptions.exportOptions, ...gridOptions.textExportOptions }));
+        const exportOptions = gridOptions && ((gridOptions.excelExportOptions || gridOptions.textExportOptions));
         let textToCopy = exportWithFormatterWhenDefined(row, cell, columnDef, dataContext, grid, exportOptions);
         if (typeof columnDef.queryFieldNameGetterFn === 'function') {
           textToCopy = getCellValueFromQueryFieldGetter(columnDef, dataContext, '');

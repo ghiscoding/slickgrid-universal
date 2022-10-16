@@ -303,14 +303,10 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
 
     cy.get('.slick-header-columns')
       .children('.slick-header-column:nth(4)')
-      .should('contain', 'Duration')
-      .trigger('mousedown', 'center', { which: 1 });
+      .contains('Duration')
+      .drag('.slick-header-column:nth(7)');
 
-    cy.get('.slick-header-columns')
-      .children('.slick-header-column:nth(7)')
-      .should('contain', 'Finish')
-      .trigger('mousemove', 'bottomRight')
-      .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+    cy.get('.slick-header-column:nth(7)').contains('Duration');
 
     cy.get('.grid7')
       .find('.slick-header-columns')
@@ -726,14 +722,10 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
 
     cy.get('.slick-header-columns')
       .children('.slick-header-column:nth(5)')
-      .should('contain', 'Start')
-      .trigger('mousedown', 'bottom', { which: 1 });
+      .contains('Start')
+      .drag('.slick-header-column:nth(8)');
 
-    cy.get('.slick-header-columns')
-      .children('.slick-header-column:nth(8)')
-      .should('contain', 'Completed')
-      .trigger('mousemove', 'bottomRight')
-      .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+    cy.get('.slick-header-column:nth(8)').contains('Start');
 
     cy.get('.grid7')
       .find('.slick-header-columns')

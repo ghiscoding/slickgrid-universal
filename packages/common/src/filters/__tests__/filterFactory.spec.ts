@@ -5,19 +5,19 @@ import { SlickgridConfig } from '../../slickgrid-config';
 import { CollectionService } from '../../services/collection.service';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { AutoCompleteFilter } from '../autoCompleteFilter';
+import { AutocompleterFilter } from '../autocompleterFilter';
 
-const mockAutocompleteFilter = jest.fn().mockImplementation(() => ({
+const mockAutocompleterFilter = jest.fn().mockImplementation(() => ({
   constructor: jest.fn(),
   init: jest.fn(),
   destroy: jest.fn(),
-} as unknown as AutoCompleteFilter));
+} as unknown as AutocompleterFilter));
 
 describe('Filter Factory', () => {
-  jest.mock('../autoCompleteFilter', () => mockAutocompleteFilter);
+  jest.mock('../autocompleterFilter', () => mockAutocompleterFilter);
   const Filters = {
     input: InputFilter,
-    autoComplete: mockAutocompleteFilter
+    autocompleter: mockAutocompleterFilter
   };
   let factory: FilterFactory;
   let collectionService: CollectionService;
@@ -48,8 +48,8 @@ describe('Filter Factory', () => {
   });
 
   it('should create AutoComplete Filter when that is the Filter provided as a model', () => {
-    const mockColumn = { filter: { model: Filters.autoComplete } } as Column;
-    const filterSpy = jest.spyOn(mockAutocompleteFilter.prototype, 'constructor');
+    const mockColumn = { filter: { model: Filters.autocompleter } } as Column;
+    const filterSpy = jest.spyOn(mockAutocompleterFilter.prototype, 'constructor');
 
     const newFilter = factory.createFilter(mockColumn.filter);
 
@@ -59,8 +59,8 @@ describe('Filter Factory', () => {
 
   it('should create AutoComplete Filter with RxJS when that is the Filter provided as a model', () => {
     factory = new FilterFactory(slickgridConfig, translateService, collectionService, rxjsResourceStub);
-    const mockColumn = { filter: { model: Filters.autoComplete } } as Column;
-    const filterSpy = jest.spyOn(mockAutocompleteFilter.prototype, 'constructor');
+    const mockColumn = { filter: { model: Filters.autocompleter } } as Column;
+    const filterSpy = jest.spyOn(mockAutocompleterFilter.prototype, 'constructor');
 
     const newFilter = factory.createFilter(mockColumn.filter);
 
@@ -69,8 +69,8 @@ describe('Filter Factory', () => {
   });
 
   it('should create AutoComplete Filter with RxJS when that is the Filter provided as a model', () => {
-    const mockColumn = { filter: { model: Filters.autoComplete } } as Column;
-    const filterSpy = jest.spyOn(mockAutocompleteFilter.prototype, 'constructor');
+    const mockColumn = { filter: { model: Filters.autocompleter } } as Column;
+    const filterSpy = jest.spyOn(mockAutocompleterFilter.prototype, 'constructor');
 
     factory.addRxJsResource(rxjsResourceStub);
     const newFilter = factory.createFilter(mockColumn.filter);

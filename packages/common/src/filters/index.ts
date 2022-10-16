@@ -1,4 +1,4 @@
-export * from './autoCompleteFilter';
+export * from './autocompleterFilter';
 export * from './compoundDateFilter';
 export * from './compoundInputFilter';
 export * from './compoundInputNumberFilter';
@@ -15,5 +15,4 @@ export * from './multipleSelectFilter';
 export * from './nativeSelectFilter';
 export * from './selectFilter';
 export * from './singleSelectFilter';
-export * from './sliderRangeFilter';
 export * from './sliderFilter';

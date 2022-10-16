@@ -1,4 +1,4 @@
-export * from './autoCompleteEditor';
+export * from './autocompleterEditor';
 export * from './checkboxEditor';
 export * from './dateEditor';
 export * from './dualInputEditor';

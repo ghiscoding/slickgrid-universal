@@ -1,11 +1,39 @@
-import 'jquery-ui/ui/widgets/sortable';
+const sortableMock = {
+  el: undefined,
+  options: {} as SortableOptions,
+  constructor: jest.fn(),
+  create: (el, options) => {
+    sortableMock.el = el;
+    sortableMock.options = {
+      ...(options || {}),
+      onAdd: jest.fn(),
+      onEnd: jest.fn(),
+      onStart: jest.fn(),
+      onUpdate: jest.fn(),
+    };
+
+    return {
+      el,
+      options,
+      destroy: jest.fn(),
+      toArray: jest.fn(),
+    };
+  },
+  utils: {
+    clone: (el) => el.cloneNode(true),
+  },
+};
+jest.mock('sortablejs', () => sortableMock);
+
+import 'jest-extended';
+import { SortableOptions } from 'sortablejs';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { Aggregators } from '../../aggregators/aggregators.index';
 import { SlickDraggableGrouping } from '../slickDraggableGrouping';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { Column, DraggableGroupingOption, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
-import { BackendUtilityService, } from '../../services';
+import { BackendUtilityService, createDomElement, } from '../../services';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
@@ -23,6 +51,7 @@ const gridOptionsMock = {
   enableDraggableGrouping: true,
   draggableGrouping: {
     hideToggleAllButton: false,
+    deleteIconCssClass: 'mdi mdi-close color-danger',
   },
   showHeaderRow: false,
   showTopPanel: false,
@@ -57,9 +86,9 @@ const gridStub = {
   onMouseEnter: new Slick.Event(),
 } as unknown as SlickGrid;
 
-const mockColumns = [      // The column definitions
+const mockColumns = [
   { id: 'firstName', name: 'First Name', field: 'firstName', width: 100 },
-  { id: 'lasstName', name: 'Last Name', field: 'lasstName', width: 100 },
+  { id: 'lastName', name: 'Last Name', field: 'lastName', width: 100 },
   {
     id: 'age', name: 'Age', field: 'age', width: 50,
     grouping: {
@@ -84,20 +113,24 @@ describe('Draggable Grouping Plugin', () => {
   let sharedService: SharedService;
   let backendUtilityService: BackendUtilityService;
   let extensionUtility: ExtensionUtility;
+  let gridContainerDiv: HTMLDivElement;
   let translateService: TranslateServiceStub;
   let headerDiv: HTMLDivElement;
   let preHeaderDiv: HTMLDivElement;
-  let dragGroupDiv: HTMLDivElement;
+  let dropzoneElm: HTMLDivElement;
 
   beforeEach(() => {
-    preHeaderDiv = document.createElement('div');
+    gridContainerDiv = document.createElement('div');
+    gridContainerDiv.className = `slickgrid-container ${GRID_UID}`;
     headerDiv = document.createElement('div');
-    dragGroupDiv = document.createElement('div');
-    dragGroupDiv.className = 'ui-droppable ui-sortable';
+    dropzoneElm = document.createElement('div');
+    dropzoneElm.className = 'slick-dropzone';
     headerDiv.className = 'slick-header-column';
+    preHeaderDiv = document.createElement('div');
     preHeaderDiv.className = 'slick-preheader-panel';
-    preHeaderDiv.appendChild(dragGroupDiv);
-    document.body.appendChild(preHeaderDiv);
+    gridContainerDiv.appendChild(preHeaderDiv);
+    preHeaderDiv.appendChild(dropzoneElm);
+    document.body.appendChild(gridContainerDiv);
 
     eventPubSubService = new EventPubSubService();
     backendUtilityService = new BackendUtilityService();
@@ -107,7 +140,7 @@ describe('Draggable Grouping Plugin', () => {
     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-    jest.spyOn(gridStub, 'getPreHeaderPanel').mockReturnValue(preHeaderDiv);
+    jest.spyOn(gridStub, 'getPreHeaderPanel').mockReturnValue(dropzoneElm);
     plugin = new SlickDraggableGrouping(extensionUtility, eventPubSubService, sharedService);
   });
 
@@ -140,8 +173,8 @@ describe('Draggable Grouping Plugin', () => {
   it('should initialize the Draggable Grouping and expect optional "Toggle All" button text when provided to the plugin', () => {
     plugin.init(gridStub, { ...addonOptions, toggleAllButtonText: 'Toggle all Groups' });
 
-    const preHeaderElm = document.querySelector('.slick-preheader-panel');
-    const toggleAllTextElm = preHeaderElm.querySelector('.slick-group-toggle-all-text');
+    const preHeaderElm = document.querySelector('.slick-preheader-panel') as HTMLDivElement;
+    const toggleAllTextElm = preHeaderElm.querySelector('.slick-group-toggle-all-text') as HTMLDivElement;
     expect(preHeaderElm).toBeTruthy();
     expect(toggleAllTextElm.textContent).toBe('Toggle all Groups');
   });
@@ -151,8 +184,8 @@ describe('Draggable Grouping Plugin', () => {
     translateService.use('fr');
     plugin.init(gridStub, { ...addonOptions, toggleAllButtonTextKey: 'TOGGLE_ALL_GROUPS' });
 
-    const preHeaderElm = document.querySelector('.slick-preheader-panel');
-    const toggleAllTextElm = preHeaderElm.querySelector('.slick-group-toggle-all-text');
+    const preHeaderElm = document.querySelector('.slick-preheader-panel') as HTMLDivElement;
+    const toggleAllTextElm = preHeaderElm.querySelector('.slick-group-toggle-all-text') as HTMLDivElement;
 
     expect(preHeaderElm).toBeTruthy();
     expect(toggleAllTextElm.textContent).toBe('Basculer tous les groupes');
@@ -163,10 +196,10 @@ describe('Draggable Grouping Plugin', () => {
     translateService.use('fr');
     plugin.init(gridStub, { ...addonOptions, toggleAllPlaceholderTextKey: 'TOGGLE_ALL_GROUPS' });
 
-    const preHeaderElm = document.querySelector('.slick-preheader-panel');
-    const toggleAllTextElm = preHeaderElm.querySelector('.slick-group-toggle-all') as HTMLDivElement;
+    const dropzoneElm = document.querySelector('.slick-preheader-panel') as HTMLDivElement;
+    const toggleAllTextElm = dropzoneElm.querySelector('.slick-group-toggle-all') as HTMLDivElement;
 
-    expect(preHeaderElm).toBeTruthy();
+    expect(dropzoneElm).toBeTruthy();
     expect(toggleAllTextElm.title).toBe('Basculer tous les groupes');
   });
 
@@ -175,8 +208,8 @@ describe('Draggable Grouping Plugin', () => {
     translateService.use('fr');
     plugin.init(gridStub, { ...addonOptions, dropPlaceHolderTextKey: 'GROUP_BY' });
 
-    const preHeaderElm = document.querySelector('.slick-preheader-panel');
-    const dropboxPlaceholderElm = preHeaderElm.querySelector('.slick-draggable-dropbox-toggle-placeholder');
+    const preHeaderElm = document.querySelector('.slick-preheader-panel') as HTMLDivElement;
+    const dropboxPlaceholderElm = preHeaderElm.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
 
     expect(preHeaderElm).toBeTruthy();
     expect(dropboxPlaceholderElm.textContent).toBe('Groupé par');
@@ -196,11 +229,15 @@ describe('Draggable Grouping Plugin', () => {
 
   describe('setupColumnReorder definition', () => {
     let dropEvent;
-    let dropTargetElm: HTMLSpanElement;
     let mockHelperElm: HTMLSpanElement;
-    let $headerColumnElm: any;
-    let $mockDivPaneContainer1: any;
-    let $mockDivPaneContainer2: any;
+    let mockDivPaneContainer1: HTMLDivElement;
+    let mockDivPaneContainer2: HTMLDivElement;
+    let headerColumnDiv1: HTMLDivElement;
+    let headerColumnDiv2: HTMLDivElement;
+    let headerColumnDiv3: HTMLDivElement;
+    let headerColumnDiv4: HTMLDivElement;
+    let mockHeaderLeftDiv1: HTMLDivElement;
+    let mockHeaderLeftDiv2: HTMLDivElement;
     const setColumnsSpy = jest.fn();
     const setColumnResizeSpy = jest.fn();
     const getColumnIndexSpy = jest.fn();
@@ -208,64 +245,71 @@ describe('Draggable Grouping Plugin', () => {
     const setGroupingSpy = jest.spyOn(dataViewStub, 'setGrouping');
 
     beforeEach(() => {
+      mockDivPaneContainer1 = document.createElement('div');
+      mockDivPaneContainer2 = document.createElement('div');
       mockHelperElm = document.createElement('span');
       const mockDivPaneContainerElm = document.createElement('div');
       mockDivPaneContainerElm.className = 'slick-pane-header';
       const mockDivPaneContainerElm2 = document.createElement('div');
       mockDivPaneContainerElm2.className = 'slick-pane-header';
-      const mockHeaderLeftDiv1 = document.createElement('div');
-      const mockHeaderLeftDiv2 = document.createElement('div');
-      mockHeaderLeftDiv1.className = 'slick-header-columns slick-header-columns-left ui-sortable';
-      mockHeaderLeftDiv2.className = 'slick-header-columns slick-header-columns-right ui-sortable';
-      const $mockHeaderLeftDiv1 = $(mockHeaderLeftDiv1);
-      const $mockHeaderLeftDiv2 = $(mockHeaderLeftDiv2);
-      $mockDivPaneContainer1 = $(mockDivPaneContainerElm);
-      $mockDivPaneContainer2 = $(mockDivPaneContainerElm2);
-      $mockHeaderLeftDiv1.appendTo($mockDivPaneContainer1);
-      $mockHeaderLeftDiv2.appendTo($mockDivPaneContainer2);
+      mockHeaderLeftDiv1 = document.createElement('div');
+      mockHeaderLeftDiv2 = document.createElement('div');
+      mockHeaderLeftDiv1.className = 'slick-header-columns slick-header-columns-left';
+      mockHeaderLeftDiv2.className = 'slick-header-columns slick-header-columns-right';
 
-      dropTargetElm = document.createElement('div');
+      mockDivPaneContainerElm.appendChild(mockHeaderLeftDiv1);
+      mockDivPaneContainerElm2.appendChild(mockHeaderLeftDiv2);
+      gridContainerDiv.appendChild(mockDivPaneContainerElm);
+      gridContainerDiv.appendChild(mockDivPaneContainerElm2);
       dropEvent = new Event('mouseup');
-      preHeaderDiv.appendChild(dropTargetElm);
-      Object.defineProperty(dropEvent, 'target', { writable: true, configurable: true, value: dropTargetElm });
-      const headerColumnElm = document.createElement('div');
-      headerColumnElm.className = 'slick-header-column';
-      headerColumnElm.id = 'slickgrid12345age';
-      headerColumnElm.dataset.id = 'age';
-      const columnSpanElm = document.createElement('span');
-      headerColumnElm.appendChild(columnSpanElm);
-      preHeaderDiv.appendChild(headerColumnElm);
-      $headerColumnElm = $(headerColumnElm);
+      headerColumnDiv1 = createDomElement('div', {
+        className: 'slick-header-column', id: `${GRID_UID}firstName`, dataset: { id: 'firstName' },
+      });
+      headerColumnDiv2 = createDomElement('div', {
+        className: 'slick-header-column', id: `${GRID_UID}lastName`, dataset: { id: 'lastName' },
+      });
+      headerColumnDiv3 = createDomElement('div', {
+        className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' },
+      });
+      headerColumnDiv4 = createDomElement('div', {
+        className: 'slick-header-column', id: `${GRID_UID}medals`, dataset: { id: 'medals' },
+      });
+      headerColumnDiv1.appendChild(createDomElement('span', { className: 'slick-column-name', textContent: 'First Name' }));
+      headerColumnDiv2.appendChild(createDomElement('span', { className: 'slick-column-name', textContent: 'Last Name' }));
+      headerColumnDiv3.appendChild(createDomElement('span', { className: 'slick-column-name', textContent: 'Age' }));
+      headerColumnDiv4.appendChild(createDomElement('span', { className: 'slick-column-name', textContent: 'Medals' }));
+      preHeaderDiv.appendChild(headerColumnDiv1);
+      preHeaderDiv.appendChild(headerColumnDiv2);
+      preHeaderDiv.appendChild(headerColumnDiv3);
+      preHeaderDiv.appendChild(headerColumnDiv4);
     });
 
     afterEach(() => {
       jest.clearAllMocks();
     });
 
-    it('should execute the "start" callback of the jQueryUI Sortable and expect css classes to be updated', () => {
+    it('should execute the "onStart" and "onAdd" callbacks of Sortable and expect css classes to be updated', () => {
       plugin.init(gridStub, { ...addonOptions });
-      const droppableOptions = ($(plugin.dropboxElement) as any).droppable('option') as any;
-      droppableOptions.drop(dropEvent, { draggable: $headerColumnElm });
-      const fn = plugin.setupColumnReorder(gridStub, $mockDivPaneContainer1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
-      let placeholderElm = preHeaderDiv.querySelector('.slick-draggable-dropbox-toggle-placeholder') as HTMLDivElement;
-      let dropGroupingElm = dropTargetElm.querySelector('.slick-dropped-grouping') as HTMLDivElement;
-      const startFn = fn.sortable('option', 'start');
-      startFn(new Event('click'), { helper: mockHelperElm });
+      const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+      jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
 
-      expect(mockHelperElm.classList.contains('slick-header-column-active')).toBeTruthy();
-      expect(placeholderElm.style.display).toBe('inline-block');
-      expect(dropGroupingElm.style.display).toBe('none');
+      fn.sortableLeftInstance!.options.onStart!({} as any);
+      plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
 
-      let groupByRemoveElm = preHeaderDiv.querySelector('.slick-groupby-remove');
-      const groupByRemoveImageElm = document.querySelector('.slick-groupby-remove-image');
+      let groupByRemoveElm = preHeaderDiv.querySelector('.slick-groupby-remove') as HTMLDivElement;
+      const groupByRemoveImageElm = document.querySelector('.slick-groupby-remove-icon') as HTMLDivElement;
+      let placeholderElm = preHeaderDiv.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
 
+      expect(fn.sortableLeftInstance).toEqual(plugin.sortableLeftInstance);
+      expect(fn.sortableRightInstance).toEqual(plugin.sortableRightInstance);
+      expect(fn.sortableLeftInstance.destroy).toBeTruthy();
       expect(groupByRemoveElm).toBeTruthy();
       expect(groupByRemoveImageElm).toBeTruthy();
 
       groupByRemoveElm.dispatchEvent(new Event('click'));
 
-      groupByRemoveElm = preHeaderDiv.querySelector('.slick-groupby-remove');
-      placeholderElm = preHeaderDiv.querySelector('.slick-draggable-dropbox-toggle-placeholder') as HTMLDivElement;
+      groupByRemoveElm = preHeaderDiv.querySelector('.slick-groupby-remove') as HTMLDivElement;
+      placeholderElm = preHeaderDiv.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
       const toggleAllElm = preHeaderDiv.querySelector('.slick-group-toggle-all') as HTMLDivElement;
 
       expect(setGroupingSpy).toHaveBeenCalledWith([]);
@@ -274,84 +318,98 @@ describe('Draggable Grouping Plugin', () => {
       expect(toggleAllElm.style.display).toBe('none');
     });
 
-    it('should execute the "beforeStop" callback of the jQueryUI Sortable and expect css classes to be updated', () => {
-      plugin.init(gridStub, { ...addonOptions, deleteIconCssClass: 'mdi mdi-close' });
-      const droppableOptions = ($(plugin.dropboxElement) as any).droppable('option') as any;
-      droppableOptions.drop(dropEvent, { draggable: $headerColumnElm });
-      const fn = plugin.setupColumnReorder(gridStub, $mockDivPaneContainer1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
-      const beforeStopFn = fn.sortable('option', 'beforeStop');
-      beforeStopFn(new Event('click'), { helper: mockHelperElm });
+    it('should execute the "onEnd" callback of Sortable and expect css classes to be updated', () => {
+      plugin.init(gridStub, { ...addonOptions });
+      const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+      jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue([]);
 
-      let placeholderElm = preHeaderDiv.querySelector('.slick-draggable-dropbox-toggle-placeholder') as HTMLDivElement;
-      let dropGroupingElm = dropTargetElm.querySelector('.slick-dropped-grouping') as HTMLDivElement;
+      fn.sortableLeftInstance!.options.onStart!({} as any);
+      plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
+      fn.sortableLeftInstance.options.onEnd!(new CustomEvent('end') as any);
+
+      let placeholderElm = preHeaderDiv.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
+      let dropGroupingElm = preHeaderDiv.querySelector('.slick-dropped-grouping') as HTMLDivElement;
       expect(placeholderElm.style.display).toBe('none');
       expect(dropGroupingElm.style.display).toBe('inline-block');
     });
 
-    it('should execute the "stop" callback of the jQueryUI Sortable and expect sortable to be cancelled', () => {
-      plugin.init(gridStub, { ...addonOptions, deleteIconCssClass: 'mdi mdi-close' });
-      const droppableOptions = ($(plugin.dropboxElement) as any).droppable('option') as any;
-      droppableOptions.drop(dropEvent, { draggable: $headerColumnElm });
-      jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(false);
-      const fn = plugin.setupColumnReorder(gridStub, $mockDivPaneContainer1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
-      const stopFn = fn.sortable('option', 'stop');
+    it('should execute the "onEnd" callback of Sortable and expect sortable to be cancelled', () => {
+      plugin.init(gridStub, { ...addonOptions });
+      plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close color-danger' });
+      const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
 
-      const groupByRemoveElm = document.querySelector('.slick-groupby-remove.mdi-close');
+      fn.sortableLeftInstance!.options.onStart!({} as any);
+      plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
+      fn.sortableLeftInstance.options.onEnd!(new CustomEvent('end') as any);
+
+      const groupByRemoveElm = document.querySelector('.slick-groupby-remove.mdi-close') as HTMLDivElement;
       expect(groupByRemoveElm).toBeTruthy();
-
-      stopFn(new Event('click'), { helper: mockHelperElm });
 
       expect(setColumnsSpy).not.toHaveBeenCalled();
       expect(setColumnResizeSpy).not.toHaveBeenCalled();
       expect(triggerSpy).not.toHaveBeenCalled();
     });
 
-    it('should execute the "stop" callback of the jQueryUI Sortable and expect css classes to be updated', () => {
-      plugin.init(gridStub, { ...addonOptions, deleteIconCssClass: 'mdi mdi-close' });
+    it('should clear grouping and expect placeholder to be displayed when calling "onEnd" callback', () => {
+      plugin.init(gridStub, { ...addonOptions });
+      plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close color-danger' });
+      const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+
+      fn.sortableLeftInstance!.options.onStart!({} as any);
+      plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
+      plugin.clearDroppedGroups();
+      fn.sortableLeftInstance.options.onEnd!(new CustomEvent('end') as any);
+
+      const draggablePlaceholderElm = dropzoneElm.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
+      expect(draggablePlaceholderElm.style.display).toEqual('inline-block');
+    });
+
+    it('should execute the "onEnd" callback of Sortable and expect css classes to be updated', () => {
+      plugin.init(gridStub, { ...addonOptions });
       plugin.setColumns(mockColumns);
-      const droppableOptions = ($(plugin.dropboxElement) as any).droppable('option') as any;
-      droppableOptions.drop(dropEvent, { draggable: $headerColumnElm });
+      plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close' });
       jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
       getColumnIndexSpy.mockReturnValue(2);
-      const fn = plugin.setupColumnReorder(gridStub, $mockDivPaneContainer1.add($mockDivPaneContainer2), {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
-      const stopFn = fn.sortable('option', 'stop');
+      const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+      jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
+
+      fn.sortableLeftInstance!.options.onStart!({} as any);
+      plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
 
       const groupByRemoveElm = document.querySelector('.slick-groupby-remove.mdi-close');
       expect(groupByRemoveElm).toBeTruthy();
 
-      stopFn(new Event('click'), { helper: mockHelperElm });
+      fn.sortableLeftInstance.options.onEnd!(new CustomEvent('end') as any);
 
       expect(setColumnsSpy).toHaveBeenCalledWith([mockColumns[2], mockColumns[2]]);
       expect(setColumnResizeSpy).toHaveBeenCalled();
       expect(triggerSpy).toHaveBeenCalledWith(gridStub.onColumnsReordered, { grid: gridStub });
     });
 
+    it('should drag over dropzone and expect hover css class be added and removed when dragging outside of dropzone', () => {
+      plugin.init(gridStub, { ...addonOptions });
+      plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close color-danger' });
+      const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+
+      fn.sortableLeftInstance!.options.onStart!({} as any);
+      plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
+      fn.sortableLeftInstance.options.onEnd!(new CustomEvent('end') as any);
+
+      const dragoverEvent = new CustomEvent('dragover', { bubbles: true, detail: {} });
+      dropzoneElm.dispatchEvent(dragoverEvent);
+
+      const dragenterEvent = new CustomEvent('dragenter', { bubbles: true, detail: {} });
+      dropzoneElm.dispatchEvent(dragenterEvent);
+      expect(dropzoneElm.classList.contains('slick-dropzone-hover')).toBeTruthy();
+
+      const dragleaveEvent = new CustomEvent('dragleave', { bubbles: true, detail: {} });
+      dropzoneElm.dispatchEvent(dragleaveEvent);
+      expect(dropzoneElm.classList.contains('slick-dropzone-hover')).toBeFalsy();
+    });
+
     describe('setupColumnDropbox method', () => {
-      it('should expect denied class to be removed when "deactivate" is called', () => {
-        plugin.init(gridStub, { ...addonOptions });
-        const deactivateFn = plugin.droppableInstance.droppable('option', 'deactivate');
-        plugin.dropboxElement.classList.add('slick-header-column-denied');
-        deactivateFn();
-
-        expect(plugin.dropboxElement.classList.contains('slick-header-column-denied')).toBeFalsy();
-      });
-
-      it('should expect denied class to be added when calling "over" with a header column that does not have a "grouping" property', () => {
-        const mockHeaderColumnDiv = document.createElement('div');
-        mockHeaderColumnDiv.id = 'slickgrid12345firstName';
-        mockHeaderColumnDiv.className = 'slick-header-column';
-        const $mockHeaderColumnDiv = $(mockHeaderColumnDiv);
-
-        plugin.init(gridStub, { ...addonOptions });
-        const overFn = plugin.droppableInstance.droppable('option', 'over');
-        overFn(new Event('mouseup'), { draggable: $mockHeaderColumnDiv });
-
-        expect(plugin.dropboxElement.classList.contains('slick-header-column-denied')).toBeTruthy();
-      });
-
       describe('setupColumnDropbox update & toggler click event', () => {
         let groupChangedSpy: any;
-        const updateEvent = new Event('mouseup');
         let mockHeaderColumnDiv1: HTMLDivElement;
         let mockHeaderColumnDiv2: HTMLDivElement;
 
@@ -361,26 +419,27 @@ describe('Draggable Grouping Plugin', () => {
           mockHeaderColumnDiv1.className = 'slick-dropped-grouping';
           mockHeaderColumnDiv1.id = 'age';
           mockHeaderColumnDiv1.dataset.id = 'age';
-          mockColumns[2].grouping.collapsed = false;
+          mockColumns[2].grouping!.collapsed = false;
 
           mockHeaderColumnDiv2 = document.createElement('div');
           mockHeaderColumnDiv2.className = 'slick-dropped-grouping';
           mockHeaderColumnDiv2.id = 'medals';
           mockHeaderColumnDiv2.dataset.id = 'medals';
-          dragGroupDiv.appendChild(mockHeaderColumnDiv1);
-          dragGroupDiv.appendChild(mockHeaderColumnDiv2);
-          $(mockHeaderColumnDiv1).appendTo($mockDivPaneContainer1);
-          $(mockHeaderColumnDiv2).appendTo($mockDivPaneContainer1);
+          dropzoneElm.appendChild(mockHeaderColumnDiv1);
+          dropzoneElm.appendChild(mockHeaderColumnDiv2);
 
-          Object.defineProperty(updateEvent, 'target', { writable: true, configurable: true, value: $mockDivPaneContainer1.get(0) });
+          mockHeaderColumnDiv1.appendChild(mockDivPaneContainer1);
+          mockHeaderColumnDiv2.appendChild(mockDivPaneContainer1);
 
           plugin.init(gridStub, { ...addonOptions, deleteIconCssClass: 'mdi mdi-close' });
-          const droppableOptions = ($(plugin.dropboxElement) as any).droppable('option') as any;
-          droppableOptions.drop(dropEvent, { draggable: $headerColumnElm });
+          plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close' });
+
           jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(false);
-          const fn = plugin.setupColumnReorder(gridStub, $mockDivPaneContainer1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
-          const updateFn = plugin.sortableInstance.sortable('option', 'update');
-          updateFn(updateEvent);
+          const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+          jest.spyOn(plugin.droppableInstance!, 'toArray').mockReturnValue(['age', 'medals']);
+          fn.sortableLeftInstance!.options.onStart!({} as any);
+          plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
+          plugin.droppableInstance?.options.onUpdate!({ item: mockDivPaneContainer1, clone: mockDivPaneContainer1.cloneNode(true) } as any);
         });
 
         afterEach(() => {
@@ -388,10 +447,16 @@ describe('Draggable Grouping Plugin', () => {
         });
 
         it('should call sortable "update" from setupColumnDropbox and expect "updateGroupBy" to be called with a sort-group', () => {
+          expect(plugin.dropboxElement).toEqual(dropzoneElm);
           expect(plugin.columnsGroupBy.length).toBeGreaterThan(0);
           expect(groupChangedSpy).toHaveBeenCalledWith({
             caller: 'sort-group',
-            groupColumns: [{ aggregators: expect.toBeArray(), formatter: mockColumns[2].grouping.formatter, getter: 'age', collapsed: false, }],
+            groupColumns: [{
+              aggregators: expect.toBeArray(),
+              formatter: mockColumns[2].grouping!.formatter,
+              getter: 'age',
+              collapsed: false,
+            }],
           });
 
           jest.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(mockHeaderColumnDiv1);
@@ -399,12 +464,12 @@ describe('Draggable Grouping Plugin', () => {
         });
 
         it('should call "clearDroppedGroups" and expect the grouping to be cleared', () => {
-          const preHeaderElm = document.querySelector('.slick-preheader-panel');
-          let dropboxPlaceholderElm = preHeaderElm.querySelector('.slick-draggable-dropbox-toggle-placeholder') as HTMLDivElement;
+          const preHeaderElm = document.querySelector('.slick-preheader-panel') as HTMLDivElement;
+          let dropboxPlaceholderElm = preHeaderElm.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
           expect(dropboxPlaceholderElm.style.display).toBe('none');
 
           plugin.clearDroppedGroups();
-          dropboxPlaceholderElm = preHeaderElm.querySelector('.slick-draggable-dropbox-toggle-placeholder') as HTMLDivElement;
+          dropboxPlaceholderElm = preHeaderElm.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
           expect(dropboxPlaceholderElm.style.display).toBe('inline-block');
           expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'clear-all', groupColumns: [], });
         });
@@ -412,8 +477,8 @@ describe('Draggable Grouping Plugin', () => {
         it('should use the Toggle All and expect classes to be toggled and DataView to call necessary method', () => {
           const dvExpandSpy = jest.spyOn(dataViewStub, 'expandAllGroups');
           const dvCollapseSpy = jest.spyOn(dataViewStub, 'collapseAllGroups');
-          let toggleAllElm = document.querySelector('.slick-group-toggle-all');
-          const toggleAllIconElm = toggleAllElm.querySelector('.slick-group-toggle-all-icon');
+          let toggleAllElm = document.querySelector('.slick-group-toggle-all') as HTMLDivElement;
+          const toggleAllIconElm = toggleAllElm.querySelector('.slick-group-toggle-all-icon') as HTMLDivElement;
           const clickEvent = new Event('click');
           Object.defineProperty(clickEvent, 'target', { writable: true, configurable: true, value: toggleAllIconElm });
 
@@ -423,14 +488,14 @@ describe('Draggable Grouping Plugin', () => {
 
           // collapsed after toggle
           toggleAllElm.dispatchEvent(clickEvent);
-          toggleAllElm = document.querySelector('.slick-group-toggle-all');
+          toggleAllElm = document.querySelector('.slick-group-toggle-all') as HTMLDivElement;
           expect(toggleAllIconElm.classList.contains('collapsed')).toBeTruthy();
           expect(toggleAllIconElm.classList.contains('expanded')).toBeFalsy();
           expect(dvCollapseSpy).toHaveBeenCalled();
 
           // expanded after toggle
           toggleAllElm.dispatchEvent(clickEvent);
-          toggleAllElm = document.querySelector('.slick-group-toggle-all');
+          toggleAllElm = document.querySelector('.slick-group-toggle-all') as HTMLDivElement;
           expect(toggleAllIconElm.classList.contains('collapsed')).toBeFalsy();
           expect(toggleAllIconElm.classList.contains('expanded')).toBeTruthy();
           expect(dvExpandSpy).toHaveBeenCalled();
@@ -444,8 +509,8 @@ describe('Draggable Grouping Plugin', () => {
 
         it('should change the toggle icon to collapsed when that action is called from the Context Menu', () => {
           eventPubSubService.publish('onContextMenuCollapseAllGroups');
-          const toggleAllElm = document.querySelector('.slick-group-toggle-all');
-          const toggleAllIconElm = toggleAllElm.querySelector('.slick-group-toggle-all-icon');
+          const toggleAllElm = document.querySelector('.slick-group-toggle-all') as HTMLDivElement;
+          const toggleAllIconElm = toggleAllElm.querySelector('.slick-group-toggle-all-icon') as HTMLDivElement;
 
           expect(toggleAllIconElm.classList.contains('expanded')).toBeFalsy();
           expect(toggleAllIconElm.classList.contains('collapsed')).toBeTruthy();
@@ -453,12 +518,44 @@ describe('Draggable Grouping Plugin', () => {
 
         it('should change the toggle icon to expanded when that action is called from the Context Menu', () => {
           eventPubSubService.publish('onContextMenuExpandAllGroups');
-          const toggleAllElm = document.querySelector('.slick-group-toggle-all');
-          const toggleAllIconElm = toggleAllElm.querySelector('.slick-group-toggle-all-icon');
+          const toggleAllElm = document.querySelector('.slick-group-toggle-all') as HTMLDivElement;
+          const toggleAllIconElm = toggleAllElm.querySelector('.slick-group-toggle-all-icon') as HTMLDivElement;
 
           expect(toggleAllIconElm.classList.contains('expanded')).toBeTruthy();
           expect(toggleAllIconElm.classList.contains('collapsed')).toBeFalsy();
         });
+      });
+    });
+
+    describe('with Frozen Grid', () => {
+      beforeEach(() => {
+        gridOptionsMock.frozenColumn = 2;
+        setColumnsSpy.mockClear();
+        jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
+        getColumnIndexSpy
+          .mockReturnValueOnce(0)
+          .mockReturnValueOnce(1)
+          .mockReturnValueOnce(2)
+          .mockReturnValueOnce(3)
+          .mockReturnValueOnce(4)
+      });
+
+      it('should execute the "onEnd" callback of Sortable and expect sortable to be cancelled', () => {
+        plugin.init(gridStub, { ...addonOptions });
+        plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close color-danger' });
+        const fn = plugin.setupColumnReorder(gridStub, [mockHeaderLeftDiv1, mockHeaderLeftDiv2], {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+        jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['firstName', 'lastName', 'age']);
+        jest.spyOn(fn.sortableRightInstance, 'toArray').mockReturnValue(['gender']);
+
+        fn.sortableLeftInstance!.options.onStart!({} as any);
+        plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
+        fn.sortableLeftInstance.options.onEnd!(new CustomEvent('end') as any);
+
+        const groupByRemoveElm = document.querySelector('.slick-groupby-remove.mdi-close') as HTMLDivElement;
+        expect(groupByRemoveElm).toBeTruthy();
+
+        mockColumns.pop(); // all original columns except last column which is what we returned on sortableRightInstance
+        expect(setColumnsSpy).toHaveBeenCalledWith(mockColumns);
       });
     });
   });

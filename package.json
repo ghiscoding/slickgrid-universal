@@ -26,6 +26,7 @@
     "preview:publish": "lerna publish from-package --dry-run",
     "preview:version": "lerna version --dry-run",
     "preview:roll-new-release": "pnpm bundle && pnpm new-version --dry-run && pnpm new-publish --dry-run",
+    "preview:alpha-release": "lerna publish 2.0.0-alpha.0 --dist-tag next --dry-run",
     "new-version": "lerna version",
     "new-publish": "lerna publish from-package",
     "roll-new-release": "pnpm bundle && pnpm new-version && pnpm new-publish",
@@ -39,6 +40,7 @@
     "new-version": "To create a new version with lerna, run the following scripts (1) 'bundle', (2) 'new-version' and (3) 'new-publish' to send it over to NPM."
   },
   "devDependencies": {
+    "@4tw/cypress-drag-drop": "^2.2.1",
     "@jest/types": "^29.1.2",
     "@lerna-lite/cli": "^1.12.0",
     "@lerna-lite/run": "^1.12.0",

@@ -1,6 +1,6 @@
 import {
   Column,
-  DOMMouseEvent,
+  DOMMouseOrTouchEvent,
   ExternalResource,
   FormatterResultObject,
   GridOption,
@@ -653,7 +653,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** Handle mouse click event */
-  protected handleClick(e: DOMMouseEvent<HTMLDivElement>, args: { row: number; cell: number; }) {
+  protected handleClick(e: DOMMouseOrTouchEvent<HTMLDivElement>, args: { row: number; cell: number; }) {
     const dataContext = this._grid.getDataItem(args.row);
     if (this.checkExpandableOverride(args.row, dataContext, this._grid)) {
       // clicking on a row select checkbox
