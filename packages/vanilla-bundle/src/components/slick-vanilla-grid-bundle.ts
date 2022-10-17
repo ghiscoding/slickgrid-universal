@@ -1,10 +1,10 @@
 import { dequal } from 'dequal/lite';
 import 'jquery';
 import 'flatpickr/dist/l10n/fr';
-import 'slickgrid/slick.core';
-import 'slickgrid/slick.interactions';
-import 'slickgrid/slick.grid';
-import 'slickgrid/slick.dataview';
+import 'slickgrid/dist/slick.core.min';
+import 'slickgrid/dist/slick.interactions.min';
+import 'slickgrid/dist/slick.grid.min';
+import 'slickgrid/dist/slick.dataview.min';
 import SortableInstance, * as Sortable_ from 'sortablejs';
 const Sortable = ((Sortable_ as any)?.['default'] ?? Sortable_); // patch for rollup
 
