@@ -27,6 +27,7 @@
     "preview:version": "lerna version --dry-run",
     "preview:roll-new-release": "pnpm bundle && pnpm new-version --dry-run && pnpm new-publish --dry-run",
     "preview:alpha-release": "lerna publish 2.0.0-alpha.0 --dist-tag next --dry-run",
+    "preview:major-release": "lerna publish 2.0.0 --dry-run",
     "new-version": "lerna version",
     "new-publish": "lerna publish from-package",
     "roll-new-release": "pnpm bundle && pnpm new-version && pnpm new-publish",
