@@ -85,7 +85,6 @@
   "devDependencies": {
     "@types/dompurify": "^2.3.4",
     "@types/jquery": "^3.5.14",
-    "@types/moment": "^2.13.0",
     "@types/sortablejs": "^1.15.0",
     "autoprefixer": "^10.4.12",
     "copyfiles": "^2.4.1",
