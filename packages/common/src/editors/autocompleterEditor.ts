@@ -540,6 +540,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     this._clearButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default icon-clear' });
     this._inputElm = createDomElement('input', {
       type: 'text', placeholder, title,
+      autocomplete: 'none',
       className: `autocomplete form-control editor-text input-group-editor editor-${columnId}`,
       dataset: { input: '' }
     });
