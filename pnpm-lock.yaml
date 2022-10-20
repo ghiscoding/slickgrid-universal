@@ -24,7 +24,7 @@ importers:
       jsdom: ^20.0.1
       jsdom-global: ^3.0.2
       moment-mini: ^2.29.4
-      pnpm: ^7.13.5
+      pnpm: ^7.13.6
       rimraf: ^3.0.2
       rxjs: ^7.5.7
       serve: ^14.0.1
@@ -51,7 +51,7 @@ importers:
       jsdom: 20.0.1
       jsdom-global: 3.0.2_jsdom@20.0.1
       moment-mini: 2.29.4
-      pnpm: 7.13.5
+      pnpm: 7.13.6
       rimraf: 3.0.2
       rxjs: 7.5.7
       serve: 14.0.1
@@ -8379,8 +8379,8 @@ packages:
       find-up: 4.1.0
     dev: true
 
-  /pnpm/7.13.5:
-    resolution: {integrity: sha512-7+xyYPunBiAAJclpmUU2CTqe7uHipDjguUF2qmd9+r8hfZEVj0TnMTfblPnRF9aiVsmE4X3zRPlY3A5zk7r73w==}
+  /pnpm/7.13.6:
+    resolution: {integrity: sha512-KIGf//0cojjX3cUL63gvAk8d5t9tg+5h6AxLGyxQwoCPtpsjXafm/auIJyDUUh9RVmcPusJxdiONkgxPnbW1YA==}
     engines: {node: '>=14.6'}
     hasBin: true
     dev: true
