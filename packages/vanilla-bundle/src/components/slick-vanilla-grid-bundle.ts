@@ -637,6 +637,7 @@ export class SlickVanillaGridBundle {
 
       // return all available Services (non-singleton)
       backendService: this.gridOptions?.backendServiceApi?.service,
+      eventPubSubService: this._eventPubSubService,
       filterService: this.filterService,
       gridEventService: this.gridEventService,
       gridStateService: this.gridStateService,
