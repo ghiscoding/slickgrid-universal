@@ -14,6 +14,7 @@ import {
   SortService,
   TreeDataService,
 } from '@slickgrid-universal/common';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 export interface SlickerGridInstance {
   /** Slick DataView object */
@@ -33,6 +34,9 @@ export interface SlickerGridInstance {
 
   /** Backend Service, when available */
   backendService?: BackendService;
+
+  /** EventPubSub Service instance that is used internal by the lib and could be used externally to subscribe to Slickgrid-Universal events */
+  eventPubSubService?: EventPubSubService;
 
   /** Extension (Controls & Plugins) Service */
   extensionService: ExtensionService;
