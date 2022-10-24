@@ -539,12 +539,16 @@ export class Example7 {
     this.sgb.columnDefinitions.pop();
     this.sgb.columnDefinitions = this.sgb.columnDefinitions.slice();
 
-    // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
-    // you MUST use the code below, first you must reassign the Editor facade (from the internalColumnEditor back to the editor)
+    // NOTE if you use an Extensions (Row Move, Row Detail, Row Selections) that modifies the column definitions in any way
+    // it will update the column definitions but only on the sgb instance, so you can use "this.sgb.columnDefinitions" to get full list.
+    // However please note that this will ALWAYS return all columns in their original positions,
+    // in other words, if you change column reordering, that unfortunately won't be reflected.
+    // Another important thing is that SlickGrid does not have "editors: { model ...}" and you MUST use the code below to let SlickGrid have that info,
+    // first you must reassign the Editor facade (from the internalColumnEditor back to the editor)
     // in other words, SlickGrid is not using the same as Slickgrid-Universal uses (editor with a "model" and other properties are a facade, SlickGrid only uses what is inside the model)
     /*
-    const allColumns = this.slickerGridInstance.gridService.getAllColumnDefinitions();
-    const allOriginalColumns = allColumns.map((column) => {
+    const allOriginalColumns = this.sgb.columnDefinitions(); // or: this.slickerGridInstance.gridService.getAllColumnDefinitions();
+    const allOriginalColumns = allOriginalColumns.map((column) => {
       column.editor = column.internalColumnEditor;
       return column;
     });

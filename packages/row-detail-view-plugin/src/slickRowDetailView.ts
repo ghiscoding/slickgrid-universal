@@ -208,6 +208,11 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       } else {
         columnDefinitions.unshift(finalRowDetailViewColumn);
       }
+
+      this._pubSubService?.publish(`onPluginColumnsChanged`, {
+        columns: columnDefinitions,
+        pluginName: this.pluginName
+      });
     }
     return this as unknown as UniversalRowDetailView;
   }

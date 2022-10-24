@@ -2,6 +2,7 @@ import 'jest-extended';
 import { SlickCheckboxSelectColumn } from '../slickCheckboxSelectColumn';
 import { Column, OnSelectedRowsChangedEventArgs, SlickGrid, SlickNamespace, } from '../../interfaces/index';
 import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 declare const Slick: SlickNamespace;
 
@@ -66,6 +67,13 @@ const mockRowSelectionModel = {
   onSelectedRangesChanged: new Slick.Event(),
 } as unknown as SlickRowSelectionModel;
 
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as BasePubSubService;
+
 jest.mock('../../extensions/slickRowSelectionModel', () => ({
   SlickRowSelectionModel: jest.fn().mockImplementation(() => mockRowSelectionModel),
 }));
@@ -81,7 +89,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   let plugin: SlickCheckboxSelectColumn;
 
   beforeEach(() => {
-    plugin = new SlickCheckboxSelectColumn();
+    plugin = new SlickCheckboxSelectColumn(pubSubServiceStub);
     jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(false);
     jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
     // jest.spyOn(gridStub, 'getSelectedRows').mockReturnValue([]);
@@ -203,17 +211,17 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     nodeElm.className = 'slick-headerrow-column';
     const updateColHeaderSpy = jest.spyOn(gridStub, 'updateColumnHeader');
 
-    plugin = new SlickCheckboxSelectColumn({ hideInFilterHeaderRow: false, hideSelectAllCheckbox: false, });
+    plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, { hideInFilterHeaderRow: false, hideSelectAllCheckbox: false, });
     plugin.init(gridStub);
     gridStub.onHeaderRowCellRendered.notify({ column: { id: '_checkbox_selector', field: 'sel' }, node: nodeElm, grid: gridStub });
     plugin.setOptions({ hideInColumnTitleRow: true, hideInFilterHeaderRow: false, hideSelectAllCheckbox: false, });
-    let filterSelectAll = plugin.headerRowNode.querySelector(`#filter-checkbox-selectall-container`) as HTMLSpanElement;
+    let filterSelectAll = plugin.headerRowNode!.querySelector(`#filter-checkbox-selectall-container`) as HTMLSpanElement;
 
     expect(plugin).toBeTruthy();
     expect(updateColHeaderSpy).toHaveBeenCalledWith('_checkbox_selector', '', '');
     expect(filterSelectAll.style.display).toEqual('flex');
 
-    filterSelectAll = plugin.headerRowNode.querySelector(`#filter-checkbox-selectall-container`) as HTMLSpanElement;
+    filterSelectAll = plugin.headerRowNode!.querySelector(`#filter-checkbox-selectall-container`) as HTMLSpanElement;
     plugin.hideSelectAllFromColumnHeaderFilterRow();
     expect(filterSelectAll.style.display).toEqual('none');
   });
@@ -265,7 +273,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     jest.spyOn(gridStub, 'getSelectedRows').mockReturnValue([1, 2]);
     const setActiveCellSpy = jest.spyOn(gridStub, 'setActiveCell');
 
-    plugin = new SlickCheckboxSelectColumn({ selectableOverride: () => false });
+    plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, { selectableOverride: () => false });
     plugin.init(gridStub);
     plugin.selectRows([2, 3]);
     plugin.toggleRowSelection(2);
@@ -306,7 +314,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   });
 
   it('should create a new row selection column definition', () => {
-    plugin = new SlickCheckboxSelectColumn();
+    plugin = new SlickCheckboxSelectColumn(pubSubServiceStub);
     plugin.init(gridStub);
 
     expect(plugin.getColumnDefinition()).toEqual({
@@ -333,12 +341,12 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const nodeElm = document.createElement('div');
     nodeElm.className = 'slick-headerrow-column';
 
-    plugin = new SlickCheckboxSelectColumn({ hideInFilterHeaderRow: false, });
+    plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, { hideInFilterHeaderRow: false, });
     plugin.init(gridStub);
 
     gridStub.onHeaderRowCellRendered.notify({ column: { id: '_checkbox_selector', field: 'sel' }, node: nodeElm, grid: gridStub });
-    const checkboxContainerElm = nodeElm.querySelector('span#filter-checkbox-selectall-container');
-    const inputCheckboxElm = checkboxContainerElm.querySelector('input[type=checkbox]');
+    const checkboxContainerElm = nodeElm.querySelector('span#filter-checkbox-selectall-container') as HTMLDivElement;
+    const inputCheckboxElm = checkboxContainerElm.querySelector('input[type=checkbox]') as HTMLDivElement;
     inputCheckboxElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
 
     expect(inputCheckboxElm).toBeTruthy();
@@ -394,7 +402,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return null when selectableOverride is returning False', () => {
     plugin.selectableOverride(() => false);
     plugin.create(mockColumns, {});
-    const output = plugin.getColumnDefinition().formatter(0, 0, null, { id: 'checkbox_selector', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
+    const output = plugin.getColumnDefinition().formatter!(0, 0, null, { id: 'checkbox_selector', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
 
     expect(plugin).toBeTruthy();
     expect(output).toEqual(null);
@@ -403,7 +411,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return null when selectableOverride is returning False', () => {
     plugin.init(gridStub);
     plugin.selectableOverride(() => true);
-    const output = plugin.getColumnDefinition().formatter(0, 0, null, { id: 'checkbox_selector', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
+    const output = plugin.getColumnDefinition().formatter!(0, 0, null, { id: 'checkbox_selector', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
 
     expect(plugin).toBeTruthy();
     expect(output).toContain(`<input id="selector`);
@@ -529,7 +537,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const setSelectedRowSpy = jest.spyOn(gridStub, 'setSelectedRows');
     jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
 
-    plugin = new SlickCheckboxSelectColumn({ hideInColumnTitleRow: false, hideSelectAllCheckbox: false });
+    plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, { hideInColumnTitleRow: false, hideSelectAllCheckbox: false });
     plugin.init(gridStub);
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
@@ -556,7 +564,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const setSelectedRowSpy = jest.spyOn(gridStub, 'setSelectedRows');
     jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
 
-    plugin = new SlickCheckboxSelectColumn({ hideInFilterHeaderRow: false, hideSelectAllCheckbox: false, selectableOverride: () => false });
+    plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, { hideInFilterHeaderRow: false, hideSelectAllCheckbox: false, selectableOverride: () => false });
     plugin.init(gridStub);
     plugin.selectedRowsLookup = { 1: false, 2: true };
 

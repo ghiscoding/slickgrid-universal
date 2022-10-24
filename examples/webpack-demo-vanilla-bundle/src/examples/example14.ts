@@ -2,6 +2,7 @@ import {
   AutocompleterOption,
   BindingEventService,
   Column,
+  EditCommand,
   Editors,
   EventNamingStyle,
   FieldType,
@@ -84,7 +85,7 @@ export class Example14 {
   isGridEditable = true;
   classDefaultResizeButton = 'button is-small';
   classNewResizeButton = 'button is-small is-selected is-primary';
-  editQueue = [];
+  editQueue: Array<{ item: any; columns: Column[]; editCommand: EditCommand }> = [];
   editedItems = {};
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;

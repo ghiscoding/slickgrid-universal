@@ -1,3 +1,4 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import 'jest-extended';
 
 import { Column, DragRowMove, GridOption, OnDragEventArgs, SlickGrid, SlickNamespace, } from '../../interfaces/index';
@@ -57,6 +58,13 @@ const gridStub = {
   onDragStart: new Slick.Event(),
 } as unknown as SlickGrid;
 
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as BasePubSubService;
+
 describe('SlickRowMoveManager Plugin', () => {
   let plugin: SlickRowMoveManager;
   const mockColumns = [
@@ -90,7 +98,7 @@ describe('SlickRowMoveManager Plugin', () => {
   jest.spyOn(gridStub, 'getCanvasNode').mockReturnValue(canvasTL);
 
   beforeEach(() => {
-    plugin = new SlickRowMoveManager();
+    plugin = new SlickRowMoveManager(pubSubServiceStub);
   });
 
   afterEach(() => {
@@ -194,7 +202,7 @@ describe('SlickRowMoveManager Plugin', () => {
 
   it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return null when usabilityOverride is provided as plugin option and is returning False', () => {
     plugin.init(gridStub, { usabilityOverride: () => false });
-    const output = plugin.getColumnDefinition().formatter(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
+    const output = plugin.getColumnDefinition().formatter!(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
 
     expect(plugin).toBeTruthy();
     expect(output).toEqual('');
@@ -203,7 +211,7 @@ describe('SlickRowMoveManager Plugin', () => {
   it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return null when usabilityOverride is defined and returning False', () => {
     plugin.usabilityOverride(() => false);
     plugin.create(mockColumns, {});
-    const output = plugin.getColumnDefinition().formatter(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
+    const output = plugin.getColumnDefinition().formatter!(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
 
     expect(plugin).toBeTruthy();
     expect(output).toEqual('');
@@ -212,7 +220,7 @@ describe('SlickRowMoveManager Plugin', () => {
   it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return regular formatter when usabilityOverride is returning True', () => {
     plugin.init(gridStub);
     plugin.usabilityOverride(() => true);
-    const output = plugin.getColumnDefinition().formatter(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
+    const output = plugin.getColumnDefinition().formatter!(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
 
     expect(plugin).toBeTruthy();
     expect(output).toEqual({ addClasses: 'cell-reorder dnd', text: '' });
@@ -220,8 +228,8 @@ describe('SlickRowMoveManager Plugin', () => {
 
   it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return regular formatter when usabilityOverride is not a function', () => {
     plugin.init(gridStub);
-    plugin.usabilityOverride(null);
-    const output = plugin.getColumnDefinition().formatter(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
+    plugin.usabilityOverride(null as any);
+    const output = plugin.getColumnDefinition().formatter!(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
 
     expect(plugin).toBeTruthy();
     expect(output).toEqual({ addClasses: 'cell-reorder dnd', text: '' });
