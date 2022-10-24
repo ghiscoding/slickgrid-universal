@@ -137,10 +137,8 @@ describe('SlickRowMoveManager Plugin', () => {
   });
 
   it('should call the "create" method and expect plugin to be created with checkbox column to be created at position 0 when using default', () => {
-    plugin.create(mockColumns, { rowMoveManager: { columnId: 'move-id' } });
-
-    expect(plugin).toBeTruthy();
-    expect(mockColumns[0]).toEqual({
+    const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+    const rowMoveColumnMock = {
       cssClass: 'slick-row-move-column',
       excludeFromColumnPicker: true,
       excludeFromExport: true,
@@ -155,7 +153,13 @@ describe('SlickRowMoveManager Plugin', () => {
       resizable: false,
       selectable: false,
       width: 40,
-    });
+    };
+
+    plugin.create(mockColumns, { rowMoveManager: { columnId: 'move-id' } });
+
+    expect(plugin).toBeTruthy();
+    expect(pubSubSpy).toHaveBeenCalledWith('onPluginColumnsChanged', { columns: expect.arrayContaining([{ ...rowMoveColumnMock, formatter: expect.toBeFunction() }]), pluginName: 'RowMoveManager' });
+    expect(mockColumns[0]).toEqual(rowMoveColumnMock);
   });
 
   it('should create the plugin and call "setOptions" and expect options changed', () => {

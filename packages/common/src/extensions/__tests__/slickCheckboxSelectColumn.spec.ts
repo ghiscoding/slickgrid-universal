@@ -1,8 +1,9 @@
 import 'jest-extended';
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import { SlickCheckboxSelectColumn } from '../slickCheckboxSelectColumn';
 import { Column, OnSelectedRowsChangedEventArgs, SlickGrid, SlickNamespace, } from '../../interfaces/index';
 import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 declare const Slick: SlickNamespace;
 
@@ -354,10 +355,8 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   });
 
   it('should call the "create" method and expect plugin to be created with checkbox column to be created at position 0 when using default', () => {
-    plugin.create(mockColumns, { checkboxSelector: { columnId: 'chk-id' } });
-
-    expect(plugin).toBeTruthy();
-    expect(mockColumns[0]).toEqual({
+    const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+    const checkboxColumnMock = {
       cssClass: null,
       excludeFromColumnPicker: true,
       excludeFromExport: true,
@@ -365,7 +364,6 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       excludeFromHeaderMenu: true,
       excludeFromQuery: true,
       field: 'sel',
-      formatter: expect.toBeFunction(),
       hideSelectAllCheckbox: false,
       id: 'chk-id',
       name: `<input id="header-selector${plugin.selectAllUid}" type="checkbox"><label for="header-selector${plugin.selectAllUid}"></label>`,
@@ -373,7 +371,13 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       sortable: false,
       toolTip: 'Select/Deselect All',
       width: 30,
-    });
+    };
+
+    plugin.create(mockColumns, { checkboxSelector: { columnId: 'chk-id' } });
+
+    expect(pubSubSpy).toHaveBeenCalledWith('onPluginColumnsChanged', { columns: expect.arrayContaining([{ ...checkboxColumnMock, formatter: expect.toBeFunction() }]), pluginName: 'CheckboxSelectColumn' });
+    expect(plugin).toBeTruthy();
+    expect(mockColumns[0]).toEqual(expect.objectContaining({ ...checkboxColumnMock, formatter: expect.toBeFunction() }));
   });
 
   it('should call the "create" method and expect plugin to be created at position 1 when defined', () => {
