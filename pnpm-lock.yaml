@@ -422,6 +422,7 @@ importers:
       '@slickgrid-universal/custom-footer-component': workspace:~
       '@slickgrid-universal/empty-warning-component': workspace:~
       '@slickgrid-universal/event-pub-sub': workspace:~
+      '@slickgrid-universal/graphql': workspace:~
       '@slickgrid-universal/pagination-component': workspace:~
       '@slickgrid-universal/utils': workspace:~
       '@types/jquery': ^3.5.14
@@ -450,6 +451,7 @@ importers:
       sortablejs: 1.15.0
       whatwg-fetch: 3.6.2
     devDependencies:
+      '@slickgrid-universal/graphql': link:../graphql
       '@types/jquery': 3.5.14
       '@types/sortablejs': 1.15.0
       cross-env: 7.0.3

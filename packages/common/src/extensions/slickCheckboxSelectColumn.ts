@@ -1,3 +1,5 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import { KeyCode } from '../enums/keyCode.enum';
 import { CheckboxSelectorOption, Column, DOMMouseOrTouchEvent, GridOption, SelectableOverrideCallback, SlickEventData, SlickEventHandler, SlickGrid, SlickNamespace } from '../interfaces/index';
 import { SlickRowSelectionModel } from './slickRowSelectionModel';
@@ -31,7 +33,7 @@ export class SlickCheckboxSelectColumn<T = any> {
   protected _selectAll_UID: number;
   protected _selectedRowsLookup: any = {};
 
-  constructor(options?: CheckboxSelectorOption) {
+  constructor(protected readonly pubSubService: BasePubSubService, options?: CheckboxSelectorOption) {
     this._selectAll_UID = this.createUID();
     this._bindEventService = new BindingEventService();
     this._eventHandler = new Slick.EventHandler();
@@ -111,6 +113,11 @@ export class SlickCheckboxSelectColumn<T = any> {
       } else {
         columnDefinitions.unshift(selectionColumn);
       }
+
+      this.pubSubService.publish(`onPluginColumnsChanged`, {
+        columns: columnDefinitions,
+        pluginName: this.pluginName
+      });
     }
     return this;
   }

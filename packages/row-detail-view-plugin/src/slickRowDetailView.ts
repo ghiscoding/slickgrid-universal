@@ -37,7 +37,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   protected _keyPrefix = '';
   protected _lastRange: { bottom: number; top: number; } | null = null;
   protected _outsideRange = 5;
-  protected _pubSubService: PubSubService | null = null;
   protected _rowIdsOutOfViewport: Array<number | string> = [];
   protected _visibleRenderedCellCount = 0;
   protected _defaults = {
@@ -77,7 +76,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   onRowOutOfViewportRange = new Slick.Event();
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
-  constructor() {
+  constructor(protected readonly pubSubService: PubSubService) {
     this._eventHandler = new Slick.EventHandler();
   }
 
@@ -208,6 +207,11 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       } else {
         columnDefinitions.unshift(finalRowDetailViewColumn);
       }
+
+      this.pubSubService.publish(`onPluginColumnsChanged`, {
+        columns: columnDefinitions,
+        pluginName: this.pluginName
+      });
     }
     return this as unknown as UniversalRowDetailView;
   }

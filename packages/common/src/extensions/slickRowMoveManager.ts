@@ -1,3 +1,5 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
 import {
   Column,
@@ -54,7 +56,7 @@ export class SlickRowMoveManager {
   pluginName: 'RowMoveManager' = 'RowMoveManager' as const;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
-  constructor() {
+  constructor(protected readonly pubSubService: BasePubSubService) {
     this._eventHandler = new Slick.EventHandler();
   }
 
@@ -111,6 +113,11 @@ export class SlickRowMoveManager {
       } else {
         columnDefinitions.unshift(finalRowMoveColumn);
       }
+
+      this.pubSubService.publish(`onPluginColumnsChanged`, {
+        columns: columnDefinitions,
+        pluginName: this.pluginName
+      });
     }
     return this;
   }

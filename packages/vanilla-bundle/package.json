@@ -58,6 +58,7 @@
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
+    "@slickgrid-universal/graphql": "workspace:~",
     "@types/jquery": "^3.5.14",
     "@types/sortablejs": "^1.15.0",
     "cross-env": "^7.0.3",

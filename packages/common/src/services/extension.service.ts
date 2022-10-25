@@ -198,7 +198,7 @@ export class ExtensionService {
 
       // Checkbox Selector Plugin
       if (this.gridOptions.enableCheckboxSelector) {
-        this._checkboxSelectColumn = this._checkboxSelectColumn || new SlickCheckboxSelectColumn(this.gridOptions.checkboxSelector);
+        this._checkboxSelectColumn = this._checkboxSelectColumn || new SlickCheckboxSelectColumn(this.pubSubService, this.gridOptions.checkboxSelector);
         this._checkboxSelectColumn.init(this.sharedService.slickGrid);
         const createdExtension = this.getCreatedExtensionByName(ExtensionName.checkboxSelector); // get the instance from when it was really created earlier
         const instance = createdExtension && createdExtension.instance;
@@ -274,7 +274,7 @@ export class ExtensionService {
 
       // Row Move Manager Plugin
       if (this.gridOptions.enableRowMoveManager) {
-        this._rowMoveManagerPlugin = this._rowMoveManagerPlugin || new SlickRowMoveManager();
+        this._rowMoveManagerPlugin = this._rowMoveManagerPlugin || new SlickRowMoveManager(this.pubSubService);
         this._rowMoveManagerPlugin.init(this.sharedService.slickGrid, this.gridOptions.rowMoveManager);
         const createdExtension = this.getCreatedExtensionByName(ExtensionName.rowMoveManager); // get the instance from when it was really created earlier
         const instance = createdExtension?.instance;
@@ -298,13 +298,13 @@ export class ExtensionService {
     // we push them into a array and we'll process them by their position (if provided, else use same order that they were inserted)
     if (gridOptions.enableCheckboxSelector) {
       if (!this.getCreatedExtensionByName(ExtensionName.checkboxSelector)) {
-        this._checkboxSelectColumn = new SlickCheckboxSelectColumn(this.sharedService.gridOptions.checkboxSelector);
+        this._checkboxSelectColumn = new SlickCheckboxSelectColumn(this.pubSubService, this.sharedService.gridOptions.checkboxSelector);
         featureWithColumnIndexPositions.push({ name: ExtensionName.checkboxSelector, extension: this._checkboxSelectColumn, columnIndexPosition: gridOptions?.checkboxSelector?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
       }
     }
     if (gridOptions.enableRowMoveManager) {
       if (!this.getCreatedExtensionByName(ExtensionName.rowMoveManager)) {
-        this._rowMoveManagerPlugin = new SlickRowMoveManager();
+        this._rowMoveManagerPlugin = new SlickRowMoveManager(this.pubSubService);
         featureWithColumnIndexPositions.push({ name: ExtensionName.rowMoveManager, extension: this._rowMoveManagerPlugin, columnIndexPosition: gridOptions?.rowMoveManager?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
       }
     }

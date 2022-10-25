@@ -1,4 +1,4 @@
-import { GridOption, SlickDataView, SlickGrid, SlickNamespace, } from '@slickgrid-universal/common';
+import { GridOption, PubSubService, SlickDataView, SlickGrid, SlickNamespace, } from '@slickgrid-universal/common';
 
 import { SlickRowDetailView } from './slickRowDetailView';
 
@@ -48,6 +48,13 @@ const gridStub = {
   onSort: new Slick.Event(),
 } as unknown as SlickGrid;
 
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as PubSubService;
+
 const mockColumns = [
   { id: 'firstName', name: 'First Name', field: 'firstName', width: 100 },
   { id: 'lasstName', name: 'Last Name', field: 'lasstName', width: 100 },
@@ -60,7 +67,7 @@ describe('SlickRowDetailView plugin', () => {
   gridContainerElm.className = GRID_UID;
 
   beforeEach(() => {
-    plugin = new SlickRowDetailView();
+    plugin = new SlickRowDetailView(pubSubServiceStub);
     divContainer.className = `slickgrid-container ${GRID_UID}`;
     document.body.appendChild(divContainer);
   });
@@ -101,7 +108,7 @@ describe('SlickRowDetailView plugin', () => {
 
   it('should throw an error when slick grid object is not provided to the init method', (done) => {
     try {
-      plugin.init(null);
+      plugin.init(null as any);
     } catch (e) {
       expect(e.message).toBe('[Slickgrid-Universal] RowDetailView Plugin requires the Grid instance to be passed as argument to the "init()" method.');
       done();
@@ -178,16 +185,20 @@ describe('SlickRowDetailView plugin', () => {
   });
 
   it('should add the Row Detail to the column definitions at index when calling "create" without specifying position', () => {
+    const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
     const processMock = jest.fn();
     const overrideMock = jest.fn();
-    const output = plugin.create(mockColumns, { rowDetailView: { process: processMock, expandableOverride: overrideMock, panelRows: 4, columnId: '_detail_', cssClass: 'some-class', toolTip: 'title' } });
-
-    expect(mockColumns[0]).toEqual({
+    const rowDetailColumnMock = {
       id: '_detail_', field: 'sel', name: '', alwaysRenderColumn: true, cssClass: 'some-class',
       excludeFromExport: true, excludeFromColumnPicker: true, excludeFromGridMenu: true, excludeFromQuery: true, excludeFromHeaderMenu: true,
       formatter: expect.anything(),
       resizable: false, sortable: false, toolTip: 'title', width: 30,
-    });
+    };
+
+    const output = plugin.create(mockColumns, { rowDetailView: { process: processMock, expandableOverride: overrideMock, panelRows: 4, columnId: '_detail_', cssClass: 'some-class', toolTip: 'title' } });
+
+    expect(pubSubSpy).toHaveBeenCalledWith('onPluginColumnsChanged', { columns: expect.arrayContaining([{ ...rowDetailColumnMock, formatter: expect.toBeFunction() }]), pluginName: 'RowDetailView' });
+    expect(mockColumns[0]).toEqual(rowDetailColumnMock);
     expect(plugin.getExpandableOverride()).toEqual(overrideMock);
     expect(output instanceof SlickRowDetailView).toBeTruthy();
   });
@@ -680,7 +691,7 @@ describe('SlickRowDetailView plugin', () => {
       const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', };
       plugin.init(gridStub);
       plugin.expandableOverride(() => false);
-      const formattedVal = plugin.getColumnDefinition().formatter(0, 1, '', mockColumns[0], mockItem, gridStub);
+      const formattedVal = plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub);
       expect(formattedVal).toBe('');
     });
 
@@ -689,7 +700,7 @@ describe('SlickRowDetailView plugin', () => {
       plugin.init(gridStub);
       plugin.setOptions({ collapsedClass: 'some-collapsed' });
       plugin.expandableOverride(() => true);
-      const formattedVal = plugin.getColumnDefinition().formatter(0, 1, '', mockColumns[0], mockItem, gridStub);
+      const formattedVal = plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub);
       expect(formattedVal).toBe(`<div class="expand some-collapsed"></div>`);
     });
 
@@ -698,7 +709,7 @@ describe('SlickRowDetailView plugin', () => {
       plugin.init(gridStub);
       plugin.setOptions({ collapsedClass: 'some-collapsed' });
       plugin.expandableOverride(() => true);
-      const formattedVal = plugin.getColumnDefinition().formatter(0, 1, '', mockColumns[0], mockItem, gridStub);
+      const formattedVal = plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub);
       expect(formattedVal).toBe(``);
     });
 
@@ -707,7 +718,7 @@ describe('SlickRowDetailView plugin', () => {
       plugin.init(gridStub);
       plugin.setOptions({ expandedClass: 'some-expanded', maxRows: 2 });
       plugin.expandableOverride(() => true);
-      const formattedVal = plugin.getColumnDefinition().formatter(0, 1, '', mockColumns[0], mockItem, gridStub);
+      const formattedVal = plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub);
       expect(formattedVal).toBe(`<div class="collapse some-expanded"></div></div><div class="dynamic-cell-detail cellDetailView_123" style="height: 50px;top: 25px"><div class="detail-container detailViewContainer_123"><div class="innerDetailView_123">undefined</div></div>`);
     });
   });

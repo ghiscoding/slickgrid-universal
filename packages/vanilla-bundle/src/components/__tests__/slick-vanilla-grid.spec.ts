@@ -1,6 +1,7 @@
 import 'jest-extended';
 import { of, throwError } from 'rxjs';
 import {
+  BackendServiceApi,
   BackendUtilityService,
   Column,
   CollectionService,
@@ -390,6 +391,21 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     expect(pubSubSpy).toHaveBeenNthCalledWith(6, 'onAfterGridDestroyed', true);
   });
 
+  it('should update column definitions when onPluginColumnsChanged event is triggered with updated columns', () => {
+    const columnsMock = [
+      { id: 'firstName', field: 'firstName', editor: undefined, internalColumnEditor: {} },
+      { id: 'lastName', field: 'lastName', editor: undefined, internalColumnEditor: {} }
+    ]
+    eventPubSubService.publish('onPluginColumnsChanged', {
+      columns: columnsMock,
+      pluginName: 'RowMoveManager'
+    });
+
+    component.initialization(divContainer, slickEventHandler);
+
+    expect(component.columnDefinitions).toEqual(columnsMock);
+  });
+
   describe('initialization method', () => {
     const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef) => {
       const isEditableLine = !!columnDef.editor;
@@ -457,7 +473,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const autosizeSpy = jest.spyOn(mockGrid, 'autosizeColumns');
         const updateSpy = jest.spyOn(component, 'updateColumnDefinitionsList');
         const eventSpy = jest.spyOn(eventPubSubService, 'publish');
-        const addPubSubSpy = jest.spyOn(component.translaterService, 'addPubSubMessaging');
+        const addPubSubSpy = jest.spyOn(component.translaterService as TranslaterService, 'addPubSubMessaging');
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
 
         component.columnDefinitions = mockColDefs;
@@ -478,7 +494,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const updateSpy = jest.spyOn(component, 'updateColumnDefinitionsList');
         const renderSpy = jest.spyOn(extensionServiceStub, 'renderColumnHeaders');
         const eventSpy = jest.spyOn(eventPubSubService, 'publish');
-        const addPubSubSpy = jest.spyOn(component.translaterService, 'addPubSubMessaging');
+        const addPubSubSpy = jest.spyOn(component.translaterService as TranslaterService, 'addPubSubMessaging');
         const autoAddFormatterSpy = jest.spyOn(formatterUtilities, 'autoAddEditorFormatterToColumnsWithEditor');
         const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
 
@@ -593,12 +609,12 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should merge grid options with global options when slickgrid "getOptions" does not exist yet', () => {
-        mockGrid.getOptions = null;
+        mockGrid.getOptions = null as any;
         const setOptionSpy = jest.spyOn(mockGrid, 'setOptions');
         const sharedOptionSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'set');
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
 
-        component.gridOptions = { autoCommitEdit: false, autoResize: null };
+        component.gridOptions = { autoCommitEdit: false, autoResize: null as any };
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockData;
 
@@ -609,12 +625,12 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should merge grid options with global options and expect bottom padding to be calculated', () => {
-        mockGrid.getOptions = null;
+        mockGrid.getOptions = null as any;
         const setOptionSpy = jest.spyOn(mockGrid, 'setOptions');
         const sharedOptionSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'set');
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
 
-        component.gridOptions = { autoCommitEdit: false, autoResize: null };
+        component.gridOptions = { autoCommitEdit: false, autoResize: null as any };
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockData;
 
@@ -664,9 +680,9 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         setTimeout(() => {
           expect(component.columnDefinitions[0].editor).toBeTruthy();
-          expect(component.columnDefinitions[0].editor.collection).toEqual(mockCollection);
-          expect(component.columnDefinitions[0].internalColumnEditor.collection).toEqual(mockCollection);
-          expect(component.columnDefinitions[0].internalColumnEditor.model).toEqual(Editors.text);
+          expect(component.columnDefinitions[0].editor!.collection).toEqual(mockCollection);
+          expect(component.columnDefinitions[0].internalColumnEditor!.collection).toEqual(mockCollection);
+          expect(component.columnDefinitions[0].internalColumnEditor!.model).toEqual(Editors.text);
           done();
         });
       });
@@ -689,9 +705,9 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         setTimeout(() => {
           expect(component.columnDefinitions[0].editor).toBeTruthy();
-          expect(component.columnDefinitions[0].editor.collection).toEqual(mockCollection);
-          expect(component.columnDefinitions[0].internalColumnEditor.collection).toEqual(mockCollection);
-          expect(component.columnDefinitions[0].internalColumnEditor.model).toEqual(Editors.text);
+          expect(component.columnDefinitions[0].editor!.collection).toEqual(mockCollection);
+          expect(component.columnDefinitions[0].internalColumnEditor!.collection).toEqual(mockCollection);
+          expect(component.columnDefinitions[0].internalColumnEditor!.model).toEqual(Editors.text);
           expect(disableSpy).toHaveBeenCalledWith(false);
           expect(destroySpy).toHaveBeenCalled();
           expect(renderSpy).toHaveBeenCalledWith(mockCollection);
@@ -707,9 +723,9 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.columnDefinitions = mockColDefs;
 
         setTimeout(() => {
-          expect(component.columnDefinitions[0].editor.collection).toEqual(mockCollection);
-          expect(component.columnDefinitions[0].internalColumnEditor.collection).toEqual(mockCollection);
-          expect(component.columnDefinitions[0].internalColumnEditor.model).toEqual(Editors.text);
+          expect(component.columnDefinitions[0].editor!.collection).toEqual(mockCollection);
+          expect(component.columnDefinitions[0].internalColumnEditor!.collection).toEqual(mockCollection);
+          expect(component.columnDefinitions[0].internalColumnEditor!.model).toEqual(Editors.text);
           done();
         });
       });
@@ -727,9 +743,9 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.columnDefinitions = mockColDefs;
 
         setTimeout(() => {
-          expect(component.columnDefinitions[0].editor.collection).toEqual(mockCollection);
-          expect(component.columnDefinitions[0].internalColumnEditor.collection).toEqual(mockCollection);
-          expect(component.columnDefinitions[0].internalColumnEditor.model).toEqual(Editors.text);
+          expect(component.columnDefinitions[0].editor!.collection).toEqual(mockCollection);
+          expect(component.columnDefinitions[0].internalColumnEditor!.collection).toEqual(mockCollection);
+          expect(component.columnDefinitions[0].internalColumnEditor!.model).toEqual(Editors.text);
           done();
         });
       });
@@ -780,7 +796,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         component.gridOptions = { draggableGrouping: {} };
         component.initialization(divContainer, slickEventHandler);
-        const extensions = component.extensions;
+        const extensions = component.extensions as ExtensionList<any>;
 
         expect(Object.keys(extensions).length).toBe(1);
         expect(dataviewSpy).toHaveBeenCalledWith({ inlineFilters: false, groupItemMetadataProvider: expect.anything() });
@@ -1013,9 +1029,9 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.dataset = mockData;
 
         setTimeout(() => {
-          expect(component.paginationOptions.pageSize).toBe(2);
-          expect(component.paginationOptions.pageNumber).toBe(expectedPageNumber);
-          expect(component.paginationOptions.totalItems).toBe(expectedTotalItems);
+          expect(component.paginationOptions!.pageSize).toBe(2);
+          expect(component.paginationOptions!.pageNumber).toBe(expectedPageNumber);
+          expect(component.paginationOptions!.totalItems).toBe(expectedTotalItems);
           expect(refreshSpy).toHaveBeenCalledWith(mockData);
           done();
         });
@@ -1040,9 +1056,9 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         setTimeout(() => {
           expect(getPagingSpy).toHaveBeenCalled();
-          expect(component.paginationOptions.pageSize).toBe(10);
-          expect(component.paginationOptions.pageNumber).toBe(expectedPageNumber);
-          expect(component.paginationOptions.totalItems).toBe(expectedTotalItems);
+          expect(component.paginationOptions!.pageSize).toBe(10);
+          expect(component.paginationOptions!.pageNumber).toBe(expectedPageNumber);
+          expect(component.paginationOptions!.totalItems).toBe(expectedTotalItems);
           expect(refreshSpy).toHaveBeenCalledWith(mockData);
           done();
         });
@@ -1072,55 +1088,55 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
 
         expect(spy).toHaveBeenCalled();
-        expect(component.gridOptions.backendServiceApi.internalPostProcess).toEqual(expect.any(Function));
+        expect(component.gridOptions.backendServiceApi!.internalPostProcess).toEqual(expect.any(Function));
       });
 
       it('should execute the "internalPostProcess" callback method that was created by "createBackendApiInternalPostProcessCallback" with Pagination', () => {
-        jest.spyOn(component.gridOptions.backendServiceApi.service, 'getDatasetName').mockReturnValue('users');
+        jest.spyOn(component.gridOptions.backendServiceApi!.service, 'getDatasetName').mockReturnValue('users');
         const spy = jest.spyOn(component, 'refreshGridData');
 
         component.initialization(divContainer, slickEventHandler);
-        component.gridOptions.backendServiceApi.internalPostProcess({ data: { users: { nodes: [{ firstName: 'John' }], totalCount: 2 } } } as GraphqlPaginatedResult);
+        component.gridOptions.backendServiceApi!.internalPostProcess!({ data: { users: { nodes: [{ firstName: 'John' }], totalCount: 2 } } } as GraphqlPaginatedResult);
 
         expect(spy).toHaveBeenCalled();
-        expect(component.gridOptions.backendServiceApi.internalPostProcess).toEqual(expect.any(Function));
+        expect(component.gridOptions.backendServiceApi!.internalPostProcess).toEqual(expect.any(Function));
       });
 
       it('should execute the "internalPostProcess" callback and expect totalItems to be updated in the PaginationService when "refreshGridData" is called on the 2nd time', () => {
-        jest.spyOn(component.gridOptions.backendServiceApi.service, 'getDatasetName').mockReturnValue('users');
+        jest.spyOn(component.gridOptions.backendServiceApi!.service, 'getDatasetName').mockReturnValue('users');
         const refreshSpy = jest.spyOn(component, 'refreshGridData');
         const paginationSpy = jest.spyOn(paginationServiceStub, 'totalItems', 'set');
         const mockDataset = [{ firstName: 'John' }, { firstName: 'Jane' }];
 
         component.initialization(divContainer, slickEventHandler);
-        component.gridOptions.backendServiceApi.internalPostProcess({ data: { users: { nodes: mockDataset, totalCount: mockDataset.length } } } as GraphqlPaginatedResult);
+        component.gridOptions.backendServiceApi!.internalPostProcess!({ data: { users: { nodes: mockDataset, totalCount: mockDataset.length } } } as GraphqlPaginatedResult);
         component.refreshGridData(mockDataset, 1);
         component.refreshGridData(mockDataset, 1);
 
         expect(refreshSpy).toHaveBeenCalledTimes(3);
         expect(paginationSpy).toHaveBeenCalledWith(2);
-        expect(component.gridOptions.backendServiceApi.internalPostProcess).toEqual(expect.any(Function));
+        expect(component.gridOptions.backendServiceApi!.internalPostProcess).toEqual(expect.any(Function));
       });
 
       it('should execute the "internalPostProcess" callback method that was created by "createBackendApiInternalPostProcessCallback" without Pagination (when disabled)', () => {
         component.gridOptions.enablePagination = false;
-        jest.spyOn(component.gridOptions.backendServiceApi.service, 'getDatasetName').mockReturnValue('users');
+        jest.spyOn(component.gridOptions.backendServiceApi!.service, 'getDatasetName').mockReturnValue('users');
         const spy = jest.spyOn(component, 'refreshGridData');
 
         component.initialization(divContainer, slickEventHandler);
-        component.gridOptions.backendServiceApi.internalPostProcess({ data: { users: [{ firstName: 'John' }] } });
+        component.gridOptions.backendServiceApi!.internalPostProcess!({ data: { users: [{ firstName: 'John' }] } });
 
         expect(spy).toHaveBeenCalled();
-        expect(component.gridOptions.backendServiceApi.internalPostProcess).toEqual(expect.any(Function));
+        expect(component.gridOptions.backendServiceApi!.internalPostProcess).toEqual(expect.any(Function));
       });
 
       it('should execute the "internalPostProcess" callback method but return an empty dataset when dataset name does not match "getDatasetName"', () => {
         component.gridOptions.enablePagination = true;
-        jest.spyOn(component.gridOptions.backendServiceApi.service, 'getDatasetName').mockReturnValue('users');
+        jest.spyOn(component.gridOptions.backendServiceApi!.service, 'getDatasetName').mockReturnValue('users');
         const spy = jest.spyOn(component, 'refreshGridData');
 
         component.initialization(divContainer, slickEventHandler);
-        component.gridOptions.backendServiceApi.internalPostProcess({ data: { notUsers: { nodes: [{ firstName: 'John' }], totalCount: 2 } } } as GraphqlPaginatedResult);
+        component.gridOptions.backendServiceApi!.internalPostProcess!({ data: { notUsers: { nodes: [{ firstName: 'John' }], totalCount: 2 } } } as GraphqlPaginatedResult);
 
         expect(spy).not.toHaveBeenCalled();
         expect(component.dataset).toEqual([]);
@@ -1201,8 +1217,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockData;
 
-        expect(component.paginationOptions.pageSize).toBe(10);
-        expect(component.paginationOptions.pageNumber).toBe(expectedPageNumber);
+        expect(component.paginationOptions!.pageSize).toBe(10);
+        expect(component.paginationOptions!.pageNumber).toBe(expectedPageNumber);
         expect(refreshSpy).toHaveBeenCalledWith(mockData);
       });
 
@@ -1214,17 +1230,17 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           metrics: { startTime: now, endTime: now, executionTime: 0, totalItemCount: 0 }
         };
         const promise = new Promise(resolve => setTimeout(() => resolve(processResult), 1));
-        const processSpy = jest.spyOn(component.gridOptions.backendServiceApi, 'process').mockReturnValue(promise);
-        jest.spyOn(component.gridOptions.backendServiceApi.service, 'buildQuery').mockReturnValue(query);
+        const processSpy = jest.spyOn(component.gridOptions.backendServiceApi as BackendServiceApi, 'process').mockReturnValue(promise);
+        jest.spyOn(component.gridOptions.backendServiceApi!.service, 'buildQuery').mockReturnValue(query);
         const backendExecuteSpy = jest.spyOn(backendUtilityServiceStub, 'executeBackendProcessesCallback');
 
-        component.gridOptions.backendServiceApi.service.options = { executeProcessCommandOnInit: true };
+        component.gridOptions.backendServiceApi!.service.options = { executeProcessCommandOnInit: true };
         component.initialization(divContainer, slickEventHandler);
 
         expect(processSpy).toHaveBeenCalled();
 
         setTimeout(() => {
-          expect(backendExecuteSpy).toHaveBeenCalledWith(expect.toBeDate(), processResult, component.gridOptions.backendServiceApi, 0);
+          expect(backendExecuteSpy).toHaveBeenCalledWith(expect.toBeDate(), processResult, component.gridOptions.backendServiceApi as BackendServiceApi, 0);
           done();
         }, 5);
       });
@@ -1237,18 +1253,18 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           data: { users: { nodes: [] }, pageInfo: { hasNextPage: true }, totalCount: 0 },
           metrics: { startTime: now, endTime: now, executionTime: 0, totalItemCount: 0 }
         };
-        const processSpy = jest.spyOn((component.gridOptions as any).backendServiceApi, 'process').mockReturnValue(of(processResult));
+        const processSpy = jest.spyOn((component.gridOptions as any).backendServiceApi as BackendServiceApi, 'process').mockReturnValue(of(processResult));
         jest.spyOn((component.gridOptions as any).backendServiceApi.service, 'buildQuery').mockReturnValue(query);
         const backendExecuteSpy = jest.spyOn(backendUtilityServiceStub, 'executeBackendProcessesCallback');
 
         component.gridOptions.registerExternalResources = [rxjsMock];
-        component.gridOptions.backendServiceApi.service.options = { executeProcessCommandOnInit: true };
+        component.gridOptions.backendServiceApi!.service.options = { executeProcessCommandOnInit: true };
         component.initialization(divContainer, slickEventHandler);
 
         expect(processSpy).toHaveBeenCalled();
 
         setTimeout(() => {
-          expect(backendExecuteSpy).toHaveBeenCalledWith(expect.toBeDate(), processResult, component.gridOptions.backendServiceApi, 0);
+          expect(backendExecuteSpy).toHaveBeenCalledWith(expect.toBeDate(), processResult, component.gridOptions.backendServiceApi as BackendServiceApi, 0);
           done();
         }, 5);
       });
@@ -1261,17 +1277,17 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           metrics: { startTime: now, endTime: now, executionTime: 0, totalItemCount: 0 }
         };
         const promise = new Promise(resolve => setTimeout(() => resolve(processResult), 1));
-        const processSpy = jest.spyOn(component.gridOptions.backendServiceApi, 'process').mockReturnValue(promise);
-        jest.spyOn(component.gridOptions.backendServiceApi.service, 'buildQuery').mockReturnValue(query);
+        const processSpy = jest.spyOn(component.gridOptions.backendServiceApi as BackendServiceApi, 'process').mockReturnValue(promise);
+        jest.spyOn(component.gridOptions.backendServiceApi!.service, 'buildQuery').mockReturnValue(query);
         const backendExecuteSpy = jest.spyOn(backendUtilityServiceStub, 'executeBackendProcessesCallback');
 
-        component.gridOptions.backendServiceApi.service.options = { executeProcessCommandOnInit: true };
+        component.gridOptions.backendServiceApi!.service.options = { executeProcessCommandOnInit: true };
         component.initialization(divContainer, slickEventHandler);
 
         expect(processSpy).toHaveBeenCalled();
 
         setTimeout(() => {
-          expect(backendExecuteSpy).toHaveBeenCalledWith(expect.toBeDate(), processResult, component.gridOptions.backendServiceApi, 0);
+          expect(backendExecuteSpy).toHaveBeenCalledWith(expect.toBeDate(), processResult, component.gridOptions.backendServiceApi as BackendServiceApi, 0);
           done();
         }, 5);
       });
@@ -1280,10 +1296,10 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockError = { error: '404' };
         const query = `query { users (first:20,offset:0) { totalCount, nodes { id,name,gender,company } } }`;
         const promise = new Promise((_resolve, reject) => setTimeout(() => reject(mockError), 1));
-        const processSpy = jest.spyOn(component.gridOptions.backendServiceApi, 'process').mockReturnValue(promise);
-        jest.spyOn(component.gridOptions.backendServiceApi.service, 'buildQuery').mockReturnValue(query);
+        const processSpy = jest.spyOn(component.gridOptions.backendServiceApi as BackendServiceApi, 'process').mockReturnValue(promise);
+        jest.spyOn(component.gridOptions.backendServiceApi!.service, 'buildQuery').mockReturnValue(query);
 
-        component.gridOptions.backendServiceApi.service.options = { executeProcessCommandOnInit: true };
+        component.gridOptions.backendServiceApi!.service.options = { executeProcessCommandOnInit: true };
         component.initialization(divContainer, slickEventHandler);
 
         expect(processSpy).toHaveBeenCalled();
@@ -1298,12 +1314,12 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockError = { error: '404' };
         const rxjsMock = new RxJsResourceStub();
         const query = `query { users (first:20,offset:0) { totalCount, nodes { id,name,gender,company } } }`;
-        const processSpy = jest.spyOn((component.gridOptions as any).backendServiceApi, 'process').mockReturnValue(throwError(mockError));
+        const processSpy = jest.spyOn((component.gridOptions as any).backendServiceApi as BackendServiceApi, 'process').mockReturnValue(throwError(mockError));
         jest.spyOn((component.gridOptions as any).backendServiceApi.service, 'buildQuery').mockReturnValue(query);
         const backendErrorSpy = jest.spyOn(backendUtilityServiceStub, 'onBackendError');
 
         component.gridOptions.registerExternalResources = [rxjsMock];
-        component.gridOptions.backendServiceApi.service.options = { executeProcessCommandOnInit: true };
+        component.gridOptions.backendServiceApi!.service.options = { executeProcessCommandOnInit: true };
         component.initialization(divContainer, slickEventHandler);
 
         expect(processSpy).toHaveBeenCalled();
@@ -1685,7 +1701,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         component.gridOptions = mockGridOptions;
         component.initialization(divContainer, slickEventHandler);
-        const emptySpy = jest.spyOn(component.slickEmptyWarning, 'showEmptyDataMessage');
+        const emptySpy = jest.spyOn(component.slickEmptyWarning!, 'showEmptyDataMessage');
         component.columnDefinitions = mockColDefs;
         component.refreshGridData([]);
         mockDataView.onRowCountChanged.notify({ current: 0, previous: 0, dataView: mockDataView, itemCount: 0, callingOnRowsChanged: false });
@@ -1789,7 +1805,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         component.gridOptions = { enablePagination: false, showCustomFooter: true };
         component.initialization(divContainer, slickEventHandler);
-        const footerSpy = jest.spyOn(component.slickFooter, 'metrics', 'set');
+        const footerSpy = jest.spyOn(component.slickFooter!, 'metrics', 'set');
         mockDataView.onRowCountChanged.notify({ current: 2, previous: 0, dataView: mockDataView, itemCount: 0, callingOnRowsChanged: false });
 
         expect(invalidateSpy).toHaveBeenCalled();
@@ -1809,7 +1825,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         component.gridOptions = { enablePagination: false, showCustomFooter: true };
         component.initialization(divContainer, slickEventHandler);
-        const footerSpy = jest.spyOn(component.slickFooter, 'metrics', 'set');
+        const footerSpy = jest.spyOn(component.slickFooter!, 'metrics', 'set');
         mockDataView.onSetItemsCalled.notify({ idProperty: 'id', itemCount: 0 });
 
         expect(invalidateSpy).toHaveBeenCalled();
@@ -1876,7 +1892,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = {
           enableRowSelection: true,
           enablePagination: true,
-          backendServiceApi: null,
+          backendServiceApi: null as any,
           presets: { rowSelection: { dataContextIds: selectedGridRows } }
         };
         component.dataset = mockData;
@@ -1899,11 +1915,11 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
       it('should change "showPagination" flag when "onPaginationVisibilityChanged" from the Pagination Service is triggered', () => {
         component.gridOptions.enablePagination = true;
-        component.gridOptions.backendServiceApi = null;
+        component.gridOptions.backendServiceApi = null as any;
 
         component.initialization(divContainer, slickEventHandler);
         component.refreshGridData([{ firstName: 'John', lastName: 'Doe' }]);
-        const disposeSpy = jest.spyOn(component.slickPagination, 'dispose');
+        const disposeSpy = jest.spyOn(component.slickPagination!, 'dispose');
         eventPubSubService.publish('onPaginationVisibilityChanged', { visible: false });
 
         expect(component.showPagination).toBeFalsy();
@@ -2072,7 +2088,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
   let eventPubSubService: EventPubSubService;
   let translateService: TranslateServiceStub;
   let dataset = [];
-  let hierarchicalDataset = null;
+  let hierarchicalDataset: any = null;
   let hierarchicalSpy;
 
   beforeEach(() => {
@@ -2177,7 +2193,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
       columnDefinitions,
       gridOptions,
       dataset,
-      null,
+      null as any,
       {
         backendUtilityService: backendUtilityServiceStub,
         collectionService: collectionServiceStub,
