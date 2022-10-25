@@ -1,6 +1,7 @@
 import 'jest-extended';
 import { of, throwError } from 'rxjs';
 import {
+  BackendServiceApi,
   BackendUtilityService,
   Column,
   CollectionService,
@@ -40,7 +41,6 @@ import {
   SortService,
   TreeDataService,
   TranslaterService,
-  BackendServiceApi,
 } from '@slickgrid-universal/common';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
