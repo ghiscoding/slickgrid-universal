@@ -1151,6 +1151,7 @@ input.slider-editor-input[type=range] {
   width: 100%;
 
   .slider-track {
+    cursor: var(--slick-slider-filter-runnable-track-cursor, $slick-slider-filter-runnable-track-cursor);
     width: calc(100% - 16px);
     height: var(--slick-slider-filter-runnable-track-height, $slick-slider-filter-runnable-track-height);
     position: absolute;
