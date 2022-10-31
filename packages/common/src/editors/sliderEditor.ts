@@ -1,14 +1,11 @@
 import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
+import { Constants } from '../constants';
 import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption, SlickGrid, SlickNamespace } from '../interfaces/index';
 import { getDescendantProperty } from '../services/utilities';
 import { sliderValidator } from '../editorValidators/sliderValidator';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { createDomElement } from '../services/domUtilities';
-
-const DEFAULT_MIN_VALUE = 0;
-const DEFAULT_MAX_VALUE = 100;
-const DEFAULT_STEP = 1;
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -304,15 +301,15 @@ export class SliderEditor implements Editor {
   protected buildDomElement(): HTMLDivElement {
     const columnId = this.columnDef?.id ?? '';
     const title = this.columnEditor && this.columnEditor.title || '';
-    const minValue = this.columnEditor.hasOwnProperty('minValue') ? this.columnEditor.minValue : DEFAULT_MIN_VALUE;
-    const maxValue = this.columnEditor.hasOwnProperty('maxValue') ? this.columnEditor.maxValue : DEFAULT_MAX_VALUE;
-    const defaultValue = this.editorParams.hasOwnProperty('sliderStartValue') ? this.editorParams.sliderStartValue : minValue;
+    const minValue = this.columnEditor?.minValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE;
+    const maxValue = this.columnEditor?.maxValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE;
+    const defaultValue = this.editorParams?.sliderStartValue ?? minValue;
     this._defaultValue = defaultValue;
 
     const inputElm = createDomElement('input', {
       type: 'range', name: this._elementRangeInputId, title,
       defaultValue, value: defaultValue, min: `${minValue}`, max: `${maxValue}`,
-      step: `${this.columnEditor.hasOwnProperty('valueStep') ? this.columnEditor.valueStep : DEFAULT_STEP}`,
+      step: `${this.columnEditor?.valueStep ?? Constants.SLIDER_DEFAULT_STEP}`,
       className: `form-control slider-editor-input editor-${columnId} range ${this._elementRangeInputId}`,
     });
     inputElm.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Slider Editor`);

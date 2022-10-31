@@ -1,5 +1,6 @@
 import { hasData, toSentenceCase } from '@slickgrid-universal/utils';
 
+import { Constants } from '../constants';
 import { OperatorType, OperatorString, SearchTerm, } from '../enums/index';
 import {
   Column,
@@ -10,12 +11,8 @@ import {
   FilterCallback,
   SlickGrid,
 } from './../interfaces/index';
-import { createDomElement, emptyElement, } from '../services/domUtilities';
 import { BindingEventService } from '../services/bindingEvent.service';
-
-const DEFAULT_MIN_VALUE = 0;
-const DEFAULT_MAX_VALUE = 100;
-const DEFAULT_STEP = 1;
+import { createDomElement, emptyElement, } from '../services/domUtilities';
 
 export class SliderFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -80,7 +77,7 @@ export class SliderFilter implements Filter {
     this.grid = args.grid;
     this.callback = args.callback;
     this.columnDef = args.columnDef;
-    this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
+    this.searchTerms = args?.searchTerms ?? [];
     this.filterContainerElm = args.filterContainerElm;
 
     // define the input & slider number IDs
@@ -91,7 +88,7 @@ export class SliderFilter implements Filter {
     const searchTerm = (Array.isArray(this.searchTerms) && this.searchTerms.length >= 0) ? this.searchTerms[0] : '';
 
     // step 1, create the DOM Element of the filter & initialize it if searchTerm is filled
-    this.filterElm = this.createDomElement(searchTerm);
+    this.filterElm = this.createDomFilterElement(searchTerm);
 
     // step 2, subscribe to the change event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
@@ -110,7 +107,7 @@ export class SliderFilter implements Filter {
       this._clearFilterTriggered = true;
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
-      const clearedValue = this.filterParams?.sliderStartValue ?? DEFAULT_MIN_VALUE;
+      const clearedValue = this.filterParams?.sliderStartValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE;
       this._currentValue = +clearedValue;
       this.filterInputElm.value = clearedValue;
       if (this.filterNumberElm) {
@@ -175,12 +172,12 @@ export class SliderFilter implements Filter {
    * Create the Filter DOM element
    * @param searchTerm optional preset search terms
    */
-  protected createDomElement(searchTerm?: SearchTerm) {
+  protected createDomFilterElement(searchTerm?: SearchTerm) {
     const columnId = this.columnDef?.id ?? '';
-    const minValue = this.filterProperties?.minValue ?? DEFAULT_MIN_VALUE;
-    const maxValue = this.filterProperties?.maxValue ?? DEFAULT_MAX_VALUE;
+    const minValue = this.filterProperties?.minValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE;
+    const maxValue = this.filterProperties?.maxValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE;
     const defaultValue = this.filterParams?.sliderStartValue ?? minValue;
-    const step = this.filterProperties?.valueStep ?? DEFAULT_STEP;
+    const step = this.filterProperties?.valueStep ?? Constants.SLIDER_DEFAULT_STEP;
     const startValue = +(this.filterParams?.sliderStartValue ?? minValue);
     emptyElement(this.filterContainerElm);
 
@@ -203,7 +200,7 @@ export class SliderFilter implements Filter {
     });
     this.filterInputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
 
-    this.divContainerFilterElm = createDomElement('div', { className: `search-filter slider-container filter-${columnId}` });
+    this.divContainerFilterElm = createDomElement('div', { className: `search-filter slider-single slider-container filter-${columnId}` });
     this.divContainerFilterElm.appendChild(this.filterInputElm);
 
     if (!this.filterParams.hideSliderNumber) {
@@ -247,7 +244,7 @@ export class SliderFilter implements Filter {
       this.filterElm.classList.remove('filled');
       this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, searchTerms: [], shouldTriggerQuery: this._shouldTriggerQuery });
     } else {
-      this.filterElm.classList.add('filled');
+      value === '' ? this.filterElm.classList.remove('filled') : this.filterElm.classList.add('filled');
       this.callback(e, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value || '0'], shouldTriggerQuery: this._shouldTriggerQuery });
     }
     // reset both flags for next use

@@ -1,6 +1,5 @@
 import { toSentenceCase } from '@slickgrid-universal/utils';
 
-import { Constants } from '../constants';
 import { FieldType, OperatorString, OperatorType, SearchTerm, } from '../enums/index';
 import {
   Column,
@@ -9,13 +8,12 @@ import {
   FilterArguments,
   FilterCallback,
   GridOption,
-  Locale,
   OperatorDetail,
   SlickGrid,
 } from '../interfaces/index';
-import { buildSelectOperator } from './filterUtilities';
+import { buildSelectOperator, compoundOperatorNumeric, compoundOperatorString } from './filterUtilities';
 import { createDomElement, emptyElement } from '../services/domUtilities';
-import { getTranslationPrefix, mapOperatorToShorthandDesignation } from '../services/utilities';
+import { mapOperatorToShorthandDesignation } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 
@@ -63,11 +61,6 @@ export class CompoundInputFilter implements Filter {
   /** Setter of input type (text, number, password) */
   set inputType(type: string) {
     this._inputType = type;
-  }
-
-  /** Getter for the single Locale texts provided by the user in main file or else use default English locales via the Constants */
-  get locales(): Locale {
-    return this.gridOptions.locales || Constants.locales;
   }
 
   /** Getter of the Operator to use when doing the filter comparing */
@@ -204,39 +197,15 @@ export class CompoundInputFilter implements Filter {
         case FieldType.text:
         case FieldType.readonly:
         case FieldType.password:
-          optionValues = [
-            { operator: '' as OperatorString, description: this.getOutputText('CONTAINS', 'TEXT_CONTAINS', 'Contains') },
-            { operator: '<>' as OperatorString, description: this.getOutputText('NOT_CONTAINS', 'TEXT_NOT_CONTAINS', 'Not Contains') },
-            { operator: '=' as OperatorString, description: this.getOutputText('EQUALS', 'TEXT_EQUALS', 'Equals') },
-            { operator: '!=' as OperatorString, description: this.getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to') },
-            { operator: 'a*' as OperatorString, description: this.getOutputText('STARTS_WITH', 'TEXT_STARTS_WITH', 'Starts with') },
-            { operator: '*z' as OperatorString, description: this.getOutputText('ENDS_WITH', 'TEXT_ENDS_WITH', 'Ends with') },
-          ];
+          optionValues = compoundOperatorString(this.gridOptions, this.translaterService);
           break;
         default:
-          optionValues = [
-            { operator: '' as OperatorString, description: '' },
-            { operator: '=' as OperatorString, description: this.getOutputText('EQUAL_TO', 'TEXT_EQUAL_TO', 'Equal to') },
-            { operator: '<' as OperatorString, description: this.getOutputText('LESS_THAN', 'TEXT_LESS_THAN', 'Less than') },
-            { operator: '<=' as OperatorString, description: this.getOutputText('LESS_THAN_OR_EQUAL_TO', 'TEXT_LESS_THAN_OR_EQUAL_TO', 'Less than or equal to') },
-            { operator: '>' as OperatorString, description: this.getOutputText('GREATER_THAN', 'TEXT_GREATER_THAN', 'Greater than') },
-            { operator: '>=' as OperatorString, description: this.getOutputText('GREATER_THAN_OR_EQUAL_TO', 'TEXT_GREATER_THAN_OR_EQUAL_TO', 'Greater than or equal to') },
-            { operator: '<>' as OperatorString, description: this.getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to') }
-          ];
+          optionValues = compoundOperatorNumeric(this.gridOptions, this.translaterService);
           break;
       }
     }
 
     return optionValues;
-  }
-
-  /** Get Locale, Translated or a Default Text if first two aren't detected */
-  protected getOutputText(translationKey: string, localeText: string, defaultText: string): string {
-    if (this.gridOptions?.enableTranslate && this.translaterService?.translate) {
-      const translationPrefix = getTranslationPrefix(this.gridOptions);
-      return this.translaterService.translate(`${translationPrefix}${translationKey}`);
-    }
-    return this.locales?.[localeText as keyof Locale] ?? defaultText;
   }
 
   /**

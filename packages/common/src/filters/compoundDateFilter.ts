@@ -11,15 +11,13 @@ import {
   FilterCallback,
   FlatpickrOption,
   GridOption,
-  Locale,
   OperatorDetail,
   SlickGrid,
 } from '../interfaces/index';
 import { FieldType, OperatorString, OperatorType, SearchTerm } from '../enums/index';
-import { Constants } from '../constants';
-import { buildSelectOperator } from './filterUtilities';
+import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
 import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
-import { getTranslationPrefix, mapFlatpickrDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
+import { mapFlatpickrDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
 import { TranslaterService } from '../services/translater.service';
 import { BindingEventService } from '../services/bindingEvent.service';
 
@@ -68,11 +66,6 @@ export class CompoundDateFilter implements Filter {
   /** Getter for the Flatpickr Options */
   get flatpickrOptions(): FlatpickrOption {
     return this._flatpickrOptions || {};
-  }
-
-  /** Getter for the single Locale texts provided by the user in main file or else use default English locales via the Constants */
-  get locales(): Locale {
-    return this.gridOptions.locales || Constants.locales;
   }
 
   /** Getter for the Filter Operator */
@@ -269,25 +262,8 @@ export class CompoundDateFilter implements Filter {
     if (this.columnFilter?.compoundOperatorList) {
       return this.columnFilter.compoundOperatorList;
     } else {
-      return [
-        { operator: '', description: '' },
-        { operator: '=', description: this.getOutputText('EQUAL_TO', 'TEXT_EQUAL_TO', 'Equal to') },
-        { operator: '<', description: this.getOutputText('LESS_THAN', 'TEXT_LESS_THAN', 'Less than') },
-        { operator: '<=', description: this.getOutputText('LESS_THAN_OR_EQUAL_TO', 'TEXT_LESS_THAN_OR_EQUAL_TO', 'Less than or equal to') },
-        { operator: '>', description: this.getOutputText('GREATER_THAN', 'TEXT_GREATER_THAN', 'Greater than') },
-        { operator: '>=', description: this.getOutputText('GREATER_THAN_OR_EQUAL_TO', 'TEXT_GREATER_THAN_OR_EQUAL_TO', 'Greater than or equal to') },
-        { operator: '<>', description: this.getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to') }
-      ];
+      return compoundOperatorNumeric(this.gridOptions, this.translaterService);
     }
-  }
-
-  /** Get Locale, Translated or a Default Text if first two aren't detected */
-  protected getOutputText(translationKey: string, localeText: string, defaultText: string): string {
-    if (this.gridOptions?.enableTranslate && this.translaterService?.translate) {
-      const translationPrefix = getTranslationPrefix(this.gridOptions);
-      return this.translaterService.translate(`${translationPrefix}${translationKey}`);
-    }
-    return this.locales?.[localeText as keyof Locale] ?? defaultText;
   }
 
   /**
