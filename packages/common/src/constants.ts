@@ -78,6 +78,9 @@ export class Constants {
     TREE_LEVEL_PROP: '__treeLevel',
     PARENT_PROP: '__parentId',
   };
+  static readonly SLIDER_DEFAULT_MIN_VALUE = 0;
+  static readonly SLIDER_DEFAULT_MAX_VALUE = 100;
+  static readonly SLIDER_DEFAULT_STEP = 1;
   static readonly VALIDATION_REQUIRED_FIELD = 'Field is required';
   static readonly VALIDATION_EDITOR_VALID_NUMBER = 'Please enter a valid number';
   static readonly VALIDATION_EDITOR_VALID_INTEGER = 'Please enter a valid integer number';

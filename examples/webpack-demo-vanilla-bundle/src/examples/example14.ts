@@ -12,6 +12,7 @@ import {
   GridOption,
   LongTextEditorOption,
   SlickNamespace,
+  SliderRangeOption,
   SortComparers,
 
   // utilities
@@ -172,10 +173,17 @@ export class Example14 {
         formatter: Formatters.dollar,
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', minWidth: 100,
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete', minWidth: 150,
         type: FieldType.number,
         sortable: true, filterable: true, columnGroup: 'Analysis',
-        filter: { model: Filters.compoundSlider, operator: '>=' },
+        filter: {
+          model: Filters.sliderRange,
+          operator: '>=',
+          filterOptions: {
+            enableSliderTrackColoring: true,
+            hideSliderNumbers: false,
+          } as SliderRangeOption,
+        },
         editor: {
           model: Editors.slider,
           minValue: 0, maxValue: 100,

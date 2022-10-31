@@ -659,37 +659,27 @@ $slick-draggable-group-column-icon-margin-left:             4px !default;
 $slick-slider-filter-border:                                1px solid #ccc !default;
 $slick-slider-filter-bgcolor:                               #eee !default;
 $slick-slider-filter-runnable-track-bgcolor:                #ddd !default;
-$slick-slider-filter-runnable-track-height:                 4px !default;
+$slick-slider-filter-runnable-track-cursor:                 pointer !default;
+$slick-slider-filter-runnable-track-height:                 5px !default;
 $slick-slider-filter-runnable-track-padding:                0 6px !default;
 $slick-slider-filter-fill-lower-color:                      #ddd !default; /* ms only */
 $slick-slider-filter-fill-focus-lower-color:                #aaa !default; /* ms only */
 $slick-slider-filter-height:                                $slick-header-input-height !default;
 $slick-slider-filter-thumb-border-radius:                   50% !default;
-$slick-slider-filter-thumb-cursor:                          pointer !default;
+$slick-slider-filter-thumb-cursor:                          grab !default;
 $slick-slider-filter-thumb-color:                           rgb(201, 219, 203) !default;
+$slick-slider-filter-thumb-active-bg-color:                 #fff !default;
 $slick-slider-filter-thumb-size:                            14px !default;
-$slick-slider-filter-thumb-height:                          calc(#{$slick-slider-filter-thumb-size} - 2px) !default;
+$slick-slider-filter-thumb-height:                          calc(#{$slick-slider-filter-thumb-size} - 4px) !default;
 $slick-slider-filter-thumb-width:                           $slick-slider-filter-thumb-height !default;
-$slick-slider-filter-thumb-border:                          1px solid darken($slick-slider-filter-thumb-color, 15%) !default;
+$slick-slider-filter-thumb-border:                          2px solid darken($slick-slider-filter-thumb-color, 15%) !default;
 $slick-slider-filter-number-padding:                        4px 8px !default;
 $slick-slider-filter-number-font-size:                      calc(#{$slick-font-size-base-value} - 1px) !default;
 
-/* Input Range Slider Filter (with jQuery UI) */
-$slick-slider-range-filter-height:                          $slick-slider-filter-height !default;
-$slick-slider-range-filter-border:                          $slick-slider-filter-border !default;
-$slick-slider-range-filter-thumb-color:                     $slick-slider-filter-thumb-color !default;
-$slick-slider-range-filter-thumb-border:                    $slick-slider-filter-thumb-border !default;
-$slick-slider-range-filter-thumb-border-radius:             $slick-slider-filter-thumb-border-radius !default;
-$slick-slider-range-filter-thumb-cursor:                    $slick-slider-filter-thumb-cursor !default;
-$slick-slider-range-filter-thumb-size:                      $slick-slider-filter-thumb-size !default;
-$slick-slider-range-filter-thumb-top:                       -5px !default;
-$slick-slider-range-filter-runnable-track-top:              45% !default;
-$slick-slider-range-filter-runnable-track-height:           $slick-slider-filter-runnable-track-height !default;
-$slick-slider-range-filter-bgcolor:                         $slick-slider-filter-bgcolor !default;
-$slick-slider-range-filter-padding:                         0 12px !default;
-$slick-slider-range-filter-values-slider-width:             calc(98% - 16px) !default;
-$slick-slider-range-filter-values-slider-top:               12px !default;
-$slick-slider-range-filter-values-slider-margin:            0 10px !default;
+/* Input Range Slider Filter */
+$slick-slider-range-filter-border-radius:                   4px !default;
+$slick-slider-range-focus-border-color:                     lighten($slick-primary-color, 10%) !default;
+$slick-slider-range-focus-box-shadow:                       inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(lighten($slick-primary-color, 3%), .3) !default;
 
 /* Multiple-Select Filter */
 $slick-multiselect-input-filter-border:                     1px solid #ccc !default;

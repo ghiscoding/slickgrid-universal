@@ -13,6 +13,7 @@ import { NativeSelectFilter } from './nativeSelectFilter';
 import { DateRangeFilter } from './dateRangeFilter';
 import { SingleSelectFilter } from './singleSelectFilter';
 import { SliderFilter } from './sliderFilter';
+import { SliderRangeFilter } from './sliderRangeFilter';
 
 export const Filters = {
   /** AutoComplete Filter (using https://github.com/kraaden/autocomplete) */
@@ -66,6 +67,9 @@ export const Filters = {
   /** Single Select filter, which uses 3rd party lib "multiple-select.js" */
   singleSelect: SingleSelectFilter,
 
-  /** Slider Filter (only 1 value) */
+  /** Slider Filter (single value) */
   slider: SliderFilter,
+
+  /** Slider Range Filter (dual values, lowest/highest filter range) */
+  sliderRange: SliderRangeFilter,
 };

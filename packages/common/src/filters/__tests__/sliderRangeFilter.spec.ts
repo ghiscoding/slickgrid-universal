@@ -1,0 +1,343 @@
+import { Filters } from '../filters.index';
+import { Column, FilterArguments, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { SliderRangeFilter } from '../sliderRangeFilter';
+
+const containerId = 'demo-container';
+declare const Slick: SlickNamespace;
+
+// define a <div> container to simulate the grid container
+const template = `<div id="${containerId}"></div>`;
+
+const gridOptionMock = {
+  enableFiltering: true,
+  enableFilterTrimWhiteSpace: true,
+} as GridOption;
+
+const gridStub = {
+  getOptions: () => gridOptionMock,
+  getColumns: jest.fn(),
+  getHeaderRowColumn: jest.fn(),
+  render: jest.fn(),
+  onHeaderMouseLeave: new Slick.Event(),
+} as unknown as SlickGrid;
+
+describe('SliderRangeFilter', () => {
+  let consoleSpy: any;
+  let divContainer: HTMLDivElement;
+  let filter: SliderRangeFilter;
+  let filterArguments: FilterArguments;
+  let spyGetHeaderRow;
+  let mockColumn: Column;
+
+  beforeEach(() => {
+    consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
+    divContainer = document.createElement('div');
+    divContainer.innerHTML = template;
+    document.body.appendChild(divContainer);
+    spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+
+    mockColumn = { id: 'duration', field: 'duration', filterable: true, filter: { model: Filters.sliderRange } };
+    filterArguments = {
+      grid: gridStub,
+      columnDef: mockColumn,
+      callback: jest.fn(),
+      filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
+    };
+
+    filter = new SliderRangeFilter();
+  });
+
+  afterEach(() => {
+    filter.destroy();
+  });
+
+  it('should throw an error when trying to call init without any arguments', () => {
+    expect(() => filter.init(null as any)).toThrowError('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
+  });
+
+  it('should initialize the filter', () => {
+    filter.init(filterArguments);
+    const filterCount = divContainer.querySelectorAll('.search-filter.slider-container.filter-duration').length;
+
+    expect(spyGetHeaderRow).toHaveBeenCalled();
+    expect(filterCount).toBe(1);
+  });
+
+  it('should be able to retrieve default slider options through the Getter', () => {
+    filter.init(filterArguments);
+
+    expect(filter.sliderRangeOptions).toEqual({
+      maxValue: 100,
+      minValue: 0,
+      step: 1,
+    });
+  });
+
+  it('should be able to retrieve slider options defined through the Getter when passing different filterOptions', () => {
+    mockColumn.filter = {
+      minValue: 4,
+      maxValue: 69,
+      valueStep: 5,
+    };
+    filter.init(filterArguments);
+
+    expect(filter.sliderRangeOptions).toEqual({
+      maxValue: 69,
+      minValue: 4,
+      step: 5,
+    });
+  });
+
+  it('should call "setValues" and expect that value to be in the callback when triggered', () => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    filter.setValues(['2..80']);
+    const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
+    filterElms[0].dispatchEvent(new CustomEvent('change'));
+
+    expect(spyCallback).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [2, 80], shouldTriggerQuery: true });
+  });
+
+  it('should call "setValues" and expect that value to be in the callback when triggered', () => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    filter.setValues([3, 84]);
+    const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-filter-input');
+    const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
+    filterElms[0].dispatchEvent(new CustomEvent('change'));
+
+    expect(sliderInputs[0].style.zIndex).toBe('0');
+    expect(sliderInputs[1].style.zIndex).toBe('1');
+    expect(spyCallback).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [3, 84], shouldTriggerQuery: true });
+  });
+
+  it('should change z-index on left handle when it is by 20px near right handle so it shows over the right handle not below', () => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    filter.setValues([50, 63]);
+    const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-filter-input');
+    const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
+    filterElms[0].dispatchEvent(new CustomEvent('change'));
+
+    expect(sliderInputs[0].style.zIndex).toBe('1');
+    expect(sliderInputs[1].style.zIndex).toBe('0');
+    expect(spyCallback).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [50, 63], shouldTriggerQuery: true });
+  });
+
+  it('should change minValue to a lower value when it is to close to maxValue and "stopGapBetweenSliderHandles" is enabled so it will auto-change minValue to a lower value plus gap', () => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const minVal = 56;
+    const maxVal = 58;
+
+    mockColumn.filter = {
+      filterOptions: { stopGapBetweenSliderHandles: 5 }
+    };
+    filter.init(filterArguments);
+    filter.setValues([minVal, maxVal]);
+    const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-filter-input');
+    const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
+    filterElms[0].dispatchEvent(new CustomEvent('change'));
+
+    expect(sliderInputs[0].value).toBe(`${minVal - 5}`);
+    expect(sliderInputs[1].value).toBe('58');
+    expect(spyCallback).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [51, 58], shouldTriggerQuery: true });
+  });
+
+  it('should change maxValue to a lower value when it is to close to minValue and "stopGapBetweenSliderHandles" is enabled so it will auto-change maxValue to a lower value plus gap', () => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const minVal = 56;
+    const maxVal = 58;
+
+    mockColumn.filter = {
+      filterOptions: { stopGapBetweenSliderHandles: 5 }
+    };
+    filter.init(filterArguments);
+    filter.setValues([minVal, maxVal]);
+    const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-filter-input');
+    const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
+    filterElms[1].dispatchEvent(new CustomEvent('change'));
+
+    expect(sliderInputs[0].value).toBe('56');
+    expect(sliderInputs[1].value).toBe(`${minVal + 5}`);
+    expect(spyCallback).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [56, 61], shouldTriggerQuery: true });
+  });
+
+  it('should be able to call "setValues" and set empty values and the input to not have the "filled" css class', () => {
+    filter.init(filterArguments);
+    filter.setValues([3, 80]);
+    let filledInputElm = divContainer.querySelector('.search-filter.slider-container.filter-duration.filled') as HTMLInputElement;
+
+    expect(filledInputElm).toBeTruthy();
+
+    filter.setValues('');
+    filledInputElm = divContainer.querySelector('.search-filter.slider-container.filter-duration.filled') as HTMLInputElement;
+    expect(filledInputElm).toBeFalsy();
+  });
+
+  it('should create the input filter with default search terms range when passed as a filter argument', () => {
+    filterArguments.searchTerms = [3, 80];
+
+    filter.init(filterArguments);
+
+    const filterLowestElm = divContainer.querySelector('.lowest-range-duration') as HTMLInputElement;
+    const filterHighestElm = divContainer.querySelector('.highest-range-duration') as HTMLInputElement;
+
+    expect(filterLowestElm.textContent).toBe('3');
+    expect(filterHighestElm.textContent).toBe('80');
+    expect(filter.currentValues).toEqual([3, 80]);
+  });
+
+  it('should create the input filter with min/max slider values being set by filter "minValue" and "maxValue"', () => {
+    mockColumn.filter = {
+      minValue: 4,
+      maxValue: 69,
+    };
+
+    filter.init(filterArguments);
+
+    const filterLowestElm = divContainer.querySelector('.lowest-range-duration') as HTMLInputElement;
+    const filterHighestElm = divContainer.querySelector('.highest-range-duration') as HTMLInputElement;
+
+    expect(filterLowestElm.textContent).toBe('4');
+    expect(filterHighestElm.textContent).toBe('69');
+    expect(filter.currentValues).toEqual([4, 69]);
+  });
+
+  it('should create the input filter with min/max slider values being set by filter "sliderStartValue" and "sliderEndValue" through the filterOptions', () => {
+    mockColumn.filter = {
+      filterOptions: {
+        sliderStartValue: 4,
+        sliderEndValue: 69,
+      }
+    };
+
+    filter.init(filterArguments);
+
+    const filterLowestElm = divContainer.querySelector('.lowest-range-duration') as HTMLInputElement;
+    const filterHighestElm = divContainer.querySelector('.highest-range-duration') as HTMLInputElement;
+
+    expect(filterLowestElm.textContent).toBe('4');
+    expect(filterHighestElm.textContent).toBe('69');
+    expect(filter.currentValues).toEqual([4, 69]);
+  });
+
+  it('should create the input filter with min/max slider values defined in params and expect deprecated console warning', () => {
+    mockColumn.filter = {
+      params: {
+        sliderStartValue: 4,
+        sliderEndValue: 69,
+      }
+    };
+
+    filter.init(filterArguments);
+
+    const filterLowestElm = divContainer.querySelector('.lowest-range-duration') as HTMLInputElement;
+    const filterHighestElm = divContainer.querySelector('.highest-range-duration') as HTMLInputElement;
+
+    expect(consoleSpy).toHaveBeenCalledWith('[Slickgrid-Universal] All filter.params were moved, and deprecated, to "filterOptions" as SliderRangeOption for better typing support.');
+    expect(filterLowestElm.textContent).toBe('4');
+    expect(filterHighestElm.textContent).toBe('69');
+    expect(filter.currentValues).toEqual([4, 69]);
+  });
+
+  it('should create the input filter with default search terms range but without showing side numbers when "hideSliderNumbers" is set in filterOptions', () => {
+    filterArguments.searchTerms = [3, 80];
+    mockColumn.filter!.filterOptions = { hideSliderNumbers: true };
+
+    filter.init(filterArguments);
+
+    const filterLowestElms = divContainer.querySelectorAll<HTMLInputElement>('.lowest-range-duration');
+    const filterHighestElms = divContainer.querySelectorAll<HTMLInputElement>('.highest-range-duration');
+
+    expect(filterLowestElms.length).toBe(0);
+    expect(filterHighestElms.length).toBe(0);
+    expect(filter.currentValues).toEqual([3, 80]);
+  });
+
+  it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
+    filterArguments.searchTerms = [3, 80];
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    filter.clear();
+
+    expect(filter.currentValues).toEqual([0, 100]);
+    expect(spyCallback).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: true });
+  });
+
+  it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
+    filterArguments.searchTerms = [3, 80];
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    filter.clear(false);
+
+    expect(filter.currentValues).toEqual([0, 100]);
+    expect(spyCallback).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
+  });
+
+  it('should trigger a callback with the clear filter set when calling the "clear" method and expect min/max slider values being with values of "sliderStartValue" and "sliderEndValue" when defined through the filterOptions', () => {
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    mockColumn.filter = {
+      filterOptions: {
+        sliderStartValue: 4,
+        sliderEndValue: 69,
+      }
+    };
+
+    filter.init(filterArguments);
+    filter.clear(false);
+
+    expect(filter.currentValues).toEqual([4, 69]);
+    expect(spyCallback).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
+  });
+
+  it('should enableSliderTrackColoring and trigger a change event and expect slider track to have background color', () => {
+    mockColumn.filter = { filterOptions: { enableSliderTrackColoring: true } };
+    filter.init(filterArguments);
+    filter.setValues(['2..80']);
+    const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
+    filterElms[0].dispatchEvent(new CustomEvent('change'));
+    const sliderTrackElm = divContainer.querySelector('.slider-track') as HTMLDivElement;
+
+    // expect(sliderTrackElm.style.background).toBe('linear-gradient(to right, #eee 2%, var(--slick-slider-filter-thumb-color, #86bff8) 2%, var(--slick-slider-filter-thumb-color, #86bff8) 80%, #eee 80%)');
+    expect(filter.sliderRangeOptions?.sliderTrackBackground).toBe('linear-gradient(to right, #eee 2%, var(--slick-slider-filter-thumb-color, #86bff8) 2%, var(--slick-slider-filter-thumb-color, #86bff8) 80%, #eee 80%)');
+  });
+
+  it('should click on the slider track and expect left handle to move to the new position when calculated percent is below 50%', () => {
+    filter.init(filterArguments);
+    const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-filter-input');
+    const sliderTrackElm = divContainer.querySelector('.slider-track') as HTMLDivElement;
+
+    const sliderOneChangeSpy = jest.spyOn(sliderInputs[0], 'dispatchEvent');
+    const sliderTwoChangeSpy = jest.spyOn(sliderInputs[1], 'dispatchEvent');
+
+    const clickEvent = new Event('click');
+    Object.defineProperty(clickEvent, 'offsetX', { writable: true, configurable: true, value: 22 });
+    Object.defineProperty(sliderTrackElm, 'offsetWidth', { writable: true, configurable: true, value: 85 });
+    sliderTrackElm.dispatchEvent(clickEvent);
+
+    expect(sliderOneChangeSpy).toHaveBeenCalled();
+    expect(sliderTwoChangeSpy).not.toHaveBeenCalled();
+  });
+
+  it('should click on the slider track and expect right handle to move to the new position when calculated percent is above 50%', () => {
+    filter.init(filterArguments);
+    const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-filter-input');
+    const sliderTrackElm = divContainer.querySelector('.slider-track') as HTMLDivElement;
+
+    const sliderOneChangeSpy = jest.spyOn(sliderInputs[0], 'dispatchEvent');
+    const sliderTwoChangeSpy = jest.spyOn(sliderInputs[1], 'dispatchEvent');
+
+    const clickEvent = new Event('click');
+    Object.defineProperty(clickEvent, 'offsetX', { writable: true, configurable: true, value: 56 });
+    Object.defineProperty(sliderTrackElm, 'offsetWidth', { writable: true, configurable: true, value: 75 });
+    sliderTrackElm.dispatchEvent(clickEvent);
+
+    expect(sliderOneChangeSpy).not.toHaveBeenCalled();
+    expect(sliderTwoChangeSpy).toHaveBeenCalled();
+  });
+});
