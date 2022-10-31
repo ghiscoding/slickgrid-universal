@@ -19,7 +19,7 @@ describe('Example 14 - Columns Resize by Content', { retries: 1 }, () => {
     cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('equal', 83);
     cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('equal', 98);
     cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('equal', 67);
-    cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('equal', 110);
+    cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('equal', 160);
     cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('equal', 106);
     cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('equal', 88);
     cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('equal', 68);
@@ -35,7 +35,7 @@ describe('Example 14 - Columns Resize by Content', { retries: 1 }, () => {
     cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('equal', 75);
     cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('equal', 98);
     cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('equal', 67);
-    cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('equal', 102);
+    cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('equal', 152);
     cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('equal', 98);
     cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('equal', 80);
     cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('equal', 68);
@@ -51,7 +51,7 @@ describe('Example 14 - Columns Resize by Content', { retries: 1 }, () => {
     cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.lt', 75);
     cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.lt', 95);
     cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.lt', 70);
-    cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.lt', 100);
+    cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.lt', 150);
     cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.lt', 100);
     cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.lt', 85);
     cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('be.lt', 70);
