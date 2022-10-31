@@ -670,9 +670,9 @@ $slick-slider-filter-thumb-cursor:                          grab !default;
 $slick-slider-filter-thumb-color:                           rgb(201, 219, 203) !default;
 $slick-slider-filter-thumb-active-bg-color:                 #fff !default;
 $slick-slider-filter-thumb-size:                            14px !default;
-$slick-slider-filter-thumb-height:                          calc(#{$slick-slider-filter-thumb-size} - 3px) !default;
+$slick-slider-filter-thumb-height:                          calc(#{$slick-slider-filter-thumb-size} - 4px) !default;
 $slick-slider-filter-thumb-width:                           $slick-slider-filter-thumb-height !default;
-$slick-slider-filter-thumb-border:                          1px solid darken($slick-slider-filter-thumb-color, 15%) !default;
+$slick-slider-filter-thumb-border:                          2px solid darken($slick-slider-filter-thumb-color, 15%) !default;
 $slick-slider-filter-number-padding:                        4px 8px !default;
 $slick-slider-filter-number-font-size:                      calc(#{$slick-font-size-base-value} - 1px) !default;
 
