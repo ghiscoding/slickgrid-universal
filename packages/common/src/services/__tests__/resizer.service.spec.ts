@@ -101,7 +101,7 @@ describe('Resizer Service', () => {
       resizeByContentOptions: {},
     } as GridOption;
     jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
-    jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(divContainer.querySelector(`#${GRID_ID}`));
+    jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(divContainer.querySelector(`#${GRID_ID}`) as HTMLDivElement);
   });
 
   afterEach(() => {
@@ -120,7 +120,7 @@ describe('Resizer Service', () => {
 
     it('should call "bindAutoResizeDataGrid" when autoResize is enabled', () => {
       mockGridOptions.enableAutoResize = true;
-      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(null);
+      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(null as any);
       const bindAutoResizeDataGridSpy = jest.spyOn(service, 'bindAutoResizeDataGrid').mockImplementation();
 
       service.init(gridStub, divContainer);
@@ -130,7 +130,7 @@ describe('Resizer Service', () => {
 
     it('should not call "bindAutoResizeDataGrid" when autoResize is not enabled', () => {
       mockGridOptions.enableAutoResize = false;
-      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(null);
+      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(null as any);
       const bindAutoResizeDataGridSpy = jest.spyOn(service, 'bindAutoResizeDataGrid').mockImplementation();
 
       service.init(gridStub, divContainer);
@@ -140,9 +140,9 @@ describe('Resizer Service', () => {
 
     it('should observe resize events on the container element when "resizeDetection" is "container"', () => {
       mockGridOptions.enableAutoResize = true;
-      mockGridOptions.autoResize.resizeDetection = 'container';
+      mockGridOptions.autoResize!.resizeDetection = 'container';
       const resizeContainer = document.createElement('div');
-      mockGridOptions.autoResize.container = resizeContainer;
+      mockGridOptions.autoResize!.container = resizeContainer;
 
       service.init(gridStub, divContainer);
 
@@ -155,17 +155,17 @@ describe('Resizer Service', () => {
 
     it('should throw an error when container element is not valid and "resizeDetection" is "container"', () => {
       mockGridOptions.enableAutoResize = true;
-      mockGridOptions.autoResize.resizeDetection = 'container';
-      mockGridOptions.autoResize.container = '#doesnotexist';
+      mockGridOptions.autoResize!.resizeDetection = 'container';
+      mockGridOptions.autoResize!.container = '#doesnotexist';
 
       expect(() => service.init(gridStub, divContainer)).toThrowError('[Slickgrid-Universal] Resizer Service requires a container when gridOption.autoResize.resizeDetection="container"');
     });
 
     it('should execute "resizeGrid" when "resizeDetection" is "container"', () => {
       mockGridOptions.enableAutoResize = true;
-      mockGridOptions.autoResize.resizeDetection = "container";
+      mockGridOptions.autoResize!.resizeDetection = "container";
       const resizeContainer = document.createElement('div');
-      mockGridOptions.autoResize.container = resizeContainer;
+      mockGridOptions.autoResize!.container = resizeContainer;
 
       const resizeGridSpy = jest.spyOn(service, 'resizeGrid');
 
@@ -176,9 +176,9 @@ describe('Resizer Service', () => {
 
     it('should not execute "resizeGrid" when "resizeDetection" is "container" and the resizer is paused', () => {
       mockGridOptions.enableAutoResize = true;
-      mockGridOptions.autoResize.resizeDetection = "container";
+      mockGridOptions.autoResize!.resizeDetection = "container";
       const resizeContainer = document.createElement('div');
-      mockGridOptions.autoResize.container = resizeContainer;
+      mockGridOptions.autoResize!.container = resizeContainer;
 
       const resizeGridSpy = jest.spyOn(service, 'resizeGrid');
 
@@ -206,9 +206,9 @@ describe('Resizer Service', () => {
 
     it('should disconnect from resize events on the container element when "resizeDetection" is "container"', () => {
       mockGridOptions.enableAutoResize = true;
-      mockGridOptions.autoResize.resizeDetection = "container";
+      mockGridOptions.autoResize!.resizeDetection = "container";
       const resizeContainer = document.createElement('div');
-      mockGridOptions.autoResize.container = resizeContainer;
+      mockGridOptions.autoResize!.container = resizeContainer;
 
       service.init(gridStub, divContainer);
 
@@ -233,19 +233,19 @@ describe('Resizer Service', () => {
     });
 
     it('should return null when calling "bindAutoResizeDataGrid" method with a gridId that is not found in the DOM', () => {
-      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(null);
+      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(null as any);
       service.init(gridStub, divContainer);
       const output = service.bindAutoResizeDataGrid();
 
-      expect(output).toBe(null);
+      expect(output).toBe(null as any);
       expect(service.eventHandler).toBeTruthy();
     });
 
     it('should return null when calling "calculateGridNewDimensions" method with a gridId that is not found in the DOM', () => {
-      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(null);
+      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(null as any);
       service.init(gridStub, divContainer);
       const output = service.calculateGridNewDimensions(mockGridOptions);
-      expect(output).toBe(null);
+      expect(output).toBe(null as any);
     });
 
     it('should trigger a grid resize when a window resize event occurs', () => {
@@ -605,7 +605,7 @@ describe('Resizer Service', () => {
 
         mockGridOptions.frozenColumn = 7;
         mockGridOptions.enableColumnResizeOnDoubleClick = true;
-        mockGridOptions.resizeByContentOptions.widthToRemoveFromExceededWidthReadjustment = 20;
+        mockGridOptions.resizeByContentOptions!.widthToRemoveFromExceededWidthReadjustment = 20;
         service.init(gridStub, divContainer);
         gridStub.onColumnsResizeDblClick.notify({ triggeredByColumn: 'zip', grid: gridStub });
 
@@ -820,7 +820,7 @@ describe('Resizer Service', () => {
       it('should try to resize grid when its UI is deemed broken but expect an error shown in the console when "resizeGrid" throws an error', (done) => {
         const consoleSpy = jest.spyOn(global.console, 'log').mockReturnValue();
         const promise = new Promise((_resolve, reject) => setTimeout(() => reject('some error'), 0));
-        jest.spyOn(service, 'resizeGrid').mockReturnValue(promise);
+        jest.spyOn(service, 'resizeGrid').mockReturnValue(promise as any);
 
         service.init(gridStub, divContainer);
 
