@@ -1,8 +1,10 @@
+import { Constants } from '../constants';
 import { OperatorString } from '../enums/operatorString.type';
-import { Column, GridOption } from '../interfaces/index';
+import { Column, GridOption, Locale } from '../interfaces/index';
 import { Observable, RxJsFacade, Subject, Subscription } from '../services/rxjsFacade';
 import { createDomElement, htmlEncodedStringWithPadding, sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
-import { castObservableToPromise, getDescendantProperty, } from '../services/utilities';
+import { castObservableToPromise, getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
+import { TranslaterService } from '../services/translater.service';
 
 /**
  * Create and return a select dropdown HTML element with a list of Operators with descriptions
@@ -111,3 +113,37 @@ export function createCollectionAsyncSubject(columnDef: Column, renderDomElement
   }
 }
 
+/** Get Locale, Translated or a Default Text if first two aren't detected */
+function getOutputText(translationKey: string, localeText: string, defaultText: string, gridOptions: GridOption, translaterService?: TranslaterService): string {
+  if (gridOptions?.enableTranslate && translaterService?.translate) {
+    const translationPrefix = getTranslationPrefix(gridOptions);
+    return translaterService.translate(`${translationPrefix}${translationKey}`);
+  }
+  const locales = gridOptions.locales || Constants.locales;
+  return locales?.[localeText as keyof Locale] ?? defaultText;
+}
+
+/** returns common list of string related operators and their associated translation descriptions */
+export function compoundOperatorString(gridOptions: GridOption, translaterService?: TranslaterService) {
+  return [
+    { operator: '' as OperatorString, description: getOutputText('CONTAINS', 'TEXT_CONTAINS', 'Contains', gridOptions, translaterService) },
+    { operator: '<>' as OperatorString, description: getOutputText('NOT_CONTAINS', 'TEXT_NOT_CONTAINS', 'Not Contains', gridOptions, translaterService) },
+    { operator: '=' as OperatorString, description: getOutputText('EQUALS', 'TEXT_EQUALS', 'Equals', gridOptions, translaterService) },
+    { operator: '!=' as OperatorString, description: getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to', gridOptions, translaterService) },
+    { operator: 'a*' as OperatorString, description: getOutputText('STARTS_WITH', 'TEXT_STARTS_WITH', 'Starts with', gridOptions, translaterService) },
+    { operator: '*z' as OperatorString, description: getOutputText('ENDS_WITH', 'TEXT_ENDS_WITH', 'Ends with', gridOptions, translaterService) },
+  ];
+}
+
+/** returns common list of numeric related operators and their associated translation descriptions */
+export function compoundOperatorNumeric(gridOptions: GridOption, translaterService?: TranslaterService) {
+  return [
+    { operator: '' as OperatorString, description: '' },
+    { operator: '=' as OperatorString, description: getOutputText('EQUAL_TO', 'TEXT_EQUAL_TO', 'Equal to', gridOptions, translaterService) },
+    { operator: '<' as OperatorString, description: getOutputText('LESS_THAN', 'TEXT_LESS_THAN', 'Less than', gridOptions, translaterService) },
+    { operator: '<=' as OperatorString, description: getOutputText('LESS_THAN_OR_EQUAL_TO', 'TEXT_LESS_THAN_OR_EQUAL_TO', 'Less than or equal to', gridOptions, translaterService) },
+    { operator: '>' as OperatorString, description: getOutputText('GREATER_THAN', 'TEXT_GREATER_THAN', 'Greater than', gridOptions, translaterService) },
+    { operator: '>=' as OperatorString, description: getOutputText('GREATER_THAN_OR_EQUAL_TO', 'TEXT_GREATER_THAN_OR_EQUAL_TO', 'Greater than or equal to', gridOptions, translaterService) },
+    { operator: '<>' as OperatorString, description: getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to', gridOptions, translaterService) }
+  ];
+}

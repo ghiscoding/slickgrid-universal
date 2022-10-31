@@ -8,21 +8,16 @@ import {
   FilterArguments,
   FilterCallback,
   GridOption,
-  Locale,
   OperatorDetail,
   SlickGrid,
 } from '../interfaces/index';
 import { Constants } from '../constants';
 import { OperatorString, OperatorType, SearchTerm } from '../enums/index';
-import { buildSelectOperator } from './filterUtilities';
+import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
 import { createDomElement, emptyElement } from '../services/domUtilities';
-import { getTranslationPrefix, mapOperatorToShorthandDesignation, } from '../services/utilities';
+import { mapOperatorToShorthandDesignation, } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
-
-const DEFAULT_MIN_VALUE = 0;
-const DEFAULT_MAX_VALUE = 100;
-const DEFAULT_STEP = 1;
 
 export class CompoundSliderFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -73,11 +68,6 @@ export class CompoundSliderFilter implements Filter {
     return this.grid?.getOptions?.() ?? {};
   }
 
-  /** Getter for the single Locale texts provided by the user in main file or else use default English locales via the Constants */
-  get locales(): Locale {
-    return this.gridOptions.locales || Constants.locales;
-  }
-
   /** Getter for the Filter Operator */
   get operator(): OperatorType | OperatorString {
     return this._operator || this.columnFilter.operator || this.defaultOperator;
@@ -111,7 +101,7 @@ export class CompoundSliderFilter implements Filter {
 
     // step 1, create the DOM Element of the filter which contain the compound Operator+Input
     // and initialize it if searchTerm is filled
-    this.filterElm = this.createDomElement(searchTerm);
+    this.filterElm = this.createDomFilterElement(searchTerm);
 
     // step 2, subscribe to the input change event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
@@ -131,7 +121,7 @@ export class CompoundSliderFilter implements Filter {
       this._clearFilterTriggered = true;
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
-      const clearedValue = this.filterParams?.sliderStartValue ?? DEFAULT_MIN_VALUE;
+      const clearedValue = this.filterParams?.sliderStartValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE;
       this._currentValue = +clearedValue;
       this.selectOperatorElm.selectedIndex = 0;
       this.filterInputElm.value = clearedValue;
@@ -196,36 +186,19 @@ export class CompoundSliderFilter implements Filter {
     if (this.columnFilter?.compoundOperatorList) {
       return this.columnFilter.compoundOperatorList;
     } else {
-      return [
-        { operator: '', description: '' },
-        { operator: '=', description: this.getOutputText('EQUAL_TO', 'TEXT_EQUAL_TO', 'Equal to') },
-        { operator: '<', description: this.getOutputText('LESS_THAN', 'TEXT_LESS_THAN', 'Less than') },
-        { operator: '<=', description: this.getOutputText('LESS_THAN_OR_EQUAL_TO', 'TEXT_LESS_THAN_OR_EQUAL_TO', 'Less than or equal to') },
-        { operator: '>', description: this.getOutputText('GREATER_THAN', 'TEXT_GREATER_THAN', 'Greater than') },
-        { operator: '>=', description: this.getOutputText('GREATER_THAN_OR_EQUAL_TO', 'TEXT_GREATER_THAN_OR_EQUAL_TO', 'Greater than or equal to') },
-        { operator: '<>', description: this.getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to') }
-      ];
+      return compoundOperatorNumeric(this.gridOptions, this.translaterService);
     }
-  }
-
-  /** Get Locale, Translated or a Default Text if first two aren't detected */
-  protected getOutputText(translationKey: string, localeText: string, defaultText: string): string {
-    if (this.gridOptions?.enableTranslate && this.translaterService?.translate) {
-      const translationPrefix = getTranslationPrefix(this.gridOptions);
-      return this.translaterService.translate(`${translationPrefix}${translationKey}`);
-    }
-    return this.locales?.[localeText as keyof Locale] ?? defaultText;
   }
 
   /**
    * Create the DOM element
    */
-  protected createDomElement(searchTerm?: SearchTerm): HTMLDivElement {
+  protected createDomFilterElement(searchTerm?: SearchTerm): HTMLDivElement {
     const columnId = this.columnDef?.id ?? '';
-    const minValue = this.filterProperties?.minValue ?? DEFAULT_MIN_VALUE;
-    const maxValue = this.filterProperties?.maxValue ?? DEFAULT_MAX_VALUE;
+    const minValue = this.filterProperties?.minValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE;
+    const maxValue = this.filterProperties?.maxValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE;
     const defaultValue = this.filterParams?.sliderStartValue ?? minValue;
-    const step = this.filterProperties?.valueStep ?? DEFAULT_STEP;
+    const step = this.filterProperties?.valueStep ?? Constants.SLIDER_DEFAULT_STEP;
     const startValue = +(this.filterParams?.sliderStartValue ?? minValue);
 
     emptyElement(this.filterContainerElm);
@@ -269,7 +242,7 @@ export class CompoundSliderFilter implements Filter {
     });
     this.filterInputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
 
-    this.divContainerFilterElm = createDomElement('div', { className: `form-group search-filter slider-container filter-${columnId}` });
+    this.divContainerFilterElm = createDomElement('div', { className: `form-group search-filter slider-single slider-container filter-${columnId}` });
     this.containerInputGroupElm = createDomElement('div', { className: `input-group search-filter filter-${columnId}` });
     this.containerInputGroupElm.appendChild(spanPrependElm);
     this.containerInputGroupElm.appendChild(this.filterInputElm);
