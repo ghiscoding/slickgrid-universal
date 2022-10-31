@@ -18,7 +18,7 @@ import { ExampleGridOptions } from './example-grid-options';
 const NB_ITEMS = 200;
 
 const currencyFormatter: Formatter = (cell: number, row: number, value: string) =>
-  `<img src="https://flags.fmcdn.net/data/flags/mini/${value.substr(0, 2).toLowerCase()}.png" width="20"/> ${value}`;
+  `<img src="https://flags.fmcdn.net/data/flags/mini/${value.substring(0, 2).toLowerCase()}.png" width="20"/> ${value}`;
 
 const priceFormatter: Formatter = (cell: number, row: number, value: number, col: Column, dataContext: any) => {
   const direction = dataContext.priceChange >= 0 ? 'up' : 'down';
@@ -211,7 +211,7 @@ export class Example34 {
         currency,
         trsnType: (Math.round(Math.random() * 100)) % 2 ? 'Buy' : 'Sell',
         company,
-        symbol: currency === 'CAD' ? company.substr(0, 3).toUpperCase() + '.TO' : company.substr(0, 4).toUpperCase(),
+        symbol: currency === 'CAD' ? company.substring(0, 3).toUpperCase() + '.TO' : company.substring(0, 4).toUpperCase(),
         market: currency === 'CAD' ? 'TSX' : price > 200 ? 'Nasdaq' : 'S&P 500',
         duration: (i % 33 === 0) ? null : Math.random() * 100 + '',
         percentCompleteNumber: randomPercent,

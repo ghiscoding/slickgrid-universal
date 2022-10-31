@@ -253,7 +253,7 @@ export function titleCase(inputStr: string, shouldTitleCaseEveryWords = false): 
   if (typeof inputStr === 'string') {
     if (shouldTitleCaseEveryWords) {
       return inputStr.replace(/\w\S*/g, (outputStr) => {
-        return outputStr.charAt(0).toUpperCase() + outputStr.substr(1).toLowerCase();
+        return outputStr.charAt(0).toUpperCase() + outputStr.substring(1).toLowerCase();
       });
     }
     return inputStr.charAt(0).toUpperCase() + inputStr.slice(1);

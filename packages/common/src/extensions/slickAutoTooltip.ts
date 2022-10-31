@@ -76,7 +76,7 @@ export class SlickAutoTooltip {
         if (node.clientWidth < node.scrollWidth) {
           text = node.textContent?.trim() ?? '';
           if (this._addonOptions?.maxToolTipLength && text.length > this._addonOptions?.maxToolTipLength) {
-            text = text.substr(0, this._addonOptions.maxToolTipLength - 3) + '...';
+            text = text.substring(0, this._addonOptions.maxToolTipLength - 3) + '...';
           }
         } else {
           text = '';

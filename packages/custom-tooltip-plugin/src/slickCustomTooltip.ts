@@ -310,7 +310,7 @@ export class SlickCustomTooltip {
       if (this._cellNodeElm && (this._cellNodeElm.clientWidth < this._cellNodeElm.scrollWidth) && !this._cellAddonOptions?.useRegularTooltipFromFormatterOnly) {
         tooltipText = this._cellNodeElm.textContent?.trim() ?? '';
         if (this._cellAddonOptions?.tooltipTextMaxLength && tooltipText.length > this._cellAddonOptions?.tooltipTextMaxLength) {
-          tooltipText = tooltipText.substr(0, this._cellAddonOptions.tooltipTextMaxLength - 3) + '...';
+          tooltipText = tooltipText.substring(0, this._cellAddonOptions.tooltipTextMaxLength - 3) + '...';
         }
         tmpTitleElm = this._cellNodeElm;
       } else {
@@ -344,7 +344,7 @@ export class SlickCustomTooltip {
     this._tooltipElm.classList.add('r' + cell.cell);
 
     let outputText = tooltipText || this.parseFormatterAndSanitize(formatter, cell, value, columnDef, item) || '';
-    outputText = (this._cellAddonOptions?.tooltipTextMaxLength && outputText.length > this._cellAddonOptions.tooltipTextMaxLength) ? outputText.substr(0, this._cellAddonOptions.tooltipTextMaxLength - 3) + '...' : outputText;
+    outputText = (this._cellAddonOptions?.tooltipTextMaxLength && outputText.length > this._cellAddonOptions.tooltipTextMaxLength) ? outputText.substring(0, this._cellAddonOptions.tooltipTextMaxLength - 3) + '...' : outputText;
 
     let finalOutputText = '';
     if (!tooltipText || this._cellAddonOptions?.renderRegularTooltipAsHtml) {
