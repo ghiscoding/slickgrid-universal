@@ -52,12 +52,12 @@ export interface CustomTooltipOption<T = any> {
   offsetTopBottom?: number;
 
   /**
-   * Defaults to "auto", allows to align the tooltip to the best logical position in the window, by default it will show on top but if it calculates that it doesn't have enough space it will revert to bottom.
+   * Defaults to "auto" (note that "center" will never be used by "auto"), allows to align the tooltip to the best logical position in the window, by default it will show on top but if it calculates that it doesn't have enough space it will revert to bottom.
    * We can assume that in 80% of the time the default position is top left, the default is "auto" but we can also override this and use a specific align side.
-   * Most of the time positioning of the tooltip will be to the "right-align" of the cell is ok but if our column is completely on the right side then we'll want to change the position to "left-align" align.
+   * Most of the time, the positioning of the tooltip will be "right-align" of the cell which is typically ok unless your column is completely on the right side and so we'll want to change the position to "left-align" in that case.
    * Same goes for the top/bottom position, Most of the time positioning the tooltip to the "top" but if we are showing a tooltip from a cell on the top of the grid then we might need to reposition to "bottom" instead.
    */
-  position?: 'auto' | 'top' | 'bottom' | 'left-align' | 'right-align';
+  position?: 'auto' | 'top' | 'bottom' | 'left-align' | 'right-align' | 'center';
 
   /** defaults to False, when set to True it will skip custom tooltip formatter and instead will parse through the regular cell formatter and try to find a `title` to show regular tooltip */
   useRegularTooltip?: boolean;

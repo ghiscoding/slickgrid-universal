@@ -393,6 +393,9 @@ li.hidden {
   &.tooltip-arrow.arrow-right-align::after {
     margin-left: var(--slick-tooltip-right-arrow-side-margin, $slick-tooltip-right-arrow-side-margin);
   }
+  &.tooltip-arrow.arrow-center-align::after {
+    margin-left: var(--slick-tooltip-arrow-center-margin, $slick-tooltip-arrow-center-margin);
+  }
 }
 
 // ---------------------------------------------------------

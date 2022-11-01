@@ -56,6 +56,3 @@ $control-height: 2.4em;
 .l4.slick-custom-tooltip.arrow-right-align::after {
   margin-left: calc(100% - 20px - 15px); // 20px is (arrow size * 2), 15px is your extra side margin
 }
-.l6.slick-custom-tooltip.arrow-left-align::after {
-  margin-left: 4px;
-}

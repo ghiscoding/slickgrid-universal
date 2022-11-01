@@ -154,7 +154,7 @@ export class Example16 {
         formatter: Formatters.percentCompleteBar,
         sortable: true, filterable: true,
         filter: { model: Filters.slider, operator: '>=' },
-        customTooltip: { useRegularTooltip: true, },
+        customTooltip: { useRegularTooltip: true, position: 'center' },
       },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true,

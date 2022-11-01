@@ -857,7 +857,8 @@ $slick-tooltip-arrow-color:                                 darken($slick-toolti
 $slick-tooltip-arrow-size:                                  8px !default;
 $slick-tooltip-down-arrow-top-margin:                       100% !default;
 $slick-tooltip-up-arrow-top-margin:                         -($slick-tooltip-arrow-size * 2) !default;
-$slick-tooltip-arrow-side-margin:                           9px !default;
+$slick-tooltip-arrow-side-margin:                           3px !default;
+$slick-tooltip-arrow-center-margin:                         calc(50% - #{$slick-tooltip-arrow-size}) !default;
 $slick-tooltip-right-arrow-side-margin:                     calc(100% - #{($slick-tooltip-arrow-size * 2)} - #{$slick-tooltip-arrow-side-margin}) !default;
 
 /** Empty Data Warning element */
