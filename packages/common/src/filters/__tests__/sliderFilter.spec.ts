@@ -76,7 +76,7 @@ describe('SliderFilter', () => {
     const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
     filterElm.dispatchEvent(new CustomEvent('change'));
 
-    expect(spyCallback).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['2'], shouldTriggerQuery: true });
+    expect(spyCallback).toHaveBeenLastCalledWith(new CustomEvent('change'), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['2'], shouldTriggerQuery: true });
   });
 
   it('should call "setValues" and expect that value, converted as a string, to be in the callback when triggered', () => {
@@ -92,7 +92,7 @@ describe('SliderFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll('.search-filter.slider-container.filter-duration.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(spyCallback).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['13'], shouldTriggerQuery: true });
+    expect(spyCallback).toHaveBeenLastCalledWith(new CustomEvent('change'), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['13'], shouldTriggerQuery: true });
   });
 
   it('should be able to call "setValues" and set empty values and the input to not have the "filled" css class', () => {
@@ -182,7 +182,7 @@ describe('SliderFilter', () => {
     filter.clear();
 
     expect(filter.getValues()).toBe(0);
-    expect(spyCallback).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, clearFilterTriggered: true, searchTerms: [], shouldTriggerQuery: true });
+    expect(spyCallback).toHaveBeenLastCalledWith(new Event('change'), { columnDef: mockColumn, clearFilterTriggered: true, searchTerms: [], shouldTriggerQuery: true });
   });
 
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
@@ -193,7 +193,7 @@ describe('SliderFilter', () => {
     filter.clear(false);
 
     expect(filter.getValues()).toBe(0);
-    expect(spyCallback).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, clearFilterTriggered: true, searchTerms: [], shouldTriggerQuery: false });
+    expect(spyCallback).toHaveBeenLastCalledWith(new Event('change'), { columnDef: mockColumn, clearFilterTriggered: true, searchTerms: [], shouldTriggerQuery: false });
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method and expect min slider values being with values of "sliderStartValue" when defined through the filter params', () => {
@@ -209,6 +209,6 @@ describe('SliderFilter', () => {
     filter.clear(false);
 
     expect(filter.getValues()).toEqual(4);
-    expect(spyCallback).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, clearFilterTriggered: true, searchTerms: [], shouldTriggerQuery: false });
+    expect(spyCallback).toHaveBeenLastCalledWith(new Event('change'), { columnDef: mockColumn, clearFilterTriggered: true, searchTerms: [], shouldTriggerQuery: false });
   });
 });

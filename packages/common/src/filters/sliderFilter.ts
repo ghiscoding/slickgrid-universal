@@ -10,7 +10,7 @@ import {
   FilterArguments,
   FilterCallback,
   SlickGrid,
-} from './../interfaces/index';
+} from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { createDomElement, emptyElement, } from '../services/domUtilities';
 
@@ -21,7 +21,7 @@ export class SliderFilter implements Filter {
   protected _shouldTriggerQuery = true;
   protected _elementRangeInputId = '';
   protected _elementRangeOutputId = '';
-  protected divContainerFilterElm!: HTMLDivElement;
+  protected divContainerFilterElm?: HTMLDivElement;
   protected filterElm!: HTMLDivElement;
   protected filterInputElm!: HTMLInputElement;
   protected filterNumberElm?: HTMLSpanElement;
@@ -50,17 +50,12 @@ export class SliderFilter implements Filter {
     return this.columnDef?.filter?.params ?? {};
   }
 
-  /** Getter for the `filter` properties */
-  protected get filterProperties(): ColumnFilter {
-    return this.columnDef?.filter ?? {};
-  }
-
-  /** Getter for the current Operator */
+  /** Getter for the Filter Operator */
   get operator(): OperatorType | OperatorString {
     return this.columnFilter?.operator ?? this.defaultOperator;
   }
 
-  /** Setter for the filter operator */
+  /** Setter for the Filter Operator */
   set operator(operator: OperatorType | OperatorString) {
     if (this.columnFilter) {
       this.columnFilter.operator = operator;
@@ -92,10 +87,10 @@ export class SliderFilter implements Filter {
 
     // step 2, subscribe to the change event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this._bindEventService.bind(this.filterInputElm, ['change', 'mouseup', 'touchend'], this.handleOnChange.bind(this) as EventListener);
+    this._bindEventService.bind(this.filterInputElm, ['change', 'mouseup', 'touchend'], this.handleFilterChange.bind(this) as EventListener);
 
     // if user chose to display the slider number on the right side, then update it every time it changes
-    // we need to use both "input" and "change" event to be all cross-browser
+    // we need to use both "input" and "change" event to support cross-browser
     this._bindEventService.bind(this.filterInputElm, ['input', 'change'], this.handleInputChange.bind(this));
   }
 
@@ -113,8 +108,8 @@ export class SliderFilter implements Filter {
       if (this.filterNumberElm) {
         this.filterNumberElm.textContent = clearedValue;
       }
-      this.divContainerFilterElm.classList.remove('filled');
       this.filterElm.classList.remove('filled');
+      this.divContainerFilterElm?.classList.remove('filled');
       this.filterInputElm.dispatchEvent(new Event('change'));
     }
   }
@@ -153,10 +148,10 @@ export class SliderFilter implements Filter {
     }
 
     if (this.getValues() !== undefined) {
-      this.divContainerFilterElm.classList.add('filled');
+      this.divContainerFilterElm?.classList.add('filled');
       this.filterElm.classList.add('filled');
     } else {
-      this.divContainerFilterElm.classList.remove('filled');
+      this.divContainerFilterElm?.classList.remove('filled');
       this.filterElm.classList.remove('filled');
     }
 
@@ -172,12 +167,12 @@ export class SliderFilter implements Filter {
    * Create the Filter DOM element
    * @param searchTerm optional preset search terms
    */
-  protected createDomFilterElement(searchTerm?: SearchTerm) {
+  protected createDomFilterElement(searchTerm?: SearchTerm): HTMLDivElement {
     const columnId = this.columnDef?.id ?? '';
-    const minValue = this.filterProperties?.minValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE;
-    const maxValue = this.filterProperties?.maxValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE;
+    const minValue = this.columnFilter?.minValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE;
+    const maxValue = this.columnFilter?.maxValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE;
     const defaultValue = this.filterParams?.sliderStartValue ?? minValue;
-    const step = this.filterProperties?.valueStep ?? Constants.SLIDER_DEFAULT_STEP;
+    const step = this.columnFilter?.valueStep ?? Constants.SLIDER_DEFAULT_STEP;
     const startValue = +(this.filterParams?.sliderStartValue ?? minValue);
     emptyElement(this.filterContainerElm);
 
@@ -236,7 +231,7 @@ export class SliderFilter implements Filter {
     }
   }
 
-  protected handleOnChange(e: DOMEvent<HTMLInputElement>) {
+  protected handleFilterChange(e: DOMEvent<HTMLInputElement>) {
     const value = e?.target?.value ?? '';
     this._currentValue = +value;
 
@@ -245,7 +240,7 @@ export class SliderFilter implements Filter {
       this.callback(e, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, searchTerms: [], shouldTriggerQuery: this._shouldTriggerQuery });
     } else {
       value === '' ? this.filterElm.classList.remove('filled') : this.filterElm.classList.add('filled');
-      this.callback(e, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value || '0'], shouldTriggerQuery: this._shouldTriggerQuery });
+      this.callback(e, { columnDef: this.columnDef, searchTerms: (value ? [value || '0'] : null), operator: this.operator, shouldTriggerQuery: this._shouldTriggerQuery });
     }
     // reset both flags for next use
     this._clearFilterTriggered = false;
