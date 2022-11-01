@@ -393,7 +393,7 @@ export class SlickCustomTooltip {
     if (this._tooltipElm) {
       this._cellNodeElm = this._cellNodeElm || this._grid.getCellNode(cell.row, cell.cell) as HTMLDivElement;
       const cellPosition = getHtmlElementOffset(this._cellNodeElm) || { top: 0, left: 0 };
-      const containerWidth = this._cellNodeElm.offsetWidth;
+      const cellContainerWidth = this._cellNodeElm.offsetWidth;
       const calculatedTooltipHeight = this._tooltipElm.getBoundingClientRect().height;
       const calculatedTooltipWidth = this._tooltipElm.getBoundingClientRect().width;
       const calculatedBodyWidth = document.body.offsetWidth || window.innerWidth;
@@ -402,17 +402,25 @@ export class SlickCustomTooltip {
       let newPositionTop = (cellPosition.top || 0) - this._tooltipElm.offsetHeight - (this._cellAddonOptions?.offsetTopBottom ?? 0);
       let newPositionLeft = (cellPosition.left || 0) - (this._cellAddonOptions?.offsetLeft ?? 0);
 
-      // user could explicitely use a "left-align" arrow position, (when user knows his column is completely on the right)
+      // user could explicitely use a "left-align" arrow position, (when user knows his column is completely on the right in the grid)
       // or when using "auto" and we detect not enough available space then we'll position to the "left" of the cell
       // NOTE the class name is for the arrow and is inverse compare to the tooltip itself, so if user ask for "left-align", then the arrow will in fact be "arrow-right-align"
       const position = this._cellAddonOptions?.position ?? 'auto';
-      if (position === 'left-align' || ((position === 'auto' || position !== 'right-align') && (newPositionLeft + calculatedTooltipWidth) > calculatedBodyWidth)) {
-        newPositionLeft -= (calculatedTooltipWidth - containerWidth - (this._cellAddonOptions?.offsetRight ?? 0));
+      if (position === 'center') {
+        newPositionLeft += (cellContainerWidth / 2) - (calculatedTooltipWidth / 2) + (this._cellAddonOptions?.offsetLeft ?? 0);
+        this._tooltipElm.classList.remove('arrow-left-align');
+        this._tooltipElm.classList.remove('arrow-right-align');
+        this._tooltipElm.classList.add('arrow-center-align');
+
+      } else if (position === 'left-align' || ((position === 'auto' || position !== 'right-align') && (newPositionLeft + calculatedTooltipWidth) > calculatedBodyWidth)) {
+        newPositionLeft -= (calculatedTooltipWidth - cellContainerWidth - (this._cellAddonOptions?.offsetRight ?? 0));
+        this._tooltipElm.classList.remove('arrow-center-align');
         this._tooltipElm.classList.remove('arrow-left-align');
         this._tooltipElm.classList.add('arrow-right-align');
       } else {
-        this._tooltipElm.classList.add('arrow-left-align');
+        this._tooltipElm.classList.remove('arrow-center-align');
         this._tooltipElm.classList.remove('arrow-right-align');
+        this._tooltipElm.classList.add('arrow-left-align');
       }
 
       // do the same calculation/reposition with top/bottom (default is top of the cell or in other word starting from the cell going down)
