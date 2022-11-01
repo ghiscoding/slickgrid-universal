@@ -61,15 +61,9 @@ export class SliderRangeFilter implements Filter {
     return this.columnFilter.filterOptions;
   }
 
-
-  /** Getter for the `filter` properties */
-  protected get filterProperties(): ColumnFilter {
-    return this.columnDef && this.columnDef.filter || {};
-  }
-
   /** Getter for the Column Filter */
   get columnFilter(): ColumnFilter {
-    return this.columnDef && this.columnDef.filter || {};
+    return this.columnDef?.filter ?? {};
   }
 
   /** Getter for the Current Slider Values */
@@ -92,12 +86,12 @@ export class SliderRangeFilter implements Filter {
     return this._sliderOptions;
   }
 
-  /** Getter of the Operator to use when doing the filter comparing */
+  /** Getter for the Filter Operator */
   get operator(): OperatorType | OperatorString {
     return this.columnFilter?.operator ?? this.defaultOperator;
   }
 
-  /** Setter for the filter operator */
+  /** Setter for the Filter Operator */
   set operator(operator: OperatorType | OperatorString) {
     if (this.columnFilter) {
       this.columnFilter.operator = operator;
@@ -226,9 +220,9 @@ export class SliderRangeFilter implements Filter {
    */
   protected createDomFilterElement(searchTerms?: SearchTerm | SearchTerm[]) {
     const columnId = this.columnDef?.id ?? '';
-    const minValue = +(this.filterProperties?.minValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE);
-    const maxValue = +(this.filterProperties?.maxValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE);
-    const step = +(this.filterProperties?.valueStep ?? Constants.SLIDER_DEFAULT_STEP);
+    const minValue = +(this.columnFilter?.minValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE);
+    const maxValue = +(this.columnFilter?.maxValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE);
+    const step = +(this.columnFilter?.valueStep ?? Constants.SLIDER_DEFAULT_STEP);
     emptyElement(this._argFilterContainerElm);
 
     let defaultStartValue: number = Constants.SLIDER_DEFAULT_MIN_VALUE;
