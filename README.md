@@ -10,16 +10,16 @@
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
-This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces)) which is regrouping a few packages under a single repository. It is using SlickGrid (more specifically the [6pac/SlickGrid](https://github.com/6pac/SlickGrid/) fork) behind the scene (there is no need to rewrite the core library itself, in other words this is a wrapper library). The main goal of this library is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It was also a good opportunity to decouple some features/services that not every one need at all time, this will also help in getting smaller bundle size depending on which features (packages) you decide to use. For example, not every project require backend services (OData, GraphQL) and export services (Excel Export, Text Export), which is why they are better handled with a monorepo structure.
+This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces)) which is regrouping a few packages under a single repository. It is using SlickGrid (more specifically the [6pac/SlickGrid](https://github.com/6pac/SlickGrid/) fork) behind the scene (there is no need to rewrite the core library itself, in other words this is a wrapper library). The main goal of this library is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It was also a good opportunity to decouple some features/services that not every one need at all time, this will also help in getting smaller bundle size depending on which features (packages) you decide to use. For example, not every project need backend services (OData, GraphQL) and/or export services (Excel Export, Text Export), which is why they are better handled with a monorepo structure (download and install only what you need).
 
 ## Latest News & Releases
-Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all latest News & Version Releases.
+Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all the latest News & Version Releases.
 
 ### Demo page
-The GitHub [demo page](https://ghiscoding.github.io/slickgrid-universal) uses 2 different themes (Material Design / Salesforce) but you could also use Bootstrap theme which is demoed in other frameworks.
+The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2 different themes (Material Design / Salesforce), but you could also choose a Bootstrap theme which is demoed in other frameworks.
 - [Angular-Slickgrid](https://ghiscoding.github.io/Angular-Slickgrid/) - External Library
 - [Aurelia-Slickgrid](https://ghiscoding.github.io/aurelia-slickgrid/) - External Library
-- [Webpack-Demo-Vanilla-Bundle](https://ghiscoding.github.io/slickgrid-universal) - internal with Material Design theme & Salesforce themes
+- [Webpack-Demo-Vanilla-Bundle](https://ghiscoding.github.io/slickgrid-universal) - internal with Material Design and Salesforce themes
 - [Slickgrid-Universal-Vite-Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) - Slickgrid-Universal demo with ViteJS
 
 ### Like my work?
@@ -39,7 +39,7 @@ You might be wondering why was this monorepo created? Here are a few reasons:
 ### Frameworks using this monorepo
   - [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) starting with version `>=3.x`
   - [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) starting with version `>=3.x`
-  - [Vanilla bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) is to use it with plain JavaScript or TypeScript without targeting any particular framework and here some demos using it
+  - [Vanilla bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) is meant to be used with plain JavaScript/TypeScript that is without targeting any particular framework, below are demos using it
     - [Webpack-Demo-Vanilla-Bundle](https://ghiscoding.github.io/slickgrid-universal) - internal demo with Material Design theme & Salesforce themes
     - [Slickgrid-Universal-Vite-Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) - Slickgrid-Universal demo with ViteJS
 
