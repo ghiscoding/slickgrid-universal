@@ -10,6 +10,7 @@ import {
   FilterCallback,
   GridOption,
   SlickGrid,
+  SlickNamespace,
   SliderRangeOption,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
@@ -22,6 +23,7 @@ interface CurrentSliderOption {
   sliderTrackBackground?: string;
 }
 
+declare const Slick: SlickNamespace;
 const GAP_BETWEEN_SLIDER_HANDLES = 0;
 const Z_INDEX_MIN_GAP = 20; // gap in Px before we change z-index so that lowest/highest handle doesn't block each other
 
@@ -36,12 +38,12 @@ export class SliderRangeFilter implements Filter {
   protected _argFilterContainerElm!: HTMLDivElement;
   protected _divContainerFilterElm!: HTMLDivElement;
   protected _filterContainerElm!: HTMLDivElement;
-  protected _lowestSliderNumberElm?: HTMLSpanElement;
-  protected _highestSliderNumberElm?: HTMLSpanElement;
+  protected _leftSliderNumberElm?: HTMLSpanElement;
+  protected _rightSliderNumberElm?: HTMLSpanElement;
   protected _sliderRangeContainElm!: HTMLDivElement;
   protected _sliderTrackElm!: HTMLDivElement;
-  protected _sliderOneElm!: HTMLInputElement;
-  protected _sliderTwoElm!: HTMLInputElement;
+  protected _sliderLeftElm!: HTMLInputElement;
+  protected _sliderRightElm!: HTMLInputElement;
   grid!: SlickGrid;
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
@@ -78,7 +80,7 @@ export class SliderRangeFilter implements Filter {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+    return this.grid?.getOptions() ?? {};
   }
 
   /** Getter for the current Slider Options */
@@ -126,8 +128,8 @@ export class SliderRangeFilter implements Filter {
       const lowestValue = (this.getFilterOptionByName('sliderStartValue') ?? Constants.SLIDER_DEFAULT_MIN_VALUE) as number;
       const highestValue = (this.getFilterOptionByName('sliderEndValue') ?? Constants.SLIDER_DEFAULT_MAX_VALUE) as number;
       this._currentValues = [lowestValue, highestValue];
-      this._sliderOneElm.value = `${lowestValue}`;
-      this._sliderTwoElm.value = `${highestValue}`;
+      this._sliderLeftElm.value = `${lowestValue}`;
+      this._sliderRightElm.value = `${highestValue}`;
       this.dispatchBothEvents();
 
       if (!this.getFilterOptionByName('hideSliderNumbers')) {
@@ -167,11 +169,11 @@ export class SliderRangeFilter implements Filter {
    * @param highestValue number
    */
   renderSliderValues(lowestValue: number | string, highestValue: number | string) {
-    if (this._lowestSliderNumberElm?.textContent) {
-      this._lowestSliderNumberElm.textContent = lowestValue.toString();
+    if (this._leftSliderNumberElm?.textContent) {
+      this._leftSliderNumberElm.textContent = lowestValue.toString();
     }
-    if (this._highestSliderNumberElm?.textContent) {
-      this._highestSliderNumberElm.textContent = highestValue.toString();
+    if (this._rightSliderNumberElm?.textContent) {
+      this._rightSliderNumberElm.textContent = highestValue.toString();
     }
   }
 
@@ -197,8 +199,8 @@ export class SliderRangeFilter implements Filter {
       if (Array.isArray(sliderValues) && sliderValues.length === 2) {
         if (!this.getFilterOptionByName('hideSliderNumbers')) {
           const [lowestValue, highestValue] = sliderValues;
-          this._sliderOneElm.value = String(lowestValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE);
-          this._sliderTwoElm.value = String(highestValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE);
+          this._sliderLeftElm.value = String(lowestValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE);
+          this._sliderRightElm.value = String(highestValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE);
           this.renderSliderValues(sliderValues[0], sliderValues[1]);
         }
       }
@@ -239,14 +241,14 @@ export class SliderRangeFilter implements Filter {
     this._sliderRangeContainElm.title = `${defaultStartValue} - ${defaultEndValue}`;
 
     this._sliderTrackElm = createDomElement('div', { className: 'slider-track' });
-    this._sliderOneElm = createDomElement('input', {
+    this._sliderLeftElm = createDomElement('input', {
       type: 'range',
       className: `slider-filter-input`,
       ariaLabel: this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`,
       defaultValue: `${defaultStartValue}`, value: `${defaultStartValue}`,
       min: `${minValue}`, max: `${maxValue}`, step: `${step}`,
     });
-    this._sliderTwoElm = createDomElement('input', {
+    this._sliderRightElm = createDomElement('input', {
       type: 'range',
       className: `slider-filter-input`,
       ariaLabel: this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`,
@@ -255,29 +257,29 @@ export class SliderRangeFilter implements Filter {
     });
 
     this._bindEventService.bind(this._sliderTrackElm, 'click', this.sliderTrackClicked.bind(this) as EventListener);
-    this._bindEventService.bind(this._sliderOneElm, ['input', 'change'], this.slideOneInputChanged.bind(this));
-    this._bindEventService.bind(this._sliderTwoElm, ['input', 'change'], this.slideTwoInputChanged.bind(this));
-    this._bindEventService.bind(this._sliderOneElm, ['change', 'mouseup', 'touchend'], this.onValueChanged.bind(this) as EventListener);
-    this._bindEventService.bind(this._sliderTwoElm, ['change', 'mouseup', 'touchend'], this.onValueChanged.bind(this) as EventListener);
+    this._bindEventService.bind(this._sliderLeftElm, ['input', 'change'], this.slideLeftInputChanged.bind(this));
+    this._bindEventService.bind(this._sliderRightElm, ['input', 'change'], this.slideRightInputChanged.bind(this));
+    this._bindEventService.bind(this._sliderLeftElm, ['change', 'mouseup', 'touchend'], this.onValueChanged.bind(this) as EventListener);
+    this._bindEventService.bind(this._sliderRightElm, ['change', 'mouseup', 'touchend'], this.onValueChanged.bind(this) as EventListener);
 
     // create the DOM element
     const sliderNumberClass = this.getFilterOptionByName('hideSliderNumbers') ? '' : 'input-group';
     this._divContainerFilterElm = createDomElement('div', { className: `${sliderNumberClass} search-filter slider-container slider-values filter-${columnId}`.trim() });
 
     this._sliderRangeContainElm.append(this._sliderTrackElm);
-    this._sliderRangeContainElm.append(this._sliderOneElm);
-    this._sliderRangeContainElm.append(this._sliderTwoElm);
+    this._sliderRangeContainElm.append(this._sliderLeftElm);
+    this._sliderRangeContainElm.append(this._sliderRightElm);
 
     if (this.getFilterOptionByName('hideSliderNumbers')) {
       this._divContainerFilterElm.append(this._sliderRangeContainElm);
     } else {
       const lowestSliderContainerDivElm = createDomElement('div', { className: `input-group-addon input-group-prepend slider-range-value` });
-      this._lowestSliderNumberElm = createDomElement('span', { className: `input-group-text lowest-range-${columnId}`, textContent: `${defaultStartValue}` });
-      lowestSliderContainerDivElm.append(this._lowestSliderNumberElm);
+      this._leftSliderNumberElm = createDomElement('span', { className: `input-group-text lowest-range-${columnId}`, textContent: `${defaultStartValue}` });
+      lowestSliderContainerDivElm.append(this._leftSliderNumberElm);
 
       const highestSliderContainerDivElm = createDomElement('div', { className: `input-group-addon input-group-append slider-range-value` });
-      this._highestSliderNumberElm = createDomElement('span', { className: `input-group-text highest-range-${columnId}`, textContent: `${defaultEndValue}` });
-      highestSliderContainerDivElm.append(this._highestSliderNumberElm);
+      this._rightSliderNumberElm = createDomElement('span', { className: `input-group-text highest-range-${columnId}`, textContent: `${defaultEndValue}` });
+      highestSliderContainerDivElm.append(this._rightSliderNumberElm);
 
       this._divContainerFilterElm.append(lowestSliderContainerDivElm);
       this._divContainerFilterElm.append(this._sliderRangeContainElm);
@@ -303,15 +305,15 @@ export class SliderRangeFilter implements Filter {
   }
 
   protected dispatchBothEvents() {
-    this._sliderOneElm.dispatchEvent(new Event('change'));
-    this._sliderTwoElm.dispatchEvent(new Event('change'));
+    this._sliderLeftElm.dispatchEvent(new Event('change'));
+    this._sliderRightElm.dispatchEvent(new Event('change'));
   }
 
   /** handle value change event triggered, trigger filter callback & update "filled" class name */
-  protected onValueChanged(e: Event) {
-    const sliderOneVal = parseInt(this._sliderOneElm.value, 10);
-    const sliderTwoVal = parseInt(this._sliderTwoElm.value, 10);
-    const values = [sliderOneVal, sliderTwoVal];
+  protected onValueChanged(e: MouseEvent) {
+    const sliderLeftVal = parseInt(this._sliderLeftElm.value, 10);
+    const sliderRightVal = parseInt(this._sliderRightElm.value, 10);
+    const values = [sliderLeftVal, sliderRightVal];
     const value = values.join('..');
 
     if (this._clearFilterTriggered) {
@@ -326,59 +328,63 @@ export class SliderRangeFilter implements Filter {
     this._shouldTriggerQuery = true;
     this.changeBothSliderFocuses(false);
 
-    // trigger leave event to avoid having previous value still being displayed with custom tooltip feat
-    this.grid?.onHeaderMouseLeave.notify({ column: this.columnDef, grid: this.grid });
+    // trigger mouse enter event on the filter for optionally hooked SlickCustomTooltip
+    // the minimum requirements for tooltip to work are the columnDef and targetElement
+    setTimeout(() => this.grid.onHeaderRowMouseEnter.notify(
+      { column: this.columnDef, grid: this.grid },
+      { ...new Slick.EventData(), target: this._argFilterContainerElm }
+    ), 20);
   }
 
   protected changeBothSliderFocuses(isAddingFocus: boolean) {
     const addRemoveCmd = isAddingFocus ? 'add' : 'remove';
-    this._sliderOneElm.classList[addRemoveCmd]('focus');
-    this._sliderTwoElm.classList[addRemoveCmd]('focus');
+    this._sliderLeftElm.classList[addRemoveCmd]('focus');
+    this._sliderRightElm.classList[addRemoveCmd]('focus');
   }
 
-  protected slideOneInputChanged() {
-    const sliderOneVal = parseInt(this._sliderOneElm.value, 10);
-    const sliderTwoVal = parseInt(this._sliderTwoElm.value, 10);
+  protected slideLeftInputChanged() {
+    const sliderLeftVal = parseInt(this._sliderLeftElm.value, 10);
+    const sliderRightVal = parseInt(this._sliderRightElm.value, 10);
 
-    if (sliderTwoVal - sliderOneVal <= this.getFilterOptionByName<number>('stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES)) {
-      this._sliderOneElm.value = String(sliderOneVal - this.getFilterOptionByName<number>('stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES));
+    if (sliderRightVal - sliderLeftVal <= this.getFilterOptionByName<number>('stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES)) {
+      this._sliderLeftElm.value = String(sliderLeftVal - this.getFilterOptionByName<number>('stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES));
     }
 
-    this._sliderRangeContainElm.title = `${sliderOneVal} - ${sliderTwoVal}`;
+    this._sliderRangeContainElm.title = `${sliderLeftVal} - ${sliderRightVal}`;
 
     // change which handle has higher z-index to make them still usable,
     // ie when left handle reaches the end, it has to have higher z-index or else it will be stuck below
     // and we cannot move right because it cannot go below min value
-    if (+this._sliderOneElm.value >= +this._sliderTwoElm.value - Z_INDEX_MIN_GAP) {
-      this._sliderOneElm.style.zIndex = '1';
-      this._sliderTwoElm.style.zIndex = '0';
+    if (+this._sliderLeftElm.value >= +this._sliderRightElm.value - Z_INDEX_MIN_GAP) {
+      this._sliderLeftElm.style.zIndex = '1';
+      this._sliderRightElm.style.zIndex = '0';
     } else {
-      this._sliderOneElm.style.zIndex = '0';
-      this._sliderTwoElm.style.zIndex = '1';
+      this._sliderLeftElm.style.zIndex = '0';
+      this._sliderRightElm.style.zIndex = '1';
     }
 
     this.updateTrackFilledColor();
     this.changeBothSliderFocuses(true);
-    if (!this.getFilterOptionByName('hideSliderNumbers') && this._lowestSliderNumberElm?.textContent) {
-      this._lowestSliderNumberElm.textContent = this._sliderOneElm.value;
+    if (!this.getFilterOptionByName('hideSliderNumbers') && this._leftSliderNumberElm?.textContent) {
+      this._leftSliderNumberElm.textContent = this._sliderLeftElm.value;
     }
 
   }
 
-  protected slideTwoInputChanged() {
-    const sliderOneVal = parseInt(this._sliderOneElm.value, 10);
-    const sliderTwoVal = parseInt(this._sliderTwoElm.value, 10);
+  protected slideRightInputChanged() {
+    const sliderLeftVal = parseInt(this._sliderLeftElm.value, 10);
+    const sliderRightVal = parseInt(this._sliderRightElm.value, 10);
 
-    if (sliderTwoVal - sliderOneVal <= this.getFilterOptionByName<number>('stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES)) {
-      this._sliderTwoElm.value = String(sliderOneVal + this.getFilterOptionByName<number>('stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES));
+    if (sliderRightVal - sliderLeftVal <= this.getFilterOptionByName<number>('stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES)) {
+      this._sliderRightElm.value = String(sliderLeftVal + this.getFilterOptionByName<number>('stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES));
     }
 
     this.updateTrackFilledColor();
     this.changeBothSliderFocuses(true);
-    this._sliderRangeContainElm.title = `${sliderOneVal} - ${sliderTwoVal}`;
+    this._sliderRangeContainElm.title = `${sliderLeftVal} - ${sliderRightVal}`;
 
-    if (!this.getFilterOptionByName('hideSliderNumbers') && this._highestSliderNumberElm?.textContent) {
-      this._highestSliderNumberElm.textContent = this._sliderTwoElm.value;
+    if (!this.getFilterOptionByName('hideSliderNumbers') && this._rightSliderNumberElm?.textContent) {
+      this._rightSliderNumberElm.textContent = this._sliderRightElm.value;
     }
   }
 
@@ -390,18 +396,18 @@ export class SliderRangeFilter implements Filter {
 
     // when tracker position is below 50% we'll auto-place the left slider thumb or else auto-place right slider thumb
     if (trackPercentPosition <= 50) {
-      this._sliderOneElm.value = `${trackPercentPosition}`;
-      this._sliderOneElm.dispatchEvent(new Event('change'));
+      this._sliderLeftElm.value = `${trackPercentPosition}`;
+      this._sliderLeftElm.dispatchEvent(new Event('change'));
     } else {
-      this._sliderTwoElm.value = `${trackPercentPosition}`;
-      this._sliderTwoElm.dispatchEvent(new Event('change'));
+      this._sliderRightElm.value = `${trackPercentPosition}`;
+      this._sliderRightElm.dispatchEvent(new Event('change'));
     }
   }
 
   protected updateTrackFilledColor() {
     if (this.getFilterOptionByName('enableSliderTrackColoring')) {
-      const percent1 = ((+this._sliderOneElm.value - +this._sliderOneElm.min) / (this.sliderRangeOptions?.maxValue ?? 0 - +this._sliderOneElm.min)) * 100;
-      const percent2 = ((+this._sliderTwoElm.value - +this._sliderTwoElm.min) / (this.sliderRangeOptions?.maxValue ?? 0 - +this._sliderTwoElm.min)) * 100;
+      const percent1 = ((+this._sliderLeftElm.value - +this._sliderLeftElm.min) / (this.sliderRangeOptions?.maxValue ?? 0 - +this._sliderLeftElm.min)) * 100;
+      const percent2 = ((+this._sliderRightElm.value - +this._sliderRightElm.min) / (this.sliderRangeOptions?.maxValue ?? 0 - +this._sliderRightElm.min)) * 100;
       const bg = 'linear-gradient(to right, %b %p1, %c %p1, %c %p2, %b %p2)'
         .replace(/%b/g, '#eee')
         .replace(/%c/g, (this.getFilterOptionByName('sliderTrackFilledColor') ?? 'var(--slick-slider-filter-thumb-color, #86bff8)') as string)
