@@ -20,6 +20,7 @@ jobs:
 
     name: '${{matrix.platform}} / NodeJS ${{ matrix.node }}'
     runs-on: ${{matrix.platform}}
+    if: ${{ !startsWith(github.event.head_commit.message, 'docs:') }}
 
     steps:
       - name: Checkout

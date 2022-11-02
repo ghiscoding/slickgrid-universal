@@ -15,8 +15,8 @@ jobs:
   cypress:
     name: 'E2E Tests / NodeJS ${{ matrix.node }}'
     runs-on: ubuntu-latest
-    # timeout-minutes: 8
-    if: github.event.pull_request.draft != true
+    if: ${{ !startsWith(github.event.head_commit.message, 'docs:') }}
+
     steps:
       - name: Check out repository
         uses: actions/checkout@master
