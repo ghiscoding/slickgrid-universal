@@ -482,7 +482,7 @@ importers:
       rimraf: ^3.0.2
       webpack: ^5.74.0
       whatwg-fetch: ^3.6.2
-      yargs: ^17.6.1
+      yargs: ^17.6.2
     dependencies:
       '@slickgrid-universal/binding': link:../binding
       '@slickgrid-universal/common': link:../common
@@ -507,7 +507,7 @@ importers:
       npm-run-all2: 6.0.2
       rimraf: 3.0.2
       webpack: 5.74.0
-      yargs: 17.6.1
+      yargs: 17.6.2
 
 packages:
 
@@ -1260,7 +1260,7 @@ packages:
       load-json-file: 6.2.0
       npmlog: 7.0.0
       path: 0.12.7
-      yargs: 17.6.0
+      yargs: 17.6.2
     transitivePeerDependencies:
       - bluebird
       - encoding
@@ -6287,7 +6287,7 @@ packages:
       jest-util: 29.2.1
       jest-validate: 29.2.2
       prompts: 2.4.2
-      yargs: 17.6.0
+      yargs: 17.6.2
     transitivePeerDependencies:
       - '@types/node'
       - supports-color
@@ -10640,6 +10640,11 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
+  /yargs-parser/21.1.1:
+    resolution: {integrity: sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==}
+    engines: {node: '>=12'}
+    dev: true
+
   /yargs/16.2.0:
     resolution: {integrity: sha512-D1mvvtDG0L5ft/jGWkLpG1+m0eQxOfaBvTNELraWj22wSVUMWxZUvYgJYcKh6jGGIkJFhH4IZPQhR4TKpc8mBw==}
     engines: {node: '>=10'}
@@ -10663,11 +10668,11 @@ packages:
       require-directory: 2.1.1
       string-width: 4.2.3
       y18n: 5.0.8
-      yargs-parser: 21.0.1
+      yargs-parser: 21.1.1
     dev: true
 
-  /yargs/17.6.0:
-    resolution: {integrity: sha512-8H/wTDqlSwoSnScvV2N/JHfLWOKuh5MVla9hqLjK3nsfyy6Y4kDSYSvkU5YCUEPOSnRXfIyx3Sq+B/IWudTo4g==}
+  /yargs/17.6.2:
+    resolution: {integrity: sha512-1/9UrdHjDZc0eOU0HxOHoS78C69UD3JRMvzlJ7S79S2nTaWRA/whGCTV8o9e/N/1Va9YIV7Q4sOxD8VV4pCWOw==}
     engines: {node: '>=12'}
     dependencies:
       cliui: 8.0.1
@@ -10676,20 +10681,7 @@ packages:
       require-directory: 2.1.1
       string-width: 4.2.3
       y18n: 5.0.8
-      yargs-parser: 21.0.1
-    dev: true
-
-  /yargs/17.6.1:
-    resolution: {integrity: sha512-leBuCGrL4dAd6ispNOGsJlhd0uZ6Qehkbu/B9KCR+Pxa/NVdNwi+i31lo0buCm6XxhJQFshXCD0/evfV4xfoUg==}
-    engines: {node: '>=12'}
-    dependencies:
-      cliui: 8.0.1
-      escalade: 3.1.1
-      get-caller-file: 2.0.5
-      require-directory: 2.1.1
-      string-width: 4.2.3
-      y18n: 5.0.8
-      yargs-parser: 21.0.1
+      yargs-parser: 21.1.1
     dev: true
 
   /yauzl/2.10.0:
