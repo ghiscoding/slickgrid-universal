@@ -10,6 +10,7 @@ import {
   GridOption,
   OperatorDetail,
   SlickGrid,
+  SlickNamespace,
 } from '../interfaces/index';
 import { Constants } from '../constants';
 import { OperatorString, OperatorType, SearchTerm } from '../enums/index';
@@ -18,6 +19,8 @@ import { createDomElement, emptyElement } from '../services/domUtilities';
 import { mapOperatorToShorthandDesignation, } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
+
+declare const Slick: SlickNamespace;
 
 export class CompoundSliderFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -286,7 +289,11 @@ export class CompoundSliderFilter implements Filter {
     this._clearFilterTriggered = false;
     this._shouldTriggerQuery = true;
 
-    // trigger leave event to avoid having previous value still being displayed with custom tooltip feat
-    this.grid?.onHeaderMouseLeave.notify({ column: this.columnDef, grid: this.grid });
+    // trigger mouse enter event on the filter for optionally hooked SlickCustomTooltip
+    // the minimum requirements for tooltip to work are the columnDef and targetElement
+    setTimeout(() => this.grid.onHeaderRowMouseEnter.notify(
+      { column: this.columnDef, grid: this.grid },
+      { ...new Slick.EventData(), target: this.filterContainerElm }
+    ));
   }
 }
