@@ -333,7 +333,7 @@ export class SliderRangeFilter implements Filter {
     setTimeout(() => this.grid.onHeaderRowMouseEnter.notify(
       { column: this.columnDef, grid: this.grid },
       { ...new Slick.EventData(), target: this._argFilterContainerElm }
-    ), 20);
+    ));
   }
 
   protected changeBothSliderFocuses(isAddingFocus: boolean) {

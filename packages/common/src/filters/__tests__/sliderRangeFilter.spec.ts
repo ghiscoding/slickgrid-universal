@@ -4,6 +4,7 @@ import { SliderRangeFilter } from '../sliderRangeFilter';
 
 const containerId = 'demo-container';
 declare const Slick: SlickNamespace;
+jest.useFakeTimers();
 
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
@@ -19,6 +20,7 @@ const gridStub = {
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
   onHeaderMouseLeave: new Slick.Event(),
+  onHeaderRowMouseEnter: new Slick.Event(),
 } as unknown as SlickGrid;
 
 describe('SliderRangeFilter', () => {
@@ -89,18 +91,22 @@ describe('SliderRangeFilter', () => {
   });
 
   it('should call "setValues" and expect that value to be in the callback when triggered', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+    const rowMouseEnterSpy = jest.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
 
     filter.init(filterArguments);
     filter.setValues(['2..80']);
     const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
     filterElms[0].dispatchEvent(new CustomEvent('change'));
 
-    expect(spyCallback).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [2, 80], shouldTriggerQuery: true });
+    jest.runAllTimers(); // fast-forward timer
+
+    expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [2, 80], shouldTriggerQuery: true });
+    expect(rowMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
   });
 
   it('should call "setValues" and expect that value to be in the callback when triggered', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.setValues([3, 84]);
@@ -110,11 +116,11 @@ describe('SliderRangeFilter', () => {
 
     expect(sliderInputs[0].style.zIndex).toBe('0');
     expect(sliderInputs[1].style.zIndex).toBe('1');
-    expect(spyCallback).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [3, 84], shouldTriggerQuery: true });
+    expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [3, 84], shouldTriggerQuery: true });
   });
 
   it('should change z-index on left handle when it is by 20px near right handle so it shows over the right handle not below', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.setValues([50, 63]);
@@ -124,11 +130,11 @@ describe('SliderRangeFilter', () => {
 
     expect(sliderInputs[0].style.zIndex).toBe('1');
     expect(sliderInputs[1].style.zIndex).toBe('0');
-    expect(spyCallback).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [50, 63], shouldTriggerQuery: true });
+    expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [50, 63], shouldTriggerQuery: true });
   });
 
   it('should change minValue to a lower value when it is to close to maxValue and "stopGapBetweenSliderHandles" is enabled so it will auto-change minValue to a lower value plus gap', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = jest.spyOn(filterArguments, 'callback');
     const minVal = 56;
     const maxVal = 58;
 
@@ -143,11 +149,11 @@ describe('SliderRangeFilter', () => {
 
     expect(sliderInputs[0].value).toBe(`${minVal - 5}`);
     expect(sliderInputs[1].value).toBe('58');
-    expect(spyCallback).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [51, 58], shouldTriggerQuery: true });
+    expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [51, 58], shouldTriggerQuery: true });
   });
 
   it('should change maxValue to a lower value when it is to close to minValue and "stopGapBetweenSliderHandles" is enabled so it will auto-change maxValue to a lower value plus gap', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = jest.spyOn(filterArguments, 'callback');
     const minVal = 56;
     const maxVal = 58;
 
@@ -162,7 +168,7 @@ describe('SliderRangeFilter', () => {
 
     expect(sliderInputs[0].value).toBe('56');
     expect(sliderInputs[1].value).toBe(`${minVal + 5}`);
-    expect(spyCallback).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [56, 61], shouldTriggerQuery: true });
+    expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [56, 61], shouldTriggerQuery: true });
   });
 
   it('should be able to call "setValues" and set empty values and the input to not have the "filled" css class', () => {
@@ -259,28 +265,28 @@ describe('SliderRangeFilter', () => {
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
     filterArguments.searchTerms = [3, 80];
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.clear();
 
     expect(filter.currentValues).toEqual([0, 100]);
-    expect(spyCallback).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: true });
+    expect(callbackSpy).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: true });
   });
 
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
     filterArguments.searchTerms = [3, 80];
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
     filter.clear(false);
 
     expect(filter.currentValues).toEqual([0, 100]);
-    expect(spyCallback).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
+    expect(callbackSpy).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method and expect min/max slider values being with values of "sliderStartValue" and "sliderEndValue" when defined through the filterOptions', () => {
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
+    const callbackSpy = jest.spyOn(filterArguments, 'callback');
     mockColumn.filter = {
       filterOptions: {
         sliderStartValue: 4,
@@ -292,7 +298,7 @@ describe('SliderRangeFilter', () => {
     filter.clear(false);
 
     expect(filter.currentValues).toEqual([4, 69]);
-    expect(spyCallback).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
+    expect(callbackSpy).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
   });
 
   it('should enableSliderTrackColoring and trigger a change event and expect slider track to have background color', () => {
