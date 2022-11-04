@@ -1,6 +1,7 @@
 import { Filters } from '../filters.index';
 import { Column, FilterArguments, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
 import { SliderRangeFilter } from '../sliderRangeFilter';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';
 declare const Slick: SlickNamespace;
@@ -24,6 +25,7 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('SliderRangeFilter', () => {
+  let translateService: TranslateServiceStub;
   let consoleSpy: any;
   let divContainer: HTMLDivElement;
   let filter: SliderRangeFilter;
@@ -32,6 +34,7 @@ describe('SliderRangeFilter', () => {
   let mockColumn: Column;
 
   beforeEach(() => {
+    translateService = new TranslateServiceStub();
     consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
@@ -46,7 +49,7 @@ describe('SliderRangeFilter', () => {
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
 
-    filter = new SliderRangeFilter();
+    filter = new SliderRangeFilter(translateService);
   });
 
   afterEach(() => {
@@ -68,7 +71,7 @@ describe('SliderRangeFilter', () => {
   it('should be able to retrieve default slider options through the Getter', () => {
     filter.init(filterArguments);
 
-    expect(filter.sliderRangeOptions).toEqual({
+    expect(filter.sliderOptions).toEqual({
       maxValue: 100,
       minValue: 0,
       step: 1,
@@ -83,7 +86,7 @@ describe('SliderRangeFilter', () => {
     };
     filter.init(filterArguments);
 
-    expect(filter.sliderRangeOptions).toEqual({
+    expect(filter.sliderOptions).toEqual({
       maxValue: 69,
       minValue: 4,
       step: 5,
@@ -271,7 +274,7 @@ describe('SliderRangeFilter', () => {
     filter.clear();
 
     expect(filter.currentValues).toEqual([0, 100]);
-    expect(callbackSpy).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: true });
+    expect(callbackSpy).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, searchTerms: [], shouldTriggerQuery: true });
   });
 
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
@@ -282,7 +285,7 @@ describe('SliderRangeFilter', () => {
     filter.clear(false);
 
     expect(filter.currentValues).toEqual([0, 100]);
-    expect(callbackSpy).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
+    expect(callbackSpy).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, searchTerms: [], shouldTriggerQuery: false });
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method and expect min/max slider values being with values of "sliderStartValue" and "sliderEndValue" when defined through the filterOptions', () => {
@@ -298,7 +301,7 @@ describe('SliderRangeFilter', () => {
     filter.clear(false);
 
     expect(filter.currentValues).toEqual([4, 69]);
-    expect(callbackSpy).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
+    expect(callbackSpy).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, searchTerms: [], shouldTriggerQuery: false });
   });
 
   it('should enableSliderTrackColoring and trigger a change event and expect slider track to have background color', () => {
@@ -310,7 +313,7 @@ describe('SliderRangeFilter', () => {
     const sliderTrackElm = divContainer.querySelector('.slider-track') as HTMLDivElement;
 
     // expect(sliderTrackElm.style.background).toBe('linear-gradient(to right, #eee 2%, var(--slick-slider-filter-thumb-color, #86bff8) 2%, var(--slick-slider-filter-thumb-color, #86bff8) 80%, #eee 80%)');
-    expect(filter.sliderRangeOptions?.sliderTrackBackground).toBe('linear-gradient(to right, #eee 2%, var(--slick-slider-filter-thumb-color, #86bff8) 2%, var(--slick-slider-filter-thumb-color, #86bff8) 80%, #eee 80%)');
+    expect(filter.sliderOptions?.sliderTrackBackground).toBe('linear-gradient(to right, #eee 2%, var(--slick-slider-filter-thumb-color, #86bff8) 2%, var(--slick-slider-filter-thumb-color, #86bff8) 80%, #eee 80%)');
   });
 
   it('should click on the slider track and expect left handle to move to the new position when calculated percent is below 50%', () => {

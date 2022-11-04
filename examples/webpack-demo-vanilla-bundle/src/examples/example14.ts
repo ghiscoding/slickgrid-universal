@@ -179,6 +179,7 @@ export class Example14 {
         filter: {
           model: Filters.sliderRange,
           operator: '>=',
+          // searchTerms: [15, 78],
           filterOptions: {
             enableSliderTrackColoring: true,
             hideSliderNumbers: false,

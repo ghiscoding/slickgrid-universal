@@ -107,7 +107,9 @@ export class Example7 {
       },
       {
         id: 'percentComplete', nameKey: 'PERCENT_COMPLETE', field: 'percentComplete', type: 'number',
-        filterable: true, sortable: true, editor: { model: Editors.slider, minValue: 0, maxValue: 100, },
+        filterable: true, sortable: true,
+        filter: { model: Filters.compoundSlider, minValue: 0, maxValue: 100, operator: '>=' },
+        editor: { model: Editors.slider, minValue: 0, maxValue: 100, },
       },
       {
         id: 'start', nameKey: 'START', field: 'start', formatter: Formatters.dateIso,

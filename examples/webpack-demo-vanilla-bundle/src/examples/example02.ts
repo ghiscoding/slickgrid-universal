@@ -9,6 +9,7 @@ import {
   GridOption,
   Grouping,
   GroupTotalFormatters,
+  SliderOption,
   SortComparers,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
@@ -76,7 +77,11 @@ export class Example2 {
         id: 'duration', name: 'Duration', field: 'duration',
         minWidth: 50, width: 60,
         filterable: true,
-        filter: { model: Filters.slider, operator: '>=' },
+        filter: {
+          model: Filters.slider,
+          operator: '>=',
+          filterOptions: { hideSliderNumber: true, enableSliderTrackColoring: true, sliderTrackFilledColor: '#9ac49c' } as SliderOption
+        },
         sortable: true,
         type: FieldType.number,
         groupTotalsFormatter: GroupTotalFormatters.sumTotals,
