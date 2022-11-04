@@ -143,7 +143,7 @@ export class Example16 {
         type: FieldType.number,
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number, minWidth: 130,
         editor: {
           model: Editors.slider,
           minValue: 0,
@@ -153,7 +153,7 @@ export class Example16 {
         exportWithFormatter: false,
         formatter: Formatters.percentCompleteBar,
         sortable: true, filterable: true,
-        filter: { model: Filters.slider, operator: '>=' },
+        filter: { model: Filters.sliderRange, operator: '>=' },
         customTooltip: { useRegularTooltip: true, position: 'center' },
       },
       {

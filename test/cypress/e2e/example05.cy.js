@@ -29,7 +29,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
   });
 
   it('should have a Grid Preset Filter on 3rd column "% Complete" and expect all rows to be filtered as well', () => {
-    cy.get('.input-group-text.rangeOutput_percentComplete')
+    cy.get('.input-group-text.highest-range-percentComplete')
       .contains('25');
 
     cy.get('.search-filter.filter-percentComplete')
@@ -115,7 +115,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
     cy.get('.search-filter.filter-percentComplete .operator .form-control')
       .should('have.value', '>=');
 
-    cy.get('.rangeInput_percentComplete')
+    cy.get('input.slider-filter-input')
       .invoke('val')
       .then(text => expect(text).to.eq('25'));
 
@@ -156,7 +156,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
     cy.get('.search-filter.filter-percentComplete .operator .form-control')
       .should('have.value', '');
 
-    cy.get('.rangeInput_percentComplete')
+    cy.get('input.slider-filter-input')
       .invoke('val')
       .then(text => expect(text).to.eq('0'));
 
@@ -230,7 +230,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
 
     cy.get('.slick-viewport-top.slick-viewport-left')
       .scrollTo('top');
-    
+
     const now = new Date();
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const today = changeTimezone(now, tz);

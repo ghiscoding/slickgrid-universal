@@ -966,31 +966,9 @@ input.flatpickr.form-control {
 }
 
 // ----------------------------------------------
-// Input Slider Filter (with vanilla html)
+// Input Slider Filters (with vanilla html)
 // ----------------------------------------------
-.slider-single {
-  input[type="range"] {
-    &::-webkit-slider-runnable-track, &:focus::-webkit-slider-runnable-track {
-      background: var(--slick-slider-filter-bgcolor, $slick-slider-filter-bgcolor);
-    }
-    &::-moz-range-track, &:focus::-moz-range-track {
-      background: var(--slick-slider-filter-bgcolor, $slick-slider-filter-bgcolor);
-    }
-    &::-ms-fill-lower {
-      background: var(--slick-slider-filter-fill-lower-color, $slick-slider-filter-fill-lower-color);
-      &:focus {
-        background: var(--slick-slider-filter-fill-focus-lower-color, $slick-slider-filter-fill-focus-lower-color);
-      }
-    }
-    &::-ms-fill-upper, &:focus::-ms-fill-upper {
-      background: var(--slick-slider-filter-bgcolor, $slick-slider-filter-bgcolor);
-    }
 
-    &::-webkit-slider-runnable-track, &:focus::-webkit-slider-runnable-track {
-      background: var(--slick-slider-filter-bgcolor, $slick-slider-filter-bgcolor);
-    }
-  }
-}
 input.slider-editor-input[type=range],
 input.slider-filter-input[type=range] {
   /*removes default webkit styles*/
@@ -1129,12 +1107,13 @@ input.slider-editor-input[type=range] {
   }
 }
 
-
 // ----------------------------------------------
 // Input Slider Range Filter (with vanilla html)
 // ----------------------------------------------
 
 .slider-container {
+  display: flex;
+
   .slider-range-value {
     padding: 0;
     height: 100%;
@@ -1148,8 +1127,12 @@ input.slider-editor-input[type=range] {
       border-radius: var(--slick-slider-range-filter-border-radius, $slick-slider-range-filter-border-radius);
     }
   }
+  &.input-group > :first-child:not(.input-group-addon) .slider-filter-input {
+    border-bottom-left-radius: var(--slick-slider-range-filter-border-radius, $slick-slider-range-filter-border-radius);
+    border-top-left-radius: var(--slick-slider-range-filter-border-radius, $slick-slider-range-filter-border-radius);
+  }
 }
-.slider-range-container {
+.slider-input-container {
   position: relative;
   width: 100%;
 
@@ -1199,7 +1182,7 @@ input.slider-editor-input[type=range] {
   }
 }
 
-.slider-range-container.slider-values {
+.slider-input-container.slider-values {
   display: flex;
   padding: 0;
 }

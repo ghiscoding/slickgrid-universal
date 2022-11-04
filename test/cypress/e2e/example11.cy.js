@@ -197,7 +197,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
   it('should not have filters set', () => {
     cy.get('.selected-view').should('contain', '');
 
-    cy.get('.rangeInput_percentComplete')
+    cy.get('input.slider-filter-input')
       .invoke('val')
       .then(text => expect(text).to.eq('0'));
 
@@ -218,7 +218,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .children()
       .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
 
-    cy.get('.rangeInput_percentComplete')
+    cy.get('input.slider-filter-input')
       .invoke('val')
       .then(text => expect(text).to.eq('50'));
 
@@ -315,7 +315,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .children()
       .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
 
-    cy.get('.rangeInput_percentComplete')
+    cy.get('input.slider-filter-input')
       .invoke('val')
       .then(text => expect(text).to.eq('0'));
 
@@ -449,7 +449,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
     cy.get('.slick-sort-indicator.slick-sort-indicator-desc')
       .should('have.length', 0);
 
-    cy.get('.rangeInput_percentComplete')
+    cy.get('input.slider-filter-input')
       .invoke('val')
       .then(text => expect(text).to.eq('0'));
 
@@ -497,7 +497,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
     cy.get('.slick-sort-indicator.slick-sort-indicator-desc')
       .should('have.length', 0);
 
-    cy.get('.rangeInput_percentComplete')
+    cy.get('input.slider-filter-input')
       .invoke('val')
       .then(text => expect(text).to.eq('0'));
 
@@ -670,7 +670,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .children()
       .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
 
-    cy.get('.rangeInput_percentComplete')
+    cy.get('input.slider-filter-input')
       .invoke('val')
       .then(text => expect(text).to.eq('50'));
 

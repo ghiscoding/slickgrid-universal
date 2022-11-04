@@ -12,7 +12,7 @@ import { MultipleSelectFilter } from './multipleSelectFilter';
 import { NativeSelectFilter } from './nativeSelectFilter';
 import { DateRangeFilter } from './dateRangeFilter';
 import { SingleSelectFilter } from './singleSelectFilter';
-import { SliderFilter } from './sliderFilter';
+import { SingleSliderFilter } from './singleSliderFilter';
 import { SliderRangeFilter } from './sliderRangeFilter';
 
 export const Filters = {
@@ -68,7 +68,7 @@ export const Filters = {
   singleSelect: SingleSelectFilter,
 
   /** Slider Filter (single value) */
-  slider: SliderFilter,
+  slider: SingleSliderFilter,
 
   /** Slider Range Filter (dual values, lowest/highest filter range) */
   sliderRange: SliderRangeFilter,
