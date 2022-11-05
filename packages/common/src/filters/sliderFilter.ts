@@ -23,6 +23,7 @@ import { mapOperatorToShorthandDesignation } from '../services/utilities';
 import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
 
 declare const Slick: SlickNamespace;
+const DEFAULT_SLIDER_TRACK_FILLED_COLOR = '#86bff8';
 const GAP_BETWEEN_SLIDER_HANDLES = 0;
 const Z_INDEX_MIN_GAP = 20; // gap in Px before we change z-index so that lowest/highest handle doesn't block each other
 
@@ -46,6 +47,7 @@ export class SliderFilter implements Filter {
   protected _sliderTrackElm!: HTMLDivElement;
   protected _sliderLeftElm?: HTMLInputElement;
   protected _sliderRightElm?: HTMLInputElement;
+  protected _sliderTrackFilledColor = DEFAULT_SLIDER_TRACK_FILLED_COLOR;
   sliderType: SliderType = 'double';
   grid!: SlickGrid;
   searchTerms: SearchTerm[] = [];
@@ -117,6 +119,9 @@ export class SliderFilter implements Filter {
     this.operator = args.operator || '';
     this.searchTerms = args?.searchTerms ?? [];
     this._argFilterContainerElm = args.filterContainerElm;
+
+    // get slider track filled color from CSS variable when exist
+    this._sliderTrackFilledColor = window.getComputedStyle(document.documentElement).getPropertyValue('--slick-slider-filter-filled-track-color') || DEFAULT_SLIDER_TRACK_FILLED_COLOR;
 
     // step 1, create the DOM Element of the filter & initialize it if searchTerm is filled
     this._filterElm = this.createDomFilterElement(this.searchTerms);
@@ -527,7 +532,7 @@ export class SliderFilter implements Filter {
       const percent2 = ((+this._sliderRightElm.value - +this._sliderRightElm.min) / (this.sliderOptions?.maxValue ?? 0 - +this._sliderRightElm.min)) * 100;
       const bg = 'linear-gradient(to right, %b %p1, %c %p1, %c %p2, %b %p2)'
         .replace(/%b/g, '#eee')
-        .replace(/%c/g, (this.getFilterOptionByName('sliderTrackFilledColor') ?? 'var(--slick-slider-filter-thumb-color, #86bff8)') as string)
+        .replace(/%c/g, this.getFilterOptionByName('sliderTrackFilledColor') || this._sliderTrackFilledColor || DEFAULT_SLIDER_TRACK_FILLED_COLOR)
         .replace(/%p1/g, `${percent1}%`)
         .replace(/%p2/g, `${percent2}%`);
 

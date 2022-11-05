@@ -1,5 +1,8 @@
 export interface SliderOption {
-  /** Defaults to false, do we want to show slider track coloring? */
+  /**
+   * Defaults to false, do we want to show slider track coloring?
+   * You can change the slider track filled color via the option "sliderTrackFilledColor" or the CSS variable "--slick-slider-filter-filled-track-color"
+   */
   enableSliderTrackColoring?: boolean;
 
   /** Defaults to true, hide the slider number shown on the right side */
