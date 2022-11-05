@@ -165,6 +165,29 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 
+  it('should create a tooltip align on the right, when position is set to "right-align"', () => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell';
+    cellNode.setAttribute('title', 'tooltip text');
+    const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: true, position: 'right-align' });
+    gridStub.onMouseEnter.notify({ grid: gridStub });
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeTruthy();
+    expect(tooltipElm.textContent).toBe('tooltip text');
+    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
+    expect(tooltipElm.classList.contains('arrow-center-align')).toBeFalsy();
+    expect(tooltipElm.classList.contains('arrow-left-align')).toBeFalsy();
+    expect(tooltipElm.classList.contains('arrow-right-align')).toBeTruthy();
+  });
+
   it('should create a centered tooltip, when position is set to "center"', () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell';
