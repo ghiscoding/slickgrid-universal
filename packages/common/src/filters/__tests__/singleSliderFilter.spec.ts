@@ -85,7 +85,7 @@ describe('SingleSliderFilter', () => {
 
     jest.runAllTimers(); // fast-forward timer
 
-    expect(callbackSpy).toHaveBeenLastCalledWith(new CustomEvent('change'), { columnDef: mockColumn, operator: 'EQ', searchTerms: [2], shouldTriggerQuery: true });
+    expect(callbackSpy).toHaveBeenLastCalledWith(new CustomEvent('change'), { columnDef: mockColumn, operator: 'GE', searchTerms: [2], shouldTriggerQuery: true });
     expect(rowMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
   });
 
@@ -102,7 +102,7 @@ describe('SingleSliderFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll('.search-filter.slider-container.filter-duration.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(callbackSpy).toHaveBeenLastCalledWith(new CustomEvent('change'), { columnDef: mockColumn, operator: 'EQ', searchTerms: [3], shouldTriggerQuery: true });
+    expect(callbackSpy).toHaveBeenLastCalledWith(new CustomEvent('change'), { columnDef: mockColumn, operator: 'GE', searchTerms: [3], shouldTriggerQuery: true });
   });
 
   it('should be able to call "setValues" and set empty values and the input to not have the "filled" css class', () => {
