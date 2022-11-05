@@ -59,7 +59,7 @@ export class Example16 {
         },
         filterable: true,
         customTooltip: {
-          position: 'right-align', // defaults to "auto"
+          position: 'left-align', // defaults to "auto"
           // you can use the Custom Tooltip in 2 ways (synchronous or asynchronous)
           // example 1 (sync):
           // formatter: this.tooltipTaskFormatter,
@@ -263,6 +263,10 @@ export class Example16 {
         id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
         formatter: () => `<div class="button-style margin-auto" style="width: 35px; margin-top: -1px;"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
         excludeFromExport: true,
+        // customTooltip: {
+        //   formatter: () => `Click to open Cell Menu`, // return empty so it won't show any pre-tooltip
+        //   offsetRight: 20,
+        // },
         cellMenu: {
           hideCloseButton: false,
           commandTitle: 'Commands',
