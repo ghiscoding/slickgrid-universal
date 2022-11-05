@@ -1,3 +1,4 @@
+import 'jest-extended';
 import { Filters } from '../filters.index';
 import { FieldType, OperatorType } from '../../enums/index';
 import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
@@ -171,6 +172,37 @@ describe('CompoundDateFilter', () => {
 
     expect(filterFilledElms.length).toBe(1);
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '>', searchTerms: ['2001-01-02'], shouldTriggerQuery: true });
+  });
+
+  it('should change operator dropdown without a date entered and not expect the callback to be called', () => {
+    mockColumn.filter!.filterOptions = { allowInput: true }; // change to allow input value only for testing purposes
+    mockColumn.filter!.operator = '>';
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish .flatpickr input.input') as HTMLInputElement;
+    const filterSelectElm = divContainer.querySelector('.search-filter.filter-finish select') as HTMLInputElement;
+    filterInputElm.value = undefined as any;
+    filterSelectElm.value = '<=';
+    filterSelectElm.dispatchEvent(new Event('change'));
+
+    expect(spyCallback).not.toHaveBeenCalled();
+  });
+
+  it('should change operator dropdown without a date entered and expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as False', () => {
+    mockColumn.filter!.filterOptions = { allowInput: true }; // change to allow input value only for testing purposes
+    mockColumn.filter!.operator = '>';
+    mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = false;
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish .flatpickr input.input') as HTMLInputElement;
+    const filterSelectElm = divContainer.querySelector('.search-filter.filter-finish select') as HTMLInputElement;
+    filterInputElm.value = undefined as any;
+    filterSelectElm.value = '<=';
+    filterSelectElm.dispatchEvent(new Event('change'));
+
+    expect(spyCallback).toHaveBeenCalled();
   });
 
   it('should create the input filter with a default search term when passed as a filter argument', () => {
@@ -360,7 +392,7 @@ describe('CompoundDateFilter', () => {
   it('should have custom compound operator list showing up in the operator select dropdown options list', () => {
     mockColumn.outputType = null as any;
     filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
-    mockColumn.filter.compoundOperatorList = [
+    mockColumn.filter!.compoundOperatorList = [
       { operator: '', description: '' },
       { operator: '=', description: 'Equal to' },
       { operator: '<', description: 'Less than' },

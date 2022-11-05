@@ -141,7 +141,7 @@ describe('CompoundInputFilter', () => {
     filter.setValues(['9'], OperatorType.greaterThanOrEqual);
 
     const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
-    filterSelectElm.dispatchEvent(new CustomEvent('change'));
+    filterSelectElm.dispatchEvent(new Event('change'));
 
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '>=', searchTerms: ['9'], shouldTriggerQuery: true });
     expect(filterSelectElm.value).toBe('>=');
@@ -168,9 +168,37 @@ describe('CompoundInputFilter', () => {
     const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
 
     filterSelectElm.value = '<=';
-    filterSelectElm.dispatchEvent(new CustomEvent('change'));
+    filterSelectElm.dispatchEvent(new Event('change'));
 
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['9'], shouldTriggerQuery: true });
+  });
+
+  it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as True', () => {
+    mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
+    mockColumn.type = FieldType.number;
+    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
+
+    filterSelectElm.value = '<=';
+    filterSelectElm.dispatchEvent(new Event('change'));
+
+    expect(callbackSpy).not.toHaveBeenCalled();
+  });
+
+  it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as False', () => {
+    mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = false;
+    mockColumn.type = FieldType.number;
+    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
+
+    filterSelectElm.value = '<=';
+    filterSelectElm.dispatchEvent(new Event('change'));
+
+    expect(callbackSpy).toHaveBeenCalled();
   });
 
   it('should call "setValues" with extra spaces at the beginning of the searchTerms and trim value when "enableFilterTrimWhiteSpace" is enabled in grid options', () => {
