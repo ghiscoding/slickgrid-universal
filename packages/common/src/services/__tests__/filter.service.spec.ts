@@ -372,7 +372,8 @@ describe('FilterService', () => {
           operator: 'EQ',
           searchTerms: ['John'],
           parsedSearchTerms: ['John'],
-          grid: gridStub
+          grid: gridStub,
+          target: null,
         }, expect.anything());
         expect(spyEmit).toHaveBeenCalledWith('local');
         done();
@@ -402,7 +403,8 @@ describe('FilterService', () => {
         operator: 'EQ',
         searchTerms: ['John'],
         parsedSearchTerms: ['John'],
-        grid: gridStub
+        grid: gridStub,
+        target: { value: 'John', },
       }, expect.anything());
     });
 
@@ -436,7 +438,8 @@ describe('FilterService', () => {
         operator: 'EQ',
         searchTerms: [''],
         parsedSearchTerms: [''],
-        grid: gridStub
+        grid: gridStub,
+        target: null,
       }, expect.anything());
       expect(service.getCurrentLocalFilters()).toEqual([{ columnId: 'firstName', operator: 'EQ', searchTerms: [''] }]);
     });
