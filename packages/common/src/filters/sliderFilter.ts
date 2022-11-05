@@ -81,7 +81,7 @@ export class SliderFilter implements Filter {
     if (this.sliderType === 'compound') {
       return OperatorType.empty;
     } else if (this.sliderType === 'single') {
-      return OperatorType.equal;
+      return OperatorType.greaterThanOrEqual;
     }
     return this.gridOptions.defaultFilterRangeOperator || OperatorType.rangeInclusive;
   }
