@@ -64,7 +64,7 @@ describe('SingleSliderFilter', () => {
 
     expect(spyGetHeaderRow).toHaveBeenCalled();
     expect(filterCount).toBe(1);
-    expect(filter.currentValue).toBe(0);
+    expect(filter.currentValue).toBeUndefined();
   });
 
   it('should have an aria-label when creating the filter', () => {
@@ -81,11 +81,11 @@ describe('SingleSliderFilter', () => {
     filter.init(filterArgs);
     filter.setValues(['2']);
     const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
-    filterElm.dispatchEvent(new CustomEvent('change'));
+    filterElm.dispatchEvent(new Event('change'));
 
     jest.runAllTimers(); // fast-forward timer
 
-    expect(callbackSpy).toHaveBeenLastCalledWith(new CustomEvent('change'), { columnDef: mockColumn, operator: 'GE', searchTerms: [2], shouldTriggerQuery: true });
+    expect(callbackSpy).toHaveBeenLastCalledWith(new Event('change'), { columnDef: mockColumn, operator: 'GE', searchTerms: [2], shouldTriggerQuery: true });
     expect(rowMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
   });
 
@@ -95,14 +95,14 @@ describe('SingleSliderFilter', () => {
     filter.init(filterArgs);
     filter.setValues(3);
     const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
-    filterElm.dispatchEvent(new CustomEvent('change'));
-    const mockEvent = new CustomEvent(`change`);
+    filterElm.dispatchEvent(new Event('change'));
+    const mockEvent = new Event('change');
     Object.defineProperty(mockEvent, 'target', { writable: true, configurable: true, value: { value: '13' } });
     filterElm.dispatchEvent(mockEvent);
     const filterFilledElms = divContainer.querySelectorAll('.search-filter.slider-container.filter-duration.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(callbackSpy).toHaveBeenLastCalledWith(new CustomEvent('change'), { columnDef: mockColumn, operator: 'GE', searchTerms: [3], shouldTriggerQuery: true });
+    expect(callbackSpy).toHaveBeenLastCalledWith(new Event('change'), { columnDef: mockColumn, operator: 'GE', searchTerms: [3], shouldTriggerQuery: true });
   });
 
   it('should be able to call "setValues" and set empty values and the input to not have the "filled" css class', () => {
@@ -227,7 +227,7 @@ describe('SingleSliderFilter', () => {
     filter.init(filterArgs);
     filter.setValues(['80']);
     const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
-    filterElms[0].dispatchEvent(new CustomEvent('change'));
+    filterElms[0].dispatchEvent(new Event('change'));
 
     expect(filter.sliderOptions?.sliderTrackBackground).toBe('linear-gradient(to right, #eee 0%, var(--slick-slider-filter-thumb-color, #86bff8) 0%, var(--slick-slider-filter-thumb-color, #86bff8) 80%, #eee 80%)');
   });

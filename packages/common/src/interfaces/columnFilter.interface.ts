@@ -122,6 +122,13 @@ export interface ColumnFilter {
    */
   emptySearchTermReturnAllValues?: boolean;
 
+  /**
+   * Should we skip filtering when the Operator is changed before the Compound Filter input.
+   * For example, with a CompoundDate Filter it's probably better to wait until we have a date filled before filtering even if we start with the operator.
+   * Defaults to True only for the Compound Date Filter (all other compound filters will still filter even when operator is first changed).
+   */
+  skipCompoundOperatorFilterWithNullInput?: boolean;
+
   /** What is the Field Type that can be used by the Filter (as precedence over the "type" set the column definition) */
   type?: typeof FieldType[keyof typeof FieldType];
 

@@ -326,7 +326,12 @@ export class CompoundDateFilter implements Filter {
     } else {
       const selectedOperator = this._selectOperatorElm.value as OperatorString;
       (this._currentValue) ? this._filterElm.classList.add('filled') : this._filterElm.classList.remove('filled');
-      this.callback(e, { columnDef: this.columnDef, searchTerms: (this._currentValue ? [this._currentValue] : null), operator: selectedOperator || '', shouldTriggerQuery: this._shouldTriggerQuery });
+
+      // when changing compound operator, we don't want to trigger the filter callback unless the date input is also provided
+      const skipCompoundOperatorFilterWithNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput === undefined;
+      if (!skipCompoundOperatorFilterWithNullInput || this._currentDate !== undefined) {
+        this.callback(e, { columnDef: this.columnDef, searchTerms: (this._currentValue ? [this._currentValue] : null), operator: selectedOperator || '', shouldTriggerQuery: this._shouldTriggerQuery });
+      }
     }
 
     // reset both flags for next use

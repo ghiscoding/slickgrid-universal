@@ -335,16 +335,19 @@ export class SliderFilter implements Filter {
       this._divContainerFilterElm.appendChild(rightDivGroupElm);
     }
 
-    // if we are preloading searchTerms, we'll keep them for reference
-    this._currentValue = defaultStartValue;
-    this._currentValues = [defaultStartValue, defaultEndValue];
-
     // merge options with optional user's custom options
     this._sliderOptions = { minValue, maxValue, step };
+
+    // if we are preloading searchTerms, we'll keep them for reference
+    this._currentValues = [defaultStartValue, defaultEndValue];
 
     // if there's a search term, we will add the "filled" class for styling purposes
     if (Array.isArray(searchTerms) && searchTerms.length > 0 && searchTerms[0] !== '') {
       this._divContainerFilterElm.classList.add('filled');
+      this._currentValue = defaultStartValue;
+    }
+    if (this.getFilterOptionByName('sliderStartValue') !== undefined || this.columnFilter?.minValue !== undefined) {
+      this._currentValue = defaultStartValue;
     }
 
     // append the new DOM element to the header row
@@ -357,7 +360,7 @@ export class SliderFilter implements Filter {
     this._bindEventService.bind(this._sliderRightElm, ['change', 'mouseup', 'touchend'], this.onValueChanged.bind(this) as EventListener);
 
     if (this.sliderType === 'compound' && this._selectOperatorElm) {
-      this._bindEventService.bind(this._selectOperatorElm, ['change', 'mouseup', 'touchend'], this.onValueChanged.bind(this) as EventListener);
+      this._bindEventService.bind(this._selectOperatorElm, ['change'], this.onValueChanged.bind(this) as EventListener);
     } else if (this.sliderType === 'double' && this._sliderLeftElm) {
       this._bindEventService.bind(this._sliderLeftElm, ['input', 'change'], this.slideLeftInputChanged.bind(this));
       this._bindEventService.bind(this._sliderLeftElm, ['change', 'mouseup', 'touchend'], this.onValueChanged.bind(this) as EventListener);
@@ -381,7 +384,10 @@ export class SliderFilter implements Filter {
     let searchTerms: SearchTerm[];
 
     if (this.sliderType === 'compound' || this.sliderType === 'single') {
-      this._currentValue = +sliderRightVal;
+      // only update ref when the value from the input
+      if ((e?.target as HTMLElement)?.tagName?.toLowerCase() !== 'select') {
+        this._currentValue = +sliderRightVal;
+      }
       value = this._currentValue;
       searchTerms = [value || '0'];
     } else if (this.sliderType === 'double') {
@@ -397,7 +403,12 @@ export class SliderFilter implements Filter {
     } else {
       const selectedOperator = (this._selectOperatorElm?.value ?? this.operator) as OperatorString;
       value === '' ? this._filterElm.classList.remove('filled') : this._filterElm.classList.add('filled');
-      this.callback(e, { columnDef: this.columnDef, operator: selectedOperator || '', searchTerms: searchTerms! as SearchTerm[], shouldTriggerQuery: this._shouldTriggerQuery });
+
+      // when changing compound operator, we don't want to trigger the filter callback unless the filter input is also provided
+      const skipCompoundOperatorFilterWithNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput;
+      if (this.sliderType !== 'compound' || (!skipCompoundOperatorFilterWithNullInput || this._currentValue !== undefined)) {
+        this.callback(e, { columnDef: this.columnDef, operator: selectedOperator || '', searchTerms: searchTerms! as SearchTerm[], shouldTriggerQuery: this._shouldTriggerQuery });
+      }
     }
     // reset both flags for next use
     this._clearFilterTriggered = false;

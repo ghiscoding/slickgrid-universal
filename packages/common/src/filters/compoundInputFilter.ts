@@ -20,6 +20,7 @@ import { TranslaterService } from '../services/translater.service';
 export class CompoundInputFilter implements Filter {
   protected _bindEventService: BindingEventService;
   protected _clearFilterTriggered = false;
+  protected _currentValue?: number | string;
   protected _debounceTypingDelay = 0;
   protected _shouldTriggerQuery = true;
   protected _inputType = 'text';
@@ -103,8 +104,8 @@ export class CompoundInputFilter implements Filter {
     // step 3, subscribe to the keyup event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
     // we'll use all necessary events to cover the following (keyup, change, mousewheel & spinner)
-    this._bindEventService.bind(this._filterInputElm, ['keyup', 'blur', 'change', 'wheel'], this.onTriggerEvent.bind(this));
-    this._bindEventService.bind(this._selectOperatorElm, 'change', this.onTriggerEvent.bind(this));
+    this._bindEventService.bind(this._filterInputElm, ['keyup', 'blur', 'change', 'wheel'], this.onTriggerEvent.bind(this) as EventListener);
+    this._bindEventService.bind(this._selectOperatorElm, 'change', this.onTriggerEvent.bind(this) as EventListener);
   }
 
   /**
@@ -117,6 +118,7 @@ export class CompoundInputFilter implements Filter {
       this.searchTerms = [];
       this._selectOperatorElm.selectedIndex = 0;
       this._filterInputElm.value = '';
+      this._currentValue = undefined;
       this.onTriggerEvent(undefined);
       this._filterElm.classList.remove('filled');
       this._filterInputElm.classList.remove('filled');
@@ -144,6 +146,7 @@ export class CompoundInputFilter implements Filter {
       newInputValue = `${newValue ?? ''}`;
     }
     this._filterInputElm.value = newInputValue;
+    this._currentValue = newInputValue;
 
     if (this.getValues() !== '') {
       this._filterElm.classList.add('filled');
@@ -240,8 +243,12 @@ export class CompoundInputFilter implements Filter {
     // create the DOM element & add an ID and filter class
     filterContainerElm.appendChild(containerInputGroupElm);
 
-    this._filterInputElm.value = `${searchTerm ?? ''}`;
     this._filterInputElm.dataset.columnid = `${columnId}`;
+    const searchVal = `${searchTerm ?? ''}`;
+    this._filterInputElm.value = searchVal;
+    if (searchTerm !== undefined) {
+      this._currentValue = searchVal;
+    }
 
     if (this.operator) {
       const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
@@ -265,7 +272,7 @@ export class CompoundInputFilter implements Filter {
    * Event trigger, could be called by the Operator dropdown or the input itself and we will cover the following (keyup, change, mousewheel & spinner)
    * We will trigger the Filter Service callback from this handler
    */
-  protected onTriggerEvent(event: Event | undefined) {
+  protected onTriggerEvent(event: MouseEvent | KeyboardEvent | undefined) {
     if (this._clearFilterTriggered) {
       this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
       this._filterElm.classList.remove('filled');
@@ -278,15 +285,24 @@ export class CompoundInputFilter implements Filter {
         value = value.trim();
       }
 
+      // only update ref when the value from the input
+      if ((event?.target as HTMLElement)?.tagName.toLowerCase() !== 'select') {
+        this._currentValue = value;
+      }
+
       (value !== null && value !== undefined && value !== '') ? this._filterElm.classList.add('filled') : this._filterElm.classList.remove('filled');
       const callbackArgs = { columnDef: this.columnDef, searchTerms: (value ? [value] : null), operator: selectedOperator, shouldTriggerQuery: this._shouldTriggerQuery };
       const typingDelay = (eventType === 'keyup' && (event as KeyboardEvent)?.key !== 'Enter') ? this._debounceTypingDelay : 0;
 
-      if (typingDelay > 0) {
-        clearTimeout(this.timer as NodeJS.Timeout);
-        this.timer = setTimeout(() => this.callback(event, callbackArgs), typingDelay);
-      } else {
-        this.callback(event, callbackArgs);
+      // when changing compound operator, we don't want to trigger the filter callback unless the filter input is also provided
+      const skipCompoundOperatorFilterWithNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput;
+      if (!skipCompoundOperatorFilterWithNullInput || this._currentValue !== undefined) {
+        if (typingDelay > 0) {
+          clearTimeout(this.timer as NodeJS.Timeout);
+          this.timer = setTimeout(() => this.callback(event, callbackArgs), typingDelay);
+        } else {
+          this.callback(event, callbackArgs);
+        }
       }
     }
 

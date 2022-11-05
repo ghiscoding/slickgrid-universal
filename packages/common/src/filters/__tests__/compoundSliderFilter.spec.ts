@@ -69,7 +69,7 @@ describe('CompoundSliderFilter', () => {
 
     expect(spyGetHeaderRow).toHaveBeenCalled();
     expect(filterCount).toBe(1);
-    expect(filter.currentValue).toBe(0);
+    expect(filter.currentValue).toBeUndefined();
   });
 
   it('should have an aria-label when creating the filter', () => {
@@ -87,7 +87,7 @@ describe('CompoundSliderFilter', () => {
     filter.init(filterArgs);
     filter.setValues(['2']);
     const filterElm = divContainer.querySelector('.input-group.search-filter.filter-duration input') as HTMLInputElement;
-    filterElm.dispatchEvent(new CustomEvent('change'));
+    filterElm.dispatchEvent(new Event('change'));
 
     jest.runAllTimers(); // fast-forward timer
 
@@ -102,7 +102,7 @@ describe('CompoundSliderFilter', () => {
     filter.init(filterArgs);
     filter.setValues(3);
     const filterElm = divContainer.querySelector('.input-group.search-filter.filter-duration input') as HTMLInputElement;
-    filterElm.dispatchEvent(new CustomEvent('change'));
+    filterElm.dispatchEvent(new Event('change'));
     const filterFilledElms = divContainer.querySelectorAll('.slider-container.search-filter.filter-duration.filled');
 
     expect(filterFilledElms.length).toBe(1);
@@ -117,9 +117,35 @@ describe('CompoundSliderFilter', () => {
     const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
 
     filterSelectElm.value = '<=';
-    filterSelectElm.dispatchEvent(new CustomEvent('change'));
+    filterSelectElm.dispatchEvent(new Event('change'));
 
     expect(callbackSpy).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: [9], shouldTriggerQuery: true });
+  });
+
+  it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as True', () => {
+    mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
+    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
+
+    filterSelectElm.value = '<=';
+    filterSelectElm.dispatchEvent(new Event('change'));
+
+    expect(callbackSpy).not.toHaveBeenCalled();
+  });
+
+  it('should change operator dropdown without a value entered and expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as False', () => {
+    mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = false;
+    const callbackSpy = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
+
+    filterSelectElm.value = '<=';
+    filterSelectElm.dispatchEvent(new Event('change'));
+
+    expect(callbackSpy).toHaveBeenCalled();
   });
 
   it('should be able to call "setValues" with a value, converted as a number, and an extra operator and expect it to be set as new operator', () => {
@@ -129,7 +155,7 @@ describe('CompoundSliderFilter', () => {
     filter.setValues(['9'], OperatorType.greaterThanOrEqual);
 
     const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
-    filterSelectElm.dispatchEvent(new CustomEvent('change'));
+    filterSelectElm.dispatchEvent(new Event('change'));
 
     expect(callbackSpy).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '>=', searchTerms: [9], shouldTriggerQuery: true });
   });
@@ -257,7 +283,7 @@ describe('CompoundSliderFilter', () => {
     filter.init(filterArguments);
     filter.setValues(['80']);
     const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
-    filterElms[0].dispatchEvent(new CustomEvent('change'));
+    filterElms[0].dispatchEvent(new Event('change'));
 
     expect(filter.sliderOptions?.sliderTrackBackground).toBe('linear-gradient(to right, #eee 0%, var(--slick-slider-filter-thumb-color, #86bff8) 0%, var(--slick-slider-filter-thumb-color, #86bff8) 80%, #eee 80%)');
   });
