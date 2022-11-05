@@ -80,7 +80,7 @@ export class Example2 {
         filter: {
           model: Filters.slider,
           operator: '>=',
-          filterOptions: { hideSliderNumber: true, enableSliderTrackColoring: true, sliderTrackFilledColor: '#9ac49c' } as SliderOption
+          filterOptions: { hideSliderNumber: true, enableSliderTrackColoring: true } as SliderOption
         },
         sortable: true,
         type: FieldType.number,

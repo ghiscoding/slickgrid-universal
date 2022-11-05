@@ -285,7 +285,7 @@ describe('CompoundSliderFilter', () => {
     const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
     filterElms[0].dispatchEvent(new Event('change'));
 
-    expect(filter.sliderOptions?.sliderTrackBackground).toBe('linear-gradient(to right, #eee 0%, var(--slick-slider-filter-thumb-color, #86bff8) 0%, var(--slick-slider-filter-thumb-color, #86bff8) 80%, #eee 80%)');
+    expect(filter.sliderOptions?.sliderTrackBackground).toBe('linear-gradient(to right, #eee 0%, #86bff8 0%, #86bff8 80%, #eee 80%)');
   });
 
   it('should click on the slider track and expect handle to move to the new position', () => {

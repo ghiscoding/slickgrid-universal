@@ -312,8 +312,8 @@ describe('SliderRangeFilter', () => {
     filterElms[0].dispatchEvent(new CustomEvent('change'));
     const sliderTrackElm = divContainer.querySelector('.slider-track') as HTMLDivElement;
 
-    // expect(sliderTrackElm.style.background).toBe('linear-gradient(to right, #eee 2%, var(--slick-slider-filter-thumb-color, #86bff8) 2%, var(--slick-slider-filter-thumb-color, #86bff8) 80%, #eee 80%)');
-    expect(filter.sliderOptions?.sliderTrackBackground).toBe('linear-gradient(to right, #eee 2%, var(--slick-slider-filter-thumb-color, #86bff8) 2%, var(--slick-slider-filter-thumb-color, #86bff8) 80%, #eee 80%)');
+    // expect(sliderTrackElm.style.background).toBe('linear-gradient(to right, #eee 2%, #86bff8 2%, #86bff8 80%, #eee 80%)');
+    expect(filter.sliderOptions?.sliderTrackBackground).toBe('linear-gradient(to right, #eee 2%, #86bff8 2%, #86bff8 80%, #eee 80%)');
   });
 
   it('should click on the slider track and expect left handle to move to the new position when calculated percent is below 50%', () => {
