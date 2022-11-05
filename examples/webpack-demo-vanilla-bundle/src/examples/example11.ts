@@ -156,7 +156,7 @@ export class Example11 {
       },
       {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number, minWidth: 80,
-        editor: { model: Editors.slider, massUpdate: true, minValue: 0, maxValue: 100, },
+        editor: { model: Editors.slider, massUpdate: true, minValue: 0, maxValue: 100, params: { hideSliderNumber: true } },
         sortable: true, filterable: true,
         filter: { model: Filters.slider, operator: '>=' },
       },

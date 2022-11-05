@@ -75,7 +75,7 @@ describe('SelectFilter', () => {
     expect(spyGetHeaderRow).toHaveBeenCalled();
     expect(filterCount).toBe(1);
     expect(filter.isMultipleSelect).toBe(false);
-    expect(filter.columnDef.filter.emptySearchTermReturnAllValues).toBeUndefined();
+    expect(filter.columnDef.filter!.emptySearchTermReturnAllValues).toBeUndefined();
   });
 
   it('should create the select filter with empty search term when passed an empty string as a filter argument and not expect "filled" css class either', () => {

@@ -22,3 +22,12 @@ export interface SliderRangeOption extends Omit<SliderOption, 'hideSliderNumber'
   /** Defaults to false, hide the slider numbers shown on the left/right side */
   hideSliderNumbers?: boolean;
 }
+
+export interface CurrentSliderOption {
+  minValue: number;
+  maxValue: number;
+  step: number;
+  sliderTrackBackground?: string;
+}
+
+export type SliderType = 'single' | 'double' | 'compound';

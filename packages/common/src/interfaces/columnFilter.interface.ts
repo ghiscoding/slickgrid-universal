@@ -6,7 +6,6 @@ import {
   CollectionSortBy,
   Column,
   Filter,
-  MultipleSelectOption,
   OperatorDetail,
 } from './index';
 import { Observable, Subject } from '../services/rxjsFacade';
@@ -91,7 +90,7 @@ export interface ColumnFilter {
    * Please note that if you use options that have existed model interfaces, you should cast with "as X",
    * for example { filterOptions: {maxHeight: 250} as MultipleSelectOption }
    */
-  filterOptions?: MultipleSelectOption | any;
+  filterOptions?: any;
 
   /**
    * Use "params" to pass any type of arguments to your Custom Filter
