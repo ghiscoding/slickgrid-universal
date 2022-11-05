@@ -89,17 +89,17 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
   it('should be able to change "% Complete" values of row indexes 2-4', () => {
     // change % complete
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).click();
-    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 5).trigger('change');
+    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 5).trigger('change', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).should('contain', '5')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(4)`).click();
-    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 6).trigger('change');
+    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 6).trigger('change', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(4)`).should('contain', '6')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(4)`).click();
-    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 7).trigger('change');
+    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 7).trigger('change', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(4)`).should('contain', '7')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 

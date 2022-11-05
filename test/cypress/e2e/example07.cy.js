@@ -169,7 +169,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
 
     // change % complete
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(5)`).click();
-    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 25).trigger('change');
+    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 25).trigger('change', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(5)`).should('contain', '25');
 
     // change Finish date
@@ -287,7 +287,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
 
     // change % complete
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(5)`).click();
-    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 50).trigger('change');
+    cy.get('.slider-editor input[type=range]').as('range').invoke('val', 50).trigger('change', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(5)`).should('contain', '50');
 
     // change Finish date
@@ -345,6 +345,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 9}px"] > .slick-cell:nth(2)`).should('contain', 'Task 9');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 10}px"] > .slick-cell:nth(2)`).should('contain', 'Task 10');
 
+    cy.wait(1);
     cy.get('.grid7').find(`[style="top:${GRID_ROW_HEIGHT * 9}px"] > .slick-cell:nth(3)`).click({ force: true });
     cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-title').contains('Commands');
     cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-content').contains('Delete Row');

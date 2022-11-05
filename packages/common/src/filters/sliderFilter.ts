@@ -5,6 +5,7 @@ import { OperatorString, OperatorType, SearchTerm, } from '../enums/index';
 import {
   Column,
   ColumnFilter,
+  CurrentSliderOption,
   Filter,
   FilterArguments,
   FilterCallback,
@@ -13,20 +14,13 @@ import {
   SlickGrid,
   SlickNamespace,
   SliderRangeOption,
+  SliderType,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { createDomElement, emptyElement } from '../services/domUtilities';
 import { TranslaterService } from '../services/translater.service';
 import { mapOperatorToShorthandDesignation } from '../services/utilities';
 import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
-
-interface CurrentSliderOption {
-  minValue: number;
-  maxValue: number;
-  step: number;
-  sliderTrackBackground?: string;
-}
-type SliderType = 'single' | 'double' | 'compound';
 
 declare const Slick: SlickNamespace;
 const GAP_BETWEEN_SLIDER_HANDLES = 0;
@@ -65,11 +59,6 @@ export class SliderFilter implements Filter {
   /** @deprecated Getter for the Filter Generic Params */
   protected get filterParams(): any {
     return this.columnDef?.filter?.params ?? {};
-  }
-
-  /** Getter for the Filter Options */
-  get filterOptions(): SliderRangeOption | undefined {
-    return this.columnFilter.filterOptions;
   }
 
   /** Getter for the Column Filter */
@@ -181,21 +170,9 @@ export class SliderFilter implements Filter {
   /** destroy the filter */
   destroy() {
     this._bindEventService.unbindAll();
-  }
-
-  /**
-   * Get option from filter.params PR filter.filterOptions
-   * @deprecated this should be removed when slider filterParams are replaced by filterOptions
-   */
-  getFilterOptionByName<T extends string | number | boolean>(optionName: string, defaultValue?: string | number | boolean): T {
-    let outValue: string | number | boolean | undefined;
-    if (this.filterOptions?.[optionName as keyof SliderRangeOption] !== undefined) {
-      outValue = this.filterOptions[optionName as keyof SliderRangeOption];
-    } else if (this.filterParams?.[optionName] !== undefined) {
-      console.warn('[Slickgrid-Universal] All filter.params were moved, and deprecated, to "filterOptions" as SliderRangeOption for better typing support.');
-      outValue = this.filterParams?.[optionName];
-    }
-    return outValue as T ?? defaultValue ?? undefined;
+    this._sliderTrackElm?.remove();
+    this._sliderLeftElm?.remove();
+    this._sliderRightElm?.remove();
   }
 
   /**
@@ -328,14 +305,14 @@ export class SliderFilter implements Filter {
     const sliderNumberClass = hideSliderNumbers ? '' : 'input-group';
     this._divContainerFilterElm = createDomElement('div', { className: `${sliderNumberClass} search-filter slider-container slider-values filter-${columnId}`.trim() });
 
-    this._sliderRangeContainElm.append(this._sliderTrackElm);
+    this._sliderRangeContainElm.appendChild(this._sliderTrackElm);
     if (this.sliderType === 'double' && this._sliderLeftElm) {
-      this._sliderRangeContainElm.append(this._sliderLeftElm);
+      this._sliderRangeContainElm.appendChild(this._sliderLeftElm);
     }
-    this._sliderRangeContainElm.append(this._sliderRightElm);
+    this._sliderRangeContainElm.appendChild(this._sliderRightElm);
 
     if (hideSliderNumbers) {
-      this._divContainerFilterElm.append(this._sliderRangeContainElm);
+      this._divContainerFilterElm.appendChild(this._sliderRangeContainElm);
     } else {
       let leftDivGroupElm: HTMLDivElement | HTMLSpanElement | undefined;
       if (this.sliderType === 'compound' && this._selectOperatorElm) {
@@ -344,18 +321,18 @@ export class SliderFilter implements Filter {
       } else if (this.sliderType === 'double') {
         leftDivGroupElm = createDomElement('div', { className: `input-group-addon input-group-prepend slider-range-value` });
         this._leftSliderNumberElm = createDomElement('span', { className: `input-group-text lowest-range-${columnId}`, textContent: `${defaultStartValue}` });
-        leftDivGroupElm.append(this._leftSliderNumberElm);
+        leftDivGroupElm.appendChild(this._leftSliderNumberElm);
       }
 
       const rightDivGroupElm = createDomElement('div', { className: `input-group-addon input-group-append slider-range-value` });
       this._rightSliderNumberElm = createDomElement('span', { className: `input-group-text highest-range-${columnId}`, textContent: `${rightDefaultVal}` });
-      rightDivGroupElm.append(this._rightSliderNumberElm);
+      rightDivGroupElm.appendChild(this._rightSliderNumberElm);
 
       if (leftDivGroupElm) {
-        this._divContainerFilterElm.append(leftDivGroupElm);
+        this._divContainerFilterElm.appendChild(leftDivGroupElm);
       }
-      this._divContainerFilterElm.append(this._sliderRangeContainElm);
-      this._divContainerFilterElm.append(rightDivGroupElm);
+      this._divContainerFilterElm.appendChild(this._sliderRangeContainElm);
+      this._divContainerFilterElm.appendChild(rightDivGroupElm);
     }
 
     // if we are preloading searchTerms, we'll keep them for reference
@@ -371,8 +348,8 @@ export class SliderFilter implements Filter {
     }
 
     // append the new DOM element to the header row
-    this._argFilterContainerElm.append(this._divContainerFilterElm);
-    this.updateTrackFilledColor();
+    this._argFilterContainerElm.appendChild(this._divContainerFilterElm);
+    this.updateTrackFilledColorWhenEnabled();
 
     // attach events
     this._bindEventService.bind(this._sliderTrackElm, 'click', this.sliderTrackClicked.bind(this) as EventListener);
@@ -441,6 +418,21 @@ export class SliderFilter implements Filter {
     this._sliderRightElm?.classList[addRemoveCmd]('focus');
   }
 
+  /**
+   * Get option from filter.params PR filter.filterOptions
+   * @deprecated this should be removed when slider filterParams are replaced by filterOptions
+   */
+  protected getFilterOptionByName<T extends string | number | boolean>(optionName: string, defaultValue?: string | number | boolean): T {
+    let outValue: string | number | boolean | undefined;
+    if (this.columnFilter.filterOptions?.[optionName as keyof SliderRangeOption] !== undefined) {
+      outValue = this.columnFilter.filterOptions[optionName as keyof SliderRangeOption];
+    } else if (this.filterParams?.[optionName] !== undefined) {
+      console.warn('[Slickgrid-Universal] All filter.params were moved, and deprecated, to "filterOptions" as SliderOption for better typing support.');
+      outValue = this.filterParams?.[optionName];
+    }
+    return outValue as T ?? defaultValue ?? undefined;
+  }
+
   protected slideLeftInputChanged() {
     const sliderLeftVal = parseInt(this._sliderLeftElm?.value ?? '', 10);
     const sliderRightVal = parseInt(this._sliderRightElm?.value ?? '', 10);
@@ -464,13 +456,12 @@ export class SliderFilter implements Filter {
       }
     }
 
-    this.updateTrackFilledColor();
+    this.updateTrackFilledColorWhenEnabled();
     this.changeBothSliderFocuses(true);
     const hideSliderNumbers = this.getFilterOptionByName('hideSliderNumber') ?? this.getFilterOptionByName('hideSliderNumbers');
     if (!hideSliderNumbers && this._leftSliderNumberElm?.textContent) {
       this._leftSliderNumberElm.textContent = this._sliderLeftElm?.value ?? '';
     }
-
   }
 
   protected slideRightInputChanged() {
@@ -481,7 +472,7 @@ export class SliderFilter implements Filter {
       this._sliderRightElm.value = String(sliderLeftVal + this.getFilterOptionByName<number>('stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES));
     }
 
-    this.updateTrackFilledColor();
+    this.updateTrackFilledColorWhenEnabled();
     this.changeBothSliderFocuses(true);
     this._sliderRangeContainElm.title = this.sliderType === 'double' ? `${sliderLeftVal} - ${sliderRightVal}` : `${sliderRightVal}`;
 
@@ -497,8 +488,9 @@ export class SliderFilter implements Filter {
     const sliderTrackWidth = this._sliderTrackElm.offsetWidth;
     const trackPercentPosition = (sliderTrackX + 0) * 100 / sliderTrackWidth;
 
-    if (this._sliderRightElm && (this.sliderType === 'compound' || this.sliderType === 'single')) {
+    if (this._sliderRightElm && this.sliderType !== 'double') {
       // when slider is compound/single, we'll automatically move to calculated clicked percentage
+      // dispatch a change event to update its value & number when shown
       this._sliderRightElm.value = `${trackPercentPosition}`;
       this._sliderRightElm.dispatchEvent(new Event('change'));
     } else {
@@ -515,7 +507,7 @@ export class SliderFilter implements Filter {
     }
   }
 
-  protected updateTrackFilledColor() {
+  protected updateTrackFilledColorWhenEnabled() {
     if (this.getFilterOptionByName('enableSliderTrackColoring') && this._sliderRightElm) {
       let percent1 = 0;
       if (this._sliderLeftElm) {

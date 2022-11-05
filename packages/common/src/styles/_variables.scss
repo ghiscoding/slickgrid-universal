@@ -657,13 +657,17 @@ $slick-draggable-group-column-icon-margin-left:             4px !default;
 
 /* Input Slider Filter (vanilla html) */
 $slick-slider-filter-border:                                1px solid #ccc !default;
+$slick-slider-filter-border-radius:                         4px !default;
 $slick-slider-filter-bgcolor:                               #eee !default;
+$slick-slider-filter-input-bgcolor:                         #fff !default;
 $slick-slider-filter-runnable-track-bgcolor:                #ddd !default;
 $slick-slider-filter-runnable-track-cursor:                 pointer !default;
 $slick-slider-filter-runnable-track-height:                 5px !default;
 $slick-slider-filter-runnable-track-padding:                0 6px !default;
 $slick-slider-filter-fill-lower-color:                      #ddd !default; /* ms only */
 $slick-slider-filter-fill-focus-lower-color:                #aaa !default; /* ms only */
+$slick-slider-filter-focus-border-color:                    lighten($slick-primary-color, 10%) !default;
+$slick-slider-filter-focus-box-shadow:                      inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(lighten($slick-primary-color, 3%), .3) !default;
 $slick-slider-filter-height:                                $slick-header-input-height !default;
 $slick-slider-filter-thumb-border-radius:                   50% !default;
 $slick-slider-filter-thumb-cursor:                          grab !default;
@@ -675,11 +679,6 @@ $slick-slider-filter-thumb-width:                           $slick-slider-filter
 $slick-slider-filter-thumb-border:                          2px solid darken($slick-slider-filter-thumb-color, 15%) !default;
 $slick-slider-filter-number-padding:                        4px 8px !default;
 $slick-slider-filter-number-font-size:                      calc(#{$slick-font-size-base-value} - 1px) !default;
-
-/* Input Range Slider Filter */
-$slick-slider-range-filter-border-radius:                   4px !default;
-$slick-slider-range-focus-border-color:                     lighten($slick-primary-color, 10%) !default;
-$slick-slider-range-focus-box-shadow:                       inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(lighten($slick-primary-color, 3%), .3) !default;
 
 /* Multiple-Select Filter */
 $slick-multiselect-input-filter-border:                     1px solid #ccc !default;

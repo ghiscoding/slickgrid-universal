@@ -35,12 +35,14 @@ const gridStub = {
 
 describe('SliderEditor', () => {
   let divContainer: HTMLDivElement;
+  let consoleSpy: any;
   let editor: SliderEditor;
   let editorArguments: EditorArguments;
   let mockColumn: Column;
   let mockItemData: any;
 
   beforeEach(() => {
+    consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
@@ -96,7 +98,7 @@ describe('SliderEditor', () => {
       editor = new SliderEditor(editorArguments);
       const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;
 
-      expect(editorElm.getAttribute('aria-label')).toBe('Price Slider Editor');
+      expect(editorElm.ariaLabel).toBe('Price Slider Editor');
     });
 
     it('should have a title (tooltip) when defined in its column definition', () => {
@@ -459,6 +461,52 @@ describe('SliderEditor', () => {
 
         expect(validation).toEqual({ valid: false, msg: 'Please enter a valid number between 10 and 99' });
       });
+    });
+
+    it('should create the input editor with option defined in editor params and expect deprecated console warning', () => {
+      (mockColumn.internalColumnEditor as ColumnEditor).params = { sliderStartValue: 5, enableSliderTrackColoring: true };
+      mockItemData = { id: 1, price: 80, isActive: true };
+      editor = new SliderEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      editor.setValue(45);
+
+      const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;
+      editorElm.dispatchEvent(new Event('change'));
+
+      expect(consoleSpy).toHaveBeenCalledWith('[Slickgrid-Universal] All editor.params were moved, and deprecated, to "editorOptions" as SliderOption for better typing support.');
+    });
+
+    it('should enableSliderTrackColoring and trigger a change event and expect slider track to have background color', () => {
+      (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { sliderStartValue: 5, enableSliderTrackColoring: true };
+      mockItemData = { id: 1, price: 80, isActive: true };
+      editor = new SliderEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      editor.setValue(45);
+
+      const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;
+      editorElm.dispatchEvent(new Event('change'));
+
+      expect(editor.sliderOptions?.sliderTrackBackground).toBe('linear-gradient(to right, #eee 0%, var(--slick-slider-filter-thumb-color, #86bff8) 0%, var(--slick-slider-filter-thumb-color, #86bff8) 80%, #eee 80%)');
+    });
+
+    it('should click on the slider track and expect handle to move to the new position', () => {
+      (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { sliderStartValue: 5, enableSliderTrackColoring: true };
+      editor = new SliderEditor(editorArguments);
+
+      const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;
+      editorElm.dispatchEvent(new Event('change'));
+
+      const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-editor-input');
+      const sliderTrackElm = divContainer.querySelector('.slider-track') as HTMLDivElement;
+
+      const sliderRightChangeSpy = jest.spyOn(sliderInputs[0], 'dispatchEvent');
+
+      const clickEvent = new Event('click');
+      Object.defineProperty(clickEvent, 'offsetX', { writable: true, configurable: true, value: 56 });
+      Object.defineProperty(sliderTrackElm, 'offsetWidth', { writable: true, configurable: true, value: 75 });
+      sliderTrackElm.dispatchEvent(clickEvent);
+
+      expect(sliderRightChangeSpy).toHaveBeenCalled();
     });
   });
 

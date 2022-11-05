@@ -7,7 +7,6 @@ import {
   CollectionOverrideArgs,
   CollectionSortBy,
   EditorValidator,
-  MultipleSelectOption,
 } from './index';
 
 export interface ColumnEditor {
@@ -71,7 +70,7 @@ export interface ColumnEditor {
    * Please note that if you use options that have existed model interfaces, you should cast with "as X",
    * for example { editorOptions: {maxHeight: 250} as MultipleSelectOption }
    */
-  editorOptions?: MultipleSelectOption | any;
+  editorOptions?: any;
 
   /**
    * Defaults to false, when set it will render any HTML code instead of removing it (sanitized)

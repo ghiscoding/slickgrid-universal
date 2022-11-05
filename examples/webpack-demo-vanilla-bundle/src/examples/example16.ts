@@ -7,6 +7,7 @@ import {
   Formatters,
   GridOption,
   OperatorType,
+  SliderOption,
 } from '@slickgrid-universal/common';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
@@ -148,7 +149,7 @@ export class Example16 {
           model: Editors.slider,
           minValue: 0,
           maxValue: 100,
-          // params: { hideSliderNumber: true },
+          editorOptions: { enableSliderTrackColoring: true, hideSliderNumber: true } as SliderOption,
         },
         exportWithFormatter: false,
         formatter: Formatters.percentCompleteBar,
