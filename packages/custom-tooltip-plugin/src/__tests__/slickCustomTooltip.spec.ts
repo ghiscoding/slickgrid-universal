@@ -401,7 +401,7 @@ describe('SlickCustomTooltip plugin', () => {
       tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
       expect(tooltipElm.textContent).toBe('async post text with ratio: 1.2');
       expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-      expect(tooltipElm.classList.contains('arrow-right-align')).toBeTruthy();
+      expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
       done();
     }, 0);
   });
