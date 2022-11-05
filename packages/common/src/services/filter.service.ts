@@ -50,6 +50,7 @@ interface OnSearchChangeEventArgs {
   parsedSearchTerms?: SearchTerm | SearchTerm[] | undefined;
   searchTerms: SearchTerm[] | undefined;
   grid: SlickGrid;
+  target?: HTMLElement;
 }
 
 export class FilterService {
@@ -1160,7 +1161,8 @@ export class FilterService {
           operator: operator || mapOperatorByFieldType(fieldType),
           searchTerms,
           parsedSearchTerms,
-          grid: this._grid
+          grid: this._grid,
+          target: event?.target
         } as OnSearchChangeEventArgs;
 
         const onBeforeDispatchResult = this.pubSubService.publish('onBeforeSearchChange', eventArgs);
