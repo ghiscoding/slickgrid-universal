@@ -3,14 +3,14 @@ import { SearchTerm } from '../enums/searchTerm.type';
 
 export interface CurrentFilter {
   /**
-   * Column Id that must be defined as a Column in the Columns Definition (using the "field" property).
-   * However, please note that it will still check if there's a "queryField" defined and use if exists
+   * Column Id that must be defined as a Column and exists in the Columns Definition array (column association is done through the "field" property).
+   * Please note that it will parse through "queryField" if it is defined to find the targeted column.
    */
   columnId: string;
 
   /** Filter operator or use default operator when not provided */
   operator?: OperatorType | OperatorString;
 
-  /** Filter search terms  */
+  /** Filter search terms */
   searchTerms?: SearchTerm[];
 }
