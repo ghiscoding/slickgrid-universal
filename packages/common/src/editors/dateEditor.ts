@@ -21,16 +21,9 @@ import {
   SlickGrid,
   SlickNamespace,
 } from './../interfaces/index';
-import {
-  createDomElement,
-  destroyObjectDomElementProps,
-  emptyElement,
-} from '../services/domUtilities';
-import {
-  getDescendantProperty,
-  mapFlatpickrDateFormatWithFieldType,
-  mapMomentDateFormatWithFieldType,
-} from './../services/utilities';
+import { getEditorOptionByName } from './editorUtilities';
+import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
+import { getDescendantProperty, mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, } from './../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { TranslaterService } from '../services/translater.service';
 
@@ -170,7 +163,7 @@ export class DateEditor implements Editor {
       this._editorInputGroupElm.appendChild(this._inputElm);
 
       // show clear date button (unless user specifically doesn't want it)
-      if (!this.columnEditor?.params?.hideClearButton) {
+      if (!getEditorOptionByName<FlatpickrOption, 'hideClearButton'>(this.columnEditor, 'hideClearButton')) {
         closeButtonGroupElm.appendChild(this._clearButtonElm);
         this._editorInputGroupElm.appendChild(closeButtonGroupElm);
         this._bindEventService.bind(this._clearButtonElm, 'click', () => this._lastTriggeredByClearDate = true);
@@ -237,7 +230,7 @@ export class DateEditor implements Editor {
    * @param {string} optionName - Flatpickr option name
    * @param {newValue} newValue - Flatpickr new option value
    */
-  changeEditorOption(optionName: keyof FlatpickrOption, newValue: any) {
+  changeEditorOption(optionName: keyof FlatpickrBaseOptions, newValue: any) {
     if (!this.columnEditor.editorOptions) {
       this.columnEditor.editorOptions = {};
     }

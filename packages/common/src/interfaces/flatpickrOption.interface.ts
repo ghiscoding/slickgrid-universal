@@ -76,6 +76,9 @@ export interface FlatpickrOption {
   /** Allows using a custom date formatting function instead of the built-in handling for date formats using dateFormat, altFormat, etc. */
   formatDate?: (dateObj: Date, format: string, locale: Locale) => string;
 
+  /** defaults to false, do we want to hide the clear date button? */
+  hideClearButton?: boolean;
+
   /** defaults to 1, adjusts the step for the hour input (incl. scrolling) */
   hourIncrement?: number;
 

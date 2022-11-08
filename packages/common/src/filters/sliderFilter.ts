@@ -13,6 +13,7 @@ import {
   OperatorDetail,
   SlickGrid,
   SlickNamespace,
+  SliderOption,
   SliderRangeOption,
   SliderType,
 } from '../interfaces/index';
@@ -20,7 +21,7 @@ import { BindingEventService } from '../services/bindingEvent.service';
 import { createDomElement, emptyElement } from '../services/domUtilities';
 import { TranslaterService } from '../services/translater.service';
 import { mapOperatorToShorthandDesignation } from '../services/utilities';
-import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
+import { buildSelectOperator, compoundOperatorNumeric, getFilterOptionByName } from './filterUtilities';
 
 declare const Slick: SlickNamespace;
 const DEFAULT_SLIDER_TRACK_FILLED_COLOR = '#86bff8';
@@ -56,11 +57,6 @@ export class SliderFilter implements Filter {
 
   constructor(protected readonly translaterService: TranslaterService) {
     this._bindEventService = new BindingEventService();
-  }
-
-  /** @deprecated Getter for the Filter Generic Params */
-  protected get filterParams(): any {
-    return this.columnDef?.filter?.params ?? {};
   }
 
   /** Getter for the Column Filter */
@@ -133,8 +129,8 @@ export class SliderFilter implements Filter {
       this._clearFilterTriggered = true;
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
-      const lowestValue = +(this.getFilterOptionByName('sliderStartValue') ?? Constants.SLIDER_DEFAULT_MIN_VALUE) as number;
-      const highestValue = +(this.getFilterOptionByName('sliderEndValue') ?? Constants.SLIDER_DEFAULT_MAX_VALUE) as number;
+      const lowestValue = +(getFilterOptionByName<SliderRangeOption, 'sliderStartValue'>(this.columnFilter, 'sliderStartValue') ?? Constants.SLIDER_DEFAULT_MIN_VALUE) as number;
+      const highestValue = +(getFilterOptionByName<SliderRangeOption, 'sliderEndValue'>(this.columnFilter, 'sliderEndValue') ?? Constants.SLIDER_DEFAULT_MAX_VALUE) as number;
 
       if (this.sliderType === 'double') {
         if (this._sliderLeftElm) {
@@ -158,7 +154,7 @@ export class SliderFilter implements Filter {
         this._sliderRightElm?.dispatchEvent(new Event('change'));
       }
 
-      const hideSliderNumbers = this.getFilterOptionByName('hideSliderNumber') ?? this.getFilterOptionByName('hideSliderNumbers');
+      const hideSliderNumbers = getFilterOptionByName<SliderOption, 'hideSliderNumber'>(this.columnFilter, 'hideSliderNumber') ?? getFilterOptionByName<SliderRangeOption, 'hideSliderNumbers'>(this.columnFilter, 'hideSliderNumbers');
       if (!hideSliderNumbers) {
         if (this.sliderType === 'double') {
           this.renderSliderValues(lowestValue, highestValue);
@@ -224,7 +220,7 @@ export class SliderFilter implements Filter {
         this._sliderRightElm.value = typeof values === 'string' ? values : `${term1}`;
         this.renderSliderValues(undefined, this._sliderRightElm.value);
       } else if (Array.isArray(sliderVals) && sliderVals.length === 2) {
-        if (!this.getFilterOptionByName('hideSliderNumbers')) {
+        if (!getFilterOptionByName<SliderRangeOption, 'hideSliderNumbers'>(this.columnFilter, 'hideSliderNumbers')) {
           const [lowestValue, highestValue] = sliderVals;
           if (this._sliderLeftElm) {
             this._sliderLeftElm.value = String(lowestValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE);
@@ -269,8 +265,8 @@ export class SliderFilter implements Filter {
     const step = +(this.columnFilter?.valueStep ?? Constants.SLIDER_DEFAULT_STEP);
     emptyElement(this._argFilterContainerElm);
 
-    const defaultStartValue = +((Array.isArray(searchTerms) && searchTerms?.[0]) ?? this.getFilterOptionByName('sliderStartValue') ?? minValue);
-    const defaultEndValue = +((Array.isArray(searchTerms) && searchTerms?.[1]) ?? this.getFilterOptionByName('sliderEndValue') ?? maxValue);
+    const defaultStartValue = +((Array.isArray(searchTerms) && searchTerms?.[0]) ?? getFilterOptionByName<SliderRangeOption, 'sliderStartValue'>(this.columnFilter, 'sliderStartValue') ?? minValue);
+    const defaultEndValue = +((Array.isArray(searchTerms) && searchTerms?.[1]) ?? getFilterOptionByName<SliderRangeOption, 'sliderEndValue'>(this.columnFilter, 'sliderEndValue') ?? maxValue);
 
     this._sliderRangeContainElm = createDomElement('div', { className: `filter-input filter-${columnId} slider-input-container slider-values` });
     this._sliderRangeContainElm.title = this.sliderType === 'double' ? `${defaultStartValue} - ${defaultEndValue}` : `${defaultStartValue}`;
@@ -306,7 +302,7 @@ export class SliderFilter implements Filter {
     });
 
     // put all DOM elements together to create the final Slider
-    const hideSliderNumbers = this.getFilterOptionByName('hideSliderNumber') ?? this.getFilterOptionByName('hideSliderNumbers');
+    const hideSliderNumbers = getFilterOptionByName<SliderOption, 'hideSliderNumber'>(this.columnFilter, 'hideSliderNumber') ?? getFilterOptionByName<SliderRangeOption, 'hideSliderNumbers'>(this.columnFilter, 'hideSliderNumbers');
     const sliderNumberClass = hideSliderNumbers ? '' : 'input-group';
     this._divContainerFilterElm = createDomElement('div', { className: `${sliderNumberClass} search-filter slider-container slider-values filter-${columnId}`.trim() });
 
@@ -351,7 +347,7 @@ export class SliderFilter implements Filter {
       this._divContainerFilterElm.classList.add('filled');
       this._currentValue = defaultStartValue;
     }
-    if (this.getFilterOptionByName('sliderStartValue') !== undefined || this.columnFilter?.minValue !== undefined) {
+    if (getFilterOptionByName<SliderRangeOption, 'sliderStartValue'>(this.columnFilter, 'sliderStartValue') !== undefined || this.columnFilter?.minValue !== undefined) {
       this._currentValue = defaultStartValue;
     }
 
@@ -434,27 +430,12 @@ export class SliderFilter implements Filter {
     this._sliderRightElm?.classList[addRemoveCmd]('focus');
   }
 
-  /**
-   * Get option from filter.params PR filter.filterOptions
-   * @deprecated this should be removed when slider filterParams are replaced by filterOptions
-   */
-  protected getFilterOptionByName<T extends string | number | boolean>(optionName: string, defaultValue?: string | number | boolean): T {
-    let outValue: string | number | boolean | undefined;
-    if (this.columnFilter.filterOptions?.[optionName as keyof SliderRangeOption] !== undefined) {
-      outValue = this.columnFilter.filterOptions[optionName as keyof SliderRangeOption];
-    } else if (this.filterParams?.[optionName] !== undefined) {
-      console.warn('[Slickgrid-Universal] All filter.params were moved, and deprecated, to "filterOptions" as SliderOption for better typing support.');
-      outValue = this.filterParams?.[optionName];
-    }
-    return outValue as T ?? defaultValue ?? undefined;
-  }
-
   protected slideLeftInputChanged() {
     const sliderLeftVal = parseInt(this._sliderLeftElm?.value ?? '', 10);
     const sliderRightVal = parseInt(this._sliderRightElm?.value ?? '', 10);
 
-    if (this._sliderLeftElm && sliderRightVal - sliderLeftVal <= this.getFilterOptionByName<number>('stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES)) {
-      this._sliderLeftElm.value = String(sliderLeftVal - this.getFilterOptionByName<number>('stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES));
+    if (this._sliderLeftElm && sliderRightVal - sliderLeftVal <= getFilterOptionByName<SliderRangeOption, 'stopGapBetweenSliderHandles'>(this.columnFilter, 'stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES)!) {
+      this._sliderLeftElm.value = String(sliderLeftVal - getFilterOptionByName<SliderRangeOption, 'stopGapBetweenSliderHandles'>(this.columnFilter, 'stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES)!);
     }
 
     this._sliderRangeContainElm.title = this.sliderType === 'double' ? `${sliderLeftVal} - ${sliderRightVal}` : `${sliderRightVal}`;
@@ -474,7 +455,7 @@ export class SliderFilter implements Filter {
 
     this.updateTrackFilledColorWhenEnabled();
     this.changeBothSliderFocuses(true);
-    const hideSliderNumbers = this.getFilterOptionByName('hideSliderNumber') ?? this.getFilterOptionByName('hideSliderNumbers');
+    const hideSliderNumbers = getFilterOptionByName<SliderOption, 'hideSliderNumber'>(this.columnFilter, 'hideSliderNumber') ?? getFilterOptionByName<SliderRangeOption, 'hideSliderNumbers'>(this.columnFilter, 'hideSliderNumbers');
     if (!hideSliderNumbers && this._leftSliderNumberElm?.textContent) {
       this._leftSliderNumberElm.textContent = this._sliderLeftElm?.value ?? '';
     }
@@ -484,15 +465,15 @@ export class SliderFilter implements Filter {
     const sliderLeftVal = parseInt(this._sliderLeftElm?.value ?? '', 10);
     const sliderRightVal = parseInt(this._sliderRightElm?.value ?? '', 10);
 
-    if (this.sliderType === 'double' && this._sliderRightElm && sliderRightVal - sliderLeftVal <= this.getFilterOptionByName<number>('stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES)) {
-      this._sliderRightElm.value = String(sliderLeftVal + this.getFilterOptionByName<number>('stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES));
+    if (this.sliderType === 'double' && this._sliderRightElm && sliderRightVal - sliderLeftVal <= getFilterOptionByName<SliderRangeOption, 'stopGapBetweenSliderHandles'>(this.columnFilter, 'stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES)!) {
+      this._sliderRightElm.value = String(sliderLeftVal + getFilterOptionByName<SliderRangeOption, 'stopGapBetweenSliderHandles'>(this.columnFilter, 'stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES)!);
     }
 
     this.updateTrackFilledColorWhenEnabled();
     this.changeBothSliderFocuses(true);
     this._sliderRangeContainElm.title = this.sliderType === 'double' ? `${sliderLeftVal} - ${sliderRightVal}` : `${sliderRightVal}`;
 
-    const hideSliderNumbers = this.getFilterOptionByName('hideSliderNumber') ?? this.getFilterOptionByName('hideSliderNumbers');
+    const hideSliderNumbers = getFilterOptionByName<SliderOption, 'hideSliderNumber'>(this.columnFilter, 'hideSliderNumber') ?? getFilterOptionByName<SliderRangeOption, 'hideSliderNumbers'>(this.columnFilter, 'hideSliderNumbers');
     if (!hideSliderNumbers && this._rightSliderNumberElm?.textContent) {
       this._rightSliderNumberElm.textContent = this._sliderRightElm?.value ?? '';
     }
@@ -524,7 +505,7 @@ export class SliderFilter implements Filter {
   }
 
   protected updateTrackFilledColorWhenEnabled() {
-    if (this.getFilterOptionByName('enableSliderTrackColoring') && this._sliderRightElm) {
+    if (getFilterOptionByName<SliderRangeOption, 'enableSliderTrackColoring'>(this.columnFilter, 'enableSliderTrackColoring') && this._sliderRightElm) {
       let percent1 = 0;
       if (this._sliderLeftElm) {
         percent1 = ((+this._sliderLeftElm.value - +this._sliderLeftElm.min) / (this.sliderOptions?.maxValue ?? 0 - +this._sliderLeftElm.min)) * 100;
@@ -532,7 +513,7 @@ export class SliderFilter implements Filter {
       const percent2 = ((+this._sliderRightElm.value - +this._sliderRightElm.min) / (this.sliderOptions?.maxValue ?? 0 - +this._sliderRightElm.min)) * 100;
       const bg = 'linear-gradient(to right, %b %p1, %c %p1, %c %p2, %b %p2)'
         .replace(/%b/g, '#eee')
-        .replace(/%c/g, this.getFilterOptionByName('sliderTrackFilledColor') || this._sliderTrackFilledColor || DEFAULT_SLIDER_TRACK_FILLED_COLOR)
+        .replace(/%c/g, getFilterOptionByName<SliderRangeOption, 'sliderTrackFilledColor'>(this.columnFilter, 'sliderTrackFilledColor') || this._sliderTrackFilledColor || DEFAULT_SLIDER_TRACK_FILLED_COLOR)
         .replace(/%p1/g, `${percent1}%`)
         .replace(/%p2/g, `${percent2}%`);
 
