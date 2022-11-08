@@ -17,6 +17,9 @@ export interface AutocompleterOption<T extends AutocompleteItem = any> extends P
   /** defaults to false, force the user to start typing a value in the search input */
   forceUserInput?: boolean;
 
+  /** defaults to false, do we want to hide the clear date button? */
+  hideClearButton?: boolean;
+
   /**
    * renderItem option is to simply provide a Template and decide which custom Layout to use
    *

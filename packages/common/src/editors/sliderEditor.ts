@@ -1,7 +1,21 @@
 import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants';
-import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption, SlickGrid, SlickNamespace, SliderOption, CurrentSliderOption } from '../interfaces/index';
+import {
+  Column,
+  ColumnEditor,
+  CompositeEditorOption,
+  Editor,
+  EditorArguments,
+  EditorValidator,
+  EditorValidationResult,
+  GridOption,
+  SlickGrid,
+  SlickNamespace,
+  SliderOption,
+  CurrentSliderOption
+} from '../interfaces/index';
+import { getEditorOptionByName } from './editorUtilities';
 import { getDescendantProperty } from '../services/utilities';
 import { sliderValidator } from '../editorValidators/sliderValidator';
 import { BindingEventService } from '../services/bindingEvent.service';
@@ -71,11 +85,6 @@ export class SliderEditor implements Editor {
 
   get hasAutoCommitEdit(): boolean {
     return this.gridOptions.autoCommitEdit ?? false;
-  }
-
-  /** @deprecated Getter for the Editor Generic Params */
-  protected get editorParams(): any {
-    return this.columnEditor.params || {};
   }
 
   /** Getter for the current Slider Options */
@@ -308,7 +317,7 @@ export class SliderEditor implements Editor {
     const minValue = +(this.columnEditor?.minValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE);
     const maxValue = +(this.columnEditor?.maxValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE);
     const step = +(this.columnEditor?.valueStep ?? Constants.SLIDER_DEFAULT_STEP);
-    const defaultValue = this.getEditorOptionByName('sliderStartValue') ?? minValue;
+    const defaultValue = getEditorOptionByName<SliderOption, 'sliderStartValue'>(this.columnEditor, 'sliderStartValue') ?? minValue;
     this._defaultValue = +defaultValue;
 
     this._sliderTrackElm = createDomElement('div', { className: 'slider-track' });
@@ -326,7 +335,7 @@ export class SliderEditor implements Editor {
     sliderInputContainerElm.appendChild(inputElm);
     divContainerElm.appendChild(sliderInputContainerElm);
 
-    if (!this.getEditorOptionByName('hideSliderNumber')) {
+    if (!getEditorOptionByName<SliderOption, 'hideSliderNumber'>(this.columnEditor, 'hideSliderNumber')) {
       divContainerElm.classList.add('input-group');
 
       const divGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-append slider-value' });
@@ -350,21 +359,6 @@ export class SliderEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  /**
-   * Get option from editor.params PR editor.editorOptions
-   * @deprecated this should be removed when slider editorParams are replaced by editorOptions
-   */
-  protected getEditorOptionByName<T extends string | number | boolean>(optionName: string, defaultValue?: string | number | boolean): T {
-    let outValue: string | number | boolean | undefined;
-    if (this.columnEditor.editorOptions?.[optionName as keyof SliderOption] !== undefined) {
-      outValue = this.columnEditor.editorOptions[optionName as keyof SliderOption];
-    } else if (this.editorParams?.[optionName] !== undefined) {
-      console.warn('[Slickgrid-Universal] All editor.params were moved, and deprecated, to "editorOptions" as SliderOption for better typing support.');
-      outValue = this.editorParams?.[optionName];
-    }
-    return outValue as T ?? defaultValue ?? undefined;
-  }
-
   protected handleChangeEvent(event: MouseEvent) {
     this._isValueTouched = true;
     const compositeEditorOptions = this.args.compositeEditorOptions;
@@ -379,7 +373,7 @@ export class SliderEditor implements Editor {
   protected handleChangeSliderNumber(event: Event) {
     const value = (<HTMLInputElement>event.target)?.value ?? '';
     if (value !== '') {
-      if (!this.getEditorOptionByName('hideSliderNumber') && this._sliderNumberElm) {
+      if (!getEditorOptionByName<SliderOption, 'hideSliderNumber'>(this.columnEditor, 'hideSliderNumber') && this._sliderNumberElm) {
         this._sliderNumberElm.textContent = value;
       }
       this._inputElm.title = value;
@@ -426,12 +420,12 @@ export class SliderEditor implements Editor {
   }
 
   protected updateTrackFilledColorWhenEnabled() {
-    if (this.getEditorOptionByName('enableSliderTrackColoring') && this._inputElm) {
+    if (getEditorOptionByName<SliderOption, 'enableSliderTrackColoring'>(this.columnEditor, 'enableSliderTrackColoring') && this._inputElm) {
       const percent1 = 0;
       const percent2 = ((+this.getValue() - +this._inputElm.min) / (this.sliderOptions?.maxValue ?? 0 - +this._inputElm.min)) * 100;
       const bg = 'linear-gradient(to right, %b %p1, %c %p1, %c %p2, %b %p2)'
         .replace(/%b/g, '#eee')
-        .replace(/%c/g, (this.getEditorOptionByName('sliderTrackFilledColor') ?? 'var(--slick-slider-filter-thumb-color, #86bff8)') as string)
+        .replace(/%c/g, (getEditorOptionByName<SliderOption, 'sliderTrackFilledColor'>(this.columnEditor, 'sliderTrackFilledColor') ?? 'var(--slick-slider-filter-thumb-color, #86bff8)') as string)
         .replace(/%p1/g, `${percent1}%`)
         .replace(/%p2/g, `${percent2}%`);
 

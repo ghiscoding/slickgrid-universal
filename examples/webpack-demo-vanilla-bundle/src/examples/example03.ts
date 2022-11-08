@@ -141,7 +141,7 @@ export class Example3 {
           model: Editors.slider,
           minValue: 0,
           maxValue: 100,
-          // params: { hideSliderNumber: true },
+          // editorOptions: { hideSliderNumber: true } as SliderOption,
         },
         sortable: true, filterable: true,
         filter: { model: Filters.slider, operator: '>=' },

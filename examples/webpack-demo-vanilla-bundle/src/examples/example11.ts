@@ -20,6 +20,7 @@ import {
   // utilities
   deepCopy,
   formatNumber,
+  SliderOption,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickerGridInstance, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -156,7 +157,7 @@ export class Example11 {
       },
       {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number, minWidth: 80,
-        editor: { model: Editors.slider, massUpdate: true, minValue: 0, maxValue: 100, params: { hideSliderNumber: true } },
+        editor: { model: Editors.slider, massUpdate: true, minValue: 0, maxValue: 100, editorOptions: { hideSliderNumber: true } as SliderOption },
         sortable: true, filterable: true,
         filter: { model: Filters.slider, operator: '>=' },
       },

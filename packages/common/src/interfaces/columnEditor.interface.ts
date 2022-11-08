@@ -157,7 +157,7 @@ export interface ColumnEditor {
    * Use "params" to pass any type of arguments to your Custom Editor
    * or regular Editor like the Editors.float
    * for example, if we don't want the slider number we could write
-   * params: { hideSliderNumber: true }
+   * params: { decimalPlaces: 2 }
    */
   params?: any;
 }

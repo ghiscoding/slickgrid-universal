@@ -98,6 +98,7 @@ export * from './headerMenuItems.interface';
 export * from './headerMenuOption.interface';
 export * from './hideColumnOption.interface';
 export * from './htmlElementPosition.interface';
+export * from './inputOption.interface';
 export * from './itemMetadata.interface';
 export * from './keyTitlePair.interface';
 export * from './locale.interface';
