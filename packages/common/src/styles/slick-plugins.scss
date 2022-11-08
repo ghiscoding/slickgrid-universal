@@ -1147,7 +1147,8 @@ input.flatpickr.form-control {
 
 .slider-input-container {
   position: relative;
-  width: 100%;
+  flex: 1 1 auto;
+  width: 1%;
   background-color: var(--slick-slider-filter-input-bgcolor, $slick-slider-filter-input-bgcolor);
 
   &.slider-values {
