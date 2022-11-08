@@ -7,6 +7,7 @@ import {
   EventNamingStyle,
   FieldType,
   Filters,
+  FlatpickrOption,
   Formatter,
   Formatters,
   GridOption,
@@ -211,7 +212,7 @@ export class Example14 {
         exportCustomFormatter: Formatters.dateUs,
         type: FieldType.date, outputType: FieldType.dateUs, saveOutputType: FieldType.dateUtc,
         filterable: true, filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date, params: { hideClearButton: false } },
+        editor: { model: Editors.date, editorOptions: { hideClearButton: false } as FlatpickrOption },
       },
       {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 75, maxWidth: 100,
