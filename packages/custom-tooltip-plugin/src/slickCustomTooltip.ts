@@ -220,7 +220,10 @@ export class SlickCustomTooltip {
     this.hideTooltip();
 
     if (event && this._grid) {
-      const cell = this._grid.getCellFromEvent(event);
+      // get cell only when it's possible (ie, Composite Editor will not be able to get cell and so it will never show any tooltip)
+      const targetClassName = (event?.target as HTMLDivElement)?.closest('.slick-cell')?.className;
+      const cell = (targetClassName && /l\d+/.exec(targetClassName || '')) ? this._grid.getCellFromEvent(event) : null;
+
       if (cell) {
         const item = this.dataView ? this.dataView.getItem(cell.row) : this._grid.getDataItem(cell.row);
         const columnDef = this._grid.getColumns()[cell.cell];

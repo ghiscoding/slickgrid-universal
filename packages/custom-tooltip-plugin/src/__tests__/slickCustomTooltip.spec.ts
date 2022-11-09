@@ -153,7 +153,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(getEditorLockMock, 'isActive').mockReturnValue(true);
     const cellNode = document.createElement('div');
     const editInput = document.createElement('input');
-    cellNode.className = 'slick-cell';
+    cellNode.className = 'slick-cell l2 r2';
     editInput.setAttribute('title', 'editing input tooltip text');
     cellNode.appendChild(editInput);
     const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
@@ -164,7 +164,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true });
-    gridStub.onMouseEnter.notify({ grid: gridStub });
+    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -177,7 +177,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(getEditorLockMock, 'isActive').mockReturnValue(true);
     const cellNode = document.createElement('div');
     const editInput = document.createElement('input');
-    cellNode.className = 'slick-cell';
+    cellNode.className = 'slick-cell l2 r2';
     editInput.setAttribute('title', 'editing input tooltip text 20');
     cellNode.appendChild(editInput);
     const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
@@ -188,7 +188,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: false, formatter: () => 'EDITING FORMATTER' });
-    gridStub.onMouseEnter.notify({ grid: gridStub });
+    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -199,7 +199,7 @@ describe('SlickCustomTooltip plugin', () => {
 
   it('should create a tooltip, with default positioning (down & leftAlign), when tooltip option has "useRegularTooltip" enabled', () => {
     const cellNode = document.createElement('div');
-    cellNode.className = 'slick-cell';
+    cellNode.className = 'slick-cell l2 r2';
     cellNode.setAttribute('title', 'tooltip text');
     const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
     jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
@@ -209,7 +209,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true });
-    gridStub.onMouseEnter.notify({ grid: gridStub });
+    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -220,7 +220,7 @@ describe('SlickCustomTooltip plugin', () => {
 
   it('should create a tooltip align on the right, when position is set to "right-align"', () => {
     const cellNode = document.createElement('div');
-    cellNode.className = 'slick-cell';
+    cellNode.className = 'slick-cell l2 r2';
     cellNode.setAttribute('title', 'tooltip text');
     const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
     jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
@@ -230,7 +230,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, position: 'right-align' });
-    gridStub.onMouseEnter.notify({ grid: gridStub });
+    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -243,7 +243,7 @@ describe('SlickCustomTooltip plugin', () => {
 
   it('should create a centered tooltip, when position is set to "center"', () => {
     const cellNode = document.createElement('div');
-    cellNode.className = 'slick-cell';
+    cellNode.className = 'slick-cell l2 r2';
     cellNode.setAttribute('title', 'tooltip text');
     const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
     jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
@@ -253,7 +253,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, position: 'center' });
-    gridStub.onMouseEnter.notify({ grid: gridStub });
+    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -266,7 +266,7 @@ describe('SlickCustomTooltip plugin', () => {
 
   it('should create a tooltip with truncated text when tooltip option has "useRegularTooltip" enabled and the tooltipt text is longer than that of "tooltipTextMaxLength"', () => {
     const cellNode = document.createElement('div');
-    cellNode.className = 'slick-cell';
+    cellNode.className = 'slick-cell l2 r2';
     cellNode.setAttribute('title', 'some very extra long tooltip text sentence');
     const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
     jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
@@ -276,7 +276,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, tooltipTextMaxLength: 23 });
-    gridStub.onMouseEnter.notify({ grid: gridStub });
+    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -287,7 +287,7 @@ describe('SlickCustomTooltip plugin', () => {
 
   it('should create a tooltip as regular tooltip with coming from text content when it is filled & also expect "hideTooltip" to be called after leaving the cell when "onHeaderMouseLeave" event is triggered', () => {
     const cellNode = document.createElement('div');
-    cellNode.className = 'slick-cell';
+    cellNode.className = 'slick-cell l2 r2';
     cellNode.textContent = 'some text content';
     cellNode.setAttribute('title', 'tooltip text');
     Object.defineProperty(cellNode, 'scrollWidth', { writable: true, configurable: true, value: 400 });
@@ -300,7 +300,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, maxWidth: 85 });
-    gridStub.onMouseEnter.notify({ grid: gridStub });
+    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -317,7 +317,7 @@ describe('SlickCustomTooltip plugin', () => {
 
   it('should create a tooltip as regular tooltip with truncated text when tooltip option has "useRegularTooltip" enabled and the tooltipt text is longer than that of "tooltipTextMaxLength"', () => {
     const cellNode = document.createElement('div');
-    cellNode.className = 'slick-cell';
+    cellNode.className = 'slick-cell l2 r2';
     cellNode.textContent = 'some very extra long tooltip text sentence';
     cellNode.setAttribute('title', 'tooltip text');
     Object.defineProperty(cellNode, 'scrollWidth', { writable: true, configurable: true, value: 400 });
@@ -330,7 +330,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, tooltipTextMaxLength: 23 });
-    gridStub.onMouseEnter.notify({ grid: gridStub });
+    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -341,7 +341,7 @@ describe('SlickCustomTooltip plugin', () => {
 
   it('should create a tooltip with only the tooltip formatter output when tooltip option has "useRegularTooltip" & "useRegularTooltipFromFormatterOnly" enabled and column definition has a regular formatter with a "title" attribute filled', () => {
     const cellNode = document.createElement('div');
-    cellNode.className = 'slick-cell';
+    cellNode.className = 'slick-cell l2 r2';
     cellNode.setAttribute('title', 'tooltip text');
     const mockColumns = [{ id: 'firstName', field: 'firstName', formatter: () => `<span title="formatter tooltip text">Hello World</span>` }] as Column[];
     jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
@@ -351,7 +351,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, useRegularTooltipFromFormatterOnly: true, maxHeight: 100 });
-    gridStub.onMouseEnter.notify({ grid: gridStub });
+    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -364,7 +364,7 @@ describe('SlickCustomTooltip plugin', () => {
   it('should throw an error when trying to create an async tooltip without "asyncPostFormatter" defined', () => {
     const consoleSpy = jest.spyOn(global.console, 'error').mockReturnValue();
     const cellNode = document.createElement('div');
-    cellNode.className = 'slick-cell';
+    cellNode.className = 'slick-cell l2 r2';
     const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
     jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
@@ -379,14 +379,14 @@ describe('SlickCustomTooltip plugin', () => {
       formatter: () => 'loading...',
       asyncPostFormatter: undefined
     });
-    gridStub.onMouseEnter.notify({ grid: gridStub });
+    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
 
     expect(consoleSpy).toHaveBeenCalledWith(`[Slickgrid-Universal] when using "asyncProcess" with Custom Tooltip, you must also provide an "asyncPostFormatter" formatter.`);
   });
 
   it('should create an Observable async tooltip', (done) => {
     const cellNode = document.createElement('div');
-    cellNode.className = 'slick-cell';
+    cellNode.className = 'slick-cell l2 r2';
     const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
     jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
@@ -400,7 +400,7 @@ describe('SlickCustomTooltip plugin', () => {
       formatter: () => 'loading...',
       asyncPostFormatter: (row, cell, val, column, dataContext) => `async post text with ratio: ${dataContext.__params.ratio || ''}`,
     });
-    gridStub.onMouseEnter.notify({ grid: gridStub });
+    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
 
     let tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -416,7 +416,7 @@ describe('SlickCustomTooltip plugin', () => {
 
   it('should create an Observable async tooltip and throw an error when the Observable is throwing', (done) => {
     const cellNode = document.createElement('div');
-    cellNode.className = 'slick-cell';
+    cellNode.className = 'slick-cell l2 r2';
     const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
     jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
@@ -431,7 +431,7 @@ describe('SlickCustomTooltip plugin', () => {
       formatter: () => 'loading...',
       asyncPostFormatter: (row, cell, val, column, dataContext) => `async post text with ratio: ${dataContext.__params.ratio || ''}`,
     });
-    gridStub.onMouseEnter.notify({ grid: gridStub });
+    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
 
     let tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -445,7 +445,7 @@ describe('SlickCustomTooltip plugin', () => {
 
   it('should create a Promise async tooltip with position (up & right align) when space is not available on the right of the tooltip', (done) => {
     const cellNode = document.createElement('div');
-    cellNode.className = 'slick-cell';
+    cellNode.className = 'slick-cell l2 r2';
     const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
     jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
@@ -461,7 +461,7 @@ describe('SlickCustomTooltip plugin', () => {
       asyncProcess: () => Promise.resolve({ ratio: 1.2 }),
       asyncPostFormatter: (row, cell, val, column, dataContext) => `async post text with ratio: ${dataContext.__params.ratio || ''}`,
     });
-    gridStub.onMouseEnter.notify({ grid: gridStub });
+    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
 
     let tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     jest.spyOn(tooltipElm, 'getBoundingClientRect').mockReturnValue({ top: 22, left: 11, height: 100, width: 250 } as any);
@@ -484,7 +484,7 @@ describe('SlickCustomTooltip plugin', () => {
 
   it('should create a Promise async tooltip even on regular tooltip with "asyncProcess" and "useRegularTooltip" flags', (done) => {
     const cellNode = document.createElement('div');
-    cellNode.className = 'slick-cell';
+    cellNode.className = 'slick-cell l2 r2';
     const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
     jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
@@ -499,7 +499,7 @@ describe('SlickCustomTooltip plugin', () => {
       asyncProcess: () => Promise.resolve({ ratio: 1.2 }),
       asyncPostFormatter: (row, cell, val, column, dataContext) => `<span title="tooltip title text with ratio: ${dataContext.__params.ratio || ''}">cell value</span>`,
     });
-    gridStub.onMouseEnter.notify({ grid: gridStub });
+    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
 
     let tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
 
@@ -516,7 +516,7 @@ describe('SlickCustomTooltip plugin', () => {
 
   it('should create a Promise async tooltip and throw an error when the Promise is not completing (rejected)', (done) => {
     const cellNode = document.createElement('div');
-    cellNode.className = 'slick-cell';
+    cellNode.className = 'slick-cell l2 r2';
     const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
     jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
@@ -529,7 +529,7 @@ describe('SlickCustomTooltip plugin', () => {
       formatter: () => 'loading...',
       asyncPostFormatter: (row, cell, val, column, dataContext) => `async post text with ratio: ${dataContext.__params.ratio || ''}`,
     });
-    gridStub.onMouseEnter.notify({ grid: gridStub });
+    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
     const cancellablePromise = plugin.cancellablePromise;
     let tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
