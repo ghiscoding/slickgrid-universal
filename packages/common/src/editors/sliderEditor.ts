@@ -380,10 +380,12 @@ export class SliderEditor implements Editor {
       this._inputElm.title = value;
 
       // trigger mouse enter event on the editor for optionally hooked SlickCustomTooltip
-      this.grid.onMouseEnter.notify(
-        { grid: this.grid },
-        { ...new Slick.EventData(), target: event?.target }
-      );
+      if (!this.args?.compositeEditorOptions) {
+        this.grid.onMouseEnter.notify(
+          { grid: this.grid },
+          { ...new Slick.EventData(), target: event?.target }
+        );
+      }
     }
     this.updateTrackFilledColorWhenEnabled();
   }
