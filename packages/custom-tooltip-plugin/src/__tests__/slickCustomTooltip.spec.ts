@@ -19,11 +19,16 @@ const dataviewStub = {
   getItem: jest.fn(),
 } as unknown as SlickDataView;
 
+const getEditorLockMock = {
+  isActive: jest.fn(),
+};
+
 const gridStub = {
   getCellFromEvent: jest.fn(),
   getCellNode: jest.fn(),
   getColumns: jest.fn(),
   getData: () => dataviewStub,
+  getEditorLock: () => getEditorLockMock,
   getOptions: () => gridOptionsMock,
   getUID: () => GRID_UID,
   registerPlugin: jest.fn(),
@@ -142,6 +147,54 @@ describe('SlickCustomTooltip plugin', () => {
     gridStub.onMouseEnter.notify({ grid: gridStub });
 
     expect(document.body.querySelector('.slick-custom-tooltip')).toBeFalsy();
+  });
+
+  it('should create a tooltip and the editor [title] attribute instead of the cell [title] when currently editing (editor lock)', () => {
+    jest.spyOn(getEditorLockMock, 'isActive').mockReturnValue(true);
+    const cellNode = document.createElement('div');
+    const editInput = document.createElement('input');
+    cellNode.className = 'slick-cell';
+    editInput.setAttribute('title', 'editing input tooltip text');
+    cellNode.appendChild(editInput);
+    const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: true });
+    gridStub.onMouseEnter.notify({ grid: gridStub });
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeTruthy();
+    expect(tooltipElm.textContent).toBe('editing input tooltip text');
+    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
+    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
+  });
+
+  it('should create a tooltip from the editor [title] attribute and a formatter instead of the cell [title] when currently editing (editor lock) and a formatter is provided', () => {
+    jest.spyOn(getEditorLockMock, 'isActive').mockReturnValue(true);
+    const cellNode = document.createElement('div');
+    const editInput = document.createElement('input');
+    cellNode.className = 'slick-cell';
+    editInput.setAttribute('title', 'editing input tooltip text 20');
+    cellNode.appendChild(editInput);
+    const mockColumns = [{ id: 'firstName', field: 'firstName', }] as Column[];
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: false, formatter: () => 'EDITING FORMATTER' });
+    gridStub.onMouseEnter.notify({ grid: gridStub });
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeTruthy();
+    expect(tooltipElm.textContent).toBe('EDITING FORMATTER');
+    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
+    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 
   it('should create a tooltip, with default positioning (down & leftAlign), when tooltip option has "useRegularTooltip" enabled', () => {

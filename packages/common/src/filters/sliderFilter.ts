@@ -418,10 +418,10 @@ export class SliderFilter implements Filter {
 
     // trigger mouse enter event on the filter for optionally hooked SlickCustomTooltip
     // the minimum requirements for tooltip to work are the columnDef and targetElement
-    setTimeout(() => this.grid.onHeaderRowMouseEnter.notify(
+    this.grid.onHeaderRowMouseEnter.notify(
       { column: this.columnDef, grid: this.grid },
       { ...new Slick.EventData(), target: this._argFilterContainerElm }
-    ));
+    );
   }
 
   protected changeBothSliderFocuses(isAddingFocus: boolean) {
@@ -438,8 +438,6 @@ export class SliderFilter implements Filter {
       this._sliderLeftElm.value = String(sliderLeftVal - getFilterOptionByName<SliderRangeOption, 'stopGapBetweenSliderHandles'>(this.columnFilter, 'stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES)!);
     }
 
-    this._sliderRangeContainElm.title = this.sliderType === 'double' ? `${sliderLeftVal} - ${sliderRightVal}` : `${sliderRightVal}`;
-
     // change which handle has higher z-index to make them still usable,
     // ie when left handle reaches the end, it has to have higher z-index or else it will be stuck below
     // and we cannot move right because it cannot go below min value
@@ -453,12 +451,7 @@ export class SliderFilter implements Filter {
       }
     }
 
-    this.updateTrackFilledColorWhenEnabled();
-    this.changeBothSliderFocuses(true);
-    const hideSliderNumbers = getFilterOptionByName<SliderOption, 'hideSliderNumber'>(this.columnFilter, 'hideSliderNumber') ?? getFilterOptionByName<SliderRangeOption, 'hideSliderNumbers'>(this.columnFilter, 'hideSliderNumbers');
-    if (!hideSliderNumbers && this._leftSliderNumberElm?.textContent) {
-      this._leftSliderNumberElm.textContent = this._sliderLeftElm?.value ?? '';
-    }
+    this.sliderLeftOrRightChanged(sliderLeftVal, sliderRightVal);
   }
 
   protected slideRightInputChanged() {
@@ -469,6 +462,10 @@ export class SliderFilter implements Filter {
       this._sliderRightElm.value = String(sliderLeftVal + getFilterOptionByName<SliderRangeOption, 'stopGapBetweenSliderHandles'>(this.columnFilter, 'stopGapBetweenSliderHandles', GAP_BETWEEN_SLIDER_HANDLES)!);
     }
 
+    this.sliderLeftOrRightChanged(sliderLeftVal, sliderRightVal);
+  }
+
+  protected sliderLeftOrRightChanged(sliderLeftVal: number, sliderRightVal: number) {
     this.updateTrackFilledColorWhenEnabled();
     this.changeBothSliderFocuses(true);
     this._sliderRangeContainElm.title = this.sliderType === 'double' ? `${sliderLeftVal} - ${sliderRightVal}` : `${sliderRightVal}`;
@@ -477,6 +474,12 @@ export class SliderFilter implements Filter {
     if (!hideSliderNumbers && this._rightSliderNumberElm?.textContent) {
       this._rightSliderNumberElm.textContent = this._sliderRightElm?.value ?? '';
     }
+
+    // also trigger mouse enter event on the filter in case a SlickCustomTooltip is attached
+    this.grid.onHeaderRowMouseEnter.notify(
+      { column: this.columnDef, grid: this.grid },
+      { ...new Slick.EventData(), target: this._argFilterContainerElm }
+    );
   }
 
   protected sliderTrackClicked(e: MouseEvent) {

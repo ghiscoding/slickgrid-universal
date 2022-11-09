@@ -33,6 +33,7 @@ export class SliderEditor implements Editor {
   protected _defaultValue = 0;
   protected _isValueTouched = false;
   protected _originalValue?: number | string;
+  protected _cellContainerElm!: HTMLDivElement;
   protected _editorElm!: HTMLDivElement;
   protected _inputElm!: HTMLInputElement;
   protected _sliderOptions!: CurrentSliderOption;
@@ -98,9 +99,9 @@ export class SliderEditor implements Editor {
   }
 
   init(): void {
-    const container = this.args && this.args.container;
+    this._cellContainerElm = this.args?.container;
 
-    if (container && this.columnDef) {
+    if (this._cellContainerElm && this.columnDef) {
       // define the input & slider number IDs
       const compositeEditorOptions = this.args.compositeEditorOptions;
 
@@ -113,7 +114,7 @@ export class SliderEditor implements Editor {
       }
 
       // watch on change event
-      container.appendChild(this._editorElm);
+      this._cellContainerElm.appendChild(this._editorElm);
       this._bindEventService.bind(this._sliderTrackElm, ['click', 'mouseup'], this.sliderTrackClicked.bind(this) as EventListener);
       this._bindEventService.bind(this._editorElm, ['change', 'mouseup', 'touchend'], this.handleChangeEvent.bind(this) as EventListener);
 
@@ -313,7 +314,7 @@ export class SliderEditor implements Editor {
    */
   protected buildDomElement(): HTMLDivElement {
     const columnId = this.columnDef?.id ?? '';
-    const title = this.columnEditor && this.columnEditor.title || '';
+    const title = this.columnEditor?.title ?? '';
     const minValue = +(this.columnEditor?.minValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE);
     const maxValue = +(this.columnEditor?.maxValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE);
     const step = +(this.columnEditor?.valueStep ?? Constants.SLIDER_DEFAULT_STEP);
@@ -377,6 +378,12 @@ export class SliderEditor implements Editor {
         this._sliderNumberElm.textContent = value;
       }
       this._inputElm.title = value;
+
+      // trigger mouse enter event on the editor for optionally hooked SlickCustomTooltip
+      this.grid.onMouseEnter.notify(
+        { grid: this.grid },
+        { ...new Slick.EventData(), target: event?.target }
+      );
     }
     this.updateTrackFilledColorWhenEnabled();
   }

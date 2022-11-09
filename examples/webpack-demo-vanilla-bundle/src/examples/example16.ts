@@ -8,6 +8,7 @@ import {
   GridOption,
   OperatorType,
   SliderOption,
+  SliderRangeOption,
 } from '@slickgrid-universal/common';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
@@ -154,8 +155,8 @@ export class Example16 {
         exportWithFormatter: false,
         formatter: Formatters.percentCompleteBar,
         sortable: true, filterable: true,
-        filter: { model: Filters.sliderRange, operator: '>=' },
-        customTooltip: { useRegularTooltip: true, position: 'center' },
+        filter: { model: Filters.sliderRange, operator: '>=', filterOptions: { hideSliderNumbers: true } as SliderRangeOption },
+        customTooltip: { position: 'center', formatter: (row, cell, value) => `${value}%`, headerFormatter: null, headerRowFormatter: null },
       },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true,

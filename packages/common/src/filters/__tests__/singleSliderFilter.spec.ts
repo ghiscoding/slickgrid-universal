@@ -83,9 +83,20 @@ describe('SingleSliderFilter', () => {
     const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
     filterElm.dispatchEvent(new Event('change'));
 
-    jest.runAllTimers(); // fast-forward timer
-
     expect(callbackSpy).toHaveBeenLastCalledWith(new Event('change'), { columnDef: mockColumn, operator: 'GE', searchTerms: [2], shouldTriggerQuery: true });
+    expect(rowMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
+  });
+
+  it('should trigger an slider input change event and expect slider value to be updated and also "onHeaderRowMouseEnter" to be notified', () => {
+    const rowMouseEnterSpy = jest.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+
+    filter.init(filterArgs);
+    filter.setValues(['2']);
+    const filterNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
+    const filterElm = divContainer.querySelector('.input-group.search-filter.filter-duration input') as HTMLInputElement;
+    filterElm.dispatchEvent(new Event('input'));
+
+    expect(filterNumberElm.textContent).toBe('2');
     expect(rowMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
   });
 

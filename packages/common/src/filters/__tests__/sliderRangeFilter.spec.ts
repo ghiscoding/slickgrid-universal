@@ -102,9 +102,23 @@ describe('SliderRangeFilter', () => {
     const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
     filterElms[0].dispatchEvent(new CustomEvent('change'));
 
-    jest.runAllTimers(); // fast-forward timer
-
     expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: [2, 80], shouldTriggerQuery: true });
+    expect(rowMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
+  });
+
+  it('should trigger an slider input change event and expect slider value to be updated and also "onHeaderRowMouseEnter" to be notified', () => {
+    const rowMouseEnterSpy = jest.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+
+    filter.init(filterArguments);
+    filter.setValues([2, 80]);
+    const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
+    filterElms[0].dispatchEvent(new CustomEvent('input'));
+
+    const filterLowestElm = divContainer.querySelector('.lowest-range-duration') as HTMLInputElement;
+    const filterHighestElm = divContainer.querySelector('.highest-range-duration') as HTMLInputElement;
+
+    expect(filterLowestElm.textContent).toBe('2');
+    expect(filterHighestElm.textContent).toBe('80');
     expect(rowMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
   });
 
