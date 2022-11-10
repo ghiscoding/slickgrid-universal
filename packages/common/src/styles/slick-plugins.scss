@@ -971,6 +971,7 @@ input.flatpickr.form-control {
 
 .slider-container {
   display: flex;
+  height: 100%;
 
   input[type=range] {
     /*removes default webkit styles*/
@@ -1131,6 +1132,10 @@ input.flatpickr.form-control {
     border-bottom-left-radius: var(--slick-slider-filter-border-radius, $slick-slider-filter-border-radius);
     border-top-left-radius: var(--slick-slider-filter-border-radius, $slick-slider-filter-border-radius);
   }
+  .input-group-addon:last-child .input-group-text {
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+  }
 }
 
 .slider-editor {
@@ -1146,6 +1151,7 @@ input.flatpickr.form-control {
 }
 
 .slider-input-container {
+  height: 100%;
   position: relative;
   flex: 1 1 auto;
   width: 1%;
