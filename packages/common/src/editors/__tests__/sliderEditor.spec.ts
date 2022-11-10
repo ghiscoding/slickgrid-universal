@@ -30,6 +30,7 @@ const gridStub = {
   getOptions: () => gridOptionMock,
   render: jest.fn(),
   onBeforeEditCell: new Slick.Event(),
+  onMouseEnter: new Slick.Event(),
   onCompositeEditorChange: new Slick.Event(),
 } as unknown as SlickGrid;
 
@@ -215,6 +216,7 @@ describe('SliderEditor', () => {
     });
 
     it('should update slider number every time a change event happens on the input slider', () => {
+      const cellMouseEnterSpy = jest.spyOn(gridStub.onMouseEnter, 'notify');
       (mockColumn.internalColumnEditor as ColumnEditor).params = { hideSliderNumber: false };
       mockItemData = { id: 1, price: 32, isActive: true };
       editor = new SliderEditor(editorArguments);
@@ -229,6 +231,7 @@ describe('SliderEditor', () => {
 
       expect(editor.isValueChanged()).toBe(true);
       expect(editorNumberElm.textContent).toBe('13');
+      expect(cellMouseEnterSpy).toHaveBeenCalledWith({ grid: gridStub }, expect.anything());
     });
 
     describe('isValueChanged method', () => {

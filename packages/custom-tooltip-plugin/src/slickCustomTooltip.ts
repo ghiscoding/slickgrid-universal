@@ -220,7 +220,10 @@ export class SlickCustomTooltip {
     this.hideTooltip();
 
     if (event && this._grid) {
-      const cell = this._grid.getCellFromEvent(event);
+      // get cell only when it's possible (ie, Composite Editor will not be able to get cell and so it will never show any tooltip)
+      const targetClassName = (event?.target as HTMLDivElement)?.closest('.slick-cell')?.className;
+      const cell = (targetClassName && /l\d+/.exec(targetClassName || '')) ? this._grid.getCellFromEvent(event) : null;
+
       if (cell) {
         const item = this.dataView ? this.dataView.getItem(cell.row) : this._grid.getDataItem(cell.row);
         const columnDef = this._grid.getColumns()[cell.cell];
@@ -235,13 +238,16 @@ export class SlickCustomTooltip {
 
           const value = item.hasOwnProperty(columnDef.field) ? item[columnDef.field] : null;
 
+          // when cell is currently lock for editing, we'll force a tooltip title search
+          const cellValue = this._grid.getEditorLock().isActive() ? null : value;
+
           // when there aren't any formatter OR when user specifically want to use a regular tooltip (via "title" attribute)
           if ((this._cellAddonOptions.useRegularTooltip && !this._cellAddonOptions?.asyncProcess) || !this._cellAddonOptions?.formatter) {
-            this.renderRegularTooltip(columnDef.formatter, cell, value, columnDef, item);
+            this.renderRegularTooltip(columnDef.formatter, cell, cellValue, columnDef, item);
           } else {
             // when we aren't using regular tooltip and we do have a tooltip formatter, let's render it
             if (typeof this._cellAddonOptions?.formatter === 'function') {
-              this.renderTooltipFormatter(this._cellAddonOptions.formatter, cell, value, columnDef, item);
+              this.renderTooltipFormatter(this._cellAddonOptions.formatter, cell, cellValue, columnDef, item);
             }
 
             // when tooltip is an Async (delayed, e.g. with a backend API call)
@@ -342,6 +348,14 @@ export class SlickCustomTooltip {
     this._tooltipElm.classList.add(this.gridUid);
     this._tooltipElm.classList.add('l' + cell.cell);
     this._tooltipElm.classList.add('r' + cell.cell);
+
+    // when cell is currently lock for editing, we'll force a tooltip title search
+    // that can happen when user has a formatter but is currently editing and in that case we want the new value
+    // ie: when user is currently editing and uses the Slider, when dragging its value is changing, so we wish to use the editing value instead of the previous cell value.
+    if (value === null || value === undefined) {
+      const tmpTitleElm = this._cellNodeElm?.querySelector<HTMLDivElement>('[title], [data-slick-tooltip]');
+      value = findFirstElementAttribute(tmpTitleElm, ['title', 'data-slick-tooltip']) || value;
+    }
 
     let outputText = tooltipText || this.parseFormatterAndSanitize(formatter, cell, value, columnDef, item) || '';
     outputText = (this._cellAddonOptions?.tooltipTextMaxLength && outputText.length > this._cellAddonOptions.tooltipTextMaxLength) ? outputText.substring(0, this._cellAddonOptions.tooltipTextMaxLength - 3) + '...' : outputText;

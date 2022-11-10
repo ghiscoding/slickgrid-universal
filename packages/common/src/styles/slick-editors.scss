@@ -383,6 +383,7 @@
         }
       }
       .input-group {
+        display: flex;
         position: relative;
         height: var(--slick-editor-modal-input-editor-height, $slick-editor-modal-input-editor-height);
         input {
