@@ -223,14 +223,14 @@ describe('SliderEditor', () => {
       editor.loadValue(mockItemData);
       editor.setValue(17);
 
-      const editorElm = divContainer.querySelector('.slider-container.slider-editor') as HTMLDivElement;
+      const inputElm = divContainer.querySelector('.slider-editor-input.editor-price') as HTMLDivElement;
       const editorNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
       const mockEvent = new CustomEvent('change');
-      Object.defineProperty(mockEvent, 'target', { writable: true, configurable: true, value: { value: '13' } });
-      editorElm.dispatchEvent(mockEvent);
+      Object.defineProperty(mockEvent, 'target', { writable: true, configurable: true, value: { value: '17' } });
+      inputElm.dispatchEvent(mockEvent);
 
       expect(editor.isValueChanged()).toBe(true);
-      expect(editorNumberElm.textContent).toBe('13');
+      expect(editorNumberElm.textContent).toBe('17');
       expect(cellMouseEnterSpy).toHaveBeenCalledWith({ grid: gridStub }, expect.anything());
     });
 
@@ -489,7 +489,7 @@ describe('SliderEditor', () => {
       const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;
       editorElm.dispatchEvent(new Event('change'));
 
-      expect(editor.sliderOptions?.sliderTrackBackground).toBe('linear-gradient(to right, #eee 0%, var(--slick-slider-filter-thumb-color, #86bff8) 0%, var(--slick-slider-filter-thumb-color, #86bff8) 80%, #eee 80%)');
+      expect(editor.sliderOptions?.sliderTrackBackground).toBe('linear-gradient(to right, #eee 0%, var(--slick-slider-filter-thumb-color, #86bff8) 0%, var(--slick-slider-filter-thumb-color, #86bff8) 45%, #eee 45%)');
     });
 
     it('should click on the slider track and expect handle to move to the new position', () => {

@@ -38,7 +38,7 @@
   }
 
   .slider-editor {
-    height: var(--slick-slider-editor-height, $slick-slider-editor-height);
+    height: 100%;
     .slider-editor-input {
       height: var(--slick-slider-editor-height, $slick-slider-editor-height);
       &:focus {
