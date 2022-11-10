@@ -80,7 +80,7 @@ importers:
       clean-webpack-plugin: 4.0.0
       copy-webpack-plugin: ^11.0.0
       css-loader: ^6.7.1
-      dompurify: ^2.4.0
+      dompurify: ^2.4.1
       esbuild-loader: ^2.20.0
       file-loader: ^6.2.0
       flatpickr: ^4.6.13
@@ -115,7 +115,7 @@ importers:
       '@slickgrid-universal/vanilla-bundle': link:../../packages/vanilla-bundle
       '@slickgrid-universal/vanilla-force-bundle': link:../../packages/vanilla-force-bundle
       bulma: 0.9.4
-      dompurify: 2.4.0
+      dompurify: 2.4.1
       flatpickr: 4.6.13
       jquery: 3.6.1
       moment-mini: 2.29.4
@@ -149,11 +149,11 @@ importers:
     specifiers:
       '@types/dompurify': ^2.3.4
       cross-env: ^7.0.3
-      dompurify: ^2.4.0
+      dompurify: ^2.4.1
       npm-run-all2: ^6.0.4
       rimraf: ^3.0.2
     dependencies:
-      dompurify: 2.4.0
+      dompurify: 2.4.1
     devDependencies:
       '@types/dompurify': 2.3.4
       cross-env: 7.0.3
@@ -172,7 +172,7 @@ importers:
       copyfiles: ^2.4.1
       cross-env: ^7.0.3
       dequal: ^2.0.3
-      dompurify: ^2.4.0
+      dompurify: ^2.4.1
       flatpickr: ^4.6.13
       jquery: ^3.6.1
       moment-mini: ^2.29.4
@@ -191,7 +191,7 @@ importers:
       '@slickgrid-universal/utils': link:../utils
       autocompleter: 7.0.1
       dequal: 2.0.3
-      dompurify: 2.4.0
+      dompurify: 2.4.1
       flatpickr: 4.6.13
       jquery: 3.6.1
       moment-mini: 2.29.4
@@ -252,12 +252,12 @@ importers:
       '@slickgrid-universal/common': workspace:~
       '@types/dompurify': ^2.3.4
       cross-env: ^7.0.3
-      dompurify: ^2.4.0
+      dompurify: ^2.4.1
       npm-run-all2: ^6.0.4
       rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
-      dompurify: 2.4.0
+      dompurify: 2.4.1
     devDependencies:
       '@types/dompurify': 2.3.4
       cross-env: 7.0.3
@@ -4145,8 +4145,8 @@ packages:
       domelementtype: 2.3.0
     dev: true
 
-  /dompurify/2.4.0:
-    resolution: {integrity: sha512-Be9tbQMZds4a3C6xTmz68NlMfeONA//4dOavl/1rNw50E+/QO0KVpbcU0PcaW0nsQxurXls9ZocqFxk8R2mWEA==}
+  /dompurify/2.4.1:
+    resolution: {integrity: sha512-ewwFzHzrrneRjxzmK6oVz/rZn9VWspGFRDb4/rRtIsM1n36t9AKma/ye8syCpcw+XJ25kOK/hOG7t1j2I2yBqA==}
     dev: false
 
   /domutils/2.8.0:

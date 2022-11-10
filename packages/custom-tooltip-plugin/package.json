@@ -42,7 +42,7 @@
   ],
   "dependencies": {
     "@slickgrid-universal/common": "workspace:~",
-    "dompurify": "^2.4.0"
+    "dompurify": "^2.4.1"
   },
   "devDependencies": {
     "@types/dompurify": "^2.3.4",

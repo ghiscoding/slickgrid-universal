@@ -73,7 +73,7 @@
     "@slickgrid-universal/utils": "workspace:~",
     "autocompleter": "^7.0.1",
     "dequal": "^2.0.3",
-    "dompurify": "^2.4.0",
+    "dompurify": "^2.4.1",
     "flatpickr": "^4.6.13",
     "jquery": "^3.6.1",
     "moment-mini": "^2.29.4",
