@@ -107,7 +107,6 @@ export class SliderEditor implements Editor {
 
       // create HTML string template
       this._editorElm = this.buildDomElement();
-      this._inputElm = this._editorElm.querySelector('input') as HTMLInputElement;
 
       if (!compositeEditorOptions) {
         this.focus();
@@ -116,11 +115,11 @@ export class SliderEditor implements Editor {
       // watch on change event
       this._cellContainerElm.appendChild(this._editorElm);
       this._bindEventService.bind(this._sliderTrackElm, ['click', 'mouseup'], this.sliderTrackClicked.bind(this) as EventListener);
-      this._bindEventService.bind(this._editorElm, ['change', 'mouseup', 'touchend'], this.handleChangeEvent.bind(this) as EventListener);
+      this._bindEventService.bind(this._inputElm, ['change', 'mouseup', 'touchend'], this.handleChangeEvent.bind(this) as EventListener);
 
       // if user chose to display the slider number on the right side, then update it every time it changes
       // we need to use both "input" and "change" event to be all cross-browser
-      this._bindEventService.bind(this._editorElm, ['input', 'change'], this.handleChangeSliderNumber.bind(this));
+      this._bindEventService.bind(this._inputElm, ['input', 'change'], this.handleChangeSliderNumber.bind(this));
     }
   }
 
@@ -252,9 +251,11 @@ export class SliderEditor implements Editor {
    */
   reset(value?: number | string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
     const inputValue = value ?? this._originalValue ?? 0;
-    if (this._editorElm) {
-      this._editorElm.querySelector<HTMLInputElement>('input')!.value = `${inputValue}`;
-      this._editorElm.querySelector<HTMLInputElement>('div.input-group-addon.input-group-append')!.textContent = `${inputValue}`;
+    if (this._inputElm) {
+      this._inputElm.value = `${inputValue}`;
+    }
+    if (this._sliderNumberElm) {
+      this._sliderNumberElm.textContent = `${inputValue}`;
     }
     this._isValueTouched = false;
 
@@ -322,7 +323,7 @@ export class SliderEditor implements Editor {
     this._defaultValue = +defaultValue;
 
     this._sliderTrackElm = createDomElement('div', { className: 'slider-track' });
-    const inputElm = createDomElement('input', {
+    this._inputElm = createDomElement('input', {
       type: 'range', title,
       defaultValue: `${defaultValue}`, value: `${defaultValue}`, min: `${minValue}`, max: `${maxValue}`,
       step: `${this.columnEditor?.valueStep ?? Constants.SLIDER_DEFAULT_STEP}`,
@@ -333,7 +334,7 @@ export class SliderEditor implements Editor {
     const divContainerElm = createDomElement('div', { className: 'slider-container slider-editor' });
     const sliderInputContainerElm = createDomElement('div', { className: 'slider-input-container slider-editor' });
     sliderInputContainerElm.appendChild(this._sliderTrackElm);
-    sliderInputContainerElm.appendChild(inputElm);
+    sliderInputContainerElm.appendChild(this._inputElm);
     divContainerElm.appendChild(sliderInputContainerElm);
 
     if (!getEditorOptionByName<SliderOption, 'hideSliderNumber'>(this.columnEditor, 'hideSliderNumber')) {
