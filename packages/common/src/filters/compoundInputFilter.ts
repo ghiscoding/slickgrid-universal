@@ -1,5 +1,5 @@
-import { TranslaterService } from '../services';
 import { InputFilter } from './inputFilter';
+import { TranslaterService } from '../services';
 
 export class CompoundInputFilter extends InputFilter {
   /**
@@ -8,6 +8,6 @@ export class CompoundInputFilter extends InputFilter {
   constructor(protected readonly translaterService: TranslaterService) {
     super(translaterService);
     this.inputType = 'text';
-    super.inputFilterType = 'compound';
+    this.inputFilterType = 'compound';
   }
 }
