@@ -1,10 +1,11 @@
+import { InputFilter } from './inputFilter';
 import { TranslaterService } from '../services/translater.service';
-import { CompoundInputFilter } from './compoundInputFilter';
 
-export class CompoundInputPasswordFilter extends CompoundInputFilter {
+export class CompoundInputPasswordFilter extends InputFilter {
   /** Initialize the Filter */
   constructor(protected readonly translaterService: TranslaterService) {
     super(translaterService);
     this.inputType = 'password';
+    this.inputFilterType = 'compound';
   }
 }
