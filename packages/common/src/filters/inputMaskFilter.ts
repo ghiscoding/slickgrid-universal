@@ -44,19 +44,19 @@ export class InputMaskFilter extends InputFilter {
     const searchTerm = (Array.isArray(this.searchTerms) && this.searchTerms.length >= 0) ? this.searchTerms[0] : '';
 
     // step 1, create the DOM Element of the filter & initialize it if searchTerm is filled
-    this._filterElm = this.createDomFilterElement(searchTerm);
+    this.createDomFilterElement(searchTerm);
 
     // step 2, subscribe to the input event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
     // we'll use all necessary events to cover the following (keyup, change, mousewheel & spinner)
-    this._bindEventService.bind(this._filterElm, ['keyup', 'blur', 'change'], this.handleInputChange.bind(this));
+    this._bindEventService.bind(this._filterInputElm, ['keyup', 'blur', 'change'], this.onTriggerEvent.bind(this) as EventListener);
   }
 
   /**
    * Event handler to cover the following (keyup, change, mousewheel & spinner)
    * We will trigger the Filter Service callback from this handler
    */
-  protected handleInputChange(event: Event) {
+  protected onTriggerEvent(event: MouseEvent | KeyboardEvent | undefined) {
     let value = '';
     if ((event?.target as HTMLInputElement)?.value) {
       let targetValue = (event?.target as HTMLInputElement)?.value ?? '';
@@ -72,16 +72,16 @@ export class InputMaskFilter extends InputFilter {
       value = unmaskedValue;
 
       if ((event as KeyboardEvent)?.keyCode >= 48) {
-        this._filterElm.value = maskedValue; // replace filter string with masked string
-        event.preventDefault();
+        this._filterInputElm.value = maskedValue; // replace filter string with masked string
+        event!.preventDefault();
       }
     }
 
     if (this._clearFilterTriggered) {
       this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
-      this._filterElm.classList.remove('filled');
+      this._filterInputElm.classList.remove('filled');
     } else {
-      this._filterElm.classList.add('filled');
+      this._filterInputElm.classList.add('filled');
       this.callback(event, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery });
     }
     // reset both flags for next use
