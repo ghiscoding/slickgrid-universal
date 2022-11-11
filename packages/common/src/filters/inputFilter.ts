@@ -20,7 +20,6 @@ export class InputFilter implements Filter {
   protected _shouldTriggerQuery = true;
   protected _inputType = 'text';
   protected _timer?: NodeJS.Timeout;
-  protected _filterElm!: HTMLInputElement;
   protected _filterInputElm!: HTMLInputElement;
   grid!: SlickGrid;
   searchTerms: SearchTerm[] = [];
@@ -91,7 +90,7 @@ export class InputFilter implements Filter {
     const searchTerm = (Array.isArray(this.searchTerms) && this.searchTerms.length >= 0) ? this.searchTerms[0] : '';
 
     // step 1, create the DOM Element of the filter & initialize it if searchTerm is filled
-    this._filterElm = this.createDomFilterElement(searchTerm);
+    this.createDomFilterElement(searchTerm);
 
     // step 2, subscribe to the input event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
@@ -103,12 +102,11 @@ export class InputFilter implements Filter {
    * Clear the filter value
    */
   clear(shouldTriggerQuery = true) {
-    if (this._filterElm) {
+    if (this._filterInputElm) {
       this._clearFilterTriggered = true;
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
       this._filterInputElm.value = '';
-      this._filterElm.classList.remove('filled');
       this._filterInputElm.classList.remove('filled');
       this.onTriggerEvent(undefined);
     }
@@ -119,7 +117,7 @@ export class InputFilter implements Filter {
    */
   destroy() {
     this._bindEventService.unbindAll();
-    this._filterElm?.remove?.();
+    this._filterInputElm?.remove?.();
   }
 
   getValues(): string {
@@ -229,7 +227,7 @@ export class InputFilter implements Filter {
   protected onTriggerEvent(event: MouseEvent | KeyboardEvent | undefined) {
     if (this._clearFilterTriggered) {
       this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
-      this._filterElm.classList.remove('filled');
+      this._filterInputElm.classList.remove('filled');
     } else {
       const eventType = event?.type ?? '';
       let value = (event?.target as HTMLInputElement)?.value ?? '';
@@ -237,7 +235,7 @@ export class InputFilter implements Filter {
       if (typeof value === 'string' && enableWhiteSpaceTrim) {
         value = value.trim();
       }
-      value === '' ? this._filterElm.classList.remove('filled') : this._filterElm.classList.add('filled');
+      value === '' ? this._filterInputElm.classList.remove('filled') : this._filterInputElm.classList.add('filled');
       const callbackArgs = { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery };
       const typingDelay = (eventType === 'keyup' && (event as KeyboardEvent)?.key !== 'Enter') ? this._debounceTypingDelay : 0;
 

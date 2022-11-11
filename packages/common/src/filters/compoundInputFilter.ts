@@ -116,8 +116,8 @@ export class CompoundInputFilter implements Filter {
       this._clearFilterTriggered = true;
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
-      this._selectOperatorElm.selectedIndex = 0;
       this._filterInputElm.value = '';
+      this._selectOperatorElm.selectedIndex = 0;
       this._currentValue = undefined;
       this._filterElm.classList.remove('filled');
       this._filterInputElm.classList.remove('filled');
