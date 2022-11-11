@@ -1,5 +1,5 @@
 import * as flatpickr_ from 'flatpickr';
-import { BaseOptions as FlatpickrBaseOptions, } from 'flatpickr/dist/types/options';
+import { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
 import { Instance as FlatpickrInstance, FlatpickrFn } from 'flatpickr/dist/types/instance';
 const flatpickr: FlatpickrFn = (flatpickr_?.['default'] ?? flatpickr_) as any; // patch for rollup
 
@@ -48,7 +48,7 @@ export class CompoundDateFilter implements Filter {
     return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
   }
 
-  /** Getter for the Filter Operator */
+  /** Getter for the Column Filter */
   get columnFilter(): ColumnFilter {
     return this.columnDef && this.columnDef.filter || {};
   }
@@ -89,7 +89,7 @@ export class CompoundDateFilter implements Filter {
     this.callback = args.callback;
     this.columnDef = args.columnDef;
     this.operator = args.operator || '';
-    this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
+    this.searchTerms = args?.searchTerms ?? [];
     this.filterContainerElm = args.filterContainerElm;
 
     // date input can only have 1 search term, so we will use the 1st array index if it exist
@@ -97,7 +97,7 @@ export class CompoundDateFilter implements Filter {
 
     // step 1, create the DOM Element of the filter which contain the compound Operator+Input
     // and initialize it if searchTerm is filled
-    this._filterElm = this.createDomElement(searchTerm);
+    this._filterElm = this.createDomFilterElement(searchTerm);
 
     // step 3, subscribe to the keyup event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
@@ -128,7 +128,7 @@ export class CompoundDateFilter implements Filter {
   destroy() {
     this._bindEventService.unbindAll();
 
-    if (this.flatInstance && typeof this.flatInstance.destroy === 'function') {
+    if (typeof this.flatInstance?.destroy === 'function') {
       this.flatInstance.destroy();
       if (this.flatInstance.element) {
         destroyObjectDomElementProps(this.flatInstance);
@@ -144,13 +144,13 @@ export class CompoundDateFilter implements Filter {
   }
 
   hide() {
-    if (this.flatInstance && typeof this.flatInstance.close === 'function') {
+    if (typeof this.flatInstance?.close === 'function') {
       this.flatInstance.close();
     }
   }
 
   show() {
-    if (this.flatInstance && typeof this.flatInstance.open === 'function') {
+    if (typeof this.flatInstance?.open === 'function') {
       this.flatInstance.open();
     }
   }
@@ -175,7 +175,7 @@ export class CompoundDateFilter implements Filter {
       this._filterDivInputElm.classList.remove('filled');
     }
 
-    // set the operator, in the DOM as well, when defined
+    // set the operator when defined
     this.operator = operator || this.defaultOperator;
     if (operator && this._selectOperatorElm) {
       const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
@@ -188,9 +188,10 @@ export class CompoundDateFilter implements Filter {
   // ------------------
 
   protected buildDatePickerInput(searchTerm?: SearchTerm): HTMLDivElement {
+    const columnId = this.columnDef?.id ?? '';
     const inputFormat = mapFlatpickrDateFormatWithFieldType(this.columnFilter.type || this.columnDef.type || FieldType.dateIso);
     const outputFormat = mapFlatpickrDateFormatWithFieldType(this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc);
-    const userFilterOptions = (this.columnFilter && this.columnFilter.filterOptions || {}) as FlatpickrOption;
+    const userFilterOptions = this.columnFilter?.filterOptions ?? {} as FlatpickrOption;
 
     // get current locale, if user defined a custom locale just use or get it the Translate Service if it exist else just use English
     let currentLocale = (userFilterOptions?.locale ?? this.translaterService?.getCurrentLanguage?.()) || this.gridOptions.locale || 'en';
@@ -212,16 +213,13 @@ export class CompoundDateFilter implements Filter {
       closeOnSelect: true,
       locale: currentLocale,
       onChange: (selectedDates: Date[] | Date, dateStr: string) => {
-        this._currentValue = dateStr;
         this._currentDate = Array.isArray(selectedDates) && selectedDates[0] || undefined;
+        this._currentValue = dateStr;
 
         // when using the time picker, we can simulate a keyup event to avoid multiple backend request
         // since backend request are only executed after user start typing, changing the time should be treated the same way
-        let customEvent: CustomEvent | undefined;
-        if (pickerOptions.enableTime) {
-          customEvent = new CustomEvent('keyup');
-        }
-        this.onTriggerEvent(customEvent);
+        const newEvent = pickerOptions.enableTime ? new Event('keyup') : undefined;
+        this.onTriggerEvent(newEvent);
       },
       errorHandler: (error) => {
         if (error.toString().includes('invalid locale')) {
@@ -249,7 +247,8 @@ export class CompoundDateFilter implements Filter {
     filterDivInputElm.appendChild(
       createDomElement('input', {
         type: 'text', className: 'form-control',
-        placeholder, dataset: { input: '' }
+        placeholder,
+        dataset: { input: '', columnid: `${columnId}` }
       })
     );
     this.flatInstance = flatpickr(filterDivInputElm, this._flatpickrOptions as unknown as Partial<FlatpickrBaseOptions>);
@@ -269,35 +268,24 @@ export class CompoundDateFilter implements Filter {
   /**
    * Create the DOM element
    */
-  protected createDomElement(searchTerm?: SearchTerm): HTMLDivElement {
+  protected createDomFilterElement(searchTerm?: SearchTerm): HTMLDivElement {
     const columnId = this.columnDef?.id ?? '';
     emptyElement(this.filterContainerElm);
 
 
-    // create the DOM Select dropdown for the Operator
-    this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.gridOptions);
+    // create the DOM element filter container & operator
     this._filterDivInputElm = this.buildDatePickerInput(searchTerm);
+    this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.gridOptions);
     const filterContainerElm = createDomElement('div', { className: `form-group search-filter filter-${columnId}` });
     const containerInputGroupElm = createDomElement('div', { className: 'input-group flatpickr' });
     const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' });
 
-    /* the DOM element final structure will be
-      <div class="input-group">
-        <div class="input-group-addon input-group-prepend operator">
-          <select class="form-control"></select>
-        </div>
-        <div class="flatpickr">
-          <input type="text" class="form-control" data-input>
-        </div>
-      </div>
-    */
     operatorInputGroupAddonElm.appendChild(this._selectOperatorElm);
     containerInputGroupElm.appendChild(operatorInputGroupAddonElm);
     containerInputGroupElm.appendChild(this._filterDivInputElm);
 
     // create the DOM element & add an ID and filter class
     filterContainerElm.appendChild(containerInputGroupElm);
-    this._filterDivInputElm.dataset.columnid = `${columnId}`;
 
     if (this.operator) {
       const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
@@ -305,7 +293,7 @@ export class CompoundDateFilter implements Filter {
     }
 
     // if there's a search term, we will add the "filled" class for styling purposes
-    if (searchTerm && searchTerm !== '') {
+    if (searchTerm !== '') {
       this._filterDivInputElm.classList.add('filled');
       this._currentDate = searchTerm as Date;
       this._currentValue = searchTerm as string;
