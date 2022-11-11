@@ -24,6 +24,7 @@ export class CompoundInputFilter implements Filter {
   protected _debounceTypingDelay = 0;
   protected _shouldTriggerQuery = true;
   protected _inputType = 'text';
+  protected _timer?: NodeJS.Timeout;
   protected _filterElm!: HTMLDivElement;
   protected _filterInputElm!: HTMLInputElement;
   protected _selectOperatorElm!: HTMLSelectElement;
@@ -32,16 +33,10 @@ export class CompoundInputFilter implements Filter {
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
-  timer?: NodeJS.Timeout;
   filterContainerElm!: HTMLDivElement;
 
   constructor(protected readonly translaterService: TranslaterService) {
     this._bindEventService = new BindingEventService();
-  }
-
-  /** Getter for the Grid Options pulled through the Grid Object */
-  protected get gridOptions(): GridOption {
-    return this.grid?.getOptions?.() ?? {};
   }
 
   /** Getter for the Column Filter */
@@ -74,6 +69,11 @@ export class CompoundInputFilter implements Filter {
     this._operator = op;
   }
 
+  /** Getter for the Grid Options pulled through the Grid Object */
+  protected get gridOptions(): GridOption {
+    return this.grid?.getOptions?.() ?? {};
+  }
+
   /**
    * Initialize the Filter
    */
@@ -99,7 +99,7 @@ export class CompoundInputFilter implements Filter {
 
     // step 1, create the DOM Element of the filter which contain the compound Operator+Input
     // and initialize it if searchTerm is filled
-    this._filterElm = this.createDomElement(searchTerm);
+    this._filterElm = this.createDomFilterElement(searchTerm);
 
     // step 3, subscribe to the keyup event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
@@ -119,9 +119,9 @@ export class CompoundInputFilter implements Filter {
       this._selectOperatorElm.selectedIndex = 0;
       this._filterInputElm.value = '';
       this._currentValue = undefined;
-      this.onTriggerEvent(undefined);
       this._filterElm.classList.remove('filled');
       this._filterInputElm.classList.remove('filled');
+      this.onTriggerEvent(undefined);
     }
   }
 
@@ -168,7 +168,7 @@ export class CompoundInputFilter implements Filter {
   // protected functions
   // ------------------
 
-  protected buildInputElement(): HTMLInputElement {
+  protected buildInputElement(searchTerm?: SearchTerm): HTMLInputElement {
     const columnId = this.columnDef?.id ?? '';
 
     // create the DOM element & add an ID and filter class
@@ -177,12 +177,19 @@ export class CompoundInputFilter implements Filter {
       placeholder = this.columnFilter.placeholder;
     }
 
+    const searchVal = `${searchTerm ?? ''}`;
     const inputElm = createDomElement('input', {
       type: this._inputType || 'text',
       autocomplete: 'none', placeholder,
+      ariaLabel: this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`,
       className: `form-control compound-input filter-${columnId}`,
+      value: searchVal,
+      dataset: { columnid: `${columnId}` }
     });
-    inputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
+
+    if (searchTerm !== undefined) {
+      this._currentValue = searchVal;
+    }
 
     return inputElm;
   }
@@ -214,27 +221,20 @@ export class CompoundInputFilter implements Filter {
   /**
    * Create the DOM element
    */
-  protected createDomElement(searchTerm?: SearchTerm) {
+  protected createDomFilterElement(searchTerm?: SearchTerm) {
     const columnId = this.columnDef?.id ?? '';
     emptyElement(this.filterContainerElm);
 
     // create the DOM Select dropdown for the Operator
     this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.gridOptions);
-    this._filterInputElm = this.buildInputElement();
+    this._filterInputElm = this.buildInputElement(searchTerm);
     const emptySpanElm = createDomElement('span');
 
     const filterContainerElm = createDomElement('div', { className: `form-group search-filter filter-${columnId}` });
     const containerInputGroupElm = createDomElement('div', { className: 'input-group' });
     const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' });
 
-    /* the DOM element final structure will be
-      <div class="input-group">
-        <div class="input-group-addon input-group-prepend operator">
-          <select class="form-control"></select>
-        </div>
-        <input class="form-control compound-input" type="text" />
-      </div>
-    */
+    // append operator & input DOM element
     operatorInputGroupAddonElm.appendChild(this._selectOperatorElm);
     containerInputGroupElm.appendChild(operatorInputGroupAddonElm);
     containerInputGroupElm.appendChild(this._filterInputElm);
@@ -242,13 +242,6 @@ export class CompoundInputFilter implements Filter {
 
     // create the DOM element & add an ID and filter class
     filterContainerElm.appendChild(containerInputGroupElm);
-
-    this._filterInputElm.dataset.columnid = `${columnId}`;
-    const searchVal = `${searchTerm ?? ''}`;
-    this._filterInputElm.value = searchVal;
-    if (searchTerm !== undefined) {
-      this._currentValue = searchVal;
-    }
 
     if (this.operator) {
       const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
@@ -298,8 +291,8 @@ export class CompoundInputFilter implements Filter {
       const skipCompoundOperatorFilterWithNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput;
       if (!skipCompoundOperatorFilterWithNullInput || this._currentValue !== undefined) {
         if (typingDelay > 0) {
-          clearTimeout(this.timer as NodeJS.Timeout);
-          this.timer = setTimeout(() => this.callback(event, callbackArgs), typingDelay);
+          clearTimeout(this._timer as NodeJS.Timeout);
+          this._timer = setTimeout(() => this.callback(event, callbackArgs), typingDelay);
         } else {
           this.callback(event, callbackArgs);
         }

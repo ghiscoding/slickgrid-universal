@@ -72,7 +72,7 @@ describe('CompoundInputFilter', () => {
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
 
-    expect(filterInputElm.getAttribute('aria-label')).toBe('Duration Search Filter');
+    expect(filterInputElm.ariaLabel).toBe('Duration Search Filter');
   });
 
   it('should have a placeholder when defined in its column definition', () => {
@@ -83,7 +83,7 @@ describe('CompoundInputFilter', () => {
     const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
 
     expect(filterInputElm.placeholder).toBe(testValue);
-    expect(filterInputElm.getAttribute('aria-label')).toBe('Duration Search Filter');
+    expect(filterInputElm.ariaLabel).toBe('Duration Search Filter');
   });
 
   it('should call "setValues" and expect that value to be in the callback when triggered', () => {
@@ -372,7 +372,7 @@ describe('CompoundInputFilter', () => {
   it('should have custom compound operator list showing up in the operator select dropdown options list', () => {
     mockColumn.outputType = null as any;
     filterArguments.searchTerms = ['xyz'];
-    mockColumn.filter.compoundOperatorList = [
+    mockColumn.filter!.compoundOperatorList = [
       { operator: '', description: '' },
       { operator: '=', description: 'Equal to' },
       { operator: '<', description: 'Less than' },

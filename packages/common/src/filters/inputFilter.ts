@@ -21,6 +21,7 @@ export class InputFilter implements Filter {
   protected _inputType = 'text';
   protected _timer?: NodeJS.Timeout;
   protected _filterElm!: HTMLInputElement;
+  protected _filterInputElm!: HTMLInputElement;
   grid!: SlickGrid;
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
@@ -33,7 +34,7 @@ export class InputFilter implements Filter {
 
   /** Getter for the Column Filter */
   get columnFilter(): ColumnFilter {
-    return this.columnDef && this.columnDef.filter || {};
+    return this.columnDef?.filter ?? {};
   }
 
   /** Getter to know what would be the default operator when none is specified */
@@ -65,7 +66,7 @@ export class InputFilter implements Filter {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get gridOptions(): GridOption {
-    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+    return this.grid?.getOptions?.() ?? {};
   }
 
   /**
@@ -90,12 +91,12 @@ export class InputFilter implements Filter {
     const searchTerm = (Array.isArray(this.searchTerms) && this.searchTerms.length >= 0) ? this.searchTerms[0] : '';
 
     // step 1, create the DOM Element of the filter & initialize it if searchTerm is filled
-    this._filterElm = this.createDomElement(searchTerm);
+    this._filterElm = this.createDomFilterElement(searchTerm);
 
     // step 2, subscribe to the input event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
     // we'll use all necessary events to cover the following (keyup, change, mousewheel & spinner)
-    this._bindEventService.bind(this._filterElm, ['keyup', 'blur', 'change', 'wheel'], this.handleInputChange.bind(this));
+    this._bindEventService.bind(this._filterInputElm, ['keyup', 'blur', 'change', 'wheel'], this.onTriggerEvent.bind(this) as EventListener);
   }
 
   /**
@@ -106,9 +107,10 @@ export class InputFilter implements Filter {
       this._clearFilterTriggered = true;
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
-      this._filterElm.value = '';
+      this._filterInputElm.value = '';
       this._filterElm.classList.remove('filled');
-      this._filterElm.dispatchEvent(new Event('change'));
+      this._filterInputElm.classList.remove('filled');
+      this.onTriggerEvent(undefined);
     }
   }
 
@@ -121,7 +123,7 @@ export class InputFilter implements Filter {
   }
 
   getValues(): string {
-    return this._filterElm.value;
+    return this._filterInputElm.value;
   }
 
   /** Set value(s) on the DOM element */
@@ -130,9 +132,9 @@ export class InputFilter implements Filter {
     let searchValue: SearchTerm = '';
     for (const value of searchValues) {
       searchValue = operator ? this.addOptionalOperatorIntoSearchString(value, operator) : value;
-      this._filterElm.value = `${searchValue ?? ''}`;
+      this._filterInputElm.value = `${searchValue ?? ''}`;
     }
-    this.getValues() !== '' ? this._filterElm.classList.add('filled') : this._filterElm.classList.remove('filled');
+    this.getValues() !== '' ? this._filterInputElm.classList.add('filled') : this._filterInputElm.classList.remove('filled');
 
     // set the operator when defined
     this.operator = operator || this.defaultOperator;
@@ -188,7 +190,7 @@ export class InputFilter implements Filter {
    * @param {Object} searchTerm - filter search term
    * @returns {Object} DOM element filter
    */
-  protected createDomElement(searchTerm?: SearchTerm) {
+  protected createDomFilterElement(searchTerm?: SearchTerm) {
     const columnId = this.columnDef?.id ?? '';
     emptyElement(this.filterContainerElm);
 
@@ -198,33 +200,33 @@ export class InputFilter implements Filter {
       placeholder = this.columnFilter.placeholder;
     }
 
-    const inputElm = createDomElement('input', {
+    this._filterInputElm = createDomElement('input', {
       type: this._inputType || 'text',
       autocomplete: 'none', placeholder,
+      ariaLabel: this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`,
       className: `form-control search-filter filter-${columnId}`,
-      value: (searchTerm ?? '') as string,
+      value: `${searchTerm ?? ''}`,
       dataset: { columnid: `${columnId}` }
     });
-    inputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
 
 
     // if there's a search term, we will add the "filled" class for styling purposes
     if (searchTerm) {
-      inputElm.classList.add('filled');
+      this._filterInputElm.classList.add('filled');
     }
 
     // append the new DOM element to the header row & an empty span
-    this.filterContainerElm.appendChild(inputElm);
+    this.filterContainerElm.appendChild(this._filterInputElm);
     this.filterContainerElm.appendChild(document.createElement('span'));
 
-    return inputElm;
+    return this._filterInputElm;
   }
 
   /**
    * Event handler to cover the following (keyup, change, mousewheel & spinner)
    * We will trigger the Filter Service callback from this handler
    */
-  protected handleInputChange(event: Event) {
+  protected onTriggerEvent(event: MouseEvent | KeyboardEvent | undefined) {
     if (this._clearFilterTriggered) {
       this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
       this._filterElm.classList.remove('filled');

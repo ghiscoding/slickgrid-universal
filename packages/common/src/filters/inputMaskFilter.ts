@@ -44,7 +44,7 @@ export class InputMaskFilter extends InputFilter {
     const searchTerm = (Array.isArray(this.searchTerms) && this.searchTerms.length >= 0) ? this.searchTerms[0] : '';
 
     // step 1, create the DOM Element of the filter & initialize it if searchTerm is filled
-    this._filterElm = this.createDomElement(searchTerm);
+    this._filterElm = this.createDomFilterElement(searchTerm);
 
     // step 2, subscribe to the input event and run the callback when that happens
     // also add/remove "filled" class for styling purposes

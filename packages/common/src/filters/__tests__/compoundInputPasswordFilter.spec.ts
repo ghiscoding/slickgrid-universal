@@ -59,7 +59,7 @@ describe('CompoundInputPasswordFilter', () => {
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
 
-    expect(filterInputElm.getAttribute('aria-label')).toBe('Duration Search Filter');
+    expect(filterInputElm.ariaLabel).toBe('Duration Search Filter');
   });
 
   it('should initialize the filter and expect an input of type password', () => {
