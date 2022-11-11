@@ -7,26 +7,32 @@ import {
   FilterArguments,
   FilterCallback,
   GridOption,
+  OperatorDetail,
   SlickGrid,
 } from '../interfaces/index';
-import { OperatorType, OperatorString, SearchTerm } from '../enums/index';
+import { FieldType, OperatorType, OperatorString, SearchTerm } from '../enums/index';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { createDomElement, emptyElement, } from '../services';
+import { buildSelectOperator, compoundOperatorNumeric, compoundOperatorString } from './filterUtilities';
+import { createDomElement, emptyElement, mapOperatorToShorthandDesignation, TranslaterService, } from '../services';
 
 export class InputFilter implements Filter {
   protected _bindEventService: BindingEventService;
+  protected _currentValue?: number | string;
   protected _debounceTypingDelay = 0;
   protected _shouldTriggerQuery = true;
   protected _inputType = 'text';
   protected _timer?: NodeJS.Timeout;
+  protected _cellContainerElm!: HTMLDivElement;
+  protected _filterContainerElm!: HTMLDivElement;
   protected _filterInputElm!: HTMLInputElement;
+  protected _selectOperatorElm?: HTMLSelectElement;
+  inputFilterType: 'single' | 'compound' = 'single';
   grid!: SlickGrid;
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
-  filterContainerElm!: HTMLDivElement;
 
-  constructor() {
+  constructor(protected readonly translaterService: TranslaterService) {
     this._bindEventService = new BindingEventService();
   }
 
@@ -50,12 +56,12 @@ export class InputFilter implements Filter {
     this._inputType = type;
   }
 
-  /** Getter of the Operator to use when doing the filter comparing */
+  /** Getter for the Filter Operator */
   get operator(): OperatorType | OperatorString {
     return this.columnFilter?.operator ?? this.defaultOperator;
   }
 
-  /** Setter for the filter operator */
+  /** Setter for the Filter Operator */
   set operator(operator: OperatorType | OperatorString) {
     if (this.columnFilter) {
       this.columnFilter.operator = operator;
@@ -64,7 +70,7 @@ export class InputFilter implements Filter {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get gridOptions(): GridOption {
-    return this.grid?.getOptions?.() ?? {};
+    return this.grid?.getOptions() ?? {};
   }
 
   /**
@@ -77,8 +83,11 @@ export class InputFilter implements Filter {
     this.grid = args.grid;
     this.callback = args.callback;
     this.columnDef = args.columnDef;
-    this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
-    this.filterContainerElm = args.filterContainerElm;
+    if (this.inputFilterType === 'compound') {
+      this.operator = args.operator || '';
+    }
+    this.searchTerms = args?.searchTerms ?? [];
+    this._cellContainerElm = args.filterContainerElm;
 
     // analyze if we have any keyboard debounce delay (do we wait for user to finish typing before querying)
     // it is used by default for a backend service but is optional when using local dataset
@@ -95,6 +104,9 @@ export class InputFilter implements Filter {
     // also add/remove "filled" class for styling purposes
     // we'll use all necessary events to cover the following (keyup, change, mousewheel & spinner)
     this._bindEventService.bind(this._filterInputElm, ['keyup', 'blur', 'change', 'wheel'], this.onTriggerEvent.bind(this) as EventListener);
+    if (this.inputFilterType === 'compound' && this._selectOperatorElm) {
+      this._bindEventService.bind(this._selectOperatorElm, 'change', this.onTriggerEvent.bind(this) as EventListener);
+    }
   }
 
   /**
@@ -105,6 +117,11 @@ export class InputFilter implements Filter {
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
       this._filterInputElm.value = '';
+      this._currentValue = undefined;
+      if (this.inputFilterType === 'compound' && this._selectOperatorElm) {
+        this._selectOperatorElm.selectedIndex = 0;
+        this._filterContainerElm.classList.remove('filled');
+      }
       this._filterInputElm.classList.remove('filled');
       this.onTriggerEvent(undefined, true);
     }
@@ -115,6 +132,7 @@ export class InputFilter implements Filter {
    */
   destroy() {
     this._bindEventService.unbindAll();
+    this._selectOperatorElm?.remove?.();
     this._filterInputElm?.remove?.();
   }
 
@@ -125,15 +143,31 @@ export class InputFilter implements Filter {
   /** Set value(s) on the DOM element */
   setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString) {
     const searchValues = Array.isArray(values) ? values : [values];
-    let searchValue: SearchTerm = '';
+    let newInputValue: SearchTerm = '';
     for (const value of searchValues) {
-      searchValue = operator ? this.addOptionalOperatorIntoSearchString(value, operator) : value;
-      this._filterInputElm.value = `${searchValue ?? ''}`;
+      if (this.inputFilterType === 'single') {
+        newInputValue = operator ? this.addOptionalOperatorIntoSearchString(value, operator) : value;
+      } else {
+        newInputValue = `${value}`;
+      }
+      this._filterInputElm.value = `${newInputValue ?? ''}`;
+      this._currentValue = this._filterInputElm.value;
     }
-    this.getValues() !== '' ? this._filterInputElm.classList.add('filled') : this._filterInputElm.classList.remove('filled');
+
+    if (this.getValues() !== '') {
+      this._filterContainerElm.classList.add('filled');
+      this._filterInputElm.classList.add('filled');
+    } else {
+      this._filterContainerElm.classList.remove('filled');
+      this._filterInputElm.classList.remove('filled');
+    }
 
     // set the operator when defined
     this.operator = operator || this.defaultOperator;
+    if (operator && this._selectOperatorElm) {
+      const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
+      this._selectOperatorElm.value = operatorShorthand;
+    }
   }
 
   //
@@ -181,6 +215,30 @@ export class InputFilter implements Filter {
     return outputValue;
   }
 
+  /** Get the available operator option values to populate the operator select dropdown list */
+  protected getCompoundOperatorOptionValues(): OperatorDetail[] {
+    const type = (this.columnDef.type && this.columnDef.type) ? this.columnDef.type : FieldType.string;
+    let optionValues = [];
+
+    if (this.columnFilter?.compoundOperatorList) {
+      return this.columnFilter.compoundOperatorList;
+    } else {
+      switch (type) {
+        case FieldType.string:
+        case FieldType.text:
+        case FieldType.readonly:
+        case FieldType.password:
+          optionValues = compoundOperatorString(this.gridOptions, this.translaterService);
+          break;
+        default:
+          optionValues = compoundOperatorNumeric(this.gridOptions, this.translaterService);
+          break;
+      }
+    }
+
+    return optionValues;
+  }
+
   /**
    * From the html template string, create a DOM element
    * @param {Object} searchTerm - filter search term
@@ -188,7 +246,7 @@ export class InputFilter implements Filter {
    */
   protected createDomFilterElement(searchTerm?: SearchTerm) {
     const columnId = this.columnDef?.id ?? '';
-    emptyElement(this.filterContainerElm);
+    emptyElement(this._cellContainerElm);
 
     // create the DOM element & add an ID and filter class
     let placeholder = this.gridOptions?.defaultFilterPlaceholder ?? '';
@@ -196,26 +254,57 @@ export class InputFilter implements Filter {
       placeholder = this.columnFilter.placeholder;
     }
 
+    const searchVal = `${searchTerm ?? ''}`;
     this._filterInputElm = createDomElement('input', {
       type: this._inputType || 'text',
       autocomplete: 'none', placeholder,
       ariaLabel: this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`,
-      className: `form-control search-filter filter-${columnId}`,
-      value: `${searchTerm ?? ''}`,
+      className: `form-control filter-${columnId}`,
+      value: searchVal,
       dataset: { columnid: `${columnId}` }
     });
-
 
     // if there's a search term, we will add the "filled" class for styling purposes
     if (searchTerm) {
       this._filterInputElm.classList.add('filled');
     }
+    if (searchTerm !== undefined) {
+      this._currentValue = searchVal;
+    }
 
-    // append the new DOM element to the header row & an empty span
-    this.filterContainerElm.appendChild(this._filterInputElm);
-    this.filterContainerElm.appendChild(document.createElement('span'));
+    // create the DOM Select dropdown for the Operator
+    if (this.inputFilterType === 'single') {
+      this._filterContainerElm = this._filterInputElm;
+      // append the new DOM element to the header row & an empty span
+      this._filterInputElm.classList.add('search-filter');
+      this._cellContainerElm.appendChild(this._filterInputElm);
+      this._cellContainerElm.appendChild(document.createElement('span'));
+    } else {
+      // compound filter
+      this._filterInputElm.classList.add('compound-input');
+      this._selectOperatorElm = buildSelectOperator(this.getCompoundOperatorOptionValues(), this.gridOptions);
+      this._filterContainerElm = createDomElement('div', { className: `form-group search-filter filter-${columnId}` });
+      const containerInputGroupElm = createDomElement('div', { className: 'input-group' });
+      const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' });
 
-    return this._filterInputElm;
+      // append operator & input DOM element
+      operatorInputGroupAddonElm.appendChild(this._selectOperatorElm);
+      containerInputGroupElm.appendChild(operatorInputGroupAddonElm);
+      containerInputGroupElm.appendChild(this._filterInputElm);
+      containerInputGroupElm.appendChild(createDomElement('span'));
+
+      // create the DOM element & add an ID and filter class
+      this._filterContainerElm.appendChild(containerInputGroupElm);
+
+      if (this.operator) {
+        this._selectOperatorElm.value = mapOperatorToShorthandDesignation(this.operator);
+      }
+
+      // append the new DOM element to the header row
+      if (this._filterContainerElm) {
+        this._cellContainerElm.appendChild(this._filterContainerElm);
+      }
+    }
   }
 
   /**
@@ -225,23 +314,32 @@ export class InputFilter implements Filter {
   protected onTriggerEvent(event?: MouseEvent | KeyboardEvent, isClearFilterEvent = false) {
     if (isClearFilterEvent) {
       this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: isClearFilterEvent, shouldTriggerQuery: this._shouldTriggerQuery });
-      this._filterInputElm.classList.remove('filled');
+      this._filterContainerElm.classList.remove('filled');
     } else {
       const eventType = event?.type ?? '';
-      let value = (event?.target as HTMLInputElement)?.value ?? '';
+      const selectedOperator = (this._selectOperatorElm?.value ?? this.operator) as OperatorString;
+      let value = this._filterInputElm.value;
       const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
       if (typeof value === 'string' && enableWhiteSpaceTrim) {
         value = value.trim();
       }
-      value === '' ? this._filterInputElm.classList.remove('filled') : this._filterInputElm.classList.add('filled');
-      const callbackArgs = { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery };
+
+      if ((event?.target as HTMLElement)?.tagName.toLowerCase() !== 'select') {
+        this._currentValue = value;
+      }
+
+      value === '' ? this._filterContainerElm.classList.remove('filled') : this._filterContainerElm.classList.add('filled');
+      const callbackArgs = { columnDef: this.columnDef, operator: selectedOperator, searchTerms: (value ? [value] : null), shouldTriggerQuery: this._shouldTriggerQuery };
       const typingDelay = (eventType === 'keyup' && (event as KeyboardEvent)?.key !== 'Enter') ? this._debounceTypingDelay : 0;
 
-      if (typingDelay > 0) {
-        clearTimeout(this._timer as NodeJS.Timeout);
-        this._timer = setTimeout(() => this.callback(event, callbackArgs), typingDelay);
-      } else {
-        this.callback(event, callbackArgs);
+      const skipCompoundOperatorFilterWithNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput;
+      if (this.inputFilterType === 'single' || !skipCompoundOperatorFilterWithNullInput || this._currentValue !== undefined) {
+        if (typingDelay > 0) {
+          clearTimeout(this._timer as NodeJS.Timeout);
+          this._timer = setTimeout(() => this.callback(event, callbackArgs), typingDelay);
+        } else {
+          this.callback(event, callbackArgs);
+        }
       }
     }
 

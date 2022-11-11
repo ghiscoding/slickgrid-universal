@@ -1,12 +1,13 @@
 import { InputFilter } from './inputFilter';
 import { FilterArguments } from '../interfaces/filterArguments.interface';
+import { TranslaterService } from '../services/translater.service';
 
 export class InputMaskFilter extends InputFilter {
   protected _inputMask = '';
 
   /** Initialize the Filter */
-  constructor() {
-    super();
+  constructor(protected readonly translaterService: TranslaterService) {
+    super(translaterService);
     this.inputType = 'text';
   }
 
@@ -26,7 +27,7 @@ export class InputMaskFilter extends InputFilter {
     this.callback = args.callback;
     this.columnDef = args.columnDef;
     this.searchTerms = (args.hasOwnProperty('searchTerms') ? args.searchTerms : []) || [];
-    this.filterContainerElm = args.filterContainerElm;
+    this._cellContainerElm = args.filterContainerElm;
 
     // get input mask from params (can be in columnDef or columnFilter params)
     if (this.columnDef?.params?.mask) {
