@@ -56,7 +56,7 @@ export class InputMaskFilter extends InputFilter {
    * Event handler to cover the following (keyup, change, mousewheel & spinner)
    * We will trigger the Filter Service callback from this handler
    */
-  protected onTriggerEvent(event: MouseEvent | KeyboardEvent | undefined) {
+  protected onTriggerEvent(event?: MouseEvent | KeyboardEvent, isClearFilterEvent = false) {
     let value = '';
     if ((event?.target as HTMLInputElement)?.value) {
       let targetValue = (event?.target as HTMLInputElement)?.value ?? '';
@@ -77,15 +77,14 @@ export class InputMaskFilter extends InputFilter {
       }
     }
 
-    if (this._clearFilterTriggered) {
-      this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
+    if (isClearFilterEvent) {
+      this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: isClearFilterEvent, shouldTriggerQuery: this._shouldTriggerQuery });
       this._filterInputElm.classList.remove('filled');
     } else {
       this._filterInputElm.classList.add('filled');
       this.callback(event, { columnDef: this.columnDef, operator: this.operator, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery });
     }
     // reset both flags for next use
-    this._clearFilterTriggered = false;
     this._shouldTriggerQuery = true;
   }
 

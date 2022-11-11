@@ -15,7 +15,6 @@ import { createDomElement, emptyElement, } from '../services';
 
 export class InputFilter implements Filter {
   protected _bindEventService: BindingEventService;
-  protected _clearFilterTriggered = false;
   protected _debounceTypingDelay = 0;
   protected _shouldTriggerQuery = true;
   protected _inputType = 'text';
@@ -103,12 +102,11 @@ export class InputFilter implements Filter {
    */
   clear(shouldTriggerQuery = true) {
     if (this._filterInputElm) {
-      this._clearFilterTriggered = true;
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
       this._filterInputElm.value = '';
       this._filterInputElm.classList.remove('filled');
-      this.onTriggerEvent(undefined);
+      this.onTriggerEvent(undefined, true);
     }
   }
 
@@ -224,9 +222,9 @@ export class InputFilter implements Filter {
    * Event handler to cover the following (keyup, change, mousewheel & spinner)
    * We will trigger the Filter Service callback from this handler
    */
-  protected onTriggerEvent(event: MouseEvent | KeyboardEvent | undefined) {
-    if (this._clearFilterTriggered) {
-      this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
+  protected onTriggerEvent(event?: MouseEvent | KeyboardEvent, isClearFilterEvent = false) {
+    if (isClearFilterEvent) {
+      this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: isClearFilterEvent, shouldTriggerQuery: this._shouldTriggerQuery });
       this._filterInputElm.classList.remove('filled');
     } else {
       const eventType = event?.type ?? '';
@@ -248,7 +246,6 @@ export class InputFilter implements Filter {
     }
 
     // reset both flags for next use
-    this._clearFilterTriggered = false;
     this._shouldTriggerQuery = true;
   }
 }

@@ -19,7 +19,6 @@ import { TranslaterService } from '../services/translater.service';
 
 export class CompoundInputFilter implements Filter {
   protected _bindEventService: BindingEventService;
-  protected _clearFilterTriggered = false;
   protected _currentValue?: number | string;
   protected _debounceTypingDelay = 0;
   protected _shouldTriggerQuery = true;
@@ -113,7 +112,6 @@ export class CompoundInputFilter implements Filter {
    */
   clear(shouldTriggerQuery = true) {
     if (this._filterElm && this._selectOperatorElm) {
-      this._clearFilterTriggered = true;
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
       this._filterInputElm.value = '';
@@ -121,7 +119,7 @@ export class CompoundInputFilter implements Filter {
       this._currentValue = undefined;
       this._filterElm.classList.remove('filled');
       this._filterInputElm.classList.remove('filled');
-      this.onTriggerEvent(undefined);
+      this.onTriggerEvent(undefined, true);
     }
   }
 
@@ -265,9 +263,9 @@ export class CompoundInputFilter implements Filter {
    * Event trigger, could be called by the Operator dropdown or the input itself and we will cover the following (keyup, change, mousewheel & spinner)
    * We will trigger the Filter Service callback from this handler
    */
-  protected onTriggerEvent(event: MouseEvent | KeyboardEvent | undefined) {
-    if (this._clearFilterTriggered) {
-      this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: this._clearFilterTriggered, shouldTriggerQuery: this._shouldTriggerQuery });
+  protected onTriggerEvent(event: MouseEvent | KeyboardEvent | undefined, isClearFilterEvent = false) {
+    if (isClearFilterEvent) {
+      this.callback(event, { columnDef: this.columnDef, clearFilterTriggered: isClearFilterEvent, shouldTriggerQuery: this._shouldTriggerQuery });
       this._filterElm.classList.remove('filled');
     } else {
       const eventType = event?.type ?? '';
@@ -300,7 +298,6 @@ export class CompoundInputFilter implements Filter {
     }
 
     // reset both flags for next use
-    this._clearFilterTriggered = false;
     this._shouldTriggerQuery = true;
   }
 }
