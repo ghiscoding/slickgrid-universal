@@ -44,7 +44,7 @@ describe('Filter Factory', () => {
 
   it('should create default Filter when no argument provided', () => {
     const newFilter = factory.createFilter();
-    expect(newFilter).toEqual(new Filters.input());
+    expect(newFilter).toEqual(new Filters.input(translateService));
   });
 
   it('should create AutoComplete Filter when that is the Filter provided as a model', () => {
