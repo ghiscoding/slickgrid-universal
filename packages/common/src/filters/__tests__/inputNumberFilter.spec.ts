@@ -55,7 +55,7 @@ describe('InputNumberFilter', () => {
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('input.filter-number') as HTMLInputElement;
 
-    expect(filterInputElm.getAttribute('aria-label')).toBe('Number Search Filter');
+    expect(filterInputElm.ariaLabel).toBe('Number Search Filter');
   });
 
   it('should initialize the filter and expect an input of type number', () => {

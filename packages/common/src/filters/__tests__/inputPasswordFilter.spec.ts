@@ -55,7 +55,7 @@ describe('InputPasswordFilter', () => {
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('input.filter-passwordField') as HTMLInputElement;
 
-    expect(filterInputElm.getAttribute('aria-label')).toBe('Password Field Search Filter');
+    expect(filterInputElm.ariaLabel).toBe('Password Field Search Filter');
   });
 
   it('should initialize the filter and expect an input of type password', () => {

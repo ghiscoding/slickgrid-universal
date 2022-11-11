@@ -70,7 +70,7 @@ describe('InputMaskFilter', () => {
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('input.filter-mask') as HTMLInputElement;
 
-    expect(filterInputElm.getAttribute('aria-label')).toBe('Mask Search Filter');
+    expect(filterInputElm.ariaLabel).toBe('Mask Search Filter');
   });
 
   it('should initialize the filter and define the mask in the column definition instead and get the same output', () => {
@@ -232,7 +232,7 @@ describe('InputMaskFilter', () => {
     const filterElm = divContainer.querySelector('input.filter-mask') as HTMLInputElement;
 
     expect(filterElm.value).toBe('');
-    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: true });
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: true });
   });
 
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
@@ -245,6 +245,6 @@ describe('InputMaskFilter', () => {
     const filterElm = divContainer.querySelector('input.filter-mask') as HTMLInputElement;
 
     expect(filterElm.value).toBe('');
-    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
   });
 });

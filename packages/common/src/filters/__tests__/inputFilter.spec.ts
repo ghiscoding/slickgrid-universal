@@ -64,7 +64,7 @@ describe('InputFilter', () => {
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('input.filter-duration') as HTMLInputElement;
 
-    expect(filterInputElm.getAttribute('aria-label')).toBe('Duration Search Filter');
+    expect(filterInputElm.ariaLabel).toBe('Duration Search Filter');
   });
 
   it('should have a placeholder when defined in its column definition', () => {
@@ -281,7 +281,7 @@ describe('InputFilter', () => {
 
     expect(filterElm.value).toBe('');
     expect(filterFilledElms.length).toBe(0);
-    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: true });
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: true });
   });
 
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
@@ -295,6 +295,6 @@ describe('InputFilter', () => {
 
     expect(filterElm.value).toBe('');
     expect(filterFilledElms.length).toBe(0);
-    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
   });
 });
