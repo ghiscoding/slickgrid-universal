@@ -238,6 +238,14 @@ export function getHtmlElementOffset(element?: HTMLElement): HtmlElementPosition
   return { top, left, bottom, right };
 }
 
+export function getSelectorStringFromElement(elm?: HTMLElement | null) {
+  let selector = '';
+  if (elm?.localName) {
+    selector = elm?.className ? `${elm.localName}.${Array.from(elm.classList).join('.')}` : elm.localName;
+  }
+  return selector;
+}
+
 export function findFirstElementAttribute(inputElm: Element | null | undefined, attributes: string[]): string | null {
   if (inputElm) {
     for (const attribute of attributes) {

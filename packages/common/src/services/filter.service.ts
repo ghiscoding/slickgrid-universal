@@ -31,7 +31,7 @@ import {
   SlickNamespace,
 } from './../interfaces/index';
 import { BackendUtilityService } from './backendUtility.service';
-import { sanitizeHtmlToText, } from '../services/domUtilities';
+import { getSelectorStringFromElement, sanitizeHtmlToText, } from '../services/domUtilities';
 import { getDescendantProperty, mapOperatorByFieldType, } from './utilities';
 import { SharedService } from './shared.service';
 import { RxJsFacade, Subject } from './rxjsFacade';
@@ -669,6 +669,9 @@ export class FilterService {
         if (columnFilter.operator) {
           filter.operator = columnFilter.operator;
         }
+        if (columnFilter.targetSelector) {
+          filter.targetSelector = columnFilter.targetSelector;
+        }
         if (Array.isArray(filter.searchTerms) && filter.searchTerms.length > 0 && (!emptySearchTermReturnAllValues || filter.searchTerms[0] !== '')) {
           currentFilters.push(filter);
         }
@@ -1127,7 +1130,8 @@ export class FilterService {
             columnId: colId,
             columnDef,
             parsedSearchTerms: [],
-            type: fieldType
+            type: fieldType,
+            targetSelector: getSelectorStringFromElement(event?.target as HTMLElement | undefined)
           };
           const inputSearchConditions = this.parseFormInputFilterConditions(searchTerms, colFilter);
           colFilter.operator = operator || inputSearchConditions.operator || mapOperatorByFieldType(fieldType);

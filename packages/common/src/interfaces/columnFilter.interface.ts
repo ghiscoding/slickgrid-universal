@@ -129,6 +129,9 @@ export interface ColumnFilter {
    */
   skipCompoundOperatorFilterWithNullInput?: boolean;
 
+  /** Target element selector from which the filter was triggered from. */
+  targetSelector?: string;
+
   /** What is the Field Type that can be used by the Filter (as precedence over the "type" set the column definition) */
   type?: typeof FieldType[keyof typeof FieldType];
 

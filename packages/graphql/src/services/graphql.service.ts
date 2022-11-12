@@ -632,6 +632,9 @@ export class GraphqlService implements BackendService {
       if (filter.operator) {
         tmpFilter.operator = filter.operator;
       }
+      if (filter.targetSelector) {
+        tmpFilter.targetSelector = filter.targetSelector;
+      }
       if (Array.isArray(filter.searchTerms)) {
         tmpFilter.searchTerms = filter.searchTerms;
       }

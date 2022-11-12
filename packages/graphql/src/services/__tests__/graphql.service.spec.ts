@@ -521,7 +521,7 @@ describe('GraphqlService', () => {
       const querySpy = jest.spyOn(service, 'buildQuery');
       const resetSpy = jest.spyOn(service, 'resetPaginationOptions');
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
-      const mockColumnFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'] } as ColumnFilter;
+      const mockColumnFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'], targetSelector: 'div.some-classes' } as ColumnFilter;
       const mockFilterChangedArgs = {
         columnDef: mockColumn,
         columnId: 'gender',
@@ -529,7 +529,8 @@ describe('GraphqlService', () => {
         grid: gridStub,
         operator: 'EQ',
         searchTerms: ['female'],
-        shouldTriggerQuery: true
+        shouldTriggerQuery: true,
+        targetSelector: 'div.some-classes'
       } as FilterChangedArgs;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -539,7 +540,7 @@ describe('GraphqlService', () => {
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
       expect(querySpy).toHaveBeenCalled();
       expect(resetSpy).toHaveBeenCalled();
-      expect(currentFilters).toEqual([{ columnId: 'gender', operator: 'EQ', searchTerms: ['female'] }]);
+      expect(currentFilters).toEqual([{ columnId: 'gender', operator: 'EQ', searchTerms: ['female'], targetSelector: 'div.some-classes' }]);
     });
 
     it('should return a query with a new filter when previous filters exists', () => {
@@ -550,7 +551,7 @@ describe('GraphqlService', () => {
       const resetSpy = jest.spyOn(service, 'resetPaginationOptions');
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnName = { id: 'firstName', field: 'firstName' } as Column;
-      const mockColumnFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'] } as ColumnFilter;
+      const mockColumnFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'], targetSelector: 'div.some-classes' } as ColumnFilter;
       const mockColumnFilterName = { columnDef: mockColumnName, columnId: 'firstName', operator: 'StartsWith', searchTerms: ['John'] } as ColumnFilter;
       const mockFilterChangedArgs = {
         columnDef: mockColumn,
@@ -570,7 +571,7 @@ describe('GraphqlService', () => {
       expect(querySpy).toHaveBeenCalled();
       expect(resetSpy).toHaveBeenCalled();
       expect(currentFilters).toEqual([
-        { columnId: 'gender', operator: 'EQ', searchTerms: ['female'] },
+        { columnId: 'gender', operator: 'EQ', searchTerms: ['female'], targetSelector: 'div.some-classes' },
         { columnId: 'firstName', operator: 'StartsWith', searchTerms: ['John'] }
       ]);
     });
