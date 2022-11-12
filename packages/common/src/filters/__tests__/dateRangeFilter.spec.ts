@@ -1,3 +1,4 @@
+import 'jest-extended';
 import { FieldType } from '../../enums/index';
 import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
 import { Filters } from '../filters.index';
@@ -117,14 +118,14 @@ describe('DateRangeFilter', () => {
     const mockDates = ['2001-01-02T16:02:02.239Z', '2001-01-31T16:02:02.239Z'];
     filter.init(filterArguments);
     filter.setValues(mockDates);
-    expect(filter.currentDates).toEqual(mockDates);
+    expect(filter.currentDateOrDates).toEqual(mockDates);
   });
 
   it('should be able to call "setValues" with 2 dots (..) notation and have them set in the picker', () => {
     const mockDate = '2001-01-02T16:02:02.239Z..2001-01-31T16:02:02.239Z';
     filter.init(filterArguments);
     filter.setValues([mockDate]);
-    expect(filter.currentDates).toEqual(mockDate.split('..'));
+    expect(filter.currentDateOrDates).toEqual(mockDate.split('..'));
   });
 
   it('should trigger input change event and expect the callback to be called with the date provided in the input', () => {
@@ -199,7 +200,7 @@ describe('DateRangeFilter', () => {
     filter.setValues(mockDates);
     let filledInputElm = divContainer.querySelector('.search-filter.filter-finish.filled') as HTMLInputElement;
 
-    expect(filter.currentDates).toEqual(mockDates);
+    expect(filter.currentDateOrDates).toEqual(mockDates);
     expect(filledInputElm).toBeTruthy();
 
     filter.setValues('');
@@ -300,7 +301,7 @@ describe('DateRangeFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.flatpickr.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    // expect(filter.currentDates.map((date) => date.toISOString())).toEqual(['2000-01-01T05:00:00.000Z', '2000-01-31T05:00:00.000Z']);
+    // expect(filter.currentDateOrDates.map((date) => date.toISOString())).toEqual(['2000-01-01T05:00:00.000Z', '2000-01-31T05:00:00.000Z']);
     expect(filterInputElm.value).toBe('2000-01-01 5:00:00 AM to 2000-01-31 5:00:00 AM');
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), {
       columnDef: mockColumn, operator: '>', searchTerms: ['2000-01-01 05:00:00 am', '2000-01-31 05:00:00 am'], shouldTriggerQuery: true
@@ -321,7 +322,7 @@ describe('DateRangeFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.flatpickr.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(filter.currentDates).toEqual(['2000-01-01T05:00:00.000Z', '2000-01-31T05:00:00.000Z']);
+    expect(filter.currentDateOrDates).toEqual(['2000-01-01T05:00:00.000Z', '2000-01-31T05:00:00.000Z']);
     expect(filterInputElm.value).toBe('2000-01-01 to 2000-01-31');
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01', '2000-01-31'], shouldTriggerQuery: true });
   });
