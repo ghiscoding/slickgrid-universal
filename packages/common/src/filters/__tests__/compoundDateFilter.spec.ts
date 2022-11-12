@@ -112,6 +112,7 @@ describe('CompoundDateFilter', () => {
       defaultDate: '',
       errorHandler: expect.toBeFunction(),
       locale: 'en',
+      mode: 'single',
       onChange: expect.anything(),
       wrap: true,
     });
@@ -121,14 +122,14 @@ describe('CompoundDateFilter', () => {
     const mockDate = '2001-01-02T16:02:02.239Z';
     filter.init(filterArguments);
     filter.setValues(mockDate);
-    expect(filter.currentDate).toEqual(mockDate);
+    expect(filter.currentDateOrDates).toEqual(mockDate);
   });
 
   it('should be able to call "setValues" as an array and have that value set in the picker', () => {
     const mockDate = '2001-01-02T16:02:02.239Z';
     filter.init(filterArguments);
     filter.setValues([mockDate]);
-    expect(filter.currentDate).toEqual(mockDate);
+    expect(filter.currentDateOrDates).toEqual(mockDate);
   });
 
   it('should be able to call "setValues" with a value and an extra operator and expect it to be set as new operator', () => {
@@ -138,7 +139,7 @@ describe('CompoundDateFilter', () => {
 
     const filterOperatorElm = divContainer.querySelector('.input-group-prepend.operator select') as HTMLInputElement;
 
-    expect(filter.currentDate).toEqual(mockDate);
+    expect(filter.currentDateOrDates).toEqual(mockDate);
     expect(filterOperatorElm.value).toBe('>=');
   });
 
@@ -218,7 +219,7 @@ describe('CompoundDateFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(filter.currentDate).toBe('2000-01-01T05:00:00.000Z');
+    expect(filter.currentDateOrDates).toBe('2000-01-01T05:00:00.000Z');
     expect(filterInputElm.value).toBe('2000-01-01');
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T05:00:00.000Z'], shouldTriggerQuery: true });
   });
@@ -245,7 +246,7 @@ describe('CompoundDateFilter', () => {
     filter.setValues(mockDate);
     let filledInputElm = divContainer.querySelector('.search-filter.filter-finish .filled') as HTMLInputElement;
 
-    expect(filter.currentDate).toEqual(mockDate);
+    expect(filter.currentDateOrDates).toEqual(mockDate);
     expect(filledInputElm).toBeTruthy();
 
     filter.setValues('');
@@ -273,7 +274,7 @@ describe('CompoundDateFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(filter.currentDate).toBe('2000-01-01T05:00:00.000Z');
+    expect(filter.currentDateOrDates).toBe('2000-01-01T05:00:00.000Z');
     expect(filterInputElm.value).toBe('2000-01-01');
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T05:00:00.000Z'], shouldTriggerQuery: true });
     expect(calendarElm).toBeTruthy();
@@ -347,7 +348,7 @@ describe('CompoundDateFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    // expect(filter.currentDate.toISOString()).toBe('2001-01-02T21:02:02.000Z');
+    // expect(filter.currentDateOrDates.toISOString()).toBe('2001-01-02T21:02:02.000Z');
     expect(filterInputElm.value).toBe('2001-01-02 4:02:02 PM');
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), {
       columnDef: mockColumn, operator: '>', searchTerms: ['2001-01-02'], shouldTriggerQuery: true
@@ -368,7 +369,7 @@ describe('CompoundDateFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(filter.currentDate).toBe('2000-01-01T05:00:00.000Z');
+    expect(filter.currentDateOrDates).toBe('2000-01-01T05:00:00.000Z');
     expect(filterInputElm.value).toBe('2000-01-01T05:00:00.000Z');
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T05:00:00.000Z'], shouldTriggerQuery: true });
   });

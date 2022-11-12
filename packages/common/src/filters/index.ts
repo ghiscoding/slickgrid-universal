@@ -4,6 +4,7 @@ export * from './compoundInputFilter';
 export * from './compoundInputNumberFilter';
 export * from './compoundInputPasswordFilter';
 export * from './compoundSliderFilter';
+export * from './dateFilter';
 export * from './dateRangeFilter';
 export * from './filters.index';
 export * from './filterFactory';
