@@ -6,6 +6,7 @@ import {
   findFirstElementAttribute,
   getElementOffsetRelativeToParent,
   getHtmlElementOffset,
+  getSelectorStringFromElement,
   htmlEncode,
   htmlEntityDecode,
   sanitizeHtmlToText,
@@ -127,6 +128,37 @@ describe('Service/domUtilies', () => {
 
       const output = getHtmlElementOffset(div);
       expect(output).toEqual({ top: 10, left: 25 });
+    });
+  });
+
+  describe('getSelectorStringFromElement() method', () => {
+    it('should return html element selector without classes when div is created without classes', () => {
+      const result = getSelectorStringFromElement(null);
+
+      expect(result).toBe('');
+    });
+
+    it('should return html element selector without classes when div is created without classes', () => {
+      const tmpDiv = document.createElement('div');
+      const result = getSelectorStringFromElement(tmpDiv);
+
+      expect(result).toBe('div');
+    });
+
+    it('should return html element selector with a single class name when exists', () => {
+      const tmpDiv = document.createElement('div');
+      tmpDiv.className = 'some-class'
+      const result = getSelectorStringFromElement(tmpDiv);
+
+      expect(result).toBe('div.some-class');
+    });
+
+    it('should return html element selector with multiple classes when exists', () => {
+      const tmpDiv = document.createElement('div');
+      tmpDiv.className = 'some-class other-class yet-more'
+      const result = getSelectorStringFromElement(tmpDiv);
+
+      expect(result).toBe('div.some-class.other-class.yet-more');
     });
   });
 

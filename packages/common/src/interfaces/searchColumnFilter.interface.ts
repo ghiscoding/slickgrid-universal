@@ -32,4 +32,7 @@ export interface SearchColumnFilter {
 
   /** What is the Field Type that can be used by the Filter (as precedence over the "type" set the column definition) */
   type: typeof FieldType[keyof typeof FieldType];
+
+  /** Target element selector from which the filter was triggered from. */
+  targetSelector?: string;
 }

@@ -13,4 +13,7 @@ export interface CurrentFilter {
 
   /** Filter search terms */
   searchTerms?: SearchTerm[];
+
+  /** Target element selector from which the filter was triggered from. */
+  targetSelector?: string;
 }

@@ -294,7 +294,8 @@ describe('GridOdataService', () => {
         grid: gridStub,
         operator: 'EQ',
         searchTerms: ['female'],
-        shouldTriggerQuery: true
+        shouldTriggerQuery: true,
+        targetSelector: 'div.some-classes'
       } as FilterChangedArgs;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -322,7 +323,8 @@ describe('GridOdataService', () => {
         grid: gridStub,
         operator: 'EQ',
         searchTerms: ['female'],
-        shouldTriggerQuery: true
+        shouldTriggerQuery: true,
+        targetSelector: 'div.some-classes'
       } as FilterChangedArgs;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -356,7 +358,8 @@ describe('GridOdataService', () => {
           grid: gridStub,
           operator: 'EQ',
           searchTerms: ['female'],
-          shouldTriggerQuery: true
+          shouldTriggerQuery: true,
+          targetSelector: 'div.some-classes'
         } as FilterChangedArgs;
 
         service.init(serviceOptions, paginationOptions, gridStub);
@@ -375,8 +378,8 @@ describe('GridOdataService', () => {
         const resetSpy = jest.spyOn(service, 'resetPaginationOptions');
         const mockColumn = { id: 'gender', field: 'gender' } as Column;
         const mockColumnName = { id: 'firstName', field: 'firstName' } as Column;
-        const mockColumnFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'] } as ColumnFilter;
-        const mockColumnFilterName = { columnDef: mockColumnName, columnId: 'firstName', operator: 'StartsWith', searchTerms: ['John'] } as ColumnFilter;
+        const mockColumnFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'], targetSelector: 'div.some-classes' } as ColumnFilter;
+        const mockColumnFilterName = { columnDef: mockColumnName, columnId: 'firstName', operator: 'StartsWith', searchTerms: ['John'], targetSelector: 'div.some-classes' } as ColumnFilter;
         const mockFilterChangedArgs = {
           columnDef: mockColumn,
           columnId: 'gender',
@@ -395,8 +398,8 @@ describe('GridOdataService', () => {
         expect(querySpy).toHaveBeenCalled();
         expect(resetSpy).toHaveBeenCalled();
         expect(currentFilters).toEqual([
-          { columnId: 'gender', operator: 'EQ', searchTerms: ['female'] },
-          { columnId: 'firstName', operator: 'StartsWith', searchTerms: ['John'] }
+          { columnId: 'gender', operator: 'EQ', searchTerms: ['female'], targetSelector: 'div.some-classes' },
+          { columnId: 'firstName', operator: 'StartsWith', searchTerms: ['John'], targetSelector: 'div.some-classes' }
         ]);
       });
     });
@@ -1798,7 +1801,7 @@ describe('GridOdataService', () => {
       serviceOptions.enableCount = true;
       service.init(serviceOptions, paginationOptions, gridStub);
 
-      service.postProcess({ '__count': 20 } );
+      service.postProcess({ '__count': 20 });
 
       expect(paginationOptions.totalItems).toBe(20);
     });

@@ -13,4 +13,5 @@ export interface FilterChangedArgs {
   operator: OperatorType | OperatorString;
   searchTerms: SearchTerm[];
   shouldTriggerQuery?: boolean;
+  targetSelector?: string;
 }
