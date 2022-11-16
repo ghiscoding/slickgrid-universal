@@ -305,8 +305,11 @@ export class Example3 {
       // frozenColumn: 2,
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by the column',
+        // hideGroupSortIcons: true,
         // groupIconCssClass: 'fa fa-outdent',
         deleteIconCssClass: 'mdi mdi-close color-danger',
+        sortAscIconCssClass: 'mdi mdi-arrow-up',
+        sortDescIconCssClass: 'mdi mdi-arrow-down',
         onGroupChanged: (_e, args) => this.onGroupChanged(args),
         onExtensionRegistered: (extension) => this.draggableGroupingPlugin = extension,
         // groupIconCssClass: 'mdi mdi-drag-vertical',

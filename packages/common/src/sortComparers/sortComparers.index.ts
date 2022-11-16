@@ -1,3 +1,4 @@
+import { booleanSortComparer } from './booleanSortComparer';
 import { numericSortComparer } from './numericSortComparer';
 import { objectStringSortComparer } from './objectStringSortComparer';
 import { stringSortComparer } from './stringSortComparer';
@@ -8,6 +9,9 @@ import { FieldType } from '../enums/fieldType.enum';
 export * from './sortUtilities';
 
 export const SortComparers = {
+  /** SortComparer method to sort values as regular strings */
+  boolean: booleanSortComparer,
+
   /** SortComparer method to sort values by Date object type (uses Moment.js ISO_8601 standard format, optionally include time) */
   date: getAssociatedDateSortComparer(FieldType.date),
 

@@ -17,6 +17,15 @@ export interface DraggableGroupingOption {
   /** Defaults to False, should we display a toggle all button (typically aligned on the left before any of the column group) */
   hideToggleAllButton?: boolean;
 
+  /** Defaults to False, should we show the Sorting icons on each group by element? */
+  hideGroupSortIcons?: boolean;
+
+  /** an extra CSS class to add to the sort ascending icon (default undefined), if sortAscIconCssClass is undefined then slick-groupby-sort-asc-icon class will be added */
+  sortAscIconCssClass?: string;
+
+  /** an extra CSS class to add to the sort descending icon (default undefined), if sortDescIconCssClass is undefined then slick-groupby-sort-desc-icon class will be added */
+  sortDescIconCssClass?: string;
+
   /** Defaults to "Toggle all Groups", placeholder of the Toggle All button that can optionally show up in the pre-header row. */
   toggleAllPlaceholderText?: string;
 

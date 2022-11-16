@@ -925,10 +925,24 @@ input.flatpickr.form-control {
       z-index: 1;
     }
 
+    .slick-groupby-sort {
+      cursor: pointer;
+      display: inline-flex;
+      margin-left: var(--slick-draggable-group-sort-icon-margin-left, $slick-draggable-group-sort-icon-margin-left);
+      color: var(--slick-draggable-group-sort-icon-color, $slick-draggable-group-sort-icon-color);
+      font-size: var(--slick-draggable-group-sort-icon-font-size, $slick-draggable-group-sort-icon-font-size);
+      padding-left: var(--slick-draggable-group-sort-icon-padding-left, $slick-draggable-group-sort-icon-padding-left);
+      padding-right: var(--slick-draggable-group-sort-icon-padding-right, $slick-draggable-group-sort-icon-padding-right);
+      vertical-align: var(--slick-draggable-group-sort-icon-vertical-align, $slick-draggable-group-sort-icon-vertical-align);
+      &:hover {
+        color: var(--slick-draggable-group-sort-icon-hover-color, $slick-draggable-group-sort-icon-hover-color);
+      }
+    }
+
     .slick-groupby-remove {
       cursor: pointer;
       display: inline-flex;
-      margin-left: 5px;
+      margin-left: var(--slick-draggable-group-delete-margin-left, $slick-draggable-group-delete-margin-left);
       color: var(--slick-draggable-group-delete-color, $slick-draggable-group-delete-color);
       font-size: var(--slick-draggable-group-delete-font-size, $slick-draggable-group-delete-font-size);
       padding-left: var(--slick-draggable-group-delete-padding-left, $slick-draggable-group-delete-padding-left);
@@ -937,6 +951,22 @@ input.flatpickr.form-control {
       &:hover {
         color: var(--slick-draggable-group-delete-hover-color, $slick-draggable-group-delete-hover-color);
       }
+    }
+
+    .slick-groupby-remove-icon::before {
+      font-family: var(--slick-icon-font-family, $slick-icon-font-family);
+      font-size: var(--slick-draggable-group-by-remove-icon-size, $slick-draggable-group-by-remove-icon-size);
+      content: var(--slick-draggable-group-by-remove-icon, $slick-draggable-group-by-remove-icon);
+    }
+    .slick-groupby-sort-asc-icon::before {
+      font-family: var(--slick-icon-font-family, $slick-icon-font-family);
+      font-size: var(--slick-draggable-group-sort-asc-icon-size, $slick-draggable-group-sort-asc-icon-size);
+      content: var(--slick-draggable-group-sort-asc-icon, $slick-draggable-group-sort-asc-icon);
+    }
+    .slick-groupby-sort-desc-icon::before {
+      font-family: var(--slick-icon-font-family, $slick-icon-font-family);
+      font-size: var(--slick-draggable-group-sort-desc-icon-size, $slick-draggable-group-sort-desc-icon-size);
+      content: var(--slick-draggable-group-sort-desc-icon, $slick-draggable-group-sort-desc-icon);
     }
   }
   .slick-dropzone-hover {
