@@ -38,4 +38,7 @@ export interface Grouping<T = any> {
 
   /** Set some predefined Grouping values */
   predefinedValues?: any[];
+
+  /** defaults to true, so far only used internally by SlickDraggableGrouping */
+  sortAsc?: boolean
 }

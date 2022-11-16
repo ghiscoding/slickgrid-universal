@@ -36,12 +36,14 @@ import { Column, DraggableGroupingOption, GridOption, SlickGrid, SlickNamespace 
 import { BackendUtilityService, createDomElement, } from '../../services';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { SortDirectionNumber } from '../../enums';
 
 declare const Slick: SlickNamespace;
 const GRID_UID = 'slickgrid12345';
 
 let addonOptions: DraggableGroupingOption = {
   dropPlaceHolderText: 'Drop a column header here to group by the column',
+  hideGroupSortIcons: false,
   hideToggleAllButton: false,
   toggleAllButtonText: '',
   toggleAllPlaceholderText: 'Toggle all Groups',
@@ -78,6 +80,7 @@ const gridStub = {
   getData: () => dataViewStub,
   getEditorLock: () => getEditorLockMock,
   getUID: () => GRID_UID,
+  invalidate: jest.fn(),
   registerPlugin: jest.fn(),
   updateColumnHeader: jest.fn(),
   onColumnsReordered: new Slick.Event(),
@@ -330,7 +333,7 @@ describe('Draggable Grouping Plugin', () => {
       let placeholderElm = preHeaderDiv.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
       let dropGroupingElm = preHeaderDiv.querySelector('.slick-dropped-grouping') as HTMLDivElement;
       expect(placeholderElm.style.display).toBe('none');
-      expect(dropGroupingElm.style.display).toBe('inline-block');
+      expect(dropGroupingElm.style.display).toBe('flex');
     });
 
     it('should execute the "onEnd" callback of Sortable and expect sortable to be cancelled', () => {
@@ -443,6 +446,7 @@ describe('Draggable Grouping Plugin', () => {
         });
 
         afterEach(() => {
+          plugin.dispose();
           jest.clearAllMocks();
         });
 
@@ -456,6 +460,7 @@ describe('Draggable Grouping Plugin', () => {
               formatter: mockColumns[2].grouping!.formatter,
               getter: 'age',
               collapsed: false,
+              sortAsc: true,
             }],
           });
 
@@ -523,6 +528,143 @@ describe('Draggable Grouping Plugin', () => {
 
           expect(toggleAllIconElm.classList.contains('expanded')).toBeTruthy();
           expect(toggleAllIconElm.classList.contains('collapsed')).toBeFalsy();
+        });
+      });
+
+      describe('setupColumnDropbox sort icon and click events', () => {
+        let groupChangedSpy: any;
+        let mockHeaderColumnDiv1: HTMLDivElement;
+        let mockHeaderColumnDiv2: HTMLDivElement;
+
+        beforeEach(() => {
+          groupChangedSpy = jest.spyOn(plugin.onGroupChanged, 'notify');
+          mockHeaderColumnDiv1 = document.createElement('div');
+          mockHeaderColumnDiv1.className = 'slick-dropped-grouping';
+          mockHeaderColumnDiv1.id = 'age';
+          mockHeaderColumnDiv1.dataset.id = 'age';
+          mockColumns[2].grouping!.collapsed = false;
+
+          mockHeaderColumnDiv2 = document.createElement('div');
+          mockHeaderColumnDiv2.className = 'slick-dropped-grouping';
+          mockHeaderColumnDiv2.id = 'medals';
+          mockHeaderColumnDiv2.dataset.id = 'medals';
+          dropzoneElm.appendChild(mockHeaderColumnDiv1);
+          dropzoneElm.appendChild(mockHeaderColumnDiv2);
+
+          mockHeaderColumnDiv1.appendChild(mockDivPaneContainer1);
+          mockHeaderColumnDiv2.appendChild(mockDivPaneContainer1);
+        });
+
+        afterEach(() => {
+          plugin.dispose();
+          jest.clearAllMocks();
+        });
+
+        it('should ', () => {
+
+        });
+
+        it('should not expect any sort icons displayed when "hideGroupSortIcons" is set to True', () => {
+          plugin.init(gridStub, { ...addonOptions, hideGroupSortIcons: true });
+          const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+          jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
+
+          fn.sortableLeftInstance!.options.onStart!({} as any);
+          plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
+
+          expect(plugin.addonOptions.hideGroupSortIcons).toBe(true)
+          let groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
+          let groupBySortAscIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-asc-icon') as HTMLDivElement;
+
+          expect(fn.sortableLeftInstance).toEqual(plugin.sortableLeftInstance);
+          expect(fn.sortableRightInstance).toEqual(plugin.sortableRightInstance);
+          expect(fn.sortableLeftInstance.destroy).toBeTruthy();
+          expect(groupBySortElm).toBeFalsy();
+          expect(groupBySortAscIconElm).toBeFalsy();
+        });
+
+        it('should toggle ascending/descending order when original sort is ascending then user clicked the sorting icon twice', () => {
+          plugin.init(gridStub, { ...addonOptions });
+          const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+          jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
+          const invalidateSpy = jest.spyOn(gridStub, 'invalidate');
+
+          fn.sortableLeftInstance!.options.onStart!({} as any);
+          plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
+
+          let groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
+          let groupBySortAscIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-asc-icon') as HTMLDivElement;
+
+          expect(fn.sortableLeftInstance).toEqual(plugin.sortableLeftInstance);
+          expect(fn.sortableRightInstance).toEqual(plugin.sortableRightInstance);
+          expect(fn.sortableLeftInstance.destroy).toBeTruthy();
+          expect(groupBySortElm).toBeTruthy();
+          expect(groupBySortAscIconElm).toBeTruthy();
+
+          groupBySortAscIconElm.dispatchEvent(new Event('click'));
+          const toggleAllElm = document.querySelector('.slick-group-toggle-all') as HTMLDivElement;
+          const toggleAllIconElm = toggleAllElm.querySelector('.slick-group-toggle-all-icon') as HTMLDivElement;
+          groupBySortAscIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-asc-icon') as HTMLDivElement;
+          let groupBySortDescIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-desc-icon') as HTMLDivElement;
+
+          expect(setGroupingSpy).toHaveBeenCalledWith(expect.toBeArray());
+          expect(toggleAllIconElm.classList.contains('expanded')).toBeTruthy();
+          expect(groupBySortAscIconElm).toBeFalsy();
+          expect(groupBySortDescIconElm).toBeTruthy();
+
+          groupBySortDescIconElm.dispatchEvent(new Event('click'));
+          groupBySortAscIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-asc-icon') as HTMLDivElement;
+          groupBySortDescIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-desc-icon') as HTMLDivElement;
+
+          expect(setGroupingSpy).toHaveBeenCalledWith(expect.toBeArray());
+          expect(toggleAllIconElm.classList.contains('expanded')).toBeTruthy();
+          expect(groupBySortAscIconElm).toBeTruthy();
+          expect(groupBySortDescIconElm).toBeFalsy();
+          expect(invalidateSpy).toHaveBeenCalledTimes(2);
+          expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'sort-group', groupColumns: expect.toBeArray(), });
+        });
+
+        it('should toggle ascending/descending order with different icons when original sort is ascending then user clicked the sorting icon twice', () => {
+          plugin.init(gridStub, { ...addonOptions, sortAscIconCssClass: 'mdi mdi-arrow-up', sortDescIconCssClass: 'mdi mdi-arrow-down' });
+          const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+          jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
+          const invalidateSpy = jest.spyOn(gridStub, 'invalidate');
+
+          fn.sortableLeftInstance!.options.onStart!({} as any);
+          plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
+
+          let groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
+          let groupBySortAscIconElm = preHeaderDiv.querySelector('.mdi-arrow-up') as HTMLDivElement;
+
+          expect(fn.sortableLeftInstance).toEqual(plugin.sortableLeftInstance);
+          expect(fn.sortableRightInstance).toEqual(plugin.sortableRightInstance);
+          expect(fn.sortableLeftInstance.destroy).toBeTruthy();
+          expect(groupBySortElm).toBeTruthy();
+          expect(groupBySortAscIconElm).toBeTruthy();
+
+          groupBySortAscIconElm.dispatchEvent(new Event('click'));
+          groupBySortAscIconElm = preHeaderDiv.querySelector('.mdi-arrow-up') as HTMLDivElement;
+          let groupBySortDescIconElm = preHeaderDiv.querySelector('.mdi-arrow-down') as HTMLDivElement;
+
+          expect(setGroupingSpy).toHaveBeenCalledWith(expect.toBeArray());
+          expect(groupBySortAscIconElm).toBeFalsy();
+          expect(groupBySortDescIconElm).toBeTruthy();
+
+          groupBySortDescIconElm.dispatchEvent(new Event('click'));
+          groupBySortAscIconElm = preHeaderDiv.querySelector('.mdi-arrow-up') as HTMLDivElement;
+          groupBySortDescIconElm = preHeaderDiv.querySelector('.mdi-arrow-down') as HTMLDivElement;
+
+          expect(setGroupingSpy).toHaveBeenCalledWith(expect.toBeArray());
+          expect(groupBySortAscIconElm).toBeTruthy();
+          expect(groupBySortDescIconElm).toBeFalsy();
+          expect(invalidateSpy).toHaveBeenCalledTimes(2);
+          expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'sort-group', groupColumns: expect.toBeArray(), });
+
+          const sortResult1 = mockColumns[2].grouping!.comparer!({ value: 'John', count: 0 }, { value: 'Jane', count: 1 });
+          expect(sortResult1).toBe(SortDirectionNumber.asc);
+
+          const sortResult2 = mockColumns[2].grouping!.comparer!({ value: 'Jane', count: 1 }, { value: 'John', count: 0 });
+          expect(sortResult2).toBe(SortDirectionNumber.desc);
         });
       });
     });

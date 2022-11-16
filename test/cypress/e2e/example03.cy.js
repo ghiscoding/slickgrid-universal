@@ -47,6 +47,32 @@ describe('Example 03 - Draggable Grouping', { retries: 1 }, () => {
       cy.get(`[style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 4');
     });
 
+    it('should click on the group by Duration sort icon and expect data to become sorted as descending order with all rows being expanded', () => {
+      cy.get('.mdi-arrow-up:nth(0)').click();
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
+    });
+
+    it('should collapse all rows and make sure Duration group is sorted in descending order', () => {
+      cy.get('.slick-preheader-panel .slick-group-toggle-all').click();
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 100');
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 99');
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 98');
+    });
+
+    it('should click on the group by Duration sort icon and now expect data to become sorted as ascending order with all rows being expanded', () => {
+      cy.get('.mdi-arrow-down:nth(0)').click();
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
+    });
+
+    it('should collapse all rows and make sure Duration group is sorted in descending order', () => {
+      cy.get('.slick-preheader-panel .slick-group-toggle-all').click();
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 1');
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 2');
+    });
+
     it('should click on Expand All columns and expect 1st row as grouping title and 2nd row as a regular row', () => {
       cy.get('[data-test="add-50k-rows-btn"]').click();
       cy.get('[data-test="group-duration-sort-value-btn"]').click();

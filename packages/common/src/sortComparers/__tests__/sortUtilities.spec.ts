@@ -4,6 +4,12 @@ import { sortByFieldType } from '../sortUtilities';
 import { SortComparers } from '../sortComparers.index';
 
 describe('sortUtilities', () => {
+  it('should call the SortComparers.boolean when FieldType is boolean', () => {
+    const spy = jest.spyOn(SortComparers, 'boolean');
+    sortByFieldType(FieldType.boolean, 0, 4, SortDirectionNumber.asc, { id: 'field1', field: 'field1' });
+    expect(spy).toHaveBeenCalledWith(0, 4, SortDirectionNumber.asc, { id: 'field1', field: 'field1' }, undefined);
+  });
+
   it('should call the SortComparers.numeric when FieldType is number', () => {
     const spy = jest.spyOn(SortComparers, 'numeric');
     sortByFieldType(FieldType.number, 0, 4, SortDirectionNumber.asc, { id: 'field1', field: 'field1' });

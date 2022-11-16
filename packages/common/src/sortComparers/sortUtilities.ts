@@ -7,6 +7,9 @@ export function sortByFieldType(fieldType: typeof FieldType[keyof typeof FieldTy
   let sortResult = 0;
 
   switch (fieldType) {
+    case FieldType.boolean:
+      sortResult = SortComparers.boolean(value1, value2, sortDirection, sortColumn, gridOptions);
+      break;
     case FieldType.float:
     case FieldType.integer:
     case FieldType.number:

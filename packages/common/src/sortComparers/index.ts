@@ -1,3 +1,4 @@
+export * from './booleanSortComparer';
 export * from './objectStringSortComparer';
 export * from './stringSortComparer';
 export * from './sortUtilities';
