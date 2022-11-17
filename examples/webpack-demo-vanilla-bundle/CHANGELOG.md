@@ -4,6 +4,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.0.0...v2.1.0) (2022-11-17)
+
+### Bug Fixes
+
+* **common:** changing Slider value(s) should update Tooltip instantly ([#800](https://github.com/ghiscoding/slickgrid-universal/issues/800)) ([9c6be27](https://github.com/ghiscoding/slickgrid-universal/commit/9c6be271a956876edaa03be7bf4bda9821840910)) - by @ghiscoding
+* **common:** Slider Range should update both number addons ([#803](https://github.com/ghiscoding/slickgrid-universal/issues/803)) ([3cfd84e](https://github.com/ghiscoding/slickgrid-universal/commit/3cfd84e7ec4e45cf6a4896dc6143da1fecb0402c)) - by @ghiscoding
+* **deps:** update dependency dompurify to ^2.4.1 ([#806](https://github.com/ghiscoding/slickgrid-universal/issues/806)) ([a33d8fb](https://github.com/ghiscoding/slickgrid-universal/commit/a33d8fbf3e48bfa29b9173f9263620e61608fffb)) - by @renovate-bot
+* **editors:** disable browser autofill on the Editors.autocompleter ([#776](https://github.com/ghiscoding/slickgrid-universal/issues/776)) ([fd2cf53](https://github.com/ghiscoding/slickgrid-universal/commit/fd2cf535c0bd941203951c665bb3da00f4a4677e)) - by @ghiscoding
+* **editors:** Slider editor track not showing after Slider filter change ([#792](https://github.com/ghiscoding/slickgrid-universal/issues/792)) ([2ad02d2](https://github.com/ghiscoding/slickgrid-universal/commit/2ad02d22cfbb2187df62f0ec19b26f828fec57a6)) - by @ghiscoding
+* **toolip:** left & right align were inverted ([#797](https://github.com/ghiscoding/slickgrid-universal/issues/797)) ([91c4a5c](https://github.com/ghiscoding/slickgrid-universal/commit/91c4a5c61a4f78478929f2be41a17e3e2d210a30)) - by @ghiscoding
+
+### Features
+
+* **addon:** add group by sorting to SlickDraggableGrouping ([#814](https://github.com/ghiscoding/slickgrid-universal/issues/814)) ([962a756](https://github.com/ghiscoding/slickgrid-universal/commit/962a756fb17476221867c977752e28bd1d74f6db)) - by @ghiscoding
+* **common:** use editorOptions/filterOptions instead of params ([#798](https://github.com/ghiscoding/slickgrid-universal/issues/798)) ([a3c8b6e](https://github.com/ghiscoding/slickgrid-universal/commit/a3c8b6e48dbe3db7eb154837f15ce10780923b32)) - by @ghiscoding
+* **filters:** add back Slider Range filter in pure JS ([#784](https://github.com/ghiscoding/slickgrid-universal/issues/784)) ([b84525c](https://github.com/ghiscoding/slickgrid-universal/commit/b84525c3c087582854e30b386a1015f6ce3156b4)) - by @ghiscoding
+* **filters:** add Slider filter track filled track color ([#795](https://github.com/ghiscoding/slickgrid-universal/issues/795)) ([5fbd9c9](https://github.com/ghiscoding/slickgrid-universal/commit/5fbd9c9036844e7e88a99fea6a4d1e1f0fd2377a)) - by @ghiscoding
+* **plugins:** sync column definitions to user after plugin adds column ([#781](https://github.com/ghiscoding/slickgrid-universal/issues/781)) ([0755b65](https://github.com/ghiscoding/slickgrid-universal/commit/0755b655b7be5911345334e094544a14c3698b51)) - by @ghiscoding
+* **tooltip:** add a new "center" position option to SlickCustomTooltip ([#787](https://github.com/ghiscoding/slickgrid-universal/issues/787)) ([b019de5](https://github.com/ghiscoding/slickgrid-universal/commit/b019de50244836a984314ea6e6f5cee639551438)) - by @ghiscoding
+
+### Performance Improvements
+
+* **filters:** merge all Slider filters into one class ([#791](https://github.com/ghiscoding/slickgrid-universal/issues/791)) ([fc4304b](https://github.com/ghiscoding/slickgrid-universal/commit/fc4304b3dd47ac10df65f5b8dda9d8ce5aad8ed9)) - by @ghiscoding
+
 # [2.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v1.4.0...v2.0.0) (2022-10-17)
 
 ### Bug Fixes

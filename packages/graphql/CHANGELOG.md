@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.0.0...v2.1.0) (2022-11-17)
+
+### Features
+
+* **common:** add "targetSelector" to onFilterChanged & Grid State ([#813](https://github.com/ghiscoding/slickgrid-universal/issues/813)) ([a25791a](https://github.com/ghiscoding/slickgrid-universal/commit/a25791a5d11b73fd88d80ef8a6f788b27d7390ec)) - by @ghiscoding
+
 # [2.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v1.4.0...v2.0.0) (2022-10-17)
 
 ### Features
