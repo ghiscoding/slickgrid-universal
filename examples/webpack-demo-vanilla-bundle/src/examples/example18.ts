@@ -178,6 +178,8 @@ export class Example34 {
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by any of these available columns: Currency, Market or Type',
         deleteIconCssClass: 'mdi mdi-close color-danger',
+        sortAscIconCssClass: 'mdi mdi-arrow-up',
+        sortDescIconCssClass: 'mdi mdi-arrow-down',
       },
       enableDraggableGrouping: true,
       createPreHeaderPanel: true,
