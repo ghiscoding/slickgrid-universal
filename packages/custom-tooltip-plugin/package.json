@@ -45,7 +45,7 @@
     "dompurify": "^2.4.1"
   },
   "devDependencies": {
-    "@types/dompurify": "^2.3.4",
+    "@types/dompurify": "^2.4.0",
     "cross-env": "^7.0.3",
     "npm-run-all2": "^6.0.4",
     "rimraf": "^3.0.2"

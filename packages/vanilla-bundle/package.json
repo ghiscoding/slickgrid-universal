@@ -53,7 +53,7 @@
     "dequal": "^2.0.3",
     "flatpickr": "^4.6.13",
     "jquery": "^3.6.1",
-    "slickgrid": "^3.0.0",
+    "slickgrid": "^3.0.2",
     "sortablejs": "^1.15.0",
     "whatwg-fetch": "^3.6.2"
   },
