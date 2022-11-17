@@ -139,7 +139,7 @@ export function parseFormatterWhenExist<T = any>(formatter: Formatter<T> | undef
     fieldProperty = (props.length > 0) ? props[0] : columnDef.field;
   }
 
-  const cellValue = (dataContext as any).hasOwnProperty(fieldProperty) ? (dataContext as any)[fieldProperty] : null;
+  const cellValue = dataContext?.hasOwnProperty(fieldProperty as keyof T) ? dataContext[fieldProperty as keyof T] : null;
 
   if (typeof formatter === 'function') {
     const formattedData = formatter(row, col, cellValue, columnDef, dataContext, grid);
@@ -151,7 +151,7 @@ export function parseFormatterWhenExist<T = any>(formatter: Formatter<T> | undef
       output = '';
     }
   } else {
-    output = (!(dataContext as any).hasOwnProperty(fieldProperty)) ? '' : cellValue;
+    output = ((!dataContext?.hasOwnProperty(fieldProperty as keyof T)) ? '' : cellValue) as string;
     if (output === null || output === undefined) {
       output = '';
     }

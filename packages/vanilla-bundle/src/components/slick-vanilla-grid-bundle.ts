@@ -448,7 +448,7 @@ export class SlickVanillaGridBundle {
 
     if (this.backendServiceApi) {
       for (const prop of Object.keys(this.backendServiceApi)) {
-        (this.backendServiceApi as any)[prop] = null;
+        this.backendServiceApi[prop as keyof BackendServiceApi] = null;
       }
       this.backendServiceApi = undefined;
     }

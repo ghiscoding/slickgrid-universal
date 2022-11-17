@@ -506,7 +506,7 @@ export class GridService {
 
     // get row numbers of all new inserted items
     // we need to do it after resort and get each row number because it possibly changed after the sort
-    items.forEach((item: T) => rowNumbers.push(this._dataView.getRowById((item as any)[idPropName]) as number));
+    items.forEach((item: T) => rowNumbers.push(this._dataView.getRowById(item[idPropName as keyof T] as string | number) as number));
 
     // if user wanted to see highlighted row
     if (options.highlightRow) {
@@ -539,7 +539,7 @@ export class GridService {
     if (!options?.skipError && (!item || !item.hasOwnProperty(idPropName))) {
       throw new Error(`Deleting an item requires the item to include an "${idPropName}" property`);
     }
-    return this.deleteItemById((item as any)[idPropName], options);
+    return this.deleteItemById(item[idPropName as keyof T] as string | number, options);
   }
 
   /**
