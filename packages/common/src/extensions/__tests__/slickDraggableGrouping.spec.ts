@@ -37,6 +37,7 @@ import { BackendUtilityService, createDomElement, } from '../../services';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SortDirectionNumber } from '../../enums';
+import { deepCopy } from '@slickgrid-universal/utils';
 
 declare const Slick: SlickNamespace;
 const GRID_UID = 'slickgrid12345';
@@ -93,7 +94,7 @@ const mockColumns = [
   { id: 'firstName', name: 'First Name', field: 'firstName', width: 100 },
   { id: 'lastName', name: 'Last Name', field: 'lastName', width: 100 },
   {
-    id: 'age', name: 'Age', field: 'age', width: 50,
+    id: 'age', name: 'Age', field: 'age', width: 50, sortable: true,
     grouping: {
       getter: 'age', aggregators: [new Aggregators.Avg('age')],
       formatter: (g) => `Age: ${g.value} <span style="color:green">(${g.count} items)</span>`,
@@ -101,7 +102,7 @@ const mockColumns = [
     }
   },
   {
-    id: 'medals', name: 'Medals', field: 'medals', width: 50,
+    id: 'medals', name: 'Medals', field: 'medals', width: 50,sortable: true,
     grouping: {
       getter: 'medals', aggregators: [new Aggregators.Sum('medals')],
       formatter: (g) => `Medals: ${g.value} <span style="color:green">(${g.count} items)</span>`,
@@ -579,6 +580,26 @@ describe('Draggable Grouping Plugin', () => {
           expect(fn.sortableLeftInstance).toEqual(plugin.sortableLeftInstance);
           expect(fn.sortableRightInstance).toEqual(plugin.sortableRightInstance);
           expect(fn.sortableLeftInstance.destroy).toBeTruthy();
+          expect(groupBySortElm).toBeFalsy();
+          expect(groupBySortAscIconElm).toBeFalsy();
+        });
+
+        it('should not expect any sort icons displayed when the Column is not Sortable', () => {
+          const mockColumnsCopy = deepCopy(mockColumns);
+          mockColumnsCopy[2].sortable = false; // change age column to not sortable
+          jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumnsCopy);
+          plugin.init(gridStub, { ...addonOptions });
+          const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumnsCopy, getColumnIndexSpy, GRID_UID, triggerSpy);
+          jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age']);
+
+          fn.sortableLeftInstance!.options.onStart!({} as any);
+          plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
+
+          let groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
+          let groupBySortAscIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-asc-icon') as HTMLDivElement;
+
+          // we're not hiding the columns, but it's not Sortable so the result is the same
+          expect(plugin.addonOptions.hideGroupSortIcons).toBe(false);
           expect(groupBySortElm).toBeFalsy();
           expect(groupBySortAscIconElm).toBeFalsy();
         });
