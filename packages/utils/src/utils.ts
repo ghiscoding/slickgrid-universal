@@ -7,7 +7,7 @@
 export function addToArrayWhenNotExists<T = any>(inputArray: T[], inputItem: T, itemIdPropName = 'id') {
   let arrayRowIndex = -1;
   if (inputItem && typeof inputItem === 'object' && itemIdPropName in inputItem) {
-    arrayRowIndex = inputArray.findIndex((item) => (item as any)[itemIdPropName] === (inputItem as any)[itemIdPropName]);
+    arrayRowIndex = inputArray.findIndex((item) => item[itemIdPropName as keyof T] === inputItem[itemIdPropName as keyof T]);
   } else {
     arrayRowIndex = inputArray.findIndex((item) => item === inputItem);
   }

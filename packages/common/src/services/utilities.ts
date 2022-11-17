@@ -173,13 +173,13 @@ export function findItemInTreeStructure<T = any>(treeArray: T[], predicate: (ite
     throw new Error('findRecursive requires parameter "childrenPropertyName"');
   }
   const initialFind = treeArray.find(predicate);
-  const elementsWithChildren = treeArray.filter((x: T) => childrenPropertyName in x && (x as any)[childrenPropertyName]);
+  const elementsWithChildren = treeArray.filter((x: T) => x?.hasOwnProperty(childrenPropertyName) && x[childrenPropertyName as keyof T]);
   if (initialFind) {
     return initialFind;
   } else if (elementsWithChildren.length) {
     const childElements: T[] = [];
     elementsWithChildren.forEach((item: T) => {
-      if (childrenPropertyName in item) {
+      if (item?.hasOwnProperty(childrenPropertyName)) {
         childElements.push(...(item as any)[childrenPropertyName]);
       }
     });
