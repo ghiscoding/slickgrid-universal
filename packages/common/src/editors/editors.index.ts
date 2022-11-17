@@ -48,6 +48,6 @@ export const Editors = {
   /** Slider Editor using an input of type "range" */
   slider: SliderEditor,
 
-  /** Text Editor using an input of type "text" */
+  /** text Editor using an input of type "text" (this is the default editor when no type is provided) */
   text: InputEditor
 };
