@@ -13,9 +13,9 @@
   },
   "scripts": {
     "prebuild": "pnpm lint",
-    "build": "cross-env CI=true lerna run build --stream",
+    "build": "lerna run build --stream",
     "prebundle": "pnpm lint",
-    "bundle": "cross-env CI=true lerna run bundle --stream",
+    "bundle": "lerna run bundle --stream",
     "prebundle:zip": "pnpm bundle",
     "bundle:zip": "pnpm -r --stream --filter=./packages/** run bundle:zip",
     "build:demo": "pnpm -r --stream build:demo",
