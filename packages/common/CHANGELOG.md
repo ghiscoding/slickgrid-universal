@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.1](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.0...v2.1.1) (2022-11-19)
+
+### Bug Fixes
+
+* **plugin:** do not show drag group sort when column is not sortable ([#819](https://github.com/ghiscoding/slickgrid-universal/issues/819)) ([049303b](https://github.com/ghiscoding/slickgrid-universal/commit/049303b0f6d085e7d022a2c87572c9ac90082b3e)) - by @ghiscoding
+
 # [2.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.0.0...v2.1.0) (2022-11-17)
 
 ### Bug Fixes
