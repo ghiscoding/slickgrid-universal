@@ -166,7 +166,6 @@ export class DateFilter implements Filter {
     this.filterContainerElm?.remove();
     this._selectOperatorElm?.remove();
     this._filterElm?.remove();
-    this.grid = null as any;
   }
 
   hide() {
