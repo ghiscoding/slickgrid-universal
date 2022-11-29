@@ -721,7 +721,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
     setTimeout(() => {
       // make sure View Row DOM Element really exist before notifying that it's a row that is visible again
-      if (document.querySelector(`.cellDetailView_${item[this._dataViewIdProperty]}`)) {
+      if (document.querySelector(`.${this.gridUid} .cellDetailView_${item[this._dataViewIdProperty]}`)) {
         this.onRowBackToViewportRange.notify({
           grid: this._grid,
           item,
