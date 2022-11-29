@@ -130,7 +130,6 @@ export class FilterService {
     }
     this.disposeColumnFilters();
     this._onSearchChange = null;
-    this._grid = null as any;
   }
 
   /**
