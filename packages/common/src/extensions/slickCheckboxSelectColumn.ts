@@ -106,18 +106,21 @@ export class SlickCheckboxSelectColumn<T = any> {
     this._addonOptions = { ...this._defaults, ...gridOptions.checkboxSelector } as CheckboxSelectorOption;
     if (Array.isArray(columnDefinitions) && gridOptions) {
       const selectionColumn: Column = this.getColumnDefinition();
-      // column index position in the grid
-      const columnPosition = gridOptions?.checkboxSelector?.columnIndexPosition ?? 0;
-      if (columnPosition > 0) {
-        columnDefinitions.splice(columnPosition, 0, selectionColumn);
-      } else {
-        columnDefinitions.unshift(selectionColumn);
-      }
 
-      this.pubSubService.publish(`onPluginColumnsChanged`, {
-        columns: columnDefinitions,
-        pluginName: this.pluginName
-      });
+      // add new checkbox column unless it was already added
+      if (!columnDefinitions.some(col => col.id === selectionColumn.id)) {
+        // column index position in the grid
+        const columnPosition = gridOptions?.checkboxSelector?.columnIndexPosition ?? 0;
+        if (columnPosition > 0) {
+          columnDefinitions.splice(columnPosition, 0, selectionColumn);
+        } else {
+          columnDefinitions.unshift(selectionColumn);
+        }
+        this.pubSubService.publish(`onPluginColumnsChanged`, {
+          columns: columnDefinitions,
+          pluginName: this.pluginName
+        });
+      }
     }
     return this;
   }
