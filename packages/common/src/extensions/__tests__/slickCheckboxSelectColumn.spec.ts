@@ -4,17 +4,21 @@ import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickCheckboxSelectColumn } from '../slickCheckboxSelectColumn';
 import { Column, OnSelectedRowsChangedEventArgs, SlickGrid, SlickNamespace, } from '../../interfaces/index';
 import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
+import { KeyCode } from '../../enums';
 
 declare const Slick: SlickNamespace;
 
-const addJQueryEventPropagation = function (event, commandKey = '', keyName = '', target?: HTMLElement) {
+const addJQueryEventPropagation = function (event, commandKey = '', keyName = '', target?: HTMLElement, which: string | number = '') {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
   Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
   if (commandKey) {
     Object.defineProperty(event, commandKey, { writable: true, configurable: true, value: true });
   }
-  if (keyName) {
+  if (keyName !== '') {
     Object.defineProperty(event, 'key', { writable: true, configurable: true, value: keyName });
+  }
+  if (which !== '') {
+    Object.defineProperty(event, 'which', { writable: true, configurable: true, value: which });
   }
   if (target) {
     Object.defineProperty(event, 'target', { writable: true, configurable: true, value: target });
@@ -82,14 +86,20 @@ jest.mock('../../extensions/slickRowSelectionModel', () => ({
 describe('SlickCheckboxSelectColumn Plugin', () => {
   Slick.RowMoveManager = mockAddon;
 
-  const mockColumns = [
-    { id: 'firstName', field: 'firstName', name: 'First Name', },
-    { id: 'lastName', field: 'lastName', name: 'Last Name', },
-    { id: 'age', field: 'age', name: 'Age', },
-  ] as Column[];
+  let mockColumns: Column[];
+  // let mockColumns: Column[] = [
+  //   { id: 'firstName', field: 'firstName', name: 'First Name', },
+  //   { id: 'lastName', field: 'lastName', name: 'Last Name', },
+  //   { id: 'age', field: 'age', name: 'Age', },
+  // ];
   let plugin: SlickCheckboxSelectColumn;
 
   beforeEach(() => {
+    mockColumns = [
+      { id: 'firstName', field: 'firstName', name: 'First Name', },
+      { id: 'lastName', field: 'lastName', name: 'Last Name', },
+      { id: 'age', field: 'age', name: 'Age', },
+    ];
     plugin = new SlickCheckboxSelectColumn(pubSubServiceStub);
     jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(false);
     jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
@@ -423,7 +433,13 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   });
 
   it('should trigger "onClick" event and expect toggleRowSelection to be called', () => {
+    const newCols = [
+      { id: '_checkbox_selector', toolTip: 'Select/Deselect All', field: 'sel', },
+      { id: 'firstName', field: 'firstName', name: 'First Name', },
+    ];
     const toggleRowSpy = jest.spyOn(plugin, 'toggleRowSelectionWithEvent');
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(newCols);
+    plugin.create(newCols, { checkboxSelector: { columnIndexPosition: 0 } });
 
     plugin.init(gridStub);
     const checkboxElm = document.createElement('input');
@@ -517,13 +533,18 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   });
 
   it('should trigger "onKeyDown" event and expect toggleRowSelection to be called when editor "commitCurrentEdit" returns True', () => {
+    const newCols = [
+      { id: '_checkbox_selector', toolTip: 'Select/Deselect All', field: 'sel', },
+      { id: 'firstName', field: 'firstName', name: 'First Name', },
+    ];
     const toggleRowSpy = jest.spyOn(plugin, 'toggleRowSelectionWithEvent');
     jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(newCols);
 
     plugin.init(gridStub);
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
-    const keyboardEvent = addJQueryEventPropagation(new Event('keyDown'), '', ' ', checkboxElm);
+    const keyboardEvent = addJQueryEventPropagation(new Event('keyDown'), '', ' ', checkboxElm, KeyCode.SPACE);
     const preventDefaultSpy = jest.spyOn(keyboardEvent, 'preventDefault');
     const stopImmediatePropagationSpy = jest.spyOn(keyboardEvent, 'stopImmediatePropagation');
     gridStub.onKeyDown.notify({ cell: 0, row: 2, grid: gridStub }, keyboardEvent);

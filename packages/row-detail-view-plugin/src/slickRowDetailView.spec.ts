@@ -1,4 +1,4 @@
-import { GridOption, PubSubService, SlickDataView, SlickGrid, SlickNamespace, } from '@slickgrid-universal/common';
+import { Column, GridOption, PubSubService, SlickDataView, SlickGrid, SlickNamespace, } from '@slickgrid-universal/common';
 
 import { SlickRowDetailView } from './slickRowDetailView';
 
@@ -55,10 +55,7 @@ const pubSubServiceStub = {
   unsubscribeAll: jest.fn(),
 } as PubSubService;
 
-const mockColumns = [
-  { id: 'firstName', name: 'First Name', field: 'firstName', width: 100 },
-  { id: 'lasstName', name: 'Last Name', field: 'lasstName', width: 100 },
-];
+let mockColumns: Column[];
 
 describe('SlickRowDetailView plugin', () => {
   const divContainer = document.createElement('div');
@@ -67,6 +64,10 @@ describe('SlickRowDetailView plugin', () => {
   gridContainerElm.className = GRID_UID;
 
   beforeEach(() => {
+    mockColumns = [
+      { id: 'firstName', name: 'First Name', field: 'firstName', width: 100 },
+      { id: 'lasstName', name: 'Last Name', field: 'lasstName', width: 100 },
+    ];
     plugin = new SlickRowDetailView(pubSubServiceStub);
     divContainer.className = `slickgrid-container ${GRID_UID}`;
     document.body.appendChild(divContainer);

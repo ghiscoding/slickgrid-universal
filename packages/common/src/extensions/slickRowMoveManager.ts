@@ -103,21 +103,25 @@ export class SlickRowMoveManager {
     this._addonOptions = { ...this._defaults, ...gridOptions.rowMoveManager } as RowMoveManagerOption;
     if (Array.isArray(columnDefinitions) && gridOptions) {
       const newRowMoveColumn: Column = this.getColumnDefinition();
-      const rowMoveColDef = Array.isArray(columnDefinitions) && columnDefinitions.find((col: Column) => col?.behavior === 'selectAndMove');
-      const finalRowMoveColumn = rowMoveColDef ? rowMoveColDef : newRowMoveColumn;
 
-      // column index position in the grid
-      const columnPosition = gridOptions?.rowMoveManager?.columnIndexPosition ?? 0;
-      if (columnPosition > 0) {
-        columnDefinitions.splice(columnPosition, 0, finalRowMoveColumn);
-      } else {
-        columnDefinitions.unshift(finalRowMoveColumn);
+      // add new row move column unless it was already added
+      if (!columnDefinitions.some(col => col.id === newRowMoveColumn.id)) {
+        const rowMoveColDef = Array.isArray(columnDefinitions) && columnDefinitions.find((col: Column) => col?.behavior === 'selectAndMove');
+        const finalRowMoveColumn = rowMoveColDef ? rowMoveColDef : newRowMoveColumn;
+
+        // column index position in the grid
+        const columnPosition = gridOptions?.rowMoveManager?.columnIndexPosition ?? 0;
+        if (columnPosition > 0) {
+          columnDefinitions.splice(columnPosition, 0, finalRowMoveColumn);
+        } else {
+          columnDefinitions.unshift(finalRowMoveColumn);
+        }
+
+        this.pubSubService.publish(`onPluginColumnsChanged`, {
+          columns: columnDefinitions,
+          pluginName: this.pluginName
+        });
       }
-
-      this.pubSubService.publish(`onPluginColumnsChanged`, {
-        columns: columnDefinitions,
-        pluginName: this.pluginName
-      });
     }
     return this;
   }

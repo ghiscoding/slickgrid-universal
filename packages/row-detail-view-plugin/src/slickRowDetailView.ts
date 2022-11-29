@@ -197,21 +197,25 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
     if (Array.isArray(columnDefinitions) && gridOptions) {
       const newRowDetailViewColumn: Column = this.getColumnDefinition();
-      const rowDetailColDef = Array.isArray(columnDefinitions) && columnDefinitions.find(col => col?.behavior === 'selectAndMove');
-      const finalRowDetailViewColumn = rowDetailColDef ? rowDetailColDef : newRowDetailViewColumn;
 
-      // column index position in the grid
-      const columnPosition = gridOptions?.rowDetailView?.columnIndexPosition ?? 0;
-      if (columnPosition > 0) {
-        columnDefinitions.splice(columnPosition, 0, finalRowDetailViewColumn);
-      } else {
-        columnDefinitions.unshift(finalRowDetailViewColumn);
+      // add new row detail column unless it was already added
+      if (!columnDefinitions.some(col => col.id === newRowDetailViewColumn.id)) {
+        const rowDetailColDef = Array.isArray(columnDefinitions) && columnDefinitions.find(col => col?.behavior === 'selectAndMove');
+        const finalRowDetailViewColumn = rowDetailColDef ? rowDetailColDef : newRowDetailViewColumn;
+
+        // column index position in the grid
+        const columnPosition = gridOptions?.rowDetailView?.columnIndexPosition ?? 0;
+        if (columnPosition > 0) {
+          columnDefinitions.splice(columnPosition, 0, finalRowDetailViewColumn);
+        } else {
+          columnDefinitions.unshift(finalRowDetailViewColumn);
+        }
+
+        this.pubSubService.publish(`onPluginColumnsChanged`, {
+          columns: columnDefinitions,
+          pluginName: this.pluginName
+        });
       }
-
-      this.pubSubService.publish(`onPluginColumnsChanged`, {
-        columns: columnDefinitions,
-        pluginName: this.pluginName
-      });
     }
     return this as unknown as UniversalRowDetailView;
   }
