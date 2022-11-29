@@ -470,7 +470,6 @@ export class SlickDraggableGrouping {
 
             // sorting icons when enabled
             let groupSortContainerElm: HTMLDivElement | undefined;
-            console.log('col id:', col.id, 'sortable:', col.sortable);
             if (this._addonOptions?.hideGroupSortIcons !== true && col.sortable) {
               if (col.grouping?.sortAsc === undefined) {
                 col.grouping.sortAsc = true;
