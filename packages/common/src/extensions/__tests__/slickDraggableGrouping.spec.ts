@@ -102,7 +102,7 @@ const mockColumns = [
     }
   },
   {
-    id: 'medals', name: 'Medals', field: 'medals', width: 50,sortable: true,
+    id: 'medals', name: 'Medals', field: 'medals', width: 50, sortable: true,
     grouping: {
       getter: 'medals', aggregators: [new Aggregators.Sum('medals')],
       formatter: (g) => `Medals: ${g.value} <span style="color:green">(${g.count} items)</span>`,
@@ -416,8 +416,10 @@ describe('Draggable Grouping Plugin', () => {
         let groupChangedSpy: any;
         let mockHeaderColumnDiv1: HTMLDivElement;
         let mockHeaderColumnDiv2: HTMLDivElement;
+        let onGroupChangedCallbackSpy: any;
 
         beforeEach(() => {
+          onGroupChangedCallbackSpy = jest.fn();
           groupChangedSpy = jest.spyOn(plugin.onGroupChanged, 'notify');
           mockHeaderColumnDiv1 = document.createElement('div');
           mockHeaderColumnDiv1.className = 'slick-dropped-grouping';
@@ -435,7 +437,7 @@ describe('Draggable Grouping Plugin', () => {
           mockHeaderColumnDiv1.appendChild(mockDivPaneContainer1);
           mockHeaderColumnDiv2.appendChild(mockDivPaneContainer1);
 
-          plugin.init(gridStub, { ...addonOptions, deleteIconCssClass: 'mdi mdi-close' });
+          plugin.init(gridStub, { ...addonOptions, deleteIconCssClass: 'mdi mdi-close', onGroupChanged: onGroupChangedCallbackSpy });
           plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close' });
 
           jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(false);
@@ -454,7 +456,7 @@ describe('Draggable Grouping Plugin', () => {
         it('should call sortable "update" from setupColumnDropbox and expect "updateGroupBy" to be called with a sort-group', () => {
           expect(plugin.dropboxElement).toEqual(dropzoneElm);
           expect(plugin.columnsGroupBy.length).toBeGreaterThan(0);
-          expect(groupChangedSpy).toHaveBeenCalledWith({
+          const onGroupChangedArgs = {
             caller: 'sort-group',
             groupColumns: [{
               aggregators: expect.toBeArray(),
@@ -463,7 +465,9 @@ describe('Draggable Grouping Plugin', () => {
               collapsed: false,
               sortAsc: true,
             }],
-          });
+          };
+          expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), onGroupChangedArgs);
+          expect(groupChangedSpy).toHaveBeenCalledWith(onGroupChangedArgs);
 
           jest.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(mockHeaderColumnDiv1);
           plugin.setDroppedGroups('age');
@@ -477,6 +481,7 @@ describe('Draggable Grouping Plugin', () => {
           plugin.clearDroppedGroups();
           dropboxPlaceholderElm = preHeaderElm.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
           expect(dropboxPlaceholderElm.style.display).toBe('inline-block');
+          expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), { caller: 'clear-all', groupColumns: [], });
           expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'clear-all', groupColumns: [], });
         });
 
@@ -605,7 +610,8 @@ describe('Draggable Grouping Plugin', () => {
         });
 
         it('should toggle ascending/descending order when original sort is ascending then user clicked the sorting icon twice', () => {
-          plugin.init(gridStub, { ...addonOptions });
+          const onGroupChangedCallbackSpy = jest.fn();
+          plugin.init(gridStub, { ...addonOptions, onGroupChanged: onGroupChangedCallbackSpy });
           const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
           jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
           const invalidateSpy = jest.spyOn(gridStub, 'invalidate');
@@ -642,11 +648,13 @@ describe('Draggable Grouping Plugin', () => {
           expect(groupBySortAscIconElm).toBeTruthy();
           expect(groupBySortDescIconElm).toBeFalsy();
           expect(invalidateSpy).toHaveBeenCalledTimes(2);
+          expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), { caller: 'sort-group', groupColumns: expect.toBeArray(), });
           expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'sort-group', groupColumns: expect.toBeArray(), });
         });
 
         it('should toggle ascending/descending order with different icons when original sort is ascending then user clicked the sorting icon twice', () => {
-          plugin.init(gridStub, { ...addonOptions, sortAscIconCssClass: 'mdi mdi-arrow-up', sortDescIconCssClass: 'mdi mdi-arrow-down' });
+          const onGroupChangedCallbackSpy = jest.fn();
+          plugin.init(gridStub, { ...addonOptions, sortAscIconCssClass: 'mdi mdi-arrow-up', sortDescIconCssClass: 'mdi mdi-arrow-down', onGroupChanged: onGroupChangedCallbackSpy });
           const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
           jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
           const invalidateSpy = jest.spyOn(gridStub, 'invalidate');
@@ -679,6 +687,7 @@ describe('Draggable Grouping Plugin', () => {
           expect(groupBySortAscIconElm).toBeTruthy();
           expect(groupBySortDescIconElm).toBeFalsy();
           expect(invalidateSpy).toHaveBeenCalledTimes(2);
+          expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), { caller: 'sort-group', groupColumns: expect.toBeArray(), });
           expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'sort-group', groupColumns: expect.toBeArray(), });
 
           const sortResult1 = mockColumns[2].grouping!.comparer!({ value: 'John', count: 0 }, { value: 'Jane', count: 1 });
