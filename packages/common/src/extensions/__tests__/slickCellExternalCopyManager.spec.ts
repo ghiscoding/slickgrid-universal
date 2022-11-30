@@ -118,7 +118,7 @@ describe('CellExternalCopyManager', () => {
 
       plugin.init(gridStub);
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      mockCellSelectionModel.onSelectedRangesChanged.notify({ fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 }, eventData, gridStub);
+      mockCellSelectionModel.onSelectedRangesChanged.notify([{ fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 }], eventData, gridStub);
 
       expect(gridFocusSpy).toHaveBeenCalled();
     });

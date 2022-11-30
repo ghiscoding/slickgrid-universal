@@ -117,7 +117,7 @@ describe('CellSelectionModel Plugin', () => {
   it('should create the plugin and initialize it with just "selectActiveCell" option and still expect the same result', () => {
     const registerSpy = jest.spyOn(gridStub, 'registerPlugin');
 
-    plugin = new SlickCellSelectionModel({ selectActiveCell: false, cellRangeSelector: undefined });
+    plugin = new SlickCellSelectionModel({ selectActiveCell: false, cellRangeSelector: undefined as any });
     plugin.init(gridStub);
 
     expect(plugin.cellRangeSelector).toBeTruthy();
@@ -142,7 +142,7 @@ describe('CellSelectionModel Plugin', () => {
   it('should expect that "setSelectedRanges" is being triggered when "refreshSelections" is called', () => {
     const registerSpy = jest.spyOn(gridStub, 'registerPlugin');
 
-    plugin = new SlickCellSelectionModel({ selectActiveCell: false, cellRangeSelector: undefined });
+    plugin = new SlickCellSelectionModel({ selectActiveCell: false, cellRangeSelector: undefined as any });
     plugin.init(gridStub);
 
     jest.spyOn(plugin, 'getSelectedRanges').mockReturnValue([
@@ -187,7 +187,7 @@ describe('CellSelectionModel Plugin', () => {
   });
 
   it('should call "setSelectedRanges" with Slick Ranges when triggered by "onActiveCellChanged" and "selectActiveCell" is True', () => {
-    plugin = new SlickCellSelectionModel({ selectActiveCell: true, cellRangeSelector: undefined });
+    plugin = new SlickCellSelectionModel({ selectActiveCell: true, cellRangeSelector: undefined as any });
     plugin.init(gridStub);
     const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
     const mouseEvent = addJQueryEventPropagation(new Event('mouseenter'));
@@ -200,7 +200,7 @@ describe('CellSelectionModel Plugin', () => {
   });
 
   it('should call "setSelectedRanges" with empty array when triggered by "onActiveCellChanged" and "selectActiveCell" is False', () => {
-    plugin = new SlickCellSelectionModel({ selectActiveCell: false, cellRangeSelector: undefined });
+    plugin = new SlickCellSelectionModel({ selectActiveCell: false, cellRangeSelector: undefined as any });
     plugin.init(gridStub);
     const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
     const mouseEvent = addJQueryEventPropagation(new Event('mouseenter'));

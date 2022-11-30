@@ -183,10 +183,10 @@ describe('CellMenu Plugin', () => {
       eventData.target = slickCellElm;
 
       jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-      columnsMock[3].cellMenu.commandItems = deepCopy(commandItemsMock);
-      delete (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).action;
-      delete (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).itemVisibilityOverride;
-      delete (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).itemUsabilityOverride;
+      columnsMock[3].cellMenu!.commandItems = deepCopy(commandItemsMock);
+      delete (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).action;
+      delete (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride;
+      delete (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride;
       cellMenuDiv = document.createElement('div');
       cellMenuDiv.className = 'slick-header-column';
       gridContainerDiv = document.createElement('div');
@@ -209,7 +209,7 @@ describe('CellMenu Plugin', () => {
 
       plugin.dispose();
       plugin.init();
-      gridStub.onClick.notify(null, eventData, gridStub);
+      gridStub.onClick.notify(null as any, eventData, gridStub);
 
       let cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
       expect(cellMenuElm).toBeTruthy();
@@ -247,7 +247,7 @@ describe('CellMenu Plugin', () => {
       it('should not populate and automatically return when the Cell Menu item "commandItems" array of the cell menu is undefined', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[3].cellMenu.commandItems) = undefined as any;
+        (columnsMock[3].cellMenu!.commandItems) = undefined as any;
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -258,8 +258,8 @@ describe('CellMenu Plugin', () => {
       it('should create a Cell Menu to be create and show up when item visibility & usability callbacks returns true', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).itemVisibilityOverride = () => true;
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).itemUsabilityOverride = () => true;
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -295,8 +295,8 @@ describe('CellMenu Plugin', () => {
       it('should expect a Cell Menu to be created when cell is clicked with a list of commands defined but without "Command 1" when "itemVisibilityOverride" and "itemUsabilityOverride" return undefined', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).itemVisibilityOverride = () => undefined;
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).itemUsabilityOverride = () => undefined;
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => undefined as any;
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => undefined as any;
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -325,8 +325,8 @@ describe('CellMenu Plugin', () => {
       it('should expect a Cell Menu to be created when cell is clicked with a list of commands defined but without "Command 1" when "itemVisibilityOverride" and "itemUsabilityOverride" return false', () => {
         plugin.dispose();
         plugin.init({ maxHeight: 290, width: 400 });
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).itemVisibilityOverride = () => false;
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).itemUsabilityOverride = () => false;
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => false;
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => false;
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -349,8 +349,8 @@ describe('CellMenu Plugin', () => {
       it('should create a Cell Menu and a 2nd button item usability callback returns false and expect button to be disabled', () => {
         plugin.dispose();
         plugin.init({ maxWidth: 310, width: 'auto' });
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).itemVisibilityOverride = () => true;
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).itemUsabilityOverride = () => false;
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => false;
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -373,7 +373,7 @@ describe('CellMenu Plugin', () => {
       it('should create a Cell Menu and a 2nd item is "disabled" and expect button to be disabled', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).disabled = true;
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).disabled = true;
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -389,7 +389,7 @@ describe('CellMenu Plugin', () => {
       it('should create a Cell Menu and expect button to be disabled when command property is hidden', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).hidden = true;
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).hidden = true;
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -405,7 +405,7 @@ describe('CellMenu Plugin', () => {
       it('should create a Cell Menu item with "iconCssClass" and expect extra css classes added to the icon element', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).iconCssClass = 'bold red';
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).iconCssClass = 'bold red';
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -423,8 +423,8 @@ describe('CellMenu Plugin', () => {
       it('should create a Cell Menu item with "textCssClass" and expect extra css classes added to the item text DOM element', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).title = 'Help';
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).textCssClass = 'italic blue';
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).title = 'Help';
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).textCssClass = 'italic blue';
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -441,7 +441,7 @@ describe('CellMenu Plugin', () => {
       it('should create a Cell Menu item with "tooltip" and expect a title attribute to be added the item text DOM element', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).tooltip = 'some tooltip';
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).tooltip = 'some tooltip';
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -457,8 +457,8 @@ describe('CellMenu Plugin', () => {
       it('should create a Cell Menu item with a title for the command list when "commandTitle" is provided', () => {
         plugin.dispose();
         plugin.init({ commandTitle: 'The Commands!' });
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).title = 'Help';
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).textCssClass = 'italic blue';
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).title = 'Help';
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).textCssClass = 'italic blue';
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -472,9 +472,9 @@ describe('CellMenu Plugin', () => {
       it('should expect all menu related to Sorting when "enableSorting" is set', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[3].cellMenu as CellMenu).commandTitleKey = 'COMMANDS';
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).command = 'help';
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).titleKey = 'HELP';
+        (columnsMock[3].cellMenu! as CellMenu).commandTitleKey = 'COMMANDS';
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).command = 'help';
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).titleKey = 'HELP';
         translateService.use('fr');
         plugin.translateCellMenu();
 
@@ -575,12 +575,12 @@ describe('CellMenu Plugin', () => {
 
         plugin.dispose();
         plugin.init();
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).action = actionMock;
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).action = actionMock;
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = cellMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
-        commandListElm.querySelector('[data-command="command2"]').dispatchEvent(new Event('click'));
+        commandListElm.querySelector('[data-command="command2"]')!.dispatchEvent(new Event('click'));
 
         expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(actionMock).toHaveBeenCalled();
@@ -596,7 +596,7 @@ describe('CellMenu Plugin', () => {
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = cellMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
-        commandListElm.querySelector('[data-command="command2"]').dispatchEvent(new Event('click'));
+        commandListElm.querySelector('[data-command="command2"]')!.dispatchEvent(new Event('click'));
 
         expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(onCommandMock).toHaveBeenCalled();
@@ -605,8 +605,8 @@ describe('CellMenu Plugin', () => {
       it('should not populate a Cell Menu when "menuUsabilityOverride" is defined and returns False', () => {
         plugin.dispose();
         plugin.init({ menuUsabilityOverride: () => false });
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).itemVisibilityOverride = () => true;
-        (columnsMock[3].cellMenu.commandItems[1] as MenuCommandItem).itemUsabilityOverride = () => true;
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
         expect(plugin.menuElement).toBeFalsy();
@@ -615,16 +615,16 @@ describe('CellMenu Plugin', () => {
 
     describe('with Options Items', () => {
       beforeEach(() => {
-        columnsMock[4].cellMenu.optionItems = deepCopy(optionItemsMock);
-        delete (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).itemVisibilityOverride;
-        delete (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).itemUsabilityOverride;
+        columnsMock[4].cellMenu!.optionItems = deepCopy(optionItemsMock);
+        delete (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).itemVisibilityOverride;
+        delete (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).itemUsabilityOverride;
         jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 4, row: 1 });
       });
 
       it('should not populate and automatically return when the Cell Menu item "optionItems" array of the cell menu is undefined', () => {
         plugin.dispose();
         plugin.init({ onAfterMenuShow: undefined });
-        (columnsMock[4].cellMenu.optionItems) = undefined;
+        (columnsMock[4].cellMenu!.optionItems) = undefined;
         gridStub.onClick.notify({ cell: 4, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -635,8 +635,8 @@ describe('CellMenu Plugin', () => {
       it('should create a Cell Menu to be create and show up when item visibility & usability callbacks returns true', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).itemVisibilityOverride = () => true;
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).itemUsabilityOverride = () => true;
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).itemVisibilityOverride = () => true;
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).itemUsabilityOverride = () => true;
         gridStub.onClick.notify({ cell: 4, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -670,8 +670,8 @@ describe('CellMenu Plugin', () => {
       it('should expect a Cell Menu to be created when cell is clicked with a list of commands defined but without "Option 1" when "itemVisibilityOverride" and "itemUsabilityOverride" return undefined', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).itemVisibilityOverride = () => undefined;
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).itemUsabilityOverride = () => undefined;
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).itemVisibilityOverride = () => undefined as any;
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).itemUsabilityOverride = () => undefined as any;
         gridStub.onClick.notify({ cell: 4, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -700,8 +700,8 @@ describe('CellMenu Plugin', () => {
       it('should expect a Cell Menu to be created when cell is clicked with a list of options defined but without "Option 1" when "itemVisibilityOverride" and "itemUsabilityOverride" return false', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).itemVisibilityOverride = () => false;
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).itemUsabilityOverride = () => false;
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).itemVisibilityOverride = () => false;
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).itemUsabilityOverride = () => false;
         gridStub.onClick.notify({ cell: 4, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -722,8 +722,8 @@ describe('CellMenu Plugin', () => {
       it('should create a Cell Menu and a 2nd button item usability callback returns false and expect button to be disabled', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).itemVisibilityOverride = () => true;
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).itemUsabilityOverride = () => false;
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).itemVisibilityOverride = () => true;
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).itemUsabilityOverride = () => false;
         gridStub.onClick.notify({ cell: 4, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -744,7 +744,7 @@ describe('CellMenu Plugin', () => {
       it('should create a Cell Menu and a 2nd item is "disabled" and expect button to be disabled', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).disabled = true;
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).disabled = true;
         gridStub.onClick.notify({ cell: 4, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -760,7 +760,7 @@ describe('CellMenu Plugin', () => {
       it('should create a Cell Menu and expect button to be disabled when option property is hidden', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).hidden = true;
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).hidden = true;
         gridStub.onClick.notify({ cell: 4, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -776,7 +776,7 @@ describe('CellMenu Plugin', () => {
       it('should create a Cell Menu item with "iconCssClass" and expect extra css classes added to the icon element', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).iconCssClass = 'underline sky';
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).iconCssClass = 'underline sky';
         gridStub.onClick.notify({ cell: 4, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -794,8 +794,8 @@ describe('CellMenu Plugin', () => {
       it('should create a Cell Menu item with "textCssClass" and expect extra css classes added to the item text DOM element', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).title = 'Help';
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).textCssClass = 'italic blue';
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).title = 'Help';
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).textCssClass = 'italic blue';
         gridStub.onClick.notify({ cell: 4, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -812,7 +812,7 @@ describe('CellMenu Plugin', () => {
       it('should create a Cell Menu item with "tooltip" and expect a title attribute to be added the item text DOM element', () => {
         plugin.dispose();
         plugin.init();
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).tooltip = 'some tooltip';
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).tooltip = 'some tooltip';
         gridStub.onClick.notify({ cell: 4, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -829,8 +829,8 @@ describe('CellMenu Plugin', () => {
         plugin.dispose();
         plugin.init();
         plugin.setOptions({ optionTitle: 'The Options!' });
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).title = 'Help';
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).textCssClass = 'italic blue';
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).title = 'Help';
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).textCssClass = 'italic blue';
         gridStub.onClick.notify({ cell: 4, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
@@ -845,8 +845,8 @@ describe('CellMenu Plugin', () => {
         plugin.dispose();
         plugin.init();
         (columnsMock[4].cellMenu as CellMenu).optionTitleKey = 'OPTIONS_LIST';
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).option = 'none';
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).titleKey = 'NONE';
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).option = 'none';
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).titleKey = 'NONE';
         translateService.use('fr');
         plugin.translateCellMenu();
 
@@ -886,12 +886,12 @@ describe('CellMenu Plugin', () => {
 
         plugin.dispose();
         plugin.init();
-        (columnsMock[4].cellMenu.optionItems[1] as MenuOptionItem).action = actionMock;
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).action = actionMock;
         gridStub.onClick.notify({ cell: 4, row: 1, grid: gridStub }, eventData, gridStub);
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
         const optionListElm = cellMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-        optionListElm.querySelector('[data-option="option2"]').dispatchEvent(new Event('click'));
+        optionListElm.querySelector('[data-option="option2"]')!.dispatchEvent(new Event('click'));
 
         expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(actionMock).toHaveBeenCalled();
@@ -908,7 +908,7 @@ describe('CellMenu Plugin', () => {
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
         const optionListElm = cellMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-        optionListElm.querySelector('[data-option="option2"]').dispatchEvent(new Event('click'));
+        optionListElm.querySelector('[data-option="option2"]')!.dispatchEvent(new Event('click'));
 
         expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(onOptionSelectedMock).toHaveBeenCalled();
@@ -925,7 +925,7 @@ describe('CellMenu Plugin', () => {
 
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
         const optionListElm = cellMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
-        optionListElm.querySelector('[data-option="option2"]').dispatchEvent(new Event('click'));
+        optionListElm.querySelector('[data-option="option2"]')!.dispatchEvent(new Event('click'));
 
         expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(onOptionSelectedMock).not.toHaveBeenCalled();

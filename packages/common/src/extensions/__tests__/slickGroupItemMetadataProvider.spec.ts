@@ -111,25 +111,25 @@ describe('GroupItemMetadataProvider Service', () => {
   describe('Group Formatter', () => {
     it('should return item title when calling "defaultGroupCellFormatter" with option "enableExpandCollapse" set to False', () => {
       service.setOptions({ enableExpandCollapse: false });
-      const output = service.getOptions().groupFormatter(0, 0, 'test', mockColumns[0], { title: 'Some Title' }, gridStub);
+      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: 'Some Title' }, gridStub);
       expect(output).toBe('Some Title');
     });
 
     it('should return Grouping info formatted with a group level 0 without indentation when calling "defaultGroupCellFormatter" with option "enableExpandCollapse" set to True', () => {
       service.setOptions({ enableExpandCollapse: true });
-      const output = service.getOptions().groupFormatter(0, 0, 'test', mockColumns[0], { title: 'Some Title' }, gridStub);
+      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: 'Some Title' }, gridStub);
       expect(output).toBe('<span class="slick-group-toggle expanded" aria-expanded="true" style="margin-left: 0px"></span><span class="slick-group-title" level="0">Some Title</span>');
     });
 
     it('should return Grouping info formatted with a group level 2 with indentation of 30px when calling "defaultGroupCellFormatter" with option "enableExpandCollapse" set to True and level 2', () => {
       service.setOptions({ enableExpandCollapse: true, toggleCssClass: 'groupy-toggle', toggleExpandedCssClass: 'groupy-expanded' });
-      const output = service.getOptions().groupFormatter(0, 0, 'test', mockColumns[0], { level: 2, title: 'Some Title' }, gridStub);
+      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { level: 2, title: 'Some Title' }, gridStub);
       expect(output).toBe('<span class="groupy-toggle groupy-expanded" aria-expanded="true" style="margin-left: 30px"></span><span class="slick-group-title" level="2">Some Title</span>');
     });
 
     it('should return Grouping info formatted with a group level 2 with indentation of 30px when calling "defaultGroupCellFormatter" with option "enableExpandCollapse" set to True and level 2', () => {
       service.setOptions({ enableExpandCollapse: true, toggleCssClass: 'groupy-toggle', toggleCollapsedCssClass: 'groupy-collapsed' });
-      const output = service.getOptions().groupFormatter(0, 0, 'test', mockColumns[0], { collapsed: true, level: 3, title: 'Some Title' }, gridStub);
+      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { collapsed: true, level: 3, title: 'Some Title' }, gridStub);
       expect(output).toBe('<span class="groupy-toggle groupy-collapsed" aria-expanded="false" style="margin-left: 45px"></span><span class="slick-group-title" level="3">Some Title</span>');
     });
   });
@@ -137,13 +137,13 @@ describe('GroupItemMetadataProvider Service', () => {
   describe('Group Totals Formatter', () => {
     it('should return Grouping Totals formatted with column definition "groupTotalsFormatter" called when defined', () => {
       const mockDataContext = { sum: 152, avg: 33 };
-      const output = service.getOptions().totalsFormatter(0, 0, 'some value', mockColumns[2], mockDataContext, gridStub);
+      const output = service.getOptions().totalsFormatter!(0, 0, 'some value', mockColumns[2], mockDataContext, gridStub);
       expect(output).toBe('<strong>Totals:</strong> 152');
     });
 
     it('should return empty string when column definition does not include grouping info formatter', () => {
       const mockDataContext = { sum: 152, avg: 33 };
-      const output = service.getOptions().totalsFormatter(0, 0, 'some value', mockColumns[0], mockDataContext, gridStub);
+      const output = service.getOptions().totalsFormatter!(0, 0, 'some value', mockColumns[0], mockDataContext, gridStub);
       expect(output).toBe('');
     });
   });
@@ -153,7 +153,7 @@ describe('GroupItemMetadataProvider Service', () => {
       const mockOptions = { groupFocusable: true, groupCssClass: 'groupy-group', includeHeaderTotals: true } as GroupItemMetadataProviderOption;
       service.setOptions(mockOptions);
 
-      const output = service.getGroupRowMetadata({ count: 12, level: undefined, groupingKey: 'age', value: 33 });
+      const output = service.getGroupRowMetadata({ count: 12, level: undefined as any, groupingKey: 'age', value: 33 });
       expect(output).toEqual({
         selectable: false,
         focusable: mockOptions.groupFocusable,
@@ -195,7 +195,7 @@ describe('GroupItemMetadataProvider Service', () => {
       const mockOptions = { totalsFocusable: true, totalsCssClass: 'groupy-totals' } as GroupItemMetadataProviderOption;
       service.setOptions(mockOptions);
 
-      const output = service.getTotalsRowMetadata({ group: { count: 12, level: undefined, groupingKey: 'age', value: 33 } });
+      const output = service.getTotalsRowMetadata({ group: { count: 12, level: undefined as any, groupingKey: 'age', value: 33 } });
       expect(output).toEqual({
         editor: null,
         selectable: false,
