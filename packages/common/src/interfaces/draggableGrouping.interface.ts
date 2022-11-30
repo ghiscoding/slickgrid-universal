@@ -7,7 +7,7 @@ export interface DraggableGrouping extends DraggableGroupingOption {
   // Events
   // ---------
   /** Fired when grouped columns changed */
-  onGroupChanged?: (e: SlickEventData, args: { caller?: string; groupColumns: Grouping[] }) => void;
+  onGroupChanged?: (e: SlickEventData | null, args: { caller?: string; groupColumns: Grouping[] }) => void;
 
   /** Fired after extension (plugin) is registered by SlickGrid */
   onExtensionRegistered?: (plugin: SlickDraggableGrouping) => void;

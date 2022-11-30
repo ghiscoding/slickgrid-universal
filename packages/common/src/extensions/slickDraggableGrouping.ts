@@ -56,7 +56,7 @@ declare const Slick: SlickNamespace;
  *   }];
  */
 export class SlickDraggableGrouping {
-  protected _addonOptions!: DraggableGroupingOption;
+  protected _addonOptions!: DraggableGrouping;
   protected _bindEventService: BindingEventService;
   protected _droppableInstance?: SortableInstance;
   protected _dropzoneElm!: HTMLDivElement;
@@ -615,13 +615,21 @@ export class SlickDraggableGrouping {
     if (this.columnsGroupBy.length === 0) {
       this.dataView.setGrouping([]);
       this._dropzonePlaceholderElm.style.display = 'inline-block';
-      this.onGroupChanged.notify({ caller: originator, groupColumns: [] });
+      this.triggerOnGroupChangedEvent({ caller: originator, groupColumns: [] });
       return;
     }
     const groupingArray: Grouping<any>[] = [];
     this.columnsGroupBy.forEach(element => groupingArray.push(element.grouping!));
     this.dataView.setGrouping(groupingArray);
     this._dropzonePlaceholderElm.style.display = 'none';
-    this.onGroupChanged.notify({ caller: originator, groupColumns: groupingArray });
+    this.triggerOnGroupChangedEvent({ caller: originator, groupColumns: groupingArray });
+  }
+
+  /** call notify on slickgrid event and execute onGroupChanged callback when defined as a function by the user */
+  protected triggerOnGroupChangedEvent(args: { caller?: string; groupColumns: Grouping[] }) {
+    if (this._addonOptions && typeof this._addonOptions.onGroupChanged === 'function') {
+      this._addonOptions.onGroupChanged(new Slick.EventData(), args);
+    }
+    this.onGroupChanged.notify(args);
   }
 }
