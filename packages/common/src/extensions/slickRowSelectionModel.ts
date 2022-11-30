@@ -102,7 +102,7 @@ export class SlickRowSelectionModel {
     return this._ranges;
   }
 
-  getSelectedRows() {
+  getSelectedRows(): number[] {
     return this.rangesToRows(this._ranges);
   }
 
@@ -248,7 +248,7 @@ export class SlickRowSelectionModel {
     return /move|selectAndMove/.test(col);
   }
 
-  protected rangesToRows(ranges: CellRange[]) {
+  protected rangesToRows(ranges: CellRange[]): number[] {
     const rows = [];
     for (let i = 0; i < ranges.length; i++) {
       for (let j = ranges[i].fromRow; j <= ranges[i].toRow; j++) {

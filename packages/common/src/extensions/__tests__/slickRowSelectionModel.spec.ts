@@ -490,7 +490,7 @@ describe('SlickRowSelectionModel Plugin', () => {
 
       plugin.init(gridStub);
       const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
-      plugin.getCellRangeSelector().onCellRangeSelected.notify({ range: { fromCell: 2, fromRow: 3, toCell: 4, toRow: 5 } }, scrollEvent, gridStub);
+      plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: { fromCell: 2, fromRow: 3, toCell: 4, toRow: 5 } }, scrollEvent, gridStub);
 
       expect(setSelectedRangeSpy).toHaveBeenCalledWith([{
         fromCell: 0, fromRow: 3, toCell: 2, toRow: 5,
@@ -512,7 +512,7 @@ describe('SlickRowSelectionModel Plugin', () => {
       });
       plugin.init(gridStub);
       const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
-      plugin.getCellRangeSelector().onCellRangeSelected.notify({ range: { fromCell: 2, fromRow: 3, toCell: 4, toRow: 5 } }, scrollEvent, gridStub);
+      plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: { fromCell: 2, fromRow: 3, toCell: 4, toRow: 5 } }, scrollEvent, gridStub);
 
       expect(setSelectedRangeSpy).toHaveBeenCalledWith([{
         fromCell: 0, fromRow: 3, toCell: 2, toRow: 5,
@@ -526,7 +526,7 @@ describe('SlickRowSelectionModel Plugin', () => {
 
       plugin.init(gridStub);
       const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
-      plugin.getCellRangeSelector().onCellRangeSelected.notify({ range: { fromCell: 2, fromRow: 3, toCell: 4, toRow: 5 } }, scrollEvent, gridStub);
+      plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: { fromCell: 2, fromRow: 3, toCell: 4, toRow: 5 } }, scrollEvent, gridStub);
 
       expect(setSelectedRangeSpy).not.toHaveBeenCalled();
     });
@@ -537,7 +537,7 @@ describe('SlickRowSelectionModel Plugin', () => {
 
       plugin.init(gridStub);
       const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
-      plugin.getCellRangeSelector().onBeforeCellRangeSelected.notify({ row: 2, cell: 4 }, scrollEvent, gridStub);
+      plugin.getCellRangeSelector()!.onBeforeCellRangeSelected.notify({ row: 2, cell: 4 }, scrollEvent, gridStub);
 
       expect(setActiveCellSpy).toHaveBeenCalledWith(2, 4);
     });
@@ -549,7 +549,7 @@ describe('SlickRowSelectionModel Plugin', () => {
 
       plugin.init(gridStub);
       const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
-      plugin.getCellRangeSelector().onBeforeCellRangeSelected.notify({ row: 2, cell: 4 }, scrollEvent, gridStub);
+      plugin.getCellRangeSelector()!.onBeforeCellRangeSelected.notify({ row: 2, cell: 4 }, scrollEvent, gridStub);
 
       expect(setActiveCellSpy).not.toHaveBeenCalled();
     });
@@ -562,7 +562,7 @@ describe('SlickRowSelectionModel Plugin', () => {
 
       plugin.init(gridStub);
       const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
-      plugin.getCellRangeSelector().onBeforeCellRangeSelected.notify({ row: 2, cell: 1 }, scrollEvent, gridStub);
+      plugin.getCellRangeSelector()!.onBeforeCellRangeSelected.notify({ row: 2, cell: 1 }, scrollEvent, gridStub);
 
       expect(setActiveCellSpy).toHaveBeenCalledWith(2, 1);
     });
@@ -576,7 +576,7 @@ describe('SlickRowSelectionModel Plugin', () => {
 
       plugin.init(gridStub);
       const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
-      plugin.getCellRangeSelector().onBeforeCellRangeSelected.notify({ row: 2, cell: 0 }, scrollEvent, gridStub);
+      plugin.getCellRangeSelector()!.onBeforeCellRangeSelected.notify({ row: 2, cell: 0 }, scrollEvent, gridStub);
 
       expect(setActiveCellSpy).not.toHaveBeenCalled();
     });

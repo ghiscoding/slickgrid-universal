@@ -79,7 +79,7 @@ export class SlickCellSelectionModel {
     this._selector?.dispose();
   }
 
-  getSelectedRanges() {
+  getSelectedRanges(): CellRange[] {
     return this._ranges;
   }
 

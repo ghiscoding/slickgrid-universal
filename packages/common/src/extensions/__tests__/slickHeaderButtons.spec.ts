@@ -110,8 +110,8 @@ describe('HeaderButton Plugin', () => {
   describe('plugins - Header Button', () => {
     beforeEach(() => {
       jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-      columnsMock[0].header.buttons[1] = undefined;
-      columnsMock[0].header.buttons[1] = {
+      columnsMock[0].header!.buttons![1] = undefined as any;
+      columnsMock[0].header!.buttons![1] = {
         cssClass: 'mdi mdi-lightbulb-on',
         command: 'show-negative-numbers',
         tooltip: 'Highlight negative numbers.',
@@ -124,7 +124,7 @@ describe('HeaderButton Plugin', () => {
 
       plugin.dispose();
       plugin.init();
-      columnsMock[0].header.buttons[1].itemVisibilityOverride = () => undefined;
+      columnsMock[0].header!.buttons![1].itemVisibilityOverride = () => undefined as any;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -143,7 +143,7 @@ describe('HeaderButton Plugin', () => {
 
       plugin.dispose();
       plugin.init();
-      columnsMock[0].header.buttons[1].itemVisibilityOverride = () => false;
+      columnsMock[0].header!.buttons![1].itemVisibilityOverride = () => false;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -159,8 +159,8 @@ describe('HeaderButton Plugin', () => {
 
       plugin.dispose();
       plugin.init();
-      columnsMock[0].header.buttons[1].itemVisibilityOverride = () => true;
-      columnsMock[0].header.buttons[1].itemUsabilityOverride = () => true;
+      columnsMock[0].header!.buttons![1].itemVisibilityOverride = () => true;
+      columnsMock[0].header!.buttons![1].itemUsabilityOverride = () => true;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -177,8 +177,8 @@ describe('HeaderButton Plugin', () => {
 
       plugin.dispose();
       plugin.init();
-      columnsMock[0].header.buttons[1].itemVisibilityOverride = () => true;
-      columnsMock[0].header.buttons[1].itemUsabilityOverride = () => false;
+      columnsMock[0].header!.buttons![1].itemVisibilityOverride = () => true;
+      columnsMock[0].header!.buttons![1].itemUsabilityOverride = () => false;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -195,8 +195,8 @@ describe('HeaderButton Plugin', () => {
 
       plugin.dispose();
       plugin.init();
-      columnsMock[0].header.buttons[1].itemVisibilityOverride = undefined;
-      columnsMock[0].header.buttons[1].disabled = true;
+      columnsMock[0].header!.buttons![1].itemVisibilityOverride = undefined as any;
+      columnsMock[0].header!.buttons![1].disabled = true;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -213,8 +213,8 @@ describe('HeaderButton Plugin', () => {
 
       plugin.dispose();
       plugin.init();
-      columnsMock[0].header.buttons[1].itemVisibilityOverride = undefined;
-      columnsMock[0].header.buttons[1].showOnHover = true;
+      columnsMock[0].header!.buttons![1].itemVisibilityOverride = undefined as any;
+      columnsMock[0].header!.buttons![1].showOnHover = true;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -232,11 +232,11 @@ describe('HeaderButton Plugin', () => {
 
       plugin.dispose();
       plugin.init();
-      columnsMock[0].header.buttons[1].handler = handlerMock;
+      columnsMock[0].header!.buttons![1].handler = handlerMock;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
-      headerDiv.querySelector('.slick-header-button.mdi-lightbulb-on').dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+      headerDiv.querySelector('.slick-header-button.mdi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
       // add Header Buttons which are visible (2x buttons)
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
@@ -252,11 +252,11 @@ describe('HeaderButton Plugin', () => {
 
       plugin.dispose();
       plugin.init();
-      columnsMock[0].header.buttons[1].action = actionMock;
+      columnsMock[0].header!.buttons![1].action = actionMock;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
-      headerDiv.querySelector('.slick-header-button.mdi-lightbulb-on').dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+      headerDiv.querySelector('.slick-header-button.mdi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
       // add Header Buttons which are visible (2x buttons)
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
@@ -277,7 +277,7 @@ describe('HeaderButton Plugin', () => {
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
-      headerDiv.querySelector('.slick-header-button.mdi-lightbulb-on').dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+      headerDiv.querySelector('.slick-header-button.mdi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
       // add Header Buttons which are visible (2x buttons)
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
@@ -293,10 +293,10 @@ describe('HeaderButton Plugin', () => {
 
       plugin.dispose();
       plugin.init();
-      columnsMock[0].header.buttons[1].itemVisibilityOverride = () => true;
-      columnsMock[0].header.buttons[1].itemUsabilityOverride = () => true;
-      delete columnsMock[0].header.buttons[1].showOnHover;
-      columnsMock[0].header.buttons[1].disabled = true;
+      columnsMock[0].header!.buttons![1].itemVisibilityOverride = () => true;
+      columnsMock[0].header!.buttons![1].itemUsabilityOverride = () => true;
+      delete columnsMock[0].header!.buttons![1].showOnHover;
+      columnsMock[0].header!.buttons![1].disabled = true;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
