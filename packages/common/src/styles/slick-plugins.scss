@@ -608,7 +608,9 @@ li.hidden {
   }
 }
 .ms-parent-open button {
-  box-shadow: var(--slick-multiselect-input-box-shadow, $slick-multiselect-input-box-shadow);
+  outline: 0;
+  border-color: var(--slick-form-control-focus-border-color, $slick-form-control-focus-border-color);
+  box-shadow: var(--slick-form-control-focus-box-shadow, $slick-form-control-focus-box-shadow);
 }
 .ms-drop {
   max-width: var(--slick-multiselect-dropdown-max-width, $slick-multiselect-dropdown-max-width);

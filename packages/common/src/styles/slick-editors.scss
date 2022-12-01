@@ -63,9 +63,6 @@
       height: var(--slick-multiselect-editor-height, $slick-multiselect-editor-height);
     }
   }
-  .ms-parent-open button {
-    box-shadow: var(--slick-multiselect-input-box-shadow, $slick-multiselect-input-box-shadow);
-  }
 
   .autocomplete-container.input-group,
   .flatpickr.input-group {

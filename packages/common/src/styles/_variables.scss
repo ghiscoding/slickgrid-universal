@@ -5,10 +5,11 @@
  */
 
 /* this is the only variable without $slick prefix and exists so that user could use the same Bootstrap primary color without declaring $slick-primary-color variable (which also exists) */
-// Bootstrap 5 box-shadow
-// $input-focus-box-shadow: 0 0 0 0.25rem #0d6efd40 !default;
+/** extra styling when Bootstrap isn't provided */
 $primary-color:                                             #31708F !default;
 $input-focus-box-shadow:                                    inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(lighten($primary-color, 3%), .3) !default;
+// Bootstrap 5 box-shadow
+// $input-focus-box-shadow: 0 0 0 0.25rem #0d6efd40 !default;
 
 $slick-border-color:                                        #dddddd !default;
 $slick-font-size-base-value:                                14 !default;
@@ -683,7 +684,7 @@ $slick-slider-filter-runnable-track-height:                 5px !default;
 $slick-slider-filter-runnable-track-padding:                0 6px !default;
 $slick-slider-filter-fill-lower-color:                      #ddd !default; /* ms only */
 $slick-slider-filter-fill-focus-lower-color:                #aaa !default; /* ms only */
-$slick-slider-filter-focus-border-color:                    lighten($slick-primary-color, 10%) !default;
+$slick-slider-filter-focus-border-color:                    $slick-editor-focus-border-color !default;
 $slick-slider-filter-focus-box-shadow:                      $slick-editor-focus-box-shadow !default;
 $slick-slider-filter-height:                                $slick-header-input-height !default;
 $slick-slider-filter-thumb-border-radius:                   50% !default;
@@ -698,7 +699,6 @@ $slick-slider-filter-number-padding:                        4px 8px !default;
 $slick-slider-filter-number-font-size:                      calc(#{$slick-font-size-base-value} - 1px) !default;
 
 /* Multiple-Select Filter */
-$slick-multiselect-input-box-shadow:                        $slick-editor-focus-box-shadow !default;
 $slick-multiselect-input-filter-border:                     1px solid #ccc !default;
 $slick-multiselect-input-filter-font-family:                "Helvetica Neue", Helvetica, Arial !default;
 $slick-multiselect-input-filter-font-size:                  12px !default;
