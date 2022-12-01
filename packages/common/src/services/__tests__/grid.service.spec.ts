@@ -1728,24 +1728,32 @@ describe('Grid Service', () => {
       service.resetGrid();
 
       expect(allColumnSpy).toHaveBeenCalled();
-      expect(setColSpy).toHaveBeenCalled();
+      expect(setColSpy).toHaveBeenCalledTimes(1);
       expect(autosizeSpy).toHaveBeenCalled();
       expect(gridStateSpy).toHaveBeenCalled();
       expect(filterSpy).toHaveBeenCalled();
       expect(sortSpy).toHaveBeenCalled();
-      expect(clearPinningSpy).toHaveBeenCalled();
+      expect(clearPinningSpy).toHaveBeenCalledWith(false);
     });
 
     it('should call a reset and expect the grid "resetColumns" method to be called with the column definitions provided to the method', () => {
       const mockColumns = [{ id: 'field1', width: 100 }, { id: 'field2', width: 150 }, { id: 'field3', field: 'field3' }] as Column[];
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableAutoSizeColumns: true } as GridOption);
       const allColumnSpy = jest.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+      const setColSpy = jest.spyOn(gridStub, 'setColumns');
       const gridStateSpy = jest.spyOn(gridStateServiceStub, 'resetColumns');
+      const clearPinningSpy = jest.spyOn(service, 'clearPinning');
+      const filterSpy = jest.spyOn(filterServiceStub, 'clearFilters');
+      const sortSpy = jest.spyOn(sortServiceStub, 'clearSorting');
 
       service.resetGrid(mockColumns);
 
+      expect(setColSpy).toHaveBeenCalledTimes(1);
       expect(allColumnSpy).toHaveBeenCalled();
       expect(gridStateSpy).toHaveBeenCalledWith(mockColumns);
+      expect(clearPinningSpy).toHaveBeenCalledWith(false);
+      expect(filterSpy).toHaveBeenCalled();
+      expect(sortSpy).toHaveBeenCalled();
     });
   });
 

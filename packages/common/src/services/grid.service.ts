@@ -73,13 +73,13 @@ export class GridService {
   }
 
   /** Clear all the pinning (frozen) options */
-  clearPinning() {
+  clearPinning(resetColumns = true) {
     const visibleColumns = [...this.sharedService.visibleColumns];
     this.sharedService.slickGrid.setOptions({ frozenColumn: -1, frozenRow: -1, frozenBottom: false, enableMouseWheelScrollHandler: false });
 
     // SlickGrid seems to be somehow resetting the columns to their original positions,
     // so let's re-fix them to the position we kept as reference
-    if (Array.isArray(visibleColumns)) {
+    if (resetColumns && Array.isArray(visibleColumns)) {
       this.sharedService.slickGrid.setColumns(visibleColumns);
     }
   }
@@ -363,6 +363,10 @@ export class GridService {
    * The reset will clear the Filters & Sort, then will reset the Columns to their original state
    */
   resetGrid(columnDefinitions?: Column[]) {
+    // clear any Pinning/Frozen columns/rows
+    // do it prior to setting the Columns back on the next few lines
+    this.clearPinning(false);
+
     // reset columns to original states & refresh the grid
     if (this._grid) {
       const originalColumns = this.sharedService.allColumns || [];
@@ -377,13 +381,10 @@ export class GridService {
       }
     }
 
-    // clear any Pinning/Frozen columns/rows
-    this.clearPinning();
-
-    if (this.filterService && this.filterService.clearFilters) {
+    if (typeof this.filterService?.clearFilters === 'function') {
       this.filterService.clearFilters();
     }
-    if (this.sortService && this.sortService.clearSorting) {
+    if (typeof this.sortService?.clearSorting === 'function') {
       this.sortService.clearSorting();
     }
   }

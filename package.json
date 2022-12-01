@@ -16,6 +16,7 @@
     "build": "lerna run build --stream",
     "prebundle": "pnpm lint",
     "bundle": "lerna run bundle --stream",
+    "bundle:common": "pnpm -r --stream --filter=./packages/common run bundle",
     "prebundle:zip": "pnpm bundle",
     "bundle:zip": "pnpm -r --stream --filter=./packages/** run bundle:zip",
     "build:demo": "pnpm -r --stream build:demo",
