@@ -58,7 +58,7 @@
   "devDependencies": {
     "@types/fnando__sparkline": "^0.3.4",
     "@types/jquery": "^3.5.14",
-    "@types/node": "^18.11.9",
+    "@types/node": "^18.11.10",
     "@types/webpack": "^5.28.0",
     "clean-webpack-plugin": "4.0.0",
     "copy-webpack-plugin": "^11.0.0",
@@ -68,7 +68,7 @@
     "fork-ts-checker-webpack-plugin": "^7.2.13",
     "html-loader": "^4.2.0",
     "html-webpack-plugin": "5.5.0",
-    "mini-css-extract-plugin": "^2.7.0",
+    "mini-css-extract-plugin": "^2.7.1",
     "sass": "^1.56.1",
     "sass-loader": "^13.2.0",
     "style-loader": "^3.3.1",
