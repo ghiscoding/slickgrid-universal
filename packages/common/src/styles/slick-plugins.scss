@@ -748,6 +748,9 @@ li.hidden {
   padding: 0;
   min-width: 25px;
   border: none;
+  &:focus {
+    z-index: 3;
+  }
 
   .form-control {
     border-radius: var(--slick-compound-filter-operator-border-radius, $slick-compound-filter-operator-border-radius);
@@ -757,6 +760,9 @@ li.hidden {
     color: var(--slick-compound-filter-text-color, $slick-compound-filter-text-color);
     font-weight: var(--slick-compound-filter-text-weight, $slick-compound-filter-text-weight);
     background-color: var(--slick-compound-filter-bgcolor, $slick-compound-filter-bgcolor);
+    &:focus {
+      z-index: 3;
+    }
   }
 
   select {
