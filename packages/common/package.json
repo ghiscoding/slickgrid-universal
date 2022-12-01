@@ -25,6 +25,7 @@
     "/dist"
   ],
   "scripts": {
+    "prebuild": "pnpm run clean",
     "build": "pnpm run bundle:commonjs",
     "postbuild": "pnpm run sass:build sass:copy",
     "build:watch": "tsc --incremental --watch",
