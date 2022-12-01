@@ -574,6 +574,7 @@ li.hidden {
   border: var(--slick-multiselect-input-filter-border, $slick-multiselect-input-filter-border);
   background-color: transparent;
   font-size: var(--slick-header-font-size, $slick-header-font-size);
+  height: var(--slick-header-input-height, $slick-header-input-height);
 
   div {
     &:before {
