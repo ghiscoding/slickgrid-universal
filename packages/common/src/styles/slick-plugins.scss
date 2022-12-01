@@ -607,6 +607,9 @@ li.hidden {
     cursor: pointer;
   }
 }
+.ms-parent-open button {
+  box-shadow: var(--slick-multiselect-input-box-shadow, $slick-multiselect-input-box-shadow);
+}
 .ms-drop {
   max-width: var(--slick-multiselect-dropdown-max-width, $slick-multiselect-dropdown-max-width);
   border: var(--slick-multiselect-dropdown-border, $slick-multiselect-dropdown-border);

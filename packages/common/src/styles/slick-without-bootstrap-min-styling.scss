@@ -2,7 +2,10 @@
 
 $slick-form-control-border: 1px solid #ccc !default;
 $slick-form-control-focus-border-color: lighten($slick-primary-color, 10%) !default;
-$slick-form-control-focus-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(lighten($slick-primary-color, 3%), .3) !default;
+$slick-form-control-focus-box-shadow: $input-focus-box-shadow !default;
+
+// Bootstrap 5 box-shadow
+// $input-focus-box-shadow: 0 0 0 0.25rem #0d6efd40 !default;
 
 /** Bootstrap buttons styling copied and changed slightly for Material Design */
 .slick-editor-modal, .slick-large-editor-text {
