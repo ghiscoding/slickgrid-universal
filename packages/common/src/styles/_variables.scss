@@ -702,6 +702,8 @@ $slick-slider-filter-number-font-size:                      calc(#{$slick-font-s
 $slick-multiselect-input-filter-border:                     1px solid #ccc !default;
 $slick-multiselect-input-filter-font-family:                "Helvetica Neue", Helvetica, Arial !default;
 $slick-multiselect-input-filter-font-size:                  12px !default;
+$slick-multiselect-input-focus-border-color:                $slick-editor-focus-border-color !default;
+$slick-multiselect-input-focus-box-shadow:                  $slick-editor-focus-box-shadow !default;
 $slick-multiselect-dropdown-border:                         1px solid #bbb !default;
 $slick-multiselect-dropdown-max-width:                      250px !default;
 $slick-multiselect-dropdown-z-index:                        9999 !default;
