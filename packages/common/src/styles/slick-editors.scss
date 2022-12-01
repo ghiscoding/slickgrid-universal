@@ -83,15 +83,17 @@
         border-bottom-right-radius: var(--slick-text-editor-border-radius, $slick-text-editor-border-radius);
         cursor: pointer;
         height: var(--slick-date-editor-height, $slick-date-editor-height);
+        &.icon-clear {
+          display: flex;
+          align-items: center;
+        }
         &.icon-clear:before {
           font-family: var(--slick-icon-font-family, $slick-icon-font-family);
           font-size: var(--slick-editor-input-group-clear-btn-icon-size, $slick-editor-input-group-clear-btn-icon-size);
           content: var(--slick-editor-input-group-clear-btn-icon, $slick-editor-input-group-clear-btn-icon);
-          vertical-align: var(--slick-editor-input-group-clear-btn-icon-vertical-align, $slick-editor-input-group-clear-btn-icon-vertical-align);
           display: inline-block;
           height: var(--slick-editor-input-group-clear-btn-icon-height, $slick-editor-input-group-clear-btn-icon-height);
           width: var(--slick-editor-input-group-clear-btn-icon-width, $slick-editor-input-group-clear-btn-icon-width);
-          margin-top: var(--slick-editor-input-group-clear-btn-icon-margin-top, $slick-editor-input-group-clear-btn-icon-margin-top);
         }
       }
     }

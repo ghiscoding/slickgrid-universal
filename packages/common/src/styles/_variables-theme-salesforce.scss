@@ -157,11 +157,8 @@ $slick-row-move-plugin-icon:                                  url('data:image/sv
 $slick-editor-input-height:                                   100% !default;
 $slick-editor-input-group-clear-btn-icon-color:               $slick-icon-color !default;
 $slick-editor-input-group-clear-btn-icon:                     url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-editor-input-group-clear-btn-icon-color)}" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"></path></svg>') !default;
-$slick-editor-input-group-clear-btn-icon-margin-top:          inherit !default;
 $slick-editor-input-group-clear-btn-icon-padding:             1px 6px !default;
 $slick-editor-input-group-clear-btn-icon-size:                calc(#{$slick-icon-font-size} + 2px) !default;
-$slick-editor-input-group-clear-btn-icon-vertical-align:      initial !default;
-$slick-editor-input-group-clear-btn-icon-height:              14px !default;
 $slick-editor-input-group-clear-btn-icon-width:               14px !default;
 $slick-editor-focus-box-shadow:                               0 0 3px $slick-primary-color !default;
 $slick-editor-modal-container-radius:                         var(--lwc-borderRadiusMedium, 0.25rem) !default;
