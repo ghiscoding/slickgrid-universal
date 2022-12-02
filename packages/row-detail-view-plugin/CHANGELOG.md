@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.2](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.1...v2.1.2) (2022-12-02)
+
+### Bug Fixes
+
+* **addons:** do not add special columns twice (like Row Selection) ([#822](https://github.com/ghiscoding/slickgrid-universal/issues/822)) ([a80d6f8](https://github.com/ghiscoding/slickgrid-universal/commit/a80d6f8f2cae674e0a870eb9c450de991cd84837)) - by @ghiscoding
+* all querySelector should be specific to a grid UID ([#823](https://github.com/ghiscoding/slickgrid-universal/issues/823)) ([bc2b65c](https://github.com/ghiscoding/slickgrid-universal/commit/bc2b65c676762d21ef45e7b76caf900708c1422f)) - by @ghiscoding
+
 ## [2.1.1](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.0...v2.1.1) (2022-11-19)
 
 **Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin

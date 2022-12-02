@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.2](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.1...v2.1.2) (2022-12-02)
+
+### Bug Fixes
+
+* **addons:** do not add special columns twice (like Row Selection) ([#822](https://github.com/ghiscoding/slickgrid-universal/issues/822)) ([a80d6f8](https://github.com/ghiscoding/slickgrid-universal/commit/a80d6f8f2cae674e0a870eb9c450de991cd84837)) - by @ghiscoding
+* **addons:** onGroupChanged callback should be executed with Draggable ([#826](https://github.com/ghiscoding/slickgrid-universal/issues/826)) ([35c2631](https://github.com/ghiscoding/slickgrid-universal/commit/35c2631feb00a5b2efe6903e9bfdfe5c95df318e)) - by @ghiscoding
+* **common:** remove unused console log ([593928a](https://github.com/ghiscoding/slickgrid-universal/commit/593928af8a7e92ecf2a8c67e4cff4c8e5da58468)) - by @ghiscoding
+* **core:** grid service `resetGrid` method wasn't always resetting ([#829](https://github.com/ghiscoding/slickgrid-universal/issues/829)) ([1ffc382](https://github.com/ghiscoding/slickgrid-universal/commit/1ffc38265006e8b6e584e6de8f6c4fe53c2e2bf8)) - by @ghiscoding
+* **styling:** editor clear button should always be centered ([3e9f330](https://github.com/ghiscoding/slickgrid-universal/commit/3e9f3304dc2b02450e859af27af254fee1fbd650)) - by @ghiscoding
+* **styling:** focused compound input box-shadow css ([2c50c47](https://github.com/ghiscoding/slickgrid-universal/commit/2c50c47a76556ae4a6f842c483800d5af90637fc)) - by @ghiscoding
+
 ## [2.1.1](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.0...v2.1.1) (2022-11-19)
 
 ### Bug Fixes
