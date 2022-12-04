@@ -345,6 +345,7 @@ export class ResizerService {
         this._gridDomElm.height(newHeight as string);
       }
       this._gridDomElm.width(newWidth as string);
+      this._gridContainerElm.width(newWidth as string);
 
       // resize the slickgrid canvas on all browser except some IE versions
       // exclude all IE below IE11
