@@ -298,7 +298,10 @@ export interface GridOption {
   /** Defaults to false, do we want to enable the Draggable Grouping Plugin? */
   enableDraggableGrouping?: boolean;
 
-  /** Defaults to true, which leads to use an Excel like copy buffer that gets copied in clipboard and can be pasted back in Excel or any other app */
+  /**
+   * Defaults to true, which leads to use an Excel like copy buffer that gets copied in clipboard and can be pasted back in Excel or any other app.
+   * NOTE: please note that this option will NOT work when "Row Selection" & "Row Move" are enabled, because features are conflicting with each other.
+   */
   enableExcelCopyBuffer?: boolean;
 
   /**
