@@ -689,12 +689,15 @@ $slick-slider-filter-focus-box-shadow:                      $slick-input-focus-b
 $slick-slider-filter-height:                                $slick-header-input-height !default;
 $slick-slider-filter-thumb-border-radius:                   50% !default;
 $slick-slider-filter-thumb-cursor:                          grab !default;
-$slick-slider-filter-thumb-color:                           rgb(201, 219, 203) !default;
+$slick-slider-filter-thumb-border:                          2px solid rgba($slick-primary-color, .68) !default;
+$slick-slider-filter-thumb-color:                           lighten($slick-primary-color, 75%) !default; // #c9dbcb
+$slick-slider-filter-thumb-active-color:                    rgba($slick-primary-color, .88) !default; // #c9dbcb
 $slick-slider-filter-thumb-active-bg-color:                 #fff !default;
+$slick-slider-filter-thumb-active-border:                   2px solid #{$slick-slider-filter-thumb-active-color} !default; // #c9dbcb
+$slick-slider-filter-thumb-active-box-shadow:               0 0 0 2px rgba(lighten($slick-primary-color, 3%), .15) !default; // #c9dbcb
 $slick-slider-filter-thumb-size:                            14px !default;
 $slick-slider-filter-thumb-height:                          calc(#{$slick-slider-filter-thumb-size} - 4px) !default;
 $slick-slider-filter-thumb-width:                           $slick-slider-filter-thumb-height !default;
-$slick-slider-filter-thumb-border:                          2px solid darken($slick-slider-filter-thumb-color, 15%) !default;
 $slick-slider-filter-number-padding:                        4px 8px !default;
 $slick-slider-filter-number-font-size:                      calc(#{$slick-font-size-base-value} - 1px) !default;
 

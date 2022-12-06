@@ -1111,11 +1111,13 @@ input.flatpickr.form-control {
     }
     &:active::-webkit-slider-thumb {
       background-color: var(--slick-slider-filter-thumb-active-bg-color, $slick-slider-filter-thumb-active-bg-color);
-      border: 2px solid var(--slick-slider-filter-thumb-color, $slick-slider-filter-thumb-color);
+      border: var(--slick-slider-filter-thumb-active-border, $slick-slider-filter-thumb-active-border);
+      box-shadow: var(--slick-slider-filter-thumb-active-box-shadow, $slick-slider-filter-thumb-active-box-shadow);
     }
     &:active::-moz-range-thumb {
       background-color: var(--slick-slider-filter-thumb-active-bg-color, $slick-slider-filter-thumb-active-bg-color);
-      border: 2px solid var(--slick-slider-filter-thumb-color, $slick-slider-filter-thumb-color);
+      border: var(--slick-slider-filter-thumb-active-border, $slick-slider-filter-thumb-active-border);
+      box-shadow: var(--slick-slider-filter-thumb-active-box-shadow, $slick-slider-filter-thumb-active-box-shadow);
     }
   }
 }
