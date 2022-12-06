@@ -109,8 +109,9 @@ export class SlickCellExternalCopyManager {
     // if a custom getter is not defined, we call serializeValue of the editor to serialize
     if (columnDef) {
       if (columnDef.editor) {
+        const tmpP = document.createElement('p');
         const editor = new (columnDef as any).editor({
-          container: document.createElement('p'),  // a dummy container
+          container: tmpP,  // a dummy container
           column: columnDef,
           event,
           position: { top: 0, left: 0 },  // a dummy position required by some editors
@@ -119,6 +120,7 @@ export class SlickCellExternalCopyManager {
         editor.loadValue(item);
         retVal = editor.serializeValue();
         editor.destroy();
+        tmpP.remove();
       } else {
         retVal = item[columnDef.field || ''];
       }
@@ -135,8 +137,9 @@ export class SlickCellExternalCopyManager {
 
       // if a custom setter is not defined, we call applyValue of the editor to unserialize
       if (columnDef.editor) {
+        const tmpDiv = document.createElement('div');
         const editor = new (columnDef as any).editor({
-          container: document.body,  // a dummy container
+          container: tmpDiv, // a dummy container
           column: columnDef,
           position: { top: 0, left: 0 },  // a dummy position required by some editors
           grid: this._grid
@@ -144,6 +147,7 @@ export class SlickCellExternalCopyManager {
         editor.loadValue(item);
         editor.applyValue(item, value);
         editor.destroy();
+        tmpDiv.remove();
       } else {
         item[columnDef.field] = value;
       }
