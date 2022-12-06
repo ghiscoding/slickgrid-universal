@@ -688,13 +688,11 @@ export class SlickVanillaGridBundle {
 
     // when we use Pagination on Local Grid, it doesn't seem to work without enableFiltering
     // so we'll enable the filtering but we'll keep the header row hidden
-    if (!options.enableFiltering && options.enablePagination && this._isLocalGrid) {
+    if (this.sharedService && !options.enableFiltering && options.enablePagination && this._isLocalGrid) {
       options.enableFiltering = true;
       options.showHeaderRow = false;
       this._hideHeaderRowAfterPageLoad = true;
-      if (this.sharedService) {
-        this.sharedService.hideHeaderRowAfterPageLoad = true;
-      }
+      this.sharedService.hideHeaderRowAfterPageLoad = true;
     }
 
     return options;
