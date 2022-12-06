@@ -20,6 +20,7 @@ Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/relea
 The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2 different themes (Material Design / Salesforce), but you could also choose a Bootstrap theme which is demoed in other frameworks.
 - [Angular-Slickgrid](https://ghiscoding.github.io/Angular-Slickgrid/) - External Library
 - [Aurelia-Slickgrid](https://ghiscoding.github.io/aurelia-slickgrid/) - External Library
+- [Slickgrid-React](https://ghiscoding.github.io/slickgrid-react/) - External Library
 - [Webpack-Demo-Vanilla-Bundle](https://ghiscoding.github.io/slickgrid-universal) - internal with Material Design and Salesforce themes
 - [Slickgrid-Universal-Vite-Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) - Slickgrid-Universal demo with ViteJS
 
@@ -40,6 +41,7 @@ You might be wondering why was this monorepo created? Here are a few reasons:
 ### Frameworks using this monorepo
   - [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) starting with version `>=3.x`
   - [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) starting with version `>=3.x`
+  - [Slickgrid-React](https://github.com/ghiscoding/slickgrid-react)
   - [Vanilla bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) is meant to be used with plain JavaScript/TypeScript that is without targeting any particular framework, below are demos using it
     - [Webpack-Demo-Vanilla-Bundle](https://ghiscoding.github.io/slickgrid-universal) - internal demo with Material Design theme & Salesforce themes
     - [Slickgrid-Universal-Vite-Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) - Slickgrid-Universal demo with ViteJS
@@ -54,8 +56,9 @@ Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +15,00
 
 | Package or Lib Name | Description |
 | --------| ----------- |
-| [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) | for Angular framework |
-| [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) | for Aurelia framework |
+| [Angular-Slickgrid](https://ghiscoding.github.io/Angular-Slickgrid/) | for Angular framework |
+| [Aurelia-Slickgrid](https://ghiscoding.github.io/aurelia-slickgrid/) | for Aurelia framework |
+| [Slickgrid-React](https://ghiscoding.github.io/slickgrid-react/) | for React framework |
 | [slickgrid-universal/webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle) | standalone package written in plain TypeScript for demo and UI testing (**do not use in production**, this is only for demo/testing purpose). |
 | [Slickgrid-Universal-Vite-Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) | Slickgrid-Universal demo with Vite & TypeScript (**demo purposes only**) |
 
