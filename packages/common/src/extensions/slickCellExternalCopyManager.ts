@@ -136,7 +136,7 @@ export class SlickCellExternalCopyManager {
       // if a custom setter is not defined, we call applyValue of the editor to unserialize
       if (columnDef.editor) {
         const editor = new (columnDef as any).editor({
-          container: document.body,  // a dummy container
+          container: document.createElement('div'),  // a dummy container
           column: columnDef,
           position: { top: 0, left: 0 },  // a dummy position required by some editors
           grid: this._grid
