@@ -48,7 +48,7 @@
     "@lerna-lite/cli": "^1.13.0",
     "@lerna-lite/run": "^1.13.0",
     "@types/jest": "^29.2.4",
-    "@types/node": "^18.11.11",
+    "@types/node": "^18.11.12",
     "@typescript-eslint/eslint-plugin": "^5.46.0",
     "@typescript-eslint/parser": "^5.46.0",
     "cross-env": "^7.0.3",
