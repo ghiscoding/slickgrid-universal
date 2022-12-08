@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.3](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.2...v2.1.3) (2022-12-08)
+
+### Bug Fixes
+
+* **common:** Date Sorting was shuffling other lines with same dates ([#831](https://github.com/ghiscoding/slickgrid-universal/issues/831)) ([db34213](https://github.com/ghiscoding/slickgrid-universal/commit/db34213bc8594ae12a6fd241f9fb6d6bfd1b8334)) - by @ghiscoding
+* **common:** Resizer Service should only resize grid not its container ([#833](https://github.com/ghiscoding/slickgrid-universal/issues/833)) ([7d21233](https://github.com/ghiscoding/slickgrid-universal/commit/7d21233deb16a1bda99799fe54401a8b9410197a)) - by @ghiscoding
+
 ## [2.1.2](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.1...v2.1.2) (2022-12-02)
 
 ### Bug Fixes

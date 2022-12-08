@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.3](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.2...v2.1.3) (2022-12-08)
+
+### Bug Fixes
+
+* Grid Menu filtering options should be removed when option disabled ([#837](https://github.com/ghiscoding/slickgrid-universal/issues/837)) ([9bc29d2](https://github.com/ghiscoding/slickgrid-universal/commit/9bc29d2682256605dd80475015b85879e1298381)) - by @ghiscoding
+
 ## [2.1.2](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.1...v2.1.2) (2022-12-02)
 
 **Note:** Version bump only for package @slickgrid-universal/vanilla-bundle
