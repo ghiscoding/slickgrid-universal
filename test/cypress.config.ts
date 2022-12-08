@@ -11,6 +11,7 @@ export default defineConfig({
   videosFolder: 'test/cypress/videos',
   defaultCommandTimeout: 5000,
   pageLoadTimeout: 90000,
+  numTestsKeptInMemory: 5,
   retries: {
     runMode: 2,
     openMode: 0,
