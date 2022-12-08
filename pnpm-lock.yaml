@@ -13,7 +13,7 @@ importers:
       '@typescript-eslint/eslint-plugin': ^5.45.0
       '@typescript-eslint/parser': ^5.45.0
       cross-env: ^7.0.3
-      cypress: ^11.2.0
+      cypress: ^12.0.1
       eslint: ^8.28.0
       eslint-plugin-import: ^2.26.0
       eslint-plugin-prefer-arrow: ^1.2.3
@@ -31,7 +31,7 @@ importers:
       ts-jest: ^29.0.3
       typescript: ^4.9.3
     devDependencies:
-      '@4tw/cypress-drag-drop': 2.2.2_cypress@11.2.0
+      '@4tw/cypress-drag-drop': 2.2.2_cypress@12.0.1
       '@jest/types': 29.3.1
       '@lerna-lite/cli': 1.13.0
       '@lerna-lite/run': 1.13.0
@@ -40,7 +40,7 @@ importers:
       '@typescript-eslint/eslint-plugin': 5.45.0_czs5uoqkd3podpy6vgtsxfc7au
       '@typescript-eslint/parser': 5.45.0_hsf322ms6xhhd4b5ne6lb74y4a
       cross-env: 7.0.3
-      cypress: 11.2.0
+      cypress: 12.0.1
       eslint: 8.28.0
       eslint-plugin-import: 2.26.0_vbnhqcxlbs7ynbxw44hu2vq7eq
       eslint-plugin-prefer-arrow: 1.2.3_eslint@8.28.0
@@ -511,12 +511,12 @@ importers:
 
 packages:
 
-  /@4tw/cypress-drag-drop/2.2.2_cypress@11.2.0:
+  /@4tw/cypress-drag-drop/2.2.2_cypress@12.0.1:
     resolution: {integrity: sha512-WlDkChwUKIn+8z8vLmmGARIOHlbymPu1sVFj3Hvxtuy+8Db7lBROcpmmYolYFBGGhFm9mgb7yG39La8wT4N5jA==}
     peerDependencies:
       cypress: ^2.1.0 || ^3.1.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0
     dependencies:
-      cypress: 11.2.0
+      cypress: 12.0.1
     dev: true
 
   /@ampproject/remapping/2.2.0:
@@ -3755,9 +3755,9 @@ packages:
       cssom: 0.3.8
     dev: true
 
-  /cypress/11.2.0:
-    resolution: {integrity: sha512-u61UGwtu7lpsNWLUma/FKNOsrjcI6wleNmda/TyKHe0dOBcVjbCPlp1N6uwFZ0doXev7f/91YDpU9bqDCFeBLA==}
-    engines: {node: '>=12.0.0'}
+  /cypress/12.0.1:
+    resolution: {integrity: sha512-I1Ag5RsPEINfUlQtV6xwkd6ktJuu5QGiKZ3pFa/IXjcyCY6I7CH3gOz0juLOhg/LXOPrQtZH35ulcWDQohyyEA==}
+    engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
     hasBin: true
     requiresBuild: true
     dependencies:
