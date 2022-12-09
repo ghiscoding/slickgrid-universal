@@ -11,6 +11,10 @@
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 [![codecov](https://codecov.io/gh/slickgrid-stellar/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/slickgrid-stellar/slickgrid-universal)
 
+### Community
+Recently moved all my SlickGrid related repos into a new [Slickgrid-Stellar](https://github.com/slickgrid-stellar) GitHub org to regroup them all into a single location.
+
+### Description
 This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces)) which is regrouping a few packages under a single repository. It is using SlickGrid (more specifically the [6pac/SlickGrid](https://github.com/6pac/SlickGrid/) fork) behind the scene (there is no need to rewrite the core library itself, in other words this is a wrapper library). The main goal of this library is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It was also a good opportunity to decouple some features/services that not every one need at all time, this will also help in getting smaller bundle size depending on which features (packages) you decide to use. For example, not every project need backend services (OData, GraphQL) and/or export services (Excel Export, Text Export), which is why they are better handled with a monorepo structure (download and install only what you need).
 
 ## Latest News & Releases
@@ -39,28 +43,20 @@ You might be wondering why was this monorepo created? Here are a few reasons:
    - you can use it in plain JavaScript (ES6) or TypeScript, on our side we use it with plain JS (ES6) in our Salesforce environment with LWC (Lightning Web Component)
 
 ### Frameworks using this monorepo
-  - [Aurelia-Slickgrid](https://github.com/slickgrid-stellar/aurelia-slickgrid) starting with version `>=3.x`
-  - [Angular-Slickgrid](https://github.com/slickgrid-stellar/Angular-Slickgrid) starting with version `>=3.x`
-  - [Slickgrid-React](https://github.com/slickgrid-stellar/slickgrid-react)
-  - [Vanilla bundle](https://github.com/slickgrid-stellar/slickgrid-universal/tree/master/packages/vanilla-bundle) is meant to be used with plain JavaScript/TypeScript that is without targeting any particular framework, below are demos using it
-    - [Webpack-Demo-Vanilla-Bundle](https://slickgrid-stellar.github.io/slickgrid-universal) - internal demo with Material Design theme & Salesforce themes
-    - [Slickgrid-Universal-Vite-Demo](https://github.com/slickgrid-stellar/slickgrid-universal-vite-demo) - Slickgrid-Universal demo with ViteJS
+### Available Demos
 
+| Lib | Live Demo | Description |
+| ----| --------- | ----------- |
+| [Angular-Slickgrid](https://slickgrid-stellar.github.io/Angular-Slickgrid/) | [demo](https://slickgrid-stellar.github.io/Angular-Slickgrid/) | for Angular framework |
+| [Aurelia-Slickgrid](https://slickgrid-stellar.github.io/aurelia-slickgrid/) | [demo](https://slickgrid-stellar.github.io/aurelia-slickgrid/) | for Aurelia framework |
+| [Slickgrid-React](https://slickgrid-stellar.github.io/slickgrid-react/) | [demo](https://slickgrid-stellar.github.io/slickgrid-react/) | for React framework |
+| [slickgrid-universal/webpack-demo-vanilla-bundle](https://github.com/slickgrid-stellar/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle) | [demo](https://slickgrid-stellar.github.io/slickgrid-universal) | standalone package written in plain TypeScript for demo and UI testing (**do not use in production**, this is only for demo/testing purpose). |
+| [Slickgrid-Universal-Vite-Demo](https://github.com/slickgrid-stellar/slickgrid-universal-vite-demo) | n/a | Slickgrid-Universal demo with Vite & TypeScript (**demo purposes only**) |
 
 The Vanilla Implementation (which is not associated to any framework) was built with [WebPack](https://webpack.js.org/) and is also used to run and test all the UI functionalities [Cypress](https://www.cypress.io/) (E2E tests). The [Vanilla-force-bundle](https://github.com/slickgrid-stellar/slickgrid-universal/tree/master/packages/vanilla-bundle), which extends the `vanilla-bundle` package is what we use in our SalesForce implementation (with Lightning Web Component), hence the creation of this monorepo library.
 
 ### Fully Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
 Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +15,000 lines of code (+3,700 unit tests) that are fully tested with [Jest](https://jestjs.io/). There are also +450 Cypress E2E tests to cover all [Examples](https://slickgrid-stellar.github.io/slickgrid-universal/) and most UI functionalities (there's also an additional +500 tests in Angular/Aurelia-Slickgrid)
-
-### Available Demos
-
-| Package or Lib Name | Description |
-| --------| ----------- |
-| [Angular-Slickgrid](https://slickgrid-stellar.github.io/Angular-Slickgrid/) | for Angular framework |
-| [Aurelia-Slickgrid](https://slickgrid-stellar.github.io/aurelia-slickgrid/) | for Aurelia framework |
-| [Slickgrid-React](https://slickgrid-stellar.github.io/slickgrid-react/) | for React framework |
-| [slickgrid-universal/webpack-demo-vanilla-bundle](https://github.com/slickgrid-stellar/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle) | standalone package written in plain TypeScript for demo and UI testing (**do not use in production**, this is only for demo/testing purpose). |
-| [Slickgrid-Universal-Vite-Demo](https://github.com/slickgrid-stellar/slickgrid-universal-vite-demo) | Slickgrid-Universal demo with Vite & TypeScript (**demo purposes only**) |
 
 ### Available Public Packages
 
