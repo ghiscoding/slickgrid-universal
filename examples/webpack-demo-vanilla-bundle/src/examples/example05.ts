@@ -220,7 +220,7 @@ export class Example5 {
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {
         // optionally display some text on the left footer container
-        leftFooterText: 'Grid created with <a href="https://github.com/ghiscoding/slickgrid-universal" target="_blank">Slickgrid-Universal</a> <i class="mdi mdi-github"></i>',
+        leftFooterText: 'Grid created with <a href="https://github.com/slickclub/slickgrid-universal" target="_blank">Slickgrid-Universal</a> <i class="mdi mdi-github"></i>',
       },
       // enableCheckboxSelector: true,
       // enableRowSelection: true,

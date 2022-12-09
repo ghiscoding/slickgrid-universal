@@ -27,14 +27,14 @@
   },
   "license": "MIT",
   "author": "Ghislain B.",
-  "homepage": "https://github.com/ghiscoding/slickgrid-universal",
+  "homepage": "https://github.com/slickclub/slickgrid-universal",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ghiscoding/slickgrid-universal.git",
+    "url": "https://github.com/slickclub/slickgrid-universal.git",
     "directory": "packages/event-pub-sub"
   },
   "bugs": {
-    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+    "url": "https://github.com/slickclub/slickgrid-universal/issues"
   },
   "browserslist": [
     "last 2 version",
