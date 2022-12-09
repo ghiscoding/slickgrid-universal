@@ -12,6 +12,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **common:** Resizer Service regression still resize container width ([#834](https://github.com/ghiscoding/slickgrid-universal/issues/834)) ([0db8b7e](https://github.com/ghiscoding/slickgrid-universal/commit/0db8b7ec9ecb3c7e88ee6905037da7e13064c60f)) - by @ghiscoding
 * **common:** Resizer Service should only resize grid not its container ([#833](https://github.com/ghiscoding/slickgrid-universal/issues/833)) ([7d21233](https://github.com/ghiscoding/slickgrid-universal/commit/7d21233deb16a1bda99799fe54401a8b9410197a)) - by @ghiscoding
 * Grid Menu filtering options should be removed when option disabled ([#837](https://github.com/ghiscoding/slickgrid-universal/issues/837)) ([9bc29d2](https://github.com/ghiscoding/slickgrid-universal/commit/9bc29d2682256605dd80475015b85879e1298381)) - by @ghiscoding
+* Fix for page being cleared when using copy and paste with selectEditor ([#836](https://github.com/ghiscoding/slickgrid-universal/pull/836)) ([f1cadb33](https://github.com/ghiscoding/slickgrid-universal/commit/f1cadb33d99bcd98bc3c79221fbe55a5b1d72cfd)) - by @austinsimpson
 
 ## [2.1.2](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.1...v2.1.2) (2022-12-02)
 
