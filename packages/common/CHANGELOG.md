@@ -1,4 +1,4 @@
-# Changeghiscoding Log
+# Change Log
 ## All-in-One SlickGrid framework agnostic wrapper, visit [Slickgrid-Universal](https://github.com/slickclub/slickgrid-universal) 📦🚀
 
 All notable changes to this project will be documented in this file.
