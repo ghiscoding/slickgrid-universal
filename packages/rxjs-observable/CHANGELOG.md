@@ -24,7 +24,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* **common:** BREAKING CHANGE replace jQueryUI with SortableJS in common & DraggableGrouping ([#772](https://github.com/slickgrid-stellar/slickgrid-universal/issues/772)) ([a9db2cc](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a9db2cca965adc7871d7e4d050ae8f3653c84bb4)), closes [#752](https://github.com/slickgrid-stellar/slickgrid-universal/issues/752) [#756](https://github.com/slickgrid-stellar/slickgrid-universal/issues/756) - by @slickgrid-stellar
+* **common:** BREAKING CHANGE replace jQueryUI with SortableJS in common & DraggableGrouping ([#772](https://github.com/slickgrid-stellar/slickgrid-universal/issues/772)) ([a9db2cc](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a9db2cca965adc7871d7e4d050ae8f3653c84bb4)), closes [#752](https://github.com/slickgrid-stellar/slickgrid-universal/issues/752) [#756](https://github.com/slickgrid-stellar/slickgrid-universal/issues/756) - by @ghiscoding
 
 # [2.0.0-alpha.0](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.4.0...v2.0.0-alpha.0) (2022-10-15)
 
@@ -42,13 +42,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* **deps:** loosen up RxJS min version to avoid interface out of sync ([54ef4ad](https://github.com/slickgrid-stellar/slickgrid-universal/commit/54ef4ad72b441ea9eacb45f4d46da0b6965bb90c)) - by @slickgrid-stellar
+* **deps:** loosen up RxJS min version to avoid interface out of sync ([54ef4ad](https://github.com/slickgrid-stellar/slickgrid-universal/commit/54ef4ad72b441ea9eacb45f4d46da0b6965bb90c)) - by @ghiscoding
 
 ## [1.3.5](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.3.4...v1.3.5) (2022-07-28)
 
 ### Bug Fixes
 
-* **build:** use `workspace:~` to avoid multiple versions d/l on ext libs ([3ca1943](https://github.com/slickgrid-stellar/slickgrid-universal/commit/3ca1943f1247e66d3213fb5edeed7e7246032767)) - by @slickgrid-stellar
+* **build:** use `workspace:~` to avoid multiple versions d/l on ext libs ([3ca1943](https://github.com/slickgrid-stellar/slickgrid-universal/commit/3ca1943f1247e66d3213fb5edeed7e7246032767)) - by @ghiscoding
 
 ## [1.3.4](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.3.3...v1.3.4) (2022-07-28)
 

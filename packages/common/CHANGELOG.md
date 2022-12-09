@@ -8,81 +8,81 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* **common:** Date Sorting was shuffling other lines with same dates ([#831](https://github.com/slickgrid-stellar/slickgrid-universal/issues/831)) ([db34213](https://github.com/slickgrid-stellar/slickgrid-universal/commit/db34213bc8594ae12a6fd241f9fb6d6bfd1b8334)) - by @slickgrid-stellar
-* **common:** Resizer Service should only resize grid not its container ([#833](https://github.com/slickgrid-stellar/slickgrid-universal/issues/833)) ([7d21233](https://github.com/slickgrid-stellar/slickgrid-universal/commit/7d21233deb16a1bda99799fe54401a8b9410197a)) - by @slickgrid-stellar
+* **common:** Date Sorting was shuffling other lines with same dates ([#831](https://github.com/slickgrid-stellar/slickgrid-universal/issues/831)) ([db34213](https://github.com/slickgrid-stellar/slickgrid-universal/commit/db34213bc8594ae12a6fd241f9fb6d6bfd1b8334)) - by @ghiscoding
+* **common:** Resizer Service should only resize grid not its container ([#833](https://github.com/slickgrid-stellar/slickgrid-universal/issues/833)) ([7d21233](https://github.com/slickgrid-stellar/slickgrid-universal/commit/7d21233deb16a1bda99799fe54401a8b9410197a)) - by @ghiscoding
 * Fix for page being cleared when using copy and paste with selectEditor ([#836](https://github.com/slickgrid-stellar/slickgrid-universal/pull/836)) ([f1cadb33](https://github.com/slickgrid-stellar/slickgrid-universal/commit/f1cadb33d99bcd98bc3c79221fbe55a5b1d72cfd)) - by @austinsimpson
 
 ## [2.1.2](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v2.1.1...v2.1.2) (2022-12-02)
 
 ### Bug Fixes
 
-* **addons:** do not add special columns twice (like Row Selection) ([#822](https://github.com/slickgrid-stellar/slickgrid-universal/issues/822)) ([a80d6f8](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a80d6f8f2cae674e0a870eb9c450de991cd84837)) - by @slickgrid-stellar
-* **addons:** onGroupChanged callback should be executed with Draggable ([#826](https://github.com/slickgrid-stellar/slickgrid-universal/issues/826)) ([35c2631](https://github.com/slickgrid-stellar/slickgrid-universal/commit/35c2631feb00a5b2efe6903e9bfdfe5c95df318e)) - by @slickgrid-stellar
-* **common:** remove unused console log ([593928a](https://github.com/slickgrid-stellar/slickgrid-universal/commit/593928af8a7e92ecf2a8c67e4cff4c8e5da58468)) - by @slickgrid-stellar
-* **core:** grid service `resetGrid` method wasn't always resetting ([#829](https://github.com/slickgrid-stellar/slickgrid-universal/issues/829)) ([1ffc382](https://github.com/slickgrid-stellar/slickgrid-universal/commit/1ffc38265006e8b6e584e6de8f6c4fe53c2e2bf8)) - by @slickgrid-stellar
-* **styling:** editor clear button should always be centered ([3e9f330](https://github.com/slickgrid-stellar/slickgrid-universal/commit/3e9f3304dc2b02450e859af27af254fee1fbd650)) - by @slickgrid-stellar
-* **styling:** focused compound input box-shadow css ([2c50c47](https://github.com/slickgrid-stellar/slickgrid-universal/commit/2c50c47a76556ae4a6f842c483800d5af90637fc)) - by @slickgrid-stellar
+* **addons:** do not add special columns twice (like Row Selection) ([#822](https://github.com/slickgrid-stellar/slickgrid-universal/issues/822)) ([a80d6f8](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a80d6f8f2cae674e0a870eb9c450de991cd84837)) - by @ghiscoding
+* **addons:** onGroupChanged callback should be executed with Draggable ([#826](https://github.com/slickgrid-stellar/slickgrid-universal/issues/826)) ([35c2631](https://github.com/slickgrid-stellar/slickgrid-universal/commit/35c2631feb00a5b2efe6903e9bfdfe5c95df318e)) - by @ghiscoding
+* **common:** remove unused console log ([593928a](https://github.com/slickgrid-stellar/slickgrid-universal/commit/593928af8a7e92ecf2a8c67e4cff4c8e5da58468)) - by @ghiscoding
+* **core:** grid service `resetGrid` method wasn't always resetting ([#829](https://github.com/slickgrid-stellar/slickgrid-universal/issues/829)) ([1ffc382](https://github.com/slickgrid-stellar/slickgrid-universal/commit/1ffc38265006e8b6e584e6de8f6c4fe53c2e2bf8)) - by @ghiscoding
+* **styling:** editor clear button should always be centered ([3e9f330](https://github.com/slickgrid-stellar/slickgrid-universal/commit/3e9f3304dc2b02450e859af27af254fee1fbd650)) - by @ghiscoding
+* **styling:** focused compound input box-shadow css ([2c50c47](https://github.com/slickgrid-stellar/slickgrid-universal/commit/2c50c47a76556ae4a6f842c483800d5af90637fc)) - by @ghiscoding
 
 ## [2.1.1](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v2.1.0...v2.1.1) (2022-11-19)
 
 ### Bug Fixes
 
-* **plugin:** do not show drag group sort when column is not sortable ([#819](https://github.com/slickgrid-stellar/slickgrid-universal/issues/819)) ([049303b](https://github.com/slickgrid-stellar/slickgrid-universal/commit/049303b0f6d085e7d022a2c87572c9ac90082b3e)) - by @slickgrid-stellar
+* **plugin:** do not show drag group sort when column is not sortable ([#819](https://github.com/slickgrid-stellar/slickgrid-universal/issues/819)) ([049303b](https://github.com/slickgrid-stellar/slickgrid-universal/commit/049303b0f6d085e7d022a2c87572c9ac90082b3e)) - by @ghiscoding
 
 # [2.1.0](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v2.0.0...v2.1.0) (2022-11-17)
 
 ### Bug Fixes
 
-* **build:** upgrading to TypeScript 4.9 brought new build issue ([#816](https://github.com/slickgrid-stellar/slickgrid-universal/issues/816)) ([4d46d8a](https://github.com/slickgrid-stellar/slickgrid-universal/commit/4d46d8ab251bd78671140f82cb143b973e5422b3)) - by @slickgrid-stellar
-* **common:** changing Slider value(s) should update Tooltip instantly ([#800](https://github.com/slickgrid-stellar/slickgrid-universal/issues/800)) ([9c6be27](https://github.com/slickgrid-stellar/slickgrid-universal/commit/9c6be271a956876edaa03be7bf4bda9821840910)) - by @slickgrid-stellar
-* **common:** Slider Range should update both number addons ([#803](https://github.com/slickgrid-stellar/slickgrid-universal/issues/803)) ([3cfd84e](https://github.com/slickgrid-stellar/slickgrid-universal/commit/3cfd84e7ec4e45cf6a4896dc6143da1fecb0402c)) - by @slickgrid-stellar
+* **build:** upgrading to TypeScript 4.9 brought new build issue ([#816](https://github.com/slickgrid-stellar/slickgrid-universal/issues/816)) ([4d46d8a](https://github.com/slickgrid-stellar/slickgrid-universal/commit/4d46d8ab251bd78671140f82cb143b973e5422b3)) - by @ghiscoding
+* **common:** changing Slider value(s) should update Tooltip instantly ([#800](https://github.com/slickgrid-stellar/slickgrid-universal/issues/800)) ([9c6be27](https://github.com/slickgrid-stellar/slickgrid-universal/commit/9c6be271a956876edaa03be7bf4bda9821840910)) - by @ghiscoding
+* **common:** Slider Range should update both number addons ([#803](https://github.com/slickgrid-stellar/slickgrid-universal/issues/803)) ([3cfd84e](https://github.com/slickgrid-stellar/slickgrid-universal/commit/3cfd84e7ec4e45cf6a4896dc6143da1fecb0402c)) - by @ghiscoding
 * **deps:** update dependency autocompleter to v7 ([#804](https://github.com/slickgrid-stellar/slickgrid-universal/issues/804)) ([c298646](https://github.com/slickgrid-stellar/slickgrid-universal/commit/c298646fca64059ca3a59a370f870ad4b3a573da)) - by @renovate-bot
 * **deps:** update dependency dompurify to ^2.4.1 ([#806](https://github.com/slickgrid-stellar/slickgrid-universal/issues/806)) ([a33d8fb](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a33d8fbf3e48bfa29b9173f9263620e61608fffb)) - by @renovate-bot
-* **editors:** disable browser autofill on the Editors.autocompleter ([#776](https://github.com/slickgrid-stellar/slickgrid-universal/issues/776)) ([fd2cf53](https://github.com/slickgrid-stellar/slickgrid-universal/commit/fd2cf535c0bd941203951c665bb3da00f4a4677e)) - by @slickgrid-stellar
-* **editors:** Slider editor track not showing after Slider filter change ([#792](https://github.com/slickgrid-stellar/slickgrid-universal/issues/792)) ([2ad02d2](https://github.com/slickgrid-stellar/slickgrid-universal/commit/2ad02d22cfbb2187df62f0ec19b26f828fec57a6)) - by @slickgrid-stellar
-* **filters:** changing Slider value should update tooltip value ([#788](https://github.com/slickgrid-stellar/slickgrid-universal/issues/788)) ([509a31d](https://github.com/slickgrid-stellar/slickgrid-universal/commit/509a31d5630689c6c91cc2cef4e87b8dea72a243)) - by @slickgrid-stellar
-* **filters:** Slider default operator should be greater or equal (>=) ([#793](https://github.com/slickgrid-stellar/slickgrid-universal/issues/793)) ([b895864](https://github.com/slickgrid-stellar/slickgrid-universal/commit/b895864bc39a415622ac9f2a4b79565aa3d89179)) - by @slickgrid-stellar
-* **styling:** new Slider not flexed correctly ([#799](https://github.com/slickgrid-stellar/slickgrid-universal/issues/799)) ([83a86d0](https://github.com/slickgrid-stellar/slickgrid-universal/commit/83a86d0575a47ed3a11ede31af2a8a3a8186fb9d)) - by @slickgrid-stellar
+* **editors:** disable browser autofill on the Editors.autocompleter ([#776](https://github.com/slickgrid-stellar/slickgrid-universal/issues/776)) ([fd2cf53](https://github.com/slickgrid-stellar/slickgrid-universal/commit/fd2cf535c0bd941203951c665bb3da00f4a4677e)) - by @ghiscoding
+* **editors:** Slider editor track not showing after Slider filter change ([#792](https://github.com/slickgrid-stellar/slickgrid-universal/issues/792)) ([2ad02d2](https://github.com/slickgrid-stellar/slickgrid-universal/commit/2ad02d22cfbb2187df62f0ec19b26f828fec57a6)) - by @ghiscoding
+* **filters:** changing Slider value should update tooltip value ([#788](https://github.com/slickgrid-stellar/slickgrid-universal/issues/788)) ([509a31d](https://github.com/slickgrid-stellar/slickgrid-universal/commit/509a31d5630689c6c91cc2cef4e87b8dea72a243)) - by @ghiscoding
+* **filters:** Slider default operator should be greater or equal (>=) ([#793](https://github.com/slickgrid-stellar/slickgrid-universal/issues/793)) ([b895864](https://github.com/slickgrid-stellar/slickgrid-universal/commit/b895864bc39a415622ac9f2a4b79565aa3d89179)) - by @ghiscoding
+* **styling:** new Slider not flexed correctly ([#799](https://github.com/slickgrid-stellar/slickgrid-universal/issues/799)) ([83a86d0](https://github.com/slickgrid-stellar/slickgrid-universal/commit/83a86d0575a47ed3a11ede31af2a8a3a8186fb9d)) - by @ghiscoding
 
 ### Features
 
-* **addon:** add group by sorting to SlickDraggableGrouping ([#814](https://github.com/slickgrid-stellar/slickgrid-universal/issues/814)) ([962a756](https://github.com/slickgrid-stellar/slickgrid-universal/commit/962a756fb17476221867c977752e28bd1d74f6db)) - by @slickgrid-stellar
-* **common:** add "targetSelector" to onFilterChanged & Grid State ([#813](https://github.com/slickgrid-stellar/slickgrid-universal/issues/813)) ([a25791a](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a25791a5d11b73fd88d80ef8a6f788b27d7390ec)) - by @slickgrid-stellar
-* **common:** use editorOptions/filterOptions instead of params ([#798](https://github.com/slickgrid-stellar/slickgrid-universal/issues/798)) ([a3c8b6e](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a3c8b6e48dbe3db7eb154837f15ce10780923b32)) - by @slickgrid-stellar
-* **filters:** add "target" prop to `onBeforeSearchChange` ([#796](https://github.com/slickgrid-stellar/slickgrid-universal/issues/796)) ([c4606fd](https://github.com/slickgrid-stellar/slickgrid-universal/commit/c4606fde3cf206f81ab5f83d150cf3ce29cbfe75)) - by @slickgrid-stellar
-* **filters:** add back Slider Range filter in pure JS ([#784](https://github.com/slickgrid-stellar/slickgrid-universal/issues/784)) ([b84525c](https://github.com/slickgrid-stellar/slickgrid-universal/commit/b84525c3c087582854e30b386a1015f6ce3156b4)) - by @slickgrid-stellar
-* **filters:** add grid option `skipCompoundOperatorFilterWithNullInput` ([#794](https://github.com/slickgrid-stellar/slickgrid-universal/issues/794)) ([617c88d](https://github.com/slickgrid-stellar/slickgrid-universal/commit/617c88d7432c35b8ac0c0f40066a2f55a58b6d35)) - by @slickgrid-stellar
-* **filters:** add Slider filter track filled track color ([#795](https://github.com/slickgrid-stellar/slickgrid-universal/issues/795)) ([5fbd9c9](https://github.com/slickgrid-stellar/slickgrid-universal/commit/5fbd9c9036844e7e88a99fea6a4d1e1f0fd2377a)) - by @slickgrid-stellar
-* **plugins:** sync column definitions to user after plugin adds column ([#781](https://github.com/slickgrid-stellar/slickgrid-universal/issues/781)) ([0755b65](https://github.com/slickgrid-stellar/slickgrid-universal/commit/0755b655b7be5911345334e094544a14c3698b51)) - by @slickgrid-stellar
-* **tooltip:** add a new "center" position option to SlickCustomTooltip ([#787](https://github.com/slickgrid-stellar/slickgrid-universal/issues/787)) ([b019de5](https://github.com/slickgrid-stellar/slickgrid-universal/commit/b019de50244836a984314ea6e6f5cee639551438)) - by @slickgrid-stellar
+* **addon:** add group by sorting to SlickDraggableGrouping ([#814](https://github.com/slickgrid-stellar/slickgrid-universal/issues/814)) ([962a756](https://github.com/slickgrid-stellar/slickgrid-universal/commit/962a756fb17476221867c977752e28bd1d74f6db)) - by @ghiscoding
+* **common:** add "targetSelector" to onFilterChanged & Grid State ([#813](https://github.com/slickgrid-stellar/slickgrid-universal/issues/813)) ([a25791a](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a25791a5d11b73fd88d80ef8a6f788b27d7390ec)) - by @ghiscoding
+* **common:** use editorOptions/filterOptions instead of params ([#798](https://github.com/slickgrid-stellar/slickgrid-universal/issues/798)) ([a3c8b6e](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a3c8b6e48dbe3db7eb154837f15ce10780923b32)) - by @ghiscoding
+* **filters:** add "target" prop to `onBeforeSearchChange` ([#796](https://github.com/slickgrid-stellar/slickgrid-universal/issues/796)) ([c4606fd](https://github.com/slickgrid-stellar/slickgrid-universal/commit/c4606fde3cf206f81ab5f83d150cf3ce29cbfe75)) - by @ghiscoding
+* **filters:** add back Slider Range filter in pure JS ([#784](https://github.com/slickgrid-stellar/slickgrid-universal/issues/784)) ([b84525c](https://github.com/slickgrid-stellar/slickgrid-universal/commit/b84525c3c087582854e30b386a1015f6ce3156b4)) - by @ghiscoding
+* **filters:** add grid option `skipCompoundOperatorFilterWithNullInput` ([#794](https://github.com/slickgrid-stellar/slickgrid-universal/issues/794)) ([617c88d](https://github.com/slickgrid-stellar/slickgrid-universal/commit/617c88d7432c35b8ac0c0f40066a2f55a58b6d35)) - by @ghiscoding
+* **filters:** add Slider filter track filled track color ([#795](https://github.com/slickgrid-stellar/slickgrid-universal/issues/795)) ([5fbd9c9](https://github.com/slickgrid-stellar/slickgrid-universal/commit/5fbd9c9036844e7e88a99fea6a4d1e1f0fd2377a)) - by @ghiscoding
+* **plugins:** sync column definitions to user after plugin adds column ([#781](https://github.com/slickgrid-stellar/slickgrid-universal/issues/781)) ([0755b65](https://github.com/slickgrid-stellar/slickgrid-universal/commit/0755b655b7be5911345334e094544a14c3698b51)) - by @ghiscoding
+* **tooltip:** add a new "center" position option to SlickCustomTooltip ([#787](https://github.com/slickgrid-stellar/slickgrid-universal/issues/787)) ([b019de5](https://github.com/slickgrid-stellar/slickgrid-universal/commit/b019de50244836a984314ea6e6f5cee639551438)) - by @ghiscoding
 
 ### Performance Improvements
 
-* **filters:** merge all date range & compound filters into one class ([#812](https://github.com/slickgrid-stellar/slickgrid-universal/issues/812)) ([ca9adfa](https://github.com/slickgrid-stellar/slickgrid-universal/commit/ca9adfae84ca8fd57b61548b1222ade5a8b9c498)) - by @slickgrid-stellar
-* **filters:** merge all input & compound filters into one class ([#809](https://github.com/slickgrid-stellar/slickgrid-universal/issues/809)) ([6d08f4d](https://github.com/slickgrid-stellar/slickgrid-universal/commit/6d08f4dc9fc471b316f375d77fa8ae1805dc9b83)) - by @slickgrid-stellar
-* **filters:** merge all Slider filters into one class ([#791](https://github.com/slickgrid-stellar/slickgrid-universal/issues/791)) ([fc4304b](https://github.com/slickgrid-stellar/slickgrid-universal/commit/fc4304b3dd47ac10df65f5b8dda9d8ce5aad8ed9)) - by @slickgrid-stellar
+* **filters:** merge all date range & compound filters into one class ([#812](https://github.com/slickgrid-stellar/slickgrid-universal/issues/812)) ([ca9adfa](https://github.com/slickgrid-stellar/slickgrid-universal/commit/ca9adfae84ca8fd57b61548b1222ade5a8b9c498)) - by @ghiscoding
+* **filters:** merge all input & compound filters into one class ([#809](https://github.com/slickgrid-stellar/slickgrid-universal/issues/809)) ([6d08f4d](https://github.com/slickgrid-stellar/slickgrid-universal/commit/6d08f4dc9fc471b316f375d77fa8ae1805dc9b83)) - by @ghiscoding
+* **filters:** merge all Slider filters into one class ([#791](https://github.com/slickgrid-stellar/slickgrid-universal/issues/791)) ([fc4304b](https://github.com/slickgrid-stellar/slickgrid-universal/commit/fc4304b3dd47ac10df65f5b8dda9d8ce5aad8ed9)) - by @ghiscoding
 
 # [2.0.0](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.4.0...v2.0.0) (2022-10-17)
 
 ### Bug Fixes
 
 * **deps:** update all non-major dependencies ([#769](https://github.com/slickgrid-stellar/slickgrid-universal/issues/769)) ([4e05a4b](https://github.com/slickgrid-stellar/slickgrid-universal/commit/4e05a4b977c760511fc90903c0f62673859bd65f)) - by @renovate-bot
-* **styling:** fix some styling issues with input groups and Firefox ([#750](https://github.com/slickgrid-stellar/slickgrid-universal/issues/750)) ([1aa849e](https://github.com/slickgrid-stellar/slickgrid-universal/commit/1aa849ea81461dc9bbd7b3bc05a092bb14c88be2)) - by @slickgrid-stellar
+* **styling:** fix some styling issues with input groups and Firefox ([#750](https://github.com/slickgrid-stellar/slickgrid-universal/issues/750)) ([1aa849e](https://github.com/slickgrid-stellar/slickgrid-universal/commit/1aa849ea81461dc9bbd7b3bc05a092bb14c88be2)) - by @ghiscoding
 
 ### Features
 
-* **common:** BREAKING CHANGE replace jQueryUI with SortableJS in common & DraggableGrouping ([#772](https://github.com/slickgrid-stellar/slickgrid-universal/issues/772)) ([a9db2cc](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a9db2cca965adc7871d7e4d050ae8f3653c84bb4)), closes [#752](https://github.com/slickgrid-stellar/slickgrid-universal/issues/752) [#756](https://github.com/slickgrid-stellar/slickgrid-universal/issues/756) - by @slickgrid-stellar
+* **common:** BREAKING CHANGE replace jQueryUI with SortableJS in common & DraggableGrouping ([#772](https://github.com/slickgrid-stellar/slickgrid-universal/issues/772)) ([a9db2cc](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a9db2cca965adc7871d7e4d050ae8f3653c84bb4)), closes [#752](https://github.com/slickgrid-stellar/slickgrid-universal/issues/752) [#756](https://github.com/slickgrid-stellar/slickgrid-universal/issues/756) - by @ghiscoding
 
 # [2.0.0-alpha.0](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.4.0...v2.0.0-alpha.0) (2022-10-15)
 
 ### Bug Fixes
 
 * **deps:** update all non-major dependencies ([#769](https://github.com/slickgrid-stellar/slickgrid-universal/issues/769)) ([4e05a4b](https://github.com/slickgrid-stellar/slickgrid-universal/commit/4e05a4b977c760511fc90903c0f62673859bd65f)) - by @renovate-bot
-* **styling:** fix some styling issues with input groups and Firefox ([#750](https://github.com/slickgrid-stellar/slickgrid-universal/issues/750)) ([1aa849e](https://github.com/slickgrid-stellar/slickgrid-universal/commit/1aa849ea81461dc9bbd7b3bc05a092bb14c88be2)) - by @slickgrid-stellar
+* **styling:** fix some styling issues with input groups and Firefox ([#750](https://github.com/slickgrid-stellar/slickgrid-universal/issues/750)) ([1aa849e](https://github.com/slickgrid-stellar/slickgrid-universal/commit/1aa849ea81461dc9bbd7b3bc05a092bb14c88be2)) - by @ghiscoding
 
 ### Features
 
-* **common:** replace jQueryUI Autocomplete with Kradeen Autocomplete ([#752](https://github.com/slickgrid-stellar/slickgrid-universal/issues/752)) ([991d29c](https://github.com/slickgrid-stellar/slickgrid-universal/commit/991d29c4c8c85d800d69c4ba16d608d7a20d2a90)) - by @slickgrid-stellar
+* **common:** replace jQueryUI Autocomplete with Kradeen Autocomplete ([#752](https://github.com/slickgrid-stellar/slickgrid-universal/issues/752)) ([991d29c](https://github.com/slickgrid-stellar/slickgrid-universal/commit/991d29c4c8c85d800d69c4ba16d608d7a20d2a90)) - by @ghiscoding
 
 # [1.4.0](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.3.7...v1.4.0) (2022-08-15)
 
@@ -90,24 +90,24 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * **common:** duplicate translation namespace prefix, fixes [#738](https://github.com/slickgrid-stellar/slickgrid-universal/issues/738) ([#739](https://github.com/slickgrid-stellar/slickgrid-universal/issues/739)) ([ed6b0cc](https://github.com/slickgrid-stellar/slickgrid-universal/commit/ed6b0cc4f664e27830357ac45d523d0571c94bce)) - by @someusersomeuser
 * **deps:** update all non-major dependencies ([#740](https://github.com/slickgrid-stellar/slickgrid-universal/issues/740)) ([c8acb65](https://github.com/slickgrid-stellar/slickgrid-universal/commit/c8acb6542a768b2a2b4e0ea0e1f71533d7077927)) - by @renovate-bot
-* **filters:** fetch API isn't always an instance of Response ([#746](https://github.com/slickgrid-stellar/slickgrid-universal/issues/746)) ([11be5c2](https://github.com/slickgrid-stellar/slickgrid-universal/commit/11be5c2f9554c8fad2b984864ec7180698d02d19)), closes [#744](https://github.com/slickgrid-stellar/slickgrid-universal/issues/744) - by @slickgrid-stellar
+* **filters:** fetch API isn't always an instance of Response ([#746](https://github.com/slickgrid-stellar/slickgrid-universal/issues/746)) ([11be5c2](https://github.com/slickgrid-stellar/slickgrid-universal/commit/11be5c2f9554c8fad2b984864ec7180698d02d19)), closes [#744](https://github.com/slickgrid-stellar/slickgrid-universal/issues/744) - by @ghiscoding
 
 ### Features
 
-* **common:** remove jquery-ui-dist from deps, use jquery-ui only ([#733](https://github.com/slickgrid-stellar/slickgrid-universal/issues/733)) ([b89d1f1](https://github.com/slickgrid-stellar/slickgrid-universal/commit/b89d1f169bfde21d8a46520aed580c12db5f668f)) - by @slickgrid-stellar
-* **common:** update title prop on change event for Slider Filter/Editor ([#743](https://github.com/slickgrid-stellar/slickgrid-universal/issues/743)) ([0ca6f3f](https://github.com/slickgrid-stellar/slickgrid-universal/commit/0ca6f3f4d8894d4bb9459cabca9a3492e7cca0ad)) - by @slickgrid-stellar
+* **common:** remove jquery-ui-dist from deps, use jquery-ui only ([#733](https://github.com/slickgrid-stellar/slickgrid-universal/issues/733)) ([b89d1f1](https://github.com/slickgrid-stellar/slickgrid-universal/commit/b89d1f169bfde21d8a46520aed580c12db5f668f)) - by @ghiscoding
+* **common:** update title prop on change event for Slider Filter/Editor ([#743](https://github.com/slickgrid-stellar/slickgrid-universal/issues/743)) ([0ca6f3f](https://github.com/slickgrid-stellar/slickgrid-universal/commit/0ca6f3f4d8894d4bb9459cabca9a3492e7cca0ad)) - by @ghiscoding
 
 ## [1.3.7](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.3.6...v1.3.7) (2022-08-02)
 
 ### Bug Fixes
 
-* **service:** should be able to update dataview item not shown in grid ([#730](https://github.com/slickgrid-stellar/slickgrid-universal/issues/730)) ([dc88c87](https://github.com/slickgrid-stellar/slickgrid-universal/commit/dc88c870e046e904b160546239ab2d403237d98a)) - by @slickgrid-stellar
+* **service:** should be able to update dataview item not shown in grid ([#730](https://github.com/slickgrid-stellar/slickgrid-universal/issues/730)) ([dc88c87](https://github.com/slickgrid-stellar/slickgrid-universal/commit/dc88c870e046e904b160546239ab2d403237d98a)) - by @ghiscoding
 
 ## [1.3.5](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.3.4...v1.3.5) (2022-07-28)
 
 ### Bug Fixes
 
-* **build:** use `workspace:~` to avoid multiple versions d/l on ext libs ([3ca1943](https://github.com/slickgrid-stellar/slickgrid-universal/commit/3ca1943f1247e66d3213fb5edeed7e7246032767)) - by @slickgrid-stellar
+* **build:** use `workspace:~` to avoid multiple versions d/l on ext libs ([3ca1943](https://github.com/slickgrid-stellar/slickgrid-universal/commit/3ca1943f1247e66d3213fb5edeed7e7246032767)) - by @ghiscoding
 
 ## [1.3.4](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.3.3...v1.3.4) (2022-07-28)
 

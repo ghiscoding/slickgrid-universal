@@ -12,8 +12,8 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* **addons:** do not add special columns twice (like Row Selection) ([#822](https://github.com/slickgrid-stellar/slickgrid-universal/issues/822)) ([a80d6f8](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a80d6f8f2cae674e0a870eb9c450de991cd84837)) - by @slickgrid-stellar
-* all querySelector should be specific to a grid UID ([#823](https://github.com/slickgrid-stellar/slickgrid-universal/issues/823)) ([bc2b65c](https://github.com/slickgrid-stellar/slickgrid-universal/commit/bc2b65c676762d21ef45e7b76caf900708c1422f)) - by @slickgrid-stellar
+* **addons:** do not add special columns twice (like Row Selection) ([#822](https://github.com/slickgrid-stellar/slickgrid-universal/issues/822)) ([a80d6f8](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a80d6f8f2cae674e0a870eb9c450de991cd84837)) - by @ghiscoding
+* all querySelector should be specific to a grid UID ([#823](https://github.com/slickgrid-stellar/slickgrid-universal/issues/823)) ([bc2b65c](https://github.com/slickgrid-stellar/slickgrid-universal/commit/bc2b65c676762d21ef45e7b76caf900708c1422f)) - by @ghiscoding
 
 ## [2.1.1](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v2.1.0...v2.1.1) (2022-11-19)
 
@@ -23,13 +23,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* **plugins:** sync column definitions to user after plugin adds column ([#781](https://github.com/slickgrid-stellar/slickgrid-universal/issues/781)) ([0755b65](https://github.com/slickgrid-stellar/slickgrid-universal/commit/0755b655b7be5911345334e094544a14c3698b51)) - by @slickgrid-stellar
+* **plugins:** sync column definitions to user after plugin adds column ([#781](https://github.com/slickgrid-stellar/slickgrid-universal/issues/781)) ([0755b65](https://github.com/slickgrid-stellar/slickgrid-universal/commit/0755b655b7be5911345334e094544a14c3698b51)) - by @ghiscoding
 
 # [2.0.0](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.4.0...v2.0.0) (2022-10-17)
 
 ### Features
 
-* **common:** BREAKING CHANGE replace jQueryUI with SortableJS in common & DraggableGrouping ([#772](https://github.com/slickgrid-stellar/slickgrid-universal/issues/772)) ([a9db2cc](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a9db2cca965adc7871d7e4d050ae8f3653c84bb4)), closes [#752](https://github.com/slickgrid-stellar/slickgrid-universal/issues/752) [#756](https://github.com/slickgrid-stellar/slickgrid-universal/issues/756) - by @slickgrid-stellar
+* **common:** BREAKING CHANGE replace jQueryUI with SortableJS in common & DraggableGrouping ([#772](https://github.com/slickgrid-stellar/slickgrid-universal/issues/772)) ([a9db2cc](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a9db2cca965adc7871d7e4d050ae8f3653c84bb4)), closes [#752](https://github.com/slickgrid-stellar/slickgrid-universal/issues/752) [#756](https://github.com/slickgrid-stellar/slickgrid-universal/issues/756) - by @ghiscoding
 
 # [2.0.0-alpha.0](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.4.0...v2.0.0-alpha.0) (2022-10-15)
 
@@ -47,7 +47,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* **build:** use `workspace:~` to avoid multiple versions d/l on ext libs ([3ca1943](https://github.com/slickgrid-stellar/slickgrid-universal/commit/3ca1943f1247e66d3213fb5edeed7e7246032767)) - by @slickgrid-stellar
+* **build:** use `workspace:~` to avoid multiple versions d/l on ext libs ([3ca1943](https://github.com/slickgrid-stellar/slickgrid-universal/commit/3ca1943f1247e66d3213fb5edeed7e7246032767)) - by @ghiscoding
 
 ## [1.3.4](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.3.3...v1.3.4) (2022-07-28)
 

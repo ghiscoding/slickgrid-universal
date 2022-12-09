@@ -20,19 +20,19 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* **common:** changing Slider value(s) should update Tooltip instantly ([#800](https://github.com/slickgrid-stellar/slickgrid-universal/issues/800)) ([9c6be27](https://github.com/slickgrid-stellar/slickgrid-universal/commit/9c6be271a956876edaa03be7bf4bda9821840910)) - by @slickgrid-stellar
+* **common:** changing Slider value(s) should update Tooltip instantly ([#800](https://github.com/slickgrid-stellar/slickgrid-universal/issues/800)) ([9c6be27](https://github.com/slickgrid-stellar/slickgrid-universal/commit/9c6be271a956876edaa03be7bf4bda9821840910)) - by @ghiscoding
 * **deps:** update dependency dompurify to ^2.4.1 ([#806](https://github.com/slickgrid-stellar/slickgrid-universal/issues/806)) ([a33d8fb](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a33d8fbf3e48bfa29b9173f9263620e61608fffb)) - by @renovate-bot
-* **toolip:** left & right align were inverted ([#797](https://github.com/slickgrid-stellar/slickgrid-universal/issues/797)) ([91c4a5c](https://github.com/slickgrid-stellar/slickgrid-universal/commit/91c4a5c61a4f78478929f2be41a17e3e2d210a30)) - by @slickgrid-stellar
+* **toolip:** left & right align were inverted ([#797](https://github.com/slickgrid-stellar/slickgrid-universal/issues/797)) ([91c4a5c](https://github.com/slickgrid-stellar/slickgrid-universal/commit/91c4a5c61a4f78478929f2be41a17e3e2d210a30)) - by @ghiscoding
 
 ### Features
 
-* **tooltip:** add a new "center" position option to SlickCustomTooltip ([#787](https://github.com/slickgrid-stellar/slickgrid-universal/issues/787)) ([b019de5](https://github.com/slickgrid-stellar/slickgrid-universal/commit/b019de50244836a984314ea6e6f5cee639551438)) - by @slickgrid-stellar
+* **tooltip:** add a new "center" position option to SlickCustomTooltip ([#787](https://github.com/slickgrid-stellar/slickgrid-universal/issues/787)) ([b019de5](https://github.com/slickgrid-stellar/slickgrid-universal/commit/b019de50244836a984314ea6e6f5cee639551438)) - by @ghiscoding
 
 # [2.0.0](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.4.0...v2.0.0) (2022-10-17)
 
 ### Features
 
-* **common:** BREAKING CHANGE replace jQueryUI with SortableJS in common & DraggableGrouping ([#772](https://github.com/slickgrid-stellar/slickgrid-universal/issues/772)) ([a9db2cc](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a9db2cca965adc7871d7e4d050ae8f3653c84bb4)), closes [#752](https://github.com/slickgrid-stellar/slickgrid-universal/issues/752) [#756](https://github.com/slickgrid-stellar/slickgrid-universal/issues/756) - by @slickgrid-stellar
+* **common:** BREAKING CHANGE replace jQueryUI with SortableJS in common & DraggableGrouping ([#772](https://github.com/slickgrid-stellar/slickgrid-universal/issues/772)) ([a9db2cc](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a9db2cca965adc7871d7e4d050ae8f3653c84bb4)), closes [#752](https://github.com/slickgrid-stellar/slickgrid-universal/issues/752) [#756](https://github.com/slickgrid-stellar/slickgrid-universal/issues/756) - by @ghiscoding
 
 # [2.0.0-alpha.0](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.4.0...v2.0.0-alpha.0) (2022-10-15)
 
@@ -50,7 +50,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* **build:** use `workspace:~` to avoid multiple versions d/l on ext libs ([3ca1943](https://github.com/slickgrid-stellar/slickgrid-universal/commit/3ca1943f1247e66d3213fb5edeed7e7246032767)) - by @slickgrid-stellar
+* **build:** use `workspace:~` to avoid multiple versions d/l on ext libs ([3ca1943](https://github.com/slickgrid-stellar/slickgrid-universal/commit/3ca1943f1247e66d3213fb5edeed7e7246032767)) - by @ghiscoding
 
 ## [1.3.4](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.3.3...v1.3.4) (2022-07-28)
 

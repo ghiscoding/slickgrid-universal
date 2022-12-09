@@ -8,7 +8,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* Grid Menu filtering options should be removed when option disabled ([#837](https://github.com/slickgrid-stellar/slickgrid-universal/issues/837)) ([9bc29d2](https://github.com/slickgrid-stellar/slickgrid-universal/commit/9bc29d2682256605dd80475015b85879e1298381)) - by @slickgrid-stellar
+* Grid Menu filtering options should be removed when option disabled ([#837](https://github.com/slickgrid-stellar/slickgrid-universal/issues/837)) ([9bc29d2](https://github.com/slickgrid-stellar/slickgrid-universal/commit/9bc29d2682256605dd80475015b85879e1298381)) - by @ghiscoding
 
 ## [2.1.2](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v2.1.1...v2.1.2) (2022-12-02)
 
@@ -18,36 +18,36 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* **plugins:** rollback PR [#781](https://github.com/slickgrid-stellar/slickgrid-universal/issues/781) to fix regression with Grid Presets ([#820](https://github.com/slickgrid-stellar/slickgrid-universal/issues/820)) ([60e4a29](https://github.com/slickgrid-stellar/slickgrid-universal/commit/60e4a299a2cbdee947b36dbfbb690f22156f8693)) - by @slickgrid-stellar
+* **plugins:** rollback PR [#781](https://github.com/slickgrid-stellar/slickgrid-universal/issues/781) to fix regression with Grid Presets ([#820](https://github.com/slickgrid-stellar/slickgrid-universal/issues/820)) ([60e4a29](https://github.com/slickgrid-stellar/slickgrid-universal/commit/60e4a299a2cbdee947b36dbfbb690f22156f8693)) - by @ghiscoding
 
 # [2.1.0](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v2.0.0...v2.1.0) (2022-11-17)
 
 ### Bug Fixes
 
-* **build:** upgrading to TypeScript 4.9 brought new build issue ([#816](https://github.com/slickgrid-stellar/slickgrid-universal/issues/816)) ([4d46d8a](https://github.com/slickgrid-stellar/slickgrid-universal/commit/4d46d8ab251bd78671140f82cb143b973e5422b3)) - by @slickgrid-stellar
+* **build:** upgrading to TypeScript 4.9 brought new build issue ([#816](https://github.com/slickgrid-stellar/slickgrid-universal/issues/816)) ([4d46d8a](https://github.com/slickgrid-stellar/slickgrid-universal/commit/4d46d8ab251bd78671140f82cb143b973e5422b3)) - by @ghiscoding
 
 ### Features
 
-* **core:** expose EventPubSub Service on SlickerGridInstance ([#780](https://github.com/slickgrid-stellar/slickgrid-universal/issues/780)) ([8ad54b5](https://github.com/slickgrid-stellar/slickgrid-universal/commit/8ad54b5739772eb8d96d23e1be04ebb426dfa596)) - by @slickgrid-stellar
-* **plugins:** sync column definitions to user after plugin adds column ([#781](https://github.com/slickgrid-stellar/slickgrid-universal/issues/781)) ([0755b65](https://github.com/slickgrid-stellar/slickgrid-universal/commit/0755b655b7be5911345334e094544a14c3698b51)) - by @slickgrid-stellar
+* **core:** expose EventPubSub Service on SlickerGridInstance ([#780](https://github.com/slickgrid-stellar/slickgrid-universal/issues/780)) ([8ad54b5](https://github.com/slickgrid-stellar/slickgrid-universal/commit/8ad54b5739772eb8d96d23e1be04ebb426dfa596)) - by @ghiscoding
+* **plugins:** sync column definitions to user after plugin adds column ([#781](https://github.com/slickgrid-stellar/slickgrid-universal/issues/781)) ([0755b65](https://github.com/slickgrid-stellar/slickgrid-universal/commit/0755b655b7be5911345334e094544a14c3698b51)) - by @ghiscoding
 
 # [2.0.0](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.4.0...v2.0.0) (2022-10-17)
 
 ### Features
 
-* **common:** BREAKING CHANGE replace jQueryUI with SortableJS in common & DraggableGrouping ([#772](https://github.com/slickgrid-stellar/slickgrid-universal/issues/772)) ([a9db2cc](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a9db2cca965adc7871d7e4d050ae8f3653c84bb4)), closes [#752](https://github.com/slickgrid-stellar/slickgrid-universal/issues/752) [#756](https://github.com/slickgrid-stellar/slickgrid-universal/issues/756) - by @slickgrid-stellar
+* **common:** BREAKING CHANGE replace jQueryUI with SortableJS in common & DraggableGrouping ([#772](https://github.com/slickgrid-stellar/slickgrid-universal/issues/772)) ([a9db2cc](https://github.com/slickgrid-stellar/slickgrid-universal/commit/a9db2cca965adc7871d7e4d050ae8f3653c84bb4)), closes [#752](https://github.com/slickgrid-stellar/slickgrid-universal/issues/752) [#756](https://github.com/slickgrid-stellar/slickgrid-universal/issues/756) - by @ghiscoding
 
 # [2.0.0-alpha.0](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.4.0...v2.0.0-alpha.0) (2022-10-15)
 
 ### Features
 
-* **common:** replace jQueryUI Autocomplete with Kradeen Autocomplete ([#752](https://github.com/slickgrid-stellar/slickgrid-universal/issues/752)) ([991d29c](https://github.com/slickgrid-stellar/slickgrid-universal/commit/991d29c4c8c85d800d69c4ba16d608d7a20d2a90)) - by @slickgrid-stellar
+* **common:** replace jQueryUI Autocomplete with Kradeen Autocomplete ([#752](https://github.com/slickgrid-stellar/slickgrid-universal/issues/752)) ([991d29c](https://github.com/slickgrid-stellar/slickgrid-universal/commit/991d29c4c8c85d800d69c4ba16d608d7a20d2a90)) - by @ghiscoding
 
 # [1.4.0](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.3.7...v1.4.0) (2022-08-15)
 
 ### Bug Fixes
 
-* **bundle:** fetch API isn't always an instance of Response ([#744](https://github.com/slickgrid-stellar/slickgrid-universal/issues/744)) ([72a6f24](https://github.com/slickgrid-stellar/slickgrid-universal/commit/72a6f2489a88974c8f5faf0041184ac78d6c7caa)) - by @slickgrid-stellar
+* **bundle:** fetch API isn't always an instance of Response ([#744](https://github.com/slickgrid-stellar/slickgrid-universal/issues/744)) ([72a6f24](https://github.com/slickgrid-stellar/slickgrid-universal/commit/72a6f2489a88974c8f5faf0041184ac78d6c7caa)) - by @ghiscoding
 * **collectionAsync:** hidden column does not load edit field selection ([#742](https://github.com/slickgrid-stellar/slickgrid-universal/issues/742)) ([763c61c](https://github.com/slickgrid-stellar/slickgrid-universal/commit/763c61cfa7e82dd82b88f22db3eb47dc274a5eb3)) - by @mcallegario
 
 ## [1.3.7](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.3.6...v1.3.7) (2022-08-02)
@@ -58,7 +58,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* **build:** use `workspace:~` to avoid multiple versions d/l on ext libs ([3ca1943](https://github.com/slickgrid-stellar/slickgrid-universal/commit/3ca1943f1247e66d3213fb5edeed7e7246032767)) - by @slickgrid-stellar
+* **build:** use `workspace:~` to avoid multiple versions d/l on ext libs ([3ca1943](https://github.com/slickgrid-stellar/slickgrid-universal/commit/3ca1943f1247e66d3213fb5edeed7e7246032767)) - by @ghiscoding
 
 ## [1.3.4](https://github.com/slickgrid-stellar/slickgrid-universal/compare/v1.3.3...v1.3.4) (2022-07-28)
 
