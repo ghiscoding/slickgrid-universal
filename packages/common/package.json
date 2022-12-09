@@ -9,14 +9,14 @@
   "typings": "dist/commonjs/index.d.ts",
   "license": "MIT",
   "author": "Ghislain B.",
-  "homepage": "https://github.com/slickclub/slickgrid-universal",
+  "homepage": "https://github.com/slickgrid-stellar/slickgrid-universal",
   "repository": {
     "type": "git",
-    "url": "https://github.com/slickclub/slickgrid-universal.git",
+    "url": "https://github.com/slickgrid-stellar/slickgrid-universal.git",
     "directory": "packages/common"
   },
   "bugs": {
-    "url": "https://github.com/slickclub/slickgrid-universal/issues"
+    "url": "https://github.com/slickgrid-stellar/slickgrid-universal/issues"
   },
   "publishConfig": {
     "access": "public"

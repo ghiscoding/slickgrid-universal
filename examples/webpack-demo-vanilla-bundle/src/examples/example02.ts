@@ -175,7 +175,7 @@ export class Example2 {
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {
         // optionally display some text on the left footer container
-        leftFooterText: 'Grid created with <a href="https://github.com/slickclub/slickgrid-universal" target="_blank">Slickgrid-Universal</a>',
+        leftFooterText: 'Grid created with <a href="https://github.com/slickgrid-stellar/slickgrid-universal" target="_blank">Slickgrid-Universal</a>',
         hideMetrics: false,
         hideTotalItemCount: false,
         hideLastUpdateTimestamp: false

@@ -1,13 +1,13 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
-[![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-e137ff)](https://github.com/slickclub/lerna-lite)
+[![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-e137ff)](https://github.com/slickgrid-stellar/lerna-lite)
 [![npm](https://img.shields.io/npm/v/@slickgrid-universal/graphql.svg)](https://www.npmjs.com/package/@slickgrid-universal/graphql)
 [![npm](https://img.shields.io/npm/dy/@slickgrid-universal/graphql)](https://www.npmjs.com/package/@slickgrid-universal/graphql)
 
-[![Actions Status](https://github.com/slickclub/slickgrid-universal/workflows/CI%20Build/badge.svg)](https://github.com/slickclub/slickgrid-universal/actions)
+[![Actions Status](https://github.com/slickgrid-stellar/slickgrid-universal/workflows/CI%20Build/badge.svg)](https://github.com/slickgrid-stellar/slickgrid-universal/actions)
 [![Cypress.io](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
-[![codecov](https://codecov.io/gh/slickclub/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/slickclub/slickgrid-universal)
+[![codecov](https://codecov.io/gh/slickgrid-stellar/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/slickgrid-stellar/slickgrid-universal)
 
 ## GraphQL Service
 #### @slickgrid-universal/graphql
@@ -15,13 +15,13 @@
 GraphQL Service to sync a grid with an GraphQL backend server, the service will consider any Filter/Sort and automatically build the necessary GraphQL query string that is sent to your GraphQL backend server.
 
 ### Internal Dependencies
-- [@slickgrid-universal/common](https://github.com/slickclub/slickgrid-universal/tree/master/packages/common)
+- [@slickgrid-universal/common](https://github.com/slickgrid-stellar/slickgrid-universal/tree/master/packages/common)
 
 ### External Dependencies
 No external dependency
 
 ### Installation
-Follow the instruction provided in the main [README](https://github.com/slickclub/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://slickclub.github.io/slickgrid-universal/#/example10) page.
+Follow the instruction provided in the main [README](https://github.com/slickgrid-stellar/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://slickgrid-stellar.github.io/slickgrid-universal/#/example10) page.
 
 ### Usage
 Simply use pass the Service into the `backendServiceApi` Grid Option.
