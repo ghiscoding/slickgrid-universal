@@ -12,7 +12,7 @@
 [![codecov](https://codecov.io/gh/slickgrid-stellar/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/slickgrid-stellar/slickgrid-universal)
 
 ### Community
-Recently moved all my SlickGrid related repos into a new [Slickgrid-Stellar](https://github.com/slickgrid-stellar) GitHub org to regroup them all into a single location.
+Recently moved all my SlickGrid related repos into a new [Slickgrid-Stellar](https://github.com/slickgrid-stellar) GitHub org to regroup them all under a single location.
 
 ### Description
 This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces)) which is regrouping a few packages under a single repository. It is using SlickGrid (more specifically the [6pac/SlickGrid](https://github.com/6pac/SlickGrid/) fork) behind the scene (there is no need to rewrite the core library itself, in other words this is a wrapper library). The main goal of this library is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It was also a good opportunity to decouple some features/services that not every one need at all time, this will also help in getting smaller bundle size depending on which features (packages) you decide to use. For example, not every project need backend services (OData, GraphQL) and/or export services (Excel Export, Text Export), which is why they are better handled with a monorepo structure (download and install only what you need).
