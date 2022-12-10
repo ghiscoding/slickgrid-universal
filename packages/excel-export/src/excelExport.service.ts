@@ -17,6 +17,8 @@ import {
   ExternalResource,
   FileType,
   FieldType,
+  Formatter,
+  Formatters,
   GridOption,
   KeyTitlePair,
   Locale,
@@ -233,7 +235,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   }
 
   /** use different Excel Stylesheet Format as per the Field Type */
-  useCellFormatByFieldType(data: string | Date | moment_.Moment, fieldType: typeof FieldType[keyof typeof FieldType]): ExcelCellFormat | string {
+  useCellFormatByFieldType(data: string | Date | moment_.Moment, fieldType: typeof FieldType[keyof typeof FieldType], formatter?: Formatter): ExcelCellFormat | string {
     let outputData: ExcelCellFormat | string | Date | moment_.Moment = data;
     switch (fieldType) {
       case FieldType.dateTime:
@@ -272,7 +274,17 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       case FieldType.number:
         const num = parseFloat(data as string);
         const val = isNaN(num) ? null : num;
-        outputData = { value: val, metadata: { style: this._stylesheetFormats.numberFormatter.id } };
+
+        switch (formatter) {
+          case Formatters.dollar:
+          case Formatters.dollarColored:
+          case Formatters.dollarColoredBold:
+            outputData = { value: val, metadata: { style: this._stylesheetFormats.dollarFormatter.id} };
+            break;
+          default:
+            outputData = { value: val, metadata: { style: this._stylesheetFormats.numberFormatter.id } };
+            break;
+        }
         break;
       default:
         outputData = data;
@@ -583,7 +595,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
         // use different Excel Stylesheet Format as per the Field Type
         if (!columnDef.exportWithFormatter) {
-          itemData = this.useCellFormatByFieldType(itemData as string, fieldType);
+          itemData = this.useCellFormatByFieldType(itemData as string, fieldType, columnDef.formatter);
         }
 
         rowOutputStrings.push(itemData);
