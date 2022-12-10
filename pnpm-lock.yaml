@@ -293,6 +293,7 @@ importers:
   packages/excel-export:
     specifiers:
       '@slickgrid-universal/common': workspace:~
+      '@slickgrid-universal/event-pub-sub': workspace:~
       '@slickgrid-universal/utils': workspace:~
       cross-env: ^7.0.3
       excel-builder-webpacker: ^2.1.7
@@ -305,6 +306,7 @@ importers:
       excel-builder-webpacker: 2.1.7
       moment-mini: 2.29.4
     devDependencies:
+      '@slickgrid-universal/event-pub-sub': link:../event-pub-sub
       cross-env: 7.0.3
       npm-run-all2: 6.0.4
       rimraf: 3.0.2
