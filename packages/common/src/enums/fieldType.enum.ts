@@ -32,10 +32,10 @@ export const FieldType = {
   /** Format: 'YYYY-MM-DD HH:mm:ss' <=> 2001-02-28 14:01:01 */
   dateTimeIso: 'dateTimeIso',
 
-  /** Format: 'YYYY-MM-DD h:mm:ss a' <=> 2001-02-28 11:01:01 pm */
+  /** Format: 'YYYY-MM-DD hh:mm:ss a' <=> 2001-02-28 11:01:01 pm */
   dateTimeIsoAmPm: 'dateTimeIsoAmPm',
 
-  /** Format: 'YYYY-MM-DD h:mm:ss A' <=> 2001-02-28 11:01:01 PM */
+  /** Format: 'YYYY-MM-DD hh:mm:ss A' <=> 2001-02-28 11:01:01 PM */
   dateTimeIsoAM_PM: 'dateTimeIsoAM_PM',
 
   /** Format: 'YYYY-MM-DD HH:mm' <=> 2001-02-28 14:01 */

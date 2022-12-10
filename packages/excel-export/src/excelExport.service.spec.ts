@@ -1,4 +1,4 @@
-import moment = require('moment-mini');
+import moment from 'moment-mini';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import {
   Column,
@@ -19,6 +19,7 @@ import {
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 import { ExcelExportService } from './excelExport.service';
+import { useCellFormatByFieldType } from './excelUtils';
 
 const pubSubServiceStub = {
   publish: jest.fn(),
@@ -89,7 +90,7 @@ describe('ExcelExportService', () => {
       mockGridOptions.translater = translateService;
 
       (navigator as any).__defineGetter__('appName', () => 'Netscape');
-      navigator.msSaveOrOpenBlob = undefined as any;
+      (navigator as any).msSaveOrOpenBlob = undefined as any;
       mockExcelBlob = new Blob(['', ''], { type: `text/xlsx;charset=utf-8;` });
 
       mockExportExcelOptions = {
@@ -188,7 +189,7 @@ describe('ExcelExportService', () => {
 
       it('should call "msSaveOrOpenBlob" with a Blob and xlsx file when browser is IE11 when exporting as xlsx', async () => {
         const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
-        navigator.msSaveOrOpenBlob = jest.fn();
+        (navigator as any).msSaveOrOpenBlob = jest.fn();
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyMsSave = jest.spyOn(navigator, 'msSaveOrOpenBlob');
 
@@ -427,11 +428,11 @@ describe('ExcelExportService', () => {
         expect(spyDownload).toHaveBeenCalledWith({
           ...optionExpectation, blob: new Blob(), data: [
             [
-              { metadata: { style: 5, }, value: 'User Id', },
-              { metadata: { style: 5, }, value: 'FirstName', },
-              { metadata: { style: 5, }, value: 'LastName', },
-              { metadata: { style: 5, }, value: 'Position', },
-              { metadata: { style: 5, }, value: 'Order', },
+              { metadata: { style: 4, }, value: 'User Id', },
+              { metadata: { style: 4, }, value: 'FirstName', },
+              { metadata: { style: 4, }, value: 'LastName', },
+              { metadata: { style: 4, }, value: 'Position', },
+              { metadata: { style: 4, }, value: 'Order', },
             ],
             ['2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '<b>1</b>'],
           ]
@@ -478,7 +479,7 @@ describe('ExcelExportService', () => {
           ...optionExpectation, blob: new Blob(), data: [
             [
               { value: '' },
-              { metadata: { style: 5, }, value: 'My header that is long enough to wrap', }
+              { metadata: { style: 4, }, value: 'My header that is long enough to wrap', }
             ],
             [
               { metadata: { style: 1, }, value: 'User Id', },
@@ -540,8 +541,8 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'StartDate', },
               { metadata: { style: 1, }, value: 'EndDate', },
             ],
-            ['1E06', 'John', 'Z', 'SALES_REP', { metadata: { style: 5, }, value: '2005-12-20' }, ''],
-            ['1E09', 'Jane', 'Doe', 'HUMAN_RESOURCES', { metadata: { style: 6, }, value: '2010-10-09' }, '2024-01-02'],
+            ['1E06', 'John', 'Z', 'SALES_REP', { metadata: { style: 4, }, value: '2005-12-20' }, ''],
+            ['1E09', 'Jane', 'Doe', 'HUMAN_RESOURCES', { metadata: { style: 4, }, value: '2010-10-09' }, '2024-01-02'],
           ]
         });
       });
@@ -1026,254 +1027,277 @@ describe('ExcelExportService', () => {
       it('should return a date time format when using FieldType.dateTime and a Date object as input', async () => {
         const input = new Date('2012-02-28 15:07:59');
         const expectedDate = '2012-02-28 15:07:59';
+        const column = { type: FieldType.dateTime } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateTime);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateTimeIso', async () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '2012-02-28 15:07:59';
+        const column = { type: FieldType.dateTimeIso } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateTimeIso);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateTimeShortIso', async () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '2012-02-28 15:07';
+        const column = { type: FieldType.dateTimeShortIso } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateTimeShortIso);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateTimeIsoAmPm', async () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '2012-02-28 03:07:59 pm';
+        const column = { type: FieldType.dateTimeIsoAmPm } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateTimeIsoAmPm);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateTimeIsoAM_PM', async () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '2012-02-28 03:07:59 PM';
+        const column = { type: FieldType.dateTimeIsoAM_PM } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateTimeIsoAM_PM);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateEuro', async () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '28/02/2012';
+        const column = { type: FieldType.dateEuro } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateEuro);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateEuroShort', async () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '28/2/12';
+        const column = { type: FieldType.dateEuroShort } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateEuroShort);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateTimeEuro', async () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '28/02/2012 15:07:59';
+        const column = { type: FieldType.dateTimeEuro } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateTimeEuro);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateTimeShortEuro', async () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '28/02/2012 15:07';
+        const column = { type: FieldType.dateTimeShortEuro } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateTimeShortEuro);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateTimeEuroAmPm', async () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '28/02/2012 03:07:59 pm';
+        const column = { type: FieldType.dateTimeEuroAmPm } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateTimeEuroAmPm);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateTimeEuroAM_PM', async () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '28/02/2012 03:07:59 PM';
+        const column = { type: FieldType.dateTimeEuroAM_PM } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateTimeEuroAM_PM);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateTimeEuroShort', async () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '28/2/12 15:7:59';
+        const column = { type: FieldType.dateTimeEuroShort } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateTimeEuroShort);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateTimeEuroShortAmPm', async () => {
         const input = '2012-02-28 15:07:59';
         const expectedDate = '28/2/12 3:7:59 pm';
+        const column = { type: FieldType.dateTimeEuroShortAmPm } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateTimeEuroShortAmPm);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateUs', async () => {
         const input = new Date('2012-02-28 15:07:59');
         const expectedDate = '02/28/2012';
+        const column = { type: FieldType.dateUs } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateUs);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateUsShort', async () => {
         const input = new Date('2012-02-28 15:07:59');
         const expectedDate = '2/28/12';
+        const column = { type: FieldType.dateUsShort } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateUsShort);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateTimeUs', async () => {
         const input = new Date('2012-02-28 15:07:59');
         const expectedDate = '02/28/2012 15:07:59';
+        const column = { type: FieldType.dateTimeUs } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateTimeUs);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateTimeShortUs', async () => {
         const input = new Date('2012-02-28 15:07:59');
         const expectedDate = '02/28/2012 15:07';
+        const column = { type: FieldType.dateTimeShortUs } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateTimeShortUs);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateTimeUsAmPm', async () => {
         const input = new Date('2012-02-28 15:07:59');
         const expectedDate = '02/28/2012 03:07:59 pm';
+        const column = { type: FieldType.dateTimeUsAmPm } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateTimeUsAmPm);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateTimeUsAM_PM', async () => {
         const input = new Date('2012-02-28 15:07:59');
         const expectedDate = '02/28/2012 03:07:59 PM';
+        const column = { type: FieldType.dateTimeUsAM_PM } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateTimeUsAM_PM);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateTimeUsShort', async () => {
         const input = new Date('2012-02-28 15:07:59');
         const expectedDate = '2/28/12 15:7:59';
+        const column = { type: FieldType.dateTimeUsShort } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateTimeUsShort);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.dateTimeUsShortAmPm', async () => {
         const input = new Date('2012-02-28 15:07:59');
         const expectedDate = '2/28/12 3:7:59 pm';
+        const column = { type: FieldType.dateTimeUsShortAmPm } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateTimeUsShortAmPm);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       xit('should return a date time format when using FieldType.dateUtc', async () => {
         const input = moment('2013-05-23T17:55:00.325').utcOffset(420); // timezone that is +7 UTC hours
         const expectedDate = '2013-05-24T04:55:00.325+07:00';
+        const column = { type: FieldType.dateUtc } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.dateUtc);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
 
       it('should return a date time format when using FieldType.date', async () => {
         const input = new Date(Date.UTC(2012, 1, 28, 23, 1, 52, 103));
         const expectedDate = '2012-02-28';
+        const column = { type: FieldType.date } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = service.useCellFormatByFieldType(input, FieldType.date);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 5 }, value: expectedDate });
+        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
       });
     });
 
@@ -1315,11 +1339,11 @@ describe('ExcelExportService', () => {
         expect(spyDownload).toHaveBeenCalledWith({
           ...optionExpectation, blob: new Blob(), data: [
             [
-              { metadata: { style: 5, }, value: 'User Profile', },
-              { metadata: { style: 5, }, value: 'User Profile', },
-              { metadata: { style: 5, }, value: 'Company Profile', },
-              { metadata: { style: 5, }, value: 'Company Profile', },
-              { metadata: { style: 5, }, value: 'Sales', },
+              { metadata: { style: 4, }, value: 'User Profile', },
+              { metadata: { style: 4, }, value: 'User Profile', },
+              { metadata: { style: 4, }, value: 'Company Profile', },
+              { metadata: { style: 4, }, value: 'Company Profile', },
+              { metadata: { style: 4, }, value: 'Sales', },
             ],
             [
               { metadata: { style: 1, }, value: 'FirstName', },
@@ -1374,11 +1398,11 @@ describe('ExcelExportService', () => {
           expect(spyDownload).toHaveBeenCalledWith({
             ...optionExpectation, blob: new Blob(), data: [
               [
-                { metadata: { style: 5, }, value: 'User Profile', },
-                { metadata: { style: 5, }, value: 'User Profile', },
-                { metadata: { style: 5, }, value: 'Company Profile', },
-                { metadata: { style: 5, }, value: 'Company Profile', },
-                { metadata: { style: 5, }, value: 'Sales', },
+                { metadata: { style: 4, }, value: 'User Profile', },
+                { metadata: { style: 4, }, value: 'User Profile', },
+                { metadata: { style: 4, }, value: 'Company Profile', },
+                { metadata: { style: 4, }, value: 'Company Profile', },
+                { metadata: { style: 4, }, value: 'Sales', },
               ],
               [
                 { metadata: { style: 1, }, value: 'First Name', },

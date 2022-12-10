@@ -1,12 +1,9 @@
 import * as ExcelBuilder from 'excel-builder-webpacker';
-import * as moment_ from 'moment-mini';
-const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import {
   // utility functions
   exportWithFormatterWhenDefined,
   getTranslationPrefix,
-  mapMomentDateFormatWithFieldType,
   sanitizeHtmlToText,
 
   // interfaces
@@ -16,9 +13,6 @@ import {
   ExcelExportService as BaseExcelExportService,
   ExternalResource,
   FileType,
-  FieldType,
-  Formatter,
-  Formatters,
   GridOption,
   KeyTitlePair,
   Locale,
@@ -38,6 +32,7 @@ import {
   ExcelWorkbook,
   ExcelWorksheet,
 } from './interfaces/index';
+import { useCellFormatByFieldType } from './excelUtils';
 
 const DEFAULT_EXPORT_OPTIONS: ExcelExportOption = {
   filename: 'export',
@@ -76,7 +71,15 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return (this._grid && this._grid.getOptions) ? this._grid.getOptions() : {};
+    return this._grid?.getOptions() || {};
+  }
+
+  get stylesheet() {
+    return this._stylesheet;
+  }
+
+  get stylesheetFormats() {
+    return this._stylesheetFormats;
   }
 
   dispose() {
@@ -131,13 +134,12 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       const boldFormatter = this._stylesheet.createFormat({ font: { bold: true } });
       const stringFormatter = this._stylesheet.createFormat({ format: '@' });
       const numberFormatter = this._stylesheet.createFormat({ format: '0' });
-      const usdFormatter = this._stylesheet.createFormat({ format: '$#,##0.00' });
       this._stylesheetFormats = {
         boldFormatter,
-        dollarFormatter: usdFormatter,
         numberFormatter,
         stringFormatter,
       };
+      this._sheet.setColumnFormats([boldFormatter]);
 
       // get the CSV output from the grid data
       const dataOutput = this.getDataOutput();
@@ -145,11 +147,11 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       // trigger a download file
       // wrap it into a setTimeout so that the EventAggregator has enough time to start a pre-process like showing a spinner
       setTimeout(async () => {
-        if (this._gridOptions && this._gridOptions.excelExportOptions && this._gridOptions.excelExportOptions.customExcelHeader) {
+        if (this._gridOptions?.excelExportOptions?.customExcelHeader) {
           this._gridOptions.excelExportOptions.customExcelHeader(this._workbook, this._sheet);
         }
 
-        const columns = this._grid && this._grid.getColumns && this._grid.getColumns() || [];
+        const columns = this._grid?.getColumns() || [];
         this._sheet.setColumns(this.getColumnStyles(columns));
 
         const currentSheetData = this._sheet.data;
@@ -234,74 +236,16 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     }
   }
 
-  /** use different Excel Stylesheet Format as per the Field Type */
-  useCellFormatByFieldType(data: string | Date | moment_.Moment, fieldType: typeof FieldType[keyof typeof FieldType], formatter?: Formatter): ExcelCellFormat | string {
-    let outputData: ExcelCellFormat | string | Date | moment_.Moment = data;
-    switch (fieldType) {
-      case FieldType.dateTime:
-      case FieldType.dateTimeIso:
-      case FieldType.dateTimeShortIso:
-      case FieldType.dateTimeIsoAmPm:
-      case FieldType.dateTimeIsoAM_PM:
-      case FieldType.dateEuro:
-      case FieldType.dateEuroShort:
-      case FieldType.dateTimeEuro:
-      case FieldType.dateTimeShortEuro:
-      case FieldType.dateTimeEuroAmPm:
-      case FieldType.dateTimeEuroAM_PM:
-      case FieldType.dateTimeEuroShort:
-      case FieldType.dateTimeEuroShortAmPm:
-      case FieldType.dateUs:
-      case FieldType.dateUsShort:
-      case FieldType.dateTimeUs:
-      case FieldType.dateTimeShortUs:
-      case FieldType.dateTimeUsAmPm:
-      case FieldType.dateTimeUsAM_PM:
-      case FieldType.dateTimeUsShort:
-      case FieldType.dateTimeUsShortAmPm:
-      case FieldType.dateUtc:
-      case FieldType.date:
-      case FieldType.dateIso:
-        outputData = data;
-        if (data) {
-          const defaultDateFormat = mapMomentDateFormatWithFieldType(fieldType);
-          const isDateValid = moment(data as string, defaultDateFormat, false).isValid();
-          const outputDate = (data && isDateValid) ? moment(data as string).format(defaultDateFormat) : data;
-          const dateFormatter = this._stylesheet.createFormat({ format: defaultDateFormat });
-          outputData = { value: outputDate, metadata: { style: dateFormatter.id } };
-        }
-        break;
-      case FieldType.number:
-        const num = parseFloat(data as string);
-        const val = isNaN(num) ? null : num;
-
-        switch (formatter) {
-          case Formatters.dollar:
-          case Formatters.dollarColored:
-          case Formatters.dollarColoredBold:
-            outputData = { value: val, metadata: { style: this._stylesheetFormats.dollarFormatter.id} };
-            break;
-          default:
-            outputData = { value: val, metadata: { style: this._stylesheetFormats.numberFormatter.id } };
-            break;
-        }
-        break;
-      default:
-        outputData = data;
-    }
-    return outputData as string;
-  }
-
   // -----------------------
   // protected functions
   // -----------------------
 
   protected getDataOutput(): Array<string[] | ExcelCellFormat[]> {
-    const columns = this._grid && this._grid.getColumns && this._grid.getColumns() || [];
+    const columns = this._grid?.getColumns() || [];
 
     // data variable which will hold all the fields data of a row
     const outputData: Array<string[] | ExcelCellFormat[]> = [];
-    const columnHeaderStyle = this._gridOptions && this._gridOptions.excelExportOptions && this._gridOptions.excelExportOptions.columnHeaderStyle;
+    const columnHeaderStyle = this._gridOptions?.excelExportOptions?.columnHeaderStyle;
     let columnHeaderStyleId = this._stylesheetFormats.boldFormatter.id;
     if (columnHeaderStyle) {
       columnHeaderStyleId = this._stylesheet.createFormat(columnHeaderStyle).id;
@@ -528,7 +472,6 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
     for (let col = 0; col < columnsLn; col++) {
       const columnDef = columns[col];
-      const fieldType = columnDef.outputType || columnDef.type || FieldType.string;
 
       // skip excluded column
       if (columnDef.excludeFromExport) {
@@ -595,7 +538,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
         // use different Excel Stylesheet Format as per the Field Type
         if (!columnDef.exportWithFormatter) {
-          itemData = this.useCellFormatByFieldType(itemData as string, fieldType, columnDef.formatter);
+          itemData = useCellFormatByFieldType(this._stylesheet, this._stylesheetFormats, itemData as string, columnDef, this._grid);
         }
 
         rowOutputStrings.push(itemData);
