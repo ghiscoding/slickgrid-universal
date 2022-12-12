@@ -14,7 +14,8 @@ li.hidden {
   cursor: default;
   list-style-type: none;
   position: absolute;
-	overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   resize: both;
   width: max-content;
   font-family: var(--slick-font-family, $slick-font-family);
@@ -23,6 +24,10 @@ li.hidden {
   border-radius: var(--slick-column-picker-border-radius, $slick-column-picker-border-radius);
   min-width: var(--slick-column-picker-min-width, $slick-column-picker-min-width);
   padding: var(--slick-column-picker-padding, $slick-column-picker-padding);
+  @-moz-document url-prefix() {
+    /* add right padding to avoid scrollback showing over text, but for firefox since webkit is ok */
+    padding: var(--slick-column-picker-padding-firefox, $slick-column-picker-padding-firefox);
+  }
   box-shadow: var(--slick-column-picker-box-shadow, $slick-column-picker-box-shadow);
   z-index: var(--slick-column-picker-z-index, $slick-column-picker-z-index);
 
@@ -265,6 +270,7 @@ li.hidden {
     list-style: none outside none;
     padding: var(--slick-menu-item-padding, $slick-menu-item-padding);
     width: var(--slick-menu-item-width, $slick-menu-item-width);
+    white-space: var(--slick-menu-item-white-space, $slick-menu-item-white-space);
 
     &:hover {
       border: var(--slick-menu-item-hover-border, $slick-menu-item-hover-border);
@@ -338,10 +344,15 @@ li.hidden {
   border-radius: var(--slick-menu-border-radius, $slick-menu-border-radius);
   min-width: var(--slick-menu-min-width, $slick-menu-min-width);
   padding: var(--slick-menu-padding, $slick-menu-padding);
+  @-moz-document url-prefix() {
+    /* add right padding to avoid scrollback showing over text, but for firefox since webkit is ok */
+    padding: var(--slick-menu-padding-firefox, $slick-menu-padding-firefox);
+  }
   z-index: 100000;
   cursor: default;
   display: inline-block;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   resize: both;
 
   /* make sure that other UI frameworks aren't overriding our properties (Bulma was one of them affecting this) */

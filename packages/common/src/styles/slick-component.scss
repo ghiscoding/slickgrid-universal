@@ -204,6 +204,7 @@
     padding: 2px;
 
     select {
+      background-color: var(--slick-pagination-page-select-bg-color, $slick-pagination-page-select-bg-color);
       font-size: var(--slick-pagination-page-select-font-size, $slick-pagination-page-select-font-size);
       line-height: 1.5;
       height: var(--slick-pagination-page-select-height, $slick-pagination-page-select-height);
