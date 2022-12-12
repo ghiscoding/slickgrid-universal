@@ -3,13 +3,13 @@
   "private": true,
   "license": "MIT",
   "author": "Ghislain B.",
-  "homepage": "https://github.com/slickgrid-stellar/slickgrid-universal",
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal",
   "repository": {
     "type": "git",
-    "url": "https://github.com/slickgrid-stellar/slickgrid-universal.git"
+    "url": "https://github.com/ghiscoding/slickgrid-universal.git"
   },
   "bugs": {
-    "url": "https://github.com/slickgrid-stellar/slickgrid-universal/issues"
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "scripts": {
     "prebuild": "pnpm lint",

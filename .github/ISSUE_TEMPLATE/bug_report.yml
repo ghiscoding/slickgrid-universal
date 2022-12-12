@@ -42,13 +42,13 @@ body:
       label: Validations
       description: Before submitting the issue, please make sure you do the following
       options:
-        - label: Follow our [Code of Conduct](https://github.com/slickgrid-stellar/slickgrid-universal/blob/master/.github/CODE_OF_CONDUCT.md)
+        - label: Follow our [Code of Conduct](https://github.com/ghiscoding/slickgrid-universal/blob/master/.github/CODE_OF_CONDUCT.md)
           required: true
-        - label: Read the [Wikis](https://github.com/slickgrid-stellar/slickgrid-universal/wiki).
+        - label: Read the [Wikis](https://github.com/ghiscoding/slickgrid-universal/wiki).
           required: true
-        - label: Check that there isn't [already an issue](https://github.com/slickgrid-stellar/slickgrid-universal/issues) that reports the same bug to avoid creating a duplicate.
+        - label: Check that there isn't [already an issue](https://github.com/ghiscoding/slickgrid-universal/issues) that reports the same bug to avoid creating a duplicate.
           required: true
-        - label: Check that this is a concrete bug. For Q&A open a [GitHub Discussion](https://github.com/slickgrid-stellar/slickgrid-universal/discussions).
+        - label: Check that this is a concrete bug. For Q&A open a [GitHub Discussion](https://github.com/ghiscoding/slickgrid-universal/discussions).
           required: true
         - label: The provided reproduction is a [minimal reproducible example](https://stackoverflow.com/help/minimal-reproducible-example) of the bug.
           required: true

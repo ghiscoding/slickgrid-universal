@@ -14,14 +14,14 @@
   },
   "license": "MIT",
   "author": "Ghislain B.",
-  "homepage": "https://github.com/slickgrid-stellar/slickgrid-universal",
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal",
   "repository": {
     "type": "git",
-    "url": "https://github.com/slickgrid-stellar/slickgrid-universal.git",
+    "url": "https://github.com/ghiscoding/slickgrid-universal.git",
     "directory": "examples/webpack-demo-vanilla-bundle"
   },
   "bugs": {
-    "url": "https://github.com/slickgrid-stellar/slickgrid-universal/issues"
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "engines": {
     "node": ">=14.17.0",
