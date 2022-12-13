@@ -10,6 +10,7 @@
   box-sizing: border-box;
   max-height: var(--slick-autocomplete-max-height, $slick-autocomplete-max-height);
   min-height: var(--slick-autocomplete-min-height, $slick-autocomplete-min-height);
+  min-width: var(--slick-autocomplete-min-width, $slick-autocomplete-min-width);
   overflow: auto;
   z-index: var(--slick-autocomplete-z-index, $slick-autocomplete-z-index);
 
