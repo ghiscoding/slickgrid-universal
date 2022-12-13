@@ -22,11 +22,25 @@ body:
       placeholder: Reproduction
     validations:
       required: true
+  - type: dropdown
+    id: framework-used
+    attributes:
+      label: Which Framework are you using?
+      description: Select which framework you are using (this helps with finding the problem)
+      options:
+        - Angular
+        - Aurelia
+        - React
+        - Vue
+        - Vanilla / Plain JS
+        - Other
+    validations:
+      required: true
   - type: textarea
     id: system-info
     attributes:
       label: Environment Info
-      description: versions number of each systems and libs (Slickgrid-Universal/[packageName], TypeScript)
+      description: versions number of each frameworks and libs (Slickgrid-Universal/[packageName], TypeScript)
       render: shell
       placeholder: |
         Framework used (x.y)
@@ -34,6 +48,14 @@ body:
         TypeScript (x.y)
         Browser(s)
         System OS
+      value: |
+        | Executable          | Version |
+        | ------------------- | ------- |
+        | (framework used)    | VERSION |
+        | Slickgrid-Universal | VERSION |
+        | TypeScript          | VERSION |
+        | Browser(s)          | VERSION |
+        | System OS           | VERSION |
     validations:
       required: true
   - type: checkboxes
