@@ -26,7 +26,7 @@ body:
     id: framework-used
     attributes:
       label: Which Framework are you using?
-      description: Select which framework you are using (this helps with finding the problem)
+      description: Select which framework is use (helps with identifying & replicating the problem)
       options:
         - Angular
         - Aurelia
