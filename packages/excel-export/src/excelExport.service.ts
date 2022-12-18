@@ -169,9 +169,16 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         this._workbook.addWorksheet(this._sheet);
 
         // using ExcelBuilder.Builder.createFile with WebPack but ExcelBuilder.createFile with RequireJS/SystemJS
-        const createFileFn = ExcelBuilder.Builder && ExcelBuilder.Builder.createFile ? ExcelBuilder.Builder.createFile : ExcelBuilder.createFile;
-        const mimeType = this._fileFormat === FileType.xls ? 'application/vnd.ms-excel' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet ';
-        const excelBlob = await createFileFn(this._workbook, { type: 'blob', mimeType });
+        const createFileFn = ExcelBuilder.Builder?.createFile ?? ExcelBuilder.createFile;
+
+        // MIME type could be undefined, if that's the case we'll detect the type by its file extension
+        // user could also provide its own mime type, if however an empty string is provided we will consider to be without any MIME type)
+        let mimeType = this._excelExportOptions?.mimeType;
+        if (mimeType === undefined) {
+          mimeType = this._fileFormat === FileType.xls ? 'application/vnd.ms-excel' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        }
+        const createFileOptions = mimeType === '' ? { type: 'blob' } : { type: 'blob', mimeType };
+        const excelBlob = await createFileFn(this._workbook, createFileOptions);
         const downloadOptions = {
           filename: `${this._excelExportOptions.filename}.${this._fileFormat}`,
           format: this._fileFormat
