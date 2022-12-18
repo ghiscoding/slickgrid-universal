@@ -78,6 +78,15 @@ export class Constants {
     TREE_LEVEL_PROP: '__treeLevel',
     PARENT_PROP: '__parentId',
   };
+  static readonly DEFAULT_FORMATTER_NUMBER_MIN_DECIMAL = 2;
+  static readonly DEFAULT_FORMATTER_NUMBER_MAX_DECIMAL = 2;
+  static readonly DEFAULT_FORMATTER_DOLLAR_MIN_DECIMAL = 2;
+  static readonly DEFAULT_FORMATTER_DOLLAR_MAX_DECIMAL = 4;
+  static readonly DEFAULT_FORMATTER_PERCENT_MIN_DECIMAL = undefined;
+  static readonly DEFAULT_FORMATTER_PERCENT_MAX_DECIMAL = undefined;
+  static readonly DEFAULT_NUMBER_DECIMAL_SEPARATOR = '.';
+  static readonly DEFAULT_NUMBER_THOUSAND_SEPARATOR = '';
+  static readonly DEFAULT_NEGATIVE_NUMBER_WRAPPED_IN_BRAQUET = false;
   static readonly SLIDER_DEFAULT_MIN_VALUE = 0;
   static readonly SLIDER_DEFAULT_MAX_VALUE = 100;
   static readonly SLIDER_DEFAULT_STEP = 1;
