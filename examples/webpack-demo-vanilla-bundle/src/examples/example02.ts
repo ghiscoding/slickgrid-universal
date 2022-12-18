@@ -117,22 +117,20 @@ export class Example2 {
         filter: { model: Filters.compoundDate },
         sortable: true,
         type: FieldType.dateIso,
+        outputType: FieldType.dateIso,
         formatter: Formatters.dateIso,
-        exportWithFormatter: true
       },
       {
         id: 'cost', name: 'Cost', field: 'cost',
         minWidth: 70,
         width: 80,
-        maxWidth: 120,
         filterable: true,
         filter: { model: Filters.compoundInputNumber },
         type: FieldType.number,
         sortable: true,
-        exportWithFormatter: true,
-        formatter: Formatters.dollar,
+        formatter: Formatters.decimal,
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
-        params: { groupFormatterPrefix: '<b>Total</b>: ' /* , groupFormatterSuffix: ' USD' */ }
+        params: { displayNegativeNumberWithParentheses: true, numberPrefix: '€ ', minDecimal: 2, maxDecimal: 4, groupFormatterPrefix: '<b>Total</b>: ' /* , groupFormatterSuffix: ' USD' */ },
       },
       {
         id: 'effortDriven', name: 'Effort Driven',
@@ -169,7 +167,7 @@ export class Example2 {
         onColumnsChanged: (e, args) => console.log(e, args)
       },
       enableExcelExport: true,
-      excelExportOptions: { filename: 'my-export', sanitizeDataExport: true },
+      excelExportOptions: { filename: 'my-export', sanitizeDataExport: true, exportWithExcelFormat: true, },
       textExportOptions: { filename: 'my-export', sanitizeDataExport: true },
       registerExternalResources: [this.excelExportService, new TextExportService()],
       showCustomFooter: true, // display some metrics in the bottom custom footer

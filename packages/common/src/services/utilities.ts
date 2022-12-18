@@ -242,13 +242,13 @@ export function decimalFormatted(input: number | string, minDecimal?: number, ma
  * @param input
  * @param minDecimal
  * @param maxDecimal
- * @param displayNegativeNumberWithParentheses
+ * @param wrapNegativeNumberInBraquets
  * @param symbolPrefix
  * @param symbolSuffix
  * @param decimalSeparator
  * @param thousandSeparator
  */
-export function formatNumber(input: number | string, minDecimal?: number, maxDecimal?: number, displayNegativeNumberWithParentheses?: boolean, symbolPrefix = '', symbolSuffix = '', decimalSeparator: '.' | ',' = '.', thousandSeparator: ',' | '_' | '.' | ' ' | '' = ''): string {
+export function formatNumber(input: number | string, minDecimal?: number, maxDecimal?: number, wrapNegativeNumberInBraquets?: boolean, symbolPrefix = '', symbolSuffix = '', decimalSeparator: '.' | ',' = '.', thousandSeparator: ',' | '_' | '.' | ' ' | '' = ''): string {
   if (isNaN(+input)) {
     return input as string;
   }
@@ -257,7 +257,7 @@ export function formatNumber(input: number | string, minDecimal?: number, maxDec
 
   if (calculatedValue < 0) {
     const absValue = Math.abs(calculatedValue);
-    if (displayNegativeNumberWithParentheses) {
+    if (wrapNegativeNumberInBraquets) {
       if (!isNaN(minDecimal as number) || !isNaN(maxDecimal as number)) {
         return `(${symbolPrefix}${decimalFormatted(absValue, minDecimal, maxDecimal, decimalSeparator, thousandSeparator)}${symbolSuffix})`;
       }

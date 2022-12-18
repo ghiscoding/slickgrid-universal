@@ -1,4 +1,4 @@
-import moment from 'moment-mini';
+import 'jest-extended';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import {
   Column,
@@ -191,7 +191,7 @@ describe('ExcelExportService', () => {
         const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
         (navigator as any).msSaveOrOpenBlob = jest.fn();
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyMsSave = jest.spyOn(navigator, 'msSaveOrOpenBlob');
+        const spyMsSave = jest.spyOn(navigator as any, 'msSaveOrOpenBlob');
 
         service.init(gridStub, container);
         const result = await service.exportToExcel(mockExportExcelOptions);
@@ -206,7 +206,7 @@ describe('ExcelExportService', () => {
       let mockCollection: any[];
 
       it(`should have the Order exported correctly with multiple formatters which have 1 of them returning an object with a text property (instead of simple string)`, async () => {
-        mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
+        mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
@@ -229,7 +229,7 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'Position', },
               { metadata: { style: 1, }, value: 'Order', },
             ],
-            ['1E06', 'John', 'Z', 'SALES_REP', '<b>10</b>'],
+            ['1E06', 'John', 'X', 'SALES_REP', '<b>10</b>'],
           ]
         });
       });
@@ -498,14 +498,14 @@ describe('ExcelExportService', () => {
       let mockCollection: any[];
 
       beforeEach(() => {
-        mockGridOptions.excelExportOptions = { sanitizeDataExport: true };
+        mockGridOptions.excelExportOptions = { sanitizeDataExport: true, exportWithExcelFormat: true, };
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100 },
-          { id: 'firstName', field: 'firstName', width: 100, formatter: myBoldHtmlFormatter },
-          { id: 'lastName', field: 'lastName', width: 100, sanitizeDataExport: true, exportWithFormatter: true },
+          { id: 'firstName', field: 'firstName', width: 100, formatter: myBoldHtmlFormatter, exportWithExcelFormat: false },
+          { id: 'lastName', field: 'lastName', width: 100, sanitizeDataExport: true, exportWithFormatter: true, exportWithExcelFormat: false },
           { id: 'position', field: 'position', width: 100 },
-          { id: 'startDate', field: 'startDate', type: FieldType.dateIso, width: 100, exportWithFormatter: false },
+          { id: 'startDate', field: 'startDate', type: FieldType.dateIso, width: 100, exportWithFormatter: false, },
           { id: 'endDate', field: 'endDate', width: 100, formatter: Formatters.dateIso, type: FieldType.dateUtc, exportWithFormatter: true, outputType: FieldType.dateIso },
         ] as Column[];
 
@@ -515,7 +515,7 @@ describe('ExcelExportService', () => {
 
       it(`should expect Date exported correctly when Field Type is provided and we use "exportWithFormatter" set to True & False`, async () => {
         mockCollection = [
-          { id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', startDate: '2005-12-20T18:19:19.992Z', endDate: null },
+          { id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', startDate: '2005-12-20T18:19:19.992Z', endDate: null },
           { id: 1, userId: '1E09', firstName: 'Jane', lastName: 'Doe', position: 'HUMAN_RESOURCES', startDate: '2010-10-09T18:19:19.992Z', endDate: '2024-01-02T16:02:02.000Z' },
         ];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
@@ -541,8 +541,8 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'StartDate', },
               { metadata: { style: 1, }, value: 'EndDate', },
             ],
-            ['1E06', 'John', 'Z', 'SALES_REP', { metadata: { style: 4, }, value: '2005-12-20' }, ''],
-            ['1E09', 'Jane', 'Doe', 'HUMAN_RESOURCES', { metadata: { style: 4, }, value: '2010-10-09' }, '2024-01-02'],
+            ['1E06', 'John', 'X', 'SALES_REP', '2005-12-20', ''],
+            ['1E09', 'Jane', 'Doe', 'HUMAN_RESOURCES', '2010-10-09', '2024-01-02'],
           ]
         });
       });
@@ -555,7 +555,7 @@ describe('ExcelExportService', () => {
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'firstName', field: 'user.firstName', name: 'First Name', width: 100, formatter: Formatters.complexObject, exportWithFormatter: true },
           { id: 'lastName', field: 'user.lastName', name: 'Last Name', width: 100, formatter: Formatters.complexObject, exportWithFormatter: true },
-          { id: 'position', field: 'position', width: 100 },
+          { id: 'position', field: 'position', width: 100, type: FieldType.number, exportWithExcelFormat: true },
         ] as Column[];
 
         jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -564,7 +564,7 @@ describe('ExcelExportService', () => {
       let mockCollection: any[];
 
       it(`should export correctly with complex object formatters`, async () => {
-        mockCollection = [{ id: 0, user: { firstName: 'John', lastName: 'Z' }, position: 'SALES_REP', order: 10 }];
+        mockCollection = [{ id: 0, user: { firstName: 'John', lastName: 'X' }, position: 'SALES_REP', order: 10 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
@@ -585,15 +585,15 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'Last Name', },
               { metadata: { style: 1, }, value: 'Position', },
             ],
-            ['John', 'Z', 'SALES_REP'],
+            ['John', 'X', { value: 'SALES_REP', metadata: { style: 3 } }],
           ]
         });
       });
 
       it(`should skip lines that have an empty Slick DataView structure like "getItem" that is null and is part of the item object`, async () => {
         mockCollection = [
-          { id: 0, user: { firstName: 'John', lastName: 'Z' }, position: 'SALES_REP', order: 10 },
-          { id: 1, getItem: null, getItems: null, __parent: { id: 0, user: { firstName: 'John', lastName: 'Z' }, position: 'SALES_REP', order: 10 } }
+          { id: 0, user: { firstName: 'John', lastName: 'X' }, position: 'SALES_REP', order: 10 },
+          { id: 1, getItem: null, getItems: null, __parent: { id: 0, user: { firstName: 'John', lastName: 'X' }, position: 'SALES_REP', order: 10 } }
         ];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]);
@@ -615,7 +615,7 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'Last Name', },
               { metadata: { style: 1, }, value: 'Position', },
             ],
-            ['John', 'Z', 'SALES_REP'],
+            ['John', 'X', { value: 'SALES_REP', metadata: { style: 3 } }],
           ]
         });
       });
@@ -633,7 +633,7 @@ describe('ExcelExportService', () => {
           { id: 'userId', field: 'userId', name: 'User Id', width: 100 },
           { id: 'firstName', nameKey: 'FIRST_NAME', width: 100, formatter: myBoldHtmlFormatter },
           { id: 'lastName', field: 'lastName', nameKey: 'LAST_NAME', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
-          { id: 'position', field: 'position', name: 'Position', width: 100, formatter: Formatters.translate, exportWithFormatter: true },
+          { id: 'position', field: 'position', name: 'Position', type: FieldType.number, width: 100, formatter: Formatters.translate, exportWithFormatter: true },
           { id: 'order', field: 'order', width: 100, exportWithFormatter: true, formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] } },
         ] as Column[];
 
@@ -641,7 +641,7 @@ describe('ExcelExportService', () => {
       });
 
       it(`should have the LastName header title translated when defined as a "nameKey" and "translater" is set in grid option`, async () => {
-        mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
+        mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
@@ -664,7 +664,7 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'Position', },
               { metadata: { style: 1, }, value: 'Order', },
             ],
-            ['1E06', 'John', 'Z', 'Sales Rep.', '10'],
+            ['1E06', 'John', 'X', 'Sales Rep.', '10'],
           ]
         });
       });
@@ -713,7 +713,7 @@ describe('ExcelExportService', () => {
           predefinedValues: [],
         };
 
-        mockItem1 = { id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 };
+        mockItem1 = { id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 };
         mockItem2 = { id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 10 };
         mockGroup1 = {
           collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
@@ -757,7 +757,7 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'Order', },
             ],
             ['⮟ Order: 20 (2 items)'],
-            ['', '1E06', 'John', 'Z', 'SALES_REP', '10'],
+            ['', '1E06', 'John', 'X', 'SALES_REP', '10'],
             ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '10'],
             ['', '', '', '', '', 'Custom: 20'],
           ]
@@ -765,7 +765,7 @@ describe('ExcelExportService', () => {
       });
     });
 
-    describe('with Grouping and Translation', () => {
+    describe('with Grouping and export with Excel custom format', () => {
       let mockCollection: any[];
       let mockOrderGrouping;
       let mockItem1;
@@ -774,15 +774,18 @@ describe('ExcelExportService', () => {
 
       beforeEach(() => {
         mockGridOptions.enableGrouping = true;
-        mockGridOptions.enableTranslate = true;
-        mockGridOptions.excelExportOptions = { sanitizeDataExport: true, addGroupIndentation: true };
+        mockGridOptions.enableTranslate = false;
+        mockGridOptions.excelExportOptions = { sanitizeDataExport: true, addGroupIndentation: true, exportWithExcelFormat: true };
 
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100 },
-          { id: 'firstName', field: 'firstName', nameKey: 'FIRST_NAME', width: 100, formatter: myBoldHtmlFormatter },
-          { id: 'lastName', field: 'lastName', nameKey: 'LAST_NAME', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
-          { id: 'position', field: 'position', name: 'Position', width: 100, formatter: Formatters.translate, exportWithFormatter: true },
+          { id: 'firstName', field: 'firstName', width: 100, formatter: myBoldHtmlFormatter },
+          { id: 'lastName', field: 'lastName', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
+          {
+            id: 'position', field: 'position', width: 100,
+            groupTotalsFormatter: GroupTotalFormatters.avgTotalsDollar,
+          },
           {
             id: 'order', field: 'order', type: FieldType.number,
             exportWithFormatter: true,
@@ -807,7 +810,101 @@ describe('ExcelExportService', () => {
           predefinedValues: [],
         };
 
-        mockItem1 = { id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 };
+        mockItem1 = { id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 };
+        mockItem2 = { id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 10 };
+        mockGroup1 = {
+          collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
+          rows: [mockItem1, mockItem2],
+          title: `Order: 20 <span style="color:green">(2 items)</span>`,
+          totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
+        };
+
+        jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        mockCollection = [mockGroup1, mockItem1, mockItem2, { __groupTotals: true, initialized: true, sum: { order: 20 }, group: mockGroup1 }];
+        jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
+        jest.spyOn(dataViewStub, 'getItem')
+          .mockReturnValue(null)
+          .mockReturnValueOnce(mockCollection[0])
+          .mockReturnValueOnce(mockCollection[1])
+          .mockReturnValueOnce(mockCollection[2])
+          .mockReturnValueOnce(mockCollection[3]);
+        jest.spyOn(dataViewStub, 'getGrouping').mockReturnValue([mockOrderGrouping]);
+      });
+
+      it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
+        const spyDownload = jest.spyOn(service, 'startDownloadFile');
+
+        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
+
+        service.init(gridStub, container);
+        await service.exportToExcel(mockExportExcelOptions);
+
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
+        expect(spyDownload).toHaveBeenCalledWith({
+          ...optionExpectation, blob: new Blob(), data: [
+            [
+              { metadata: { style: 1, }, value: 'Group By', },
+              { metadata: { style: 1, }, value: 'User Id', },
+              { metadata: { style: 1, }, value: 'FirstName', },
+              { metadata: { style: 1, }, value: 'LastName', },
+              { metadata: { style: 1, }, value: 'Position', },
+              { metadata: { style: 1, }, value: 'Order', },
+            ],
+            ['⮟ Order: 20 (2 items)'],
+            ['', '1E06', 'John', 'X', 'SALES_REP', '10'],
+            ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '10'],
+            ['', '', '', '', '', { value: 20, metadata: { style: 4, type: 'number' } }],
+          ]
+        });
+      });
+    });
+
+    describe('with Grouping and Translation', () => {
+      let mockCollection: any[];
+      let mockOrderGrouping;
+      let mockItem1;
+      let mockItem2;
+      let mockGroup1;
+
+      beforeEach(() => {
+        mockGridOptions.enableGrouping = true;
+        mockGridOptions.enableTranslate = true;
+        mockGridOptions.excelExportOptions = { sanitizeDataExport: true, addGroupIndentation: true };
+
+        mockColumns = [
+          { id: 'id', field: 'id', excludeFromExport: true },
+          { id: 'userId', field: 'userId', name: 'User Id', width: 100 },
+          { id: 'firstName', field: 'firstName', nameKey: 'FIRST_NAME', width: 100, formatter: myBoldHtmlFormatter },
+          { id: 'lastName', field: 'lastName', nameKey: 'LAST_NAME', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
+          { id: 'position', field: 'position', name: 'Position', type: FieldType.number, width: 100, formatter: Formatters.translate, exportWithFormatter: true },
+          {
+            id: 'order', field: 'order', type: FieldType.number,
+            exportWithFormatter: true,
+            formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
+            groupTotalsFormatter: GroupTotalFormatters.sumTotals,
+          },
+        ] as Column[];
+
+        mockOrderGrouping = {
+          aggregateChildGroups: false,
+          aggregateCollapsed: false,
+          aggregateEmpty: false,
+          aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4, }],
+          collapsed: false,
+          comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
+          compiledAccumulators: [jest.fn(), jest.fn()],
+          displayTotalsRow: true,
+          formatter: (g) => `Order:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          getter: 'order',
+          getterIsAFn: false,
+          lazyTotalsCalculation: true,
+          predefinedValues: [],
+        };
+
+        mockItem1 = { id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 };
         mockItem2 = { id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 10 };
         mockGroup1 = {
           collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
@@ -851,7 +948,7 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'Order', },
             ],
             ['⮟ Order: 20 (2 items)'],
-            ['', '1E06', 'John', 'Z', 'Sales Rep.', '10'],
+            ['', '1E06', 'John', 'X', 'Sales Rep.', '10'],
             ['', '2B02', 'Jane', 'DOE', 'Finance Manager', '10'],
             ['', '', '', '', '', '20'],
           ]
@@ -904,7 +1001,7 @@ describe('ExcelExportService', () => {
           predefinedValues: [],
         };
 
-        mockItem1 = { id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 };
+        mockItem1 = { id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 };
         mockItem2 = { id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 10 };
         mockGroup1 = {
           collapsed: false, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
@@ -913,9 +1010,9 @@ describe('ExcelExportService', () => {
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
         mockGroup2 = {
-          collapsed: false, count: 2, groupingKey: '10:|:Z', groups: null, level: 1, selectChecked: false,
+          collapsed: false, count: 2, groupingKey: '10:|:X', groups: null, level: 1, selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Last Name: Z <span style="color:green">(1 items)</span>`,
+          title: `Last Name: X <span style="color:green">(1 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
         };
         mockGroup3 = {
@@ -974,8 +1071,8 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'Order', },
             ],
             ['⮟ Order: 20 (2 items)'],
-            ['⮟      Last Name: Z (1 items)'], // expanded
-            ['', '1E06', 'John', 'Z', 'Sales Rep.', '10'],
+            ['⮟      Last Name: X (1 items)'], // expanded
+            ['', '1E06', 'John', 'X', 'Sales Rep.', '10'],
             ['⮟      Last Name: Doe (1 items)'], // expanded
             ['', '2B02', 'Jane', 'DOE', 'Finance Manager', '10'],
             ['⮞      Last Name: null (0 items)'], // collapsed
@@ -1011,10 +1108,10 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'Order', },
             ],
             ['Order: 20 (2 items)'],
-            ['Last Name: Z (1 items)'],
-            ['', '1E06', 'John', 'Z', 'Sales Rep.', { metadata: { style: 3, type: 'number' }, value: 10, }],
+            ['Last Name: X (1 items)'],
+            ['', '1E06', 'John', 'X', 'Sales Rep.', "10"],
             ['Last Name: Doe (1 items)'],
-            ['', '2B02', 'Jane', 'DOE', 'Finance Manager', { metadata: { style: 3, type: 'number' }, value: 10, }],
+            ['', '2B02', 'Jane', 'DOE', 'Finance Manager', "10"],
             ['Last Name: null (0 items)'],
             ['', '', '', '', '', '20'],
             ['', '', '', '', '', '10'],
@@ -1025,279 +1122,13 @@ describe('ExcelExportService', () => {
 
     describe('useCellFormatByFieldType method', () => {
       it('should return a date time format when using FieldType.dateTime and a Date object as input', async () => {
-        const input = new Date('2012-02-28 15:07:59');
-        const expectedDate = '2012-02-28 15:07:59';
         const column = { type: FieldType.dateTime } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, column, gridStub);
 
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateTimeIso', async () => {
-        const input = '2012-02-28 15:07:59';
-        const expectedDate = '2012-02-28 15:07:59';
-        const column = { type: FieldType.dateTimeIso } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateTimeShortIso', async () => {
-        const input = '2012-02-28 15:07:59';
-        const expectedDate = '2012-02-28 15:07';
-        const column = { type: FieldType.dateTimeShortIso } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateTimeIsoAmPm', async () => {
-        const input = '2012-02-28 15:07:59';
-        const expectedDate = '2012-02-28 03:07:59 pm';
-        const column = { type: FieldType.dateTimeIsoAmPm } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateTimeIsoAM_PM', async () => {
-        const input = '2012-02-28 15:07:59';
-        const expectedDate = '2012-02-28 03:07:59 PM';
-        const column = { type: FieldType.dateTimeIsoAM_PM } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateEuro', async () => {
-        const input = '2012-02-28 15:07:59';
-        const expectedDate = '28/02/2012';
-        const column = { type: FieldType.dateEuro } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateEuroShort', async () => {
-        const input = '2012-02-28 15:07:59';
-        const expectedDate = '28/2/12';
-        const column = { type: FieldType.dateEuroShort } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateTimeEuro', async () => {
-        const input = '2012-02-28 15:07:59';
-        const expectedDate = '28/02/2012 15:07:59';
-        const column = { type: FieldType.dateTimeEuro } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateTimeShortEuro', async () => {
-        const input = '2012-02-28 15:07:59';
-        const expectedDate = '28/02/2012 15:07';
-        const column = { type: FieldType.dateTimeShortEuro } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateTimeEuroAmPm', async () => {
-        const input = '2012-02-28 15:07:59';
-        const expectedDate = '28/02/2012 03:07:59 pm';
-        const column = { type: FieldType.dateTimeEuroAmPm } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateTimeEuroAM_PM', async () => {
-        const input = '2012-02-28 15:07:59';
-        const expectedDate = '28/02/2012 03:07:59 PM';
-        const column = { type: FieldType.dateTimeEuroAM_PM } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateTimeEuroShort', async () => {
-        const input = '2012-02-28 15:07:59';
-        const expectedDate = '28/2/12 15:7:59';
-        const column = { type: FieldType.dateTimeEuroShort } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateTimeEuroShortAmPm', async () => {
-        const input = '2012-02-28 15:07:59';
-        const expectedDate = '28/2/12 3:7:59 pm';
-        const column = { type: FieldType.dateTimeEuroShortAmPm } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateUs', async () => {
-        const input = new Date('2012-02-28 15:07:59');
-        const expectedDate = '02/28/2012';
-        const column = { type: FieldType.dateUs } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateUsShort', async () => {
-        const input = new Date('2012-02-28 15:07:59');
-        const expectedDate = '2/28/12';
-        const column = { type: FieldType.dateUsShort } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateTimeUs', async () => {
-        const input = new Date('2012-02-28 15:07:59');
-        const expectedDate = '02/28/2012 15:07:59';
-        const column = { type: FieldType.dateTimeUs } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateTimeShortUs', async () => {
-        const input = new Date('2012-02-28 15:07:59');
-        const expectedDate = '02/28/2012 15:07';
-        const column = { type: FieldType.dateTimeShortUs } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateTimeUsAmPm', async () => {
-        const input = new Date('2012-02-28 15:07:59');
-        const expectedDate = '02/28/2012 03:07:59 pm';
-        const column = { type: FieldType.dateTimeUsAmPm } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateTimeUsAM_PM', async () => {
-        const input = new Date('2012-02-28 15:07:59');
-        const expectedDate = '02/28/2012 03:07:59 PM';
-        const column = { type: FieldType.dateTimeUsAM_PM } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateTimeUsShort', async () => {
-        const input = new Date('2012-02-28 15:07:59');
-        const expectedDate = '2/28/12 15:7:59';
-        const column = { type: FieldType.dateTimeUsShort } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.dateTimeUsShortAmPm', async () => {
-        const input = new Date('2012-02-28 15:07:59');
-        const expectedDate = '2/28/12 3:7:59 pm';
-        const column = { type: FieldType.dateTimeUsShortAmPm } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      xit('should return a date time format when using FieldType.dateUtc', async () => {
-        const input = moment('2013-05-23T17:55:00.325').utcOffset(420); // timezone that is +7 UTC hours
-        const expectedDate = '2013-05-24T04:55:00.325+07:00';
-        const column = { type: FieldType.dateUtc } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
-      });
-
-      it('should return a date time format when using FieldType.date', async () => {
-        const input = new Date(Date.UTC(2012, 1, 28, 23, 1, 52, 103));
-        const expectedDate = '2012-02-28';
-        const column = { type: FieldType.date } as Column;
-
-        service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
-        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, input, column, gridStub);
-
-        expect(output).toEqual({ metadata: { style: 4 }, value: expectedDate });
+        expect(output).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
       });
     });
 
@@ -1322,7 +1153,7 @@ describe('ExcelExportService', () => {
       });
 
       it('should export with grouped header titles showing up on first row', async () => {
-        mockCollection2 = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
+        mockCollection2 = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection2.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection2[0]);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
@@ -1352,7 +1183,7 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'Position', },
               { metadata: { style: 1, }, value: 'Order', },
             ],
-            ['John', 'Z', '1E06', 'SALES_REP', '10'],
+            ['John', 'X', '1E06', 'SALES_REP', '10'],
           ]
         });
       });
@@ -1381,7 +1212,7 @@ describe('ExcelExportService', () => {
 
         it(`should have the LastName header title translated when defined as a "headerKey" and "translater" is set in grid option`, async () => {
           mockGridOptions.excelExportOptions!.sanitizeDataExport = false;
-          mockTranslateCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
+          mockTranslateCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 }];
           jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockTranslateCollection.length);
           jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockTranslateCollection[0]);
           const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
@@ -1411,7 +1242,7 @@ describe('ExcelExportService', () => {
                 { metadata: { style: 1, }, value: 'Position', },
                 { metadata: { style: 1, }, value: 'Order', },
               ],
-              ['<b>John</b>', 'Z', '1E06', 'Sales Rep.', '<b>10</b>'],
+              ['<b>John</b>', 'X', '1E06', 'Sales Rep.', '<b>10</b>'],
             ]
           });
         });
@@ -1429,13 +1260,14 @@ describe('ExcelExportService', () => {
         mockGridOptions.excelExportOptions = {};
         mockGridOptions.createPreHeaderPanel = false;
         mockGridOptions.showPreHeaderPanel = false;
+        mockGridOptions.excelExportOptions.exportWithFormatter = true;
         mockGridOptions.colspanCallback = (item: any) => (item.id % 2 === 1) ? evenMetatadata : oddMetatadata;
 
         mockColumns = [
           { id: 'userId', field: 'userId', name: 'User Id', width: 100 },
-          { id: 'firstName', nameKey: 'FIRST_NAME', width: 100, formatter: myBoldHtmlFormatter },
-          { id: 'lastName', field: 'lastName', nameKey: 'LAST_NAME', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true, exportWithFormatter: true },
-          { id: 'position', field: 'position', name: 'Position', width: 100, formatter: Formatters.translate, exportWithFormatter: true },
+          { id: 'firstName', nameKey: 'FIRST_NAME', width: 100, formatter: myBoldHtmlFormatter, exportWithFormatter: false },
+          { id: 'lastName', field: 'lastName', nameKey: 'LAST_NAME', width: 100, formatter: myBoldHtmlFormatter, exportCustomFormatter: myUppercaseFormatter, sanitizeDataExport: true },
+          { id: 'position', field: 'position', name: 'Position', width: 100, formatter: Formatters.translate },
           { id: 'order', field: 'order', width: 100, },
         ] as Column[];
 
@@ -1460,7 +1292,7 @@ describe('ExcelExportService', () => {
 
       it(`should export same colspan in the export excel as defined in the grid`, async () => {
         mockCollection = [
-          { id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 },
+          { id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 },
           { id: 1, userId: '1E09', firstName: 'Jane', lastName: 'Doe', position: 'DEVELOPER', order: 15 },
           { id: 2, userId: '2ABC', firstName: 'Sponge', lastName: 'Bob', position: 'IT_ADMIN', order: 33 },
         ];

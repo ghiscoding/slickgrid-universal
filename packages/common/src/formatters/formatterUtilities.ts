@@ -4,7 +4,11 @@ import { sanitizeHtmlToText } from '../services/domUtilities';
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { multipleFormatter } from './multipleFormatter';
 import * as moment_ from 'moment-mini';
+import { Constants } from '../constants';
 const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
+
+export type FormatterType = 'group' | 'cell';
+export type NumberType = 'decimal' | 'dollar' | 'percent' | 'regular';
 
 /**
  * Automatically add a Custom Formatter on all column definitions that have an Editor.
@@ -31,6 +35,42 @@ export function autoAddEditorFormatterToColumnsWithEditor(columnDefinitions: Col
       }
     }
   }
+}
+
+export function retrieveFormatterOptions(columnDef: Column, grid: SlickGrid, numberType: NumberType, formatterType: FormatterType) {
+  let defaultMinDecimal;
+  let defaultMaxDecimal;
+  let numberPrefix = '';
+  let numberSuffix = '';
+
+  switch (numberType) {
+    case 'decimal':
+      defaultMinDecimal = Constants.DEFAULT_FORMATTER_NUMBER_MIN_DECIMAL;
+      defaultMaxDecimal = Constants.DEFAULT_FORMATTER_NUMBER_MAX_DECIMAL;
+      break;
+    case 'dollar':
+      defaultMinDecimal = Constants.DEFAULT_FORMATTER_DOLLAR_MIN_DECIMAL;
+      defaultMaxDecimal = Constants.DEFAULT_FORMATTER_DOLLAR_MAX_DECIMAL;
+      break;
+    case 'percent':
+      defaultMinDecimal = Constants.DEFAULT_FORMATTER_PERCENT_MIN_DECIMAL;
+      defaultMaxDecimal = Constants.DEFAULT_FORMATTER_PERCENT_MAX_DECIMAL;
+      break;
+    default:
+      break;
+  }
+  const minDecimal = getValueFromParamsOrFormatterOptions('minDecimal', columnDef, grid, defaultMinDecimal);
+  const maxDecimal = getValueFromParamsOrFormatterOptions('maxDecimal', columnDef, grid, defaultMaxDecimal);
+  const decimalSeparator = getValueFromParamsOrFormatterOptions('decimalSeparator', columnDef, grid, Constants.DEFAULT_NUMBER_DECIMAL_SEPARATOR);
+  const thousandSeparator = getValueFromParamsOrFormatterOptions('thousandSeparator', columnDef, grid, Constants.DEFAULT_NUMBER_THOUSAND_SEPARATOR);
+  const wrapNegativeNumber = getValueFromParamsOrFormatterOptions('displayNegativeNumberWithParentheses', columnDef, grid, Constants.DEFAULT_NEGATIVE_NUMBER_WRAPPED_IN_BRAQUET);
+
+  if (formatterType === 'cell') {
+    numberPrefix = getValueFromParamsOrFormatterOptions('numberPrefix', columnDef, grid, '');
+    numberSuffix = getValueFromParamsOrFormatterOptions('numberSuffix', columnDef, grid, '');
+  }
+
+  return { minDecimal, maxDecimal, decimalSeparator, thousandSeparator, wrapNegativeNumber, numberPrefix, numberSuffix };
 }
 
 /**
@@ -96,12 +136,12 @@ export function exportWithFormatterWhenDefined<T = any>(row: number, col: number
   let isEvaluatingFormatter = false;
 
   // first check if there are any export options provided (as Grid Options)
-  if (exportOptions && exportOptions.hasOwnProperty('exportWithFormatter')) {
+  if (exportOptions?.hasOwnProperty('exportWithFormatter')) {
     isEvaluatingFormatter = !!exportOptions.exportWithFormatter;
   }
 
   // second check if "exportWithFormatter" is provided in the column definition, if so it will have precendence over the Grid Options exportOptions
-  if (columnDef && columnDef.hasOwnProperty('exportWithFormatter')) {
+  if (columnDef?.hasOwnProperty('exportWithFormatter')) {
     isEvaluatingFormatter = !!columnDef.exportWithFormatter;
   }
 

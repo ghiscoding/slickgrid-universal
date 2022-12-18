@@ -1,5 +1,4 @@
 import * as ExcelBuilder from 'excel-builder-webpacker';
-
 import {
   // utility functions
   exportWithFormatterWhenDefined,
@@ -11,7 +10,11 @@ import {
   Constants,
   ContainerService,
   ExcelExportService as BaseExcelExportService,
+  ExcelExportOption,
   ExternalResource,
+  ExcelWorkbook,
+  ExcelWorksheet,
+  FieldType,
   FileType,
   GridOption,
   KeyTitlePair,
@@ -23,16 +26,12 @@ import {
 } from '@slickgrid-universal/common';
 import { addWhiteSpaces, deepCopy, titleCase } from '@slickgrid-universal/utils';
 
-
 import {
   ExcelCellFormat,
-  ExcelExportOption,
   ExcelMetadata,
   ExcelStylesheet,
-  ExcelWorkbook,
-  ExcelWorksheet,
 } from './interfaces/index';
-import { useCellFormatByFieldType } from './excelUtils';
+import { getGroupTotalValue, getExcelFormatFromGridFormatter, useCellFormatByFieldType, ExcelFormatter, GetDataValueCallback } from './excelUtils';
 
 const DEFAULT_EXPORT_OPTIONS: ExcelExportOption = {
   filename: 'export',
@@ -55,10 +54,12 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   protected _translaterService: TranslaterService | undefined;
   protected _workbook!: ExcelWorkbook;
 
+  // references of each detected cell and/or group total formats
+  protected _regularCellExcelFormats: { [fieldId: string]: { stylesheetFormatterId?: number; getDataValueCallback: GetDataValueCallback; }; } = {};
+  protected _groupTotalExcelFormats: { [fieldId: string]: { groupType: string; stylesheetFormatter?: ExcelFormatter; }; } = {};
+
   /** ExcelExportService class name which is use to find service instance in the external registered services */
   readonly className = 'ExcelExportService';
-
-  constructor() { }
 
   protected get _datasetIdPropName(): string {
     return this._gridOptions?.datasetIdPropertyName ?? 'id';
@@ -122,6 +123,10 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       this._pubSubService?.publish(`onBeforeExportToExcel`, true);
       this._excelExportOptions = deepCopy({ ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.excelExportOptions, ...options });
       this._fileFormat = this._excelExportOptions.format || FileType.xlsx;
+
+      // reset references of detected Excel formats
+      this._regularCellExcelFormats = {};
+      this._groupTotalExcelFormats = {};
 
       // prepare the Excel Workbook & Sheet
       // we can use ExcelBuilder constructor with WebPack but we need to use function calls with RequireJS/SystemJS
@@ -430,7 +435,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   /**
    * Get all the grid row data and return that as an output string
    */
-  protected pushAllGridRowDataToArray(originalDaraArray: Array<string[] | ExcelCellFormat[]>, columns: Column[]): Array<string[] | ExcelCellFormat[]> {
+  protected pushAllGridRowDataToArray(originalDaraArray: Array<Array<string | ExcelCellFormat | number>>, columns: Column[]): Array<Array<string | ExcelCellFormat | number>> {
     const lineCount = this._dataView.getLength();
 
     // loop through all the grid rows of data
@@ -472,6 +477,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
     for (let col = 0; col < columnsLn; col++) {
       const columnDef = columns[col];
+      const fieldType = columnDef.outputType || columnDef.type || FieldType.string;
 
       // skip excluded column
       if (columnDef.excludeFromExport) {
@@ -527,18 +533,28 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           colspan = prevColspan--;
         }
       } else {
-        // -- Read Data & Push to Data Array
-        // get the output by analyzing if we'll pull the value from the cell or from a formatter
-        let itemData: ExcelCellFormat | string = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, this._excelExportOptions);
+        let itemData: Date | number | string | ExcelCellFormat = '';
 
-        // does the user want to sanitize the output data (remove HTML tags)?
-        if (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport) {
-          itemData = sanitizeHtmlToText(itemData as string);
+        // -- Read Data & Push to Data Array
+        // user might want to export with Formatter, and/or auto-detect Excel format, and/or export as regular cell data
+        if (columnDef.exportWithFormatter || columnDef.exportCustomFormatter) {
+          // get the output by analyzing if we'll pull the value from the cell or from a formatter
+          itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, this._excelExportOptions);
+        } else if (this.isExportingWithExcelFormat(columnDef)) {
+          // auto-detect best possible Excel format, we only do this check once per column (everything after that will be pull from temp ref)
+          if (!this._regularCellExcelFormats.hasOwnProperty(columnDef.id)) {
+            this._regularCellExcelFormats[columnDef.id] = useCellFormatByFieldType(this._stylesheet, this._stylesheetFormats, columnDef, this._grid);
+          }
+          const { stylesheetFormatterId, getDataValueCallback } = this._regularCellExcelFormats[columnDef.id];
+          itemData = getDataValueCallback(itemObj[columnDef.field], stylesheetFormatterId, fieldType);
+        } else {
+          // at this point user might still have enabled exportWithFormatter in grid options or else cell will be exported "as is"
+          itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, this._excelExportOptions);
         }
 
-        // use different Excel Stylesheet Format as per the Field Type
-        if (!columnDef.exportWithFormatter) {
-          itemData = useCellFormatByFieldType(this._stylesheet, this._stylesheetFormats, itemData as string, columnDef, this._grid);
+        // does the user want to sanitize the output data (remove HTML tags)?
+        if (!this.isExportingWithExcelFormat(columnDef) && typeof itemData === 'string' && (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport)) {
+          itemData = sanitizeHtmlToText(itemData as string);
         }
 
         rowOutputStrings.push(itemData);
@@ -547,6 +563,20 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     }
 
     return rowOutputStrings as string[];
+  }
+
+  protected isExportingWithExcelFormat(columnDef: Column) {
+    let isExportWithExcelFormatEnabled = false;
+
+    // first check if there are any export options provided (as Grid Options)
+    if (this._excelExportOptions?.hasOwnProperty('exportWithExcelFormat')) {
+      isExportWithExcelFormatEnabled = !!this._excelExportOptions.exportWithExcelFormat;
+    }
+    // second check if "exportWithExcelFormat" is provided in the column definition, if so it will have precendence over the Grid Options exportOptions
+    if (columnDef?.hasOwnProperty('exportWithExcelFormat')) {
+      isExportWithExcelFormatEnabled = !!columnDef.exportWithExcelFormat;
+    }
+    return isExportWithExcelFormatEnabled;
   }
 
   /**
@@ -570,26 +600,42 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * For example if we grouped by "salesRep" and we have a Sum Aggregator on "sales", then the returned output would be:: ["Sum 123$"]
    * @param itemObj
    */
-  protected readGroupedTotalRows(columns: Column[], itemObj: any): string[] {
+  protected readGroupedTotalRows(columns: Column[], itemObj: any): Array<ExcelCellFormat | string | number> {
     const groupingAggregatorRowText = this._excelExportOptions.groupingAggregatorRowText || '';
-    const outputStrings = [groupingAggregatorRowText];
+    const outputStrings: Array<ExcelCellFormat | string | number> = [groupingAggregatorRowText];
 
     columns.forEach((columnDef) => {
-      let itemData = '';
-
+      let itemData: number | string | ExcelCellFormat = '';
+      const fieldType = columnDef.outputType || columnDef.type || FieldType.string;
       const skippedField = columnDef.excludeFromExport || false;
 
-      // if there's a exportCustomGroupTotalsFormatter or groupTotalsFormatter, we will re-run it to get the exact same output as what is shown in UI
-      if (columnDef.exportCustomGroupTotalsFormatter) {
-        itemData = columnDef.exportCustomGroupTotalsFormatter(itemObj, columnDef, this._grid);
+      // use different Excel Stylesheet Format as per the Field Type
+      if (this.isExportingWithExcelFormat(columnDef) && fieldType === FieldType.number) {
+        let groupCellFormat = this._groupTotalExcelFormats[columnDef.id];
+        if (!groupCellFormat?.groupType) {
+          groupCellFormat = getExcelFormatFromGridFormatter(this._stylesheet, this._stylesheetFormats, columnDef, this._grid, 'group');
+          this._groupTotalExcelFormats[columnDef.id] = groupCellFormat;
+        }
+
+        if (itemObj[groupCellFormat.groupType]?.[columnDef.field] !== undefined) {
+          itemData = {
+            value: getGroupTotalValue(itemObj, groupCellFormat.groupType, columnDef.field),
+            metadata: { style: groupCellFormat.stylesheetFormatter?.id }
+          };
+        }
       } else {
-        if (columnDef.groupTotalsFormatter) {
-          itemData = columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid);
+        // if there's a exportCustomGroupTotalsFormatter or groupTotalsFormatter, we will re-run it to get the exact same output as what is shown in UI
+        if (columnDef.exportCustomGroupTotalsFormatter) {
+          itemData = columnDef.exportCustomGroupTotalsFormatter(itemObj, columnDef, this._grid);
+        } else {
+          if (columnDef.groupTotalsFormatter) {
+            itemData = columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid);
+          }
         }
       }
 
       // does the user want to sanitize the output data (remove HTML tags)?
-      if (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport) {
+      if (typeof itemData === 'string' && (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport)) {
         itemData = sanitizeHtmlToText(itemData);
       }
 

@@ -116,6 +116,13 @@ export interface Column<T = any> {
   exportWithFormatter?: boolean;
 
   /**
+   * Defaults to true, which leads to ExcelExportService trying to detect the best possible Excel format for each cell.
+   * The difference the other flag is that "exportWithFormatter" will always export as a string, while this option here will try to detect the best Excel format.
+   * NOTE: Date will still be exported as string, the numbers are the ones taking the best advantage from this option.
+   */
+  exportWithExcelFormat?: boolean;
+
+  /**
    * Do we want to force the cell value to be a string?
    * When set to True, it will wrap the cell value in double quotes and add an equal sign (=) at the beginning of the cell to force Excel to evaluate it as a string and not change it's format.
    * For example, without this flag a cell value with "1E06" would be interpreted as a number becoming (1.0E06) by Excel.

@@ -1,6 +1,6 @@
 import { Column, GroupTotalsFormatter, SlickGrid } from './../interfaces/index';
 import { decimalFormatted, thousandSeparatorFormatted } from '../services/utilities';
-import { getValueFromParamsOrFormatterOptions } from '../formatters/formatterUtilities';
+import { retrieveFormatterOptions } from '../formatters/formatterUtilities';
 
 export const avgTotalsPercentageFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column, grid: SlickGrid) => {
   const field = columnDef.field ?? '';
@@ -8,16 +8,18 @@ export const avgTotalsPercentageFormatter: GroupTotalsFormatter = (totals: any, 
   const params = columnDef?.params;
   let prefix = params?.groupFormatterPrefix || '';
   const suffix = params?.groupFormatterSuffix || '';
-  const minDecimal = getValueFromParamsOrFormatterOptions('minDecimal', columnDef, grid);
-  const maxDecimal = getValueFromParamsOrFormatterOptions('maxDecimal', columnDef, grid);
-  const decimalSeparator = getValueFromParamsOrFormatterOptions('decimalSeparator', columnDef, grid, '.');
-  const thousandSeparator = getValueFromParamsOrFormatterOptions('thousandSeparator', columnDef, grid, '');
-  const displayNegativeNumberWithParentheses = getValueFromParamsOrFormatterOptions('displayNegativeNumberWithParentheses', columnDef, grid, false);
+  const {
+    minDecimal,
+    maxDecimal,
+    decimalSeparator,
+    thousandSeparator,
+    wrapNegativeNumber
+  } = retrieveFormatterOptions(columnDef, grid, 'percent', 'group');
 
   if (val !== null && !isNaN(+val)) {
     if (val < 0) {
       val = Math.abs(val);
-      if (!displayNegativeNumberWithParentheses) {
+      if (!wrapNegativeNumber) {
         prefix += '-';
       } else {
         if (isNaN(minDecimal) && isNaN(maxDecimal)) {

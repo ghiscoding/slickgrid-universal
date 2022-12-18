@@ -2,7 +2,7 @@ import { isNumber } from '@slickgrid-universal/utils';
 
 import { Formatter } from './../interfaces/index';
 import { formatNumber } from './../services/utilities';
-import { getValueFromParamsOrFormatterOptions } from './formatterUtilities';
+import { retrieveFormatterOptions } from './formatterUtilities';
 
 /**
  * Display the value as x decimals formatted, defaults to 2 decimals.
@@ -10,16 +10,18 @@ import { getValueFromParamsOrFormatterOptions } from './formatterUtilities';
  * For example:: `{ formatter: Formatters.decimal, params: { minDecimal: 2, maxDecimal: 4 }}`
  */
 export const decimalFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
-  const minDecimal = getValueFromParamsOrFormatterOptions('minDecimal', columnDef, grid, 2);
-  const maxDecimal = getValueFromParamsOrFormatterOptions('maxDecimal', columnDef, grid, 2);
-  const decimalSeparator = getValueFromParamsOrFormatterOptions('decimalSeparator', columnDef, grid, '.');
-  const thousandSeparator = getValueFromParamsOrFormatterOptions('thousandSeparator', columnDef, grid, '');
-  const numberPrefix = getValueFromParamsOrFormatterOptions('numberPrefix', columnDef, grid, '');
-  const numberSuffix = getValueFromParamsOrFormatterOptions('numberSuffix', columnDef, grid, '');
-  const displayNegativeNumberWithParentheses = getValueFromParamsOrFormatterOptions('displayNegativeNumberWithParentheses', columnDef, grid, false);
+  const {
+    minDecimal,
+    maxDecimal,
+    numberPrefix,
+    numberSuffix,
+    decimalSeparator,
+    thousandSeparator,
+    wrapNegativeNumber,
+  } = retrieveFormatterOptions(columnDef, grid, 'decimal', 'cell');
 
   if (isNumber(value)) {
-    return formatNumber(value, minDecimal, maxDecimal, displayNegativeNumberWithParentheses, numberPrefix, numberSuffix, decimalSeparator, thousandSeparator);
+    return formatNumber(value, minDecimal, maxDecimal, wrapNegativeNumber, numberPrefix, numberSuffix, decimalSeparator, thousandSeparator);
   }
   return value;
 };
