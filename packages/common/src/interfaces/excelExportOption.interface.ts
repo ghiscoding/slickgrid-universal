@@ -28,6 +28,14 @@ export interface ExcelExportOption {
   /** file type format, .xls/.xlsx (this will provide the extension) */
   format?: FileType.xls | FileType.xlsx;
 
+  /**
+   * file MIME type could be provided by the user.
+   * - when undefined it will detect the type depending on its extension unless user defines it.
+   * - user could also be set to an empty string, which in this case would lead to an empty MIME type:
+   *   - ie Salesforce restricts Excel MIME types, however we can go around this issue by not providing any MIME type
+   */
+  mimeType?: string;
+
   /** The column header title (at A0 in Excel) of the Group by. If nothing is provided it will use "Group By" (which is a translated value of GROUP_BY i18n) */
   groupingColumnHeaderTitle?: string;
 

@@ -16,6 +16,7 @@ import {
   SortComparers,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
+import * as ExcelBuilder from 'excel-builder-webpacker';
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 import { ExcelExportService } from './excelExport.service';
@@ -143,6 +144,10 @@ describe('ExcelExportService', () => {
         jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       });
 
+      afterEach(() => {
+        jest.clearAllMocks();
+      });
+
       it('should throw an error when trying call exportToExcel" without a grid and/or dataview object initialized', async () => {
         try {
           service.init(null as any, container);
@@ -174,6 +179,7 @@ describe('ExcelExportService', () => {
       });
 
       it('should call "URL.createObjectURL" with a Blob and xlsx file when browser is not IE11 (basically any other browser) when exporting as xlsx', async () => {
+        const excelBuilderSpy = jest.spyOn(ExcelBuilder.Builder, 'createFile');
         const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
@@ -184,8 +190,40 @@ describe('ExcelExportService', () => {
         expect(result).toBeTruthy();
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
+        expect(excelBuilderSpy).toHaveBeenCalledWith(expect.anything(), { type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       });
 
+      it('should call "URL.createObjectURL" with a Blob and xlsx file without any MIME type when providing an empty string as a mime type', async () => {
+        const excelBuilderSpy = jest.spyOn(ExcelBuilder.Builder, 'createFile');
+        mockGridOptions.excelExportOptions = { mimeType: '' };
+        const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
+
+        service.init(gridStub, container);
+        const result = await service.exportToExcel(mockExportExcelOptions);
+
+        expect(result).toBeTruthy();
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
+        expect(excelBuilderSpy).toHaveBeenCalledWith(expect.anything(), { type: 'blob' });
+      });
+
+      it('should call "URL.createObjectURL" with a Blob and expect same mime type when provided', async () => {
+        const excelBuilderSpy = jest.spyOn(ExcelBuilder.Builder, 'createFile');
+        mockGridOptions.excelExportOptions = { mimeType: 'application/some-excel-format' };
+        const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
+
+        service.init(gridStub, container);
+        const result = await service.exportToExcel(mockExportExcelOptions);
+
+        expect(result).toBeTruthy();
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
+        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
+        expect(excelBuilderSpy).toHaveBeenCalledWith(expect.anything(), { type: 'blob', mimeType: 'application/some-excel-format' });
+      });
 
       it('should call "msSaveOrOpenBlob" with a Blob and xlsx file when browser is IE11 when exporting as xlsx', async () => {
         const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
