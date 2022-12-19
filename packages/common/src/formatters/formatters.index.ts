@@ -8,6 +8,7 @@ import { centerFormatter } from './centerFormatter';
 import { checkboxFormatter } from './checkboxFormatter';
 import { checkmarkFormatter } from './checkmarkFormatter';
 import { checkmarkMaterialFormatter } from './checkmarkMaterialFormatter';
+import { currencyFormatter } from './currencyFormatter';
 import { collectionFormatter } from './collectionFormatter';
 import { collectionEditorFormatter } from './collectionEditorFormatter';
 import { complexObjectFormatter } from './complexObjectFormatter';
@@ -111,6 +112,15 @@ export const Formatters = {
    * const dataset = [1, 2];
    */
   collectionEditor: collectionEditorFormatter,
+
+  /**
+   * Similar to "Formatters.decimal", but it allows you to provide prefixes and suffixes (currencyPrefix, currencySuffix, numberPrefix, numberSuffix)
+   * So with this, it allows the user to provide dual prefixes/suffixes via the following params
+   * You can pass "minDecimal", "maxDecimal", "decimalSeparator", "thousandSeparator", "numberPrefix", "currencyPrefix", "currencySuffix", and "numberSuffix" to the "params" property.
+   * For example:: `{ formatter: Formatters.decimal, params: { minDecimal: 2, maxDecimal: 4, prefix: 'Price ', currencyPrefix: '€', currencySuffix: ' EUR' }}`
+   * with value of 33.45 would result into: "Price €33.45 EUR"
+   */
+  currency: currencyFormatter,
 
   /** Takes a Date object and displays it as an ISO Date format (YYYY-MM-DD) */
   dateIso: getAssociatedDateFormatter(FieldType.dateIso, '-'),

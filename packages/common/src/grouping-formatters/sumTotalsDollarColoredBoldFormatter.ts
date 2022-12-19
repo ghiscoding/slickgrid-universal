@@ -14,7 +14,7 @@ export const sumTotalsDollarColoredBoldFormatter: GroupTotalsFormatter = (totals
     decimalSeparator,
     thousandSeparator,
     wrapNegativeNumber
-  } = retrieveFormatterOptions(columnDef, grid, 'dollar', 'group');
+  } = retrieveFormatterOptions(columnDef, grid, 'currency', 'group');
 
   if (val !== null && !isNaN(+val)) {
     const colorStyle = (val >= 0) ? 'green' : 'red';

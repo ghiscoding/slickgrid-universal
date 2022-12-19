@@ -83,16 +83,19 @@ export function getGroupTotalValue(totals: any, groupType: string, colField: str
 
 /** Get numeric formatter options when defined or use default values (minDecimal, maxDecimal, thousandSeparator, decimalSeparator, wrapNegativeNumber) */
 export function getNumericFormatterOptions(columnDef: Column, grid: SlickGrid, formatterType: FormatterType) {
-  let dataType: 'decimal' | 'dollar' | 'percent' | 'regular';
+  let dataType: 'currency' | 'decimal' | 'percent' | 'regular';
 
   if (formatterType === 'group') {
     switch (columnDef.groupTotalsFormatter) {
+      case GroupTotalFormatters.avgTotalsCurrency:
       case GroupTotalFormatters.avgTotalsDollar:
-      case GroupTotalFormatters.sumTotalsDollarColoredBold:
-      case GroupTotalFormatters.sumTotalsDollarColored:
-      case GroupTotalFormatters.sumTotalsDollarBold:
+      case GroupTotalFormatters.sumTotalsCurrency:
+      case GroupTotalFormatters.sumTotalsCurrencyColored:
       case GroupTotalFormatters.sumTotalsDollar:
-        dataType = 'dollar';
+      case GroupTotalFormatters.sumTotalsDollarBold:
+      case GroupTotalFormatters.sumTotalsDollarColored:
+      case GroupTotalFormatters.sumTotalsDollarColoredBold:
+        dataType = 'currency';
         break;
       case GroupTotalFormatters.avgTotalsPercentage:
         dataType = 'percent';
@@ -100,8 +103,8 @@ export function getNumericFormatterOptions(columnDef: Column, grid: SlickGrid, f
       case GroupTotalFormatters.avgTotals:
       case GroupTotalFormatters.minTotals:
       case GroupTotalFormatters.maxTotals:
-      case GroupTotalFormatters.sumTotalsColored:
       case GroupTotalFormatters.sumTotals:
+      case GroupTotalFormatters.sumTotalsColored:
       case GroupTotalFormatters.sumTotalsBold:
       default:
         // side note, formatters are using "regular" without any decimal limits (min, max),
@@ -111,15 +114,16 @@ export function getNumericFormatterOptions(columnDef: Column, grid: SlickGrid, f
     }
   } else {
     switch (columnDef.formatter) {
-      case Formatters.dollarColoredBold:
-      case Formatters.dollarColored:
+      case Formatters.currency:
       case Formatters.dollar:
-        dataType = 'dollar';
+      case Formatters.dollarColored:
+      case Formatters.dollarColoredBold:
+        dataType = 'currency';
         break;
       case Formatters.percent:
+      case Formatters.percentComplete:
       case Formatters.percentCompleteBar:
       case Formatters.percentCompleteBarWithText:
-      case Formatters.percentComplete:
       case Formatters.percentSymbol:
         dataType = 'percent';
         break;
@@ -142,6 +146,7 @@ export function getExcelFormatFromGridFormatter(stylesheet: ExcelStylesheet, sty
   if (formatterType === 'group') {
     switch (columnDef.groupTotalsFormatter) {
       case GroupTotalFormatters.avgTotals:
+      case GroupTotalFormatters.avgTotalsCurrency:
       case GroupTotalFormatters.avgTotalsDollar:
       case GroupTotalFormatters.avgTotalsPercentage:
         groupType = 'avg';
@@ -155,6 +160,8 @@ export function getExcelFormatFromGridFormatter(stylesheet: ExcelStylesheet, sty
       case GroupTotalFormatters.sumTotals:
       case GroupTotalFormatters.sumTotalsBold:
       case GroupTotalFormatters.sumTotalsColored:
+      case GroupTotalFormatters.sumTotalsCurrency:
+      case GroupTotalFormatters.sumTotalsCurrencyColored:
       case GroupTotalFormatters.sumTotalsDollar:
       case GroupTotalFormatters.sumTotalsDollarColoredBold:
       case GroupTotalFormatters.sumTotalsDollarColored:
@@ -169,15 +176,16 @@ export function getExcelFormatFromGridFormatter(stylesheet: ExcelStylesheet, sty
     switch (fieldType) {
       case FieldType.number:
         switch (columnDef.formatter) {
-          case Formatters.dollarColoredBold:
-          case Formatters.dollarColored:
+          case Formatters.currency:
+          case Formatters.decimal:
           case Formatters.dollar:
+          case Formatters.dollarColored:
+          case Formatters.dollarColoredBold:
           case Formatters.percent:
           case Formatters.percentComplete:
           case Formatters.percentCompleteBar:
           case Formatters.percentCompleteBarWithText:
           case Formatters.percentSymbol:
-          case Formatters.decimal:
             format = createExcelFormatFromGridFormatter(columnDef, grid, 'cell');
             break;
           default:
@@ -217,10 +225,9 @@ function createFormatFromNumber(formattedVal: string) {
     suffix
   ] = formattedVal?.match(/^([^\d\(\-]*)([\(]?)([^\d]*)([\-]?[\w]]?[\d\s]*[.,\d]*[\d]*[^)\s\%]?)([^\d.,)]*)([\)]?)([^\d]*)$/i) || [];
 
+  // we use 1 so that they won't be removed when rounding numbers, however Excel uses 0 and # symbol
   // replace 1's by 0's (required numbers) and replace 2's by "#" (optional numbers)
   const replacedNumber = (number || '').replace(/1/g, '0').replace(/[2]/g, '#');
-
-  // console.log('createFormatFromNumber', formattedVal.trim(), '|prefix:', prefix ?? '', '|openBraquet:', openBraquet ?? '', '|symbolPrefix:', symbolPrefix ?? '', '|input:', replacedNumber, '|symbolSuffix:', symbolSuffix ?? '', '|closingBraquet:', closingBraquet ?? '', '|suffix:', suffix ?? '');
 
   const format = [
     escapeQuotes(prefix ?? ''),

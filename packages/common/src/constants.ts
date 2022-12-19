@@ -80,8 +80,8 @@ export class Constants {
   };
   static readonly DEFAULT_FORMATTER_NUMBER_MIN_DECIMAL = 2;
   static readonly DEFAULT_FORMATTER_NUMBER_MAX_DECIMAL = 2;
-  static readonly DEFAULT_FORMATTER_DOLLAR_MIN_DECIMAL = 2;
-  static readonly DEFAULT_FORMATTER_DOLLAR_MAX_DECIMAL = 4;
+  static readonly DEFAULT_FORMATTER_CURRENCY_MIN_DECIMAL = 2;
+  static readonly DEFAULT_FORMATTER_CURRENCY_MAX_DECIMAL = 4;
   static readonly DEFAULT_FORMATTER_PERCENT_MIN_DECIMAL = undefined;
   static readonly DEFAULT_FORMATTER_PERCENT_MAX_DECIMAL = undefined;
   static readonly DEFAULT_NUMBER_DECIMAL_SEPARATOR = '.';

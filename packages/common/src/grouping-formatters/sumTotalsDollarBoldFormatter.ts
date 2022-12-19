@@ -14,7 +14,7 @@ export const sumTotalsDollarBoldFormatter: GroupTotalsFormatter = (totals: any, 
     decimalSeparator,
     thousandSeparator,
     wrapNegativeNumber
-  } = retrieveFormatterOptions(columnDef, grid, 'dollar', 'group');
+  } = retrieveFormatterOptions(columnDef, grid, 'currency', 'group');
 
   if (val !== null && !isNaN(+val)) {
     const formattedNumber = formatNumber(val, minDecimal, maxDecimal, wrapNegativeNumber, '$', '', decimalSeparator, thousandSeparator);

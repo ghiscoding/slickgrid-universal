@@ -1,9 +1,12 @@
 import { avgTotalsPercentageFormatter } from './avgTotalsPercentageFormatter';
 import { avgTotalsDollarFormatter } from './avgTotalsDollarFormatter';
+import { avgTotalsCurrencyFormatter } from './avgTotalsCurrencyFormatter';
 import { avgTotalsFormatter } from './avgTotalsFormatter';
 import { minTotalsFormatter } from './minTotalsFormatter';
 import { maxTotalsFormatter } from './maxTotalsFormatter';
 import { sumTotalsColoredFormatter } from './sumTotalsColoredFormatter';
+import { sumTotalsCurrencyFormatter } from './sumTotalsCurrencyFormatter';
+import { sumTotalsCurrencyColoredFormatter } from './sumTotalsCurrencyColoredFormatter';
 import { sumTotalsDollarColoredBoldFormatter } from './sumTotalsDollarColoredBoldFormatter';
 import { sumTotalsDollarColoredFormatter } from './sumTotalsDollarColoredFormatter';
 import { sumTotalsDollarBoldFormatter } from './sumTotalsDollarBoldFormatter';
@@ -18,6 +21,12 @@ export const GroupTotalFormatters = {
    * Extra options available in "params":: "groupFormatterPrefix" and "groupFormatterSuffix", e.g.: params: { groupFormatterPrefix: '<i>Total</i>: ', groupFormatterSuffix: '$' }
    */
   avgTotals: avgTotalsFormatter,
+
+  /**
+   * Average all the column totals and display currency prefix/suffix via "groupFormatterCurrencyPrefix" and/or "groupFormatterCurrencySuffix"
+   * Extra options available in "params":: "groupFormatterPrefix" and "groupFormatterSuffix", e.g.: params: { groupFormatterPrefix: '<i>Total</i>: ', groupFormatterSuffix: '$' }
+   */
+  avgTotalsCurrency: avgTotalsCurrencyFormatter,
 
   /**
    * Average all the column totals and display '$' at the end of the value
@@ -60,6 +69,20 @@ export const GroupTotalFormatters = {
    * Extra options available in "params":: "groupFormatterPrefix" and "groupFormatterSuffix", e.g: params: { groupFormatterPrefix: '<i>Total</i>: ', groupFormatterSuffix: '$' }
    */
   sumTotalsColored: sumTotalsColoredFormatter,
+
+  /**
+   * Sums up all the column totals and display currency
+   * Extra options available in "params":: "groupFormatterPrefix", "groupFormatterSuffix", "groupFormatterCurrencyPrefix" and/or "groupFormatterCurrencySuffix"
+   * e.g: params: { groupFormatterPrefix: '<i>Total</i>: ', groupFormatterSuffix: '$' }
+   */
+  sumTotalsCurrency: sumTotalsCurrencyFormatter,
+
+  /**
+   * Sums up all the column totals and display currency with color of red/green text on negative/positive values
+   * Extra options available in "params":: "groupFormatterPrefix", "groupFormatterSuffix", "groupFormatterCurrencyPrefix" and/or "groupFormatterCurrencySuffix"
+   * e.g: params: { groupFormatterPrefix: '<i>Total</i>: ', groupFormatterSuffix: '$' }
+   */
+  sumTotalsCurrencyColored: sumTotalsCurrencyColoredFormatter,
 
   /**
    * Sums up all the column totals and display dollar sign

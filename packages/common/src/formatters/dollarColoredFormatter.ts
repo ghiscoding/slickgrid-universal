@@ -12,7 +12,7 @@ export const dollarColoredFormatter: Formatter = (_row, _cell, value, columnDef,
     decimalSeparator,
     thousandSeparator,
     wrapNegativeNumber,
-  } = retrieveFormatterOptions(columnDef, grid, 'dollar', 'cell');
+  } = retrieveFormatterOptions(columnDef, grid, 'currency', 'cell');
 
   if (isNumber(value)) {
     const colorStyle = (value >= 0) ? 'green' : 'red';

@@ -47,7 +47,7 @@ The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2
 The Vanilla Implementation (which is not associated to any framework) was built with [WebPack](https://webpack.js.org/) and is also used to run and test all the UI functionalities [Cypress](https://www.cypress.io/) (E2E tests). The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle), which extends the `vanilla-bundle` package is what we use in our SalesForce implementation (with Lightning Web Component), hence the creation of this monorepo library.
 
 ### Fully Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +15,000 lines of code (+3,700 unit tests) that are fully tested with [Jest](https://jestjs.io/). There are also +450 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (there's also an additional +500 tests in Angular/Aurelia-Slickgrid)
+Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +15,000 lines of code (~4,000 unit tests) that are fully tested with [Jest](https://jestjs.io/). There are also +450 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (there's also an additional +500 tests in Angular/Aurelia-Slickgrid)
 
 ### Available Public Packages
 
