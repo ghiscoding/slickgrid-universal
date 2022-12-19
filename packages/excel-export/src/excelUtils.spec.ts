@@ -330,6 +330,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: '.',
           maxDecimal: 4,
           minDecimal: 2,
@@ -348,6 +350,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: ',',
           maxDecimal: 4,
           minDecimal: 2,
@@ -365,6 +369,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: '.',
           maxDecimal: 4,
           minDecimal: 2,
@@ -382,6 +388,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: '.',
           maxDecimal: 4,
           minDecimal: 2,
@@ -399,6 +407,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: '.',
           maxDecimal: 4,
           minDecimal: 2,
@@ -416,6 +426,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: '.',
           maxDecimal: undefined,
           minDecimal: undefined,
@@ -433,6 +445,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: '.',
           maxDecimal: 2,
           minDecimal: 2,
@@ -450,6 +464,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: '.',
           maxDecimal: 2,
           minDecimal: 2,
@@ -467,6 +483,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: '.',
           maxDecimal: 2,
           minDecimal: 2,
@@ -484,6 +502,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: '.',
           maxDecimal: 2,
           minDecimal: 2,
@@ -502,6 +522,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: '.',
           maxDecimal: 2,
           minDecimal: 2,
@@ -520,6 +542,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'group');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: '.',
           maxDecimal: 2,
           minDecimal: 2,
@@ -540,6 +564,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'cell');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: '.',
           maxDecimal: 4,
           minDecimal: 2,
@@ -558,6 +584,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'cell');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: '.',
           maxDecimal: 4,
           minDecimal: 2,
@@ -576,6 +604,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'cell');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: '.',
           maxDecimal: 4,
           minDecimal: 2,
@@ -594,6 +624,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'cell');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: '.',
           maxDecimal: undefined,
           minDecimal: undefined,
@@ -612,6 +644,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'cell');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: '.',
           maxDecimal: undefined,
           minDecimal: undefined,
@@ -630,6 +664,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'cell');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: '.',
           maxDecimal: undefined,
           minDecimal: undefined,
@@ -648,6 +684,8 @@ describe('excelUtils', () => {
         const output = getNumericFormatterOptions(column, gridStub, 'cell');
 
         expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
           decimalSeparator: '.',
           maxDecimal: 2,
           minDecimal: 2,
@@ -673,6 +711,18 @@ describe('excelUtils', () => {
         expect(output).toEqual({ groupType: 'avg', stylesheetFormatter: { id: 135 } });
       });
 
+      it('should get excel excel metadata style format for GroupTotalFormatters.avgTotalsCurrency', () => {
+        const column = {
+          type: FieldType.number,
+          formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.avgTotalsCurrency,
+          params: { thousandSeparator: ' ', decimalSeparator: ',', numberSuffix: ' USD' }
+        } as Column;
+
+        const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
+
+        expect(output).toEqual({ groupType: 'avg', stylesheetFormatter: { id: 135 } });
+      });
+
       it('should get excel excel metadata style format for GroupTotalFormatters.avgTotalsDollar', () => {
         const column = {
           type: FieldType.number,
@@ -685,7 +735,7 @@ describe('excelUtils', () => {
         expect(output).toEqual({ groupType: 'avg', stylesheetFormatter: { id: 135 } });
       });
 
-      it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsDollarColored', () => {
+      it('should get excel excel metadata style format for GroupTotalFormatters.avgTotals', () => {
         const column = {
           type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.avgTotals,
         } as Column;
@@ -715,6 +765,24 @@ describe('excelUtils', () => {
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsColored', () => {
         const column = {
           type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsColored,
+        } as Column;
+        const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
+
+        expect(output).toEqual({ groupType: 'sum', stylesheetFormatter: { id: 135 } });
+      });
+
+      it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsCurrencyColored', () => {
+        const column = {
+          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsCurrencyColored,
+        } as Column;
+        const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
+
+        expect(output).toEqual({ groupType: 'sum', stylesheetFormatter: { id: 135 } });
+      });
+
+      it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsCurrencyColored', () => {
+        const column = {
+          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsCurrencyColored,
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
@@ -787,10 +855,22 @@ describe('excelUtils', () => {
     });
 
     describe('with regular Formatters', () => {
-      it('should get excel excel metadata style format for Formatters.dollarColoredBold', () => {
+      it('should get excel excel metadata style format for Formatters.currency', () => {
         const column = {
-          type: FieldType.number, formatter: Formatters.dollarColoredBold,
-          params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' }
+          type: FieldType.number,
+          formatter: Formatters.currency,
+          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+        } as Column;
+        const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
+
+        expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 135 } });
+      });
+
+      it('should get excel excel metadata style format for Formatters.dollar', () => {
+        const column = {
+          type: FieldType.number,
+          formatter: Formatters.dollar,
+          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
@@ -808,11 +888,10 @@ describe('excelUtils', () => {
         expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 135 } });
       });
 
-      it('should get excel excel metadata style format for Formatters.dollar', () => {
+      it('should get excel excel metadata style format for Formatters.dollarColoredBold', () => {
         const column = {
-          type: FieldType.number,
-          formatter: Formatters.dollar,
-          params: { displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+          type: FieldType.number, formatter: Formatters.dollarColoredBold,
+          params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' }
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 

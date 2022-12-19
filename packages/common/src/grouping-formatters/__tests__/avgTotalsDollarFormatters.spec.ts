@@ -8,63 +8,63 @@ describe('avgTotalsDollarFormatter', () => {
   } as unknown as SlickGrid;
 
   it('should display an empty string when no value is provided', () => {
-    const output = avgTotalsDollarFormatter({}, {} as Column);
+    const output = avgTotalsDollarFormatter({}, {} as Column, {} as SlickGrid);
     expect(output).toBe('');
   });
 
   it('should display an empty string when the "avg" does not find the field property in its object', () => {
     const columnDef = { id: 'column3', field: 'column3' } as Column;
     const totals = { avg: { column1: 123, column2: 345 } };
-    const output = avgTotalsDollarFormatter(totals, columnDef, {});
+    const output = avgTotalsDollarFormatter(totals, columnDef, {} as SlickGrid);
     expect(output).toBe('');
   });
 
   it('should display an empty string when the average number is null', () => {
     const columnDef = { id: 'column1', field: 'column1' } as Column;
     const totals = { avg: { column1: null } };
-    const output = avgTotalsDollarFormatter(totals, columnDef, {});
+    const output = avgTotalsDollarFormatter(totals, columnDef, {} as SlickGrid);
     expect(output).toBe('');
   });
 
   it('should display an empty string when the average input is not a number', () => {
     const columnDef = { id: 'column1', field: 'column1' } as Column;
     const totals = { avg: { column1: 'abc' } };
-    const output = avgTotalsDollarFormatter(totals, columnDef, {});
+    const output = avgTotalsDollarFormatter(totals, columnDef, {} as SlickGrid);
     expect(output).toBe('');
   });
 
   it('should display a negative average with dollar sign when its input is negative', () => {
     const columnDef = { id: 'column3', field: 'column3' } as Column;
     const totals = { avg: { column1: 123, column2: 345, column3: -2.45 } };
-    const output = avgTotalsDollarFormatter(totals, columnDef, {});
+    const output = avgTotalsDollarFormatter(totals, columnDef, {} as SlickGrid);
     expect(output).toBe('-$2.45');
   });
 
   it('should display a negative average with dollar sign and thousand separator when its input is negative', () => {
     const columnDef = { id: 'column3', field: 'column3', params: { thousandSeparator: ',' } } as Column;
     const totals = { avg: { column1: 123, column2: 345, column3: -12345678.45 } };
-    const output = avgTotalsDollarFormatter(totals, columnDef, {});
+    const output = avgTotalsDollarFormatter(totals, columnDef, {} as SlickGrid);
     expect(output).toBe('-$12,345,678.45');
   });
 
   it('should display a negative average with dollar sign, comma as decimal separator and underscore as thousand separator when its input is negative', () => {
     const columnDef = { id: 'column3', field: 'column3', params: { decimalSeparator: ',', thousandSeparator: '_' } } as Column;
     const totals = { avg: { column1: 123, column2: 345, column3: -12345678.45 } };
-    const output = avgTotalsDollarFormatter(totals, columnDef, {});
+    const output = avgTotalsDollarFormatter(totals, columnDef, {} as SlickGrid);
     expect(output).toBe('-$12_345_678,45');
   });
 
   it('should display a negative average with parentheses instead of the negative sign with dollar sign when its input is negative', () => {
     const columnDef = { id: 'column3', field: 'column3', params: { displayNegativeNumberWithParentheses: true } } as Column;
     const totals = { avg: { column1: 123, column2: 345, column3: -2.4 } };
-    const output = avgTotalsDollarFormatter(totals, columnDef, {});
+    const output = avgTotalsDollarFormatter(totals, columnDef, {} as SlickGrid);
     expect(output).toBe('($2.40)');
   });
 
   it('should display a negative average with parentheses instead of the negative sign with dollar sign and thousand separator when its input is negative', () => {
     const columnDef = { id: 'column3', field: 'column3', params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column;
     const totals = { avg: { column1: 123, column2: 345, column3: -12345678.4 } };
-    const output = avgTotalsDollarFormatter(totals, columnDef, {});
+    const output = avgTotalsDollarFormatter(totals, columnDef, {} as SlickGrid);
     expect(output).toBe('($12,345,678.40)');
   });
 
@@ -128,7 +128,7 @@ describe('avgTotalsDollarFormatter', () => {
       totals, {
         id: 'column3', field: 'column3',
         params: { minDecimal: 3, displayNegativeNumberWithParentheses: true, groupFormatterPrefix: 'Avg: ', groupFormatterSuffix: '/item' }
-      } as Column);
+      } as Column, {} as SlickGrid);
 
     expect(output1).toBe('Avg: $123.46');
     expect(output2).toBe('$345.2 (avg)');
@@ -144,7 +144,7 @@ describe('avgTotalsDollarFormatter', () => {
       totals, {
         id: 'column3', field: 'column3',
         params: { minDecimal: 3, displayNegativeNumberWithParentheses: true, groupFormatterPrefix: 'Avg: ', groupFormatterSuffix: '/item', decimalSeparator: ',', thousandSeparator: '_' }
-      } as Column);
+      } as Column, {} as SlickGrid);
 
     expect(output1).toBe('Avg: $12_345_678,46');
     expect(output2).toBe('$345_678,2 (avg)');

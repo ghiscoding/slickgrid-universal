@@ -12,7 +12,7 @@ export const dollarFormatter: Formatter = (_row, _cell, value, columnDef, _dataC
     decimalSeparator,
     thousandSeparator,
     wrapNegativeNumber,
-  } = retrieveFormatterOptions(columnDef, grid, 'dollar', 'cell');
+  } = retrieveFormatterOptions(columnDef, grid, 'currency', 'cell');
 
   if (isNumber(value)) {
     return formatNumber(value, minDecimal, maxDecimal, wrapNegativeNumber, '$', '', decimalSeparator, thousandSeparator);

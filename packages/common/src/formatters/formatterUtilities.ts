@@ -8,7 +8,7 @@ import { Constants } from '../constants';
 const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 export type FormatterType = 'group' | 'cell';
-export type NumberType = 'decimal' | 'dollar' | 'percent' | 'regular';
+export type NumberType = 'decimal' | 'currency' | 'percent' | 'regular';
 
 /**
  * Automatically add a Custom Formatter on all column definitions that have an Editor.
@@ -44,13 +44,13 @@ export function retrieveFormatterOptions(columnDef: Column, grid: SlickGrid, num
   let numberSuffix = '';
 
   switch (numberType) {
+    case 'currency':
+      defaultMinDecimal = Constants.DEFAULT_FORMATTER_CURRENCY_MIN_DECIMAL;
+      defaultMaxDecimal = Constants.DEFAULT_FORMATTER_CURRENCY_MAX_DECIMAL;
+      break;
     case 'decimal':
       defaultMinDecimal = Constants.DEFAULT_FORMATTER_NUMBER_MIN_DECIMAL;
       defaultMaxDecimal = Constants.DEFAULT_FORMATTER_NUMBER_MAX_DECIMAL;
-      break;
-    case 'dollar':
-      defaultMinDecimal = Constants.DEFAULT_FORMATTER_DOLLAR_MIN_DECIMAL;
-      defaultMaxDecimal = Constants.DEFAULT_FORMATTER_DOLLAR_MAX_DECIMAL;
       break;
     case 'percent':
       defaultMinDecimal = Constants.DEFAULT_FORMATTER_PERCENT_MIN_DECIMAL;
@@ -64,13 +64,15 @@ export function retrieveFormatterOptions(columnDef: Column, grid: SlickGrid, num
   const decimalSeparator = getValueFromParamsOrFormatterOptions('decimalSeparator', columnDef, grid, Constants.DEFAULT_NUMBER_DECIMAL_SEPARATOR);
   const thousandSeparator = getValueFromParamsOrFormatterOptions('thousandSeparator', columnDef, grid, Constants.DEFAULT_NUMBER_THOUSAND_SEPARATOR);
   const wrapNegativeNumber = getValueFromParamsOrFormatterOptions('displayNegativeNumberWithParentheses', columnDef, grid, Constants.DEFAULT_NEGATIVE_NUMBER_WRAPPED_IN_BRAQUET);
+  const currencyPrefix = getValueFromParamsOrFormatterOptions('currencyPrefix', columnDef, grid, '');
+  const currencySuffix = getValueFromParamsOrFormatterOptions('currencySuffix', columnDef, grid, '');
 
   if (formatterType === 'cell') {
     numberPrefix = getValueFromParamsOrFormatterOptions('numberPrefix', columnDef, grid, '');
     numberSuffix = getValueFromParamsOrFormatterOptions('numberSuffix', columnDef, grid, '');
   }
 
-  return { minDecimal, maxDecimal, decimalSeparator, thousandSeparator, wrapNegativeNumber, numberPrefix, numberSuffix };
+  return { minDecimal, maxDecimal, decimalSeparator, thousandSeparator, wrapNegativeNumber, currencyPrefix, currencySuffix, numberPrefix, numberSuffix };
 }
 
 /**
@@ -85,7 +87,7 @@ export function getValueFromParamsOrFormatterOptions(optionName: string, columnD
 
   if (params && params.hasOwnProperty(optionName)) {
     return params[optionName];
-  } else if (gridOptions.formatterOptions?.hasOwnProperty(optionName)) {
+  } else if (gridOptions?.formatterOptions?.hasOwnProperty(optionName)) {
     return (gridOptions.formatterOptions as any)[optionName];
   }
   return defaultValue;
