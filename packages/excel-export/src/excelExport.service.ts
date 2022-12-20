@@ -32,7 +32,6 @@ import {
   GetDataValueCallback,
   getGroupTotalValue,
   getExcelFormatFromGridFormatter,
-  getExcelNumberCallback,
   useCellFormatByFieldType,
 } from './excelUtils';
 
@@ -566,12 +565,12 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           // auto-detect best possible Excel format, unless the user provide his own formatting,
           // we only do this check once per column (everything after that will be pull from temp ref)
           if (!this._regularCellExcelFormats.hasOwnProperty(columnDef.id)) {
+            const cellStyleFormat = useCellFormatByFieldType(this._stylesheet, this._stylesheetFormats, columnDef, this._grid);
             if (columnDef.excelExportOptions?.style) {
               const excelCustomStyling = this._stylesheet.createFormat(columnDef.excelExportOptions.style);
-              this._regularCellExcelFormats[columnDef.id] = { stylesheetFormatterId: excelCustomStyling.id, getDataValueCallback: getExcelNumberCallback };
-            } else {
-              this._regularCellExcelFormats[columnDef.id] = useCellFormatByFieldType(this._stylesheet, this._stylesheetFormats, columnDef, this._grid);
+              cellStyleFormat.stylesheetFormatterId = excelCustomStyling.id;
             }
+            this._regularCellExcelFormats[columnDef.id] = cellStyleFormat;
           }
           const { stylesheetFormatterId, getDataValueCallback } = this._regularCellExcelFormats[columnDef.id];
           itemData = getDataValueCallback(itemObj[columnDef.field], stylesheetFormatterId, fieldType);
