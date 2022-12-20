@@ -1,3 +1,4 @@
+import { ExcelCustomStyling } from './columnExcelExportOption.interface';
 import { ExcelWorksheet } from './excelWorksheet.interface';
 import { ExcelWorkbook } from './excelWorkbook.interface';
 import { FileType } from '../enums/fileType.enum';
@@ -6,8 +7,8 @@ export interface ExcelExportOption {
   /** Defaults to true, when grid is using Grouping, it will show indentation of the text with collapsed/expanded symbol as well */
   addGroupIndentation?: boolean;
 
-  /** If defined apply the style to header columns. Else use the bold style */
-  columnHeaderStyle?: any;
+  /** When defined, this will override header titles styling, when undefined the default will be a bold style */
+  columnHeaderStyle?: ExcelCustomStyling;
 
   /** If set then this will be used as column width for all columns */
   customColumnWidth?: number;

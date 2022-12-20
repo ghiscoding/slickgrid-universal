@@ -19,12 +19,12 @@ export type ExcelFormatter = object & { id: number; };
 export type GetDataValueCallback = (data: Date | string | number, excelFormatterId: number | undefined, fieldType: typeof FieldType[keyof typeof FieldType]) => Date | string | number | ExcelCellFormat;
 
 // define all type of potential excel data function callbacks
-const getExcelInputDataCallback: GetDataValueCallback = (data) => data;
-const getExcelNumberCallback: GetDataValueCallback = (data, excelFormatterId) => ({
+export const getExcelInputDataCallback: GetDataValueCallback = (data) => data;
+export const getExcelNumberCallback: GetDataValueCallback = (data, excelFormatterId) => ({
   value: isNumber(data) ? +data : data,
   metadata: { style: excelFormatterId }
 });
-const getExcelDateCallback: GetDataValueCallback = (data, _excelFormatterId, fieldType) => {
+export const getExcelDateCallback: GetDataValueCallback = (data, _excelFormatterId, fieldType) => {
   let outputData: any;
   if (data) {
     const dateFormat: string = mapMomentDateFormatWithFieldType(fieldType);

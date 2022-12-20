@@ -2,6 +2,7 @@
 import {
   CellMenu,
   ColumnEditor,
+  ColumnExcelExportOption,
   ColumnFilter,
   CustomTooltipOption,
   EditorValidator,
@@ -79,6 +80,9 @@ export interface Column<T = any> {
   /** Any inline editor function that implements Editor for the cell value or ColumnEditor */
   editor?: ColumnEditor;
 
+  /** Excel export custom options for cell formatting & width, this option only works when `exportWithExcelFormat` is enabled */
+  excelExportOptions?: ColumnExcelExportOption;
+
   /** Default to false, which leads to exclude the column title from the Column Picker. */
   excludeFromColumnPicker?: boolean;
 
@@ -94,7 +98,7 @@ export interface Column<T = any> {
   /** Defaults to false, which leads to exclude the column from getting a header menu. For example, the checkbox row selection should not have a header menu. */
   excludeFromHeaderMenu?: boolean;
 
-  /** If defined this will be set as column width in Excel */
+  /** @deprecated @use `excelExportOptions` in the future. This option let you defined this Excel column width */
   exportColumnWidth?: number;
 
   /**
@@ -162,6 +166,9 @@ export interface Column<T = any> {
 
   /** Grouping option used by a Draggable Grouping Column */
   grouping?: Grouping;
+
+  /** Excel export custom options for cell formatting & width, this option only works when `exportWithExcelFormat` is enabled */
+  groupTotalsExcelExportOptions?: Exclude<ColumnExcelExportOption, 'width'>;
 
   /** Group Totals Formatter function that can be used to add grouping totals in the grid */
   groupTotalsFormatter?: GroupTotalsFormatter;

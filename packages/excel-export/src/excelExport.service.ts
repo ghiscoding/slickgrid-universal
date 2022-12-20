@@ -26,12 +26,15 @@ import {
 } from '@slickgrid-universal/common';
 import { addWhiteSpaces, deepCopy, titleCase } from '@slickgrid-universal/utils';
 
+import { ExcelCellFormat, ExcelMetadata, ExcelStylesheet, } from './interfaces/index';
 import {
-  ExcelCellFormat,
-  ExcelMetadata,
-  ExcelStylesheet,
-} from './interfaces/index';
-import { getGroupTotalValue, getExcelFormatFromGridFormatter, useCellFormatByFieldType, ExcelFormatter, GetDataValueCallback } from './excelUtils';
+  ExcelFormatter,
+  GetDataValueCallback,
+  getGroupTotalValue,
+  getExcelFormatFromGridFormatter,
+  getExcelNumberCallback,
+  useCellFormatByFieldType,
+} from './excelUtils';
 
 const DEFAULT_EXPORT_OPTIONS: ExcelExportOption = {
   filename: 'export',
@@ -83,6 +86,14 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     return this._stylesheetFormats;
   }
 
+  get groupTotalExcelFormats() {
+    return this._groupTotalExcelFormats;
+  }
+
+  get regularCellExcelFormats() {
+    return this._regularCellExcelFormats;
+  }
+
   dispose() {
     this._pubSubService?.unsubscribeAll();
   }
@@ -119,6 +130,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       throw new Error('[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableExcelExport"?');
     }
 
+    // wrap in a Promise so that we can add loading spinner
     return new Promise(resolve => {
       this._pubSubService?.publish(`onBeforeExportToExcel`, true);
       this._excelExportOptions = deepCopy({ ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.excelExportOptions, ...options });
@@ -136,6 +148,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
       // add any Excel Format/Stylesheet to current Workbook
       this._stylesheet = this._workbook.getStyleSheet();
+
+      // create some common default Excel formatters that will be used
       const boldFormatter = this._stylesheet.createFormat({ font: { bold: true } });
       const stringFormatter = this._stylesheet.createFormat({ format: '@' });
       const numberFormatter = this._stylesheet.createFormat({ format: '0' });
@@ -257,7 +271,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
     // data variable which will hold all the fields data of a row
     const outputData: Array<string[] | ExcelCellFormat[]> = [];
-    const columnHeaderStyle = this._gridOptions?.excelExportOptions?.columnHeaderStyle;
+    const gridExportOptions = this._gridOptions?.excelExportOptions;
+    const columnHeaderStyle = gridExportOptions?.columnHeaderStyle;
     let columnHeaderStyleId = this._stylesheetFormats.boldFormatter.id;
     if (columnHeaderStyle) {
       columnHeaderStyleId = this._stylesheet.createFormat(columnHeaderStyle).id;
@@ -298,7 +313,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
         columnStyles.push({
           bestFit: true,
-          width: columnDef.exportColumnWidth ?? this._gridOptions?.excelExportOptions?.customColumnWidth ?? 10
+          width: columnDef.exportColumnWidth ?? columnDef.excelExportOptions?.width ?? this._gridOptions?.excelExportOptions?.customColumnWidth ?? 10
         });
       }
     });
@@ -548,9 +563,15 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           // get the output by analyzing if we'll pull the value from the cell or from a formatter
           itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, this._excelExportOptions);
         } else if (this.isExportingWithExcelFormat(columnDef)) {
-          // auto-detect best possible Excel format, we only do this check once per column (everything after that will be pull from temp ref)
+          // auto-detect best possible Excel format, unless the user provide his own formatting,
+          // we only do this check once per column (everything after that will be pull from temp ref)
           if (!this._regularCellExcelFormats.hasOwnProperty(columnDef.id)) {
-            this._regularCellExcelFormats[columnDef.id] = useCellFormatByFieldType(this._stylesheet, this._stylesheetFormats, columnDef, this._grid);
+            if (columnDef.excelExportOptions?.style) {
+              const excelCustomStyling = this._stylesheet.createFormat(columnDef.excelExportOptions.style);
+              this._regularCellExcelFormats[columnDef.id] = { stylesheetFormatterId: excelCustomStyling.id, getDataValueCallback: getExcelNumberCallback };
+            } else {
+              this._regularCellExcelFormats[columnDef.id] = useCellFormatByFieldType(this._stylesheet, this._stylesheetFormats, columnDef, this._grid);
+            }
           }
           const { stylesheetFormatterId, getDataValueCallback } = this._regularCellExcelFormats[columnDef.id];
           itemData = getDataValueCallback(itemObj[columnDef.field], stylesheetFormatterId, fieldType);
@@ -616,11 +637,15 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       const fieldType = columnDef.outputType || columnDef.type || FieldType.string;
       const skippedField = columnDef.excludeFromExport || false;
 
-      // use different Excel Stylesheet Format as per the Field Type
+      // auto-detect best possible Excel format for Group Totals, unless the user provide his own formatting,
+      // we only do this check once per column (everything after that will be pull from temp ref)
       if (this.isExportingWithExcelFormat(columnDef) && fieldType === FieldType.number) {
         let groupCellFormat = this._groupTotalExcelFormats[columnDef.id];
         if (!groupCellFormat?.groupType) {
           groupCellFormat = getExcelFormatFromGridFormatter(this._stylesheet, this._stylesheetFormats, columnDef, this._grid, 'group');
+          if (columnDef.groupTotalsExcelExportOptions?.style) {
+            groupCellFormat.stylesheetFormatter = this._stylesheet.createFormat(columnDef.groupTotalsExcelExportOptions.style);
+          }
           this._groupTotalExcelFormats[columnDef.id] = groupCellFormat;
         }
 

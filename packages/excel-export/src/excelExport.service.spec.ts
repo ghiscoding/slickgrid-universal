@@ -20,7 +20,7 @@ import * as ExcelBuilder from 'excel-builder-webpacker';
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 import { ExcelExportService } from './excelExport.service';
-import { useCellFormatByFieldType } from './excelUtils';
+import { getExcelNumberCallback, useCellFormatByFieldType } from './excelUtils';
 
 const pubSubServiceStub = {
   publish: jest.fn(),
@@ -542,7 +542,10 @@ describe('ExcelExportService', () => {
           { id: 'userId', field: 'userId', name: 'User Id', width: 100 },
           { id: 'firstName', field: 'firstName', width: 100, formatter: myBoldHtmlFormatter, exportWithExcelFormat: false },
           { id: 'lastName', field: 'lastName', width: 100, sanitizeDataExport: true, exportWithFormatter: true, exportWithExcelFormat: false },
-          { id: 'position', field: 'position', width: 100 },
+          {
+            id: 'position', field: 'position', width: 100,
+            excelExportOptions: { style: { font: { outline: true, italic: true }, format: '€0.00##;[Red](€0.00##)' }, width: 18 }
+          },
           { id: 'startDate', field: 'startDate', type: FieldType.dateIso, width: 100, exportWithFormatter: false, },
           { id: 'endDate', field: 'endDate', width: 100, formatter: Formatters.dateIso, type: FieldType.dateUtc, exportWithFormatter: true, outputType: FieldType.dateIso },
         ] as Column[];
@@ -550,6 +553,9 @@ describe('ExcelExportService', () => {
         jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       });
 
+      afterEach(() => {
+        jest.clearAllMocks();
+      });
 
       it(`should expect Date exported correctly when Field Type is provided and we use "exportWithFormatter" set to True & False`, async () => {
         mockCollection = [
@@ -563,10 +569,10 @@ describe('ExcelExportService', () => {
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
-
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
+        expect(service.stylesheet).toBeTruthy();
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
         expect(spyDownload).toHaveBeenCalledWith({
@@ -579,9 +585,13 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'StartDate', },
               { metadata: { style: 1, }, value: 'EndDate', },
             ],
-            ['1E06', 'John', 'X', 'SALES_REP', '2005-12-20', ''],
-            ['1E09', 'Jane', 'Doe', 'HUMAN_RESOURCES', '2010-10-09', '2024-01-02'],
+            ['1E06', 'John', 'X', { value: 'SALES_REP', metadata: { style: 4 } }, '2005-12-20', ''],
+            ['1E09', 'Jane', 'Doe', { value: 'HUMAN_RESOURCES', metadata: { style: 4 } }, '2010-10-09', '2024-01-02'],
           ]
+        });
+        expect(service.regularCellExcelFormats.position).toEqual({
+          getDataValueCallback: getExcelNumberCallback,
+          stylesheetFormatterId: 4,
         });
       });
     });
@@ -828,6 +838,7 @@ describe('ExcelExportService', () => {
             id: 'order', field: 'order', type: FieldType.number,
             exportWithFormatter: true,
             formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
+            groupTotalsExcelExportOptions: { style: { font: { bold: true, italic: true }, format: '€0.00##;[Red](€0.00##)' }, },
             groupTotalsFormatter: GroupTotalFormatters.sumTotals,
           },
         ] as Column[];
@@ -894,8 +905,16 @@ describe('ExcelExportService', () => {
             ['⮟ Order: 20 (2 items)'],
             ['', '1E06', 'John', 'X', 'SALES_REP', '10'],
             ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '10'],
-            ['', '', '', '', '', { value: 20, metadata: { style: 4, type: 'number' } }],
+            ['', '', '', '', '', { value: 20, metadata: { style: 5, type: 'number' } }],
           ]
+        });
+        expect(service.groupTotalExcelFormats.order).toEqual({
+          groupType: 'sum',
+          stylesheetFormatter: {
+            fontId: 2,
+            id: 5,
+            numFmtId: 103,
+          }
         });
       });
     });
