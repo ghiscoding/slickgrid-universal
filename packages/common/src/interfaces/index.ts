@@ -19,6 +19,7 @@ export * from './collectionSortBy.interface';
 export * from './column.interface';
 export * from './columnEditor.interface';
 export * from './columnEditorDualInput.interface';
+export * from './columnExcelExportOption.interface';
 export * from './columnFilter.interface';
 export * from './columnFilters.interface';
 export * from './columnPicker.interface';

@@ -1,3 +1,4 @@
+import { ExcelCustomStyling } from './columnExcelExportOption.interface';
 import { ExcelWorksheet } from './excelWorksheet.interface';
 import { ExcelWorkbook } from './excelWorkbook.interface';
 import { FileType } from '../enums/fileType.enum';
@@ -6,8 +7,8 @@ export interface ExcelExportOption {
   /** Defaults to true, when grid is using Grouping, it will show indentation of the text with collapsed/expanded symbol as well */
   addGroupIndentation?: boolean;
 
-  /** If defined apply the style to header columns. Else use the bold style */
-  columnHeaderStyle?: any;
+  /** When defined, this will override header titles styling, when undefined the default will be a bold style */
+  columnHeaderStyle?: ExcelCustomStyling;
 
   /** If set then this will be used as column width for all columns */
   customColumnWidth?: number;
@@ -16,9 +17,9 @@ export interface ExcelExportOption {
   exportWithFormatter?: boolean;
 
   /**
-   * Defaults to true, which leads to ExcelExportService trying to detect the best possible Excel format for each cell.
-   * The difference the other flag is that "exportWithFormatter" will always export as a string, while this option here will try to detect the best Excel format.
-   * NOTE: Date will still be exported as string, the numbers are the ones taking the best advantage from this option.
+   * Defaults to true, which leads to ExcelExportService that will try to detect the best possible Excel format for each cell.
+   * The difference with the other flag is that "exportWithFormatter" will always export as a string, while this option here will try to detect the best Excel format and cell type.
+   * NOTE: Date will be exported as string (not as Excel Date), the numbers are the ones making the best out of this option.
    */
   exportWithExcelFormat?: boolean;
 

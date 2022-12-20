@@ -122,15 +122,34 @@ export class Example2 {
       },
       {
         id: 'cost', name: 'Cost', field: 'cost',
-        minWidth: 70,
-        width: 80,
-        filterable: true,
+        minWidth: 70, width: 80,
+        sortable: true, filterable: true,
         filter: { model: Filters.compoundInputNumber },
         type: FieldType.number,
-        sortable: true,
-        formatter: Formatters.decimal,
-        groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
-        params: { displayNegativeNumberWithParentheses: true, numberPrefix: '€ ', minDecimal: 2, maxDecimal: 4, groupFormatterPrefix: '<b>Total</b>: ' /* , groupFormatterSuffix: ' USD' */ },
+        formatter: Formatters.currency,
+        groupTotalsFormatter: GroupTotalFormatters.sumTotalsCurrency,
+        params: { displayNegativeNumberWithParentheses: true, currencyPrefix: '€', groupFormatterCurrencyPrefix: '€', minDecimal: 2, maxDecimal: 4, groupFormatterPrefix: '<b>Total</b>: ' },
+        excelExportOptions: {
+          style: {
+            font: { outline: true, italic: true },
+            format: '€0.00##;[Red](€0.00##)',
+          },
+          width: 18
+        },
+        groupTotalsExcelExportOptions: {
+          style: {
+            alignment: { horizontal: 'center' },
+            font: { bold: true, color: 'FF005289', underline: 'single', fontName: 'Consolas', size: 10 },
+            fill: { type: 'pattern', patternType: 'solid', fgColor: 'FFE6F2F6' },
+            border: {
+              top: { color: 'FFa500ff', style: 'thick', },
+              left: { color: 'FFa500ff', style: 'medium', },
+              right: { color: 'FFa500ff', style: 'dotted', },
+              bottom: { color: 'FFa500ff', style: 'double', },
+            },
+            format: '"Total: "€0.00##;[Red]"Total: "(€0.00##)'
+          },
+        },
       },
       {
         id: 'effortDriven', name: 'Effort Driven',
@@ -167,7 +186,15 @@ export class Example2 {
         onColumnsChanged: (e, args) => console.log(e, args)
       },
       enableExcelExport: true,
-      excelExportOptions: { filename: 'my-export', sanitizeDataExport: true, exportWithExcelFormat: true, },
+      excelExportOptions: {
+        filename: 'my-export',
+        sanitizeDataExport: true,
+        exportWithExcelFormat: true,
+        columnHeaderStyle: {
+          font: { color: 'FFFFFFFF' },
+          fill: { type: 'pattern', patternType: 'solid', fgColor: 'FF4a6c91' }
+        }
+      },
       textExportOptions: { filename: 'my-export', sanitizeDataExport: true },
       registerExternalResources: [this.excelExportService, new TextExportService()],
       showCustomFooter: true, // display some metrics in the bottom custom footer
@@ -189,6 +216,7 @@ export class Example2 {
       const randomMonth = Math.floor(Math.random() * 11);
       const randomDay = Math.floor((Math.random() * 29));
       const randomPercent = Math.round(Math.random() * 100);
+      const randomCost = (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100;
 
       tmpArray[i] = {
         id: 'id_' + i,
@@ -199,7 +227,7 @@ export class Example2 {
         percentCompleteNumber: randomPercent,
         start: new Date(randomYear, randomMonth, randomDay),
         finish: new Date(randomYear, (randomMonth + 1), randomDay),
-        cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
+        cost: i % 3 ? randomCost : -randomCost,
         effortDriven: (i % 5 === 0)
       };
     }
