@@ -558,12 +558,11 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
         // -- Read Data & Push to Data Array
         // user might want to export with Formatter, and/or auto-detect Excel format, and/or export as regular cell data
-        if (columnDef.exportWithFormatter || columnDef.exportCustomFormatter) {
-          // get the output by analyzing if we'll pull the value from the cell or from a formatter
-          itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, this._excelExportOptions);
-        } else if (this.isExportingWithExcelFormat(columnDef)) {
-          // auto-detect best possible Excel format, unless the user provide his own formatting,
-          // we only do this check once per column (everything after that will be pull from temp ref)
+        itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, this._excelExportOptions);
+
+        // auto-detect best possible Excel format, unless the user provide his own formatting,
+        // we only do this check once per column (everything after that will be pull from temp ref)
+        if (this.isExportingWithExcelFormat(columnDef)) {
           if (!this._regularCellExcelFormats.hasOwnProperty(columnDef.id)) {
             const cellStyleFormat = useCellFormatByFieldType(this._stylesheet, this._stylesheetFormats, columnDef, this._grid);
             if (columnDef.excelExportOptions?.style) {
@@ -573,14 +572,11 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
             this._regularCellExcelFormats[columnDef.id] = cellStyleFormat;
           }
           const { stylesheetFormatterId, getDataValueCallback } = this._regularCellExcelFormats[columnDef.id];
-          itemData = getDataValueCallback(itemObj[columnDef.field], stylesheetFormatterId, fieldType);
-        } else {
-          // at this point user might still have enabled exportWithFormatter in grid options or else cell will be exported "as is"
-          itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, this._excelExportOptions);
+          itemData = getDataValueCallback(itemData, stylesheetFormatterId, fieldType);
         }
 
         // does the user want to sanitize the output data (remove HTML tags)?
-        if (!this.isExportingWithExcelFormat(columnDef) && typeof itemData === 'string' && (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport)) {
+        if (typeof itemData === 'string' && (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport)) {
           itemData = sanitizeHtmlToText(itemData as string);
         }
 

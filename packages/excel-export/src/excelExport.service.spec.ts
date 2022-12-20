@@ -903,8 +903,8 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'Order', },
             ],
             ['⮟ Order: 20 (2 items)'],
-            ['', '1E06', 'John', 'X', 'SALES_REP', '10'],
-            ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '10'],
+            ['', '1E06', 'John', 'X', 'SALES_REP', { metadata: { style: 3, type: "number", }, value: 10, }],
+            ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', { metadata: { style: 3, type: "number", }, value: 10, }],
             ['', '', '', '', '', { value: 20, metadata: { style: 5, type: 'number' } }],
           ]
         });
