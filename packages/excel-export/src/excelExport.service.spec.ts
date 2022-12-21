@@ -921,7 +921,7 @@ describe('ExcelExportService', () => {
             numFmtId: 103,
           }
         });
-        expect(parserCallbackSpy).toHaveBeenCalledWith('22', mockColumns[6], undefined, expect.anything());
+        expect(parserCallbackSpy).toHaveBeenCalledWith(22, mockColumns[6], undefined, expect.anything());
       });
     });
 
