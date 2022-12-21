@@ -200,7 +200,7 @@ export function parseFormatterWhenExist<T = any>(formatter: Formatter<T> | undef
   }
 
   // if at the end we have an empty object, then replace it with an empty string
-  if (typeof output === 'object' && Object.entries(output).length === 0) {
+  if (typeof output === 'object' && !((output as any) instanceof Date) && Object.entries(output).length === 0) {
     output = '';
   }
 

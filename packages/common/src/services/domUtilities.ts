@@ -318,9 +318,12 @@ export function htmlEncodedStringWithPadding(inputStr: string, paddingLength: nu
  * @return text
  */
 export function sanitizeHtmlToText(htmlString: string): string {
-  const temp = document.createElement('div');
-  temp.innerHTML = htmlString;
-  return temp.textContent || temp.innerText || '';
+  if (typeof htmlString === 'string') {
+    const temp = document.createElement('div');
+    temp.innerHTML = htmlString;
+    return temp.textContent || temp.innerText || '';
+  }
+  return htmlString;
 }
 
 /**
