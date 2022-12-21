@@ -16,9 +16,11 @@ import {
   ExcelWorksheet,
   FieldType,
   FileType,
+  getColumnFieldType,
   GetDataValueCallback,
   GetGroupTotalValueCallback,
   GridOption,
+  isColumnDateType,
   KeyTitlePair,
   Locale,
   PubSubService,
@@ -33,7 +35,6 @@ import {
   ExcelFormatter,
   getGroupTotalValue,
   getExcelFormatFromGridFormatter,
-  isColumnDateType,
   useCellFormatByFieldType,
 } from './excelUtils';
 
@@ -555,13 +556,14 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         }
       } else {
         let itemData: Date | number | string | ExcelCellFormat = '';
+        const fieldType = getColumnFieldType(columnDef);
 
         // -- Read Data & Push to Data Array
         // user might want to export with Formatter, and/or auto-detect Excel format, and/or export as regular cell data
 
         // for column that are Date type, we'll always export with their associated Date Formatters unless `exportWithFormatter` is specifically set to false
         const exportOptions = { ...this._excelExportOptions };
-        if (columnDef?.exportWithFormatter !== false && isColumnDateType(columnDef)) {
+        if (columnDef?.exportWithFormatter !== false && isColumnDateType(fieldType)) {
           exportOptions.exportWithFormatter = true;
         }
         itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, exportOptions);
@@ -622,7 +624,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
     columns.forEach((columnDef) => {
       let itemData: number | string | ExcelCellFormat = '';
-      const fieldType = columnDef.outputType || columnDef.type || FieldType.string;
+      const fieldType = getColumnFieldType(columnDef);
       const skippedField = columnDef.excludeFromExport || false;
 
       // if there's a exportCustomGroupTotalsFormatter or groupTotalsFormatter, we will re-run it to get the exact same output as what is shown in UI

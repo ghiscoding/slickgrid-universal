@@ -4,6 +4,7 @@ import {
   FieldType,
   Formatters,
   FormatterType,
+  getColumnFieldType,
   GetDataValueCallback,
   GroupTotalFormatters,
   isNumber,
@@ -21,45 +22,9 @@ export const getExcelNumberCallback: GetDataValueCallback = (data, _col, excelFo
   metadata: { style: excelFormatterId }
 });
 
-export function isColumnDateType(columnDef: Column) {
-  const fieldType = columnDef.outputType || columnDef.type || FieldType.string;
-
-  switch (fieldType) {
-    case FieldType.date:
-    case FieldType.dateTime:
-    case FieldType.dateIso:
-    case FieldType.dateTimeIso:
-    case FieldType.dateTimeShortIso:
-    case FieldType.dateTimeIsoAmPm:
-    case FieldType.dateTimeIsoAM_PM:
-    case FieldType.dateEuro:
-    case FieldType.dateEuroShort:
-    case FieldType.dateTimeEuro:
-    case FieldType.dateTimeShortEuro:
-    case FieldType.dateTimeEuroAmPm:
-    case FieldType.dateTimeEuroAM_PM:
-    case FieldType.dateTimeEuroShort:
-    case FieldType.dateTimeEuroShortAmPm:
-    case FieldType.dateTimeEuroShortAM_PM:
-    case FieldType.dateUs:
-    case FieldType.dateUsShort:
-    case FieldType.dateTimeUs:
-    case FieldType.dateTimeShortUs:
-    case FieldType.dateTimeUsAmPm:
-    case FieldType.dateTimeUsAM_PM:
-    case FieldType.dateTimeUsShort:
-    case FieldType.dateTimeUsShortAmPm:
-    case FieldType.dateTimeUsShortAM_PM:
-    case FieldType.dateUtc:
-      return true;
-    default:
-      return false;
-  }
-}
-
 /** use different Excel Stylesheet Format as per the Field Type */
 export function useCellFormatByFieldType(stylesheet: ExcelStylesheet, stylesheetFormatters: any, columnDef: Column, grid: SlickGrid) {
-  const fieldType = columnDef.outputType || columnDef.type || FieldType.string;
+  const fieldType = getColumnFieldType(columnDef);
   let stylesheetFormatterId: number | undefined;
   let callback: GetDataValueCallback = getExcelSameInputDataCallback;
 
@@ -134,7 +99,7 @@ export function getExcelFormatFromGridFormatter(stylesheet: ExcelStylesheet, sty
   let format = '';
   let groupType = '';
   let stylesheetFormatter: undefined | ExcelFormatter;
-  const fieldType = columnDef.outputType || columnDef.type || FieldType.string;
+  const fieldType = getColumnFieldType(columnDef);
 
   if (formatterType === 'group') {
     switch (columnDef.groupTotalsFormatter) {
