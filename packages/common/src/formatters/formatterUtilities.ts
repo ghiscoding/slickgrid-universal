@@ -157,7 +157,7 @@ export function exportWithFormatterWhenDefined<T = any>(row: number, col: number
   }
 
   const output = parseFormatterWhenExist(formatter, row, col, columnDef, dataContext, grid);
-  return exportOptions?.sanitizeDataExport ? sanitizeHtmlToText(output) : output;
+  return (exportOptions?.sanitizeDataExport && typeof output === 'string') ? sanitizeHtmlToText(output) : output;
 }
 
 /**

@@ -585,8 +585,8 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'StartDate', },
               { metadata: { style: 1, }, value: 'EndDate', },
             ],
-            ['1E06', 'John', 'X', 'SALES_REP', '2005-12-20T18:19:19.992Z', ''],
-            ['1E09', 'Jane', 'Doe', 'HUMAN_RESOURCES', '2010-10-09T18:19:19.992Z', '2024-01-02'],
+            ['1E06', 'John', 'X', 'SALES_REP', '2005-12-20', ''],
+            ['1E09', 'Jane', 'Doe', 'HUMAN_RESOURCES', '2010-10-09', '2024-01-02'],
           ]
         });
         expect(service.regularCellExcelFormats.position).toEqual({

@@ -193,12 +193,6 @@ describe('Service/domUtilies', () => {
       expect(output).toBe('foo bar');
     });
 
-    it('should return original value when input is an instance of a Date', () => {
-      const input = new Date();
-      const output = sanitizeHtmlToText(input as any);
-      expect(output).toEqual(input);
-    });
-
     it('should return a string with only the HTML text content without any HTML tags', () => {
       const input = '<div class="color: blue">Something</div>';
       const output = sanitizeHtmlToText(input);
