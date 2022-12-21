@@ -134,17 +134,35 @@ export const Formatters = {
   /** Takes a Date object and displays it as an ISO Date+Time+(am/pm) format (YYYY-MM-DD h:mm:ss a) */
   dateTimeIsoAmPm: getAssociatedDateFormatter(FieldType.dateTimeIsoAmPm, '-'),
 
+  /** Takes a Date object and displays it as an ISO Date+Time+(AM/PM) format (YYYY-MM-DD hh:mm:ss A) */
+  dateTimeIsoAM_PM: getAssociatedDateFormatter(FieldType.dateTimeIsoAM_PM, '-'),
+
   /** Takes a Date object and displays it as an Euro Date format (DD/MM/YYYY) */
   dateEuro: getAssociatedDateFormatter(FieldType.dateEuro, '/'),
 
+  /** Takes a Date object and displays it as an Euro Date format (D/M/YY) */
+  dateEuroShort: getAssociatedDateFormatter(FieldType.dateEuroShort, '/'),
+
   /** Takes a Date object and displays it as an Euro Date+Time format (DD/MM/YYYY HH:mm:ss) */
   dateTimeEuro: getAssociatedDateFormatter(FieldType.dateTimeEuro, '/'),
+
+  /** Takes a Date object and displays it as an Euro Date+Time format (D/M/YY H:m:s) */
+  dateTimeEuroShort: getAssociatedDateFormatter(FieldType.dateTimeEuroShort, '/'),
 
   /** Takes a Date object and displays it as an Euro Date+Time (without seconds) format (DD/MM/YYYY HH:mm) */
   dateTimeShortEuro: getAssociatedDateFormatter(FieldType.dateTimeShortEuro, '/'),
 
   /** Takes a Date object and displays it as an Euro Date+Time+(am/pm) format (DD/MM/YYYY hh:mm:ss a) */
   dateTimeEuroAmPm: getAssociatedDateFormatter(FieldType.dateTimeEuroAmPm, '/'),
+
+  /** Takes a Date object and displays it as an Euro Date+Time+(AM/PM) format (DD/MM/YYYY hh:mm:ss A) */
+  dateTimeEuroAM_PM: getAssociatedDateFormatter(FieldType.dateTimeEuroAM_PM, '/'),
+
+  /** Takes a Date object and displays it as an Euro Date+Time+(am/pm) format (D/M/YY h:m:s a) */
+  dateTimeEuroShortAmPm: getAssociatedDateFormatter(FieldType.dateTimeEuroShortAmPm, '/'),
+
+  /** Takes a Date object and displays it as an Euro Date+Time+(am/pm) format (D/M/YY h:m:s A) */
+  dateTimeEuroShortAM_PM: getAssociatedDateFormatter(FieldType.dateTimeEuroShortAM_PM, '/'),
 
   /** Takes a Date object and displays it as an US Date format (MM/DD/YYYY) */
   dateUs: getAssociatedDateFormatter(FieldType.dateUs, '/'),
@@ -157,6 +175,24 @@ export const Formatters = {
 
   /** Takes a Date object and displays it as an US Date+Time+(am/pm) format (MM/DD/YYYY hh:mm:ss a) */
   dateTimeUsAmPm: getAssociatedDateFormatter(FieldType.dateTimeUsAmPm, '/'),
+
+  /** Takes a Date object and displays it as an US Date+Time+(AM/PM) format (MM/DD/YYYY hh:mm:ss A) */
+  dateTimeUsAM_PM: getAssociatedDateFormatter(FieldType.dateTimeUsAM_PM, '/'),
+
+  /** Takes a Date object and displays it as an US Date+Time format (M/D/YY H:m:s) */
+  dateTimeUsShort: getAssociatedDateFormatter(FieldType.dateTimeUsShort, '/'),
+
+  /** Takes a Date object and displays it as an US Date+Time+(am/pm) format (M/D/YY h:m:s a) */
+  dateTimeUsShortAmPm: getAssociatedDateFormatter(FieldType.dateTimeUsShortAmPm, '/'),
+
+  /** Takes a Date object and displays it as an US Date+Time+(AM/PM) format (M/D/YY h:m:s A) */
+  dateTimeUsShortAM_PM: getAssociatedDateFormatter(FieldType.dateTimeUsShortAM_PM, '/'),
+
+  /** Takes a Date object and displays it as an US Date format (M/D/YY) */
+  dateUsShort: getAssociatedDateFormatter(FieldType.dateUsShort, '/'),
+
+  /** Takes a Date object and displays it as a regular TZ timestamp format (YYYY-MM-DDTHH:mm:ss.SSSZ) */
+  dateUtc: getAssociatedDateFormatter(FieldType.dateUtc, '-'),
 
   /** Displays a Font-Awesome delete icon (fa-trash) */
   deleteIcon: deleteIconFormatter,
