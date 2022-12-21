@@ -40,210 +40,210 @@ describe('excelUtils', () => {
       const column = { type: FieldType.dateTime } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateTime);
+      const output = result.getDataValueParser(input, { type: FieldType.dateTime } as Column, undefined, {});
 
       expect(output).toEqual('2012-02-28 15:07:59');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateTimeIso is provided', () => {
       const column = { type: FieldType.dateTimeIso } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateTimeIso);
+      const output = result.getDataValueParser(input, { type: FieldType.dateTimeIso } as Column, undefined, {});
 
       expect(output).toEqual('2012-02-28 15:07:59');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateTimeShortIso is provided', () => {
       const column = { type: FieldType.dateTimeShortIso } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateTimeShortIso);
+      const output = result.getDataValueParser(input, { type: FieldType.dateTimeShortIso } as Column, undefined, {});
 
       expect(output).toEqual('2012-02-28 15:07');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateTimeIsoAmPm is provided', () => {
       const column = { type: FieldType.dateTimeIsoAmPm } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateTimeIsoAmPm);
+      const output = result.getDataValueParser(input, { type: FieldType.dateTimeIsoAmPm } as Column, undefined, {});
 
       expect(output).toEqual('2012-02-28 03:07:59 pm');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateTimeIsoAM_PM is provided', () => {
       const column = { type: FieldType.dateTimeIsoAM_PM } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateTimeIsoAM_PM);
+      const output = result.getDataValueParser(input, { type: FieldType.dateTimeIsoAM_PM } as Column, undefined, {});
 
       expect(output).toEqual('2012-02-28 03:07:59 PM');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateEuro is provided', () => {
       const column = { type: FieldType.dateEuro } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateEuro);
+      const output = result.getDataValueParser(input, { type: FieldType.dateEuro } as Column, undefined, {});
 
       expect(output).toEqual('28/02/2012');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateEuroShort is provided', () => {
       const column = { type: FieldType.dateEuroShort } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateEuroShort);
+      const output = result.getDataValueParser(input, { type: FieldType.dateEuroShort } as Column, undefined, {});
 
       expect(output).toEqual('28/2/12');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateTimeEuro is provided', () => {
       const column = { type: FieldType.dateTimeEuro } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateTimeEuro);
+      const output = result.getDataValueParser(input, { type: FieldType.dateTimeEuro } as Column, undefined, {});
 
       expect(output).toEqual('28/02/2012 15:07:59');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateTimeShortEuro is provided', () => {
       const column = { type: FieldType.dateTimeShortEuro } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateTimeShortEuro);
+      const output = result.getDataValueParser(input, { type: FieldType.dateTimeShortEuro } as Column, undefined, {});
 
       expect(output).toEqual('28/02/2012 15:07');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateTimeEuroAmPm is provided', () => {
       const column = { type: FieldType.dateTimeEuroAmPm } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateTimeEuroAmPm);
+      const output = result.getDataValueParser(input, { type: FieldType.dateTimeEuroAmPm } as Column, undefined, {});
 
       expect(output).toEqual('28/02/2012 03:07:59 pm');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateTimeEuroAM_PM is provided', () => {
       const column = { type: FieldType.dateTimeEuroAM_PM } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateTimeEuroAM_PM);
+      const output = result.getDataValueParser(input, { type: FieldType.dateTimeEuroAM_PM } as Column, undefined, {});
 
       expect(output).toEqual('28/02/2012 03:07:59 PM');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateTimeEuroShort is provided', () => {
       const column = { type: FieldType.dateTimeEuroShort } as Column;
       const input = new Date('2012-02-28 15:07:46');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateTimeEuroShort);
+      const output = result.getDataValueParser(input, { type: FieldType.dateTimeEuroShort } as Column, undefined, {});
 
       expect(output).toEqual('28/2/12 15:7:46');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateTimeEuroShortAmPm is provided', () => {
       const column = { type: FieldType.dateTimeEuroShortAmPm } as Column;
       const input = new Date('2012-02-28 15:07:46');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateTimeEuroShortAmPm);
+      const output = result.getDataValueParser(input, { type: FieldType.dateTimeEuroShortAmPm } as Column, undefined, {});
 
       expect(output).toEqual('28/2/12 3:7:46 pm');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateUs is provided', () => {
       const column = { type: FieldType.dateUs } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateUs);
+      const output = result.getDataValueParser(input, { type: FieldType.dateUs } as Column, undefined, {});
 
       expect(output).toEqual('02/28/2012');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateUsShort is provided', () => {
       const column = { type: FieldType.dateUsShort } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateUsShort);
+      const output = result.getDataValueParser(input, { type: FieldType.dateUsShort } as Column, undefined, {});
 
       expect(output).toEqual('2/28/12');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateTimeUs is provided', () => {
       const column = { type: FieldType.dateTimeUs } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateTimeUs);
+      const output = result.getDataValueParser(input, { type: FieldType.dateTimeUs } as Column, undefined, {});
 
       expect(output).toEqual('02/28/2012 15:07:59');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateTimeShortUs is provided', () => {
       const column = { type: FieldType.dateTimeShortUs } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateTimeShortUs);
+      const output = result.getDataValueParser(input, { type: FieldType.dateTimeShortUs } as Column, undefined, {});
 
       expect(output).toEqual('02/28/2012 15:07');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateTimeUsAmPm is provided', () => {
       const column = { type: FieldType.dateTimeUsAmPm } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateTimeUsAmPm);
+      const output = result.getDataValueParser(input, { type: FieldType.dateTimeUsAmPm } as Column, undefined, {});
 
       expect(output).toEqual('02/28/2012 03:07:59 pm');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateTimeUsAM_PM is provided', () => {
       const column = { type: FieldType.dateTimeUsAM_PM } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateTimeUsAM_PM);
+      const output = result.getDataValueParser(input, { type: FieldType.dateTimeUsAM_PM } as Column, undefined, {});
 
       expect(output).toEqual('02/28/2012 03:07:59 PM');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateTimeUsShort is provided', () => {
       const column = { type: FieldType.dateTimeUsShort } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateTimeUsShort);
+      const output = result.getDataValueParser(input, { type: FieldType.dateTimeUsShort } as Column, undefined, {});
 
       expect(output).toEqual('2/28/12 15:7:59');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     it('should call createFormat with a format of an ISO date when FieldType.dateTimeUsShortAmPm is provided', () => {
       const column = { type: FieldType.dateTimeUsShortAmPm } as Column;
       const input = new Date('2012-02-28 15:07:59');
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateTimeUsShortAmPm);
+      const output = result.getDataValueParser(input, { type: FieldType.dateTimeUsShortAmPm } as Column, undefined, {});
 
       expect(output).toEqual('2/28/12 3:7:59 pm');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
 
     // xit('should call createFormat with a format of an ISO date when FieldType.dateUtc is provided', () => {
@@ -259,10 +259,10 @@ describe('excelUtils', () => {
       const column = { type: FieldType.dateIso } as Column;
       const input = '2012-02-28 15:07:46';
       const result = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
-      const output = result.getDataValueCallback(input, undefined, FieldType.dateIso);
+      const output = result.getDataValueParser(input, { type: FieldType.dateIso } as Column, undefined, {});
 
       expect(output).toEqual('2012-02-28');
-      expect(result).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      expect(result).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
     });
   });
 
@@ -276,7 +276,7 @@ describe('excelUtils', () => {
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '0.00;"-"0.00' });
-      expect(output).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: 135 });
+      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: 135 });
     });
 
     it('should call createFormat with a format of "0.0##" when a number is provided minDecimal & maxDecimal formatter options', () => {
@@ -284,7 +284,7 @@ describe('excelUtils', () => {
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '0.0##;"-"0.0##' });
-      expect(output).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: 135 });
+      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: 135 });
     });
 
     it('should call createFormat with a format of "€0.00" when a number is provided minDecimal & maxDecimal formatter options', () => {
@@ -292,7 +292,7 @@ describe('excelUtils', () => {
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '"€"0.00;"-€"0.00' });
-      expect(output).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: 135 });
+      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: 135 });
     });
 
     it('should call createFormat with a format of "#,##0.00" when a number is provided minDecimal & maxDecimal formatter options', () => {
@@ -300,7 +300,7 @@ describe('excelUtils', () => {
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '#,##0.00;"-"#,##0.00' });
-      expect(output).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: 135 });
+      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: 135 });
     });
 
     it('should call createFormat with a format of "# ##0.00 USD" when a number is provided with thousandSeparator & numberSuffix formatter options', () => {
@@ -308,7 +308,7 @@ describe('excelUtils', () => {
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '# ##0.00" USD";"-"# ##0.00" USD"' });
-      expect(output).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: 135 });
+      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: 135 });
     });
 
     it('should call createFormat with a format of "#,##0.00 USD;(#,##0.00 USD)" when a number is provided displayNegativeNumberWithParentheses, thousandSeparator & numberSuffix formatter options', () => {
@@ -316,7 +316,7 @@ describe('excelUtils', () => {
       const output = useCellFormatByFieldType(stylesheetStub, {}, column, gridStub);
 
       expect(createFormatSpy).toHaveBeenCalledWith({ format: '#,##0.00" USD";(#,##0.00" USD")' });
-      expect(output).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: 135 });
+      expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: 135 });
     });
   });
 

@@ -8,6 +8,7 @@ import {
   EditorValidator,
   Formatter,
   Grouping,
+  GroupTotalExportOption,
   GroupTotalsFormatter,
   HeaderButtonsOrMenu,
   OnEventArgs,
@@ -168,7 +169,7 @@ export interface Column<T = any> {
   grouping?: Grouping;
 
   /** Excel export custom options for cell formatting & width, this option only works when `exportWithExcelFormat` is enabled */
-  groupTotalsExcelExportOptions?: Exclude<ColumnExcelExportOption, 'width'>;
+  groupTotalsExcelExportOptions?: GroupTotalExportOption;
 
   /** Group Totals Formatter function that can be used to add grouping totals in the grid */
   groupTotalsFormatter?: GroupTotalsFormatter;

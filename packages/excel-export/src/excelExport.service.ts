@@ -16,6 +16,8 @@ import {
   ExcelWorksheet,
   FieldType,
   FileType,
+  GetDataValueCallback,
+  GetGroupTotalValueCallback,
   GridOption,
   KeyTitlePair,
   Locale,
@@ -29,7 +31,6 @@ import { addWhiteSpaces, deepCopy, titleCase } from '@slickgrid-universal/utils'
 import { ExcelCellFormat, ExcelMetadata, ExcelStylesheet, } from './interfaces/index';
 import {
   ExcelFormatter,
-  GetDataValueCallback,
   getGroupTotalValue,
   getExcelFormatFromGridFormatter,
   useCellFormatByFieldType,
@@ -57,8 +58,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   protected _workbook!: ExcelWorkbook;
 
   // references of each detected cell and/or group total formats
-  protected _regularCellExcelFormats: { [fieldId: string]: { stylesheetFormatterId?: number; getDataValueCallback: GetDataValueCallback; }; } = {};
-  protected _groupTotalExcelFormats: { [fieldId: string]: { groupType: string; stylesheetFormatter?: ExcelFormatter; }; } = {};
+  protected _regularCellExcelFormats: { [fieldId: string]: { stylesheetFormatterId?: number; getDataValueParser: GetDataValueCallback; }; } = {};
+  protected _groupTotalExcelFormats: { [fieldId: string]: { groupType: string; stylesheetFormatter?: ExcelFormatter; getGroupTotalParser?: GetGroupTotalValueCallback; }; } = {};
 
   /** ExcelExportService class name which is use to find service instance in the external registered services */
   readonly className = 'ExcelExportService';
@@ -498,7 +499,6 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
     for (let col = 0; col < columnsLn; col++) {
       const columnDef = columns[col];
-      const fieldType = columnDef.outputType || columnDef.type || FieldType.string;
 
       // skip excluded column
       if (columnDef.excludeFromExport) {
@@ -565,14 +565,17 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         if (this.isExportingWithExcelFormat(columnDef)) {
           if (!this._regularCellExcelFormats.hasOwnProperty(columnDef.id)) {
             const cellStyleFormat = useCellFormatByFieldType(this._stylesheet, this._stylesheetFormats, columnDef, this._grid);
+            // user could also override style and/or valueParserCallback
             if (columnDef.excelExportOptions?.style) {
-              const excelCustomStyling = this._stylesheet.createFormat(columnDef.excelExportOptions.style);
-              cellStyleFormat.stylesheetFormatterId = excelCustomStyling.id;
+              cellStyleFormat.stylesheetFormatterId = this._stylesheet.createFormat(columnDef.excelExportOptions.style).id;
+            }
+            if (columnDef.excelExportOptions?.valueParserCallback) {
+              cellStyleFormat.getDataValueParser = columnDef.excelExportOptions.valueParserCallback;
             }
             this._regularCellExcelFormats[columnDef.id] = cellStyleFormat;
           }
-          const { stylesheetFormatterId, getDataValueCallback } = this._regularCellExcelFormats[columnDef.id];
-          itemData = getDataValueCallback(itemData, stylesheetFormatterId, fieldType);
+          const { stylesheetFormatterId, getDataValueParser: getDataValueParser } = this._regularCellExcelFormats[columnDef.id];
+          itemData = getDataValueParser(itemData, columnDef, stylesheetFormatterId, this._stylesheet);
         }
 
         // does the user want to sanitize the output data (remove HTML tags)?
@@ -644,9 +647,10 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           this._groupTotalExcelFormats[columnDef.id] = groupCellFormat;
         }
 
+        const groupTotalParser = columnDef.groupTotalsExcelExportOptions?.valueParserCallback ?? getGroupTotalValue;
         if (itemObj[groupCellFormat.groupType]?.[columnDef.field] !== undefined) {
           itemData = {
-            value: getGroupTotalValue(itemObj, groupCellFormat.groupType, columnDef.field),
+            value: groupTotalParser(itemObj, columnDef, groupCellFormat.groupType, this._stylesheet),
             metadata: { style: groupCellFormat.stylesheetFormatter?.id }
           };
         }
