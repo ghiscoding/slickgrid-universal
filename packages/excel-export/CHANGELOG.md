@@ -4,6 +4,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.3...v2.2.0) (2022-12-21)
+
+### Bug Fixes
+
+* **export:** create custom Excel cell format with Formatters.decimal ([#844](https://github.com/ghiscoding/slickgrid-universal/issues/844)) ([a7a626c](https://github.com/ghiscoding/slickgrid-universal/commit/a7a626ccaaa510d084979d38d9a6b5a439f24e6d)) - by @ghiscoding
+* **exports:** Date should always export w/Formatter unless false ([#856](https://github.com/ghiscoding/slickgrid-universal/issues/856)) ([1b249e8](https://github.com/ghiscoding/slickgrid-universal/commit/1b249e88e3033ff4c432346ae32ce3183537237b)) - by @ghiscoding
+* **formatters:** Date Formatter should work with Date object ([#854](https://github.com/ghiscoding/slickgrid-universal/issues/854)) ([30b80e2](https://github.com/ghiscoding/slickgrid-universal/commit/30b80e27b209dbafda25963864116d980650a648)) - by @ghiscoding
+
+### Features
+
+* Excel exporter will now observe if numeric type has dollar formatter. If it does, it will use the dollarFormatter stylesheet. ([#843](https://github.com/ghiscoding/slickgrid-universal/issues/843)) ([ebabbaf](https://github.com/ghiscoding/slickgrid-universal/commit/ebabbafa240f114c7bdbd11d5d29fe1864d5bcba)) - by @austinsimpson
+* **exports:** add Excel auto-detect format by field types & formatters ([#848](https://github.com/ghiscoding/slickgrid-universal/issues/848)) ([27a18c4](https://github.com/ghiscoding/slickgrid-universal/commit/27a18c416e71a2a1f418d5c2c850fd331262bf7f)) - by @ghiscoding
+* **exports:** add Excel custom cell (column) styling ([#851](https://github.com/ghiscoding/slickgrid-universal/issues/851)) ([dd92d44](https://github.com/ghiscoding/slickgrid-universal/commit/dd92d44e0ac27c94a72c98af314cfa23f525f94c)) - by @ghiscoding
+* **exports:** add optional Excel export parser callback functions ([#852](https://github.com/ghiscoding/slickgrid-universal/issues/852)) ([975da5b](https://github.com/ghiscoding/slickgrid-universal/commit/975da5b1d87ac287c1240e7ec88be4760e22ca74)) - by @ghiscoding
+* **exports:** add optional file MIME type to Excel export service ([#849](https://github.com/ghiscoding/slickgrid-universal/issues/849)) ([05402e5](https://github.com/ghiscoding/slickgrid-universal/commit/05402e5b3a4cec9306ed21a495cc89c31b3816d8)) - by @ghiscoding
+* **formatters:** add Currency Formatter and GroupTotalFormatter ([#850](https://github.com/ghiscoding/slickgrid-universal/issues/850)) ([ad373ab](https://github.com/ghiscoding/slickgrid-universal/commit/ad373abd84468367d43bf4fa0feccb99ae22821c)) - by @ghiscoding
+
 ## [2.1.3](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.2...v2.1.3) (2022-12-08)
 
 **Note:** Version bump only for package @slickgrid-universal/excel-export

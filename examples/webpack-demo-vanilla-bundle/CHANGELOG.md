@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.3...v2.2.0) (2022-12-21)
+
+### Bug Fixes
+
+* **editors:** Autocomplete list should be using same width as cell width ([#846](https://github.com/ghiscoding/slickgrid-universal/issues/846)) ([0055f8a](https://github.com/ghiscoding/slickgrid-universal/commit/0055f8a925f7ec6e381c9b9b05dccdb405b7a420)) - by @ghiscoding
+
+### Features
+
+* **exports:** add Excel auto-detect format by field types & formatters ([#848](https://github.com/ghiscoding/slickgrid-universal/issues/848)) ([27a18c4](https://github.com/ghiscoding/slickgrid-universal/commit/27a18c416e71a2a1f418d5c2c850fd331262bf7f)) - by @ghiscoding
+* **exports:** add Excel custom cell (column) styling ([#851](https://github.com/ghiscoding/slickgrid-universal/issues/851)) ([dd92d44](https://github.com/ghiscoding/slickgrid-universal/commit/dd92d44e0ac27c94a72c98af314cfa23f525f94c)) - by @ghiscoding
+
 ## [2.1.3](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.2...v2.1.3) (2022-12-08)
 
 **Note:** Version bump only for package webpack-demo-vanilla-bundle
