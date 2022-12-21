@@ -33,6 +33,7 @@ import {
   ExcelFormatter,
   getGroupTotalValue,
   getExcelFormatFromGridFormatter,
+  isColumnDateType,
   useCellFormatByFieldType,
 } from './excelUtils';
 
@@ -557,7 +558,13 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
         // -- Read Data & Push to Data Array
         // user might want to export with Formatter, and/or auto-detect Excel format, and/or export as regular cell data
-        itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, this._excelExportOptions);
+
+        // for column that are Date type, we'll always export with their associated Date Formatters unless `exportWithFormatter` is specifically set to false
+        const exportOptions = { ...this._excelExportOptions };
+        if (columnDef?.exportWithFormatter !== false && isColumnDateType(columnDef)) {
+          exportOptions.exportWithFormatter = true;
+        }
+        itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, exportOptions);
 
         // auto-detect best possible Excel format, unless the user provide his own formatting,
         // we only do this check once per column (everything after that will be pull from temp ref)
@@ -572,7 +579,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           }
           this._regularCellExcelFormats[columnDef.id] = cellStyleFormat;
         }
-        const { stylesheetFormatterId, getDataValueParser: getDataValueParser } = this._regularCellExcelFormats[columnDef.id];
+        const { stylesheetFormatterId, getDataValueParser } = this._regularCellExcelFormats[columnDef.id];
         itemData = getDataValueParser(itemData, columnDef, stylesheetFormatterId, this._stylesheet);
 
         // does the user want to sanitize the output data (remove HTML tags)?

@@ -7,41 +7,27 @@ import {
   GetDataValueCallback,
   GroupTotalFormatters,
   isNumber,
-  mapMomentDateFormatWithFieldType,
   retrieveFormatterOptions,
   sanitizeHtmlToText,
   SlickGrid,
 } from '@slickgrid-universal/common';
-import * as moment_ from 'moment-mini';
-const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 export type ExcelFormatter = object & { id: number; };
 
 // define all type of potential excel data function callbacks
-export const getExcelInputDataCallback: GetDataValueCallback = (data) => data;
+export const getExcelSameInputDataCallback: GetDataValueCallback = (data) => data;
 export const getExcelNumberCallback: GetDataValueCallback = (data, _col, excelFormatterId) => ({
   value: isNumber(data) ? +data : data,
   metadata: { style: excelFormatterId }
 });
-export const getExcelDateCallback: GetDataValueCallback = (data, columnDef) => {
-  let outputData: any;
-  if (data) {
-    const dateFormat: string = mapMomentDateFormatWithFieldType(columnDef.outputType || columnDef.type || FieldType.string);
-    const outputDate: moment_.Moment = moment(data, dateFormat, false);
-    if (outputDate.isValid()) {
-      outputData = outputDate.format(dateFormat);
-    }
-  }
-  return outputData ?? data;
-};
 
-/** use different Excel Stylesheet Format as per the Field Type */
-export function useCellFormatByFieldType(stylesheet: ExcelStylesheet, stylesheetFormatters: any, columnDef: Column, grid: SlickGrid) {
+export function isColumnDateType(columnDef: Column) {
   const fieldType = columnDef.outputType || columnDef.type || FieldType.string;
-  let stylesheetFormatterId: number | undefined;
 
   switch (fieldType) {
+    case FieldType.date:
     case FieldType.dateTime:
+    case FieldType.dateIso:
     case FieldType.dateTimeIso:
     case FieldType.dateTimeShortIso:
     case FieldType.dateTimeIsoAmPm:
@@ -54,6 +40,7 @@ export function useCellFormatByFieldType(stylesheet: ExcelStylesheet, stylesheet
     case FieldType.dateTimeEuroAM_PM:
     case FieldType.dateTimeEuroShort:
     case FieldType.dateTimeEuroShortAmPm:
+    case FieldType.dateTimeEuroShortAM_PM:
     case FieldType.dateUs:
     case FieldType.dateUsShort:
     case FieldType.dateTimeUs:
@@ -62,18 +49,25 @@ export function useCellFormatByFieldType(stylesheet: ExcelStylesheet, stylesheet
     case FieldType.dateTimeUsAM_PM:
     case FieldType.dateTimeUsShort:
     case FieldType.dateTimeUsShortAmPm:
+    case FieldType.dateTimeUsShortAM_PM:
     case FieldType.dateUtc:
-    case FieldType.date:
-    case FieldType.dateIso:
-      return { stylesheetFormatterId: undefined, getDataValueParser: getExcelDateCallback };
-    case FieldType.number:
-      stylesheetFormatterId = getExcelFormatFromGridFormatter(stylesheet, stylesheetFormatters, columnDef, grid, 'cell').stylesheetFormatter.id;
-      return { stylesheetFormatterId, getDataValueParser: getExcelNumberCallback };
+      return true;
     default:
-      stylesheetFormatterId = undefined;
-      break;
+      return false;
   }
-  return { stylesheetFormatterId, getDataValueParser: getExcelInputDataCallback };
+}
+
+/** use different Excel Stylesheet Format as per the Field Type */
+export function useCellFormatByFieldType(stylesheet: ExcelStylesheet, stylesheetFormatters: any, columnDef: Column, grid: SlickGrid) {
+  const fieldType = columnDef.outputType || columnDef.type || FieldType.string;
+  let stylesheetFormatterId: number | undefined;
+  let callback: GetDataValueCallback = getExcelSameInputDataCallback;
+
+  if (fieldType === FieldType.number) {
+    stylesheetFormatterId = getExcelFormatFromGridFormatter(stylesheet, stylesheetFormatters, columnDef, grid, 'cell').stylesheetFormatter.id;
+    callback = getExcelNumberCallback;
+  }
+  return { stylesheetFormatterId, getDataValueParser: callback };
 }
 
 export function getGroupTotalValue(totals: any, columnDef: Column, groupType: string) {

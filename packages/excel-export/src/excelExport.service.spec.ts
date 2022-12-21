@@ -20,7 +20,7 @@ import * as ExcelBuilder from 'excel-builder-webpacker';
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 import { ExcelExportService } from './excelExport.service';
-import { getExcelInputDataCallback, useCellFormatByFieldType } from './excelUtils';
+import { getExcelSameInputDataCallback, useCellFormatByFieldType } from './excelUtils';
 
 const pubSubServiceStub = {
   publish: jest.fn(),
@@ -547,7 +547,7 @@ describe('ExcelExportService', () => {
             excelExportOptions: { style: { font: { outline: true, italic: true }, format: '€0.00##;[Red](€0.00##)' }, width: 18 }
           },
           { id: 'startDate', field: 'startDate', type: FieldType.dateIso, width: 100, exportWithFormatter: false, },
-          { id: 'endDate', field: 'endDate', width: 100, formatter: Formatters.dateIso, type: FieldType.dateUtc, exportWithFormatter: true, outputType: FieldType.dateIso },
+          { id: 'endDate', field: 'endDate', width: 100, formatter: Formatters.dateIso, type: FieldType.dateUtc, outputType: FieldType.dateIso },
         ] as Column[];
 
         jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -557,7 +557,7 @@ describe('ExcelExportService', () => {
         jest.clearAllMocks();
       });
 
-      it(`should expect Date exported correctly when Field Type is provided and we use "exportWithFormatter" set to True & False`, async () => {
+      it(`should expect Date to be formatted as ISO Date only "exportWithFormatter" is undefined or set to True but remains untouched when "exportWithFormatter" is explicitely set to False`, async () => {
         mockCollection = [
           { id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', startDate: '2005-12-20T18:19:19.992Z', endDate: null },
           { id: 1, userId: '1E09', firstName: 'Jane', lastName: 'Doe', position: 'HUMAN_RESOURCES', startDate: '2010-10-09T18:19:19.992Z', endDate: '2024-01-02T16:02:02.000Z' },
@@ -585,12 +585,12 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'StartDate', },
               { metadata: { style: 1, }, value: 'EndDate', },
             ],
-            ['1E06', 'John', 'X', 'SALES_REP', '2005-12-20', ''],
-            ['1E09', 'Jane', 'Doe', 'HUMAN_RESOURCES', '2010-10-09', '2024-01-02'],
+            ['1E06', 'John', 'X', 'SALES_REP', '2005-12-20T18:19:19.992Z', ''],
+            ['1E09', 'Jane', 'Doe', 'HUMAN_RESOURCES', '2010-10-09T18:19:19.992Z', '2024-01-02'],
           ]
         });
         expect(service.regularCellExcelFormats.position).toEqual({
-          getDataValueParser: getExcelInputDataCallback,
+          getDataValueParser: getExcelSameInputDataCallback,
           stylesheetFormatterId: 4,
         });
       });
