@@ -368,6 +368,9 @@ export function mapMomentDateFormatWithFieldType(fieldType: typeof FieldType[key
     case FieldType.dateTimeEuroShortAmPm:
       map = 'D/M/YY h:m:s a';
       break;
+    case FieldType.dateTimeEuroShortAM_PM:
+      map = 'D/M/YY h:m:s A';
+      break;
     // all US Formats (month/date/year)
     case FieldType.dateUs:
       map = 'MM/DD/YYYY';
@@ -389,6 +392,9 @@ export function mapMomentDateFormatWithFieldType(fieldType: typeof FieldType[key
       break;
     case FieldType.dateTimeUsShortAmPm:
       map = 'M/D/YY h:m:s a';
+      break;
+    case FieldType.dateTimeUsShortAM_PM:
+      map = 'M/D/YY h:m:s A';
       break;
     case FieldType.dateTimeShortUs:
       map = 'MM/DD/YYYY HH:mm';
