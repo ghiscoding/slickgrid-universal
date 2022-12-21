@@ -20,7 +20,7 @@ import * as ExcelBuilder from 'excel-builder-webpacker';
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 import { ExcelExportService } from './excelExport.service';
-import { getExcelInputDataCallback, useCellFormatByFieldType } from './excelUtils';
+import { getExcelSameInputDataCallback, useCellFormatByFieldType } from './excelUtils';
 
 const pubSubServiceStub = {
   publish: jest.fn(),
@@ -585,12 +585,12 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'StartDate', },
               { metadata: { style: 1, }, value: 'EndDate', },
             ],
-            ['1E06', 'John', 'X', 'SALES_REP', '2005-12-20', ''],
-            ['1E09', 'Jane', 'Doe', 'HUMAN_RESOURCES', '2010-10-09', '2024-01-02'],
+            ['1E06', 'John', 'X', 'SALES_REP', '2005-12-20T18:19:19.992Z', ''],
+            ['1E09', 'Jane', 'Doe', 'HUMAN_RESOURCES', '2010-10-09T18:19:19.992Z', '2024-01-02'],
           ]
         });
         expect(service.regularCellExcelFormats.position).toEqual({
-          getDataValueParser: getExcelInputDataCallback,
+          getDataValueParser: getExcelSameInputDataCallback,
           stylesheetFormatterId: 4,
         });
       });
@@ -921,7 +921,7 @@ describe('ExcelExportService', () => {
             numFmtId: 103,
           }
         });
-        expect(parserCallbackSpy).toHaveBeenCalledWith('22', mockColumns[6], undefined, expect.anything());
+        expect(parserCallbackSpy).toHaveBeenCalledWith(22, mockColumns[6], undefined, expect.anything());
       });
     });
 
