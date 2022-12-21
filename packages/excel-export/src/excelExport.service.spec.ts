@@ -712,7 +712,7 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'Position', },
               { metadata: { style: 1, }, value: 'Order', },
             ],
-            ['1E06', 'John', 'X', 'Sales Rep.', '10'],
+            ['1E06', 'John', 'X', { metadata: { style: 3 }, value: 'Sales Rep.' }, '10'],
           ]
         });
       });
@@ -805,9 +805,9 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'Order', },
             ],
             ['⮟ Order: 20 (2 items)'],
-            ['', '1E06', 'John', 'X', 'SALES_REP', '10'],
-            ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '10'],
-            ['', '', '', '', '', 'Custom: 20'],
+            ['', '1E06', 'John', 'X', 'SALES_REP', { metadata: { style: 3, type: 'number' }, value: 10 }],
+            ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', { metadata: { style: 3, type: 'number' }, value: 10 }],
+            ['', '', '', '', '', { metadata: { style: 4, type: 'number' }, value: 20 }],
           ]
         });
       });
@@ -1011,9 +1011,9 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'Order', },
             ],
             ['⮟ Order: 20 (2 items)'],
-            ['', '1E06', 'John', 'X', 'Sales Rep.', '10'],
-            ['', '2B02', 'Jane', 'DOE', 'Finance Manager', '10'],
-            ['', '', '', '', '', '20'],
+            ['', '1E06', 'John', 'X', { metadata: { style: 3 }, value: 'Sales Rep.' }, { metadata: { style: 3, type: 'number' }, value: 10 }],
+            ['', '2B02', 'Jane', 'DOE', { metadata: { style: 3 }, value: 'Finance Manager' }, { metadata: { style: 3, type: 'number' }, value: 10 }],
+            ['', '', '', '', '', { metadata: { style: 4, type: 'number', }, value: 20, }],
           ]
         });
       });
