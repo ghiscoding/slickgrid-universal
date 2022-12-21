@@ -16,9 +16,11 @@ import {
   ExcelWorksheet,
   FieldType,
   FileType,
+  getColumnFieldType,
   GetDataValueCallback,
   GetGroupTotalValueCallback,
   GridOption,
+  isColumnDateType,
   KeyTitlePair,
   Locale,
   PubSubService,
@@ -554,10 +556,17 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         }
       } else {
         let itemData: Date | number | string | ExcelCellFormat = '';
+        const fieldType = getColumnFieldType(columnDef);
 
         // -- Read Data & Push to Data Array
         // user might want to export with Formatter, and/or auto-detect Excel format, and/or export as regular cell data
-        itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, this._excelExportOptions);
+
+        // for column that are Date type, we'll always export with their associated Date Formatters unless `exportWithFormatter` is specifically set to false
+        const exportOptions = { ...this._excelExportOptions };
+        if (columnDef?.exportWithFormatter !== false && isColumnDateType(fieldType)) {
+          exportOptions.exportWithFormatter = true;
+        }
+        itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, exportOptions);
 
         // auto-detect best possible Excel format, unless the user provide his own formatting,
         // we only do this check once per column (everything after that will be pull from temp ref)
@@ -572,7 +581,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           }
           this._regularCellExcelFormats[columnDef.id] = cellStyleFormat;
         }
-        const { stylesheetFormatterId, getDataValueParser: getDataValueParser } = this._regularCellExcelFormats[columnDef.id];
+        const { stylesheetFormatterId, getDataValueParser } = this._regularCellExcelFormats[columnDef.id];
         itemData = getDataValueParser(itemData, columnDef, stylesheetFormatterId, this._stylesheet);
 
         // does the user want to sanitize the output data (remove HTML tags)?
@@ -615,7 +624,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
     columns.forEach((columnDef) => {
       let itemData: number | string | ExcelCellFormat = '';
-      const fieldType = columnDef.outputType || columnDef.type || FieldType.string;
+      const fieldType = getColumnFieldType(columnDef);
       const skippedField = columnDef.excludeFromExport || false;
 
       // if there's a exportCustomGroupTotalsFormatter or groupTotalsFormatter, we will re-run it to get the exact same output as what is shown in UI

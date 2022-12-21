@@ -322,6 +322,46 @@ export function getTranslationPrefix(gridOptions?: GridOption): string {
   return '';
 }
 
+/** From a column definition, find column type */
+export function getColumnFieldType(columnDef: Column): typeof FieldType[keyof typeof FieldType] {
+  return columnDef.outputType || columnDef.type || FieldType.string;
+}
+
+/** Verify if the identified column is of type Date */
+export function isColumnDateType(fieldType: typeof FieldType[keyof typeof FieldType]) {
+  switch (fieldType) {
+    case FieldType.date:
+    case FieldType.dateTime:
+    case FieldType.dateIso:
+    case FieldType.dateTimeIso:
+    case FieldType.dateTimeShortIso:
+    case FieldType.dateTimeIsoAmPm:
+    case FieldType.dateTimeIsoAM_PM:
+    case FieldType.dateEuro:
+    case FieldType.dateEuroShort:
+    case FieldType.dateTimeEuro:
+    case FieldType.dateTimeShortEuro:
+    case FieldType.dateTimeEuroAmPm:
+    case FieldType.dateTimeEuroAM_PM:
+    case FieldType.dateTimeEuroShort:
+    case FieldType.dateTimeEuroShortAmPm:
+    case FieldType.dateTimeEuroShortAM_PM:
+    case FieldType.dateUs:
+    case FieldType.dateUsShort:
+    case FieldType.dateTimeUs:
+    case FieldType.dateTimeShortUs:
+    case FieldType.dateTimeUsAmPm:
+    case FieldType.dateTimeUsAM_PM:
+    case FieldType.dateTimeUsShort:
+    case FieldType.dateTimeUsShortAmPm:
+    case FieldType.dateTimeUsShortAM_PM:
+    case FieldType.dateUtc:
+      return true;
+    default:
+      return false;
+  }
+}
+
 /**
  * From a Date FieldType, return it's equivalent moment.js format
  * refer to moment.js for the format standard used: https://momentjs.com/docs/#/parsing/string-format/
@@ -641,42 +681,23 @@ export function mapOperatorToShorthandDesignation(operator: OperatorType | Opera
 export function mapOperatorByFieldType(fieldType: typeof FieldType[keyof typeof FieldType]): OperatorType {
   let map: OperatorType;
 
-  switch (fieldType) {
-    case FieldType.unknown:
-    case FieldType.string:
-    case FieldType.text:
-    case FieldType.password:
-    case FieldType.readonly:
-      map = OperatorType.contains;
-      break;
-    case FieldType.float:
-    case FieldType.number:
-    case FieldType.date:
-    case FieldType.dateIso:
-    case FieldType.dateUtc:
-    case FieldType.dateTime:
-    case FieldType.dateTimeIso:
-    case FieldType.dateTimeIsoAmPm:
-    case FieldType.dateTimeIsoAM_PM:
-    case FieldType.dateEuro:
-    case FieldType.dateEuroShort:
-    case FieldType.dateTimeEuro:
-    case FieldType.dateTimeEuroAmPm:
-    case FieldType.dateTimeEuroAM_PM:
-    case FieldType.dateTimeEuroShort:
-    case FieldType.dateTimeEuroShortAmPm:
-    case FieldType.dateTimeEuroShortAM_PM:
-    case FieldType.dateUs:
-    case FieldType.dateUsShort:
-    case FieldType.dateTimeUs:
-    case FieldType.dateTimeUsAmPm:
-    case FieldType.dateTimeUsAM_PM:
-    case FieldType.dateTimeUsShort:
-    case FieldType.dateTimeUsShortAmPm:
-    case FieldType.dateTimeUsShortAM_PM:
-    default:
-      map = OperatorType.equal;
-      break;
+  if (isColumnDateType(fieldType)) {
+    map = OperatorType.equal;
+  } else {
+    switch (fieldType) {
+      case FieldType.unknown:
+      case FieldType.string:
+      case FieldType.text:
+      case FieldType.password:
+      case FieldType.readonly:
+        map = OperatorType.contains;
+        break;
+      case FieldType.float:
+      case FieldType.number:
+      default:
+        map = OperatorType.equal;
+        break;
+    }
   }
 
   return map;

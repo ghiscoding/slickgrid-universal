@@ -3,7 +3,7 @@ import { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { of } from 'rxjs';
 
 import { FieldType, OperatorType } from '../../enums/index';
-import { GridOption } from '../../interfaces/index';
+import { Column, GridOption } from '../../interfaces/index';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import {
   addTreeLevelByMutation,
@@ -16,8 +16,10 @@ import {
   findItemInTreeStructure,
   findOrDefault,
   formatNumber,
+  getColumnFieldType,
   getDescendantProperty,
   getTranslationPrefix,
+  isColumnDateType,
   mapMomentDateFormatWithFieldType,
   mapFlatpickrDateFormatWithFieldType,
   mapOperatorByFieldType,
@@ -100,7 +102,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should throw an error when argument provided is not a Promise neither an Observable', async () => {
-      expect(() => castObservableToPromise(rxjs, null)).toThrowError('Something went wrong,');
+      expect(() => castObservableToPromise(rxjs, null as any)).toThrowError('Something went wrong,');
     });
 
     it('should return original Promise when argument is already a Promise', async () => {
@@ -445,7 +447,24 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('getDescendantProperty method', () => {
+  describe('getColumnFieldType() method', () => {
+    it('should return field type when type is defined', () => {
+      const result = getColumnFieldType({ type: FieldType.dateIso } as Column);
+      expect(result).toEqual(FieldType.dateIso);
+    });
+
+    it('should return outputType when both field type and outputType are defined', () => {
+      const result = getColumnFieldType({ outputType: FieldType.number, type: FieldType.dateIso } as Column);
+      expect(result).toEqual(FieldType.number);
+    });
+
+    it('should return string field type when neither type nor outputType are defined', () => {
+      const result = getColumnFieldType({ field: 'startDate' } as Column);
+      expect(result).toEqual(FieldType.string);
+    });
+  });
+
+  describe('getDescendantProperty() method', () => {
     let obj = {};
     beforeEach(() => {
       obj = { id: 1, user: { firstName: 'John', lastName: 'Doe', address: { number: 123, street: 'Broadway' } } };
@@ -493,6 +512,142 @@ describe('Service/Utilies', () => {
       const gridOptions = { translationNamespace: 'App1', translationNamespaceSeparator: ':' } as GridOption;
       const output = getTranslationPrefix(gridOptions);
       expect(output).toBe('App1:');
+    });
+  });
+
+  describe('isColumnDateType() method', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should return True when FieldType.date is provided', () => {
+      const result = isColumnDateType(FieldType.date);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTime is provided', () => {
+      const result = isColumnDateType(FieldType.dateTime);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTimeIso is provided', () => {
+      const result = isColumnDateType(FieldType.dateTimeIso);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTimeShortIso is provided', () => {
+      const result = isColumnDateType(FieldType.dateTimeShortIso);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTimeIsoAmPm is provided', () => {
+      const result = isColumnDateType(FieldType.dateTimeIsoAmPm);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTimeIsoAM_PM is provided', () => {
+      const result = isColumnDateType(FieldType.dateTimeIsoAM_PM);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateEuro is provided', () => {
+      const result = isColumnDateType(FieldType.dateEuro);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateEuroShort is provided', () => {
+      const result = isColumnDateType(FieldType.dateEuroShort);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTimeEuro is provided', () => {
+      const result = isColumnDateType(FieldType.dateTimeEuro);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTimeShortEuro is provided', () => {
+      const result = isColumnDateType(FieldType.dateTimeShortEuro);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTimeEuroAmPm is provided', () => {
+      const result = isColumnDateType(FieldType.dateTimeEuroAmPm);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTimeEuroAM_PM is provided', () => {
+      const result = isColumnDateType(FieldType.dateTimeEuroAM_PM);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTimeEuroShort is provided', () => {
+      const result = isColumnDateType(FieldType.dateTimeEuroShort);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTimeEuroShortAM_PM is provided', () => {
+      const result = isColumnDateType(FieldType.dateTimeEuroShortAM_PM);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTimeEuroShortAmPm is provided', () => {
+      const result = isColumnDateType(FieldType.dateTimeEuroShortAmPm);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateUs is provided', () => {
+      const result = isColumnDateType(FieldType.dateUs);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateUsShort is provided', () => {
+      const result = isColumnDateType(FieldType.dateUsShort);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTimeUs is provided', () => {
+      const result = isColumnDateType(FieldType.dateTimeUs);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTimeShortUs is provided', () => {
+      const result = isColumnDateType(FieldType.dateTimeShortUs);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTimeUsAmPm is provided', () => {
+      const result = isColumnDateType(FieldType.dateTimeUsAmPm);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTimeUsShortAM_PM is provided', () => {
+      const result = isColumnDateType(FieldType.dateTimeUsShortAM_PM);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTimeUsAM_PM is provided', () => {
+      const result = isColumnDateType(FieldType.dateTimeUsAM_PM);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTimeUsShort is provided', () => {
+      const result = isColumnDateType(FieldType.dateTimeUsShort);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateTimeUsShortAmPm is provided', () => {
+      const result = isColumnDateType(FieldType.dateTimeUsShortAmPm);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateUtc is provided', () => {
+      const result = isColumnDateType(FieldType.dateUtc);
+      expect(result).toBe(true);
+    });
+
+    it('should return True when FieldType.dateIso is provided', () => {
+      const result = isColumnDateType(FieldType.dateIso);
+      expect(result).toBe(true);
     });
   });
 
