@@ -16,13 +16,6 @@ export interface ExcelExportOption {
   /** Defaults to false, which leads to all Formatters of the grid being evaluated on export. You can also override a column by changing the propery on the column itself */
   exportWithFormatter?: boolean;
 
-  /**
-   * Defaults to true, which leads to ExcelExportService that will try to detect the best possible Excel format for each cell.
-   * The difference with the other flag is that "exportWithFormatter" will always export as a string, while this option here will try to detect the best Excel format and cell type.
-   * NOTE: Date will be exported as string (not as Excel Date), the numbers are the ones making the best out of this option.
-   */
-  exportWithExcelFormat?: boolean;
-
   /** filename (without extension) */
   filename?: string;
 

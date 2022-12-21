@@ -30,6 +30,7 @@ export class Example2 {
   commandQueue = [];
   sgb: SlickVanillaGridBundle;
   excelExportService: ExcelExportService;
+  loadingClass = '';
 
   constructor() {
     this.excelExportService = new ExcelExportService();
@@ -41,8 +42,8 @@ export class Example2 {
     this.dataset = this.loadData(NB_ITEMS);
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid2`);
 
-    this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
-    this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
+    this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-22px');
+    this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => this.loadingClass = '');
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
     // you could group by duration on page load (must be AFTER the DataView is created, so after GridBundle)
@@ -189,7 +190,6 @@ export class Example2 {
       excelExportOptions: {
         filename: 'my-export',
         sanitizeDataExport: true,
-        exportWithExcelFormat: true,
         columnHeaderStyle: {
           font: { color: 'FFFFFFFF' },
           fill: { type: 'pattern', patternType: 'solid', fgColor: 'FF4a6c91' }

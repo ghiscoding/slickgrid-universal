@@ -81,7 +81,7 @@ export interface Column<T = any> {
   /** Any inline editor function that implements Editor for the cell value or ColumnEditor */
   editor?: ColumnEditor;
 
-  /** Excel export custom options for cell formatting & width, this option only works when `exportWithExcelFormat` is enabled */
+  /** Excel export custom options for cell formatting & width */
   excelExportOptions?: ColumnExcelExportOption;
 
   /** Default to false, which leads to exclude the column title from the Column Picker. */
@@ -119,13 +119,6 @@ export interface Column<T = any> {
    * Most often used with dates that are stored as UTC but displayed as Date ISO (or any other format) with a Formatter.
    */
   exportWithFormatter?: boolean;
-
-  /**
-   * Defaults to true, which leads to ExcelExportService that will try to detect the best possible Excel format for each cell.
-   * The difference with the other flag is that "exportWithFormatter" will always export as a string, while this option here will try to detect the best Excel format and cell type.
-   * NOTE: Date will be exported as string (not as Excel Date), the numbers are the ones making the best out of this option.
-   */
-  exportWithExcelFormat?: boolean;
 
   /**
    * Do we want to force the cell value to be a string?
@@ -168,7 +161,7 @@ export interface Column<T = any> {
   /** Grouping option used by a Draggable Grouping Column */
   grouping?: Grouping;
 
-  /** Excel export custom options for cell formatting & width, this option only works when `exportWithExcelFormat` is enabled */
+  /** Excel export custom options for cell formatting & width */
   groupTotalsExcelExportOptions?: GroupTotalExportOption;
 
   /** Group Totals Formatter function that can be used to add grouping totals in the grid */
