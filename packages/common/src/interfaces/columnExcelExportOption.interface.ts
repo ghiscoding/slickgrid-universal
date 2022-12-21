@@ -1,3 +1,6 @@
+import { Column } from './column.interface';
+import { ExcelCellFormat } from './excelCellFormat.interface';
+
 /** Excel custom export options (formatting & width) that can be applied to a column */
 export interface ColumnExcelExportOption {
   /**
@@ -8,7 +11,24 @@ export interface ColumnExcelExportOption {
 
   /** Excel column width */
   width?: number;
+
+  /** Cell data value parser callback function */
+  valueParserCallback?: GetDataValueCallback;
 }
+
+export interface GroupTotalExportOption {
+  /**
+   * Option to provide custom Excel styling
+   * NOTE: this option will completely override any detected column formatting
+   */
+  style?: ExcelCustomStyling;
+
+  /** Cell data value parser callback function */
+  valueParserCallback?: GetGroupTotalValueCallback;
+}
+
+export type GetDataValueCallback = (data: Date | string | number, columnDef: Column, excelFormatterId: number | undefined, excelStylesheet: unknown) => Date | string | number | ExcelCellFormat;
+export type GetGroupTotalValueCallback = (totals: any, columnDef: Column, groupType: string, excelStylesheet: unknown) => Date | string | number;
 
 /**
  * Excel Color in ARGB format, for color aren't transparent just use "FF" as prefix.

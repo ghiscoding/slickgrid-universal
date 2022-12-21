@@ -590,7 +590,7 @@ describe('ExcelExportService', () => {
           ]
         });
         expect(service.regularCellExcelFormats.position).toEqual({
-          getDataValueCallback: getExcelInputDataCallback,
+          getDataValueParser: getExcelInputDataCallback,
           stylesheetFormatterId: 4,
         });
       });
@@ -819,6 +819,8 @@ describe('ExcelExportService', () => {
       let mockItem1;
       let mockItem2;
       let mockGroup1;
+      let parserCallbackSpy = jest.fn();
+      let groupTotalParserCallbackSpy = jest.fn();
 
       beforeEach(() => {
         mockGridOptions.enableGrouping = true;
@@ -841,6 +843,7 @@ describe('ExcelExportService', () => {
             groupTotalsExcelExportOptions: { style: { font: { bold: true, italic: true }, format: '€0.00##;[Red](€0.00##)' }, },
             groupTotalsFormatter: GroupTotalFormatters.sumTotals,
           },
+          { id: 'cost', field: 'cost', name: 'Cost', excelExportOptions: { valueParserCallback: parserCallbackSpy }, groupTotalsExcelExportOptions: { valueParserCallback: groupTotalParserCallbackSpy } }
         ] as Column[];
 
         mockOrderGrouping = {
@@ -859,8 +862,8 @@ describe('ExcelExportService', () => {
           predefinedValues: [],
         };
 
-        mockItem1 = { id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 };
-        mockItem2 = { id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 10 };
+        mockItem1 = { id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10, cost: 22 };
+        mockItem2 = { id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 10, cost: 33 };
         mockGroup1 = {
           collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
           rows: [mockItem1, mockItem2],
@@ -881,12 +884,13 @@ describe('ExcelExportService', () => {
       });
 
       it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
+        parserCallbackSpy.mockReturnValue(8888);
+        groupTotalParserCallbackSpy.mockReturnValue(9999);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
 
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
-
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
@@ -901,11 +905,12 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'LastName', },
               { metadata: { style: 1, }, value: 'Position', },
               { metadata: { style: 1, }, value: 'Order', },
+              { metadata: { style: 1, }, value: 'Cost', },
             ],
             ['⮟ Order: 20 (2 items)'],
-            ['', '1E06', 'John', 'X', 'SALES_REP', { metadata: { style: 3, type: "number", }, value: 10, }],
-            ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', { metadata: { style: 3, type: "number", }, value: 10, }],
-            ['', '', '', '', '', { value: 20, metadata: { style: 5, type: 'number' } }],
+            ['', '1E06', 'John', 'X', 'SALES_REP', { metadata: { style: 3, type: "number", }, value: 10, }, 8888],
+            ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', { metadata: { style: 3, type: "number", }, value: 10, }, 8888],
+            ['', '', '', '', '', { value: 20, metadata: { style: 5, type: 'number' } }, ''],
           ]
         });
         expect(service.groupTotalExcelFormats.order).toEqual({
@@ -916,6 +921,7 @@ describe('ExcelExportService', () => {
             numFmtId: 103,
           }
         });
+        expect(parserCallbackSpy).toHaveBeenCalledWith('22', mockColumns[6], undefined, expect.anything());
       });
     });
 
@@ -1022,12 +1028,12 @@ describe('ExcelExportService', () => {
       let mockGroup2;
       let mockGroup3;
       let mockGroup4;
+      let groupTotalParserCallbackSpy = jest.fn();
 
       beforeEach(() => {
         mockGridOptions.enableGrouping = true;
         mockGridOptions.enableTranslate = true;
-        mockGridOptions.excelExportOptions = { sanitizeDataExport: true, addGroupIndentation: true, exportWithFormatter: true };
-
+        mockGridOptions.excelExportOptions = { sanitizeDataExport: true, addGroupIndentation: true, exportWithFormatter: true, exportWithExcelFormat: true };
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100 },
@@ -1039,6 +1045,7 @@ describe('ExcelExportService', () => {
             exportWithFormatter: true,
             formatter: Formatters.multiple, params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
             groupTotalsFormatter: GroupTotalFormatters.sumTotals,
+            groupTotalsExcelExportOptions: { valueParserCallback: groupTotalParserCallbackSpy }
           },
         ] as Column[];
 
@@ -1103,12 +1110,14 @@ describe('ExcelExportService', () => {
           .mockReturnValueOnce(mockCollection[6])
           .mockReturnValueOnce(mockCollection[7]);
         jest.spyOn(dataViewStub, 'getGrouping').mockReturnValue([mockOrderGrouping]);
+        groupTotalParserCallbackSpy.mockReturnValue(9999);
       });
 
       it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
+        groupTotalParserCallbackSpy.mockReturnValue(9999);
 
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
@@ -1129,12 +1138,12 @@ describe('ExcelExportService', () => {
             ],
             ['⮟ Order: 20 (2 items)'],
             ['⮟      Last Name: X (1 items)'], // expanded
-            ['', '1E06', 'John', 'X', 'Sales Rep.', '10'],
+            ['', '1E06', 'John', 'X', 'Sales Rep.', { metadata: { style: 3, type: 'number', }, 'value': 10, }],
             ['⮟      Last Name: Doe (1 items)'], // expanded
-            ['', '2B02', 'Jane', 'DOE', 'Finance Manager', '10'],
+            ['', '2B02', 'Jane', 'DOE', 'Finance Manager', { metadata: { style: 3, type: 'number', }, 'value': 10, }],
             ['⮞      Last Name: null (0 items)'], // collapsed
-            ['', '', '', '', '', '20'],
-            ['', '', '', '', '', '10'],
+            ['', '', '', '', '', { metadata: { style: 4, type: 'number', }, 'value': 9999, }],
+            ['', '', '', '', '', { metadata: { style: 4, type: 'number', }, 'value': 9999, }],
           ]
         });
       });
@@ -1166,12 +1175,13 @@ describe('ExcelExportService', () => {
             ],
             ['Order: 20 (2 items)'],
             ['Last Name: X (1 items)'],
-            ['', '1E06', 'John', 'X', 'Sales Rep.', "10"],
+            ['', '1E06', 'John', 'X', 'Sales Rep.', { metadata: { style: 3, type: 'number', }, value: 10 }],
             ['Last Name: Doe (1 items)'],
-            ['', '2B02', 'Jane', 'DOE', 'Finance Manager', "10"],
+            ['', '2B02', 'Jane', 'DOE', 'Finance Manager', { metadata: { style: 3, type: 'number', }, value: 10 }],
             ['Last Name: null (0 items)'],
-            ['', '', '', '', '', '20'],
-            ['', '', '', '', '', '10'],
+            ['', '', '', '', '', { metadata: { style: 4, type: 'number', }, value: 9999 }],
+            ['', '', '', '', '', { metadata: { style: 4, type: 'number', }, value: 9999 }
+            ],
           ]
         });
       });
@@ -1185,7 +1195,7 @@ describe('ExcelExportService', () => {
         await service.exportToExcel(mockExportExcelOptions);
         const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, column, gridStub);
 
-        expect(output).toEqual({ getDataValueCallback: expect.toBeFunction(), stylesheetFormatterId: undefined });
+        expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
       });
     });
 

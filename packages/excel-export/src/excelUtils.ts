@@ -1,10 +1,10 @@
 import {
   Column,
-  ExcelCellFormat,
   ExcelStylesheet,
   FieldType,
   Formatters,
   FormatterType,
+  GetDataValueCallback,
   GroupTotalFormatters,
   isNumber,
   mapMomentDateFormatWithFieldType,
@@ -16,18 +16,17 @@ import * as moment_ from 'moment-mini';
 const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 export type ExcelFormatter = object & { id: number; };
-export type GetDataValueCallback = (data: Date | string | number, excelFormatterId: number | undefined, fieldType: typeof FieldType[keyof typeof FieldType]) => Date | string | number | ExcelCellFormat;
 
 // define all type of potential excel data function callbacks
 export const getExcelInputDataCallback: GetDataValueCallback = (data) => data;
-export const getExcelNumberCallback: GetDataValueCallback = (data, excelFormatterId) => ({
+export const getExcelNumberCallback: GetDataValueCallback = (data, _col, excelFormatterId) => ({
   value: isNumber(data) ? +data : data,
   metadata: { style: excelFormatterId }
 });
-export const getExcelDateCallback: GetDataValueCallback = (data, _excelFormatterId, fieldType) => {
+export const getExcelDateCallback: GetDataValueCallback = (data, columnDef) => {
   let outputData: any;
   if (data) {
-    const dateFormat: string = mapMomentDateFormatWithFieldType(fieldType);
+    const dateFormat: string = mapMomentDateFormatWithFieldType(columnDef.outputType || columnDef.type || FieldType.string);
     const outputDate: moment_.Moment = moment(data, dateFormat, false);
     if (outputDate.isValid()) {
       outputData = outputDate.format(dateFormat);
@@ -66,19 +65,19 @@ export function useCellFormatByFieldType(stylesheet: ExcelStylesheet, stylesheet
     case FieldType.dateUtc:
     case FieldType.date:
     case FieldType.dateIso:
-      return { stylesheetFormatterId: undefined, getDataValueCallback: getExcelDateCallback };
+      return { stylesheetFormatterId: undefined, getDataValueParser: getExcelDateCallback };
     case FieldType.number:
       stylesheetFormatterId = getExcelFormatFromGridFormatter(stylesheet, stylesheetFormatters, columnDef, grid, 'cell').stylesheetFormatter.id;
-      return { stylesheetFormatterId, getDataValueCallback: getExcelNumberCallback };
+      return { stylesheetFormatterId, getDataValueParser: getExcelNumberCallback };
     default:
       stylesheetFormatterId = undefined;
       break;
   }
-  return { stylesheetFormatterId, getDataValueCallback: getExcelInputDataCallback };
+  return { stylesheetFormatterId, getDataValueParser: getExcelInputDataCallback };
 }
 
-export function getGroupTotalValue(totals: any, groupType: string, colField: string) {
-  return totals?.[groupType]?.[colField] ?? 0;
+export function getGroupTotalValue(totals: any, columnDef: Column, groupType: string) {
+  return totals?.[groupType]?.[columnDef.field] ?? 0;
 }
 
 /** Get numeric formatter options when defined or use default values (minDecimal, maxDecimal, thousandSeparator, decimalSeparator, wrapNegativeNumber) */
