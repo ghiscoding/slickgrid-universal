@@ -3,7 +3,7 @@ import { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { of } from 'rxjs';
 
 import { FieldType, OperatorType } from '../../enums/index';
-import { GridOption } from '../../interfaces/index';
+import { Column, GridOption } from '../../interfaces/index';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import {
   addTreeLevelByMutation,
@@ -16,6 +16,7 @@ import {
   findItemInTreeStructure,
   findOrDefault,
   formatNumber,
+  getColumnFieldType,
   getDescendantProperty,
   getTranslationPrefix,
   isColumnDateType,
@@ -446,7 +447,24 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('getDescendantProperty method', () => {
+  describe('getColumnFieldType() method', () => {
+    it('should return field type when type is defined', () => {
+      const result = getColumnFieldType({ type: FieldType.dateIso } as Column);
+      expect(result).toEqual(FieldType.dateIso);
+    });
+
+    it('should return outputType when both field type and outputType are defined', () => {
+      const result = getColumnFieldType({ outputType: FieldType.number, type: FieldType.dateIso } as Column);
+      expect(result).toEqual(FieldType.number);
+    });
+
+    it('should return string field type when neither type nor outputType are defined', () => {
+      const result = getColumnFieldType({ field: 'startDate' } as Column);
+      expect(result).toEqual(FieldType.string);
+    });
+  });
+
+  describe('getDescendantProperty() method', () => {
     let obj = {};
     beforeEach(() => {
       obj = { id: 1, user: { firstName: 'John', lastName: 'Doe', address: { number: 123, street: 'Broadway' } } };
