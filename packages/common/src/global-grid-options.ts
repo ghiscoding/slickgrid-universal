@@ -146,7 +146,6 @@ export const GlobalGridOptions: GridOption = {
   excelExportOptions: {
     addGroupIndentation: true,
     exportWithFormatter: false,
-    exportWithExcelFormat: true,
     filename: 'export',
     format: FileType.xlsx,
     groupingColumnHeaderTitle: 'Group By',

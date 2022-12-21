@@ -536,12 +536,12 @@ describe('ExcelExportService', () => {
       let mockCollection: any[];
 
       beforeEach(() => {
-        mockGridOptions.excelExportOptions = { sanitizeDataExport: true, exportWithExcelFormat: true, };
+        mockGridOptions.excelExportOptions = { sanitizeDataExport: true, };
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100 },
-          { id: 'firstName', field: 'firstName', width: 100, formatter: myBoldHtmlFormatter, exportWithExcelFormat: false },
-          { id: 'lastName', field: 'lastName', width: 100, sanitizeDataExport: true, exportWithFormatter: true, exportWithExcelFormat: false },
+          { id: 'firstName', field: 'firstName', width: 100, formatter: myBoldHtmlFormatter },
+          { id: 'lastName', field: 'lastName', width: 100, sanitizeDataExport: true, exportWithFormatter: true },
           {
             id: 'position', field: 'position', width: 100,
             excelExportOptions: { style: { font: { outline: true, italic: true }, format: '€0.00##;[Red](€0.00##)' }, width: 18 }
@@ -603,7 +603,7 @@ describe('ExcelExportService', () => {
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'firstName', field: 'user.firstName', name: 'First Name', width: 100, formatter: Formatters.complexObject, exportWithFormatter: true },
           { id: 'lastName', field: 'user.lastName', name: 'Last Name', width: 100, formatter: Formatters.complexObject, exportWithFormatter: true },
-          { id: 'position', field: 'position', width: 100, type: FieldType.number, exportWithExcelFormat: true },
+          { id: 'position', field: 'position', width: 100, type: FieldType.number },
         ] as Column[];
 
         jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -712,7 +712,7 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'Position', },
               { metadata: { style: 1, }, value: 'Order', },
             ],
-            ['1E06', 'John', 'X', 'Sales Rep.', '10'],
+            ['1E06', 'John', 'X', { metadata: { style: 3 }, value: 'Sales Rep.' }, '10'],
           ]
         });
       });
@@ -805,9 +805,9 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'Order', },
             ],
             ['⮟ Order: 20 (2 items)'],
-            ['', '1E06', 'John', 'X', 'SALES_REP', '10'],
-            ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '10'],
-            ['', '', '', '', '', 'Custom: 20'],
+            ['', '1E06', 'John', 'X', 'SALES_REP', { metadata: { style: 3, type: 'number' }, value: 10 }],
+            ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', { metadata: { style: 3, type: 'number' }, value: 10 }],
+            ['', '', '', '', '', { metadata: { style: 4, type: 'number' }, value: 20 }],
           ]
         });
       });
@@ -825,7 +825,7 @@ describe('ExcelExportService', () => {
       beforeEach(() => {
         mockGridOptions.enableGrouping = true;
         mockGridOptions.enableTranslate = false;
-        mockGridOptions.excelExportOptions = { sanitizeDataExport: true, addGroupIndentation: true, exportWithExcelFormat: true };
+        mockGridOptions.excelExportOptions = { sanitizeDataExport: true, addGroupIndentation: true };
 
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
@@ -1011,9 +1011,9 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'Order', },
             ],
             ['⮟ Order: 20 (2 items)'],
-            ['', '1E06', 'John', 'X', 'Sales Rep.', '10'],
-            ['', '2B02', 'Jane', 'DOE', 'Finance Manager', '10'],
-            ['', '', '', '', '', '20'],
+            ['', '1E06', 'John', 'X', { metadata: { style: 3 }, value: 'Sales Rep.' }, { metadata: { style: 3, type: 'number' }, value: 10 }],
+            ['', '2B02', 'Jane', 'DOE', { metadata: { style: 3 }, value: 'Finance Manager' }, { metadata: { style: 3, type: 'number' }, value: 10 }],
+            ['', '', '', '', '', { metadata: { style: 4, type: 'number', }, value: 20, }],
           ]
         });
       });
@@ -1033,7 +1033,7 @@ describe('ExcelExportService', () => {
       beforeEach(() => {
         mockGridOptions.enableGrouping = true;
         mockGridOptions.enableTranslate = true;
-        mockGridOptions.excelExportOptions = { sanitizeDataExport: true, addGroupIndentation: true, exportWithFormatter: true, exportWithExcelFormat: true };
+        mockGridOptions.excelExportOptions = { sanitizeDataExport: true, addGroupIndentation: true, exportWithFormatter: true };
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100 },
