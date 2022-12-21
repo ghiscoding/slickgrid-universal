@@ -20,7 +20,7 @@ import * as ExcelBuilder from 'excel-builder-webpacker';
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 import { ExcelExportService } from './excelExport.service';
-import { getExcelSameInputDataCallback, useCellFormatByFieldType } from './excelUtils';
+import { getExcelInputDataCallback, useCellFormatByFieldType } from './excelUtils';
 
 const pubSubServiceStub = {
   publish: jest.fn(),
@@ -590,7 +590,7 @@ describe('ExcelExportService', () => {
           ]
         });
         expect(service.regularCellExcelFormats.position).toEqual({
-          getDataValueParser: getExcelSameInputDataCallback,
+          getDataValueParser: getExcelInputDataCallback,
           stylesheetFormatterId: 4,
         });
       });
