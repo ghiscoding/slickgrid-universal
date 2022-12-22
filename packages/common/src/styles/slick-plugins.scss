@@ -17,7 +17,6 @@ li.hidden {
   overflow-x: hidden;
   overflow-y: auto;
   resize: both;
-  width: max-content;
   font-family: var(--slick-font-family, $slick-font-family);
   background-color: var(--slick-column-picker-background-color, $slick-column-picker-background-color);
   border: var(--slick-column-picker-border, $slick-column-picker-border);
@@ -25,7 +24,7 @@ li.hidden {
   min-width: var(--slick-column-picker-min-width, $slick-column-picker-min-width);
   padding: var(--slick-column-picker-padding, $slick-column-picker-padding);
   @-moz-document url-prefix() {
-    /* add right padding to avoid scrollback showing over text, but for firefox since webkit is ok */
+    /* add right padding to avoid scrollback showing over text, that is for Firefox since WebKit is ok */
     padding: var(--slick-column-picker-padding-firefox, $slick-column-picker-padding-firefox);
   }
   box-shadow: var(--slick-column-picker-box-shadow, $slick-column-picker-box-shadow);
@@ -90,7 +89,11 @@ li.hidden {
 }
 
 .slick-column-picker-list, .slick-grid-menu-list {
-  width: var(--slick-column-picker-list-width, $slick-column-picker-list-width);
+  white-space: nowrap;
+  @-moz-document url-prefix() {
+    /* add right padding to avoid scrollback showing over text, that is for Firefox since WebKit is ok */
+    width: var(--slick-column-picker-list-width-firefox, $slick-column-picker-list-width-firefox);
+  }
 
   li {
     border: var(--slick-column-picker-item-border, $slick-column-picker-item-border);
@@ -157,11 +160,22 @@ li.hidden {
 .slick-grid-menu {
   .slick-menu-command-list {
     margin-bottom: var(--slick-column-picker-list-margin-bottom, $slick-column-picker-list-margin-bottom);
+    @-moz-document url-prefix() {
+      /* add right padding to avoid scrollback showing over text, that is for Firefox since WebKit is ok */
+      width: var(--slick-column-picker-list-width-firefox, $slick-column-picker-list-width-firefox);
+    }
   }
 
   li {
     list-style: none;
     background: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    @-moz-document url-prefix() {
+      margin-right: var(--slick-gri-menu-item-margin-right, $slick-gri-menu-item-margin-right);
+      width: 100%;
+    }
+
     a {
       display: block;
       padding: 4px;
@@ -345,7 +359,7 @@ li.hidden {
   min-width: var(--slick-menu-min-width, $slick-menu-min-width);
   padding: var(--slick-menu-padding, $slick-menu-padding);
   @-moz-document url-prefix() {
-    /* add right padding to avoid scrollback showing over text, but for firefox since webkit is ok */
+    /* add right padding to avoid scrollback showing over text, that is for Firefox since WebKit is ok */
     padding: var(--slick-menu-padding-firefox, $slick-menu-padding-firefox);
   }
   z-index: 100000;
