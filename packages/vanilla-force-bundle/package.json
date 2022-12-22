@@ -61,7 +61,7 @@
     "@slickgrid-universal/text-export": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
     "@slickgrid-universal/vanilla-bundle": "workspace:~",
-    "jquery": "^3.6.2",
+    "jquery": "^3.6.3",
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
