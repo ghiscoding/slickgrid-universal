@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.1](https://github.com/ghiscoding/slickgrid-universal/compare/v2.2.0...v2.2.1) (2022-12-22)
+
+### Bug Fixes
+
+* **styling:** make Grid Menu item full width instead of max-content ([#858](https://github.com/ghiscoding/slickgrid-universal/issues/858)) ([9c57365](https://github.com/ghiscoding/slickgrid-universal/commit/9c5736540fae98e227fa99b182904a228886f4cb)) - by @ghiscoding
+
 # [2.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.1.3...v2.2.0) (2022-12-21)
 
 ### Bug Fixes
