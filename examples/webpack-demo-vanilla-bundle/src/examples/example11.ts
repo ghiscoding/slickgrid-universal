@@ -389,7 +389,7 @@ export class Example11 {
         percentComplete: randomPercentComplete > 100 ? 100 : randomPercentComplete,
         start: new Date(randomYear, randomMonth, randomDay),
         finish: (i < 3) ? '' : randomFinish, // make sure the random date is earlier than today and it's index is bigger than 3
-        cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
+        cost: (i % 33 === 0 && i > 8) ? null : Math.round(Math.random() * 10000) / 100,
         completed: (randomFinish < new Date()),
         product: { id: this.mockProducts()[randomItemId]?.id, itemName: this.mockProducts()[randomItemId]?.itemName, },
         countryOfOrigin: (i % 2) ? { code: 'CA', name: 'Canada' } : { code: 'US', name: 'United States' },
