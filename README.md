@@ -38,9 +38,9 @@ The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2
 
 | Lib | Live Demo | UI lib | Description |
 | ----| --------- | ------ | ----------- |
-| [Angular-Slickgrid](https://ghiscoding.github.io/Angular-Slickgrid/) | [demo](https://ghiscoding.github.io/Angular-Slickgrid/) | Bootstrap | for Angular framework |
-| [Aurelia-Slickgrid](https://ghiscoding.github.io/aurelia-slickgrid/) | [demo](https://ghiscoding.github.io/aurelia-slickgrid/) | Bootstrap | for Aurelia framework |
-| [Slickgrid-React](https://ghiscoding.github.io/slickgrid-react/) | [demo](https://ghiscoding.github.io/slickgrid-react/) | Bootstrap | for React framework |
+| [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid)  | [demo](https://ghiscoding.github.io/Angular-Slickgrid/) | Bootstrap | for Angular framework |
+| [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) | [demo](https://ghiscoding.github.io/aurelia-slickgrid/) | Bootstrap | for Aurelia framework |
+| [Slickgrid-React](https://github.com/ghiscoding/slickgrid-react/) | [demo](https://ghiscoding.github.io/slickgrid-react/) | Bootstrap | for React framework |
 | [slickgrid-universal/webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle) | [demo](https://ghiscoding.github.io/slickgrid-universal) | Bulma | standalone package written in plain TypeScript for demo and UI testing (**do not use in production**, this is only for demo/testing purpose). |
 | [Slickgrid-Universal-Vite-Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) | n/a | Bulma | Slickgrid-Universal demo with Vite & TypeScript (**demo purposes only**) |
 
