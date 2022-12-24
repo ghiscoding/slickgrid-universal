@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.2](https://github.com/ghiscoding/slickgrid-universal/compare/v2.2.1...v2.2.2) (2022-12-24)
+
+### Bug Fixes
+
+* **common:** cell selection in Firefox not working ([#859](https://github.com/ghiscoding/slickgrid-universal/issues/859)) ([41ec4e7](https://github.com/ghiscoding/slickgrid-universal/commit/41ec4e7b8ad2396b2c8a6b5ddc43b23fb13af386)) - by @ghiscoding
+
 ## [2.2.1](https://github.com/ghiscoding/slickgrid-universal/compare/v2.2.0...v2.2.1) (2022-12-22)
 
 ### Bug Fixes
