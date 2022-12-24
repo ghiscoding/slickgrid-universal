@@ -344,6 +344,7 @@ export class SlickCellRangeSelector {
 
     // prevent the grid from cancelling drag'n'drop by default
     e.stopImmediatePropagation();
+    e.preventDefault();
   }
 
   protected handleDragStart(e: DOMMouseOrTouchEvent<HTMLDivElement>, dd: DragPosition) {
