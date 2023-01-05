@@ -85,7 +85,7 @@
   },
   "devDependencies": {
     "@types/dompurify": "^2.4.0",
-    "@types/jquery": "^3.5.14",
+    "@types/jquery": "^3.5.16",
     "@types/sortablejs": "^1.15.0",
     "autoprefixer": "^10.4.13",
     "copyfiles": "^2.4.1",

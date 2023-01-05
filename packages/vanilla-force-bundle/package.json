@@ -65,7 +65,7 @@
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
-    "@types/jquery": "^3.5.14",
+    "@types/jquery": "^3.5.16",
     "@types/webpack": "^5.28.0",
     "archiver": "^5.3.1",
     "cross-env": "^7.0.3",
