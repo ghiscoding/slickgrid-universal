@@ -508,7 +508,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(TextExportService).toHaveBeenCalled();
         expect(SlickCustomTooltip).toHaveBeenCalled();
-        expect(component.registeredResources.length).toBe(5); // TextExportService, SlickCustomTooltip, GridService, GridStateService, SlickEmptyCompositeEditorComponent
+        expect(component.registeredResources.length).toBe(6); // ExcelExportService, TextExportService, SlickCustomTooltip, GridService, GridStateService, SlickEmptyCompositeEditorComponent
       });
 
       it('should add RxJS resource to all necessary Services when RxJS external resource is registered', () => {
