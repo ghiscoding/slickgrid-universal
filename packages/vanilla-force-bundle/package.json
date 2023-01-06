@@ -57,6 +57,7 @@
     "@slickgrid-universal/custom-tooltip-plugin": "workspace:~",
     "@slickgrid-universal/empty-warning-component": "workspace:~",
     "@slickgrid-universal/event-pub-sub": "workspace:~",
+    "@slickgrid-universal/excel-export": "workspace:~",
     "@slickgrid-universal/pagination-component": "workspace:~",
     "@slickgrid-universal/text-export": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",

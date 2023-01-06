@@ -469,6 +469,7 @@ importers:
       '@slickgrid-universal/custom-tooltip-plugin': workspace:~
       '@slickgrid-universal/empty-warning-component': workspace:~
       '@slickgrid-universal/event-pub-sub': workspace:~
+      '@slickgrid-universal/excel-export': workspace:~
       '@slickgrid-universal/pagination-component': workspace:~
       '@slickgrid-universal/text-export': workspace:~
       '@slickgrid-universal/utils': workspace:~
@@ -493,6 +494,7 @@ importers:
       '@slickgrid-universal/custom-tooltip-plugin': link:../custom-tooltip-plugin
       '@slickgrid-universal/empty-warning-component': link:../empty-warning-component
       '@slickgrid-universal/event-pub-sub': link:../event-pub-sub
+      '@slickgrid-universal/excel-export': link:../excel-export
       '@slickgrid-universal/pagination-component': link:../pagination-component
       '@slickgrid-universal/text-export': link:../text-export
       '@slickgrid-universal/utils': link:../utils

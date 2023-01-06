@@ -32,6 +32,10 @@ export const SalesforceGlobalGridOptions = {
   customTooltip: {
     tooltipTextMaxLength: 650,
   },
+  excelExportOptions: {
+    mimeType: '', // Salesforce doesn't like Excel MIME type (not allowed), but we can bypass the problem by using no type at all
+    sanitizeDataExport: true
+  },
   filterTypingDebounce: 250,
   formatterOptions: {
     minDecimal: 0,
