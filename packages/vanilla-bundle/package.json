@@ -22,7 +22,7 @@
     "dev": "pnpm run bundle:commonjs",
     "dev:watch": "tsc --incremental --watch",
     "prebundle": "pnpm run clean",
-    "bundle": "npm-run-all bundle:commonjs bundle:esm --npm-path npm",
+    "bundle": "npm-run-all bundle:commonjs bundle:esm",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "test": "echo testing slickgrid-universal slickgrid-vanilla-bundle code"

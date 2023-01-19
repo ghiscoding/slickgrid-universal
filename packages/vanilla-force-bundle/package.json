@@ -22,7 +22,7 @@
     "dev": "webpack --env development",
     "dev:watch": "tsc --incremental --watch",
     "prebundle": "pnpm run clean",
-    "bundle": "npm-run-all bundle:commonjs bundle:esm webpack:prod --npm-path npm",
+    "bundle": "npm-run-all bundle:commonjs bundle:esm webpack:prod",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "prebundle:zip": "pnpm run delete:zip",
