@@ -48,7 +48,7 @@
     "cross-env": "^7.0.3",
     "moment-mini": "^2.29.4",
     "npm-run-all2": "^6.0.4",
-    "rimraf": "^3.0.2"
+    "rimraf": "^4.1.1"
   },
   "funding": {
     "type": "ko_fi",
