@@ -25,8 +25,8 @@ importers:
       jsdom: ^21.0.0
       jsdom-global: ^3.0.2
       moment-mini: ^2.29.4
-      pnpm: ^7.24.3
       npm-run-all2: ^6.0.4
+      pnpm: ^7.24.3
       rimraf: ^3.0.2
       rxjs: ^7.5.7
       serve: ^14.1.2
@@ -54,7 +54,8 @@ importers:
       jsdom: 21.0.0
       jsdom-global: 3.0.2_jsdom@21.0.0
       moment-mini: 2.29.4
-      pnpm: 7.22.0
+      npm-run-all2: 6.0.4
+      pnpm: 7.24.3
       rimraf: 3.0.2
       rxjs: 7.5.7
       serve: 14.1.2
@@ -9014,19 +9015,6 @@ packages:
   /semver/6.3.0:
     resolution: {integrity: sha512-b39TBaTSfV6yBrapU89p5fKekE2m/NwnDocOVruQFS1/veMgdzuPcnOM34M6CwxW8jH/lxEa5rBoDeUwu5HHTw==}
     hasBin: true
-    dev: true
-
-  /semver/7.0.0:
-    resolution: {integrity: sha512-+GB6zVA9LWh6zovYQLALHwv5rb2PHGlJi3lfiqIHxR0uuwCgefcOJc59v9fv1w8GbStwxuuqqAjI9NMAOOgq1A==}
-    hasBin: true
-    dev: true
-
-  /semver/7.3.7:
-    resolution: {integrity: sha512-QlYTucUYOews+WeEujDoEGziz4K6c47V/Bd+LjSSYcA94p+DmINdf7ncaUinThfvZyu13lN9OY1XDxt8C0Tw0g==}
-    engines: {node: '>=10'}
-    hasBin: true
-    dependencies:
-      lru-cache: 6.0.0
     dev: true
 
   /semver/7.3.8:
