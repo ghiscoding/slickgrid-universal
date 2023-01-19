@@ -63,7 +63,7 @@
     "clean-webpack-plugin": "4.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.3",
-    "esbuild-loader": "^2.20.0",
+    "esbuild-loader": "^2.21.0",
     "file-loader": "^6.2.0",
     "fork-ts-checker-webpack-plugin": "^7.3.0",
     "html-loader": "^4.2.0",
