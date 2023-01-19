@@ -23,7 +23,7 @@
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "prebundle": "pnpm run clean",
-    "bundle": "run-p bundle:commonjs bundle:esm --npm-path npm"
+    "bundle": "run-p bundle:commonjs bundle:esm"
   },
   "license": "MIT",
   "author": "Ghislain B.",
