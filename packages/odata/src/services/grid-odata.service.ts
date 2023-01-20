@@ -331,10 +331,16 @@ export class GridOdataService implements BackendService {
         }
 
         fieldSearchValue = (fieldSearchValue === undefined || fieldSearchValue === null) ? '' : `${fieldSearchValue}`; // make sure it's a string
-        const matches = fieldSearchValue.match(/^([<>!=\*]{0,2})(.*[^<>!=\*])([\*]?)$/); // group 1: Operator, 2: searchValue, 3: last char is '*' (meaning starts with, ex.: abc*)
-        let operator = columnFilter.operator || ((matches) ? matches[1] : '');
-        let searchValue = (!!matches) ? matches[2] : '';
-        const lastValueChar = (!!matches) ? matches[3] : (operator === '*z' || operator === OperatorType.endsWith) ? '*' : '';
+
+        // run regex to find possible filter operators unless the user disabled the feature
+        const autoParseInputFilterOperator = columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
+        const matches = autoParseInputFilterOperator !== false
+          ? fieldSearchValue.match(/^([<>!=\*]{0,2})(.*[^<>!=\*])([\*]?)$/) // group 1: Operator, 2: searchValue, 3: last char is '*' (meaning starts with, ex.: abc*)
+          : [fieldSearchValue, '', fieldSearchValue, '']; // when parsing is disabled, we'll only keep the search value in the index 2 to make it easy for code reuse
+
+        let operator = columnFilter.operator || matches?.[1];
+        let searchValue = matches?.[2] || '';
+        const lastValueChar = matches?.[3] || (operator === '*z' || operator === OperatorType.endsWith) ? '*' : '';
         const bypassOdataQuery = columnFilter.bypassBackendQuery || false;
 
         // no need to query if search value is empty
