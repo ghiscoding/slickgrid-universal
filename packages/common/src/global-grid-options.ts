@@ -13,6 +13,7 @@ export const GlobalGridOptions: GridOption = {
   autoFixResizeTimeout: 5 * 60 * 5, // interval is 200ms, so 4x is 1sec, so (5 * 60 * 5 = 5min)
   autoFixResizeRequiredGoodCount: 2,
   autoFixResizeWhenBrokenStyleDetected: false,
+  autoParseInputFilterOperator: true,
   autoResize: {
     applyResizeToContainer: true,
     calculateAvailableSizeBy: 'window',

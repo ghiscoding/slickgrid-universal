@@ -79,6 +79,14 @@ export interface GridOption {
   autoFitColumnsOnFirstLoad?: boolean;
 
   /**
+   * Defaults to true, when enabled it will parse the filter input string and extract filter operator (<, <=, >=, >, =, *) when found.
+   * When an operators is found in the input string, it will automatically be converted to a Filter Operators and will no longer be part of the search value itself.
+   * For example when the input value is "> 100", it will transform the search as to a Filter Operator of ">" and a search value of "100".
+   * The only time that the user would want to disable this flag is when the user's data has any of these special characters and the user really wants to filter them as part of the string (ie: >, <, ...)
+   */
+  autoParseInputFilterOperator?: boolean;
+
+  /**
    * Defaults to false, which leads to automatically adjust the width of each column by their cell value content and only on first page/component load.
    * If you wish this resize to also re-evaluate when resizing the browser, then you should also use `enableAutoResizeColumnsByCellContent`
    */

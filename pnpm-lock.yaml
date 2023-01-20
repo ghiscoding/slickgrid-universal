@@ -22,6 +22,7 @@ importers:
       jest-cli: ^29.3.1
       jest-environment-jsdom: ^29.3.1
       jest-extended: ^3.2.3
+      jquery: ^3.6.3
       jsdom: ^21.0.0
       jsdom-global: ^3.0.2
       moment-mini: ^2.29.4
@@ -30,8 +31,11 @@ importers:
       rimraf: ^3.0.2
       rxjs: ^7.5.7
       serve: ^14.1.2
+      slickgrid: ^3.0.2
+      sortablejs: ^1.15.0
       ts-jest: ^29.0.5
       typescript: ^4.9.4
+      whatwg-fetch: ^3.6.2
     devDependencies:
       '@4tw/cypress-drag-drop': 2.2.3_cypress@11.2.0
       '@jest/types': 29.3.1
@@ -51,6 +55,7 @@ importers:
       jest-cli: 29.3.1_@types+node@18.11.18
       jest-environment-jsdom: 29.3.1
       jest-extended: 3.2.3_jest@29.3.1
+      jquery: 3.6.3
       jsdom: 21.0.0
       jsdom-global: 3.0.2_jsdom@21.0.0
       moment-mini: 2.29.4
@@ -59,8 +64,11 @@ importers:
       rimraf: 3.0.2
       rxjs: 7.5.7
       serve: 14.1.2
+      slickgrid: 3.0.2
+      sortablejs: 1.15.0
       ts-jest: 29.0.5_a67wnu7kur6t3xg6vztzc6sc5i
       typescript: 4.9.4
+      whatwg-fetch: 3.6.2
 
   examples/webpack-demo-vanilla-bundle:
     specifiers:
@@ -6779,7 +6787,6 @@ packages:
 
   /jquery/3.6.3:
     resolution: {integrity: sha512-bZ5Sy3YzKo9Fyc8wH2iIQK4JImJ6R0GWI9kL1/k7Z91ZBNgkRXE6U0JfHIizZbort8ZunhSI3jw9I6253ahKfg==}
-    dev: false
 
   /js-sdsl/4.1.4:
     resolution: {integrity: sha512-Y2/yD55y5jteOAmY50JbUZYwk3CP3wnLPEZnlR1w9oKhITrBEtAxwuWKebFf8hMrPMgbYwFoWK/lH2sBkErELw==}
@@ -9209,7 +9216,6 @@ packages:
     dependencies:
       jquery: 3.6.3
       sortablejs: 1.15.0
-    dev: false
 
   /smart-buffer/4.2.0:
     resolution: {integrity: sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg==}
@@ -9259,7 +9265,6 @@ packages:
 
   /sortablejs/1.15.0:
     resolution: {integrity: sha512-bv9qgVMjUMf89wAvM6AxVvS/4MX3sPeN0+agqShejLU5z5GX4C75ow1O2e5k4L6XItUyAK3gH6AxSbXrOM5e8w==}
-    dev: false
 
   /source-list-map/2.0.1:
     resolution: {integrity: sha512-qnQ7gVMxGNxsiL4lEuJwe/To8UnK7fAnmbGEEH8RpLouuKbeEm0lhbQVFIrNSuB+G7tVrAlVsZgETT5nljf+Iw==}
@@ -10370,7 +10375,6 @@ packages:
 
   /whatwg-fetch/3.6.2:
     resolution: {integrity: sha512-bJlen0FcuU/0EMLrdbJ7zOnW6ITZLrZMIarMUVmdKtsGvZna8vxKYaexICWPfZ8qwf9fzNq+UEIZrnSaApt6RA==}
-    dev: false
 
   /whatwg-mimetype/3.0.0:
     resolution: {integrity: sha512-nt+N2dzIutVRxARx1nghPKGv1xHikU7HKdfafKkLNLindmPU/ch3U31NOCGGA/dmPcmb1VlofO0vnKAcsm0o/Q==}
