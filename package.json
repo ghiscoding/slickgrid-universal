@@ -48,9 +48,9 @@
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^2.2.3",
     "@jest/types": "^29.3.1",
-    "@lerna-lite/cli": "^1.14.1",
-    "@lerna-lite/run": "^1.14.1",
-    "@lerna-lite/watch": "^1.14.1",
+    "@lerna-lite/cli": "^1.14.2",
+    "@lerna-lite/run": "^1.14.2",
+    "@lerna-lite/watch": "^1.14.2",
     "@types/jest": "^29.2.6",
     "@types/node": "^18.11.18",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
