@@ -26,7 +26,7 @@
     "cypress:ci": "cypress run --config-file test/cypress.config.ts",
     "dev": "cross-env TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling pnpm -r --parallel run dev:watch",
     "dev:watch": "run-p dev sass:watch",
-    "sass:watch": "lerna watch --scope=@slickgrid-universal/common --glob=\"src/**/*.scss\" -- cross-env-shell pnpm -r --filter $LERNA_PACKAGE_NAME sass:copy",
+    "sass:watch": "lerna watch --scope=@slickgrid-universal/common --glob=\"src/**/*.scss\" -- cross-env-shell pnpm run -r --filter $LERNA_PACKAGE_NAME sass:copy",
     "preview:publish": "lerna publish from-package --dry-run",
     "preview:version": "lerna version --dry-run",
     "preview:roll-new-release": "pnpm bundle && pnpm new-version --dry-run && pnpm new-publish --dry-run",
@@ -87,5 +87,13 @@
   "funding": {
     "type": "ko_fi",
     "url": "https://ko-fi.com/ghiscoding"
+  },
+  "pnpm": {
+    "overrides": {
+      "loader-utils@>=2.0.0 <2.0.4": ">=2.0.4",
+      "loader-utils@>=2.0.0 <2.0.3": ">=2.0.3",
+      "json5@<1.0.2": ">=1.0.2",
+      "terser@>=5.0.0 <5.14.2": ">=5.14.2"
+    }
   }
 }
