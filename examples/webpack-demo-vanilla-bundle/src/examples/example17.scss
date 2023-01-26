@@ -2,8 +2,10 @@ $control-height: 2.4em;
 @import 'bulma/bulma';
 
 :root {
-  --slick-header-row-count: 1;
-  --slick-header-column-height: 17px;
+  .grid17-1, .grid17-2 {
+    --slick-header-row-count: 1;
+    --slick-header-column-height: 17px;
+  }
 }
 
 .scroll-configs input {

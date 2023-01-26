@@ -2,6 +2,7 @@ import {
   Aggregators,
   BindingEventService,
   Column,
+  EditCommand,
   Editors,
   FieldType,
   FileType,
@@ -40,7 +41,7 @@ export class Example3 {
   columnDefinitions: Column<ReportItem & { action: string; }>[];
   gridOptions: GridOption;
   dataset: any[];
-  editCommandQueue = [];
+  editCommandQueue: EditCommand[] = [];
   excelExportService: ExcelExportService;
   sgb: SlickVanillaGridBundle;
   durationOrderByCount = false;
