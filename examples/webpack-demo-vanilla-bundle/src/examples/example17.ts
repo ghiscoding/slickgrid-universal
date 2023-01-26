@@ -55,11 +55,10 @@ export class Example17 {
     ];
 
     for (let i = 0; i < 30; i++) {
-      this.columnDefinitions1.push({ id: `mock${i}`, name: `Mock${i}`, field: `mock${i}`, width: 90, filterable: true });
+      this.columnDefinitions1.push({ id: `mock${i}`, name: `Mock${i}`, field: `mock${i}`, width: 90 });
     }
 
     this.gridOptions1 = {
-      enableFiltering: true,
       enableAutoResize: false,
       enableAutoSizeColumns: false,
       autoFitColumnsOnFirstLoad: false,
