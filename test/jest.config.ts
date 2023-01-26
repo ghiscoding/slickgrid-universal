@@ -1,6 +1,8 @@
-module.exports = {
+import type { Config } from '@jest/types';
+
+const config: Config.InitialOptions = {
   rootDir: '../',
-  globalSetup: '<rootDir>/test/jest-global-setup.js',
+  globalSetup: '<rootDir>/test/jest-global-setup.ts',
   cacheDirectory: '<rootDir>/test/.jest-cache',
   collectCoverage: false,
   collectCoverageFrom: [
@@ -61,3 +63,5 @@ module.exports = {
     '<rootDir>/node_modules/',
   ],
 };
+
+export default config;
