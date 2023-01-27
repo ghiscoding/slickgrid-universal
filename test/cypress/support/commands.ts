@@ -26,10 +26,21 @@
 import '@4tw/cypress-drag-drop';
 import { convertPosition } from './common';
 
-// convert position like 'topLeft' to the object { x: 'left|right', y: 'top|bottom' }
-Cypress.Commands.add("convertPosition", (viewport = 'topLeft') => cy.wrap(convertPosition(viewport)));
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Cypress {
+    interface Chainable {
+      // triggerHover: (elements: NodeListOf<HTMLElement>) => void;
+      convertPosition(viewport: string): Chainable<JQuery<HTMLElement>>;
+      getCell(row: number, col: number, viewport?: string, options?: { parentSelector?: string, rowHeight?: number; }): Chainable<JQuery<HTMLElement>>;
+    }
+  }
+}
 
-Cypress.Commands.add("getCell", (row, col, viewport = 'topLeft', { parentSelector = '', rowHeight = 35 } = {}) => {
+// convert position like 'topLeft' to the object { x: 'left|right', y: 'top|bottom' }
+Cypress.Commands.add('convertPosition', (viewport = 'topLeft') => cy.wrap(convertPosition(viewport) as any));
+
+Cypress.Commands.add('getCell', (row: number, col: number, viewport = 'topLeft', { parentSelector = '', rowHeight = 35 } = {}) => {
   const position = convertPosition(viewport);
   const canvasSelectorX = position.x ? `.grid-canvas-${position.x}` : '';
   const canvasSelectorY = position.y ? `.grid-canvas-${position.y}` : '';

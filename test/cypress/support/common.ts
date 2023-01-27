@@ -22,7 +22,7 @@ const POSITION = Object.freeze({
   BOTTOM: 'bottom',
   LEFT: 'left',
   RIGHT: 'right'
-})
+});
 
 /**
  * Convert position string to object

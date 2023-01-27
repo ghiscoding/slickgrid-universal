@@ -1,9 +1,5 @@
-/// <reference types="cypress" />
 import moment from 'moment-mini';
-
-function removeExtraSpaces(textS) {
-  return `${textS}`.replace(/\s+/g, ' ').trim();
-}
+import { removeExtraSpaces } from '../plugins/utilities';
 
 describe('Example 02 - Grouping & Aggregators', { retries: 1 }, () => {
   const fullTitles = ['#', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Cost', 'Effort Driven'];
