@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 45;
   const titles = ['Files', 'Date Modified', 'Description', 'Size'];
@@ -7,7 +5,7 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
   // const defaultSortDescList = ['something.txt', 'music', 'mp3', 'rock', 'soft.mp3', 'pop', 'theme.mp3', 'song.mp3', 'documents', 'xls', 'compilation.xls', 'txt', 'todo.txt', 'pdf', 'phone-bill.pdf', 'map2.pdf', 'map.pdf', 'internet-bill.pdf', 'misc', 'todo.txt', 'bucket-list.txt'];
   const defaultGridPresetWithoutPdfDocs = ['bucket-list.txt', 'documents', 'misc', 'todo.txt', 'pdf', 'txt', 'todo.txt', 'xls', 'compilation.xls'];
   const defaultSortAscList = ['bucket-list.txt', 'documents', 'misc', 'todo.txt', 'pdf', 'internet-bill.pdf', 'map.pdf', 'map2.pdf', 'phone-bill.pdf'];
-  const defaultSortDescList = ['something.txt', 'music', 'mp3', 'rock', 'soft.mp3', 'pop', 'theme.mp3', 'song.mp3', 'documents', 'xls', 'compilation.xls', 'txt', 'todo.txt'];
+  // const defaultSortDescList = ['something.txt', 'music', 'mp3', 'rock', 'soft.mp3', 'pop', 'theme.mp3', 'song.mp3', 'documents', 'xls', 'compilation.xls', 'txt', 'todo.txt'];
   const defaultSortDescListWithExtraSongs = ['something.txt', 'recipes', 'coffee-cake', 'chocolate-cake', 'cheesecake', 'music', 'mp3', 'rock', 'soft.mp3', 'pop', 'theme.mp3', 'song.mp3', 'pop-126.mp3', 'pop-125.mp3', 'documents', 'xls'];
   const popMusicWith3ExtraSongs = ['music', 'mp3', 'pop', 'pop-125.mp3', 'pop-126.mp3', 'pop-127.mp3', 'song.mp3', 'theme.mp3',];
 
@@ -40,7 +38,7 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
       .click();
 
     cy.get('.slick-viewport-top.slick-viewport-left')
-      .scrollTo('top', { force: true });
+      .scrollTo('top', { force: true } as any);
   });
 
   it('should have default Files list', () => {

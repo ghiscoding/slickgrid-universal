@@ -1,8 +1,4 @@
-/// <reference types="Cypress" />
-
-function removeExtraSpaces(textS) {
-  return `${textS}`.replace(/\s+/g, ' ').trim();
-}
+import { removeExtraSpaces } from '../plugins/utilities';
 
 describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 45;

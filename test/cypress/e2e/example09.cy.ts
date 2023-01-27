@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 describe('Example 09 - OData Grid', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 45;
 
@@ -372,7 +370,7 @@ describe('Example 09 - OData Grid', { retries: 1 }, () => {
       cy.get('.grid9')
         .find('button.slick-grid-menu-button')
         .trigger('click')
-        .click()
+        .click();
 
       cy.get(`.slick-grid-menu:visible`)
         .find('.slick-menu-item:nth(1)')

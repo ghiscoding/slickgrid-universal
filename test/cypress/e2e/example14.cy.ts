@@ -1,8 +1,4 @@
-/// <reference types="cypress" />
-
 describe('Example 14 - Columns Resize by Content', { retries: 1 }, () => {
-  const titles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Complexity', 'Start', 'Completed', 'Finish', 'Product', 'Country of Origin', 'Action'];
-
   beforeEach(() => {
     // create a console.log spy for later use
     cy.window().then((win) => {

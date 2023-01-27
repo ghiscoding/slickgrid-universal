@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 describe('Example 13 - Header Button Plugin', { retries: 1 }, () => {
   const titles = ['Resize me!', 'Hover me!', 'Column C', 'Column D', 'Column E', 'Column F', 'Column G', 'Column H', 'Column I', 'Column J'];
 
@@ -348,7 +346,6 @@ describe('Example 13 - Header Button Plugin', { retries: 1 }, () => {
           cy.wrap($row).children('.slick-cell:nth(2)')
             .each($cell => {
               const numberValue = $cell.text();
-              const htmlValue = $cell.html();
               expect(+numberValue).to.be.greaterThan(0);
             });
         });

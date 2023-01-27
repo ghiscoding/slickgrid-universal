@@ -1,4 +1,3 @@
-/// <reference types='cypress' />
 import { getScrollDistanceWhenDragOutsideGrid } from '../support/drag';
 
 describe('Example 17 - Auto-Scroll with Range Selector', { retries: 1 }, () => {
@@ -51,7 +50,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', { retries: 1 }, () => {
     cy.get('.grid17-2 .slick-row:nth-child(-n+6)')
       .children(':not(.cell-unselectable)')
       .each(($child) => expect($child.attr('class')).to.include('true'));
-  })
+  });
 
   function testScroll() {
     return getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'topLeft', 'right', 0, 1).then(cellScrollDistance => {
@@ -85,7 +84,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', { retries: 1 }, () => {
     });
 
     cy.get('[data-test="default-options-btn"]').click();
-    cy.get('[data-test="is-autoscroll-chk"]').should('have.value', 'on')
+    cy.get('[data-test="is-autoscroll-chk"]').should('have.value', 'on');
   });
 
   function getIntervalUntilRow12Displayed(selector, px, rowNumber = 12) {
@@ -103,15 +102,15 @@ describe('Example 17 - Auto-Scroll with Range Selector', { retries: 1 }, () => {
 
       return cy.get(viewportSelector).invoke('scrollTop').then(scrollAfter => {
         cy.dragEnd(selector);
-        var interval = performance.now() - start;
-        expect(scrollBefore).to.be.lte(scrollAfter);
+        const interval = performance.now() - start;
+        expect(scrollBefore).to.be.lte(scrollAfter as number);
         cy.get(viewportSelector).scrollTo(0, 0, { ensureScrollable: false });
         return cy.wrap(interval);
       });
     });
   }
 
-  function testInterval(px, rowNumber) {
+  function testInterval(px: number, rowNumber?: number) {
     return getIntervalUntilRow12Displayed('.grid17-1', px, rowNumber).then(intervalCell => {
       return getIntervalUntilRow12Displayed('.grid17-2', px, rowNumber).then(intervalRow => {
         return cy.wrap({
@@ -281,7 +280,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', { retries: 1 }, () => {
     cy.get(`${selector} .slick-viewport:last`).as('viewport').invoke('scrollTop').then(scrollBefore => {
       cy.dragOutside('bottom', 400, CELL_HEIGHT * 12, { parentSelector: selector });
       cy.get('@viewport').invoke('scrollTop').then(scrollAfter => {
-        expect(scrollBefore).to.be.lessThan(scrollAfter);
+        expect(scrollBefore).to.be.lessThan(scrollAfter as number);
         cy.dragEnd(selector);
         cy.get(`${selector} [style='top:${CELL_HEIGHT * 14}px'].slick-group`).should('exist');
       });

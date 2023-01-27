@@ -1,4 +1,3 @@
-/// <reference types="Cypress" />
 import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
 describe('Example 12 - Composite Editor Modal', { retries: 1 }, () => {
@@ -119,7 +118,7 @@ describe('Example 12 - Composite Editor Modal', { retries: 1 }, () => {
     const today = changeTimezone(now, tz);
 
     const currentDate = today.getDate();
-    let currentMonth = today.getMonth() + 1; // month is zero based, let's add 1 to it
+    let currentMonth: number | string = today.getMonth() + 1; // month is zero based, let's add 1 to it
     if (currentMonth < 10) {
       currentMonth = `0${currentMonth}`; // add zero padding
     }
@@ -414,10 +413,10 @@ describe('Example 12 - Composite Editor Modal', { retries: 1 }, () => {
 
     cy.get('.btn-save')
       .click()
-      .then(() => expect(alertStub.getCall(0)).to.be.calledWith('Sorry we could not detect any changes.'))
+      .then(() => expect(alertStub.getCall(0)).to.be.calledWith('Sorry we could not detect any changes.'));
 
     cy.get('.btn-cancel')
-      .click()
+      .click();
   });
 
   it('should have the "Mass Selection" button disabled when no rows are selected', () => {
@@ -493,7 +492,7 @@ describe('Example 12 - Composite Editor Modal', { retries: 1 }, () => {
     const today = changeTimezone(now, tz);
 
     const currentDate = today.getDate();
-    let currentMonth = today.getMonth() + 1; // month is zero based, let's add 1 to it
+    let currentMonth: number | string = today.getMonth() + 1; // month is zero based, let's add 1 to it
     if (currentMonth < 10) {
       currentMonth = `0${currentMonth}`; // add zero padding
     }
