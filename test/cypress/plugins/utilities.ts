@@ -16,6 +16,10 @@ export function removeExtraSpaces(text: string) {
   return `${text}`.replace(/\s+/g, ' ').trim();
 }
 
+export function removeWhitespaces(text: string) {
+  return `${text}`.replace(/\s+/g, '');
+}
+
 export function zeroPadding(input: string | number) {
   const number = parseInt(input as string, 10);
   return number < 10 ? `0${number}` : number;

@@ -35,7 +35,7 @@ Cypress.on('window:before:load', function (window) {
   });
 });
 
-Cypress.Cookies.defaults({
-  preserve: 'serve-mode',
-  set: 'cypress'
-});
+// Cypress.Cookies.defaults({
+//   preserve: 'serve-mode',
+//   set: 'cypress'
+// });
