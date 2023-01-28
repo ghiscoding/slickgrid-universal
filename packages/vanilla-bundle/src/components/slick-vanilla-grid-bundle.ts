@@ -1,10 +1,10 @@
 import { dequal } from 'dequal/lite';
 import 'jquery';
 import 'flatpickr/dist/l10n/fr';
-import 'slickgrid/dist/slick.core.min';
-import 'slickgrid/dist/slick.interactions.min';
-import 'slickgrid/dist/slick.grid.min';
-import 'slickgrid/dist/slick.dataview.min';
+import 'slickgrid/slick.core';
+import 'slickgrid/slick.interactions';
+import 'slickgrid/slick.grid';
+import 'slickgrid/slick.dataview';
 import SortableInstance, * as Sortable_ from 'sortablejs';
 const Sortable = ((Sortable_ as any)?.['default'] ?? Sortable_); // patch for rollup
 
@@ -955,11 +955,11 @@ export class SlickVanillaGridBundle {
 
   /**
    * On a Pagination changed, we will trigger a Grid State changed with the new pagination info
-   * Also if we use Row Selection or the Checkbox Selector, we need to reset any selection
+   * Also if we use Row Selection or the Checkbox Selector with a Backend Service (Odata, GraphQL), we need to reset any selection
    */
   paginationChanged(pagination: ServicePagination) {
     const isSyncGridSelectionEnabled = this.gridStateService?.needToPreserveRowSelection() ?? false;
-    if (this.slickGrid && !isSyncGridSelectionEnabled && (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector)) {
+    if (this.slickGrid && !isSyncGridSelectionEnabled && this._gridOptions?.backendServiceApi && (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector)) {
       this.slickGrid.setSelectedRows([]);
     }
     const { pageNumber, pageSize } = pagination;
@@ -1290,11 +1290,12 @@ export class SlickVanillaGridBundle {
       // local Pagination uses the DataView and that also trigger a change/refresh
       // and we don't want to trigger 2 Grid State changes just 1
       if ((this._isLocalGrid && !this.gridOptions.enablePagination) || !this._isLocalGrid) {
-        setTimeout(() => {
-          if (this.slickGrid && Array.isArray(gridRowIndexes)) {
-            this.slickGrid.setSelectedRows(gridRowIndexes);
-          }
-        });
+        // setTimeout(() => {
+        if (this.slickGrid && Array.isArray(gridRowIndexes)) {
+          this.slickGrid.setSelectedRows(gridRowIndexes);
+          this.dataView!.setSelectedIds(dataContextIds || [], true);
+        }
+        // });
       }
     }
   }

@@ -1,6 +1,12 @@
 import { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
 
 export interface CheckboxSelectorOption {
+  /**
+   * Defaults to true, should we apply the row selection on all pages?
+   * It requires DataView `syncGridSelection` to have `preserveHidden` to be disabled and `preserveHiddenOnSelectionChange` to be enabled.
+   */
+  applySelectOnAllPages?: boolean;
+
   /** Defaults to "_checkbox_selector", you can provide a different column id used as the column header id */
   columnId?: string;
 

@@ -133,6 +133,7 @@ export class Example12 {
     this._bindingEventService.bind(this.gridContainerElm, 'oncompositeeditorchange', this.handleOnCompositeEditorChange.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'onpaginationchanged', this.handleReRenderUnsavedStyling.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'onfilterchanged', this.handleReRenderUnsavedStyling.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onselectedrowidschanged', this.handleOnSelectedRowIdsChanged.bind(this));
   }
 
   dispose() {
@@ -433,11 +434,17 @@ export class Example12 {
       headerRowHeight: 35,
       enableCheckboxSelector: true,
       enableRowSelection: true,
-      multiSelect: false,
       checkboxSelector: {
+        // applySelectOnAllPages: true,
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
       },
+      // dataView: {
+      //   syncGridSelection: {
+      //     preserveHidden: false,
+      //     preserveHiddenOnSelectionChange: true
+      //   }
+      // },
       enableCompositeEditor: true,
       editCommandHandler: (item, column, editCommand) => {
         // composite editors values are saved as array, so let's convert to array in any case and we'll loop through these values
@@ -621,6 +628,12 @@ export class Example12 {
     if (Array.isArray(gridState?.rowSelection.dataContextIds)) {
       this.isMassSelectionDisabled = gridState.rowSelection.dataContextIds.length === 0;
     }
+  }
+
+  handleOnSelectedRowIdsChanged(event) {
+    const args = event?.detail?.args;
+    // const sortedSelectedIds = args.filteredIds.sort((a, b) => a - b);
+    console.log('sortedSelectedIds', args.filteredIds.length, args.selectedRowIds.length);
   }
 
   toggleGridEditReadonly() {
