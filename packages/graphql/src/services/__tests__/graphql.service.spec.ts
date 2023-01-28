@@ -744,7 +744,7 @@ describe('GraphqlService', () => {
       expect(currentFilters).toEqual([{ columnId: 'gender', operator: 'EQ', searchTerms: ['female'] }]);
     });
 
-    it('should return a query with search having the operator StartsWith when search value has the * symbol as the last character', () => {
+    it('should return a query with search having the operator StartsWith when search value has the "*" symbol as the last character', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:StartsWith, value:"fem"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
@@ -758,7 +758,7 @@ describe('GraphqlService', () => {
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
     });
 
-    it('should return a query with search having the operator EndsWith when search value has the * symbol as the first character', () => {
+    it('should return a query with search having the operator EndsWith when search value has the "*" symbol as the first character', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:EndsWith, value:"le"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
@@ -772,7 +772,7 @@ describe('GraphqlService', () => {
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
     });
 
-    it('should return a query with search having the operator EndsWith when the operator was provided as *z', () => {
+    it('should return a query with search having the operator EndsWith when the operator was provided as "*z"', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:EndsWith, value:"le"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
@@ -786,7 +786,7 @@ describe('GraphqlService', () => {
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
     });
 
-    it('should return a query with search having the operator StartsWith even when search value last char is * symbol but the operator provided is *z', () => {
+    it('should return a query with search having the operator StartsWith even when search value last char is "*" symbol but the operator provided is "*z"', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:StartsWith, value:"le"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
@@ -800,7 +800,7 @@ describe('GraphqlService', () => {
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
     });
 
-    it('should return a query with search having the operator EndsWith when the Column Filter was provided as *z', () => {
+    it('should return a query with search having the operator EndsWith when the Column Filter was provided as "*z"', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:EndsWith, value:"le"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender', filter: { operator: '*z' } } as Column;
       const mockColumnFilters = {
@@ -828,7 +828,7 @@ describe('GraphqlService', () => {
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
     });
 
-    it('should return a query with search having the operator StartsWith when the operator was provided as a*', () => {
+    it('should return a query with search having the operator StartsWith when the operator was provided as "a*"', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:StartsWith, value:"le"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
@@ -847,6 +847,34 @@ describe('GraphqlService', () => {
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le'], operator: 'StartsWith', type: FieldType.string, },
+      } as ColumnFilters;
+
+      service.init(serviceOptions, paginationOptions, gridStub);
+      service.updateFilters(mockColumnFilters, false);
+      const query = service.buildQuery();
+
+      expect(removeSpaces(query)).toBe(removeSpaces(expectation));
+    });
+
+    it('should return a query with search having the operator Greater of Equal when the search value was provided as ">=10"', () => {
+      const expectation = `query{users(first:10, offset:0, filterBy:[{field:age, operator:GE, value:"10"}]) { totalCount,nodes{ id,company,gender,name } }}`;
+      const mockColumn = { id: 'age', field: 'age' } as Column;
+      const mockColumnFilters = {
+        age: { columnId: 'age', columnDef: mockColumn, searchTerms: ['>=10'], type: FieldType.string },
+      } as ColumnFilters;
+
+      service.init(serviceOptions, paginationOptions, gridStub);
+      service.updateFilters(mockColumnFilters, false);
+      const query = service.buildQuery();
+
+      expect(removeSpaces(query)).toBe(removeSpaces(expectation));
+    });
+
+    it('should return a query with search NOT having the operator Greater of Equal when the search value was provided as ">=10" but "autoParseInputFilterOperator" is set to false', () => {
+      const expectation = `query{users(first:10, offset:0, filterBy:[{field:age, operator:Contains, value:">=10"}]) { totalCount,nodes{ id,company,gender,name } }}`;
+      const mockColumn = { id: 'age', field: 'age', autoParseInputFilterOperator: false } as Column;
+      const mockColumnFilters = {
+        age: { columnId: 'age', columnDef: mockColumn, searchTerms: ['>=10'], type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);

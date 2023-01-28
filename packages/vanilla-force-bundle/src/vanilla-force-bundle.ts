@@ -21,6 +21,7 @@ import {
   TreeDataService,
 } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
@@ -109,6 +110,9 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
     // when using Salesforce, we want the Export to CSV always enabled without registering it
     if (this.gridOptions.enableTextExport) {
       this._registeredResources.push(new TextExportService());
+    }
+    if (this.gridOptions.enableTextExport) {
+      this._registeredResources.push(new ExcelExportService());
     }
     this._registeredResources.push(new SlickCustomTooltip());
 

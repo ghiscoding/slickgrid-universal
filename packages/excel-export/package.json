@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/excel-export",
-  "version": "2.2.2",
+  "version": "2.3.0",
   "description": "Excel Export (xls/xlsx) Service.",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
@@ -23,7 +23,7 @@
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "prebundle": "pnpm run clean",
-    "bundle": "run-p bundle:commonjs bundle:esm --npm-path npm"
+    "bundle": "run-p bundle:commonjs bundle:esm"
   },
   "license": "MIT",
   "author": "Ghislain B.",

@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/vanilla-bundle",
-  "version": "2.2.2",
+  "version": "2.3.0",
   "description": "Vanilla Slick Grid Bundle - Framework agnostic the output is to be used in vanilla JS/TS - Written in TypeScript and we also use WebPack to bundle everything into 1 JS file.",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
@@ -22,7 +22,7 @@
     "dev": "pnpm run bundle:commonjs",
     "dev:watch": "tsc --incremental --watch",
     "prebundle": "pnpm run clean",
-    "bundle": "npm-run-all bundle:commonjs bundle:esm --npm-path npm",
+    "bundle": "npm-run-all bundle:commonjs bundle:esm",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "test": "echo testing slickgrid-universal slickgrid-vanilla-bundle code"
@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@slickgrid-universal/graphql": "workspace:~",
-    "@types/jquery": "^3.5.14",
+    "@types/jquery": "^3.5.16",
     "@types/sortablejs": "^1.15.0",
     "cross-env": "^7.0.3",
     "npm-run-all2": "^6.0.4",

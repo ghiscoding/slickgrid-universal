@@ -107,8 +107,8 @@ export class App {
       }
       const viewModel = this.renderer.loadViewModel(require(`${mapRoute.moduleId}.ts`));
       if (viewModel?.dispose) {
-        window.onunload = () => {
-          viewModel.dispose; // dispose when leaving SPA
+        window.onbeforeunload = () => {
+          viewModel.dispose(); // dispose when leaving SPA
           this.disposeApp();
         };
       }

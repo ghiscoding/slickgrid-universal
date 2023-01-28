@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 describe('Example 01 - Basic Grids', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 33;
   const fullTitles = ['Title', 'Duration (days)', '% Complete', 'Start', 'Finish', 'Effort Driven'];
@@ -11,13 +9,13 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
 
     // create a console.log spy for later use
     cy.window().then(win => cy.spy(win.console, 'log'));
-  })
+  });
 
   it('should display Example title', () => {
-    cy.visit(Cypress.config('baseUrl'), { timeout: 200000 });
+    cy.visit(Cypress.config('baseUrl') as string, { timeout: 200000 });
     cy.get('h3').should('contain', 'Example 01 - Basic Grids');
     cy.get('h3 span.subtitle').should('contain', '(with Salesforce Theme)');
-    cy.getCookie('serve-mode').its('value').should('eq', 'cypress')
+    cy.getCookie('serve-mode').its('value').should('eq', 'cypress');
   });
 
   it('should have 2 grids of size 800 by 225px', () => {

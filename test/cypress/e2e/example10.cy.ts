@@ -1,4 +1,3 @@
-/// <reference types="cypress" />
 import moment from 'moment-mini';
 
 function removeSpaces(textS) {
@@ -598,7 +597,7 @@ describe('Example 10 - GraphQL Grid', { retries: 1 }, () => {
         .click();
 
       cy.get('.search-filter.filter-name select')
-        .should('have.value', 'a*')
+        .should('have.value', 'a*');
 
       cy.get('.search-filter.filter-name')
         .find('input')
@@ -612,7 +611,7 @@ describe('Example 10 - GraphQL Grid', { retries: 1 }, () => {
         .contains('Acme');
 
       cy.get('.search-filter.filter-billingAddressZip select')
-        .should('have.value', '>=')
+        .should('have.value', '>=');
 
       cy.get('.search-filter.filter-billingAddressZip')
         .find('input')

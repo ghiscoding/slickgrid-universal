@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 33;
 
@@ -916,7 +914,7 @@ describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
     });
 
     it('should mouse over Task 2 cell of last column and expect async tooltip to show up', () => {
-      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).as('task2-cell')
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).as('task2-cell');
       cy.get('@task2-cell').should('contain', 'Netility');
       cy.get('@task2-cell').trigger('mouseover');
       cy.get('.slick-custom-tooltip').contains('loading...');

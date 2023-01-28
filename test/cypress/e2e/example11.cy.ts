@@ -1,4 +1,3 @@
-/// <reference types="Cypress" />
 import moment from 'moment-mini';
 import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
@@ -113,11 +112,10 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
     const today = changeTimezone(now, tz);
 
     const currentDate = today.getDate();
-    let currentMonth = today.getMonth() + 1; // month is zero based, let's add 1 to it
+    let currentMonth: number | string = today.getMonth() + 1; // month is zero based, let's add 1 to it
     if (currentMonth < 10) {
       currentMonth = `0${currentMonth}`; // add zero padding
     }
-    const currentYear = today.getFullYear();
 
     // change Finish date to today's date
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).should('contain', '').click(); // this date should also always be initially empty
@@ -205,7 +203,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .invoke('val')
       .then(text => expect(text).to.eq(''));
 
-    cy.get('.search-filter.filter-completed .ms-choice').should('contain', '')
+    cy.get('.search-filter.filter-completed .ms-choice').should('contain', '');
   });
 
   it('should change pre-defined view to "Tasks Finished in Previous Years" and expect data to be filtered/sorted accordingly with "Cost" column shown as well', () => {
@@ -268,11 +266,11 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
   });
 
   it('should create a new View based on "Tasks Finished in Previous Years" that was already selected', () => {
-    const filterName = "Custom View Test"
+    const filterName = 'Custom View Test';
     const winPromptStub = () => filterName;
 
     cy.window().then(win => {
-      cy.stub(win, 'prompt').callsFake(winPromptStub).as('winPromptStubReturnNonNull')
+      (cy.stub(win, 'prompt').callsFake(winPromptStub) as any).as('winPromptStubReturnNonNull');
     });
 
     cy.get('input.search-filter.filter-title')
@@ -289,7 +287,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .and('be.calledWith', 'Please provide a name for the new View.');
 
     cy.should(() => {
-      const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+      const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) as string);
       expect(Object.keys(savedDefinedFilters)).to.have.lengthOf(3);
     });
 
@@ -333,12 +331,12 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
 
     cy.get('.search-filter.filter-completed .ms-choice').should('contain', '');
 
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).should($elm => expect($elm.text()).to.not.eq, '');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).should($elm => expect($elm.text()).to.not.contain, currentYear);
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(6)`).should($elm => expect($elm.text()).to.not.eq, '');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(6)`).should($elm => expect($elm.text()).to.not.contain, currentYear);
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(6)`).should($elm => expect($elm.text()).to.not.eq, '');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(6)`).should($elm => expect($elm.text()).to.not.contain, currentYear);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).should('not.equal', '');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(6)`).should('not.contain', currentYear);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(6)`).should('not.equal', '');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(6)`).should('not.contain', currentYear);
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(6)`).should('not.equal', '');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(6)`).should('not.contain', currentYear);
   });
 
   it('should NOT be able to Delete/Update a System Defined View', () => {
@@ -375,7 +373,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).should($elm => expect(+$elm.text()).to.be.greaterThan(50));
 
     cy.should(() => {
-      const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+      const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) as string);
       expect(Object.keys(savedDefinedFilters)).to.have.lengthOf(3);
     });
 
@@ -384,11 +382,11 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
   });
 
   it('should be able to Update the Custom View that we created earlier with a new name', () => {
-    const filterName = "Custom Updated View Test"
+    const filterName = 'Custom Updated View Test';
     const winPromptStub = () => filterName;
 
     cy.window().then(win => {
-      cy.stub(win, 'prompt').callsFake(winPromptStub).as('winPromptStubReturnNonNull')
+      (cy.stub(win, 'prompt').callsFake(winPromptStub) as any).as('winPromptStubReturnNonNull');
     });
 
     cy.get('.selected-view').select('CustomViewTest');
@@ -410,10 +408,10 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .click();
 
     cy.get('@winPromptStubReturnNonNull').should('be.calledOnce')
-      .and('be.calledWith', 'Update View name or click on OK to continue.', 'Custom View Test')
+      .and('be.calledWith', 'Update View name or click on OK to continue.', 'Custom View Test');
 
     cy.should(() => {
-      const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+      const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) as string);
       expect(Object.keys(savedDefinedFilters)).to.have.lengthOf(3);
     });
 
@@ -555,7 +553,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .click();
 
     cy.on('window:alert', (str) => {
-      expect(str).to.equal('The "Task 2" is now Completed')
+      expect(str).to.equal('The "Task 2" is now Completed');
     });
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 1);
@@ -578,7 +576,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .find('.slick-cell:nth(2)')
       .each(($cell, index) => {
         if (index < 10) {
-          const [number, dayString] = $cell.text().split(' ');
+          const [number] = $cell.text().split(' ');
           expect(+number).to.be.greaterThan(8);
         }
       });
@@ -591,8 +589,9 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .find('.slick-cell:nth(1)')
       .each(($cell, index) => {
         if (index < 10) {
-          const [taskString, taskNumber] = $cell.text().split(' ');
-          expect(taskNumber).to.be.eq('5')
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const [_taskString, taskNumber] = $cell.text().split(' ');
+          expect(taskNumber).to.be.eq('5');
         }
       });
   });
@@ -635,11 +634,11 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
   });
 
   it('should create a new View with current pinning & filters', () => {
-    const filterName = "Custom View Test"
+    const filterName = 'Custom View Test';
     const winPromptStub = () => filterName;
 
     cy.window().then(win => {
-      cy.stub(win, 'prompt').callsFake(winPromptStub).as('winPromptStubReturnNonNull')
+      (cy.stub(win, 'prompt').callsFake(winPromptStub) as any).as('winPromptStubReturnNonNull');
     });
 
     cy.get('.action.dropdown')
@@ -653,7 +652,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .and('be.calledWith', 'Please provide a name for the new View.');
 
     cy.should(() => {
-      const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+      const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) as string);
       expect(Object.keys(savedDefinedFilters)).to.have.lengthOf(3);
     });
 
@@ -738,8 +737,9 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .find('.slick-cell:nth(1)')
       .each(($cell, index) => {
         if (index < 10) {
-          const [taskString, taskNumber] = $cell.text().split(' ');
-          expect(taskNumber).to.include('5')
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const [_taskString, taskNumber] = $cell.text().split(' ');
+          expect(taskNumber).to.include('5');
         }
       });
 
@@ -747,7 +747,7 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .find('.slick-cell:nth(2)')
       .each(($cell, index) => {
         if (index < 10) {
-          const [number, dayString] = $cell.text().split(' ');
+          const [number] = $cell.text().split(' ');
           expect(+number).to.be.greaterThan(8);
         }
       });

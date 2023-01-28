@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/binding",
-  "version": "2.1.2",
+  "version": "2.3.0",
   "description": "Simple Vanilla Implementation of a Binding Engine & Helper to add properties/events 2 way bindings",
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
@@ -21,7 +21,7 @@
     "dev": "pnpm run bundle:commonjs",
     "dev:watch": "tsc --incremental --watch",
     "prebundle": "pnpm run clean",
-    "bundle": "run-p bundle:commonjs bundle:esm --npm-path npm",
+    "bundle": "run-p bundle:commonjs bundle:esm",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018"
   },
@@ -42,7 +42,7 @@
     "not dead"
   ],
   "dependencies": {
-    "dompurify": "^2.4.1"
+    "dompurify": "^2.4.3"
   },
   "devDependencies": {
     "@types/dompurify": "^2.4.0",

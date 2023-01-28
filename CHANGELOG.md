@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.2.2...v2.3.0) (2023-01-21)
+
+### Bug Fixes
+
+* **filters:** provide flag to disable special chars input filter parsing ([#873](https://github.com/ghiscoding/slickgrid-universal/issues/873)) ([7e35dae](https://github.com/ghiscoding/slickgrid-universal/commit/7e35dae2258c191e76dbdf01ac654f4a54b5b547)), closes [/stackoverflow.com/questions/75155658/in-angular-slickgrid-the-records-with-special-characters-are-not-gett/75160978#75160978](https://github.com//stackoverflow.com/questions/75155658/in-angular-slickgrid-the-records-with-special-characters-are-not-gett/75160978/issues/75160978) - by @ghiscoding
+* **styling:** do not remove ul>li bullet on html root, fixes [#868](https://github.com/ghiscoding/slickgrid-universal/issues/868) ([#872](https://github.com/ghiscoding/slickgrid-universal/issues/872)) ([59fa0ba](https://github.com/ghiscoding/slickgrid-universal/commit/59fa0badad181172bf37a31ecf4ef0f44ee47e8d)) - by @ghiscoding
+
+### Features
+
+* **salesforce:** add Excel Export to Salesforce & upgrade zip to 2.x ([#862](https://github.com/ghiscoding/slickgrid-universal/issues/862)) ([80ff4b7](https://github.com/ghiscoding/slickgrid-universal/commit/80ff4b79d101956334ee99b28e06e71dadf1de70)) - by @ghiscoding
+
 ## [2.2.2](https://github.com/ghiscoding/slickgrid-universal/compare/v2.2.1...v2.2.2) (2022-12-24)
 
 ### Bug Fixes

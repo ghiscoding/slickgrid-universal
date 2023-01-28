@@ -32,6 +32,11 @@ export const SalesforceGlobalGridOptions = {
   customTooltip: {
     tooltipTextMaxLength: 650,
   },
+  enableExcelExport: true,
+  excelExportOptions: {
+    mimeType: '', // Salesforce doesn't like Excel MIME type (not allowed), but we can bypass the problem by using no type at all
+    sanitizeDataExport: true
+  },
   filterTypingDebounce: 250,
   formatterOptions: {
     minDecimal: 0,
@@ -56,7 +61,7 @@ export const SalesforceGlobalGridOptions = {
     iconSortAscCommand: 'fa fa-sort-amount-asc mdi mdi-arrow-up',
     iconSortDescCommand: 'fa fa-sort-amount-desc mdi mdi-arrow-down',
   },
-  sanitizer: (dirtyHtml: string) => typeof dirtyHtml === 'string' ? dirtyHtml.replace(/(\b)(on\S+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi, '') : dirtyHtml,
+  sanitizer: (dirtyHtml: string) => typeof dirtyHtml === 'string' ? dirtyHtml.replace(/(\b)(on[a-z]+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi, '') : dirtyHtml,
   showCustomFooter: true,
   customFooterOptions: {
     hideMetrics: false,

@@ -634,7 +634,7 @@ describe('GridOdataService', () => {
       expect(currentFilters).toEqual([{ columnId: 'gender', operator: 'EQ', searchTerms: ['female'] }]);
     });
 
-    it('should return a query with search having the operator StartsWith when search value has the * symbol as the last character', () => {
+    it('should return a query with search having the operator StartsWith when search value has the "*" symbol as the last character', () => {
       const expectation = `$top=10&$filter=(startswith(Gender, 'fem'))`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
@@ -648,7 +648,21 @@ describe('GridOdataService', () => {
       expect(query).toBe(expectation);
     });
 
-    it('should return a query with search having the operator EndsWith when search value has the * symbol as the first character', () => {
+    it('should return a query with search NOT having the operator StartsWith when search value has the "*" symbol as the last character but "autoParseInputFilterOperator" is set to false', () => {
+      const expectation = `$top=10&$filter=(substringof('fem*', Gender))`;
+      const mockColumn = { id: 'gender', field: 'gender', autoParseInputFilterOperator: false } as Column;
+      const mockColumnFilters = {
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['fem*'], type: FieldType.string },
+      } as ColumnFilters;
+
+      service.init(serviceOptions, paginationOptions, gridStub);
+      service.updateFilters(mockColumnFilters, false);
+      const query = service.buildQuery();
+
+      expect(query).toBe(expectation);
+    });
+
+    it('should return a query with search having the operator EndsWith when search value has the "*" symbol as the first character', () => {
       const expectation = `$top=10&$filter=(endswith(Gender, 'le'))`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
@@ -662,7 +676,7 @@ describe('GridOdataService', () => {
       expect(query).toBe(expectation);
     });
 
-    it('should return a query with search having the operator EndsWith when the operator was provided as *z', () => {
+    it('should return a query with search having the operator EndsWith when the operator was provided as "*z"', () => {
       const expectation = `$top=10&$filter=(endswith(Gender, 'le'))`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
@@ -676,7 +690,7 @@ describe('GridOdataService', () => {
       expect(query).toBe(expectation);
     });
 
-    it('should return a query with search having the operator StartsWith even when search value last char is * symbol but the operator provided is *z', () => {
+    it('should return a query with search having the operator StartsWith even when search value last char is "*" symbol but the operator provided is *z', () => {
       const expectation = `$top=10&$filter=(startswith(Gender, 'le'))`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
@@ -704,11 +718,39 @@ describe('GridOdataService', () => {
       expect(query).toBe(expectation);
     });
 
-    it('should return a query with search having the operator StartsWith when the operator was provided as a*', () => {
+    it('should return a query with search having the operator StartsWith when the operator was provided as "a*"', () => {
       const expectation = `$top=10&$filter=(startswith(Gender, 'le'))`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le'], operator: 'a*', type: FieldType.string },
+      } as ColumnFilters;
+
+      service.init(serviceOptions, paginationOptions, gridStub);
+      service.updateFilters(mockColumnFilters, false);
+      const query = service.buildQuery();
+
+      expect(query).toBe(expectation);
+    });
+
+    it('should return a query with search having the operator Greater of Equal when the search value was provided as ">=10"', () => {
+      const expectation = `$top=10&$filter=(Age ge '10')`;
+      const mockColumn = { id: 'age', field: 'age' } as Column;
+      const mockColumnFilters = {
+        age: { columnId: 'age', columnDef: mockColumn, searchTerms: ['>=10'], type: FieldType.string },
+      } as ColumnFilters;
+
+      service.init(serviceOptions, paginationOptions, gridStub);
+      service.updateFilters(mockColumnFilters, false);
+      const query = service.buildQuery();
+
+      expect(query).toBe(expectation);
+    });
+
+    it('should return a query with search NOT having the operator Greater of Equal when the search value was provided as ">=10" but "autoParseInputFilterOperator" is set to false', () => {
+      const expectation = `$top=10&$filter=(substringof('%3E%3D10', Age))`;
+      const mockColumn = { id: 'age', field: 'age', autoParseInputFilterOperator: false } as Column;
+      const mockColumnFilters = {
+        age: { columnId: 'age', columnDef: mockColumn, searchTerms: ['>=10'], type: FieldType.string },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -732,7 +774,7 @@ describe('GridOdataService', () => {
       expect(query).toBe(expectation);
     });
 
-    it('should return a query with a CSV string when the filter operator is IN ', () => {
+    it('should return a query with a CSV string when the filter operator is IN', () => {
       const expectation = `$top=10&$filter=(Gender eq 'female' or Gender eq 'ma%2Fle')`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {

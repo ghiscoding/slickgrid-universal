@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
   // NOTE:  everywhere there's a * 2 is because we have a top+bottom (frozen rows) containers even after Unfreeze Columns/Rows
 
@@ -264,7 +262,7 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
 
   it('should filter autocomplete by typing Vancouver in the "City of Origin" and expect only filtered rows to show up', () => {
     cy.get('.search-filter.filter-cityOfOrigin')
-      .type('Vancouver')
+      .type('Vancouver');
 
     cy.get('.slick-autocomplete').should('be.visible');
     cy.get('.slick-autocomplete div').should('have.length', 2);
@@ -294,7 +292,7 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
   it('should edit first row (Task 1) and change its city by choosing it inside the autocomplete editor list', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).click();
     cy.get('input.autocomplete.editor-cityOfOrigin')
-      .type('Sydney')
+      .type('Sydney');
 
     cy.get('.slick-autocomplete').should('be.visible');
     cy.get('.slick-autocomplete div').should('have.length', 3);
