@@ -41,7 +41,7 @@ jobs:
 
       - run: pnpm --version
 
-      - name: TSC Build (cjs)
+      - name: TSC Build (esm)
         run: pnpm build
 
       - name: Website Prod Build (GitHub demo site)
