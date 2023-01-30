@@ -101,7 +101,7 @@ and is written in plain TypeScript without being bound to any framework. The imp
 It could be used as a guideline to implement it for other framework ports.
 
 ```bash
-pnpm run dev:watch
+pnpm run dev
 ```
 
 ### Tests
