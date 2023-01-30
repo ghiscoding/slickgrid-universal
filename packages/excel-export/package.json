@@ -5,8 +5,8 @@
   "main": "dist/commonjs/index.js",
   "browser": "src/index.ts",
   "module": "dist/esm/index.js",
-  "types": "dist/commonjs/index.d.ts",
-  "typings": "dist/commonjs/index.d.ts",
+  "types": "dist/esm/index.d.ts",
+  "typings": "dist/esm/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
@@ -15,11 +15,11 @@
   ],
   "scripts": {
     "prebuild": "pnpm run clean",
-    "build": "pnpm run bundle:commonjs",
+    "build": "pnpm run bundle:esm",
+    "build:incremental": "tsc --incremental",
     "build:watch": "tsc --incremental --watch",
     "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",
     "dev": "pnpm run bundle:commonjs",
-    "dev:watch": "tsc --incremental --watch",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "prebundle": "pnpm run clean",
