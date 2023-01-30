@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "prebuild": "pnpm run clean",
-    "build": "pnpm run bundle:commonjs",
+    "build": "pnpm run bundle:esm",
     "build:incremental": "tsc --incremental",
     "build:watch": "tsc --incremental --watch",
     "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",

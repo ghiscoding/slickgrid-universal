@@ -26,7 +26,7 @@
   ],
   "scripts": {
     "prebuild": "pnpm run clean",
-    "build": "pnpm run bundle:commonjs",
+    "build": "pnpm run bundle:esm",
     "postbuild": "run-s sass:build sass:copy",
     "build:incremental": "tsc --incremental",
     "build:watch": "tsc --incremental --watch",
