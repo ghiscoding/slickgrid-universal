@@ -3,10 +3,22 @@
   "version": "2.3.0",
   "description": "GraphQL Service to sync a grid with a GraphQL backend server",
   "main": "dist/commonjs/index.js",
-  "browser": "src/index.ts",
   "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
-  "typings": "dist/esm/index.d.ts",
+  "types": "dist/commonjs/index.d.ts",
+  "exports": {
+    ".": {
+      "browser": "./dist/esm/index.js",
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    },
+    "./*": "./*"
+  },
   "publishConfig": {
     "access": "public"
   },

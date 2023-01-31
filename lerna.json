@@ -6,7 +6,6 @@
   "command": {
     "publish": {
       "removePackageFields": [
-        "browser",
         "devDependencies",
         "scripts"
       ]

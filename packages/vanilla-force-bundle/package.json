@@ -3,10 +3,22 @@
   "version": "2.3.0",
   "description": "Vanilla Slick Grid Bundle (mostly exist for our Salesforce implementation) - Similar to Vanilla Bundle, the only difference is that it adds extra packages within its bundle (CustomTooltip, CompositeEditor & TextExport)",
   "main": "dist/commonjs/index.js",
-  "browser": "src/index.ts",
   "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
-  "typings": "dist/esm/index.d.ts",
+  "types": "dist/commonjs/index.d.ts",
+  "exports": {
+    ".": {
+      "browser": "./dist/esm/index.js",
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    },
+    "./*": "./*"
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -20,7 +32,7 @@
     "build:incremental": "tsc --incremental",
     "build:watch": "tsc --incremental --watch",
     "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",
-    "dev": "webpack --env development",
+    "dev:webpack": "webpack --env development",
     "prebundle": "pnpm run clean",
     "bundle": "npm-run-all bundle:commonjs bundle:esm webpack:prod",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
