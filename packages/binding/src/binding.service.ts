@@ -1,5 +1,7 @@
 /* eslint-disable no-bitwise */
-import * as DOMPurify from 'dompurify';
+import * as DOMPurify_ from 'dompurify';
+const DOMPurify = ((DOMPurify_ as any)?.['default'] ?? DOMPurify_); // patch for rollup
+
 import { Binding, BoundedEventWithListener, ElementBinding, ElementBindingWithListener } from './interfaces';
 
 /**

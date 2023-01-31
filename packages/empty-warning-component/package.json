@@ -4,7 +4,7 @@
   "description": "Slick Empty Warning Component - Vanilla Implementation of an Empty Dataset Warning Component",
   "main": "dist/commonjs/index.js",
   "module": "dist/esm/index.js",
-  "types": "dist/commonjs/index.d.ts",
+  "types": "dist/esm/index.d.ts",
   "exports": {
     ".": {
       "browser": "./dist/esm/index.js",

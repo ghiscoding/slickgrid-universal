@@ -24,7 +24,7 @@
     "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",
     "cypress": "cypress open --config-file test/cypress.config.ts",
     "cypress:ci": "cypress run --config-file test/cypress.config.ts",
-    "predev": "pnpm run clean && pnpm run -r bundle:commonjs && pnpm run -r build:incremental && pnpm run -r sass:copy",
+    "predev": "pnpm run -r build:incremental && pnpm run -r sass:copy",
     "dev": "run-p dev:watch build:watch sass:copy:watch",
     "build:watch": "lerna watch --glob=\"src/**/*.ts\" --stream -- cross-env-shell pnpm run -r --filter $LERNA_PACKAGE_NAME build:incremental",
     "dev:watch": "pnpm -r --parallel run dev:watch",
