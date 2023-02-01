@@ -4,21 +4,15 @@
   "description": "RxJS Observable Wrapper",
   "main": "dist/commonjs/index.js",
   "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
   "exports": {
     ".": {
       "browser": "./dist/esm/index.js",
-      "import": {
-        "types": "./dist/esm/index.d.ts",
-        "default": "./dist/esm/index.js"
-      },
-      "require": {
-        "types": "./dist/commonjs/index.d.ts",
-        "default": "./dist/commonjs/index.js"
-      }
+      "import": "./dist/esm/index.d.ts",
+      "require": "./dist/commonjs/index.js"
     },
     "./*": "./*"
   },
+  "types": "dist/esm/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
