@@ -369,7 +369,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         this._modalElm = createDomElement('div', { className: `slick-editor-modal ${gridUid}` });
         const modalContentElm = createDomElement('div', { className: 'slick-editor-modal-content' });
 
-        if (viewColumnLayout > 1 || (viewColumnLayout === 'auto' && layoutColCount > 1)) {
+        if ((!isNaN(viewColumnLayout as number) && +viewColumnLayout > 1) || (viewColumnLayout === 'auto' && layoutColCount > 1)) {
           const splitClassName = layoutColCount === 2 ? 'split-view' : 'triple-split-view';
           modalContentElm.classList.add(splitClassName);
         }
