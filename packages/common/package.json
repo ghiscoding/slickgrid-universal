@@ -12,6 +12,11 @@
     },
     "./*": "./*"
   },
+  "typesVersions": {
+    "*": {
+      "*": ["./dist/esm/index.d.ts"]
+    }
+  },
   "types": "dist/esm/index.d.ts",
   "license": "MIT",
   "author": "Ghislain B.",
