@@ -362,7 +362,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
       if (itemMetadata?.columns) {
         const metadata = itemMetadata?.columns;
         const columnData = metadata[columnDef.id] || metadata[col];
-        if (!(prevColspan > 1 || (prevColspan === '*' && col > 0))) {
+        if (!((!isNaN(prevColspan as number) && +prevColspan > 1) || (prevColspan === '*' && col > 0))) {
           prevColspan = columnData?.colspan ?? 1;
         }
         if (prevColspan !== '*') {
@@ -372,9 +372,9 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         }
       }
 
-      if ((prevColspan === '*' && col > 0) || (prevColspan > 1 && columnDef.id !== colspanColumnId)) {
+      if ((prevColspan === '*' && col > 0) || ((!isNaN(prevColspan as number) && +prevColspan > 1) && columnDef.id !== colspanColumnId)) {
         rowOutputStrings.push('');
-        if (prevColspan > 1) {
+        if ((!isNaN(prevColspan as number) && +prevColspan > 1)) {
           (prevColspan as number)--;
         }
       } else {

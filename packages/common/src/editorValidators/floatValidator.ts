@@ -39,20 +39,20 @@ export function floatValidator(inputValue: any, options: FloatValidatorOptions):
     // when decimal value is 0 (which is the default), we accept 0 or more decimal values
     isValid = false;
     outputMsg = errorMsg || Constants.VALIDATION_EDITOR_VALID_NUMBER;
-  } else if (minValue !== undefined && maxValue !== undefined && floatNumber !== null && ((operatorConditionalType === 'exclusive' && (floatNumber <= minValue || floatNumber >= maxValue)) || (operatorConditionalType === 'inclusive' && (floatNumber < minValue || floatNumber > maxValue)))) {
+  } else if (minValue !== undefined && maxValue !== undefined && floatNumber !== null && ((operatorConditionalType === 'exclusive' && (floatNumber <= +minValue || floatNumber >= +maxValue)) || (operatorConditionalType === 'inclusive' && (floatNumber < +minValue || floatNumber > +maxValue)))) {
     // MIN & MAX Values provided
     // when decimal value is bigger than 0, we only accept the decimal values as that value set
     // for example if we set decimalPlaces to 2, we will only accept numbers between 0 and 2 decimals
     isValid = false;
     outputMsg = errorMsg || Constants.VALIDATION_EDITOR_NUMBER_BETWEEN.replace(/{{minValue}}|{{maxValue}}/gi, (matched) => (mapValidation as any)[matched]);
-  } else if (minValue !== undefined && floatNumber !== null && ((operatorConditionalType === 'exclusive' && floatNumber <= minValue) || (operatorConditionalType === 'inclusive' && floatNumber < minValue))) {
+  } else if (minValue !== undefined && floatNumber !== null && ((operatorConditionalType === 'exclusive' && floatNumber <= +minValue) || (operatorConditionalType === 'inclusive' && floatNumber < +minValue))) {
     // MIN VALUE ONLY
     // when decimal value is bigger than 0, we only accept the decimal values as that value set
     // for example if we set decimalPlaces to 2, we will only accept numbers between 0 and 2 decimals
     isValid = false;
     const defaultErrorMsg = operatorConditionalType === 'inclusive' ? Constants.VALIDATION_EDITOR_NUMBER_MIN_INCLUSIVE : Constants.VALIDATION_EDITOR_NUMBER_MIN;
     outputMsg = errorMsg || defaultErrorMsg.replace(/{{minValue}}/gi, (matched) => (mapValidation as any)[matched]);
-  } else if (maxValue !== undefined && floatNumber !== null && ((operatorConditionalType === 'exclusive' && floatNumber >= maxValue) || (operatorConditionalType === 'inclusive' && floatNumber > maxValue))) {
+  } else if (maxValue !== undefined && floatNumber !== null && ((operatorConditionalType === 'exclusive' && floatNumber >= +maxValue) || (operatorConditionalType === 'inclusive' && floatNumber > +maxValue))) {
     // MAX VALUE ONLY
     // when decimal value is bigger than 0, we only accept the decimal values as that value set
     // for example if we set decimalPlaces to 2, we will only accept numbers between 0 and 2 decimals
