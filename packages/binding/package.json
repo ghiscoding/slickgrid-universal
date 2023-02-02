@@ -3,10 +3,21 @@
   "version": "2.3.0",
   "description": "Simple Vanilla Implementation of a Binding Engine & Helper to add properties/events 2 way bindings",
   "main": "dist/commonjs/index.js",
-  "browser": "src/index.ts",
   "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "browser": "./dist/esm/index.js",
+      "import": "./dist/esm/index.d.ts",
+      "require": "./dist/commonjs/index.js"
+    },
+    "./*": "./*"
+  },
+  "typesVersions": {
+    "*": {
+      "*": ["./dist/esm/index.d.ts"]
+    }
+  },
   "types": "dist/esm/index.d.ts",
-  "typings": "dist/esm/index.d.ts",
   "publishConfig": {
     "access": "public"
   },

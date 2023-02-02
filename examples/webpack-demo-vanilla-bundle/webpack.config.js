@@ -43,7 +43,7 @@ module.exports = ({ production } = {}) => ({
   resolve: {
     extensions: ['.ts', '.js'],
     modules: [srcDir, 'node_modules'],
-    mainFields: ['browser', 'module', 'main'],
+    mainFields: ['module', 'main'],
     fallback: {
       http: false,
       https: false,

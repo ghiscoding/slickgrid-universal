@@ -3,10 +3,21 @@
   "version": "2.3.0",
   "description": "SlickGrid-Universal Common Code",
   "main": "dist/commonjs/index.js",
-  "browser": "src/index.ts",
   "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "browser": "./dist/esm/index.js",
+      "import": "./dist/esm/index.d.ts",
+      "require": "./dist/commonjs/index.js"
+    },
+    "./*": "./*"
+  },
+  "typesVersions": {
+    "*": {
+      "*": ["./dist/esm/index.d.ts"]
+    }
+  },
   "types": "dist/esm/index.d.ts",
-  "typings": "dist/esm/index.d.ts",
   "license": "MIT",
   "author": "Ghislain B.",
   "homepage": "https://github.com/ghiscoding/slickgrid-universal",
@@ -31,7 +42,7 @@
     "build:incremental": "tsc --incremental",
     "build:watch": "tsc --incremental --watch",
     "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",
-    "dev": "run-s build sass:build sass:copy",
+    "dev": "run-s bundle:commonjs sass:copy",
     "dev:watch": "pnpm run sass:watch",
     "prebundle": "pnpm run clean",
     "bundle": "run-p bundle:commonjs bundle:esm",

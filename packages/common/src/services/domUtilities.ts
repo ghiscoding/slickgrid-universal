@@ -1,6 +1,7 @@
 import { deepMerge } from '@slickgrid-universal/utils';
+import * as DOMPurify_ from 'dompurify';
+const DOMPurify = ((DOMPurify_ as any)?.['default'] ?? DOMPurify_); // patch for rollup
 
-import * as DOMPurify from 'dompurify';
 import { InferDOMType, SearchTerm } from '../enums/index';
 import { Column, GridOption, HtmlElementPosition, SelectOption, SlickGrid, } from '../interfaces/index';
 import { TranslaterService } from './translater.service';

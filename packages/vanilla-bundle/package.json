@@ -3,10 +3,21 @@
   "version": "2.3.0",
   "description": "Vanilla Slick Grid Bundle - Framework agnostic the output is to be used in vanilla JS/TS - Written in TypeScript and we also use WebPack to bundle everything into 1 JS file.",
   "main": "dist/commonjs/index.js",
-  "browser": "src/index.ts",
   "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "browser": "./dist/esm/index.js",
+      "import": "./dist/esm/index.d.ts",
+      "require": "./dist/commonjs/index.js"
+    },
+    "./*": "./*"
+  },
+  "typesVersions": {
+    "*": {
+      "*": ["./dist/esm/index.d.ts"]
+    }
+  },
   "types": "dist/esm/index.d.ts",
-  "typings": "dist/esm/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
