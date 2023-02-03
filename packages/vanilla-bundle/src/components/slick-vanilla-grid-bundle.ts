@@ -1284,18 +1284,15 @@ export class SlickVanillaGridBundle {
       } else if (Array.isArray(gridRowIndexes) && gridRowIndexes.length > 0) {
         dataContextIds = this.dataView.mapRowsToIds(gridRowIndexes) || [];
       }
-      this.gridStateService.selectedRowDataContextIds = dataContextIds;
 
-      // change the selected rows except UNLESS it's a Local Grid with Pagination
-      // local Pagination uses the DataView and that also trigger a change/refresh
-      // and we don't want to trigger 2 Grid State changes just 1
-      if ((this._isLocalGrid && !this.gridOptions.enablePagination) || !this._isLocalGrid) {
-        // setTimeout(() => {
-        if (this.slickGrid && Array.isArray(gridRowIndexes)) {
-          this.slickGrid.setSelectedRows(gridRowIndexes);
-          this.dataView!.setSelectedIds(dataContextIds || [], true);
-        }
-        // });
+      // apply row selection when defined as grid presets
+      if (this.slickGrid && Array.isArray(gridRowIndexes)) {
+        this.slickGrid.setSelectedRows(gridRowIndexes);
+        this.dataView!.setSelectedIds(dataContextIds || [], {
+          isRowBeingAdded: true,
+          shouldTriggerEvent: false, // do not trigger when presetting the grid
+          applyRowSelectionToGrid: true
+        });
       }
     }
   }

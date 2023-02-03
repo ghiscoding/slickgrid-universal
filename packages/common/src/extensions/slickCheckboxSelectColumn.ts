@@ -423,7 +423,7 @@ export class SlickCheckboxSelectColumn<T = any> {
             ids.push(dataviewRowItem[this._dataView.getIdPropertyName()]);
           }
         }
-        this._dataView.setSelectedIds(ids, isAllSelected);
+        this._dataView.setSelectedIds(ids, { isRowBeingAdded: isAllSelected });
       }
 
       // we finally need to call the actual row selection from SlickGrid method

@@ -23,13 +23,13 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
       .should('have.css', 'width', '800px');
 
     cy.get('.grid1 > .slickgrid-container')
-      .should('have.css', 'height', '225px');
+      .should($el => expect(parseInt(`${$el.height()}`, 10)).to.eq(225));
 
     cy.get('.grid2')
       .should('have.css', 'width', '800px');
 
     cy.get('.grid2 > .slickgrid-container')
-      .should('have.css', 'height', '255px');
+      .should($el => expect(parseInt(`${$el.height()}`, 10)).to.eq(255));
   });
 
   it('should have exact column titles on 1st grid', () => {

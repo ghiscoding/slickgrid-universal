@@ -435,16 +435,10 @@ export class Example12 {
       enableCheckboxSelector: true,
       enableRowSelection: true,
       checkboxSelector: {
-        // applySelectOnAllPages: true,
+        applySelectOnAllPages: true,
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
       },
-      // dataView: {
-      //   syncGridSelection: {
-      //     preserveHidden: false,
-      //     preserveHiddenOnSelectionChange: true
-      //   }
-      // },
       enableCompositeEditor: true,
       editCommandHandler: (item, column, editCommand) => {
         // composite editors values are saved as array, so let's convert to array in any case and we'll loop through these values

@@ -124,7 +124,7 @@ export interface SlickDataView {
    * This will also work with Pagination and will return selected IDs from all pages.
    * Note: when using Pagination it will also include hidden selections assuming `preserveHiddenOnSelectionChange` is set to true.
    */
-  getAllSelectedIds(): number[];
+  getAllSelectedIds(): Array<number | string>;
 
   /**
    * Get all selected filtered IDs (similar to "getAllSelectedIds" but only return filtered data)
@@ -136,7 +136,7 @@ export interface SlickDataView {
    * Get all selected filtered dataContext items (similar to "getAllSelectedItems" but only return filtered data)
    * Note: when using Pagination it will also include hidden selections assuming `preserveHiddenOnSelectionChange` is set to true.
    */
-  getAllSelectedFilteredItems(): any[];
+  getAllSelectedFilteredItems<T = any>(): T[];
 
   /**
    * Returns an array of all row dataContext corresponding to the currently selected rows (including non-visible rows).
@@ -189,9 +189,12 @@ export interface SlickDataView {
    * NOTE: This will NOT change the selection in the grid, if you need to do that then you still need to call
    * "grid.setSelectedRows(rows)"
    * @param {Array} selectedIds - list of IDs which have been selected for this action
-   * @param {boolean} addingSelection - are the new selected IDs being added (or removed) as new row selection
+   * @param {Object} options
+   *  - `isRowBeingAdded`: defaults to true, are the new selected IDs being added (or removed) as new row selections
+   *  - `shouldTriggerEvent`: defaults to true, should we trigger `onSelectedRowIdsChanged` event
+   *  - `applyRowSelectionToGrid`: defaults to true, should we apply the row selections to the grid in the UI
    */
-  setSelectedIds(selectedIds: Array<number | string>, addingSelection?: boolean): void;
+  setSelectedIds(selectedIds: Array<number | string>, options?: { isRowBeingAdded?: boolean; shouldTriggerEvent?: boolean; applyRowSelectionToGrid?: boolean; }): void;
 
   /** Sort Method to use by the DataView */
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -264,7 +267,8 @@ export interface SlickDataView {
 
   /**
    * Event triggered when we changed row selections,
-   * NOTE: this will only work when used with "syncGridSelection"
+   * NOTE: it will trigger an event when changing page because its `rows` might have changed.
+   * Also note that this event will only work when "syncGridSelection" is enabled
    */
   onSelectedRowIdsChanged: SlickEvent<OnSelectedRowIdsChangedEventArgs>;
 
@@ -277,5 +281,5 @@ export interface OnGroupCollapsedEventArgs { level: number; groupingKey: string 
 export interface OnRowCountChangedEventArgs { previous: number; current: number; itemCount: number; dataView: SlickDataView; callingOnRowsChanged: boolean; }
 export interface OnRowsChangedEventArgs { rows: number[]; itemCount: number; dataView: SlickDataView; calledOnRowCountChanged: boolean; }
 export interface OnRowsOrCountChangedEventArgs { rowsDiff: number[]; previousRowCount: number; currentRowCount: number; itemCount: number; rowCountChanged: boolean; rowsChanged: boolean; dataView: SlickDataView; }
-export interface OnSelectedRowIdsChangedEventArgs { grid: SlickGrid; added?: boolean; filteredIds?: Array<string | number>; ids: Array<string | number>; rows: number[]; dataView: SlickDataView; }
+export interface OnSelectedRowIdsChangedEventArgs { grid: SlickGrid; added?: boolean; filteredIds: Array<string | number>; selectedRowIds: Array<string | number>; ids: Array<string | number>; rows: number[]; dataView: SlickDataView; }
 export interface OnSetItemsCalledEventArgs { idProperty: string; itemCount: number; }

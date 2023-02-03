@@ -238,26 +238,6 @@ export function getHtmlElementOffset(element?: HTMLElement): HtmlElementPosition
   return { top, left, bottom, right };
 }
 
-export function getParents(el: HTMLElement, parentSelector?: string) {
-  let parentElm: any = parentSelector;
-  // If no parentSelector defined will bubble up all the way to *document*
-  if (parentElm === undefined) {
-    parentElm = document;
-  }
-
-  const parents: any[] = [];
-  let p = el.parentNode;
-
-  while (p !== parentElm) {
-    const o = p;
-    parents.push(o);
-    p = o!.parentNode;
-  }
-  parents.push(parentElm); // Push that parentSelector you wanted to stop at
-
-  return parents;
-}
-
 export function getSelectorStringFromElement(elm?: HTMLElement | null) {
   let selector = '';
   if (elm?.localName) {

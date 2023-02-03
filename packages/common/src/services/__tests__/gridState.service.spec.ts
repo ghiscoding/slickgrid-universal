@@ -24,7 +24,6 @@ import {
   GridState,
   RowDetailView,
   RowMoveManager,
-  SlickColumnPicker,
   SlickGrid,
   SlickNamespace,
   SlickRowSelectionModel,
@@ -60,11 +59,14 @@ const backendServiceStub = {
 } as BackendService;
 
 const dataViewStub = {
+  getAllSelectedIds: jest.fn(),
+  getAllSelectedFilteredIds: jest.fn(),
   getFilteredItems: jest.fn(),
   mapIdsToRows: jest.fn(),
   mapRowsToIds: jest.fn(),
   onBeforePagingInfoChanged: new Slick.Event(),
   onPagingInfoChanged: new Slick.Event(),
+  onSelectedRowIdsChanged: new Slick.Event(),
 } as unknown as SlickDataView;
 
 const gridStub = {
@@ -526,73 +528,23 @@ describe('GridStateService', () => {
     it('should call the "mapIdsToRows" from the DataView and get the data IDs from the "selectedRowDataContextIds" array', () => {
       const mockRowIndexes = [3, 44];
       const mockRowIds = [333, 444];
-      const mockRowItems = [{ id: 333 }, { id: 444 }];
-      const gridOptionsMock = { enablePagination: true, enableRowSelection: true } as GridOption;
-      jest.spyOn(dataViewStub, 'getFilteredItems').mockReturnValue(mockRowItems);
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-      const mapIdSpy = jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue(mockRowIndexes);
+      jest.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue(mockRowIds);
+      jest.spyOn(dataViewStub, 'getAllSelectedFilteredIds').mockReturnValue(mockRowIds);
+      jest.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowIndexes);
 
       service.selectedRowDataContextIds = mockRowIds;
       const output = service.getCurrentRowSelections();
 
-      expect(mapIdSpy).toHaveBeenCalled();
       expect(output).toEqual({ gridRowIndexes: mockRowIndexes, dataContextIds: mockRowIds, filteredDataContextIds: mockRowIds });
     });
   });
 
   describe('Row Selection - bindSlickGridRowSelectionToGridStateChange method', () => {
-    let pinningMock: CurrentPinning;
-    let gridOptionsMock: GridOption;
-
     beforeEach(() => {
       jest.clearAllMocks();
     });
 
-    describe('without Pagination', () => {
-      beforeEach(() => {
-        pinningMock = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as CurrentPinning;
-        gridOptionsMock = { enablePagination: false, enableRowSelection: true, ...pinningMock } as GridOption;
-        jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-      });
-
-      it('should call the "onGridStateChanged" event with the row selection when Pagination is disabled and "onSelectedRowsChanged" is triggered', (done) => {
-        const mockRowIndexes = [3, 44];
-        const mockRowIds = [333, 444];
-        const mockRowItems = [{ id: 333 }, { id: 444 }];
-        const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
-        const columnMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
-        const filterMock = [{ columnId: 'field1', operator: 'EQ', searchTerms: [] }] as CurrentFilter[];
-        const sorterMock = [{ columnId: 'field1', direction: 'ASC' }, { columnId: 'field2', direction: 'DESC' }] as CurrentSorter[];
-
-        jest.spyOn(dataViewStub, 'getFilteredItems').mockReturnValue(mockRowItems);
-        jest.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowIndexes);
-        const mapRowsSpy = jest.spyOn(dataViewStub, 'mapRowsToIds').mockReturnValue(mockRowIds);
-        jest.spyOn(service, 'getCurrentColumns').mockReturnValue(columnMock);
-        jest.spyOn(service, 'getCurrentFilters').mockReturnValue(filterMock);
-        jest.spyOn(service, 'getCurrentSorters').mockReturnValue(sorterMock);
-
-        service.init(gridStub);
-        service.selectedRowDataContextIds = mockRowIds;
-        gridStub.onSelectedRowsChanged.notify({ rows: mockRowIndexes, previousSelectedRows: [], grid: gridStub });
-
-        setTimeout(() => {
-          expect(mapRowsSpy).toHaveBeenCalled();
-          expect(pubSubSpy).toHaveBeenLastCalledWith(`onGridStateChanged`, {
-            change: { newValues: { gridRowIndexes: mockRowIndexes, dataContextIds: mockRowIds, filteredDataContextIds: mockRowIds }, type: 'rowSelection', },
-            gridState: {
-              columns: columnMock,
-              filters: filterMock,
-              sorters: sorterMock,
-              pinning: pinningMock,
-              rowSelection: { gridRowIndexes: mockRowIndexes, dataContextIds: mockRowIds, filteredDataContextIds: mockRowIds },
-            },
-          });
-          done();
-        });
-      });
-    });
-
-    describe('with Pagination (bindSlickGridRowSelectionWithPaginationToGridStateChange)', () => {
+    describe('with Pagination', () => {
       let pinningMock: CurrentPinning;
       beforeEach(() => {
         jest.clearAllMocks();
@@ -603,235 +555,43 @@ describe('GridStateService', () => {
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       });
 
-      it('should call the "onGridStateChanged" event with the row selection when Pagination is disabled and "onSelectedRowsChanged" is triggered', (done) => {
-        const mockPreviousRowIndexes = [3, 33];
-        const mockRowIndexes = [3, 44];
-        const mockRowIds = [333, 444];
-        const mockRowItems = [{ id: 333 }, { id: 444 }];
-        const columnMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
-        const filterMock = [{ columnId: 'field1', operator: 'EQ', searchTerms: [] }] as CurrentFilter[];
-        const sorterMock = [{ columnId: 'field1', direction: 'ASC' }, { columnId: 'field2', direction: 'DESC' }] as CurrentSorter[];
-        const paginationMock = { pageNumber: 3, pageSize: 25 } as CurrentPagination;
-
-        jest.spyOn(dataViewStub, 'getFilteredItems').mockReturnValue(mockRowItems);
-        jest.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowIndexes);
-        jest.spyOn(service, 'getCurrentColumns').mockReturnValue(columnMock);
-        jest.spyOn(service, 'getCurrentFilters').mockReturnValue(filterMock);
-        jest.spyOn(service, 'getCurrentSorters').mockReturnValue(sorterMock);
-        jest.spyOn(service, 'getCurrentPagination').mockReturnValue(paginationMock);
-        const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
-        const mapRowsSpy = jest.spyOn(dataViewStub, 'mapRowsToIds').mockReturnValue(mockRowIds);
-
-        service.init(gridStub);
-        service.selectedRowDataContextIds = mockRowIds;
-
-        // the regular event flow is 1.onBeforePagingInfoChanged, 2.onPagingInfoChanged then 3.onSelectedRowsChanged
-        dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0, totalPages: 1, totalRows: 0, dataView: dataViewStub });
-        dataViewStub.onPagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: (paginationMock.pageNumber - 1), totalPages: 1, totalRows: 0, dataView: dataViewStub });
-        gridStub.onSelectedRowsChanged.notify({ rows: mockRowIndexes, previousSelectedRows: mockPreviousRowIndexes, grid: gridStub });
-
-        setTimeout(() => {
-          expect(mapRowsSpy).toHaveBeenCalled();
-          expect(pubSubSpy).toHaveBeenLastCalledWith(`onGridStateChanged`, {
-            change: { newValues: { gridRowIndexes: mockRowIndexes, dataContextIds: mockRowIds, filteredDataContextIds: mockRowIds }, type: 'rowSelection' },
-            gridState: {
-              columns: columnMock,
-              filters: filterMock,
-              sorters: sorterMock,
-              pinning: pinningMock,
-              pagination: paginationMock,
-              rowSelection: { gridRowIndexes: mockRowIndexes, dataContextIds: mockRowIds, filteredDataContextIds: mockRowIds },
-            },
-          });
-          done();
-        });
-      });
-
-      it('should call the "setSelectedRows" grid method inside the "onPagingInfoChanged" event when the rows are not yet selected in the grid', (done) => {
-        const currentSelectedRowIndexes = [4, 44];
-        const shouldBeSelectedRowIndexes = [3, 44];
-        const mockRowIds = [333, 444];
-        const columnMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
-        const paginationMock = { pageNumber: 3, pageSize: 25 } as CurrentPagination;
-
-        jest.spyOn(service, 'getCurrentColumns').mockReturnValue(columnMock);
-        jest.spyOn(service, 'getCurrentPagination').mockReturnValue(paginationMock);
-        const setSelectSpy = jest.spyOn(gridStub, 'setSelectedRows');
-
-        service.init(gridStub);
-        service.selectedRowDataContextIds = mockRowIds;
-
-        // this comparison which has different arrays, will trigger the expectation we're looking for
-        jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue(shouldBeSelectedRowIndexes);
-        jest.spyOn(gridStub, 'getSelectedRows').mockReturnValueOnce(currentSelectedRowIndexes);
-
-        // the regular event flow is 1.onBeforePagingInfoChanged, 2.onPagingInfoChanged then 3.onSelectedRowsChanged
-        dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0, totalPages: 1, totalRows: 0, dataView: dataViewStub });
-        dataViewStub.onPagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: (paginationMock.pageNumber - 1), totalPages: 1, totalRows: 0, dataView: dataViewStub });
-
-        setTimeout(() => {
-          expect(setSelectSpy).toHaveBeenCalledWith(shouldBeSelectedRowIndexes);
-          done();
-        });
-      });
-
-      it('should call the "setSelectedRows" grid method inside the "onSelectedRowsChanged" when the rows are not yet selected in the grid before calling "onGridStateChanged" event', (done) => {
-        const mockPreviousRowIndexes = [3, 33];
-        const mockRowIndexes = [3, 44];
-        const currentSelectedRowIndexes = [4, 44];
-        const shouldBeSelectedRowIndexes = [3, 44];
-        const mockRowIds = [333, 444];
-        const mockRowItems = [{ id: 333 }, { id: 444 }];
-        const columnMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
-        const paginationMock = { pageNumber: 3, pageSize: 25 } as CurrentPagination;
-
-        jest.spyOn(dataViewStub, 'getFilteredItems').mockReturnValue(mockRowItems);
-        jest.spyOn(service, 'getCurrentColumns').mockReturnValue(columnMock);
-        jest.spyOn(service, 'getCurrentPagination').mockReturnValue(paginationMock);
-        const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
-        const mapRowsSpy = jest.spyOn(dataViewStub, 'mapRowsToIds').mockReturnValue(mockRowIds);
-        const setSelectSpy = jest.spyOn(gridStub, 'setSelectedRows');
-
-        service.init(gridStub);
-        service.selectedRowDataContextIds = mockRowIds;
-
-        // this comparison which has different arrays, will trigger the expectation we're looking for
-        jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue(shouldBeSelectedRowIndexes);
-        const getSelectSpy = jest.spyOn(gridStub, 'getSelectedRows').mockReturnValueOnce(currentSelectedRowIndexes).mockReturnValue(shouldBeSelectedRowIndexes);
-
-        // the regular event flow is 1.onBeforePagingInfoChanged, 2.onPagingInfoChanged then 3.onSelectedRowsChanged
-        dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0, totalPages: 1, totalRows: 0, dataView: dataViewStub });
-        // dataViewStub.onPagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: (paginationMock.pageNumber - 1) });
-        gridStub.onSelectedRowsChanged.notify({ rows: mockRowIndexes, previousSelectedRows: mockPreviousRowIndexes, grid: gridStub });
-
-        setTimeout(() => {
-          expect(mapRowsSpy).toHaveBeenCalled();
-          expect(getSelectSpy).toHaveBeenCalledTimes(2);
-          expect(setSelectSpy).toHaveBeenCalledWith(shouldBeSelectedRowIndexes);
-          expect(pubSubSpy).toHaveBeenLastCalledWith(`onGridStateChanged`, {
-            change: { newValues: { gridRowIndexes: shouldBeSelectedRowIndexes, dataContextIds: mockRowIds, filteredDataContextIds: mockRowIds }, type: 'rowSelection' },
-            gridState: {
-              columns: columnMock,
-              filters: null,
-              sorters: null,
-              pagination: paginationMock,
-              pinning: pinningMock,
-              rowSelection: { gridRowIndexes: shouldBeSelectedRowIndexes, dataContextIds: mockRowIds, filteredDataContextIds: mockRowIds },
-            },
-          });
-          done();
-        });
-      });
-
-      it('should set new rows in the "selectedRowDataContextIds" setter when "onSelectedRowsChanged" is triggered with new selected row additions', (done) => {
-        const mockPreviousRowIndexes = [3, 77];
+      it('should set new rows in the "selectedRowDataContextIds" setter when "onSelectedRowIdsChanged" is triggered with new selected row additions', (done) => {
         const mockPreviousDataIds = [333, 777];
         const mockNewRowIndexes = [3, 77, 55];
         const mockNewDataIds = [333, 777, 555];
         const columnMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
         const paginationMock = { pageNumber: 3, pageSize: 25 } as CurrentPagination;
 
-        jest.spyOn(service, 'getCurrentColumns').mockReturnValue(columnMock);
-        jest.spyOn(service, 'getCurrentPagination').mockReturnValue(paginationMock);
-        const mapRowsSpy = jest.spyOn(dataViewStub, 'mapRowsToIds').mockReturnValue(mockNewDataIds);
-
-        service.init(gridStub);
-        service.selectedRowDataContextIds = mockPreviousDataIds;
-
-        // the regular event flow is 1.onBeforePagingInfoChanged, 2.onPagingInfoChanged then 3.onSelectedRowsChanged
-        dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0, totalPages: 1, totalRows: 0, dataView: dataViewStub });
-        dataViewStub.onPagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: (paginationMock.pageNumber - 1), totalPages: 1, totalRows: 0, dataView: dataViewStub });
-        gridStub.onSelectedRowsChanged.notify({ rows: mockNewRowIndexes, previousSelectedRows: mockPreviousRowIndexes, grid: gridStub });
-
-        setTimeout(() => {
-          expect(mapRowsSpy).toHaveBeenCalled();
-          expect(service.selectedRowDataContextIds).toEqual(mockNewDataIds);
-          done();
-        });
-      });
-
-      it('should set remove some rows (deletions/uncheck) in the "selectedRowDataContextIds" setter when "onSelectedRowsChanged" is triggered with new selected row delitions', (done) => {
-        const mockPreviousRowIndexes = [3, 77, 55];
-        const mockPreviousDataIds = [333, 777, 555];
-        const mockNewRowIndexes = [3, 77];
-        const mockNewDataIds = [333, 777];
-        const columnMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
-        const paginationMock = { pageNumber: 3, pageSize: 25 } as CurrentPagination;
-
-        jest.spyOn(service, 'getCurrentColumns').mockReturnValue(columnMock);
-        jest.spyOn(service, 'getCurrentPagination').mockReturnValue(paginationMock);
-        const mapRowsSpy = jest.spyOn(dataViewStub, 'mapRowsToIds').mockReturnValue([555]); // remove [555], will remain [333, 777]
-
-        service.init(gridStub);
-        service.selectedRowDataContextIds = mockPreviousDataIds;
-
-        // the regular event flow is 1.onBeforePagingInfoChanged, 2.onPagingInfoChanged then 3.onSelectedRowsChanged
-        dataViewStub.onBeforePagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: 0, totalPages: 1, totalRows: 0, dataView: dataViewStub });
-        dataViewStub.onPagingInfoChanged.notify({ pageSize: paginationMock.pageSize, pageNum: (paginationMock.pageNumber - 1), totalPages: 1, totalRows: 0, dataView: dataViewStub });
-        gridStub.onSelectedRowsChanged.notify({ rows: mockNewRowIndexes, previousSelectedRows: mockPreviousRowIndexes, grid: gridStub });
-        gridStub.onSelectedRowsChanged.notify({ rows: mockNewRowIndexes, previousSelectedRows: mockPreviousRowIndexes, grid: gridStub });
-
-        setTimeout(() => {
-          expect(mapRowsSpy).toHaveBeenCalled();
-          expect(service.selectedRowDataContextIds).toEqual(mockNewDataIds);
-          done();
-        });
-      });
-
-      it('should trigger a "onGridStateChanged" event and expect different filtered "filteredDataContextIds" when "onFilterChanged" is triggered with a some data filtered out by the DataView', (done) => {
-        const mockFullDatasetRowItems = [{ id: 333 }, { id: 444 }, { id: 555 }];
-        const mockRowIds = mockFullDatasetRowItems.map((item) => item.id);
-
-        const mockFilteredRowItems = [{ id: 333 }, { id: 555 }];
-        const mockFilterSearchTerms = [333, 555];
-        const mockRowIndexes = [3, 44];
-        const columnMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
-        const filterMock = [{ columnId: 'field1', operator: 'EQ', searchTerms: [] }] as CurrentFilter[];
-        const sorterMock = [{ columnId: 'field1', direction: 'ASC' }, { columnId: 'field2', direction: 'DESC' }] as CurrentSorter[];
-        const paginationMock = { pageNumber: 3, pageSize: 25 } as CurrentPagination;
-
-        jest.spyOn(dataViewStub, 'getFilteredItems').mockReturnValue(mockFilteredRowItems);
-        jest.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowIndexes);
-        jest.spyOn(service, 'getCurrentColumns').mockReturnValue(columnMock);
-        jest.spyOn(service, 'getCurrentFilters').mockReturnValue(filterMock);
-        jest.spyOn(service, 'getCurrentSorters').mockReturnValue(sorterMock);
-        jest.spyOn(service, 'getCurrentPagination').mockReturnValue(paginationMock);
         const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
+        jest.spyOn(service, 'getCurrentColumns').mockReturnValue(columnMock);
+        jest.spyOn(service, 'getCurrentPagination').mockReturnValue(paginationMock);
+        jest.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue(mockNewDataIds);
+        jest.spyOn(dataViewStub, 'getAllSelectedFilteredIds').mockReturnValue(mockNewDataIds);
+        jest.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockNewRowIndexes);
 
         service.init(gridStub);
-        service.selectedRowDataContextIds = mockRowIds;
+        service.selectedRowDataContextIds = mockPreviousDataIds;
 
-        fnCallbacks['onFilterChanged'](filterMock);
+        dataViewStub.onSelectedRowIdsChanged.notify({ rows: mockNewRowIndexes, filteredIds: mockNewDataIds, ids: mockNewDataIds, selectedRowIds: mockNewDataIds, dataView: dataViewStub, grid: gridStub });
 
         setTimeout(() => {
-          expect(pubSubSpy).toBeCalledTimes(2); // 2x for GridState shown below
-
-          // expect filteredDataContextIds to not be changed before the next Grid State change with Row Selection type
+          expect(service.selectedRowDataContextIds).toEqual(mockNewDataIds);
           expect(pubSubSpy).toHaveBeenCalledWith(`onGridStateChanged`, {
-            change: { newValues: filterMock, type: 'filter' },
+            change: {
+              newValues: { gridRowIndexes: mockNewRowIndexes, dataContextIds: mockNewDataIds, filteredDataContextIds: mockNewDataIds },
+              type: GridStateType.rowSelection,
+            },
             gridState: {
               columns: columnMock,
-              filters: filterMock,
-              sorters: sorterMock,
+              filters: null,
+              sorters: null,
               pagination: paginationMock,
               pinning: pinningMock,
-              rowSelection: { gridRowIndexes: mockRowIndexes, dataContextIds: mockRowIds, filteredDataContextIds: mockRowIds },
+              rowSelection: { gridRowIndexes: mockNewRowIndexes, dataContextIds: mockNewDataIds, filteredDataContextIds: mockNewDataIds },
             }
           });
-          // expect filteredDataContextIds to be updated with a Grid State change with Row Selection type
-          expect(pubSubSpy).toHaveBeenCalledWith(`onGridStateChanged`, {
-            change: { newValues: { gridRowIndexes: mockRowIndexes, dataContextIds: mockRowIds, filteredDataContextIds: mockFilterSearchTerms }, type: 'rowSelection' },
-            gridState: {
-              columns: columnMock,
-              filters: filterMock,
-              sorters: sorterMock,
-              pagination: paginationMock,
-              pinning: pinningMock,
-              rowSelection: { gridRowIndexes: mockRowIndexes, dataContextIds: mockRowIds, filteredDataContextIds: mockFilterSearchTerms },
-            },
-          });
           done();
-        });
+        })
       });
     });
   });

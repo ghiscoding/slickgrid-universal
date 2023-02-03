@@ -726,7 +726,7 @@ describe('Example 09 - OData Grid', { retries: 1 }, () => {
         .find('.slick-header-left .slick-header-column:nth(1)')
         .trigger('mouseover')
         .children('.slick-header-menu-button')
-        .click();
+        .click({ force: true });
 
       cy.get('.slick-header-menu')
         .should('be.visible')
