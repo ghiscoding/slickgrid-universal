@@ -31,6 +31,7 @@ const dataViewStub = {
   getAllSelectedFilteredIds: jest.fn(),
   getFilteredItems: jest.fn(),
   getItemByIdx: jest.fn(),
+  getItemCount: jest.fn(),
   getIdPropertyName: () => 'id',
   onPagingInfoChanged: new Slick.Event(),
   onSelectedRowIdsChanged: new Slick.Event(),
@@ -232,7 +233,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       .mockReturnValue({ firstName: 'John', lastName: 'Doe', age: 30 })
       .mockReturnValueOnce({ firstName: 'Jane', lastName: 'Doe', age: 28 })
       .mockReturnValueOnce({ __group: true, __groupTotals: { age: { sum: 58 } } });
-    jest.spyOn(dataViewStub, 'getFilteredItems').mockReturnValue([{ id: 22, firstName: 'John', lastName: 'Doe', age: 30 }])
+    jest.spyOn(dataViewStub, 'getFilteredItems').mockReturnValue([{ id: 22, firstName: 'John', lastName: 'Doe', age: 30 }]);
     const setSelectedRowSpy = jest.spyOn(gridStub, 'setSelectedRows');
     const onToggleEndMock = jest.fn();
     const onToggleStartMock = jest.fn();
@@ -683,6 +684,38 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(invalidateRowSpy).toHaveBeenCalled();
     expect(renderSpy).toHaveBeenCalled();
     expect(setSelectedRowSpy).toHaveBeenCalled();
+    expect(updateColumnHeaderSpy).toHaveBeenCalledWith(
+      '_checkbox_selector',
+      `<input id="header-selector${plugin.selectAllUid}" type="checkbox" checked="checked"><label for="header-selector${plugin.selectAllUid}"></label>`,
+      'Select/Deselect All'
+    );
+  });
+
+  it('should trigger "onSelectedRowIdsChanged" event and invalidate row and render to be called also with "setSelectedRows" when checkSelectableOverride returns False and input select checkbox is all checked', () => {
+    const nodeElm = document.createElement('div');
+    nodeElm.className = 'slick-headerrow-column';
+    const invalidateRowSpy = jest.spyOn(gridStub, 'invalidateRow');
+    const renderSpy = jest.spyOn(gridStub, 'render');
+    const updateColumnHeaderSpy = jest.spyOn(gridStub, 'updateColumnHeader');
+    const setSelectedRowSpy = jest.spyOn(gridStub, 'setSelectedRows');
+    jest.spyOn(dataViewStub, 'getAllSelectedFilteredIds').mockReturnValueOnce([1, 2]);
+    jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
+    jest.spyOn(dataViewStub, 'getFilteredItems').mockReturnValueOnce([{ id: 22, firstName: 'John', lastName: 'Doe', age: 30 }]);
+    jest.spyOn(dataViewStub, 'getItemCount').mockReturnValueOnce(2);
+    jest.spyOn(dataViewStub, 'getItemByIdx').mockReturnValueOnce({ id: 22, firstName: 'John', lastName: 'Doe', age: 30 });
+
+    plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, { hideInFilterHeaderRow: false, hideSelectAllCheckbox: false, selectableOverride: () => false });
+    plugin.init(gridStub);
+    plugin.selectedRowsLookup = { 1: false, 2: true };
+
+    gridStub.onHeaderRowCellRendered.notify({ column: { id: '_checkbox_selector', field: 'sel' }, node: nodeElm, grid: gridStub });
+
+    const checkboxElm = document.createElement('input');
+    checkboxElm.type = 'checkbox';
+    const clickEvent = addJQueryEventPropagation(new Event('keyDown'), '', ' ', checkboxElm);
+    dataViewStub.onSelectedRowIdsChanged.notify({ rows: [0, 1], filteredIds: [1, 2], ids: [1, 2], selectedRowIds: [1, 2], dataView: dataViewStub, grid: gridStub }, clickEvent);
+
+    expect(plugin).toBeTruthy();
     expect(updateColumnHeaderSpy).toHaveBeenCalledWith(
       '_checkbox_selector',
       `<input id="header-selector${plugin.selectAllUid}" type="checkbox" checked="checked"><label for="header-selector${plugin.selectAllUid}"></label>`,
