@@ -30,7 +30,7 @@
     "postbuild": "pnpm run bundle:commonjs",
     "build:incremental": "tsc --incremental",
     "build:watch": "tsc --incremental --watch",
-    "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",
+    "clean": "rimraf dist",
     "dev:webpack": "webpack --env development",
     "prebundle": "pnpm run clean",
     "bundle": "npm-run-all bundle:commonjs bundle:esm webpack:prod",
