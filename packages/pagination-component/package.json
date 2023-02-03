@@ -29,7 +29,7 @@
     "build": "pnpm run bundle:esm",
     "build:incremental": "tsc --incremental",
     "build:watch": "tsc --incremental --watch",
-    "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",
+    "clean": "rimraf dist",
     "dev": "pnpm run bundle:commonjs",
     "prebundle": "pnpm run clean",
     "bundle": "run-p bundle:commonjs bundle:esm",
