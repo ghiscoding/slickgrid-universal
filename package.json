@@ -26,7 +26,7 @@
     "cypress:ci": "cypress run --config-file test/cypress.config.ts",
     "predev": "pnpm run -r build:incremental && pnpm run -r sass:copy",
     "dev": "run-p dev:watch build:watch sass:copy:watch",
-    "build:watch": "lerna watch --glob=\"src/**/*.ts\" --stream -- cross-env-shell pnpm run -r --filter $LERNA_PACKAGE_NAME build:incremental",
+    "build:watch": "lerna watch --glob=\"src/**/*.ts\" --ignored=\"src/**/*.spec.ts\" --stream -- cross-env-shell pnpm run -r --filter $LERNA_PACKAGE_NAME build:incremental",
     "dev:watch": "pnpm -r --parallel run dev:watch",
     "sass:copy:watch": "lerna watch --scope=@slickgrid-universal/common --glob=\"src/**/*.scss\" -- cross-env-shell pnpm run -r --filter $LERNA_PACKAGE_NAME sass:copy",
     "preview:publish": "lerna publish from-package --dry-run",
