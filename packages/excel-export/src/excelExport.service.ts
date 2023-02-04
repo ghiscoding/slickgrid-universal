@@ -518,7 +518,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       if (itemMetadata?.columns) {
         const metadata = itemMetadata.columns;
         const columnData = metadata[columnDef.id] || metadata[col];
-        if (!(prevColspan > 1 || (prevColspan === '*' && col > 0))) {
+        if (!((!isNaN(prevColspan as number) && +prevColspan > 1) || (prevColspan === '*' && col > 0))) {
           prevColspan = columnData?.colspan ?? 1;
         }
         if (prevColspan === '*') {
@@ -533,7 +533,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       }
 
       // when using grid with colspan, we will merge some cells together
-      if ((prevColspan === '*' && col > 0) || (prevColspan > 1 && columnDef.id !== colspanColumnId)) {
+      if ((prevColspan === '*' && col > 0) || ((!isNaN(prevColspan as number) && +prevColspan > 1) && columnDef.id !== colspanColumnId)) {
         // -- Merge Data
         // Excel row starts at 2 or at 3 when dealing with pre-header grouping
         const excelRowNumber = row + (this._hasColumnTitlePreHeader ? 3 : 2);
@@ -553,7 +553,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         }
 
         // decrement colspan until we reach colspan of 1 then proceed with cell merge OR full row merge when colspan is (*)
-        if (typeof prevColspan === 'number' && prevColspan > 1) {
+        if (typeof prevColspan === 'number' && (!isNaN(prevColspan as number) && +prevColspan > 1)) {
           colspan = prevColspan--;
         }
       } else {

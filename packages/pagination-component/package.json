@@ -3,10 +3,21 @@
   "version": "2.3.0",
   "description": "Slick Pagination Component - Vanilla Implementation of a Pagination Component",
   "main": "dist/commonjs/index.js",
-  "browser": "src/index.ts",
   "module": "dist/esm/index.js",
-  "types": "dist/commonjs/index.d.ts",
-  "typings": "dist/commonjs/index.d.ts",
+  "exports": {
+    ".": {
+      "browser": "./dist/esm/index.js",
+      "import": "./dist/esm/index.d.ts",
+      "require": "./dist/commonjs/index.js"
+    },
+    "./*": "./*"
+  },
+  "typesVersions": {
+    "*": {
+      "*": ["./dist/esm/index.d.ts"]
+    }
+  },
+  "types": "dist/esm/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
@@ -15,11 +26,11 @@
   ],
   "scripts": {
     "prebuild": "pnpm run clean",
-    "build": "pnpm run bundle:commonjs",
+    "build": "pnpm run bundle:esm",
+    "build:incremental": "tsc --incremental",
     "build:watch": "tsc --incremental --watch",
-    "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",
+    "clean": "rimraf dist",
     "dev": "pnpm run bundle:commonjs",
-    "dev:watch": "tsc --incremental --watch",
     "prebundle": "pnpm run clean",
     "bundle": "run-p bundle:commonjs bundle:esm",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
