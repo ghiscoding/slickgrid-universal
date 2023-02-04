@@ -1859,7 +1859,7 @@ describe('CompositeEditorService', () => {
       });
     });
 
-    xit('should show a validation summary when clicking "Mass Update" save button and the custom "onSave" async function throws an error', (done) => {
+    it('should show a validation summary when clicking "Mass Update" save button and the custom "onSave" async function throws an error', (done) => {
       const mockProduct1 = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
       const mockProduct2 = { id: 333, field3: 'else', address: { zip: 789123 }, product: { name: 'Product XYZ', price: 33.44 } };
       const currentEditorMock = { validate: jest.fn() };
