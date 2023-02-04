@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.1](https://github.com/ghiscoding/slickgrid-universal/compare/v2.4.0...v2.4.1) (2023-02-04)
+
+### Bug Fixes
+
+* use DOMPurify correct namespace for dts file ([#890](https://github.com/ghiscoding/slickgrid-universal/issues/890)) ([78357bc](https://github.com/ghiscoding/slickgrid-universal/commit/78357bc3247200a281b42e6b8a7e58f8f7ca4132)) - by @ghiscoding
+
 # [2.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.3.0...v2.4.0) (2023-02-04)
 
 ### Bug Fixes
