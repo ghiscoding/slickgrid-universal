@@ -3,10 +3,21 @@
   "version": "2.3.0",
   "description": "SlickGrid-Universal Common Code",
   "main": "dist/commonjs/index.js",
-  "browser": "src/index.ts",
   "module": "dist/esm/index.js",
-  "types": "dist/commonjs/index.d.ts",
-  "typings": "dist/commonjs/index.d.ts",
+  "exports": {
+    ".": {
+      "browser": "./dist/esm/index.js",
+      "import": "./dist/esm/index.d.ts",
+      "require": "./dist/commonjs/index.js"
+    },
+    "./*": "./*"
+  },
+  "typesVersions": {
+    "*": {
+      "*": ["./dist/esm/index.d.ts"]
+    }
+  },
+  "types": "dist/esm/index.d.ts",
   "license": "MIT",
   "author": "Ghislain B.",
   "homepage": "https://github.com/ghiscoding/slickgrid-universal",
@@ -26,12 +37,13 @@
   ],
   "scripts": {
     "prebuild": "pnpm run clean",
-    "build": "pnpm run bundle:commonjs",
+    "build": "pnpm run bundle:esm",
     "postbuild": "run-s sass:build sass:copy",
+    "build:incremental": "tsc --incremental",
     "build:watch": "tsc --incremental --watch",
-    "clean": "rimraf --maxBusyTries=10 packages/*/dist dist",
-    "dev": "run-s build sass:build sass:copy",
-    "dev:watch": "run-p build:watch sass:watch",
+    "clean": "rimraf dist",
+    "dev": "run-s bundle:commonjs sass:copy",
+    "dev:watch": "pnpm run sass:watch",
     "prebundle": "pnpm run clean",
     "bundle": "run-p bundle:commonjs bundle:esm",
     "postbundle": "run-s sass:build sass:copy",
@@ -85,7 +97,7 @@
     "postcss": "^8.4.21",
     "postcss-cli": "^10.1.0",
     "rimraf": "^3.0.2",
-    "sass": "^1.57.1"
+    "sass": "^1.58.0"
   },
   "engines": {
     "node": ">=14.17.0",

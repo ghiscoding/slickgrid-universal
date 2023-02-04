@@ -5,8 +5,8 @@
   "loglevel": "info",
   "command": {
     "publish": {
+      "cleanupTempFiles": true,
       "removePackageFields": [
-        "browser",
         "devDependencies",
         "scripts"
       ]

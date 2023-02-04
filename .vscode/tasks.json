@@ -22,7 +22,7 @@
     {
       "label": "Start Library Development",
       "type": "shell",
-      "command": "pnpm dev:watch",
+      "command": "pnpm dev",
       "problemMatcher": []
     },
     {
