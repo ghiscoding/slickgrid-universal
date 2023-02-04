@@ -101,7 +101,7 @@ export class Example14 {
     { value: 4, label: 'Very Complex' },
   ];
 
-  get slickerGridInstance(): SlickerGridInstance {
+  get slickerGridInstance() {
     return this.sgb?.instances;
   }
 
@@ -112,7 +112,7 @@ export class Example14 {
   attached() {
     this.initializeGrid();
     this.dataset = this.loadData(NB_ITEMS);
-    this.gridContainerElm = document.querySelector<HTMLDivElement>(`.grid14`);
+    this.gridContainerElm = document.querySelector(`.grid14`) as HTMLDivElement;
 
     this.sgb = new Slicker.GridBundle(this.gridContainerElm, Utilities.deepCopy(this.columnDefinitions), { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
@@ -130,7 +130,7 @@ export class Example14 {
   dispose() {
     this.sgb?.dispose();
     this._bindingEventService.unbindAll();
-    this.gridContainerElm = null;
+    this.gridContainerElm.remove();
   }
 
   initializeGrid() {
@@ -344,8 +344,8 @@ export class Example14 {
               },
               action: (_event, args) => {
                 const dataContext = args.dataContext;
-                if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"`)) {
-                  this.slickerGridInstance.gridService.deleteItemById(dataContext.id);
+                if (confirm(`Do you really want to delete row (${args.row || 0 + 1}) with "${dataContext.title}"`)) {
+                  this.slickerGridInstance?.gridService.deleteItemById(dataContext.id);
                 }
               }
             },
@@ -410,15 +410,15 @@ export class Example14 {
         const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
         const editorColumns = this.columnDefinitions.filter((col) => col.editor !== undefined);
 
-        const modifiedColumns = [];
+        const modifiedColumns: Column[] = [];
         prevSerializedValues.forEach((_val, index) => {
           const prevSerializedValue = prevSerializedValues[index];
           const serializedValue = serializedValues[index];
 
           if (prevSerializedValue !== serializedValue || serializedValue === '') {
-            const finalColumn = Array.isArray(editCommand.prevSerializedValue) ? editorColumns[index] : column;
+            const finalColumn: Column = Array.isArray(editCommand.prevSerializedValue) ? editorColumns[index] : column;
             this.editedItems[this.gridOptions.datasetIdPropertyName || 'id'] = item; // keep items by their row indexes, if the row got edited twice then we'll keep only the last change
-            this.sgb.slickGrid.invalidate();
+            this.sgb.slickGrid?.invalidate();
             editCommand.execute();
 
             this.renderUnsavedCellStyling(item, finalColumn, editCommand);
@@ -446,7 +446,7 @@ export class Example14 {
 
   loadData(count: number) {
     // mock data
-    const tmpArray = [];
+    const tmpArray: any[] = [];
     for (let i = 0; i < count; i++) {
       const randomItemId = Math.floor(Math.random() * this.mockProducts().length);
       const randomYear = 2000 + Math.floor(Math.random() * 10);
@@ -543,10 +543,10 @@ export class Example14 {
 
   handleDefaultResizeColumns() {
     // just for demo purposes, set it back to its original width
-    const columns = this.sgb.slickGrid.getColumns();
+    const columns = this.sgb.slickGrid?.getColumns() as Column[];
     columns.forEach(col => col.width = col.originalWidth);
-    this.sgb.slickGrid.setColumns(columns);
-    this.sgb.slickGrid.autosizeColumns();
+    this.sgb.slickGrid?.setColumns(columns);
+    this.sgb.slickGrid?.autosizeColumns();
 
     // simple css class to change selected button in the UI
     this.classDefaultResizeButton = 'button is-small is-selected is-primary';
@@ -582,7 +582,7 @@ export class Example14 {
 
   removeUnsavedStylingFromCell(_item: any, column: Column, row: number) {
     // remove unsaved css class from that cell
-    this.sgb.slickGrid.removeCellCssStyles(`unsaved_highlight_${[column.id]}${row}`);
+    this.sgb.slickGrid?.removeCellCssStyles(`unsaved_highlight_${[column.id]}${row}`);
   }
 
   removeAllUnsavedStylingFromCell() {
@@ -612,10 +612,10 @@ export class Example14 {
 
   renderUnsavedCellStyling(item, column, editCommand) {
     if (editCommand && item && column) {
-      const row = this.sgb.dataView.getRowByItem(item);
+      const row = this.sgb.dataView?.getRowByItem(item) ?? 0;
       if (row >= 0) {
         const hash = { [row]: { [column.id]: 'unsaved-editable-field' } };
-        this.sgb.slickGrid.setCellCssStyles(`unsaved_highlight_${[column.id]}${row}`, hash);
+        this.sgb.slickGrid?.setCellCssStyles(`unsaved_highlight_${[column.id]}${row}`, hash);
       }
     }
   }
@@ -660,12 +660,12 @@ export class Example14 {
       for (const lastEditColumn of lastEdit.columns) {
         this.removeUnsavedStylingFromCell(lastEdit.item, lastEditColumn, lastEditCommand.row);
       }
-      this.sgb.slickGrid.invalidate();
+      this.sgb.slickGrid?.invalidate();
 
 
       // optionally open the last cell editor associated
       if (showLastEditor) {
-        this.sgb?.slickGrid.gotoCell(lastEditCommand.row, lastEditCommand.cell, false);
+        this.sgb?.slickGrid?.gotoCell(lastEditCommand.row, lastEditCommand.cell, false);
       }
     }
   }
@@ -682,7 +682,7 @@ export class Example14 {
         }
       }
     }
-    this.sgb.slickGrid.invalidate(); // re-render the grid only after every cells got rolled back
+    this.sgb.slickGrid?.invalidate(); // re-render the grid only after every cells got rolled back
     this.editQueue = [];
   }
 
