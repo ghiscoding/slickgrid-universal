@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/rxjs-observable",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "RxJS Observable Wrapper",
   "main": "dist/commonjs/index.js",
   "module": "dist/esm/index.js",
@@ -14,7 +14,9 @@
   },
   "typesVersions": {
     "*": {
-      "*": ["./dist/esm/index.d.ts"]
+      "*": [
+        "./dist/esm/index.d.ts"
+      ]
     }
   },
   "types": "dist/esm/index.d.ts",

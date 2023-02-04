@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.3.0...v2.4.0) (2023-02-04)
+
+### Bug Fixes
+
+* **build:** some TypeScript 5.x related errors ([#886](https://github.com/ghiscoding/slickgrid-universal/issues/886)) ([4aa2f56](https://github.com/ghiscoding/slickgrid-universal/commit/4aa2f56b545f912d04fe4fab553d783164f6fc36)) - by @ghiscoding
+
+### Features
+
+* **dataView:** add option to apply row selection to all pages ([#882](https://github.com/ghiscoding/slickgrid-universal/issues/882)) ([4aac7cb](https://github.com/ghiscoding/slickgrid-universal/commit/4aac7cb7f38c3675a2ad693212152ded94ee2174)) - by @ghiscoding
+
 # [2.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.2.2...v2.3.0) (2023-01-21)
 
 ### Bug Fixes
