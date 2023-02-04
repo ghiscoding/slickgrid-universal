@@ -49,7 +49,7 @@
     <p class="control">
       <button class="button is-small" onclick.delegate="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
         <span class="icon mdi mdi-table-edit"></span>
-        <span>Toggle Edit/Readonly Grid</span>
+        <span>Toggle Readonly</span>
       </button>
     </p>
     <p class="control">
@@ -63,6 +63,12 @@
               title="Check your console log for the result">
         <span class="icon mdi mdi-check-all color-se-primary"></span>
         <span>Save All</span>
+      </button>
+    </p>
+    <p class="control">
+      <button class="button is-small" onclick.delegate="setSelectedRowIds()" data-test="set-dynamic-rows-btn"
+              title="Change Row Selection across multiple pages">
+        <span>Change Row Selection</span>
       </button>
     </p>
     <span class.bind="loadingClass"></span>

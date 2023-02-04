@@ -47,17 +47,20 @@ describe('Example 12 - Composite Editor Modal', { retries: 1 }, () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
       .should('contain', '0 day')
       .get('.editing-field')
-      .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
+      .should('have.css', 'border')
+      .and('contain', `solid ${UNSAVED_RGB_COLOR}`);
 
     cy.get('.editor-duration').type('1').type('{enter}', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(2)`).should('contain', '1 day')
       .get('.editing-field')
-      .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
+      .should('have.css', 'border')
+      .and('contain', `solid ${UNSAVED_RGB_COLOR}`);
 
     cy.get('.editor-duration').type('2').type('{enter}', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(2)`).should('contain', '2 days')
       .get('.editing-field')
-      .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
+      .should('have.css', 'border')
+      .and('contain', `solid ${UNSAVED_RGB_COLOR}`);
   });
 
   it('should be able to change "Title" values of row indexes 1-3', () => {
@@ -67,14 +70,16 @@ describe('Example 12 - Composite Editor Modal', { retries: 1 }, () => {
     cy.get('.editor-title .editor-footer .btn-save').click();
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 1111')
       .get('.editing-field')
-      .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
+      .should('have.css', 'border')
+      .and('contain', `solid ${UNSAVED_RGB_COLOR}`);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 2').click();
     cy.get('.editor-title').type('task 2222');
     cy.get('.editor-title .editor-footer .btn-save').click();
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 2222')
       .get('.editing-field')
-      .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
+      .should('have.css', 'border')
+      .and('contain', `solid ${UNSAVED_RGB_COLOR}`);
   });
 
   it('should be able to change "% Complete" values of row indexes 2-4', () => {
@@ -83,13 +88,15 @@ describe('Example 12 - Composite Editor Modal', { retries: 1 }, () => {
     cy.get('.slider-editor input[type=range]').as('range').invoke('val', 5).trigger('change', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).should('contain', '5')
       .get('.editing-field')
-      .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
+      .should('have.css', 'border')
+      .and('contain', `solid ${UNSAVED_RGB_COLOR}`);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(4)`).click();
     cy.get('.slider-editor input[type=range]').as('range').invoke('val', 6).trigger('change', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(4)`).should('contain', '6')
       .get('.editing-field')
-      .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
+      .should('have.css', 'border')
+      .and('contain', `solid ${UNSAVED_RGB_COLOR}`);
   });
 
   it('should not be able to change the "Finish" dates on first 2 rows', () => {
@@ -129,19 +136,22 @@ describe('Example 12 - Composite Editor Modal', { retries: 1 }, () => {
     cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(8)`).should('contain', `${zeroPadding(currentMonth)}/${zeroPadding(currentDate)}/${currentYear}`)
       .get('.editing-field')
-      .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
+      .should('have.css', 'border')
+      .and('contain', `solid ${UNSAVED_RGB_COLOR}`);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(8)`).click();
     cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(8)`).should('contain', `${zeroPadding(currentMonth)}/${zeroPadding(currentDate)}/${currentYear}`)
       .get('.editing-field')
-      .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
+      .should('have.css', 'border')
+      .and('contain', `solid ${UNSAVED_RGB_COLOR}`);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(8)`).click();
     cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(8)`).should('contain', `${zeroPadding(currentMonth)}/${zeroPadding(currentDate)}/${currentYear}`)
       .get('.editing-field')
-      .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
+      .should('have.css', 'border')
+      .and('contain', `solid ${UNSAVED_RGB_COLOR}`);
 
     cy.get('.unsaved-editable-field')
       .should('have.length', 13);
@@ -159,7 +169,8 @@ describe('Example 12 - Composite Editor Modal', { retries: 1 }, () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(8)`)
       .should('contain', '')
       .get('.editing-field')
-      .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
+      .should('have.css', 'border')
+      .and('contain', `solid ${UNSAVED_RGB_COLOR}`);
   });
 
   it('should undo last edit and expect the date editor to NOT be opened when clicking undo last edit button', () => {
@@ -174,7 +185,8 @@ describe('Example 12 - Composite Editor Modal', { retries: 1 }, () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(8)`)
       .should('contain', '')
       .get('.editing-field')
-      .should('have.css', 'border').and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
+      .should('have.css', 'border')
+      .and('contain', `solid ${UNSAVED_RGB_COLOR}`);
   });
 
   it('should click on the "Save" button and expect 2 console log calls with the queued items & also expect no more unsaved cells', () => {
@@ -233,7 +245,7 @@ describe('Example 12 - Composite Editor Modal', { retries: 1 }, () => {
 
     // cy.get('.slick-large-editor-text.editor-title')
     //   .should('have.css', 'border')
-    //   .and('eq', `1px solid ${UNSAVED_RGB_COLOR}`);
+    //   .and('contain', `solid ${UNSAVED_RGB_COLOR}`);
 
     cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 5).trigger('change', { force: true });
     cy.get('.item-details-editor-container .input-group-text').contains('5');

@@ -1,7 +1,7 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { KeyCode } from '../enums/keyCode.enum';
-import { CheckboxSelectorOption, Column, DOMMouseOrTouchEvent, GridOption, SelectableOverrideCallback, SlickEventData, SlickEventHandler, SlickGrid, SlickNamespace } from '../interfaces/index';
+import { CheckboxSelectorOption, Column, DOMMouseOrTouchEvent, GridOption, SelectableOverrideCallback, SlickDataView, SlickEventData, SlickEventHandler, SlickGrid, SlickNamespace } from '../interfaces/index';
 import { SlickRowSelectionModel } from './slickRowSelectionModel';
 import { createDomElement, emptyElement } from '../services/domUtilities';
 import { BindingEventService } from '../services/bindingEvent.service';
@@ -18,16 +18,19 @@ export class SlickCheckboxSelectColumn<T = any> {
     hideSelectAllCheckbox: false,
     toolTip: 'Select/Deselect All',
     width: 30,
+    applySelectOnAllPages: true, // when that is enabled the "Select All" will be applied to all pages (when using Pagination)
     hideInColumnTitleRow: false,
     hideInFilterHeaderRow: true
   } as unknown as CheckboxSelectorOption;
   protected _addonOptions: CheckboxSelectorOption = this._defaults;
   protected _bindEventService: BindingEventService;
   protected _checkboxColumnCellIndex: number | null = null;
+  protected _dataView!: SlickDataView;
   protected _eventHandler: SlickEventHandler;
   protected _headerRowNode?: HTMLElement;
   protected _grid!: SlickGrid;
   protected _isSelectAllChecked = false;
+  protected _isUsingDataView = false;
   protected _rowSelectionModel?: SlickRowSelectionModel;
   protected _selectableOverride?: SelectableOverrideCallback<T> | number;
   protected _selectAll_UID: number;
@@ -63,10 +66,26 @@ export class SlickCheckboxSelectColumn<T = any> {
 
   init(grid: SlickGrid) {
     this._grid = grid;
+    this._isUsingDataView = !Array.isArray(grid.getData());
+    if (this._isUsingDataView) {
+      this._dataView = grid.getData();
+    }
+
+    // we cannot apply "Select All" to all pages when using a Backend Service API (OData, GraphQL, ...)
+    if (this.gridOptions.backendServiceApi) {
+      this._addonOptions.applySelectOnAllPages = false;
+    }
+
     this._eventHandler
       .subscribe(grid.onSelectedRowsChanged, this.handleSelectedRowsChanged.bind(this) as EventListener)
       .subscribe(grid.onClick, this.handleClick.bind(this) as EventListener)
       .subscribe(grid.onKeyDown, this.handleKeyDown.bind(this) as EventListener);
+
+    if (this._isUsingDataView && this._dataView && this._addonOptions.applySelectOnAllPages) {
+      this._eventHandler
+        .subscribe(this._dataView.onSelectedRowIdsChanged, this.handleDataViewSelectedIdsChanged.bind(this) as EventListener)
+        .subscribe(this._dataView.onPagingInfoChanged, this.handleDataViewSelectedIdsChanged.bind(this) as EventListener);
+    }
 
     if (!this._addonOptions.hideInFilterHeaderRow) {
       this.addCheckboxToFilterHeaderRow(grid);
@@ -262,7 +281,7 @@ export class SlickCheckboxSelectColumn<T = any> {
 
   protected addCheckboxToFilterHeaderRow(grid: SlickGrid) {
     this._eventHandler.subscribe(grid.onHeaderRowCellRendered, (_e: any, args: any) => {
-      if (args.column.field === (this.addonOptions.field || 'sel')) {
+      if (args.column.field === (this._addonOptions.field || 'sel')) {
         emptyElement(args.node);
 
         // <span class="container"><input type="checkbox"><label for="checkbox"></label></span>
@@ -313,6 +332,36 @@ export class SlickCheckboxSelectColumn<T = any> {
     return this._checkboxColumnCellIndex;
   }
 
+  protected handleDataViewSelectedIdsChanged() {
+    const selectedIds = this._dataView.getAllSelectedFilteredIds();
+    const filteredItems = this._dataView.getFilteredItems();
+    let disabledCount = 0;
+
+    if (typeof this._selectableOverride === 'function' && selectedIds.length > 0) {
+      for (let k = 0; k < this._dataView.getItemCount(); k++) {
+        // If we are allowed to select the row
+        const dataItem = this._dataView.getItemByIdx(k);
+        const idProperty = this._dataView.getIdPropertyName();
+        const dataItemId = dataItem[idProperty];
+        const foundItemIdx = filteredItems.findIndex((item) => item[idProperty] === dataItemId);
+        if (foundItemIdx >= 0 && !this.checkSelectableOverride(k, dataItem, this._grid)) {
+          disabledCount++;
+        }
+      }
+    }
+    this._isSelectAllChecked = (selectedIds.length + disabledCount) >= filteredItems.length;
+
+    if (!this._addonOptions.hideInColumnTitleRow && !this._addonOptions.hideSelectAllCheckbox) {
+      this.renderSelectAllCheckbox(this._isSelectAllChecked);
+    }
+    if (!this._addonOptions.hideInFilterHeaderRow) {
+      const selectAllElm = this.headerRowNode?.querySelector<HTMLInputElement>(`#header-filter-selector${this._selectAll_UID}`);
+      if (selectAllElm) {
+        selectAllElm.checked = this._isSelectAllChecked;
+      }
+    }
+  }
+
   protected handleClick(e: DOMMouseOrTouchEvent<HTMLInputElement>, args: { row: number; cell: number; grid: SlickGrid; }) {
     // clicking on a row select checkbox
     if (this._grid.getColumns()[args.cell].id === this._addonOptions.columnId && e.target.type === 'checkbox') {
@@ -339,8 +388,8 @@ export class SlickCheckboxSelectColumn<T = any> {
       }
 
       // who called the selection?
-      const isExecutingSelectAll = e.target.checked;
-      const caller = isExecutingSelectAll ? 'click.selectAll' : 'click.unselectAll';
+      let isAllSelected = e.target.checked;
+      const caller = isAllSelected ? 'click.selectAll' : 'click.unselectAll';
 
       // trigger event before the real selection so that we have an event before & the next one after the change
       const previousSelectedRows = this._grid.getSelectedRows();
@@ -351,7 +400,7 @@ export class SlickCheckboxSelectColumn<T = any> {
       }
 
       let newSelectedRows: number[] = []; // when unselecting all, the array will become empty
-      if (isExecutingSelectAll) {
+      if (isAllSelected) {
         const rows = [];
         for (let i = 0; i < this._grid.getDataLength(); i++) {
           // Get the row and check it's a selectable row before pushing it onto the stack
@@ -361,6 +410,20 @@ export class SlickCheckboxSelectColumn<T = any> {
           }
         }
         newSelectedRows = rows;
+        isAllSelected = true;
+      }
+
+      if (this._isUsingDataView && this._dataView && this._addonOptions.applySelectOnAllPages) {
+        const ids = [];
+        const filteredItems = this._dataView.getFilteredItems();
+        for (let j = 0; j < filteredItems.length; j++) {
+          // Get the row and check it's a selectable ID (it could be in a different page) before pushing it onto the stack
+          const dataviewRowItem = filteredItems[j];
+          if (this.checkSelectableOverride(j, dataviewRowItem, this._grid)) {
+            ids.push(dataviewRowItem[this._dataView.getIdPropertyName()]);
+          }
+        }
+        this._dataView.setSelectedIds(ids, { isRowBeingAdded: isAllSelected });
       }
 
       // we finally need to call the actual row selection from SlickGrid method
@@ -432,15 +495,18 @@ export class SlickCheckboxSelectColumn<T = any> {
     this._grid.render();
     this._isSelectAllChecked = (selectedRows?.length ?? 0) + disabledCount >= this._grid.getDataLength();
 
-    if (!this._addonOptions.hideInColumnTitleRow && !this._addonOptions.hideSelectAllCheckbox) {
-      this.renderSelectAllCheckbox(this._isSelectAllChecked);
-    }
-    if (!this._addonOptions.hideInFilterHeaderRow) {
-      const selectAllElm = this.headerRowNode?.querySelector<HTMLInputElement>(`#header-filter-selector${this._selectAll_UID}`);
-      if (selectAllElm) {
-        selectAllElm.checked = this._isSelectAllChecked;
+    if (!this._isUsingDataView || !this._addonOptions.applySelectOnAllPages) {
+      if (!this._addonOptions.hideInColumnTitleRow && !this._addonOptions.hideSelectAllCheckbox) {
+        this.renderSelectAllCheckbox(this._isSelectAllChecked);
+      }
+      if (!this._addonOptions.hideInFilterHeaderRow) {
+        const selectAllElm = this.headerRowNode?.querySelector<HTMLInputElement>(`#header-filter-selector${this._selectAll_UID}`);
+        if (selectAllElm) {
+          selectAllElm.checked = this._isSelectAllChecked;
+        }
       }
     }
+
     // Remove items that shouln't of been selected in the first place (Got here Ctrl + click)
     if (removeList.length > 0) {
       for (const itemToRemove of removeList) {

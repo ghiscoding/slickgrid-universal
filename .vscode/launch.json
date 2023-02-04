@@ -29,7 +29,7 @@
         "--runInBand",
         "${fileBasename}",
         "--config",
-        "${workspaceFolder}/test/jest.config.js"
+        "${workspaceFolder}/test/jest.config.ts"
       ],
       "console": "internalConsole",
       "internalConsoleOptions": "neverOpen",

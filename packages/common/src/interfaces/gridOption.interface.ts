@@ -178,9 +178,13 @@ export interface GridOption {
   /** Some of the SlickGrid DataView options */
   dataView?: DataViewOption & {
     /**
-     * Defaults to true, when using row selection,
-     * if you don't want the items that are not visible (due to being filtered out or being on a different page) to stay selected,
-     * then set this property as 'false'. You can also set any of the preserve options instead of a boolean value.
+     * Wires the grid and the DataView together to keep row selection tied to item ids.
+     * This is useful since, without it, the grid only knows about rows, so if the items
+     * move around, the same rows stay selected instead of the selection moving along
+     * with the items, if you don't want this behavior then set this property as `false`.
+     *
+     * You can optionally provide preserve options (object) instead of a boolean value, there are 2 available flag options (preserveHidden, preserveHiddenOnSelectionChange)
+     * The default Grid Option is to have the flags `preserveHidden` as disabled and `preserveHiddenOnSelectionChange` as enabled.
      */
     syncGridSelection?: boolean | { preserveHidden: boolean; preserveHiddenOnSelectionChange: boolean; };
 

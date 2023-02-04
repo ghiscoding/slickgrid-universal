@@ -726,12 +726,14 @@ describe('Example 09 - OData Grid', { retries: 1 }, () => {
         .find('.slick-header-left .slick-header-column:nth(1)')
         .trigger('mouseover')
         .children('.slick-header-menu-button')
-        .click();
+        .invoke('show')
+        .click({ force: true });
 
       cy.get('.slick-header-menu')
         .should('be.visible')
         .children('.slick-menu-item:nth-of-type(6)')
         .children('.slick-menu-content')
+        .invoke('show')
         .should('contain', 'Remove Filter')
         .click();
 

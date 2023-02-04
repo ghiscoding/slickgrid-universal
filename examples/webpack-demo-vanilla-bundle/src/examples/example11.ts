@@ -470,7 +470,7 @@ export default class Example11 {
   }
 
   remoteCallbackFn(args: { item: any, selectedIds: string[], updateType: 'selection' | 'mass' }) {
-    const fields: Array<{ fieldName: string; value: any;}> = [];
+    const fields: Array<{ fieldName: string; value: any; }> = [];
     for (const key in args.item) {
       if (args.item.hasOwnProperty(key)) {
         fields.push({ fieldName: key, value: args.item[key] });
@@ -675,6 +675,7 @@ export default class Example11 {
     this.sgb.gridStateService.resetToOriginalColumns();
     this.sgb.filterService.clearFilters();
     this.sgb.sortService.clearSorting();
+    this.sgb.gridService.clearPinning();
   }
 
   async updateView(event: DOMEvent<HTMLInputElement>) {

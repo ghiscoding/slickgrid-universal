@@ -9,7 +9,6 @@ import {
   Constants,
   ContainerService,
   createDomElement,
-  CurrentRowSelection,
   DOMEvent,
   Editor,
   EditorValidationResult,
@@ -17,7 +16,6 @@ import {
   getDescendantProperty,
   GridOption,
   GridService,
-  GridStateService,
   Locale,
   numericSortComparer,
   OnErrorOption,
@@ -68,7 +66,6 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   protected _modalSaveButtonElm!: HTMLButtonElement;
   protected grid!: SlickGrid;
   protected gridService: GridService | null = null;
-  protected gridStateService: GridStateService | null = null;
   protected translaterService?: TranslaterService | null;
 
   get eventHandler(): SlickEventHandler {
@@ -112,11 +109,10 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   init(grid: SlickGrid, containerService: ContainerService) {
     this.grid = grid;
     this.gridService = containerService.get<GridService>('GridService');
-    this.gridStateService = containerService.get<GridStateService>('GridStateService');
     this.translaterService = containerService.get<TranslaterService>('TranslaterService');
 
-    if (!this.gridService || !this.gridStateService) {
-      throw new Error('[Slickgrid-Universal] it seems that the GridService and/or GridStateService are not being loaded properly, make sure the Container Service is properly implemented.');
+    if (!this.gridService) {
+      throw new Error('[Slickgrid-Universal] it seems that the GridService is not being loaded properly, make sure the Container Service is properly implemented.');
     }
 
     if (this.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
@@ -323,8 +319,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         const selectedRowsIndexes = this.hasRowSelectionEnabled() ? this.grid.getSelectedRows() : [];
         const fullDatasetLength = this.dataView?.getItemCount() ?? 0;
         this._lastActiveRowNumber = activeRow;
-        const gridStateSelection = this.gridStateService?.getCurrentRowSelections() as CurrentRowSelection;
-        const dataContextIds = gridStateSelection?.dataContextIds || [];
+        const dataContextIds = this.dataView.getAllSelectedIds();
 
         // focus on a first cell with an Editor (unless current cell already has an Editor then do nothing)
         // also when it's a "Create" modal, we'll scroll to the end of the grid
@@ -850,9 +845,8 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
   /** Retrieve the current selection of row indexes & data context Ids */
   protected getCurrentRowSelections(): { gridRowIndexes: number[]; dataContextIds: Array<string | number>; } {
-    const gridStateSelection = this.gridStateService?.getCurrentRowSelections() as CurrentRowSelection;
-    const gridRowIndexes = gridStateSelection?.gridRowIndexes || [];
-    const dataContextIds = gridStateSelection?.dataContextIds || [];
+    const dataContextIds = this.dataView.getAllSelectedIds();
+    const gridRowIndexes = this.dataView.mapIdsToRows(dataContextIds);
     return { gridRowIndexes, dataContextIds };
   }
 

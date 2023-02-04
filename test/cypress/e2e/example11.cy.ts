@@ -29,6 +29,16 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
+  it('should click on "Clear Local Storage" and expect to be back to original grid with all the columns', () => {
+    cy.get('[data-test="clear-storage-btn"]')
+      .click();
+
+    cy.get('.grid11')
+      .find('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+  });
+
   it('should have "TASK 0" (uppercase) incremented by 1 after each row', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 0');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 1');
@@ -59,9 +69,6 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
     cy.get('.editor-duration').type('{esc}');
     cy.get('.editor-duration').should('not.exist');
-
-    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left')
-      .scrollTo('top');
   });
 
   it('should be able to change "Title" values of row indexes 1-3', () => {
