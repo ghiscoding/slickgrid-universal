@@ -5,6 +5,7 @@
   "loglevel": "info",
   "command": {
     "publish": {
+      "cleanupTempFiles": true,
       "removePackageFields": [
         "devDependencies",
         "scripts"
