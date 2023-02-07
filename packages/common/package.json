@@ -7,7 +7,7 @@
   "exports": {
     ".": {
       "browser": "./dist/esm/index.js",
-      "import": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js",
       "require": "./dist/commonjs/index.js"
     },
     "./*": "./*"
@@ -42,7 +42,6 @@
     "build": "pnpm run bundle:esm",
     "postbuild": "run-s sass:build sass:copy",
     "build:incremental": "tsc --incremental",
-    "build:watch": "tsc --incremental --watch",
     "clean": "rimraf dist",
     "dev": "run-s bundle:commonjs sass:copy",
     "dev:watch": "pnpm run sass:watch",

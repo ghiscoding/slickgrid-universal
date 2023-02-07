@@ -7,7 +7,7 @@
   "exports": {
     ".": {
       "browser": "./dist/esm/index.js",
-      "import": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js",
       "require": "./dist/commonjs/index.js"
     },
     "./*": "./*"
@@ -30,7 +30,6 @@
     "prebuild": "pnpm run clean",
     "build": "pnpm run bundle:esm",
     "build:incremental": "tsc --incremental",
-    "build:watch": "tsc --incremental --watch",
     "clean": "rimraf dist",
     "dev": "pnpm run bundle:commonjs",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
