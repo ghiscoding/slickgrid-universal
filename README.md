@@ -18,11 +18,10 @@ This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces))
 You might be wondering why was this monorepo created? Here are a few reasons:
 1. it removed a lot of duplicated code that were common in both
 [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) libraries
-(prior to creating this monorepo, these 2 libs had ~90% of TypeScript code in common which was not very DRY, it is sldo a lot easier to push fixes in only 1 place instead of multiple places).
-2. decouple some Services that are not required by every project (OData, GraphQL, Export to CSV, Export to Excel, Composite Editor, RxJS, ...)
-3. framework agnostic, it could be implemented in many different frameworks (if you're interested in adding a port for any other framework that is not listed below, please open a new [Discussion](https://github.com/ghiscoding/slickgrid-universal/discussions))
+  - prior to creating this monorepo, these 2 libs had ~90% of TypeScript code in common which was not very DRY, it is also a lot easier to maintain by pushing fixes in 1 common lib.
+2. decoupled a few Services that are not required by every project (OData, GraphQL, Export to CSV, Export to Excel, Composite Editor, RxJS, ...)
+3. framework agnostic, it could be implemented in many different frameworks (if you're interested in adding a port for any other framework that is not listed in the [table](#available-framework-ports) below, please open a new [Discussion](https://github.com/ghiscoding/slickgrid-universal/discussions))
    - you can use it in plain JavaScript (ES6) or TypeScript, on our side we use it with plain JS (ES6) in our Salesforce environment with LWC (Lightning Web Component)
-   - [Slickgrid-React](https://github.com/ghiscoding/slickgrid-react) was recently added
 
 ## Latest News & Releases
 Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all the latest News & Version Releases.
@@ -33,11 +32,11 @@ You could :star: the lib and perhaps support me with cafeine :coffee:. Thanks in
 <a href='https://ko-fi.com/ghiscoding' target='_blank'><img height='34' style='border:0px;height:34px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' />
 
 ## Live Demos & Available Framework Ports
-The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2 different themes (Material Design / Salesforce), but you could also choose a Bootstrap theme which is demoed in other frameworks with links below. Also note the live demos are using [Bootstrap](https://getbootstrap.com/) and [Bulma](https://bulma.io/), but it could be any other UI libraries since the lib is UI and framework agnostic.
+The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2 different themes (Material Design / Salesforce), but you could also choose a Bootstrap theme which is demoed in other frameworks with links shown in the table below. Also note the live demos are using [Bootstrap](https://getbootstrap.com/) and [Bulma](https://bulma.io/), but you could use any other UI libraries you wish since the lib is framework agnostic.
 
 ### Available Framework Ports
 
-| Project Repo | Live Demo | demoed with | Description |
+| Project Repo | Live Demo | UI used | Description |
 | ----| --------- | ------ | ----------- |
 | [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid)  | [demo](https://ghiscoding.github.io/Angular-Slickgrid/) | Bootstrap | for Angular framework |
 | [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) | [demo](https://ghiscoding.github.io/aurelia-slickgrid/) | Bootstrap | for Aurelia framework |
@@ -45,7 +44,7 @@ The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2
 | [slickgrid-universal/webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle) | [demo](https://ghiscoding.github.io/slickgrid-universal) | Bulma | standalone demo written in plain TypeScript for demo and UI testing (**do not use in production**, this is only for demo/testing purpose). |
 | [Slickgrid-Universal-Vite-Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) | n/a | Bulma | Slickgrid-Universal demo with Vite & TypeScript (**demo purposes only**) |
 
-The Vanilla Implementation (which is not associated to any framework) was built with [WebPack](https://webpack.js.org/) and is also used to run and test all the UI functionalities [Cypress](https://www.cypress.io/) (E2E tests). The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle), which extends the `vanilla-bundle` package is also what we use in our SalesForce implementation (with Lightning Web Component), hence the creation of this monorepo library.
+The Vanilla Implementation (which is not associated to any framework) was built with [WebPack](https://webpack.js.org/) and is also used to run and test all the UI functionalities with [Cypress](https://www.cypress.io/) (E2E tests). The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle), which extends the `vanilla-bundle` package is also what we use in our SalesForce implementation (with Lightning Web Component), hence the creation of this monorepo library.
 
 ### Fully Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
 Slickgrid-Universal has **100%** Unit Test Coverage, about ~4,000 Jest unit tests and also +450 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementations also have an additional +500 tests)
@@ -73,7 +72,7 @@ Slickgrid-Universal has **100%** Unit Test Coverage, about ~4,000 Jest unit test
 | [@slickgrid-universal/vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle) | [![npm](https://img.shields.io/npm/v/@slickgrid-universal/vanilla-force-bundle.svg)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-force-bundle) | Vanilla TypeScript/ES6 for Salesforce implementation | [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/vanilla-force-bundle/CHANGELOG.md)
 
 ## Installation
-**NOTE:** the installation instructions below are **only** required if you want to contribute to this project, if on the other hand you just want to do a quick demo and use Slickgrid-Universal then take a look at [webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle) or [slickgrid-universal-vite-demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo). If you want to clone a repo, the better option is to clone [slickgrid-universal-vite-demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo).
+**NOTE:** the installation instructions below are **only** required if you want to contribute to this project, if on the other hand you just want to download a quick Slickgrid-Universal demo, then take a look at [webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle) or even better [slickgrid-universal-vite-demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo).
 
 To get started and do development with this monorepo, you will need to clone the repo and then follow the steps below. You must be at the root of your project to run the following commands. This project uses `pnpm`, you can install it via `npm i -g pnpm` or follow their [installation](https://pnpm.io/installation)
 
