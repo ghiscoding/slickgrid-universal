@@ -423,6 +423,9 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       debounceWaitMs: 200,
       className: `slick-autocomplete ${this.filterOptions?.className ?? ''}`.trim(),
       emptyMsg: this.gridOptions.enableTranslate && this.translaterService?.translate ? this.translaterService.translate('NO_ELEMENTS_FOUND') : this._locales?.TEXT_NO_ELEMENTS_FOUND ?? 'No elements found',
+      customize: (_input, _inputRect, container) => {
+        container.style.width = ''; // unset width that was set internally by the Autopleter lib
+      },
       onSelect: (item: AutocompleteSearchItem) => {
         this.isItemSelected = true;
         this.handleSelect(item);

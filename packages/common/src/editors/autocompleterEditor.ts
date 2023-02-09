@@ -617,6 +617,9 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       debounceWaitMs: 200,
       className: `slick-autocomplete ${this.editorOptions?.className ?? ''}`.trim(),
       emptyMsg: this.gridOptions.enableTranslate && this._translater?.translate ? this._translater.translate('NO_ELEMENTS_FOUND') : this._locales?.TEXT_NO_ELEMENTS_FOUND ?? 'No elements found',
+      customize: (_input, _inputRect, container) => {
+        container.style.width = ''; // unset width that was set internally by the Autopleter lib
+      },
       onSelect: this.handleSelect.bind(this),
       ...this.editorOptions,
     } as Partial<AutocompleteSettings<any>>;
