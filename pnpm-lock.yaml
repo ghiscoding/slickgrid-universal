@@ -187,7 +187,7 @@ importers:
       '@types/dompurify': ^2.4.0
       '@types/jquery': ^3.5.16
       '@types/sortablejs': ^1.15.0
-      autocompleter: ^7.1.0
+      autocompleter: ^8.0.2
       autoprefixer: ^10.4.13
       copyfiles: ^2.4.1
       cross-env: ^7.0.3
@@ -208,7 +208,7 @@ importers:
     dependencies:
       '@slickgrid-universal/event-pub-sub': link:../event-pub-sub
       '@slickgrid-universal/utils': link:../utils
-      autocompleter: 7.1.0
+      autocompleter: 8.0.2
       dequal: 2.0.3
       dompurify: 2.4.3
       flatpickr: 4.6.13
@@ -3017,8 +3017,8 @@ packages:
     engines: {node: '>= 4.0.0'}
     dev: true
 
-  /autocompleter/7.1.0:
-    resolution: {integrity: sha512-uCToOnq7eAD/GJAteDbYuQ7ksDtrYWOy5CIAq43wh0dT+5frMpPlyD9tp+y5fz8KIcsP+zR2MjzoTAdW5aJESw==}
+  /autocompleter/8.0.2:
+    resolution: {integrity: sha512-glhrn0mw82rOyuBQng42o9bDk5rRk4vCWDEfyju9UG4jAGjfi3BU3qgKa3HXKwDRJp8/Nl1qFLQ59kSYUDbbIQ==}
     dev: false
 
   /autoprefixer/10.4.13_postcss@8.4.21:
