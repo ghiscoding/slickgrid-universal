@@ -15,6 +15,7 @@ import {
   SlickRowDetailView as UniversalRowDetailView,
   UsabilityOverrideFn,
 } from '@slickgrid-universal/common';
+import { objectAssignAndExtend } from '@slickgrid-universal/utils';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -130,7 +131,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
     this._grid = grid;
     this._gridUid = grid.getUID();
-    this._addonOptions = (this.gridOptions.rowDetailView || {}) as RowDetailView;
+    if (!this._addonOptions) {
+      this._addonOptions = objectAssignAndExtend(this.gridOptions.rowDetailView, this._defaults) as RowDetailView;
+    }
     this._keyPrefix = this._addonOptions?.keyPrefix || '_';
 
     // Update the minRowBuffer so that the view doesn't disappear when it's at top of screen + the original default 3
@@ -139,6 +142,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
     this._eventHandler
       .subscribe(this._grid.onClick, this.handleClick.bind(this) as EventListener)
+      .subscribe(this._grid.onBeforeEditCell, () => this.collapseAll())
       .subscribe(this._grid.onScroll, this.handleScroll.bind(this) as EventListener);
 
     // Sort will, by default, Collapse all of the open items (unless user implements his own onSort which deals with open row and padding)
@@ -188,7 +192,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       throw new Error('[Slickgrid-Universal] The Row Detail View requires options to be passed via the "rowDetailView" property of the Grid Options');
     }
 
-    this._addonOptions = { ...this._defaults, ...gridOptions.rowDetailView } as RowDetailView;
+    this._addonOptions = objectAssignAndExtend(gridOptions.rowDetailView, this._defaults) as RowDetailView;
 
     // user could override the expandable icon logic from within the options or after instantiating the plugin
     if (typeof this._addonOptions.expandableOverride === 'function') {
@@ -227,7 +231,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /** set or change some of the plugin options */
   setOptions(options: Partial<RowDetailViewOption>) {
-    this._addonOptions = { ... this._addonOptions, ...options };
+    this._addonOptions = objectAssignAndExtend(options, this._addonOptions);
     if (this._addonOptions?.singleRowExpand) {
       this.collapseAll();
     }
@@ -359,7 +363,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   /** Get the Column Definition of the first column dedicated to toggling the Row Detail View */
   getColumnDefinition(): Column {
     return {
-      id: this._addonOptions?.columnId ?? '_rowDetail_',
+      id: this._addonOptions?.columnId ?? this._defaults.columnId as string | number,
       field: 'sel',
       name: '',
       alwaysRenderColumn: this._addonOptions?.alwaysRenderColumn,

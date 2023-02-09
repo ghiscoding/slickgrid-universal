@@ -1307,6 +1307,7 @@ input.flatpickr.form-control {
     position:           absolute;
     width:              100%;
     overflow:           auto;
+    left:               var(--slick-detail-view-container-left, $slick-detail-view-container-left);
     border:             var(--slick-detail-view-container-border, $slick-detail-view-container-border);
     background-color:   var(--slick-detail-view-container-bgcolor, $slick-detail-view-container-bgcolor);
     padding:            var(--slick-detail-view-container-padding, $slick-detail-view-container-padding);

@@ -42,6 +42,7 @@ const gridStub = {
   registerPlugin: jest.fn(),
   render: jest.fn(),
   updateRowCount: jest.fn(),
+  onBeforeEditCell: new Slick.Event(),
   onClick: new Slick.Event(),
   onRendered: new Slick.Event(),
   onScroll: new Slick.Event(),
@@ -97,7 +98,9 @@ describe('SlickRowDetailView plugin', () => {
       singleRowExpand: true,
       useSimpleViewportCalc: true,
       alwaysRenderColumn: true,
-      maxRows: 300
+      maxRows: 300,
+      toolTip: 'some-tooltip',
+      width: 40,
     };
     plugin.init(gridStub);
     plugin.setOptions(mockOptions);
@@ -133,6 +136,18 @@ describe('SlickRowDetailView plugin', () => {
     plugin.init(gridStub);
     const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
     gridStub.onSort.notify({ sortCols: [{ columnId: mockColumns[0].id, sortCol: mockColumns[0], sortAsc: true }], multiColumnSort: true, previousSortColumns: [], grid: gridStub }, eventData, gridStub);
+
+    expect(plugin.getExpandedRows()).toEqual([]);
+    expect(plugin.getOutOfViewportRows()).toEqual([]);
+    expect(collapseAllSpy).toHaveBeenCalled();
+  });
+
+  it('should collapse all rows when "onBeforeEditCell" event is triggered', () => {
+    const collapseAllSpy = jest.spyOn(plugin, 'collapseAll');
+    jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { collapseAllOnSort: true } as any });
+
+    plugin.init(gridStub);
+    gridStub.onBeforeEditCell.notify({ cell: undefined as any, row: undefined as any, grid: gridStub, column: {} as Column, item: {} }, new Slick.EventData(), gridStub);
 
     expect(plugin.getExpandedRows()).toEqual([]);
     expect(plugin.getOutOfViewportRows()).toEqual([]);
@@ -702,7 +717,7 @@ describe('SlickRowDetailView plugin', () => {
       plugin.setOptions({ collapsedClass: 'some-collapsed' });
       plugin.expandableOverride(() => true);
       const formattedVal = plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub);
-      expect(formattedVal).toBe(`<div class="expand some-collapsed"></div>`);
+      expect(formattedVal).toBe(`<div class="detailView-toggle expand some-collapsed"></div>`);
     });
 
     it('should execute formatter and expect it to return empty string and render nothing when isPadding is True', () => {
@@ -720,7 +735,7 @@ describe('SlickRowDetailView plugin', () => {
       plugin.setOptions({ expandedClass: 'some-expanded', maxRows: 2 });
       plugin.expandableOverride(() => true);
       const formattedVal = plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub);
-      expect(formattedVal).toBe(`<div class="collapse some-expanded"></div></div><div class="dynamic-cell-detail cellDetailView_123" style="height: 50px;top: 25px"><div class="detail-container detailViewContainer_123"><div class="innerDetailView_123">undefined</div></div>`);
+      expect(formattedVal).toBe(`<div class="detailView-toggle collapse some-expanded"></div></div><div class="dynamic-cell-detail cellDetailView_123" style="height: 50px;top: 25px"><div class="detail-container detailViewContainer_123"><div class="innerDetailView_123">undefined</div></div>`);
     });
   });
 });
