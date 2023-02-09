@@ -142,6 +142,18 @@ describe('SlickRowDetailView plugin', () => {
     expect(collapseAllSpy).toHaveBeenCalled();
   });
 
+  it('should collapse all rows when "onBeforeEditCell" event is triggered', () => {
+    const collapseAllSpy = jest.spyOn(plugin, 'collapseAll');
+    jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { collapseAllOnSort: true } as any });
+
+    plugin.init(gridStub);
+    gridStub.onBeforeEditCell.notify({ cell: undefined as any, row: undefined as any, grid: gridStub, column: {} as Column, item: {} }, new Slick.EventData(), gridStub);
+
+    expect(plugin.getExpandedRows()).toEqual([]);
+    expect(plugin.getOutOfViewportRows()).toEqual([]);
+    expect(collapseAllSpy).toHaveBeenCalled();
+  });
+
   it('should update grid row count and re-render grid when "onRowCountChanged" event is triggered', () => {
     const updateRowCountSpy = jest.spyOn(gridStub, 'updateRowCount');
     const renderSpy = jest.spyOn(gridStub, 'render');
