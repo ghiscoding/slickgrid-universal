@@ -12,16 +12,17 @@
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
 ### Description
-This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces)) which is regrouping a few packages under a single repository. It is using SlickGrid behind the scene (more specifically the [6pac/SlickGrid](https://github.com/6pac/SlickGrid/) fork) behind the scene (there is no need to rewrite the core library itself, in other words this is a wrapper library). The main goal of this library is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic) by simply enabling some flags. It was also a good opportunity to decouple some features/services that were not always needed, this will also help in getting a smaller bundle size depending on which features (packages) are selected. For example, not every project need backend services (OData, GraphQL) and/or export services (Excel Export, Text Export), which is why they are better handled with a monorepo structure (download and install only what you really need).
+This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces)) which is regrouping a few packages under a single repository. It is using and requiring SlickGrid core library (more specifically the [6pac/SlickGrid](https://github.com/6pac/SlickGrid/) fork) behind the scene (the "Why?" is simply because there is no need to rewrite the core library itself, in other words this is a wrapper library). The main goal of this library is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It was also created because I felt that there was a good opportunity to decouple some features/services that were not always needed by all users, this will also help in getting a smaller bundle size depending on which features (packages) are selected. For example, not every project needs to use the backend services (OData, GraphQL) and/or export services (Excel Export, Text Export), which is why they are better handled with a monorepo structure (download and install only what you really use).
 
 ### Why create this monorepo?
 You might be wondering why was this monorepo created? Here are a few reasons:
 1. it removed a lot of duplicated code that were common in both
 [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) libraries
-(prior to creating this monorepo, these libs had ~90% of TypeScript code in common which was not very DRY, it's a lot easier to push fixes in only 1 place instead of multiple).
-2. decouple some Services that should not be required, neither imported when not needed (OData, GraphQL, Export to CSV, Export to Excel, Composite Editor, RxJS, ...)
+(prior to creating this monorepo, these 2 libs had ~90% of TypeScript code in common which was not very DRY, it is sldo a lot easier to push fixes in only 1 place instead of multiple places).
+2. decouple some Services that are not required by every project (OData, GraphQL, Export to CSV, Export to Excel, Composite Editor, RxJS, ...)
 3. framework agnostic, it could be implemented in many different frameworks (if you're interested in adding a port for any other framework that is not listed below, please open a new [Discussion](https://github.com/ghiscoding/slickgrid-universal/discussions))
    - you can use it in plain JavaScript (ES6) or TypeScript, on our side we use it with plain JS (ES6) in our Salesforce environment with LWC (Lightning Web Component)
+   - [Slickgrid-React](https://github.com/ghiscoding/slickgrid-react) was recently added
 
 ## Latest News & Releases
 Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all the latest News & Version Releases.
@@ -36,7 +37,7 @@ The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2
 
 ### Available Framework Ports
 
-| Project Repo | Live Demo | UI lib | Description |
+| Project Repo | Live Demo | demoed with | Description |
 | ----| --------- | ------ | ----------- |
 | [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid)  | [demo](https://ghiscoding.github.io/Angular-Slickgrid/) | Bootstrap | for Angular framework |
 | [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) | [demo](https://ghiscoding.github.io/aurelia-slickgrid/) | Bootstrap | for Aurelia framework |
@@ -44,10 +45,10 @@ The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2
 | [slickgrid-universal/webpack-demo-vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/webpack-demo-vanilla-bundle) | [demo](https://ghiscoding.github.io/slickgrid-universal) | Bulma | standalone demo written in plain TypeScript for demo and UI testing (**do not use in production**, this is only for demo/testing purpose). |
 | [Slickgrid-Universal-Vite-Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) | n/a | Bulma | Slickgrid-Universal demo with Vite & TypeScript (**demo purposes only**) |
 
-The Vanilla Implementation (which is not associated to any framework) was built with [WebPack](https://webpack.js.org/) and is also used to run and test all the UI functionalities [Cypress](https://www.cypress.io/) (E2E tests). The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle), which extends the `vanilla-bundle` package is what we use in our SalesForce implementation (with Lightning Web Component), hence the creation of this monorepo library.
+The Vanilla Implementation (which is not associated to any framework) was built with [WebPack](https://webpack.js.org/) and is also used to run and test all the UI functionalities [Cypress](https://www.cypress.io/) (E2E tests). The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle), which extends the `vanilla-bundle` package is also what we use in our SalesForce implementation (with Lightning Web Component), hence the creation of this monorepo library.
 
 ### Fully Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has **100%** Unit Test Coverage, we are talking about +4,000 Jest unit tests and also +450 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (there's also an additional +500 tests in each framework ports)
+Slickgrid-Universal has **100%** Unit Test Coverage, about ~4,000 Jest unit tests and also +450 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementations also have an additional +500 tests)
 
 ### Available Public Packages
 
@@ -85,16 +86,7 @@ pnpm install
 npx pnpm install
 ```
 
-2. Build
-
-To get started you must run at least once the following script for the initial TS build so that all necessary `dist` folders are created and bundled for all the workspace packages to work together.
-
-```bash
-pnpm run build
-```
-NOTE: this will also have to be re-executed if you change any of the interfaces in the `common` package (since that package is a dependency of all other packages).
-
-3. Run Dev (Vanilla Implementation)
+2. Run Dev (Vanilla Implementation)
 
 There is a Vanilla flavour implementation of this monorepo, vanilla means that it is not associated to any framework
 and is written in plain TypeScript without being bound to any framework. The implementation is very similar to Angular and Aurelia.
@@ -104,11 +96,20 @@ It could be used as a guideline to implement it for other framework ports.
 pnpm run dev
 ```
 
+
+3. Build (bundle)
+
+You can also run a build if you want to run the Jest unit tests
+
+```bash
+pnpm run bundle
+```
+
 ### Tests
-You must go through Installation Steps 1-2 prior to run the unit tests OR Steps 1-3 when running E2E tests.
+You must go through Installation Steps 1-2 (or 1,3) prior to running the Jest unit tests OR steps 1-2 when running Cypress E2E tests.
 
 #### Jest Unit Tests
-To run all unit tests (with Jest), you can run one of the following commands
+To run all unit tests (with Jest), you can run one of the following commands (make sure that steps 1,3 were executed prior to running this command)
 ```bash
 pnpm run test
 
@@ -117,11 +118,11 @@ pnpm run test:watch
 ```
 
 #### Cypress E2E Tests
-To run all E2E tests (with Cypress), you can run one of the following commands
+To run all E2E tests (with Cypress), you can run one of the following commands (make sure that steps 1,2 were executed prior to running this command)
 ```bash
-# will open the Cypress UI
+# will open the Cypress GUI
 pnpm run cypress
 
-# or run in the shell like a CI/CD would
+# or run it in the shell (like a CI/CD would)
 pnpm run cypress:ci
 ```
