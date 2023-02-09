@@ -30,7 +30,7 @@
     "prebuild": "pnpm run clean",
     "build": "pnpm run bundle:esm",
     "build:incremental": "tsc --incremental",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
     "dev": "pnpm run bundle:commonjs",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",

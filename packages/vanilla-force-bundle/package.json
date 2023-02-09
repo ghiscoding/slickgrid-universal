@@ -31,7 +31,7 @@
     "build": "tsc --build",
     "postbuild": "pnpm run bundle:commonjs",
     "build:incremental": "tsc --incremental",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
     "dev:webpack": "webpack --env development",
     "prebundle": "pnpm run clean",
     "bundle": "npm-run-all bundle:commonjs bundle:esm webpack:prod",

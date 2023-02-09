@@ -30,7 +30,7 @@
     "prebuild": "pnpm run clean",
     "build": "pnpm run bundle:esm",
     "build:incremental": "tsc --incremental",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
     "dev": "pnpm run bundle:commonjs",
     "prebundle": "pnpm run clean",
     "bundle": "run-p bundle:commonjs bundle:esm",

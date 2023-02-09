@@ -42,7 +42,7 @@
     "build": "pnpm run bundle:esm",
     "postbuild": "run-s sass:build sass:copy",
     "build:incremental": "tsc --incremental",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
     "dev": "run-s bundle:commonjs sass:copy",
     "dev:watch": "pnpm run sass:watch",
     "prebundle": "pnpm run clean",
