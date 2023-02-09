@@ -379,11 +379,13 @@ importers:
   packages/row-detail-view-plugin:
     specifiers:
       '@slickgrid-universal/common': workspace:~
+      '@slickgrid-universal/utils': workspace:~
       cross-env: ^7.0.3
       npm-run-all2: ^6.0.4
       rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
+      '@slickgrid-universal/utils': link:../utils
     devDependencies:
       cross-env: 7.0.3
       npm-run-all2: 6.0.4

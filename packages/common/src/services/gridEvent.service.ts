@@ -98,7 +98,10 @@ export class GridEventService {
       // only when the grid option "autoCommitEdit" is enabled, we will make the cell active (in focus) when clicked
       // setting the cell as active as a side effect and if "autoCommitEdit" is set to false then the Editors won't save correctly
       if (gridOptions.enableCellNavigation && (!gridOptions.editable || (gridOptions.editable && gridOptions.autoCommitEdit))) {
-        grid.setActiveCell(args.row, args.cell, false, false, true);
+        try {
+          grid.setActiveCell(args.row, args.cell, false, false, true);
+        // eslint-disable-next-line @typescript-eslint/no-shadow, no-empty
+        } catch(e) {}
       }
 
       // if the column definition has a onCellClick property (a callback function), then run it
