@@ -43,8 +43,7 @@
     "postbuild": "run-s sass:build sass:copy",
     "build:incremental": "tsc --incremental",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
-    "dev": "run-s bundle:commonjs sass:copy",
-    "dev:watch": "pnpm run sass:watch",
+    "dev": "node build-watch.mjs",
     "prebundle": "pnpm run clean",
     "bundle": "run-p bundle:commonjs bundle:esm",
     "postbundle": "run-s sass:build sass:copy",
@@ -98,7 +97,8 @@
     "postcss": "^8.4.21",
     "postcss-cli": "^10.1.0",
     "rimraf": "^3.0.2",
-    "sass": "^1.58.0"
+    "sass": "^1.58.0",
+    "yargs": "^17.6.2"
   },
   "engines": {
     "node": ">=14.17.0",

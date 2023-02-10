@@ -7,4 +7,4 @@ This is basically a simple UI implementation written in plain TypeScript with We
 ### Installation
 To get started with this demo, you will need to install the entire project and do the following 2 things:
 1. Go to the root of the repo and follow the instructions provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation), make sure you do the `bundle`
-2. Run the npm script `dev:watch`
+2. Run the pnpm script `dev`
