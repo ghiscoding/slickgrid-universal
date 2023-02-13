@@ -8,8 +8,8 @@
   },
   "scripts": {
     "build:demo": "webpack --env production",
-    "predev:watch": "echo [webpack-dev-server] Project is running at http://localhost:8888/",
-    "dev:watch": "webpack serve --env development",
+    "prewebpack:dev": "echo [webpack-dev-server] Project is running at http://localhost:8888/",
+    "webpack:dev": "webpack serve --env development",
     "test": "echo testing slickgrid-universal demo code"
   },
   "license": "MIT",
