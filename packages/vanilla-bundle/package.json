@@ -32,7 +32,7 @@
     "postbuild": "pnpm run bundle:commonjs",
     "build:incremental": "tsc --incremental",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
-    "dev": "pnpm run bundle:commonjs",
+    "dev": "tsc --incremental",
     "prebundle": "pnpm run clean",
     "bundle": "npm-run-all bundle:commonjs bundle:esm",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
