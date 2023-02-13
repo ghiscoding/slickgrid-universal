@@ -1,4 +1,4 @@
-import { exec, execSync } from 'child_process';
+import { exec } from 'child_process';
 import copyfiles from 'copyfiles';
 import path from 'path';
 
@@ -18,7 +18,7 @@ async function run() {
 
   if (changedFiles.some(f => f.includes('.ts'))) {
     console.log('TypeScript file changes detected... start tsc incremental build');
-    execSync('npm run build:incremental', () => console.log('tsc incremental completed'));
+    exec('npm run build:incremental', () => console.log('tsc incremental completed'));
   }
   if (changedFiles.some(f => f.includes('.scss'))) {
     console.log('SASS file changes detected... recompile to CSS');
