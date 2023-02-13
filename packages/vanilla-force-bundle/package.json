@@ -41,8 +41,8 @@
     "bundle:zip": "pnpm run zip:dist",
     "delete:zip": "cross-env rimraf --maxBusyTries=10 dist-bundle-zip",
     "webpack:prod": "webpack --env production",
-    "zip:dist:dev": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle-DEV --output-folder=\"dist-grid-bundle-zip/\"",
-    "zip:dist": "cross-env node compress.js --output-filename=slickgrid-vanilla-bundle --output-folder=\"dist-grid-bundle-zip/\"",
+    "zip:dist:dev": "cross-env node compress.mjs --output-filename=slickgrid-vanilla-bundle-DEV --output-folder=\"dist-grid-bundle-zip/\"",
+    "zip:dist": "cross-env node compress.mjs --output-filename=slickgrid-vanilla-bundle --output-folder=\"dist-grid-bundle-zip/\"",
     "test": "echo testing slickgrid-universal vanilla-force-bundle code"
   },
   "license": "MIT",
