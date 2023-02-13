@@ -1,8 +1,6 @@
 import { exec, execSync } from 'child_process';
 import copyfiles from 'copyfiles';
 import path from 'path';
-import yargs from 'yargs';
-import { hideBin } from 'yargs/helpers';
 
 /**
  * Special script used by the Watch in Development which will compile TypeScript files with tsc incremental and/or SASS files when changes occurs.
@@ -14,20 +12,20 @@ import { hideBin } from 'yargs/helpers';
 await run();
 
 async function run() {
-  console.log('Common build started.')
-  const argv = yargs(hideBin(process.argv)).argv;
-  const changedFiles = argv.files.split(',');
+  // get the file changed from Lerna watch from the environment variable since we are interested in these changes only in this script,
+  // using .env var will avoid passing the changes to all packages npm scripts and avoid `tsc` complaining about unknown argument `--files`
+  const changedFiles = process.env.LERNA_FILE_CHANGES.split(',');
 
   if (changedFiles.some(f => f.includes('.ts'))) {
-    console.log('TS files found!');
+    console.log('TypeScript file changes detected... start tsc incremental build');
     execSync('npm run build:incremental', () => console.log('tsc incremental completed'));
   }
   if (changedFiles.some(f => f.includes('.scss'))) {
-    console.log('SASS files found!');
+    console.log('SASS file changes detected... recompile to CSS');
 
     // for CSS we need to recompile all Slickgrid-Universal themes (except the bare/lite versions)
     await compileAllSassThemes();
-    console.log('All styling themes compiled to CSS...\nProceeding with .scss files copy');
+    console.log('All styling themes compiled to CSS... Proceeding with .scss files copy');
 
     // copy only the SASS file that changed
     for (const changedFile of changedFiles) {

@@ -21,6 +21,7 @@ importers:
       '@typescript-eslint/parser': ^5.51.0
       cross-env: ^7.0.3
       cypress: ^12.5.1
+      dotenv: ^16.0.3
       eslint: ^8.33.0
       eslint-plugin-import: ^2.27.5
       eslint-plugin-prefer-arrow: ^1.2.3
@@ -55,6 +56,7 @@ importers:
       '@typescript-eslint/parser': 5.51.0_4vsywjlpuriuw3tl5oq6zy5a64
       cross-env: 7.0.3
       cypress: 12.5.1
+      dotenv: 16.0.3
       eslint: 8.33.0
       eslint-plugin-import: 2.27.5_yzj2n2b43wonjwaifya6xmk2zy
       eslint-plugin-prefer-arrow: 1.2.3_eslint@8.33.0
@@ -205,7 +207,6 @@ importers:
       slickgrid: ^3.0.3
       sortablejs: ^1.15.0
       un-flatten-tree: ^2.0.12
-      yargs: ^17.6.2
     dependencies:
       '@slickgrid-universal/event-pub-sub': link:../event-pub-sub
       '@slickgrid-universal/utils': link:../utils
@@ -231,7 +232,6 @@ importers:
       postcss-cli: 10.1.0_postcss@8.4.21
       rimraf: 3.0.2
       sass: 1.58.0
-      yargs: 17.6.2
 
   packages/composite-editor-component:
     specifiers:
