@@ -128,16 +128,22 @@ export class Example16 {
         },
       },
       {
-        id: 'cost', name: '<span title="custom cost title tooltip text">Cost</span>', field: 'cost',
+        id: 'cost', name: '<span title="custom cost title tooltip text">Cost (in €)</span>', field: 'cost',
         width: 90,
         sortable: true,
         filterable: true,
-        exportWithFormatter: false,
+        exportWithFormatter: true,
         // filter: { model: Filters.compoundInput },
-        // formatter: Formatters.dollar,
+        // formatter: Formatters.currency,
         formatter: Formatters.multiple,
-        // params: { formatters: [Formatters.dollar, (row, cell, value) => `<span title="regular tooltip, cost: ${value}">${value || ''}</span>`] },
-        params: { formatters: [Formatters.dollar, (row, cell, value) => `<span title="regular tooltip (from title attribute) -\rcell value:\n\n${value || ''}">${value || ''}</span>`] },
+        // params: { formatters: [Formatters.currency, (row, cell, value) => `<span title="regular tooltip, cost: ${value}">${value || ''}</span>`] },
+        params: {
+          formatters: [
+            Formatters.currency,
+            (row, cell, value) => `<span title="regular tooltip (from title attribute) -\rcell value:\n\n${value || ''}">${value || ''}</span>`
+          ],
+          currencySuffix: ' €'
+        },
         customTooltip: {
           useRegularTooltip: true,
           useRegularTooltipFromFormatterOnly: true,
@@ -328,6 +334,10 @@ export class Example16 {
       textExportOptions: {
         exportWithFormatter: true
       },
+      formatterOptions: {
+        // decimalSeparator: ',',
+        thousandSeparator: ' '
+      },
       // Custom Tooltip options can be defined in a Column or Grid Options or a mixed of both (first options found wins)
       registerExternalResources: [new SlickCustomTooltip(), new ExcelExportService(), new TextExportService()],
       customTooltip: {
@@ -393,7 +403,7 @@ export class Example16 {
         percentComplete: Math.floor(Math.random() * (100 - 5 + 1) + 5),
         start: new Date(randomYear, randomMonth, randomDay),
         finish: randomFinish < new Date() ? '' : randomFinish, // make sure the random date is earlier than today
-        cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
+        cost: (i % 33 === 0) ? null : Math.round(Math.random() * 1000000) / 100,
         effortDriven: (i % 5 === 0),
         prerequisites: (i % 2 === 0) && i !== 0 && i < 50 ? [i, i - 1] : [],
       };

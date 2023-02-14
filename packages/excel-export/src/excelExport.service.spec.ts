@@ -819,13 +819,14 @@ describe('ExcelExportService', () => {
       let mockItem1;
       let mockItem2;
       let mockGroup1;
-      let parserCallbackSpy = jest.fn();
-      let groupTotalParserCallbackSpy = jest.fn();
+      const parserCallbackSpy = jest.fn();
+      const groupTotalParserCallbackSpy = jest.fn();
 
       beforeEach(() => {
         mockGridOptions.enableGrouping = true;
         mockGridOptions.enableTranslate = false;
         mockGridOptions.excelExportOptions = { sanitizeDataExport: true, addGroupIndentation: true };
+        mockGridOptions.formatterOptions = { decimalSeparator: ',' };
 
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
@@ -863,7 +864,7 @@ describe('ExcelExportService', () => {
         };
 
         mockItem1 = { id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10, cost: 22 };
-        mockItem2 = { id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 10, cost: 33 };
+        mockItem2 = { id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 10, cost: '$33,01' };
         mockGroup1 = {
           collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
           rows: [mockItem1, mockItem2],
@@ -908,8 +909,8 @@ describe('ExcelExportService', () => {
               { metadata: { style: 1, }, value: 'Cost', },
             ],
             ['⮟ Order: 20 (2 items)'],
-            ['', '1E06', 'John', 'X', 'SALES_REP', { metadata: { style: 3, type: "number", }, value: 10, }, 8888],
-            ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', { metadata: { style: 3, type: "number", }, value: 10, }, 8888],
+            ['', '1E06', 'John', 'X', 'SALES_REP', { metadata: { style: 3, type: 'number', }, value: 10, }, 8888],
+            ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', { metadata: { style: 3, type: 'number', }, value: 10, }, 8888],
             ['', '', '', '', '', { value: 20, metadata: { style: 5, type: 'number' } }, ''],
           ]
         });
@@ -921,7 +922,7 @@ describe('ExcelExportService', () => {
             numFmtId: 103,
           }
         });
-        expect(parserCallbackSpy).toHaveBeenCalledWith(22, mockColumns[6], undefined, expect.anything());
+        expect(parserCallbackSpy).toHaveBeenCalledWith(22, mockColumns[6], undefined, expect.anything(), mockGridOptions);
       });
     });
 
@@ -1028,7 +1029,7 @@ describe('ExcelExportService', () => {
       let mockGroup2;
       let mockGroup3;
       let mockGroup4;
-      let groupTotalParserCallbackSpy = jest.fn();
+      const groupTotalParserCallbackSpy = jest.fn();
 
       beforeEach(() => {
         mockGridOptions.enableGrouping = true;

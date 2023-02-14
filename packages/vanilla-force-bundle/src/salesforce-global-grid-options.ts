@@ -34,13 +34,12 @@ export const SalesforceGlobalGridOptions = {
   },
   enableExcelExport: true,
   excelExportOptions: {
+    exportWithFormatter: true,
     mimeType: '', // Salesforce doesn't like Excel MIME type (not allowed), but we can bypass the problem by using no type at all
     sanitizeDataExport: true
   },
   filterTypingDebounce: 250,
   formatterOptions: {
-    minDecimal: 0,
-    maxDecimal: 2,
     thousandSeparator: ','
   },
   frozenHeaderWidthCalcDifferential: 2,

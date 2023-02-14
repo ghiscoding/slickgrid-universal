@@ -26,7 +26,7 @@
     "cypress:ci": "cypress run --config-file test/cypress.config.ts",
     "predev": "pnpm run -r build:incremental && pnpm run -r sass:copy",
     "dev": "run-p dev:watch webpack:watch",
-    "dev:watch": "lerna watch --file-delimiter=\",\" --glob=\"src/**/*.{ts,scss}\" --ignored=\"src/**/*.spec.ts\" -- cross-env-shell pnpm run -r --filter $LERNA_PACKAGE_NAME dev",
+    "dev:watch": "lerna watch --no-bail --file-delimiter=\",\" --glob=\"src/**/*.{ts,scss}\" --ignored=\"src/**/*.spec.ts\" -- cross-env-shell pnpm run -r --filter $LERNA_PACKAGE_NAME dev",
     "webpack:watch": "pnpm -r --parallel run webpack:dev",
     "preview:publish": "lerna publish from-package --dry-run",
     "preview:version": "lerna version --dry-run",

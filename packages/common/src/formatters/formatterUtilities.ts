@@ -59,17 +59,18 @@ export function retrieveFormatterOptions(columnDef: Column, grid: SlickGrid, num
     default:
       break;
   }
-  const minDecimal = getValueFromParamsOrFormatterOptions('minDecimal', columnDef, grid, defaultMinDecimal);
-  const maxDecimal = getValueFromParamsOrFormatterOptions('maxDecimal', columnDef, grid, defaultMaxDecimal);
-  const decimalSeparator = getValueFromParamsOrFormatterOptions('decimalSeparator', columnDef, grid, Constants.DEFAULT_NUMBER_DECIMAL_SEPARATOR);
-  const thousandSeparator = getValueFromParamsOrFormatterOptions('thousandSeparator', columnDef, grid, Constants.DEFAULT_NUMBER_THOUSAND_SEPARATOR);
-  const wrapNegativeNumber = getValueFromParamsOrFormatterOptions('displayNegativeNumberWithParentheses', columnDef, grid, Constants.DEFAULT_NEGATIVE_NUMBER_WRAPPED_IN_BRAQUET);
-  const currencyPrefix = getValueFromParamsOrFormatterOptions('currencyPrefix', columnDef, grid, '');
-  const currencySuffix = getValueFromParamsOrFormatterOptions('currencySuffix', columnDef, grid, '');
+  const gridOptions = ((grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {}) as GridOption;
+  const minDecimal = getValueFromParamsOrFormatterOptions('minDecimal', columnDef, gridOptions, defaultMinDecimal);
+  const maxDecimal = getValueFromParamsOrFormatterOptions('maxDecimal', columnDef, gridOptions, defaultMaxDecimal);
+  const decimalSeparator = getValueFromParamsOrFormatterOptions('decimalSeparator', columnDef, gridOptions, Constants.DEFAULT_NUMBER_DECIMAL_SEPARATOR);
+  const thousandSeparator = getValueFromParamsOrFormatterOptions('thousandSeparator', columnDef, gridOptions, Constants.DEFAULT_NUMBER_THOUSAND_SEPARATOR);
+  const wrapNegativeNumber = getValueFromParamsOrFormatterOptions('displayNegativeNumberWithParentheses', columnDef, gridOptions, Constants.DEFAULT_NEGATIVE_NUMBER_WRAPPED_IN_BRAQUET);
+  const currencyPrefix = getValueFromParamsOrFormatterOptions('currencyPrefix', columnDef, gridOptions, '');
+  const currencySuffix = getValueFromParamsOrFormatterOptions('currencySuffix', columnDef, gridOptions, '');
 
   if (formatterType === 'cell') {
-    numberPrefix = getValueFromParamsOrFormatterOptions('numberPrefix', columnDef, grid, '');
-    numberSuffix = getValueFromParamsOrFormatterOptions('numberSuffix', columnDef, grid, '');
+    numberPrefix = getValueFromParamsOrFormatterOptions('numberPrefix', columnDef, gridOptions, '');
+    numberSuffix = getValueFromParamsOrFormatterOptions('numberSuffix', columnDef, gridOptions, '');
   }
 
   return { minDecimal, maxDecimal, decimalSeparator, thousandSeparator, wrapNegativeNumber, currencyPrefix, currencySuffix, numberPrefix, numberSuffix };
@@ -81,8 +82,7 @@ export function retrieveFormatterOptions(columnDef: Column, grid: SlickGrid, num
  * 2- Grid Options "formatterOptions"
  * 3- nothing found, return default value provided
  */
-export function getValueFromParamsOrFormatterOptions(optionName: string, columnDef: Column, grid: SlickGrid, defaultValue?: any) {
-  const gridOptions = ((grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {}) as GridOption;
+export function getValueFromParamsOrFormatterOptions(optionName: string, columnDef: Column, gridOptions: GridOption, defaultValue?: any) {
   const params = columnDef && columnDef.params;
 
   if (params && params.hasOwnProperty(optionName)) {

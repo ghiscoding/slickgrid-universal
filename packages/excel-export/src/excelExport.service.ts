@@ -239,7 +239,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * All other browsers will use plain javascript on client side to produce a file download.
    * @param options
    */
-  startDownloadFile(options: { filename: string, blob: Blob, data: any[] }) {
+  startDownloadFile(options: { filename: string, blob: Blob, data: any[]; }) {
     // when using IE/Edge, then use different download call
     if (typeof (navigator as any).msSaveOrOpenBlob === 'function') {
       (navigator as any).msSaveOrOpenBlob(options.blob, options.filename);
@@ -583,13 +583,14 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           }
           this._regularCellExcelFormats[columnDef.id] = cellStyleFormat;
         }
-        const { stylesheetFormatterId, getDataValueParser } = this._regularCellExcelFormats[columnDef.id];
-        itemData = getDataValueParser(itemData, columnDef, stylesheetFormatterId, this._stylesheet);
 
-        // does the user want to sanitize the output data (remove HTML tags)?
+        // sanitize early, when enabled, any HTML tags (remove HTML tags)
         if (typeof itemData === 'string' && (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport)) {
           itemData = sanitizeHtmlToText(itemData as string);
         }
+
+        const { stylesheetFormatterId, getDataValueParser } = this._regularCellExcelFormats[columnDef.id];
+        itemData = getDataValueParser(itemData, columnDef, stylesheetFormatterId, this._stylesheet, this._gridOptions);
 
         rowOutputStrings.push(itemData);
         idx++;

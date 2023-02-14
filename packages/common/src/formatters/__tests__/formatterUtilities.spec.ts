@@ -59,27 +59,23 @@ describe('formatterUtilities', () => {
   describe('getValueFromParamsOrGridOptions method', () => {
     it('should return options found in the Grid Option when not found in Column Definition "params" property', () => {
       const gridOptions = { formatterOptions: { minDecimal: 2 } } as GridOption;
-      const gridSpy = (gridStub.getOptions as jest.Mock).mockReturnValue(gridOptions);
 
-      const output = getValueFromParamsOrFormatterOptions('minDecimal', {} as Column, gridStub, -1);
+      const output = getValueFromParamsOrFormatterOptions('minDecimal', {} as Column, gridOptions, -1);
 
-      expect(gridSpy).toHaveBeenCalled();
       expect(output).toBe(2);
     });
 
     it('should return options found in the Column Definition "params" even if exist in the Grid Option as well', () => {
       const gridOptions = { formatterOptions: { minDecimal: 2 } } as GridOption;
-      const gridSpy = (gridStub.getOptions as jest.Mock).mockReturnValue(gridOptions);
 
-      const output = getValueFromParamsOrFormatterOptions('minDecimal', { params: { minDecimal: 3 } } as Column, gridStub, -1);
+      const output = getValueFromParamsOrFormatterOptions('minDecimal', { params: { minDecimal: 3 } } as Column, gridOptions, -1);
 
-      expect(gridSpy).toHaveBeenCalled();
       expect(output).toBe(3);
     });
 
     it('should return default value when not found in "params" (columnDef) neither the "formatterOptions" (gridOption)', () => {
       const defaultValue = 5;
-      const output = getValueFromParamsOrFormatterOptions('minDecimal', { field: 'column1' } as Column, {} as unknown as SlickGrid, defaultValue);
+      const output = getValueFromParamsOrFormatterOptions('minDecimal', { field: 'column1' } as Column, {} as unknown as GridOption, defaultValue);
       expect(output).toBe(defaultValue);
     });
   });

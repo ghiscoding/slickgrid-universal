@@ -157,7 +157,7 @@ export const GlobalGridOptions: GridOption = {
     groupCollapsedSymbol: '⮞',
     groupExpandedSymbol: '⮟',
     groupingAggregatorRowText: '',
-    sanitizeDataExport: false,
+    sanitizeDataExport: true,
   },
   textExportOptions: {
     delimiter: DelimiterType.comma,
@@ -166,7 +166,7 @@ export const GlobalGridOptions: GridOption = {
     format: FileType.csv,
     groupingColumnHeaderTitle: 'Group By',
     groupingAggregatorRowText: '',
-    sanitizeDataExport: false,
+    sanitizeDataExport: true,
     useUtf8WithBom: true
   },
   gridAutosizeColsMode: GridAutosizeColsMode.none,

@@ -1,5 +1,6 @@
 import { Column } from './column.interface';
 import { ExcelCellFormat } from './excelCellFormat.interface';
+import { GridOption } from './gridOption.interface';
 
 /** Excel custom export options (formatting & width) that can be applied to a column */
 export interface ColumnExcelExportOption {
@@ -27,7 +28,7 @@ export interface GroupTotalExportOption {
   valueParserCallback?: GetGroupTotalValueCallback;
 }
 
-export type GetDataValueCallback = (data: Date | string | number, columnDef: Column, excelFormatterId: number | undefined, excelStylesheet: unknown) => Date | string | number | ExcelCellFormat;
+export type GetDataValueCallback = (data: Date | string | number, columnDef: Column, excelFormatterId: number | undefined, excelStylesheet: unknown, gridOptions: GridOption) => Date | string | number | ExcelCellFormat;
 export type GetGroupTotalValueCallback = (totals: any, columnDef: Column, groupType: string, excelStylesheet: unknown) => Date | string | number;
 
 /**
