@@ -1,13 +1,16 @@
 import {
   Column,
+  Constants,
   ExcelStylesheet,
   FieldType,
+  Formatter,
   Formatters,
   FormatterType,
   getColumnFieldType,
   GetDataValueCallback,
+  getValueFromParamsOrFormatterOptions,
+  GridOption,
   GroupTotalFormatters,
-  isNumber,
   retrieveFormatterOptions,
   sanitizeHtmlToText,
   SlickGrid,
@@ -17,10 +20,23 @@ export type ExcelFormatter = object & { id: number; };
 
 // define all type of potential excel data function callbacks
 export const getExcelSameInputDataCallback: GetDataValueCallback = (data) => data;
-export const getExcelNumberCallback: GetDataValueCallback = (data, _col, excelFormatterId) => ({
-  value: isNumber(data) ? +data : data,
+export const getExcelNumberCallback: GetDataValueCallback = (data, column, excelFormatterId, _excelSheet, gridOptions) => ({
+  value: typeof data === 'string' && /\d/g.test(data) ? parseNumberWithFormatterOptions(data, column, gridOptions) : data,
   metadata: { style: excelFormatterId }
 });
+
+/** Parse a number which the user might have provided formatter options (for example a user might have provided { decimalSeparator: ',', thousandSeparator: ' '}) */
+export function parseNumberWithFormatterOptions(value: any, column: Column, gridOptions: GridOption) {
+  let outValue = value;
+  if (typeof value === 'string' && value) {
+    const decimalSeparator = getValueFromParamsOrFormatterOptions('decimalSeparator', column, gridOptions, Constants.DEFAULT_NUMBER_DECIMAL_SEPARATOR);
+    const val: number | string = (decimalSeparator === ',')
+      ? parseFloat(value.replace(/[^0-9\,]+/g, '').replace(',', '.'))
+      : parseFloat(value.replace(/[^\d\.]/g, ''));
+    outValue = isNaN(val) ? value : val;
+  }
+  return outValue;
+}
 
 /** use different Excel Stylesheet Format as per the Field Type */
 export function useCellFormatByFieldType(stylesheet: ExcelStylesheet, stylesheetFormatters: any, columnDef: Column, grid: SlickGrid) {
@@ -71,28 +87,46 @@ export function getNumericFormatterOptions(columnDef: Column, grid: SlickGrid, f
         break;
     }
   } else {
-    switch (columnDef.formatter) {
-      case Formatters.currency:
-      case Formatters.dollar:
-      case Formatters.dollarColored:
-      case Formatters.dollarColoredBold:
-        dataType = 'currency';
-        break;
-      case Formatters.percent:
-      case Formatters.percentComplete:
-      case Formatters.percentCompleteBar:
-      case Formatters.percentCompleteBarWithText:
-      case Formatters.percentSymbol:
-        dataType = 'percent';
-        break;
-      case Formatters.decimal:
-      default:
-        // use "decimal" instead of "regular" to show optional decimals "##" in Excel
-        dataType = 'decimal';
-        break;
+    // when formatter is a Formatter.multiple, we need to loop through each of its formatter to find the best numeric data type
+    if (columnDef.formatter === Formatters.multiple && Array.isArray(columnDef.params?.formatters)) {
+      dataType = 'decimal';
+      for (const formatter of columnDef.params.formatters) {
+        dataType = getFormatterNumericDataType(formatter);
+        if (dataType !== 'decimal') {
+          break; // if we found something different than the default (decimal) then we can assume that we found our type so we can stop & return
+        }
+      }
+    } else {
+      dataType = getFormatterNumericDataType(columnDef.formatter);
     }
   }
-  return retrieveFormatterOptions(columnDef, grid, dataType, formatterType);
+  return retrieveFormatterOptions(columnDef, grid, dataType!, formatterType);
+}
+
+export function getFormatterNumericDataType(formatter?: Formatter) {
+  let dataType: 'currency' | 'decimal' | 'percent' | 'regular';
+
+  switch (formatter) {
+    case Formatters.currency:
+    case Formatters.dollar:
+    case Formatters.dollarColored:
+    case Formatters.dollarColoredBold:
+      dataType = 'currency';
+      break;
+    case Formatters.percent:
+    case Formatters.percentComplete:
+    case Formatters.percentCompleteBar:
+    case Formatters.percentCompleteBarWithText:
+    case Formatters.percentSymbol:
+      dataType = 'percent';
+      break;
+    case Formatters.decimal:
+    default:
+      // use "decimal" instead of "regular" to show optional decimals "##" in Excel
+      dataType = 'decimal';
+      break;
+  }
+  return dataType;
 }
 
 export function getExcelFormatFromGridFormatter(stylesheet: ExcelStylesheet, stylesheetFormatters: any, columnDef: Column, grid: SlickGrid, formatterType: FormatterType) {
@@ -134,6 +168,21 @@ export function getExcelFormatFromGridFormatter(stylesheet: ExcelStylesheet, sty
     switch (fieldType) {
       case FieldType.number:
         switch (columnDef.formatter) {
+          case Formatters.multiple:
+            // when formatter is a Formatter.multiple, we need to loop through each of its formatter to find the best possible Excel format
+            if (Array.isArray(columnDef.params?.formatters)) {
+              for (const formatter of columnDef.params.formatters) {
+                const { stylesheetFormatter: stylesheetFormatterResult } = getExcelFormatFromGridFormatter(stylesheet, stylesheetFormatters, { ...columnDef, formatter } as Column, grid, formatterType);
+                if (stylesheetFormatterResult !== stylesheetFormatters.numberFormatter) {
+                  stylesheetFormatter = stylesheetFormatterResult;
+                  break;
+                }
+              }
+            }
+            if (!stylesheetFormatter) {
+              stylesheetFormatter = stylesheetFormatters.numberFormatter;
+            }
+            break;
           case Formatters.currency:
           case Formatters.decimal:
           case Formatters.dollar:

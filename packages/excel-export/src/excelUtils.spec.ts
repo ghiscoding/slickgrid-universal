@@ -1,6 +1,6 @@
 import { Column, ExcelStylesheet, FieldType, Formatters, GridOption, GroupTotalFormatters, SlickGrid } from '@slickgrid-universal/common';
 
-import { getExcelFormatFromGridFormatter, getNumericFormatterOptions, isColumnDateType, useCellFormatByFieldType } from './excelUtils';
+import { getExcelFormatFromGridFormatter, getExcelNumberCallback, getNumericFormatterOptions, useCellFormatByFieldType } from './excelUtils';
 
 const mockGridOptions = {
   enableExcelExport: true,
@@ -20,7 +20,7 @@ const stylesheetStub = {
 } as unknown as ExcelStylesheet;
 
 describe('excelUtils', () => {
-  let mockedFormatId = 135;
+  const mockedFormatId = 135;
   let createFormatSpy: any;
 
   beforeEach(() => {
@@ -29,6 +29,32 @@ describe('excelUtils', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe('getExcelNumberCallback() method', () => {
+    it('should return same data when input not a number', () => {
+      const output = getExcelNumberCallback('something else', {} as Column, 3, {}, mockGridOptions);
+      expect(output).toEqual({ metadata: { style: 3 }, value: 'something else' });
+    });
+
+    it('should return same data when input value is already a number', () => {
+      const output = getExcelNumberCallback(9.33, {} as Column, 3, {}, mockGridOptions);
+      expect(output).toEqual({ metadata: { style: 3 }, value: 9.33 });
+    });
+
+    it('should return parsed number when input value can be parsed to a number', () => {
+      const output = getExcelNumberCallback('$1,209.33', {} as Column, 3, {}, mockGridOptions);
+      expect(output).toEqual({ metadata: { style: 3 }, value: 1209.33 });
+    });
+
+    it('should be able to provide a number with different decimal separator as formatter options and return parsed number when input value can be parsed to a number', () => {
+      const output = getExcelNumberCallback(
+        '1 244 209,33€', {} as Column, 3, {},
+        {
+          ...mockGridOptions, formatterOptions: { decimalSeparator: ',', thousandSeparator: ' ' }
+        });
+      expect(output).toEqual({ metadata: { style: 3 }, value: 1244209.33 });
+    });
   });
 
   describe('decimal formatter', () => {
@@ -341,6 +367,26 @@ describe('excelUtils', () => {
         });
       });
 
+      it('should get formatter options for Formatters.dollarColoredBold when using Formatters.multiple and 1 of its formatter is dollarColoredBold formatter', () => {
+        const column = {
+          type: FieldType.number, formatter: Formatters.multiple,
+          params: { formatters: [Formatters.dollarColoredBold, Formatters.bold], displayNegativeNumberWithParentheses: true, thousandSeparator: ',' }
+        } as Column;
+        const output = getNumericFormatterOptions(column, gridStub, 'cell');
+
+        expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
+          decimalSeparator: '.',
+          maxDecimal: 4,
+          minDecimal: 2,
+          numberPrefix: '',
+          numberSuffix: '',
+          thousandSeparator: ',',
+          wrapNegativeNumber: true,
+        });
+      });
+
       it('should get formatter options for Formatters.dollarColored', () => {
         const column = {
           type: FieldType.number, formatter: Formatters.dollarColored,
@@ -398,6 +444,26 @@ describe('excelUtils', () => {
           numberSuffix: '',
           thousandSeparator: ' ',
           wrapNegativeNumber: false,
+        });
+      });
+
+      it('should get formatter options for Formatters.percent when using Formatters.multiple and 1 of its formatter is percent formatter', () => {
+        const column = {
+          type: FieldType.number, formatter: Formatters.multiple,
+          params: { formatters: [Formatters.percent, Formatters.bold], displayNegativeNumberWithParentheses: true, thousandSeparator: ',' }
+        } as Column;
+        const output = getNumericFormatterOptions(column, gridStub, 'cell');
+
+        expect(output).toEqual({
+          currencyPrefix: '',
+          currencySuffix: '',
+          decimalSeparator: '.',
+          maxDecimal: undefined,
+          minDecimal: undefined,
+          numberPrefix: '',
+          numberSuffix: '',
+          thousandSeparator: ',',
+          wrapNegativeNumber: true,
         });
       });
 
@@ -611,7 +677,8 @@ describe('excelUtils', () => {
       it('should get excel excel metadata style with regular number format when a custom GroupTotalFormatters is provided', () => {
         const columnDef = {
           type: FieldType.number, formatter: Formatters.decimal,
-          groupTotalsFormatter: (totals: any, columnDef: Column, grid: SlickGrid) => `Some Total: ${totals.sum}`,
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          groupTotalsFormatter: (totals: any, _columnDef: Column, _grid: SlickGrid) => `Some Total: ${totals.sum}`,
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, { numberFormatter: { id: 3 } }, columnDef, gridStub, 'group');
 
@@ -715,6 +782,39 @@ describe('excelUtils', () => {
         const output = getExcelFormatFromGridFormatter(stylesheetStub, { numberFormatter: { id: 3 } }, columnDef, gridStub, 'cell');
 
         expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 3 } });
+      });
+
+      it('should get excel excel metadata style with regular number format when using Formatters.multiple and a custom Formatter is provided', () => {
+        const columnDef = {
+          type: FieldType.number,
+          formatter: Formatters.multiple,
+          params: { formatters: [() => `Something rendered`, Formatters.bold], },
+        } as unknown as Column;
+        const output = getExcelFormatFromGridFormatter(stylesheetStub, { numberFormatter: { id: 3 } }, columnDef, gridStub, 'cell');
+
+        expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 3 } });
+      });
+
+      it('should get excel excel metadata style format for Formatters.currency when using Formatters.multiple and the first multiple formatters is currency formatter', () => {
+        const column = {
+          type: FieldType.number,
+          formatter: Formatters.multiple,
+          params: { formatters: [Formatters.currency, Formatters.bold], displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+        } as Column;
+        const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
+
+        expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 135 } });
+      });
+
+      it('should get excel excel metadata style format for Formatters.dollar when using Formatters.multiple and the last formatter is dollar formatter', () => {
+        const column = {
+          type: FieldType.number,
+          formatter: Formatters.multiple,
+          params: { formatters: [Formatters.bold, Formatters.dollar], displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+        } as Column;
+        const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
+
+        expect(output).toEqual({ groupType: '', stylesheetFormatter: { id: 135 } });
       });
     });
   });
