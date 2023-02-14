@@ -1,6 +1,8 @@
 import {
   BindingEventService,
   Column,
+  Editors,
+  FieldType,
   GridOption,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
@@ -59,6 +61,9 @@ export class Example13 {
       enableAutoResize: true,
       enableHeaderButton: true,
       enableHeaderMenu: false,
+      autoCommitEdit: true,
+      autoEdit: true,
+      editable: true,
       autoResize: {
         container: '.demo-container',
       },
@@ -124,9 +129,11 @@ export class Example13 {
         id: i,
         name: 'Column ' + String.fromCharCode('A'.charCodeAt(0) + i),
         field: i + '',
-        width: i === 0 ? 70 : 100, // have the 2 first columns wider
+        width: i === 0 ? 70 : 100, // make the first 2 columns wider
         filterable: true,
         sortable: true,
+        type: FieldType.number,
+        editor: { model: Editors.integer },
         formatter: (_row, _cell, value, columnDef) => {
           if (gridNo === 1 && columns1WithHighlightingById[columnDef.id] && value < 0) {
             return `<div style="color:red; font-weight:bold;">${value}</div>`;
