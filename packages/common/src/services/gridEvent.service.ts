@@ -28,7 +28,7 @@ export class GridEventService {
 
   /* OnCellChange Event */
   bindOnBeforeEditCell(grid: SlickGrid) {
-    const dataView = grid?.getData && grid.getData() as SlickDataView;
+    const dataView = grid?.getData?.() as SlickDataView;
 
     // subscribe to this Slickgrid event of onBeforeEditCell
     this._eventHandler.subscribe(grid.onBeforeEditCell, (e, args) => {
@@ -57,7 +57,7 @@ export class GridEventService {
 
   /* OnCellChange Event */
   bindOnCellChange(grid: SlickGrid) {
-    const dataView = grid?.getData && grid.getData() as SlickDataView;
+    const dataView = grid?.getData?.() as SlickDataView;
 
     // subscribe to this Slickgrid event of onCellChange
     this._eventHandler.subscribe(grid.onCellChange, (e, args) => {
@@ -86,14 +86,14 @@ export class GridEventService {
 
   /* OnClick Event */
   bindOnClick(grid: SlickGrid) {
-    const dataView = grid?.getData && grid.getData() as SlickDataView;
+    const dataView = grid?.getData?.() as SlickDataView;
 
     this._eventHandler.subscribe(grid.onClick, (e, args) => {
       if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
         return;
       }
-      const column: Column = grid && grid.getColumns && grid.getColumns()[args.cell];
-      const gridOptions: GridOption = grid && grid.getOptions && grid.getOptions() || {};
+      const column: Column = grid.getColumns?.()[args.cell];
+      const gridOptions: GridOption = grid.getOptions?.() || {};
 
       // when using Excel copy buffer to copy cell ranges, the cell loses its focus after the copy execution
       // so we need to reapply the focus on the active cell that the user clicked
