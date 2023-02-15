@@ -6,9 +6,9 @@
   "module": "dist/esm/index.js",
   "exports": {
     ".": {
-      "browser": "./dist/esm/index.js",
       "import": "./dist/esm/index.js",
-      "require": "./dist/commonjs/index.js"
+      "require": "./dist/commonjs/index.js",
+      "default": "./dist/esm/index.js"
     },
     "./*": "./*"
   },
