@@ -15,11 +15,11 @@
   "typesVersions": {
     "*": {
       "*": [
-        "./dist/esm/index.d.ts"
+        "./dist/types/index.d.ts"
       ]
     }
   },
-  "types": "dist/esm/index.d.ts",
+  "types": "dist/types/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
@@ -30,13 +30,14 @@
     "prebuild": "pnpm run clean",
     "build": "tsc --build",
     "postbuild": "pnpm run bundle:commonjs",
-    "build:incremental": "tsc --incremental",
+    "build:incremental": "tsc --incremental --declaration",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
-    "dev": "tsc --incremental",
+    "dev": "pnpm build:incremental",
     "prebundle": "pnpm run clean",
-    "bundle": "npm-run-all bundle:commonjs bundle:esm",
+    "bundle": "npm-run-all bundle:commonjs bundle:esm bundle:types",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
+    "bundle:types": "tsc --emitDeclarationOnly --declarationMap --outDir dist/types",
     "test": "echo testing slickgrid-universal slickgrid-vanilla-bundle code"
   },
   "license": "MIT",

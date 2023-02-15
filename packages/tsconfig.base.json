@@ -22,8 +22,6 @@
     "emitDecoratorMetadata": true,
     "noImplicitReturns": true,
     "rootDir": ".",
-    "declaration": true,
-    "declarationMap": true,
     "sourceMap": true,
     "composite": true,
     "noEmitOnError": true,
