@@ -28,7 +28,7 @@
   ],
   "scripts": {
     "prebuild": "pnpm run clean",
-    "build": "pnpm run bundle:esm",
+    "build": "pnpm run bundle:esm && tsc --declaration",
     "build:incremental": "tsc --incremental --declaration",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "dev": "pnpm build:incremental",

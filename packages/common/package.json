@@ -39,7 +39,7 @@
   ],
   "scripts": {
     "prebuild": "pnpm run clean",
-    "build": "pnpm run bundle:esm",
+    "build": "pnpm run bundle:esm && tsc --declaration",
     "postbuild": "run-s sass:build sass:copy",
     "build:incremental": "tsc --incremental --declaration",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
