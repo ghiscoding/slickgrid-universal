@@ -38,7 +38,7 @@ importers:
       rimraf: ^3.0.2
       rxjs: ^7.5.7
       servor: ^4.0.2
-      slickgrid: ^3.0.3
+      slickgrid: ^3.0.4
       sortablejs: ^1.15.0
       ts-jest: ^29.0.5
       ts-node: ^10.9.1
@@ -73,7 +73,7 @@ importers:
       rimraf: 3.0.2
       rxjs: 7.5.7
       servor: 4.0.2
-      slickgrid: 3.0.3
+      slickgrid: 3.0.4
       sortablejs: 1.15.0
       ts-jest: 29.0.5_jzhsp3ae3eifadqc4vuxu2hrie
       ts-node: 10.9.1_4bewfcp2iebiwuold25d6rgcsy
@@ -205,7 +205,7 @@ importers:
       postcss-cli: ^10.1.0
       rimraf: ^3.0.2
       sass: ^1.58.0
-      slickgrid: ^3.0.3
+      slickgrid: ^3.0.4
       sortablejs: ^1.15.0
       un-flatten-tree: ^2.0.12
     dependencies:
@@ -218,7 +218,7 @@ importers:
       jquery: 3.6.3
       moment-mini: 2.29.4
       multiple-select-modified: 1.3.17
-      slickgrid: 3.0.3
+      slickgrid: 3.0.4
       sortablejs: 1.15.0
       un-flatten-tree: 2.0.12
     devDependencies:
@@ -459,7 +459,7 @@ importers:
       jquery: ^3.6.3
       npm-run-all2: ^6.0.4
       rimraf: ^3.0.2
-      slickgrid: ^3.0.3
+      slickgrid: ^3.0.4
       sortablejs: ^1.15.0
       whatwg-fetch: ^3.6.2
     dependencies:
@@ -473,7 +473,7 @@ importers:
       dequal: 2.0.3
       flatpickr: 4.6.13
       jquery: 3.6.3
-      slickgrid: 3.0.3
+      slickgrid: 3.0.4
       sortablejs: 1.15.0
       whatwg-fetch: 3.6.2
     devDependencies:
@@ -9602,8 +9602,8 @@ packages:
       is-fullwidth-code-point: 3.0.0
     dev: true
 
-  /slickgrid/3.0.3:
-    resolution: {integrity: sha512-9NlWDTHftNs3+Ta62cF6rV9Vo4PBHCYuBVxb5yHxZ62CiuqtMvKusktEOt1O1RLC1J+lg5v4Qs7LccJ6T3CAJQ==}
+  /slickgrid/3.0.4:
+    resolution: {integrity: sha512-0CY57mxZWJ5Y9XI29ogC4kIMQmyOIHSbmCefOnFFvVUsaI0yqKHfOC84TtGwCScxQfYWFM4AhvWBrae3ff3YZA==}
     dependencies:
       jquery: 3.6.3
       sortablejs: 1.15.0
