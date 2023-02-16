@@ -179,46 +179,22 @@ describe('GridEventService', () => {
       });
     });
 
-    it('should execute the column "onCellClick" callback method and "setActiveCell" cell navigation is enabled but column is not editable', () => {
+    it('should execute the column "onCellClick" callback method and "setActiveCell" only when enableExcelCopyBuffer is enabled', () => {
       gridStub.getOptions = jest.fn();
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableCellNavigation: true, editable: false });
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableCellNavigation: true, enableExcelCopyBuffer: true });
       const spyActive = jest.spyOn(gridStub, 'setActiveCell');
       const spyGetCols = jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
       const spyGetData = jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockRowData);
       const spyOnChange = jest.spyOn(mockColumn, 'onCellClick');
 
       service.bindOnClick(gridStub);
-      gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, new Slick.EventData(), gridStub);
+      gridStub.onClick.notify({ cell: 0, row: 2, grid: gridStub }, new Slick.EventData(), gridStub);
 
-      expect(spyActive).toHaveBeenCalled();
+      expect(spyActive).toHaveBeenCalledWith(2, 0);
       expect(spyGetCols).toHaveBeenCalled();
       expect(spyGetData).toHaveBeenCalled();
       expect(spyOnChange).toHaveBeenCalledWith(expect.anything(), {
-        row: 0,
-        cell: 0,
-        dataView: dataViewStub,
-        grid: gridStub,
-        columnDef: mockColumn,
-        dataContext: mockRowData
-      });
-    });
-
-    it('should execute the column "onCellClick" callback method and "setActiveCell" when cell is editable and autoCommitEdit', () => {
-      gridStub.getOptions = jest.fn();
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableCellNavigation: true, editable: true, autoCommitEdit: true });
-      const spyActive = jest.spyOn(gridStub, 'setActiveCell');
-      const spyGetCols = jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
-      const spyGetData = jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockRowData);
-      const spyOnChange = jest.spyOn(mockColumn, 'onCellClick');
-
-      service.bindOnClick(gridStub);
-      gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, new Slick.EventData(), gridStub);
-
-      expect(spyActive).toHaveBeenCalled();
-      expect(spyGetCols).toHaveBeenCalled();
-      expect(spyGetData).toHaveBeenCalled();
-      expect(spyOnChange).toHaveBeenCalledWith(expect.anything(), {
-        row: 0,
+        row: 2,
         cell: 0,
         dataView: dataViewStub,
         grid: gridStub,

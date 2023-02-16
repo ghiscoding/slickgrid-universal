@@ -43,20 +43,20 @@ describe('Example 12 - Composite Editor Modal', { retries: 1 }, () => {
   it('should be able to change "Duration" values of first 4 rows', () => {
     // change duration
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'days').click();
-    cy.get('.editor-duration').type('0').type('{enter}', { force: true });
+    cy.get('.editor-duration').type('0{enter}');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
       .should('contain', '0 day')
       .get('.editing-field')
       .should('have.css', 'border')
       .and('contain', `solid ${UNSAVED_RGB_COLOR}`);
 
-    cy.get('.editor-duration').type('1').type('{enter}', { force: true });
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(2)`).click().type('1{enter}');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(2)`).should('contain', '1 day')
       .get('.editing-field')
       .should('have.css', 'border')
       .and('contain', `solid ${UNSAVED_RGB_COLOR}`);
 
-    cy.get('.editor-duration').type('2').type('{enter}', { force: true });
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(2)`).click().type('2{enter}');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(2)`).should('contain', '2 days')
       .get('.editing-field')
       .should('have.css', 'border')

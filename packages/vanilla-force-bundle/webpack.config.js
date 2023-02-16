@@ -41,9 +41,5 @@ module.exports = ({ production } = {}) => ({
         options: { loader: 'ts', target: 'es2018' }
       },
     ],
-  },
-  watchOptions: {
-    ignored: '**/node_modules',
-    poll: 1000, // Check for changes every second
   }
 });

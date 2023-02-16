@@ -55,7 +55,7 @@
     "not dead"
   ],
   "dependencies": {
-    "dompurify": "^2.4.3"
+    "dompurify": "^3.0.0"
   },
   "devDependencies": {
     "@types/dompurify": "^2.4.0",
