@@ -496,7 +496,7 @@ export class SelectEditor implements Editor {
 
         // clear select when it's newly disabled and not yet empty
         const currentValues: string | number | Array<string | number> = this.getValue();
-        const isValueBlank = this.isMultipleSelect ? currentValues === [''] as Array<string | number> : currentValues === '';
+        const isValueBlank = Array.isArray(currentValues) && this.isMultipleSelect ? currentValues?.[0] === '' : currentValues === '';
         if (prevIsDisabled !== isDisabled && this.isCompositeEditor && !isValueBlank) {
           this.reset('', true, true);
         }
