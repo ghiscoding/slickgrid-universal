@@ -21,18 +21,17 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
     cy.get('h3').should('contain', 'Example 11 - Batch Editing');
   });
 
+  it('should click on "Clear Local Storage" and expect to be back to original grid with all the columns', () => {
+    cy.get('[data-test="clear-storage-btn"]')
+      .click();
 
-  it('should have exact Column Titles in the grid', () => {
     cy.get('.grid11')
       .find('.slick-header-columns')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
-  it('should click on "Clear Local Storage" and expect to be back to original grid with all the columns', () => {
-    cy.get('[data-test="clear-storage-btn"]')
-      .click();
-
+  it('should have exact Column Titles in the grid', () => {
     cy.get('.grid11')
       .find('.slick-header-columns')
       .children()
@@ -56,36 +55,41 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
       .should('contain', '0 day')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
-    cy.get('.editor-duration').type('1').type('{enter}', { force: true });
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(2)`).click().type('1{enter}');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(2)`).should('contain', '1 day')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
-    cy.get('.editor-duration').type('2').type('{enter}', { force: true });
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(2)`).click().type('2{enter}');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(2)`).should('contain', '2 days')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
-    cy.get('.editor-duration').type('3').type('{enter}', { force: true });
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(2)`).click().type('3{enter}');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(2)`).should('contain', '3 days')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
-    cy.get('.editor-duration').type('{esc}');
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(2)`).click().type('{esc}');
     cy.get('.editor-duration').should('not.exist');
   });
 
   it('should be able to change "Title" values of row indexes 1-3', () => {
     // change title
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 1').click();
-    cy.get('.editor-title').type('task 1111').type('{enter}', { force: true });
+    cy.get('.editor-title').type('task 1111').type('{enter}');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 1111')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
-    cy.get('.editor-title').type('task 2222').type('{enter}', { force: true });
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).click()
+      .type('task 2222{enter}');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 2222')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
-    cy.get('.editor-title').type('task 3333').type('{enter}', { force: true });
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1)`).click()
+      .type('task 3333').type('{enter}');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1)`).should('contain', 'TASK 3333')
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
-    cy.get('.editor-title').type('{esc}');
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1)`).click()
+      .type('{esc}');
     cy.get('.editor-title').should('not.exist');
 
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left')

@@ -82,7 +82,7 @@
     "jquery": "^3.6.3",
     "moment-mini": "^2.29.4",
     "multiple-select-modified": "^1.3.17",
-    "slickgrid": "^3.0.3",
+    "slickgrid": "^3.0.4",
     "sortablejs": "^1.15.0",
     "un-flatten-tree": "^2.0.12"
   },
