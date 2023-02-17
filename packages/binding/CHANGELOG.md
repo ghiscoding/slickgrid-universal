@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.4.1...v2.5.0) (2023-02-17)
+
+### Bug Fixes
+
+* **build:** package exports prop had invalid ESM import link ([#892](https://github.com/ghiscoding/slickgrid-universal/issues/892)) ([7f95f69](https://github.com/ghiscoding/slickgrid-universal/commit/7f95f698447f8178cb7ceec416c35f4957fddbe9)) - by @ghiscoding
+* **deps:** update dependency dompurify to v3 ([#907](https://github.com/ghiscoding/slickgrid-universal/issues/907)) ([66c8b4d](https://github.com/ghiscoding/slickgrid-universal/commit/66c8b4d602d88d733070b2189468bf1b6508d7eb)) - by @renovate-bot
+
 # [2.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.3.0...v2.4.0) (2023-02-04)
 
 **Note:** Version bump only for package @slickgrid-universal/binding
