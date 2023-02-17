@@ -4,7 +4,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "rootDir": "src",
-    "declarationDir": "dist/esm",
+    "declarationDir": "dist/types",
     "outDir": "dist/esm",
     "typeRoots": [
       "typings"

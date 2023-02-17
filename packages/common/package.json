@@ -6,20 +6,20 @@
   "module": "dist/esm/index.js",
   "exports": {
     ".": {
-      "browser": "./dist/esm/index.js",
       "import": "./dist/esm/index.js",
-      "require": "./dist/commonjs/index.js"
+      "require": "./dist/commonjs/index.js",
+      "default": "./dist/esm/index.js"
     },
     "./*": "./*"
   },
   "typesVersions": {
     "*": {
       "*": [
-        "./dist/esm/index.d.ts"
+        "./dist/types/index.d.ts"
       ]
     }
   },
-  "types": "dist/esm/index.d.ts",
+  "types": "dist/types/index.d.ts",
   "license": "MIT",
   "author": "Ghislain B.",
   "homepage": "https://github.com/ghiscoding/slickgrid-universal",
@@ -39,16 +39,17 @@
   ],
   "scripts": {
     "prebuild": "pnpm run clean",
-    "build": "pnpm run bundle:esm",
+    "build": "pnpm run bundle:esm && tsc --declaration",
     "postbuild": "run-s sass:build sass:copy",
-    "build:incremental": "tsc --incremental",
+    "build:incremental": "tsc --incremental --declaration",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "dev": "node build-watch.mjs",
     "prebundle": "pnpm run clean",
-    "bundle": "run-p bundle:commonjs bundle:esm",
+    "bundle": "run-p bundle:commonjs bundle:esm bundle:types",
     "postbundle": "run-s sass:build sass:copy",
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
+    "bundle:types": "tsc --emitDeclarationOnly --declarationMap --outDir dist/types",
     "sass-build-task:scss-compile:bootstrap": "sass src/styles/slickgrid-theme-bootstrap.scss dist/styles/css/slickgrid-theme-bootstrap.css --style=compressed --quiet-deps --no-source-map",
     "sass-build-task:scss-compile:material": "sass src/styles/slickgrid-theme-material.scss dist/styles/css/slickgrid-theme-material.css --style=compressed --quiet-deps --no-source-map",
     "sass-build-task:scss-compile:material-bare": "sass src/styles/slickgrid-theme-material.bare.scss dist/styles/css/slickgrid-theme-material.bare.css --style=compressed --quiet-deps --no-source-map",
