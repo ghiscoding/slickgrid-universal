@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/vanilla-force-bundle",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "description": "Vanilla Slick Grid Bundle (mostly exist for our Salesforce implementation) - Similar to Vanilla Bundle, the only difference is that it adds extra packages within its bundle (CustomTooltip, CompositeEditor & TextExport)",
   "main": "dist/commonjs/index.js",
   "module": "dist/esm/index.js",
@@ -38,6 +38,7 @@
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "bundle:types": "tsc --emitDeclarationOnly --declarationMap --outDir dist/types",
+    "bundle:web": "esbuild src/index.ts --bundle --minify --format=iife --sourcemap --target=es2018 --main-fields=module,main --external:jquery --global-name=Slicker --outfile=dist/bundle/slickgrid-vanilla-bundle.js",
     "prebundle:zip": "pnpm run delete:zip",
     "bundle:zip": "pnpm run zip:dist",
     "delete:zip": "cross-env rimraf --maxBusyTries=10 dist-bundle-zip",
