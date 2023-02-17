@@ -40,8 +40,8 @@ export class Example13 {
     this.initializeGrid();
     this.dataset1 = this.loadData(200, 1);
     this.dataset2 = this.loadData(200, 2);
-    const gridContainerElm1 = document.querySelector<HTMLDivElement>(`.grid13-1`);
-    const gridContainerElm2 = document.querySelector<HTMLDivElement>(`.grid13-2`);
+    const gridContainerElm1 = document.querySelector(`.grid13-1`) as HTMLDivElement;
+    const gridContainerElm2 = document.querySelector(`.grid13-2`) as HTMLDivElement;
 
     this.sgb1 = new Slicker.GridBundle(gridContainerElm1, this.columnDefinitions1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
     this.sgb2 = new Slicker.GridBundle(gridContainerElm2, this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
@@ -118,7 +118,7 @@ export class Example13 {
         button.cssClass = 'mdi mdi-lightbulb-on color-danger';
         button.tooltip = 'Remove highlight.';
       }
-      this[`sgb${gridNo}`].slickGrid.invalidate();
+      this[`sgb${gridNo}`].slickGrid?.invalidate();
     }
   }
 
@@ -219,7 +219,7 @@ export class Example13 {
     };
 
     // mock a dataset
-    const mockDataset = [];
+    const mockDataset: any[] = [];
     for (let i = 0; i < count; i++) {
       const d = (mockDataset[i] = {});
       d['id'] = i;
