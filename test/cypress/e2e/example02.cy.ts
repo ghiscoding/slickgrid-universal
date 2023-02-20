@@ -57,12 +57,13 @@ describe('Example 02 - Grouping & Aggregators', { retries: 1 }, () => {
       .find('span:nth(1)')
       .click();
 
+    const currentDateTime = moment().format('YYYY-MM-DD, hh:mm a');
     cy.get('.grid2')
       .find('.slick-custom-footer')
       .find('.right-footer')
       .should($span => {
         const text = removeExtraSpaces($span.text()); // remove all white spaces
-        expect(text).to.eq(`Last Update ${moment().format('YYYY-MM-DD, hh:mm a')} | 28 of 500 items`);
+        expect(text).to.eq(`Last Update ${currentDateTime} | 28 of 500 items`);
       });
   });
 
