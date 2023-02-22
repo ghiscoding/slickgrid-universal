@@ -37,7 +37,7 @@
     "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
     "bundle:types": "tsc --emitDeclarationOnly --declarationMap --outDir dist/types",
-    "bundle:web": "esbuild src/index.ts --bundle --minify --format=iife --sourcemap --sources-content=false --target=es2018 --main-fields=module,main --external:jquery --global-name=Slicker --outfile=dist/bundle/slickgrid-vanilla-bundle.js",
+    "bundle:web": "esbuild src/index.ts --bundle --minify --format=iife --sourcemap --sources-content=false --target=es2018 --main-fields=module,main --global-name=Slicker --outfile=dist/bundle/slickgrid-vanilla-bundle.js",
     "bundle:web:esbuild": "node esbuild.mjs",
     "prebundle:zip": "pnpm run delete:zip",
     "bundle:zip": "pnpm run zip:dist",

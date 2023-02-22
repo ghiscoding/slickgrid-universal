@@ -1,3 +1,4 @@
+import './global-jquery';
 import 'multiple-select-modified';
 
 import * as BackendUtilities from './services/backendUtility.service';
