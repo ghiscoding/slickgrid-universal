@@ -117,6 +117,7 @@ importers:
       sass: ^1.58.1
       sass-loader: ^13.2.0
       style-loader: ^3.3.1
+      tsconfig-paths-webpack-plugin: ^4.0.0
       typescript: ^5.0.0-beta
       url-loader: ^4.1.1
       webpack: ^5.75.0
@@ -161,6 +162,7 @@ importers:
       sass: 1.58.1
       sass-loader: 13.2.0_sass@1.58.1+webpack@5.75.0
       style-loader: 3.3.1_webpack@5.75.0
+      tsconfig-paths-webpack-plugin: 4.0.0
       typescript: 5.0.0-dev.20230220
       url-loader: 4.1.1_p5dl6emkcwslbw72e37w4ug7em
       webpack: 5.75.0_webpack-cli@5.0.1
@@ -10521,11 +10523,29 @@ packages:
       yn: 3.1.1
     dev: true
 
+  /tsconfig-paths-webpack-plugin/4.0.0:
+    resolution: {integrity: sha512-fw/7265mIWukrSHd0i+wSwx64kYUSAKPfxRDksjKIYTxSAp9W9/xcZVBF4Kl0eqQd5eBpAQ/oQrc5RyM/0c1GQ==}
+    engines: {node: '>=10.13.0'}
+    dependencies:
+      chalk: 4.1.2
+      enhanced-resolve: 5.10.0
+      tsconfig-paths: 4.1.2
+    dev: true
+
   /tsconfig-paths/3.14.1:
     resolution: {integrity: sha512-fxDhWnFSLt3VuTwtvJt5fpwxBHg5AdKWMsgcPOOIilyjymcYVZoCQF8fvFRezCNfblEXmi+PcM1eYHeOAgXCOQ==}
     dependencies:
       '@types/json5': 0.0.29
       json5: 1.0.1
+      minimist: 1.2.6
+      strip-bom: 3.0.0
+    dev: true
+
+  /tsconfig-paths/4.1.2:
+    resolution: {integrity: sha512-uhxiMgnXQp1IR622dUXI+9Ehnws7i/y6xvpZB9IbUVOPy0muvdvgXeZOn88UcGPiT98Vp3rJPTa8bFoalZ3Qhw==}
+    engines: {node: '>=6'}
+    dependencies:
+      json5: 2.2.3
       minimist: 1.2.6
       strip-bom: 3.0.0
     dev: true
