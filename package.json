@@ -25,7 +25,7 @@
     "cypress": "cypress open --config-file test/cypress.config.ts",
     "cypress:ci": "cypress run --config-file test/cypress.config.ts",
     "build:esm": "tsc --build ./tsconfig.packages.json",
-    "build:esm:styles": "pnpm build:esm && pnpm run -r sass:build && pnpm run -r sass:copy",
+    "build:esm:styles": "pnpm build:esm && pnpm run -r sass:copy",
     "build:watch": "tsc --build ./tsconfig.packages.json --watch",
     "predev": "pnpm build:esm:styles",
     "dev": "run-p dev:watch webpack:watch",
