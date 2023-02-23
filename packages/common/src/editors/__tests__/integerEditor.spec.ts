@@ -27,6 +27,7 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
+  focus: jest.fn(),
   getActiveCell: jest.fn(),
   getColumns: jest.fn(),
   getEditorLock: () => getEditorLockMock,
@@ -180,6 +181,7 @@ describe('IntegerEditor', () => {
       editor.focus();
       editorElm.dispatchEvent(event);
 
+      expect(gridStub.focus).toHaveBeenCalled();
       expect(spyEvent).toHaveBeenCalled();
     });
 
@@ -193,6 +195,7 @@ describe('IntegerEditor', () => {
       editor.focus();
       editorElm.dispatchEvent(event);
 
+      expect(gridStub.focus).toHaveBeenCalled();
       expect(spyEvent).toHaveBeenCalled();
     });
 
@@ -207,6 +210,7 @@ describe('IntegerEditor', () => {
         editor.focus();
         editorElm.dispatchEvent(event);
 
+        expect(gridStub.focus).toHaveBeenCalled();
         expect(editor.isValueChanged()).toBe(true);
       });
 
@@ -220,6 +224,7 @@ describe('IntegerEditor', () => {
         editor.focus();
         editorElm.dispatchEvent(event);
 
+        expect(gridStub.focus).toHaveBeenCalled();
         expect(editor.isValueChanged()).toBe(false);
       });
 
@@ -233,6 +238,7 @@ describe('IntegerEditor', () => {
         editor.focus();
         editorElm.dispatchEvent(event);
 
+        expect(gridStub.focus).toHaveBeenCalled();
         expect(editor.isValueChanged()).toBe(false);
       });
 
@@ -246,6 +252,7 @@ describe('IntegerEditor', () => {
         editor.focus();
         editorElm.dispatchEvent(event);
 
+        expect(gridStub.focus).toHaveBeenCalled();
         expect(editor.isValueChanged()).toBe(true);
       });
     });

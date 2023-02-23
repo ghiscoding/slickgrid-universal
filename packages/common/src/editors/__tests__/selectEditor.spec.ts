@@ -28,6 +28,7 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
+  focus: jest.fn(),
   getActiveCell: jest.fn(),
   getColumns: jest.fn(),
   getEditorLock: () => getEditorLockMock,
@@ -146,6 +147,7 @@ describe('SelectEditor', () => {
       editor.focus();
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
 
+      expect(gridStub.focus).toHaveBeenCalled();
       expect(editorCount).toBe(1);
     });
 

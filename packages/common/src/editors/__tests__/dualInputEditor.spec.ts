@@ -27,6 +27,7 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
+  focus: jest.fn(),
   getActiveCell: jest.fn(),
   getColumns: jest.fn(),
   getEditorLock: () => getEditorLockMock,
@@ -215,6 +216,7 @@ describe('DualInputEditor', () => {
       editor.focus();
       editorElm.dispatchEvent(event);
 
+      expect(gridStub.focus).toHaveBeenCalled();
       expect(spyEvent).toHaveBeenCalled();
     });
 

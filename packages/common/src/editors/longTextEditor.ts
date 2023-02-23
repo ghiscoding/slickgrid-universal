@@ -224,6 +224,9 @@ export class LongTextEditor implements Editor {
   }
 
   focus() {
+    // always set focus on grid first so that plugin to copy range (SlickCellExternalCopyManager) would still be able to paste at that position
+    this.grid.focus();
+
     if (this._textareaElm) {
       this._textareaElm.focus();
       this._textareaElm.select();
@@ -433,7 +436,7 @@ export class LongTextEditor implements Editor {
   }
 
   /** On every input change event, we'll update the current text length counter */
-  protected handleOnInputChange(event: Event & { clipboardData: DataTransfer, target: HTMLTextAreaElement }) {
+  protected handleOnInputChange(event: Event & { clipboardData: DataTransfer, target: HTMLTextAreaElement; }) {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     const maxLength = this.columnEditor?.maxLength;
 

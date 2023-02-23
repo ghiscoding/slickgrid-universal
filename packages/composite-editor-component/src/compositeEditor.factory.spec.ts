@@ -28,6 +28,7 @@ const getEditControllerMock = {
 const gridStub = {
   autosizeColumns: jest.fn(),
   editActiveCell: jest.fn(),
+  focus: jest.fn(),
   getColumnIndex: jest.fn(),
   getActiveCell: jest.fn(),
   getCellNode: jest.fn(),

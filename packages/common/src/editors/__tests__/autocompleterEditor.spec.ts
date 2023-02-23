@@ -28,6 +28,7 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
+  focus: jest.fn(),
   getActiveCell: jest.fn(),
   getOptions: () => gridOptionMock,
   getColumns: jest.fn(),
@@ -265,6 +266,7 @@ describe('AutocompleterEditor', () => {
       const spy = jest.spyOn(editorElm, 'focus');
       editor.focus();
 
+      expect(gridStub.focus).toHaveBeenCalled();
       expect(spy).toHaveBeenCalled();
     });
 

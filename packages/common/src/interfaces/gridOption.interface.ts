@@ -609,8 +609,9 @@ export interface GridOption {
   sortColNumberInSeparateSpan?: boolean;
 
   /**
-   * Defaults to true, which leads to suppress the cell from becoming active when cell as an editor and is clicked.
-   * This flag should be enabled especially when mixing these 2 features (Row Selections & Inline Editors)
+   * Defaults to false, which leads to suppress the cell from becoming active when cell as an editor and is clicked.
+   * This flag was originally enabled to work properly with (Row Selections & Inline Editors) features but it caused problem when also used with CellExternalCopyManager,
+   * however this flag shouldn't be need anymore when editing & using all 3 features and the flag's default is now disabled (false) but user can still change it if needed.
    */
   suppressActiveCellChangeOnEdit?: boolean;
 

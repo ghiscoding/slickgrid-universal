@@ -23,6 +23,7 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
+  focus: jest.fn(),
   getActiveCell: jest.fn(),
   getOptions: () => gridOptionMock,
   getColumns: jest.fn(),
@@ -200,6 +201,7 @@ describe('CheckboxEditor', () => {
         editor.focus();
         editor.editorDomElement.dispatchEvent(event);
 
+        expect(gridStub.focus).toHaveBeenCalled();
         expect(editor.isValueChanged()).toBe(false);
       });
     });

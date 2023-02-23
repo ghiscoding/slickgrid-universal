@@ -27,6 +27,7 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
+  focus: jest.fn(),
   getActiveCell: jest.fn(),
   getColumns: jest.fn(),
   getEditorLock: () => getEditorLockMock,
@@ -178,6 +179,7 @@ describe('FloatEditor', () => {
       editor.focus();
       editorElm.dispatchEvent(event);
 
+      expect(gridStub.focus).toHaveBeenCalled();
       expect(spyEvent).toHaveBeenCalled();
     });
 
@@ -191,6 +193,7 @@ describe('FloatEditor', () => {
       editor.focus();
       editorElm.dispatchEvent(event);
 
+      expect(gridStub.focus).toHaveBeenCalled();
       expect(spyEvent).toHaveBeenCalled();
     });
 
@@ -205,6 +208,7 @@ describe('FloatEditor', () => {
         editor.focus();
         editorElm.dispatchEvent(event);
 
+        expect(gridStub.focus).toHaveBeenCalled();
         expect(editor.isValueChanged()).toBe(true);
       });
 

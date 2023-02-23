@@ -26,6 +26,7 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
+  focus: jest.fn(),
   getOptions: () => gridOptionMock,
   getColumns: jest.fn(),
   getEditorLock: () => getEditorLockMock,

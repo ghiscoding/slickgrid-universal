@@ -8,10 +8,17 @@ import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager';
 declare const Slick: SlickNamespace;
 jest.mock('flatpickr', () => { });
 
+const getEditorLockMock = {
+  isActive: jest.fn(),
+  commitCurrentEdit: jest.fn(),
+};
+
 const gridStub = {
   getData: jest.fn(),
   getOptions: jest.fn(),
   getSelectionModel: jest.fn(),
+  getEditorLock: () => getEditorLockMock,
+  focus: jest.fn(),
   registerPlugin: jest.fn(),
   setSelectionModel: jest.fn(),
   onKeyDown: new Slick.Event(),
