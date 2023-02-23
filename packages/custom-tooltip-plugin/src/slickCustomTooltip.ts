@@ -26,6 +26,8 @@ import {
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
 
+type CellType = 'slick-cell' | 'slick-header-column' | 'slick-headerrow-column';
+
 /**
  * A plugin to add Custom Tooltip when hovering a cell, it subscribes to the cell "onMouseEnter" and "onMouseLeave" events.
  * The "customTooltip" is defined in the Column Definition OR Grid Options (the first found will have priority over the second)
@@ -54,6 +56,7 @@ export class SlickCustomTooltip {
   protected _addonOptions?: CustomTooltipOption;
   protected _cellAddonOptions?: CustomTooltipOption;
   protected _cellNodeElm?: HTMLDivElement;
+  protected _cellType: CellType = 'slick-cell';
   protected _cancellablePromise?: CancellablePromiseWrapper;
   protected _observable$?: Subscription;
   protected _rxjs?: RxJsFacade | null = null;
@@ -175,7 +178,9 @@ export class SlickCustomTooltip {
   }
 
   /** depending on the selector type, execute the necessary handler code */
-  protected handleOnHeaderMouseEnterByType(event: SlickEventData, args: any, selector: string) {
+  protected handleOnHeaderMouseEnterByType(event: SlickEventData, args: any, selector: CellType) {
+    this._cellType = selector;
+
     // before doing anything, let's remove any previous tooltip before
     // and cancel any opened Promise/Observable when using async
     this.hideTooltip();
@@ -215,6 +220,8 @@ export class SlickCustomTooltip {
   }
 
   protected async handleOnMouseEnter(event: SlickEventData) {
+    this._cellType = 'slick-cell';
+
     // before doing anything, let's remove any previous tooltip before
     // and cancel any opened Promise/Observable when using async
     this.hideTooltip();
@@ -313,7 +320,7 @@ export class SlickCustomTooltip {
     let tmpTitleElm: HTMLDivElement | null | undefined;
 
     if (!tooltipText) {
-      if (this._cellNodeElm && (this._cellNodeElm.clientWidth < this._cellNodeElm.scrollWidth) && !this._cellAddonOptions?.useRegularTooltipFromFormatterOnly) {
+      if (this._cellType === 'slick-cell' && this._cellNodeElm && (this._cellNodeElm.clientWidth < this._cellNodeElm.scrollWidth) && !this._cellAddonOptions?.useRegularTooltipFromFormatterOnly) {
         tooltipText = this._cellNodeElm.textContent?.trim() ?? '';
         if (this._cellAddonOptions?.tooltipTextMaxLength && tooltipText.length > this._cellAddonOptions?.tooltipTextMaxLength) {
           tooltipText = tooltipText.substring(0, this._cellAddonOptions.tooltipTextMaxLength - 3) + '...';
