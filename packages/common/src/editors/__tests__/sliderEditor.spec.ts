@@ -23,6 +23,7 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
+  focus: jest.fn(),
   getActiveCell: jest.fn(),
   getColumns: jest.fn(),
   getEditorLock: () => getEditorLockMock,
@@ -421,9 +422,11 @@ describe('SliderEditor', () => {
         const spy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
         editor = new SliderEditor(editorArguments);
+        editor.focus();
         editor.loadValue(mockItemData);
         editor.save();
 
+        expect(gridStub.focus).toHaveBeenCalled();
         expect(spy).toHaveBeenCalled();
       });
 

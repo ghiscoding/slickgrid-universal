@@ -1,6 +1,5 @@
 import {
   Column,
-  GridOption,
   OnEventArgs,
   SlickDataView,
   SlickEventHandler,
@@ -93,13 +92,6 @@ export class GridEventService {
         return;
       }
       const column: Column = grid.getColumns?.()[args.cell];
-      const gridOptions: GridOption = grid.getOptions?.() || {};
-
-      // when using Excel copy buffer to copy cell ranges, the cell loses its focus after the copy execution
-      // so we need to reapply the focus on the active cell that the user clicked
-      if (gridOptions.enableCellNavigation && gridOptions.enableExcelCopyBuffer) {
-        grid.setActiveCell(args.row, args.cell);
-      }
 
       // if the column definition has a onCellClick property (a callback function), then run it
       if (typeof column.onCellClick === 'function') {

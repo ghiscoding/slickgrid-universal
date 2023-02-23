@@ -27,6 +27,7 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
+  focus: jest.fn(),
   getActiveCell: jest.fn(),
   getColumns: jest.fn(),
   getEditorLock: () => getEditorLockMock,
@@ -190,6 +191,7 @@ describe('DateEditor', () => {
       editor.show();
       editor.focus();
 
+      expect(gridStub.focus).toHaveBeenCalled();
       expect(calendarElm).toBeTruthy();
       expect(spy).toHaveBeenCalled();
     });

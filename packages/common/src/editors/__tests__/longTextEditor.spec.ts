@@ -31,6 +31,7 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
+  focus: jest.fn(),
   getActiveCell: jest.fn(),
   getColumns: jest.fn(),
   getEditorLock: () => getEditorLockMock,
@@ -253,6 +254,7 @@ describe('LongTextEditor', () => {
         editorElm.dispatchEvent(eventKeyDown);
         editorElm.dispatchEvent(eventInput);
 
+        expect(gridStub.focus).toHaveBeenCalled();
         expect(currentTextLengthElm.textContent).toBe('1');
         expect(maxTextLengthElm.textContent).toBe('255');
         expect(editor.isValueChanged()).toBe(true);
@@ -269,6 +271,7 @@ describe('LongTextEditor', () => {
         editor.focus();
         editorElm.dispatchEvent(event);
 
+        expect(gridStub.focus).toHaveBeenCalled();
         expect(editor.isValueChanged()).toBe(false);
         expect(editor.isValueTouched()).toBe(true);
       });
@@ -283,6 +286,7 @@ describe('LongTextEditor', () => {
         editor.focus();
         editorElm.dispatchEvent(event);
 
+        expect(gridStub.focus).toHaveBeenCalled();
         expect(editor.isValueChanged()).toBe(true);
         expect(editor.isValueTouched()).toBe(true);
       });
@@ -742,6 +746,7 @@ describe('LongTextEditor', () => {
         const currentTextLengthElm = document.body.querySelector('.editor-footer .text-length') as HTMLDivElement;
         const maxTextLengthElm = document.body.querySelector('.editor-footer .max-length') as HTMLDivElement;
 
+        expect(gridStub.focus).toHaveBeenCalled();
         expect(editorElm.value).toBe('some extra');
         expect(currentTextLengthElm.textContent).toBe('10');
         expect(maxTextLengthElm.textContent).toBe('10');
@@ -763,6 +768,7 @@ describe('LongTextEditor', () => {
         const currentTextLengthElm = document.body.querySelector('.editor-footer .text-length') as HTMLDivElement;
         const maxTextLengthElm = document.body.querySelector('.editor-footer .max-length') as HTMLDivElement;
 
+        expect(gridStub.focus).toHaveBeenCalled();
         expect(editorElm.value).toBe('some extra');
         expect(currentTextLengthElm.textContent).toBe('10');
         expect(maxTextLengthElm.textContent).toBe('10');

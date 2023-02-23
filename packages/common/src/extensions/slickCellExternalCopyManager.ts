@@ -73,9 +73,13 @@ export class SlickCellExternalCopyManager {
       throw new Error(`Selection model is mandatory for this plugin. Please set a selection model on the grid before adding this plugin: grid.setSelectionModel(new Slick.CellSelectionModel())`);
     }
 
-    // we give focus on the grid when a selection is done on it.
+    // we give focus on the grid when a selection is done on it (unless it's an editor, if so the editor should have already set focus to the grid prior to editing a cell).
     // without this, if the user selects a range of cell without giving focus on a particular cell, the grid doesn't get the focus and key stroke handles (ctrl+c) don't work
-    this._eventHandler.subscribe(cellSelectionModel.onSelectedRangesChanged, () => this._grid.focus());
+    this._eventHandler.subscribe(cellSelectionModel.onSelectedRangesChanged, () => {
+      if (!this._grid.getEditorLock().isActive()) {
+        this._grid.focus();
+      }
+    });
   }
 
   dispose() {
