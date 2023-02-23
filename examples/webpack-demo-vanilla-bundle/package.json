@@ -73,7 +73,7 @@
     "sass-loader": "^13.2.0",
     "style-loader": "^3.3.1",
     "tsconfig-paths-webpack-plugin": "^4.0.0",
-    "typescript": "^5.0.0-dev.20230223",
+    "typescript": "^5.0.0-beta",
     "url-loader": "^4.1.1",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1",

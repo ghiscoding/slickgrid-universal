@@ -82,7 +82,7 @@
     "sortablejs": "^1.15.0",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.0-dev.20230223",
+    "typescript": "^5.0.0-beta",
     "whatwg-fetch": "^3.6.2"
   },
   "packageManager": "pnpm@7.27.1",
