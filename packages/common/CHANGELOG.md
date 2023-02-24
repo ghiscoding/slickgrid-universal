@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.6.1](https://github.com/ghiscoding/slickgrid-universal/compare/v2.6.0...v2.6.1) (2023-02-24)
+
+### Bug Fixes
+
+* **common:** remove jQuery import to avoid duplicate jQuery load ([4622258](https://github.com/ghiscoding/slickgrid-universal/commit/462225835382ecd36dbdb6bc042b38d5171c7ada)), closes [#911](https://github.com/ghiscoding/slickgrid-universal/issues/911) - by @ghiscoding
+
 # [2.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.5.0...v2.6.0) (2023-02-23)
 
 ### Bug Fixes
