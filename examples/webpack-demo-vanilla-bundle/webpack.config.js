@@ -33,7 +33,7 @@ module.exports = ({ production } = {}) => ({
     host: 'localhost',
     // open: true,
   },
-  devtool: production ? false : 'eval-cheap-module-source-map',
+  devtool: production ? false : 'source-map',
   output: {
     path: production ? outDirProd : outDirLocal,
     publicPath: baseUrl,
