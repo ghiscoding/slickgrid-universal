@@ -1,4 +1,5 @@
 import { deepMerge } from '@slickgrid-universal/utils';
+import { OptionRowData } from 'multiple-select-vanilla/*';
 import * as DOMPurify_ from 'dompurify';
 const DOMPurify = ((DOMPurify_ as any)?.['default'] ?? DOMPurify_); // patch for rollup
 
@@ -17,7 +18,7 @@ import { TranslaterService } from './translater.service';
  * @param {Array<*>} searchTerms - optional array of search term (used by the "filter" type only)
  * @returns object with 2 properties for the select element & a boolean value telling us if any of the search terms were found and selected in the dropdown
  */
-export function buildSelectEditorOrFilterDomElement(type: 'editor' | 'filter', collection: any[], columnDef: Column, grid: SlickGrid, isMultiSelect = false, translaterService?: TranslaterService, searchTerms?: SearchTerm[]): { selectElement: HTMLSelectElement; hasFoundSearchTerm: boolean; } {
+export function buildMultipleSelectDataCollection(type: 'editor' | 'filter', collection: any[], columnDef: Column, grid: SlickGrid, isMultiSelect = false, translaterService?: TranslaterService, searchTerms?: SearchTerm[]): { selectElement: HTMLSelectElement; dataCollection: OptionRowData[]; hasFoundSearchTerm: boolean; } {
   const columnId = columnDef?.id ?? '';
   const gridOptions = grid.getOptions();
   const columnFilterOrEditor = (type === 'editor' ? columnDef?.internalColumnEditor : columnDef?.filter) ?? {};
@@ -38,38 +39,32 @@ export function buildSelectEditorOrFilterDomElement(type: 'editor' | 'filter', c
   selectElement.classList.add(...extraCssClasses);
 
   selectElement.multiple = isMultiSelect;
-
-  // use an HTML Fragment for performance reason, MDN explains it well as shown below::
-  // The key difference is that because the document fragment isn't part of the actual DOM's structure, changes made to the fragment don't affect the document, cause reflow, or incur any performance impact that can occur when changes are made.
-  const selectOptionsFragment = document.createDocumentFragment();
-
+  const dataCollection: OptionRowData[] = [];
   let hasFoundSearchTerm = false;
 
   // collection could be an Array of Strings OR Objects
   if (Array.isArray(collection)) {
-    if (collection.every((x: any) => typeof x === 'string')) {
+    if (collection.every((x: any) => typeof x === 'number' || typeof x === 'string')) {
       for (const option of collection) {
-        const selectOptionElm = createDomElement('option', {
-          label: option, value: option, textContent: option,
-        });
+        const selectOption: OptionRowData = { text: option, value: option };
         if (type === 'filter' && Array.isArray(searchTerms)) {
-          selectOptionElm.selected = (searchTerms.findIndex(term => term === option) >= 0); // when filter search term is found then select it in dropdown
+          selectOption.selected = (searchTerms.findIndex(term => term === option) >= 0); // when filter search term is found then select it in dropdown
         }
-        selectOptionsFragment.appendChild(selectOptionElm);
+        dataCollection.push(selectOption);
 
         // if there's at least 1 Filter search term found, we will add the "filled" class for styling purposes
         // on a single select, we'll also make sure the single value is not an empty string to consider this being filled
-        if ((selectOptionElm.selected && isMultiSelect) || (selectOptionElm.selected && !isMultiSelect && option !== '')) {
+        if ((selectOption.selected && isMultiSelect) || (selectOption.selected && !isMultiSelect && option !== '')) {
           hasFoundSearchTerm = true;
         }
       }
     } else {
       // array of objects will require a label/value pair unless a customStructure is passed
       collection.forEach((option: SelectOption) => {
-        if (!option || (option[labelName] === undefined && option.labelKey === undefined)) {
+        if (option === undefined || (typeof option === 'object' && option[labelName] === undefined && option.labelKey === undefined)) {
           throw new Error(`[Slickgrid-Universal] Select Filter/Editor collection with value/label (or value/labelKey when using Locale) is required to populate the Select list, for example:: { filter: model: Filters.multipleSelect, collection: [ { value: '1', label: 'One' } ]')`);
         }
-        const selectOptionElm = document.createElement('option');
+
         const labelKey = (option.labelKey || option[labelName]) as string;
         const labelText = ((option.labelKey || (enableTranslateLabel && translaterService)) && labelKey && isTranslateEnabled) ? translaterService?.translate(labelKey || ' ') : labelKey;
         let prefixText = option[labelPrefixName] || '';
@@ -87,6 +82,7 @@ export function buildSelectEditorOrFilterDomElement(type: 'editor' | 'filter', c
         // add to a temp array for joining purpose and filter out empty text
         const tmpOptionArray = [prefixText, (typeof labelText === 'string' || typeof labelText === 'number') ? labelText.toString() : labelText, suffixText].filter((text) => text);
         let optionText = tmpOptionArray.join(separatorBetweenLabels);
+        const selectOption: OptionRowData = { text: '', value: '' };
 
         // if user specifically wants to render html text, he needs to opt-in else it will stripped out by default
         // also, the 3rd party lib will saninitze any html code unless it's encoded, so we'll do that
@@ -95,10 +91,8 @@ export function buildSelectEditorOrFilterDomElement(type: 'editor' | 'filter', c
           // for the remaining allowed tags we'll permit all attributes
           const sanitizedText = sanitizeTextByAvailableSanitizer(gridOptions, optionText, sanitizedOptions);
           optionText = htmlEncode(sanitizedText);
-          selectOptionElm.innerHTML = optionText;
-        } else {
-          selectOptionElm.textContent = optionText;
         }
+        selectOption.text = optionText;
 
         // html text of each select option
         let selectOptionValue = option[valueName];
@@ -107,25 +101,21 @@ export function buildSelectEditorOrFilterDomElement(type: 'editor' | 'filter', c
         }
 
         if (type === 'filter' && Array.isArray(searchTerms)) {
-          selectOptionElm.selected = (searchTerms.findIndex(term => `${term}` === `${option[valueName]}`) >= 0); // when filter search term is found then select it in dropdown
+          selectOption.selected = (searchTerms.findIndex(term => `${term}` === `${option[valueName]}`) >= 0); // when filter search term is found then select it in dropdown
         }
-        selectOptionElm.value = `${selectOptionValue}`;
-        selectOptionElm.label = `${selectOptionLabel ?? ''}`;
-        selectOptionsFragment.appendChild(selectOptionElm);
+        selectOption.value = `${selectOptionValue ?? ''}`; // we'll convert every value to string for better equality checks
+        dataCollection.push(selectOption);
 
         // if there's a search term, we will add the "filled" class for styling purposes
         // on a single select, we'll also make sure the single value is not an empty string to consider this being filled
-        if ((selectOptionElm.selected && isMultiSelect) || (selectOptionElm.selected && !isMultiSelect && option[valueName] !== '')) {
+        if ((selectOption.selected && isMultiSelect) || (selectOption.selected && !isMultiSelect && option[valueName] !== '')) {
           hasFoundSearchTerm = true;
         }
       });
     }
   }
 
-  // last step append the HTML fragment to the final select DOM element
-  selectElement.appendChild(selectOptionsFragment);
-
-  return { selectElement, hasFoundSearchTerm };
+  return { selectElement, dataCollection, hasFoundSearchTerm };
 }
 
 /** calculate available space for each side of the DOM element */
@@ -270,8 +260,8 @@ export function findWidthOrDefault(inputWidth?: number | string, defaultValue = 
 }
 
 /**
- * HTML encode using jQuery with a <div>
- * Create a in-memory div, set it's inner text(which jQuery automatically encodes)
+ * HTML encode using a plain <div>
+ * Create a in-memory div, set it's inner text(which a div can encode)
  * then grab the encoded contents back out.  The div never exists on the page.
  */
 export function htmlEncode(inputValue: string): string {

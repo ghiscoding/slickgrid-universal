@@ -43,6 +43,7 @@
   "NOT_CONTAINS": "Not contains",
   "NOT_EQUAL_TO": "Not equal to",
   "NOT_IN_COLLECTION_SEPERATED_BY_COMMA": "Search items not in a collection, must be separated by a comma (a,b)",
+  "NO_MATCHES_FOUND": "No matches found",
   "OF": "of",
   "OK": "OK",
   "PAGE": "Page",

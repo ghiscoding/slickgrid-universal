@@ -652,7 +652,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .find('span:nth(2)')
       .contains('Task 500');
 
-    cy.get('[name=editor-prerequisites].ms-drop ul > li:nth(0)')
+    cy.get('[data-name=editor-prerequisites].ms-drop ul > li:nth(0)')
       .click();
 
     cy.get('.ms-ok-button')
@@ -681,6 +681,9 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
   it('should open the "Prerequisites" Filter then choose "Task 3", "Task 4" and "Task 8" from the list and expect to see 2 rows of data in the grid', () => {
     cy.get('div.ms-filter.filter-prerequisites')
       .trigger('click');
+
+    cy.get('.ms-drop > ul:visible')
+      .scrollTo('bottom');
 
     cy.get('.ms-drop')
       .contains(/^Task 3$/) // use regexp to avoid finding first Task 3 which is in fact Task 399

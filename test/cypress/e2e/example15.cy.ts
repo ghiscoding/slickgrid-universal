@@ -631,12 +631,12 @@ describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
       const expectedOptions = ['', 'male', 'female'];
       cy.get('.ms-filter.filter-gender:visible').click();
 
-      cy.get('[name="filter-gender"].ms-drop')
+      cy.get('[data-name="filter-gender"].ms-drop')
         .find('li:visible')
         .should('have.length', 3);
 
-      cy.get('[name="filter-gender"].ms-drop')
-        .find('li:visible')
+      cy.get('[data-name="filter-gender"].ms-drop')
+        .find('li:visible span')
         .each(($li, index) => expect($li.text()).to.eq(expectedOptions[index]));
 
       cy.get('.grid15')
@@ -645,7 +645,7 @@ describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
     });
 
     it('should select "male" Gender and expect only 4 rows left in the grid', () => {
-      cy.get('[name="filter-gender"].ms-drop')
+      cy.get('[data-name="filter-gender"].ms-drop')
         .find('li:visible:nth(1)')
         .contains('male')
         .click();
@@ -662,12 +662,12 @@ describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
         .should('contain', 'male')
         .click();
 
-      cy.get('[name="editor-gender"].ms-drop')
+      cy.get('[data-name="editor-gender"].ms-drop')
         .find('li:visible')
         .should('have.length', 2);
 
-      cy.get('[name="editor-gender"].ms-drop')
-        .find('li:visible')
+      cy.get('[data-name="editor-gender"].ms-drop')
+        .find('li:visible span')
         .each(($li, index) => expect($li.text()).to.eq(expectedOptions[index]));
     });
 
@@ -684,17 +684,17 @@ describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
         .should('contain', 'male')
         .click();
 
-      cy.get('[name="editor-gender"].ms-drop')
+      cy.get('[data-name="editor-gender"].ms-drop')
         .find('li:visible')
         .should('have.length', 3);
 
-      cy.get('[name="editor-gender"].ms-drop')
-        .find('li:visible')
+      cy.get('[data-name="editor-gender"].ms-drop')
+        .find('li:visible span')
         .each(($li, index) => expect($li.text()).to.eq(expectedOptions[index]));
     });
 
     it('should be able to change the Gender editor on the first row to the new option "other"', () => {
-      cy.get('[name="editor-gender"].ms-drop')
+      cy.get('[data-name="editor-gender"].ms-drop')
         .find('li:visible:nth(2)')
         .contains('other')
         .click();
@@ -704,17 +704,17 @@ describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
       const expectedOptions = ['', 'male', 'female', 'other'];
       cy.get('.ms-filter.filter-gender:visible').click();
 
-      cy.get('[name="filter-gender"].ms-drop')
+      cy.get('[data-name="filter-gender"].ms-drop')
         .find('li:visible')
         .should('have.length', 4);
 
-      cy.get('[name="filter-gender"].ms-drop')
-        .find('li:visible')
+      cy.get('[data-name="filter-gender"].ms-drop')
+        .find('li:visible span')
         .each(($li, index) => expect($li.text()).to.eq(expectedOptions[index]));
     });
 
     it('should choose "other" form the Gender filter and expect 1 row left in the grid', () => {
-      cy.get('[name="filter-gender"].ms-drop')
+      cy.get('[data-name="filter-gender"].ms-drop')
         .find('li:visible:nth(3)')
         .contains('other')
         .click();
@@ -752,7 +752,7 @@ describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
     it('should change Gender filter to "female" and still expect previous sort (before the error) to still be in query', () => {
       cy.get('.ms-filter.filter-gender:visible').click();
 
-      cy.get('[name="filter-gender"].ms-drop')
+      cy.get('[data-name="filter-gender"].ms-drop')
         .find('li:visible:nth(2)')
         .contains('female')
         .click();

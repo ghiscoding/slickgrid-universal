@@ -1,5 +1,3 @@
-import 'multiple-select-modified';
-
 import * as BackendUtilities from './services/backendUtility.service';
 import * as Observers from './services/observers';
 import * as ServiceUtilities from './services/utilities';
@@ -44,3 +42,7 @@ export { Enums } from './enums/enums.index';
 const Utilities = { ...BackendUtilities, ...Observers, ...ServiceUtilities, ...SortUtilities, ...Utils, deepAssign: Utils.deepMerge };
 export { Utilities };
 export { SlickgridConfig } from './slickgrid-config';
+
+// re-export MultipleSelectOption to avoid breaking previous code implementation
+export { MultipleSelectOption } from 'multiple-select-vanilla';
+
