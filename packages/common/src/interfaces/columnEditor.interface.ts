@@ -137,10 +137,7 @@ export interface ColumnEditor {
 
   /**
    * Title attribute that can be used in some Editors as tooltip (usually the "input" editors).
-   *
-   * To use this as a Tooltip, Slickgrid-Universal doesn't (and never will) use any 3rd party lib to display a real Tooltip,
-   * for that you can use any jQuery 3rd party lib, for example tipsy (we use it in our own project and it works)
-   * https://www.npmjs.com/package/jquery.tipsy
+   * To use this as a Tooltip, you can use "@slickgrid-universal/slick-custom-tooltip" plugin.
    */
   title?: string;
 

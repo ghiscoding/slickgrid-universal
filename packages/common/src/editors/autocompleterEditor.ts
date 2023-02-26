@@ -54,7 +54,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   protected _lastTriggeredByClearInput = false;
   protected _locales: Locale;
 
-  /** The JQuery DOM element */
+  /** The Editor DOM element */
   protected _editorInputGroupElm!: HTMLDivElement;
   protected _inputElm!: HTMLInputElement;
   protected _closeButtonGroupElm!: HTMLSpanElement;
