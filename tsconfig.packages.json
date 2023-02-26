@@ -1,0 +1,22 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/binding" },
+    { "path": "./packages/common" },
+    { "path": "./packages/composite-editor-component" },
+    { "path": "./packages/custom-footer-component" },
+    { "path": "./packages/custom-tooltip-plugin" },
+    { "path": "./packages/empty-warning-component" },
+    { "path": "./packages/event-pub-sub" },
+    { "path": "./packages/excel-export" },
+    { "path": "./packages/graphql" },
+    { "path": "./packages/odata" },
+    { "path": "./packages/pagination-component" },
+    { "path": "./packages/row-detail-view-plugin" },
+    { "path": "./packages/rxjs-observable" },
+    { "path": "./packages/text-export" },
+    { "path": "./packages/utils" },
+    { "path": "./packages/vanilla-bundle" },
+    { "path": "./packages/vanilla-force-bundle" }
+  ]
+}

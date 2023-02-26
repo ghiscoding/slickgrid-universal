@@ -157,6 +157,9 @@ export class SliderEditor implements Editor {
   }
 
   focus() {
+    // always set focus on grid first so that plugin to copy range (SlickCellExternalCopyManager) would still be able to paste at that position
+    this.grid.focus();
+
     if (this._inputElm) {
       this._inputElm.focus();
     }

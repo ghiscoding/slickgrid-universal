@@ -3,6 +3,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { EsbuildPlugin } = require('esbuild-loader');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
@@ -32,7 +33,7 @@ module.exports = ({ production } = {}) => ({
     host: 'localhost',
     // open: true,
   },
-  devtool: production ? false : 'eval-cheap-module-source-map',
+  devtool: production ? false : 'source-map',
   output: {
     path: production ? outDirProd : outDirLocal,
     publicPath: baseUrl,
@@ -79,6 +80,7 @@ module.exports = ({ production } = {}) => ({
     poll: 1000, // Check for changes every second
   },
   plugins: [
+    new TsconfigPathsPlugin({}),
     new ProvidePlugin({
       '$': 'jquery',
       'jQuery': 'jquery',

@@ -42,7 +42,7 @@ jobs:
       - run: pnpm --version
 
       - name: TSC Build (esm)
-        run: pnpm build
+        run: pnpm build:esm:styles
 
       - name: Website Prod Build (GitHub demo site)
         run: pnpm build:demo

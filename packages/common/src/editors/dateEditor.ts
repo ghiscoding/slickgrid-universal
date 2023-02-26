@@ -240,9 +240,11 @@ export class DateEditor implements Editor {
   }
 
   focus() {
-    if (this._inputElm?.focus) {
-      this._inputElm.focus();
-    }
+    // always set focus on grid first so that plugin to copy range (SlickCellExternalCopyManager) would still be able to paste at that position
+    this.grid.focus();
+
+    this.show();
+    this._inputElm?.focus();
     if (this._inputWithDataElm?.focus) {
       this._inputWithDataElm.focus();
       this._inputWithDataElm.select();

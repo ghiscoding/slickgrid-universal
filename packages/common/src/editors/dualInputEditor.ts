@@ -82,7 +82,7 @@ export class DualInputEditor implements Editor {
   }
 
   /** Getter for the Editor DOM Element */
-  get editorDomElement(): { leftInput: HTMLInputElement, rightInput: HTMLInputElement } {
+  get editorDomElement(): { leftInput: HTMLInputElement, rightInput: HTMLInputElement; } {
     return { leftInput: this._leftInput, rightInput: this._rightInput };
   }
 
@@ -232,7 +232,8 @@ export class DualInputEditor implements Editor {
   }
 
   focus() {
-    // do nothing since we have 2 inputs and we might focus on left/right depending on which is invalid and/or new
+    // always set focus on grid first, then do nothing since we have 2 inputs and we might focus on left/right depending on which is invalid and/or new
+    this.grid.focus();
   }
 
   show() {
@@ -243,7 +244,7 @@ export class DualInputEditor implements Editor {
     }
   }
 
-  getValues(): { [fieldName: string]: string | number } {
+  getValues(): { [fieldName: string]: string | number; } {
     const obj = {};
     const leftInputValue = this._leftInput.value;
     const rightInputValue = this._rightInput.value;
@@ -382,7 +383,7 @@ export class DualInputEditor implements Editor {
     }
   }
 
-  serializeValue(): { [fieldName: string]: any } {
+  serializeValue(): { [fieldName: string]: any; } {
     const obj = {};
     const leftValue = this.serializeValueByPosition('leftInput');
     const rightValue = this.serializeValueByPosition('rightInput');
@@ -435,7 +436,7 @@ export class DualInputEditor implements Editor {
     return '1';
   }
 
-  validate(_targetElm?: any, inputValidation?: { position: 'leftInput' | 'rightInput', inputValue: any }): EditorValidationResult {
+  validate(_targetElm?: any, inputValidation?: { position: 'leftInput' | 'rightInput', inputValue: any; }): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.args.compositeEditorOptions) {
       this.applyInputUsabilityState();

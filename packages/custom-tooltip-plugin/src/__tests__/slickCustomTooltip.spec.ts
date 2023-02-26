@@ -268,7 +268,7 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm.classList.contains('arrow-right-align')).toBeFalsy();
   });
 
-  it('should create a tooltip with truncated text when tooltip option has "useRegularTooltip" enabled and the tooltipt text is longer than that of "tooltipTextMaxLength"', () => {
+  it('should create a tooltip with truncated text when tooltip option has "useRegularTooltip" enabled and the tooltip text is longer than that of "tooltipTextMaxLength"', () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
     cellNode.setAttribute('title', 'some very extra long tooltip text sentence');
@@ -319,7 +319,7 @@ describe('SlickCustomTooltip plugin', () => {
     expect(hideColumnSpy).toHaveBeenCalled();
   });
 
-  it('should create a tooltip as regular tooltip with truncated text when tooltip option has "useRegularTooltip" enabled and the tooltipt text is longer than that of "tooltipTextMaxLength"', () => {
+  it('should create a tooltip as regular tooltip with truncated text when tooltip option has "useRegularTooltip" enabled and the tooltip text is longer than that of "tooltipTextMaxLength"', () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
     cellNode.textContent = 'some very extra long tooltip text sentence';
@@ -330,7 +330,6 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
-    const hideColumnSpy = jest.spyOn(plugin, 'hideTooltip');
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, tooltipTextMaxLength: 23 });
@@ -341,6 +340,26 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm.textContent).toBe('some very extra long...');
     expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
     expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
+  });
+
+  it('should NOT create a tooltip as regular tooltip with truncated text when tooltip option has "useRegularTooltip" enabled but the mouse over is not a slick-cell cell type', () => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell l2 r2';
+    cellNode.textContent = 'some very extra long tooltip text sentence';
+    cellNode.setAttribute('title', 'tooltip text');
+    Object.defineProperty(cellNode, 'scrollWidth', { writable: true, configurable: true, value: 400 });
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: true, tooltipTextMaxLength: 23 });
+    gridStub.onHeaderMouseEnter.notify({ column: mockColumns[0], grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeFalsy();
   });
 
   it('should create a tooltip with only the tooltip formatter output when tooltip option has "useRegularTooltip" & "useRegularTooltipFromFormatterOnly" enabled and column definition has a regular formatter with a "title" attribute filled', () => {

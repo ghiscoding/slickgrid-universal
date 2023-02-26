@@ -1,5 +1,5 @@
 {
-  "extends": "../tsconfig.base.json",
+  "extends": "../../tsconfig.base.json",
   "compileOnSave": false,
   "compilerOptions": {
     "rootDir": "src",
@@ -20,5 +20,8 @@
   "include": [
     "src/**/*.ts",
     "typings/**/*.ts"
+  ],
+  "references": [
+    { "path": "../common" }
   ]
 }

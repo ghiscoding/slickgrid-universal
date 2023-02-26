@@ -25,12 +25,14 @@ build({
   format: 'iife',
   globalName: 'Slicker',
   target: 'es2018',
-  external: ['jQuery'],
   legalComments: 'external', // Move all legal comments to a .LEGAL.txt file
   mainFields: ['module', 'main'],
-  sourcemap: true,
+  sourcemap: false,
   sourcesContent: false,
   logLevel: 'error',
   outfile: 'dist/bundle/slickgrid-vanilla-bundle.js',
-  plugins: [excludeVendorFromSourceMapPlugin({ filter: /node_modules/ })]
+  plugins: [
+    // we don't need sourcemap in Salesforce since it can't be used from inside static resouce (zip)
+    excludeVendorFromSourceMapPlugin({ filter: /node_modules/ })
+  ]
 });

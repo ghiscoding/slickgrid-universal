@@ -1,0 +1,55 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "target": "es2018",
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "types": [
+      "jest",
+      "jest-extended",
+      "node"
+    ],
+    "typeRoots": [
+      "node_modules/@types",
+    ],
+    "pretty": true,
+    "importHelpers": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noImplicitReturns": true,
+    "rootDir": ".",
+    "sourceMap": true,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "noEmitOnError": true,
+    "skipLibCheck": true,
+    "preserveConstEnums": true,
+    "stripInternal": true,
+    "strict": true
+  },
+  "paths": {
+    "binding" : ["packages/binding/src"],
+    "common": ["packages/common/src"],
+    "composite-editor-component" : ["packages/composite-editor-component/src"],
+    "custom-footer-component" : ["packages/custom-footer-component/src"],
+    "custom-tooltip-plugin" : ["packages/custom-tooltip-plugin/src"],
+    "empty-warning-component" : ["packages/empty-warning-component/src"],
+    "event-pub-sub" : ["packages/event-pub-sub/src"],
+    "excel-export" : ["packages/excel-export/src"],
+    "graphql" : ["packages/graphql/src"],
+    "odata" : ["packages/odata/src"],
+    "pagination-component" : ["packages/pagination-component/src"],
+    "row-detail-view-plugin" : ["packages/row-detail-view-plugin/src"],
+    "rxjs-observable" : ["packages/rxjs-observable/src"],
+    "text-export" : ["packages/text-export/src"],
+    "utils" : ["packages/utils/src"],
+    "vanilla-bundle" : ["packages/vanilla-bundle/src"],
+    "vanilla-force-bundle": ["packages/vanilla-force-bundle/src"],
+  }
+}

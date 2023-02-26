@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/common",
-  "version": "2.5.0",
+  "version": "2.6.1",
   "description": "SlickGrid-Universal Common Code",
   "main": "dist/commonjs/index.js",
   "module": "dist/esm/index.js",
@@ -99,7 +99,7 @@
     "postcss": "^8.4.21",
     "postcss-cli": "^10.1.0",
     "rimraf": "^3.0.2",
-    "sass": "^1.58.1"
+    "sass": "^1.58.3"
   },
   "engines": {
     "node": ">=14.17.0",
