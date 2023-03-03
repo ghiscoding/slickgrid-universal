@@ -279,7 +279,6 @@ export class SlickDraggableGrouping {
    * @param trigger - callback to execute when triggering a column grouping
    */
   setupColumnReorder(grid: SlickGrid, headers: any, _headerColumnWidthDiff: any, setColumns: (columns: Column[]) => void, setupColumnResize: () => void, columns: Column[], getColumnIndex: (columnId: string) => number, uid: string, trigger: (slickEvent: SlickEvent, data?: any) => void) {
-    let reorderedColumns = grid.getColumns();
     const dropzoneElm = grid.getPreHeaderPanel();
     const draggablePlaceholderElm = dropzoneElm.querySelector<HTMLDivElement>('.slick-draggable-dropzone-placeholder');
     const groupTogglerElm = dropzoneElm.querySelector<HTMLDivElement>('.slick-group-toggle-all');
@@ -352,6 +351,7 @@ export class SlickDraggableGrouping {
         }
 
         const finalReorderedColumns: Column[] = [];
+        const reorderedColumns = grid.getColumns();
         for (const reorderedId of reorderedIds) {
           finalReorderedColumns.push(reorderedColumns[getColumnIndex(reorderedId)]);
         }
@@ -359,7 +359,6 @@ export class SlickDraggableGrouping {
         trigger(grid.onColumnsReordered, { grid });
         e.stopPropagation();
         setupColumnResize();
-        reorderedColumns = finalReorderedColumns;
       }
     } as SortableOptions;
 
