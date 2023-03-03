@@ -35,7 +35,7 @@ importers:
       moment-mini: ^2.29.4
       npm-run-all2: ^6.0.4
       pnpm: ^7.28.0
-      rimraf: ^3.0.2
+      rimraf: ^4.2.0
       rxjs: ^7.5.7
       servor: ^4.0.2
       slickgrid: ^3.0.4
@@ -70,7 +70,7 @@ importers:
       moment-mini: 2.29.4
       npm-run-all2: 6.0.4
       pnpm: 7.28.0
-      rimraf: 3.0.2
+      rimraf: 4.2.0
       rxjs: 7.5.7
       servor: 4.0.2
       slickgrid: 3.0.4
@@ -175,14 +175,12 @@ importers:
       cross-env: ^7.0.3
       dompurify: ^3.0.1
       npm-run-all2: ^6.0.4
-      rimraf: ^3.0.2
     dependencies:
       dompurify: 3.0.1
     devDependencies:
       '@types/dompurify': 2.4.0
       cross-env: 7.0.3
       npm-run-all2: 6.0.4
-      rimraf: 3.0.2
 
   packages/common:
     specifiers:
@@ -205,7 +203,6 @@ importers:
       npm-run-all2: ^6.0.4
       postcss: ^8.4.21
       postcss-cli: ^10.1.0
-      rimraf: ^3.0.2
       sass: ^1.58.3
       slickgrid: ^3.0.4
       sortablejs: ^1.15.0
@@ -234,7 +231,6 @@ importers:
       npm-run-all2: 6.0.4
       postcss: 8.4.21
       postcss-cli: 10.1.0_postcss@8.4.21
-      rimraf: 3.0.2
       sass: 1.58.3
 
   packages/composite-editor-component:
@@ -243,14 +239,12 @@ importers:
       '@slickgrid-universal/utils': workspace:~
       cross-env: ^7.0.3
       npm-run-all2: ^6.0.4
-      rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
       '@slickgrid-universal/utils': link:../utils
     devDependencies:
       cross-env: 7.0.3
       npm-run-all2: 6.0.4
-      rimraf: 3.0.2
 
   packages/custom-footer-component:
     specifiers:
@@ -260,7 +254,6 @@ importers:
       cross-env: ^7.0.3
       moment-mini: ^2.29.4
       npm-run-all2: ^6.0.4
-      rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/binding': link:../binding
       '@slickgrid-universal/common': link:../common
@@ -269,7 +262,6 @@ importers:
       '@slickgrid-universal/event-pub-sub': link:../event-pub-sub
       cross-env: 7.0.3
       npm-run-all2: 6.0.4
-      rimraf: 3.0.2
 
   packages/custom-tooltip-plugin:
     specifiers:
@@ -278,7 +270,6 @@ importers:
       cross-env: ^7.0.3
       dompurify: ^3.0.1
       npm-run-all2: ^6.0.4
-      rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
       dompurify: 3.0.1
@@ -286,33 +277,28 @@ importers:
       '@types/dompurify': 2.4.0
       cross-env: 7.0.3
       npm-run-all2: 6.0.4
-      rimraf: 3.0.2
 
   packages/empty-warning-component:
     specifiers:
       '@slickgrid-universal/common': workspace:~
       cross-env: ^7.0.3
       npm-run-all2: ^6.0.4
-      rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
     devDependencies:
       cross-env: 7.0.3
       npm-run-all2: 6.0.4
-      rimraf: 3.0.2
 
   packages/event-pub-sub:
     specifiers:
       '@slickgrid-universal/utils': workspace:~
       cross-env: ^7.0.3
       npm-run-all2: ^6.0.4
-      rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/utils': link:../utils
     devDependencies:
       cross-env: 7.0.3
       npm-run-all2: 6.0.4
-      rimraf: 3.0.2
 
   packages/excel-export:
     specifiers:
@@ -323,7 +309,6 @@ importers:
       excel-builder-webpacker: ^2.1.8
       moment-mini: ^2.29.4
       npm-run-all2: ^6.0.4
-      rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
       '@slickgrid-universal/utils': link:../utils
@@ -333,7 +318,6 @@ importers:
       '@slickgrid-universal/event-pub-sub': link:../event-pub-sub
       cross-env: 7.0.3
       npm-run-all2: 6.0.4
-      rimraf: 3.0.2
 
   packages/graphql:
     specifiers:
@@ -341,14 +325,12 @@ importers:
       cross-env: ^7.0.3
       moment-mini: ^2.29.4
       npm-run-all2: ^6.0.4
-      rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
     devDependencies:
       cross-env: 7.0.3
       moment-mini: 2.29.4
       npm-run-all2: 6.0.4
-      rimraf: 3.0.2
 
   packages/odata:
     specifiers:
@@ -356,14 +338,12 @@ importers:
       '@slickgrid-universal/utils': workspace:~
       cross-env: ^7.0.3
       npm-run-all2: ^6.0.4
-      rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
       '@slickgrid-universal/utils': link:../utils
     devDependencies:
       cross-env: 7.0.3
       npm-run-all2: 6.0.4
-      rimraf: 3.0.2
 
   packages/pagination-component:
     specifiers:
@@ -372,7 +352,6 @@ importers:
       '@slickgrid-universal/event-pub-sub': workspace:~
       cross-env: ^7.0.3
       npm-run-all2: ^6.0.4
-      rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/binding': link:../binding
       '@slickgrid-universal/common': link:../common
@@ -380,7 +359,6 @@ importers:
       '@slickgrid-universal/event-pub-sub': link:../event-pub-sub
       cross-env: 7.0.3
       npm-run-all2: 6.0.4
-      rimraf: 3.0.2
 
   packages/row-detail-view-plugin:
     specifiers:
@@ -388,21 +366,18 @@ importers:
       '@slickgrid-universal/utils': workspace:~
       cross-env: ^7.0.3
       npm-run-all2: ^6.0.4
-      rimraf: ^3.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
       '@slickgrid-universal/utils': link:../utils
     devDependencies:
       cross-env: 7.0.3
       npm-run-all2: 6.0.4
-      rimraf: 3.0.2
 
   packages/rxjs-observable:
     specifiers:
       '@slickgrid-universal/common': workspace:~
       cross-env: ^7.0.3
       npm-run-all2: ^6.0.4
-      rimraf: ^3.0.2
       rxjs: '>=7.5.0'
     dependencies:
       '@slickgrid-universal/common': link:../common
@@ -410,7 +385,6 @@ importers:
     devDependencies:
       cross-env: 7.0.3
       npm-run-all2: 6.0.4
-      rimraf: 3.0.2
 
   packages/text-export:
     specifiers:
@@ -419,7 +393,6 @@ importers:
       '@types/text-encoding-utf-8': ^1.0.2
       cross-env: ^7.0.3
       npm-run-all2: ^6.0.4
-      rimraf: ^3.0.2
       text-encoding-utf-8: ^1.0.2
     dependencies:
       '@slickgrid-universal/common': link:../common
@@ -429,19 +402,16 @@ importers:
       '@types/text-encoding-utf-8': 1.0.2
       cross-env: 7.0.3
       npm-run-all2: 6.0.4
-      rimraf: 3.0.2
 
   packages/utils:
     specifiers:
       '@types/jquery': ^3.5.16
       cross-env: ^7.0.3
       npm-run-all2: ^6.0.4
-      rimraf: ^3.0.2
     devDependencies:
       '@types/jquery': 3.5.16
       cross-env: 7.0.3
       npm-run-all2: 6.0.4
-      rimraf: 3.0.2
 
   packages/vanilla-bundle:
     specifiers:
@@ -460,7 +430,6 @@ importers:
       flatpickr: ^4.6.13
       jquery: ^3.6.3
       npm-run-all2: ^6.0.4
-      rimraf: ^3.0.2
       slickgrid: ^3.0.4
       sortablejs: ^1.15.0
       whatwg-fetch: ^3.6.2
@@ -484,7 +453,6 @@ importers:
       '@types/sortablejs': 1.15.0
       cross-env: 7.0.3
       npm-run-all2: 6.0.4
-      rimraf: 3.0.2
 
   packages/vanilla-force-bundle:
     specifiers:
@@ -509,7 +477,6 @@ importers:
       html-loader: ^4.2.0
       jquery: ^3.6.3
       npm-run-all2: ^6.0.4
-      rimraf: ^3.0.2
       webpack: ^5.75.0
       whatwg-fetch: ^3.6.2
       yargs: ^17.7.1
@@ -537,7 +504,6 @@ importers:
       esbuild-loader: 3.0.1_webpack@5.75.0
       html-loader: 4.2.0_webpack@5.75.0
       npm-run-all2: 6.0.4
-      rimraf: 3.0.2
       webpack: 5.75.0_esbuild@0.17.10
       yargs: 17.7.1
 
@@ -1994,7 +1960,7 @@ packages:
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dependencies:
       '@npmcli/promise-spawn': 6.0.1
-      lru-cache: 7.12.0
+      lru-cache: 7.18.1
       mkdirp: 1.0.4
       npm-pick-manifest: 8.0.1
       proc-log: 3.0.0
@@ -3554,7 +3520,7 @@ packages:
       fs-minipass: 2.1.0
       glob: 8.0.3
       infer-owner: 1.0.4
-      lru-cache: 7.12.0
+      lru-cache: 7.18.1
       minipass: 3.3.4
       minipass-collect: 1.0.2
       minipass-flush: 1.0.5
@@ -3577,8 +3543,8 @@ packages:
       '@npmcli/fs': 3.1.0
       fs-minipass: 3.0.0
       glob: 8.0.3
-      lru-cache: 7.12.0
-      minipass: 4.0.0
+      lru-cache: 7.18.1
+      minipass: 4.2.4
       minipass-collect: 1.0.2
       minipass-flush: 1.0.5
       minipass-pipeline: 1.2.4
@@ -4868,7 +4834,7 @@ packages:
       esbuild: 0.17.6
       get-tsconfig: 4.4.0
       loader-utils: 2.0.4
-      webpack: 5.75.0_webpack-cli@5.0.1
+      webpack: 5.75.0_esbuild@0.17.10
       webpack-sources: 1.4.3
     dev: true
 
@@ -5604,7 +5570,7 @@ packages:
     resolution: {integrity: sha512-EUojgQaSPy6sxcqcZgQv6TVF6jiKvurji3AxhAivs/Ep4O1UpS8TusaxpybfFHZ2skRhLqzk6WR8nqNYIMMDeA==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dependencies:
-      minipass: 4.0.0
+      minipass: 4.2.4
     dev: true
 
   /fs-monkey/1.0.3:
@@ -5832,6 +5798,16 @@ packages:
       once: 1.4.0
     dev: true
 
+  /glob/9.2.1:
+    resolution: {integrity: sha512-Pxxgq3W0HyA3XUvSXcFhRSs+43Jsx0ddxcFrbjxNGkL2Ak5BAUBxLqI5G6ADDeCHLfzzXFhe0b1yYcctGmytMA==}
+    engines: {node: '>=16 || 14 >=14.17'}
+    dependencies:
+      fs.realpath: 1.0.0
+      minimatch: 7.4.2
+      minipass: 4.2.4
+      path-scurry: 1.6.1
+    dev: true
+
   /global-dirs/3.0.0:
     resolution: {integrity: sha512-v8ho2DS5RiCjftj1nD9NmnfaOzTdud7RRnVd9kFNOjqZbISlx5DQ+OrTkywgd0dIt7oFCvKetZSHoHcP3sDdiA==}
     engines: {node: '>=10'}
@@ -5996,7 +5972,7 @@ packages:
     resolution: {integrity: sha512-r0EI+HBMcXadMrugk0GCQ+6BQV39PiWAZVfq7oIckeGiN7sjRGyQxPdft3nQekFTCQbYxLBH+/axZMeH8UX6+w==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dependencies:
-      lru-cache: 7.12.0
+      lru-cache: 7.18.1
     dev: true
 
   /hpack.js/2.1.6:
@@ -6031,7 +6007,7 @@ packages:
     dependencies:
       html-minifier-terser: 7.0.0
       parse5: 7.0.0
-      webpack: 5.75.0_webpack-cli@5.0.1
+      webpack: 5.75.0_esbuild@0.17.10
     dev: true
 
   /html-minifier-terser/6.1.0:
@@ -7663,8 +7639,8 @@ packages:
       yallist: 4.0.0
     dev: true
 
-  /lru-cache/7.12.0:
-    resolution: {integrity: sha512-OIP3DwzRZDfLg9B9VP/huWBlpvbkmbfiBy8xmsXp4RPmE4A3MhwNozc5ZJ3fWnSg8fDcdlE/neRTPG2ycEKliw==}
+  /lru-cache/7.18.1:
+    resolution: {integrity: sha512-8/HcIENyQnfUTCDizRu9rrDyG6XG/21M4X7/YEGZeD76ZJilFPAUVb/2zysFf7VVO1LEjCDFyHp8pMMvozIrvg==}
     engines: {node: '>=12'}
     dev: true
 
@@ -7697,7 +7673,7 @@ packages:
       http-proxy-agent: 5.0.0
       https-proxy-agent: 5.0.1
       is-lambda: 1.0.1
-      lru-cache: 7.12.0
+      lru-cache: 7.18.1
       minipass: 3.3.4
       minipass-collect: 1.0.2
       minipass-fetch: 2.1.0
@@ -7722,7 +7698,7 @@ packages:
       http-proxy-agent: 5.0.0
       https-proxy-agent: 5.0.1
       is-lambda: 1.0.1
-      lru-cache: 7.12.0
+      lru-cache: 7.18.1
       minipass: 3.3.4
       minipass-collect: 1.0.2
       minipass-fetch: 2.1.0
@@ -7747,8 +7723,8 @@ packages:
       http-proxy-agent: 5.0.0
       https-proxy-agent: 5.0.1
       is-lambda: 1.0.1
-      lru-cache: 7.12.0
-      minipass: 4.0.0
+      lru-cache: 7.18.1
+      minipass: 4.2.4
       minipass-fetch: 3.0.0
       minipass-flush: 1.0.5
       minipass-pipeline: 1.2.4
@@ -7994,11 +7970,9 @@ packages:
       yallist: 4.0.0
     dev: true
 
-  /minipass/4.0.0:
-    resolution: {integrity: sha512-g2Uuh2jEKoht+zvO6vJqXmYpflPqzRBT+Th2h01DKh5z7wbY/AZ2gCQ78cP70YoHPyFdY30YBV5WxgLOEwOykw==}
+  /minipass/4.2.4:
+    resolution: {integrity: sha512-lwycX3cBMTvcejsHITUgYj6Gy6A7Nh4Q6h9NP4sTHY1ccJlC7yKzDmiShEHsJ16Jf1nKGDEaiHxiltsJEvk0nQ==}
     engines: {node: '>=8'}
-    dependencies:
-      yallist: 4.0.0
     dev: true
 
   /minizlib/2.1.2:
@@ -8268,7 +8242,7 @@ packages:
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dependencies:
       make-fetch-happen: 11.0.0
-      minipass: 4.0.0
+      minipass: 4.2.4
       minipass-fetch: 3.0.0
       minipass-json-stream: 1.0.1
       minizlib: 2.1.2
@@ -8562,7 +8536,7 @@ packages:
       '@npmcli/run-script': 6.0.0
       cacache: 17.0.4
       fs-minipass: 3.0.0
-      minipass: 4.0.0
+      minipass: 4.2.4
       npm-package-arg: 10.1.0
       npm-packlist: 7.0.4
       npm-pick-manifest: 8.0.1
@@ -8686,6 +8660,14 @@ packages:
 
   /path-parse/1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
+    dev: true
+
+  /path-scurry/1.6.1:
+    resolution: {integrity: sha512-OW+5s+7cw6253Q4E+8qQ/u1fVvcJQCJo/VFD8pje+dbJCF1n5ZRMV2AEHbGp+5Q7jxQIYJxkHopnj6nzdGeZLA==}
+    engines: {node: '>=14'}
+    dependencies:
+      lru-cache: 7.18.1
+      minipass: 4.2.4
     dev: true
 
   /path-to-regexp/0.1.7:
@@ -9632,6 +9614,14 @@ packages:
       glob: 7.2.3
     dev: true
 
+  /rimraf/4.2.0:
+    resolution: {integrity: sha512-tPt+gLORNVqRCk0NwuJ5SlMEcOGvt4CCU8sUPqgCFtCbnoNCTd9Q6vq7JlBbxQlACiH14OR28y7piA2Bak9Sxw==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dependencies:
+      glob: 9.2.1
+    dev: true
+
   /run-async/2.4.1:
     resolution: {integrity: sha512-tvVnVv01b8c1RrA6Ep7JkStj85Guv/YrMcwqYQnwjsAS2cTmmPGBBjAjpCW7RrSodNSoE2/qg9O4bceNvUuDgQ==}
     engines: {node: '>=0.12.0'}
@@ -10095,7 +10085,7 @@ packages:
     resolution: {integrity: sha512-WVy6di9DlPOeBWEjMScpNipeSX2jIZBGEn5Uuo8Q7aIuFEuDX0pw8RxcOjlD1TWP4obi24ki7m/13+nFpcbXrw==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dependencies:
-      minipass: 4.0.0
+      minipass: 4.2.4
     dev: true
 
   /ssri/9.0.1:
@@ -10305,7 +10295,7 @@ packages:
     dependencies:
       chownr: 2.0.0
       fs-minipass: 2.1.0
-      minipass: 4.0.0
+      minipass: 4.2.4
       minizlib: 2.1.2
       mkdirp: 1.0.4
       yallist: 4.0.0

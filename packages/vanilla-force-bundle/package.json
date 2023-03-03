@@ -40,7 +40,7 @@
     "bundle:web:esbuild": "node esbuild.mjs",
     "prebundle:zip": "pnpm run delete:zip",
     "bundle:zip": "pnpm run zip:dist",
-    "delete:zip": "cross-env rimraf --maxBusyTries=10 dist-bundle-zip",
+    "delete:zip": "rimraf dist-bundle-zip",
     "webpack:prod": "webpack --env production",
     "zip:dist:dev": "cross-env node compress.mjs --output-filename=slickgrid-vanilla-bundle-DEV --output-folder=\"dist-grid-bundle-zip/\"",
     "zip:dist": "cross-env node compress.mjs --output-filename=slickgrid-vanilla-bundle --output-folder=\"dist-grid-bundle-zip/\"",
@@ -87,7 +87,6 @@
     "esbuild-loader": "^3.0.1",
     "html-loader": "^4.2.0",
     "npm-run-all2": "^6.0.4",
-    "rimraf": "^3.0.2",
     "webpack": "^5.75.0",
     "yargs": "^17.7.1"
   }
