@@ -3,8 +3,8 @@ import { build } from 'esbuild';
 
 const excludeVendorFromSourceMapPlugin = ({ filter }) => ({
   name: 'excludeVendorFromSourceMap',
-  setup(build) {
-    build.onLoad({ filter }, args => {
+  setup(esbuild) {
+    esbuild.onLoad({ filter }, args => {
       if (args.path.endsWith('.js')) {
         return {
           contents:
@@ -13,7 +13,7 @@ const excludeVendorFromSourceMapPlugin = ({ filter }) => ({
           loader: 'default',
         };
       }
-    })
+    });
   },
 });
 
