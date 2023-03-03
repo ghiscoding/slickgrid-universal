@@ -58,7 +58,7 @@
   "devDependencies": {
     "@types/fnando__sparkline": "^0.3.4",
     "@types/jquery": "^3.5.16",
-    "@types/node": "^18.14.3",
+    "@types/node": "^18.14.4",
     "@types/webpack": "^5.28.0",
     "clean-webpack-plugin": "4.0.0",
     "copy-webpack-plugin": "^11.0.0",
