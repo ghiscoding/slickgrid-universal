@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.6.2](https://github.com/ghiscoding/slickgrid-universal/compare/v2.6.1...v2.6.2) (2023-03-03)
+
+### Bug Fixes
+
+* draggable grouping shouldn't throw error when dynamically changing columns ([#922](https://github.com/ghiscoding/slickgrid-universal/issues/922)) ([07a39dc](https://github.com/ghiscoding/slickgrid-universal/commit/07a39dc3f3b07cd44a39b790737a57f60d967c7c)) - by @dmitov92
+
 ## [2.6.1](https://github.com/ghiscoding/slickgrid-universal/compare/v2.6.0...v2.6.1) (2023-02-24)
 
 ### Bug Fixes
