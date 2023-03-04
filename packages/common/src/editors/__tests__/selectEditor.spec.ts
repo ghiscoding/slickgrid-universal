@@ -493,11 +493,22 @@ describe('SelectEditor', () => {
       it('should return flat value when using a dot (.) notation for complex object with a collection of option/label pair and using "serializeComplexValueFormat" as "flat"', () => {
         mockColumn.field = 'employee.gender';
         mockItemData = { id: 1, employee: { id: 24, gender: ['male', 'other'] }, isActive: true };
+        (mockColumn.internalColumnEditor as ColumnEditor).serializeComplexValueFormat = 'object';
+        editor = new SelectEditor(editorArguments, true);
+        editor.loadValue(mockItemData);
+        const output = editor.serializeValue();
+
+        expect(output).toEqual([{ label: 'male', value: 'male' }, { label: 'other', value: 'other' }]);
+        expect(editor.currentValues).toEqual([{ label: 'male', value: 'male' }, { label: 'other', value: 'other' }]);
+      });
+
+      it('should return flat value when using a dot (.) notation for complex object with a collection of option/label pair and using "serializeComplexValueFormat" as "flat"', () => {
+        mockColumn.field = 'employee.gender';
+        mockItemData = { id: 1, employee: { id: 24, gender: ['male', 'other'] }, isActive: true };
         (mockColumn.internalColumnEditor as ColumnEditor).serializeComplexValueFormat = 'flat';
         editor = new SelectEditor(editorArguments, true);
         editor.loadValue(mockItemData);
         const output = editor.serializeValue();
-        const currentValue = editor.currentValue;
 
         expect(output).toEqual(['male', 'other']);
         expect(editor.currentValues).toEqual(['male', 'other']);
