@@ -1,5 +1,5 @@
 // import 3rd party lib multiple-select for the tests
-import 'multiple-select-modified';
+import 'multiple-select-vanilla';
 
 import { Filters } from '../filters.index';
 import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
@@ -83,7 +83,7 @@ describe('SelectFilter', () => {
 
     filterArguments.searchTerms = [''];
     filter.init(filterArguments);
-    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=radio]`);
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=radio]`);
 
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
     expect(filterListElm.length).toBe(3);
@@ -96,11 +96,11 @@ describe('SelectFilter', () => {
 
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=radio]`);
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=radio]`);
     filterBtnElm.click();
 
-    filterListElm[1].checked = true;
-    filterListElm[1].dispatchEvent(new CustomEvent('click'));
+    filter.msInstance?.setSelects(['female']);
+    filter.msInstance?.close();
 
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
     expect(filterListElm.length).toBe(2);
@@ -126,8 +126,8 @@ describe('SelectFilter', () => {
     jest.runAllTimers(); // fast-forward timer
 
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
-    const filterOkElm = divContainer.querySelectorAll<HTMLButtonElement>(`[name=filter-gender].ms-drop .ms-ok-button`);
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
+    const filterOkElm = divContainer.querySelectorAll<HTMLButtonElement>(`[data-name=filter-gender].ms-drop .ms-ok-button`);
     const filterSelectAllElm = divContainer.querySelectorAll<HTMLSpanElement>('.filter-gender .ms-select-all label span');
     filterBtnElm.click();
 
@@ -157,7 +157,7 @@ describe('SelectFilter', () => {
     jest.runAllTimers(); // fast-forward timer
 
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
     expect(filterListElm.length).toBe(3);

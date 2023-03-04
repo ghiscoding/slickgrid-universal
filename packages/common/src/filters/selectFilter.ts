@@ -1,4 +1,5 @@
 import { multipleSelect, MultipleSelectInstance, MultipleSelectOption, OptionRowData } from 'multiple-select-vanilla';
+import { isPrimitiveValue } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants';
 import { OperatorString, OperatorType, SearchTerm, } from '../enums/index';
@@ -92,6 +93,10 @@ export class SelectFilter implements Filter {
     return this._isMultipleSelect;
   }
 
+  get msInstance() {
+    return this._msInstance;
+  }
+
   /** Getter for the Filter Operator */
   get operator(): OperatorType | OperatorString {
     return this.columnFilter?.operator ?? this.defaultOperator;
@@ -121,11 +126,11 @@ export class SelectFilter implements Filter {
     }
 
     this.enableTranslateLabel = this.columnFilter?.enableTranslateLabel ?? false;
-    this.labelName = this.customStructure && this.customStructure.label || 'label';
-    this.labelPrefixName = this.customStructure && this.customStructure.labelPrefix || 'labelPrefix';
-    this.labelSuffixName = this.customStructure && this.customStructure.labelSuffix || 'labelSuffix';
-    this.optionLabel = this.customStructure && this.customStructure.optionLabel || 'value';
-    this.valueName = this.customStructure && this.customStructure.value || 'value';
+    this.labelName = this.customStructure?.label ?? 'label';
+    this.labelPrefixName = this.customStructure?.labelPrefix ?? 'labelPrefix';
+    this.labelSuffixName = this.customStructure?.labelSuffix ?? 'labelSuffix';
+    this.optionLabel = this.customStructure?.optionLabel ?? 'value';
+    this.valueName = this.customStructure?.value ?? 'value';
 
     if (this.enableTranslateLabel && (!this.translaterService || typeof this.translaterService.translate !== 'function')) {
       throw new Error(`[select-filter] The Translate Service is required for the Select Filter to work correctly when "enableTranslateLabel" is set.`);
@@ -138,8 +143,8 @@ export class SelectFilter implements Filter {
     this.initMultipleSelectTemplate();
 
     // add placeholder when found
-    let placeholder = this.gridOptions && this.gridOptions.defaultFilterPlaceholder || '';
-    if (this.columnFilter && this.columnFilter.placeholder) {
+    let placeholder = this.gridOptions?.defaultFilterPlaceholder || '';
+    if (this.columnFilter?.placeholder) {
       placeholder = this.columnFilter.placeholder;
     }
     this.defaultOptions.placeholder = placeholder || '';
@@ -217,7 +222,9 @@ export class SelectFilter implements Filter {
   /** Set value(s) on the DOM element */
   setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString) {
     if (values !== undefined && this._msInstance) {
-      values = Array.isArray(values) ? values.map(String) : [values];
+      values = Array.isArray(values)
+        ? values.every(x => isPrimitiveValue(x)) ? values.map(String) : values
+        : [values];
       this._msInstance.setSelects(values);
     }
     this.updateFilterStyle(this.getValues().length > 0);

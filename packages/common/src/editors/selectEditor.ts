@@ -118,7 +118,7 @@ export class SelectEditor implements Editor {
       container: 'body',
       filter: false,
       maxHeight: 275,
-      minHeight: 100,
+      minHeight: 25,
       name: this.elementName,
       single: true,
       useSelectOptionLabelToHtml: this.columnEditor?.enableRenderHtml ?? false,
@@ -203,6 +203,10 @@ export class SelectEditor implements Editor {
 
   get hasAutoCommitEdit(): boolean {
     return this.gridOptions.autoCommitEdit ?? false;
+  }
+
+  get msInstance() {
+    return this._msInstance;
   }
 
   /**
@@ -442,8 +446,8 @@ export class SelectEditor implements Editor {
     // convert to string because that is how the DOM will return these values
     if (Array.isArray(currentValues)) {
       // keep the default values in memory for references
-      this.originalValue = currentValues.map((i: any) => i);
-      this._msInstance?.setSelects(currentValues);
+      this.originalValue = currentValues.map((i: any) => (typeof i === 'number' || typeof i === 'boolean') ? `${i}` : i);
+      this._msInstance?.setSelects(this.originalValue);
 
       // if it's set by a Composite Editor, then also trigger a change for it
       const compositeEditorOptions = this.args.compositeEditorOptions;
@@ -455,8 +459,8 @@ export class SelectEditor implements Editor {
 
   loadSingleValue(currentValue: any) {
     // keep the default value in memory for references
-    this.originalValue = typeof currentValue === 'number' ? `${currentValue}` : currentValue;
-    this._msInstance?.setSelects([currentValue]);
+    this.originalValue = (typeof currentValue === 'number' || typeof currentValue === 'boolean') ? `${currentValue}` : currentValue;
+    this._msInstance?.setSelects([this.originalValue]);
   }
 
   serializeValue(): any | any[] {

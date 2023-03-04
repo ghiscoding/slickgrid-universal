@@ -84,13 +84,14 @@ export function buildMultipleSelectDataCollection(type: 'editor' | 'filter', col
         let optionText = tmpOptionArray.join(separatorBetweenLabels);
         const selectOption: OptionRowData = { text: '', value: '' };
 
-        // if user specifically wants to render html text, he needs to opt-in else it will stripped out by default
+        // if user specifically wants to render html text, he needs to opt-in else it will be stripped out by default
         // also, the 3rd party lib will saninitze any html code unless it's encoded, so we'll do that
         if (isRenderHtmlEnabled) {
           // sanitize any unauthorized html tags like script and others
           // for the remaining allowed tags we'll permit all attributes
-          const sanitizedText = sanitizeTextByAvailableSanitizer(gridOptions, optionText, sanitizedOptions);
-          optionText = htmlEncode(sanitizedText);
+          optionText = sanitizeTextByAvailableSanitizer(gridOptions, optionText, sanitizedOptions);
+        } else {
+          optionText = htmlEncode(optionText);
         }
         selectOption.text = optionText;
 

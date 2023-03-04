@@ -1,5 +1,5 @@
 // import 3rd party lib multiple-select for the tests
-import 'multiple-select-modified';
+import 'multiple-select-vanilla';
 
 import { Editors } from '../index';
 import { MultipleSelectEditor } from '../multipleSelectEditor';
@@ -111,10 +111,11 @@ describe('MultipleSelectEditor', () => {
 
     it('should hide the DOM element div wrapper when the "hide" method is called', () => {
       editor = new MultipleSelectEditor(editorArguments);
-      const editorElm = document.body.querySelector('[name=editor-gender].ms-drop') as HTMLDivElement;
+      const editorElm = document.body.querySelector('[data-name=editor-gender].ms-drop') as HTMLDivElement;
+      expect(editorElm).toBeTruthy();
 
       editor.show();
-      expect(editorElm.style.display).toBe('');
+      expect(editorElm.style.display).toBe('block');
 
       editor.hide();
       expect(editorElm.style.display).toBe('none');
@@ -122,13 +123,14 @@ describe('MultipleSelectEditor', () => {
 
     it('should show the DOM element div wrapper when the "show" method is called', () => {
       editor = new MultipleSelectEditor(editorArguments);
-      const editorElm = document.body.querySelector('[name=editor-gender].ms-drop') as HTMLDivElement;
+      const editorElm = document.body.querySelector('[data-name=editor-gender].ms-drop') as HTMLDivElement;
+      expect(editorElm).toBeTruthy();
 
       editor.hide();
       expect(editorElm.style.display).toBe('none');
 
       editor.show();
-      expect(editorElm.style.display).toBe('');
+      expect(editorElm.style.display).toBe('block');
     });
   });
 });

@@ -209,7 +209,7 @@ export function isObject(item: any) {
  * @param val
  * @returns {boolean}
  */
-export function isPrimmitive(val: any) {
+export function isPrimitiveValue(val: any) {
   return val === null || val === undefined || typeof val === 'boolean' || typeof val === 'number' || typeof val === 'string';
 }
 
