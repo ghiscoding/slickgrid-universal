@@ -228,13 +228,33 @@ describe('SelectFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'NIN', searchTerms: ['male'], shouldTriggerQuery: true });
   });
 
-  it('should have same value in "getValues" after being set in "setValues"', () => {
+  it('should have same value in "getValues" after being set in "setValues" a single string', () => {
     mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     filter.init(filterArguments);
     filter.setValues('female');
     const values = filter.getValues();
 
     expect(values).toEqual(['female']);
+    expect(values.length).toBe(1);
+  });
+
+  it('should have same value in "getValues" after being set in "setValues" with an array', () => {
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    filter.init(filterArguments);
+    filter.setValues(['female']);
+    const values = filter.getValues();
+
+    expect(values).toEqual(['female']);
+    expect(values.length).toBe(1);
+  });
+
+  it('should provide boolean values and expect "getValues" to be converted to string', () => {
+    mockColumn.filter!.collection = [{ value: true, label: 'True' }, { value: false, label: 'False' }];
+    filter.init(filterArguments);
+    filter.setValues([false]);
+    const values = filter.getValues();
+
+    expect(values).toEqual(['false']);
     expect(values.length).toBe(1);
   });
 

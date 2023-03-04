@@ -771,10 +771,4 @@ export class SelectEditor implements Editor {
       new Slick.EventData()
     );
   }
-
-  // refresh the ms instance because the selected checkboxes were already set
-  // prior to this method being called
-  protected refresh() {
-    this._msInstance?.refresh();
-  }
 }

@@ -890,6 +890,7 @@ describe('SelectEditor', () => {
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
       editor = new SelectEditor(editorArguments, true);
       editor.setValue(['male'], true);
+      editor.msInstance?.close();
 
       expect(editor.getValue()).toEqual(['male']);
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
@@ -976,6 +977,7 @@ describe('SelectEditor', () => {
       const editorOkElm = divContainer.querySelector(`[data-name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
       editorBtnElm.click();
       editorOkElm.click();
+      editor.msInstance?.close();
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
