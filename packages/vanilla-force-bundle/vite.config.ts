@@ -7,7 +7,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   build: {
-    // emptyOutDir: false,
+    emptyOutDir: false, // we only use Vite for the "bundle" folder, we need to keep CJS/ESM untouched
     minify: true,
     sourcemap: false,
     lib: {
