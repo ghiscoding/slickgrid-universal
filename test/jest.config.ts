@@ -18,6 +18,7 @@ const config: Config.InitialOptions = {
     '\\.d\\.ts$',
     'global-grid-options.ts',
     'salesforce-global-grid-options.ts',
+    'vite.config.ts',
     '<rootDir>/node_modules/'
   ],
   coverageReporters: [
