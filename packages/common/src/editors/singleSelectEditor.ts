@@ -5,7 +5,7 @@ export class SingleSelectEditor extends SelectEditor {
   /**
    * Initialize the Editor
    */
-  constructor(protected readonly args: EditorArguments) {
-    super(args, false);
+  constructor(protected readonly args: EditorArguments, public delayOpening = -1) {
+    super(args, false, delayOpening);
   }
 }

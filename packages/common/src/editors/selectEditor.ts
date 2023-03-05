@@ -93,7 +93,7 @@ export class SelectEditor implements Editor {
   /** Final collection displayed in the UI, that is after processing filter/sort/override */
   finalCollection: any[] = [];
 
-  constructor(protected readonly args: EditorArguments, protected readonly isMultipleSelect: boolean) {
+  constructor(protected readonly args: EditorArguments, protected readonly isMultipleSelect: boolean, public delayOpening = -1) {
     if (!args) {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }
@@ -744,7 +744,7 @@ export class SelectEditor implements Editor {
     this.editorElmOptions = { ...this.defaultOptions, ...editorOptions, data: dataCollection };
     this._msInstance = multipleSelect(selectElement, this.editorElmOptions) as MultipleSelectInstance;
     if (!this.isCompositeEditor) {
-      this.show();
+      this.delayOpening >= 0 ? setTimeout(() => this.show()) : this.show();
     }
   }
 
