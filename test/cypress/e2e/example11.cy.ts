@@ -1,7 +1,7 @@
 import moment from 'moment-mini';
 import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
-describe('Example 11 - Batch Editing', { retries: 1 }, () => {
+describe('Example 11 - Batch Editing', { retries: 0 }, () => {
   const LOCAL_STORAGE_KEY = 'gridViewPreset';
   const GRID_ROW_HEIGHT = 33;
   const EDITABLE_CELL_RGB_COLOR = 'rgba(227, 240, 251, 0.57)';
@@ -309,6 +309,14 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(4)`).should($elm => expect(+$elm.text()).to.be.greaterThan(50));
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(4)`).should($elm => expect(+$elm.text()).to.be.greaterThan(50));
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).should($elm => expect(+$elm.text()).to.be.greaterThan(50));
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).click();
+    cy.get('[data-name="editor-completed"]')
+      .find('li.hide-radio.selected')
+      .find('input[data-name=selectItemeditor-completed][value=true]')
+      .should('exist');
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).click();
 
     cy.get('.selected-view').should('have.value', 'CustomViewTest');
   });

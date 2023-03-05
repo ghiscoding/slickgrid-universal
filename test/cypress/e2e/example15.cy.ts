@@ -655,8 +655,11 @@ describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
         .should('have.length', 4);
     });
 
-    it('should be able to open "Gender" on the first row and expect to find 2 options the editor list (male, female)', () => {
+    it('should be able to open "Gender" on the first row and expect to find 2 options the editor list (male, female) and expect male to be selected', () => {
       const expectedOptions = ['male', 'female'];
+
+      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0)`)
+        .click();
 
       cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
         .should('contain', 'male')
@@ -669,6 +672,11 @@ describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
       cy.get('[data-name="editor-gender"].ms-drop')
         .find('li:visible span')
         .each(($li, index) => expect($li.text()).to.eq(expectedOptions[index]));
+
+      cy.get('[data-name="editor-gender"]')
+        .find('li.hide-radio.selected')
+        .find('input[data-name=selectItemeditor-gender][value=male]')
+        .should('exist');
     });
 
     it('should click on "Add Other Gender via RxJS" button', () => {
@@ -691,6 +699,11 @@ describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
       cy.get('[data-name="editor-gender"].ms-drop')
         .find('li:visible span')
         .each(($li, index) => expect($li.text()).to.eq(expectedOptions[index]));
+
+      cy.get('[data-name="editor-gender"]')
+        .find('li.hide-radio.selected')
+        .find('input[data-name=selectItemeditor-gender][value=male]')
+        .should('exist');
     });
 
     it('should be able to change the Gender editor on the first row to the new option "other"', () => {
