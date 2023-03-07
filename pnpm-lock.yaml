@@ -102,6 +102,7 @@ importers:
       '@types/whatwg-fetch': ^0.0.33
       bulma: ^0.9.4
       dompurify: ^3.0.1
+      flatpickr: ^4.6.13
       jquery: ^3.6.3
       moment-mini: ^2.29.4
       multiple-select-modified: ^1.3.17
@@ -125,6 +126,7 @@ importers:
       '@slickgrid-universal/vanilla-force-bundle': link:../../packages/vanilla-force-bundle
       bulma: 0.9.4
       dompurify: 3.0.1
+      flatpickr: 4.6.13
       jquery: 3.6.3
       moment-mini: 2.29.4
       multiple-select-modified: 1.3.17
