@@ -100,6 +100,7 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
       .find('.slick-header-column:nth(1)')
       .trigger('mouseover')
       .children('.slick-header-menu-button')
+      .invoke('show')
       .click();
 
     cy.get('.slick-header-menu')

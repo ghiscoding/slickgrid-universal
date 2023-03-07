@@ -1,0 +1,52 @@
+<h3 class="title is-3">
+  Example 04 - Pinned (frozen) Columns/Rows
+  <div class="subtitle" style="float: right; margin-top: -20px">
+    <span class="is-size-6">see</span>
+    <a class="is-size-5"
+       target="_blank"
+       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example04.ts">
+      <span class="mdi mdi-link-variant mdi-v-align-sub"></span> code
+    </a>
+  </div>
+  <h6 class="title is-6 italic">
+    The Autocomplete Editor (City of Origin) might throw some console errors because it uses "http://gd.geobytes.com/" request (which is not using https).
+    You can allow "Insecure content" in your browser for this website only to test the Autocomplete
+  </h6>
+</h3>
+
+<div class="row">
+  <span>
+    <label for="">Pinned Rows: </label>
+    <input type="number" class="frozen-row-count" value.bind="frozenRowCount">
+    <button class="btn btn-default btn-xs" onclick.delegate="changeFrozenRowCount()">
+      Set
+    </button>
+  </span>
+  <span style="margin-left: 10px">
+    <label for="">Pinned Columns: </label>
+    <input type="number" class="frozen-column-count" value.bind="frozenColumnCount">
+    <button class="btn btn-default btn-xs" onclick.delegate="changeFrozenColumnCount()">
+      Set
+    </button>
+  </span>
+  <span style="margin-left: 15px">
+    <button class="button is-small" onclick.delegate="setFrozenColumns(-1)"
+            data-test="remove-frozen-column-button">
+      <span class="icon mdi mdi-close"></span>
+      <span>Remove Frozen Columns</span>
+    </button>
+    <button class="button is-small" onclick.delegate="setFrozenColumns(2)" data-test="set-3frozen-columns">
+      <span class="icon mdi mdi-pin-outline"></span>
+      <span>Set 3 Frozen Columns</span>
+    </button>
+    <button class="button is-small" onclick.delegate="toggleFrozenBottomRows()">
+      <span class="icon mdi mdi-flip-vertical"></span>
+      <span>Toggle Pinned Rows (top/bottom)</span>
+    </button>
+  </span>
+</div>
+
+<br>
+
+<div class="grid4">
+</div>

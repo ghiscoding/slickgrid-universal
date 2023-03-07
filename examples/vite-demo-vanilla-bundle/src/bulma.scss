@@ -1,0 +1,12 @@
+// 1. Import the initial variables
+@import 'bulma/sass/utilities/initial-variables.sass';
+// 2. Set your own initial variables
+// Update the blue shade, used for links
+// $blue: #06bcef;
+
+// 3. Set the derived variables
+// Use the new pink as the primary color
+// $primary: $pink;
+
+// 4. Import the rest of Bulma
+@import 'bulma/bulma';

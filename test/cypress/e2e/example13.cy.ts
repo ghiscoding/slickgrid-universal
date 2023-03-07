@@ -1,4 +1,4 @@
-describe('Example 13 - Header Button Plugin', { retries: 1 }, () => {
+describe('Example 13 - Header Button Plugin', { retries: 0 }, () => {
   const titles = ['Resize me!', 'Hover me!', 'Column C', 'Column D', 'Column E', 'Column F', 'Column G', 'Column H', 'Column I', 'Column J'];
 
   beforeEach(() => {
@@ -354,8 +354,10 @@ describe('Example 13 - Header Button Plugin', { retries: 1 }, () => {
     it('should hover over the "Column C" and click on "Clear Filter" and expect grid to have all rows shown', () => {
       cy.get('.grid13-2 .slick-header-column:nth(2)')
         .first()
-        .trigger('mouseover')
+        .trigger('onmouseover')
+        .trigger('mouseenter')
         .children('.slick-header-menu-button')
+        .invoke('show')
         .click();
 
       cy.get('.grid13-2 .slick-header-menu')

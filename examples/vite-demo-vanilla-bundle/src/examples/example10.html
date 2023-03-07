@@ -1,0 +1,76 @@
+<h3 class="title is-3">
+  Example 10 - Grid with GraphQL Backend Service
+  <div class="subtitle" style="float: right; margin-top: -20px">
+    <span class="is-size-6">see</span>
+    <a class="is-size-5" target="_blank"
+       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example10.ts">
+      <span class="mdi mdi-link-variant mdi-v-align-sub"></span> code
+    </a>
+  </div>
+</h3>
+<h6 class="title is-6 italic">
+  <span style="color: red">(*) NO DATA SHOWN</span>
+  - just change any of Filters/Sorting/Pages and look at the "GraphQL Query" changing :)
+</h6>
+
+<div class="row">
+  <button class="button is-small" data-test="clear-filters-sorting"
+          onclick.delegate="clearAllFiltersAndSorts()" title="Clear all Filters & Sorts">
+    <span class="icon mdi mdi-close"></span>
+    <span>Clear all Filter &amp; Sorts</span>
+  </button>
+  <button class="button is-small" data-test="set-dynamic-filter"
+          onclick.delegate="setFiltersDynamically()">
+    Set Filters Dynamically
+  </button>
+  <button class="button is-small" data-test="set-dynamic-sorting"
+          onclick.delegate="setSortingDynamically()">
+    Set Sorting Dynamically
+  </button>
+
+  <br />
+
+  <div class="row col-md-12">
+    <span>
+      <label>Programmatically go to first/last page:</label>
+      <button class="button is-small" data-test="goto-first-page" onclick.delegate="goToFirstPage()">
+        <i class="mdi mdi-page-first"></i>
+      </button>
+      <button class="button is-small" data-test="goto-last-page" onclick.delegate="goToLastPage()">
+        <i class="mdi mdi-page-last"></i>
+      </button>
+    </span>
+
+    <span style="margin-left: 20px">
+      <button class="button is-small" onclick.delegate="switchLanguage()" data-test="language-button">
+        Switch Language
+      </button>
+      <b>Locale:</b>
+      <span style="font-style: italic" data-test="selected-locale" innerhtml.bind="selectedLanguageFile">
+      </span>
+    </span>
+  </div>
+
+</div>
+
+<br />
+
+<div class="columns" style="margin-top: 5px">
+  <div class="column">
+    <div class="notification is-info is-light" data-test="alert-graphql-query">
+      <strong>GraphQL Query:</strong>
+      <span data-test="graphql-query-result" innerhtml.bind="graphqlQuery"></span>
+    </div>
+  </div>
+  <div class="column is-narrow">
+    <div class.bind="statusClass" data-test="status">
+      <strong>Status:</strong> <span innerhtml.bind="status"></span>
+    </div>
+  </div>
+</div>
+</div>
+
+<hr />
+
+<div class="grid10">
+</div>
