@@ -242,7 +242,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .first()
       .trigger('mouseover')
       .children('.slick-header-menu-button')
-      // .invoke('show')
+      .invoke('show')
       .click();
 
     cy.get('.slick-header-menu')
@@ -411,6 +411,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .find('.slick-header-column:nth(8)')
       .trigger('mouseover')
       .children('.slick-header-menu-button')
+      .invoke('show')
       .click();
 
     cy.get('.slick-header-menu')
@@ -460,6 +461,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .find('.slick-header-column:nth-of-type(8)')
       .trigger('mouseover')
       .children('.slick-header-menu-button')
+      .invoke('show')
       .click();
 
     cy.get('.slick-header-menu')
@@ -505,6 +507,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .find('.slick-header-column:nth(5)')
       .trigger('mouseover')
       .children('.slick-header-menu-button')
+      .invoke('show')
       .click();
 
     cy.get('.slick-header-menu')
@@ -529,6 +532,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .find('.slick-header-column:nth(5)')
       .trigger('mouseover')
       .children('.slick-header-menu-button')
+      .invoke('show')
       .click();
 
     cy.get('.slick-header-menu')
@@ -817,6 +821,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .find('.slick-header-column:nth(9)')
       .trigger('mouseover')
       .children('.slick-header-menu-button')
+      .invoke('show')
       .click();
 
     cy.get('.slick-header-menu')

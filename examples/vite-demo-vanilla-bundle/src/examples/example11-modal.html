@@ -1,0 +1,21 @@
+<div class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head has-background-bis">
+      <p class="modal-card-title has-text-dark has-text-weight-semibold">Mass Update</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <h4 class="subtitle is-italic has-text-primary-dark">
+        Enter new value on the field(s) you wish to be mass updated.
+      </h4>
+      <br />
+      <div class="modal-grid"></div>
+    </section>
+    <footer class="modal-card-foot" style="justify-content: flex-end;">
+      <button class="button close">Cancel</button>
+      <button class="button is-info" onclick.delegate="saveMassUpdate('mass')">Mass Update</button>
+      <button class="button is-success" onclick.delegate="saveMassUpdate('selection')">Update Selected Rows</button>
+    </footer>
+  </div>
+</div>

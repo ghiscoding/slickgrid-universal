@@ -3,9 +3,9 @@ $slick-filled-filter-border:                                $slick-form-control-
 $slick-filled-filter-box-shadow:                            $slick-form-control-focus-border-color !default;
 $slick-filled-filter-font-weight:                           400 !default;
 
-// ----------------------------------------------
-// applied stylinh when Filters are filled in
-// ----------------------------------------------
+// ------------------------------------------------
+// apply custom styling when Filters are filled in
+// ------------------------------------------------
 
 .slick-headerrow {
   input.search-filter.filled,
@@ -22,14 +22,12 @@ $slick-filled-filter-font-weight:                           400 !default;
   .search-filter.filled .input-group-addon select {
     border-right: 0px;
   }
-  .search-filter.filled {
-    .ms-choice {
-      box-shadow: var(--slick-filled-filter-box-shadow, $slick-filled-filter-box-shadow);
-      border: var(--slick-filled-filter-border, $slick-filled-filter-border);
-      span {
-        font-weight: var(--slick-filled-filter-font-weight, $slick-filled-filter-font-weight);
-        color: var(--slick-filled-filter-color, $slick-filled-filter-color);
-      }
+  .search-filter.filled .ms-choice {
+    box-shadow: var(--slick-filled-filter-box-shadow, $slick-filled-filter-box-shadow);
+    border: var(--slick-filled-filter-border, $slick-filled-filter-border);
+    span {
+      font-weight: var(--slick-filled-filter-font-weight, $slick-filled-filter-font-weight);
+      color: var(--slick-filled-filter-color, $slick-filled-filter-color);
     }
   }
 }

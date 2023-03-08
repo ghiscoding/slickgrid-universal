@@ -170,6 +170,7 @@ describe('Example 10 - GraphQL Grid', { retries: 1 }, () => {
       .find('.slick-header-left .slick-header-column:nth(0)')
       .trigger('mouseover')
       .children('.slick-header-menu-button')
+      .invoke('show')
       .click();
 
     cy.get('.slick-header-menu')
@@ -229,6 +230,7 @@ describe('Example 10 - GraphQL Grid', { retries: 1 }, () => {
       .find('.slick-header-left .slick-header-column:nth(5)')
       .trigger('mouseover')
       .children('.slick-header-menu-button')
+      .invoke('show')
       .click();
 
     cy.get('.slick-header-menu')
@@ -429,6 +431,7 @@ describe('Example 10 - GraphQL Grid', { retries: 1 }, () => {
         .first()
         .trigger('mouseover')
         .children('.slick-header-menu-button')
+        .invoke('show')
         .click();
 
       cy.get('.slick-header-menu')
@@ -536,6 +539,7 @@ describe('Example 10 - GraphQL Grid', { retries: 1 }, () => {
         .first()
         .trigger('mouseover')
         .children('.slick-header-menu-button')
+        .invoke('show')
         .click();
 
       cy.get('.slick-header-menu')

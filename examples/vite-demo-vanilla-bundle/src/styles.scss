@@ -1,0 +1,36 @@
+$slick-primary-color:#006DCC;
+$slick-link-color: #006DCC;
+
+/* make sure to add the @import the SlickGrid Bootstrap Theme AFTER the variables changes */
+// @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
+
+/** or SalesForce Theme */
+@import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
+
+@import './bulma.scss';
+
+.demo-container.container {
+  margin-top: 50px;
+}
+.fake-hyperlink {
+    cursor: pointer;
+    color: $slick-link-color;
+    &:hover {
+      text-decoration: underline;
+    }
+}
+.disabled {
+    color: #ccc;
+}
+
+.github-button-container {
+  position: relative;
+  top: 18px;
+  margin-left: 5px;
+}
+.faded {
+  opacity: 0.7;
+}
+.faded:hover {
+  opacity: 1;
+}

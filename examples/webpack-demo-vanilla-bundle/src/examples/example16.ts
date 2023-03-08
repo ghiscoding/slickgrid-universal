@@ -1,6 +1,7 @@
 import {
   BindingEventService,
   Column,
+  EditCommand,
   Editors,
   FieldType,
   Filters,
@@ -23,7 +24,7 @@ export class Example16 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
-  editCommandQueue = [];
+  editCommandQueue: EditCommand[] = [];
   serverApiDelay = 500;
   sgb: SlickVanillaGridBundle;
   loadingClass = '';
@@ -35,7 +36,7 @@ export class Example16 {
   attached() {
     this.initializeGrid();
     this.dataset = this.loadData(500);
-    const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid16`);
+    const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid16`) as HTMLDivElement;
 
     this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-22px');
     this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => this.loadingClass = '');
@@ -162,7 +163,7 @@ export class Example16 {
         formatter: Formatters.percentCompleteBar,
         sortable: true, filterable: true,
         filter: { model: Filters.sliderRange, operator: '>=', filterOptions: { hideSliderNumbers: true } as SliderRangeOption },
-        customTooltip: { position: 'center', formatter: (row, cell, value) => `${value}%`, headerFormatter: null, headerRowFormatter: null },
+        customTooltip: { position: 'center', formatter: (row, cell, value) => `${value}%`, headerFormatter: null as any, headerRowFormatter: null as any },
       },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true,
@@ -387,7 +388,7 @@ export class Example16 {
 
   loadData(count: number) {
     // mock data
-    const tmpArray = [];
+    const tmpArray: any[] = [];
     for (let i = 0; i < count; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
       const randomFinishYear = (new Date().getFullYear() - 3) + Math.floor(Math.random() * 10); // use only years not lower than 3 years ago
