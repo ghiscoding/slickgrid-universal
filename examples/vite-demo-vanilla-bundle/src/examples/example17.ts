@@ -35,13 +35,13 @@ export default class Example17 {
     this.sgb2 = new Slicker.GridBundle(document.querySelector(`.grid17-2`) as HTMLDivElement, this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
 
     this.setOptions();
-    document.body.classList.add('material');
+    document.body.classList.add('material-theme');
   }
 
   dispose() {
     this.sgb1?.dispose();
     this.sgb2?.dispose();
-    document.body.classList.remove('material');
+    document.body.classList.remove('material-theme');
   }
 
   /* Define grid Options and Columns */

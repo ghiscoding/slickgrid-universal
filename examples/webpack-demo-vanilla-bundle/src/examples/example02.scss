@@ -5,5 +5,7 @@ $control-height: 2.4em;
 
 :root {
   // You can change the slider track filled color via the option "sliderTrackFilledColor" or the CSS variable "--slick-slider-filter-filled-track-color"
-  --slick-slider-filter-filled-track-color: #9ac49c;
+  .grid2 {
+    --slick-slider-filter-filled-track-color: #9ac49c;
+  }
 }

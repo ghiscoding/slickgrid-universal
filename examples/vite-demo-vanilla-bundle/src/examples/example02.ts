@@ -52,13 +52,13 @@ export default class Example2 {
 
     // override CSS template to be Material Design
     // await import('@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss');
-    document.body.classList.add('material');
+    document.body.classList.add('material-theme');
   }
 
   dispose() {
     this.sgb?.dispose();
     this._bindingEventService.unbindAll();
-    document.body.classList.remove('material');
+    document.body.classList.remove('material-theme');
   }
 
   initializeGrid() {
@@ -87,7 +87,7 @@ export default class Example2 {
         filter: {
           model: Filters.slider,
           operator: '>=',
-          filterOptions: { hideSliderNumber: true, enableSliderTrackColoring: true } as SliderOption
+          filterOptions: { hideSliderNumber: true, enableSliderTrackColoring: true, sliderTrackFilledColor: '#9ac49c' } as SliderOption
         },
         sortable: true,
         type: FieldType.number,

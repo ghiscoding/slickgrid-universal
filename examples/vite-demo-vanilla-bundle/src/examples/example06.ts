@@ -31,10 +31,12 @@ export default class Example6 {
     this.datasetHierarchical = this.mockDataset();
     const gridContainerElm = document.querySelector('.grid6') as HTMLDivElement;
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, null as any, this.datasetHierarchical);
+    document.body.classList.add('material-theme');
   }
 
   dispose() {
     this.sgb?.dispose();
+    document.body.classList.remove('material-theme');
   }
 
   initializeGrid() {
@@ -159,7 +161,7 @@ export default class Example6 {
     } else {
       return `${spacer} <span class="slick-group-toggle" aria-expanded="false" level="${dataContext[treeLevelPropName]}"></span>${prefix}&nbsp;${value}`;
     }
-  }
+  };
 
   getFileIcon(value: string) {
     let prefix = '';

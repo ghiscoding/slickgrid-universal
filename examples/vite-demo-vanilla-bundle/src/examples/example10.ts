@@ -56,7 +56,7 @@ export default class Example10 {
     // this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
     // this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
-    document.body.classList.add('material');
+    document.body.classList.add('material-theme');
   }
 
   dispose() {
@@ -65,7 +65,7 @@ export default class Example10 {
     }
     this._bindingEventService.unbindAll();
     //   this.saveCurrentGridState();
-    document.body.classList.remove('material');
+    document.body.classList.remove('material-theme');
   }
 
   initializeGrid() {

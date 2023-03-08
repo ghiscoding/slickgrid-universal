@@ -74,13 +74,13 @@ export default class Example34 {
     setTimeout(() => {
       this.startSimulation();
     }, this.refreshRate);
-    document.body.classList.add('material');
+    document.body.classList.add('material-theme');
   }
 
   dispose() {
     this.stopSimulation();
     this.sgb?.dispose();
-    document.body.classList.remove('material');
+    document.body.classList.remove('material-theme');
   }
 
   /* Define grid Options and Columns */

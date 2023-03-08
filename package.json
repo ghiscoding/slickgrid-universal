@@ -41,6 +41,7 @@
     "new-publish": "lerna publish from-package",
     "roll-new-release": "pnpm bundle && pnpm new-version && pnpm new-publish",
     "serve:demo": "servor ./docs index.html 8888",
+    "serve:vite": "pnpm -r --filter=./examples/vite-demo-vanilla-bundle dev",
     "lint": "eslint packages --ext .ts",
     "test": "jest --runInBand --coverage=true --config ./test/jest.config.ts",
     "test:ci": "jest --runInBand --coverage=true --ci --config ./test/jest.config.ts",

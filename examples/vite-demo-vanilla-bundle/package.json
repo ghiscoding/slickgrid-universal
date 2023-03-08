@@ -3,12 +3,11 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --mode development",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "build:demo": "tsc && vite build",
-    "previte:dev": "echo [vite-server] Project is running at http://localhost:8888/",
-    "vite:dev": "vite"
+    "build:demo": "tsc && vite build --mode production",
+    "build:dev": "tsc && vite build --mode development"
   },
   "dependencies": {
     "@faker-js/faker": "^7.6.0",
