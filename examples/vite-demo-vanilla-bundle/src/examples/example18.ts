@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import sparkline from '@fnando/sparkline';
+import * as sparkline from '@fnando/sparkline';
 import {
   Aggregators,
   Column,
@@ -19,7 +19,7 @@ import '../material-styles.scss';
 const NB_ITEMS = 200;
 
 const currencyFormatter: Formatter = (_cell: number, _row: number, value: string) =>
-  `<img src="https://flags.fmcdn.net/data/flags/mini/${value.substr(0, 2).toLowerCase()}.png" width="20"/> ${value}`;
+  `<img src="https://flags.fmcdn.net/data/flags/mini/${value.substring(0, 2).toLowerCase()}.png" width="20"/> ${value}`;
 
 const priceFormatter: Formatter = (_cell: number, _row: number, value: number, _col: Column, dataContext: any) => {
   const direction = dataContext.priceChange >= 0 ? 'up' : 'down';
@@ -35,7 +35,7 @@ const historicSparklineFormatter: Formatter = (_row: number, _cell: number, _val
   svgElem.setAttributeNS(null, 'height', '30');
   svgElem.setAttributeNS(null, 'stroke-width', '2');
   svgElem.classList.add('sparkline');
-  sparkline(svgElem, dataContext.historic, { interactive: true });
+  sparkline.sparkline(svgElem, dataContext.historic, { interactive: true });
   return svgElem.outerHTML;
 };
 
@@ -216,7 +216,7 @@ export default class Example34 {
         currency,
         trsnType: (Math.round(Math.random() * 100)) % 2 ? 'Buy' : 'Sell',
         company,
-        symbol: currency === 'CAD' ? company.substr(0, 3).toUpperCase() + '.TO' : company.substr(0, 4).toUpperCase(),
+        symbol: currency === 'CAD' ? company.substring(0, 3).toUpperCase() + '.TO' : company.substring(0, 4).toUpperCase(),
         market: currency === 'CAD' ? 'TSX' : price > 200 ? 'Nasdaq' : 'S&P 500',
         duration: (i % 33 === 0) ? null : Math.random() * 100 + '',
         percentCompleteNumber: randomPercent,
