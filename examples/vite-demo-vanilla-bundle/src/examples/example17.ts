@@ -6,6 +6,7 @@ import { ExampleGridOptions } from './example-grid-options';
 // import '../material-styles.scss';
 // import '../salesforce-styles.scss';
 import './example17.scss';
+import '../material-styles.scss';
 
 const NB_ITEMS = 300;
 
@@ -34,11 +35,13 @@ export default class Example17 {
     this.sgb2 = new Slicker.GridBundle(document.querySelector(`.grid17-2`) as HTMLDivElement, this.columnDefinitions2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
 
     this.setOptions();
+    document.body.classList.add('material');
   }
 
   dispose() {
     this.sgb1?.dispose();
     this.sgb2?.dispose();
+    document.body.classList.remove('material');
   }
 
   /* Define grid Options and Columns */

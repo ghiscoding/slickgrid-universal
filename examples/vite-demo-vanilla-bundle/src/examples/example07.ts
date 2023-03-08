@@ -15,6 +15,7 @@ import DOMPurify from 'dompurify';
 import { TranslateService } from '../translate.service';
 import { ExampleGridOptions } from './example-grid-options';
 import './example07.scss';
+import '../material-styles.scss';
 
 export default class Example7 {
   private _bindingEventService: BindingEventService;
@@ -54,11 +55,13 @@ export default class Example7 {
     this._bindingEventService.bind(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    document.body.classList.add('material');
   }
 
   dispose() {
     this.sgb?.dispose();
     this._bindingEventService.unbindAll();
+    document.body.classList.remove('material');
   }
 
   initializeGrid() {

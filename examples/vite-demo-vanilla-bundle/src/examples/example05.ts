@@ -63,10 +63,12 @@ export default class Example5 {
     // the following event is a special use case for our project and is commented out
     // so that we still have code ref if we still need to test the use case
     // this._bindingEventService.bind(gridContainerElm, 'onselectedrowschanged', this.handleOnSelectedRowsChanged.bind(this));
+    document.body.classList.add('material');
   }
 
   dispose() {
     this.sgb?.dispose();
+    document.body.classList.remove('material');
   }
 
   hideSpinner() {

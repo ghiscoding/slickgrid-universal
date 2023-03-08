@@ -11,9 +11,10 @@ import {
   GridOption,
   GroupTotalFormatters,
 } from '@slickgrid-universal/common';
-import './example18.scss';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
+import './example18.scss';
+import '../material-styles.scss';
 
 const NB_ITEMS = 200;
 
@@ -73,11 +74,13 @@ export default class Example34 {
     setTimeout(() => {
       this.startSimulation();
     }, this.refreshRate);
+    document.body.classList.add('material');
   }
 
   dispose() {
     this.stopSimulation();
     this.sgb?.dispose();
+    document.body.classList.remove('material');
   }
 
   /* Define grid Options and Columns */

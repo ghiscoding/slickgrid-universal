@@ -17,6 +17,7 @@ import moment from 'moment-mini';
 import { ExampleGridOptions } from './example-grid-options';
 import { TranslateService } from '../translate.service';
 import './example10.scss';
+import '../material-styles.scss';
 
 const defaultPageSize = 20;
 const GRAPHQL_QUERY_DATASET_NAME = 'users';
@@ -48,14 +49,6 @@ export default class Example10 {
     console.log('TranslateService', this.translateService.translate('ALL_SELECTED'));
   }
 
-  dispose() {
-    if (this.sgb) {
-      this.sgb?.dispose();
-    }
-    this._bindingEventService.unbindAll();
-    //   this.saveCurrentGridState();
-  }
-
   async attached() {
     this.initializeGrid();
     const gridContainerElm = document.querySelector(`.grid10`) as HTMLDivElement;
@@ -63,6 +56,16 @@ export default class Example10 {
     // this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
     // this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    document.body.classList.add('material');
+  }
+
+  dispose() {
+    if (this.sgb) {
+      this.sgb?.dispose();
+    }
+    this._bindingEventService.unbindAll();
+    //   this.saveCurrentGridState();
+    document.body.classList.remove('material');
   }
 
   initializeGrid() {

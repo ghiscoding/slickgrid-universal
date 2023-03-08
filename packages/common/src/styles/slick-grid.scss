@@ -60,12 +60,12 @@
        }
 
        &.active {
-         box-shadow: $slick-cell-active-box-shadow;
-         border: $slick-cell-active-border;
-         z-index: $slick-cell-active-z-index;
+         box-shadow: var(--slick-cell-active-box-shadow, $slick-cell-active-box-shadow);
+         border: var(--slick-cell-active-border, $slick-cell-active-border);
+         z-index: var(--slick-cell-active-z-index, $slick-cell-active-z-index);
 
          // We compensate for the all-around border (now 1px at top and left too!)
-         padding: $slick-cell-padding;
+         padding: var(--slick-cell-padding, $slick-cell-padding);
 
          input.dual-editor-text {
            width: calc(50% + 1px - 5px); // 1px (is 2px / 2) and 5px (is space between the 2 inputs)

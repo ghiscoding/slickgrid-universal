@@ -19,6 +19,7 @@ import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bu
 
 import { ExampleGridOptions } from './example-grid-options';
 import './example02.scss';
+import '../material-styles.scss';
 
 const NB_ITEMS = 500;
 
@@ -51,11 +52,13 @@ export default class Example2 {
 
     // override CSS template to be Material Design
     // await import('@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss');
+    document.body.classList.add('material');
   }
 
   dispose() {
     this.sgb?.dispose();
     this._bindingEventService.unbindAll();
+    document.body.classList.remove('material');
   }
 
   initializeGrid() {
