@@ -5,20 +5,14 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Chrome Debugger",
-      "type": "chrome",
+      "type": "msedge",
       "request": "launch",
-      "breakOnLoad": false,
+      "name": "Vite - Edge Debugger",
       "url": "http://localhost:8888",
-      "webRoot": "${workspaceRoot}",
-      "userDataDir": "${workspaceRoot}/.chrome",
-      "trace": true,
-      "sourceMapPathOverrides": {
-        "webpack:///${workspaceRoot}/packages/*": "${webRoot}/packages/*",
-        "webpack://webpack-demo-vanilla-bundle/../../packages/*": "${webRoot}/packages/*",
-        "webpack:///./src/*": "${webRoot}/examples/webpack-demo-vanilla-bundle/src/*",
-        "webpack://webpack-demo-vanilla-bundle/./src/*": "${webRoot}/examples/webpack-demo-vanilla-bundle/src/*"
-      }
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/",
+        "!/node_modules/**"
+      ]
     },
     {
       "type": "node",
