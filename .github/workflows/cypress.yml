@@ -44,7 +44,7 @@ jobs:
       - name: TSC Build (esm)
         run: pnpm build:esm:styles
 
-      - name: Website Dev Build (GitHub demo site)
+      - name: Website Dev Build (served for Cypress)
         run: pnpm build:dev
 
       - name: Run Cypress E2E tests
