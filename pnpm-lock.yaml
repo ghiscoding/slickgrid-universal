@@ -1,8 +1,6 @@
 lockfileVersion: 5.4
 
 overrides:
-  loader-utils@>=2.0.0 <2.0.4: '>=2.0.4'
-  loader-utils@>=2.0.0 <2.0.3: '>=2.0.3'
   json5@<1.0.2: '>=1.0.2'
   terser@>=5.0.0 <5.14.2: '>=5.14.2'
 
@@ -36,7 +34,7 @@ importers:
       npm-run-all2: ^6.0.4
       pnpm: ^7.29.1
       rimraf: ^4.4.0
-      rxjs: ^7.5.7
+      rxjs: ^7.8.0
       servor: ^4.0.2
       slickgrid: ^3.0.4
       sortablejs: ^1.15.0
@@ -71,7 +69,7 @@ importers:
       npm-run-all2: 6.0.4
       pnpm: 7.29.1
       rimraf: 4.4.0
-      rxjs: 7.5.7
+      rxjs: 7.8.0
       servor: 4.0.2
       slickgrid: 3.0.4
       sortablejs: 1.15.0
@@ -8302,12 +8300,6 @@ packages:
     dependencies:
       tslib: 2.4.0
     dev: false
-
-  /rxjs/7.5.7:
-    resolution: {integrity: sha512-z9MzKh/UcOqB3i20H6rtrlaE/CgjLOvheWK/9ILrbhROGTweAi1BaFsTT9FbwZi5Trr1qNRs+MXkhmR06awzQA==}
-    dependencies:
-      tslib: 2.4.0
-    dev: true
 
   /rxjs/7.8.0:
     resolution: {integrity: sha512-F2+gxDshqmIub1KdvZkaEfGDwLNpPvk9Fs6LD/MyQxNgMds/WH9OdDDXOmxUZpME+iSK3rQCctkL0DYyytUqMg==}
