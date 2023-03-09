@@ -7,7 +7,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "build:demo": "tsc && vite build --mode production",
-    "build:dev": "tsc && vite build --mode development"
+    "build:dev": "tsc && vite build --mode development",
+    "vite:dev": "vite --mode development"
   },
   "dependencies": {
     "@faker-js/faker": "^7.6.0",

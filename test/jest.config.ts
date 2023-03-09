@@ -9,7 +9,7 @@ const config: Config.InitialOptions = {
     'packages/**/*.ts',
     '!**/dist/**',
     '!src/assets/**',
-    '!examples/webpack-demo-vanilla-bundle/**',
+    '!examples/vite-demo-vanilla-bundle/**',
     '!**/node_modules/**',
     '!**/test/**',
   ],
