@@ -1,5 +1,6 @@
 import { RouterConfig } from './interfaces';
 
+import Icons from './examples/icons';
 import Example01 from './examples/example01';
 import Example02 from './examples/example02';
 import Example03 from './examples/example03';
@@ -23,6 +24,7 @@ export class AppRouting {
   constructor(private config: RouterConfig) {
     config.pushState = false;
     config.routes = [
+      { route: 'icons', name: 'icons', view: './examples/icons.html', viewModel: Icons, title: 'icons', },
       { route: 'example01', name: 'example01', view: './examples/example01.html', viewModel: Example01, title: 'Example01', },
       { route: 'example02', name: 'example02', view: './examples/example02.html', viewModel: Example02, title: 'Example02', },
       { route: 'example03', name: 'example03', view: './examples/example03.html', viewModel: Example03, title: 'Example03', },
