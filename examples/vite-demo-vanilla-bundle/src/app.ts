@@ -11,7 +11,6 @@ interface ElementEventListener {
 
 export class App {
   private _boundedEventWithListeners: ElementEventListener[] = [];
-  private _appInitialized = false;
   documentTitle = 'Slickgrid-Universal';
   defaultRouteName: string;
   stateBangChar: string;
@@ -124,9 +123,7 @@ export class App {
           if (viewModel?.attached && this.renderer.className) {
             this.viewModelObj[this.renderer.className] = viewModel;
             viewModel.attached();
-            if (!this._appInitialized) {
-              this.dropdownToggle(); // bind bulma dropdown toggle event handlers
-            }
+            this.dropdownToggle(); // bind bulma dropdowns toggle event handlers
           }
 
           // change browser's history state & title
@@ -137,15 +134,14 @@ export class App {
         }
       }
     }
-    this._appInitialized = true;
   }
 
   /** bind bulma all dropdowns toggle event handlers */
   dropdownToggle() {
-    const $dropdowns = document.querySelectorAll('.dropdown:not(.is-hoverable)');
+    const dropdownElms = document.querySelectorAll('.dropdown:not(.is-hoverable)');
 
-    if ($dropdowns.length > 0) {
-      $dropdowns.forEach($el => {
+    if (dropdownElms.length > 0) {
+      dropdownElms.forEach($el => {
         this.addElementEventListener($el, 'click', (event) => {
           event.stopPropagation();
           $el.classList.toggle('is-active');
@@ -157,8 +153,8 @@ export class App {
   }
 
   closeDropdowns() {
-    const $dropdowns = document.querySelectorAll('.dropdown:not(.is-hoverable)');
-    $dropdowns.forEach($el => $el.classList.remove('is-active'));
+    const dropdownElms = document.querySelectorAll('.dropdown:not(.is-hoverable)');
+    dropdownElms.forEach($el => $el.classList.remove('is-active'));
   }
 
   /** Add event listener for the navbar hamburger menu toggle when menu shows up on mobile */
