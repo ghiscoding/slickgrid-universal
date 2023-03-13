@@ -3,11 +3,9 @@ import { defineConfig } from 'vite';
 
 dns.setDefaultResultOrder('verbatim');
 
-export default defineConfig(({ mode }) => {
-  console.log('Vite mode: ', mode);
-
+export default defineConfig(() => {
   return {
-    base: mode === 'production' ? '/slickgrid-universal/' : './',
+    base: './',
     build: {
       chunkSizeWarningLimit: 6000,
       emptyOutDir: true,
