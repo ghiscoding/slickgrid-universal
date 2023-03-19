@@ -26,7 +26,6 @@
 
   .right-footer {
     color: var(--slick-footer-right-text-color, $slick-footer-right-text-color);
-    text-align: var(--slick-footer-right-text-align, $slick-footer-right-text-align);
     font-style: var(--slick-footer-right-font-style, $slick-footer-right-font-style);
     font-weight: var(--slick-footer-right-font-weight, $slick-footer-right-font-weight);
     text-align: var(--slick-footer-right-text-align, $slick-footer-right-text-align);
@@ -152,37 +151,29 @@
           }
         }
 
-        .icon-seek-first {
-          &:before {
-            content: var(--slick-pagination-icon-seek-first, $slick-pagination-icon-seek-first);
-            display: block;
-            height: var(--slick-pagination-icon-height, $slick-pagination-icon-height);
-            width: var(--slick-pagination-icon-seek-first-width, $slick-pagination-icon-seek-first-width);
-          }
+        .icon-seek-first:before {
+          content: var(--slick-pagination-icon-seek-first, $slick-pagination-icon-seek-first);
+          width: var(--slick-pagination-icon-seek-first-width, $slick-pagination-icon-seek-first-width);
         }
-        .icon-seek-prev {
-          &:before {
-            content: var(--slick-pagination-icon-seek-prev, $slick-pagination-icon-seek-prev);
-            display: block;
-            height: var(--slick-pagination-icon-height, $slick-pagination-icon-height);
-            width: var(--slick-pagination-icon-seek-prev-width, $slick-pagination-icon-seek-prev-width);
-          }
+        .icon-seek-prev:before {
+          content: var(--slick-pagination-icon-seek-prev, $slick-pagination-icon-seek-prev);
+          width: var(--slick-pagination-icon-seek-prev-width, $slick-pagination-icon-seek-prev-width);
         }
-        .icon-seek-next {
-          &:before {
-            content: var(--slick-pagination-icon-seek-next, $slick-pagination-icon-seek-next);
-            display: block;
-            height: var(--slick-pagination-icon-height, $slick-pagination-icon-height);
-            width: var(--slick-pagination-icon-seek-next-width, $slick-pagination-icon-seek-next-width);
-          }
+        .icon-seek-next:before {
+          content: var(--slick-pagination-icon-seek-next, $slick-pagination-icon-seek-next);
+          width: var(--slick-pagination-icon-seek-next-width, $slick-pagination-icon-seek-next-width);
         }
-        .icon-seek-end {
-          &:before {
-            content: var(--slick-pagination-icon-seek-end, $slick-pagination-icon-seek-end);
-            display: block;
-            height: var(--slick-pagination-icon-height, $slick-pagination-icon-height);
-            width: var(--slick-pagination-icon-seek-end-width, $slick-pagination-icon-seek-end-width);
-          }
+        .icon-seek-end:before {
+          content: var(--slick-pagination-icon-seek-end, $slick-pagination-icon-seek-end);
+
+          width: var(--slick-pagination-icon-seek-end-width, $slick-pagination-icon-seek-end-width);
+        }
+        .icon-seek-first:before,
+        .icon-seek-prev:before,
+        .icon-seek-next:before,
+        .icon-seek-end:before {
+          display: block;
+          height: var(--slick-pagination-icon-height, $slick-pagination-icon-height);
         }
       }
       .page-item.disabled {
