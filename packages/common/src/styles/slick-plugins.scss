@@ -557,10 +557,6 @@ li.hidden {
     font-family: var(--slick-icon-font-family, $slick-icon-font-family);
     font-size: var(--slick-checkbox-selector-size, $slick-checkbox-selector-size);
     opacity: var(--slick-checkbox-selector-opacity, $slick-checkbox-selector-opacity); /* unchecked icon */
-    height: var(--slick-checkbox-selector-icon-height, $slick-checkbox-selector-icon-height);
-    width: var(--slick-checkbox-selector-icon-width, $slick-checkbox-selector-icon-width);
-    border: var(--slick-checkbox-selector-icon-border, $slick-checkbox-selector-icon-border);
-    border-radius: var(--slick-checkbox-selector-icon-border-radius, $slick-checkbox-selector-icon-border-radius);
     margin: var(--slick-checkbox-selector-icon-margin, $slick-checkbox-selector-icon-margin);
   }
 
@@ -574,9 +570,15 @@ li.hidden {
     content: var(--slick-checkbox-selector-icon-checked, $slick-checkbox-selector-icon-checked);
     color: var(--slick-checkbox-selector-checked-color, $slick-checkbox-selector-checked-color);
     opacity: 1; /* checked icon */
+
+  }
+  input[type=checkbox] + label:before,
+  input[type=checkbox]:checked + label:before,
+  #filter-checkbox-selectall-container > input[type=checkbox] + label:before,
+  #filter-checkbox-selectall-container > input[type=checkbox]:checked + label:before {
     height: var(--slick-checkbox-selector-icon-height, $slick-checkbox-selector-icon-height);
     width: var(--slick-checkbox-selector-icon-width, $slick-checkbox-selector-icon-width);
-    border-radius: var(--slick-checkbox-selector-icon-border, $slick-checkbox-selector-icon-border);
+    border: var(--slick-checkbox-selector-icon-border, $slick-checkbox-selector-icon-border);
     border-radius: var(--slick-checkbox-selector-icon-border-radius, $slick-checkbox-selector-icon-border-radius);
   }
 }
@@ -602,15 +604,9 @@ li.hidden {
   height: var(--slick-header-input-height, $slick-header-input-height);
 
   div {
-    &:before {
+    &:before, &.open:before {
       font-family: var(--slick-icon-font-family, $slick-icon-font-family);
       font-size: var(--slick-multiselect-icon-arrow-font-size, $slick-multiselect-icon-arrow-font-size);
-    }
-    &.open {
-      &:before {
-        font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-        font-size: var(--slick-multiselect-icon-arrow-font-size, $slick-multiselect-icon-arrow-font-size);
-      }
     }
   }
 
@@ -657,11 +653,6 @@ li.hidden {
       font-family: var(--slick-icon-font-family, $slick-icon-font-family);
       font-size: var(--slick-multiselect-icon-font-size, $slick-multiselect-icon-font-size);
       font-weight: normal;
-      height: var(--slick-multiselect-icon-height, $slick-multiselect-icon-height);
-      width: var(--slick-multiselect-icon-width, $slick-multiselect-icon-width);
-      border: var(--slick-multiselect-icon-border, $slick-multiselect-icon-border);
-      border-radius: var(--slick-multiselect-icon-border-radius, $slick-multiselect-icon-border-radius);
-      margin: var(--slick-multiselect-icon-margin, $slick-multiselect-icon-margin);
       opacity: var(--slick-multiselect-unchecked-opacity, $slick-multiselect-unchecked-opacity);
       vertical-align: var(--slick-multiselect-icon-vertical-align, $slick-multiselect-icon-vertical-align);
     }
@@ -669,6 +660,8 @@ li.hidden {
     &:checked + span:before {
       content: var(--slick-multiselect-icon-checked, $slick-multiselect-icon-checked);
       opacity: 1;
+    }
+    & + span:before, &:checked + span:before {
       height: var(--slick-multiselect-icon-height, $slick-multiselect-icon-height);
       width: var(--slick-multiselect-icon-width, $slick-multiselect-icon-width);
       border: var(--slick-multiselect-icon-border, $slick-multiselect-icon-border);
@@ -679,15 +672,12 @@ li.hidden {
   input[type="radio"] {
     & + span:before {
       content: var(--slick-multiselect-icon-radio-unchecked, $slick-multiselect-icon-radio-unchecked);
-      height: var(--slick-multiselect-icon-radio-height, $slick-multiselect-icon-radio-height);
-      width: var(--slick-multiselect-icon-radio-width, $slick-multiselect-icon-radio-width);
-      border: var(--slick-multiselect-icon-radio-border, $slick-multiselect-icon-radio-border);
-      border-radius: var(--slick-multiselect-icon-radio-border-radius, $slick-multiselect-icon-radio-border-radius);
-      margin: var(--slick-multiselect-icon-radio-margin, $slick-multiselect-icon-radio-margin);
     }
     &:checked + span:before {
       content: var(--slick-multiselect-icon-radio-checked, $slick-multiselect-icon-radio-checked);
       color: var(--slick-multiselect-icon-radio-color, $slick-multiselect-icon-radio-color);
+    }
+    & + span:before, &:checked + span:before {
       height: var(--slick-multiselect-icon-radio-height, $slick-multiselect-icon-radio-height);
       width: var(--slick-multiselect-icon-radio-width, $slick-multiselect-icon-radio-width);
       border: var(--slick-multiselect-icon-radio-border, $slick-multiselect-icon-radio-border);
@@ -991,19 +981,21 @@ input.flatpickr.form-control {
     }
 
     .slick-groupby-remove-icon::before {
-      font-family: var(--slick-icon-font-family, $slick-icon-font-family);
       font-size: var(--slick-draggable-group-by-remove-icon-size, $slick-draggable-group-by-remove-icon-size);
       content: var(--slick-draggable-group-by-remove-icon, $slick-draggable-group-by-remove-icon);
     }
     .slick-groupby-sort-asc-icon::before {
-      font-family: var(--slick-icon-font-family, $slick-icon-font-family);
       font-size: var(--slick-draggable-group-sort-asc-icon-size, $slick-draggable-group-sort-asc-icon-size);
       content: var(--slick-draggable-group-sort-asc-icon, $slick-draggable-group-sort-asc-icon);
     }
     .slick-groupby-sort-desc-icon::before {
-      font-family: var(--slick-icon-font-family, $slick-icon-font-family);
       font-size: var(--slick-draggable-group-sort-desc-icon-size, $slick-draggable-group-sort-desc-icon-size);
       content: var(--slick-draggable-group-sort-desc-icon, $slick-draggable-group-sort-desc-icon);
+    }
+    .slick-groupby-remove-icon::before,
+    .slick-groupby-sort-asc-icon::before,
+    .slick-groupby-sort-desc-icon::before {
+      font-family: var(--slick-icon-font-family, $slick-icon-font-family);
     }
   }
   .slick-dropzone-hover {
@@ -1284,8 +1276,6 @@ input.flatpickr.form-control {
         color: var(--slick-detail-view-icon-expand-color-hover, $slick-detail-view-icon-expand-color-hover);
       }
       &:before {
-        font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-        font-size: var(--slick-detail-view-icon-size, $slick-detail-view-icon-size);
         content: var(--slick-detail-view-icon-expand, $slick-detail-view-icon-expand);
       }
     }
@@ -1296,10 +1286,13 @@ input.flatpickr.form-control {
         color: var(--slick-detail-view-icon-collapse-color-hover, $slick-detail-view-icon-collapse-color-hover);
       }
       &:before {
-        font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-        font-size: var(--slick-detail-view-icon-size, $slick-detail-view-icon-size);
         content: var(--slick-detail-view-icon-collapse, $slick-detail-view-icon-collapse);
       }
+    }
+    &.expand:before,
+    &.collapse:before {
+      font-family: var(--slick-icon-font-family, $slick-icon-font-family);
+      font-size: var(--slick-detail-view-icon-size, $slick-detail-view-icon-size);
     }
   }
 
