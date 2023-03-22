@@ -24,7 +24,7 @@ const addJQueryEventPropagation = function (event, commandKey = '', keyName = ''
     Object.defineProperty(event, 'target', { writable: true, configurable: true, value: target });
   }
   return event;
-}
+};
 
 const dataViewStub = {
   collapseAllGroups: jest.fn(),
@@ -36,7 +36,7 @@ const dataViewStub = {
   onPagingInfoChanged: new Slick.Event(),
   onSelectedRowIdsChanged: new Slick.Event(),
   setSelectedIds: jest.fn(),
-}
+};
 
 const getEditorLockMock = {
   commitCurrentEdit: jest.fn(),
@@ -123,7 +123,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       applySelectOnAllPages: true,
       columnId: '_checkbox_selector',
       cssClass: null,
-      field: 'sel',
+      field: '_checkbox_selector',
       hideSelectAllCheckbox: false,
       toolTip: 'Select/Deselect All',
       width: 30,
@@ -146,7 +146,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       applySelectOnAllPages: true,
       columnId: '_checkbox_selector',
       cssClass: 'some-class',
-      field: 'sel',
+      field: '_checkbox_selector',
       hideSelectAllCheckbox: true,
       toolTip: 'Select/Deselect All',
       width: 30,
@@ -180,7 +180,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const clickEvent = addJQueryEventPropagation(new Event('click'), '', '', checkboxElm);
     const preventDefaultSpy = jest.spyOn(clickEvent, 'preventDefault');
     const stopImmediatePropagationSpy = jest.spyOn(clickEvent, 'stopImmediatePropagation');
-    gridStub.onHeaderClick.notify({ column: { id: '_checkbox_selector', field: 'sel' }, grid: gridStub }, clickEvent);
+    gridStub.onHeaderClick.notify({ column: { id: '_checkbox_selector', field: '_checkbox_selector' }, grid: gridStub }, clickEvent);
 
     expect(plugin).toBeTruthy();
     expect(updateColHeaderSpy).toHaveBeenCalledWith(
@@ -215,7 +215,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const clickEvent = addJQueryEventPropagation(new Event('click'), '', '', checkboxElm);
     const stopPropagationSpy = jest.spyOn(clickEvent, 'stopPropagation');
     const stopImmediatePropagationSpy = jest.spyOn(clickEvent, 'stopImmediatePropagation');
-    gridStub.onHeaderClick.notify({ column: { id: '_checkbox_selector', field: 'sel' }, grid: gridStub }, clickEvent);
+    gridStub.onHeaderClick.notify({ column: { id: '_checkbox_selector', field: '_checkbox_selector' }, grid: gridStub }, clickEvent);
 
     expect(plugin).toBeTruthy();
     expect(stopPropagationSpy).toHaveBeenCalled();
@@ -249,7 +249,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const clickEvent = addJQueryEventPropagation(new Event('click'), '', '', checkboxElm);
     const stopPropagationSpy = jest.spyOn(clickEvent, 'stopPropagation');
     const stopImmediatePropagationSpy = jest.spyOn(clickEvent, 'stopImmediatePropagation');
-    gridStub.onHeaderClick.notify({ column: { id: '_checkbox_selector', field: 'sel' }, grid: gridStub }, clickEvent);
+    gridStub.onHeaderClick.notify({ column: { id: '_checkbox_selector', field: '_checkbox_selector' }, grid: gridStub }, clickEvent);
 
     expect(plugin).toBeTruthy();
     expect(stopPropagationSpy).toHaveBeenCalled();
@@ -267,7 +267,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
 
     plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, { hideInFilterHeaderRow: false, hideSelectAllCheckbox: false, });
     plugin.init(gridStub);
-    gridStub.onHeaderRowCellRendered.notify({ column: { id: '_checkbox_selector', field: 'sel' }, node: nodeElm, grid: gridStub });
+    gridStub.onHeaderRowCellRendered.notify({ column: { id: '_checkbox_selector', field: '_checkbox_selector' }, node: nodeElm, grid: gridStub });
     plugin.setOptions({ hideInColumnTitleRow: true, hideInFilterHeaderRow: false, hideSelectAllCheckbox: false, });
     let filterSelectAll = plugin.headerRowNode!.querySelector(`#filter-checkbox-selectall-container`) as HTMLSpanElement;
 
@@ -386,7 +386,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       id: '_checkbox_selector',
       name: `<input id="header-selector${plugin.selectAllUid}" type="checkbox"><label for="header-selector${plugin.selectAllUid}"></label>`,
       toolTip: 'Select/Deselect All',
-      field: 'sel',
+      field: '_checkbox_selector',
       cssClass: null,
       excludeFromExport: true,
       excludeFromColumnPicker: true,
@@ -409,7 +409,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, { applySelectOnAllPages: false, hideInFilterHeaderRow: false, });
     plugin.init(gridStub);
 
-    gridStub.onHeaderRowCellRendered.notify({ column: { id: '_checkbox_selector', field: 'sel' }, node: nodeElm, grid: gridStub });
+    gridStub.onHeaderRowCellRendered.notify({ column: { id: '_checkbox_selector', field: '_checkbox_selector' }, node: nodeElm, grid: gridStub });
     const checkboxContainerElm = nodeElm.querySelector('span#filter-checkbox-selectall-container') as HTMLDivElement;
     const inputCheckboxElm = checkboxContainerElm.querySelector('input[type=checkbox]') as HTMLDivElement;
     inputCheckboxElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
@@ -427,7 +427,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       excludeFromGridMenu: true,
       excludeFromHeaderMenu: true,
       excludeFromQuery: true,
-      field: 'sel',
+      field: 'chk-id',
       hideSelectAllCheckbox: false,
       id: 'chk-id',
       name: `<input id="header-selector${plugin.selectAllUid}" type="checkbox"><label for="header-selector${plugin.selectAllUid}"></label>`,
@@ -455,7 +455,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       excludeFromGridMenu: true,
       excludeFromHeaderMenu: true,
       excludeFromQuery: true,
-      field: 'sel',
+      field: '_checkbox_selector',
       formatter: expect.toBeFunction(),
       hideSelectAllCheckbox: false,
       id: '_checkbox_selector',
@@ -488,7 +488,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
 
   it('should trigger "onClick" event and expect toggleRowSelection to be called', () => {
     const newCols = [
-      { id: '_checkbox_selector', toolTip: 'Select/Deselect All', field: 'sel', },
+      { id: '_checkbox_selector', toolTip: 'Select/Deselect All', field: '_checkbox_selector', },
       { id: 'firstName', field: 'firstName', name: 'First Name', },
     ];
     const toggleRowSpy = jest.spyOn(plugin, 'toggleRowSelectionWithEvent');
@@ -588,7 +588,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
 
   it('should trigger "onKeyDown" event and expect toggleRowSelection to be called when editor "commitCurrentEdit" returns True', () => {
     const newCols = [
-      { id: '_checkbox_selector', toolTip: 'Select/Deselect All', field: 'sel', },
+      { id: '_checkbox_selector', toolTip: 'Select/Deselect All', field: '_checkbox_selector', },
       { id: 'firstName', field: 'firstName', name: 'First Name', },
     ];
     const toggleRowSpy = jest.spyOn(plugin, 'toggleRowSelectionWithEvent');
@@ -673,7 +673,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin.init(gridStub);
     plugin.selectedRowsLookup = { 1: false, 2: true };
 
-    gridStub.onHeaderRowCellRendered.notify({ column: { id: '_checkbox_selector', field: 'sel' }, node: nodeElm, grid: gridStub });
+    gridStub.onHeaderRowCellRendered.notify({ column: { id: '_checkbox_selector', field: '_checkbox_selector' }, node: nodeElm, grid: gridStub });
 
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
@@ -708,7 +708,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin.init(gridStub);
     plugin.selectedRowsLookup = { 1: false, 2: true };
 
-    gridStub.onHeaderRowCellRendered.notify({ column: { id: '_checkbox_selector', field: 'sel' }, node: nodeElm, grid: gridStub });
+    gridStub.onHeaderRowCellRendered.notify({ column: { id: '_checkbox_selector', field: '_checkbox_selector' }, node: nodeElm, grid: gridStub });
 
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';

@@ -43,6 +43,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   protected _defaults = {
     alwaysRenderColumn: true,
     columnId: '_detail_selector',
+    field: '_detail_selector',
     cssClass: 'detailView-toggle',
     collapseAllOnSort: true,
     collapsedClass: null,
@@ -362,9 +363,11 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /** Get the Column Definition of the first column dedicated to toggling the Row Detail View */
   getColumnDefinition(): Column {
+    const columnId = String(this._addonOptions?.columnId ?? this._defaults.columnId);
+
     return {
-      id: this._addonOptions?.columnId ?? this._defaults.columnId as string | number,
-      field: 'sel',
+      id: columnId,
+      field: columnId,
       name: '',
       alwaysRenderColumn: this._addonOptions?.alwaysRenderColumn,
       cssClass: this._addonOptions.cssClass || '',

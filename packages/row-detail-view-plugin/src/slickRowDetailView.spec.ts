@@ -205,7 +205,7 @@ describe('SlickRowDetailView plugin', () => {
     const processMock = jest.fn();
     const overrideMock = jest.fn();
     const rowDetailColumnMock = {
-      id: '_detail_', field: 'sel', name: '', alwaysRenderColumn: true, cssClass: 'some-class',
+      id: '_detail_', field: '_detail_', name: '', alwaysRenderColumn: true, cssClass: 'some-class',
       excludeFromExport: true, excludeFromColumnPicker: true, excludeFromGridMenu: true, excludeFromQuery: true, excludeFromHeaderMenu: true,
       formatter: expect.anything(),
       resizable: false, sortable: false, toolTip: 'title', width: 30,
@@ -225,7 +225,7 @@ describe('SlickRowDetailView plugin', () => {
     const output = plugin.create(mockColumns, { rowDetailView: { process: processMock, columnIndexPosition: columnIndex, panelRows: 4, columnId: '_detail_', cssClass: 'some-class', toolTip: 'title' } });
 
     expect(mockColumns[columnIndex]).toEqual({
-      id: '_detail_', field: 'sel', name: '', alwaysRenderColumn: true, cssClass: 'some-class',
+      id: '_detail_', field: '_detail_', name: '', alwaysRenderColumn: true, cssClass: 'some-class',
       excludeFromExport: true, excludeFromColumnPicker: true, excludeFromGridMenu: true, excludeFromQuery: true, excludeFromHeaderMenu: true,
       formatter: expect.anything(),
       resizable: false, sortable: false, toolTip: 'title', width: 30,

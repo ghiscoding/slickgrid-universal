@@ -397,7 +397,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     const columnsMock = [
       { id: 'firstName', field: 'firstName', editor: undefined, internalColumnEditor: {} },
       { id: 'lastName', field: 'lastName', editor: undefined, internalColumnEditor: {} }
-    ]
+    ];
     eventPubSubService.publish('onPluginColumnsChanged', {
       columns: columnsMock,
       pluginName: 'RowMoveManager'
@@ -1413,6 +1413,56 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         component.columnDefinitions = mockCols;
         component.gridOptions = { enableCheckboxSelector: true, presets: { columns: mockColsPresets } } as unknown as GridOption;
+        component.initialization(divContainer, slickEventHandler);
+
+        expect(getAssocColSpy).toHaveBeenCalledWith(mockGrid, mockColsPresets);
+        expect(setColSpy).toHaveBeenCalledWith(mockCols);
+      });
+
+      it('should reflect columns with an extra row detail column in the grid when "enableRowDetailView" is set', () => {
+        const mockColsPresets = [{ columnId: 'firstName', width: 100 }];
+        const mockCol = { id: 'firstName', field: 'firstName' };
+        const mockCols = [{ id: '_detail_selector', field: '_detail_selector', editor: undefined, internalColumnEditor: {} }, mockCol];
+        const getAssocColSpy = jest.spyOn(gridStateServiceStub, 'getAssociatedGridColumns').mockReturnValue([mockCol]);
+        const setColSpy = jest.spyOn(mockGrid, 'setColumns');
+
+        component.columnDefinitions = mockCols;
+        component.gridOptions = { ...gridOptions, enableRowDetailView: true, presets: { columns: mockColsPresets } } as unknown as GridOption;
+        component.initialization(divContainer, slickEventHandler);
+
+        expect(getAssocColSpy).toHaveBeenCalledWith(mockGrid, mockColsPresets);
+        expect(setColSpy).toHaveBeenCalledWith(mockCols);
+      });
+
+      it('should reflect columns with an extra row move column in the grid when "enableRowMoveManager" is set', () => {
+        const mockColsPresets = [{ columnId: 'firstName', width: 100 }];
+        const mockCol = { id: 'firstName', field: 'firstName' };
+        const mockCols = [{ id: '_move', field: '_move', editor: undefined, internalColumnEditor: {} }, mockCol];
+        const getAssocColSpy = jest.spyOn(gridStateServiceStub, 'getAssociatedGridColumns').mockReturnValue([mockCol]);
+        const setColSpy = jest.spyOn(mockGrid, 'setColumns');
+
+        component.columnDefinitions = mockCols;
+        component.gridOptions = { ...gridOptions, enableRowMoveManager: true, presets: { columns: mockColsPresets } } as unknown as GridOption;
+        component.initialization(divContainer, slickEventHandler);
+
+        expect(getAssocColSpy).toHaveBeenCalledWith(mockGrid, mockColsPresets);
+        expect(setColSpy).toHaveBeenCalledWith(mockCols);
+      });
+
+      it('should reflect 3 dynamic columns (1-RowMove, 2-RowSelection, 3-RowDetail) when all associated extension flags are enabled', () => {
+        const mockColsPresets = [{ columnId: 'firstName', width: 100 }];
+        const mockCol = { id: 'firstName', field: 'firstName' };
+        const mockCols = [
+          { id: '_move', field: '_move', editor: undefined, internalColumnEditor: {} },
+          { id: '_checkbox_selector', field: '_checkbox_selector', editor: undefined, internalColumnEditor: {} },
+          { id: '_detail_selector', field: '_detail_selector', editor: undefined, internalColumnEditor: {} },
+          mockCol
+        ];
+        const getAssocColSpy = jest.spyOn(gridStateServiceStub, 'getAssociatedGridColumns').mockReturnValue([mockCol]);
+        const setColSpy = jest.spyOn(mockGrid, 'setColumns');
+
+        component.columnDefinitions = mockCols;
+        component.gridOptions = { ...gridOptions, enableCheckboxSelector: true, enableRowDetailView: true, enableRowMoveManager: true, presets: { columns: mockColsPresets } } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
         expect(getAssocColSpy).toHaveBeenCalledWith(mockGrid, mockColsPresets);
