@@ -14,7 +14,7 @@ export class SlickCheckboxSelectColumn<T = any> {
   protected _defaults = {
     columnId: '_checkbox_selector',
     cssClass: null,
-    field: 'sel',
+    field: '_checkbox_selector',
     hideSelectAllCheckbox: false,
     toolTip: 'Select/Deselect All',
     width: 30,
@@ -199,11 +199,13 @@ export class SlickCheckboxSelectColumn<T = any> {
   }
 
   getColumnDefinition(): Column {
+    const columnId = String(this._addonOptions?.columnId ?? this._defaults.columnId);
+
     return {
-      id: this._addonOptions.columnId,
+      id: columnId,
       name: (this._addonOptions.hideSelectAllCheckbox || this._addonOptions.hideInColumnTitleRow) ? '' : `<input id="header-selector${this._selectAll_UID}" type="checkbox"><label for="header-selector${this._selectAll_UID}"></label>`,
       toolTip: (this._addonOptions.hideSelectAllCheckbox || this._addonOptions.hideInColumnTitleRow) ? '' : this._addonOptions.toolTip,
-      field: this._addonOptions.field || 'sel',
+      field: columnId,
       cssClass: this._addonOptions.cssClass,
       excludeFromExport: true,
       excludeFromColumnPicker: true,
@@ -281,7 +283,7 @@ export class SlickCheckboxSelectColumn<T = any> {
 
   protected addCheckboxToFilterHeaderRow(grid: SlickGrid) {
     this._eventHandler.subscribe(grid.onHeaderRowCellRendered, (_e: any, args: any) => {
-      if (args.column.field === (this._addonOptions.field || 'sel')) {
+      if (args.column.field === (this._addonOptions.field || '_checkbox_selector')) {
         emptyElement(args.node);
 
         // <span class="container"><input type="checkbox"><label for="checkbox"></label></span>

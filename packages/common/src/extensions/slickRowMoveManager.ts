@@ -127,8 +127,10 @@ export class SlickRowMoveManager {
   }
 
   getColumnDefinition(): Column {
+    const columnId = String(this._addonOptions?.columnId ?? this._defaults.columnId);
+
     return {
-      id: this._addonOptions.columnId || '_move',
+      id: columnId,
       name: '',
       behavior: 'selectAndMove',
       cssClass: this._addonOptions.cssClass,
@@ -137,7 +139,7 @@ export class SlickRowMoveManager {
       excludeFromGridMenu: true,
       excludeFromQuery: true,
       excludeFromHeaderMenu: true,
-      field: 'move',
+      field: columnId,
       resizable: false,
       selectable: false,
       width: this._addonOptions.width || 40,

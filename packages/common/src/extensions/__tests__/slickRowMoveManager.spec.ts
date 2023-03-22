@@ -15,7 +15,7 @@ const addJQueryEventPropagation = function (event, target?: HTMLElement) {
     Object.defineProperty(event, 'target', { writable: true, configurable: true, value: target });
   }
   return event;
-}
+};
 
 const mockGridOptions = {
   frozenColumn: 1,
@@ -145,7 +145,7 @@ describe('SlickRowMoveManager Plugin', () => {
       excludeFromGridMenu: true,
       excludeFromHeaderMenu: true,
       excludeFromQuery: true,
-      field: 'move',
+      field: 'move-id',
       formatter: expect.toBeFunction(),
       id: 'move-id',
       name: '',
@@ -194,7 +194,7 @@ describe('SlickRowMoveManager Plugin', () => {
       excludeFromGridMenu: true,
       excludeFromHeaderMenu: true,
       excludeFromQuery: true,
-      field: 'move',
+      field: 'move-id',
       formatter: expect.toBeFunction(),
       id: 'move-id',
       name: '',
