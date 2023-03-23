@@ -103,7 +103,7 @@ importers:
       flatpickr: ^4.6.13
       jquery: ^3.6.4
       moment-mini: ^2.29.4
-      multiple-select-vanilla: ^0.2.7
+      multiple-select-vanilla: ^0.2.8
       rxjs: ^7.8.0
       sass: ^1.59.3
       typescript: ^5.0.2
@@ -127,7 +127,7 @@ importers:
       flatpickr: 4.6.13
       jquery: 3.6.4
       moment-mini: 2.29.4
-      multiple-select-vanilla: 0.2.7
+      multiple-select-vanilla: 0.2.8
       rxjs: 7.8.0
       whatwg-fetch: 3.6.2
     devDependencies:
@@ -171,7 +171,7 @@ importers:
       flatpickr: ^4.6.13
       jquery: ^3.6.4
       moment-mini: ^2.29.4
-      multiple-select-vanilla: ^0.2.7
+      multiple-select-vanilla: ^0.2.8
       npm-run-all2: ^6.0.4
       postcss: ^8.4.21
       postcss-cli: ^10.1.0
@@ -188,7 +188,7 @@ importers:
       flatpickr: 4.6.13
       jquery: 3.6.4
       moment-mini: 2.29.4
-      multiple-select-vanilla: 0.2.7
+      multiple-select-vanilla: 0.2.8
       slickgrid: 3.0.4
       sortablejs: 1.15.0
       un-flatten-tree: 2.0.12
@@ -6581,8 +6581,8 @@ packages:
       minimatch: 3.1.2
     dev: true
 
-  /multiple-select-vanilla/0.2.7:
-    resolution: {integrity: sha512-g75ipCzd8cxT2rn1A4NYrxWFfBep/TK6hqz3D+PqawMYtwhpj38DTOoz0tSDkd9YAj23oqDppUhqTm1PutZ0Sg==}
+  /multiple-select-vanilla/0.2.8:
+    resolution: {integrity: sha512-b632v5BjQAKOt9wTi0v6l6VB/1Jgep4tTuE/DFUwLUHj/lD80l1RMkzhdS6If7ZcEw/cMubn6TvrXkj1OUHk4A==}
     dev: false
 
   /mute-stream/0.0.8:
