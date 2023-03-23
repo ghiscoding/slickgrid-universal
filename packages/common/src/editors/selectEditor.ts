@@ -363,9 +363,9 @@ export class SelectEditor implements Editor {
     }
   }
 
-  show() {
+  show(openDelay?: number | null) {
     if (!this.isCompositeEditor && this._msInstance) {
-      this._msInstance.open();
+      this._msInstance.open(openDelay);
     } else if (this.isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
       this.applyInputUsabilityState();

@@ -114,7 +114,7 @@ describe('MultipleSelectEditor', () => {
       const editorElm = document.body.querySelector('[data-name=editor-gender].ms-drop') as HTMLDivElement;
       expect(editorElm).toBeTruthy();
 
-      editor.show();
+      editor.show(null);
       expect(editorElm.style.display).toBe('block');
 
       editor.hide();
@@ -129,7 +129,7 @@ describe('MultipleSelectEditor', () => {
       editor.hide();
       expect(editorElm.style.display).toBe('none');
 
-      editor.show();
+      editor.show(null);
       expect(editorElm.style.display).toBe('block');
     });
   });
