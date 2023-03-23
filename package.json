@@ -76,7 +76,7 @@
     "jsdom-global": "^3.0.2",
     "moment-mini": "^2.29.4",
     "npm-run-all2": "^6.0.4",
-    "pnpm": "^7.30.0",
+    "pnpm": "^7.30.1",
     "rimraf": "^4.4.1",
     "rxjs": "^7.8.0",
     "servor": "^4.0.2",
@@ -87,7 +87,7 @@
     "typescript": "5.0.2",
     "whatwg-fetch": "^3.6.2"
   },
-  "packageManager": "pnpm@7.30.0",
+  "packageManager": "pnpm@7.30.1",
   "engines": {
     "node": ">=14.17.0",
     "npm": ">=6.14.13"
