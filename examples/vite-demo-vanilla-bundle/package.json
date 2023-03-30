@@ -40,7 +40,7 @@
     "@types/node": "^18.15.11",
     "@types/whatwg-fetch": "^0.0.33",
     "sass": "^1.60.0",
-    "typescript": "^5.0.2",
+    "typescript": "^5.0.3",
     "vite": "^4.2.1"
   }
 }
