@@ -59,7 +59,7 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "npm-run-all2": "^6.0.4"
+    "npm-run-all2": "^6.0.5"
   },
   "funding": {
     "type": "ko_fi",
