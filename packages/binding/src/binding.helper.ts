@@ -15,8 +15,6 @@ export class BindingHelper {
     return this._observers;
   }
 
-  constructor() { }
-
   dispose() {
     let observer = this._observers.pop();
     while (observer) {

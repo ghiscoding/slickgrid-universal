@@ -1,7 +1,3 @@
-/* eslint-disable no-bitwise */
-import * as DOMPurify_ from 'dompurify';
-const DOMPurify = ((DOMPurify_ as any)?.['default'] ?? DOMPurify_); // patch for rollup
-
 import { Binding, BoundedEventWithListener, ElementBinding, ElementBindingWithListener } from './interfaces';
 
 /**
@@ -22,9 +18,9 @@ export class BindingService {
     this._property = binding.property || '';
     this._elementBindings = [];
     if (binding.property && binding.variable && (binding.variable.hasOwnProperty(binding.property) || binding.property in binding.variable)) {
-      this._value = typeof binding.variable[binding.property] === 'string' ? this.sanitizeText(binding.variable[binding.property]) : binding.variable[binding.property];
+      this._value = binding.variable[binding.property];
     } else {
-      this._value = typeof binding.variable === 'string' ? this.sanitizeText(binding.variable) : binding.variable;
+      this._value = binding.variable;
     }
 
     if (typeof binding.variable === 'object') {
@@ -58,11 +54,11 @@ export class BindingService {
   }
 
   valueSetter<T extends Element = Element>(val: any) {
-    this._value = typeof val === 'string' ? this.sanitizeText(val) : val;
+    this._value = val;
     if (Array.isArray(this._elementBindings)) {
       for (const binding of this._elementBindings) {
         if (binding?.element && binding?.attribute) {
-          (binding.element as T)[binding.attribute as keyof T] = typeof val === 'string' ? this.sanitizeText(val) : val;
+          (binding.element as T)[binding.attribute as keyof T] = val;
         }
       }
     }
@@ -139,13 +135,14 @@ export class BindingService {
         this._boundedEventWithListeners.push({ element, eventName, listener, uid: this.generateUuidV4() });
       }
       this._elementBindings.push(binding);
-      element[attribute as keyof T] = typeof this._value === 'string' ? this.sanitizeText(this._value) : this._value;
+      element[attribute as keyof T] = this._value;
     }
   }
 
   /** Generate a UUID version 4 RFC compliant */
   protected generateUuidV4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      /* eslint-disable no-bitwise */
       const r = Math.random() * 16 | 0;
       const v = c === 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
@@ -154,9 +151,5 @@ export class BindingService {
 
   protected hasData(value: any): boolean {
     return value !== undefined && value !== null && value !== '';
-  }
-
-  protected sanitizeText(dirtyText: string): string {
-    return (DOMPurify?.sanitize) ? DOMPurify.sanitize(dirtyText, {}) : dirtyText;
   }
 }

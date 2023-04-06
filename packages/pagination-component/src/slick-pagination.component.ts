@@ -34,7 +34,6 @@ export class SlickPaginationComponent {
   constructor(protected readonly paginationService: PaginationService, protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService, protected readonly translaterService?: TranslaterService) {
     this._bindingHelper = new BindingHelper();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
-
     this.currentPagination = this.paginationService.getFullPagination();
     this._enableTranslate = this.gridOptions?.enableTranslate ?? false;
 
@@ -202,7 +201,7 @@ export class SlickPaginationComponent {
     this._bindingHelper.bindEventHandler('.icon-seek-end', 'click', this.changeToLastPage.bind(this) as EventListener);
     this._bindingHelper.bindEventHandler('.icon-seek-next', 'click', this.changeToNextPage.bind(this) as EventListener);
     this._bindingHelper.bindEventHandler('.icon-seek-prev', 'click', this.changeToPreviousPage.bind(this) as EventListener);
-    this._bindingHelper.bindEventHandler('select.items-per-page', 'change', (event: & { target: any }) => this.itemsPerPage = +(event?.target?.value ?? 0));
+    this._bindingHelper.bindEventHandler('select.items-per-page', 'change', (event: & { target: any; }) => this.itemsPerPage = +(event?.target?.value ?? 0));
   }
 
   changeToFirstPage(event: MouseEvent) {
@@ -267,7 +266,7 @@ export class SlickPaginationComponent {
     return paginationElm;
   }
 
-  protected createPageNavigation(navAriaLabel: string, liElements: Array<{ liClass: string, aClass: string, ariaLabel: string }>) {
+  protected createPageNavigation(navAriaLabel: string, liElements: Array<{ liClass: string, aClass: string, ariaLabel: string; }>) {
     const navElm = createDomElement('nav', { ariaLabel: navAriaLabel });
     const ulElm = createDomElement('ul', { className: 'pagination' });
 
