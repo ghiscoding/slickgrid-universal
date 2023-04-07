@@ -15,13 +15,13 @@ importers:
         specifier: ^29.5.0
         version: 29.5.0
       '@lerna-lite/cli':
-        specifier: 2.0.0-alpha.2
+        specifier: ^2.0.0-alpha.2
         version: 2.0.0-alpha.2
       '@lerna-lite/run':
-        specifier: 2.0.0-alpha.2
+        specifier: ^2.0.0-alpha.2
         version: 2.0.0-alpha.2
       '@lerna-lite/watch':
-        specifier: 2.0.0-alpha.2
+        specifier: ^2.0.0-alpha.2
         version: 2.0.0-alpha.2
       '@types/jest':
         specifier: ^29.5.0
