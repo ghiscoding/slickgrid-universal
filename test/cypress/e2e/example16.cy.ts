@@ -226,4 +226,30 @@ describe('Example 16 - Regular & Custom Tooltips', { retries: 1 }, () => {
     cy.get('.slick-custom-tooltip').should('not.exist');
     cy.get('@finish-header').trigger('mouseleave');
   });
+
+  it('should click Prerequisite editor of 1st row (Task 2) and expect Task1 & 2 to be selected in the multiple-select drop', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(10)`).as('prereq-cell');
+    cy.get('@prereq-cell')
+      .should('contain', 'Task 2, Task 1')
+      .click();
+
+    cy.get('div.ms-drop[data-name=editor-prerequisites]')
+      .find('li.selected')
+      .should('have.length', 2);
+
+    cy.get('div.ms-drop[data-name=editor-prerequisites]')
+      .find('li.selected:nth(0) span')
+      .should('contain', 'Task 1');
+
+    cy.get('div.ms-drop[data-name=editor-prerequisites]')
+      .find('li.selected:nth(1) span')
+      .should('contain', 'Task 2');
+
+    cy.get('div.ms-drop[data-name=editor-prerequisites]')
+      .find('.ms-ok-button')
+      .click();
+
+    cy.get('div.ms-drop[data-name=editor-prerequisites]')
+      .should('not.exist');
+  });
 });

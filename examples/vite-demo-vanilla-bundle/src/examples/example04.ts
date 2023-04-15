@@ -124,7 +124,7 @@ export default class Example4 {
           editorOptions: {
             filter: true // adds a filter on top of the multi-select dropdown
           },
-          model: Editors.multipleSelect,
+          model: Editors.singleSelect,
         },
       },
       {

@@ -1,3 +1,6 @@
+// import multiple-select SASS variables in order to override them
+@import 'multiple-select-vanilla/dist/styles/sass/multiple-select.scss';
+
 /*
  * SlickGrid-Universal theming variables, used by all Themes
  * Lib Website (https://github.com/ghiscoding/slickgrid-universal)
@@ -713,6 +716,7 @@ $slick-multiselect-input-filter-font-size:                  12px !default;
 $slick-multiselect-input-focus-border-color:                $slick-input-focus-border-color !default;
 $slick-multiselect-input-focus-box-shadow:                  $slick-input-focus-box-shadow !default;
 $slick-multiselect-dropdown-border:                         1px solid #bbb !default;
+$slick-multiselect-dropdown-list-padding:                   4px 6px !default;
 $slick-multiselect-dropdown-max-width:                      250px !default;
 $slick-multiselect-dropdown-z-index:                        9999 !default;
 $slick-multiselect-checkbox-margin-left:                    0px !default;
@@ -743,13 +747,13 @@ $slick-multiselect-item-height:                             26px !default;
 $slick-multiselect-item-border:                             1px solid transparent !default;
 $slick-multiselect-item-hover-border:                       1px solid #d5d5d5 !default;
 $slick-multiselect-item-line-height:                        calc(#{$slick-multiselect-icon-font-size} + 2px) !default;
-$slick-multiselect-item-padding:                            2px 6px !default;
+$slick-multiselect-item-padding:                            2px 4px !default;
 $slick-multiselect-unchecked-opacity:                       0.6 !default;
 $slick-multiselect-placeholder-bg-color:                    transparent !default;
 $slick-multiselect-placeholder-color:                       $slick-editor-placeholder-color !default;
 $slick-multiselect-placeholder-font-family:                 $slick-filter-placeholder-font-family !default;
 $slick-multiselect-ok-button-bg-color:                      #fff !default;
-$slick-multiselect-ok-button-bg-hover-color:                darken($slick-row-mouse-hover-color, 3%) !default;
+$slick-multiselect-ok-button-bg-hover-color:                #f9f9f9 !default;
 $slick-multiselect-ok-button-border-color:                  #ccc !default;
 $slick-multiselect-ok-button-border-radius:                 0 0 4px 4px !default;
 $slick-multiselect-ok-button-border-width:                  1px 0 0 0 !default;
@@ -765,9 +769,23 @@ $slick-multiselect-select-all-label-hover-border:           $slick-multiselect-i
 $slick-multiselect-select-all-label-hover-bg-color:         $slick-multiselect-checkbox-hover-bg-color !default;
 $slick-multiselect-select-all-label-padding:                4px !default;
 $slick-multiselect-select-all-line-height:                  calc(#{$slick-multiselect-icon-font-size} + 2px) !default;
-$slick-multiselect-select-all-padding:                      8px !default;
+$slick-multiselect-select-all-padding:                      4px 6px !default;
 $slick-multiselect-select-all-text-color:                   darken($slick-primary-color, 5%) !default;
 $slick-multiselect-select-all-text-hover-color:             transparent !default;
+
+// override multiple-select SASS variables
+$ms-drop-list-padding:                                      $slick-multiselect-dropdown-list-padding;
+$ms-drop-list-item-padding:                                 $slick-multiselect-item-padding;
+$ms-drop-hide-radio-selected-color:                         unset;
+$ms-drop-hide-radio-selected-bgcolor:                       unset;
+$ms-label-padding:                                          $slick-multiselect-item-padding;
+$ms-ok-button-bg-hover-color:                               $slick-multiselect-ok-button-bg-hover-color;
+$ms-ok-button-text-color:                                   $slick-multiselect-ok-button-text-color;
+$ms-ok-button-text-hover-color:                             $slick-multiselect-ok-button-text-hover-color;
+$ms-select-all-label-hover-border:                          $slick-multiselect-select-all-label-hover-border;
+$ms-select-all-label-padding:                               $slick-multiselect-select-all-padding;
+$ms-select-all-label-span-padding:                          $slick-multiselect-select-all-label-padding;
+$ms-select-all-text-color:                                  $slick-multiselect-select-all-text-color;
 
 /* pagination variables */
 $slick-pagination-border-color:                             #ddd !default;

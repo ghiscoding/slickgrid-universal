@@ -84,11 +84,37 @@ describe('Example 02 - Grouping & Aggregators', { retries: 1 }, () => {
       });
   });
 
+  it('should change filter "Effort-Driven" to the null option and expect 176 items shown in the footer and also no label to show in the drop parent', () => {
+    cy.get('div.ms-filter.filter-effortDriven')
+      .trigger('click');
+
+    cy.get('.ms-drop')
+      .find('span:nth(0)')
+      .click();
+
+    cy.get('.grid2')
+      .find('.slick-custom-footer')
+      .find('.right-footer')
+      .should($span => {
+        const text = removeExtraSpaces($span.text()); // remove all white spaces
+        expect(text).to.eq(`Last Update ${moment().format('YYYY-MM-DD, hh:mm a')} | 176 of 500 items`);
+      });
+
+    cy.get('.ms-drop').should('contain', '');
+  });
+
   it('should clear filters of grid2 using the Grid Menu "Clear all Filters" command', () => {
     cy.get('.grid2')
       .find('button.slick-grid-menu-button')
       .trigger('click')
       .click({ force: true });
+
+    cy.get(`.slick-grid-menu:visible`)
+      .find('.slick-menu-item')
+      .first()
+      .find('span')
+      .contains('Clear all Filters')
+      .click();
   });
 
   describe('Grouping Tests', () => {
@@ -120,6 +146,13 @@ describe('Example 02 - Grouping & Aggregators', { retries: 1 }, () => {
 
     it('should "Group by Duration then Effort-Driven" and expect 1st row to be expanded, 2nd row to be collapsed and 3rd row to have group totals', () => {
       cy.get('[data-test="group-duration-effort-btn"]').click();
+
+      cy.get('div.ms-filter.filter-effortDriven')
+        .trigger('click');
+
+      cy.get('.ms-drop')
+        .find('span:nth(2)')
+        .click();
 
       cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
       cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"].slick-group-level-0 > .slick-cell:nth(0) .slick-group-title`).should('contain', 'Duration: 0');

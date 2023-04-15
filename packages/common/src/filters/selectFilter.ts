@@ -1,3 +1,6 @@
+import { multipleSelect, MultipleSelectInstance, MultipleSelectOption, OptionRowData } from 'multiple-select-vanilla';
+import { isPrimitiveValue } from '@slickgrid-universal/utils';
+
 import { Constants } from '../constants';
 import { OperatorString, OperatorType, SearchTerm, } from '../enums/index';
 import {
@@ -10,35 +13,35 @@ import {
   FilterCallback,
   GridOption,
   Locale,
-  MultipleSelectOption,
   SlickGrid,
 } from './../interfaces/index';
 import { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
 import { getDescendantProperty, getTranslationPrefix, unsubscribeAll } from '../services/utilities';
-import { buildSelectEditorOrFilterDomElement, RxJsFacade, Subscription, TranslaterService } from '../services/index';
+import { buildMultipleSelectDataCollection, emptyElement, RxJsFacade, sanitizeTextByAvailableSanitizer, Subscription, TranslaterService } from '../services/index';
 import { renderCollectionOptionsAsync } from './filterUtilities';
 
 export class SelectFilter implements Filter {
   protected _isMultipleSelect = true;
   protected _collectionLength = 0;
   protected _locales!: Locale;
+  protected _msInstance?: MultipleSelectInstance;
   protected _shouldTriggerQuery = true;
 
   /** DOM Element Name, useful for auto-detecting positioning (dropup / dropdown) */
   elementName!: string;
 
   /** Filter Multiple-Select options */
-  filterElmOptions!: MultipleSelectOption;
+  filterElmOptions!: Partial<MultipleSelectOption>;
 
-  /** The JQuery DOM element */
-  $filterElm: any;
+  /** The DOM element */
+  filterElm?: HTMLElement;
 
   grid!: SlickGrid;
   searchTerms: SearchTerm[] | undefined;
   columnDef!: Column;
   callback!: FilterCallback;
-  defaultOptions!: MultipleSelectOption;
+  defaultOptions!: Partial<MultipleSelectOption>;
   isFilled = false;
   labelName!: string;
   labelPrefixName!: string;
@@ -90,6 +93,10 @@ export class SelectFilter implements Filter {
     return this._isMultipleSelect;
   }
 
+  get msInstance() {
+    return this._msInstance;
+  }
+
   /** Getter for the Filter Operator */
   get operator(): OperatorType | OperatorString {
     return this.columnFilter?.operator ?? this.defaultOperator;
@@ -102,9 +109,7 @@ export class SelectFilter implements Filter {
     }
   }
 
-  /**
-   * Initialize the filter template
-   */
+  /** Initialize the filter template */
   init(args: FilterArguments): Promise<any[]> {
     if (!args) {
       throw new Error('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
@@ -121,11 +126,11 @@ export class SelectFilter implements Filter {
     }
 
     this.enableTranslateLabel = this.columnFilter?.enableTranslateLabel ?? false;
-    this.labelName = this.customStructure && this.customStructure.label || 'label';
-    this.labelPrefixName = this.customStructure && this.customStructure.labelPrefix || 'labelPrefix';
-    this.labelSuffixName = this.customStructure && this.customStructure.labelSuffix || 'labelSuffix';
-    this.optionLabel = this.customStructure && this.customStructure.optionLabel || 'value';
-    this.valueName = this.customStructure && this.customStructure.value || 'value';
+    this.labelName = this.customStructure?.label ?? 'label';
+    this.labelPrefixName = this.customStructure?.labelPrefix ?? 'labelPrefix';
+    this.labelSuffixName = this.customStructure?.labelSuffix ?? 'labelSuffix';
+    this.optionLabel = this.customStructure?.optionLabel ?? 'value';
+    this.valueName = this.customStructure?.value ?? 'value';
 
     if (this.enableTranslateLabel && (!this.translaterService || typeof this.translaterService.translate !== 'function')) {
       throw new Error(`[select-filter] The Translate Service is required for the Select Filter to work correctly when "enableTranslateLabel" is set.`);
@@ -138,8 +143,8 @@ export class SelectFilter implements Filter {
     this.initMultipleSelectTemplate();
 
     // add placeholder when found
-    let placeholder = this.gridOptions && this.gridOptions.defaultFilterPlaceholder || '';
-    if (this.columnFilter && this.columnFilter.placeholder) {
+    let placeholder = this.gridOptions?.defaultFilterPlaceholder || '';
+    if (this.columnFilter?.placeholder) {
       placeholder = this.columnFilter.placeholder;
     }
     this.defaultOptions.placeholder = placeholder || '';
@@ -183,14 +188,13 @@ export class SelectFilter implements Filter {
     });
   }
 
-  /**
-   * Clear the filter values
-   */
+  /** Clear the filter values */
   clear(shouldTriggerQuery = true) {
-    if (this.$filterElm && this.$filterElm.multipleSelect && this._collectionLength > 0) {
+    if (this._msInstance && this._collectionLength > 0) {
       // reload the filter element by it's id, to make sure it's still a valid element (because of some issue in the GraphQL example)
-      this.$filterElm.multipleSelect('setSelects', []);
-      this.$filterElm.removeClass('filled').siblings('div .search-filter').removeClass('filled');
+      this._msInstance.setSelects([]);
+      this.filterElm?.classList.remove('filled');
+      this._msInstance?.getParentElement()?.classList.remove('filled');
       this.searchTerms = [];
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.callback(undefined, { columnDef: this.columnDef, clearFilterTriggered: true, shouldTriggerQuery: this._shouldTriggerQuery });
@@ -198,17 +202,10 @@ export class SelectFilter implements Filter {
     }
   }
 
-  /**
-   * destroy the filter
-   */
+  /** destroy the filter */
   destroy() {
-    if (this.$filterElm && typeof this.$filterElm.multipleSelect === 'function') {
-      this.$filterElm.multipleSelect('destroy');
-      this.$filterElm.remove();
-      const elementClassName = this.elementName.toString().replace('.', '\\.'); // make sure to escape any dot "." from CSS class to avoid console error
-      $(`[name=${elementClassName}].ms-drop`).remove();
-    }
-    this.$filterElm = null;
+    this._msInstance?.destroy();
+    this.filterElm?.remove();
 
     // unsubscribe all the possible Observables if RxJS was used
     unsubscribeAll(this.subscriptions);
@@ -219,19 +216,19 @@ export class SelectFilter implements Filter {
    * @params selected items
    */
   getValues(): any[] {
-    if (this.$filterElm && typeof this.$filterElm.multipleSelect === 'function') {
-      return this.$filterElm.multipleSelect('getSelects');
-    }
-    return [];
+    return this._msInstance?.getSelects() ?? [];
   }
 
   /** Set value(s) on the DOM element */
   setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString) {
-    if (values && this.$filterElm && typeof this.$filterElm.multipleSelect === 'function') {
-      values = Array.isArray(values) ? values : [values];
-      this.$filterElm.multipleSelect('setSelects', values);
+    if (values !== undefined && this._msInstance) {
+      values = Array.isArray(values)
+        ? values.every(x => isPrimitiveValue(x)) ? values.map(String) : values
+        : [values];
+      this._msInstance.setSelects(values);
     }
     this.updateFilterStyle(this.getValues().length > 0);
+
     // set the operator when defined
     this.operator = operator || this.defaultOperator;
   }
@@ -251,7 +248,7 @@ export class SelectFilter implements Filter {
     // user might want to filter certain items of the collection
     if (this.columnFilter && this.columnFilter.collectionFilterBy) {
       const filterBy = this.columnFilter.collectionFilterBy;
-      const filterCollectionBy = this.columnFilter.collectionOptions && this.columnFilter.collectionOptions.filterResultAfterEachPass || null;
+      const filterCollectionBy = this.columnFilter.collectionOptions?.filterResultAfterEachPass || null;
       outputCollection = this.collectionService.filterCollection(outputCollection, filterBy, filterCollectionBy);
     }
 
@@ -344,7 +341,7 @@ export class SelectFilter implements Filter {
     newCollection = this.sortCollection(newCollection);
 
     // step 1, create HTML DOM element
-    const selectBuildResult = buildSelectEditorOrFilterDomElement(
+    const selectBuildResult = buildMultipleSelectDataCollection(
       'filter',
       newCollection,
       this.columnDef,
@@ -357,7 +354,7 @@ export class SelectFilter implements Filter {
 
     // step 2, create the DOM Element of the filter & pre-load search terms
     // we will later also subscribe to the onClose event to filter the data whenever that event is triggered
-    this.createDomElement(selectBuildResult.selectElement);
+    this.createDomElement(selectBuildResult.selectElement, selectBuildResult.dataCollection);
     this._collectionLength = newCollection.length;
   }
 
@@ -377,77 +374,70 @@ export class SelectFilter implements Filter {
   }
 
   /**
-   * From the Select DOM Element created earlier, create a Multiple/Single Select Filter using the jQuery multiple-select.js lib
+   * From the Select DOM Element created earlier, create a Multiple/Single Select Filter using the multiple-select-vanilla.js lib
    * @param {Object} selectElement
    */
-  protected createDomElement(selectElement: HTMLSelectElement) {
+  protected createDomElement(selectElement: HTMLSelectElement, dataCollection: OptionRowData[]) {
     const columnId = this.columnDef?.id ?? '';
 
     // provide the name attribute to the DOM element which will be needed to auto-adjust drop position (dropup / dropdown)
     this.elementName = `filter-${columnId}`;
     this.defaultOptions.name = this.elementName;
 
-    $(this.filterContainerElm).empty();
+    emptyElement(this.filterContainerElm);
 
     // create the DOM element & add an ID and filter class
-    this.$filterElm = $(selectElement);
-    if (typeof this.$filterElm.multipleSelect !== 'function') {
-      throw new Error(`multiple-select.js was not found, make sure to read the HOWTO Wiki on how to install it.`);
-    }
-    this.$filterElm.data('columnId', columnId);
+    this.filterElm = selectElement;
+    this.filterElm.dataset.columnId = `${columnId}`;
 
     // if there's a search term, we will add the "filled" class for styling purposes
     this.updateFilterStyle(this.isFilled);
 
     // append the new DOM element to the header row
-    if (this.$filterElm && typeof this.$filterElm.appendTo === 'function') {
-      this.$filterElm.appendTo(this.filterContainerElm);
-    }
+    this.filterContainerElm.appendChild(selectElement);
 
     // merge options & attach multiSelect
     const filterOptions: MultipleSelectOption = (this.columnFilter) ? this.columnFilter.filterOptions : {};
-    this.filterElmOptions = { ...this.defaultOptions, ...(filterOptions as MultipleSelectOption) };
-    this.$filterElm = this.$filterElm.multipleSelect(this.filterElmOptions);
+    this.filterElmOptions = { ...this.defaultOptions, ...(filterOptions as MultipleSelectOption), data: dataCollection };
+    this._msInstance = multipleSelect(selectElement, this.filterElmOptions) as MultipleSelectInstance;
   }
 
   protected initMultipleSelectTemplate() {
     const isTranslateEnabled = this.gridOptions?.enableTranslate ?? false;
+    const columnId = this.columnDef?.id ?? '';
 
     // default options used by this Filter, user can overwrite any of these by passing "otions"
-    const options: MultipleSelectOption = {
+    const options = {
       autoAdjustDropHeight: true,
       autoAdjustDropPosition: true,
       autoAdjustDropWidthByTextSize: true,
+      name: `${columnId}`,
       container: 'body',
       filter: false,  // input search term on top of the select option list
       maxHeight: 275,
       single: true,
-      textTemplate: ($elm) => {
-        // are we rendering HTML code? by default it is sanitized and won't be rendered
-        const isRenderHtmlEnabled = this.columnDef && this.columnDef.filter && this.columnDef.filter.enableRenderHtml || false;
-        return isRenderHtmlEnabled ? $elm.text() : $elm.html();
-      },
+      sanitizer: (dirtyHtml: string) => sanitizeTextByAvailableSanitizer(this.gridOptions, dirtyHtml),
       // we will subscribe to the onClose event for triggering our callback
       // also add/remove "filled" class for styling purposes
       onClose: () => this.onTriggerEvent()
-    };
+    } as MultipleSelectOption;
 
     if (this._isMultipleSelect) {
       options.single = false;
-      options.okButton = true;
-      options.addTitle = true; // show tooltip of all selected items while hovering the filter
+      options.showOkButton = true;
+      options.displayTitle = true; // show tooltip of all selected items while hovering the filter
       const translationPrefix = getTranslationPrefix(this.gridOptions);
-      options.countSelected = (isTranslateEnabled && this.translaterService?.translate) ? this.translaterService.translate(`${translationPrefix}X_OF_Y_SELECTED`) : this._locales?.TEXT_X_OF_Y_SELECTED;
-      options.allSelected = (isTranslateEnabled && this.translaterService?.translate) ? this.translaterService.translate(`${translationPrefix}ALL_SELECTED`) : this._locales?.TEXT_ALL_SELECTED;
+      options.countSelectedText = (isTranslateEnabled && this.translaterService?.translate) ? this.translaterService.translate(`${translationPrefix}X_OF_Y_SELECTED`) : this._locales?.TEXT_X_OF_Y_SELECTED;
+      options.allSelectedText = (isTranslateEnabled && this.translaterService?.translate) ? this.translaterService.translate(`${translationPrefix}ALL_SELECTED`) : this._locales?.TEXT_ALL_SELECTED;
+      options.noMatchesFoundText = (isTranslateEnabled && this.translaterService?.translate) ? this.translaterService.translate(`${translationPrefix}NO_MATCHES_FOUND`) : this._locales?.TEXT_NO_MATCHES_FOUND;
       options.okButtonText = (isTranslateEnabled && this.translaterService?.translate) ? this.translaterService.translate(`${translationPrefix}OK`) : this._locales?.TEXT_OK;
       options.selectAllText = (isTranslateEnabled && this.translaterService?.translate) ? this.translaterService.translate(`${translationPrefix}SELECT_ALL`) : this._locales?.TEXT_SELECT_ALL;
-      options.selectAllDelimiter = ['', '']; // remove default square brackets of default text "[Select All]" => "Select All"
     }
     this.defaultOptions = options;
   }
 
   protected onTriggerEvent() {
-    if (this.$filterElm) {
+    if (this._msInstance) {
       const selectedItems = this.getValues();
       this.updateFilterStyle(Array.isArray(selectedItems) && selectedItems.length > 1 || (selectedItems.length === 1 && selectedItems[0] !== ''));
       this.searchTerms = selectedItems;
@@ -461,11 +451,12 @@ export class SelectFilter implements Filter {
   protected updateFilterStyle(isFilled: boolean) {
     if (isFilled) {
       this.isFilled = true;
-      this.$filterElm?.addClass('filled').siblings('div .search-filter').addClass('filled');
+      this.filterElm?.classList.add('filled');
+      this._msInstance?.getParentElement()?.classList.add('filled');
     } else {
       this.isFilled = false;
-      this.$filterElm.removeClass('filled');
-      this.$filterElm.siblings('div .search-filter').removeClass('filled');
+      this.filterElm?.classList.remove('filled');
+      this._msInstance?.getParentElement()?.classList.remove('filled');
     }
   }
 }

@@ -1402,7 +1402,7 @@ packages:
   /@esbuild/win32-ia32@0.17.16:
     resolution: {integrity: sha512-B8b7W+oo2yb/3xmwk9Vc99hC9bNolvqjaTZYEfMQhzdpBsjTvZBlXQ/teUE55Ww6sg//wlcDjOaqldOKyigWdA==}
     engines: {node: '>=12'}
-    cpu: [ia32]
+    cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: true
@@ -1415,7 +1415,6 @@ packages:
     os: [win32]
     requiresBuild: true
     dev: true
-    optional: true
 
   /@esbuild/win32-x64@0.17.16:
     resolution: {integrity: sha512-xJ7OH/nanouJO9pf03YsL9NAFQBHd8AqfrQd7Pf5laGyyTt/gToul6QYOA/i5i/q8y9iaM5DQFNTgpi995VkOg==}
@@ -1424,7 +1423,6 @@ packages:
     os: [win32]
     requiresBuild: true
     dev: true
-    optional: true
 
   /@eslint-community/eslint-utils@4.2.0(eslint@8.38.0):
     resolution: {integrity: sha512-gB8T4H4DEfX2IV9zGDJPOBgP1e/DbfCPDTtEqUMckpvzS1OYtva8JdFYBqMwYk7xAQ429WGF/UPqn8uQ//h2vQ==}
