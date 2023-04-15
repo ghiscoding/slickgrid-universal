@@ -51,6 +51,17 @@
     "new-version": "To create a new version with Lerna-Lite, simply run the following script (1) 'roll-new-release'.",
     "devDependencies": "The dev deps 'jQuery', 'slickgrid', 'sortablejs' and 'whatwg-fetch' are simply installed for Jest unit tests."
   },
+  "engines": {
+    "node": ">=14.17.0",
+    "npm": ">=6.14.13"
+  },
+  "packageManager": "pnpm@8.2.0",
+  "pnpm": {
+    "overrides": {
+      "json5@<1.0.2": ">=1.0.2",
+      "terser@>=5.0.0 <5.14.2": ">=5.14.2"
+    }
+  },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^2.2.3",
     "@jest/types": "^29.5.0",
@@ -77,7 +88,7 @@
     "jsdom-global": "^3.0.2",
     "moment-mini": "^2.29.4",
     "npm-run-all2": "^6.0.5",
-    "pnpm": "^7.32.0",
+    "pnpm": "^8.2.0",
     "rimraf": "^5.0.0",
     "rxjs": "^7.8.0",
     "servor": "^4.0.2",
@@ -88,19 +99,8 @@
     "typescript": "5.0.4",
     "whatwg-fetch": "^3.6.2"
   },
-  "packageManager": "pnpm@7.32.0",
-  "engines": {
-    "node": ">=14.17.0",
-    "npm": ">=6.14.13"
-  },
   "funding": {
     "type": "ko_fi",
     "url": "https://ko-fi.com/ghiscoding"
-  },
-  "pnpm": {
-    "overrides": {
-      "json5@<1.0.2": ">=1.0.2",
-      "terser@>=5.0.0 <5.14.2": ">=5.14.2"
-    }
   }
 }
