@@ -202,8 +202,8 @@ importers:
         specifier: ^5.0.4
         version: 5.0.4
       vite:
-        specifier: ^4.2.2
-        version: 4.2.2(@types/node@18.15.12)(sass@1.62.0)
+        specifier: ^4.3.0
+        version: 4.3.0(@types/node@18.15.12)(sass@1.62.0)
 
   packages/binding:
     devDependencies:
@@ -634,8 +634,8 @@ importers:
         specifier: ^6.0.5
         version: 6.0.5
       vite:
-        specifier: ^4.2.2
-        version: 4.2.2(@types/node@18.15.12)(sass@1.62.0)
+        specifier: ^4.3.0
+        version: 4.3.0(@types/node@18.15.12)(sass@1.62.0)
       yargs:
         specifier: ^17.7.1
         version: 17.7.1
@@ -8218,8 +8218,8 @@ packages:
       glob: 10.0.0
     dev: true
 
-  /rollup@3.18.0:
-    resolution: {integrity: sha512-J8C6VfEBjkvYPESMQYxKHxNOh4A5a3FlP+0BETGo34HEcE4eTlgCrO2+eWzlu2a/sHs2QUkZco+wscH7jhhgWg==}
+  /rollup@3.20.6:
+    resolution: {integrity: sha512-2yEB3nQXp/tBQDN0hJScJQheXdvU2wFhh6ld7K/aiZ1vYcak6N/BKjY1QrU6BvO2JWYS8bEs14FRaxXosxy2zw==}
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
@@ -9218,8 +9218,8 @@ packages:
       extsprintf: 1.3.0
     dev: true
 
-  /vite@4.2.2(@types/node@18.15.12)(sass@1.62.0):
-    resolution: {integrity: sha512-PcNtT5HeDxb3QaSqFYkEum8f5sCVe0R3WK20qxgIvNBZPXU/Obxs/+ubBMeE7nLWeCo2LDzv+8hRYSlcaSehig==}
+  /vite@4.3.0(@types/node@18.15.12)(sass@1.62.0):
+    resolution: {integrity: sha512-JTGFgDh3dVxeGBpuQX04Up+JZmuG6wu9414Ei36vQzaEruY/M4K0AgwtuB2b4HaBgB7R8l+LHxjB0jcgz4d2qQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
@@ -9246,8 +9246,7 @@ packages:
       '@types/node': 18.15.12
       esbuild: 0.17.17
       postcss: 8.4.23
-      resolve: 1.22.1
-      rollup: 3.18.0
+      rollup: 3.20.6
       sass: 1.62.0
     optionalDependencies:
       fsevents: 2.3.2
