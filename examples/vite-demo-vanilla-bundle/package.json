@@ -41,6 +41,6 @@
     "@types/whatwg-fetch": "^0.0.33",
     "sass": "^1.62.0",
     "typescript": "^5.0.4",
-    "vite": "^4.2.2"
+    "vite": "^4.3.0"
   }
 }
