@@ -81,9 +81,9 @@
     "@types/jquery": "^3.5.16",
     "archiver": "^5.3.1",
     "cross-env": "^7.0.3",
-    "esbuild": "^0.17.16",
+    "esbuild": "^0.17.17",
     "npm-run-all2": "^6.0.5",
-    "vite": "^4.2.1",
+    "vite": "^4.2.2",
     "yargs": "^17.7.1"
   }
 }
