@@ -1,4 +1,4 @@
-import { ExcelMetadata } from './excelMetadata.interface';
+import type { ExcelMetadata } from './excelMetadata.interface';
 
 export interface ExcelCellFormat {
   value: any;

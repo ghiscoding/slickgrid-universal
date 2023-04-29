@@ -1,5 +1,5 @@
 import { KeyCode } from '../enums/index';
-import { CellRange, OnActiveCellChangedEventArgs, SlickEventHandler, SlickGrid, SlickNamespace, SlickRange, } from '../interfaces/index';
+import type { CellRange, OnActiveCellChangedEventArgs, SlickEventHandler, SlickGrid, SlickNamespace, SlickRange, } from '../interfaces/index';
 import { SlickCellRangeSelector } from './index';
 
 // using external SlickGrid JS libraries

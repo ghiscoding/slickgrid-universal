@@ -1,7 +1,7 @@
 import { toSentenceCase } from '@slickgrid-universal/utils';
 
 import { KeyCode } from '../enums/index';
-import { EditorArguments, EditorValidationResult } from '../interfaces/index';
+import type { EditorArguments, EditorValidationResult } from '../interfaces/index';
 import { integerValidator } from '../editorValidators/integerValidator';
 import { InputEditor } from './inputEditor';
 import { createDomElement } from '../services/domUtilities';

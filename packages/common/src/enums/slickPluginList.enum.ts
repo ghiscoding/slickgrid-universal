@@ -1,6 +1,6 @@
-import { ExtensionName } from '../enums/index';
-import { SlickEditorLock, SlickRowDetailView } from '../interfaces/index';
-import {
+import type { ExtensionName } from '../enums/index';
+import type { SlickEditorLock, SlickRowDetailView } from '../interfaces/index';
+import type {
   SlickAutoTooltip,
   SlickCellExcelCopyManager,
   SlickCellExternalCopyManager,

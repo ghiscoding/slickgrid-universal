@@ -1,4 +1,4 @@
-import { SlickGrid } from './slickGrid.interface';
+import type { SlickGrid } from './slickGrid.interface';
 
 export interface CellArgs {
   row: number;

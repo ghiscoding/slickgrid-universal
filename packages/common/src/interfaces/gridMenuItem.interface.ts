@@ -1,5 +1,5 @@
-import { GridMenuCallbackArgs, GridMenuCommandItemCallbackArgs } from './gridMenuCommandItemCallbackArgs.interface';
-import { MenuCommandItem } from './menuCommandItem.interface';
+import type { GridMenuCallbackArgs, GridMenuCommandItemCallbackArgs } from './gridMenuCommandItemCallbackArgs.interface';
+import type { MenuCommandItem } from './menuCommandItem.interface';
 
 export interface GridMenuItem extends MenuCommandItem<GridMenuCommandItemCallbackArgs, GridMenuCallbackArgs> {
   // --

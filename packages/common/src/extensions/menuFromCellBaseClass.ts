@@ -1,7 +1,7 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { titleCase } from '@slickgrid-universal/utils';
 
-import {
+import type {
   CellMenu,
   ContextMenu,
   DOMMouseOrTouchEvent,
@@ -12,10 +12,10 @@ import {
   MenuOptionItem,
   MenuOptionItemCallbackArgs,
 } from '../interfaces/index';
-import { ExtensionUtility } from '../extensions/extensionUtility';
+import type { ExtensionUtility } from '../extensions/extensionUtility';
 import { calculateAvailableSpace, createDomElement, findWidthOrDefault, getHtmlElementOffset, } from '../services/domUtilities';
-import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
-import { SharedService } from '../services/shared.service';
+import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from './menuBaseClass';
+import type { SharedService } from '../services/shared.service';
 
 export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends MenuBaseClass<M> {
   protected _currentCell = -1;

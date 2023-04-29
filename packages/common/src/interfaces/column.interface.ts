@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/indent */
-import {
+import type {
   CellMenu,
   ColumnEditor,
   ColumnExcelExportOption,
@@ -15,7 +15,7 @@ import {
   SlickEventData,
   SortComparer,
 } from './index';
-import { FieldType } from '../enums/fieldType.enum';
+import type { FieldType } from '../enums/fieldType.enum';
 
 type PathsToStringProps<T> = T extends string | number | boolean | Date ? [] : {
   [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>]

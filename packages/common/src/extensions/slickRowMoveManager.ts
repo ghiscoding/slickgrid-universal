@@ -1,7 +1,7 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
-import {
+import type { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
+import type {
   Column,
   DragRowMove,
   FormatterResultObject,

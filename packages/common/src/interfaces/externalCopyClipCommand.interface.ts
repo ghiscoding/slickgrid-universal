@@ -1,5 +1,5 @@
-import { SlickCellExternalCopyManager } from '../extensions/slickCellExternalCopyManager';
-import { CellRange, Column, ExcelCopyBufferOption } from './index';
+import type { SlickCellExternalCopyManager } from '../extensions/slickCellExternalCopyManager';
+import type { CellRange, Column, ExcelCopyBufferOption } from './index';
 
 export interface ExternalCopyClipCommand {
   activeCell: number;

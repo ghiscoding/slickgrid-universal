@@ -1,6 +1,6 @@
-import { Column } from './column.interface';
-import { SlickDataView } from './slickDataView.interface';
-import { SlickGrid } from './slickGrid.interface';
+import type { Column } from './column.interface';
+import type { SlickDataView } from './slickDataView.interface';
+import type { SlickGrid } from './slickGrid.interface';
 
 export interface OnEventArgs {
   row: number;

@@ -1,4 +1,4 @@
-import { ColumnEditor } from './columnEditor.interface';
+import type { ColumnEditor } from './columnEditor.interface';
 
 export interface EditorDualInput extends Partial<ColumnEditor> {
   /** Associated Item Field */

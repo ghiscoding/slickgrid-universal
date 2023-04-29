@@ -1,34 +1,36 @@
 import { deepCopy, deepMerge, emptyObject, setDeepValue } from '@slickgrid-universal/utils';
-import {
-  BindingEventService,
+import type {
   Column,
   CompositeEditorLabel,
   CompositeEditorModalType,
   CompositeEditorOpenDetailOption,
   CompositeEditorOption,
-  Constants,
   ContainerService,
-  createDomElement,
   DOMEvent,
   Editor,
   EditorValidationResult,
   ExternalResource,
-  getDescendantProperty,
   GridOption,
   GridService,
   Locale,
-  numericSortComparer,
   OnErrorOption,
   OnCompositeEditorChangeEventArgs,
   PlainFunc,
-  sanitizeTextByAvailableSanitizer,
   SlickCompositeEditor,
   SlickDataView,
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
-  SortDirectionNumber,
   TranslaterService,
+} from '@slickgrid-universal/common';
+import {
+  BindingEventService,
+  Constants,
+  createDomElement,
+  getDescendantProperty,
+  numericSortComparer,
+  sanitizeTextByAvailableSanitizer,
+  SortDirectionNumber,
 } from '@slickgrid-universal/common';
 import { CompositeEditor } from './compositeEditor.factory';
 

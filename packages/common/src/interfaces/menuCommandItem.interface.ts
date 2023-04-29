@@ -1,7 +1,7 @@
-import { MenuItem } from './menuItem.interface';
-import { MenuCommandItemCallbackArgs } from './menuCommandItemCallbackArgs.interface';
-import { SlickEventData } from './slickEventData.interface';
-import { MenuCallbackArgs } from './menuCallbackArgs.interface';
+import type { MenuItem } from './menuItem.interface';
+import type { MenuCommandItemCallbackArgs } from './menuCommandItemCallbackArgs.interface';
+import type { SlickEventData } from './slickEventData.interface';
+import type { MenuCallbackArgs } from './menuCallbackArgs.interface';
 
 export interface MenuCommandItem<A = MenuCommandItemCallbackArgs, R = MenuCallbackArgs> extends MenuItem<R> {
   /** A command identifier to be passed to the onCommand event callback handler (when using "commandItems"). */

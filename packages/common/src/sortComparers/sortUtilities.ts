@@ -1,5 +1,5 @@
-import { FieldType, SortDirectionNumber } from '../enums/index';
-import { Column, GridOption } from '../interfaces/index';
+import { FieldType, type SortDirectionNumber } from '../enums/index';
+import type { Column, GridOption } from '../interfaces/index';
 import { SortComparers } from './index';
 import { getAssociatedDateSortComparer } from './dateUtilities';
 

@@ -1,12 +1,12 @@
-import { EventSubscription } from '@slickgrid-universal/event-pub-sub';
+import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { flatten } from 'un-flatten-tree';
 import * as moment_ from 'moment-mini';
 const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import { Constants } from '../constants';
-import { FieldType, OperatorString, OperatorType } from '../enums/index';
-import { CancellablePromiseWrapper, Column, GridOption, } from '../interfaces/index';
-import { Observable, RxJsFacade, Subject, Subscription } from './rxjsFacade';
+import { FieldType, type OperatorString, OperatorType } from '../enums/index';
+import type { CancellablePromiseWrapper, Column, GridOption, } from '../interfaces/index';
+import type { Observable, RxJsFacade, Subject, Subscription } from './rxjsFacade';
 
 /** Cancelled Extension that can be only be thrown by the `cancellablePromise()` function */
 export class CancelledException extends Error {

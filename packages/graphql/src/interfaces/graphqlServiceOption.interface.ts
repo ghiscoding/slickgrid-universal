@@ -1,10 +1,10 @@
-import { BackendServiceOption } from '@slickgrid-universal/common';
+import type { BackendServiceOption } from '@slickgrid-universal/common';
 
-import { GraphqlFilteringOption } from './graphqlFilteringOption.interface';
-import { GraphqlSortingOption } from './graphqlSortingOption.interface';
-import { GraphqlCursorPaginationOption } from './graphqlCursorPaginationOption.interface';
-import { GraphqlPaginationOption } from './graphqlPaginationOption.interface';
-import { QueryArgument } from './queryArgument.interface';
+import type { GraphqlFilteringOption } from './graphqlFilteringOption.interface';
+import type { GraphqlSortingOption } from './graphqlSortingOption.interface';
+import type { GraphqlCursorPaginationOption } from './graphqlCursorPaginationOption.interface';
+import type { GraphqlPaginationOption } from './graphqlPaginationOption.interface';
+import type { QueryArgument } from './queryArgument.interface';
 
 export interface GraphqlServiceOption extends BackendServiceOption {
   /**

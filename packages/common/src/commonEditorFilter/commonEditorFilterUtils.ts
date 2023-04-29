@@ -1,6 +1,6 @@
 import { AutocompleteItem } from 'autocompleter';
 
-import { AutocompleterOption } from '../interfaces/index';
+import type { AutocompleterOption } from '../interfaces/index';
 
 /**
  * add loading class ".slick-autocomplete-loading" to the Kraaden Autocomplete input element

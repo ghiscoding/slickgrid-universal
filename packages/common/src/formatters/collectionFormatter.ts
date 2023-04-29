@@ -1,5 +1,5 @@
 import { arrayToCsvFormatter } from './arrayToCsvFormatter';
-import { Formatter } from './../interfaces/index';
+import type { Formatter } from './../interfaces/index';
 import { findOrDefault } from '../services/index';
 
 /**

@@ -1,4 +1,4 @@
-import { Column, GridOption, SortComparer } from '../interfaces/index';
+import type { Column, GridOption, SortComparer } from '../interfaces/index';
 
 export const numericSortComparer: SortComparer = (value1: any, value2: any, sortDirection: number, sortColumn?: Column, gridOptions?: GridOption) => {
   const checkForUndefinedValues = sortColumn?.valueCouldBeUndefined ?? gridOptions?.cellValueCouldBeUndefined ?? false;

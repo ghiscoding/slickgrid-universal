@@ -1,5 +1,5 @@
-import { Editor } from './editor.interface';
-import { CompositeEditorModalType } from '../enums/compositeEditorModalType.type';
+import type { Editor } from './editor.interface';
+import type { CompositeEditorModalType } from '../enums/compositeEditorModalType.type';
 
 export interface CompositeEditorOption {
   /** Defaults to "edit", what is the type of Composite Editor Modal is used? */

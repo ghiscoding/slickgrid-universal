@@ -1,4 +1,4 @@
-import { Aggregator } from './../interfaces/aggregator.interface';
+import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class DistinctAggregator implements Aggregator {
   private _field: number | string;

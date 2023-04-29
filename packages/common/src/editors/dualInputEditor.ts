@@ -1,7 +1,7 @@
 import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
 import { KeyCode } from '../enums/keyCode.enum';
-import {
+import type {
   DOMEvent,
   Column,
   ColumnEditor,

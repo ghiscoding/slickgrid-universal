@@ -1,4 +1,4 @@
-import { SlickCellRangeSelector } from '../extensions/slickCellRangeSelector';
+import type { SlickCellRangeSelector } from '../extensions/slickCellRangeSelector';
 
 export type RowSelectionModelOption = {
   /** Defaults to True, should we auto-scroll when dragging a row */

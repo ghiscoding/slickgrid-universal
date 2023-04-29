@@ -1,6 +1,6 @@
 import { Constants } from '../constants';
-import { OperatorString, OperatorType, SearchTerm, } from '../enums/index';
-import {
+import { type OperatorString, OperatorType, type SearchTerm, } from '../enums/index';
+import type {
   CollectionCustomStructure,
   CollectionOption,
   Column,
@@ -13,10 +13,10 @@ import {
   MultipleSelectOption,
   SlickGrid,
 } from './../interfaces/index';
-import { CollectionService } from '../services/collection.service';
+import type { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
 import { getDescendantProperty, getTranslationPrefix, unsubscribeAll } from '../services/utilities';
-import { buildSelectEditorOrFilterDomElement, RxJsFacade, Subscription, TranslaterService } from '../services/index';
+import { buildSelectEditorOrFilterDomElement, type RxJsFacade, type Subscription, type TranslaterService } from '../services/index';
 import { renderCollectionOptionsAsync } from './filterUtilities';
 
 export class SelectFilter implements Filter {

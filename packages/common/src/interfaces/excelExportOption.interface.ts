@@ -1,7 +1,7 @@
-import { ExcelCustomStyling } from './columnExcelExportOption.interface';
-import { ExcelWorksheet } from './excelWorksheet.interface';
-import { ExcelWorkbook } from './excelWorkbook.interface';
-import { FileType } from '../enums/fileType.enum';
+import type { ExcelCustomStyling } from './columnExcelExportOption.interface';
+import type { ExcelWorksheet } from './excelWorksheet.interface';
+import type { ExcelWorkbook } from './excelWorkbook.interface';
+import type { FileType } from '../enums/fileType.enum';
 
 export interface ExcelExportOption {
   /** Defaults to true, when grid is using Grouping, it will show indentation of the text with collapsed/expanded symbol as well */

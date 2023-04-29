@@ -1,12 +1,12 @@
 import * as autocompleter_ from 'autocompleter';
 const autocomplete = (autocompleter_ && autocompleter_['default'] || autocompleter_) as <T extends AutocompleteItem>(settings: AutocompleteSettings<T>) => AutocompleteResult; // patch for rollup
 
-import { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
+import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
 import { isObject, isPrimmitive, setDeepValue, toKebabCase } from '@slickgrid-universal/utils';
 
 import { Constants } from './../constants';
 import { FieldType, KeyCode, } from '../enums/index';
-import {
+import type {
   AutocompleterOption,
   AutocompleteSearchItem,
   CollectionCustomStructure,
@@ -29,7 +29,7 @@ import { getEditorOptionByName } from './editorUtilities';
 import { createDomElement, sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 import { findOrDefault, getDescendantProperty, } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { TranslaterService } from '../services/translater.service';
+import type { TranslaterService } from '../services/translater.service';
 
 // minimum length of chars to type before starting to start querying
 const MIN_LENGTH = 3;

@@ -1,4 +1,4 @@
-import { Editor, Formatter, GroupTotalsFormatter } from './index';
+import type { Editor, Formatter, GroupTotalsFormatter } from './index';
 
 /**
  * Provides a powerful way of specifying additional information about a data item that let the grid customize the appearance

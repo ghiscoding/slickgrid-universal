@@ -2,9 +2,9 @@ import { deepMerge } from '@slickgrid-universal/utils';
 import * as DOMPurify_ from 'dompurify';
 const DOMPurify = ((DOMPurify_ as any)?.['default'] ?? DOMPurify_); // patch for rollup
 
-import { InferDOMType, SearchTerm } from '../enums/index';
-import { Column, GridOption, HtmlElementPosition, SelectOption, SlickGrid, } from '../interfaces/index';
-import { TranslaterService } from './translater.service';
+import type { InferDOMType, SearchTerm } from '../enums/index';
+import type { Column, GridOption, HtmlElementPosition, SelectOption, SlickGrid, } from '../interfaces/index';
+import type { TranslaterService } from './translater.service';
 
 /**
  * Create the HTML DOM Element for a Select Editor or Filter, this is specific to these 2 types only and the unit tests are directly under them

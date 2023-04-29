@@ -1,7 +1,7 @@
-import { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { dequal } from 'dequal/lite';
 
-import {
+import type {
   BackendServiceApi,
   CurrentPagination,
   Pagination,
@@ -10,9 +10,9 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { BackendUtilityService } from './backendUtility.service';
-import { SharedService } from './shared.service';
-import { Observable, RxJsFacade } from './rxjsFacade';
+import type { BackendUtilityService } from './backendUtility.service';
+import type { SharedService } from './shared.service';
+import type { Observable, RxJsFacade } from './rxjsFacade';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;

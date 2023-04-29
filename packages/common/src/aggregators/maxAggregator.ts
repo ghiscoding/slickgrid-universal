@@ -1,4 +1,4 @@
-import { Aggregator } from './../interfaces/aggregator.interface';
+import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class MaxAggregator implements Aggregator {
   private _max: number | null = null;

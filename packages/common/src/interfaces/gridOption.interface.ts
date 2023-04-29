@@ -1,6 +1,6 @@
-import { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
+import type { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
 
-import {
+import type {
   AutoResizeOption,
   AutoTooltipOption,
   BackendServiceApi,
@@ -36,8 +36,8 @@ import {
   TextExportOption,
   TreeDataOption,
 } from './index';
-import { ColumnReorderFunction, GridAutosizeColsMode, OperatorType, OperatorString, } from '../enums/index';
-import { TranslaterService } from '../services/translater.service';
+import type { ColumnReorderFunction, GridAutosizeColsMode, OperatorType, OperatorString, } from '../enums/index';
+import type { TranslaterService } from '../services/translater.service';
 
 export interface GridOption {
   /** CSS class name used on newly added row */

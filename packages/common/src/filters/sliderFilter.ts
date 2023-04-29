@@ -1,8 +1,8 @@
 import { hasData, toSentenceCase } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants';
-import { OperatorString, OperatorType, SearchTerm, } from '../enums/index';
-import {
+import { type OperatorString, OperatorType, type SearchTerm, } from '../enums/index';
+import type {
   Column,
   ColumnFilter,
   CurrentSliderOption,
@@ -19,7 +19,7 @@ import {
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { createDomElement, emptyElement } from '../services/domUtilities';
-import { TranslaterService } from '../services/translater.service';
+import type { TranslaterService } from '../services/translater.service';
 import { mapOperatorToShorthandDesignation } from '../services/utilities';
 import { buildSelectOperator, compoundOperatorNumeric, getFilterOptionByName } from './filterUtilities';
 

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 import { titleCase } from '@slickgrid-universal/utils';
 
-import { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../interfaces/index';
+import type { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../interfaces/index';
 import { createDomElement, sanitizeTextByAvailableSanitizer } from '../services/domUtilities';
 import { SlickColumnPicker } from './slickColumnPicker';
 import { SlickGridMenu } from './slickGridMenu';

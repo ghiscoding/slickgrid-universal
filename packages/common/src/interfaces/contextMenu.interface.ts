@@ -1,5 +1,5 @@
-import { SlickContextMenu } from '../extensions/slickContextMenu';
-import {
+import type { SlickContextMenu } from '../extensions/slickContextMenu';
+import type {
   ContextMenuOption,
   MenuCommandItemCallbackArgs,
   MenuFromCellCallbackArgs,

@@ -1,5 +1,5 @@
 import { KeyCode } from '../enums/keyCode.enum';
-import {
+import type {
   Column,
   DOMEvent,
   GroupingFormatterItem,

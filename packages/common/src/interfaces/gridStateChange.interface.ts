@@ -1,5 +1,5 @@
-import { GridStateType } from '../enums/index';
-import { CurrentColumn, CurrentFilter, CurrentPagination, CurrentPinning, CurrentRowSelection, CurrentSorter, GridState, TreeToggleStateChange } from './index';
+import type { GridStateType } from '../enums/index';
+import type { CurrentColumn, CurrentFilter, CurrentPagination, CurrentPinning, CurrentRowSelection, CurrentSorter, GridState, TreeToggleStateChange } from './index';
 
 export interface GridStateChange {
   /** Last Grid State Change that was triggered (only 1 type of change at a time) */

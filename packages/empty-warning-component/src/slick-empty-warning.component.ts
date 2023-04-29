@@ -1,12 +1,12 @@
-import {
+import type {
   ContainerService,
   EmptyWarning,
   ExternalResource,
   GridOption,
-  sanitizeTextByAvailableSanitizer,
   SlickGrid,
   TranslaterService
 } from '@slickgrid-universal/common';
+import { sanitizeTextByAvailableSanitizer } from '@slickgrid-universal/common';
 
 export class SlickEmptyWarningComponent implements ExternalResource {
   protected _warningLeftElement: HTMLDivElement | null = null;

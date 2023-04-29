@@ -1,5 +1,5 @@
 import { KeyCode } from '../enums/index';
-import {
+import type {
   CellRange,
   Column,
   ExcelCopyBufferOption,

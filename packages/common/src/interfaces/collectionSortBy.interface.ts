@@ -1,4 +1,4 @@
-import { FieldType } from '../enums/index';
+import type { FieldType } from '../enums/index';
 
 export interface CollectionSortBy {
   /** Object Property name when the collection is an array of objects */

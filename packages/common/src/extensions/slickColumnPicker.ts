@@ -1,6 +1,6 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import {
+import type {
   Column,
   ColumnPickerOption,
   DOMMouseOrTouchEvent,
@@ -9,9 +9,9 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { ExtensionUtility } from '../extensions/extensionUtility';
+import type { ExtensionUtility } from '../extensions/extensionUtility';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { SharedService } from '../services/shared.service';
+import type { SharedService } from '../services/shared.service';
 import { createDomElement, emptyElement, findWidthOrDefault } from '../services/domUtilities';
 import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
 

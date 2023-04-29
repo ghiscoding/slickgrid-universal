@@ -1,7 +1,18 @@
 import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
 import { KeyCode } from '../enums/keyCode.enum';
-import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption, SlickGrid, SlickNamespace, } from '../interfaces/index';
+import type {
+  Column,
+  ColumnEditor,
+  CompositeEditorOption,
+  Editor,
+  EditorArguments,
+  EditorValidator,
+  EditorValidationResult,
+  GridOption,
+  SlickGrid,
+  SlickNamespace,
+} from '../interfaces/index';
 import { getDescendantProperty } from '../services/utilities';
 import { textValidator } from '../editorValidators/textValidator';
 import { BindingEventService } from '../services/bindingEvent.service';

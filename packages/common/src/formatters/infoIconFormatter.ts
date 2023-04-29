@@ -1,4 +1,4 @@
-import { Formatter } from './../interfaces/index';
+import {  type Formatter } from './../interfaces/index';
 
 /** Displays a Font-Awesome edit icon (fa-info-circle) */
 export const infoIconFormatter: Formatter = () =>
