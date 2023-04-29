@@ -8,7 +8,7 @@ declare const Slick: SlickNamespace;
 const GRID_UID = 'slickgrid_12345';
 jest.mock('flatpickr', () => { });
 
-const addJQueryEventPropagation = function (event, commandKey = '', keyName = '') {
+const addVanillaEventPropagation = function (event, commandKey = '', keyName = '') {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
   Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
   if (commandKey) {
@@ -202,7 +202,7 @@ describe('SlickRowSelectionModel Plugin', () => {
     plugin = new SlickRowSelectionModel({ selectActiveRow: true, });
     plugin.init(gridStub);
     const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
-    const mouseEvent = addJQueryEventPropagation(new Event('mouseenter'));
+    const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'));
     gridStub.onActiveCellChanged.notify({ cell: 2, row: 3, grid: gridStub }, mouseEvent, gridStub);
 
     expect(setSelectRangeSpy).toHaveBeenCalledWith([{
@@ -223,7 +223,7 @@ describe('SlickRowSelectionModel Plugin', () => {
     plugin.setSelectedRanges(mockRanges);
 
     const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
-    const keyDownEvent = addJQueryEventPropagation(new Event('keydown'), 'shiftKey', 'ArrowDown');
+    const keyDownEvent = addVanillaEventPropagation(new Event('keydown'), 'shiftKey', 'ArrowDown');
     gridStub.onKeyDown.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
 
     expect(setSelectRangeSpy).toHaveBeenCalledWith([{
@@ -253,7 +253,7 @@ describe('SlickRowSelectionModel Plugin', () => {
     plugin.setSelectedRanges(mockRanges);
 
     const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
-    const keyDownEvent = addJQueryEventPropagation(new Event('keydown'), 'shiftKey', 'ArrowUp');
+    const keyDownEvent = addVanillaEventPropagation(new Event('keydown'), 'shiftKey', 'ArrowUp');
     gridStub.onKeyDown.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
 
     expect(setSelectRangeSpy).toHaveBeenCalledWith([{
@@ -278,7 +278,7 @@ describe('SlickRowSelectionModel Plugin', () => {
     plugin.setSelectedRanges(mockRanges);
 
     const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
-    const keyDownEvent = addJQueryEventPropagation(new Event('keydown'), 'shiftKey', 'ArrowUp');
+    const keyDownEvent = addVanillaEventPropagation(new Event('keydown'), 'shiftKey', 'ArrowUp');
     gridStub.onKeyDown.notify({ cell: 2, row: 5, grid: gridStub }, keyDownEvent, gridStub);
 
     expect(setSelectRangeSpy).toHaveBeenCalledWith([{
@@ -300,7 +300,7 @@ describe('SlickRowSelectionModel Plugin', () => {
     plugin.setSelectedRanges(mockRanges);
 
     const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
-    const keyDownEvent = addJQueryEventPropagation(new Event('keydown'), 'shiftKey', 'ArrowUp');
+    const keyDownEvent = addVanillaEventPropagation(new Event('keydown'), 'shiftKey', 'ArrowUp');
     gridStub.onKeyDown.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
 
     expect(setSelectRangeSpy).toHaveBeenCalledWith([{
@@ -325,7 +325,7 @@ describe('SlickRowSelectionModel Plugin', () => {
     plugin.setSelectedRanges(mockRanges);
 
     const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
-    const keyDownEvent = addJQueryEventPropagation(new Event('click'), 'ctrlKey');
+    const keyDownEvent = addVanillaEventPropagation(new Event('click'), 'ctrlKey');
     gridStub.onClick.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
 
     expect(setSelectRangeSpy).not.toHaveBeenCalled();
@@ -345,7 +345,7 @@ describe('SlickRowSelectionModel Plugin', () => {
     plugin.setSelectedRanges(mockRanges);
 
     const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
-    const keyDownEvent = addJQueryEventPropagation(new Event('click'), 'ctrlKey');
+    const keyDownEvent = addVanillaEventPropagation(new Event('click'), 'ctrlKey');
     gridStub.onClick.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
 
     expect(setSelectRangeSpy).not.toHaveBeenCalled();
@@ -364,7 +364,7 @@ describe('SlickRowSelectionModel Plugin', () => {
     plugin.setSelectedRanges(mockRanges);
 
     const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
-    const keyDownEvent = addJQueryEventPropagation(new Event('click'), 'ctrlKey');
+    const keyDownEvent = addVanillaEventPropagation(new Event('click'), 'ctrlKey');
     gridStub.onClick.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
 
     expect(setSelectRangeSpy).toHaveBeenCalledWith([{
@@ -393,7 +393,7 @@ describe('SlickRowSelectionModel Plugin', () => {
     plugin.setSelectedRanges(mockRanges);
 
     const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
-    const keyDownEvent = addJQueryEventPropagation(new Event('click'), 'shiftKey');
+    const keyDownEvent = addVanillaEventPropagation(new Event('click'), 'shiftKey');
     gridStub.onClick.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
 
     expect(setActiveCellSpy).toHaveBeenCalledWith(3, 2);
@@ -420,7 +420,7 @@ describe('SlickRowSelectionModel Plugin', () => {
     plugin.setSelectedRanges(mockRanges);
 
     const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
-    const keyDownEvent = addJQueryEventPropagation(new Event('click'), 'shiftKey');
+    const keyDownEvent = addVanillaEventPropagation(new Event('click'), 'shiftKey');
     gridStub.onClick.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
 
     expect(setActiveCellSpy).toHaveBeenCalledWith(1, 0);
@@ -452,7 +452,7 @@ describe('SlickRowSelectionModel Plugin', () => {
     plugin.setSelectedRanges(mockRanges);
 
     const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
-    const keyDownEvent = addJQueryEventPropagation(new Event('click'), 'ctrlKey');
+    const keyDownEvent = addVanillaEventPropagation(new Event('click'), 'ctrlKey');
     gridStub.onClick.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
 
     expect(setSelectRangeSpy).toHaveBeenCalledWith([{
@@ -489,7 +489,7 @@ describe('SlickRowSelectionModel Plugin', () => {
       const setSelectedRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
 
       plugin.init(gridStub);
-      const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+      const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
       plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: { fromCell: 2, fromRow: 3, toCell: 4, toRow: 5 } }, scrollEvent, gridStub);
 
       expect(setSelectedRangeSpy).toHaveBeenCalledWith([{
@@ -511,7 +511,7 @@ describe('SlickRowSelectionModel Plugin', () => {
         accelerateInterval: 5
       });
       plugin.init(gridStub);
-      const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+      const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
       plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: { fromCell: 2, fromRow: 3, toCell: 4, toRow: 5 } }, scrollEvent, gridStub);
 
       expect(setSelectedRangeSpy).toHaveBeenCalledWith([{
@@ -525,7 +525,7 @@ describe('SlickRowSelectionModel Plugin', () => {
       mockGridOptions.multiSelect = false;
 
       plugin.init(gridStub);
-      const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+      const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
       plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: { fromCell: 2, fromRow: 3, toCell: 4, toRow: 5 } }, scrollEvent, gridStub);
 
       expect(setSelectedRangeSpy).not.toHaveBeenCalled();
@@ -536,7 +536,7 @@ describe('SlickRowSelectionModel Plugin', () => {
       mockGridOptions.multiSelect = false;
 
       plugin.init(gridStub);
-      const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+      const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
       plugin.getCellRangeSelector()!.onBeforeCellRangeSelected.notify({ row: 2, cell: 4 }, scrollEvent, gridStub);
 
       expect(setActiveCellSpy).toHaveBeenCalledWith(2, 4);
@@ -548,7 +548,7 @@ describe('SlickRowSelectionModel Plugin', () => {
       mockGridOptions.multiSelect = false;
 
       plugin.init(gridStub);
-      const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+      const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
       plugin.getCellRangeSelector()!.onBeforeCellRangeSelected.notify({ row: 2, cell: 4 }, scrollEvent, gridStub);
 
       expect(setActiveCellSpy).not.toHaveBeenCalled();
@@ -561,7 +561,7 @@ describe('SlickRowSelectionModel Plugin', () => {
       mockGridOptions.multiSelect = false;
 
       plugin.init(gridStub);
-      const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+      const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
       plugin.getCellRangeSelector()!.onBeforeCellRangeSelected.notify({ row: 2, cell: 1 }, scrollEvent, gridStub);
 
       expect(setActiveCellSpy).toHaveBeenCalledWith(2, 1);
@@ -575,7 +575,7 @@ describe('SlickRowSelectionModel Plugin', () => {
       mockColumns.unshift({ id: '_move', field: '_move', behavior: 'selectAndMove' });
 
       plugin.init(gridStub);
-      const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+      const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
       plugin.getCellRangeSelector()!.onBeforeCellRangeSelected.notify({ row: 2, cell: 0 }, scrollEvent, gridStub);
 
       expect(setActiveCellSpy).not.toHaveBeenCalled();

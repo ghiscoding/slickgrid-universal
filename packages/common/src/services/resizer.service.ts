@@ -12,7 +12,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { getHtmlElementOffset, sanitizeHtmlToText, } from '../services/index';
+import { BindingEventService, getElementInnerSize, getHtmlElementOffset, sanitizeHtmlToText, } from '../services/index';
 import { parseFormatterWhenExist } from '../formatters/formatterUtilities';
 
 // using external non-typed js libraries
@@ -26,13 +26,14 @@ const DEFAULT_INTERVAL_RETRY_DELAY = 200;
 
 export class ResizerService {
   protected _autoResizeOptions!: AutoResizeOption;
+  protected _bindingEventService: BindingEventService;
   protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
   protected _fixedHeight?: number | string;
   protected _fixedWidth?: number | string;
-  protected _gridDomElm!: any;
-  protected _gridContainerElm!: any;
-  protected _pageContainerElm!: JQuery<HTMLElement>;
+  protected _gridDomElm!: HTMLElement;
+  protected _gridContainerElm!: HTMLElement;
+  protected _pageContainerElm!: HTMLElement;
   protected _gridParentContainerElm!: HTMLElement;
   protected _intervalId!: NodeJS.Timeout;
   protected _intervalRetryDelay = DEFAULT_INTERVAL_RETRY_DELAY;
@@ -80,6 +81,7 @@ export class ResizerService {
 
   constructor(protected readonly pubSubService: BasePubSubService) {
     this._eventHandler = new Slick.EventHandler();
+    this._bindingEventService = new BindingEventService();
   }
 
   /** Dispose function when service is destroyed */
@@ -92,20 +94,17 @@ export class ResizerService {
     }
     clearTimeout(this._timer);
 
-    if (this.gridOptions.autoResize?.resizeDetection === 'container') {
-      if (this._resizeObserver) {
-        this._resizeObserver.disconnect();
-      }
-    } else {
-      $(window).off(`resize.grid${this.gridUidSelector}`);
+    if (this.gridOptions.autoResize?.resizeDetection === 'container' && this._resizeObserver) {
+      this._resizeObserver.disconnect();
     }
+    this._bindingEventService.unbindAll();
   }
 
   init(grid: SlickGrid, gridParentContainerElm: HTMLElement) {
     if (!grid || !this.gridOptions || !gridParentContainerElm) {
       throw new Error(`
       [Slickgrid-Universal] Resizer Service requires a valid Grid object and DOM Element Container to be provided.
-      You can fix this by setting your gridOption to use "enableAutoResize" or create an instance of the ResizerService by calling bindAutoResizeDataGrid()`);
+      You can fix this by setting your gridOption to use "enableAutoResize" or create an instance of the ResizerService by calling bindAutoResizeDataGrid() once.`);
     }
 
     this._grid = grid;
@@ -117,16 +116,15 @@ export class ResizerService {
       gridParentContainerElm.style.width = typeof fixedGridSizes.width === 'string' ? fixedGridSizes.width : `${fixedGridSizes.width}px`;
     }
 
-    const containerNode = grid?.getContainerNode?.() as HTMLDivElement;
-    this._gridDomElm = $(containerNode);
+    this._gridDomElm = grid?.getContainerNode?.() as HTMLDivElement;
 
     if (typeof this._autoResizeOptions.container === 'string') {
-      this._pageContainerElm = $(this._autoResizeOptions.container);
+      this._pageContainerElm = typeof this._autoResizeOptions.container === 'string' ? document.querySelector(this._autoResizeOptions.container) as HTMLElement : this._autoResizeOptions.container;
     } else {
-      this._pageContainerElm = $(this._autoResizeOptions.container!);
+      this._pageContainerElm = this._autoResizeOptions.container!;
     }
 
-    this._gridContainerElm = $(gridParentContainerElm);
+    this._gridContainerElm = gridParentContainerElm;
 
     if (fixedGridSizes) {
       this._fixedHeight = fixedGridSizes.height;
@@ -165,7 +163,7 @@ export class ResizerService {
    */
   bindAutoResizeDataGrid(newSizes?: GridSize): null | void {
     if (this.gridOptions.autoResize?.resizeDetection === 'container') {
-      if (!this._pageContainerElm || !this._pageContainerElm[0]) {
+      if (!this._pageContainerElm || !this._pageContainerElm) {
         throw new Error(`
           [Slickgrid-Universal] Resizer Service requires a container when gridOption.autoResize.resizeDetection="container"
           You can fix this by setting your gridOption.autoResize.container`);
@@ -173,10 +171,10 @@ export class ResizerService {
       if (!this._resizeObserver) {
         this._resizeObserver = new ResizeObserver(() => this.resizeObserverCallback());
       }
-      this._resizeObserver.observe(this._pageContainerElm[0]);
+      this._resizeObserver.observe(this._pageContainerElm);
     } else {
       // if we can't find the grid to resize, return without binding anything
-      if (this._gridDomElm === undefined || this._gridDomElm.offset() === undefined) {
+      if (this._gridDomElm === undefined || getHtmlElementOffset(this._gridDomElm) === undefined) {
         return null;
       }
 
@@ -190,7 +188,9 @@ export class ResizerService {
 
       // -- 2nd bind a trigger on the Window DOM element, so that it happens also when resizing after first load
       // -- bind auto-resize to Window object only if it exist
-      $(window).on(`resize.grid${this.gridUidSelector}`, this.handleResizeGrid.bind(this, newSizes));
+      this._bindingEventService.bind(window as any, 'resize', this.handleResizeGrid.bind(this, newSizes));
+
+      // $(window).on(`resize.grid${this.gridUidSelector}`, this.handleResizeGrid.bind(this, newSizes));
     }
   }
 
@@ -216,7 +216,7 @@ export class ResizerService {
    */
   calculateGridNewDimensions(gridOptions: GridOption): GridSize | null {
     const autoResizeOptions = gridOptions?.autoResize ?? {};
-    if (!window || this._pageContainerElm === undefined || this._gridDomElm.offset() === undefined) {
+    if (!window || this._pageContainerElm === undefined || getHtmlElementOffset(this._gridDomElm) === undefined) {
       return null;
     }
 
@@ -239,16 +239,16 @@ export class ResizerService {
     // which DOM element are we using to calculate the available size for the grid?
     if (autoResizeOptions.calculateAvailableSizeBy === 'container') {
       // uses the container's height to calculate grid height without any top offset
-      gridHeight = this._pageContainerElm.height() || 0;
+      gridHeight = getElementInnerSize(this._pageContainerElm, 'height') || 0;
     } else {
       // uses the browser's window height with its top offset to calculate grid height
       gridHeight = window.innerHeight || 0;
-      const coordOffsetTop = this._gridDomElm.offset();
-      gridOffsetTop = (coordOffsetTop !== undefined) ? coordOffsetTop.top : 0;
+      const coordOffsetTop = getHtmlElementOffset(this._gridDomElm);
+      gridOffsetTop = coordOffsetTop?.top ?? 0;
     }
 
     const availableHeight = gridHeight - gridOffsetTop - bottomPadding;
-    const availableWidth = this._pageContainerElm.width() || window.innerWidth || 0;
+    const availableWidth = getElementInnerSize(this._pageContainerElm, 'width') || window.innerWidth || 0;
     const maxHeight = autoResizeOptions?.maxHeight;
     const minHeight = autoResizeOptions?.minHeight ?? DATAGRID_MIN_HEIGHT;
     const maxWidth = autoResizeOptions?.maxWidth;
@@ -333,7 +333,7 @@ export class ResizerService {
     // calculate the available sizes with minimum height defined as a constant
     const availableDimensions = this.calculateGridNewDimensions(this.gridOptions);
 
-    if ((newSizes || availableDimensions) && this._gridDomElm.length > 0) {
+    if ((newSizes || availableDimensions) && this._gridDomElm) {
       // get the new sizes, if new sizes are passed (not 0), we will use them else use available space
       // basically if user passes 1 of the dimension, let say he passes just the height,
       // we will use the height as a fixed height but the width will be resized by it's available space
@@ -342,22 +342,22 @@ export class ResizerService {
 
       // apply these new height/width to the datagrid
       if (!this.gridOptions.autoHeight) {
-        this._gridDomElm.height(newHeight as string);
+        this._gridDomElm.style.height = `${newHeight}px`;
       }
-      this._gridDomElm.width(newWidth as string);
-      this._gridContainerElm.width(newWidth as string);
+      this._gridDomElm.style.width = `${newWidth}px`;
+      this._gridContainerElm.style.width = `${newWidth}px`;
 
       // resize the slickgrid canvas on all browser except some IE versions
       // exclude all IE below IE11
       // IE11 wants to be a better standard (W3C) follower (finally) they even changed their appName output to also have 'Netscape'
-      if (new RegExp('MSIE [6-8]').exec(navigator.userAgent) === null && this._grid?.resizeCanvas && $(this._gridContainerElm)) {
+      if (new RegExp('MSIE [6-8]').exec(navigator.userAgent) === null && this._grid?.resizeCanvas && this._gridContainerElm) {
         this._grid.resizeCanvas();
       }
 
       // also call the grid auto-size columns so that it takes available space when going bigger
       if (this.gridOptions?.enableAutoSizeColumns && this._grid.autosizeColumns) {
         // make sure that the grid still exist (by looking if the Grid UID is found in the DOM tree) to avoid SlickGrid error "missing stylesheet"
-        if (this.gridUid && $(`${this.gridUidSelector}`).length > 0) {
+        if (this.gridUid && this.gridUidSelector) {
           this._grid.autosizeColumns();
         }
       } else if (this.gridOptions.enableAutoResizeColumnsByCellContent && (!this._lastDimensions?.width || newWidth !== this._lastDimensions?.width)) {

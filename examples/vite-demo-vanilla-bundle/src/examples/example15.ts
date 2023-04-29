@@ -66,6 +66,9 @@ export default class Example15 {
         id: 'name', name: 'Name', field: 'name', sortable: true,
         type: FieldType.string,
         filterable: true,
+        editor: {
+          model: Editors.text,
+        },
         filter: {
           model: Filters.compoundInput
         },

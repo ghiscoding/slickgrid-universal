@@ -360,7 +360,7 @@ export class SliderEditor implements Editor {
     const activeCell = this.grid.getActiveCell();
     const isCellEditable = this.grid.onBeforeEditCell.notify({
       ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
-    });
+    }).getReturnValue();
     this.disable(isCellEditable === false);
   }
 

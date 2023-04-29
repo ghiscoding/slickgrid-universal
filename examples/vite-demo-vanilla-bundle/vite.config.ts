@@ -12,9 +12,6 @@ export default defineConfig(() => {
       // outDir: mode === 'production' ? '../../docs' : 'dist',
       outDir: '../../docs',
     },
-    optimizeDeps: {
-      include: ['jquery'],
-    },
     preview: {
       port: 8888
     },

@@ -231,8 +231,8 @@ describe('CellExternalCopyManager', () => {
 
         expect(clearSpy).toHaveBeenCalled();
         expect(mockOnCopyInit).toHaveBeenCalled();
-        expect(mockOnCopyCancelled).toHaveBeenCalledWith(keyDownEscEvent, { ranges: [{ fromCell: 1, fromRow: 0, toCell: 2, toRow: 2 }] });
-        expect(mockOnCopyCells).toHaveBeenCalledWith(keyDownEscEvent, { ranges: expect.toBeArray() });
+        expect(mockOnCopyCancelled).toHaveBeenCalledWith(expect.any(Object), { ranges: [{ fromCell: 1, fromRow: 0, toCell: 2, toRow: 2 }] });
+        expect(mockOnCopyCells).toHaveBeenCalledWith(expect.any(Object), { ranges: expect.toBeArray() });
 
         const getActiveCellSpy = jest.spyOn(gridStub, 'getActiveCell');
         const keyDownCtrlPasteEvent = new Event('keydown');

@@ -12,7 +12,6 @@
       "cypress",
       "jest",
       "jest-extended",
-      "jquery",
       "node"
     ]
   },

@@ -777,7 +777,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
       const col = columns[colIndex];
       if (col.editor && (!isWithMassUpdate || (isWithMassUpdate && col.internalColumnEditor?.massUpdate))) {
         // we can check that the cell is really editable by checking the onBeforeEditCell event not returning false (returning undefined, null also mean it is editable)
-        const isCellEditable = this.grid.onBeforeEditCell.notify({ row: rowIndex, cell: colIndex, item: dataContext, column: col, grid: this.grid, target: 'composite', compositeEditorOptions: this._compositeOptions });
+        const isCellEditable = this.grid.onBeforeEditCell.notify({ row: rowIndex, cell: colIndex, item: dataContext, column: col, grid: this.grid, target: 'composite', compositeEditorOptions: this._compositeOptions }).getReturnValue();
         this.grid.setActiveCell(rowIndex, colIndex, false);
         if (isCellEditable !== false) {
           columnIndexWithEditor = colIndex;

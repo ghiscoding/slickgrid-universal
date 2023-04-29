@@ -12,7 +12,6 @@
   "globals": {
     "Slick": true,
     "Slicker": true,
-    "jQuery": true,
     "$": true,
     "_": true
   },
@@ -122,7 +121,7 @@
     "no-console": "off",
     "no-debugger": "error",
     "no-duplicate-case": "error",
-    "no-duplicate-imports": "error",
+    "no-duplicate-imports": "off",
     "no-empty": 1,
     "no-eval": "error",
     "no-extra-bind": "error",
