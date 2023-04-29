@@ -1,34 +1,35 @@
 import * as ExcelBuilder_ from 'excel-builder-webpacker';
 const ExcelBuilder = (ExcelBuilder_ as any)['default'] || ExcelBuilder_; // patch to fix rollup "ExcelBuilder has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
-import {
-  // utility functions
-  exportWithFormatterWhenDefined,
-  getTranslationPrefix,
-  sanitizeHtmlToText,
-
-  // interfaces
+import type {
   Column,
-  Constants,
   ContainerService,
   ExcelExportService as BaseExcelExportService,
   ExcelExportOption,
   ExternalResource,
   ExcelWorkbook,
   ExcelWorksheet,
-  FieldType,
-  FileType,
-  getColumnFieldType,
+
   GetDataValueCallback,
   GetGroupTotalValueCallback,
   GridOption,
-  isColumnDateType,
   KeyTitlePair,
   Locale,
   PubSubService,
   SlickDataView,
   SlickGrid,
   TranslaterService,
+} from '@slickgrid-universal/common';
+import {
+  Constants,
+  FieldType,
+  FileType,
+  // utility functions
+  exportWithFormatterWhenDefined,
+  getColumnFieldType,
+  getTranslationPrefix,
+  isColumnDateType,
+  sanitizeHtmlToText,
 } from '@slickgrid-universal/common';
 import { addWhiteSpaces, deepCopy, titleCase } from '@slickgrid-universal/utils';
 

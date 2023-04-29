@@ -8,9 +8,7 @@ import 'slickgrid/slick.dataview';
 import SortableInstance, * as Sortable_ from 'sortablejs';
 const Sortable = ((Sortable_ as any)?.['default'] ?? Sortable_); // patch for rollup
 
-import {
-  autoAddEditorFormatterToColumnsWithEditor,
-  AutocompleterEditor,
+import type {
   BackendServiceApi,
   BackendServiceOption,
   Column,
@@ -18,9 +16,7 @@ import {
   DataViewOption,
   ExtensionList,
   ExternalResource,
-  GlobalGridOptions,
   GridOption,
-  GridStateType,
   Metrics,
   Pagination,
   SelectEditor,
@@ -28,9 +24,18 @@ import {
   SlickDataView,
   SlickEventHandler,
   SlickGrid,
-  SlickGroupItemMetadataProvider,
   SlickNamespace,
   Subscription,
+  RxJsFacade,
+} from '@slickgrid-universal/common';
+
+import {
+  autoAddEditorFormatterToColumnsWithEditor,
+  AutocompleterEditor,
+  GlobalGridOptions,
+  GridStateType,
+  SlickGroupItemMetadataProvider,
+
   // services
   BackendUtilityService,
   CollectionService,
@@ -45,7 +50,6 @@ import {
   Observable,
   PaginationService,
   ResizerService,
-  RxJsFacade,
   SharedService,
   SortService,
   SlickgridConfig,

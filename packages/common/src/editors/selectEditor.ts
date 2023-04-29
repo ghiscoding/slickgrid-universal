@@ -3,7 +3,7 @@ import { dequal } from 'dequal/lite';
 
 import { Constants } from '../constants';
 import { FieldType } from './../enums/index';
-import {
+import type {
   CollectionCustomStructure,
   CollectionOption,
   CollectionOverrideArgs,
@@ -21,7 +21,7 @@ import {
   SlickGrid,
   SlickNamespace,
 } from './../interfaces/index';
-import { buildSelectEditorOrFilterDomElement, CollectionService, findOrDefault, TranslaterService } from '../services/index';
+import { buildSelectEditorOrFilterDomElement, CollectionService, findOrDefault, type TranslaterService } from '../services/index';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
 
 // using external non-typed js libraries

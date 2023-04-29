@@ -1,6 +1,6 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import {
+import type {
   Column,
   DOMEvent,
   GridMenu,
@@ -13,15 +13,15 @@ import {
   SlickNamespace,
 } from '../interfaces/index';
 import { DelimiterType, FileType } from '../enums/index';
-import { ExtensionUtility } from '../extensions/extensionUtility';
+import type { ExtensionUtility } from '../extensions/extensionUtility';
 import { createDomElement, emptyElement, findWidthOrDefault, getHtmlElementOffset, getTranslationPrefix, } from '../services/index';
-import { ExcelExportService } from '../services/excelExport.service';
-import { FilterService } from '../services/filter.service';
-import { SharedService } from '../services/shared.service';
-import { SortService } from '../services/sort.service';
-import { TextExportService } from '../services/textExport.service';
+import type { ExcelExportService } from '../services/excelExport.service';
+import type { FilterService } from '../services/filter.service';
+import type { SharedService } from '../services/shared.service';
+import type { SortService } from '../services/sort.service';
+import type { TextExportService } from '../services/textExport.service';
 import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
-import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from '../extensions/menuBaseClass';
+import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from '../extensions/menuBaseClass';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;

@@ -1,5 +1,5 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import {
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type {
   ContextMenu,
   ContextMenuOption,
   Column,
@@ -10,11 +10,11 @@ import {
   MenuOptionItem,
 } from '../interfaces/index';
 import { DelimiterType, FileType } from '../enums/index';
-import { ExcelExportService, getCellValueFromQueryFieldGetter, getTranslationPrefix, TextExportService } from '../services/index';
+import { type ExcelExportService, getCellValueFromQueryFieldGetter, getTranslationPrefix, type TextExportService } from '../services/index';
 import { exportWithFormatterWhenDefined } from '../formatters/formatterUtilities';
-import { ExtensionUtility } from '../extensions/extensionUtility';
-import { SharedService } from '../services/shared.service';
-import { TreeDataService } from '../services/treeData.service';
+import type { ExtensionUtility } from '../extensions/extensionUtility';
+import type { SharedService } from '../services/shared.service';
+import type { TreeDataService } from '../services/treeData.service';
 import { MenuFromCellBaseClass } from './menuFromCellBaseClass';
 
 

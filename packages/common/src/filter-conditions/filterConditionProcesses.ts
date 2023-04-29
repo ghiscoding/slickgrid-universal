@@ -1,5 +1,5 @@
-import { FieldType, SearchTerm } from '../enums/index';
-import { FilterCondition, FilterConditionOption } from '../interfaces/index';
+import { FieldType, type SearchTerm } from '../enums/index';
+import type { FilterCondition, FilterConditionOption } from '../interfaces/index';
 import { executeBooleanFilterCondition, getFilterParsedBoolean } from './booleanFilterCondition';
 import { executeCollectionSearchFilterCondition } from './collectionSearchFilterCondition';
 import { getFilterParsedNumbers, executeNumberFilterCondition } from './numberFilterCondition';

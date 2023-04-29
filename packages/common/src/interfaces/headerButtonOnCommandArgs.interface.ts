@@ -1,6 +1,6 @@
-import { Column } from './column.interface';
-import { HeaderButtonItem } from './headerButtonItem.interface';
-import { SlickGrid } from './slickGrid.interface';
+import type { Column } from './column.interface';
+import type { HeaderButtonItem } from './headerButtonItem.interface';
+import type { SlickGrid } from './slickGrid.interface';
 
 export interface HeaderButtonOnCommandArgs {
   grid: SlickGrid;

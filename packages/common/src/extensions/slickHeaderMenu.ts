@@ -1,8 +1,8 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { arrayRemoveItemByIndex } from '@slickgrid-universal/utils';
 
 import { EmitterType } from '../enums/index';
-import {
+import type {
   Column,
   CurrentSorter,
   DOMEvent,
@@ -17,11 +17,11 @@ import {
   OnHeaderCellRenderedEventArgs,
 } from '../interfaces/index';
 import { createDomElement, emptyElement, getElementOffsetRelativeToParent, getTranslationPrefix } from '../services/index';
-import { ExtensionUtility } from '../extensions/extensionUtility';
-import { FilterService } from '../services/filter.service';
-import { SharedService } from '../services/shared.service';
-import { SortService } from '../services/sort.service';
-import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
+import type { ExtensionUtility } from '../extensions/extensionUtility';
+import type { FilterService } from '../services/filter.service';
+import type { SharedService } from '../services/shared.service';
+import type { SortService } from '../services/sort.service';
+import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from './menuBaseClass';
 
 /**
  * A plugin to add drop-down menus to column headers.
@@ -460,7 +460,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       this._menuElm as HTMLDivElement,
       menu.items,
       args,
-      this.handleMenuItemCommandClick ,
+      this.handleMenuItemCommandClick,
     );
 
     this.repositionMenu(e);

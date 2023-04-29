@@ -1,14 +1,14 @@
 import { setDeepValue } from '@slickgrid-universal/utils';
 import * as flatpickr_ from 'flatpickr';
 import * as moment_ from 'moment-mini';
-import { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
-import { Instance as FlatpickrInstance, FlatpickrFn } from 'flatpickr/dist/types/instance';
+import type { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
+import type { Instance as FlatpickrInstance, FlatpickrFn } from 'flatpickr/dist/types/instance';
 const flatpickr: FlatpickrFn = (flatpickr_ && flatpickr_['default'] || flatpickr_) as any; // patch for rollup
 const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import { Constants } from './../constants';
 import { FieldType } from '../enums/index';
-import {
+import type {
   Column,
   ColumnEditor,
   CompositeEditorOption,
@@ -25,7 +25,7 @@ import { getEditorOptionByName } from './editorUtilities';
 import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
 import { getDescendantProperty, mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, } from './../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { TranslaterService } from '../services/translater.service';
+import type { TranslaterService } from '../services/translater.service';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;

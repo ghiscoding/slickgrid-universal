@@ -1,6 +1,6 @@
 import { toSentenceCase } from '@slickgrid-universal/utils';
 
-import {
+import type {
   Column,
   ColumnFilter,
   Filter,
@@ -9,9 +9,9 @@ import {
   GridOption,
   SlickGrid,
 } from '../interfaces/index';
-import { OperatorType, OperatorString, SearchTerm } from '../enums/index';
+import { OperatorType, type OperatorString, type SearchTerm } from '../enums/index';
 import { createDomElement, emptyElement, } from '../services/domUtilities';
-import { TranslaterService } from '../services/translater.service';
+import type { TranslaterService } from '../services/translater.service';
 import { BindingEventService } from '../services/bindingEvent.service';
 
 export class NativeSelectFilter implements Filter {

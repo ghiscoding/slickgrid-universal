@@ -1,4 +1,4 @@
-import { EditorArguments } from '../interfaces/editorArguments.interface';
+import type { EditorArguments } from '../interfaces/editorArguments.interface';
 import { InputEditor } from './inputEditor';
 
 export class InputPasswordEditor extends InputEditor {

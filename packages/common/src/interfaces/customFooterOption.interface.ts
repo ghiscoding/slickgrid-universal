@@ -1,4 +1,4 @@
-import { MetricTexts } from './metricTexts.interface';
+import type { MetricTexts } from './metricTexts.interface';
 
 export interface CustomFooterOption {
   /** Optionally provide some text to be displayed on the left side of the footer (in the "left-footer" css class) */

@@ -1,16 +1,16 @@
 import * as autocompleter_ from 'autocompleter';
 const autocomplete = (autocompleter_ && autocompleter_['default'] || autocompleter_) as <T extends AutocompleteItem>(settings: AutocompleteSettings<T>) => AutocompleteResult; // patch for rollup
 
-import { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
+import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
 import { isPrimmitive, toKebabCase, toSentenceCase } from '@slickgrid-universal/utils';
 
 import {
   FieldType,
   OperatorType,
-  OperatorString,
-  SearchTerm,
+  type OperatorString,
+  type SearchTerm,
 } from '../enums/index';
-import {
+import type {
   AutocompleterOption,
   AutocompleteSearchItem,
   CollectionCustomStructure,
@@ -29,13 +29,13 @@ import {
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter';
 import { createDomElement, emptyElement, } from '../services';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { CollectionService } from '../services/collection.service';
+import type { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
 import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 import { getDescendantProperty, unsubscribeAll } from '../services/utilities';
-import { TranslaterService } from '../services/translater.service';
+import type { TranslaterService } from '../services/translater.service';
 import { renderCollectionOptionsAsync } from './filterUtilities';
-import { RxJsFacade, Subscription } from '../services/rxjsFacade';
+import type { RxJsFacade, Subscription } from '../services/rxjsFacade';
 import { Constants } from '../constants';
 
 export class AutocompleterFilter<T extends AutocompleteItem = any> implements Filter {

@@ -1,6 +1,6 @@
 import { isNumber } from '@slickgrid-universal/utils';
 
-import { Formatter } from './../interfaces/index';
+import type { Formatter } from './../interfaces/index';
 
 /**
  * When value is filled, or if the value is a number and is bigger than 0, it will display a Font-Awesome icon (fa-check).

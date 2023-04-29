@@ -1,6 +1,6 @@
-import { MenuCommandItem } from '../index';
-import { SlickHeaderMenu } from '../extensions/slickHeaderMenu';
-import {
+import type { MenuCommandItem } from '../index';
+import type { SlickHeaderMenu } from '../extensions/slickHeaderMenu';
+import type {
   Column,
   HeaderMenuOption,
   MenuCommandItemCallbackArgs,

@@ -1,18 +1,8 @@
 import { TextEncoder } from 'text-encoding-utf-8';
-import {
-  // utility functions
-  exportWithFormatterWhenDefined,
-  getTranslationPrefix,
-  htmlEntityDecode,
-  sanitizeHtmlToText,
-
-  // interfaces
+import type {
   Column,
-  Constants,
   ContainerService,
-  DelimiterType,
   ExternalResource,
-  FileType,
   GridOption,
   KeyTitlePair,
   Locale,
@@ -22,6 +12,16 @@ import {
   TextExportOption,
   TextExportService as BaseTextExportService,
   TranslaterService,
+} from '@slickgrid-universal/common';
+import {
+  Constants,
+  DelimiterType,
+  FileType,
+  // utility functions
+  exportWithFormatterWhenDefined,
+  getTranslationPrefix,
+  htmlEntityDecode,
+  sanitizeHtmlToText,
 } from '@slickgrid-universal/common';
 import { addWhiteSpaces, deepCopy, titleCase } from '@slickgrid-universal/utils';
 

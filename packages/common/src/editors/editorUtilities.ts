@@ -1,5 +1,5 @@
 // import { InferObjectPropTypeByName } from '../enums/inferObjectPropTypeByName.type';
-import { ColumnEditor } from '../interfaces/index';
+import type { ColumnEditor } from '../interfaces/index';
 
 /**
  * Get option from editor.params PR editor.editorOptions

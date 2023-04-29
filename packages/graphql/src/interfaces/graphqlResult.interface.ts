@@ -1,4 +1,4 @@
-import { Metrics } from '@slickgrid-universal/common';
+import type { Metrics } from '@slickgrid-universal/common';
 
 export interface GraphqlResult<T = any> {
   data: {

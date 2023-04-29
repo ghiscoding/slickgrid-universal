@@ -1,6 +1,6 @@
-import { CaseType, Column } from '@slickgrid-universal/common';
+import { CaseType, type Column } from '@slickgrid-universal/common';
 import { titleCase } from '@slickgrid-universal/utils';
-import { OdataOption } from '../interfaces/odataOption.interface';
+import type { OdataOption } from '../interfaces/odataOption.interface';
 
 export class OdataQueryBuilderService {
   _columnFilters: any;

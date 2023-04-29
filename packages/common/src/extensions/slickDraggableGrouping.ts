@@ -1,12 +1,12 @@
-import { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { isEmptyObject } from '@slickgrid-universal/utils';
-import SortableInstance, { Options as SortableOptions, SortableEvent } from 'sortablejs';
+import SortableInstance, { type Options as SortableOptions, type SortableEvent } from 'sortablejs';
 import * as Sortable_ from 'sortablejs';
 const Sortable = ((Sortable_ as any)?.['default'] ?? Sortable_); // patch for rollup
 
-import { ExtensionUtility } from '../extensions/extensionUtility';
+import type { ExtensionUtility } from '../extensions/extensionUtility';
 import { SortDirectionNumber } from '../enums';
-import {
+import type {
   Column,
   DOMMouseOrTouchEvent,
   DraggableGrouping,
@@ -21,7 +21,7 @@ import {
   SlickNamespace,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { SharedService } from '../services/shared.service';
+import type { SharedService } from '../services/shared.service';
 import { createDomElement, emptyElement } from '../services/domUtilities';
 import { sortByFieldType } from '../sortComparers';
 

@@ -1,4 +1,4 @@
-import { RowDetailViewOption, SlickEventData, SlickGrid, SlickRowDetailView } from './index';
+import type { RowDetailViewOption, SlickEventData, SlickGrid, SlickRowDetailView } from './index';
 
 export interface RowDetailView extends RowDetailViewOption {
   // --

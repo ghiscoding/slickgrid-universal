@@ -1,7 +1,7 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { hasData } from '@slickgrid-universal/utils';
 
-import {
+import type {
   CellMenu,
   Column,
   ContextMenu,
@@ -18,8 +18,8 @@ import {
   SlickNamespace,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { ExtensionUtility } from '../extensions/extensionUtility';
-import { SharedService } from '../services/shared.service';
+import type { ExtensionUtility } from '../extensions/extensionUtility';
+import type { SharedService } from '../services/shared.service';
 import { createDomElement, emptyElement } from '../services/domUtilities';
 
 // using external SlickGrid JS libraries

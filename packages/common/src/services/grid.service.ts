@@ -1,7 +1,7 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { arrayRemoveItemByIndex, isObjectEmpty } from '@slickgrid-universal/utils';
 
-import {
+import type {
   CellArgs,
   Column,
   CurrentPinning,
@@ -14,12 +14,12 @@ import {
   OnEventArgs,
   SlickGrid,
 } from '../interfaces/index';
-import { FilterService } from './filter.service';
-import { GridStateService } from './gridState.service';
-import { PaginationService } from '../services/pagination.service';
-import { SharedService } from './shared.service';
-import { SortService } from './sort.service';
-import { TreeDataService } from './treeData.service';
+import type { FilterService } from './filter.service';
+import type { GridStateService } from './gridState.service';
+import type { PaginationService } from '../services/pagination.service';
+import type { SharedService } from './shared.service';
+import type { SortService } from './sort.service';
+import type { TreeDataService } from './treeData.service';
 import { SlickRowSelectionModel } from '../extensions/slickRowSelectionModel';
 
 let highlightTimerEnd: any;

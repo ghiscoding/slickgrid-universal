@@ -1,4 +1,4 @@
-import { Formatter } from './../interfaces/index';
+import type { Formatter } from './../interfaces/index';
 
 /** Align cell value to the center (alias to Formatters.center) */
 export const centerFormatter: Formatter = (_row, _cell, value) => {

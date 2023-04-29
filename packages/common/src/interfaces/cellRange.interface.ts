@@ -1,4 +1,4 @@
-import { SlickCellRangeDecorator } from '../extensions/slickCellRangeDecorator';
+import type { SlickCellRangeDecorator } from '../extensions/slickCellRangeDecorator';
 
 export interface CellRange {
   /** Selection start from which cell? */

@@ -1,4 +1,4 @@
-import { ElementEventListener } from '../interfaces/elementEventListener.interface';
+import type { ElementEventListener } from '../interfaces/elementEventListener.interface';
 
 export class BindingEventService {
   protected _boundedEvents: ElementEventListener[] = [];

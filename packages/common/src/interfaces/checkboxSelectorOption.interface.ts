@@ -1,4 +1,4 @@
-import { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
+import type { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
 
 export interface CheckboxSelectorOption {
   /**

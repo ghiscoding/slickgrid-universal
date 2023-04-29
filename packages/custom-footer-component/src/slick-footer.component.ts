@@ -1,21 +1,19 @@
 import * as moment_ from 'moment-mini';
 const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
-import {
-  Constants,
-  createDomElement,
+import type {
   CustomFooterOption,
   GridOption,
   Locale,
   Metrics,
   MetricTexts,
-  sanitizeTextByAvailableSanitizer,
   SlickEventHandler,
   SlickGrid,
   SlickNamespace,
   Subscription,
   TranslaterService,
 } from '@slickgrid-universal/common';
+import { Constants, createDomElement, sanitizeTextByAvailableSanitizer, } from '@slickgrid-universal/common';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { BindingHelper } from '@slickgrid-universal/binding';
 

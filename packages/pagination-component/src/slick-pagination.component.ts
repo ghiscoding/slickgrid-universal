@@ -1,16 +1,18 @@
-import {
-  Constants,
-  createDomElement,
-  getTranslationPrefix,
+import type {
   GridOption,
   Locale,
   PaginationService,
   PubSubService,
   ServicePagination,
   SharedService,
-  SlickGrid,
   Subscription,
   TranslaterService,
+} from '@slickgrid-universal/common';
+import {
+  Constants,
+  createDomElement,
+  getTranslationPrefix,
+  SlickGrid,
 } from '@slickgrid-universal/common';
 import { BindingHelper } from '@slickgrid-universal/binding';
 

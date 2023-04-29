@@ -1,6 +1,6 @@
 import { toSentenceCase } from '@slickgrid-universal/utils';
 
-import {
+import type {
   Column,
   ColumnFilter,
   Filter,
@@ -10,10 +10,10 @@ import {
   OperatorDetail,
   SlickGrid,
 } from '../interfaces/index';
-import { FieldType, OperatorType, OperatorString, SearchTerm } from '../enums/index';
+import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { buildSelectOperator, compoundOperatorNumeric, compoundOperatorString } from './filterUtilities';
-import { createDomElement, emptyElement, mapOperatorToShorthandDesignation, TranslaterService, } from '../services';
+import { createDomElement, emptyElement, mapOperatorToShorthandDesignation, type TranslaterService, } from '../services';
 
 export class InputFilter implements Filter {
   protected _bindEventService: BindingEventService;

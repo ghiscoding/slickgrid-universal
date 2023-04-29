@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { EventSubscription } from './types';
+import type { EventSubscription } from './types';
 
 export abstract class BasePubSubService {
   /**

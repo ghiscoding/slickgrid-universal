@@ -1,7 +1,7 @@
-import { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 
 import { FieldType, } from '../enums/index';
-import {
+import type {
   AutoResizeOption,
   Column,
   GridOption,

@@ -1,6 +1,6 @@
-import { Column, GridOption, RowDetailViewOption, SlickEvent, SlickGrid, } from './index';
-import { ContainerService } from '../services/container.service';
-import { UsabilityOverrideFn } from '../enums';
+import type { Column, GridOption, RowDetailViewOption, SlickEvent, SlickGrid, } from './index';
+import type { ContainerService } from '../services/container.service';
+import type { UsabilityOverrideFn } from '../enums';
 
 /** A plugin to add row detail panel. */
 export interface SlickRowDetailView {

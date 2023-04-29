@@ -1,8 +1,8 @@
-import { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 
 import { Constants } from '../constants';
-import { ToggleStateChangeType, ToggleStateChangeTypeString } from '../enums/index';
-import {
+import { ToggleStateChangeType, type ToggleStateChangeTypeString } from '../enums/index';
+import type {
   Column,
   ColumnSort,
   GridOption,
@@ -17,8 +17,8 @@ import {
   TreeToggleStateChange,
 } from '../interfaces/index';
 import { findItemInTreeStructure, unflattenParentChildArrayToTree } from './utilities';
-import { SharedService } from './shared.service';
-import { SortService } from './sort.service';
+import type { SharedService } from './shared.service';
+import type { SortService } from './sort.service';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;

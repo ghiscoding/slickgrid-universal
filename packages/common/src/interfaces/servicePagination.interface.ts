@@ -1,4 +1,4 @@
-import { Pagination } from './pagination.interface';
+import type { Pagination } from './pagination.interface';
 
 export interface ServicePagination extends Pagination {
   /** How many pages do we have in total to display the entire dataset? */

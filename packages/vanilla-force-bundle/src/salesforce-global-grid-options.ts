@@ -1,4 +1,4 @@
-import { GridOption } from '@slickgrid-universal/common';
+import type { GridOption } from '@slickgrid-universal/common';
 import { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
 
 /** Global Grid Options Defaults for Salesforce */

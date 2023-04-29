@@ -1,6 +1,6 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import {
+import type {
   Column,
   DOMEvent,
   HeaderButton,
@@ -13,9 +13,9 @@ import {
   SlickNamespace,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { ExtensionUtility } from '../extensions/extensionUtility';
-import { SharedService } from '../services/shared.service';
-import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
+import type { ExtensionUtility } from '../extensions/extensionUtility';
+import type { SharedService } from '../services/shared.service';
+import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from './menuBaseClass';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;

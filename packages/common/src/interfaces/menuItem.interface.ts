@@ -1,4 +1,4 @@
-import { MenuCallbackArgs } from './menuCallbackArgs.interface';
+import type { MenuCallbackArgs } from './menuCallbackArgs.interface';
 
 export interface MenuItem<O = MenuCallbackArgs> {
   /** A CSS class to be added to the menu item container. */

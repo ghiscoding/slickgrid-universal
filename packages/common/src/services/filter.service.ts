@@ -3,16 +3,16 @@ import { deepCopy } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 
 import { FilterConditions, getParsedSearchTermsByFieldType } from './../filter-conditions/index';
-import { FilterFactory } from './../filters/filterFactory';
+import { type FilterFactory } from './../filters/filterFactory';
 import {
   EmitterType,
   FieldType,
   KeyCode,
   OperatorType,
-  OperatorString,
-  SearchTerm,
+  type OperatorString,
+  type SearchTerm,
 } from '../enums/index';
-import {
+import type {
   Column,
   ColumnFilters,
   CurrentFilter,
@@ -30,11 +30,11 @@ import {
   SlickGrid,
   SlickNamespace,
 } from './../interfaces/index';
-import { BackendUtilityService } from './backendUtility.service';
+import type { BackendUtilityService } from './backendUtility.service';
 import { getSelectorStringFromElement, sanitizeHtmlToText, } from '../services/domUtilities';
 import { getDescendantProperty, mapOperatorByFieldType, } from './utilities';
-import { SharedService } from './shared.service';
-import { RxJsFacade, Subject } from './rxjsFacade';
+import type { SharedService } from './shared.service';
+import type { RxJsFacade, Subject } from './rxjsFacade';
 import { Constants } from '../constants';
 
 // using external non-typed js libraries

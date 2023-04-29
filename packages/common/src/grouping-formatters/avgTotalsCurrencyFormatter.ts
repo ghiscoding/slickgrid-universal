@@ -1,4 +1,4 @@
-import { Column, GroupTotalsFormatter, SlickGrid } from '../interfaces/index';
+import type { Column, GroupTotalsFormatter, SlickGrid } from '../interfaces/index';
 import { retrieveFormatterOptions } from '../formatters/formatterUtilities';
 import { formatNumber } from '../services/utilities';
 

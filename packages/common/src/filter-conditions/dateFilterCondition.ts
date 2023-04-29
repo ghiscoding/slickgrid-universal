@@ -1,8 +1,8 @@
 import * as moment_ from 'moment-mini';
 const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
-import { FieldType, OperatorType, SearchTerm } from '../enums/index';
-import { FilterConditionOption } from '../interfaces/index';
+import { FieldType, OperatorType, type SearchTerm } from '../enums/index';
+import type { FilterConditionOption } from '../interfaces/index';
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { testFilterCondition } from './filterUtilities';
 

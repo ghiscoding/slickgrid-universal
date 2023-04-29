@@ -1,5 +1,5 @@
 import { Constants } from '../constants';
-import { Formatter } from './../interfaces/index';
+import { type Formatter } from './../interfaces/index';
 import { parseFormatterWhenExist } from './formatterUtilities';
 import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 import { getCellValueFromQueryFieldGetter, } from '../services/utilities';

@@ -1,4 +1,4 @@
-import { FilterCondition, FilterConditionOption } from '../interfaces/index';
+import type { FilterCondition, FilterConditionOption } from '../interfaces/index';
 import { testFilterCondition } from './filterUtilities';
 
 /**

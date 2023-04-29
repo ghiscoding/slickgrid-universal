@@ -1,5 +1,5 @@
-import { Observable, Subject } from '../services/rxjsFacade';
-import { Column, Formatter, SlickGrid } from './index';
+import type { Observable, Subject } from '../services/rxjsFacade';
+import type { Column, Formatter, SlickGrid } from './index';
 
 type PostProcessOutput<P> = P & { [asyncParamsPropName: string]: any; };
 export type asyncProcess<T = any> = (row: number, cell: number, value: any, columnDef: Column<T>, dataContext: T, grid?: SlickGrid) => Promise<PostProcessOutput<T>> | Observable<PostProcessOutput<T>> | Subject<PostProcessOutput<T>>;
