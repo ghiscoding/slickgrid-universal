@@ -21,7 +21,7 @@ import type {
   SlickGrid,
   SlickNamespace,
 } from './../interfaces/index';
-import { CollectionService, findOrDefault, type TranslaterService } from '../services/index';
+import { buildSelectEditorOrFilterDomElement, CollectionService, findOrDefault, type TranslaterService } from '../services/index';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
 
 // using external non-typed js libraries
