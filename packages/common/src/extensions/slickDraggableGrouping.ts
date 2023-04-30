@@ -321,10 +321,6 @@ export class SlickDraggableGrouping {
           if (draggablePlaceholderElm) {
             draggablePlaceholderElm.style.display = 'none';
           }
-          const droppedGroupingElm = dropzoneElm.querySelector<HTMLDivElement>('.slick-dropped-grouping');
-          if (droppedGroupingElm) {
-            droppedGroupingElm.style.display = 'flex';
-          }
           if (groupTogglerElm) {
             groupTogglerElm.style.display = 'inline-block';
           }
