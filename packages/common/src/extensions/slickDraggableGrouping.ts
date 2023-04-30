@@ -314,7 +314,10 @@ export class SlickDraggableGrouping {
         dropzoneElm?.classList.remove('slick-dropzone-hover');
         draggablePlaceholderElm?.parentElement?.classList.remove('slick-dropzone-placeholder-hover');
 
-        if (dropzoneElm.querySelectorAll('.slick-dropped-grouping').length) {
+        const droppedGroupingElms = dropzoneElm.querySelectorAll<HTMLDivElement>('.slick-dropped-grouping');
+        droppedGroupingElms.forEach(droppedGroupingElm => droppedGroupingElm.style.display = 'flex');
+
+        if (droppedGroupingElms.length) {
           if (draggablePlaceholderElm) {
             draggablePlaceholderElm.style.display = 'none';
           }

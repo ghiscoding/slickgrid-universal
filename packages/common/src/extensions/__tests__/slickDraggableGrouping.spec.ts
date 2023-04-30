@@ -121,6 +121,7 @@ describe('Draggable Grouping Plugin', () => {
   let translateService: TranslateServiceStub;
   let headerDiv: HTMLDivElement;
   let preHeaderDiv: HTMLDivElement;
+  let dropzonePlaceholderElm: HTMLDivElement;
   let dropzoneElm: HTMLDivElement;
 
   beforeEach(() => {
@@ -129,9 +130,12 @@ describe('Draggable Grouping Plugin', () => {
     headerDiv = document.createElement('div');
     dropzoneElm = document.createElement('div');
     dropzoneElm.className = 'slick-dropzone';
+    dropzonePlaceholderElm = document.createElement('div');
+    dropzonePlaceholderElm.className = 'slick-placeholder';
     headerDiv.className = 'slick-header-column';
     preHeaderDiv = document.createElement('div');
     preHeaderDiv.className = 'slick-preheader-panel';
+    dropzoneElm.appendChild(dropzonePlaceholderElm);
     gridContainerDiv.appendChild(preHeaderDiv);
     preHeaderDiv.appendChild(dropzoneElm);
     document.body.appendChild(gridContainerDiv);
@@ -400,15 +404,15 @@ describe('Draggable Grouping Plugin', () => {
       fn.sortableLeftInstance.options.onEnd!(new CustomEvent('end') as any);
 
       const dragoverEvent = new CustomEvent('dragover', { bubbles: true, detail: {} });
-      dropzoneElm.dispatchEvent(dragoverEvent);
+      dropzonePlaceholderElm.dispatchEvent(dragoverEvent);
 
       const dragenterEvent = new CustomEvent('dragenter', { bubbles: true, detail: {} });
-      dropzoneElm.dispatchEvent(dragenterEvent);
-      expect(dropzoneElm.classList.contains('slick-dropzone-hover')).toBeTruthy();
+      dropzonePlaceholderElm.dispatchEvent(dragenterEvent);
+      expect(dropzoneElm.classList.contains('slick-dropzone-placeholder-hover')).toBeTruthy();
 
       const dragleaveEvent = new CustomEvent('dragleave', { bubbles: true, detail: {} });
-      dropzoneElm.dispatchEvent(dragleaveEvent);
-      expect(dropzoneElm.classList.contains('slick-dropzone-hover')).toBeFalsy();
+      dropzonePlaceholderElm.dispatchEvent(dragleaveEvent);
+      expect(dropzoneElm.classList.contains('slick-dropzone-placeholder-hover')).toBeFalsy();
     });
 
     describe('setupColumnDropbox method', () => {
