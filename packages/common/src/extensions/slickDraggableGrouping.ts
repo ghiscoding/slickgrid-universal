@@ -302,7 +302,7 @@ export class SlickDraggableGrouping {
       // },
       onStart: () => {
         if (draggablePlaceholderElm) {
-          draggablePlaceholderElm.style.display = 'none';
+          draggablePlaceholderElm.style.display = 'inline-block';
         }
         const droppedGroupingElms = dropzoneElm.querySelectorAll<HTMLDivElement>('.slick-dropped-grouping');
         droppedGroupingElms.forEach(droppedGroupingElm => droppedGroupingElm.style.display = 'none');
@@ -324,8 +324,6 @@ export class SlickDraggableGrouping {
           if (groupTogglerElm) {
             groupTogglerElm.style.display = 'inline-block';
           }
-        } else if (draggablePlaceholderElm) {
-          draggablePlaceholderElm.style.display = 'inline-block';
         }
 
         if (!grid.getEditorLock().commitCurrentEdit()) {
@@ -538,12 +536,12 @@ export class SlickDraggableGrouping {
   }
 
   protected addDragOverDropzoneListeners() {
-    const draggablePlaceholderElm = this._dropzoneElm.querySelector('.slick-placeholder');
+    const draggablePlaceholderElm = this._dropzoneElm.querySelector('.slick-draggable-dropzone-placeholder');
 
-    if (draggablePlaceholderElm) {
+    if (draggablePlaceholderElm && this._dropzoneElm) {
       this._bindingEventService.bind(draggablePlaceholderElm, 'dragover', (e) => e.preventDefault);
-      this._bindingEventService.bind(draggablePlaceholderElm, 'dragenter', () => this._dropzoneElm.classList.add('slick-dropzone-placeholder-hover'));
-      this._bindingEventService.bind(draggablePlaceholderElm, 'dragleave', () => this._dropzoneElm.classList.remove('slick-dropzone-placeholder-hover'));
+      this._bindingEventService.bind(draggablePlaceholderElm, 'dragenter', () => this._dropzoneElm.classList.add('slick-dropzone-hover'));
+      this._bindingEventService.bind(draggablePlaceholderElm, 'dragleave', () => this._dropzoneElm.classList.remove('slick-dropzone-hover'));
     }
   }
 
