@@ -907,6 +907,7 @@ input.flatpickr.form-control {
     .slick-draggable-dropzone-placeholder {
       font-style: var(--slick-draggable-group-placeholder-font-style, $slick-draggable-group-placeholder-font-style);
       color: var(--slick-draggable-group-placeholder-color, $slick-draggable-group-placeholder-color);
+      width: 100%;
     }
 
     .slick-group-toggle-all {

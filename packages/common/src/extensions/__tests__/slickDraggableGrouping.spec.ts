@@ -398,16 +398,17 @@ describe('Draggable Grouping Plugin', () => {
       fn.sortableLeftInstance!.options.onStart!({} as any);
       plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
       fn.sortableLeftInstance.options.onEnd!(new CustomEvent('end') as any);
+      const dropzonePlaceholderElm = dropzoneElm.querySelector('.slick-draggable-dropzone-placeholder');
 
       const dragoverEvent = new CustomEvent('dragover', { bubbles: true, detail: {} });
-      dropzoneElm.dispatchEvent(dragoverEvent);
+      dropzonePlaceholderElm?.dispatchEvent(dragoverEvent);
 
       const dragenterEvent = new CustomEvent('dragenter', { bubbles: true, detail: {} });
-      dropzoneElm.dispatchEvent(dragenterEvent);
+      dropzonePlaceholderElm?.dispatchEvent(dragenterEvent);
       expect(dropzoneElm.classList.contains('slick-dropzone-hover')).toBeTruthy();
 
       const dragleaveEvent = new CustomEvent('dragleave', { bubbles: true, detail: {} });
-      dropzoneElm.dispatchEvent(dragleaveEvent);
+      dropzonePlaceholderElm?.dispatchEvent(dragleaveEvent);
       expect(dropzoneElm.classList.contains('slick-dropzone-hover')).toBeFalsy();
     });
 
@@ -476,7 +477,6 @@ describe('Draggable Grouping Plugin', () => {
         it('should call "clearDroppedGroups" and expect the grouping to be cleared', () => {
           const preHeaderElm = document.querySelector('.slick-preheader-panel') as HTMLDivElement;
           let dropboxPlaceholderElm = preHeaderElm.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
-          expect(dropboxPlaceholderElm.style.display).toBe('none');
 
           plugin.clearDroppedGroups();
           dropboxPlaceholderElm = preHeaderElm.querySelector('.slick-draggable-dropzone-placeholder') as HTMLDivElement;
