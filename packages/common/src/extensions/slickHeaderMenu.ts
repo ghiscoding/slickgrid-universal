@@ -147,7 +147,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       this.grid.getContainerNode()?.appendChild(this._menuElm);
     }
 
-    // make sure the menu element is an empty div besore adding all list of commands
+    // make sure the menu element is an empty div before adding all list of commands
     emptyElement(this._menuElm);
     this.populateHeaderMenuCommandList(e, menu, callbackArgs);
   }
