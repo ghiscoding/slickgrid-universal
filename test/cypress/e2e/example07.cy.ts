@@ -348,6 +348,8 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-content').contains('Help');
     cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-title').contains('Change Completed Flag');
     cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
+
+    cy.wait(5); // wait for previous cell menu to be closed before reopening another one
     cy.get('.grid7').find(`[style="top:${GRID_ROW_HEIGHT * 10}px"] > .slick-cell:nth(3)`).click({ force: true });
     cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
 
