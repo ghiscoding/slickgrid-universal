@@ -13,7 +13,7 @@ export default defineConfig(() => {
       outDir: '../../docs',
       rollupOptions: {
         external: [
-          'flatpickr/dist/l10n/fr',
+          './node_modules/flatpickr/dist/l10n/fr',
         ],
       },
     },
