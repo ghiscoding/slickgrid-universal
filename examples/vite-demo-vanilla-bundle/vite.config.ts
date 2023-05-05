@@ -11,6 +11,11 @@ export default defineConfig(() => {
       emptyOutDir: true,
       // outDir: mode === 'production' ? '../../docs' : 'dist',
       outDir: '../../docs',
+      rollupOptions: {
+        external: [
+          'flatpickr/dist/l10n/fr',
+        ],
+      },
     },
     optimizeDeps: {
       include: ['jquery'],
