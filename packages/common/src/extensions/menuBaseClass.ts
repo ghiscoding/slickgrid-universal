@@ -175,7 +175,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
         item.disabled = isItemUsable ? false : true;
       }
 
-      commandLiElm = createDomElement('li', { className: menuCssPrefix });
+      commandLiElm = createDomElement('li', { className: menuCssPrefix, role: 'menuitem' });
       if (typeof item === 'object' && hasData((item as never)[itemType])) {
         commandLiElm.dataset[itemType] = (item as never)?.[itemType];
       }
