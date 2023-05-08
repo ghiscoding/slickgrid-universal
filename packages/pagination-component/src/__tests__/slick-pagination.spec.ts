@@ -97,7 +97,7 @@ describe('Slick-Pagination Component', () => {
 
       expect(translateService.getCurrentLanguage()).toBe('en');
       expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe('<span class="item-from" data-test="item-from" aria-label="Page Item From">10</span>-<span class="item-to" data-test="item-to" aria-label="Page Item To">15</span> <span class="text-of">of</span> ');
-      expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe('<span class="total-items" data-test="total-items">95</span> <span class="text-items">items</span> ');
+      expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe('<span class="total-items" data-test="total-items" aria-label="Total Items">95</span> <span class="text-items">items</span> ');
       expect(itemsPerPage.selectedOptions[0].value).toBe('5');
     });
 
@@ -256,7 +256,7 @@ describe('with different i18n locale', () => {
 
   it('should throw an error when enabling translate without a Translate Service', () => {
     mockGridOptions.enableTranslate = true;
-    expect(() => new SlickPaginationComponent(paginationServiceStub, eventPubSubService, sharedService, null))
+    expect(() => new SlickPaginationComponent(paginationServiceStub, eventPubSubService, sharedService, null as any))
       .toThrow('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
   });
 
@@ -269,7 +269,7 @@ describe('with different i18n locale', () => {
       const pageInfoTotalItems = document.querySelector('.page-info-total-items') as HTMLSpanElement;
       expect(translateService.getCurrentLanguage()).toBe('fr');
       expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe(`<span class="item-from" data-test="item-from" aria-label="Page Item From">10</span>-<span class="item-to" data-test="item-to" aria-label="Page Item To">15</span> <span class="text-of">de</span> `);
-      expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe(`<span class="total-items" data-test="total-items">95</span> <span class="text-items">éléments</span> `);
+      expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe(`<span class="total-items" data-test="total-items" aria-label="Total Items">95</span> <span class="text-items">éléments</span> `);
       done();
     }, 50);
   });
