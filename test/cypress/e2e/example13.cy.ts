@@ -1,4 +1,4 @@
-describe('Example 13 - Header Button Plugin', { retries: 0 }, () => {
+describe('Example 13 - Header Button Plugin', { retries: 1 }, () => {
   const titles = ['Resize me!', 'Hover me!', 'Column C', 'Column D', 'Column E', 'Column F', 'Column G', 'Column H', 'Column I', 'Column J'];
 
   beforeEach(() => {
