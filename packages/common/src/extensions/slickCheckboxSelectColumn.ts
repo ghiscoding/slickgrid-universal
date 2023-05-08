@@ -166,8 +166,10 @@ export class SlickCheckboxSelectColumn<T = any> {
         const selectAllContainerElm = this.headerRowNode?.querySelector<HTMLSpanElement>('#filter-checkbox-selectall-container');
         if (selectAllContainerElm) {
           selectAllContainerElm.style.display = 'flex';
+          selectAllContainerElm.ariaChecked = String(this._isSelectAllChecked);
           const selectAllInputElm = selectAllContainerElm.querySelector<HTMLInputElement>('input[type="checkbox"]');
           if (selectAllInputElm) {
+            selectAllInputElm.ariaChecked = String(this._isSelectAllChecked);
             selectAllInputElm.checked = this._isSelectAllChecked;
           }
         }
@@ -287,7 +289,7 @@ export class SlickCheckboxSelectColumn<T = any> {
         emptyElement(args.node);
 
         // <span class="container"><input type="checkbox"><label for="checkbox"></label></span>
-        const spanElm = createDomElement('span', { id: 'filter-checkbox-selectall-container' });
+        const spanElm = createDomElement('span', { id: 'filter-checkbox-selectall-container', ariaChecked: 'false' });
         spanElm.appendChild(
           createDomElement('input', { type: 'checkbox', id: `header-filter-selector${this._selectAll_UID}` })
         );
@@ -305,7 +307,7 @@ export class SlickCheckboxSelectColumn<T = any> {
   protected checkboxSelectionFormatter(row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGrid) {
     if (dataContext && this.checkSelectableOverride(row, dataContext, grid)) {
       const UID = this.createUID() + row;
-      return `<input id="selector${UID}" type="checkbox" ${this._selectedRowsLookup[row] ? `checked="checked"` : ''}><label for="selector${UID}"></label>`;
+      return `<input id="selector${UID}" type="checkbox" ${this._selectedRowsLookup[row] ? `checked="checked" aria-checked="true"` : 'aria-checked="false"'}><label for="selector${UID}"></label>`;
     }
     return null;
   }
@@ -359,6 +361,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     if (!this._addonOptions.hideInFilterHeaderRow) {
       const selectAllElm = this.headerRowNode?.querySelector<HTMLInputElement>(`#header-filter-selector${this._selectAll_UID}`);
       if (selectAllElm) {
+        selectAllElm.ariaChecked = String(this._isSelectAllChecked);
         selectAllElm.checked = this._isSelectAllChecked;
       }
     }
@@ -367,6 +370,8 @@ export class SlickCheckboxSelectColumn<T = any> {
   protected handleClick(e: DOMMouseOrTouchEvent<HTMLInputElement>, args: { row: number; cell: number; grid: SlickGrid; }) {
     // clicking on a row select checkbox
     if (this._grid.getColumns()[args.cell].id === this._addonOptions.columnId && e.target.type === 'checkbox') {
+      e.target.ariaChecked = String(e.target.checked);
+
       // if editing, try to commit
       if (this._grid.getEditorLock().isActive() && !this._grid.getEditorLock().commitCurrentEdit()) {
         e.preventDefault();
@@ -382,6 +387,8 @@ export class SlickCheckboxSelectColumn<T = any> {
 
   protected handleHeaderClick(e: DOMMouseOrTouchEvent<HTMLInputElement>, args: { column: Column; node: HTMLDivElement; grid: SlickGrid; }) {
     if (args.column.id === this._addonOptions.columnId && e.target.type === 'checkbox') {
+      e.target.ariaChecked = String(e.target.checked);
+
       // if editing, try to commit
       if (this._grid.getEditorLock().isActive() && !this._grid.getEditorLock().commitCurrentEdit()) {
         e.preventDefault();
@@ -504,6 +511,7 @@ export class SlickCheckboxSelectColumn<T = any> {
       if (!this._addonOptions.hideInFilterHeaderRow) {
         const selectAllElm = this.headerRowNode?.querySelector<HTMLInputElement>(`#header-filter-selector${this._selectAll_UID}`);
         if (selectAllElm) {
+          selectAllElm.ariaChecked = String(this._isSelectAllChecked);
           selectAllElm.checked = this._isSelectAllChecked;
         }
       }
@@ -520,7 +528,7 @@ export class SlickCheckboxSelectColumn<T = any> {
   }
 
   protected renderSelectAllCheckbox(isSelectAllChecked: boolean) {
-    const checkedStr = isSelectAllChecked ? ` checked="checked"` : '';
+    const checkedStr = isSelectAllChecked ? ` checked="checked" aria-checked="true"` : ' aria-checked="false"';
     this._grid.updateColumnHeader(
       this._addonOptions.columnId || '',
       `<input id="header-selector${this._selectAll_UID}" type="checkbox"${checkedStr}><label for="header-selector${this._selectAll_UID}"></label>`,

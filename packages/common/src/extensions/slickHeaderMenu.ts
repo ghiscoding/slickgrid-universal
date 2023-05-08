@@ -140,7 +140,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
     if (!this._menuElm) {
       this._menuElm = createDomElement('div', {
-        className: 'slick-header-menu',
+        className: 'slick-header-menu', role: 'menu',
         style: { minWidth: `${this.addonOptions.minWidth}px` },
       });
       this._menuElm.setAttribute('aria-expanded', 'true');
@@ -178,7 +178,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         return;
       }
 
-      const headerButtonDivElm = createDomElement('div', { className: 'slick-header-menu-button' });
+      const headerButtonDivElm = createDomElement('div', { className: 'slick-header-menu-button', ariaLabel: 'Header Menu' });
 
       if (this.addonOptions.buttonCssClass) {
         headerButtonDivElm.classList.add(...this.addonOptions.buttonCssClass.split(' '));

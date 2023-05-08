@@ -105,7 +105,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
 
       // -- Option List section
       if (!(this.addonOptions as CellMenu | ContextMenu).hideOptionSection && isColumnOptionAllowed && optionItems.length > 0) {
-        const optionMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-option-list` });
+        const optionMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-option-list`, role: 'menu' });
         this.populateCommandOrOptionTitle('option', this.addonOptions, optionMenuElm);
         if (!this.addonOptions.hideCloseButton) {
           this.populateCommandOrOptionCloseBtn('option', closeButtonElm, optionMenuElm);
@@ -123,7 +123,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
 
       // -- Command List section
       if (!(this.addonOptions as CellMenu | ContextMenu).hideCommandSection && isColumnCommandAllowed && commandItems.length > 0) {
-        const commandMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-command-list` });
+        const commandMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-command-list`, role: 'menu' });
         this.populateCommandOrOptionTitle('command', this.addonOptions, commandMenuElm);
         if (!this.addonOptions.hideCloseButton && (!isColumnOptionAllowed || optionItems.length === 0 || (this.addonOptions as CellMenu | ContextMenu).hideOptionSection)) {
           this.populateCommandOrOptionCloseBtn('command', closeButtonElm, commandMenuElm);

@@ -107,7 +107,7 @@ describe('Slick-Pagination Component', () => {
 
       expect(translateService.getCurrentLanguage()).toBe('en');
       expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe('<span class="item-from" data-test="item-from" aria-label="Page Item From">10</span>-<span class="item-to" data-test="item-to" aria-label="Page Item To">15</span> <span class="text-of">of</span> ');
-      expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe('<span class="total-items" data-test="total-items">95</span> <span class="text-items">items</span> ');
+      expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe('<span class="total-items" data-test="total-items" aria-label="Total Items">95</span> <span class="text-items">items</span> ');
       component.dispose();
     });
   });
