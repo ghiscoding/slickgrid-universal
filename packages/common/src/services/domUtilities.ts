@@ -180,7 +180,7 @@ export function createDomElement<T extends keyof HTMLElementTagNameMap, K extend
       }
     });
   }
-  if (appendToParent && appendToParent.appendChild) {
+  if (appendToParent?.appendChild) {
     appendToParent.appendChild(elm);
   }
   return elm;
