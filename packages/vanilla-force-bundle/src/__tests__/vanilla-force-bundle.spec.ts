@@ -409,12 +409,12 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should merge grid options with global options when slickgrid "getOptions" does not exist yet', () => {
-        mockGrid.getOptions = null;
+        mockGrid.getOptions = null as any;
         const setOptionSpy = jest.spyOn(mockGrid, 'setOptions');
         const sharedOptionSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'set');
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
 
-        component.gridOptions = { autoCommitEdit: false, autoResize: null };
+        component.gridOptions = { autoCommitEdit: false, autoResize: null as any };
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockData;
 
@@ -424,12 +424,12 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should merge grid options with global options and expect bottom padding to be calculated', () => {
-        mockGrid.getOptions = null;
+        mockGrid.getOptions = null as any;
         const setOptionSpy = jest.spyOn(mockGrid, 'setOptions');
         const sharedOptionSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'set');
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
 
-        component.gridOptions = { autoCommitEdit: false, autoResize: null };
+        component.gridOptions = { autoCommitEdit: false, autoResize: null as any };
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockData;
 
@@ -573,9 +573,9 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         component.dataset = mockData;
 
         setTimeout(() => {
-          expect(component.paginationOptions.pageSize).toBe(2);
-          expect(component.paginationOptions.pageNumber).toBe(expectedPageNumber);
-          expect(component.paginationOptions.totalItems).toBe(expectedTotalItems);
+          expect(component.paginationOptions!.pageSize).toBe(2);
+          expect(component.paginationOptions!.pageNumber).toBe(expectedPageNumber);
+          expect(component.paginationOptions!.totalItems).toBe(expectedTotalItems);
           expect(refreshSpy).toHaveBeenCalledWith(mockData);
           done();
         });
@@ -600,9 +600,9 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
 
         setTimeout(() => {
           expect(getPagingSpy).toHaveBeenCalled();
-          expect(component.paginationOptions.pageSize).toBe(10);
-          expect(component.paginationOptions.pageNumber).toBe(expectedPageNumber);
-          expect(component.paginationOptions.totalItems).toBe(expectedTotalItems);
+          expect(component.paginationOptions!.pageSize).toBe(10);
+          expect(component.paginationOptions!.pageNumber).toBe(expectedPageNumber);
+          expect(component.paginationOptions!.totalItems).toBe(expectedTotalItems);
           expect(refreshSpy).toHaveBeenCalledWith(mockData);
           done();
         });

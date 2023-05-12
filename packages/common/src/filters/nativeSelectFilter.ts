@@ -85,7 +85,7 @@ export class NativeSelectFilter implements Filter {
     }
 
     // step 1, create the DOM Element of the filter & initialize it if searchTerm is filled
-    this.filterElm = this.createDomElement(searchTerm);
+    this.filterElm = this.createFilterElement(searchTerm);
 
     // step 2, subscribe to the change event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
@@ -149,8 +149,10 @@ export class NativeSelectFilter implements Filter {
    */
   buildFilterSelectFromCollection(collection: any[]): HTMLSelectElement {
     const columnId = this.columnDef?.id ?? '';
-    const selectElm = createDomElement('select', { className: `form-control search-filter filter-${columnId}` });
-    selectElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
+    const selectElm = createDomElement('select', {
+      className: `form-control search-filter filter-${columnId}`,
+      ariaLabel: this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`
+    });
 
     const labelName = this.columnFilter.customStructure?.label ?? 'label';
     const valueName = this.columnFilter.customStructure?.value ?? 'value';
@@ -185,7 +187,7 @@ export class NativeSelectFilter implements Filter {
    * From the html template string, create a DOM element
    * @param filterTemplate
    */
-  protected createDomElement(searchTerm?: SearchTerm): HTMLSelectElement {
+  protected createFilterElement(searchTerm?: SearchTerm): HTMLSelectElement {
     const columnId = this.columnDef?.id ?? '';
     emptyElement(this.filterContainerElm);
 

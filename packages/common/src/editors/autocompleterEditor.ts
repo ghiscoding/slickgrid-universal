@@ -500,9 +500,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
   protected renderRegularItem(item: T) {
     const itemLabel = (typeof item === 'string' ? item : item?.label ?? '') as string;
-    return createDomElement('div', {
-      textContent: itemLabel || ''
-    });
+    return createDomElement('div', { textContent: itemLabel || '' });
   }
 
   protected renderCustomItem(item: T) {
@@ -512,10 +510,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     // for the remaining allowed tags we'll permit all attributes
     const sanitizedTemplateText = sanitizeTextByAvailableSanitizer(this.gridOptions, templateString) || '';
 
-    return createDomElement('div', {
-      // dataset: { item },
-      innerHTML: sanitizedTemplateText
-    });
+    return createDomElement('div', { innerHTML: sanitizedTemplateText });
   }
 
   protected renderCollectionItem(item: any) { // CollectionCustomStructure
@@ -542,17 +537,19 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     this._editorInputGroupElm = createDomElement('div', { className: 'autocomplete-container input-group' });
     const closeButtonGroupElm = createDomElement('span', { className: 'input-group-btn input-group-append', dataset: { clear: '' } });
     this._clearButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default icon-clear' });
-    this._inputElm = createDomElement('input', {
-      type: 'text', placeholder, title,
-      autocomplete: 'none',
-      className: `autocomplete form-control editor-text input-group-editor editor-${columnId}`,
-      dataset: { input: '' }
-    });
-
-    this._editorInputGroupElm.appendChild(this._inputElm);
+    this._inputElm = createDomElement(
+      'input',
+      {
+        type: 'text', placeholder, title,
+        autocomplete: 'none',
+        className: `autocomplete form-control editor-text input-group-editor editor-${columnId}`,
+        dataset: { input: '' }
+      },
+      this._editorInputGroupElm
+    );
 
     // add an empty <span> in order to add loading spinner styling
-    this._editorInputGroupElm.appendChild(createDomElement('span'));
+    this._editorInputGroupElm.appendChild(document.createElement('span'));
 
     // show clear date button (unless user specifically doesn't want it)
     if (!getEditorOptionByName<AutocompleterOption, 'hideClearButton'>(this.columnEditor, 'hideClearButton')) {

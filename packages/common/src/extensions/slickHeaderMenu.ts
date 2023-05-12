@@ -140,10 +140,10 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
     if (!this._menuElm) {
       this._menuElm = createDomElement('div', {
+        ariaExpanded: 'true',
         className: 'slick-header-menu', role: 'menu',
         style: { minWidth: `${this.addonOptions.minWidth}px` },
       });
-      this._menuElm.setAttribute('aria-expanded', 'true');
       this.grid.getContainerNode()?.appendChild(this._menuElm);
     }
 
@@ -178,7 +178,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         return;
       }
 
-      const headerButtonDivElm = createDomElement('div', { className: 'slick-header-menu-button', ariaLabel: 'Header Menu' });
+      const headerButtonDivElm = createDomElement('div', { className: 'slick-header-menu-button', ariaLabel: 'Header Menu' }, args.node);
 
       if (this.addonOptions.buttonCssClass) {
         headerButtonDivElm.classList.add(...this.addonOptions.buttonCssClass.split(' '));
@@ -187,7 +187,6 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       if (this.addonOptions.tooltip) {
         headerButtonDivElm.title = this.addonOptions.tooltip;
       }
-      args.node.appendChild(headerButtonDivElm);
 
       // show the header menu dropdown list of commands
       this._bindEventService.bind(headerButtonDivElm, 'click', ((e: MouseEvent) => this.showMenu(e, column, menu)) as EventListener);

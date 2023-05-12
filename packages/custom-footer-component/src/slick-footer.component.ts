@@ -198,7 +198,7 @@ export class SlickFooterComponent {
       rightFooterElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, this.customFooterOptions.rightFooterText || '');
     } else if (!this.customFooterOptions.hideMetrics) {
       rightFooterElm.classList.add('metrics');
-      const lastUpdateElm = createDomElement('span', { className: 'timestamp' });
+      const lastUpdateElm = createDomElement('span', { className: 'timestamp' }, rightFooterElm);
 
       if (!this.customFooterOptions.hideLastUpdateTimestamp) {
         const footerLastUpdateElm = this.createFooterLastUpdate();
@@ -208,7 +208,6 @@ export class SlickFooterComponent {
       }
 
       // last update elements
-      rightFooterElm.appendChild(lastUpdateElm);
       rightFooterElm.appendChild(
         createDomElement('span', { className: 'item-count', textContent: `${this.metrics?.itemCount ?? '0'}` })
       );
@@ -245,15 +244,10 @@ export class SlickFooterComponent {
     const lastUpdateTimestamp = moment(this.metrics?.endTime).format(this.customFooterOptions.dateFormat);
     const lastUpdateContainerElm = createDomElement('span');
 
-    lastUpdateContainerElm.appendChild(
-      createDomElement('span', { className: 'text-last-update', textContent: lastUpdateText }));
+    lastUpdateContainerElm.appendChild(createDomElement('span', { className: 'text-last-update', textContent: lastUpdateText }));
     lastUpdateContainerElm.appendChild(document.createTextNode('\r\n'));
-    lastUpdateContainerElm.appendChild(
-      createDomElement('span', { className: 'last-update-timestamp', textContent: lastUpdateTimestamp })
-    );
-    lastUpdateContainerElm.appendChild(
-      createDomElement('span', { className: 'separator', textContent: ` ${this.customFooterOptions.metricSeparator || ''} ` })
-    );
+    lastUpdateContainerElm.appendChild(createDomElement('span', { className: 'last-update-timestamp', textContent: lastUpdateTimestamp }));
+    lastUpdateContainerElm.appendChild(createDomElement('span', { className: 'separator', textContent: ` ${this.customFooterOptions.metricSeparator || ''} ` }));
 
     return lastUpdateContainerElm;
   }

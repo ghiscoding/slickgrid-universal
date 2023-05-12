@@ -387,16 +387,15 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       placeholder = this.columnFilter.placeholder;
     }
 
-    const inputElm = createDomElement('input', {
+    this._filterElm = createDomElement('input', {
       type: 'text',
+      ariaLabel: this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`,
       autocomplete: 'none',
       placeholder,
       className: `form-control search-filter filter-${columnId} slick-autocomplete-container`,
       value: (searchTerm ?? '') as string,
       dataset: { columnid: `${columnId}` }
     });
-    inputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
-    this._filterElm = inputElm;
 
     // create the DOM element & add an ID and filter class
     const searchTermInput = searchTerm as string;
@@ -471,25 +470,25 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       } as AutocompleteSettings<any>);
     }
 
-    inputElm.value = searchTermInput ?? '';
+    this._filterElm.value = searchTermInput ?? '';
 
     // append the new DOM element to the header row
     const filterDivContainerElm = createDomElement('div', { className: 'autocomplete-filter-container' });
-    filterDivContainerElm.appendChild(inputElm);
+    filterDivContainerElm.appendChild(this._filterElm);
 
     // add an empty <span> in order to add loading spinner styling
     filterDivContainerElm.appendChild(createDomElement('span'));
 
     // if there's a search term, we will add the "filled" class for styling purposes
     if (searchTerm) {
-      inputElm.classList.add('filled');
+      this._filterElm.classList.add('filled');
     }
 
     // append the new DOM element to the header row & an empty span
     this.filterContainerElm.appendChild(filterDivContainerElm);
     this.filterContainerElm.appendChild(document.createElement('span'));
 
-    return inputElm;
+    return this._filterElm;
   }
 
   //

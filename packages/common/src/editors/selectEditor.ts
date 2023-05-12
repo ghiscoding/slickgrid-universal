@@ -712,7 +712,7 @@ export class SelectEditor implements Editor {
 
     // step 2, create the DOM Element of the editor
     // we will later also subscribe to the onClose event to save the Editor whenever that event is triggered
-    this.createDomElement(selectBuildResult.selectElement);
+    this.createEditorElement(selectBuildResult.selectElement);
   }
 
   /** Create a blank entry that can be added to the collection. It will also reuse the same collection structure provided by the user */
@@ -734,7 +734,7 @@ export class SelectEditor implements Editor {
    * From the Select DOM Element created earlier, create a Multiple/Single Select Editor using the jQuery multiple-select.js lib
    * @param {Object} selectElement
    */
-  protected createDomElement(selectElement: HTMLSelectElement) {
+  protected createEditorElement(selectElement: HTMLSelectElement) {
     this.$editorElm = $(selectElement);
 
     if (this.$editorElm && typeof this.$editorElm.appendTo === 'function') {

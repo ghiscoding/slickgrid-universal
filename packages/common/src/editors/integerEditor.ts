@@ -20,12 +20,12 @@ export class IntegerEditor extends InputEditor {
 
       this._input = createDomElement('input', {
         type: 'number', autocomplete: 'none',
+        ariaLabel: this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Slider Editor`,
         placeholder: this.columnEditor?.placeholder ?? '',
         title: this.columnEditor?.title ?? '',
         step: `${(this.columnEditor.valueStep !== undefined) ? this.columnEditor.valueStep : '1'}`,
         className: `editor-text editor-${columnId}`,
       });
-      this._input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Slider Editor`);
       const cellContainer = this.args.container;
       if (cellContainer && typeof cellContainer.appendChild === 'function') {
         cellContainer.appendChild(this._input);

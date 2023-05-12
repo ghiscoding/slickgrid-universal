@@ -151,8 +151,7 @@ export class SlickDraggableGrouping {
           title: this._addonOptions.toggleAllPlaceholderText ?? '',
           style: { display: 'none' },
         });
-        const groupTogglerIconElm = createDomElement('span', { className: 'slick-group-toggle-all-icon' });
-        this._groupToggler.appendChild(groupTogglerIconElm);
+        const groupTogglerIconElm = createDomElement('span', { className: 'slick-group-toggle-all-icon' }, this._groupToggler);
 
         if (this.gridOptions.enableTranslate && this._addonOptions.toggleAllButtonTextKey) {
           this._addonOptions.toggleAllButtonText = this.extensionUtility.translateWhenEnabledAndServiceExist(this._addonOptions.toggleAllButtonTextKey, 'TEXT_TOGGLE_ALL_GROUPS');
@@ -179,12 +178,11 @@ export class SlickDraggableGrouping {
         );
       }
 
-      this._dropzonePlaceholderElm = createDomElement('div', { className: 'slick-draggable-dropzone-placeholder' });
+      this._dropzonePlaceholderElm = createDomElement('div', { className: 'slick-draggable-dropzone-placeholder' }, this._dropzoneElm);
       if (this.gridOptions.enableTranslate && this._addonOptions?.dropPlaceHolderTextKey) {
         this._addonOptions.dropPlaceHolderText = this.extensionUtility.translateWhenEnabledAndServiceExist(this._addonOptions.dropPlaceHolderTextKey, 'TEXT_TOGGLE_ALL_GROUPS');
       }
       this._dropzonePlaceholderElm.textContent = this._addonOptions?.dropPlaceHolderText ?? this._defaults.dropPlaceHolderText ?? '';
-      this._dropzoneElm.appendChild(this._dropzonePlaceholderElm);
 
       this.setupColumnDropbox();
 
@@ -196,11 +194,10 @@ export class SlickDraggableGrouping {
 
           // also optionally add an icon beside each column title that can be dragged
           if (this._addonOptions.groupIconCssClass) {
-            const groupableIconElm = createDomElement('span', { className: 'slick-column-groupable' });
+            const groupableIconElm = createDomElement('span', { className: 'slick-column-groupable' }, node);
             if (this._addonOptions.groupIconCssClass) {
               groupableIconElm.classList.add(...this._addonOptions.groupIconCssClass.split(' '));
             }
-            node.appendChild(groupableIconElm);
           }
         }
       });
@@ -445,12 +442,11 @@ export class SlickDraggableGrouping {
               className: 'slick-dropped-grouping',
               dataset: { id: `${col.id}` }
             });
-            const groupTextElm = createDomElement('div', {
+            createDomElement('div', {
               className: 'slick-dropped-grouping-title',
               style: { display: 'inline-flex' },
               textContent: columnNameElm ? columnNameElm.textContent : headerColumnElm.textContent,
-            });
-            entryElm.appendChild(groupTextElm);
+            }, entryElm);
 
             // delete icon
             const groupRemoveIconElm = createDomElement('div', { className: 'slick-groupby-remove' });
@@ -467,9 +463,8 @@ export class SlickDraggableGrouping {
               if (col.grouping?.sortAsc === undefined) {
                 col.grouping.sortAsc = true;
               }
-              groupSortContainerElm = createDomElement('div', { className: 'slick-groupby-sort' });
+              groupSortContainerElm = createDomElement('div', { className: 'slick-groupby-sort' }, entryElm);
               this.getGroupBySortIcon(groupSortContainerElm, col.grouping.sortAsc);
-              entryElm.appendChild(groupSortContainerElm);
             }
 
             entryElm.appendChild(groupRemoveIconElm);
@@ -622,7 +617,7 @@ export class SlickDraggableGrouping {
   }
 
   /** call notify on slickgrid event and execute onGroupChanged callback when defined as a function by the user */
-  protected triggerOnGroupChangedEvent(args: { caller?: string; groupColumns: Grouping[] }) {
+  protected triggerOnGroupChangedEvent(args: { caller?: string; groupColumns: Grouping[]; }) {
     if (this._addonOptions && typeof this._addonOptions.onGroupChanged === 'function') {
       this._addonOptions.onGroupChanged(new Slick.EventData(), args);
     }

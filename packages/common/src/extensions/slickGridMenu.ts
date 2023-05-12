@@ -225,8 +225,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         style: { display: 'none' }
       });
 
-      this._commandMenuElm = createDomElement('div', { className: 'slick-menu-command-list', role: 'menu' });
-      this._menuElm.appendChild(this._commandMenuElm);
+      this._commandMenuElm = createDomElement('div', { className: 'slick-menu-command-list', role: 'menu' }, this._menuElm);
 
       this.recreateCommandList(this._gridMenuOptions, {
         grid: this.grid,

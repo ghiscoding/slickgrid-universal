@@ -193,12 +193,12 @@ export class DualInputEditor implements Editor {
     const input = createDomElement('input', {
       type: fieldType || 'text',
       id: `item-${itemId}-${position}`,
+      ariaLabel: this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Input Editor`,
       className: `dual-editor-text editor-${columnId} ${position.replace(/input/gi, '')}`,
       autocomplete: 'none',
       placeholder: editorSideParams.placeholder || '',
       title: editorSideParams.title || '',
     });
-    input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Input Editor`);
 
     if (fieldType === 'readonly') {
       // when the custom type is defined as readonly, we'll make a readonly text input

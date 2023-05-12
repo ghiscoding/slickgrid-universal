@@ -100,17 +100,15 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
         this._menuElm.style.width = findWidthOrDefault(this.addonOptions?.width);
       }
 
-      const closeButtonElm = createDomElement('button', { className: 'close', type: 'button', innerHTML: '&times;', dataset: { dismiss: this._menuCssPrefix } });
-      closeButtonElm.setAttribute('aria-label', 'Close');
+      const closeButtonElm = createDomElement('button', { ariaLabel: 'Close', className: 'close', type: 'button', innerHTML: '&times;', dataset: { dismiss: this._menuCssPrefix } });
 
       // -- Option List section
       if (!(this.addonOptions as CellMenu | ContextMenu).hideOptionSection && isColumnOptionAllowed && optionItems.length > 0) {
-        const optionMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-option-list`, role: 'menu' });
+        const optionMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-option-list`, role: 'menu' }, this._menuElm);
         this.populateCommandOrOptionTitle('option', this.addonOptions, optionMenuElm);
         if (!this.addonOptions.hideCloseButton) {
           this.populateCommandOrOptionCloseBtn('option', closeButtonElm, optionMenuElm);
         }
-        this._menuElm.appendChild(optionMenuElm);
         this.populateCommandOrOptionItems(
           'option',
           this.addonOptions,
@@ -123,12 +121,11 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
 
       // -- Command List section
       if (!(this.addonOptions as CellMenu | ContextMenu).hideCommandSection && isColumnCommandAllowed && commandItems.length > 0) {
-        const commandMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-command-list`, role: 'menu' });
+        const commandMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-command-list`, role: 'menu' }, this._menuElm);
         this.populateCommandOrOptionTitle('command', this.addonOptions, commandMenuElm);
         if (!this.addonOptions.hideCloseButton && (!isColumnOptionAllowed || optionItems.length === 0 || (this.addonOptions as CellMenu | ContextMenu).hideOptionSection)) {
           this.populateCommandOrOptionCloseBtn('command', closeButtonElm, commandMenuElm);
         }
-        this._menuElm.appendChild(commandMenuElm);
         this.populateCommandOrOptionItems(
           'command',
           this.addonOptions,
