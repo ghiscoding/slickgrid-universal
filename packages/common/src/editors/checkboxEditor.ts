@@ -76,10 +76,10 @@ export class CheckboxEditor implements Editor {
 
     this._input = createDomElement('input', {
       type: 'checkbox', value: 'true',
+      ariaLabel: this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Checkbox Editor`,
       className: `editor-checkbox editor-${columnId}`,
       title: this.columnEditor?.title ?? '',
     });
-    this._input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Checkbox Editor`);
 
     const cellContainer = this.args?.container;
     if (cellContainer && typeof cellContainer.appendChild === 'function') {

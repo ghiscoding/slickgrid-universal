@@ -159,9 +159,8 @@ export class GroupingAndColspanService {
             style: { width: `${widthTotal - headerColumnWidthDiff}px` }
           });
 
-          const spanColumnNameElm = createDomElement('span', { className: 'slick-column-name', textContent: colDef.columnGroup || '' });
+          createDomElement('span', { className: 'slick-column-name', textContent: colDef.columnGroup || '' }, headerElm);
 
-          headerElm.appendChild(spanColumnNameElm);
           preHeaderPanel.appendChild(headerElm);
         }
         lastColumnGroup = colDef.columnGroup || '';

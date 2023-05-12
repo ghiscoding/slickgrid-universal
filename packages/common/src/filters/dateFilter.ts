@@ -364,15 +364,11 @@ export class DateFilter implements Filter {
     } else {
       this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.gridOptions);
       const filterContainerElm = createDomElement('div', { className: `form-group search-filter filter-${columnId}` });
-      const containerInputGroupElm = createDomElement('div', { className: 'input-group flatpickr' });
-      const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' });
+      const containerInputGroupElm = createDomElement('div', { className: 'input-group flatpickr' }, filterContainerElm);
+      const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' }, containerInputGroupElm);
 
       operatorInputGroupAddonElm.appendChild(this._selectOperatorElm);
-      containerInputGroupElm.appendChild(operatorInputGroupAddonElm);
       containerInputGroupElm.appendChild(this._filterDivInputElm);
-
-      // create the DOM element & add an ID and filter class
-      filterContainerElm.appendChild(containerInputGroupElm);
 
       if (this.operator) {
         const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);

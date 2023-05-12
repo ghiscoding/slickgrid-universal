@@ -284,17 +284,13 @@ export class InputFilter implements Filter {
       this._filterInputElm.classList.add('compound-input');
       this._selectOperatorElm = buildSelectOperator(this.getCompoundOperatorOptionValues(), this.gridOptions);
       this._filterContainerElm = createDomElement('div', { className: `form-group search-filter filter-${columnId}` });
-      const containerInputGroupElm = createDomElement('div', { className: 'input-group' });
-      const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' });
+      const containerInputGroupElm = createDomElement('div', { className: 'input-group' }, this._filterContainerElm);
+      const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' }, containerInputGroupElm);
 
       // append operator & input DOM element
       operatorInputGroupAddonElm.appendChild(this._selectOperatorElm);
-      containerInputGroupElm.appendChild(operatorInputGroupAddonElm);
       containerInputGroupElm.appendChild(this._filterInputElm);
       containerInputGroupElm.appendChild(createDomElement('span'));
-
-      // create the DOM element & add an ID and filter class
-      this._filterContainerElm.appendChild(containerInputGroupElm);
 
       if (this.operator) {
         this._selectOperatorElm.value = mapOperatorToShorthandDesignation(this.operator);

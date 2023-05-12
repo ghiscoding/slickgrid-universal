@@ -22,12 +22,12 @@ export class FloatEditor extends InputEditor {
 
       this._input = createDomElement('input', {
         type: 'number', autocomplete: 'none',
+        ariaLabel: this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Number Editor`,
         className: `editor-text editor-${columnId}`,
         placeholder: this.columnEditor?.placeholder ?? '',
         title: this.columnEditor?.title ?? '',
         step: `${(this.columnEditor.valueStep !== undefined) ? this.columnEditor.valueStep : this.getInputDecimalSteps()}`,
       });
-      this._input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Number Editor`);
       const cellContainer = this.args.container;
       if (cellContainer && typeof cellContainer.appendChild === 'function') {
         cellContainer.appendChild(this._input);

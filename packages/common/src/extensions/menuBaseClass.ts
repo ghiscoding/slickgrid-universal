@@ -215,11 +215,14 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
           iconElm.textContent = '◦';
         }
 
-        const textElm = createDomElement('span', {
-          className: `${this._menuCssPrefix}-content`,
-          textContent: typeof item === 'object' && (item as MenuCommandItem | MenuOptionItem).title || ''
-        });
-        commandLiElm.appendChild(textElm);
+        const textElm = createDomElement(
+          'span',
+          {
+            className: `${this._menuCssPrefix}-content`,
+            textContent: typeof item === 'object' && (item as MenuCommandItem | MenuOptionItem).title || ''
+          },
+          commandLiElm
+        );
 
         if ((item as MenuCommandItem | MenuOptionItem).textCssClass) {
           textElm.classList.add(...(item as MenuCommandItem | MenuOptionItem).textCssClass!.split(' '));

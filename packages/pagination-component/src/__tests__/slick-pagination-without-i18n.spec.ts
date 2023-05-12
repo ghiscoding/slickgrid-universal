@@ -106,8 +106,11 @@ describe('Slick-Pagination Component', () => {
       const pageInfoTotalItems = document.querySelector('.page-info-total-items') as HTMLSpanElement;
 
       expect(translateService.getCurrentLanguage()).toBe('en');
-      expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe('<span class="item-from" data-test="item-from" aria-label="Page Item From">10</span>-<span class="item-to" data-test="item-to" aria-label="Page Item To">15</span> <span class="text-of">of</span> ');
-      expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe('<span class="total-items" data-test="total-items" aria-label="Total Items">95</span> <span class="text-items">items</span> ');
+      expect(pageInfoFromTo.querySelector('span.item-from')!.ariaLabel).toBe('Page Item From'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
+      expect(pageInfoFromTo.querySelector('span.item-to')!.ariaLabel).toBe('Page Item To');
+      expect(pageInfoTotalItems.querySelector('span.total-items')!.ariaLabel).toBe('Total Items');
+      expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe('<span class="item-from" data-test="item-from">10</span>-<span class="item-to" data-test="item-to">15</span> <span class="text-of">of</span> ');
+      expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe('<span class="total-items" data-test="total-items">95</span> <span class="text-items">items</span> ');
       component.dispose();
     });
   });

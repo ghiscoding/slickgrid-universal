@@ -134,7 +134,7 @@ describe('LongTextEditor', () => {
       editor = new LongTextEditor(editorArguments);
       const editorElm = document.body.querySelector('.slick-large-editor-text.editor-title textarea') as HTMLTextAreaElement;
 
-      expect(editorElm.getAttribute('aria-label')).toBe('Title Text Editor');
+      expect(editorElm.ariaLabel).toBe('Title Text Editor');
     });
 
     it('should initialize the editor with default constant text when translate service is not provided', () => {

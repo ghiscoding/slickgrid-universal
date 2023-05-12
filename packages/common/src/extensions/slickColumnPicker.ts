@@ -103,10 +103,10 @@ export class SlickColumnPicker {
     this._eventHandler.subscribe(this.grid.onColumnsReordered, updateColumnPickerOrder.bind(this) as EventListener);
 
     this._menuElm = createDomElement('div', {
+      ariaExpanded: 'false',
       className: `slick-column-picker ${this._gridUid}`, role: 'menu',
       style: { display: 'none' },
     });
-    this._menuElm.setAttribute('aria-expanded', 'false');
 
     // add Close button and optiona a Column list title
     addColumnTitleElementWhenDefined.call(this, this._menuElm);

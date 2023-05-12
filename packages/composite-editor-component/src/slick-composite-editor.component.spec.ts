@@ -715,8 +715,8 @@ describe('CompositeEditorService', () => {
       expect(component.constructor).toBeDefined();
       expect(compositeContainerElm).toBeTruthy();
       expect(compositeFooterCancelBtnElm).toBeTruthy();
-      expect(compositeFooterCancelBtnElm.getAttribute('aria-label')).toBe('Cancel');
-      expect(compositeFooterCloseBtnElm.getAttribute('aria-label')).toBe('Close');
+      expect(compositeFooterCancelBtnElm.ariaLabel).toBe('Cancel');
+      expect(compositeFooterCloseBtnElm.ariaLabel).toBe('Close');
       expect(getEditSpy).toHaveBeenCalled();
       expect(cancelSpy).toHaveBeenCalled();
     });
@@ -811,8 +811,8 @@ describe('CompositeEditorService', () => {
         expect(compositeContainerElm).toBeTruthy();
         expect(compositeHeaderElm).toBeTruthy();
         expect(compositeTitleElm).toBeTruthy();
-        expect(compositeFooterCancelBtnElm.getAttribute('aria-label')).toBe('Cancel');
-        expect(compositeFooterSaveBtnElm.getAttribute('aria-label')).toBe('Clone');
+        expect(compositeFooterCancelBtnElm.ariaLabel).toBe('Cancel');
+        expect(compositeFooterSaveBtnElm.ariaLabel).toBe('Clone');
         expect(compositeTitleElm.textContent).toBe('Details');
         expect(productNameLabelElm.textContent).toBe('Product');
         expect(productNameDetailCellElm.classList.contains('modified')).toBe(true);
@@ -1078,7 +1078,7 @@ describe('CompositeEditorService', () => {
         expect(component).toBeTruthy();
         expect(input1ResetButtonElm).toBeTruthy();
         expect(input2ResetButtonElm).toBeTruthy();
-        expect(input1ResetButtonElm.getAttribute('aria-label')).toBe('Reset');
+        expect(input1ResetButtonElm.ariaLabel).toBe('Reset');
         expect(component.constructor).toBeDefined();
         expect(compositeContainerElm).toBeTruthy();
         expect(compositeHeaderElm).toBeTruthy();
@@ -1527,7 +1527,7 @@ describe('CompositeEditorService', () => {
         expect(compositeContainerElm).toBeTruthy();
         expect(compositeTitleElm.textContent).toBe('Mass Update');
         expect(compositeFooterSaveBtnElm.textContent).toBe('Mass Update');
-        expect(compositeFooterSaveBtnElm.getAttribute('aria-label')).toBe('Mass Update');
+        expect(compositeFooterSaveBtnElm.ariaLabel).toBe('Mass Update');
       });
 
       it('should expect to have a header title & modal type representing "mass-selection" when using "auto-mass" type and having some row(s) selected', () => {
@@ -1548,7 +1548,7 @@ describe('CompositeEditorService', () => {
         expect(compositeContainerElm).toBeTruthy();
         expect(compositeTitleElm.textContent).toBe('Mass Selection');
         expect(compositeFooterSaveBtnElm.textContent).toBe('Update Selection');
-        expect(compositeFooterSaveBtnElm.getAttribute('aria-label')).toBe('Update Selection');
+        expect(compositeFooterSaveBtnElm.ariaLabel).toBe('Update Selection');
       });
 
       it('should activate next available cell with an Editor when current active cell does not have an Editor', () => {
@@ -1958,8 +1958,8 @@ describe('CompositeEditorService', () => {
       expect(productNameLabelElm.textContent).toBe('Produit');
       expect(compositeFooterCancelBtnElm.textContent).toBe('Annuler');
       expect(compositeFooterSaveBtnElm.textContent).toBe('Sauvegarder');
-      expect(compositeFooterCancelBtnElm.getAttribute('aria-label')).toBe('Annuler');
-      expect(compositeFooterSaveBtnElm.getAttribute('aria-label')).toBe('Sauvegarder');
+      expect(compositeFooterCancelBtnElm.ariaLabel).toBe('Annuler');
+      expect(compositeFooterSaveBtnElm.ariaLabel).toBe('Sauvegarder');
     });
 
     it('should have translate text when opening Composite Editor when cloning an Item', () => {
@@ -1992,7 +1992,7 @@ describe('CompositeEditorService', () => {
       expect(productNameLabelElm.textContent).toBe('Produit');
       expect(compositeFooterCancelBtnElm.textContent).toBe('Annuler');
       expect(compositeFooterSaveBtnElm.textContent).toBe('Cloner');
-      expect(compositeFooterSaveBtnElm.getAttribute('aria-label')).toBe('Cloner');
+      expect(compositeFooterSaveBtnElm.ariaLabel).toBe('Cloner');
     });
 
     it('should have translated text when handling a saving of grid changes when "Mass Selection" save button is clicked', (done) => {
@@ -2037,9 +2037,9 @@ describe('CompositeEditorService', () => {
         expect(compositeTitleElm.textContent).toBe('Details');
         expect(field3LabelElm.textContent).toBe('Nom du Groupe - Durée');
         expect(compositeFooterCancelBtnElm.textContent).toBe('Annuler');
-        expect(compositeFooterCancelBtnElm.getAttribute('aria-label')).toBe('Annuler');
+        expect(compositeFooterCancelBtnElm.ariaLabel).toBe('Annuler');
         expect(compositeFooterSaveBtnElm.textContent).toBe('Mettre à jour la sélection');
-        expect(compositeFooterSaveBtnElm.getAttribute('aria-label')).toBe('Mettre à jour la sélection');
+        expect(compositeFooterSaveBtnElm.ariaLabel).toBe('Mettre à jour la sélection');
         expect(updateItemsSpy).toHaveBeenCalledWith([mockProduct]);
         expect(cancelCommitSpy).toHaveBeenCalled();
         expect(setActiveRowSpy).toHaveBeenCalledWith(0);

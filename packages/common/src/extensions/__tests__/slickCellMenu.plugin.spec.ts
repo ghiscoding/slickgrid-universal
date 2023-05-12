@@ -268,11 +268,12 @@ describe('CellMenu Plugin', () => {
         expect(cellMenuElm.classList.contains('dropdown'));
         expect(cellMenuElm.classList.contains('dropright'));
         expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(document.body.querySelector('button.close')!.ariaLabel).toBe('Close'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
           `<div class="slick-cell-menu slickgrid12345 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
             <div class="slick-menu-command-list">
               <div class="slick-command-header no-title with-close">
-                <button class="close" type="button" data-dismiss="slick-menu" aria-label="Close">×</button>
+                <button class="close" type="button" data-dismiss="slick-menu">×</button>
               </div>
               <li class="slick-menu-item orange" data-command="command1">
                 <div class="slick-menu-icon">◦</div>
@@ -643,11 +644,12 @@ describe('CellMenu Plugin', () => {
         const optionListElm = cellMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
 
         expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(document.body.querySelector('button.close')!.ariaLabel).toBe('Close'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
           `<div class="slick-cell-menu slickgrid12345 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
             <div class="slick-menu-option-list">
               <div class="slick-option-header no-title with-close">
-                <button class="close" type="button" data-dismiss="slick-menu" aria-label="Close">×</button>
+                <button class="close" type="button" data-dismiss="slick-menu">×</button>
               </div>
               <li class="slick-menu-item purple" data-option="option1">
                 <div class="slick-menu-icon">◦</div>

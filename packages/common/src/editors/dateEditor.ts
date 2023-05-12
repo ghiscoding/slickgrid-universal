@@ -153,14 +153,16 @@ export class DateEditor implements Editor {
       this._editorInputGroupElm = createDomElement('div', { className: 'flatpickr input-group' });
       const closeButtonGroupElm = createDomElement('span', { className: 'input-group-btn input-group-append', dataset: { clear: '' } });
       this._clearButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default icon-clear' });
-      this._inputElm = createDomElement('input', {
-        placeholder: this.columnEditor?.placeholder ?? '',
-        title: this.columnEditor && this.columnEditor.title || '',
-        className: inputCssClasses.replace(/\./g, ' '),
-        dataset: { input: '', defaultdate: this.defaultDate }
-      });
-
-      this._editorInputGroupElm.appendChild(this._inputElm);
+      this._inputElm = createDomElement(
+        'input',
+        {
+          placeholder: this.columnEditor?.placeholder ?? '',
+          title: this.columnEditor && this.columnEditor.title || '',
+          className: inputCssClasses.replace(/\./g, ' '),
+          dataset: { input: '', defaultdate: this.defaultDate }
+        },
+        this._editorInputGroupElm
+      );
 
       // show clear date button (unless user specifically doesn't want it)
       if (!getEditorOptionByName<FlatpickrOption, 'hideClearButton'>(this.columnEditor, 'hideClearButton')) {

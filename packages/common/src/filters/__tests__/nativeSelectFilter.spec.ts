@@ -121,7 +121,7 @@ describe('NativeSelectFilter', () => {
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('select.form-control.search-filter.filter-gender') as HTMLInputElement;
 
-    expect(filterInputElm.getAttribute('aria-label')).toBe('Gender Search Filter');
+    expect(filterInputElm.ariaLabel).toBe('Gender Search Filter');
   });
 
   it('should trigger select change event and expect the callback to be called with the search terms we select from dropdown list', () => {

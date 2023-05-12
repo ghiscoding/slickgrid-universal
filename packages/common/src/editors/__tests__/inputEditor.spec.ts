@@ -103,7 +103,7 @@ describe('InputEditor (TextEditor)', () => {
       editor = new InputEditor(editorArguments, 'text');
       const editorElm = divContainer.querySelector('input.editor-text.editor-title') as HTMLInputElement;
 
-      expect(editorElm.getAttribute('aria-label')).toBe('Title Input Editor');
+      expect(editorElm.ariaLabel).toBe('Title Input Editor');
     });
 
     it('should initialize the editor and focus on the element after a small delay', () => {

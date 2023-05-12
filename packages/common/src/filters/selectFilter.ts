@@ -357,7 +357,7 @@ export class SelectFilter implements Filter {
 
     // step 2, create the DOM Element of the filter & pre-load search terms
     // we will later also subscribe to the onClose event to filter the data whenever that event is triggered
-    this.createDomElement(selectBuildResult.selectElement);
+    this.createFilterElement(selectBuildResult.selectElement);
     this._collectionLength = newCollection.length;
   }
 
@@ -380,7 +380,7 @@ export class SelectFilter implements Filter {
    * From the Select DOM Element created earlier, create a Multiple/Single Select Filter using the jQuery multiple-select.js lib
    * @param {Object} selectElement
    */
-  protected createDomElement(selectElement: HTMLSelectElement) {
+  protected createFilterElement(selectElement: HTMLSelectElement) {
     const columnId = this.columnDef?.id ?? '';
 
     // provide the name attribute to the DOM element which will be needed to auto-adjust drop position (dropup / dropdown)
