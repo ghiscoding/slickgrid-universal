@@ -52,7 +52,7 @@ export class FloatEditor extends InputEditor {
 
       if (compositeEditorOptions) {
         this._bindEventService.bind(this._input, ['input', 'paste'], this.handleOnInputChange.bind(this) as EventListener);
-        this._bindEventService.bind(this._input, 'wheel', this.handleOnMouseWheel.bind(this) as EventListener);
+        this._bindEventService.bind(this._input, 'wheel', this.handleOnMouseWheel.bind(this) as EventListener, { passive: true });
       }
     }
   }

@@ -49,12 +49,11 @@ export class InputMaskFilter extends InputFilter {
 
     // step 2, subscribe to the input event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    // we'll use all necessary events to cover the following (keyup, change, mousewheel & spinner)
     this._bindEventService.bind(this._filterInputElm, ['keyup', 'blur', 'change'], this.onTriggerEvent.bind(this) as EventListener);
   }
 
   /**
-   * Event handler to cover the following (keyup, change, mousewheel & spinner)
+   * Event handler to cover the following (keyup, blur, change)
    * We will trigger the Filter Service callback from this handler
    */
   protected onTriggerEvent(event?: MouseEvent | KeyboardEvent, isClearFilterEvent = false) {
