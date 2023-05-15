@@ -11,7 +11,7 @@
     "vite:dev": "vite --mode development"
   },
   "dependencies": {
-    "@faker-js/faker": "^7.6.0",
+    "@faker-js/faker": "^8.0.0",
     "@fnando/sparkline": "^0.3.10",
     "@slickgrid-universal/common": "workspace:~",
     "@slickgrid-universal/composite-editor-component": "workspace:~",
