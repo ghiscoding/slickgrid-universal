@@ -25,5 +25,5 @@
       allowedVersions: '7.5.0',
     }
   ],
-  schedule: ['on thursday and monday'],
+  schedule: ['on friday and tuesday'],
 }
