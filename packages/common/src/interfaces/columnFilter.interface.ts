@@ -1,5 +1,5 @@
-import { FieldType, OperatorString, OperatorType, SearchTerm, } from '../enums/index';
-import {
+import type { FieldType, OperatorString, OperatorType, SearchTerm, } from '../enums/index';
+import type {
   CollectionCustomStructure,
   CollectionFilterBy,
   CollectionOption,
@@ -8,7 +8,7 @@ import {
   Filter,
   OperatorDetail,
 } from './index';
-import { Observable, Subject } from '../services/rxjsFacade';
+import type { Observable, Subject } from '../services/rxjsFacade';
 
 export interface ColumnFilter {
   /** Optionally provide an aria-label for assistive scren reader, defaults to "{inputName} Search Filter" */

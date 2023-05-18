@@ -1,6 +1,6 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import {
+import type {
   Column,
   ColumnSort,
   SlickDataView,
@@ -19,13 +19,13 @@ import {
   FieldType,
   SortDirection,
   SortDirectionNumber,
-  SortDirectionString,
+  type SortDirectionString,
 } from '../enums/index';
-import { BackendUtilityService } from './backendUtility.service';
+import type { BackendUtilityService } from './backendUtility.service';
 import { getDescendantProperty, flattenToParentChildArray } from './utilities';
 import { sortByFieldType } from '../sortComparers/sortUtilities';
-import { SharedService } from './shared.service';
-import { RxJsFacade, Subject } from './rxjsFacade';
+import type { SharedService } from './shared.service';
+import type { RxJsFacade, Subject } from './rxjsFacade';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;

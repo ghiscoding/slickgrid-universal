@@ -1,10 +1,10 @@
 import { Constants } from '../constants';
-import { OperatorString } from '../enums/index';
-import { Column, ColumnFilter, GridOption, Locale } from '../interfaces/index';
-import { Observable, RxJsFacade, Subject, Subscription } from '../services/rxjsFacade';
+import type { OperatorString } from '../enums/index';
+import type { Column, ColumnFilter, GridOption, Locale } from '../interfaces/index';
+import type { Observable, RxJsFacade, Subject, Subscription } from '../services/rxjsFacade';
 import { createDomElement, htmlEncodedStringWithPadding, sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 import { castObservableToPromise, getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
-import { TranslaterService } from '../services/translater.service';
+import type { TranslaterService } from '../services/translater.service';
 
 /**
  * Create and return a select dropdown HTML element with a list of Operators with descriptions

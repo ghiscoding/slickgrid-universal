@@ -1,4 +1,4 @@
-import { Formatter } from './../interfaces/index';
+import { type  Formatter } from './../interfaces/index';
 
 /** Display whichever icon you want (library agnostic, it could be Font-Awesome or any other) */
 export const iconFormatter: Formatter = (_row, _cell, _value, columnDef) => {

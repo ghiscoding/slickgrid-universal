@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 import { titleCase } from '@slickgrid-universal/utils';
 
-import { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../interfaces/index';
+import type { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../interfaces/index';
 import { createDomElement, sanitizeTextByAvailableSanitizer } from '../services/domUtilities';
 import { SlickColumnPicker } from './slickColumnPicker';
 import { SlickGridMenu } from './slickGridMenu';
@@ -11,10 +11,10 @@ export function addCloseButtomElement(this: SlickColumnPicker | SlickGridMenu, m
   const context: any = this;
   const closePickerButtonElm = createDomElement('button', {
     type: 'button', className: 'close',
+    ariaLabel: 'Close',
     innerHTML: '&times;',
     dataset: { dismiss: context instanceof SlickColumnPicker ? 'slick-column-picker' : 'slick-grid-menu' }
   });
-  closePickerButtonElm.setAttribute('aria-label', 'Close');
   menuElm.appendChild(closePickerButtonElm);
 }
 
@@ -22,8 +22,11 @@ export function addCloseButtomElement(this: SlickColumnPicker | SlickGridMenu, m
 export function addColumnTitleElementWhenDefined(this: SlickColumnPicker | SlickGridMenu, menuElm: HTMLDivElement) {
   const context: any = this;
   if (context.addonOptions?.columnTitle) {
-    context._columnTitleElm = createDomElement('div', { className: 'slick-menu-title', textContent: context.addonOptions?.columnTitle ?? context._defaults.columnTitle });
-    menuElm.appendChild(context._columnTitleElm);
+    context._columnTitleElm = createDomElement(
+      'div',
+      { className: 'slick-menu-title', textContent: context.addonOptions?.columnTitle ?? context._defaults.columnTitle },
+      menuElm
+    );
   }
 }
 
@@ -40,6 +43,7 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
     // when calling setOptions, it will resize with ALL Columns (even the hidden ones)
     // we can avoid this problem by keeping a reference to the visibleColumns before setOptions and then setColumns after
     const previousVisibleColumns = context.getVisibleColumns();
+    event.target.ariaChecked = String(event.target.checked);
     const isChecked = event.target.checked;
     context.grid.setOptions({ forceFitColumns: isChecked });
     context.grid.setColumns(previousVisibleColumns);
@@ -47,12 +51,14 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
   }
 
   if (event.target.dataset.option === 'syncresize') {
+    event.target.ariaChecked = String(event.target.checked);
     context.grid.setOptions({ syncColumnCellResize: !!(event.target.checked) });
     return;
   }
 
   if (event.target.type === 'checkbox') {
     context._areVisibleColumnDifferent = true;
+    event.target.ariaChecked = String(event.target.checked);
     const isChecked = event.target.checked;
     const columnId = event.target.dataset.columnid || '';
     const visibleColumns: Column[] = [];
@@ -126,6 +132,7 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
     });
     const colIndex = context.grid.getColumnIndex(columnId);
     if (colIndex >= 0) {
+      colInputElm.ariaChecked = 'true';
       colInputElm.checked = true;
     }
     columnLiElm.appendChild(colInputElm);
@@ -152,6 +159,7 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
     fitLiElm.appendChild(
       createDomElement('input', {
         type: 'checkbox', id: `${context._gridUid}-${menuPrefix}colpicker-forcefit`,
+        ariaChecked: String(context.gridOptions.forceFitColumns),
         checked: context.gridOptions.forceFitColumns,
         dataset: { option: 'autoresize' }
       })
@@ -170,6 +178,7 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
     syncLiElm.appendChild(
       createDomElement('input', {
         type: 'checkbox', id: `${context._gridUid}-${menuPrefix}colpicker-syncresize`,
+        ariaChecked: String(context.gridOptions.syncColumnCellResize),
         checked: context.gridOptions.syncColumnCellResize,
         dataset: { option: 'syncresize' }
       })

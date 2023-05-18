@@ -1,4 +1,4 @@
-import { BackendServiceOption, CaseType } from '@slickgrid-universal/common';
+import type { BackendServiceOption, CaseType } from '@slickgrid-universal/common';
 
 export interface OdataOption extends BackendServiceOption {
   /** What is the casing type to use? Typically that would be 1 of the following 2: camelCase or PascalCase */

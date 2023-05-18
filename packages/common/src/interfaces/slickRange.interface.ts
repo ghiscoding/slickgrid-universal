@@ -1,4 +1,4 @@
-import { CellRange } from './cellRange.interface';
+import type { CellRange } from './cellRange.interface';
 
 export interface SlickRange extends CellRange {
   /**

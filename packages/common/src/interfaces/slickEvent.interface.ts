@@ -1,4 +1,4 @@
-import { SlickEventData } from './slickEventData.interface';
+import type { SlickEventData } from './slickEventData.interface';
 
 export interface SlickEvent<T = any> {
   /**

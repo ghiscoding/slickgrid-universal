@@ -1,6 +1,6 @@
 // import { Aggregator } from './aggregator.interface';
-import { SortDirection, SortDirectionString } from '../enums/index';
-import { Formatter } from './formatter.interface';
+import type { SortDirection, SortDirectionString } from '../enums/index';
+import type { Formatter } from './formatter.interface';
 
 export interface TreeDataOption {
   /** Column Id of which column in the column definitions has the Tree Data, there can only be one with a Tree Data. */

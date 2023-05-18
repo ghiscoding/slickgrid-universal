@@ -1,4 +1,4 @@
-import { Aggregator } from './../interfaces/aggregator.interface';
+import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class SumAggregator implements Aggregator {
   private _sum = 0;

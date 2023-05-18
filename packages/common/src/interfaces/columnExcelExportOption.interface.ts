@@ -1,6 +1,6 @@
-import { Column } from './column.interface';
-import { ExcelCellFormat } from './excelCellFormat.interface';
-import { GridOption } from './gridOption.interface';
+import type { Column } from './column.interface';
+import type { ExcelCellFormat } from './excelCellFormat.interface';
+import type { GridOption } from './gridOption.interface';
 
 /** Excel custom export options (formatting & width) that can be applied to a column */
 export interface ColumnExcelExportOption {

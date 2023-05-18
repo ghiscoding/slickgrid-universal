@@ -1,4 +1,4 @@
-import { RxJsFacade } from '@slickgrid-universal/common';
+import type { RxJsFacade } from '@slickgrid-universal/common';
 import { EMPTY, iif, isObservable, firstValueFrom, Observable, ObservableInput, of, OperatorFunction, ObservedValueOf, Subject, switchMap, } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 

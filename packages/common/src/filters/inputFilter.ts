@@ -1,6 +1,6 @@
 import { toSentenceCase } from '@slickgrid-universal/utils';
 
-import {
+import type {
   Column,
   ColumnFilter,
   Filter,
@@ -10,10 +10,10 @@ import {
   OperatorDetail,
   SlickGrid,
 } from '../interfaces/index';
-import { FieldType, OperatorType, OperatorString, SearchTerm } from '../enums/index';
+import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { buildSelectOperator, compoundOperatorNumeric, compoundOperatorString } from './filterUtilities';
-import { createDomElement, emptyElement, mapOperatorToShorthandDesignation, TranslaterService, } from '../services';
+import { createDomElement, emptyElement, mapOperatorToShorthandDesignation, type TranslaterService, } from '../services';
 
 export class InputFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -103,7 +103,8 @@ export class InputFilter implements Filter {
     // step 2, subscribe to the input event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
     // we'll use all necessary events to cover the following (keyup, change, mousewheel & spinner)
-    this._bindEventService.bind(this._filterInputElm, ['keyup', 'blur', 'change', 'wheel'], this.onTriggerEvent.bind(this) as EventListener);
+    this._bindEventService.bind(this._filterInputElm, ['keyup', 'blur', 'change'], this.onTriggerEvent.bind(this) as EventListener);
+    this._bindEventService.bind(this._filterInputElm, 'wheel', this.onTriggerEvent.bind(this) as EventListener, { passive: true });
     if (this.inputFilterType === 'compound' && this._selectOperatorElm) {
       this._bindEventService.bind(this._selectOperatorElm, 'change', this.onTriggerEvent.bind(this) as EventListener);
     }
@@ -284,17 +285,13 @@ export class InputFilter implements Filter {
       this._filterInputElm.classList.add('compound-input');
       this._selectOperatorElm = buildSelectOperator(this.getCompoundOperatorOptionValues(), this.gridOptions);
       this._filterContainerElm = createDomElement('div', { className: `form-group search-filter filter-${columnId}` });
-      const containerInputGroupElm = createDomElement('div', { className: 'input-group' });
-      const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' });
+      const containerInputGroupElm = createDomElement('div', { className: 'input-group' }, this._filterContainerElm);
+      const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' }, containerInputGroupElm);
 
       // append operator & input DOM element
       operatorInputGroupAddonElm.appendChild(this._selectOperatorElm);
-      containerInputGroupElm.appendChild(operatorInputGroupAddonElm);
       containerInputGroupElm.appendChild(this._filterInputElm);
       containerInputGroupElm.appendChild(createDomElement('span'));
-
-      // create the DOM element & add an ID and filter class
-      this._filterContainerElm.appendChild(containerInputGroupElm);
 
       if (this.operator) {
         this._selectOperatorElm.value = mapOperatorToShorthandDesignation(this.operator);

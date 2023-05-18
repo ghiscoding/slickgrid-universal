@@ -1,5 +1,5 @@
-import { AutocompleteItem, AutocompleteSettings } from 'autocompleter';
-import { Column } from './column.interface';
+import type { AutocompleteItem, AutocompleteSettings } from 'autocompleter';
+import type { Column } from './column.interface';
 
 export interface AutoCompleterRenderItemDefinition {
   /** which custom Layout to use? We created 2 custom styled layouts "twoRows" and "fourCorners", both layouts also support an optional icon on the left. */

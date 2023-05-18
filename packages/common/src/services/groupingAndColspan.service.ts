@@ -1,6 +1,6 @@
-import { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 
-import {
+import type {
   Column,
   GridOption,
   SlickDataView,
@@ -9,7 +9,7 @@ import {
   SlickNamespace,
   SlickResizer,
 } from './../interfaces/index';
-import { ExtensionUtility } from '../extensions/extensionUtility';
+import type { ExtensionUtility } from '../extensions/extensionUtility';
 import { createDomElement, emptyElement } from './domUtilities';
 
 // using external non-typed js libraries
@@ -159,9 +159,8 @@ export class GroupingAndColspanService {
             style: { width: `${widthTotal - headerColumnWidthDiff}px` }
           });
 
-          const spanColumnNameElm = createDomElement('span', { className: 'slick-column-name', textContent: colDef.columnGroup || '' });
+          createDomElement('span', { className: 'slick-column-name', textContent: colDef.columnGroup || '' }, headerElm);
 
-          headerElm.appendChild(spanColumnNameElm);
           preHeaderPanel.appendChild(headerElm);
         }
         lastColumnGroup = colDef.columnGroup || '';

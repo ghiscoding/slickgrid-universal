@@ -1,4 +1,4 @@
-import { SearchColumnFilter } from './searchColumnFilter.interface';
+import type { SearchColumnFilter } from './searchColumnFilter.interface';
 
 export interface ColumnFilters {
   [key: string]: SearchColumnFilter;

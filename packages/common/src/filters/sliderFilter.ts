@@ -1,8 +1,8 @@
 import { hasData, toSentenceCase } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants';
-import { OperatorString, OperatorType, SearchTerm, } from '../enums/index';
-import {
+import { type OperatorString, OperatorType, type SearchTerm, } from '../enums/index';
+import type {
   Column,
   ColumnFilter,
   CurrentSliderOption,
@@ -19,7 +19,7 @@ import {
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { createDomElement, emptyElement } from '../services/domUtilities';
-import { TranslaterService } from '../services/translater.service';
+import type { TranslaterService } from '../services/translater.service';
 import { mapOperatorToShorthandDesignation } from '../services/utilities';
 import { buildSelectOperator, compoundOperatorNumeric, getFilterOptionByName } from './filterUtilities';
 
@@ -268,14 +268,16 @@ export class SliderFilter implements Filter {
     const defaultStartValue = +((Array.isArray(searchTerms) && searchTerms?.[0]) ?? getFilterOptionByName<SliderRangeOption, 'sliderStartValue'>(this.columnFilter, 'sliderStartValue') ?? minValue);
     const defaultEndValue = +((Array.isArray(searchTerms) && searchTerms?.[1]) ?? getFilterOptionByName<SliderRangeOption, 'sliderEndValue'>(this.columnFilter, 'sliderEndValue') ?? maxValue);
 
-    this._sliderRangeContainElm = createDomElement('div', { className: `filter-input filter-${columnId} slider-input-container slider-values` });
-    this._sliderRangeContainElm.title = this.sliderType === 'double' ? `${defaultStartValue} - ${defaultEndValue}` : `${defaultStartValue}`;
+    this._sliderRangeContainElm = createDomElement('div', {
+      className: `filter-input filter-${columnId} slider-input-container slider-values`,
+      title: this.sliderType === 'double' ? `${defaultStartValue} - ${defaultEndValue}` : `${defaultStartValue}`
+    });
     this._sliderTrackElm = createDomElement('div', { className: 'slider-track' });
 
     // create Operator dropdown DOM element
     if (this.sliderType === 'compound') {
-      this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.gridOptions);
       const spanPrependElm = createDomElement('span', { className: 'input-group-addon input-group-prepend operator' });
+      this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.gridOptions);
       spanPrependElm.appendChild(this._selectOperatorElm);
     }
 
@@ -326,8 +328,7 @@ export class SliderFilter implements Filter {
       }
 
       const rightDivGroupElm = createDomElement('div', { className: `input-group-addon input-group-append slider-range-value` });
-      this._rightSliderNumberElm = createDomElement('span', { className: `input-group-text highest-range-${columnId}`, textContent: `${rightDefaultVal}` });
-      rightDivGroupElm.appendChild(this._rightSliderNumberElm);
+      this._rightSliderNumberElm = createDomElement('span', { className: `input-group-text highest-range-${columnId}`, textContent: `${rightDefaultVal}` }, rightDivGroupElm);
 
       if (leftDivGroupElm) {
         this._divContainerFilterElm.appendChild(leftDivGroupElm);

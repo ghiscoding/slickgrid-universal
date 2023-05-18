@@ -1,7 +1,7 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
-import {
+import type { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
+import type {
   Column,
   DragRowMove,
   FormatterResultObject,
@@ -294,8 +294,7 @@ export class SlickRowMoveManager {
           width: `${this._canvas.clientWidth}px`,
           height: `${rowHeight * selectedRows.length}px`,
         }
-      });
-      this._canvas.appendChild(dd.selectionProxy);
+      }, this._canvas);
 
       dd.guide = createDomElement('div', {
         className: 'slick-reorder-guide',
@@ -305,8 +304,7 @@ export class SlickRowMoveManager {
           width: `${this._canvas.clientWidth}px`,
           top: `-1000px`,
         }
-      });
-      this._canvas.appendChild(dd.guide);
+      }, this._canvas);
 
       dd.insertBefore = -1;
     }

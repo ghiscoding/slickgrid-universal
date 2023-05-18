@@ -1,11 +1,6 @@
-import {
-  // utilities
-  parseUtcDate,
-  mapOperatorByFieldType,
-
+import type {
   // enums/interfaces
   BackendService,
-  CaseType,
   Column,
   ColumnFilter,
   ColumnFilters,
@@ -14,19 +9,24 @@ import {
   CurrentPagination,
   CurrentSorter,
   FilterChangedArgs,
-  FieldType,
   GridOption,
   MultiColumnSort,
   Pagination,
   PaginationChangedArgs,
-  SortDirection,
   SortDirectionString,
-  OperatorType,
   OperatorString,
   SearchTerm,
   SharedService,
   SingleColumnSort,
   SlickGrid,
+} from '@slickgrid-universal/common';
+import {
+  CaseType,
+  FieldType,
+  mapOperatorByFieldType,
+  OperatorType,
+  parseUtcDate,
+  SortDirection,
 } from '@slickgrid-universal/common';
 import { titleCase } from '@slickgrid-universal/utils';
 import { OdataQueryBuilderService } from './odataQueryBuilder.service';

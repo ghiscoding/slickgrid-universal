@@ -1,4 +1,4 @@
-import { ExtensionName, SlickControlList, SlickPluginList } from '../enums/index';
+import type { ExtensionName, SlickControlList, SlickPluginList } from '../enums/index';
 
 export interface ExtensionModel<P extends (SlickControlList | SlickPluginList)> {
   /** Name of the Slickgrid-Universal Extension */

@@ -115,7 +115,7 @@ describe('DualInputEditor', () => {
       editor = new DualInputEditor(editorArguments);
       const editorElm = divContainer.querySelector('input.dual-editor-text.editor-range.left') as HTMLInputElement;
 
-      expect(editorElm.getAttribute('aria-label')).toBe('Range Input Editor');
+      expect(editorElm.ariaLabel).toBe('Range Input Editor');
     });
 
     it('should have a placeholder on the left input when defined in its column definition', () => {

@@ -1,4 +1,4 @@
-import { SlickGrid } from './index';
+import type { SlickGrid } from './index';
 
 export interface DragPosition {
   startX: number;

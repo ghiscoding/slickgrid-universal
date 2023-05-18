@@ -1,16 +1,18 @@
-import {
-  Constants,
-  createDomElement,
-  getTranslationPrefix,
+import type {
   GridOption,
   Locale,
   PaginationService,
   PubSubService,
   ServicePagination,
   SharedService,
-  SlickGrid,
   Subscription,
   TranslaterService,
+} from '@slickgrid-universal/common';
+import {
+  Constants,
+  createDomElement,
+  getTranslationPrefix,
+  SlickGrid,
 } from '@slickgrid-universal/common';
 import { BindingHelper } from '@slickgrid-universal/binding';
 
@@ -168,9 +170,7 @@ export class SlickPaginationComponent {
     const selectElm = document.querySelector<HTMLSelectElement>(`.${this.gridUid} .items-per-page`);
     if (selectElm && Array.isArray(this.availablePageSizes)) {
       for (const option of this.availablePageSizes) {
-        selectElm.appendChild(
-          createDomElement('option', { value: `${option}`, text: `${option}` })
-        );
+        selectElm.appendChild(createDomElement('option', { value: `${option}`, text: `${option}` }));
       }
     }
   }
@@ -271,11 +271,8 @@ export class SlickPaginationComponent {
     const ulElm = createDomElement('ul', { className: 'pagination' });
 
     for (const li of liElements) {
-      const liElm = createDomElement('li', { className: li.liClass });
-      const aElm = createDomElement('a', { className: li.aClass });
-      aElm.setAttribute('aria-label', li.ariaLabel);
-      liElm.appendChild(aElm);
-      ulElm.appendChild(liElm);
+      createDomElement('li', { className: li.liClass }, ulElm)
+        .appendChild(createDomElement('a', { className: li.aClass, ariaLabel: li.ariaLabel, role: 'button' }));
     }
     navElm.appendChild(ulElm);
 
@@ -284,59 +281,42 @@ export class SlickPaginationComponent {
 
   protected createPageNumberSection() {
     const divElm = createDomElement('div', { className: 'slick-page-number' });
-    const spanTextPageElm = createDomElement('span', { className: 'text-page', textContent: 'Page' });
-    const input = createDomElement('input', {
+    createDomElement('span', { className: 'text-page', textContent: 'Page' }, divElm);
+    divElm.appendChild(document.createTextNode(' '));
+    createDomElement('input', {
       type: 'text', className: 'form-control page-number',
+      ariaLabel: 'Page Number',
       value: '1', size: 1,
       dataset: { test: 'page-number-input' },
-    });
-    input.setAttribute('aria-label', 'Page Number');
-    const spanTextOfElm = createDomElement('span', { className: 'text-of', textContent: 'of' });
-    const spanPageCountElm = createDomElement('span', { className: 'page-count', dataset: { test: 'page-count' } });
-    divElm.appendChild(spanTextPageElm);
+    }, divElm);
     divElm.appendChild(document.createTextNode(' '));
-    divElm.appendChild(input);
+    createDomElement('span', { className: 'text-of', textContent: 'of' }, divElm);
     divElm.appendChild(document.createTextNode(' '));
-    divElm.appendChild(spanTextOfElm);
-    divElm.appendChild(document.createTextNode(' '));
-    divElm.appendChild(spanPageCountElm);
+    createDomElement('span', { className: 'page-count', dataset: { test: 'page-count' } }, divElm);
 
     return divElm;
   }
 
   protected createPaginationSettingsSection() {
     const spanContainerElm = createDomElement('span', { className: 'slick-pagination-settings' });
-    const selectElm = createDomElement('select', { id: 'items-per-page-label', className: 'items-per-page' });
-    selectElm.setAttribute('aria-label', 'Items per Page Select');
-    const spanItemPerPageElm = createDomElement('span', { className: 'text-item-per-page', textContent: 'items per page' });
-    const spanPaginationCount = createDomElement('span', { className: 'slick-pagination-count' });
-    const spanInfoFromToElm = createDomElement('span', { className: 'page-info-from-to' });
-    const spanItemFromElm = createDomElement('span', { className: 'item-from', dataset: { test: 'item-from' } });
-    spanItemFromElm.setAttribute('aria-label', 'Page Item From');
-    const spanItemToElm = createDomElement('span', { className: 'item-to', dataset: { test: 'item-to' } });
-    spanItemToElm.setAttribute('aria-label', 'Page Item To');
-    const spanOfElm = createDomElement('span', { className: 'text-of', textContent: 'of' });
-    const spanInfoTotalElm = createDomElement('span', { className: 'page-info-total-items' });
-    const spanTotalItem = createDomElement('span', { className: 'total-items', dataset: { test: 'total-items' } });
-    const spanTextItemsElm = createDomElement('span', { className: 'text-items', textContent: 'items' });
-
-    spanContainerElm.appendChild(selectElm);
+    createDomElement('select', { id: 'items-per-page-label', ariaLabel: 'Items per Page', className: 'items-per-page' }, spanContainerElm);
     spanContainerElm.appendChild(document.createTextNode(' '));
-    spanContainerElm.appendChild(spanItemPerPageElm);
+    createDomElement('span', { className: 'text-item-per-page', textContent: 'items per page' }, spanContainerElm);
     spanContainerElm.appendChild(document.createTextNode(', '));
-    spanInfoFromToElm.appendChild(spanItemFromElm);
+
+    const spanPaginationCount = createDomElement('span', { className: 'slick-pagination-count' }, spanContainerElm);
+    const spanInfoFromToElm = createDomElement('span', { className: 'page-info-from-to' }, spanPaginationCount);
+    createDomElement('span', { className: 'item-from', ariaLabel: 'Page Item From', dataset: { test: 'item-from' } }, spanInfoFromToElm);
     spanInfoFromToElm.appendChild(document.createTextNode('-'));
-    spanInfoFromToElm.appendChild(spanItemToElm);
+    createDomElement('span', { className: 'item-to', ariaLabel: 'Page Item To', dataset: { test: 'item-to' } }, spanInfoFromToElm);
     spanInfoFromToElm.appendChild(document.createTextNode(' '));
-    spanInfoFromToElm.appendChild(spanOfElm);
+    createDomElement('span', { className: 'text-of', textContent: 'of' }, spanInfoFromToElm);
     spanInfoFromToElm.appendChild(document.createTextNode(' '));
-    spanPaginationCount.appendChild(spanInfoFromToElm);
-    spanContainerElm.appendChild(spanPaginationCount);
-    spanInfoTotalElm.appendChild(spanTotalItem);
+    const spanInfoTotalElm = createDomElement('span', { className: 'page-info-total-items' }, spanPaginationCount);
+    createDomElement('span', { className: 'total-items', ariaLabel: 'Total Items', dataset: { test: 'total-items' } }, spanInfoTotalElm);
     spanInfoTotalElm.appendChild(document.createTextNode(' '));
-    spanInfoTotalElm.appendChild(spanTextItemsElm);
+    createDomElement('span', { className: 'text-items', textContent: 'items' }, spanInfoTotalElm);
     spanInfoTotalElm.appendChild(document.createTextNode(' '));
-    spanPaginationCount.appendChild(spanInfoTotalElm);
 
     return spanContainerElm;
   }

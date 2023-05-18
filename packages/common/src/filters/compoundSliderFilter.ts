@@ -1,5 +1,5 @@
-import { TranslaterService } from '../services';
 import { SliderFilter } from './sliderFilter';
+import type { TranslaterService } from '../services';
 
 export class CompoundSliderFilter extends SliderFilter {
   /**

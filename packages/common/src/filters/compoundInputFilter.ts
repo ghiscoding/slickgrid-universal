@@ -1,5 +1,5 @@
 import { InputFilter } from './inputFilter';
-import { TranslaterService } from '../services';
+import type { TranslaterService } from '../services';
 
 export class CompoundInputFilter extends InputFilter {
   /**

@@ -1,6 +1,6 @@
-import { FieldType } from '../enums/index';
-import { Observable } from '../services/rxjsFacade';
-import {
+import type { FieldType } from '../enums/index';
+import type { Observable } from '../services/rxjsFacade';
+import type {
   CollectionCustomStructure,
   CollectionFilterBy,
   CollectionOption,

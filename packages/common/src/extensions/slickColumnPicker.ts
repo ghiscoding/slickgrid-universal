@@ -1,6 +1,6 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import {
+import type {
   Column,
   ColumnPickerOption,
   DOMMouseOrTouchEvent,
@@ -9,9 +9,9 @@ import {
   SlickGrid,
   SlickNamespace,
 } from '../interfaces/index';
-import { ExtensionUtility } from '../extensions/extensionUtility';
+import type { ExtensionUtility } from '../extensions/extensionUtility';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { SharedService } from '../services/shared.service';
+import type { SharedService } from '../services/shared.service';
 import { createDomElement, emptyElement, findWidthOrDefault } from '../services/domUtilities';
 import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
 
@@ -103,16 +103,16 @@ export class SlickColumnPicker {
     this._eventHandler.subscribe(this.grid.onColumnsReordered, updateColumnPickerOrder.bind(this) as EventListener);
 
     this._menuElm = createDomElement('div', {
-      className: `slick-column-picker ${this._gridUid}`,
+      ariaExpanded: 'false',
+      className: `slick-column-picker ${this._gridUid}`, role: 'menu',
       style: { display: 'none' },
     });
-    this._menuElm.setAttribute('aria-expanded', 'false');
 
     // add Close button and optiona a Column list title
     addColumnTitleElementWhenDefined.call(this, this._menuElm);
     addCloseButtomElement.call(this, this._menuElm);
 
-    this._listElm = createDomElement('div', { className: 'slick-column-picker-list' });
+    this._listElm = createDomElement('div', { className: 'slick-column-picker-list', role: 'menu' });
     this._bindEventService.bind(this._menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener);
 
     // Hide the menu on outside click.

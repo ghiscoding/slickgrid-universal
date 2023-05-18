@@ -1,6 +1,6 @@
 import { Constants } from '../constants';
-import { EditorValidationResult } from '../interfaces/editorValidationResult.interface';
-import { EditorValidator } from '../interfaces/editorValidator.interface';
+import type { EditorValidationResult } from '../interfaces/editorValidationResult.interface';
+import type { EditorValidator } from '../interfaces/editorValidator.interface';
 
 interface SliderValidatorOptions {
   editorArgs: any;

@@ -1,4 +1,4 @@
-import { OperatorString } from '../enums/index';
+import type { OperatorString } from '../enums/index';
 
 /**
  * Compare 2 objects,

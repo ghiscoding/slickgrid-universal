@@ -1,5 +1,5 @@
-import { Column, FilterArguments, FilterCallback, SlickGrid } from './index';
-import { OperatorType, OperatorString, SearchTerm, } from '../enums/index';
+import type { Column, FilterArguments, FilterCallback, SlickGrid } from './index';
+import type { OperatorType, OperatorString, SearchTerm, } from '../enums/index';
 
 // export type Filter = (searchTerms: string | number | string[] | number[], columnDef: Column, params?: any) => string;
 export interface Filter {

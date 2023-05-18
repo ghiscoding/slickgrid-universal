@@ -1,19 +1,21 @@
-import {
+import type {
   Column,
-  Constants,
   ExcelStylesheet,
-  FieldType,
   Formatter,
-  Formatters,
   FormatterType,
-  getColumnFieldType,
   GetDataValueCallback,
-  getValueFromParamsOrFormatterOptions,
   GridOption,
+  SlickGrid,
+} from '@slickgrid-universal/common';
+import {
+  Constants,
+  FieldType,
+  Formatters,
+  getColumnFieldType,
+  getValueFromParamsOrFormatterOptions,
   GroupTotalFormatters,
   retrieveFormatterOptions,
   sanitizeHtmlToText,
-  SlickGrid,
 } from '@slickgrid-universal/common';
 
 export type ExcelFormatter = object & { id: number; };

@@ -1,7 +1,7 @@
 import { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
 
 import { DelimiterType, FileType, GridAutosizeColsMode, OperatorType } from './enums/index';
-import { Column, EmptyWarning, GridOption, TreeDataOption } from './interfaces/index';
+import type { Column, EmptyWarning, GridOption, TreeDataOption } from './interfaces/index';
 import { Filters } from './filters';
 
 /** Global Grid Options Defaults */

@@ -1,4 +1,4 @@
-import { CompositeEditorError } from './compositeEditorError.interface';
+import type { CompositeEditorError } from './compositeEditorError.interface';
 
 export interface EditorValidationResult {
   /** Did the validation pass? */

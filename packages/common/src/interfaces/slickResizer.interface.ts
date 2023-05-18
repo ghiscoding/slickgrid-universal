@@ -1,4 +1,4 @@
-import {
+import type {
   GridSize,
   ResizerOption,
   SlickEvent,

@@ -1,7 +1,7 @@
 import { addWhiteSpaces } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants';
-import { Formatter } from './../interfaces/index';
+import { type Formatter } from './../interfaces/index';
 import { sanitizeHtmlToText, } from '../services/domUtilities';
 import { getCellValueFromQueryFieldGetter, } from '../services/utilities';
 import { parseFormatterWhenExist } from './formatterUtilities';

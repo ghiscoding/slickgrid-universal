@@ -1,4 +1,4 @@
-import { Column } from './column.interface';
+import type { Column } from './column.interface';
 
 export interface ColumnSort {
   /** Column Id to be sorted */

@@ -1,11 +1,10 @@
-import { deepMerge } from '@slickgrid-universal/utils';
-import { OptionRowData } from 'multiple-select-vanilla/*';
+import { OptionRowData } from 'multiple-select-vanilla';
 import * as DOMPurify_ from 'dompurify';
 const DOMPurify = ((DOMPurify_ as any)?.['default'] ?? DOMPurify_); // patch for rollup
 
-import { InferDOMType, SearchTerm } from '../enums/index';
-import { Column, GridOption, HtmlElementPosition, SelectOption, SlickGrid, } from '../interfaces/index';
-import { TranslaterService } from './translater.service';
+import type { InferDOMType, SearchTerm } from '../enums/index';
+import type { Column, GridOption, HtmlElementPosition, SelectOption, SlickGrid, } from '../interfaces/index';
+import type { TranslaterService } from './translater.service';
 
 /**
  * Create the HTML DOM Element for a Select Editor or Filter, this is specific to these 2 types only and the unit tests are directly under them
@@ -145,19 +144,35 @@ export function calculateAvailableSpace(element: HTMLElement): { top: number; bo
   return { top, bottom, left, right };
 }
 
-/** Create a DOM Element with any optional attributes or properties */
-export function createDomElement<T extends keyof HTMLElementTagNameMap, K extends keyof HTMLElementTagNameMap[T]>(tagName: T, elementOptions?: { [P in K]: InferDOMType<HTMLElementTagNameMap[T][P]> }): HTMLElementTagNameMap[T] {
+/**
+ * Create a DOM Element with any optional attributes or properties.
+ * It will only accept valid DOM element properties that `createElement` would accept.
+ * For example: `createDomElement('div', { className: 'my-css-class' })`,
+ * for style or dataset you need to use nested object `{ style: { display: 'none' }}
+ * The last argument is to optionally append the created element to a parent container element.
+ * @param {String} tagName - html tag
+ * @param {Object} options - element properties
+ * @param {[Element]} appendToParent - parent element to append to
+ */
+export function createDomElement<T extends keyof HTMLElementTagNameMap, K extends keyof HTMLElementTagNameMap[T]>(
+  tagName: T,
+  elementOptions?: { [P in K]: InferDOMType<HTMLElementTagNameMap[T][P]> },
+  appendToParent?: Element
+): HTMLElementTagNameMap[T] {
   const elm = document.createElement<T>(tagName);
 
   if (elementOptions) {
     Object.keys(elementOptions).forEach((elmOptionKey) => {
       const elmValue = elementOptions[elmOptionKey as keyof typeof elementOptions];
       if (typeof elmValue === 'object') {
-        deepMerge(elm[elmOptionKey as K], elmValue);
+        Object.assign(elm[elmOptionKey as K] as object, elmValue);
       } else {
         elm[elmOptionKey as K] = (elementOptions as any)[elmOptionKey as keyof typeof elementOptions];
       }
     });
+  }
+  if (appendToParent?.appendChild) {
+    appendToParent.appendChild(elm);
   }
   return elm;
 }

@@ -1,17 +1,17 @@
 import * as flatpickr_ from 'flatpickr';
 import * as moment_ from 'moment-mini';
-import { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
-import { Instance as FlatpickrInstance, FlatpickrFn } from 'flatpickr/dist/types/instance';
+import type { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
+import type { Instance as FlatpickrInstance, FlatpickrFn } from 'flatpickr/dist/types/instance';
 const flatpickr: FlatpickrFn = (flatpickr_?.['default'] ?? flatpickr_) as any; // patch for rollup
 const moment = (moment_ as any)?.['default'] ?? moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import {
   FieldType,
-  OperatorString,
   OperatorType,
-  SearchTerm,
+  type OperatorString,
+  type SearchTerm,
 } from '../enums/index';
-import {
+import type {
   Column,
   ColumnFilter,
   Filter,
@@ -26,7 +26,7 @@ import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities'
 import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
 import { mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { TranslaterService } from '../services/translater.service';
+import type { TranslaterService } from '../services/translater.service';
 
 export class DateFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -364,15 +364,11 @@ export class DateFilter implements Filter {
     } else {
       this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.gridOptions);
       const filterContainerElm = createDomElement('div', { className: `form-group search-filter filter-${columnId}` });
-      const containerInputGroupElm = createDomElement('div', { className: 'input-group flatpickr' });
-      const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' });
+      const containerInputGroupElm = createDomElement('div', { className: 'input-group flatpickr' }, filterContainerElm);
+      const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' }, containerInputGroupElm);
 
       operatorInputGroupAddonElm.appendChild(this._selectOperatorElm);
-      containerInputGroupElm.appendChild(operatorInputGroupAddonElm);
       containerInputGroupElm.appendChild(this._filterDivInputElm);
-
-      // create the DOM element & add an ID and filter class
-      filterContainerElm.appendChild(containerInputGroupElm);
 
       if (this.operator) {
         const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);

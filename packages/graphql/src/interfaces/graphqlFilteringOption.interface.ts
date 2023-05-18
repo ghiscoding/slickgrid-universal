@@ -1,4 +1,4 @@
-import { OperatorString, OperatorType } from '@slickgrid-universal/common';
+import type { OperatorString, OperatorType } from '@slickgrid-universal/common';
 
 export interface GraphqlFilteringOption {
   /** Field name to use when filtering */

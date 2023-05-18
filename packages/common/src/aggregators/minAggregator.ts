@@ -1,4 +1,4 @@
-import { Aggregator } from './../interfaces/aggregator.interface';
+import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class MinAggregator implements Aggregator {
   private _min: number | null = null;

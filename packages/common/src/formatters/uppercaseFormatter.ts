@@ -1,4 +1,4 @@
-import { Formatter } from './../interfaces/index';
+import { type Formatter } from './../interfaces/index';
 
 /** Takes a value and displays it all uppercase */
 export const uppercaseFormatter: Formatter = (_row, _cell, value) => {

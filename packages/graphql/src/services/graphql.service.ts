@@ -1,9 +1,4 @@
-import {
-  // utilities
-  mapOperatorType,
-  mapOperatorByFieldType,
-
-  // enums/interfaces
+import type {
   BackendService,
   Column,
   ColumnFilter,
@@ -12,19 +7,24 @@ import {
   CurrentFilter,
   CurrentPagination,
   CurrentSorter,
-  FieldType,
   FilterChangedArgs,
   GridOption,
   MultiColumnSort,
   OperatorString,
-  OperatorType,
   Pagination,
   PaginationChangedArgs,
   SharedService,
   SingleColumnSort,
   SlickGrid,
-  SortDirection,
   SortDirectionString,
+} from '@slickgrid-universal/common';
+import {
+  FieldType,
+  // utilities
+  mapOperatorType,
+  mapOperatorByFieldType,
+  OperatorType,
+  SortDirection,
 } from '@slickgrid-universal/common';
 import {
   GraphqlCursorPaginationOption,
@@ -413,7 +413,7 @@ export class GraphqlService implements BackendService {
           ? fieldSearchValue.match(/^([<>!=\*]{0,2})(.*[^<>!=\*])([\*]?)$/) // group 1: Operator, 2: searchValue, 3: last char is '*' (meaning starts with, ex.: abc*)
           : [fieldSearchValue, '', fieldSearchValue, '']; // when parsing is disabled, we'll only keep the search value in the index 2 to make it easy for code reuse
 
-        let operator: OperatorString = columnFilter.operator ||  matches?.[1] || '';
+        let operator: OperatorString = columnFilter.operator || matches?.[1] || '';
         searchValue = matches?.[2] || '';
         const lastValueChar = matches?.[3] || (operator === '*z' ? '*' : '');
 

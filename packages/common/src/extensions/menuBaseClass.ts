@@ -1,7 +1,7 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { hasData } from '@slickgrid-universal/utils';
 
-import {
+import type {
   CellMenu,
   Column,
   ContextMenu,
@@ -18,8 +18,8 @@ import {
   SlickNamespace,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { ExtensionUtility } from '../extensions/extensionUtility';
-import { SharedService } from '../services/shared.service';
+import type { ExtensionUtility } from '../extensions/extensionUtility';
+import type { SharedService } from '../services/shared.service';
 import { createDomElement, emptyElement } from '../services/domUtilities';
 
 // using external SlickGrid JS libraries
@@ -175,7 +175,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
         item.disabled = isItemUsable ? false : true;
       }
 
-      commandLiElm = createDomElement('li', { className: menuCssPrefix });
+      commandLiElm = createDomElement('li', { className: menuCssPrefix, role: 'menuitem' });
       if (typeof item === 'object' && hasData((item as never)[itemType])) {
         commandLiElm.dataset[itemType] = (item as never)?.[itemType];
       }
@@ -215,11 +215,14 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
           iconElm.textContent = '◦';
         }
 
-        const textElm = createDomElement('span', {
-          className: `${this._menuCssPrefix}-content`,
-          textContent: typeof item === 'object' && (item as MenuCommandItem | MenuOptionItem).title || ''
-        });
-        commandLiElm.appendChild(textElm);
+        const textElm = createDomElement(
+          'span',
+          {
+            className: `${this._menuCssPrefix}-content`,
+            textContent: typeof item === 'object' && (item as MenuCommandItem | MenuOptionItem).title || ''
+          },
+          commandLiElm
+        );
 
         if ((item as MenuCommandItem | MenuOptionItem).textCssClass) {
           textElm.classList.add(...(item as MenuCommandItem | MenuOptionItem).textCssClass!.split(' '));

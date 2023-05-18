@@ -1,4 +1,4 @@
-import {
+import type {
   AutoTooltipOption,
   CellMenuOption,
   CheckboxSelectorOption,
@@ -29,7 +29,7 @@ import {
   SlickResizer,
   SlickRowDetailView,
 } from './index';
-import {
+import type {
   SlickAutoTooltip,
   SlickCellExternalCopyManager,
   SlickCellMenu,

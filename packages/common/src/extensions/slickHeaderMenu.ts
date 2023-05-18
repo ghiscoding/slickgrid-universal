@@ -1,8 +1,8 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { arrayRemoveItemByIndex } from '@slickgrid-universal/utils';
 
 import { EmitterType } from '../enums/index';
-import {
+import type {
   Column,
   CurrentSorter,
   DOMEvent,
@@ -17,11 +17,11 @@ import {
   OnHeaderCellRenderedEventArgs,
 } from '../interfaces/index';
 import { createDomElement, emptyElement, getElementOffsetRelativeToParent, getTranslationPrefix } from '../services/index';
-import { ExtensionUtility } from '../extensions/extensionUtility';
-import { FilterService } from '../services/filter.service';
-import { SharedService } from '../services/shared.service';
-import { SortService } from '../services/sort.service';
-import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from './menuBaseClass';
+import type { ExtensionUtility } from '../extensions/extensionUtility';
+import type { FilterService } from '../services/filter.service';
+import type { SharedService } from '../services/shared.service';
+import type { SortService } from '../services/sort.service';
+import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from './menuBaseClass';
 
 /**
  * A plugin to add drop-down menus to column headers.
@@ -140,14 +140,14 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
     if (!this._menuElm) {
       this._menuElm = createDomElement('div', {
-        className: 'slick-header-menu',
+        ariaExpanded: 'true',
+        className: 'slick-header-menu', role: 'menu',
         style: { minWidth: `${this.addonOptions.minWidth}px` },
       });
-      this._menuElm.setAttribute('aria-expanded', 'true');
       this.grid.getContainerNode()?.appendChild(this._menuElm);
     }
 
-    // make sure the menu element is an empty div besore adding all list of commands
+    // make sure the menu element is an empty div before adding all list of commands
     emptyElement(this._menuElm);
     this.populateHeaderMenuCommandList(e, menu, callbackArgs);
   }
@@ -178,7 +178,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         return;
       }
 
-      const headerButtonDivElm = createDomElement('div', { className: 'slick-header-menu-button' });
+      const headerButtonDivElm = createDomElement('div', { className: 'slick-header-menu-button', ariaLabel: 'Header Menu' }, args.node);
 
       if (this.addonOptions.buttonCssClass) {
         headerButtonDivElm.classList.add(...this.addonOptions.buttonCssClass.split(' '));
@@ -187,7 +187,6 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       if (this.addonOptions.tooltip) {
         headerButtonDivElm.title = this.addonOptions.tooltip;
       }
-      args.node.appendChild(headerButtonDivElm);
 
       // show the header menu dropdown list of commands
       this._bindEventService.bind(headerButtonDivElm, 'click', ((e: MouseEvent) => this.showMenu(e, column, menu)) as EventListener);
@@ -460,7 +459,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       this._menuElm as HTMLDivElement,
       menu.items,
       args,
-      this.handleMenuItemCommandClick ,
+      this.handleMenuItemCommandClick,
     );
 
     this.repositionMenu(e);
