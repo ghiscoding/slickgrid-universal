@@ -1,16 +1,16 @@
 import * as autocompleter_ from 'autocompleter';
 const autocomplete = (autocompleter_ && autocompleter_['default'] || autocompleter_) as <T extends AutocompleteItem>(settings: AutocompleteSettings<T>) => AutocompleteResult; // patch for rollup
 
-import { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
+import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
 import { isPrimitiveValue, toKebabCase, toSentenceCase } from '@slickgrid-universal/utils';
 
 import {
   FieldType,
   OperatorType,
-  OperatorString,
-  SearchTerm,
+  type OperatorString,
+  type SearchTerm,
 } from '../enums/index';
-import {
+import type {
   AutocompleterOption,
   AutocompleteSearchItem,
   CollectionCustomStructure,
@@ -29,13 +29,13 @@ import {
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter';
 import { createDomElement, emptyElement, } from '../services';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { CollectionService } from '../services/collection.service';
+import type { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
 import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 import { getDescendantProperty, unsubscribeAll } from '../services/utilities';
-import { TranslaterService } from '../services/translater.service';
+import type { TranslaterService } from '../services/translater.service';
 import { renderCollectionOptionsAsync } from './filterUtilities';
-import { RxJsFacade, Subscription } from '../services/rxjsFacade';
+import type { RxJsFacade, Subscription } from '../services/rxjsFacade';
 import { Constants } from '../constants';
 
 export class AutocompleterFilter<T extends AutocompleteItem = any> implements Filter {
@@ -387,16 +387,15 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       placeholder = this.columnFilter.placeholder;
     }
 
-    const inputElm = createDomElement('input', {
+    this._filterElm = createDomElement('input', {
       type: 'text',
+      ariaLabel: this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`,
       autocomplete: 'none',
       placeholder,
       className: `form-control search-filter filter-${columnId} slick-autocomplete-container`,
       value: (searchTerm ?? '') as string,
       dataset: { columnid: `${columnId}` }
     });
-    inputElm.setAttribute('aria-label', this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`);
-    this._filterElm = inputElm;
 
     // create the DOM element & add an ID and filter class
     const searchTermInput = searchTerm as string;
@@ -471,25 +470,25 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       } as AutocompleteSettings<any>);
     }
 
-    inputElm.value = searchTermInput ?? '';
+    this._filterElm.value = searchTermInput ?? '';
 
     // append the new DOM element to the header row
     const filterDivContainerElm = createDomElement('div', { className: 'autocomplete-filter-container' });
-    filterDivContainerElm.appendChild(inputElm);
+    filterDivContainerElm.appendChild(this._filterElm);
 
     // add an empty <span> in order to add loading spinner styling
     filterDivContainerElm.appendChild(createDomElement('span'));
 
     // if there's a search term, we will add the "filled" class for styling purposes
     if (searchTerm) {
-      inputElm.classList.add('filled');
+      this._filterElm.classList.add('filled');
     }
 
     // append the new DOM element to the header row & an empty span
     this.filterContainerElm.appendChild(filterDivContainerElm);
     this.filterContainerElm.appendChild(document.createElement('span'));
 
-    return inputElm;
+    return this._filterElm;
   }
 
   //

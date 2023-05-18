@@ -11,6 +11,11 @@ export default defineConfig(() => {
       emptyOutDir: true,
       // outDir: mode === 'production' ? '../../docs' : 'dist',
       outDir: '../../docs',
+      rollupOptions: {
+        external: [
+          './node_modules/flatpickr/dist/l10n/fr',
+        ],
+      },
     },
     preview: {
       port: 8888

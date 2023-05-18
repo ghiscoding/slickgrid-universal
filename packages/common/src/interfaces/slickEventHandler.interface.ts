@@ -1,4 +1,4 @@
-import { SlickEvent, SlickEventData } from './index';
+import type { SlickEvent, SlickEventData } from './index';
 
 export type Handler<H> = (e: SlickEventData, data: H) => void;
 

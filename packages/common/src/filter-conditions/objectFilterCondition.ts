@@ -1,5 +1,5 @@
-import { SearchTerm } from '../enums/searchTerm.type';
-import { FilterCondition, FilterConditionOption } from '../interfaces/index';
+import type { SearchTerm } from '../enums/searchTerm.type';
+import type { FilterCondition, FilterConditionOption } from '../interfaces/index';
 import { compareObjects } from './filterUtilities';
 
 /** Execute filter condition check on each cell */

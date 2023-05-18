@@ -1,5 +1,5 @@
-import { TranslaterService } from '../services';
 import { DateFilter } from './dateFilter';
+import type { TranslaterService } from '../services';
 
 export class DateRangeFilter extends DateFilter {
   /** Initialize the Filter */

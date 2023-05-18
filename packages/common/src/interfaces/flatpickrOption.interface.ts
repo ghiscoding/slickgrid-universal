@@ -1,5 +1,5 @@
-import { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
-import { Locale } from 'flatpickr/dist/types/locale';
+import type { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
+import type { Locale } from 'flatpickr/dist/types/locale';
 
 export interface FlatpickrOption {
   /** defaults to "F j, Y",	exactly the same as date format, but for the altInput field */

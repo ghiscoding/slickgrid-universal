@@ -1,4 +1,4 @@
-import { TranslaterService } from '../services';
+import type { TranslaterService } from '../services';
 import { DateFilter } from './dateFilter';
 
 export class CompoundDateFilter extends DateFilter {

@@ -1,4 +1,4 @@
-import { EditorArguments } from '../interfaces/editorArguments.interface';
+import type { EditorArguments } from '../interfaces/editorArguments.interface';
 import { SelectEditor } from './selectEditor';
 
 export class SingleSelectEditor extends SelectEditor {

@@ -1,5 +1,5 @@
-import { Column, SlickEventData } from './index';
-import { OperatorString, OperatorType, SearchTerm } from '../enums/index';
+import type { Column, SlickEventData } from './index';
+import type { OperatorString, OperatorType, SearchTerm } from '../enums/index';
 
 export interface FilterCallbackArg {
   /** Was the last event a Clear Filter that was triggered? */

@@ -1,7 +1,7 @@
 import { toSentenceCase } from '@slickgrid-universal/utils';
 
 import { KeyCode } from '../enums/index';
-import { EditorArguments, EditorValidationResult } from '../interfaces/index';
+import type { EditorArguments, EditorValidationResult } from '../interfaces/index';
 import { integerValidator } from '../editorValidators/integerValidator';
 import { InputEditor } from './inputEditor';
 import { createDomElement } from '../services/domUtilities';
@@ -20,12 +20,12 @@ export class IntegerEditor extends InputEditor {
 
       this._input = createDomElement('input', {
         type: 'number', autocomplete: 'none',
+        ariaLabel: this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Slider Editor`,
         placeholder: this.columnEditor?.placeholder ?? '',
         title: this.columnEditor?.title ?? '',
         step: `${(this.columnEditor.valueStep !== undefined) ? this.columnEditor.valueStep : '1'}`,
         className: `editor-text editor-${columnId}`,
       });
-      this._input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Slider Editor`);
       const cellContainer = this.args.container;
       if (cellContainer && typeof cellContainer.appendChild === 'function') {
         cellContainer.appendChild(this._input);
@@ -50,7 +50,7 @@ export class IntegerEditor extends InputEditor {
 
       if (compositeEditorOptions) {
         this._bindEventService.bind(this._input, ['input', 'paste'], this.handleOnInputChange.bind(this) as EventListener);
-        this._bindEventService.bind(this._input, 'wheel', this.handleOnMouseWheel.bind(this) as EventListener);
+        this._bindEventService.bind(this._input, 'wheel', this.handleOnMouseWheel.bind(this) as EventListener, { passive: true });
       }
     }
   }

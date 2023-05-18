@@ -1,6 +1,6 @@
 import { EmitterType } from '../enums/emitterType.enum';
-import { BackendServiceApi, GridOption } from '../interfaces/index';
-import { Observable, RxJsFacade, Subject } from './rxjsFacade';
+import type { BackendServiceApi, GridOption } from '../interfaces/index';
+import type { Observable, RxJsFacade, Subject } from './rxjsFacade';
 
 export interface BackendCallbacks {
   emitActionChangedCallback?: (type: EmitterType) => void;

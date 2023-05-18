@@ -1,4 +1,4 @@
-import { Column, CompositeEditorOption, Editor, ElementPosition, } from './index';
+import type { Column, CompositeEditorOption, Editor, ElementPosition, } from './index';
 
 /** A composite SlickGrid editor factory. */
 export interface SlickCompositeEditor {

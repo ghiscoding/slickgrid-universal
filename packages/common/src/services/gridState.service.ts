@@ -1,11 +1,8 @@
-import { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { dequal } from 'dequal/lite';
 
-import {
-  ExtensionName,
-  GridStateType,
-} from '../enums/index';
-import {
+import { ExtensionName, GridStateType, } from '../enums/index';
+import type {
   Column,
   CurrentColumn,
   CurrentFilter,
@@ -19,11 +16,11 @@ import {
   SlickNamespace,
   TreeToggleStateChange,
 } from '../interfaces/index';
-import { ExtensionService } from './extension.service';
-import { FilterService } from './filter.service';
-import { SharedService } from './shared.service';
-import { SortService } from './sort.service';
-import { TreeDataService } from './treeData.service';
+import type { ExtensionService } from './extension.service';
+import type { FilterService } from './filter.service';
+import type { SharedService } from './shared.service';
+import type { SortService } from './sort.service';
+import type { TreeDataService } from './treeData.service';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;

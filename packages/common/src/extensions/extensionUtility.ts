@@ -1,8 +1,8 @@
 import { Constants } from '../constants';
-import { Column, GridMenuItem, GridOption, Locale, MenuCommandItem, MenuOptionItem, } from '../interfaces/index';
-import { BackendUtilityService } from '../services/backendUtility.service';
-import { SharedService } from '../services/shared.service';
-import { TranslaterService } from '../services/translater.service';
+import type { Column, GridMenuItem, GridOption, Locale, MenuCommandItem, MenuOptionItem, } from '../interfaces/index';
+import type { BackendUtilityService } from '../services/backendUtility.service';
+import type { SharedService } from '../services/shared.service';
+import type { TranslaterService } from '../services/translater.service';
 import { getTranslationPrefix } from '../services/utilities';
 
 export class ExtensionUtility {

@@ -97,7 +97,7 @@ describe('CheckboxEditor', () => {
       editor = new CheckboxEditor(editorArguments);
       const editorElm = divContainer.querySelector('input.editor-checkbox') as HTMLInputElement;
 
-      expect(editorElm.getAttribute('aria-label')).toBe('Is Active Checkbox Editor');
+      expect(editorElm.ariaLabel).toBe('Is Active Checkbox Editor');
     });
 
     it('should initialize the editor even when user define his own editor options', () => {

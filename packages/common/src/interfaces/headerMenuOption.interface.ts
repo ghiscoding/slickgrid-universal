@@ -1,4 +1,4 @@
-import { Column, SlickGrid } from './index';
+import type { Column, SlickGrid } from './index';
 
 export interface HeaderMenuOption {
   /** Auto-align drop menu to the left when not enough viewport space to show on the right */

@@ -1,4 +1,4 @@
-import { SortComparer } from '../interfaces/index';
+import type { SortComparer } from '../interfaces/index';
 import { SortDirectionNumber } from '../enums/sortDirectionNumber.enum';
 
 export const booleanSortComparer: SortComparer = (value1: any, value2: any, sortDirection: number | SortDirectionNumber) => {

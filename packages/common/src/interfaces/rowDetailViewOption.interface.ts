@@ -1,5 +1,5 @@
-import { UsabilityOverrideFn } from '../index';
-import { Observable, Subject } from '../services/rxjsFacade';
+import type { UsabilityOverrideFn } from '../index';
+import type { Observable, Subject } from '../services/rxjsFacade';
 
 export interface RowDetailViewOption {
   /** Defaults to True, do we always render/reRender the column */

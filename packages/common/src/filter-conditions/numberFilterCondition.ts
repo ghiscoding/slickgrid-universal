@@ -1,7 +1,7 @@
 import { isNumber } from '@slickgrid-universal/utils';
 
-import { OperatorType, SearchTerm } from '../enums/index';
-import { FilterCondition, FilterConditionOption } from '../interfaces/index';
+import { OperatorType, type SearchTerm } from '../enums/index';
+import type { FilterCondition, FilterConditionOption } from '../interfaces/index';
 import { testFilterCondition } from './filterUtilities';
 
 /** Execute filter condition check on each cell */

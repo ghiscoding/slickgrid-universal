@@ -1,7 +1,7 @@
 import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
 import { Constants } from './../constants';
-import { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption, SlickGrid, SlickNamespace } from './../interfaces/index';
+import type { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption, SlickGrid, SlickNamespace } from './../interfaces/index';
 import { createDomElement } from '../services/domUtilities';
 import { getDescendantProperty, } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
@@ -76,10 +76,10 @@ export class CheckboxEditor implements Editor {
 
     this._input = createDomElement('input', {
       type: 'checkbox', value: 'true',
+      ariaLabel: this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Checkbox Editor`,
       className: `editor-checkbox editor-${columnId}`,
       title: this.columnEditor?.title ?? '',
     });
-    this._input.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Checkbox Editor`);
 
     const cellContainer = this.args?.container;
     if (cellContainer && typeof cellContainer.appendChild === 'function') {

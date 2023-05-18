@@ -1,5 +1,5 @@
 import { FieldType } from '../enums/fieldType.enum';
-import { Column, ExcelExportOption, Formatter, GridOption, SlickGrid, TextExportOption } from '../interfaces/index';
+import type { Column, ExcelExportOption, Formatter, GridOption, SlickGrid, TextExportOption } from '../interfaces/index';
 import { sanitizeHtmlToText } from '../services/domUtilities';
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { multipleFormatter } from './multipleFormatter';

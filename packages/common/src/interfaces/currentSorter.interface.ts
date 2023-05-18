@@ -1,4 +1,4 @@
-import { SortDirection, SortDirectionString } from '../enums/index';
+import type { SortDirection, SortDirectionString } from '../enums/index';
 
 export interface CurrentSorter {
   /**

@@ -1,4 +1,4 @@
-import { Editor } from './editor.interface';
+import type { Editor } from './editor.interface';
 
 export interface CompositeEditorError {
   /** Editor DOM element container */

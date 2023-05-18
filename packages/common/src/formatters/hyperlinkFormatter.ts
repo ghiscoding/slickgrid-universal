@@ -1,4 +1,4 @@
-import { Formatter } from './../interfaces/index';
+import { type Formatter } from './../interfaces/index';
 import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 
 /**

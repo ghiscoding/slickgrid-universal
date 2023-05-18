@@ -2,14 +2,14 @@ import { uniqueArray } from '@slickgrid-universal/utils';
 
 import {
   FilterMultiplePassType,
-  FilterMultiplePassTypeString,
+  type FilterMultiplePassTypeString,
   FieldType,
   OperatorType,
   SortDirectionNumber,
 } from './../enums/index';
-import { CollectionFilterBy, CollectionSortBy, Column } from './../interfaces/index';
+import type { CollectionFilterBy, CollectionSortBy, Column } from './../interfaces/index';
 import { sortByFieldType } from '../sortComparers/sortUtilities';
-import { TranslaterService } from './translater.service';
+import type { TranslaterService } from './translater.service';
 
 export class CollectionService<T = any> {
   constructor(protected readonly translaterService?: TranslaterService) { }

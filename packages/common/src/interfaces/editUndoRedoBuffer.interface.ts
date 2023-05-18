@@ -1,4 +1,4 @@
-import { EditCommand } from './editCommand.interface';
+import type { EditCommand } from './editCommand.interface';
 
 export interface EditUndoRedoBuffer {
   /** Send the Edit Command to the Queue and Execute it after doing so */

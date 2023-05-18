@@ -1,5 +1,5 @@
-import { ExcelWorksheet } from './excelWorksheet.interface';
-import { ExcelStylesheet } from './excelStylesheet.interface';
+import type { ExcelWorksheet } from './excelWorksheet.interface';
+import type { ExcelStylesheet } from './excelStylesheet.interface';
 
 export interface ExcelWorkbook {
   addDrawings: (drawings: any) => any;

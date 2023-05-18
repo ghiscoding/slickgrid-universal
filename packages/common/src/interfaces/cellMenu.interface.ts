@@ -1,10 +1,10 @@
-import {
+import type {
   CellMenuOption,
   MenuCommandItemCallbackArgs,
   MenuFromCellCallbackArgs,
   MenuOptionItemCallbackArgs,
 } from './index';
-import { SlickCellMenu } from '../extensions/slickCellMenu';
+import type { SlickCellMenu } from '../extensions/slickCellMenu';
 
 export interface CellMenu extends CellMenuOption {
 

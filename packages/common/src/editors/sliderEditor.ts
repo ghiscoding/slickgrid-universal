@@ -1,10 +1,11 @@
 import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants';
-import {
+import type {
   Column,
   ColumnEditor,
   CompositeEditorOption,
+  CurrentSliderOption,
   Editor,
   EditorArguments,
   EditorValidator,
@@ -13,7 +14,6 @@ import {
   SlickGrid,
   SlickNamespace,
   SliderOption,
-  CurrentSliderOption
 } from '../interfaces/index';
 import { getEditorOptionByName } from './editorUtilities';
 import { getDescendantProperty } from '../services/utilities';

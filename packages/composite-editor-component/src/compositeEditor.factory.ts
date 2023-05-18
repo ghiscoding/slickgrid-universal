@@ -1,14 +1,16 @@
-import {
+import type {
   Column,
   CompositeEditorOption,
   Editor,
   EditorArguments,
   EditorValidationResult,
   ElementPosition,
-  emptyElement,
-  getHtmlElementOffset,
   HtmlElementPosition,
   SlickNamespace
+} from '@slickgrid-universal/common';
+import {
+  emptyElement,
+  getHtmlElementOffset,
 } from '@slickgrid-universal/common';
 
 // using external non-typed js libraries

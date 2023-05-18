@@ -1,6 +1,6 @@
 import { deepMerge } from '@slickgrid-universal/utils';
 
-import {
+import type {
   CellRange,
   CellRangeSelectorOption,
   DOMMouseOrTouchEvent,

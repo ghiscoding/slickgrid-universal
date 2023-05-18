@@ -1,5 +1,5 @@
-import { DelimiterType } from '../enums/delimiterType.enum';
-import { FileType } from '../enums/fileType.enum';
+import type { DelimiterType } from '../enums/delimiterType.enum';
+import type { FileType } from '../enums/fileType.enum';
 
 export interface TextExportOption {
   /** export delimiter, can be (comma, tab, ... or even custom string). */

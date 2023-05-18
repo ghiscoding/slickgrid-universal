@@ -2,7 +2,7 @@ import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
 import { Constants } from './../constants';
 import { KeyCode } from '../enums/keyCode.enum';
-import {
+import type {
   Column,
   ColumnEditor,
   CompositeEditorOption,
@@ -21,7 +21,7 @@ import {
 import { createDomElement, getHtmlElementOffset, } from '../services/domUtilities';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { TranslaterService } from '../services/translater.service';
+import type { TranslaterService } from '../services/translater.service';
 import { textValidator } from '../editorValidators/textValidator';
 
 // using external non-typed js libraries
@@ -132,14 +132,17 @@ export class LongTextEditor implements Editor {
     containerElm.appendChild(this._wrapperElm);
 
     // use textarea row if defined but don't go over 3 rows with composite editor modal
-    this._textareaElm = createDomElement('textarea', {
-      cols: this.editorOptions?.cols ?? 40,
-      rows: (compositeEditorOptions && textAreaRows > 3) ? 3 : textAreaRows,
-      placeholder: this.columnEditor?.placeholder ?? '',
-      title: this.columnEditor?.title ?? '',
-    });
-    this._textareaElm.setAttribute('aria-label', this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Text Editor`);
-    this._wrapperElm.appendChild(this._textareaElm);
+    this._textareaElm = createDomElement(
+      'textarea',
+      {
+        ariaLabel: this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Text Editor`,
+        cols: this.editorOptions?.cols ?? 40,
+        rows: (compositeEditorOptions && textAreaRows > 3) ? 3 : textAreaRows,
+        placeholder: this.columnEditor?.placeholder ?? '',
+        title: this.columnEditor?.title ?? '',
+      },
+      this._wrapperElm
+    );
 
     const editorFooterElm = createDomElement('div', { className: 'editor-footer' });
     const countContainerElm = createDomElement('span', { className: 'counter' });
@@ -157,10 +160,8 @@ export class LongTextEditor implements Editor {
     editorFooterElm.appendChild(countContainerElm);
 
     if (!compositeEditorOptions) {
-      const cancelBtnElm = createDomElement('button', { className: 'btn btn-cancel btn-default btn-xs', textContent: cancelText });
-      const saveBtnElm = createDomElement('button', { className: 'btn btn-save btn-primary btn-xs', textContent: saveText });
-      editorFooterElm.appendChild(cancelBtnElm);
-      editorFooterElm.appendChild(saveBtnElm);
+      const cancelBtnElm = createDomElement('button', { className: 'btn btn-cancel btn-default btn-xs', textContent: cancelText }, editorFooterElm);
+      const saveBtnElm = createDomElement('button', { className: 'btn btn-save btn-primary btn-xs', textContent: saveText }, editorFooterElm);
       this._bindEventService.bind(cancelBtnElm, 'click', this.cancel.bind(this) as EventListener);
       this._bindEventService.bind(saveBtnElm, 'click', this.save.bind(this) as EventListener);
       this.position(this.args?.position as ElementPosition);

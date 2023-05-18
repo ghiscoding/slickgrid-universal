@@ -1,4 +1,4 @@
-import { Editor } from './editor.interface';
+import type { Editor } from './editor.interface';
 
 /**
  * A locking helper to track the active edit controller and ensure that only a single controller

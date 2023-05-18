@@ -342,14 +342,20 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 10}px"] > .slick-cell:nth(2)`).should('contain', 'Task 10');
 
     cy.wait(1);
-    cy.get('.grid7').find(`[style="top:${GRID_ROW_HEIGHT * 9}px"] > .slick-cell:nth(3)`).click({ force: true });
+    cy.get('.grid7').find(`[style="top:${GRID_ROW_HEIGHT * 9}px"] > .slick-cell:nth(3)`).click();
+    cy.get('.slick-cell-menu').should('be.visible');
     cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-title').contains('Commands');
     cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-content').contains('Delete Row');
     cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-content').contains('Help');
     cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-title').contains('Change Completed Flag');
     cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
-    cy.get('.grid7').find(`[style="top:${GRID_ROW_HEIGHT * 10}px"] > .slick-cell:nth(3)`).click({ force: true });
+
+    // wait for previous cell menu to be closed before reopening another one
+    cy.get('.slick-cell-menu').should('not.exist');
+    cy.get('.grid7').find(`[style="top:${GRID_ROW_HEIGHT * 10}px"] > .slick-cell:nth(3)`).click();
+    cy.get('.slick-cell-menu').should('be.visible');
     cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
+    cy.get('.slick-cell-menu').should('not.exist');
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 9}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 10}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 1);

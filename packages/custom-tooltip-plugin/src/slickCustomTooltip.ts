@@ -1,19 +1,12 @@
-import {
-  calculateAvailableSpace,
+import type {
   CancellablePromiseWrapper,
-  cancellablePromise,
-  CancelledException,
   Column,
   ContainerService,
-  createDomElement,
   CustomTooltipOption,
-  findFirstElementAttribute,
   Formatter,
-  getHtmlElementOffset,
   GridOption,
   Observable,
   RxJsFacade,
-  sanitizeTextByAvailableSanitizer,
   SharedService,
   SlickDataView,
   SlickEventData,
@@ -21,6 +14,15 @@ import {
   SlickGrid,
   SlickNamespace,
   Subscription,
+} from '@slickgrid-universal/common';
+import {
+  calculateAvailableSpace,
+  CancelledException,
+  cancellablePromise,
+  createDomElement,
+  findFirstElementAttribute,
+  getHtmlElementOffset,
+  sanitizeTextByAvailableSanitizer,
 } from '@slickgrid-universal/common';
 
 // using external SlickGrid JS libraries

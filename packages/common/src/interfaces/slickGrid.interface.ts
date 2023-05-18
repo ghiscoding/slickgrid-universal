@@ -1,6 +1,6 @@
-import { SlickPluginList } from '../enums/index';
-import { CompositeEditorOption } from './compositeEditorOption.interface';
-import {
+import type { SlickPluginList } from '../enums/index';
+import type { CompositeEditorOption } from './compositeEditorOption.interface';
+import type {
   Column,
   ColumnSort,
   DragRowMove,
@@ -17,7 +17,7 @@ import {
   SlickEditorLock,
   SlickEvent,
 } from './index';
-import {
+import type {
   SlickCellSelectionModel,
   SlickRowSelectionModel,
 } from '../extensions/index';

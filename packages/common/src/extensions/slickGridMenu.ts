@@ -1,6 +1,6 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import {
+import type {
   Column,
   DOMEvent,
   GridMenu,
@@ -13,15 +13,15 @@ import {
   SlickNamespace,
 } from '../interfaces/index';
 import { DelimiterType, FileType } from '../enums/index';
-import { ExtensionUtility } from '../extensions/extensionUtility';
+import type { ExtensionUtility } from '../extensions/extensionUtility';
 import { createDomElement, emptyElement, findWidthOrDefault, getHtmlElementOffset, getTranslationPrefix, } from '../services/index';
-import { ExcelExportService } from '../services/excelExport.service';
-import { FilterService } from '../services/filter.service';
-import { SharedService } from '../services/shared.service';
-import { SortService } from '../services/sort.service';
-import { TextExportService } from '../services/textExport.service';
+import type { ExcelExportService } from '../services/excelExport.service';
+import type { FilterService } from '../services/filter.service';
+import type { SharedService } from '../services/shared.service';
+import type { SortService } from '../services/sort.service';
+import type { TextExportService } from '../services/textExport.service';
 import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
-import { ExtendableItemTypes, ExtractMenuType, MenuBaseClass, MenuType } from '../extensions/menuBaseClass';
+import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from '../extensions/menuBaseClass';
 
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
@@ -174,7 +174,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       // user could pass a title on top of the columns list
       addColumnTitleElementWhenDefined.call(this, this._menuElm);
 
-      this._listElm = createDomElement('div', { className: 'slick-column-picker-list' });
+      this._listElm = createDomElement('div', { className: 'slick-column-picker-list', role: 'menu' });
 
       // update all columns on any of the column title button click from column picker
       this._bindEventService.bind(this._menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener);
@@ -203,7 +203,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
       const showButton = this._gridMenuOptions.showButton ?? this._defaults.showButton;
       if (showButton) {
-        this._gridMenuButtonElm = createDomElement('button', { className: 'slick-grid-menu-button' });
+        this._gridMenuButtonElm = createDomElement('button', { className: 'slick-grid-menu-button', ariaLabel: 'Grid Menu' });
         if (this._gridMenuOptions?.iconCssClass) {
           this._gridMenuButtonElm.classList.add(...this._gridMenuOptions.iconCssClass.split(' '));
         }
@@ -219,12 +219,13 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       this.translateTitleLabels(this._gridMenuOptions);
       this.translateTitleLabels(this.sharedService.gridOptions.gridMenu);
 
-      this._menuElm = document.createElement('div');
-      this._menuElm.classList.add('slick-grid-menu', this._gridUid);
-      this._menuElm.style.display = 'none';
+      this._menuElm = createDomElement('div', {
+        role: 'menu',
+        className: `slick-grid-menu ${this._gridUid}`,
+        style: { display: 'none' }
+      });
 
-      this._commandMenuElm = createDomElement('div', { className: 'slick-menu-command-list' });
-      this._menuElm.appendChild(this._commandMenuElm);
+      this._commandMenuElm = createDomElement('div', { className: 'slick-menu-command-list', role: 'menu' }, this._menuElm);
 
       this.recreateCommandList(this._gridMenuOptions, {
         grid: this.grid,

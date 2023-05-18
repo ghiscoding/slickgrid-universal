@@ -103,7 +103,7 @@ describe('FloatEditor', () => {
       editor = new FloatEditor(editorArguments);
       const editorElm = divContainer.querySelector('input.editor-text.editor-price') as HTMLInputElement;
 
-      expect(editorElm.getAttribute('aria-label')).toBe('Price Number Editor');
+      expect(editorElm.ariaLabel).toBe('Price Number Editor');
     });
 
     it('should initialize the editor and focus on the element after a small delay', () => {

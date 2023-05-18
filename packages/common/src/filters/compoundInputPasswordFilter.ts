@@ -1,5 +1,5 @@
 import { InputFilter } from './inputFilter';
-import { TranslaterService } from '../services/translater.service';
+import type { TranslaterService } from '../services/translater.service';
 
 export class CompoundInputPasswordFilter extends InputFilter {
   /** Initialize the Filter */

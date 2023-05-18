@@ -1,6 +1,6 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import {
+import type {
   CellMenu,
   CellMenuOption,
   Column,
@@ -9,8 +9,8 @@ import {
   MenuCommandItemCallbackArgs,
   MenuOptionItem,
 } from '../interfaces/index';
-import { ExtensionUtility } from '../extensions/extensionUtility';
-import { SharedService } from '../services/shared.service';
+import type { ExtensionUtility } from '../extensions/extensionUtility';
+import type { SharedService } from '../services/shared.service';
 import { MenuFromCellBaseClass } from './menuFromCellBaseClass';
 
 /**

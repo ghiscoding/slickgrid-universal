@@ -1,5 +1,5 @@
-import { Observable } from '../services/rxjsFacade';
-import { BackendService } from './backendService.interface';
+import type { Observable } from '../services/rxjsFacade';
+import type { BackendService } from './backendService.interface';
 
 export interface BackendServiceApi {
   /** How long to wait until we start querying backend to avoid sending too many requests to backend server. Default to 500ms */
