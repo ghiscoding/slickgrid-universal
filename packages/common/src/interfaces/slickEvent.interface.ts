@@ -6,7 +6,7 @@ export interface SlickEvent<T = any> {
    * @param args Additional data object to be passed to all handlers.
    * @param eventData Optional.
    *      An EventData object to be passed to all handlers.
-   *      For DOM events, an existing W3C/jQuery event object can be passed in.
+   *      For DOM events, an existing W3C event object can be passed in.
    * @param scope Optional.
    *      The scope ("this") within which the handler will be executed.
    *      If not specified, the scope will be set to the Event instance.

@@ -230,6 +230,24 @@ export function getHtmlElementOffset(element?: HTMLElement): HtmlElementPosition
   return { top, left, bottom, right };
 }
 
+export function getInnerSize(elm: HTMLElement, type: 'height' | 'width') {
+  let size = 0;
+
+  if (elm) {
+    const clientSize = type === 'height' ? 'clientHeight' : 'clientWidth';
+    const sides = type === 'height' ? ['top', 'bottom'] : ['left', 'right'];
+    size = elm[clientSize];
+    for (const side of sides) {
+      size -= (parseFloat(getElementProp(elm, `padding-${side}`)) || 0);
+    }
+  }
+  return size;
+}
+
+export function getElementProp(elm: HTMLElement, property: string) {
+  return window.getComputedStyle(elm, null).getPropertyValue(property);
+}
+
 export function getSelectorStringFromElement(elm?: HTMLElement | null) {
   let selector = '';
   if (elm?.localName) {

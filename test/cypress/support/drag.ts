@@ -5,10 +5,10 @@ declare global {
   namespace Cypress {
     interface Chainable {
       // triggerHover: (elements: NodeListOf<HTMLElement>) => void;
-      dragOutside(viewport?: string, ms?: number, px?: number, options?: { parentSelector?: string, scrollbarDimension?: number; }): Chainable<JQuery<HTMLElement>>;
-      dragStart(options?: { cellWidth?: number; cellHeight?: number; }): Chainable<JQuery<HTMLElement>>;
-      dragCell(addRow: number, addCell: number, options?: { cellWidth?: number; cellHeight?: number; }): Chainable<JQuery<HTMLElement>>;
-      dragEnd(gridSelector?: string): Chainable<JQuery<HTMLElement>>;
+      dragOutside(viewport?: string, ms?: number, px?: number, options?: { parentSelector?: string, scrollbarDimension?: number; }): Chainable<HTMLElement>;
+      dragStart(options?: { cellWidth?: number; cellHeight?: number; }): Chainable<HTMLElement>;
+      dragCell(addRow: number, addCell: number, options?: { cellWidth?: number; cellHeight?: number; }): Chainable<HTMLElement>;
+      dragEnd(gridSelector?: string): Chainable<HTMLElement>;
     }
   }
 }
@@ -54,8 +54,8 @@ Cypress.Commands.add('dragEnd', { prevSubject: 'optional' }, (_subject, gridSele
   return;
 });
 
-export function getScrollDistanceWhenDragOutsideGrid(selector :string, viewport: string, dragDirection: string, fromRow: number, fromCol: number, px = 140) {
-  return (cy as any).convertPosition(viewport).then((_viewportPosition: { x: number; y: number;}) => {
+export function getScrollDistanceWhenDragOutsideGrid(selector: string, viewport: string, dragDirection: string, fromRow: number, fromCol: number, px = 140) {
+  return (cy as any).convertPosition(viewport).then((_viewportPosition: { x: number; y: number; }) => {
     const viewportSelector = `${selector} .slick-viewport-${_viewportPosition.x}.slick-viewport-${_viewportPosition.y}`;
     (cy as any).getCell(fromRow, fromCol, viewport, { parentSelector: selector })
       .dragStart();

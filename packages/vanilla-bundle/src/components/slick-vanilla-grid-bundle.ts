@@ -1,5 +1,4 @@
 import { dequal } from 'dequal/lite';
-import 'jquery';
 import 'flatpickr/dist/l10n/fr';
 import 'slickgrid/slick.core';
 import 'slickgrid/slick.interactions';
@@ -53,6 +52,7 @@ import {
   TreeDataService,
 
   // utilities
+  deepCopy,
   emptyElement,
   unsubscribeAll,
 } from '@slickgrid-universal/common';
@@ -156,7 +156,7 @@ export class SlickVanillaGridBundle {
     const prevDatasetLn = this._currentDatasetLength;
     const isDatasetEqual = dequal(newDataset, this.dataset || []);
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions?.enableDeepCopyDatasetOnPageLoad);
-    let data = isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], newDataset) : newDataset;
+    let data = isDeepCopyDataOnPageLoadEnabled ? deepCopy(newDataset || []) : newDataset;
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
     if (this.slickGrid && this.gridOptions?.enableTreeData && Array.isArray(newDataset) && (newDataset.length > 0 || newDataset.length !== prevDatasetLn || !isDatasetEqual)) {
@@ -219,7 +219,7 @@ export class SlickVanillaGridBundle {
     // if we already have grid options, when grid was already initialized, we'll merge with those options
     // else we'll merge with global grid options
     if (this.slickGrid?.getOptions) {
-      mergedOptions = $.extend(true, {}, this.slickGrid.getOptions(), options);
+      mergedOptions = Slick.Utils.extend(true, {}, this.slickGrid.getOptions(), options);
     } else {
       mergedOptions = this.mergeGridOptions(options);
     }
@@ -362,7 +362,7 @@ export class SlickVanillaGridBundle {
     this.groupingService = services?.groupingAndColspanService ?? new GroupingAndColspanService(this.extensionUtility, this._eventPubSubService);
 
     if (hierarchicalDataset) {
-      this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? $.extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
+      this.sharedService.hierarchicalDataset = (isDeepCopyDataOnPageLoadEnabled ? deepCopy(hierarchicalDataset || []) : hierarchicalDataset) || [];
     }
     const eventHandler = new Slick.EventHandler();
 
@@ -672,14 +672,14 @@ export class SlickVanillaGridBundle {
   }
 
   mergeGridOptions(gridOptions: GridOption) {
-    const options = $.extend(true, {}, GlobalGridOptions, gridOptions);
+    const options = Slick.Utils.extend(true, {}, GlobalGridOptions, gridOptions);
 
     // also make sure to show the header row if user have enabled filtering
     if (options.enableFiltering && !options.showHeaderRow) {
       options.showHeaderRow = options.enableFiltering;
     }
 
-    // using jQuery extend to do a deep clone has an unwanted side on objects and pageSizes but ES6 spread has other worst side effects
+    // using copy extend to do a deep clone has an unwanted side on objects and pageSizes but ES6 spread has other worst side effects
     // so we will just overwrite the pageSizes when needed, this is the only one causing issues so far.
     // jQuery wrote this on their docs:: On a deep extend, Object and Array are extended, but object wrappers on primitive types such as String, Boolean, and Number are not.
     if (options?.pagination && (gridOptions.enablePagination || gridOptions.backendServiceApi) && gridOptions.pagination && Array.isArray(gridOptions.pagination.pageSizes)) {

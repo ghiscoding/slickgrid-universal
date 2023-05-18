@@ -345,7 +345,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     expect(component.isGridInitialized).toBeTruthy();
   });
 
-  it('should load enable jquery mousewheel scrolling when using a frozen grid', () => {
+  it('should load enabled mousewheel scrolling when using a frozen grid', () => {
     component.gridOptions.enableMouseWheelScrollHandler = undefined;
     component.gridOptions.frozenRow = 3;
     component.initialization(divContainer, slickEventHandler);

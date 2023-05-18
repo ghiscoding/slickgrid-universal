@@ -286,7 +286,6 @@ export class SlickCheckboxSelectColumn<T = any> {
       if (args.column.field === (this._addonOptions.field || '_checkbox_selector')) {
         emptyElement(args.node);
 
-        // <span class="container"><input type="checkbox"><label for="checkbox"></label></span>
         const spanElm = createDomElement('span', { id: 'filter-checkbox-selectall-container' });
         spanElm.appendChild(
           createDomElement('input', { type: 'checkbox', id: `header-filter-selector${this._selectAll_UID}` })

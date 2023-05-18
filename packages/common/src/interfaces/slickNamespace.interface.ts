@@ -87,14 +87,14 @@ export interface SlickNamespace {
   // --------------------------
 
   /** A composite SlickGrid editor factory. Generates an editor that is composed of multiple editors for given columns. */
-  CompositeEditor: new (modalColumns: Column[], containers: Array<HTMLElement | JQuery<HTMLElement> | null>, options?: CompositeEditorOption) => SlickCompositeEditor;
+  CompositeEditor: new (modalColumns: Column[], containers: Array<HTMLElement | null>, options?: CompositeEditorOption) => SlickCompositeEditor;
 
   /** Event is a Pub/Sub SlickGrid Event */
   Event: new <T = any> () => SlickEvent<T>;
 
   /**
    * An event object for passing data to event handlers and letting them control propagation.
-   * This is pretty much identical to how W3C and jQuery implement events.
+   * This is pretty much identical to how W3C implement events.
    */
   EventData: new () => SlickEventData;
 
@@ -164,5 +164,11 @@ export interface SlickNamespace {
 
     /** Resizer is a 3rd party plugin (addon) that can be used to auto-resize a grid and/or resize it with fixed dimensions. */
     Resizer: new (options?: ResizerOption, fixedGridDimensions?: GridSize) => SlickResizer;
-  };
+  },
+
+  // SlickGrid Utilities
+  Utils: {
+    grep: <T = any>(elems: T[], callback: (elem: T, index: number) => boolean, invert?: boolean) => any;
+    extend: <T = any>(deep?: any, ...args: T[]) => T;
+  }
 }

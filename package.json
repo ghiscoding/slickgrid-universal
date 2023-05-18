@@ -49,7 +49,7 @@
   },
   "comments": {
     "new-version": "To create a new version with Lerna-Lite, simply run the following script (1) 'roll-new-release'.",
-    "devDependencies": "The dev deps 'jQuery', 'slickgrid', 'sortablejs' and 'whatwg-fetch' are simply installed for Jest unit tests."
+    "devDependencies": "The dev deps 'slickgrid', 'sortablejs' and 'whatwg-fetch' are simply installed for Jest unit tests."
   },
   "engines": {
     "node": ">=14.17.0",
@@ -83,7 +83,6 @@
     "jest-cli": "^29.5.0",
     "jest-environment-jsdom": "^29.5.0",
     "jest-extended": "^3.2.4",
-    "jquery": "^3.6.4",
     "jsdom": "^21.1.1",
     "jsdom-global": "^3.0.2",
     "moment-mini": "^2.29.4",
@@ -92,7 +91,7 @@
     "rimraf": "^5.0.0",
     "rxjs": "^7.8.0",
     "servor": "^4.0.2",
-    "slickgrid": "^3.0.4",
+    "slickgrid": "^4.0.0-beta.0",
     "sortablejs": "^1.15.0",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",

@@ -92,7 +92,7 @@ export interface SlickGrid {
   getAbsoluteColumnMinWidth(): number;
 
   /** Get the canvas DOM element */
-  getActiveCanvasNode(element?: HTMLElement | JQuery<HTMLElement>): HTMLElement;
+  getActiveCanvasNode(element?: HTMLElement): HTMLElement;
 
   /**
    * Returns an object representing the coordinates of the currently active cell:
@@ -135,8 +135,8 @@ export interface SlickGrid {
   getCellEditor(): Editor | null;
 
   /**
-   * Returns a hash containing row and cell indexes from a standard W3C/jQuery event.
-   * @param e A standard W3C/jQuery event.
+   * Returns a hash containing row and cell indexes from a standard W3C event.
+   * @param e A standard W3C event.
    */
   getCellFromEvent(e: Event): { cell: number; row: number; } | null;
 

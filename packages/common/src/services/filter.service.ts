@@ -1154,7 +1154,7 @@ export class FilterService {
 
       // event might have been created as a CustomEvent (e.g. CompoundDateFilter), without being a valid Slick.EventData,
       // if so we will create a new Slick.EventData and merge it with that CustomEvent to avoid having SlickGrid errors
-      const eventData = ((event && typeof (event as SlickEventData).isPropagationStopped !== 'function') ? $.extend({}, new Slick.EventData(), event) : event) as SlickEventData;
+      const eventData = ((event && typeof (event as SlickEventData).isPropagationStopped !== 'function') ? Slick.Utils.extend({}, new Slick.EventData(), event) : event) as SlickEventData;
 
       // trigger an event only if Filters changed or if ENTER key was pressed
       const eventKey = (event as KeyboardEvent)?.key;

@@ -1,6 +1,3 @@
-import 'jquery';
-import './jQuery'; // define jQuery on the global window to make it available in Vite since @rollup/plugin-inject causes conflict with SASS variables prefixed with $var
-
 // import all CSS required by Slickgrid-Universal
 import 'flatpickr/dist/flatpickr.min.css';
 import './styles.scss';

@@ -278,7 +278,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
       // execute optional callback method defined by the user, if it returns false then we won't go further neither close the menu
       this.pubSubService.publish('onGridMenuMenuClose', callbackArgs);
-      if ((typeof this._gridMenuOptions?.onMenuClose === 'function' && this._gridMenuOptions.onMenuClose(event, callbackArgs) === false) || this.onMenuClose.notify(callbackArgs, null, this) === false) {
+      if ((typeof this._gridMenuOptions?.onMenuClose === 'function' && this._gridMenuOptions.onMenuClose(event, callbackArgs) === false) || this.onMenuClose.notify(callbackArgs, null, this).getReturnValue() === false) {
         return;
       }
 
@@ -395,7 +395,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       // execute optional callback method defined by the user, if it returns false then we won't go further and not open the grid menu
       if (typeof e.stopPropagation === 'function') {
         this.pubSubService.publish('onGridMenuBeforeMenuShow', callbackArgs);
-        if ((typeof addonOptions?.onBeforeMenuShow === 'function' && addonOptions.onBeforeMenuShow(e, callbackArgs) === false) || this.onBeforeMenuShow.notify(callbackArgs, null, this)) {
+        if ((typeof addonOptions?.onBeforeMenuShow === 'function' && addonOptions.onBeforeMenuShow(e, callbackArgs) === false) || this.onBeforeMenuShow.notify(callbackArgs, null, this).getReturnValue() === false) {
           return;
         }
       }
