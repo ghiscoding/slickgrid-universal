@@ -93,8 +93,8 @@ importers:
         specifier: ^4.0.2
         version: 4.0.2
       slickgrid:
-        specifier: ^3.0.4
-        version: 3.0.4
+        specifier: ^4.0.0-beta.0
+        version: 4.0.0-beta.0
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -165,8 +165,8 @@ importers:
         specifier: ^2.29.4
         version: 2.29.4
       multiple-select-vanilla:
-        specifier: ^0.2.9
-        version: 0.2.9
+        specifier: ^0.3.1
+        version: 0.3.1
       rxjs:
         specifier: ^7.8.0
         version: 7.8.0
@@ -235,11 +235,11 @@ importers:
         specifier: ^2.29.4
         version: 2.29.4
       multiple-select-vanilla:
-        specifier: ^0.2.9
-        version: 0.2.9
+        specifier: ^0.3.1
+        version: 0.3.1
       slickgrid:
-        specifier: ^3.0.4
-        version: 3.0.4
+        specifier: ^4.0.0-beta.0
+        version: 4.0.0-beta.0
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -530,8 +530,8 @@ importers:
         specifier: ^4.6.13
         version: 4.6.13
       slickgrid:
-        specifier: ^3.0.4
-        version: 3.0.4
+        specifier: ^4.0.0-beta.0
+        version: 4.0.0-beta.0
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -6281,9 +6281,6 @@ packages:
       - ts-node
     dev: true
 
-  /jquery@3.6.4:
-    resolution: {integrity: sha512-v28EW9DWDFpzcD9O5iyJXg3R3+q+mET5JhnjJzQUZMHOv67bpSIHq81GEYpPNZHG+XXHsfSme3nxp/hndKEcsQ==}
-
   /js-sdsl@4.1.4:
     resolution: {integrity: sha512-Y2/yD55y5jteOAmY50JbUZYwk3CP3wnLPEZnlR1w9oKhITrBEtAxwuWKebFf8hMrPMgbYwFoWK/lH2sBkErELw==}
     dev: true
@@ -7048,8 +7045,8 @@ packages:
       minimatch: 3.1.2
     dev: true
 
-  /multiple-select-vanilla@0.2.9:
-    resolution: {integrity: sha512-S5Nh5jXIJ7idd7l9TF7KYSobfYkz8kxHHbLfcwDKVxjVEbYyZs9gF9oaL3qyA2SXm/EuLvVKhhjIb3TNuKapCA==}
+  /multiple-select-vanilla@0.3.1:
+    resolution: {integrity: sha512-HJy4bYAcSSYcvGei82lhjxvch4y3/ypC5J5+shss5Hnwnpumw/+Rz4jEHl805XnmqME2/WCa0rwxnQnvmDSurA==}
     dev: false
 
   /mute-stream@1.0.0:
@@ -8610,10 +8607,9 @@ packages:
       is-fullwidth-code-point: 3.0.0
     dev: true
 
-  /slickgrid@3.0.4:
-    resolution: {integrity: sha512-0CY57mxZWJ5Y9XI29ogC4kIMQmyOIHSbmCefOnFFvVUsaI0yqKHfOC84TtGwCScxQfYWFM4AhvWBrae3ff3YZA==}
+  /slickgrid@4.0.0-beta.0:
+    resolution: {integrity: sha512-8ST7jkwYYHvdpo/Rc2R8kr/9i8IH6LTOmiEMwdzwhl10HNBAGOiZeaoSoS3Wiu1xJpGl7mqzvt/1Zn+33qjE7Q==}
     dependencies:
-      jquery: 3.6.4
       sortablejs: 1.15.0
 
   /smart-buffer@4.2.0:

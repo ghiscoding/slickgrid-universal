@@ -230,7 +230,7 @@ export function getHtmlElementOffset(element?: HTMLElement): HtmlElementPosition
   return { top, left, bottom, right };
 }
 
-export function getElementInnerSize(elm: HTMLElement, type: 'height' | 'width') {
+export function getInnerSize(elm: HTMLElement, type: 'height' | 'width') {
   let size = 0;
 
   if (elm) {
