@@ -137,14 +137,12 @@ export function getAssociatedDateFormatter(fieldType: typeof FieldType[keyof typ
 export function exportWithFormatterWhenDefined<T = any>(row: number, col: number, columnDef: Column<T>, dataContext: T, grid: SlickGrid, exportOptions?: TextExportOption | ExcelExportOption) {
   let isEvaluatingFormatter = false;
 
-  // first check if there are any export options provided (as Grid Options)
-  if (exportOptions?.hasOwnProperty('exportWithFormatter')) {
-    isEvaluatingFormatter = !!exportOptions.exportWithFormatter;
-  }
-
-  // second check if "exportWithFormatter" is provided in the column definition, if so it will have precendence over the Grid Options exportOptions
+  // check if "exportWithFormatter" is provided in the column definition, if so it will have precendence over the Grid Options exportOptions
   if (columnDef?.hasOwnProperty('exportWithFormatter')) {
     isEvaluatingFormatter = !!columnDef.exportWithFormatter;
+  } else if (exportOptions?.hasOwnProperty('exportWithFormatter')) {
+    // last check in Grid Options export options
+    isEvaluatingFormatter = !!exportOptions.exportWithFormatter;
   }
 
   let formatter: Formatter | undefined;
