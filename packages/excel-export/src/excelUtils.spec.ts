@@ -47,6 +47,11 @@ describe('excelUtils', () => {
       expect(output).toEqual({ metadata: { style: 3 }, value: 1209.33 });
     });
 
+    it('should return negative parsed number when input value can be parsed to a number', () => {
+      const output = getExcelNumberCallback('-$1,209.33', {} as Column, 3, {}, mockGridOptions);
+      expect(output).toEqual({ metadata: { style: 3 }, value: -1209.33 });
+    });
+
     it('should be able to provide a number with different decimal separator as formatter options and return parsed number when input value can be parsed to a number', () => {
       const output = getExcelNumberCallback(
         '1 244 209,33€', {} as Column, 3, {},

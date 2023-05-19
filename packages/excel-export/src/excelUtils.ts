@@ -33,8 +33,8 @@ export function parseNumberWithFormatterOptions(value: any, column: Column, grid
   if (typeof value === 'string' && value) {
     const decimalSeparator = getValueFromParamsOrFormatterOptions('decimalSeparator', column, gridOptions, Constants.DEFAULT_NUMBER_DECIMAL_SEPARATOR);
     const val: number | string = (decimalSeparator === ',')
-      ? parseFloat(value.replace(/[^0-9\,]+/g, '').replace(',', '.'))
-      : parseFloat(value.replace(/[^\d\.]/g, ''));
+      ? parseFloat(value.replace(/[^0-9\,\-]+/g, '').replace(',', '.'))
+      : parseFloat(value.replace(/[^\d\.\-]/g, ''));
     outValue = isNaN(val) ? value : val;
   }
   return outValue;
