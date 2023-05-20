@@ -101,5 +101,8 @@
   "funding": {
     "type": "ko_fi",
     "url": "https://ko-fi.com/ghiscoding"
+  },
+  "dependencies": {
+    "conventional-changelog-conventionalcommits": "^5.0.0"
   }
 }

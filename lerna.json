@@ -20,6 +20,7 @@
       "syncWorkspaceLock": true
     }
   },
+  "changelogPreset": "conventional-changelog-conventionalcommits",
   "packages": [
     "examples/*",
     "packages/*"
