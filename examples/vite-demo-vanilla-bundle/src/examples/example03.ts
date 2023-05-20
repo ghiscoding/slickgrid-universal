@@ -18,6 +18,7 @@ import {
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
@@ -124,6 +125,7 @@ export default class Example3 {
         // filter: { model: Filters.compoundInput },
         // formatter: Formatters.dollar,
         formatter: Formatters.dollar,
+        exportWithFormatter: true,
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
         type: FieldType.number,
         grouping: {
@@ -286,11 +288,12 @@ export default class Example3 {
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableCellNavigation: true,
+      enableTextExport: true,
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: true
       },
-      registerExternalResources: [this.excelExportService],
+      registerExternalResources: [new TextExportService(), this.excelExportService],
       enableFiltering: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
@@ -352,6 +355,7 @@ export default class Example3 {
       const randomMonth = Math.floor(Math.random() * 11);
       const randomDay = Math.floor((Math.random() * 29));
       const randomFinish = new Date(randomFinishYear, (randomMonth + 1), randomDay);
+      const randomCost = Math.round(Math.random() * 10000) / 100;
 
       tmpArray[i] = {
         id: i,
@@ -360,7 +364,7 @@ export default class Example3 {
         percentComplete: Math.round(Math.random() * 100),
         start: new Date(randomYear, randomMonth, randomDay),
         finish: randomFinish < new Date() ? '' : randomFinish, // make sure the random date is earlier than today
-        cost: (i % 33 === 0) ? null : Math.round(Math.random() * 10000) / 100,
+        cost: (i % 33 === 0) ? -randomCost : randomCost,
         effortDriven: (i % 5 === 0)
       };
 
@@ -442,7 +446,7 @@ export default class Example3 {
     this.sgb?.slickGrid?.setPreHeaderPanelVisibility(!this.sgb?.slickGrid?.getOptions().showPreHeaderPanel);
   }
 
-  onGroupChanged(change: { caller?: string; groupColumns: Grouping[] }) {
+  onGroupChanged(change: { caller?: string; groupColumns: Grouping[]; }) {
     const caller = change && change.caller || [];
     const groups = change && change.groupColumns || [];
 
