@@ -123,7 +123,6 @@ export default class Example3 {
         sortable: true,
         filterable: true,
         // filter: { model: Filters.compoundInput },
-        // formatter: Formatters.dollar,
         formatter: Formatters.dollar,
         exportWithFormatter: true,
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
