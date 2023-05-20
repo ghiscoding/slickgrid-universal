@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.6.4](https://github.com/ghiscoding/slickgrid-universal/compare/v2.6.3...v2.6.4) (2023-05-20)
+
+### Bug Fixes
+
+* **binding:** remove unnecessary sanitizer in BindingService ([#947](https://github.com/ghiscoding/slickgrid-universal/issues/947)) ([32a9a35](https://github.com/ghiscoding/slickgrid-universal/commit/32a9a35861647510ccb0d3dd14340cd3a1689fc1)) - by @ghiscoding
+
 ## [2.6.3](https://github.com/ghiscoding/slickgrid-universal/compare/v2.6.2...v2.6.3) (2023-03-23)
 
 **Note:** Version bump only for package @slickgrid-universal/binding
