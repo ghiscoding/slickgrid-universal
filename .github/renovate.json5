@@ -14,15 +14,15 @@
     // allow Node14/npm8 until its EOL June 2023
     {
       packageNames: ['node'],
-      allowedVersions: '14.17.0',
+      allowedVersions: '16.15.0',
     },
     {
       packageNames: ['npm'],
-      allowedVersions: '6.14.13',
+      allowedVersions: '8.5.0',
     },
     {
       packageNames: ['rxjs'],
-      allowedVersions: '7.5.0',
+      allowedVersions: '7.8.1',
     }
   ],
   schedule: ['on friday and tuesday'],
