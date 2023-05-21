@@ -463,8 +463,8 @@ importers:
         specifier: workspace:~
         version: link:../common
       rxjs:
-        specifier: '>=7.5.0'
-        version: 7.5.6
+        specifier: '>=7.8.1'
+        version: 7.8.1
     devDependencies:
       cross-env:
         specifier: ^7.0.3
@@ -8230,12 +8230,6 @@ packages:
     dependencies:
       queue-microtask: 1.2.3
     dev: true
-
-  /rxjs@7.5.6:
-    resolution: {integrity: sha512-dnyv2/YsXhnm461G+R/Pe5bWP41Nm6LBXEYWI6eiFP4fiwx6WRI/CD0zbdVAudd9xwLEF2IDcKXLHit0FYjUzw==}
-    dependencies:
-      tslib: 2.4.0
-    dev: false
 
   /rxjs@7.8.1:
     resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
