@@ -1,6 +1,3 @@
-// import multiple-select SASS variables in order to override them
-@import 'multiple-select-vanilla/dist/styles/sass/multiple-select.scss';
-
 /*
  * SlickGrid-Universal theming variables, used by all Themes
  * Lib Website (https://github.com/ghiscoding/slickgrid-universal)
@@ -908,3 +905,6 @@ $slick-empty-data-warning-line-height:                      18px !default;
 $slick-empty-data-warning-margin:                           0px !default;
 $slick-empty-data-warning-padding:                          8px !default;
 $slick-empty-data-warning-z-index:                          10 !default;
+
+// import multiple-select SASS variables in order to override them
+@import 'multiple-select-vanilla/dist/styles/sass/multiple-select.scss';
