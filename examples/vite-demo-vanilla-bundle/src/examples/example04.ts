@@ -245,8 +245,7 @@ export default class Example4 {
           placeholder: '🔎︎ search city',
 
           // We can use the autocomplete through 3 ways "collection", "collectionAsync" or with your own autocomplete options
-          // use your own autocomplete options, instead of fetchJsonp, use HttpClient or FetchClient
-          // here we use fetchJsonp just because I'm not sure how to configure HttpClient with JSONP and CORS
+          // use your own autocomplete options, instead of fetch-jsonp, use HttpClient or FetchClient
           editorOptions: {
             minLength: 3,
             fetch: (searchText, updateCallback) => {

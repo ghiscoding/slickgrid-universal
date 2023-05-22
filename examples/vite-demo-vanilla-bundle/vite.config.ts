@@ -24,6 +24,9 @@ export default defineConfig(() => {
       port: 8888,
       cors: true,
       host: 'localhost',
+      hmr: {
+        clientPort: 8888,
+      },
     },
   };
 });

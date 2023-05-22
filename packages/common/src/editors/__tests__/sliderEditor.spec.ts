@@ -479,7 +479,7 @@ describe('SliderEditor', () => {
       const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;
       editorElm.dispatchEvent(new Event('change'));
 
-      expect(consoleSpy).toHaveBeenCalledWith('[Slickgrid-Universal] All editor.params are moving to "editorOptions" for better typing support and "params" will be deprecated in future release.');
+      expect(consoleSpy).toHaveBeenCalledWith('[Slickgrid-Universal] All editor.params from Slider Editor are moving to "editorOptions" for better typing support and "params" will be deprecated in future release.');
     });
 
     it('should enableSliderTrackColoring and trigger a change event and expect slider track to have background color', () => {
