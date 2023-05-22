@@ -463,7 +463,7 @@ importers:
         specifier: workspace:~
         version: link:../common
       rxjs:
-        specifier: '>=7.8.1'
+        specifier: ^7.8.1
         version: 7.8.1
     devDependencies:
       cross-env:
