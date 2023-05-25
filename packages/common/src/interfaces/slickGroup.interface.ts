@@ -1,6 +1,6 @@
 /** A base class that all specia / non-data rows (like Group and GroupTotals) derive from. */
-export abstract class SlickNonDataItem {
-  protected __nonDataRow = true;
+export interface SlickNonDataItem {
+  __nonDataRow: boolean;
 }
 
 export interface SlickGroup extends SlickNonDataItem {
