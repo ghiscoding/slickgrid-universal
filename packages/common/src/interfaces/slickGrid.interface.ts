@@ -260,6 +260,9 @@ export interface SlickGrid {
   /** Get Top Panel DOM element */
   getTopPanel(): HTMLDivElement;
 
+  /** Get Top Panels (left/right) DOM element */
+  getTopPanels(): [HTMLDivElement, HTMLDivElement];
+
   /** Get grid unique identifier */
   getUID(): string;
 
@@ -370,9 +373,6 @@ export interface SlickGrid {
 
   /** Scroll to an Y position in the grid */
   scrollTo(yPos: number): void;
-
-  /** Sets an active canvas node */
-  setActiveCanvasNode(element: HTMLDivElement): void;
 
   /**
    * Sets an active cell.

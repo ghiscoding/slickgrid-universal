@@ -1,4 +1,9 @@
-export interface SlickGroup {
+/** A base class that all specia / non-data rows (like Group and GroupTotals) derive from. */
+export interface SlickNonDataItem {
+  __nonDataRow: boolean;
+}
+
+export interface SlickGroup extends SlickNonDataItem {
   /**
    * Grouping level, starting with 0.
    * @type {Number}
@@ -59,4 +64,19 @@ export interface SlickGroup {
    * @type {Object}
    */
   groupingKey?: string | null;
+}
+
+export interface GroupTotals extends SlickNonDataItem {
+  /**
+   * Parent Group
+   * @type {Group}
+   */
+  group: SlickGroup;
+
+  /**
+   * Whether the totals have been fully initialized / calculated.
+   * Will be set to false for lazy-calculated group totals.
+   * @type {Boolean}
+   */
+  initialized: boolean;
 }
