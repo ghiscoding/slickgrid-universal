@@ -11,7 +11,7 @@
     "vite:dev": "vite --mode development"
   },
   "dependencies": {
-    "@faker-js/faker": "^8.0.1",
+    "@faker-js/faker": "^8.0.2",
     "@fnando/sparkline": "^0.3.10",
     "@slickgrid-universal/common": "workspace:~",
     "@slickgrid-universal/composite-editor-component": "workspace:~",
@@ -36,10 +36,10 @@
     "@rollup/plugin-dynamic-import-vars": "^2.0.3",
     "@types/fnando__sparkline": "^0.3.4",
     "@types/moment": "^2.13.0",
-    "@types/node": "^18.16.13",
+    "@types/node": "^18.16.16",
     "@types/whatwg-fetch": "^0.0.33",
     "sass": "^1.62.1",
     "typescript": "^5.0.4",
-    "vite": "^4.3.8"
+    "vite": "^4.3.9"
   }
 }
