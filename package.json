@@ -91,7 +91,7 @@
     "rimraf": "^5.0.1",
     "rxjs": "^7.8.1",
     "servor": "^4.0.2",
-    "slickgrid": "^4.0.0-beta.0",
+    "slickgrid": "^4.0.0",
     "sortablejs": "^1.15.0",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
