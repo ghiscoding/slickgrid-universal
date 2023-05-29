@@ -2,7 +2,7 @@ import * as autocompleter_ from 'autocompleter';
 const autocomplete = (autocompleter_ && autocompleter_['default'] || autocompleter_) as <T extends AutocompleteItem>(settings: AutocompleteSettings<T>) => AutocompleteResult; // patch for rollup
 
 import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
-import { isObject, isPrimmitive, setDeepValue, toKebabCase } from '@slickgrid-universal/utils';
+import { isObject, isPrimitiveValue, setDeepValue, toKebabCase } from '@slickgrid-universal/utils';
 
 import { Constants } from './../constants';
 import { FieldType, KeyCode, } from '../enums/index';
@@ -435,7 +435,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     const activeCell = this.grid.getActiveCell();
     const isCellEditable = this.grid.onBeforeEditCell.notify({
       ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
-    });
+    }).getReturnValue();
     this.disable(isCellEditable === false);
   }
 
@@ -552,7 +552,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     this._editorInputGroupElm.appendChild(document.createElement('span'));
 
     // show clear date button (unless user specifically doesn't want it)
-    if (!getEditorOptionByName<AutocompleterOption, 'hideClearButton'>(this.columnEditor, 'hideClearButton')) {
+    if (!getEditorOptionByName<AutocompleterOption, 'hideClearButton'>(this.columnEditor, 'hideClearButton', undefined, 'autocomplete')) {
       closeButtonGroupElm.appendChild(this._clearButtonElm);
       this._editorInputGroupElm.appendChild(closeButtonGroupElm);
       this._bindEventService.bind(this._clearButtonElm, 'click', () => this.clear());
@@ -594,7 +594,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
     // the kradeen autocomplete lib only works with label/value pair, make sure that our array is in accordance
     if (Array.isArray(finalCollection)) {
-      if (this.collection.every(x => isPrimmitive(x))) {
+      if (this.collection.every(x => isPrimitiveValue(x))) {
         // when detecting an array of primitives, we have to remap it to an array of value/pair objects
         finalCollection = finalCollection.map(c => ({ label: c, value: c }));
       } else {

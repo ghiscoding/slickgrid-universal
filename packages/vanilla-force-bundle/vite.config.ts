@@ -13,14 +13,9 @@ export default defineConfig({
       fileName: () => 'bundle/slickgrid-vanilla-bundle.js'
     },
     rollupOptions: {
-      // external: ['jquery'],
       output: {
         minifyInternalExports: false,
         // chunkFileNames: 'dist/bundle/[name].js',
-        globals: {
-          $: 'jquery',
-          jQuery: 'jquery',
-        },
       },
     },
   },

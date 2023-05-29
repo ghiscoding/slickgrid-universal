@@ -1,5 +1,5 @@
 // import 3rd party lib multiple-select for the tests
-import 'multiple-select-modified';
+import 'multiple-select-vanilla';
 
 import { Editors } from '../index';
 import { SelectEditor } from '../selectEditor';
@@ -54,6 +54,7 @@ describe('SelectEditor', () => {
 
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
+    document.body.innerHTML = '';
     document.body.appendChild(divContainer);
 
     mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, internalColumnEditor: {} } as Column;
@@ -168,7 +169,7 @@ describe('SelectEditor', () => {
       expect(disableSpy).toHaveBeenCalledWith(true);
     });
 
-    it('should initialize the editor even when user define his own editor options', () => {
+    it('should initialize the editor even when user define its own editor options', () => {
       (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { minLength: 3 } as AutocompleterOption;
       editor = new SelectEditor(editorArguments, true);
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
@@ -182,7 +183,7 @@ describe('SelectEditor', () => {
       (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
       editor = new SelectEditor(editorArguments, true);
-      const editorElm = divContainer.querySelector('.ms-filter.editor-gender .placeholder') as HTMLSpanElement;
+      const editorElm = divContainer.querySelector('.ms-filter.editor-gender .ms-placeholder') as HTMLSpanElement;
 
       expect(editorElm.innerHTML).toBe(testValue);
     });
@@ -217,17 +218,17 @@ describe('SelectEditor', () => {
       const editorElm = editor.editorDomElement;
 
       expect(editor.getValue()).toEqual(['male']);
-      expect(editorElm[0].value).toEqual('male');
+      expect(editor.msInstance!.getSelects()).toEqual(['male']);
     });
 
     it('should create the multi-select editor with a blank entry at the beginning of the collection when "addBlankEntry" is set in the "collectionOptions" property', () => {
       (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
       (mockColumn.internalColumnEditor as ColumnEditor).collectionOptions = { addBlankEntry: true };
 
-      editor = new SelectEditor(editorArguments, true);
+      editor = new SelectEditor(editorArguments, true, 0);
       const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-      const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
-      const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+      const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li input[type=checkbox]`);
+      const editorOkElm = divContainer.querySelector(`[data-name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
       editorBtnElm.click();
       editorOkElm.click();
 
@@ -240,10 +241,10 @@ describe('SelectEditor', () => {
       (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
       (mockColumn.internalColumnEditor as ColumnEditor).collectionOptions = { addCustomFirstEntry: { value: null as any, label: '' } };
 
-      editor = new SelectEditor(editorArguments, true);
+      editor = new SelectEditor(editorArguments, true, 0);
       const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-      const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
-      const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+      const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li input[type=checkbox]`);
+      const editorOkElm = divContainer.querySelector(`[data-name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
       editorBtnElm.click();
       editorOkElm.click();
 
@@ -256,10 +257,10 @@ describe('SelectEditor', () => {
       (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
       (mockColumn.internalColumnEditor as ColumnEditor).collectionOptions = { addCustomLastEntry: { value: null as any, label: '' } };
 
-      editor = new SelectEditor(editorArguments, true);
+      editor = new SelectEditor(editorArguments, true, 0);
       const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-      const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
-      const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+      const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li input[type=checkbox]`);
+      const editorOkElm = divContainer.querySelector(`[data-name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
       editorBtnElm.click();
       editorOkElm.click();
 
@@ -270,14 +271,17 @@ describe('SelectEditor', () => {
 
     describe('isValueChanged method', () => {
       it('should return True after doing a check of an option and clicking on the OK button', () => {
-        editor = new SelectEditor(editorArguments, true);
+        editor = new SelectEditor(editorArguments, true, 0);
         editor.reset();
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
-        const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li input[type=checkbox]`);
+        const editorOkElm = divContainer.querySelector(`[data-name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
         editorBtnElm.click();
 
         // we can use property "checked" or dispatch an event
+        // editor.msInstance?.setSelects(['female']);
+        // editor.msInstance?.close();
+
         editorListElm[1].checked = true;
         editorListElm[1].dispatchEvent(new CustomEvent('click'));
         editorOkElm.click();
@@ -288,11 +292,11 @@ describe('SelectEditor', () => {
       });
 
       it('should return False after doing a check & uncheck of the same option and clicking on the OK button', () => {
-        editor = new SelectEditor(editorArguments, true);
+        editor = new SelectEditor(editorArguments, true, 0);
         editor.reset();
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
         const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`.ms-drop ul>li input[type=checkbox]`);
-        const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+        const editorOkElm = divContainer.querySelector(`[data-name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
         editorBtnElm.click();
 
         // we can use property "checked" or dispatch an event
@@ -309,21 +313,21 @@ describe('SelectEditor', () => {
 
       it('should call the "changeEditorOption" method and expect new option to be merged with the previous Editor options and also expect to call MultipleSelect "refreshOptions" setter method', () => {
         editor = new SelectEditor(editorArguments, true);
-        const multipleSelectSpy = jest.spyOn(editor.editorDomElement, 'multipleSelect');
+        const refreshSpy = jest.spyOn(editor.msInstance!, 'refreshOptions');
         editor.changeEditorOption('filter', true);
 
-        expect(multipleSelectSpy).toHaveBeenCalledWith('refreshOptions', { ...editor.editorElmOptions, filter: true });
+        expect(refreshSpy).toHaveBeenCalledWith({ ...editor.editorElmOptions, filter: true });
       });
     });
 
     describe('isValueTouched method', () => {
       it('should return True after triggering an Check All event', () => {
-        editor = new SelectEditor(editorArguments, true);
+        editor = new SelectEditor(editorArguments, true, 0);
         editor.reset();
         const selectAllBtnElm = divContainer.querySelector('.ms-select-all') as HTMLButtonElement;
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
         const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`.ms-drop ul>li input[type=checkbox]`);
-        const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+        const editorOkElm = divContainer.querySelector(`[data-name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
         editorBtnElm.click();
 
         // we can use property "checked" or dispatch an event
@@ -331,19 +335,19 @@ describe('SelectEditor', () => {
         selectAllBtnElm.dispatchEvent(new CustomEvent('onCheckAll'));
         selectAllBtnElm.click();
         editorOkElm.click();
-        editor.editorDomElement.multipleSelect('checkAll');
+        editor.msInstance?.checkAll();
 
         expect(editorListElm.length).toBe(3);
         expect(editor.isValueTouched()).toBe(true);
       });
 
       it('should return True after triggering an UnCheck All event', () => {
-        editor = new SelectEditor(editorArguments, true);
+        editor = new SelectEditor(editorArguments, true, 0);
         editor.reset();
         const selectAllBtnElm = divContainer.querySelector('.ms-select-all') as HTMLButtonElement;
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
         const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`.ms-drop ul>li input[type=checkbox]`);
-        const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+        const editorOkElm = divContainer.querySelector(`[data-name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
         editorBtnElm.click();
 
         // we can use property "checked" or dispatch an event
@@ -351,7 +355,7 @@ describe('SelectEditor', () => {
         selectAllBtnElm.dispatchEvent(new CustomEvent('onCheckAll'));
         selectAllBtnElm.click();
         editorOkElm.click();
-        editor.editorDomElement.multipleSelect('uncheckAll');
+        editor.msInstance?.uncheckAll();
 
         expect(editorListElm.length).toBe(3);
         expect(editor.isValueTouched()).toBe(true);
@@ -481,10 +485,33 @@ describe('SelectEditor', () => {
         editor = new SelectEditor(editorArguments, true);
         editor.loadValue(mockItemData);
         const output = editor.serializeValue();
-        const currentValue = editor.currentValue;
 
         expect(output).toEqual([{ label: 'male', value: 'male' }, { label: 'other', value: 'other' }]);
-        expect(currentValue).toEqual({});
+        expect(editor.currentValues).toEqual([{ label: 'male', value: 'male' }, { label: 'other', value: 'other' }]);
+      });
+
+      it('should return all object values when using a dot (.) notation for complex object with a collection of option/label pair and using "serializeComplexValueFormat" as "object"', () => {
+        mockColumn.field = 'employee.gender';
+        mockItemData = { id: 1, employee: { id: 24, gender: ['male', 'other'] }, isActive: true };
+        (mockColumn.internalColumnEditor as ColumnEditor).serializeComplexValueFormat = 'object';
+        editor = new SelectEditor(editorArguments, true);
+        editor.loadValue(mockItemData);
+        const output = editor.serializeValue();
+
+        expect(output).toEqual([{ label: 'male', value: 'male' }, { label: 'other', value: 'other' }]);
+        expect(editor.currentValues).toEqual([{ label: 'male', value: 'male' }, { label: 'other', value: 'other' }]);
+      });
+
+      it('should return a single object value when using a dot (.) notation for complex object with a collection of option/label pair and using "serializeComplexValueFormat" as "object"', () => {
+        mockColumn.field = 'employee.gender';
+        mockItemData = { id: 1, employee: { id: 24, gender: 'male' }, isActive: true };
+        (mockColumn.internalColumnEditor as ColumnEditor).serializeComplexValueFormat = 'object';
+        editor = new SelectEditor(editorArguments, false);
+        editor.loadValue(mockItemData);
+        const output = editor.serializeValue();
+
+        expect(output).toEqual({ label: 'male', value: 'male' });
+        expect(editor.currentValue).toEqual({ label: 'male', value: 'male' });
       });
 
       it('should return flat value when using a dot (.) notation for complex object with a collection of option/label pair and using "serializeComplexValueFormat" as "flat"', () => {
@@ -494,10 +521,9 @@ describe('SelectEditor', () => {
         editor = new SelectEditor(editorArguments, true);
         editor.loadValue(mockItemData);
         const output = editor.serializeValue();
-        const currentValue = editor.currentValue;
 
         expect(output).toEqual(['male', 'other']);
-        expect(currentValue).toEqual('');
+        expect(editor.currentValues).toEqual(['male', 'other']);
       });
 
       it('should return object value when using a dot (.) notation and we override the object path using "complexObjectPath" to find correct values', () => {
@@ -554,7 +580,7 @@ describe('SelectEditor', () => {
         const saveSpy = jest.spyOn(editor, 'save');
 
         editor.loadValue(mockItemData);
-        editor.editorDomElement.multipleSelect('close');
+        editor.msInstance?.close();
         editor.destroy();
 
         expect(saveSpy).toHaveBeenCalledTimes(1);
@@ -569,7 +595,7 @@ describe('SelectEditor', () => {
         const saveSpy = jest.spyOn(editor, 'save');
 
         editor.loadValue(mockItemData);
-        editor.editorDomElement.multipleSelect('close');
+        editor.msInstance?.close();
         editor.destroy();
 
         expect(saveSpy).toHaveBeenCalledTimes(1);
@@ -611,10 +637,10 @@ describe('SelectEditor', () => {
       it('should create the multi-select editor with a default search term when passed as a filter argument even with collection an array of strings', () => {
         (mockColumn.internalColumnEditor as ColumnEditor).collection = ['male', 'female'];
 
-        editor = new SelectEditor(editorArguments, true);
+        editor = new SelectEditor(editorArguments, true, 0);
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
-        const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li input[type=checkbox]`);
+        const editorOkElm = divContainer.querySelector(`[data-name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
         editorBtnElm.click();
         editorOkElm.click();
 
@@ -634,9 +660,9 @@ describe('SelectEditor', () => {
           }
         };
 
-        editor = new SelectEditor(editorArguments, true);
+        editor = new SelectEditor(editorArguments, true, 0);
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li input[type=checkbox]`);
         editorBtnElm.click();
 
         expect(editorListElm.length).toBe(3);
@@ -659,9 +685,9 @@ describe('SelectEditor', () => {
           },
         };
 
-        editor = new SelectEditor(editorArguments, true);
+        editor = new SelectEditor(editorArguments, true, 0);
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li input[type=checkbox]`);
         editorBtnElm.click();
 
         expect(editorListElm.length).toBe(3);
@@ -681,9 +707,9 @@ describe('SelectEditor', () => {
           }
         };
 
-        editor = new SelectEditor(editorArguments, true);
+        editor = new SelectEditor(editorArguments, true, 0);
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li input[type=checkbox]`);
         editorBtnElm.click();
 
         expect(editorListElm.length).toBe(1);
@@ -703,9 +729,9 @@ describe('SelectEditor', () => {
           },
         };
 
-        editor = new SelectEditor(editorArguments, true);
+        editor = new SelectEditor(editorArguments, true, 0);
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li input[type=checkbox]`);
         editorBtnElm.click();
 
         expect(editorListElm.length).toBe(1);
@@ -728,9 +754,9 @@ describe('SelectEditor', () => {
           },
         };
 
-        editor = new SelectEditor(editorArguments, true);
+        editor = new SelectEditor(editorArguments, true, 0);
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li input[type=checkbox]`);
         editorBtnElm.click();
 
         expect(editorListElm.length).toBe(2);
@@ -746,9 +772,9 @@ describe('SelectEditor', () => {
           collectionOverride: (inputCollection) => inputCollection.filter(item => item !== 'other')
         };
 
-        editor = new SelectEditor(editorArguments, true);
+        editor = new SelectEditor(editorArguments, true, 0);
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li input[type=checkbox]`);
         editorBtnElm.click();
 
         expect(editorListElm.length).toBe(2);
@@ -770,9 +796,9 @@ describe('SelectEditor', () => {
           },
         };
 
-        editor = new SelectEditor(editorArguments, true);
+        editor = new SelectEditor(editorArguments, true, 0);
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=checkbox]`);
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li input[type=checkbox]`);
         editorBtnElm.click();
 
         expect(editorListElm.length).toBe(3);
@@ -794,9 +820,9 @@ describe('SelectEditor', () => {
           },
         };
 
-        editor = new SelectEditor(editorArguments, true);
+        editor = new SelectEditor(editorArguments, true, 0);
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li span`);
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li span`);
         editorBtnElm.click();
 
         expect(editorListElm.length).toBe(2);
@@ -819,11 +845,11 @@ describe('SelectEditor', () => {
         };
         mockItemData = { id: 1, gender: 'male', isEffort: false };
 
-        editor = new SelectEditor(editorArguments, true);
+        editor = new SelectEditor(editorArguments, true, 0);
         editor.loadValue(mockItemData);
         editor.setValue([false]);
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li span`);
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li span`);
         editorBtnElm.click();
 
         expect(editor.getValue()).toEqual(['']);
@@ -848,11 +874,11 @@ describe('SelectEditor', () => {
         mockItemData = { id: 1, gender: 'male', isEffort: false };
         gridOptionMock.sanitizer = (dirtyHtml) => dirtyHtml.replace(/(<script>.*?<\/script>)/gi, '');
 
-        editor = new SelectEditor(editorArguments, true);
+        editor = new SelectEditor(editorArguments, true, 0);
         editor.loadValue(mockItemData);
         editor.setValue([false]);
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li span`);
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li span`);
         editorBtnElm.click();
 
         expect(editor.getValue()).toEqual(['']);
@@ -884,9 +910,12 @@ describe('SelectEditor', () => {
     it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
       const activeCellMock = { row: 0, cell: 0 };
       jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+        getReturnValue: () => false
+      });
       editor = new SelectEditor(editorArguments, true);
       editor.setValue(['male'], true);
+      editor.msInstance?.close();
 
       expect(editor.getValue()).toEqual(['male']);
       expect(onCompositeEditorSpy).toHaveBeenCalledWith({
@@ -898,7 +927,9 @@ describe('SelectEditor', () => {
     it('should call "show" and expect the DOM element to not be disabled when "onBeforeEditCell" is NOT returning false', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+        getReturnValue: () => undefined
+      });
 
       editor = new SelectEditor(editorArguments, true);
       const disableSpy = jest.spyOn(editor, 'disable');
@@ -912,8 +943,12 @@ describe('SelectEditor', () => {
     it('should call "show" and expect the DOM element to become disabled with empty value set in the form values when "onBeforeEditCell" returns false', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(false);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+        getReturnValue: () => false
+      });
+      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+        getReturnValue: () => false
+      });
 
       editor = new SelectEditor(editorArguments, true);
       editor.loadValue(mockItemData);
@@ -929,14 +964,18 @@ describe('SelectEditor', () => {
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editorBtnElm.classList.contains('disabled')).toEqual(true);
-      expect(editor.editorDomElement.multipleSelect('getSelects')).toEqual([]);
+      expect(editor.msInstance!.getSelects()).toEqual([]);
     });
 
     it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(false);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+        getReturnValue: () => false
+      });
+      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+        getReturnValue: () => false
+      });
       gridOptionMock.compositeEditorOptions = {
         excludeDisabledFieldFormValues: true
       };
@@ -955,14 +994,18 @@ describe('SelectEditor', () => {
       }, expect.anything());
       expect(disableSpy).toHaveBeenCalledWith(true);
       expect(editorBtnElm.classList.contains('disabled')).toEqual(true);
-      expect(editor.editorDomElement.multipleSelect('getSelects')).toEqual([]);
+      expect(editor.msInstance!.getSelects()).toEqual([]);
     });
 
     it('should expect "onCompositeEditorChange" to have been triggered with the new value showing up in its "formValues" object', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue(undefined);
-      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+      const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
+        getReturnValue: () => undefined
+      });
+      const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+        getReturnValue: () => false
+      });
       gridOptionMock.autoCommitEdit = true;
       mockItemData = { id: 1, gender: ['male'], isActive: true };
 
@@ -970,9 +1013,10 @@ describe('SelectEditor', () => {
       editor.loadValue(mockItemData);
       editor.setValue(['male']);
       const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-      const editorOkElm = divContainer.querySelector(`[name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+      const editorOkElm = divContainer.querySelector(`[data-name=editor-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
       editorBtnElm.click();
       editorOkElm.click();
+      editor.msInstance?.close();
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(onBeforeEditSpy).toHaveBeenCalledWith({ ...activeCellMock, column: mockColumn, item: mockItemData, grid: gridStub, target: 'composite', compositeEditorOptions: editorArguments.compositeEditorOptions });
@@ -986,7 +1030,9 @@ describe('SelectEditor', () => {
       it('should create the editor and expect a different collection outputed when using the override', () => {
         const activeCellMock = { row: 0, cell: 0 };
         jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-        const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue(false);
+        const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
+          getReturnValue: () => false
+        });
         mockColumn.internalColumnEditor = {
           collection: [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }, { value: 'other', label: 'other' }],
           collectionOverride: (inputCollection) => inputCollection.filter(item => item.value !== 'other')

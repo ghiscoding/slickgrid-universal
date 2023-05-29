@@ -24,6 +24,7 @@ import type {
   SlickEventHandler,
   SlickGrid,
   SlickGroup,
+  SlickNonDataItem,
   SlickRange,
   SlickRemoteModel,
   SlickResizer,
@@ -82,19 +83,22 @@ export interface SlickNamespace {
   /** Information about a group of rows. */
   Group: new () => SlickGroup;
 
+  /** A base class that all specia / non-data rows (like Group and GroupTotals) derive from. */
+  NonDataItem: new () => SlickNonDataItem;
+
   // --
   // Slick Core
   // --------------------------
 
   /** A composite SlickGrid editor factory. Generates an editor that is composed of multiple editors for given columns. */
-  CompositeEditor: new (modalColumns: Column[], containers: Array<HTMLElement | JQuery<HTMLElement> | null>, options?: CompositeEditorOption) => SlickCompositeEditor;
+  CompositeEditor: new (modalColumns: Column[], containers: Array<HTMLElement | null>, options?: CompositeEditorOption) => SlickCompositeEditor;
 
   /** Event is a Pub/Sub SlickGrid Event */
   Event: new <T = any> () => SlickEvent<T>;
 
   /**
    * An event object for passing data to event handlers and letting them control propagation.
-   * This is pretty much identical to how W3C and jQuery implement events.
+   * This is pretty much identical to how W3C implement events.
    */
   EventData: new () => SlickEventData;
 
@@ -107,6 +111,11 @@ export interface SlickNamespace {
   /** A structure containing a range of cells. */
   Range: new (fromRow?: number, fromCell?: number, toRow?: number, toCell?: number) => SlickRange;
 
+  /**
+   * HTML Sanitizer using simple Regular Expression.
+   * Please note that it is much better to use other tools like DOMPurify when possible.
+   */
+  RegexSanitizer: (dirtyHtml: string) => string,
 
   // --
   // Slick Controls/Plugins (addons)
@@ -164,5 +173,35 @@ export interface SlickNamespace {
 
     /** Resizer is a 3rd party plugin (addon) that can be used to auto-resize a grid and/or resize it with fixed dimensions. */
     Resizer: new (options?: ResizerOption, fixedGridDimensions?: GridSize) => SlickResizer;
-  };
+  },
+
+  BindingEventService: {
+    destroy: () => void;
+    bind: (elm: HTMLElement, eventName: string, listener: EventListenerOrEventListenerObject) => void;
+    unbind: (elm: HTMLElement, eventName: string, listener: EventListenerOrEventListenerObject) => void;
+    unbindByEventName: (elm: HTMLElement, eventName: string) => void;
+    unbindAll: () => void;
+  },
+
+  // SlickGrid Utilities
+  Utils: {
+    calculateAvailableSpace: (elm: HTMLElement) => { top: number; left: number; bottom: number; right: number; };
+    createDomElement: <T extends keyof HTMLElementTagNameMap, K extends keyof HTMLElementTagNameMap[T]>(tagName: T, elementOptions?: { [P in K]: HTMLElementTagNameMap[T][P] }, appendToParent?: Element) => HTMLElementTagNameMap[T];
+    contains: (parent: HTMLElement, child: HTMLElement) => boolean;
+    debounce: (callback: (args?: any[]) => void, wait?: number) => void;
+    emptyElement: (elm: HTMLElement) => void;
+    extend: <T = any>(deep?: boolean | any, ...args: T[]) => T;
+    getElementProp: (elm: HTMLElement, prop: string) => any;
+    innerSize: (elm: HTMLElement, type: 'height' | 'width') => number;
+    height: (elm: HTMLElement, val?: number | string) => number | void;
+    width: (elm: HTMLElement, val?: number | string) => number | void;
+    offset: (elm: HTMLElement) => undefined | { top: number, left: number };
+    isEmptyObject: (obj: any) => boolean;
+    parents: (elm: HTMLElement, selector: string) => HTMLElement[];
+    setStyleSize: (elm: HTMLElement, style: string, val: string | (() => string)) => void;
+    hide: (elm: HTMLElement, type?: string) => void;
+    show: (elm: HTMLElement, type?: string) => void;
+    toFloat: (val: number) => number;
+    windowScrollPosition: () => { top: number; left: number; };
+  }
 }

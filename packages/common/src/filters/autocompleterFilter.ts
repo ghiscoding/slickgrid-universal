@@ -2,7 +2,7 @@ import * as autocompleter_ from 'autocompleter';
 const autocomplete = (autocompleter_ && autocompleter_['default'] || autocompleter_) as <T extends AutocompleteItem>(settings: AutocompleteSettings<T>) => AutocompleteResult; // patch for rollup
 
 import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
-import { isPrimmitive, toKebabCase, toSentenceCase } from '@slickgrid-universal/utils';
+import { isPrimitiveValue, toKebabCase, toSentenceCase } from '@slickgrid-universal/utils';
 
 import {
   FieldType,
@@ -402,7 +402,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
 
     // the kradeen autocomplete lib only works with label/value pair, make sure that our array is in accordance
     if (Array.isArray(collection)) {
-      if (collection.every(x => isPrimmitive(x))) {
+      if (collection.every(x => isPrimitiveValue(x))) {
         // when detecting an array of primitives, we have to remap it to an array of value/pair objects
         collection = collection.map(c => ({ label: c, value: c }));
       } else {

@@ -217,7 +217,7 @@ export class SlickRowMoveManager {
           insertBefore,
         };
 
-        if (this._addonOptions?.onBeforeMoveRows?.(e, eventData) === false || this.onBeforeMoveRows.notify(eventData) === false) {
+        if (this._addonOptions?.onBeforeMoveRows?.(e, eventData) === false || this.onBeforeMoveRows.notify(eventData).getReturnValue() === false) {
           dd.canMove = false;
         } else {
           dd.canMove = true;

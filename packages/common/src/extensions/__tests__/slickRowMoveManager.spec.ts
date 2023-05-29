@@ -8,7 +8,7 @@ declare const Slick: SlickNamespace;
 const GRID_UID = 'slickgrid_12345';
 jest.mock('flatpickr', () => { });
 
-const addJQueryEventPropagation = function (event, target?: HTMLElement) {
+const addVanillaEventPropagation = function (event, target?: HTMLElement) {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
   Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
   if (target) {
@@ -243,7 +243,7 @@ describe('SlickRowMoveManager Plugin', () => {
     plugin.init(gridStub);
 
     const divElm = document.createElement('div');
-    const mouseEvent = addJQueryEventPropagation(new Event('mouseenter'), divElm);
+    const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
     const stopImmediatePropagationSpy = jest.spyOn(mouseEvent, 'stopImmediatePropagation');
     gridStub.onDragInit.notify({
       count: 1, deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3, proxy: document.createElement('div'), guide: document.createElement('div'), row: 2, rows: [2],
@@ -256,7 +256,7 @@ describe('SlickRowMoveManager Plugin', () => {
     plugin.init(gridStub, { hideRowMoveShadow: false });
 
     const divElm = document.createElement('div');
-    const mouseEvent = addJQueryEventPropagation(new Event('mouseenter'), divElm);
+    const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
     const stopImmediatePropagationSpy = jest.spyOn(mouseEvent, 'stopImmediatePropagation');
     const mockArgs = {
       deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3,
@@ -287,7 +287,7 @@ describe('SlickRowMoveManager Plugin', () => {
     const onMoveRowNotifySpy = jest.spyOn(plugin.onMoveRows, 'notify');
 
     const divElm = document.createElement('div');
-    const mouseEvent = addJQueryEventPropagation(new Event('mouseenter'), divElm);
+    const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
     const stopImmediatePropagationSpy = jest.spyOn(mouseEvent, 'stopImmediatePropagation');
     const mockArgs = {
       deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3,
@@ -309,7 +309,7 @@ describe('SlickRowMoveManager Plugin', () => {
 
     gridStub.onDragEnd.notify(mockArgs, mouseEvent);
     expect(onMoveRowNotifySpy).toHaveBeenCalledWith({ insertBefore: -1, rows: [mockNewMovedRow], grid: gridStub, });
-    expect(mockOnMoveRows).toHaveBeenCalledWith(mouseEvent, { insertBefore: -1, rows: [mockNewMovedRow], grid: gridStub, });
+    expect(mockOnMoveRows).toHaveBeenCalledWith(expect.anything(), { insertBefore: -1, rows: [mockNewMovedRow], grid: gridStub, });
     expect(stopImmediatePropagationSpy).toHaveBeenCalledTimes(2);
   });
 
@@ -324,13 +324,13 @@ describe('SlickRowMoveManager Plugin', () => {
     const cancelEditorSpy = jest.spyOn(gridStub.getEditorLock(), 'cancelCurrentEdit');
 
     const divElm = document.createElement('div');
-    const mouseEvent = addJQueryEventPropagation(new Event('mouseenter'), divElm);
+    const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
     const stopImmediatePropagationSpy = jest.spyOn(mouseEvent, 'stopImmediatePropagation');
     const mockArgs = {
       canMove: true, deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3,
       row: 2, rows: [2], selectedRows: [2], insertBefore: 4,
     } as any;
-    const output = gridStub.onDragStart.notify(mockArgs, mouseEvent);
+    const output = gridStub.onDragStart.notify(mockArgs, mouseEvent).getReturnValue();
 
     expect(stopImmediatePropagationSpy).not.toHaveBeenCalled();
     expect(cancelEditorSpy).toHaveBeenCalled();
@@ -347,7 +347,7 @@ describe('SlickRowMoveManager Plugin', () => {
     jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
 
     const divElm = document.createElement('div');
-    const mouseEvent = addJQueryEventPropagation(new Event('mouseenter'), divElm);
+    const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
     const stopImmediatePropagationSpy = jest.spyOn(mouseEvent, 'stopImmediatePropagation');
     const mockArgs = {
       canMove: true, deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3,
@@ -376,7 +376,7 @@ describe('SlickRowMoveManager Plugin', () => {
     jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(false);
 
     const divElm = document.createElement('div');
-    const mouseEvent = addJQueryEventPropagation(new Event('mouseenter'), divElm);
+    const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
     const stopImmediatePropagationSpy = jest.spyOn(mouseEvent, 'stopImmediatePropagation');
     const mockArgs = {
       deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3,
@@ -424,7 +424,7 @@ describe('SlickRowMoveManager Plugin', () => {
     jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(false);
 
     const divElm = document.createElement('div');
-    const mouseEvent = addJQueryEventPropagation(new Event('mouseenter'), divElm);
+    const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'), divElm);
     const stopImmediatePropagationSpy = jest.spyOn(mouseEvent, 'stopImmediatePropagation');
     const mockArgs = {
       deltaX: 0, deltaY: 1, offsetX: 2, offsetY: 3,

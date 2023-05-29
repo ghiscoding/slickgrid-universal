@@ -8,7 +8,7 @@ import { KeyCode } from '../../enums';
 
 declare const Slick: SlickNamespace;
 
-const addJQueryEventPropagation = function (event, commandKey = '', keyName = '', target?: HTMLElement, which: string | number = '') {
+const addVanillaEventPropagation = function (event, commandKey = '', keyName = '', target?: HTMLElement, which: string | number = '') {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
   Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
   if (commandKey) {
@@ -177,7 +177,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
 
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
-    const clickEvent = addJQueryEventPropagation(new Event('click'), '', '', checkboxElm);
+    const clickEvent = addVanillaEventPropagation(new Event('click'), '', '', checkboxElm);
     const preventDefaultSpy = jest.spyOn(clickEvent, 'preventDefault');
     const stopImmediatePropagationSpy = jest.spyOn(clickEvent, 'stopImmediatePropagation');
     gridStub.onHeaderClick.notify({ column: { id: '_checkbox_selector', field: '_checkbox_selector' }, grid: gridStub }, clickEvent);
@@ -212,7 +212,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
     checkboxElm.checked = true;
-    const clickEvent = addJQueryEventPropagation(new Event('click'), '', '', checkboxElm);
+    const clickEvent = addVanillaEventPropagation(new Event('click'), '', '', checkboxElm);
     const stopPropagationSpy = jest.spyOn(clickEvent, 'stopPropagation');
     const stopImmediatePropagationSpy = jest.spyOn(clickEvent, 'stopImmediatePropagation');
     gridStub.onHeaderClick.notify({ column: { id: '_checkbox_selector', field: '_checkbox_selector' }, grid: gridStub }, clickEvent);
@@ -220,7 +220,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(plugin).toBeTruthy();
     expect(stopPropagationSpy).toHaveBeenCalled();
     expect(stopImmediatePropagationSpy).toHaveBeenCalled();
-    expect(setSelectedRowSpy).toHaveBeenCalledWith([0, 1, 2], 'click.selectAll');
+    expect(setSelectedRowSpy).toHaveBeenCalledWith([0, 2], 'click.selectAll');
     expect(onToggleStartMock).toHaveBeenCalledWith(expect.anything(), { caller: 'click.selectAll', previousSelectedRows: undefined, });
     expect(onToggleEndMock).toHaveBeenCalledWith(expect.anything(), { caller: 'click.selectAll', previousSelectedRows: undefined, rows: [0, 2] });
   });
@@ -246,7 +246,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
     checkboxElm.checked = true;
-    const clickEvent = addJQueryEventPropagation(new Event('click'), '', '', checkboxElm);
+    const clickEvent = addVanillaEventPropagation(new Event('click'), '', '', checkboxElm);
     const stopPropagationSpy = jest.spyOn(clickEvent, 'stopPropagation');
     const stopImmediatePropagationSpy = jest.spyOn(clickEvent, 'stopImmediatePropagation');
     gridStub.onHeaderClick.notify({ column: { id: '_checkbox_selector', field: '_checkbox_selector' }, grid: gridStub }, clickEvent);
@@ -254,7 +254,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(plugin).toBeTruthy();
     expect(stopPropagationSpy).toHaveBeenCalled();
     expect(stopImmediatePropagationSpy).toHaveBeenCalled();
-    expect(setSelectedRowSpy).toHaveBeenCalledWith([0, 1, 2], 'click.selectAll');
+    expect(setSelectedRowSpy).toHaveBeenCalledWith([0, 2], 'click.selectAll');
     expect(onToggleStartMock).toHaveBeenCalledWith(expect.anything(), { caller: 'click.selectAll', previousSelectedRows: undefined, });
     expect(onToggleEndMock).toHaveBeenCalledWith(expect.anything(), { caller: 'click.selectAll', previousSelectedRows: undefined, rows: [0, 2] });
     expect(setSelectedIdsSpy).toHaveBeenCalledWith([22], { isRowBeingAdded: true });
@@ -498,7 +498,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin.init(gridStub);
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
-    const clickEvent = addJQueryEventPropagation(new Event('click'), '', '', checkboxElm);
+    const clickEvent = addVanillaEventPropagation(new Event('click'), '', '', checkboxElm);
     const stopPropagationSpy = jest.spyOn(clickEvent, 'stopPropagation');
     const stopImmediatePropagationSpy = jest.spyOn(clickEvent, 'stopImmediatePropagation');
     gridStub.onClick.notify({ cell: 0, row: 2, grid: gridStub }, clickEvent);
@@ -517,7 +517,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin.setOptions({ onRowToggleStart: onToggleStartMock });
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
-    const clickEvent = addJQueryEventPropagation(new Event('click'), '', '', checkboxElm);
+    const clickEvent = addVanillaEventPropagation(new Event('click'), '', '', checkboxElm);
     const stopPropagationSpy = jest.spyOn(clickEvent, 'stopPropagation');
     const stopImmediatePropagationSpy = jest.spyOn(clickEvent, 'stopImmediatePropagation');
     gridStub.onClick.notify({ cell: 0, row: 2, grid: gridStub }, clickEvent);
@@ -537,7 +537,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin.setOptions({ onRowToggleEnd: onToggleEndMock });
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
-    const clickEvent = addJQueryEventPropagation(new Event('click'), '', '', checkboxElm);
+    const clickEvent = addVanillaEventPropagation(new Event('click'), '', '', checkboxElm);
     const stopPropagationSpy = jest.spyOn(clickEvent, 'stopPropagation');
     const stopImmediatePropagationSpy = jest.spyOn(clickEvent, 'stopImmediatePropagation');
     gridStub.onClick.notify({ cell: 0, row: 2, grid: gridStub }, clickEvent);
@@ -557,7 +557,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin.init(gridStub);
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
-    const clickEvent = addJQueryEventPropagation(new Event('click'), '', '', checkboxElm);
+    const clickEvent = addVanillaEventPropagation(new Event('click'), '', '', checkboxElm);
     const preventDefaultSpy = jest.spyOn(clickEvent, 'preventDefault');
     const stopImmediatePropagationSpy = jest.spyOn(clickEvent, 'stopImmediatePropagation');
     gridStub.onClick.notify({ cell: 0, row: 2, grid: gridStub }, clickEvent);
@@ -575,7 +575,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin.init(gridStub);
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
-    const keyboardEvent = addJQueryEventPropagation(new Event('keyDown'), '', ' ', checkboxElm);
+    const keyboardEvent = addVanillaEventPropagation(new Event('keyDown'), '', ' ', checkboxElm);
     const preventDefaultSpy = jest.spyOn(keyboardEvent, 'preventDefault');
     const stopImmediatePropagationSpy = jest.spyOn(keyboardEvent, 'stopImmediatePropagation');
     gridStub.onKeyDown.notify({ cell: 0, row: 2, grid: gridStub }, keyboardEvent);
@@ -598,7 +598,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin.init(gridStub);
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
-    const keyboardEvent = addJQueryEventPropagation(new Event('keyDown'), '', ' ', checkboxElm, KeyCode.SPACE);
+    const keyboardEvent = addVanillaEventPropagation(new Event('keyDown'), '', ' ', checkboxElm, KeyCode.SPACE);
     const preventDefaultSpy = jest.spyOn(keyboardEvent, 'preventDefault');
     const stopImmediatePropagationSpy = jest.spyOn(keyboardEvent, 'stopImmediatePropagation');
     gridStub.onKeyDown.notify({ cell: 0, row: 2, grid: gridStub }, keyboardEvent);
@@ -620,7 +620,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin.init(gridStub);
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
-    const clickEvent = addJQueryEventPropagation(new Event('keyDown'), '', ' ', checkboxElm);
+    const clickEvent = addVanillaEventPropagation(new Event('keyDown'), '', ' ', checkboxElm);
     gridStub.onSelectedRowsChanged.notify({ rows: [2, 3], previousSelectedRows: [0, 1], grid: gridStub } as OnSelectedRowsChangedEventArgs, clickEvent);
 
     expect(plugin).toBeTruthy();
@@ -646,7 +646,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin.init(gridStub);
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
-    const clickEvent = addJQueryEventPropagation(new Event('keyDown'), '', ' ', checkboxElm);
+    const clickEvent = addVanillaEventPropagation(new Event('keyDown'), '', ' ', checkboxElm);
     gridStub.onSelectedRowsChanged.notify({ rows: [2, 3], previousSelectedRows: [0, 1], grid: gridStub } as OnSelectedRowsChangedEventArgs, clickEvent);
 
     expect(plugin).toBeTruthy();
@@ -677,7 +677,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
 
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
-    const clickEvent = addJQueryEventPropagation(new Event('keyDown'), '', ' ', checkboxElm);
+    const clickEvent = addVanillaEventPropagation(new Event('keyDown'), '', ' ', checkboxElm);
     gridStub.onSelectedRowsChanged.notify({ rows: [2, 3], previousSelectedRows: [0, 1], grid: gridStub } as OnSelectedRowsChangedEventArgs, clickEvent);
 
     expect(plugin).toBeTruthy();
@@ -712,7 +712,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
 
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
-    const clickEvent = addJQueryEventPropagation(new Event('keyDown'), '', ' ', checkboxElm);
+    const clickEvent = addVanillaEventPropagation(new Event('keyDown'), '', ' ', checkboxElm);
     dataViewStub.onSelectedRowIdsChanged.notify({ rows: [0, 1], filteredIds: [1, 2], ids: [1, 2], selectedRowIds: [1, 2], dataView: dataViewStub, grid: gridStub }, clickEvent);
 
     expect(plugin).toBeTruthy();

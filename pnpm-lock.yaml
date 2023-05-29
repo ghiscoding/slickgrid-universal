@@ -7,6 +7,10 @@ overrides:
 importers:
 
   .:
+    dependencies:
+      conventional-changelog-conventionalcommits:
+        specifier: ^5.0.0
+        version: 5.0.0
     devDependencies:
       '@4tw/cypress-drag-drop':
         specifier: ^2.2.3
@@ -68,9 +72,6 @@ importers:
       jest-extended:
         specifier: ^3.2.4
         version: 3.2.4(jest@29.5.0)
-      jquery:
-        specifier: ^3.7.0
-        version: 3.7.0
       jsdom:
         specifier: ^22.0.0
         version: 22.0.0
@@ -96,8 +97,8 @@ importers:
         specifier: ^4.0.2
         version: 4.0.2
       slickgrid:
-        specifier: ^3.0.4
-        version: 3.0.4
+        specifier: ^4.0.0
+        version: 4.0.0
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -158,18 +159,18 @@ importers:
       dompurify:
         specifier: ^3.0.3
         version: 3.0.3
+      fetch-jsonp:
+        specifier: ^1.2.3
+        version: 1.2.3
       flatpickr:
         specifier: ^4.6.13
         version: 4.6.13
-      jquery:
-        specifier: ^3.7.0
-        version: 3.7.0
       moment-mini:
         specifier: ^2.29.4
         version: 2.29.4
-      multiple-select-modified:
-        specifier: ^1.3.17
-        version: 1.3.17
+      multiple-select-vanilla:
+        specifier: ^0.3.1
+        version: 0.3.1
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -183,9 +184,6 @@ importers:
       '@types/fnando__sparkline':
         specifier: ^0.3.4
         version: 0.3.4
-      '@types/jquery':
-        specifier: ^3.5.16
-        version: 3.5.16
       '@types/moment':
         specifier: ^2.13.0
         version: 2.13.0
@@ -237,18 +235,15 @@ importers:
       flatpickr:
         specifier: ^4.6.13
         version: 4.6.13
-      jquery:
-        specifier: ^3.7.0
-        version: 3.7.0
       moment-mini:
         specifier: ^2.29.4
         version: 2.29.4
-      multiple-select-modified:
-        specifier: ^1.3.17
-        version: 1.3.17
+      multiple-select-vanilla:
+        specifier: ^0.3.1
+        version: 0.3.1
       slickgrid:
-        specifier: ^3.0.4
-        version: 3.0.4
+        specifier: ^4.0.0
+        version: 4.0.0
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -259,9 +254,6 @@ importers:
       '@types/dompurify':
         specifier: ^3.0.2
         version: 3.0.2
-      '@types/jquery':
-        specifier: ^3.5.16
-        version: 3.5.16
       '@types/sortablejs':
         specifier: ^1.15.1
         version: 1.15.1
@@ -471,8 +463,8 @@ importers:
         specifier: workspace:~
         version: link:../common
       rxjs:
-        specifier: '>=7.5.0'
-        version: 7.5.6
+        specifier: ^7.8.1
+        version: 7.8.1
     devDependencies:
       cross-env:
         specifier: ^7.0.3
@@ -505,9 +497,6 @@ importers:
 
   packages/utils:
     devDependencies:
-      '@types/jquery':
-        specifier: ^3.5.16
-        version: 3.5.16
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -544,12 +533,9 @@ importers:
       flatpickr:
         specifier: ^4.6.13
         version: 4.6.13
-      jquery:
-        specifier: ^3.7.0
-        version: 3.7.0
       slickgrid:
-        specifier: ^3.0.4
-        version: 3.0.4
+        specifier: ^4.0.0
+        version: 4.0.0
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -560,9 +546,6 @@ importers:
       '@slickgrid-universal/graphql':
         specifier: workspace:~
         version: link:../graphql
-      '@types/jquery':
-        specifier: ^3.5.16
-        version: 3.5.16
       '@types/sortablejs':
         specifier: ^1.15.1
         version: 1.15.1
@@ -611,16 +594,10 @@ importers:
       '@slickgrid-universal/vanilla-bundle':
         specifier: workspace:~
         version: link:../vanilla-bundle
-      jquery:
-        specifier: ^3.7.0
-        version: 3.7.0
       whatwg-fetch:
         specifier: ^3.6.2
         version: 3.6.2
     devDependencies:
-      '@types/jquery':
-        specifier: ^3.5.16
-        version: 3.5.16
       archiver:
         specifier: ^5.3.1
         version: 5.3.1
@@ -2307,12 +2284,6 @@ packages:
       pretty-format: 29.5.0
     dev: true
 
-  /@types/jquery@3.5.16:
-    resolution: {integrity: sha512-bsI7y4ZgeMkmpG9OM710RRzDFp+w4P1RGiIt30C1mSBT+ExCleeh4HObwgArnDFELmRrOpXgSYN9VF1hj+f1lw==}
-    dependencies:
-      '@types/sizzle': 2.3.3
-    dev: true
-
   /@types/jsdom@20.0.0:
     resolution: {integrity: sha512-YfAchFs0yM1QPDrLm2VHe+WHGtqms3NXnXAMolrgrVP6fgBHHXy1ozAbo/dFtPNtZC/m66bPiCTWYmqp1F14gA==}
     dependencies:
@@ -2773,7 +2744,6 @@ packages:
 
   /array-ify@1.0.0:
     resolution: {integrity: sha512-c5AMf34bKdvPhQ7tBGhqkgKNUzMr4WUs+WDtC2ZUGOUncbxKMTvqxYctiseW3+L4bA8ec+GcZ6/A/FW4m8ukng==}
-    dev: true
 
   /array-includes@3.1.6:
     resolution: {integrity: sha512-sgTbLvL6cNnw24FnbaDyjmvddQ2ML8arZsgaJhoABMoplz/4QRhtrYS+alr1BUM1Bwp6dhx8vVCBSLG+StwOFw==}
@@ -3415,7 +3385,6 @@ packages:
     dependencies:
       array-ify: 1.0.0
       dot-prop: 5.3.0
-    dev: true
 
   /compress-commons@4.1.1:
     resolution: {integrity: sha512-QLdDLCKNV2dtoTorqgxngQCMA+gWXkM/Nwu7FpeBhk/RdkzimqC3jueb/FDmaZeXh+uby1jkBqE3xArsLBE5wQ==}
@@ -3459,6 +3428,15 @@ packages:
       compare-func: 2.0.0
       q: 1.5.1
     dev: true
+
+  /conventional-changelog-conventionalcommits@5.0.0:
+    resolution: {integrity: sha512-lCDbA+ZqVFQGUj7h9QBKoIpLhl8iihkO0nCTyRNzuXtcd7ubODpYB04IFy31JloiJgG0Uovu8ot8oxRzn7Nwtw==}
+    engines: {node: '>=10'}
+    dependencies:
+      compare-func: 2.0.0
+      lodash: 4.17.21
+      q: 1.5.1
+    dev: false
 
   /conventional-changelog-core@4.2.4:
     resolution: {integrity: sha512-gDVS+zVJHE2v4SLc6B0sLsPiloR0ygU7HaDW14aNJE1v4SlqJPILPl/aJC7YdtRE4CybBf8gDwObBvKha8Xlyg==}
@@ -4027,7 +4005,6 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       is-obj: 2.0.0
-    dev: true
 
   /dotenv@16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
@@ -4601,6 +4578,10 @@ packages:
       node-domexception: 1.0.0
       web-streams-polyfill: 3.2.1
     dev: true
+
+  /fetch-jsonp@1.2.3:
+    resolution: {integrity: sha512-C13k1o7R9JTN1wmhKkrW5bU/00LwixXnkufQUR6Rbf4KCS0i8mycQaovt4WVbHnA2NKgi7Ryp9Whpy/CGcij6Q==}
+    dev: false
 
   /figures@3.2.0:
     resolution: {integrity: sha512-yaduQFRKLXYOGgEn6AZau90j3ggSOyiqXU0F9JZfeXYhNa+Jk4X+s45A2zg5jns87GAFa34BBm2kXw4XpNcbdg==}
@@ -5469,7 +5450,6 @@ packages:
   /is-obj@2.0.0:
     resolution: {integrity: sha512-drqDG3cbczxxEJRoOXcOjtdp1J/lyp1mNn0xaznRs8+muBhgQcrnbspox5X5fOw0HnMnbfDzvnEMEtqDEJEo8w==}
     engines: {node: '>=8'}
-    dev: true
 
   /is-path-inside@3.0.3:
     resolution: {integrity: sha512-Fd4gABb+ycGAmKou8eMftCupSir5lRxqf4aD/vd0cD2qc4HL07OjCeuHMr8Ro4CoMaeCKDB0/ECBOVWjTwUvPQ==}
@@ -6115,9 +6095,6 @@ packages:
       - supports-color
       - ts-node
     dev: true
-
-  /jquery@3.7.0:
-    resolution: {integrity: sha512-umpJ0/k8X0MvD1ds0P9SfowREz2LenHsQaxSohMZ5OMNEU2r0tf8pdeEFTHMFxWVxKNyU9rTtK3CWzUCTKJUeQ==}
 
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -6868,10 +6845,8 @@ packages:
       minimatch: 3.1.2
     dev: true
 
-  /multiple-select-modified@1.3.17:
-    resolution: {integrity: sha512-PbF++gNu4gIT0gYrlX82NXOVnw/Xz0M8ilVHVWRRDZgTsX/FBNeHg94pIM4mbsQ4JKO4ggSGLoYG4GheuUG2/Q==}
-    dependencies:
-      jquery: 3.7.0
+  /multiple-select-vanilla@0.3.1:
+    resolution: {integrity: sha512-HJy4bYAcSSYcvGei82lhjxvch4y3/ypC5J5+shss5Hnwnpumw/+Rz4jEHl805XnmqME2/WCa0rwxnQnvmDSurA==}
     dev: false
 
   /mute-stream@1.0.0:
@@ -8256,12 +8231,6 @@ packages:
       queue-microtask: 1.2.3
     dev: true
 
-  /rxjs@7.5.6:
-    resolution: {integrity: sha512-dnyv2/YsXhnm461G+R/Pe5bWP41Nm6LBXEYWI6eiFP4fiwx6WRI/CD0zbdVAudd9xwLEF2IDcKXLHit0FYjUzw==}
-    dependencies:
-      tslib: 2.4.0
-    dev: false
-
   /rxjs@7.8.1:
     resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
     dependencies:
@@ -8445,10 +8414,9 @@ packages:
       is-fullwidth-code-point: 3.0.0
     dev: true
 
-  /slickgrid@3.0.4:
-    resolution: {integrity: sha512-0CY57mxZWJ5Y9XI29ogC4kIMQmyOIHSbmCefOnFFvVUsaI0yqKHfOC84TtGwCScxQfYWFM4AhvWBrae3ff3YZA==}
+  /slickgrid@4.0.0:
+    resolution: {integrity: sha512-Z3TMxPys1Ant60qtnD7aKRU9PtzPld8/KOSfZu3Wgb1IbxCu4so1XB3XTzQH8F5/9jc7iNQefaprQ5fkAYS36w==}
     dependencies:
-      jquery: 3.7.0
       sortablejs: 1.15.0
 
   /smart-buffer@4.2.0:

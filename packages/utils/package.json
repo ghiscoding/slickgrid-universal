@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/utils",
-  "version": "2.6.4",
+  "version": "3.0.0-beta.0",
   "description": "Common set of small utilities",
   "main": "dist/commonjs/index.js",
   "module": "dist/esm/index.js",
@@ -54,7 +54,6 @@
     "not dead"
   ],
   "devDependencies": {
-    "@types/jquery": "^3.5.16",
     "cross-env": "^7.0.3",
     "npm-run-all2": "^6.0.5"
   }

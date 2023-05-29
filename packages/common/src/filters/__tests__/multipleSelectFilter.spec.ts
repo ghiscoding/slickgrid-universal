@@ -1,5 +1,5 @@
 // import 3rd party lib multiple-select for the tests
-import 'multiple-select-modified';
+import 'multiple-select-vanilla';
 
 import { Filters } from '../filters.index';
 import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
@@ -73,6 +73,6 @@ describe('SelectFilter', () => {
     expect(spyGetHeaderRow).toHaveBeenCalled();
     expect(filterCount).toBe(1);
     expect(filter.isMultipleSelect).toBe(true);
-    expect(filter.columnDef.filter.emptySearchTermReturnAllValues).toBeFalse();
+    expect(filter.columnDef.filter!.emptySearchTermReturnAllValues).toBeFalse();
   });
 });

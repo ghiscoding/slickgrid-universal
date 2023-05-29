@@ -260,7 +260,7 @@ describe('SliderRangeFilter', () => {
     const filterLowestElm = divContainer.querySelector('.lowest-range-duration') as HTMLInputElement;
     const filterHighestElm = divContainer.querySelector('.highest-range-duration') as HTMLInputElement;
 
-    expect(consoleSpy).toHaveBeenCalledWith('[Slickgrid-Universal] All filter.params are moving to "filterOptions" for better typing support and "params" will be deprecated in future release.');
+    expect(consoleSpy).toHaveBeenCalledWith('[Slickgrid-Universal] All filter.params from Slider Filter are moving to "filterOptions" for better typing support and "params" will be deprecated in future release.');
     expect(filterLowestElm.textContent).toBe('4');
     expect(filterHighestElm.textContent).toBe('69');
     expect(filter.currentValues).toEqual([4, 69]);

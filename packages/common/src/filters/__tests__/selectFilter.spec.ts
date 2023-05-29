@@ -1,5 +1,5 @@
 // import 3rd party lib multiple-select for the tests
-import 'multiple-select-modified';
+import 'multiple-select-vanilla';
 import { of, Subject } from 'rxjs';
 
 import { FieldType, OperatorType } from '../../enums/index';
@@ -46,6 +46,7 @@ describe('SelectFilter', () => {
 
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
+    document.body.innerHTML = '';
     document.body.appendChild(divContainer);
     spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
@@ -143,7 +144,7 @@ describe('SelectFilter', () => {
     mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
     filter.init(filterArguments);
-    const filterElm = divContainer.querySelector('.ms-filter.search-filter.filter-gender .placeholder') as HTMLSpanElement;
+    const filterElm = divContainer.querySelector('.ms-filter.search-filter.filter-gender .ms-placeholder') as HTMLSpanElement;
 
     expect(filterElm.innerHTML).toBe(testValue);
   });
@@ -154,14 +155,13 @@ describe('SelectFilter', () => {
 
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
-    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+    const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
 
-    // we can use property "checked" or dispatch an event
-    filterListElm[0].checked = true;
-    filterListElm[0].dispatchEvent(new Event('click'));
+    filter.msInstance?.setSelects(['male']);
     filterOkElm.click();
+    filter.msInstance?.close();
 
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
     expect(filterListElm.length).toBe(2);
@@ -175,10 +175,11 @@ describe('SelectFilter', () => {
 
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
-    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+    const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
+    filter.msInstance?.close();
 
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
     expect(filterListElm.length).toBe(2);
@@ -192,15 +193,15 @@ describe('SelectFilter', () => {
     mockColumn.filter!.collection = ['male', 'female'];
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
-    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+    const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
 
-    // here we use "checked" property instead of dispatching an event
-    filterListElm[0].checked = true;
-    filterOkElm.click();
+    filter.msInstance?.setSelects(['male']);
+    filter.msInstance?.close();
 
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
+    expect(filterOkElm).toBeTruthy();
     expect(filterListElm.length).toBe(2);
     expect(filterFilledElms.length).toBe(1);
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['male'], shouldTriggerQuery: true });
@@ -211,28 +212,49 @@ describe('SelectFilter', () => {
     mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
-    filter.init(filterArguments);
+    filter.init({ ...filterArguments, columnDef: mockColumn });
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
-    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+    const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
 
-    filterListElm[0].checked = true;
-    filterOkElm.click();
+    filter.msInstance?.setSelects(['male']);
+    filter.msInstance?.close();
 
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
+    expect(filterOkElm).toBeTruthy();
     expect(filterListElm.length).toBe(2);
     expect(filterFilledElms.length).toBe(1);
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'NIN', searchTerms: ['male'], shouldTriggerQuery: true });
   });
 
-  it('should have same value in "getValues" after being set in "setValues"', () => {
+  it('should have same value in "getValues" after being set in "setValues" a single string', () => {
     mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     filter.init(filterArguments);
     filter.setValues('female');
     const values = filter.getValues();
 
     expect(values).toEqual(['female']);
+    expect(values.length).toBe(1);
+  });
+
+  it('should have same value in "getValues" after being set in "setValues" with an array', () => {
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    filter.init(filterArguments);
+    filter.setValues(['female']);
+    const values = filter.getValues();
+
+    expect(values).toEqual(['female']);
+    expect(values.length).toBe(1);
+  });
+
+  it('should provide boolean values and expect "getValues" to be converted to string', () => {
+    mockColumn.filter!.collection = [{ value: true, label: 'True' }, { value: false, label: 'False' }];
+    filter.init(filterArguments);
+    filter.setValues([false]);
+    const values = filter.getValues();
+
+    expect(values).toEqual(['false']);
     expect(values.length).toBe(1);
   });
 
@@ -259,11 +281,12 @@ describe('SelectFilter', () => {
     filterArguments.searchTerms = ['female'];
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+    const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
+    filter.msInstance?.close();
 
     expect(filterListElm.length).toBe(2);
     expect(filterFilledElms.length).toBe(1);
@@ -278,11 +301,12 @@ describe('SelectFilter', () => {
     filterArguments.searchTerms = [false];
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+    const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
+    filter.msInstance?.close();
 
     expect(filterListElm.length).toBe(2);
     expect(filterFilledElms.length).toBe(1);
@@ -297,11 +321,12 @@ describe('SelectFilter', () => {
     filterArguments.searchTerms = [2];
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+    const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
+    filter.msInstance?.close();
 
     expect(filterListElm.length).toBe(2);
     expect(filterFilledElms.length).toBe(1);
@@ -316,11 +341,12 @@ describe('SelectFilter', () => {
     filterArguments.searchTerms = ['female'];
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+    const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
+    filter.msInstance?.close();
 
     expect(filterListElm.length).toBe(2);
     expect(filterFilledElms.length).toBe(1);
@@ -339,8 +365,9 @@ describe('SelectFilter', () => {
 
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
+    filter.msInstance?.close();
 
     expect(filterListElm.length).toBe(3);
     expect(filterListElm[0].textContent).toBe('other');
@@ -364,7 +391,7 @@ describe('SelectFilter', () => {
 
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
     expect(filterListElm.length).toBe(3);
@@ -381,7 +408,7 @@ describe('SelectFilter', () => {
 
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
     expect(filterListElm.length).toBe(1);
@@ -400,7 +427,7 @@ describe('SelectFilter', () => {
 
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
     expect(filterListElm.length).toBe(1);
@@ -420,7 +447,7 @@ describe('SelectFilter', () => {
 
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
     expect(filterListElm.length).toBe(2);
@@ -437,7 +464,7 @@ describe('SelectFilter', () => {
 
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
     expect(filterListElm.length).toBe(3);
@@ -459,8 +486,9 @@ describe('SelectFilter', () => {
 
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
+    filter.msInstance?.close();
 
     expect(filterListElm.length).toBe(2);
     expect(filterListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> True');
@@ -479,7 +507,7 @@ describe('SelectFilter', () => {
 
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
     expect(filterListElm.length).toBe(2);
@@ -494,11 +522,12 @@ describe('SelectFilter', () => {
 
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+    const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
+    filter.msInstance?.close();
 
     expect(filterListElm.length).toBe(3);
     expect(filterFilledElms.length).toBe(1);
@@ -515,11 +544,12 @@ describe('SelectFilter', () => {
 
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+    const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
+    filter.msInstance?.close();
 
     expect(filterListElm.length).toBe(3);
     expect(filterFilledElms.length).toBe(1);
@@ -536,11 +566,12 @@ describe('SelectFilter', () => {
 
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+    const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
+    filter.msInstance?.close();
 
     expect(filterListElm.length).toBe(3);
     expect(filterFilledElms.length).toBe(1);
@@ -596,8 +627,8 @@ describe('SelectFilter', () => {
 
     const filterSelectAllElm = divContainer.querySelector('.filter-gender .ms-select-all label span') as HTMLSpanElement;
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
-    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
+    const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     const filterParentElm = divContainer.querySelector(`.ms-parent.ms-filter.search-filter.filter-gender button`) as HTMLButtonElement;
     filterBtnElm.click();
 
@@ -629,8 +660,8 @@ describe('SelectFilter', () => {
 
     const filterSelectAllElm = divContainer.querySelector('.filter-gender .ms-select-all label span') as HTMLSpanElement;
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
-    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
+    const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     const filterParentElm = divContainer.querySelector(`.ms-parent.ms-filter.search-filter.filter-gender button`) as HTMLButtonElement;
     filterBtnElm.click();
 
@@ -653,11 +684,12 @@ describe('SelectFilter', () => {
     await filter.init(filterArguments);
 
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+    const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
+    filter.msInstance?.close();
 
     expect(filterListElm.length).toBe(2);
     expect(filterFilledElms.length).toBe(1);
@@ -675,11 +707,12 @@ describe('SelectFilter', () => {
     await filter.init(filterArguments);
 
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+    const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
+    filter.msInstance?.close();
 
     expect(filterListElm.length).toBe(2);
     expect(filterFilledElms.length).toBe(1);
@@ -702,11 +735,12 @@ describe('SelectFilter', () => {
     await filter.init(filterArguments);
 
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+    const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-    const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+    const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
     filterBtnElm.click();
     filterOkElm.click();
+    filter.msInstance?.close();
 
     expect(filterListElm.length).toBe(2);
     expect(filterFilledElms.length).toBe(1);
@@ -725,7 +759,7 @@ describe('SelectFilter', () => {
     await filter.init(filterArguments);
 
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
     expect(filterListElm.length).toBe(3);
@@ -755,7 +789,7 @@ describe('SelectFilter', () => {
     expect(renderSpy).toHaveBeenCalledWith(newCollection);
 
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
     expect(filterListElm.length).toBe(3);
@@ -781,7 +815,7 @@ describe('SelectFilter', () => {
     expect(renderSpy).toHaveBeenCalledWith(mockColumn.filter!.collection);
 
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+    const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
     filterBtnElm.click();
 
     expect(filterListElm.length).toBe(3);
@@ -868,7 +902,7 @@ describe('SelectFilter', () => {
       await filter.init(filterArguments);
 
       const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-      const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[name=filter-gender].ms-drop ul>li span`);
+      const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
       filterBtnElm.click();
 
       expect(filterListElm.length).toBe(3);
@@ -887,11 +921,12 @@ describe('SelectFilter', () => {
       await filter.init(filterArguments);
 
       const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-      const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+      const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
       const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-      const filterOkElm = divContainer.querySelector(`[name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
+      const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
       filterBtnElm.click();
       filterOkElm.click();
+      filter.msInstance?.close();
 
       expect(filterListElm.length).toBe(2);
       expect(filterFilledElms.length).toBe(1);
@@ -907,7 +942,7 @@ describe('SelectFilter', () => {
       await filter.init(filterArguments);
 
       const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-      const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+      const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
       filterBtnElm.click();
 
       expect(filterListElm.length).toBe(2);
@@ -917,7 +952,7 @@ describe('SelectFilter', () => {
       mockCollection.push('other');
       (mockColumn.filter!.collectionAsync as Subject<any[]>).next(mockCollection);
 
-      const filterUpdatedListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+      const filterUpdatedListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
       expect(filterUpdatedListElm.length).toBe(3);
     });
 
@@ -938,7 +973,7 @@ describe('SelectFilter', () => {
       await filter.init(filterArguments);
 
       const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-      const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+      const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
       filterBtnElm.click();
 
       expect(filterListElm.length).toBe(2);
@@ -948,7 +983,7 @@ describe('SelectFilter', () => {
       mockCollection.deep.myCollection.push('other');
       (mockColumn.filter!.collectionAsync as Subject<any[]>).next(mockCollection.deep.myCollection);
 
-      const filterUpdatedListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=filter-gender].ms-drop ul>li input[type=checkbox]`);
+      const filterUpdatedListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
       expect(filterUpdatedListElm.length).toBe(3);
     });
 

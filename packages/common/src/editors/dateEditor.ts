@@ -165,7 +165,7 @@ export class DateEditor implements Editor {
       );
 
       // show clear date button (unless user specifically doesn't want it)
-      if (!getEditorOptionByName<FlatpickrOption, 'hideClearButton'>(this.columnEditor, 'hideClearButton')) {
+      if (!getEditorOptionByName<FlatpickrOption, 'hideClearButton'>(this.columnEditor, 'hideClearButton', undefined, 'date')) {
         closeButtonGroupElm.appendChild(this._clearButtonElm);
         this._editorInputGroupElm.appendChild(closeButtonGroupElm);
         this._bindEventService.bind(this._clearButtonElm, 'click', () => this._lastTriggeredByClearDate = true);
@@ -426,7 +426,7 @@ export class DateEditor implements Editor {
     const activeCell = this.grid.getActiveCell();
     const isCellEditable = this.grid.onBeforeEditCell.notify({
       ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
-    });
+    }).getReturnValue();
     this.disable(isCellEditable === false);
   }
 

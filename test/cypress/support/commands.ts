@@ -31,8 +31,8 @@ declare global {
   namespace Cypress {
     interface Chainable {
       // triggerHover: (elements: NodeListOf<HTMLElement>) => void;
-      convertPosition(viewport: string): Chainable<JQuery<HTMLElement>>;
-      getCell(row: number, col: number, viewport?: string, options?: { parentSelector?: string, rowHeight?: number; }): Chainable<JQuery<HTMLElement>>;
+      convertPosition(viewport: string): Chainable<HTMLElement>;
+      getCell(row: number, col: number, viewport?: string, options?: { parentSelector?: string, rowHeight?: number; }): Chainable<HTMLElement>;
     }
   }
 }

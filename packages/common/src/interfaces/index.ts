@@ -115,7 +115,6 @@ export * from './metrics.interface';
 export * from './metricTexts.interface';
 export * from './mouseOffsetViewport.interface';
 export * from './multiColumnSort.interface';
-export * from './multipleSelectOption.interface';
 export * from './onEventArgs.interface';
 export * from './onValidationErrorResult.interface';
 export * from './operatorDetail.interface';

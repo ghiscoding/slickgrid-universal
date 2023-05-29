@@ -21,7 +21,6 @@
     "skipLibCheck": true,
     "strictPropertyInitialization": false,
     "types": [
-      "jquery",
       "node"
     ],
     "typeRoots": [

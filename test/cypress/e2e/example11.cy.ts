@@ -310,6 +310,14 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(4)`).should($elm => expect(+$elm.text()).to.be.greaterThan(50));
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(4)`).should($elm => expect(+$elm.text()).to.be.greaterThan(50));
 
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).click();
+    cy.get('[data-name="editor-completed"]')
+      .find('li.hide-radio.selected')
+      .find('input[data-name=selectItemeditor-completed][value=true]')
+      .should('exist');
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).click();
+
     cy.get('.selected-view').should('have.value', 'CustomViewTest');
   });
 
@@ -781,5 +789,42 @@ describe('Example 11 - Batch Editing', { retries: 1 }, () => {
 
     cy.get('[style="top:0px"]').should('have.length', 1);
     cy.get('.grid-canvas-left > [style="top:0px"]').children().should('have.length', 11);
+  });
+
+  it('should filter the "Completed" column to True and expect only completed rows to be displayed', () => {
+    cy.get('div.ms-filter.filter-completed')
+      .trigger('click');
+
+    cy.get('.ms-drop')
+      .find('span:nth(1)')
+      .click();
+
+    cy.get('.grid11')
+      .find('.slick-custom-footer')
+      .find('.right-footer .item-count')
+      .should($span => {
+        expect(Number($span.text())).to.lt(50);
+      });
+  });
+
+  it('should filter the "Completed" column to the null option and expect 50 rows displayed', () => {
+    cy.get('div.ms-filter.filter-completed')
+      .trigger('click');
+
+    cy.get('.ms-drop')
+      .find('span:nth(0)')
+      .click();
+
+    cy.get('.filter-title.filled').should('exist');
+    cy.get('.filter-countryOfOrigin.filled').should('exist');
+    cy.get('.filter-completed.filled').should('not.exist');
+    cy.get('.search-filter.filter-completed .ms-choice').should('contain', '');
+
+    cy.get('.grid11')
+      .find('.slick-custom-footer')
+      .find('.right-footer .item-count')
+      .should($span => {
+        expect(Number($span.text())).to.eq(50);
+      });
   });
 });

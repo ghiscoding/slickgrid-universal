@@ -7,7 +7,7 @@ declare const Slick: SlickNamespace;
 const GRID_UID = 'slickgrid_12345';
 jest.mock('flatpickr', () => { });
 
-const addJQueryEventPropagation = function (event) {
+const addVanillaEventPropagation = function (event) {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
   Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
   return event;
@@ -120,25 +120,27 @@ describe('CellRangeSelector Plugin', () => {
     jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(false);
     jest.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
     const focusSpy = jest.spyOn(gridStub, 'focus');
-    jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue(true);
+    jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
+      getReturnValue: () => true
+    });
 
     plugin.init(gridStub);
     const decoratorHideSpy = jest.spyOn(plugin.getCellDecorator(), 'hide');
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
-    const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+    const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
     gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
-    const dragEventInit = addJQueryEventPropagation(new Event('dragInit'));
+    const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
 
-    const dragEventStart = addJQueryEventPropagation(new Event('dragStart'));
+    const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEvent = addJQueryEventPropagation(new Event('drag'));
+    const dragEvent = addVanillaEventPropagation(new Event('drag'));
     gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
 
-    const dragEventEnd = addJQueryEventPropagation(new Event('dragEnd'));
+    const dragEventEnd = addVanillaEventPropagation(new Event('dragEnd'));
     gridStub.onDragEnd.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEventEnd, gridStub);
 
     expect(focusSpy).not.toHaveBeenCalled();
@@ -162,21 +164,23 @@ describe('CellRangeSelector Plugin', () => {
     jest.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
     const focusSpy = jest.spyOn(gridStub, 'focus');
     const scrollSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
-    jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue(true);
+    jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
+      getReturnValue: () => true
+    });
 
     plugin.init(gridStub);
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
-    const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+    const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
     gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
-    const dragEventInit = addJQueryEventPropagation(new Event('dragInit'));
+    const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
 
-    const dragEventStart = addJQueryEventPropagation(new Event('dragStart'));
+    const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEvent = addJQueryEventPropagation(new Event('drag'));
+    const dragEvent = addVanillaEventPropagation(new Event('drag'));
     dragEvent.pageX = 0;
     dragEvent.pageY = 0;
     gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
@@ -203,21 +207,23 @@ describe('CellRangeSelector Plugin', () => {
     jest.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
     const focusSpy = jest.spyOn(gridStub, 'focus');
     const scrollSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
-    const onBeforeCellSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue(true);
+    const onBeforeCellSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
+      getReturnValue: () => true
+    });
 
     plugin.init(gridStub);
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
-    const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+    const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
     gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
-    const dragEventInit = addJQueryEventPropagation(new Event('dragInit'));
+    const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
 
-    const dragEventStart = addJQueryEventPropagation(new Event('dragStart'));
+    const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEvent = addJQueryEventPropagation(new Event('drag'));
+    const dragEvent = addVanillaEventPropagation(new Event('drag'));
     dragEvent.pageX = -2;
     dragEvent.pageY = -156;
     gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
@@ -246,26 +252,30 @@ describe('CellRangeSelector Plugin', () => {
     jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
     jest.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
     const focusSpy = jest.spyOn(gridStub, 'focus');
-    const onBeforeCellRangeSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue(true);
-    const onCellRangeSpy = jest.spyOn(plugin.onCellRangeSelected, 'notify').mockReturnValue(true);
+    const onBeforeCellRangeSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
+      getReturnValue: () => true
+    });
+    const onCellRangeSpy = jest.spyOn(plugin.onCellRangeSelected, 'notify').mockReturnValue({
+      getReturnValue: () => true
+    });
 
     plugin.init(gridStub);
     const decoratorHideSpy = jest.spyOn(plugin.getCellDecorator(), 'hide');
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
-    const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+    const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
     gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
-    const dragEventInit = addJQueryEventPropagation(new Event('dragInit'));
+    const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
 
-    const dragEventStart = addJQueryEventPropagation(new Event('dragStart'));
+    const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEventEnd = addJQueryEventPropagation(new Event('dragEnd'));
+    const dragEventEnd = addVanillaEventPropagation(new Event('dragEnd'));
     gridStub.onDragEnd.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEventEnd, gridStub);
 
-    const dragEvent = addJQueryEventPropagation(new Event('drag'));
+    const dragEvent = addVanillaEventPropagation(new Event('drag'));
     gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
 
     expect(focusSpy).toHaveBeenCalled();
@@ -300,8 +310,12 @@ describe('CellRangeSelector Plugin', () => {
     jest.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
     jest.spyOn(gridStub, 'getCellNodeBox').mockReturnValue({ right: 2, bottom: 3, left: 4, top: 5, height: 20, width: 33, visible: true });
     const focusSpy = jest.spyOn(gridStub, 'focus');
-    const onBeforeCellRangeSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue(true);
-    const onCellRangeSpy = jest.spyOn(plugin.onCellRangeSelected, 'notify').mockReturnValue(true);
+    const onBeforeCellRangeSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
+      getReturnValue: () => true
+    });
+    const onCellRangeSpy = jest.spyOn(plugin.onCellRangeSelected, 'notify').mockReturnValue({
+      getReturnValue: () => true
+    });
     const scrollSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
     const onCellRangeSelectingSpy = jest.spyOn(plugin.onCellRangeSelecting, 'notify');
 
@@ -309,16 +323,16 @@ describe('CellRangeSelector Plugin', () => {
     const decoratorHideSpy = jest.spyOn(plugin.getCellDecorator(), 'hide');
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
-    const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+    const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
     gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
-    const dragEventInit = addJQueryEventPropagation(new Event('dragInit'));
+    const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
 
-    const dragEventStart = addJQueryEventPropagation(new Event('dragStart'));
+    const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEvent = addJQueryEventPropagation(new Event('drag'));
+    const dragEvent = addVanillaEventPropagation(new Event('drag'));
     gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
 
     expect(focusSpy).toHaveBeenCalled();
@@ -350,8 +364,12 @@ describe('CellRangeSelector Plugin', () => {
     jest.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
     jest.spyOn(gridStub, 'getCellNodeBox').mockReturnValue({ right: 2, bottom: 3, left: 4, top: 5, height: 20, width: 33, visible: true });
     const focusSpy = jest.spyOn(gridStub, 'focus');
-    const onBeforeCellRangeSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue(true);
-    const onCellRangeSpy = jest.spyOn(plugin.onCellRangeSelected, 'notify').mockReturnValue(true);
+    const onBeforeCellRangeSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
+      getReturnValue: () => true
+    });
+    const onCellRangeSpy = jest.spyOn(plugin.onCellRangeSelected, 'notify').mockReturnValue({
+      getReturnValue: () => true
+    });
     const scrollSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
     const onCellRangeSelectingSpy = jest.spyOn(plugin.onCellRangeSelecting, 'notify');
 
@@ -359,16 +377,16 @@ describe('CellRangeSelector Plugin', () => {
     const decoratorHideSpy = jest.spyOn(plugin.getCellDecorator(), 'hide');
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
-    const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+    const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
     gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
-    const dragEventInit = addJQueryEventPropagation(new Event('dragInit'));
+    const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
 
-    const dragEventStart = addJQueryEventPropagation(new Event('dragStart'));
+    const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEvent = addJQueryEventPropagation(new Event('drag'));
+    const dragEvent = addVanillaEventPropagation(new Event('drag'));
     gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
 
     expect(focusSpy).toHaveBeenCalled();
@@ -408,21 +426,23 @@ describe('CellRangeSelector Plugin', () => {
     jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
     jest.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 0 });
     const focusSpy = jest.spyOn(gridStub, 'focus');
-    const onBeforeCellRangeSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue(true);
+    const onBeforeCellRangeSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
+      getReturnValue: () => true
+    });
 
     plugin.init(gridStub);
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
-    const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+    const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
     gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
-    const dragEventInit = addJQueryEventPropagation(new Event('dragInit'));
+    const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
 
-    const dragEventStart = addJQueryEventPropagation(new Event('dragStart'));
+    const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEvent = addJQueryEventPropagation(new Event('drag'));
+    const dragEvent = addVanillaEventPropagation(new Event('drag'));
     gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
 
     // expect(focusSpy).toHaveBeenCalled();
@@ -453,21 +473,23 @@ describe('CellRangeSelector Plugin', () => {
     jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
     jest.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 0 });
     const focusSpy = jest.spyOn(gridStub, 'focus');
-    const onBeforeCellRangeSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue(true);
+    const onBeforeCellRangeSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
+      getReturnValue: () => true
+    });
 
     plugin.init(gridStub);
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
-    const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+    const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
     gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
-    const dragEventInit = addJQueryEventPropagation(new Event('dragInit'));
+    const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
 
-    const dragEventStart = addJQueryEventPropagation(new Event('dragStart'));
+    const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEvent = addJQueryEventPropagation(new Event('drag'));
+    const dragEvent = addVanillaEventPropagation(new Event('drag'));
     gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
 
     expect(focusSpy).toHaveBeenCalled();
@@ -503,7 +525,9 @@ describe('CellRangeSelector Plugin', () => {
       isOutsideViewport: true
     });
     const focusSpy = jest.spyOn(gridStub, 'focus');
-    jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue(true);
+    jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
+      getReturnValue: () => true
+    });
     const getCellFromPointSpy = jest.spyOn(gridStub, 'getCellFromPoint');
     const onCellRangeSelectingSpy = jest.spyOn(plugin.onCellRangeSelecting, 'notify');
 
@@ -512,16 +536,16 @@ describe('CellRangeSelector Plugin', () => {
     plugin.addonOptions.maxIntervalToShowNextCell = 6;
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
-    const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+    const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
     gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
-    const dragEventInit = addJQueryEventPropagation(new Event('dragInit'));
+    const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
 
-    const dragEventStart = addJQueryEventPropagation(new Event('dragStart'));
+    const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEvent = addJQueryEventPropagation(new Event('drag'));
+    const dragEvent = addVanillaEventPropagation(new Event('drag'));
     gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
 
     expect(focusSpy).toHaveBeenCalled();
@@ -556,7 +580,9 @@ describe('CellRangeSelector Plugin', () => {
       isOutsideViewport: true
     });
     const focusSpy = jest.spyOn(gridStub, 'focus');
-    jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue(true);
+    jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
+      getReturnValue: () => true
+    });
     const getCellFromPointSpy = jest.spyOn(gridStub, 'getCellFromPoint');
     const onCellRangeSelectingSpy = jest.spyOn(plugin.onCellRangeSelecting, 'notify');
 
@@ -565,16 +591,16 @@ describe('CellRangeSelector Plugin', () => {
     plugin.addonOptions.maxIntervalToShowNextCell = 6;
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
-    const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+    const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
     gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
-    const dragEventInit = addJQueryEventPropagation(new Event('dragInit'));
+    const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
 
-    const dragEventStart = addJQueryEventPropagation(new Event('dragStart'));
+    const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEvent = addJQueryEventPropagation(new Event('drag'));
+    const dragEvent = addVanillaEventPropagation(new Event('drag'));
     gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
 
     expect(focusSpy).toHaveBeenCalled();
@@ -617,7 +643,9 @@ describe('CellRangeSelector Plugin', () => {
       isOutsideViewport: true
     });
     const focusSpy = jest.spyOn(gridStub, 'focus');
-    jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue(true);
+    jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
+      getReturnValue: () => true
+    });
     const getCellFromPointSpy = jest.spyOn(gridStub, 'getCellFromPoint');
     const onCellRangeSelectingSpy = jest.spyOn(plugin.onCellRangeSelecting, 'notify');
 
@@ -626,16 +654,16 @@ describe('CellRangeSelector Plugin', () => {
     plugin.addonOptions.maxIntervalToShowNextCell = 6;
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
 
-    const scrollEvent = addJQueryEventPropagation(new Event('scroll'));
+    const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
     gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
-    const dragEventInit = addJQueryEventPropagation(new Event('dragInit'));
+    const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
 
-    const dragEventStart = addJQueryEventPropagation(new Event('dragStart'));
+    const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEvent = addJQueryEventPropagation(new Event('drag'));
+    const dragEvent = addVanillaEventPropagation(new Event('drag'));
     gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
 
     expect(focusSpy).toHaveBeenCalled();

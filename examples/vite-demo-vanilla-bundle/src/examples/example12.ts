@@ -506,8 +506,10 @@ export default class Example12 {
       };
 
       if (!(i % 8)) {
-        delete tmpArray[i].finish; // also test with undefined properties
-        delete tmpArray[i].percentComplete; // also test with undefined properties
+        // also test with undefined properties
+        delete tmpArray[i].finish;
+        delete tmpArray[i].percentComplete;
+        delete tmpArray[i].analysis.percentComplete;
       }
     }
     return tmpArray;

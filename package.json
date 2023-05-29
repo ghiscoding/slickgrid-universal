@@ -34,8 +34,8 @@
     "preview:publish": "lerna publish from-package --dry-run",
     "preview:version": "lerna version --dry-run",
     "preview:roll-new-release": "pnpm bundle && pnpm new-version --dry-run && pnpm new-publish --dry-run",
-    "preview:alpha-release": "lerna publish 2.0.0-alpha.0 --dist-tag next --dry-run",
-    "preview:major-release": "lerna publish 2.0.0 --dry-run",
+    "beta-release": "lerna publish 3.0.0-beta.0 --dist-tag next",
+    "preview:major-release": "lerna publish 3.0.0 --dry-run",
     "new-version": "lerna version",
     "new-publish": "lerna publish from-package",
     "roll-new-release": "pnpm bundle && pnpm new-version && pnpm new-publish",
@@ -49,7 +49,7 @@
   },
   "comments": {
     "new-version": "To create a new version with Lerna-Lite, simply run the following script (1) 'roll-new-release'.",
-    "devDependencies": "The dev deps 'jQuery', 'slickgrid', 'sortablejs' and 'whatwg-fetch' are simply installed for Jest unit tests."
+    "devDependencies": "The dev deps 'slickgrid', 'sortablejs' and 'whatwg-fetch' are simply installed for Jest unit tests."
   },
   "engines": {
     "node": ">=16.15.0",
@@ -83,7 +83,6 @@
     "jest-cli": "^29.5.0",
     "jest-environment-jsdom": "^29.5.0",
     "jest-extended": "^3.2.4",
-    "jquery": "^3.7.0",
     "jsdom": "^22.0.0",
     "jsdom-global": "^3.0.2",
     "moment-mini": "^2.29.4",
@@ -92,7 +91,7 @@
     "rimraf": "^5.0.1",
     "rxjs": "^7.8.1",
     "servor": "^4.0.2",
-    "slickgrid": "^3.0.4",
+    "slickgrid": "^4.0.0",
     "sortablejs": "^1.15.0",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
@@ -102,5 +101,8 @@
   "funding": {
     "type": "ko_fi",
     "url": "https://ko-fi.com/ghiscoding"
+  },
+  "dependencies": {
+    "conventional-changelog-conventionalcommits": "^5.0.0"
   }
 }

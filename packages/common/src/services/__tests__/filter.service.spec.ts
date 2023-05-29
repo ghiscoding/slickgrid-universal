@@ -1,5 +1,3 @@
-// import 3rd party lib multiple-select for the tests
-import 'multiple-select-modified';
 import { of, throwError } from 'rxjs';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 

@@ -1,5 +1,5 @@
 // import 3rd party lib multiple-select for the tests
-import 'multiple-select-modified';
+import 'multiple-select-vanilla';
 
 import { Editors } from '../index';
 import { SingleSelectEditor } from '../singleSelectEditor';
@@ -91,10 +91,10 @@ describe('SingleSelectEditor', () => {
 
     it('should hide the DOM element div wrapper when the "hide" method is called', () => {
       editor = new SingleSelectEditor(editorArguments);
-      const editorElm = document.body.querySelector('[name=editor-gender].ms-drop') as HTMLDivElement;
+      const editorElm = document.body.querySelector('[data-name=editor-gender].ms-drop') as HTMLDivElement;
 
-      editor.show();
-      expect(editorElm.style.display).toBe('');
+      editor.show(null);
+      expect(editorElm.style.display).toBe('block');
 
       editor.hide();
       expect(editorElm.style.display).toBe('none');
@@ -102,13 +102,13 @@ describe('SingleSelectEditor', () => {
 
     it('should show the DOM element div wrapper when the "show" method is called', () => {
       editor = new SingleSelectEditor(editorArguments);
-      const editorElm = document.body.querySelector('[name=editor-gender].ms-drop') as HTMLDivElement;
+      const editorElm = document.body.querySelector('[data-name=editor-gender].ms-drop') as HTMLDivElement;
 
       editor.hide();
       expect(editorElm.style.display).toBe('none');
 
-      editor.show();
-      expect(editorElm.style.display).toBe('');
+      editor.show(null);
+      expect(editorElm.style.display).toBe('block');
     });
 
     it('should call "setValue" with a single string and expect the string to be returned as an single string when calling "getValue"', () => {
@@ -128,9 +128,9 @@ describe('SingleSelectEditor', () => {
 
     describe('isValueChanged method', () => {
       it('should return False if the value is undefined', () => {
-        editor = new SingleSelectEditor(editorArguments);
+        editor = new SingleSelectEditor(editorArguments, 0);
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=radio]`);
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li input[type=radio]`);
         editorBtnElm.click();
 
         // we can use property "checked" or dispatch an event
@@ -140,9 +140,9 @@ describe('SingleSelectEditor', () => {
       });
 
       it('should return True after doing a check of an option', () => {
-        editor = new SingleSelectEditor(editorArguments);
+        editor = new SingleSelectEditor(editorArguments, 0);
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=radio]`);
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li input[type=radio]`);
         editorBtnElm.click();
 
         // we can use property "checked" or dispatch an event
@@ -157,11 +157,11 @@ describe('SingleSelectEditor', () => {
         (mockColumn.internalColumnEditor as ColumnEditor).collection = ['male', 'female'];
         mockItemData = { id: 1, gender: 'male', isActive: true };
 
-        editor = new SingleSelectEditor(editorArguments);
+        editor = new SingleSelectEditor(editorArguments, 0);
         editor.loadValue(mockItemData);
 
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li input[type=radio]`);
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li input[type=radio]`);
         editorBtnElm.click();
 
         // we can use property "checked" or dispatch an event
@@ -241,10 +241,10 @@ describe('SingleSelectEditor', () => {
           },
         };
 
-        editor = new SingleSelectEditor(editorArguments);
+        editor = new SingleSelectEditor(editorArguments, 0);
         editor.setValue(false);
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li span`);
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li span`);
         editorBtnElm.click();
 
         expect(editor.getValue()).toEqual('');
@@ -269,12 +269,15 @@ describe('SingleSelectEditor', () => {
         };
         mockItemData = { id: 1, gender: 'male', isEffort: true };
 
-        editor = new SingleSelectEditor(editorArguments);
+        editor = new SingleSelectEditor(editorArguments, 0);
         editor.loadValue(mockItemData);
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[name=editor-gender].ms-drop ul>li span`);
-        editorBtnElm.click();
+        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li span`);
 
+        editorBtnElm.click();
+        editorListElm[0].click();
+
+        expect(editorBtnElm).toBeTruthy();
         expect(editor.getValue()).toEqual(`<script>alert('test')></script><i class="fa fa-check"></i> : true`);
         expect(editorListElm.length).toBe(2);
         expect(editorListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> : True');

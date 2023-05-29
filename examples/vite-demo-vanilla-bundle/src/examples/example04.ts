@@ -15,6 +15,7 @@ import {
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import fetchJsonp from 'fetch-jsonp';
 // import { fetch } from 'whatwg-fetch';
 
 import { ExampleGridOptions } from './example-grid-options';
@@ -124,7 +125,7 @@ export default class Example4 {
           editorOptions: {
             filter: true // adds a filter on top of the multi-select dropdown
           },
-          model: Editors.multipleSelect,
+          model: Editors.singleSelect,
         },
       },
       {
@@ -244,22 +245,14 @@ export default class Example4 {
           placeholder: '🔎︎ search city',
 
           // We can use the autocomplete through 3 ways "collection", "collectionAsync" or with your own autocomplete options
-          // use your own autocomplete options, instead of $.ajax, use HttpClient or FetchClient
-          // here we use $.ajax just because I'm not sure how to configure HttpClient with JSONP and CORS
+          // use your own autocomplete options, instead of fetch-jsonp, use HttpClient or FetchClient
           editorOptions: {
             minLength: 3,
             fetch: (searchText, updateCallback) => {
-              $.ajax({
-                url: 'http://gd.geobytes.com/AutoCompleteCity',
-                dataType: 'jsonp',
-                data: {
-                  q: searchText
-                },
-                success: (data) => {
-                  const finalData = (data.length === 1 && data[0] === '') ? [] : data; // invalid result should be [] instead of [''
-                  updateCallback(finalData);
-                }
-              });
+              fetchJsonp(`http://gd.geobytes.com/AutoCompleteCity?q=${searchText}`)
+                .then((response) => response.json())
+                .then((json) => updateCallback(json))
+                .catch((ex) => console.log('invalid JSONP response', ex));
             },
           } as AutocompleterOption,
         },
@@ -282,22 +275,15 @@ export default class Example4 {
           // We can use the autocomplete through 3 ways "collection", "collectionAsync" or with your own autocomplete options
           // collectionAsync: fetch(URL_COUNTRIES_COLLECTION),
 
-          // OR use your own autocomplete options, instead of $.ajax, use HttpClient or FetchClient
-          // here we use $.ajax just because I'm not sure how to configure HttpClient with JSONP and CORS
+          // OR use your own autocomplete options, instead of fetchJsonp, use HttpClient or FetchClient
+          // here we use fetchJsonp just because I'm not sure how to configure HttpClient with JSONP and CORS
           filterOptions: {
             minLength: 3,
             fetch: (searchText, updateCallback) => {
-              $.ajax({
-                url: 'http://gd.geobytes.com/AutoCompleteCity',
-                dataType: 'jsonp',
-                data: {
-                  q: searchText
-                },
-                success: (data) => {
-                  const finalData = (data.length === 1 && data[0] === '') ? [] : data; // invalid result should be [] instead of ['']
-                  updateCallback(finalData);
-                }
-              });
+              fetchJsonp(`http://gd.geobytes.com/AutoCompleteCity?q=${searchText}`)
+                .then((response) => response.json())
+                .then((json) => updateCallback(json))
+                .catch((ex) => console.log('invalid JSONP response', ex));
             },
           } as AutocompleterOption,
         }

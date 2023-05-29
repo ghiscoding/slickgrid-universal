@@ -1,3 +1,4 @@
+import { multipleSelect, MultipleSelectInstance, MultipleSelectOption, OptionRowData } from 'multiple-select-vanilla';
 import { setDeepValue } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 
@@ -16,12 +17,11 @@ import type {
   EditorValidationResult,
   GridOption,
   Locale,
-  MultipleSelectOption,
   SelectOption,
   SlickGrid,
   SlickNamespace,
 } from './../interfaces/index';
-import { buildSelectEditorOrFilterDomElement, CollectionService, findOrDefault, type TranslaterService } from '../services/index';
+import { buildMultipleSelectDataCollection, CollectionService, emptyElement, findOrDefault, sanitizeTextByAvailableSanitizer, type TranslaterService } from '../services/index';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
 
 // using external non-typed js libraries
@@ -46,20 +46,22 @@ export class SelectEditor implements Editor {
   /** The translate library */
   protected _translaterService?: TranslaterService;
 
-  /** The JQuery DOM element */
-  $editorElm: any;
+  protected _msInstance?: MultipleSelectInstance;
+
+  /** Editor DOM element */
+  editorElm?: HTMLElement;
 
   /** is the Editor disabled? */
   disabled = false;
 
   /** Editor Multiple-Select options */
-  editorElmOptions!: MultipleSelectOption;
+  editorElmOptions!: Partial<MultipleSelectOption>;
 
   /** DOM Element Name, useful for auto-detecting positioning (dropup / dropdown) */
   elementName: string;
 
   /** The multiple-select options for a multiple select list */
-  defaultOptions: MultipleSelectOption;
+  defaultOptions: Partial<MultipleSelectOption>;
 
   /** The original item values that are set at the beginning */
   originalValue: any | any[];
@@ -91,7 +93,7 @@ export class SelectEditor implements Editor {
   /** Final collection displayed in the UI, that is after processing filter/sort/override */
   finalCollection: any[] = [];
 
-  constructor(protected readonly args: EditorArguments, protected readonly isMultipleSelect: boolean) {
+  constructor(protected readonly args: EditorArguments, protected readonly isMultipleSelect: boolean, public delayOpening = -1) {
     if (!args) {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }
@@ -109,20 +111,18 @@ export class SelectEditor implements Editor {
     this.elementName = `editor-${columnId}`;
     const compositeEditorOptions = this.args.compositeEditorOptions;
 
-    const libOptions: MultipleSelectOption = {
+    const libOptions = {
       autoAdjustDropHeight: true,
       autoAdjustDropPosition: true,
       autoAdjustDropWidthByTextSize: true,
       container: 'body',
       filter: false,
       maxHeight: 275,
+      minHeight: 25,
       name: this.elementName,
       single: true,
-      textTemplate: ($elm) => {
-        // render HTML code or not, by default it is sanitized and won't be rendered
-        const isRenderHtmlEnabled = this.columnEditor?.enableRenderHtml ?? false;
-        return isRenderHtmlEnabled ? $elm.text() : $elm.html();
-      },
+      useSelectOptionLabelToHtml: this.columnEditor?.enableRenderHtml ?? false,
+      sanitizer: (dirtyHtml: string) => sanitizeTextByAvailableSanitizer(this.gridOptions, dirtyHtml),
       onClick: () => this._isValueTouched = true,
       onCheckAll: () => this._isValueTouched = true,
       onUncheckAll: () => this._isValueTouched = true,
@@ -134,25 +134,26 @@ export class SelectEditor implements Editor {
           this.save(this.hasAutoCommitEdit);
         }
       },
-    };
+    } as Partial<MultipleSelectOption>;
 
     if (isMultipleSelect) {
       libOptions.single = false;
-      libOptions.addTitle = true;
-      libOptions.okButton = true;
-      libOptions.selectAllDelimiter = ['', ''];
+      libOptions.displayTitle = true;
+      libOptions.showOkButton = true;
 
-      if (this._translaterService && this._translaterService.getCurrentLanguage && this._translaterService.getCurrentLanguage()) {
+      if (this._translaterService?.getCurrentLanguage()) {
         const translationPrefix = getTranslationPrefix(this.gridOptions);
-        libOptions.countSelected = this._translaterService.translate(`${translationPrefix}X_OF_Y_SELECTED`);
-        libOptions.allSelected = this._translaterService.translate(`${translationPrefix}ALL_SELECTED`);
+        libOptions.countSelectedText = this._translaterService.translate(`${translationPrefix}X_OF_Y_SELECTED`);
+        libOptions.allSelectedText = this._translaterService.translate(`${translationPrefix}ALL_SELECTED`);
         libOptions.selectAllText = this._translaterService.translate(`${translationPrefix}SELECT_ALL`);
         libOptions.okButtonText = this._translaterService.translate(`${translationPrefix}OK`);
+        libOptions.noMatchesFoundText = this._translaterService.translate(`${translationPrefix}NO_MATCHES_FOUND`);
       } else {
-        libOptions.countSelected = this._locales?.TEXT_X_OF_Y_SELECTED;
-        libOptions.allSelected = this._locales?.TEXT_ALL_SELECTED;
+        libOptions.countSelectedText = this._locales?.TEXT_X_OF_Y_SELECTED;
+        libOptions.allSelectedText = this._locales?.TEXT_ALL_SELECTED;
         libOptions.selectAllText = this._locales?.TEXT_SELECT_ALL;
         libOptions.okButtonText = this._locales?.TEXT_OK;
+        libOptions.noMatchesFoundText = this._locales?.TEXT_NO_MATCHES_FOUND;
       }
     }
 
@@ -187,8 +188,8 @@ export class SelectEditor implements Editor {
   }
 
   /** Getter for the Editor DOM Element */
-  get editorDomElement(): any {
-    return this.$editorElm;
+  get editorDomElement() {
+    return this.editorElm;
   }
 
   get isCompositeEditor(): boolean {
@@ -204,15 +205,19 @@ export class SelectEditor implements Editor {
     return this.gridOptions.autoCommitEdit ?? false;
   }
 
+  get msInstance() {
+    return this._msInstance;
+  }
+
   /**
    * The current selected values (multiple select) from the collection
    */
   get currentValues(): any[] | null {
-    const elmValue = this.$editorElm?.val();
+    const selectedValues = this._msInstance?.getSelects() ?? [];
 
     // collection of strings, just return the filtered string that are equals
-    if (this.collection.every(x => typeof x === 'string')) {
-      return this.collection.filter(c => elmValue.indexOf(c?.toString()) !== -1);
+    if (this.collection.every(x => typeof x === 'number' || typeof x === 'string')) {
+      return this.collection.filter(c => selectedValues?.some(val => `${val}` === c?.toString()));
     }
 
     // collection of label/value pair
@@ -220,7 +225,7 @@ export class SelectEditor implements Editor {
     const isIncludingPrefixSuffix = this.collectionOptions?.includePrefixSuffixToSelectedValues ?? false;
 
     return this.collection
-      .filter(c => elmValue.indexOf(c.hasOwnProperty(this.valueName) && c[this.valueName]?.toString()) !== -1)
+      .filter(c => selectedValues.some(val => `${val}` === c?.[this.valueName]?.toString()))
       .map(c => {
         const labelText = c[this.valueName];
         let prefixText = c[this.labelPrefixName] || '';
@@ -253,19 +258,20 @@ export class SelectEditor implements Editor {
    * The current selected values (single select) from the collection
    */
   get currentValue(): number | string {
-    const elmValue = this.$editorElm.val();
-    const fieldName = this.columnDef && this.columnDef.field;
+    const selectedValues = this._msInstance?.getSelects() ?? [];
+    const selectedValue = selectedValues.length ? selectedValues[0] : '';
+    const fieldName = this.columnDef?.field;
 
     if (fieldName !== undefined) {
       // collection of strings, just return the filtered string that are equals
-      if (this.collection.every(x => typeof x === 'string')) {
-        return findOrDefault(this.collection, (c: any) => c?.toString?.() === elmValue);
+      if (this.collection.every(x => typeof x === 'number' || typeof x === 'string')) {
+        return findOrDefault(this.collection, (c: any) => c?.toString?.() === `${selectedValue}`);
       }
 
       // collection of label/value pair
       const separatorBetweenLabels = this.collectionOptions?.separatorBetweenTextLabels ?? '';
       const isIncludingPrefixSuffix = this.collectionOptions?.includePrefixSuffixToSelectedValues ?? false;
-      const itemFound = findOrDefault(this.collection, (c: any) => c.hasOwnProperty(this.valueName) && c[this.valueName]?.toString() === elmValue);
+      const itemFound = findOrDefault(this.collection, (c: any) => c.hasOwnProperty(this.valueName) && c[this.valueName]?.toString() === `${selectedValue}`);
 
       // is the field a complex object, "address.streetNumber"
       const isComplexObject = fieldName?.indexOf('.') > 0;
@@ -352,14 +358,14 @@ export class SelectEditor implements Editor {
   }
 
   hide() {
-    if (this.$editorElm && typeof this.$editorElm.multipleSelect === 'function') {
-      this.$editorElm.multipleSelect('close');
+    if (this._msInstance) {
+      this._msInstance.close();
     }
   }
 
-  show() {
-    if (!this.isCompositeEditor && this.$editorElm && typeof this.$editorElm.multipleSelect === 'function') {
-      this.$editorElm.multipleSelect('open');
+  show(openDelay?: number | null) {
+    if (!this.isCompositeEditor && this._msInstance) {
+      this._msInstance.open(openDelay);
     } else if (this.isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
       this.applyInputUsabilityState();
@@ -367,8 +373,8 @@ export class SelectEditor implements Editor {
   }
 
   applyValue(item: any, state: any): void {
-    const fieldName = this.columnDef && this.columnDef.field;
-    const fieldType = this.columnDef && this.columnDef.type;
+    const fieldName = this.columnDef?.field;
+    const fieldType = this.columnDef?.type;
     let newValue = state;
 
     if (fieldName !== undefined) {
@@ -405,24 +411,19 @@ export class SelectEditor implements Editor {
   destroy() {
     // when autoCommitEdit is enabled, we might end up leaving an editor without it being saved, if so do call a save before destroying
     // this mainly happens doing a blur or focusing on another cell in the grid (it won't come here if we click outside the grid, in the body)
-    if (this.$editorElm && this.hasAutoCommitEdit && this.isValueChanged() && !this._isDisposingOrCallingSave && !this.isCompositeEditor) {
+    if (this._msInstance && this.hasAutoCommitEdit && this.isValueChanged() && !this._isDisposingOrCallingSave && !this.isCompositeEditor) {
       this._isDisposingOrCallingSave = true; // change destroying flag to avoid infinite loop
       this.save(true);
     }
 
     this._isDisposingOrCallingSave = true;
-    if (this.$editorElm && typeof this.$editorElm.multipleSelect === 'function') {
-      this.$editorElm.multipleSelect('destroy');
-      this.$editorElm.remove();
-      const elementClassName = this.elementName.toString().replace('.', '\\.'); // make sure to escape any dot "." from CSS class to avoid console error
-      $(`[name=${elementClassName}].ms-drop`).remove();
-      this.$editorElm.remove();
-      this.$editorElm = null;
-    }
+    this._msInstance?.destroy();
+    this.editorElm?.remove();
+    this._msInstance = undefined;
   }
 
   loadValue(item: any): void {
-    const fieldName = this.columnDef && this.columnDef.field;
+    const fieldName = this.columnDef?.field;
 
     // is the field a complex object, "address.streetNumber"
     const isComplexObject = fieldName !== undefined && fieldName?.indexOf('.') > 0;
@@ -439,7 +440,6 @@ export class SelectEditor implements Editor {
       } else {
         this.loadSingleValue(value);
       }
-      this.refresh();
     }
   }
 
@@ -447,8 +447,8 @@ export class SelectEditor implements Editor {
     // convert to string because that is how the DOM will return these values
     if (Array.isArray(currentValues)) {
       // keep the default values in memory for references
-      this.originalValue = currentValues.map((i: any) => i);
-      this.$editorElm.multipleSelect('setSelects', currentValues);
+      this.originalValue = currentValues.map((i: any) => (typeof i === 'number' || typeof i === 'boolean') ? `${i}` : i);
+      this._msInstance?.setSelects(this.originalValue);
 
       // if it's set by a Composite Editor, then also trigger a change for it
       const compositeEditorOptions = this.args.compositeEditorOptions;
@@ -460,9 +460,8 @@ export class SelectEditor implements Editor {
 
   loadSingleValue(currentValue: any) {
     // keep the default value in memory for references
-    this.originalValue = typeof currentValue === 'number' ? `${currentValue}` : currentValue;
-    this.$editorElm.val(currentValue);
-    this.$editorElm.multipleSelect('setSelects', [currentValue]);
+    this.originalValue = (typeof currentValue === 'number' || typeof currentValue === 'boolean') ? `${currentValue}` : currentValue;
+    this._msInstance?.setSelects([this.originalValue]);
   }
 
   serializeValue(): any | any[] {
@@ -482,7 +481,7 @@ export class SelectEditor implements Editor {
       }
       this.columnEditor.editorOptions[optionName] = newValue;
       this.editorElmOptions = { ...this.editorElmOptions, [optionName]: newValue };
-      this.$editorElm.multipleSelect('refreshOptions', this.editorElmOptions);
+      this._msInstance?.refreshOptions(this.editorElmOptions);
     }
   }
 
@@ -490,9 +489,9 @@ export class SelectEditor implements Editor {
     const prevIsDisabled = this.disabled;
     this.disabled = isDisabled;
 
-    if (this.$editorElm) {
+    if (this._msInstance) {
       if (isDisabled) {
-        this.$editorElm.multipleSelect('disable');
+        this._msInstance.disable();
 
         // clear select when it's newly disabled and not yet empty
         const currentValues: string | number | Array<string | number> = this.getValue();
@@ -501,7 +500,7 @@ export class SelectEditor implements Editor {
           this.reset('', true, true);
         }
       } else {
-        this.$editorElm.multipleSelect('enable');
+        this._msInstance.enable();
       }
     }
   }
@@ -509,14 +508,11 @@ export class SelectEditor implements Editor {
   focus() {
     // always set focus on grid first so that plugin to copy range (SlickCellExternalCopyManager) would still be able to paste at that position
     this.grid.focus();
-
-    if (this.$editorElm && this.$editorElm.multipleSelect) {
-      this.$editorElm.multipleSelect('focus');
-    }
+    this._msInstance?.focus();
   }
 
   isValueChanged(): boolean {
-    const valueSelection = this.$editorElm?.multipleSelect('getSelects');
+    const valueSelection = this._msInstance?.getSelects();
     if (this.isMultipleSelect) {
       const isEqual = dequal(valueSelection, this.originalValue);
       return !isEqual;
@@ -535,10 +531,10 @@ export class SelectEditor implements Editor {
    */
   reset(value?: string, triggerCompositeEventWhenExist = true, clearByDisableCommand = false) {
     const inputValue = value ?? this.originalValue;
-    if (this.$editorElm) {
+    if (this._msInstance) {
       this.originalValue = this.isMultipleSelect ? (inputValue !== undefined ? [inputValue] : []) : inputValue;
       const selection = this.originalValue === undefined ? [] : [this.originalValue];
-      this.$editorElm.multipleSelect('setSelects', selection);
+      this._msInstance.setSelects(selection);
     }
     this._isValueTouched = false;
 
@@ -564,7 +560,7 @@ export class SelectEditor implements Editor {
 
   validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     const isRequired = this.isCompositeEditor ? false : this.columnEditor?.required;
-    const elmValue = (inputValue !== undefined) ? inputValue : this.$editorElm && this.$editorElm.val && this.$editorElm.val();
+    const elmValue = (inputValue !== undefined) ? inputValue : this._msInstance?.getSelects(); // && this.$editorElm.val && this.$editorElm.val();
     const errorMsg = this.columnEditor && this.columnEditor.errorMessage;
 
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
@@ -605,7 +601,7 @@ export class SelectEditor implements Editor {
     const activeCell = this.grid.getActiveCell();
     const isCellEditable = this.grid.onBeforeEditCell.notify({
       ...activeCell, item: this.dataContext, column: this.args.column, grid: this.grid, target: 'composite', compositeEditorOptions: this.args.compositeEditorOptions
-    });
+    }).getReturnValue();
     this.disable(isCellEditable === false);
   }
 
@@ -701,7 +697,7 @@ export class SelectEditor implements Editor {
     this.finalCollection = finalCollection;
 
     // step 1, create HTML string template
-    const selectBuildResult = buildSelectEditorOrFilterDomElement(
+    const selectBuildResult = buildMultipleSelectDataCollection(
       'editor',
       finalCollection,
       this.columnDef,
@@ -712,7 +708,7 @@ export class SelectEditor implements Editor {
 
     // step 2, create the DOM Element of the editor
     // we will later also subscribe to the onClose event to save the Editor whenever that event is triggered
-    this.createEditorElement(selectBuildResult.selectElement);
+    this.createDomElement(selectBuildResult.selectElement, selectBuildResult.dataCollection);
   }
 
   /** Create a blank entry that can be added to the collection. It will also reuse the same collection structure provided by the user */
@@ -731,28 +727,25 @@ export class SelectEditor implements Editor {
   }
 
   /**
-   * From the Select DOM Element created earlier, create a Multiple/Single Select Editor using the jQuery multiple-select.js lib
+   * From the Select DOM Element created earlier, create a Multiple/Single Select Editor using the multiple-select-vanilla.js lib
    * @param {Object} selectElement
    */
-  protected createEditorElement(selectElement: HTMLSelectElement) {
-    this.$editorElm = $(selectElement);
-
-    if (this.$editorElm && typeof this.$editorElm.appendTo === 'function') {
-      $(this.args.container).empty();
-      this.$editorElm.appendTo(this.args.container);
+  protected createDomElement(selectElement: HTMLSelectElement, dataCollection: OptionRowData[]) {
+    const cellContainer = this.args.container;
+    if (selectElement && cellContainer && typeof cellContainer.appendChild === 'function') {
+      emptyElement(cellContainer);
+      cellContainer.appendChild(selectElement);
     }
 
     // add placeholder when found
     const placeholder = this.columnEditor?.placeholder ?? '';
     this.defaultOptions.placeholder = placeholder || '';
 
-    if (typeof this.$editorElm.multipleSelect === 'function') {
-      const editorOptions = (this.columnDef && this.columnDef.internalColumnEditor) ? this.columnDef.internalColumnEditor.editorOptions : {};
-      this.editorElmOptions = { ...this.defaultOptions, ...editorOptions };
-      this.$editorElm = this.$editorElm.multipleSelect(this.editorElmOptions);
-      if (!this.isCompositeEditor) {
-        setTimeout(() => this.show());
-      }
+    const editorOptions = this.columnDef?.internalColumnEditor?.editorOptions ?? {};
+    this.editorElmOptions = { ...this.defaultOptions, ...editorOptions, data: dataCollection };
+    this._msInstance = multipleSelect(selectElement, this.editorElmOptions) as MultipleSelectInstance;
+    if (!this.isCompositeEditor) {
+      this.delayOpening >= 0 ? setTimeout(() => this.show()) : this.show();
     }
   }
 
@@ -778,13 +771,5 @@ export class SelectEditor implements Editor {
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
       new Slick.EventData()
     );
-  }
-
-  // refresh the jquery object because the selected checkboxes were already set
-  // prior to this method being called
-  protected refresh() {
-    if (typeof this.$editorElm.multipleSelect === 'function') {
-      this.$editorElm.multipleSelect('refresh');
-    }
   }
 }

@@ -11,7 +11,7 @@ import {
   hasData,
   isEmptyObject,
   isNumber,
-  isPrimmitive,
+  isPrimitiveValue,
   isObject,
   isObjectEmpty,
   parseBoolean,
@@ -171,34 +171,34 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('isPrimmitive method', () => {
+  describe('isPrimitiveValue method', () => {
     it('should return True when input is undefined', () => {
-      const result = isPrimmitive(undefined);
+      const result = isPrimitiveValue(undefined);
       expect(result).toBeTrue();
     });
 
     it('should return True when input is null', () => {
-      const result = isPrimmitive(null);
+      const result = isPrimitiveValue(null);
       expect(result).toBeTrue();
     });
 
     it('should return True when input is a number', () => {
-      const result = isPrimmitive(0);
+      const result = isPrimitiveValue(0);
       expect(result).toBeTrue();
     });
 
     it('should return True when input is a string', () => {
-      const result = isPrimmitive('');
+      const result = isPrimitiveValue('');
       expect(result).toBeTrue();
     });
 
     it('should return False when input is an empty object', () => {
-      const result = isPrimmitive({});
+      const result = isPrimitiveValue({});
       expect(result).toBeFalsy();
     });
 
     it('should return False when input is a function', () => {
-      const result = isPrimmitive(() => true);
+      const result = isPrimitiveValue(() => true);
       expect(result).toBeFalsy();
     });
   });

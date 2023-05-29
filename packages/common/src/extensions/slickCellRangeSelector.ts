@@ -349,7 +349,7 @@ export class SlickCellRangeSelector {
 
   protected handleDragStart(e: DOMMouseOrTouchEvent<HTMLDivElement>, dd: DragPosition) {
     const cellObj = this._grid.getCellFromEvent(e);
-    if (cellObj && this.onBeforeCellRangeSelected.notify(cellObj) !== false && this._grid.canCellBeSelected(cellObj.row, cellObj.cell)) {
+    if (cellObj && this.onBeforeCellRangeSelected.notify(cellObj).getReturnValue() !== false && this._grid.canCellBeSelected(cellObj.row, cellObj.cell)) {
       this._dragging = true;
       e.stopImmediatePropagation();
     }
