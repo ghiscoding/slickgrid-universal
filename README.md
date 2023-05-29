@@ -12,15 +12,15 @@
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
 ### Description
-This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces)) which is regrouping a few packages under a single repository. It is using and requiring SlickGrid core library (more specifically the [6pac/SlickGrid](https://github.com/6pac/SlickGrid/) fork) behind the scene (the "Why?" is simply because there is no need to rewrite the core library itself, in other words this is a wrapper library). The main goal of this library is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). It was also created because I felt that there was a good opportunity to decouple some features/services that were not always needed by all users, this will also help in getting a smaller bundle size depending on which features (packages) are selected. For example, not every project needs to use the backend services (OData, GraphQL) and/or export services (Excel Export, Text Export), which is why they are better handled with a monorepo structure (download and install only what you really use).
+This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces)) which is regrouping a few packages under a single repository. It is using and requiring SlickGrid core library (more specifically the [6pac/SlickGrid](https://github.com/6pac/SlickGrid/) fork) behind the scene (the "Why?" is simply because there is no need to rewrite the core library itself, in other words this is a wrapper library). The main goal of this library is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). The original SlickGrid is like an IKEA product you need to assemble everything yourself, while in our project we offer the all assembled product including a lot more available Editors, Filters, OData, GraphQL, ... that SlickGrid simply does not offer. See below for more reasons of when and why this project was created.
 
 ### Why create this monorepo?
 You might be wondering why was this monorepo created? Here are a few reasons:
-1. it removed a lot of duplicated code that were common in both
+1. it removed a lot of duplicate code that were common in both
 [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) libraries
-   - prior to creating this monorepo, these 2 libs had ~90% of TypeScript code in common which was not very DRY, it is also a lot easier to maintain by pushing fixes in 1 common lib.
+   - prior to creating this monorepo, these 2 libs had ~90% of TypeScript code in common which was not very DRY, it is also a lot easier to maintain by pushing fixes in 1 common lib (this one here).
 2. decoupled a few Services that are not required by every project (OData, GraphQL, Export to CSV, Export to Excel, Composite Editor, RxJS, ...)
-3. framework agnostic, it could be implemented in many different frameworks (if you're interested in adding a port for any other framework that is not listed in the [table](#available-framework-ports) below, please open a new [Discussion](https://github.com/ghiscoding/slickgrid-universal/discussions))
+3. framework agnostic, it could be implemented in many different frameworks (if you are interested in adding a different framework port that is not listed in the [table](#available-framework-ports) below, please open a new [Discussion](https://github.com/ghiscoding/slickgrid-universal/discussions))
    - you can use it in plain JavaScript (ES6) or TypeScript, on our side we use it with plain JS (ES6) in our Salesforce environment with LWC (Lightning Web Component)
 
 ## Latest News & Releases
@@ -32,7 +32,7 @@ You could :star: the lib and perhaps support me with cafeine :coffee:. Thanks in
 <a href='https://ko-fi.com/ghiscoding' target='_blank'><img height='34' style='border:0px;height:34px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' />
 
 ## Live Demos & Available Framework Ports
-The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2 different themes (Material Design / Salesforce), but you could also choose a Bootstrap theme which is demoed in other frameworks with links shown in the table below. Also note the live demos are using [Bootstrap](https://getbootstrap.com/) and [Bulma](https://bulma.io/), but you could use any other UI libraries you wish since the lib is framework agnostic.
+The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2 different UI themes (Material Design / Salesforce), but you could also choose the Bootstrap theme which is demoed in other frameworks with available links shown in the table below. Also note that these live demos are using [Bootstrap](https://getbootstrap.com/) and [Bulma](https://bulma.io/), but you could use any other UI libraries you wish since the lib is UI framework agnostic and there's a ton of CSS/SASS variables available to make it look the way you want.
 
 ### Available Framework Ports
 
@@ -44,10 +44,10 @@ The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2
 | [Slickgrid-Universal-WebPack-Demo](https://github.com/ghiscoding/slickgrid-universal-webpack-demo) | [demo](https://ghiscoding.github.io/slickgrid-universal-webpack-demo) | Bulma | Slickgrid-Universal demo with WebPack & TypeScript (**demo purposes only**) |
 | [Slickgrid-Universal-Vite-Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) | [demo](https://ghiscoding.github.io/slickgrid-universal-vite-demo) | Bulma | Slickgrid-Universal demo with Vite & TypeScript (**demo purposes only**) |
 
-The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) is a Vanilla Implementation (which is not associated to any framework) built with [ViteJS](https://vitejs.dev/) (originally [WebPack](https://webpack.js.org/)) and is also used by [Cypress](https://www.cypress.io/) for E2E testing all the UI functionalities. The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle), which extends the `vanilla-bundle` package is also what we use in our SalesForce implementation (with Lightning Web Component), which was the original reason to create this monorepo library and avoid duplications of the same code.
+The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) is a Vanilla Implementation (which is not associated to any framework) built with [ViteJS](https://vitejs.dev/) (originally [WebPack](https://webpack.js.org/)) and is also used by [Cypress](https://www.cypress.io/) for E2E testing all the UI functionalities. The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle), which extends the [vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package is also what we use in our SalesForce implementation (with Lightning Web Component), which was the original reason to create this monorepo library and avoid duplications of the same code.
 
 ### Fully Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has **100%** Unit Test Coverage, about ~4,000 Jest unit tests and also +450 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementations also have an additional +500 tests)
+Slickgrid-Universal has **100%** Unit Test Coverage, about ~4,000 Jest unit tests and also +450 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementations also have an additional +500 tests), this offer peace of mind that whenever a new PRs are opened, we have tests to cover them.
 
 ### Available Public Packages
 
