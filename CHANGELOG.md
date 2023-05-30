@@ -6,6 +6,8 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [3.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.6.4...v3.0.0) (2023-05-29)
 
+### Follow the [Migration 3.x Guide](https://github.com/ghiscoding/slickgrid-universal/wiki/Migration-to-3.x)
+
 ### ⚠ BREAKING CHANGES
 
 * drop jQuery requirement & use multiple-select-vanilla dependency (#976)
