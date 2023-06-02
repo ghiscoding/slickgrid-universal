@@ -6,7 +6,8 @@
     "declarationDir": "dist/types",
     "outDir": "dist/esm",
     "typeRoots": [
-      "typings"
+      "./node_modules/@types",
+      "../../node_modules/@types"
     ]
   },
   "exclude": [
@@ -18,16 +19,29 @@
     "./src/**/*.ts"
   ],
   "include": [
-    "src/**/*.ts",
-    "typings/**/*.ts"
+    "src/**/*.ts"
   ],
   "references": [
-    { "path": "../binding" },
-    { "path": "../common" },
-    { "path": "../custom-footer-component" },
-    { "path": "../empty-warning-component" },
-    { "path": "../event-pub-sub" },
-    { "path": "../pagination-component" },
-    { "path": "../utils" }
+    {
+      "path": "../binding"
+    },
+    {
+      "path": "../common"
+    },
+    {
+      "path": "../custom-footer-component"
+    },
+    {
+      "path": "../empty-warning-component"
+    },
+    {
+      "path": "../event-pub-sub"
+    },
+    {
+      "path": "../pagination-component"
+    },
+    {
+      "path": "../utils"
+    }
   ]
 }

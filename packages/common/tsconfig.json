@@ -5,13 +5,14 @@
     "rootDir": "src",
     "declarationDir": "dist/types",
     "outDir": "dist/esm",
-    "typeRoots": [
-      "typings"
-    ],
     "types": [
       "jest",
-      "jest-extended",
       "node"
+    ],
+    "typeRoots": [
+      "src/typings",
+      "./node_modules/@types",
+      "../../node_modules/@types"
     ]
   },
   "exclude": [
@@ -27,7 +28,11 @@
     "typings/**/*.ts"
   ],
   "references": [
-    { "path": "../event-pub-sub" },
-    { "path": "../utils" }
+    {
+      "path": "../event-pub-sub"
+    },
+    {
+      "path": "../utils"
+    }
   ]
 }

@@ -2,13 +2,12 @@
   "extends": "../tsconfig.bundle.json",
   "compilerOptions": {
     "typeRoots": [
-      "../typings",
+      "./node_modules/@types",
       "../../node_modules/@types"
     ],
     "outDir": "dist/commonjs"
   },
   "include": [
-    "../typings",
     "**/*"
   ]
 }

@@ -4,7 +4,10 @@
     "emitDecoratorMetadata": true,
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "lib": ["ESNext", "DOM"],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "moduleResolution": "Node",
     "allowJs": true,
     "strict": true,
@@ -24,9 +27,11 @@
       "node"
     ],
     "typeRoots": [
-      "node_modules/@types",
-      "src/typings"
+      "./node_modules/@types",
+      "../../node_modules/@types"
     ]
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

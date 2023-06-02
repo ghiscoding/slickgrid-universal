@@ -6,7 +6,8 @@
     "declarationDir": "dist/types",
     "outDir": "dist/esm",
     "typeRoots": [
-      "typings"
+      "./node_modules/@types",
+      "../../node_modules/@types"
     ]
   },
   "exclude": [
@@ -22,6 +23,8 @@
     "typings/**/*.ts"
   ],
   "references": [
-    { "path": "../common" }
+    {
+      "path": "../common"
+    }
   ]
 }
