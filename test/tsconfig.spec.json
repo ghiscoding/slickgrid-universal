@@ -11,8 +11,10 @@
       "@4tw/cypress-drag-drop",
       "cypress",
       "jest",
-      "jest-extended",
       "node"
+    ],
+    "typeRoots": [
+      "../node_modules/@types"
     ]
   },
   "include": [

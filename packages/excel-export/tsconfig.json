@@ -7,7 +7,9 @@
     "declarationDir": "dist/types",
     "outDir": "dist/esm",
     "typeRoots": [
-      "typings"
+      "src/typings",
+      "./node_modules/@types",
+      "../../node_modules/@types"
     ],
     "paths": {
       "jszip": [
@@ -28,7 +30,11 @@
     "typings/**/*.ts"
   ],
   "references": [
-    { "path": "../common" },
-    { "path": "../utils" }
+    {
+      "path": "../common"
+    },
+    {
+      "path": "../utils"
+    }
   ]
 }

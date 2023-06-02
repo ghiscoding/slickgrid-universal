@@ -1,8 +1,14 @@
 {
   "compilerOptions": {
     "target": "es2020",
-    "lib": ["es5", "dom"],
-    "types": ["jest", "node"],
+    "lib": [
+      "es5",
+      "dom"
+    ],
+    "types": [
+      "jest",
+      "node"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -12,7 +18,12 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "typeRoots": [
+      "../node_modules/@types"
+    ]
   },
-  "include": ["**/*.ts"]
+  "include": [
+    "**/*.ts"
+  ]
 }
