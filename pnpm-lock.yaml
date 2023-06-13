@@ -228,8 +228,8 @@ importers:
         specifier: workspace:~
         version: link:../utils
       autocompleter:
-        specifier: ^8.0.3
-        version: 8.0.3
+        specifier: ^8.0.4
+        version: 8.0.4
       dequal:
         specifier: ^2.0.3
         version: 2.0.3
@@ -3012,8 +3012,8 @@ packages:
     engines: {node: '>= 4.0.0'}
     dev: true
 
-  /autocompleter@8.0.3:
-    resolution: {integrity: sha512-cfwd5ycP7exgTDpgPgTjh6yalac3unTy3AHbTqpI2na5FjqeLJHh7bIt2vfb08Ujq7zHQkN8nRDaLptucmaRBw==}
+  /autocompleter@8.0.4:
+    resolution: {integrity: sha512-q334YswwucSBphN5djVkEt3beVhHotrCtPGNIXmyilw9UnXV9Cb+gNAZ2yhZSfiBSzP6rxHLLT2gpr57xgbcwQ==}
     dev: false
 
   /autoprefixer@10.4.14(postcss@8.4.24):
