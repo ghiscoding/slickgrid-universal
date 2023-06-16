@@ -53,8 +53,8 @@ importers:
         specifier: ^12.14.0
         version: 12.14.0
       dotenv:
-        specifier: ^16.2.0
-        version: 16.2.0
+        specifier: ^16.3.0
+        version: 16.3.0
       eslint:
         specifier: ^8.42.0
         version: 8.42.0
@@ -1792,7 +1792,7 @@ packages:
       '@lerna-lite/version': 2.4.1(@lerna-lite/publish@2.4.1)(@lerna-lite/run@2.4.1)(@lerna-lite/watch@2.4.1)
       '@lerna-lite/watch': 2.4.1(@lerna-lite/publish@2.4.1)(@lerna-lite/run@2.4.1)
       dedent: 0.7.0
-      dotenv: 16.2.0
+      dotenv: 16.3.0
       import-local: 3.1.0
       load-json-file: 7.0.1
       npmlog: 7.0.1
@@ -4196,8 +4196,8 @@ packages:
     dependencies:
       is-obj: 2.0.0
 
-  /dotenv@16.2.0:
-    resolution: {integrity: sha512-jcq2vR1DY1+QA+vH58RIrWLDZOifTGmyQJWzP9arDUbgZcySdzuBb1WvhWZzZtiXgfm+GW2pjBqStqlfpzq7wQ==}
+  /dotenv@16.3.0:
+    resolution: {integrity: sha512-tHB+hmf8MRCkT3VVivGiG8kq9HiGTmQ3FzOKgztfpJQH1IWuZTOvKSJmHNnQPowecAmkCJhLrxdPhOr06LLqIQ==}
     engines: {node: '>=12'}
     dev: true
 
