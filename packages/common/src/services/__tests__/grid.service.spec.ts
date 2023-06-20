@@ -606,12 +606,17 @@ describe('Grid Service', () => {
 
     it('should throw an error when 1st argument for the item object is missing', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(undefined as any);
-      expect(() => service.addItem(null as any)).toThrowError('We could not find SlickGrid Grid, DataView objects');
+      expect(() => service.addItem(null as any)).toThrowError('[Slickgrid-Universal] We could not find SlickGrid Grid, DataView objects');
+    });
+
+    it('should throw an error when 1st argument for the item object is missing', () => {
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableTreeData: true } as GridOption);
+      expect(() => service.addItem({ user: 'John' }, { position: 'top' })).toThrowError('[Slickgrid-Universal] Please note that `addItem({ position: "top" })` is not currently supported with Tree Data because of its complexity.');
     });
 
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(undefined as any);
-      expect(() => service.addItem(null as any, { skipError: true })).not.toThrowError('We could not find SlickGrid Grid, DataView objects');
+      expect(() => service.addItem(null as any, { skipError: true })).not.toThrowError('[Slickgrid-Universal] We could not find SlickGrid Grid, DataView objects');
     });
 
     it('should throw an error when 1st argument for the item object is missing or "id" is missing', () => {

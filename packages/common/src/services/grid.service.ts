@@ -402,6 +402,9 @@ export class GridService {
     if (!options?.skipError && (!this._grid || !this._gridOptions || !this._dataView)) {
       throw new Error('We could not find SlickGrid Grid, DataView objects');
     }
+    if (this._gridOptions.enableTreeData && options?.position === 'top') {
+      throw new Error('[Slickgrid-Universal] Please note that `addItem({ position: "top" })` is not currently supported with Tree Data because of its complexity.');
+    }
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
     if (!options?.skipError && (!item || !item.hasOwnProperty(idPropName))) {
       throw new Error(`Adding an item requires the item to include an "${idPropName}" property`);
