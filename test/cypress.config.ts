@@ -20,6 +20,7 @@ export default defineConfig({
   },
   e2e: {
     baseUrl: 'http://localhost:8888/#',
+    experimentalRunAllSpecs: true,
     supportFile: 'test/cypress/support/index.ts',
     specPattern: 'test/cypress/e2e/**/*.cy.{js,ts}',
     excludeSpecPattern: process.env.CI ? ['**/node_modules/**', '**/000-*.cy.{js,ts}'] : ['**/node_modules/**'],
