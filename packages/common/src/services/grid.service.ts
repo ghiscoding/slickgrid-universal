@@ -127,7 +127,7 @@ export class GridService {
    */
   getColumnFromEventArguments(args: CellArgs): OnEventArgs {
     if (!args || !args.grid || !args.grid.getColumns || !args.grid.getDataItem) {
-      throw new Error('To get the column definition and data, we need to have these arguments passed as objects (row, cell, grid)');
+      throw new Error('[Slickgrid-Universal] To get the column definition and data, we need to have these arguments passed as objects (row, cell, grid)');
     }
 
     return {
@@ -143,7 +143,7 @@ export class GridService {
   /** Get data item by it's row index number */
   getDataItemByRowNumber<T = any>(rowNumber: number): T {
     if (!this._grid || typeof this._grid.getDataItem !== 'function') {
-      throw new Error(`We could not find SlickGrid Grid object or it's "getDataItem" method`);
+      throw new Error(`[Slickgrid-Universal] We could not find SlickGrid Grid object or it's "getDataItem" method`);
     }
     return this._grid.getDataItem<T>(rowNumber);
   }
@@ -177,7 +177,7 @@ export class GridService {
   /** Get the Data Item from a grid row index */
   getDataItemByRowIndex<T = any>(index: number): T {
     if (!this._grid || typeof this._grid.getDataItem !== 'function') {
-      throw new Error('We could not find SlickGrid Grid object and/or "getDataItem" method');
+      throw new Error('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getDataItem" method');
     }
 
     return this._grid.getDataItem(index);
@@ -186,7 +186,7 @@ export class GridService {
   /** Get the Data Item from an array of grid row indexes */
   getDataItemByRowIndexes<T = any>(indexes: number[]): T[] {
     if (!this._grid || typeof this._grid.getDataItem !== 'function') {
-      throw new Error('We could not find SlickGrid Grid object and/or "getDataItem" method');
+      throw new Error('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getDataItem" method');
     }
 
     const dataItems: T[] = [];
@@ -203,7 +203,7 @@ export class GridService {
   /** Get the currently selected row indexes */
   getSelectedRows(): number[] {
     if (!this._grid || typeof this._grid.getSelectedRows !== 'function') {
-      throw new Error('We could not find SlickGrid Grid object and/or "getSelectedRows" method');
+      throw new Error('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getSelectedRows" method');
     }
     return this._grid.getSelectedRows();
   }
@@ -211,7 +211,7 @@ export class GridService {
   /** Get the currently selected rows item data */
   getSelectedRowsDataItem<T = any>(): T[] {
     if (!this._grid || typeof this._grid.getSelectedRows !== 'function') {
-      throw new Error('We could not find SlickGrid Grid object and/or "getSelectedRows" method');
+      throw new Error('[Slickgrid-Universal] We could not find SlickGrid Grid object and/or "getSelectedRows" method');
     }
 
     const selectedRowIndexes = this._grid.getSelectedRows();
@@ -396,20 +396,21 @@ export class GridService {
    * @return rowIndex: typically index 0 when adding to position "top" or a different number when adding to the "bottom"
    */
   addItem<T = any>(item: T, options?: GridServiceInsertOption): number | undefined {
-    options = { ...GridServiceInsertOptionDefaults, ...options };
-    const insertPosition = options?.position ?? 'top';
+    const addOptions = { ...GridServiceInsertOptionDefaults, ...options };
 
-    if (!options?.skipError && (!this._grid || !this._gridOptions || !this._dataView)) {
-      throw new Error('We could not find SlickGrid Grid, DataView objects');
+    if (!addOptions?.skipError && (!this._grid || !this._gridOptions || !this._dataView)) {
+      throw new Error('[Slickgrid-Universal] We could not find SlickGrid Grid, DataView objects');
     }
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
-    if (!options?.skipError && (!item || !item.hasOwnProperty(idPropName))) {
-      throw new Error(`Adding an item requires the item to include an "${idPropName}" property`);
+    if (!addOptions?.skipError && (!item || !item.hasOwnProperty(idPropName))) {
+      throw new Error(`[Slickgrid-Universal] Adding an item requires the item to include an "${idPropName}" property`);
     }
 
-    if (this._gridOptions?.enableTreeData && typeof options.position !== 'undefined') {
-      throw new Error('[Slickgrid-Universal] Please note that the `position` option is not supported by `addItem()` when used with Tree Data because of the extra complexity.');
+    if (this._gridOptions?.enableTreeData && options?.position === 'top') {
+      throw new Error('[Slickgrid-Universal] Please note that `addItem({ position: "top" })` is not supported when used with Tree Data because of the extra complexity.');
     }
+
+    const insertPosition = addOptions?.position ?? 'top';
 
     // insert position top/bottom, defaults to top
     // when position is top we'll call insert at index 0, else call addItem which just push to the DataView array
@@ -428,7 +429,7 @@ export class GridService {
       this.invalidateHierarchicalDataset();
       rowNumber = this._dataView.getRowById(itemId);
       this._grid.scrollRowIntoView(rowNumber ?? 0, false);
-    } else if (options.resortGrid) {
+    } else if (addOptions.resortGrid) {
       // do we want the item to be sorted in the grid, when set to False it will insert on first row (defaults to false)
       this._dataView.reSort();
 
@@ -442,17 +443,17 @@ export class GridService {
     }
 
     // if highlight is enabled, we'll highlight the row we just added
-    if (options.highlightRow && rowNumber !== undefined) {
+    if (addOptions.highlightRow && rowNumber !== undefined) {
       this.highlightRow(rowNumber);
     }
 
     // if row selection (checkbox selector) is enabled, we'll select the row in the grid
-    if (rowNumber !== undefined && options.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+    if (rowNumber !== undefined && addOptions.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
       this.setSelectedRow(rowNumber);
     }
 
     // do we want to trigger an event after adding the item
-    if (options.triggerEvent) {
+    if (addOptions.triggerEvent) {
       this.pubSubService.publish('onItemAdded', item);
     }
 
@@ -542,7 +543,7 @@ export class GridService {
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
 
     if (!options?.skipError && (!item || !item.hasOwnProperty(idPropName))) {
-      throw new Error(`Deleting an item requires the item to include an "${idPropName}" property`);
+      throw new Error(`[Slickgrid-Universal] Deleting an item requires the item to include an "${idPropName}" property`);
     }
     return this.deleteItemById(item[idPropName as keyof T] as string | number, options);
   }
@@ -596,7 +597,7 @@ export class GridService {
     options = { ...GridServiceDeleteOptionDefaults, ...options };
 
     if (!options?.skipError && (itemId === null || itemId === undefined)) {
-      throw new Error(`Cannot delete a row without a valid "id"`);
+      throw new Error(`[Slickgrid-Universal] Cannot delete a row without a valid "id"`);
     }
 
     // when user has row selection enabled, we should clear any selection to avoid confusion after a delete
@@ -658,7 +659,7 @@ export class GridService {
     const itemId = (!item || !item.hasOwnProperty(idPropName)) ? undefined : (item as any)[idPropName];
 
     if (!options?.skipError && itemId === undefined) {
-      throw new Error(`Calling Update of an item requires the item to include an "${idPropName}" property`);
+      throw new Error(`[Slickgrid-Universal] Calling Update of an item requires the item to include an "${idPropName}" property`);
     }
 
     return this.updateItemById(itemId, item, options);
@@ -739,13 +740,13 @@ export class GridService {
   updateItemById<T = any>(itemId: number | string, item: T, options?: GridServiceUpdateOption): number | undefined {
     options = { ...GridServiceUpdateOptionDefaults, ...options };
     if (!options?.skipError && itemId === undefined) {
-      throw new Error(`Cannot update a row without a valid "id"`);
+      throw new Error(`[Slickgrid-Universal] Cannot update a row without a valid "id"`);
     }
     const rowNumber = this._dataView.getRowById(itemId) as number;
 
     // when using pagination the item to update might not be on current page, so we bypass this condition
     if (!options?.skipError && (!item && !this._gridOptions.enablePagination)) {
-      throw new Error(`The item to update in the grid was not found with id: ${itemId}`);
+      throw new Error(`[Slickgrid-Universal] The item to update in the grid was not found with id: ${itemId}`);
     }
 
     if (this._dataView.getIdxById(itemId) !== undefined) {
@@ -794,7 +795,7 @@ export class GridService {
     const itemId = (!item || !item.hasOwnProperty(idPropName)) ? undefined : (item as any)[idPropName];
 
     if (!options?.skipError && itemId === undefined) {
-      throw new Error(`Calling Upsert of an item requires the item to include an "${idPropName}" property`);
+      throw new Error(`[Slickgrid-Universal] Calling Upsert of an item requires the item to include an "${idPropName}" property`);
     }
 
     return this.upsertItemById<T>(itemId, item, options);
@@ -863,7 +864,7 @@ export class GridService {
     let isItemAdded = false;
     options = { ...GridServiceInsertOptionDefaults, ...options };
     if (!options?.skipError && (itemId === undefined && !this.hasRowSelectionEnabled())) {
-      throw new Error(`Calling Upsert of an item requires the item to include a valid and unique "id" property`);
+      throw new Error(`[Slickgrid-Universal] Calling Upsert of an item requires the item to include a valid and unique "id" property`);
     }
 
     let rowNumberAdded: number | undefined;
