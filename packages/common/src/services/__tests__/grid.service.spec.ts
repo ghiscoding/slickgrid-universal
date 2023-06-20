@@ -609,11 +609,6 @@ describe('Grid Service', () => {
       expect(() => service.addItem(null as any)).toThrowError('[Slickgrid-Universal] We could not find SlickGrid Grid, DataView objects');
     });
 
-    it('should throw an error when 1st argument for the item object is missing', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableTreeData: true } as GridOption);
-      expect(() => service.addItem({ user: 'John' }, { position: 'top' })).toThrowError('[Slickgrid-Universal] Please note that `addItem({ position: "top" })` is not currently supported with Tree Data because of its complexity.');
-    });
-
     it('should NOT throw an error when "skipError" is enabled even when 1st argument for the item object is missing', () => {
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(undefined as any);
       expect(() => service.addItem(null as any, { skipError: true })).not.toThrowError('[Slickgrid-Universal] We could not find SlickGrid Grid, DataView objects');
@@ -647,6 +642,12 @@ describe('Grid Service', () => {
 
       // reset mock
       jest.spyOn(gridStub, 'getOptions').mockReturnValue({});
+    });
+
+    it('should throw an error when addItem and a position is provided when used with Tree Data', () => {
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue({ enableTreeData: true } as GridOption);
+      expect(() => service.addItem({ id: 0, user: 'John' }, { position: 'top' })).toThrowError('[Slickgrid-Universal] Please note that the `position` option is not supported by `addItem()` when used with Tree Data because of the extra complexity.');
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue({}); // reset mock
     });
 
     it('should expect the service to call the DataView "insertItem" when calling "addItem" with an item that has an Id defined by the "datasetIdPropertyName" property', () => {
