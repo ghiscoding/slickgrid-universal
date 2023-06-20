@@ -24,16 +24,16 @@ importers:
         version: 29.5.0
       '@lerna-lite/cli':
         specifier: ^2.4.2
-        version: 2.4.2(@lerna-lite/publish@2.4.2)(@lerna-lite/run@2.4.2)(@lerna-lite/version@2.4.2)(@lerna-lite/watch@2.4.2)
+        version: 2.4.2(@lerna-lite/publish@2.4.3)(@lerna-lite/run@2.4.2)(@lerna-lite/version@2.4.2)(@lerna-lite/watch@2.4.2)
       '@lerna-lite/publish':
-        specifier: ^2.4.2
-        version: 2.4.2(@lerna-lite/run@2.4.2)(@lerna-lite/watch@2.4.2)
+        specifier: ^2.4.3
+        version: 2.4.3(@lerna-lite/run@2.4.2)(@lerna-lite/watch@2.4.2)
       '@lerna-lite/run':
         specifier: ^2.4.2
-        version: 2.4.2(@lerna-lite/publish@2.4.2)(@lerna-lite/watch@2.4.2)
+        version: 2.4.2(@lerna-lite/publish@2.4.3)(@lerna-lite/watch@2.4.2)
       '@lerna-lite/watch':
         specifier: ^2.4.2
-        version: 2.4.2(@lerna-lite/publish@2.4.2)(@lerna-lite/run@2.4.2)
+        version: 2.4.2(@lerna-lite/publish@2.4.3)(@lerna-lite/run@2.4.2)
       '@types/jest':
         specifier: ^29.5.2
         version: 29.5.2
@@ -1760,7 +1760,7 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
-  /@lerna-lite/cli@2.4.2(@lerna-lite/publish@2.4.2)(@lerna-lite/run@2.4.2)(@lerna-lite/version@2.4.2)(@lerna-lite/watch@2.4.2):
+  /@lerna-lite/cli@2.4.2(@lerna-lite/publish@2.4.3)(@lerna-lite/run@2.4.2)(@lerna-lite/version@2.4.2)(@lerna-lite/watch@2.4.2):
     resolution: {integrity: sha512-n7qykx847XePkaLoCW2WYz/Tr27Q8HOKHGXFtHHiv6XX/68BbGk5w5icp8w4esrk4xvenEXNSm6tm6Z9oPdbww==}
     engines: {node: '>=16.15.0', npm: '>=8.5.0'}
     hasBin: true
@@ -1787,10 +1787,10 @@ packages:
     dependencies:
       '@lerna-lite/core': 2.4.2
       '@lerna-lite/init': 2.4.2
-      '@lerna-lite/publish': 2.4.2(@lerna-lite/run@2.4.2)(@lerna-lite/watch@2.4.2)
-      '@lerna-lite/run': 2.4.2(@lerna-lite/publish@2.4.2)(@lerna-lite/watch@2.4.2)
-      '@lerna-lite/version': 2.4.2(@lerna-lite/publish@2.4.2)(@lerna-lite/run@2.4.2)(@lerna-lite/watch@2.4.2)
-      '@lerna-lite/watch': 2.4.2(@lerna-lite/publish@2.4.2)(@lerna-lite/run@2.4.2)
+      '@lerna-lite/publish': 2.4.3(@lerna-lite/run@2.4.2)(@lerna-lite/watch@2.4.2)
+      '@lerna-lite/run': 2.4.2(@lerna-lite/publish@2.4.3)(@lerna-lite/watch@2.4.2)
+      '@lerna-lite/version': 2.4.2(@lerna-lite/publish@2.4.3)(@lerna-lite/run@2.4.2)(@lerna-lite/watch@2.4.2)
+      '@lerna-lite/watch': 2.4.2(@lerna-lite/publish@2.4.3)(@lerna-lite/run@2.4.2)
       dedent: 0.7.0
       dotenv: 16.3.1
       import-local: 3.1.0
@@ -1875,13 +1875,13 @@ packages:
       - supports-color
     dev: true
 
-  /@lerna-lite/publish@2.4.2(@lerna-lite/run@2.4.2)(@lerna-lite/watch@2.4.2):
-    resolution: {integrity: sha512-T1tIHpETYj2r3pLVQeZ+CdgYT7zMmbMF7Eof5jXM8fv97mlpaWSI9fhn+hBVz58T5Q29u9+BVJO0NYRDbdAZIw==}
+  /@lerna-lite/publish@2.4.3(@lerna-lite/run@2.4.2)(@lerna-lite/watch@2.4.2):
+    resolution: {integrity: sha512-iTwE6sUZxkiEllcIEbLF/sql6BzdglNGCUm9MiUY8aImBVqr6E6+d5Y4CkkSU1Ff8fzheZ6nmfJhbSljgiroag==}
     engines: {node: '>=16.15.0', npm: '>=8.5.0'}
     dependencies:
-      '@lerna-lite/cli': 2.4.2(@lerna-lite/publish@2.4.2)(@lerna-lite/run@2.4.2)(@lerna-lite/version@2.4.2)(@lerna-lite/watch@2.4.2)
+      '@lerna-lite/cli': 2.4.2(@lerna-lite/publish@2.4.3)(@lerna-lite/run@2.4.2)(@lerna-lite/version@2.4.2)(@lerna-lite/watch@2.4.2)
       '@lerna-lite/core': 2.4.2
-      '@lerna-lite/version': 2.4.2(@lerna-lite/publish@2.4.2)(@lerna-lite/run@2.4.2)(@lerna-lite/watch@2.4.2)
+      '@lerna-lite/version': 2.4.2(@lerna-lite/publish@2.4.3)(@lerna-lite/run@2.4.2)(@lerna-lite/watch@2.4.2)
       '@npmcli/arborist': 6.2.9
       byte-size: 8.1.1
       chalk: 5.2.0
@@ -1915,11 +1915,11 @@ packages:
       - supports-color
     dev: true
 
-  /@lerna-lite/run@2.4.2(@lerna-lite/publish@2.4.2)(@lerna-lite/watch@2.4.2):
+  /@lerna-lite/run@2.4.2(@lerna-lite/publish@2.4.3)(@lerna-lite/watch@2.4.2):
     resolution: {integrity: sha512-tGyS8Dc1b3ilvikRxetlm3avf1MidMYSyKXsJ5P9xKQpwjfPQVdfkmjYw1hJRycHsTV5PKQlT8p9TGKl55hfUw==}
     engines: {node: '>=16.15.0', npm: '>=8.5.0'}
     dependencies:
-      '@lerna-lite/cli': 2.4.2(@lerna-lite/publish@2.4.2)(@lerna-lite/run@2.4.2)(@lerna-lite/version@2.4.2)(@lerna-lite/watch@2.4.2)
+      '@lerna-lite/cli': 2.4.2(@lerna-lite/publish@2.4.3)(@lerna-lite/run@2.4.2)(@lerna-lite/version@2.4.2)(@lerna-lite/watch@2.4.2)
       '@lerna-lite/core': 2.4.2
       '@lerna-lite/filter-packages': 2.4.2
       '@lerna-lite/profiler': 2.4.2
@@ -1937,11 +1937,11 @@ packages:
       - supports-color
     dev: true
 
-  /@lerna-lite/version@2.4.2(@lerna-lite/publish@2.4.2)(@lerna-lite/run@2.4.2)(@lerna-lite/watch@2.4.2):
+  /@lerna-lite/version@2.4.2(@lerna-lite/publish@2.4.3)(@lerna-lite/run@2.4.2)(@lerna-lite/watch@2.4.2):
     resolution: {integrity: sha512-N7DY01sIM6/V2Tbb8tHUxCYNEE8sACYc6R7UrGa6WdKdGOq5KeRIeekIclO2ybrlMqR+YhfgZlZ33Rxxe8UOKQ==}
     engines: {node: '>=16.15.0', npm: '>=8.5.0'}
     dependencies:
-      '@lerna-lite/cli': 2.4.2(@lerna-lite/publish@2.4.2)(@lerna-lite/run@2.4.2)(@lerna-lite/version@2.4.2)(@lerna-lite/watch@2.4.2)
+      '@lerna-lite/cli': 2.4.2(@lerna-lite/publish@2.4.3)(@lerna-lite/run@2.4.2)(@lerna-lite/version@2.4.2)(@lerna-lite/watch@2.4.2)
       '@lerna-lite/core': 2.4.2
       '@octokit/plugin-enterprise-rest': 6.0.1
       '@octokit/rest': 19.0.13
@@ -1984,11 +1984,11 @@ packages:
       - supports-color
     dev: true
 
-  /@lerna-lite/watch@2.4.2(@lerna-lite/publish@2.4.2)(@lerna-lite/run@2.4.2):
+  /@lerna-lite/watch@2.4.2(@lerna-lite/publish@2.4.3)(@lerna-lite/run@2.4.2):
     resolution: {integrity: sha512-z2VOWtV5YgDLrcGZFB7qa1CX7X5ZvZh7ahjagszZGnFZjMBVXooaIU0UPspw+uRruuHKVUo1LcBGBsCaZic1vg==}
     engines: {node: '>=16.15.0', npm: '>=8.5.0'}
     dependencies:
-      '@lerna-lite/cli': 2.4.2(@lerna-lite/publish@2.4.2)(@lerna-lite/run@2.4.2)(@lerna-lite/version@2.4.2)(@lerna-lite/watch@2.4.2)
+      '@lerna-lite/cli': 2.4.2(@lerna-lite/publish@2.4.3)(@lerna-lite/run@2.4.2)(@lerna-lite/version@2.4.2)(@lerna-lite/watch@2.4.2)
       '@lerna-lite/core': 2.4.2
       '@lerna-lite/filter-packages': 2.4.2
       chokidar: 3.5.3

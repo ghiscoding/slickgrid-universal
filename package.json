@@ -66,7 +66,7 @@
     "@4tw/cypress-drag-drop": "^2.2.4",
     "@jest/types": "^29.5.0",
     "@lerna-lite/cli": "^2.4.2",
-    "@lerna-lite/publish": "^2.4.2",
+    "@lerna-lite/publish": "^2.4.3",
     "@lerna-lite/run": "^2.4.2",
     "@lerna-lite/watch": "^2.4.2",
     "@types/jest": "^29.5.2",
