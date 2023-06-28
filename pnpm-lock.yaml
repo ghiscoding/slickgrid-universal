@@ -173,8 +173,8 @@ importers:
         specifier: ^2.29.4
         version: 2.29.4
       multiple-select-vanilla:
-        specifier: ^0.4.3
-        version: 0.4.3
+        specifier: ^0.4.4
+        version: 0.4.4
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -243,8 +243,8 @@ importers:
         specifier: ^2.29.4
         version: 2.29.4
       multiple-select-vanilla:
-        specifier: ^0.4.3
-        version: 0.4.3
+        specifier: ^0.4.4
+        version: 0.4.4
       slickgrid:
         specifier: ^4.0.0
         version: 4.0.0
@@ -7079,8 +7079,8 @@ packages:
       minimatch: 3.1.2
     dev: true
 
-  /multiple-select-vanilla@0.4.3:
-    resolution: {integrity: sha512-l3MNcn/eB1TZKPUlGuNFEKix16vbKCkeksHFUeNCWHSZsgTo0GezpHiT82BSwtDLzjwx1Q4ykKvXKG/49Jk8Wg==}
+  /multiple-select-vanilla@0.4.4:
+    resolution: {integrity: sha512-R6Sl93PyYAGL8LFUkp8W+ojdBEdVNZYd/eV2H+37rcolMKgyssjA5KsHO1d+5JnO6rr4Xm7npAmGfuHNehBM0g==}
     dev: false
 
   /mute-stream@1.0.0:
