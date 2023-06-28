@@ -416,6 +416,7 @@ export class SelectFilter implements Filter {
       filter: false,  // input search term on top of the select option list
       maxHeight: 275,
       single: true,
+      useSelectOptionLabelToHtml: this.columnFilter?.enableRenderHtml ?? false,
       sanitizer: (dirtyHtml: string) => sanitizeTextByAvailableSanitizer(this.gridOptions, dirtyHtml),
       // we will subscribe to the onClose event for triggering our callback
       // also add/remove "filled" class for styling purposes

@@ -27,7 +27,7 @@
     "fetch-jsonp": "^1.2.3",
     "flatpickr": "^4.6.13",
     "moment-mini": "^2.29.4",
-    "multiple-select-vanilla": "^0.4.3",
+    "multiple-select-vanilla": "^0.4.4",
     "rxjs": "^7.8.1",
     "whatwg-fetch": "^3.6.2"
   },
