@@ -34,7 +34,7 @@ async function run() {
       copyfiles(
         [relativeFile, 'dist/styles/sass'],
         { up: true },
-        (err) => { err ? console.error(err) : console.log(`Copied "${fileWithExtension}" to "dist/styles/sass"`) }
+        (err) => { err ? console.error(err) : console.log(`Copied "${fileWithExtension}" to "dist/styles/sass"`); }
       );
     }
   }
