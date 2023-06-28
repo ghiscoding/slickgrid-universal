@@ -88,9 +88,7 @@ export function buildMultipleSelectDataCollection(type: 'editor' | 'filter', col
         if (isRenderHtmlEnabled) {
           // sanitize any unauthorized html tags like script and others
           // for the remaining allowed tags we'll permit all attributes
-          optionText = sanitizeTextByAvailableSanitizer(gridOptions, optionText, sanitizedOptions);
-        } else {
-          optionText = htmlEncode(optionText);
+          optionText = htmlEncode(sanitizeTextByAvailableSanitizer(gridOptions, optionText, sanitizedOptions));
         }
         selectOption.text = optionText;
 
