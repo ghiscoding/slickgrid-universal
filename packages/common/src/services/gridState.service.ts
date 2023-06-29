@@ -21,7 +21,6 @@ import type { FilterService } from './filter.service';
 import type { SharedService } from './shared.service';
 import type { SortService } from './sort.service';
 import type { TreeDataService } from './treeData.service';
-import { objectWithoutKey } from './utilities';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -221,7 +220,12 @@ export class GridStateService {
         if (gridColumn?.id) {
           columns.push({
             ...gridColumn,
-            ...objectWithoutKey(currentColumn, 'columnId') // extend all currentCol proops except "columnId" which isn't needed
+            cssClass: currentColumn.cssClass || gridColumn.cssClass,
+            headerCssClass: currentColumn.headerCssClass || gridColumn.headerCssClass,
+
+            // for the width we will only pull the custom width or else nothing
+            // since we don't want to use the default width that SlickGrid changes internally and that has an impact when using autoResizeColumnsByCellContent
+            width: currentColumn.width
           });
         }
       });
