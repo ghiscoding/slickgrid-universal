@@ -398,14 +398,9 @@ describe('GridStateService', () => {
         { id: 'field2', field: 'field2', width: 150, headerCssClass: 'blue' },
         { id: 'field3', field: 'field3' },
       ] as Column[];
-      const columnsWithClassesMock = [
-        { id: 'field1', field: 'field1', width: 100, cssClass: 'red', headerCssClass: '' },
-        { id: 'field2', field: 'field2', width: 150, cssClass: '', headerCssClass: 'blue' },
-        { id: 'field3', field: 'field3', width: 0, cssClass: '', headerCssClass: '' },
-      ] as Column[];
       const currentColumnsMock = [
-        { columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 },
-        { columnId: 'field2', cssClass: '', headerCssClass: 'blue', width: 150 },
+        { columnId: 'field1', cssClass: 'purple', headerCssClass: 'custom-hdr', width: 100 },
+        { columnId: 'field2', cssClass: '', width: 150 },
         { columnId: 'field3', cssClass: '', headerCssClass: '', width: 0 },
       ] as CurrentColumn[];
       const gridSpy = jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
@@ -414,8 +409,18 @@ describe('GridStateService', () => {
       const columns = service.getColumns();
 
       expect(gridSpy).toHaveBeenCalled();
-      expect(associatedGridColumns).toEqual(columnsWithClassesMock);
-      expect(columns).toEqual(columnsWithClassesMock);
+
+      // cssClass: red will change to purple and headerCssClass will remain blue when defined in either
+      expect(associatedGridColumns).toEqual([
+        { id: 'field1', field: 'field1', width: 100, cssClass: 'purple', headerCssClass: 'custom-hdr' },
+        { id: 'field2', field: 'field2', width: 150, cssClass: '', headerCssClass: 'blue' },
+        { id: 'field3', field: 'field3', width: 0, cssClass: '', headerCssClass: '' },
+      ]);
+      expect(columns).toEqual([
+        { id: 'field1', field: 'field1', width: 100, cssClass: 'purple', headerCssClass: 'custom-hdr' },
+        { id: 'field2', field: 'field2', width: 150, cssClass: '', headerCssClass: 'blue' },
+        { id: 'field3', field: 'field3', width: 0, cssClass: '', headerCssClass: '' },
+      ]);
     });
   });
 
@@ -591,7 +596,7 @@ describe('GridStateService', () => {
             }
           });
           done();
-        })
+        });
       });
     });
   });
