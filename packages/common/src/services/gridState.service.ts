@@ -21,6 +21,7 @@ import type { FilterService } from './filter.service';
 import type { SharedService } from './shared.service';
 import type { SortService } from './sort.service';
 import type { TreeDataService } from './treeData.service';
+import { objectWithoutKey } from './utilities';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -220,9 +221,7 @@ export class GridStateService {
         if (gridColumn?.id) {
           columns.push({
             ...gridColumn,
-            cssClass: currentColumn.cssClass,
-            headerCssClass: currentColumn.headerCssClass,
-            width: currentColumn.width
+            ...objectWithoutKey(currentColumn, 'columnId') // extend all currentCol proops except "columnId" which isn't needed
           });
         }
       });
