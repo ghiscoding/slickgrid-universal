@@ -413,13 +413,13 @@ describe('GridStateService', () => {
       // cssClass: red will change to purple and headerCssClass will remain blue when defined in either
       expect(associatedGridColumns).toEqual([
         { id: 'field1', field: 'field1', width: 100, cssClass: 'purple', headerCssClass: 'custom-hdr' },
-        { id: 'field2', field: 'field2', width: 150, cssClass: '', headerCssClass: 'blue' },
-        { id: 'field3', field: 'field3', width: 0, cssClass: '', headerCssClass: '' },
+        { id: 'field2', field: 'field2', width: 150, cssClass: undefined, headerCssClass: 'blue' },
+        { id: 'field3', field: 'field3', width: 0, cssClass: undefined, headerCssClass: undefined },
       ]);
       expect(columns).toEqual([
         { id: 'field1', field: 'field1', width: 100, cssClass: 'purple', headerCssClass: 'custom-hdr' },
-        { id: 'field2', field: 'field2', width: 150, cssClass: '', headerCssClass: 'blue' },
-        { id: 'field3', field: 'field3', width: 0, cssClass: '', headerCssClass: '' },
+        { id: 'field2', field: 'field2', width: 150, cssClass: undefined, headerCssClass: 'blue' },
+        { id: 'field3', field: 'field3', width: 0, cssClass: undefined, headerCssClass: undefined },
       ]);
     });
   });
