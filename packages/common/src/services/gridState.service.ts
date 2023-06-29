@@ -224,7 +224,8 @@ export class GridStateService {
             headerCssClass: currentColumn.headerCssClass || gridColumn.headerCssClass,
 
             // for the width we will only pull the custom width or else nothing
-            // since we don't want to use the default width that SlickGrid changes internally and that has an impact when using autoResizeColumnsByCellContent
+            // since we don't want to use the default width that SlickGrid uses internally (which is 60px),
+            // because that would cancel any column resize done by Slickgrid-Universal (like autoResizeColumnsByCellContent)
             width: currentColumn.width
           });
         }
