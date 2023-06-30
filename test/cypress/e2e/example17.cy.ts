@@ -49,7 +49,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', { retries: 1 }, () => {
     cy.get('.grid17-2 .slick-range-decorator').should('not.be.exist');
     cy.get('.grid17-2 .slick-row:nth-child(-n+6)')
       .children(':not(.cell-unselectable)')
-      .each(($child) => expect($child.attr('class')).to.include('true'));
+      .each(($child) => expect($child.attr('class')).to.include('selected'));
   });
 
   function testScroll() {
