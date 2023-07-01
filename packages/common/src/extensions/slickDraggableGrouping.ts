@@ -28,11 +28,6 @@ import { sortByFieldType } from '../sortComparers';
 // using external SlickGrid JS libraries
 declare const Slick: SlickNamespace;
 
-// use global variable because "setupColumnReorder()" method is used as static
-// and doesn't have access to anything inside the class and we need to dipose/destroy cleanly of all Sortable instances
-// let sortableLeftInstance: SortableInstance;
-// let sortableRightInstance: SortableInstance;
-
 /**
  *
  * Draggable Grouping contributed by:  Muthukumar Selconstasu
@@ -215,12 +210,7 @@ export class SlickDraggableGrouping {
 
   /** Dispose the plugin. */
   dispose() {
-    if (this._sortableLeftInstance?.el) {
-      this._sortableLeftInstance?.destroy();
-    }
-    if (this._sortableRightInstance?.el) {
-      this._sortableRightInstance?.destroy();
-    }
+    this.destroySortableInstances();
     this.onGroupChanged.unsubscribe();
     this._eventHandler.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);
@@ -242,6 +232,15 @@ export class SlickDraggableGrouping {
     this._dropzonePlaceholderElm.style.display = 'inline-block';
     if (this._groupToggler) {
       this._groupToggler.style.display = 'none';
+    }
+  }
+
+  destroySortableInstances() {
+    if (this._sortableLeftInstance?.el) {
+      this._sortableLeftInstance?.destroy();
+    }
+    if (this._sortableRightInstance?.el) {
+      this._sortableRightInstance?.destroy();
     }
   }
 
@@ -276,6 +275,7 @@ export class SlickDraggableGrouping {
    * @param trigger - callback to execute when triggering a column grouping
    */
   setupColumnReorder(grid: SlickGrid, headers: any, _headerColumnWidthDiff: any, setColumns: (columns: Column[]) => void, setupColumnResize: () => void, _columns: Column[], getColumnIndex: (columnId: string) => number, _uid: string, trigger: (slickEvent: SlickEvent, data?: any) => void) {
+    this.destroySortableInstances();
     const dropzoneElm = grid.getPreHeaderPanel();
     const draggablePlaceholderElm = dropzoneElm.querySelector<HTMLDivElement>('.slick-draggable-dropzone-placeholder');
     const groupTogglerElm = dropzoneElm.querySelector<HTMLDivElement>('.slick-group-toggle-all');
@@ -545,7 +545,6 @@ export class SlickDraggableGrouping {
 
     this._droppableInstance = Sortable.create(dropzoneElm, {
       group: 'shared',
-      // chosenClass: 'slick-header-column-active',
       ghostClass: 'slick-droppable-sortitem-hover',
       draggable: '.slick-dropped-grouping',
       dragoverBubble: true,
@@ -554,7 +553,6 @@ export class SlickDraggableGrouping {
         if (el.getAttribute('id')?.replace(this._gridUid, '')) {
           this.handleGroupByDrop(dropzoneElm, (Sortable.utils as any).clone(evt.item));
         }
-        evt.clone.style.opacity = '.5';
         el.parentNode?.removeChild(el);
       },
       onUpdate: () => {
