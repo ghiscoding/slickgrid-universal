@@ -4,6 +4,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.1](https://github.com/ghiscoding/slickgrid-universal/compare/v3.0.0...v3.0.1) (2023-07-01)
+
+### Bug Fixes
+
+* **common:** Select Filter/Editor regular text shouldn't be html encoded ([#1011](https://github.com/ghiscoding/slickgrid-universal/issues/1011)) ([c203a2c](https://github.com/ghiscoding/slickgrid-universal/commit/c203a2ce4d4e5cf6dfb0e05a25f5fd6b0c4cbe4d)), closes [#976](https://github.com/ghiscoding/slickgrid-universal/issues/976) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#1016](https://github.com/ghiscoding/slickgrid-universal/issues/1016)) ([c34ed84](https://github.com/ghiscoding/slickgrid-universal/commit/c34ed84c8c5aa20876c70b6350f711e16fe6b965)) - by @renovate-bot
+* **deps:** update dependency autocompleter to ^8.0.4 ([#996](https://github.com/ghiscoding/slickgrid-universal/issues/996)) ([3adf3a1](https://github.com/ghiscoding/slickgrid-universal/commit/3adf3a1a4cf960963ce1447617b3f34b68b6ff4d)) - by @renovate-bot
+* **deps:** update dependency conventional-changelog-conventionalcommits to v6 ([#990](https://github.com/ghiscoding/slickgrid-universal/issues/990)) ([b3fbcf5](https://github.com/ghiscoding/slickgrid-universal/commit/b3fbcf57556a7eb964782eb967c187f4307323f8)) - by @renovate-bot
+* **deps:** update dependency slickgrid to ^4.0.1 ([#1017](https://github.com/ghiscoding/slickgrid-universal/issues/1017)) ([2750816](https://github.com/ghiscoding/slickgrid-universal/commit/2750816b7b669a820362934daa9bbfd5d60f3ac5)) - by @renovate-bot
+* **GridState:** calling `getAssociatedGridColumns` should extend column ([#1014](https://github.com/ghiscoding/slickgrid-universal/issues/1014)) ([77cec0c](https://github.com/ghiscoding/slickgrid-universal/commit/77cec0cd052ec3145d73a7a16d0c7f5c663e3901)) - by @ghiscoding
+* **GridState:** calling getAssociatedGridColumns should extend column (part2) ([#1015](https://github.com/ghiscoding/slickgrid-universal/issues/1015)) ([3ea1d02](https://github.com/ghiscoding/slickgrid-universal/commit/3ea1d0289ba260325a2592fda42fecce10499525)) - by @ghiscoding
+* **grouping:** DraggableGrouping could throw when leaving page ([#1019](https://github.com/ghiscoding/slickgrid-universal/issues/1019)) ([c233a9c](https://github.com/ghiscoding/slickgrid-universal/commit/c233a9c5db1fc06395e75f1bc5bb34ea3431ba1f)) - by @ghiscoding
+
 ## [3.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v2.6.4...v3.0.0) (2023-05-29)
 
 ### Follow the [Migration 3.x Guide](https://github.com/ghiscoding/slickgrid-universal/wiki/Migration-to-3.x)
