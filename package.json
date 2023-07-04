@@ -69,7 +69,7 @@
     "@lerna-lite/publish": "^2.4.3",
     "@lerna-lite/run": "^2.4.2",
     "@lerna-lite/watch": "^2.4.2",
-    "@types/jest": "^29.6.0",
+    "@types/jest": "^29.5.2",
     "@types/node": "^18.16.19",
     "@typescript-eslint/eslint-plugin": "^5.61.0",
     "@typescript-eslint/parser": "^5.61.0",
