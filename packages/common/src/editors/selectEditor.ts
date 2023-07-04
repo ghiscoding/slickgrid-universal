@@ -744,6 +744,7 @@ export class SelectEditor implements Editor {
     const editorOptions = this.columnDef?.internalColumnEditor?.editorOptions ?? {};
     this.editorElmOptions = { ...this.defaultOptions, ...editorOptions, data: dataCollection };
     this._msInstance = multipleSelect(selectElement, this.editorElmOptions) as MultipleSelectInstance;
+    this.editorElm = this._msInstance.getParentElement();
     if (!this.isCompositeEditor) {
       this.delayOpening >= 0 ? setTimeout(() => this.show()) : this.show();
     }
