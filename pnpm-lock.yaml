@@ -204,8 +204,8 @@ importers:
         specifier: ^5.1.6
         version: 5.1.6
       vite:
-        specifier: ^4.4.1
-        version: 4.4.1(@types/node@18.16.19)(sass@1.63.6)
+        specifier: ^4.4.2
+        version: 4.4.2(@types/node@18.16.19)(sass@1.63.6)
 
   packages/binding:
     devDependencies:
@@ -615,8 +615,8 @@ importers:
         specifier: ^6.0.6
         version: 6.0.6
       vite:
-        specifier: ^4.4.1
-        version: 4.4.1(@types/node@18.16.19)(sass@1.63.6)
+        specifier: ^4.4.2
+        version: 4.4.2(@types/node@18.16.19)(sass@1.63.6)
       yargs:
         specifier: ^17.7.2
         version: 17.7.2
@@ -9352,8 +9352,8 @@ packages:
       extsprintf: 1.3.0
     dev: true
 
-  /vite@4.4.1(@types/node@18.16.19)(sass@1.63.6):
-    resolution: {integrity: sha512-8mmwPlsy7t+ZcTme7vdbVGuZ3Tri+lrLXr6hsF5UHdyYyARPPPMtM16QlqC9TZuCd5j3NmWs1rwka3cVSRHZTw==}
+  /vite@4.4.2(@types/node@18.16.19)(sass@1.63.6):
+    resolution: {integrity: sha512-zUcsJN+UvdSyHhYa277UHhiJ3iq4hUBwHavOpsNUGsTgjBeoBlK8eDt+iT09pBq0h9/knhG/SPrZiM7cGmg7NA==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
