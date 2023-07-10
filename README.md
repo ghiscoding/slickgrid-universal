@@ -12,7 +12,7 @@
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
 ### Description
-This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces)) which is regrouping a few packages under a single repository. It is using and requiring SlickGrid core library (more specifically the [6pac/SlickGrid](https://github.com/6pac/SlickGrid/) fork) behind the scene (the "Why?" is simply because there is no need to rewrite the core library itself, in other words this is a wrapper library). The main goal of this library is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). The original SlickGrid is like an IKEA product you need to assemble everything yourself, while in our project we offer the all assembled product including a lot more available Editors, Filters, OData, GraphQL, ... that SlickGrid simply does not offer. See below for more reasons of when and why this project was created.
+This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces)) which is regrouping a few packages under a single repository. It is using and requiring SlickGrid core library (more specifically the [6pac/SlickGrid](https://github.com/6pac/SlickGrid/) fork) and behind the scene (the "Why?" is simply because there is no need to rewrite the core library itself, in other words this is a wrapper library). The main goal of this library is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). The original SlickGrid is like an IKEA product that requires assembling everything yourself, however in this project here, we offer an all assembled product including a lot more available Editors, Filters, OData, GraphQL, ... and SlickGrid simply does not offer that by default. See below for more project details.
 
 ### Why create this monorepo?
 You might be wondering why was this monorepo created? Here are a few reasons:
@@ -44,10 +44,10 @@ The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2
 | [Slickgrid-Universal-WebPack-Demo](https://github.com/ghiscoding/slickgrid-universal-webpack-demo) | [demo](https://ghiscoding.github.io/slickgrid-universal-webpack-demo) | Bulma | Slickgrid-Universal demo with WebPack & TypeScript (**demo purposes only**) |
 | [Slickgrid-Universal-Vite-Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) | [demo](https://ghiscoding.github.io/slickgrid-universal-vite-demo) | Bulma | Slickgrid-Universal demo with Vite & TypeScript (**demo purposes only**) |
 
-The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) is a Vanilla Implementation (which is not associated to any framework) built with [ViteJS](https://vitejs.dev/) (originally [WebPack](https://webpack.js.org/)) and is also used by [Cypress](https://www.cypress.io/) for E2E testing all the UI functionalities. The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle), which extends the [vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package is also what we use in our SalesForce implementation (with Lightning Web Component), which was the original reason to create this monorepo library and avoid duplications of the same code.
+The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) is a Vanilla Implementation (which is not associated to any framework) built with [ViteJS](https://vitejs.dev/) (originally [WebPack](https://webpack.js.org/)) and is also used by [Cypress](https://www.cypress.io/) for E2E testing all the UI functionalities. The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle), which extends the [vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package is also what we use in our SalesForce implementation (with Lightning Web Component), which was the original reason to create this monorepo library and avoid code duplication.
 
 ### Fully Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has **100%** Unit Test Coverage, about ~4,000 Jest unit tests and also +450 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementations also have an additional +500 tests), this offer peace of mind that whenever a new PRs are opened, we have tests to cover them.
+Slickgrid-Universal has **100%** Unit Test Coverage, about ~4,000 Jest unit tests and also +450 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementations also have an additional +500 tests), this offer peace of mind that whenever new PRs are opened, we have tests to cover them.
 
 ### Available Public Packages
 
@@ -74,7 +74,7 @@ Slickgrid-Universal has **100%** Unit Test Coverage, about ~4,000 Jest unit test
 ## Installation
 **NOTE:** the installation instructions below are **only** required if you want to contribute to this project, if on the other hand you just want to download a quick Slickgrid-Universal demo, then take a look at [Slickgrid-Universal Vite Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) or [Slickgrid-Universal WebPack Demo](https://github.com/ghiscoding/slickgrid-universal-webpack-demo).
 
-To get started and do development with this monorepo, you will need to clone the repo and then follow the steps below. You must be at the root of your project to run the following commands. This project uses `pnpm`, you can install it via `npm i -g pnpm` or follow their [installation](https://pnpm.io/installation)
+To get started and do development with this monorepo, you will need to clone the repo and follow the steps shown below. You must be at the root of the project to run the following commands. This project uses `pnpm`, you can install it via `npm i -g pnpm` or follow their [installation](https://pnpm.io/installation)
 
 1. Install pnpm workspace with [pnpm](https://pnpm.io/installation) or run it with `npx`
 ```bash
@@ -98,7 +98,7 @@ pnpm run dev
 
 3. Build (bundle)
 
-You can also run a build if you want to run the Jest unit tests
+You also need to run a full build if you want to run the Jest unit tests
 
 ```bash
 pnpm run bundle
