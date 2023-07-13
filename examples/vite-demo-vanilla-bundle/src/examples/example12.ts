@@ -516,7 +516,7 @@ export default class Example12 {
   }
 
   handleValidationError(event) {
-    const args = event.detail && event.detail.args;
+    const args = event.detail?.args;
     console.log('handleValidationError', event.detail);
     if (args.validationResults) {
       let errorMsg = args.validationResults.msg || '';
@@ -538,13 +538,13 @@ export default class Example12 {
   }
 
   handleItemDeleted(event) {
-    const itemId = event && event.detail;
+    const itemId = event?.detail;
     console.log('item deleted with id:', itemId);
   }
 
   handleOnBeforeEditCell(event) {
-    const eventData = event.detail.eventData;
-    const args = event && event.detail && event.detail.args;
+    const eventData = event.detail?.eventData;
+    const args = event?.detail?.args;
     const { column, item, grid } = args;
 
     if (column && item) {
@@ -558,8 +558,8 @@ export default class Example12 {
   }
 
   handleOnCellChange(event) {
-    const args = event && event.detail && event.detail.args;
-    const dataContext = args && args.item;
+    const args = event?.detail?.args;
+    const dataContext = args?.item;
     console.log('cell change', args);
 
     // when the field "completed" changes to false, we also need to blank out the "finish" date
@@ -570,8 +570,8 @@ export default class Example12 {
   }
 
   handleOnCellClicked(event) {
-    const args = event && event.detail && event.detail.args;
-    const eventData = event && event.detail && event.detail.eventData;
+    const args = event?.detail?.args;
+    const eventData = event?.detail?.eventData;
     console.log(eventData, args);
     // if (eventData.target.classList.contains('mdi-help-circle-outline')) {
     //   alert('please HELP!!!');
@@ -621,7 +621,7 @@ export default class Example12 {
 
   handleOnGridStateChanged(event) {
     // console.log('handleOnGridStateChanged', event?.detail ?? '')
-    const gridState = event && event.detail && event.detail.gridState;
+    const gridState = event?.detail?.gridState;
     if (Array.isArray(gridState?.rowSelection.dataContextIds)) {
       this.isMassSelectionDisabled = gridState.rowSelection.dataContextIds.length === 0;
     }
