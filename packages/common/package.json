@@ -2,8 +2,6 @@
   "name": "@slickgrid-universal/common",
   "version": "3.0.1",
   "description": "SlickGrid-Universal Common Code",
-  "main": "dist/commonjs/index.js",
-  "module": "dist/esm/index.js",
   "exports": {
     ".": {
       "import": "./dist/esm/index.js",
@@ -20,6 +18,8 @@
     }
   },
   "types": "dist/types/index.d.ts",
+  "main": "dist/commonjs/index.js",
+  "module": "dist/esm/index.js",
   "license": "MIT",
   "author": "Ghislain B.",
   "homepage": "https://github.com/ghiscoding/slickgrid-universal",
