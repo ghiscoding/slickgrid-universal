@@ -525,7 +525,7 @@ describe('Resizer Service', () => {
       expect(spy).not.toHaveBeenCalled();
     });
 
-    it('should call a grid "resizeCanvas" when browser is not IE', () => {
+    it('should call a grid "resizeCanvas" when size changes', () => {
       const newHeight = 500;
       service.init(gridStub, divContainer);
       const serviceCalculateSpy = jest.spyOn(service, 'calculateGridNewDimensions');
