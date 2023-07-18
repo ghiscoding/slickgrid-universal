@@ -346,10 +346,8 @@ export class ResizerService {
         this._gridContainerElm.style.width = `${newWidth}px`;
       }
 
-      // resize the slickgrid canvas on all browser except some IE versions
-      // exclude all IE below IE11
-      // IE11 wants to be a better standard (W3C) follower (finally) they even changed their appName output to also have 'Netscape'
-      if (new RegExp('MSIE [6-8]').exec(navigator.userAgent) === null && this._grid?.resizeCanvas && this._gridContainerElm) {
+      // resize the slickgrid canvas on all browser
+      if (this._grid?.resizeCanvas && this._gridContainerElm) {
         this._grid.resizeCanvas();
       }
 
