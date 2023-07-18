@@ -89,8 +89,8 @@ importers:
         specifier: ^6.0.6
         version: 6.0.6
       pnpm:
-        specifier: ^8.6.8
-        version: 8.6.8
+        specifier: ^8.6.9
+        version: 8.6.9
       rimraf:
         specifier: ^5.0.1
         version: 5.0.1
@@ -116,8 +116,8 @@ importers:
         specifier: ^5.1.6
         version: 5.1.6
       whatwg-fetch:
-        specifier: ^3.6.2
-        version: 3.6.2
+        specifier: ^3.6.16
+        version: 3.6.16
 
   examples/vite-demo-vanilla-bundle:
     dependencies:
@@ -179,8 +179,8 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
       whatwg-fetch:
-        specifier: ^3.6.2
-        version: 3.6.2
+        specifier: ^3.6.16
+        version: 3.6.16
     devDependencies:
       '@rollup/plugin-dynamic-import-vars':
         specifier: ^2.0.4
@@ -544,8 +544,8 @@ importers:
         specifier: ^1.15.0
         version: 1.15.0
       whatwg-fetch:
-        specifier: ^3.6.2
-        version: 3.6.2
+        specifier: ^3.6.16
+        version: 3.6.16
     devDependencies:
       '@slickgrid-universal/graphql':
         specifier: workspace:~
@@ -599,8 +599,8 @@ importers:
         specifier: workspace:~
         version: link:../vanilla-bundle
       whatwg-fetch:
-        specifier: ^3.6.2
-        version: 3.6.2
+        specifier: ^3.6.16
+        version: 3.6.16
     devDependencies:
       archiver:
         specifier: ^5.3.1
@@ -616,7 +616,7 @@ importers:
         version: 6.0.6
       vite:
         specifier: ^4.4.4
-        version: 4.4.4(@types/node@18.16.19)
+        version: 4.4.4(@types/node@18.16.19)(sass@1.63.6)
       yargs:
         specifier: ^17.7.2
         version: 17.7.2
@@ -7804,8 +7804,8 @@ packages:
       find-up: 4.1.0
     dev: true
 
-  /pnpm@8.6.8:
-    resolution: {integrity: sha512-OtrCRUE7VqRyKly9E3gfExZHOAHtFDpmulyVFKrnl3v/n2xJckdueVumWJqUA5FHxcRP/T42r8P8CDr9duPP9w==}
+  /pnpm@8.6.9:
+    resolution: {integrity: sha512-LPEaCGvlV4dVGeJeHqi/pCR/SETooqmScv2wcr0gTqGUebpkt1w9TIEX0awLMhLO29p7pcXfz5ZO59B70Tnc0w==}
     engines: {node: '>=16.14'}
     hasBin: true
     dev: true
@@ -9504,42 +9504,6 @@ packages:
       extsprintf: 1.3.0
     dev: true
 
-  /vite@4.4.4(@types/node@18.16.19):
-    resolution: {integrity: sha512-4mvsTxjkveWrKDJI70QmelfVqTm+ihFAb6+xf4sjEU2TmUCTlVX87tmg/QooPEMQb/lM9qGHT99ebqPziEd3wg==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': '>= 14'
-      less: '*'
-      lightningcss: ^1.21.0
-      sass: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.4.0
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      less:
-        optional: true
-      lightningcss:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-    dependencies:
-      '@types/node': 18.16.19
-      esbuild: 0.18.14
-      postcss: 8.4.26
-      rollup: 3.26.2
-    optionalDependencies:
-      fsevents: 2.3.2
-    dev: true
-
   /vite@4.4.4(@types/node@18.16.19)(sass@1.63.6):
     resolution: {integrity: sha512-4mvsTxjkveWrKDJI70QmelfVqTm+ihFAb6+xf4sjEU2TmUCTlVX87tmg/QooPEMQb/lM9qGHT99ebqPziEd3wg==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -9621,8 +9585,8 @@ packages:
       iconv-lite: 0.6.3
     dev: true
 
-  /whatwg-fetch@3.6.2:
-    resolution: {integrity: sha512-bJlen0FcuU/0EMLrdbJ7zOnW6ITZLrZMIarMUVmdKtsGvZna8vxKYaexICWPfZ8qwf9fzNq+UEIZrnSaApt6RA==}
+  /whatwg-fetch@3.6.16:
+    resolution: {integrity: sha512-83avoGbZ0qtjtNrU3UTT3/Xd3uZ7DyfSYLuc1fL5iYs+93P+UkIVF6/6xpRVWeQcvbc7kSnVybSAVbd6QFW5Fg==}
 
   /whatwg-mimetype@3.0.0:
     resolution: {integrity: sha512-nt+N2dzIutVRxARx1nghPKGv1xHikU7HKdfafKkLNLindmPU/ch3U31NOCGGA/dmPcmb1VlofO0vnKAcsm0o/Q==}
