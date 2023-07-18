@@ -74,7 +74,7 @@
     "@slickgrid-universal/text-export": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
     "@slickgrid-universal/vanilla-bundle": "workspace:~",
-    "whatwg-fetch": "^3.6.2"
+    "whatwg-fetch": "^3.6.16"
   },
   "devDependencies": {
     "archiver": "^5.3.1",
