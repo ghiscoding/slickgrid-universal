@@ -295,6 +295,23 @@ export default class Example5 {
       // use the Grid Service to insert the item,
       // it will also internally take care of updating & resorting the hierarchical dataset
       this.sgb.gridService.addItem(newItem);
+
+      // or insert multiple items
+      // const itemCount = 15;
+      // const newItems: any[] = [];
+      // for (let i = 0; i < itemCount; i++) {
+      //   newItems.push({
+      //     id: newId + i,
+      //     parentId: parentItemFound.id,
+      //     title: `Task ${newId + i}`,
+      //     duration: '1 day',
+      //     percentComplete: 99,
+      //     start: new Date(),
+      //     finish: new Date(),
+      //     effortDriven: false
+      //   });
+      // }
+      // this.sgb.gridService.addItems(newItems);
     }
   }
 

@@ -618,13 +618,13 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       });
   });
 
-  it('should click Add Item button 2x times and expect "Task 500" and "Task 501" to be created', () => {
+  it('should click Add Item button 2x times and expect "Task 500" and "Task 501" to be inserted at the end of the grid', () => {
     cy.get('[data-test="add-item-btn"]').click();
     cy.wait(200);
     cy.get('[data-test="add-item-btn"]').click();
 
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 501');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(2)`).should('contain', 'Task 500');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 500}px"] > .slick-cell:nth(2)`).should('contain', 'Task 500');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 501}px"] > .slick-cell:nth(2)`).should('contain', 'Task 501');
 
     cy.get('[data-test="toggle-filtering-btn"]').click(); // show it back
   });
@@ -646,7 +646,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
   });
 
   it('should open the "Prerequisites" Editor and expect to have Task 500 & 501 in the Editor', () => {
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`)
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 501}px"] > .slick-cell:nth(9)`)
       .should('contain', '')
       .click();
 
@@ -665,13 +665,13 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .last()
       .click({ force: true });
 
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(9)`).should('contain', 'Task 501');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 501}px"] > .slick-cell:nth(9)`).should('contain', 'Task 501');
   });
 
-  it('should delete the last item "Task 501" and expect it to be removed from the Filter', () => {
+  it('should delete the last item "Task 501" and expect it to be removed from the Filter, the last item should now be "Task 500"', () => {
     cy.get('[data-test="delete-item-btn"]').click();
 
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'Task 500');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 500}px"] > .slick-cell:nth(2)`).should('contain', 'Task 500');
 
     cy.get('div.ms-filter.filter-prerequisites')
       .trigger('click');

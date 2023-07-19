@@ -25,7 +25,7 @@ import { SlickRowSelectionModel } from '../extensions/slickRowSelectionModel';
 let highlightTimerEnd: any;
 
 const GridServiceDeleteOptionDefaults: GridServiceDeleteOption = { skipError: false, triggerEvent: true };
-const GridServiceInsertOptionDefaults: GridServiceInsertOption = { highlightRow: true, position: 'top', resortGrid: false, selectRow: false, skipError: false, triggerEvent: true };
+const GridServiceInsertOptionDefaults: GridServiceInsertOption = { highlightRow: true, resortGrid: false, selectRow: false, scrollRowIntoView: true, skipError: false, triggerEvent: true };
 const GridServiceUpdateOptionDefaults: GridServiceUpdateOption = { highlightRow: false, selectRow: false, scrollRowIntoView: false, skipError: false, triggerEvent: true };
 const HideColumnOptionDefaults: HideColumnOption = { autoResizeColumns: true, triggerEvent: true, hideFromColumnPicker: false, hideFromGridMenu: false };
 
@@ -396,13 +396,13 @@ export class GridService {
    * @return rowIndex: typically index 0 when adding to position "top" or a different number when adding to the "bottom"
    */
   addItem<T = any>(item: T, options?: GridServiceInsertOption): number | undefined {
-    const addOptions = { ...GridServiceInsertOptionDefaults, ...options };
+    const insertOptions = { ...GridServiceInsertOptionDefaults, ...options };
 
-    if (!addOptions?.skipError && (!this._grid || !this._gridOptions || !this._dataView)) {
+    if (!insertOptions?.skipError && (!this._grid || !this._gridOptions || !this._dataView)) {
       throw new Error('[Slickgrid-Universal] We could not find SlickGrid Grid, DataView objects');
     }
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
-    if (!addOptions?.skipError && (!item || !item.hasOwnProperty(idPropName))) {
+    if (!insertOptions?.skipError && (!item || !item.hasOwnProperty(idPropName))) {
       throw new Error(`[Slickgrid-Universal] Adding an item requires the item to include an "${idPropName}" property`);
     }
 
@@ -410,7 +410,7 @@ export class GridService {
       throw new Error('[Slickgrid-Universal] Please note that `addItem({ position: "top" })` is not supported when used with Tree Data because of the extra complexity.');
     }
 
-    const insertPosition = addOptions?.position ?? 'top';
+    const insertPosition = insertOptions?.position;
 
     // insert position top/bottom, defaults to top
     // when position is top we'll call insert at index 0, else call addItem which just push to the DataView array
@@ -428,8 +428,10 @@ export class GridService {
       // if we add/remove item(s) from the dataset, we need to also refresh our tree data filters
       this.invalidateHierarchicalDataset();
       rowNumber = this._dataView.getRowById(itemId);
-      this._grid.scrollRowIntoView(rowNumber ?? 0, false);
-    } else if (addOptions.resortGrid) {
+      if (insertOptions.scrollRowIntoView) {
+        this._grid.scrollRowIntoView(rowNumber ?? 0, false);
+      }
+    } else if (insertOptions.resortGrid) {
       // do we want the item to be sorted in the grid, when set to False it will insert on first row (defaults to false)
       this._dataView.reSort();
 
@@ -439,28 +441,30 @@ export class GridService {
     } else {
       // scroll to row index 0 when inserting on top else scroll to the bottom where it got inserted
       rowNumber = (insertPosition === 'bottom') ? this._dataView.getRowById(itemId) : 0;
-      this._grid.scrollRowIntoView(rowNumber ?? 0);
+      if (insertOptions.scrollRowIntoView) {
+        this._grid.scrollRowIntoView(rowNumber ?? 0);
+      }
     }
 
     // if highlight is enabled, we'll highlight the row we just added
-    if (addOptions.highlightRow && rowNumber !== undefined) {
+    if (insertOptions.highlightRow && rowNumber !== undefined) {
       this.highlightRow(rowNumber);
     }
 
     // if row selection (checkbox selector) is enabled, we'll select the row in the grid
-    if (rowNumber !== undefined && addOptions.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+    if (rowNumber !== undefined && insertOptions.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
       this.setSelectedRow(rowNumber);
     }
 
     // do we want to trigger an event after adding the item
-    if (addOptions.triggerEvent) {
+    if (insertOptions.triggerEvent) {
       this.pubSubService.publish('onItemAdded', item);
     }
 
     // when using Pagination in a local grid, we need to either go to first page or last page depending on which position user want to insert the new row
-    const isLocalGrid = !(this._gridOptions && this._gridOptions.backendServiceApi);
+    const isLocalGrid = !(this._gridOptions?.backendServiceApi);
     if (isLocalGrid && this._gridOptions.enablePagination) {
-      insertPosition === 'top' ? this.paginationService.goToFirstPage() : this.paginationService.goToLastPage();
+      insertPosition === 'bottom' ? this.paginationService.goToLastPage() : this.paginationService.goToFirstPage();
     }
 
     return rowNumber;
@@ -472,14 +476,14 @@ export class GridService {
    * @param options: provide the possibility to do certain actions after or during the upsert (highlightRow, resortGrid, selectRow, triggerEvent)
    */
   addItems<T = any>(items: T | T[], options?: GridServiceInsertOption): number[] {
-    options = { ...GridServiceInsertOptionDefaults, ...options };
+    const insertOptions = { ...GridServiceInsertOptionDefaults, ...options };
     const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
-    const insertPosition = options?.position ?? 'top';
+    const insertPosition = insertOptions?.position;
     const rowNumbers: number[] = [];
 
     // loop through all items to add
     if (!Array.isArray(items)) {
-      return [this.addItem<T>(items, options) || 0]; // on a single item, just call addItem()
+      return [this.addItem<T>(items, insertOptions) || 0]; // on a single item, just call addItem()
     } else {
       // begin bulk transaction
       this._dataView.beginUpdate(true);
@@ -501,31 +505,36 @@ export class GridService {
       this.invalidateHierarchicalDataset();
       const firstItemId = (items as any)[0]?.[idPropName] ?? '';
       const rowNumber = this._dataView.getRowById(firstItemId);
-      this._grid.scrollRowIntoView(rowNumber ?? 0, false);
-    } else if (options.resortGrid) {
+      if (insertOptions.scrollRowIntoView) {
+        this._grid.scrollRowIntoView(rowNumber ?? 0, false);
+      }
+    } else if (insertOptions.resortGrid) {
       // do we want the item to be sorted in the grid, when set to False it will insert on first row (defaults to false)
       this._dataView.reSort();
     }
 
-    // scroll to row index 0 when inserting on top else scroll to the bottom where it got inserted
-    (insertPosition === 'bottom' && !this._gridOptions?.enableTreeData) ? this._grid.navigateBottom() : this._grid.navigateTop();
+    // when insert position if defined and we're not using a Tree Data grid
+    if (insertPosition && insertOptions.scrollRowIntoView && !this._gridOptions?.enableTreeData) {
+      // "top" insert will scroll to row index 0 or else "bottom" will scroll to the bottom of the grid
+      insertPosition === 'bottom' ? this._grid.navigateBottom() : this._grid.navigateTop();
+    }
 
     // get row numbers of all new inserted items
     // we need to do it after resort and get each row number because it possibly changed after the sort
     items.forEach((item: T) => rowNumbers.push(this._dataView.getRowById(item[idPropName as keyof T] as string | number) as number));
 
     // if user wanted to see highlighted row
-    if (options.highlightRow) {
+    if (insertOptions.highlightRow) {
       this.highlightRow(rowNumbers);
     }
 
     // select the row in the grid
-    if (options.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+    if (insertOptions.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
       this.setSelectedRows(rowNumbers);
     }
 
     // do we want to trigger an event after adding the item
-    if (options.triggerEvent) {
+    if (insertOptions.triggerEvent) {
       this.pubSubService.publish('onItemAdded', items);
     }
 
