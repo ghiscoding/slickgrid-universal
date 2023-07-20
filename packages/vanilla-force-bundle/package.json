@@ -74,14 +74,14 @@
     "@slickgrid-universal/text-export": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
     "@slickgrid-universal/vanilla-bundle": "workspace:~",
-    "whatwg-fetch": "^3.6.16"
+    "whatwg-fetch": "^3.6.17"
   },
   "devDependencies": {
     "archiver": "^5.3.1",
     "cross-env": "^7.0.3",
-    "esbuild": "^0.18.14",
+    "esbuild": "^0.18.15",
     "npm-run-all2": "^6.0.6",
-    "vite": "^4.4.4",
+    "vite": "^4.4.5",
     "yargs": "^17.7.2"
   }
 }
