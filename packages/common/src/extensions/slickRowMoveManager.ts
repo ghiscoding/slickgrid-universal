@@ -133,7 +133,6 @@ export class SlickRowMoveManager {
       id: columnId,
       name: '',
       behavior: 'selectAndMove',
-      cssClass: this._addonOptions.cssClass,
       excludeFromExport: true,
       excludeFromColumnPicker: true,
       excludeFromGridMenu: true,
@@ -321,7 +320,7 @@ export class SlickRowMoveManager {
     if (!this.checkUsabilityOverride(row, dataContext, grid)) {
       return '';
     } else {
-      return { addClasses: 'cell-reorder dnd', text: '' };
+      return { addClasses: `cell-reorder dnd ${this._addonOptions.cssClass || ''}`, text: '' };
     }
   }
 }
