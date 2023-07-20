@@ -391,13 +391,13 @@ export class SlickCellExternalCopyManager {
 
           for (let rg = 0; rg < ranges.length; rg++) {
             const range = ranges[rg];
-            const clipTextRows = [];
+            const clipTextRows: string[] = [];
             for (let i = range.fromRow; i < range.toRow + 1; i++) {
               const clipTextCells = [];
               const dt = this._grid.getDataItem(i);
 
               if (clipTextRows.length === 0 && this._addonOptions.includeHeaderWhenCopying) {
-                const clipTextHeaders = [];
+                const clipTextHeaders:string[] = [];
                 for (let j = range.fromCell; j < range.toCell + 1; j++) {
                   if (columns[j].name!.length > 0) {
                     clipTextHeaders.push(this.getHeaderValueForColumn(columns[j]));

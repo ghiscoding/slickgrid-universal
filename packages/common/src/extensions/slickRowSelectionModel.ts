@@ -29,7 +29,7 @@ export class SlickRowSelectionModel {
   pluginName: 'RowSelectionModel' = 'RowSelectionModel' as const;
 
   /** triggered when selected ranges changes */
-  onSelectedRangesChanged = new Slick.Event();
+  onSelectedRangesChanged = new Slick.Event<CellRange[]>();
 
   constructor(options?: RowSelectionModelOption) {
     this._eventHandler = new Slick.EventHandler();
@@ -166,7 +166,7 @@ export class SlickRowSelectionModel {
     }
   }
 
-  protected handleClick(e: SlickEventData): boolean | void {
+  protected handleClick(e: MouseEvent): boolean | void {
     const cell = this._grid.getCellFromEvent(e);
     if (!cell || !this._grid.canCellBeActive(cell.row, cell.cell)) {
       return false;
@@ -221,7 +221,7 @@ export class SlickRowSelectionModel {
         selectedRows = [activeRow.row];
       }
 
-      let active;
+      let active:number;
       let top = selectedRows[0];
       let bottom = selectedRows[selectedRows.length - 1];
 

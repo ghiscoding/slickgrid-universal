@@ -44,10 +44,10 @@ export interface SlickGrid {
   applyFormatResultToCellNode(formatterResult?: FormatterResultObject, cellNode?: HTMLDivElement, suppressRemove?: boolean): void;
 
   /** Proportionally resize a specific column by its name, index or Id */
-  autosizeColumn(columnOrIndexOrId: string | number, isInit: boolean): void;
+  autosizeColumn(columnOrIndexOrId: string | number, isInit?: boolean): void;
 
   /** Proportionately resizes all columns to fill available horizontal space. This does not take the cell contents into consideration. */
-  autosizeColumns(): void;
+  autosizeColumns(autosizeMode?: string, isInit?: boolean): void;
 
   /**
    * Returns true if you can click on a given cell and make it the active focus.
@@ -65,15 +65,15 @@ export interface SlickGrid {
 
   /**
    * Destroy (dispose) of SlickGrid
-   * @param {boolean} shouldDestroyAllElements - do we want to destroy (nullify) all DOM elements as well? This help in avoiding mem leaks
+   * @param {boolean} [shouldDestroyAllElements] - do we want to destroy (nullify) all DOM elements as well? This help in avoiding mem leaks
    */
   destroy(shouldDestroyAllElements?: boolean): void;
 
   /**
    * Attempts to switch the active cell into edit mode. Will throw an error if the cell is set to be not editable. Uses the specified editor, otherwise defaults to any default editor for that given cell.
    * @param {object} editor - A SlickGrid editor (see examples in slick.editors.js).
-   * @param {boolean} preClickModeOn - Pre-Click Mode is Enabled?
-   * @param {object} event
+   * @param {boolean} [preClickModeOn] - Pre-Click Mode is Enabled?
+   * @param {object} [event]
    */
   editActiveCell(editor: Editor | SlickCompositeEditor, preClickModeOn?: boolean, event?: Event): void;
 
@@ -81,7 +81,7 @@ export interface SlickGrid {
    * Flashes the cell twice by toggling the CSS class 4 times.
    * @param {number} row A row index.
    * @param {number} cell A column index.
-   * @param {number} speed (optional) - The milliseconds delay between the toggling calls. Defaults to 100 ms.
+   * @param {number} [speed] (optional) - The milliseconds delay between the toggling calls. Defaults to 100 ms.
    */
   flashCell(row: number, cell: number, speed?: number): void;
 
@@ -92,15 +92,11 @@ export interface SlickGrid {
   getAbsoluteColumnMinWidth(): number;
 
   /** Get the canvas DOM element */
-  getActiveCanvasNode(element?: HTMLElement): HTMLElement;
+  getActiveCanvasNode(event?: Event | SlickGridEventData): HTMLElement;
 
   /**
    * Returns an object representing the coordinates of the currently active cell:
-   * @example
-   * 	{
-   * 	  row: activeRow,
-   * 	  cell: activeCell
-   * 	}
+   * @example	`{ row: activeRow, cell: activeCell }`
    */
   getActiveCell(): { row: number; cell: number; };
 
@@ -111,7 +107,7 @@ export interface SlickGrid {
   getActiveCellPosition(): ElementPosition;
 
   /** Get the active Viewport DOM node element */
-  getActiveViewportNode(elm?: HTMLElement): HTMLDivElement;
+  getActiveViewportNode(event?: Event | SlickGridEventData): HTMLDivElement;
 
   /** Get the displayed scrollbar dimensions */
   getDisplayedScrollbarDimensions(): { height: number; width: number; }
@@ -353,7 +349,7 @@ export interface SlickGrid {
    */
   reRenderColumns(shouldReRender?: boolean): void;
 
-  /**  Resets active cell. */
+  /** Resets active cell. */
   resetActiveCell(): void;
 
   /** Execute a Resize of the Canvas */

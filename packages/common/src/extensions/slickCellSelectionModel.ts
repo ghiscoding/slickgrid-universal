@@ -136,7 +136,7 @@ export class SlickCellSelectionModel {
   // protected functions
   // ---------------------
 
-  protected handleActiveCellChange(_e: any, args: OnActiveCellChangedEventArgs) {
+  protected handleActiveCellChange(_e: Event, args: OnActiveCellChangedEventArgs) {
     if (this._addonOptions?.selectActiveCell && args.row !== null && args.cell !== null) {
       this.setSelectedRanges([new Slick.Range(args.row, args.cell)]);
     } else if (!this._addonOptions?.selectActiveCell) {
@@ -157,7 +157,7 @@ export class SlickCellSelectionModel {
     this.setSelectedRanges([args.range as SlickRange]);
   }
 
-  protected handleKeyDown(e: any) {
+  protected handleKeyDown(e: KeyboardEvent) {
     let ranges: CellRange[];
     let last: SlickRange;
     const active = this._grid.getActiveCell();

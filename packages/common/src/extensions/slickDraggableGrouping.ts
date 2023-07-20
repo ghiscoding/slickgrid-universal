@@ -434,55 +434,53 @@ export class SlickDraggableGrouping {
 
     if (columnAllowed) {
       for (const col of this._gridColumns) {
-        if (col.id === columnId) {
-          if (col.grouping && !isEmptyObject(col.grouping)) {
-            const columnNameElm = headerColumnElm.querySelector('.slick-column-name');
-            const entryElm = createDomElement('div', {
-              id: `${this._gridUid}_${col.id}_entry`,
-              className: 'slick-dropped-grouping',
-              dataset: { id: `${col.id}` }
-            });
-            createDomElement('div', {
-              className: 'slick-dropped-grouping-title',
-              style: { display: 'inline-flex' },
-              textContent: columnNameElm ? columnNameElm.textContent : headerColumnElm.textContent,
-            }, entryElm);
+        if (col.id === columnId && col.grouping && !isEmptyObject(col.grouping)) {
+          const columnNameElm = headerColumnElm.querySelector('.slick-column-name');
+          const entryElm = createDomElement('div', {
+            id: `${this._gridUid}_${col.id}_entry`,
+            className: 'slick-dropped-grouping',
+            dataset: { id: `${col.id}` }
+          });
+          createDomElement('div', {
+            className: 'slick-dropped-grouping-title',
+            style: { display: 'inline-flex' },
+            textContent: columnNameElm ? columnNameElm.textContent : headerColumnElm.textContent,
+          }, entryElm);
 
-            // delete icon
-            const groupRemoveIconElm = createDomElement('div', { className: 'slick-groupby-remove' });
-            if (this._addonOptions.deleteIconCssClass) {
-              groupRemoveIconElm.classList.add(...this._addonOptions.deleteIconCssClass.split(' '));
+          // delete icon
+          const groupRemoveIconElm = createDomElement('div', { className: 'slick-groupby-remove' });
+          if (this._addonOptions.deleteIconCssClass) {
+            groupRemoveIconElm.classList.add(...this._addonOptions.deleteIconCssClass.split(' '));
+          }
+          if (!this._addonOptions.deleteIconCssClass) {
+            groupRemoveIconElm.classList.add('slick-groupby-remove-icon');
+          }
+
+          // sorting icons when enabled
+          let groupSortContainerElm: HTMLDivElement | undefined;
+          if (this._addonOptions?.hideGroupSortIcons !== true && col.sortable) {
+            if (col.grouping?.sortAsc === undefined) {
+              col.grouping.sortAsc = true;
             }
-            if (!this._addonOptions.deleteIconCssClass) {
-              groupRemoveIconElm.classList.add('slick-groupby-remove-icon');
-            }
+            groupSortContainerElm = createDomElement('div', { className: 'slick-groupby-sort' }, entryElm);
+            this.getGroupBySortIcon(groupSortContainerElm, col.grouping.sortAsc);
+          }
 
-            // sorting icons when enabled
-            let groupSortContainerElm: HTMLDivElement | undefined;
-            if (this._addonOptions?.hideGroupSortIcons !== true && col.sortable) {
-              if (col.grouping?.sortAsc === undefined) {
-                col.grouping.sortAsc = true;
-              }
-              groupSortContainerElm = createDomElement('div', { className: 'slick-groupby-sort' }, entryElm);
-              this.getGroupBySortIcon(groupSortContainerElm, col.grouping.sortAsc);
-            }
+          entryElm.appendChild(groupRemoveIconElm);
+          entryElm.appendChild(document.createElement('div'));
+          containerElm.appendChild(entryElm);
 
-            entryElm.appendChild(groupRemoveIconElm);
-            entryElm.appendChild(document.createElement('div'));
-            containerElm.appendChild(entryElm);
+          // if we're grouping by only 1 group, at the root, we'll analyze Toggle All and add collapsed/expanded class
+          if (this._groupToggler && this.columnsGroupBy.length === 0) {
+            this.toggleGroupAll(col);
+          }
 
-            // if we're grouping by only 1 group, at the root, we'll analyze Toggle All and add collapsed/expanded class
-            if (this._groupToggler && this.columnsGroupBy.length === 0) {
-              this.toggleGroupAll(col);
-            }
+          this.addColumnGroupBy(col);
+          this.addGroupByRemoveClickHandler(col.id, groupRemoveIconElm, headerColumnElm, entryElm);
 
-            this.addColumnGroupBy(col);
-            this.addGroupByRemoveClickHandler(col.id, groupRemoveIconElm, headerColumnElm, entryElm);
-
-            // when Sorting group is enabled, let's add all handlers
-            if (groupSortContainerElm) {
-              this.addGroupSortClickHandler(col, groupSortContainerElm);
-            }
+          // when Sorting group is enabled, let's add all handlers
+          if (groupSortContainerElm) {
+            this.addGroupSortClickHandler(col, groupSortContainerElm);
           }
         }
       }
@@ -534,7 +532,7 @@ export class SlickDraggableGrouping {
     const draggablePlaceholderElm = this._dropzoneElm.querySelector('.slick-draggable-dropzone-placeholder');
 
     if (draggablePlaceholderElm && this._dropzoneElm) {
-      this._bindingEventService.bind(draggablePlaceholderElm, 'dragover', (e) => e.preventDefault);
+      this._bindingEventService.bind(draggablePlaceholderElm, 'dragover', (e) => e.preventDefault());
       this._bindingEventService.bind(draggablePlaceholderElm, 'dragenter', () => this._dropzoneElm.classList.add('slick-dropzone-hover'));
       this._bindingEventService.bind(draggablePlaceholderElm, 'dragleave', () => this._dropzoneElm.classList.remove('slick-dropzone-hover'));
     }

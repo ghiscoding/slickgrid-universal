@@ -31,13 +31,13 @@ export class SlickCellRangeSelector {
   protected _gridOptions!: GridOption;
   protected _gridUid = '';
 
-  // Frozen row & column constiables
+  // Frozen row & column variables
   protected _columnOffset = 0;
   protected _rowOffset = 0;
   protected _isRightCanvas = false;
   protected _isBottomCanvas = false;
 
-  // autoScroll related constiables
+  // autoScroll related variables
   protected _activeViewport!: HTMLElement;
   protected _autoScrollTimerId?: NodeJS.Timeout;
   protected _draggingMouseOffset!: MouseOffsetViewport;
@@ -46,6 +46,7 @@ export class SlickCellRangeSelector {
   protected _yDelayForNextCell = 0;
   protected _viewportHeight = 0;
   protected _viewportWidth = 0;
+  protected _isRowMoveRegistered = false;
 
   // Scrollings
   protected _scrollLeft = 0;
@@ -312,7 +313,7 @@ export class SlickCellRangeSelector {
     }
   }
 
-  protected handleDragInit(e: any) {
+  protected handleDragInit(e: Event) {
     // Set the active canvas node because the decorator needs to append its
     // box to the correct canvas
     this._activeCanvas = this._grid.getActiveCanvasNode(e);

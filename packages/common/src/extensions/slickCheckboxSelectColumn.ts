@@ -478,7 +478,7 @@ export class SlickCheckboxSelectColumn<T = any> {
       }
     }
 
-    const removeList = [];
+    const removeList: number[] = [];
     for (i = 0; i < selectedRows.length; i++) {
       row = selectedRows[i];
 
