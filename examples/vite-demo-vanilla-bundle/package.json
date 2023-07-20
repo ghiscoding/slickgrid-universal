@@ -29,16 +29,16 @@
     "moment-mini": "^2.29.4",
     "multiple-select-vanilla": "^0.4.5",
     "rxjs": "^7.8.1",
-    "whatwg-fetch": "^3.6.16"
+    "whatwg-fetch": "^3.6.17"
   },
   "devDependencies": {
     "@rollup/plugin-dynamic-import-vars": "^2.0.4",
     "@types/fnando__sparkline": "^0.3.4",
     "@types/moment": "^2.13.0",
-    "@types/node": "^18.16.19",
+    "@types/node": "^20.4.2",
     "@types/whatwg-fetch": "^0.0.33",
-    "sass": "^1.63.6",
+    "sass": "^1.64.0",
     "typescript": "^5.1.6",
-    "vite": "^4.4.4"
+    "vite": "^4.4.5"
   }
 }
