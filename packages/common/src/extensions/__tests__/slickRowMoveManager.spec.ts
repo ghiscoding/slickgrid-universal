@@ -139,7 +139,6 @@ describe('SlickRowMoveManager Plugin', () => {
   it('should call the "create" method and expect plugin to be created with checkbox column to be created at position 0 when using default', () => {
     const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
     const rowMoveColumnMock = {
-      cssClass: 'slick-row-move-column',
       excludeFromColumnPicker: true,
       excludeFromExport: true,
       excludeFromGridMenu: true,
@@ -188,7 +187,6 @@ describe('SlickRowMoveManager Plugin', () => {
     expect(plugin).toBeTruthy();
     expect(mockColumns[1]).toEqual({
       behavior: 'selectAndMove',
-      cssClass: 'slick-row-move-column',
       excludeFromColumnPicker: true,
       excludeFromExport: true,
       excludeFromGridMenu: true,
@@ -227,7 +225,7 @@ describe('SlickRowMoveManager Plugin', () => {
     const output = plugin.getColumnDefinition().formatter!(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
 
     expect(plugin).toBeTruthy();
-    expect(output).toEqual({ addClasses: 'cell-reorder dnd', text: '' });
+    expect(output).toEqual({ addClasses: 'cell-reorder dnd slick-row-move-column', text: '' });
   });
 
   it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return regular formatter when usabilityOverride is not a function', () => {
@@ -236,7 +234,7 @@ describe('SlickRowMoveManager Plugin', () => {
     const output = plugin.getColumnDefinition().formatter!(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
 
     expect(plugin).toBeTruthy();
-    expect(output).toEqual({ addClasses: 'cell-reorder dnd', text: '' });
+    expect(output).toEqual({ addClasses: 'cell-reorder dnd slick-row-move-column', text: '' });
   });
 
   it('should create the plugin and trigger "dragInit" event and expect "stopImmediatePropagation" to be called', () => {
