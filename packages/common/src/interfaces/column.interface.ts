@@ -13,6 +13,7 @@ import type {
   HeaderButtonsOrMenu,
   OnEventArgs,
   SlickEventData,
+  SlickGrid,
   SortComparer,
 } from './index';
 import type { FieldType } from '../enums/fieldType.enum';
@@ -31,11 +32,14 @@ type Join<T extends any[], D extends string> =
 /* eslint-enable @typescript-eslint/indent */
 
 export interface Column<T = any> {
-  /** do we want to always render the column? */
+  /** Defaults to false, should we always render the column? */
   alwaysRenderColumn?: boolean;
 
   /** async background post-rendering formatter */
   asyncPostRender?: (domCellNode: any, row: number, dataContext: T, columnDef: Column) => void;
+
+  /** async background post-render cleanup callback function */
+  asyncPostRenderCleanup?: (node: HTMLElement, rowIdx: number, column: Column) => void;
 
   /**
    * Defaults to true, when enabled it will parse the filter input string and extract filter operator (<, <=, >=, >, =, *) when found.
@@ -48,8 +52,11 @@ export interface Column<T = any> {
   /** optional Behavior of a column with action, for example it's used by the Row Move Manager Plugin */
   behavior?: string;
 
-  /** Block event triggering of an insert? */
+  /** Block event triggering of a new row insert? */
   cannotTriggerInsert?: boolean;
+
+  /** slick cell attributes */
+  cellAttrs?: any;
 
   /** Options that can be provide to the Cell Context Menu Plugin */
   cellMenu?: CellMenu;
@@ -166,6 +173,9 @@ export interface Column<T = any> {
   /** Formatter function is to format, or visually change, the data shown in the grid (UI) in a different way without affecting the source. */
   formatter?: Formatter<T>;
 
+  /** Default Formatter override function */
+  formatterOverride?: { ReturnsTextOnly?: boolean; } | ((row: number, cell: number, val: any, columnDef: Column, item: any, grid: SlickGrid) => Formatter<T>);
+
   /** Grouping option used by a Draggable Grouping Column */
   grouping?: Grouping;
 
@@ -177,6 +187,9 @@ export interface Column<T = any> {
 
   /** Options that can be provided to the Header Menu Plugin */
   header?: HeaderButtonsOrMenu;
+
+  /** header cell attributes */
+  headerCellAttrs?: any;
 
   /** CSS class that can be added to the column header */
   headerCssClass?: string;
@@ -338,4 +351,7 @@ export interface Column<T = any> {
 
   /** Width of the column in pixels (number only). */
   width?: number;
+
+  /** column width request when resizing */
+  widthRequest?: number;
 }

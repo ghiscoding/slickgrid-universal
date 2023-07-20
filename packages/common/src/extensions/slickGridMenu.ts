@@ -752,7 +752,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   }
 
   /** Mouse down handler when clicking anywhere in the DOM body */
-  protected handleBodyMouseDown(event: DOMEvent<HTMLDivElement>) {
+  protected handleBodyMouseDown(event: DOMEvent<HTMLElement>) {
     if ((this._menuElm !== event.target && !this._menuElm?.contains(event.target) && this._isMenuOpen) || event.target.className === 'close') {
       this.hideMenu(event);
     }
