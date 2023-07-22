@@ -46,11 +46,11 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     field: '_detail_selector',
     cssClass: 'detailView-toggle',
     collapseAllOnSort: true,
-    collapsedClass: null,
-    expandedClass: null,
+    collapsedClass: undefined,
+    expandedClass: undefined,
     keyPrefix: '_',
     loadOnce: false,
-    maxRows: null,
+    maxRows: undefined,
     saveDetailViewOnScroll: true,
     singleRowExpand: false,
     useSimpleViewportCalc: false,
@@ -437,7 +437,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     item[`${this._keyPrefix}height`] = itemHeight;
 
     let outterHeight = (item[`${this._keyPrefix}sizePadding`] * rowHeight);
-    if (this._addonOptions.maxRows !== null && item[`${this._keyPrefix}sizePadding`] > this._addonOptions.maxRows!) {
+    if (this._addonOptions.maxRows !== undefined && item[`${this._keyPrefix}sizePadding`] > this._addonOptions.maxRows) {
       outterHeight = this._addonOptions.maxRows! * rowHeight;
       item[`${this._keyPrefix}sizePadding`] = this._addonOptions.maxRows;
     }
@@ -620,7 +620,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         }
         return `<div class="${collapsedClasses.trim()}"></div>`;
       } else {
-        const html = [];
+        const html: string[] = [];
         const rowHeight = this.gridOptions.rowHeight || 0;
         let outterHeight = (dataContext[`${this._keyPrefix}sizePadding`] || 0) * this.gridOptions.rowHeight!;
 

@@ -169,8 +169,7 @@ export interface SlickDataView {
   setGrouping(groupingInfo: Grouping | Grouping[]): void;
 
   /** Set a Filter that will be used by the DataView */
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  setFilter(filterFn: Function): void;
+  setFilter(filterFn: ((item1: any, item2: any) => boolean)): void;
 
   /** Set extra Filter arguments which will be used by the Filter method */
   setFilterArgs(args: any): void;
