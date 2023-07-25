@@ -35,10 +35,10 @@
     "@rollup/plugin-dynamic-import-vars": "^2.0.4",
     "@types/fnando__sparkline": "^0.3.4",
     "@types/moment": "^2.13.0",
-    "@types/node": "^20.4.2",
+    "@types/node": "^20.4.4",
     "@types/whatwg-fetch": "^0.0.33",
-    "sass": "^1.64.0",
+    "sass": "^1.64.1",
     "typescript": "^5.1.6",
-    "vite": "^4.4.6"
+    "vite": "^4.4.7"
   }
 }

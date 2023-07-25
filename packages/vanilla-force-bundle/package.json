@@ -79,9 +79,9 @@
   "devDependencies": {
     "archiver": "^5.3.1",
     "cross-env": "^7.0.3",
-    "esbuild": "^0.18.15",
+    "esbuild": "^0.18.16",
     "npm-run-all2": "^6.0.6",
-    "vite": "^4.4.6",
+    "vite": "^4.4.7",
     "yargs": "^17.7.2"
   }
 }
