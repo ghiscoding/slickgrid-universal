@@ -107,7 +107,7 @@ export class SortService {
   handleLocalOnSort(_e: SlickEventData, args: SingleColumnSort | MultiColumnSort) {
     // multiSort and singleSort are not exactly the same, but we want to structure it the same for the (for loop) after
     // also to avoid having to rewrite the for loop in the sort, we will make the singleSort an array of 1 object
-    const sortColumns: Array<SingleColumnSort> = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as SingleColumnSort).sortCol.id, sortAsc: (args as SingleColumnSort).sortAsc, sortCol: (args as SingleColumnSort).sortCol });
+    const sortColumns: Array<SingleColumnSort> = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as SingleColumnSort).sortCol?.id ?? '', sortAsc: (args as SingleColumnSort).sortAsc, sortCol: (args as SingleColumnSort).sortCol });
 
     // keep current sorters
     this._currentLocalSorters = []; // reset current local sorters
