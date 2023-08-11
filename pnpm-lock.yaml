@@ -198,14 +198,14 @@ importers:
         specifier: ^0.0.33
         version: 0.0.33
       sass:
-        specifier: ^1.64.2
-        version: 1.64.2
+        specifier: ^1.65.1
+        version: 1.65.1
       typescript:
         specifier: ^5.1.6
         version: 5.1.6
       vite:
         specifier: ^4.4.9
-        version: 4.4.9(@types/node@20.4.9)(sass@1.64.2)
+        version: 4.4.9(@types/node@20.4.9)(sass@1.65.1)
 
   packages/binding:
     devDependencies:
@@ -283,8 +283,8 @@ importers:
         specifier: ^10.1.0
         version: 10.1.0(postcss@8.4.27)(ts-node@10.9.1)
       sass:
-        specifier: ^1.64.2
-        version: 1.64.2
+        specifier: ^1.65.1
+        version: 1.65.1
 
   packages/composite-editor-component:
     dependencies:
@@ -9042,8 +9042,8 @@ packages:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
     dev: true
 
-  /sass@1.64.2:
-    resolution: {integrity: sha512-TnDlfc+CRnUAgLO9D8cQLFu/GIjJIzJCGkE7o4ekIGQOH7T3GetiRR/PsTWJUHhkzcSPrARkPI+gNWn5alCzDg==}
+  /sass@1.65.1:
+    resolution: {integrity: sha512-9DINwtHmA41SEd36eVPQ9BJKpn7eKDQmUHmpI0y5Zv2Rcorrh0zS+cFrt050hdNbmmCNKTW3hV5mWfuegNRsEA==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:
@@ -10039,7 +10039,7 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vite@4.4.9(@types/node@20.4.9)(sass@1.64.2):
+  /vite@4.4.9(@types/node@20.4.9)(sass@1.65.1):
     resolution: {integrity: sha512-2mbUn2LlUmNASWwSCNSJ/EG2HuSRTnVNaydp6vMCm5VIqJsjMfbIWtbH2kDuwUVW5mMUKKZvGPX/rqeqVvv1XA==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -10071,7 +10071,7 @@ packages:
       esbuild: 0.18.19
       postcss: 8.4.27
       rollup: 3.27.2
-      sass: 1.64.2
+      sass: 1.65.1
     optionalDependencies:
       fsevents: 2.3.2
     dev: true

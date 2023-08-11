@@ -93,7 +93,7 @@
     "npm-run-all2": "^6.0.6",
     "postcss": "^8.4.27",
     "postcss-cli": "^10.1.0",
-    "sass": "^1.64.2"
+    "sass": "^1.65.1"
   },
   "engines": {
     "node": ">=16.15.0",
