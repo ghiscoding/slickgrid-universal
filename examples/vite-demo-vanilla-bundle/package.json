@@ -37,7 +37,7 @@
     "@types/moment": "^2.13.0",
     "@types/node": "^20.4.9",
     "@types/whatwg-fetch": "^0.0.33",
-    "sass": "^1.64.2",
+    "sass": "^1.65.1",
     "typescript": "^5.1.6",
     "vite": "^4.4.9"
   }
