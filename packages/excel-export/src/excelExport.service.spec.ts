@@ -73,7 +73,7 @@ const gridStub = {
   getOptions: () => mockGridOptions,
   getColumns: jest.fn(),
   getGrouping: jest.fn(),
-} as unknown as SlickGrid;
+} as unknown as SlickGridUniversal;
 
 describe('ExcelExportService', () => {
   let container: ContainerServiceStub;

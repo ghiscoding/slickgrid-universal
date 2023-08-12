@@ -1,5 +1,6 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { arrayRemoveItemByIndex } from '@slickgrid-universal/utils';
+import type { OnHeaderCellRenderedEventArgs, } from 'slickgrid';
 
 import { EmitterType } from '../enums/index';
 import type {
@@ -14,7 +15,6 @@ import type {
   MenuCommandItemCallbackArgs,
   MenuOptionItem,
   MultiColumnSort,
-  OnHeaderCellRenderedEventArgs,
 } from '../interfaces/index';
 import { createDomElement, emptyElement, getElementOffsetRelativeToParent, getTranslationPrefix } from '../services/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';

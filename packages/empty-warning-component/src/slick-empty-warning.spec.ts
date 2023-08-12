@@ -15,7 +15,7 @@ const gridStub = {
   getOptions: () => mockGridOptions,
   getUID: () => GRID_UID,
   registerPlugin: jest.fn(),
-} as unknown as SlickGrid;
+} as unknown as SlickGridUniversal;
 
 describe('Slick-Empty-Warning Component', () => {
   let container: ContainerServiceStub;

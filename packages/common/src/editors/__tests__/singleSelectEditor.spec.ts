@@ -34,7 +34,7 @@ const gridStub = {
   navigateNext: jest.fn(),
   navigatePrev: jest.fn(),
   render: jest.fn(),
-} as unknown as SlickGrid;
+} as unknown as SlickGridUniversal;
 
 describe('SingleSelectEditor', () => {
   let translateService: TranslateServiceStub;

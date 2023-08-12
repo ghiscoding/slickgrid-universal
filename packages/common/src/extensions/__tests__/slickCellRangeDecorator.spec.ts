@@ -1,16 +1,15 @@
 import 'jest-extended';
 
-import { GridOption, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import { GridOption, type SlickGridUniversal  } from '../../interfaces/index';
 import { SlickCellRangeDecorator } from '../slickCellRangeDecorator';
 
-declare const Slick: SlickNamespace;
 jest.mock('flatpickr', () => { });
 
 const gridStub = {
   getActiveCell: jest.fn(),
   getActiveCanvasNode: jest.fn(),
   getCellNodeBox: jest.fn(),
-} as unknown as SlickGrid;
+} as unknown as SlickGridUniversal;
 
 describe('CellRangeDecorator Plugin', () => {
   const mockEventCallback = () => { };
@@ -47,9 +46,9 @@ describe('CellRangeDecorator Plugin', () => {
   });
 
   it('should dispose of the addon', () => {
-    const disposeSpy = jest.spyOn(plugin, 'dispose');
+    const disposeSpy = jest.spyOn(plugin, 'destroy');
     const hideSpy = jest.spyOn(plugin, 'hide');
-    plugin.dispose();
+    plugin.destroy();
     expect(disposeSpy).toHaveBeenCalled();
     expect(hideSpy).toHaveBeenCalled();
   });
@@ -70,7 +69,7 @@ describe('CellRangeDecorator Plugin', () => {
   it('should Show range when called and calculate new position when getCellNodeBox returns a cell position', () => {
     const divContainer = document.createElement('div');
     jest.spyOn(gridStub, 'getActiveCanvasNode').mockReturnValue(divContainer);
-    jest.spyOn(gridStub, 'getCellNodeBox').mockReturnValue({ top: 25, left: 26, right: 27, bottom: 12, height: 33, width: 44, visible: true });
+    jest.spyOn(gridStub, 'getCellNodeBox').mockReturnValue({ top: 25, left: 26, right: 27, bottom: 12 });
 
     plugin = new SlickCellRangeDecorator(gridStub, { offset: { top: 20, left: 5, width: 12, height: 33 } });
     plugin.show({ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 });

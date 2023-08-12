@@ -1,10 +1,11 @@
+import type { SlickGroupTotals } from 'slickgrid';
 import type { Aggregator } from './../interfaces/aggregator.interface';
 
-export class AvgAggregator implements Aggregator {
+export class AvgAggregator<T = any> implements Aggregator {
   private _nonNullCount = 0;
   private _sum = 0;
   private _field: number | string;
-  private _type = 'avg';
+  private _type = 'avg' as const;
 
   constructor(field: number | string) {
     this._field = field;
@@ -23,15 +24,15 @@ export class AvgAggregator implements Aggregator {
     this._sum = 0;
   }
 
-  accumulate(item: any) {
-    const val = (item && item.hasOwnProperty(this._field)) ? item[this._field] : null;
+  accumulate(item: T) {
+    const val: any = (item && item.hasOwnProperty(this._field)) ? item[this._field as keyof T] : null;
     if (val !== null && val !== '' && !isNaN(val)) {
       this._nonNullCount++;
       this._sum += parseFloat(val);
     }
   }
 
-  storeResult(groupTotals: any) {
+  storeResult(groupTotals: SlickGroupTotals & { avg: Record<number | string, number>; }) {
     if (!groupTotals || groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }

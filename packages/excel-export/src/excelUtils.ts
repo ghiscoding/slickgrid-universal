@@ -5,7 +5,7 @@ import type {
   FormatterType,
   GetDataValueCallback,
   GridOption,
-  SlickGrid,
+  SlickGridUniversal,
 } from '@slickgrid-universal/common';
 import {
   Constants,
@@ -41,7 +41,7 @@ export function parseNumberWithFormatterOptions(value: any, column: Column, grid
 }
 
 /** use different Excel Stylesheet Format as per the Field Type */
-export function useCellFormatByFieldType(stylesheet: ExcelStylesheet, stylesheetFormatters: any, columnDef: Column, grid: SlickGrid) {
+export function useCellFormatByFieldType(stylesheet: ExcelStylesheet, stylesheetFormatters: any, columnDef: Column, grid: SlickGridUniversal) {
   const fieldType = getColumnFieldType(columnDef);
   let stylesheetFormatterId: number | undefined;
   let callback: GetDataValueCallback = getExcelSameInputDataCallback;
@@ -58,7 +58,7 @@ export function getGroupTotalValue(totals: any, columnDef: Column, groupType: st
 }
 
 /** Get numeric formatter options when defined or use default values (minDecimal, maxDecimal, thousandSeparator, decimalSeparator, wrapNegativeNumber) */
-export function getNumericFormatterOptions(columnDef: Column, grid: SlickGrid, formatterType: FormatterType) {
+export function getNumericFormatterOptions(columnDef: Column, grid: SlickGridUniversal, formatterType: FormatterType) {
   let dataType: 'currency' | 'decimal' | 'percent' | 'regular';
 
   if (formatterType === 'group') {
@@ -131,7 +131,7 @@ export function getFormatterNumericDataType(formatter?: Formatter) {
   return dataType;
 }
 
-export function getExcelFormatFromGridFormatter(stylesheet: ExcelStylesheet, stylesheetFormatters: any, columnDef: Column, grid: SlickGrid, formatterType: FormatterType) {
+export function getExcelFormatFromGridFormatter(stylesheet: ExcelStylesheet, stylesheetFormatters: any, columnDef: Column, grid: SlickGridUniversal, formatterType: FormatterType) {
   let format = '';
   let groupType = '';
   let stylesheetFormatter: undefined | ExcelFormatter;
@@ -250,7 +250,7 @@ function createFormatFromNumber(formattedVal: string) {
   return format.replace(',', '\,');
 }
 
-function createExcelFormatFromGridFormatter(columnDef: Column, grid: SlickGrid, formatterType: FormatterType, groupType = '') {
+function createExcelFormatFromGridFormatter(columnDef: Column, grid: SlickGridUniversal, formatterType: FormatterType, groupType = '') {
   let outputFormat = '';
   let positiveFormat = '';
   let negativeFormat = '';

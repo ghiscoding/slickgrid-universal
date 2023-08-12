@@ -1,5 +1,6 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { of, throwError } from 'rxjs';
+import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler } from 'slickgrid';
 
 import { EmitterType, FieldType, } from '../../enums/index';
 import {
@@ -10,10 +11,7 @@ import {
   GridMenuItem,
   GridOption,
   MenuCommandItem,
-  SlickDataView,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
+  SlickGridUniversal,
   SingleColumnSort,
   BackendServiceApi,
 } from '../../interfaces/index';
@@ -22,9 +20,6 @@ import { SortService } from '../sort.service';
 import { BackendUtilityService } from '../backendUtility.service';
 import { SharedService } from '../shared.service';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
-
-declare const Slick: SlickNamespace;
-
 
 const gridOptionMock = {
   enablePagination: true,
@@ -55,7 +50,7 @@ const dataViewStub = {
   reSort: jest.fn(),
   sort: jest.fn(),
   setItems: jest.fn(),
-  onRowCountChanged: new Slick.Event(),
+  onRowCountChanged: new SlickEvent(),
 } as unknown as SlickDataView;
 
 const backendServiceStub = {
@@ -77,19 +72,19 @@ const gridStub = {
   getSortColumns: jest.fn(),
   invalidate: jest.fn(),
   onLocalSortChanged: jest.fn(),
-  onSort: new Slick.Event(),
+  onSort: new SlickEvent(),
   render: jest.fn(),
   setColumns: jest.fn(),
   setOptions: jest.fn(),
   setSortColumns: jest.fn(),
-} as unknown as SlickGrid;
+} as unknown as SlickGridUniversal;
 
 const pubSubServiceStub = {
   publish: jest.fn(),
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-} as PubSubService;
+} as BasePubSubService;
 
 describe('SortService', () => {
   let backendUtilityService: BackendUtilityService;
@@ -279,7 +274,7 @@ describe('SortService', () => {
       const spySortChanged = jest.spyOn(service, 'onBackendSortChanged');
 
       service.bindBackendOnSort(gridStub);
-      gridStub.onSort.notify(mockSortedCol, new Slick.EventData(), gridStub);
+      gridStub.onSort.notify(mockSortedCol, new SlickEventData(), gridStub);
       service.clearSorting();
 
       expect(spySetColumns).toHaveBeenCalledWith([]);
@@ -293,7 +288,7 @@ describe('SortService', () => {
       const spySortChanged = jest.spyOn(service, 'onLocalSortChanged');
 
       service.bindLocalOnSort(gridStub);
-      gridStub.onSort.notify(mockSortedCol, new Slick.EventData(), gridStub);
+      gridStub.onSort.notify(mockSortedCol, new SlickEventData(), gridStub);
       service.clearSorting();
 
       expect(pubSubSpy).toHaveBeenCalledWith(`onSortCleared`, true);
@@ -308,7 +303,7 @@ describe('SortService', () => {
       const spyClearSorters = jest.spyOn(backendServiceStub, 'clearSorters');
 
       service.bindBackendOnSort(gridStub);
-      gridStub.onSort.notify(mockSortedCol, new Slick.EventData(), gridStub);
+      gridStub.onSort.notify(mockSortedCol, new SlickEventData(), gridStub);
       service.clearSorting(false);
 
       expect(pubSubSpy).toHaveBeenCalledWith(`onSortCleared`, true);
@@ -321,7 +316,7 @@ describe('SortService', () => {
       const spySetColumns = jest.spyOn(gridStub, 'setSortColumns');
 
       service.bindLocalOnSort(gridStub);
-      gridStub.onSort.notify(mockSortedCol, new Slick.EventData(), gridStub);
+      gridStub.onSort.notify(mockSortedCol, new SlickEventData(), gridStub);
       service.clearSorting(false);
 
       expect(pubSubSpy).toHaveBeenCalledWith(`onSortCleared`, true);
@@ -342,7 +337,7 @@ describe('SortService', () => {
       const spy = jest.spyOn(service, 'onBackendSortChanged');
 
       service.bindBackendOnSort(gridStub);
-      gridStub.onSort.notify({ multiColumnSort: true, sortCols: [], grid: gridStub }, new Slick.EventData(), gridStub);
+      gridStub.onSort.notify({ multiColumnSort: true, sortCols: [], grid: gridStub }, new SlickEventData(), gridStub);
 
       expect(spy).toHaveBeenCalledWith(expect.anything(), { grid: gridStub, multiColumnSort: true, sortCols: [] });
     });
@@ -356,7 +351,7 @@ describe('SortService', () => {
       const mockSortedCol = { columnId: 'lastName', sortCol: { id: 'lastName', field: 'lastName', width: 100 }, sortAsc: true } as ColumnSort;
 
       service.bindLocalOnSort(gridStub);
-      gridStub.onSort.notify(mockSortedCol, new Slick.EventData(), gridStub);
+      gridStub.onSort.notify(mockSortedCol, new SlickEventData(), gridStub);
 
       setTimeout(() => {
         expect(spyCurrentSort).toHaveBeenCalled();
@@ -376,7 +371,7 @@ describe('SortService', () => {
       ];
 
       service.bindLocalOnSort(gridStub);
-      gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new Slick.EventData(), gridStub);
+      gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new SlickEventData(), gridStub);
 
       setTimeout(() => {
         expect(spyCurrentSort).toHaveBeenCalled();
@@ -410,7 +405,7 @@ describe('SortService', () => {
       const mockSortedCol = { columnId: mockColumn.id, sortCol: mockColumn, sortAsc: true, grid: gridStub } as ColumnSort;
 
       service.bindBackendOnSort(gridStub);
-      gridStub.onSort.notify(mockSortedCol, new Slick.EventData(), gridStub);
+      gridStub.onSort.notify(mockSortedCol, new SlickEventData(), gridStub);
 
       setTimeout(() => {
         expect(spyBackendCurrentSort).toHaveBeenCalled();
@@ -432,7 +427,7 @@ describe('SortService', () => {
       ];
 
       service.bindBackendOnSort(gridStub);
-      gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new Slick.EventData(), gridStub);
+      gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new SlickEventData(), gridStub);
 
       setTimeout(() => {
         expect(spyBackendCurrentSort).toHaveBeenCalled();
@@ -491,7 +486,7 @@ describe('SortService', () => {
     });
 
     it('should use an empty grid option object when grid "getOptions" method is not available', () => {
-      gridStub.getOptions = undefined as any;
+      gridStub.getOptions = () => undefined as any;
 
       service.bindBackendOnSort(gridStub);
       expect(() => service.onBackendSortChanged(undefined, { multiColumnSort: true, grid: gridStub, sortCols: [] })).toThrowError('BackendServiceApi requires at least a "process" function and a "service" defined');
@@ -529,10 +524,10 @@ describe('SortService', () => {
     it('should execute the "onError" method when the Observable throws an error', (done) => {
       const spyProcess = jest.fn();
       const errorExpected = 'observable error';
-      gridOptionMock.backendServiceApi.process = () => of(spyProcess);
-      gridOptionMock.backendServiceApi.onError = (e) => jest.fn();
-      const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi, 'onError');
-      jest.spyOn(gridOptionMock.backendServiceApi, 'process').mockReturnValue(throwError(errorExpected));
+      gridOptionMock.backendServiceApi!.process = () => of(spyProcess);
+      gridOptionMock.backendServiceApi!.onError = (e) => jest.fn();
+      const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi!, 'onError');
+      jest.spyOn(gridOptionMock.backendServiceApi!, 'process').mockReturnValue(throwError(errorExpected));
 
       backendUtilityService.addRxJsResource(rxjsResourceStub);
       service.addRxJsResource(rxjsResourceStub);
@@ -651,7 +646,7 @@ describe('SortService', () => {
 
       service.bindLocalOnSort(gridStub);
       service.disableSortFunctionality(false);
-      gridStub.onSort.notify({ multiColumnSort: true, sortCols: [], grid: gridStub }, new Slick.EventData(), gridStub);
+      gridStub.onSort.notify({ multiColumnSort: true, sortCols: [], grid: gridStub }, new SlickEventData(), gridStub);
 
       mockColumns.forEach(col => {
         expect(col.sortable).toBeTruthy();
@@ -722,7 +717,7 @@ describe('SortService', () => {
       ];
 
       service.bindLocalOnSort(gridStub);
-      service.loadGridSorters(gridOptionMock.presets.sorters);
+      service.loadGridSorters(gridOptionMock.presets!.sorters!);
 
       expect(spySetCols).toHaveBeenCalledWith([
         { columnId: 'firstName', sortAsc: true, },
@@ -741,7 +736,7 @@ describe('SortService', () => {
 
       gridOptionMock.multiColumnSort = false;
       service.bindLocalOnSort(gridStub);
-      service.loadGridSorters(gridOptionMock.presets.sorters);
+      service.loadGridSorters(gridOptionMock.presets!.sorters!);
 
       expect(spySetCols).toHaveBeenCalledWith([{ columnId: 'firstName', sortAsc: true }]);
       expect(spySortChanged).toHaveBeenCalledWith(gridStub, [expectation[0]]);
@@ -754,20 +749,20 @@ describe('SortService', () => {
         sorters: [{ columnId: 'firstName', direction: 'ASC' }, { columnId: 'lastName', direction: 'DESC' }],
       };
       const spySetCols = jest.spyOn(gridStub, 'setSortColumns');
-      gridStub.getColumns = undefined;
+      gridStub.getColumns = () => undefined as any;
 
       service.bindLocalOnSort(gridStub);
-      service.loadGridSorters(gridOptionMock.presets.sorters);
+      service.loadGridSorters(gridOptionMock.presets!.sorters!);
 
       expect(spySetCols).toHaveBeenCalledWith([]);
     });
 
     it('should use an empty grid option object when grid "getOptions" method is not available', () => {
       const spySetCols = jest.spyOn(gridStub, 'setSortColumns');
-      gridStub.getOptions = undefined;
+      gridStub.getOptions = () => undefined as any;
 
       service.bindLocalOnSort(gridStub);
-      service.loadGridSorters(gridOptionMock.presets.sorters);
+      service.loadGridSorters(gridOptionMock.presets!.sorters!);
 
       expect(spySetCols).toHaveBeenCalledWith([]);
     });
@@ -1058,7 +1053,7 @@ describe('SortService', () => {
 
       sharedService.hierarchicalDataset = [];
       service.bindLocalOnSort(gridStub);
-      gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new Slick.EventData(), gridStub);
+      gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new SlickEventData(), gridStub);
 
       setTimeout(() => {
         expect(spyCurrentSort).toHaveBeenCalled();
@@ -1088,7 +1083,7 @@ describe('SortService', () => {
 
       sharedService.hierarchicalDataset = [];
       service.bindLocalOnSort(gridStub);
-      gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new Slick.EventData(), gridStub);
+      gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new SlickEventData(), gridStub);
 
       setTimeout(() => {
         expect(spyCurrentSort).toHaveBeenCalled();
@@ -1205,7 +1200,7 @@ describe('SortService', () => {
         const mockSortedCols: ColumnSort[] = [{ columnId: 'file', sortAsc: false, sortCol: { id: 'file', field: 'file' } }];
 
         service.bindLocalOnSort(gridStub);
-        gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new Slick.EventData(), gridStub);
+        gridStub.onSort.notify({ multiColumnSort: true, sortCols: mockSortedCols, grid: gridStub }, new SlickEventData(), gridStub);
 
         setTimeout(() => {
           expect(spyCurrentSort).toHaveBeenCalled();

@@ -1,5 +1,4 @@
-import type { Column } from './column.interface';
-import type { SlickGrid } from './slickGrid.interface';
+import type { Column, SlickGridUniversal } from './index';
 
 export interface MenuFromCellCallbackArgs {
   /** Grid cell/column index */
@@ -9,7 +8,7 @@ export interface MenuFromCellCallbackArgs {
   row: number;
 
   /** Reference to the grid. */
-  grid: SlickGrid;
+  grid: SlickGridUniversal;
 }
 
 export interface MenuFromCellWithColumnCallbackArgs<T = any> extends MenuFromCellCallbackArgs {

@@ -1,3 +1,4 @@
+import type { SlickDataView } from 'slickgrid';
 import { TextEncoder } from 'text-encoding-utf-8';
 import type {
   Column,
@@ -7,8 +8,7 @@ import type {
   KeyTitlePair,
   Locale,
   PubSubService,
-  SlickDataView,
-  SlickGrid,
+  SlickGridUniversal,
   TextExportOption,
   TextExportService as BaseTextExportService,
   TranslaterService,
@@ -46,7 +46,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   protected _exportOptions!: TextExportOption;
   protected _fileFormat = FileType.csv;
   protected _lineCarriageReturn = '\n';
-  protected _grid!: SlickGrid;
+  protected _grid!: SlickGridUniversal;
   protected _groupedColumnHeaders?: Array<KeyTitlePair>;
   protected _columnHeaders: Array<KeyTitlePair> = [];
   protected _hasGroupedItems = false;
@@ -65,12 +65,12 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
   /** Getter of SlickGrid DataView object */
   get _dataView(): SlickDataView {
-    return (this._grid?.getData && this._grid.getData()) as SlickDataView;
+    return this._grid?.getData<SlickDataView>();
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return (this._grid?.getOptions) ? this._grid.getOptions() : {};
+    return this._grid?.getOptions() ?? {} as GridOption;
   }
 
   dispose() {
@@ -82,7 +82,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    * @param grid
    * @param containerService
    */
-  init(grid: SlickGrid, containerService: ContainerService): void {
+  init(grid: SlickGridUniversal, containerService: ContainerService): void {
     this._grid = grid;
     this._pubSubService = containerService.get<PubSubService>('PubSubService');
 

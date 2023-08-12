@@ -13,7 +13,7 @@ import type {
   FilterCallback,
   GridOption,
   Locale,
-  SlickGrid,
+  SlickGridUniversal,
 } from './../interfaces/index';
 import type { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
@@ -37,7 +37,7 @@ export class SelectFilter implements Filter {
   /** The DOM element */
   filterElm?: HTMLElement;
 
-  grid!: SlickGrid;
+  grid!: SlickGridUniversal;
   searchTerms: SearchTerm[] | undefined;
   columnDef!: Column;
   callback!: FilterCallback;
@@ -80,7 +80,7 @@ export class SelectFilter implements Filter {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+    return this.grid?.getOptions() ?? {};
   }
 
   /** Getter to know what would be the default operator when none is specified */

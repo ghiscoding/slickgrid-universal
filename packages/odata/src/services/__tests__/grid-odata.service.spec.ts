@@ -34,7 +34,7 @@ const gridStub = {
   registerPlugin: jest.fn(),
   setSelectedRows: jest.fn(),
   setSortColumns: jest.fn(),
-} as unknown as SlickGrid;
+} as unknown as SlickGridUniversal;
 
 describe('GridOdataService', () => {
   let service: GridOdataService;

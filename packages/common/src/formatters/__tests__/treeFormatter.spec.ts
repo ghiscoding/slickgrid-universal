@@ -1,10 +1,10 @@
-import { Column, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, GridOption, SlickGridUniversal } from '../../interfaces/index';
 import { treeFormatter } from '../treeFormatter';
 
 const gridStub = {
   getData: jest.fn(),
   getOptions: jest.fn(),
-} as unknown as SlickGrid;
+} as unknown as SlickGridUniversal;
 
 describe('Tree Formatter', () => {
   let dataset;
@@ -87,8 +87,8 @@ describe('Tree Formatter', () => {
   });
 
   it('should return a span with expanded icon and 15px indentation of a tree level 1 with a value prefix when provided', () => {
-    mockGridOptions.treeDataOptions.levelPropName = 'indent';
-    mockGridOptions.treeDataOptions.titleFormatter = (_row, _cell, value, _def, dataContext) => {
+    mockGridOptions.treeDataOptions!.levelPropName = 'indent';
+    mockGridOptions.treeDataOptions!.titleFormatter = (_row, _cell, value, _def, dataContext) => {
       if (dataContext.indent > 0) {
         return `<span class="mdi mdi-subdirectory-arrow-right"></span>${value}`;
       }

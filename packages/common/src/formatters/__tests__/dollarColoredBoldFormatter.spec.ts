@@ -4,7 +4,7 @@ import { dollarColoredBoldFormatter } from '../dollarColoredBoldFormatter';
 describe('the DollarColoredBold Formatter', () => {
   const gridStub = {
     getOptions: jest.fn()
-  } as unknown as SlickGrid;
+  } as unknown as SlickGridUniversal;
 
   it('should return an empty string when no value is provided', () => {
     const output = dollarColoredBoldFormatter(1, 1, '', {} as Column, {}, {} as any);

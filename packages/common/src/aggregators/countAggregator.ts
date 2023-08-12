@@ -1,8 +1,9 @@
+import type { SlickGroupTotals } from 'slickgrid';
 import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class CountAggregator implements Aggregator {
   private _field: number | string;
-  private _type = 'count';
+  private _type = 'count' as const;
 
   constructor(field: number | string) {
     this._field = field;
@@ -19,7 +20,7 @@ export class CountAggregator implements Aggregator {
   init(): void {
   }
 
-  storeResult(groupTotals: any) {
+  storeResult(groupTotals: SlickGroupTotals & { count: Record<number | string, number>; }) {
     if (!groupTotals || groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }

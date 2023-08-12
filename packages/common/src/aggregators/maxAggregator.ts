@@ -1,9 +1,10 @@
+import type { SlickGroupTotals } from 'slickgrid';
 import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class MaxAggregator implements Aggregator {
   private _max: number | null = null;
   private _field: number | string;
-  private _type = 'max';
+  private _type = 'max' as const;
 
   constructor(field: number | string) {
     this._field = field;
@@ -30,7 +31,7 @@ export class MaxAggregator implements Aggregator {
     }
   }
 
-  storeResult(groupTotals: any) {
+  storeResult(groupTotals: SlickGroupTotals & { max: Record<number | string, number | null>; }) {
     if (!groupTotals || groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }

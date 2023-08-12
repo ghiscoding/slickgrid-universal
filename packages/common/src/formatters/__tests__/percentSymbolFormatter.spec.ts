@@ -4,7 +4,7 @@ import { percentSymbolFormatter } from '../percentSymbolFormatter';
 describe('the Percent Symbol Formatter', () => {
   const gridStub = {
     getOptions: jest.fn()
-  } as unknown as SlickGrid;
+  } as unknown as SlickGridUniversal;
 
   it('should display an empty string when no value is provided', () => {
     const output = percentSymbolFormatter(1, 1, '', {} as Column, {}, {} as any);

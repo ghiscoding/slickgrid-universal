@@ -3,7 +3,7 @@ import type {
   EmptyWarning,
   ExternalResource,
   GridOption,
-  SlickGrid,
+  SlickGridUniversal,
   TranslaterService
 } from '@slickgrid-universal/common';
 import { sanitizeTextByAvailableSanitizer } from '@slickgrid-universal/common';
@@ -11,19 +11,19 @@ import { sanitizeTextByAvailableSanitizer } from '@slickgrid-universal/common';
 export class SlickEmptyWarningComponent implements ExternalResource {
   protected _warningLeftElement: HTMLDivElement | null = null;
   protected _warningRightElement: HTMLDivElement | null = null;
-  protected grid!: SlickGrid;
+  protected grid!: SlickGridUniversal;
   protected isPreviouslyShown = false;
   protected translaterService?: TranslaterService | null;
 
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+    return this.grid?.getOptions() ?? {};
   }
 
   constructor() { }
 
-  init(grid: SlickGrid, containerService: ContainerService) {
+  init(grid: SlickGridUniversal, containerService: ContainerService) {
     this.grid = grid;
     this.translaterService = containerService.get<TranslaterService>('TranslaterService');
   }

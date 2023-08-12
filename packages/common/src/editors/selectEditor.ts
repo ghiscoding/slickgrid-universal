@@ -1,6 +1,7 @@
-import { multipleSelect, MultipleSelectInstance, MultipleSelectOption, OptionRowData } from 'multiple-select-vanilla';
 import { setDeepValue } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
+import { multipleSelect, MultipleSelectInstance, MultipleSelectOption, OptionRowData } from 'multiple-select-vanilla';
+import { SlickEventData } from 'slickgrid';
 
 import { Constants } from '../constants';
 import { FieldType } from './../enums/index';
@@ -18,14 +19,10 @@ import type {
   GridOption,
   Locale,
   SelectOption,
-  SlickGrid,
-  SlickNamespace,
+  SlickGridUniversal,
 } from './../interfaces/index';
 import { buildMultipleSelectDataCollection, CollectionService, emptyElement, findOrDefault, sanitizeTextByAvailableSanitizer, type TranslaterService } from '../services/index';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
 
 /**
  * Slickgrid editor class for multiple/single select lists
@@ -88,7 +85,7 @@ export class SelectEditor implements Editor {
   enableTranslateLabel = false;
 
   /** SlickGrid Grid object */
-  grid: SlickGrid;
+  grid: SlickGridUniversal;
 
   /** Final collection displayed in the UI, that is after processing filter/sort/override */
   finalCollection: any[] = [];
@@ -179,7 +176,7 @@ export class SelectEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor | undefined {
-    return this.columnDef?.internalColumnEditor ?? {};
+    return this.columnDef?.internalColumnEditor ?? {} as ColumnEditor;
   }
 
   /** Getter for item data context object */
@@ -770,7 +767,7 @@ export class SelectEditor implements Editor {
     }
     grid.onCompositeEditorChange.notify(
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
-      new Slick.EventData()
+      new SlickEventData()
     );
   }
 }

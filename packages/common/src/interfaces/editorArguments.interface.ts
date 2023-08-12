@@ -1,4 +1,6 @@
-import type { Column, CompositeEditorOption, ElementPosition, SlickDataView, SlickGrid } from './index';
+import type { SlickDataView } from 'slickgrid';
+
+import type { Column, CompositeEditorOption, ElementPosition, SlickGridUniversal } from './index';
 import type { PositionMethod } from '../enums/positionMethod.type';
 
 export interface EditorArguments {
@@ -18,7 +20,7 @@ export interface EditorArguments {
   event: Event;
 
   /** Slick Grid object */
-  grid: SlickGrid;
+  grid: SlickGridUniversal;
 
   /** Grid Position */
   gridPosition: ElementPosition;

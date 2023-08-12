@@ -7,7 +7,7 @@ import type {
   FilterArguments,
   FilterCallback,
   GridOption,
-  SlickGrid,
+  SlickGridUniversal,
 } from '../interfaces/index';
 import { OperatorType, type OperatorString, type SearchTerm } from '../enums/index';
 import { createDomElement, emptyElement, } from '../services/domUtilities';
@@ -20,7 +20,7 @@ export class NativeSelectFilter implements Filter {
   protected _shouldTriggerQuery = true;
   protected _currentValues: any | any[] = [];
   filterElm!: HTMLSelectElement;
-  grid!: SlickGrid;
+  grid!: SlickGridUniversal;
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
@@ -42,7 +42,7 @@ export class NativeSelectFilter implements Filter {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get gridOptions(): GridOption {
-    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+    return this.grid?.getOptions() ?? {};
   }
 
   /** Getter for the current Operator */

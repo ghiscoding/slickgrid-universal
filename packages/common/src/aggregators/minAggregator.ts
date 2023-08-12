@@ -1,9 +1,10 @@
+import type { SlickGroupTotals } from 'slickgrid';
 import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class MinAggregator implements Aggregator {
   private _min: number | null = null;
   private _field: number | string;
-  private _type = 'min';
+  private _type = 'min' as const;
 
   constructor(field: number | string) {
     this._field = field;
@@ -30,7 +31,7 @@ export class MinAggregator implements Aggregator {
     }
   }
 
-  storeResult(groupTotals: any) {
+  storeResult(groupTotals: SlickGroupTotals & { min: Record<number | string, number | null>; }) {
     if (!groupTotals || groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }

@@ -1,9 +1,10 @@
+import type { SlickGroupTotals } from 'slickgrid';
 import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class CloneAggregator implements Aggregator {
   private _field: number | string;
-  private _data: any;
-  private _type = 'clone';
+  private _data = '';
+  private _type = 'clone' as const;
 
   constructor(field: number | string) {
     this._field = field;
@@ -28,7 +29,7 @@ export class CloneAggregator implements Aggregator {
     }
   }
 
-  storeResult(groupTotals: any) {
+  storeResult(groupTotals: SlickGroupTotals & { clone: Record<number | string, string>; }) {
     if (!groupTotals || groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }

@@ -1,5 +1,5 @@
-import type { CompositeEditorOption } from './compositeEditorOption.interface';
-import type { Column, SlickGrid } from './index';
+import type { CompositeEditorOption, SlickGridUniversal } from './index';
+import type { Column } from './index';
 
 export interface CollectionOverrideArgs {
   /** Column Definition */
@@ -9,7 +9,7 @@ export interface CollectionOverrideArgs {
   dataContext: any;
 
   /** Slick Grid object */
-  grid: SlickGrid;
+  grid: SlickGridUniversal;
 
   /** Potential Composite Editor option when triggered by the Composite Editor modal window */
   compositeEditorOptions?: Pick<CompositeEditorOption, 'formValues' | 'modalType'>;

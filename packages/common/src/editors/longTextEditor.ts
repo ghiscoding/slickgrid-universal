@@ -1,4 +1,5 @@
 import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
+import { SlickEventData } from 'slickgrid';
 
 import { Constants } from './../constants';
 import { KeyCode } from '../enums/keyCode.enum';
@@ -15,17 +16,13 @@ import type {
   HtmlElementPosition,
   Locale,
   LongTextEditorOption,
-  SlickGrid,
-  SlickNamespace,
+  SlickGridUniversal,
 } from '../interfaces/index';
 import { createDomElement, getHtmlElementOffset, } from '../services/domUtilities';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
 import { textValidator } from '../editorValidators/textValidator';
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
 
 /*
  * An example of a 'detached' editor.
@@ -46,7 +43,7 @@ export class LongTextEditor implements Editor {
   disabled = false;
 
   /** SlickGrid Grid object */
-  grid: SlickGrid;
+  grid: SlickGridUniversal;
 
   /** Grid options */
   gridOptions: GridOption;
@@ -79,7 +76,7 @@ export class LongTextEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef?.internalColumnEditor ?? {};
+    return this.columnDef?.internalColumnEditor ?? {} as ColumnEditor;
   }
 
   /** Getter for the item data context object */
@@ -483,7 +480,7 @@ export class LongTextEditor implements Editor {
     }
     grid.onCompositeEditorChange.notify(
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
-      { ...new Slick.EventData(), ...event }
+      { ...new SlickEventData(), ...event as Event }
     );
   }
 

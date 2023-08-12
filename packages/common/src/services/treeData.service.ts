@@ -1,4 +1,5 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
+import { type OnClickEventArgs, type SlickDataView, SlickEventHandler, } from 'slickgrid';
 
 import { Constants } from '../constants';
 import { ToggleStateChangeType, type ToggleStateChangeTypeString } from '../enums/index';
@@ -6,12 +7,7 @@ import type {
   Column,
   ColumnSort,
   GridOption,
-  OnClickEventArgs,
-  SlickDataView,
-  SlickEventData,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
+  SlickGridUniversal,
   TreeDataOption,
   TreeToggledItem,
   TreeToggleStateChange,
@@ -20,19 +16,16 @@ import { findItemInTreeStructure, unflattenParentChildArrayToTree } from './util
 import type { SharedService } from './shared.service';
 import type { SortService } from './sort.service';
 
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
-
 export class TreeDataService {
   protected _isLastFullToggleCollapsed = false;
   protected _lastToggleStateChange!: Omit<TreeToggleStateChange, 'fromItemId'>;
   protected _currentToggledItems: TreeToggledItem[] = [];
-  protected _grid!: SlickGrid;
+  protected _grid!: SlickGridUniversal;
   protected _eventHandler: SlickEventHandler;
   protected _subscriptions: EventSubscription[] = [];
 
   constructor(protected readonly pubSubService: BasePubSubService, protected readonly sharedService: SharedService, protected readonly sortService: SortService) {
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
   }
 
   set currentToggledItems(newToggledItems: TreeToggledItem[]) {
@@ -48,7 +41,7 @@ export class TreeDataService {
 
   /** Getter of SlickGrid DataView object */
   get dataView(): SlickDataView {
-    return this._grid?.getData?.() ?? {} as SlickDataView;
+    return this._grid?.getData<SlickDataView>();
   }
 
   /** Getter of the SlickGrid Event Handler */
@@ -57,7 +50,7 @@ export class TreeDataService {
   }
 
   get gridOptions(): GridOption {
-    return this._grid?.getOptions?.() ?? {};
+    return this._grid?.getOptions() ?? {};
   }
 
   get treeDataOptions(): TreeDataOption {
@@ -70,7 +63,7 @@ export class TreeDataService {
     this.pubSubService.unsubscribeAll(this._subscriptions);
   }
 
-  init(grid: SlickGrid) {
+  init(grid: SlickGridUniversal) {
     this._grid = grid;
     this._isLastFullToggleCollapsed = this.gridOptions?.treeDataOptions?.initiallyCollapsed ?? false;
     this._currentToggledItems = this.gridOptions.presets?.treeData?.toggledItems ?? [];
@@ -363,7 +356,7 @@ export class TreeDataService {
   // protected functions
   // ------------------
 
-  protected handleOnCellClick(event: SlickEventData, args: OnClickEventArgs) {
+  protected handleOnCellClick(event: MouseEvent, args: OnClickEventArgs) {
     if (event && args) {
       const targetElm: any = event.target || {};
       const idPropName = this.gridOptions.datasetIdPropertyName ?? 'id';

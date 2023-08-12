@@ -1,10 +1,9 @@
-import type { MenuCommandItem } from '../index';
+import type { MenuCommandItem, SlickGridUniversal } from '../index';
 import type { SlickHeaderMenu } from '../extensions/slickHeaderMenu';
 import type {
   Column,
   HeaderMenuOption,
   MenuCommandItemCallbackArgs,
-  SlickGrid,
 } from './index';
 
 export interface HeaderMenuCommandItemCallbackArgs {
@@ -12,7 +11,7 @@ export interface HeaderMenuCommandItemCallbackArgs {
   column: Column;
 
   /** Slick Grid object */
-  grid: SlickGrid;
+  grid: SlickGridUniversal;
 
   /** html DOM element of the menu */
   menu: Array<MenuCommandItem | 'divider'>;
