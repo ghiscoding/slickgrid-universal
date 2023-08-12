@@ -73,7 +73,7 @@
   "dependencies": {
     "@slickgrid-universal/event-pub-sub": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
-    "autocompleter": "^8.0.4",
+    "autocompleter": "^9.0.1",
     "dequal": "^2.0.3",
     "dompurify": "^3.0.5",
     "flatpickr": "^4.6.13",
@@ -93,7 +93,7 @@
     "npm-run-all2": "^6.0.6",
     "postcss": "^8.4.27",
     "postcss-cli": "^10.1.0",
-    "sass": "^1.64.0"
+    "sass": "^1.65.1"
   },
   "engines": {
     "node": ">=16.15.0",
