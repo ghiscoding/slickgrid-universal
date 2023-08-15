@@ -1,6 +1,7 @@
 import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class DistinctAggregator implements Aggregator {
+  private _isInitialized = false;
   private _field: number | string;
   private _distinctValues: any[] = [];
   private _type = 'distinct';
@@ -13,6 +14,10 @@ export class DistinctAggregator implements Aggregator {
     return this._field;
   }
 
+  get isInitialized() {
+    return this._isInitialized;
+  }
+
   get result(): any[] {
     return this._distinctValues;
   }
@@ -21,8 +26,12 @@ export class DistinctAggregator implements Aggregator {
     return this._type;
   }
 
-  init(): void {
+  init(_item?: any, isTreeAggregator = false): void {
     this._distinctValues = [];
+    this._isInitialized = true;
+    if (isTreeAggregator) {
+      throw new Error('[Slickgrid-Universal] CloneAggregator is not currently supported for use with Tree Data');
+    }
   }
 
   accumulate(item: any) {

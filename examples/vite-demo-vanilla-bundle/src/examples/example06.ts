@@ -62,11 +62,17 @@ export default class Example6 {
         type: FieldType.number, exportWithFormatter: true,
         filterable: true, filter: { model: Filters.compoundInputNumber },
         formatter: (row, cell, value, column, dataContext) => {
-          const aggregatorType = 'avg';
           const fieldId = column.field;
-          if (dataContext?.__treeTotals?.[aggregatorType]?.[fieldId] !== undefined) {
+          if (dataContext?.__treeTotals !== undefined) {
             const treeLevel = dataContext[this.gridOptions?.treeDataOptions?.levelPropName || '__treeLevel'];
-            return isNaN(dataContext?.__treeTotals[aggregatorType][fieldId]) ? '' : `<span class="color-primary" style="font-weight: 600">${decimalFormatted(dataContext?.__treeTotals[aggregatorType][fieldId], 0, 2)} MB</span> (${treeLevel === 0 ? 'total' : 'sub-total'})`;
+
+            if (dataContext?.__treeTotals?.['avg']?.[fieldId] !== undefined && dataContext?.__treeTotals?.['sum']?.[fieldId] !== undefined) {
+              // when found, display both Avg & Sum
+              return isNaN(dataContext?.__treeTotals['sum'][fieldId]) ? '' : `<span class="color-primary" style="font-weight: 600">sum: ${decimalFormatted(dataContext?.__treeTotals['sum'][fieldId], 0, 2)} MB</span> / <span class="avg-total">avg: ${decimalFormatted(dataContext?.__treeTotals['avg'][fieldId], 0, 2)} MB</span>`;
+            } else if (dataContext?.__treeTotals?.['sum']) {
+              // or just show Sum
+              return isNaN(dataContext?.__treeTotals['sum'][fieldId]) ? '' : `<span class="color-primary" style="font-weight: 600">sum: ${decimalFormatted(dataContext?.__treeTotals['sum'][fieldId], 0, 2)} MB</span> (${treeLevel === 0 ? 'total' : 'sub-total'})`;
+            }
           }
           return isNaN(value) ? '' : `${value} MB`;
         },
@@ -115,8 +121,12 @@ export default class Example6 {
         //   columnId: 'file',
         //   direction: 'DESC'
         // },
-        // @ts-ignore
-        aggregators: [new Aggregators.Avg('size'),/* new Aggregators.Sum('size') */]
+
+        // Aggregators are also supported and must always be an array even when single one is provided
+        // Note: only 5 are currently supported: Avg, Sum, Min, Max and Count
+        // Note 2: also note that Avg Aggregator will automatically give you the "avg", "count" and "sum" so if you need these 3 then simply calling Avg will give you better perf
+        // aggregators: [new Aggregators.Sum('size')]
+        aggregators: [new Aggregators.Avg('size'), new Aggregators.Sum('size') /* , new Aggregators.Min('size'), new Aggregators.Max('size') */]
       },
       showCustomFooter: true,
 
@@ -173,7 +183,7 @@ export default class Example6 {
     value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const spacer = `<span style="display:inline-block; width:${(15 * treeLevel)}px;"></span>`;
 
-    if (data[idx + 1] && data[idx + 1][treeLevelPropName] > data[idx][treeLevelPropName]) {
+    if (data[idx + 1]?.[treeLevelPropName] > data[idx][treeLevelPropName] || data[idx]['__hasChildren']) {
       const folderPrefix = `<i class="mdi mdi-22px ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;
       if (dataContext.__collapsed) {
         return `${spacer} <span class="slick-group-toggle collapsed" level="${treeLevel}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
@@ -191,7 +201,7 @@ export default class Example6 {
       prefix = '<i class="mdi mdi-20px mdi-file-pdf-outline"></i>';
     } else if (value.includes('.txt')) {
       prefix = '<i class="mdi mdi-20px mdi-file-document-outline"></i>';
-    } else if (value.includes('.xls')) {
+    } else if (value.includes('.csv') || value.includes('.xls')) {
       prefix = '<i class="mdi mdi-20px mdi-file-excel-outline"></i>';
     } else if (value.includes('.mp3')) {
       prefix = '<i class="mdi mdi-20px mdi-file-music-outline"></i>';
@@ -261,7 +271,7 @@ export default class Example6 {
               { id: 23, file: 'phone-bill.pdf', dateModified: '2015-05-01T07:50:00.123Z', size: 1.5, },
             ]
           },
-          { id: 9, file: 'misc', files: [{ id: 10, file: 'todo.txt', dateModified: '2015-02-26T16:50:00.123Z', size: 0.4, }] },
+          { id: 9, file: 'misc', files: [{ id: 10, file: 'warranties.txt', dateModified: '2015-02-26T16:50:00.123Z', size: 0.4, }] },
           { id: 7, file: 'xls', files: [{ id: 8, file: 'compilation.xls', dateModified: '2014-10-02T14:50:00.123Z', size: 2.3, }] },
           { id: 55, file: 'unclassified.csv', dateModified: '2015-04-08T03:44:12.333Z', size: 0.25, },
           { id: 56, file: 'unresolved.csv', dateModified: '2015-04-03T03:21:12.000Z', size: 0.79, },
@@ -276,8 +286,9 @@ export default class Example6 {
               id: 14, file: 'pop', files: [
                 { id: 15, file: 'theme.mp3', description: 'Movie Theme Song', dateModified: '2015-03-01T17:05:00Z', size: 47, },
                 { id: 25, file: 'song.mp3', description: 'it is a song...', dateModified: '2016-10-04T06:33:44Z', size: 6.3, }
-              ]
+              ],
             },
+            { id: 33, file: 'other', files: [] }
           ]
         }]
       },
@@ -289,5 +300,24 @@ export default class Example6 {
         ]
       },
     ];
+  }
+
+  /**
+   * for test purposes only, we can dynamically change the loaded Aggregator(s) but we'll have to reload the dataset
+   * also note that it bypasses the grid preset which mean that "pdf" will not be collapsed when called this way
+   */
+  displaySumAggregatorOnly() {
+    this.sgb.slickGrid!.setOptions({
+      treeDataOptions: {
+        columnId: 'file',
+        childrenPropName: 'files',
+        excludeChildrenWhenFilteringTree: this.isExcludingChildWhenFiltering, // defaults to false
+        autoApproveParentItemWhenTreeColumnIsValid: this.isAutoApproveParentItemWhenTreeColumnIsValid,
+        aggregators: [new Aggregators.Sum('size')]
+      }
+    });
+
+    // reset dataset to clear all tree data stat mutations (basically recreate the grid entirely to start from scratch)
+    this.sgb.datasetHierarchical = this.mockDataset();
   }
 }

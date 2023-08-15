@@ -1,6 +1,9 @@
+import { isNumber } from '@slickgrid-universal/utils';
+
 import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class AvgAggregator implements Aggregator {
+  private _isInitialized = false;
   private _isTreeAggregator = false;
   private _nonNullCount = 0;
   private _result = 0;
@@ -16,6 +19,10 @@ export class AvgAggregator implements Aggregator {
     return this._field;
   }
 
+  get isInitialized() {
+    return this._isInitialized;
+  }
+
   get result(): number {
     return this._result;
   }
@@ -27,21 +34,28 @@ export class AvgAggregator implements Aggregator {
   init(item?: any, isTreeAggregator = false) {
     this._sum = 0;
     this._nonNullCount = 0;
+    this._isInitialized = true;
 
-    // when dealing with Tree Data structure, we also need to clear any parent totals
+    // when dealing with Tree Data structure, we also need to keep sum & itemCount refs
+    // also while calculating Avg Aggregator, we could in theory skip completely SumAggregator because we kept the sum already for calculations
     this._isTreeAggregator = isTreeAggregator;
     if (isTreeAggregator) {
-      if (!item.__treeTotals || item.__treeTotals[this._type] === undefined) {
-        item.__treeTotals = { [this._type]: {}, __avgSum: {}, __itemCount: {} };
+      if (!item.__treeTotals) {
+        item.__treeTotals = {};
+      }
+      if (item.__treeTotals[this._type] === undefined) {
+        item.__treeTotals[this._type] = {};
+        item.__treeTotals.sum = {};
+        item.__treeTotals.count = {};
       }
       item.__treeTotals[this._type][this._field] = 0;
-      item.__treeTotals['__avgSum'][this._field] = 0;
-      item.__treeTotals['__itemCount'][this._field] = 0;
+      item.__treeTotals['count'][this._field] = 0;
+      item.__treeTotals['sum'][this._field] = 0;
     }
   }
 
-  accumulate(item: any, isParentTreeAccumlate = false, childCount = 0) {
-    const val = (item && item.hasOwnProperty(this._field)) ? item[this._field] : null;
+  accumulate(item: any, isTreeParent = false) {
+    const val = item?.hasOwnProperty(this._field) ? item[this._field] : null;
 
     // when dealing with Tree Data structure, we need keep only the new sum (without doing any addition)
     if (!this._isTreeAggregator) {
@@ -49,32 +63,36 @@ export class AvgAggregator implements Aggregator {
       this._nonNullCount++;
       this._sum += parseFloat(val);
     } else {
-      this._nonNullCount = childCount;
-      if (isParentTreeAccumlate) {
+      if (isTreeParent) {
+        if (!item.__treeTotals) {
+          item.__treeTotals = {};
+        }
         this.addGroupTotalPropertiesWhenNotExist(item.__treeTotals);
-        // item.__treeTotals['__itemCount'][this._field] = this._nonNullCount;
-        this._sum = parseFloat(item.__treeTotals['__avgSum'][this._field] ?? 0);
-      } else if (this.isNumber(val)) {
+        this._sum = parseFloat(item.__treeTotals['sum'][this._field] ?? 0);
+        this._nonNullCount = item.__treeTotals['count'][this._field] ?? 0;
+      } else if (isNumber(val)) {
         this._sum = parseFloat(val);
+        this._nonNullCount = 1;
       }
     }
   }
 
   storeResult(groupTotals: any) {
     let sum = this._sum;
+    let itemCount = this._nonNullCount;
     this.addGroupTotalPropertiesWhenNotExist(groupTotals);
 
     // when dealing with Tree Data, we also need to take the parent's total and add it to the final sum
     if (this._isTreeAggregator) {
-      sum += groupTotals['__avgSum'][this._field];
-      groupTotals['__avgSum'][this._field] = sum;
+      sum += groupTotals['sum'][this._field];
+      itemCount += groupTotals['count'][this._field];
+
+      groupTotals['sum'][this._field] = sum;
+      groupTotals['count'][this._field] = itemCount;
     }
-    // console.log(sum, this._nonNullCount, sum / this._nonNullCount);
-    this._result = sum / this._nonNullCount;
+
+    this._result = itemCount === 0 ? sum : sum / itemCount;
     groupTotals[this._type][this._field] = this._result;
-    if (this._isTreeAggregator) {
-      groupTotals['__itemCount'][this._field] = this._nonNullCount;
-    }
   }
 
   protected addGroupTotalPropertiesWhenNotExist(groupTotals: any) {
@@ -84,9 +102,11 @@ export class AvgAggregator implements Aggregator {
     if (groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }
-  }
-
-  protected isNumber(value: any) {
-    return (value === null || value === undefined || value === '') ? false : !isNaN(+value);
+    if (this._isTreeAggregator && groupTotals['sum'] === undefined) {
+      groupTotals['sum'] = {};
+    }
+    if (this._isTreeAggregator && groupTotals['count'] === undefined) {
+      groupTotals['count'] = {};
+    }
   }
 }

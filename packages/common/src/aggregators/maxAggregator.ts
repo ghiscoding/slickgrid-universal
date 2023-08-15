@@ -1,6 +1,9 @@
+import { isNumber } from '@slickgrid-universal/utils';
+
 import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class MaxAggregator implements Aggregator {
+  private _isInitialized = false;
   private _isTreeAggregator = false;
   private _max: number | null = null;
   private _field: number | string;
@@ -14,6 +17,10 @@ export class MaxAggregator implements Aggregator {
     return this._field;
   }
 
+  get isInitialized() {
+    return this._isInitialized;
+  }
+
   get result(): number | null {
     return this._max;
   }
@@ -24,36 +31,40 @@ export class MaxAggregator implements Aggregator {
 
   init(item?: any, isTreeAggregator = false) {
     this._max = null;
+    this._isInitialized = true;
 
     // when dealing with Tree Data structure, we also need to clear any parent totals
     this._isTreeAggregator = isTreeAggregator;
     if (isTreeAggregator) {
-      if (!item.__treeTotals || item.__treeTotals[this._type] === undefined) {
-        item.__treeTotals = { [this._type]: {} };
+      if (!item.__treeTotals) {
+        item.__treeTotals = {};
       }
+      if (item.__treeTotals[this._type] === undefined) {
+        item.__treeTotals[this._type] = {};
+      }
+      item.__treeTotals[this._type][this._field] = null;
     }
   }
 
   accumulate(item: any, isParentTreeAccumlate = false) {
-    const val = (item && item.hasOwnProperty(this._field)) ? item[this._field] : null;
+    const val = item?.hasOwnProperty(this._field) ? item[this._field] : null;
 
     // when dealing with Tree Data structure, we need keep only the new max (without doing any addition)
     if (!this._isTreeAggregator) {
-      // not a Tree structure, we'll do a regular maxmation
-      if (this._max === null || val > this._max) {
-        this._max = parseFloat(val);
-      }
+      // not a Tree structure, we'll do a regular maximation
+      this.keepMaxValueWhenFound(val);
     } else {
       if (isParentTreeAccumlate) {
+        if (!item.__treeTotals) {
+          item.__treeTotals = {};
+        }
         this.addGroupTotalPropertiesWhenNotExist(item.__treeTotals);
         const parentMax = item.__treeTotals[this._type][this._field] !== null ? parseFloat(item.__treeTotals[this._type][this._field]) : null;
-        if (this._max === null || parentMax === null || parentMax > this._max) {
+        if (parentMax !== null && isNumber(parentMax) && (this._max === null || parentMax > this._max)) {
           this._max = parentMax;
         }
-      } else if (this.isNumber(val)) {
-        if (this._max === null || val > this._max) {
-          this._max = parseFloat(val);
-        }
+      } else if (isNumber(val)) {
+        this.keepMaxValueWhenFound(val);
       }
     }
   }
@@ -65,7 +76,7 @@ export class MaxAggregator implements Aggregator {
     // when dealing with Tree Data, we also need to take the parent's total and add it to the final max
     if (this._isTreeAggregator && max !== null) {
       const parentMax = groupTotals[this._type][this._field];
-      if (parentMax > max) {
+      if (isNumber(parentMax) && parentMax > max) {
         max = parentMax;
       }
     }
@@ -81,7 +92,9 @@ export class MaxAggregator implements Aggregator {
     }
   }
 
-  protected isNumber(value: any) {
-    return (value === null || value === undefined || value === '') ? false : !isNaN(+value);
+  protected keepMaxValueWhenFound(val: number) {
+    if (this._max === null || val > this._max) {
+      this._max = val;
+    }
   }
 }

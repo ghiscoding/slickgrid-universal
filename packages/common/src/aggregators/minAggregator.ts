@@ -1,6 +1,9 @@
+import { isNumber } from '@slickgrid-universal/utils';
+
 import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class MinAggregator implements Aggregator {
+  private _isInitialized = false;
   private _isTreeAggregator = false;
   private _min: number | null = null;
   private _field: number | string;
@@ -14,6 +17,10 @@ export class MinAggregator implements Aggregator {
     return this._field;
   }
 
+  get isInitialized() {
+    return this._isInitialized;
+  }
+
   get result(): number | null {
     return this._min;
   }
@@ -24,36 +31,40 @@ export class MinAggregator implements Aggregator {
 
   init(item?: any, isTreeAggregator = false) {
     this._min = null;
+    this._isInitialized = true;
 
     // when dealing with Tree Data structure, we also need to clear any parent totals
     this._isTreeAggregator = isTreeAggregator;
     if (isTreeAggregator) {
-      if (!item.__treeTotals || item.__treeTotals[this._type] === undefined) {
-        item.__treeTotals = { [this._type]: {} };
+      if (!item.__treeTotals) {
+        item.__treeTotals = {};
       }
+      if (item.__treeTotals[this._type] === undefined) {
+        item.__treeTotals[this._type] = {};
+      }
+      item.__treeTotals[this._type][this._field] = null;
     }
   }
 
   accumulate(item: any, isParentTreeAccumlate = false) {
-    const val = (item && item.hasOwnProperty(this._field)) ? item[this._field] : null;
+    const val = item?.hasOwnProperty(this._field) ? item[this._field] : null;
 
     // when dealing with Tree Data structure, we need keep only the new min (without doing any addition)
     if (!this._isTreeAggregator) {
-      // not a Tree structure, we'll do a regular minmation
-      if (this._min === null || val < this._min) {
-        this._min = parseFloat(val);
-      }
+      // not a Tree structure, we'll do a regular minimation
+      this.keepMinValueWhenFound(val);
     } else {
       if (isParentTreeAccumlate) {
+        if (!item.__treeTotals) {
+          item.__treeTotals = {};
+        }
         this.addGroupTotalPropertiesWhenNotExist(item.__treeTotals);
         const parentMin = item.__treeTotals[this._type][this._field] !== null ? parseFloat(item.__treeTotals[this._type][this._field]) : null;
-        if (this._min === null || parentMin === null || parentMin < this._min) {
+        if (parentMin !== null && isNumber(parentMin) && (this._min === null || parentMin < this._min)) {
           this._min = parentMin;
         }
-      } else if (this.isNumber(val)) {
-        if (this._min === null || val < this._min) {
-          this._min = parseFloat(val);
-        }
+      } else if (isNumber(val)) {
+        this.keepMinValueWhenFound(val);
       }
     }
   }
@@ -65,7 +76,7 @@ export class MinAggregator implements Aggregator {
     // when dealing with Tree Data, we also need to take the parent's total and add it to the final min
     if (this._isTreeAggregator && min !== null) {
       const parentMin = groupTotals[this._type][this._field];
-      if (parentMin < min) {
+      if (isNumber(parentMin) && parentMin < min) {
         min = parentMin;
       }
     }
@@ -81,7 +92,9 @@ export class MinAggregator implements Aggregator {
     }
   }
 
-  protected isNumber(value: any) {
-    return (value === null || value === undefined || value === '') ? false : !isNaN(+value);
+  protected keepMinValueWhenFound(val: number) {
+    if (this._min === null || val < this._min) {
+      this._min = val;
+    }
   }
 }

@@ -2,6 +2,9 @@ export interface Aggregator {
   /** Column definition field Id of the associated Aggregator */
   field: number | string;
 
+  /** Was the Aggregator already initialized? */
+  isInitialized?: boolean;
+
   /** Result valut of the Aggregator (what is the current sum, avg, ...) */
   result: any;
 
@@ -9,11 +12,11 @@ export interface Aggregator {
   type: string;
 
   /** Aggregator initialize method */
-  init: (item?: any, isParentTree?: boolean) => void;
+  init: (item?: any, isTreeAggregator?: boolean) => void;
 
   /** Method to accumulate the result which will be different for each Aggregator type */
-  accumulate?: (item: any, isParentTreeAccumlate?: boolean, childCount?: number) => void;
+  accumulate?: (item: any, isTreeParent?: boolean) => void;
 
   /** Method to store the result into the given group total object provided as argument */
-  storeResult: (groupTotals: any | undefined, isParentTreeStoring?: boolean) => void;
+  storeResult: (groupTotals: any | undefined) => void;
 }
