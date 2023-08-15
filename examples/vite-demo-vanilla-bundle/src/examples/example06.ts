@@ -61,7 +61,7 @@ export default class Example6 {
         id: 'size', name: 'Size', field: 'size', minWidth: 90,
         type: FieldType.number, exportWithFormatter: true,
         filterable: true, filter: { model: Filters.compoundInputNumber },
-        formatter: (row, cell, value, column, dataContext) => {
+        formatter: (_row, _cell, value, column, dataContext) => {
           const fieldId = column.field;
           if (dataContext?.__treeTotals !== undefined) {
             const treeLevel = dataContext[this.gridOptions?.treeDataOptions?.levelPropName || '__treeLevel'];
