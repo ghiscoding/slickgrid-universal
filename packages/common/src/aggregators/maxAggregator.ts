@@ -88,9 +88,11 @@ export class MaxAggregator implements Aggregator {
     }
   }
 
-  protected keepMaxValueWhenFound(val: number) {
-    if (this._max === null || val > this._max) {
-      this._max = val;
+  protected keepMaxValueWhenFound(val: any) {
+    if (val !== null && val !== '' && !isNaN(val)) {
+      if (this._max === null || val > this._max) {
+        this._max = parseFloat(val);
+      }
     }
   }
 }

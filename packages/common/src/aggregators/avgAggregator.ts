@@ -6,7 +6,6 @@ export class AvgAggregator implements Aggregator {
   private _isInitialized = false;
   private _isTreeAggregator = false;
   private _nonNullCount = 0;
-  private _result = 0;
   private _sum = 0;
   private _field: number | string;
   private _type = 'avg';
@@ -56,8 +55,10 @@ export class AvgAggregator implements Aggregator {
     // when dealing with Tree Data structure, we need keep only the new sum (without doing any addition)
     if (!this._isTreeAggregator) {
       // not a Tree structure, we'll do a regular summation
-      this._nonNullCount++;
-      this._sum += parseFloat(val);
+      if (val !== null && val !== '' && !isNaN(val)) {
+        this._nonNullCount++;
+        this._sum += parseFloat(val);
+      }
     } else {
       if (isTreeParent) {
         if (!item.__treeTotals) {
@@ -87,8 +88,9 @@ export class AvgAggregator implements Aggregator {
       groupTotals['count'][this._field] = itemCount;
     }
 
-    this._result = itemCount === 0 ? sum : sum / itemCount;
-    groupTotals[this._type][this._field] = this._result;
+    if (itemCount !== 0) {
+      groupTotals[this._type][this._field] = itemCount === 0 ? sum : sum / itemCount;
+    }
   }
 
   protected addGroupTotalPropertiesWhenNotExist(groupTotals: any) {
