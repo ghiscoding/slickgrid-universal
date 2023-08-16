@@ -35,7 +35,7 @@ import { progressBarFormatter } from './progressBarFormatter';
 import { translateFormatter } from './translateFormatter';
 import { treeExportFormatter } from './treeExportFormatter';
 import { treeFormatter } from './treeFormatter';
-import { treeParseTotalFormatters } from './treeParseTotalFormatters';
+import { treeParseTotalsFormatter } from './treeParseTotalsFormatter';
 import { translateBooleanFormatter } from './translateBooleanFormatter';
 import { uppercaseFormatter } from './uppercaseFormatter';
 import { yesNoFormatter } from './yesNoFormatter';
@@ -285,8 +285,16 @@ export const Formatters = {
   /** Formatter that must be use with a Tree Data column */
   tree: treeFormatter,
 
-  /** Formatter that can be use to parse Tree Data totals and display totals using GroupTotalFormatters */
-  treeParseTotalFormatters,
+  /**
+   * Formatter that can be use to parse Tree Data totals and display totals using GroupTotalFormatters.
+   * This formatter works with both regular `Formatters` or `GroupTotalFormatters`,
+   * it will auto-detect if the current data context has a `__treeTotals` prop,
+   * then it will use the `GroupTotalFormatters`, if not then it will try to use regular `Formatters`.
+   *
+   * This mean that you can provide an array of `Formatters` & `GroupTotalFormatters` and it will use the correct formatter
+   * by detecting if the current data context has a `__treeTotals` prop (`GroupTotalFormatters`) or not (regular `Formatter`)
+   */
+  treeParseTotals: treeParseTotalsFormatter,
 
   /** Formatter that must be use with a Tree Data column for Exporting the data */
   treeExport: treeExportFormatter,

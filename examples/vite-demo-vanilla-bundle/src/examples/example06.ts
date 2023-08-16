@@ -6,10 +6,11 @@ import {
   findItemInTreeStructure,
   Formatter,
   Formatters,
-  // GroupTotalFormatters,
+  GroupTotalFormatters,
   SlickDataView,
   Aggregators,
   decimalFormatted,
+  italicFormatter,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -63,7 +64,28 @@ export default class Example6 {
         type: FieldType.number, exportWithFormatter: true,
         filterable: true, filter: { model: Filters.compoundInputNumber },
 
-        // Formatter option #1 (custom formatter)
+        // Formatter option #1 (treeParseTotalFormatters)
+        // if you wish to use any of the GroupTotalFormatters (or even regular Formatters), we can do so with the code below
+        // use `treeTotalsFormatter` or `groupTotalsFormatter` to show totals in a Tree Data grid
+        // provide any regular formatters inside the params.formatters
+        // IMPORTANT: DO NOT USE Formatters.multiple (that will fail), Formatters.treeParseTotals already accepts multiple params.formatters and IT MUST BE the Formatter entry point
+
+        // formatter: Formatters.treeParseTotals,
+        // treeTotalsFormatter: GroupTotalFormatters.sumTotalsBold,
+        // // groupTotalsFormatter: GroupTotalFormatters.sumTotalsBold,
+        // params: {
+        //   formatters: [
+        //     // providing extra formatters for regular cell dataContext, it will only be used when `__treeTotals` is NOT detected (so when it's not a Tree Data total)
+        //     (_row, _cell, value) => isNaN(value) ? '' : `${decimalFormatted(value, 0, 2)} MB`,
+        //     italicFormatter,
+        //   ],
+        //   // we can also supply extra params for Formatters/GroupTotalFormatters like min/max decimals
+        //   groupFormatterSuffix: ' MB',
+        //   minDecimal: 0,
+        //   maxDecimal: 2,
+        // },
+
+        // OR option #2 (custom formatter)
         formatter: (_row, _cell, value, column, dataContext) => {
           // parent items will a "__treeTotals" property (when creating the Tree and running Aggregation, it mutates all items, all extra props starts with "__" prefix)
           const fieldId = column.field;
@@ -80,23 +102,9 @@ export default class Example6 {
               return isNaN(sumVal) ? '' : `<span class="color-primary bold">sum: ${decimalFormatted(sumVal, 0, 2)} MB</span> <span class="total-suffix">(${treeLevel === 0 ? 'total' : 'sub-total'})</span>`;
             }
           }
+          // reaching this line means it's a regular dataContext without totals, so regular formatter output will be used
           return isNaN(value) ? '' : `${value} MB`;
         },
-
-        // OR Formatter option #2
-        // if you wish to use any of the GroupTotalFormatters (or even regular Formatters), we can do so with the code below
-        // formatter: Formatters.treeParseTotalFormatters,
-        // params: {
-        //   groupFormatterSuffix: ' MB',
-        //   minDecimal: 0,
-        //   maxDecimal: 2,
-        //   formatters: [
-        //     // in this use case, we use 2 formatters sequentially to show "x MB" suffix and then show it in bold font
-        //     // we can also supply min/max decimals to the GroupTotalFormatters.sumTotalsBold to show a decimal formatted total
-        //     (_row, _cell, value) => isNaN(value) ? '' : `${value} MB`,
-        //     GroupTotalFormatters.sumTotalsBold,
-        //   ]
-        // }
       },
     ];
 
