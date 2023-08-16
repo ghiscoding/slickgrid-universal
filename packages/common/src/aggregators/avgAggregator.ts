@@ -23,10 +23,6 @@ export class AvgAggregator implements Aggregator {
     return this._isInitialized;
   }
 
-  get result(): number {
-    return this._result;
-  }
-
   get type(): string {
     return this._type;
   }

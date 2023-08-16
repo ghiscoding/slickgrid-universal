@@ -21,10 +21,6 @@ export class MinAggregator implements Aggregator {
     return this._isInitialized;
   }
 
-  get result(): number | null {
-    return this._min;
-  }
-
   get type(): string {
     return this._type;
   }

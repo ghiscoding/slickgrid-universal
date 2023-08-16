@@ -18,10 +18,6 @@ export class CloneAggregator implements Aggregator {
     return this._isInitialized;
   }
 
-  get result(): string {
-    return this._data;
-  }
-
   get type(): string {
     return this._type;
   }

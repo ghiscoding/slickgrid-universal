@@ -858,7 +858,7 @@ export class FilterService {
    * you can change the sorting icons separately by passing an array of columnId/sortAsc and that will change ONLY the icons
    * @param sortColumns
    */
-  setSortColumnIcons(sortColumns: { columnId: string, sortAsc: boolean }[]) {
+  setSortColumnIcons(sortColumns: { columnId: string, sortAsc: boolean; }[]) {
     if (this._grid && Array.isArray(sortColumns)) {
       this._grid.setSortColumns(sortColumns);
     }
@@ -1056,7 +1056,7 @@ export class FilterService {
   // -------------------
 
   /** Add all created filters (from their template) to the header row section area */
-  protected addFilterTemplateToHeaderRow(args: { column: Column; grid: SlickGrid; node: HTMLElement }, isFilterFirstRender = true) {
+  protected addFilterTemplateToHeaderRow(args: { column: Column; grid: SlickGrid; node: HTMLElement; }, isFilterFirstRender = true) {
     const columnDef = args.column;
     const columnId = columnDef?.id ?? '';
 

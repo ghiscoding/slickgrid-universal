@@ -21,10 +21,6 @@ export class CountAggregator implements Aggregator {
     return this._isInitialized;
   }
 
-  get result(): number {
-    return this._count;
-  }
-
   get type(): string {
     return this._type;
   }

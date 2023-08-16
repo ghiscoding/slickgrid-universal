@@ -226,7 +226,7 @@ export default class Example6 {
         id: newId,
         file: `pop-${newId}.mp3`,
         dateModified: new Date(),
-        size: Math.floor(Math.random() * 100) + 50,
+        size: newId + 3,
       });
 
       // overwrite hierarchical dataset which will also trigger a grid sort and rendering
@@ -234,9 +234,9 @@ export default class Example6 {
 
       // scroll into the position where the item was added with a delay since it needs to recreate the tree grid
       setTimeout(() => {
-        const rowIndex = this.sgb.dataView?.getRowById(popItem.id) as number;
+        const rowIndex = this.sgb.dataView?.getRowById(newId) as number;
         this.sgb.slickGrid?.scrollRowIntoView(rowIndex + 3);
-      }, 10);
+      }, 0);
     }
   }
 

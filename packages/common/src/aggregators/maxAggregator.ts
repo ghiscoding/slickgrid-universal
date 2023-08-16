@@ -21,10 +21,6 @@ export class MaxAggregator implements Aggregator {
     return this._isInitialized;
   }
 
-  get result(): number | null {
-    return this._max;
-  }
-
   get type(): string {
     return this._type;
   }

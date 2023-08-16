@@ -18,10 +18,6 @@ export class DistinctAggregator implements Aggregator {
     return this._isInitialized;
   }
 
-  get result(): any[] {
-    return this._distinctValues;
-  }
-
   get type(): string {
     return this._type;
   }

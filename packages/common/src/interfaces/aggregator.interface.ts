@@ -5,9 +5,6 @@ export interface Aggregator {
   /** Was the Aggregator already initialized? */
   isInitialized?: boolean;
 
-  /** Result valut of the Aggregator (what is the current sum, avg, ...) */
-  result: any;
-
   /** Type of Aggregator (sum, avg, ...) */
   type: string;
 
