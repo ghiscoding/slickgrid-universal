@@ -6,6 +6,7 @@ import {
   findItemInTreeStructure,
   Formatter,
   Formatters,
+  // GroupTotalFormatters,
   SlickDataView,
   Aggregators,
   decimalFormatted,
@@ -61,27 +62,38 @@ export default class Example6 {
         id: 'size', name: 'Size', field: 'size', minWidth: 90,
         type: FieldType.number, exportWithFormatter: true,
         filterable: true, filter: { model: Filters.compoundInputNumber },
+
+        // Formatter option #1 (custom formatter)
         formatter: (_row, _cell, value, column, dataContext) => {
+          // parent items will a "__treeTotals" property (when creating the Tree and running Aggregation, it mutates all items, all extra props starts with "__" prefix)
           const fieldId = column.field;
           if (dataContext?.__treeTotals !== undefined) {
             const treeLevel = dataContext[this.gridOptions?.treeDataOptions?.levelPropName || '__treeLevel'];
+            const sumVal = dataContext?.__treeTotals?.['sum'][fieldId];
+            const avgVal = dataContext?.__treeTotals?.['avg'][fieldId];
 
-            if (dataContext?.__treeTotals?.['avg']?.[fieldId] !== undefined && dataContext?.__treeTotals?.['sum']?.[fieldId] !== undefined) {
-              // when found, display both Avg & Sum
-              return isNaN(dataContext?.__treeTotals['sum'][fieldId]) ? '' : `<span class="color-primary" style="font-weight: 600">sum: ${decimalFormatted(dataContext?.__treeTotals['sum'][fieldId], 0, 2)} MB</span> / <span class="avg-total">avg: ${decimalFormatted(dataContext?.__treeTotals['avg'][fieldId], 0, 2)} MB</span>`;
-            } else if (dataContext?.__treeTotals?.['sum']) {
-              // or just show Sum
-              return isNaN(dataContext?.__treeTotals['sum'][fieldId]) ? '' : `<span class="color-primary" style="font-weight: 600">sum: ${decimalFormatted(dataContext?.__treeTotals['sum'][fieldId], 0, 2)} MB</span> (${treeLevel === 0 ? 'total' : 'sub-total'})`;
+            if (avgVal !== undefined && sumVal !== undefined) {
+              // when found Avg & Sum, we'll display both
+              return isNaN(sumVal) ? '' : `<span class="color-primary bold">sum: ${decimalFormatted(sumVal, 0, 2)} MB</span> / <span class="avg-total">avg: ${decimalFormatted(avgVal, 0, 2)} MB</span> <span class="total-suffix">(${treeLevel === 0 ? 'total' : 'sub-total'})</span>`;
+            } else if (sumVal !== undefined) {
+              // or when only Sum is aggregated, then just show Sum
+              return isNaN(sumVal) ? '' : `<span class="color-primary bold">sum: ${decimalFormatted(sumVal, 0, 2)} MB</span> <span class="total-suffix">(${treeLevel === 0 ? 'total' : 'sub-total'})</span>`;
             }
           }
           return isNaN(value) ? '' : `${value} MB`;
         },
-        // OR if you wish to use any of the GroupTotalFormatters, we can do so with the code below
+
+        // OR Formatter option #2
+        // if you wish to use any of the GroupTotalFormatters (or even regular Formatters), we can do so with the code below
         // formatter: Formatters.treeParseTotalFormatters,
         // params: {
         //   groupFormatterSuffix: ' MB',
+        //   minDecimal: 0,
+        //   maxDecimal: 2,
         //   formatters: [
-        //     (row, cell, value) => isNaN(value) ? '' : `${value} MB`,
+        //     // in this use case, we use 2 formatters sequentially to show "x MB" suffix and then show it in bold font
+        //     // we can also supply min/max decimals to the GroupTotalFormatters.sumTotalsBold to show a decimal formatted total
+        //     (_row, _cell, value) => isNaN(value) ? '' : `${value} MB`,
         //     GroupTotalFormatters.sumTotalsBold,
         //   ]
         // }

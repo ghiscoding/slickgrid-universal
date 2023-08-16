@@ -285,7 +285,7 @@ export const Formatters = {
   /** Formatter that must be use with a Tree Data column */
   tree: treeFormatter,
 
-  /** Formatter that must be use with a Tree Data column */
+  /** Formatter that can be use to parse Tree Data totals and display totals using GroupTotalFormatters */
   treeParseTotalFormatters,
 
   /** Formatter that must be use with a Tree Data column for Exporting the data */
