@@ -32,12 +32,10 @@
     "whatwg-fetch": "^3.6.17"
   },
   "devDependencies": {
-    "@rollup/plugin-dynamic-import-vars": "^2.0.4",
     "@types/fnando__sparkline": "^0.3.4",
-    "@types/moment": "^2.13.0",
-    "@types/node": "^20.4.9",
+    "@types/node": "^20.5.0",
     "@types/whatwg-fetch": "^0.0.33",
-    "sass": "^1.64.2",
+    "sass": "^1.65.1",
     "typescript": "^5.1.6",
     "vite": "^4.4.9"
   }
