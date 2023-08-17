@@ -42,7 +42,7 @@ export class MinAggregator implements Aggregator {
     }
   }
 
-  accumulate(item: any, isParentTreeAccumlate = false) {
+  accumulate(item: any, isTreeParent = false) {
     const val = item?.hasOwnProperty(this._field) ? item[this._field] : null;
 
     // when dealing with Tree Data structure, we need keep only the new min (without doing any addition)
@@ -50,7 +50,7 @@ export class MinAggregator implements Aggregator {
       // not a Tree structure, we'll do a regular minimation
       this.keepMinValueWhenFound(val);
     } else {
-      if (isParentTreeAccumlate) {
+      if (isTreeParent) {
         if (!item.__treeTotals) {
           item.__treeTotals = {};
         }
@@ -80,9 +80,6 @@ export class MinAggregator implements Aggregator {
   }
 
   protected addGroupTotalPropertiesWhenNotExist(groupTotals: any) {
-    if (!groupTotals) {
-      groupTotals = {};
-    }
     if (groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }

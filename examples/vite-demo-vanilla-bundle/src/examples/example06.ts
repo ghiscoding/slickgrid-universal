@@ -1,16 +1,16 @@
 import {
+  Aggregators,
   Column,
-  GridOption,
+  decimalFormatted,
   FieldType,
   Filters,
   findItemInTreeStructure,
   Formatter,
   Formatters,
-  GroupTotalFormatters,
+  GridOption,
   SlickDataView,
-  Aggregators,
-  decimalFormatted,
-  italicFormatter,
+  // GroupTotalFormatters,
+  // italicFormatter,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -85,10 +85,12 @@ export default class Example6 {
         //   maxDecimal: 2,
         // },
 
-        // OR option #2 (custom formatter)
+        // OR option #2 (custom Formatter)
         formatter: (_row, _cell, value, column, dataContext) => {
           // parent items will a "__treeTotals" property (when creating the Tree and running Aggregation, it mutates all items, all extra props starts with "__" prefix)
           const fieldId = column.field;
+
+          // Tree Totals, if exists, will be found under `__treeTotals` prop
           if (dataContext?.__treeTotals !== undefined) {
             const treeLevel = dataContext[this.gridOptions?.treeDataOptions?.levelPropName || '__treeLevel'];
             const sumVal = dataContext?.__treeTotals?.['sum'][fieldId];

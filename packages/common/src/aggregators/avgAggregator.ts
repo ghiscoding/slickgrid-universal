@@ -94,9 +94,6 @@ export class AvgAggregator implements Aggregator {
   }
 
   protected addGroupTotalPropertiesWhenNotExist(groupTotals: any) {
-    if (!groupTotals) {
-      groupTotals = {};
-    }
     if (groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }
