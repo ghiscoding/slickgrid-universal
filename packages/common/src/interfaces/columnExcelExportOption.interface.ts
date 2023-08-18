@@ -4,9 +4,12 @@ import type { GridOption } from './gridOption.interface';
 
 /** Excel custom export options (formatting & width) that can be applied to a column */
 export interface ColumnExcelExportOption {
+  /** Defaults to true, when enabled the system will try to find the best possible format to use when exporting. */
+  autoDetectCellFormat?: boolean;
+
   /**
    * Option to provide custom Excel styling
-   * NOTE: this option will completely override any detected column formatting
+   * NOTE: this option will completely override any detected cell styling
    */
   style?: ExcelCustomStyling;
 
@@ -20,7 +23,7 @@ export interface ColumnExcelExportOption {
 export interface GroupTotalExportOption {
   /**
    * Option to provide custom Excel styling
-   * NOTE: this option will completely override any detected column formatting
+   * NOTE: this option will completely override any detected cell styling
    */
   style?: ExcelCustomStyling;
 

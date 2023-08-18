@@ -150,6 +150,7 @@ export const GlobalGridOptions: GridOption = {
   explicitInitialization: true,
   excelExportOptions: {
     addGroupIndentation: true,
+    autoDetectCellFormat: true,
     exportWithFormatter: false,
     filename: 'export',
     format: FileType.xlsx,

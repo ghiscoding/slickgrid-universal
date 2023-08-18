@@ -7,6 +7,9 @@ export interface ExcelExportOption {
   /** Defaults to true, when grid is using Grouping, it will show indentation of the text with collapsed/expanded symbol as well */
   addGroupIndentation?: boolean;
 
+  /** Defaults to true, when enabled the system will try to find the best possible format to use when exporting */
+  autoDetectCellFormat?: boolean;
+
   /** When defined, this will override header titles styling, when undefined the default will be a bold style */
   columnHeaderStyle?: ExcelCustomStyling;
 
