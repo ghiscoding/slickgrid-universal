@@ -58,6 +58,7 @@ export default class Example6 {
       {
         id: 'size', name: 'Size', field: 'size', minWidth: 90,
         type: FieldType.number, exportWithFormatter: true,
+        excelExportOptions: { autoDetectCellFormat: false },
         filterable: true, filter: { model: Filters.compoundInputNumber },
         formatter: (_row, _cell, value) => isNaN(value) ? '' : `${value} MB`,
       },
