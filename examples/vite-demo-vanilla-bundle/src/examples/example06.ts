@@ -238,7 +238,7 @@ export default class Example6 {
    * After adding the item, it will sort by parent/child recursively
    */
   addNewFile() {
-    const newId = this.sgb.dataView!.getItemCount() + 100;
+    const newId = this.sgb.dataView!.getItemCount() + 50;
 
     // find first parent object and add the new item as a child
     const popItem = findItemInTreeStructure(this.datasetHierarchical, x => x.file === 'pop', 'files');
