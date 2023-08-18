@@ -8,11 +8,13 @@ import {
   Formatter,
   Formatters,
   GridOption,
+  isNumber,
   SlickDataView,
   // GroupTotalFormatters,
   // italicFormatter,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import './example06.scss';
@@ -105,7 +107,7 @@ export default class Example6 {
             }
           }
           // reaching this line means it's a regular dataContext without totals, so regular formatter output will be used
-          return isNaN(value) ? '' : `${value} MB`;
+          return !isNumber(value) ? '' : `${value} MB`;
         },
       },
     ];
@@ -121,10 +123,15 @@ export default class Example6 {
         exportWithFormatter: true,
         sanitizeDataExport: true
       },
+      enableTextExport: true,
+      textExportOptions: {
+        exportWithFormatter: true,
+        sanitizeDataExport: true
+      },
       gridMenu: {
         iconCssClass: 'mdi mdi-dots-grid',
       },
-      registerExternalResources: [new ExcelExportService()],
+      registerExternalResources: [new ExcelExportService(), new TextExportService()],
       enableFiltering: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
