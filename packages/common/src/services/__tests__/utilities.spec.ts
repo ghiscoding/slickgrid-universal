@@ -11,6 +11,7 @@ import {
   cancellablePromise,
   CancelledException,
   castObservableToPromise,
+  debounce,
   flattenToParentChildArray,
   unflattenParentChildArrayToTree,
   decimalFormatted,
@@ -146,6 +147,35 @@ describe('Service/Utilies', () => {
       castObservableToPromise(rxjs, observable).then((outputArray) => {
         expect(outputArray).toBe(inputArray);
       });
+    });
+  });
+
+  describe('debounce method', () => {
+    it('should execute callback right away when debounce wait time is below 0', () => {
+      const callbackSpy = jest.fn();
+
+      debounce(callbackSpy, -1)();
+
+      expect(callbackSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should NOT execute callback right away when debounce wait time is greater than 0', () => {
+      const callbackSpy = jest.fn();
+
+      debounce(callbackSpy, 1)();
+
+      expect(callbackSpy).toHaveBeenCalledTimes(0);
+    });
+
+    it('should execute callback after debounce time is reached and is greater than 0', (done) => {
+      const callbackSpy = jest.fn();
+
+      debounce(callbackSpy, 1)();
+
+      setTimeout(() => {
+        expect(callbackSpy).toHaveBeenCalledTimes(1);
+        done();
+      }, 1);
     });
   });
 
