@@ -1,13 +1,14 @@
-describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 }, () => {
+describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 0 }, () => {
   const GRID_ROW_HEIGHT = 45;
   const titles = ['Files', 'Date Modified', 'Description', 'Size'];
-  // const defaultSortAscList = ['bucket-list.txt', 'documents', 'misc', 'todo.txt', 'pdf', 'internet-bill.pdf', 'map.pdf', 'map2.pdf', 'phone-bill.pdf', 'txt', 'todo.txt', 'xls', 'compilation.xls', 'music', 'mp3', 'pop', 'song.mp3', 'theme.mp3', 'rock', 'soft.mp3', 'something.txt'];
-  // const defaultSortDescList = ['something.txt', 'music', 'mp3', 'rock', 'soft.mp3', 'pop', 'theme.mp3', 'song.mp3', 'documents', 'xls', 'compilation.xls', 'txt', 'todo.txt', 'pdf', 'phone-bill.pdf', 'map2.pdf', 'map.pdf', 'internet-bill.pdf', 'misc', 'todo.txt', 'bucket-list.txt'];
-  const defaultGridPresetWithoutPdfDocs = ['bucket-list.txt', 'documents', 'misc', 'todo.txt', 'pdf', 'txt', 'todo.txt', 'xls', 'compilation.xls'];
-  const defaultSortAscList = ['bucket-list.txt', 'documents', 'misc', 'todo.txt', 'pdf', 'internet-bill.pdf', 'map.pdf', 'map2.pdf', 'phone-bill.pdf'];
-  // const defaultSortDescList = ['something.txt', 'music', 'mp3', 'rock', 'soft.mp3', 'pop', 'theme.mp3', 'song.mp3', 'documents', 'xls', 'compilation.xls', 'txt', 'todo.txt'];
-  const defaultSortDescListWithExtraSongs = ['something.txt', 'recipes', 'coffee-cake', 'chocolate-cake', 'cheesecake', 'music', 'mp3', 'rock', 'soft.mp3', 'pop', 'theme.mp3', 'song.mp3', 'pop-126.mp3', 'pop-125.mp3', 'documents', 'xls'];
-  const popMusicWith3ExtraSongs = ['music', 'mp3', 'pop', 'pop-125.mp3', 'pop-126.mp3', 'pop-127.mp3', 'song.mp3', 'theme.mp3',];
+  // const defaultSortAscList = ['bucket-list.txt', 'documents', 'misc', 'warranties.txt', 'pdf', 'internet-bill.pdf', 'map.pdf', 'map2.pdf', 'phone-bill.pdf', 'txt', 'todo.txt', 'unclassified.csv', 'unresolved.csv', 'xls', 'compilation.xls', 'music', 'mp3', 'other', 'pop', 'song.mp3', 'theme.mp3', 'rock', 'soft.mp3', 'something.txt'];
+  // const defaultSortDescList = ['something.txt', 'music', 'mp3', 'rock', 'soft.mp3', 'other', 'pop', 'theme.mp3', 'song.mp3', 'documents', 'xls', 'compilation.xls', 'txt', 'todo.txt', 'unclassified.csv', 'unresolved.csv', 'pdf', 'phone-bill.pdf', 'map2.pdf', 'map.pdf', 'internet-bill.pdf', 'misc', 'todo.txt', 'bucket-list.txt'];
+  const defaultGridPresetWithoutPdfDocs = ['bucket-list.txt', 'documents', 'misc', 'warranties.txt', 'pdf', 'txt', 'todo.txt', 'unclassified.csv', 'unresolved.csv', 'xls', 'compilation.xls'];
+  const defaultSortAscList = ['bucket-list.txt', 'documents', 'misc', 'warranties.txt', 'pdf', 'internet-bill.pdf', 'map.pdf', 'map2.pdf', 'phone-bill.pdf'];
+  // const defaultSortDescList = ['something.txt', 'music', 'mp3', 'rock', 'soft.mp3', 'other', 'pop', 'theme.mp3', 'song.mp3', 'documents', 'xls', 'compilation.xls', 'txt', 'todo.txt'];
+  const defaultSortDescListWithExtraSongs = ['something.txt', 'recipes', 'coffee-cake', 'chocolate-cake', 'cheesecake', 'music', 'mp3', 'rock', 'soft.mp3', 'pop', 'theme.mp3', 'song.mp3', 'pop-80.mp3', 'pop-79.mp3', 'other', 'documents', 'xls'];
+  const popMusicWith3ExtraSongs = ['music', 'mp3', 'other', 'pop', 'pop-79.mp3', 'pop-80.mp3', 'pop-81.mp3', 'song.mp3', 'theme.mp3',];
+  const popMusicWith3ExtraSongsWithoutEmpty = ['music', 'mp3', 'pop', 'pop-79.mp3', 'pop-80.mp3', 'pop-81.mp3', 'song.mp3', 'theme.mp3',];
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example06`);
@@ -22,15 +23,23 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
       .each(($child, index) => expect($child.text()).to.eq(titles[index]));
   });
 
-  it('should expect the "pdf" folder to be closed by the collapsed items grid preset', () => {
+  it('should expect the "pdf" folder to be closed by the collapsed items grid preset with aggregators of Sum(8.8MB) / Avg(2.2MB)', () => {
     cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(0)`).should('contain', 'pdf');
     cy.get(`.slick-group-toggle.collapsed`).should('have.length', 1);
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(3)`).should('contain', 'sum: 8.8 MB / avg: 2.2 MB');
 
     defaultGridPresetWithoutPdfDocs.forEach((_colName, rowIdx) => {
       if (rowIdx < defaultGridPresetWithoutPdfDocs.length - 1) {
         cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * rowIdx}px"] > .slick-cell:nth(0)`).should('contain', defaultGridPresetWithoutPdfDocs[rowIdx]);
       }
     });
+  });
+
+  it('should have documents folder with aggregation of Sum(14.46MB) / Avg(1.45MB)', () => {
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0)`).should('contain', 'documents');
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(3)`).should('contain', 'sum: 14.46 MB / avg: 1.45 MB');
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(0)`).should('contain', 'misc');
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(3)`).should('contain', 'sum: 0.4 MB / avg: 0.4 MB');
   });
 
   it('should expand "pdf" folder and expect all folders to be expanded', () => {
@@ -50,6 +59,18 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
     });
   });
 
+  it('should have pop songs folder with aggregation of Sum(53.3MB) / Avg(26.65MB)', () => {
+    cy.get('.slick-viewport-top.slick-viewport-left')
+      .scrollTo('center', { force: true } as any);
+
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 16}px"] > .slick-cell:nth(0)`).should('contain', 'music');
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 16}px"] > .slick-cell:nth(3)`).should('contain', 'sum: 151.3 MB / avg: 50.43 MB');
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 17}px"] > .slick-cell:nth(3)`).should('contain', 'sum: 151.3 MB / avg: 50.43 MB');
+    // next folder is "other" and is empty without aggregations
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 19}px"] > .slick-cell:nth(0)`).should('contain', 'pop');
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 19}px"] > .slick-cell:nth(3)`).should('contain', 'sum: 53.3 MB / avg: 26.65 MB');
+  });
+
   it('should be able to add 2 new pop songs into the Music folder', () => {
     cy.get('[data-test=add-item-btn]')
       .contains('Add New Pop Song')
@@ -58,11 +79,27 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
 
     cy.get('.slick-group-toggle[level=3]')
       .get('.slick-cell')
-      .contains('pop-125.mp3');
+      .contains('pop-79.mp3');
 
     cy.get('.slick-group-toggle[level=3]')
       .get('.slick-cell')
-      .contains('pop-126.mp3');
+      .contains('pop-80.mp3');
+
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 20}px"] > .slick-cell:nth(3)`).should('contain', '82 MB');
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 21}px"] > .slick-cell:nth(3)`).should('contain', '83 MB');
+
+  });
+
+  it('should have pop songs folder with updated aggregation including new pop songs of Sum(218.3MB) / Avg(54.58MB)', () => {
+    cy.get('.slick-viewport-top.slick-viewport-left')
+      .scrollTo('bottom', { force: true } as any);
+
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 16}px"] > .slick-cell:nth(0)`).should('contain', 'music');
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 16}px"] > .slick-cell:nth(3)`).should('contain', 'sum: 316.3 MB / avg: 63.26 MB');
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 17}px"] > .slick-cell:nth(3)`).should('contain', 'sum: 316.3 MB / avg: 63.26 MB');
+    // next folder is "other" and is empty without aggregations
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 19}px"] > .slick-cell:nth(0)`).should('contain', 'pop');
+    cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 19}px"] > .slick-cell:nth(3)`).should('contain', 'sum: 218.3 MB / avg: 54.58 MB');
   });
 
   it('should filter the Files column with the word "map" and expect only 4 rows left', () => {
@@ -197,11 +234,11 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
 
     cy.get('.slick-group-toggle[level=3]')
       .get('.slick-cell')
-      .contains('pop-127.mp3');
+      .contains('pop-81.mp3');
 
     cy.get('.slick-group-toggle[level=3]')
       .get('.slick-cell')
-      .contains('pop-127.mp3');
+      .contains('pop-81.mp3');
   });
 
   it('should return 8 rows when filtering the word "pop" music without excluding children', () => {
@@ -211,9 +248,9 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
     cy.get('.right-footer .item-count')
       .contains('8');
 
-    popMusicWith3ExtraSongs.forEach((_colName, rowIdx) => {
-      if (rowIdx < popMusicWith3ExtraSongs.length - 1) {
-        cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * rowIdx}px"] > .slick-cell:nth(0)`).should('contain', popMusicWith3ExtraSongs[rowIdx]);
+    popMusicWith3ExtraSongsWithoutEmpty.forEach((_colName, rowIdx) => {
+      if (rowIdx < popMusicWith3ExtraSongsWithoutEmpty.length - 1) {
+        cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * rowIdx}px"] > .slick-cell:nth(0)`).should('contain', popMusicWith3ExtraSongsWithoutEmpty[rowIdx]);
       }
     });
   });
@@ -225,9 +262,9 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
     cy.get('.right-footer .item-count')
       .contains('6');
 
-    popMusicWith3ExtraSongs.forEach((_colName, rowIdx) => {
-      if (rowIdx < popMusicWith3ExtraSongs.length - 3) {
-        cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * rowIdx}px"] > .slick-cell:nth(0)`).should('contain', popMusicWith3ExtraSongs[rowIdx]);
+    popMusicWith3ExtraSongsWithoutEmpty.forEach((_colName, rowIdx) => {
+      if (rowIdx < popMusicWith3ExtraSongsWithoutEmpty.length - 3) {
+        cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * rowIdx}px"] > .slick-cell:nth(0)`).should('contain', popMusicWith3ExtraSongsWithoutEmpty[rowIdx]);
       }
     });
   });
@@ -250,7 +287,7 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
       .uncheck();
 
     cy.get('.right-footer .item-count')
-      .contains('10');
+      .contains('11');
 
     const allMusic = [...popMusicWith3ExtraSongs, 'rock', 'soft.mp3'];
 
@@ -277,7 +314,7 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 },
         expect(+$row.text()).to.be.at.least(6);
       });
 
-    const expectedFiles = ['music', 'mp3', 'pop', 'pop-125.mp3', 'rock', 'soft.mp3'];
+    const expectedFiles = ['music', 'mp3', 'pop', 'pop-79.mp3', 'rock', 'soft.mp3'];
 
     expectedFiles.forEach((_colName, rowIdx) => {
       if (rowIdx < expectedFiles.length - 3) {

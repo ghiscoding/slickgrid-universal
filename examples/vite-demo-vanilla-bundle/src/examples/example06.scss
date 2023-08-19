@@ -2,6 +2,16 @@
 @import '@slickgrid-universal/common/dist/styles/sass/sass-utilities.scss';
 
 .grid6 {
+  .avg-total {
+    color: #ac76ff;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .total-suffix {
+    margin-left: 10px;
+  }
+
   .mdi-file-pdf-outline {
     /** 1. use `filter` color */
     // filter: invert(62%) sepia(93%) saturate(5654%) hue-rotate(325deg) brightness(100%) contrast(90%);
