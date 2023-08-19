@@ -41,6 +41,7 @@ const dataViewStub = {
   reSort: jest.fn(),
   setItems: jest.fn(),
   updateItem: jest.fn(),
+  onRowCountChanged: new Slick.Event(),
 } as unknown as SlickDataView;
 
 const gridStub = {

@@ -29,6 +29,9 @@ export default class Example6 {
   durationOrderByCount = false;
   isExcludingChildWhenFiltering = false;
   isAutoApproveParentItemWhenTreeColumnIsValid = true;
+  isAutoRecalcTotalsOnFilterChange = false;
+  isRemoveLastInsertedPopSongDisabled = true;
+  lastInsertedPopSongId: number | undefined;
   searchString = '';
 
   attached() {
@@ -156,7 +159,14 @@ export default class Example6 {
         // Note: only 5 are currently supported: Avg, Sum, Min, Max and Count
         // Note 2: also note that Avg Aggregator will automatically give you the "avg", "count" and "sum" so if you need these 3 then simply calling Avg will give you better perf
         // aggregators: [new Aggregators.Sum('size')]
-        aggregators: [new Aggregators.Avg('size'), new Aggregators.Sum('size') /* , new Aggregators.Min('size'), new Aggregators.Max('size') */]
+        aggregators: [new Aggregators.Avg('size'), new Aggregators.Sum('size') /* , new Aggregators.Min('size'), new Aggregators.Max('size') */],
+
+        // should we auto-recalc Tree Totals (when using Aggregators) anytime a filter changes
+        // it is disabled by default for perf reason, by default it will only calculate totals on first load
+        autoRecalcTotalsOnFilterChange: this.isAutoRecalcTotalsOnFilterChange,
+
+        // add optional debounce time to limit number of execution that recalc is called, mostly useful on large dataset
+        // autoRecalcTotalsDebounce: 750
       },
       showCustomFooter: true,
 
@@ -172,6 +182,17 @@ export default class Example6 {
     this.gridOptions.treeDataOptions!.autoApproveParentItemWhenTreeColumnIsValid = this.isAutoApproveParentItemWhenTreeColumnIsValid;
     this.sgb.slickGrid?.setOptions(this.gridOptions);
     this.sgb.filterService.refreshTreeDataFilters();
+    return true;
+  }
+
+  changeAutoRecalcTotalsOnFilterChange() {
+    this.isAutoRecalcTotalsOnFilterChange = !this.isAutoRecalcTotalsOnFilterChange;
+    this.gridOptions.treeDataOptions!.autoRecalcTotalsOnFilterChange = this.isAutoRecalcTotalsOnFilterChange;
+    this.sgb.slickGrid?.setOptions(this.gridOptions);
+
+    // since it doesn't take current filters in consideration, we better clear them
+    this.sgb.filterService.clearFilters();
+    this.sgb.treeDataService.enableAutoRecalcTotalsFeature();
     return true;
   }
 
@@ -249,15 +270,17 @@ export default class Example6 {
     const newId = this.sgb.dataView!.getItemCount() + 50;
 
     // find first parent object and add the new item as a child
-    const popItem = findItemInTreeStructure(this.datasetHierarchical, x => x.file === 'pop', 'files');
+    const popFolderItem = findItemInTreeStructure(this.datasetHierarchical, x => x.file === 'pop', 'files');
 
-    if (popItem && Array.isArray(popItem.files)) {
-      popItem.files.push({
+    if (popFolderItem && Array.isArray(popFolderItem.files)) {
+      popFolderItem.files.push({
         id: newId,
         file: `pop-${newId}.mp3`,
         dateModified: new Date(),
         size: newId + 3,
       });
+      this.lastInsertedPopSongId = newId;
+      this.isRemoveLastInsertedPopSongDisabled = false;
 
       // overwrite hierarchical dataset which will also trigger a grid sort and rendering
       this.sgb.datasetHierarchical = this.datasetHierarchical;
@@ -268,6 +291,27 @@ export default class Example6 {
         this.sgb.slickGrid?.scrollRowIntoView(rowIndex + 3);
       }, 0);
     }
+  }
+
+  deleteFile() {
+    const popFolderItem = findItemInTreeStructure(this.datasetHierarchical, x => x.file === 'pop', 'files');
+    const songItemFound = findItemInTreeStructure(this.datasetHierarchical, x => x.id === this.lastInsertedPopSongId, 'files');
+
+    if (popFolderItem && songItemFound) {
+      const songIdx = popFolderItem.files.findIndex(f => f.id === songItemFound.id);
+      if (songIdx >= 0) {
+        popFolderItem.files.splice(songIdx, 1);
+        this.lastInsertedPopSongId = undefined;
+        this.isRemoveLastInsertedPopSongDisabled = true;
+
+        // overwrite hierarchical dataset which will also trigger a grid sort and rendering
+        this.sgb.datasetHierarchical = this.datasetHierarchical;
+      }
+    }
+  }
+
+  clearFilters() {
+    this.sgb.filterService.clearFilters();
   }
 
   collapseAll() {

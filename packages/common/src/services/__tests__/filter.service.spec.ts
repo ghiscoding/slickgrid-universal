@@ -1073,7 +1073,7 @@ describe('FilterService', () => {
     });
 
     it('should return an empty array when column definitions returns nothing as well', () => {
-      gridStub.getColumns = undefined as any;
+      gridStub.getColumns = jest.fn().mockReturnValue(undefined);
 
       service.init(gridStub);
       const output = service.populateColumnFilterSearchTermPresets(undefined as any);

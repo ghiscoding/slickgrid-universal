@@ -319,7 +319,6 @@ export default class Example7 {
     this.sgb.filterService.clearFilters();
   }
 
-
   allFilters() {
     const grid = this.sgb;
     const modalHtml = `<div id="modal-allFilter" class="modal is-active">
