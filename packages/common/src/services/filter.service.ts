@@ -347,7 +347,9 @@ export class FilterService {
         // when user enables Tree Data auto-recalc, we need to keep ref (only in hierarchical tree) of which datacontext was filtered or not
         if (treeDataOptions?.autoRecalcTotalsOnFilterChange) {
           const treeItem = findItemInTreeStructure(this.sharedService.hierarchicalDataset!, x => x[dataViewIdIdentifier] === item[dataViewIdIdentifier], childrenPropName);
-          treeItem.__filteredOut = !filtered;
+          if (treeItem) {
+            treeItem.__filteredOut = !filtered;
+          }
         }
         return filtered;
       }

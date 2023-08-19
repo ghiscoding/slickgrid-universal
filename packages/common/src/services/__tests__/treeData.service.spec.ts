@@ -1,6 +1,7 @@
 import { Constants } from '../../constants';
 import { Column, SlickDataView, GridOption, SlickEventHandler, SlickGrid, SlickNamespace, BackendService } from '../../interfaces/index';
-import { PubSubService } from '@slickgrid-universal/event-pub-sub';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
+import { SumAggregator } from '../../aggregators';
 import { SharedService } from '../shared.service';
 import { SortService } from '../sort.service';
 import { TreeDataService } from '../treeData.service';
@@ -8,6 +9,8 @@ import * as utilities from '../utilities';
 
 const mockUnflattenParentChildArrayToTree = jest.fn();
 (utilities.unflattenParentChildArrayToTree as any) = mockUnflattenParentChildArrayToTree;
+
+jest.useFakeTimers();
 
 declare const Slick: SlickNamespace;
 
@@ -64,7 +67,7 @@ const mockPubSub = {
   subscribe: (eventName, fn) => fnCallbacks[eventName as string] = fn,
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-} as PubSubService;
+} as unknown as EventPubSubService;
 jest.mock('@slickgrid-universal/event-pub-sub', () => ({
   PubSubService: () => mockPubSub
 }));
@@ -309,8 +312,8 @@ describe('TreeData Service', () => {
       expect(service.getCurrentToggleState()).toEqual({ type: 'toggle-expand', previousFullToggleType: 'full-expand', toggledItems: [{ isCollapsed: false, itemId: 123 }] });
       expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: false });
       expect(service.getToggledItems()).toEqual([{ itemId: 123, isCollapsed: false }]);
-      expect(SharedService.prototype.hierarchicalDataset[0].file).toBe('myFile.txt');
-      expect(SharedService.prototype.hierarchicalDataset[0].__collapsed).toBeFalse();
+      expect(SharedService.prototype.hierarchicalDataset![0].file).toBe('myFile.txt');
+      expect(SharedService.prototype.hierarchicalDataset![0].__collapsed).toBeFalse();
     });
 
     it('should toggle the collapsed custom class name to False when that custom class name was found to be True prior', () => {
@@ -372,10 +375,10 @@ describe('TreeData Service', () => {
       expect(beginUpdateSpy).toHaveBeenCalled();
       expect(updateItemSpy).toHaveBeenNthCalledWith(1, 0, { __collapsed: true, __hasChildren: true, id: 0, file: 'TXT', size: 5.8, __treeLevel: 0 });
       expect(updateItemSpy).toHaveBeenNthCalledWith(2, 4, { __collapsed: true, __hasChildren: true, id: 4, file: 'MP3', size: 3.4, __treeLevel: 0 });
-      expect(SharedService.prototype.hierarchicalDataset[0].file).toBe('TXT')
-      expect(SharedService.prototype.hierarchicalDataset[0].__collapsed).toBeTrue();
-      expect(SharedService.prototype.hierarchicalDataset[1].file).toBe('MP3');
-      expect(SharedService.prototype.hierarchicalDataset[1].__collapsed).toBeTrue();
+      expect(SharedService.prototype.hierarchicalDataset![0].file).toBe('TXT')
+      expect(SharedService.prototype.hierarchicalDataset![0].__collapsed).toBeTrue();
+      expect(SharedService.prototype.hierarchicalDataset![1].file).toBe('MP3');
+      expect(SharedService.prototype.hierarchicalDataset![1].__collapsed).toBeTrue();
       expect(service.getItemCount(0)).toBe(2); // get count by tree level 0
       expect(service.getItemCount(1)).toBe(3);
       expect(service.getItemCount()).toBe(5); // get full count of all tree
@@ -503,6 +506,70 @@ describe('TreeData Service', () => {
     });
   });
 
+  describe('enableAutoRecalcTotalsFeature method', () => {
+    it('should NOT execute auto-recalc callback method when "onRowCountChanged" event is triggered but we did not wait necessary delay', () => {
+      const recalcSpy = jest.spyOn(service, 'recalculateTreeTotals');
+
+      gridOptionsMock.treeDataOptions!.autoRecalcTotalsOnFilterChange = true;
+      gridOptionsMock.treeDataOptions!.aggregators = [new SumAggregator('size')];
+      service.init(gridStub);
+
+      dataViewStub.onRowCountChanged.notify({} as any);
+
+      expect(recalcSpy).not.toHaveBeenCalled();
+    });
+
+    it('should execute auto-recalc callback method when "onRowCountChanged" event is triggered and "autoRecalcTotalsOnFilterChange" flag is enabled', () => {
+      const recalcSpy = jest.spyOn(service, 'recalculateTreeTotals');
+
+      gridOptionsMock.treeDataOptions!.autoRecalcTotalsOnFilterChange = true;
+      gridOptionsMock.treeDataOptions!.aggregators = [new SumAggregator('size')];
+      service.init(gridStub);
+
+      // auto-recalc inside event needs at minimum 1 CPU cycle before executing
+      jest.advanceTimersByTime(0);
+      dataViewStub.onRowCountChanged.notify({} as any);
+
+      // auto-recalc itself is also wrapped in a debounce of another cycle
+      jest.advanceTimersByTime(0);
+      expect(recalcSpy).toHaveBeenCalled();
+    });
+
+    it('should execute auto-recalc callback method when "onRowCountChanged" event is triggered and "autoRecalcTotalsOnFilterChange" flag is disabled but we called "enableAutoRecalcTotalsFeature()" method', () => {
+      const recalcSpy = jest.spyOn(service, 'recalculateTreeTotals');
+
+      gridOptionsMock.treeDataOptions!.autoRecalcTotalsOnFilterChange = false;
+      gridOptionsMock.treeDataOptions!.aggregators = [new SumAggregator('size')];
+      service.init(gridStub);
+      service.enableAutoRecalcTotalsFeature();
+
+      // auto-recalc inside event needs at minimum 1 CPU cycle before executing
+      jest.advanceTimersByTime(0);
+      dataViewStub.onRowCountChanged.notify({} as any);
+
+      // auto-recalc itself is also wrapped in a debounce of another cycle
+      jest.advanceTimersByTime(0);
+      expect(recalcSpy).toHaveBeenCalled();
+    });
+
+    it('should NOT execute auto-recalc callback method when "onRowCountChanged" event is triggered and "autoRecalcTotalsOnFilterChange" flag is disabled and we called "enableAutoRecalcTotalsFeature()" method with False argument', () => {
+      const recalcSpy = jest.spyOn(service, 'recalculateTreeTotals');
+
+      gridOptionsMock.treeDataOptions!.autoRecalcTotalsOnFilterChange = false;
+      gridOptionsMock.treeDataOptions!.aggregators = [new SumAggregator('size')];
+      service.init(gridStub);
+      service.enableAutoRecalcTotalsFeature(false);
+
+      // auto-recalc inside event needs at minimum 1 CPU cycle before executing
+      jest.advanceTimersByTime(0);
+      dataViewStub.onRowCountChanged.notify({} as any);
+
+      // auto-recalc itself is also wrapped in a debounce of another cycle
+      jest.advanceTimersByTime(0);
+      expect(recalcSpy).not.toHaveBeenCalled();
+    });
+  });
+
   describe('convertFlatParentChildToTreeDatasetAndSort method', () => {
     let mockColumns: Column[];
     let mockFlatDataset;
@@ -552,7 +619,7 @@ describe('TreeData Service', () => {
     });
 
     it('should sort by the Tree column by the "initialSort" provided', () => {
-      gridOptionsMock.treeDataOptions.initialSort = {
+      gridOptionsMock.treeDataOptions!.initialSort = {
         columnId: 'size',
         direction: 'desc'
       };
