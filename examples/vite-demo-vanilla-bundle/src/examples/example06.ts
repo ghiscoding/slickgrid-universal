@@ -74,21 +74,13 @@ export default class Example6 {
         // if you wish to use any of the GroupTotalFormatters (or even regular Formatters), we can do so with the code below
         // use `treeTotalsFormatter` or `groupTotalsFormatter` to show totals in a Tree Data grid
         // provide any regular formatters inside the params.formatters
-        // IMPORTANT: DO NOT USE Formatters.multiple (that will fail), Formatters.treeParseTotals already accepts multiple params.formatters and IT MUST BE the Formatter entry point
 
         // formatter: Formatters.treeParseTotals,
         // treeTotalsFormatter: GroupTotalFormatters.sumTotalsBold,
         // // groupTotalsFormatter: GroupTotalFormatters.sumTotalsBold,
         // params: {
-        //   formatters: [
-        //     // providing extra formatters for regular cell dataContext, it will only be used when `__treeTotals` is NOT detected (so when it's not a Tree Data total)
-        //     (_row, _cell, value) => isNaN(value) ? '' : `${decimalFormatted(value, 0, 2)} MB`,
-        //     italicFormatter,
-        //   ],
         //   // we can also supply extra params for Formatters/GroupTotalFormatters like min/max decimals
-        //   groupFormatterSuffix: ' MB',
-        //   minDecimal: 0,
-        //   maxDecimal: 2,
+        //   groupFormatterSuffix: ' MB', minDecimal: 0, maxDecimal: 2,
         // },
 
         // OR option #2 (custom Formatter)
@@ -139,6 +131,7 @@ export default class Example6 {
       enableFiltering: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
+      rowHeight: 40,
       treeDataOptions: {
         columnId: 'file',
         childrenPropName: 'files',
@@ -166,7 +159,7 @@ export default class Example6 {
         autoRecalcTotalsOnFilterChange: this.isAutoRecalcTotalsOnFilterChange,
 
         // add optional debounce time to limit number of execution that recalc is called, mostly useful on large dataset
-        // autoRecalcTotalsDebounce: 750
+        // autoRecalcTotalsDebounce: 250
       },
       showCustomFooter: true,
 

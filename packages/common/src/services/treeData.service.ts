@@ -18,7 +18,6 @@ import type {
 } from '../interfaces/index';
 import {
   addTreeLevelAndAggregatorsByMutation,
-  debounce,
   findItemInTreeStructure,
   unflattenParentChildArrayToTree
 } from './utilities';
@@ -37,6 +36,7 @@ export class TreeDataService {
   protected _isOneCpuCyclePassed = false;
   protected _isTreeDataEnabled = false;
   protected _subscriptions: EventSubscription[] = [];
+  protected _timer?: NodeJS.Timeout;
   protected _treeDataRecalcHandler: (() => void) | null = null;
 
   constructor(protected readonly pubSubService: BasePubSubService, protected readonly sharedService: SharedService, protected readonly sortService: SortService) {
@@ -121,10 +121,11 @@ export class TreeDataService {
     this._treeDataRecalcHandler = this.setAutoRecalcTotalsCallbackWhenFeatEnabled(this.gridOptions);
 
     this._eventHandler.subscribe(this.dataView.onRowCountChanged, () => {
-      // call Tree Data recalc handler when defined but only when at least 1 CPU cycle is passed
+      // call Tree Data recalc handler, inside a debounce, when defined but only when at least 1 CPU cycle is passed
       // we wait for 1 CPU cycle to make sure that we only run it after filtering and grid initialization of tree & grid is over
       if (typeof this._treeDataRecalcHandler === 'function' && this._isOneCpuCyclePassed) {
-        debounce(() => this._treeDataRecalcHandler?.(), this.treeDataOptions?.autoRecalcTotalsDebounce ?? 0)();
+        clearTimeout(this._timer as NodeJS.Timeout);
+        this._timer = setTimeout(() => this._treeDataRecalcHandler?.(), this.treeDataOptions?.autoRecalcTotalsDebounce ?? 0);
       }
     });
   }
