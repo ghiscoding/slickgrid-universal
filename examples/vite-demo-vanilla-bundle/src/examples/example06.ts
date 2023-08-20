@@ -166,7 +166,7 @@ export default class Example6 {
         autoRecalcTotalsOnFilterChange: this.isAutoRecalcTotalsOnFilterChange,
 
         // add optional debounce time to limit number of execution that recalc is called, mostly useful on large dataset
-        // autoRecalcTotalsDebounce: 750
+        autoRecalcTotalsDebounce: 750
       },
       showCustomFooter: true,
 

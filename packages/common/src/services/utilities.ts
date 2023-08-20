@@ -61,23 +61,6 @@ export function castObservableToPromise<T>(rxjs: RxJsFacade, input: Promise<T> |
 }
 
 /**
- * Debounce to delay JS callback execution, a wait of (-1) could be provided to execute callback without delay.
- * @param {Function} callback - callback method to execute
- * @param {Number} wait - delay to wait before execution or -1 delay
- */
-export function debounce(callback: (...args: any) => any, wait = -1) {
-  let timeoutId: any = null;
-  return (...args: any) => {
-    if (wait >= 0) {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => callback(...args), wait);
-    } else {
-      callback.apply(null);
-    }
-  };
-}
-
-/**
  * Mutate the original array and add a treeLevel (defaults to `__treeLevel`) property on each item.
  * @param {Array<Object>} treeArray - hierarchical tree array
  * @param {Object} options - options containing info like children & treeLevel property names
