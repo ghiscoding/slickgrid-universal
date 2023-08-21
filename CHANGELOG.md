@@ -4,6 +4,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.1.0...v3.2.0) (2023-08-21)
+
+### Features
+
+* **export:** add `autoDetectCellFormat` flag to Excel Export Options ([#1083](https://github.com/ghiscoding/slickgrid-universal/issues/1083)) ([839b09a](https://github.com/ghiscoding/slickgrid-universal/commit/839b09a10ceba889bc96a7f229f58412a6d5649c)) - by @ghiscoding
+* **TreeData:** add auto-recalc feature for Tree Totals w/Aggregators ([#1084](https://github.com/ghiscoding/slickgrid-universal/issues/1084)) ([e884c03](https://github.com/ghiscoding/slickgrid-universal/commit/e884c0356595c161b746ca370efa4bd74088c458)) - by @ghiscoding
+* **TreeData:** add optional Aggregators to Tree Data grids  ([#1074](https://github.com/ghiscoding/slickgrid-universal/issues/1074)) ([6af5fd1](https://github.com/ghiscoding/slickgrid-universal/commit/6af5fd17b582834b24655b06c34c634a99c93c6e)) - by @ghiscoding
+
+### Bug Fixes
+
+* adding dataset hierarchical item shouldn't cause scroll flickering ([#1076](https://github.com/ghiscoding/slickgrid-universal/issues/1076)) ([8536e0e](https://github.com/ghiscoding/slickgrid-universal/commit/8536e0e04f1168648251f517cb47ea2e7129e231)) - by @ghiscoding
+* **common:** Sort Service could throw on 3rd with undefined columnId ([#1059](https://github.com/ghiscoding/slickgrid-universal/issues/1059)) ([1141230](https://github.com/ghiscoding/slickgrid-universal/commit/114123040a6b69d40f928955627121189a6feb75)) - by @ghiscoding
+* copying multiple times only kept last undo CellExternalCopyManager ([#1075](https://github.com/ghiscoding/slickgrid-universal/issues/1075)) ([e3beee2](https://github.com/ghiscoding/slickgrid-universal/commit/e3beee208fcd223e911d2d88a15b9d2950267eda)) - by @ghiscoding
+* **deps:** update dependency autocompleter to v9 ([#1051](https://github.com/ghiscoding/slickgrid-universal/issues/1051)) ([0e05f2a](https://github.com/ghiscoding/slickgrid-universal/commit/0e05f2a4c9f3c9640a3982b7cfa04ea71cfaab96)) - by @renovate-bot
+* **TreeData:** auto-recalc should update totals for collapsed items too ([#1086](https://github.com/ghiscoding/slickgrid-universal/issues/1086)) ([25d39f2](https://github.com/ghiscoding/slickgrid-universal/commit/25d39f277093990f150ec4aa471c079eab73e4b1)) - by @ghiscoding
+
 ## [3.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.0.1...v3.1.0) (2023-07-20)
 
 ### Features
