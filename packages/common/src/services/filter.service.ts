@@ -328,13 +328,22 @@ export class FilterService {
       const collapsedPropName = treeDataOptions.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
       const parentPropName = treeDataOptions.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
       const childrenPropName = treeDataOptions?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP;
-      const dataViewIdIdentifier = this._gridOptions.datasetIdPropertyName ?? 'id';
+      const primaryDataId = this._gridOptions.datasetIdPropertyName ?? 'id';
+      const autoRecalcTotalsOnFilterChange = treeDataOptions.autoRecalcTotalsOnFilterChange ?? false;
 
+      // typically when a parent is collapsed we can exit early (by returning false) but we can't do that when we use auto-recalc totals
+      // if that happens, we need to keep a ref and recalculate total for all tree leafs then only after we can exit
+      let isParentCollapsed = false; // will be used only when auto-recalc is enabled
       if (item[parentPropName] !== null) {
         let parent = this._dataView.getItemById(item[parentPropName]);
         while (parent) {
           if (parent[collapsedPropName]) {
-            return false; // don't display any row that have their parent collapsed
+            if (autoRecalcTotalsOnFilterChange) {
+              isParentCollapsed = true; // when auto-recalc tree totals is enabled, we need to keep ref without exiting the loop just yet
+            } else {
+              // not using auto-recalc, we can exit early and not display any row that have their parent collapsed
+              return false;
+            }
           }
           parent = this._dataView.getItemById(parent[parentPropName]);
         }
@@ -342,13 +351,16 @@ export class FilterService {
 
       // filter out any row items that aren't part of our pre-processed "preFilterTreeData()" result
       if (this._tmpPreFilteredData instanceof Set) {
-        const filtered = this._tmpPreFilteredData.has(item[dataViewIdIdentifier]); // return true when found, false otherwise
+        const filtered = this._tmpPreFilteredData.has(item[primaryDataId]); // return true when found, false otherwise
 
         // when user enables Tree Data auto-recalc, we need to keep ref (only in hierarchical tree) of which datacontext was filtered or not
-        if (treeDataOptions?.autoRecalcTotalsOnFilterChange) {
-          const treeItem = findItemInTreeStructure(this.sharedService.hierarchicalDataset!, x => x[dataViewIdIdentifier] === item[dataViewIdIdentifier], childrenPropName);
+        if (autoRecalcTotalsOnFilterChange) {
+          const treeItem = findItemInTreeStructure(this.sharedService.hierarchicalDataset!, x => x[primaryDataId] === item[primaryDataId], childrenPropName);
           if (treeItem) {
             treeItem.__filteredOut = !filtered;
+          }
+          if (isParentCollapsed) {
+            return false; // now that we are done analyzing "__filteredOut", we can now return false to not show collapsed children
           }
         }
         return filtered;
@@ -508,8 +520,8 @@ export class FilterService {
     // when using localization (i18n), we should use the formatter output to search as the new cell value
     if (columnDef?.params?.useFormatterOuputToFilter === true) {
       const dataView = grid.getData() as SlickDataView;
-      const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
-      const rowIndex = (dataView && typeof dataView.getIdxById === 'function') ? dataView.getIdxById(item[idPropName]) : 0;
+      const primaryDataId = this._gridOptions.datasetIdPropertyName || 'id';
+      const rowIndex = (dataView && typeof dataView.getIdxById === 'function') ? dataView.getIdxById(item[primaryDataId]) : 0;
       const formattedCellValue = (columnDef && typeof columnDef.formatter === 'function') ? columnDef.formatter(rowIndex || 0, columnIndex, cellValue, columnDef, item, this._grid) : '';
       cellValue = sanitizeHtmlToText(formattedCellValue as string);
     }
@@ -542,7 +554,7 @@ export class FilterService {
     const collapsedPropName = treeDataOptions?.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
     const parentPropName = treeDataOptions?.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
     const hasChildrenPropName = treeDataOptions?.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
-    const dataViewIdIdentifier = this._gridOptions.datasetIdPropertyName ?? 'id';
+    const primaryDataId = this._gridOptions.datasetIdPropertyName ?? 'id';
     const treeDataToggledItems = this._gridOptions.presets?.treeData?.toggledItems;
     const isInitiallyCollapsed = this._gridOptions.treeDataOptions?.initiallyCollapsed ?? false;
     const treeDataColumnId = this._gridOptions.treeDataOptions?.columnId;
@@ -558,11 +570,11 @@ export class FilterService {
 
     if (Array.isArray(inputItems)) {
       for (const inputItem of inputItems) {
-        (treeObj as any)[inputItem[dataViewIdIdentifier]] = inputItem;
+        (treeObj as any)[inputItem[primaryDataId]] = inputItem;
         // as the filtered data is then used again as each subsequent letter
         // we need to delete the .__used property, otherwise the logic below
         // in the while loop (which checks for parents) doesn't work
-        delete (treeObj as any)[inputItem[dataViewIdIdentifier]].__used;
+        delete (treeObj as any)[inputItem[primaryDataId]].__used;
       }
 
       // Step 1. prepare search filter by getting their parsed value(s), for example if it's a date filter then parse it to a Moment object
@@ -598,7 +610,7 @@ export class FilterService {
             // when using `excludeChildrenWhenFilteringTree: false`, we can auto-approve current item if it's the column holding the Tree structure and is a Parent that passes the first filter criteria
             // in other words, if we're on the column with the Tree and its filter is valid (and is a parent), then skip any other filter(s)
             if (conditionResult && isNotExcludingChildAndValidateOnlyTreeColumn && hasChildren && columnFilter.columnId === treeDataColumnId) {
-              filteredParents.set(item[dataViewIdIdentifier], true);
+              filteredParents.set(item[primaryDataId], true);
               break;
             }
 
@@ -606,7 +618,7 @@ export class FilterService {
             // however we don't return true, we need to continue and loop through next filter(s) since we still need to check other keys in columnFilters
             if (conditionResult || (!excludeChildrenWhenFilteringTree && (filteredParents.get(item[parentPropName]) === true))) {
               if (hasChildren && columnFilter.columnId === treeDataColumnId) {
-                filteredParents.set(item[dataViewIdIdentifier], true); // when it's a Parent item, we'll keep a Map ref as being a Parent with valid criteria
+                filteredParents.set(item[primaryDataId], true); // when it's a Parent item, we'll keep a Map ref as being a Parent with valid criteria
               }
               // if our filter is valid OR we're on the Tree column then let's continue
               if (conditionResult || (!excludeChildrenWhenFilteringTree && columnFilter.columnId === treeDataColumnId)) {
@@ -616,7 +628,7 @@ export class FilterService {
               // when it's a Parent item AND its Parent isn't valid AND we aren't on the Tree column
               // we'll keep reference of the parent via a Map key/value pair and make its value as False because this Parent item is considered invalid
               if (hasChildren && filteredParents.get(item[parentPropName]) !== true && columnFilter.columnId !== treeDataColumnId) {
-                filteredParents.set(item[dataViewIdIdentifier], false);
+                filteredParents.set(item[primaryDataId], false);
               }
             }
           }
@@ -630,7 +642,7 @@ export class FilterService {
         // will be pushed to the filteredChildrenAndParents array
         if (matchFilter) {
           // add child (id):
-          filteredChildrenAndParents.add(item[dataViewIdIdentifier]);
+          filteredChildrenAndParents.add(item[primaryDataId]);
           let parent = (treeObj as any)[item[parentPropName]] ?? false;
 
           // if there are any presets of collapsed parents, let's processed them
@@ -641,9 +653,9 @@ export class FilterService {
 
           while (parent) {
             // only add parent (id) if not already added:
-            parent.__used ?? filteredChildrenAndParents.add(parent[dataViewIdIdentifier]);
+            parent.__used ?? filteredChildrenAndParents.add(parent[primaryDataId]);
             // mark each parent as used to not use them again later:
-            (treeObj as any)[parent[dataViewIdIdentifier]].__used = true;
+            (treeObj as any)[parent[primaryDataId]].__used = true;
             // try to find parent of the current parent, if exists:
             parent = (treeObj as any)[parent[parentPropName]] ?? false;
           }

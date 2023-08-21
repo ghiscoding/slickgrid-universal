@@ -1,4 +1,4 @@
-describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 0 }, () => {
+describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 1 }, () => {
   const GRID_ROW_HEIGHT = 40;
   const titles = ['Files', 'Date Modified', 'Description', 'Size'];
   // const defaultSortAscList = ['bucket-list.txt', 'documents', 'misc', 'warranties.txt', 'pdf', 'internet-bill.pdf', 'map.pdf', 'map2.pdf', 'phone-bill.pdf', 'txt', 'todo.txt', 'unclassified.csv', 'unresolved.csv', 'xls', 'compilation.xls', 'music', 'mp3', 'other', 'pop', 'song.mp3', 'theme.mp3', 'rock', 'soft.mp3', 'something.txt'];
@@ -454,6 +454,47 @@ describe('Example 06 - Tree Data (from a Hierarchical Dataset)', { retries: 0 },
       cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(3)`).should('contain', '1.5 MB');
 
       cy.get('.right-footer .item-count').contains('4');
+      cy.get('.right-footer .total-count').contains('31');
+    });
+
+    it('should clear all filters', () => {
+      cy.get('[data-test="clear-filters-btn"]')
+        .click();
+    });
+
+    it('should collapse "pdf" folder and filter with "b" again and expect same updated tree totals as earlier collapsed or expanded should still be Sum(2.8MB) / Avg(1.4MB)', () => {
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(0) .slick-group-toggle.expanded`)
+        .click();
+
+      cy.get('.search-filter.filter-file')
+        .type('b');
+
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0)`).should('contain', 'bucket-list.txt');
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0)`).should('contain', 'documents');
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(3)`).should('contain', 'sum: 4.02 MB / avg: 1.34 MB (total)');
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(0)`).should('contain', 'pdf');
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(3)`).should('contain', 'sum: 2.8 MB / avg: 1.4 MB (sub-total)');
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(0)`).should('contain', 'zebra.dll');
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(3)`).should('contain', '1.22 MB');
+
+      cy.get('.right-footer .item-count').contains('4');
+      cy.get('.right-footer .total-count').contains('31');
+    });
+
+    it('should clear all filters and collapse all Tree groups (folders) then type "so" and expect updated "music" totals Sum(104.3MB) / Avg(52.15MB)', () => {
+      cy.get('[data-test="clear-filters-btn"]').click();
+      cy.get('[data-test="collapse-all-btn"]').click();
+
+      cy.get('.search-filter.filter-file').type('so');
+
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0)`).should('contain', 'documents');
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).should('contain', 'sum: 0.79 MB / avg: 0.79 MB (total)');
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0)`).should('contain', 'music');
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(3)`).should('contain', 'sum: 104.3 MB / avg: 52.15 MB (total)');
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(0)`).should('contain', 'something.txt');
+      cy.get(`.grid6 [style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(3)`).should('contain', '90 MB');
+
+      cy.get('.right-footer .item-count').contains('3');
       cy.get('.right-footer .total-count').contains('31');
     });
   });
