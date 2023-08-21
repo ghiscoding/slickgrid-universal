@@ -1934,6 +1934,32 @@ describe('FilterService', () => {
         expect(preFilterSpy).toHaveReturnedWith(initSetWithValues([21, 4, 5]));
       });
 
+      it('should return False even when using "autoRecalcTotalsOnFilterChange" and item is found BUT its parent is collapsed', async () => {
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
+        jest.spyOn(dataViewStub, 'getItemById').mockReturnValueOnce({ ...dataset[4] as any, __collapsed: true })
+          .mockReturnValueOnce(dataset[5])
+          .mockReturnValueOnce(dataset[6]);
+
+        gridOptionMock.treeDataOptions!.autoRecalcTotalsOnFilterChange = true;
+        const mockItem1 = { __parentId: 4, id: 5, file: 'map.pdf', dateModified: '2015-05-21T10:22:00.123Z', size: 3.1 };
+
+        service.init(gridStub);
+        service.bindLocalOnFilter(gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new Slick.EventData(), gridStub);
+        gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new Slick.EventData(), gridStub);
+
+        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', operator: 'Contains', searchTerms: ['map'], parsedSearchTerms: ['map'], targetSelector: '', type: FieldType.string } } as ColumnFilters;
+        await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
+        const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
+
+        expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterChange`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['map'] }]);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onFilterChanged`, [{ columnId: 'file', operator: 'Contains', searchTerms: ['map'] }]);
+        expect(output).toBe(false);
+        expect(preFilterSpy).toHaveBeenCalledWith(dataset, columnFilters);
+        expect(preFilterSpy).toHaveReturnedWith(initSetWithValues([21, 4, 5]));
+      });
+
       it('should return False when item is not found in the dataset', async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const preFilterSpy = jest.spyOn(service, 'preFilterTreeData');
