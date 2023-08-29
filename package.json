@@ -103,6 +103,6 @@
     "url": "https://ko-fi.com/ghiscoding"
   },
   "dependencies": {
-    "conventional-changelog-conventionalcommits": "^6.1.0"
+    "conventional-changelog-conventionalcommits": "^7.0.1"
   }
 }
