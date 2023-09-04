@@ -19,7 +19,7 @@ export class IntegerEditor extends InputEditor {
       const compositeEditorOptions = this.args.compositeEditorOptions;
 
       this._input = createDomElement('input', {
-        type: 'number', autocomplete: 'none',
+        type: 'number', autocomplete: 'off', ariaAutoComplete: 'none',
         ariaLabel: this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Slider Editor`,
         placeholder: this.columnEditor?.placeholder ?? '',
         title: this.columnEditor?.title ?? '',
