@@ -1,4 +1,4 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
 
 settings:
   autoInstallPeers: true
@@ -9586,7 +9586,7 @@ packages:
       sass: '*'
       stylus: '*'
       sugarss: '*'
-      terser: '>=5.14.2'
+      terser: ^5.4.0
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -9622,7 +9622,7 @@ packages:
       sass: '*'
       stylus: '*'
       sugarss: '*'
-      terser: '>=5.14.2'
+      terser: ^5.4.0
     peerDependenciesMeta:
       '@types/node':
         optional: true
