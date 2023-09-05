@@ -128,7 +128,12 @@ export default class Example7 {
         id: 'completed', nameKey: 'COMPLETED', field: 'completed', formatter: Formatters.checkmarkMaterial,
         filterable: true, sortable: true,
         filter: {
-          collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
+          enableRenderHtml: true,
+          collection: [
+            { value: '', label: '' },
+            { value: true, label: 'True', labelPrefix: `<i class="mdi mdi-check mdi-v-align-middle"></i> ` },
+            { value: false, label: 'False', labelPrefix: `<i class="mdi mdi-close mdi-v-align-middle"></i> ` }
+          ],
           model: Filters.singleSelect
         },
         editor: {
@@ -138,8 +143,12 @@ export default class Example7 {
           // collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }],
 
           // Select Editor can also support collection that are async, it could be a Promise (shown below) or Fetch result
+          enableRenderHtml: true,
           collectionAsync: new Promise<any>(resolve => setTimeout(() => {
-            resolve([{ value: true, label: 'True' }, { value: false, label: 'False' }]);
+            resolve([
+              { value: true, label: 'True', labelPrefix: `<i class="mdi mdi-check mdi-v-align-middle"></i> ` },
+              { value: false, label: 'False', labelPrefix: `<i class="mdi mdi-close mdi-v-align-middle"></i> ` }
+            ]);
           }, 250)),
         },
       },

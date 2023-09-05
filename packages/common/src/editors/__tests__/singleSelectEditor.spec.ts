@@ -87,6 +87,8 @@ describe('SingleSelectEditor', () => {
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
 
       expect(editorCount).toBe(1);
+      expect(editor.selectOptions.renderOptionLabelAsHtml).toBeFalsy();
+      expect(editor.selectOptions.useSelectOptionLabelToHtml).toBeFalsy();
     });
 
     it('should hide the DOM element div wrapper when the "hide" method is called', () => {
@@ -245,6 +247,8 @@ describe('SingleSelectEditor', () => {
         const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li span`);
         editorBtnElm.click();
 
+        expect(editor.selectOptions.renderOptionLabelAsHtml).toBeTruthy();
+        expect(editor.selectOptions.useSelectOptionLabelToHtml).toBeFalsy();
         expect(editor.getValue()).toEqual('');
         expect(editorListElm.length).toBe(2);
         expect(editorListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> True');

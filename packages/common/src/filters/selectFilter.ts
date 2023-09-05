@@ -80,7 +80,7 @@ export class SelectFilter implements Filter {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+    return this.grid?.getOptions() ?? {};
   }
 
   /** Getter to know what would be the default operator when none is specified */
@@ -95,6 +95,10 @@ export class SelectFilter implements Filter {
 
   get msInstance() {
     return this._msInstance;
+  }
+
+  get selectOptions() {
+    return this.defaultOptions;
   }
 
   /** Getter for the Filter Operator */
@@ -416,7 +420,7 @@ export class SelectFilter implements Filter {
       filter: false,  // input search term on top of the select option list
       maxHeight: 275,
       single: true,
-      useSelectOptionLabelToHtml: this.columnFilter?.enableRenderHtml ?? false,
+      renderOptionLabelAsHtml: this.columnFilter?.enableRenderHtml ?? false,
       sanitizer: (dirtyHtml: string) => sanitizeTextByAvailableSanitizer(this.gridOptions, dirtyHtml),
       // we will subscribe to the onClose event for triggering our callback
       // also add/remove "filled" class for styling purposes
