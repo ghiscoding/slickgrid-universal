@@ -6,3 +6,4 @@ export * from './filterConditions.index';
 export * from './filterConditionProcesses';
 export * from './collectionSearchFilterCondition';
 export * from './booleanFilterCondition';
+export * from './dateFilterCondition';

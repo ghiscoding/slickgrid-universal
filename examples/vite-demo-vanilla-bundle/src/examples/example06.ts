@@ -1,14 +1,20 @@
 import {
+  Aggregators,
   Column,
-  GridOption,
+  decimalFormatted,
   FieldType,
   Filters,
   findItemInTreeStructure,
   Formatter,
   Formatters,
+  GridOption,
+  isNumber,
   SlickDataView,
+  // GroupTotalFormatters,
+  // italicFormatter,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import './example06.scss';
@@ -23,6 +29,9 @@ export default class Example6 {
   durationOrderByCount = false;
   isExcludingChildWhenFiltering = false;
   isAutoApproveParentItemWhenTreeColumnIsValid = true;
+  isAutoRecalcTotalsOnFilterChange = false;
+  isRemoveLastInsertedPopSongDisabled = true;
+  lastInsertedPopSongId: number | undefined;
   searchString = '';
 
   attached() {
@@ -58,8 +67,44 @@ export default class Example6 {
       {
         id: 'size', name: 'Size', field: 'size', minWidth: 90,
         type: FieldType.number, exportWithFormatter: true,
+        excelExportOptions: { autoDetectCellFormat: false },
         filterable: true, filter: { model: Filters.compoundInputNumber },
-        formatter: (_row, _cell, value) => isNaN(value) ? '' : `${value} MB`,
+
+        // Formatter option #1 (treeParseTotalFormatters)
+        // if you wish to use any of the GroupTotalFormatters (or even regular Formatters), we can do so with the code below
+        // use `treeTotalsFormatter` or `groupTotalsFormatter` to show totals in a Tree Data grid
+        // provide any regular formatters inside the params.formatters
+
+        // formatter: Formatters.treeParseTotals,
+        // treeTotalsFormatter: GroupTotalFormatters.sumTotalsBold,
+        // // groupTotalsFormatter: GroupTotalFormatters.sumTotalsBold,
+        // params: {
+        //   // we can also supply extra params for Formatters/GroupTotalFormatters like min/max decimals
+        //   groupFormatterSuffix: ' MB', minDecimal: 0, maxDecimal: 2,
+        // },
+
+        // OR option #2 (custom Formatter)
+        formatter: (_row, _cell, value, column, dataContext) => {
+          // parent items will a "__treeTotals" property (when creating the Tree and running Aggregation, it mutates all items, all extra props starts with "__" prefix)
+          const fieldId = column.field;
+
+          // Tree Totals, if exists, will be found under `__treeTotals` prop
+          if (dataContext?.__treeTotals !== undefined) {
+            const treeLevel = dataContext[this.gridOptions?.treeDataOptions?.levelPropName || '__treeLevel'];
+            const sumVal = dataContext?.__treeTotals?.['sum'][fieldId];
+            const avgVal = dataContext?.__treeTotals?.['avg'][fieldId];
+
+            if (avgVal !== undefined && sumVal !== undefined) {
+              // when found Avg & Sum, we'll display both
+              return isNaN(sumVal) ? '' : `<span class="color-primary bold">sum: ${decimalFormatted(sumVal, 0, 2)} MB</span> / <span class="avg-total">avg: ${decimalFormatted(avgVal, 0, 2)} MB</span> <span class="total-suffix">(${treeLevel === 0 ? 'total' : 'sub-total'})</span>`;
+            } else if (sumVal !== undefined) {
+              // or when only Sum is aggregated, then just show Sum
+              return isNaN(sumVal) ? '' : `<span class="color-primary bold">sum: ${decimalFormatted(sumVal, 0, 2)} MB</span> <span class="total-suffix">(${treeLevel === 0 ? 'total' : 'sub-total'})</span>`;
+            }
+          }
+          // reaching this line means it's a regular dataContext without totals, so regular formatter output will be used
+          return !isNumber(value) ? '' : `${value} MB`;
+        },
       },
     ];
 
@@ -74,13 +119,19 @@ export default class Example6 {
         exportWithFormatter: true,
         sanitizeDataExport: true
       },
+      enableTextExport: true,
+      textExportOptions: {
+        exportWithFormatter: true,
+        sanitizeDataExport: true
+      },
       gridMenu: {
         iconCssClass: 'mdi mdi-dots-grid',
       },
-      registerExternalResources: [new ExcelExportService()],
+      registerExternalResources: [new ExcelExportService(), new TextExportService()],
       enableFiltering: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
+      rowHeight: 40,
       treeDataOptions: {
         columnId: 'file',
         childrenPropName: 'files',
@@ -95,7 +146,20 @@ export default class Example6 {
         // initialSort: {
         //   columnId: 'file',
         //   direction: 'DESC'
-        // }
+        // },
+
+        // Aggregators are also supported and must always be an array even when single one is provided
+        // Note: only 5 are currently supported: Avg, Sum, Min, Max and Count
+        // Note 2: also note that Avg Aggregator will automatically give you the "avg", "count" and "sum" so if you need these 3 then simply calling Avg will give you better perf
+        // aggregators: [new Aggregators.Sum('size')]
+        aggregators: [new Aggregators.Avg('size'), new Aggregators.Sum('size') /* , new Aggregators.Min('size'), new Aggregators.Max('size') */],
+
+        // should we auto-recalc Tree Totals (when using Aggregators) anytime a filter changes
+        // it is disabled by default for perf reason, by default it will only calculate totals on first load
+        autoRecalcTotalsOnFilterChange: this.isAutoRecalcTotalsOnFilterChange,
+
+        // add optional debounce time to limit number of execution that recalc is called, mostly useful on large dataset
+        // autoRecalcTotalsDebounce: 250
       },
       showCustomFooter: true,
 
@@ -111,6 +175,17 @@ export default class Example6 {
     this.gridOptions.treeDataOptions!.autoApproveParentItemWhenTreeColumnIsValid = this.isAutoApproveParentItemWhenTreeColumnIsValid;
     this.sgb.slickGrid?.setOptions(this.gridOptions);
     this.sgb.filterService.refreshTreeDataFilters();
+    return true;
+  }
+
+  changeAutoRecalcTotalsOnFilterChange() {
+    this.isAutoRecalcTotalsOnFilterChange = !this.isAutoRecalcTotalsOnFilterChange;
+    this.gridOptions.treeDataOptions!.autoRecalcTotalsOnFilterChange = this.isAutoRecalcTotalsOnFilterChange;
+    this.sgb.slickGrid?.setOptions(this.gridOptions);
+
+    // since it doesn't take current filters in consideration, we better clear them
+    this.sgb.filterService.clearFilters();
+    this.sgb.treeDataService.enableAutoRecalcTotalsFeature();
     return true;
   }
 
@@ -147,32 +222,35 @@ export default class Example6 {
     const identifierPropName = dataView.getIdPropertyName() || 'id';
     const idx = dataView.getIdxById(dataContext[identifierPropName]) as number;
     const prefix = this.getFileIcon(value);
+    const treeLevel = dataContext[treeLevelPropName];
 
     value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    const spacer = `<span style="display:inline-block; width:${(15 * dataContext[treeLevelPropName])}px;"></span>`;
+    const spacer = `<span style="display:inline-block; width:${(15 * treeLevel)}px;"></span>`;
 
-    if (data[idx + 1] && data[idx + 1][treeLevelPropName] > data[idx][treeLevelPropName]) {
-      const folderPrefix = `<i class="mdi icon ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;
+    if (data[idx + 1]?.[treeLevelPropName] > data[idx][treeLevelPropName] || data[idx]['__hasChildren']) {
+      const folderPrefix = `<i class="mdi mdi-22px ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;
       if (dataContext.__collapsed) {
-        return `${spacer} <span class="slick-group-toggle collapsed" aria-expanded="false" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
+        return `${spacer} <span class="slick-group-toggle collapsed" level="${treeLevel}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
       } else {
-        return `${spacer} <span class="slick-group-toggle expanded" aria-expanded="true" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
+        return `${spacer} <span class="slick-group-toggle expanded" level="${treeLevel}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
       }
     } else {
-      return `${spacer} <span class="slick-group-toggle" aria-expanded="false" level="${dataContext[treeLevelPropName]}"></span>${prefix}&nbsp;${value}`;
+      return `${spacer} <span class="slick-group-toggle" level="${treeLevel}"></span>${prefix}&nbsp;${value}`;
     }
   };
 
   getFileIcon(value: string) {
     let prefix = '';
     if (value.includes('.pdf')) {
-      prefix = '<i class="mdi icon mdi-file-pdf-outline"></i>';
+      prefix = '<i class="mdi mdi-20px mdi-file-pdf-outline"></i>';
     } else if (value.includes('.txt')) {
-      prefix = '<i class="mdi icon mdi-file-document-outline"></i>';
-    } else if (value.includes('.xls')) {
-      prefix = '<i class="mdi icon mdi-file-excel-outline"></i>';
+      prefix = '<i class="mdi mdi-20px mdi-file-document-outline"></i>';
+    } else if (value.includes('.csv') || value.includes('.xls')) {
+      prefix = '<i class="mdi mdi-20px mdi-file-excel-outline"></i>';
     } else if (value.includes('.mp3')) {
-      prefix = '<i class="mdi icon mdi-file-music-outline"></i>';
+      prefix = '<i class="mdi mdi-20px mdi-file-music-outline"></i>';
+    } else if (value.includes('.')) {
+      prefix = '<i class="mdi mdi-20px mdi-file-question-outline"></i>';
     }
     return prefix;
   }
@@ -182,28 +260,51 @@ export default class Example6 {
    * After adding the item, it will sort by parent/child recursively
    */
   addNewFile() {
-    const newId = this.sgb.dataView!.getItemCount() + 100;
+    const newId = this.sgb.dataView!.getItemCount() + 50;
 
     // find first parent object and add the new item as a child
-    const popItem = findItemInTreeStructure(this.datasetHierarchical, x => x.file === 'pop', 'files');
+    const popFolderItem = findItemInTreeStructure(this.datasetHierarchical, x => x.file === 'pop', 'files');
 
-    if (popItem && Array.isArray(popItem.files)) {
-      popItem.files.push({
+    if (popFolderItem && Array.isArray(popFolderItem.files)) {
+      popFolderItem.files.push({
         id: newId,
         file: `pop-${newId}.mp3`,
         dateModified: new Date(),
-        size: Math.floor(Math.random() * 100) + 50,
+        size: newId + 3,
       });
+      this.lastInsertedPopSongId = newId;
+      this.isRemoveLastInsertedPopSongDisabled = false;
 
       // overwrite hierarchical dataset which will also trigger a grid sort and rendering
       this.sgb.datasetHierarchical = this.datasetHierarchical;
 
       // scroll into the position where the item was added with a delay since it needs to recreate the tree grid
       setTimeout(() => {
-        const rowIndex = this.sgb.dataView?.getRowById(popItem.id) as number;
+        const rowIndex = this.sgb.dataView?.getRowById(newId) as number;
         this.sgb.slickGrid?.scrollRowIntoView(rowIndex + 3);
-      }, 10);
+      }, 0);
     }
+  }
+
+  deleteFile() {
+    const popFolderItem = findItemInTreeStructure(this.datasetHierarchical, x => x.file === 'pop', 'files');
+    const songItemFound = findItemInTreeStructure(this.datasetHierarchical, x => x.id === this.lastInsertedPopSongId, 'files');
+
+    if (popFolderItem && songItemFound) {
+      const songIdx = popFolderItem.files.findIndex(f => f.id === songItemFound.id);
+      if (songIdx >= 0) {
+        popFolderItem.files.splice(songIdx, 1);
+        this.lastInsertedPopSongId = undefined;
+        this.isRemoveLastInsertedPopSongDisabled = true;
+
+        // overwrite hierarchical dataset which will also trigger a grid sort and rendering
+        this.sgb.datasetHierarchical = this.datasetHierarchical;
+      }
+    }
+  }
+
+  clearFilters() {
+    this.sgb.filterService.clearFilters();
   }
 
   collapseAll() {
@@ -233,12 +334,15 @@ export default class Example6 {
             id: 4, file: 'pdf', files: [
               { id: 22, file: 'map2.pdf', dateModified: '2015-07-21T08:22:00.123Z', size: 2.9, },
               { id: 5, file: 'map.pdf', dateModified: '2015-05-21T10:22:00.123Z', size: 3.1, },
-              { id: 6, file: 'internet-bill.pdf', dateModified: '2015-05-12T14:50:00.123Z', size: 1.4, },
-              { id: 23, file: 'phone-bill.pdf', dateModified: '2015-05-01T07:50:00.123Z', size: 1.4, },
+              { id: 6, file: 'internet-bill.pdf', dateModified: '2015-05-12T14:50:00.123Z', size: 1.3, },
+              { id: 23, file: 'phone-bill.pdf', dateModified: '2015-05-01T07:50:00.123Z', size: 1.5, },
             ]
           },
-          { id: 9, file: 'misc', files: [{ id: 10, file: 'todo.txt', dateModified: '2015-02-26T16:50:00.123Z', size: 0.4, }] },
-          { id: 7, file: 'xls', files: [{ id: 8, file: 'compilation.xls', description: 'movie compilation', dateModified: '2014-10-02T14:50:00.123Z', size: 2.3, }] },
+          { id: 9, file: 'misc', files: [{ id: 10, file: 'warranties.txt', dateModified: '2015-02-26T16:50:00.123Z', size: 0.4, }] },
+          { id: 7, file: 'xls', files: [{ id: 8, file: 'compilation.xls', dateModified: '2014-10-02T14:50:00.123Z', size: 2.3, }] },
+          { id: 55, file: 'unclassified.csv', dateModified: '2015-04-08T03:44:12.333Z', size: 0.25, },
+          { id: 56, file: 'unresolved.csv', dateModified: '2015-04-03T03:21:12.000Z', size: 0.79, },
+          { id: 57, file: 'zebra.dll', dateModified: '2016-12-08T13:22:12.432', size: 1.22, },
         ]
       },
       {
@@ -249,8 +353,9 @@ export default class Example6 {
               id: 14, file: 'pop', files: [
                 { id: 15, file: 'theme.mp3', description: 'Movie Theme Song', dateModified: '2015-03-01T17:05:00Z', size: 47, },
                 { id: 25, file: 'song.mp3', description: 'it is a song...', dateModified: '2016-10-04T06:33:44Z', size: 6.3, }
-              ]
+              ],
             },
+            { id: 33, file: 'other', files: [] }
           ]
         }]
       },
@@ -262,5 +367,24 @@ export default class Example6 {
         ]
       },
     ];
+  }
+
+  /**
+   * for test purposes only, we can dynamically change the loaded Aggregator(s) but we'll have to reload the dataset
+   * also note that it bypasses the grid preset which mean that "pdf" will not be collapsed when called this way
+   */
+  displaySumAggregatorOnly() {
+    this.sgb.slickGrid!.setOptions({
+      treeDataOptions: {
+        columnId: 'file',
+        childrenPropName: 'files',
+        excludeChildrenWhenFilteringTree: this.isExcludingChildWhenFiltering, // defaults to false
+        autoApproveParentItemWhenTreeColumnIsValid: this.isAutoApproveParentItemWhenTreeColumnIsValid,
+        aggregators: [new Aggregators.Sum('size')]
+      }
+    });
+
+    // reset dataset to clear all tree data stat mutations (basically recreate the grid entirely to start from scratch)
+    this.sgb.datasetHierarchical = this.mockDataset();
   }
 }

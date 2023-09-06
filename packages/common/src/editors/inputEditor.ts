@@ -96,7 +96,7 @@ export class InputEditor implements Editor {
 
     this._input = createDomElement('input', {
       type: this._inputType || 'text',
-      autocomplete: 'none',
+      autocomplete: 'off', ariaAutoComplete: 'none',
       ariaLabel: this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Input Editor`,
       placeholder: this.columnEditor?.placeholder ?? '',
       title: this.columnEditor?.title ?? '',

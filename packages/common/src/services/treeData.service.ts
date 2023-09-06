@@ -12,20 +12,29 @@ import type {
   TreeToggledItem,
   TreeToggleStateChange,
 } from '../interfaces/index';
-import { findItemInTreeStructure, unflattenParentChildArrayToTree } from './utilities';
+import {
+  addTreeLevelAndAggregatorsByMutation,
+  findItemInTreeStructure,
+  unflattenParentChildArrayToTree
+} from './utilities';
 import type { SharedService } from './shared.service';
 import type { SortService } from './sort.service';
 
 export class TreeDataService {
-  protected _isLastFullToggleCollapsed = false;
   protected _lastToggleStateChange!: Omit<TreeToggleStateChange, 'fromItemId'>;
   protected _currentToggledItems: TreeToggledItem[] = [];
   protected _grid!: SlickGridUniversal;
   protected _eventHandler: SlickEventHandler;
+  protected _isLastFullToggleCollapsed = false;
+  protected _isOneCpuCyclePassed = false;
+  protected _isTreeDataEnabled = false;
   protected _subscriptions: EventSubscription[] = [];
+  protected _timer?: NodeJS.Timeout;
+  protected _treeDataRecalcHandler: (() => void) | null = null;
 
   constructor(protected readonly pubSubService: BasePubSubService, protected readonly sharedService: SharedService, protected readonly sortService: SortService) {
     this._eventHandler = new SlickEventHandler();
+    setTimeout(() => this._isOneCpuCyclePassed = true);
   }
 
   set currentToggledItems(newToggledItems: TreeToggledItem[]) {
@@ -53,8 +62,8 @@ export class TreeDataService {
     return this._grid?.getOptions() ?? {};
   }
 
-  get treeDataOptions(): TreeDataOption {
-    return this.gridOptions.treeDataOptions as TreeDataOption;
+  get treeDataOptions() {
+    return this.gridOptions.treeDataOptions;
   }
 
   dispose() {
@@ -65,7 +74,8 @@ export class TreeDataService {
 
   init(grid: SlickGridUniversal) {
     this._grid = grid;
-    this._isLastFullToggleCollapsed = this.gridOptions?.treeDataOptions?.initiallyCollapsed ?? false;
+    this._isTreeDataEnabled = this.gridOptions?.enableTreeData ?? false;
+    this._isLastFullToggleCollapsed = this.treeDataOptions?.initiallyCollapsed ?? false;
     this._currentToggledItems = this.gridOptions.presets?.treeData?.toggledItems ?? [];
     this._lastToggleStateChange = {
       type: this._isLastFullToggleCollapsed ? 'full-collapse' : 'full-expand',
@@ -74,7 +84,7 @@ export class TreeDataService {
     };
 
     // there's a few limitations with Tree Data, we'll just throw error when that happens
-    if (this.gridOptions?.enableTreeData) {
+    if (this._isTreeDataEnabled) {
       if (this.gridOptions?.multiColumnSort) {
         throw new Error('[Slickgrid-Universal] It looks like you are trying to use Tree Data with multi-column sorting, unfortunately it is not supported because of its complexity, you can disable it via "multiColumnSort: false" grid option and/or help in providing support for this feature.');
       }
@@ -99,6 +109,18 @@ export class TreeDataService {
     this._subscriptions.push(
       this.pubSubService.subscribe('onGridMenuClearAllSorting', this.clearSorting.bind(this))
     );
+
+    // when Tree Data totals auto-recalc feature is enabled, we will define its handler to do the recalc
+    this._treeDataRecalcHandler = this.setAutoRecalcTotalsCallbackWhenFeatEnabled(this.gridOptions);
+
+    this._eventHandler.subscribe(this.dataView.onRowCountChanged, () => {
+      // call Tree Data recalc handler, inside a debounce, when defined but only when at least 1 CPU cycle is passed
+      // we wait for 1 CPU cycle to make sure that we only run it after filtering and grid initialization of tree & grid is over
+      if (typeof this._treeDataRecalcHandler === 'function' && this._isOneCpuCyclePassed) {
+        clearTimeout(this._timer as NodeJS.Timeout);
+        this._timer = setTimeout(() => this._treeDataRecalcHandler?.(), this.treeDataOptions?.autoRecalcTotalsDebounce ?? 0);
+      }
+    });
   }
 
   /**
@@ -298,6 +320,36 @@ export class TreeDataService {
   }
 
   /**
+   * Dynamically enable (or disable) Tree Totals auto-recalc feature when Aggregators exists
+   * @param {Boolean} [enableFeature=true]
+   */
+  enableAutoRecalcTotalsFeature(enableFeature = true) {
+    if (enableFeature && this._isTreeDataEnabled) {
+      this._treeDataRecalcHandler = this.recalculateTreeTotals.bind(this, this.gridOptions);
+    } else {
+      this._treeDataRecalcHandler = null;
+    }
+  }
+
+  /**
+   * Recalculate all Tree Data totals, this requires Aggregators to be defined.
+   * NOTE: this does **not** take the current filters in consideration
+   * @param gridOptions
+   */
+  recalculateTreeTotals(gridOptions: GridOption) {
+    const treeDataOptions = gridOptions.treeDataOptions;
+    const childrenPropName = (treeDataOptions?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP);
+    const levelPropName = treeDataOptions?.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
+
+    if (treeDataOptions?.aggregators) {
+      treeDataOptions.aggregators.forEach((aggregator) => {
+        addTreeLevelAndAggregatorsByMutation(this.sharedService.hierarchicalDataset || [], { childrenPropName, levelPropName, aggregator });
+      });
+      this._grid.invalidate();
+    }
+  }
+
+  /**
    * Takes a hierarchical (tree) input array and sort it (if an `initialSort` exist, it will use that to sort)
    * @param {Array<Object>} hierarchicalDataset - inpu
    * @returns {Object} sort result object that includes both the flat & tree data arrays
@@ -421,5 +473,17 @@ export class TreeDataService {
         treeItemFound[collapsedPropName] = isCollapsed;
       }
     }
+  }
+
+  /**
+   * When using Tree Data with Aggregator and auto-recalc flag is enabled, we will define a callback handler
+   * @return {Function | undefined} Tree Data totals recalculate callback when enabled
+   */
+  protected setAutoRecalcTotalsCallbackWhenFeatEnabled(gridOptions: GridOption) {
+    // when using Tree Data with Aggregators, we might need to auto-recalc when necessary flag is enabled
+    if (gridOptions?.enableTreeData && gridOptions?.treeDataOptions?.autoRecalcTotalsOnFilterChange && gridOptions?.treeDataOptions?.aggregators) {
+      return this.recalculateTreeTotals.bind(this, gridOptions);
+    }
+    return null;
   }
 }

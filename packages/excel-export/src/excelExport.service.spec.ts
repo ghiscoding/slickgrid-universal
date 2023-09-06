@@ -20,7 +20,7 @@ import * as ExcelBuilder from 'excel-builder-webpacker';
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 import { ExcelExportService } from './excelExport.service';
-import { getExcelSameInputDataCallback, useCellFormatByFieldType } from './excelUtils';
+import { getExcelNumberCallback, getExcelSameInputDataCallback, useCellFormatByFieldType } from './excelUtils';
 
 const pubSubServiceStub = {
   publish: jest.fn(),
@@ -1034,7 +1034,7 @@ describe('ExcelExportService', () => {
       beforeEach(() => {
         mockGridOptions.enableGrouping = true;
         mockGridOptions.enableTranslate = true;
-        mockGridOptions.excelExportOptions = { sanitizeDataExport: true, addGroupIndentation: true, exportWithFormatter: true };
+        mockGridOptions.excelExportOptions = { autoDetectCellFormat: true, sanitizeDataExport: true, addGroupIndentation: true, exportWithFormatter: true };
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'userId', field: 'userId', name: 'User Id', width: 100 },
@@ -1125,6 +1125,7 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
+        expect(groupTotalParserCallbackSpy).toHaveBeenCalled();
         expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
         expect(spyDownload).toHaveBeenCalledWith({
@@ -1147,6 +1148,22 @@ describe('ExcelExportService', () => {
             ['', '', '', '', '', { metadata: { style: 4, type: 'number', }, 'value': 9999, }],
           ]
         });
+      });
+
+      it(`should not call group total value parser when column "exportAutoDetectCellFormat" is disabled`, async () => {
+        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
+        const spyDownload = jest.spyOn(service, 'startDownloadFile');
+        groupTotalParserCallbackSpy.mockReturnValue(9999);
+
+        mockGridOptions.excelExportOptions!.autoDetectCellFormat = false;
+        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
+
+        service.init(gridStub, container);
+        await service.exportToExcel(mockExportExcelOptions);
+
+        expect(groupTotalParserCallbackSpy).not.toHaveBeenCalled();
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
       });
 
       it(`should have a xlsx export with grouping but without indentation when "addGroupIndentation" is set to False
@@ -1195,6 +1212,26 @@ describe('ExcelExportService', () => {
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
         const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, column, gridStub);
+
+        expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
+      });
+
+      it('should return a number format when using FieldType.number and a number is provided as input', async () => {
+        const column = { type: FieldType.number } as Column;
+
+        service.init(gridStub, container);
+        await service.exportToExcel(mockExportExcelOptions);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, column, gridStub);
+
+        expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: 3 });
+      });
+
+      it('should NOT return a number format when using FieldType.number but autoDetectCellFormat is disabled', async () => {
+        const column = { type: FieldType.number, excelExportOptions: { autoDetectCellFormat: false } } as Column;
+
+        service.init(gridStub, container);
+        await service.exportToExcel(mockExportExcelOptions);
+        const output = useCellFormatByFieldType(service.stylesheet, service.stylesheetFormats, column, gridStub, false);
 
         expect(output).toEqual({ getDataValueParser: expect.toBeFunction(), stylesheetFormatterId: undefined });
       });

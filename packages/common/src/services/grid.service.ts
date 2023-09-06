@@ -908,6 +908,7 @@ export class GridService {
       this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
       this.filterService.refreshTreeDataFilters(items);
       this._dataView.setItems(sortedDatasetResult.flat);
+      this._grid.invalidate();
     }
   }
 

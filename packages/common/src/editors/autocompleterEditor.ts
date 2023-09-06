@@ -538,7 +538,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       'input',
       {
         type: 'text', placeholder, title,
-        autocomplete: 'none' as any,
+        autocomplete: 'off', ariaAutoComplete: 'none',
         className: `autocomplete form-control editor-text input-group-editor editor-${columnId}`,
         dataset: { input: '' }
       },

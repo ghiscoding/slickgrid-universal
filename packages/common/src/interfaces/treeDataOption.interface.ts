@@ -1,8 +1,18 @@
 // import { Aggregator } from './aggregator.interface';
 import type { SortDirection, SortDirectionString } from '../enums/index';
+import type { Aggregator } from './aggregator.interface';
 import type { Formatter } from './formatter.interface';
 
 export interface TreeDataOption {
+  /** Tree Data Aggregators array that can be provided to aggregate the tree (avg, sum, ...) */
+  aggregators?: Aggregator[];
+
+  /** Defaults to 0, optional debounce to limit the number of recalc execution (when enabled) of Tree Totals (Aggregators), this is especially useful with large tree dataset. */
+  autoRecalcTotalsDebounce?: number;
+
+  /** Defaults to false, should we recalculate aggregator tree totals on a filter changed triggered */
+  autoRecalcTotalsOnFilterChange?: boolean;
+
   /** Column Id of which column in the column definitions has the Tree Data, there can only be one with a Tree Data. */
   columnId: string;
 
@@ -24,10 +34,6 @@ export interface TreeDataOption {
    *    - and the reason we do this is that we'll be able to show music files with "Size > 7" even though these files might not include the word "music"
    */
   excludeChildrenWhenFilteringTree?: boolean;
-
-  /** Grouping Aggregators array */
-  // NOT YET IMPLEMENTED
-  // aggregators?: Aggregator[];
 
   /** Optionally define the initial sort column and direction */
   initialSort?: {
@@ -56,11 +62,11 @@ export interface TreeDataOption {
    */
   identifierPropName?: string;
 
-  /** Defaults to "__parentId", object property name used to designate the Parent Id */
-  parentPropName?: string;
-
   /** Defaults to "__treeLevel", object property name used to designate the Tree Level depth number */
   levelPropName?: string;
+
+  /** Defaults to "__parentId", object property name used to designate the Parent Id */
+  parentPropName?: string;
 
   /**
    * Defaults to 15px, margin to add from the left (calculated by the tree level multiplied by this number).

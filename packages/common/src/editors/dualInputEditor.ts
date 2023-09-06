@@ -191,7 +191,7 @@ export class DualInputEditor implements Editor {
       id: `item-${itemId}-${position}`,
       ariaLabel: this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Input Editor`,
       className: `dual-editor-text editor-${columnId} ${position.replace(/input/gi, '')}`,
-      autocomplete: 'none',
+      autocomplete: 'off', ariaAutoComplete: 'none',
       placeholder: editorSideParams.placeholder || '',
       title: editorSideParams.title || '',
     });

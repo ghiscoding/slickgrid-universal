@@ -2,6 +2,7 @@ import type { SlickGroupTotals } from 'slickgrid';
 import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class CloneAggregator implements Aggregator {
+  private _isInitialized = false;
   private _field: number | string;
   private _data = '';
   private _type = 'clone' as const;
@@ -14,12 +15,20 @@ export class CloneAggregator implements Aggregator {
     return this._field;
   }
 
+  get isInitialized() {
+    return this._isInitialized;
+  }
+
   get type(): string {
     return this._type;
   }
 
-  init(): void {
+  init(_item?: any, isTreeAggregator = false): void {
     this._data = '';
+    this._isInitialized = true;
+    if (isTreeAggregator) {
+      throw new Error('[Slickgrid-Universal] CloneAggregator is not currently supported for use with Tree Data');
+    }
   }
 
   accumulate(item: any) {

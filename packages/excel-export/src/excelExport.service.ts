@@ -566,7 +566,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
         // for column that are Date type, we'll always export with their associated Date Formatters unless `exportWithFormatter` is specifically set to false
         const exportOptions = { ...this._excelExportOptions };
-        if (columnDef?.exportWithFormatter !== false && isColumnDateType(fieldType)) {
+        if (columnDef.exportWithFormatter !== false && isColumnDateType(fieldType)) {
           exportOptions.exportWithFormatter = true;
         }
         itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, exportOptions);
@@ -574,7 +574,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         // auto-detect best possible Excel format, unless the user provide his own formatting,
         // we only do this check once per column (everything after that will be pull from temp ref)
         if (!this._regularCellExcelFormats.hasOwnProperty(columnDef.id)) {
-          const cellStyleFormat = useCellFormatByFieldType(this._stylesheet, this._stylesheetFormats, columnDef, this._grid);
+          const autoDetectCellFormat = columnDef.excelExportOptions?.autoDetectCellFormat ?? this._excelExportOptions?.autoDetectCellFormat;
+          const cellStyleFormat = useCellFormatByFieldType(this._stylesheet, this._stylesheetFormats, columnDef, this._grid, autoDetectCellFormat);
           // user could also override style and/or valueParserCallback
           if (columnDef.excelExportOptions?.style) {
             cellStyleFormat.stylesheetFormatterId = this._stylesheet.createFormat(columnDef.excelExportOptions.style).id;
@@ -638,7 +639,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
       // auto-detect best possible Excel format for Group Totals, unless the user provide his own formatting,
       // we only do this check once per column (everything after that will be pull from temp ref)
-      if (fieldType === FieldType.number) {
+      const autoDetectCellFormat = columnDef.excelExportOptions?.autoDetectCellFormat ?? this._excelExportOptions?.autoDetectCellFormat;
+      if (fieldType === FieldType.number && autoDetectCellFormat !== false) {
         let groupCellFormat = this._groupTotalExcelFormats[columnDef.id];
         if (!groupCellFormat?.groupType) {
           groupCellFormat = getExcelFormatFromGridFormatter(this._stylesheet, this._stylesheetFormats, columnDef, this._grid, 'group');

@@ -335,6 +335,12 @@ export interface Column<T = any> extends ColumnCore<T> {
   /** Custom Tooltip that can ben shown to the column */
   toolTip?: string;
 
+  /**
+   * @alias `groupTotalsFormatter` Tree Totals Formatter function that can be used to add tree totals in the,
+   * user can provide any `GroupTotalsFormatter` and/or use `groupTotalsFormatter` which will do the same
+   */
+  treeTotalsFormatter?: GroupTotalsFormatter;
+
   /** What is the Field Type, this can be used in the Formatters/Editors/Filters/... */
   type?: typeof FieldType[keyof typeof FieldType];
 

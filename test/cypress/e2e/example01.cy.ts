@@ -18,7 +18,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
     cy.getCookie('serve-mode').its('value').should('eq', 'cypress');
   });
 
-  it('should have 2 grids of size 800 by 225px', () => {
+  it('should have 2 grids of size 800 * 225px and 800 * 255px', () => {
     cy.get('.grid1')
       .should('have.css', 'width', '800px');
 

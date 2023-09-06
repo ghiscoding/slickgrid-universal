@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/vanilla-force-bundle",
-  "version": "3.1.0",
+  "version": "3.2.1",
   "description": "Vanilla Slick Grid Bundle (mostly exist for our Salesforce implementation) - Similar to Vanilla Bundle, the only difference is that it adds extra packages within its bundle (CustomTooltip, CompositeEditor & TextExport)",
   "exports": {
     ".": {
@@ -74,12 +74,12 @@
     "@slickgrid-universal/text-export": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
     "@slickgrid-universal/vanilla-bundle": "workspace:~",
-    "whatwg-fetch": "^3.6.17"
+    "whatwg-fetch": "^3.6.18"
   },
   "devDependencies": {
-    "archiver": "^5.3.1",
+    "archiver": "^6.0.1",
     "cross-env": "^7.0.3",
-    "esbuild": "^0.19.1",
+    "esbuild": "^0.19.2",
     "npm-run-all2": "^6.0.6",
     "vite": "^4.4.9",
     "yargs": "^17.7.2"

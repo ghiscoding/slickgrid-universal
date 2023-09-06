@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.1](https://github.com/ghiscoding/slickgrid-universal/compare/v3.2.0...v3.2.1) (2023-09-05)
+
+**Note:** Version bump only for package @slickgrid-universal/vanilla-bundle
+
+## [3.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.1.0...v3.2.0) (2023-08-21)
+
+### Bug Fixes
+
+* adding dataset hierarchical item shouldn't cause scroll flickering ([#1076](https://github.com/ghiscoding/slickgrid-universal/issues/1076)) ([8536e0e](https://github.com/ghiscoding/slickgrid-universal/commit/8536e0e04f1168648251f517cb47ea2e7129e231)) - by @ghiscoding
+
 ## [3.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.0.1...v3.1.0) (2023-07-20)
 
 **Note:** Version bump only for package @slickgrid-universal/vanilla-bundle

@@ -258,7 +258,7 @@ export class InputFilter implements Filter {
     const searchVal = `${searchTerm ?? ''}`;
     this._filterInputElm = createDomElement('input', {
       type: this._inputType || 'text',
-      autocomplete: 'none' as any, placeholder,
+      autocomplete: 'off', ariaAutoComplete: 'none', placeholder,
       ariaLabel: this.columnFilter?.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`,
       className: `form-control filter-${columnId}`,
       value: searchVal,

@@ -29,7 +29,7 @@ import type {
 } from './../interfaces/index';
 import type { BackendUtilityService } from './backendUtility.service';
 import { getSelectorStringFromElement, sanitizeHtmlToText, } from '../services/domUtilities';
-import { getDescendantProperty, mapOperatorByFieldType, } from './utilities';
+import { findItemInTreeStructure, getDescendantProperty, mapOperatorByFieldType, } from './utilities';
 import type { SharedService } from './shared.service';
 import type { RxJsFacade, Subject } from './rxjsFacade';
 
@@ -194,7 +194,7 @@ export class FilterService {
         // When using Tree Data, we need to do it in 2 steps
         // step 1. we need to prefilter (search) the data prior, the result will be an array of IDs which are the node(s) and their parent nodes when necessary.
         // step 2. calling the DataView.refresh() is what triggers the final filtering, with "customLocalFilter()" which will decide which rows should persist
-        if (this._gridOptions?.enableTreeData === true) {
+        if (this._gridOptions.enableTreeData === true) {
           this._tmpPreFilteredData = this.preFilterTreeData(this._dataView.getItems(), this._columnFilters);
         }
 
@@ -224,7 +224,7 @@ export class FilterService {
   async clearFilterByColumnId(event: Event, columnId: number | string): Promise<boolean> {
     await this.pubSubService.publish('onBeforeFilterClear', { columnId }, 0);
 
-    const isBackendApi = this._gridOptions?.backendServiceApi ?? false;
+    const isBackendApi = this._gridOptions.backendServiceApi ?? false;
     const emitter = isBackendApi ? EmitterType.remote : EmitterType.local;
 
     // get current column filter before clearing, this allow us to know if the filter was empty prior to calling the clear filter
@@ -286,12 +286,12 @@ export class FilterService {
     }
 
     // when using backend service, we need to query only once so it's better to do it here
-    const backendApi = this._gridOptions?.backendServiceApi;
+    const backendApi = this._gridOptions.backendServiceApi;
     if (backendApi && triggerChange) {
       const callbackArgs = { clearFilterTriggered: true, shouldTriggerQuery: triggerChange, grid: this._grid, columnFilters: this._columnFilters };
       const queryResponse = backendApi.service.processOnFilterChanged(undefined, callbackArgs as FilterChangedArgs);
       const query = queryResponse as string;
-      const totalItems = this._gridOptions?.pagination?.totalItems ?? 0;
+      const totalItems = this._gridOptions.pagination?.totalItems ?? 0;
       this.backendUtilities?.executeBackendCallback(backendApi, query, callbackArgs, new Date(), totalItems, {
         errorCallback: this.resetToPreviousSearchFilters.bind(this),
         successCallback: (responseArgs) => this._previousFilters = this.extractBasicFilterDetails(responseArgs.columnFilters),
@@ -311,23 +311,32 @@ export class FilterService {
   /** Local Grid Filter search */
   customLocalFilter(item: any, args: { columnFilters: ColumnFilters; dataView: SlickDataView; grid: SlickGridUniversal; }): boolean {
     const grid = args?.grid;
-    const isGridWithTreeData = this._gridOptions?.enableTreeData ?? false;
     const columnFilters = args?.columnFilters ?? {};
-    let treeDataOptions;
+    const isGridWithTreeData = this._gridOptions.enableTreeData ?? false;
+    const treeDataOptions = this._gridOptions.treeDataOptions;
 
     // when the column is a Tree Data structure and the parent is collapsed, we won't go further and just continue with next row
     // so we always run this check even when there are no filter search, the reason is because the user might click on the expand/collapse
-    if (isGridWithTreeData && this._gridOptions && this._gridOptions.treeDataOptions) {
-      treeDataOptions = this._gridOptions.treeDataOptions;
+    if (isGridWithTreeData && treeDataOptions) {
       const collapsedPropName = treeDataOptions.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
       const parentPropName = treeDataOptions.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
-      const dataViewIdIdentifier = this._gridOptions.datasetIdPropertyName ?? 'id';
+      const childrenPropName = treeDataOptions?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP;
+      const primaryDataId = this._gridOptions.datasetIdPropertyName ?? 'id';
+      const autoRecalcTotalsOnFilterChange = treeDataOptions.autoRecalcTotalsOnFilterChange ?? false;
 
+      // typically when a parent is collapsed we can exit early (by returning false) but we can't do that when we use auto-recalc totals
+      // if that happens, we need to keep a ref and recalculate total for all tree leafs then only after we can exit
+      let isParentCollapsed = false; // will be used only when auto-recalc is enabled
       if (item[parentPropName] !== null) {
         let parent = this._dataView.getItemById(item[parentPropName]);
         while (parent) {
           if (parent[collapsedPropName]) {
-            return false; // don't display any row that have their parent collapsed
+            if (autoRecalcTotalsOnFilterChange) {
+              isParentCollapsed = true; // when auto-recalc tree totals is enabled, we need to keep ref without exiting the loop just yet
+            } else {
+              // not using auto-recalc, we can exit early and not display any row that have their parent collapsed
+              return false;
+            }
           }
           parent = this._dataView.getItemById(parent[parentPropName]);
         }
@@ -335,7 +344,19 @@ export class FilterService {
 
       // filter out any row items that aren't part of our pre-processed "preFilterTreeData()" result
       if (this._tmpPreFilteredData instanceof Set) {
-        return this._tmpPreFilteredData.has(item[dataViewIdIdentifier]); // return true when found, false otherwise
+        const filtered = this._tmpPreFilteredData.has(item[primaryDataId]); // return true when found, false otherwise
+
+        // when user enables Tree Data auto-recalc, we need to keep ref (only in hierarchical tree) of which datacontext was filtered or not
+        if (autoRecalcTotalsOnFilterChange) {
+          const treeItem = findItemInTreeStructure(this.sharedService.hierarchicalDataset!, x => x[primaryDataId] === item[primaryDataId], childrenPropName);
+          if (treeItem) {
+            treeItem.__filteredOut = !filtered;
+          }
+          if (isParentCollapsed) {
+            return false; // now that we are done analyzing "__filteredOut", we can now return false to not show collapsed children
+          }
+        }
+        return filtered;
       }
     } else {
       if (typeof columnFilters === 'object') {
@@ -522,11 +543,11 @@ export class FilterService {
    * We do this in 2 steps so that we can still use the DataSet setFilter()
    */
   preFilterTreeData(inputItems: any[], columnFilters: ColumnFilters) {
-    const treeDataOptions = this._gridOptions?.treeDataOptions;
+    const treeDataOptions = this._gridOptions.treeDataOptions;
     const collapsedPropName = treeDataOptions?.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
     const parentPropName = treeDataOptions?.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
     const hasChildrenPropName = treeDataOptions?.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
-    const dataViewIdIdentifier = this._gridOptions?.datasetIdPropertyName ?? 'id';
+    const primaryDataId = this._gridOptions.datasetIdPropertyName ?? 'id';
     const treeDataToggledItems = this._gridOptions.presets?.treeData?.toggledItems;
     const isInitiallyCollapsed = this._gridOptions.treeDataOptions?.initiallyCollapsed ?? false;
     const treeDataColumnId = this._gridOptions.treeDataOptions?.columnId;
@@ -542,11 +563,11 @@ export class FilterService {
 
     if (Array.isArray(inputItems)) {
       for (const inputItem of inputItems) {
-        (treeObj as any)[inputItem[dataViewIdIdentifier]] = inputItem;
+        (treeObj as any)[inputItem[primaryDataId]] = inputItem;
         // as the filtered data is then used again as each subsequent letter
         // we need to delete the .__used property, otherwise the logic below
         // in the while loop (which checks for parents) doesn't work
-        delete (treeObj as any)[inputItem[dataViewIdIdentifier]].__used;
+        delete (treeObj as any)[inputItem[primaryDataId]].__used;
       }
 
       // Step 1. prepare search filter by getting their parsed value(s), for example if it's a date filter then parse it to a Moment object
@@ -582,7 +603,7 @@ export class FilterService {
             // when using `excludeChildrenWhenFilteringTree: false`, we can auto-approve current item if it's the column holding the Tree structure and is a Parent that passes the first filter criteria
             // in other words, if we're on the column with the Tree and its filter is valid (and is a parent), then skip any other filter(s)
             if (conditionResult && isNotExcludingChildAndValidateOnlyTreeColumn && hasChildren && columnFilter.columnId === treeDataColumnId) {
-              filteredParents.set(item[dataViewIdIdentifier], true);
+              filteredParents.set(item[primaryDataId], true);
               break;
             }
 
@@ -590,7 +611,7 @@ export class FilterService {
             // however we don't return true, we need to continue and loop through next filter(s) since we still need to check other keys in columnFilters
             if (conditionResult || (!excludeChildrenWhenFilteringTree && (filteredParents.get(item[parentPropName]) === true))) {
               if (hasChildren && columnFilter.columnId === treeDataColumnId) {
-                filteredParents.set(item[dataViewIdIdentifier], true); // when it's a Parent item, we'll keep a Map ref as being a Parent with valid criteria
+                filteredParents.set(item[primaryDataId], true); // when it's a Parent item, we'll keep a Map ref as being a Parent with valid criteria
               }
               // if our filter is valid OR we're on the Tree column then let's continue
               if (conditionResult || (!excludeChildrenWhenFilteringTree && columnFilter.columnId === treeDataColumnId)) {
@@ -600,7 +621,7 @@ export class FilterService {
               // when it's a Parent item AND its Parent isn't valid AND we aren't on the Tree column
               // we'll keep reference of the parent via a Map key/value pair and make its value as False because this Parent item is considered invalid
               if (hasChildren && filteredParents.get(item[parentPropName]) !== true && columnFilter.columnId !== treeDataColumnId) {
-                filteredParents.set(item[dataViewIdIdentifier], false);
+                filteredParents.set(item[primaryDataId], false);
               }
             }
           }
@@ -614,7 +635,7 @@ export class FilterService {
         // will be pushed to the filteredChildrenAndParents array
         if (matchFilter) {
           // add child (id):
-          filteredChildrenAndParents.add(item[dataViewIdIdentifier]);
+          filteredChildrenAndParents.add(item[primaryDataId]);
           let parent = (treeObj as any)[item[parentPropName]] ?? false;
 
           // if there are any presets of collapsed parents, let's processed them
@@ -625,9 +646,9 @@ export class FilterService {
 
           while (parent) {
             // only add parent (id) if not already added:
-            parent.__used ?? filteredChildrenAndParents.add(parent[dataViewIdIdentifier]);
+            parent.__used ?? filteredChildrenAndParents.add(parent[primaryDataId]);
             // mark each parent as used to not use them again later:
-            (treeObj as any)[parent[dataViewIdIdentifier]].__used = true;
+            (treeObj as any)[parent[primaryDataId]].__used = true;
             // try to find parent of the current parent, if exists:
             parent = (treeObj as any)[parent[parentPropName]] ?? false;
           }
@@ -685,7 +706,7 @@ export class FilterService {
   emitFilterChanged(caller: EmitterType, isBeforeExecution = false): void | boolean | Promise<boolean> {
     const eventName = isBeforeExecution ? 'onBeforeFilterChange' : 'onFilterChanged';
 
-    if (caller === EmitterType.remote && this._gridOptions?.backendServiceApi) {
+    if (caller === EmitterType.remote && this._gridOptions.backendServiceApi) {
       let currentFilters: CurrentFilter[] = [];
       const backendService = this._gridOptions.backendServiceApi.service;
       if (backendService?.getCurrentFilters) {
@@ -725,7 +746,7 @@ export class FilterService {
     // query backend, except when it's called by a ClearFilters then we won't
     if (isTriggeringQueryEvent) {
       const query = await backendApi.service.processOnFilterChanged(event, args as FilterChangedArgs);
-      const totalItems = this._gridOptions?.pagination?.totalItems ?? 0;
+      const totalItems = this._gridOptions.pagination?.totalItems ?? 0;
       this.backendUtilities?.executeBackendCallback(backendApi, query, args, startTime, totalItems, {
         errorCallback: this.resetToPreviousSearchFilters.bind(this),
         successCallback: (responseArgs) => this._previousFilters = this.extractBasicFilterDetails(responseArgs.columnFilters),
@@ -760,7 +781,7 @@ export class FilterService {
       });
 
       // when we have a Filter Presets on a Tree Data View grid, we need to call the pre-filtering of tree data
-      if (this._gridOptions?.enableTreeData) {
+      if (this._gridOptions.enableTreeData) {
         this.refreshTreeDataFilters();
       }
 
@@ -778,7 +799,7 @@ export class FilterService {
   refreshTreeDataFilters(items?: any[]) {
     const inputItems = items ?? this._dataView?.getItems() ?? [];
 
-    if (this._dataView && this._gridOptions?.enableTreeData && inputItems.length > 0) {
+    if (this._dataView && this._gridOptions.enableTreeData && inputItems.length > 0) {
       this._tmpPreFilteredData = this.preFilterTreeData(inputItems, this._columnFilters);
       this._dataView.refresh(); // and finally this refresh() is what triggers a DataView filtering check
     } else if (inputItems.length === 0 && Array.isArray(this.sharedService.hierarchicalDataset) && this.sharedService.hierarchicalDataset.length > 0) {
@@ -835,7 +856,7 @@ export class FilterService {
    * Toggle the Header Row filter bar (this does not disable the Filtering itself, you can use "toggleFilterFunctionality()" instead, however this will reset any column positions)
    */
   toggleHeaderFilterRow() {
-    let showHeaderRow = this._gridOptions?.showHeaderRow ?? false;
+    let showHeaderRow = this._gridOptions.showHeaderRow ?? false;
     showHeaderRow = !showHeaderRow; // inverse show header flag
     this._grid.setHeaderRowVisibility(showHeaderRow);
 
@@ -851,7 +872,7 @@ export class FilterService {
    * you can change the sorting icons separately by passing an array of columnId/sortAsc and that will change ONLY the icons
    * @param sortColumns
    */
-  setSortColumnIcons(sortColumns: { columnId: string, sortAsc: boolean }[]) {
+  setSortColumnIcons(sortColumns: { columnId: string, sortAsc: boolean; }[]) {
     if (this._grid && Array.isArray(sortColumns)) {
       this._grid.setSortColumns(sortColumns);
     }
@@ -887,13 +908,13 @@ export class FilterService {
           this.updateColumnFilters(newFilter.searchTerms, uiFilter.columnDef, newOperator);
           uiFilter.setValues(newFilter.searchTerms || [], newOperator);
 
-          if (triggerOnSearchChangeEvent || this._gridOptions?.enableTreeData) {
+          if (triggerOnSearchChangeEvent || this._gridOptions.enableTreeData) {
             this.callbackSearchEvent(undefined, { columnDef: uiFilter.columnDef, operator: newOperator, searchTerms: newFilter.searchTerms, shouldTriggerQuery: true, forceOnSearchChangeEvent: true });
           }
         }
       });
 
-      const backendApi = this._gridOptions?.backendServiceApi;
+      const backendApi = this._gridOptions.backendServiceApi;
       const emitterType = backendApi ? EmitterType.remote : EmitterType.local;
 
       // trigger the onBeforeFilterChange event before the process
@@ -950,7 +971,7 @@ export class FilterService {
         };
       }
 
-      const backendApi = this._gridOptions?.backendServiceApi;
+      const backendApi = this._gridOptions.backendServiceApi;
       const emitterType = backendApi ? EmitterType.remote : EmitterType.local;
 
       // trigger the onBeforeFilterChange event before the process
@@ -973,7 +994,7 @@ export class FilterService {
         });
 
         // when using Tree Data, we also need to refresh the filters because of the tree structure with recursion
-        if (this._gridOptions?.enableTreeData) {
+        if (this._gridOptions.enableTreeData) {
           this.refreshTreeDataFilters();
         }
 
@@ -1203,7 +1224,7 @@ export class FilterService {
     });
 
     // loop through column definition to hide/show grid menu commands
-    const commandItems = this._gridOptions?.gridMenu?.commandItems;
+    const commandItems = this._gridOptions.gridMenu?.commandItems;
     if (commandItems) {
       commandItems.forEach((menuItem) => {
         if (menuItem && typeof menuItem !== 'string') {

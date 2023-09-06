@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/common",
-  "version": "3.1.0",
+  "version": "3.2.1",
   "description": "SlickGrid-Universal Common Code",
   "exports": {
     ".": {
@@ -73,27 +73,27 @@
   "dependencies": {
     "@slickgrid-universal/event-pub-sub": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
-    "autocompleter": "^9.0.1",
+    "autocompleter": "^9.1.0",
     "dequal": "^2.0.3",
     "dompurify": "^3.0.5",
     "flatpickr": "^4.6.13",
     "moment-mini": "^2.29.4",
-    "multiple-select-vanilla": "^0.4.5",
+    "multiple-select-vanilla": "^0.4.9",
     "slickgrid": "^4.0.1",
     "sortablejs": "^1.15.0",
     "un-flatten-tree": "^2.0.12"
   },
   "devDependencies": {
     "@types/dompurify": "^3.0.2",
-    "@types/sortablejs": "^1.15.1",
-    "autoprefixer": "^10.4.14",
+    "@types/sortablejs": "^1.15.2",
+    "autoprefixer": "^10.4.15",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
     "cssnano": "^6.0.1",
     "npm-run-all2": "^6.0.6",
-    "postcss": "^8.4.27",
+    "postcss": "^8.4.29",
     "postcss-cli": "^10.1.0",
-    "sass": "^1.65.1"
+    "sass": "^1.66.1"
   },
   "engines": {
     "node": ">=16.15.0",

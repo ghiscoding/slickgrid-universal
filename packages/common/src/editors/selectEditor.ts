@@ -118,7 +118,7 @@ export class SelectEditor implements Editor {
       minHeight: 25,
       name: this.elementName,
       single: true,
-      useSelectOptionLabelToHtml: this.columnEditor?.enableRenderHtml ?? false,
+      renderOptionLabelAsHtml: this.columnEditor?.enableRenderHtml ?? false,
       sanitizer: (dirtyHtml: string) => sanitizeTextByAvailableSanitizer(this.gridOptions, dirtyHtml),
       onClick: () => this._isValueTouched = true,
       onCheckAll: () => this._isValueTouched = true,
@@ -204,6 +204,10 @@ export class SelectEditor implements Editor {
 
   get msInstance() {
     return this._msInstance;
+  }
+
+  get selectOptions() {
+    return this.defaultOptions;
   }
 
   /**

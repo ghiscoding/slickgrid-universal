@@ -184,7 +184,6 @@ export class SlickVanillaGridBundle<TData = any> {
 
     // when a hierarchical dataset is set afterward, we can reset the flat dataset and call a tree data sort that will overwrite the flat dataset
     if (this.dataView && newHierarchicalDataset && this.slickGrid && this.sortService?.processTreeDataInitialSort) {
-      this.dataView.setItems([], this._gridOptions?.datasetIdPropertyName ?? 'id');
       this.sortService.processTreeDataInitialSort();
 
       // we also need to reset/refresh the Tree Data filters because if we inserted new item(s) then it might not show up without doing this refresh

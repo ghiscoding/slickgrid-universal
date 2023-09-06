@@ -41,12 +41,12 @@ export function parseNumberWithFormatterOptions(value: any, column: Column, grid
 }
 
 /** use different Excel Stylesheet Format as per the Field Type */
-export function useCellFormatByFieldType(stylesheet: ExcelStylesheet, stylesheetFormatters: any, columnDef: Column, grid: SlickGridUniversal) {
+export function useCellFormatByFieldType(stylesheet: ExcelStylesheet, stylesheetFormatters: any, columnDef: Column, grid: SlickGridUniversal, autoDetect = true) {
   const fieldType = getColumnFieldType(columnDef);
   let stylesheetFormatterId: number | undefined;
   let callback: GetDataValueCallback = getExcelSameInputDataCallback;
 
-  if (fieldType === FieldType.number) {
+  if (fieldType === FieldType.number && autoDetect) {
     stylesheetFormatterId = getExcelFormatFromGridFormatter(stylesheet, stylesheetFormatters, columnDef, grid, 'cell').stylesheetFormatter.id;
     callback = getExcelNumberCallback;
   }

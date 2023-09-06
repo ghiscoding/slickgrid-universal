@@ -490,6 +490,8 @@ describe('SelectFilter', () => {
     filterBtnElm.click();
     filter.msInstance?.close();
 
+    expect(filter.selectOptions.renderOptionLabelAsHtml).toBeTruthy();
+    expect(filter.selectOptions.useSelectOptionLabelToHtml).toBeFalsy();
     expect(filterListElm.length).toBe(2);
     expect(filterListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> True');
   });
@@ -529,6 +531,8 @@ describe('SelectFilter', () => {
     filterOkElm.click();
     filter.msInstance?.close();
 
+    expect(filter.selectOptions.renderOptionLabelAsHtml).toBeFalsy();
+    expect(filter.selectOptions.useSelectOptionLabelToHtml).toBeFalsy();
     expect(filterListElm.length).toBe(3);
     expect(filterFilledElms.length).toBe(1);
     expect(filterListElm[0].value).toBe('');

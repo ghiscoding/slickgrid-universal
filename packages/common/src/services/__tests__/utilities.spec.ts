@@ -7,6 +7,7 @@ import { Column, GridOption } from '../../interfaces/index';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import {
   addTreeLevelByMutation,
+  addTreeLevelAndAggregatorsByMutation,
   cancellablePromise,
   CancelledException,
   castObservableToPromise,
@@ -29,6 +30,7 @@ import {
   thousandSeparatorFormatted,
   unsubscribeAll,
 } from '../utilities';
+import { SumAggregator } from '../../aggregators';
 
 describe('Service/Utilies', () => {
   describe('unflattenParentChildArrayToTree method', () => {
@@ -51,6 +53,32 @@ describe('Service/Utilies', () => {
             id: 12, __treeLevel: 1, __collapsed: false, parentId: 11, file: 'mp3', files: [
               { id: 14, __treeLevel: 2, __collapsed: false, parentId: 12, file: 'pop', files: [{ id: 15, __treeLevel: 3, parentId: 14, file: 'theme.mp3', dateModified: '2015-03-01', size: 85, }] },
               { id: 16, __treeLevel: 2, __collapsed: false, parentId: 12, file: 'rock', files: [{ id: 17, __treeLevel: 3, parentId: 16, file: 'soft.mp3', dateModified: '2015-05-13', size: 98, }] },
+            ]
+          }]
+        },
+        { id: 18, __treeLevel: 0, parentId: null, file: 'something.txt', dateModified: '2015-03-03', size: 90, },
+      ]);
+    });
+
+    it('should take a parent/child array with aggregators and return a hierarchical array structure', () => {
+      const input = [
+        { id: 18, size: 90, dateModified: '2015-03-03', file: 'something.txt', parentId: null, },
+        { id: 11, file: 'Music', parentId: null, __treeTotals: { count: { size: 2, }, sum: { size: (98 + 85), }, }, },
+        { id: 12, file: 'mp3', parentId: 11, __treeTotals: { count: { size: 2, }, sum: { size: (98 + 85), }, }, },
+        { id: 16, file: 'rock', parentId: 12, __treeTotals: { count: { size: 2, }, sum: { size: 98, }, }, },
+        { id: 17, dateModified: '2015-05-13', file: 'soft.mp3', size: 98, parentId: 16, },
+        { id: 14, file: 'pop', parentId: 12, __treeTotals: { count: { size: 2, }, sum: { size: 85, }, }, },
+        { id: 15, dateModified: '2015-03-01', file: 'theme.mp3', size: 85, parentId: 14, },
+      ];
+
+      const output = unflattenParentChildArrayToTree(input, { aggregators: [new SumAggregator('size')], parentPropName: 'parentId', childrenPropName: 'files' });
+
+      expect(output).toEqual([
+        {
+          id: 11, __treeLevel: 0, __collapsed: false, parentId: null, file: 'Music', __treeTotals: { count: { size: 2, }, sum: { size: (98 + 85), }, }, files: [{
+            id: 12, __treeLevel: 1, __collapsed: false, parentId: 11, file: 'mp3', __treeTotals: { count: { size: 2, }, sum: { size: (98 + 85), }, }, files: [
+              { id: 14, __treeLevel: 2, __collapsed: false, parentId: 12, file: 'pop', __treeTotals: { count: { size: 1, }, sum: { size: 85, }, }, files: [{ id: 15, __treeLevel: 3, parentId: 14, file: 'theme.mp3', dateModified: '2015-03-01', size: 85, }] },
+              { id: 16, __treeLevel: 2, __collapsed: false, parentId: 12, file: 'rock', __treeTotals: { count: { size: 1, }, sum: { size: 98, }, }, files: [{ id: 17, __treeLevel: 3, parentId: 16, file: 'soft.mp3', dateModified: '2015-05-13', size: 98, }] },
             ]
           }]
         },
@@ -148,6 +176,36 @@ describe('Service/Utilies', () => {
         { id: 16, __treeLevel: 2, file: 'rock', __parentId: 12, __hasChildren: true },
         { id: 17, __treeLevel: 3, dateModified: '2015-05-13', file: 'soft.mp3', size: 98, __parentId: 16, __hasChildren: false },
         { id: 14, __treeLevel: 2, file: 'pop', __parentId: 12, __hasChildren: true },
+        { id: 15, __treeLevel: 3, dateModified: '2015-03-01', file: 'theme.mp3', size: 85, __parentId: 14, __hasChildren: false },
+      ]);
+    });
+
+    it('should return a flat array from a hierarchical structure and tree totals aggregation', () => {
+      const aggregator = new SumAggregator('size');
+      addTreeLevelAndAggregatorsByMutation(mockTreeArray, { aggregator, childrenPropName: 'files', levelPropName: '__treeLevel' });
+      const output = flattenToParentChildArray(mockTreeArray, { childrenPropName: 'files' });
+      expect(output).toEqual([
+        { id: 18, size: 90, __treeLevel: 0, dateModified: '2015-03-03', file: 'something.txt', __parentId: null, __hasChildren: false },
+        { id: 11, __treeLevel: 0, file: 'Music', __parentId: null, __hasChildren: true, __treeTotals: { count: { size: 2, }, sum: { size: (98 + 85), }, }, },
+        { id: 12, __treeLevel: 1, file: 'mp3', __parentId: 11, __hasChildren: true, __treeTotals: { count: { size: 2, }, sum: { size: (98 + 85), }, }, },
+        { id: 16, __treeLevel: 2, file: 'rock', __parentId: 12, __hasChildren: true, __treeTotals: { count: { size: 1, }, sum: { size: 98, }, }, },
+        { id: 17, __treeLevel: 3, dateModified: '2015-05-13', file: 'soft.mp3', size: 98, __parentId: 16, __hasChildren: false },
+        { id: 14, __treeLevel: 2, file: 'pop', __parentId: 12, __hasChildren: true, __treeTotals: { count: { size: 1, }, sum: { size: 85, }, } },
+        { id: 15, __treeLevel: 3, dateModified: '2015-03-01', file: 'theme.mp3', size: 85, __parentId: 14, __hasChildren: false },
+      ]);
+    });
+
+    it('should return a flat array from a hierarchical structure and tree totals aggregation and tree level number as well', () => {
+      const aggregator = new SumAggregator('size');
+      addTreeLevelAndAggregatorsByMutation(mockTreeArray, { aggregator, childrenPropName: 'files', levelPropName: '__treeLevel' });
+      const output = flattenToParentChildArray(mockTreeArray, { childrenPropName: 'files', shouldAddTreeLevelNumber: true, aggregators: [aggregator] });
+      expect(output).toEqual([
+        { id: 18, size: 90, __treeLevel: 0, dateModified: '2015-03-03', file: 'something.txt', __parentId: null, __hasChildren: false },
+        { id: 11, __treeLevel: 0, file: 'Music', __parentId: null, __hasChildren: true, __treeTotals: { count: { size: 2, }, sum: { size: (98 + 85), }, }, },
+        { id: 12, __treeLevel: 1, file: 'mp3', __parentId: 11, __hasChildren: true, __treeTotals: { count: { size: 2, }, sum: { size: (98 + 85), }, }, },
+        { id: 16, __treeLevel: 2, file: 'rock', __parentId: 12, __hasChildren: true, __treeTotals: { count: { size: 1, }, sum: { size: 98, }, }, },
+        { id: 17, __treeLevel: 3, dateModified: '2015-05-13', file: 'soft.mp3', size: 98, __parentId: 16, __hasChildren: false },
+        { id: 14, __treeLevel: 2, file: 'pop', __parentId: 12, __hasChildren: true, __treeTotals: { count: { size: 1, }, sum: { size: 85, }, } },
         { id: 15, __treeLevel: 3, dateModified: '2015-03-01', file: 'theme.mp3', size: 85, __parentId: 14, __hasChildren: false },
       ]);
     });

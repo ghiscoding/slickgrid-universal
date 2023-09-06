@@ -1,8 +1,9 @@
 import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler } from 'slickgrid';
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { Constants } from '../../constants';
 import { Column, GridOption, SlickGridUniversal, BackendService } from '../../interfaces/index';
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { SumAggregator } from '../../aggregators';
 import { SharedService } from '../shared.service';
 import { SortService } from '../sort.service';
 import { TreeDataService } from '../treeData.service';
@@ -10,6 +11,8 @@ import * as utilities from '../utilities';
 
 const mockUnflattenParentChildArrayToTree = jest.fn();
 (utilities.unflattenParentChildArrayToTree as any) = mockUnflattenParentChildArrayToTree;
+
+jest.useFakeTimers();
 
 const gridOptionsMock = {
   multiColumnSort: false,
@@ -41,6 +44,7 @@ const dataViewStub = {
   reSort: jest.fn(),
   setItems: jest.fn(),
   updateItem: jest.fn(),
+  onRowCountChanged: new SlickEvent(),
 } as unknown as SlickDataView;
 
 const gridStub = {
@@ -499,6 +503,70 @@ describe('TreeData Service', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onTreeItemToggled`, { fromItemId: 4, previousFullToggleType: 'full-expand', toggledItems: [{ itemId: 4, isCollapsed: true }], type: 'toggle-collapse' });
         expect(endUpdateSpy).toHaveBeenCalled();
       });
+    });
+  });
+
+  describe('enableAutoRecalcTotalsFeature method', () => {
+    it('should NOT execute auto-recalc callback method when "onRowCountChanged" event is triggered but we did not wait necessary delay', () => {
+      const recalcSpy = jest.spyOn(service, 'recalculateTreeTotals');
+
+      gridOptionsMock.treeDataOptions!.autoRecalcTotalsOnFilterChange = true;
+      gridOptionsMock.treeDataOptions!.aggregators = [new SumAggregator('size')];
+      service.init(gridStub);
+
+      dataViewStub.onRowCountChanged.notify({} as any);
+
+      expect(recalcSpy).not.toHaveBeenCalled();
+    });
+
+    it('should execute auto-recalc callback method when "onRowCountChanged" event is triggered and "autoRecalcTotalsOnFilterChange" flag is enabled', () => {
+      const recalcSpy = jest.spyOn(service, 'recalculateTreeTotals');
+
+      gridOptionsMock.treeDataOptions!.autoRecalcTotalsOnFilterChange = true;
+      gridOptionsMock.treeDataOptions!.aggregators = [new SumAggregator('size')];
+      service.init(gridStub);
+
+      // auto-recalc inside event needs at minimum 1 CPU cycle before executing
+      jest.advanceTimersByTime(0);
+      dataViewStub.onRowCountChanged.notify({} as any);
+
+      // auto-recalc itself is also wrapped in a debounce of another cycle
+      jest.advanceTimersByTime(0);
+      expect(recalcSpy).toHaveBeenCalled();
+    });
+
+    it('should execute auto-recalc callback method when "onRowCountChanged" event is triggered and "autoRecalcTotalsOnFilterChange" flag is disabled but we called "enableAutoRecalcTotalsFeature()" method', () => {
+      const recalcSpy = jest.spyOn(service, 'recalculateTreeTotals');
+
+      gridOptionsMock.treeDataOptions!.autoRecalcTotalsOnFilterChange = false;
+      gridOptionsMock.treeDataOptions!.aggregators = [new SumAggregator('size')];
+      service.init(gridStub);
+      service.enableAutoRecalcTotalsFeature();
+
+      // auto-recalc inside event needs at minimum 1 CPU cycle before executing
+      jest.advanceTimersByTime(0);
+      dataViewStub.onRowCountChanged.notify({} as any);
+
+      // auto-recalc itself is also wrapped in a debounce of another cycle
+      jest.advanceTimersByTime(0);
+      expect(recalcSpy).toHaveBeenCalled();
+    });
+
+    it('should NOT execute auto-recalc callback method when "onRowCountChanged" event is triggered and "autoRecalcTotalsOnFilterChange" flag is disabled and we called "enableAutoRecalcTotalsFeature()" method with False argument', () => {
+      const recalcSpy = jest.spyOn(service, 'recalculateTreeTotals');
+
+      gridOptionsMock.treeDataOptions!.autoRecalcTotalsOnFilterChange = false;
+      gridOptionsMock.treeDataOptions!.aggregators = [new SumAggregator('size')];
+      service.init(gridStub);
+      service.enableAutoRecalcTotalsFeature(false);
+
+      // auto-recalc inside event needs at minimum 1 CPU cycle before executing
+      jest.advanceTimersByTime(0);
+      dataViewStub.onRowCountChanged.notify({} as any);
+
+      // auto-recalc itself is also wrapped in a debounce of another cycle
+      jest.advanceTimersByTime(0);
+      expect(recalcSpy).not.toHaveBeenCalled();
     });
   });
 
