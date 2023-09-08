@@ -31,14 +31,14 @@ declare global {
   namespace Cypress {
     interface Chainable {
       // triggerHover: (elements: NodeListOf<HTMLElement>) => void;
-      convertPosition(viewport: string): Chainable<HTMLElement>;
-      getCell(row: number, col: number, viewport?: string, options?: { parentSelector?: string, rowHeight?: number; }): Chainable<HTMLElement>;
+      convertPosition(viewport: string): Chainable<HTMLElement | JQuery<HTMLElement> | { x: string; y: string; }>;
+      getCell(row: number, col: number, viewport?: string, options?: { parentSelector?: string, rowHeight?: number; }): Chainable<HTMLElement | JQuery<HTMLElement>>;
     }
   }
 }
 
 // convert position like 'topLeft' to the object { x: 'left|right', y: 'top|bottom' }
-Cypress.Commands.add('convertPosition', (viewport = 'topLeft') => cy.wrap(convertPosition(viewport) as any));
+Cypress.Commands.add('convertPosition', (viewport = 'topLeft') => cy.wrap(convertPosition(viewport)));
 
 Cypress.Commands.add('getCell', (row: number, col: number, viewport = 'topLeft', { parentSelector = '', rowHeight = 35 } = {}) => {
   const position = convertPosition(viewport);
