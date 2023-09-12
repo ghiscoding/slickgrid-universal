@@ -29,7 +29,7 @@
     "moment-mini": "^2.29.4",
     "multiple-select-vanilla": "^0.4.10",
     "rxjs": "^7.8.1",
-    "whatwg-fetch": "^3.6.18"
+    "whatwg-fetch": "^3.6.19"
   },
   "devDependencies": {
     "@types/fnando__sparkline": "^0.3.4",
