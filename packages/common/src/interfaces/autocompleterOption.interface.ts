@@ -43,5 +43,5 @@ export interface AutocompleterOption<T extends AutocompleteItem = any> extends P
    * This is the same as the "select" callback and was created so that user don't overwrite exclusive usage of the "select" callback.
    * Also compare to the "select", it has some extra arguments which are: row, cell, column, dataContext
    */
-  onSelectItem?: (item: any, row: number, cell: number, columnDef: Column, dataContext: any) => void;
+  onSelectItem?: (item: any, row: number | undefined, cell: number | undefined, columnDef: Column, dataContext: any) => void;
 }

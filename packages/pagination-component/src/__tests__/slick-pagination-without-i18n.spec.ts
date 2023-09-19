@@ -13,7 +13,7 @@ const gridStub = {
   getOptions: jest.fn(),
   getUID: () => 'slickgrid_123456',
   registerPlugin: jest.fn(),
-} as unknown as SlickGrid;
+} as unknown as SlickGridUniversal;
 
 const mockLocales = {
   TEXT_ITEMS_PER_PAGE: 'items per page',

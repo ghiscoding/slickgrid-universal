@@ -1,6 +1,7 @@
 import { setDeepValue } from '@slickgrid-universal/utils';
 import * as flatpickr_ from 'flatpickr';
 import * as moment_ from 'moment-mini';
+import { SlickEventData } from 'slickgrid';
 import type { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
 import type { Instance as FlatpickrInstance, FlatpickrFn } from 'flatpickr/dist/types/instance';
 const flatpickr: FlatpickrFn = (flatpickr_ && flatpickr_['default'] || flatpickr_) as any; // patch for rollup
@@ -18,17 +19,13 @@ import type {
   EditorValidationResult,
   FlatpickrOption,
   GridOption,
-  SlickGrid,
-  SlickNamespace,
+  SlickGridUniversal,
 } from './../interfaces/index';
 import { getEditorOptionByName } from './editorUtilities';
 import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
 import { getDescendantProperty, mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, } from './../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
 
 /*
  * An example of a date picker editor using Flatpickr
@@ -52,7 +49,7 @@ export class DateEditor implements Editor {
   disabled = false;
 
   /** SlickGrid Grid object */
-  grid: SlickGrid;
+  grid: SlickGridUniversal;
 
   /** Grid options */
   gridOptions: GridOption;
@@ -80,7 +77,7 @@ export class DateEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef && this.columnDef.internalColumnEditor || {};
+    return this.columnDef?.internalColumnEditor || {} as ColumnEditor;
   }
 
   /** Getter for the item data context object */
@@ -465,7 +462,7 @@ export class DateEditor implements Editor {
     }
     grid.onCompositeEditorChange.notify(
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
-      new Slick.EventData()
+      new SlickEventData()
     );
   }
 }

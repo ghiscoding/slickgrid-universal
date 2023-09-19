@@ -1,10 +1,11 @@
+import { SlickEvent } from 'slickgrid';
+
 import { Filters } from '../filters.index';
-import { Column, FilterArguments, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption, type SlickGridUniversal } from '../../interfaces/index';
 import { SingleSliderFilter } from '../singleSliderFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';
-declare const Slick: SlickNamespace;
 jest.useFakeTimers();
 
 // define a <div> container to simulate the grid container
@@ -20,9 +21,9 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-  onHeaderMouseLeave: new Slick.Event(),
-  onHeaderRowMouseEnter: new Slick.Event(),
-} as unknown as SlickGrid;
+  onHeaderMouseLeave: new SlickEvent(),
+  onHeaderRowMouseEnter: new SlickEvent(),
+} as unknown as SlickGridUniversal;
 
 describe('SingleSliderFilter', () => {
   let translateService: TranslateServiceStub;

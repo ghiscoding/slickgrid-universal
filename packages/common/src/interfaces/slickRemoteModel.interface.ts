@@ -1,5 +1,5 @@
+import type { SlickEvent } from 'slickgrid';
 import type { Column } from './column.interface';
-import type { SlickEvent } from './index';
 
 /**
  * A sample AJAX remote data store implementation.

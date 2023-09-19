@@ -1,45 +1,32 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-
+import { type SlickDataView, type SlickEventData, SlickEventHandler, } from 'slickgrid';
 import type {
   Column,
   ColumnSort,
-  SlickDataView,
   GridOption,
   CurrentSorter,
   MultiColumnSort,
   SingleColumnSort,
-  SlickEventHandler,
-  SlickGrid,
+  SlickGridUniversal,
   TreeDataOption,
-  SlickNamespace,
-  SlickEventData,
 } from '../interfaces/index';
-import {
-  EmitterType,
-  FieldType,
-  SortDirection,
-  SortDirectionNumber,
-  type SortDirectionString,
-} from '../enums/index';
+import { EmitterType, FieldType, SortDirection, SortDirectionNumber, type SortDirectionString, } from '../enums/index';
 import type { BackendUtilityService } from './backendUtility.service';
 import { getDescendantProperty, flattenToParentChildArray } from './utilities';
 import { sortByFieldType } from '../sortComparers/sortUtilities';
 import type { SharedService } from './shared.service';
 import type { RxJsFacade, Subject } from './rxjsFacade';
 
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
-
 export class SortService {
   protected _currentLocalSorters: CurrentSorter[] = [];
   protected _eventHandler: SlickEventHandler;
   protected _dataView!: SlickDataView;
-  protected _grid!: SlickGrid;
+  protected _grid!: SlickGridUniversal;
   protected _isBackendGrid = false;
   protected httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
 
   constructor(protected readonly sharedService: SharedService, protected readonly pubSubService: BasePubSubService, protected readonly backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) {
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
     if (this.rxjs) {
       this.httpCancelRequests$ = this.rxjs.createSubject<void>();
     }
@@ -52,12 +39,12 @@ export class SortService {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return (this._grid && this._grid.getOptions) ? this._grid.getOptions() : {};
+    return this._grid?.getOptions() ?? {};
   }
 
   /** Getter for the Column Definitions pulled through the Grid Object */
   protected get _columnDefinitions(): Column[] {
-    return (this._grid && this._grid.getColumns) ? this._grid.getColumns() : [];
+    return this._grid?.getColumns() ?? [];
   }
 
   dispose() {
@@ -80,10 +67,10 @@ export class SortService {
    * @param grid SlickGrid Grid object
    * @param dataView SlickGrid DataView object
    */
-  bindBackendOnSort(grid: SlickGrid) {
+  bindBackendOnSort(grid: SlickGridUniversal) {
     this._isBackendGrid = true;
     this._grid = grid;
-    this._dataView = grid?.getData?.() ?? {} as SlickDataView;
+    this._dataView = grid?.getData<SlickDataView>();
 
     // subscribe to the SlickGrid event and call the backend execution
     this._eventHandler.subscribe(grid.onSort, this.onBackendSortChanged.bind(this) as EventListener);
@@ -95,19 +82,25 @@ export class SortService {
    * @param gridOptions Grid Options object
    * @param dataView
    */
-  bindLocalOnSort(grid: SlickGrid) {
+  bindLocalOnSort(grid: SlickGridUniversal) {
     this._isBackendGrid = false;
     this._grid = grid;
-    this._dataView = grid.getData() as SlickDataView;
+    this._dataView = grid?.getData<SlickDataView>();
 
     this.processTreeDataInitialSort();
-    this._eventHandler.subscribe(grid.onSort, this.handleLocalOnSort.bind(this) as EventListener);
+    this._eventHandler.subscribe(grid.onSort, this.handleLocalOnSort.bind(this));
   }
 
   handleLocalOnSort(_e: SlickEventData, args: SingleColumnSort | MultiColumnSort) {
     // multiSort and singleSort are not exactly the same, but we want to structure it the same for the (for loop) after
     // also to avoid having to rewrite the for loop in the sort, we will make the singleSort an array of 1 object
-    const sortColumns: Array<SingleColumnSort> = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as SingleColumnSort).sortCol?.id ?? '', sortAsc: (args as SingleColumnSort).sortAsc, sortCol: (args as SingleColumnSort).sortCol });
+    const sortColumns: Array<SingleColumnSort> = (args.multiColumnSort)
+      ? (args as MultiColumnSort).sortCols
+      : new Array({
+        columnId: (args as SingleColumnSort).sortCol?.id ?? '',
+        sortAsc: (args as SingleColumnSort).sortAsc,
+        sortCol: (args as SingleColumnSort).sortCol
+      });
 
     // keep current sorters
     this._currentLocalSorters = []; // reset current local sorters
@@ -146,9 +139,9 @@ export class SortService {
       // update the grid sortColumns array which will at the same add the visual sort icon(s) on the UI
       const updatedSortColumns: ColumnSort[] = sortedColsWithoutCurrent.map((col) => {
         return {
-          columnId: col && col.sortCol && col.sortCol.id,
-          sortAsc: col && col.sortAsc,
-          sortCol: col && col.sortCol,
+          columnId: col?.sortCol?.id ?? '',
+          sortAsc: col?.sortAsc,
+          sortCol: col?.sortCol,
         };
       });
       this._grid.setSortColumns(updatedSortColumns); // add sort icon in UI
@@ -355,7 +348,7 @@ export class SortService {
     if (!args || !args.grid) {
       throw new Error('Something went wrong when trying to bind the "onBackendSortChanged(event, args)" function, it seems that "args" is not populated correctly');
     }
-    const gridOptions: GridOption = (args.grid && args.grid.getOptions) ? args.grid.getOptions() : {};
+    const gridOptions: GridOption = args.grid?.getOptions() ?? {};
     const backendApi = gridOptions.backendServiceApi;
 
     if (!backendApi || !backendApi.process || !backendApi.service) {
@@ -391,10 +384,10 @@ export class SortService {
   }
 
   /** When a Sort Changes on a Local grid (JSON dataset) */
-  async onLocalSortChanged(grid: SlickGrid, sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, forceReSort = false, emitSortChanged = false) {
+  async onLocalSortChanged(grid: SlickGridUniversal, sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, forceReSort = false, emitSortChanged = false) {
     const datasetIdPropertyName = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const isTreeDataEnabled = this._gridOptions?.enableTreeData ?? false;
-    const dataView = grid.getData?.() as SlickDataView;
+    const dataView = grid.getData<SlickDataView>();
     await this.pubSubService.publish('onBeforeSortChange', { sortColumns }, 0);
 
     if (grid && dataView) {
@@ -488,10 +481,10 @@ export class SortService {
       let value2 = dataRow2[queryFieldName2];
 
       // when item is a complex object (dot "." notation), we need to filter the value contained in the object tree
-      if (queryFieldName1 && queryFieldName1.indexOf('.') >= 0) {
+      if (queryFieldName1?.indexOf('.') >= 0) {
         value1 = getDescendantProperty(dataRow1, queryFieldName1);
       }
-      if (queryFieldName2 && queryFieldName2.indexOf('.') >= 0) {
+      if (queryFieldName2?.indexOf('.') >= 0) {
         value2 = getDescendantProperty(dataRow2, queryFieldName2);
       }
 

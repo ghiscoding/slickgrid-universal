@@ -7,6 +7,7 @@ import {
   Formatters,
   GridOption,
   OperatorType,
+  SlickEventData,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -429,7 +430,7 @@ export default class Example7 {
     return collection.sort((item1, item2) => item1.value - item2.value);
   }
 
-  onBeforeMoveRow(e: Event, data: { rows: number[]; insertBefore: number; }) {
+  onBeforeMoveRow(e: MouseEvent | TouchEvent | SlickEventData, data: { rows: number[]; insertBefore: number; }) {
     for (const rowIdx of data.rows) {
       // no point in moving before or after itself
       if (rowIdx === data.insertBefore || (rowIdx === data.insertBefore - 1 && ((data.insertBefore - 1) !== this.sgb.dataView?.getItemCount()))) {
@@ -440,7 +441,7 @@ export default class Example7 {
     return true;
   }
 
-  onMoveRows(_e: Event, args: { rows: number[]; insertBefore: number; }) {
+  onMoveRows(_e: MouseEvent | TouchEvent | SlickEventData, args: { rows: number[]; insertBefore: number; }) {
     // rows and insertBefore references,
     // note that these references are assuming that the dataset isn't filtered at all
     // which is not always the case so we will recalcualte them and we won't use these reference afterward

@@ -13,7 +13,7 @@ import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
  */
 export const hyperlinkFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
   const columnParams = columnDef && columnDef.params || {};
-  const gridOptions = (grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {};
+  const gridOptions = grid?.getOptions() ?? {};
 
   let displayedText = columnParams.hyperlinkText ? columnParams.hyperlinkText : value;
   displayedText = sanitizeTextByAvailableSanitizer(gridOptions, displayedText);

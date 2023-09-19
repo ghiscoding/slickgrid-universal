@@ -1,20 +1,15 @@
+import { type SlickDataView, SlickEventHandler, SlickGlobalEditorLock } from 'slickgrid';
 import type {
   Column,
   EditCommand,
   EditUndoRedoBuffer,
   ExcelCopyBufferOption,
   GridOption,
-  SlickDataView,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
+  SlickGridUniversal,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { sanitizeHtmlToText } from '../services/domUtilities';
 import { SlickCellExternalCopyManager, SlickCellSelectionModel } from './index';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
 
 /*
   This manager enables users to copy/paste data from/to an external Spreadsheet application
@@ -25,18 +20,19 @@ declare const Slick: SlickNamespace;
   where the browser copies/pastes the serialized data.
 */
 export class SlickCellExcelCopyManager {
+  pluginName: 'CellExcelCopyManager' = 'CellExcelCopyManager' as const;
+
   protected _addonOptions!: ExcelCopyBufferOption;
   protected _bindingEventService: BindingEventService;
   protected _cellExternalCopyManagerPlugin!: SlickCellExternalCopyManager;
   protected _cellSelectionModel!: SlickCellSelectionModel;
   protected _commandQueue!: EditCommand[];
   protected _eventHandler: SlickEventHandler;
-  protected _grid!: SlickGrid;
+  protected _grid!: SlickGridUniversal;
   protected _undoRedoBuffer!: EditUndoRedoBuffer;
-  pluginName: 'CellExcelCopyManager' = 'CellExcelCopyManager' as const;
 
   constructor() {
-    this._eventHandler = new Slick.EventHandler() as SlickEventHandler;
+    this._eventHandler = new SlickEventHandler();
     this._bindingEventService = new BindingEventService();
   }
 
@@ -53,18 +49,18 @@ export class SlickCellExcelCopyManager {
   }
 
   get gridOptions(): GridOption {
-    return this._grid?.getOptions?.() ?? {};
+    return this._grid?.getOptions() ?? {};
   }
 
   get undoRedoBuffer(): EditUndoRedoBuffer {
     return this._undoRedoBuffer;
   }
 
-  init(grid: SlickGrid, options?: ExcelCopyBufferOption) {
+  init(grid: SlickGridUniversal, options?: ExcelCopyBufferOption) {
     this._grid = grid;
     this.createUndoRedoBuffer();
     this._cellSelectionModel = new SlickCellSelectionModel();
-    this._grid.setSelectionModel(this._cellSelectionModel as any);
+    this._grid.setSelectionModel(this._cellSelectionModel);
     this._bindingEventService.bind(document.body, 'keydown', this.handleBodyKeyDown.bind(this) as EventListener);
     this._addonOptions = { ...this.getDefaultOptions(), ...options } as ExcelCopyBufferOption;
     this._cellExternalCopyManagerPlugin = new SlickCellExternalCopyManager();
@@ -119,7 +115,7 @@ export class SlickCellExcelCopyManager {
         }
         commandCtr--;
         const command = this._commandQueue[commandCtr];
-        if (command && Slick.GlobalEditorLock.cancelCurrentEdit()) {
+        if (command && SlickGlobalEditorLock.cancelCurrentEdit()) {
           command.undo();
         }
       },
@@ -129,7 +125,7 @@ export class SlickCellExcelCopyManager {
         }
         const command = this._commandQueue[commandCtr];
         commandCtr++;
-        if (command && Slick.GlobalEditorLock.cancelCurrentEdit()) {
+        if (command && SlickGlobalEditorLock.cancelCurrentEdit()) {
           command.execute();
         }
       }

@@ -1,9 +1,6 @@
-import type {
-  Column,
-  CellRange,
-  FormatterResultObject,
-  SlickEventData,
-} from './index';
+import { SlickEventData } from 'slickgrid';
+
+import type { Column, CellRange, FormatterResultObject, } from './index';
 import type { SlickCellExcelCopyManager, } from '../extensions/slickCellExcelCopyManager';
 
 export interface ExcelCopyBufferOption<T = any> {

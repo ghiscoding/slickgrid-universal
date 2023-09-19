@@ -1,21 +1,17 @@
-import type {
-  MenuCallbackArgs,
-  MenuCommandItem,
-  MenuOptionItem,
-} from './index';
+import type { MenuCallbackArgs, MenuCommandItem, MenuOptionItem } from './index';
 
 export interface CellMenuOption {
   /** Defaults to true, Auto-align dropup or dropdown menu to the left or right depending on grid viewport available space */
   autoAdjustDrop?: boolean;
 
   /** Defaults to 0, Optionally add an offset to the auto-align of the drop menu */
-  autoAdjustDropOffset?: string;
+  autoAdjustDropOffset?: number;
 
   /** Defaults to true, Auto-align drop menu to the left or right depending on grid viewport available space */
   autoAlignSide?: boolean;
 
   /** Defaults to 0, Optionally add an offset to the left/right side auto-align */
-  autoAlignSideOffset?: string;
+  autoAlignSideOffset?: number;
 
   /** Array of Command Items (title, command, disabled, ...) */
   commandItems?: Array<MenuCommandItem | 'divider'>;

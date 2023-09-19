@@ -1,18 +1,17 @@
+import { type SlickDataView, SlickEventHandler } from 'slickgrid';
+
 import type {
   CancellablePromiseWrapper,
   Column,
   ContainerService,
   CustomTooltipOption,
+  DOMEvent,
   Formatter,
   GridOption,
   Observable,
   RxJsFacade,
   SharedService,
-  SlickDataView,
-  SlickEventData,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
+  SlickGridUniversal,
   Subscription,
 } from '@slickgrid-universal/common';
 import {
@@ -24,9 +23,6 @@ import {
   getHtmlElementOffset,
   sanitizeTextByAvailableSanitizer,
 } from '@slickgrid-universal/common';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
 
 type CellType = 'slick-cell' | 'slick-header-column' | 'slick-headerrow-column';
 
@@ -55,6 +51,8 @@ type CellType = 'slick-cell' | 'slick-header-column' | 'slick-headerrow-column';
  *  };
  */
 export class SlickCustomTooltip {
+  name: 'CustomTooltip' = 'CustomTooltip' as const;
+
   protected _addonOptions?: CustomTooltipOption;
   protected _cellAddonOptions?: CustomTooltipOption;
   protected _cellNodeElm?: HTMLDivElement;
@@ -73,12 +71,11 @@ export class SlickCustomTooltip {
     regularTooltipWhiteSpace: 'pre-line',
     whiteSpace: 'normal',
   } as CustomTooltipOption;
-  protected _grid!: SlickGrid;
+  protected _grid!: SlickGridUniversal;
   protected _eventHandler: SlickEventHandler;
-  name: 'CustomTooltip' = 'CustomTooltip' as const;
 
   constructor() {
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
   }
 
   get addonOptions(): CustomTooltipOption | undefined {
@@ -102,7 +99,7 @@ export class SlickCustomTooltip {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return this._grid.getOptions() || {};
+    return this._grid?.getOptions() || {} as GridOption;
   }
 
   /** Getter for the grid uid */
@@ -121,7 +118,7 @@ export class SlickCustomTooltip {
     this._rxjs = rxjs;
   }
 
-  init(grid: SlickGrid, containerService: ContainerService) {
+  init(grid: SlickGridUniversal, containerService: ContainerService) {
     this._grid = grid;
     this._rxjs = containerService.get<RxJsFacade>('RxJsFacade');
     this._sharedService = containerService.get<SharedService>('SharedService');
@@ -180,7 +177,7 @@ export class SlickCustomTooltip {
   }
 
   /** depending on the selector type, execute the necessary handler code */
-  protected handleOnHeaderMouseEnterByType(event: SlickEventData, args: any, selector: CellType) {
+  protected handleOnHeaderMouseEnterByType(event: DOMEvent<HTMLDivElement>, args: any, selector: CellType) {
     this._cellType = selector;
 
     // before doing anything, let's remove any previous tooltip before
@@ -221,7 +218,7 @@ export class SlickCustomTooltip {
     }
   }
 
-  protected async handleOnMouseEnter(event: SlickEventData) {
+  protected async handleOnMouseEnter(event: DOMEvent<HTMLDivElement>) {
     this._cellType = 'slick-cell';
 
     // before doing anything, let's remove any previous tooltip before
@@ -230,7 +227,7 @@ export class SlickCustomTooltip {
 
     if (event && this._grid) {
       // get cell only when it's possible (ie, Composite Editor will not be able to get cell and so it will never show any tooltip)
-      const targetClassName = (event?.target as HTMLDivElement)?.closest('.slick-cell')?.className;
+      const targetClassName = event?.target?.closest('.slick-cell')?.className;
       const cell = (targetClassName && /l\d+/.exec(targetClassName || '')) ? this._grid.getCellFromEvent(event) : null;
 
       if (cell) {

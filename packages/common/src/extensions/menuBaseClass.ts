@@ -1,5 +1,6 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { hasData } from '@slickgrid-universal/utils';
+import { SlickEventHandler } from 'slickgrid';
 
 import type {
   CellMenu,
@@ -13,17 +14,12 @@ import type {
   HeaderMenu,
   MenuCommandItem,
   MenuOptionItem,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
+  SlickGridUniversal,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import type { SharedService } from '../services/shared.service';
 import { createDomElement, emptyElement } from '../services/domUtilities';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
 
 export type MenuType = 'command' | 'option';
 export type ExtendableItemTypes = HeaderButtonItem | MenuCommandItem | MenuOptionItem | 'divider';
@@ -54,7 +50,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     protected readonly sharedService: SharedService,
   ) {
     this._bindEventService = new BindingEventService();
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
   }
 
   get addonOptions(): M {
@@ -68,7 +64,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     return this._eventHandler;
   }
 
-  get grid(): SlickGrid {
+  get grid(): SlickGridUniversal {
     return this.sharedService.slickGrid;
   }
 

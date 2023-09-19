@@ -9,7 +9,7 @@ const gridStub = {
   setColumns: jest.fn(),
   setOptions: jest.fn(),
   registerPlugin: jest.fn(),
-} as unknown as SlickGrid;
+} as unknown as SlickGridUniversal;
 
 const backendUtilityServiceStub = {
   executeBackendProcessesCallback: jest.fn(),

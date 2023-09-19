@@ -5,6 +5,7 @@ import type {
   PubSubService,
   ServicePagination,
   SharedService,
+  SlickGridUniversal,
   Subscription,
   TranslaterService,
 } from '@slickgrid-universal/common';
@@ -12,7 +13,6 @@ import {
   Constants,
   createDomElement,
   getTranslationPrefix,
-  SlickGrid,
 } from '@slickgrid-universal/common';
 import { BindingHelper } from '@slickgrid-universal/binding';
 
@@ -97,7 +97,7 @@ export class SlickPaginationComponent {
     // the setter has to be declared but we won't use it, instead we will use the "changeToCurrentPage()" to only update the value after ENTER keydown event
   }
 
-  get grid(): SlickGrid {
+  get grid(): SlickGridUniversal {
     return this.sharedService.slickGrid;
   }
 

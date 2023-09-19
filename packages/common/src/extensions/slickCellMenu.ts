@@ -32,6 +32,8 @@ import { MenuFromCellBaseClass } from './menuFromCellBaseClass';
  *   }];
  */
 export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
+  pluginName: 'CellMenu' = 'CellMenu' as const;
+
   protected _defaults = {
     autoAdjustDrop: true,     // dropup/dropdown
     autoAlignSide: true,      // left/right
@@ -39,7 +41,6 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
     autoAlignSideOffset: 0,
     hideMenuOnScroll: true,
   } as unknown as CellMenuOption;
-  pluginName: 'CellMenu' = 'CellMenu' as const;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(

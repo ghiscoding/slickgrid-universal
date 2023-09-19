@@ -1,4 +1,4 @@
-import { Column, ExcelStylesheet, FieldType, Formatters, GridOption, GroupTotalFormatters, SlickGrid } from '@slickgrid-universal/common';
+import { Column, ExcelStylesheet, FieldType, Formatters, GridOption, GroupTotalFormatters, SlickGridUniversal } from '@slickgrid-universal/common';
 
 import { getExcelFormatFromGridFormatter, getExcelNumberCallback, getNumericFormatterOptions, useCellFormatByFieldType } from './excelUtils';
 
@@ -13,7 +13,7 @@ const gridStub = {
   getOptions: () => mockGridOptions,
   getColumns: jest.fn(),
   getGrouping: jest.fn(),
-} as unknown as SlickGrid;
+} as unknown as SlickGridUniversal;
 
 const stylesheetStub = {
   createFormat: jest.fn(),
@@ -683,7 +683,7 @@ describe('excelUtils', () => {
         const columnDef = {
           type: FieldType.number, formatter: Formatters.decimal,
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          groupTotalsFormatter: (totals: any, _columnDef: Column, _grid: SlickGrid) => `Some Total: ${totals.sum}`,
+          groupTotalsFormatter: (totals: any, _columnDef: Column, _grid: SlickGridUniversal) => `Some Total: ${totals.sum}`,
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, { numberFormatter: { id: 3 } }, columnDef, gridStub, 'group');
 

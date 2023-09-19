@@ -15,7 +15,6 @@ import {
   Formatters,
   GridOption,
   OperatorType,
-  SlickNamespace,
   SortComparers,
 
   // utilities
@@ -26,14 +25,13 @@ import {
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import moment from 'moment-mini';
+import { SlickGlobalEditorLock } from 'slickgrid';
 
 import countriesJson from './data/countries.json?raw';
 import { ExampleGridOptions } from './example-grid-options';
 import { loadComponent } from './utilities';
 import './example11.scss';
 
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
 const LOCAL_STORAGE_KEY = 'gridViewPreset';
 
 // you can create custom validator to pass to an inline editor
@@ -261,7 +259,7 @@ export default class Example11 {
         excludeFromExport: true,
         formatter: () => `<span class="button-style padding-1px" style="display: inline-block; line-height: 18px;" title"Delete the Row"><span class="mdi mdi-close color-danger" title="Delete Current Row"></span></span>
         &nbsp;<span class="button-style padding-1px" style="display: inline-block; line-height: 18px;" title="Mark as Completed"><span class="mdi mdi-check-underline"></span></span>`,
-        onCellClick: (event, args) => {
+        onCellClick: (event: Event, args) => {
           const dataContext = args.dataContext;
           if ((event.target as HTMLElement).classList.contains('mdi-close')) {
             if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"`)) {
@@ -551,7 +549,7 @@ export default class Example11 {
   undoLastEdit(showLastEditor = false) {
     const lastEdit = this.editQueue.pop();
     const lastEditCommand = lastEdit?.editCommand;
-    if (lastEdit && lastEditCommand && Slick.GlobalEditorLock.cancelCurrentEdit()) {
+    if (lastEdit && lastEditCommand && SlickGlobalEditorLock.cancelCurrentEdit()) {
       lastEditCommand.undo();
 
       // remove unsaved css class from that cell
@@ -569,7 +567,7 @@ export default class Example11 {
   undoAllEdits() {
     for (const lastEdit of this.editQueue) {
       const lastEditCommand = lastEdit?.editCommand;
-      if (lastEditCommand && Slick.GlobalEditorLock.cancelCurrentEdit()) {
+      if (lastEditCommand && SlickGlobalEditorLock.cancelCurrentEdit()) {
         lastEditCommand.undo();
 
         // remove unsaved css class from that cell

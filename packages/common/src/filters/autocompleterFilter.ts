@@ -24,7 +24,7 @@ import type {
   FilterCallbackArg,
   GridOption,
   Locale,
-  SlickGrid,
+  SlickGridUniversal,
 } from '../interfaces/index';
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter';
 import { createDomElement, emptyElement, } from '../services';
@@ -51,7 +51,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   /** DOM Element Name, useful for auto-detecting positioning (dropup / dropdown) */
   elementName!: string;
 
-  grid!: SlickGrid;
+  grid!: SlickGridUniversal;
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
@@ -137,7 +137,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+    return this.grid?.getOptions() ?? {};
   }
 
   /** Kraaden AutoComplete instance */

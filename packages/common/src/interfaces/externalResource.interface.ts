@@ -1,4 +1,4 @@
-import type { SlickGrid } from './slickGrid.interface';
+import type { SlickGridUniversal } from './index';
 import type { ContainerService } from '../services/index';
 
 export interface ExternalResource {
@@ -6,7 +6,7 @@ export interface ExternalResource {
   className?: string;
 
   /** Initialize the External Resource (Component or Service) */
-  init?: (grid: SlickGrid, container: ContainerService) => void;
+  init?: (grid: SlickGridUniversal, container: ContainerService) => void;
 
   /** Dispose method */
   dispose?: () => void;

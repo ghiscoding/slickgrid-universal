@@ -1,13 +1,12 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy } from '@slickgrid-universal/utils';
+import { SlickEvent, SlickEventData } from 'slickgrid';
 
-import { CellMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import { CellMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, type SlickGridUniversal } from '../../interfaces/index';
 import { SlickCellMenu } from '../slickCellMenu';
 import { BackendUtilityService, SharedService, } from '../../services';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-
-declare const Slick: SlickNamespace;
 
 const removeExtraSpaces = (textS) => `${textS}`.replace(/[\n\r]\s+/g, '');
 
@@ -71,10 +70,10 @@ const gridStub = {
   setOptions: jest.fn(),
   setSortColumns: jest.fn(),
   updateColumnHeader: jest.fn(),
-  onClick: new Slick.Event(),
-  onScroll: new Slick.Event(),
-  onSort: new Slick.Event(),
-} as unknown as SlickGrid;
+  onClick: new SlickEvent(),
+  onScroll: new SlickEvent(),
+  onSort: new SlickEvent(),
+} as unknown as SlickGridUniversal;
 
 const pubSubServiceStub = {
   publish: jest.fn(),
@@ -179,7 +178,7 @@ describe('CellMenu Plugin', () => {
     beforeEach(() => {
       slickCellElm = document.createElement('div');
       slickCellElm.className = 'slick-cell';
-      eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+      eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
       eventData.target = slickCellElm;
 
       jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);

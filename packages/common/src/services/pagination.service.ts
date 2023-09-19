@@ -1,24 +1,20 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { dequal } from 'dequal/lite';
+import { type SlickDataView, SlickEventHandler, } from 'slickgrid';
 
 import type {
   BackendServiceApi,
   CurrentPagination,
   Pagination,
   ServicePagination,
-  SlickDataView,
-  SlickGrid,
-  SlickNamespace,
+  SlickGridUniversal,
 } from '../interfaces/index';
 import type { BackendUtilityService } from './backendUtility.service';
 import type { SharedService } from './shared.service';
 import type { Observable, RxJsFacade } from './rxjsFacade';
 
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
-
 export class PaginationService {
-  protected _eventHandler = new Slick.EventHandler();
+  protected _eventHandler = new SlickEventHandler();
   protected _initialized = false;
   protected _isLocalGrid = true;
   protected _backendServiceApi: BackendServiceApi | undefined;
@@ -34,14 +30,14 @@ export class PaginationService {
   protected _subscriptions: EventSubscription[] = [];
 
   /** SlickGrid Grid object */
-  grid!: SlickGrid;
+  grid!: SlickGridUniversal;
 
   /** Constructor */
   constructor(protected readonly pubSubService: BasePubSubService, protected readonly sharedService: SharedService, protected readonly backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) { }
 
   /** Getter of SlickGrid DataView object */
   get dataView(): SlickDataView | undefined {
-    return this.grid?.getData?.() ?? {} as SlickDataView;
+    return this.grid?.getData<SlickDataView>() ?? {};
   }
 
   set paginationOptions(paginationOptions: Pagination) {
@@ -90,7 +86,7 @@ export class PaginationService {
     this.rxjs = rxjs;
   }
 
-  init(grid: SlickGrid, paginationOptions: Pagination, backendServiceApi?: BackendServiceApi) {
+  init(grid: SlickGridUniversal, paginationOptions: Pagination, backendServiceApi?: BackendServiceApi) {
     this._availablePageSizes = paginationOptions.pageSizes;
     this.grid = grid;
     this._backendServiceApi = backendServiceApi;

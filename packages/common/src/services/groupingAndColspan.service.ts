@@ -1,32 +1,22 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
+import { type SlickDataView, SlickEventHandler } from 'slickgrid';
 
-import type {
-  Column,
-  GridOption,
-  SlickDataView,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
-  SlickResizer,
-} from './../interfaces/index';
+import type { Column, GridOption, SlickGridUniversal, SlickResizer, } from './../interfaces/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import { createDomElement, emptyElement } from './domUtilities';
 
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
-
 export class GroupingAndColspanService {
   protected _eventHandler: SlickEventHandler;
-  protected _grid!: SlickGrid;
+  protected _grid!: SlickGridUniversal;
   protected _subscriptions: EventSubscription[] = [];
 
   constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: BasePubSubService) {
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
   }
 
   /** Getter of SlickGrid DataView object */
   get _dataView(): SlickDataView {
-    return (this._grid?.getData && this._grid.getData()) as SlickDataView;
+    return this._grid?.getData<SlickDataView>() ?? {};
   }
 
   /** Getter of the SlickGrid Event Handler */
@@ -36,12 +26,12 @@ export class GroupingAndColspanService {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return (this._grid?.getOptions) ? this._grid.getOptions() : {};
+    return this._grid?.getOptions() ?? {} as GridOption;
   }
 
   /** Getter for the Column Definitions pulled through the Grid Object */
   protected get _columnDefinitions(): Column[] {
-    return (this._grid && this._grid.getColumns) ? this._grid.getColumns() : [];
+    return this._grid?.getColumns() ?? [];
   }
 
   /**
@@ -49,7 +39,7 @@ export class GroupingAndColspanService {
    * @param {object} grid
    * @param {object} resizerPlugin
    */
-  init(grid: SlickGrid) {
+  init(grid: SlickGridUniversal) {
     this._grid = grid;
 
     if (grid && this._gridOptions) {

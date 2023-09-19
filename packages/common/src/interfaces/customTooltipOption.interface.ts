@@ -1,8 +1,8 @@
 import type { Observable, Subject } from '../services/rxjsFacade';
-import type { Column, Formatter, SlickGrid } from './index';
+import type { Column, Formatter, SlickGridUniversal } from './index';
 
 type PostProcessOutput<P> = P & { [asyncParamsPropName: string]: any; };
-export type asyncProcess<T = any> = (row: number, cell: number, value: any, columnDef: Column<T>, dataContext: T, grid?: SlickGrid) => Promise<PostProcessOutput<T>> | Observable<PostProcessOutput<T>> | Subject<PostProcessOutput<T>>;
+export type AsyncProcess<T = any> = (row: number, cell: number, value: any, columnDef: Column<T>, dataContext: T, grid?: SlickGridUniversal) => Promise<PostProcessOutput<T>> | Observable<PostProcessOutput<T>> | Subject<PostProcessOutput<T>>;
 
 export interface CustomTooltipOption<T = any> {
   /** defaults to "__params", optionally change the property name that will be used to merge the data returned by the async method into the `dataContext` object */
@@ -12,7 +12,7 @@ export interface CustomTooltipOption<T = any> {
    * Async Post method returning a Promise, it must return an object with 1 or more properties
    * Note: internally the data that will automatically be merged into the `dataContext` object under the `__params` property so that you can use it in your `asyncPostFormatter` formatter.
    */
-  asyncProcess?: asyncProcess<T>;
+  asyncProcess?: AsyncProcess<T>;
 
   /** Formatter to execute once the async process is completed, to displayed the actual text result (used when dealing with an Async API to get data to display later in the tooltip) */
   asyncPostFormatter?: Formatter;
@@ -92,5 +92,5 @@ export interface CustomTooltipOption<T = any> {
   // Methods
 
   /** Callback method that user can override the default behavior of showing the tooltip. If it returns False, then the tooltip won't show */
-  usabilityOverride?: (args: { cell: number; row: number; column: Column; dataContext: any; type: 'cell' | 'header' | 'header-row'; grid: SlickGrid; }) => boolean;
+  usabilityOverride?: (args: { cell: number; row: number; column: Column; dataContext: any; type: 'cell' | 'header' | 'header-row'; grid: SlickGridUniversal; }) => boolean;
 }

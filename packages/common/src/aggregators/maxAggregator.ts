@@ -1,3 +1,4 @@
+import type { SlickGroupTotals } from 'slickgrid';
 import { isNumber } from '@slickgrid-universal/utils';
 
 import type { Aggregator } from './../interfaces/aggregator.interface';
@@ -65,13 +66,13 @@ export class MaxAggregator implements Aggregator {
     }
   }
 
-  storeResult(groupTotals: any) {
+  storeResult(groupTotals: SlickGroupTotals & { [type: string]: Record<number | string, number | null>; }) {
     let max = this._max;
     this.addGroupTotalPropertiesWhenNotExist(groupTotals);
 
     // when dealing with Tree Data, we also need to take the parent's total and add it to the final max
     if (this._isTreeAggregator && max !== null) {
-      const parentMax = groupTotals[this._type][this._field];
+      const parentMax = groupTotals[this._type][this._field] as number;
       if (isNumber(parentMax) && parentMax > max) {
         max = parentMax;
       }

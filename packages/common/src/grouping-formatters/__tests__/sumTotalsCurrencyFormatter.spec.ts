@@ -5,7 +5,7 @@ describe('sumTotalsCurrencyFormatter', () => {
   // stub some methods of the SlickGrid Grid instance
   const gridStub = {
     getOptions: jest.fn()
-  } as unknown as SlickGrid;
+  } as unknown as SlickGridUniversal;
 
   it('should display an empty string when no value is provided', () => {
     const output = sumTotalsCurrencyFormatter({}, {} as Column, {} as SlickGrid);

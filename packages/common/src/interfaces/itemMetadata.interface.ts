@@ -15,7 +15,7 @@ export interface ItemMetadata {
   focusable?: boolean;
 
   /** A custom group formatter. */
-  formatter?: GroupTotalsFormatter;
+  formatter?: GroupTotalsFormatter | Formatter;
 
   /** Whether or not a row or any cells in it can be selected. */
   selectable?: boolean;

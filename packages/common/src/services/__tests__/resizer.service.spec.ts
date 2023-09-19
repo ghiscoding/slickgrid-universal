@@ -1,11 +1,11 @@
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
+import { SlickEvent } from 'slickgrid';
 
 import { Editors } from '../../editors/index';
 import { FieldType, } from '../../enums/index';
-import { Column, GridOption, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import { Column, GridOption, SlickGridUniversal, } from '../../interfaces/index';
 import { ResizerService } from '../resizer.service';
 
-declare const Slick: SlickNamespace;
 const DATAGRID_MIN_HEIGHT = 180;
 const DATAGRID_MIN_WIDTH = 300;
 const DATAGRID_BOTTOM_PADDING = 20;
@@ -54,9 +54,9 @@ const gridStub = {
   setPreHeaderPanelVisibility: jest.fn(),
   setOptions: jest.fn(),
   setSortColumns: jest.fn(),
-  onColumnsResizeDblClick: new Slick.Event(),
-  onSort: new Slick.Event(),
-} as unknown as SlickGrid;
+  onColumnsResizeDblClick: new SlickEvent(),
+  onSort: new SlickEvent(),
+} as unknown as SlickGridUniversal;
 
 describe('Resizer Service', () => {
   let eventPubSubService: EventPubSubService;

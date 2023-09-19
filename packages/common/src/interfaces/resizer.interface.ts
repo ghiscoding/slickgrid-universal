@@ -1,8 +1,9 @@
+import type { SlickEventData } from 'slickgrid';
+
 import type {
   GridSize,
   ResizerOption,
-  SlickEventData,
-  SlickGrid,
+  SlickGridUniversal,
   SlickResizer,
 } from './index';
 
@@ -14,8 +15,8 @@ export interface Resizer extends ResizerOption {
   onExtensionRegistered?: (plugin: SlickResizer) => void;
 
   /** triggered before rows are being moved */
-  onGridAfterResize?: (e: SlickEventData, args: { grid: SlickGrid; dimensions: GridSize; }) => void;
+  onGridAfterResize?: (e: SlickEventData, args: { grid: SlickGridUniversal; dimensions: GridSize; }) => void;
 
   /** triggered when rows are being moved */
-  onGridBeforeResize?: (e: SlickEventData, args: { grid: SlickGrid; }) => void;
+  onGridBeforeResize?: (e: SlickEventData, args: { grid: SlickGridUniversal; }) => void;
 }

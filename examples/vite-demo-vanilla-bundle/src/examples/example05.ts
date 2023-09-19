@@ -318,7 +318,7 @@ export default class Example5 {
   updateFirstRow() {
     // to update any of the grid rows, we CANNOT simply pass a new updated object
     // we MUST read it from the DataView first (that will include all mutated Tree Data props, like `__treeLevel`, `__parentId`, ...) and then update it
-    const item = this.sgb.dataView?.getItemById<any>(0);
+    const item = this.sgb.dataView?.getItemById(0);
 
     // option 1
     /*

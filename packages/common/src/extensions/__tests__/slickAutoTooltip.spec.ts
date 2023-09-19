@@ -1,8 +1,8 @@
-import { AutoTooltipOption, Column, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { SlickEvent, SlickEventData } from 'slickgrid';
+
+import { AutoTooltipOption, Column, type SlickGridUniversal } from '../../interfaces/index';
 import { SharedService } from '../../services/shared.service';
 import { SlickAutoTooltip } from '../slickAutoTooltip';
-
-declare const Slick: SlickNamespace;
 
 let addonOptions: AutoTooltipOption = {
   enableForCells: true,
@@ -16,9 +16,9 @@ const gridStub = {
   getCellFromEvent: jest.fn(),
   getOptions: jest.fn(),
   registerPlugin: jest.fn(),
-  onHeaderMouseEnter: new Slick.Event(),
-  onMouseEnter: new Slick.Event(),
-} as unknown as SlickGrid;
+  onHeaderMouseEnter: new SlickEvent(),
+  onMouseEnter: new SlickEvent(),
+} as unknown as SlickGridUniversal;
 
 const mockColumns = [      // The column definitions
   { name: 'Short', field: 'short', width: 100 },
@@ -58,6 +58,7 @@ describe('AutoTooltip Plugin', () => {
     });
 
     afterEach(() => {
+      plugin.destroy();
       plugin.dispose();
     });
 
@@ -70,7 +71,7 @@ describe('AutoTooltip Plugin', () => {
       Object.defineProperty(mockNodeElm, 'clientWidth', { writable: true, configurable: true, value: 150 });
       Object.defineProperty(mockNodeElm, 'scrollWidth', { writable: true, configurable: true, value: 100 });
 
-      gridStub.onMouseEnter.notify({ grid: gridStub }, new Slick.EventData());
+      gridStub.onMouseEnter.notify({ column: mockColumns[0], grid: gridStub }, new SlickEventData());
 
       expect(mockNodeElm.title).toBe('');
     });
@@ -84,8 +85,8 @@ describe('AutoTooltip Plugin', () => {
       Object.defineProperty(mockNodeElm, 'clientWidth', { writable: true, configurable: true, value: 150 });
       Object.defineProperty(mockNodeElm, 'scrollWidth', { writable: true, configurable: true, value: 100 });
 
-      const eventData = new Slick.EventData();
-      gridStub.onMouseEnter.notify({ grid: gridStub }, new Slick.EventData());
+      const eventData = new SlickEventData();
+      gridStub.onMouseEnter.notify({ column: mockColumns[0], grid: gridStub }, new SlickEventData());
       gridStub.onHeaderMouseEnter.notify({ column: mockColumns[4], grid: gridStub }, eventData);
 
       expect(mockNodeElm.title).toBe('');
@@ -110,7 +111,7 @@ describe('AutoTooltip Plugin', () => {
       Object.defineProperty(mockNodeElm, 'clientWidth', { writable: true, configurable: true, value: 150 });
       Object.defineProperty(mockNodeElm, 'scrollWidth', { writable: true, configurable: true, value: 100 });
 
-      gridStub.onMouseEnter.notify({ grid: gridStub }, new Slick.EventData());
+      gridStub.onMouseEnter.notify({ column: mockColumns[0], grid: gridStub }, new SlickEventData());
 
       expect(mockNodeElm.title).toBe('');
     });
@@ -124,7 +125,7 @@ describe('AutoTooltip Plugin', () => {
       Object.defineProperty(mockNodeElm, 'clientWidth', { writable: true, configurable: true, value: 140 });
       Object.defineProperty(mockNodeElm, 'scrollWidth', { writable: true, configurable: true, value: 175 });
 
-      gridStub.onMouseEnter.notify({ grid: gridStub }, new Slick.EventData());
+      gridStub.onMouseEnter.notify({ column: mockColumns[0], grid: gridStub }, new SlickEventData());
 
       expect(mockNodeElm.title).toBe('my super very lon...');
     });
@@ -143,7 +144,7 @@ describe('AutoTooltip Plugin', () => {
       Object.defineProperty(mockNodeElm, 'clientWidth', { writable: true, configurable: true, value: 175 });
       Object.defineProperty(mockNodeElm, 'scrollWidth', { writable: true, configurable: true, value: 50 });
 
-      const eventData = new Slick.EventData();
+      const eventData = new SlickEventData();
       Object.defineProperty(eventData, 'target', { writable: true, configurable: true, value: mockNodeElm });
       gridStub.onHeaderMouseEnter.notify({ column: mockColumns[0], grid: gridStub }, eventData);
 
@@ -165,9 +166,9 @@ describe('AutoTooltip Plugin', () => {
       Object.defineProperty(mockNodeElm, 'clientWidth', { writable: true, configurable: true, value: 144 });
       Object.defineProperty(mockHeaderColElm, 'clientWidth', { writable: true, configurable: true, value: 130 });
 
-      const eventData = new Slick.EventData();
+      const eventData = new SlickEventData();
       Object.defineProperty(eventData, 'target', { writable: true, configurable: true, value: mockHeaderColElm });
-      gridStub.onMouseEnter.notify({ grid: gridStub }, eventData);
+      gridStub.onMouseEnter.notify({ column: mockColumns[0], grid: gridStub }, eventData);
       gridStub.onHeaderMouseEnter.notify({ column: mockColumns[4], grid: gridStub }, eventData);
 
       expect(mockNodeElm.title).toBe('Long header creates tooltip');
@@ -188,9 +189,9 @@ describe('AutoTooltip Plugin', () => {
       Object.defineProperty(mockNodeElm, 'clientWidth', { writable: true, configurable: true, value: 144 });
       Object.defineProperty(mockHeaderColElm, 'clientWidth', { writable: true, configurable: true, value: 130 });
 
-      const eventData = new Slick.EventData();
+      const eventData = new SlickEventData();
       Object.defineProperty(eventData, 'target', { writable: true, configurable: true, value: mockHeaderColElm });
-      gridStub.onMouseEnter.notify({ grid: gridStub }, eventData);
+      gridStub.onMouseEnter.notify({ column: mockColumns[0], grid: gridStub }, eventData);
       gridStub.onHeaderMouseEnter.notify({ column: mockColumns[5], grid: gridStub }, eventData);
 
       expect(mockNodeElm.title).toBe('');
@@ -212,9 +213,9 @@ describe('AutoTooltip Plugin', () => {
       Object.defineProperty(mockHeaderColElm, 'clientWidth', { writable: true, configurable: true, value: 50 });
       Object.defineProperty(mockHeaderColElm, 'scrollWidth', { writable: true, configurable: true, value: 175 });
 
-      const eventData = new Slick.EventData();
+      const eventData = new SlickEventData();
       Object.defineProperty(eventData, 'target', { writable: true, configurable: true, value: mockNodeElm });
-      gridStub.onMouseEnter.notify({ grid: gridStub }, eventData);
+      gridStub.onMouseEnter.notify({ column: mockColumns[0], grid: gridStub }, eventData);
       gridStub.onHeaderMouseEnter.notify({ column: mockColumns[4], grid: gridStub }, eventData);
 
       expect(mockNodeElm.title).toBe('Long header creat...');

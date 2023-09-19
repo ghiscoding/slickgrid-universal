@@ -4,7 +4,7 @@ import { currencyFormatter } from '../currencyFormatter';
 describe('the Currency Formatter', () => {
   const gridStub = {
     getOptions: jest.fn()
-  } as unknown as SlickGrid;
+  } as unknown as SlickGridUniversal;
 
   beforeEach(() => {
     jest.spyOn(global.console, 'warn').mockReturnValue();

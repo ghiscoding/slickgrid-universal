@@ -2,7 +2,7 @@ import { type Formatter } from './../interfaces/index';
 
 /** Takes a cell value and translates it (translater). Requires an instance of the Translate Service:: `translater: this.translate */
 export const translateFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
-  const gridOptions = (grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {};
+  const gridOptions = grid?.getOptions() ?? {};
   const translater = gridOptions.translater || (columnDef && columnDef.params && columnDef.params.translater);
 
   if (!translater || typeof translater.translate !== 'function') {

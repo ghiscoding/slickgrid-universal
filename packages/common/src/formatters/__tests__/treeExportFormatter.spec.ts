@@ -4,7 +4,7 @@ import { treeExportFormatter } from '../treeExportFormatter';
 const gridStub = {
   getData: jest.fn(),
   getOptions: jest.fn(),
-} as unknown as SlickGrid;
+} as unknown as SlickGridUniversal;
 
 describe('Tree Export Formatter', () => {
   let dataset: any[];

@@ -1,4 +1,5 @@
 import type { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
+import type { GridOption as GridOptionCore, SlickEditorLock } from 'slickgrid';
 
 import type {
   AutoResizeOption,
@@ -36,10 +37,11 @@ import type {
   TextExportOption,
   TreeDataOption,
 } from './index';
-import type { ColumnReorderFunction, GridAutosizeColsMode, OperatorType, OperatorString, } from '../enums/index';
+import type { GridAutosizeColsMode, OperatorType, OperatorString, } from '../enums/index';
 import type { TranslaterService } from '../services/translater.service';
 
-export interface GridOption {
+export interface GridOption<C extends Column = Column> extends GridOptionCore<C> {
+  // alwaysAllowHorizontalScroll?: boolean;
   /** CSS class name used on newly added row */
   addNewRowCssClass?: string;
 
@@ -167,12 +169,12 @@ export interface GridOption {
   customTooltip?: CustomTooltipOption;
 
   /** Data item column value extractor (getter) that can be used by the Excel like copy buffer plugin */
-  dataItemColumnValueExtractor?: (item: any, columnDef: Column) => any;
+  dataItemColumnValueExtractor?: null | ((item: any, columnDef: C) => any);
 
   /** Data item column value setter that can be used by the Excel like copy buffer plugin */
-  dataItemColumnValueSetter?: (item: any, columnDef: Column, value: any) => void;
+  dataItemColumnValueSetter?: (item: any, columnDef: C, value: any) => void;
 
-  /** Unique property name on the dataset used by Slick.Data.DataView */
+  /** Unique property name on the dataset used by SlickDataView */
   datasetIdPropertyName?: string;
 
   /** Some of the SlickGrid DataView options */
@@ -226,13 +228,13 @@ export interface GridOption {
   editable?: boolean;
 
   /** option to intercept edit commands and implement undo support. */
-  editCommandHandler?: (item: any, column: Column, command: EditCommand) => void;
+  editCommandHandler?: (item: any, column: C, command: EditCommand) => void;
 
   /** Editor classes factory */
   editorFactory?: any;
 
   /** a global singleton editor lock. */
-  editorLock?: any;
+  editorLock?: SlickEditorLock;
 
   /** Default to 450ms and only applies to Composite Editor, how long to wait until we start validating the editor changes on Editor that support it (integer, float, text, longText). */
   editorTypingDebounce?: number;
@@ -284,7 +286,7 @@ export interface GridOption {
    * When provided as a boolean, it will permits the user to move an entire column from a position to another.
    * We could also provide a Column Reorder function, there's mostly only 1 use for this which is the SlickDraggableGrouping plugin.
    */
-  enableColumnReorder?: boolean | ColumnReorderFunction;
+  // enableColumnReorder?: boolean | ColumnReorderFunction;
 
   /**
    * Defaults to true, when doing a double-click in the column resize section (top right of a column when the mouse resize icon shows up),
@@ -408,6 +410,9 @@ export interface GridOption {
    */
   filterTypingDebounce?: number;
 
+  /** Firefox max supported CSS height */
+  ffMaxSupportedCssHeight?: number;
+
   /** Defaults to 25, which is the grid footer row panel height */
   footerRowHeight?: number;
 
@@ -418,7 +423,7 @@ export interface GridOption {
   forceSyncScrolling?: boolean;
 
   /** Formatter classes factory */
-  formatterFactory?: any;
+  // formatterFactory?: { getFormatter: (col: C) => Formatter; } | null;
 
   /** Formatter commonly used options defined for the entire grid */
   formatterOptions?: FormatterOption;
@@ -501,6 +506,9 @@ export interface GridOption {
   /** Do we leave space for new rows in the DOM visible buffer */
   leaveSpaceForNewRows?: boolean;
 
+  /** Max supported CSS height */
+  maxSupportedCssHeight?: number;
+
   /** What is the minimum row buffer to use? */
   minRowBuffer?: number;
 
@@ -577,6 +585,9 @@ export interface GridOption {
    * but you could optionally pass your own sanitizer function which will run instead of DOM Purify
    */
   sanitizer?: (dirtyHtml: string) => string;
+
+  /** Defaults to 50, render throttling when scrolling large dataset */
+  scrollRenderThrottling?: number;
 
   /** CSS class name used when cell is selected */
   selectedCellCssClass?: string;

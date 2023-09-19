@@ -20,7 +20,7 @@ import type {
   FlatpickrOption,
   GridOption,
   OperatorDetail,
-  SlickGrid,
+  SlickGridUniversal,
 } from '../interfaces/index';
 import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
 import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
@@ -42,7 +42,7 @@ export class DateFilter implements Filter {
   protected _shouldTriggerQuery = true;
   inputFilterType: 'compound' | 'range' = 'range';
   flatInstance!: FlatpickrInstance;
-  grid!: SlickGrid;
+  grid!: SlickGridUniversal;
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
@@ -54,12 +54,12 @@ export class DateFilter implements Filter {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get gridOptions(): GridOption {
-    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+    return this.grid?.getOptions() ?? {};
   }
 
   /** Getter for the Column Filter */
   get columnFilter(): ColumnFilter {
-    return this.columnDef && this.columnDef.filter || {};
+    return this.columnDef?.filter || {} as ColumnFilter;
   }
 
   /** Getter for the Current Date(s) selected */

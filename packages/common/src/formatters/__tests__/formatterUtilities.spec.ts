@@ -10,7 +10,7 @@ import { multipleFormatter } from '../multipleFormatter';
 describe('formatterUtilities', () => {
   const gridStub = {
     getOptions: jest.fn()
-  } as unknown as SlickGrid;
+  } as unknown as SlickGridUniversal;
 
   describe('autoAddEditorFormatterToColumnsWithEditor', () => {
     let columnDefinitions: Column[];
