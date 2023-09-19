@@ -78,7 +78,7 @@
     "dompurify": "^3.0.5",
     "flatpickr": "^4.6.13",
     "moment-mini": "^2.29.4",
-    "multiple-select-vanilla": "^0.4.9",
+    "multiple-select-vanilla": "^0.4.10",
     "slickgrid": "^5.0.0-alpha.1",
     "sortablejs": "^1.15.0",
     "un-flatten-tree": "^2.0.12"
@@ -91,9 +91,9 @@
     "cross-env": "^7.0.3",
     "cssnano": "^6.0.1",
     "npm-run-all2": "^6.0.6",
-    "postcss": "^8.4.29",
+    "postcss": "^8.4.30",
     "postcss-cli": "^10.1.0",
-    "sass": "^1.66.1"
+    "sass": "^1.67.0"
   },
   "engines": {
     "node": ">=16.15.0",

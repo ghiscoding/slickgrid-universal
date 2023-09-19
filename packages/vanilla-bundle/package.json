@@ -67,7 +67,7 @@
     "flatpickr": "^4.6.13",
     "slickgrid": "^5.0.0-alpha.1",
     "sortablejs": "^1.15.0",
-    "whatwg-fetch": "^3.6.18"
+    "whatwg-fetch": "^3.6.19"
   },
   "devDependencies": {
     "@slickgrid-universal/graphql": "workspace:~",
