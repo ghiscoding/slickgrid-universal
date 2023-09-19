@@ -1,3 +1,3 @@
-import type { SlickGrid } from '../interfaces/slickGrid.interface';
+import { SlickGridUniversal } from '../interfaces/index';
 
-export type UsabilityOverrideFn = (row: number, dataContext: any, grid: SlickGrid) => boolean;
+export type UsabilityOverrideFn = (row: number, dataContext: any, grid: SlickGridUniversal) => boolean;

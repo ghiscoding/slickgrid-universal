@@ -4,7 +4,7 @@ import { percentCompleteFormatter } from '../percentCompleteFormatter';
 describe('the Percent Complete Formatter', () => {
   const gridStub = {
     getOptions: jest.fn()
-  } as unknown as SlickGrid;
+  } as unknown as SlickGridUniversal;
 
   it('should return an empty string when no value is provided', () => {
     const output = percentCompleteFormatter(1, 1, '', {} as Column, {}, {} as any);

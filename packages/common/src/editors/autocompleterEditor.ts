@@ -1,3 +1,4 @@
+import { SlickEventData } from 'slickgrid';
 import * as autocompleter_ from 'autocompleter';
 const autocomplete = (autocompleter_ && autocompleter_['default'] || autocompleter_) as <T extends AutocompleteItem>(settings: AutocompleteSettings<T>) => AutocompleteResult; // patch for rollup
 
@@ -19,9 +20,8 @@ import type {
   EditorValidator,
   EditorValidationResult,
   GridOption,
-  SlickGrid,
-  SlickNamespace,
   Locale,
+  SlickGridUniversal,
 } from '../interfaces/index';
 import { textValidator } from '../editorValidators/textValidator';
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter';
@@ -33,9 +33,6 @@ import type { TranslaterService } from '../services/translater.service';
 
 // minimum length of chars to type before starting to start querying
 const MIN_LENGTH = 3;
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
 
 /*
  * An example of a 'detached' editor.
@@ -67,7 +64,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   disabled = false;
 
   /** SlickGrid Grid object */
-  grid: SlickGrid;
+  grid: SlickGridUniversal;
 
   /** The property name for labels in the collection */
   labelName!: string;
@@ -129,7 +126,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef?.internalColumnEditor || {};
+    return this.columnDef?.internalColumnEditor || {} as ColumnEditor;
   }
 
   /** Getter for the Custom Structure if exist */
@@ -156,7 +153,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return this.grid?.getOptions?.() ?? {};
+    return this.grid?.getOptions() ?? {};
   }
 
   /** Kraaden AutoComplete instance */
@@ -461,7 +458,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     }
     grid.onCompositeEditorChange.notify(
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
-      { ...new Slick.EventData(), ...event }
+      { ...new SlickEventData(), ...event as Event }
     );
   }
 
@@ -491,7 +488,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       // if user wants to hook to the "select", he can do via this "onSelect"
       // its signature is purposely similar to the "onSelect" callback + some extra arguments (row, cell, column, dataContext)
       if (typeof this.editorOptions.onSelectItem === 'function') {
-        const { row, cell } = this.grid.getActiveCell();
+        const { row, cell } = this.grid.getActiveCell() || {};
         this.editorOptions.onSelectItem(item, row, cell, this.args.column, this.args.item);
       }
 

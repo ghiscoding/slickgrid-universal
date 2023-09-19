@@ -17,7 +17,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-} as unknown as SlickGrid;
+} as unknown as SlickGridUniversal;
 
 describe('InputPasswordFilter', () => {
   let divContainer: HTMLDivElement;

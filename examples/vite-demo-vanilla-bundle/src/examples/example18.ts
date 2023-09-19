@@ -238,8 +238,10 @@ export default class Example18 {
       itemTmp.amount = itemTmp.price * itemTmp.quantity;
       itemTmp.trsnType = (Math.round(Math.random() * 100)) % 2 ? 'Buy' : 'Sell';
       itemTmp.execution = new Date();
-      itemTmp.historic.push(itemTmp.price);
-      itemTmp.historic = itemTmp.historic.slice(-20); // keep a max of X historic values
+      if (itemTmp.price !== undefined) {
+        itemTmp.historic.push(itemTmp.price);
+        itemTmp.historic = itemTmp.historic.slice(-20); // keep a max of X historic values
+      }
 
       if (!changes[rowNumber]) {
         changes[rowNumber] = {};

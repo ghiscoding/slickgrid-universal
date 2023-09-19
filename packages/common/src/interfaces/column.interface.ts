@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/indent */
+import type { Column as ColumnCore, FormatterResultObject } from 'slickgrid';
+
 import type {
   CellMenu,
   ColumnEditor,
@@ -12,31 +13,32 @@ import type {
   GroupTotalsFormatter,
   HeaderButtonsOrMenu,
   OnEventArgs,
-  SlickEventData,
-  SlickGrid,
+  SlickGridUniversal,
   SortComparer,
 } from './index';
 import type { FieldType } from '../enums/fieldType.enum';
 
-type PathsToStringProps<T> = T extends string | number | boolean | Date ? [] : {
-  [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>]
-}[Extract<keyof T, string>];
+type FormatterOverrideCallback = (row: number, cell: number, val: any, columnDef: Column, item: any, grid: SlickGridUniversal) => string | FormatterResultObject;
 
-/* eslint-disable @typescript-eslint/indent */
-// disable eslint indent rule until this issue is fixed: https://github.com/typescript-eslint/typescript-eslint/issues/1824
-type Join<T extends any[], D extends string> =
-  T extends [] ? never :
-  T extends [infer F] ? F :
-  T extends [infer F, ...infer R] ?
-  F extends string ? string extends F ? string : `${F}${D}${Join<R, D>}` : never : string;
-/* eslint-enable @typescript-eslint/indent */
+// type PathsToStringProps<T> = T extends string | number | boolean | Date ? [] : {
+//   [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>]
+// }[Extract<keyof T, string>];
 
-export interface Column<T = any> {
+// /* eslint-disable @typescript-eslint/indent */
+// // disable eslint indent rule until this issue is fixed: https://github.com/typescript-eslint/typescript-eslint/issues/1824
+// type Join<T extends any[], D extends string> =
+//   T extends [] ? never :
+//   T extends [infer F] ? F :
+//   T extends [infer F, ...infer R] ?
+//   F extends string ? string extends F ? string : `${F}${D}${Join<R, D>}` : never : string;
+// /* eslint-enable @typescript-eslint/indent */
+
+export interface Column<T = any> extends ColumnCore<T> {
   /** Defaults to false, should we always render the column? */
   alwaysRenderColumn?: boolean;
 
   /** async background post-rendering formatter */
-  asyncPostRender?: (domCellNode: any, row: number, dataContext: T, columnDef: Column) => void;
+  asyncPostRender?: (domCellNode: HTMLElement, row: number, dataContext: T, columnDef: Column, process?: boolean) => void;
 
   /** async background post-render cleanup callback function */
   asyncPostRenderCleanup?: (node: HTMLElement, rowIdx: number, column: Column) => void;
@@ -87,6 +89,7 @@ export interface Column<T = any> {
 
   /** Defaults to false, do we want to deny executing a Paste (from a Copy of CellExternalCopyManager)? */
   denyPaste?: boolean;
+
   /**
    * defaults to False, optionally enable/disable tooltip.
    * This is typically used on a specific column that you would like to completely disable the custom/regular tooltip.
@@ -149,7 +152,7 @@ export interface Column<T = any> {
    * NOTE: a field with dot notation (.) will be considered a complex object.
    * For example: { id: 'Users', field: 'user.firstName' }
    */
-  field: Join<PathsToStringProps<T>, '.'>;
+  // field: Join<PathsToStringProps<T>, '.'>;
 
   /**
    * Only used by Backend Services since the query is built using the column definitions, this is a way to pass extra properties to the backend query.
@@ -174,7 +177,7 @@ export interface Column<T = any> {
   formatter?: Formatter<T>;
 
   /** Default Formatter override function */
-  formatterOverride?: { ReturnsTextOnly?: boolean; } | ((row: number, cell: number, val: any, columnDef: Column, item: any, grid: SlickGrid) => Formatter<T>);
+  formatterOverride?: { ReturnsTextOnly: boolean; } | FormatterOverrideCallback;
 
   /** Grouping option used by a Draggable Grouping Column */
   grouping?: Grouping;
@@ -192,7 +195,7 @@ export interface Column<T = any> {
   headerCellAttrs?: any;
 
   /** CSS class that can be added to the column header */
-  headerCssClass?: string;
+  headerCssClass?: string | null;
 
   /** ID of the column, each row have to be unique or SlickGrid will throw an error. */
   id: number | string;
@@ -233,13 +236,13 @@ export interface Column<T = any> {
   nameCompositeEditorKey?: string;
 
   /** an event that can be used for executing an action before the cell becomes editable (that event happens before the "onCellChange" event) */
-  onBeforeEditCell?: (e: SlickEventData, args: OnEventArgs) => void;
+  onBeforeEditCell?: (e: Event, args: OnEventArgs) => void;
 
   /** an event that can be used for executing an action after a cell change */
-  onCellChange?: (e: SlickEventData, args: OnEventArgs) => void;
+  onCellChange?: (e: Event, args: OnEventArgs) => void;
 
   /** an event that can be used for executing an action after a cell click */
-  onCellClick?: (e: SlickEventData, args: OnEventArgs) => void;
+  onCellClick?: (e: Event, args: OnEventArgs) => void;
 
   /**
    * Column output type (e.g. Date Picker, the output format that we will see in the picker)

@@ -20,7 +20,7 @@ const gridStub = {
   onColumnsReordered: jest.fn(),
   onColumnsResized: jest.fn(),
   registerPlugin: jest.fn(),
-} as unknown as SlickGrid;
+} as unknown as SlickGridUniversal;
 
 const pubSubServiceStub = {
   publish: jest.fn(),

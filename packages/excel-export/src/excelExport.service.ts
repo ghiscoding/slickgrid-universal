@@ -16,8 +16,7 @@ import type {
   KeyTitlePair,
   Locale,
   PubSubService,
-  SlickDataView,
-  SlickGrid,
+  SlickGridUniversal,
   TranslaterService,
 } from '@slickgrid-universal/common';
 import {
@@ -32,6 +31,7 @@ import {
   sanitizeHtmlToText,
 } from '@slickgrid-universal/common';
 import { addWhiteSpaces, deepCopy, titleCase } from '@slickgrid-universal/utils';
+import { type SlickDataView } from 'slickgrid';
 
 import { ExcelCellFormat, ExcelMetadata, ExcelStylesheet, } from './interfaces/index';
 import {
@@ -48,7 +48,7 @@ const DEFAULT_EXPORT_OPTIONS: ExcelExportOption = {
 
 export class ExcelExportService implements ExternalResource, BaseExcelExportService {
   protected _fileFormat = FileType.xlsx;
-  protected _grid!: SlickGrid;
+  protected _grid!: SlickGridUniversal;
   protected _locales!: Locale;
   protected _groupedColumnHeaders?: Array<KeyTitlePair>;
   protected _columnHeaders: Array<KeyTitlePair> = [];
@@ -75,12 +75,12 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   /** Getter of SlickGrid DataView object */
   get _dataView(): SlickDataView {
-    return (this._grid?.getData()) as SlickDataView;
+    return this._grid?.getData<SlickDataView>();
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return this._grid?.getOptions() || {};
+    return this._grid?.getOptions() || {} as GridOption;
   }
 
   get stylesheet() {
@@ -108,7 +108,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * @param grid
    * @param containerService
    */
-  init(grid: SlickGrid, containerService: ContainerService): void {
+  init(grid: SlickGridUniversal, containerService: ContainerService): void {
     this._grid = grid;
     this._pubSubService = containerService.get<PubSubService>('PubSubService');
 

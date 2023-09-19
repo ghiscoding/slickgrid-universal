@@ -13,8 +13,6 @@ import {
   Formatters,
   GridOption,
   LongTextEditorOption,
-  OnCompositeEditorChangeEventArgs,
-  SlickNamespace,
   SliderOption,
   SortComparers,
 
@@ -25,13 +23,10 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { SlickerGridInstance } from '@slickgrid-universal/vanilla-bundle';
 import { VanillaForceGridBundle, Slicker } from '@slickgrid-universal/vanilla-force-bundle';
 import { CompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
-
+import { OnCompositeEditorChangeEventArgs, SlickGlobalEditorLock } from 'slickgrid';
 import { ExampleGridOptions } from './example-grid-options';
 import countriesJson from './data/countries.json?raw';
 import './example12.scss';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
 
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator = (value, args) => {
@@ -709,7 +704,7 @@ export default class Example12 {
   undoLastEdit(showLastEditor = false) {
     const lastEdit = this.editQueue.pop();
     const lastEditCommand = lastEdit?.editCommand;
-    if (lastEdit && lastEditCommand && Slick.GlobalEditorLock.cancelCurrentEdit()) {
+    if (lastEdit && lastEditCommand && SlickGlobalEditorLock.cancelCurrentEdit()) {
       lastEditCommand.undo();
 
       // remove unsaved css class from that cell
@@ -729,7 +724,7 @@ export default class Example12 {
   undoAllEdits() {
     for (const lastEdit of this.editQueue) {
       const lastEditCommand = lastEdit?.editCommand;
-      if (lastEditCommand && Slick.GlobalEditorLock.cancelCurrentEdit()) {
+      if (lastEditCommand && SlickGlobalEditorLock.cancelCurrentEdit()) {
         lastEditCommand.undo();
 
         // remove unsaved css class from that cell

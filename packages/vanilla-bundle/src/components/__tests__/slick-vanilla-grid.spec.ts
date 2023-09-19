@@ -1,7 +1,16 @@
+jest.mock('sortablejs');
+
 import 'jest-extended';
 import { of, throwError } from 'rxjs';
 import {
-  autoAddEditorFormatterToColumnsWithEditor,
+  OnRowCountChangedEventArgs,
+  OnRowsChangedEventArgs,
+  OnSetItemsCalledEventArgs,
+  SlickDataView,
+  SlickEventHandler,
+} from 'slickgrid';
+
+import {
   BackendServiceApi,
   BackendUtilityService,
   Column,
@@ -26,18 +35,13 @@ import {
   GridStateService,
   GridStateType,
   GroupingAndColspanService,
-  OnRowCountChangedEventArgs,
-  OnRowsChangedEventArgs,
-  OnSetItemsCalledEventArgs,
   Pagination,
   PaginationService,
   ResizerService,
   ServicePagination,
   SharedService,
-  SlickDataView,
-  SlickEventHandler,
   SlickEditorLock,
-  SlickGrid,
+  SlickGridUniversal,
   SlickGroupItemMetadataProvider,
   SortService,
   TreeDataService,
@@ -57,9 +61,6 @@ jest.mock('@slickgrid-universal/common', () => ({
   ...(jest.requireActual('@slickgrid-universal/common') as any),
   autoAddEditorFormatterToColumnsWithEditor: jest.fn(),
 }));
-
-declare const Slick: any;
-const slickEventHandler = new MockSlickEventHandler() as unknown as SlickEventHandler;
 
 const extensionServiceStub = {
   addRxJsResource: jest.fn(),
@@ -103,7 +104,6 @@ const backendUtilityServiceStub = {
   onBackendError: jest.fn(),
   refreshBackendDataset: jest.fn(),
 } as unknown as BackendUtilityService;
-
 
 const collectionServiceStub = {
   filterCollection: jest.fn(),
@@ -260,19 +260,19 @@ const mockGrid = {
   onRendered: jest.fn(),
   onScroll: jest.fn(),
   onDataviewCreated: new MockSlickEvent(),
-} as unknown as SlickGrid;
+} as unknown as SlickGridUniversal;
 
-const mockSlickEventHandlerImplementation = jest.fn().mockImplementation(() => mockSlickEventHandler);
-const mockDataViewImplementation = jest.fn().mockImplementation(() => mockDataView);
-const mockGridImplementation = jest.fn().mockImplementation(() => mockGrid);
 const template = `<div class="demo-container"><div class="grid1"></div></div>`;
+const slickEventHandler = new MockSlickEventHandler() as unknown as SlickEventHandler;
+
+jest.mock('slickgrid', () => ({
+  ...(jest.requireActual('slickgrid') as any),
+  SlickGrid: jest.fn().mockImplementation(() => mockGrid),
+  SlickEventHandler: jest.fn().mockImplementation(() => mockSlickEventHandler),
+  SlickDataView: jest.fn().mockImplementation(() => mockDataView),
+}));
 
 describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () => {
-  jest.mock('slickgrid/slick.grid', () => mockGridImplementation);
-  Slick.Grid = mockGridImplementation;
-  Slick.EventHandler = slickEventHandler;
-  Slick.Data = { DataView: mockDataViewImplementation, };
-
   let component: SlickVanillaGridBundle;
   let divContainer: HTMLDivElement;
   let cellDiv: HTMLDivElement;
@@ -516,7 +516,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('dataset changed', () => {
       beforeEach(() => {
         jest.clearAllMocks();
-        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
+        sharedService.slickGrid = mockGrid as unknown as SlickGridUniversal;
       });
 
       it('should expect "autosizeColumns" being called when "autoFitColumnsOnFirstLoad" is set and we are on first page load', () => {
@@ -600,7 +600,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('options changed', () => {
       beforeEach(() => {
         jest.clearAllMocks();
-        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
+        sharedService.slickGrid = mockGrid as unknown as SlickGridUniversal;
         sharedService.gridOptions = gridOptions;
       });
 
@@ -610,34 +610,36 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should merge grid options with global options when slickgrid "getOptions" does not exist yet', () => {
-        mockGrid.getOptions = null as any;
+        mockGrid.getOptions = () => null as any;
         const setOptionSpy = jest.spyOn(mockGrid, 'setOptions');
         const sharedOptionSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'set');
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
+        const mockGridOptions = { autoCommitEdit: false, autoResize: null as any };
 
-        component.gridOptions = { autoCommitEdit: false, autoResize: null as any };
+        component.gridOptions = mockGridOptions;
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockData;
 
         expect(component.gridOptions.autoCommitEdit).toEqual(false);
         // expect(component.gridOptions.autoResize.bottomPadding).toEqual(50 + DATAGRID_FOOTER_HEIGHT); // calculated by the lib
-        expect(setOptionSpy).toBeCalledWith(component.gridOptions, false, true);
-        expect(sharedOptionSpy).toBeCalledWith(component.gridOptions);
+        expect(setOptionSpy).toBeCalledWith(mockGridOptions, false, true);
+        expect(sharedOptionSpy).toBeCalledWith(mockGridOptions);
       });
 
       it('should merge grid options with global options and expect bottom padding to be calculated', () => {
-        mockGrid.getOptions = null as any;
+        mockGrid.getOptions = () => null as any;
         const setOptionSpy = jest.spyOn(mockGrid, 'setOptions');
         const sharedOptionSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'set');
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
+        const mockGridOptions = { autoCommitEdit: false, autoResize: null as any };
 
-        component.gridOptions = { autoCommitEdit: false, autoResize: null as any };
+        component.gridOptions = mockGridOptions;
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockData;
 
         expect(component.gridOptions.autoCommitEdit).toEqual(false);
-        expect(setOptionSpy).toBeCalledWith(component.gridOptions, false, true);
-        expect(sharedOptionSpy).toBeCalledWith(component.gridOptions);
+        expect(setOptionSpy).toBeCalledWith(mockGridOptions, false, true);
+        expect(sharedOptionSpy).toBeCalledWith(mockGridOptions);
       });
 
       it('should merge paginationOptions when some already exist', () => {
@@ -791,7 +793,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
     describe('use grouping', () => {
       it('should load groupItemMetaProvider to the DataView when using "draggableGrouping" feature', () => {
-        const dataviewSpy = jest.spyOn(mockDataViewImplementation.prototype, 'constructor');
+        const dataviewSpy = jest.spyOn(SlickDataView.prototype, 'constructor' as any);
         const sharedMetaSpy = jest.spyOn(SharedService.prototype, 'groupItemMetadataProvider', 'set');
         jest.spyOn(extensionServiceStub, 'extensionList', 'get').mockReturnValue({ draggableGrouping: { pluginName: 'DraggableGrouping' } } as unknown as ExtensionList<any>);
 
@@ -808,7 +810,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should load groupItemMetaProvider to the DataView when using "enableGrouping" feature', () => {
-        const dataviewSpy = jest.spyOn(mockDataViewImplementation.prototype, 'constructor');
+        const dataviewSpy = jest.spyOn(SlickDataView.prototype, 'constructor' as any);
         const sharedMetaSpy = jest.spyOn(SharedService.prototype, 'groupItemMetadataProvider', 'set');
 
         component.gridOptions = { enableGrouping: true };
@@ -826,7 +828,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       afterEach(() => {
         component.dispose();
         jest.clearAllMocks();
-        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
+        sharedService.slickGrid = mockGrid as unknown as SlickGridUniversal;
       });
 
       it('should call the onDataviewCreated emitter', () => {
@@ -937,7 +939,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       afterEach(() => {
         jest.clearAllMocks();
         component.dispose();
-        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
+        sharedService.slickGrid = mockGrid as unknown as SlickGridUniversal;
       });
 
       it('should initialize groupingAndColspanService when "createPreHeaderPanel" grid option is enabled and "enableDraggableGrouping" is disabled', () => {
@@ -1894,7 +1896,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('loadRowSelectionPresetWhenExists method', () => {
       beforeEach(() => {
         jest.clearAllMocks();
-        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
+        sharedService.slickGrid = mockGrid as unknown as SlickGridUniversal;
       });
 
       it('should call the "mapIdsToRows" from the DataView then "setSelectedRows" from the Grid when there are row selection presets with "dataContextIds" array set', (done) => {
@@ -1966,7 +1968,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('onPaginationVisibilityChanged event', () => {
       beforeEach(() => {
         jest.clearAllMocks();
-        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
+        sharedService.slickGrid = mockGrid as unknown as SlickGridUniversal;
       });
 
       it('should change "showPagination" flag when "onPaginationVisibilityChanged" from the Pagination Service is triggered', () => {
@@ -2131,10 +2133,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 });
 
 describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with a Hierarchical Dataset', () => {
-  jest.mock('slickgrid/slick.grid', () => mockGridImplementation);
-  Slick.Grid = mockGridImplementation;
-  Slick.Data = { DataView: mockDataViewImplementation, };
-
   let component: SlickVanillaGridBundle;
   let divContainer: HTMLDivElement;
   let cellDiv: HTMLDivElement;
@@ -2206,18 +2204,13 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
     const mockHierarchical = [{ file: 'documents', files: [{ file: 'vacation.txt' }] }];
 
     component.gridOptions = { enableTreeData: true, treeDataOptions: { columnId: 'file' } } as unknown as GridOption;
-    component.initialization(divContainer, slickEventHandler);
+    component.initialization(divContainer, slickEventHandler as any);
 
     expect(hierarchicalSpy).toHaveBeenCalledWith(mockHierarchical);
   });
 });
 
 describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with a Slickgrid Container that already exist', () => {
-  jest.mock('slickgrid/slick.grid', () => mockGridImplementation);
-  Slick.Grid = mockGridImplementation;
-  Slick.EventHandler = mockSlickEventHandlerImplementation;
-  Slick.Data = { DataView: mockDataViewImplementation, };
-
   let component: SlickVanillaGridBundle;
   let divContainer: HTMLDivElement;
   let cellDiv: HTMLDivElement;

@@ -18,7 +18,7 @@ import type {
   SearchTerm,
   SharedService,
   SingleColumnSort,
-  SlickGrid,
+  SlickGridUniversal,
 } from '@slickgrid-universal/common';
 import {
   CaseType,
@@ -40,7 +40,7 @@ export class GridOdataService implements BackendService {
   protected _currentPagination: CurrentPagination | null = null;
   protected _currentSorters: CurrentSorter[] = [];
   protected _columnDefinitions: Column[] = [];
-  protected _grid: SlickGrid | undefined;
+  protected _grid: SlickGridUniversal | undefined;
   protected _odataService: OdataQueryBuilderService;
   options?: Partial<OdataOption>;
   pagination: Pagination | undefined;
@@ -62,14 +62,14 @@ export class GridOdataService implements BackendService {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return (this._grid?.getOptions) ? this._grid.getOptions() : {};
+    return this._grid?.getOptions() ?? {} as GridOption;
   }
 
   constructor() {
     this._odataService = new OdataQueryBuilderService();
   }
 
-  init(serviceOptions?: Partial<OdataOption>, pagination?: Pagination, grid?: SlickGrid, sharedService?: SharedService): void {
+  init(serviceOptions?: Partial<OdataOption>, pagination?: Pagination, grid?: SlickGridUniversal, sharedService?: SharedService): void {
     this._grid = grid;
     const mergedOptions = { ...this.defaultOptions, ...serviceOptions };
 
@@ -279,7 +279,7 @@ export class GridOdataService implements BackendService {
    * SORTING
    */
   processOnSortChanged(_event: Event | undefined, args: SingleColumnSort | MultiColumnSort) {
-    const sortColumns = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as ColumnSort).sortCol.id, sortCol: (args as ColumnSort).sortCol, sortAsc: (args as ColumnSort).sortAsc });
+    const sortColumns = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as ColumnSort).sortCol?.id ?? '', sortCol: (args as ColumnSort).sortCol, sortAsc: (args as ColumnSort).sortAsc });
 
     // loop through all columns to inspect sorters & set the query
     this.updateSorters(sortColumns);

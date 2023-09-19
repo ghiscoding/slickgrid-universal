@@ -2,9 +2,10 @@ jest.mock('../../extensions/slickDraggableGrouping');
 
 import 'jest-extended';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { SlickEvent } from 'slickgrid';
 
 import { ExtensionName } from '../../enums/index';
-import { Column, ExtensionModel, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { Column, ExtensionModel, GridOption, SlickGridUniversal } from '../../interfaces/index';
 import { ExtensionUtility } from '../../extensions';
 import { ExtensionService, FilterService, SharedService, SortService, TreeDataService } from '../index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -26,7 +27,6 @@ import {
 } from '../../extensions/index';
 
 jest.mock('flatpickr', () => { });
-declare const Slick: SlickNamespace;
 const GRID_UID = 'slickgrid_12345';
 
 const extensionUtilityStub = {
@@ -47,7 +47,7 @@ const mockCellSelectionModel = {
   setSelectedRanges: jest.fn(),
   getSelectedRows: jest.fn(),
   setSelectedRows: jest.fn(),
-  onSelectedRangesChanged: new Slick.Event(),
+  onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickCellSelectionModel;
 jest.mock('../../extensions/slickCellSelectionModel');
 
@@ -56,7 +56,7 @@ const mockRowSelectionModel = {
   init: jest.fn(),
   destroy: jest.fn(),
   dispose: jest.fn(),
-  onSelectedRangesChanged: new Slick.Event(),
+  onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickRowSelectionModel;
 jest.mock('../../extensions/slickRowSelectionModel', () => ({
   SlickRowSelectionModel: jest.fn().mockImplementation(() => mockRowSelectionModel),
@@ -99,21 +99,21 @@ const gridStub = {
   registerPlugin: jest.fn(),
   setSelectionModel: jest.fn(),
   updateColumnHeader: jest.fn(),
-  onActiveCellChanged: new Slick.Event(),
-  onBeforeDestroy: new Slick.Event(),
-  onBeforeHeaderCellDestroy: new Slick.Event(),
-  onBeforeSetColumns: new Slick.Event(),
-  onClick: new Slick.Event(),
-  onColumnsReordered: new Slick.Event(),
-  onContextMenu: new Slick.Event(),
-  onHeaderCellRendered: new Slick.Event(),
-  onHeaderClick: new Slick.Event(),
-  onHeaderContextMenu: new Slick.Event(),
-  onKeyDown: new Slick.Event(),
-  onSelectedRowsChanged: new Slick.Event(),
-  onScroll: new Slick.Event(),
-  onSetOptions: new Slick.Event(),
-} as unknown as SlickGrid;
+  onActiveCellChanged: new SlickEvent(),
+  onBeforeDestroy: new SlickEvent(),
+  onBeforeHeaderCellDestroy: new SlickEvent(),
+  onBeforeSetColumns: new SlickEvent(),
+  onClick: new SlickEvent(),
+  onColumnsReordered: new SlickEvent(),
+  onContextMenu: new SlickEvent(),
+  onHeaderCellRendered: new SlickEvent(),
+  onHeaderClick: new SlickEvent(),
+  onHeaderContextMenu: new SlickEvent(),
+  onKeyDown: new SlickEvent(),
+  onSelectedRowsChanged: new SlickEvent(),
+  onScroll: new SlickEvent(),
+  onSetOptions: new SlickEvent(),
+} as unknown as SlickGridUniversal;
 
 const filterServiceStub = {
   addRxJsResource: jest.fn(),
@@ -302,7 +302,7 @@ describe('ExtensionService', () => {
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
-        const output = service.getExtensionByName(ExtensionName.autoTooltip);
+        const output = service.getExtensionByName<SlickAutoTooltip>(ExtensionName.autoTooltip);
         const pluginInstance = service.getExtensionInstanceByName(ExtensionName.autoTooltip);
 
         expect(extSpy).toHaveBeenCalled();

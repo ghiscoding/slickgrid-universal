@@ -16,7 +16,7 @@ import type {
   PaginationCursorChangedArgs,
   SharedService,
   SingleColumnSort,
-  SlickGrid,
+  SlickGridUniversal,
   SortDirectionString,
 } from '@slickgrid-universal/common';
 import {
@@ -46,7 +46,7 @@ export class GraphqlService implements BackendService {
   protected _currentPagination: CurrentPagination | null = null;
   protected _currentSorters: CurrentSorter[] = [];
   protected _columnDefinitions?: Column[];
-  protected _grid: SlickGrid | undefined;
+  protected _grid: SlickGridUniversal | undefined;
   protected _datasetIdPropName = 'id';
   options: GraphqlServiceOption | undefined;
   pagination: Pagination | undefined;
@@ -62,11 +62,11 @@ export class GraphqlService implements BackendService {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return (this._grid?.getOptions) ? this._grid.getOptions() : {};
+    return this._grid?.getOptions() ?? {} as GridOption;
   }
 
   /** Initialization of the service, which acts as a constructor */
-  init(serviceOptions?: GraphqlServiceOption, pagination?: Pagination, grid?: SlickGrid, sharedService?: SharedService): void {
+  init(serviceOptions?: GraphqlServiceOption, pagination?: Pagination, grid?: SlickGridUniversal, sharedService?: SharedService): void {
     this._grid = grid;
     this.options = serviceOptions || { datasetName: '' };
     this.pagination = pagination;
@@ -362,7 +362,7 @@ export class GraphqlService implements BackendService {
    *  }
    */
   processOnSortChanged(_event: Event | undefined, args: SingleColumnSort | MultiColumnSort): string {
-    const sortColumns = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as ColumnSort).sortCol.id, sortCol: (args as ColumnSort).sortCol, sortAsc: (args as ColumnSort).sortAsc });
+    const sortColumns = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as ColumnSort).sortCol?.id ?? '', sortCol: (args as ColumnSort).sortCol, sortAsc: (args as ColumnSort).sortAsc });
 
     // loop through all columns to inspect sorters & set the query
     this.updateSorters(sortColumns);

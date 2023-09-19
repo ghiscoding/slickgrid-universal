@@ -1,10 +1,10 @@
 import 'jest-extended';
+import { SlickEvent, SlickRange } from 'slickgrid';
 
-import { GridOption, SlickGrid, SlickNamespace, SlickRange, } from '../../interfaces/index';
+import { GridOption, type SlickGridUniversal } from '../../interfaces/index';
 import { SlickCellRangeSelector } from '../slickCellRangeSelector';
 import { SlickCellSelectionModel } from '../slickCellSelectionModel';
 
-declare const Slick: SlickNamespace;
 const GRID_UID = 'slickgrid_12345';
 const NB_ITEMS = 200;
 const CALCULATED_PAGE_ROW_COUNT = 23; // pageRowCount with our mocked sizes is 23 => ((600 - 17) / 25)
@@ -59,11 +59,11 @@ const gridStub = {
   scrollCellIntoView: jest.fn(),
   scrollRowIntoView: jest.fn(),
   unregisterPlugin: jest.fn(),
-  onActiveCellChanged: new Slick.Event(),
-  onKeyDown: new Slick.Event(),
-  onCellRangeSelected: new Slick.Event(),
-  onBeforeCellRangeSelected: new Slick.Event(),
-} as unknown as SlickGrid;
+  onActiveCellChanged: new SlickEvent(),
+  onKeyDown: new SlickEvent(),
+  onCellRangeSelected: new SlickEvent(),
+  onBeforeCellRangeSelected: new SlickEvent(),
+} as unknown as SlickGridUniversal;
 
 describe('CellSelectionModel Plugin', () => {
   let plugin: SlickCellSelectionModel;
@@ -159,7 +159,7 @@ describe('CellSelectionModel Plugin', () => {
     jest.spyOn(plugin, 'getSelectedRanges').mockReturnValue([
       { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 },
       { fromCell: 2, fromRow: 3, toCell: 3, toRow: 4 }
-    ]);
+    ] as unknown as SlickRange[]);
     const setSelectedRangesSpy = jest.spyOn(plugin, 'setSelectedRanges');
     plugin.refreshSelections();
 
@@ -190,7 +190,7 @@ describe('CellSelectionModel Plugin', () => {
     const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
 
     plugin.init(gridStub);
-    plugin.cellRangeSelector.onCellRangeSelected.notify({ range: { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 } }, mouseEvent, gridStub);
+    plugin.cellRangeSelector.onCellRangeSelected.notify({ range: { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 } as SlickRange }, mouseEvent, gridStub);
 
     expect(setActiveCellSpy).toHaveBeenCalledWith(2, 1, false, false, true);
     expect(setSelectRangeSpy).toHaveBeenCalledWith([{ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 }]);

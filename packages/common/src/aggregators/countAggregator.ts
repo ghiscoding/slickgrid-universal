@@ -1,4 +1,5 @@
 import { isNumber } from '@slickgrid-universal/utils';
+import type { SlickGroupTotals } from 'slickgrid';
 
 import type { Aggregator } from './../interfaces/aggregator.interface';
 
@@ -61,7 +62,7 @@ export class CountAggregator implements Aggregator {
     }
   }
 
-  storeResult(groupTotals: any) {
+  storeResult(groupTotals: SlickGroupTotals & { [type: string]: Record<number | string, number | null>; }) {
     if (!groupTotals || groupTotals[this._type] === undefined) {
       groupTotals[this._type] = {};
     }
@@ -69,7 +70,7 @@ export class CountAggregator implements Aggregator {
 
     if (this._isTreeAggregator) {
       // when dealing with Tree Data, we also need to take the parent's total and add it to the final count
-      itemCount += groupTotals[this._type][this._field];
+      itemCount += groupTotals[this._type][this._field] as number;
     } else {
       itemCount = groupTotals.group.rows.length;
     }

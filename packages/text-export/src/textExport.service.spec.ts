@@ -66,7 +66,7 @@ const gridStub = {
   getOptions: () => mockGridOptions,
   getColumns: jest.fn(),
   getGrouping: jest.fn(),
-} as unknown as SlickGrid;
+} as unknown as SlickGridUniversal;
 
 describe('ExportService', () => {
   let container: ContainerServiceStub;

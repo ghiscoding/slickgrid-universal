@@ -1,13 +1,6 @@
-import type {
-  AutoTooltipOption,
-  Column,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
-} from '../interfaces/index';
+import { SlickEventHandler } from 'slickgrid';
 
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
+import type { AutoTooltipOption, Column, SlickGridUniversal, } from '../interfaces/index';
 
 /**
  * AutoTooltips plugin to show/hide tooltips when columns are too narrow to fit content.
@@ -17,20 +10,21 @@ declare const Slick: SlickNamespace;
  * @param {number}  [options.maxToolTipLength=null]      - The maximum length for a tooltip
  */
 export class SlickAutoTooltip {
-  protected _eventHandler!: SlickEventHandler;
-  protected _grid!: SlickGrid;
+  pluginName = 'AutoTooltips' as const;
+
   protected _addonOptions?: AutoTooltipOption;
+  protected _eventHandler!: SlickEventHandler;
+  protected _grid!: SlickGridUniversal;
   protected _defaults = {
     enableForCells: true,
     enableForHeaderCells: false,
     maxToolTipLength: undefined,
     replaceExisting: true
   } as AutoTooltipOption;
-  pluginName: 'AutoTooltips' = 'AutoTooltips' as const;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(options?: AutoTooltipOption) {
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
     this._addonOptions = options;
   }
 
@@ -43,7 +37,7 @@ export class SlickAutoTooltip {
   }
 
   /** Initialize plugin. */
-  init(grid: SlickGrid) {
+  init(grid: SlickGridUniversal) {
     this._addonOptions = { ...this._defaults, ...this.addonOptions };
     this._grid = grid;
     if (this._addonOptions.enableForCells) {
@@ -52,6 +46,10 @@ export class SlickAutoTooltip {
     if (this._addonOptions.enableForHeaderCells) {
       this._eventHandler.subscribe(this._grid.onHeaderMouseEnter, this.handleHeaderMouseEnter.bind(this));
     }
+  }
+
+  destroy() {
+    this.dispose();
   }
 
   /** Dispose (destroy) the SlickGrid 3rd party plugin */

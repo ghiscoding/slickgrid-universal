@@ -1,14 +1,15 @@
+import { SlickEvent, type SlickDataView } from 'slickgrid';
+
 import { Editors } from '../index';
 import { LongTextEditor } from '../longTextEditor';
 import { KeyCode } from '../../enums/index';
-import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption, type SlickGridUniversal } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import * as domUtilities from '../../services/domUtilities';
 const mockGetHtmlElementOffset = jest.fn();
 // @ts-ignore:2540
 domUtilities.getHtmlElementOffset = mockGetHtmlElementOffset;
 
-declare const Slick: SlickNamespace;
 const KEY_CHAR_A = 97;
 const containerId = 'demo-container';
 
@@ -40,9 +41,9 @@ const gridStub = {
   navigateNext: jest.fn(),
   navigatePrev: jest.fn(),
   render: jest.fn(),
-  onBeforeEditCell: new Slick.Event(),
-  onCompositeEditorChange: new Slick.Event(),
-} as unknown as SlickGrid;
+  onBeforeEditCell: new SlickEvent(),
+  onCompositeEditorChange: new SlickEvent(),
+} as unknown as SlickGridUniversal;
 
 describe('LongTextEditor', () => {
   let divContainer: HTMLDivElement;
@@ -836,7 +837,7 @@ describe('LongTextEditor', () => {
       jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       editor = new LongTextEditor(editorArguments);
       editor.setValue('task 2', true);
 
@@ -852,7 +853,7 @@ describe('LongTextEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
-      });
+      } as any);
 
       editor = new LongTextEditor(editorArguments);
       const disableSpy = jest.spyOn(editor, 'disable');
@@ -868,10 +869,10 @@ describe('LongTextEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
 
       editor = new LongTextEditor(editorArguments);
       editor.loadValue(mockItemData);
@@ -894,10 +895,10 @@ describe('LongTextEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.compositeEditorOptions = {
         excludeDisabledFieldFormValues: true
       };
@@ -920,7 +921,7 @@ describe('LongTextEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.compositeEditorOptions = {
         excludeDisabledFieldFormValues: true
       };
@@ -945,10 +946,10 @@ describe('LongTextEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.autoCommitEdit = true;
       mockItemData = { id: 1, title: 'task 2', isActive: true };
 

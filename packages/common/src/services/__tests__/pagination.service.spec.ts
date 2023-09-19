@@ -1,12 +1,11 @@
 import { of, throwError } from 'rxjs';
+import { type SlickDataView, SlickEvent, SlickEventData } from 'slickgrid';
 
 import { PaginationService } from './../pagination.service';
 import { SharedService } from '../shared.service';
-import { Column, CursorPageInfo, SlickDataView, GridOption, SlickGrid, SlickNamespace, BackendServiceApi, Pagination } from '../../interfaces/index';
+import { BackendServiceApi, Column, GridOption, Pagination, SlickGridUniversal } from '../../interfaces/index';
 import { BackendUtilityService } from '../backendUtility.service';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
-
-declare const Slick: SlickNamespace;
 
 const fnCallbacks = {};
 const mockPubSub = {
@@ -27,9 +26,9 @@ const backendUtilityServiceStub = {
 } as unknown as BackendUtilityService;
 
 const dataviewStub = {
-  onPagingInfoChanged: new Slick.Event(),
-  onRowCountChanged: new Slick.Event(),
-  onRowsChanged: new Slick.Event(),
+  onPagingInfoChanged: new SlickEvent(),
+  onRowCountChanged: new SlickEvent(),
+  onRowsChanged: new SlickEvent(),
   setPagingOptions: jest.fn(),
   setRefreshHints: jest.fn(),
 } as unknown as SlickDataView;
@@ -89,7 +88,7 @@ const gridStub = {
   onColumnsReordered: jest.fn(),
   onColumnsResized: jest.fn(),
   registerPlugin: jest.fn(),
-} as unknown as SlickGrid;
+} as unknown as SlickGridUniversal;
 
 describe('PaginationService', () => {
   let service: PaginationService;
@@ -949,7 +948,7 @@ describe('PaginationService', () => {
       const mockSlickPagingInfo = { pageSize: 5, pageNum: 2, totalRows: expectedNewTotal, totalPages: 3, dataView: dataviewStub };
 
       service.init(gridStub, mockGridOption.pagination as Pagination);
-      dataviewStub.onPagingInfoChanged.notify(mockSlickPagingInfo, new Slick.EventData(), dataviewStub);
+      dataviewStub.onPagingInfoChanged.notify(mockSlickPagingInfo, new SlickEventData(), dataviewStub);
 
       expect(service.totalItems).toBe(expectedNewTotal);
     });

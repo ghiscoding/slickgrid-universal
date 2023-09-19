@@ -1,10 +1,6 @@
-import type {
-  GridSize,
-  ResizerOption,
-  SlickEvent,
-  SlickEventData,
-  SlickGrid,
-} from './index';
+import type { SlickEvent, SlickEventData } from 'slickgrid';
+
+import type { GridSize, ResizerOption, SlickGridUniversal } from './index';
 
 /**
  * A Resizer plugin that can be used to auto-resize a grid and/or resize with fixed dimensions.
@@ -22,7 +18,7 @@ export interface SlickResizer {
   constructor: (options?: ResizerOption, fixedGridDimensions?: GridSize) => void;
 
   /** initialize the 3rd party plugin */
-  init(grid: SlickGrid): void;
+  init(grid: SlickGridUniversal): void;
 
   /** destroy the 3rd party plugin */
   destroy(): void;
@@ -58,8 +54,8 @@ export interface SlickResizer {
   // Events
 
   /** triggered before rows are being moved */
-  onGridAfterResize: SlickEvent<{ grid: SlickGrid; dimensions: GridSize; }>;
+  onGridAfterResize: SlickEvent<{ grid: SlickGridUniversal; dimensions: GridSize; }>;
 
   /** triggered when rows are being moved */
-  onGridBeforeResize: SlickEvent<{ grid: SlickGrid; }>;
+  onGridBeforeResize: SlickEvent<{ grid: SlickGridUniversal; }>;
 }

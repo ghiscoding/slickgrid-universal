@@ -4,7 +4,7 @@ import { decimalFormatter } from '../decimalFormatter';
 describe('the Decimal Formatter', () => {
   const gridStub = {
     getOptions: jest.fn()
-  } as unknown as SlickGrid;
+  } as unknown as SlickGridUniversal;
 
   beforeEach(() => {
     jest.spyOn(global.console, 'warn').mockReturnValue();

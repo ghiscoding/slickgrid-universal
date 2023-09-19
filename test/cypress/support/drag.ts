@@ -12,15 +12,17 @@ declare global {
     }
   }
 }
-
-Cypress.Commands.add('dragStart', { prevSubject: true }, (subject, { cellWidth = 90, cellHeight = 35 } = {}) => {
-  return cy.wrap(subject).click({ force: true })
+// @ts-ignore
+Cypress.Commands.add('dragStart', { prevSubject: true }, (subject: HTMLElement, { cellWidth = 90, cellHeight = 35 } = {}) => {
+  return cy.wrap(subject)
+    .click({ force: true })
     .trigger('mousedown', { which: 1 } as any, { force: true })
     .trigger('mousemove', cellWidth / 3, cellHeight / 3);
 });
 
 // use a different command name than 'drag' so that it doesn't conflict with the '@4tw/cypress-drag-drop' lib
-Cypress.Commands.add('dragCell', { prevSubject: true }, (subject, addRow, addCell, { cellWidth = 90, cellHeight = 35 } = {}) => {
+// @ts-ignore
+Cypress.Commands.add('dragCell', { prevSubject: true as any }, (subject: HTMLElement, addRow: number, addCell: number, { cellWidth = 90, cellHeight = 35 } = {}) => {
   return cy.wrap(subject).trigger('mousemove', cellWidth * (addCell + 0.5), cellHeight * (addRow + 0.5), { force: true });
 });
 

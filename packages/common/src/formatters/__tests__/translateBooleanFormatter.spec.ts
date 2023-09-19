@@ -1,4 +1,4 @@
-import { Column, SlickGrid } from '../../interfaces/index';
+import { Column, type SlickGridUniversal } from '../../interfaces/index';
 import { translateBooleanFormatter } from '../translateBooleanFormatter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
@@ -8,7 +8,7 @@ describe('the Translate Boolean Formatter', () => {
   // stub some methods of the SlickGrid Grid instance
   const gridStub = {
     getOptions: jest.fn()
-  } as unknown as SlickGrid;
+  } as unknown as SlickGridUniversal;
 
   beforeEach(() => {
     translateService = new TranslateServiceStub();
@@ -51,7 +51,7 @@ describe('the Translate Boolean Formatter', () => {
 
   it('should return the translated value when value passed is a string and translater service is passed as a ColumnDef Params without any Grid object', async () => {
     await translateService.use('fr');
-    const output = translateBooleanFormatter(1, 1, 'TRUE', { params: { translater: translateService } } as Column, {}, {} as any);
+    const output = translateBooleanFormatter(1, 1, 'TRUE', { params: { translater: translateService } } as Column, {}, gridStub);
     expect(output).toBe('Vrai');
   });
 

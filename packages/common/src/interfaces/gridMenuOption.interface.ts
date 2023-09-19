@@ -160,6 +160,6 @@ export interface GridMenuOption {
   /** Callback method to override the column name output used by the ColumnPicker/GridMenu. */
   headerColumnValueExtractor?: (column: Column, gridOptions?: GridOption) => string;
 
-  /** Callback method that user can override to make the menu usable or not (the menu will not be showm when not considered usable). */
-  menuUsabilityOverride?: (args: MenuCallbackArgs) => boolean;
+  /** Callback method that user can override the default behavior of enabling/disabling an item from the list. */
+  menuUsabilityOverride?: (args: MenuCallbackArgs<any>) => boolean;
 }

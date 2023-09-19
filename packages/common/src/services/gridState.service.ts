@@ -1,5 +1,6 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { dequal } from 'dequal/lite';
+import { type SlickDataView, SlickEventHandler, } from 'slickgrid';
 
 import { ExtensionName, GridStateType, } from '../enums/index';
 import type {
@@ -11,9 +12,7 @@ import type {
   CurrentSorter,
   GridOption,
   GridState,
-  SlickDataView,
-  SlickGrid,
-  SlickNamespace,
+  SlickGridUniversal,
   TreeToggleStateChange,
 } from '../interfaces/index';
 import type { ExtensionService } from './extension.service';
@@ -22,13 +21,10 @@ import type { SharedService } from './shared.service';
 import type { SortService } from './sort.service';
 import type { TreeDataService } from './treeData.service';
 
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
-
 export class GridStateService {
-  protected _eventHandler = new Slick.EventHandler();
+  protected _eventHandler = new SlickEventHandler();
   protected _columns: Column[] = [];
-  protected _grid!: SlickGrid;
+  protected _grid!: SlickGridUniversal;
   protected _subscriptions: EventSubscription[] = [];
   protected _selectedRowIndexes: number[] | undefined = [];
   protected _selectedRowDataContextIds: Array<number | string> | undefined = []; // used with row selection
@@ -45,12 +41,12 @@ export class GridStateService {
 
   /** Getter of SlickGrid DataView object */
   get _dataView(): SlickDataView {
-    return this._grid?.getData?.() ?? {} as SlickDataView;
+    return this._grid?.getData<SlickDataView>() ?? {};
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return this._grid?.getOptions?.() ?? {};
+    return this._grid?.getOptions() ?? {};
   }
 
   /** Getter of the selected data context object IDs */
@@ -67,7 +63,7 @@ export class GridStateService {
    * Initialize the Service
    * @param grid
    */
-  init(grid: SlickGrid): void {
+  init(grid: SlickGridUniversal): void {
     this._grid = grid;
     this.subscribeToAllGridChanges(grid);
   }
@@ -210,7 +206,7 @@ export class GridStateService {
    * @param grid
    * @param currentColumns
    */
-  getAssociatedGridColumns(grid: SlickGrid, currentColumns: CurrentColumn[]): Column[] {
+  getAssociatedGridColumns(grid: SlickGridUniversal, currentColumns: CurrentColumn[]): Column[] {
     const columns: Column[] = [];
     const gridColumns: Column[] = this.sharedService.allColumns || grid.getColumns();
 
@@ -375,7 +371,7 @@ export class GridStateService {
    * Subscribe to all necessary SlickGrid or Service Events that deals with a Grid change,
    * when triggered, we will publish a Grid State Event with current Grid State
    */
-  subscribeToAllGridChanges(grid: SlickGrid) {
+  subscribeToAllGridChanges(grid: SlickGridUniversal) {
     // Subscribe to Event Emitter of Filter changed
     this._subscriptions.push(
       this.pubSubService.subscribe<CurrentFilter[]>('onFilterChanged', currentFilters => {
@@ -506,7 +502,7 @@ export class GridStateService {
    * @param event - event name
    * @param grid - SlickGrid object
    */
-  protected bindSlickGridColumnChangeEventToGridStateChange(eventName: string, grid: SlickGrid) {
+  protected bindSlickGridColumnChangeEventToGridStateChange(eventName: string, grid: SlickGridUniversal) {
     const slickGridEvent = (grid as any)?.[eventName];
 
     if (slickGridEvent && typeof slickGridEvent.subscribe === 'function') {
@@ -522,7 +518,7 @@ export class GridStateService {
    * Bind a Grid Event (of grid option changes) to a Grid State change event, if we detect that any of the pinning (frozen) options changes then we'll trigger a Grid State change
    * @param grid - SlickGrid object
    */
-  protected bindSlickGridOnSetOptionsEventToGridStateChange(grid: SlickGrid) {
+  protected bindSlickGridOnSetOptionsEventToGridStateChange(grid: SlickGridUniversal) {
     const onSetOptionsHandler = grid.onSetOptions;
     this._eventHandler.subscribe(onSetOptionsHandler, (_e, args) => {
       const { frozenBottom: frozenBottomBefore, frozenColumn: frozenColumnBefore, frozenRow: frozenRowBefore } = args.optionsBefore;

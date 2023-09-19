@@ -316,6 +316,7 @@ export class ExtensionService {
       if (!this.getCreatedExtensionByName(ExtensionName.draggableGrouping)) {
         this._draggleGroupingPlugin = new SlickDraggableGrouping(this.extensionUtility, this.pubSubService, this.sharedService);
         if (this._draggleGroupingPlugin) {
+          // @ts-ignore
           gridOptions.enableColumnReorder = this._draggleGroupingPlugin.setupColumnReorder.bind(this._draggleGroupingPlugin) as ColumnReorderFunction;
           this._extensionCreatedList[ExtensionName.draggableGrouping] = { name: ExtensionName.draggableGrouping, instance: this._draggleGroupingPlugin };
         }

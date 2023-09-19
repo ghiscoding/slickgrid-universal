@@ -1,9 +1,10 @@
+import { SlickEvent, type SlickDataView } from 'slickgrid';
+
 import { Editors } from '../index';
 import { InputEditor } from '../inputEditor';
 import { KeyCode } from '../../enums/index';
-import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption, type SlickGridUniversal } from '../../interfaces/index';
 
-declare const Slick: SlickNamespace;
 jest.useFakeTimers();
 
 const KEY_CHAR_A = 97;
@@ -34,9 +35,9 @@ const gridStub = {
   getHeaderRowColumn: jest.fn(),
   getOptions: () => gridOptionMock,
   render: jest.fn(),
-  onBeforeEditCell: new Slick.Event(),
-  onCompositeEditorChange: new Slick.Event(),
-} as unknown as SlickGrid;
+  onBeforeEditCell: new SlickEvent(),
+  onCompositeEditorChange: new SlickEvent(),
+} as unknown as SlickGridUniversal;
 
 describe('InputEditor (TextEditor)', () => {
   let divContainer: HTMLDivElement;
@@ -547,7 +548,7 @@ describe('InputEditor (TextEditor)', () => {
       jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       editor = new InputEditor(editorArguments, 'text');
       editor.setValue('task 1', true);
 
@@ -563,7 +564,7 @@ describe('InputEditor (TextEditor)', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
-      });
+      } as any);
 
       editor = new InputEditor(editorArguments, 'text');
       const disableSpy = jest.spyOn(editor, 'disable');
@@ -579,10 +580,10 @@ describe('InputEditor (TextEditor)', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
 
       editor = new InputEditor(editorArguments, 'text');
       editor.loadValue(mockItemData);
@@ -605,10 +606,10 @@ describe('InputEditor (TextEditor)', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.compositeEditorOptions = {
         excludeDisabledFieldFormValues: true
       };
@@ -631,7 +632,7 @@ describe('InputEditor (TextEditor)', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.compositeEditorOptions = {
         excludeDisabledFieldFormValues: true
       };
@@ -656,10 +657,10 @@ describe('InputEditor (TextEditor)', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.autoCommitEdit = true;
       mockItemData = { id: 1, title: 'task 2', isActive: true };
 

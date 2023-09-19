@@ -1,9 +1,9 @@
 import 'jest-extended';
+import { SlickEvent } from 'slickgrid';
 
-import { GridOption, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import { GridOption, type SlickGridUniversal } from '../../interfaces/index';
 import { SlickCellRangeSelector } from '../slickCellRangeSelector';
 
-declare const Slick: SlickNamespace;
 const GRID_UID = 'slickgrid_12345';
 jest.mock('flatpickr', () => { });
 
@@ -40,12 +40,12 @@ const gridStub = {
   getUID: () => GRID_UID,
   focus: jest.fn(),
   scrollCellIntoView: jest.fn(),
-  onDragInit: new Slick.Event(),
-  onDragStart: new Slick.Event(),
-  onDrag: new Slick.Event(),
-  onDragEnd: new Slick.Event(),
-  onScroll: new Slick.Event(),
-} as unknown as SlickGrid;
+  onDragInit: new SlickEvent(),
+  onDragStart: new SlickEvent(),
+  onDrag: new SlickEvent(),
+  onDragEnd: new SlickEvent(),
+  onScroll: new SlickEvent(),
+} as unknown as SlickGridUniversal;
 
 describe('CellRangeSelector Plugin', () => {
   let plugin: SlickCellRangeSelector;
@@ -316,7 +316,7 @@ describe('CellRangeSelector Plugin', () => {
     jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 2, row: 3 });
     jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValueOnce(true).mockReturnValueOnce(false);
     jest.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
-    jest.spyOn(gridStub, 'getCellNodeBox').mockReturnValue({ right: 2, bottom: 3, left: 4, top: 5, height: 20, width: 33, visible: true });
+    jest.spyOn(gridStub, 'getCellNodeBox').mockReturnValue({ right: 2, bottom: 3, left: 4, top: 5 });
     const focusSpy = jest.spyOn(gridStub, 'focus');
     const onBeforeCellRangeSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true
@@ -370,7 +370,7 @@ describe('CellRangeSelector Plugin', () => {
     jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 2, row: 3 });
     jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValueOnce(true);
     jest.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
-    jest.spyOn(gridStub, 'getCellNodeBox').mockReturnValue({ right: 2, bottom: 3, left: 4, top: 5, height: 20, width: 33, visible: true });
+    jest.spyOn(gridStub, 'getCellNodeBox').mockReturnValue({ right: 2, bottom: 3, left: 4, top: 5 });
     const focusSpy = jest.spyOn(gridStub, 'focus');
     const onBeforeCellRangeSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true

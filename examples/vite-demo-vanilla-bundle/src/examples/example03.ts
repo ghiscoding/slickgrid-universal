@@ -13,19 +13,16 @@ import {
   GroupingGetterFunction,
   GroupTotalFormatters,
   SlickDraggableGrouping,
-  SlickNamespace,
   SortComparers,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { SlickGlobalEditorLock } from 'slickgrid';
 
 import { ExampleGridOptions } from './example-grid-options';
 import './example03.scss?inline';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
 
 interface ReportItem {
   title: string;
@@ -44,7 +41,7 @@ export default class Example3 {
   dataset: any[];
   editCommandQueue: EditCommand[] = [];
   excelExportService: ExcelExportService;
-  sgb: SlickVanillaGridBundle;
+  sgb: SlickVanillaGridBundle<ReportItem & { action: string; }>;
   durationOrderByCount = false;
   draggableGroupingPlugin: SlickDraggableGrouping;
   loadingClass = '';
@@ -374,6 +371,9 @@ export default class Example3 {
     if (this.sgb) {
       this.sgb.dataset = tmpArray;
     }
+    // const item = this.sgb.dataView?.getItemById<ReportItem & { myAction: string; }>(0);
+    // const item = this.sgb?.dataView?.getItemById(0);
+    // console.log('item', item);
     return tmpArray;
   }
 
@@ -504,7 +504,7 @@ export default class Example3 {
 
   undo() {
     const command = this.editCommandQueue.pop();
-    if (command && Slick.GlobalEditorLock.cancelCurrentEdit()) {
+    if (command && SlickGlobalEditorLock.cancelCurrentEdit()) {
       command.undo();
       this.sgb?.slickGrid?.gotoCell(command.row, command.cell, false);
     }

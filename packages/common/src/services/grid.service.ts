@@ -1,18 +1,18 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { arrayRemoveItemByIndex, isObjectEmpty } from '@slickgrid-universal/utils';
+import type { SlickDataView } from 'slickgrid';
 
 import type {
   CellArgs,
   Column,
   CurrentPinning,
-  SlickDataView,
   GridOption,
   GridServiceDeleteOption,
   GridServiceInsertOption,
   GridServiceUpdateOption,
   HideColumnOption,
   OnEventArgs,
-  SlickGrid,
+  SlickGridUniversal,
 } from '../interfaces/index';
 import type { FilterService } from './filter.service';
 import type { GridStateService } from './gridState.service';
@@ -28,7 +28,7 @@ const GridServiceUpdateOptionDefaults: GridServiceUpdateOption = { highlightRow:
 const HideColumnOptionDefaults: HideColumnOption = { autoResizeColumns: true, triggerEvent: true, hideFromColumnPicker: false, hideFromGridMenu: false };
 
 export class GridService {
-  protected _grid!: SlickGrid;
+  protected _grid!: SlickGridUniversal;
   protected _rowSelectionPlugin?: SlickRowSelectionModel;
   protected _highlightTimer?: NodeJS.Timeout;
   protected _highlightTimerEnd?: NodeJS.Timeout;
@@ -45,12 +45,12 @@ export class GridService {
 
   /** Getter of SlickGrid DataView object */
   get _dataView(): SlickDataView {
-    return (this._grid?.getData && this._grid.getData()) as SlickDataView;
+    return this._grid?.getData<SlickDataView>();
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get _gridOptions(): GridOption {
-    return (this._grid?.getOptions) ? this._grid.getOptions() : {};
+    return this._grid?.getOptions() ?? {};
   }
 
   dispose() {
@@ -58,7 +58,7 @@ export class GridService {
     this._rowSelectionPlugin?.dispose();
   }
 
-  init(grid: SlickGrid): void {
+  init(grid: SlickGridUniversal): void {
     this._grid = grid;
   }
 
@@ -148,11 +148,11 @@ export class GridService {
   }
 
   /** Get data item by it's row index number */
-  getDataItemByRowNumber<T = any>(rowNumber: number): T {
+  getDataItemByRowNumber(rowNumber: number) {
     if (!this._grid || typeof this._grid.getDataItem !== 'function') {
       throw new Error(`[Slickgrid-Universal] We could not find SlickGrid Grid object or it's "getDataItem" method`);
     }
-    return this._grid.getDataItem<T>(rowNumber);
+    return this._grid.getDataItem(rowNumber);
   }
 
   /** Chain the item Metadata with our implementation of Metadata at given row index */
@@ -161,7 +161,7 @@ export class GridService {
       const item = this._dataView.getItem(rowNumber);
       let meta = { cssClasses: '' };
       if (typeof previousItemMetadata === 'function') {
-        meta = previousItemMetadata(rowNumber);
+        meta = previousItemMetadata.call(this._dataView, rowNumber);
       }
 
       if (!meta) {
@@ -719,7 +719,7 @@ export class GridService {
     });
 
     // Update the items in the dataView, note that the itemIds must be in the same order as the items
-    this._dataView.updateItems<T>(itemIds, items);
+    this._dataView.updateItems(itemIds, items);
 
     // end the bulk transaction since we're all done
     this._dataView.endUpdate();
@@ -769,7 +769,7 @@ export class GridService {
 
     if (this._dataView.getIdxById(itemId) !== undefined) {
       // Update the item itself inside the dataView
-      this._dataView.updateItem<T>(itemId, item);
+      this._dataView.updateItem(itemId, item);
       if (rowNumber !== undefined) {
         this._grid.updateRow(rowNumber);
       }

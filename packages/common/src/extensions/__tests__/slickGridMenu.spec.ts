@@ -1,14 +1,14 @@
 import 'jest-extended';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { type SlickDataView, SlickEvent, SlickEventData } from 'slickgrid';
 
 import { DelimiterType, FileType } from '../../enums/index';
-import { Column, DOMEvent, GridMenu, GridOption, SlickDataView, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import { Column, DOMEvent, GridMenu, GridOption, SlickGridUniversal } from '../../interfaces/index';
 import { SlickGridMenu } from '../slickGridMenu';
 import { BackendUtilityService, ExcelExportService, FilterService, SharedService, SortService, TextExportService, } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 
-declare const Slick: SlickNamespace;
 jest.mock('flatpickr', () => { });
 
 const gridId = 'grid1';
@@ -62,10 +62,10 @@ const gridStub = {
   setPreHeaderPanelVisibility: jest.fn(),
   setOptions: jest.fn(),
   scrollColumnIntoView: jest.fn(),
-  onBeforeDestroy: new Slick.Event(),
-  onColumnsReordered: new Slick.Event(),
-  onSetOptions: new Slick.Event(),
-} as unknown as SlickGrid;
+  onBeforeDestroy: new SlickEvent(),
+  onColumnsReordered: new SlickEvent(),
+  onSetOptions: new SlickEvent(),
+} as unknown as SlickGridUniversal;
 
 // define a <div> container to simulate the grid container
 const template =
@@ -86,7 +86,7 @@ const template =
 
 describe('GridMenuControl', () => {
   let control: SlickGridMenu;
-  const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+  const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
   const columnsMock: Column[] = [
     { id: 'field1', field: 'field1', name: 'Field 1', width: 100, nameKey: 'TITLE' },
     { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
@@ -293,10 +293,10 @@ describe('GridMenuControl', () => {
         jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
 
         control.initEventHandlers();
-        gridStub.onSetOptions.notify({ grid: gridStub, optionsBefore: { frozenColumn: -1 }, optionsAfter: { frozenColumn: 2 } }, new Slick.EventData(), gridStub);
+        gridStub.onSetOptions.notify({ grid: gridStub, optionsBefore: { frozenColumn: -1 }, optionsAfter: { frozenColumn: 2 } }, new SlickEventData(), gridStub);
         expect(recreateSpy).toHaveBeenCalledTimes(1);
 
-        gridStub.onSetOptions.notify({ grid: gridStub, optionsBefore: { frozenColumn: 2 }, optionsAfter: { frozenColumn: -1 } }, new Slick.EventData(), gridStub);
+        gridStub.onSetOptions.notify({ grid: gridStub, optionsBefore: { frozenColumn: 2 }, optionsAfter: { frozenColumn: -1 } }, new SlickEventData(), gridStub);
         expect(recreateSpy).toHaveBeenCalledTimes(2);
       });
 
@@ -1482,7 +1482,7 @@ describe('GridMenuControl', () => {
         control.init();
         const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
         buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-        gridStub.onColumnsReordered.notify({ impactedColumns: columnsUnorderedMock, grid: gridStub }, eventData, gridStub);
+        gridStub.onColumnsReordered.notify({ impactedColumns: columnsUnorderedMock, grid: gridStub }, eventData as any, gridStub);
         control.menuElement!.querySelector('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
 
         expect(handlerSpy).toHaveBeenCalledTimes(3);

@@ -1,17 +1,16 @@
+import { SlickEvent, SlickEventData, SlickEventHandler, SlickRange } from 'slickgrid';
+
 import { KeyCode } from '../enums/index';
 import type {
   CellRange,
   Column,
   ExcelCopyBufferOption,
   ExternalCopyClipCommand,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
+  SlickGridUniversal,
 } from '../interfaces/index';
 import { createDomElement } from '../services/domUtilities';
 
 // using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
 const CLEAR_COPY_SELECTION_DELAY = 2000;
 const CLIPBOARD_PASTE_DELAY = 100;
 
@@ -24,6 +23,11 @@ const CLIPBOARD_PASTE_DELAY = 100;
   where the browser copies/pastes the serialized data.
 */
 export class SlickCellExternalCopyManager {
+  pluginName: 'CellExternalCopyManager' = 'CellExternalCopyManager' as const;
+  onCopyCells = new SlickEvent<{ ranges: CellRange[]; }>();
+  onCopyCancelled = new SlickEvent<{ ranges: CellRange[]; }>();
+  onPasteCells = new SlickEvent<{ ranges: CellRange[]; }>();
+
   protected _addonOptions!: ExcelCopyBufferOption;
   protected _bodyElement = document.body;
   protected _clearCopyTI?: NodeJS.Timeout;
@@ -31,16 +35,12 @@ export class SlickCellExternalCopyManager {
   protected _copiedCellStyleLayerKey = 'copy-manager';
   protected _copiedRanges: CellRange[] | null = null;
   protected _eventHandler: SlickEventHandler;
-  protected _grid!: SlickGrid;
+  protected _grid!: SlickGridUniversal;
   protected _onCopyInit?: () => void;
   protected _onCopySuccess?: (rowCount: number) => void;
-  pluginName: 'CellExternalCopyManager' = 'CellExternalCopyManager' as const;
-  onCopyCells = new Slick.Event();
-  onCopyCancelled = new Slick.Event();
-  onPasteCells = new Slick.Event();
 
   constructor() {
-    this._eventHandler = new Slick.EventHandler() as SlickEventHandler;
+    this._eventHandler = new SlickEventHandler();
   }
 
   get addonOptions() {
@@ -51,7 +51,7 @@ export class SlickCellExternalCopyManager {
     return this._eventHandler;
   }
 
-  init(grid: SlickGrid, options?: ExcelCopyBufferOption) {
+  init(grid: SlickGridUniversal, options?: ExcelCopyBufferOption) {
     this._grid = grid;
     this._addonOptions = { ...this._addonOptions, ...options };
     this._copiedCellStyleLayerKey = this._addonOptions.copiedCellStyleLayerKey || 'copy-manager';
@@ -65,7 +65,7 @@ export class SlickCellExternalCopyManager {
     // we need a cell selection model
     const cellSelectionModel = grid.getSelectionModel();
     if (!cellSelectionModel) {
-      throw new Error(`Selection model is mandatory for this plugin. Please set a selection model on the grid before adding this plugin: grid.setSelectionModel(new Slick.CellSelectionModel())`);
+      throw new Error(`Selection model is mandatory for this plugin. Please set a selection model on the grid before adding this plugin: grid.setSelectionModel(new SlickCellSelectionModel())`);
     }
 
     // we give focus on the grid when a selection is done on it (unless it's an editor, if so the editor should have already set focus to the grid prior to editing a cell).
@@ -174,7 +174,7 @@ export class SlickCellExternalCopyManager {
     return textAreaElm;
   }
 
-  protected decodeTabularData(grid: SlickGrid, textAreaElement: HTMLTextAreaElement) {
+  protected decodeTabularData(grid: SlickGridUniversal, textAreaElement: HTMLTextAreaElement) {
     const columns = grid.getColumns();
     const clipText = textAreaElement.value;
     const clipRows = clipText.split(/[\n\f\r]/);
@@ -214,12 +214,12 @@ export class SlickCellExternalCopyManager {
       destH = selectedRange.toRow - selectedRange.fromRow + 1;
       destW = selectedRange.toCell - selectedRange.fromCell + 1;
     }
-    const availableRows = (this._grid.getData() as any[]).length - activeRow;
+    const availableRows = this._grid.getData<any[]>().length - activeRow;
     let addRows = 0;
 
     // ignore new rows if we don't have a "newRowCreator"
     if ((availableRows < destH) && typeof this._addonOptions.newRowCreator === 'function') {
-      const d: any[] = this._grid.getData();
+      const d = this._grid.getData<any[]>();
       for (addRows = 1; addRows <= (destH - availableRows); addRows++) {
         d.push({});
       }
@@ -283,12 +283,12 @@ export class SlickCellExternalCopyManager {
           }
         }
 
-        const bRange = {
-          fromCell: activeCell,
-          fromRow: activeRow,
-          toCell: activeCell + clipCommand.w - 1,
-          toRow: activeRow + clipCommand.h - 1
-        };
+        const bRange = new SlickRange(
+          activeRow,
+          activeCell,
+          activeRow + clipCommand.h - 1,
+          activeCell + clipCommand.w - 1
+        );
         this.markCopySelection([bRange]);
         this._grid.getSelectionModel()?.setSelectedRanges([bRange]);
         this.onPasteCells.notify({ ranges: [bRange] });
@@ -320,22 +320,22 @@ export class SlickCellExternalCopyManager {
           }
         }
 
-        const bRange = {
-          fromCell: activeCell,
-          fromRow: activeRow,
-          toCell: activeCell + clipCommand.w - 1,
-          toRow: activeRow + clipCommand.h - 1
-        };
+        const bRange = new SlickRange(
+          activeRow,
+          activeCell,
+          activeRow + clipCommand.h - 1,
+          activeCell + clipCommand.w - 1
+        );
 
         this.markCopySelection([bRange]);
         this._grid.getSelectionModel()?.setSelectedRanges([bRange]);
         this.onPasteCells.notify({ ranges: [bRange] });
         if (typeof this._addonOptions.onPasteCells === 'function') {
-          this._addonOptions.onPasteCells(new Slick.EventData(), { ranges: [bRange] });
+          this._addonOptions.onPasteCells(new SlickEventData(), { ranges: [bRange] });
         }
 
         if (addRows > 1) {
-          const data = this._grid.getData() as any[];
+          const data = this._grid.getData<any[]>();
           for (; addRows > 1; addRows--) {
             data.splice(data.length - 1, 1);
           }

@@ -1,15 +1,14 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy } from '@slickgrid-universal/utils';
+import { type SlickDataView, SlickEvent, SlickEventData } from 'slickgrid';
 
 import { DelimiterType, FileType } from '../../enums/index';
-import { ContextMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, SlickDataView, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import { ContextMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, SlickGridUniversal, } from '../../interfaces/index';
 import { BackendUtilityService, ExcelExportService, SharedService, TextExportService, TreeDataService, } from '../../services/index';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { Formatters } from '../../formatters';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SlickContextMenu } from '../slickContextMenu';
-
-declare const Slick: SlickNamespace;
 
 const removeExtraSpaces = (textS) => `${textS}`.replace(/[\n\r]\s+/g, '');
 
@@ -112,11 +111,11 @@ const gridStub = {
   setOptions: jest.fn(),
   setSortColumns: jest.fn(),
   updateColumnHeader: jest.fn(),
-  onClick: new Slick.Event(),
-  onContextMenu: new Slick.Event(),
-  onScroll: new Slick.Event(),
-  onSort: new Slick.Event(),
-} as unknown as SlickGrid;
+  onClick: new SlickEvent(),
+  onContextMenu: new SlickEvent(),
+  onScroll: new SlickEvent(),
+  onSort: new SlickEvent(),
+} as unknown as SlickGridUniversal;
 
 const dataViewStub = {
   collapseAllGroups: jest.fn(),
@@ -221,7 +220,7 @@ describe('ContextMenu Plugin', () => {
     beforeEach(() => {
       slickCellElm = document.createElement('div');
       slickCellElm.className = 'slick-cell';
-      eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+      eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
       eventData.target = slickCellElm;
 
       jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
@@ -760,7 +759,7 @@ describe('ContextMenu Plugin', () => {
       beforeEach(() => {
         slickCellElm = document.createElement('div');
         slickCellElm.className = 'slick-cell';
-        eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+        eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
         eventData.target = slickCellElm;
 
         jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
