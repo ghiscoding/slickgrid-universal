@@ -55,7 +55,7 @@
     "node": ">=16.15.0",
     "npm": ">=8.5.0"
   },
-  "packageManager": "pnpm@8.7.5",
+  "packageManager": "pnpm@8.7.6",
   "pnpm": {
     "overrides": {
       "json5@<1.0.2": ">=1.0.2",
@@ -70,9 +70,9 @@
     "@lerna-lite/run": "^2.5.1",
     "@lerna-lite/watch": "^2.5.1",
     "@types/jest": "^29.5.5",
-    "@types/node": "^20.6.1",
-    "@typescript-eslint/eslint-plugin": "^6.7.0",
-    "@typescript-eslint/parser": "^6.7.0",
+    "@types/node": "^20.6.2",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/parser": "^6.7.2",
     "cross-env": "^7.0.3",
     "cypress": "^13.2.0",
     "dotenv": "^16.3.1",
@@ -87,7 +87,7 @@
     "jsdom-global": "^3.0.2",
     "moment-mini": "^2.29.4",
     "npm-run-all2": "^6.0.6",
-    "pnpm": "^8.7.5",
+    "pnpm": "^8.7.6",
     "rimraf": "^5.0.1",
     "rxjs": "^7.8.1",
     "servor": "^4.0.2",
