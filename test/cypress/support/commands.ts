@@ -31,19 +31,35 @@ declare global {
   namespace Cypress {
     interface Chainable {
       // triggerHover: (elements: NodeListOf<HTMLElement>) => void;
-      convertPosition(viewport: string): Chainable<HTMLElement>;
-      getCell(row: number, col: number, viewport?: string, options?: { parentSelector?: string, rowHeight?: number; }): Chainable<HTMLElement>;
+      convertPosition(viewport: string): Chainable<HTMLElement | JQuery<HTMLElement> | { x: string; y: string; }>;
+      getCell(row: number, col: number, viewport?: string, options?: { parentSelector?: string, rowHeight?: number; }): Chainable<HTMLElement | JQuery<HTMLElement>>;
+      restoreLocalStorage(): Chainable<HTMLElement | JQuery<HTMLElement>>;
+      saveLocalStorage(): Chainable<HTMLElement | JQuery<HTMLElement>>;
     }
   }
 }
 
 // convert position like 'topLeft' to the object { x: 'left|right', y: 'top|bottom' }
-Cypress.Commands.add('convertPosition', (viewport = 'topLeft') => cy.wrap(convertPosition(viewport) as any));
+Cypress.Commands.add('convertPosition', (viewport = 'topLeft') => cy.wrap(convertPosition(viewport)))
 
-Cypress.Commands.add('getCell', (row: number, col: number, viewport = 'topLeft', { parentSelector = '', rowHeight = 35 } = {}) => {
+Cypress.Commands.add('getCell', (row, col, viewport = 'topLeft', { parentSelector = '', rowHeight = 25 } = {}) => {
   const position = convertPosition(viewport);
   const canvasSelectorX = position.x ? `.grid-canvas-${position.x}` : '';
   const canvasSelectorY = position.y ? `.grid-canvas-${position.y}` : '';
 
   return cy.get(`${parentSelector} ${canvasSelectorX}${canvasSelectorY} [style="top:${row * rowHeight}px"] > .slick-cell:nth(${col})`);
+});
+
+const LOCAL_STORAGE_MEMORY = {};
+
+Cypress.Commands.add('saveLocalStorage', () => {
+  Object.keys(localStorage).forEach(key => {
+    LOCAL_STORAGE_MEMORY[key] = localStorage[key];
+  });
+});
+
+Cypress.Commands.add('restoreLocalStorage', () => {
+  Object.keys(LOCAL_STORAGE_MEMORY).forEach(key => {
+    localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
+  });
 });
