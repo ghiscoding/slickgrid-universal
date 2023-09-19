@@ -97,8 +97,8 @@ importers:
         specifier: ^4.0.2
         version: 4.0.2
       slickgrid:
-        specifier: ^5.0.0-alpha.1
-        version: 5.0.0-alpha.1
+        specifier: ^5.0.0-alpha.2
+        version: 5.0.0-alpha.2
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -236,8 +236,8 @@ importers:
         specifier: ^0.4.10
         version: 0.4.10
       slickgrid:
-        specifier: ^5.0.0-alpha.1
-        version: 5.0.0-alpha.1
+        specifier: ^5.0.0-alpha.2
+        version: 5.0.0-alpha.2
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -528,8 +528,8 @@ importers:
         specifier: ^4.6.13
         version: 4.6.13
       slickgrid:
-        specifier: ^5.0.0-alpha.1
-        version: 5.0.0-alpha.1
+        specifier: ^5.0.0-alpha.2
+        version: 5.0.0-alpha.2
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -8890,8 +8890,8 @@ packages:
       is-fullwidth-code-point: 3.0.0
     dev: true
 
-  /slickgrid@5.0.0-alpha.1:
-    resolution: {integrity: sha512-9UQuLplLP+4lp0jCNwF2WSbgB9VvH875u9G7IknMJhqTEaZCrm3sGyNaCtHi3r09aVF7XZ/BPNXyXUFqI0+MlA==}
+  /slickgrid@5.0.0-alpha.2:
+    resolution: {integrity: sha512-Xr+Ri5yql7dnFRNm3ZZlXr+S/4X3grHlviIQHzB0JlO/1CFgINzXjnyjr39bekpLbR6mBg7n/ND+ClQuCavIQw==}
     engines: {node: '>=16.0.0', npm: '>=8.0.0'}
     dependencies:
       sortablejs: 1.15.0
@@ -9754,7 +9754,7 @@ packages:
       sass: '*'
       stylus: '*'
       sugarss: '*'
-      terser: '>=5.14.2'
+      terser: ^5.4.0
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -9790,7 +9790,7 @@ packages:
       sass: '*'
       stylus: '*'
       sugarss: '*'
-      terser: '>=5.14.2'
+      terser: ^5.4.0
     peerDependenciesMeta:
       '@types/node':
         optional: true

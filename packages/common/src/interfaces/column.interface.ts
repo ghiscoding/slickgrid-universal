@@ -1,4 +1,4 @@
-import type { Column as ColumnCore, FormatterResultObject, SlickEventData } from 'slickgrid';
+import type { Column as ColumnCore, FormatterResultObject } from 'slickgrid';
 
 import type {
   CellMenu,
@@ -236,13 +236,13 @@ export interface Column<T = any> extends ColumnCore<T> {
   nameCompositeEditorKey?: string;
 
   /** an event that can be used for executing an action before the cell becomes editable (that event happens before the "onCellChange" event) */
-  onBeforeEditCell?: (e: SlickEventData, args: OnEventArgs) => void;
+  onBeforeEditCell?: (e: Event, args: OnEventArgs) => void;
 
   /** an event that can be used for executing an action after a cell change */
-  onCellChange?: (e: SlickEventData, args: OnEventArgs) => void;
+  onCellChange?: (e: Event, args: OnEventArgs) => void;
 
   /** an event that can be used for executing an action after a cell click */
-  onCellClick?: (e: SlickEventData, args: OnEventArgs) => void;
+  onCellClick?: (e: Event, args: OnEventArgs) => void;
 
   /**
    * Column output type (e.g. Date Picker, the output format that we will see in the picker)

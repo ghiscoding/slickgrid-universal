@@ -47,4 +47,4 @@ export { SlickgridConfig } from './slickgrid-config';
 export { MultipleSelectOption } from 'multiple-select-vanilla';
 
 // re-export SlickGrid
-export { SlickGrid, SlickDataView } from 'slickgrid';
+export { SlickGrid, SlickDataView, OnSelectedRowsChangedEventArgs, SlickEventData } from 'slickgrid';

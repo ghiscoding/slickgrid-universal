@@ -259,7 +259,7 @@ export default class Example11 {
         excludeFromExport: true,
         formatter: () => `<span class="button-style padding-1px" style="display: inline-block; line-height: 18px;" title"Delete the Row"><span class="mdi mdi-close color-danger" title="Delete Current Row"></span></span>
         &nbsp;<span class="button-style padding-1px" style="display: inline-block; line-height: 18px;" title="Mark as Completed"><span class="mdi mdi-check-underline"></span></span>`,
-        onCellClick: (event, args) => {
+        onCellClick: (event: Event, args) => {
           const dataContext = args.dataContext;
           if ((event.target as HTMLElement).classList.contains('mdi-close')) {
             if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"`)) {
