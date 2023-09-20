@@ -10,7 +10,7 @@
     "vite:dev": "vite --mode development"
   },
   "dependencies": {
-    "@faker-js/faker": "^8.0.2",
+    "@faker-js/faker": "^8.1.0",
     "@fnando/sparkline": "^0.3.10",
     "@slickgrid-universal/common": "workspace:~",
     "@slickgrid-universal/composite-editor-component": "workspace:~",
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@types/fnando__sparkline": "^0.3.5",
-    "@types/node": "^20.6.2",
+    "@types/node": "^20.6.3",
     "@types/whatwg-fetch": "^0.0.33",
     "sass": "^1.67.0",
     "typescript": "^5.2.2",
