@@ -11,6 +11,12 @@ describe('Example 02 - Grouping & Aggregators', { retries: 1 }, () => {
     cy.get('h3 span.subtitle').should('contain', '(with Material Theme)');
   });
 
+  it('should have a min size, to verify that autoResize works properly', () => {
+    cy.get('.grid2')
+      .invoke('width')
+      .should('be.gt', 10);
+  });
+
   it('should have exact column titles on 1st grid', () => {
     cy.get('.grid2')
       .find('.slick-header-columns')
