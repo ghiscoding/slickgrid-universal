@@ -298,6 +298,22 @@ describe('Resizer Service', () => {
       expect(serviceCalculateSpy).toReturnWith({ height: fixedHeight, width: fixedWidth });
     });
 
+    it('should calculate new dimensions even when no container element is defined', () => {
+      const newHeight = 440;
+      const fixedWidth = 800;
+      mockGridOptions.gridWidth = fixedWidth;
+      mockGridOptions.autoResize!.container = undefined;
+      service.init(gridStub, divContainer);
+      const serviceCalculateSpy = jest.spyOn(service, 'calculateGridNewDimensions');
+
+      Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: newHeight });
+      window.dispatchEvent(new Event('resize'));
+      service.calculateGridNewDimensions(mockGridOptions);
+
+      // same comment as previous test, the height dimension will work because calculateGridNewDimensions() uses "window.innerHeight"
+      expect(serviceCalculateSpy).toReturnWith({ height: (newHeight - DATAGRID_BOTTOM_PADDING), width: fixedWidth });
+    });
+
     it('should calculate new dimensions when calculateGridNewDimensions is called', () => {
       const newHeight = 440;
       const fixedWidth = 800;
