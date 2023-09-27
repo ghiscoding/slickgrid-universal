@@ -14,7 +14,7 @@ importers:
     devDependencies:
       '@4tw/cypress-drag-drop':
         specifier: ^2.2.5
-        version: 2.2.5(cypress@13.2.0)
+        version: 2.2.5(cypress@13.3.0)
       '@jest/types':
         specifier: ^29.6.3
         version: 29.6.3
@@ -46,8 +46,8 @@ importers:
         specifier: ^7.0.3
         version: 7.0.3
       cypress:
-        specifier: ^13.2.0
-        version: 13.2.0
+        specifier: ^13.3.0
+        version: 13.3.0
       dotenv:
         specifier: ^16.3.1
         version: 16.3.1
@@ -85,11 +85,11 @@ importers:
         specifier: ^6.0.6
         version: 6.0.6
       pnpm:
-        specifier: ^8.7.6
-        version: 8.7.6
+        specifier: ^8.8.0
+        version: 8.8.0
       rimraf:
-        specifier: ^5.0.4
-        version: 5.0.4
+        specifier: ^5.0.5
+        version: 5.0.5
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -613,12 +613,12 @@ importers:
 
 packages:
 
-  /@4tw/cypress-drag-drop@2.2.5(cypress@13.2.0):
+  /@4tw/cypress-drag-drop@2.2.5(cypress@13.3.0):
     resolution: {integrity: sha512-3ghTmzhOmUqeN6U3QmUnKRUxI7OMLbJA4hHUY/eS/FhWJgxbiGgcaELbolWnBAOpajPXcsNQGYEj9brd59WH6A==}
     peerDependencies:
       cypress: 2 - 13
     dependencies:
-      cypress: 13.2.0
+      cypress: 13.3.0
     dev: true
 
   /@aashutoshrathi/word-wrap@1.2.6:
@@ -2184,7 +2184,7 @@ packages:
     engines: {node: ^16.14.0 || >=18.0.0}
     dependencies:
       '@npmcli/git': 5.0.3
-      glob: 10.3.4
+      glob: 10.3.7
       hosted-git-info: 7.0.0
       json-parse-even-better-errors: 3.0.0
       normalize-package-data: 6.0.0
@@ -3356,7 +3356,7 @@ packages:
     dependencies:
       '@npmcli/fs': 3.1.0
       fs-minipass: 3.0.1
-      glob: 10.3.4
+      glob: 10.3.7
       lru-cache: 10.0.1
       minipass: 7.0.3
       minipass-collect: 1.0.2
@@ -4004,8 +4004,8 @@ packages:
       rrweb-cssom: 0.6.0
     dev: true
 
-  /cypress@13.2.0:
-    resolution: {integrity: sha512-AvDQxBydE771GTq0TR4ZUBvv9m9ffXuB/ueEtpDF/6gOcvFR96amgwSJP16Yhqw6VhmwqspT5nAGzoxxB+D89g==}
+  /cypress@13.3.0:
+    resolution: {integrity: sha512-mpI8qcTwLGiA4zEQvTC/U1xGUezVV4V8HQCOYjlEOrVmU1etVvxOjkCXHGwrlYdZU/EPmUiWfsO3yt1o+Q2bgw==}
     engines: {node: ^16.0.0 || ^18.0.0 || >=20.0.0}
     hasBin: true
     requiresBuild: true
@@ -5259,7 +5259,7 @@ packages:
       foreground-child: 3.1.1
       jackspeak: 2.0.3
       minimatch: 9.0.3
-      minipass: 5.0.0
+      minipass: 7.0.3
       path-scurry: 1.10.1
     dev: true
 
@@ -7903,8 +7903,8 @@ packages:
       find-up: 4.1.0
     dev: true
 
-  /pnpm@8.7.6:
-    resolution: {integrity: sha512-ZJ/LpDy+IGYpCPYo2INfnw2MopUOTHQ3HcnhbiSqVLtV5rTmsrbFHe4i35ITLpcgvIWptWbzUTZ8efDYXWpFew==}
+  /pnpm@8.8.0:
+    resolution: {integrity: sha512-eY5rMiZpzmPI2oVr1irR97bzb036oKwCWvK91wDQndXcqUPlytPtrF0bO668Syw/uA+7hTf5NnM8Mr4ux4BRRA==}
     engines: {node: '>=16.14'}
     hasBin: true
     dev: true
@@ -8446,7 +8446,7 @@ packages:
     resolution: {integrity: sha512-uL4Z10OKV4p6vbdvIXB+OzhInYtIozl/VxUBPgNkBuUi2DeRonnuspmaVAMcrkmfjKGNmRndyQAbE7/AmzGwFg==}
     engines: {node: ^16.14.0 || >=18.0.0}
     dependencies:
-      glob: 10.3.4
+      glob: 10.3.7
       json-parse-even-better-errors: 3.0.0
       normalize-package-data: 6.0.0
       npm-normalize-package-bin: 3.0.1
@@ -8648,8 +8648,8 @@ packages:
       glob: 7.2.3
     dev: true
 
-  /rimraf@5.0.4:
-    resolution: {integrity: sha512-rizQI/o/YAMM1us0Zyax0uRfIK39XR52EAjjOi0fzMolpGp0onj6CWzBAXuOx6+6Xi9Rgi0d9tUZojhJerLUmQ==}
+  /rimraf@5.0.5:
+    resolution: {integrity: sha512-CqDakW+hMe/Bz202FPEymy68P+G50RfMQK+Qo5YUqc9SPipvbGjCGKd0RSKEelbsfQuw3g5NZDSrlZZAJurH1A==}
     engines: {node: '>=14'}
     hasBin: true
     dependencies:
