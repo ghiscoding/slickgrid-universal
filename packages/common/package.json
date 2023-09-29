@@ -75,7 +75,7 @@
     "@slickgrid-universal/utils": "workspace:~",
     "autocompleter": "^9.1.0",
     "dequal": "^2.0.3",
-    "dompurify": "^3.0.5",
+    "dompurify": "^3.0.6",
     "flatpickr": "^4.6.13",
     "moment-mini": "^2.29.4",
     "multiple-select-vanilla": "^0.4.10",
@@ -91,7 +91,7 @@
     "cross-env": "^7.0.3",
     "cssnano": "^6.0.1",
     "npm-run-all2": "^6.0.6",
-    "postcss": "^8.4.30",
+    "postcss": "^8.4.31",
     "postcss-cli": "^10.1.0",
     "sass": "^1.68.0"
   },
