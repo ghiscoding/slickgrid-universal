@@ -47,11 +47,6 @@ export class SlickCellSelectionModel {
     return this._selector;
   }
 
-  /** Getter of SlickGrid DataView object */
-  get dataView(): SlickDataView {
-    return this._grid?.getData() ?? {} as SlickDataView;
-  }
-
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
   }
@@ -203,7 +198,6 @@ export class SlickCellSelectionModel {
     }
 
     if (active && e.shiftKey && !metaKey && !e.altKey && this.isKeyAllowed(e.key)) {
-
       ranges = this.getSelectedRanges().slice();
       if (!ranges.length) {
         ranges.push(new Slick.Range(active.row, active.cell));
@@ -222,7 +216,6 @@ export class SlickCellSelectionModel {
         // walking direction
         const dirRow = active.row === last.fromRow ? 1 : -1;
         const dirCell = active.cell === last.fromCell ? 1 : -1;
-        const pageRowCount = this.getViewportRowCount();
         const isSingleKeyMove = e.key.startsWith('Arrow');
         let toRow = 0;
 
@@ -239,7 +232,8 @@ export class SlickCellSelectionModel {
           }
           toRow = active.row + dirRow * dRow;
         } else {
-          // multiple cell moves: (Home, End, Page{Up/Down})
+          // multiple cell moves: (Home, End, Page{Up/Down}), we need to know how many rows are displayed on a page
+          const pageRowCount = this.getViewportRowCount();
           if (this._prevSelectedRow === undefined) {
             this._prevSelectedRow = active.row;
           }

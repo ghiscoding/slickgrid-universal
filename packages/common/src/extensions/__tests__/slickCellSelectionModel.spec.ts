@@ -6,6 +6,8 @@ import { SlickCellSelectionModel } from '../slickCellSelectionModel';
 
 declare const Slick: SlickNamespace;
 const GRID_UID = 'slickgrid_12345';
+const NB_ITEMS = 200;
+const CALCULATED_PAGE_ROW_COUNT = 23; // pageRowCount with our mocked sizes is 23 => ((600 - 17) / 25)
 jest.mock('flatpickr', () => { });
 
 const addVanillaEventPropagation = function (event, commandKey = '', keyName = '') {
@@ -23,6 +25,7 @@ const addVanillaEventPropagation = function (event, commandKey = '', keyName = '
 const mockGridOptions = {
   frozenColumn: 1,
   frozenRow: -1,
+  rowHeight: 25
 } as GridOption;
 
 const getEditorLockMock = {
@@ -31,7 +34,8 @@ const getEditorLockMock = {
 };
 
 const dataViewStub = {
-  getPagingInfo: () => ({ pageSize: 5 }),
+  getLength: () => NB_ITEMS,
+  getPagingInfo: () => ({ pageSize: 0 }),
 };
 
 const gridStub = {
@@ -43,10 +47,11 @@ const gridStub = {
   getCellFromPoint: jest.fn(),
   getCellNodeBox: jest.fn(),
   getData: () => dataViewStub,
+  getDataLength: jest.fn(),
   getEditorLock: () => getEditorLockMock,
   getOptions: () => mockGridOptions,
   getUID: () => GRID_UID,
-  getScrollbarDimensions: jest.fn(),
+  getScrollbarDimensions: () => ({ height: 17, width: 17}),
   getViewportNode: jest.fn(),
   focus: jest.fn(),
   registerPlugin: jest.fn(),
@@ -88,6 +93,8 @@ describe('CellSelectionModel Plugin', () => {
 
   beforeEach(() => {
     plugin = new SlickCellSelectionModel();
+    jest.spyOn(gridStub, 'getViewportNode').mockReturnValue(viewportElm);
+    Object.defineProperty(viewportElm, 'clientHeight', { writable: true, configurable: true, value: 600 });
   });
 
   afterEach(() => {
@@ -236,6 +243,9 @@ describe('CellSelectionModel Plugin', () => {
   });
 
   it('should call "setSelectedRanges" with Slick Range with a Right direction when triggered by "onKeyDown" with key combo of Shift+ArrowRight', () => {
+    // let's test this one without a DataView (aka SlickGrid only)
+    jest.spyOn(gridStub, 'getData').mockReturnValueOnce([]);
+    jest.spyOn(gridStub, 'getDataLength').mockReturnValueOnce(NB_ITEMS);
     jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: 3 });
 
     plugin.init(gridStub);
@@ -253,7 +263,7 @@ describe('CellSelectionModel Plugin', () => {
     }]);
   });
 
-  it('should call "setSelectedRanges" with Slick Range with a Right direction when triggered by "onKeyDown" with key combo of Shift+ArrowUp', () => {
+  it('should call "setSelectedRanges" with Slick Range with an Up direction when triggered by "onKeyDown" with key combo of Shift+ArrowUp', () => {
     jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: 3 });
 
     plugin.init(gridStub);
@@ -271,7 +281,7 @@ describe('CellSelectionModel Plugin', () => {
     }]);
   });
 
-  it('should call "setSelectedRanges" with Slick Range with a Right direction when triggered by "onKeyDown" with key combo of Shift+ArrowDown', () => {
+  it('should call "setSelectedRanges" with Slick Range with a Down direction when triggered by "onKeyDown" with key combo of Shift+ArrowDown', () => {
     jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: 3 });
 
     plugin.init(gridStub);
@@ -316,6 +326,155 @@ describe('CellSelectionModel Plugin', () => {
     expect(scrollCellSpy).toHaveBeenCalledWith(4, 2, false);
     expect(scrollRowSpy).toHaveBeenCalledWith(4);
     expect(onSelectedRangeSpy).toHaveBeenCalledWith(expectedRangeCalled, expect.objectContaining({ detail: { caller: 'SlickCellSelectionModel.setSelectedRanges' } }));
+  });
+
+  it('should call "setSelectedRanges" with Slick Range from current position to a calculated size of a page down when using Shift+PageDown key combo when triggered by "onKeyDown"', () => {
+    const notifyingRowNumber = 3;
+    jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: notifyingRowNumber });
+    jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+
+    plugin.init(gridStub);
+    plugin.setSelectedRanges([
+      { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4, contains: () => false },
+      { fromCell: 2, fromRow: notifyingRowNumber, toCell: 3, toRow: 4, contains: () => false }
+    ] as unknown as SlickRange[]);
+    const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
+    const keyDownEvent = addVanillaEventPropagation(new Event('keydown'), 'shiftKey', 'PageDown');
+    gridStub.onKeyDown.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
+
+    const expectedRangeCalled = [
+      { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4, contains: expect.toBeFunction(), } as unknown as SlickRange,
+      {
+        fromCell: 2, fromRow: 3, toCell: 2, toRow: (notifyingRowNumber + CALCULATED_PAGE_ROW_COUNT),
+        contains: expect.toBeFunction(), toString: expect.toBeFunction(), isSingleCell: expect.toBeFunction(), isSingleRow: expect.toBeFunction(),
+      },
+    ];
+    expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
+  });
+
+  it('should call "setSelectedRanges" with Slick Range from current position to the last row index when using Shift+PageDown key combo but there is less rows than an actual page left to display', () => {
+    const notifyingRowNumber = NB_ITEMS - 10; // will be less than a page size (row count)
+    const lastRowIndex = NB_ITEMS - 1;
+    jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: notifyingRowNumber });
+    jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+
+    plugin.init(gridStub);
+    plugin.setSelectedRanges([
+      { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4, contains: () => false },
+      { fromCell: 2, fromRow: notifyingRowNumber, toCell: 3, toRow: 4, contains: () => false }
+    ] as unknown as SlickRange[]);
+    const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
+    const keyDownEvent = addVanillaEventPropagation(new Event('keydown'), 'shiftKey', 'PageDown');
+    gridStub.onKeyDown.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
+
+    const expectedRangeCalled = [
+      { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4, contains: expect.toBeFunction(), } as unknown as SlickRange,
+      {
+        fromCell: 2, fromRow: notifyingRowNumber, toCell: 2, toRow: lastRowIndex,
+        contains: expect.toBeFunction(), toString: expect.toBeFunction(), isSingleCell: expect.toBeFunction(), isSingleRow: expect.toBeFunction(),
+      },
+    ];
+    expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
+  });
+
+  it('should call "setSelectedRanges" with Slick Range from current position to a calculated size of a page up when using Shift+PageUp key combo when triggered by "onKeyDown"', () => {
+    const notifyingRowNumber = 100;
+    const CALCULATED_PAGE_ROW_COUNT = 23;
+    jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: notifyingRowNumber });
+    jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+
+    plugin.init(gridStub);
+    plugin.setSelectedRanges([
+      { fromCell: 1, fromRow: 99, toCell: 3, toRow: 120, contains: () => false },
+      { fromCell: 2, fromRow: notifyingRowNumber, toCell: 3, toRow: 120, contains: () => false }
+    ] as unknown as SlickRange[]);
+    const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
+    const keyDownEvent = addVanillaEventPropagation(new Event('keydown'), 'shiftKey', 'PageUp');
+    gridStub.onKeyDown.notify({ cell: 2, row: 101, grid: gridStub }, keyDownEvent, gridStub);
+
+    const expectedRangeCalled = [
+      { fromCell: 1, fromRow: 99, toCell: 3, toRow: 120, contains: expect.toBeFunction(), } as unknown as SlickRange,
+      {
+        fromCell: 2, fromRow: (notifyingRowNumber - CALCULATED_PAGE_ROW_COUNT), toCell: 2, toRow: 100,
+        contains: expect.toBeFunction(), toString: expect.toBeFunction(), isSingleCell: expect.toBeFunction(), isSingleRow: expect.toBeFunction(),
+      },
+    ];
+    expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
+  });
+
+  it('should call "setSelectedRanges" with Slick Range from current position to the first row index when using Shift+PageUp key combo but there is less rows than an actual page left to display', () => {
+    const notifyingRowNumber = 10; // will be less than a page size (row count)
+    const firstRowIndex = 0;
+    jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: notifyingRowNumber });
+    jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+
+    plugin.init(gridStub);
+    plugin.setSelectedRanges([
+      { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4, contains: () => false },
+      { fromCell: 2, fromRow: notifyingRowNumber, toCell: 3, toRow: 4, contains: () => false }
+    ] as unknown as SlickRange[]);
+    const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
+    const keyDownEvent = addVanillaEventPropagation(new Event('keydown'), 'shiftKey', 'PageUp');
+    gridStub.onKeyDown.notify({ cell: 2, row: 3, grid: gridStub }, keyDownEvent, gridStub);
+
+    const expectedRangeCalled = [
+      { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4, contains: expect.toBeFunction(), } as unknown as SlickRange,
+      {
+        fromCell: 2, fromRow: firstRowIndex, toCell: 2, toRow: notifyingRowNumber,
+        contains: expect.toBeFunction(), toString: expect.toBeFunction(), isSingleCell: expect.toBeFunction(), isSingleRow: expect.toBeFunction(),
+      },
+    ];
+    expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
+  });
+
+  it('should call "setSelectedRanges" with Slick Range from current position to row index 0 when using Shift+Home key combo when triggered by "onKeyDown"', () => {
+    const notifyingRowNumber = 100;
+    const expectedRowZeroIdx = 0;
+    jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: notifyingRowNumber });
+    jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+
+    plugin.init(gridStub);
+    plugin.setSelectedRanges([
+      { fromCell: 1, fromRow: 99, toCell: 3, toRow: 120, contains: () => false },
+      { fromCell: 2, fromRow: notifyingRowNumber, toCell: 3, toRow: 120, contains: () => false }
+    ] as unknown as SlickRange[]);
+    const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
+    const keyDownEvent = addVanillaEventPropagation(new Event('keydown'), 'shiftKey', 'Home');
+    gridStub.onKeyDown.notify({ cell: 2, row: 101, grid: gridStub }, keyDownEvent, gridStub);
+
+    const expectedRangeCalled = [
+      { fromCell: 1, fromRow: 99, toCell: 3, toRow: 120, contains: expect.toBeFunction(), } as unknown as SlickRange,
+      {
+        fromCell: 2, fromRow: expectedRowZeroIdx, toCell: 2, toRow: 100,
+        contains: expect.toBeFunction(), toString: expect.toBeFunction(), isSingleCell: expect.toBeFunction(), isSingleRow: expect.toBeFunction(),
+      },
+    ];
+    expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
+  });
+
+  it('should call "setSelectedRanges" with Slick Range from current position to last row index when using Shift+End key combo when triggered by "onKeyDown"', () => {
+    const notifyingRowNumber = 100;
+    const expectedLastRowIdx = NB_ITEMS - 1;
+    jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: notifyingRowNumber });
+    jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+
+    plugin.init(gridStub);
+    plugin.setSelectedRanges([
+      { fromCell: 1, fromRow: 99, toCell: 3, toRow: 120, contains: () => false },
+      { fromCell: 2, fromRow: notifyingRowNumber, toCell: 3, toRow: 120, contains: () => false }
+    ] as unknown as SlickRange[]);
+    const setSelectRangeSpy = jest.spyOn(plugin, 'setSelectedRanges');
+    const keyDownEvent = addVanillaEventPropagation(new Event('keydown'), 'shiftKey', 'End');
+    gridStub.onKeyDown.notify({ cell: 2, row: 101, grid: gridStub }, keyDownEvent, gridStub);
+
+    const expectedRangeCalled = [
+      { fromCell: 1, fromRow: 99, toCell: 3, toRow: 120, contains: expect.toBeFunction(), } as unknown as SlickRange,
+      {
+        fromCell: 2, fromRow: notifyingRowNumber, toCell: 2, toRow: expectedLastRowIdx,
+        contains: expect.toBeFunction(), toString: expect.toBeFunction(), isSingleCell: expect.toBeFunction(), isSingleRow: expect.toBeFunction(),
+      },
+    ];
+    expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
   });
 
   it('should call "rangesAreEqual" and expect True when both ranges are equal', () => {
