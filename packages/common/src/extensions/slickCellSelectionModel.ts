@@ -274,10 +274,10 @@ export class SlickCellSelectionModel {
           const viewCell = dirCell > 0 ? newLast.toCell : newLast.fromCell;
           if (isSingleKeyMove) {
             this._grid.scrollRowIntoView(viewRow);
-            this._grid.scrollCellIntoView(viewRow, viewCell);
+            this._grid.scrollCellIntoView(viewRow, viewCell, false);
           } else {
             this._grid.scrollRowIntoView(toRow);
-            this._grid.scrollCellIntoView(toRow, viewCell);
+            this._grid.scrollCellIntoView(toRow, viewCell, false);
           }
         } else {
           ranges.push(last);

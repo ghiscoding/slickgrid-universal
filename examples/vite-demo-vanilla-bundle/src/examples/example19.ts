@@ -24,6 +24,7 @@ export default class Example34 {
   columnDefinitions: Column[] = [];
   dataset: any[] = [];
   gridOptions!: GridOption;
+  isWithPagination = true;
   sgb: SlickVanillaGridBundle;
 
   attached() {
@@ -134,5 +135,14 @@ export default class Example34 {
       phone += Math.round(Math.random() * 9) + '';
     }
     return phone;
+  }
+
+  // Toggle the Grid Pagination
+  // IMPORTANT, the Pagination MUST BE CREATED on initial page load before you can start toggling it
+  // Basically you cannot toggle a Pagination that doesn't exist (must created at the time as the grid)
+  togglePagination() {
+    this.isWithPagination = !this.isWithPagination;
+    this.sgb.paginationService!.togglePaginationVisibility(this.isWithPagination);
+    this.sgb.slickGrid!.setSelectedRows([]);
   }
 }

@@ -30,6 +30,10 @@ const getEditorLockMock = {
   isActive: jest.fn(),
 };
 
+const dataViewStub = {
+  getPagingInfo: () => ({ pageSize: 5 }),
+};
+
 const gridStub = {
   canCellBeSelected: jest.fn(),
   getActiveCell: jest.fn(),
@@ -38,9 +42,12 @@ const gridStub = {
   getCellFromEvent: jest.fn(),
   getCellFromPoint: jest.fn(),
   getCellNodeBox: jest.fn(),
+  getData: () => dataViewStub,
   getEditorLock: () => getEditorLockMock,
   getOptions: () => mockGridOptions,
   getUID: () => GRID_UID,
+  getScrollbarDimensions: jest.fn(),
+  getViewportNode: jest.fn(),
   focus: jest.fn(),
   registerPlugin: jest.fn(),
   setActiveCell: jest.fn(),
