@@ -1,5 +1,4 @@
-import { KeyCode } from '../enums/index';
-import type { CellRange, OnActiveCellChangedEventArgs, SlickEventHandler, SlickGrid, SlickNamespace, SlickRange, } from '../interfaces/index';
+import type { CellRange, OnActiveCellChangedEventArgs, SlickDataView, SlickEventHandler, SlickGrid, SlickNamespace, SlickRange } from '../interfaces/index';
 import { SlickCellRangeSelector } from './index';
 
 // using external SlickGrid JS libraries
@@ -14,7 +13,10 @@ export class SlickCellSelectionModel {
   protected _addonOptions?: CellSelectionModelOption;
   protected _canvas: HTMLElement | null = null;
   protected _eventHandler: SlickEventHandler;
+  protected _dataView?: SlickDataView;
   protected _grid!: SlickGrid;
+  protected _prevSelectedRow?: number;
+  protected _prevKeyDown = '';
   protected _ranges: CellRange[] = [];
   protected _selector: SlickCellRangeSelector;
   protected _defaults = {
@@ -45,6 +47,11 @@ export class SlickCellSelectionModel {
     return this._selector;
   }
 
+  /** Getter of SlickGrid DataView object */
+  get dataView(): SlickDataView {
+    return this._grid?.getData() ?? {} as SlickDataView;
+  }
+
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
   }
@@ -52,6 +59,9 @@ export class SlickCellSelectionModel {
 
   init(grid: SlickGrid) {
     this._grid = grid;
+    if (this.hasDataView()) {
+      this._dataView = grid?.getData() ?? {} as SlickDataView;
+    }
     this._addonOptions = { ...this._defaults, ...this._addonOptions } as CellSelectionModelOption;
     this._eventHandler
       .subscribe(this._grid.onActiveCellChanged, this.handleActiveCellChange.bind(this) as EventListener)
@@ -81,6 +91,23 @@ export class SlickCellSelectionModel {
 
   getSelectedRanges(): CellRange[] {
     return this._ranges;
+  }
+
+  /**
+   * Get the number of rows displayed in the viewport
+   * Note that the row count is an approximation because it is a calculated value using this formula (viewport / rowHeight = rowCount),
+   * the viewport must also be displayed for this calculation to work.
+   * @return {Number} rowCount
+   */
+  getViewportRowCount() {
+    const viewportElm = this._grid.getViewportNode();
+    const viewportHeight = viewportElm?.clientHeight ?? 0;
+    const scrollbarHeight = this._grid.getScrollbarDimensions()?.height ?? 0;
+    return Math.floor((viewportHeight - scrollbarHeight) / this._grid.getOptions().rowHeight!) || 1;
+  }
+
+  hasDataView() {
+    return !Array.isArray(this._grid.getData());
   }
 
   rangesAreEqual(range1: CellRange[], range2: CellRange[]) {
@@ -137,6 +164,7 @@ export class SlickCellSelectionModel {
   // ---------------------
 
   protected handleActiveCellChange(_e: Event, args: OnActiveCellChangedEventArgs) {
+    this._prevSelectedRow = undefined;
     if (this._addonOptions?.selectActiveCell && args.row !== null && args.cell !== null) {
       this.setSelectedRanges([new Slick.Range(args.row, args.cell)]);
     } else if (!this._addonOptions?.selectActiveCell) {
@@ -157,17 +185,24 @@ export class SlickCellSelectionModel {
     this.setSelectedRanges([args.range as SlickRange]);
   }
 
+  protected isKeyAllowed(key: string) {
+    return ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageDown', 'PageUp', 'Home', 'End'].some(k => k === key);
+  }
+
   protected handleKeyDown(e: KeyboardEvent) {
     let ranges: CellRange[];
     let last: SlickRange;
     const active = this._grid.getActiveCell();
     const metaKey = e.ctrlKey || e.metaKey;
 
-    if (active && e.shiftKey && !metaKey && !e.altKey &&
-      (e.which === KeyCode.LEFT || e.key === 'ArrowLeft'
-        || e.which === KeyCode.RIGHT || e.key === 'ArrowRight'
-        || e.which === KeyCode.UP || e.key === 'ArrowUp'
-        || e.which === KeyCode.DOWN || e.key === 'ArrowDown')) {
+    let dataLn = 0;
+    if (this._dataView) {
+      dataLn = this._dataView?.getPagingInfo().pageSize || this._dataView.getLength();
+    } else {
+      dataLn = this._grid.getDataLength();
+    }
+
+    if (active && e.shiftKey && !metaKey && !e.altKey && this.isKeyAllowed(e.key)) {
 
       ranges = this.getSelectedRanges().slice();
       if (!ranges.length) {
@@ -187,25 +222,63 @@ export class SlickCellSelectionModel {
         // walking direction
         const dirRow = active.row === last.fromRow ? 1 : -1;
         const dirCell = active.cell === last.fromCell ? 1 : -1;
+        const pageRowCount = this.getViewportRowCount();
+        const isSingleKeyMove = e.key.startsWith('Arrow');
+        let toRow = 0;
 
-        if (e.which === KeyCode.LEFT || e.key === 'ArrowLeft') {
-          dCell -= dirCell;
-        } else if (e.which === KeyCode.RIGHT || e.key === 'ArrowRight') {
-          dCell += dirCell;
-        } else if (e.which === KeyCode.UP || e.key === 'ArrowUp') {
-          dRow -= dirRow;
-        } else if (e.which === KeyCode.DOWN || e.key === 'ArrowDown') {
-          dRow += dirRow;
+        if (isSingleKeyMove) {
+          // single cell move: (Arrow{Up/ArrowDown/ArrowLeft/ArrowRight})
+          if (e.key === 'ArrowLeft') {
+            dCell -= dirCell;
+          } else if (e.key === 'ArrowRight') {
+            dCell += dirCell;
+          } else if (e.key === 'ArrowUp') {
+            dRow -= dirRow;
+          } else if (e.key === 'ArrowDown') {
+            dRow += dirRow;
+          }
+          toRow = active.row + dirRow * dRow;
+        } else {
+          // multiple cell moves: (Home, End, Page{Up/Down})
+          if (this._prevSelectedRow === undefined) {
+            this._prevSelectedRow = active.row;
+          }
+
+          if (e.key === 'Home') {
+            toRow = 0;
+          } else if (e.key === 'End') {
+            toRow = dataLn - 1;
+          } else if (e.key === 'PageUp') {
+            if (this._prevSelectedRow >= 0) {
+              toRow = this._prevSelectedRow - pageRowCount;
+            }
+            if (toRow < 0) {
+              toRow = 0;
+            }
+          } else if (e.key === 'PageDown') {
+            if (this._prevSelectedRow <= dataLn - 1) {
+              toRow = this._prevSelectedRow + pageRowCount;
+            }
+            if (toRow > dataLn - 1) {
+              toRow = dataLn - 1;
+            }
+          }
+          this._prevSelectedRow = toRow;
         }
 
         // define new selection range
-        const newLast = new Slick.Range(active.row, active.cell, active.row + dirRow * dRow, active.cell + dirCell * dCell);
+        const newLast = new Slick.Range(active.row, active.cell, toRow, active.cell + dirCell * dCell);
         if (this.removeInvalidRanges([newLast]).length) {
           ranges.push(newLast);
           const viewRow = dirRow > 0 ? newLast.toRow : newLast.fromRow;
           const viewCell = dirCell > 0 ? newLast.toCell : newLast.fromCell;
-          this._grid.scrollRowIntoView(viewRow);
-          this._grid.scrollCellIntoView(viewRow, viewCell, false);
+          if (isSingleKeyMove) {
+            this._grid.scrollRowIntoView(viewRow);
+            this._grid.scrollCellIntoView(viewRow, viewCell);
+          } else {
+            this._grid.scrollRowIntoView(toRow);
+            this._grid.scrollCellIntoView(toRow, viewCell);
+          }
         } else {
           ranges.push(last);
         }
@@ -213,6 +286,7 @@ export class SlickCellSelectionModel {
 
         e.preventDefault();
         e.stopPropagation();
+        this._prevKeyDown = e.key;
       }
     }
   }
