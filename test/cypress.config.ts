@@ -7,7 +7,7 @@ export default defineConfig({
   video: false,
   projectId: 'p5zxx6',
   viewportWidth: 1200,
-  viewportHeight: 950,
+  viewportHeight: 900,
   fixturesFolder: 'test/cypress/fixtures',
   screenshotsFolder: 'test/cypress/screenshots',
   videosFolder: 'test/cypress/videos',

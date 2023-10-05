@@ -95,8 +95,8 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', { retries: 0 }, () 
         .should('have.text', '{"fromRow":8,"fromCell":2,"toRow":10,"toCell":2}');
     });
 
-    it('should click on cell D10 then PageDown 2 times w/selection D10-D52 ', () => {
-      // 52 is because of a page row count found to be 21 for current browser resolution set in Cypress => 21*2+10 = 52
+    it('should click on cell D10 then PageDown 2 times w/selection D10-D50 ', () => {
+      // 50 is because of a page row count found to be 21 for current browser resolution set in Cypress => 21*2+10 = 50
       cy.getCell(10, 4, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
         .as('cell_D10')
         .click();
@@ -105,10 +105,10 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', { retries: 0 }, () 
         .type('{shift}{pagedown}{pagedown}');
 
       cy.get('#selectionRange')
-        .should('have.text', '{"fromRow":10,"fromCell":4,"toRow":52,"toCell":4}');
+        .should('have.text', '{"fromRow":10,"fromCell":4,"toRow":50,"toCell":4}');
     });
 
-    it('should click on cell D10 then PageDown 3 times then PageUp 1 time w/selection D10-D52', () => {
+    it('should click on cell D10 then PageDown 3 times then PageUp 1 time w/selection D10-D50', () => {
       cy.getCell(10, 4, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
         .as('cell_D10')
         .click();
@@ -117,19 +117,19 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', { retries: 0 }, () 
         .type('{shift}{pagedown}{pagedown}{pagedown}{pageup}');
 
       cy.get('#selectionRange')
-        .should('have.text', '{"fromRow":10,"fromCell":4,"toRow":52,"toCell":4}');
+        .should('have.text', '{"fromRow":10,"fromCell":4,"toRow":50,"toCell":4}');
     });
 
-    it('should click on cell E12 then End key w/selection E52-E99', () => {
-      cy.getCell(52, 5, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
-        .as('cell_E52')
+    it('should click on cell E12 then End key w/selection E50-E99', () => {
+      cy.getCell(50, 5, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })
+        .as('cell_E50')
         .click();
 
-      cy.get('@cell_E52')
+      cy.get('@cell_E50')
         .type('{shift}{end}');
 
       cy.get('#selectionRange')
-        .should('have.text', '{"fromRow":52,"fromCell":5,"toRow":99,"toCell":5}');
+        .should('have.text', '{"fromRow":50,"fromCell":5,"toRow":99,"toCell":5}');
     });
 
     it('should click on cell C85 then End key w/selection C0-C85', () => {
