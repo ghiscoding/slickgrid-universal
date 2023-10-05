@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.1](https://github.com/ghiscoding/slickgrid-universal/compare/v3.3.0...v3.3.1) (2023-10-05)
+
+### Reverts
+
+* Revert "feat: add option to cancel Row Detail opening (#1125)" (#1127) ([5e4b14a](https://github.com/ghiscoding/slickgrid-universal/commit/5e4b14a15e7933d0699ef4c11d6336e76f1af597)), closes [#1125](https://github.com/ghiscoding/slickgrid-universal/issues/1125) [#1127](https://github.com/ghiscoding/slickgrid-universal/issues/1127) - by @ghiscoding
+
 # [3.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.2.2...v3.3.0) (2023-10-05)
 
 ### Bug Fixes
