@@ -11,7 +11,7 @@ export interface CellSelectionModelOption {
 
 export class SlickCellSelectionModel {
   protected _addonOptions?: CellSelectionModelOption;
-  protected _canvas: HTMLElement | null = null;
+  protected _cachedPageRowCount = 0;
   protected _eventHandler: SlickEventHandler;
   protected _dataView?: SlickDataView;
   protected _grid!: SlickGrid;
@@ -39,10 +39,6 @@ export class SlickCellSelectionModel {
     return this._addonOptions;
   }
 
-  get canvas() {
-    return this._canvas;
-  }
-
   get cellRangeSelector() {
     return this._selector;
   }
@@ -66,7 +62,6 @@ export class SlickCellSelectionModel {
 
     // register the cell range selector plugin
     grid.registerPlugin(this._selector);
-    this._canvas = this._grid.getCanvasNode();
   }
 
   destroy() {
@@ -74,7 +69,6 @@ export class SlickCellSelectionModel {
   }
 
   dispose() {
-    this._canvas = null;
     if (this._selector) {
       this._selector.onBeforeCellRangeSelected.unsubscribe(this.handleBeforeCellRangeSelected.bind(this) as EventListener);
       this._selector.onCellRangeSelected.unsubscribe(this.handleCellRangeSelected.bind(this) as EventListener);
@@ -135,6 +129,11 @@ export class SlickCellSelectionModel {
       }
     }
     return result;
+  }
+
+  /** Provide a way to force a recalculation of page row count (for example on grid resize) */
+  resetPageRowCount() {
+    this._cachedPageRowCount = 0;
   }
 
   setSelectedRanges(ranges: CellRange[], caller = 'SlickCellSelectionModel.setSelectedRanges') {
@@ -233,7 +232,9 @@ export class SlickCellSelectionModel {
           toRow = active.row + dirRow * dRow;
         } else {
           // multiple cell moves: (Home, End, Page{Up/Down}), we need to know how many rows are displayed on a page
-          const pageRowCount = this.getViewportRowCount();
+          if (this._cachedPageRowCount < 1) {
+            this._cachedPageRowCount = this.getViewportRowCount();
+          }
           if (this._prevSelectedRow === undefined) {
             this._prevSelectedRow = active.row;
           }
@@ -244,14 +245,14 @@ export class SlickCellSelectionModel {
             toRow = dataLn - 1;
           } else if (e.key === 'PageUp') {
             if (this._prevSelectedRow >= 0) {
-              toRow = this._prevSelectedRow - pageRowCount;
+              toRow = this._prevSelectedRow - this._cachedPageRowCount;
             }
             if (toRow < 0) {
               toRow = 0;
             }
           } else if (e.key === 'PageDown') {
             if (this._prevSelectedRow <= dataLn - 1) {
-              toRow = this._prevSelectedRow + pageRowCount;
+              toRow = this._prevSelectedRow + this._cachedPageRowCount;
             }
             if (toRow > dataLn - 1) {
               toRow = dataLn - 1;

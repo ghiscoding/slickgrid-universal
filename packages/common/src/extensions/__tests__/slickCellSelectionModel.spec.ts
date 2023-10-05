@@ -123,7 +123,6 @@ describe('CellSelectionModel Plugin', () => {
     plugin.init(gridStub);
 
     expect(plugin.cellRangeSelector).toBeTruthy();
-    expect(plugin.canvas).toBeTruthy();
     expect(plugin.addonOptions).toEqual({ selectActiveCell: true });
     expect(registerSpy).toHaveBeenCalledWith(plugin.cellRangeSelector);
   });
@@ -135,7 +134,6 @@ describe('CellSelectionModel Plugin', () => {
     plugin.init(gridStub);
 
     expect(plugin.cellRangeSelector).toBeTruthy();
-    expect(plugin.canvas).toBeTruthy();
     expect(plugin.addonOptions).toEqual({ selectActiveCell: false });
     expect(registerSpy).toHaveBeenCalledWith(plugin.cellRangeSelector);
   });
@@ -148,7 +146,6 @@ describe('CellSelectionModel Plugin', () => {
     plugin.init(gridStub);
 
     expect(plugin.cellRangeSelector).toBeTruthy();
-    expect(plugin.canvas).toBeTruthy();
     expect(plugin.addonOptions).toEqual({ selectActiveCell: true, cellRangeSelector: mockCellRangeSelector });
     expect(registerSpy).toHaveBeenCalledWith(plugin.cellRangeSelector);
   });
@@ -167,7 +164,6 @@ describe('CellSelectionModel Plugin', () => {
     plugin.refreshSelections();
 
     expect(plugin.cellRangeSelector).toBeTruthy();
-    expect(plugin.canvas).toBeTruthy();
     expect(registerSpy).toHaveBeenCalledWith(plugin.cellRangeSelector);
     expect(setSelectedRangesSpy).toHaveBeenCalledWith([
       { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 },
@@ -332,8 +328,10 @@ describe('CellSelectionModel Plugin', () => {
     const notifyingRowNumber = 3;
     jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: notifyingRowNumber });
     jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+    const scrollCellSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
 
     plugin.init(gridStub);
+    plugin.resetPageRowCount();
     plugin.setSelectedRanges([
       { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4, contains: () => false },
       { fromCell: 2, fromRow: notifyingRowNumber, toCell: 3, toRow: 4, contains: () => false }
@@ -350,6 +348,7 @@ describe('CellSelectionModel Plugin', () => {
       },
     ];
     expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
+    expect(scrollCellSpy).toHaveBeenCalledWith((notifyingRowNumber + CALCULATED_PAGE_ROW_COUNT), 2, false);
   });
 
   it('should call "setSelectedRanges" with Slick Range from current position to the last row index when using Shift+PageDown key combo but there is less rows than an actual page left to display', () => {
@@ -357,6 +356,7 @@ describe('CellSelectionModel Plugin', () => {
     const lastRowIndex = NB_ITEMS - 1;
     jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: notifyingRowNumber });
     jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+    const scrollCellSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
 
     plugin.init(gridStub);
     plugin.setSelectedRanges([
@@ -375,6 +375,7 @@ describe('CellSelectionModel Plugin', () => {
       },
     ];
     expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
+    expect(scrollCellSpy).toHaveBeenCalledWith(lastRowIndex, 2, false);
   });
 
   it('should call "setSelectedRanges" with Slick Range from current position to a calculated size of a page up when using Shift+PageUp key combo when triggered by "onKeyDown"', () => {
@@ -382,6 +383,7 @@ describe('CellSelectionModel Plugin', () => {
     const CALCULATED_PAGE_ROW_COUNT = 23;
     jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: notifyingRowNumber });
     jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+    const scrollCellSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
 
     plugin.init(gridStub);
     plugin.setSelectedRanges([
@@ -400,6 +402,7 @@ describe('CellSelectionModel Plugin', () => {
       },
     ];
     expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
+    expect(scrollCellSpy).toHaveBeenCalledWith((notifyingRowNumber - CALCULATED_PAGE_ROW_COUNT), 2, false);
   });
 
   it('should call "setSelectedRanges" with Slick Range from current position to the first row index when using Shift+PageUp key combo but there is less rows than an actual page left to display', () => {
@@ -407,6 +410,7 @@ describe('CellSelectionModel Plugin', () => {
     const firstRowIndex = 0;
     jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: notifyingRowNumber });
     jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+    const scrollCellSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
 
     plugin.init(gridStub);
     plugin.setSelectedRanges([
@@ -425,6 +429,7 @@ describe('CellSelectionModel Plugin', () => {
       },
     ];
     expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
+    expect(scrollCellSpy).toHaveBeenCalledWith(firstRowIndex, 2, false);
   });
 
   it('should call "setSelectedRanges" with Slick Range from current position to row index 0 when using Shift+Home key combo when triggered by "onKeyDown"', () => {
@@ -432,6 +437,7 @@ describe('CellSelectionModel Plugin', () => {
     const expectedRowZeroIdx = 0;
     jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: notifyingRowNumber });
     jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+    const scrollCellSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
 
     plugin.init(gridStub);
     plugin.setSelectedRanges([
@@ -450,6 +456,7 @@ describe('CellSelectionModel Plugin', () => {
       },
     ];
     expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
+    expect(scrollCellSpy).toHaveBeenCalledWith(expectedRowZeroIdx, 2, false);
   });
 
   it('should call "setSelectedRanges" with Slick Range from current position to last row index when using Shift+End key combo when triggered by "onKeyDown"', () => {
@@ -457,6 +464,7 @@ describe('CellSelectionModel Plugin', () => {
     const expectedLastRowIdx = NB_ITEMS - 1;
     jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: notifyingRowNumber });
     jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+    const scrollCellSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
 
     plugin.init(gridStub);
     plugin.setSelectedRanges([
@@ -475,6 +483,7 @@ describe('CellSelectionModel Plugin', () => {
       },
     ];
     expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
+    expect(scrollCellSpy).toHaveBeenCalledWith(expectedLastRowIdx, 2, false);
   });
 
   it('should call "rangesAreEqual" and expect True when both ranges are equal', () => {
