@@ -682,10 +682,10 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         }
 
         // trigger an event before toggling
-        // user could cancel the Row Detail opening when event is returning false
-        if (this.onBeforeRowDetailToggle.notify({ grid: this._grid, item: dataContext }, e, this).getReturnValue() === false) {
-          return;
-        }
+        this.onBeforeRowDetailToggle.notify({
+          grid: this._grid,
+          item: dataContext
+        });
 
         this.toggleRowSelection(args.row, dataContext);
 
