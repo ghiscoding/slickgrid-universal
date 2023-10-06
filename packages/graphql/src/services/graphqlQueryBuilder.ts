@@ -5,7 +5,7 @@
  *
  * The previous lib can be found here at this Github link:
  *     https://github.com/codemeasandwich/graphql-query-builder
- * his licence is MIT and can be found at 
+ * This licence is MIT and can be found at
  *     https://github.com/codemeasandwich/graphql-query-builder/blob/master/LICENSE
  */
 export default class GraphqlQueryBuilder {
