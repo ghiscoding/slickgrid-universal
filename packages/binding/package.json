@@ -56,6 +56,6 @@
   "devDependencies": {
     "@types/dompurify": "^3.0.3",
     "cross-env": "^7.0.3",
-    "npm-run-all2": "^6.0.6"
+    "npm-run-all2": "^6.1.1"
   }
 }

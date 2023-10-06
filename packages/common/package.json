@@ -90,10 +90,10 @@
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
     "cssnano": "^6.0.1",
-    "npm-run-all2": "^6.0.6",
+    "npm-run-all2": "^6.1.1",
     "postcss": "^8.4.31",
     "postcss-cli": "^10.1.0",
-    "sass": "^1.68.0"
+    "sass": "^1.69.0"
   },
   "engines": {
     "node": ">=16.15.0",
