@@ -86,7 +86,7 @@
     "jsdom": "^22.1.0",
     "jsdom-global": "^3.0.2",
     "moment-mini": "^2.29.4",
-    "npm-run-all2": "^6.0.6",
+    "npm-run-all2": "^6.1.1",
     "pnpm": "^8.8.0",
     "rimraf": "^5.0.5",
     "rxjs": "^7.8.1",

@@ -6,7 +6,7 @@
 [![NPM downloads](https://img.shields.io/npm/dy/@slickgrid-universal/common.svg)](https://www.npmjs.com/package/@slickgrid-universal/common)
 [![npm](https://img.shields.io/npm/v/@slickgrid-universal/common.svg?logo=npm&logoColor=fff&label=npm)](https://www.npmjs.com/package/@slickgrid-universal/common)
 
-[![Actions Status](https://github.com/ghiscoding/slickgrid-universal/workflows/CI%20Build/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions)
+[![Actions Status](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/main.yml/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions)
 [![Cypress.io](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg?logo=cypress)](https://www.cypress.io/)
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
@@ -15,7 +15,7 @@
 This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces)) which is regrouping a few packages under a single repository. It is using and requiring SlickGrid core library (more specifically the [6pac/SlickGrid](https://github.com/6pac/SlickGrid/) fork) and behind the scene (the "Why?" is simply because there is no need to rewrite the core library itself, in other words this is a wrapper library). The main goal of this library is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). The original SlickGrid is like an IKEA product that requires assembling everything yourself, however in this project here, we offer an all assembled product including a lot more available Editors, Filters, OData, GraphQL, ... and SlickGrid simply does not offer that by default. See below for more project details.
 
 ### Why create this monorepo?
-You might be wondering why was this monorepo created? Here are a few reasons:
+Below is a list of reasons why this project was created and why it is a monorepo project:
 1. it removed a lot of duplicate code that were common in both
 [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid) libraries
    - prior to creating this monorepo, these 2 libs had ~90% of TypeScript code in common which was not very DRY, it is also a lot easier to maintain by pushing fixes in 1 common lib (this one here).

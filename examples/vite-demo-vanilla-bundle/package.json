@@ -35,8 +35,8 @@
     "@types/fnando__sparkline": "^0.3.5",
     "@types/node": "^20.8.2",
     "@types/whatwg-fetch": "^0.0.33",
-    "sass": "^1.68.0",
+    "sass": "^1.69.0",
     "typescript": "^5.2.2",
-    "vite": "^4.4.10"
+    "vite": "^4.4.11"
   }
 }
