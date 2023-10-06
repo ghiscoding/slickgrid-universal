@@ -195,7 +195,7 @@ export class GraphqlService implements BackendService {
 
     const set = (o: any = {}, a: any) => {
       const k = a.shift();
-      o[k] = a.length ? set(o[k], a) : null;
+      o[k] = a.length ? set(o[k] ?? undefined, a) : null;
       return o;
     };
 
