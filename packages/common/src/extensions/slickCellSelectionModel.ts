@@ -128,6 +128,11 @@ export class SlickCellSelectionModel implements SelectionModel {
     return result;
   }
 
+  /** Provide a way to force a recalculation of page row count (for example on grid resize) */
+  resetPageRowCount() {
+    this._cachedPageRowCount = 0;
+  }
+
   setSelectedRanges(ranges: SlickRange[], caller = 'SlickCellSelectionModel.setSelectedRanges') {
     // simple check for: empty selection didn't change, prevent firing onSelectedRangesChanged
     if ((!this._ranges || this._ranges.length === 0) && (!ranges || ranges.length === 0)) {
