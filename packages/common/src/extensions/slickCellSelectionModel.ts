@@ -135,7 +135,7 @@ export class SlickCellSelectionModel implements SelectionModel {
     this._cachedPageRowCount = 0;
   }
 
-  setSelectedRanges(ranges: SickRange[], caller = 'SlickCellSelectionModel.setSelectedRanges') {
+  setSelectedRanges(ranges: SlickRange[], caller = 'SlickCellSelectionModel.setSelectedRanges') {
     // simple check for: empty selection didn't change, prevent firing onSelectedRangesChanged
     if ((!this._ranges || this._ranges.length === 0) && (!ranges || ranges.length === 0)) {
       return;
