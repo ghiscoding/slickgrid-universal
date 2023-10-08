@@ -32,7 +32,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', { retries: 1 }, () 
         .type('{shift}{end}');
 
       cy.get('#selectionRange')
-        .should('have.text', '{"fromRow":14,"fromCell":2,"toRow":19,"toCell":2}');
+        .should('have.text', '{"fromRow":14,"fromCell":2,"toCell":2,"toRow":19}');
     });
 
     it('should click on cell C19 then Shift+End w/selection C0-19', () => {
@@ -44,7 +44,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', { retries: 1 }, () 
         .type('{shift}{home}');
 
       cy.get('#selectionRange')
-        .should('have.text', '{"fromRow":0,"fromCell":2,"toRow":19,"toCell":2}');
+        .should('have.text', '{"fromRow":0,"fromCell":2,"toCell":2,"toRow":19}');
     });
 
     it('should click on cell E3 then Shift+PageDown multiple times with current page selection starting at E3 w/selection E3-19', () => {
@@ -56,7 +56,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', { retries: 1 }, () 
         .type('{shift}{pagedown}{pagedown}{pagedown}');
 
       cy.get('#selectionRange')
-        .should('have.text', '{"fromRow":3,"fromCell":5,"toRow":19,"toCell":5}');
+        .should('have.text', '{"fromRow":3,"fromCell":5,"toCell":5,"toRow":19}');
     });
 
     it('should change to 2nd page then click on cell D41 then Shift+PageUp multiple times with current page selection w/selection D25-41', () => {
@@ -70,7 +70,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', { retries: 1 }, () 
         .type('{shift}{pageup}{pageup}{pageup}');
 
       cy.get('#selectionRange')
-        .should('have.text', '{"fromRow":0,"fromCell":4,"toRow":15,"toCell":4}');
+        .should('have.text', '{"fromRow":0,"fromCell":4,"toCell":4,"toRow":15}');
     });
   });
 
@@ -92,7 +92,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', { retries: 1 }, () 
         .should('have.length', 3);
 
       cy.get('#selectionRange')
-        .should('have.text', '{"fromRow":8,"fromCell":2,"toRow":10,"toCell":2}');
+        .should('have.text', '{"fromRow":8,"fromCell":2,"toCell":2,"toRow":10}');
     });
 
     it('should click on cell D10 then PageDown 2 times w/selection D10-D50 (or D10-D52)', () => {
@@ -105,7 +105,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', { retries: 1 }, () 
         .type('{shift}{pagedown}{pagedown}');
 
       cy.get('#selectionRange')
-        .should('contains', /{"fromRow":10,"fromCell":4,"toRow":5[0-2],"toCell":4}/);
+        .should('contains', /{"fromRow":10,"fromCell":4,"toCell":4,"toRow":5[0-2]}/);
     });
 
     it('should click on cell D10 then PageDown 3 times then PageUp 1 time w/selection D10-D50 (or D10-D52)', () => {
@@ -117,7 +117,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', { retries: 1 }, () 
         .type('{shift}{pagedown}{pagedown}{pagedown}{pageup}');
 
       cy.get('#selectionRange')
-        .should('contains', /{"fromRow":10,"fromCell":4,"toRow":5[0-2],"toCell":4}/);
+        .should('contains', /{"fromRow":10,"fromCell":4,"toCell":4,"toRow":5[0-2]}/);
     });
 
     it('should click on cell E12 then End key w/selection E52-E99', () => {
@@ -129,7 +129,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', { retries: 1 }, () 
         .type('{shift}{end}');
 
       cy.get('#selectionRange')
-        .should('have.text', '{"fromRow":52,"fromCell":5,"toRow":99,"toCell":5}');
+        .should('have.text', '{"fromRow":52,"fromCell":5,"toCell":5,"toRow":99}');
     });
 
     it('should click on cell C85 then End key w/selection C0-C85', () => {
@@ -141,7 +141,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', { retries: 1 }, () 
         .type('{shift}{home}');
 
       cy.get('#selectionRange')
-        .should('have.text', '{"fromRow":0,"fromCell":3,"toRow":85,"toCell":3}');
+        .should('have.text', '{"fromRow":0,"fromCell":3,"toCell":3,"toRow":85}');
     });
   });
 });
