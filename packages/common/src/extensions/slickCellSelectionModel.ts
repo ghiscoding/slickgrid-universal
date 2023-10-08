@@ -86,6 +86,7 @@ export class SlickCellSelectionModel implements SelectionModel {
    * @return {Number} rowCount
    */
   getViewportRowCount() {
+    // @ts-ignore
     const viewportElm = this._grid.getViewportNode();
     const viewportHeight = viewportElm?.clientHeight ?? 0;
     const scrollbarHeight = this._grid.getScrollbarDimensions()?.height ?? 0;
