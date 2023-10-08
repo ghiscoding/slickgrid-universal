@@ -211,7 +211,7 @@ export class ResizerService {
     const autoResizeOptions = gridOptions?.autoResize ?? {};
     const gridElmOffset = getHtmlElementOffset(this._gridDomElm);
 
-    if (!window || this._pageContainerElm === undefined || gridElmOffset === undefined) {
+    if (!window || gridElmOffset === undefined) {
       return null;
     }
 
