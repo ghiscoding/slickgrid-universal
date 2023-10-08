@@ -22,8 +22,6 @@ import type { SortService } from './sort.service';
 import type { TreeDataService } from './treeData.service';
 import { SlickRowSelectionModel } from '../extensions/slickRowSelectionModel';
 
-let highlightTimerEnd: any;
-
 const GridServiceDeleteOptionDefaults: GridServiceDeleteOption = { skipError: false, triggerEvent: true };
 const GridServiceInsertOptionDefaults: GridServiceInsertOption = { highlightRow: true, resortGrid: false, selectRow: false, scrollRowIntoView: true, skipError: false, triggerEvent: true };
 const GridServiceUpdateOptionDefaults: GridServiceUpdateOption = { highlightRow: false, selectRow: false, scrollRowIntoView: false, skipError: false, triggerEvent: true };
@@ -32,6 +30,8 @@ const HideColumnOptionDefaults: HideColumnOption = { autoResizeColumns: true, tr
 export class GridService {
   protected _grid!: SlickGridUniversal;
   protected _rowSelectionPlugin?: SlickRowSelectionModel;
+  protected _highlightTimer?: NodeJS.Timeout;
+  protected _highlightTimerEnd?: NodeJS.Timeout;
 
   constructor(
     protected readonly gridStateService: GridStateService,
@@ -54,6 +54,7 @@ export class GridService {
   }
 
   dispose() {
+    this.clearHighlightTimer();
     this._rowSelectionPlugin?.dispose();
   }
 
@@ -70,6 +71,12 @@ export class GridService {
     if (this.filterService && this.filterService.clearFilters) {
       this.filterService.clearFilters();
     }
+  }
+
+  /** Clear any highlight timer that might have been left opened */
+  clearHighlightTimer() {
+    clearTimeout(this._highlightTimer);
+    clearTimeout(this._highlightTimerEnd);
   }
 
   /** Clear all the pinning (frozen) options */
@@ -314,16 +321,18 @@ export class GridService {
       this._dataView.updateItem(item[idPropName], item);
       this.renderGrid();
 
+      // clear both timers
+      this.clearHighlightTimer();
+
       // fade out
-      clearTimeout(highlightTimerEnd);
-      highlightTimerEnd = setTimeout(() => {
+      this._highlightTimerEnd = setTimeout(() => {
         item.rowClass = 'highlight-end';
         this._dataView.updateItem(item[idPropName], item);
         this.renderGrid();
       }, fadeOutDelay);
 
       // delete the row's CSS highlight classes once the delay is passed
-      setTimeout(() => {
+      this._highlightTimer = setTimeout(() => {
         if (item?.[idPropName] !== undefined) {
           delete item.rowClass;
           if (this._dataView.getIdxById(item[idPropName]) !== undefined) {

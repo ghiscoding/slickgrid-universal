@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/utils",
-  "version": "3.1.0",
+  "version": "3.3.2",
   "description": "Common set of small utilities",
   "exports": {
     ".": {
@@ -55,6 +55,6 @@
   ],
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "npm-run-all2": "^6.0.6"
+    "npm-run-all2": "^6.1.1"
   }
 }
