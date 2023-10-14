@@ -1,10 +1,12 @@
 /**
- * This GraphqlQueryBuilder class is a lib that already exist
- * but was causing issues with TypeScript, RequireJS and other bundler/packagers
- * and so I rewrote it in pure TypeScript.
+ * This GraphqlQueryBuilder class is a lib that already existed
+ * but was causing issues with TypeScript, RequireJS and other bundler/packagers,
+ * so I simply rewrote the code in TypeScript to make it easier to import.
  *
- * The previous lib can be viewed here at this Github
- * https://github.com/codemeasandwich/graphql-query-builder
+ * The previous lib can be found here at this Github link:
+ *     https://github.com/codemeasandwich/graphql-query-builder
+ * With an MIT licence that and can be found at
+ *     https://github.com/codemeasandwich/graphql-query-builder/blob/master/LICENSE
  */
 export default class GraphqlQueryBuilder {
   // eslint-disable-next-line @typescript-eslint/ban-types

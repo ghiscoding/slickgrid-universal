@@ -40,7 +40,7 @@ body:
     id: system-info
     attributes:
       label: Environment Info
-      description: versions number of each frameworks and libs (Slickgrid-Universal/[packageName], TypeScript)
+      description: output of `npx envinfo --system --npmPackages 'slickgrid-universal/*' --binaries --browsers`
       render: shell
       placeholder: |
         Framework used (x.y)

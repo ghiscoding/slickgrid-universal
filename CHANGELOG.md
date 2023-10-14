@@ -4,6 +4,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.2](https://github.com/ghiscoding/slickgrid-universal/compare/v3.3.1...v3.3.2) (2023-10-06)
+
+### Bug Fixes
+
+* **graphql:** column with complex object could throw null pointer exception ([#1130](https://github.com/ghiscoding/slickgrid-universal/issues/1130)) ([f3c85b8](https://github.com/ghiscoding/slickgrid-universal/commit/f3c85b86d3423591844f8bbb2844f7842fefdfa3)) - by @Harsgalt86
+
+## [3.3.1](https://github.com/ghiscoding/slickgrid-universal/compare/v3.3.0...v3.3.1) (2023-10-05)
+
+### Reverts
+
+* Revert "feat: add option to cancel Row Detail opening (#1125)" (#1127) ([5e4b14a](https://github.com/ghiscoding/slickgrid-universal/commit/5e4b14a15e7933d0699ef4c11d6336e76f1af597)), closes [#1125](https://github.com/ghiscoding/slickgrid-universal/issues/1125) [#1127](https://github.com/ghiscoding/slickgrid-universal/issues/1127) - by @ghiscoding
+
+# [3.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.2.2...v3.3.0) (2023-10-05)
+
+### Bug Fixes
+
+* **types:** small TS type fix on DataView setFilter ([1ab0930](https://github.com/ghiscoding/slickgrid-universal/commit/1ab0930213e68110e22b6f89681c4651586c9420)) - by @ghiscoding
+
+### Features
+
+* add option to cancel Row Detail opening ([#1125](https://github.com/ghiscoding/slickgrid-universal/issues/1125)) ([82ba377](https://github.com/ghiscoding/slickgrid-universal/commit/82ba377132d90335ea2bca5bf628ab47841fc913)) - by @ghiscoding
+* add pageUp/pageDown/home/end to SlickCellSelection ([#1126](https://github.com/ghiscoding/slickgrid-universal/issues/1126)) ([b7e9e0d](https://github.com/ghiscoding/slickgrid-universal/commit/b7e9e0db9fde184c76cb835858d195ad28657b05)) - by @ghiscoding
+
 ## [3.2.2](https://github.com/ghiscoding/slickgrid-universal/compare/v3.2.1...v3.2.2) (2023-09-24)
 
 ### Bug Fixes

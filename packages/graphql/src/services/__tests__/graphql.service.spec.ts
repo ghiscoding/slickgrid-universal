@@ -416,6 +416,15 @@ describe('GraphqlService', () => {
 
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
     });
+
+    it('should return a query string including a direct reference to a complex object', () => {
+      const expectation = `firstName, lastName, billing{address{street, zip}}`;
+      const columns = ['firstName', 'lastName', 'billing', 'billing.address.street', 'billing.address.zip'];
+
+      const query = service.buildFilterQuery(columns);
+
+      expect(removeSpaces(query)).toBe(removeSpaces(expectation));
+    });
   });
 
   describe('clearFilters method', () => {

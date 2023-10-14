@@ -6,6 +6,8 @@ import type {
   SlickGrid
 } from './index';
 
+export type FilterFn<T> = (item: T, args: any) => boolean;
+
 export interface SlickDataView {
   // --
   // Slick DataView Available Methods
@@ -69,7 +71,7 @@ export interface SlickDataView {
   fastSort(field: string | Function, ascending: boolean): void;
 
   /** Get current Filter used by the DataView */
-  getFilter(): any;
+  getFilter(): FilterFn<any>;
 
   /** Get only the DataView filtered items */
   getFilteredItems: <T = any>() => T[];
@@ -169,7 +171,7 @@ export interface SlickDataView {
   setGrouping(groupingInfo: Grouping | Grouping[]): void;
 
   /** Set a Filter that will be used by the DataView */
-  setFilter(filterFn: ((item1: any, item2: any) => boolean)): void;
+  setFilter<T = any>(filterFn: FilterFn<T>): void;
 
   /** Set extra Filter arguments which will be used by the Filter method */
   setFilterArgs(args: any): void;

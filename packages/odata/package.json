@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/odata",
-  "version": "3.2.2",
+  "version": "3.3.2",
   "description": "Grid OData Service to sync a grid with an OData backend server",
   "exports": {
     ".": {
@@ -59,7 +59,7 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "npm-run-all2": "^6.0.6"
+    "npm-run-all2": "^6.1.1"
   },
   "funding": {
     "type": "ko_fi",

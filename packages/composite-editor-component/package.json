@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/composite-editor-component",
-  "version": "3.2.2",
+  "version": "3.3.2",
   "description": "Slick Composite Editor Component - Vanilla Implementation of a Composite Editor Modal Window Component",
   "exports": {
     ".": {
@@ -59,6 +59,6 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "npm-run-all2": "^6.0.6"
+    "npm-run-all2": "^6.1.1"
   }
 }

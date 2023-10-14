@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/binding",
-  "version": "3.2.2",
+  "version": "3.3.2",
   "description": "Simple Vanilla Implementation of a Binding Engine & Helper to add properties/events 2 way bindings",
   "exports": {
     ".": {
@@ -56,6 +56,6 @@
   "devDependencies": {
     "@types/dompurify": "^3.0.3",
     "cross-env": "^7.0.3",
-    "npm-run-all2": "^6.0.6"
+    "npm-run-all2": "^6.1.1"
   }
 }
