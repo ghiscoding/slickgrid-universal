@@ -1,0 +1,24 @@
+.env
+
+# dependencies
+/node_modules
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.chrome
+
+# Tests, Report & Coverage
+*.spec.ts
+/test
+**/docs
+**/node_modules
+**/coverage
+**/jest-coverage
+**/*.tgz
+**/junit.xml
+**/test-report.xml
+**/testresult.xml
