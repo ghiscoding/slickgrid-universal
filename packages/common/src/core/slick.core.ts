@@ -573,8 +573,7 @@ export class Utils {
   };
 
   public static isFunction(obj: any) {
-    return typeof obj === 'function' && typeof obj.nodeType !== 'number' &&
-      typeof obj.item !== 'function';
+    return typeof obj === 'function' && typeof obj.nodeType !== 'number' && typeof obj.item !== 'function';
   }
 
   public static isPlainObject(obj: any) {
@@ -588,31 +587,6 @@ export class Utils {
     }
     const Ctor = Utils.hasOwn.call(proto, 'constructor') && proto.constructor;
     return typeof Ctor === 'function' && Utils.fnToString.call(Ctor) === Utils.ObjectFunctionString;
-  }
-
-  public static calculateAvailableSpace(element: HTMLElement) {
-    let bottom = 0;
-    let top = 0;
-    let left = 0;
-    let right = 0;
-
-    const windowHeight = window.innerHeight || 0;
-    const windowWidth = window.innerWidth || 0;
-    const scrollPosition = Utils.windowScrollPosition();
-    const pageScrollTop = scrollPosition.top;
-    const pageScrollLeft = scrollPosition.left;
-    const elmOffset = Utils.offset(element);
-
-    if (elmOffset) {
-      const elementOffsetTop = elmOffset.top || 0;
-      const elementOffsetLeft = elmOffset.left || 0;
-      top = elementOffsetTop - pageScrollTop;
-      bottom = windowHeight - (elementOffsetTop - pageScrollTop);
-      left = elementOffsetLeft - pageScrollLeft;
-      right = windowWidth - (elementOffsetLeft - pageScrollLeft);
-    }
-
-    return { top, bottom, left, right };
   }
 
   public static extend<T = any>(...args: any[]): T {
@@ -850,9 +824,7 @@ export class Utils {
 
   public static hide(el: HTMLElement | HTMLElement[]) {
     if (Array.isArray(el)) {
-      el.forEach(function (e) {
-        e.style.display = 'none';
-      });
+      el.forEach((e) => e.style.display = 'none');
     } else {
       el.style.display = 'none';
     }
