@@ -1,8 +1,8 @@
-import type { Column, FilterCallback, SlickGridUniversal } from './index';
+import type { Column, FilterCallback, SlickGridModel } from './index';
 import type { OperatorString, OperatorType, SearchTerm } from '../enums/index';
 
 export interface FilterArguments {
-  grid: SlickGridUniversal;
+  grid: SlickGridModel;
   columnDef: Column;
   callback: FilterCallback;
   operator?: OperatorType | OperatorString;

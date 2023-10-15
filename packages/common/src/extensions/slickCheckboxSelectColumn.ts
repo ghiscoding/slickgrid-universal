@@ -1,11 +1,12 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { type SelectionModel, type SlickDataView, SlickEventHandler, } from 'slickgrid';
 
+import { type SlickDataView, SlickEventHandler } from '../core/index';
 import { KeyCode } from '../enums/keyCode.enum';
-import type { CheckboxSelectorOption, Column, DOMMouseOrTouchEvent, GridOption, SelectableOverrideCallback, SlickGridUniversal } from '../interfaces/index';
+import type { CheckboxSelectorOption, Column, DOMMouseOrTouchEvent, GridOption, SelectableOverrideCallback, SlickGridModel } from '../interfaces/index';
 import { SlickRowSelectionModel } from './slickRowSelectionModel';
 import { createDomElement, emptyElement } from '../services/domUtilities';
 import { BindingEventService } from '../services/bindingEvent.service';
+import { SelectionModel } from '../enums/index';
 
 export class SlickCheckboxSelectColumn<T = any> {
   pluginName: 'CheckboxSelectColumn' = 'CheckboxSelectColumn' as const;
@@ -26,7 +27,7 @@ export class SlickCheckboxSelectColumn<T = any> {
   protected _dataView!: SlickDataView;
   protected _eventHandler: SlickEventHandler;
   protected _headerRowNode?: HTMLElement;
-  protected _grid!: SlickGridUniversal;
+  protected _grid!: SlickGridModel;
   protected _isSelectAllChecked = false;
   protected _isUsingDataView = false;
   protected _rowSelectionModel?: SelectionModel;
@@ -62,7 +63,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     this._selectedRowsLookup = selectedRows;
   }
 
-  init(grid: SlickGridUniversal) {
+  init(grid: SlickGridModel) {
     this._grid = grid;
     this._isUsingDataView = !Array.isArray(grid.getData());
     if (this._isUsingDataView) {
@@ -281,7 +282,7 @@ export class SlickCheckboxSelectColumn<T = any> {
   // protected functions
   // ---------------------
 
-  protected addCheckboxToFilterHeaderRow(grid: SlickGridUniversal) {
+  protected addCheckboxToFilterHeaderRow(grid: SlickGridModel) {
     this._eventHandler.subscribe(grid.onHeaderRowCellRendered, (_e: any, args: any) => {
       if (args.column.field === (this._addonOptions.field || '_checkbox_selector')) {
         emptyElement(args.node);
@@ -302,7 +303,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     });
   }
 
-  protected checkboxSelectionFormatter(row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGridUniversal) {
+  protected checkboxSelectionFormatter(row: number, _cell: number, _val: any, _columnDef: Column, dataContext: any, grid: SlickGridModel) {
     if (dataContext && this.checkSelectableOverride(row, dataContext, grid)) {
       const UID = this.createUID() + row;
       return `<input id="selector${UID}" type="checkbox" ${this._selectedRowsLookup[row] ? `checked="checked" aria-checked="true"` : 'aria-checked="false"'}><label for="selector${UID}"></label>`;
@@ -310,7 +311,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     return null;
   }
 
-  protected checkSelectableOverride(row: number, dataContext: any, grid: SlickGridUniversal) {
+  protected checkSelectableOverride(row: number, dataContext: any, grid: SlickGridModel) {
     if (typeof this._selectableOverride === 'function') {
       return this._selectableOverride(row, dataContext, grid);
     }
@@ -365,7 +366,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
-  protected handleClick(e: DOMMouseOrTouchEvent<HTMLInputElement>, args: { row: number; cell: number; grid: SlickGridUniversal; }) {
+  protected handleClick(e: DOMMouseOrTouchEvent<HTMLInputElement>, args: { row: number; cell: number; grid: SlickGridModel; }) {
     // clicking on a row select checkbox
     if (this._grid.getColumns()[args.cell].id === this._addonOptions.columnId && e.target.type === 'checkbox') {
       e.target.ariaChecked = String(e.target.checked);
@@ -383,7 +384,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
-  protected handleHeaderClick(e: DOMMouseOrTouchEvent<HTMLInputElement>, args: { column: Column; node: HTMLDivElement; grid: SlickGridUniversal; }) {
+  protected handleHeaderClick(e: DOMMouseOrTouchEvent<HTMLInputElement>, args: { column: Column; node: HTMLDivElement; grid: SlickGridModel; }) {
     if (args.column.id === this._addonOptions.columnId && e.target.type === 'checkbox') {
       e.target.ariaChecked = String(e.target.checked);
 

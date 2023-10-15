@@ -1,8 +1,8 @@
-import type { Column, GroupTotalsFormatter, SlickGridUniversal } from './../interfaces/index';
+import type { Column, GroupTotalsFormatter, SlickGridModel } from './../interfaces/index';
 import { decimalFormatted, thousandSeparatorFormatted } from '../services/utilities';
 import { retrieveFormatterOptions } from '../formatters/formatterUtilities';
 
-export const avgTotalsFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column, grid: SlickGridUniversal) => {
+export const avgTotalsFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column, grid: SlickGridModel) => {
   const field = columnDef.field ?? '';
   let val = totals.avg?.[field];
   const params = columnDef?.params;

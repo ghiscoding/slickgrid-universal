@@ -1,6 +1,6 @@
-import { SlickEventHandler } from 'slickgrid';
 
-import type { AutoTooltipOption, Column, SlickGridUniversal, } from '../interfaces/index';
+import { SlickEventHandler } from '../core/slick.core';
+import type { AutoTooltipOption, Column, SlickGridModel, } from '../interfaces/index';
 
 /**
  * AutoTooltips plugin to show/hide tooltips when columns are too narrow to fit content.
@@ -14,7 +14,7 @@ export class SlickAutoTooltip {
 
   protected _addonOptions?: AutoTooltipOption;
   protected _eventHandler!: SlickEventHandler;
-  protected _grid!: SlickGridUniversal;
+  protected _grid!: SlickGridModel;
   protected _defaults = {
     enableForCells: true,
     enableForHeaderCells: false,
@@ -37,7 +37,7 @@ export class SlickAutoTooltip {
   }
 
   /** Initialize plugin. */
-  init(grid: SlickGridUniversal) {
+  init(grid: SlickGridModel) {
     this._addonOptions = { ...this._defaults, ...this.addonOptions };
     this._grid = grid;
     if (this._addonOptions.enableForCells) {

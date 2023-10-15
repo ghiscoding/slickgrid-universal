@@ -1,10 +1,10 @@
-import { Column, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, GridOption, SlickGridModel } from '../../interfaces/index';
 import { dollarColoredBoldFormatter } from '../dollarColoredBoldFormatter';
 
 describe('the DollarColoredBold Formatter', () => {
   const gridStub = {
     getOptions: jest.fn()
-  } as unknown as SlickGridUniversal;
+  } as unknown as SlickGridModel;
 
   it('should return an empty string when no value is provided', () => {
     const output = dollarColoredBoldFormatter(1, 1, '', {} as Column, {}, {} as any);

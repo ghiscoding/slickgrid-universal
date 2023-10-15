@@ -9,19 +9,19 @@ import type {
   GroupingAndColspanService,
   PaginationService,
   ResizerService,
-  SlickGridUniversal,
+  SlickDataView,
+  SlickGridModel,
   SortService,
   TreeDataService,
 } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import type { SlickDataView } from 'slickgrid';
 
 export interface SlickerGridInstance<TData = any> {
   /** Slick DataView object */
   dataView: SlickDataView<TData>;
 
   /** Slick Grid object */
-  slickGrid: SlickGridUniversal;
+  slickGrid: SlickGridModel;
 
   // --
   // Methods

@@ -1,6 +1,6 @@
 import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
-import { SlickEventData, SlickEventHandler } from 'slickgrid';
 
+import { SlickEventData, SlickEventHandler } from '../core/slick.core';
 import { KeyCode } from '../enums/keyCode.enum';
 import type {
   DOMEvent,
@@ -13,7 +13,7 @@ import type {
   EditorValidator,
   EditorValidationResult,
   GridOption,
-  SlickGridUniversal,
+  SlickGridModel,
 } from '../interfaces/index';
 import { getDescendantProperty } from '../services/utilities';
 import { floatValidator, integerValidator, textValidator } from '../editorValidators';
@@ -44,7 +44,7 @@ export class DualInputEditor implements Editor {
   disabled = false;
 
   /** SlickGrid Grid object */
-  grid: SlickGridUniversal;
+  grid: SlickGridModel;
 
   /** Grid options */
   gridOptions: GridOption;
@@ -59,6 +59,7 @@ export class DualInputEditor implements Editor {
     this._bindEventService = new BindingEventService();
     this.init();
 
+    // @ts-ignore
     this._eventHandler.subscribe(this.grid.onValidationError, () => this._isValueSaveCalled = true);
   }
 

@@ -1,4 +1,4 @@
-import type { SlickGroupTotals } from 'slickgrid';
+import { SlickGroupTotals } from '../core/slick.core';
 import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class CloneAggregator implements Aggregator {

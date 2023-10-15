@@ -1,7 +1,7 @@
-import { type SlickDataView, SlickEvent, SlickGroup } from 'slickgrid';
+import { type SlickDataView, SlickEvent, SlickGroup } from '../../core/index';
 
 import { KeyCode } from '../../enums/index';
-import { Column, GridOption, GroupItemMetadataProviderOption, SlickGridUniversal } from '../../interfaces';
+import { Column, GridOption, GroupItemMetadataProviderOption, SlickGridModel } from '../../interfaces';
 import { SlickGroupItemMetadataProvider } from '../slickGroupItemMetadataProvider';
 
 const gridOptionMock = {
@@ -48,7 +48,7 @@ const gridStub = {
   onClick: new SlickEvent(),
   onKeyDown: new SlickEvent(),
   onSort: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('GroupItemMetadataProvider Service', () => {
   let service: SlickGroupItemMetadataProvider;

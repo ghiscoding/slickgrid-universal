@@ -1,5 +1,5 @@
 import { InputNumberFilter } from '../inputNumberFilter';
-import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption, SlickGridModel } from '../../interfaces/index';
 import { Filters } from '../filters.index';
 
 const containerId = 'demo-container';
@@ -17,7 +17,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('InputNumberFilter', () => {
   let divContainer: HTMLDivElement;
@@ -40,7 +40,7 @@ describe('InputNumberFilter', () => {
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
 
-    filter = new InputNumberFilter();
+    filter = new InputNumberFilter({} as any);
   });
 
   afterEach(() => {

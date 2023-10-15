@@ -1,7 +1,6 @@
-import type { SlickDataView } from 'slickgrid';
-
-import type { Column, CompositeEditorOption, ElementPosition, SlickGridUniversal } from './index';
+import type { Column, CompositeEditorOption, ElementPosition, SlickGridModel } from './index';
 import type { PositionMethod } from '../enums/positionMethod.type';
+import type { SlickDataView } from '../core/index';
 
 export interface EditorArguments {
   /** Column Definition */
@@ -20,7 +19,7 @@ export interface EditorArguments {
   event: Event;
 
   /** Slick Grid object */
-  grid: SlickGridUniversal;
+  grid: SlickGridModel;
 
   /** Grid Position */
   gridPosition: ElementPosition;

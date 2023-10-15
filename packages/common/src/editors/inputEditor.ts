@@ -1,5 +1,4 @@
 import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
-import { SlickEventData } from 'slickgrid';
 
 import { KeyCode } from '../enums/keyCode.enum';
 import type {
@@ -11,12 +10,13 @@ import type {
   EditorValidator,
   EditorValidationResult,
   GridOption,
-  SlickGridUniversal,
+  SlickGridModel,
 } from '../interfaces/index';
 import { getDescendantProperty } from '../services/utilities';
 import { textValidator } from '../editorValidators/textValidator';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { createDomElement } from '../services/domUtilities';
+import { SlickEventData } from '../core/slick.core';
 
 /*
  * An example of a 'detached' editor.
@@ -35,7 +35,7 @@ export class InputEditor implements Editor {
   disabled = false;
 
   /** SlickGrid Grid object */
-  grid: SlickGridUniversal;
+  grid: SlickGridModel;
 
   /** Grid options */
   gridOptions: GridOption;

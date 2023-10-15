@@ -1,4 +1,4 @@
-import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption, SlickGridModel } from '../../interfaces/index';
 import { Filters } from '../filters.index';
 import { NativeSelectFilter } from '../nativeSelectFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -20,7 +20,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('NativeSelectFilter', () => {
   let translateService: TranslateServiceStub;

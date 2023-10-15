@@ -1,5 +1,4 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { SlickEvent, } from 'slickgrid';
 
 import type {
   Column,
@@ -24,6 +23,7 @@ import type { SortService } from '../services/sort.service';
 import type { TextExportService } from '../services/textExport.service';
 import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
 import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from '../extensions/menuBaseClass';
+import { SlickEvent } from '../core/index';
 
 /**
  * A control to add a Grid Menu with Extra Commands & Column Picker (hambuger menu on top-right of the grid)

@@ -1,6 +1,6 @@
-import type { SlickEventData } from 'slickgrid';
 
-import type { RowDetailViewOption, SlickGridUniversal, SlickRowDetailView } from './index';
+import type { SlickEventData } from '../core/index';
+import type { RowDetailViewOption, SlickGridModel, SlickRowDetailView } from './index';
 
 export interface RowDetailView extends RowDetailViewOption {
   // --
@@ -49,7 +49,7 @@ export interface OnRowDetailAsyncEndUpdateArgs {
   itemDetail: any;
 
   /** Reference to the Slick grid object */
-  grid: SlickGridUniversal;
+  grid: SlickGridModel;
 }
 
 /** Fired after the row detail gets toggled */
@@ -61,7 +61,7 @@ export interface OnAfterRowDetailToggleArgs {
   expandedRows: Array<number | string>;
 
   /** Reference to the Slick grid object */
-  grid: SlickGridUniversal;
+  grid: SlickGridModel;
 }
 
 /** Fired before the row detail gets toggled */
@@ -70,7 +70,7 @@ export interface OnBeforeRowDetailToggleArgs {
   item: any;
 
   /** Reference to the Slick grid object */
-  grid: SlickGridUniversal;
+  grid: SlickGridModel;
 }
 
 /** Fired after the row detail gets toggled */
@@ -91,7 +91,7 @@ export interface OnRowBackToViewportRangeArgs {
   rowIdsOutOfViewport: Array<string | number>;
 
   /** Reference to the Slick grid object */
-  grid: SlickGridUniversal;
+  grid: SlickGridModel;
 }
 
 /** Fired after a row becomes out of viewport range (user can't see the row anymore) */
@@ -112,5 +112,5 @@ export interface OnRowOutOfViewportRangeArgs {
   rowIdsOutOfViewport: Array<string | number>;
 
   /** Reference to the Slick grid object */
-  grid: SlickGridUniversal;
+  grid: SlickGridModel;
 }

@@ -1,7 +1,7 @@
 import { isNumber } from '@slickgrid-universal/utils';
-import type { SlickGroupTotals } from 'slickgrid';
 
 import type { Aggregator } from './../interfaces/aggregator.interface';
+import { SlickGroupTotals } from '../core/slick.core';
 
 export class CountAggregator implements Aggregator {
   private _isInitialized = false;

@@ -92,9 +92,6 @@ importers:
       servor:
         specifier: ^4.0.2
         version: 4.0.2
-      slickgrid:
-        specifier: ^5.1.0
-        version: 5.1.0
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -229,11 +226,8 @@ importers:
         specifier: ^2.29.4
         version: 2.29.4
       multiple-select-vanilla:
-        specifier: ^0.6.3
-        version: 0.6.3
-      slickgrid:
-        specifier: ^5.1.0
-        version: 5.1.0
+        specifier: ^0.4.10
+        version: 0.4.10
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -523,9 +517,6 @@ importers:
       flatpickr:
         specifier: ^4.6.13
         version: 4.6.13
-      slickgrid:
-        specifier: ^5.1.0
-        version: 5.1.0
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -8580,12 +8571,6 @@ packages:
       astral-regex: 2.0.0
       is-fullwidth-code-point: 3.0.0
     dev: true
-
-  /slickgrid@5.1.0:
-    resolution: {integrity: sha512-jwHWFlchv+NWH9OjtdEf0+NtmaeXmxoBdorwLUodPQWJU/522VqU+pUE0e+U55GUDXeUVNpxzyxr6Y34K2Q0UQ==}
-    engines: {node: '>=16.0.0', npm: '>=8.0.0'}
-    dependencies:
-      sortablejs: 1.15.0
 
   /smart-buffer@4.2.0:
     resolution: {integrity: sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg==}

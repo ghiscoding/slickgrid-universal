@@ -10,7 +10,7 @@ import type {
   PaginationChangedArgs,
   PaginationCursorChangedArgs,
   SingleColumnSort,
-  SlickGridUniversal,
+  SlickGridModel,
 } from './index';
 import { SharedService } from '../services';
 
@@ -31,7 +31,7 @@ export interface BackendService {
   clearSorters?: () => void;
 
   /** initialize the backend service with certain options */
-  init?: (serviceOptions?: BackendServiceOption | any, pagination?: Pagination, grid?: SlickGridUniversal, sharedService?: SharedService) => void;
+  init?: (serviceOptions?: BackendServiceOption | any, pagination?: Pagination, grid?: SlickGridModel, sharedService?: SharedService) => void;
 
   /** Get the dataset name */
   getDatasetName?: () => string;

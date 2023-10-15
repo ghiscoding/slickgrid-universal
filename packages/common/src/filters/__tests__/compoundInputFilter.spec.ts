@@ -1,5 +1,5 @@
 import { FieldType, OperatorType } from '../../enums/index';
-import { BackendServiceApi, Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { BackendServiceApi, Column, FilterArguments, GridOption, SlickGridModel } from '../../interfaces/index';
 import { Filters } from '../index';
 import { CompoundInputFilter } from '../compoundInputFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -22,7 +22,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('CompoundInputFilter', () => {
   let translateService: TranslateServiceStub;

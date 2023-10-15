@@ -13,13 +13,13 @@ import {
   GroupingGetterFunction,
   GroupTotalFormatters,
   SlickDraggableGrouping,
+  SlickGlobalEditorLock,
   SortComparers,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { SlickGlobalEditorLock } from 'slickgrid';
 
 import { ExampleGridOptions } from './example-grid-options';
 import './example03.scss?inline';

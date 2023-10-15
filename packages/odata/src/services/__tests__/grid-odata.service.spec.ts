@@ -13,7 +13,7 @@ import {
   FieldType,
   CurrentSorter,
   SharedService,
-  SlickGrid,
+  SlickGridModel,
   BackendService,
 } from '@slickgrid-universal/common';
 import { GridOdataService } from '../grid-odata.service';
@@ -34,7 +34,7 @@ const gridStub = {
   registerPlugin: jest.fn(),
   setSelectedRows: jest.fn(),
   setSortColumns: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('GridOdataService', () => {
   let service: GridOdataService;

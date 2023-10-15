@@ -2,15 +2,9 @@ jest.mock('sortablejs');
 
 import 'jest-extended';
 import { of, throwError } from 'rxjs';
-import {
-  OnRowCountChangedEventArgs,
-  OnRowsChangedEventArgs,
-  OnSetItemsCalledEventArgs,
-  SlickDataView,
-  SlickEventHandler,
-} from 'slickgrid';
 
 import {
+  autoAddEditorFormatterToColumnsWithEditor,
   BackendServiceApi,
   BackendUtilityService,
   Column,
@@ -35,13 +29,18 @@ import {
   GridStateService,
   GridStateType,
   GroupingAndColspanService,
+  OnRowCountChangedEventArgs,
+  OnRowsChangedEventArgs,
+  OnSetItemsCalledEventArgs,
   Pagination,
   PaginationService,
   ResizerService,
   ServicePagination,
   SharedService,
+  SlickDataView,
   SlickEditorLock,
-  SlickGridUniversal,
+  SlickEventHandler,
+  SlickGridModel,
   SlickGroupItemMetadataProvider,
   SortService,
   TreeDataService,
@@ -56,11 +55,6 @@ import { HttpStub } from '../../../../../test/httpClientStub';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../../test/mockSlickEvent';
 import { UniversalContainerService } from '../../services/universalContainer.service';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
-
-jest.mock('@slickgrid-universal/common', () => ({
-  ...(jest.requireActual('@slickgrid-universal/common') as any),
-  autoAddEditorFormatterToColumnsWithEditor: jest.fn(),
-}));
 
 const extensionServiceStub = {
   addRxJsResource: jest.fn(),
@@ -260,13 +254,14 @@ const mockGrid = {
   onRendered: jest.fn(),
   onScroll: jest.fn(),
   onDataviewCreated: new MockSlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const template = `<div class="demo-container"><div class="grid1"></div></div>`;
 const slickEventHandler = new MockSlickEventHandler() as unknown as SlickEventHandler;
 
-jest.mock('slickgrid', () => ({
-  ...(jest.requireActual('slickgrid') as any),
+jest.mock('@slickgrid-universal/common', () => ({
+  ...(jest.requireActual('@slickgrid-universal/common') as any),
+  autoAddEditorFormatterToColumnsWithEditor: jest.fn(),
   SlickGrid: jest.fn().mockImplementation(() => mockGrid),
   SlickEventHandler: jest.fn().mockImplementation(() => mockSlickEventHandler),
   SlickDataView: jest.fn().mockImplementation(() => mockDataView),
@@ -516,7 +511,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('dataset changed', () => {
       beforeEach(() => {
         jest.clearAllMocks();
-        sharedService.slickGrid = mockGrid as unknown as SlickGridUniversal;
+        sharedService.slickGrid = mockGrid as unknown as SlickGridModel;
       });
 
       it('should expect "autosizeColumns" being called when "autoFitColumnsOnFirstLoad" is set and we are on first page load', () => {
@@ -600,7 +595,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('options changed', () => {
       beforeEach(() => {
         jest.clearAllMocks();
-        sharedService.slickGrid = mockGrid as unknown as SlickGridUniversal;
+        sharedService.slickGrid = mockGrid as unknown as SlickGridModel;
         sharedService.gridOptions = gridOptions;
       });
 
@@ -828,7 +823,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       afterEach(() => {
         component.dispose();
         jest.clearAllMocks();
-        sharedService.slickGrid = mockGrid as unknown as SlickGridUniversal;
+        sharedService.slickGrid = mockGrid as unknown as SlickGridModel;
       });
 
       it('should call the onDataviewCreated emitter', () => {
@@ -939,7 +934,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       afterEach(() => {
         jest.clearAllMocks();
         component.dispose();
-        sharedService.slickGrid = mockGrid as unknown as SlickGridUniversal;
+        sharedService.slickGrid = mockGrid as unknown as SlickGridModel;
       });
 
       it('should initialize groupingAndColspanService when "createPreHeaderPanel" grid option is enabled and "enableDraggableGrouping" is disabled', () => {
@@ -1896,7 +1891,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('loadRowSelectionPresetWhenExists method', () => {
       beforeEach(() => {
         jest.clearAllMocks();
-        sharedService.slickGrid = mockGrid as unknown as SlickGridUniversal;
+        sharedService.slickGrid = mockGrid as unknown as SlickGridModel;
       });
 
       it('should call the "mapIdsToRows" from the DataView then "setSelectedRows" from the Grid when there are row selection presets with "dataContextIds" array set', (done) => {
@@ -1968,7 +1963,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('onPaginationVisibilityChanged event', () => {
       beforeEach(() => {
         jest.clearAllMocks();
-        sharedService.slickGrid = mockGrid as unknown as SlickGridUniversal;
+        sharedService.slickGrid = mockGrid as unknown as SlickGridModel;
       });
 
       it('should change "showPagination" flag when "onPaginationVisibilityChanged" from the Pagination Service is triggered', () => {

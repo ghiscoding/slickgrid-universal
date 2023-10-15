@@ -6,10 +6,11 @@ import {
   Editors,
   GridOption,
   GridService,
+  type SlickDataView,
+  SlickEvent,
   SlickRowSelectionModel,
-  type SlickGridUniversal,
+  type SlickGridModel,
 } from '@slickgrid-universal/common';
-import { type SlickDataView, SlickEvent } from 'slickgrid';
 
 import { SlickCompositeEditorComponent } from './slick-composite-editor.component';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
@@ -102,7 +103,7 @@ const gridStub = {
   setSelectedRows: jest.fn(),
   setActiveRow: jest.fn(),
   setSortColumns: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const rowSelectionModelStub = {
   pluginName: 'RowSelectionModel',

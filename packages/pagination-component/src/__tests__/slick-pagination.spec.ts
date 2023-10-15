@@ -1,5 +1,5 @@
 
-import { PaginationService, SharedService, SlickGrid, GridOption } from '@slickgrid-universal/common';
+import { GridOption, PaginationService, SharedService, SlickGridModel, } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { TranslateServiceStub } from '../../../../test/translateServiceStub';
@@ -13,7 +13,7 @@ const gridStub = {
   getOptions: jest.fn(),
   getUID: () => 'slickgrid_123456',
   registerPlugin: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const mockGridOptions = { enableTranslate: false } as GridOption;
 

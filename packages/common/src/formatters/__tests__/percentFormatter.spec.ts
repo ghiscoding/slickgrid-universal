@@ -1,10 +1,10 @@
-import { Column, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, GridOption, SlickGridModel } from '../../interfaces/index';
 import { percentFormatter } from '../percentFormatter';
 
 describe('the Percent Symbol Formatter', () => {
   const gridStub = {
     getOptions: jest.fn()
-  } as unknown as SlickGridUniversal;
+  } as unknown as SlickGridModel;
 
   it('should display an empty string when no value is provided', () => {
     const output = percentFormatter(1, 1, '', {} as Column, {}, {} as any);

@@ -1,5 +1,5 @@
-import type { Column as ColumnCore, FormatterResultObject } from 'slickgrid';
-
+import type { AutoSize } from '../core/index';
+import type { FieldType } from '../enums/fieldType.enum';
 import type {
   CellMenu,
   ColumnEditor,
@@ -8,32 +8,32 @@ import type {
   CustomTooltipOption,
   EditorValidator,
   Formatter,
+  FormatterResultObject,
   Grouping,
   GroupTotalExportOption,
   GroupTotalsFormatter,
   HeaderButtonsOrMenu,
   OnEventArgs,
-  SlickGridUniversal,
+  SlickGridModel,
   SortComparer,
 } from './index';
-import type { FieldType } from '../enums/fieldType.enum';
 
-type FormatterOverrideCallback = (row: number, cell: number, val: any, columnDef: Column, item: any, grid: SlickGridUniversal) => string | FormatterResultObject;
+export type FormatterOverrideCallback = (row: number, cell: number, val: any, columnDef: Column, item: any, grid: SlickGridModel) => string | FormatterResultObject;
 
-// type PathsToStringProps<T> = T extends string | number | boolean | Date ? [] : {
-//   [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>]
-// }[Extract<keyof T, string>];
+type PathsToStringProps<T> = T extends string | number | boolean | Date ? [] : {
+  [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>]
+}[Extract<keyof T, string>];
 
-// /* eslint-disable @typescript-eslint/indent */
-// // disable eslint indent rule until this issue is fixed: https://github.com/typescript-eslint/typescript-eslint/issues/1824
-// type Join<T extends any[], D extends string> =
-//   T extends [] ? never :
-//   T extends [infer F] ? F :
-//   T extends [infer F, ...infer R] ?
-//   F extends string ? string extends F ? string : `${F}${D}${Join<R, D>}` : never : string;
-// /* eslint-enable @typescript-eslint/indent */
+/* eslint-disable @typescript-eslint/indent */
+// disable eslint indent rule until this issue is fixed: https://github.com/typescript-eslint/typescript-eslint/issues/1824
+type Join<T extends any[], D extends string> =
+  T extends [] ? never :
+  T extends [infer F] ? F :
+  T extends [infer F, ...infer R] ?
+  F extends string ? string extends F ? string : `${F}${D}${Join<R, D>}` : never : string;
+/* eslint-enable @typescript-eslint/indent */
 
-export interface Column<T = any> extends ColumnCore<T> {
+export interface Column<T = any> {
   /** Defaults to false, should we always render the column? */
   alwaysRenderColumn?: boolean;
 
@@ -42,6 +42,9 @@ export interface Column<T = any> extends ColumnCore<T> {
 
   /** async background post-render cleanup callback function */
   asyncPostRenderCleanup?: (node: HTMLElement, rowIdx: number, column: Column) => void;
+
+  /** column autosize feature */
+  autoSize?: AutoSize;
 
   /**
    * Defaults to true, when enabled it will parse the filter input string and extract filter operator (<, <=, >=, >, =, *) when found.
@@ -99,6 +102,9 @@ export interface Column<T = any> extends ColumnCore<T> {
   /** Any inline editor function that implements Editor for the cell value or ColumnEditor */
   editor?: ColumnEditor;
 
+  /** Editor number fixed decimal places */
+  editorFixedDecimalPlaces?: number;
+
   /** Excel export custom options for cell formatting & width */
   excelExportOptions?: ColumnExcelExportOption;
 
@@ -152,7 +158,7 @@ export interface Column<T = any> extends ColumnCore<T> {
    * NOTE: a field with dot notation (.) will be considered a complex object.
    * For example: { id: 'Users', field: 'user.firstName' }
    */
-  // field: Join<PathsToStringProps<T>, '.'>;
+  field: Join<PathsToStringProps<T>, '.'>;
 
   /**
    * Only used by Backend Services since the query is built using the column definitions, this is a way to pass extra properties to the backend query.
@@ -197,6 +203,9 @@ export interface Column<T = any> extends ColumnCore<T> {
   /** CSS class that can be added to the column header */
   headerCssClass?: string | null;
 
+  /** is the column hidden? */
+  hidden?: boolean;
+
   /** ID of the column, each row have to be unique or SlickGrid will throw an error. */
   id: number | string;
 
@@ -234,6 +243,9 @@ export interface Column<T = any> extends ColumnCore<T> {
 
   /** Alternative Column Title Name translation key that could be used by the Composite Editor Modal, it has precedence over the column "name" property. */
   nameCompositeEditorKey?: string;
+
+  /** column offset width */
+  offsetWidth?: number;
 
   /** an event that can be used for executing an action before the cell becomes editable (that event happens before the "onCellChange" event) */
   onBeforeEditCell?: (e: Event, args: OnEventArgs) => void;

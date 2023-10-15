@@ -12,7 +12,7 @@ import {
   GroupTotalFormatters,
   ItemMetadata,
   SlickDataView,
-  SlickGrid,
+  SlickGridModel,
   SortComparers,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
@@ -20,7 +20,7 @@ import * as ExcelBuilder from 'excel-builder-webpacker';
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 import { ExcelExportService } from './excelExport.service';
-import { getExcelNumberCallback, getExcelSameInputDataCallback, useCellFormatByFieldType } from './excelUtils';
+import { getExcelSameInputDataCallback, useCellFormatByFieldType } from './excelUtils';
 
 const pubSubServiceStub = {
   publish: jest.fn(),
@@ -73,7 +73,7 @@ const gridStub = {
   getOptions: () => mockGridOptions,
   getColumns: jest.fn(),
   getGrouping: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('ExcelExportService', () => {
   let container: ContainerServiceStub;

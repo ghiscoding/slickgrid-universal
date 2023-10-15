@@ -3,7 +3,7 @@ import 'multiple-select-vanilla';
 import { of, Subject } from 'rxjs';
 
 import { FieldType, OperatorType } from '../../enums/index';
-import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption, SlickGridModel } from '../../interfaces/index';
 import { CollectionService } from '../../services/collection.service';
 import { Filters } from '../filters.index';
 import { SelectFilter } from '../selectFilter';
@@ -28,7 +28,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('SelectFilter', () => {
   let translateService: TranslateServiceStub;

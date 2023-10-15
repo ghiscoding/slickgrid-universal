@@ -1,12 +1,11 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { isEmptyObject } from '@slickgrid-universal/utils';
 import SortableInstance, { type Options as SortableOptions, type SortableEvent } from 'sortablejs';
-import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler } from 'slickgrid';
 import * as Sortable_ from 'sortablejs';
 const Sortable = ((Sortable_ as any)?.['default'] ?? Sortable_); // patch for rollup
 
 import type { ExtensionUtility } from '../extensions/extensionUtility';
-import { SortDirectionNumber } from '../enums';
+import { SortDirectionNumber } from '../enums/index';
 import type {
   Column,
   DOMMouseOrTouchEvent,
@@ -15,12 +14,13 @@ import type {
   GridOption,
   Grouping,
   GroupingGetterFunction,
-  SlickGridUniversal,
+  SlickGridModel,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { SharedService } from '../services/shared.service';
 import { createDomElement, emptyElement } from '../services/domUtilities';
 import { sortByFieldType } from '../sortComparers';
+import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler } from '../core/index';
 
 /**
  *
@@ -55,7 +55,7 @@ export class SlickDraggableGrouping {
   protected _dropzoneElm!: HTMLDivElement;
   protected _dropzonePlaceholderElm!: HTMLDivElement;
   protected _eventHandler!: SlickEventHandler;
-  protected _grid?: SlickGridUniversal;
+  protected _grid?: SlickGridModel;
   protected _gridColumns: Column[] = [];
   protected _gridUid = '';
   protected _groupToggler?: HTMLDivElement;
@@ -111,7 +111,7 @@ export class SlickDraggableGrouping {
     return this._eventHandler;
   }
 
-  get grid(): SlickGridUniversal {
+  get grid(): SlickGridModel {
     return this._grid ?? this.sharedService.slickGrid ?? {};
   }
 
@@ -129,7 +129,7 @@ export class SlickDraggableGrouping {
   }
 
   /** Initialize plugin. */
-  init(grid: SlickGridUniversal, groupingOptions?: DraggableGrouping) {
+  init(grid: SlickGridModel, groupingOptions?: DraggableGrouping) {
     this._addonOptions = { ...this._defaults, ...groupingOptions };
     this._grid = grid;
     if (grid) {
@@ -273,7 +273,7 @@ export class SlickDraggableGrouping {
    * @param uid - grid UID
    * @param trigger - callback to execute when triggering a column grouping
    */
-  setupColumnReorder(grid: SlickGridUniversal, headers: any, _headerColumnWidthDiff: any, setColumns: (columns: Column[]) => void, setupColumnResize: () => void, _columns: Column[], getColumnIndex: (columnId: string) => number, _uid: string, trigger: (slickEvent: SlickEvent, data?: any) => void) {
+  setupColumnReorder(grid: SlickGridModel, headers: any, _headerColumnWidthDiff: any, setColumns: (columns: Column[]) => void, setupColumnResize: () => void, _columns: Column[], getColumnIndex: (columnId: string) => number, _uid: string, trigger: (slickEvent: SlickEvent, data?: any) => void) {
     this.destroySortableInstances();
     const dropzoneElm = grid.getPreHeaderPanel();
     const draggablePlaceholderElm = dropzoneElm.querySelector<HTMLDivElement>('.slick-draggable-dropzone-placeholder');

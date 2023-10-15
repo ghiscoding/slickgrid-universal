@@ -1,8 +1,8 @@
-import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler } from 'slickgrid';
+import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler } from '../../core/index';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { Constants } from '../../constants';
-import { Column, GridOption, SlickGridUniversal, BackendService } from '../../interfaces/index';
+import { Column, GridOption, SlickGridModel, BackendService } from '../../interfaces/index';
 import { SumAggregator } from '../../aggregators';
 import { SharedService } from '../shared.service';
 import { SortService } from '../sort.service';
@@ -59,7 +59,7 @@ const gridStub = {
   onClick: new SlickEvent(),
   render: jest.fn(),
   setSortColumns: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const fnCallbacks = {};
 const mockPubSub = {

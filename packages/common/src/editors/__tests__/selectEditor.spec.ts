@@ -1,11 +1,11 @@
 // import 3rd party lib multiple-select for the tests
 import 'multiple-select-vanilla';
-import { SlickEvent, type SlickDataView } from 'slickgrid';
+import { SlickEvent, type SlickDataView } from '../../core/index';
 
 import { Editors } from '../index';
 import { SelectEditor } from '../selectEditor';
 import { FieldType, OperatorType } from '../../enums/index';
-import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption, type SlickGridUniversal } from '../../interfaces/index';
+import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption, type SlickGridModel } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';
@@ -39,7 +39,7 @@ const gridStub = {
   render: jest.fn(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('SelectEditor', () => {
   let translateService: TranslateServiceStub;

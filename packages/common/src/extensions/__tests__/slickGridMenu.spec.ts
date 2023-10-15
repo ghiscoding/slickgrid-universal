@@ -1,9 +1,9 @@
 import 'jest-extended';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { type SlickDataView, SlickEvent, SlickEventData } from 'slickgrid';
+import { type SlickDataView, SlickEvent, SlickEventData } from '../../core/index';
 
 import { DelimiterType, FileType } from '../../enums/index';
-import { Column, DOMEvent, GridMenu, GridOption, SlickGridUniversal } from '../../interfaces/index';
+import { Column, DOMEvent, GridMenu, GridOption, SlickGridModel } from '../../interfaces/index';
 import { SlickGridMenu } from '../slickGridMenu';
 import { BackendUtilityService, ExcelExportService, FilterService, SharedService, SortService, TextExportService, } from '../../services';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -65,7 +65,7 @@ const gridStub = {
   onBeforeDestroy: new SlickEvent(),
   onColumnsReordered: new SlickEvent(),
   onSetOptions: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 // define a <div> container to simulate the grid container
 const template =

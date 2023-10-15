@@ -1,7 +1,6 @@
 import { setDeepValue } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import { multipleSelect, MultipleSelectInstance, MultipleSelectOption, OptionRowData } from 'multiple-select-vanilla';
-import { SlickEventData } from 'slickgrid';
 
 import { Constants } from '../constants';
 import { FieldType } from './../enums/index';
@@ -19,10 +18,11 @@ import type {
   GridOption,
   Locale,
   SelectOption,
-  SlickGridUniversal,
+  SlickGridModel,
 } from './../interfaces/index';
 import { buildMultipleSelectDataCollection, CollectionService, emptyElement, findOrDefault, sanitizeTextByAvailableSanitizer, type TranslaterService } from '../services/index';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
+import { SlickEventData } from '../core/slick.core';
 
 /**
  * Slickgrid editor class for multiple/single select lists
@@ -85,7 +85,7 @@ export class SelectEditor implements Editor {
   enableTranslateLabel = false;
 
   /** SlickGrid Grid object */
-  grid: SlickGridUniversal;
+  grid: SlickGridModel;
 
   /** Final collection displayed in the UI, that is after processing filter/sort/override */
   finalCollection: any[] = [];

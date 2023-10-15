@@ -1,5 +1,5 @@
-import { type SlickDataView, SlickEvent, SlickEventData } from 'slickgrid';
-import { Column, GridOption, PubSubService, SlickGridUniversal } from '@slickgrid-universal/common';
+import 'jest-extended';
+import { Column, GridOption, PubSubService, type SlickDataView, SlickEvent, SlickEventData, SlickGridModel } from '@slickgrid-universal/common';
 
 import { SlickRowDetailView } from './slickRowDetailView';
 
@@ -45,7 +45,7 @@ const gridStub = {
   onRendered: new SlickEvent(),
   onScroll: new SlickEvent(),
   onSort: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const pubSubServiceStub = {
   publish: jest.fn(),

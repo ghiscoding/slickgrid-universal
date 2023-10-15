@@ -19,7 +19,7 @@ import type {
   TranslaterService,
   TreeDataService,
 } from '@slickgrid-universal/common';
-import { GlobalGridOptions } from '@slickgrid-universal/common';
+import { GlobalGridOptions, Utils as SlickUtils } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
@@ -27,7 +27,6 @@ import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-c
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { SlickVanillaGridBundle, UniversalContainerService } from '@slickgrid-universal/vanilla-bundle';
-import { Utils as SlickUtils } from 'slickgrid';
 
 import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options';
 

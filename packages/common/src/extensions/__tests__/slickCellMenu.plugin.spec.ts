@@ -1,8 +1,8 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy } from '@slickgrid-universal/utils';
-import { SlickEvent, SlickEventData } from 'slickgrid';
+import { SlickEvent, SlickEventData } from '../../core/index';
 
-import { CellMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, type SlickGridUniversal } from '../../interfaces/index';
+import { CellMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, type SlickGridModel } from '../../interfaces/index';
 import { SlickCellMenu } from '../slickCellMenu';
 import { BackendUtilityService, SharedService, } from '../../services';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
@@ -73,7 +73,7 @@ const gridStub = {
   onClick: new SlickEvent(),
   onScroll: new SlickEvent(),
   onSort: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const pubSubServiceStub = {
   publish: jest.fn(),

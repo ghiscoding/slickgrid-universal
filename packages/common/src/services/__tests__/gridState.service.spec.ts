@@ -1,5 +1,5 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { type SlickDataView, SlickEvent, SlickEventData } from 'slickgrid';
+import { type SlickDataView, SlickEvent, SlickEventData } from '../../core/index';
 
 import { ExtensionService } from '../extension.service';
 import { FilterService } from '../filter.service';
@@ -24,7 +24,7 @@ import {
   GridState,
   RowDetailView,
   RowMoveManager,
-  SlickGridUniversal,
+  SlickGridModel,
   TreeToggleStateChange,
 } from '../../interfaces/index';
 import { SharedService } from '../shared.service';
@@ -81,7 +81,7 @@ const gridStub = {
   onColumnsResized: new SlickEvent(),
   onSetOptions: new SlickEvent(),
   onSelectedRowsChanged: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const extensionServiceStub = {
   getExtensionByName: (_name: string) => { }

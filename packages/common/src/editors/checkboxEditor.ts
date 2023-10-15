@@ -1,11 +1,11 @@
 import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
-import { SlickEventData } from 'slickgrid';
 
 import { Constants } from './../constants';
-import type { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption, SlickGridUniversal, } from './../interfaces/index';
+import type { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption, SlickGridModel, } from './../interfaces/index';
 import { createDomElement } from '../services/domUtilities';
 import { getDescendantProperty, } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
+import { SlickEventData } from '../core/slick.core';
 
 /*
  * An example of a 'detached' editor.
@@ -22,7 +22,7 @@ export class CheckboxEditor implements Editor {
   disabled = false;
 
   /** SlickGrid Grid object */
-  grid: SlickGridUniversal;
+  grid: SlickGridModel;
 
   /** Grid options */
   gridOptions: GridOption;

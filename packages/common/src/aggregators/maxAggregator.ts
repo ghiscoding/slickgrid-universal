@@ -1,7 +1,7 @@
-import type { SlickGroupTotals } from 'slickgrid';
 import { isNumber } from '@slickgrid-universal/utils';
 
 import type { Aggregator } from './../interfaces/aggregator.interface';
+import { SlickGroupTotals } from '../core/slick.core';
 
 export class MaxAggregator implements Aggregator {
   private _isInitialized = false;

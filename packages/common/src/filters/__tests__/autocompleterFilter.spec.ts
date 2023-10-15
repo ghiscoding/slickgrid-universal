@@ -3,7 +3,7 @@ import { of, Subject } from 'rxjs';
 import { Filters } from '../index';
 import { AutocompleterFilter } from '../autocompleterFilter';
 import { FieldType, OperatorType, KeyCode } from '../../enums/index';
-import { AutocompleterOption, Column, ColumnFilter, FilterArguments, GridOption, type SlickGridUniversal } from '../../interfaces/index';
+import { AutocompleterOption, Column, ColumnFilter, FilterArguments, GridOption, type SlickGridModel } from '../../interfaces/index';
 import { CollectionService } from '../../services/collection.service';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
@@ -26,7 +26,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('AutocompleterFilter', () => {
   let translaterService: TranslateServiceStub;

@@ -1,9 +1,9 @@
 import { of, throwError } from 'rxjs';
-import { type SlickDataView, SlickEvent, SlickEventData } from 'slickgrid';
+import { type SlickDataView, SlickEvent, SlickEventData } from '../../core/index';
 
 import { PaginationService } from './../pagination.service';
 import { SharedService } from '../shared.service';
-import { BackendServiceApi, Column, GridOption, Pagination, SlickGridUniversal } from '../../interfaces/index';
+import { BackendServiceApi, Column, GridOption, Pagination, SlickGridModel } from '../../interfaces/index';
 import { BackendUtilityService } from '../backendUtility.service';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 
@@ -88,7 +88,7 @@ const gridStub = {
   onColumnsReordered: jest.fn(),
   onColumnsResized: jest.fn(),
   registerPlugin: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('PaginationService', () => {
   let service: PaginationService;

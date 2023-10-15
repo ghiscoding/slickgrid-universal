@@ -1,9 +1,9 @@
 import 'jest-extended';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { type SlickDataView, SlickEvent } from 'slickgrid';
+import { type SlickDataView, SlickEvent } from '../../core/index';
 
 import { FilterService, GridService, GridStateService, PaginationService, SharedService, SortService, TreeDataService } from '../index';
-import { GridOption, CellArgs, Column, OnEventArgs, SlickGridUniversal } from '../../interfaces/index';
+import { GridOption, CellArgs, Column, OnEventArgs, SlickGridModel } from '../../interfaces/index';
 import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
 
 jest.useFakeTimers();
@@ -87,7 +87,7 @@ const gridStub = {
   setSelectedRows: jest.fn(),
   scrollRowIntoView: jest.fn(),
   updateRow: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const paginationServiceStub = {
   goToFirstPage: jest.fn(),

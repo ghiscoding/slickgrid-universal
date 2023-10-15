@@ -1,10 +1,10 @@
-import { Column, SlickGridUniversal } from '../../interfaces/index';
+import { Column, SlickGridModel } from '../../interfaces/index';
 import { hyperlinkFormatter } from '../hyperlinkFormatter';
 
 const gridStub = {
   getData: jest.fn(),
   getOptions: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('the Hyperlink Formatter', () => {
   beforeEach(() => {

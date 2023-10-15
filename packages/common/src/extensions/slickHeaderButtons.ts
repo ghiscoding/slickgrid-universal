@@ -1,5 +1,4 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { type OnHeaderCellRenderedEventArgs, SlickEventHandler } from 'slickgrid';
 
 import type {
   Column,
@@ -9,12 +8,14 @@ import type {
   HeaderButtonItem,
   HeaderButtonOnCommandArgs,
   HeaderButtonOption,
-  SlickGridUniversal,
+  OnHeaderCellRenderedEventArgs,
+  SlickGridModel,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import type { SharedService } from '../services/shared.service';
 import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from './menuBaseClass';
+import { SlickEventHandler } from '../core/index';
 
 /**
  * A plugin to add custom buttons to column headers.
@@ -54,7 +55,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
     return this._eventHandler;
   }
 
-  get grid(): SlickGridUniversal {
+  get grid(): SlickGridModel {
     return this.sharedService.slickGrid;
   }
 

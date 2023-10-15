@@ -1,7 +1,7 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { type SlickDataView, SlickEvent, SlickEventData } from 'slickgrid';
+import { type SlickDataView, SlickEvent, SlickEventData } from '../../core/index';
 
-import { Column, ColumnSort, ElementPosition, GridOption, MenuCommandItem, SlickGridUniversal } from '../../interfaces/index';
+import { Column, ColumnSort, ElementPosition, GridOption, MenuCommandItem, SlickGridModel } from '../../interfaces/index';
 import { SlickHeaderMenu } from '../slickHeaderMenu';
 import { BackendUtilityService, FilterService, SharedService, SortService } from '../../services';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
@@ -63,7 +63,7 @@ const gridStub = {
   onHeaderMouseEnter: new SlickEvent(),
   onMouseEnter: new SlickEvent(),
   onSort: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const dataViewStub = {
   refresh: jest.fn(),

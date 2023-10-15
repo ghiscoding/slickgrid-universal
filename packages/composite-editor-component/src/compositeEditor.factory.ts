@@ -11,7 +11,6 @@ import {
   emptyElement,
   getHtmlElementOffset,
 } from '@slickgrid-universal/common';
-// import { SlickCompositeEditor } from 'slickgrid';
 
 export interface CompositeEditorArguments extends EditorArguments {
   formValues: any;

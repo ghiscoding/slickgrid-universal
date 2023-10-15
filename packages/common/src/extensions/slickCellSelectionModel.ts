@@ -1,7 +1,7 @@
-import { type OnActiveCellChangedEventArgs, type SelectionModel, SlickEvent, SlickEventData, SlickEventHandler, SlickRange } from 'slickgrid';
 
-import { KeyCode } from '../enums/index';
-import type { CellRange, SlickGridUniversal, } from '../interfaces/index';
+import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, SlickRange } from '../core/index';
+import type { SelectionModel } from '../enums/index';
+import type { CellRange, OnActiveCellChangedEventArgs, SlickGridModel } from '../interfaces/index';
 import { SlickCellRangeSelector } from './index';
 
 export interface CellSelectionModelOption {
@@ -16,7 +16,7 @@ export class SlickCellSelectionModel implements SelectionModel {
   protected _addonOptions?: CellSelectionModelOption;
   protected _cachedPageRowCount = 0;
   protected _eventHandler: SlickEventHandler;
-  protected _grid!: SlickGridUniversal;
+  protected _grid!: SlickGridModel;
   protected _ranges: SlickRange[] = [];
   protected _selector: SlickCellRangeSelector;
   protected _defaults = {
@@ -45,7 +45,7 @@ export class SlickCellSelectionModel implements SelectionModel {
     return this._eventHandler;
   }
 
-  init(grid: SlickGridUniversal) {
+  init(grid: SlickGridModel) {
     this._grid = grid;
     if (this.hasDataView()) {
       this._dataView = grid?.getData() ?? {} as SlickDataView;

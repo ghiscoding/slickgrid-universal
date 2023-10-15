@@ -8,7 +8,7 @@ import type {
   FilterCallback,
   GridOption,
   OperatorDetail,
-  SlickGridUniversal,
+  SlickGridModel,
 } from '../interfaces/index';
 import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index';
 import { BindingEventService } from '../services/bindingEvent.service';
@@ -27,7 +27,7 @@ export class InputFilter implements Filter {
   protected _filterInputElm!: HTMLInputElement;
   protected _selectOperatorElm?: HTMLSelectElement;
   inputFilterType: 'single' | 'compound' = 'single';
-  grid!: SlickGridUniversal;
+  grid!: SlickGridModel;
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;

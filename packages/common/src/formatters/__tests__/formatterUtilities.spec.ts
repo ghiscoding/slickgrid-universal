@@ -1,16 +1,17 @@
 import { autoAddEditorFormatterToColumnsWithEditor, exportWithFormatterWhenDefined, getAssociatedDateFormatter, getValueFromParamsOrFormatterOptions } from '../formatterUtilities';
 import { FieldType } from '../../enums/index';
 import { Editors } from '../../editors/index';
-import { Column, Formatter, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, Formatter, GridOption, SlickGridModel } from '../../interfaces/index';
 import { complexObjectFormatter } from '../complexObjectFormatter';
 import { boldFormatter } from '../boldFormatter';
 import { italicFormatter } from '../italicFormatter';
 import { multipleFormatter } from '../multipleFormatter';
+import { SlickGrid } from '../../core/index';
 
 describe('formatterUtilities', () => {
   const gridStub = {
     getOptions: jest.fn()
-  } as unknown as SlickGridUniversal;
+  } as unknown as SlickGridModel;
 
   describe('autoAddEditorFormatterToColumnsWithEditor', () => {
     let columnDefinitions: Column[];

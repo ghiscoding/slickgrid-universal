@@ -1,8 +1,8 @@
-import { SlickEvent, type SlickDataView } from 'slickgrid';
+import { SlickEvent, type SlickDataView } from '../../core/index';
 
 import { Editors } from '../index';
 import { SliderEditor } from '../sliderEditor';
-import { Column, ColumnEditor, EditorArguments, GridOption, type SlickGridUniversal } from '../../interfaces/index';
+import { Column, ColumnEditor, EditorArguments, GridOption, type SlickGridModel } from '../../interfaces/index';
 
 jest.useFakeTimers();
 
@@ -34,7 +34,7 @@ const gridStub = {
   onBeforeEditCell: new SlickEvent(),
   onMouseEnter: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('SliderEditor', () => {
   let divContainer: HTMLDivElement;

@@ -1,7 +1,8 @@
 import 'jest-extended';
-import { type SelectionModel, SlickEvent, SlickEventData, SlickRange } from 'slickgrid';
+import { SlickEvent, SlickEventData, SlickRange } from '../../core/index';
 
-import { Column, GridOption, type SlickGridUniversal } from '../../interfaces/index';
+import { SelectionModel } from '../../enums/index';
+import { Column, GridOption, type SlickGridModel, } from '../../interfaces/index';
 import { SlickCellSelectionModel } from '../slickCellSelectionModel';
 import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager';
 import { InputEditor } from '../../editors/inputEditor';
@@ -32,7 +33,7 @@ const gridStub = {
   render: jest.fn(),
   onCellChange: new SlickEvent(),
   onKeyDown: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const mockCellSelectionModel = {
   constructor: jest.fn(),

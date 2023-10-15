@@ -1,6 +1,7 @@
-import { Handler, MergeTypes, SlickEvent, SlickEventData } from 'slickgrid';
+import { Handler, SlickEvent, SlickEventData } from '@slickgrid-universal/common';
+type MergeTypes<A, B> = { [key in keyof A]: key extends keyof B ? B[key] : A[key]; } & B;
 
-export class MockSlickEvent<ArgType = any> extends SlickEvent {
+export class MockSlickEvent<ArgType = any> implements SlickEvent {
   protected handlers: Handler<any>[] = [];
 
   notify(args: ArgType, event?: SlickEventData | Event | MergeTypes<SlickEventData, Event> | null, scope?: any) {
@@ -8,7 +9,7 @@ export class MockSlickEvent<ArgType = any> extends SlickEvent {
 
     let returnValue: any;
     for (let i = 0; i < this.handlers.length; i++) {
-      returnValue = this.handlers[i].call(scope, event, args);
+      returnValue = this.handlers[i].call(scope, event as SlickEventData, args);
     }
 
     return returnValue;
@@ -18,7 +19,7 @@ export class MockSlickEvent<ArgType = any> extends SlickEvent {
     this.handlers.push(handler);
   }
 
-  unsubscribe(handler: Handler<ArgType>) {
+  unsubscribe(handler?: Handler<ArgType>) {
     this.handlers.forEach((handlerFn, index) => {
       if (handlerFn === handler) {
         this.handlers.splice(index, 1);

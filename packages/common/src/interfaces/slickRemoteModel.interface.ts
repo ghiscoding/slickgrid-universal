@@ -1,4 +1,4 @@
-import type { SlickEvent } from 'slickgrid';
+import type { SlickEvent } from '../core/index';
 import type { Column } from './column.interface';
 
 /**

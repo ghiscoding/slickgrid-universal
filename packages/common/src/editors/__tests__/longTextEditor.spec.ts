@@ -1,9 +1,9 @@
-import { SlickEvent, type SlickDataView } from 'slickgrid';
+import { SlickEvent, type SlickDataView } from '../../core/index';
 
 import { Editors } from '../index';
 import { LongTextEditor } from '../longTextEditor';
 import { KeyCode } from '../../enums/index';
-import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption, type SlickGridUniversal } from '../../interfaces/index';
+import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption, type SlickGridModel } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import * as domUtilities from '../../services/domUtilities';
 const mockGetHtmlElementOffset = jest.fn();
@@ -43,7 +43,7 @@ const gridStub = {
   render: jest.fn(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('LongTextEditor', () => {
   let divContainer: HTMLDivElement;

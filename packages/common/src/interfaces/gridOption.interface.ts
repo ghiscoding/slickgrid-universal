@@ -1,5 +1,4 @@
 import type { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
-import type { GridOption as GridOptionCore, SlickEditorLock } from 'slickgrid';
 
 import type {
   AutoResizeOption,
@@ -38,11 +37,30 @@ import type {
   TextExportOption,
   TreeDataOption,
 } from './index';
-import type { GridAutosizeColsMode, OperatorType, OperatorString, } from '../enums/index';
+import type { GridAutosizeColsMode, OperatorType, OperatorString, ColumnReorderFunction, } from '../enums/index';
 import type { TranslaterService } from '../services/translater.service';
+import type { SlickEditorLock } from '../core/index';
 
-export interface GridOption<C extends Column = Column> extends GridOptionCore<C> {
-  // alwaysAllowHorizontalScroll?: boolean;
+export interface CellViewportRange {
+  bottom: number;
+  top: number;
+  leftPx: number;
+  rightPx: number;
+}
+
+export interface CustomDataView<T = any> {
+  getLength: () => number;
+  getItem: (index: number) => T;
+  getItemMetadata(index: number): ItemMetadata | null;
+}
+
+export interface CssStyleHash {
+  [prop: number | string]: { [columnId: number | string]: any; }
+}
+
+export interface GridOption<C extends Column = Column> {
+  alwaysAllowHorizontalScroll?: boolean;
+
   /** CSS class name used on newly added row */
   addNewRowCssClass?: string;
 
@@ -61,6 +79,9 @@ export interface GridOption<C extends Column = Column> extends GridOptionCore<C>
   /** Defaults to 40, which is the delay before the asynchronous post renderer start cleanup execution */
   asyncPostRenderCleanupDelay?: number;
 
+  // TODO: not sure what that option does?
+  auto?: boolean;
+
   /**
    * Automatically add a Custom Formatter on all column definitions that have an Editor.
    * Instead of manually adding a Custom Formatter on every column definitions that are editables, let's ask the system to do it in an easier automated way.
@@ -74,6 +95,12 @@ export interface GridOption<C extends Column = Column> extends GridOptionCore<C>
 
   /** Defaults to false, when enabled will automatically open the inlined editor as soon as there is a focus on the cell (can be combined with "enableCellNavigation: true"). */
   autoEdit?: boolean;
+
+  /**
+   * Defaults to true, when enabled it will automatically open the editor when clicking on cell that has a defined editor.
+   * When using CellExternalCopyManager, this option could be useful to avoid opening the cell editor automatically on empty new row and we wish to paste our cell selection range.
+   */
+  autoEditNewRow?: boolean;
 
   /**
    * Defaults to true, which leads to automatically adjust the width of each column with the available space. Similar to "Force Fit Column" but only happens on first page/component load.
@@ -112,6 +139,15 @@ export interface GridOption<C extends Column = Column> extends GridOptionCore<C>
 
   /** Auto-resize options (bottom padding, minHeight, ...)  */
   autoResize?: AutoResizeOption;
+
+  /** defaults to LegacyOff, Grid Autosize Columns Mode used when calling "autosizeColumns()" method */
+  autosizeColsMode?: string;
+
+  /** defaults to 4, autosize column padding in pixel */
+  autosizeColPaddingPx?: number;
+
+  /** defaults to 0.75, autosize text average to minimum width ratio */
+  autosizeTextAvgToMWidthRatio?: number;
 
   /** Auto-tooltip options (enableForCells, enableForHeaderCells, maxToolTipLength) */
   autoTooltipOptions?: AutoTooltipOption;
@@ -232,14 +268,23 @@ export interface GridOption<C extends Column = Column> extends GridOptionCore<C>
   /** Defaults to 'RangeInclusive', allows to change the default filter range operator */
   defaultFilterRangeOperator?: OperatorString | OperatorType;
 
+  /** Default cell Formatter that will be used by the grid */
+  defaultFormatter?: Formatter;
+
   /** Default prefix for SlickGrid Event names (events created in the SlickGrid and/or DataView objects) */
   defaultSlickgridEventPrefix?: string;
+
+  /** Do we have paging enabled? */
+  doPaging?: boolean;
 
   /** Draggable Grouping Plugin options & events */
   draggableGrouping?: DraggableGrouping;
 
   /** Defaults to false, when enabled will give the possibility to edit cell values with inline editors. */
   editable?: boolean;
+
+  /** Defaults to false, editor cell navigation left/right keys */
+  editorCellNavOnLRKeys?: boolean;
 
   /** option to intercept edit commands and implement undo support. */
   editCommandHandler?: (item: any, column: C, command: EditCommand) => void;
@@ -300,7 +345,7 @@ export interface GridOption<C extends Column = Column> extends GridOptionCore<C>
    * When provided as a boolean, it will permits the user to move an entire column from a position to another.
    * We could also provide a Column Reorder function, there's mostly only 1 use for this which is the SlickDraggableGrouping plugin.
    */
-  // enableColumnReorder?: boolean | ColumnReorderFunction;
+  enableColumnReorder?: boolean | ColumnReorderFunction;
 
   /**
    * Defaults to true, when doing a double-click in the column resize section (top right of a column when the mouse resize icon shows up),
@@ -437,7 +482,7 @@ export interface GridOption<C extends Column = Column> extends GridOptionCore<C>
   forceSyncScrolling?: boolean;
 
   /** Formatter classes factory */
-  // formatterFactory?: { getFormatter: (col: C) => Formatter; } | null;
+  formatterFactory?: { getFormatter: (col: C) => Formatter; } | null;
 
   /** Formatter commonly used options defined for the entire grid */
   formatterOptions?: FormatterOption;
@@ -512,6 +557,9 @@ export interface GridOption<C extends Column = Column> extends GridOptionCore<C>
    */
   ignoreAccentOnStringFilterAndSort?: boolean;
 
+  /** Do we leave space for new rows in the DOM visible buffer */
+  leaveSpaceForNewRows?: boolean;
+
   /**
    * When using custom Locales (that is when user is NOT using a Translate Service, this property does nothing when used with Translate Service),
    * This is useful so that every component of the lib knows the locale.
@@ -523,8 +571,8 @@ export interface GridOption<C extends Column = Column> extends GridOptionCore<C>
   /** Set of Locale translations used by the library */
   locales?: Locale;
 
-  /** Do we leave space for new rows in the DOM visible buffer */
-  leaveSpaceForNewRows?: boolean;
+  /** Should we log the sanitized html? */
+  logSanitizedHtml?: boolean;
 
   /** Max supported CSS height */
   maxSupportedCssHeight?: number;
@@ -534,6 +582,9 @@ export interface GridOption<C extends Column = Column> extends GridOptionCore<C>
 
   /** Defaults to false, which leads to be able to do multiple columns sorting (or single sort when false) */
   multiColumnSort?: boolean;
+
+  /** Use a mixin function when applying defaults to passed in option and columns objects, rather than creating a new object, so as not to break references */
+  mixinDefaults?: boolean;
 
   /** Defaults to true, which leads to be able to do multiple selection */
   multiSelect?: boolean;
@@ -618,6 +669,9 @@ export interface GridOption<C extends Column = Column> extends GridOptionCore<C>
   /** Do we want to show cell selection? */
   showCellSelection?: boolean;
 
+  /** Do we want to show column header? */
+  showColumnHeader?: boolean;
+
   /**
    * Do we want to show a custom footer with some metrics?
    * By default it will show how many items are in the dataset and when was last update done (timestamp)
@@ -649,6 +703,9 @@ export interface GridOption<C extends Column = Column> extends GridOptionCore<C>
    */
   suppressActiveCellChangeOnEdit?: boolean;
 
+  /** Defaults to false, do we want to suppress CSS changes when onHiddenInit event is triggered */
+  suppressCssChangesOnHiddenInit?: boolean;
+
   /** Defaults to false, when set to True will sync the column cell resize & apply the column width */
   syncColumnCellResize?: boolean;
 
@@ -678,4 +735,13 @@ export interface GridOption<C extends Column = Column> extends GridOptionCore<C>
 
   /** Defaults to null, which is the default Viewport CSS class name */
   viewportClass?: string;
+
+  /** Viewport switch to scroll model with percentage */
+  viewportSwitchToScrollModeWidthPercent?: number;
+
+  /** Viewport min width in pixel */
+  viewportMinWidthPx?: number;
+
+  /** Viewport max width in pixel */
+  viewportMaxWidthPx?: number;
 }

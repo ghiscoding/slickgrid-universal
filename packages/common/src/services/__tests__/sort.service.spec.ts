@@ -1,6 +1,6 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { of, throwError } from 'rxjs';
-import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler } from 'slickgrid';
+import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler } from '../../core/index';
 
 import { EmitterType, FieldType, } from '../../enums/index';
 import {
@@ -11,7 +11,7 @@ import {
   GridMenuItem,
   GridOption,
   MenuCommandItem,
-  SlickGridUniversal,
+  SlickGridModel,
   SingleColumnSort,
   BackendServiceApi,
 } from '../../interfaces/index';
@@ -77,7 +77,7 @@ const gridStub = {
   setColumns: jest.fn(),
   setOptions: jest.fn(),
   setSortColumns: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const pubSubServiceStub = {
   publish: jest.fn(),

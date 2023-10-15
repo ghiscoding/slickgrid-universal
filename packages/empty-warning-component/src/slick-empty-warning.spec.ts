@@ -1,4 +1,4 @@
-import { EmptyWarning, GridOption, SlickGrid } from '@slickgrid-universal/common';
+import { EmptyWarning, GridOption, SlickGridModel } from '@slickgrid-universal/common';
 import { SlickEmptyWarningComponent } from './slick-empty-warning.component';
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
@@ -15,7 +15,7 @@ const gridStub = {
   getOptions: () => mockGridOptions,
   getUID: () => GRID_UID,
   registerPlugin: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('Slick-Empty-Warning Component', () => {
   let container: ContainerServiceStub;

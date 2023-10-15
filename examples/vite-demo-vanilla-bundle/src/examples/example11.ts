@@ -21,11 +21,11 @@ import {
   deepCopy,
   formatNumber,
   SliderOption,
+  SlickGlobalEditorLock,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import moment from 'moment-mini';
-import { SlickGlobalEditorLock } from 'slickgrid';
 
 import exampleModal from './example11-modal.html?raw';
 import Example11Modal from './example11-modal';

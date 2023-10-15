@@ -1,6 +1,6 @@
 import type { SlickHeaderButtons } from '../extensions/slickHeaderButtons';
 import type { HeaderButtonOnCommandArgs } from './headerButtonOnCommandArgs.interface';
-import type { SlickEventData } from './slickEventData.interface';
+import type { SlickEventData } from '../core/index';
 
 export interface HeaderButton extends HeaderButtonOption {
   // --

@@ -19,10 +19,10 @@ import {
   formatNumber,
   Utilities,
   GridStateChange,
+  SlickGlobalEditorLock,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { SlickGlobalEditorLock } from 'slickgrid';
 
 import countriesJson from './data/countries.json?raw';
 import { ExampleGridOptions } from './example-grid-options';

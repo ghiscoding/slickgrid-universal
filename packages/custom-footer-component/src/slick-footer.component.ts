@@ -1,4 +1,3 @@
-import { SlickEventHandler } from 'slickgrid';
 import * as moment_ from 'moment-mini';
 const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
@@ -9,10 +8,10 @@ import type {
   Metrics,
   MetricTexts,
   Subscription,
-  SlickGridUniversal,
+  SlickGridModel,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import { Constants, createDomElement, sanitizeTextByAvailableSanitizer, } from '@slickgrid-universal/common';
+import { Constants, createDomElement, sanitizeTextByAvailableSanitizer, SlickEventHandler, } from '@slickgrid-universal/common';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { BindingHelper } from '@slickgrid-universal/binding';
 
@@ -67,7 +66,7 @@ export class SlickFooterComponent {
     this.renderRightFooterText(text);
   }
 
-  constructor(protected readonly grid: SlickGridUniversal, protected readonly customFooterOptions: CustomFooterOption, protected readonly pubSubService: BasePubSubService, protected readonly translaterService?: TranslaterService) {
+  constructor(protected readonly grid: SlickGridModel, protected readonly customFooterOptions: CustomFooterOption, protected readonly pubSubService: BasePubSubService, protected readonly translaterService?: TranslaterService) {
     this._bindingHelper = new BindingHelper();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
     this._eventHandler = new SlickEventHandler();

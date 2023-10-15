@@ -1,5 +1,5 @@
 import { InputPasswordFilter } from '../inputPasswordFilter';
-import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption, SlickGridModel } from '../../interfaces/index';
 import { Filters } from '../filters.index';
 
 const containerId = 'demo-container';
@@ -17,7 +17,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('InputPasswordFilter', () => {
   let divContainer: HTMLDivElement;
@@ -40,7 +40,7 @@ describe('InputPasswordFilter', () => {
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
 
-    filter = new InputPasswordFilter();
+    filter = new InputPasswordFilter({} as any);
   });
 
   afterEach(() => {

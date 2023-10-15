@@ -3,8 +3,9 @@ import 'multiple-select-vanilla';
 
 import { Editors } from '../index';
 import { SingleSelectEditor } from '../singleSelectEditor';
-import { Column, SlickDataView, EditorArguments, GridOption, SlickGrid, ColumnEditor } from '../../interfaces/index';
+import { Column, ColumnEditor, EditorArguments, GridOption, SlickGridModel } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import type { SlickDataView } from '../../core';
 
 const containerId = 'demo-container';
 
@@ -34,7 +35,7 @@ const gridStub = {
   navigateNext: jest.fn(),
   navigatePrev: jest.fn(),
   render: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('SingleSelectEditor', () => {
   let translateService: TranslateServiceStub;

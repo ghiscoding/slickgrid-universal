@@ -1,4 +1,4 @@
-import type { SlickGridUniversal } from './index';
+import type { SlickGridModel } from './index';
 
 export interface DragPosition {
   startX: number;
@@ -25,7 +25,7 @@ export interface DragRowMove {
   deltaY: number;
   drag: HTMLElement;
   drop: any[];
-  grid: SlickGridUniversal;
+  grid: SlickGridModel;
   guide: HTMLElement;
   insertBefore: number;
   offsetX: number;

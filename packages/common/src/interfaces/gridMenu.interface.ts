@@ -2,7 +2,7 @@ import type {
   Column,
   GridMenuOption,
   GridMenuCommandItemCallbackArgs,
-  SlickGridUniversal,
+  SlickGridModel,
 } from './index';
 import type { SlickGridMenu } from '../extensions/slickGridMenu';
 
@@ -40,7 +40,7 @@ export interface GridMenuEventBaseCallbackArgs {
   visibleColumns: Column[];
 
   /** slick grid object */
-  grid: SlickGridUniversal;
+  grid: SlickGridModel;
 }
 
 export interface GridMenuEventWithElementCallbackArgs extends GridMenuEventBaseCallbackArgs {

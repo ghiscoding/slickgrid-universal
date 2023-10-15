@@ -1,11 +1,11 @@
-import { type SlickDataView, SlickEventHandler, SlickGlobalEditorLock } from 'slickgrid';
+import { type SlickDataView, SlickEventHandler, SlickGlobalEditorLock } from '../core/index';
 import type {
   Column,
   EditCommand,
   EditUndoRedoBuffer,
   ExcelCopyBufferOption,
   GridOption,
-  SlickGridUniversal,
+  SlickGridModel,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { sanitizeHtmlToText } from '../services/domUtilities';
@@ -28,7 +28,7 @@ export class SlickCellExcelCopyManager {
   protected _cellSelectionModel!: SlickCellSelectionModel;
   protected _commandQueue!: EditCommand[];
   protected _eventHandler: SlickEventHandler;
-  protected _grid!: SlickGridUniversal;
+  protected _grid!: SlickGridModel;
   protected _undoRedoBuffer!: EditUndoRedoBuffer;
 
   constructor() {
@@ -56,7 +56,7 @@ export class SlickCellExcelCopyManager {
     return this._undoRedoBuffer;
   }
 
-  init(grid: SlickGridUniversal, options?: ExcelCopyBufferOption) {
+  init(grid: SlickGridModel, options?: ExcelCopyBufferOption) {
     this._grid = grid;
     this.createUndoRedoBuffer();
     this._cellSelectionModel = new SlickCellSelectionModel();

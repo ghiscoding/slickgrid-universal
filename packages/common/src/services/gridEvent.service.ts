@@ -1,5 +1,5 @@
-import { type SlickDataView, SlickEventHandler, } from 'slickgrid';
-import type { Column, OnEventArgs, SlickGridUniversal, } from './../interfaces/index';
+import { type SlickDataView, SlickEventHandler } from '../core/index';
+import type { Column, OnEventArgs, SlickGridModel, } from './../interfaces/index';
 
 export class GridEventService {
   protected _eventHandler: SlickEventHandler;
@@ -17,7 +17,7 @@ export class GridEventService {
   }
 
   /* OnCellChange Event */
-  bindOnBeforeEditCell(grid: SlickGridUniversal) {
+  bindOnBeforeEditCell(grid: SlickGridModel) {
     const dataView = grid?.getData<SlickDataView>();
 
     // subscribe to this Slickgrid event of onBeforeEditCell
@@ -46,7 +46,7 @@ export class GridEventService {
   }
 
   /* OnCellChange Event */
-  bindOnCellChange(grid: SlickGridUniversal) {
+  bindOnCellChange(grid: SlickGridModel) {
     const dataView = grid?.getData<SlickDataView>();
 
     // subscribe to this Slickgrid event of onCellChange
@@ -75,7 +75,7 @@ export class GridEventService {
   }
 
   /* OnClick Event */
-  bindOnClick(grid: SlickGridUniversal) {
+  bindOnClick(grid: SlickGridModel) {
     const dataView = grid?.getData<SlickDataView>();
 
     this._eventHandler.subscribe(grid.onClick, (e, args) => {

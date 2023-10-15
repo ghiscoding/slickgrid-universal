@@ -1,5 +1,5 @@
-import { type OnClickEventArgs, type SlickDataView, SlickEventHandler, SlickGroup, Utils as SlickUtils } from 'slickgrid';
 
+import { SlickEventHandler, Utils as SlickUtils, type SlickDataView, SlickGroup } from '../core/index';
 import { KeyCode } from '../enums/keyCode.enum';
 import type {
   Column,
@@ -7,7 +7,8 @@ import type {
   GroupingFormatterItem,
   GroupItemMetadataProviderOption,
   ItemMetadata,
-  SlickGridUniversal,
+  OnClickEventArgs,
+  SlickGridModel,
 } from '../interfaces/index';
 
 /**
@@ -20,7 +21,7 @@ import type {
  */
 export class SlickGroupItemMetadataProvider {
   protected _eventHandler: SlickEventHandler;
-  protected _grid!: SlickGridUniversal;
+  protected _grid!: SlickGridModel;
   protected _options: GroupItemMetadataProviderOption;
   protected _defaults: GroupItemMetadataProviderOption = {
     groupCssClass: 'slick-group',
@@ -53,7 +54,7 @@ export class SlickGroupItemMetadataProvider {
     return this._grid?.getData<SlickDataView>() ?? {};
   }
 
-  init(grid: SlickGridUniversal, inputOptions?: GroupItemMetadataProviderOption) {
+  init(grid: SlickGridModel, inputOptions?: GroupItemMetadataProviderOption) {
     this._grid = grid;
     this._options = { ...this._defaults, ...inputOptions };
 
@@ -122,7 +123,7 @@ export class SlickGroupItemMetadataProvider {
       `<span class="${this._options.groupTitleCssClass}" level="${groupLevel}">${item.title || ''}</span>`;
   }
 
-  protected defaultTotalsCellFormatter(_row: number, _cell: number, _value: any, columnDef: Column, item: any, grid: SlickGridUniversal) {
+  protected defaultTotalsCellFormatter(_row: number, _cell: number, _value: any, columnDef: Column, item: any, grid: SlickGridModel) {
     return columnDef?.groupTotalsFormatter?.(item, columnDef, grid) ?? '';
   }
 

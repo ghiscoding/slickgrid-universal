@@ -1,4 +1,3 @@
-import { SlickEventData } from 'slickgrid';
 import * as autocompleter_ from 'autocompleter';
 const autocomplete = (autocompleter_ && autocompleter_['default'] || autocompleter_) as <T extends AutocompleteItem>(settings: AutocompleteSettings<T>) => AutocompleteResult; // patch for rollup
 
@@ -21,7 +20,7 @@ import type {
   EditorValidationResult,
   GridOption,
   Locale,
-  SlickGridUniversal,
+  SlickGridModel,
 } from '../interfaces/index';
 import { textValidator } from '../editorValidators/textValidator';
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter';
@@ -30,6 +29,7 @@ import { createDomElement, sanitizeTextByAvailableSanitizer, } from '../services
 import { findOrDefault, getDescendantProperty, } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
+import { SlickEventData } from '../core/slick.core';
 
 // minimum length of chars to type before starting to start querying
 const MIN_LENGTH = 3;
@@ -64,7 +64,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   disabled = false;
 
   /** SlickGrid Grid object */
-  grid: SlickGridUniversal;
+  grid: SlickGridModel;
 
   /** The property name for labels in the collection */
   labelName!: string;

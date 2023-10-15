@@ -1,8 +1,8 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import 'jest-extended';
-import { SlickEvent } from 'slickgrid';
+import { SlickEvent } from '../../core/index';
 
-import { Column, DragRowMove, GridOption, SlickGridUniversal } from '../../interfaces/index';
+import { Column, DragRowMove, GridOption, SlickGridModel } from '../../interfaces/index';
 import { SlickRowMoveManager } from '../slickRowMoveManager';
 
 const GRID_UID = 'slickgrid_12345';
@@ -56,7 +56,7 @@ const gridStub = {
   onDragInit: new SlickEvent(),
   onDragEnd: new SlickEvent(),
   onDragStart: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const pubSubServiceStub = {
   publish: jest.fn(),

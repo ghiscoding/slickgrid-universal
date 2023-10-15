@@ -13,7 +13,7 @@ import {
   OperatorType,
   Pagination,
   SharedService,
-  SlickGrid,
+  SlickGridModel,
   TranslaterService,
 } from '@slickgrid-universal/common';
 
@@ -39,7 +39,7 @@ const gridStub = {
   registerPlugin: jest.fn(),
   setSelectedRows: jest.fn(),
   setSortColumns: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('GraphqlService', () => {
   let mockColumns: Column[];

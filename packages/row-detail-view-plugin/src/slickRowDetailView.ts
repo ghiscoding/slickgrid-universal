@@ -1,4 +1,3 @@
-import { type SlickDataView, SlickEvent, type SlickEventData, SlickEventHandler } from 'slickgrid';
 
 import type {
   Column,
@@ -15,10 +14,13 @@ import type {
   PubSubService,
   RowDetailView,
   RowDetailViewOption,
-  SlickGridUniversal,
+  SlickGridModel,
   SlickRowDetailView as UniversalRowDetailView,
   UsabilityOverrideFn,
+  SlickDataView,
+  SlickEventData,
 } from '@slickgrid-universal/common';
+import { SlickEvent, SlickEventHandler, } from '@slickgrid-universal/common';
 import { objectAssignAndExtend } from '@slickgrid-universal/utils';
 
 /**
@@ -57,7 +59,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   protected _eventHandler: SlickEventHandler;
   protected _expandableOverride: UsabilityOverrideFn | null = null;
   protected _expandedRows: any[] = [];
-  protected _grid!: SlickGridUniversal;
+  protected _grid!: SlickGridModel;
   protected _gridRowBuffer = 0;
   protected _gridUid = '';
   protected _keyPrefix = '';
@@ -131,7 +133,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
    * @param _grid
    * @param _containerService
    */
-  init(grid: SlickGridUniversal) {
+  init(grid: SlickGridModel) {
     this._grid = grid;
     if (!grid) {
       throw new Error('[Slickgrid-Universal] RowDetailView Plugin requires the Grid instance to be passed as argument to the "init()" method.');
@@ -572,7 +574,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
   }
 
-  protected checkExpandableOverride(row: number, dataContext: any, grid: SlickGridUniversal) {
+  protected checkExpandableOverride(row: number, dataContext: any, grid: SlickGridModel) {
     if (typeof this._expandableOverride === 'function') {
       return this._expandableOverride(row, dataContext, grid);
     }
@@ -604,7 +606,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** The Formatter of the toggling icon of the Row Detail */
-  protected detailSelectionFormatter(row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGridUniversal): FormatterResultObject | string {
+  protected detailSelectionFormatter(row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGridModel): FormatterResultObject | string {
     if (!this.checkExpandableOverride(row, dataContext, grid)) {
       return '';
     } else {

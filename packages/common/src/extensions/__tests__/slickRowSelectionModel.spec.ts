@@ -1,7 +1,7 @@
 import 'jest-extended';
-import { SlickEvent, SlickRange } from 'slickgrid';
+import { SlickEvent, SlickRange } from '../../core/index';
 
-import { Column, GridOption, SlickGridUniversal, } from '../../interfaces/index';
+import { Column, GridOption, SlickGridModel, } from '../../interfaces/index';
 import { SlickCellRangeSelector } from '../slickCellRangeSelector';
 import { SlickRowSelectionModel } from '../slickRowSelectionModel';
 
@@ -55,7 +55,7 @@ const gridStub = {
   onKeyDown: new SlickEvent(),
   onSelectedRangesChanged: new SlickEvent(),
   onBeforeCellRangeSelected: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('SlickRowSelectionModel Plugin', () => {
   let plugin: SlickRowSelectionModel;

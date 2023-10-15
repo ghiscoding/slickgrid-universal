@@ -1,5 +1,5 @@
 import { of, throwError } from 'rxjs';
-import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler } from 'slickgrid';
+import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler } from '../../core/index';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { FieldType } from '../../enums/index';
@@ -13,7 +13,7 @@ import {
   GridOption,
   MenuCommandItem,
   RowDetailView,
-  SlickGridUniversal,
+  SlickGridModel,
 } from '../../interfaces/index';
 import { Filters, InputFilter, NativeSelectFilter } from '../../filters';
 import { FilterService } from '../filter.service';
@@ -99,7 +99,7 @@ const gridStub = {
   setHeaderRowVisibility: jest.fn(),
   setSortColumns: jest.fn(),
   setOptions: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const pubSubServiceStub = {
   publish: jest.fn(),

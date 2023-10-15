@@ -1,8 +1,8 @@
-import { type OnActiveCellChangedEventArgs, type SelectionModel, SlickEvent, SlickEventData, SlickEventHandler, SlickRange, } from 'slickgrid';
 
-import { KeyCode } from '../enums/index';
-import type { CellRange, GridOption, RowSelectionModelOption, SlickGridUniversal, } from '../interfaces/index';
+import { KeyCode, type SelectionModel } from '../enums/index';
+import type { CellRange, GridOption, OnActiveCellChangedEventArgs, RowSelectionModelOption, SlickGridModel, } from '../interfaces/index';
 import { SlickCellRangeSelector } from '../extensions/slickCellRangeSelector';
+import { SlickEvent, SlickEventData, SlickEventHandler, SlickRange } from '../core/index';
 
 export class SlickRowSelectionModel implements SelectionModel {
   pluginName: 'RowSelectionModel' = 'RowSelectionModel' as const;
@@ -13,7 +13,7 @@ export class SlickRowSelectionModel implements SelectionModel {
   protected _options: RowSelectionModelOption;
   protected _eventHandler: SlickEventHandler;
   protected _inHandler = false;
-  protected _grid!: SlickGridUniversal;
+  protected _grid!: SlickGridModel;
   protected _ranges: SlickRange[] = [];
   protected _selector?: SlickCellRangeSelector;
   protected _defaults = {
@@ -40,7 +40,7 @@ export class SlickRowSelectionModel implements SelectionModel {
     return this._grid?.getOptions();
   }
 
-  init(grid: SlickGridUniversal) {
+  init(grid: SlickGridModel) {
     this._grid = grid;
     this._options = { ...this._defaults, ...this._options };
     this._selector = this.addonOptions.cellRangeSelector;

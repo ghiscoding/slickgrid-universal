@@ -1,5 +1,5 @@
 
-import { Column, type SlickGridUniversal } from '../../interfaces/index';
+import { Column, type SlickGridModel } from '../../interfaces/index';
 import { translateFormatter } from '../translateFormatter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
@@ -9,7 +9,7 @@ describe('the Translate Formatter', () => {
   // stub some methods of the SlickGrid Grid instance
   const gridStub = {
     getOptions: jest.fn()
-  } as unknown as SlickGridUniversal;
+  } as unknown as SlickGridModel;
 
   beforeEach(() => {
     translateService = new TranslateServiceStub();

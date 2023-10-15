@@ -1,17 +1,16 @@
 import { delay, of, throwError } from 'rxjs';
-import { type SlickDataView, SlickEvent, SlickEventData } from 'slickgrid';
 
-import { Column, GridOption, SlickGridUniversal, SharedService, } from '@slickgrid-universal/common';
-import * as utilities from '@slickgrid-universal/common/dist/commonjs/services/utilities';
+import { Column, GridOption, SlickGridModel, SharedService, type SlickDataView, SlickEvent, SlickEventData } from '@slickgrid-universal/common';
 
 import { SlickCustomTooltip } from '../slickCustomTooltip';
 import { ContainerServiceStub } from '../../../../test/containerServiceStub';
 import { RxJsResourceStub } from '../../../../test/rxjsResourceStub';
 
-// mocked modules
+const mockGetHtmlElementOffset = jest.fn();
+
 jest.mock('@slickgrid-universal/common', () => ({
   ...(jest.requireActual('@slickgrid-universal/common') as any),
-  getHtmlElementOffset: jest.fn(),
+  getHtmlElementOffset: jest.fn().mockImplementation(() => mockGetHtmlElementOffset),
 }));
 
 const GRID_UID = 'slickgrid12345';
@@ -41,7 +40,7 @@ const gridStub = {
   onMouseLeave: new SlickEvent(),
   onHeaderMouseLeave: new SlickEvent(),
   onHeaderRowMouseLeave: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('SlickCustomTooltip plugin', () => {
   let divContainer = document.createElement('div');

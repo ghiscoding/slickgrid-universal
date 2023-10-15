@@ -1,7 +1,7 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { SlickEvent, SlickEventData } from 'slickgrid';
+import { SlickEvent, SlickEventData } from '../../core/index';
 
-import { Column, GridOption, SlickGridUniversal } from '../../interfaces/index';
+import { Column, GridOption, SlickGridModel } from '../../interfaces/index';
 import { SlickHeaderButtons } from '../slickHeaderButtons';
 import { BackendUtilityService } from '../../services';
 import { SharedService } from '../../services/shared.service';
@@ -23,7 +23,7 @@ const gridStub = {
   onHeaderCellRendered: new SlickEvent(),
   onHeaderMouseEnter: new SlickEvent(),
   onMouseEnter: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const pubSubServiceStub = {
   publish: jest.fn(),

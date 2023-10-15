@@ -46,7 +46,7 @@ interface ReportItem {
   effortDriven: boolean;
 }
 
-const customEditableInputFormatter: Formatter<ReportItem> = (_row: number, _cell: number, _value: any, _columnDef: Column, item: ReportItem) => {
+const customEditableInputFormatter: Formatter<ReportItem> = (_row, _cell, _value, _columnDef, item) => {
   return item.title;
 };
 

@@ -1,5 +1,4 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
-import { type OnClickEventArgs, type SlickDataView, SlickEventHandler, } from 'slickgrid';
 
 import { Constants } from '../constants';
 import { ToggleStateChangeType, type ToggleStateChangeTypeString } from '../enums/index';
@@ -7,7 +6,8 @@ import type {
   Column,
   ColumnSort,
   GridOption,
-  SlickGridUniversal,
+  OnClickEventArgs,
+  SlickGridModel,
   TreeDataOption,
   TreeToggledItem,
   TreeToggleStateChange,
@@ -19,11 +19,12 @@ import {
 } from './utilities';
 import type { SharedService } from './shared.service';
 import type { SortService } from './sort.service';
+import { type SlickDataView, SlickEventHandler } from '../core/index';
 
 export class TreeDataService {
   protected _lastToggleStateChange!: Omit<TreeToggleStateChange, 'fromItemId'>;
   protected _currentToggledItems: TreeToggledItem[] = [];
-  protected _grid!: SlickGridUniversal;
+  protected _grid!: SlickGridModel;
   protected _eventHandler: SlickEventHandler;
   protected _isLastFullToggleCollapsed = false;
   protected _isOneCpuCyclePassed = false;
@@ -72,7 +73,7 @@ export class TreeDataService {
     this.pubSubService.unsubscribeAll(this._subscriptions);
   }
 
-  init(grid: SlickGridUniversal) {
+  init(grid: SlickGridModel) {
     this._grid = grid;
     this._isTreeDataEnabled = this.gridOptions?.enableTreeData ?? false;
     this._isLastFullToggleCollapsed = this.treeDataOptions?.initiallyCollapsed ?? false;

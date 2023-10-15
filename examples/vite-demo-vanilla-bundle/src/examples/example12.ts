@@ -18,12 +18,13 @@ import {
 
   // utilities
   formatNumber,
+  OnCompositeEditorChangeEventArgs,
+  SlickGlobalEditorLock,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { SlickerGridInstance } from '@slickgrid-universal/vanilla-bundle';
 import { VanillaForceGridBundle, Slicker } from '@slickgrid-universal/vanilla-force-bundle';
 import { CompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
-import { OnCompositeEditorChangeEventArgs, SlickGlobalEditorLock } from 'slickgrid';
 import { ExampleGridOptions } from './example-grid-options';
 import countriesJson from './data/countries.json?raw';
 import './example12.scss';

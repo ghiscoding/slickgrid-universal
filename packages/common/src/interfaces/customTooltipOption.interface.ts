@@ -1,8 +1,8 @@
 import type { Observable, Subject } from '../services/rxjsFacade';
-import type { Column, Formatter, SlickGridUniversal } from './index';
+import type { Column, Formatter, SlickGridModel } from './index';
 
 type PostProcessOutput<P> = P & { [asyncParamsPropName: string]: any; };
-export type AsyncProcess<T = any> = (row: number, cell: number, value: any, columnDef: Column<T>, dataContext: T, grid?: SlickGridUniversal) => Promise<PostProcessOutput<T>> | Observable<PostProcessOutput<T>> | Subject<PostProcessOutput<T>>;
+export type AsyncProcess<T = any> = (row: number, cell: number, value: any, columnDef: Column<T>, dataContext: T, grid?: SlickGridModel) => Promise<PostProcessOutput<T>> | Observable<PostProcessOutput<T>> | Subject<PostProcessOutput<T>>;
 
 export interface CustomTooltipOption<T = any> {
   /** defaults to "__params", optionally change the property name that will be used to merge the data returned by the async method into the `dataContext` object */
@@ -92,5 +92,5 @@ export interface CustomTooltipOption<T = any> {
   // Methods
 
   /** Callback method that user can override the default behavior of showing the tooltip. If it returns False, then the tooltip won't show */
-  usabilityOverride?: (args: { cell: number; row: number; column: Column; dataContext: any; type: 'cell' | 'header' | 'header-row'; grid: SlickGridUniversal; }) => boolean;
+  usabilityOverride?: (args: { cell: number; row: number; column: Column; dataContext: any; type: 'cell' | 'header' | 'header-row'; grid: SlickGridModel; }) => boolean;
 }

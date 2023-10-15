@@ -1,5 +1,6 @@
-import type { Column, GridOption, SlickGridUniversal } from './index';
+import type { Column, GridOption } from './index';
 import type { SlickColumnPicker } from '../extensions/slickColumnPicker';
+import type { SlickGrid } from '../core/index';
 
 export interface ColumnPicker extends ColumnPickerOption {
 
@@ -10,25 +11,7 @@ export interface ColumnPicker extends ColumnPickerOption {
   onExtensionRegistered?: (plugin: SlickColumnPicker) => void;
 
   /** SlickGrid Event fired when any of the columns checkbox selection changes. */
-  onColumnsChanged?: (e: Event, args: {
-    /** column definition id */
-    columnId: number | string;
-
-    /** last command, are we showing or not the column? */
-    showing: boolean;
-
-    /** slick grid object */
-    grid: SlickGridUniversal;
-
-    /** list of all column definitions (visible & hidden) */
-    allColumns: Column[];
-
-    /** list of all column definitions (visible & hidden) */
-    columns: Column[];
-
-    /** list of visible column definitions */
-    visibleColumns: Column[];
-  }) => void;
+  onColumnsChanged?: (e: Event, args: OnColumnsChangedArgs) => void;
 }
 
 export interface ColumnPickerOption {
@@ -64,4 +47,24 @@ export interface ColumnPickerOption {
 
   /** Callback method to override the column name output used by the ColumnPicker/GridMenu. */
   headerColumnValueExtractor?: (column: Column, gridOptions?: GridOption) => string;
+}
+
+export interface OnColumnsChangedArgs {
+  /** column definition id */
+  columnId: number | string;
+
+  /** last command, are we showing or not the column? */
+  showing: boolean;
+
+  /** slick grid object */
+  grid: SlickGrid;
+
+  /** list of all column definitions (visible & hidden) */
+  allColumns: Column[];
+
+  /** list of all column definitions (visible & hidden) */
+  columns: Column[];
+
+  /** list of visible column definitions */
+  visibleColumns: Column[];
 }

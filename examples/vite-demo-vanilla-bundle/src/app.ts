@@ -1,13 +1,7 @@
 import { AppRouting } from './app-routing';
 import { Renderer } from './renderer';
-import { RouterConfig } from './interfaces';
+import { ElementEventListener, RouterConfig } from './interfaces';
 const pageLayoutGlobs = import.meta.glob('./examples/**/*.html', { as: 'raw', eager: true });
-
-interface ElementEventListener {
-  element: Element;
-  eventName: string;
-  listener: EventListenerOrEventListenerObject;
-}
 
 export class App {
   private _boundedEventWithListeners: ElementEventListener[] = [];

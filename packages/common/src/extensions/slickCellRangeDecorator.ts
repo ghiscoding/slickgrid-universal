@@ -1,6 +1,6 @@
 import { deepMerge } from '@slickgrid-universal/utils';
 
-import type { CellRange, CellRangeDecoratorOption, CSSStyleDeclarationWritable, SlickGridUniversal } from '../interfaces/index';
+import type { CellRange, CellRangeDecoratorOption, CSSStyleDeclarationWritable, SlickGridModel } from '../interfaces/index';
 import { createDomElement } from '../services/domUtilities';
 
 /**
@@ -26,7 +26,7 @@ export class SlickCellRangeDecorator {
     offset: { top: -1, left: -1, height: -2, width: -2 }
   } as CellRangeDecoratorOption;
 
-  constructor(protected readonly grid: SlickGridUniversal, options?: Partial<CellRangeDecoratorOption>) {
+  constructor(protected readonly grid: SlickGridModel, options?: Partial<CellRangeDecoratorOption>) {
     this._options = deepMerge(this._defaults, options);
   }
 

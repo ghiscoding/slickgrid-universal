@@ -1,5 +1,5 @@
 import { InputMaskFilter } from '../inputMaskFilter';
-import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption, SlickGridModel } from '../../interfaces/index';
 import { Filters } from '../filters.index';
 
 const containerId = 'demo-container';
@@ -16,7 +16,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('InputMaskFilter', () => {
   let divContainer: HTMLDivElement;
@@ -39,7 +39,7 @@ describe('InputMaskFilter', () => {
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
 
-    filter = new InputMaskFilter();
+    filter = new InputMaskFilter({} as any);
   });
 
   afterEach(() => {

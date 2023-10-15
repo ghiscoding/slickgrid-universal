@@ -1,7 +1,7 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { SlickEvent, SlickEventData } from 'slickgrid';
+import { SlickEvent, SlickEventData } from '../../core/index';
 
-import { Column, ColumnPicker, GridOption, SlickGridUniversal } from '../../interfaces/index';
+import { Column, ColumnPicker, GridOption, SlickGridModel } from '../../interfaces/index';
 import { SlickColumnPicker } from '../slickColumnPicker';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
@@ -22,7 +22,7 @@ const gridStub = {
   setSelectedRows: jest.fn(),
   onColumnsReordered: new SlickEvent(),
   onHeaderContextMenu: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const pubSubServiceStub = {
   publish: jest.fn(),

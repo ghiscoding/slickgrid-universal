@@ -1,5 +1,4 @@
-import { CustomFooterOption, GridOption, type SlickGridUniversal } from '@slickgrid-universal/common';
-import { SlickEvent } from 'slickgrid';
+import { CustomFooterOption, GridOption, SlickEvent, type SlickGridModel } from '@slickgrid-universal/common';
 
 import { SlickFooterComponent } from './slick-footer.component';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
@@ -19,7 +18,7 @@ const gridStub = {
   getUID: () => 'slickgrid_123456',
   onSelectedRowsChanged: new SlickEvent(),
   registerPlugin: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('Slick-Footer Component', () => {
   let component: SlickFooterComponent;

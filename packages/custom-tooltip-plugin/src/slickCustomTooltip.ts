@@ -1,4 +1,3 @@
-import { type SlickDataView, SlickEventHandler } from 'slickgrid';
 
 import type {
   CancellablePromiseWrapper,
@@ -11,7 +10,8 @@ import type {
   Observable,
   RxJsFacade,
   SharedService,
-  SlickGridUniversal,
+  SlickDataView,
+  SlickGridModel,
   Subscription,
 } from '@slickgrid-universal/common';
 import {
@@ -22,6 +22,7 @@ import {
   findFirstElementAttribute,
   getHtmlElementOffset,
   sanitizeTextByAvailableSanitizer,
+  SlickEventHandler,
 } from '@slickgrid-universal/common';
 
 type CellType = 'slick-cell' | 'slick-header-column' | 'slick-headerrow-column';
@@ -71,7 +72,7 @@ export class SlickCustomTooltip {
     regularTooltipWhiteSpace: 'pre-line',
     whiteSpace: 'normal',
   } as CustomTooltipOption;
-  protected _grid!: SlickGridUniversal;
+  protected _grid!: SlickGridModel;
   protected _eventHandler: SlickEventHandler;
 
   constructor() {
@@ -118,7 +119,7 @@ export class SlickCustomTooltip {
     this._rxjs = rxjs;
   }
 
-  init(grid: SlickGridUniversal, containerService: ContainerService) {
+  init(grid: SlickGridModel, containerService: ContainerService) {
     this._grid = grid;
     this._rxjs = containerService.get<RxJsFacade>('RxJsFacade');
     this._sharedService = containerService.get<SharedService>('SharedService');

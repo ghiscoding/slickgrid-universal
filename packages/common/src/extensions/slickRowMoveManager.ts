@@ -1,5 +1,4 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { SlickEvent, type SlickEventData, SlickEventHandler } from 'slickgrid';
 
 import type { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
 import type {
@@ -9,9 +8,10 @@ import type {
   GridOption,
   RowMoveManager,
   RowMoveManagerOption,
-  SlickGridUniversal,
+  SlickGridModel,
 } from '../interfaces/index';
 import { createDomElement, findWidthOrDefault, getHtmlElementOffset } from '../services/domUtilities';
+import { SlickEvent, SlickEventData, SlickEventHandler } from '../core/index';
 
 /**
  * Row Move Manager options:
@@ -25,15 +25,15 @@ import { createDomElement, findWidthOrDefault, getHtmlElementOffset } from '../s
  *
  */
 export class SlickRowMoveManager {
-  onBeforeMoveRows = new SlickEvent<{ grid: SlickGridUniversal; rows: number[]; insertBefore: number; }>();
-  onMoveRows = new SlickEvent<{ grid: SlickGridUniversal; rows: number[]; insertBefore: number; }>();
+  onBeforeMoveRows = new SlickEvent<{ grid: SlickGridModel; rows: number[]; insertBefore: number; }>();
+  onMoveRows = new SlickEvent<{ grid: SlickGridModel; rows: number[]; insertBefore: number; }>();
   pluginName: 'RowMoveManager' = 'RowMoveManager' as const;
 
   protected _addonOptions!: RowMoveManager;
   protected _canvas!: HTMLElement;
   protected _dragging = false;
   protected _eventHandler: SlickEventHandler;
-  protected _grid!: SlickGridUniversal;
+  protected _grid!: SlickGridModel;
   protected _usabilityOverride?: UsabilityOverrideFn;
   protected _defaults = {
     autoScroll: true,
@@ -69,7 +69,7 @@ export class SlickRowMoveManager {
   }
 
   /** Initialize plugin. */
-  init(grid: SlickGridUniversal, options?: RowMoveManager) {
+  init(grid: SlickGridModel, options?: RowMoveManager) {
     this._addonOptions = { ...this._defaults, ...options };
     this._grid = grid;
     this._canvas = this._grid.getCanvasNode();
@@ -305,14 +305,14 @@ export class SlickRowMoveManager {
     }
   }
 
-  protected checkUsabilityOverride(row: number, dataContext: any, grid: SlickGridUniversal) {
+  protected checkUsabilityOverride(row: number, dataContext: any, grid: SlickGridModel) {
     if (typeof this._usabilityOverride === 'function') {
       return this._usabilityOverride(row, dataContext, grid);
     }
     return true;
   }
 
-  protected moveIconFormatter(row: number, cell: number, value: any, column: Column, dataContext: any, grid: SlickGridUniversal): FormatterResultObject | string {
+  protected moveIconFormatter(row: number, cell: number, value: any, column: Column, dataContext: any, grid: SlickGridModel): FormatterResultObject | string {
     if (!this.checkUsabilityOverride(row, dataContext, grid)) {
       return '';
     } else {

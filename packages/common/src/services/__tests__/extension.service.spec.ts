@@ -2,10 +2,10 @@ jest.mock('../../extensions/slickDraggableGrouping');
 
 import 'jest-extended';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { SlickEvent } from 'slickgrid';
+import { SlickEvent } from '../../core/index';
 
 import { ExtensionName } from '../../enums/index';
-import { Column, ExtensionModel, GridOption, SlickGridUniversal } from '../../interfaces/index';
+import { Column, ExtensionModel, GridOption, SlickGridModel } from '../../interfaces/index';
 import { ExtensionUtility } from '../../extensions';
 import { ExtensionService, FilterService, SharedService, SortService, TreeDataService } from '../index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -113,7 +113,7 @@ const gridStub = {
   onSelectedRowsChanged: new SlickEvent(),
   onScroll: new SlickEvent(),
   onSetOptions: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const filterServiceStub = {
   addRxJsResource: jest.fn(),

@@ -1,9 +1,9 @@
-import { SlickEvent, type SlickDataView } from 'slickgrid';
+import { SlickEvent, type SlickDataView } from '../../core/index';
 
 import { Editors } from '../index';
 import { IntegerEditor } from '../integerEditor';
 import { KeyCode } from '../../enums/index';
-import { Column, ColumnEditor, EditorArguments, GridOption, type SlickGridUniversal } from '../../interfaces/index';
+import { Column, ColumnEditor, EditorArguments, GridOption, type SlickGridModel } from '../../interfaces/index';
 
 const KEY_CHAR_0 = 48;
 const containerId = 'demo-container';
@@ -37,7 +37,7 @@ const gridStub = {
   render: jest.fn(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 describe('IntegerEditor', () => {
   let divContainer: HTMLDivElement;

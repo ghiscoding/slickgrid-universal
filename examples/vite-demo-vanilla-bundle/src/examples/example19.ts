@@ -1,6 +1,5 @@
-import { CellRange, Column, GridOption, } from '@slickgrid-universal/common';
+import { CellRange, Column, GridOption, SlickEventHandler, } from '@slickgrid-universal/common';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { SlickEventHandler } from 'slickgrid';
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
 import './example19.scss';

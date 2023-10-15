@@ -1,5 +1,4 @@
-import type { SlickEvent } from 'slickgrid';
-
+import type { SlickEvent } from '../core/index';
 import type {
   Column,
   GridOption,
@@ -10,17 +9,17 @@ import type {
   OnRowDetailAsyncResponseArgs,
   OnRowOutOfViewportRangeArgs,
   RowDetailViewOption,
-  SlickGridUniversal
+  SlickGridModel
 } from './index';
 import type { ContainerService } from '../services/container.service';
-import type { UsabilityOverrideFn } from '../enums';
+import type { UsabilityOverrideFn } from '../enums/index';
 
 /** A plugin to add row detail panel. */
 export interface SlickRowDetailView {
   pluginName: 'RowDetailView';
 
   /** Initialize the SlickGrid 3rd party plugin */
-  init(grid: SlickGridUniversal, containerService?: ContainerService): void;
+  init(grid: SlickGridModel, containerService?: ContainerService): void;
 
   /** Destroy (dispose) the SlickGrid 3rd party plugin */
   dispose(): void;

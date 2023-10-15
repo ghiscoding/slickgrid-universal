@@ -13,12 +13,15 @@ import type {
   GridOption,
   GridService,
   Locale,
+  OnCompositeEditorChangeEventArgs,
   OnErrorOption,
   PlainFunc,
   SlickCompositeEditor,
-  SlickGridUniversal,
+  SlickDataView,
+  SlickGridModel,
   TranslaterService,
 } from '@slickgrid-universal/common';
+import { SlickEventHandler } from '@slickgrid-universal/common';
 import {
   BindingEventService,
   Constants,
@@ -28,7 +31,6 @@ import {
   sanitizeTextByAvailableSanitizer,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
-import { type OnCompositeEditorChangeEventArgs, type SlickDataView, SlickEventHandler } from 'slickgrid';
 
 import { CompositeEditor } from './compositeEditor.factory';
 
@@ -61,7 +63,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   protected _editorContainers!: Array<HTMLElement | null>;
   protected _modalBodyTopValidationElm!: HTMLDivElement;
   protected _modalSaveButtonElm!: HTMLButtonElement;
-  protected grid!: SlickGridUniversal;
+  protected grid!: SlickGridModel;
   protected gridService: GridService | null = null;
   protected translaterService?: TranslaterService | null;
 
@@ -103,7 +105,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
    * Note: we aren't using DI in the constructor simply to be as framework agnostic as possible,
    * we are simply using this init() function with a very basic container service to do the job
    */
-  init(grid: SlickGridUniversal, containerService: ContainerService) {
+  init(grid: SlickGridModel, containerService: ContainerService) {
     this.grid = grid;
     this.gridService = containerService.get<GridService>('GridService');
     this.translaterService = containerService.get<TranslaterService>('TranslaterService');

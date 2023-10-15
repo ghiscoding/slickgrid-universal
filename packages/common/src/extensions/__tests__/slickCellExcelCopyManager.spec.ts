@@ -1,6 +1,6 @@
-import { SlickEvent, SlickEventData } from 'slickgrid';
+import { SlickEvent, SlickEventData } from '../../core/index';
 
-import { CellRange, EditCommand, Formatter, GridOption, type SlickGridUniversal } from '../../interfaces/index';
+import { CellRange, EditCommand, Formatter, GridOption, type SlickGridModel } from '../../interfaces/index';
 import { Formatters } from '../../formatters';
 import { SharedService } from '../../services/shared.service';
 import { SlickCellExcelCopyManager } from '../slickCellExcelCopyManager';
@@ -23,7 +23,7 @@ const gridStub = {
   registerPlugin: jest.fn(),
   setSelectionModel: jest.fn(),
   onKeyDown: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const mockCellExternalCopyManager = {
   constructor: jest.fn(),

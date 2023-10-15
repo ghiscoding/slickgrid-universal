@@ -28,16 +28,16 @@ jest.mock('sortablejs', () => sortableMock);
 import 'jest-extended';
 import { SortableOptions } from 'sortablejs';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import { SlickEvent, SlickEventData } from 'slickgrid';
+import { SlickEvent, SlickEventData } from '../../core/index';
 
 import { Aggregators } from '../../aggregators/aggregators.index';
 import { SlickDraggableGrouping } from '../slickDraggableGrouping';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
-import { Column, DraggableGroupingOption, GridOption, SlickGridUniversal } from '../../interfaces/index';
+import { Column, DraggableGroupingOption, GridOption, SlickGridModel } from '../../interfaces/index';
 import { BackendUtilityService, createDomElement, } from '../../services';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { SortDirectionNumber } from '../../enums';
+import { SortDirectionNumber } from '../../enums/index';
 import { deepCopy } from '@slickgrid-universal/utils';
 
 const GRID_UID = 'slickgrid12345';
@@ -89,7 +89,7 @@ const gridStub = {
   onHeaderCellRendered: new SlickEvent(),
   onHeaderMouseEnter: new SlickEvent(),
   onMouseEnter: new SlickEvent(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const mockColumns = [
   { id: 'firstName', name: 'First Name', field: 'firstName', width: 100 },

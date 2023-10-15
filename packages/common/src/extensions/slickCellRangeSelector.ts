@@ -1,5 +1,4 @@
 import { deepMerge } from '@slickgrid-universal/utils';
-import { type OnScrollEventArgs, SlickEvent, type SlickEventData, SlickEventHandler, SlickRange } from 'slickgrid';
 
 import type {
   CellRangeSelectorOption,
@@ -8,10 +7,12 @@ import type {
   DragRange,
   GridOption,
   MouseOffsetViewport,
-  SlickGridUniversal,
+  OnScrollEventArgs,
+  SlickGridModel,
 } from '../interfaces/index';
 import { emptyElement, getHtmlElementOffset, } from '../services/domUtilities';
 import { SlickCellRangeDecorator } from './index';
+import { SlickEvent, SlickEventData, SlickEventHandler, SlickRange } from '../core/index';
 
 export class SlickCellRangeSelector {
   pluginName: 'CellRangeSelector' = 'CellRangeSelector' as const;
@@ -26,7 +27,7 @@ export class SlickCellRangeSelector {
   protected _decorator!: SlickCellRangeDecorator;
   protected _dragging = false;
   protected _eventHandler: SlickEventHandler;
-  protected _grid!: SlickGridUniversal;
+  protected _grid!: SlickGridModel;
   protected _gridOptions!: GridOption;
   protected _gridUid = '';
 
@@ -81,7 +82,7 @@ export class SlickCellRangeSelector {
     return this.gridUid ? `.${this.gridUid}` : '';
   }
 
-  init(grid: SlickGridUniversal) {
+  init(grid: SlickGridModel) {
     this._grid = grid;
     this._decorator = this._options.cellDecorator || new SlickCellRangeDecorator(grid, this._options);
     this._canvas = grid.getCanvasNode();

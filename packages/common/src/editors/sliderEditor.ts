@@ -1,5 +1,4 @@
 import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
-import { SlickEventData } from 'slickgrid';
 
 import { Constants } from '../constants';
 import type {
@@ -12,7 +11,7 @@ import type {
   EditorValidator,
   EditorValidationResult,
   GridOption,
-  SlickGridUniversal,
+  SlickGridModel,
   SliderOption,
 } from '../interfaces/index';
 import { getEditorOptionByName } from './editorUtilities';
@@ -20,6 +19,7 @@ import { getDescendantProperty } from '../services/utilities';
 import { sliderValidator } from '../editorValidators/sliderValidator';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { createDomElement } from '../services/domUtilities';
+import { SlickEventData } from '../core/slick.core';
 
 /*
  * An example of a 'detached' editor.
@@ -41,7 +41,7 @@ export class SliderEditor implements Editor {
   disabled = false;
 
   /** SlickGrid Grid object */
-  grid: SlickGridUniversal;
+  grid: SlickGridModel;
 
   /** Grid options */
   gridOptions: GridOption;

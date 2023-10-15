@@ -1,7 +1,7 @@
-import type { Column, HeaderButtonItem, SlickGridUniversal } from './index';
+import type { Column, HeaderButtonItem, SlickGridModel } from './index';
 
 export interface HeaderButtonOnCommandArgs {
-  grid: SlickGridUniversal;
+  grid: SlickGridModel;
   column: Column;
   command: string;
   button: HeaderButtonItem;

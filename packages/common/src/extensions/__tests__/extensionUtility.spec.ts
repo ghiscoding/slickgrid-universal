@@ -1,4 +1,4 @@
-import { Column, GridOption, MenuCommandItem, SlickGrid } from '../../interfaces/index';
+import { Column, GridOption, MenuCommandItem, SlickGridModel } from '../../interfaces/index';
 import { ExtensionUtility } from '../extensionUtility';
 import { SharedService } from '../../services/shared.service';
 import { BackendUtilityService } from '../../services/backendUtility.service';
@@ -9,7 +9,7 @@ const gridStub = {
   setColumns: jest.fn(),
   setOptions: jest.fn(),
   registerPlugin: jest.fn(),
-} as unknown as SlickGridUniversal;
+} as unknown as SlickGridModel;
 
 const backendUtilityServiceStub = {
   executeBackendProcessesCallback: jest.fn(),
