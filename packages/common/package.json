@@ -73,7 +73,7 @@
   "dependencies": {
     "@slickgrid-universal/event-pub-sub": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
-    "autocompleter": "^9.1.0",
+    "autocompleter": "^9.1.1",
     "dequal": "^2.0.3",
     "dompurify": "^3.0.6",
     "flatpickr": "^4.6.13",
