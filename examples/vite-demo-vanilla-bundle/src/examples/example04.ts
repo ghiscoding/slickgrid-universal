@@ -426,7 +426,7 @@ export default class Example4 {
         subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
         hideCloseButton: true,
         optionTitle: 'Change Percent Complete',
-        onOptionSelected: (e, args) => {
+        onOptionSelected: (_e, args) => {
           // e.preventDefault(); // you could do if you wish to keep the menu open
           const dataContext = args?.dataContext;
 
