@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/pagination-component",
-  "version": "3.3.0",
+  "version": "3.3.2",
   "description": "Slick Pagination Component - Vanilla Implementation of a Pagination Component",
   "exports": {
     ".": {
@@ -60,6 +60,6 @@
   "devDependencies": {
     "@slickgrid-universal/event-pub-sub": "workspace:~",
     "cross-env": "^7.0.3",
-    "npm-run-all2": "^6.0.6"
+    "npm-run-all2": "^6.1.1"
   }
 }

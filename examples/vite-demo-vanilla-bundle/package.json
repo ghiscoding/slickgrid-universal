@@ -1,7 +1,7 @@
 {
   "name": "slickgrid-universal-vite-demo",
   "private": true,
-  "version": "3.3.0",
+  "version": "3.3.2",
   "scripts": {
     "build": "tsc && vite build",
     "preview": "vite preview",
@@ -10,7 +10,7 @@
     "vite:dev": "vite --mode development"
   },
   "dependencies": {
-    "@faker-js/faker": "^8.1.0",
+    "@faker-js/faker": "^8.2.0",
     "@fnando/sparkline": "^0.3.10",
     "@slickgrid-universal/common": "workspace:~",
     "@slickgrid-universal/composite-editor-component": "workspace:~",
@@ -32,11 +32,11 @@
     "whatwg-fetch": "^3.6.19"
   },
   "devDependencies": {
-    "@types/fnando__sparkline": "^0.3.5",
-    "@types/node": "^20.8.2",
+    "@types/fnando__sparkline": "^0.3.6",
+    "@types/node": "^20.8.7",
     "@types/whatwg-fetch": "^0.0.33",
-    "sass": "^1.68.0",
+    "sass": "^1.69.4",
     "typescript": "^5.2.2",
-    "vite": "^4.4.10"
+    "vite": "^4.5.0"
   }
 }
