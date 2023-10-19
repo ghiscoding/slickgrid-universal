@@ -36,6 +36,7 @@ import {
 } from '../interfaces/index';
 
 import QueryBuilder from './graphqlQueryBuilder';
+import { PageInfo } from '../interfaces/graphqlPageInfo.interface';
 
 const DEFAULT_ITEMS_PER_PAGE = 25;
 const DEFAULT_PAGE_SIZE = 20;
@@ -53,6 +54,11 @@ export class GraphqlService implements BackendService {
     first: DEFAULT_ITEMS_PER_PAGE,
     offset: 0
   };
+  defaultCursorPaginationOptions: GraphqlCursorPaginationOption = {
+    first: DEFAULT_ITEMS_PER_PAGE,
+    after: undefined
+  };
+  pageInfo: PageInfo | undefined;
 
   /** Getter for the Column Definitions */
   get columnDefinitions() {
@@ -146,7 +152,17 @@ export class GraphqlService implements BackendService {
         first: ((this.options.paginationOptions && this.options.paginationOptions.first) ? this.options.paginationOptions.first : ((this.pagination && this.pagination.pageSize) ? this.pagination.pageSize : null)) || this.defaultPaginationOptions.first
       };
 
-      if (!this.options.isWithCursor) {
+      if (this.options.isWithCursor) {
+        if (this.options.paginationOptions) {
+          const { before, after } = this.options.paginationOptions as GraphqlCursorPaginationOption;
+          if (before) {
+            datasetFilters.before = before;
+          } else if (after) {
+            datasetFilters.after = after;
+          }
+        }
+      }
+      else {
         const paginationOptions = this.options?.paginationOptions;
         datasetFilters.offset = paginationOptions?.hasOwnProperty('offset') ? +(paginationOptions as any)['offset'] : 0;
       }
@@ -497,16 +513,33 @@ export class GraphqlService implements BackendService {
    * @param pageSize
    */
   updatePagination(newPage: number, pageSize: number) {
+    const previousPage = this._currentPagination?.pageNumber;
+
     this._currentPagination = {
       pageNumber: newPage,
       pageSize
     };
 
-    let paginationOptions;
+    let paginationOptions: GraphqlPaginationOption | GraphqlCursorPaginationOption;
     if (this.options && this.options.isWithCursor) {
-      paginationOptions = {
-        first: pageSize
-      };
+      const graphQlCursorPaginationOptions = {
+        first: pageSize,
+      } as GraphqlCursorPaginationOption;
+
+      // can only navigate backwards or forwards if an existing PageInfo is set
+      if (this.pageInfo && previousPage && newPage > 1) {
+        if (newPage === previousPage) {
+          // stay on same "page", get data from the current cursor
+          graphQlCursorPaginationOptions.after = this.pageInfo.startCursor;
+        } else if(newPage > previousPage) {
+          // navigating forwards
+          graphQlCursorPaginationOptions.after = this.pageInfo.endCursor;
+        } else if(newPage < previousPage) {
+          // navigating backwards
+          graphQlCursorPaginationOptions.before = this.pageInfo.startCursor;
+        }
+      }
+      paginationOptions = graphQlCursorPaginationOptions;
     } else {
       paginationOptions = {
         first: pageSize,
@@ -515,6 +548,20 @@ export class GraphqlService implements BackendService {
     }
 
     this.updateOptions({ paginationOptions });
+  }
+
+  /**
+   * Updates the PageInfo when using cursor based pagination
+   * @param pageInfo The PageInfo object returned from the server
+   * @param totalCount The total count of items (often returned from the server in the same request)
+   */
+  updatePageInfo(pageInfo: PageInfo, totalCount: number) {
+    console.assert(this.options?.isWithCursor, 'Updating PageInfo is only relevenat when using cursor pagination');
+    this.pageInfo = pageInfo;
+
+    if (this.pagination) {
+      this.pagination.totalItems = totalCount;
+    }
   }
 
   /**
