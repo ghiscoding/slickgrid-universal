@@ -124,7 +124,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
     }
   }
 
-  protected handleButtonClick(event: DOMEvent<HTMLDivElement>, _type: MenuType, button: ExtractMenuType<ExtendableItemTypes, MenuType>, columnDef?: Column) {
+  protected handleButtonClick(event: DOMEvent<HTMLDivElement>, _type: MenuType, button: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column) {
     if ((button as HeaderButtonItem).command && !(button as HeaderButtonItem).disabled) {
       const command = (button as HeaderButtonItem).command || '';
 

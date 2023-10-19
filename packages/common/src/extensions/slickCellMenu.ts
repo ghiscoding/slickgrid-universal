@@ -124,11 +124,11 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
       }
 
       // create the DOM element
-      this._menuElm = this.createMenu(event);
+      this._menuElm = this.createParentMenu(event);
 
       // reposition the menu to where the user clicked
       if (this._menuElm) {
-        this.repositionMenu(event);
+        this.repositionMenu(event, this._menuElm);
         this._menuElm.setAttribute('aria-expanded', 'true');
         this._menuElm.style.display = 'block';
       }

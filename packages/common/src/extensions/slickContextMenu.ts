@@ -126,14 +126,14 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       }
 
       // create the DOM element
-      this._menuElm = this.createMenu(event);
+      this._menuElm = this.createParentMenu(event);
       if (this._menuElm) {
         event.preventDefault();
       }
 
       // reposition the menu to where the user clicked
       if (this._menuElm) {
-        this.repositionMenu(event);
+        this.repositionMenu(event, this._menuElm);
         this._menuElm.setAttribute('aria-expanded', 'true');
         this._menuElm.style.display = 'block';
       }

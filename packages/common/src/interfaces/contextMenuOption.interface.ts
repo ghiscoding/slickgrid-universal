@@ -116,6 +116,9 @@ export interface ContextMenuOption {
   /** Defaults to True, should we show bullets when icons are missing? */
   showBulletWhenIconMissing?: boolean;
 
+  /** CSS class that can be added on the right side of a sub-item parent (typically a chevron-right icon) */
+  subItemChevronClass?: string;
+
   // --
   // action/override callbacks
 

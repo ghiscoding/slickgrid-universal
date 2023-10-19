@@ -798,7 +798,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   /** Re/Create Command List by adding title, close & list of commands */
   recreateCommandList(addonOptions: GridMenu, callbackArgs: GridMenuEventWithElementCallbackArgs) {
     // add Close button
-    this.populateCommandOrOptionTitle('command', addonOptions, this._commandMenuElm);
+    this.populateCommandOrOptionTitle('command', addonOptions, this._commandMenuElm, 0);
     const commandMenuHeaderElm = this._commandMenuElm.querySelector<HTMLDivElement>(`.slick-command-header`) ?? createDomElement('div', { className: 'slick-command-header' });
     commandMenuHeaderElm.classList.add('with-close');
     addCloseButtomElement.call(this, commandMenuHeaderElm);
