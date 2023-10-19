@@ -154,10 +154,12 @@ export class GraphqlService implements BackendService {
 
       if (this.options.isWithCursor) {
         if (this.options.paginationOptions) {
-          const { before, after } = this.options.paginationOptions as GraphqlCursorPaginationOption;
+          const { before, after, first, last } = this.options.paginationOptions as GraphqlCursorPaginationOption;
           if (before) {
+            datasetFilters.last = last;
             datasetFilters.before = before;
           } else if (after) {
+            datasetFilters.first = first;
             datasetFilters.after = after;
           }
         }
@@ -520,26 +522,35 @@ export class GraphqlService implements BackendService {
       pageSize
     };
 
-    let paginationOptions: GraphqlPaginationOption | GraphqlCursorPaginationOption;
+    let paginationOptions: GraphqlPaginationOption | GraphqlCursorPaginationOption = {};
     if (this.options && this.options.isWithCursor) {
-      const graphQlCursorPaginationOptions = {
-        first: pageSize,
-      } as GraphqlCursorPaginationOption;
-
       // can only navigate backwards or forwards if an existing PageInfo is set
       if (this.pageInfo && previousPage && newPage > 1) {
         if (newPage === previousPage) {
-          // stay on same "page", get data from the current cursor
-          graphQlCursorPaginationOptions.after = this.pageInfo.startCursor;
+          // stay on same "page", get data from the current cursor position (pageSize may have changed)
+          paginationOptions = {
+            first: pageSize,
+            after: this.pageInfo.startCursor
+          };
         } else if(newPage > previousPage) {
-          // navigating forwards
-          graphQlCursorPaginationOptions.after = this.pageInfo.endCursor;
+          // navigating forwards - // // https://relay.dev/graphql/connections.htm#sec-Forward-pagination-arguments
+          paginationOptions = {
+            first: pageSize,
+            after: this.pageInfo.endCursor
+          };
         } else if(newPage < previousPage) {
-          // navigating backwards
-          graphQlCursorPaginationOptions.before = this.pageInfo.startCursor;
+          // navigating backwards - // https://relay.dev/graphql/connections.htm#sec-Backward-pagination-arguments
+          paginationOptions = {
+            last: pageSize,
+            before: this.pageInfo.endCursor
+          };
         }
       }
-      paginationOptions = graphQlCursorPaginationOptions;
+      else {
+        paginationOptions = {
+          first: pageSize,
+        };
+      }
     } else {
       paginationOptions = {
         first: pageSize,
