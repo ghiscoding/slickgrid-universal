@@ -58,7 +58,7 @@ export class GraphqlService implements BackendService {
     first: DEFAULT_ITEMS_PER_PAGE,
     after: undefined
   };
-  pageInfo: PageInfo | undefined;
+  pageInfo: PageInfo & { totalCount: number} | undefined;
 
   /** Getter for the Column Definitions */
   get columnDefinitions() {
@@ -524,8 +524,25 @@ export class GraphqlService implements BackendService {
 
     let paginationOptions: GraphqlPaginationOption | GraphqlCursorPaginationOption = {};
     if (this.options && this.options.isWithCursor) {
+      // https://dev.to/jackmarchant/offset-and-cursor-pagination-explained-b89
+      // Cursor based pagination does not allow navigation to the middle of the page.
+      // As such we treat any "page number" greater than the current page, to be a forward navigation.
+      // Likewise any page number less than the current page a backwards navigation.
+
       // can only navigate backwards or forwards if an existing PageInfo is set
-      if (this.pageInfo && previousPage && newPage > 1) {
+      if (!this.pagination || !this.pageInfo || newPage === 1) {
+        // get the first page
+        paginationOptions = {
+          first: pageSize,
+        };
+      }
+      else if (newPage === Math.ceil(this.pageInfo.totalCount / pageSize)) {
+        // get the last page
+        paginationOptions = {
+          last: pageSize,
+        };
+      }
+      else if (this.pageInfo && previousPage) {
         if (newPage === previousPage) {
           // stay on same "page", get data from the current cursor position (pageSize may have changed)
           paginationOptions = {
@@ -568,11 +585,10 @@ export class GraphqlService implements BackendService {
    */
   updatePageInfo(pageInfo: PageInfo, totalCount: number) {
     console.assert(this.options?.isWithCursor, 'Updating PageInfo is only relevenat when using cursor pagination');
-    this.pageInfo = pageInfo;
-
-    if (this.pagination) {
-      this.pagination.totalItems = totalCount;
-    }
+    this.pageInfo = {
+      ...pageInfo,
+      totalCount
+    };
   }
 
   /**
