@@ -13,6 +13,7 @@ import type {
   OperatorString,
   Pagination,
   PaginationChangedArgs,
+  PaginationCursorChangedArgs,
   SharedService,
   SingleColumnSort,
   SlickGrid,
@@ -36,7 +37,6 @@ import {
 } from '../interfaces/index';
 
 import QueryBuilder from './graphqlQueryBuilder';
-import { PageInfo } from '../interfaces/graphqlPageInfo.interface';
 
 const DEFAULT_ITEMS_PER_PAGE = 25;
 const DEFAULT_PAGE_SIZE = 20;
@@ -58,7 +58,6 @@ export class GraphqlService implements BackendService {
     first: DEFAULT_ITEMS_PER_PAGE,
     after: undefined
   };
-  pageInfo: PageInfo & { totalCount: number} | undefined;
 
   /** Getter for the Column Definitions */
   get columnDefinitions() {
@@ -352,12 +351,17 @@ export class GraphqlService implements BackendService {
    *     }
    *   }
    */
-  processOnPaginationChanged(_event: Event | undefined, args: PaginationChangedArgs): string {
-    const pageSize = +(args.pageSize || ((this.pagination) ? this.pagination.pageSize : DEFAULT_PAGE_SIZE));
-    this.updatePagination(args.newPage, pageSize);
+  processOnPaginationChanged(_event: Event | undefined, args: PaginationChangedArgs | PaginationCursorChangedArgs): string {
+    if ('pageSize' in args && 'newPage' in args) {
+      const pageSize = +(args.pageSize || ((this.pagination) ? this.pagination.pageSize : DEFAULT_PAGE_SIZE));
+      this.updatePagination(args.newPage, pageSize);
+    } else {
+      this.updatePagination(args);
+    }
 
     // build the GraphQL query which we will use in the WebAPI callback
     return this.buildQuery();
+
   }
 
   /*
@@ -514,81 +518,123 @@ export class GraphqlService implements BackendService {
    * @param newPage
    * @param pageSize
    */
-  updatePagination(newPage: number, pageSize: number) {
-    const previousPage = this._currentPagination?.pageNumber;
-
-    this._currentPagination = {
-      pageNumber: newPage,
-      pageSize
-    };
-
+  updatePagination(newPage: number, pageSize: number): void;
+  updatePagination(cursorArgs: PaginationCursorChangedArgs): void;
+  updatePagination(newPageOrCursorArgs: number | PaginationCursorChangedArgs, pageSize?: number) {
     let paginationOptions: GraphqlPaginationOption | GraphqlCursorPaginationOption = {};
-    if (this.options && this.options.isWithCursor) {
-      // https://dev.to/jackmarchant/offset-and-cursor-pagination-explained-b89
-      // Cursor based pagination does not allow navigation to the middle of the page.
-      // As such we treat any "page number" greater than the current page, to be a forward navigation.
-      // Likewise any page number less than the current page a backwards navigation.
 
-      // can only navigate backwards or forwards if an existing PageInfo is set
-      if (!this.pagination || !this.pageInfo || newPage === 1) {
-        // get the first page
-        paginationOptions = {
-          first: pageSize,
-        };
-      }
-      else if (newPage === Math.ceil(this.pageInfo.totalCount / pageSize)) {
-        // get the last page
-        paginationOptions = {
-          last: pageSize,
-        };
-      }
-      else if (this.pageInfo && previousPage) {
-        if (newPage === previousPage) {
-          // stay on same "page", get data from the current cursor position (pageSize may have changed)
-          paginationOptions = {
-            first: pageSize,
-            after: this.pageInfo.startCursor
-          };
-        } else if(newPage > previousPage) {
-          // navigating forwards - // // https://relay.dev/graphql/connections.htm#sec-Forward-pagination-arguments
-          paginationOptions = {
-            first: pageSize,
-            after: this.pageInfo.endCursor
-          };
-        } else if(newPage < previousPage) {
-          // navigating backwards - // https://relay.dev/graphql/connections.htm#sec-Backward-pagination-arguments
-          paginationOptions = {
-            last: pageSize,
-            before: this.pageInfo.endCursor
-          };
-        }
-      }
-      else {
-        paginationOptions = {
-          first: pageSize,
-        };
+    if (this.options?.isWithCursor) {
+      // use cursor based pagination
+      const cursorArgs = newPageOrCursorArgs;
+      if (cursorArgs instanceof Object) {
+        // when using cursor pagination, expect to be given a PaginationCursorChangedArgs as arguments
+        paginationOptions = newPageOrCursorArgs as PaginationCursorChangedArgs;
+      } else {
+        // should not happen unless there is an error in initial configuration
+        paginationOptions = this.defaultCursorPaginationOptions;
       }
     } else {
+      // use offset based pagination
+      const newPage = newPageOrCursorArgs as number;
+      this._currentPagination = {
+        pageNumber: newPage,
+        pageSize: pageSize!
+      };
       paginationOptions = {
         first: pageSize,
-        offset: (newPage > 1) ? ((newPage - 1) * pageSize) : 0 // recalculate offset but make sure the result is always over 0
+        offset: (newPage > 1) ? ((newPage - 1) * pageSize!) : 0 // recalculate offset but make sure the result is always over 0
       };
     }
 
-    this.updateOptions({ paginationOptions });
-  }
+    // if (typeof newPageOrCursorArgs === 'number' || !this.options?.isWithCursor) {
+    //   const newPage = newPageOrCursorArgs as number;
+    //   this._currentPagination = {
+    //     pageNumber: newPage,
+    //     pageSize: pageSize!
+    //   };
+    //   paginationOptions = {
+    //     first: pageSize,
+    //     offset: (newPage > 1) ? ((newPage - 1) * pageSize!) : 0 // recalculate offset but make sure the result is always over 0
+    //   };
+    // } else {
+    //   // when using cursor pagination, expect to be given a PaginationCursorChangedArgs as arguments
+    //   paginationOptions = newPageOrCursorArgs as PaginationCursorChangedArgs;
+    // }
 
-  /**
-   * Updates the PageInfo when using cursor based pagination
-   * @param pageInfo The PageInfo object returned from the server
-   * @param totalCount The total count of items (often returned from the server in the same request)
-   */
-  updatePageInfo(pageInfo: PageInfo, totalCount: number) {
-    console.assert(this.options?.isWithCursor, 'Updating PageInfo is only relevenat when using cursor pagination');
-    this.pageInfo = {
-      ...pageInfo,
-      totalCount
-    };
+    // else {
+    //   const newPage = newPageOrCursorArgs as number;
+    //   this._currentPagination = {
+    //     pageNumber: newPage,
+    //     pageSize: pageSize!
+    //   };
+    //   paginationOptions = {
+    //     first: pageSize,
+    //     offset: (newPage > 1) ? ((newPage - 1) * pageSize!) : 0 // recalculate offset but make sure the result is always over 0
+    //   };
+    // }
+
+
+    // if (this.options && this.options.isWithCursor) {
+    // https://dev.to/jackmarchant/offset-and-cursor-pagination-explained-b89
+    // Cursor based pagination does not allow navigation to the middle of the page.
+    // As such we treat any "page number" greater than the current page, to be a forward navigation.
+    // Likewise any page number less than the current page a backwards navigation.
+    // if (cursorArgs) {
+    //   paginationOptions = cursorArgs;
+    // } else {
+    //   paginationOptions = {
+    //     first: 0
+    //   };
+    // }
+
+    // can only navigate backwards or forwards if an existing PageInfo is set
+    // if (!this.pagination || !this.pageInfo || newPage === 1) {
+    //   // get the first page
+    //   paginationOptions = {
+    //     first: pageSize,
+    //   };
+    // }
+    // else if (newPage === Math.ceil(this.pageInfo.totalCount / pageSize)) {
+    //   // get the last page
+    //   paginationOptions = {
+    //     last: pageSize,
+    //   };
+    // }
+    // else if (this.pageInfo && previousPage) {
+    //   if (newPage === previousPage) {
+    //     // stay on same "page", get data from the current cursor position (pageSize may have changed)
+    //     paginationOptions = {
+    //       first: pageSize,
+    //       after: this.pageInfo.startCursor
+    //     };
+    //   } else if(newPage > previousPage) {
+    //     // navigating forwards - // // https://relay.dev/graphql/connections.htm#sec-Forward-pagination-arguments
+    //     paginationOptions = {
+    //       first: pageSize,
+    //       after: this.pageInfo.endCursor
+    //     };
+    //   } else if(newPage < previousPage) {
+    //     // navigating backwards - // https://relay.dev/graphql/connections.htm#sec-Backward-pagination-arguments
+    //     paginationOptions = {
+    //       last: pageSize,
+    //       before: this.pageInfo.endCursor
+    //     };
+    //   }
+    // }
+    // else {
+    //   paginationOptions = {
+    //     first: pageSize,
+    //   };
+    // }
+
+    // } else {
+    //   paginationOptions = {
+    //     first: pageSize,
+    //     offset: (newPage > 1) ? ((newPage - 1) * pageSize) : 0 // recalculate offset but make sure the result is always over 0
+    //   };
+    // }
+
+    this.updateOptions({ paginationOptions });
   }
 
   /**

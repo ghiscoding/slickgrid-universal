@@ -120,6 +120,7 @@ export * from './onValidationErrorResult.interface';
 export * from './operatorDetail.interface';
 export * from './pagination.interface';
 export * from './paginationChangedArgs.interface';
+export * from './paginationCursorChangedArgs.interface';
 export * from './pagingInfo.interface';
 export * from './resizeByContentOption.interface';
 export * from './resizer.interface';

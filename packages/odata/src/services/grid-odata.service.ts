@@ -19,6 +19,7 @@ import type {
   SharedService,
   SingleColumnSort,
   SlickGrid,
+  PaginationCursorChangedArgs,
 } from '@slickgrid-universal/common';
 import {
   CaseType,
@@ -267,12 +268,16 @@ export class GridOdataService implements BackendService {
   /*
    * PAGINATION
    */
-  processOnPaginationChanged(_event: Event | undefined, args: PaginationChangedArgs) {
-    const pageSize = +(args.pageSize || ((this.pagination) ? this.pagination.pageSize : DEFAULT_PAGE_SIZE));
-    this.updatePagination(args.newPage, pageSize);
+  processOnPaginationChanged(_event: Event | undefined, args: PaginationChangedArgs | PaginationCursorChangedArgs) {
+    if ('pageSize' in args && 'newPage' in args) {
+      const pageSize = +(args.pageSize || ((this.pagination) ? this.pagination.pageSize : DEFAULT_PAGE_SIZE));
+      this.updatePagination(args.newPage, pageSize);
 
-    // build the OData query which we will use in the WebAPI callback
-    return this._odataService.buildQuery();
+      // build the OData query which we will use in the WebAPI callback
+      return this._odataService.buildQuery();
+    }
+
+    return ''; // cursor based pagination not supported in this service
   }
 
   /*

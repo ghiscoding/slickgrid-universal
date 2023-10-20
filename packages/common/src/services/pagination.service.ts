@@ -5,6 +5,7 @@ import type {
   BackendServiceApi,
   CurrentPagination,
   Pagination,
+  PaginationCursorChangedArgs,
   ServicePagination,
   SlickDataView,
   SlickGrid,
@@ -13,6 +14,7 @@ import type {
 import type { BackendUtilityService } from './backendUtility.service';
 import type { SharedService } from './shared.service';
 import type { Observable, RxJsFacade } from './rxjsFacade';
+import { PageInfo } from '../interfaces/pageInfo.interface';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -84,6 +86,10 @@ export class PaginationService {
     if (this._initialized) {
       this.refreshPagination();
     }
+  }
+
+  get cursorBased(): boolean {
+    return !!this._pageInfo;
   }
 
   addRxJsResource(rxjs: RxJsFacade) {
@@ -195,12 +201,19 @@ export class PaginationService {
   goToNextPage(event?: any, triggerChangeEvent = true): Promise<boolean | ServicePagination> {
     if (this._pageNumber < this._pageCount) {
       this._pageNumber++;
-      return triggerChangeEvent ? this.processOnPageChanged(this._pageNumber, event) : Promise.resolve(this.getFullPagination());
+      if (triggerChangeEvent && this._pageInfo) {
+        return this.cursorBased
+          ? this.processOnPageChanged(this._pageNumber, event, { first: this._itemsPerPage, after: this._pageInfo.endCursor })
+          : this.processOnPageChanged(this._pageNumber, event);
+      } else {
+        return Promise.resolve(this.getFullPagination());
+      }
     }
     return Promise.resolve(false);
   }
 
   goToPageNumber(pageNumber: number, event?: any, triggerChangeEvent = true): Promise<boolean | ServicePagination> {
+    console.assert(!this.cursorBased, 'Cursor based navigation cannot navigate to arbitrary page');
     const previousPageNumber = this._pageNumber;
 
     if (pageNumber < 1) {
@@ -321,7 +334,7 @@ export class PaginationService {
     }
   }
 
-  processOnPageChanged(pageNumber: number, event?: Event | undefined): Promise<ServicePagination> {
+  processOnPageChanged(pageNumber: number, event?: Event | undefined, cursorArgs?: PaginationCursorChangedArgs): Promise<ServicePagination> {
     if (this.pubSubService.publish('onBeforePaginationChange', this.getFullPagination()) === false) {
       this.resetToPreviousPagination();
       return Promise.resolve(this.getFullPagination());
@@ -347,7 +360,9 @@ export class PaginationService {
         }
 
         if (this._backendServiceApi?.process) {
-          const query = this._backendServiceApi.service.processOnPaginationChanged(event, { newPage: pageNumber, pageSize: itemsPerPage });
+          const query = this.cursorBased && cursorArgs
+            ? this._backendServiceApi.service.processOnPaginationChanged(event, cursorArgs)
+            : this._backendServiceApi.service.processOnPaginationChanged(event, { newPage: pageNumber, pageSize: itemsPerPage });
 
           // the processes can be Promises
           const process = this._backendServiceApi.process(query);
@@ -435,6 +450,11 @@ export class PaginationService {
       this.refreshPagination();
       this._backendServiceApi?.service?.updatePagination?.(this._previousPagination?.pageNumber ?? 0, this._previousPagination?.pageSize ?? 0);
     }
+  }
+
+  private _pageInfo?: PageInfo;
+  updatePageInfo(pageInfo: PageInfo) {
+    this._pageInfo = pageInfo;
   }
 
   updateTotalItems(totalItems: number, triggerChangedEvent = false) {
