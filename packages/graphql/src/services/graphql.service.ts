@@ -145,25 +145,14 @@ export class GraphqlService implements BackendService {
 
     // only add pagination if it's enabled in the grid options
     if (this._gridOptions.enablePagination !== false) {
-      datasetFilters = {
-        ...this.options.paginationOptions,
-        first: ((this.options.paginationOptions && this.options.paginationOptions.first) ? this.options.paginationOptions.first : ((this.pagination && this.pagination.pageSize) ? this.pagination.pageSize : null)) || this.defaultPaginationOptions.first
-      };
+      datasetFilters = {};
 
-      if (this.options.isWithCursor) {
-        if (this.options.paginationOptions) {
-          const { before, after, first, last } = this.options.paginationOptions as GraphqlCursorPaginationOption;
-          if (before) {
-            datasetFilters.last = last;
-            datasetFilters.before = before;
-          } else if (after) {
-            datasetFilters.first = first;
-            datasetFilters.after = after;
-          }
-        }
+      if (this.options.isWithCursor && this.options.paginationOptions) {
+        datasetFilters = { ...this.options.paginationOptions };
       }
       else {
         const paginationOptions = this.options?.paginationOptions;
+        datasetFilters.first = ((this.options.paginationOptions && this.options.paginationOptions.first) ? this.options.paginationOptions.first : ((this.pagination && this.pagination.pageSize) ? this.pagination.pageSize : null)) || this.defaultPaginationOptions.first;
         datasetFilters.offset = paginationOptions?.hasOwnProperty('offset') ? +(paginationOptions as any)['offset'] : 0;
       }
     }
@@ -352,7 +341,6 @@ export class GraphqlService implements BackendService {
    */
   processOnPaginationChanged(_event: Event | undefined, args: PaginationChangedArgs | PaginationCursorChangedArgs): string {
     const pageSize = +(args.pageSize || ((this.pagination) ? this.pagination.pageSize : DEFAULT_PAGE_SIZE));
-    this.updatePagination(args.newPage, pageSize);
 
     // if first/last defined on args, then it is a cursor based pagination change
     'first' in args || 'last' in args
@@ -614,8 +602,18 @@ export class GraphqlService implements BackendService {
   //   // if (this.options && this.options.isWithCursor) {
   //   // https://dev.to/jackmarchant/offset-and-cursor-pagination-explained-b89
   //   // Cursor based pagination does not allow navigation to the middle of the page.
-  //   // As such we treat any "page number" greater than the current page, to be a forward navigation.
-  //   // Likewise any page number less than the current page a backwards navigation.
+  //   //   Pagination by page numbers only makes sense in non-relay style pagination
+  //   //   Relay style pagination is better suited to infinite scrolling
+  //   //   relay pagination - infinte scrolling appending data
+  //   //     page1: {startCursor: A, endCursor: B }
+  //   //     page2: {startCursor: A, endCursor: C }
+  //   //     page3: {startCursor: A, endCursor: D }
+
+  //   //   non-relay pagination - Getting page chunks
+  //   //     page1: {startCursor: A, endCursor: B }
+  //   //     page2: {startCursor: B, endCursor: C }
+  //   //     page3: {startCursor: C, endCursor: D }
+
   //   // if (cursorArgs) {
   //   //   paginationOptions = cursorArgs;
   //   // } else {

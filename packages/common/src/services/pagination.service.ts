@@ -233,7 +233,13 @@ export class PaginationService {
   goToPreviousPage(event?: any, triggerChangeEvent = true): Promise<boolean | ServicePagination> {
     if (this._pageNumber > 1) {
       this._pageNumber--;
-      return triggerChangeEvent ? this.processOnPageChanged(this._pageNumber, event) : Promise.resolve(this.getFullPagination());
+      if (triggerChangeEvent && this._pageInfo) {
+        return this.cursorBased
+          ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, first: this._itemsPerPage, before: this._pageInfo.startCursor })
+          : this.processOnPageChanged(this._pageNumber, event);
+      } else {
+        return Promise.resolve(this.getFullPagination());
+      }
     }
     return Promise.resolve(false);
   }
