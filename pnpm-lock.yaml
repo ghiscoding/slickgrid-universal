@@ -14,7 +14,7 @@ importers:
     devDependencies:
       '@4tw/cypress-drag-drop':
         specifier: ^2.2.5
-        version: 2.2.5(cypress@13.3.1)
+        version: 2.2.5(cypress@13.3.2)
       '@jest/types':
         specifier: ^29.6.3
         version: 29.6.3
@@ -46,8 +46,8 @@ importers:
         specifier: ^7.0.3
         version: 7.0.3
       cypress:
-        specifier: ^13.3.1
-        version: 13.3.1
+        specifier: ^13.3.2
+        version: 13.3.2
       dotenv:
         specifier: ^16.3.1
         version: 16.3.1
@@ -249,8 +249,8 @@ importers:
         specifier: ^3.0.4
         version: 3.0.4
       '@types/sortablejs':
-        specifier: ^1.15.3
-        version: 1.15.3
+        specifier: ^1.15.4
+        version: 1.15.4
       autoprefixer:
         specifier: ^10.4.16
         version: 10.4.16(postcss@8.4.31)
@@ -480,8 +480,8 @@ importers:
         version: 1.0.2
     devDependencies:
       '@types/text-encoding-utf-8':
-        specifier: ^1.0.3
-        version: 1.0.3
+        specifier: ^1.0.4
+        version: 1.0.4
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -541,8 +541,8 @@ importers:
         specifier: workspace:~
         version: link:../graphql
       '@types/sortablejs':
-        specifier: ^1.15.3
-        version: 1.15.3
+        specifier: ^1.15.4
+        version: 1.15.4
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -613,12 +613,12 @@ importers:
 
 packages:
 
-  /@4tw/cypress-drag-drop@2.2.5(cypress@13.3.1):
+  /@4tw/cypress-drag-drop@2.2.5(cypress@13.3.2):
     resolution: {integrity: sha512-3ghTmzhOmUqeN6U3QmUnKRUxI7OMLbJA4hHUY/eS/FhWJgxbiGgcaELbolWnBAOpajPXcsNQGYEj9brd59WH6A==}
     peerDependencies:
       cypress: 2 - 13
     dependencies:
-      cypress: 13.3.1
+      cypress: 13.3.2
     dev: true
 
   /@aashutoshrathi/word-wrap@1.2.6:
@@ -2647,16 +2647,16 @@ packages:
     resolution: {integrity: sha512-JYM8x9EGF163bEyhdJBpR2QX1R5naCJHC8ucJylJ3w9/CVBaskdQ8WqBf8MmQrd1kRvp/a4TS8HJ+bxzR7ZJYQ==}
     dev: true
 
-  /@types/sortablejs@1.15.3:
-    resolution: {integrity: sha512-v+zh6TZP/cLeMUK0MDx1onp8e7Jk2/4iTQ7sb/n80rTAvBm14yJkpOEfJdrTCkHiF7IZbPjxGX2NRJfogRoYIg==}
+  /@types/sortablejs@1.15.4:
+    resolution: {integrity: sha512-7oL7CcPSfoyoNx3Ba1+79ykJzpEKVhHUyfAiN5eT/FoeDXOR3eBDLXf9ndDNuxaExmjpI+zVi2dMMuaoXUOzNA==}
     dev: true
 
   /@types/stack-utils@2.0.1:
     resolution: {integrity: sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==}
     dev: true
 
-  /@types/text-encoding-utf-8@1.0.3:
-    resolution: {integrity: sha512-bU5jEQxiSn5YnrB21WB/SnzbMiU3Z5hpk3bWqdKmIyiKdJHnNI0Sp6V74DfwBEB90v9B3n9zA6+jqKOLALrjQw==}
+  /@types/text-encoding-utf-8@1.0.4:
+    resolution: {integrity: sha512-IM0hR5Gr7AeA+tvMTwbClGT97Ym7o17ussTo4Vj9FW4t4/FZ6eFISQxAtpHUqTJDSERT8zwL51HIzeIc7ovQMQ==}
     dev: true
 
   /@types/tough-cookie@4.0.2:
@@ -4098,8 +4098,8 @@ packages:
       rrweb-cssom: 0.6.0
     dev: true
 
-  /cypress@13.3.1:
-    resolution: {integrity: sha512-g4mJLZxYN+UAF2LMy3Znd4LBnUmS59Vynd81VES59RdW48Yt+QtR2cush3melOoVNz0PPbADpWr8DcUx6mif8Q==}
+  /cypress@13.3.2:
+    resolution: {integrity: sha512-ArLmZObcLC+xxCp7zJZZbhby9FUf5CueLej9dUM4+5j37FTS4iMSgHxQLDu01PydFUvDXcNoIVRCYrHHxD7Ybg==}
     engines: {node: ^16.0.0 || ^18.0.0 || >=20.0.0}
     hasBin: true
     requiresBuild: true
