@@ -203,7 +203,7 @@ export class PaginationService {
       this._pageNumber++;
       if (triggerChangeEvent && this._pageInfo) {
         return this.cursorBased
-          ? this.processOnPageChanged(this._pageNumber, event, { first: this._itemsPerPage, after: this._pageInfo.endCursor })
+          ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, first: this._itemsPerPage, after: this._pageInfo.endCursor })
           : this.processOnPageChanged(this._pageNumber, event);
       } else {
         return Promise.resolve(this.getFullPagination());
@@ -335,6 +335,8 @@ export class PaginationService {
   }
 
   processOnPageChanged(pageNumber: number, event?: Event | undefined, cursorArgs?: PaginationCursorChangedArgs): Promise<ServicePagination> {
+    console.assert(!this.cursorBased || cursorArgs, 'Configured for cursor based pagination - cursorArgs expected');
+
     if (this.pubSubService.publish('onBeforePaginationChange', this.getFullPagination()) === false) {
       this.resetToPreviousPagination();
       return Promise.resolve(this.getFullPagination());

@@ -1,4 +1,6 @@
-export interface PaginationCursorChangedArgs {
+import { PaginationChangedArgs } from './paginationChangedArgs.interface';
+
+export interface PaginationCursorChangedArgs extends PaginationChangedArgs {
   /** Start our page After cursor X */
   after?: string;
 
