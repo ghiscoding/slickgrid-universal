@@ -336,33 +336,11 @@ export default class Example4 {
 
             { command: 'help', title: 'Help', iconCssClass: 'mdi mdi-help-circle', positionOrder: 66, },
             { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, },
-            'divider',
-            {
-              // we can also have multiple sub-items
-              command: 'export', title: 'Export',
-              commandItems: [
-                { command: 'export-txt', title: 'Text (tab delimited)' },
-                {
-                  command: 'sub-menu', title: 'Excel', cssClass: 'green', subMenuTitle: 'available formats', subMenuTitleCssClass: 'text-italic orange',
-                  commandItems: [
-                    { command: 'export-csv', title: 'Excel (csv)' },
-                    { command: 'export-xlsx', title: 'Excel (xlsx)' },
-                  ]
-                }
-              ]
-            }
           ],
           optionTitle: 'Change Complete Flag',
           optionItems: [
             { option: true, title: 'True', iconCssClass: 'mdi mdi-check-box-outline' },
             { option: false, title: 'False', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
-            {
-              // we can also have multiple sub-items
-              option: null, title: 'Sub-Options (demo)', subMenuTitle: 'Set Effort Driven', optionItems: [
-                { option: true, title: 'True', iconCssClass: 'mdi mdi-check-box-outline' },
-                { option: false, title: 'False', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
-              ]
-            }
           ]
         }
       },
@@ -444,9 +422,9 @@ export default class Example4 {
           {
             // we can also have multiple sub-items
             option: null, title: 'Sub-Options (demo)', subMenuTitle: 'Set Percent Complete', optionItems: [
-              { option: 1, iconCssClass: 'mdi mdi-checkbox-blank-outline color-secondary', title: 'Not Started (0%)' },
-              { option: 2, iconCssClass: 'mdi mdi-flip-vertical', title: 'Half Completed (50%)' },
-              { option: 3, iconCssClass: 'mdi mdi-checkbox-marked color-success', title: 'Completed (100%)' },
+              { option: 0, iconCssClass: 'mdi mdi-checkbox-blank-outline color-secondary', title: 'Not Started (0%)' },
+              { option: 50, iconCssClass: 'mdi mdi-flip-vertical', title: 'Half Completed (50%)' },
+              { option: 100, iconCssClass: 'mdi mdi-checkbox-marked color-success', title: 'Completed (100%)' },
             ]
           }
         ],

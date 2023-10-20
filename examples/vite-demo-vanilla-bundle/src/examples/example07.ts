@@ -95,12 +95,49 @@ export default class Example7 {
               command: 'help', titleKey: 'HELP', iconCssClass: 'mdi mdi-help-circle',
               action: () => alert('Please help!')
             },
+            'divider',
+            {
+              // we can also have multiple sub-items
+              command: 'export', title: 'Export',
+              commandItems: [
+                { command: 'export-txt', title: 'Text (tab delimited)' },
+                {
+                  command: 'sub-menu', title: 'Excel', cssClass: 'green', subMenuTitle: 'available formats', subMenuTitleCssClass: 'text-italic orange',
+                  commandItems: [
+                    { command: 'export-csv', title: 'Excel (csv)' },
+                    { command: 'export-xlsx', title: 'Excel (xlsx)' },
+                  ]
+                }
+              ]
+            }
           ],
+          onCommand: (_e, args) => {
+            switch(args.command) {
+              // show alert only for export commands
+              case 'export-cks':
+              case 'export-txt':
+              case 'export-xlsx':
+                alert(`Exporting as ${args.item.title}`);
+                break;
+              default:
+                break;
+            }
+          },
           optionTitleKey: 'CHANGE_COMPLETED_FLAG',
           optionItems: [
-            { option: true, titleKey: 'TRUE', iconCssClass: 'mdi mdi-check-box-outline', action: (_e, args) => this.changeCompletedOption(args.dataContext, args.item.option) },
-            { option: false, titleKey: 'FALSE', iconCssClass: 'mdi mdi-checkbox-blank-outline', action: (_e, args) => this.changeCompletedOption(args.dataContext, args.item.option) },
-          ]
+            { option: true, titleKey: 'TRUE', iconCssClass: 'mdi mdi-check-box-outline' },
+            { option: false, titleKey: 'FALSE', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
+            {
+              // we can also have multiple sub-items
+              option: null, title: 'Sub-Options (demo)', subMenuTitleKey: 'CHANGE_COMPLETED_FLAG', optionItems: [
+                { option: true, titleKey: 'TRUE', iconCssClass: 'mdi mdi-check-box-outline' },
+                { option: false, titleKey: 'FALSE', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
+              ]
+            }
+          ],
+          onOptionSelected: (_e, args) => {
+            this.changeCompletedOption(args.dataContext, args.item.option);
+          },
         }
       },
       {

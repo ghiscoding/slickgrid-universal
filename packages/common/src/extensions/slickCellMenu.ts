@@ -89,8 +89,8 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
           }
 
           // translate both command/option items (whichever is provided)
-          this.extensionUtility.translateMenuItemsFromTitleKey(columnCellMenuCommandItems);
-          this.extensionUtility.translateMenuItemsFromTitleKey(columnCellMenuOptionItems);
+          this.extensionUtility.translateMenuItemsFromTitleKey(columnCellMenuCommandItems, 'commandItems');
+          this.extensionUtility.translateMenuItemsFromTitleKey(columnCellMenuOptionItems, 'optionItems');
         }
       });
     }

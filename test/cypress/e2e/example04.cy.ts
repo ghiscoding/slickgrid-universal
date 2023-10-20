@@ -1,4 +1,4 @@
-describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
+describe('Example 04 - Frozen Grid', { retries: 0 }, () => {
   // NOTE:  everywhere there's a * 2 is because we have a top+bottom (frozen rows) containers even after Unfreeze Columns/Rows
 
   const fullTitles = ['', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
@@ -301,5 +301,44 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', 'Task 0');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).should('contain', 'Sydney, NS, Australia');
+  });
+
+  it('should open Context Menu hover "% Complete" column then select "Not Started (0%)" option and expect Task to be at 0', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
+      .rightclick();
+
+    cy.get('.slick-context-menu .slick-menu-option-list')
+      .should('exist')
+      .contains('Not Started (0%)')
+      .click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '0');
+  });
+
+  it('should reopen Context Menu hover "% Complete" column then select "Half Completed (50%)" option and expect Task to be at 50', () => {
+    const subOptions = ['Not Started (0%)', 'Half Completed (50%)', 'Completed (100%)'];
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
+      .rightclick();
+
+    cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-option-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Sub-Options (demo)')
+      .click();
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-option-list').as('subMenuList');
+    cy.get('@subMenuList').find('.slick-menu-title').contains('Set Percent Complete');
+    cy.get('@subMenuList')
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($command, index) => expect($command.text()).to.eq(subOptions[index]));
+
+    cy.get('@subMenuList')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Half Completed (50%)')
+      .click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '50');
   });
 });

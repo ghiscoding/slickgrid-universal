@@ -99,8 +99,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       }
 
       // translate both command/option items (whichever is provided)
-      this.extensionUtility.translateMenuItemsFromTitleKey(columnContextMenuCommandItems);
-      this.extensionUtility.translateMenuItemsFromTitleKey(columnContextMenuOptionItems);
+      this.extensionUtility.translateMenuItemsFromTitleKey(columnContextMenuCommandItems, 'commandItems');
+      this.extensionUtility.translateMenuItemsFromTitleKey(columnContextMenuOptionItems, 'optionItems');
     }
   }
 
