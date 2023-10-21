@@ -96,8 +96,8 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     // to avoid having multiple sub-menu trees opened
     // we need to somehow keep trace of which parent menu the tree belongs to
     // and we should keep ref of only the first sub-menu parent, we can use the command name (remove any whitespaces though)
-    const subMenuCommand = (item as MenuCommandItem)?.command;
-    let subMenuId = (level === 1 && subMenuCommand) ? subMenuCommand.replace(/\s/g, '') : '';
+    const subMenuCommandOrOption = (item as MenuCommandItem)?.command || (item as MenuOptionItem)?.option;
+    let subMenuId = (level === 1 && subMenuCommandOrOption) ? subMenuCommandOrOption.replace(/\s/g, '') : '';
     if (subMenuId) {
       this._subMenuParentId = subMenuId;
     }
@@ -137,6 +137,9 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     menuElm.className = menuClasses;
     if (level > 0) {
       menuElm.classList.add('slick-submenu');
+      if (subMenuId) {
+        menuElm.dataset.subMenuParent = subMenuId;
+      }
     }
 
     const maxHeight = isNaN(this.addonOptions.maxHeight as any) ? this.addonOptions.maxHeight : `${this.addonOptions.maxHeight ?? 0}px`;
@@ -213,6 +216,11 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       }
       this.hideMenu();
     }
+  }
+
+  dispose() {
+    super.dispose();
+    this.disposeAllMenus();
   }
 
   /** Remove/dispose all parent menus and any sub-menu(s) */
@@ -332,8 +340,6 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
         }
       } else if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems) {
         this.repositionSubMenu(item as any, type, level, event);
-      } else {
-        this.disposeSubMenus();
       }
       this._lastMenuTypeClicked = type;
     }
