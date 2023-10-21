@@ -644,7 +644,7 @@ describe('CellMenu Plugin', () => {
         expect(subCommand5Elm.textContent).toContain('Command 5');
         expect(cellMenu1Elm.classList.contains('dropleft'));
 
-        // return menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
+        // return Cell Menu menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
         subCommands1Elm!.dispatchEvent(new Event('click'));
         expect(disposeSubMenuSpy).toHaveBeenCalledTimes(3);
         const subCommands12Elm = commandList1Elm.querySelector('[data-command="sub-commands2"]') as HTMLDivElement;
