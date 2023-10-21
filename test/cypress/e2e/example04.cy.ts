@@ -467,7 +467,7 @@ describe('Example 04 - Frozen Grid', { retries: 0 }, () => {
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '0');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
-      .rightclick();
+      .rightclick({ force: true });
 
     cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
       .find('.slick-menu-item .slick-menu-content')
