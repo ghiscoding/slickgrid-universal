@@ -31,22 +31,22 @@ importers:
         specifier: ^2.6.0
         version: 2.6.0(@lerna-lite/publish@2.6.0)(@lerna-lite/run@2.6.0)(typescript@5.2.2)
       '@types/jest':
-        specifier: ^29.5.5
+        specifier: ^29.5.6
         version: 29.5.6
       '@types/node':
-        specifier: ^20.8.6
+        specifier: ^20.8.7
         version: 20.8.7
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.8.0
-        version: 6.8.0(@typescript-eslint/parser@6.8.0)(eslint@8.52.0)(typescript@5.2.2)
+        version: 6.8.0(@typescript-eslint/parser@6.8.0)(eslint@8.51.0)(typescript@5.2.2)
       '@typescript-eslint/parser':
         specifier: ^6.8.0
-        version: 6.8.0(eslint@8.52.0)(typescript@5.2.2)
+        version: 6.8.0(eslint@8.51.0)(typescript@5.2.2)
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
       cypress:
-        specifier: ^13.3.1
+        specifier: ^13.3.2
         version: 13.3.2
       dotenv:
         specifier: ^16.3.1
