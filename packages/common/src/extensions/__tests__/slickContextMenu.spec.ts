@@ -300,7 +300,7 @@ describe('ContextMenu Plugin', () => {
         expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(document.body.querySelector('button.close')!.ariaLabel).toBe('Close'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-context-menu slickgrid12345 slick-menu-level-0 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
+          `<div class="slick-context-menu slick-menu-level-0 slickgrid12345 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
             <div class="slick-menu-command-list">
               <div class="slick-command-header no-title with-close">
                 <button class="close" type="button" data-dismiss="slick-menu">×</button>
@@ -1250,7 +1250,7 @@ describe('ContextMenu Plugin', () => {
         expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(document.body.querySelector('button.close')!.ariaLabel).toBe('Close'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-context-menu slickgrid12345 slick-menu-level-0 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
+          `<div class="slick-context-menu slick-menu-level-0 slickgrid12345 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
             <div class="slick-menu-option-list">
               <div class="slick-option-header no-title with-close">
                 <button class="close" type="button" data-dismiss="slick-menu">×</button>
