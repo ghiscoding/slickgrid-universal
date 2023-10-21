@@ -420,7 +420,7 @@ export default class Example4 {
           { option: 100, iconCssClass: 'mdi mdi-checkbox-marked color-success', title: 'Completed (100%)' },
           'divider',
           {
-            // we can also have multiple sub-items
+            // we can also have multiple nested sub-menus
             option: null, title: 'Sub-Options (demo)', subMenuTitle: 'Set Percent Complete', optionItems: [
               { option: 0, iconCssClass: 'mdi mdi-checkbox-blank-outline color-secondary', title: 'Not Started (0%)' },
               { option: 50, iconCssClass: 'mdi mdi-flip-vertical', title: 'Half Completed (50%)' },
@@ -431,8 +431,8 @@ export default class Example4 {
         commandItems: [
           { command: '', divider: true, positionOrder: 98 },
           {
-            // we can also have multiple sub-items
-            command: 'export', title: 'Export', positionOrder: 99,
+            // we can also have multiple nested sub-menus
+            command: 'export', title: 'Exports', positionOrder: 99,
             commandItems: [
               { command: 'export-txt', title: 'Text (tab delimited)' },
               {
@@ -440,6 +440,21 @@ export default class Example4 {
                 commandItems: [
                   { command: 'export-csv', title: 'Excel (csv)' },
                   { command: 'export-xlsx', title: 'Excel (xlsx)' },
+                ]
+              }
+            ]
+          },
+          {
+            command: 'feedback', title: 'Feedback', positionOrder: 100,
+            commandItems: [
+              { command: 'request-update', title: 'Request update from shipping team', iconCssClass: 'mdi mdi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
+              'divider',
+              {
+                command: 'sub-menu', title: 'Contact Us', iconCssClass: 'mdi mdi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
+                commandItems: [
+                  { command: 'contact-email', title: 'Email us', iconCssClass: 'mdi mdi-pencil-outline' },
+                  { command: 'contact-chat', title: 'Chat with us', iconCssClass: 'mdi mdi-message-text-outline' },
+                  { command: 'contact-meeting', title: 'Book an appointment', iconCssClass: 'mdi mdi-coffee' },
                 ]
               }
             ]
@@ -553,6 +568,9 @@ export default class Example4 {
         if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"?`)) {
           this.sgb?.gridService.deleteItemById(dataContext.id);
         }
+        break;
+      default:
+        alert('Command: ' + args.command);
         break;
     }
   }

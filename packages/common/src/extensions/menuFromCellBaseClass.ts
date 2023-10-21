@@ -21,7 +21,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
   protected _currentCell = -1;
   protected _currentRow = -1;
   protected _lastMenuTypeClicked = '';
-  protected _subMenuElms: HTMLDivElement[] = [];
+  protected _subMenuParentId = '';
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
@@ -93,6 +93,18 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     const columnDef = this.grid.getColumns()[this._currentCell];
     const dataContext = this.grid.getDataItem(this._currentRow);
 
+    // to avoid having multiple sub-menu trees opened
+    // we need to somehow keep trace of which parent menu the tree belongs to
+    // and we should keep ref of only the first sub-menu parent, we can use the command name (remove any whitespaces though)
+    const subMenuCommand = (item as MenuCommandItem)?.command;
+    let subMenuId = (level === 1 && subMenuCommand) ? subMenuCommand.replace(/\s/g, '') : '';
+    if (subMenuId) {
+      this._subMenuParentId = subMenuId;
+    }
+    if (level > 1) {
+      subMenuId = this._subMenuParentId;
+    }
+
     let isColumnOptionAllowed = true;
     let isColumnCommandAllowed = true;
 
@@ -110,12 +122,15 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       }
     }
 
-    const menuClasses = `${this._menuPluginCssPrefix || this._menuCssPrefix} ${this.gridUid} slick-menu-level-${level}`;
-    const bodyMenuElm = document.body.querySelector<HTMLDivElement>(`.slick-cell-menu.${this.gridUid}.slick-menu-level-${level}`);
+    const menuClasses = `${this._menuPluginCssPrefix || this._menuCssPrefix} slick-menu-level-${level} ${this.gridUid}`;
+    const bodyMenuElm = document.body.querySelector<HTMLDivElement>(`.${this._menuPluginCssPrefix || this._menuCssPrefix}.slick-menu-level-${level}${this.gridUidSelector}`);
 
-    // if menu/sub-menu already exist, then no need to recreate, just return it
+    // return menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
     if (bodyMenuElm) {
-      return bodyMenuElm;
+      if (bodyMenuElm.dataset.subMenuParent === subMenuId) {
+        return bodyMenuElm;
+      }
+      this.disposeSubMenus();
     }
 
     const menuElm = document.createElement('div');
@@ -200,29 +215,31 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     }
   }
 
-  /** Close and destroy all previously opened sub-menus */
-  destroySubMenus() {
-    if (this._subMenuElms.length) {
-      let subElm = this._subMenuElms.pop();
-      while (subElm) {
-        subElm.remove();
-        subElm = this._subMenuElms.pop();
-      }
-    }
+  /** Remove/dispose all parent menus and any sub-menu(s) */
+  disposeAllMenus() {
+    this.disposeSubMenus();
+    document.querySelectorAll(`.${this._menuPluginCssPrefix || this._menuCssPrefix}${this.gridUidSelector}`)
+      .forEach(subElm => subElm.remove());
+  }
+
+  /** Remove/dispose all previously opened sub-menu(s) */
+  disposeSubMenus() {
+    document.querySelectorAll(`.${this._menuPluginCssPrefix || this._menuCssPrefix}.slick-submenu${this.gridUidSelector}`)
+      .forEach(subElm => subElm.remove());
   }
 
   /** Hide the Menu */
   hideMenu() {
     this.menuElement?.remove();
     this._menuElm = null;
-    this.destroySubMenus();
+    this.disposeSubMenus();
   }
 
   // --
   // protected functions
   // ------------------
 
-  protected addSubMenuTitleWhenExists(item: MenuCommandItem  | MenuOptionItem | 'divider', commandOrOptionMenu: HTMLDivElement) {
+  protected addSubMenuTitleWhenExists(item: MenuCommandItem | MenuOptionItem | 'divider', commandOrOptionMenu: HTMLDivElement) {
     if (item !== 'divider' && item?.subMenuTitle) {
       const subMenuTitleElm = document.createElement('div');
       subMenuTitleElm.className = 'slick-menu-title';
@@ -244,15 +261,21 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
 
   /** Mouse down handler when clicking anywhere in the DOM body */
   protected handleBodyMouseDown(e: DOMMouseOrTouchEvent<HTMLDivElement>) {
+    // did we click inside the menu or any of its sub-menu(s)
     let isMenuClicked = false;
-    this._subMenuElms.forEach(subElm => {
-      if (subElm.contains(e.target)) {
-        isMenuClicked = true;
-      }
-    });
     if (this.menuElement?.contains(e.target)) {
       isMenuClicked = true;
     }
+    if (!isMenuClicked) {
+      document
+        .querySelectorAll(`.${this._menuPluginCssPrefix || this._menuCssPrefix}.slick-submenu${this.gridUidSelector}`)
+        .forEach(subElm => {
+          if (subElm.contains(e.target)) {
+            isMenuClicked = true;
+          }
+        });
+    }
+
     if (this.menuElement !== e.target && !isMenuClicked && !e.defaultPrevented || e.target.className === 'close') {
       this.closeMenu(e, { cell: this._currentCell, row: this._currentRow, grid: this.grid });
     }
@@ -310,7 +333,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       } else if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems) {
         this.repositionSubMenu(item as any, type, level, event);
       } else {
-        this.destroySubMenus();
+        this.disposeSubMenus();
       }
       this._lastMenuTypeClicked = type;
     }
@@ -324,16 +347,15 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     commandOrOptionMenuHeaderElm.classList.add('with-close');
   }
 
-  protected repositionSubMenu(item: MenuCommandItem  | MenuOptionItem | 'divider', type: MenuType, level: number, e: DOMMouseOrTouchEvent<HTMLDivElement>) {
+  protected repositionSubMenu(item: MenuCommandItem | MenuOptionItem | 'divider', type: MenuType, level: number, e: DOMMouseOrTouchEvent<HTMLDivElement>) {
     // when we're clicking a grid cell OR our last menu type (command/option) differs then we know that we need to start fresh and close any sub-menus that might still be open
     if (e.target.classList.contains('slick-cell') || this._lastMenuTypeClicked !== type) {
-      this.destroySubMenus();
+      this.disposeSubMenus();
     }
 
     // creating sub-menu, we'll also pass level & the item object since we might have "subMenuTitle" to show
     const subMenuElm = this.createMenu((item as MenuCommandItem)?.commandItems || [], (item as MenuOptionItem)?.optionItems || [], level + 1, item);
     if (subMenuElm) {
-      this._subMenuElms.push(subMenuElm);
       subMenuElm.style.display = 'block';
       document.body.appendChild(subMenuElm);
       this.repositionMenu(e, subMenuElm);

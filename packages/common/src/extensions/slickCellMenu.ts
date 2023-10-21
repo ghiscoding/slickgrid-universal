@@ -101,7 +101,9 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   // ------------------
 
   protected handleCellClick(event: DOMMouseOrTouchEvent<HTMLDivElement>, args: MenuCommandItemCallbackArgs) {
+    this.disposeAllMenus(); // make there's only 1 parent menu opened at a time
     const cell = this.grid.getCellFromEvent(event);
+
     if (cell) {
       const dataContext = this.grid.getDataItem(cell.row);
       const columnDef = this.grid.getColumns()[cell.cell];

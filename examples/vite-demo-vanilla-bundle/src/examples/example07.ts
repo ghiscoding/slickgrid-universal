@@ -77,8 +77,8 @@ export default class Example7 {
         excludeFromExport: true, excludeFromHeaderMenu: true,
         formatter: () => `<div class="button-style margin-auto" style="width: 35px; margin-top: -1px;"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
         cellMenu: {
-          width: 185,
           hideCloseButton: false,
+          subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
           commandTitleKey: 'COMMANDS',
           commandItems: [
             {
@@ -95,10 +95,10 @@ export default class Example7 {
               command: 'help', titleKey: 'HELP', iconCssClass: 'mdi mdi-help-circle',
               action: () => alert('Please help!')
             },
-            'divider',
+            { command: '', divider: true, positionOrder: 98 },
             {
-              // we can also have multiple sub-items
-              command: 'export', title: 'Export',
+              // we can also have multiple nested sub-menus
+              command: 'export', title: 'Exports', positionOrder: 99,
               commandItems: [
                 { command: 'export-txt', title: 'Text (tab delimited)' },
                 {
@@ -106,6 +106,21 @@ export default class Example7 {
                   commandItems: [
                     { command: 'export-csv', title: 'Excel (csv)' },
                     { command: 'export-xlsx', title: 'Excel (xlsx)' },
+                  ]
+                }
+              ]
+            },
+            {
+              command: 'feedback', title: 'Feedback', positionOrder: 100,
+              commandItems: [
+                { command: 'request-update', title: 'Request update from shipping team', iconCssClass: 'mdi mdi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
+                'divider',
+                {
+                  command: 'sub-menu', title: 'Contact Us', iconCssClass: 'mdi mdi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
+                  commandItems: [
+                    { command: 'contact-email', title: 'Email us', iconCssClass: 'mdi mdi-pencil-outline' },
+                    { command: 'contact-chat', title: 'Chat with us', iconCssClass: 'mdi mdi-message-text-outline' },
+                    { command: 'contact-meeting', title: 'Book an appointment', iconCssClass: 'mdi mdi-coffee' },
                   ]
                 }
               ]
@@ -120,6 +135,7 @@ export default class Example7 {
                 alert(`Exporting as ${args.item.title}`);
                 break;
               default:
+                alert('Command: ' + args.command);
                 break;
             }
           },
@@ -128,7 +144,7 @@ export default class Example7 {
             { option: true, titleKey: 'TRUE', iconCssClass: 'mdi mdi-check-box-outline' },
             { option: false, titleKey: 'FALSE', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
             {
-              // we can also have multiple sub-items
+              // we can also have multiple nested sub-menus
               option: null, title: 'Sub-Options (demo)', subMenuTitleKey: 'CHANGE_COMPLETED_FLAG', optionItems: [
                 { option: true, titleKey: 'TRUE', iconCssClass: 'mdi mdi-check-box-outline' },
                 { option: false, titleKey: 'FALSE', iconCssClass: 'mdi mdi-checkbox-blank-outline' },

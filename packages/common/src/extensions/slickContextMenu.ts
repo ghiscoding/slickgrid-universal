@@ -73,7 +73,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     // sort all menu items by their position order when defined
     this.sortMenuItems();
 
-    this._eventHandler.subscribe(this.grid.onContextMenu, this.handleClick.bind(this) as EventListener);
+    this._eventHandler.subscribe(this.grid.onContextMenu, this.handleOnContextMenu.bind(this) as EventListener);
 
     if (this._addonOptions.hideMenuOnScroll) {
       this._eventHandler.subscribe(this.grid.onScroll, this.closeMenu.bind(this) as EventListener);
@@ -108,8 +108,10 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
   // event handlers
   // ------------------
 
-  protected handleClick(event: DOMMouseOrTouchEvent<HTMLDivElement>, args: MenuCommandItemCallbackArgs) {
+  protected handleOnContextMenu(event: DOMMouseOrTouchEvent<HTMLDivElement>, args: MenuCommandItemCallbackArgs) {
+    this.disposeAllMenus(); // make there's only 1 parent menu opened at a time
     const cell = this.grid.getCellFromEvent(event);
+
     if (cell) {
       const dataContext = this.grid.getDataItem(cell.row);
       const columnDef = this.grid.getColumns()[cell.cell];
