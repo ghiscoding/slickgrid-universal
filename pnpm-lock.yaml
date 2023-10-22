@@ -52,7 +52,7 @@ importers:
         specifier: ^16.3.1
         version: 16.3.1
       eslint:
-        specifier: ^8.51.0
+        specifier: ^8.52.0
         version: 8.52.0
       eslint-plugin-import:
         specifier: ^2.28.1
