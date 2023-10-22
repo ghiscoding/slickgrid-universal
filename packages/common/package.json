@@ -84,8 +84,8 @@
     "un-flatten-tree": "^2.0.12"
   },
   "devDependencies": {
-    "@types/dompurify": "^3.0.3",
-    "@types/sortablejs": "^1.15.3",
+    "@types/dompurify": "^3.0.4",
+    "@types/sortablejs": "^1.15.4",
     "autoprefixer": "^10.4.16",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
@@ -93,7 +93,7 @@
     "npm-run-all2": "^6.1.1",
     "postcss": "^8.4.31",
     "postcss-cli": "^10.1.0",
-    "sass": "^1.69.3"
+    "sass": "^1.69.4"
   },
   "engines": {
     "node": ">=16.15.0",
