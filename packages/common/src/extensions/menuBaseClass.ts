@@ -115,7 +115,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     commandOrOptionMenuElm: HTMLElement,
     commandOrOptionItems: Array<ExtractMenuType<ExtendableItemTypes, MenuType>>,
     args: unknown,
-    itemClickCallback: (event: DOMMouseOrTouchEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, columnDef?: Column) => void
+    itemClickCallback: (event: DOMMouseOrTouchEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column) => void
   ) {
     if (args && commandOrOptionItems && menuOptions) {
       for (const item of commandOrOptionItems) {
@@ -125,19 +125,23 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   }
 
   /** Add the Command/Options Title when necessary. */
-  protected populateCommandOrOptionTitle(itemType: MenuType, menuOptions: M, commandOrOptionMenuElm: HTMLElement) {
+  protected populateCommandOrOptionTitle(itemType: MenuType, menuOptions: M, commandOrOptionMenuElm: HTMLElement, level: number) {
     if (menuOptions) {
+      const isSubMenu = level > 0;
       const menuHeaderElm = this._menuElm?.querySelector(`.slick-${itemType}-header`) ?? createDomElement('div', { className: `slick-${itemType}-header` });
       // user could pass a title on top of the Commands/Options section
       const titleProp: 'commandTitle' | 'optionTitle' = `${itemType}Title`;
-      if ((menuOptions as CellMenu | ContextMenu)?.[titleProp]) {
-        this[`_${itemType}TitleElm`] = createDomElement('span', { className: 'slick-menu-title', textContent: (menuOptions as never)[titleProp] });
-        menuHeaderElm.appendChild(this[`_${itemType}TitleElm`]!);
-        menuHeaderElm.classList.add('with-title');
-      } else {
-        menuHeaderElm.classList.add('no-title');
+
+      if (!isSubMenu) {
+        if ((menuOptions as CellMenu | ContextMenu)?.[titleProp]) {
+          this[`_${itemType}TitleElm`] = createDomElement('span', { className: 'slick-menu-title', textContent: (menuOptions as never)[titleProp] });
+          menuHeaderElm.appendChild(this[`_${itemType}TitleElm`]!);
+          menuHeaderElm.classList.add('with-title');
+        } else {
+          menuHeaderElm.classList.add('no-title');
+        }
+        commandOrOptionMenuElm.appendChild(menuHeaderElm);
       }
-      commandOrOptionMenuElm.appendChild(menuHeaderElm);
     }
   }
 
@@ -148,7 +152,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     commandOrOptionMenuElm: HTMLElement | null,
     item: ExtractMenuType<ExtendableItemTypes, MenuType>,
     args: any,
-    itemClickCallback: (event: DOMMouseOrTouchEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, columnDef?: Column) => void
+    itemClickCallback: (event: DOMMouseOrTouchEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column) => void
   ): HTMLLIElement | null {
     let commandLiElm: HTMLLIElement | null = null;
 
@@ -170,7 +174,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       }
 
       // when the override is defined (and previously executed), we need to use its result to update the disabled property
-      // so that "handleMenuItemCommandClick" has the correct flag and won't trigger a command clicked event
+      // so that "handleMenuItemCommandClick" has the correct flag and won't trigger a command/option clicked event
       if (typeof item === 'object' && item.itemUsabilityOverride) {
         item.disabled = isItemUsable ? false : true;
       }
@@ -231,12 +235,26 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
 
       // execute command on menu item clicked
       this._bindEventService.bind(commandLiElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLDivElement>) =>
-        itemClickCallback.call(this, e, itemType, item, args?.column)) as EventListener);
+        itemClickCallback.call(this, e, itemType, item, args?.level, args?.column)) as EventListener);
 
       // Header Button can have an optional handler
       if ((item as HeaderButtonItem).handler && !(item as HeaderButtonItem).disabled) {
         this._bindEventService.bind(commandLiElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLDivElement>) =>
           (item as HeaderButtonItem).handler!.call(this, e)) as EventListener);
+      }
+
+      // the option/command item could be a sub-menu if it has another list of commands/options
+      if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems) {
+        const chevronElm = document.createElement('span');
+        chevronElm.className = 'sub-item-chevron';
+        if ((this._addonOptions as any).subItemChevronClass) {
+          chevronElm.classList.add(...(this._addonOptions as any).subItemChevronClass.split(' '));
+        } else {
+          chevronElm.textContent = '⮞'; // ⮞ or ▸
+        }
+
+        commandLiElm.classList.add('slick-submenu-item');
+        commandLiElm.appendChild(chevronElm);
       }
     }
     return commandLiElm;

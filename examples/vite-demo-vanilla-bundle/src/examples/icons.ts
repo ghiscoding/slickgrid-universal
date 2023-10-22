@@ -205,6 +205,8 @@ export default class Icons {
       '.mdi.mdi-sort-descending',
       '.mdi.mdi-sort-variant-remove',
       '.mdi.mdi-square-edit-outline',
+      '.mdi.mdi-star',
+      '.mdi.mdi-star-outline',
       '.mdi.mdi-stop-circle-outline',
       '.mdi.mdi-subdirectory-arrow-right',
       '.mdi.mdi-swap-horizontal',

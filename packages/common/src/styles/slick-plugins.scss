@@ -226,6 +226,11 @@ li.hidden {
 // ----------------------------------------------
 
 .slick-cell-menu, .slick-context-menu, .slick-grid-menu, .slick-header-menu {
+  &.slick-submenu {
+    box-shadow: var(--slick-submenu-box-shadow, $slick-submenu-box-shadow);
+    min-width: var(--slick-submenu-min-width, $slick-submenu-min-width);
+}
+
   .slick-menu-option-list,
   .slick-menu-command-list {
     .slick-command-header, .slick-option-header {
@@ -326,6 +331,10 @@ li.hidden {
     .slick-menu-content {
       display: inline-block;
       vertical-align: middle;
+      width: 100%;
+    }
+    .sub-item-chevron {
+      float: right;
     }
 
     /* Disabled item */

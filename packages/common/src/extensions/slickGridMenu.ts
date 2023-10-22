@@ -140,7 +140,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     const gridMenuCommandItems = this._userOriginalGridMenu.commandItems;
     const originalCommandItems = this._userOriginalGridMenu && Array.isArray(gridMenuCommandItems) ? gridMenuCommandItems : [];
     this._gridMenuOptions.commandItems = [...originalCommandItems, ...this.addGridMenuCustomCommands(originalCommandItems)];
-    this.extensionUtility.translateMenuItemsFromTitleKey(this._gridMenuOptions.commandItems || []);
+    this.extensionUtility.translateMenuItemsFromTitleKey(this._gridMenuOptions.commandItems || [], 'commandItems');
     this.extensionUtility.sortItems(this._gridMenuOptions.commandItems, 'positionOrder');
     this._gridMenuOptions.commandItems = this._gridMenuOptions.commandItems;
 
@@ -445,7 +445,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       // then sort all Grid Menu command items (sorted by pointer, no need to use the return)
       const originalCommandItems = this._userOriginalGridMenu && Array.isArray(this._userOriginalGridMenu.commandItems) ? this._userOriginalGridMenu.commandItems : [];
       this.sharedService.gridOptions.gridMenu.commandItems = [...originalCommandItems, ...this.addGridMenuCustomCommands(originalCommandItems)];
-      this.extensionUtility.translateMenuItemsFromTitleKey(this._gridMenuOptions?.commandItems || []);
+      this.extensionUtility.translateMenuItemsFromTitleKey(this._gridMenuOptions?.commandItems || [], 'commandItems');
       this.extensionUtility.sortItems(this.sharedService.gridOptions.gridMenu.commandItems, 'positionOrder');
       this.translateTitleLabels(this.sharedService.gridOptions.gridMenu);
       this.translateTitleLabels(this._gridMenuOptions);
@@ -798,7 +798,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   /** Re/Create Command List by adding title, close & list of commands */
   recreateCommandList(addonOptions: GridMenu, callbackArgs: GridMenuEventWithElementCallbackArgs) {
     // add Close button
-    this.populateCommandOrOptionTitle('command', addonOptions, this._commandMenuElm);
+    this.populateCommandOrOptionTitle('command', addonOptions, this._commandMenuElm, 0);
     const commandMenuHeaderElm = this._commandMenuElm.querySelector<HTMLDivElement>(`.slick-command-header`) ?? createDomElement('div', { className: 'slick-command-header' });
     commandMenuHeaderElm.classList.add('with-close');
     addCloseButtomElement.call(this, commandMenuHeaderElm);
