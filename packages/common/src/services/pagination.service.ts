@@ -190,19 +190,31 @@ export class PaginationService {
 
   goToFirstPage(event?: any, triggerChangeEvent = true): Promise<ServicePagination> {
     this._pageNumber = 1;
-    return triggerChangeEvent ? this.processOnPageChanged(this._pageNumber, event) : Promise.resolve(this.getFullPagination());
+    if (triggerChangeEvent) {
+      return this.cursorBased && this._pageInfo
+        ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, first: this._itemsPerPage })
+        : this.processOnPageChanged(this._pageNumber, event);
+    } else {
+      return Promise.resolve(this.getFullPagination());
+    }
   }
 
   goToLastPage(event?: any, triggerChangeEvent = true): Promise<ServicePagination> {
     this._pageNumber = this._pageCount || 1;
-    return triggerChangeEvent ? this.processOnPageChanged(this._pageNumber || 1, event) : Promise.resolve(this.getFullPagination());
+    if (triggerChangeEvent) {
+      return this.cursorBased && this._pageInfo
+        ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, last: this._itemsPerPage })
+        : this.processOnPageChanged(this._pageNumber, event);
+    } else {
+      return Promise.resolve(this.getFullPagination());
+    }
   }
 
   goToNextPage(event?: any, triggerChangeEvent = true): Promise<boolean | ServicePagination> {
     if (this._pageNumber < this._pageCount) {
       this._pageNumber++;
-      if (triggerChangeEvent && this._pageInfo) {
-        return this.cursorBased
+      if (triggerChangeEvent) {
+        return this.cursorBased && this._pageInfo
           ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, first: this._itemsPerPage, after: this._pageInfo.endCursor })
           : this.processOnPageChanged(this._pageNumber, event);
       } else {
@@ -235,7 +247,7 @@ export class PaginationService {
       this._pageNumber--;
       if (triggerChangeEvent && this._pageInfo) {
         return this.cursorBased
-          ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, first: this._itemsPerPage, before: this._pageInfo.startCursor })
+          ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, last: this._itemsPerPage, before: this._pageInfo.startCursor })
           : this.processOnPageChanged(this._pageNumber, event);
       } else {
         return Promise.resolve(this.getFullPagination());
