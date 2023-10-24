@@ -89,7 +89,7 @@ export class PaginationService {
   }
 
   get cursorBased(): boolean {
-    return !!this._pageInfo;
+    return !!this._backendServiceApi?.options.isWithCursor;
   }
 
   addRxJsResource(rxjs: RxJsFacade) {
