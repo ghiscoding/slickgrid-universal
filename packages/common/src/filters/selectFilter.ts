@@ -208,7 +208,9 @@ export class SelectFilter implements Filter {
 
   /** destroy the filter */
   destroy() {
-    this._msInstance?.destroy();
+    if (typeof this._msInstance?.destroy === 'function') {
+      this._msInstance.destroy();
+    }
     this.filterElm?.remove();
 
     // unsubscribe all the possible Observables if RxJS was used
