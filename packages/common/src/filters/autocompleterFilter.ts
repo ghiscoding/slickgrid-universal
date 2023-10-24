@@ -237,7 +237,9 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
    * destroy the filter
    */
   destroy() {
-    this._instance?.destroy();
+    if (typeof this._instance?.destroy === 'function') {
+      this._instance.destroy();
+    }
     if (this._filterElm) {
       // this._filterElm.autocomplete('destroy');
       // this._filterElm.off('input').remove();
