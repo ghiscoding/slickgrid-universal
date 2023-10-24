@@ -1,4 +1,4 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
 
 settings:
   autoInstallPeers: true
@@ -97,8 +97,8 @@ importers:
         specifier: ^4.0.2
         version: 4.0.2
       slickgrid:
-        specifier: ^4.0.1
-        version: 4.0.1
+        specifier: ^4.0.2
+        version: 4.0.2
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -236,8 +236,8 @@ importers:
         specifier: ^0.4.10
         version: 0.4.10
       slickgrid:
-        specifier: ^4.0.1
-        version: 4.0.1
+        specifier: ^4.0.2
+        version: 4.0.2
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -528,8 +528,8 @@ importers:
         specifier: ^4.6.13
         version: 4.6.13
       slickgrid:
-        specifier: ^4.0.1
-        version: 4.0.1
+        specifier: ^4.0.2
+        version: 4.0.2
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -8699,8 +8699,8 @@ packages:
       is-fullwidth-code-point: 3.0.0
     dev: true
 
-  /slickgrid@4.0.1:
-    resolution: {integrity: sha512-5eB8S7QnqUM+h2aVzVgeZ1HtlqNXV82M9WYrd5/sFgYErD50PMZ2gpzXhloemqg8z2eaDysvgzGREoLLp180Lg==}
+  /slickgrid@4.0.2:
+    resolution: {integrity: sha512-6G9SQFU7IpxyBoGlgFA4jt2fCO5/Lwirs/QWvbwX0aUTCbFs9TK/QJy1XJZBo78LNqcgYptBEitijlJYECuvXw==}
     dependencies:
       sortablejs: 1.15.0
 
@@ -9534,7 +9534,7 @@ packages:
       sass: '*'
       stylus: '*'
       sugarss: '*'
-      terser: '>=5.14.2'
+      terser: ^5.4.0
     peerDependenciesMeta:
       '@types/node':
         optional: true
