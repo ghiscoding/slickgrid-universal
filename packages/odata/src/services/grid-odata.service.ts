@@ -269,7 +269,7 @@ export class GridOdataService implements BackendService {
    * PAGINATION
    */
   processOnPaginationChanged(_event: Event | undefined, args: PaginationChangedArgs | PaginationCursorChangedArgs) {
-    if ('pageSize' in args && 'newPage' in args) {
+    if ('pageSize' in args || 'newPage' in args) {
       const pageSize = +(args.pageSize || ((this.pagination) ? this.pagination.pageSize : DEFAULT_PAGE_SIZE));
       this.updatePagination(args.newPage, pageSize);
 
@@ -277,6 +277,7 @@ export class GridOdataService implements BackendService {
       return this._odataService.buildQuery();
     }
 
+    console.assert(true, 'cursor based pagination not supported in this service');
     return ''; // cursor based pagination not supported in this service
   }
 
