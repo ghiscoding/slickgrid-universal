@@ -65,7 +65,7 @@
     "@slickgrid-universal/utils": "workspace:~",
     "dequal": "^2.0.3",
     "flatpickr": "^4.6.13",
-    "slickgrid": "^4.0.1",
+    "slickgrid": "^4.0.2",
     "sortablejs": "^1.15.0",
     "whatwg-fetch": "^3.6.19"
   },
