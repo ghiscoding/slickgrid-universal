@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -14,7 +14,7 @@ importers:
     devDependencies:
       '@4tw/cypress-drag-drop':
         specifier: ^2.2.5
-        version: 2.2.5(cypress@13.3.2)
+        version: 2.2.5(cypress@13.3.3)
       '@jest/types':
         specifier: ^29.6.3
         version: 29.6.3
@@ -46,8 +46,8 @@ importers:
         specifier: ^7.0.3
         version: 7.0.3
       cypress:
-        specifier: ^13.3.2
-        version: 13.3.2
+        specifier: ^13.3.3
+        version: 13.3.3
       dotenv:
         specifier: ^16.3.1
         version: 16.3.1
@@ -169,8 +169,8 @@ importers:
         specifier: ^2.29.4
         version: 2.29.4
       multiple-select-vanilla:
-        specifier: ^0.4.10
-        version: 0.4.10
+        specifier: ^0.4.11
+        version: 0.4.11
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -233,8 +233,8 @@ importers:
         specifier: ^2.29.4
         version: 2.29.4
       multiple-select-vanilla:
-        specifier: ^0.4.10
-        version: 0.4.10
+        specifier: ^0.4.11
+        version: 0.4.11
       slickgrid:
         specifier: ^4.0.3
         version: 4.0.3
@@ -613,12 +613,12 @@ importers:
 
 packages:
 
-  /@4tw/cypress-drag-drop@2.2.5(cypress@13.3.2):
+  /@4tw/cypress-drag-drop@2.2.5(cypress@13.3.3):
     resolution: {integrity: sha512-3ghTmzhOmUqeN6U3QmUnKRUxI7OMLbJA4hHUY/eS/FhWJgxbiGgcaELbolWnBAOpajPXcsNQGYEj9brd59WH6A==}
     peerDependencies:
       cypress: 2 - 13
     dependencies:
-      cypress: 13.3.2
+      cypress: 13.3.3
     dev: true
 
   /@aashutoshrathi/word-wrap@1.2.6:
@@ -3973,8 +3973,8 @@ packages:
       rrweb-cssom: 0.6.0
     dev: true
 
-  /cypress@13.3.2:
-    resolution: {integrity: sha512-ArLmZObcLC+xxCp7zJZZbhby9FUf5CueLej9dUM4+5j37FTS4iMSgHxQLDu01PydFUvDXcNoIVRCYrHHxD7Ybg==}
+  /cypress@13.3.3:
+    resolution: {integrity: sha512-mbdkojHhKB1xbrj7CrKWHi22uFx9P9vQFiR0sYDZZoK99OMp9/ZYN55TO5pjbXmV7xvCJ4JwBoADXjOJK8aCJw==}
     engines: {node: ^16.0.0 || ^18.0.0 || >=20.0.0}
     hasBin: true
     requiresBuild: true
@@ -7102,8 +7102,8 @@ packages:
       minimatch: 3.1.2
     dev: true
 
-  /multiple-select-vanilla@0.4.10:
-    resolution: {integrity: sha512-Gp07Bo4v6MnzwBALzBGIw+LP5zpuPnonZeKebm2IWnbnK8GOCvSJbOXiAN4M0TvgJgXriw8qo0+Iv3yDrqaAcQ==}
+  /multiple-select-vanilla@0.4.11:
+    resolution: {integrity: sha512-QJfUunZSpVvogvAN6KnusQ9IxJHoXZt48KkfRCiDkbH5kyIOomRaalZa+WEo1nva7BkkAvQgRNndLDTvR6heNw==}
     dev: false
 
   /mute-stream@1.0.0:
@@ -9515,7 +9515,7 @@ packages:
     dev: true
 
   /verror@1.10.0:
-    resolution: {integrity: sha1-OhBcoXBTr1XW4nDB+CiGguGNpAA=}
+    resolution: {integrity: sha512-ZZKSmDAEFOijERBLkmYfJ+vmk3w+7hOLYDNkRCuRuMJGEmqYNCNLyBBFwWKVMhfwaEF3WOd0Zlw86U/WC/+nYw==}
     engines: {'0': node >=0.6.0}
     dependencies:
       assert-plus: 1.0.0
@@ -9534,7 +9534,7 @@ packages:
       sass: '*'
       stylus: '*'
       sugarss: '*'
-      terser: ^5.4.0
+      terser: '>=5.14.2'
     peerDependenciesMeta:
       '@types/node':
         optional: true

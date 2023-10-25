@@ -74,7 +74,7 @@
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
     "cross-env": "^7.0.3",
-    "cypress": "^13.3.2",
+    "cypress": "^13.3.3",
     "dotenv": "^16.3.1",
     "eslint": "^8.52.0",
     "eslint-plugin-import": "^2.29.0",
