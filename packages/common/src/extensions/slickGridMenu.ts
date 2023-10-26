@@ -489,18 +489,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     }
   }
 
-  /** Update the Titles of each sections (command, commandTitle, ...) */
-  updateAllTitles(options: GridMenuOption) {
-    if (this._commandTitleElm?.textContent && options.commandTitle) {
-      this._commandTitleElm.textContent = this._addonOptions?.commandItems?.length ? options.commandTitle as string : '';
-      this._addonOptions!.commandTitle = this._commandTitleElm.textContent;
-    }
-    if (this._columnTitleElm?.textContent && options.columnTitle) {
-      this._columnTitleElm.textContent = options.columnTitle;
-      this._addonOptions!.columnTitle = options.columnTitle;
-    }
-  }
-
   /** Translate the Grid Menu titles and column picker */
   translateGridMenu() {
     // update the properties by pointers, that is the only way to get Grid Menu Control to see the new values
