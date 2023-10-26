@@ -90,12 +90,12 @@ export class PaginationService {
 
   /**
    * https://dev.to/jackmarchant/offset-and-cursor-pagination-explained-b89
-   * Cursor based pagination does not allow navigation to the middle of the page.
-   *  Pagination by page numbers only makes sense in non-relay style pagination
+   * Cursor based pagination does not allow navigation to a page in the middle of a set of pages (eg: LinkedList vs Vector).
+   *  Further, Pagination with page numbers only makes sense in non-relay style pagination
    *  Relay style pagination is better suited to infinite scrolling
    *
    * eg
-   *  relay pagination - infinte scrolling appending data
+   *  relay pagination - Infinte scrolling appending data
    *    page1: {startCursor: A, endCursor: B }
    *    page2: {startCursor: A, endCursor: C }
    *    page3: {startCursor: A, endCursor: D }
