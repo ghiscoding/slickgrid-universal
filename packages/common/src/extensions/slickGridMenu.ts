@@ -14,7 +14,7 @@ import type {
 } from '../interfaces/index';
 import { DelimiterType, FileType } from '../enums/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
-import { createDomElement, emptyElement, findWidthOrDefault, getHtmlElementOffset, getTranslationPrefix, } from '../services/index';
+import { calculateAvailableSpace, createDomElement, emptyElement, findWidthOrDefault, getHtmlElementOffset, getTranslationPrefix, } from '../services/index';
 import type { ExcelExportService } from '../services/excelExport.service';
 import type { FilterService } from '../services/filter.service';
 import type { SharedService } from '../services/shared.service';
@@ -366,13 +366,33 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       let menuOffsetLeft;
       let menuOffsetTop;
       if (isSubMenu) {
-        menuOffsetLeft = parentOffset?.left ?? 0;
         menuOffsetTop = parentOffset?.top ?? 0;
+        menuOffsetLeft = parentOffset?.left ?? 0;
       } else {
-        menuOffsetLeft = gridMenuOptions?.dropSide === 'right' ? nextPositionLeft - buttonWidth : nextPositionLeft - currentMenuWidth;
         menuOffsetTop = nextPositionTop + iconButtonElm.offsetHeight; // top position has to include button height so the menu is placed just below it
+        menuOffsetLeft = gridMenuOptions?.dropSide === 'right'
+          ? nextPositionLeft - buttonWidth
+          : nextPositionLeft - currentMenuWidth;
       }
 
+      // for sub-menus only, auto-adjust drop position (up/down)
+      //  we first need to see what position the drop will be located (defaults to bottom)
+      if (isSubMenu) {
+        // since we reposition menu below slick cell, we need to take it in consideration and do our calculation from that element
+        const menuHeight = menuElm?.clientHeight || 0;
+        const { bottom: availableSpaceBottom, top: availableSpaceTop } = calculateAvailableSpace(parentElm);
+        const dropPosition = ((availableSpaceBottom < menuHeight) && (availableSpaceTop > availableSpaceBottom)) ? 'top' : 'bottom';
+        if (dropPosition === 'top') {
+          menuElm.classList.remove('dropdown');
+          menuElm.classList.add('dropup');
+          menuOffsetTop -= (menuHeight - parentElm.clientHeight);
+        } else {
+          menuElm.classList.remove('dropup');
+          menuElm.classList.add('dropdown');
+        }
+      }
+
+      // auto-align side (left/right)
       const gridPos = this.grid.getGridPosition();
       let subMenuPosCalc = menuOffsetLeft + Number(menuWidth); // calculate coordinate at caller element far right
       if (isSubMenu) {

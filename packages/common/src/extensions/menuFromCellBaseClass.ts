@@ -359,15 +359,14 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       const dropOffset = Number((this._addonOptions as CellMenu | ContextMenu).autoAdjustDropOffset || 0);
       const sideOffset = Number((this._addonOptions as CellMenu | ContextMenu).autoAlignSideOffset || 0);
 
-      // if autoAdjustDrop is enable, we first need to see what position the drop will be located (defaults to bottom)
+      // if autoAdjustDrop is enabled, we first need to see what position the drop will be located (defaults to bottom)
       // without necessary toggling it's position just yet, we just want to know the future position for calculation
       if ((this._addonOptions as CellMenu | ContextMenu).autoAdjustDrop || (this._addonOptions as CellMenu | ContextMenu).dropDirection) {
         // since we reposition menu below slick cell, we need to take it in consideration and do our calculation from that element
-        const spaceBottom = calculateAvailableSpace(parentElm).bottom;
-        const spaceTop = calculateAvailableSpace(parentElm).top;
-        const spaceBottomRemaining = spaceBottom + dropOffset - rowHeight;
-        const spaceTopRemaining = spaceTop - dropOffset + rowHeight;
-        const dropPosition = ((spaceBottomRemaining < menuHeight) && (spaceTopRemaining > spaceBottomRemaining)) ? 'top' : 'bottom';
+        const { bottom: spaceBottom, top: spaceTop } = calculateAvailableSpace(parentElm);
+        const availableSpaceBottom = spaceBottom + dropOffset - rowHeight;
+        const availableSpaceTop = spaceTop - dropOffset + rowHeight;
+        const dropPosition = ((availableSpaceBottom < menuHeight) && (availableSpaceTop > availableSpaceBottom)) ? 'top' : 'bottom';
         if (dropPosition === 'top' || (this._addonOptions as CellMenu | ContextMenu).dropDirection === 'top') {
           menuElm.classList.remove('dropdown');
           menuElm.classList.add('dropup');
