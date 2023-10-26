@@ -158,7 +158,7 @@ export default class Example7 {
             }
           ],
           onOptionSelected: (_e, args) => {
-            this.changeCompletedOption(args.dataContext, args.item.option);
+            this.changeCompletedOption(args.dataContext, args.item.option as boolean);
           },
         }
       },
