@@ -34,6 +34,7 @@ export class PaginationService {
   protected _paginationOptions!: Pagination;
   protected _previousPagination?: Pagination;
   protected _subscriptions: EventSubscription[] = [];
+  protected _pageInfo?: PageInfo;
 
   /** SlickGrid Grid object */
   grid!: SlickGrid;
@@ -493,7 +494,6 @@ export class PaginationService {
     }
   }
 
-  private _pageInfo?: PageInfo;
   updatePageInfo(pageInfo: PageInfo) {
     this._pageInfo = pageInfo;
   }
