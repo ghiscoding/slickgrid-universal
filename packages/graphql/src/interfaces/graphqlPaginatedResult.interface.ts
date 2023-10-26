@@ -1,5 +1,4 @@
-import type { Metrics } from '@slickgrid-universal/common';
-import { PageInfo } from './graphqlPageInfo.interface';
+import type { Metrics, PageInfo } from '@slickgrid-universal/common';
 
 export interface GraphqlPaginatedResult {
   data: {

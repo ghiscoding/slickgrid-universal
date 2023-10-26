@@ -118,6 +118,7 @@ export * from './multiColumnSort.interface';
 export * from './onEventArgs.interface';
 export * from './onValidationErrorResult.interface';
 export * from './operatorDetail.interface';
+export * from './pageInfo.interface';
 export * from './pagination.interface';
 export * from './paginationChangedArgs.interface';
 export * from './paginationCursorChangedArgs.interface';
