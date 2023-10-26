@@ -286,7 +286,7 @@ export class SlickPaginationComponent {
     createDomElement('span', { className: 'text-page', textContent: 'Page' }, divElm);
     divElm.appendChild(document.createTextNode(' '));
     if (this.paginationService.cursorBased) {
-      // cursor based navigation cannot jump to an arbitrary page. Display current page.
+      // cursor based navigation cannot jump to an arbitrary page. Simply display current page number.
       createDomElement('span', {
         className: 'page-number',
         ariaLabel: 'Page Number',
