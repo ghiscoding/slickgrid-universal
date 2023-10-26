@@ -225,7 +225,11 @@ export class PaginationService {
   }
 
   goToPageNumber(pageNumber: number, event?: any, triggerChangeEvent = true): Promise<boolean | ServicePagination> {
-    console.assert(!this.cursorBased, 'Cursor based navigation cannot navigate to arbitrary page');
+    if (this.cursorBased) {
+      console.assert(true, 'Cursor based navigation cannot navigate to arbitrary page');
+      return Promise.resolve(false);
+    }
+
     const previousPageNumber = this._pageNumber;
 
     if (pageNumber < 1) {
