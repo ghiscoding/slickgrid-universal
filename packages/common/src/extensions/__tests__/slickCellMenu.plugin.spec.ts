@@ -235,6 +235,11 @@ describe('CellMenu Plugin', () => {
       let cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
       expect(cellMenuElm).toBeTruthy();
 
+      // click inside menu shouldn't close it
+      cellMenuElm!.dispatchEvent(new Event('mousedown', { bubbles: true }));
+      expect(cellMenuElm).toBeTruthy();
+
+      // click anywhere else should close it
       document.body.dispatchEvent(new Event('mousedown', { bubbles: true }));
       cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
 

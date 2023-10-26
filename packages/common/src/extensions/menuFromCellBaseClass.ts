@@ -310,7 +310,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
   }
 
   protected populateCommandOrOptionCloseBtn(itemType: MenuType, closeButtonElm: HTMLButtonElement, commandOrOptionMenuElm: HTMLDivElement) {
-    this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener);
+    this._bindEventService.bind(closeButtonElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => this.handleCloseButtonClicked(e)) as EventListener, undefined, 'parent-menu');
     const commandOrOptionMenuHeaderElm = commandOrOptionMenuElm.querySelector<HTMLDivElement>(`.slick-${itemType}-header`) ?? createDomElement('div', { className: `slick-${itemType}-header` });
     commandOrOptionMenuHeaderElm?.appendChild(closeButtonElm);
     commandOrOptionMenuElm.appendChild(commandOrOptionMenuHeaderElm);

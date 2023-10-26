@@ -256,6 +256,11 @@ describe('ContextMenu Plugin', () => {
       let contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
       expect(contextMenuElm).toBeTruthy();
 
+      // click inside menu shouldn't close it
+      contextMenuElm!.dispatchEvent(new Event('mousedown', { bubbles: true }));
+      expect(contextMenuElm).toBeTruthy();
+
+      // click anywhere else should close it
       document.body.dispatchEvent(new Event('mousedown', { bubbles: true }));
       contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
 

@@ -100,21 +100,28 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     this.pubSubService.unsubscribeAll();
     this._commandTitleElm?.remove();
     this._optionTitleElm?.remove();
-    this.menuElement?.remove();
-    emptyElement(this._menuElm);
-    this._menuElm?.remove();
     this.disposeAllMenus();
+    emptyElement(this._menuElm);
+    this.menuElement?.remove();
+    this._menuElm?.remove();
   }
 
   /** Remove/dispose all parent menus and any sub-menu(s) */
   disposeAllMenus() {
     this.disposeSubMenus();
+
+    // remove all parent menu listeners before removing them from the DOM
+    this._bindEventService.unbindAll('parent-menu');
     document.querySelectorAll(`.${this.menuCssClass}${this.gridUidSelector}`)
       .forEach(subElm => subElm.remove());
   }
 
-  /** Remove/dispose all previously opened sub-menu(s) */
+  /**
+   * Remove/dispose all previously opened sub-menu(s),
+   * it will first remove all sub-menu listeners then remove sub-menus from the DOM
+   */
   disposeSubMenus() {
+    this._bindEventService.unbindAll('sub-menu');
     document.querySelectorAll(`.${this.menuCssClass}.slick-submenu${this.gridUidSelector}`)
       .forEach(subElm => subElm.remove());
   }
@@ -193,6 +200,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     let commandLiElm: HTMLLIElement | null = null;
 
     if (args && item && menuOptions) {
+      const level = args?.level || 0;
       const pluginMiddleName = this._camelPluginName === 'headerButtons' ? '' : '-item';
       const menuCssPrefix = `${this._menuCssPrefix}${pluginMiddleName}`;
 
@@ -269,9 +277,14 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
         }
       }
 
-      // execute command on menu item clicked
-      this._bindEventService.bind(commandLiElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLDivElement>) =>
-        itemClickCallback.call(this, e, itemType, item, args?.level, args?.column)) as EventListener);
+      // execute command callback on menu item clicked
+      this._bindEventService.bind(
+        commandLiElm,
+        'click',
+        ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => itemClickCallback.call(this, e, itemType, item, level, args?.column)) as EventListener,
+        undefined,
+        level > 0 ? 'sub-menu' : 'parent-menu'
+      );
 
       // Header Button can have an optional handler
       if ((item as HeaderButtonItem).handler && !(item as HeaderButtonItem).disabled) {

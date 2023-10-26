@@ -177,7 +177,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       this._listElm = createDomElement('div', { className: 'slick-column-picker-list', role: 'menu' });
 
       // update all columns on any of the column title button click from column picker
-      this._bindEventService.bind(this._menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener);
+      this._bindEventService.bind(this._menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener, undefined, 'parent-menu');
     }
   }
 
