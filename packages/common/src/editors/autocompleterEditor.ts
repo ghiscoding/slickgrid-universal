@@ -196,7 +196,9 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
   destroy() {
     this._bindEventService.unbindAll();
-    this._instance?.destroy();
+    if (typeof this._instance?.destroy === 'function') {
+      this._instance.destroy();
+    }
     this._inputElm?.remove?.();
     this._elementCollection = null;
   }

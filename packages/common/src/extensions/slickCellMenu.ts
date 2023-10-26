@@ -89,8 +89,8 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
           }
 
           // translate both command/option items (whichever is provided)
-          this.extensionUtility.translateMenuItemsFromTitleKey(columnCellMenuCommandItems);
-          this.extensionUtility.translateMenuItemsFromTitleKey(columnCellMenuOptionItems);
+          this.extensionUtility.translateMenuItemsFromTitleKey(columnCellMenuCommandItems, 'commandItems');
+          this.extensionUtility.translateMenuItemsFromTitleKey(columnCellMenuOptionItems, 'optionItems');
         }
       });
     }
@@ -101,7 +101,9 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   // ------------------
 
   protected handleCellClick(event: DOMMouseOrTouchEvent<HTMLDivElement>, args: MenuCommandItemCallbackArgs) {
+    this.disposeAllMenus(); // make there's only 1 parent menu opened at a time
     const cell = this.grid.getCellFromEvent(event);
+
     if (cell) {
       const dataContext = this.grid.getDataItem(cell.row);
       const columnDef = this.grid.getColumns()[cell.cell];
@@ -124,11 +126,11 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
       }
 
       // create the DOM element
-      this._menuElm = this.createMenu(event);
+      this._menuElm = this.createParentMenu(event);
 
       // reposition the menu to where the user clicked
       if (this._menuElm) {
-        this.repositionMenu(event);
+        this.repositionMenu(event, this._menuElm);
         this._menuElm.setAttribute('aria-expanded', 'true');
         this._menuElm.style.display = 'block';
       }

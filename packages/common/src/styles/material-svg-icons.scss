@@ -902,6 +902,16 @@ $slick-icon-height: $slick-icon-width;
   encodecolor($slick-icon-color), $slick-icon-height, $slick-icon-width, inline-block);
 
 @include loadsvg(
+  ".mdi.mdi-star",
+  "M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z",
+  encodecolor($slick-icon-color), $slick-icon-height, $slick-icon-width, inline-block);
+
+@include loadsvg(
+  ".mdi.mdi-star-outline",
+  "M12,15.39L8.24,17.66L9.23,13.38L5.91,10.5L10.29,10.13L12,6.09L13.71,10.13L18.09,10.5L14.77,13.38L15.76,17.66M22,9.24L14.81,8.63L12,2L9.19,8.63L2,9.24L7.45,13.97L5.82,21L12,17.27L18.18,21L16.54,13.97L22,9.24Z",
+  encodecolor($slick-icon-color), $slick-icon-height, $slick-icon-width, inline-block);
+
+@include loadsvg(
   ".mdi.mdi-stop-circle-outline",
   "M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4M9,9V15H15V9",
   encodecolor($slick-icon-color), $slick-icon-height, $slick-icon-width, inline-block);

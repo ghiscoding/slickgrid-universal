@@ -16,4 +16,6 @@ export interface MenuCallbackArgs<T = any> {
 
   /** Cell Data Context(data object) */
   dataContext?: T;
+
+  level?: number;
 }

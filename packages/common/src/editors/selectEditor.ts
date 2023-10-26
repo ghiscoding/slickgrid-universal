@@ -421,7 +421,9 @@ export class SelectEditor implements Editor {
     }
 
     this._isDisposingOrCallingSave = true;
-    this._msInstance?.destroy();
+    if (typeof this._msInstance?.destroy === 'function') {
+      this._msInstance.destroy();
+    }
     this.editorElm?.remove();
     this._msInstance = undefined;
   }

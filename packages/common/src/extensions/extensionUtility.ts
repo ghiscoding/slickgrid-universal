@@ -131,14 +131,24 @@ export class ExtensionUtility {
   }
 
   /**
-   * Loop through all Menu Command Items and use `titleKey` property to translate (or use Locale) appropriate `title` property
+   * Loop through all Menu Command Items and use `titleKey`, `subMenuTitleKey` properties to translate (or use Locale) appropriate `title` property
    * @param {Array<MenuCommandItem | String>} items - Menu Command Items array
    * @param {Object} gridOptions - Grid Options
    */
-  translateMenuItemsFromTitleKey(items: Array<MenuCommandItem | MenuOptionItem | GridMenuItem | 'divider'>) {
+  translateMenuItemsFromTitleKey(items: Array<MenuCommandItem | MenuOptionItem | GridMenuItem | 'divider'>, subMenuItemsKey = 'commandItems') {
     for (const item of items) {
-      if (typeof item === 'object' && item.titleKey) {
-        item.title = this.translateWhenEnabledAndServiceExist(`${item.titleKey}`, `TEXT_${item.titleKey}`);
+      // translate `titleKey` and also `subMenuTitleKey` if exists
+      if (typeof item === 'object') {
+        if (item.titleKey) {
+          item.title = this.translateWhenEnabledAndServiceExist(`${item.titleKey}`, `TEXT_${item.titleKey}`);
+        }
+        if (item.subMenuTitleKey) {
+          item.subMenuTitle = this.translateWhenEnabledAndServiceExist(`${item.subMenuTitleKey}`, `TEXT_${item.subMenuTitleKey}`);
+        }
+      }
+      // an item can also have nested sub-menu items, we can use recursion to translate them as well
+      if (Array.isArray((item as any)?.[subMenuItemsKey])) {
+        this.translateMenuItemsFromTitleKey((item as any)?.[subMenuItemsKey]);
       }
     }
   }

@@ -216,7 +216,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     }
   }
 
-  protected handleMenuItemCommandClick(event: DOMEvent<HTMLDivElement>, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, columnDef?: Column): boolean | void {
+  protected handleMenuItemCommandClick(event: DOMEvent<HTMLDivElement>, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column): boolean | void {
     if (item === 'divider' || (item as MenuCommandItem).command && (item.disabled || (item as MenuCommandItem | MenuOptionItem).divider)) {
       return false;
     }
