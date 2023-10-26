@@ -828,14 +828,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       // did we click inside the menu or any of its sub-menu(s)
       if (this.menuElement.contains(e.target) || parentMenuElm) {
         isMenuClicked = true;
-      } else {
-        document
-          .querySelectorAll(`.${this.menuCssClass}.slick-submenu${this.gridUidSelector}`)
-          .forEach(subElm => {
-            if (subElm.contains(e.target)) {
-              isMenuClicked = true;
-            }
-          });
       }
 
       if ((this._isMenuOpen && this.menuElement !== e.target && !isMenuClicked && !e.defaultPrevented) || (e.target.className === 'close' && parentMenuElm)) {

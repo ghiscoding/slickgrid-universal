@@ -246,15 +246,6 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       if (this.menuElement.contains(e.target) || parentMenuElm) {
         isMenuClicked = true;
       }
-      if (!isMenuClicked) {
-        document
-          .querySelectorAll(`.${this.menuCssClass}.slick-submenu${this.gridUidSelector}`)
-          .forEach(subElm => {
-            if (subElm.contains(e.target)) {
-              isMenuClicked = true;
-            }
-          });
-      }
 
       if (this.menuElement !== e.target && !isMenuClicked && !e.defaultPrevented || e.target.className === 'close' && parentMenuElm) {
         this.closeMenu(e, { cell: this._currentCell, row: this._currentRow, grid: this.grid });
@@ -413,12 +404,8 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
         if (dropSide === 'left' || (!isSubMenu && this._addonOptions.dropSide === 'left')) {
           menuElm.classList.remove('dropright');
           menuElm.classList.add('dropleft');
-          if (this._camelPluginName === 'cellMenu') {
-            if (isSubMenu) {
-              menuOffsetLeft -= Number(menuWidth) - sideOffset;
-            } else {
-              menuOffsetLeft -= Number(menuWidth) - parentCellWidth - sideOffset;
-            }
+          if (this._camelPluginName === 'cellMenu' && !isSubMenu) {
+            menuOffsetLeft -= Number(menuWidth) - parentCellWidth - sideOffset;
           } else {
             menuOffsetLeft -= Number(menuWidth) - sideOffset;
           }
