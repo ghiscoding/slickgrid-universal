@@ -12,6 +12,7 @@ import {
   MultiColumnSort,
   OperatorType,
   Pagination,
+  PaginationCursorChangedArgs,
   SharedService,
   SlickGrid,
   TranslaterService,
@@ -624,6 +625,28 @@ describe('GraphqlService', () => {
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
       expect(querySpy).toHaveBeenCalled();
       expect(currentPagination).toEqual({ pageNumber: 3, pageSize: 20 });
+    });
+
+    describe("CursorBased related scenarios", () => {
+      describe.each`
+        description           | cursorArgs                    | expectation
+        ${"First page"}       | ${{ first: 20 }}              | ${'query{users(first:20) { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
+        ${"Next Page"}        | ${{ first: 20, after: 'a' }}  | ${'query{users(first:20, after:"a") { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
+        ${"Previous Page"  }  | ${{ last: 20,  before: 'b' }} | ${'query{users(last:20, before:"b") { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
+        ${"Last Page"}        | ${{ last: 20 }}               | ${'query{users(last:20) { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
+      `(`$description`, ({ description, cursorArgs, expectation }) => {
+        it('should return a query with the new pagination and use pagination size options that was passed to service options when it is not provided as argument to "processOnPaginationChanged"', () => {
+          const querySpy = jest.spyOn(service, 'buildQuery');
+
+          service.init({ ...serviceOptions, isWithCursor: true }, paginationOptions, gridStub);
+          const query = service.processOnPaginationChanged(null as any, { newPage: 3, pageSize: 20, ...cursorArgs });
+          const currentPagination = service.getCurrentPagination();
+
+          expect(removeSpaces(query)).toBe(removeSpaces(expectation));
+          expect(querySpy).toHaveBeenCalled();
+          expect(currentPagination).toEqual({ pageNumber: 3, pageSize: 20 });
+        });
+      });
     });
   });
 

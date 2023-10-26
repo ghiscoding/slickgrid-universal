@@ -339,7 +339,7 @@ export class GraphqlService implements BackendService {
    *     }
    *   }
    */
-  processOnPaginationChanged(_event: Event | undefined, args: PaginationChangedArgs | PaginationCursorChangedArgs): string {
+  processOnPaginationChanged(_event: Event | undefined, args: PaginationChangedArgs | (PaginationCursorChangedArgs & PaginationChangedArgs)): string {
     const pageSize = +(args.pageSize || ((this.pagination) ? this.pagination.pageSize : DEFAULT_PAGE_SIZE));
 
     // if first/last defined on args, then it is a cursor based pagination change
