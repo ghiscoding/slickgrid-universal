@@ -65,13 +65,13 @@
     "@slickgrid-universal/utils": "workspace:~",
     "dequal": "^2.0.3",
     "flatpickr": "^4.6.13",
-    "slickgrid": "^4.0.1",
+    "slickgrid": "^4.0.3",
     "sortablejs": "^1.15.0",
     "whatwg-fetch": "^3.6.19"
   },
   "devDependencies": {
     "@slickgrid-universal/graphql": "workspace:~",
-    "@types/sortablejs": "^1.15.3",
+    "@types/sortablejs": "^1.15.4",
     "cross-env": "^7.0.3",
     "npm-run-all2": "^6.1.1"
   },

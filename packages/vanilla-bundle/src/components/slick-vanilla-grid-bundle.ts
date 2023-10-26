@@ -438,7 +438,7 @@ export class SlickVanillaGridBundle {
     unsubscribeAll(this.subscriptions);
     this._eventPubSubService?.unsubscribeAll();
     this.dataView?.setItems([]);
-    if (this.dataView?.destroy) {
+    if (typeof this.dataView?.destroy === 'function') {
       this.dataView?.destroy();
     }
     this.slickGrid?.destroy(true);
@@ -1478,7 +1478,9 @@ export class SlickVanillaGridBundle {
       // get current Editor, remove it from the DOm then re-enable it and re-render it with the new collection.
       const currentEditor = this.slickGrid.getCellEditor() as AutocompleterEditor | SelectEditor;
       if (currentEditor?.disable && currentEditor?.renderDomElement) {
-        currentEditor.destroy();
+        if (typeof currentEditor.destroy === 'function') {
+          currentEditor.destroy();
+        }
         currentEditor.disable(false);
         currentEditor.renderDomElement(newCollection);
       }

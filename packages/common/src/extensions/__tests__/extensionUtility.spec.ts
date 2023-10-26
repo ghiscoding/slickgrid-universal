@@ -102,6 +102,23 @@ describe('extensionUtility', () => {
         expect(commandItem1.title).toBe('Supprimer tous les filtres');
         expect(commandItem2.title).toBe('Supprimer tous les tris');
       });
+
+      it('should translate nested translation keys by providing a sub-items key', () => {
+        const commandItem1 = { command: 'clear-filter', titleKey: 'CLEAR_ALL_FILTERS' } as MenuCommandItem;
+        const commandItem2 = {
+          command: 'group-by', titleKey: 'GROUP_BY', subMenuTitleKey: 'CONTAINS',
+          commandItems: [
+            { command: 'percent-complete', titleKey: 'FINANCE_MANAGER' }
+          ]
+        } as MenuCommandItem;
+
+        utility.translateMenuItemsFromTitleKey([commandItem1, commandItem2], 'commandItems');
+
+        expect(commandItem1.title).toBe('Supprimer tous les filtres');
+        expect(commandItem2.title).toBe('Groupé par');
+        expect(commandItem2.subMenuTitle).toBe('Contient');
+        expect((commandItem2.commandItems![0] as MenuCommandItem).title).toBe('Responsable des finances');
+      });
     });
 
     describe('translateWhenEnabledAndServiceExist method', () => {

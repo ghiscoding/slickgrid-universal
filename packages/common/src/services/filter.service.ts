@@ -142,7 +142,9 @@ export class FilterService {
     if (Array.isArray(this._filtersMetadata)) {
       let filter = this._filtersMetadata.pop();
       while (filter) {
-        filter?.destroy();
+        if (typeof filter?.destroy === 'function') {
+          filter.destroy();
+        }
         filter = this._filtersMetadata.pop();
       }
     }
