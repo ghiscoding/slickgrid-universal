@@ -77,6 +77,7 @@ describe('Slick-Pagination Component', () => {
       ${"Without CursorPagination"} | ${basicPaginationServiceStub}
       ${"With CursorPagination"}    | ${paginationServiceStubWithCursor}
     `(`$description`, ({ description, paginationServiceStub }) => {
+      // Reset mockFullPagination before each entry in the test table
       beforeAll(() => {
         mockFullPagination = {
           pageCount: 19,
