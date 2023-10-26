@@ -122,8 +122,8 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       }
     }
 
-    const menuClasses = `${this._menuPluginCssPrefix || this._menuCssPrefix} slick-menu-level-${level} ${this.gridUid}`;
-    const bodyMenuElm = document.body.querySelector<HTMLDivElement>(`.${this._menuPluginCssPrefix || this._menuCssPrefix}.slick-menu-level-${level}${this.gridUidSelector}`);
+    const menuClasses = `${this.menuCssClass} slick-menu-level-${level} ${this.gridUid}`;
+    const bodyMenuElm = document.body.querySelector<HTMLDivElement>(`.${this.menuCssClass}.slick-menu-level-${level}${this.gridUidSelector}`);
 
     // return menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
     if (bodyMenuElm) {
@@ -218,24 +218,6 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     }
   }
 
-  dispose() {
-    super.dispose();
-    this.disposeAllMenus();
-  }
-
-  /** Remove/dispose all parent menus and any sub-menu(s) */
-  disposeAllMenus() {
-    this.disposeSubMenus();
-    document.querySelectorAll(`.${this._menuPluginCssPrefix || this._menuCssPrefix}${this.gridUidSelector}`)
-      .forEach(subElm => subElm.remove());
-  }
-
-  /** Remove/dispose all previously opened sub-menu(s) */
-  disposeSubMenus() {
-    document.querySelectorAll(`.${this._menuPluginCssPrefix || this._menuCssPrefix}.slick-submenu${this.gridUidSelector}`)
-      .forEach(subElm => subElm.remove());
-  }
-
   /** Hide the Menu */
   hideMenu() {
     this.menuElement?.remove();
@@ -247,19 +229,6 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
   // protected functions
   // ------------------
 
-  protected addSubMenuTitleWhenExists(item: MenuCommandItem | MenuOptionItem | 'divider', commandOrOptionMenu: HTMLDivElement) {
-    if (item !== 'divider' && item?.subMenuTitle) {
-      const subMenuTitleElm = document.createElement('div');
-      subMenuTitleElm.className = 'slick-menu-title';
-      subMenuTitleElm.textContent = item.subMenuTitle as string;
-      const subMenuTitleClass = item.subMenuTitleCssClass as string;
-      if (subMenuTitleClass) {
-        subMenuTitleElm.classList.add(...subMenuTitleClass.split(' '));
-      }
-      commandOrOptionMenu.appendChild(subMenuTitleElm);
-    }
-  }
-
   protected checkIsColumnAllowed(columnIds: Array<number | string>, columnId: number | string): boolean {
     if (columnIds?.length > 0) {
       return columnIds.findIndex(colId => colId === columnId) >= 0;
@@ -269,23 +238,27 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
 
   /** Mouse down handler when clicking anywhere in the DOM body */
   protected handleBodyMouseDown(e: DOMMouseOrTouchEvent<HTMLDivElement>) {
-    // did we click inside the menu or any of its sub-menu(s)
-    let isMenuClicked = false;
-    if (this.menuElement?.contains(e.target)) {
-      isMenuClicked = true;
-    }
-    if (!isMenuClicked) {
-      document
-        .querySelectorAll(`.${this._menuPluginCssPrefix || this._menuCssPrefix}.slick-submenu${this.gridUidSelector}`)
-        .forEach(subElm => {
-          if (subElm.contains(e.target)) {
-            isMenuClicked = true;
-          }
-        });
-    }
+    if (this.menuElement) {
+      let isMenuClicked = false;
+      const parentMenuElm = e.target.closest(`.${this.menuCssClass}`);
 
-    if (this.menuElement !== e.target && !isMenuClicked && !e.defaultPrevented || e.target.className === 'close') {
-      this.closeMenu(e, { cell: this._currentCell, row: this._currentRow, grid: this.grid });
+      // did we click inside the menu or any of its sub-menu(s)
+      if (this.menuElement.contains(e.target) || parentMenuElm) {
+        isMenuClicked = true;
+      }
+      if (!isMenuClicked) {
+        document
+          .querySelectorAll(`.${this.menuCssClass}.slick-submenu${this.gridUidSelector}`)
+          .forEach(subElm => {
+            if (subElm.contains(e.target)) {
+              isMenuClicked = true;
+            }
+          });
+      }
+
+      if (this.menuElement !== e.target && !isMenuClicked && !e.defaultPrevented || e.target.className === 'close' && parentMenuElm) {
+        this.closeMenu(e, { cell: this._currentCell, row: this._currentRow, grid: this.grid });
+      }
     }
   }
 
@@ -368,8 +341,8 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     }
   }
 
-  protected repositionMenu(event: DOMMouseOrTouchEvent<HTMLDivElement>, menuElm: HTMLElement) {
-    const isSubMenu = menuElm.classList.contains('slick-submenu');
+  protected repositionMenu(event: DOMMouseOrTouchEvent<HTMLDivElement>, menuElm?: HTMLElement) {
+    const isSubMenu = menuElm?.classList.contains('slick-submenu');
     const parentElm = isSubMenu
       ? event.target.closest(`.${this._menuCssPrefix}-item`) as HTMLDivElement
       : event.target.closest('.slick-cell') as HTMLDivElement;
@@ -437,7 +410,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
         }
         const browserWidth = document.documentElement.clientWidth;
         const dropSide = (subMenuPosCalc >= gridPos.width || subMenuPosCalc >= browserWidth) ? 'left' : 'right';
-        if (dropSide === 'left' || this._addonOptions.dropSide === 'left') {
+        if (dropSide === 'left' || (!isSubMenu && this._addonOptions.dropSide === 'left')) {
           menuElm.classList.remove('dropright');
           menuElm.classList.add('dropleft');
           if (this._camelPluginName === 'cellMenu') {

@@ -7,6 +7,7 @@ import type {
   ContextMenu,
   DOMMouseOrTouchEvent,
   GridMenu,
+  GridMenuItem,
   GridOption,
   HeaderButton,
   HeaderButtonItem,
@@ -84,8 +85,12 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     return this.gridUid ? `.${this.gridUid}` : '';
   }
 
+  get menuCssClass() {
+    return this._menuPluginCssPrefix || this._menuCssPrefix;
+  }
+
   get menuElement(): HTMLDivElement | null {
-    return this._menuElm || document.querySelector(`.${this._menuPluginCssPrefix || this._menuCssPrefix}${this.gridUidSelector}`);
+    return this._menuElm || document.querySelector(`.${this.menuCssClass}${this.gridUidSelector}`);
   }
 
   /** Dispose (destroy) of the plugin */
@@ -98,6 +103,20 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     this.menuElement?.remove();
     emptyElement(this._menuElm);
     this._menuElm?.remove();
+    this.disposeAllMenus();
+  }
+
+  /** Remove/dispose all parent menus and any sub-menu(s) */
+  disposeAllMenus() {
+    this.disposeSubMenus();
+    document.querySelectorAll(`.${this.menuCssClass}${this.gridUidSelector}`)
+      .forEach(subElm => subElm.remove());
+  }
+
+  /** Remove/dispose all previously opened sub-menu(s) */
+  disposeSubMenus() {
+    document.querySelectorAll(`.${this.menuCssClass}.slick-submenu${this.gridUidSelector}`)
+      .forEach(subElm => subElm.remove());
   }
 
   setOptions(newOptions: M) {
@@ -107,6 +126,19 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   // --
   // protected functions
   // ------------------
+
+  protected addSubMenuTitleWhenExists(item: MenuCommandItem | MenuOptionItem | GridMenuItem | 'divider', commandOrOptionMenu: HTMLDivElement) {
+    if (item !== 'divider' && item?.subMenuTitle) {
+      const subMenuTitleElm = document.createElement('div');
+      subMenuTitleElm.className = 'slick-menu-title';
+      subMenuTitleElm.textContent = item.subMenuTitle as string;
+      const subMenuTitleClass = item.subMenuTitleCssClass as string;
+      if (subMenuTitleClass) {
+        subMenuTitleElm.classList.add(...subMenuTitleClass.split(' '));
+      }
+      commandOrOptionMenu.appendChild(subMenuTitleElm);
+    }
+  }
 
   /** Construct the Command/Options Items section. */
   protected populateCommandOrOptionItems(
@@ -128,12 +160,16 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   protected populateCommandOrOptionTitle(itemType: MenuType, menuOptions: M, commandOrOptionMenuElm: HTMLElement, level: number) {
     if (menuOptions) {
       const isSubMenu = level > 0;
+
+      // return or create a title container
       const menuHeaderElm = this._menuElm?.querySelector(`.slick-${itemType}-header`) ?? createDomElement('div', { className: `slick-${itemType}-header` });
+
       // user could pass a title on top of the Commands/Options section
       const titleProp: 'commandTitle' | 'optionTitle' = `${itemType}Title`;
 
       if (!isSubMenu) {
         if ((menuOptions as CellMenu | ContextMenu)?.[titleProp]) {
+          emptyElement(menuHeaderElm); // make sure title container is empty before adding anything inside it
           this[`_${itemType}TitleElm`] = createDomElement('span', { className: 'slick-menu-title', textContent: (menuOptions as never)[titleProp] });
           menuHeaderElm.appendChild(this[`_${itemType}TitleElm`]!);
           menuHeaderElm.classList.add('with-title');

@@ -434,12 +434,12 @@ export default class Example4 {
             // we can also have multiple nested sub-menus
             command: 'export', title: 'Exports', positionOrder: 99,
             commandItems: [
-              { command: 'export-txt', title: 'Text (tab delimited)' },
+              { command: 'exports-txt', title: 'Text (tab delimited)' },
               {
                 command: 'sub-menu', title: 'Excel', cssClass: 'green', subMenuTitle: 'available formats', subMenuTitleCssClass: 'text-italic orange',
                 commandItems: [
-                  { command: 'export-csv', title: 'Excel (csv)' },
-                  { command: 'export-xlsx', title: 'Excel (xlsx)' },
+                  { command: 'exports-csv', title: 'Excel (csv)' },
+                  { command: 'exports-xlsx', title: 'Excel (xlsx)' },
                 ]
               }
             ]
@@ -447,7 +447,7 @@ export default class Example4 {
           {
             command: 'feedback', title: 'Feedback', positionOrder: 100,
             commandItems: [
-              { command: 'request-update', title: 'Request update from shipping team', iconCssClass: 'mdi mdi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
+              { command: 'request-update', title: 'Request update from supplier', iconCssClass: 'mdi mdi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
               'divider',
               {
                 command: 'sub-menu', title: 'Contact Us', iconCssClass: 'mdi mdi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
@@ -556,9 +556,9 @@ export default class Example4 {
       case 'command2':
         alert(args.item.title);
         break;
-      case 'export-csv':
-      case 'export-txt':
-      case 'export-xlsx':
+      case 'exports-csv':
+      case 'exports-txt':
+      case 'exports-xlsx':
         alert(`Exporting as ${args.item.title}`);
         break;
       case 'help':
