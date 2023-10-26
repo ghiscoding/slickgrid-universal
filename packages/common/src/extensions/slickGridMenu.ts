@@ -333,6 +333,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     // this._bindEventService.unbindAll();
     this.disposeSubMenus();
     this._menuElm?.remove();
+    this._menuElm = null;
   }
 
   /** destroy and recreate the Grid Menu in the DOM */
@@ -400,10 +401,18 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         menuElm.style.minWidth = `${contentMinWidth}px`;
       }
       menuElm.style.opacity = '1';
+      menuElm.style.display = 'block';
     }
   }
 
-  /** show grid menu which in theory is recreated every time */
+  /** Open the Grid Menu */
+  openGridMenu() {
+    const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false });
+    Object.defineProperty(clickEvent, 'target', { writable: true, configurable: true, value: createDomElement('button', { className: 'slick-grid-menu-button' }) });
+    this.showGridMenu(clickEvent);
+  }
+
+  /** show Grid Menu from the click event, which in theory will recreate the grid menu in the DOM */
   showGridMenu(e: MouseEvent | TouchEvent, options?: GridMenuOption) {
     const targetEvent: MouseEvent | Touch = (e as TouchEvent)?.touches?.[0] ?? e;
     e.preventDefault();
@@ -422,11 +431,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
       const addonOptions: GridMenu = { ...this._addonOptions, ...options }; // merge optional picker option
 
-      this._menuElm = this.createCommandMenu(this._addonOptions?.commandItems ?? []);
-      this.createColumnPickerContainer();
-      updateColumnPickerOrder.call(this);
-      this._columnCheckboxes = [];
-
       // run the override function (when defined), if the result is false then we won't go further
       if (addonOptions && !this.extensionUtility.runOverrideFunctionWhenExists<typeof callbackArgs>(addonOptions.menuUsabilityOverride, callbackArgs)) {
         return;
@@ -439,6 +443,11 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           return;
         }
       }
+
+      this._menuElm = this.createCommandMenu(this._addonOptions?.commandItems ?? []);
+      this.createColumnPickerContainer();
+      updateColumnPickerOrder.call(this);
+      this._columnCheckboxes = [];
 
       // load the column & create column picker list
       populateColumnPicker.call(this, addonOptions);
@@ -514,9 +523,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
       // translate all columns (including non-visible)
       this.extensionUtility.translateItems(this._columns, 'nameKey', 'name');
-
-      // update the Titles of each sections (command, commandTitle, ...)
-      this.updateAllTitles(this.sharedService.gridOptions.gridMenu);
     }
   }
 
