@@ -235,6 +235,11 @@ describe('CellMenu Plugin', () => {
       let cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
       expect(cellMenuElm).toBeTruthy();
 
+      // click inside menu shouldn't close it
+      cellMenuElm!.dispatchEvent(new Event('mousedown', { bubbles: true }));
+      expect(cellMenuElm).toBeTruthy();
+
+      // click anywhere else should close it
       document.body.dispatchEvent(new Event('mousedown', { bubbles: true }));
       cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
 
@@ -609,7 +614,7 @@ describe('CellMenu Plugin', () => {
         Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
 
         plugin.dispose();
-        plugin.init({ commandItems: deepCopy(commandItemsMock) });
+        plugin.init({ commandItems: deepCopy(commandItemsMock), dropSide: 'left' });
         (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).action = actionMock;
         plugin.addonOptions.subItemChevronClass = 'mdi mdi-chevron-right';
         plugin.addonOptions.autoAdjustDropOffset = '-780';
