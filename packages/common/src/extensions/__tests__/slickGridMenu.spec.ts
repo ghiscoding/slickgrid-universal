@@ -238,8 +238,13 @@ describe('GridMenuControl', () => {
         const headerRowElm = document.querySelector('.slick-headerrow') as HTMLDivElement;
 
         expect(control.menuElement!.style.display).toBe('block');
-        expect(headerRowElm.style.width).toBe(`calc(100% - 16px)`)
+        expect(headerRowElm.style.width).toBe(`calc(100% - 16px)`);
 
+        // click inside menu shouldn't close it
+        control.menuElement!.dispatchEvent(new Event('mousedown', { bubbles: true }));
+        expect(control.menuElement).toBeTruthy();
+
+        // click anywhere else should close it
         const bodyElm = document.body;
         bodyElm.dispatchEvent(new Event('mousedown', { bubbles: true }));
 
