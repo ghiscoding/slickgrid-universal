@@ -52,16 +52,20 @@ export class BindingEventService {
   /**
    * Unbind all event listeners that were bounded, optionally provide a group name to unbind all listeners assigned to that specific group only.
    */
-  unbindAll(groupName?: string) {
+  unbindAll(groupName?: string | string[]) {
     if (groupName) {
+      const groupNames = Array.isArray(groupName) ? groupName : [groupName];
+
       // unbind only the bounded event with a specific group
-      this._boundedEvents.forEach((boundedEvent, idx) => {
-        if (boundedEvent.groupName === groupName) {
+      // Note: we need to loop in reverse order to avoid array reindexing (causing index offset) after a splice is called
+      for (let i = this._boundedEvents.length - 1; i >= 0; --i) {
+        const boundedEvent = this._boundedEvents[i];
+        if (groupNames.some(g => g === boundedEvent.groupName)) {
           const { element, eventName, listener } = boundedEvent;
           this.unbind(element, eventName, listener);
-          this._boundedEvents.splice(idx, 1);
+          this._boundedEvents.splice(i, 1);
         }
-      });
+      }
     } else {
       // unbind everything
       while (this._boundedEvents.length > 0) {
