@@ -97,7 +97,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     // we need to somehow keep trace of which parent menu the tree belongs to
     // and we should keep ref of only the first sub-menu parent, we can use the command name (remove any whitespaces though)
     const subMenuCommandOrOption = (item as MenuCommandItem)?.command || (item as MenuOptionItem)?.option;
-    let subMenuId = (level === 1 && subMenuCommandOrOption) ? subMenuCommandOrOption.replace(/\s/g, '') : '';
+    let subMenuId = (level === 1 && subMenuCommandOrOption) ? String(subMenuCommandOrOption).replace(/\s/g, '') : '';
     if (subMenuId) {
       this._subMenuParentId = subMenuId;
     }
