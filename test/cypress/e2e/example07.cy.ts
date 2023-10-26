@@ -1131,7 +1131,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
 
   it('should open Export->Excel sub-menu then open Feedback->ContactUs sub-menus and expect previous Export menu to no longer exists', () => {
     const subCommands1 = ['Text', 'Excel'];
-    const subCommands2 = ['Request update from shipping team', '', 'Contact Us'];
+    const subCommands2 = ['Request update from supplier', '', 'Contact Us'];
     const subCommands2_1 = ['Email us', 'Chat with us', 'Book an appointment'];
 
     const stub = cy.stub();

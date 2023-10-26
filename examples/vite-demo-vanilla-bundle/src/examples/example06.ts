@@ -202,6 +202,22 @@ export default class Example6 {
     (document.querySelector('input.search') as HTMLInputElement).value = '';
   }
 
+  executeCommand(_e, args) {
+    // const columnDef = args.column;
+    const command = args.command;
+
+    switch (command) {
+      case 'exports-csv':
+      case 'exports-txt':
+      case 'exports-xlsx':
+        alert(`Exporting as ${args.item.title}`);
+        break;
+      default:
+        alert('Command: ' + args.command);
+        break;
+    }
+  }
+
   searchFile(event: KeyboardEvent) {
     this.searchString = (event.target as HTMLInputElement)?.value || '';
     this.updateFilter();

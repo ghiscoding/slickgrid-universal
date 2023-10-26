@@ -168,8 +168,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             disabled: false,
             command: commandName,
             positionOrder: 50,
-            action: (_e: Event, args: MenuCommandItemCallbackArgs) => {
-              this.copyToClipboard(args);
+            action: (_e, args) => {
+              this.copyToClipboard(args as MenuCommandItemCallbackArgs);
             },
             itemUsabilityOverride: (args: MenuCallbackArgs) => {
               // make sure there's an item to copy before enabling this command

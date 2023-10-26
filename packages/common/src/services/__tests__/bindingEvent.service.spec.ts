@@ -81,9 +81,8 @@ describe('BindingEvent Service', () => {
     expect(mockElm.removeEventListener).toHaveBeenCalledWith('click', mockCallback2);
   });
 
-  it('should call unbindAll with a group name and expect that group listeners to be removed but others kept', () => {
+  it('should call unbindAll with a single group name and expect that group listeners to be removed but others kept', () => {
     const mockElm1 = { addEventListener: jest.fn(), removeEventListener: jest.fn() } as unknown as HTMLElement;
-    const mockElm2 = { addEventListener: jest.fn(), removeEventListener: jest.fn() } as unknown as HTMLElement;
     const mockCallback1 = jest.fn();
     const mockCallback2 = jest.fn();
     const mockCallback3 = jest.fn();
@@ -91,26 +90,58 @@ describe('BindingEvent Service', () => {
     const mockCallback5 = jest.fn();
 
     service = new BindingEventService();
-    service.bind(mockElm1, 'keyup', mockCallback1, false, 'same-group');
+    service.bind(mockElm1, 'keyup', mockCallback1, false, 'wonderful');
     service.bind(mockElm1, 'keydown', mockCallback2, { capture: true, passive: true }, 'magic');
-    service.bind(mockElm2, 'click', mockCallback3, { capture: true, passive: true }); // no group
-    service.bind(mockElm2, 'mouseover', mockCallback4, { capture: false, passive: true }, 'same-group');
-    service.bind(mockElm2, 'mouseout', mockCallback5, { capture: false, passive: false }, 'wonderful');
+    service.bind(mockElm1, 'click', mockCallback3, { capture: true, passive: true }); // no group
+    service.bind(mockElm1, 'mouseover', mockCallback4, { capture: false, passive: true }, 'mouse-group');
+    service.bind(mockElm1, 'mouseout', mockCallback5, { capture: false, passive: false }, 'mouse-group');
 
     expect(service.boundedEvents.length).toBe(5);
-    expect(mockElm1.addEventListener).toHaveBeenCalledWith('keyup', mockCallback1, false); // same-group
+    expect(mockElm1.addEventListener).toHaveBeenCalledWith('keyup', mockCallback1, false);
     expect(mockElm1.addEventListener).toHaveBeenCalledWith('keydown', mockCallback2, { capture: true, passive: true });
-    expect(mockElm2.addEventListener).toHaveBeenCalledWith('click', mockCallback3, { capture: true, passive: true });
-    expect(mockElm2.addEventListener).toHaveBeenCalledWith('mouseover', mockCallback4, { capture: false, passive: true }); // same-group
-    expect(mockElm2.addEventListener).toHaveBeenCalledWith('mouseout', mockCallback5, { capture: false, passive: false });
+    expect(mockElm1.addEventListener).toHaveBeenCalledWith('click', mockCallback3, { capture: true, passive: true });
+    expect(mockElm1.addEventListener).toHaveBeenCalledWith('mouseover', mockCallback4, { capture: false, passive: true }); // mouse-group
+    expect(mockElm1.addEventListener).toHaveBeenCalledWith('mouseout', mockCallback5, { capture: false, passive: false }); // mouse-group
 
-    service.unbindAll('same-group');
+    service.unbindAll('mouse-group');
 
     expect(service.boundedEvents.length).toBe(3);
-    expect(mockElm1.removeEventListener).toHaveBeenCalledWith('keyup', mockCallback1); // same-group
-    expect(mockElm1.removeEventListener).not.toHaveBeenCalledWith();
-    expect(mockElm2.removeEventListener).not.toHaveBeenCalledWith();
-    expect(mockElm2.removeEventListener).toHaveBeenCalledWith('mouseover', mockCallback4); // same-group
-    expect(mockElm2.removeEventListener).not.toHaveBeenCalledWith();
+    expect(mockElm1.removeEventListener).not.toHaveBeenCalledWith('keyup', mockCallback1);
+    expect(mockElm1.removeEventListener).not.toHaveBeenCalledWith('keydown', mockCallback2);
+    expect(mockElm1.removeEventListener).not.toHaveBeenCalledWith('click', mockCallback3);
+    expect(mockElm1.removeEventListener).toHaveBeenCalledWith('mouseover', mockCallback4); // mouse-group
+    expect(mockElm1.removeEventListener).toHaveBeenCalledWith('mouseout', mockCallback5); // mouse-group
+  });
+
+  it('should call unbindAll with a multiple group names and expect those group listeners to be removed but others kept', () => {
+    const mockElm1 = { addEventListener: jest.fn(), removeEventListener: jest.fn() } as unknown as HTMLElement;
+    const mockCallback1 = jest.fn();
+    const mockCallback2 = jest.fn();
+    const mockCallback3 = jest.fn();
+    const mockCallback4 = jest.fn();
+    const mockCallback5 = jest.fn();
+
+    service = new BindingEventService();
+    service.bind(mockElm1, 'keyup', mockCallback1, false, 'wonderful');
+    service.bind(mockElm1, 'keydown', mockCallback2, { capture: true, passive: true }, 'magic');
+    service.bind(mockElm1, 'click', mockCallback3, { capture: true, passive: true }); // no group
+    service.bind(mockElm1, 'mouseover', mockCallback4, { capture: false, passive: true }, 'mouse-group');
+    service.bind(mockElm1, 'mouseout', mockCallback5, { capture: false, passive: false }, 'mouse-group');
+
+    expect(service.boundedEvents.length).toBe(5);
+    expect(mockElm1.addEventListener).toHaveBeenCalledWith('keyup', mockCallback1, false);
+    expect(mockElm1.addEventListener).toHaveBeenCalledWith('keydown', mockCallback2, { capture: true, passive: true });
+    expect(mockElm1.addEventListener).toHaveBeenCalledWith('click', mockCallback3, { capture: true, passive: true });
+    expect(mockElm1.addEventListener).toHaveBeenCalledWith('mouseover', mockCallback4, { capture: false, passive: true }); // mouse-group
+    expect(mockElm1.addEventListener).toHaveBeenCalledWith('mouseout', mockCallback5, { capture: false, passive: false }); // mouse-group
+
+    service.unbindAll(['magic', 'mouse-group']);
+
+    expect(service.boundedEvents.length).toBe(2);
+    expect(mockElm1.removeEventListener).not.toHaveBeenCalledWith('keyup', mockCallback1);
+    expect(mockElm1.removeEventListener).toHaveBeenCalledWith('keydown', mockCallback2); // magic
+    expect(mockElm1.removeEventListener).not.toHaveBeenCalledWith('click', mockCallback3);
+    expect(mockElm1.removeEventListener).toHaveBeenCalledWith('mouseover', mockCallback4); // mouse-group
+    expect(mockElm1.removeEventListener).toHaveBeenCalledWith('mouseout', mockCallback5); // mouse-group
   });
 });
