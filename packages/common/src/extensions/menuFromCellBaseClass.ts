@@ -155,7 +155,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       menuElm.style.width = findWidthOrDefault(this.addonOptions?.width);
     }
 
-    const closeButtonElm = createDomElement('button', { ariaLabel: 'Close', className: 'close', type: 'button', innerHTML: '&times;', dataset: { dismiss: this._menuCssPrefix } });
+    const closeButtonElm = createDomElement('button', { ariaLabel: 'Close', className: 'close', type: 'button', textContent: '×', dataset: { dismiss: this._menuCssPrefix } });
 
     // -- Option List section
     if (!(this.addonOptions as CellMenu | ContextMenu).hideOptionSection && isColumnOptionAllowed && optionItems.length > 0) {
