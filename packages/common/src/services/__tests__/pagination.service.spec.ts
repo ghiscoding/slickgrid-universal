@@ -236,6 +236,15 @@ describe('PaginationService', () => {
       expect(service.getCurrentPageNumber()).toBe(1);
       expect(spy).toHaveBeenCalledWith(1, undefined, { first: 25, newPage: 1, pageSize: 25 });
     });
+
+    it('should expect current page to be 1 and "processOnPageChanged" method NOT to be called', () => {
+      const spy = jest.spyOn(service, 'processOnPageChanged');
+      service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
+      service.goToFirstPage(null, false);
+
+      expect(service.getCurrentPageNumber()).toBe(1);
+      expect(spy).not.toHaveBeenCalled();
+    });
   });
 
   describe('goToLastPage method', () => {
@@ -262,6 +271,16 @@ describe('PaginationService', () => {
       expect(service.dataTo).toBe(85);
       expect(service.getCurrentPageNumber()).toBe(4);
       expect(spy).toHaveBeenCalledWith(4, undefined, { last: 25, newPage: 4, pageSize: 25 });
+    });
+
+    it('should call "goToLastPage" method and expect current page to be last page and "processOnPageChanged" method NOT to be called', () => {
+      const spy = jest.spyOn(service, 'processOnPageChanged');
+
+      service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
+      service.goToLastPage(null, false);
+
+      expect(service.getCurrentPageNumber()).toBe(4);
+      expect(spy).not.toHaveBeenCalledWith();
     });
   });
 
