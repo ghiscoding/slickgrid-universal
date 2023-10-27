@@ -231,7 +231,6 @@ export class SlickPaginationComponent {
   }
 
   changeToCurrentPage(pageNumber: number) {
-    console.log("asdfasdf");
     this.paginationService.goToPageNumber(+pageNumber);
   }
 
