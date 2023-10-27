@@ -7,6 +7,7 @@ import type {
   ContextMenu,
   DOMMouseOrTouchEvent,
   GridMenu,
+  GridMenuItem,
   GridOption,
   HeaderButton,
   HeaderButtonItem,
@@ -84,8 +85,12 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     return this.gridUid ? `.${this.gridUid}` : '';
   }
 
+  get menuCssClass() {
+    return this._menuPluginCssPrefix || this._menuCssPrefix;
+  }
+
   get menuElement(): HTMLDivElement | null {
-    return this._menuElm || document.querySelector(`.${this._menuPluginCssPrefix || this._menuCssPrefix}${this.gridUidSelector}`);
+    return this._menuElm || document.querySelector(`.${this.menuCssClass}${this.gridUidSelector}`);
   }
 
   /** Dispose (destroy) of the plugin */
@@ -95,9 +100,30 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     this.pubSubService.unsubscribeAll();
     this._commandTitleElm?.remove();
     this._optionTitleElm?.remove();
-    this.menuElement?.remove();
+    this.disposeAllMenus();
     emptyElement(this._menuElm);
+    this.menuElement?.remove();
     this._menuElm?.remove();
+  }
+
+  /** Remove/dispose all parent menus and any sub-menu(s) */
+  disposeAllMenus() {
+    this.disposeSubMenus();
+
+    // remove all parent menu listeners before removing them from the DOM
+    this._bindEventService.unbindAll('parent-menu');
+    document.querySelectorAll(`.${this.menuCssClass}${this.gridUidSelector}`)
+      .forEach(subElm => subElm.remove());
+  }
+
+  /**
+   * Remove/dispose all previously opened sub-menu(s),
+   * it will first remove all sub-menu listeners then remove sub-menus from the DOM
+   */
+  disposeSubMenus() {
+    this._bindEventService.unbindAll('sub-menu');
+    document.querySelectorAll(`.${this.menuCssClass}.slick-submenu${this.gridUidSelector}`)
+      .forEach(subElm => subElm.remove());
   }
 
   setOptions(newOptions: M) {
@@ -107,6 +133,19 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   // --
   // protected functions
   // ------------------
+
+  protected addSubMenuTitleWhenExists(item: MenuCommandItem | MenuOptionItem | GridMenuItem | 'divider', commandOrOptionMenu: HTMLDivElement) {
+    if (item !== 'divider' && item?.subMenuTitle) {
+      const subMenuTitleElm = document.createElement('div');
+      subMenuTitleElm.className = 'slick-menu-title';
+      subMenuTitleElm.textContent = item.subMenuTitle as string;
+      const subMenuTitleClass = item.subMenuTitleCssClass as string;
+      if (subMenuTitleClass) {
+        subMenuTitleElm.classList.add(...subMenuTitleClass.split(' '));
+      }
+      commandOrOptionMenu.appendChild(subMenuTitleElm);
+    }
+  }
 
   /** Construct the Command/Options Items section. */
   protected populateCommandOrOptionItems(
@@ -128,12 +167,16 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   protected populateCommandOrOptionTitle(itemType: MenuType, menuOptions: M, commandOrOptionMenuElm: HTMLElement, level: number) {
     if (menuOptions) {
       const isSubMenu = level > 0;
+
+      // return or create a title container
       const menuHeaderElm = this._menuElm?.querySelector(`.slick-${itemType}-header`) ?? createDomElement('div', { className: `slick-${itemType}-header` });
+
       // user could pass a title on top of the Commands/Options section
       const titleProp: 'commandTitle' | 'optionTitle' = `${itemType}Title`;
 
       if (!isSubMenu) {
         if ((menuOptions as CellMenu | ContextMenu)?.[titleProp]) {
+          emptyElement(menuHeaderElm); // make sure title container is empty before adding anything inside it
           this[`_${itemType}TitleElm`] = createDomElement('span', { className: 'slick-menu-title', textContent: (menuOptions as never)[titleProp] });
           menuHeaderElm.appendChild(this[`_${itemType}TitleElm`]!);
           menuHeaderElm.classList.add('with-title');
@@ -157,6 +200,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     let commandLiElm: HTMLLIElement | null = null;
 
     if (args && item && menuOptions) {
+      const level = args?.level || 0;
       const pluginMiddleName = this._camelPluginName === 'headerButtons' ? '' : '-item';
       const menuCssPrefix = `${this._menuCssPrefix}${pluginMiddleName}`;
 
@@ -233,9 +277,14 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
         }
       }
 
-      // execute command on menu item clicked
-      this._bindEventService.bind(commandLiElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLDivElement>) =>
-        itemClickCallback.call(this, e, itemType, item, args?.level, args?.column)) as EventListener);
+      // execute command callback on menu item clicked
+      this._bindEventService.bind(
+        commandLiElm,
+        'click',
+        ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => itemClickCallback.call(this, e, itemType, item, level, args?.column)) as EventListener,
+        undefined,
+        level > 0 ? 'sub-menu' : 'parent-menu'
+      );
 
       // Header Button can have an optional handler
       if ((item as HeaderButtonItem).handler && !(item as HeaderButtonItem).disabled) {

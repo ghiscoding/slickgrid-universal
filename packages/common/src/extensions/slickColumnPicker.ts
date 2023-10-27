@@ -113,7 +113,7 @@ export class SlickColumnPicker {
     addCloseButtomElement.call(this, this._menuElm);
 
     this._listElm = createDomElement('div', { className: 'slick-column-picker-list', role: 'menu' });
-    this._bindEventService.bind(this._menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener);
+    this._bindEventService.bind(this._menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener, undefined, 'parent-menu');
 
     // Hide the menu on outside click.
     this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener);

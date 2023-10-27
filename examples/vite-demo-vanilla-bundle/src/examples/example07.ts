@@ -100,12 +100,12 @@ export default class Example7 {
               // we can also have multiple nested sub-menus
               command: 'export', title: 'Exports', positionOrder: 99,
               commandItems: [
-                { command: 'export-txt', title: 'Text (tab delimited)' },
+                { command: 'exports-txt', title: 'Text (tab delimited)' },
                 {
                   command: 'sub-menu', title: 'Excel', cssClass: 'green', subMenuTitle: 'available formats', subMenuTitleCssClass: 'text-italic orange',
                   commandItems: [
-                    { command: 'export-csv', title: 'Excel (csv)' },
-                    { command: 'export-xlsx', title: 'Excel (xlsx)' },
+                    { command: 'exports-csv', title: 'Excel (csv)' },
+                    { command: 'exports-xlsx', title: 'Excel (xlsx)' },
                   ]
                 }
               ]
@@ -113,7 +113,7 @@ export default class Example7 {
             {
               command: 'feedback', title: 'Feedback', positionOrder: 100,
               commandItems: [
-                { command: 'request-update', title: 'Request update from shipping team', iconCssClass: 'mdi mdi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
+                { command: 'request-update', title: 'Request update from supplier', iconCssClass: 'mdi mdi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
                 'divider',
                 {
                   command: 'sub-menu', title: 'Contact Us', iconCssClass: 'mdi mdi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
@@ -127,16 +127,22 @@ export default class Example7 {
             }
           ],
           onCommand: (_e, args) => {
-            switch(args.command) {
-              // show alert only for export commands
-              case 'export-cks':
-              case 'export-txt':
-              case 'export-xlsx':
-                alert(`Exporting as ${args.item.title}`);
-                break;
-              default:
-                alert('Command: ' + args.command);
-                break;
+            // to keep menu open you can preventDefault & return false
+            // _e.preventDefault();
+            // return false;
+
+            if (!args.item?.action) {
+              switch (args.command) {
+                // show alert only for export commands
+                case 'exports-csv':
+                case 'exports-txt':
+                case 'exports-xlsx':
+                  alert(`Exporting as ${args.item.title}`);
+                  break;
+                default:
+                  alert('Command: ' + args.command);
+                  break;
+              }
             }
           },
           optionTitleKey: 'CHANGE_COMPLETED_FLAG',
@@ -152,7 +158,7 @@ export default class Example7 {
             }
           ],
           onOptionSelected: (_e, args) => {
-            this.changeCompletedOption(args.dataContext, args.item.option);
+            this.changeCompletedOption(args.dataContext, args.item.option as boolean);
           },
         }
       },
@@ -437,8 +443,7 @@ export default class Example7 {
   }
 
   changeCompletedOption(dataContext: any, newValue: boolean) {
-    console.log('change', dataContext, newValue);
-    if (dataContext && dataContext.hasOwnProperty('completed')) {
+    if (dataContext?.hasOwnProperty('completed')) {
       dataContext.completed = newValue;
       this.sgb?.gridService.updateItem(dataContext);
     }

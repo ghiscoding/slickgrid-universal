@@ -74,11 +74,39 @@ export default class Example1 {
           onColumnsChanged: (_e, args) => console.log('onColumnPickerColumnsChanged - visible columns count', args.visibleColumns.length),
         },
         gridMenu: {
-          // commandItems: [
-          //   { command: 'help', title: 'Help', positionOrder: 70, action: (e, args) => console.log(args) },
-          //   { command: '', divider: true, positionOrder: 72 },
-          //   { command: 'hello', title: 'Hello', positionOrder: 69, action: (e, args) => alert('Hello World'), cssClass: 'red', tooltip: 'Hello World', iconCssClass: 'mdi mdi-close' },
-          // ],
+          subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
+          commandItems: [
+            { command: '', divider: true, positionOrder: 98 },
+            {
+              // we can also have multiple nested sub-menus
+              command: 'export', title: 'Exports', positionOrder: 99,
+              commandItems: [
+                { command: 'exports-txt', title: 'Text (tab delimited)' },
+                {
+                  command: 'sub-menu', title: 'Excel', cssClass: 'green', subMenuTitle: 'available formats', subMenuTitleCssClass: 'text-italic orange',
+                  commandItems: [
+                    { command: 'exports-csv', title: 'Excel (csv)' },
+                    { command: 'exports-xlsx', title: 'Excel (xlsx)' },
+                  ]
+                }
+              ]
+            },
+            {
+              command: 'feedback', title: 'Feedback', positionOrder: 100,
+              commandItems: [
+                { command: 'request-update', title: 'Request update from supplier', iconCssClass: 'mdi mdi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
+                'divider',
+                {
+                  command: 'sub-menu', title: 'Contact Us', iconCssClass: 'mdi mdi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
+                  commandItems: [
+                    { command: 'contact-email', title: 'Email us', iconCssClass: 'mdi mdi-pencil-outline' },
+                    { command: 'contact-chat', title: 'Chat with us', iconCssClass: 'mdi mdi-message-text-outline' },
+                    { command: 'contact-meeting', title: 'Book an appointment', iconCssClass: 'mdi mdi-coffee' },
+                  ]
+                }
+              ]
+            }
+          ],
           // menuUsabilityOverride: () => false,
           onBeforeMenuShow: () => {
             console.log('onGridMenuBeforeMenuShow');
@@ -88,7 +116,14 @@ export default class Example1 {
           onColumnsChanged: (_e, args) => console.log('onGridMenuColumnsChanged', args),
           onCommand: (_e, args) => {
             // e.preventDefault(); // preventing default event would keep the menu open after the execution
-            console.log('onGridMenuCommand', args.command);
+            const command = args.item?.command;
+            if (command.includes('exports-')) {
+              alert('Exporting as ' + args?.item.title);
+            } else if (command.includes('contact-')) {
+              alert('Command: ' + args?.command);
+            } else {
+              console.log('onGridMenuCommand', args.command);
+            }
           },
           onMenuClose: (_e, args) => console.log('onGridMenuMenuClose - visible columns count', args.visibleColumns.length),
         },
