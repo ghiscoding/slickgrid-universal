@@ -164,6 +164,31 @@ describe('Slick-Pagination Component', () => {
         expect(itemTo.textContent).toBe('10');
       });
 
+      it('should change the page number and expect the pagination service to go to that page (except for cursor based pagination)', () => {
+        const spy = jest.spyOn(paginationServiceStub, 'goToPageNumber');
+
+        const newPageNumber = 3;
+        const input = document.querySelector('input.page-number') as HTMLInputElement;
+        const span = document.querySelector('span.page-number') as HTMLInputElement;
+
+        const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: newPageNumber } } });
+        if (paginationServiceStub.cursorBased) {
+          expect(input).toBe(null);
+          expect(span).not.toBe(null);
+
+          span.dispatchEvent(mockEvent);
+          expect(spy).not.toHaveBeenCalled();
+        } else {
+          expect(span).toBe(null);
+          expect(input).not.toBe(null);
+
+          input.value = `${newPageNumber}`;
+          input.dispatchEvent(mockEvent);
+          component.pageNumber = newPageNumber;
+          expect(spy).toHaveBeenCalledWith(newPageNumber);
+        }
+      });
+
       it('should call changeToNextPage() from the View and expect the pagination service to be called with correct method', () => {
         const spy = jest.spyOn(paginationServiceStub, 'goToNextPage');
 
