@@ -22,7 +22,7 @@ export class BindingEventService {
       (elementOrElements as NodeListOf<HTMLElement>).forEach(element => {
         for (const eventName of eventNames) {
           element.addEventListener(eventName, listener, listenerOptions);
-          this._boundedEvents.push({ element, eventName, listener });
+          this._boundedEvents.push({ element, eventName, listener, groupName });
         }
       });
     } else {

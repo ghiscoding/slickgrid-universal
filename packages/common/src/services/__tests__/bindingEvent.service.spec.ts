@@ -125,15 +125,14 @@ describe('BindingEvent Service', () => {
     service.bind(mockElm1, 'keyup', mockCallback1, false, 'wonderful');
     service.bind(mockElm1, 'keydown', mockCallback2, { capture: true, passive: true }, 'magic');
     service.bind(mockElm1, 'click', mockCallback3, { capture: true, passive: true }); // no group
-    service.bind(mockElm1, 'mouseover', mockCallback4, { capture: false, passive: true }, 'mouse-group');
-    service.bind(mockElm1, 'mouseout', mockCallback5, { capture: false, passive: false }, 'mouse-group');
+    service.bind(mockElm1, ['mouseover', 'mouseout'], mockCallback4, { capture: false, passive: true }, 'mouse-group');
 
     expect(service.boundedEvents.length).toBe(5);
     expect(mockElm1.addEventListener).toHaveBeenCalledWith('keyup', mockCallback1, false);
     expect(mockElm1.addEventListener).toHaveBeenCalledWith('keydown', mockCallback2, { capture: true, passive: true });
     expect(mockElm1.addEventListener).toHaveBeenCalledWith('click', mockCallback3, { capture: true, passive: true });
     expect(mockElm1.addEventListener).toHaveBeenCalledWith('mouseover', mockCallback4, { capture: false, passive: true }); // mouse-group
-    expect(mockElm1.addEventListener).toHaveBeenCalledWith('mouseout', mockCallback5, { capture: false, passive: false }); // mouse-group
+    expect(mockElm1.addEventListener).toHaveBeenCalledWith('mouseout', mockCallback4, { capture: false, passive: true }); // mouse-group
 
     service.unbindAll(['magic', 'mouse-group']);
 
@@ -142,6 +141,6 @@ describe('BindingEvent Service', () => {
     expect(mockElm1.removeEventListener).toHaveBeenCalledWith('keydown', mockCallback2); // magic
     expect(mockElm1.removeEventListener).not.toHaveBeenCalledWith('click', mockCallback3);
     expect(mockElm1.removeEventListener).toHaveBeenCalledWith('mouseover', mockCallback4); // mouse-group
-    expect(mockElm1.removeEventListener).toHaveBeenCalledWith('mouseout', mockCallback5); // mouse-group
+    expect(mockElm1.removeEventListener).toHaveBeenCalledWith('mouseout', mockCallback4); // mouse-group
   });
 });
