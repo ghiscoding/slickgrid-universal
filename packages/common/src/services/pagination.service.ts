@@ -212,9 +212,8 @@ export class PaginationService {
       return this.cursorBased && this._pageInfo
         ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, first: this._itemsPerPage })
         : this.processOnPageChanged(this._pageNumber, event);
-    } else {
-      return Promise.resolve(this.getFullPagination());
     }
+    return Promise.resolve(this.getFullPagination());
   }
 
   goToLastPage(event?: any, triggerChangeEvent = true): Promise<ServicePagination> {
@@ -223,9 +222,8 @@ export class PaginationService {
       return this.cursorBased && this._pageInfo
         ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, last: this._itemsPerPage })
         : this.processOnPageChanged(this._pageNumber, event);
-    } else {
-      return Promise.resolve(this.getFullPagination());
     }
+    return Promise.resolve(this.getFullPagination());
   }
 
   goToNextPage(event?: any, triggerChangeEvent = true): Promise<boolean | ServicePagination> {
@@ -271,8 +269,6 @@ export class PaginationService {
         return this.cursorBased && this._pageInfo
           ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, last: this._itemsPerPage, before: this._pageInfo.startCursor })
           : this.processOnPageChanged(this._pageNumber, event);
-      } else {
-        return Promise.resolve(this.getFullPagination());
       }
     }
     return Promise.resolve(false);
