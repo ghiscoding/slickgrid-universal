@@ -286,12 +286,6 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
         level > 0 ? 'sub-menu' : 'parent-menu'
       );
 
-      // Header Button can have an optional handler
-      if ((item as HeaderButtonItem).handler && !(item as HeaderButtonItem).disabled) {
-        this._bindEventService.bind(commandLiElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLDivElement>) =>
-          (item as HeaderButtonItem).handler!.call(this, e)) as EventListener);
-      }
-
       // the option/command item could be a sub-menu if it has another list of commands/options
       if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems) {
         const chevronElm = document.createElement('span');
