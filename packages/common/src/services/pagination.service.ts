@@ -269,6 +269,8 @@ export class PaginationService {
         return this.cursorBased && this._pageInfo
           ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, last: this._itemsPerPage, before: this._pageInfo.startCursor })
           : this.processOnPageChanged(this._pageNumber, event);
+      } else {
+        return Promise.resolve(this.getFullPagination());
       }
     }
     return Promise.resolve(false);
