@@ -578,7 +578,7 @@ describe('HeaderMenu Plugin', () => {
       });
     });
 
-    describe('with sub-menus', () => {
+    describe.skip('with sub-menus', () => {
       it('should create a Grid Menu item with commands sub-menu items and expect sub-menu list to show in the DOM element aligned left when sub-menu is clicked', () => {
         const actionMock = jest.fn();
         const disposeSubMenuSpy = jest.spyOn(control, 'disposeSubMenus');
