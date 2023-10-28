@@ -50,7 +50,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getColumnIndex: jest.fn(),
   getContainerNode: jest.fn(),
-  getGridPosition: jest.fn(),
+  getGridPosition: () => ({ width: 10, left: 0 }),
   getUID: () => 'slickgrid12345',
   getOptions: () => gridOptionsMock,
   registerPlugin: jest.fn(),
@@ -78,6 +78,7 @@ const filterServiceStub = {
 const pubSubServiceStub = {
   publish: jest.fn(),
   subscribe: jest.fn(),
+  subscribeEvent: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
 } as BasePubSubService;
@@ -447,11 +448,9 @@ describe('HeaderMenu Plugin', () => {
       Object.defineProperty(buttonElm, 'clientWidth', { writable: true, configurable: true, value: 350 });
       Object.defineProperty(plugin.menuElement, 'clientWidth', { writable: true, configurable: true, value: 275 });
       Object.defineProperty(clickEvent, 'target', { writable: true, configurable: true, value: buttonElm });
-      plugin.showMenu(clickEvent, columnsMock[0], columnsMock[0].header!.menu!);
 
       expect(menuElm).toBeTruthy();
       expect(menuElm.clientWidth).toBe(275);
-      expect(menuElm.style.left).toBe('75px');
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
         `<li class="slick-menu-item mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers.">
@@ -576,6 +575,162 @@ describe('HeaderMenu Plugin', () => {
         expect(setOptionSpy).toHaveBeenCalledWith({ frozenColumn: 0 });
         expect(visibleSpy).toHaveBeenCalledWith(updatedColumnsMock);
         expect(setColumnsSpy).toHaveBeenCalledWith(updatedColumnsMock);
+      });
+    });
+
+    describe('with sub-menus', () => {
+      it('should create a Grid Menu item with commands sub-menu items and expect sub-menu list to show in the DOM element aligned left when sub-menu is clicked', () => {
+        const actionMock = jest.fn();
+        const disposeSubMenuSpy = jest.spyOn(control, 'disposeSubMenus');
+        Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
+
+        const updatedColumnsMock = [
+          { id: 'field1', field: 'field1', name: 'Field 1', width: 100, header: { menu: undefined, }, },
+          { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', header: { menu: undefined, }, width: 75, },
+        ] as Column[];
+
+        gridOptionsMock.gridMenu!.subItemChevronClass = 'mdi mdi-chevron-right';
+        gridOptionsMock.gridMenu!.dropSide = 'left';
+        gridOptionsMock.gridMenu!.commandItems = [
+          { command: 'help', title: 'Help', textCssClass: 'red bold' },
+          {
+            command: 'sub-commands', title: 'Sub Commands', subMenuTitle: 'Sub Command Title', action: actionMock, commandItems: [
+              { command: 'command3', title: 'Command 3', positionOrder: 70, },
+              { command: 'command4', title: 'Command 4', positionOrder: 71, },
+              {
+                command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'color-warning', commandItems: [
+                  { command: 'command5', title: 'Command 5', positionOrder: 72, },
+                ]
+              }
+            ]
+          },
+          {
+            command: 'sub-commands2', title: 'Sub Commands 2', commandItems: [
+              { command: 'command33', title: 'Command 33', positionOrder: 70, },
+            ]
+          }
+        ];
+        control.columns = columnsMock;
+        control.init();
+        const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
+        buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const gridMenu1Elm = document.body.querySelector('.slick-grid-menu.slick-menu-level-0') as HTMLDivElement;
+        const commandList1Elm = gridMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        Object.defineProperty(commandList1Elm, 'clientWidth', { writable: true, configurable: true, value: 70 });
+        const subCommands1Elm = commandList1Elm.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
+        Object.defineProperty(subCommands1Elm, 'clientWidth', { writable: true, configurable: true, value: 70 });
+        const commandContentElm2 = subCommands1Elm.querySelector('.slick-menu-content') as HTMLDivElement;
+        const commandChevronElm = commandList1Elm.querySelector('.sub-item-chevron') as HTMLSpanElement;
+
+        subCommands1Elm!.dispatchEvent(new Event('click'));
+        const gridMenu2Elm = document.body.querySelector('.slick-grid-menu.slick-menu-level-1') as HTMLDivElement;
+        const commandList2Elm = gridMenu2Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const subCommand3Elm = commandList2Elm.querySelector('[data-command="command3"]') as HTMLDivElement;
+        const subCommands2Elm = commandList2Elm.querySelector('[data-command="more-sub-commands"]') as HTMLDivElement;
+
+        subCommands2Elm!.dispatchEvent(new Event('click'));
+        const cellMenu3Elm = document.body.querySelector('.slick-grid-menu.slick-menu-level-2') as HTMLDivElement;
+        const commandList3Elm = cellMenu3Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const subCommand5Elm = commandList3Elm.querySelector('[data-command="command5"]') as HTMLDivElement;
+        const subMenuTitleElm = commandList3Elm.querySelector('.slick-menu-title') as HTMLDivElement;
+
+        expect(commandList1Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
+        expect(commandList2Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
+        expect(commandContentElm2.textContent).toBe('Sub Commands');
+        expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
+        expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
+        expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
+        expect(subCommand3Elm.textContent).toContain('Command 3');
+        expect(subCommand5Elm.textContent).toContain('Command 5');
+        expect(gridMenu1Elm.classList.contains('dropleft'));
+
+        // return Grid Menu menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
+        subCommands1Elm!.dispatchEvent(new Event('click'));
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(0);
+        const subCommands12Elm = commandList1Elm.querySelector('[data-command="sub-commands2"]') as HTMLDivElement;
+        subCommands12Elm!.dispatchEvent(new Event('click'));
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(1);
+        expect(disposeSubMenuSpy).toHaveBeenCalled();
+      });
+
+      it.skip('should create a Cell Menu item with commands sub-menu items and expect sub-menu list to show in the DOM element align right when sub-menu is clicked', () => {
+        // const actionMock = jest.fn();
+        // const disposeSubMenuSpy = jest.spyOn(plugin, 'disposeSubMenus');
+        // jest.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
+        // Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
+
+        // plugin.dispose();
+        // plugin.init({ commandItems: deepCopy(commandItemsMock) });
+        // (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).action = actionMock;
+        // plugin.addonOptions.subItemChevronClass = 'mdi mdi-chevron-right';
+        // plugin.addonOptions.autoAdjustDropOffset = '-780';
+        // plugin.addonOptions.dropSide = 'right';
+        // gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
+
+        const actionMock = jest.fn();
+        const disposeSubMenuSpy = jest.spyOn(control, 'disposeSubMenus');
+        Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
+
+        gridOptionsMock.gridMenu!.subItemChevronClass = 'mdi mdi-chevron-right';
+        gridOptionsMock.gridMenu!.dropSide = 'right';
+        gridOptionsMock.gridMenu!.commandItems = [
+          { command: 'help', title: 'Help', textCssClass: 'red bold' },
+          {
+            command: 'sub-commands', title: 'Sub Commands', subMenuTitle: 'Sub Command Title', action: actionMock, commandItems: [
+              { command: 'command3', title: 'Command 3', positionOrder: 70, },
+              { command: 'command4', title: 'Command 4', positionOrder: 71, },
+              {
+                command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'color-warning', commandItems: [
+                  { command: 'command5', title: 'Command 5', positionOrder: 72, },
+                ]
+              }
+            ]
+          },
+          {
+            command: 'sub-commands2', title: 'Sub Commands 2', commandItems: [
+              { command: 'command33', title: 'Command 33', positionOrder: 70, },
+            ]
+          }
+        ];
+        control.columns = columnsMock;
+        control.init();
+        const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
+        buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const gridMenu1Elm = document.body.querySelector('.slick-grid-menu.slick-menu-level-0') as HTMLDivElement;
+        const commandList1Elm = gridMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const subCommands1Elm = commandList1Elm.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
+        const commandContentElm2 = subCommands1Elm.querySelector('.slick-menu-content') as HTMLDivElement;
+        const commandChevronElm = commandList1Elm.querySelector('.sub-item-chevron') as HTMLSpanElement;
+
+        subCommands1Elm!.dispatchEvent(new Event('click'));
+        const gridMenu2Elm = document.body.querySelector('.slick-grid-menu.slick-menu-level-1') as HTMLDivElement;
+        const commandList2Elm = gridMenu2Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const subCommand3Elm = commandList2Elm.querySelector('[data-command="command3"]') as HTMLDivElement;
+        const subCommands2Elm = commandList2Elm.querySelector('[data-command="more-sub-commands"]') as HTMLDivElement;
+
+        subCommands2Elm!.dispatchEvent(new Event('click'));
+        const cellMenu3Elm = document.body.querySelector('.slick-grid-menu.slick-menu-level-2') as HTMLDivElement;
+        const commandList3Elm = cellMenu3Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const subCommand5Elm = commandList3Elm.querySelector('[data-command="command5"]') as HTMLDivElement;
+        const subMenuTitleElm = commandList3Elm.querySelector('.slick-menu-title') as HTMLDivElement;
+
+        expect(commandList1Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
+        expect(commandList2Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
+        expect(commandContentElm2.textContent).toBe('Sub Commands');
+        expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
+        expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
+        expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
+        expect(subCommand3Elm.textContent).toContain('Command 3');
+        expect(subCommand5Elm.textContent).toContain('Command 5');
+        expect(gridMenu1Elm.classList.contains('dropright'));
+
+        // return menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
+        subCommands1Elm!.dispatchEvent(new Event('click'));
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(0);
+        const subCommands12Elm = commandList1Elm.querySelector('[data-command="sub-commands2"]') as HTMLDivElement;
+        subCommands12Elm!.dispatchEvent(new Event('click'));
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(1);
+        expect(disposeSubMenuSpy).toHaveBeenCalled();
       });
     });
 

@@ -316,12 +316,12 @@ describe('CellMenu Plugin', () => {
               </li>
               <li class="slick-menu-item slick-menu-item-divider"></li>
               <li class=\"slick-menu-item slick-submenu-item\" data-command=\"sub-commands\">
-                <div class=\"slick-menu-icon\">◦</div>
+                <div class=\"slick-menu-icon\"></div>
                 <span class=\"slick-menu-content\">Sub Commands</span>
                 <span class=\"sub-item-chevron\">⮞</span>
               </li>
               <li class=\"slick-menu-item slick-submenu-item\" data-command=\"sub-commands2\">
-                <div class=\"slick-menu-icon\">◦</div>
+                <div class=\"slick-menu-icon\"></div>
                 <span class=\"slick-menu-content\">Sub Commands 2</span>
                 <span class=\"sub-item-chevron\">⮞</span>
               </li>
@@ -804,7 +804,7 @@ describe('CellMenu Plugin', () => {
               </li>
               <li class="slick-menu-item slick-menu-item-divider"></li>
               <li class=\"slick-menu-item slick-submenu-item\" data-option=\"sub-options\">
-                <div class=\"slick-menu-icon\">◦</div>
+                <div class=\"slick-menu-icon\"></div>
                 <span class=\"slick-menu-content\">Sub Options</span>
                 <span class=\"sub-item-chevron\">⮞</span>
               </li>

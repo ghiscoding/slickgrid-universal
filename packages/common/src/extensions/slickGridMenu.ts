@@ -330,7 +330,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     }
 
     // dispose of all sub-menus from the DOM and unbind all listeners
-    // this._bindEventService.unbindAll();
     this.disposeSubMenus();
     this._menuElm?.remove();
     this._menuElm = null;
