@@ -124,6 +124,82 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     this._activeHeaderColumnElm?.classList.remove('slick-header-column-active');
   }
 
+  repositionSubMenu(item: HeaderMenuCommandItem, columnDef: Column, level: number, e: DOMMouseOrTouchEvent<HTMLDivElement>) {
+    // creating sub-menu, we'll also pass level & the item object since we might have "subMenuTitle" to show
+    const subMenuElm = this.createCommandMenu(item.items || [], columnDef, level + 1, item);
+    document.body.appendChild(subMenuElm);
+    this.repositionMenu(e, subMenuElm);
+  }
+
+  repositionMenu(e: DOMMouseOrTouchEvent<HTMLDivElement>, menuElm: HTMLDivElement) {
+    const buttonElm = e.target as HTMLDivElement; // get header button createElement
+    const isSubMenu = menuElm.classList.contains('slick-submenu');
+    const parentElm = isSubMenu
+      ? e.target.closest('.slick-menu-item') as HTMLDivElement
+      : buttonElm as HTMLElement;
+
+    const relativePos = getElementOffsetRelativeToParent(this.sharedService.gridContainerElement, buttonElm);
+    const gridPos = this.grid.getGridPosition();
+    const menuWidth = menuElm.offsetWidth;
+    const parentOffset = getHtmlElementOffset(parentElm);
+    let menuOffsetLeft = isSubMenu ? parentOffset?.left ?? 0 : relativePos?.left ?? 0;
+    let menuOffsetTop = isSubMenu
+      ? parentOffset?.top ?? 0
+      : (relativePos?.top ?? 0) + (this.addonOptions?.menuOffsetTop ?? 0) + buttonElm.clientHeight;
+
+    // for sub-menus only, auto-adjust drop position (up/down)
+    //  we first need to see what position the drop will be located (defaults to bottom)
+    if (isSubMenu) {
+      // since we reposition menu below slick cell, we need to take it in consideration and do our calculation from that element
+      const menuHeight = menuElm?.clientHeight || 0;
+      const { bottom: availableSpaceBottom, top: availableSpaceTop } = calculateAvailableSpace(parentElm);
+      const dropPosition = ((availableSpaceBottom < menuHeight) && (availableSpaceTop > availableSpaceBottom)) ? 'top' : 'bottom';
+      if (dropPosition === 'top') {
+        menuElm.classList.remove('dropdown');
+        menuElm.classList.add('dropup');
+        menuOffsetTop -= (menuHeight - parentElm.clientHeight);
+      } else {
+        menuElm.classList.remove('dropup');
+        menuElm.classList.add('dropdown');
+      }
+    }
+
+    // when auto-align is set, it will calculate whether it has enough space in the viewport to show the drop menu on the right (default)
+    // if there isn't enough space on the right, it will automatically align the drop menu to the left
+    // to simulate an align left, we actually need to know the width of the drop menu
+    if (isSubMenu && parentElm) {
+      // sub-menu
+      const subMenuPosCalc = menuOffsetLeft + Number(menuWidth) + parentElm.clientWidth; // calculate coordinate at caller element far right
+      const browserWidth = document.documentElement.clientWidth;
+      const dropSide = (subMenuPosCalc >= gridPos.width || subMenuPosCalc >= browserWidth) ? 'left' : 'right';
+      if (dropSide === 'left') {
+        menuElm.classList.remove('dropright');
+        menuElm.classList.add('dropleft');
+        menuOffsetLeft -= menuWidth;
+      } else {
+        menuElm.classList.remove('dropleft');
+        menuElm.classList.add('dropright');
+        menuOffsetLeft += parentElm.offsetWidth;
+      }
+    } else {
+      // parent menu
+      menuOffsetLeft = relativePos?.left ?? 0;
+      if (this.addonOptions.autoAlign && (gridPos?.width && (menuOffsetLeft + (menuElm.clientWidth ?? 0)) >= gridPos.width)) {
+        menuOffsetLeft = menuOffsetLeft + buttonElm.clientWidth - menuElm.clientWidth + (this.addonOptions?.autoAlignOffset || 0);
+      }
+    }
+
+    // ready to reposition the menu
+    menuElm.style.top = `${menuOffsetTop}px`;
+    menuElm.style.left = `${menuOffsetLeft}px`;
+
+    // mark the header as active to keep the highlighting.
+    this._activeHeaderColumnElm = this.grid.getContainerNode().querySelector(`:not(.slick-preheader-panel) >.slick-header-columns`);
+    if (this._activeHeaderColumnElm) {
+      this._activeHeaderColumnElm.classList.add('slick-header-column-active');
+    }
+  }
+
   /** Translate the Header Menu titles, we need to loop through all column definition to re-translate them */
   translateHeaderMenu() {
     if (this.sharedService.gridOptions?.headerMenu) {
@@ -513,6 +589,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       }
     }
 
+    const commandMenuElm = createDomElement('div', { className: `${this._menuCssPrefix}-command-list`, role: 'menu' }, menuElm);
+
     const callbackArgs = {
       grid: this.grid,
       column: columnDef,
@@ -522,13 +600,13 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
     // when creating sub-menu also add its sub-menu title when exists
     if (item && level > 0) {
-      this.addSubMenuTitleWhenExists(item as HeaderMenuCommandItem, menuElm); // add sub-menu title when exists
+      this.addSubMenuTitleWhenExists(item as HeaderMenuCommandItem, commandMenuElm); // add sub-menu title when exists
     }
 
     this.populateCommandOrOptionItems(
       'command',
       this.addonOptions,
-      menuElm as HTMLDivElement,
+      commandMenuElm,
       commandItems,
       callbackArgs,
       this.handleMenuItemCommandClick,
@@ -538,82 +616,6 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     level++;
 
     return menuElm;
-  }
-
-  protected repositionSubMenu(item: HeaderMenuCommandItem, columnDef: Column, level: number, e: DOMMouseOrTouchEvent<HTMLDivElement>) {
-    // creating sub-menu, we'll also pass level & the item object since we might have "subMenuTitle" to show
-    const subMenuElm = this.createCommandMenu(item.items || [], columnDef, level + 1, item);
-    document.body.appendChild(subMenuElm);
-    this.repositionMenu(e, subMenuElm);
-  }
-
-  protected repositionMenu(e: DOMMouseOrTouchEvent<HTMLDivElement>, menuElm: HTMLDivElement) {
-    const buttonElm = e.target as HTMLDivElement; // get header button createElement
-    const isSubMenu = menuElm.classList.contains('slick-submenu');
-    const parentElm = isSubMenu
-      ? e.target.closest('.slick-menu-item') as HTMLDivElement
-      : buttonElm as HTMLElement;
-
-    const relativePos = getElementOffsetRelativeToParent(this.sharedService.gridContainerElement, buttonElm);
-    const gridPos = this.grid.getGridPosition();
-    const menuWidth = menuElm.offsetWidth;
-    const parentOffset = getHtmlElementOffset(parentElm);
-    let menuOffsetLeft = isSubMenu ? parentOffset?.left ?? 0 : relativePos?.left ?? 0;
-    let menuOffsetTop = isSubMenu
-      ? parentOffset?.top ?? 0
-      : (relativePos?.top ?? 0) + (this.addonOptions?.menuOffsetTop ?? 0) + buttonElm.clientHeight;
-
-    // for sub-menus only, auto-adjust drop position (up/down)
-    //  we first need to see what position the drop will be located (defaults to bottom)
-    if (isSubMenu) {
-      // since we reposition menu below slick cell, we need to take it in consideration and do our calculation from that element
-      const menuHeight = menuElm?.clientHeight || 0;
-      const { bottom: availableSpaceBottom, top: availableSpaceTop } = calculateAvailableSpace(parentElm);
-      const dropPosition = ((availableSpaceBottom < menuHeight) && (availableSpaceTop > availableSpaceBottom)) ? 'top' : 'bottom';
-      if (dropPosition === 'top') {
-        menuElm.classList.remove('dropdown');
-        menuElm.classList.add('dropup');
-        menuOffsetTop -= (menuHeight - parentElm.clientHeight);
-      } else {
-        menuElm.classList.remove('dropup');
-        menuElm.classList.add('dropdown');
-      }
-    }
-
-    // when auto-align is set, it will calculate whether it has enough space in the viewport to show the drop menu on the right (default)
-    // if there isn't enough space on the right, it will automatically align the drop menu to the left
-    // to simulate an align left, we actually need to know the width of the drop menu
-    if (isSubMenu && parentElm) {
-      // sub-menu
-      const subMenuPosCalc = menuOffsetLeft + Number(menuWidth) + parentElm.clientWidth; // calculate coordinate at caller element far right
-      const browserWidth = document.documentElement.clientWidth;
-      const dropSide = (subMenuPosCalc >= gridPos.width || subMenuPosCalc >= browserWidth) ? 'left' : 'right';
-      if (dropSide === 'left') {
-        menuElm.classList.remove('dropright');
-        menuElm.classList.add('dropleft');
-        menuOffsetLeft -= menuWidth;
-      } else {
-        menuElm.classList.remove('dropleft');
-        menuElm.classList.add('dropright');
-        menuOffsetLeft += parentElm.offsetWidth;
-      }
-    } else {
-      // parent menu
-      menuOffsetLeft = relativePos?.left ?? 0;
-      if (this.addonOptions.autoAlign && (gridPos?.width && (menuOffsetLeft + (menuElm.clientWidth ?? 0)) >= gridPos.width)) {
-        menuOffsetLeft = menuOffsetLeft + buttonElm.clientWidth - menuElm.clientWidth + (this.addonOptions?.autoAlignOffset || 0);
-      }
-    }
-
-    // ready to reposition the menu
-    menuElm.style.top = `${menuOffsetTop}px`;
-    menuElm.style.left = `${menuOffsetLeft}px`;
-
-    // mark the header as active to keep the highlighting.
-    this._activeHeaderColumnElm = menuElm.closest('.slick-header-column');
-    if (this._activeHeaderColumnElm) {
-      this._activeHeaderColumnElm.classList.add('slick-header-column-active');
-    }
   }
 
   /**

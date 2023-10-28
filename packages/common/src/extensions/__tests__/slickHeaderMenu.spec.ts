@@ -172,6 +172,7 @@ describe('HeaderMenu Plugin', () => {
   describe('plugins - Header Menu', () => {
     let gridContainerDiv: HTMLDivElement;
     let headerDiv: HTMLDivElement;
+    let headersDiv: HTMLDivElement;
 
     beforeEach(() => {
       jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
@@ -185,8 +186,13 @@ describe('HeaderMenu Plugin', () => {
       headerDiv.className = 'slick-header-column';
       gridContainerDiv = document.createElement('div');
       gridContainerDiv.className = 'slickgrid-container';
+      headersDiv = document.createElement('div');
+      headersDiv.className = 'slick-header-columns';
       jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(gridContainerDiv);
       jest.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
+      headersDiv.appendChild(headerDiv);
+      gridContainerDiv.appendChild(headersDiv);
+      document.body.appendChild(gridContainerDiv);
     });
 
     afterEach(() => {
@@ -379,7 +385,7 @@ describe('HeaderMenu Plugin', () => {
 
       gridContainerDiv.querySelector('.slick-menu-item.mdi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       expect(actionMock).toHaveBeenCalled();
-      expect(gridContainerDiv.innerHTML).toBe('');
+      expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('');
     });
 
     it('should populate a Header Menu and a 2nd button and expect the "onCommand" handler to be executed when defined', () => {
@@ -405,7 +411,7 @@ describe('HeaderMenu Plugin', () => {
 
       gridContainerDiv.querySelector('.slick-menu-item.mdi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       expect(onCommandMock).toHaveBeenCalled();
-      expect(gridContainerDiv.innerHTML).toBe('');
+      expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('');
     });
 
     it('should populate a Header Menu and a 2nd button is "disabled" but still expect the button NOT to be disabled because the "itemUsabilityOverride" has priority over the "disabled" property', () => {
@@ -514,6 +520,11 @@ describe('HeaderMenu Plugin', () => {
           </li>`
       ));
 
+      // click inside menu shouldn't close it
+      plugin.menuElement!.dispatchEvent(new Event('mousedown', { bubbles: true, cancelable: false, composed: false }));
+      expect(plugin.menuElement).toBeTruthy();
+
+      // click anywhere else should close it
       const bodyElm = document.body;
       bodyElm.dispatchEvent(new Event('mousedown', { bubbles: true }));
       expect(hideMenuSpy).toHaveBeenCalled();
@@ -578,58 +589,70 @@ describe('HeaderMenu Plugin', () => {
       });
     });
 
-    describe.skip('with sub-menus', () => {
-      it('should create a Grid Menu item with commands sub-menu items and expect sub-menu list to show in the DOM element aligned left when sub-menu is clicked', () => {
-        const actionMock = jest.fn();
-        const disposeSubMenuSpy = jest.spyOn(control, 'disposeSubMenus');
-        Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
+    describe('with sub-menus', () => {
+      let columnsMock: Column[];
 
-        const updatedColumnsMock = [
-          { id: 'field1', field: 'field1', name: 'Field 1', width: 100, header: { menu: undefined, }, },
-          { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', header: { menu: undefined, }, width: 75, },
-        ] as Column[];
-
-        gridOptionsMock.gridMenu!.subItemChevronClass = 'mdi mdi-chevron-right';
-        gridOptionsMock.gridMenu!.dropSide = 'left';
-        gridOptionsMock.gridMenu!.commandItems = [
-          { command: 'help', title: 'Help', textCssClass: 'red bold' },
+      beforeEach(() => {
+        columnsMock = [
+          { id: 'field1', field: 'field1', name: 'Field 1', width: 100, },
           {
-            command: 'sub-commands', title: 'Sub Commands', subMenuTitle: 'Sub Command Title', action: actionMock, commandItems: [
-              { command: 'command3', title: 'Command 3', positionOrder: 70, },
-              { command: 'command4', title: 'Command 4', positionOrder: 71, },
-              {
-                command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'color-warning', commandItems: [
-                  { command: 'command5', title: 'Command 5', positionOrder: 72, },
+            id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing',
+            header: {
+              menu: {
+                items: [
+                  { command: 'help', title: 'Help', textCssClass: 'red bold' },
+                  {
+                    command: 'sub-commands', title: 'Sub Commands', subMenuTitle: 'Sub Command Title', items: [
+                      { command: 'command3', title: 'Command 3', positionOrder: 70, },
+                      { command: 'command4', title: 'Command 4', positionOrder: 71, },
+                      {
+                        command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'color-warning', items: [
+                          { command: 'command5', title: 'Command 5', positionOrder: 72, },
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    command: 'sub-commands2', title: 'Sub Commands 2', items: [
+                      { command: 'command33', title: 'Command 33', positionOrder: 70, },
+                    ]
+                  }
                 ]
               }
-            ]
+            }, width: 75,
           },
-          {
-            command: 'sub-commands2', title: 'Sub Commands 2', commandItems: [
-              { command: 'command33', title: 'Command 33', positionOrder: 70, },
-            ]
-          }
-        ];
-        control.columns = columnsMock;
-        control.init();
-        const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
-        buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-        const gridMenu1Elm = document.body.querySelector('.slick-grid-menu.slick-menu-level-0') as HTMLDivElement;
-        const commandList1Elm = gridMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        ] as Column[];
+      });
+
+      it('should create Header Menu item with commands sub-menu items and expect sub-menu list to show in the DOM element aligned left when sub-menu is clicked', () => {
+        const onCommandMock = jest.fn();
+        const disposeSubMenuSpy = jest.spyOn(plugin, 'disposeSubMenus');
+        Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
+        jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
+
+        plugin.init({ autoAlign: true });
+        plugin.addonOptions.onCommand = onCommandMock;
+
+        const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const headerMenu1Elm = gridContainerDiv.querySelector('.slick-header-menu.slick-menu-level-0') as HTMLDivElement;
+        const commandList1Elm = headerMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         Object.defineProperty(commandList1Elm, 'clientWidth', { writable: true, configurable: true, value: 70 });
         const subCommands1Elm = commandList1Elm.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
         Object.defineProperty(subCommands1Elm, 'clientWidth', { writable: true, configurable: true, value: 70 });
         const commandContentElm2 = subCommands1Elm.querySelector('.slick-menu-content') as HTMLDivElement;
         const commandChevronElm = commandList1Elm.querySelector('.sub-item-chevron') as HTMLSpanElement;
 
-        subCommands1Elm!.dispatchEvent(new Event('click'));
-        const gridMenu2Elm = document.body.querySelector('.slick-grid-menu.slick-menu-level-1') as HTMLDivElement;
-        const commandList2Elm = gridMenu2Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        subCommands1Elm!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const headerMenu2Elm = document.body.querySelector('.slick-header-menu.slick-menu-level-1') as HTMLDivElement;
+        const commandList2Elm = headerMenu2Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         const subCommand3Elm = commandList2Elm.querySelector('[data-command="command3"]') as HTMLDivElement;
         const subCommands2Elm = commandList2Elm.querySelector('[data-command="more-sub-commands"]') as HTMLDivElement;
 
-        subCommands2Elm!.dispatchEvent(new Event('click'));
-        const cellMenu3Elm = document.body.querySelector('.slick-grid-menu.slick-menu-level-2') as HTMLDivElement;
+        subCommands2Elm!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const cellMenu3Elm = document.body.querySelector('.slick-header-menu.slick-menu-level-2') as HTMLDivElement;
         const commandList3Elm = cellMenu3Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         const subCommand5Elm = commandList3Elm.querySelector('[data-command="command5"]') as HTMLDivElement;
         const subMenuTitleElm = commandList3Elm.querySelector('.slick-menu-title') as HTMLDivElement;
@@ -639,77 +662,49 @@ describe('HeaderMenu Plugin', () => {
         expect(commandContentElm2.textContent).toBe('Sub Commands');
         expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
         expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
-        expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
+        expect(commandChevronElm.className).toBe('sub-item-chevron');
         expect(subCommand3Elm.textContent).toContain('Command 3');
         expect(subCommand5Elm.textContent).toContain('Command 5');
-        expect(gridMenu1Elm.classList.contains('dropleft'));
+        expect(headerMenu1Elm.classList.contains('dropleft'));
+        expect(headerMenu2Elm.classList.contains('dropup')).toBeFalsy();
+        expect(headerMenu2Elm.classList.contains('dropdown')).toBeTruthy();
 
         // return Grid Menu menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
         subCommands1Elm!.dispatchEvent(new Event('click'));
-        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(0);
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(1);
         const subCommands12Elm = commandList1Elm.querySelector('[data-command="sub-commands2"]') as HTMLDivElement;
         subCommands12Elm!.dispatchEvent(new Event('click'));
-        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(1);
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(2);
         expect(disposeSubMenuSpy).toHaveBeenCalled();
       });
 
-      it.skip('should create a Cell Menu item with commands sub-menu items and expect sub-menu list to show in the DOM element align right when sub-menu is clicked', () => {
-        // const actionMock = jest.fn();
-        // const disposeSubMenuSpy = jest.spyOn(plugin, 'disposeSubMenus');
-        // jest.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
-        // Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
-
-        // plugin.dispose();
-        // plugin.init({ commandItems: deepCopy(commandItemsMock) });
-        // (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).action = actionMock;
-        // plugin.addonOptions.subItemChevronClass = 'mdi mdi-chevron-right';
-        // plugin.addonOptions.autoAdjustDropOffset = '-780';
-        // plugin.addonOptions.dropSide = 'right';
-        // gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
-
-        const actionMock = jest.fn();
-        const disposeSubMenuSpy = jest.spyOn(control, 'disposeSubMenus');
+      it('should create a Header Menu item with commands sub-menu items and expect sub-menu list to show in the DOM element align right when sub-menu is clicked', () => {
+        const onCommandMock = jest.fn();
+        const disposeSubMenuSpy = jest.spyOn(plugin, 'disposeSubMenus');
         Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
+        jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
 
-        gridOptionsMock.gridMenu!.subItemChevronClass = 'mdi mdi-chevron-right';
-        gridOptionsMock.gridMenu!.dropSide = 'right';
-        gridOptionsMock.gridMenu!.commandItems = [
-          { command: 'help', title: 'Help', textCssClass: 'red bold' },
-          {
-            command: 'sub-commands', title: 'Sub Commands', subMenuTitle: 'Sub Command Title', action: actionMock, commandItems: [
-              { command: 'command3', title: 'Command 3', positionOrder: 70, },
-              { command: 'command4', title: 'Command 4', positionOrder: 71, },
-              {
-                command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'color-warning', commandItems: [
-                  { command: 'command5', title: 'Command 5', positionOrder: 72, },
-                ]
-              }
-            ]
-          },
-          {
-            command: 'sub-commands2', title: 'Sub Commands 2', commandItems: [
-              { command: 'command33', title: 'Command 33', positionOrder: 70, },
-            ]
-          }
-        ];
-        control.columns = columnsMock;
-        control.init();
-        const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
-        buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-        const gridMenu1Elm = document.body.querySelector('.slick-grid-menu.slick-menu-level-0') as HTMLDivElement;
-        const commandList1Elm = gridMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        plugin.init({ autoAlign: true, subItemChevronClass: 'mdi mdi-chevron-right' });
+        plugin.addonOptions.onCommand = onCommandMock;
+
+        const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const headerMenu1Elm = gridContainerDiv.querySelector('.slick-header-menu.slick-menu-level-0') as HTMLDivElement;
+        const commandList1Elm = headerMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         const subCommands1Elm = commandList1Elm.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
         const commandContentElm2 = subCommands1Elm.querySelector('.slick-menu-content') as HTMLDivElement;
         const commandChevronElm = commandList1Elm.querySelector('.sub-item-chevron') as HTMLSpanElement;
 
         subCommands1Elm!.dispatchEvent(new Event('click'));
-        const gridMenu2Elm = document.body.querySelector('.slick-grid-menu.slick-menu-level-1') as HTMLDivElement;
-        const commandList2Elm = gridMenu2Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const headerMenu2Elm = document.body.querySelector('.slick-header-menu.slick-menu-level-1') as HTMLDivElement;
+        const commandList2Elm = headerMenu2Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         const subCommand3Elm = commandList2Elm.querySelector('[data-command="command3"]') as HTMLDivElement;
         const subCommands2Elm = commandList2Elm.querySelector('[data-command="more-sub-commands"]') as HTMLDivElement;
 
         subCommands2Elm!.dispatchEvent(new Event('click'));
-        const cellMenu3Elm = document.body.querySelector('.slick-grid-menu.slick-menu-level-2') as HTMLDivElement;
+        const cellMenu3Elm = document.body.querySelector('.slick-header-menu.slick-menu-level-2') as HTMLDivElement;
         const commandList3Elm = cellMenu3Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         const subCommand5Elm = commandList3Elm.querySelector('[data-command="command5"]') as HTMLDivElement;
         const subMenuTitleElm = commandList3Elm.querySelector('.slick-menu-title') as HTMLDivElement;
@@ -722,15 +717,60 @@ describe('HeaderMenu Plugin', () => {
         expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
         expect(subCommand3Elm.textContent).toContain('Command 3');
         expect(subCommand5Elm.textContent).toContain('Command 5');
-        expect(gridMenu1Elm.classList.contains('dropright'));
+        expect(headerMenu1Elm.classList.contains('dropright'));
+        expect(headerMenu2Elm.classList.contains('dropup')).toBeFalsy();
+        expect(headerMenu2Elm.classList.contains('dropdown')).toBeTruthy();
 
         // return menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
         subCommands1Elm!.dispatchEvent(new Event('click'));
-        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(0);
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(1);
         const subCommands12Elm = commandList1Elm.querySelector('[data-command="sub-commands2"]') as HTMLDivElement;
         subCommands12Elm!.dispatchEvent(new Event('click'));
-        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(1);
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(2);
         expect(disposeSubMenuSpy).toHaveBeenCalled();
+      });
+
+      it('should create a Grid Menu item with commands sub-menu items and expect sub-menu to be positioned on top (dropup)', () => {
+        const onCommandMock = jest.fn();
+        Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
+        jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
+
+        plugin.init({ autoAlign: true });
+        plugin.addonOptions.onCommand = onCommandMock;
+
+        const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const headerMenu1Elm = gridContainerDiv.querySelector('.slick-header-menu.slick-menu-level-0') as HTMLDivElement;
+        const commandList1Elm = headerMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const subCommands1Elm = commandList1Elm.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
+        Object.defineProperty(headerMenu1Elm, 'clientHeight', { writable: true, configurable: true, value: 77 });
+        Object.defineProperty(headerMenu1Elm, 'clientWidth', { writable: true, configurable: true, value: 225 });
+        const divEvent1 = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false })
+        Object.defineProperty(divEvent1, 'target', { writable: true, configurable: true, value: headerButtonElm });
+
+        subCommands1Elm!.dispatchEvent(new Event('click'));
+        plugin.repositionMenu(divEvent1 as any, headerMenu1Elm);
+        const headerMenu2Elm = document.body.querySelector('.slick-header-menu.slick-menu-level-1') as HTMLDivElement;
+        Object.defineProperty(headerMenu2Elm, 'clientHeight', { writable: true, configurable: true, value: 320 });
+
+        const divEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false })
+        const subMenuElm = document.createElement('div');
+        const menuItem = document.createElement('div');
+        menuItem.className = 'slick-menu-item';
+        menuItem.style.top = '465px';
+        jest.spyOn(menuItem, 'getBoundingClientRect').mockReturnValue({ top: 465, left: 25 } as any);
+        Object.defineProperty(menuItem, 'target', { writable: true, configurable: true, value: menuItem });
+        subMenuElm.className = 'slick-submenu';
+        Object.defineProperty(divEvent, 'target', { writable: true, configurable: true, value: subMenuElm });
+        menuItem.appendChild(subMenuElm);
+
+        plugin.repositionMenu(divEvent as any, headerMenu2Elm);
+        const headerMenu2Elm2 = document.body.querySelector('.slick-header-menu.slick-menu-level-1') as HTMLDivElement;
+
+        expect(headerMenu2Elm2.classList.contains('dropup')).toBeTruthy();
+        expect(headerMenu2Elm2.classList.contains('dropdown')).toBeFalsy();
       });
     });
 

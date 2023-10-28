@@ -478,6 +478,7 @@ export default class Example14 {
       // when using the cellMenu, you can change some of the default options and all use some of the callback methods
       enableCellMenu: true,
       headerMenu: {
+        subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
         onCommand: (_e, args) => {
           // e.preventDefault(); // preventing default event would keep the menu open after the execution
           const command = args.item?.command;
