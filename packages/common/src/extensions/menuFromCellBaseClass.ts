@@ -247,7 +247,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
         isMenuClicked = true;
       }
 
-      if (this.menuElement !== e.target && !isMenuClicked && !e.defaultPrevented || e.target.className === 'close' && parentMenuElm) {
+      if (this.menuElement !== e.target && !isMenuClicked && !e.defaultPrevented || (e.target.className === 'close' && parentMenuElm)) {
         this.closeMenu(e, { cell: this._currentCell, row: this._currentRow, grid: this.grid });
       }
     }

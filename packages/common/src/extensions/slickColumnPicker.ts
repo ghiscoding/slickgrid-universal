@@ -175,7 +175,7 @@ export class SlickColumnPicker {
 
   /** Mouse down handler when clicking anywhere in the DOM body */
   protected handleBodyMouseDown(e: DOMMouseOrTouchEvent<HTMLDivElement>) {
-    if ((this._menuElm !== e.target && !this._menuElm.contains(e.target)) || e.target.className === 'close') {
+    if ((this._menuElm !== e.target && !this._menuElm.contains(e.target)) || (e.target.className === 'close' && e.target.closest('.slick-column-picker'))) {
       this._menuElm.setAttribute('aria-expanded', 'false');
       this._menuElm.style.display = 'none';
     }
