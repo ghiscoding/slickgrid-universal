@@ -196,6 +196,7 @@ describe('ContextMenu Plugin', () => {
       hideMenuOnScroll: false,
       optionShownOverColumnIds: [],
       commandShownOverColumnIds: [],
+      subMenuOpenByEvent: 'mouseover'
     });
   });
 
@@ -657,6 +658,7 @@ describe('ContextMenu Plugin', () => {
 
       it('should create a Context Menu item with commands sub-menu items and expect sub-menu list to show in the DOM element when sub-menu is clicked', () => {
         const actionMock = jest.fn();
+        const disposeSubMenuSpy = jest.spyOn(plugin, 'disposeSubMenus');
         jest.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
 
         plugin.dispose();
@@ -667,6 +669,7 @@ describe('ContextMenu Plugin', () => {
 
         let contextMenu1Elm = document.body.querySelector('.slick-context-menu.slickgrid12345.slick-menu-level-0') as HTMLDivElement;
         const commandList1Elm = contextMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const deleteRowCommandElm = commandList1Elm.querySelector('[data-command="delete-row"]') as HTMLDivElement;
         const subCommands1Elm = commandList1Elm.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
         const commandContentElm2 = subCommands1Elm.querySelector('.slick-menu-content') as HTMLDivElement;
         const commandChevronElm = commandList1Elm.querySelector('.sub-item-chevron') as HTMLSpanElement;
@@ -677,7 +680,7 @@ describe('ContextMenu Plugin', () => {
         const subCommand3Elm = commandList2Elm.querySelector('[data-command="command3"]') as HTMLDivElement;
         const subCommands2Elm = commandList2Elm.querySelector('[data-command="more-sub-commands"]') as HTMLDivElement;
 
-        subCommands2Elm!.dispatchEvent(new Event('click'));
+        subCommands2Elm!.dispatchEvent(new Event('mouseover')); // mouseover or click should work
         const contextMenu3Elm = document.body.querySelector('.slick-context-menu.slickgrid12345.slick-menu-level-2') as HTMLDivElement;
         const commandList3Elm = contextMenu3Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         const subCommand5Elm = commandList3Elm.querySelector('[data-command="command5"]') as HTMLDivElement;
@@ -705,6 +708,10 @@ describe('ContextMenu Plugin', () => {
         document.body.dispatchEvent(subCommandEvent);
         contextMenu2Elm = document.body.querySelector('.slick-context-menu.slickgrid12345.slick-menu-level-1') as HTMLDivElement;
         expect(contextMenu2Elm).toBeTruthy();
+
+        // calling another command on parent menu should dispose sub-menus
+        deleteRowCommandElm!.dispatchEvent(new Event('mouseover'));
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(4);
       });
 
       it('should create a Context Menu and expect the button click handler & "action" callback to be executed when defined', () => {

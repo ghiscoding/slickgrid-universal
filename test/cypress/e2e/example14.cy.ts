@@ -201,7 +201,7 @@ describe('Example 14 - Columns Resize by Content', { retries: 1 }, () => {
       cy.get('.slick-menu-item.slick-menu-item')
         .contains('Hello')
         .should('exist')
-        .click();
+        .trigger('mouseover'); // mouseover or click should work
 
       cy.get('.slick-header-menu.slick-menu-level-1.dropright')
         .should('exist')
@@ -260,7 +260,7 @@ describe('Example 14 - Columns Resize by Content', { retries: 1 }, () => {
         .find('.slick-menu-item.slick-menu-item')
         .contains('Contact Us')
         .should('exist')
-        .click();
+        .trigger('mouseover'); // mouseover or click should work
 
       cy.get('.slick-submenu').should('have.length', 2);
       cy.get('.slick-header-menu.slick-menu-level-2.dropright') // right align

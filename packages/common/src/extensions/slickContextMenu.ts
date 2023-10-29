@@ -43,6 +43,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     hideMenuOnScroll: false,
     optionShownOverColumnIds: [],
     commandShownOverColumnIds: [],
+    subMenuOpenByEvent: 'mouseover',
   } as unknown as ContextMenuOption;
   pluginName: 'ContextMenu' = 'ContextMenu' as const;
 

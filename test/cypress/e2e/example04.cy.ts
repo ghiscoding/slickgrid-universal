@@ -497,7 +497,7 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
       .find('.slick-menu-item .slick-menu-content')
       .contains('Contact Us')
       .should('exist')
-      .click();
+      .trigger('mouseover'); // mouseover or click should work
 
     cy.get('.slick-submenu').should('have.length', 2);
     cy.get('.slick-context-menu.slick-menu-level-2.dropright') // right align
