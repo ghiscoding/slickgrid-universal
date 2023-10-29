@@ -275,7 +275,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         isMenuClicked = true;
       }
 
-      if (this._menuElm !== e.target && !isMenuClicked && !e.defaultPrevented || e.target.className === 'close') {
+      if (this._menuElm !== e.target && !isMenuClicked && !e.defaultPrevented || (e.target.className === 'close' && parentMenuElm)) {
         this.hideMenu();
       }
     }
