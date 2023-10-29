@@ -135,12 +135,12 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   // protected functions
   // ------------------
 
-  protected addSubMenuTitleWhenExists(item: MenuCommandItem | MenuOptionItem | GridMenuItem | 'divider', commandOrOptionMenu: HTMLDivElement) {
-    if (item !== 'divider' && item?.subMenuTitle) {
+  protected addSubMenuTitleWhenExists(item: ExtractMenuType<ExtendableItemTypes, MenuType>, commandOrOptionMenu: HTMLDivElement) {
+    if (item !== 'divider' && (item as MenuCommandItem | MenuOptionItem | GridMenuItem)?.subMenuTitle) {
       const subMenuTitleElm = document.createElement('div');
       subMenuTitleElm.className = 'slick-menu-title';
-      subMenuTitleElm.textContent = item.subMenuTitle as string;
-      const subMenuTitleClass = item.subMenuTitleCssClass as string;
+      subMenuTitleElm.textContent = (item as MenuCommandItem | MenuOptionItem | GridMenuItem).subMenuTitle as string;
+      const subMenuTitleClass = (item as MenuCommandItem | MenuOptionItem | GridMenuItem).subMenuTitleCssClass as string;
       if (subMenuTitleClass) {
         subMenuTitleElm.classList.add(...subMenuTitleClass.split(' '));
       }
@@ -155,11 +155,12 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     commandOrOptionMenuElm: HTMLElement,
     commandOrOptionItems: Array<ExtractMenuType<ExtendableItemTypes, MenuType>>,
     args: unknown,
-    itemClickCallback: (event: DOMMouseOrTouchEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column) => void
+    itemClickCallback: (e: DOMMouseOrTouchEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column) => void,
+    itemMouseoverCallback?: (e: DOMMouseOrTouchEvent<HTMLElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column) => void
   ) {
     if (args && commandOrOptionItems && menuOptions) {
       for (const item of commandOrOptionItems) {
-        this.populateSingleCommandOrOptionItem(itemType, menuOptions, commandOrOptionMenuElm, item, args, itemClickCallback);
+        this.populateSingleCommandOrOptionItem(itemType, menuOptions, commandOrOptionMenuElm, item, args, itemClickCallback, itemMouseoverCallback);
       }
     }
   }
@@ -196,7 +197,8 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     commandOrOptionMenuElm: HTMLElement | null,
     item: ExtractMenuType<ExtendableItemTypes, MenuType>,
     args: any,
-    itemClickCallback: (event: DOMMouseOrTouchEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column) => void
+    itemClickCallback: (e: DOMMouseOrTouchEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column) => void,
+    itemMouseoverCallback?: (e: DOMMouseOrTouchEvent<HTMLElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, columnDef?: Column) => void
   ): HTMLLIElement | null {
     let commandLiElm: HTMLLIElement | null = null;
 
@@ -279,13 +281,32 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       }
 
       // execute command callback on menu item clicked
+      const eventGroupName = level > 0 ? 'sub-menu' : 'parent-menu';
       this._bindEventService.bind(
         commandLiElm,
         'click',
         ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => itemClickCallback.call(this, e, itemType, item, level, args?.column)) as EventListener,
         undefined,
-        level > 0 ? 'sub-menu' : 'parent-menu'
+        eventGroupName
       );
+
+      // optionally open sub-menu(s) by mouseover
+      if ((this._addonOptions as CellMenu | ContextMenu | GridMenu | HeaderMenu)?.subMenuOpenByEvent === 'mouseover' && typeof itemMouseoverCallback === 'function') {
+        this._bindEventService.bind(
+          commandLiElm,
+          'mouseover',
+          ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => itemMouseoverCallback.call(this, e, itemType, item as ExtractMenuType<ExtendableItemTypes, MenuType>, level)) as EventListener,
+          undefined,
+          eventGroupName
+        );
+        // this._bindEventService.bind(commandLiElm, 'mouseover', ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => {
+        //   if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems || (item as HeaderMenuCommandItem).items) {
+        //     (this as any).repositionSubMenu(item, itemType, args.level, e);
+        //   } else if (level === 0) {
+        //     this.disposeSubMenus();
+        //   }
+        // }) as EventListener);
+      }
 
       // the option/command item could be a sub-menu if it has another list of commands/options
       if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems || (item as HeaderMenuCommandItem).items) {

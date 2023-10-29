@@ -48,6 +48,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     hideColumnHideCommand: false,
     hideSortCommands: false,
     title: '',
+    subMenuOpenByEvent: 'mouseover',
   } as unknown as HeaderMenuOption;
   pluginName: 'HeaderMenu' = 'HeaderMenu' as const;
 
@@ -124,14 +125,14 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     this._activeHeaderColumnElm?.classList.remove('slick-header-column-active');
   }
 
-  repositionSubMenu(item: HeaderMenuCommandItem, columnDef: Column, level: number, e: DOMMouseOrTouchEvent<HTMLDivElement>) {
+  repositionSubMenu(e: DOMMouseOrTouchEvent<HTMLElement>, item: HeaderMenuCommandItem, level: number, columnDef: Column) {
     // creating sub-menu, we'll also pass level & the item object since we might have "subMenuTitle" to show
     const subMenuElm = this.createCommandMenu(item.commandItems || item.items || [], columnDef, level + 1, item);
     document.body.appendChild(subMenuElm);
     this.repositionMenu(e, subMenuElm);
   }
 
-  repositionMenu(e: DOMMouseOrTouchEvent<HTMLDivElement>, menuElm: HTMLDivElement) {
+  repositionMenu(e: DOMMouseOrTouchEvent<HTMLElement>, menuElm: HTMLDivElement) {
     const buttonElm = e.target as HTMLDivElement; // get header button createElement
     const isSubMenu = menuElm.classList.contains('slick-submenu');
     const parentElm = isSubMenu
@@ -315,8 +316,16 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         event.preventDefault();
         event.stopPropagation();
       } else if ((item as HeaderMenuCommandItem).commandItems || (item as HeaderMenuCommandItem).items) {
-        this.repositionSubMenu(item as HeaderMenuCommandItem, columnDef as Column, level, event);
+        this.repositionSubMenu(event, item as HeaderMenuCommandItem, level, columnDef as Column);
       }
+    }
+  }
+
+  protected handleMenuItemMouseOver(e: DOMMouseOrTouchEvent<HTMLElement>, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level = 0, columnDef?: Column) {
+    if ((item as HeaderMenuCommandItem).commandItems || (item as HeaderMenuCommandItem).items) {
+      this.repositionSubMenu(e, item as HeaderMenuCommandItem, level, columnDef as Column);
+    } else if (level === 0) {
+      this.disposeSubMenus();
     }
   }
 
@@ -614,6 +623,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       commandItems,
       callbackArgs,
       this.handleMenuItemCommandClick,
+      this.handleMenuItemMouseOver
     );
 
     // increment level for possible next sub-menus if exists

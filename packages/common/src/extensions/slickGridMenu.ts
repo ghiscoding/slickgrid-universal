@@ -63,6 +63,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     contentMinWidth: 0,
     resizeOnShowHeaderRow: false,
     syncResizeTitle: 'Synchronous resize',
+    subMenuOpenByEvent: 'mouseover',
     headerColumnValueExtractor: (columnDef: Column) => columnDef.name
   } as GridMenuOption;
 
@@ -879,8 +880,16 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         event.preventDefault();
         event.stopPropagation();
       } else if ((item as GridMenuItem).commandItems) {
-        this.repositionSubMenu(item, level, event);
+        this.repositionSubMenu(event, item, level);
       }
+    }
+  }
+
+  protected handleMenuItemMouseOver(e: DOMMouseOrTouchEvent<HTMLElement>, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level = 0) {
+    if ((item as GridMenuItem).commandItems) {
+      this.repositionSubMenu(e, item, level);
+    } else if (level === 0) {
+      this.disposeSubMenus();
     }
   }
 
@@ -900,7 +909,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
       // when creating sub-menu also add its sub-menu title when exists
       if (item && level > 0) {
-        this.addSubMenuTitleWhenExists(item as GridMenuItem, commandMenuElm); // add sub-menu title when exists
+        this.addSubMenuTitleWhenExists(item as ExtractMenuType<ExtendableItemTypes, MenuType>, commandMenuElm); // add sub-menu title when exists
       }
 
       this.populateCommandOrOptionItems(
@@ -910,13 +919,14 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         commandItems as Array<ExtractMenuType<ExtendableItemTypes, MenuType>>,
         callbackArgs,
         this.handleMenuItemCommandClick,
+        this.handleMenuItemMouseOver
       );
       return commandMenuElm;
     }
     return null;
   }
 
-  protected repositionSubMenu(item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, e: DOMMouseOrTouchEvent<HTMLButtonElement | HTMLDivElement>) {
+  protected repositionSubMenu(e: DOMMouseOrTouchEvent<HTMLElement>, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number) {
     // creating sub-menu, we'll also pass level & the item object since we might have "subMenuTitle" to show
     const commandItems = (item as GridMenuItem)?.commandItems || [];
     const subMenuElm = this.createCommandMenu(commandItems as Array<GridMenuItem | 'divider'>, level + 1, item);

@@ -657,7 +657,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
       .find('.slick-menu-item')
       .contains('Feedback')
       .should('exist')
-      .click();
+      .trigger('mouseover'); // mouseover or click should work
 
     cy.get('.slick-submenu').should('have.length', 1);
     cy.get('.slick-grid-menu.slick-menu-level-1')

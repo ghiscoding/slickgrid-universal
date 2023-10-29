@@ -5,6 +5,7 @@ import type {
   CellMenu,
   ContextMenu,
   DOMMouseOrTouchEvent,
+  HeaderMenuCommandItem,
   MenuCallbackArgs,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
@@ -89,7 +90,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
    * @param item - command, option or divider
    * @returns menu DOM element
    */
-  createMenu(commandItems: Array<MenuCommandItem | 'divider'>, optionItems: Array<MenuOptionItem | 'divider'>, level = 0, item?: MenuCommandItem | MenuOptionItem | 'divider') {
+  createMenu(commandItems: Array<MenuCommandItem | 'divider'>, optionItems: Array<MenuOptionItem | 'divider'>, level = 0, item?: ExtractMenuType<ExtendableItemTypes, MenuType>) {
     const columnDef = this.grid.getColumns()[this._currentCell];
     const dataContext = this.grid.getDataItem(this._currentRow);
 
@@ -177,6 +178,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
         optionItems,
         { cell: this._currentCell, row: this._currentRow, column: columnDef, dataContext, grid: this.grid, level } as MenuCallbackArgs,
         this.handleMenuItemCommandClick,
+        this.handleMenuItemMouseOver
       );
     }
 
@@ -200,6 +202,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
         commandItems,
         { cell: this._currentCell, row: this._currentRow, column: columnDef, dataContext, grid: this.grid, level } as MenuCallbackArgs,
         this.handleMenuItemCommandClick,
+        this.handleMenuItemMouseOver
       );
     }
 
@@ -259,6 +262,15 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     }
   }
 
+  protected handleMenuItemMouseOver(e: DOMMouseOrTouchEvent<HTMLElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level = 0) {
+    if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems || (item as HeaderMenuCommandItem).items) {
+      this.repositionSubMenu(item, type, level, e);
+      this._lastMenuTypeClicked = type;
+    } else if (level === 0) {
+      this.disposeSubMenus();
+    }
+  }
+
   protected handleMenuItemCommandClick(event: DOMMouseOrTouchEvent<HTMLDivElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level = 0) {
     if ((item as never)?.[type] !== undefined && item !== 'divider' && !item.disabled && !(item as MenuCommandItem | MenuOptionItem).divider && this._currentCell !== undefined && this._currentRow !== undefined) {
       if (type === 'option' && !this.grid.getEditorLock().commitCurrentEdit()) {
@@ -303,7 +315,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
           this.closeMenu(event, { cell, row, grid: this.grid });
         }
       } else if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems) {
-        this.repositionSubMenu(item as any, type, level, event);
+        this.repositionSubMenu(item as MenuCommandItem | MenuOptionItem | 'divider', type, level, event);
       }
       this._lastMenuTypeClicked = type;
     }
@@ -317,7 +329,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     commandOrOptionMenuHeaderElm.classList.add('with-close');
   }
 
-  protected repositionSubMenu(item: MenuCommandItem | MenuOptionItem | 'divider', type: MenuType, level: number, e: DOMMouseOrTouchEvent<HTMLDivElement>) {
+  protected repositionSubMenu(item: ExtractMenuType<ExtendableItemTypes, MenuType>, type: MenuType, level: number, e: DOMMouseOrTouchEvent<HTMLElement>) {
     // when we're clicking a grid cell OR our last menu type (command/option) differs then we know that we need to start fresh and close any sub-menus that might still be open
     if (e.target.classList.contains('slick-cell') || this._lastMenuTypeClicked !== type) {
       this.disposeSubMenus();
@@ -332,7 +344,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     }
   }
 
-  protected repositionMenu(event: DOMMouseOrTouchEvent<HTMLDivElement>, menuElm?: HTMLElement) {
+  protected repositionMenu(event: DOMMouseOrTouchEvent<HTMLElement>, menuElm?: HTMLElement) {
     const isSubMenu = menuElm?.classList.contains('slick-submenu');
     const parentElm = isSubMenu
       ? event.target.closest(`.${this._menuCssPrefix}-item`) as HTMLDivElement

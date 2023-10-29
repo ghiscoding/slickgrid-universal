@@ -1171,7 +1171,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .find('.slick-menu-item .slick-menu-content')
       .contains('Contact Us')
       .should('exist')
-      .click();
+      .trigger('mouseover'); // mouseover or click should work
 
     cy.get('.slick-submenu').should('have.length', 2);
     cy.get('.slick-cell-menu.slick-menu-level-2.dropright') // right align

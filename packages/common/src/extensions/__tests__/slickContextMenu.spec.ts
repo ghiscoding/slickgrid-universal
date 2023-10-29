@@ -196,6 +196,7 @@ describe('ContextMenu Plugin', () => {
       hideMenuOnScroll: false,
       optionShownOverColumnIds: [],
       commandShownOverColumnIds: [],
+      subMenuOpenByEvent: 'mouseover'
     });
   });
 
@@ -677,7 +678,7 @@ describe('ContextMenu Plugin', () => {
         const subCommand3Elm = commandList2Elm.querySelector('[data-command="command3"]') as HTMLDivElement;
         const subCommands2Elm = commandList2Elm.querySelector('[data-command="more-sub-commands"]') as HTMLDivElement;
 
-        subCommands2Elm!.dispatchEvent(new Event('click'));
+        subCommands2Elm!.dispatchEvent(new Event('mouseover')); // mouseover or click should work
         const contextMenu3Elm = document.body.querySelector('.slick-context-menu.slickgrid12345.slick-menu-level-2') as HTMLDivElement;
         const commandList3Elm = contextMenu3Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         const subCommand5Elm = commandList3Elm.querySelector('[data-command="command5"]') as HTMLDivElement;

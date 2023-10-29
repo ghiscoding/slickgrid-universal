@@ -155,6 +155,7 @@ describe('HeaderMenu Plugin', () => {
       hideSortCommands: false,
       minWidth: 100,
       title: '',
+      subMenuOpenByEvent: 'mouseover'
     });
   });
 
@@ -662,7 +663,7 @@ describe('HeaderMenu Plugin', () => {
         const subCommand3Elm = commandList2Elm.querySelector('[data-command="command3"]') as HTMLDivElement;
         const subCommands2Elm = commandList2Elm.querySelector('[data-command="more-sub-commands"]') as HTMLDivElement;
 
-        subCommands2Elm!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        subCommands2Elm!.dispatchEvent(new Event('mouseover', { bubbles: true, cancelable: true, composed: false })); // mouseover or click should work
         const cellMenu3Elm = document.body.querySelector('.slick-header-menu.slick-menu-level-2') as HTMLDivElement;
         const commandList3Elm = cellMenu3Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         const subCommand5Elm = commandList3Elm.querySelector('[data-command="command5"]') as HTMLDivElement;
