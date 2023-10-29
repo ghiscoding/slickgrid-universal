@@ -36,7 +36,7 @@ const basicPaginationServiceStub = {
   pageSize: 5,
   totalItems: 95,
   availablePageSizes: [5, 10, 15, 20],
-  cursorBased: false,
+  isCursorBased: false,
   pageInfoTotalItems: jest.fn(),
   getFullPagination: jest.fn(),
   goToFirstPage: jest.fn(),
@@ -51,7 +51,7 @@ const basicPaginationServiceStub = {
 
 const paginationServiceStubWithCursor = {
   ...basicPaginationServiceStub,
-  cursorBased: true,
+  isCursorBased: true,
 } as unknown as PaginationService
 
 [basicPaginationServiceStub, paginationServiceStubWithCursor].forEach(stub => {
@@ -149,7 +149,7 @@ describe('Slick-Pagination Component', () => {
 
         expect(spy).toHaveBeenCalled();
 
-        if (paginationServiceStub.cursorBased) {
+        if (paginationServiceStub.isCursorBased) {
           const span = document.querySelector('span.page-number') as HTMLSpanElement;
           expect(span.textContent).toBe('1');
         } else {
@@ -172,7 +172,7 @@ describe('Slick-Pagination Component', () => {
         const span = document.querySelector('span.page-number') as HTMLInputElement;
 
         const mockEvent = new CustomEvent('change', { bubbles: true, detail: { target: { value: newPageNumber } } });
-        if (paginationServiceStub.cursorBased) {
+        if (paginationServiceStub.isCursorBased) {
           expect(input).toBe(null);
           expect(span).not.toBe(null);
 

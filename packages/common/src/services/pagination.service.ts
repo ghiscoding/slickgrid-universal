@@ -106,7 +106,7 @@ export class PaginationService {
    *    page2: {startCursor: B, endCursor: C }
    *    page3: {startCursor: C, endCursor: D }
    */
-  get cursorBased(): boolean {
+  get isCursorBased(): boolean {
     return !!this._backendServiceApi?.options.isWithCursor;
   }
 
@@ -209,7 +209,7 @@ export class PaginationService {
   goToFirstPage(event?: any, triggerChangeEvent = true): Promise<ServicePagination> {
     this._pageNumber = 1;
     if (triggerChangeEvent) {
-      return this.cursorBased && this._cursorPageInfo
+      return this.isCursorBased && this._cursorPageInfo
         ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, first: this._itemsPerPage })
         : this.processOnPageChanged(this._pageNumber, event);
     }
@@ -219,7 +219,7 @@ export class PaginationService {
   goToLastPage(event?: any, triggerChangeEvent = true): Promise<ServicePagination> {
     this._pageNumber = this._pageCount || 1;
     if (triggerChangeEvent) {
-      return this.cursorBased && this._cursorPageInfo
+      return this.isCursorBased && this._cursorPageInfo
         ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, last: this._itemsPerPage })
         : this.processOnPageChanged(this._pageNumber, event);
     }
@@ -230,7 +230,7 @@ export class PaginationService {
     if (this._pageNumber < this._pageCount) {
       this._pageNumber++;
       if (triggerChangeEvent) {
-        return this.cursorBased && this._cursorPageInfo
+        return this.isCursorBased && this._cursorPageInfo
           ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, first: this._itemsPerPage, after: this._cursorPageInfo.endCursor })
           : this.processOnPageChanged(this._pageNumber, event);
       } else {
@@ -241,7 +241,7 @@ export class PaginationService {
   }
 
   goToPageNumber(pageNumber: number, event?: any, triggerChangeEvent = true): Promise<boolean | ServicePagination> {
-    if (this.cursorBased) {
+    if (this.isCursorBased) {
       console.assert(true, 'Cursor based navigation cannot navigate to arbitrary page');
       return Promise.resolve(false);
     }
@@ -266,7 +266,7 @@ export class PaginationService {
     if (this._pageNumber > 1) {
       this._pageNumber--;
       if (triggerChangeEvent) {
-        return this.cursorBased && this._cursorPageInfo
+        return this.isCursorBased && this._cursorPageInfo
           ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, last: this._itemsPerPage, before: this._cursorPageInfo.startCursor })
           : this.processOnPageChanged(this._pageNumber, event);
       } else {
@@ -373,7 +373,7 @@ export class PaginationService {
   }
 
   processOnPageChanged(pageNumber: number, event?: Event | undefined, cursorArgs?: PaginationCursorChangedArgs): Promise<ServicePagination> {
-    console.assert(!this.cursorBased || cursorArgs, 'Configured for cursor based pagination - cursorArgs expected');
+    console.assert(!this.isCursorBased || cursorArgs, 'Configured for cursor based pagination - cursorArgs expected');
 
     if (this.pubSubService.publish('onBeforePaginationChange', this.getFullPagination()) === false) {
       this.resetToPreviousPagination();
@@ -400,7 +400,7 @@ export class PaginationService {
         }
 
         if (this._backendServiceApi?.process) {
-          const query = this.cursorBased && cursorArgs
+          const query = this.isCursorBased && cursorArgs
             ? this._backendServiceApi.service.processOnPaginationChanged(event, cursorArgs)
             : this._backendServiceApi.service.processOnPaginationChanged(event, { newPage: pageNumber, pageSize: itemsPerPage });
 

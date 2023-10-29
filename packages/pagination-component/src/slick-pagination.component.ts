@@ -186,7 +186,7 @@ export class SlickPaginationComponent {
     this._bindingHelper.addElementBinding(this.currentPagination, 'totalItems', 'span.total-items', 'textContent');
     this._bindingHelper.addElementBinding(this.currentPagination, 'pageCount', 'span.page-count', 'textContent');
     this._bindingHelper.addElementBinding(this.currentPagination, 'pageSize', 'select.items-per-page', 'value');
-    this.paginationService.cursorBased
+    this.paginationService.isCursorBased
       ? this._bindingHelper.addElementBinding(this.currentPagination, 'pageNumber', 'span.page-number', 'textContent')
       : this._bindingHelper.addElementBinding(this.currentPagination, 'pageNumber', 'input.page-number', 'value', 'change', this.changeToCurrentPage.bind(this));
 
@@ -285,7 +285,7 @@ export class SlickPaginationComponent {
     const divElm = createDomElement('div', { className: 'slick-page-number' });
     createDomElement('span', { className: 'text-page', textContent: 'Page' }, divElm);
     divElm.appendChild(document.createTextNode(' '));
-    if (this.paginationService.cursorBased) {
+    if (this.paginationService.isCursorBased) {
       // cursor based navigation cannot jump to an arbitrary page. Simply display current page number.
       createDomElement('span', {
         className: 'page-number',
