@@ -597,7 +597,7 @@ export class SortService {
         col.sortable = !isDisabling;
       }
       if (col?.header?.menu) {
-        col.header.menu.items.forEach(menuItem => {
+        (col.header.menu.commandItems || col.header.menu.items)?.forEach(menuItem => {
           if (menuItem && typeof menuItem !== 'string') {
             const menuCommand = menuItem.command;
             if (menuCommand === 'sort-asc' || menuCommand === 'sort-desc' || menuCommand === 'clear-sort') {
