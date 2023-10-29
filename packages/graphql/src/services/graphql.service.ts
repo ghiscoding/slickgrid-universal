@@ -517,7 +517,7 @@ export class GraphqlService implements BackendService {
     if (this.options?.isWithCursor) {
       // use cursor based pagination
       // when using cursor pagination, expect to be given a PaginationCursorChangedArgs as arguments,
-      // but still handle the case where it's not (can happen when initial configuration not pre-configured (automatically corrects itself next updatePageInfo() call))
+      // but still handle the case where it's not (can happen when initial configuration not pre-configured (automatically corrects itself next setCursorPageInfo() call))
       if (cursorArgs && cursorArgs instanceof Object) {
         // remove pageSize and newPage from cursorArgs, otherwise they get put on the query input string
         // eslint-disable-next-line

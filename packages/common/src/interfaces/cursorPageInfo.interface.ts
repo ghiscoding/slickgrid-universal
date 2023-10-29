@@ -1,4 +1,4 @@
-export interface PageInfo {
+export interface CursorPageInfo {
   /** Do we have a next page from current cursor position? */
   hasNextPage: boolean;
 

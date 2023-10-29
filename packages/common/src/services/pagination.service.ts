@@ -4,6 +4,7 @@ import { dequal } from 'dequal/lite';
 import type {
   BackendServiceApi,
   CurrentPagination,
+  CursorPageInfo,
   Pagination,
   PaginationCursorChangedArgs,
   ServicePagination,
@@ -14,7 +15,6 @@ import type {
 import type { BackendUtilityService } from './backendUtility.service';
 import type { SharedService } from './shared.service';
 import type { Observable, RxJsFacade } from './rxjsFacade';
-import { PageInfo } from '../interfaces/pageInfo.interface';
 
 // using external non-typed js libraries
 declare const Slick: SlickNamespace;
@@ -34,7 +34,7 @@ export class PaginationService {
   protected _paginationOptions!: Pagination;
   protected _previousPagination?: Pagination;
   protected _subscriptions: EventSubscription[] = [];
-  protected _pageInfo?: PageInfo;
+  protected _cursorPageInfo?: CursorPageInfo;
 
   /** SlickGrid Grid object */
   grid!: SlickGrid;
@@ -209,7 +209,7 @@ export class PaginationService {
   goToFirstPage(event?: any, triggerChangeEvent = true): Promise<ServicePagination> {
     this._pageNumber = 1;
     if (triggerChangeEvent) {
-      return this.cursorBased && this._pageInfo
+      return this.cursorBased && this._cursorPageInfo
         ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, first: this._itemsPerPage })
         : this.processOnPageChanged(this._pageNumber, event);
     }
@@ -219,7 +219,7 @@ export class PaginationService {
   goToLastPage(event?: any, triggerChangeEvent = true): Promise<ServicePagination> {
     this._pageNumber = this._pageCount || 1;
     if (triggerChangeEvent) {
-      return this.cursorBased && this._pageInfo
+      return this.cursorBased && this._cursorPageInfo
         ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, last: this._itemsPerPage })
         : this.processOnPageChanged(this._pageNumber, event);
     }
@@ -230,8 +230,8 @@ export class PaginationService {
     if (this._pageNumber < this._pageCount) {
       this._pageNumber++;
       if (triggerChangeEvent) {
-        return this.cursorBased && this._pageInfo
-          ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, first: this._itemsPerPage, after: this._pageInfo.endCursor })
+        return this.cursorBased && this._cursorPageInfo
+          ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, first: this._itemsPerPage, after: this._cursorPageInfo.endCursor })
           : this.processOnPageChanged(this._pageNumber, event);
       } else {
         return Promise.resolve(this.getFullPagination());
@@ -266,8 +266,8 @@ export class PaginationService {
     if (this._pageNumber > 1) {
       this._pageNumber--;
       if (triggerChangeEvent) {
-        return this.cursorBased && this._pageInfo
-          ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, last: this._itemsPerPage, before: this._pageInfo.startCursor })
+        return this.cursorBased && this._cursorPageInfo
+          ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, last: this._itemsPerPage, before: this._cursorPageInfo.startCursor })
           : this.processOnPageChanged(this._pageNumber, event);
       } else {
         return Promise.resolve(this.getFullPagination());
@@ -492,8 +492,8 @@ export class PaginationService {
     }
   }
 
-  updatePageInfo(pageInfo: PageInfo) {
-    this._pageInfo = pageInfo;
+  setCursorPageInfo(pageInfo: CursorPageInfo) {
+    this._cursorPageInfo = pageInfo;
   }
 
   updateTotalItems(totalItems: number, triggerChangedEvent = false) {

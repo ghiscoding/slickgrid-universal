@@ -51,7 +51,7 @@ export interface BackendService {
   /** Update the Filters options with a set of new options */
   updateFilters?: (columnFilters: ColumnFilters | CurrentFilter[], isUpdatedByPresetOrDynamically: boolean) => void;
 
-  /** Update the Pagination component with it's new page number and size. If using cursor based pagination, a PageInfo object needs to be supplied */
+  /** Update the Pagination component with it's new page number and size. If using cursor based pagination, a CursorPageInfo object needs to be supplied */
   updatePagination?: (newPage: number, pageSize: number, cursorArgs?: PaginationCursorChangedArgs) => void;
 
   /** Update the Sorters options with a set of new options */

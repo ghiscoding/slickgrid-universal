@@ -2,10 +2,9 @@ import { of, throwError } from 'rxjs';
 
 import { PaginationService } from './../pagination.service';
 import { SharedService } from '../shared.service';
-import { Column, SlickDataView, GridOption, SlickGrid, SlickNamespace, BackendServiceApi, Pagination } from '../../interfaces/index';
+import { Column, CursorPageInfo, SlickDataView, GridOption, SlickGrid, SlickNamespace, BackendServiceApi, Pagination } from '../../interfaces/index';
 import { BackendUtilityService } from '../backendUtility.service';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
-import { PageInfo } from '../../interfaces/pageInfo.interface';
 
 declare const Slick: SlickNamespace;
 
@@ -75,9 +74,9 @@ const mockGridOptionWithCursorPaginationBackend = {
   },
 } as GridOption;
 
-const mockPageInfo = {
+const mockCursorPageInfo = {
   startCursor: "b", endCursor: "c", hasNextPage: true, hasPreviousPage: true, // b-c simulates page 2
-} as PageInfo;
+} as CursorPageInfo;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
@@ -228,7 +227,7 @@ describe('PaginationService', () => {
     it('should expect current page to be 1 and "processOnPageChanged" method to be called with cursorArgs when backend service is cursor based', () => {
       const spy = jest.spyOn(service, 'processOnPageChanged');
       service.init(gridStub, mockGridOptionWithCursorPaginationBackend.pagination as Pagination, mockGridOptionWithCursorPaginationBackend.backendServiceApi);
-      service.updatePageInfo(mockPageInfo);
+      service.setCursorPageInfo(mockCursorPageInfo);
       service.goToFirstPage();
 
       expect(service.dataFrom).toBe(1);
@@ -264,7 +263,7 @@ describe('PaginationService', () => {
       const spy = jest.spyOn(service, 'processOnPageChanged');
 
       service.init(gridStub, mockGridOptionWithCursorPaginationBackend.pagination as Pagination, mockGridOptionWithCursorPaginationBackend.backendServiceApi);
-      service.updatePageInfo(mockPageInfo);
+      service.setCursorPageInfo(mockCursorPageInfo);
       service.goToLastPage();
 
       expect(service.dataFrom).toBe(76);
@@ -301,7 +300,7 @@ describe('PaginationService', () => {
       const spy = jest.spyOn(service, 'processOnPageChanged');
 
       service.init(gridStub, mockGridOptionWithCursorPaginationBackend.pagination as Pagination, mockGridOptionWithCursorPaginationBackend.backendServiceApi);
-      service.updatePageInfo(mockPageInfo);
+      service.setCursorPageInfo(mockCursorPageInfo);
       service.goToNextPage();
 
       expect(service.dataFrom).toBe(51);
@@ -351,7 +350,7 @@ describe('PaginationService', () => {
       const spy = jest.spyOn(service, 'processOnPageChanged');
 
       service.init(gridStub, mockGridOptionWithCursorPaginationBackend.pagination as Pagination, mockGridOptionWithCursorPaginationBackend.backendServiceApi);
-      service.updatePageInfo(mockPageInfo);
+      service.setCursorPageInfo(mockCursorPageInfo);
       service.goToPreviousPage();
 
       expect(service.dataFrom).toBe(1);
@@ -437,7 +436,7 @@ describe('PaginationService', () => {
 
     it('should not expect "processOnPageChanged" method to be called when backend service is cursor based', async () => {
       const spy = jest.spyOn(service, 'processOnPageChanged');
-      service.updatePageInfo(mockPageInfo);
+      service.setCursorPageInfo(mockCursorPageInfo);
       service.init(gridStub, mockGridOptionWithCursorPaginationBackend.pagination as Pagination, mockGridOptionWithCursorPaginationBackend.backendServiceApi);
 
       const output = await service.goToPageNumber(3);
