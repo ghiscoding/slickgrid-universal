@@ -652,6 +652,7 @@ describe('HeaderMenu Plugin', () => {
         const headerMenu1Elm = gridContainerDiv.querySelector('.slick-header-menu.slick-menu-level-0') as HTMLDivElement;
         const commandList1Elm = headerMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         Object.defineProperty(commandList1Elm, 'clientWidth', { writable: true, configurable: true, value: 70 });
+        const helpCommandElm = commandList1Elm.querySelector('[data-command="help"]') as HTMLDivElement;
         const subCommands1Elm = commandList1Elm.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
         Object.defineProperty(subCommands1Elm, 'clientWidth', { writable: true, configurable: true, value: 70 });
         const commandContentElm2 = subCommands1Elm.querySelector('.slick-menu-content') as HTMLDivElement;
@@ -688,6 +689,10 @@ describe('HeaderMenu Plugin', () => {
         subCommands12Elm!.dispatchEvent(new Event('click'));
         expect(disposeSubMenuSpy).toHaveBeenCalledTimes(2);
         expect(disposeSubMenuSpy).toHaveBeenCalled();
+
+        // calling another command on parent menu should dispose sub-menus
+        helpCommandElm!.dispatchEvent(new Event('mouseover'));
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(3);
       });
 
       it('should create a Header Menu item with commands sub-menu commandItems and expect sub-menu list to show in the DOM element align right when sub-menu is clicked', () => {
