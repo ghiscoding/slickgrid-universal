@@ -12,6 +12,7 @@ import type {
   HeaderButton,
   HeaderButtonItem,
   HeaderMenu,
+  HeaderMenuCommandItem,
   MenuCommandItem,
   MenuOptionItem,
   SlickEventHandler,
@@ -259,7 +260,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
 
         if ((item as MenuCommandItem | MenuOptionItem).iconCssClass) {
           iconElm.classList.add(...(item as MenuCommandItem | MenuOptionItem).iconCssClass!.split(' '));
-        } else {
+        } else if (!(item as MenuCommandItem).commandItems && !(item as MenuOptionItem).optionItems && !(item as HeaderMenuCommandItem).items) {
           iconElm.textContent = '◦';
         }
 
@@ -287,7 +288,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       );
 
       // the option/command item could be a sub-menu if it has another list of commands/options
-      if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems) {
+      if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems || (item as HeaderMenuCommandItem).items) {
         const chevronElm = document.createElement('span');
         chevronElm.className = 'sub-item-chevron';
         if ((this._addonOptions as any).subItemChevronClass) {

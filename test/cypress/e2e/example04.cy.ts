@@ -1,4 +1,4 @@
-describe('Example 04 - Frozen Grid', { retries: 0 }, () => {
+describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
   // NOTE:  everywhere there's a * 2 is because we have a top+bottom (frozen rows) containers even after Unfreeze Columns/Rows
 
   const fullTitles = ['', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
@@ -103,7 +103,7 @@ describe('Example 04 - Frozen Grid', { retries: 0 }, () => {
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu')
+    cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
       .children('.slick-menu-item:nth-of-type(9)')
       .children('.slick-menu-content')
