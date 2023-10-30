@@ -152,7 +152,7 @@ export class GraphqlService implements BackendService {
       }
       else {
         const paginationOptions = this.options?.paginationOptions;
-        datasetFilters.first = ((this.options.paginationOptions && this.options.paginationOptions.first) ? this.options.paginationOptions.first : ((this.pagination && this.pagination.pageSize) ? this.pagination.pageSize : null)) || this.defaultPaginationOptions.first;
+        datasetFilters.first = this.options?.paginationOptions?.first ?? this.pagination?.pageSize ?? this.defaultPaginationOptions.first;
         datasetFilters.offset = paginationOptions?.hasOwnProperty('offset') ? +(paginationOptions as any)['offset'] : 0;
       }
     }
