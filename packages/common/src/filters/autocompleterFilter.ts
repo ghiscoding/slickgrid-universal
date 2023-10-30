@@ -572,9 +572,9 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     // for the remaining allowed tags we'll permit all attributes
     const sanitizedTemplateText = sanitizeTextByAvailableSanitizer(this.gridOptions, templateString) || '';
 
-    return createDomElement('div', {
-      innerHTML: sanitizedTemplateText
-    });
+    const tmpDiv = document.createElement('div');
+    tmpDiv.innerHTML = sanitizedTemplateText;
+    return tmpDiv;
   }
 
   protected renderCollectionItem(item: any) {
