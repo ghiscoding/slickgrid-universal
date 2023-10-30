@@ -221,7 +221,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       this.translateTitleLabels(this.sharedService.gridOptions.gridMenu);
 
       // hide the menu on outside click.
-      this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener);
+      this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener, { capture: true });
 
       // destroy the picker if user leaves the page
       this._bindEventService.bind(document.body, 'beforeunload', this.dispose.bind(this) as EventListener);
