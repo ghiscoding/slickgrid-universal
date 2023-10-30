@@ -116,7 +116,7 @@ export class SlickColumnPicker {
     this._bindEventService.bind(this._menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener, undefined, 'parent-menu');
 
     // Hide the menu on outside click.
-    this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener);
+    this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener, { capture: true });
 
     // destroy the picker if user leaves the page
     this._bindEventService.bind(document.body, 'beforeunload', this.dispose.bind(this) as EventListener);

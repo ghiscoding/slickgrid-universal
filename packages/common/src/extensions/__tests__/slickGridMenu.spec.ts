@@ -146,11 +146,8 @@ describe('GridMenuControl', () => {
 
   describe('with I18N Service', () => {
     const consoleErrorSpy = jest.spyOn(global.console, 'error').mockReturnValue();
-    const consoleWarnSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
-    // let divElement;
 
     beforeEach(() => {
-      // divElement = document.createElement('div');
       div = document.createElement('div');
       div.innerHTML = template;
       document.body.appendChild(div);
