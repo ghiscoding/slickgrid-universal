@@ -520,7 +520,7 @@ export class GraphqlService implements BackendService {
       // but still handle the case where it's not (can happen when initial configuration not pre-configured (automatically corrects itself next setCursorPageInfo() call))
       if (cursorArgs && cursorArgs instanceof Object) {
         // remove pageSize and newPage from cursorArgs, otherwise they get put on the query input string
-        // eslint-disable-next-line
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-shadow
         const { pageSize, newPage, ...cursorPaginationOptions } = cursorArgs;
         paginationOptions = cursorPaginationOptions;
       } else {
