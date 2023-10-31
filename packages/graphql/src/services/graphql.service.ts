@@ -54,9 +54,6 @@ export class GraphqlService implements BackendService {
     first: DEFAULT_ITEMS_PER_PAGE,
     offset: 0
   };
-  defaultCursorPaginationOptions: GraphqlCursorPaginationOption = {
-    first: DEFAULT_ITEMS_PER_PAGE,
-  };
 
   /** Getter for the Column Definitions */
   get columnDefinitions() {
