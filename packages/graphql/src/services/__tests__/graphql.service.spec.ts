@@ -509,7 +509,7 @@ describe('GraphqlService', () => {
       service.init({ datasetName: 'users', isWithCursor: true }, paginationOptions);
       service.resetPaginationOptions();
 
-      expect(spy).toHaveBeenCalledWith({ paginationOptions: { after: '', before: undefined, last: undefined } });
+      expect(spy).toHaveBeenCalledWith({ paginationOptions: { first: 20 } });
     });
   });
 

@@ -255,12 +255,7 @@ export class GraphqlService implements BackendService {
     let paginationOptions: GraphqlPaginationOption | GraphqlCursorPaginationOption;
 
     if (this.options && this.options.isWithCursor) {
-      // first, last, after, before
-      paginationOptions = {
-        after: '',
-        before: undefined,
-        last: undefined
-      } as GraphqlCursorPaginationOption;
+      paginationOptions = this.getInitPaginationOptions();
     } else {
       // first, last, offset
       paginationOptions = ((this.options && this.options.paginationOptions) || this.getInitPaginationOptions()) as GraphqlPaginationOption;
