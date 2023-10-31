@@ -2,7 +2,7 @@ import { of, throwError } from 'rxjs';
 
 import { PaginationService } from './../pagination.service';
 import { SharedService } from '../shared.service';
-import { Column, SlickDataView, GridOption, SlickGrid, SlickNamespace, BackendServiceApi, Pagination } from '../../interfaces/index';
+import { Column, CursorPageInfo, SlickDataView, GridOption, SlickGrid, SlickNamespace, BackendServiceApi, Pagination } from '../../interfaces/index';
 import { BackendUtilityService } from '../backendUtility.service';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 
@@ -60,6 +60,23 @@ const mockGridOption = {
     totalItems: 85
   }
 } as GridOption;
+
+const mockGridOptionWithCursorPaginationBackend = {
+  ...mockGridOption,
+  backendServiceApi: {
+    service: mockBackendService,
+    process: jest.fn(),
+    options: {
+      columnDefinitions: [{ id: 'name', field: 'name' }] as Column[],
+      datasetName: 'user',
+      isWithCursor: true,
+    }
+  },
+} as GridOption;
+
+const mockCursorPageInfo = {
+  startCursor: "b", endCursor: "c", hasNextPage: true, hasPreviousPage: true, // b-c simulates page 2
+} as CursorPageInfo;
 
 const gridStub = {
   autosizeColumns: jest.fn(),
@@ -206,6 +223,27 @@ describe('PaginationService', () => {
       expect(service.getCurrentPageNumber()).toBe(1);
       expect(spy).toHaveBeenCalledWith(1, undefined);
     });
+
+    it('should expect current page to be 1 and "processOnPageChanged" method to be called with cursorArgs when backend service is cursor based', () => {
+      const spy = jest.spyOn(service, 'processOnPageChanged');
+      service.init(gridStub, mockGridOptionWithCursorPaginationBackend.pagination as Pagination, mockGridOptionWithCursorPaginationBackend.backendServiceApi);
+      service.setCursorPageInfo(mockCursorPageInfo);
+      service.goToFirstPage();
+
+      expect(service.dataFrom).toBe(1);
+      expect(service.dataTo).toBe(25);
+      expect(service.getCurrentPageNumber()).toBe(1);
+      expect(spy).toHaveBeenCalledWith(1, undefined, { first: 25, newPage: 1, pageSize: 25 });
+    });
+
+    it('should expect current page to be 1 and "processOnPageChanged" method NOT to be called', () => {
+      const spy = jest.spyOn(service, 'processOnPageChanged');
+      service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
+      service.goToFirstPage(null, false);
+
+      expect(service.getCurrentPageNumber()).toBe(1);
+      expect(spy).not.toHaveBeenCalled();
+    });
   });
 
   describe('goToLastPage method', () => {
@@ -219,6 +257,29 @@ describe('PaginationService', () => {
       expect(service.dataTo).toBe(85);
       expect(service.getCurrentPageNumber()).toBe(4);
       expect(spy).toHaveBeenCalledWith(4, undefined);
+    });
+
+    it('should call "goToLastPage" method and expect current page to be last page and "processOnPageChanged" method to be called with cursorArgs when backend service is cursor based', () => {
+      const spy = jest.spyOn(service, 'processOnPageChanged');
+
+      service.init(gridStub, mockGridOptionWithCursorPaginationBackend.pagination as Pagination, mockGridOptionWithCursorPaginationBackend.backendServiceApi);
+      service.setCursorPageInfo(mockCursorPageInfo);
+      service.goToLastPage();
+
+      expect(service.dataFrom).toBe(76);
+      expect(service.dataTo).toBe(85);
+      expect(service.getCurrentPageNumber()).toBe(4);
+      expect(spy).toHaveBeenCalledWith(4, undefined, { last: 25, newPage: 4, pageSize: 25 });
+    });
+
+    it('should call "goToLastPage" method and expect current page to be last page and "processOnPageChanged" method NOT to be called', () => {
+      const spy = jest.spyOn(service, 'processOnPageChanged');
+
+      service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
+      service.goToLastPage(null, false);
+
+      expect(service.getCurrentPageNumber()).toBe(4);
+      expect(spy).not.toHaveBeenCalledWith();
     });
   });
 
@@ -235,16 +296,27 @@ describe('PaginationService', () => {
       expect(spy).toHaveBeenCalledWith(3, undefined);
     });
 
-    it('should expect page to increment by 1 and "processOnPageChanged" method to be called', () => {
+    it('should expect page to increment by 1 and "processOnPageChanged" method to be called with cursorArgs when backend service is cursor based', () => {
       const spy = jest.spyOn(service, 'processOnPageChanged');
 
-      service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
+      service.init(gridStub, mockGridOptionWithCursorPaginationBackend.pagination as Pagination, mockGridOptionWithCursorPaginationBackend.backendServiceApi);
+      service.setCursorPageInfo(mockCursorPageInfo);
       service.goToNextPage();
 
       expect(service.dataFrom).toBe(51);
       expect(service.dataTo).toBe(75);
       expect(service.getCurrentPageNumber()).toBe(3);
-      expect(spy).toHaveBeenCalledWith(3, undefined);
+      expect(spy).toHaveBeenCalledWith(3, undefined, {first: 25, after: "c", newPage: 3, pageSize: 25 });
+    });
+
+    it('should expect page to increment by 1 and "processOnPageChanged" method NOT to be called', () => {
+      const spy = jest.spyOn(service, 'processOnPageChanged');
+
+      service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
+      service.goToNextPage(null, false);
+
+      expect(service.getCurrentPageNumber()).toBe(3);
+      expect(spy).not.toHaveBeenCalled();
     });
 
     it('should not expect "processOnPageChanged" method to be called when we are already on last page', () => {
@@ -272,6 +344,29 @@ describe('PaginationService', () => {
       expect(service.dataTo).toBe(25);
       expect(service.getCurrentPageNumber()).toBe(1);
       expect(spy).toHaveBeenCalledWith(1, undefined);
+    });
+
+    it('should expect page to decrement by 1 and "processOnPageChanged" method to be called  with cursorArgs when backend service is cursor based', () => {
+      const spy = jest.spyOn(service, 'processOnPageChanged');
+
+      service.init(gridStub, mockGridOptionWithCursorPaginationBackend.pagination as Pagination, mockGridOptionWithCursorPaginationBackend.backendServiceApi);
+      service.setCursorPageInfo(mockCursorPageInfo);
+      service.goToPreviousPage();
+
+      expect(service.dataFrom).toBe(1);
+      expect(service.dataTo).toBe(25);
+      expect(service.getCurrentPageNumber()).toBe(1);
+      expect(spy).toHaveBeenCalledWith(1, undefined, {last: 25, before: "b", newPage: 1, pageSize: 25 });
+    });
+
+    it('should expect page to decrement by 1 and "processOnPageChanged" method NOT to be called', () => {
+      const spy = jest.spyOn(service, 'processOnPageChanged');
+
+      service.init(gridStub, mockGridOptionWithCursorPaginationBackend.pagination as Pagination, mockGridOptionWithCursorPaginationBackend.backendServiceApi);
+      service.goToPreviousPage(null, false);
+
+      expect(service.getCurrentPageNumber()).toBe(1);
+      expect(spy).not.toHaveBeenCalled()
     });
 
     it('should not expect "processOnPageChanged" method to be called when we are already on first page', () => {
@@ -332,6 +427,21 @@ describe('PaginationService', () => {
       service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
       const output = await service.goToPageNumber(2);
 
+      expect(service.dataFrom).toBe(26);
+      expect(service.dataTo).toBe(50);
+      expect(service.getCurrentPageNumber()).toBe(2);
+      expect(spy).not.toHaveBeenCalled();
+      expect(output).toBeFalsy();
+    });
+
+    it('should not expect "processOnPageChanged" method to be called when backend service is cursor based', async () => {
+      const spy = jest.spyOn(service, 'processOnPageChanged');
+      service.setCursorPageInfo(mockCursorPageInfo);
+      service.init(gridStub, mockGridOptionWithCursorPaginationBackend.pagination as Pagination, mockGridOptionWithCursorPaginationBackend.backendServiceApi);
+
+      const output = await service.goToPageNumber(3);
+
+      // stay on current page
       expect(service.dataFrom).toBe(26);
       expect(service.dataTo).toBe(50);
       expect(service.getCurrentPageNumber()).toBe(2);
