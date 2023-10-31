@@ -175,9 +175,7 @@ export class SlickColumnPicker {
     this.extensionUtility.translateItems(this._columns, 'nameKey', 'name');
 
     // update the Titles of each sections (command, commandTitle, ...)
-    if (this.addonOptions) {
-      this.updateAllTitles(this.addonOptions);
-    }
+    this.translateTitleLabels(this.addonOptions);
   }
 
   // --
@@ -220,9 +218,9 @@ export class SlickColumnPicker {
   }
 
   /** Update the Titles of each sections (command, commandTitle, ...) */
-  protected updateAllTitles(options: ColumnPickerOption) {
-    if (this._columnTitleElm?.textContent && options.columnTitle) {
-      this._columnTitleElm.textContent = options.columnTitle;
+  protected translateTitleLabels(pickerOptions: ColumnPickerOption) {
+    if (pickerOptions) {
+      pickerOptions.columnTitle = this.extensionUtility.getPickerTitleOutputString('columnTitle', 'gridMenu');
     }
   }
 }
