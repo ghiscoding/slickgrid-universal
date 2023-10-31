@@ -12,7 +12,7 @@ export function addCloseButtomElement(this: SlickColumnPicker | SlickGridMenu, m
   const closePickerButtonElm = createDomElement('button', {
     type: 'button', className: 'close',
     ariaLabel: 'Close',
-    innerHTML: '&times;',
+    textContent: '×',
     dataset: { dismiss: context instanceof SlickColumnPicker ? 'slick-column-picker' : 'slick-grid-menu' }
   });
   menuElm.appendChild(closePickerButtonElm);

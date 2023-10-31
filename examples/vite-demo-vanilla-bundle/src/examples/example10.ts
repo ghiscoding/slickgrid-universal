@@ -47,7 +47,6 @@ export default class Example10 {
     this.translateService = (<any>window).TranslateService;
     this.selectedLanguage = this.translateService.getCurrentLanguage();
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;
-    console.log('TranslateService', this.translateService.translate('ALL_SELECTED'));
   }
 
   async attached() {

@@ -3,6 +3,7 @@ import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import type {
   Column,
   DOMEvent,
+  DOMMouseOrTouchEvent,
   HeaderButton,
   HeaderButtonItem,
   HeaderButtonOnCommandArgs,
@@ -96,6 +97,12 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
       while (i--) {
         const buttonItem = column.header.buttons[i];
         const itemElm = this.populateSingleCommandOrOptionItem('command', this.addonOptions, null, buttonItem, args, this.handleButtonClick.bind(this));
+
+        // Header Button can have an optional handler
+        if (itemElm && buttonItem.handler && !buttonItem.disabled) {
+          this._bindEventService.bind(itemElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLDivElement>) =>
+            buttonItem.handler!.call(this, e)) as EventListener);
+        }
 
         if (itemElm) {
           this._buttonElms.push(itemElm);

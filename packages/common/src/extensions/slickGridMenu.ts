@@ -63,6 +63,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     contentMinWidth: 0,
     resizeOnShowHeaderRow: false,
     syncResizeTitle: 'Synchronous resize',
+    subMenuOpenByEvent: 'mouseover',
     headerColumnValueExtractor: (columnDef: Column) => columnDef.name
   } as GridMenuOption;
 
@@ -220,7 +221,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       this.translateTitleLabels(this.sharedService.gridOptions.gridMenu);
 
       // hide the menu on outside click.
-      this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener);
+      this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener, { capture: true });
 
       // destroy the picker if user leaves the page
       this._bindEventService.bind(document.body, 'beforeunload', this.dispose.bind(this) as EventListener);
@@ -330,7 +331,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     }
 
     // dispose of all sub-menus from the DOM and unbind all listeners
-    // this._bindEventService.unbindAll();
     this.disposeSubMenus();
     this._menuElm?.remove();
     this._menuElm = null;
@@ -880,8 +880,16 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         event.preventDefault();
         event.stopPropagation();
       } else if ((item as GridMenuItem).commandItems) {
-        this.repositionSubMenu(item, level, event);
+        this.repositionSubMenu(event, item, level);
       }
+    }
+  }
+
+  protected handleMenuItemMouseOver(e: DOMMouseOrTouchEvent<HTMLElement>, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level = 0) {
+    if ((item as GridMenuItem).commandItems) {
+      this.repositionSubMenu(e, item, level);
+    } else if (level === 0) {
+      this.disposeSubMenus();
     }
   }
 
@@ -901,7 +909,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
       // when creating sub-menu also add its sub-menu title when exists
       if (item && level > 0) {
-        this.addSubMenuTitleWhenExists(item as GridMenuItem, commandMenuElm); // add sub-menu title when exists
+        this.addSubMenuTitleWhenExists(item as ExtractMenuType<ExtendableItemTypes, MenuType>, commandMenuElm); // add sub-menu title when exists
       }
 
       this.populateCommandOrOptionItems(
@@ -911,13 +919,14 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         commandItems as Array<ExtractMenuType<ExtendableItemTypes, MenuType>>,
         callbackArgs,
         this.handleMenuItemCommandClick,
+        this.handleMenuItemMouseOver
       );
       return commandMenuElm;
     }
     return null;
   }
 
-  protected repositionSubMenu(item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number, e: DOMMouseOrTouchEvent<HTMLButtonElement | HTMLDivElement>) {
+  protected repositionSubMenu(e: DOMMouseOrTouchEvent<HTMLElement>, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level: number) {
     // creating sub-menu, we'll also pass level & the item object since we might have "subMenuTitle" to show
     const commandItems = (item as GridMenuItem)?.commandItems || [];
     const subMenuElm = this.createCommandMenu(commandItems as Array<GridMenuItem | 'divider'>, level + 1, item);

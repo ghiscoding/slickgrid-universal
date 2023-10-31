@@ -48,7 +48,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu')
+    cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
       .children('.slick-menu-item:nth-of-type(4)')
       .children('.slick-menu-content')
@@ -83,7 +83,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu')
+    cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
       .children('.slick-menu-item:nth-of-type(3)')
       .children('.slick-menu-content')
@@ -106,7 +106,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
       .click();
 
     cy.get('.grid2')
-      .find('.slick-header-menu')
+      .find('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
       .children('.slick-menu-item:nth-of-type(4)')
       .click();
@@ -657,7 +657,7 @@ describe('Example 01 - Basic Grids', { retries: 1 }, () => {
       .find('.slick-menu-item')
       .contains('Feedback')
       .should('exist')
-      .click();
+      .trigger('mouseover'); // mouseover or click should work
 
     cy.get('.slick-submenu').should('have.length', 1);
     cy.get('.slick-grid-menu.slick-menu-level-1')

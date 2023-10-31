@@ -245,7 +245,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu')
+    cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
       .children('.slick-menu-item:nth-of-type(6)')
       .children('.slick-menu-content')
@@ -420,7 +420,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu')
+    cy.get('.slick-header-menu .slick-menu-command-list')
       .children('.slick-menu-item')
       .each(($child, index) => {
         const commandTitle = $child.text();
@@ -470,7 +470,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu')
+    cy.get('.slick-header-menu .slick-menu-command-list')
       .children('.slick-menu-item')
       .each(($child, index) => {
         const commandTitle = $child.text();
@@ -516,7 +516,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu')
+    cy.get('.slick-header-menu .slick-menu-command-list')
       .children('.slick-menu-item')
       .each(($child, index) => {
         const commandTitle = $child.text();
@@ -541,7 +541,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu')
+    cy.get('.slick-header-menu .slick-menu-command-list')
       .children('.slick-menu-item')
       .each(($child, index) => {
         const commandTitle = $child.text();
@@ -833,7 +833,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu')
+    cy.get('.slick-header-menu .slick-menu-command-list')
       .children('.slick-menu-item')
       .each(($child, index) => {
         const commandTitle = $child.text();
@@ -894,7 +894,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(7)`).find('.checkmark-icon').should('have.length', 0);
   });
 
-  it('should open the Cell Menu on 2nr row and delete it', () => {
+  it('should open the Cell Menu on 2nd row and delete it', () => {
     const confirmStub = cy.stub();
     cy.on('window:confirm', confirmStub);
 
@@ -1171,7 +1171,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries
       .find('.slick-menu-item .slick-menu-content')
       .contains('Contact Us')
       .should('exist')
-      .click();
+      .trigger('mouseover'); // mouseover or click should work
 
     cy.get('.slick-submenu').should('have.length', 2);
     cy.get('.slick-cell-menu.slick-menu-level-2.dropright') // right align

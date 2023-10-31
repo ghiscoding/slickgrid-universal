@@ -54,7 +54,6 @@ const columnsMock: Column[] = [
 ];
 
 describe('HeaderButton Plugin', () => {
-  const consoleWarnSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
   let backendUtilityService: BackendUtilityService;
   let extensionUtility: ExtensionUtility;
   let translateService: TranslateServiceStub;

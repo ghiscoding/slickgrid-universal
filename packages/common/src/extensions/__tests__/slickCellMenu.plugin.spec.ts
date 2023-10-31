@@ -175,6 +175,7 @@ describe('CellMenu Plugin', () => {
       autoAdjustDropOffset: 0,
       autoAlignSideOffset: 0,
       hideMenuOnScroll: true,
+      subMenuOpenByEvent: 'mouseover'
     });
   });
 
@@ -316,12 +317,12 @@ describe('CellMenu Plugin', () => {
               </li>
               <li class="slick-menu-item slick-menu-item-divider"></li>
               <li class=\"slick-menu-item slick-submenu-item\" data-command=\"sub-commands\">
-                <div class=\"slick-menu-icon\">◦</div>
+                <div class=\"slick-menu-icon\"></div>
                 <span class=\"slick-menu-content\">Sub Commands</span>
                 <span class=\"sub-item-chevron\">⮞</span>
               </li>
               <li class=\"slick-menu-item slick-submenu-item\" data-command=\"sub-commands2\">
-                <div class=\"slick-menu-icon\">◦</div>
+                <div class=\"slick-menu-icon\"></div>
                 <span class=\"slick-menu-content\">Sub Commands 2</span>
                 <span class=\"sub-item-chevron\">⮞</span>
               </li>
@@ -627,7 +628,7 @@ describe('CellMenu Plugin', () => {
         const commandContentElm2 = subCommands1Elm.querySelector('.slick-menu-content') as HTMLDivElement;
         const commandChevronElm = commandList1Elm.querySelector('.sub-item-chevron') as HTMLSpanElement;
 
-        subCommands1Elm!.dispatchEvent(new Event('click'));
+        subCommands1Elm!.dispatchEvent(new Event('mouseover')); // mouseover or click should work
         const cellMenu2Elm = document.body.querySelector('.slick-cell-menu.slickgrid12345.slick-menu-level-1') as HTMLDivElement;
         const commandList2Elm = cellMenu2Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         const subCommand3Elm = commandList2Elm.querySelector('[data-command="command3"]') as HTMLDivElement;
@@ -804,7 +805,7 @@ describe('CellMenu Plugin', () => {
               </li>
               <li class="slick-menu-item slick-menu-item-divider"></li>
               <li class=\"slick-menu-item slick-submenu-item\" data-option=\"sub-options\">
-                <div class=\"slick-menu-icon\">◦</div>
+                <div class=\"slick-menu-icon\"></div>
                 <span class=\"slick-menu-content\">Sub Options</span>
                 <span class=\"sub-item-chevron\">⮞</span>
               </li>

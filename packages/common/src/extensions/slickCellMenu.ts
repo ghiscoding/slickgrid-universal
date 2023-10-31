@@ -38,6 +38,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
     autoAdjustDropOffset: 0,
     autoAlignSideOffset: 0,
     hideMenuOnScroll: true,
+    subMenuOpenByEvent: 'mouseover',
   } as unknown as CellMenuOption;
   pluginName: 'CellMenu' = 'CellMenu' as const;
 
@@ -136,7 +137,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
       }
 
       // Hide the menu on outside click.
-      this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener);
+      this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener, { capture: true });
     }
   }
 

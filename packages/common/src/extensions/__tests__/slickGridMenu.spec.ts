@@ -146,11 +146,8 @@ describe('GridMenuControl', () => {
 
   describe('with I18N Service', () => {
     const consoleErrorSpy = jest.spyOn(global.console, 'error').mockReturnValue();
-    const consoleWarnSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
-    // let divElement;
 
     beforeEach(() => {
-      // divElement = document.createElement('div');
       div = document.createElement('div');
       div.innerHTML = template;
       document.body.appendChild(div);
@@ -925,6 +922,7 @@ describe('GridMenuControl', () => {
           const commandList1Elm = gridMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
           Object.defineProperty(commandList1Elm, 'clientWidth', { writable: true, configurable: true, value: 70 });
           const subCommands1Elm = commandList1Elm.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
+          const helpCommandElm = commandList1Elm.querySelector('[data-command="help"]') as HTMLDivElement;
           Object.defineProperty(subCommands1Elm, 'clientWidth', { writable: true, configurable: true, value: 70 });
           const commandContentElm2 = subCommands1Elm.querySelector('.slick-menu-content') as HTMLDivElement;
           const commandChevronElm = commandList1Elm.querySelector('.sub-item-chevron') as HTMLSpanElement;
@@ -935,7 +933,7 @@ describe('GridMenuControl', () => {
           const subCommand3Elm = commandList2Elm.querySelector('[data-command="command3"]') as HTMLDivElement;
           const subCommands2Elm = commandList2Elm.querySelector('[data-command="more-sub-commands"]') as HTMLDivElement;
 
-          subCommands2Elm!.dispatchEvent(new Event('click'));
+          subCommands2Elm!.dispatchEvent(new Event('mouseover')); // mouseover or click should work
           const cellMenu3Elm = document.body.querySelector('.slick-grid-menu.slick-menu-level-2') as HTMLDivElement;
           const commandList3Elm = cellMenu3Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
           const subCommand5Elm = commandList3Elm.querySelector('[data-command="command5"]') as HTMLDivElement;
@@ -957,9 +955,15 @@ describe('GridMenuControl', () => {
           subCommands1Elm!.dispatchEvent(new Event('click'));
           expect(disposeSubMenuSpy).toHaveBeenCalledTimes(0);
           const subCommands12Elm = commandList1Elm.querySelector('[data-command="sub-commands2"]') as HTMLDivElement;
-          subCommands12Elm!.dispatchEvent(new Event('click'));
+          subCommands12Elm!.dispatchEvent(new Event('mouseover'));
           expect(disposeSubMenuSpy).toHaveBeenCalledTimes(1);
           expect(disposeSubMenuSpy).toHaveBeenCalled();
+          subCommands1Elm!.dispatchEvent(new Event('mouseover'));
+          expect(disposeSubMenuSpy).toHaveBeenCalledTimes(2);
+
+          // calling another command on parent menu should dispose sub-menus
+          helpCommandElm!.dispatchEvent(new Event('mouseover'));
+          expect(disposeSubMenuSpy).toHaveBeenCalledTimes(3);
         });
 
         it('should create a Cell Menu item with commands sub-menu items and expect sub-menu list to show in the DOM element align right when sub-menu is clicked', () => {
