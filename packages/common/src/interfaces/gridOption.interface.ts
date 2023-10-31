@@ -587,6 +587,9 @@ export interface GridOption {
   /** CSS class name used when cell is selected */
   selectedCellCssClass?: string;
 
+  /** Defaults to undefined. If we are inside a shadow DOM tree, this must be the shadow root of the tree */
+  shadowRoot?: ShadowRoot;
+
   /** Do we want to show cell selection? */
   showCellSelection?: boolean;
 
