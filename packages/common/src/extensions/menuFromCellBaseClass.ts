@@ -263,11 +263,13 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
   }
 
   protected handleMenuItemMouseOver(e: DOMMouseOrTouchEvent<HTMLElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level = 0) {
-    if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems || (item as HeaderMenuCommandItem).items) {
-      this.repositionSubMenu(item, type, level, e);
-      this._lastMenuTypeClicked = type;
-    } else if (level === 0) {
-      this.disposeSubMenus();
+    if ((item as never)?.[type] !== undefined && item !== 'divider' && !item.disabled && !(item as MenuCommandItem | MenuOptionItem).divider) {
+      if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems || (item as HeaderMenuCommandItem).items) {
+        this.repositionSubMenu(item, type, level, e);
+        this._lastMenuTypeClicked = type;
+      } else if (level === 0) {
+        this.disposeSubMenus();
+      }
     }
   }
 

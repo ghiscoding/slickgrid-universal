@@ -886,10 +886,12 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   }
 
   protected handleMenuItemMouseOver(e: DOMMouseOrTouchEvent<HTMLElement>, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level = 0) {
-    if ((item as GridMenuItem).commandItems) {
-      this.repositionSubMenu(e, item, level);
-    } else if (level === 0) {
-      this.disposeSubMenus();
+    if (item !== 'divider' && !item.disabled && !(item as GridMenuItem).divider) {
+      if ((item as GridMenuItem).commandItems) {
+        this.repositionSubMenu(e, item, level);
+      } else if (level === 0) {
+        this.disposeSubMenus();
+      }
     }
   }
 

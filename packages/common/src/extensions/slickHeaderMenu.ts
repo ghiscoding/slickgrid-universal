@@ -322,10 +322,12 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   }
 
   protected handleMenuItemMouseOver(e: DOMMouseOrTouchEvent<HTMLElement>, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level = 0, columnDef?: Column) {
-    if ((item as HeaderMenuCommandItem).commandItems || (item as HeaderMenuCommandItem).items) {
-      this.repositionSubMenu(e, item as HeaderMenuCommandItem, level, columnDef as Column);
-    } else if (level === 0) {
-      this.disposeSubMenus();
+    if (item !== 'divider' && !item.disabled && !(item as HeaderMenuCommandItem).divider) {
+      if ((item as HeaderMenuCommandItem).commandItems || (item as HeaderMenuCommandItem).items) {
+        this.repositionSubMenu(e, item as HeaderMenuCommandItem, level, columnDef as Column);
+      } else if (level === 0) {
+        this.disposeSubMenus();
+      }
     }
   }
 
