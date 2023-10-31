@@ -102,16 +102,16 @@ describe('ColumnPickerControl', () => {
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
-      const inputElm = control.menuElement.querySelector('input[type="checkbox"]') as HTMLInputElement;
+      const inputElm = control.menuElement!.querySelector('input[type="checkbox"]') as HTMLInputElement;
       inputElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
-      expect(control.menuElement.style.display).toBe('block');
+      expect(control.menuElement!.style.display).toBe('block');
       expect(setSelectionSpy).toHaveBeenCalledWith(mockRowSelection);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
     });
 
-    it('should open the column picker via "onHeaderContextMenu" and then expect it to hide when clicking anywhere in the DOM body', () => {
+    it('should open the Column Picker and then expect it to hide when clicking anywhere in the DOM body', () => {
       const mockRowSelection = [0, 3, 5];
       jest.spyOn(control.eventHandler, 'subscribe');
       jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
@@ -122,13 +122,17 @@ describe('ColumnPickerControl', () => {
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
+      control.menuElement!.dispatchEvent(new Event('mousedown', { bubbles: true }));
 
-      expect(control.menuElement.style.display).toBe('block');
+      // click inside menu shouldn't close it
+      expect(control.menuElement!.style.display).toBe('block');
+      expect(control.menuElement).toBeTruthy();
 
+      // click anywhere else should close it
       const bodyElm = document.body;
       bodyElm.dispatchEvent(new Event('mousedown', { bubbles: true }));
 
-      expect(control.menuElement.style.display).toBe('none');
+      expect(control.menuElement).toBeFalsy();
     });
 
     it('should query an input checkbox change event and expect "readjustFrozenColumnIndexWhenNeeded" method to be called when the grid is detected to be a frozen grid', () => {
@@ -141,7 +145,7 @@ describe('ColumnPickerControl', () => {
       control.init();
 
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
-      control.menuElement.querySelector('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
+      control.menuElement!.querySelector('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
 
       expect(handlerSpy).toHaveBeenCalledTimes(2);
       expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
@@ -159,8 +163,8 @@ describe('ColumnPickerControl', () => {
       control.init();
 
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
-      control.menuElement.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
-      const liElmList = control.menuElement.querySelectorAll<HTMLLIElement>('li');
+      control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
+      const liElmList = control.menuElement!.querySelectorAll<HTMLLIElement>('li');
 
       expect(handlerSpy).toHaveBeenCalledTimes(2);
       expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
@@ -179,9 +183,9 @@ describe('ColumnPickerControl', () => {
       control.init();
 
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
-      control.menuElement.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
-      const inputForcefitElm = control.menuElement.querySelector('#slickgrid_124343-colpicker-forcefit') as HTMLInputElement;
-      const labelSyncElm = control.menuElement.querySelector('label[for=slickgrid_124343-colpicker-forcefit]') as HTMLDivElement;
+      control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
+      const inputForcefitElm = control.menuElement!.querySelector('#slickgrid_124343-colpicker-forcefit') as HTMLInputElement;
+      const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-colpicker-forcefit]') as HTMLDivElement;
 
       expect(handlerSpy).toHaveBeenCalledTimes(2);
       expect(control.getAllColumns()).toEqual(columnsMock);
@@ -201,9 +205,9 @@ describe('ColumnPickerControl', () => {
       control.init();
 
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
-      control.menuElement.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
-      const inputSyncElm = control.menuElement.querySelector('#slickgrid_124343-colpicker-syncresize') as HTMLInputElement;
-      const labelSyncElm = control.menuElement.querySelector('label[for=slickgrid_124343-colpicker-syncresize]') as HTMLDivElement;
+      control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
+      const inputSyncElm = control.menuElement!.querySelector('#slickgrid_124343-colpicker-syncresize') as HTMLInputElement;
+      const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-colpicker-syncresize]') as HTMLDivElement;
 
       expect(handlerSpy).toHaveBeenCalledTimes(2);
       expect(control.getAllColumns()).toEqual(columnsMock);
@@ -224,7 +228,7 @@ describe('ColumnPickerControl', () => {
       control.init();
 
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
-      control.menuElement.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
+      control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
 
       const expectedCallbackArgs = {
         columnId: 'field1',
@@ -254,8 +258,8 @@ describe('ColumnPickerControl', () => {
       control.init();
 
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
-      const inputForcefitElm = control.menuElement.querySelector('#slickgrid_124343-colpicker-forcefit') as HTMLInputElement;
-      const labelSyncElm = control.menuElement.querySelector('label[for=slickgrid_124343-colpicker-forcefit]') as HTMLDivElement;
+      const inputForcefitElm = control.menuElement!.querySelector('#slickgrid_124343-colpicker-forcefit') as HTMLInputElement;
+      const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-colpicker-forcefit]') as HTMLDivElement;
       inputForcefitElm.dispatchEvent(new Event('click', { bubbles: true }));
 
       expect(handlerSpy).toHaveBeenCalledTimes(2);
@@ -280,8 +284,8 @@ describe('ColumnPickerControl', () => {
       control.init();
 
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
-      const inputSyncElm = control.menuElement.querySelector('#slickgrid_124343-colpicker-syncresize') as HTMLInputElement;
-      const labelSyncElm = control.menuElement.querySelector('label[for=slickgrid_124343-colpicker-syncresize]') as HTMLDivElement;
+      const inputSyncElm = control.menuElement!.querySelector('#slickgrid_124343-colpicker-syncresize') as HTMLInputElement;
+      const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-colpicker-syncresize]') as HTMLDivElement;
       inputSyncElm.dispatchEvent(new Event('click', { bubbles: true }));
 
       expect(handlerSpy).toHaveBeenCalledTimes(2);
@@ -314,8 +318,8 @@ describe('ColumnPickerControl', () => {
 
         gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
         gridStub.onColumnsReordered.notify({ impactedColumns: columnsUnorderedMock, grid: gridStub }, eventData, gridStub);
-        control.menuElement.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
-        const col4 = control.menuElement.querySelector<HTMLInputElement>('li.hidden input[data-columnid=field4]');
+        control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
+        const col4 = control.menuElement!.querySelector<HTMLInputElement>('li.hidden input[data-columnid=field4]');
 
         expect(handlerSpy).toHaveBeenCalledTimes(2);
         expect(control.getAllColumns()).toEqual(columnsMock);
@@ -341,9 +345,9 @@ describe('ColumnPickerControl', () => {
       control.translateColumnPicker();
 
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData, gridStub);
-      control.menuElement.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
-      const labelForcefitElm = control.menuElement.querySelector('label[for=slickgrid_124343-colpicker-forcefit]') as HTMLDivElement;
-      const labelSyncElm = control.menuElement.querySelector('label[for=slickgrid_124343-colpicker-syncresize]') as HTMLDivElement;
+      control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
+      const labelForcefitElm = control.menuElement!.querySelector('label[for=slickgrid_124343-colpicker-forcefit]') as HTMLDivElement;
+      const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-colpicker-syncresize]') as HTMLDivElement;
 
       expect(handlerSpy).toHaveBeenCalledTimes(2);
       expect(labelForcefitElm.textContent).toBe('Ajustement forcé des colonnes');
