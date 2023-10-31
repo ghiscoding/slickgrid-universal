@@ -38,7 +38,7 @@ export class SlickColumnPicker {
   protected _eventHandler!: SlickEventHandler;
   protected _gridUid = '';
   protected _listElm!: HTMLSpanElement;
-  protected _menuElm!: HTMLDivElement;
+  protected _menuElm: HTMLDivElement | null = null;
   protected _columnCheckboxes: HTMLInputElement[] = [];
   onColumnsChanged = new Slick.Event();
 
@@ -85,7 +85,7 @@ export class SlickColumnPicker {
     return this.sharedService.slickGrid;
   }
 
-  get menuElement(): HTMLDivElement {
+  get menuElement(): HTMLDivElement | null {
     return this._menuElm;
   }
 
@@ -102,34 +102,45 @@ export class SlickColumnPicker {
     this._eventHandler.subscribe(this.grid.onHeaderContextMenu, this.handleHeaderContextMenu.bind(this) as EventListener);
     this._eventHandler.subscribe(this.grid.onColumnsReordered, updateColumnPickerOrder.bind(this) as EventListener);
 
-    this._menuElm = createDomElement('div', {
-      ariaExpanded: 'false',
-      className: `slick-column-picker ${this._gridUid}`, role: 'menu',
-      style: { display: 'none' },
-    });
-
-    // add Close button and optiona a Column list title
-    addColumnTitleElementWhenDefined.call(this, this._menuElm);
-    addCloseButtomElement.call(this, this._menuElm);
-
-    this._listElm = createDomElement('div', { className: 'slick-column-picker-list', role: 'menu' });
-    this._bindEventService.bind(this._menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener, undefined, 'parent-menu');
-
     // Hide the menu on outside click.
-    this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener, { capture: true });
+    this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener, undefined, 'body');
 
     // destroy the picker if user leaves the page
-    this._bindEventService.bind(document.body, 'beforeunload', this.dispose.bind(this) as EventListener);
-
-    document.body.appendChild(this._menuElm);
+    this._bindEventService.bind(document.body, 'beforeunload', this.dispose.bind(this) as EventListener, undefined, 'body');
   }
 
   /** Dispose (destroy) the SlickGrid 3rd party plugin */
   dispose() {
     this._eventHandler.unsubscribeAll();
     this._bindEventService.unbindAll();
-    this._listElm?.remove?.();
-    this._menuElm?.remove?.();
+    this.disposeMenu();
+  }
+
+  disposeMenu() {
+    this._bindEventService.unbindAll('parent-menu');
+    this._listElm?.remove();
+    this._menuElm?.remove();
+    this._menuElm = null;
+  }
+
+  createPickerMenu() {
+    const menuElm = createDomElement('div', {
+      ariaExpanded: 'true',
+      className: `slick-column-picker ${this._gridUid}`,
+      role: 'menu',
+    });
+    updateColumnPickerOrder.call(this);
+
+    // add Close button and optiona a Column list title
+    addColumnTitleElementWhenDefined.call(this, menuElm);
+    addCloseButtomElement.call(this, menuElm);
+
+    this._listElm = createDomElement('div', { className: 'slick-column-picker-list', role: 'menu' });
+    this._bindEventService.bind(menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener, undefined, 'parent-menu');
+
+    document.body.appendChild(menuElm);
+
+    return menuElm;
   }
 
   /**
@@ -164,9 +175,7 @@ export class SlickColumnPicker {
     this.extensionUtility.translateItems(this._columns, 'nameKey', 'name');
 
     // update the Titles of each sections (command, commandTitle, ...)
-    if (this.addonOptions) {
-      this.updateAllTitles(this.addonOptions);
-    }
+    this.translateTitleLabels(this.addonOptions);
   }
 
   // --
@@ -175,9 +184,8 @@ export class SlickColumnPicker {
 
   /** Mouse down handler when clicking anywhere in the DOM body */
   protected handleBodyMouseDown(e: DOMMouseOrTouchEvent<HTMLDivElement>) {
-    if ((this._menuElm !== e.target && !this._menuElm.contains(e.target)) || (e.target.className === 'close' && e.target.closest('.slick-column-picker'))) {
-      this._menuElm.setAttribute('aria-expanded', 'false');
-      this._menuElm.style.display = 'none';
+    if ((this._menuElm !== e.target && !this._menuElm?.contains(e.target)) || (e.target.className === 'close' && e.target.closest('.slick-column-picker'))) {
+      this.disposeMenu();
     }
   }
 
@@ -185,28 +193,34 @@ export class SlickColumnPicker {
   protected handleHeaderContextMenu(e: DOMMouseOrTouchEvent<HTMLDivElement>) {
     e.preventDefault();
     emptyElement(this._listElm);
-    updateColumnPickerOrder.call(this);
     this._columnCheckboxes = [];
 
+    this._menuElm = this.createPickerMenu();
+
+    // load the column & create column picker list
     populateColumnPicker.call(this, this.addonOptions);
+    document.body.appendChild(this._menuElm);
+
     this.repositionMenu(e);
   }
 
   protected repositionMenu(event: DOMMouseOrTouchEvent<HTMLDivElement>) {
     const targetEvent: MouseEvent | Touch = (event as TouchEvent)?.touches?.[0] ?? event;
-    this._menuElm.style.top = `${targetEvent.pageY - 10}px`;
-    this._menuElm.style.left = `${targetEvent.pageX - 10}px`;
-    this._menuElm.style.minHeight = findWidthOrDefault(this.addonOptions.minHeight, '');
-    this._menuElm.style.maxHeight = findWidthOrDefault(this.addonOptions.maxHeight, `${window.innerHeight - targetEvent.clientY}px`);
-    this._menuElm.style.display = 'block';
-    this._menuElm.setAttribute('aria-expanded', 'true');
-    this._menuElm.appendChild(this._listElm);
+    if (this._menuElm) {
+      this._menuElm.style.top = `${targetEvent.pageY - 10}px`;
+      this._menuElm.style.left = `${targetEvent.pageX - 10}px`;
+      this._menuElm.style.minHeight = findWidthOrDefault(this.addonOptions.minHeight, '');
+      this._menuElm.style.maxHeight = findWidthOrDefault(this.addonOptions.maxHeight, `${window.innerHeight - targetEvent.clientY}px`);
+      this._menuElm.style.display = 'block';
+      this._menuElm.setAttribute('aria-expanded', 'true');
+      this._menuElm.appendChild(this._listElm);
+    }
   }
 
   /** Update the Titles of each sections (command, commandTitle, ...) */
-  protected updateAllTitles(options: ColumnPickerOption) {
-    if (this._columnTitleElm?.textContent && options.columnTitle) {
-      this._columnTitleElm.textContent = options.columnTitle;
+  protected translateTitleLabels(pickerOptions: ColumnPickerOption) {
+    if (pickerOptions) {
+      pickerOptions.columnTitle = this.extensionUtility.getPickerTitleOutputString('columnTitle', 'gridMenu');
     }
   }
 }
