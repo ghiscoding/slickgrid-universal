@@ -187,7 +187,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     const gridUidSelector = this._gridUid ? `.${this._gridUid}` : '';
     const gridMenuWidth = this._addonOptions?.menuWidth || this._defaults.menuWidth;
     const headerSide = (this.gridOptions.hasOwnProperty('frozenColumn') && this.gridOptions.frozenColumn! >= 0) ? 'right' : 'left';
-    this._headerElm = document.querySelector<HTMLDivElement>(`${gridUidSelector} .slick-header-${headerSide}`);
+    const gridContainer = this.grid.getContainerNode();
+    this._headerElm = gridContainer.querySelector<HTMLDivElement>(`.slick-header-${headerSide}`);
 
     if (this._headerElm && this._addonOptions) {
       // resize the header row to include the hamburger menu icon
@@ -196,7 +197,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       // if header row is enabled, we also need to resize its width
       const enableResizeHeaderRow = this._addonOptions.resizeOnShowHeaderRow ?? this._defaults.resizeOnShowHeaderRow;
       if (enableResizeHeaderRow && this.gridOptions.showHeaderRow) {
-        const headerRowElm = document.querySelector<HTMLDivElement>(`${gridUidSelector} .slick-headerrow`);
+        const headerRowElm = gridContainer.querySelector<HTMLDivElement>(`${gridUidSelector} .slick-headerrow`);
         if (headerRowElm) {
           headerRowElm.style.width = `calc(100% - ${gridMenuWidth}px)`;
         }

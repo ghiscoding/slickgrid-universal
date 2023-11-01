@@ -75,6 +75,7 @@ const gridStub = {
   getCellNode: jest.fn(),
   getCellFromEvent: jest.fn(),
   getColumns: jest.fn(),
+  getContainerNode: jest.fn(),
   getHeaderColumn: jest.fn(),
   getOptions: jest.fn(),
   getPreHeaderPanel: jest.fn(),
@@ -141,6 +142,7 @@ describe('Draggable Grouping Plugin', () => {
     sharedService = new SharedService();
     translateService = new TranslateServiceStub();
     extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
+    jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(document.body as HTMLDivElement);
     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);

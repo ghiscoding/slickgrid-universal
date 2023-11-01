@@ -49,6 +49,7 @@ const gridStub = {
   autosizeColumns: jest.fn(),
   getColumnIndex: jest.fn(),
   getColumns: jest.fn(),
+  getContainerNode: jest.fn(),
   getGridPosition: () => ({ width: 10, left: 0 }),
   getOptions: jest.fn(),
   getSelectedRows: jest.fn(),
@@ -156,6 +157,7 @@ describe('GridMenuControl', () => {
       translateService = new TranslateServiceStub();
       extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
 
+      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(document.body as HTMLDivElement);
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
       jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       jest.spyOn(SharedService.prototype, 'dataView', 'get').mockReturnValue(dataViewStub);

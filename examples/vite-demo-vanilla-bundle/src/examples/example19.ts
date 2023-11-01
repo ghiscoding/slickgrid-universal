@@ -6,16 +6,8 @@ import './example19.scss';
 
 const NB_ITEMS = 100;
 declare const Slick: SlickNamespace;
-export default class Example34 {
+export default class Example19 {
   protected _eventHandler: SlickEventHandler;
-  title = 'Example 19: ExcelCopyBuffer with Cell Selection';
-  subTitle = `Cell Selection using "Shift+{key}" where "key" can be any of:
-  <ul>
-    <li>Arrow Up/Down/Left/Right</li>
-    <li>Page Up/Down</li>
-    <li>Home</li>
-    <li>End</li>
-  </ul>`;
 
   columnDefinitions: Column[] = [];
   dataset: any[] = [];
@@ -71,7 +63,7 @@ export default class Example34 {
         id: i,
         name: i < 26
           ? String.fromCharCode('A'.charCodeAt(0) + (i % 26))
-          : String.fromCharCode('A'.charCodeAt(0) + ((i / 26) | 0) -1) + String.fromCharCode('A'.charCodeAt(0) + (i % 26)),
+          : String.fromCharCode('A'.charCodeAt(0) + (Math.floor(i / 26)) - 1) + String.fromCharCode('A'.charCodeAt(0) + (i % 26)),
         field: i as any,
         minWidth: 60,
         width: 60,
