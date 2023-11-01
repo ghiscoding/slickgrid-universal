@@ -15,12 +15,10 @@ export function buildSelectOperator(optionValues: Array<{ operator: OperatorStri
   const selectElm = createDomElement('select', { className: 'form-control' });
 
   for (const option of optionValues) {
-    selectElm.appendChild(
-      createDomElement('option', {
-        value: option.operator,
-        innerHTML: sanitizeTextByAvailableSanitizer(gridOptions, `${htmlEncodedStringWithPadding(option.operator, 3)}${option.description}`)
-      })
-    );
+    const optionElm = document.createElement('option');
+    optionElm.value = option.operator;
+    optionElm.innerHTML = sanitizeTextByAvailableSanitizer(gridOptions, `${htmlEncodedStringWithPadding(option.operator, 3)}${option.description}`);
+    selectElm.appendChild(optionElm);
   }
 
   return selectElm;

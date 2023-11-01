@@ -141,12 +141,10 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
     const headerColumnValueExtractorFn = typeof addonOptions?.headerColumnValueExtractor === 'function' ? addonOptions.headerColumnValueExtractor : context._defaults.headerColumnValueExtractor;
     const columnLabel = headerColumnValueExtractorFn!(column, context.gridOptions);
 
-    columnLiElm.appendChild(
-      createDomElement('label', {
-        htmlFor: `${context._gridUid}-${menuPrefix}colpicker-${columnId}`,
-        innerHTML: sanitizeTextByAvailableSanitizer(context.gridOptions, columnLabel),
-      })
-    );
+    const labelElm = document.createElement('label');
+    labelElm.htmlFor = `${context._gridUid}-${menuPrefix}colpicker-${columnId}`;
+    labelElm.innerHTML = sanitizeTextByAvailableSanitizer(context.gridOptions, columnLabel);
+    columnLiElm.appendChild(labelElm);
     context._listElm.appendChild(columnLiElm);
   }
 

@@ -316,7 +316,8 @@ export class SlickCustomTooltip {
    * also clear the "title" attribute from the grid div text content so that it won't show also as a 2nd browser tooltip
    */
   protected renderRegularTooltip(formatterOrText: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: any) {
-    const tmpDiv = createDomElement('div', { innerHTML: this.parseFormatterAndSanitize(formatterOrText, cell, value, columnDef, item) });
+    const tmpDiv = document.createElement('div');
+    tmpDiv.innerHTML = this.parseFormatterAndSanitize(formatterOrText, cell, value, columnDef, item);
 
     let tooltipText = columnDef?.toolTip ?? '';
     let tmpTitleElm: HTMLDivElement | null | undefined;
