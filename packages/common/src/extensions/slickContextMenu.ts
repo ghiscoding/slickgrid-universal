@@ -142,7 +142,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       }
 
       // Hide the menu on outside click.
-      this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener, { capture: true });
+      this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener);
     }
   }
 
