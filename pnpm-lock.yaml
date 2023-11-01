@@ -85,8 +85,8 @@ importers:
         specifier: ^6.1.1
         version: 6.1.1
       pnpm:
-        specifier: ^8.10.0
-        version: 8.10.0
+        specifier: ^8.10.2
+        version: 8.10.2
       rimraf:
         specifier: ^5.0.5
         version: 5.0.5
@@ -97,8 +97,8 @@ importers:
         specifier: ^4.0.2
         version: 4.0.2
       slickgrid:
-        specifier: ^4.1.1
-        version: 4.1.1
+        specifier: ^4.1.2
+        version: 4.1.2
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -236,8 +236,8 @@ importers:
         specifier: ^0.5.0
         version: 0.5.0
       slickgrid:
-        specifier: ^4.1.1
-        version: 4.1.1
+        specifier: ^4.1.2
+        version: 4.1.2
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -528,8 +528,8 @@ importers:
         specifier: ^4.6.13
         version: 4.6.13
       slickgrid:
-        specifier: ^4.1.1
-        version: 4.1.1
+        specifier: ^4.1.2
+        version: 4.1.2
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -7755,8 +7755,8 @@ packages:
       find-up: 4.1.0
     dev: true
 
-  /pnpm@8.10.0:
-    resolution: {integrity: sha512-nCy4Pyts9qJdjFgwC/mRl8fvO+hM8+dm8pBUtAuDtC+Kq6b8wxSp7PJ8APfOgKdXu0xgiADnrb4tKdxccFb1vg==}
+  /pnpm@8.10.2:
+    resolution: {integrity: sha512-B4IJPVumx62UYggbwe8HdQFqS0EJ7KHh/tzqbxEBQ69fUJk9s2xCfU+oxivjkgoyJNsS2nGdJGyhndnxgEjDPA==}
     engines: {node: '>=16.14'}
     hasBin: true
     dev: true
@@ -8699,8 +8699,8 @@ packages:
       is-fullwidth-code-point: 3.0.0
     dev: true
 
-  /slickgrid@4.1.1:
-    resolution: {integrity: sha512-KYwo7e6VzZiwgmMwPw8oKvJFVt61JtnBKPgwqS+t7o1FTQHhZAHf6HPxssqGRmfqlTbg3Li7UjBqYQkOTGrBVA==}
+  /slickgrid@4.1.2:
+    resolution: {integrity: sha512-yXS/4k6SVpI4FacpzbAQ7GXFQGSKT3w8kn64y9YQ2by2D9kOqDigXub+LNurunPkh3BEOYxBx0kkPjy/I8BYPg==}
     dependencies:
       sortablejs: 1.15.0
 
