@@ -550,7 +550,7 @@ describe('GridMenuControl', () => {
         expect(control.menuElement).toBeFalsy();
         expect(pubSubSpy).toHaveBeenCalledWith('onGridMenuBeforeMenuShow', {
           grid: gridStub,
-          menu: undefined,
+          menu: null,
           allColumns: columnsMock,
           columns: columnsMock,
           visibleColumns: columnsMock
@@ -589,7 +589,7 @@ describe('GridMenuControl', () => {
         expect(control.menuElement).toBeFalsy();
         expect(pubSubSpy).toHaveBeenCalledWith('onGridMenuAfterMenuShow', {
           grid: gridStub,
-          menu: undefined,
+          menu: null,
           allColumns: columnsMock,
           columns: columnsMock,
           visibleColumns: columnsMock

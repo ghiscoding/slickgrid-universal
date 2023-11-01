@@ -163,6 +163,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   deleteMenu() {
     this._bindEventService.unbindAll();
     this._menuElm?.remove();
+    this._menuElm = null;
     this._gridMenuButtonElm?.remove();
     if (this._headerElm) {
       // put back grid header original width (fixes width and frozen+gridMenu on left header)
@@ -440,6 +441,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
     // empty the entire menu so that it's recreated every time it opens
     emptyElement(this._menuElm);
+    this._menuElm?.remove();
 
     if (this._addonOptions) {
       const callbackArgs = {
