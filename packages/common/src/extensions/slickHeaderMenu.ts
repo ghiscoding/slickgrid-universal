@@ -84,7 +84,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     this.grid.setColumns(this.grid.getColumns());
 
     // hide the menu when clicking outside the grid
-    this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener, { capture: true });
+    this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener);
   }
 
   /** Dispose (destroy) of the plugin */
