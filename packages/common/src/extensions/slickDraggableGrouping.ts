@@ -129,6 +129,10 @@ export class SlickDraggableGrouping {
     return this._gridUid || (this.grid?.getUID() ?? '');
   }
 
+  get gridContainer() {
+    return this.grid.getContainerNode();
+  }
+
   /** Initialize plugin. */
   init(grid: SlickGrid, groupingOptions?: DraggableGrouping) {
     this._addonOptions = { ...this._defaults, ...groupingOptions };
@@ -215,7 +219,7 @@ export class SlickDraggableGrouping {
     this._eventHandler.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);
     this._bindingEventService.unbindAll();
-    emptyElement(document.querySelector(`.${this.gridUid} .slick-preheader-panel`));
+    emptyElement(this.gridContainer.querySelector(`.${this.gridUid} .slick-preheader-panel`));
   }
 
   clearDroppedGroups() {
@@ -354,8 +358,8 @@ export class SlickDraggableGrouping {
       }
     } as SortableOptions;
 
-    this._sortableLeftInstance = Sortable.create(document.querySelector(`.${grid.getUID()} .slick-header-columns.slick-header-columns-left`) as HTMLDivElement, sortableOptions) as SortableInstance;
-    this._sortableRightInstance = Sortable.create(document.querySelector(`.${grid.getUID()} .slick-header-columns.slick-header-columns-right`) as HTMLDivElement, sortableOptions) as SortableInstance;
+    this._sortableLeftInstance = Sortable.create(this.gridContainer.querySelector(`.${grid.getUID()} .slick-header-columns.slick-header-columns-left`) as HTMLDivElement, sortableOptions) as SortableInstance;
+    this._sortableRightInstance = Sortable.create(this.gridContainer.querySelector(`.${grid.getUID()} .slick-header-columns.slick-header-columns-right`) as HTMLDivElement, sortableOptions) as SortableInstance;
 
     return {
       sortableLeftInstance: this._sortableLeftInstance,

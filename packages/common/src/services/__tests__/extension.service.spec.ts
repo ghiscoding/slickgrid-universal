@@ -87,6 +87,7 @@ jest.mock('../../extensions/slickRowMoveManager', () => ({
 const gridStub = {
   autosizeColumns: jest.fn(),
   getColumnIndex: jest.fn(),
+  getContainerNode: jest.fn(),
   getOptions: jest.fn(),
   getPluginByName: jest.fn(),
   getPreHeaderPanel: jest.fn(),
@@ -131,6 +132,7 @@ const filterServiceStub = {
 const pubSubServiceStub = {
   publish: jest.fn(),
   subscribe: jest.fn(),
+  subscribeEvent: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
 } as BasePubSubService;
@@ -190,6 +192,7 @@ describe('ExtensionService', () => {
         treeDataServiceStub,
         translateService,
       );
+      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(document.body as HTMLDivElement);
     });
 
     afterEach(() => {
@@ -304,7 +307,7 @@ describe('ExtensionService', () => {
 
         expect(extSpy).toHaveBeenCalled();
         expect(output).toEqual({ name: ExtensionName.autoTooltip, instance: pluginInstance } as ExtensionModel<any>);
-        expect(output.instance instanceof SlickAutoTooltip).toBeTrue();
+        expect(output!.instance instanceof SlickAutoTooltip).toBeTrue();
       });
 
       it('should register the ColumnPicker addon when "enableColumnPicker" is set in the grid options', () => {
@@ -318,7 +321,7 @@ describe('ExtensionService', () => {
 
         expect(gridSpy).toHaveBeenCalled();
         expect(output).toEqual({ name: ExtensionName.columnPicker, instance: pluginInstance } as ExtensionModel<any>);
-        expect(output.instance instanceof SlickColumnPicker).toBeTrue();
+        expect(output!.instance instanceof SlickColumnPicker).toBeTrue();
       });
 
       it('should call "onExtensionRegistered" when defined in grid option and the ColumnPicker control gets created', () => {
@@ -335,7 +338,7 @@ describe('ExtensionService', () => {
         const output = service.getExtensionByName(ExtensionName.columnPicker);
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.toBeObject());
-        expect(output.instance instanceof SlickColumnPicker).toBeTrue();
+        expect(output!.instance instanceof SlickColumnPicker).toBeTrue();
       });
 
       it('should register the DraggableGrouping addon when "enableDraggableGrouping" is set in the grid options', () => {
@@ -355,7 +358,7 @@ describe('ExtensionService', () => {
         const output2 = service.getExtensionByName(ExtensionName.groupItemMetaProvider);
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.toBeObject());
-        expect(output.instance instanceof SlickDraggableGrouping).toBeTrue();
+        expect(output!.instance instanceof SlickDraggableGrouping).toBeTrue();
         expect(gridSpy).toHaveBeenCalled();
         expect(pluginInstance).toBeTruthy();
         expect(output!.instance).toEqual(pluginInstance);
@@ -377,7 +380,7 @@ describe('ExtensionService', () => {
         const output = service.getExtensionByName(ExtensionName.gridMenu);
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.toBeObject());
-        expect(output.instance instanceof SlickGridMenu).toBeTrue();
+        expect(output!.instance instanceof SlickGridMenu).toBeTrue();
       });
 
       it('should register the GroupItemMetaProvider addon when "enableGrouping" is set in the grid options', () => {
@@ -389,7 +392,7 @@ describe('ExtensionService', () => {
         const pluginInstance = service.getExtensionInstanceByName(ExtensionName.groupItemMetaProvider);
 
         expect(gridSpy).toHaveBeenCalled();
-        expect(output.instance instanceof SlickGroupItemMetadataProvider).toBeTrue();
+        expect(output!.instance instanceof SlickGroupItemMetadataProvider).toBeTrue();
         expect(pluginInstance).toBeTruthy();
         expect(output!.instance).toEqual(pluginInstance);
         expect(output).toEqual({ name: ExtensionName.groupItemMetaProvider, instance: pluginInstance } as ExtensionModel<any>);
@@ -450,7 +453,7 @@ describe('ExtensionService', () => {
         const pluginInstance = service.getExtensionInstanceByName(ExtensionName.cellMenu);
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.toBeObject());
-        expect(output.instance instanceof SlickCellMenu).toBeTrue();
+        expect(output!.instance instanceof SlickCellMenu).toBeTrue();
         expect(gridSpy).toHaveBeenCalled();
         expect(pluginInstance).toBeTruthy();
         expect(output!.instance).toEqual(pluginInstance);
@@ -467,7 +470,7 @@ describe('ExtensionService', () => {
         const pluginInstance = service.getExtensionInstanceByName(ExtensionName.contextMenu);
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.toBeObject());
-        expect(output.instance instanceof SlickContextMenu).toBeTrue();
+        expect(output!.instance instanceof SlickContextMenu).toBeTrue();
         expect(gridSpy).toHaveBeenCalled();
         expect(pluginInstance).toBeTruthy();
         expect(output!.instance).toEqual(pluginInstance);
@@ -484,7 +487,7 @@ describe('ExtensionService', () => {
         const pluginInstance = service.getExtensionInstanceByName(ExtensionName.headerButton);
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.toBeObject());
-        expect(output.instance instanceof SlickHeaderButtons).toBeTrue();
+        expect(output!.instance instanceof SlickHeaderButtons).toBeTrue();
         expect(gridSpy).toHaveBeenCalled();
         expect(pluginInstance).toBeTruthy();
         expect(output!.instance).toEqual(pluginInstance);
@@ -501,7 +504,7 @@ describe('ExtensionService', () => {
         const pluginInstance = service.getExtensionInstanceByName(ExtensionName.headerMenu);
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.toBeObject());
-        expect(output.instance instanceof SlickHeaderMenu).toBeTrue();
+        expect(output!.instance instanceof SlickHeaderMenu).toBeTrue();
         expect(gridSpy).toHaveBeenCalled();
         expect(pluginInstance).toBeTruthy();
         expect(output!.instance).toEqual(pluginInstance);
@@ -519,7 +522,7 @@ describe('ExtensionService', () => {
         const pluginInstance = service.getExtensionInstanceByName(ExtensionName.cellExternalCopyManager);
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.toBeObject());
-        expect(output.instance instanceof SlickCellExcelCopyManager).toBeTrue();
+        expect(output!.instance instanceof SlickCellExcelCopyManager).toBeTrue();
         expect(gridSpy).toHaveBeenCalled();
         expect(pluginInstance).toBeTruthy();
         expect(output!.instance).toEqual(pluginInstance);
@@ -643,7 +646,7 @@ describe('ExtensionService', () => {
 
       service.bindDifferentExtensions();
 
-      const columnPickerInstance = service.getExtensionByName(ExtensionName.columnPicker).instance;
+      const columnPickerInstance = service.getExtensionByName(ExtensionName.columnPicker)!.instance;
       const extSpy = jest.spyOn(columnPickerInstance, 'translateColumnPicker');
       service.translateColumnPicker();
       expect(extSpy).toHaveBeenCalled();
@@ -815,7 +818,7 @@ describe('ExtensionService', () => {
         service.renderColumnHeaders(columnsMock);
 
         expect(setColumnsSpy).toHaveBeenCalledWith(columnsMock);
-        expect(service.getExtensionByName(ExtensionName.columnPicker).instance.columns).toEqual(columnsMock);
+        expect(service.getExtensionByName(ExtensionName.columnPicker)!.instance.columns).toEqual(columnsMock);
       });
 
       it('should replace the Grid Menu columns when plugin is enabled and method is called with new column definition collection provided as argument', () => {
@@ -834,7 +837,7 @@ describe('ExtensionService', () => {
         service.renderColumnHeaders(columnsMock);
 
         expect(setColumnsSpy).toHaveBeenCalledWith(columnsMock);
-        expect(service.getExtensionByName(ExtensionName.gridMenu).instance.columns).toEqual(columnsMock);
+        expect(service.getExtensionByName(ExtensionName.gridMenu)!.instance.columns).toEqual(columnsMock);
       });
     });
   });
