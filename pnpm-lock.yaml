@@ -4,10 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  json5@<1.0.2: '>=1.0.2'
-  terser@>=5.0.0 <5.14.2: '>=5.14.2'
-
 importers:
 
   .:
@@ -9534,7 +9530,7 @@ packages:
       sass: '*'
       stylus: '*'
       sugarss: '*'
-      terser: '>=5.14.2'
+      terser: ^5.4.0
     peerDependenciesMeta:
       '@types/node':
         optional: true
