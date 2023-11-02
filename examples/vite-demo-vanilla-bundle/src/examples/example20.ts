@@ -32,9 +32,13 @@ export default class Example20 {
     this.gridContainerElm = document.querySelector<HTMLDivElement>(`#host`) as HTMLDivElement;
     document.body.classList.add('salesforce-theme');
 
+    // not sure why but ShadowDOM seems a little slower to render,
+    // let's wrap the grid resize in a delay & show the grid only after the resize
     setTimeout(() => {
       this.sgb = new Slicker.GridBundle(shadowObj.gridContainer as HTMLDivElement, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
-    }, 25);
+      this.sgb.resizerService.resizeGrid();
+      shadowObj.gridContainer.style.opacity = '1';
+    }, 50);
   }
 
   /**
@@ -53,6 +57,7 @@ export default class Example20 {
     const gridContainer = document.createElement('div');
     // gridContainer.style.width = '600px';
     // gridContainer.style.height = '500px';
+    gridContainer.style.opacity = '0';
     gridContainer.classList.add('grid20');
     shadow.appendChild(gridContainer);
 
