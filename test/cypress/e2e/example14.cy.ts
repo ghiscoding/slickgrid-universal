@@ -185,7 +185,7 @@ describe('Example 14 - Columns Resize by Content', { retries: 1 }, () => {
       .should('have.length', 0);
   });
 
-  describe('Custom Header Menu tests', () => {
+  describe('Custom Header Menu & sub-menus tests', () => {
     it('should open Hello sub-menu with 2 options expect it to be aligned to right then trigger alert when command is clicked', () => {
       const subCommands = ['Hello World', 'Hello SlickGrid', `Let's play`];
       const stub = cy.stub();
