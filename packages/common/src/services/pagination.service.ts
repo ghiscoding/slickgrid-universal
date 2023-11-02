@@ -35,6 +35,7 @@ export class PaginationService {
   protected _previousPagination?: Pagination;
   protected _subscriptions: EventSubscription[] = [];
   protected _cursorPageInfo?: CursorPageInfo;
+  protected _isCursorBased = false;
 
   /** SlickGrid Grid object */
   grid!: SlickGrid;
@@ -107,7 +108,7 @@ export class PaginationService {
    *    page3: {startCursor: C, endCursor: D }
    */
   get isCursorBased(): boolean {
-    return !!this._backendServiceApi?.options.isWithCursor;
+    return this._isCursorBased;
   }
 
   addRxJsResource(rxjs: RxJsFacade) {
@@ -121,6 +122,7 @@ export class PaginationService {
     this._paginationOptions = paginationOptions;
     this._isLocalGrid = !backendServiceApi;
     this._pageNumber = paginationOptions.pageNumber || 1;
+    this._isCursorBased = this._backendServiceApi?.options?.isWithCursor ?? false;
 
     if (backendServiceApi && (!backendServiceApi.service || !backendServiceApi.process)) {
       throw new Error(`BackendServiceApi requires the following 2 properties "process" and "service" to be defined.`);
@@ -491,6 +493,10 @@ export class PaginationService {
       this.refreshPagination();
       this._backendServiceApi?.service?.updatePagination?.(this._previousPagination?.pageNumber ?? 0, this._previousPagination?.pageSize ?? 0);
     }
+  }
+
+  setCursorBased(isWithCursor: boolean) {
+    this._isCursorBased = isWithCursor;
   }
 
   setCursorPageInfo(pageInfo: CursorPageInfo) {
