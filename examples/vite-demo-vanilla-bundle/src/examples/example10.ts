@@ -23,7 +23,6 @@ import '../material-styles.scss';
 const defaultPageSize = 20;
 const GRAPHQL_QUERY_DATASET_NAME = 'users';
 const FAKE_SERVER_DELAY = 250;
-const FAKE_SMALLER_SERVER_DELAY = 50;
 
 export default class Example10 {
   private _bindingEventService: BindingEventService;
@@ -364,10 +363,6 @@ export default class Example10 {
     await this.translateService.use(nextLanguage);
     this.selectedLanguage = nextLanguage;
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;
-  }
-
-  testWithSmallerWaitTime() {
-    this.serverWaitDelay = FAKE_SMALLER_SERVER_DELAY;
   }
 
   private resetOptions(options: Partial<GraphqlServiceOption>) {
