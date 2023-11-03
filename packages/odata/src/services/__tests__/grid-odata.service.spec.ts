@@ -1548,7 +1548,7 @@ describe('GridOdataService', () => {
         ${"Verbatim true,  Filter for empty string (in list)"}  | ${true}  | ${'IN'}   | ${['']}                | ${'$top=10&$filter=(gender IN [\"\"])'}
         ${"Verbatim false, Filter for female"}                  | ${false} | ${'IN'}   | ${['female']}          | ${'$top=10&$filter=(gender eq \'female\')'}
         ${"Verbatim true,  Filter for female"}                  | ${true}  | ${'IN'}   | ${['female']}          | ${'$top=10&$filter=(gender IN [\"female\"])'}
-        ${"Verbatim false, Filter for female/male"}             | ${false} | ${'IN'}   | ${['female', 'male']}  | ${'$top=10&$filter=(Gender eq \'female\' or Gender eq \'male\')'}
+        ${"Verbatim false, Filter for female/male"}             | ${false} | ${'IN'}   | ${['female', 'male']}  | ${'$top=10&$filter=(gender eq \'female\' or Gender eq \'male\')'}
         ${"Verbatim true,  Filter for female/male"}             | ${true}  | ${'IN'}   | ${['female', 'male']}  | ${'$top=10&$filter=(gender IN [\"female\",\"male\"])'}
       `(`$description`, ({ description, verbatim, operator, searchTerms, expectation }) => {
 
