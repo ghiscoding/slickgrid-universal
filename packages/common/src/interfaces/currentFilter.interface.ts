@@ -17,6 +17,6 @@ export interface CurrentFilter {
   /** Target element selector from which the filter was triggered from. */
   targetSelector?: string;
 
-  /** If true, stringifies the search terms as is without modification */
+  /** If true, JSON.stringify is used on the searchTerms as is and used to build the filter query */
   verbatimSearchTerms?: boolean;
 }
