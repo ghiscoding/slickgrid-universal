@@ -1239,21 +1239,21 @@ describe('GraphqlService', () => {
 
     describe("Verbatim ColumnFilters", () => {
       describe.each`
-        description                                         | verbatim | operator    | searchTerms            | expectation
-        ${"Verbatim false, Filter for null"}                | ${false} | ${'EQ'}     | ${null}                | ${'query{users(first:10, offset:0) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim true,  Filter for null"}                | ${true}  | ${'EQ'}     | ${null}                | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:EQ, value:"null"}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim false, Empty String"}                   | ${false} | ${'EQ'}     | ${''}                  | ${'query{users(first:10, offset:0) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim true,  Empty String"}                   | ${true}  | ${'EQ'}     | ${''}                  | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:EQ, value:"\\"\\""}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim false, Empty List"}                     | ${false} | ${'IN'}     | ${[]}                  | ${'query{users(first:10, offset:0) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim true,  Empty List"}                     | ${true}  | ${'IN'}     | ${[]}                  | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim false, Filter for null (List version)"} | ${false} | ${'IN'}     | ${[null]}              | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:""}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim true,  Filter for null (List version)"} | ${true}  | ${'IN'}     | ${[null]}              | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[null]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim false, Empty String (List Version)"}    | ${false} | ${'IN'}     | ${['']}                | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:""}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim true,  Empty String (List Version)"}    | ${true}  | ${'IN'}     | ${['']}                | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[\\"\\"]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim false, Filter for females"}             | ${false} | ${'IN'}     | ${['female']}          | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"female"}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim true,  Filter for females"}             | ${true}  | ${'IN'}     | ${['female']}          | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[\\"female\\"]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim false, Filter for female/male"}         | ${false} | ${'IN'}     | ${['female', 'male']}  | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"female, male"}]) { totalCount,nodes{ id,company,gender,name } }}'}
-        ${"Verbatim true,  Filter for female/male"}         | ${true}  | ${'IN'}     | ${['female', 'male']}  | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[\\"female\\", \\"male\\"]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        description                                             | verbatim | operator  | searchTerms            | expectation
+        ${"Verbatim false, Filter for null"}                    | ${false} | ${'EQ'}   | ${null}                | ${'query{users(first:10, offset:0) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim true,  Filter for null"}                    | ${true}  | ${'EQ'}   | ${null}                | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:EQ, value:"null"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim false, Empty string"}                       | ${false} | ${'EQ'}   | ${''}                  | ${'query{users(first:10, offset:0) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim true,  Empty string"}                       | ${true}  | ${'EQ'}   | ${''}                  | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:EQ, value:"\\"\\""}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim false, Empty list"}                         | ${false} | ${'IN'}   | ${[]}                  | ${'query{users(first:10, offset:0) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim true,  Empty list"}                         | ${true}  | ${'IN'}   | ${[]}                  | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim false, Filter for null (in list)"}          | ${false} | ${'IN'}   | ${[null]}              | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:""}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim true,  Filter for null (in list)"}          | ${true}  | ${'IN'}   | ${[null]}              | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[null]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim false, Filter for empty string (in list)"}  | ${false} | ${'IN'}   | ${['']}                | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:""}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim true,  Filter for empty string (in list)"}  | ${true}  | ${'IN'}   | ${['']}                | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[\\"\\"]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim false, Filter for female"}                  | ${false} | ${'IN'}   | ${['female']}          | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"female"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim true,  Filter for female"}                  | ${true}  | ${'IN'}   | ${['female']}          | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[\\"female\\"]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim false, Filter for female/male"}             | ${false} | ${'IN'}   | ${['female', 'male']}  | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"female, male"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim true,  Filter for female/male"}             | ${true}  | ${'IN'}   | ${['female', 'male']}  | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[\\"female\\", \\"male\\"]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
       `(`$description`, ({ description, verbatim, operator, searchTerms, expectation }) => {
 
         const mockColumn = { id: 'gender', field: 'gender' } as Column;
@@ -1261,7 +1261,7 @@ describe('GraphqlService', () => {
 
         beforeEach(() => {
           mockColumnFilters = {
-            gender: { columnId: 'gender', columnDef: mockColumn, searchTerms, operator, type: FieldType.string, verbatim },
+            gender: { columnId: 'gender', columnDef: mockColumn, searchTerms, operator, type: FieldType.string, verbatimSearchTerms: verbatim },
           } as ColumnFilters;
 
           service.init(serviceOptions, paginationOptions, gridStub);

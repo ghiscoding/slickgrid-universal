@@ -18,5 +18,5 @@ export interface CurrentFilter {
   targetSelector?: string;
 
   /** If true, stringifies the search terms as is without modification */
-  verbatim?: boolean;
+  verbatimSearchTerms?: boolean;
 }

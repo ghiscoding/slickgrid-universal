@@ -407,7 +407,7 @@ export class GraphqlService implements BackendService {
           throw new Error(`GraphQL filter could not find the field name to query the search, your column definition must include a valid "field" or "name" (optionally you can also use the "queryfield").`);
         }
 
-        if (columnFilter.verbatim) {
+        if (columnFilter.verbatimSearchTerms) {
           searchByArray.push({ field: fieldName, operator: columnFilter.operator, value: JSON.stringify(columnFilter.searchTerms) });
           continue;
         }
