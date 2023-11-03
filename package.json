@@ -55,7 +55,7 @@
     "node": ">=16.15.0",
     "npm": ">=8.5.0"
   },
-  "packageManager": "pnpm@8.10.0",
+  "packageManager": "pnpm@8.10.2",
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^2.2.5",
     "@jest/types": "^29.6.3",
