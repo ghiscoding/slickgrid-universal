@@ -17,6 +17,9 @@ export interface CurrentFilter {
   /** Target element selector from which the filter was triggered from. */
   targetSelector?: string;
 
-  /** If true, JSON.stringify is used on the searchTerms as is and used to build the filter query */
+  /**
+   * When false, searchTerms may be manipulated to be functional with certain filters eg: string only filters.
+   * When true, JSON.stringify is used on the searchTerms and used in the query "as-is". It is then the responsibility of the developer to sanitise the `searchTerms` property if necessary.
+   */
   verbatimSearchTerms?: boolean;
 }
