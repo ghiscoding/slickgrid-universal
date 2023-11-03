@@ -1236,6 +1236,46 @@ describe('GraphqlService', () => {
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
       expect(currentFilters).toEqual([]);
     });
+
+    describe("Verbatim ColumnFilters", () => {
+      describe.each`
+        description                               | verbatim | searchTerms            | expectation
+        ${"Verbatim false, searchTerms: null"}    | ${false} | ${null}                | ${'query{users(first:10, offset:0) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim true,  searchTerms: null"}    | ${true}  | ${null}                | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"null"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim false, searchTerms: ''"}      | ${false} | ${''}                  | ${'query{users(first:10, offset:0) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim true,  searchTerms: ''"}      | ${true}  | ${''}                  | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"\\"\\""}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim false, searchTerms: []"}      | ${false} | ${[]}                  | ${'query{users(first:10, offset:0) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim true,  searchTerms: []"}      | ${true}  | ${[]}                  | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim false, searchTerms: [null]"}  | ${false} | ${[null]}              | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:""}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim true,  searchTerms: [null]"}  | ${true}  | ${[null]}              | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[null]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim false, searchTerms: [null]"}  | ${false} | ${['']}                | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:""}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim true,  searchTerms: [null]"}  | ${true}  | ${['']}                | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[\\"\\"]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim false, 1 search term"}        | ${false} | ${['female']}          | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"female"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim true,  1 search term"}        | ${true}  | ${['female']}          | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[\\"female\\"]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim false, 2 search terms"}       | ${false} | ${['female', 'male']}  | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"female, male"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+        ${"Verbatim true,  2 search terms"}       | ${true}  | ${['female', 'male']}  | ${'query{users(first:10, offset:0, filterBy:[{field:gender, operator:IN, value:"[\\"female\\", \\"male\\"]"}]) { totalCount,nodes{ id,company,gender,name } }}'}
+
+
+      `(`$description`, ({ description, verbatim, searchTerms, expectation }) => {
+
+        const mockColumn = { id: 'gender', field: 'gender' } as Column;
+        let mockColumnFilters: ColumnFilters;
+
+        beforeEach(() => {
+          mockColumnFilters = {
+            gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: searchTerms, operator: 'IN', type: FieldType.string, verbatim: verbatim },
+          } as ColumnFilters;
+
+          service.init(serviceOptions, paginationOptions, gridStub);
+          service.updateFilters(mockColumnFilters, false);
+        });
+
+        test(`buildQuery output matches ${expectation}`, () => {
+          const query = service.buildQuery();
+          expect(removeSpaces(query)).toBe(removeSpaces(expectation));
+        });
+      });
+    });
   });
 
   describe('presets', () => {

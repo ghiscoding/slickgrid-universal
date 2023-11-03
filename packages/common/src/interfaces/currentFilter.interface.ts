@@ -16,4 +16,7 @@ export interface CurrentFilter {
 
   /** Target element selector from which the filter was triggered from. */
   targetSelector?: string;
+
+  /** If true, stringifies the search terms as is without modification */
+  verbatim?: boolean;
 }
