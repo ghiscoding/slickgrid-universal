@@ -64,7 +64,7 @@ export default class Example20 {
     const linkElement = document.createElement('link');
     linkElement.type = 'text/css';
     linkElement.rel = 'stylesheet';
-    linkElement.href = './src/styles.scss';
+    linkElement.href = './assets/styles.css';
     shadow.appendChild(linkElement);
     return { shadow, gridContainer };
   }
