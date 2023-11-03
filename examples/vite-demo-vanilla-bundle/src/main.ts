@@ -16,11 +16,7 @@ class Main {
   constructor(private renderer: Renderer) { }
 
   async loadApp() {
-    // this.app = new App();
-    // this.app.loadRoute()
-    // console.log(App, await import(`./app.ts` as any))
     this.app = this.renderer.loadViewModel(App);
-    // this.app = this.renderer.loadViewModel(await import(`./app.ts` as any));
     this.renderer.loadView(AppView);
 
     const translate = new TranslateService();

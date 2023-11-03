@@ -1,19 +1,19 @@
 import { Renderer } from '../renderer';
 
-export function loadComponent<T = any>(containerElement: HTMLDivElement, componentModuleId: string, bindings?: any): T | null {
+export function loadComponent<T = any>(containerElement: HTMLDivElement, htmlView: string, vmModule: any, bindings?: any): T | null {
   if (containerElement) {
     const renderer = new Renderer(containerElement);
-    const viewModel = renderer.loadViewModel(require(`${componentModuleId}.ts`));
-    if (viewModel && viewModel.dispose) {
+    const viewModel = renderer.loadViewModel(vmModule);
+    if (viewModel?.dispose) {
       window.onunload = viewModel.dispose; // dispose when leaving SPA
     }
 
-    renderer.loadView(require(`${componentModuleId}.html`));
-    if (viewModel && viewModel.attached && renderer.className) {
+    renderer.loadView(htmlView);
+    if (viewModel?.attached && renderer.className) {
       const viewModelObj = {};
       viewModelObj[renderer.className] = viewModel;
       viewModel.attached();
-      if (viewModel && viewModel.bind) {
+      if (viewModel?.bind) {
         viewModel.bind(bindings);
       }
     }
