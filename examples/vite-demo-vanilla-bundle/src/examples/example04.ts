@@ -334,13 +334,8 @@ export default class Example4 {
             { divider: true, command: '', positionOrder: 63 },
             // 'divider',
 
-            {
-              command: 'help',
-              title: 'Help',
-              iconCssClass: 'mdi mdi-help-circle',
-              positionOrder: 66,
-            },
-            { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, }
+            { command: 'help', title: 'Help', iconCssClass: 'mdi mdi-help-circle', positionOrder: 66, },
+            { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, },
           ],
           optionTitle: 'Change Complete Flag',
           optionItems: [
@@ -388,6 +383,7 @@ export default class Example4 {
       // when using the cellMenu, you can change some of the default options and all use some of the callback methods
       enableCellMenu: true,
       cellMenu: {
+        subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
         // all the Cell Menu callback methods (except the action callback)
         // are available under the grid options as shown below
         onCommand: (e, args) => this.executeCommand(e, args),
@@ -401,7 +397,71 @@ export default class Example4 {
         },
       },
       gridMenu: { hideClearFrozenColumnsCommand: false },
-      headerMenu: { hideFreezeColumnsCommand: false }
+      headerMenu: { hideFreezeColumnsCommand: false },
+      enableContextMenu: true,
+      contextMenu: {
+        optionShownOverColumnIds: ['percentComplete'],
+        subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
+        hideCloseButton: true,
+        optionTitle: 'Change Percent Complete',
+        onOptionSelected: (_e, args) => {
+          // e.preventDefault(); // you could do if you wish to keep the menu open
+          const dataContext = args?.dataContext;
+
+          // change Priority
+          if (dataContext?.hasOwnProperty('percentComplete')) {
+            dataContext.percentComplete = args.item.option;
+            this.sgb.slickGrid?.updateRow(args.row || 0);
+          }
+        },
+        optionItems: [
+          { option: 0, iconCssClass: 'mdi mdi-checkbox-blank-outline color-secondary', title: 'Not Started (0%)' },
+          { option: 50, iconCssClass: 'mdi mdi-flip-vertical', title: 'Half Completed (50%)' },
+          { option: 100, iconCssClass: 'mdi mdi-checkbox-marked color-success', title: 'Completed (100%)' },
+          'divider',
+          {
+            // we can also have multiple nested sub-menus
+            option: null, title: 'Sub-Options (demo)', subMenuTitle: 'Set Percent Complete', optionItems: [
+              { option: 0, iconCssClass: 'mdi mdi-checkbox-blank-outline color-secondary', title: 'Not Started (0%)' },
+              { option: 50, iconCssClass: 'mdi mdi-flip-vertical', title: 'Half Completed (50%)' },
+              { option: 100, iconCssClass: 'mdi mdi-checkbox-marked color-success', title: 'Completed (100%)' },
+            ]
+          }
+        ],
+        commandItems: [
+          { command: '', divider: true, positionOrder: 98 },
+          {
+            // we can also have multiple nested sub-menus
+            command: 'export', title: 'Exports', positionOrder: 99,
+            commandItems: [
+              { command: 'exports-txt', title: 'Text (tab delimited)' },
+              {
+                command: 'sub-menu', title: 'Excel', cssClass: 'green', subMenuTitle: 'available formats', subMenuTitleCssClass: 'text-italic orange',
+                commandItems: [
+                  { command: 'exports-csv', title: 'Excel (csv)' },
+                  { command: 'exports-xlsx', title: 'Excel (xlsx)' },
+                ]
+              }
+            ]
+          },
+          {
+            command: 'feedback', title: 'Feedback', positionOrder: 100,
+            commandItems: [
+              { command: 'request-update', title: 'Request update from supplier', iconCssClass: 'mdi mdi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
+              'divider',
+              {
+                command: 'sub-menu', title: 'Contact Us', iconCssClass: 'mdi mdi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
+                commandItems: [
+                  { command: 'contact-email', title: 'Email us', iconCssClass: 'mdi mdi-pencil-outline' },
+                  { command: 'contact-chat', title: 'Chat with us', iconCssClass: 'mdi mdi-message-text-outline' },
+                  { command: 'contact-meeting', title: 'Book an appointment', iconCssClass: 'mdi mdi-coffee' },
+                ]
+              }
+            ]
+          }
+        ],
+        onCommand: (e, args) => this.executeCommand(e, args)
+      },
     };
 
     // mock data
@@ -493,10 +553,13 @@ export default class Example4 {
 
     switch (command) {
       case 'command1':
-        alert('Command 1');
-        break;
       case 'command2':
-        alert('Command 2');
+        alert(args.item.title);
+        break;
+      case 'exports-csv':
+      case 'exports-txt':
+      case 'exports-xlsx':
+        alert(`Exporting as ${args.item.title}`);
         break;
       case 'help':
         alert('Please help!');
@@ -505,6 +568,9 @@ export default class Example4 {
         if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"?`)) {
           this.sgb?.gridService.deleteItemById(dataContext.id);
         }
+        break;
+      default:
+        alert('Command: ' + args.command);
         break;
     }
   }

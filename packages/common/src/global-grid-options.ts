@@ -41,6 +41,7 @@ export const GlobalGridOptions: GridOption = {
     hideCommandSection: false,
     hideOptionSection: false,
     showBulletWhenIconMissing: true,
+    subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
   },
   compositeEditorOptions: {
     labels: {
@@ -77,6 +78,7 @@ export const GlobalGridOptions: GridOption = {
     iconExportExcelCommand: 'fa fa-file-excel-o mdi mdi-file-excel-outline',
     iconExportTextDelimitedCommand: 'fa fa-download mdi mdi-download',
     showBulletWhenIconMissing: true,
+    subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
   },
   customFooterOptions: {
     dateFormat: 'YYYY-MM-DD, hh:mm a',
@@ -211,6 +213,7 @@ export const GlobalGridOptions: GridOption = {
     menuWidth: 16,
     resizeOnShowHeaderRow: true,
     showBulletWhenIconMissing: true,
+    subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
     headerColumnValueExtractor: pickerHeaderColumnValueExtractor
   },
   headerMenu: {
@@ -229,7 +232,8 @@ export const GlobalGridOptions: GridOption = {
     hideClearFilterCommand: false,
     hideClearSortCommand: false,
     hideFreezeColumnsCommand: true, // opt-in command
-    hideSortCommands: false
+    hideSortCommands: false,
+    subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
   },
   ignoreAccentOnStringFilterAndSort: false,
   multiColumnSort: true,

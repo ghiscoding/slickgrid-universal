@@ -103,7 +103,7 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
       .invoke('show')
       .click();
 
-    cy.get('.slick-header-menu')
+    cy.get('.slick-header-menu .slick-menu-command-list')
       .should('be.visible')
       .children('.slick-menu-item:nth-of-type(9)')
       .children('.slick-menu-content')
@@ -301,5 +301,218 @@ describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', 'Task 0');
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).should('contain', 'Sydney, NS, Australia');
+  });
+
+  it('should open Context Menu hover "% Complete" column then select "Not Started (0%)" option and expect Task to be at 0', () => {
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
+      .rightclick();
+
+    cy.get('.slick-context-menu .slick-menu-option-list')
+      .should('exist')
+      .contains('Not Started (0%)')
+      .click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '0');
+  });
+
+  it('should reopen Context Menu hover "% Complete" column then open options sub-menu & select "Half Completed (50%)" option and expect Task to be at 50', () => {
+    const subOptions = ['Not Started (0%)', 'Half Completed (50%)', 'Completed (100%)'];
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
+      .rightclick();
+
+    cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-option-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Sub-Options (demo)')
+      .click();
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-option-list').as('subMenuList');
+    cy.get('@subMenuList').find('.slick-menu-title').contains('Set Percent Complete');
+    cy.get('@subMenuList')
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($command, index) => expect($command.text()).to.eq(subOptions[index]));
+
+    cy.get('@subMenuList')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Half Completed (50%)')
+      .click();
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '50');
+  });
+
+  it('should be able to open Context Menu and click on Export->Text and expect alert triggered with Text Export', () => {
+    const subCommands1 = ['Text', 'Excel'];
+    const stub = cy.stub();
+    cy.on('window:alert', stub);
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
+      .rightclick();
+
+    cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains(/^Exports$/)
+      .click();
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
+      .should('exist')
+      .find('.slick-menu-item')
+      .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
+      .find('.slick-menu-item')
+      .contains('Text')
+      .click()
+      .then(() => expect(stub.getCall(0)).to.be.calledWith('Exporting as Text (tab delimited)'));
+  });
+
+  it('should be able to open Context Menu and click on Export->Excel-> sub-commands to see 1 context menu + 1 sub-menu then clicking on Text should call alert action', () => {
+    const subCommands1 = ['Text', 'Excel'];
+    const subCommands2 = ['Excel (csv)', 'Excel (xlsx)'];
+    const stub = cy.stub();
+    cy.on('window:alert', stub);
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
+      .rightclick();
+
+    cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains(/^Exports$/)
+      .click();
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Excel')
+      .click();
+
+    cy.get('.slick-context-menu.slick-menu-level-2 .slick-menu-command-list').as('subMenuList2');
+
+    cy.get('@subMenuList2')
+      .find('.slick-menu-title')
+      .contains('available formats');
+
+    cy.get('@subMenuList2')
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($command, index) => expect($command.text()).to.contain(subCommands2[index]));
+
+    cy.get('.slick-context-menu.slick-menu-level-2 .slick-menu-command-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Excel (xlsx)')
+      .click()
+      .then(() => expect(stub.getCall(0)).to.be.calledWith('Exporting as Excel (xlsx)'));
+  });
+
+  it('should open Export->Excel sub-menu & open again Sub-Options on top and expect sub-menu to be recreated with that Sub-Options list instead of the Export->Excel list', () => {
+    const subCommands1 = ['Text', 'Excel'];
+    const subCommands2 = ['Excel (csv)', 'Excel (xlsx)'];
+    const subOptions = ['Not Started (0%)', 'Half Completed (50%)', 'Completed (100%)'];
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
+      .rightclick();
+
+    cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains(/^Exports$/)
+      .click();
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Excel')
+      .click();
+
+    cy.get('.slick-context-menu.slick-menu-level-2 .slick-menu-command-list')
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($command, index) => expect($command.text()).to.contain(subCommands2[index]));
+
+    cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-option-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Sub-Options')
+      .click();
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-option-list').as('optionSubList2');
+
+    cy.get('@optionSubList2')
+      .find('.slick-menu-title')
+      .contains('Set Percent Complete');
+
+    cy.get('@optionSubList2')
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($option, index) => expect($option.text()).to.contain(subOptions[index]));
+  });
+
+  it('should open Export->Excel context sub-menu then open Feedback->ContactUs sub-menus and expect previous Export menu to no longer exists', () => {
+    const subCommands1 = ['Text', 'Excel'];
+    const subCommands2 = ['Request update from supplier', '', 'Contact Us'];
+    const subCommands2_1 = ['Email us', 'Chat with us', 'Book an appointment'];
+
+    const stub = cy.stub();
+    cy.on('window:alert', stub);
+
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '0');
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
+      .rightclick({ force: true });
+
+    cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains(/^Exports$/)
+      .click();
+
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
+
+    // click different sub-menu
+    cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Feedback')
+      .should('exist')
+      .click();
+
+    cy.get('.slick-submenu').should('have.length', 1);
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($command, index) => expect($command.text()).to.contain(subCommands2[index]));
+
+    // click on Feedback->ContactUs
+    cy.get('.slick-context-menu.slick-menu-level-1.dropright') // right align
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Contact Us')
+      .should('exist')
+      .trigger('mouseover'); // mouseover or click should work
+
+    cy.get('.slick-submenu').should('have.length', 2);
+    cy.get('.slick-context-menu.slick-menu-level-2.dropright') // right align
+      .should('exist')
+      .find('.slick-menu-item .slick-menu-content')
+      .each(($command, index) => expect($command.text()).to.eq(subCommands2_1[index]));
+
+    cy.get('.slick-context-menu.slick-menu-level-2');
+
+    cy.get('.slick-context-menu.slick-menu-level-2 .slick-menu-command-list')
+      .find('.slick-menu-item .slick-menu-content')
+      .contains('Chat with us')
+      .click()
+      .then(() => expect(stub.getCall(0)).to.be.calledWith('Command: contact-chat'));
+
+    cy.get('.slick-submenu').should('have.length', 0);
   });
 });

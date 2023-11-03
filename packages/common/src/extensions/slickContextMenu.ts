@@ -43,6 +43,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     hideMenuOnScroll: false,
     optionShownOverColumnIds: [],
     commandShownOverColumnIds: [],
+    subMenuOpenByEvent: 'mouseover',
   } as unknown as ContextMenuOption;
   pluginName: 'ContextMenu' = 'ContextMenu' as const;
 
@@ -73,7 +74,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     // sort all menu items by their position order when defined
     this.sortMenuItems();
 
-    this._eventHandler.subscribe(this.grid.onContextMenu, this.handleClick.bind(this) as EventListener);
+    this._eventHandler.subscribe(this.grid.onContextMenu, this.handleOnContextMenu.bind(this) as EventListener);
 
     if (this._addonOptions.hideMenuOnScroll) {
       this._eventHandler.subscribe(this.grid.onScroll, this.closeMenu.bind(this) as EventListener);
@@ -99,8 +100,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       }
 
       // translate both command/option items (whichever is provided)
-      this.extensionUtility.translateMenuItemsFromTitleKey(columnContextMenuCommandItems);
-      this.extensionUtility.translateMenuItemsFromTitleKey(columnContextMenuOptionItems);
+      this.extensionUtility.translateMenuItemsFromTitleKey(columnContextMenuCommandItems, 'commandItems');
+      this.extensionUtility.translateMenuItemsFromTitleKey(columnContextMenuOptionItems, 'optionItems');
     }
   }
 
@@ -108,8 +109,10 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
   // event handlers
   // ------------------
 
-  protected handleClick(event: DOMMouseOrTouchEvent<HTMLDivElement>, args: MenuCommandItemCallbackArgs) {
+  protected handleOnContextMenu(event: DOMMouseOrTouchEvent<HTMLDivElement>, args: MenuCommandItemCallbackArgs) {
+    this.disposeAllMenus(); // make there's only 1 parent menu opened at a time
     const cell = this.grid.getCellFromEvent(event);
+
     if (cell) {
       const dataContext = this.grid.getDataItem(cell.row);
       const columnDef = this.grid.getColumns()[cell.cell];
@@ -126,14 +129,14 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       }
 
       // create the DOM element
-      this._menuElm = this.createMenu(event);
+      this._menuElm = this.createParentMenu(event);
       if (this._menuElm) {
         event.preventDefault();
       }
 
       // reposition the menu to where the user clicked
       if (this._menuElm) {
-        this.repositionMenu(event);
+        this.repositionMenu(event, this._menuElm);
         this._menuElm.setAttribute('aria-expanded', 'true');
         this._menuElm.style.display = 'block';
       }
@@ -166,8 +169,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             disabled: false,
             command: commandName,
             positionOrder: 50,
-            action: (_e: Event, args: MenuCommandItemCallbackArgs) => {
-              this.copyToClipboard(args);
+            action: (_e, args) => {
+              this.copyToClipboard(args as MenuCommandItemCallbackArgs);
             },
             itemUsabilityOverride: (args: MenuCallbackArgs) => {
               // make sure there's an item to copy before enabling this command

@@ -176,12 +176,9 @@ export class SlickFooterComponent {
       }
     });
 
-    footerElm.appendChild(
-      createDomElement('div', {
-        className: `left-footer ${this.customFooterOptions.leftContainerClass}`,
-        innerHTML: sanitizeTextByAvailableSanitizer(this.gridOptions, this.customFooterOptions.leftFooterText || '')
-      })
-    );
+    const leftFooterElm = createDomElement('div', { className: `left-footer ${this.customFooterOptions.leftContainerClass}` });
+    leftFooterElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, this.customFooterOptions.leftFooterText || '');
+    footerElm.appendChild(leftFooterElm);
     footerElm.appendChild(this.createFooterRightContainer());
     this._footerElement = footerElm;
 

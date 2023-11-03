@@ -19,6 +19,15 @@ export interface MenuItem<O = MenuCallbackArgs> {
   /** position order in the list, a lower number will make it on top of the list. Internal commands starts at 50. */
   positionOrder?: number;
 
+  /** Optional sub-menu title that will shows up when sub-menu commmands/options list is opened */
+  subMenuTitle?: string;
+
+  /** Same as "subMenuTitle", except that it's a translation key which can be used on page load and/or when switching locale */
+  subMenuTitleKey?: string;
+
+  /** Optional sub-menu title CSS class to use with `subMenuTitle` */
+  subMenuTitleCssClass?: string;
+
   /** CSS class to be added to the menu item text. */
   textCssClass?: string;
 

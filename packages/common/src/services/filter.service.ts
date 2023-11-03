@@ -142,7 +142,9 @@ export class FilterService {
     if (Array.isArray(this._filtersMetadata)) {
       let filter = this._filtersMetadata.pop();
       while (filter) {
-        filter?.destroy();
+        if (typeof filter?.destroy === 'function') {
+          filter.destroy();
+        }
         filter = this._filtersMetadata.pop();
       }
     }
@@ -1219,7 +1221,7 @@ export class FilterService {
     // loop through column definition to hide/show header menu commands
     columnDefinitions.forEach((col) => {
       if (col?.header?.menu) {
-        col.header.menu.items.forEach(menuItem => {
+        (col.header.menu.commandItems || col.header.menu.items)?.forEach(menuItem => {
           if (menuItem && typeof menuItem !== 'string') {
             const menuCommand = menuItem.command;
             if (menuCommand === 'clear-filter') {

@@ -185,8 +185,10 @@ export class SlickPaginationComponent {
     this._bindingHelper.addElementBinding(this.currentPagination, 'dataTo', 'span.item-to', 'textContent');
     this._bindingHelper.addElementBinding(this.currentPagination, 'totalItems', 'span.total-items', 'textContent');
     this._bindingHelper.addElementBinding(this.currentPagination, 'pageCount', 'span.page-count', 'textContent');
-    this._bindingHelper.addElementBinding(this.currentPagination, 'pageNumber', 'input.page-number', 'value', 'change', this.changeToCurrentPage.bind(this));
     this._bindingHelper.addElementBinding(this.currentPagination, 'pageSize', 'select.items-per-page', 'value');
+    this.paginationService.isCursorBased
+      ? this._bindingHelper.addElementBinding(this.currentPagination, 'pageNumber', 'span.page-number', 'textContent')
+      : this._bindingHelper.addElementBinding(this.currentPagination, 'pageNumber', 'input.page-number', 'value', 'change', this.changeToCurrentPage.bind(this));
 
     // locale text changes
     this._bindingHelper.addElementBinding(this, 'textItems', 'span.text-items', 'textContent');
@@ -283,12 +285,25 @@ export class SlickPaginationComponent {
     const divElm = createDomElement('div', { className: 'slick-page-number' });
     createDomElement('span', { className: 'text-page', textContent: 'Page' }, divElm);
     divElm.appendChild(document.createTextNode(' '));
-    createDomElement('input', {
-      type: 'text', className: 'form-control page-number',
-      ariaLabel: 'Page Number',
-      value: '1', size: 1,
-      dataset: { test: 'page-number-input' },
-    }, divElm);
+    if (this.paginationService.isCursorBased) {
+      // cursor based navigation cannot jump to an arbitrary page. Simply display current page number.
+      createDomElement('span', {
+        className: 'page-number',
+        ariaLabel: 'Page Number',
+        dataset: { test: 'page-number-label' },
+        textContent: '1',
+      }, divElm);
+    } else {
+      // offset based navigation can jump to any page. Allow editing of current page number.
+      createDomElement('input', {
+        type: 'text',
+        className: 'form-control page-number',
+        ariaLabel: 'Page Number',
+        value: '1', size: 1,
+        dataset: { test: 'page-number-input' },
+      }, divElm);
+    }
+
     divElm.appendChild(document.createTextNode(' '));
     createDomElement('span', { className: 'text-of', textContent: 'of' }, divElm);
     divElm.appendChild(document.createTextNode(' '));

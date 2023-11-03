@@ -50,7 +50,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getColumnIndex: jest.fn(),
   getContainerNode: jest.fn(),
-  getGridPosition: jest.fn(),
+  getGridPosition: () => ({ width: 10, left: 0 }),
   getUID: () => 'slickgrid12345',
   getOptions: () => gridOptionsMock,
   registerPlugin: jest.fn(),
@@ -78,6 +78,7 @@ const filterServiceStub = {
 const pubSubServiceStub = {
   publish: jest.fn(),
   subscribe: jest.fn(),
+  subscribeEvent: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
 } as BasePubSubService;
@@ -93,7 +94,7 @@ const sortServiceStub = {
 
 const headerMock = {
   menu: {
-    items: [
+    commandItems: [
       {
         cssClass: 'mdi mdi-lightbulb-outline',
         command: 'show-positive-numbers',
@@ -154,6 +155,7 @@ describe('HeaderMenu Plugin', () => {
       hideSortCommands: false,
       minWidth: 100,
       title: '',
+      subMenuOpenByEvent: 'mouseover'
     });
   });
 
@@ -171,11 +173,12 @@ describe('HeaderMenu Plugin', () => {
   describe('plugins - Header Menu', () => {
     let gridContainerDiv: HTMLDivElement;
     let headerDiv: HTMLDivElement;
+    let headersDiv: HTMLDivElement;
 
     beforeEach(() => {
       jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
-      columnsMock[0].header!.menu!.items[1] = undefined as any;
-      columnsMock[0].header!.menu!.items[1] = {
+      columnsMock[0].header!.menu!.commandItems![1] = undefined as any;
+      columnsMock[0].header!.menu!.commandItems![1] = {
         cssClass: 'mdi mdi-lightbulb-on',
         command: 'show-negative-numbers',
         tooltip: 'Highlight negative numbers.',
@@ -184,18 +187,34 @@ describe('HeaderMenu Plugin', () => {
       headerDiv.className = 'slick-header-column';
       gridContainerDiv = document.createElement('div');
       gridContainerDiv.className = 'slickgrid-container';
+      headersDiv = document.createElement('div');
+      headersDiv.className = 'slick-header-columns';
       jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(gridContainerDiv);
       jest.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
+      headersDiv.appendChild(headerDiv);
+      gridContainerDiv.appendChild(headersDiv);
+      document.body.appendChild(gridContainerDiv);
     });
 
     afterEach(() => {
       plugin.dispose();
     });
 
+    it('should display a console warning when using deprecated "items" instead of "commandItems"', () => {
+      plugin.dispose();
+      plugin.init({ buttonCssClass: 'mdi mdi-chevron-down' });
+      columnsMock[0].header!.menu!.items = columnsMock[0].header!.menu!.commandItems;
+
+      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] Header Menu "items" property was deprecated in favor of "commandItems" to align with all other Menu plugins.');
+    });
+
     it('should populate a Header Menu button with extra button css classes when header menu option "buttonCssClass" and cell is being rendered', () => {
       plugin.dispose();
       plugin.init({ buttonCssClass: 'mdi mdi-chevron-down' });
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).itemVisibilityOverride = () => undefined as any;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => undefined as any;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -207,7 +226,7 @@ describe('HeaderMenu Plugin', () => {
     it('should populate a Header Menu button with extra tooltip title attribute when header menu option "tooltip" and cell is being rendered', () => {
       plugin.dispose();
       plugin.init({ tooltip: 'some tooltip text' });
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).itemVisibilityOverride = () => undefined as any;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => undefined as any;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -219,7 +238,7 @@ describe('HeaderMenu Plugin', () => {
     it('should populate a Header Menu when cell is being rendered and a 2nd button item visibility callback returns undefined', () => {
       plugin.dispose();
       plugin.init();
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).itemVisibilityOverride = () => undefined as any;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => undefined as any;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -235,7 +254,7 @@ describe('HeaderMenu Plugin', () => {
     it('should populate a Header Menu when cell is being rendered and a 2nd button item visibility callback returns false', () => {
       plugin.dispose();
       plugin.init();
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).itemVisibilityOverride = () => false;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => false;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -248,8 +267,8 @@ describe('HeaderMenu Plugin', () => {
     it('should populate a Header Menu when cell is being rendered and a 2nd button item visibility & usability callbacks returns true', () => {
       plugin.dispose();
       plugin.init({ hideFreezeColumnsCommand: false, hideFilterCommand: false });
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).itemVisibilityOverride = () => true;
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).itemUsabilityOverride = () => true;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -272,8 +291,8 @@ describe('HeaderMenu Plugin', () => {
     it('should populate a Header Menu and a 2nd button item usability callback returns false and expect button to be disabled', () => {
       plugin.dispose();
       plugin.init();
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).itemVisibilityOverride = () => true;
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).itemUsabilityOverride = () => false;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => false;
       const publishSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
@@ -297,8 +316,8 @@ describe('HeaderMenu Plugin', () => {
     it('should populate a Header Menu and a 2nd button is "disabled" and expect button to be disabled', () => {
       plugin.dispose();
       plugin.init();
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).itemVisibilityOverride = undefined;
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).disabled = true;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = undefined;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).disabled = true;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -318,7 +337,7 @@ describe('HeaderMenu Plugin', () => {
     it('should populate a Header Menu and expect button to be disabled when command property is disabled', () => {
       plugin.dispose();
       plugin.init();
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).hidden = true;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).hidden = true;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -338,7 +357,7 @@ describe('HeaderMenu Plugin', () => {
     it('should populate a Header Menu and a 2nd button and property "tooltip" is filled and expect button to include a "title" attribute for the tooltip', () => {
       plugin.dispose();
       plugin.init();
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).tooltip = 'Some Tooltip';
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).tooltip = 'Some Tooltip';
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -360,7 +379,7 @@ describe('HeaderMenu Plugin', () => {
 
       plugin.dispose();
       plugin.init();
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).action = actionMock;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).action = actionMock;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -378,7 +397,7 @@ describe('HeaderMenu Plugin', () => {
 
       gridContainerDiv.querySelector('.slick-menu-item.mdi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       expect(actionMock).toHaveBeenCalled();
-      expect(gridContainerDiv.innerHTML).toBe('');
+      expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('');
     });
 
     it('should populate a Header Menu and a 2nd button and expect the "onCommand" handler to be executed when defined', () => {
@@ -404,7 +423,7 @@ describe('HeaderMenu Plugin', () => {
 
       gridContainerDiv.querySelector('.slick-menu-item.mdi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       expect(onCommandMock).toHaveBeenCalled();
-      expect(gridContainerDiv.innerHTML).toBe('');
+      expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('');
     });
 
     it('should populate a Header Menu and a 2nd button is "disabled" but still expect the button NOT to be disabled because the "itemUsabilityOverride" has priority over the "disabled" property', () => {
@@ -412,9 +431,9 @@ describe('HeaderMenu Plugin', () => {
 
       plugin.dispose();
       plugin.init();
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).itemVisibilityOverride = () => true;
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).itemUsabilityOverride = () => true;
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).disabled = true;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).disabled = true;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
@@ -447,11 +466,9 @@ describe('HeaderMenu Plugin', () => {
       Object.defineProperty(buttonElm, 'clientWidth', { writable: true, configurable: true, value: 350 });
       Object.defineProperty(plugin.menuElement, 'clientWidth', { writable: true, configurable: true, value: 275 });
       Object.defineProperty(clickEvent, 'target', { writable: true, configurable: true, value: buttonElm });
-      plugin.showMenu(clickEvent, columnsMock[0], columnsMock[0].header!.menu!);
 
       expect(menuElm).toBeTruthy();
       expect(menuElm.clientWidth).toBe(275);
-      expect(menuElm.style.left).toBe('75px');
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
         `<li class="slick-menu-item mdi mdi-lightbulb-on" data-command="show-negative-numbers" title="Highlight negative numbers.">
@@ -464,8 +481,8 @@ describe('HeaderMenu Plugin', () => {
     it('should not populate a Header Menu when 2nd button item visibility callback returns false', () => {
       plugin.dispose();
       plugin.init();
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).itemVisibilityOverride = () => false;
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).itemUsabilityOverride = () => false;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => false;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => false;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
@@ -481,9 +498,9 @@ describe('HeaderMenu Plugin', () => {
 
       plugin.dispose();
       plugin.init({ menuUsabilityOverride: () => false });
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).itemVisibilityOverride = () => true;
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).itemUsabilityOverride = () => true;
-      (columnsMock[0].header!.menu!.items[1] as MenuCommandItem).disabled = true;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).disabled = true;
 
       const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
       gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
@@ -515,6 +532,11 @@ describe('HeaderMenu Plugin', () => {
           </li>`
       ));
 
+      // click inside menu shouldn't close it
+      plugin.menuElement!.dispatchEvent(new Event('mousedown', { bubbles: true, cancelable: false, composed: false }));
+      expect(plugin.menuElement).toBeTruthy();
+
+      // click anywhere else should close it
       const bodyElm = document.body;
       bodyElm.dispatchEvent(new Event('mousedown', { bubbles: true }));
       expect(hideMenuSpy).toHaveBeenCalled();
@@ -579,6 +601,196 @@ describe('HeaderMenu Plugin', () => {
       });
     });
 
+    describe('with sub-menus', () => {
+      let columnsMock: Column[];
+
+      beforeEach(() => {
+        columnsMock = [
+          { id: 'field1', field: 'field1', name: 'Field 1', width: 100, },
+          {
+            id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing',
+            header: {
+              menu: {
+                commandItems: [
+                  { command: 'help', title: 'Help', textCssClass: 'red bold' },
+                  {
+                    command: 'sub-commands', title: 'Sub Commands', subMenuTitle: 'Sub Command Title', commandItems: [
+                      { command: 'command3', title: 'Command 3', positionOrder: 70, },
+                      { command: 'command4', title: 'Command 4', positionOrder: 71, },
+                      {
+                        command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'color-warning', commandItems: [
+                          { command: 'command5', title: 'Command 5', positionOrder: 72, },
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    command: 'sub-commands2', title: 'Sub Commands 2', commandItems: [
+                      { command: 'command33', title: 'Command 33', positionOrder: 70, },
+                    ]
+                  }
+                ]
+              }
+            }, width: 75,
+          },
+        ] as Column[];
+      });
+
+      it('should create Header Menu item with commands sub-menu commandItems and expect sub-menu list to show in the DOM element aligned left when sub-menu is clicked', () => {
+        const onCommandMock = jest.fn();
+        const disposeSubMenuSpy = jest.spyOn(plugin, 'disposeSubMenus');
+        Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
+        jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
+
+        plugin.init({ autoAlign: true });
+        plugin.addonOptions.onCommand = onCommandMock;
+
+        const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const headerMenu1Elm = gridContainerDiv.querySelector('.slick-header-menu.slick-menu-level-0') as HTMLDivElement;
+        const commandList1Elm = headerMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        Object.defineProperty(commandList1Elm, 'clientWidth', { writable: true, configurable: true, value: 70 });
+        const helpCommandElm = commandList1Elm.querySelector('[data-command="help"]') as HTMLDivElement;
+        const subCommands1Elm = commandList1Elm.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
+        Object.defineProperty(subCommands1Elm, 'clientWidth', { writable: true, configurable: true, value: 70 });
+        const commandContentElm2 = subCommands1Elm.querySelector('.slick-menu-content') as HTMLDivElement;
+        const commandChevronElm = commandList1Elm.querySelector('.sub-item-chevron') as HTMLSpanElement;
+
+        subCommands1Elm!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const headerMenu2Elm = document.body.querySelector('.slick-header-menu.slick-menu-level-1') as HTMLDivElement;
+        const commandList2Elm = headerMenu2Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const subCommand3Elm = commandList2Elm.querySelector('[data-command="command3"]') as HTMLDivElement;
+        const subCommands2Elm = commandList2Elm.querySelector('[data-command="more-sub-commands"]') as HTMLDivElement;
+
+        subCommands2Elm!.dispatchEvent(new Event('mouseover', { bubbles: true, cancelable: true, composed: false })); // mouseover or click should work
+        const cellMenu3Elm = document.body.querySelector('.slick-header-menu.slick-menu-level-2') as HTMLDivElement;
+        const commandList3Elm = cellMenu3Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const subCommand5Elm = commandList3Elm.querySelector('[data-command="command5"]') as HTMLDivElement;
+        const subMenuTitleElm = commandList3Elm.querySelector('.slick-menu-title') as HTMLDivElement;
+
+        expect(commandList1Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
+        expect(commandList2Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
+        expect(commandContentElm2.textContent).toBe('Sub Commands');
+        expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
+        expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
+        expect(commandChevronElm.className).toBe('sub-item-chevron');
+        expect(subCommand3Elm.textContent).toContain('Command 3');
+        expect(subCommand5Elm.textContent).toContain('Command 5');
+        expect(headerMenu1Elm.classList.contains('dropleft'));
+        expect(headerMenu2Elm.classList.contains('dropup')).toBeFalsy();
+        expect(headerMenu2Elm.classList.contains('dropdown')).toBeTruthy();
+
+        // return Grid Menu menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
+        subCommands1Elm!.dispatchEvent(new Event('click'));
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(1);
+        const subCommands12Elm = commandList1Elm.querySelector('[data-command="sub-commands2"]') as HTMLDivElement;
+        subCommands12Elm!.dispatchEvent(new Event('click'));
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(2);
+        expect(disposeSubMenuSpy).toHaveBeenCalled();
+
+        // calling another command on parent menu should dispose sub-menus
+        helpCommandElm!.dispatchEvent(new Event('mouseover'));
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should create a Header Menu item with commands sub-menu commandItems and expect sub-menu list to show in the DOM element align right when sub-menu is clicked', () => {
+        const onCommandMock = jest.fn();
+        const disposeSubMenuSpy = jest.spyOn(plugin, 'disposeSubMenus');
+        Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
+        jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
+
+        plugin.init({ autoAlign: true, subItemChevronClass: 'mdi mdi-chevron-right' });
+        plugin.addonOptions.onCommand = onCommandMock;
+
+        const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const headerMenu1Elm = gridContainerDiv.querySelector('.slick-header-menu.slick-menu-level-0') as HTMLDivElement;
+        const commandList1Elm = headerMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const subCommands1Elm = commandList1Elm.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
+        const commandContentElm2 = subCommands1Elm.querySelector('.slick-menu-content') as HTMLDivElement;
+        const commandChevronElm = commandList1Elm.querySelector('.sub-item-chevron') as HTMLSpanElement;
+
+        subCommands1Elm!.dispatchEvent(new Event('click'));
+        const headerMenu2Elm = document.body.querySelector('.slick-header-menu.slick-menu-level-1') as HTMLDivElement;
+        const commandList2Elm = headerMenu2Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const subCommand3Elm = commandList2Elm.querySelector('[data-command="command3"]') as HTMLDivElement;
+        const subCommands2Elm = commandList2Elm.querySelector('[data-command="more-sub-commands"]') as HTMLDivElement;
+
+        subCommands2Elm!.dispatchEvent(new Event('click'));
+        const cellMenu3Elm = document.body.querySelector('.slick-header-menu.slick-menu-level-2') as HTMLDivElement;
+        const commandList3Elm = cellMenu3Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const subCommand5Elm = commandList3Elm.querySelector('[data-command="command5"]') as HTMLDivElement;
+        const subMenuTitleElm = commandList3Elm.querySelector('.slick-menu-title') as HTMLDivElement;
+
+        expect(commandList1Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
+        expect(commandList2Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
+        expect(commandContentElm2.textContent).toBe('Sub Commands');
+        expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
+        expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
+        expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
+        expect(subCommand3Elm.textContent).toContain('Command 3');
+        expect(subCommand5Elm.textContent).toContain('Command 5');
+        expect(headerMenu1Elm.classList.contains('dropright'));
+        expect(headerMenu2Elm.classList.contains('dropup')).toBeFalsy();
+        expect(headerMenu2Elm.classList.contains('dropdown')).toBeTruthy();
+
+        // return menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
+        subCommands1Elm!.dispatchEvent(new Event('click'));
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(1);
+        const subCommands12Elm = commandList1Elm.querySelector('[data-command="sub-commands2"]') as HTMLDivElement;
+        subCommands12Elm!.dispatchEvent(new Event('click'));
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(2);
+        expect(disposeSubMenuSpy).toHaveBeenCalled();
+      });
+
+      it('should create a Grid Menu item with commands sub-menu commandItems and expect sub-menu to be positioned on top (dropup)', () => {
+        const onCommandMock = jest.fn();
+        Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
+        jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
+
+        plugin.init({ autoAlign: true });
+        plugin.addonOptions.onCommand = onCommandMock;
+
+        const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const headerMenu1Elm = gridContainerDiv.querySelector('.slick-header-menu.slick-menu-level-0') as HTMLDivElement;
+        const commandList1Elm = headerMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const subCommands1Elm = commandList1Elm.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
+        Object.defineProperty(headerMenu1Elm, 'clientHeight', { writable: true, configurable: true, value: 77 });
+        Object.defineProperty(headerMenu1Elm, 'clientWidth', { writable: true, configurable: true, value: 225 });
+        const divEvent1 = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false })
+        Object.defineProperty(divEvent1, 'target', { writable: true, configurable: true, value: headerButtonElm });
+
+        subCommands1Elm!.dispatchEvent(new Event('click'));
+        plugin.repositionMenu(divEvent1 as any, headerMenu1Elm);
+        const headerMenu2Elm = document.body.querySelector('.slick-header-menu.slick-menu-level-1') as HTMLDivElement;
+        Object.defineProperty(headerMenu2Elm, 'clientHeight', { writable: true, configurable: true, value: 320 });
+
+        const divEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false })
+        const subMenuElm = document.createElement('div');
+        const menuItem = document.createElement('div');
+        menuItem.className = 'slick-menu-item';
+        menuItem.style.top = '465px';
+        jest.spyOn(menuItem, 'getBoundingClientRect').mockReturnValue({ top: 465, left: 25 } as any);
+        Object.defineProperty(menuItem, 'target', { writable: true, configurable: true, value: menuItem });
+        subMenuElm.className = 'slick-submenu';
+        Object.defineProperty(divEvent, 'target', { writable: true, configurable: true, value: subMenuElm });
+        menuItem.appendChild(subMenuElm);
+
+        plugin.repositionMenu(divEvent as any, headerMenu2Elm);
+        const headerMenu2Elm2 = document.body.querySelector('.slick-header-menu.slick-menu-level-1') as HTMLDivElement;
+
+        expect(headerMenu2Elm2.classList.contains('dropup')).toBeTruthy();
+        expect(headerMenu2Elm2.classList.contains('dropdown')).toBeFalsy();
+      });
+    });
+
     describe('Internal Custom Commands', () => {
       let eventData: SlickEventData;
 
@@ -613,7 +825,7 @@ describe('HeaderMenu Plugin', () => {
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
         const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
-        expect((originalColumnDefinitions[1] as any).header!.menu!.items).toEqual([
+        expect((originalColumnDefinitions[1] as any).header!.menu!.commandItems!).toEqual([
           { iconCssClass: 'fa fa-thumb-tack', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
           { divider: true, command: '', positionOrder: 49 },
         ]);
@@ -639,7 +851,7 @@ describe('HeaderMenu Plugin', () => {
         const commandDivElm = gridContainerDiv.querySelector('[data-command="clear-filter"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
-        expect(columnsMock[1].header!.menu!.items).toEqual(headerMenuExpected);
+        expect(columnsMock[1].header!.menu!.commandItems!).toEqual(headerMenuExpected);
         expect(commandIconElm.classList.contains('fa-filter')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Remove Filter');
 
@@ -650,7 +862,7 @@ describe('HeaderMenu Plugin', () => {
         expect(onAfterSpy).toHaveBeenCalled();
         expect(pubSubSpy).toHaveBeenCalledWith('onHeaderMenuAfterMenuShow', {
           grid: gridStub,
-          menu: { items: headerMenuExpected },
+          menu: { commandItems: headerMenuExpected },
           column: columnsMock[1]
         });
       });
@@ -678,7 +890,7 @@ describe('HeaderMenu Plugin', () => {
         const commandDivElm = gridContainerDiv.querySelector('[data-command="column-resize-by-content"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
-        expect(columnsMock[1].header!.menu!.items).toEqual(headerMenuExpected);
+        expect(columnsMock[1].header!.menu!.commandItems!).toEqual(headerMenuExpected);
         expect(commandIconElm.classList.contains('fa-arrows-h')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Resize by Content');
 
@@ -712,7 +924,7 @@ describe('HeaderMenu Plugin', () => {
         const commandDivElm = gridContainerDiv.querySelector('[data-command="hide-column"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
-        expect(columnsMock[1].header!.menu!.items).toEqual(headerMenuExpected);
+        expect(columnsMock[1].header!.menu!.commandItems!).toEqual(headerMenuExpected);
         expect(commandIconElm.classList.contains('fa-times')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Hide Column');
 
@@ -738,7 +950,7 @@ describe('HeaderMenu Plugin', () => {
         const commandDivElm = gridContainerDiv.querySelector('[data-command="clear-filter"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
-        expect(columnsMock[1].header!.menu!.items).toEqual(headerMenuExpected);
+        expect(columnsMock[1].header!.menu!.commandItems!).toEqual(headerMenuExpected);
         expect(commandIconElm.classList.contains('fa-filter')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Remove Filter');
 
@@ -764,7 +976,7 @@ describe('HeaderMenu Plugin', () => {
         const commandDivElm = gridContainerDiv.querySelector('[data-command="clear-sort"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
-        expect(columnsMock[1].header!.menu!.items).toEqual([
+        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           { iconCssClass: 'fa fa-sort-asc', title: 'Sort Ascending', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
           { iconCssClass: 'fa fa-sort-desc', title: 'Sort Descending', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
           { divider: true, command: '', positionOrder: 52 },
@@ -775,7 +987,7 @@ describe('HeaderMenu Plugin', () => {
 
         translateService.use('fr');
         plugin.translateHeaderMenu();
-        expect(columnsMock[1].header!.menu!.items).toEqual([
+        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           { iconCssClass: 'fa fa-sort-asc', title: 'Trier par ordre croissant', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
           { iconCssClass: 'fa fa-sort-desc', title: 'Trier par ordre décroissant', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
           { divider: true, command: '', positionOrder: 52 },
@@ -805,7 +1017,7 @@ describe('HeaderMenu Plugin', () => {
         const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
-        expect(columnsMock[1].header!.menu!.items).toEqual([
+        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           { iconCssClass: 'fa fa-thumb-tack', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
           { divider: true, command: '', positionOrder: 49 },
         ]);
@@ -814,7 +1026,7 @@ describe('HeaderMenu Plugin', () => {
 
         translateService.use('fr');
         plugin.translateHeaderMenu();
-        expect(columnsMock[1].header!.menu!.items).toEqual([
+        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           { iconCssClass: 'fa fa-thumb-tack', title: 'Geler les colonnes', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
           { divider: true, command: '', positionOrder: 49 },
         ]);
@@ -838,7 +1050,7 @@ describe('HeaderMenu Plugin', () => {
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
         const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
-        expect(columnsMock[2].header!.menu!.items).toEqual([
+        expect(columnsMock[2].header!.menu!.commandItems!).toEqual([
           { iconCssClass: 'fa fa-thumb-tack', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
           { divider: true, command: '', positionOrder: 49 },
         ]);
@@ -866,7 +1078,7 @@ describe('HeaderMenu Plugin', () => {
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
         const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
-        expect((originalColumnDefinitions[1] as any).header!.menu!.items).toEqual([
+        expect((originalColumnDefinitions[1] as any).header!.menu!.commandItems!).toEqual([
           { iconCssClass: 'fa fa-thumb-tack', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
           { divider: true, command: '', positionOrder: 49 },
         ]);
@@ -893,7 +1105,7 @@ describe('HeaderMenu Plugin', () => {
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
         const commandDivElm = gridContainerDiv.querySelector('[data-command="sort-asc"]') as HTMLDivElement;
-        expect(columnsMock[1].header!.menu!.items).toEqual([
+        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           { iconCssClass: 'fa fa-sort-asc', title: 'Sort Ascending', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
           { iconCssClass: 'fa fa-sort-desc', title: 'Sort Descending', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
           { divider: true, command: '', positionOrder: 52 },
@@ -925,7 +1137,7 @@ describe('HeaderMenu Plugin', () => {
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
         const commandDivElm = gridContainerDiv.querySelector('[data-command="sort-desc"]') as HTMLDivElement;
-        expect(columnsMock[1].header!.menu!.items).toEqual([
+        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
           { iconCssClass: 'fa fa-sort-asc', title: 'Sort Ascending', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
           { iconCssClass: 'fa fa-sort-desc', title: 'Sort Descending', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
           { divider: true, command: '', positionOrder: 52 },

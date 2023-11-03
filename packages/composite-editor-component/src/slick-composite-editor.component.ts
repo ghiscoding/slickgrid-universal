@@ -371,10 +371,9 @@ export class SlickCompositeEditorComponent implements ExternalResource {
           modalContentElm.classList.add(splitClassName);
         }
 
-        const modalHeaderTitleElm = createDomElement('div', {
-          className: 'slick-editor-modal-title',
-          innerHTML: sanitizeTextByAvailableSanitizer(this.gridOptions, parsedHeaderTitle),
-        });
+        const modalHeaderTitleElm = createDomElement('div', { className: 'slick-editor-modal-title' });
+        modalHeaderTitleElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, parsedHeaderTitle);
+
         const modalCloseButtonElm = createDomElement('button', { type: 'button', ariaLabel: 'Close', textContent: '×', className: 'close', dataset: { action: 'close' } });
         if (this._options.showCloseButtonOutside) {
           modalHeaderTitleElm?.classList?.add('outside');
@@ -451,10 +450,8 @@ export class SlickCompositeEditorComponent implements ExternalResource {
               itemContainer.classList.add('slick-col-medium-6', `slick-col-xlarge-${12 / layoutColCount}`);
             }
 
-            const templateItemLabelElm = createDomElement('div', {
-              className: `item-details-label editor-${columnDef.id}`,
-              innerHTML: sanitizeTextByAvailableSanitizer(this.gridOptions, this.getColumnLabel(columnDef) || 'n/a')
-            });
+            const templateItemLabelElm = createDomElement('div', { className: `item-details-label editor-${columnDef.id}` });
+            templateItemLabelElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, this.getColumnLabel(columnDef) || 'n/a');
             const templateItemEditorElm = createDomElement('div', {
               className: 'item-details-editor-container slick-cell',
               dataset: { editorid: `${columnDef.id}` },

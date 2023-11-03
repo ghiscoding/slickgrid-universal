@@ -111,12 +111,15 @@ describe('Example 12 - Composite Editor Modal', { retries: 1 }, () => {
     // change Completed
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).click();
     cy.get('.editor-completed').check();
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(7)`).click();
     cy.get('.editor-completed').check();
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
 
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(7)`).click();
     cy.get('.editor-completed').check();
+    cy.get(`[style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
   });
 
   it('should be able to change "Finish" values of row indexes 0-2', () => {

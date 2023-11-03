@@ -191,7 +191,7 @@ export class DateEditor implements Editor {
     this.hide();
     this._bindEventService.unbindAll();
 
-    if (this.flatInstance?.destroy) {
+    if (typeof this.flatInstance?.destroy === 'function') {
       this.flatInstance.destroy();
       if (this.flatInstance?.element) {
         setTimeout(() => destroyObjectDomElementProps(this.flatInstance));

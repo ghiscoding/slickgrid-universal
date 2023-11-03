@@ -4,7 +4,9 @@ import { dequal } from 'dequal/lite';
 import type {
   BackendServiceApi,
   CurrentPagination,
+  CursorPageInfo,
   Pagination,
+  PaginationCursorChangedArgs,
   ServicePagination,
   SlickDataView,
   SlickGrid,
@@ -32,6 +34,8 @@ export class PaginationService {
   protected _paginationOptions!: Pagination;
   protected _previousPagination?: Pagination;
   protected _subscriptions: EventSubscription[] = [];
+  protected _cursorPageInfo?: CursorPageInfo;
+  protected _isCursorBased = false;
 
   /** SlickGrid Grid object */
   grid!: SlickGrid;
@@ -86,6 +90,27 @@ export class PaginationService {
     }
   }
 
+  /**
+   * https://dev.to/jackmarchant/offset-and-cursor-pagination-explained-b89
+   * Cursor based pagination does not allow navigation to a page in the middle of a set of pages (eg: LinkedList vs Vector).
+   *  Further, Pagination with page numbers only makes sense in non-relay style pagination
+   *  Relay style pagination is better suited to infinite scrolling
+   *
+   * eg
+   *  relay pagination - Infinte scrolling appending data
+   *    page1: {startCursor: A, endCursor: B }
+   *    page2: {startCursor: A, endCursor: C }
+   *    page3: {startCursor: A, endCursor: D }
+   *
+   *  non-relay pagination - Getting page chunks
+   *    page1: {startCursor: A, endCursor: B }
+   *    page2: {startCursor: B, endCursor: C }
+   *    page3: {startCursor: C, endCursor: D }
+   */
+  get isCursorBased(): boolean {
+    return this._isCursorBased;
+  }
+
   addRxJsResource(rxjs: RxJsFacade) {
     this.rxjs = rxjs;
   }
@@ -97,6 +122,7 @@ export class PaginationService {
     this._paginationOptions = paginationOptions;
     this._isLocalGrid = !backendServiceApi;
     this._pageNumber = paginationOptions.pageNumber || 1;
+    this._isCursorBased = this._backendServiceApi?.options?.isWithCursor ?? false;
 
     if (backendServiceApi && (!backendServiceApi.service || !backendServiceApi.process)) {
       throw new Error(`BackendServiceApi requires the following 2 properties "process" and "service" to be defined.`);
@@ -184,23 +210,44 @@ export class PaginationService {
 
   goToFirstPage(event?: any, triggerChangeEvent = true): Promise<ServicePagination> {
     this._pageNumber = 1;
-    return triggerChangeEvent ? this.processOnPageChanged(this._pageNumber, event) : Promise.resolve(this.getFullPagination());
+    if (triggerChangeEvent) {
+      return this.isCursorBased && this._cursorPageInfo
+        ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, first: this._itemsPerPage })
+        : this.processOnPageChanged(this._pageNumber, event);
+    }
+    return Promise.resolve(this.getFullPagination());
   }
 
   goToLastPage(event?: any, triggerChangeEvent = true): Promise<ServicePagination> {
     this._pageNumber = this._pageCount || 1;
-    return triggerChangeEvent ? this.processOnPageChanged(this._pageNumber || 1, event) : Promise.resolve(this.getFullPagination());
+    if (triggerChangeEvent) {
+      return this.isCursorBased && this._cursorPageInfo
+        ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, last: this._itemsPerPage })
+        : this.processOnPageChanged(this._pageNumber, event);
+    }
+    return Promise.resolve(this.getFullPagination());
   }
 
   goToNextPage(event?: any, triggerChangeEvent = true): Promise<boolean | ServicePagination> {
     if (this._pageNumber < this._pageCount) {
       this._pageNumber++;
-      return triggerChangeEvent ? this.processOnPageChanged(this._pageNumber, event) : Promise.resolve(this.getFullPagination());
+      if (triggerChangeEvent) {
+        return this.isCursorBased && this._cursorPageInfo
+          ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, first: this._itemsPerPage, after: this._cursorPageInfo.endCursor })
+          : this.processOnPageChanged(this._pageNumber, event);
+      } else {
+        return Promise.resolve(this.getFullPagination());
+      }
     }
     return Promise.resolve(false);
   }
 
   goToPageNumber(pageNumber: number, event?: any, triggerChangeEvent = true): Promise<boolean | ServicePagination> {
+    if (this.isCursorBased) {
+      console.assert(true, 'Cursor based navigation cannot navigate to arbitrary page');
+      return Promise.resolve(false);
+    }
+
     const previousPageNumber = this._pageNumber;
 
     if (pageNumber < 1) {
@@ -220,7 +267,13 @@ export class PaginationService {
   goToPreviousPage(event?: any, triggerChangeEvent = true): Promise<boolean | ServicePagination> {
     if (this._pageNumber > 1) {
       this._pageNumber--;
-      return triggerChangeEvent ? this.processOnPageChanged(this._pageNumber, event) : Promise.resolve(this.getFullPagination());
+      if (triggerChangeEvent) {
+        return this.isCursorBased && this._cursorPageInfo
+          ? this.processOnPageChanged(this._pageNumber, event, { newPage: this._pageNumber, pageSize: this._itemsPerPage, last: this._itemsPerPage, before: this._cursorPageInfo.startCursor })
+          : this.processOnPageChanged(this._pageNumber, event);
+      } else {
+        return Promise.resolve(this.getFullPagination());
+      }
     }
     return Promise.resolve(false);
   }
@@ -288,6 +341,7 @@ export class PaginationService {
       // on a local grid we also need to reset the DataView paging to 1st page
       this.dataView.setPagingOptions({ pageSize: this._itemsPerPage, pageNum: 0 });
     }
+    this._cursorPageInfo = undefined;
     this.refreshPagination(true, triggerChangedEvent);
   }
 
@@ -321,7 +375,9 @@ export class PaginationService {
     }
   }
 
-  processOnPageChanged(pageNumber: number, event?: Event | undefined): Promise<ServicePagination> {
+  processOnPageChanged(pageNumber: number, event?: Event | undefined, cursorArgs?: PaginationCursorChangedArgs): Promise<ServicePagination> {
+    console.assert(!this.isCursorBased || cursorArgs, 'Configured for cursor based pagination - cursorArgs expected');
+
     if (this.pubSubService.publish('onBeforePaginationChange', this.getFullPagination()) === false) {
       this.resetToPreviousPagination();
       return Promise.resolve(this.getFullPagination());
@@ -347,7 +403,9 @@ export class PaginationService {
         }
 
         if (this._backendServiceApi?.process) {
-          const query = this._backendServiceApi.service.processOnPaginationChanged(event, { newPage: pageNumber, pageSize: itemsPerPage });
+          const query = this.isCursorBased && cursorArgs
+            ? this._backendServiceApi.service.processOnPaginationChanged(event, cursorArgs)
+            : this._backendServiceApi.service.processOnPaginationChanged(event, { newPage: pageNumber, pageSize: itemsPerPage });
 
           // the processes can be Promises
           const process = this._backendServiceApi.process(query);
@@ -435,6 +493,14 @@ export class PaginationService {
       this.refreshPagination();
       this._backendServiceApi?.service?.updatePagination?.(this._previousPagination?.pageNumber ?? 0, this._previousPagination?.pageSize ?? 0);
     }
+  }
+
+  setCursorBased(isWithCursor: boolean) {
+    this._isCursorBased = isWithCursor;
+  }
+
+  setCursorPageInfo(pageInfo: CursorPageInfo) {
+    this._cursorPageInfo = pageInfo;
   }
 
   updateTotalItems(totalItems: number, triggerChangedEvent = false) {

@@ -237,7 +237,9 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
    * destroy the filter
    */
   destroy() {
-    this._instance?.destroy();
+    if (typeof this._instance?.destroy === 'function') {
+      this._instance.destroy();
+    }
     if (this._filterElm) {
       // this._filterElm.autocomplete('destroy');
       // this._filterElm.off('input').remove();
@@ -570,9 +572,9 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     // for the remaining allowed tags we'll permit all attributes
     const sanitizedTemplateText = sanitizeTextByAvailableSanitizer(this.gridOptions, templateString) || '';
 
-    return createDomElement('div', {
-      innerHTML: sanitizedTemplateText
-    });
+    const tmpDiv = document.createElement('div');
+    tmpDiv.innerHTML = sanitizedTemplateText;
+    return tmpDiv;
   }
 
   protected renderCollectionItem(item: any) {

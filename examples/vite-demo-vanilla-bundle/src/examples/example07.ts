@@ -77,8 +77,8 @@ export default class Example7 {
         excludeFromExport: true, excludeFromHeaderMenu: true,
         formatter: () => `<div class="button-style margin-auto" style="width: 35px; margin-top: -1px;"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
         cellMenu: {
-          width: 185,
           hideCloseButton: false,
+          subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
           commandTitleKey: 'COMMANDS',
           commandItems: [
             {
@@ -95,12 +95,71 @@ export default class Example7 {
               command: 'help', titleKey: 'HELP', iconCssClass: 'mdi mdi-help-circle',
               action: () => alert('Please help!')
             },
+            { command: '', divider: true, positionOrder: 98 },
+            {
+              // we can also have multiple nested sub-menus
+              command: 'export', title: 'Exports', positionOrder: 99,
+              commandItems: [
+                { command: 'exports-txt', title: 'Text (tab delimited)' },
+                {
+                  command: 'sub-menu', title: 'Excel', cssClass: 'green', subMenuTitle: 'available formats', subMenuTitleCssClass: 'text-italic orange',
+                  commandItems: [
+                    { command: 'exports-csv', title: 'Excel (csv)' },
+                    { command: 'exports-xlsx', title: 'Excel (xlsx)' },
+                  ]
+                }
+              ]
+            },
+            {
+              command: 'feedback', title: 'Feedback', positionOrder: 100,
+              commandItems: [
+                { command: 'request-update', title: 'Request update from supplier', iconCssClass: 'mdi mdi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
+                'divider',
+                {
+                  command: 'sub-menu', title: 'Contact Us', iconCssClass: 'mdi mdi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
+                  commandItems: [
+                    { command: 'contact-email', title: 'Email us', iconCssClass: 'mdi mdi-pencil-outline' },
+                    { command: 'contact-chat', title: 'Chat with us', iconCssClass: 'mdi mdi-message-text-outline' },
+                    { command: 'contact-meeting', title: 'Book an appointment', iconCssClass: 'mdi mdi-coffee' },
+                  ]
+                }
+              ]
+            }
           ],
+          onCommand: (_e, args) => {
+            // to keep menu open you can preventDefault & return false
+            // _e.preventDefault();
+            // return false;
+
+            if (!args.item?.action) {
+              switch (args.command) {
+                // show alert only for export commands
+                case 'exports-csv':
+                case 'exports-txt':
+                case 'exports-xlsx':
+                  alert(`Exporting as ${args.item.title}`);
+                  break;
+                default:
+                  alert('Command: ' + args.command);
+                  break;
+              }
+            }
+          },
           optionTitleKey: 'CHANGE_COMPLETED_FLAG',
           optionItems: [
-            { option: true, titleKey: 'TRUE', iconCssClass: 'mdi mdi-check-box-outline', action: (_e, args) => this.changeCompletedOption(args.dataContext, args.item.option) },
-            { option: false, titleKey: 'FALSE', iconCssClass: 'mdi mdi-checkbox-blank-outline', action: (_e, args) => this.changeCompletedOption(args.dataContext, args.item.option) },
-          ]
+            { option: true, titleKey: 'TRUE', iconCssClass: 'mdi mdi-check-box-outline' },
+            { option: false, titleKey: 'FALSE', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
+            {
+              // we can also have multiple nested sub-menus
+              option: null, title: 'Sub-Options (demo)', subMenuTitleKey: 'CHANGE_COMPLETED_FLAG', optionItems: [
+                { option: true, titleKey: 'TRUE', iconCssClass: 'mdi mdi-check-box-outline' },
+                { option: false, titleKey: 'FALSE', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
+              ]
+            }
+          ],
+          onOptionSelected: (_e, args) => {
+            this.changeCompletedOption(args.dataContext, args.item.option as boolean);
+          },
         }
       },
       {
@@ -384,8 +443,7 @@ export default class Example7 {
   }
 
   changeCompletedOption(dataContext: any, newValue: boolean) {
-    console.log('change', dataContext, newValue);
-    if (dataContext && dataContext.hasOwnProperty('completed')) {
+    if (dataContext?.hasOwnProperty('completed')) {
       dataContext.completed = newValue;
       this.sgb?.gridService.updateItem(dataContext);
     }

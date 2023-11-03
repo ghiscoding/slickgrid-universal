@@ -1,6 +1,7 @@
 import {
   BindingEventService,
   Column,
+  CursorPageInfo,
   FieldType,
   Filters,
   Formatters,
@@ -46,7 +47,6 @@ export default class Example10 {
     this.translateService = (<any>window).TranslateService;
     this.selectedLanguage = this.translateService.getCurrentLanguage();
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;
-    console.log('TranslateService', this.translateService.translate('ALL_SELECTED'));
   }
 
   async attached() {
@@ -174,7 +174,7 @@ export default class Example10 {
           { columnId: 'name', direction: 'asc' },
           { columnId: 'company', direction: SortDirection.DESC }
         ],
-        pagination: { pageNumber: 2, pageSize: 20 }
+        pagination: { pageNumber: this.isWithCursor ? 1 : 2, pageSize: 20 } // if cursor based, start at page 1
       },
       backendServiceApi: {
         service: new GraphqlService(),
@@ -185,6 +185,7 @@ export default class Example10 {
             field: 'userId',
             value: 123
           }],
+          isWithCursor: this.isWithCursor, // sets pagination strategy, if true requires a call to setPageInfo() when graphql call returns
           // when dealing with complex objects, we want to keep our field name with double quotes
           // example with gender: query { users (orderBy:[{field:"gender",direction:ASC}]) {}
           keepArgumentFieldDoubleQuotes: true
@@ -220,6 +221,35 @@ export default class Example10 {
    * @return Promise<GraphqlPaginatedResult>
    */
   getCustomerApiCall(_query: string): Promise<GraphqlPaginatedResult> {
+    let pageInfo: CursorPageInfo;
+    if (this.sgb) {
+      const { paginationService } = this.sgb;
+      // there seems to a timing issue where when you click "cursor" it requests the data before the pagination-service is initialized...
+      const pageNumber = (paginationService as any)._initialized ? paginationService.getCurrentPageNumber() : 1;
+      // In the real world, each node item would be A,B,C...AA,AB,AC, etc and so each page would actually be something like A-T, T-AN
+      // but for this mock data it's easier to represent each page as
+      // Page1: A-B
+      // Page2: B-C
+      // Page3: C-D
+      // Page4: D-E
+      // Page5: E-F
+      const startCursor = String.fromCharCode('A'.charCodeAt(0) + pageNumber - 1);
+      const endCursor = String.fromCharCode(startCursor.charCodeAt(0) + 1);
+      pageInfo = {
+        hasPreviousPage: paginationService.dataFrom === 0,
+        hasNextPage: paginationService.dataTo === 100,
+        startCursor,
+        endCursor
+      };
+    } else {
+      pageInfo = {
+        hasPreviousPage: false,
+        hasNextPage: true,
+        startCursor: 'A',
+        endCursor: 'B'
+      };
+    }
+
     // in your case, you will call your WebAPI function (wich needs to return a Promise)
     // for the demo purpose, we will call a mock WebAPI function
     const mockedResult = {
@@ -228,14 +258,21 @@ export default class Example10 {
       data: {
         [GRAPHQL_QUERY_DATASET_NAME]: {
           nodes: [],
-          totalCount: 100
-        }
-      }
+          totalCount: 100,
+          pageInfo
+        },
+      },
     };
 
     return new Promise<GraphqlPaginatedResult>(resolve => {
       setTimeout(() => {
         this.graphqlQuery = this.gridOptions.backendServiceApi!.service.buildQuery();
+        if (this.isWithCursor) {
+          // When using cursor pagination, the pagination service needs to updated with the PageInfo data from the latest request
+          // This might be done automatically if using a framework specific slickgrid library
+          // Note because of this timeout, this may cause race conditions with rapid clicks!
+          this.sgb?.paginationService.setCursorPageInfo((mockedResult.data[GRAPHQL_QUERY_DATASET_NAME].pageInfo));
+        }
         resolve(mockedResult);
       }, 150);
     });
@@ -278,6 +315,20 @@ export default class Example10 {
       { columnId: 'billingAddressZip', direction: 'DESC' },
       { columnId: 'company', direction: 'ASC' },
     ]);
+  }
+
+  setIsWithCursor(newValue: boolean) {
+    this.isWithCursor = newValue;
+
+    // recreate grid and initiialisations
+    const parent = document.querySelector(`.grid10`)?.parentElement;
+    this.dispose();
+    if (parent) {
+      const newGrid10El = document.createElement('div');
+      newGrid10El.classList.add('grid10');
+      parent.appendChild(newGrid10El);
+      this.attached();
+    }
   }
 
   async switchLanguage() {

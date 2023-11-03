@@ -92,6 +92,22 @@ const commandItemsMock = [
     iconCssClass: 'mdi mdi-close', cssClass: 'red', textCssClass: 'bold',
   },
   'divider',
+  {
+    command: 'sub-commands', title: 'Sub Commands', subMenuTitle: 'Sub Command Title', commandItems: [
+      { command: 'command3', title: 'Command 3', positionOrder: 70, },
+      { command: 'command4', title: 'Command 4', positionOrder: 71, },
+      {
+        command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'color-warning', commandItems: [
+          { command: 'command5', title: 'Command 5', positionOrder: 72, },
+        ]
+      }
+    ]
+  },
+  {
+    command: 'sub-commands2', title: 'Sub Commands 2', commandItems: [
+      { command: 'command33', title: 'Command 33', positionOrder: 70, },
+    ]
+  }
 ] as MenuCommandItem[];
 const optionItemsMock = [
   { option: 'option2', title: 'Option 2', positionOrder: 62, },
@@ -102,6 +118,12 @@ const optionItemsMock = [
     iconCssClass: 'mdi mdi-checked', cssClass: 'sky', textCssClass: 'underline',
   },
   'divider',
+  {
+    option: 'sub-options', title: 'Sub Options', subMenuTitle: 'Sub Title', optionItems: [
+      { option: 'option3', title: 'Option 3', positionOrder: 70, },
+      { option: 'option4', title: 'Option 4', positionOrder: 71, },
+    ]
+  }
 ] as MenuOptionItem[];
 const cellMenuMockWithCommands = { commandItems: deepCopy(commandItemsMock) } as CellMenu;
 const cellMenuMockWithOptions = { optionItems: deepCopy(optionItemsMock) } as CellMenu;
@@ -115,7 +137,6 @@ const columnsMock: Column[] = [
 ];
 
 describe('CellMenu Plugin', () => {
-  const consoleWarnSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
   let backendUtilityService: BackendUtilityService;
   let extensionUtility: ExtensionUtility;
   let translateService: TranslateServiceStub;
@@ -154,6 +175,7 @@ describe('CellMenu Plugin', () => {
       autoAdjustDropOffset: 0,
       autoAlignSideOffset: 0,
       hideMenuOnScroll: true,
+      subMenuOpenByEvent: 'mouseover'
     });
   });
 
@@ -214,6 +236,11 @@ describe('CellMenu Plugin', () => {
       let cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
       expect(cellMenuElm).toBeTruthy();
 
+      // click inside menu shouldn't close it
+      cellMenuElm!.dispatchEvent(new Event('mousedown', { bubbles: true }));
+      expect(cellMenuElm).toBeTruthy();
+
+      // click anywhere else should close it
       document.body.dispatchEvent(new Event('mousedown', { bubbles: true }));
       cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
 
@@ -267,10 +294,10 @@ describe('CellMenu Plugin', () => {
 
         expect(cellMenuElm.classList.contains('dropdown'));
         expect(cellMenuElm.classList.contains('dropright'));
-        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(7);
         expect(document.body.querySelector('button.close')!.ariaLabel).toBe('Close'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-cell-menu slickgrid12345 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
+          `<div class="slick-cell-menu slick-menu-level-0 slickgrid12345 dropdown dropleft" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
             <div class="slick-menu-command-list">
               <div class="slick-command-header no-title with-close">
                 <button class="close" type="button" data-dismiss="slick-menu">×</button>
@@ -289,6 +316,16 @@ describe('CellMenu Plugin', () => {
                 <span class="slick-menu-content bold">Delete Row</span>
               </li>
               <li class="slick-menu-item slick-menu-item-divider"></li>
+              <li class=\"slick-menu-item slick-submenu-item\" data-command=\"sub-commands\">
+                <div class=\"slick-menu-icon\"></div>
+                <span class=\"slick-menu-content\">Sub Commands</span>
+                <span class=\"sub-item-chevron\">⮞</span>
+              </li>
+              <li class=\"slick-menu-item slick-submenu-item\" data-command=\"sub-commands2\">
+                <div class=\"slick-menu-icon\"></div>
+                <span class=\"slick-menu-content\">Sub Commands 2</span>
+                <span class=\"sub-item-chevron\">⮞</span>
+              </li>
           </div>
         </div>`));
       });
@@ -313,7 +350,7 @@ describe('CellMenu Plugin', () => {
 
         expect(plugin.menuElement).toBeTruthy();
         expect(closeBtnElm).toBeTruthy();
-        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(4);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
         expect(commandItemElm1.classList.contains('orange')).toBeTruthy();
         expect(commandIconElm1.className).toBe('slick-menu-icon');
         expect(commandLabelElm1.textContent).toBe('Command 1');
@@ -340,7 +377,7 @@ describe('CellMenu Plugin', () => {
         expect(closeBtnElm).toBeTruthy();
         expect(cellMenuElm.style.maxHeight).toBe('290px');
         expect(cellMenuElm.style.width).toBe('400px');
-        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(4);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
         expect(commandItemElm1.classList.contains('orange')).toBeTruthy();
         expect(commandIconElm1.className).toBe('slick-menu-icon');
         expect(commandLabelElm1.textContent).toBe('Command 1');
@@ -364,7 +401,7 @@ describe('CellMenu Plugin', () => {
         expect(closeBtnElm).toBeTruthy();
         expect(cellMenuElm.style.maxWidth).toBe('310px');
         expect(cellMenuElm.style.width).toBe('auto');
-        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(7);
         expect(commandItemElm1.classList.contains('orange')).toBeTruthy();
         expect(commandIconElm1.className).toBe('slick-menu-icon');
         expect(commandLabelElm1.textContent).toBe('Command 1');
@@ -382,7 +419,7 @@ describe('CellMenu Plugin', () => {
         const commandItemElm2 = commandListElm.querySelector('[data-command="command2"]') as HTMLDivElement;
         const commandContentElm2 = commandItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
 
-        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(7);
         expect(commandContentElm2.textContent).toBe('Command 2');
         expect(commandItemElm2.classList.contains('slick-menu-item-disabled')).toBeTruthy();
       });
@@ -398,7 +435,7 @@ describe('CellMenu Plugin', () => {
         const commandItemElm2 = commandListElm.querySelector('[data-command="command2"]') as HTMLDivElement;
         const commandContentElm2 = commandItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
 
-        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(7);
         expect(commandContentElm2.textContent).toBe('Command 2');
         expect(commandItemElm2.classList.contains('slick-menu-item-hidden')).toBeTruthy();
       });
@@ -415,7 +452,7 @@ describe('CellMenu Plugin', () => {
         const commandContentElm2 = commandItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
         const commandIconElm2 = commandItemElm2.querySelector('.slick-menu-icon') as HTMLDivElement;
 
-        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(7);
         expect(commandContentElm2.textContent).toBe('Command 2');
         expect(commandIconElm2.classList.contains('bold')).toBeTruthy();
         expect(commandIconElm2.classList.contains('red')).toBeTruthy();
@@ -433,7 +470,7 @@ describe('CellMenu Plugin', () => {
         const commandItemElm2 = commandListElm.querySelector('[data-command="command2"]') as HTMLDivElement;
         const commandContentElm2 = commandItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
 
-        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(7);
         expect(commandContentElm2.textContent).toBe('Help');
         expect(commandContentElm2.classList.contains('italic')).toBeTruthy();
         expect(commandContentElm2.classList.contains('blue')).toBeTruthy();
@@ -450,7 +487,7 @@ describe('CellMenu Plugin', () => {
         const commandItemElm2 = commandListElm.querySelector('[data-command="command2"]') as HTMLDivElement;
         const commandContentElm2 = commandItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
 
-        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(7);
         expect(commandContentElm2.textContent).toBe('Command 2');
         expect(commandItemElm2.title).toBe('some tooltip');
       });
@@ -466,7 +503,7 @@ describe('CellMenu Plugin', () => {
         const commandListElm = cellMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         const commandListTitleElm = commandListElm.querySelector('.slick-menu-title') as HTMLDivElement;
 
-        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(7);
         expect(commandListTitleElm.textContent).toBe('The Commands!');
       });
 
@@ -487,7 +524,7 @@ describe('CellMenu Plugin', () => {
         const commandContentElm = commandItemElm.querySelector('.slick-menu-content') as HTMLDivElement;
         const commandListTitleElm = commandListElm.querySelector('.slick-menu-title') as HTMLDivElement;
 
-        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(7);
         expect(commandListTitleElm.textContent).toBe('Commandes');
         expect(commandContentElm.textContent).toBe('Aide');
       });
@@ -521,7 +558,7 @@ describe('CellMenu Plugin', () => {
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = cellMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
 
-        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(7);
         expect(onBeforeSpy).toHaveBeenCalled();
         expect(hideSpy).not.toHaveBeenCalled();
       });
@@ -566,9 +603,111 @@ describe('CellMenu Plugin', () => {
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = cellMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
 
-        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(7);
         expect(onBeforeSpy).toHaveBeenCalled();
         expect(onAfterSpy).toHaveBeenCalled();
+      });
+
+      it('should create a Cell Menu item with commands sub-menu items and expect sub-menu list to show in the DOM element aligned left when sub-menu is clicked', () => {
+        const actionMock = jest.fn();
+        const disposeSubMenuSpy = jest.spyOn(plugin, 'disposeSubMenus');
+        jest.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
+        Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
+
+        plugin.dispose();
+        plugin.init({ commandItems: deepCopy(commandItemsMock), dropSide: 'left' });
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).action = actionMock;
+        plugin.addonOptions.subItemChevronClass = 'mdi mdi-chevron-right';
+        plugin.addonOptions.autoAdjustDropOffset = '-780';
+        plugin.addonOptions.dropSide = 'left';
+        gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
+
+        const cellMenu1Elm = document.body.querySelector('.slick-cell-menu.slickgrid12345.slick-menu-level-0') as HTMLDivElement;
+        const commandList1Elm = cellMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const subCommands1Elm = commandList1Elm.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
+        const commandContentElm2 = subCommands1Elm.querySelector('.slick-menu-content') as HTMLDivElement;
+        const commandChevronElm = commandList1Elm.querySelector('.sub-item-chevron') as HTMLSpanElement;
+
+        subCommands1Elm!.dispatchEvent(new Event('mouseover')); // mouseover or click should work
+        const cellMenu2Elm = document.body.querySelector('.slick-cell-menu.slickgrid12345.slick-menu-level-1') as HTMLDivElement;
+        const commandList2Elm = cellMenu2Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const subCommand3Elm = commandList2Elm.querySelector('[data-command="command3"]') as HTMLDivElement;
+        const subCommands2Elm = commandList2Elm.querySelector('[data-command="more-sub-commands"]') as HTMLDivElement;
+
+        subCommands2Elm!.dispatchEvent(new Event('click'));
+        const cellMenu3Elm = document.body.querySelector('.slick-cell-menu.slickgrid12345.slick-menu-level-2') as HTMLDivElement;
+        const commandList3Elm = cellMenu3Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const subCommand5Elm = commandList3Elm.querySelector('[data-command="command5"]') as HTMLDivElement;
+        const subMenuTitleElm = commandList3Elm.querySelector('.slick-menu-title') as HTMLDivElement;
+
+        expect(commandList1Elm.querySelectorAll('.slick-menu-item').length).toBe(7);
+        expect(commandList2Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
+        expect(commandContentElm2.textContent).toBe('Sub Commands');
+        expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
+        expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
+        expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
+        expect(subCommand3Elm.textContent).toContain('Command 3');
+        expect(subCommand5Elm.textContent).toContain('Command 5');
+        expect(cellMenu1Elm.classList.contains('dropleft'));
+
+        // return Cell Menu menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
+        subCommands1Elm!.dispatchEvent(new Event('click'));
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(3);
+        const subCommands12Elm = commandList1Elm.querySelector('[data-command="sub-commands2"]') as HTMLDivElement;
+        subCommands12Elm!.dispatchEvent(new Event('click'));
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(4);
+        expect(disposeSubMenuSpy).toHaveBeenCalled();
+      });
+
+      it('should create a Cell Menu item with commands sub-menu items and expect sub-menu list to show in the DOM element align right when sub-menu is clicked', () => {
+        const actionMock = jest.fn();
+        const disposeSubMenuSpy = jest.spyOn(plugin, 'disposeSubMenus');
+        jest.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
+        Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
+
+        plugin.dispose();
+        plugin.init({ commandItems: deepCopy(commandItemsMock) });
+        (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).action = actionMock;
+        plugin.addonOptions.subItemChevronClass = 'mdi mdi-chevron-right';
+        plugin.addonOptions.autoAdjustDropOffset = '-780';
+        plugin.addonOptions.dropSide = 'right';
+        gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
+
+        const cellMenu1Elm = document.body.querySelector('.slick-cell-menu.slickgrid12345.slick-menu-level-0') as HTMLDivElement;
+        const commandList1Elm = cellMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const subCommands1Elm = commandList1Elm.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
+        const commandContentElm2 = subCommands1Elm.querySelector('.slick-menu-content') as HTMLDivElement;
+        const commandChevronElm = commandList1Elm.querySelector('.sub-item-chevron') as HTMLSpanElement;
+
+        subCommands1Elm!.dispatchEvent(new Event('click'));
+        const cellMenu2Elm = document.body.querySelector('.slick-cell-menu.slickgrid12345.slick-menu-level-1') as HTMLDivElement;
+        const commandList2Elm = cellMenu2Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const subCommand3Elm = commandList2Elm.querySelector('[data-command="command3"]') as HTMLDivElement;
+        const subCommands2Elm = commandList2Elm.querySelector('[data-command="more-sub-commands"]') as HTMLDivElement;
+
+        subCommands2Elm!.dispatchEvent(new Event('click'));
+        const cellMenu3Elm = document.body.querySelector('.slick-cell-menu.slickgrid12345.slick-menu-level-2') as HTMLDivElement;
+        const commandList3Elm = cellMenu3Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const subCommand5Elm = commandList3Elm.querySelector('[data-command="command5"]') as HTMLDivElement;
+        const subMenuTitleElm = commandList3Elm.querySelector('.slick-menu-title') as HTMLDivElement;
+
+        expect(commandList1Elm.querySelectorAll('.slick-menu-item').length).toBe(7);
+        expect(commandList2Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
+        expect(commandContentElm2.textContent).toBe('Sub Commands');
+        expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
+        expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
+        expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
+        expect(subCommand3Elm.textContent).toContain('Command 3');
+        expect(subCommand5Elm.textContent).toContain('Command 5');
+        expect(cellMenu1Elm.classList.contains('dropright'));
+
+        // return menu/sub-menu if it's already opened unless we are on different sub-menu tree if so close them all
+        subCommands1Elm!.dispatchEvent(new Event('click'));
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(3);
+        const subCommands12Elm = commandList1Elm.querySelector('[data-command="sub-commands2"]') as HTMLDivElement;
+        subCommands12Elm!.dispatchEvent(new Event('click'));
+        expect(disposeSubMenuSpy).toHaveBeenCalledTimes(4);
+        expect(disposeSubMenuSpy).toHaveBeenCalled();
       });
 
       it('should create a Cell Menu and expect the button click handler & "action" callback to be executed when defined', () => {
@@ -583,7 +722,7 @@ describe('CellMenu Plugin', () => {
         const commandListElm = cellMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         commandListElm.querySelector('[data-command="command2"]')!.dispatchEvent(new Event('click'));
 
-        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(7);
         expect(actionMock).toHaveBeenCalled();
       });
 
@@ -599,7 +738,7 @@ describe('CellMenu Plugin', () => {
         const commandListElm = cellMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
         commandListElm.querySelector('[data-command="command2"]')!.dispatchEvent(new Event('click'));
 
-        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(7);
         expect(onCommandMock).toHaveBeenCalled();
       });
 
@@ -643,10 +782,10 @@ describe('CellMenu Plugin', () => {
         const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
         const optionListElm = cellMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
 
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
         expect(document.body.querySelector('button.close')!.ariaLabel).toBe('Close'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-cell-menu slickgrid12345 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
+          `<div class="slick-cell-menu slick-menu-level-0 slickgrid12345 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
             <div class="slick-menu-option-list">
               <div class="slick-option-header no-title with-close">
                 <button class="close" type="button" data-dismiss="slick-menu">×</button>
@@ -665,6 +804,11 @@ describe('CellMenu Plugin', () => {
                 <span class="slick-menu-content underline">Delete Row</span>
               </li>
               <li class="slick-menu-item slick-menu-item-divider"></li>
+              <li class=\"slick-menu-item slick-submenu-item\" data-option=\"sub-options\">
+                <div class=\"slick-menu-icon\"></div>
+                <span class=\"slick-menu-content\">Sub Options</span>
+                <span class=\"sub-item-chevron\">⮞</span>
+              </li>
           </div>
         </div>`));
       });
@@ -689,7 +833,7 @@ describe('CellMenu Plugin', () => {
 
         expect(plugin.menuElement).toBeTruthy();
         expect(closeBtnElm).toBeTruthy();
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(4);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(optionItemElm1.classList.contains('purple')).toBeTruthy();
         expect(optionIconElm1.className).toBe('slick-menu-icon');
         expect(optionLabelElm1.textContent).toBe('Option 1');
@@ -714,7 +858,7 @@ describe('CellMenu Plugin', () => {
         const optionIconElm1 = optionItemElm1.querySelector('.slick-menu-icon') as HTMLDivElement;
 
         expect(closeBtnElm).toBeTruthy();
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(4);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
         expect(optionItemElm1.classList.contains('purple')).toBeTruthy();
         expect(optionIconElm1.className).toBe('slick-menu-icon');
         expect(optionLabelElm1.textContent).toBe('Option 1');
@@ -736,7 +880,7 @@ describe('CellMenu Plugin', () => {
         const optionIconElm1 = optionItemElm1.querySelector('.slick-menu-icon') as HTMLDivElement;
 
         expect(closeBtnElm).toBeTruthy();
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
         expect(optionItemElm1.classList.contains('purple')).toBeTruthy();
         expect(optionIconElm1.className).toBe('slick-menu-icon');
         expect(optionLabelElm1.textContent).toBe('Option 1');
@@ -754,7 +898,7 @@ describe('CellMenu Plugin', () => {
         const optionItemElm2 = optionListElm.querySelector('[data-option="option2"]') as HTMLDivElement;
         const optionContentElm2 = optionItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
 
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
         expect(optionContentElm2.textContent).toBe('Option 2');
         expect(optionItemElm2.classList.contains('slick-menu-item-disabled')).toBeTruthy();
       });
@@ -770,7 +914,7 @@ describe('CellMenu Plugin', () => {
         const optionItemElm2 = optionListElm.querySelector('[data-option="option2"]') as HTMLDivElement;
         const optionContentElm2 = optionItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
 
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
         expect(optionContentElm2.textContent).toBe('Option 2');
         expect(optionItemElm2.classList.contains('slick-menu-item-hidden')).toBeTruthy();
       });
@@ -787,7 +931,7 @@ describe('CellMenu Plugin', () => {
         const optionContentElm2 = optionItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
         const optionIconElm2 = optionItemElm2.querySelector('.slick-menu-icon') as HTMLDivElement;
 
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
         expect(optionContentElm2.textContent).toBe('Option 2');
         expect(optionIconElm2.classList.contains('underline')).toBeTruthy();
         expect(optionIconElm2.classList.contains('sky')).toBeTruthy();
@@ -805,7 +949,7 @@ describe('CellMenu Plugin', () => {
         const optionItemElm2 = optionListElm.querySelector('[data-option="option2"]') as HTMLDivElement;
         const optionContentElm2 = optionItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
 
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
         expect(optionContentElm2.textContent).toBe('Help');
         expect(optionContentElm2.classList.contains('italic')).toBeTruthy();
         expect(optionContentElm2.classList.contains('blue')).toBeTruthy();
@@ -821,10 +965,13 @@ describe('CellMenu Plugin', () => {
         const optionListElm = cellMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
         const optionItemElm2 = optionListElm.querySelector('[data-option="option2"]') as HTMLDivElement;
         const optionContentElm2 = optionItemElm2.querySelector('.slick-menu-content') as HTMLDivElement;
+        const optionChevronElm = optionListElm.querySelector('.sub-item-chevron') as HTMLSpanElement;
 
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
         expect(optionContentElm2.textContent).toBe('Option 2');
         expect(optionItemElm2.title).toBe('some tooltip');
+        expect(optionChevronElm.className).toBe('sub-item-chevron');
+        expect(optionChevronElm.textContent).toBe('⮞');
       });
 
       it('should create a Cell Menu item with a title for the option list when "optionTitle" is provided', () => {
@@ -839,7 +986,7 @@ describe('CellMenu Plugin', () => {
         const optionListElm = cellMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
         const optionListTitleElm = optionListElm.querySelector('.slick-menu-title') as HTMLDivElement;
 
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
         expect(optionListTitleElm.textContent).toBe('The Options!');
       });
 
@@ -860,7 +1007,7 @@ describe('CellMenu Plugin', () => {
         const optionContentElm = optionItemElm.querySelector('.slick-menu-content') as HTMLDivElement;
         const optionListTitleElm = optionListElm.querySelector('.slick-menu-title') as HTMLDivElement;
 
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
         expect(optionListTitleElm.textContent).toBe(`Liste d'options`);
         expect(optionContentElm.textContent).toBe(`Aucun`);
       });
@@ -882,6 +1029,34 @@ describe('CellMenu Plugin', () => {
         expect(closeSpy).toHaveBeenCalled();
       });
 
+      it('should create a Cell Menu item with options sub-menu items and expect sub-menu list to show in the DOM element when sub-menu is clicked', () => {
+        const actionMock = jest.fn();
+        jest.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
+
+        plugin.dispose();
+        plugin.init({ optionItems: deepCopy(optionItemsMock) });
+        (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).action = actionMock;
+        plugin.addonOptions.subItemChevronClass = 'mdi mdi-chevron-right';
+        gridStub.onClick.notify({ cell: 4, row: 1, grid: gridStub }, eventData, gridStub);
+
+        const cellMenu1Elm = document.body.querySelector('.slick-cell-menu.slickgrid12345.slick-menu-level-0') as HTMLDivElement;
+        const optionList1Elm = cellMenu1Elm.querySelector('.slick-menu-option-list') as HTMLDivElement;
+        const subOptionsElm = optionList1Elm.querySelector('[data-option="sub-options"]') as HTMLDivElement;
+        const optionContentElm2 = subOptionsElm.querySelector('.slick-menu-content') as HTMLDivElement;
+        const optionChevronElm = optionList1Elm.querySelector('.sub-item-chevron') as HTMLSpanElement;
+
+        subOptionsElm!.dispatchEvent(new Event('click'));
+        const cellMenu2Elm = document.body.querySelector('.slick-cell-menu.slickgrid12345.slick-menu-level-1') as HTMLDivElement;
+        const optionList2Elm = cellMenu2Elm.querySelector('.slick-menu-option-list') as HTMLDivElement;
+        const subOption3Elm = optionList2Elm.querySelector('[data-option="option3"]') as HTMLDivElement;
+
+        expect(optionList1Elm.querySelectorAll('.slick-menu-item').length).toBe(6);
+        expect(optionList2Elm.querySelectorAll('.slick-menu-item').length).toBe(2);
+        expect(optionContentElm2.textContent).toBe('Sub Options');
+        expect(optionChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
+        expect(subOption3Elm.textContent).toContain('Option 3');
+      });
+
       it('should create a Cell Menu and expect the button click handler & "action" callback to be executed when defined', () => {
         const actionMock = jest.fn();
         jest.spyOn(getEditorLockMock, 'commitCurrentEdit').mockReturnValue(true);
@@ -895,7 +1070,7 @@ describe('CellMenu Plugin', () => {
         const optionListElm = cellMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
         optionListElm.querySelector('[data-option="option2"]')!.dispatchEvent(new Event('click'));
 
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
         expect(actionMock).toHaveBeenCalled();
       });
 
@@ -912,7 +1087,7 @@ describe('CellMenu Plugin', () => {
         const optionListElm = cellMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
         optionListElm.querySelector('[data-option="option2"]')!.dispatchEvent(new Event('click'));
 
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
         expect(onOptionSelectedMock).toHaveBeenCalled();
       });
 
@@ -929,7 +1104,7 @@ describe('CellMenu Plugin', () => {
         const optionListElm = cellMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
         optionListElm.querySelector('[data-option="option2"]')!.dispatchEvent(new Event('click'));
 
-        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(5);
+        expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
         expect(onOptionSelectedMock).not.toHaveBeenCalled();
       });
     });

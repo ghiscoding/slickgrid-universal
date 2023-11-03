@@ -4,6 +4,47 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.4.2](https://github.com/ghiscoding/slickgrid-universal/compare/v3.4.1...v3.4.2) (2023-11-02)
+
+**Note:** Version bump only for package slickgrid-universal
+
+## [3.4.1](https://github.com/ghiscoding/slickgrid-universal/compare/v3.4.0...v3.4.1) (2023-11-02)
+
+### Bug Fixes
+
+* **pagination:** add missing setCursorBased() method for dynamic change ([#1171](https://github.com/ghiscoding/slickgrid-universal/issues/1171)) ([886170e](https://github.com/ghiscoding/slickgrid-universal/commit/886170e35f68fe06cfe9e185e2f39d75d8e295f4)) - by @ghiscoding
+
+# [3.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.3.2...v3.4.0) (2023-11-02)
+
+### Bug Fixes
+
+* **common:** `unbindAll` with a group name should remove all tagged ones ([#1152](https://github.com/ghiscoding/slickgrid-universal/issues/1152)) ([5014354](https://github.com/ghiscoding/slickgrid-universal/commit/5014354803d4561409c0f9622ad8bc5093d494cf)), closes [#1150](https://github.com/ghiscoding/slickgrid-universal/issues/1150) - by @ghiscoding
+* **common:** calling `bind` with multiple events should add group name ([#1157](https://github.com/ghiscoding/slickgrid-universal/issues/1157)) ([9023b54](https://github.com/ghiscoding/slickgrid-universal/commit/9023b54146b72c0305128484f9fd6f9d1ac47b48)), closes [#1150](https://github.com/ghiscoding/slickgrid-universal/issues/1150) - by @ghiscoding
+* **common:** clicking Menu close button should only close current menu ([#1160](https://github.com/ghiscoding/slickgrid-universal/issues/1160)) ([b524ef1](https://github.com/ghiscoding/slickgrid-universal/commit/b524ef1af6c662bc4ebcd87ad95aa99dd077a119)) - by @ghiscoding
+* **common:** context menu should close when clicking another cell ([#1163](https://github.com/ghiscoding/slickgrid-universal/issues/1163)) ([bd132c5](https://github.com/ghiscoding/slickgrid-universal/commit/bd132c52a082147c2366b2fade124e145834902f)) - by @ghiscoding
+* **common:** disable throwWhenFrozenNotAllViewable w/frozen grids ([#1149](https://github.com/ghiscoding/slickgrid-universal/issues/1149)) ([9a06875](https://github.com/ghiscoding/slickgrid-universal/commit/9a06875d8654c47d97aaaa0fd5191c1bfeae7288)) - by @ghiscoding
+* **common:** make sure destroy is a function before calling it ([#1148](https://github.com/ghiscoding/slickgrid-universal/issues/1148)) ([dba9606](https://github.com/ghiscoding/slickgrid-universal/commit/dba96060666a929eb616bcacb492f6f5f3f56106)) - by @ghiscoding
+* **common:** mouseover disabled sub-menu shouldn't open it ([#1167](https://github.com/ghiscoding/slickgrid-universal/issues/1167)) ([550f103](https://github.com/ghiscoding/slickgrid-universal/commit/550f1031ca2c56649ed630ab753d757a3fb799fa)) - by @ghiscoding
+* **common:** replace `innerHTML: '&times;'` with `textContent: '×'` ([#1156](https://github.com/ghiscoding/slickgrid-universal/issues/1156)) ([e8b2cfb](https://github.com/ghiscoding/slickgrid-universal/commit/e8b2cfb4b3d182de429ba367d1c83b873670fabc)) - by @ghiscoding
+* **common:** rollback event capture causing multiple calls ([#1168](https://github.com/ghiscoding/slickgrid-universal/issues/1168)) ([90876c9](https://github.com/ghiscoding/slickgrid-universal/commit/90876c9a57f291271a3510541e4a24a4ef86413c)) - by @ghiscoding
+* deprecate HeaderMenu `items` in favor of `commandItems` ([634441c](https://github.com/ghiscoding/slickgrid-universal/commit/634441c34e17a0a11c672df32c71014309efc13e)) - by @ghiscoding
+* deprecate HeaderMenu `items` in favor of `commandItems` ([#1159](https://github.com/ghiscoding/slickgrid-universal/issues/1159)) ([2b26d6d](https://github.com/ghiscoding/slickgrid-universal/commit/2b26d6da1232f4ad4a7d0db8ad077b3b2e3c6bd7)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#1136](https://github.com/ghiscoding/slickgrid-universal/issues/1136)) ([a755b0f](https://github.com/ghiscoding/slickgrid-universal/commit/a755b0f0ff8af47c6d1d534930b1354fd28a781f)) - by @renovate-bot
+* **deps:** update all non-major dependencies ([#1138](https://github.com/ghiscoding/slickgrid-universal/issues/1138)) ([82a602e](https://github.com/ghiscoding/slickgrid-universal/commit/82a602e8c3c25a45979d3e3bbf4766d1bae33f80)) - by @renovate-bot
+* **gridMenu:** remove GridMenu from DOM after closing it ([#1169](https://github.com/ghiscoding/slickgrid-universal/issues/1169)) ([87b242f](https://github.com/ghiscoding/slickgrid-universal/commit/87b242fdebd6d8ce838842458e192a6e90de3d80)) - by @ghiscoding
+* move `innerHTML` as separate assignment to improve CSP trusted types ([#1162](https://github.com/ghiscoding/slickgrid-universal/issues/1162)) ([9c6a002](https://github.com/ghiscoding/slickgrid-universal/commit/9c6a002666f16b1096d3f928900ad412a4124233)) - by @ghiscoding
+
+### Features
+
+* add `subMenuOpenByEvent` option to open sub-menus via mouseover ([#1161](https://github.com/ghiscoding/slickgrid-universal/issues/1161)) ([609f88b](https://github.com/ghiscoding/slickgrid-universal/commit/609f88b2b80515a540bd7ae1c8366b57bd288dbc)) - by @ghiscoding
+* add sub-menu(s) to CellMenu & ContextMenu plugins ([#1141](https://github.com/ghiscoding/slickgrid-universal/issues/1141)) ([bd18af1](https://github.com/ghiscoding/slickgrid-universal/commit/bd18af1ee960f9417cb7625ff8c3fb5d9567d16e)) - by @ghiscoding
+* add sub-menu(s) to GridMenu plugin ([#1151](https://github.com/ghiscoding/slickgrid-universal/issues/1151)) ([5178310](https://github.com/ghiscoding/slickgrid-universal/commit/5178310c0247d5524300841aac7aea7c4f3df733)) - by @ghiscoding
+* add sub-menu(s) to HeaderMenu plugin ([#1158](https://github.com/ghiscoding/slickgrid-universal/issues/1158)) ([eeab42e](https://github.com/ghiscoding/slickgrid-universal/commit/eeab42e270e53341a8572ab55ed758276a4d30d6)) - by @ghiscoding
+* add support for grid inside Shadow DOM ([#1166](https://github.com/ghiscoding/slickgrid-universal/issues/1166)) ([f7b8c46](https://github.com/ghiscoding/slickgrid-universal/commit/f7b8c46593c71b7114ac85610c12ad6187e3f6de)) - by @ghiscoding
+* **common:** add group name to `bind` and `unbindAll` methods ([#1150](https://github.com/ghiscoding/slickgrid-universal/issues/1150)) ([6c3b90e](https://github.com/ghiscoding/slickgrid-universal/commit/6c3b90e774906621d5b1584a2372ba633d2366ff)) - by @ghiscoding
+* **common:** create ColumnPicker dynamically every time ([#1165](https://github.com/ghiscoding/slickgrid-universal/issues/1165)) ([7e8d80e](https://github.com/ghiscoding/slickgrid-universal/commit/7e8d80e807176ba2064cbb71d06fb53995aae06c)) - by @ghiscoding
+* **graphql:** add optional cursor pagination to GraphQL backend service ([#1153](https://github.com/ghiscoding/slickgrid-universal/issues/1153)) ([29579b2](https://github.com/ghiscoding/slickgrid-universal/commit/29579b23ab1e531b3323cbf10eb9e9882e244b8f)) - by @Harsgalt86
+
 ## [3.3.2](https://github.com/ghiscoding/slickgrid-universal/compare/v3.3.1...v3.3.2) (2023-10-06)
 
 ### Bug Fixes

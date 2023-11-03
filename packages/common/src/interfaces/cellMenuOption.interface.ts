@@ -68,6 +68,12 @@ export interface CellMenuOption {
   /** Defaults to True, should we show bullets when icons are missing? */
   showBulletWhenIconMissing?: boolean;
 
+  /** CSS class that can be added on the right side of a sub-item parent (typically a chevron-right icon) */
+  subItemChevronClass?: string;
+
+  /** Defaults to "mouseover", what event type shoud we use to open sub-menu(s), 2 options are available: "mouseover" or "click" */
+  subMenuOpenByEvent?: 'mouseover' | 'click';
+
   // --
   // action/override callbacks
 

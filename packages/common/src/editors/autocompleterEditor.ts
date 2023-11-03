@@ -196,7 +196,9 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
   destroy() {
     this._bindEventService.unbindAll();
-    this._instance?.destroy();
+    if (typeof this._instance?.destroy === 'function') {
+      this._instance.destroy();
+    }
     this._inputElm?.remove?.();
     this._elementCollection = null;
   }
@@ -510,7 +512,9 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     // for the remaining allowed tags we'll permit all attributes
     const sanitizedTemplateText = sanitizeTextByAvailableSanitizer(this.gridOptions, templateString) || '';
 
-    return createDomElement('div', { innerHTML: sanitizedTemplateText });
+    const tmpElm = document.createElement('div');
+    tmpElm.innerHTML = sanitizedTemplateText;
+    return tmpElm;
   }
 
   protected renderCollectionItem(item: any) { // CollectionCustomStructure

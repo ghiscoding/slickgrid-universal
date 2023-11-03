@@ -13,6 +13,7 @@ import type {
   OperatorString,
   Pagination,
   PaginationChangedArgs,
+  PaginationCursorChangedArgs,
   SharedService,
   SingleColumnSort,
   SlickGrid,
@@ -49,7 +50,7 @@ export class GraphqlService implements BackendService {
   protected _datasetIdPropName = 'id';
   options: GraphqlServiceOption | undefined;
   pagination: Pagination | undefined;
-  defaultPaginationOptions: GraphqlPaginationOption | GraphqlCursorPaginationOption = {
+  defaultPaginationOptions: GraphqlPaginationOption = {
     first: DEFAULT_ITEMS_PER_PAGE,
     offset: 0
   };
@@ -141,13 +142,14 @@ export class GraphqlService implements BackendService {
 
     // only add pagination if it's enabled in the grid options
     if (this._gridOptions.enablePagination !== false) {
-      datasetFilters = {
-        ...this.options.paginationOptions,
-        first: ((this.options.paginationOptions && this.options.paginationOptions.first) ? this.options.paginationOptions.first : ((this.pagination && this.pagination.pageSize) ? this.pagination.pageSize : null)) || this.defaultPaginationOptions.first
-      };
+      datasetFilters = {};
 
-      if (!this.options.isWithCursor) {
+      if (this.options.isWithCursor && this.options.paginationOptions) {
+        datasetFilters = { ...this.options.paginationOptions };
+      }
+      else {
         const paginationOptions = this.options?.paginationOptions;
+        datasetFilters.first = this.options?.paginationOptions?.first ?? this.pagination?.pageSize ?? this.defaultPaginationOptions.first;
         datasetFilters.offset = paginationOptions?.hasOwnProperty('offset') ? +(paginationOptions as any)['offset'] : 0;
       }
     }
@@ -253,12 +255,7 @@ export class GraphqlService implements BackendService {
     let paginationOptions: GraphqlPaginationOption | GraphqlCursorPaginationOption;
 
     if (this.options && this.options.isWithCursor) {
-      // first, last, after, before
-      paginationOptions = {
-        after: '',
-        before: undefined,
-        last: undefined
-      } as GraphqlCursorPaginationOption;
+      paginationOptions = this.getInitPaginationOptions();
     } else {
       // first, last, offset
       paginationOptions = ((this.options && this.options.paginationOptions) || this.getInitPaginationOptions()) as GraphqlPaginationOption;
@@ -334,9 +331,14 @@ export class GraphqlService implements BackendService {
    *     }
    *   }
    */
-  processOnPaginationChanged(_event: Event | undefined, args: PaginationChangedArgs): string {
+  processOnPaginationChanged(_event: Event | undefined, args: PaginationChangedArgs | (PaginationCursorChangedArgs & PaginationChangedArgs)): string {
     const pageSize = +(args.pageSize || ((this.pagination) ? this.pagination.pageSize : DEFAULT_PAGE_SIZE));
-    this.updatePagination(args.newPage, pageSize);
+
+    // if first/last defined on args, then it is a cursor based pagination change
+    'first' in args || 'last' in args
+      ? this.updatePagination(args.newPage, pageSize, args)
+      : this.updatePagination(args.newPage, pageSize);
+
 
     // build the GraphQL query which we will use in the WebAPI callback
     return this.buildQuery();
@@ -492,25 +494,35 @@ export class GraphqlService implements BackendService {
   }
 
   /**
-   * Update the pagination component with it's new page number and size
+   * Update the pagination component with it's new page number and size.
    * @param newPage
    * @param pageSize
+   * @param cursorArgs Should be supplied when using cursor based pagination
    */
-  updatePagination(newPage: number, pageSize: number) {
+  updatePagination(newPage: number, pageSize: number, cursorArgs?: PaginationCursorChangedArgs) {
     this._currentPagination = {
       pageNumber: newPage,
       pageSize
     };
 
-    let paginationOptions;
-    if (this.options && this.options.isWithCursor) {
-      paginationOptions = {
-        first: pageSize
-      };
+    let paginationOptions: GraphqlPaginationOption | GraphqlCursorPaginationOption = {};
+    if (this.options?.isWithCursor) {
+      // use cursor based pagination
+      // when using cursor pagination, expect to be given a PaginationCursorChangedArgs as arguments,
+      // but still handle the case where it's not (can happen when initial configuration not pre-configured (automatically corrects itself next setCursorPageInfo() call))
+      if (cursorArgs && cursorArgs instanceof Object) {
+        // remove pageSize and newPage from cursorArgs, otherwise they get put on the query input string
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-shadow
+        const { pageSize, newPage, ...cursorPaginationOptions } = cursorArgs;
+        paginationOptions = cursorPaginationOptions;
+      } else {
+        paginationOptions = { first: pageSize };
+      }
     } else {
+      // use offset based pagination
       paginationOptions = {
         first: pageSize,
-        offset: (newPage > 1) ? ((newPage - 1) * pageSize) : 0 // recalculate offset but make sure the result is always over 0
+        offset: (newPage > 1) ? ((newPage - 1) * pageSize!) : 0 // recalculate offset but make sure the result is always over 0
       };
     }
 

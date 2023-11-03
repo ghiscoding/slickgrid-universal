@@ -2,6 +2,7 @@ import 'jest-extended';
 import { GridOption } from '../../interfaces';
 import {
   calculateAvailableSpace,
+  createDomElement,
   emptyElement,
   findFirstElementAttribute,
   getElementOffsetRelativeToParent,
@@ -43,6 +44,24 @@ describe('Service/domUtilies', () => {
         right: 1175, // 1200px - 25px
         top: 10,
       });
+    });
+  });
+
+  describe('createDomElement method', () => {
+    it('should create a DOM element via the method to equal a regular DOM element', () => {
+      const div = document.createElement('div');
+      div.className = 'red bold';
+      const cdiv = createDomElement('div', { className: 'red bold' });
+
+      expect(cdiv).toEqual(div);
+      expect(cdiv.outerHTML).toEqual(div.outerHTML);
+    });
+
+    it('should display a warning when trying to use innerHTML via the method', () => {
+      const consoleWarnSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
+      createDomElement('div', { className: 'red bold', innerHTML: '<input />' });
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining(`[Slickgrid-Universal] For better CSP (Content Security Policy) support, do not use "innerHTML" directly in "createDomElement('div', { innerHTML: 'some html'})"`));
     });
   });
 
@@ -112,7 +131,7 @@ describe('Service/domUtilies', () => {
     document.body.appendChild(div);
 
     it('should return undefined when element if not a valid html element', () => {
-      const output = getHtmlElementOffset(null);
+      const output = getHtmlElementOffset(null as any);
       expect(output).toEqual(undefined);
     });
 
