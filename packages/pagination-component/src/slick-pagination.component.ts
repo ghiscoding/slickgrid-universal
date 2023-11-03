@@ -20,6 +20,7 @@ export class SlickPaginationComponent {
   protected _bindingHelper: BindingHelper;
   protected _paginationElement!: HTMLDivElement;
   protected _enableTranslate = false;
+  protected _gridParentContainerElm?: HTMLElement;
   protected _subscriptions: Subscription[] = [];
   currentPagination: ServicePagination;
   firstButtonClasses = '';
@@ -63,6 +64,10 @@ export class SlickPaginationComponent {
         if (pageFromToElm?.style) {
           pageFromToElm.style.display = (this.currentPagination.totalItems === 0) ? 'none' : '';
         }
+      }),
+      this.pubSubService.subscribe('onPaginationSetCursorBased', () => {
+        this.dispose(); // recreate pagination component, probably only used for GraphQL E2E tests
+        this.renderPagination(this._gridParentContainerElm!);
       })
     );
   }
@@ -92,9 +97,6 @@ export class SlickPaginationComponent {
 
   get pageNumber(): number {
     return this.paginationService.pageNumber;
-  }
-  set pageNumber(_page: number) {
-    // the setter has to be declared but we won't use it, instead we will use the "changeToCurrentPage()" to only update the value after ENTER keydown event
   }
 
   get grid(): SlickGrid {
@@ -135,6 +137,7 @@ export class SlickPaginationComponent {
   }
 
   renderPagination(gridParentContainerElm: HTMLElement) {
+    this._gridParentContainerElm = gridParentContainerElm;
     const paginationElm = this.createPaginationContainer();
     const divNavContainerElm = createDomElement('div', { className: 'slick-pagination-nav' });
     const leftNavigationElm = this.createPageNavigation('Page navigation', [

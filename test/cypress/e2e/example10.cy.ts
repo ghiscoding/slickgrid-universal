@@ -68,6 +68,12 @@ describe('Example 10 - GraphQL Grid', { retries: 1 }, () => {
       });
   });
 
+  it('should use fake smaller server wait delay for faster E2E tests', () => {
+    cy.get('[data-test="server-delay"]')
+      .clear()
+      .type('20');
+  });
+
   it('should change Pagination to next page', () => {
     cy.get('.icon-seek-next').click();
 
@@ -196,6 +202,10 @@ describe('Example 10 - GraphQL Grid', { retries: 1 }, () => {
   });
 
   it('should try clearing same filter, which is now empty, by the header menu and expect same query without loading spinner', () => {
+    cy.get('[data-test="server-delay"]')
+      .clear()
+      .type('250');
+
     cy.get('.grid10')
       .find('.slick-header-left .slick-header-column:nth(0)')
       .trigger('mouseover')
@@ -361,6 +371,12 @@ describe('Example 10 - GraphQL Grid', { retries: 1 }, () => {
   });
 
   describe('Set Dynamic Sorting', () => {
+    it('should use slower server wait delay to test loading widget', () => {
+      cy.get('[data-test="server-delay"]')
+        .clear()
+        .type('250');
+    });
+
     it('should click on "Clear all Filters & Sorting" then "Set Dynamic Sorting" buttons', () => {
       cy.get('[data-test=clear-filters-sorting]')
         .click();
@@ -373,6 +389,12 @@ describe('Example 10 - GraphQL Grid', { retries: 1 }, () => {
 
       cy.get('[data-test=status]').should('contain', 'loading');
       cy.get('[data-test=status]').should('contain', 'finished');
+    });
+
+    it('should use smaller server wait delay for faster E2E tests', () => {
+      cy.get('[data-test="server-delay"]')
+        .clear()
+        .type('20');
     });
 
     it('should expect the grid to be sorted by "Zip" descending then by "Company" ascending', () => {
@@ -669,6 +691,7 @@ describe('Example 10 - GraphQL Grid', { retries: 1 }, () => {
 
   describe('Cursor Pagination', () => {
     it('should re-initialize grid for cursor pagination', () => {
+      cy.get('[data-test="reset-presets"]').click();
       cy.get('[data-test=cursor]').click();
 
       // the page number input should be a label now
@@ -722,7 +745,7 @@ describe('Example 10 - GraphQL Grid', { retries: 1 }, () => {
 
       // on page 1, click 4 times to get to page 5 (the last page)
       cy.wrap([0, 1, 2, 3]).each((el, i) => {
-        cy.wait(200); // Avoid clicking too fast and hitting race conditions because of the setTimeout in the example page (this timeout should be greater than in the page)
+        cy.wait(25); // Avoid clicking too fast and hitting race conditions because of the setTimeout in the example page (this timeout should be greater than in the page)
         cy.get('.icon-seek-next').click().then(() => {
           // wait for the query to finish
           cy.get('[data-test=status]').should('contain', 'finished');
@@ -751,7 +774,7 @@ describe('Example 10 - GraphQL Grid', { retries: 1 }, () => {
 
       // on page 5 (last page), click 4 times to go to page 1
       cy.wrap([0, 1, 2, 3]).each((el, i) => {
-        cy.wait(200); // Avoid clicking too fast and hitting race conditions because of the setTimeout in the example page (this timeout should be greater than in the page)
+        cy.wait(25); // Avoid clicking too fast and hitting race conditions because of the setTimeout in the example page (this timeout should be greater than in the page)
         cy.get('.icon-seek-prev').click().then(() => {
           // wait for the query to finish
           cy.get('[data-test=status]').should('contain', 'finished');

@@ -27,8 +27,15 @@
           onclick.delegate="setSortingDynamically()">
     Set Sorting Dynamically
   </button>
+  <button class="button is-small" data-test="reset-presets"
+          onclick.delegate="resetToOriginalPresets()">
+    Reset Original Presets
+  </button>
 
-  <br />
+  <label for="serverdelay" class="ml-4">Server Delay: </label>
+  <input id="serverdelay" type="number" data-test="server-delay" style="width: 55px"
+        value.bind="serverWaitDelay"
+        title="input a fake timer delay to simulate slow server response" />
 
   <div class="row col-md-12">
     <span>
@@ -41,7 +48,7 @@
       </button>
     </span>
 
-    <span style="margin-left: 20px">
+    <span class="ml-4">
       <button class="button is-small" onclick.delegate="switchLanguage()" data-test="language-button">
         Switch Language
       </button>
@@ -50,7 +57,7 @@
       </span>
     </span>
 
-    <span style="margin-left: 10px">
+    <span class="ml-4">
       <label>Pagination strategy: </label>
       <span data-test="radioStrategy">
         <label class="radio-inline control-label" for="offset">
@@ -67,9 +74,7 @@
 
 </div>
 
-<br />
-
-<div class="columns" style="margin-top: 5px">
+<div class="columns mt-2">
   <div class="column">
     <div class="notification is-info is-light" data-test="alert-graphql-query">
       <strong>GraphQL Query:</strong>

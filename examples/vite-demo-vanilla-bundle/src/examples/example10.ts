@@ -12,7 +12,7 @@ import {
   OperatorType,
   SortDirection,
 } from '@slickgrid-universal/common';
-import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, } from '@slickgrid-universal/graphql';
+import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption, } from '@slickgrid-universal/graphql';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import moment from 'moment-mini';
 import { ExampleGridOptions } from './example-grid-options';
@@ -22,6 +22,8 @@ import '../material-styles.scss';
 
 const defaultPageSize = 20;
 const GRAPHQL_QUERY_DATASET_NAME = 'users';
+const FAKE_SERVER_DELAY = 250;
+const FAKE_SMALLER_SERVER_DELAY = 50;
 
 export default class Example10 {
   private _bindingEventService: BindingEventService;
@@ -39,6 +41,7 @@ export default class Example10 {
   status = '';
   statusClass = 'is-success';
   translateService: TranslateService;
+  serverWaitDelay = FAKE_SERVER_DELAY; // server simulation with default of 250ms but 50ms for Cypress tests
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -274,7 +277,7 @@ export default class Example10 {
           this.sgb?.paginationService.setCursorPageInfo((mockedResult.data[GRAPHQL_QUERY_DATASET_NAME].pageInfo));
         }
         resolve(mockedResult);
-      }, 150);
+      }, this.serverWaitDelay);
     });
   }
 
@@ -317,18 +320,43 @@ export default class Example10 {
     ]);
   }
 
+  resetToOriginalPresets() {
+    const presetLowestDay = moment().add(-2, 'days').format('YYYY-MM-DD');
+    const presetHighestDay = moment().add(20, 'days').format('YYYY-MM-DD');
+
+    this.sgb?.filterService.updateFilters([
+      // you can use OperatorType or type them as string, e.g.: operator: 'EQ'
+      { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
+      { columnId: 'name', searchTerms: ['John Doe'], operator: OperatorType.contains },
+      { columnId: 'company', searchTerms: ['xyz'], operator: 'IN' },
+
+      // use a date range with 2 searchTerms values
+      { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: OperatorType.rangeInclusive },
+    ]);
+    this.sgb?.sortService.updateSorting([
+      // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
+      { columnId: 'name', direction: 'asc' },
+      { columnId: 'company', direction: SortDirection.DESC }
+    ]);
+    setTimeout(() => {
+      this.sgb?.paginationService?.changeItemPerPage(20);
+      this.sgb?.paginationService?.goToPageNumber(2);
+    });
+  }
+
   setIsWithCursor(newValue: boolean) {
     this.isWithCursor = newValue;
+    this.resetOptions({ isWithCursor: this.isWithCursor });
 
-    // recreate grid and initiialisations
-    const parent = document.querySelector(`.grid10`)?.parentElement;
-    this.dispose();
-    if (parent) {
-      const newGrid10El = document.createElement('div');
-      newGrid10El.classList.add('grid10');
-      parent.appendChild(newGrid10El);
-      this.attached();
-    }
+    // // recreate grid and initiialisations
+    // const parent = document.querySelector(`.grid10`)?.parentElement;
+    // this.dispose();
+    // if (parent) {
+    //   const newGrid10El = document.createElement('div');
+    //   newGrid10El.classList.add('grid10');
+    //   parent.appendChild(newGrid10El);
+    //   this.attached();
+    // }
   }
 
   async switchLanguage() {
@@ -336,5 +364,17 @@ export default class Example10 {
     await this.translateService.use(nextLanguage);
     this.selectedLanguage = nextLanguage;
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;
+  }
+
+  testWithSmallerWaitTime() {
+    this.serverWaitDelay = FAKE_SMALLER_SERVER_DELAY;
+  }
+
+  private resetOptions(options: Partial<GraphqlServiceOption>) {
+    const graphqlService = this.gridOptions.backendServiceApi!.service as GraphqlService;
+    this.sgb?.paginationService!.setCursorBased(options.isWithCursor!);
+    this.sgb?.paginationService?.goToFirstPage();
+    graphqlService.updateOptions(options);
+    this.gridOptions = { ...this.gridOptions };
   }
 }

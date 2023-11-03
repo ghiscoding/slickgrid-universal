@@ -559,7 +559,7 @@ describe('PaginationService', () => {
 
     it('should execute "process" method when defined as an Observable', (done) => {
       const postSpy = jest.fn();
-      mockGridOption.backendServiceApi.process = postSpy;
+      mockGridOption.backendServiceApi!.process = postSpy;
       const backendExecuteSpy = jest.spyOn(backendUtilityServiceStub, 'executeBackendProcessesCallback');
       jest.spyOn(mockBackendService, 'processOnPaginationChanged').mockReturnValue('backend query');
       const now = new Date();
@@ -744,15 +744,35 @@ describe('PaginationService', () => {
     });
 
     it('should call "goToPageNumber" when page size is different', () => {
-      const changeItemSpy = jest.spyOn(service, 'goToPageNumber');
+      const gotoPageSpy = jest.spyOn(service, 'goToPageNumber');
       const refreshSpy = jest.spyOn(service, 'refreshPagination');
 
       service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
       service.goToPageNumber(100, null, false); // change without triggering event to simulate a change
       service.resetToPreviousPagination();
 
-      expect(changeItemSpy).toHaveBeenCalled();
+      expect(gotoPageSpy).toHaveBeenCalled();
       expect(refreshSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('setCursorBased method', () => {
+    it('should call the method and expect "onPaginationSetCursorBased" to be triggered', () => {
+      const setCursorSpy = jest.spyOn(service, 'setCursorPageInfo');
+      const gotoFirstSpy = jest.spyOn(service, 'goToFirstPage');
+      const pubSubSpy = jest.spyOn(mockPubSub, 'publish');
+
+      service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
+
+      service.setCursorBased(false);
+      expect(setCursorSpy).toHaveBeenCalledTimes(0);
+      expect(gotoFirstSpy).toHaveBeenCalledTimes(1);
+      expect(pubSubSpy).toHaveBeenCalledWith('onPaginationSetCursorBased', { isCursorBased: false });
+
+      service.setCursorBased(true);
+      expect(setCursorSpy).toHaveBeenCalledTimes(1);
+      expect(gotoFirstSpy).toHaveBeenCalledTimes(2);
+      expect(pubSubSpy).toHaveBeenCalledWith('onPaginationSetCursorBased', { isCursorBased: true });
     });
   });
 
