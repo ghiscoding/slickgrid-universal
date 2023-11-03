@@ -184,7 +184,6 @@ describe('Slick-Pagination Component', () => {
 
           input.value = `${newPageNumber}`;
           input.dispatchEvent(mockEvent);
-          component.pageNumber = newPageNumber;
           expect(spy).toHaveBeenCalledWith(newPageNumber);
         }
       });
@@ -229,10 +228,9 @@ describe('Slick-Pagination Component', () => {
         expect(spy).toHaveBeenCalledWith(newItemsPerPage);
       });
 
-      it(`should trigger "onPaginationRefreshed" and expect page from/to being displayed when total items is over 0 and also expect first/prev buttons to be disabled when on page 1`, () => {
+      test(`when "onPaginationRefreshed" event is triggered then expect page from/to being displayed when total items is over 0 and also expect first/prev buttons to be disabled when on page 1`, () => {
         mockFullPagination.pageNumber = 1;
         mockFullPagination.totalItems = 100;
-        component.pageNumber = 1;
         eventPubSubService.publish('onPaginationRefreshed', mockFullPagination);
         const pageFromToElm = document.querySelector('span.page-info-from-to') as HTMLSpanElement;
 
@@ -243,11 +241,10 @@ describe('Slick-Pagination Component', () => {
         expect(pageFromToElm.style.display).toBe('');
       });
 
-      it(`should trigger "onPaginationRefreshed" and expect page from/to being displayed when total items is over 0 and also expect last/next buttons to be disabled when on last page`, () => {
+      test(`when "onPaginationRefreshed" event is triggered then expect page from/to being displayed when total items is over 0 and also expect last/next buttons to be disabled when on last page`, () => {
         mockFullPagination.pageNumber = 10;
         mockFullPagination.pageCount = 10;
         mockFullPagination.totalItems = 100;
-        component.pageNumber = 10;
         eventPubSubService.publish('onPaginationRefreshed', mockFullPagination);
         const pageFromToElm = document.querySelector('span.page-info-from-to') as HTMLSpanElement;
 
@@ -258,10 +255,9 @@ describe('Slick-Pagination Component', () => {
         expect(pageFromToElm.style.display).toBe('');
       });
 
-      it(`should trigger "onPaginationRefreshed" and expect page from/to NOT being displayed when total items is 0 and also expect all page buttons to be disabled`, () => {
+      test(`when "onPaginationRefreshed" event is triggered then expect page from/to NOT being displayed when total items is 0 and also expect all page buttons to be disabled`, () => {
         mockFullPagination.pageNumber = 0;
         mockFullPagination.totalItems = 0;
-        component.pageNumber = 0;
         eventPubSubService.publish('onPaginationRefreshed', mockFullPagination);
         const pageFromToElm = document.querySelector('span.page-info-from-to') as HTMLSpanElement;
 
@@ -270,6 +266,28 @@ describe('Slick-Pagination Component', () => {
         expect(component.lastButtonClasses).toBe('page-item seek-end disabled');
         expect(component.nextButtonClasses).toBe('page-item seek-next disabled');
         expect(pageFromToElm.style.display).toBe('none');
+      });
+
+      test(`when "onPaginationSetCursorBased" event is triggered then expect pagination to be recreated`, () => {
+        const disposeSpy = jest.spyOn(component, 'dispose');
+        const renderPagSpy = jest.spyOn(component, 'renderPagination');
+
+        mockFullPagination.pageNumber = 1;
+        mockFullPagination.pageCount = 10;
+        mockFullPagination.totalItems = 100;
+        paginationServiceStub.isCursorBased = true;
+        eventPubSubService.publish('onPaginationSetCursorBased', { isCursorBased: true });
+        const pageFromToElm = document.querySelector('span.page-info-from-to') as HTMLSpanElement;
+        const pageNbSpan = document.querySelector('span[data-test=page-number-label]') as HTMLSpanElement;
+
+        expect(disposeSpy).toHaveBeenCalledTimes(1);
+        expect(renderPagSpy).toHaveBeenCalledTimes(1);
+        expect(component.firstButtonClasses).toBe('page-item seek-first disabled');
+        expect(component.prevButtonClasses).toBe('page-item seek-prev disabled');
+        expect(component.lastButtonClasses).toBe('page-item seek-end');
+        expect(component.nextButtonClasses).toBe('page-item seek-next');
+        expect(pageFromToElm.style.display).toBe('');
+        expect(pageNbSpan.textContent).toBe('1');
       });
     });
   });

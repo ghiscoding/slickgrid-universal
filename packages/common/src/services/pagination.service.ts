@@ -495,8 +495,13 @@ export class PaginationService {
     }
   }
 
-  setCursorBased(isWithCursor: boolean) {
-    this._isCursorBased = isWithCursor;
+  setCursorBased(isCursorBased: boolean) {
+    this._isCursorBased = isCursorBased;
+    if (isCursorBased) {
+      this.setCursorPageInfo({ startCursor: '', endCursor: '', hasNextPage: false, hasPreviousPage: false }); // reset cursor
+    }
+    this.goToFirstPage();
+    this.pubSubService.publish(`onPaginationSetCursorBased`, { isCursorBased });
   }
 
   setCursorPageInfo(pageInfo: CursorPageInfo) {
