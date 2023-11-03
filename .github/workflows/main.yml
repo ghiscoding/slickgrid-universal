@@ -1,5 +1,5 @@
 # CI Build & Jest Unit Tests (ship smaller name for CI badge)
-name: Build & Unit Tests
+name: Build & Unit Tests (Jest)
 on:
   # Trigger the workflow on push or pull request,
   # but only for the master branch on Push and any branches on PR

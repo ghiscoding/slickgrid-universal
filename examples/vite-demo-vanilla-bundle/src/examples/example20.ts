@@ -54,7 +54,7 @@ export default class Example20 {
   createShadowElement(): ShadowContainer {
     // const styleElms = document.querySelectorAll<HTMLStyleElement>('head > link[rel=stylesheet], head > style[type="text/css"]');
     const styleElms = document.querySelectorAll<HTMLStyleElement>('head > link[rel=stylesheet]');
-    const sheets = Array.from(styleElms).map(el => el.sheet);
+    const styleClones = Array.from(styleElms).map(el => el.cloneNode(true));
 
     const host = document.querySelector('#host') as HTMLDivElement;
     const shadow = host.attachShadow({ mode: 'open' });
@@ -65,13 +65,14 @@ export default class Example20 {
     gridContainer.classList.add('grid20');
     shadow.appendChild(gridContainer);
     if (styleElms.length) {
-      shadow.adoptedStyleSheets = [...sheets as CSSStyleSheet[]];
+      shadow.prepend(...styleClones);
+    } else {
+      const linkElement = document.createElement('link');
+      linkElement.type = 'text/css';
+      linkElement.rel = 'stylesheet';
+      linkElement.href = './src/styles.scss';
+      shadow.appendChild(linkElement);
     }
-    const linkElement = document.createElement('link');
-    linkElement.type = 'text/css';
-    linkElement.rel = 'stylesheet';
-    linkElement.href = './src/styles.scss';
-    shadow.appendChild(linkElement);
 
     return { shadow, gridContainer };
   }
