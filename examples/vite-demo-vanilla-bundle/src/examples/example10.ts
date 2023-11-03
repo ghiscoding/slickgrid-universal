@@ -346,16 +346,6 @@ export default class Example10 {
   setIsWithCursor(newValue: boolean) {
     this.isWithCursor = newValue;
     this.resetOptions({ isWithCursor: this.isWithCursor });
-
-    // // recreate grid and initiialisations
-    // const parent = document.querySelector(`.grid10`)?.parentElement;
-    // this.dispose();
-    // if (parent) {
-    //   const newGrid10El = document.createElement('div');
-    //   newGrid10El.classList.add('grid10');
-    //   parent.appendChild(newGrid10El);
-    //   this.attached();
-    // }
   }
 
   async switchLanguage() {
