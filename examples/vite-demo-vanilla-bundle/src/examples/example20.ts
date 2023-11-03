@@ -66,13 +66,12 @@ export default class Example20 {
     shadow.appendChild(gridContainer);
     if (styleElms.length) {
       shadow.adoptedStyleSheets = [...sheets as CSSStyleSheet[]];
-    } else {
-      const linkElement = document.createElement('link');
-      linkElement.type = 'text/css';
-      linkElement.rel = 'stylesheet';
-      linkElement.href = './src/styles.scss';
-      shadow.appendChild(linkElement);
     }
+    const linkElement = document.createElement('link');
+    linkElement.type = 'text/css';
+    linkElement.rel = 'stylesheet';
+    linkElement.href = './src/styles.scss';
+    shadow.appendChild(linkElement);
 
     return { shadow, gridContainer };
   }
