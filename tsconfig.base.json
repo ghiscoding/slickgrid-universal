@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "./",
     "module": "esnext",
     "moduleResolution": "node",
     "target": "es2018",
@@ -29,59 +30,59 @@
     "skipLibCheck": true,
     "preserveConstEnums": true,
     "stripInternal": true,
-    "strict": true
-  },
-  "paths": {
-    "@slickgrid-universal/binding": [
-      "packages/binding/src"
-    ],
-    "@slickgrid-universal/common": [
-      "packages/common/src"
-    ],
-    "@slickgrid-universal/composite-editor-component": [
-      "packages/composite-editor-component/src"
-    ],
-    "@slickgrid-universal/custom-footer-component": [
-      "packages/custom-footer-component/src"
-    ],
-    "@slickgrid-universal/custom-tooltip-plugin": [
-      "packages/custom-tooltip-plugin/src"
-    ],
-    "@slickgrid-universal/empty-warning-component": [
-      "packages/empty-warning-component/src"
-    ],
-    "@slickgrid-universal/event-pub-sub": [
-      "packages/event-pub-sub/src"
-    ],
-    "@slickgrid-universal/excel-export": [
-      "packages/excel-export/src"
-    ],
-    "@slickgrid-universal/graphql": [
-      "packages/graphql/src"
-    ],
-    "@slickgrid-universal/odata": [
-      "packages/odata/src"
-    ],
-    "@slickgrid-universal/pagination-component": [
-      "packages/pagination-component/src"
-    ],
-    "@slickgrid-universal/row-detail-view-plugin": [
-      "packages/row-detail-view-plugin/src"
-    ],
-    "@slickgrid-universal/rxjs-observable": [
-      "packages/rxjs-observable/src"
-    ],
-    "@slickgrid-universal/text-export": [
-      "packages/text-export/src"
-    ],
-    "@slickgrid-universal/utils": [
-      "packages/utils/src"
-    ],
-    "@slickgrid-universal/vanilla-bundle": [
-      "packages/vanilla-bundle/src"
-    ],
-    "@slickgrid-universal/vanilla-force-bundle": [
-      "packages/vanilla-force-bundle/src"
-    ],
+    "strict": true,
+    "paths": {
+      "@slickgrid-universal/binding": [
+        "packages/binding/src"
+      ],
+      "@slickgrid-universal/common": [
+        "packages/common/src"
+      ],
+      "@slickgrid-universal/composite-editor-component": [
+        "packages/composite-editor-component/src"
+      ],
+      "@slickgrid-universal/custom-footer-component": [
+        "packages/custom-footer-component/src"
+      ],
+      "@slickgrid-universal/custom-tooltip-plugin": [
+        "packages/custom-tooltip-plugin/src"
+      ],
+      "@slickgrid-universal/empty-warning-component": [
+        "packages/empty-warning-component/src"
+      ],
+      "@slickgrid-universal/event-pub-sub": [
+        "packages/event-pub-sub/src"
+      ],
+      "@slickgrid-universal/excel-export": [
+        "packages/excel-export/src"
+      ],
+      "@slickgrid-universal/graphql": [
+        "packages/graphql/src"
+      ],
+      "@slickgrid-universal/odata": [
+        "packages/odata/src"
+      ],
+      "@slickgrid-universal/pagination-component": [
+        "packages/pagination-component/src"
+      ],
+      "@slickgrid-universal/row-detail-view-plugin": [
+        "packages/row-detail-view-plugin/src"
+      ],
+      "@slickgrid-universal/rxjs-observable": [
+        "packages/rxjs-observable/src"
+      ],
+      "@slickgrid-universal/text-export": [
+        "packages/text-export/src"
+      ],
+      "@slickgrid-universal/utils": [
+        "packages/utils/src"
+      ],
+      "@slickgrid-universal/vanilla-bundle": [
+        "packages/vanilla-bundle/src"
+      ],
+      "@slickgrid-universal/vanilla-force-bundle": [
+        "packages/vanilla-force-bundle/src"
+      ]
+    }
   }
 }

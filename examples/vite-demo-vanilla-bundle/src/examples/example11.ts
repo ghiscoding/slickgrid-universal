@@ -27,6 +27,8 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import moment from 'moment-mini';
 
+import exampleModal from './example11-modal.html?raw';
+import Example11Modal from './example11-modal';
 import countriesJson from './data/countries.json?raw';
 import { ExampleGridOptions } from './example-grid-options';
 import { loadComponent } from './utilities';
@@ -439,7 +441,7 @@ export default class Example11 {
         const massUpdateColumnDefinitions = columnDefinitionsClone?.filter((col: Column) => col.editor?.massUpdate || col.internalColumnEditor?.massUpdate) || [];
         const selectedItems = this.sgb.gridService.getSelectedRowsDataItem();
         const selectedIds = selectedItems.map(selectedItem => selectedItem.id);
-        loadComponent(modalContainerElm, './example11-modal', { columnDefinitions: massUpdateColumnDefinitions, selectedIds, remoteCallback: this.remoteCallbackFn.bind(this) });
+        loadComponent(modalContainerElm, exampleModal, Example11Modal, { columnDefinitions: massUpdateColumnDefinitions, selectedIds, remoteCallback: this.remoteCallbackFn.bind(this) });
         break;
     }
   }

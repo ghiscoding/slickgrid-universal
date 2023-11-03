@@ -325,7 +325,7 @@ export default class Example15 {
       let data = Data as unknown as { name: string; gender: string; company: string; id: string, category: { id: string; name: string } }[];
       switch (sort) {
         case 'ASC':
-          data = data.sort((a, b) => a.name.localeCompare(b.name)); // ..order require('./data/customers_100_ASC.json');
+          data = data.sort((a, b) => a.name.localeCompare(b.name));
           break;
         case 'DESC':
           data = data.sort((a, b) => b.name.localeCompare(a.name));
