@@ -432,7 +432,7 @@ export default class Example4 {
           { command: '', divider: true, positionOrder: 98 },
           {
             // we can also have multiple nested sub-menus
-            command: 'export', title: 'Exports', positionOrder: 99,
+            command: 'export', title: 'Exports', iconCssClass: 'mdi mdi-download', positionOrder: 99,
             commandItems: [
               { command: 'exports-txt', title: 'Text (tab delimited)' },
               {
@@ -445,7 +445,7 @@ export default class Example4 {
             ]
           },
           {
-            command: 'feedback', title: 'Feedback', positionOrder: 100,
+            command: 'feedback', title: 'Feedback', iconCssClass: 'mdi mdi-information-outline', positionOrder: 100,
             commandItems: [
               { command: 'request-update', title: 'Request update from supplier', iconCssClass: 'mdi mdi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
               'divider',

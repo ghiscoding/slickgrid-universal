@@ -325,6 +325,7 @@ li.hidden {
       line-height: var(--slick-menu-icon-line-height, $slick-menu-icon-line-height);
       margin-right: var(--slick-menu-icon-margin-right, $slick-menu-icon-margin-right);
       vertical-align: middle;
+      min-width: var(--slick-menu-icon-min-width, $slick-menu-icon-min-width);
       width: var(--slick-menu-icon-width, $slick-menu-icon-width);
     }
 
