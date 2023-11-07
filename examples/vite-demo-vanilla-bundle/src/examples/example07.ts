@@ -98,7 +98,7 @@ export default class Example7 {
             { command: '', divider: true, positionOrder: 98 },
             {
               // we can also have multiple nested sub-menus
-              command: 'export', title: 'Exports', positionOrder: 99,
+              command: 'export', title: 'Exports', iconCssClass: 'mdi mdi-download', positionOrder: 99,
               commandItems: [
                 { command: 'exports-txt', title: 'Text (tab delimited)' },
                 {
