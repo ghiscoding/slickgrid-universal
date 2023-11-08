@@ -416,6 +416,11 @@ export default class Example14 {
         pageSize: 10,
         pageSizes: [10, 200, 500, 5000]
       },
+      // you can change compound filter text/desc shown in operator dropdown
+      // compoundOperatorAltTexts: {
+      //   numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
+      //   text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
+      // },
 
       // resizing by cell content is opt-in
       // we first need to disable the 2 default flags to autoFit/autosize

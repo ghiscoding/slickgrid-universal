@@ -28,6 +28,7 @@ import type {
   HeaderMenu,
   ItemMetadata,
   Locale,
+  OperatorDetailAlt,
   Pagination,
   ResizeByContentOption,
   RowDetailView,
@@ -144,6 +145,19 @@ export interface GridOption {
 
   /** Column Picker Plugin options (columnTitle, forceFitTitle, syncResizeTitle) */
   columnPicker?: ColumnPicker;
+
+  /**
+   * Compound Filters alternate texts, there are 2 filter categories that can be changed
+   * 1. text: CompoundInputFilter, CompoundInputPassword
+   * 2. numeric: CompoundDate, CompoundInputNumber, CompoundSlider
+   *
+   * For example
+   * `compoundOperatorAltTexts: { text: { 'a*': { operatorAlt: 'a..', descAlt: 'my alternate description' } }}`
+   */
+  compoundOperatorAltTexts?: {
+    text?: { [operator in OperatorString]?: OperatorDetailAlt };
+    numeric?: { [operator in OperatorString]?: OperatorDetailAlt };
+  };
 
   /** Optionally provide global options to the Composite Editor instead of having to redeclare them every time you want to use it */
   compositeEditorOptions?: Partial<CompositeEditorOpenDetailOption>;

@@ -1,6 +1,5 @@
 import { Constants } from '../constants';
-import type { OperatorString } from '../enums/index';
-import type { Column, ColumnFilter, GridOption, Locale } from '../interfaces/index';
+import type { Column, ColumnFilter, GridOption, Locale, OperatorDetail } from '../interfaces/index';
 import type { Observable, RxJsFacade, Subject, Subscription } from '../services/rxjsFacade';
 import { createDomElement, htmlEncodedStringWithPadding, sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 import { castObservableToPromise, getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
@@ -11,13 +10,13 @@ import type { TranslaterService } from '../services/translater.service';
  * @param {Array<Object>} optionValues - list of operators and their descriptions
  * @returns {Object} selectElm - Select Dropdown HTML Element
  */
-export function buildSelectOperator(optionValues: Array<{ operator: OperatorString, description: string }>, gridOptions: GridOption): HTMLSelectElement {
+export function buildSelectOperator(optionValues: OperatorDetail[], gridOptions: GridOption): HTMLSelectElement {
   const selectElm = createDomElement('select', { className: 'form-control' });
 
   for (const option of optionValues) {
     const optionElm = document.createElement('option');
     optionElm.value = option.operator;
-    optionElm.innerHTML = sanitizeTextByAvailableSanitizer(gridOptions, `${htmlEncodedStringWithPadding(option.operator, 3)}${option.description}`);
+    optionElm.innerHTML = sanitizeTextByAvailableSanitizer(gridOptions, `${htmlEncodedStringWithPadding(option.operatorAlt || option.operator, 3)}${option.descAlt || option.desc}`);
     selectElm.appendChild(optionElm);
   }
 
@@ -138,26 +137,49 @@ function getOutputText(translationKey: string, localeText: string, defaultText: 
 }
 
 /** returns common list of string related operators and their associated translation descriptions */
-export function compoundOperatorString(gridOptions: GridOption, translaterService?: TranslaterService) {
-  return [
-    { operator: '' as OperatorString, description: getOutputText('CONTAINS', 'TEXT_CONTAINS', 'Contains', gridOptions, translaterService) },
-    { operator: '<>' as OperatorString, description: getOutputText('NOT_CONTAINS', 'TEXT_NOT_CONTAINS', 'Not Contains', gridOptions, translaterService) },
-    { operator: '=' as OperatorString, description: getOutputText('EQUALS', 'TEXT_EQUALS', 'Equals', gridOptions, translaterService) },
-    { operator: '!=' as OperatorString, description: getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to', gridOptions, translaterService) },
-    { operator: 'a*' as OperatorString, description: getOutputText('STARTS_WITH', 'TEXT_STARTS_WITH', 'Starts with', gridOptions, translaterService) },
-    { operator: '*z' as OperatorString, description: getOutputText('ENDS_WITH', 'TEXT_ENDS_WITH', 'Ends with', gridOptions, translaterService) },
+export function compoundOperatorString(gridOptions: GridOption, translaterService?: TranslaterService): OperatorDetail[] {
+  const operatorList: OperatorDetail[] = [
+    { operator: '', desc: getOutputText('CONTAINS', 'TEXT_CONTAINS', 'Contains', gridOptions, translaterService) },
+    { operator: '<>', desc: getOutputText('NOT_CONTAINS', 'TEXT_NOT_CONTAINS', 'Not Contains', gridOptions, translaterService) },
+    { operator: '=', desc: getOutputText('EQUALS', 'TEXT_EQUALS', 'Equals', gridOptions, translaterService) },
+    { operator: '!=', desc: getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to', gridOptions, translaterService) },
+    { operator: 'a*', desc: getOutputText('STARTS_WITH', 'TEXT_STARTS_WITH', 'Starts with', gridOptions, translaterService) },
+    { operator: '*z', desc: getOutputText('ENDS_WITH', 'TEXT_ENDS_WITH', 'Ends with', gridOptions, translaterService) },
   ];
+
+  // add alternate texts when provided
+  applyOperatorAltTextWhenExists(gridOptions, operatorList, 'text');
+
+  return operatorList;
 }
 
 /** returns common list of numeric related operators and their associated translation descriptions */
-export function compoundOperatorNumeric(gridOptions: GridOption, translaterService?: TranslaterService) {
-  return [
-    { operator: '' as OperatorString, description: '' },
-    { operator: '=' as OperatorString, description: getOutputText('EQUAL_TO', 'TEXT_EQUAL_TO', 'Equal to', gridOptions, translaterService) },
-    { operator: '<' as OperatorString, description: getOutputText('LESS_THAN', 'TEXT_LESS_THAN', 'Less than', gridOptions, translaterService) },
-    { operator: '<=' as OperatorString, description: getOutputText('LESS_THAN_OR_EQUAL_TO', 'TEXT_LESS_THAN_OR_EQUAL_TO', 'Less than or equal to', gridOptions, translaterService) },
-    { operator: '>' as OperatorString, description: getOutputText('GREATER_THAN', 'TEXT_GREATER_THAN', 'Greater than', gridOptions, translaterService) },
-    { operator: '>=' as OperatorString, description: getOutputText('GREATER_THAN_OR_EQUAL_TO', 'TEXT_GREATER_THAN_OR_EQUAL_TO', 'Greater than or equal to', gridOptions, translaterService) },
-    { operator: '<>' as OperatorString, description: getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to', gridOptions, translaterService) }
+export function compoundOperatorNumeric(gridOptions: GridOption, translaterService?: TranslaterService): OperatorDetail[] {
+  const operatorList: OperatorDetail[] = [
+    { operator: '', desc: '' },
+    { operator: '=', desc: getOutputText('EQUAL_TO', 'TEXT_EQUAL_TO', 'Equal to', gridOptions, translaterService) },
+    { operator: '<', desc: getOutputText('LESS_THAN', 'TEXT_LESS_THAN', 'Less than', gridOptions, translaterService) },
+    { operator: '<=', desc: getOutputText('LESS_THAN_OR_EQUAL_TO', 'TEXT_LESS_THAN_OR_EQUAL_TO', 'Less than or equal to', gridOptions, translaterService) },
+    { operator: '>', desc: getOutputText('GREATER_THAN', 'TEXT_GREATER_THAN', 'Greater than', gridOptions, translaterService) },
+    { operator: '>=', desc: getOutputText('GREATER_THAN_OR_EQUAL_TO', 'TEXT_GREATER_THAN_OR_EQUAL_TO', 'Greater than or equal to', gridOptions, translaterService) },
+    { operator: '<>', desc: getOutputText('NOT_EQUAL_TO', 'TEXT_NOT_EQUAL_TO', 'Not equal to', gridOptions, translaterService) }
   ];
+
+  // add alternate texts when provided
+  applyOperatorAltTextWhenExists(gridOptions, operatorList, 'numeric');
+
+  return operatorList;
+}
+
+// internal function to apply Operator detail alternate texts when they exists
+function applyOperatorAltTextWhenExists(gridOptions: GridOption, operatorDetailList: OperatorDetail[], filterType: 'text' | 'numeric') {
+  if (gridOptions.compoundOperatorAltTexts) {
+    for (const opDetail of operatorDetailList) {
+      if (gridOptions.compoundOperatorAltTexts.hasOwnProperty(filterType)) {
+        const altTexts = gridOptions.compoundOperatorAltTexts[filterType]![opDetail.operator];
+        opDetail['operatorAlt'] = altTexts?.operatorAlt || '';
+        opDetail['descAlt'] = altTexts?.descAlt || '';
+      }
+    }
+  }
 }

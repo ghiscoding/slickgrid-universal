@@ -20,7 +20,7 @@ const gridOptionMock = {
 } as GridOption;
 
 const gridStub = {
-  getOptions: () => gridOptionMock,
+  getOptions: jest.fn(),
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
@@ -41,6 +41,7 @@ describe('CompoundDateFilter', () => {
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
     spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+    jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionMock);
 
     mockColumn = { id: 'finish', field: 'finish', filterable: true, outputType: FieldType.dateIso, filter: { model: Filters.compoundDate, operator: '>' } };
 
@@ -56,6 +57,7 @@ describe('CompoundDateFilter', () => {
 
   afterEach(() => {
     filter.destroy();
+    jest.clearAllMocks();
   });
 
   it('should throw an error when trying to call init without any arguments', () => {
@@ -394,10 +396,10 @@ describe('CompoundDateFilter', () => {
     mockColumn.outputType = null as any;
     filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
     mockColumn.filter!.compoundOperatorList = [
-      { operator: '', description: '' },
-      { operator: '=', description: 'Equal to' },
-      { operator: '<', description: 'Less than' },
-      { operator: '>', description: 'Greater than' },
+      { operator: '', desc: '' },
+      { operator: '=', desc: 'Equal to' },
+      { operator: '<', desc: 'Less than' },
+      { operator: '>', desc: 'Greater than' },
     ];
 
     filter.init(filterArguments);
@@ -407,6 +409,28 @@ describe('CompoundDateFilter', () => {
     expect(removeExtraSpaces(filterOperatorElm[0][1].textContent!)).toBe('= Equal to');
     expect(removeExtraSpaces(filterOperatorElm[0][2].textContent!)).toBe('< Less than');
     expect(removeExtraSpaces(filterOperatorElm[0][3].textContent!)).toBe('> Greater than');
+  });
+
+  it('should be able to change compound operator & description with alternate texts for the operator list showing up in the operator select dropdown options list', () => {
+    mockColumn.outputType = null as any;
+    filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
+    jest.spyOn(gridStub, 'getOptions').mockReturnValue({
+      ...gridOptionMock, compoundOperatorAltTexts: {
+        numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
+        text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
+      }
+    });
+
+    filter.init(filterArguments);
+    const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.input-group-prepend.operator select');
+
+    expect(filterOperatorElm[0][0].title).toBe('');
+    expect(removeExtraSpaces(filterOperatorElm[0][1].textContent!)).toBe('eq alternate numeric equal description');
+    expect(removeExtraSpaces(filterOperatorElm[0][2].textContent!)).toBe('< Less than');
+    expect(removeExtraSpaces(filterOperatorElm[0][3].textContent!)).toBe('<= Less than or equal to');
+    expect(removeExtraSpaces(filterOperatorElm[0][4].textContent!)).toBe('> Greater than');
+    expect(removeExtraSpaces(filterOperatorElm[0][5].textContent!)).toBe('>= Greater than or equal to');
+    expect(removeExtraSpaces(filterOperatorElm[0][6].textContent!)).toBe('<> Not equal to');
   });
 
   describe('with French I18N translations', () => {
