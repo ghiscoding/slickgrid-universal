@@ -20,7 +20,7 @@ export default defineConfig({
 
     // you must also explicitly set openMode and runMode to
     // either true or false when using experimental retries
-    openMode: true,
+    openMode: false,
     runMode: true,
   },
   e2e: {
