@@ -18,7 +18,7 @@ const gridOptionMock = {
 } as GridOption;
 
 const gridStub = {
-  getOptions: () => gridOptionMock,
+  getOptions: jest.fn(),
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
@@ -39,6 +39,7 @@ describe('CompoundInputFilter', () => {
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
     spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+    jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionMock);
 
     mockColumn = { id: 'duration', field: 'duration', filterable: true, filter: { model: Filters.input, operator: 'EQ' } };
     filterArguments = {
@@ -373,10 +374,10 @@ describe('CompoundInputFilter', () => {
     mockColumn.outputType = null as any;
     filterArguments.searchTerms = ['xyz'];
     mockColumn.filter!.compoundOperatorList = [
-      { operator: '', description: '' },
-      { operator: '=', description: 'Equal to' },
-      { operator: '<', description: 'Less than' },
-      { operator: '>', description: 'Greater than' },
+      { operator: '', desc: '' },
+      { operator: '=', desc: 'Equal to' },
+      { operator: '<', desc: 'Less than' },
+      { operator: '>', desc: 'Greater than' },
     ];
 
     filter.init(filterArguments);
@@ -386,6 +387,28 @@ describe('CompoundInputFilter', () => {
     expect(removeExtraSpaces(filterOperatorElm[0][1].textContent!)).toBe('= Equal to');
     expect(removeExtraSpaces(filterOperatorElm[0][2].textContent!)).toBe('< Less than');
     expect(removeExtraSpaces(filterOperatorElm[0][3].textContent!)).toBe('> Greater than');
+  });
+
+  it('should be able to change compound operator & description with alternate texts for the operator list showing up in the operator select dropdown options list', () => {
+    mockColumn.outputType = null as any;
+    filterArguments.searchTerms = ['xyz'];
+    jest.spyOn(gridStub, 'getOptions').mockReturnValue({
+      ...gridOptionMock, compoundOperatorAlternateTexts: {
+        numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
+        text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
+      }
+    });
+
+    filter.init(filterArguments);
+    const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
+
+    expect(filterOperatorElm[0][0].title).toBe('');
+    expect(removeExtraSpaces(filterOperatorElm[0][0].textContent!)).toBe(' Contains');
+    expect(removeExtraSpaces(filterOperatorElm[0][1].textContent!)).toBe('<> Not contains');
+    expect(removeExtraSpaces(filterOperatorElm[0][2].textContent!)).toBe('eq alternate text equal description');
+    expect(removeExtraSpaces(filterOperatorElm[0][3].textContent!)).toBe('!= Not equal to');
+    expect(removeExtraSpaces(filterOperatorElm[0][4].textContent!)).toBe('a* Starts With');
+    expect(removeExtraSpaces(filterOperatorElm[0][5].textContent!)).toBe('*z Ends With');
   });
 
   describe('with French I18N translations', () => {

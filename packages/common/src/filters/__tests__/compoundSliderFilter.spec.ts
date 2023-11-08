@@ -335,10 +335,10 @@ describe('CompoundSliderFilter', () => {
     mockColumn.outputType = null as any;
     filterArguments.searchTerms = ['9'];
     mockColumn.filter!.compoundOperatorList = [
-      { operator: '', description: '' },
-      { operator: '=', description: 'Equal to' },
-      { operator: '<', description: 'Less than' },
-      { operator: '>', description: 'Greater than' },
+      { operator: '', desc: '' },
+      { operator: '=', desc: 'Equal to' },
+      { operator: '<', desc: 'Less than' },
+      { operator: '>', desc: 'Greater than' },
     ];
 
     filter.init(filterArguments);
@@ -348,6 +348,28 @@ describe('CompoundSliderFilter', () => {
     expect(removeExtraSpaces(filterOperatorElm[0][1].textContent!)).toBe('= Equal to');
     expect(removeExtraSpaces(filterOperatorElm[0][2].textContent!)).toBe('< Less than');
     expect(removeExtraSpaces(filterOperatorElm[0][3].textContent!)).toBe('> Greater than');
+  });
+
+  it('should be able to change compound operator & description with alternate texts for the operator list showing up in the operator select dropdown options list', () => {
+    mockColumn.outputType = null as any;
+    filterArguments.searchTerms = ['9'];
+    jest.spyOn(gridStub, 'getOptions').mockReturnValueOnce({
+      ...gridOptionMock, compoundOperatorAlternateTexts: {
+        numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
+        text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
+      }
+    });
+
+    filter.init(filterArguments);
+    const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
+
+    expect(filterOperatorElm[0][0].title).toBe('');
+    expect(removeExtraSpaces(filterOperatorElm[0][1].textContent!)).toBe('eq alternate numeric equal description');
+    expect(removeExtraSpaces(filterOperatorElm[0][2].textContent!)).toBe('< Less than');
+    expect(removeExtraSpaces(filterOperatorElm[0][3].textContent!)).toBe('<= Less than or equal to');
+    expect(removeExtraSpaces(filterOperatorElm[0][4].textContent!)).toBe('> Greater than');
+    expect(removeExtraSpaces(filterOperatorElm[0][5].textContent!)).toBe('>= Greater than or equal to');
+    expect(removeExtraSpaces(filterOperatorElm[0][6].textContent!)).toBe('<> Not equal to');
   });
 
   describe('with French I18N translations', () => {
