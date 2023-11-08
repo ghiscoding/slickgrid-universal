@@ -1,5 +1,4 @@
 import { Constants } from '../constants';
-import type { OperatorString } from '../enums/index';
 import type { Column, ColumnFilter, GridOption, Locale, OperatorDetail } from '../interfaces/index';
 import type { Observable, RxJsFacade, Subject, Subscription } from '../services/rxjsFacade';
 import { createDomElement, htmlEncodedStringWithPadding, sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
@@ -174,10 +173,10 @@ export function compoundOperatorNumeric(gridOptions: GridOption, translaterServi
 
 // internal function to apply Operator detail alternate texts when they exists
 function applyOperatorAltTextWhenExists(gridOptions: GridOption, operatorDetailList: OperatorDetail[], filterType: 'text' | 'numeric') {
-  if (gridOptions.compoundOperatorAlternateTexts) {
+  if (gridOptions.compoundOperatorAltTexts) {
     for (const opDetail of operatorDetailList) {
-      if (gridOptions.compoundOperatorAlternateTexts.hasOwnProperty(filterType)) {
-        const altTexts = gridOptions.compoundOperatorAlternateTexts[filterType]![opDetail.operator];
+      if (gridOptions.compoundOperatorAltTexts.hasOwnProperty(filterType)) {
+        const altTexts = gridOptions.compoundOperatorAltTexts[filterType]![opDetail.operator];
         opDetail['operatorAlt'] = altTexts?.operatorAlt || '';
         opDetail['descAlt'] = altTexts?.descAlt || '';
       }

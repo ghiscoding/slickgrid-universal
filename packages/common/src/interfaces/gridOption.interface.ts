@@ -152,9 +152,9 @@ export interface GridOption {
    * 2. numeric: CompoundDate, CompoundInputNumber, CompoundSlider
    *
    * For example
-   * `compoundOperatorAlternateTexts: { text: { 'a*': { operatorAlt: 'a..', descAlt: 'my alternate description' } }}`
+   * `compoundOperatorAltTexts: { text: { 'a*': { operatorAlt: 'a..', descAlt: 'my alternate description' } }}`
    */
-  compoundOperatorAlternateTexts?: {
+  compoundOperatorAltTexts?: {
     text?: { [operator in OperatorString]?: OperatorDetailAlt };
     numeric?: { [operator in OperatorString]?: OperatorDetailAlt };
   };

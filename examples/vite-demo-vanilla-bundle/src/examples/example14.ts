@@ -417,7 +417,7 @@ export default class Example14 {
         pageSizes: [10, 200, 500, 5000]
       },
       // you can change compound filter text/desc shown in operator dropdown
-      // compoundOperatorAlternateTexts: {
+      // compoundOperatorAltTexts: {
       //   numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
       //   text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
       // },

@@ -354,7 +354,7 @@ describe('CompoundSliderFilter', () => {
     mockColumn.outputType = null as any;
     filterArguments.searchTerms = ['9'];
     jest.spyOn(gridStub, 'getOptions').mockReturnValueOnce({
-      ...gridOptionMock, compoundOperatorAlternateTexts: {
+      ...gridOptionMock, compoundOperatorAltTexts: {
         numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
         text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
       }

@@ -393,7 +393,7 @@ describe('CompoundInputFilter', () => {
     mockColumn.outputType = null as any;
     filterArguments.searchTerms = ['xyz'];
     jest.spyOn(gridStub, 'getOptions').mockReturnValue({
-      ...gridOptionMock, compoundOperatorAlternateTexts: {
+      ...gridOptionMock, compoundOperatorAltTexts: {
         numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
         text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
       }
