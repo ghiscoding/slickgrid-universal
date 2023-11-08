@@ -20,8 +20,8 @@ export default defineConfig({
 
     // you must also explicitly set openMode and runMode to
     // either true or false when using experimental retries
-    openMode: false,
-    runMode: true,
+    openMode: false, // Cypress UI
+    runMode: true, // run in CI
   },
   e2e: {
     baseUrl: 'http://localhost:8888/#',
