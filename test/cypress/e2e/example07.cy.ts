@@ -1,6 +1,6 @@
 import { removeExtraSpaces } from '../plugins/utilities';
 
-describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', { retries: 1 }, () => {
+describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   const GRID_ROW_HEIGHT = 45;
   const fullTitles = ['', '', 'Title', 'Action', 'Duration', '% Complete', 'Start', 'Finish', 'Completed', 'Prerequisites'];
 

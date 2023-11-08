@@ -1,6 +1,6 @@
 import { getScrollDistanceWhenDragOutsideGrid } from '../support/drag';
 
-describe('Example 17 - Auto-Scroll with Range Selector', { retries: 1 }, () => {
+describe('Example 17 - Auto-Scroll with Range Selector', () => {
   // NOTE:  everywhere there's a * 2 is because we have a top+bottom (frozen rows) containers even after Unfreeze Columns/Rows
   const CELL_WIDTH = 80;
   const CELL_HEIGHT = 35;

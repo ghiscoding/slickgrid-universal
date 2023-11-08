@@ -1,4 +1,4 @@
-describe('Example 20 - Basic grid inside a Shadow DOM', { retries: 1 }, () => {
+describe('Example 20 - Basic grid inside a Shadow DOM', () => {
   const fullTitles = ['Title', 'Duration (days)', '% Complete', 'Start', 'Finish', 'Effort Driven'];
 
   it('should display Example title', () => {

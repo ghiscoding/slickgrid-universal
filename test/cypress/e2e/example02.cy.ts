@@ -1,7 +1,7 @@
 import moment from 'moment-mini';
 import { removeExtraSpaces } from '../plugins/utilities';
 
-describe('Example 02 - Grouping & Aggregators', { retries: 1 }, () => {
+describe('Example 02 - Grouping & Aggregators', () => {
   const fullTitles = ['#', 'Title', 'Duration', '% Complete', 'Start', 'Finish', 'Cost', 'Effort Driven'];
   const GRID_ROW_HEIGHT = 45;
 

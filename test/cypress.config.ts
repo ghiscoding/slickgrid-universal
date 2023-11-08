@@ -12,8 +12,16 @@ export default defineConfig({
   pageLoadTimeout: 90000,
   numTestsKeptInMemory: 5,
   retries: {
-    runMode: 2,
-    openMode: 0,
+    experimentalStrategy: 'detect-flake-and-pass-on-threshold',
+    experimentalOptions: {
+      maxRetries: 2,
+      passesRequired: 1,
+    },
+
+    // you must also explicitly set openMode and runMode to
+    // either true or false when using experimental retries
+    openMode: true,
+    runMode: true,
   },
   e2e: {
     baseUrl: 'http://localhost:8888/#',

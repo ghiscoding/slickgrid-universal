@@ -1,6 +1,6 @@
 import { removeExtraSpaces } from '../plugins/utilities';
 
-describe('Example 08 - Column Span & Header Grouping', { retries: 1 }, () => {
+describe('Example 08 - Column Span & Header Grouping', () => {
   // NOTE:  everywhere there's a * 2 is because we have a top+bottom (frozen rows) containers even after Unfreeze Columns/Rows
   const fullPreTitles = ['', 'Common Factor', 'Period', 'Analysis'];
   const fullTitles = ['#', 'Title', 'Duration', 'Start', 'Finish', '% Complete', 'Effort Driven'];

@@ -7,7 +7,7 @@ function removeSpaces(textS) {
 const presetLowestDay = moment().add(-2, 'days').format('YYYY-MM-DD');
 const presetHighestDay = moment().add(20, 'days').format('YYYY-MM-DD');
 
-describe('Example 10 - GraphQL Grid', { retries: 1 }, () => {
+describe('Example 10 - GraphQL Grid', () => {
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example10`);
     cy.get('h3').should('contain', 'Example 10 - Grid with GraphQL Backend Service');
