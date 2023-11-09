@@ -19,6 +19,11 @@ const mockGridOptions = {
   rowHeight: 30,
 } as GridOption;
 
+const getEditorLockMock = {
+  commitCurrentEdit: jest.fn(),
+  isActive: jest.fn(),
+};
+
 const gridStub = {
   canCellBeSelected: jest.fn(),
   getAbsoluteColumnMinWidth: jest.fn(),
@@ -30,6 +35,7 @@ const gridStub = {
   getCellFromPoint: jest.fn(),
   getCellNodeBox: jest.fn(),
   getDisplayedScrollbarDimensions: jest.fn(),
+  getEditorLock: () => getEditorLockMock,
   getOptions: () => mockGridOptions,
   getUID: () => GRID_UID,
   focus: jest.fn(),
@@ -69,6 +75,8 @@ describe('CellRangeSelector Plugin', () => {
   beforeEach(() => {
     plugin = new SlickCellRangeSelector();
     jest.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
+    jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(false);
+    jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
   });
 
   afterEach(() => {
@@ -122,7 +130,7 @@ describe('CellRangeSelector Plugin', () => {
     const focusSpy = jest.spyOn(gridStub, 'focus');
     jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true
-    });
+    } as any);
 
     plugin.init(gridStub);
     const decoratorHideSpy = jest.spyOn(plugin.getCellDecorator(), 'hide');
@@ -166,7 +174,7 @@ describe('CellRangeSelector Plugin', () => {
     const scrollSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
     jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true
-    });
+    } as any);
 
     plugin.init(gridStub);
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
@@ -209,7 +217,7 @@ describe('CellRangeSelector Plugin', () => {
     const scrollSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
     const onBeforeCellSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true
-    });
+    } as any);
 
     plugin.init(gridStub);
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
@@ -254,10 +262,10 @@ describe('CellRangeSelector Plugin', () => {
     const focusSpy = jest.spyOn(gridStub, 'focus');
     const onBeforeCellRangeSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true
-    });
+    } as any);
     const onCellRangeSpy = jest.spyOn(plugin.onCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true
-    });
+    } as any);
 
     plugin.init(gridStub);
     const decoratorHideSpy = jest.spyOn(plugin.getCellDecorator(), 'hide');
@@ -312,10 +320,10 @@ describe('CellRangeSelector Plugin', () => {
     const focusSpy = jest.spyOn(gridStub, 'focus');
     const onBeforeCellRangeSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true
-    });
+    } as any);
     const onCellRangeSpy = jest.spyOn(plugin.onCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true
-    });
+    } as any);
     const scrollSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
     const onCellRangeSelectingSpy = jest.spyOn(plugin.onCellRangeSelecting, 'notify');
 
@@ -366,10 +374,10 @@ describe('CellRangeSelector Plugin', () => {
     const focusSpy = jest.spyOn(gridStub, 'focus');
     const onBeforeCellRangeSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true
-    });
+    } as any);
     const onCellRangeSpy = jest.spyOn(plugin.onCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true
-    });
+    } as any);
     const scrollSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
     const onCellRangeSelectingSpy = jest.spyOn(plugin.onCellRangeSelecting, 'notify');
 
@@ -428,7 +436,7 @@ describe('CellRangeSelector Plugin', () => {
     const focusSpy = jest.spyOn(gridStub, 'focus');
     const onBeforeCellRangeSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true
-    });
+    } as any);
 
     plugin.init(gridStub);
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
@@ -475,7 +483,7 @@ describe('CellRangeSelector Plugin', () => {
     const focusSpy = jest.spyOn(gridStub, 'focus');
     const onBeforeCellRangeSpy = jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true
-    });
+    } as any);
 
     plugin.init(gridStub);
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
@@ -527,7 +535,7 @@ describe('CellRangeSelector Plugin', () => {
     const focusSpy = jest.spyOn(gridStub, 'focus');
     jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true
-    });
+    } as any);
     const getCellFromPointSpy = jest.spyOn(gridStub, 'getCellFromPoint');
     const onCellRangeSelectingSpy = jest.spyOn(plugin.onCellRangeSelecting, 'notify');
 
@@ -582,7 +590,7 @@ describe('CellRangeSelector Plugin', () => {
     const focusSpy = jest.spyOn(gridStub, 'focus');
     jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true
-    });
+    } as any);
     const getCellFromPointSpy = jest.spyOn(gridStub, 'getCellFromPoint');
     const onCellRangeSelectingSpy = jest.spyOn(plugin.onCellRangeSelecting, 'notify');
 
@@ -645,7 +653,7 @@ describe('CellRangeSelector Plugin', () => {
     const focusSpy = jest.spyOn(gridStub, 'focus');
     jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true
-    });
+    } as any);
     const getCellFromPointSpy = jest.spyOn(gridStub, 'getCellFromPoint');
     const onCellRangeSelectingSpy = jest.spyOn(plugin.onCellRangeSelecting, 'notify');
 
