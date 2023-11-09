@@ -330,6 +330,11 @@ export class GridOdataService implements BackendService {
           throw new Error(`GridOData filter could not find the field name to query the search, your column definition must include a valid "field" or "name" (optionally you can also use the "queryfield").`);
         }
 
+        if (this._odataService.options.useVerbatimSearchTerms || columnFilter.verbatimSearchTerms) {
+          searchByArray.push(`${fieldName} ${columnFilter.operator} ${JSON.stringify(columnFilter.searchTerms)}`.trim());
+          continue;
+        }
+
         fieldSearchValue = (fieldSearchValue === undefined || fieldSearchValue === null) ? '' : `${fieldSearchValue}`; // make sure it's a string
 
         // run regex to find possible filter operators unless the user disabled the feature

@@ -211,7 +211,7 @@ export class SliderFilter implements Filter {
           sliderVals = (term1 as string).split('..');
           this._currentValue = +(sliderVals?.[0] ?? 0);
         } else if (hasData(term1) || term1 === '') {
-          this._currentValue = +term1;
+          this._currentValue = term1 === null ? undefined : +term1;
           sliderVals = [term1 as string | number];
         }
       }

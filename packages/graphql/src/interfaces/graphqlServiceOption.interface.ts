@@ -23,7 +23,7 @@ export interface GraphqlServiceOption extends BackendServiceOption {
    */
   extraQueryArguments?: QueryArgument[];
 
-  /** (NOT FULLY IMPLEMENTED) Is the GraphQL Server using cursors? */
+  /** Is the GraphQL Server using cursors? */
   isWithCursor?: boolean;
 
   /** What are the pagination options? ex.: (first, last, offset) */
@@ -40,4 +40,10 @@ export interface GraphqlServiceOption extends BackendServiceOption {
    * ex.: { field: "name", operator: EQ, value: "John" }
    */
   keepArgumentFieldDoubleQuotes?: boolean;
+
+  /**
+   * When false, searchTerms may be manipulated to be functional with certain filters eg: string only filters.
+   * When true, JSON.stringify is used on the searchTerms and used in the query "as-is". It is then the responsibility of the developer to sanitise the `searchTerms` property if necessary.
+   */
+  useVerbatimSearchTerms?: boolean;
 }

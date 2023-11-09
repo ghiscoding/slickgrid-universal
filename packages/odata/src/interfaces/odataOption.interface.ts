@@ -43,6 +43,12 @@ export interface OdataOption extends BackendServiceOption {
   /** OData (or any other) version number (the query string is different between versions) */
   version?: number;
 
+  /**
+   * When false, searchTerms may be manipulated to be functional with certain filters eg: string only filters.
+   * When true, JSON.stringify is used on the searchTerms and used in the query "as-is". It is then the responsibility of the developer to sanitise the `searchTerms` property if necessary.
+   */
+  useVerbatimSearchTerms?: boolean;
+
   /** A callback which will extract and return the count from the data queried. Defaults to 'd.__count' for v2, '__count' for v3 and '@odata.count' for v4. */
   countExtractor?: (response: any) => number;
 

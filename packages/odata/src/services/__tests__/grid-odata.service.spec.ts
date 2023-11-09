@@ -1532,6 +1532,46 @@ describe('GridOdataService', () => {
     });
   });
 
+  describe('updateFilters method', () => {
+    describe("Verbatim ColumnFilters", () => {
+      describe.each`
+        description                                             | verbatim | operator  | searchTerms            | expectation
+        ${"Verbatim false, Filter for null"}                    | ${false} | ${'EQ'}   | ${null}                | ${'$top=10'}
+        ${"Verbatim true,  Filter for null"}                    | ${true}  | ${'EQ'}   | ${null}                | ${'$top=10&$filter=(gender EQ null)'}
+        ${"Verbatim false, Empty string"}                       | ${false} | ${'EQ'}   | ${''}                  | ${'$top=10'}
+        ${"Verbatim true,  Empty string"}                       | ${true}  | ${'EQ'}   | ${''}                  | ${'$top=10&$filter=(gender EQ \"\")'}
+        ${"Verbatim false, Empty list"}                         | ${false} | ${'IN'}   | ${[]}                  | ${'$top=10'}
+        ${"Verbatim true,  Empty list"}                         | ${true}  | ${'IN'}   | ${[]}                  | ${'$top=10&$filter=(gender IN [])'}
+        ${"Verbatim false, Filter for null (in list)"}          | ${false} | ${'IN'}   | ${[null]}              | ${'$top=10'}
+        ${"Verbatim true,  Filter for null (in list)"}          | ${true}  | ${'IN'}   | ${[null]}              | ${'$top=10&$filter=(gender IN [null])'}
+        ${"Verbatim false, Filter for empty string (in list)"}  | ${false} | ${'IN'}   | ${['']}                | ${'$top=10'}
+        ${"Verbatim true,  Filter for empty string (in list)"}  | ${true}  | ${'IN'}   | ${['']}                | ${'$top=10&$filter=(gender IN [\"\"])'}
+        ${"Verbatim false, Filter for female"}                  | ${false} | ${'IN'}   | ${['female']}          | ${'$top=10&$filter=(Gender eq \'female\')'}
+        ${"Verbatim true,  Filter for female"}                  | ${true}  | ${'IN'}   | ${['female']}          | ${'$top=10&$filter=(gender IN [\"female\"])'}
+        ${"Verbatim false, Filter for female/male"}             | ${false} | ${'IN'}   | ${['female', 'male']}  | ${'$top=10&$filter=(Gender eq \'female\' or Gender eq \'male\')'}
+        ${"Verbatim true,  Filter for female/male"}             | ${true}  | ${'IN'}   | ${['female', 'male']}  | ${'$top=10&$filter=(gender IN [\"female\",\"male\"])'}
+      `(`$description`, ({ description, verbatim, operator, searchTerms, expectation }) => {
+
+        const mockColumn = { id: 'gender', field: 'gender' } as Column;
+        let mockColumnFilters: ColumnFilters;
+
+        beforeEach(() => {
+          mockColumnFilters = {
+            gender: { columnId: 'gender', columnDef: mockColumn, searchTerms, operator, type: FieldType.string, verbatimSearchTerms: verbatim },
+          } as ColumnFilters;
+
+          service.init(serviceOptions, paginationOptions, gridStub);
+          service.updateFilters(mockColumnFilters, false);
+        });
+
+        test(`buildQuery output matches ${expectation}`, () => {
+          const query = service.buildQuery();
+          expect(query).toBe(expectation);
+        });
+      });
+    });
+  });
+
   describe('presets', () => {
     afterEach(() => {
       jest.clearAllMocks();
