@@ -1261,7 +1261,7 @@ describe('GraphqlService', () => {
 
         beforeEach(() => {
           mockColumnFilters = {
-            gender: { columnId: 'gender', columnDef: mockColumn, searchTerms, operator, type: FieldType.string, useVerbatimSearchTerms: verbatim },
+            gender: { columnId: 'gender', columnDef: mockColumn, searchTerms, operator, type: FieldType.string, verbatimSearchTerms: verbatim },
           } as ColumnFilters;
 
           service.init(serviceOptions, paginationOptions, gridStub);

@@ -21,5 +21,5 @@ export interface CurrentFilter {
    * When false, searchTerms may be manipulated to be functional with certain filters eg: string only filters.
    * When true, JSON.stringify is used on the searchTerms and used in the query "as-is". It is then the responsibility of the developer to sanitise the `searchTerms` property if necessary.
    */
-  useVerbatimSearchTerms?: boolean;
+  verbatimSearchTerms?: boolean;
 }
