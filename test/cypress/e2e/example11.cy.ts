@@ -1,7 +1,7 @@
 import moment from 'moment-mini';
 import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
-describe('Example 11 - Batch Editing', { retries: 1 }, () => {
+describe('Example 11 - Batch Editing', () => {
   const LOCAL_STORAGE_KEY = 'gridViewPreset';
   const GRID_ROW_HEIGHT = 33;
   const EDITABLE_CELL_RGB_COLOR = 'rgba(227, 240, 251, 0.57)';

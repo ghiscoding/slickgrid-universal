@@ -1,4 +1,4 @@
-describe('Example 09 - OData Grid', { retries: 1 }, () => {
+describe('Example 09 - OData Grid', () => {
   const GRID_ROW_HEIGHT = 45;
 
   beforeEach(() => {

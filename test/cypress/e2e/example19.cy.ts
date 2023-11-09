@@ -1,4 +1,4 @@
-describe('Example 19 - ExcelCopyBuffer with Cell Selection', { retries: 1 }, () => {
+describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
   const titles = [
     '', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
     'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',

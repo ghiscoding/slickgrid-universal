@@ -1,4 +1,4 @@
-describe('Example 15 - OData Grid using RxJS', { retries: 1 }, () => {
+describe('Example 15 - OData Grid using RxJS', () => {
   const GRID_ROW_HEIGHT = 33;
 
   beforeEach(() => {

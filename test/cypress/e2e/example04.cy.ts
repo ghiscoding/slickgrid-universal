@@ -1,4 +1,4 @@
-describe('Example 04 - Frozen Grid', { retries: 1 }, () => {
+describe('Example 04 - Frozen Grid', () => {
   // NOTE:  everywhere there's a * 2 is because we have a top+bottom (frozen rows) containers even after Unfreeze Columns/Rows
 
   const fullTitles = ['', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];

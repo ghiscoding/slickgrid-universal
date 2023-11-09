@@ -1,4 +1,4 @@
-describe('Example 01 - Basic Grids', { retries: 1 }, () => {
+describe('Example 01 - Basic Grids', () => {
   const GRID_ROW_HEIGHT = 33;
   const fullTitles = ['Title', 'Duration (days)', '% Complete', 'Start', 'Finish', 'Effort Driven'];
 
