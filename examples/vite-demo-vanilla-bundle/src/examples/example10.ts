@@ -187,7 +187,7 @@ export default class Example10 {
             field: 'userId',
             value: 123
           }],
-          isWithCursor: this.isWithCursor, // sets pagination strategy, if true requires a call to setPageInfo() when graphql call returns
+          useCursor: this.isWithCursor, // sets pagination strategy, if true requires a call to setPageInfo() when graphql call returns
           // when dealing with complex objects, we want to keep our field name with double quotes
           // example with gender: query { users (orderBy:[{field:"gender",direction:ASC}]) {}
           keepArgumentFieldDoubleQuotes: true
@@ -345,7 +345,7 @@ export default class Example10 {
 
   setIsWithCursor(newValue: boolean) {
     this.isWithCursor = newValue;
-    this.resetOptions({ isWithCursor: this.isWithCursor });
+    this.resetOptions({ useCursor: this.isWithCursor });
   }
 
   async switchLanguage() {
@@ -357,7 +357,7 @@ export default class Example10 {
 
   private resetOptions(options: Partial<GraphqlServiceOption>) {
     const graphqlService = this.gridOptions.backendServiceApi!.service as GraphqlService;
-    this.sgb?.paginationService!.setCursorBased(options.isWithCursor!);
+    this.sgb?.paginationService!.setCursorBased(options.useCursor!);
     this.sgb?.paginationService?.goToFirstPage();
     graphqlService.updateOptions(options);
     this.gridOptions = { ...this.gridOptions };

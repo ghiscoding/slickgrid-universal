@@ -12,7 +12,6 @@ import {
   MultiColumnSort,
   OperatorType,
   Pagination,
-  PaginationCursorChangedArgs,
   SharedService,
   SlickGrid,
   TranslaterService,
@@ -99,6 +98,14 @@ describe('GraphqlService', () => {
 
       expect(spy).toHaveBeenCalled();
       expect(service.columnDefinitions).toEqual(columns);
+    });
+
+    it('should display a console warning when using deprecated "isWithCursor" option', () => {
+      const consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
+
+      service.init({ datasetName: 'users', isWithCursor: true }, paginationOptions, gridStub);
+
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] The option `isWithCursor` is now deprecated and was replaced by `useCursor`.'));
     });
   });
 
@@ -203,7 +210,7 @@ describe('GraphqlService', () => {
       const columns = [];
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
-      service.init({ datasetName: 'users', isWithCursor: true }, paginationOptions, gridStub);
+      service.init({ datasetName: 'users', useCursor: true }, paginationOptions, gridStub);
       service.updatePagination(3, 20);
       const query = service.buildQuery();
 
@@ -215,7 +222,7 @@ describe('GraphqlService', () => {
       const columns = [{ id: 'field1', field: 'field1', width: 100 }];
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
-      service.init({ datasetName: 'users', isWithCursor: true }, paginationOptions, gridStub);
+      service.init({ datasetName: 'users', useCursor: true }, paginationOptions, gridStub);
       service.updatePagination(3, 20);
       const query = service.buildQuery();
 
@@ -456,9 +463,9 @@ describe('GraphqlService', () => {
       expect(output).toEqual({ first: 20, offset: 0 });
     });
 
-    it('should return the pagination options with cursor info when "isWithCursor" is enabled', () => {
+    it('should return the pagination options with cursor info when "useCursor" is enabled', () => {
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
-      service.init({ datasetName: 'users', isWithCursor: true }, paginationOptions);
+      service.init({ datasetName: 'users', useCursor: true }, paginationOptions);
       const output = service.getInitPaginationOptions();
       expect(output).toEqual({ first: 20 });
     });
@@ -506,7 +513,7 @@ describe('GraphqlService', () => {
       const spy = jest.spyOn(service, 'updateOptions');
 
       jest.spyOn(gridStub, 'getColumns').mockReturnValue([]);
-      service.init({ datasetName: 'users', isWithCursor: true }, paginationOptions);
+      service.init({ datasetName: 'users', useCursor: true }, paginationOptions);
       service.resetPaginationOptions();
 
       expect(spy).toHaveBeenCalledWith({ paginationOptions: { first: 20 } });
@@ -638,7 +645,7 @@ describe('GraphqlService', () => {
         it('should return a query with the new pagination and use pagination size options that was passed to service options when it is not provided as argument to "processOnPaginationChanged"', () => {
           const querySpy = jest.spyOn(service, 'buildQuery');
 
-          service.init({ ...serviceOptions, isWithCursor: true }, paginationOptions, gridStub);
+          service.init({ ...serviceOptions, useCursor: true }, paginationOptions, gridStub);
           const query = service.processOnPaginationChanged(null as any, { newPage: 3, pageSize: 20, ...cursorArgs });
           const currentPagination = service.getCurrentPagination();
 
