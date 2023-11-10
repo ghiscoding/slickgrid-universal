@@ -23,14 +23,11 @@ export interface GraphqlServiceOption extends BackendServiceOption {
    */
   extraQueryArguments?: QueryArgument[];
 
-  /** Is the GraphQL Server using cursors? */
-  isWithCursor?: boolean;
+  /** array of Filtering Options, ex.: { field: name, operator: EQ, value: "John" }  */
+  filteringOptions?: GraphqlFilteringOption[];
 
   /** What are the pagination options? ex.: (first, last, offset) */
   paginationOptions?: GraphqlPaginationOption | GraphqlCursorPaginationOption;
-
-  /** array of Filtering Options, ex.: { field: name, operator: EQ, value: "John" }  */
-  filteringOptions?: GraphqlFilteringOption[];
 
   /** array of Filtering Options, ex.: { field: name, direction: DESC }  */
   sortingOptions?: GraphqlSortingOption[];
@@ -40,6 +37,12 @@ export interface GraphqlServiceOption extends BackendServiceOption {
    * ex.: { field: "name", operator: EQ, value: "John" }
    */
   keepArgumentFieldDoubleQuotes?: boolean;
+
+  /** @deprecated @use `useCursor` Is the GraphQL Server using cursors? */
+  isWithCursor?: boolean;
+
+  /** Use Pagination Cursor in the GraphQL Server */
+  useCursor?: boolean;
 
   /**
    * When false, searchTerms may be manipulated to be functional with certain filters eg: string only filters.

@@ -122,7 +122,8 @@ export class PaginationService {
     this._paginationOptions = paginationOptions;
     this._isLocalGrid = !backendServiceApi;
     this._pageNumber = paginationOptions.pageNumber || 1;
-    this._isCursorBased = this._backendServiceApi?.options?.isWithCursor ?? false;
+    const backendServOptions = backendServiceApi?.options ?? {};
+    this._isCursorBased = (backendServOptions.useCursor || backendServOptions.isWithCursor);
 
     if (backendServiceApi && (!backendServiceApi.service || !backendServiceApi.process)) {
       throw new Error(`BackendServiceApi requires the following 2 properties "process" and "service" to be defined.`);
