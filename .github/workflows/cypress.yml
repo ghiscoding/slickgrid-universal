@@ -36,29 +36,20 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
-      - run: node --version
-      - run: pnpm --version
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Setup pnpm cache
+      - name: Cache pnpm modules
         uses: actions/cache@v3
         with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+            ${{ runner.os }}-
 
-      - name: Run pnpm install dependencies
-        run: pnpm install
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          run_install: true
+
+      - run: pnpm --version
 
       - name: TSC Build (esm)
         run: pnpm build:esm:styles
@@ -69,7 +60,7 @@ jobs:
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:
-          install: true
+          install: false
           # working-directory: packages/dnd
           start: pnpm serve:demo
           # start: pnpm serve:vite
