@@ -4,6 +4,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.4.2...v3.5.0) (2023-11-10)
+
+### Bug Fixes
+
+* **common:** SlickCellRangeSelector shouldn't stop editor event bubbling ([#1183](https://github.com/ghiscoding/slickgrid-universal/issues/1183)) ([7bb9d25](https://github.com/ghiscoding/slickgrid-universal/commit/7bb9d25c40c3f7f53be57c45917802e5f426c599)) - by @ghiscoding
+* **graphql:** deprecate `isWithCursor` in favor of simpler `useCursor` ([#1187](https://github.com/ghiscoding/slickgrid-universal/issues/1187)) ([7b3590f](https://github.com/ghiscoding/slickgrid-universal/commit/7b3590f323ea2fe3d3f312674205fc94485213fa)) - by @ghiscoding
+* **pagination:** should recreate pagination on cursor based changed ([#1175](https://github.com/ghiscoding/slickgrid-universal/issues/1175)) ([c7836aa](https://github.com/ghiscoding/slickgrid-universal/commit/c7836aae4a4ea0892791acc79a7bcb338ddb2038)) - by @ghiscoding
+* **styles:** menu command with & without icons aren't aligned ([#1180](https://github.com/ghiscoding/slickgrid-universal/issues/1180)) ([35f040d](https://github.com/ghiscoding/slickgrid-universal/commit/35f040dbd1f2d384aadbfbe351dd0e55f8d34c68)) - by @ghiscoding
+
+### Features
+
+* **common:** add `compoundOperatorAltTexts` grid option ([#1181](https://github.com/ghiscoding/slickgrid-universal/issues/1181)) ([dc0aa5e](https://github.com/ghiscoding/slickgrid-universal/commit/dc0aa5e28351af989e9dd691916af909e3a5fdf5)) - by @ghiscoding
+* Graphql verbatim search terms ([#1174](https://github.com/ghiscoding/slickgrid-universal/issues/1174)) ([eadc5ef](https://github.com/ghiscoding/slickgrid-universal/commit/eadc5ef636e8bf331d89f37be4596e7cc534b974)) - by @Harsgalt86
+
 ## [3.4.2](https://github.com/ghiscoding/slickgrid-universal/compare/v3.4.1...v3.4.2) (2023-11-02)
 
 **Note:** Version bump only for package @slickgrid-universal/common
