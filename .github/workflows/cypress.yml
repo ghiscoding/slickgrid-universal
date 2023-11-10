@@ -69,7 +69,7 @@ jobs:
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:
-          install: false
+          install: true
           # working-directory: packages/dnd
           start: pnpm serve:demo
           # start: pnpm serve:vite
