@@ -1,14 +1,15 @@
 import { delay, of, throwError } from 'rxjs';
-import { Column, GridOption, SlickDataView, SlickGrid, SlickNamespace, SharedService, } from '@slickgrid-universal/common';
-import * as utilities from '@slickgrid-universal/common/dist/commonjs/services/utilities';
+import { Column, getHtmlElementOffset, GridOption, SlickDataView, SlickGrid, SlickNamespace, SharedService, } from '@slickgrid-universal/common';
 
 import { SlickCustomTooltip } from '../slickCustomTooltip';
 import { ContainerServiceStub } from '../../../../test/containerServiceStub';
 import { RxJsResourceStub } from '../../../../test/rxjsResourceStub';
 
-const mockGetHtmlElementOffset = jest.fn();
-// @ts-ignore:2540
-utilities.getHtmlElementOffset = mockGetHtmlElementOffset;
+// mocked modules
+jest.mock('@slickgrid-universal/common', () => ({
+  ...(jest.requireActual('@slickgrid-universal/common') as any),
+  getHtmlElementOffset: jest.fn(),
+}));
 
 declare const Slick: SlickNamespace;
 const GRID_UID = 'slickgrid12345';
@@ -474,7 +475,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
-    mockGetHtmlElementOffset.mockReturnValue({ top: 100, left: 1030, height: 75, width: 400 }); // mock cell position
+    (getHtmlElementOffset as any).mockReturnValue({ top: 100, left: 1030, height: 75, width: 400 }); // mock cell position
 
     plugin.init(gridStub, container);
     plugin.setOptions({
@@ -589,7 +590,7 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('name title tooltip');
     expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
+    expect(tooltipElm.classList.contains('arrow-right-align')).toBeTruthy();
   });
 
   it('should create a tooltip on the header column when "useRegularTooltip" enabled and "onHeaderMouseEnter" is triggered', () => {
@@ -618,7 +619,7 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('header tooltip text');
     expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
+    expect(tooltipElm.classList.contains('arrow-right-align')).toBeTruthy();
   });
 
   it('should create a tooltip on the header column when "useRegularTooltip" enabled and "onHeaderRowMouseEnter" is triggered', () => {
@@ -647,6 +648,6 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('header row tooltip text');
     expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
+    expect(tooltipElm.classList.contains('arrow-right-align')).toBeTruthy();
   });
 });

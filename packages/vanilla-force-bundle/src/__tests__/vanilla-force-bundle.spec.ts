@@ -6,7 +6,6 @@ import {
   ExtensionService,
   ExtensionUtility,
   FilterService,
-  Formatter,
   GridEventService,
   GridOption,
   GridService,
@@ -31,15 +30,11 @@ import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-ed
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { UniversalContainerService } from '@slickgrid-universal/vanilla-bundle';
-import * as formatterUtilities from '@slickgrid-universal/common/dist/commonjs/formatters/formatterUtilities';
 
 import { VanillaForceGridBundle } from '../vanilla-force-bundle';
 import { TranslateServiceStub } from '../../../../test/translateServiceStub';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../test/mockSlickEvent';
 import { RxJsResourceStub } from '../../../../test/rxjsResourceStub';
-
-const mockAutoAddCustomEditorFormatter = jest.fn();
-(formatterUtilities.autoAddEditorFormatterToColumnsWithEditor as any) = mockAutoAddCustomEditorFormatter;
 
 declare const Slick: any;
 const slickEventHandler = new MockSlickEventHandler() as unknown as SlickEventHandler;
