@@ -358,8 +358,8 @@ export default class Example10 {
   private resetOptions(options: Partial<GraphqlServiceOption>) {
     const graphqlService = this.gridOptions.backendServiceApi!.service as GraphqlService;
     this.sgb?.paginationService!.setCursorBased(options.useCursor!);
-    this.sgb?.paginationService?.goToFirstPage();
     graphqlService.updateOptions(options);
     this.gridOptions = { ...this.gridOptions };
+    this.sgb?.paginationService?.goToFirstPage();
   }
 }
