@@ -36,6 +36,12 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          run_install: false
+
       - name: Get pnpm store directory
         shell: bash
         run: |
@@ -77,7 +83,7 @@ jobs:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # pass GitHub token to allow accurately detecting a build vs a re-run build
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           Cypress_extended: true
 
       - uses: actions/upload-artifact@v3
@@ -100,5 +106,5 @@ jobs:
           (contains(github.event.head_commit.message, 'chore(release)') || contains(github.event.head_commit.message, '[refresh gh-pages]'))
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
