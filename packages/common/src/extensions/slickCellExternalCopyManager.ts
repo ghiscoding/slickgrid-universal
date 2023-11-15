@@ -392,9 +392,12 @@ export class SlickCellExternalCopyManager {
               const dt = this._grid.getDataItem(i);
 
               if (clipTextRows.length === 0 && this._addonOptions.includeHeaderWhenCopying) {
-                const clipTextHeaders:string[] = [];
+                const clipTextHeaders: string[] = [];
                 for (let j = range.fromCell; j < range.toCell + 1; j++) {
-                  if (columns[j].name!.length > 0) {
+                  const colName: string = columns[j].name instanceof HTMLElement
+                    ? (columns[j].name as HTMLElement).innerHTML
+                    : columns[j].name as string;
+                  if (colName.length > 0 && !columns[j].hidden) {
                     clipTextHeaders.push(this.getHeaderValueForColumn(columns[j]));
                   }
                 }
@@ -402,7 +405,12 @@ export class SlickCellExternalCopyManager {
               }
 
               for (let j = range.fromCell; j < range.toCell + 1; j++) {
-                clipTextCells.push(this.getDataItemValueForColumn(dt, columns[j], e));
+                const colName: string = columns[j].name instanceof HTMLElement
+                  ? (columns[j].name as HTMLElement).innerHTML
+                  : columns[j].name as string;
+                if (colName.length > 0 && !columns[j].hidden) {
+                  clipTextCells.push(this.getDataItemValueForColumn(dt, columns[j], e));
+                }
               }
               clipTextRows.push(clipTextCells.join('\t'));
             }

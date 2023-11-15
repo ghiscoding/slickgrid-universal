@@ -817,7 +817,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     }
 
     const columnLabel = columnGroup ? `${columnGroup}${columnGroupSeparator}${columnName}` : columnName;
-    return columnLabel || '';
+    return columnLabel instanceof HTMLElement ? columnLabel.innerHTML : columnLabel || '';
   }
 
   /** Get the correct label text depending, if we use a Translater Service then translate the text when possible else use default text */

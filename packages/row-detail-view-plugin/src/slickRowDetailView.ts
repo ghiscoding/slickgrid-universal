@@ -3,7 +3,8 @@ import type {
   Column,
   DOMMouseOrTouchEvent,
   ExternalResource,
-  FormatterResultObject,
+  FormatterResultWithHtml,
+  FormatterResultWithText,
   GridOption,
   OnAfterRowDetailToggleArgs,
   OnBeforeRowDetailToggleArgs,
@@ -606,7 +607,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** The Formatter of the toggling icon of the Row Detail */
-  protected detailSelectionFormatter(row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGridModel): FormatterResultObject | string {
+  protected detailSelectionFormatter(row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGridModel): FormatterResultWithHtml | FormatterResultWithText | string {
     if (!this.checkExpandableOverride(row, dataContext, grid)) {
       return '';
     } else {

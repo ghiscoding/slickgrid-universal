@@ -1,16 +1,15 @@
 import { delay, of, throwError } from 'rxjs';
 
-import { Column, GridOption, SlickGridModel, SharedService, type SlickDataView, SlickEvent, SlickEventData } from '@slickgrid-universal/common';
+import { Column, getHtmlElementOffset, GridOption, SlickGridModel, SharedService, type SlickDataView, SlickEvent, SlickEventData, } from '@slickgrid-universal/common';
 
 import { SlickCustomTooltip } from '../slickCustomTooltip';
 import { ContainerServiceStub } from '../../../../test/containerServiceStub';
 import { RxJsResourceStub } from '../../../../test/rxjsResourceStub';
 
-const mockGetHtmlElementOffset = jest.fn();
-
+// mocked modules
 jest.mock('@slickgrid-universal/common', () => ({
   ...(jest.requireActual('@slickgrid-universal/common') as any),
-  getHtmlElementOffset: jest.fn().mockImplementation(() => mockGetHtmlElementOffset),
+  getHtmlElementOffset: jest.fn(),
 }));
 
 const GRID_UID = 'slickgrid12345';
@@ -34,6 +33,7 @@ const gridStub = {
   getOptions: () => gridOptionsMock,
   getUID: () => GRID_UID,
   registerPlugin: jest.fn(),
+  sanitizeHtmlString: (s) => s,
   onMouseEnter: new SlickEvent(),
   onHeaderMouseEnter: new SlickEvent(),
   onHeaderRowMouseEnter: new SlickEvent(),

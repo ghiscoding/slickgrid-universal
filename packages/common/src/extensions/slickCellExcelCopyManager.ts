@@ -4,6 +4,8 @@ import type {
   EditCommand,
   EditUndoRedoBuffer,
   ExcelCopyBufferOption,
+  FormatterResultWithHtml,
+  FormatterResultWithText,
   GridOption,
   SlickGridModel,
 } from '../interfaces/index';
@@ -147,15 +149,10 @@ export class SlickCellExcelCopyManager {
           const isEvaluatingFormatter = (columnDef.exportWithFormatter !== undefined) ? columnDef.exportWithFormatter : (this.gridOptions.textExportOptions?.exportWithFormatter);
           if (columnDef.formatter && isEvaluatingFormatter) {
             const formattedOutput = columnDef.formatter(0, 0, item[columnDef.field], columnDef, item, this._grid);
+            const cellResult = (Object.prototype.toString.call(formattedOutput) !== '[object Object]' ? formattedOutput : (formattedOutput as FormatterResultWithHtml).html || (formattedOutput as FormatterResultWithText).text);
             if (columnDef.sanitizeDataExport || (this.gridOptions.textExportOptions?.sanitizeDataExport)) {
-              let outputString = formattedOutput as string;
-              if (formattedOutput && typeof formattedOutput === 'object' && formattedOutput.hasOwnProperty('text')) {
-                outputString = formattedOutput.text;
-              }
-              if (outputString === null) {
-                outputString = '';
-              }
-              return sanitizeHtmlToText(outputString);
+              const outputString = (cellResult instanceof HTMLElement) ? cellResult.innerHTML : cellResult as string;
+              return sanitizeHtmlToText(outputString ?? '');
             }
             return formattedOutput;
           }

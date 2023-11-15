@@ -932,6 +932,22 @@ describe('GridOdataService', () => {
       expect(query).toBe(expectation);
     });
 
+    it('should return a query using column name that is an HTML Element', () => {
+      const expectation = `$top=10&$filter=(Gender eq 'female')`;
+      const nameElm = document.createElement('div');
+      nameElm.textContent = 'Gender Column';
+      const mockColumn = { id: 'gender', field: 'gender', name: nameElm } as Column;
+      const mockColumnFilters = {
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
+      } as ColumnFilters;
+
+      service.init(serviceOptions, paginationOptions, gridStub);
+      service.updateFilters(mockColumnFilters, false);
+      const query = service.buildQuery();
+
+      expect(query).toBe(expectation);
+    });
+
     it('should return a query using the column "name" property when "field" is not defined in its definition', () => {
       const expectation = `$top=10&$filter=(Gender eq 'female')`;
       const mockColumn = { id: 'gender', name: 'gender' } as Column;

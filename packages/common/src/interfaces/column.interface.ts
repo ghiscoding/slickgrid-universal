@@ -8,7 +8,8 @@ import type {
   CustomTooltipOption,
   EditorValidator,
   Formatter,
-  FormatterResultObject,
+  FormatterResultWithHtml,
+  FormatterResultWithText,
   Grouping,
   GroupTotalExportOption,
   GroupTotalsFormatter,
@@ -18,7 +19,7 @@ import type {
   SortComparer,
 } from './index';
 
-export type FormatterOverrideCallback = (row: number, cell: number, val: any, columnDef: Column, item: any, grid: SlickGridModel) => string | FormatterResultObject;
+export type FormatterOverrideCallback = (row: number, cell: number, val: any, columnDef: Column, item: any, grid: SlickGridModel) => string | FormatterResultWithHtml | FormatterResultWithText;
 
 type PathsToStringProps<T> = T extends string | number | boolean | Date ? [] : {
   [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>]
@@ -233,7 +234,7 @@ export interface Column<T = any> {
   originalWidth?: number;
 
   /** Column Title Name to be displayed in the Grid (UI) */
-  name?: string;
+  name?: string | HTMLElement;
 
   /** Alternative Column Title Name that could be used by the Composite Editor Modal, it has precedence over the column "name" property. */
   nameCompositeEditor?: string;

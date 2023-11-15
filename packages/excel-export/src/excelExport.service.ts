@@ -442,7 +442,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         if ((columnDef.nameKey || columnDef.nameKey) && this._gridOptions.enableTranslate && this._translaterService?.translate) {
           headerTitle = this._translaterService.translate((columnDef.nameKey || columnDef.nameKey));
         } else {
-          headerTitle = columnDef.name || titleCase(columnDef.field);
+          headerTitle = columnDef.name instanceof HTMLElement ? columnDef.name.innerHTML : columnDef.name || titleCase(columnDef.field);
         }
         const skippedField = columnDef.excludeFromExport || false;
 

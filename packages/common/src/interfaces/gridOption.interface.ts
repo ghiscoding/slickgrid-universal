@@ -408,6 +408,13 @@ export interface GridOption<C extends Column = Column> {
   /** Do we want to enable Header Menu? (when hovering a column, a menu will appear for that column) */
   enableHeaderMenu?: boolean;
 
+  /**
+   * Defaults to true, do we want to allow passing HTML string to cell/row rendering by using `innerHTML`.
+   * When this is enabled and input is a string, it will use `innerHTML = 'some html'` to render the input, however when disable it will use `textContent = 'some html'`.
+   * Note: for strict CSP, you would want to disable this option and convert all your custom Formatters to return an HTMLElement instead of a string
+   */
+  enableHtmlRendering?: boolean;
+
   /** Do we want to enable a styling effect when hovering any row from the grid? */
   enableMouseHoverHighlightRow?: boolean;
 
@@ -589,6 +596,11 @@ export interface GridOption<C extends Column = Column> {
   /** Defaults to true, which leads to be able to do multiple selection */
   multiSelect?: boolean;
 
+  /**
+   * Added for CSP header because of dynamic css generation.
+   */
+  nonce?: string;
+
   /** Defaults to true, which will display numbers indicating column sort precedence are displayed in the columns when multiple columns selected */
   numberedMultiColumnSort?: boolean;
 
@@ -663,7 +675,7 @@ export interface GridOption<C extends Column = Column> {
   /** CSS class name used when cell is selected */
   selectedCellCssClass?: string;
 
-  /** Defaults to undefined. If we are inside a Shadow DOM tree, this must be the shadow root of the tree */
+  /** Defaults to undefined. If we are inside a Shadow DOM tree, this must be the Shadow root of the tree */
   shadowRoot?: ShadowRoot;
 
   /** Do we want to show cell selection? */
@@ -711,6 +723,12 @@ export interface GridOption<C extends Column = Column> {
 
   /** Some default options to set for the text file export service */
   textExportOptions?: TextExportOption;
+
+  /**
+   * Defaults to false, should we throw an erro when frozenColumn is wider than the grid viewport width.
+   * When that happens the unfrozen section on the right is in a phantom area that is not viewable neither clickable unless we enable double-scroll on the grid container.
+   */
+  throwWhenFrozenNotAllViewable?: boolean;
 
   /** What is the top panel height in pixels (only type the number) */
   topPanelHeight?: number;

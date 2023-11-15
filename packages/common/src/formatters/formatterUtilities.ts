@@ -1,5 +1,5 @@
 import { FieldType } from '../enums/fieldType.enum';
-import type { Column, ExcelExportOption, Formatter, GridOption, SlickGridModel, TextExportOption } from '../interfaces/index';
+import type { Column, ExcelExportOption, Formatter, FormatterResultWithHtml, FormatterResultWithText, GridOption, SlickGridModel, TextExportOption } from '../interfaces/index';
 import { sanitizeHtmlToText } from '../services/domUtilities';
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { multipleFormatter } from './multipleFormatter';
@@ -183,18 +183,14 @@ export function parseFormatterWhenExist<T = any>(formatter: Formatter<T> | undef
 
   if (typeof formatter === 'function') {
     const formattedData = formatter(row, col, cellValue, columnDef, dataContext, grid);
-    output = formattedData as string;
-    if (formattedData && typeof formattedData === 'object' && formattedData.hasOwnProperty('text')) {
-      output = formattedData.text;
-    }
-    if (output === null || output === undefined) {
-      output = '';
-    }
+    const cellResult = (Object.prototype.toString.call(formattedData) !== '[object Object]' ? formattedData : (formattedData as FormatterResultWithHtml).html || (formattedData as FormatterResultWithText).text);
+    output = (cellResult instanceof HTMLElement) ? cellResult.innerHTML : cellResult as string;
   } else {
     output = ((!dataContext?.hasOwnProperty(fieldProperty as keyof T)) ? '' : cellValue) as string;
-    if (output === null || output === undefined) {
-      output = '';
-    }
+  }
+
+  if (output === null || output === undefined) {
+    output = '';
   }
 
   // if at the end we have an empty object, then replace it with an empty string

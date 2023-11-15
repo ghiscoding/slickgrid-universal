@@ -46,7 +46,7 @@ export interface ColumnPickerOption {
   syncResizeTitle?: string;
 
   /** Callback method to override the column name output used by the ColumnPicker/GridMenu. */
-  headerColumnValueExtractor?: (column: Column, gridOptions?: GridOption) => string;
+  headerColumnValueExtractor?: (column: Column, gridOptions?: GridOption) => string | HTMLElement;
 }
 
 export interface OnColumnsChangedArgs {

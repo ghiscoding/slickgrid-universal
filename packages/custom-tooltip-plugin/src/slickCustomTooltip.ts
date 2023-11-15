@@ -6,6 +6,8 @@ import type {
   CustomTooltipOption,
   DOMEvent,
   Formatter,
+  FormatterResultWithHtml,
+  FormatterResultWithText,
   GridOption,
   Observable,
   RxJsFacade,
@@ -299,9 +301,9 @@ export class SlickCustomTooltip {
    */
   protected parseFormatterAndSanitize(formatterOrText: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown): string {
     if (typeof formatterOrText === 'function') {
-      const tooltipText = formatterOrText(cell.row, cell.cell, value, columnDef, item, this._grid);
-      const formatterText = (typeof tooltipText === 'object' && tooltipText?.text) ? tooltipText.text : (typeof tooltipText === 'string' ? tooltipText : '');
-      return sanitizeTextByAvailableSanitizer(this.gridOptions, formatterText);
+      const tooltipResult = formatterOrText(cell.row, cell.cell, value, columnDef, item, this._grid);
+      const formatterText = (Object.prototype.toString.call(tooltipResult) !== '[object Object]' ? tooltipResult : (tooltipResult as FormatterResultWithHtml).html || (tooltipResult as FormatterResultWithText).text);
+      return sanitizeTextByAvailableSanitizer(this.gridOptions, (formatterText instanceof HTMLElement ? formatterText.textContent : formatterText as string) || '');
     } else if (typeof formatterOrText === 'string') {
       return sanitizeTextByAvailableSanitizer(this.gridOptions, formatterOrText);
     }

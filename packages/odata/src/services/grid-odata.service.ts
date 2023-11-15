@@ -349,6 +349,9 @@ export class GridOdataService implements BackendService {
         const bypassOdataQuery = columnFilter.bypassBackendQuery || false;
 
         // no need to query if search value is empty
+        if (fieldName instanceof HTMLElement) {
+          fieldName = fieldName.textContent || '';
+        }
         if (fieldName && searchValue === '' && searchTerms.length <= 1) {
           this.removeColumnFilter(fieldName);
           continue;

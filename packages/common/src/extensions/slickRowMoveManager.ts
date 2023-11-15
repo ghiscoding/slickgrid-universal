@@ -4,7 +4,7 @@ import type { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
 import type {
   Column,
   DragRowMove,
-  FormatterResultObject,
+  FormatterResultWithHtml,
   GridOption,
   RowMoveManager,
   RowMoveManagerOption,
@@ -312,11 +312,13 @@ export class SlickRowMoveManager {
     return true;
   }
 
-  protected moveIconFormatter(row: number, cell: number, value: any, column: Column, dataContext: any, grid: SlickGridModel): FormatterResultObject | string {
+  protected moveIconFormatter(row: number, cell: number, value: any, column: Column, dataContext: any, grid: SlickGridModel): FormatterResultWithHtml | string {
     if (!this.checkUsabilityOverride(row, dataContext, grid)) {
       return '';
     } else {
-      return { addClasses: `cell-reorder dnd ${this._addonOptions.cssClass || ''}`, text: '' };
+      const iconElm = document.createElement('div');
+      iconElm.className = this._addonOptions.cssClass || '';
+      return { addClasses: `cell-reorder dnd ${this._addonOptions.cssClass || ''}`, html: iconElm };
     }
   }
 }
