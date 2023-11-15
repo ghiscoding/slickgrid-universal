@@ -114,7 +114,7 @@ export interface Column<T = any> {
   /** Defaults to false, which leads to exclude the column from getting a header menu. For example, the checkbox row selection should not have a header menu. */
   excludeFromHeaderMenu?: boolean;
 
-  /** @deprecated @use `excelExportOptions` in the future. This option let you defined this Excel column width */
+  /** @deprecated @use `excelExportOptions` in the future. This option let you defined current column width in Excel. */
   exportColumnWidth?: number;
 
   /**
