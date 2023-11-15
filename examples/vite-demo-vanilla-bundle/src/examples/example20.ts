@@ -1,9 +1,8 @@
-import { Column, FieldType, Filters, Formatters, GridOption, SlickEventHandler, SlickNamespace, } from '@slickgrid-universal/common';
+import { Column, FieldType, Filters, Formatters, GridOption, SlickEventHandler, } from '@slickgrid-universal/common';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 
 const NB_ITEMS = 100;
-declare const Slick: SlickNamespace;
 
 interface ShadowContainer {
   shadow: ShadowRoot;
@@ -21,7 +20,7 @@ export default class Example20 {
   sgb: SlickVanillaGridBundle;
 
   attached() {
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
     const shadowObj = this.createShadowElement();
 
     // define the grid options & columns and then create the grid itself
