@@ -16,7 +16,10 @@ export class SlickCellSelectionModel implements SelectionModel {
   protected _addonOptions?: CellSelectionModelOption;
   protected _cachedPageRowCount = 0;
   protected _eventHandler: SlickEventHandler;
+  protected _dataView?: SlickDataView;
   protected _grid!: SlickGridModel;
+  protected _prevSelectedRow?: number;
+  protected _prevKeyDown = '';
   protected _ranges: SlickRange[] = [];
   protected _selector: SlickCellRangeSelector;
   protected _defaults = {
@@ -260,7 +263,7 @@ export class SlickCellSelectionModel implements SelectionModel {
         }
 
         // define new selection range
-        const newLast = new SlickRange(active.row, active.cell, active.row + dirRow * dRow, active.cell + dirCell * dCell);
+        const newLast = new SlickRange(active.row, active.cell, toRow, active.cell + dirCell * dCell);
         if (this.removeInvalidRanges([newLast]).length) {
           ranges.push(newLast);
           const viewRow = dirRow > 0 ? newLast.toRow : newLast.fromRow;

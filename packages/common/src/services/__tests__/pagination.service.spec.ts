@@ -3,7 +3,7 @@ import { type SlickDataView, SlickEvent, SlickEventData } from '../../core/index
 
 import { PaginationService } from './../pagination.service';
 import { SharedService } from '../shared.service';
-import { BackendServiceApi, Column, GridOption, Pagination, SlickGridModel } from '../../interfaces/index';
+import { BackendServiceApi, Column, CursorPageInfo, GridOption, Pagination, SlickGridModel } from '../../interfaces/index';
 import { BackendUtilityService } from '../backendUtility.service';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 

@@ -10,7 +10,6 @@ import type {
   GridMenuItem,
   GridMenuOption,
   GridOption,
-  MenuCommandItem,
   onGridMenuColumnsChangedCallbackArgs,
 } from '../interfaces/index';
 import { DelimiterType, FileType } from '../enums/index';
@@ -39,6 +38,7 @@ import { SlickEvent } from '../core/index';
  * @constructor
  */
 export class SlickGridMenu extends MenuBaseClass<GridMenu> {
+  // public events
   onAfterMenuShow = new SlickEvent<GridMenuEventWithElementCallbackArgs>();
   onBeforeMenuShow = new SlickEvent<GridMenuEventWithElementCallbackArgs>();
   onMenuClose = new SlickEvent<GridMenuEventWithElementCallbackArgs>();
@@ -71,13 +71,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     subMenuOpenByEvent: 'mouseover',
     headerColumnValueExtractor: (columnDef: Column) => columnDef.name
   } as GridMenuOption;
-
-  // public events
-  onAfterMenuShow = new Slick.Event();
-  onBeforeMenuShow = new Slick.Event();
-  onMenuClose = new Slick.Event();
-  onCommand = new Slick.Event();
-  onColumnsChanged = new Slick.Event();
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
