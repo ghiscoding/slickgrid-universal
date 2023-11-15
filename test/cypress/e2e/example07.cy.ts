@@ -1004,7 +1004,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     const stub = cy.stub();
     cy.on('window:alert', stub);
 
-    cy.get('.grid7').find(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(3)`).click({ force: true });
+    cy.get('.grid7').find(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).click({ force: true });
     cy.get('.slick-cell-menu').should('be.visible');
     cy.get('.slick-cell-menu.slick-menu-level-0 .slick-menu-command-list')
       .find('.slick-menu-item .slick-menu-content')
@@ -1029,7 +1029,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     const stub = cy.stub();
     cy.on('window:alert', stub);
 
-    cy.get('.grid7').find(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(3)`).click({ force: true });
+    cy.get('.grid7').find(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).click({ force: true });
     cy.get('.slick-cell-menu.slick-menu-level-0 .slick-menu-command-list')
       .find('.slick-menu-item .slick-menu-content')
       .contains('Exports')
@@ -1068,7 +1068,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     const subCommands2 = ['Excel (csv)', 'Excel (xlsx)'];
     const subOptions = ['True', 'False'];
 
-    cy.get('.grid7').find(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(3)`).click({ force: true });
+    cy.get('.grid7').find(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).click({ force: true });
     cy.get('.slick-cell-menu.slick-menu-level-0 .slick-menu-command-list')
       .find('.slick-menu-item .slick-menu-content')
       .contains('Exports')
@@ -1114,11 +1114,11 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       .contains('Change Completed Flag');
 
     cy.get('@optionSubList2').find('.slick-menu-item .slick-menu-content').contains('True').click();
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(8)`).find('.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(8)`).find('.checkmark-icon').should('have.length', 1);
   });
 
   it('should be able to choose "False" option from options sub-menu and expect it to remove checkmark in "Completed" column', () => {
-    cy.get('.grid7').find(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(3)`).click({ force: true });
+    cy.get('.grid7').find(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).click({ force: true });
     cy.get('.slick-cell-menu.slick-menu-level-0 .slick-menu-option-list')
       .find('.slick-menu-item .slick-menu-content')
       .contains('Sub-Options')
@@ -1126,7 +1126,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     cy.get('.slick-cell-menu.slick-menu-level-1 .slick-menu-option-list').as('optionSubList2');
     cy.get('@optionSubList2').find('.slick-menu-item .slick-menu-content').contains('False').click();
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(8)`).find('.checkmark-icon').should('have.length', 0);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(8)`).find('.checkmark-icon').should('have.length', 0);
   });
 
   it('should open Export->Excel sub-menu then open Feedback->ContactUs sub-menus and expect previous Export menu to no longer exists', () => {
@@ -1137,7 +1137,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     const stub = cy.stub();
     cy.on('window:alert', stub);
 
-    cy.get('.grid7').find(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(3)`).click({ force: true });
+    cy.get('.grid7').find(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(3)`).click({ force: true });
     cy.get('.slick-cell-menu.slick-menu-level-0 .slick-menu-command-list')
       .find('.slick-menu-item .slick-menu-content')
       .contains('Exports')

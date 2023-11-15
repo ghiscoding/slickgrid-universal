@@ -304,7 +304,7 @@ describe('Example 04 - Frozen Grid', () => {
   });
 
   it('should open Context Menu hover "% Complete" column then select "Not Started (0%)" option and expect Task to be at 0', () => {
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
       .rightclick();
 
     cy.get('.slick-context-menu .slick-menu-option-list')
@@ -312,14 +312,14 @@ describe('Example 04 - Frozen Grid', () => {
       .contains('Not Started (0%)')
       .click();
 
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '0');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '0');
   });
 
   it('should reopen Context Menu hover "% Complete" column then open options sub-menu & select "Half Completed (50%)" option and expect Task to be at 50', () => {
     const subOptions = ['Not Started (0%)', 'Half Completed (50%)', 'Completed (100%)'];
 
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '0');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '0');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
       .rightclick();
 
     cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-option-list')
@@ -339,7 +339,7 @@ describe('Example 04 - Frozen Grid', () => {
       .contains('Half Completed (50%)')
       .click();
 
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '50');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '50');
   });
 
   it('should be able to open Context Menu and click on Export->Text and expect alert triggered with Text Export', () => {
@@ -347,8 +347,8 @@ describe('Example 04 - Frozen Grid', () => {
     const stub = cy.stub();
     cy.on('window:alert', stub);
 
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '0');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '0');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
       .rightclick();
 
     cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
@@ -374,8 +374,8 @@ describe('Example 04 - Frozen Grid', () => {
     const stub = cy.stub();
     cy.on('window:alert', stub);
 
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '0');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '0');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
       .rightclick();
 
     cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
@@ -416,8 +416,8 @@ describe('Example 04 - Frozen Grid', () => {
     const subCommands2 = ['Excel (csv)', 'Excel (xlsx)'];
     const subOptions = ['Not Started (0%)', 'Half Completed (50%)', 'Completed (100%)'];
 
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '0');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '0');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
       .rightclick();
 
     cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
@@ -465,8 +465,8 @@ describe('Example 04 - Frozen Grid', () => {
     const stub = cy.stub();
     cy.on('window:alert', stub);
 
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', '0');
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '0');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
       .rightclick({ force: true });
 
     cy.get('.slick-context-menu.slick-menu-level-0 .slick-menu-command-list')
