@@ -62,10 +62,12 @@ const Editors = {
 };
 
 describe('CellExternalCopyManager', () => {
+  const lastNameElm = document.createElement('div');
+  lastNameElm.textContent = 'Last Name';
   const mockEventCallback = () => { };
   const mockColumns = [
     { id: 'firstName', field: 'firstName', name: 'First Name', editor: Editors.text, internalColumnEditor: Editors.text },
-    { id: 'lastName', field: 'lastName', name: 'Last Name', },
+    { id: 'lastName', field: 'lastName', name: lastNameElm, },
     { id: 'age', field: 'age', name: 'Age', editor: Editors.text, internalColumnEditor: Editors.text },
   ] as Column[];
   let plugin: SlickCellExternalCopyManager;

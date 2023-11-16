@@ -515,4 +515,146 @@ describe('Example 04 - Frozen Grid', () => {
 
     cy.get('.slick-submenu').should('have.length', 0);
   });
+
+  describe('Test UI rendering after Scrolling with large columns', () => {
+    it('should unfreeze all columns/rows', () => {
+      cy.get('.grid4')
+        .find('button.slick-grid-menu-button')
+        .click({ force: true });
+
+      cy.contains('Unfreeze Columns/Rows')
+        .click({ force: true });
+    });
+
+    it('should resize all columns and make them wider', () => {
+      // resize CityOfOrigin column
+      cy.get('.slick-header-columns')
+        .children('.slick-header-column:nth(7)')
+        .should('contain', 'City of Origin');
+
+      cy.get('.slick-resizable-handle:nth(7)')
+        .trigger('mousedown', { which: 1, force: true })
+        .trigger('mousemove', 'bottomRight');
+
+      cy.get('.slick-header-column:nth(8)')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      // resize Cost|Duration column
+      cy.get('.slick-header-columns')
+        .children('.slick-header-column:nth(6)')
+        .should('contain', 'Cost | Duration');
+
+      cy.get('.slick-resizable-handle:nth(6)')
+        .trigger('mousedown', { which: 1, force: true })
+        .trigger('mousemove', 'bottomRight');
+
+      cy.get('.slick-header-column:nth(8)')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      // resize Completed column
+      cy.get('.slick-header-columns')
+        .children('.slick-header-column:nth(5)')
+        .should('contain', 'Completed');
+
+      cy.get('.slick-resizable-handle:nth(5)')
+        .trigger('mousedown', { which: 1, force: true })
+        .trigger('mousemove', 'bottomRight');
+
+      cy.get('.slick-header-column:nth(7)')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      // resize Finish column
+      cy.get('.slick-header-columns')
+        .children('.slick-header-column:nth(4)')
+        .should('contain', 'Finish');
+
+      cy.get('.slick-resizable-handle:nth(4)')
+        .trigger('mousedown', { which: 1, force: true })
+        .trigger('mousemove', 'bottomRight');
+
+      cy.get('.slick-header-column:nth(6)')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      // resize Start column
+      cy.get('.slick-header-columns')
+        .children('.slick-header-column:nth(3)')
+        .should('contain', 'Start');
+
+      cy.get('.slick-resizable-handle:nth(3)')
+        .trigger('mousedown', { which: 1, force: true })
+        .trigger('mousemove', 'bottomRight');
+
+      cy.get('.slick-header-column:nth(6)')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      // resize %Complete column
+      cy.get('.slick-header-columns')
+        .children('.slick-header-column:nth(2)')
+        .should('contain', '% Complete');
+
+      cy.get('.slick-resizable-handle:nth(2)')
+        .trigger('mousedown', { which: 1, force: true })
+        .trigger('mousemove', 'bottomRight');
+
+      cy.get('.slick-header-column:nth(3)')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      // resize Title column
+      cy.get('.slick-header-columns')
+        .children('.slick-header-column:nth(1)')
+        .should('contain', 'Title');
+
+      cy.get('.slick-resizable-handle:nth(1)')
+        .trigger('mousedown', { which: 1, force: true })
+        .trigger('mousemove', 'bottomRight');
+
+      cy.get('.slick-header-column:nth(3)')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+    });
+
+    it('should scroll horizontally completely to the right and expect all cell to be rendered', () => {
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell.l1`).contains(/Task [0-9]*/);
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell.l2`).contains(/[0-9]*/);
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 15}px;"] > .slick-cell.l1`).contains(/Task [0-9]*/);
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 15}px;"] > .slick-cell.l2`).contains(/[0-9]*/);
+
+      // horizontal scroll to right
+      cy.get('.slick-viewport-top.slick-viewport-left')
+        .scrollTo('100%', '0%', { duration: 1500 });
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell.l3`).should('contain', '2009-01-01');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell.l4`).should('contain', '2009-05-05');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell.l7`).contains(/[United State|Canada]*/);
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell.l8`).should('contain', 'Action');
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 15}px;"] > .slick-cell.l3`).should('contain', '2009-01-01');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 15}px;"] > .slick-cell.l4`).should('contain', '2009-05-05');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 15}px;"] > .slick-cell.l7`).contains(/[United State|Canada]*/);
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 15}px;"] > .slick-cell.l8`).should('contain', 'Action');
+    });
+
+    it('should scroll vertically to the middle of the grid and expect all cell to be rendered', () => {
+      // vertical scroll to middle
+      cy.get('.slick-viewport-top.slick-viewport-left')
+        .scrollTo('100%', '40%', { duration: 1500 });
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 195}px;"] > .slick-cell.l3`).should('contain', '2009-01-01');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 195}px;"] > .slick-cell.l4`).should('contain', '2009-05-05');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 195}px;"] > .slick-cell.l7`).contains(/[United State|Canada]*/);
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 195}px;"] > .slick-cell.l8`).should('contain', 'Action');
+
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 210}px;"] > .slick-cell.l3`).should('contain', '2009-01-01');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 210}px;"] > .slick-cell.l4`).should('contain', '2009-05-05');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 210}px;"] > .slick-cell.l7`).contains(/[United State|Canada]*/);
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 210}px;"] > .slick-cell.l8`).should('contain', 'Action');
+    });
+  });
 });

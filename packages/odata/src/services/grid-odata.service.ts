@@ -26,6 +26,7 @@ import {
   mapOperatorByFieldType,
   OperatorType,
   parseUtcDate,
+  sanitizeHtmlToText,
   SortDirection,
 } from '@slickgrid-universal/common';
 import { titleCase } from '@slickgrid-universal/utils';
@@ -319,6 +320,9 @@ export class GridOdataService implements BackendService {
         }
 
         let fieldName = columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || columnDef.name || '';
+        if (fieldName instanceof HTMLElement) {
+          fieldName = sanitizeHtmlToText(fieldName.innerHTML);
+        }
         const fieldType = columnDef.type || FieldType.string;
         let searchTerms = (columnFilter && columnFilter.searchTerms ? [...columnFilter.searchTerms] : null) || [];
         let fieldSearchValue = (Array.isArray(searchTerms) && searchTerms.length === 1) ? searchTerms[0] : '';
@@ -349,9 +353,6 @@ export class GridOdataService implements BackendService {
         const bypassOdataQuery = columnFilter.bypassBackendQuery || false;
 
         // no need to query if search value is empty
-        if (fieldName instanceof HTMLElement) {
-          fieldName = fieldName.textContent || '';
-        }
         if (fieldName && searchValue === '' && searchTerms.length <= 1) {
           this.removeColumnFilter(fieldName);
           continue;

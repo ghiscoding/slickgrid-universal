@@ -26,6 +26,7 @@ import {
   mapOperatorByFieldType,
   OperatorType,
   SortDirection,
+  sanitizeHtmlToText,
 } from '@slickgrid-universal/common';
 import {
   GraphqlCursorPaginationOption,
@@ -399,7 +400,10 @@ export class GraphqlService implements BackendService {
           throw new Error('[GraphQL Service]: Something went wrong in trying to get the column definition of the specified filter (or preset filters). Did you make a typo on the filter columnId?');
         }
 
-        const fieldName = columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || (columnDef.name instanceof HTMLElement ? columnDef.name.innerHTML : columnDef.name) || '';
+        let fieldName = columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || columnDef.name || '';
+        if (fieldName instanceof HTMLElement) {
+          fieldName = sanitizeHtmlToText(fieldName.innerHTML);
+        }
         const fieldType = columnDef.type || FieldType.string;
         let searchTerms = columnFilter?.searchTerms ?? [];
         let fieldSearchValue = (Array.isArray(searchTerms) && searchTerms.length === 1) ? searchTerms[0] : '';

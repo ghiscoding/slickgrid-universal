@@ -935,8 +935,8 @@ describe('GridOdataService', () => {
     it('should return a query using column name that is an HTML Element', () => {
       const expectation = `$top=10&$filter=(Gender eq 'female')`;
       const nameElm = document.createElement('div');
-      nameElm.textContent = 'Gender Column';
-      const mockColumn = { id: 'gender', field: 'gender', name: nameElm } as Column;
+      nameElm.innerHTML = `<span class="red">Gender</span>`;
+      const mockColumn = { id: 'gender', name: nameElm } as unknown as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
       } as ColumnFilters;

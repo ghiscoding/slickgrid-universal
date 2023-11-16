@@ -343,7 +343,7 @@ export function htmlEncodedStringWithPadding(inputStr: string, paddingLength: nu
 }
 
 /**
- * Sanitize, return only the text without HTML tags
+ * Sanitizes all HTML tags and returns just the text content
  * @input htmlString
  * @return text
  */
