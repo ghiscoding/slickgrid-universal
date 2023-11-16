@@ -28,5 +28,5 @@
       allowedVersions: '4.x',
     }
   ],
-  schedule: ['every week on friday'],
+  schedule: ['on friday'],
 }
