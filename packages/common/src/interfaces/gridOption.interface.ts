@@ -342,7 +342,7 @@ export interface GridOption<C extends Column = Column> {
 
   /**
    * Defaults to true, this option can be a boolean or a Column Reorder function.
-   * When provided as a boolean, it will permits the user to move an entire column from a position to another.
+   * When provided as a boolean, it will allow the user to reorder or move a column from a position to another.
    * We could also provide a Column Reorder function, there's mostly only 1 use for this which is the SlickDraggableGrouping plugin.
    */
   enableColumnReorder?: boolean | ColumnReorderFunction;
@@ -488,10 +488,10 @@ export interface GridOption<C extends Column = Column> {
   /** Defaults to false, force synchronous scrolling */
   forceSyncScrolling?: boolean;
 
-  /** Formatter classes factory */
+  /** Formatter class factory */
   formatterFactory?: { getFormatter: (col: C) => Formatter; } | null;
 
-  /** Formatter commonly used options defined for the entire grid */
+  /** Formatter options that are defined and used for the entire grid */
   formatterOptions?: FormatterOption;
 
   /** Optional frozen border in pixel to remove from total header width calculation (depending on your border width, it should be 0, 1 or 2 defaults is 1) */
@@ -601,7 +601,7 @@ export interface GridOption<C extends Column = Column> {
   /** Pagination options (pageSize, pageSizes, pageNumber, totalItems) */
   pagination?: Pagination;
 
-  /** if you want to pass custom paramaters to your Formatter/Editor or anything else */
+  /** extra custom generic parameters that could be used by your Formatter/Editor or anything else */
   params?: any | any[];
 
   /** Extra pre-header panel height (on top of column header) */
@@ -658,8 +658,9 @@ export interface GridOption<C extends Column = Column> {
   sanitizeHtmlOptions?: any;
 
   /**
-   * By default the lib will use DOMPurify to sanitize any Html,
-   * but you could optionally pass your own sanitizer function which will run instead of DOM Purify
+   * By default the lib will use DOMPurify to sanitize any HTML strings before passing them to `innerHTML`,
+   * however you could optionally provide your own sanitizer callback instead of using DOMPurify.
+   * e.g.: DOMPurify doesn't work in Salesforce, so a custom sanitizer is required
    */
   sanitizer?: (dirtyHtml: string) => string;
 
