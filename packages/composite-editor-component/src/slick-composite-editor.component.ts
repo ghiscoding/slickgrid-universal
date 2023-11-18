@@ -1,3 +1,4 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { deepCopy, deepMerge, emptyObject, setDeepValue } from '@slickgrid-universal/utils';
 import type {
   Column,
@@ -21,14 +22,13 @@ import type {
   SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import { SlickEventHandler } from '@slickgrid-universal/common';
 import {
-  BindingEventService,
   Constants,
   createDomElement,
   getDescendantProperty,
   numericSortComparer,
   sanitizeTextByAvailableSanitizer,
+  SlickEventHandler,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
 

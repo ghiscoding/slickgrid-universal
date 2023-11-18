@@ -204,6 +204,9 @@ importers:
 
   packages/common:
     dependencies:
+      '@slickgrid-universal/binding':
+        specifier: workspace:~
+        version: link:../binding
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:~
         version: link:../event-pub-sub
@@ -268,6 +271,9 @@ importers:
 
   packages/composite-editor-component:
     dependencies:
+      '@slickgrid-universal/binding':
+        specifier: workspace:~
+        version: link:../binding
       '@slickgrid-universal/common':
         specifier: workspace:~
         version: link:../common

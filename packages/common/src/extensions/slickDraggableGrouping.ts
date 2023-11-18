@@ -1,3 +1,4 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { isEmptyObject } from '@slickgrid-universal/utils';
 import SortableInstance, { type Options as SortableOptions, type SortableEvent } from 'sortablejs';
@@ -15,7 +16,6 @@ import type {
   Grouping,
   GroupingGetterFunction,
 } from '../interfaces/index';
-import { BindingEventService } from '../services/bindingEvent.service';
 import type { SharedService } from '../services/shared.service';
 import { createDomElement, emptyElement } from '../services/domUtilities';
 import { sortByFieldType } from '../sortComparers';

@@ -1,3 +1,4 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
 import { Constants } from './../constants';
@@ -18,7 +19,6 @@ import type {
 } from '../interfaces/index';
 import { createDomElement, getHtmlElementOffset, } from '../services/domUtilities';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
-import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
 import { textValidator } from '../editorValidators/textValidator';
 import { SlickEventData, type SlickGrid } from '../core/index';

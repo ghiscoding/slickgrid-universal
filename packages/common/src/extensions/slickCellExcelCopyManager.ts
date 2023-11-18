@@ -1,3 +1,5 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
+
 import type {
   Column,
   EditCommand,
@@ -7,7 +9,6 @@ import type {
   FormatterResultWithText,
   GridOption,
 } from '../interfaces/index';
-import { BindingEventService } from '../services/bindingEvent.service';
 import { sanitizeHtmlToText } from '../services/domUtilities';
 import { SlickCellExternalCopyManager, SlickCellSelectionModel } from './index';
 import { type SlickDataView, SlickEventHandler, SlickGlobalEditorLock, type SlickGrid } from '../core/index';

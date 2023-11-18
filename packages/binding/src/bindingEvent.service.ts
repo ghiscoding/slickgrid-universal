@@ -1,5 +1,10 @@
-import type { ElementEventListener } from '../interfaces/elementEventListener.interface';
+import type { ElementEventListener } from './interfaces';
 
+/**
+ * Create a Service to bind event listeners to DOM elements events,
+ * you can bind 1 or more elements on 1 or more events.
+ * The advantage of using this service is too easily unbind all listeners without having to pass the actual listener reference
+ */
 export class BindingEventService {
   protected _boundedEvents: ElementEventListener[] = [];
 

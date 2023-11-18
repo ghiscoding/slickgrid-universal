@@ -1,3 +1,4 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { toSentenceCase } from '@slickgrid-universal/utils';
 
 import type {
@@ -11,7 +12,6 @@ import type {
 import { OperatorType, type OperatorString, type SearchTerm } from '../enums/index';
 import { createDomElement, emptyElement, } from '../services/domUtilities';
 import type { TranslaterService } from '../services/translater.service';
-import { BindingEventService } from '../services/bindingEvent.service';
 import { type SlickGrid } from '../core/index';
 
 export class NativeSelectFilter implements Filter {

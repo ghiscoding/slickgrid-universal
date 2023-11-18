@@ -1,3 +1,4 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { toSentenceCase } from '@slickgrid-universal/utils';
 
 import type {
@@ -10,7 +11,6 @@ import type {
   OperatorDetail,
 } from '../interfaces/index';
 import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index';
-import { BindingEventService } from '../services/bindingEvent.service';
 import { buildSelectOperator, compoundOperatorNumeric, compoundOperatorString } from './filterUtilities';
 import { createDomElement, emptyElement, mapOperatorToShorthandDesignation, type TranslaterService, } from '../services';
 import { type SlickGrid } from '../core/index';

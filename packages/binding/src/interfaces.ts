@@ -19,3 +19,10 @@ export interface BoundedEventWithListener<T extends Element = Element> {
   listener: EventListenerOrEventListenerObject;
   uid: string;
 }
+
+export interface ElementEventListener {
+  element: Element;
+  eventName: string;
+  listener: EventListenerOrEventListenerObject;
+  groupName?: string;
+}

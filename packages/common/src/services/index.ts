@@ -1,5 +1,4 @@
 export * from './backendUtility.service';
-export * from './bindingEvent.service';
 export * from './collection.service';
 export * from './container.service';
 export * from './domUtilities';

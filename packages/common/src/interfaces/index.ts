@@ -52,7 +52,6 @@ export * from './editorArguments.interface';
 export * from './editorValidationResult.interface';
 export * from './editorValidator.interface';
 export * from './editUndoRedoBuffer.interface';
-export * from './elementEventListener.interface';
 export * from './elementPosition.interface';
 export * from './emptyWarning.interface';
 export * from './excelCellFormat.interface';
