@@ -5,7 +5,7 @@
       "./node_modules/@types",
       "../../node_modules/@types"
     ],
-    "outDir": "dist/commonjs"
+    "outDir": "dist/cjs"
   },
   "include": [
     "**/*"

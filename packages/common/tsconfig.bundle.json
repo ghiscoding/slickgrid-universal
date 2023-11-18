@@ -1,7 +1,7 @@
 {
   "extends": "../tsconfig.bundle.json",
   "compilerOptions": {
-    "outDir": "dist/commonjs",
+    "outDir": "dist/cjs",
     "types": [
       "jest",
       "node"
