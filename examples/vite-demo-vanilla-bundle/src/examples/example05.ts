@@ -1,5 +1,4 @@
 import {
-  BindingEventService,
   type Column,
   FieldType,
   Filters,
@@ -11,6 +10,7 @@ import {
   type TreeToggledItem,
   type TreeToggleStateChange,
 } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 

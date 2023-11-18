@@ -1,6 +1,5 @@
 import {
   AutocompleterOption,
-  BindingEventService,
   type Column,
   type ColumnEditorDualInput,
   type EditCommand,
@@ -13,6 +12,7 @@ import {
   OperatorType,
   type SlickDataView,
 } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import fetchJsonp from 'fetch-jsonp';

@@ -1,5 +1,4 @@
 import {
-  BindingEventService,
   type Column,
   type DOMEvent,
   emptyElement,
@@ -7,6 +6,7 @@ import {
   Formatters,
   type GridOption,
 } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';

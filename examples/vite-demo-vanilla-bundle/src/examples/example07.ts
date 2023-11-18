@@ -1,5 +1,4 @@
 import {
-  BindingEventService,
   type Column,
   Editors,
   FieldType,
@@ -9,6 +8,7 @@ import {
   OperatorType,
   SlickEventData,
 } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import DOMPurify from 'dompurify';

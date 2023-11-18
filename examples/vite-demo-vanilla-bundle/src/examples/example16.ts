@@ -1,5 +1,4 @@
 import {
-  BindingEventService,
   type Column,
   type EditCommand,
   Editors,
@@ -11,6 +10,7 @@ import {
   type SliderOption,
   type SliderRangeOption,
 } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';

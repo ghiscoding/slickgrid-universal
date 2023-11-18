@@ -1,10 +1,5 @@
-import {
-  BindingEventService,
-  type Column,
-  Editors,
-  FieldType,
-  type GridOption,
-} from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
+import { type Column, Editors, FieldType, type GridOption } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
