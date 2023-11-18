@@ -23,7 +23,7 @@ import {
 } from './slick.core';
 import { Draggable, MouseWheel, Resizable } from './slick.interactions';
 import { SelectionModel } from '../enums/index';
-import {
+import type {
   CellViewportRange,
   Column,
   ColumnSort,
@@ -88,7 +88,7 @@ import {
   SlickGridEventData,
   SlickGridModel,
 } from '../interfaces';
-import { AutoSize } from './models/autoSize.interface';
+import type { AutoSize } from './models/autoSize.interface';
 
 /**
  * @license
@@ -3861,7 +3861,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected appendCellHtml(stringArray: string[], row: number, cell: number, colspan: number, item: TData) {
-  // stringArray: stringBuilder containing the HTML parts
+    // stringArray: stringBuilder containing the HTML parts
     // row, cell: row and column index
     // colspan: HTML colspan
     // item: grid data for row

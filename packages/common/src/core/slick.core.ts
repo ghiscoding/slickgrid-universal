@@ -9,7 +9,7 @@
  */
 
 import { InferDOMType, MergeTypes } from '../enums/index';
-import { CSSStyleDeclarationWritable, EditController } from '../interfaces';
+import type { CSSStyleDeclarationWritable, EditController } from '../interfaces';
 
 export type Handler<ArgType = any> = (e: any, args: ArgType) => void;
 

@@ -1,7 +1,20 @@
 /* eslint-disable no-new-func */
 /* eslint-disable no-bitwise */
 import { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider';
-import { Aggregator, Grouping, GroupingFormatterItem, ItemMetadata, OnGroupCollapsedEventArgs, OnGroupExpandedEventArgs, OnRowCountChangedEventArgs, OnRowsChangedEventArgs, OnRowsOrCountChangedEventArgs, OnSelectedRowIdsChangedEventArgs, OnSetItemsCalledEventArgs, PagingInfo } from '../interfaces';
+import type {
+  Aggregator,
+  Grouping,
+  GroupingFormatterItem,
+  ItemMetadata,
+  OnGroupCollapsedEventArgs,
+  OnGroupExpandedEventArgs,
+  OnRowCountChangedEventArgs,
+  OnRowsChangedEventArgs,
+  OnRowsOrCountChangedEventArgs,
+  OnSelectedRowIdsChangedEventArgs,
+  OnSetItemsCalledEventArgs,
+  PagingInfo
+} from '../interfaces';
 import { CssStyleHash, CustomDataView } from '../interfaces/gridOption.interface';
 import {
   isDefined,

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { DraggableOption, MouseWheelOption, ResizableOption } from '../interfaces/index';
+import type { DraggableOption, MouseWheelOption, ResizableOption } from '../interfaces/index';
 import { Utils } from './slick.core';
 
 /***
