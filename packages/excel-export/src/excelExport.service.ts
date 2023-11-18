@@ -75,12 +75,12 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   /** Getter of SlickGrid DataView object */
   get _dataView(): SlickDataView {
-    return (this._grid?.getData()) as SlickDataView;
+    return this._grid?.getData<SlickDataView>();
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return this._grid?.getOptions() || {};
+    return this._grid?.getOptions() || {} as GridOption;
   }
 
   get stylesheet() {
@@ -442,7 +442,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         if ((columnDef.nameKey || columnDef.nameKey) && this._gridOptions.enableTranslate && this._translaterService?.translate) {
           headerTitle = this._translaterService.translate((columnDef.nameKey || columnDef.nameKey));
         } else {
-          headerTitle = columnDef.name || titleCase(columnDef.field);
+          headerTitle = (columnDef.name instanceof HTMLElement ? columnDef.name.innerHTML : columnDef.name) || titleCase(columnDef.field);
         }
         const skippedField = columnDef.excludeFromExport || false;
 

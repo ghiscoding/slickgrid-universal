@@ -2,11 +2,10 @@ import 'jest-extended';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { SlickCheckboxSelectColumn } from '../slickCheckboxSelectColumn';
-import { Column, OnSelectedRowsChangedEventArgs, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import type { Column, OnSelectedRowsChangedEventArgs } from '../../interfaces/index';
 import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
-import { KeyCode } from '../../enums';
-
-declare const Slick: SlickNamespace;
+import { KeyCode } from '../../enums/index';
+import { SlickEvent, SlickGrid } from '../../core/index';
 
 const addVanillaEventPropagation = function (event, commandKey = '', keyName = '', target?: HTMLElement, which: string | number = '') {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
@@ -33,8 +32,8 @@ const dataViewStub = {
   getItemByIdx: jest.fn(),
   getItemCount: jest.fn(),
   getIdPropertyName: () => 'id',
-  onPagingInfoChanged: new Slick.Event(),
-  onSelectedRowIdsChanged: new Slick.Event(),
+  onPagingInfoChanged: new SlickEvent(),
+  onSelectedRowIdsChanged: new SlickEvent(),
   setSelectedIds: jest.fn(),
 };
 
@@ -59,19 +58,19 @@ const gridStub = {
   setSelectionModel: jest.fn(),
   setSelectedRows: jest.fn(),
   updateColumnHeader: jest.fn(),
-  onClick: new Slick.Event(),
-  onHeaderClick: new Slick.Event(),
-  onHeaderRowCellRendered: new Slick.Event(),
-  onKeyDown: new Slick.Event(),
-  onSelectedRowsChanged: new Slick.Event(),
+  onClick: new SlickEvent(),
+  onHeaderClick: new SlickEvent(),
+  onHeaderRowCellRendered: new SlickEvent(),
+  onKeyDown: new SlickEvent(),
+  onSelectedRowsChanged: new SlickEvent(),
 } as unknown as SlickGrid;
 
 const mockAddon = jest.fn().mockImplementation(() => ({
   init: jest.fn(),
   dispose: jest.fn(),
   getColumnDefinition: jest.fn(),
-  onBeforeMoveRows: new Slick.Event(),
-  onMoveRows: new Slick.Event(),
+  onBeforeMoveRows: new SlickEvent(),
+  onMoveRows: new SlickEvent(),
 }));
 
 const mockRowSelectionModel = {
@@ -82,7 +81,7 @@ const mockRowSelectionModel = {
   setSelectedRows: jest.fn(),
   getSelectedRanges: jest.fn(),
   setSelectedRanges: jest.fn(),
-  onSelectedRangesChanged: new Slick.Event(),
+  onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickRowSelectionModel;
 
 const pubSubServiceStub = {
@@ -97,8 +96,6 @@ jest.mock('../../extensions/slickRowSelectionModel', () => ({
 }));
 
 describe('SlickCheckboxSelectColumn Plugin', () => {
-  Slick.RowMoveManager = mockAddon;
-
   let mockColumns: Column[];
   let plugin: SlickCheckboxSelectColumn;
 

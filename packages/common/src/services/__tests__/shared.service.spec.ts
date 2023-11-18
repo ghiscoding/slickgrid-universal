@@ -1,8 +1,10 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { SharedService } from '../shared.service';
-import { Column, CurrentPagination, SlickDataView, GridOption, SlickGrid, SlickGroupItemMetadataProvider } from '../../interfaces/index';
+import { Column, CurrentPagination, GridOption } from '../../interfaces/index';
 import { ExcelExportService } from '../excelExport.service';
+import type { SlickDataView, SlickGrid } from '../../core';
+import { SlickGroupItemMetadataProvider } from '../../extensions';
 
 jest.mock('flatpickr', () => { });
 

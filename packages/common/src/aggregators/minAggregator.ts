@@ -1,5 +1,6 @@
 import { isNumber } from '@slickgrid-universal/utils';
 
+import { SlickGroupTotals } from '../core/slickCore';
 import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class MinAggregator implements Aggregator {
@@ -65,13 +66,13 @@ export class MinAggregator implements Aggregator {
     }
   }
 
-  storeResult(groupTotals: any) {
+  storeResult(groupTotals: SlickGroupTotals & { [type: string]: Record<number | string, number | null>; }) {
     let min = this._min;
     this.addGroupTotalPropertiesWhenNotExist(groupTotals);
 
     // when dealing with Tree Data, we also need to take the parent's total and add it to the final min
     if (this._isTreeAggregator && min !== null) {
-      const parentMin = groupTotals[this._type][this._field];
+      const parentMin = groupTotals[this._type][this._field] as number;
       if (isNumber(parentMin) && parentMin < min) {
         min = parentMin;
       }

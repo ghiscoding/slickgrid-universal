@@ -15,12 +15,11 @@ import type {
   ResizerService,
   RxJsFacade,
   SharedService,
-  SlickNamespace,
   SortService,
   TranslaterService,
   TreeDataService,
 } from '@slickgrid-universal/common';
-import { GlobalGridOptions } from '@slickgrid-universal/common';
+import { GlobalGridOptions, Utils as SlickUtils } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
@@ -30,9 +29,6 @@ import { TextExportService } from '@slickgrid-universal/text-export';
 import { SlickVanillaGridBundle, UniversalContainerService } from '@slickgrid-universal/vanilla-bundle';
 
 import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options';
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
 
 export class VanillaForceGridBundle extends SlickVanillaGridBundle {
   slickCompositeEditor: SlickCompositeEditorComponent | undefined;
@@ -78,7 +74,7 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
 
   mergeGridOptions(gridOptions: GridOption) {
     const extraOptions = (gridOptions.useSalesforceDefaultGridOptions || (this._gridOptions?.useSalesforceDefaultGridOptions)) ? SalesforceGlobalGridOptions : {};
-    const options = Slick.Utils.extend(true, {}, GlobalGridOptions, extraOptions, gridOptions);
+    const options = SlickUtils.extend(true, {}, GlobalGridOptions, extraOptions, gridOptions);
 
     // also make sure to show the header row if user have enabled filtering
     if (options.enableFiltering && !options.showHeaderRow) {

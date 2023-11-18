@@ -15,17 +15,12 @@ import type {
   HeaderMenuCommandItem,
   MenuCommandItem,
   MenuOptionItem,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import type { SharedService } from '../services/shared.service';
 import { createDomElement, emptyElement } from '../services/domUtilities';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
+import { SlickEventHandler, type SlickGrid } from '../core/index';
 
 export type MenuType = 'command' | 'option';
 export type ExtendableItemTypes = HeaderButtonItem | MenuCommandItem | MenuOptionItem | 'divider';
@@ -56,7 +51,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     protected readonly sharedService: SharedService,
   ) {
     this._bindEventService = new BindingEventService();
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
   }
 
   get addonOptions(): M {

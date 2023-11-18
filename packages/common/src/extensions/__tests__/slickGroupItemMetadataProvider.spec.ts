@@ -1,8 +1,7 @@
 import { KeyCode } from '../../enums/index';
-import { Column, GridOption, GroupItemMetadataProviderOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces';
+import type { Column, GridOption, GroupItemMetadataProviderOption } from '../../interfaces';
 import { SlickGroupItemMetadataProvider } from '../slickGroupItemMetadataProvider';
-
-declare const Slick: SlickNamespace;
+import { type SlickDataView, SlickEvent, SlickGrid, SlickGroup } from '../../core/index';
 
 const gridOptionMock = {
   enablePagination: true,
@@ -26,7 +25,7 @@ const dataViewStub = {
   reSort: jest.fn(),
   sort: jest.fn(),
   setItems: jest.fn(),
-  onRowCountChanged: new Slick.Event(),
+  onRowCountChanged: new SlickEvent(),
 } as unknown as SlickDataView;
 
 const gridStub = {
@@ -45,9 +44,9 @@ const gridStub = {
   setColumns: jest.fn(),
   setOptions: jest.fn(),
   setSortColumns: jest.fn(),
-  onClick: new Slick.Event(),
-  onKeyDown: new Slick.Event(),
-  onSort: new Slick.Event(),
+  onClick: new SlickEvent(),
+  onKeyDown: new SlickEvent(),
+  onSort: new SlickEvent(),
 } as unknown as SlickGrid;
 
 describe('GroupItemMetadataProvider Service', () => {
@@ -63,6 +62,7 @@ describe('GroupItemMetadataProvider Service', () => {
   });
 
   afterEach(() => {
+    service?.destroy();
     service?.dispose();
   });
 
@@ -178,7 +178,7 @@ describe('GroupItemMetadataProvider Service', () => {
         selectable: false,
         focusable: mockOptions.groupFocusable,
         cssClasses: `${mockOptions.groupCssClass} slick-group-level-2`,
-        formatter: false,
+        formatter: undefined,
         columns: {
           0: {
             colspan: '*',
@@ -224,7 +224,7 @@ describe('GroupItemMetadataProvider Service', () => {
     let stopPropagationSpy;
     let expandGroupSpy;
     let clickEvent: Event;
-    const group = new Slick.Group();
+    const group = new SlickGroup();
     const mockRange = { top: 10, bottom: 25 } as any;
 
     beforeEach(() => {
@@ -286,7 +286,7 @@ describe('GroupItemMetadataProvider Service', () => {
     let stopPropagationSpy;
     let expandGroupSpy;
     let keyDownEvent: Event;
-    const group = new Slick.Group();
+    const group = new SlickGroup();
     const mockActiveCell = { row: 0, cell: 3 };
     const mockRange = { top: 10, bottom: 25 } as any;
 

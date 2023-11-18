@@ -1,5 +1,4 @@
-import type { EditorArguments } from './editorArguments.interface';
-import type { EditorValidationResult } from './editorValidationResult.interface';
+import type { EditorArguments, EditorValidationResult } from './index';
 
 /**
  * SlickGrid Editor interface, more info can be found on the SlickGrid repo
@@ -11,6 +10,8 @@ export interface Editor {
 
   /** is the Editor disabled when we first open it? This could happen when we use "collectionAsync" and we wait for the "collection" to be filled before enabling the Editor. */
   disabled?: boolean;
+
+  keyCaptureList?: string;
 
   /** Initialize the Editor */
   init: (args?: EditorArguments) => void;
@@ -85,6 +86,8 @@ export interface Editor {
    * it may also be called by the grid if if the row/cell being edited is updated via grid.updateRow/updateCell
    */
   loadValue: (item: any) => void;
+
+  preClick?: () => void;
 
   /**
    * Return the value(s) being edited by the user in a serialized form

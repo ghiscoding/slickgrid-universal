@@ -1,19 +1,19 @@
 import {
   Aggregators,
   BindingEventService,
-  Column,
-  EditCommand,
+  type Column,
+  type EditCommand,
   Editors,
   FieldType,
   FileType,
   Filters,
   Formatters,
-  GridOption,
-  Grouping,
-  GroupingGetterFunction,
+  type GridOption,
+  type Grouping,
+  type GroupingGetterFunction,
   GroupTotalFormatters,
-  SlickDraggableGrouping,
-  SlickNamespace,
+  type SlickDraggableGrouping,
+  SlickGlobalEditorLock,
   SortComparers,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
@@ -23,9 +23,6 @@ import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bu
 
 import { ExampleGridOptions } from './example-grid-options';
 import './example03.scss?inline';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
 
 interface ReportItem {
   title: string;
@@ -37,14 +34,14 @@ interface ReportItem {
   effortDriven: boolean;
 }
 
-export default class Example3 {
+export default class Example03 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column<ReportItem & { action: string; }>[];
   gridOptions: GridOption;
   dataset: any[];
   editCommandQueue: EditCommand[] = [];
   excelExportService: ExcelExportService;
-  sgb: SlickVanillaGridBundle;
+  sgb: SlickVanillaGridBundle<ReportItem & { action: string; }>;
   durationOrderByCount = false;
   draggableGroupingPlugin: SlickDraggableGrouping;
   loadingClass = '';
@@ -374,6 +371,9 @@ export default class Example3 {
     if (this.sgb) {
       this.sgb.dataset = tmpArray;
     }
+    // const item = this.sgb.dataView?.getItemById<ReportItem & { myAction: string; }>(0);
+    // const item = this.sgb?.dataView?.getItemById(0);
+    // console.log('item', item);
     return tmpArray;
   }
 
@@ -504,7 +504,7 @@ export default class Example3 {
 
   undo() {
     const command = this.editCommandQueue.pop();
-    if (command && Slick.GlobalEditorLock.cancelCurrentEdit()) {
+    if (command && SlickGlobalEditorLock.cancelCurrentEdit()) {
       command.undo();
       this.sgb?.slickGrid?.gotoCell(command.row, command.cell, false);
     }

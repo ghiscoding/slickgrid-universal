@@ -1,6 +1,7 @@
-import { Column, SlickGrid } from '../../interfaces/index';
+import type { Column } from '../../interfaces/index';
 import { translateBooleanFormatter } from '../translateBooleanFormatter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import type { SlickGrid } from '../../core';
 
 describe('the Translate Boolean Formatter', () => {
   let translateService: TranslateServiceStub;
@@ -51,7 +52,7 @@ describe('the Translate Boolean Formatter', () => {
 
   it('should return the translated value when value passed is a string and translater service is passed as a ColumnDef Params without any Grid object', async () => {
     await translateService.use('fr');
-    const output = translateBooleanFormatter(1, 1, 'TRUE', { params: { translater: translateService } } as Column, {}, {} as any);
+    const output = translateBooleanFormatter(1, 1, 'TRUE', { params: { translater: translateService } } as Column, {}, gridStub);
     expect(output).toBe('Vrai');
   });
 

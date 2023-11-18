@@ -1,4 +1,4 @@
-import { Aggregators, Column, Formatters, GridOption, Grouping, GroupTotalFormatters, SlickCellRangeSelector, SlickCellSelectionModel, SlickRowSelectionModel } from '@slickgrid-universal/common';
+import { Aggregators, type Column, Formatters, type GridOption, type Grouping, GroupTotalFormatters, SlickCellRangeSelector, SlickCellSelectionModel, SlickRowSelectionModel } from '@slickgrid-universal/common';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 
@@ -95,14 +95,13 @@ export default class Example17 {
     // mock a dataset
     const mockDataset: any[] = [];
     for (let i = 0; i < count; i++) {
-      const someDates = ['2009-01-01', '2009-02-02', '2009-03-03'];
       mockDataset[i] = {
         id: i,
         title: 'Task ' + i,
         duration: i % 20,
         percentComplete: Math.round(Math.random() * 100),
-        start: someDates[Math.floor((Math.random() * 2))],
-        finish: someDates[Math.floor((Math.random() * 2))],
+        start: '2009-01-01',
+        finish: '2009-05-05',
         cost: Math.round(Math.random() * 10000) / 100,
         effortDriven: (i % 5 === 0)
       };

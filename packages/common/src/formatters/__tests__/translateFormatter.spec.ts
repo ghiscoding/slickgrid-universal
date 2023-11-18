@@ -1,7 +1,8 @@
 
-import { Column, SlickGrid } from '../../interfaces/index';
+import type { Column } from '../../interfaces/index';
 import { translateFormatter } from '../translateFormatter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import type { SlickGrid } from '../../core';
 
 describe('the Translate Formatter', () => {
   let translateService: TranslateServiceStub;
@@ -47,7 +48,7 @@ describe('the Translate Formatter', () => {
 
   it('should return the translated value when value passed is a string and translater service is passed as a ColumnDef Params without any Grid object', async () => {
     await translateService.use('fr');
-    const output = translateFormatter(1, 1, 'HELLO', { params: { translater: translateService } } as Column, {}, {} as any);
+    const output = translateFormatter(1, 1, 'HELLO', { params: { translater: translateService } } as Column, {}, gridStub);
     expect(output).toBe('Bonjour');
   });
 

@@ -24,7 +24,6 @@ import type {
   FilterCallbackArg,
   GridOption,
   Locale,
-  SlickGrid,
 } from '../interfaces/index';
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter';
 import { createDomElement, emptyElement, } from '../services';
@@ -37,6 +36,7 @@ import type { TranslaterService } from '../services/translater.service';
 import { renderCollectionOptionsAsync } from './filterUtilities';
 import type { RxJsFacade, Subscription } from '../services/rxjsFacade';
 import { Constants } from '../constants';
+import { type SlickGrid } from '../core/index';
 
 export class AutocompleterFilter<T extends AutocompleteItem = any> implements Filter {
   protected _autocompleterOptions!: Partial<AutocompleterOption<T>>;
@@ -137,7 +137,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+    return this.grid?.getOptions() ?? {};
   }
 
   /** Kraaden AutoComplete instance */

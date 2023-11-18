@@ -1,11 +1,12 @@
 import 'jest-extended';
+
 import { Editors } from '../index';
 import { AutocompleterEditor } from '../autocompleterEditor';
 import { KeyCode, FieldType } from '../../enums/index';
-import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { SlickDataView, SlickEvent, type SlickGrid } from '../../core/index';
 
-declare const Slick: SlickNamespace;
 const KEY_CHAR_A = 97;
 const containerId = 'demo-container';
 
@@ -35,8 +36,8 @@ const gridStub = {
   getEditorLock: () => getEditorLockMock,
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-  onBeforeEditCell: new Slick.Event(),
-  onCompositeEditorChange: new Slick.Event(),
+  onBeforeEditCell: new SlickEvent(),
+  onCompositeEditorChange: new SlickEvent(),
 } as unknown as SlickGrid;
 
 describe('AutocompleterEditor', () => {
@@ -767,7 +768,7 @@ describe('AutocompleterEditor', () => {
       jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       editor = new AutocompleterEditor(editorArguments);
       editor.setValue({ value: 'male', label: 'Male' }, true);
 
@@ -783,7 +784,7 @@ describe('AutocompleterEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
-      });
+      } as any);
 
       editor = new AutocompleterEditor(editorArguments);
       const disableSpy = jest.spyOn(editor, 'disable');
@@ -799,10 +800,10 @@ describe('AutocompleterEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
 
       editor = new AutocompleterEditor(editorArguments);
       editor.loadValue(mockItemData);
@@ -825,10 +826,10 @@ describe('AutocompleterEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.compositeEditorOptions = {
         excludeDisabledFieldFormValues: true
       };
@@ -851,7 +852,7 @@ describe('AutocompleterEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.compositeEditorOptions = {
         excludeDisabledFieldFormValues: true
       };
@@ -875,7 +876,7 @@ describe('AutocompleterEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.compositeEditorOptions = {
         excludeDisabledFieldFormValues: true
       };
@@ -899,10 +900,10 @@ describe('AutocompleterEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.autoCommitEdit = true;
       (mockColumn.internalColumnEditor as ColumnEditor).collection = ['male', 'female'];
       mockItemData = { id: 123, gender: 'female', isActive: true };
@@ -927,7 +928,7 @@ describe('AutocompleterEditor', () => {
         jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
         const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
           getReturnValue: () => false
-        });
+        } as any);
         mockColumn.internalColumnEditor = {
           collection: ['Other', 'Male', 'Female'],
           collectionOverride: (inputCollection) => inputCollection.filter(item => item !== 'other')

@@ -1,4 +1,12 @@
-import { Column, ExcelStylesheet, FieldType, Formatters, GridOption, GroupTotalFormatters, SlickGrid } from '@slickgrid-universal/common';
+import {
+  Column,
+  ExcelStylesheet,
+  FieldType,
+  Formatters,
+  GridOption,
+  GroupTotalFormatters,
+  SlickGrid
+} from '@slickgrid-universal/common';
 
 import { getExcelFormatFromGridFormatter, getExcelNumberCallback, getNumericFormatterOptions, useCellFormatByFieldType } from './excelUtils';
 

@@ -9,17 +9,12 @@ import type {
   HeaderButtonOnCommandArgs,
   HeaderButtonOption,
   OnHeaderCellRenderedEventArgs,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import type { SharedService } from '../services/shared.service';
 import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from './menuBaseClass';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
+import { SlickEventHandler, type SlickGrid } from '../core/index';
 
 /**
  * A plugin to add custom buttons to column headers.
@@ -44,7 +39,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
     this._menuCssPrefix = 'slick-header-button';
     this._camelPluginName = 'headerButtons';
     this._bindEventService = new BindingEventService();
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
     this.init(sharedService.gridOptions.headerButton);
   }
 

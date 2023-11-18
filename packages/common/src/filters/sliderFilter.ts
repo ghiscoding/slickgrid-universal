@@ -1,5 +1,6 @@
 import { hasData, toSentenceCase } from '@slickgrid-universal/utils';
 
+import { SlickEventData, type SlickGrid } from '../core/index';
 import { Constants } from '../constants';
 import { type OperatorString, OperatorType, type SearchTerm, } from '../enums/index';
 import type {
@@ -11,8 +12,6 @@ import type {
   FilterCallback,
   GridOption,
   OperatorDetail,
-  SlickGrid,
-  SlickNamespace,
   SliderOption,
   SliderRangeOption,
   SliderType,
@@ -23,7 +22,6 @@ import type { TranslaterService } from '../services/translater.service';
 import { mapOperatorToShorthandDesignation } from '../services/utilities';
 import { buildSelectOperator, compoundOperatorNumeric, getFilterOptionByName } from './filterUtilities';
 
-declare const Slick: SlickNamespace;
 const DEFAULT_SLIDER_TRACK_FILLED_COLOR = '#86bff8';
 const GAP_BETWEEN_SLIDER_HANDLES = 0;
 const Z_INDEX_MIN_GAP = 20; // gap in Px before we change z-index so that lowest/highest handle doesn't block each other
@@ -421,7 +419,7 @@ export class SliderFilter implements Filter {
     // the minimum requirements for tooltip to work are the columnDef and targetElement
     this.grid.onHeaderRowMouseEnter.notify(
       { column: this.columnDef, grid: this.grid },
-      { ...new Slick.EventData(), target: this._argFilterContainerElm }
+      { ...new SlickEventData(), ...{ target: this._argFilterContainerElm } as unknown as Event }
     );
   }
 
@@ -484,7 +482,7 @@ export class SliderFilter implements Filter {
     // also trigger mouse enter event on the filter in case a SlickCustomTooltip is attached
     this.grid.onHeaderRowMouseEnter.notify(
       { column: this.columnDef, grid: this.grid },
-      { ...new Slick.EventData(), target: this._argFilterContainerElm }
+      { ...new SlickEventData(), ...{ target: this._argFilterContainerElm } as unknown as Event }
     );
   }
 

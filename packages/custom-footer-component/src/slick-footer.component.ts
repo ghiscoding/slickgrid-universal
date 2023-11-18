@@ -7,17 +7,14 @@ import type {
   Locale,
   Metrics,
   MetricTexts,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
   Subscription,
+  SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import { Constants, createDomElement, sanitizeTextByAvailableSanitizer, } from '@slickgrid-universal/common';
+import { Constants, createDomElement, sanitizeTextByAvailableSanitizer, SlickEventHandler, } from '@slickgrid-universal/common';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { BindingHelper } from '@slickgrid-universal/binding';
 
-declare const Slick: SlickNamespace;
 export class SlickFooterComponent {
   protected _bindingHelper: BindingHelper;
   protected _enableTranslate = false;
@@ -43,7 +40,7 @@ export class SlickFooterComponent {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+    return this.grid?.getOptions() ?? {};
   }
 
   get locales(): Locale {
@@ -72,7 +69,7 @@ export class SlickFooterComponent {
   constructor(protected readonly grid: SlickGrid, protected readonly customFooterOptions: CustomFooterOption, protected readonly pubSubService: BasePubSubService, protected readonly translaterService?: TranslaterService) {
     this._bindingHelper = new BindingHelper();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
     this._enableTranslate = this.gridOptions?.enableTranslate ?? false;
     this._isLeftFooterOriginallyEmpty = !(this.gridOptions.customFooterOptions?.leftFooterText);
     this._isRightFooterOriginallyEmpty = !(this.gridOptions.customFooterOptions?.rightFooterText);

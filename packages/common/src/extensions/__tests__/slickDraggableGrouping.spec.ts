@@ -28,18 +28,18 @@ jest.mock('sortablejs', () => sortableMock);
 import 'jest-extended';
 import { SortableOptions } from 'sortablejs';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
+import { deepCopy } from '@slickgrid-universal/utils';
 
 import { Aggregators } from '../../aggregators/aggregators.index';
 import { SlickDraggableGrouping } from '../slickDraggableGrouping';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
-import { Column, DraggableGroupingOption, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import type { Column, DraggableGroupingOption, GridOption } from '../../interfaces/index';
 import { BackendUtilityService, createDomElement, } from '../../services';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { SortDirectionNumber } from '../../enums';
-import { deepCopy } from '@slickgrid-universal/utils';
+import { SortDirectionNumber } from '../../enums/index';
+import { SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
 
-declare const Slick: SlickNamespace;
 const GRID_UID = 'slickgrid12345';
 
 let addonOptions: DraggableGroupingOption = {
@@ -85,10 +85,10 @@ const gridStub = {
   invalidate: jest.fn(),
   registerPlugin: jest.fn(),
   updateColumnHeader: jest.fn(),
-  onColumnsReordered: new Slick.Event(),
-  onHeaderCellRendered: new Slick.Event(),
-  onHeaderMouseEnter: new Slick.Event(),
-  onMouseEnter: new Slick.Event(),
+  onColumnsReordered: new SlickEvent(),
+  onHeaderCellRendered: new SlickEvent(),
+  onHeaderMouseEnter: new SlickEvent(),
+  onMouseEnter: new SlickEvent(),
 } as unknown as SlickGrid;
 
 const mockColumns = [
@@ -225,8 +225,8 @@ describe('Draggable Grouping Plugin', () => {
     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableTranslate: true });
     translateService.use('fr');
     plugin.init(gridStub, { ...addonOptions, groupIconCssClass: 'mdi mdi-drag' });
-    const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-    gridStub.onHeaderCellRendered.notify({ column: mockColumns[2], node: headerDiv, grid: gridStub }, eventData, gridStub);
+    const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+    gridStub.onHeaderCellRendered.notify({ column: mockColumns[2], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
     const groupableElm = headerDiv.querySelector('.slick-column-groupable') as HTMLSpanElement;
 
     expect(headerDiv.style.cursor).toBe('pointer');

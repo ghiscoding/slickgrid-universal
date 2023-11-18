@@ -1,8 +1,9 @@
 import { FieldType, OperatorType } from '../../enums/index';
-import { BackendServiceApi, Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { BackendServiceApi, Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { Filters } from '../index';
 import { CompoundInputFilter } from '../compoundInputFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { SlickGrid } from '../../core/index';
 
 const containerId = 'demo-container';
 

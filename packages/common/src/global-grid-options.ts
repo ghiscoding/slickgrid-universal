@@ -5,7 +5,7 @@ import type { Column, EmptyWarning, GridOption, TreeDataOption } from './interfa
 import { Filters } from './filters';
 
 /** Global Grid Options Defaults */
-export const GlobalGridOptions: GridOption = {
+export const GlobalGridOptions: Partial<GridOption> = {
   alwaysShowVerticalScroll: true,
   autoEdit: false,
   asyncEditorLoading: false,

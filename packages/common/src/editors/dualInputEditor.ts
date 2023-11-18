@@ -12,17 +12,12 @@ import type {
   EditorValidator,
   EditorValidationResult,
   GridOption,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
 } from '../interfaces/index';
 import { getDescendantProperty } from '../services/utilities';
 import { floatValidator, integerValidator, textValidator } from '../editorValidators';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { createDomElement } from '../services/domUtilities';
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
+import { SlickEventData, SlickEventHandler, type SlickGrid } from '../core';
 
 /*
  * An example of a 'detached' editor.
@@ -59,7 +54,7 @@ export class DualInputEditor implements Editor {
     }
     this.grid = args.grid;
     this.gridOptions = (this.grid.getOptions() || {}) as GridOption;
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
     this._bindEventService = new BindingEventService();
     this.init();
 
@@ -73,7 +68,7 @@ export class DualInputEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef && this.columnDef.internalColumnEditor || {};
+    return this.columnDef?.internalColumnEditor || {} as ColumnEditor;
   }
 
   /** Getter for the item data context object */
@@ -547,7 +542,7 @@ export class DualInputEditor implements Editor {
     }
     grid.onCompositeEditorChange.notify(
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
-      { ...new Slick.EventData(), ...event }
+      { ...new SlickEventData(), ...event as Event }
     );
   }
 

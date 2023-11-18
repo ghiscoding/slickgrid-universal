@@ -5,5 +5,5 @@ export interface DataViewOption {
   inlineFilters?: boolean;
 
   /** Optionally provide a Group Item Metatadata Provider when using Grouping/DraggableGrouping feature */
-  groupItemMetadataProvider?: SlickGroupItemMetadataProvider;
+  groupItemMetadataProvider?: SlickGroupItemMetadataProvider | null;
 }

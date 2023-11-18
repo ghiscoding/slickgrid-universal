@@ -3,16 +3,16 @@ import type {
   Column,
   ContainerService,
   CustomTooltipOption,
+  DOMEvent,
   Formatter,
+  FormatterResultWithHtml,
+  FormatterResultWithText,
   GridOption,
   Observable,
   RxJsFacade,
   SharedService,
   SlickDataView,
-  SlickEventData,
-  SlickEventHandler,
   SlickGrid,
-  SlickNamespace,
   Subscription,
 } from '@slickgrid-universal/common';
 import {
@@ -23,10 +23,8 @@ import {
   findFirstElementAttribute,
   getHtmlElementOffset,
   sanitizeTextByAvailableSanitizer,
+  SlickEventHandler,
 } from '@slickgrid-universal/common';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
 
 type CellType = 'slick-cell' | 'slick-header-column' | 'slick-headerrow-column';
 
@@ -55,6 +53,8 @@ type CellType = 'slick-cell' | 'slick-header-column' | 'slick-headerrow-column';
  *  };
  */
 export class SlickCustomTooltip {
+  name: 'CustomTooltip' = 'CustomTooltip' as const;
+
   protected _addonOptions?: CustomTooltipOption;
   protected _cellAddonOptions?: CustomTooltipOption;
   protected _cellNodeElm?: HTMLDivElement;
@@ -75,10 +75,9 @@ export class SlickCustomTooltip {
   } as CustomTooltipOption;
   protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
-  name: 'CustomTooltip' = 'CustomTooltip' as const;
 
   constructor() {
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
   }
 
   get addonOptions(): CustomTooltipOption | undefined {
@@ -102,7 +101,7 @@ export class SlickCustomTooltip {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return this._grid.getOptions() || {};
+    return this._grid?.getOptions() || {} as GridOption;
   }
 
   /** Getter for the grid uid */
@@ -180,7 +179,7 @@ export class SlickCustomTooltip {
   }
 
   /** depending on the selector type, execute the necessary handler code */
-  protected handleOnHeaderMouseEnterByType(event: SlickEventData, args: any, selector: CellType) {
+  protected handleOnHeaderMouseEnterByType(event: DOMEvent<HTMLDivElement>, args: any, selector: CellType) {
     this._cellType = selector;
 
     // before doing anything, let's remove any previous tooltip before
@@ -221,7 +220,7 @@ export class SlickCustomTooltip {
     }
   }
 
-  protected async handleOnMouseEnter(event: SlickEventData) {
+  protected async handleOnMouseEnter(event: DOMEvent<HTMLDivElement>) {
     this._cellType = 'slick-cell';
 
     // before doing anything, let's remove any previous tooltip before
@@ -230,7 +229,7 @@ export class SlickCustomTooltip {
 
     if (event && this._grid) {
       // get cell only when it's possible (ie, Composite Editor will not be able to get cell and so it will never show any tooltip)
-      const targetClassName = (event?.target as HTMLDivElement)?.closest('.slick-cell')?.className;
+      const targetClassName = event?.target?.closest('.slick-cell')?.className;
       const cell = (targetClassName && /l\d+/.exec(targetClassName || '')) ? this._grid.getCellFromEvent(event) : null;
 
       if (cell) {
@@ -301,9 +300,9 @@ export class SlickCustomTooltip {
    */
   protected parseFormatterAndSanitize(formatterOrText: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown): string {
     if (typeof formatterOrText === 'function') {
-      const tooltipText = formatterOrText(cell.row, cell.cell, value, columnDef, item, this._grid);
-      const formatterText = (typeof tooltipText === 'object' && tooltipText?.text) ? tooltipText.text : (typeof tooltipText === 'string' ? tooltipText : '');
-      return sanitizeTextByAvailableSanitizer(this.gridOptions, formatterText);
+      const tooltipResult = formatterOrText(cell.row, cell.cell, value, columnDef, item, this._grid);
+      const formatterText = (Object.prototype.toString.call(tooltipResult) !== '[object Object]' ? tooltipResult : (tooltipResult as FormatterResultWithHtml).html || (tooltipResult as FormatterResultWithText).text);
+      return sanitizeTextByAvailableSanitizer(this.gridOptions, (formatterText instanceof HTMLElement ? formatterText.textContent : formatterText as string) || '');
     } else if (typeof formatterOrText === 'string') {
       return sanitizeTextByAvailableSanitizer(this.gridOptions, formatterOrText);
     }

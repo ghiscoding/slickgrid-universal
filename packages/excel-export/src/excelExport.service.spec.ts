@@ -20,7 +20,7 @@ import * as ExcelBuilder from 'excel-builder-webpacker';
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 import { ExcelExportService } from './excelExport.service';
-import { getExcelNumberCallback, getExcelSameInputDataCallback, useCellFormatByFieldType } from './excelUtils';
+import { getExcelSameInputDataCallback, useCellFormatByFieldType } from './excelUtils';
 
 const pubSubServiceStub = {
   publish: jest.fn(),

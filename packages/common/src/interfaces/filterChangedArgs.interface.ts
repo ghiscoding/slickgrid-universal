@@ -1,9 +1,6 @@
-import type { Column } from './column.interface';
-import type { ColumnFilters } from './columnFilters.interface';
-import type { OperatorType } from '../enums/operatorType.enum';
-import type { OperatorString } from '../enums/operatorString.type';
-import type { SearchTerm } from '../enums/searchTerm.type';
-import type { SlickGrid } from './slickGrid.interface';
+import type { OperatorString, OperatorType, SearchTerm } from '../enums/index';
+import type { Column, ColumnFilters } from './index';
+import type { SlickGrid } from '../core/index';
 
 export interface FilterChangedArgs {
   clearFilterTriggered?: boolean;

@@ -1,15 +1,15 @@
 import {
   Aggregators,
   BindingEventService,
-  Column,
+  type Column,
   FieldType,
   Filters,
   FileType,
   Formatters,
-  GridOption,
-  Grouping,
+  type GridOption,
+  type Grouping,
   GroupTotalFormatters,
-  SliderOption,
+  type SliderOption,
   SortComparers,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
@@ -23,7 +23,7 @@ import '../material-styles.scss';
 
 const NB_ITEMS = 500;
 
-export default class Example2 {
+export default class Example02 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;

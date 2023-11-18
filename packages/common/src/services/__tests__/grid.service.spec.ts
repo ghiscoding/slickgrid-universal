@@ -2,10 +2,10 @@ import 'jest-extended';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { FilterService, GridService, GridStateService, PaginationService, SharedService, SortService, TreeDataService } from '../index';
-import { GridOption, CellArgs, Column, OnEventArgs, SlickGrid, SlickDataView, SlickNamespace } from '../../interfaces/index';
+import { GridOption, CellArgs, Column, OnEventArgs } from '../../interfaces/index';
 import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
+import { type SlickDataView, SlickEvent, type SlickGrid } from '../../core/index';
 
-declare const Slick: SlickNamespace;
 jest.useFakeTimers();
 jest.mock('flatpickr', () => { });
 
@@ -18,7 +18,7 @@ const mockRowSelectionModel = {
   setSelectedRows: jest.fn(),
   getSelectedRanges: jest.fn(),
   setSelectedRanges: jest.fn(),
-  onSelectedRangesChanged: new Slick.Event(),
+  onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickRowSelectionModel;
 
 jest.mock('../../extensions/slickRowSelectionModel', () => ({
@@ -605,7 +605,7 @@ describe('Grid Service', () => {
     });
 
     it('should throw an error when 1st argument for the item object is missing', () => {
-      jest.spyOn(gridStub, 'getOptions').mockReturnValue(undefined as any);
+      jest.spyOn(gridStub, 'getData').mockReturnValueOnce(undefined as any);
       expect(() => service.addItem(null as any)).toThrowError('[Slickgrid-Universal] We could not find SlickGrid Grid, DataView objects');
     });
 

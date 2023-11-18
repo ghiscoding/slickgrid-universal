@@ -20,13 +20,13 @@ import type {
   FlatpickrOption,
   GridOption,
   OperatorDetail,
-  SlickGrid,
 } from '../interfaces/index';
 import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
 import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
 import { mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
+import type { SlickGrid } from '../core/index';
 
 export class DateFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -54,12 +54,12 @@ export class DateFilter implements Filter {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get gridOptions(): GridOption {
-    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+    return this.grid?.getOptions() ?? {};
   }
 
   /** Getter for the Column Filter */
   get columnFilter(): ColumnFilter {
-    return this.columnDef && this.columnDef.filter || {};
+    return this.columnDef?.filter || {} as ColumnFilter;
   }
 
   /** Getter for the Current Date(s) selected */

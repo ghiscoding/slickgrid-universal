@@ -49,6 +49,13 @@ export class BindingEventService {
     }
   }
 
+  unbindByEventName(element: Element | Window, eventName: string) {
+    const boundedEvent = this._boundedEvents.find(e => e.element === element && e.eventName === eventName);
+    if (boundedEvent) {
+      this.unbind(boundedEvent.element, boundedEvent.eventName, boundedEvent.listener);
+    }
+  }
+
   /**
    * Unbind all event listeners that were bounded, optionally provide a group name to unbind all listeners assigned to that specific group only.
    */

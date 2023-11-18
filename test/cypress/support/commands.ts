@@ -45,5 +45,5 @@ Cypress.Commands.add('getCell', (row: number, col: number, viewport = 'topLeft',
   const canvasSelectorX = position.x ? `.grid-canvas-${position.x}` : '';
   const canvasSelectorY = position.y ? `.grid-canvas-${position.y}` : '';
 
-  return cy.get(`${parentSelector} ${canvasSelectorX}${canvasSelectorY} [style="top:${row * rowHeight}px"] > .slick-cell:nth(${col})`);
+  return cy.get(`${parentSelector} ${canvasSelectorX}${canvasSelectorY} [style="top: ${row * rowHeight}px;"] > .slick-cell:nth(${col})`);
 });

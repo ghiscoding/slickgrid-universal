@@ -30,6 +30,22 @@ describe('BindingEvent Service', () => {
     expect(addEventSpy).toHaveBeenCalledWith('click', mockCallback, undefined);
   });
 
+  it('should be able to bind and unbindByEventName an event', () => {
+    const mockElm = { addEventListener: jest.fn() } as unknown as HTMLElement;
+    const mockCallback = jest.fn();
+    const unbindSpy = jest.spyOn(service, 'unbind');
+    const addEventSpy = jest.spyOn(mockElm, 'addEventListener');
+    const elm = document.createElement('input');
+    div.appendChild(elm);
+
+    service.bind(mockElm, 'click', mockCallback);
+    service.unbindByEventName(mockElm, 'click');
+
+    expect(service.boundedEvents.length).toBe(1);
+    expect(addEventSpy).toHaveBeenCalledWith('click', mockCallback, undefined);
+    expect(unbindSpy).toHaveBeenCalledWith(mockElm, 'click', expect.anything());
+  });
+
   it('should be able to bind an event with listener and options to an element', () => {
     const mockElm = { addEventListener: jest.fn() } as unknown as HTMLElement;
     const mockCallback = jest.fn();

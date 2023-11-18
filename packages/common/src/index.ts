@@ -46,3 +46,13 @@ export { SlickgridConfig } from './slickgrid-config';
 // re-export MultipleSelectOption to avoid breaking previous code implementation
 export { MultipleSelectOption } from 'multiple-select-vanilla';
 
+// re-export SlickGrid core files
+export {
+  SlickDataView,
+  SlickEvent,
+  SlickEventData,
+  SlickEventHandler,
+  SlickGlobalEditorLock,
+  SlickGrid,
+  Utils,
+} from './core/index';

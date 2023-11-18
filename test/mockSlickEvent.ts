@@ -1,44 +1,45 @@
-import { Handler, SlickEvent, SlickEventData, SlickEventHandler } from '@slickgrid-universal/common';
+import { Handler, SlickEvent, SlickEventData } from '@slickgrid-universal/common';
+type MergeTypes<A, B> = { [key in keyof A]: key extends keyof B ? B[key] : A[key]; } & B;
 
-export class MockSlickEvent<T = any> implements SlickEvent {
-  private _handlers = [];
+export class MockSlickEvent<ArgType = any> implements SlickEvent {
+  protected handlers: Handler<any>[] = [];
 
-  notify(args: T, event?: SlickEventData, scope?: any) {
+  notify(args: ArgType, event?: SlickEventData | Event | MergeTypes<SlickEventData, Event> | null, scope?: any) {
     scope = scope || this;
 
-    let returnValue;
-    for (let i = 0; i < this._handlers.length; i++) {
-      returnValue = this._handlers[i].call(scope, event, args);
+    let returnValue: any;
+    for (let i = 0; i < this.handlers.length; i++) {
+      returnValue = this.handlers[i].call(scope, event as SlickEventData, args);
     }
 
     return returnValue;
   }
 
-  subscribe(handler: (e: SlickEventData, data: Partial<T>) => void): any {
-    this._handlers.push(handler);
+  subscribe(handler: Handler<ArgType>): any {
+    this.handlers.push(handler);
   }
 
-  unsubscribe(handler: (e: SlickEventData, data?: any) => void) {
-    this._handlers.forEach((handlerFn, index) => {
+  unsubscribe(handler?: Handler<ArgType>) {
+    this.handlers.forEach((handlerFn, index) => {
       if (handlerFn === handler) {
-        this._handlers.splice(index, 1);
+        this.handlers.splice(index, 1);
       }
     });
   }
 }
 
-export class MockSlickEventHandler implements SlickEventHandler {
-  private _handlers: any[] = [];
+export class MockSlickEventHandler {
+  protected handlers: any[] = [];
 
   notify(eventName: string, data?: any) {
-    const pubSub = this._handlers.find(subscription => subscription.name === eventName);
+    const pubSub = this.handlers.find(subscription => subscription.name === eventName);
     if (typeof pubSub?.handler === 'function') {
       pubSub.handler(data);
     }
   }
 
   subscribe<T = any>(event: MockSlickEvent, handler: Handler<T>): any {
-    this._handlers.push({ event, handler });
+    this.handlers.push({ event, handler });
     if (event.subscribe) {
       event.subscribe(handler);
     }
@@ -47,11 +48,11 @@ export class MockSlickEventHandler implements SlickEventHandler {
   }
 
   unsubscribe<T = any>(event: MockSlickEvent, handler: Handler<T>) {
-    let i = this._handlers.length;
+    let i = this.handlers.length;
     while (i--) {
-      if (this._handlers[i].event === event &&
-        this._handlers[i].handler === handler) {
-        this._handlers.splice(i, 1);
+      if (this.handlers[i].event === event &&
+        this.handlers[i].handler === handler) {
+        this.handlers.splice(i, 1);
         if (event.unsubscribe) {
           event.unsubscribe(handler);
         }
@@ -63,13 +64,13 @@ export class MockSlickEventHandler implements SlickEventHandler {
   }
 
   unsubscribeAll() {
-    let i = this._handlers.length;
+    let i = this.handlers.length;
     while (i--) {
-      if (this._handlers[i].event.unsubscribe) {
-        this._handlers[i].event.unsubscribe(this._handlers[i].handler);
+      if (this.handlers[i].event.unsubscribe) {
+        this.handlers[i].event.unsubscribe(this.handlers[i].handler);
       }
     }
-    this._handlers = [];
+    this.handlers = [];
 
     return this;  // allow chaining
   }

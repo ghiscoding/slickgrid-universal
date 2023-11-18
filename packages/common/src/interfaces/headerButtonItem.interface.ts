@@ -1,5 +1,5 @@
-import type { Column } from './column.interface';
-import type { SlickGrid } from './slickGrid.interface';
+import type { Column } from './index';
+import type { SlickGrid } from '../core/index';
 
 export interface HeaderButtonItem {
   /** A command identifier to be passed to the onCommand event handlers. */

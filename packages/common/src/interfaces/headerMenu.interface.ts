@@ -1,11 +1,11 @@
-import type { MenuCommandItem } from '../index';
 import type { SlickHeaderMenu } from '../extensions/slickHeaderMenu';
 import type {
   Column,
   HeaderMenuOption,
+  MenuCommandItem,
   MenuCommandItemCallbackArgs,
-  SlickGrid,
 } from './index';
+import { SlickGrid } from '../core/index';
 
 export interface HeaderMenuCommandItemCallbackArgs {
   /** Column definition */

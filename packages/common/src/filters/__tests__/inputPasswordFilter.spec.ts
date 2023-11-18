@@ -1,6 +1,7 @@
 import { InputPasswordFilter } from '../inputPasswordFilter';
-import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { Filters } from '../filters.index';
+import { SlickGrid } from '../../core/index';
 
 const containerId = 'demo-container';
 
@@ -40,7 +41,7 @@ describe('InputPasswordFilter', () => {
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
 
-    filter = new InputPasswordFilter();
+    filter = new InputPasswordFilter({} as any);
   });
 
   afterEach(() => {

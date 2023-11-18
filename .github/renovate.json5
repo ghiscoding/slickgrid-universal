@@ -23,10 +23,6 @@
       packageNames: ['rxjs'],
       allowedVersions: '7.8.1',
     },
-    {
-      packageNames: ['slickgrid'],
-      allowedVersions: '4.x',
-    }
   ],
   schedule: ['every 2 weeks on friday'],
 }

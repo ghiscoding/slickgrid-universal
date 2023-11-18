@@ -1,7 +1,8 @@
 import { deepMerge } from '@slickgrid-universal/utils';
 
-import { CellRange, CellRangeDecoratorOption, type CSSStyleDeclarationWritable, type SlickGrid } from '../interfaces/index';
+import type { CellRange, CellRangeDecoratorOption, CSSStyleDeclarationWritable } from '../interfaces/index';
 import { createDomElement } from '../services/domUtilities';
+import { type SlickGrid } from '../core/index';
 
 /**
  * Displays an overlay on top of a given cell range.
@@ -13,10 +14,10 @@ import { createDomElement } from '../services/domUtilities';
 export class SlickCellRangeDecorator {
   // --
   // public API
-  pluginName: 'CellRangeDecorator' = 'CellRangeDecorator' as const;
+  pluginName = 'CellRangeDecorator' as const;
 
-  protected _addonOptions!: CellRangeDecoratorOption;
-  protected _elem?: HTMLElement | null;
+  protected _options: CellRangeDecoratorOption;
+  protected _elem?: HTMLDivElement | null;
   protected _defaults = {
     selectionCssClass: 'slick-range-decorator',
     selectionCss: {
@@ -27,11 +28,11 @@ export class SlickCellRangeDecorator {
   } as CellRangeDecoratorOption;
 
   constructor(protected readonly grid: SlickGrid, options?: Partial<CellRangeDecoratorOption>) {
-    this._addonOptions = deepMerge(this._defaults, options);
+    this._options = deepMerge(this._defaults, options);
   }
 
   get addonOptions() {
-    return this._addonOptions;
+    return this._options;
   }
 
   get addonElement(): HTMLElement | null | undefined {
@@ -39,9 +40,11 @@ export class SlickCellRangeDecorator {
   }
 
   /** Dispose the plugin. */
-  dispose() {
+  destroy() {
     this.hide();
   }
+
+  init() { }
 
   hide() {
     this._elem?.remove();
@@ -50,9 +53,9 @@ export class SlickCellRangeDecorator {
 
   show(range: CellRange) {
     if (!this._elem) {
-      this._elem = createDomElement('div', { className: this._addonOptions.selectionCssClass });
-      Object.keys(this._addonOptions.selectionCss as CSSStyleDeclaration).forEach((cssStyleKey) => {
-        this._elem!.style[cssStyleKey as CSSStyleDeclarationWritable] = this._addonOptions.selectionCss[cssStyleKey as CSSStyleDeclarationWritable];
+      this._elem = createDomElement('div', { className: this._options.selectionCssClass });
+      Object.keys(this._options.selectionCss as CSSStyleDeclaration).forEach((cssStyleKey) => {
+        this._elem!.style[cssStyleKey as CSSStyleDeclarationWritable] = this._options.selectionCss[cssStyleKey as CSSStyleDeclarationWritable];
       });
       this._elem.style.position = 'absolute';
       this.grid.getActiveCanvasNode()?.appendChild(this._elem);
@@ -61,11 +64,11 @@ export class SlickCellRangeDecorator {
     const from = this.grid.getCellNodeBox(range.fromRow, range.fromCell);
     const to = this.grid.getCellNodeBox(range.toRow, range.toCell);
 
-    if (from && to && this._addonOptions?.offset) {
-      this._elem.style.top = `${from.top + this._addonOptions.offset.top}px`;
-      this._elem.style.left = `${from.left + this._addonOptions.offset.left}px`;
-      this._elem.style.height = `${to.bottom - from.top + this._addonOptions.offset.height}px`;
-      this._elem.style.width = `${to.right - from.left + this._addonOptions.offset.width}px`;
+    if (from && to && this._options?.offset) {
+      this._elem.style.top = `${from.top + this._options.offset.top}px`;
+      this._elem.style.left = `${from.left + this._options.offset.left}px`;
+      this._elem.style.height = `${to.bottom - from.top + this._options.offset.height}px`;
+      this._elem.style.width = `${to.right - from.left + this._options.offset.width}px`;
     }
     return this._elem;
   }

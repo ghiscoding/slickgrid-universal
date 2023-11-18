@@ -86,7 +86,7 @@ describe('ExportService', () => {
       mockGridOptions.translater = translateService;
 
       (navigator as any).__defineGetter__('appName', () => 'Netscape');
-      navigator.msSaveOrOpenBlob = undefined as any;
+      (navigator as any).msSaveOrOpenBlob = undefined as any;
       mockCsvBlob = new Blob(['', ''], { type: `text/csv` });
       mockTxtBlob = new Blob(['\uFEFF', ''], { type: `text/plain` });
 
@@ -187,9 +187,9 @@ describe('ExportService', () => {
       });
 
       it('should call "msSaveOrOpenBlob" with a Blob and CSV file when browser is IE11 when exporting as CSV', async () => {
-        navigator.msSaveOrOpenBlob = jest.fn();
+        (navigator as any).msSaveOrOpenBlob = jest.fn();
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyMsSave = jest.spyOn(navigator, 'msSaveOrOpenBlob');
+        const spyMsSave = jest.spyOn(navigator as any, 'msSaveOrOpenBlob');
 
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
@@ -210,9 +210,9 @@ describe('ExportService', () => {
       });
 
       it('should call "msSaveOrOpenBlob" with a Blob and TXT file when browser is IE11 when exporting as TXT', async () => {
-        navigator.msSaveOrOpenBlob = jest.fn();
+        (navigator as any).msSaveOrOpenBlob = jest.fn();
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyMsSave = jest.spyOn(navigator, 'msSaveOrOpenBlob');
+        const spyMsSave = jest.spyOn(navigator as any, 'msSaveOrOpenBlob');
 
         service.init(gridStub, container);
         await service.exportToFile(mockExportTxtOptions);

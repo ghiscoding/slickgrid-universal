@@ -16,9 +16,9 @@ import type {
 } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
-export interface SlickerGridInstance {
+export interface SlickerGridInstance<TData = any> {
   /** Slick DataView object */
-  dataView: SlickDataView;
+  dataView: SlickDataView<TData>;
 
   /** Slick Grid object */
   slickGrid: SlickGrid;

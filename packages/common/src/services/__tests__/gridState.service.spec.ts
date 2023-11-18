@@ -4,10 +4,8 @@ import { ExtensionService } from '../extension.service';
 import { FilterService } from '../filter.service';
 import { GridStateService } from '../gridState.service';
 import { SortService } from '../sort.service';
-import {
-  GridStateType,
-  ExtensionName,
-} from '../../enums/index';
+import { GridStateType, ExtensionName } from '../../enums/index';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
 import {
   BackendService,
   CheckboxSelectorOption,
@@ -19,20 +17,16 @@ import {
   CurrentFilter,
   CurrentColumn,
   GridOption,
-  SlickDataView,
   GridStateChange,
   GridState,
   RowDetailView,
   RowMoveManager,
-  SlickGrid,
-  SlickNamespace,
-  SlickRowSelectionModel,
   TreeToggleStateChange,
 } from '../../interfaces/index';
 import { SharedService } from '../shared.service';
 import { TreeDataService } from '../treeData.service';
-
-declare const Slick: SlickNamespace;
+import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
+import { SlickColumnPicker } from '../../extensions/slickColumnPicker';
 
 const fnCallbacks = {};
 const mockPubSub = {
@@ -64,9 +58,9 @@ const dataViewStub = {
   getFilteredItems: jest.fn(),
   mapIdsToRows: jest.fn(),
   mapRowsToIds: jest.fn(),
-  onBeforePagingInfoChanged: new Slick.Event(),
-  onPagingInfoChanged: new Slick.Event(),
-  onSelectedRowIdsChanged: new Slick.Event(),
+  onBeforePagingInfoChanged: new SlickEvent(),
+  onPagingInfoChanged: new SlickEvent(),
+  onSelectedRowIdsChanged: new SlickEvent(),
 } as unknown as SlickDataView;
 
 const gridStub = {
@@ -79,10 +73,10 @@ const gridStub = {
   getSelectedRows: jest.fn(),
   setColumns: jest.fn(),
   setSelectedRows: jest.fn(),
-  onColumnsReordered: new Slick.Event(),
-  onColumnsResized: new Slick.Event(),
-  onSetOptions: new Slick.Event(),
-  onSelectedRowsChanged: new Slick.Event(),
+  onColumnsReordered: new SlickEvent(),
+  onColumnsResized: new SlickEvent(),
+  onSetOptions: new SlickEvent(),
+  onSelectedRowsChanged: new SlickEvent(),
 } as unknown as SlickGrid;
 
 const extensionServiceStub = {
@@ -108,8 +102,8 @@ const rowSelectionModelStub = {
   setSelectedRanges: jest.fn(),
   getSelectedRows: jest.fn(),
   setSelectedRows: jest.fn(),
-  onSelectedRangesChanged: new Slick.Event(),
-} as SlickRowSelectionModel;
+  onSelectedRangesChanged: new SlickEvent(),
+} as unknown as SlickRowSelectionModel;
 
 describe('GridStateService', () => {
   let service: GridStateService;
@@ -134,7 +128,7 @@ describe('GridStateService', () => {
     let slickgridEvent;
 
     beforeEach(() => {
-      slickgridEvent = new Slick.Event();
+      slickgridEvent = new SlickEvent();
     });
 
     afterEach(() => {
@@ -308,7 +302,7 @@ describe('GridStateService', () => {
 
         service.init(gridStub);
         jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
-        slickgridEvent.notify({ columns: columnsMock }, new Slick.EventData(), gridStub);
+        slickgridEvent.notify({ columns: columnsMock }, new SlickEventData(), gridStub);
 
         expect(gridStateSpy).toHaveBeenCalled();
         expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onGridStateChanged`, stateChangeMock);
@@ -332,7 +326,7 @@ describe('GridStateService', () => {
 
         service.init(gridStub);
         jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
-        gridStub.onColumnsReordered.notify({ impactedColumns: columnsMock, grid: gridStub }, new Slick.EventData(), gridStub);
+        gridStub.onColumnsReordered.notify({ impactedColumns: columnsMock, grid: gridStub }, new SlickEventData(), gridStub);
         service.resetColumns();
 
         expect(gridColumnSpy).toHaveBeenCalled();
@@ -353,7 +347,7 @@ describe('GridStateService', () => {
         const gridStateSpy = jest.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
 
         service.init(gridStub);
-        gridStub.onSetOptions.notify({ optionsBefore: mockGridOptionsBefore, optionsAfter: mockGridOptionsAfter, grid: gridStub }, new Slick.EventData());
+        gridStub.onSetOptions.notify({ optionsBefore: mockGridOptionsBefore, optionsAfter: mockGridOptionsAfter, grid: gridStub }, new SlickEventData());
 
         expect(gridStateSpy).toHaveBeenCalled();
         expect(pubSubSpy).toHaveBeenCalledWith(`onGridStateChanged`, stateChangeMock);
@@ -674,7 +668,7 @@ describe('GridStateService', () => {
     });
 
     it('should return null when no BackendService is used and FilterService is missing the "getCurrentLocalFilters" method', () => {
-      gridStub.getOptions = undefined as any;
+      gridStub.getOptions = () => undefined as any;
       const output = service.getCurrentFilters();
       expect(output).toBeNull();
     });

@@ -26,6 +26,7 @@ import {
   mapOperatorByFieldType,
   OperatorType,
   parseUtcDate,
+  sanitizeHtmlToText,
   SortDirection,
 } from '@slickgrid-universal/common';
 import { titleCase } from '@slickgrid-universal/utils';
@@ -62,7 +63,7 @@ export class GridOdataService implements BackendService {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return (this._grid?.getOptions) ? this._grid.getOptions() : {};
+    return this._grid?.getOptions() ?? {} as GridOption;
   }
 
   constructor() {
@@ -279,7 +280,7 @@ export class GridOdataService implements BackendService {
    * SORTING
    */
   processOnSortChanged(_event: Event | undefined, args: SingleColumnSort | MultiColumnSort) {
-    const sortColumns = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as ColumnSort).sortCol.id, sortCol: (args as ColumnSort).sortCol, sortAsc: (args as ColumnSort).sortAsc });
+    const sortColumns = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as ColumnSort).sortCol?.id ?? '', sortCol: (args as ColumnSort).sortCol, sortAsc: (args as ColumnSort).sortAsc });
 
     // loop through all columns to inspect sorters & set the query
     this.updateSorters(sortColumns);
@@ -319,6 +320,9 @@ export class GridOdataService implements BackendService {
         }
 
         let fieldName = columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || columnDef.name || '';
+        if (fieldName instanceof HTMLElement) {
+          fieldName = sanitizeHtmlToText(fieldName.innerHTML);
+        }
         const fieldType = columnDef.type || FieldType.string;
         let searchTerms = (columnFilter && columnFilter.searchTerms ? [...columnFilter.searchTerms] : null) || [];
         let fieldSearchValue = (Array.isArray(searchTerms) && searchTerms.length === 1) ? searchTerms[0] : '';

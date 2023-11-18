@@ -3,11 +3,12 @@ import { of, Subject } from 'rxjs';
 import { Filters } from '../index';
 import { AutocompleterFilter } from '../autocompleterFilter';
 import { FieldType, OperatorType, KeyCode } from '../../enums/index';
-import { AutocompleterOption, Column, ColumnFilter, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { AutocompleterOption, Column, ColumnFilter, FilterArguments, GridOption } from '../../interfaces/index';
 import { CollectionService } from '../../services/collection.service';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { SlickGrid } from '../../core/index';
 
 jest.useFakeTimers();
 

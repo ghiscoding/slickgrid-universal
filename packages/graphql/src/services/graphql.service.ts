@@ -26,6 +26,7 @@ import {
   mapOperatorByFieldType,
   OperatorType,
   SortDirection,
+  sanitizeHtmlToText,
 } from '@slickgrid-universal/common';
 import {
   GraphqlCursorPaginationOption,
@@ -62,7 +63,7 @@ export class GraphqlService implements BackendService {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return (this._grid?.getOptions) ? this._grid.getOptions() : {};
+    return this._grid?.getOptions() ?? {} as GridOption;
   }
 
   /** Initialization of the service, which acts as a constructor */
@@ -362,7 +363,7 @@ export class GraphqlService implements BackendService {
    *  }
    */
   processOnSortChanged(_event: Event | undefined, args: SingleColumnSort | MultiColumnSort): string {
-    const sortColumns = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as ColumnSort).sortCol.id, sortCol: (args as ColumnSort).sortCol, sortAsc: (args as ColumnSort).sortAsc });
+    const sortColumns = (args.multiColumnSort) ? (args as MultiColumnSort).sortCols : new Array({ columnId: (args as ColumnSort).sortCol?.id ?? '', sortCol: (args as ColumnSort).sortCol, sortAsc: (args as ColumnSort).sortAsc });
 
     // loop through all columns to inspect sorters & set the query
     this.updateSorters(sortColumns);
@@ -399,7 +400,10 @@ export class GraphqlService implements BackendService {
           throw new Error('[GraphQL Service]: Something went wrong in trying to get the column definition of the specified filter (or preset filters). Did you make a typo on the filter columnId?');
         }
 
-        const fieldName = columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || columnDef.name || '';
+        let fieldName = columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || columnDef.name || '';
+        if (fieldName instanceof HTMLElement) {
+          fieldName = sanitizeHtmlToText(fieldName.innerHTML);
+        }
         const fieldType = columnDef.type || FieldType.string;
         let searchTerms = columnFilter?.searchTerms ?? [];
         let fieldSearchValue = (Array.isArray(searchTerms) && searchTerms.length === 1) ? searchTerms[0] : '';

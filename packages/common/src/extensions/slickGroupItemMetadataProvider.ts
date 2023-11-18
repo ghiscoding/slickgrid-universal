@@ -1,21 +1,16 @@
+import { SlickEventHandler, Utils as SlickUtils, type SlickDataView, SlickGroup, type SlickGrid } from '../core/index';
 import { KeyCode } from '../enums/keyCode.enum';
 import type {
   Column,
   DOMEvent,
   GroupingFormatterItem,
   GroupItemMetadataProviderOption,
+  ItemMetadata,
   OnClickEventArgs,
-  SlickDataView,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
 } from '../interfaces/index';
 
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
-
 /**
- * Provides item metadata for group (Slick.Group) and totals (Slick.Totals) rows produced by the DataView.
+ * Provides item metadata for group (SlickGroup) and totals (SlickTotals) rows produced by the DataView.
  * This metadata overrides the default behavior and formatting of those rows so that they appear and function
  * correctly when processed by the grid.
  *
@@ -26,7 +21,7 @@ export class SlickGroupItemMetadataProvider {
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
   protected _options: GroupItemMetadataProviderOption;
-  protected _defaults = {
+  protected _defaults: GroupItemMetadataProviderOption = {
     groupCssClass: 'slick-group',
     groupTitleCssClass: 'slick-group-title',
     totalsCssClass: 'slick-group-totals',
@@ -40,11 +35,11 @@ export class SlickGroupItemMetadataProvider {
     groupFormatter: this.defaultGroupCellFormatter.bind(this),
     totalsFormatter: this.defaultTotalsCellFormatter.bind(this),
     includeHeaderTotals: false
-  } as GroupItemMetadataProviderOption;
+  };
 
-  constructor() {
-    this._eventHandler = new Slick.EventHandler();
-    this._options = this._defaults;
+  constructor(inputOptions?: GroupItemMetadataProviderOption) {
+    this._eventHandler = new SlickEventHandler();
+    this._options = SlickUtils.extend<GroupItemMetadataProviderOption>(true, {}, this._defaults, inputOptions);
   }
 
   /** Getter of the SlickGrid Event Handler */
@@ -54,19 +49,19 @@ export class SlickGroupItemMetadataProvider {
 
   /** Getter of SlickGrid DataView object */
   protected get dataView(): SlickDataView {
-    return this._grid?.getData?.() ?? {} as SlickDataView;
-  }
-
-  get grid(): SlickGrid {
-    return this._grid;
+    return this._grid?.getData<SlickDataView>() ?? {};
   }
 
   init(grid: SlickGrid, inputOptions?: GroupItemMetadataProviderOption) {
     this._grid = grid;
     this._options = { ...this._defaults, ...inputOptions };
 
-    this._eventHandler.subscribe(grid.onClick, this.handleGridClick.bind(this) as EventListener);
-    this._eventHandler.subscribe(grid.onKeyDown, this.handleGridKeyDown.bind(this) as EventListener);
+    this._eventHandler.subscribe(grid.onClick, this.handleGridClick.bind(this));
+    this._eventHandler.subscribe(grid.onKeyDown, this.handleGridKeyDown.bind(this));
+  }
+
+  destroy() {
+    this.dispose();
   }
 
   dispose() {
@@ -82,12 +77,12 @@ export class SlickGroupItemMetadataProvider {
     this._options = { ...this._options, ...inputOptions };
   }
 
-  getGroupRowMetadata(item: GroupingFormatterItem) {
+  getGroupRowMetadata(item: GroupingFormatterItem): ItemMetadata {
     return {
       selectable: false,
       focusable: this._options.groupFocusable,
       cssClasses: `${this._options.groupCssClass} slick-group-level-${item?.level || 0}`,
-      formatter: this._options.includeHeaderTotals && this._options.totalsFormatter,
+      formatter: (this._options.includeHeaderTotals && this._options.totalsFormatter) || undefined,
       columns: {
         0: {
           colspan: this._options.includeHeaderTotals ? '1' : '*',
@@ -112,7 +107,7 @@ export class SlickGroupItemMetadataProvider {
   // protected functions
   // -------------------
 
-  protected defaultGroupCellFormatter(_row: number, _cell: number, _value: any, _columnDef: Column, item: any) {
+  protected defaultGroupCellFormatter(_row: number, _cell: number, _value: any, _columnDef: Column, item: any): string {
     if (!this._options.enableExpandCollapse) {
       return item.title;
     }
@@ -133,8 +128,8 @@ export class SlickGroupItemMetadataProvider {
   /** Handle a grid cell clicked, it could be a Group that is being collapsed/expanded or do nothing when it's not */
   protected handleGridClick(e: DOMEvent<HTMLDivElement>, args: OnClickEventArgs) {
     const target = e.target;
-    const item = this.grid.getDataItem(args.row);
-    if (item instanceof Slick.Group && target.classList.contains(this._options.toggleCssClass || '')) {
+    const item = this._grid?.getDataItem(args.row);
+    if (item instanceof SlickGroup && target.classList.contains(this._options.toggleCssClass || '')) {
       this.handleDataViewExpandOrCollapse(item);
       e.stopImmediatePropagation();
       e.preventDefault();
@@ -145,12 +140,12 @@ export class SlickGroupItemMetadataProvider {
    * Handle a keyboard down event on a grouping cell.
    * TODO:  add -/+ handling
    */
-  protected handleGridKeyDown(e: DOMEvent<HTMLDivElement> & { keyCode: number; which: number; }) {
+  protected handleGridKeyDown(e: KeyboardEvent) {
     if (this._options.enableExpandCollapse && (e.keyCode === KeyCode.SPACE)) {
-      const activeCell = this.grid.getActiveCell();
+      const activeCell = this._grid?.getActiveCell();
       if (activeCell) {
-        const item = this.grid.getDataItem(activeCell.row);
-        if (item instanceof Slick.Group) {
+        const item = this._grid.getDataItem(activeCell.row);
+        if (item instanceof SlickGroup) {
           this.handleDataViewExpandOrCollapse(item);
           e.stopImmediatePropagation();
           e.preventDefault();
@@ -160,7 +155,7 @@ export class SlickGroupItemMetadataProvider {
   }
 
   protected handleDataViewExpandOrCollapse(item: any) {
-    const range = this.grid.getRenderedRange();
+    const range = this._grid?.getRenderedRange();
     this.dataView.setRefreshHints({
       ignoreDiffsBefore: range.top,
       ignoreDiffsAfter: range.bottom + 1

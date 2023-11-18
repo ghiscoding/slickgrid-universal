@@ -1,11 +1,9 @@
-import { Column, GridOption, PubSubService, SlickDataView, SlickGrid, SlickNamespace, } from '@slickgrid-universal/common';
+import 'jest-extended';
+import { Column, GridOption, PubSubService, type SlickDataView, SlickEvent, SlickEventData, SlickGrid } from '@slickgrid-universal/common';
 
 import { SlickRowDetailView } from './slickRowDetailView';
 
-
-declare const Slick: SlickNamespace;
 const GRID_UID = 'slickgrid12345';
-
 const gridOptionsMock = { enableAutoTooltip: true, rowHeight: 25 } as GridOption;
 
 const dataviewStub = {
@@ -18,9 +16,9 @@ const dataviewStub = {
   getRowById: jest.fn(),
   insertItem: jest.fn(),
   updateItem: jest.fn(),
-  onRowsChanged: new Slick.Event(),
-  onRowCountChanged: new Slick.Event(),
-  onSetItemsCalled: new Slick.Event(),
+  onRowsChanged: new SlickEvent(),
+  onRowCountChanged: new SlickEvent(),
+  onSetItemsCalled: new SlickEvent(),
 } as unknown as SlickDataView;
 
 const getEditorLockMock = {
@@ -42,11 +40,11 @@ const gridStub = {
   registerPlugin: jest.fn(),
   render: jest.fn(),
   updateRowCount: jest.fn(),
-  onBeforeEditCell: new Slick.Event(),
-  onClick: new Slick.Event(),
-  onRendered: new Slick.Event(),
-  onScroll: new Slick.Event(),
-  onSort: new Slick.Event(),
+  onBeforeEditCell: new SlickEvent(),
+  onClick: new SlickEvent(),
+  onRendered: new SlickEvent(),
+  onScroll: new SlickEvent(),
+  onSort: new SlickEvent(),
 } as unknown as SlickGrid;
 
 const pubSubServiceStub = {
@@ -134,8 +132,8 @@ describe('SlickRowDetailView plugin', () => {
     jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { collapseAllOnSort: true } as any });
 
     plugin.init(gridStub);
-    const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-    gridStub.onSort.notify({ sortCols: [{ columnId: mockColumns[0].id, sortCol: mockColumns[0], sortAsc: true }], multiColumnSort: true, previousSortColumns: [], grid: gridStub }, eventData, gridStub);
+    const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+    gridStub.onSort.notify({ sortCols: [{ columnId: mockColumns[0].id, sortCol: mockColumns[0], sortAsc: true }], multiColumnSort: true, previousSortColumns: [], grid: gridStub }, eventData as any, gridStub);
 
     expect(plugin.getExpandedRows()).toEqual([]);
     expect(plugin.getOutOfViewportRows()).toEqual([]);
@@ -147,7 +145,7 @@ describe('SlickRowDetailView plugin', () => {
     jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { collapseAllOnSort: true } as any });
 
     plugin.init(gridStub);
-    gridStub.onBeforeEditCell.notify({ cell: undefined as any, row: undefined as any, grid: gridStub, column: {} as Column, item: {} }, new Slick.EventData(), gridStub);
+    gridStub.onBeforeEditCell.notify({ cell: undefined as any, row: undefined as any, grid: gridStub, column: {} as Column, item: {} }, new SlickEventData(), gridStub);
 
     expect(plugin.getExpandedRows()).toEqual([]);
     expect(plugin.getOutOfViewportRows()).toEqual([]);
@@ -159,7 +157,7 @@ describe('SlickRowDetailView plugin', () => {
     const renderSpy = jest.spyOn(gridStub, 'render');
 
     plugin.init(gridStub);
-    dataviewStub.onRowCountChanged.notify({ previous: 0, current: 1, itemCount: 2, dataView: dataviewStub, callingOnRowsChanged: true }, new Slick.EventData(), gridStub);
+    dataviewStub.onRowCountChanged.notify({ previous: 0, current: 1, itemCount: 2, dataView: dataviewStub, callingOnRowsChanged: true }, new SlickEventData(), gridStub);
 
     expect(plugin.eventHandler).toBeTruthy();
     expect(updateRowCountSpy).toHaveBeenCalled();
@@ -171,7 +169,7 @@ describe('SlickRowDetailView plugin', () => {
     const renderSpy = jest.spyOn(gridStub, 'render');
 
     plugin.init(gridStub);
-    dataviewStub.onRowsChanged.notify({ rows: [1, 3], itemCount: 2, calledOnRowCountChanged: true, dataView: dataviewStub }, new Slick.EventData(), gridStub);
+    dataviewStub.onRowsChanged.notify({ rows: [1, 3], itemCount: 2, calledOnRowCountChanged: true, dataView: dataviewStub }, new SlickEventData(), gridStub);
 
     expect(plugin.eventHandler).toBeTruthy();
     expect(invalidateRowsSpy).toHaveBeenCalledWith([1, 3]);
@@ -182,7 +180,7 @@ describe('SlickRowDetailView plugin', () => {
     jest.spyOn(dataviewStub, 'getIdPropertyName').mockReturnValue('rowId');
 
     plugin.init(gridStub);
-    dataviewStub.onSetItemsCalled.notify({ idProperty: 'rowId' } as any, new Slick.EventData(), gridStub);
+    dataviewStub.onSetItemsCalled.notify({ idProperty: 'rowId' } as any, new SlickEventData(), gridStub);
 
     expect(plugin.dataViewIdProperty).toBe('rowId');
   });
@@ -191,7 +189,7 @@ describe('SlickRowDetailView plugin', () => {
     jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { useSimpleViewportCalc: true } as any });
 
     plugin.init(gridStub);
-    gridStub.onRendered.notify({ endRow: 2, startRow: 0, grid: gridStub }, new Slick.EventData(), gridStub);
+    gridStub.onRendered.notify({ endRow: 2, startRow: 0, grid: gridStub }, new SlickEventData(), gridStub);
 
     expect(plugin.visibleRenderedCellCount).toEqual(2); // end-start => 2-0=2
   });
@@ -249,7 +247,7 @@ describe('SlickRowDetailView plugin', () => {
     jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { postTemplate: postViewMock } as any });
 
     plugin.init(gridStub);
-    plugin.onAsyncResponse.notify({}, new Slick.EventData());
+    plugin.onAsyncResponse.notify({} as any, new SlickEventData());
 
     expect(consoleSpy).toHaveBeenCalledWith('SlickRowDetailView plugin requires the onAsyncResponse() to supply "args.item" property.');
     expect(updateItemSpy).not.toHaveBeenCalled();
@@ -263,7 +261,7 @@ describe('SlickRowDetailView plugin', () => {
     jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { postTemplate: postViewMock } as any });
 
     plugin.init(gridStub);
-    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, }, new Slick.EventData());
+    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, }, new SlickEventData());
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, { _detailContent: '<span>Post 123</span>', _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' });
     expect(asyncEndUpdateSpy).toHaveBeenCalledWith({ grid: gridStub, item: itemMock, itemDetail: { _detailContent: '<span>Post 123</span>', _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } });
@@ -276,7 +274,7 @@ describe('SlickRowDetailView plugin', () => {
     const detailView = `<span>loading...</span>`;
 
     plugin.init(gridStub);
-    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView, }, new Slick.EventData());
+    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView, }, new SlickEventData());
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' });
     expect(asyncEndUpdateSpy).toHaveBeenCalledWith({ grid: gridStub, item: itemMock, itemDetail: { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } });
@@ -290,7 +288,7 @@ describe('SlickRowDetailView plugin', () => {
 
     plugin.init(gridStub);
     plugin.expandableOverride(() => false);
-    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView, }, new Slick.EventData());
+    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView, }, new SlickEventData());
 
     const clickEvent = new Event('click');
     Object.defineProperty(clickEvent, 'target', { writable: true, configurable: true, value: document.createElement('div') });
@@ -319,7 +317,7 @@ describe('SlickRowDetailView plugin', () => {
     jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { process: mockProcess, columnIndexPosition: 0, useRowClick: true, maxRows: 2, panelRows: 2 } as any });
 
     plugin.init(gridStub);
-    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView, }, new Slick.EventData());
+    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView, }, new SlickEventData());
 
     const clickEvent = new Event('click');
     Object.defineProperty(clickEvent, 'target', { writable: true, configurable: true, value: document.createElement('div') });
@@ -347,7 +345,7 @@ describe('SlickRowDetailView plugin', () => {
     jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { columnIndexPosition: 0, useRowClick: true } as any });
 
     plugin.init(gridStub);
-    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView, }, new Slick.EventData());
+    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView, }, new SlickEventData());
     const filteredItem = plugin.getFilterItem(itemMock);
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' });
@@ -381,7 +379,7 @@ describe('SlickRowDetailView plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { process: mockProcess, preTemplate: loadingTemplate, panelRows: 5, useRowClick: true, singleRowExpand: true, loadOnce: true } as any });
     plugin.init(gridStub);
-    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView, }, new Slick.EventData());
+    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView, }, new SlickEventData());
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' });
     expect(asyncEndUpdateSpy).toHaveBeenCalledWith({ grid: gridStub, item: itemMock, itemDetail: { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } });
@@ -519,8 +517,8 @@ describe('SlickRowDetailView plugin', () => {
       plugin.resizeDetailView(itemMock);
       plugin.expandDetailView(itemMock);
 
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, grid: gridStub }, eventData as any, gridStub);
 
       expect(mockProcess).toHaveBeenCalledWith({
         firstName: 'John', id: 123, lastName: 'Doe',
@@ -545,11 +543,11 @@ describe('SlickRowDetailView plugin', () => {
       plugin.resizeDetailView(itemMock);
       plugin.expandDetailView(itemMock);
 
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, grid: gridStub }, eventData, gridStub);
-      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 35, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 35, grid: gridStub }, eventData as any, gridStub);
       plugin.lastRange = { bottom: 18, top: 30 };
-      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, grid: gridStub }, eventData, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, grid: gridStub }, eventData as any, gridStub);
 
       expect(mockProcess).toHaveBeenCalledWith({
         firstName: 'John', id: 123, lastName: 'Doe',
@@ -577,11 +575,11 @@ describe('SlickRowDetailView plugin', () => {
       plugin.rowIdsOutOfViewport = [123];
 
       const onRowBackToViewportSpy = jest.spyOn(plugin.onRowBackToViewportRange, 'notify');
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, grid: gridStub }, eventData, gridStub);
-      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 35, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 35, grid: gridStub }, eventData as any, gridStub);
       plugin.lastRange = { bottom: 18, top: 30 };
-      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, grid: gridStub }, eventData, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, grid: gridStub }, eventData as any, gridStub);
 
       setTimeout(() => {
         expect(mockProcess).toHaveBeenCalledWith({
@@ -614,11 +612,11 @@ describe('SlickRowDetailView plugin', () => {
       plugin.rowIdsOutOfViewport = [123];
 
       const onRowBackToViewportSpy = jest.spyOn(plugin.onRowBackToViewportRange, 'notify');
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, grid: gridStub }, eventData, gridStub);
-      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 35, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 35, grid: gridStub }, eventData as any, gridStub);
       plugin.lastRange = { bottom: 18, top: 30 };
-      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, grid: gridStub }, eventData, gridStub);
+      gridStub.onScroll.notify({ scrollLeft: 22, scrollTop: 0, grid: gridStub }, eventData as any, gridStub);
 
       setTimeout(() => {
         expect(mockProcess).toHaveBeenCalledWith({
@@ -647,11 +645,11 @@ describe('SlickRowDetailView plugin', () => {
       plugin.resizeDetailView(itemMock);
       plugin.expandDetailView(itemMock);
       plugin.rowIdsOutOfViewport = [123];
-      gridStub.onRendered.notify({ endRow: 15, startRow: 5, grid: gridStub }, new Slick.EventData(), gridStub);
+      gridStub.onRendered.notify({ endRow: 15, startRow: 5, grid: gridStub }, new SlickEventData(), gridStub);
 
       const onRowOutOfViewportRangeSpy = jest.spyOn(plugin.onRowOutOfViewportRange, 'notify');
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, grid: gridStub }, eventData as any, gridStub);
 
       expect(mockProcess).toHaveBeenCalledWith({
         firstName: 'John', id: 123, lastName: 'Doe',
@@ -681,11 +679,11 @@ describe('SlickRowDetailView plugin', () => {
       plugin.resizeDetailView(itemMock);
       plugin.expandDetailView(itemMock);
       plugin.rowIdsOutOfViewport = [123];
-      gridStub.onRendered.notify({ endRow: 77, startRow: 5, grid: gridStub }, new Slick.EventData(), gridStub);
+      gridStub.onRendered.notify({ endRow: 77, startRow: 5, grid: gridStub }, new SlickEventData(), gridStub);
 
       const onRowBackToViewportSpy = jest.spyOn(plugin.onRowBackToViewportRange, 'notify');
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 33, grid: gridStub }, eventData as any, gridStub);
 
       expect(mockProcess).toHaveBeenCalledWith({
         firstName: 'John', id: 123, lastName: 'Doe',

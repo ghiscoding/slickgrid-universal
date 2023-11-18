@@ -1,11 +1,11 @@
-import { CellRange, EditCommand, Formatter, GridOption, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import type { CellRange, EditCommand, Formatter, GridOption } from '../../interfaces/index';
 import { Formatters } from '../../formatters';
 import { SharedService } from '../../services/shared.service';
 import { SlickCellExcelCopyManager } from '../slickCellExcelCopyManager';
 import { SlickCellSelectionModel } from '../slickCellSelectionModel';
 import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager';
+import { SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
 
-declare const Slick: SlickNamespace;
 jest.mock('flatpickr', () => { });
 
 const getEditorLockMock = {
@@ -21,7 +21,7 @@ const gridStub = {
   focus: jest.fn(),
   registerPlugin: jest.fn(),
   setSelectionModel: jest.fn(),
-  onKeyDown: new Slick.Event(),
+  onKeyDown: new SlickEvent(),
 } as unknown as SlickGrid;
 
 const mockCellExternalCopyManager = {
@@ -31,9 +31,9 @@ const mockCellExternalCopyManager = {
   getHeaderValueForColumn: jest.fn(),
   getDataItemValueForColumn: jest.fn(),
   setDataItemValueForColumn: jest.fn(),
-  onCopyCells: new Slick.Event(),
-  onCopyCancelled: new Slick.Event(),
-  onPasteCells: new Slick.Event(),
+  onCopyCells: new SlickEvent(),
+  onCopyCancelled: new SlickEvent(),
+  onPasteCells: new SlickEvent(),
 } as unknown as SlickCellExternalCopyManager;
 
 const mockCellSelectionModel = {
@@ -44,7 +44,7 @@ const mockCellSelectionModel = {
   setSelectedRanges: jest.fn(),
   getSelectedRows: jest.fn(),
   setSelectedRows: jest.fn(),
-  onSelectedRangesChanged: new Slick.Event(),
+  onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickCellSelectionModel;
 
 jest.mock('../slickCellSelectionModel', () => ({
@@ -125,11 +125,11 @@ describe('CellExcelCopyManager', () => {
       const mockOnPasteCell = jest.fn();
 
       plugin.init(gridStub, { onCopyCells: mockOnCopy, onCopyCancelled: mockOnCopyCancel, onPasteCells: mockOnPasteCell });
-      mockCellExternalCopyManager.onCopyCells.notify(mockSelectRangeEvent, new Slick.EventData(), gridStub);
+      mockCellExternalCopyManager.onCopyCells.notify(mockSelectRangeEvent, new SlickEventData(), gridStub);
 
       expect(handlerSpy).toHaveBeenCalledTimes(3);
       expect(handlerSpy).toHaveBeenCalledWith(
-        { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
+        expect.any(SlickEvent),
         expect.anything()
       );
       expect(mockOnCopy).toHaveBeenCalledWith(expect.anything(), mockSelectRangeEvent);
@@ -144,11 +144,11 @@ describe('CellExcelCopyManager', () => {
       const mockOnPasteCell = jest.fn();
 
       plugin.init(gridStub, { onCopyCells: mockOnCopy, onCopyCancelled: mockOnCopyCancel, onPasteCells: mockOnPasteCell });
-      mockCellExternalCopyManager.onCopyCancelled.notify(mockSelectRangeEvent, new Slick.EventData(), gridStub);
+      mockCellExternalCopyManager.onCopyCancelled.notify(mockSelectRangeEvent, new SlickEventData(), gridStub);
 
       expect(handlerSpy).toHaveBeenCalledTimes(3);
       expect(handlerSpy).toHaveBeenCalledWith(
-        { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
+        expect.any(SlickEvent),
         expect.anything()
       );
       expect(mockOnCopy).not.toHaveBeenCalledWith(expect.anything(), mockSelectRangeEvent);
@@ -163,11 +163,11 @@ describe('CellExcelCopyManager', () => {
       const mockOnPasteCell = jest.fn();
 
       plugin.init(gridStub, { onCopyCells: mockOnCopy, onCopyCancelled: mockOnCopyCancel, onPasteCells: mockOnPasteCell });
-      mockCellExternalCopyManager.onPasteCells.notify(mockSelectRangeEvent, new Slick.EventData(), gridStub);
+      mockCellExternalCopyManager.onPasteCells.notify(mockSelectRangeEvent, new SlickEventData(), gridStub);
 
       expect(handlerSpy).toHaveBeenCalledTimes(3);
       expect(handlerSpy).toHaveBeenCalledWith(
-        { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
+        expect.any(SlickEvent),
         expect.anything()
       );
       expect(mockOnCopy).not.toHaveBeenCalledWith(expect.anything(), mockSelectRangeEvent);
@@ -294,7 +294,7 @@ describe('CellExcelCopyManager', () => {
     it('should expect "addItem" method to be called after calling "newRowCreator" callback', () => {
       plugin.init(gridStub);
       const mockGetData = { addItem: jest.fn() };
-      const getDataSpy = jest.spyOn(gridStub, 'getData').mockReturnValue(mockGetData);
+      const getDataSpy = jest.spyOn(gridStub, 'getData').mockReturnValue(mockGetData as any);
       const addItemSpy = jest.spyOn(mockGetData, 'addItem');
 
       plugin.addonOptions!.newRowCreator!(2);

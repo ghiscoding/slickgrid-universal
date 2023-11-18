@@ -5,15 +5,11 @@ import type {
   PubSubService,
   ServicePagination,
   SharedService,
+  SlickGrid,
   Subscription,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import {
-  Constants,
-  createDomElement,
-  getTranslationPrefix,
-  SlickGrid,
-} from '@slickgrid-universal/common';
+import { Constants, createDomElement, getTranslationPrefix } from '@slickgrid-universal/common';
 import { BindingHelper } from '@slickgrid-universal/binding';
 
 export class SlickPaginationComponent {

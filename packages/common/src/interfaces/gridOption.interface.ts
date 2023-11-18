@@ -37,10 +37,30 @@ import type {
   TextExportOption,
   TreeDataOption,
 } from './index';
-import type { ColumnReorderFunction, GridAutosizeColsMode, OperatorType, OperatorString, } from '../enums/index';
+import type { ColumnReorderFunction, GridAutosizeColsMode, OperatorString, OperatorType, } from '../enums/index';
 import type { TranslaterService } from '../services/translater.service';
+import type { SlickEditorLock } from '../core/index';
 
-export interface GridOption {
+export interface CellViewportRange {
+  bottom: number;
+  top: number;
+  leftPx: number;
+  rightPx: number;
+}
+
+export interface CustomDataView<T = any> {
+  getLength: () => number;
+  getItem: (index: number) => T;
+  getItemMetadata(index: number): ItemMetadata | null;
+}
+
+export interface CssStyleHash {
+  [prop: number | string]: { [columnId: number | string]: any; }
+}
+
+export interface GridOption<C extends Column = Column> {
+  alwaysAllowHorizontalScroll?: boolean;
+
   /** CSS class name used on newly added row */
   addNewRowCssClass?: string;
 
@@ -59,6 +79,9 @@ export interface GridOption {
   /** Defaults to 40, which is the delay before the asynchronous post renderer start cleanup execution */
   asyncPostRenderCleanupDelay?: number;
 
+  // TODO: not sure what that option does?
+  auto?: boolean;
+
   /**
    * Automatically add a Custom Formatter on all column definitions that have an Editor.
    * Instead of manually adding a Custom Formatter on every column definitions that are editables, let's ask the system to do it in an easier automated way.
@@ -72,6 +95,12 @@ export interface GridOption {
 
   /** Defaults to false, when enabled will automatically open the inlined editor as soon as there is a focus on the cell (can be combined with "enableCellNavigation: true"). */
   autoEdit?: boolean;
+
+  /**
+   * Defaults to true, when enabled it will automatically open the editor when clicking on cell that has a defined editor.
+   * When using CellExternalCopyManager, this option could be useful to avoid opening the cell editor automatically on empty new row and we wish to paste our cell selection range.
+   */
+  autoEditNewRow?: boolean;
 
   /**
    * Defaults to true, which leads to automatically adjust the width of each column with the available space. Similar to "Force Fit Column" but only happens on first page/component load.
@@ -110,6 +139,15 @@ export interface GridOption {
 
   /** Auto-resize options (bottom padding, minHeight, ...)  */
   autoResize?: AutoResizeOption;
+
+  /** defaults to LegacyOff, Grid Autosize Columns Mode used when calling "autosizeColumns()" method */
+  autosizeColsMode?: string;
+
+  /** defaults to 4, autosize column padding in pixel */
+  autosizeColPaddingPx?: number;
+
+  /** defaults to 0.75, autosize text average to minimum width ratio */
+  autosizeTextAvgToMWidthRatio?: number;
 
   /** Auto-tooltip options (enableForCells, enableForHeaderCells, maxToolTipLength) */
   autoTooltipOptions?: AutoTooltipOption;
@@ -181,12 +219,12 @@ export interface GridOption {
   customTooltip?: CustomTooltipOption;
 
   /** Data item column value extractor (getter) that can be used by the Excel like copy buffer plugin */
-  dataItemColumnValueExtractor?: (item: any, columnDef: Column) => any;
+  dataItemColumnValueExtractor?: null | ((item: any, columnDef: C) => any);
 
   /** Data item column value setter that can be used by the Excel like copy buffer plugin */
-  dataItemColumnValueSetter?: (item: any, columnDef: Column, value: any) => void;
+  dataItemColumnValueSetter?: (item: any, columnDef: C, value: any) => void;
 
-  /** Unique property name on the dataset used by Slick.Data.DataView */
+  /** Unique property name on the dataset used by SlickDataView */
   datasetIdPropertyName?: string;
 
   /** Some of the SlickGrid DataView options */
@@ -230,8 +268,14 @@ export interface GridOption {
   /** Defaults to 'RangeInclusive', allows to change the default filter range operator */
   defaultFilterRangeOperator?: OperatorString | OperatorType;
 
+  /** Default cell Formatter that will be used by the grid */
+  defaultFormatter?: Formatter;
+
   /** Default prefix for SlickGrid Event names (events created in the SlickGrid and/or DataView objects) */
   defaultSlickgridEventPrefix?: string;
+
+  /** Do we have paging enabled? */
+  doPaging?: boolean;
 
   /** Draggable Grouping Plugin options & events */
   draggableGrouping?: DraggableGrouping;
@@ -239,14 +283,17 @@ export interface GridOption {
   /** Defaults to false, when enabled will give the possibility to edit cell values with inline editors. */
   editable?: boolean;
 
+  /** Defaults to false, editor cell navigation left/right keys */
+  editorCellNavOnLRKeys?: boolean;
+
   /** option to intercept edit commands and implement undo support. */
-  editCommandHandler?: (item: any, column: Column, command: EditCommand) => void;
+  editCommandHandler?: (item: any, column: C, command: EditCommand) => void;
 
   /** Editor classes factory */
   editorFactory?: any;
 
   /** a global singleton editor lock. */
-  editorLock?: any;
+  editorLock?: SlickEditorLock;
 
   /** Default to 450ms and only applies to Composite Editor, how long to wait until we start validating the editor changes on Editor that support it (integer, float, text, longText). */
   editorTypingDebounce?: number;
@@ -295,7 +342,7 @@ export interface GridOption {
 
   /**
    * Defaults to true, this option can be a boolean or a Column Reorder function.
-   * When provided as a boolean, it will permits the user to move an entire column from a position to another.
+   * When provided as a boolean, it will allow the user to reorder or move a column from a position to another.
    * We could also provide a Column Reorder function, there's mostly only 1 use for this which is the SlickDraggableGrouping plugin.
    */
   enableColumnReorder?: boolean | ColumnReorderFunction;
@@ -361,6 +408,13 @@ export interface GridOption {
   /** Do we want to enable Header Menu? (when hovering a column, a menu will appear for that column) */
   enableHeaderMenu?: boolean;
 
+  /**
+   * Defaults to true, do we want to allow passing HTML string to cell/row rendering by using `innerHTML`.
+   * When this is enabled and input is a string, it will use `innerHTML = 'some html'` to render the input, however when disable it will use `textContent = 'some html'`.
+   * Note: for strict CSP, you would want to disable this option and convert all your custom Formatters to return an HTMLElement instead of a string
+   */
+  enableHtmlRendering?: boolean;
+
   /** Do we want to enable a styling effect when hovering any row from the grid? */
   enableMouseHoverHighlightRow?: boolean;
 
@@ -422,6 +476,9 @@ export interface GridOption {
    */
   filterTypingDebounce?: number;
 
+  /** Firefox max supported CSS height */
+  ffMaxSupportedCssHeight?: number;
+
   /** Defaults to 25, which is the grid footer row panel height */
   footerRowHeight?: number;
 
@@ -431,10 +488,10 @@ export interface GridOption {
   /** Defaults to false, force synchronous scrolling */
   forceSyncScrolling?: boolean;
 
-  /** Formatter classes factory */
-  formatterFactory?: any;
+  /** Formatter class factory */
+  formatterFactory?: { getFormatter: (col: C) => Formatter; } | null;
 
-  /** Formatter commonly used options defined for the entire grid */
+  /** Formatter options that are defined and used for the entire grid */
   formatterOptions?: FormatterOption;
 
   /** Optional frozen border in pixel to remove from total header width calculation (depending on your border width, it should be 0, 1 or 2 defaults is 1) */
@@ -448,12 +505,6 @@ export interface GridOption {
 
   /** Number of row index(es) to freeze (pin) in the grid */
   frozenRow?: number;
-
-  /**
-   * Defaults to false, should we throw an erro when frozenColumn is wider than the grid viewport width.
-   * When that happens the unfrozen section on the right is in a phantom area that is not viewable neither clickable unless we enable double-scroll on the grid container.
-   */
-  throwWhenFrozenNotAllViewable?: boolean;
 
   /**
    * Defaults to 100, what is the minimum width to keep for the section on the right of a frozen grid?
@@ -507,6 +558,9 @@ export interface GridOption {
    */
   ignoreAccentOnStringFilterAndSort?: boolean;
 
+  /** Do we leave space for new rows in the DOM visible buffer */
+  leaveSpaceForNewRows?: boolean;
+
   /**
    * When using custom Locales (that is when user is NOT using a Translate Service, this property does nothing when used with Translate Service),
    * This is useful so that every component of the lib knows the locale.
@@ -518,8 +572,11 @@ export interface GridOption {
   /** Set of Locale translations used by the library */
   locales?: Locale;
 
-  /** Do we leave space for new rows in the DOM visible buffer */
-  leaveSpaceForNewRows?: boolean;
+  /** Should we log the sanitized html? */
+  logSanitizedHtml?: boolean;
+
+  /** Max supported CSS height */
+  maxSupportedCssHeight?: number;
 
   /** What is the minimum row buffer to use? */
   minRowBuffer?: number;
@@ -527,8 +584,16 @@ export interface GridOption {
   /** Defaults to false, which leads to be able to do multiple columns sorting (or single sort when false) */
   multiColumnSort?: boolean;
 
+  /** Use a mixin function when applying defaults to passed in option and columns objects, rather than creating a new object, so as not to break references */
+  mixinDefaults?: boolean;
+
   /** Defaults to true, which leads to be able to do multiple selection */
   multiSelect?: boolean;
+
+  /**
+   * Added for CSP header because of dynamic css generation.
+   */
+  nonce?: string;
 
   /** Defaults to true, which will display numbers indicating column sort precedence are displayed in the columns when multiple columns selected */
   numberedMultiColumnSort?: boolean;
@@ -536,7 +601,7 @@ export interface GridOption {
   /** Pagination options (pageSize, pageSizes, pageNumber, totalItems) */
   pagination?: Pagination;
 
-  /** if you want to pass custom paramaters to your Formatter/Editor or anything else */
+  /** extra custom generic parameters that could be used by your Formatter/Editor or anything else */
   params?: any | any[];
 
   /** Extra pre-header panel height (on top of column header) */
@@ -593,19 +658,26 @@ export interface GridOption {
   sanitizeHtmlOptions?: any;
 
   /**
-   * By default the lib will use DOMPurify to sanitize any Html,
-   * but you could optionally pass your own sanitizer function which will run instead of DOM Purify
+   * By default the lib will use DOMPurify to sanitize any HTML strings before passing them to `innerHTML`,
+   * however you could optionally provide your own sanitizer callback instead of using DOMPurify.
+   * e.g.: DOMPurify doesn't work in Salesforce, so a custom sanitizer is required
    */
   sanitizer?: (dirtyHtml: string) => string;
+
+  /** Defaults to 50, render throttling when scrolling large dataset */
+  scrollRenderThrottling?: number;
 
   /** CSS class name used when cell is selected */
   selectedCellCssClass?: string;
 
-  /** Defaults to undefined. If we are inside a Shadow DOM tree, this must be the shadow root of the tree */
+  /** Defaults to undefined. If we are inside a Shadow DOM tree, this must be the Shadow root of the tree */
   shadowRoot?: ShadowRoot;
 
   /** Do we want to show cell selection? */
   showCellSelection?: boolean;
+
+  /** Do we want to show column header? */
+  showColumnHeader?: boolean;
 
   /**
    * Do we want to show a custom footer with some metrics?
@@ -638,11 +710,20 @@ export interface GridOption {
    */
   suppressActiveCellChangeOnEdit?: boolean;
 
+  /** Defaults to false, do we want to suppress CSS changes when onHiddenInit event is triggered */
+  suppressCssChangesOnHiddenInit?: boolean;
+
   /** Defaults to false, when set to True will sync the column cell resize & apply the column width */
   syncColumnCellResize?: boolean;
 
   /** Some default options to set for the text file export service */
   textExportOptions?: TextExportOption;
+
+  /**
+   * Defaults to false, should we throw an erro when frozenColumn is wider than the grid viewport width.
+   * When that happens the unfrozen section on the right is in a phantom area that is not viewable neither clickable unless we enable double-scroll on the grid container.
+   */
+  throwWhenFrozenNotAllViewable?: boolean;
 
   /** What is the top panel height in pixels (only type the number) */
   topPanelHeight?: number;
@@ -667,4 +748,13 @@ export interface GridOption {
 
   /** Defaults to null, which is the default Viewport CSS class name */
   viewportClass?: string;
+
+  /** Viewport switch to scroll model with percentage */
+  viewportSwitchToScrollModeWidthPercent?: number;
+
+  /** Viewport min width in pixel */
+  viewportMinWidthPx?: number;
+
+  /** Viewport max width in pixel */
+  viewportMaxWidthPx?: number;
 }

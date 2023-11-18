@@ -1,5 +1,6 @@
-import { Column, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, GridOption } from '../../interfaces/index';
 import { percentCompleteFormatter } from '../percentCompleteFormatter';
+import { SlickGrid } from '../../core/index';
 
 describe('the Percent Complete Formatter', () => {
   const gridStub = {

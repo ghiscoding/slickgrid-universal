@@ -1,10 +1,5 @@
-import type {
-  GridSize,
-  ResizerOption,
-  SlickEventData,
-  SlickGrid,
-  SlickResizer,
-} from './index';
+import type { GridSize, ResizerOption, SlickResizer } from './index';
+import type { SlickEventData, SlickGrid } from '../core/index';
 
 export interface Resizer extends ResizerOption {
   // --

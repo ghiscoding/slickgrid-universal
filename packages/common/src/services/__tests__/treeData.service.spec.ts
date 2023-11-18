@@ -1,18 +1,18 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import { Constants } from '../../constants';
-import { Column, SlickDataView, GridOption, SlickEventHandler, SlickGrid, SlickNamespace, BackendService } from '../../interfaces/index';
-import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
+import { Column, GridOption, BackendService } from '../../interfaces/index';
 import { SumAggregator } from '../../aggregators';
 import { SharedService } from '../shared.service';
 import { SortService } from '../sort.service';
 import { TreeDataService } from '../treeData.service';
+import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../../core/index';
 import * as utilities from '../utilities';
 
 const mockUnflattenParentChildArrayToTree = jest.fn();
 (utilities.unflattenParentChildArrayToTree as any) = mockUnflattenParentChildArrayToTree;
 
 jest.useFakeTimers();
-
-declare const Slick: SlickNamespace;
 
 const gridOptionsMock = {
   multiColumnSort: false,
@@ -44,7 +44,7 @@ const dataViewStub = {
   reSort: jest.fn(),
   setItems: jest.fn(),
   updateItem: jest.fn(),
-  onRowCountChanged: new Slick.Event(),
+  onRowCountChanged: new SlickEvent(),
 } as unknown as SlickDataView;
 
 const gridStub = {
@@ -56,7 +56,7 @@ const gridStub = {
   getSortColumns: jest.fn(),
   invalidate: jest.fn(),
   onLocalSortChanged: jest.fn(),
-  onClick: new Slick.Event(),
+  onClick: new SlickEvent(),
   render: jest.fn(),
   setSortColumns: jest.fn(),
 } as unknown as SlickGrid;
@@ -67,7 +67,7 @@ const mockPubSub = {
   subscribe: (eventName, fn) => fnCallbacks[eventName as string] = fn,
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-} as unknown as EventPubSubService;
+} as BasePubSubService;
 jest.mock('@slickgrid-universal/event-pub-sub', () => ({
   PubSubService: () => mockPubSub
 }));
@@ -235,7 +235,7 @@ describe('TreeData Service', () => {
       const spyGetCols = jest.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
 
       service.init(gridStub);
-      const eventData = new Slick.EventData();
+      const eventData = new SlickEventData();
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       gridStub.onClick.notify({ cell: undefined as any, row: undefined as any, grid: gridStub }, eventData, gridStub);
 
@@ -260,7 +260,7 @@ describe('TreeData Service', () => {
       const spyInvalidate = jest.spyOn(gridStub, 'invalidate');
 
       service.init(gridStub);
-      const eventData = new Slick.EventData();
+      const eventData = new SlickEventData();
       div.className = 'toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
@@ -278,7 +278,7 @@ describe('TreeData Service', () => {
       const spyInvalidate = jest.spyOn(gridStub, 'invalidate');
 
       service.init(gridStub);
-      const eventData = new Slick.EventData();
+      const eventData = new SlickEventData();
       div.className = 'toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
@@ -299,7 +299,7 @@ describe('TreeData Service', () => {
       const spyInvalidate = jest.spyOn(gridStub, 'invalidate');
 
       service.init(gridStub);
-      const eventData = new Slick.EventData();
+      const eventData = new SlickEventData();
       div.className = 'toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
@@ -324,7 +324,7 @@ describe('TreeData Service', () => {
       const spyInvalidate = jest.spyOn(gridStub, 'invalidate');
 
       service.init(gridStub);
-      const eventData = new Slick.EventData();
+      const eventData = new SlickEventData();
       div.className = 'toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);

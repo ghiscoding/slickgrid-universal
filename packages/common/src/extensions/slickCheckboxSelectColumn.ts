@@ -1,13 +1,12 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
+import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 import { KeyCode } from '../enums/keyCode.enum';
-import type { CheckboxSelectorOption, Column, DOMMouseOrTouchEvent, GridOption, SelectableOverrideCallback, SlickDataView, SlickEventData, SlickEventHandler, SlickGrid, SlickNamespace } from '../interfaces/index';
+import type { CheckboxSelectorOption, Column, DOMMouseOrTouchEvent, GridOption, SelectableOverrideCallback } from '../interfaces/index';
 import { SlickRowSelectionModel } from './slickRowSelectionModel';
 import { createDomElement, emptyElement } from '../services/domUtilities';
 import { BindingEventService } from '../services/bindingEvent.service';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
+import { SelectionModel } from '../enums/index';
 
 export class SlickCheckboxSelectColumn<T = any> {
   pluginName: 'CheckboxSelectColumn' = 'CheckboxSelectColumn' as const;
@@ -31,7 +30,7 @@ export class SlickCheckboxSelectColumn<T = any> {
   protected _grid!: SlickGrid;
   protected _isSelectAllChecked = false;
   protected _isUsingDataView = false;
-  protected _rowSelectionModel?: SlickRowSelectionModel;
+  protected _rowSelectionModel?: SelectionModel;
   protected _selectableOverride?: SelectableOverrideCallback<T> | number;
   protected _selectAll_UID: number;
   protected _selectedRowsLookup: any = {};
@@ -39,7 +38,7 @@ export class SlickCheckboxSelectColumn<T = any> {
   constructor(protected readonly pubSubService: BasePubSubService, options?: CheckboxSelectorOption) {
     this._selectAll_UID = this.createUID();
     this._bindEventService = new BindingEventService();
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
     this._addonOptions = { ...this._defaults, ...options } as CheckboxSelectorOption;
   }
 
@@ -53,7 +52,7 @@ export class SlickCheckboxSelectColumn<T = any> {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return this._grid?.getOptions?.() ?? {};
+    return this._grid?.getOptions() ?? {};
   }
 
   get selectAllUid() {
@@ -68,7 +67,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     this._grid = grid;
     this._isUsingDataView = !Array.isArray(grid.getData());
     if (this._isUsingDataView) {
-      this._dataView = grid.getData();
+      this._dataView = grid.getData<SlickDataView>();
     }
 
     // we cannot apply "Select All" to all pages when using a Backend Service API (OData, GraphQL, ...)
@@ -77,21 +76,21 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
 
     this._eventHandler
-      .subscribe(grid.onSelectedRowsChanged, this.handleSelectedRowsChanged.bind(this) as EventListener)
-      .subscribe(grid.onClick, this.handleClick.bind(this) as EventListener)
-      .subscribe(grid.onKeyDown, this.handleKeyDown.bind(this) as EventListener);
+      .subscribe(grid.onSelectedRowsChanged, this.handleSelectedRowsChanged.bind(this))
+      .subscribe(grid.onClick, this.handleClick.bind(this))
+      .subscribe(grid.onKeyDown, this.handleKeyDown.bind(this));
 
     if (this._isUsingDataView && this._dataView && this._addonOptions.applySelectOnAllPages) {
       this._eventHandler
-        .subscribe(this._dataView.onSelectedRowIdsChanged, this.handleDataViewSelectedIdsChanged.bind(this) as EventListener)
-        .subscribe(this._dataView.onPagingInfoChanged, this.handleDataViewSelectedIdsChanged.bind(this) as EventListener);
+        .subscribe(this._dataView.onSelectedRowIdsChanged, this.handleDataViewSelectedIdsChanged.bind(this))
+        .subscribe(this._dataView.onPagingInfoChanged, this.handleDataViewSelectedIdsChanged.bind(this));
     }
 
     if (!this._addonOptions.hideInFilterHeaderRow) {
       this.addCheckboxToFilterHeaderRow(grid);
     }
     if (!this._addonOptions.hideInColumnTitleRow) {
-      this._eventHandler.subscribe(this._grid.onHeaderClick, this.handleHeaderClick.bind(this) as EventListener);
+      this._eventHandler.subscribe(this._grid.onHeaderClick, this.handleHeaderClick.bind(this));
     }
 
     // this also requires the Row Selection Model to be registered as well
@@ -304,7 +303,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     });
   }
 
-  protected checkboxSelectionFormatter(row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGrid) {
+  protected checkboxSelectionFormatter(row: number, _cell: number, _val: any, _columnDef: Column, dataContext: any, grid: SlickGrid) {
     if (dataContext && this.checkSelectableOverride(row, dataContext, grid)) {
       const UID = this.createUID() + row;
       return `<input id="selector${UID}" type="checkbox" ${this._selectedRowsLookup[row] ? `checked="checked" aria-checked="true"` : 'aria-checked="false"'}><label for="selector${UID}"></label>`;
@@ -448,7 +447,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
-  protected handleKeyDown(e: SlickEventData, args: any) {
+  protected handleKeyDown(e: KeyboardEvent, args: any) {
     if (e.which === KeyCode.SPACE || e.key === ' ') {
       if (this._grid.getColumns()[args.cell].id === this._addonOptions.columnId) {
         // if editing, try to commit

@@ -18,6 +18,7 @@ export * from './operatorType.enum';
 export * from './plainFunc.type';
 export * from './positionMethod.type';
 export * from './searchTerm.type';
+export * from './selectionModel.type';
 export * from './slickControlList.enum';
 export * from './slickPluginList.enum';
 export * from './sortDirection.enum';

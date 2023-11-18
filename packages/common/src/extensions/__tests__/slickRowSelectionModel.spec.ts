@@ -1,10 +1,10 @@
 import 'jest-extended';
+import { SlickEvent, SlickGrid, SlickRange } from '../../core/index';
 
-import { Column, GridOption, SlickGrid, SlickNamespace, SlickRange, } from '../../interfaces/index';
+import type { Column, GridOption } from '../../interfaces/index';
 import { SlickCellRangeSelector } from '../slickCellRangeSelector';
 import { SlickRowSelectionModel } from '../slickRowSelectionModel';
 
-declare const Slick: SlickNamespace;
 const GRID_UID = 'slickgrid_12345';
 jest.mock('flatpickr', () => { });
 
@@ -50,11 +50,11 @@ const gridStub = {
   scrollCellIntoView: jest.fn(),
   scrollRowIntoView: jest.fn(),
   unregisterPlugin: jest.fn(),
-  onActiveCellChanged: new Slick.Event(),
-  onClick: new Slick.Event(),
-  onKeyDown: new Slick.Event(),
-  onSelectedRangesChanged: new Slick.Event(),
-  onBeforeCellRangeSelected: new Slick.Event(),
+  onActiveCellChanged: new SlickEvent(),
+  onClick: new SlickEvent(),
+  onKeyDown: new SlickEvent(),
+  onSelectedRangesChanged: new SlickEvent(),
+  onBeforeCellRangeSelected: new SlickEvent(),
 } as unknown as SlickGrid;
 
 describe('SlickRowSelectionModel Plugin', () => {
@@ -188,10 +188,10 @@ describe('SlickRowSelectionModel Plugin', () => {
   it('should call "setSelectedRanges" with valid ranges input and expect to "onSelectedRangesChanged" to be triggered', () => {
     const onSelectedRangeSpy = jest.spyOn(plugin.onSelectedRangesChanged, 'notify');
 
-    plugin.setSelectedRanges([{ fromCell: 0, fromRow: 0, toCell: 2, toRow: 0, }]);
+    plugin.setSelectedRanges([new SlickRange(0, 0, 0, 2)]);
 
     expect(onSelectedRangeSpy).toHaveBeenCalledWith(
-      [{ fromCell: 0, fromRow: 0, toCell: 2, toRow: 0, }],
+      [new SlickRange(0, 0, 0, 2)],
       expect.objectContaining({
         detail: { caller: 'SlickRowSelectionModel.setSelectedRanges' }
       }));
@@ -216,8 +216,8 @@ describe('SlickRowSelectionModel Plugin', () => {
     jest.spyOn(gridStub, 'getDataLength').mockReturnValue(6);
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     const mockRanges = [
-      { fromCell: 2, fromRow: 3, toCell: 3, toRow: 4 },
-      { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 }
+      new SlickRange(3, 2, 4, 3),
+      new SlickRange(2, 1, 4, 3)
     ] as unknown as SlickRange[];
     plugin.init(gridStub);
     plugin.setSelectedRanges(mockRanges);
@@ -246,8 +246,8 @@ describe('SlickRowSelectionModel Plugin', () => {
     jest.spyOn(gridStub, 'getDataLength').mockReturnValue(6);
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     const mockRanges = [
-      { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 },
-      { fromCell: 2, fromRow: 3, toCell: 3, toRow: 4 }
+      new SlickRange(2, 1, 4, 3),
+      new SlickRange(3, 2, 4, 3)
     ] as unknown as SlickRange[];
     plugin.init(gridStub);
     plugin.setSelectedRanges(mockRanges);
@@ -271,8 +271,8 @@ describe('SlickRowSelectionModel Plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(plugin, 'getSelectedRows').mockReturnValue([3, 3]);
     const mockRanges = [
-      { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 },
-      { fromCell: 2, fromRow: 3, toCell: 3, toRow: 4 }
+      new SlickRange(2, 1, 4, 3),
+      new SlickRange(3, 2, 4, 3)
     ] as unknown as SlickRange[];
     plugin.init(gridStub);
     plugin.setSelectedRanges(mockRanges);
@@ -293,8 +293,8 @@ describe('SlickRowSelectionModel Plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(plugin, 'getSelectedRows').mockReturnValue([]);
     const mockRanges = [
-      { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 },
-      { fromCell: 2, fromRow: 3, toCell: 3, toRow: 4 }
+      new SlickRange(2, 1, 4, 3),
+      new SlickRange(3, 2, 4, 3)
     ] as unknown as SlickRange[];
     plugin.init(gridStub);
     plugin.setSelectedRanges(mockRanges);
@@ -318,8 +318,8 @@ describe('SlickRowSelectionModel Plugin', () => {
     jest.spyOn(gridStub, 'getDataLength').mockReturnValue(6);
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     const mockRanges = [
-      { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 },
-      { fromCell: 2, fromRow: 3, toCell: 3, toRow: 4 }
+      new SlickRange(2, 1, 4, 3),
+      new SlickRange(3, 2, 4, 3)
     ] as unknown as SlickRange[];
     plugin.init(gridStub);
     plugin.setSelectedRanges(mockRanges);
@@ -338,8 +338,8 @@ describe('SlickRowSelectionModel Plugin', () => {
     jest.spyOn(gridStub, 'getDataLength').mockReturnValue(6);
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     const mockRanges = [
-      { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 },
-      { fromCell: 2, fromRow: 3, toCell: 3, toRow: 4 }
+      new SlickRange(2, 1, 4, 3),
+      new SlickRange(3, 2, 4, 3)
     ] as unknown as SlickRange[];
     plugin.init(gridStub);
     plugin.setSelectedRanges(mockRanges);
@@ -357,8 +357,8 @@ describe('SlickRowSelectionModel Plugin', () => {
     jest.spyOn(gridStub, 'getDataLength').mockReturnValue(6);
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     const mockRanges = [
-      { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 },
-      { fromCell: 2, fromRow: 3, toCell: 3, toRow: 4 }
+      new SlickRange(2, 1, 4, 3),
+      new SlickRange(3, 2, 4, 3)
     ] as unknown as SlickRange[];
     plugin.init(gridStub);
     plugin.setSelectedRanges(mockRanges);
@@ -386,8 +386,8 @@ describe('SlickRowSelectionModel Plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     const setActiveCellSpy = jest.spyOn(gridStub, 'setActiveCell');
     const mockRanges = [
-      { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 },
-      { fromCell: 2, fromRow: 3, toCell: 3, toRow: 4 }
+      new SlickRange(2, 1, 4, 3),
+      new SlickRange(3, 2, 4, 3)
     ] as unknown as SlickRange[];
     plugin.init(gridStub);
     plugin.setSelectedRanges(mockRanges);
@@ -413,8 +413,8 @@ describe('SlickRowSelectionModel Plugin', () => {
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     const setActiveCellSpy = jest.spyOn(gridStub, 'setActiveCell');
     const mockRanges = [
-      { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 },
-      { fromCell: 2, fromRow: 3, toCell: 3, toRow: 4 }
+      new SlickRange(2, 1, 4, 3),
+      new SlickRange(3, 2, 4, 3)
     ] as unknown as SlickRange[];
     plugin.init(gridStub);
     plugin.setSelectedRanges(mockRanges);
@@ -445,8 +445,8 @@ describe('SlickRowSelectionModel Plugin', () => {
     jest.spyOn(gridStub, 'getDataLength').mockReturnValue(6);
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     const mockRanges = [
-      { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 },
-      { fromCell: 2, fromRow: 3, toCell: 3, toRow: 4 }
+      new SlickRange(2, 1, 4, 3),
+      new SlickRange(3, 2, 4, 3)
     ] as unknown as SlickRange[];
     plugin.init(gridStub);
     plugin.setSelectedRanges(mockRanges);
@@ -490,7 +490,7 @@ describe('SlickRowSelectionModel Plugin', () => {
 
       plugin.init(gridStub);
       const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-      plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: { fromCell: 2, fromRow: 3, toCell: 4, toRow: 5 } }, scrollEvent, gridStub);
+      plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: new SlickRange(3, 2, 5, 4) }, scrollEvent, gridStub);
 
       expect(setSelectedRangeSpy).toHaveBeenCalledWith([{
         fromCell: 0, fromRow: 3, toCell: 2, toRow: 5,
@@ -512,7 +512,7 @@ describe('SlickRowSelectionModel Plugin', () => {
       });
       plugin.init(gridStub);
       const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-      plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: { fromCell: 2, fromRow: 3, toCell: 4, toRow: 5 } }, scrollEvent, gridStub);
+      plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: new SlickRange(3, 2, 5, 4) }, scrollEvent, gridStub);
 
       expect(setSelectedRangeSpy).toHaveBeenCalledWith([{
         fromCell: 0, fromRow: 3, toCell: 2, toRow: 5,
@@ -526,7 +526,7 @@ describe('SlickRowSelectionModel Plugin', () => {
 
       plugin.init(gridStub);
       const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-      plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: { fromCell: 2, fromRow: 3, toCell: 4, toRow: 5 } }, scrollEvent, gridStub);
+      plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: new SlickRange(3, 2, 5, 4) }, scrollEvent, gridStub);
 
       expect(setSelectedRangeSpy).not.toHaveBeenCalled();
     });

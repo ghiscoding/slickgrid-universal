@@ -6,15 +6,11 @@ import type {
   EditorValidationResult,
   ElementPosition,
   HtmlElementPosition,
-  SlickNamespace
 } from '@slickgrid-universal/common';
 import {
   emptyElement,
   getHtmlElementOffset,
 } from '@slickgrid-universal/common';
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
 
 export interface CompositeEditorArguments extends EditorArguments {
   formValues: any;
@@ -268,8 +264,8 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
     init();
   }
 
-  // so we can do editor instanceof Slick.CompositeEditor OR instanceof CompositeEditor
+  // so we can do editor instanceof SlickCompositeEditor OR instanceof CompositeEditor
   editor.prototype = this;
-  Slick.CompositeEditor = editor as any;
+
   return editor;
 }

@@ -6,17 +6,15 @@ import {
   Editors,
   GridOption,
   GridService,
-  SlickDataView,
-  SlickGrid,
-  SlickNamespace,
+  type SlickDataView,
+  SlickEvent,
   SlickRowSelectionModel,
+  type SlickGrid,
 } from '@slickgrid-universal/common';
 
 import { SlickCompositeEditorComponent } from './slick-composite-editor.component';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
-
-declare const Slick: SlickNamespace;
 
 const gridOptionsMock = {
   editable: true,
@@ -96,10 +94,10 @@ const gridStub = {
   getSortColumns: jest.fn(),
   invalidate: jest.fn(),
   onLocalSortChanged: jest.fn(),
-  onAddNewRow: new Slick.Event(),
-  onBeforeEditCell: new Slick.Event(),
-  onClick: new Slick.Event(),
-  onCompositeEditorChange: new Slick.Event(),
+  onAddNewRow: new SlickEvent(),
+  onBeforeEditCell: new SlickEvent(),
+  onClick: new SlickEvent(),
+  onCompositeEditorChange: new SlickEvent(),
   render: jest.fn(),
   setActiveCell: jest.fn(),
   setSelectedRows: jest.fn(),
@@ -116,10 +114,10 @@ const rowSelectionModelStub = {
   setSelectedRanges: jest.fn(),
   getSelectedRows: jest.fn(),
   setSelectedRows: jest.fn(),
-  onSelectedRangesChanged: new Slick.Event(),
+  onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickRowSelectionModel;
 
-function createNewColumDefinitions(count) {
+function createNewColumDefinitions(count: number) {
   const columnsMock: Column[] = [];
   for (let i = 0; i < count; i++) {
     columnsMock.push({ id: `field${i}`, field: `field${i}`, name: `Field ${i}`, editor: { model: Editors.text, massUpdate: true }, width: 75 });
@@ -553,7 +551,7 @@ describe('CompositeEditorService', () => {
       const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55, field2: 'Test' };
       jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
       const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-      const cancelSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+      const cancelSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
 
       const mockOnClose = jest.fn();
       const mockModalOptions = { headerTitle: 'Details', modalType: 'edit', onClose: mockOnClose } as CompositeEditorOpenDetailOption;
@@ -595,7 +593,7 @@ describe('CompositeEditorService', () => {
     it('should NOT execute "onClose" callback when user confirms the closing of the modal when "onClose" callback is defined', (done) => {
       const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
       jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
-      const cancelSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+      const cancelSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
 
       const mockOnClose = jest.fn();
       const mockModalOptions = { headerTitle: 'Details', modalType: 'edit', onClose: mockOnClose } as CompositeEditorOpenDetailOption;
@@ -657,7 +655,7 @@ describe('CompositeEditorService', () => {
 
     it('should execute "cancelCurrentEdit" when the "Esc" key is typed', () => {
       const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-      const cancelSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+      const cancelSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -700,7 +698,7 @@ describe('CompositeEditorService', () => {
 
     it('should execute "cancelCurrentEdit" when the "Cancel" button is clicked', () => {
       const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-      const cancelSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+      const cancelSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -723,7 +721,7 @@ describe('CompositeEditorService', () => {
 
     it('should execute "cancelCurrentEdit" when the "Close" button is clicked even with option "showCloseButtonOutside" is enabled', () => {
       const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-      const closeSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+      const closeSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -743,7 +741,7 @@ describe('CompositeEditorService', () => {
 
     it('should execute "commitCurrentEdit" when the "Save" button is clicked', () => {
       const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-      const saveSpy = jest.spyOn(gridStub.getEditController(), 'commitCurrentEdit');
+      const saveSpy = jest.spyOn(gridStub.getEditController() as any, 'commitCurrentEdit');
 
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
@@ -883,7 +881,7 @@ describe('CompositeEditorService', () => {
         jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
         jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
         jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
-        const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+        const cancelCommitSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
         const gridSrvAddItemSpy = jest.spyOn(gridServiceStub, 'addItem');
 
         const mockOnSave = jest.fn();
@@ -943,7 +941,7 @@ describe('CompositeEditorService', () => {
         jest.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
         jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
         jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
-        const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+        const cancelCommitSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
         const gridSrvAddItemSpy = jest.spyOn(gridServiceStub, 'addItem');
 
         const mockOnSave = jest.fn();
@@ -1005,7 +1003,7 @@ describe('CompositeEditorService', () => {
         jest.spyOn(dataViewStub, 'getItemCount').mockReturnValue(1);
         jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
         const gridSrvAddItemSpy = jest.spyOn(gridServiceStub, 'addItem');
-        const saveSpy = jest.spyOn(gridStub.getEditController(), 'commitCurrentEdit');
+        const saveSpy = jest.spyOn(gridStub.getEditController() as any, 'commitCurrentEdit');
 
         const mockModalOptions = { headerTitle: 'Details', modalType: 'create' } as CompositeEditorOpenDetailOption;
         component = new SlickCompositeEditorComponent();
@@ -1149,7 +1147,7 @@ describe('CompositeEditorService', () => {
         jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockNewProduct2);
         jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
         const gridSrvAddItemSpy = jest.spyOn(gridServiceStub, 'addItem');
-        const saveSpy = jest.spyOn(gridStub.getEditController(), 'commitCurrentEdit');
+        const saveSpy = jest.spyOn(gridStub.getEditController() as any, 'commitCurrentEdit');
 
         const mockCreateOnSave = jest.fn();
         mockCreateOnSave.mockResolvedValue(Promise.resolve(true));
@@ -1579,7 +1577,7 @@ describe('CompositeEditorService', () => {
         jest.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
         jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
         jest.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockProduct);
-        const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+        const cancelCommitSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
         const setActiveRowSpy = jest.spyOn(gridStub, 'setActiveRow');
         const clearSelectionSpy = jest.spyOn(gridStub, 'setSelectedRows');
         const updateItemsSpy = jest.spyOn(gridServiceStub, 'updateItems');
@@ -1634,7 +1632,7 @@ describe('CompositeEditorService', () => {
         jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
         jest.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockProduct);
         const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-        const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+        const cancelCommitSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
         const setActiveRowSpy = jest.spyOn(gridStub, 'setActiveRow');
         const clearSelectionSpy = jest.spyOn(gridStub, 'setSelectedRows');
         const updateItemsSpy = jest.spyOn(gridServiceStub, 'updateItems');
@@ -1702,7 +1700,7 @@ describe('CompositeEditorService', () => {
       jest.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
       jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
       const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-      const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+      const cancelCommitSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
       const setActiveCellSpy = jest.spyOn(gridStub, 'setActiveCell');
       const clearSelectionSpy = jest.spyOn(gridStub, 'setSelectedRows');
       const setItemsSpy = jest.spyOn(dataViewStub, 'setItems');
@@ -1755,7 +1753,7 @@ describe('CompositeEditorService', () => {
       jest.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
       jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
       const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-      const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+      const cancelCommitSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
       const setActiveCellSpy = jest.spyOn(gridStub, 'setActiveCell');
       const clearSelectionSpy = jest.spyOn(gridStub, 'setSelectedRows');
       const setItemsSpy = jest.spyOn(dataViewStub, 'setItems');
@@ -1810,7 +1808,7 @@ describe('CompositeEditorService', () => {
       jest.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
       jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
       const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-      const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+      const cancelCommitSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
       const setActiveCellSpy = jest.spyOn(gridStub, 'setActiveCell');
       const clearSelectionSpy = jest.spyOn(gridStub, 'setSelectedRows');
       const setItemsSpy = jest.spyOn(dataViewStub, 'setItems');
@@ -1868,7 +1866,7 @@ describe('CompositeEditorService', () => {
       jest.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
       jest.spyOn(dataViewStub, 'getAllSelectedIds').mockReturnValue([222]);
       jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
-      const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+      const cancelCommitSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
 
       const mockOnSave = jest.fn();
       mockOnSave.mockResolvedValue(Promise.reject(new Error('some error')));
@@ -2005,7 +2003,7 @@ describe('CompositeEditorService', () => {
       jest.spyOn(dataViewStub, 'mapIdsToRows').mockReturnValue([0]);
       jest.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockProduct);
       const getEditSpy = jest.spyOn(gridStub, 'getEditController');
-      const cancelCommitSpy = jest.spyOn(gridStub.getEditController(), 'cancelCurrentEdit');
+      const cancelCommitSpy = jest.spyOn(gridStub.getEditController() as any, 'cancelCurrentEdit');
       const setActiveRowSpy = jest.spyOn(gridStub, 'setActiveRow');
       const updateItemsSpy = jest.spyOn(gridServiceStub, 'updateItems');
 

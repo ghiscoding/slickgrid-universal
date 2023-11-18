@@ -1,13 +1,14 @@
 // import 3rd party lib multiple-select for the tests
 import 'multiple-select-vanilla';
+import { SlickEvent, type SlickDataView } from '../../core/index';
 
 import { Editors } from '../index';
 import { SelectEditor } from '../selectEditor';
 import { FieldType, OperatorType } from '../../enums/index';
-import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { type SlickGrid } from '../../core/index';
 
-declare const Slick: SlickNamespace;
 const containerId = 'demo-container';
 
 // define a <div> container to simulate the grid container
@@ -37,8 +38,8 @@ const gridStub = {
   navigateNext: jest.fn(),
   navigatePrev: jest.fn(),
   render: jest.fn(),
-  onBeforeEditCell: new Slick.Event(),
-  onCompositeEditorChange: new Slick.Event(),
+  onBeforeEditCell: new SlickEvent(),
+  onCompositeEditorChange: new SlickEvent(),
 } as unknown as SlickGrid;
 
 describe('SelectEditor', () => {
@@ -912,7 +913,7 @@ describe('SelectEditor', () => {
       jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       editor = new SelectEditor(editorArguments, true);
       editor.setValue(['male'], true);
       editor.msInstance?.close();
@@ -929,7 +930,7 @@ describe('SelectEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
-      });
+      } as any);
 
       editor = new SelectEditor(editorArguments, true);
       const disableSpy = jest.spyOn(editor, 'disable');
@@ -945,10 +946,10 @@ describe('SelectEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
 
       editor = new SelectEditor(editorArguments, true);
       editor.loadValue(mockItemData);
@@ -972,10 +973,10 @@ describe('SelectEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.compositeEditorOptions = {
         excludeDisabledFieldFormValues: true
       };
@@ -1002,10 +1003,10 @@ describe('SelectEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.autoCommitEdit = true;
       mockItemData = { id: 1, gender: ['male'], isActive: true };
 
@@ -1032,7 +1033,7 @@ describe('SelectEditor', () => {
         jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
         const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
           getReturnValue: () => false
-        });
+        } as any);
         mockColumn.internalColumnEditor = {
           collection: [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }, { value: 'other', label: 'other' }],
           collectionOverride: (inputCollection) => inputCollection.filter(item => item.value !== 'other')

@@ -1,5 +1,6 @@
 import { isNumber } from '@slickgrid-universal/utils';
 
+import { SlickGroupTotals } from '../core/slickCore';
 import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class AvgAggregator implements Aggregator {
@@ -74,15 +75,15 @@ export class AvgAggregator implements Aggregator {
     }
   }
 
-  storeResult(groupTotals: any) {
+  storeResult(groupTotals: SlickGroupTotals & { [type: string]: Record<number | string, number | null>; }) {
     let sum = this._sum;
     let itemCount = this._nonNullCount;
     this.addGroupTotalPropertiesWhenNotExist(groupTotals);
 
     // when dealing with Tree Data, we also need to take the parent's total and add it to the final sum
     if (this._isTreeAggregator) {
-      sum += groupTotals['sum'][this._field];
-      itemCount += groupTotals['count'][this._field];
+      sum += groupTotals['sum'][this._field] as number;
+      itemCount += groupTotals['count'][this._field] as number;
 
       groupTotals['sum'][this._field] = sum;
       groupTotals['count'][this._field] = itemCount;

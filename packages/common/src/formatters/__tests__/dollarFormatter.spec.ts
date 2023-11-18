@@ -1,5 +1,6 @@
-import { Column, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, GridOption } from '../../interfaces/index';
 import { dollarFormatter } from '../dollarFormatter';
+import { SlickGrid } from '../../core/index';
 
 describe('the Dollar Formatter', () => {
   const gridStub = {

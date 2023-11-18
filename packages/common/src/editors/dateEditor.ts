@@ -18,17 +18,13 @@ import type {
   EditorValidationResult,
   FlatpickrOption,
   GridOption,
-  SlickGrid,
-  SlickNamespace,
 } from './../interfaces/index';
 import { getEditorOptionByName } from './editorUtilities';
 import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
 import { getDescendantProperty, mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, } from './../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
+import { SlickEventData, type SlickGrid } from '../core/index';
 
 /*
  * An example of a date picker editor using Flatpickr
@@ -80,7 +76,7 @@ export class DateEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef && this.columnDef.internalColumnEditor || {};
+    return this.columnDef?.internalColumnEditor || {} as ColumnEditor;
   }
 
   /** Getter for the item data context object */
@@ -465,7 +461,7 @@ export class DateEditor implements Editor {
     }
     grid.onCompositeEditorChange.notify(
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
-      new Slick.EventData()
+      new SlickEventData()
     );
   }
 }

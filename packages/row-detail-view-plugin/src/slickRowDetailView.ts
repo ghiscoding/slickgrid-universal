@@ -2,31 +2,58 @@ import type {
   Column,
   DOMMouseOrTouchEvent,
   ExternalResource,
-  FormatterResultObject,
+  FormatterResultWithHtml,
+  FormatterResultWithText,
   GridOption,
+  OnAfterRowDetailToggleArgs,
+  OnBeforeRowDetailToggleArgs,
+  OnRowBackToViewportRangeArgs,
+  OnRowDetailAsyncEndUpdateArgs,
+  OnRowDetailAsyncResponseArgs,
+  OnRowOutOfViewportRangeArgs,
   PubSubService,
   RowDetailView,
   RowDetailViewOption,
-  SlickDataView,
-  SlickEventData,
-  SlickEventHandler,
   SlickGrid,
-  SlickNamespace,
   SlickRowDetailView as UniversalRowDetailView,
   UsabilityOverrideFn,
+  SlickDataView,
+  SlickEventData,
 } from '@slickgrid-universal/common';
+import { SlickEvent, SlickEventHandler, } from '@slickgrid-universal/common';
 import { objectAssignAndExtend } from '@slickgrid-universal/utils';
 
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
-
-/***
+/**
  * A plugin to add Row Detail Panel View (for example providing order detail info when clicking on the order row in the grid)
  * Original StackOverflow question & article making this possible (thanks to violet313)
  * https://stackoverflow.com/questions/10535164/can-slickgrids-row-height-be-dynamically-altered#29399927
  * http://violet313.org/slickgrids/#intro
  */
 export class SlickRowDetailView implements ExternalResource, UniversalRowDetailView {
+  // --
+  // public API
+  pluginName = 'RowDetailView' as const;
+
+  /** Fired when the async response finished */
+  onAsyncEndUpdate = new SlickEvent<OnRowDetailAsyncEndUpdateArgs>();
+
+  /** This event must be used with the "notify" by the end user once the Asynchronous Server call returns the item detail */
+  onAsyncResponse = new SlickEvent<OnRowDetailAsyncResponseArgs>();
+
+  /** Fired after the row detail gets toggled */
+  onAfterRowDetailToggle = new SlickEvent<OnAfterRowDetailToggleArgs>();
+
+  /** Fired before the row detail gets toggled */
+  onBeforeRowDetailToggle = new SlickEvent<OnBeforeRowDetailToggleArgs>();
+
+  /** Fired after the row detail gets toggled */
+  onRowBackToViewportRange = new SlickEvent<OnRowBackToViewportRangeArgs>();
+
+  /** Fired after a row becomes out of viewport range (when user can't see the row anymore) */
+  onRowOutOfViewportRange = new SlickEvent<OnRowOutOfViewportRangeArgs>();
+
+  // --
+  // protected props
   protected _addonOptions!: RowDetailView;
   protected _dataViewIdProperty = 'id';
   protected _eventHandler: SlickEventHandler;
@@ -57,29 +84,10 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     toolTip: '',
     width: 30,
   } as unknown as RowDetailView;
-  pluginName: 'RowDetailView' = 'RowDetailView' as const;
-
-  /** Fired when the async response finished */
-  onAsyncEndUpdate = new Slick.Event();
-
-  /** This event must be used with the "notify" by the end user once the Asynchronous Server call returns the item detail */
-  onAsyncResponse = new Slick.Event();
-
-  /** Fired after the row detail gets toggled */
-  onAfterRowDetailToggle = new Slick.Event();
-
-  /** Fired before the row detail gets toggled */
-  onBeforeRowDetailToggle = new Slick.Event();
-
-  /** Fired after the row detail gets toggled */
-  onRowBackToViewportRange = new Slick.Event();
-
-  /** Fired after a row becomes out of viewport range (when user can't see the row anymore) */
-  onRowOutOfViewportRange = new Slick.Event();
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(protected readonly pubSubService: PubSubService) {
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
   }
 
   get addonOptions() {
@@ -88,7 +96,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /** Getter of SlickGrid DataView object */
   get dataView(): SlickDataView {
-    return this._grid?.getData() || {} as SlickDataView;
+    return this._grid?.getData<SlickDataView>();
   }
 
   get dataViewIdProperty(): string {
@@ -598,7 +606,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** The Formatter of the toggling icon of the Row Detail */
-  protected detailSelectionFormatter(row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGrid): FormatterResultObject | string {
+  protected detailSelectionFormatter(row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGrid): FormatterResultWithHtml | FormatterResultWithText | string {
     if (!this.checkExpandableOverride(row, dataContext, grid)) {
       return '';
     } else {

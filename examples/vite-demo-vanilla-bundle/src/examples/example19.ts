@@ -1,11 +1,10 @@
-import { CellRange, Column, GridOption, SlickEventHandler, SlickNamespace, } from '@slickgrid-universal/common';
+import { type CellRange, type Column, type GridOption, SlickEventHandler, } from '@slickgrid-universal/common';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
 import './example19.scss';
 
 const NB_ITEMS = 100;
-declare const Slick: SlickNamespace;
 export default class Example19 {
   protected _eventHandler: SlickEventHandler;
 
@@ -17,7 +16,7 @@ export default class Example19 {
   sgb: SlickVanillaGridBundle;
 
   attached() {
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
 
     // define the grid options & columns and then create the grid itself
     this.defineGrid();

@@ -191,15 +191,15 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
   });
 
   it('should have a frozen grid with 4 containers with 2 columns on the left and 3 rows on the top after click Set/Clear Frozen button', () => {
-    cy.get(`.grid17-1 [style="top:0px"]`).should('have.length', 1);
-    cy.get(`.grid17-2 [style="top:0px"]`).should('have.length', 1);
+    cy.get(`.grid17-1 [style="top: ${CELL_HEIGHT * 0}px;"]`).should('have.length', 1);
+    cy.get(`.grid17-2 [style="top: ${CELL_HEIGHT * 0}px;"]`).should('have.length', 1);
 
     cy.get('[data-test="set-clear-frozen-btn"]').click();
 
-    cy.get(`.grid17-1 [style="top:0px"]`).should('have.length', 2 * 2);
-    cy.get(`.grid17-2 [style="top:0px"]`).should('have.length', 2 * 2);
-    cy.get(`.grid17-1 .grid-canvas-left > [style="top:0px"]`).children().should('have.length', 2 * 2);
-    cy.get(`.grid17-2 .grid-canvas-left > [style="top:0px"]`).children().should('have.length', 2 * 2);
+    cy.get(`.grid17-1 [style="top: ${CELL_HEIGHT * 0}px;"]`).should('have.length', 2 * 2);
+    cy.get(`.grid17-2 [style="top: ${CELL_HEIGHT * 0}px;"]`).should('have.length', 2 * 2);
+    cy.get(`.grid17-1 .grid-canvas-left > [style="top: ${CELL_HEIGHT * 0}px;"]`).children().should('have.length', 2 * 2);
+    cy.get(`.grid17-2 .grid-canvas-left > [style="top: ${CELL_HEIGHT * 0}px;"]`).children().should('have.length', 2 * 2);
     cy.get('.grid17-1 .grid-canvas-top').children().should('have.length', 3 * 2 + 1); // +1 for "Empty Data" div
     cy.get('.grid17-2 .grid-canvas-top').children().should('have.length', 3 * 2 + 1);
   });
@@ -269,8 +269,8 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
 
   it('should have a frozen & grouping by Duration grid after click Set/Clear grouping by Duration button', { scrollBehavior: false }, () => {
     cy.get('[data-test="set-clear-grouping-btn"]').trigger('click');
-    cy.get(`.grid17-1 [style="top:0px"]`).should('have.length', 2 * 2);
-    cy.get(`.grid17-2 [style="top:0px"]`).should('have.length', 2 * 2);
+    cy.get(`.grid17-1 [style="top: ${CELL_HEIGHT * 0}px;"]`).should('have.length', 2 * 2);
+    cy.get(`.grid17-2 [style="top: ${CELL_HEIGHT * 0}px;"]`).should('have.length', 2 * 2);
     cy.get('.grid17-1 .grid-canvas-top.grid-canvas-left').contains('Duration');
     cy.get('.grid17-2 .grid-canvas-top.grid-canvas-left').contains('Duration');
   });
@@ -283,7 +283,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
       cy.get('@viewport').invoke('scrollTop').then(scrollAfter => {
         expect(scrollBefore).to.be.lessThan(scrollAfter as number);
         cy.dragEnd(selector);
-        cy.get(`${selector} [style='top:${CELL_HEIGHT * 14}px'].slick-group`).should('exist');
+        cy.get(`${selector} [style='top: ${CELL_HEIGHT * 14}px;'].slick-group`).should('exist');
       });
     });
   }
@@ -296,7 +296,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
   it('should reset to default grid when click Set/Clear Frozen button and Set/Clear grouping button', () => {
     cy.get('[data-test="set-clear-frozen-btn"]').trigger('click');
     cy.get('[data-test="set-clear-grouping-btn"]').trigger('click');
-    cy.get(`.grid17-1 [style="top:0px"]`).should('have.length', 1);
-    cy.get(`.grid17-2 [style="top:0px"]`).should('have.length', 1);
+    cy.get(`.grid17-1 [style="top: ${CELL_HEIGHT * 0}px;"]`).should('have.length', 1);
+    cy.get(`.grid17-2 [style="top: ${CELL_HEIGHT * 0}px;"]`).should('have.length', 1);
   });
 });

@@ -1,5 +1,5 @@
-import type { SlickGrid } from './slickGrid.interface';
 import type { ContainerService } from '../services/index';
+import type { SlickGrid } from '../core/index';
 
 export interface ExternalResource {
   /** optionally provide the Service class name of the resource to make it easier to find even with minified code */

@@ -5,7 +5,7 @@ import * as Sortable_ from 'sortablejs';
 const Sortable = ((Sortable_ as any)?.['default'] ?? Sortable_); // patch for rollup
 
 import type { ExtensionUtility } from '../extensions/extensionUtility';
-import { SortDirectionNumber } from '../enums';
+import { SortDirectionNumber } from '../enums/index';
 import type {
   Column,
   DOMMouseOrTouchEvent,
@@ -14,19 +14,12 @@ import type {
   GridOption,
   Grouping,
   GroupingGetterFunction,
-  SlickDataView,
-  SlickEvent,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { SharedService } from '../services/shared.service';
 import { createDomElement, emptyElement } from '../services/domUtilities';
 import { sortByFieldType } from '../sortComparers';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
+import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
 
 /**
  *
@@ -51,6 +44,10 @@ declare const Slick: SlickNamespace;
  *   }];
  */
 export class SlickDraggableGrouping {
+  columnsGroupBy: Column[] = [];
+  onGroupChanged: SlickEvent;
+  pluginName: 'DraggableGrouping' = 'DraggableGrouping' as const;
+
   protected _addonOptions!: DraggableGrouping;
   protected _bindingEventService: BindingEventService;
   protected _droppableInstance?: SortableInstance;
@@ -72,9 +69,6 @@ export class SlickDraggableGrouping {
     toggleAllButtonText: '',
     toggleAllPlaceholderText: 'Toggle all Groups',
   } as DraggableGroupingOption;
-  columnsGroupBy: Column[] = [];
-  onGroupChanged: SlickEvent;
-  pluginName: 'DraggableGrouping' = 'DraggableGrouping' as const;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
@@ -83,8 +77,8 @@ export class SlickDraggableGrouping {
     protected readonly sharedService: SharedService,
   ) {
     this._bindingEventService = new BindingEventService();
-    this._eventHandler = new Slick.EventHandler();
-    this.onGroupChanged = new Slick.Event();
+    this._eventHandler = new SlickEventHandler();
+    this.onGroupChanged = new SlickEvent<{ caller?: string; groupColumns: Grouping[]; }>();
   }
 
   get addonOptions(): DraggableGroupingOption {
@@ -93,7 +87,7 @@ export class SlickDraggableGrouping {
 
   /** Getter of SlickGrid DataView object */
   get dataView(): SlickDataView {
-    return this.grid?.getData?.() ?? {} as SlickDataView;
+    return this.grid?.getData<SlickDataView>() ?? {};
   }
 
   get dropboxElement() {
@@ -117,7 +111,7 @@ export class SlickDraggableGrouping {
   }
 
   get grid(): SlickGrid {
-    return this._grid ?? this.sharedService.slickGrid ?? {} as SlickGrid;
+    return this._grid ?? this.sharedService.slickGrid ?? {};
   }
 
   get gridOptions(): GridOption {
@@ -349,12 +343,12 @@ export class SlickDraggableGrouping {
         const finalReorderedColumns: Column[] = [];
         const reorderedColumns = grid.getColumns();
         for (const reorderedId of reorderedIds) {
-          finalReorderedColumns.push(reorderedColumns[getColumnIndex(reorderedId)]);
+          finalReorderedColumns.push(reorderedColumns[getColumnIndex.call(grid, reorderedId)]);
         }
-        setColumns(finalReorderedColumns);
-        trigger(grid.onColumnsReordered, { grid });
+        setColumns.call(grid, finalReorderedColumns);
+        trigger.call(grid, grid.onColumnsReordered, { grid });
         e.stopPropagation();
-        setupColumnResize();
+        setupColumnResize.call(grid);
       }
     } as SortableOptions;
 
@@ -619,7 +613,7 @@ export class SlickDraggableGrouping {
   /** call notify on slickgrid event and execute onGroupChanged callback when defined as a function by the user */
   protected triggerOnGroupChangedEvent(args: { caller?: string; groupColumns: Grouping[]; }) {
     if (this._addonOptions && typeof this._addonOptions.onGroupChanged === 'function') {
-      this._addonOptions.onGroupChanged(new Slick.EventData(), args);
+      this._addonOptions.onGroupChanged(new SlickEventData(), args);
     }
     this.onGroupChanged.notify(args);
   }

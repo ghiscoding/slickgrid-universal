@@ -11,8 +11,6 @@ import type {
   EditorValidator,
   EditorValidationResult,
   GridOption,
-  SlickGrid,
-  SlickNamespace,
   SliderOption,
 } from '../interfaces/index';
 import { getEditorOptionByName } from './editorUtilities';
@@ -20,9 +18,7 @@ import { getDescendantProperty } from '../services/utilities';
 import { sliderValidator } from '../editorValidators/sliderValidator';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { createDomElement } from '../services/domUtilities';
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
+import { SlickEventData, type SlickGrid } from '../core/index';
 
 /*
  * An example of a 'detached' editor.
@@ -66,7 +62,7 @@ export class SliderEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef && this.columnDef.internalColumnEditor || {};
+    return this.columnDef?.internalColumnEditor ?? {} as ColumnEditor;
   }
 
   /** Getter for the item data context object */
@@ -383,8 +379,8 @@ export class SliderEditor implements Editor {
       // trigger mouse enter event on the editor for optionally hooked SlickCustomTooltip
       if (!this.args?.compositeEditorOptions) {
         this.grid.onMouseEnter.notify(
-          { grid: this.grid },
-          { ...new Slick.EventData(), target: event?.target }
+          { column: this.columnDef, grid: this.grid },
+          { ...new SlickEventData(), ...{ target: event?.target } as Event }
         );
       }
     }
@@ -411,7 +407,7 @@ export class SliderEditor implements Editor {
     }
     grid.onCompositeEditorChange.notify(
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
-      { ...new Slick.EventData(), ...event }
+      { ...new SlickEventData(), ...event as Event }
     );
   }
 

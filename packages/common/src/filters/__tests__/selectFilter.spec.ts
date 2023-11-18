@@ -3,10 +3,11 @@ import 'multiple-select-vanilla';
 import { of, Subject } from 'rxjs';
 
 import { FieldType, OperatorType } from '../../enums/index';
-import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { CollectionService } from '../../services/collection.service';
 import { Filters } from '../filters.index';
 import { SelectFilter } from '../selectFilter';
+import { SlickGrid } from '../../core/index';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';

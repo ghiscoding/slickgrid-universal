@@ -3,7 +3,8 @@ import * as DOMPurify_ from 'dompurify';
 const DOMPurify = ((DOMPurify_ as any)?.['default'] ?? DOMPurify_); // patch for rollup
 
 import type { InferDOMType, SearchTerm } from '../enums/index';
-import type { Column, GridOption, HtmlElementPosition, SelectOption, SlickGrid, } from '../interfaces/index';
+import type { Column, GridOption, HtmlElementPosition, SelectOption } from '../interfaces/index';
+import type { SlickGrid } from '../core/index';
 import type { TranslaterService } from './translater.service';
 
 /**
@@ -228,7 +229,7 @@ export function getElementOffsetRelativeToParent(parentElm: HTMLElement | null, 
 }
 
 /** Get HTML element offset with pure JS */
-export function getHtmlElementOffset(element?: HTMLElement): HtmlElementPosition | undefined {
+export function getHtmlElementOffset(element?: HTMLElement | null): HtmlElementPosition | undefined {
   if (!element) {
     return undefined;
   }
@@ -343,7 +344,7 @@ export function htmlEncodedStringWithPadding(inputStr: string, paddingLength: nu
 }
 
 /**
- * Sanitize, return only the text without HTML tags
+ * Sanitizes all HTML tags and returns just the text content
  * @input htmlString
  * @return text
  */

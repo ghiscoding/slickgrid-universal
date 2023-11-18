@@ -1,15 +1,15 @@
 import {
   Aggregators,
-  Column,
+  type Column,
   decimalFormatted,
   FieldType,
   Filters,
   findItemInTreeStructure,
-  Formatter,
+  type Formatter,
   Formatters,
-  GridOption,
+  type GridOption,
   isNumber,
-  SlickDataView,
+  type SlickDataView,
   // GroupTotalFormatters,
   // italicFormatter,
 } from '@slickgrid-universal/common';
@@ -20,7 +20,7 @@ import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bu
 import './example06.scss';
 import { ExampleGridOptions } from './example-grid-options';
 
-export default class Example6 {
+export default class Example06 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   datasetFlat: any[];
@@ -228,12 +228,12 @@ export default class Example6 {
   }
 
   treeFormatter: Formatter = (_row, _cell, value, _columnDef, dataContext, grid) => {
-    const gridOptions = grid.getOptions() as GridOption;
+    const gridOptions = grid.getOptions();
     const treeLevelPropName = gridOptions?.treeDataOptions?.levelPropName || '__treeLevel';
     if (value === null || value === undefined || dataContext === undefined) {
       return '';
     }
-    const dataView = grid.getData() as SlickDataView;
+    const dataView = grid.getData<SlickDataView>();
     const data = dataView.getItems();
     const identifierPropName = dataView.getIdPropertyName() || 'id';
     const idx = dataView.getIdxById(dataContext[identifierPropName]) as number;
