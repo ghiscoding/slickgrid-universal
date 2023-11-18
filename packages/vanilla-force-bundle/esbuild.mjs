@@ -24,7 +24,7 @@ build({
   minify: true,
   format: 'iife',
   globalName: 'Slicker',
-  target: 'es2018',
+  target: 'es2021',
   legalComments: 'external', // Move all legal comments to a .LEGAL.txt file
   mainFields: ['module', 'main'],
   sourcemap: false,

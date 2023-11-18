@@ -2,7 +2,7 @@
   "extends": "../tsconfig.bundle.json",
   "compilerOptions": {
     "baseUrl": "./",
-    "outDir": "dist/commonjs",
+    "outDir": "dist/cjs",
     "typeRoots": [
       "../typings",
       "./node_modules/@types",

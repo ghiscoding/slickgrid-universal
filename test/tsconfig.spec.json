@@ -2,10 +2,10 @@
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
     "baseUrl": "./",
-    "target": "es2018",
+    "target": "es2021",
     "module": "commonjs",
     "lib": [
-      "es2018"
+      "es2021"
     ],
     "types": [
       "@4tw/cypress-drag-drop",
