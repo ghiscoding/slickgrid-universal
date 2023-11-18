@@ -29,7 +29,6 @@ export const GlobalGridOptions: Partial<GridOption> = {
   },
   columnGroupSeparator: ' - ',
   columnPicker: {
-    fadeSpeed: 0,
     hideForceFitButton: false,
     hideSyncResizeButton: true,
     headerColumnValueExtractor: pickerHeaderColumnValueExtractor

@@ -3621,23 +3621,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return !Array.isArray(this.data);
   }
 
-  protected togglePanelVisibility(option: 'showTopPanel' | 'showHeaderRow' | 'showColumnHeader' | 'showFooterRow' | 'showPreHeaderPanel', container: HTMLElement | HTMLElement[], visible?: boolean, animate?: boolean) {
-    const animated = (animate === false) ? false : true;
-
+  protected togglePanelVisibility(option: 'showTopPanel' | 'showHeaderRow' | 'showColumnHeader' | 'showFooterRow' | 'showPreHeaderPanel', container: HTMLElement | HTMLElement[], visible?: boolean) {
     if (this._options[option] !== visible) {
       this._options[option] = visible as boolean;
       if (visible) {
-        if (animated) {
-          Utils.slideDown(container, this.resizeCanvas.bind(this));
-          return;
-        }
         Utils.show(container);
         this.resizeCanvas();
       } else {
-        if (animated) {
-          Utils.slideUp(container, this.resizeCanvas.bind(this));
-          return;
-        }
         Utils.hide(container);
         this.resizeCanvas();
       }
@@ -3645,48 +3635,43 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Set the Top Panel Visibility and optionally enable/disable animation (enabled by default)
+   * Set the Top Panel Visibility
    * @param {Boolean} [visible] - optionally set if top panel is visible or not
-   * @param {Boolean} [animate] - optionally enable an animation while toggling the panel
    */
-  setTopPanelVisibility(visible?: boolean, animate?: boolean) {
-    this.togglePanelVisibility('showTopPanel', this._topPanelScrollers, visible, animate);
+  setTopPanelVisibility(visible?: boolean) {
+    this.togglePanelVisibility('showTopPanel', this._topPanelScrollers, visible);
   }
 
   /**
-   * Set the Header Row Visibility and optionally enable/disable animation (enabled by default)
+   * Set the Header Row Visibility
    * @param {Boolean} [visible] - optionally set if header row panel is visible or not
-   * @param {Boolean} [animate] - optionally enable an animation while toggling the panel
    */
-  setHeaderRowVisibility(visible?: boolean, animate?: boolean) {
-    this.togglePanelVisibility('showHeaderRow', this._headerRowScroller, visible, animate);
+  setHeaderRowVisibility(visible?: boolean) {
+    this.togglePanelVisibility('showHeaderRow', this._headerRowScroller, visible);
   }
 
   /**
-   * Set the Column Header Visibility and optionally enable/disable animation (enabled by default)
+   * Set the Column Header Visibility
    * @param {Boolean} [visible] - optionally set if column header is visible or not
-   * @param {Boolean} [animate] - optionally enable an animation while toggling the panel
    */
-  setColumnHeaderVisibility(visible?: boolean, animate?: boolean) {
-    this.togglePanelVisibility('showColumnHeader', this._headerScroller, visible, animate);
+  setColumnHeaderVisibility(visible?: boolean) {
+    this.togglePanelVisibility('showColumnHeader', this._headerScroller, visible);
   }
 
   /**
-   * Set the Footer Visibility and optionally enable/disable animation (enabled by default)
+   * Set the Footer Visibility
    * @param {Boolean} [visible] - optionally set if footer row panel is visible or not
-   * @param {Boolean} [animate] - optionally enable an animation while toggling the panel
    */
-  setFooterRowVisibility(visible?: boolean, animate?: boolean) {
-    this.togglePanelVisibility('showFooterRow', this._footerRowScroller, visible, animate);
+  setFooterRowVisibility(visible?: boolean) {
+    this.togglePanelVisibility('showFooterRow', this._footerRowScroller, visible);
   }
 
   /**
-   * Set the Pre-Header Visibility and optionally enable/disable animation (enabled by default)
+   * Set the Pre-Header Visibility
    * @param {Boolean} [visible] - optionally set if pre-header panel is visible or not
-   * @param {Boolean} [animate] - optionally enable an animation while toggling the panel
    */
-  setPreHeaderPanelVisibility(visible?: boolean, animate?: boolean) {
-    this.togglePanelVisibility('showPreHeaderPanel', [this._preHeaderPanelScroller, this._preHeaderPanelScrollerR], visible, animate);
+  setPreHeaderPanelVisibility(visible?: boolean) {
+    this.togglePanelVisibility('showPreHeaderPanel', [this._preHeaderPanelScroller, this._preHeaderPanelScrollerR], visible);
   }
 
   /** Get Grid Canvas Node DOM Element */
