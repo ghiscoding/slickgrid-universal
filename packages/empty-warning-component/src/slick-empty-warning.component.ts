@@ -6,7 +6,6 @@ import type {
   SlickGrid,
   TranslaterService
 } from '@slickgrid-universal/common';
-import { sanitizeTextByAvailableSanitizer } from '@slickgrid-universal/common';
 
 export class SlickEmptyWarningComponent implements ExternalResource {
   protected _warningLeftElement: HTMLDivElement | null = null;
@@ -100,7 +99,7 @@ export class SlickEmptyWarningComponent implements ExternalResource {
       this._warningLeftElement = document.createElement('div');
       this._warningLeftElement.classList.add(emptyDataClassName);
       this._warningLeftElement.classList.add('left');
-      this._warningLeftElement.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, warningMessage, sanitizedOptions);
+      this.grid.applyHtmlCode(this._warningLeftElement, warningMessage, sanitizedOptions);
 
       // clone the warning element and add the "right" class to it so we can distinguish
       this._warningRightElement = this._warningLeftElement.cloneNode(true) as HTMLDivElement;

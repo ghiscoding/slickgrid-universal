@@ -29,6 +29,7 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
+  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   focus: jest.fn(),
   getActiveCell: jest.fn(),
   getOptions: () => gridOptionMock,

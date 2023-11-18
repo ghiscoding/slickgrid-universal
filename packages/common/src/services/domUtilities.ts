@@ -360,14 +360,14 @@ export function sanitizeHtmlToText(htmlString: string): string {
  * 2. DOMPurify sanitizer (defaults)
  * @param gridOptions: grid options
  * @param dirtyHtml: dirty html string
- * @param domPurifyOptions: optional DOMPurify options when using that sanitizer
+ * @param sanitizerOptions: optional DOMPurify options when using that sanitizer
  */
-export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyHtml: string, domPurifyOptions?: DOMPurify_.Config): string {
+export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyHtml: string, sanitizerOptions?: DOMPurify_.Config): string {
   let sanitizedText = dirtyHtml;
   if (typeof gridOptions?.sanitizer === 'function') {
     sanitizedText = gridOptions.sanitizer(dirtyHtml || '');
   } else if (typeof DOMPurify?.sanitize === 'function') {
-    sanitizedText = (DOMPurify.sanitize(dirtyHtml || '', domPurifyOptions || { RETURN_TRUSTED_TYPE: true }) || '').toString();
+    sanitizedText = (DOMPurify.sanitize(dirtyHtml || '', sanitizerOptions || { RETURN_TRUSTED_TYPE: true }) || '').toString();
   }
 
   return sanitizedText;

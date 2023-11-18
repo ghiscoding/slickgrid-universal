@@ -2,6 +2,7 @@ import { EmptyWarning, GridOption, SlickGrid } from '@slickgrid-universal/common
 import { SlickEmptyWarningComponent } from './slick-empty-warning.component';
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
+import * as DOMPurify from 'dompurify';
 
 const GRID_UID = 'slickgrid_123456';
 
@@ -11,6 +12,7 @@ const mockGridOptions = {
 } as GridOption;
 
 const gridStub = {
+  applyHtmlCode: (elm, val) => elm.innerHTML = DOMPurify.sanitize(val || ''),
   getGridPosition: () => mockGridOptions,
   getOptions: () => mockGridOptions,
   getUID: () => GRID_UID,

@@ -11,6 +11,7 @@ import { BackendUtilityService } from '../../services/backendUtility.service';
 const gridUid = 'slickgrid_124343';
 
 const gridStub = {
+  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   getColumnIndex: jest.fn(),
   getColumns: jest.fn(),
   getOptions: jest.fn(),

@@ -27,7 +27,6 @@ import {
   createDomElement,
   getDescendantProperty,
   numericSortComparer,
-  sanitizeTextByAvailableSanitizer,
   SlickEventHandler,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
@@ -369,7 +368,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         }
 
         const modalHeaderTitleElm = createDomElement('div', { className: 'slick-editor-modal-title' });
-        modalHeaderTitleElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, parsedHeaderTitle);
+        this.grid.applyHtmlCode(modalHeaderTitleElm, parsedHeaderTitle);
 
         const modalCloseButtonElm = createDomElement('button', { type: 'button', ariaLabel: 'Close', textContent: '×', className: 'close', dataset: { action: 'close' } });
         if (this._options.showCloseButtonOutside) {
@@ -448,7 +447,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
             }
 
             const templateItemLabelElm = createDomElement('div', { className: `item-details-label editor-${columnDef.id}` });
-            templateItemLabelElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, this.getColumnLabel(columnDef) || 'n/a');
+            this.grid.applyHtmlCode(templateItemLabelElm, this.getColumnLabel(columnDef) || 'n/a');
             const templateItemEditorElm = createDomElement('div', {
               className: 'item-details-editor-container slick-cell',
               dataset: { editorid: `${columnDef.id}` },

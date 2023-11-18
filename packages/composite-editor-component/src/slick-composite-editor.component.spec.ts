@@ -76,6 +76,7 @@ const gridServiceStub = {
 } as unknown as GridService;
 
 const gridStub = {
+  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   autosizeColumns: jest.fn(),
   editActiveCell: jest.fn(),
   getColumnIndex: jest.fn(),
@@ -360,7 +361,7 @@ describe('CompositeEditorService', () => {
       expect(compositeContainerElm).toBeTruthy();
       expect(compositeHeaderElm).toBeTruthy();
       expect(productNameLabelElm.textContent).toBe('Product'); // regular, without column group
-      expect(field3LabelElm.innerHTML).toBe('Group Name - <span title="tooltip text" class="mdi mdi-alert-circle"></span> Field 3'); // with column group
+      expect(field3LabelElm.innerHTML).toBe('Group Name - <span class="mdi mdi-alert-circle" title="tooltip text"></span> Field 3'); // with column group
       expect(compositeTitleElm).toBeTruthy();
       expect(compositeTitleElm.textContent).toBe('Details');
       expect(compositeBodyElm).toBeTruthy();
