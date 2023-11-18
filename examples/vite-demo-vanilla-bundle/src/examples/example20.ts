@@ -1,4 +1,4 @@
-import { Column, FieldType, Filters, Formatters, GridOption, SlickEventHandler, } from '@slickgrid-universal/common';
+import { type Column, FieldType, Filters, Formatters, type GridOption, SlickEventHandler, } from '@slickgrid-universal/common';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 

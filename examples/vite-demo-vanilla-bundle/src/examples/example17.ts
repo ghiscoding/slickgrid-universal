@@ -1,4 +1,4 @@
-import { Aggregators, Column, Formatters, GridOption, Grouping, GroupTotalFormatters, SlickCellRangeSelector, SlickCellSelectionModel, SlickRowSelectionModel } from '@slickgrid-universal/common';
+import { Aggregators, type Column, Formatters, type GridOption, type Grouping, GroupTotalFormatters, SlickCellRangeSelector, SlickCellSelectionModel, SlickRowSelectionModel } from '@slickgrid-universal/common';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 

@@ -1,9 +1,9 @@
 import {
-  Column,
-  GridOption,
+  type Column,
+  type GridOption,
   FieldType,
-  ItemMetadata,
-  OperatorString,
+  type ItemMetadata,
+  type OperatorString,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';

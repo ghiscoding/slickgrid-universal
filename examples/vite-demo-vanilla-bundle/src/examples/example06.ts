@@ -1,15 +1,15 @@
 import {
   Aggregators,
-  Column,
+  type Column,
   decimalFormatted,
   FieldType,
   Filters,
   findItemInTreeStructure,
-  Formatter,
+  type Formatter,
   Formatters,
-  GridOption,
+  type GridOption,
   isNumber,
-  SlickDataView,
+  type SlickDataView,
   // GroupTotalFormatters,
   // italicFormatter,
 } from '@slickgrid-universal/common';
@@ -20,7 +20,7 @@ import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bu
 import './example06.scss';
 import { ExampleGridOptions } from './example-grid-options';
 
-export default class Example6 {
+export default class Example06 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   datasetFlat: any[];

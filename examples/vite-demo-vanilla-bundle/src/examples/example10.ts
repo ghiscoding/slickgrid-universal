@@ -1,14 +1,14 @@
 import {
   BindingEventService,
-  Column,
-  CursorPageInfo,
+  type Column,
+  type CursorPageInfo,
   FieldType,
   Filters,
   Formatters,
-  GridOption,
-  GridStateChange,
-  Metrics,
-  MultipleSelectOption,
+  type GridOption,
+  type GridStateChange,
+  type Metrics,
+  type MultipleSelectOption,
   OperatorType,
   SortDirection,
 } from '@slickgrid-universal/common';
@@ -222,6 +222,7 @@ export default class Example10 {
    * @param query
    * @return Promise<GraphqlPaginatedResult>
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getCustomerApiCall(_query: string): Promise<GraphqlPaginatedResult> {
     let pageInfo: CursorPageInfo;
     if (this.sgb) {

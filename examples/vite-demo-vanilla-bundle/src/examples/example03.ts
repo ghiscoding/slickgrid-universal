@@ -1,18 +1,18 @@
 import {
   Aggregators,
   BindingEventService,
-  Column,
-  EditCommand,
+  type Column,
+  type EditCommand,
   Editors,
   FieldType,
   FileType,
   Filters,
   Formatters,
-  GridOption,
-  Grouping,
-  GroupingGetterFunction,
+  type GridOption,
+  type Grouping,
+  type GroupingGetterFunction,
   GroupTotalFormatters,
-  SlickDraggableGrouping,
+  type SlickDraggableGrouping,
   SlickGlobalEditorLock,
   SortComparers,
   SortDirectionNumber,
@@ -34,7 +34,7 @@ interface ReportItem {
   effortDriven: boolean;
 }
 
-export default class Example3 {
+export default class Example03 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column<ReportItem & { action: string; }>[];
   gridOptions: GridOption;

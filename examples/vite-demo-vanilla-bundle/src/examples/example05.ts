@@ -1,15 +1,15 @@
 import {
   BindingEventService,
-  Column,
+  type Column,
   FieldType,
   Filters,
   Formatters,
-  GridOption,
-  GridStateChange,
+  type GridOption,
+  type GridStateChange,
   GridStateType,
-  OnSelectedRowsChangedEventArgs,
-  TreeToggledItem,
-  TreeToggleStateChange,
+  type OnSelectedRowsChangedEventArgs,
+  type TreeToggledItem,
+  type TreeToggleStateChange,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -19,7 +19,7 @@ import './example05.scss';
 
 const NB_ITEMS = 500;
 
-export default class Example5 {
+export default class Example05 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;

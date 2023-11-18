@@ -1,11 +1,11 @@
 import {
   BindingEventService,
-  Column,
+  type Column,
   Editors,
   FieldType,
   Filters,
   Formatters,
-  GridOption,
+  type GridOption,
   OperatorType,
   SlickEventData,
 } from '@slickgrid-universal/common';
@@ -13,12 +13,12 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import DOMPurify from 'dompurify';
 
-import { TranslateService } from '../translate.service';
 import { ExampleGridOptions } from './example-grid-options';
+import { TranslateService } from '../translate.service';
 import './example07.scss';
 import '../material-styles.scss';
 
-export default class Example7 {
+export default class Example07 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;

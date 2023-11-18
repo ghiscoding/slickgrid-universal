@@ -1,25 +1,25 @@
 import {
-  AutocompleterOption,
+  type AutocompleterOption,
   BindingEventService,
-  Column,
-  EditCommand,
+  type Column,
+  type EditCommand,
   Editors,
   EventNamingStyle,
   FieldType,
   Filters,
-  FlatpickrOption,
-  Formatter,
+  type FlatpickrOption,
+  type Formatter,
   Formatters,
-  GridOption,
-  LongTextEditorOption,
-  SliderRangeOption,
+  type GridOption,
+  type GridStateChange,
+  type LongTextEditorOption,
+  SlickGlobalEditorLock,
+  type SliderRangeOption,
   SortComparers,
 
   // utilities
   formatNumber,
   Utilities,
-  GridStateChange,
-  SlickGlobalEditorLock,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';

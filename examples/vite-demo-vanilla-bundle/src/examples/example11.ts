@@ -1,27 +1,27 @@
 import {
-  AutocompleterOption,
+  type AutocompleterOption,
   BindingEventService,
   DOMEvent,
-  Column,
-  CurrentColumn,
-  CurrentFilter,
-  CurrentPinning,
-  CurrentSorter,
-  EditCommand,
+  type Column,
+  type CurrentColumn,
+  type CurrentFilter,
+  type CurrentPinning,
+  type CurrentSorter,
+  type EditCommand,
   Editors,
   FieldType,
   Filters,
-  Formatter,
+  type Formatter,
   Formatters,
-  GridOption,
+  type GridOption,
   OperatorType,
+  SlickGlobalEditorLock,
+  type SliderOption,
   SortComparers,
 
   // utilities
   deepCopy,
   formatNumber,
-  SliderOption,
-  SlickGlobalEditorLock,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
