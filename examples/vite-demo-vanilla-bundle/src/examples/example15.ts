@@ -1,4 +1,5 @@
-import { BindingEventService, type Column, Editors, FieldType, Filters, type GridOption, type GridStateChange, type Metrics, OperatorType, } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
+import { type Column, Editors, FieldType, Filters, type GridOption, type GridStateChange, type Metrics, OperatorType, } from '@slickgrid-universal/common';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { GridOdataService, type OdataServiceApi, type OdataOption } from '@slickgrid-universal/odata';
 import { RxJsResource } from '@slickgrid-universal/rxjs-observable';

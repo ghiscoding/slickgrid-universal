@@ -1,3 +1,4 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { setDeepValue } from '@slickgrid-universal/utils';
 import * as flatpickr_ from 'flatpickr';
 import * as moment_ from 'moment-mini';
@@ -22,7 +23,6 @@ import type {
 import { getEditorOptionByName } from './editorUtilities';
 import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
 import { getDescendantProperty, mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, } from './../services/utilities';
-import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
 import { SlickEventData, type SlickGrid } from '../core/index';
 

@@ -1,5 +1,4 @@
 import {
-  BindingEventService,
   type Column,
   type CursorPageInfo,
   FieldType,
@@ -12,6 +11,7 @@ import {
   OperatorType,
   SortDirection,
 } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption, } from '@slickgrid-universal/graphql';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import moment from 'moment-mini';

@@ -1,6 +1,5 @@
 import {
   type AutocompleterOption,
-  BindingEventService,
   DOMEvent,
   type Column,
   type CurrentColumn,
@@ -23,6 +22,7 @@ import {
   deepCopy,
   formatNumber,
 } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import moment from 'moment-mini';

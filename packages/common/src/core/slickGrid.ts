@@ -3,7 +3,7 @@
 import SortableInstance, * as Sortable_ from 'sortablejs';
 const Sortable = ((Sortable_ as any)?.['default'] ?? Sortable_); // patch for rollup
 import moment from 'moment-mini';
-import { BindingEventService } from '../services/bindingEvent.service';
+import { BindingEventService } from '@slickgrid-universal/binding';
 
 import {
   ColAutosizeMode,

@@ -1,3 +1,4 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import type {
@@ -10,7 +11,6 @@ import type {
   HeaderButtonOption,
   OnHeaderCellRenderedEventArgs,
 } from '../interfaces/index';
-import { BindingEventService } from '../services/bindingEvent.service';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import type { SharedService } from '../services/shared.service';
 import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from './menuBaseClass';

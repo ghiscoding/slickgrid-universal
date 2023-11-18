@@ -1,3 +1,4 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import * as flatpickr_ from 'flatpickr';
 import * as moment_ from 'moment-mini';
 import type { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
@@ -24,7 +25,6 @@ import type {
 import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
 import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
 import { mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
-import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
 import type { SlickGrid } from '../core/index';
 

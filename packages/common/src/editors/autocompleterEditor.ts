@@ -2,6 +2,7 @@ import * as autocompleter_ from 'autocompleter';
 const autocomplete = (autocompleter_ && autocompleter_['default'] || autocompleter_) as <T extends AutocompleteItem>(settings: AutocompleteSettings<T>) => AutocompleteResult; // patch for rollup
 
 import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { isObject, isPrimitiveValue, setDeepValue, toKebabCase } from '@slickgrid-universal/utils';
 
 import { Constants } from './../constants';
@@ -26,7 +27,6 @@ import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter';
 import { getEditorOptionByName } from './editorUtilities';
 import { createDomElement, sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 import { findOrDefault, getDescendantProperty, } from '../services/utilities';
-import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
 import { SlickEventData, type SlickGrid } from '../core/index';
 

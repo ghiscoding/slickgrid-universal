@@ -73,6 +73,7 @@
     "not dead"
   ],
   "dependencies": {
+    "@slickgrid-universal/binding": "workspace:~",
     "@slickgrid-universal/event-pub-sub": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
     "autocompleter": "^9.1.2",

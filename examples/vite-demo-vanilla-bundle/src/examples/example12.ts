@@ -1,7 +1,6 @@
 // import { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
 import {
   AutocompleterOption,
-  BindingEventService,
   type Column,
   CompositeEditorModalType,
   Editors,
@@ -21,6 +20,7 @@ import {
   // utilities
   formatNumber,
 } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { type SlickerGridInstance } from '@slickgrid-universal/vanilla-bundle';
 import { VanillaForceGridBundle, Slicker } from '@slickgrid-universal/vanilla-force-bundle';

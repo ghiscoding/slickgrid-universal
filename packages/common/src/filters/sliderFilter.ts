@@ -1,3 +1,4 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { hasData, toSentenceCase } from '@slickgrid-universal/utils';
 
 import { SlickEventData, type SlickGrid } from '../core/index';
@@ -16,7 +17,6 @@ import type {
   SliderRangeOption,
   SliderType,
 } from '../interfaces/index';
-import { BindingEventService } from '../services/bindingEvent.service';
 import { createDomElement, emptyElement } from '../services/domUtilities';
 import type { TranslaterService } from '../services/translater.service';
 import { mapOperatorToShorthandDesignation } from '../services/utilities';

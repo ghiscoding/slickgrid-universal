@@ -1,6 +1,5 @@
 import {
   Aggregators,
-  BindingEventService,
   type Column,
   FieldType,
   Filters,
@@ -13,6 +12,7 @@ import {
   SortComparers,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';

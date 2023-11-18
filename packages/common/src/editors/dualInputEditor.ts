@@ -1,3 +1,4 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
 import { KeyCode } from '../enums/keyCode.enum';
@@ -15,7 +16,6 @@ import type {
 } from '../interfaces/index';
 import { getDescendantProperty } from '../services/utilities';
 import { floatValidator, integerValidator, textValidator } from '../editorValidators';
-import { BindingEventService } from '../services/bindingEvent.service';
 import { createDomElement } from '../services/domUtilities';
 import { SlickEventData, SlickEventHandler, type SlickGrid } from '../core';
 
