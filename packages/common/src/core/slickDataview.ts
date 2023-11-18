@@ -24,8 +24,8 @@ import {
   SlickGroupTotals,
   SlickNonDataItem,
   Utils,
-} from './slick.core';
-import type { SlickGrid } from './slick.grid';
+} from './slickCore';
+import type { SlickGrid } from './slickGrid';
 
 export interface DataViewOption {
   groupItemMetadataProvider: SlickGroupItemMetadataProvider | null;

@@ -22,7 +22,7 @@ import type {
 } from './../interfaces/index';
 import { buildMultipleSelectDataCollection, CollectionService, emptyElement, findOrDefault, sanitizeTextByAvailableSanitizer, type TranslaterService } from '../services/index';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
-import { SlickEventData } from '../core/slick.core';
+import { SlickEventData } from '../core/slickCore';
 
 /**
  * Slickgrid editor class for multiple/single select lists

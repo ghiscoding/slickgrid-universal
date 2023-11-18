@@ -29,7 +29,7 @@ import { createDomElement, sanitizeTextByAvailableSanitizer, } from '../services
 import { findOrDefault, getDescendantProperty, } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
-import { SlickEventData } from '../core/slick.core';
+import { SlickEventData } from '../core/slickCore';
 
 // minimum length of chars to type before starting to start querying
 const MIN_LENGTH = 3;

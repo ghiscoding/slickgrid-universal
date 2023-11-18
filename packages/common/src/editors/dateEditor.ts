@@ -25,7 +25,7 @@ import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '.
 import { getDescendantProperty, mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, } from './../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
-import { SlickEventData } from '../core/slick.core';
+import { SlickEventData } from '../core/slickCore';
 
 /*
  * An example of a date picker editor using Flatpickr

@@ -20,8 +20,8 @@ import {
   Utils,
   ValueFilterMode,
   WidthEvalMode,
-} from './slick.core';
-import { Draggable, MouseWheel, Resizable } from './slick.interactions';
+} from './slickCore';
+import { Draggable, MouseWheel, Resizable } from './slickInteractions';
 import { SelectionModel } from '../enums/index';
 import type {
   CellViewportRange,

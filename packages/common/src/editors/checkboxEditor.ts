@@ -5,7 +5,7 @@ import type { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArgumen
 import { createDomElement } from '../services/domUtilities';
 import { getDescendantProperty, } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
-import { SlickEventData } from '../core/slick.core';
+import { SlickEventData } from '../core/slickCore';
 
 /*
  * An example of a 'detached' editor.

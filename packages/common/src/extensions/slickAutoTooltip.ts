@@ -1,5 +1,5 @@
 
-import { SlickEventHandler } from '../core/slick.core';
+import { SlickEventHandler } from '../core/slickCore';
 import type { AutoTooltipOption, Column, SlickGridModel, } from '../interfaces/index';
 
 /**

@@ -22,7 +22,7 @@ import { getDescendantProperty, getTranslationPrefix, } from '../services/utilit
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
 import { textValidator } from '../editorValidators/textValidator';
-import { SlickEventData } from '../core/slick.core';
+import { SlickEventData } from '../core/slickCore';
 
 /*
  * An example of a 'detached' editor.

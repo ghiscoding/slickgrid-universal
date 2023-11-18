@@ -1,5 +1,5 @@
 
-import { SlickEvent, SlickEventData, SlickEventHandler, SlickRange } from '../core/slick.core';
+import { SlickEvent, SlickEventData, SlickEventHandler, SlickRange } from '../core/slickCore';
 import { KeyCode } from '../enums/index';
 import type {
   CellRange,

@@ -1,6 +1,6 @@
 import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
-import { SlickEventData, SlickEventHandler } from '../core/slick.core';
+import { SlickEventData, SlickEventHandler } from '../core/slickCore';
 import { KeyCode } from '../enums/keyCode.enum';
 import type {
   DOMEvent,
