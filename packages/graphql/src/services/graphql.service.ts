@@ -79,7 +79,6 @@ export class GraphqlService implements BackendService {
     if (this.options?.isWithCursor) {
       console.warn('[Slickgrid-Universal] The option `isWithCursor` is now deprecated and was replaced by `useCursor`.');
     }
-
   }
 
   /**
@@ -105,7 +104,7 @@ export class GraphqlService implements BackendService {
       for (const column of columnDefinitions) {
         columnIds.push(column.field);
 
-        // if extra "fields" are passed, also push them to columnIds
+        // when extra "fields" are provided, also push them to columnIds
         if (column.fields) {
           columnIds.push(...column.fields);
         }
@@ -192,9 +191,9 @@ export class GraphqlService implements BackendService {
    * The process has to take the dot notation and parse it into a valid GraphQL query
    * Following this SO answer https://stackoverflow.com/a/47705476/1212166
    *
-   * INPUT
+   * INPUT::
    *  ['firstName', 'lastName', 'billing.address.street', 'billing.address.zip']
-   * OUTPUT
+   * OUTPUT::
    * firstName, lastName, billing{address{street, zip}}
    * @param inputArray
    */
@@ -373,7 +372,7 @@ export class GraphqlService implements BackendService {
   }
 
   /**
-   * loop through all columns to inspect filters & update backend service filteringOptions
+   * Update column filters by looping through all columns to inspect filters & update backend service filteringOptions
    * @param columnFilters
    */
   updateFilters(columnFilters: ColumnFilters | CurrentFilter[], isUpdatedByPresetOrDynamically: boolean) {
@@ -508,9 +507,9 @@ export class GraphqlService implements BackendService {
 
   /**
    * Update the pagination component with it's new page number and size.
-   * @param newPage
-   * @param pageSize
-   * @param cursorArgs Should be supplied when using cursor based pagination
+   * @param {Number} newPage
+   * @param {Number} pageSize
+   * @param {*} [cursorArgs] these should be supplied when using cursor based pagination
    */
   updatePagination(newPage: number, pageSize: number, cursorArgs?: PaginationCursorChangedArgs) {
     this._currentPagination = {
@@ -543,8 +542,7 @@ export class GraphqlService implements BackendService {
   }
 
   /**
-   * loop through all columns to inspect sorters & update backend service sortingOptions
-   * @param columnFilters
+   * Update all Sorting by looping through all columns to inspect sorters & update backend service sortingOptions
    */
   updateSorters(sortColumns?: ColumnSort[], presetSorters?: CurrentSorter[]) {
     let currentSorters: CurrentSorter[] = [];
@@ -623,6 +621,7 @@ export class GraphqlService implements BackendService {
    * query { users (orderBy:[{field:"billing.street.name", direction: ASC}}
    * @param inputStr input string
    * @param enumSearchWords array of enum words to filter
+   * @param keepArgumentFieldDoubleQuotes - do we keep field double quotes? (i.e.: field: "user.name")
    * @returns outputStr output string
    */
   trimDoubleQuotesOnEnumField(inputStr: string, enumSearchWords: string[], keepArgumentFieldDoubleQuotes: boolean) {
