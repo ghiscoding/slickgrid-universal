@@ -1069,7 +1069,7 @@ export class SlickVanillaGridBundle<TData = any> {
    * @param showing
    */
   showHeaderRow(showing = true) {
-    this.slickGrid?.setHeaderRowVisibility(showing, false);
+    this.slickGrid?.setHeaderRowVisibility(showing);
     if (this.slickGrid && showing === true && this._isGridInitialized) {
       this.slickGrid.setColumns(this.columnDefinitions);
     }
