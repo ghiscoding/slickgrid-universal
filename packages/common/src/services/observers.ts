@@ -23,7 +23,7 @@ export function collectionObserver(inputArray: any[], callback: (outputArray: an
  * @param {String} prop - object property name
  * @param {Function} callback - function that will be called on any change inside array
  */
-export function propertyObserver(obj: any, prop: string, callback: (newValue: any) => void) {
+export function propertyObserver(obj: any, prop: string, callback: (newValue: any, o?: any) => void) {
   let innerValue = obj[prop];
 
   Object.defineProperty(obj, prop, {
@@ -31,9 +31,8 @@ export function propertyObserver(obj: any, prop: string, callback: (newValue: an
     get() {
       return innerValue;
     },
-    set(newValue) {
+    set(newValue: any) {
       innerValue = newValue;
-      // @ts-ignore
       callback.apply(obj, [newValue, obj[prop]]);
     }
   });

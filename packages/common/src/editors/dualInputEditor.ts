@@ -59,7 +59,6 @@ export class DualInputEditor implements Editor {
     this._bindEventService = new BindingEventService();
     this.init();
 
-    // @ts-ignore
     this._eventHandler.subscribe(this.grid.onValidationError, () => this._isValueSaveCalled = true);
   }
 
