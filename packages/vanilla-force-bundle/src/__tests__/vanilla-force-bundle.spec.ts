@@ -617,7 +617,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
         component.showHeaderRow(true);
 
-        expect(setHeaderRowSpy).toHaveBeenCalledWith(true, false);
+        expect(setHeaderRowSpy).toHaveBeenCalledWith(true);
         expect(setColumnSpy).toHaveBeenCalledTimes(1);
       });
 
@@ -628,7 +628,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
         component.showHeaderRow(false);
 
-        expect(setHeaderRowSpy).toHaveBeenCalledWith(false, false);
+        expect(setHeaderRowSpy).toHaveBeenCalledWith(false);
         expect(setColumnSpy).not.toHaveBeenCalled();
       });
     });
