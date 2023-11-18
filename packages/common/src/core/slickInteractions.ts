@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import type { DraggableOption, MouseWheelOption, ResizableOption } from '../interfaces/index';
+import type { DOMMouseOrTouchEvent, DragPosition, DraggableOption, MouseWheelOption, ResizableOption } from '../interfaces/index';
 import { Utils } from './slickCore';
 
 /***
@@ -53,9 +53,9 @@ export function Draggable(options: DraggableOption) {
     containerElement.addEventListener('touchstart', userPressed as EventListener);
   }
 
-  function executeDragCallbackWhenDefined(callback?: Function, e?: MouseEvent | Touch | TouchEvent, dd?: any) {
+  function executeDragCallbackWhenDefined(callback?: (e: DragEvent, dd: DragPosition) => boolean | void, evt?: MouseEvent | Touch | TouchEvent, dd?: any) {
     if (typeof callback === 'function') {
-      callback(e, dd);
+      callback(evt as DragEvent, dd);
     }
   }
 
@@ -79,7 +79,7 @@ export function Draggable(options: DraggableOption) {
       deltaX = targetEvent.clientX - targetEvent.clientX;
       deltaY = targetEvent.clientY - targetEvent.clientY;
       originaldd = Object.assign(originaldd, { deltaX, deltaY, startX, startY, target });
-      executeDragCallbackWhenDefined(onDragInit as Function, event, originaldd);
+      executeDragCallbackWhenDefined(onDragInit as (e: DragEvent, dd: DragPosition) => boolean | void, event, originaldd);
 
       document.addEventListener('mousemove', userMoved);
       document.addEventListener('touchmove', userMoved);
@@ -215,9 +215,9 @@ export function Resizable(options: ResizableOption) {
     }
   }
 
-  function executeResizeCallbackWhenDefined(callback?: Function, e?: MouseEvent | TouchEvent | Touch) {
+  function executeResizeCallbackWhenDefined(callback?: (e: DOMMouseOrTouchEvent<HTMLDivElement>, resizeElms: { resizeableElement: HTMLElement; resizeableHandleElement: HTMLElement; }) => boolean | void, e?: MouseEvent | TouchEvent | Touch) {
     if (typeof callback === 'function') {
-      callback(e, { resizeableElement, resizeableHandleElement });
+      callback(e as any, { resizeableElement, resizeableHandleElement });
     }
   }
 
@@ -235,7 +235,7 @@ export function Resizable(options: ResizableOption) {
     if (e.preventDefault && e.type !== 'touchmove') {
       e.preventDefault();
     }
-    const event = (e as TouchEvent).touches ? (e as TouchEvent).changedTouches[0] : e;
+    const event = ((e as TouchEvent).touches ? (e as TouchEvent).changedTouches[0] : e) as DOMMouseOrTouchEvent<HTMLDivElement>;
     if (typeof onResize === 'function') {
       onResize(event, { resizeableElement, resizeableHandleElement });
       onResize(event, { resizeableElement, resizeableHandleElement });

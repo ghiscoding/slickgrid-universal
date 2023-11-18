@@ -2,6 +2,9 @@
 // --
 // slick.interactions.ts
 
+import { DOMMouseOrTouchEvent } from './domEvent.interface';
+import { DragPosition } from './drag.interface';
+
 export interface InteractionBase {
   destroy: () => void;
 }
@@ -17,16 +20,16 @@ export interface DraggableOption {
   allowDragFromClosest?: string;
 
   /** drag initialized callback */
-  onDragInit?: Function;
+  onDragInit?: (e: DragEvent, dd: DragPosition) => boolean | void;
 
   /** drag started callback */
-  onDragStart?: Function;
+  onDragStart?: (e: DragEvent, dd: DragPosition) => boolean | void;
 
   /** drag callback */
-  onDrag?: Function;
+  onDrag?: (e: DragEvent, dd: DragPosition) => boolean | void;
 
   /** drag ended callback */
-  onDragEnd?: Function;
+  onDragEnd?: (e: DragEvent, dd: DragPosition) => boolean | void;
 }
 
 export interface MouseWheelOption {
@@ -34,7 +37,7 @@ export interface MouseWheelOption {
   element: HTMLElement | Document;
 
   /** mousewheel callback */
-  onMouseWheel?: Function;
+  onMouseWheel?: (e: MouseEvent, delta: number, deltaX: number, deltaY: number) => boolean | void;
 }
 
 export interface ResizableOption {
@@ -45,11 +48,11 @@ export interface ResizableOption {
   resizeableHandleElement: HTMLElement;
 
   /** resize start callback */
-  onResizeStart?: Function;
+  onResizeStart?: (e: DOMMouseOrTouchEvent<HTMLDivElement>, resizeElms: { resizeableElement: HTMLElement; }) => boolean | void;
 
   /** resizing callback */
-  onResize?: Function;
+  onResize?: (e: DOMMouseOrTouchEvent<HTMLDivElement>, resizeElms: { resizeableElement: HTMLElement; resizeableHandleElement: HTMLElement; }) => boolean | void;
 
   /** resize ended callback */
-  onResizeEnd?: Function;
+  onResizeEnd?: (e: DOMMouseOrTouchEvent<HTMLDivElement>, resizeElms: { resizeableElement: HTMLElement; }) => boolean | void;
 }

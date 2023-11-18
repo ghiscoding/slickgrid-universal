@@ -830,15 +830,15 @@ export class Utils {
     }
   }
 
-  public static slideUp(el: HTMLElement | HTMLElement[], callback: Function) {
+  public static slideUp(el: HTMLElement | HTMLElement[], callback: () => void) {
     return Utils.slideAnimation(el, 'slideUp', callback);
   }
 
-  public static slideDown(el: HTMLElement | HTMLElement[], callback: Function) {
+  public static slideDown(el: HTMLElement | HTMLElement[], callback: () => void) {
     return Utils.slideAnimation(el, 'slideDown', callback);
   }
 
-  public static slideAnimation(el: HTMLElement | HTMLElement[], slideDirection: 'slideDown' | 'slideUp', callback: Function) {
+  public static slideAnimation(el: HTMLElement | HTMLElement[], slideDirection: 'slideDown' | 'slideUp', callback: () => void) {
     if ((window as any).jQuery !== undefined) {
       (window as any).jQuery(el)[slideDirection]('fast', callback);
       return;

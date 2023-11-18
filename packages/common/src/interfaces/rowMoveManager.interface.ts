@@ -1,4 +1,3 @@
-
 import type { RowMoveManagerOption } from './index';
 import type { SlickRowMoveManager } from '../extensions/slickRowMoveManager';
 import type { SlickEventData, SlickGrid } from '../core/index';

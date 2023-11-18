@@ -37,7 +37,7 @@ import type {
   TextExportOption,
   TreeDataOption,
 } from './index';
-import type { GridAutosizeColsMode, OperatorType, OperatorString, ColumnReorderFunction, } from '../enums/index';
+import type { ColumnReorderFunction, GridAutosizeColsMode, OperatorString, OperatorType, } from '../enums/index';
 import type { TranslaterService } from '../services/translater.service';
 import type { SlickEditorLock } from '../core/index';
 

@@ -463,8 +463,6 @@ export class ResizerService {
    */
   protected calculateCellWidthByReadingDataset(columnOrColumns: Column | Column[], columnWidths: { [columnId in string | number]: number; }, maxItemToInspect = 1000, columnIndexOverride?: number) {
     const columnDefinitions = Array.isArray(columnOrColumns) ? columnOrColumns : [columnOrColumns];
-
-    // const columnDefinitions = this._grid.getColumns();
     const dataset = this.dataView.getItems() as any[];
 
     let readItemCount = 0;
@@ -533,7 +531,7 @@ export class ResizerService {
 
     // apply optional ratio which is typically 1, except for string where we use a ratio of around ~0.9 since we have more various thinner characters like (i, l, t, ...)
     const stringWidthRatio = column?.resizeCalcWidthRatio ?? this.resizeByContentOptions.defaultRatioForStringType ?? 0.9;
-    newColWidth *= fieldType === 'string' ? stringWidthRatio : 1;
+    newColWidth *= (fieldType === 'string' ? stringWidthRatio : 1);
 
     // apply extra cell padding, custom padding & editor formatter padding
     // --

@@ -1,6 +1,5 @@
 import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
-import { SlickEventData, SlickEventHandler } from '../core/slickCore';
 import { KeyCode } from '../enums/keyCode.enum';
 import type {
   DOMEvent,
@@ -18,7 +17,7 @@ import { getDescendantProperty } from '../services/utilities';
 import { floatValidator, integerValidator, textValidator } from '../editorValidators';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { createDomElement } from '../services/domUtilities';
-import { type SlickGrid } from '../core';
+import { SlickEventData, SlickEventHandler, type SlickGrid } from '../core';
 
 /*
  * An example of a 'detached' editor.

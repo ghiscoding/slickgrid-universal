@@ -1,4 +1,3 @@
-
 import type { SlickEventData, SlickGrid } from '../core/index';
 import type { RowDetailViewOption, SlickRowDetailView } from './index';
 
@@ -85,10 +84,10 @@ export interface OnRowBackToViewportRangeArgs {
   rowIndex: number;
 
   /** Array of the Expanded Row Ids */
-  expandedRows: Array<string | number>;
+  expandedRows: Array<number | string>;
 
   /** Array of the Out of viewport Range Rows */
-  rowIdsOutOfViewport: Array<string | number>;
+  rowIdsOutOfViewport: Array<number | string>;
 
   /** Reference to the Slick grid object */
   grid: SlickGrid;
@@ -106,10 +105,10 @@ export interface OnRowOutOfViewportRangeArgs {
   rowIndex: number;
 
   /** Array of the Expanded Row Ids */
-  expandedRows: Array<string | number>;
+  expandedRows: Array<number | string>;
 
   /** Array of the Out of viewport Range Rows */
-  rowIdsOutOfViewport: Array<string | number>;
+  rowIdsOutOfViewport: Array<number | string>;
 
   /** Reference to the Slick grid object */
   grid: SlickGrid;

@@ -1,13 +1,7 @@
-import { SlickEvent, SlickEventData, SlickEventHandler, SlickRange } from '../core/slickCore';
 import { KeyCode } from '../enums/index';
-import type {
-  CellRange,
-  Column,
-  ExcelCopyBufferOption,
-  ExternalCopyClipCommand,
-} from '../interfaces/index';
+import type { CellRange, Column, ExcelCopyBufferOption, ExternalCopyClipCommand } from '../interfaces/index';
 import { createDomElement, sanitizeHtmlToText } from '../services/domUtilities';
-import { type SlickGrid } from '../core/index';
+import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange } from '../core/index';
 
 // using external SlickGrid JS libraries
 const CLEAR_COPY_SELECTION_DELAY = 2000;

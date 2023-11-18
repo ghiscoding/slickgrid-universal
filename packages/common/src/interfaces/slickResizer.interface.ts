@@ -1,4 +1,3 @@
-
 import type { GridSize, ResizerOption } from './index';
 import type { SlickEvent, SlickEventData, SlickGrid } from '../core/index';
 

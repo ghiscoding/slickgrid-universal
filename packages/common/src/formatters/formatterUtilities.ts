@@ -7,7 +7,7 @@ import { sanitizeHtmlToText } from '../services/domUtilities';
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { multipleFormatter } from './multipleFormatter';
 import { Constants } from '../constants';
-import { type SlickGrid } from '../core';
+import { type SlickGrid } from '../core/index';
 
 export type FormatterType = 'group' | 'cell';
 export type NumberType = 'decimal' | 'currency' | 'percent' | 'regular';
