@@ -316,7 +316,7 @@ export class SlickCustomTooltip {
    */
   protected renderRegularTooltip(formatterOrText: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: any) {
     const tmpDiv = document.createElement('div');
-    tmpDiv.innerHTML = this.parseFormatterAndSanitize(formatterOrText, cell, value, columnDef, item);
+    this._grid.applyHtmlCode(tmpDiv, this.parseFormatterAndSanitize(formatterOrText, cell, value, columnDef, item));
 
     let tooltipText = columnDef?.toolTip ?? '';
     let tmpTitleElm: HTMLDivElement | null | undefined;
@@ -372,7 +372,7 @@ export class SlickCustomTooltip {
     let finalOutputText = '';
     if (!tooltipText || this._cellAddonOptions?.renderRegularTooltipAsHtml) {
       finalOutputText = sanitizeTextByAvailableSanitizer(this.gridOptions, outputText);
-      this._tooltipElm.innerHTML = finalOutputText;
+      this._grid.applyHtmlCode(this._tooltipElm, finalOutputText);
       this._tooltipElm.style.whiteSpace = this._cellAddonOptions?.whiteSpace ?? this._defaultOptions.whiteSpace as string;
     } else {
       finalOutputText = outputText || '';

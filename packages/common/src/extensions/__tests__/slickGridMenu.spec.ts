@@ -46,6 +46,7 @@ const dataViewStub = {
 } as unknown as SlickDataView;
 
 const gridStub = {
+  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   autosizeColumns: jest.fn(),
   getColumnIndex: jest.fn(),
   getColumns: jest.fn(),

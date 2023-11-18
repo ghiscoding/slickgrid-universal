@@ -569,12 +569,9 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     const templateString = this._autocompleterOptions?.renderItem?.templateCallback(item) ?? '';
 
     // sanitize any unauthorized html tags like script and others
-    // for the remaining allowed tags we'll permit all attributes
-    const sanitizedTemplateText = sanitizeTextByAvailableSanitizer(this.gridOptions, templateString) || '';
-
-    const tmpDiv = document.createElement('div');
-    tmpDiv.innerHTML = sanitizedTemplateText;
-    return tmpDiv;
+    const tmpElm = document.createElement('div');
+    this.grid.applyHtmlCode(tmpElm, templateString);
+    return tmpElm;
   }
 
   protected renderCollectionItem(item: any) {

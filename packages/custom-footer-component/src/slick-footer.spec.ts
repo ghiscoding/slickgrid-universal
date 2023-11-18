@@ -14,6 +14,7 @@ const mockGridOptions = {
 } as GridOption;
 
 const gridStub = {
+  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   getOptions: () => mockGridOptions,
   getUID: () => 'slickgrid_123456',
   onSelectedRowsChanged: new SlickEvent(),

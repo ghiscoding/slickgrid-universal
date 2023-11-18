@@ -25,6 +25,7 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
+  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   getCellFromEvent: jest.fn(),
   getCellNode: jest.fn(),
   getColumns: jest.fn(),

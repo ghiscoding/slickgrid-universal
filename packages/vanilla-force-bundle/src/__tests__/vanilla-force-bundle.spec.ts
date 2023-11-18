@@ -177,12 +177,6 @@ const mockDataView = {
   syncGridSelection: jest.fn(),
 } as unknown as SlickDataView;
 
-const mockEventPubSub = {
-  notify: jest.fn(),
-  subscribe: jest.fn(),
-  unsubscribe: jest.fn(),
-} as unknown as EventPubSubService;
-
 const mockSlickEventHandler = {
   handlers: [],
   notify: jest.fn(),
@@ -197,6 +191,7 @@ const mockGetEditorLock = {
 } as unknown as SlickEditorLock;
 
 const mockGrid = {
+  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   autosizeColumns: jest.fn(),
   destroy: jest.fn(),
   init: jest.fn(),

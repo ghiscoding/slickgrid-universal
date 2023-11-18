@@ -11,7 +11,7 @@ import type {
   SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import { Constants, createDomElement, sanitizeTextByAvailableSanitizer, SlickEventHandler, } from '@slickgrid-universal/common';
+import { Constants, createDomElement, SlickEventHandler, } from '@slickgrid-universal/common';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { BindingHelper } from '@slickgrid-universal/binding';
 
@@ -174,7 +174,7 @@ export class SlickFooterComponent {
     });
 
     const leftFooterElm = createDomElement('div', { className: `left-footer ${this.customFooterOptions.leftContainerClass}` });
-    leftFooterElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, this.customFooterOptions.leftFooterText || '');
+    this.grid.applyHtmlCode(leftFooterElm, this.customFooterOptions.leftFooterText);
     footerElm.appendChild(leftFooterElm);
     footerElm.appendChild(this.createFooterRightContainer());
     this._footerElement = footerElm;
@@ -189,7 +189,7 @@ export class SlickFooterComponent {
     const rightFooterElm = createDomElement('div', { className: `right-footer ${this.customFooterOptions.rightContainerClass || ''}` });
 
     if (!this._isRightFooterOriginallyEmpty) {
-      rightFooterElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, this.customFooterOptions.rightFooterText || '');
+      this.grid.applyHtmlCode(rightFooterElm, this.customFooterOptions.rightFooterText);
     } else if (!this.customFooterOptions.hideMetrics) {
       rightFooterElm.classList.add('metrics');
       const lastUpdateElm = createDomElement('span', { className: 'timestamp' }, rightFooterElm);

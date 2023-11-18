@@ -225,6 +225,7 @@ const mockGetEditorLock = {
 } as unknown as SlickEditorLock;
 
 const mockGrid = {
+  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   autosizeColumns: jest.fn(),
   destroy: jest.fn(),
   init: jest.fn(),

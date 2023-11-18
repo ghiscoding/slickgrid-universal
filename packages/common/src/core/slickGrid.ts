@@ -3,6 +3,8 @@
 import SortableInstance, * as Sortable_ from 'sortablejs';
 const Sortable = ((Sortable_ as any)?.['default'] ?? Sortable_); // patch for rollup
 import moment from 'moment-mini';
+import * as DOMPurify_ from 'dompurify';
+const DOMPurify = ((DOMPurify_ as any)?.['default'] ?? DOMPurify_); // patch for rollup
 import { BindingEventService } from '@slickgrid-universal/binding';
 
 import {
@@ -508,15 +510,22 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param target - target element to apply to
    * @param val - input value can be either a string or an HTMLElement
    */
-  applyHtmlCode(target: HTMLElement, val: string | HTMLElement) {
+  applyHtmlCode(target: HTMLElement, val: string | HTMLElement = '', sanitizerOptions?: DOMPurify_.Config) {
     if (target) {
       if (val instanceof HTMLElement) {
         target.appendChild(val);
       } else {
+        let sanitizedText = val;
+        if (typeof this._options?.sanitizer === 'function') {
+          sanitizedText = this._options.sanitizer(val || '');
+        } else if (typeof DOMPurify?.sanitize === 'function') {
+          sanitizedText = DOMPurify.sanitize(val || '', sanitizerOptions || { RETURN_TRUSTED_TYPE: true });
+        }
+
         if (this._options.enableHtmlRendering) {
-          target.innerHTML = this.sanitizeHtmlString(val as string);
+          target.innerHTML = sanitizedText;
         } else {
-          target.textContent = this.sanitizeHtmlString(val as string);
+          target.textContent = sanitizedText;
         }
       }
     }
