@@ -1,6 +1,7 @@
 import { InputFilter } from '../inputFilter';
-import { BackendServiceApi, Column, FilterArguments, GridOption, SlickGridModel } from '../../interfaces/index';
+import { BackendServiceApi, Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { Filters } from '../filters.index';
+import { SlickGrid } from '../../core/index';
 
 const containerId = 'demo-container';
 
@@ -17,7 +18,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('InputFilter', () => {
   let divContainer: HTMLDivElement;

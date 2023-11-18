@@ -11,7 +11,6 @@ import type {
   CurrentSorter,
   GridOption,
   GridState,
-  SlickGridModel,
   TreeToggleStateChange,
 } from '../interfaces/index';
 import type { ExtensionService } from './extension.service';
@@ -19,12 +18,12 @@ import type { FilterService } from './filter.service';
 import type { SharedService } from './shared.service';
 import type { SortService } from './sort.service';
 import type { TreeDataService } from './treeData.service';
-import { type SlickDataView, SlickEventHandler } from '../core/index';
+import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
 export class GridStateService {
   protected _eventHandler = new SlickEventHandler();
   protected _columns: Column[] = [];
-  protected _grid!: SlickGridModel;
+  protected _grid!: SlickGrid;
   protected _subscriptions: EventSubscription[] = [];
   protected _selectedRowIndexes: number[] | undefined = [];
   protected _selectedRowDataContextIds: Array<number | string> | undefined = []; // used with row selection
@@ -63,7 +62,7 @@ export class GridStateService {
    * Initialize the Service
    * @param grid
    */
-  init(grid: SlickGridModel): void {
+  init(grid: SlickGrid): void {
     this._grid = grid;
     this.subscribeToAllGridChanges(grid);
   }
@@ -206,7 +205,7 @@ export class GridStateService {
    * @param grid
    * @param currentColumns
    */
-  getAssociatedGridColumns(grid: SlickGridModel, currentColumns: CurrentColumn[]): Column[] {
+  getAssociatedGridColumns(grid: SlickGrid, currentColumns: CurrentColumn[]): Column[] {
     const columns: Column[] = [];
     const gridColumns: Column[] = this.sharedService.allColumns || grid.getColumns();
 
@@ -371,7 +370,7 @@ export class GridStateService {
    * Subscribe to all necessary SlickGrid or Service Events that deals with a Grid change,
    * when triggered, we will publish a Grid State Event with current Grid State
    */
-  subscribeToAllGridChanges(grid: SlickGridModel) {
+  subscribeToAllGridChanges(grid: SlickGrid) {
     // Subscribe to Event Emitter of Filter changed
     this._subscriptions.push(
       this.pubSubService.subscribe<CurrentFilter[]>('onFilterChanged', currentFilters => {
@@ -502,7 +501,7 @@ export class GridStateService {
    * @param event - event name
    * @param grid - SlickGrid object
    */
-  protected bindSlickGridColumnChangeEventToGridStateChange(eventName: string, grid: SlickGridModel) {
+  protected bindSlickGridColumnChangeEventToGridStateChange(eventName: string, grid: SlickGrid) {
     const slickGridEvent = (grid as any)?.[eventName];
 
     if (slickGridEvent && typeof slickGridEvent.subscribe === 'function') {
@@ -518,7 +517,7 @@ export class GridStateService {
    * Bind a Grid Event (of grid option changes) to a Grid State change event, if we detect that any of the pinning (frozen) options changes then we'll trigger a Grid State change
    * @param grid - SlickGrid object
    */
-  protected bindSlickGridOnSetOptionsEventToGridStateChange(grid: SlickGridModel) {
+  protected bindSlickGridOnSetOptionsEventToGridStateChange(grid: SlickGrid) {
     const onSetOptionsHandler = grid.onSetOptions;
     this._eventHandler.subscribe(onSetOptionsHandler, (_e, args) => {
       const { frozenBottom: frozenBottomBefore, frozenColumn: frozenColumnBefore, frozenRow: frozenRowBefore } = args.optionsBefore;

@@ -1,9 +1,8 @@
-import { SlickEvent, type SlickDataView } from '../../core/index';
-
 import { Editors } from '../index';
 import { DualInputEditor } from '../dualInputEditor';
 import { KeyCode } from '../../enums/index';
-import { Column, ColumnEditor, ColumnEditorDualInput, EditorArguments, GridOption, type SlickGridModel } from '../../interfaces/index';
+import { Column, ColumnEditor, ColumnEditorDualInput, EditorArguments, GridOption } from '../../interfaces/index';
+import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 
 const KEY_CHAR_0 = 48;
 const containerId = 'demo-container';
@@ -38,7 +37,7 @@ const gridStub = {
   onValidationError: new SlickEvent(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('DualInputEditor', () => {
   let divContainer: HTMLDivElement;

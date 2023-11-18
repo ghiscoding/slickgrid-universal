@@ -1,7 +1,6 @@
-import { type SlickDataView, SlickEvent, SlickEventData } from '../../core/index';
-
+import type { Column } from '../../interfaces/index';
 import { GridEventService } from '../gridEvent.service';
-import { Column, SlickGridModel } from '../../interfaces/index';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
 
 const dataViewStub = {
   refresh: jest.fn(),
@@ -21,7 +20,7 @@ const gridStub = {
   onBeforeEditCell: new SlickEvent(),
   onCellChange: new SlickEvent(),
   onClick: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('GridEventService', () => {
   let service: GridEventService;

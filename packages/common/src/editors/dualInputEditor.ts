@@ -13,12 +13,12 @@ import type {
   EditorValidator,
   EditorValidationResult,
   GridOption,
-  SlickGridModel,
 } from '../interfaces/index';
 import { getDescendantProperty } from '../services/utilities';
 import { floatValidator, integerValidator, textValidator } from '../editorValidators';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { createDomElement } from '../services/domUtilities';
+import { type SlickGrid } from '../core';
 
 /*
  * An example of a 'detached' editor.
@@ -44,7 +44,7 @@ export class DualInputEditor implements Editor {
   disabled = false;
 
   /** SlickGrid Grid object */
-  grid: SlickGridModel;
+  grid: SlickGrid;
 
   /** Grid options */
   gridOptions: GridOption;

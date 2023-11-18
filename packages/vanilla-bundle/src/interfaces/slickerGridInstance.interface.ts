@@ -10,7 +10,7 @@ import type {
   PaginationService,
   ResizerService,
   SlickDataView,
-  SlickGridModel,
+  SlickGrid,
   SortService,
   TreeDataService,
 } from '@slickgrid-universal/common';
@@ -21,7 +21,7 @@ export interface SlickerGridInstance<TData = any> {
   dataView: SlickDataView<TData>;
 
   /** Slick Grid object */
-  slickGrid: SlickGridModel;
+  slickGrid: SlickGrid;
 
   // --
   // Methods

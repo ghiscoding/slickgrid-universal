@@ -1,4 +1,4 @@
-import { EmptyWarning, GridOption, SlickGridModel } from '@slickgrid-universal/common';
+import { EmptyWarning, GridOption, SlickGrid } from '@slickgrid-universal/common';
 import { SlickEmptyWarningComponent } from './slick-empty-warning.component';
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
@@ -15,7 +15,7 @@ const gridStub = {
   getOptions: () => mockGridOptions,
   getUID: () => GRID_UID,
   registerPlugin: jest.fn(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('Slick-Empty-Warning Component', () => {
   let container: ContainerServiceStub;
@@ -182,8 +182,8 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.style.marginLeft).toBe('0px');
       expect(componentLeftElm.textContent).toBe('No data to display.');
       expect(componentRightElm.textContent).toBe('No data to display.');
-      expect(gridPaneElm.style.minHeight).toBe('44px');
-      expect(gridPaneElm.style.height).toBe('44px');
+      expect(gridPaneElm!.style.minHeight).toBe('44px');
+      expect(gridPaneElm!.style.height).toBe('44px');
     });
 
     it('should expect the Slick-Empty-Warning to be created with calculated height including preHeader & filter headerRow when they are both defined in the grid options with "autoHeight" as well', () => {
@@ -214,8 +214,8 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.style.marginLeft).toBe('0px');
       expect(componentLeftElm.textContent).toBe('No data to display.');
       expect(componentRightElm.textContent).toBe('No data to display.');
-      expect(gridPaneElm.style.minHeight).toBe('117px');
-      expect(gridPaneElm.style.height).toBe('44px');
+      expect(gridPaneElm!.style.minHeight).toBe('117px');
+      expect(gridPaneElm!.style.height).toBe('44px');
     });
 
     it('should expect the Slick-Empty-Warning to be created when defining a grid that has the "autoHeight" grid option but hidden when calling it the show warning with True then False', () => {
@@ -243,8 +243,8 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentRightElm.style.marginLeft).toBe('0px');
       expect(componentLeftElm.textContent).toBe('No data to display.');
       expect(componentRightElm.textContent).toBe('No data to display.');
-      expect(gridPaneElm.style.minHeight).toBe('44px');
-      expect(gridPaneElm.style.height).toBe('44px');
+      expect(gridPaneElm!.style.minHeight).toBe('44px');
+      expect(gridPaneElm!.style.height).toBe('44px');
     });
 
     it('should expect the Slick-Empty-Warning to be created and use different left margin when "rightViewportMarginLeft" is set', () => {

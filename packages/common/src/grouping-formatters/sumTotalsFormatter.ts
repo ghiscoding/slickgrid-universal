@@ -1,8 +1,9 @@
-import type { Column, GroupTotalsFormatter, SlickGridModel } from './../interfaces/index';
+import type { Column, GroupTotalsFormatter } from './../interfaces/index';
 import { formatNumber } from '../services/utilities';
 import { retrieveFormatterOptions } from '../formatters/formatterUtilities';
+import { type SlickGrid } from '../core/index';
 
-export const sumTotalsFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column, grid: SlickGridModel) => {
+export const sumTotalsFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column, grid: SlickGrid) => {
   const field = columnDef.field ?? '';
   const val = totals.sum?.[field];
   const params = columnDef?.params;

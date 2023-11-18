@@ -1,8 +1,9 @@
-import type { ColumnSort, SlickGridModel } from './index';
+import type { ColumnSort } from './index';
+import type { SlickGrid } from '../core/index';
 
 export interface MultiColumnSort {
   /** SlickGrid grid object */
-  grid: SlickGridModel;
+  grid: SlickGrid;
 
   /** is it a multi-column sort? */
   multiColumnSort: true;

@@ -15,14 +15,13 @@ import type {
   HtmlElementPosition,
   Locale,
   LongTextEditorOption,
-  SlickGridModel,
 } from '../interfaces/index';
 import { createDomElement, getHtmlElementOffset, } from '../services/domUtilities';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
 import { textValidator } from '../editorValidators/textValidator';
-import { SlickEventData } from '../core/slickCore';
+import { SlickEventData, type SlickGrid } from '../core/index';
 
 /*
  * An example of a 'detached' editor.
@@ -43,7 +42,7 @@ export class LongTextEditor implements Editor {
   disabled = false;
 
   /** SlickGrid Grid object */
-  grid: SlickGridModel;
+  grid: SlickGrid;
 
   /** Grid options */
   gridOptions: GridOption;

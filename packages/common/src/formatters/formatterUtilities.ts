@@ -1,11 +1,13 @@
+import * as moment_ from 'moment-mini';
+const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
+
 import { FieldType } from '../enums/fieldType.enum';
-import type { Column, ExcelExportOption, Formatter, FormatterResultWithHtml, FormatterResultWithText, GridOption, SlickGridModel, TextExportOption } from '../interfaces/index';
+import type { Column, ExcelExportOption, Formatter, FormatterResultWithHtml, FormatterResultWithText, GridOption, TextExportOption } from '../interfaces/index';
 import { sanitizeHtmlToText } from '../services/domUtilities';
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { multipleFormatter } from './multipleFormatter';
-import * as moment_ from 'moment-mini';
 import { Constants } from '../constants';
-const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
+import { type SlickGrid } from '../core';
 
 export type FormatterType = 'group' | 'cell';
 export type NumberType = 'decimal' | 'currency' | 'percent' | 'regular';
@@ -37,7 +39,7 @@ export function autoAddEditorFormatterToColumnsWithEditor(columnDefinitions: Col
   }
 }
 
-export function retrieveFormatterOptions(columnDef: Column, grid: SlickGridModel, numberType: NumberType, formatterType: FormatterType) {
+export function retrieveFormatterOptions(columnDef: Column, grid: SlickGrid, numberType: NumberType, formatterType: FormatterType) {
   let defaultMinDecimal;
   let defaultMaxDecimal;
   let numberPrefix = '';
@@ -97,7 +99,7 @@ export function getValueFromParamsOrFormatterOptions(optionName: string, columnD
 export function getAssociatedDateFormatter(fieldType: typeof FieldType[keyof typeof FieldType], defaultSeparator: string): Formatter {
   const defaultDateFormat = mapMomentDateFormatWithFieldType(fieldType);
 
-  return (_row: number, _cell: number, value: any, columnDef: Column, _dataContext: any, grid: SlickGridModel) => {
+  return (_row: number, _cell: number, value: any, columnDef: Column, _dataContext: any, grid: SlickGrid) => {
     const gridOptions = ((grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {}) as GridOption;
     const customSeparator = gridOptions?.formatterOptions?.dateSeparator ?? defaultSeparator;
     const inputType = columnDef?.type ?? FieldType.date;
@@ -134,7 +136,7 @@ export function getAssociatedDateFormatter(fieldType: typeof FieldType[keyof typ
  * @param {Object} exportOptions - Excel or Text Export Options
  * @returns formatted string output or empty string
  */
-export function exportWithFormatterWhenDefined<T = any>(row: number, col: number, columnDef: Column<T>, dataContext: T, grid: SlickGridModel, exportOptions?: TextExportOption | ExcelExportOption) {
+export function exportWithFormatterWhenDefined<T = any>(row: number, col: number, columnDef: Column<T>, dataContext: T, grid: SlickGrid, exportOptions?: TextExportOption | ExcelExportOption) {
   let isEvaluatingFormatter = false;
 
   // check if "exportWithFormatter" is provided in the column definition, if so it will have precendence over the Grid Options exportOptions
@@ -168,7 +170,7 @@ export function exportWithFormatterWhenDefined<T = any>(row: number, col: number
  * @param {Object} grid - Slick Grid object
  * @returns formatted string output or empty string
  */
-export function parseFormatterWhenExist<T = any>(formatter: Formatter<T> | undefined, row: number, col: number, columnDef: Column<T>, dataContext: T, grid: SlickGridModel): string {
+export function parseFormatterWhenExist<T = any>(formatter: Formatter<T> | undefined, row: number, col: number, columnDef: Column<T>, dataContext: T, grid: SlickGrid): string {
   let output = '';
 
   // does the field have the dot (.) notation and is a complex object? if so pull the first property name

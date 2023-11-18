@@ -15,13 +15,12 @@ import type {
   HeaderMenuCommandItem,
   MenuCommandItem,
   MenuOptionItem,
-  SlickGridModel,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import type { SharedService } from '../services/shared.service';
 import { createDomElement, emptyElement } from '../services/domUtilities';
-import { SlickEventHandler } from '../core/index';
+import { SlickEventHandler, type SlickGrid } from '../core/index';
 
 export type MenuType = 'command' | 'option';
 export type ExtendableItemTypes = HeaderButtonItem | MenuCommandItem | MenuOptionItem | 'divider';
@@ -66,7 +65,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     return this._eventHandler;
   }
 
-  get grid(): SlickGridModel {
+  get grid(): SlickGrid {
     return this.sharedService.slickGrid;
   }
 

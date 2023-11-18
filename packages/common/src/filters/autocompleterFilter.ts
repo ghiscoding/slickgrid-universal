@@ -24,7 +24,6 @@ import type {
   FilterCallbackArg,
   GridOption,
   Locale,
-  SlickGridModel,
 } from '../interfaces/index';
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter';
 import { createDomElement, emptyElement, } from '../services';
@@ -37,6 +36,7 @@ import type { TranslaterService } from '../services/translater.service';
 import { renderCollectionOptionsAsync } from './filterUtilities';
 import type { RxJsFacade, Subscription } from '../services/rxjsFacade';
 import { Constants } from '../constants';
+import { type SlickGrid } from '../core/index';
 
 export class AutocompleterFilter<T extends AutocompleteItem = any> implements Filter {
   protected _autocompleterOptions!: Partial<AutocompleterOption<T>>;
@@ -51,7 +51,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   /** DOM Element Name, useful for auto-detecting positioning (dropup / dropdown) */
   elementName!: string;
 
-  grid!: SlickGridModel;
+  grid!: SlickGrid;
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;

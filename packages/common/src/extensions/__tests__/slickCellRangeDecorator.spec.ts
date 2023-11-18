@@ -1,7 +1,8 @@
 import 'jest-extended';
 
-import { GridOption, type SlickGridModel  } from '../../interfaces/index';
+import type { GridOption } from '../../interfaces/index';
 import { SlickCellRangeDecorator } from '../slickCellRangeDecorator';
+import { SlickGrid } from '../../core';
 
 jest.mock('flatpickr', () => { });
 
@@ -9,7 +10,7 @@ const gridStub = {
   getActiveCell: jest.fn(),
   getActiveCanvasNode: jest.fn(),
   getCellNodeBox: jest.fn(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('CellRangeDecorator Plugin', () => {
   const mockEventCallback = () => { };

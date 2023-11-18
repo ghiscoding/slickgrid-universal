@@ -10,7 +10,7 @@ import {
   GroupTotalFormatters,
   ItemMetadata,
   SlickDataView,
-  SlickGridModel,
+  SlickGrid,
   SortComparers,
   SortDirectionNumber,
   TextExportOption,
@@ -66,7 +66,7 @@ const gridStub = {
   getOptions: () => mockGridOptions,
   getColumns: jest.fn(),
   getGrouping: jest.fn(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('ExportService', () => {
   let container: ContainerServiceStub;

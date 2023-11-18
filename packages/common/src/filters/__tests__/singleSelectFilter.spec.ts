@@ -2,10 +2,11 @@
 import 'multiple-select-vanilla';
 
 import { Filters } from '../filters.index';
-import { Column, FilterArguments, GridOption, SlickGridModel } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { CollectionService } from '../../services/collection.service';
 import { SingleSelectFilter } from '../singleSelectFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { SlickGrid } from '../../core/index';
 
 jest.useFakeTimers();
 
@@ -24,7 +25,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('SelectFilter', () => {
   let translateService: TranslateServiceStub;

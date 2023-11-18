@@ -1,10 +1,11 @@
-import { Column, GridOption, SlickGridModel } from '../../interfaces/index';
+import { Column, GridOption } from '../../interfaces/index';
 import { decimalFormatter } from '../decimalFormatter';
+import { SlickGrid } from '../../core/index';
 
 describe('the Decimal Formatter', () => {
   const gridStub = {
     getOptions: jest.fn()
-  } as unknown as SlickGridModel;
+  } as unknown as SlickGrid;
 
   beforeEach(() => {
     jest.spyOn(global.console, 'warn').mockReturnValue();

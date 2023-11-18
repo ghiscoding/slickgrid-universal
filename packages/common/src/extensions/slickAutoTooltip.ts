@@ -1,6 +1,8 @@
 
 import { SlickEventHandler } from '../core/slickCore';
-import type { AutoTooltipOption, Column, SlickGridModel, } from '../interfaces/index';
+import type { AutoTooltipOption, Column } from '../interfaces/index';
+import { sanitizeHtmlToText } from '../services';
+import { type SlickGrid } from '../core/index';
 
 /**
  * AutoTooltips plugin to show/hide tooltips when columns are too narrow to fit content.
@@ -13,8 +15,8 @@ export class SlickAutoTooltip {
   pluginName = 'AutoTooltips' as const;
 
   protected _addonOptions?: AutoTooltipOption;
-  protected _eventHandler!: SlickEventHandler;
-  protected _grid!: SlickGridModel;
+  protected _eventHandler: SlickEventHandler;
+  protected _grid!: SlickGrid;
   protected _defaults = {
     enableForCells: true,
     enableForHeaderCells: false,
@@ -37,7 +39,7 @@ export class SlickAutoTooltip {
   }
 
   /** Initialize plugin. */
-  init(grid: SlickGridModel) {
+  init(grid: SlickGrid) {
     this._addonOptions = { ...this._defaults, ...this.addonOptions };
     this._grid = grid;
     if (this._addonOptions.enableForCells) {
@@ -99,7 +101,7 @@ export class SlickAutoTooltip {
       node = targetElm.closest<HTMLDivElement>('.slick-header-column');
       if (node && !(column?.toolTip)) {
         const titleVal = (targetElm.clientWidth < node.clientWidth) ? column?.name ?? '' : '';
-        node.title = titleVal instanceof HTMLElement ? titleVal.innerHTML : titleVal;
+        node.title = titleVal instanceof HTMLElement ? sanitizeHtmlToText(titleVal.innerHTML) : titleVal;
       }
     }
     node = null;

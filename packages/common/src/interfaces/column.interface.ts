@@ -1,4 +1,4 @@
-import type { AutoSize } from '../core/index';
+import type { AutoSize, SlickGrid } from '../core/index';
 import type { FieldType } from '../enums/fieldType.enum';
 import type {
   CellMenu,
@@ -15,11 +15,10 @@ import type {
   GroupTotalsFormatter,
   HeaderButtonsOrMenu,
   OnEventArgs,
-  SlickGridModel,
   SortComparer,
 } from './index';
 
-export type FormatterOverrideCallback = (row: number, cell: number, val: any, columnDef: Column, item: any, grid: SlickGridModel) => string | FormatterResultWithHtml | FormatterResultWithText;
+export type FormatterOverrideCallback = (row: number, cell: number, val: any, columnDef: Column, item: any, grid: SlickGrid) => string | FormatterResultWithHtml | FormatterResultWithText;
 
 type PathsToStringProps<T> = T extends string | number | boolean | Date ? [] : {
   [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>]

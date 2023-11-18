@@ -1,10 +1,11 @@
-import { Column, GridOption, SlickGridModel } from '../../interfaces/index';
+import { Column, GridOption } from '../../interfaces/index';
 import { dollarFormatter } from '../dollarFormatter';
+import { SlickGrid } from '../../core/index';
 
 describe('the Dollar Formatter', () => {
   const gridStub = {
     getOptions: jest.fn()
-  } as unknown as SlickGridModel;
+  } as unknown as SlickGrid;
 
   it('should display an empty string when no value is provided', () => {
     const output = dollarFormatter(1, 1, '', {} as Column, {}, {} as any);

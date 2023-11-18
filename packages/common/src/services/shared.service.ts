@@ -1,12 +1,12 @@
-import type { SlickDataView } from '../core/index';
-import type { Column, CurrentPagination, GridOption, SlickGridModel } from '../interfaces/index';
+import type { SlickDataView, SlickGrid } from '../core/index';
+import type { Column, CurrentPagination, GridOption } from '../interfaces/index';
 import type { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider';
 
 export class SharedService {
   protected _allColumns!: Column[];
   protected _dataView!: SlickDataView;
   protected _groupItemMetadataProvider!: SlickGroupItemMetadataProvider;
-  protected _grid!: SlickGridModel;
+  protected _grid!: SlickGrid;
   protected _gridContainerElm!: HTMLElement;
   protected _gridOptions!: GridOption;
   protected _hasColumnsReordered = false;
@@ -72,11 +72,11 @@ export class SharedService {
   }
 
   /** Getter for SlickGrid Grid object */
-  get slickGrid(): SlickGridModel {
+  get slickGrid(): SlickGrid {
     return this._grid;
   }
   /** Setter for SlickGrid Grid object */
-  set slickGrid(grid: SlickGridModel) {
+  set slickGrid(grid: SlickGrid) {
     this._grid = grid;
   }
 

@@ -20,7 +20,6 @@ import type {
   EditorValidationResult,
   GridOption,
   Locale,
-  SlickGridModel,
 } from '../interfaces/index';
 import { textValidator } from '../editorValidators/textValidator';
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter';
@@ -29,7 +28,7 @@ import { createDomElement, sanitizeTextByAvailableSanitizer, } from '../services
 import { findOrDefault, getDescendantProperty, } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
-import { SlickEventData } from '../core/slickCore';
+import { SlickEventData, type SlickGrid } from '../core/index';
 
 // minimum length of chars to type before starting to start querying
 const MIN_LENGTH = 3;
@@ -64,7 +63,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   disabled = false;
 
   /** SlickGrid Grid object */
-  grid: SlickGridModel;
+  grid: SlickGrid;
 
   /** The property name for labels in the collection */
   labelName!: string;

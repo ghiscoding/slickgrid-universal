@@ -1,8 +1,7 @@
-import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, } from '../../core/index';
-
 import { GroupingAndColspanService } from '../groupingAndColspan.service';
-import { Column, GridOption, SlickGridModel } from '../../interfaces/index';
+import { Column, GridOption } from '../../interfaces/index';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
+import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../../core/index';
 
 const gridId = 'grid1';
 const gridUid = 'slickgrid_124343';
@@ -63,7 +62,7 @@ const gridStub = {
   setColumns: jest.fn(),
   setOptions: jest.fn(),
   setSortColumns: jest.fn(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 const mockExtensionUtility = {
   translateItems: jest.fn(),

@@ -1,8 +1,7 @@
-import { type SlickDataView, SlickEvent, SlickGroup } from '../../core/index';
-
 import { KeyCode } from '../../enums/index';
-import { Column, GridOption, GroupItemMetadataProviderOption, SlickGridModel } from '../../interfaces';
+import type { Column, GridOption, GroupItemMetadataProviderOption } from '../../interfaces';
 import { SlickGroupItemMetadataProvider } from '../slickGroupItemMetadataProvider';
+import { type SlickDataView, SlickEvent, SlickGrid, SlickGroup } from '../../core/index';
 
 const gridOptionMock = {
   enablePagination: true,
@@ -48,7 +47,7 @@ const gridStub = {
   onClick: new SlickEvent(),
   onKeyDown: new SlickEvent(),
   onSort: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('GroupItemMetadataProvider Service', () => {
   let service: SlickGroupItemMetadataProvider;

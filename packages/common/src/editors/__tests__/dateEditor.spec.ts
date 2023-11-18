@@ -1,11 +1,11 @@
 import * as moment from 'moment-mini';
-import { SlickEvent, type SlickDataView } from '../../core/index';
 
 import { Editors } from '../index';
 import { DateEditor } from '../dateEditor';
 import { FieldType } from '../../enums/index';
-import { Column, ColumnEditor, EditorArguments, GridOption, type SlickGridModel } from '../../interfaces/index';
+import { Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 
 const containerId = 'demo-container';
 
@@ -38,7 +38,7 @@ const gridStub = {
   render: jest.fn(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('DateEditor', () => {
   let translateService: TranslateServiceStub;

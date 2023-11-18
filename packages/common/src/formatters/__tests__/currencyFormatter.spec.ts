@@ -1,10 +1,11 @@
-import { Column, GridOption, SlickGridModel } from '../../interfaces/index';
+import { Column, GridOption } from '../../interfaces/index';
 import { currencyFormatter } from '../currencyFormatter';
+import { SlickGrid } from '../../core/index';
 
 describe('the Currency Formatter', () => {
   const gridStub = {
     getOptions: jest.fn()
-  } as unknown as SlickGridModel;
+  } as unknown as SlickGrid;
 
   beforeEach(() => {
     jest.spyOn(global.console, 'warn').mockReturnValue();

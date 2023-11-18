@@ -1,5 +1,5 @@
-import type { SlickDataView } from '../core/index';
-import type { Column, SlickGridModel } from './index';
+import type { Column } from './index';
+import type { SlickDataView, SlickGrid } from '../core/index';
 
 export interface OnEventArgs {
   row: number;
@@ -7,5 +7,5 @@ export interface OnEventArgs {
   columnDef: Column;
   dataContext: any;
   dataView: SlickDataView;
-  grid: SlickGridModel;
+  grid: SlickGrid;
 }

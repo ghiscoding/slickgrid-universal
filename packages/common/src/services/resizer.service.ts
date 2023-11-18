@@ -7,11 +7,10 @@ import type {
   GridOption,
   GridSize,
   ResizeByContentOption,
-  SlickGridModel,
 } from '../interfaces/index';
 import { BindingEventService, getInnerSize, getHtmlElementOffset, sanitizeHtmlToText, } from '../services/index';
 import { parseFormatterWhenExist } from '../formatters/formatterUtilities';
-import { type SlickDataView, SlickEventHandler } from '../core/index';
+import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
 // using external non-typed js libraries
 const DATAGRID_BOTTOM_PADDING = 20;
@@ -24,7 +23,7 @@ const DEFAULT_INTERVAL_RETRY_DELAY = 200;
 export class ResizerService {
   protected _autoResizeOptions!: AutoResizeOption;
   protected _bindingEventService: BindingEventService;
-  protected _grid!: SlickGridModel;
+  protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
   protected _fixedHeight?: number | string;
   protected _fixedWidth?: number | string;
@@ -96,7 +95,7 @@ export class ResizerService {
     this._bindingEventService.unbindAll();
   }
 
-  init(grid: SlickGridModel, gridParentContainerElm: HTMLElement) {
+  init(grid: SlickGrid, gridParentContainerElm: HTMLElement) {
     if (!grid || !this.gridOptions || !gridParentContainerElm) {
       throw new Error(`
       [Slickgrid-Universal] Resizer Service requires a valid Grid object and DOM Element Container to be provided.

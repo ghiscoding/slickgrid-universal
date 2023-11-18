@@ -1,4 +1,4 @@
-import { Column, CompositeEditorOption, Editors, ElementPosition, GridOption, type SlickDataView, SlickEvent, type SlickGridModel } from '@slickgrid-universal/common';
+import { Column, CompositeEditorOption, Editors, ElementPosition, GridOption, type SlickDataView, SlickEvent, type SlickGrid } from '@slickgrid-universal/common';
 
 import { CompositeEditor } from './compositeEditor.factory';
 
@@ -53,7 +53,7 @@ const gridStub = {
   setSelectedRows: jest.fn(),
   setActiveRow: jest.fn(),
   setSortColumns: jest.fn(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 const columnsMock: Column[] = [
   { id: 'productName', field: 'productName', width: 100, name: 'Product', nameKey: 'PRODUCT', editor: Editors.text as any },

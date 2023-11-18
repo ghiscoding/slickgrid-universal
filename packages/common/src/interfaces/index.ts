@@ -143,7 +143,6 @@ export * from './servicePagination.interface';
 export * from './singleColumnSort.interface';
 export * from './slickCompositeEditor.interface';
 export * from './slickEditorLock.interface';
-export * from './slickGridModel.interface';
 export * from './slickGroup.interface';
 export * from './slickPlugin.interface';
 export * from './slickRange.interface';

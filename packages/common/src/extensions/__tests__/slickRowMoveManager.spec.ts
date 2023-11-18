@@ -1,9 +1,9 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import 'jest-extended';
-import { SlickEvent } from '../../core/index';
 
-import { Column, DragRowMove, GridOption, SlickGridModel } from '../../interfaces/index';
+import type { Column, DragRowMove, GridOption } from '../../interfaces/index';
 import { SlickRowMoveManager } from '../slickRowMoveManager';
+import { SlickEvent, SlickGrid } from '../../core/index';
 
 const GRID_UID = 'slickgrid_12345';
 jest.mock('flatpickr', () => { });
@@ -56,7 +56,7 @@ const gridStub = {
   onDragInit: new SlickEvent(),
   onDragEnd: new SlickEvent(),
   onDragStart: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 const pubSubServiceStub = {
   publish: jest.fn(),

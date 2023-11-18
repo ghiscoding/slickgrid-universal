@@ -18,11 +18,10 @@ import type {
   GridOption,
   Locale,
   SelectOption,
-  SlickGridModel,
 } from './../interfaces/index';
 import { buildMultipleSelectDataCollection, CollectionService, emptyElement, findOrDefault, sanitizeTextByAvailableSanitizer, type TranslaterService } from '../services/index';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
-import { SlickEventData } from '../core/slickCore';
+import { SlickEventData, type SlickGrid } from '../core/index';
 
 /**
  * Slickgrid editor class for multiple/single select lists
@@ -85,7 +84,7 @@ export class SelectEditor implements Editor {
   enableTranslateLabel = false;
 
   /** SlickGrid Grid object */
-  grid: SlickGridModel;
+  grid: SlickGrid;
 
   /** Final collection displayed in the UI, that is after processing filter/sort/override */
   finalCollection: any[] = [];

@@ -1,14 +1,11 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { type SlickDataView, SlickEvent, SlickEventData } from '../../core/index';
 
 import { ExtensionService } from '../extension.service';
 import { FilterService } from '../filter.service';
 import { GridStateService } from '../gridState.service';
 import { SortService } from '../sort.service';
-import {
-  GridStateType,
-  ExtensionName,
-} from '../../enums/index';
+import { GridStateType, ExtensionName } from '../../enums/index';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
 import {
   BackendService,
   CheckboxSelectorOption,
@@ -24,7 +21,6 @@ import {
   GridState,
   RowDetailView,
   RowMoveManager,
-  SlickGridModel,
   TreeToggleStateChange,
 } from '../../interfaces/index';
 import { SharedService } from '../shared.service';
@@ -81,7 +77,7 @@ const gridStub = {
   onColumnsResized: new SlickEvent(),
   onSetOptions: new SlickEvent(),
   onSelectedRowsChanged: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 const extensionServiceStub = {
   getExtensionByName: (_name: string) => { }

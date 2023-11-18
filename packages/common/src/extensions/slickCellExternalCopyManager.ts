@@ -1,4 +1,3 @@
-
 import { SlickEvent, SlickEventData, SlickEventHandler, SlickRange } from '../core/slickCore';
 import { KeyCode } from '../enums/index';
 import type {
@@ -6,9 +5,9 @@ import type {
   Column,
   ExcelCopyBufferOption,
   ExternalCopyClipCommand,
-  SlickGridModel,
 } from '../interfaces/index';
 import { createDomElement, sanitizeHtmlToText } from '../services/domUtilities';
+import { type SlickGrid } from '../core/index';
 
 // using external SlickGrid JS libraries
 const CLEAR_COPY_SELECTION_DELAY = 2000;
@@ -35,7 +34,7 @@ export class SlickCellExternalCopyManager {
   protected _copiedCellStyleLayerKey = 'copy-manager';
   protected _copiedRanges: CellRange[] | null = null;
   protected _eventHandler: SlickEventHandler;
-  protected _grid!: SlickGridModel;
+  protected _grid!: SlickGrid;
   protected _onCopyInit?: () => void;
   protected _onCopySuccess?: (rowCount: number) => void;
 
@@ -51,7 +50,7 @@ export class SlickCellExternalCopyManager {
     return this._eventHandler;
   }
 
-  init(grid: SlickGridModel, options?: ExcelCopyBufferOption) {
+  init(grid: SlickGrid, options?: ExcelCopyBufferOption) {
     this._grid = grid;
     this._addonOptions = { ...this._addonOptions, ...options };
     this._copiedCellStyleLayerKey = this._addonOptions.copiedCellStyleLayerKey || 'copy-manager';
@@ -174,7 +173,7 @@ export class SlickCellExternalCopyManager {
     return textAreaElm;
   }
 
-  protected decodeTabularData(grid: SlickGridModel, textAreaElement: HTMLTextAreaElement) {
+  protected decodeTabularData(grid: SlickGrid, textAreaElement: HTMLTextAreaElement) {
     const columns = grid.getColumns();
     const clipText = textAreaElement.value;
     const clipRows = clipText.split(/[\n\f\r]/);

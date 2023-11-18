@@ -1,9 +1,9 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { SharedService } from '../shared.service';
-import { Column, CurrentPagination, GridOption, SlickGridModel,  } from '../../interfaces/index';
-import type { SlickDataView } from '../../core';
+import { Column, CurrentPagination, GridOption } from '../../interfaces/index';
 import { ExcelExportService } from '../excelExport.service';
+import type { SlickDataView, SlickGrid } from '../../core';
 import { SlickGroupItemMetadataProvider } from '../../extensions';
 
 jest.mock('flatpickr', () => { });
@@ -22,7 +22,7 @@ const gridStub = {
   onColumnsReordered: jest.fn(),
   onColumnsResized: jest.fn(),
   registerPlugin: jest.fn(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 const pubSubServiceStub = {
   publish: jest.fn(),

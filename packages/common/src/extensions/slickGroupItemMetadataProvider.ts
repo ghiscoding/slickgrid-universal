@@ -1,5 +1,4 @@
-
-import { SlickEventHandler, Utils as SlickUtils, type SlickDataView, SlickGroup } from '../core/index';
+import { SlickEventHandler, Utils as SlickUtils, type SlickDataView, SlickGroup, type SlickGrid } from '../core/index';
 import { KeyCode } from '../enums/keyCode.enum';
 import type {
   Column,
@@ -8,7 +7,6 @@ import type {
   GroupItemMetadataProviderOption,
   ItemMetadata,
   OnClickEventArgs,
-  SlickGridModel,
 } from '../interfaces/index';
 
 /**
@@ -21,7 +19,7 @@ import type {
  */
 export class SlickGroupItemMetadataProvider {
   protected _eventHandler: SlickEventHandler;
-  protected _grid!: SlickGridModel;
+  protected _grid!: SlickGrid;
   protected _options: GroupItemMetadataProviderOption;
   protected _defaults: GroupItemMetadataProviderOption = {
     groupCssClass: 'slick-group',
@@ -54,7 +52,7 @@ export class SlickGroupItemMetadataProvider {
     return this._grid?.getData<SlickDataView>() ?? {};
   }
 
-  init(grid: SlickGridModel, inputOptions?: GroupItemMetadataProviderOption) {
+  init(grid: SlickGrid, inputOptions?: GroupItemMetadataProviderOption) {
     this._grid = grid;
     this._options = { ...this._defaults, ...inputOptions };
 
@@ -123,14 +121,14 @@ export class SlickGroupItemMetadataProvider {
       `<span class="${this._options.groupTitleCssClass}" level="${groupLevel}">${item.title || ''}</span>`;
   }
 
-  protected defaultTotalsCellFormatter(_row: number, _cell: number, _value: any, columnDef: Column, item: any, grid: SlickGridModel) {
+  protected defaultTotalsCellFormatter(_row: number, _cell: number, _value: any, columnDef: Column, item: any, grid: SlickGrid) {
     return columnDef?.groupTotalsFormatter?.(item, columnDef, grid) ?? '';
   }
 
   /** Handle a grid cell clicked, it could be a Group that is being collapsed/expanded or do nothing when it's not */
   protected handleGridClick(e: DOMEvent<HTMLDivElement>, args: OnClickEventArgs) {
     const target = e.target;
-    const item = this._grid.getDataItem(args.row);
+    const item = this._grid?.getDataItem(args.row);
     if (item instanceof SlickGroup && target.classList.contains(this._options.toggleCssClass || '')) {
       this.handleDataViewExpandOrCollapse(item);
       e.stopImmediatePropagation();
@@ -144,7 +142,7 @@ export class SlickGroupItemMetadataProvider {
    */
   protected handleGridKeyDown(e: KeyboardEvent) {
     if (this._options.enableExpandCollapse && (e.keyCode === KeyCode.SPACE)) {
-      const activeCell = this._grid.getActiveCell();
+      const activeCell = this._grid?.getActiveCell();
       if (activeCell) {
         const item = this._grid.getDataItem(activeCell.row);
         if (item instanceof SlickGroup) {
@@ -157,7 +155,7 @@ export class SlickGroupItemMetadataProvider {
   }
 
   protected handleDataViewExpandOrCollapse(item: any) {
-    const range = this._grid.getRenderedRange();
+    const range = this._grid?.getRenderedRange();
     this.dataView.setRefreshHints({
       ignoreDiffsBefore: range.top,
       ignoreDiffsAfter: range.bottom + 1

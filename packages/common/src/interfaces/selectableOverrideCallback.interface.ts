@@ -1,4 +1,4 @@
-import type { SlickGridModel } from './index';
+import type { SlickGrid } from '../core/index';
 
 /** Method that user can pass to override the default behavior or making every row a selectable row. */
 export type SelectableOverrideCallback<T> = (
@@ -9,5 +9,5 @@ export type SelectableOverrideCallback<T> = (
   dataContext: T,
 
   /** SlickGrid object */
-  grid: SlickGridModel
+  grid: SlickGrid
 ) => boolean;

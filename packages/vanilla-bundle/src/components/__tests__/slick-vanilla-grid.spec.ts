@@ -40,7 +40,7 @@ import {
   SlickDataView,
   SlickEditorLock,
   SlickEventHandler,
-  SlickGridModel,
+  SlickGrid,
   SlickGroupItemMetadataProvider,
   SortService,
   TreeDataService,
@@ -254,7 +254,7 @@ const mockGrid = {
   onRendered: jest.fn(),
   onScroll: jest.fn(),
   onDataviewCreated: new MockSlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 const template = `<div class="demo-container"><div class="grid1"></div></div>`;
 const slickEventHandler = new MockSlickEventHandler() as unknown as SlickEventHandler;
@@ -511,7 +511,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('dataset changed', () => {
       beforeEach(() => {
         jest.clearAllMocks();
-        sharedService.slickGrid = mockGrid as unknown as SlickGridModel;
+        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
       it('should expect "autosizeColumns" being called when "autoFitColumnsOnFirstLoad" is set and we are on first page load', () => {
@@ -595,7 +595,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('options changed', () => {
       beforeEach(() => {
         jest.clearAllMocks();
-        sharedService.slickGrid = mockGrid as unknown as SlickGridModel;
+        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
         sharedService.gridOptions = gridOptions;
       });
 
@@ -823,7 +823,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       afterEach(() => {
         component.dispose();
         jest.clearAllMocks();
-        sharedService.slickGrid = mockGrid as unknown as SlickGridModel;
+        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
       it('should call the onDataviewCreated emitter', () => {
@@ -934,7 +934,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       afterEach(() => {
         jest.clearAllMocks();
         component.dispose();
-        sharedService.slickGrid = mockGrid as unknown as SlickGridModel;
+        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
       it('should initialize groupingAndColspanService when "createPreHeaderPanel" grid option is enabled and "enableDraggableGrouping" is disabled', () => {
@@ -1891,7 +1891,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('loadRowSelectionPresetWhenExists method', () => {
       beforeEach(() => {
         jest.clearAllMocks();
-        sharedService.slickGrid = mockGrid as unknown as SlickGridModel;
+        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
       it('should call the "mapIdsToRows" from the DataView then "setSelectedRows" from the Grid when there are row selection presets with "dataContextIds" array set', (done) => {
@@ -1963,7 +1963,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     describe('onPaginationVisibilityChanged event', () => {
       beforeEach(() => {
         jest.clearAllMocks();
-        sharedService.slickGrid = mockGrid as unknown as SlickGridModel;
+        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
       it('should change "showPagination" flag when "onPaginationVisibilityChanged" from the Pagination Service is triggered', () => {

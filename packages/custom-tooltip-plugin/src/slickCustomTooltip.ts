@@ -13,7 +13,7 @@ import type {
   RxJsFacade,
   SharedService,
   SlickDataView,
-  SlickGridModel,
+  SlickGrid,
   Subscription,
 } from '@slickgrid-universal/common';
 import {
@@ -74,7 +74,7 @@ export class SlickCustomTooltip {
     regularTooltipWhiteSpace: 'pre-line',
     whiteSpace: 'normal',
   } as CustomTooltipOption;
-  protected _grid!: SlickGridModel;
+  protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
 
   constructor() {
@@ -121,7 +121,7 @@ export class SlickCustomTooltip {
     this._rxjs = rxjs;
   }
 
-  init(grid: SlickGridModel, containerService: ContainerService) {
+  init(grid: SlickGrid, containerService: ContainerService) {
     this._grid = grid;
     this._rxjs = containerService.get<RxJsFacade>('RxJsFacade');
     this._sharedService = containerService.get<SharedService>('SharedService');

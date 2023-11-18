@@ -1,13 +1,13 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 
-import type { Column, GridOption, SlickGridModel, SlickResizer, } from './../interfaces/index';
+import type { Column, GridOption, SlickResizer, } from './../interfaces/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import { createDomElement, emptyElement } from './domUtilities';
-import { type SlickDataView, SlickEventHandler } from '../core/index';
+import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
 export class GroupingAndColspanService {
   protected _eventHandler: SlickEventHandler;
-  protected _grid!: SlickGridModel;
+  protected _grid!: SlickGrid;
   protected _subscriptions: EventSubscription[] = [];
 
   constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: BasePubSubService) {
@@ -39,7 +39,7 @@ export class GroupingAndColspanService {
    * @param {object} grid
    * @param {object} resizerPlugin
    */
-  init(grid: SlickGridModel) {
+  init(grid: SlickGrid) {
     this._grid = grid;
 
     if (grid && this._gridOptions) {

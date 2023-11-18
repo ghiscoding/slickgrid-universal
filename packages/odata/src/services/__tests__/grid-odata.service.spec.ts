@@ -1,4 +1,5 @@
 import {
+  BackendService,
   CaseType,
   Column,
   ColumnFilter,
@@ -13,11 +14,10 @@ import {
   FieldType,
   CurrentSorter,
   SharedService,
-  SlickGridModel,
-  BackendService,
+  type SlickGrid,
 } from '@slickgrid-universal/common';
 import { GridOdataService } from '../grid-odata.service';
-import { OdataOption } from '../../interfaces/odataOption.interface';
+import type { OdataOption } from '../../interfaces/odataOption.interface';
 
 const DEFAULT_ITEMS_PER_PAGE = 25;
 const DEFAULT_PAGE_SIZE = 20;
@@ -34,7 +34,7 @@ const gridStub = {
   registerPlugin: jest.fn(),
   setSelectedRows: jest.fn(),
   setSortColumns: jest.fn(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('GridOdataService', () => {
   let service: GridOdataService;

@@ -86,7 +86,6 @@ import type {
   SingleColumnSort,
   SlickPlugin,
   SlickGridEventData,
-  SlickGridModel,
 } from '../interfaces';
 import type { AutoSize } from './models/autoSize.interface';
 
@@ -879,7 +878,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   /** Register an external Plugin */
   registerPlugin<T extends SlickPlugin>(plugin: T) {
     this.plugins.unshift(plugin);
-    plugin.init(this as unknown as SlickGridModel);
+    plugin.init(this as unknown as SlickGrid);
   }
 
   /** Unregister (destroy) an external Plugin */
@@ -917,7 +916,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     this.selectionModel = model;
     if (this.selectionModel) {
-      this.selectionModel.init(this as unknown as SlickGridModel);
+      this.selectionModel.init(this as unknown as SlickGrid);
       this.selectionModel.onSelectedRangesChanged.subscribe(this.handleSelectedRangesChanged.bind(this));
     }
   }
@@ -1630,7 +1629,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.setupColumnResize();
     if (this._options.enableColumnReorder) {
       if (typeof this._options.enableColumnReorder === 'function') {
-        this._options.enableColumnReorder(this as unknown as SlickGridModel, this._headers, this.headerColumnWidthDiff, this.setColumns as any, this.setupColumnResize, this.columns, this.getColumnIndex, this.uid, this.trigger);
+        this._options.enableColumnReorder(this as unknown as SlickGrid, this._headers, this.headerColumnWidthDiff, this.setColumns as any, this.setupColumnResize, this.columns, this.getColumnIndex, this.uid, this.trigger);
       } else {
         this.setupColumnReorder();
       }
@@ -2997,10 +2996,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         val = (rowInfo.valueArr ? rowInfo.valueArr[i] : rowInfo.getRowVal(i));
         if (columnDef.formatterOverride) {
           // use formatterOverride as first preference
-          formatterResult = (columnDef.formatterOverride as FormatterOverrideCallback)(i, rowInfo.colIndex, val, columnDef, this.getDataItem(i), this as unknown as SlickGridModel);
+          formatterResult = (columnDef.formatterOverride as FormatterOverrideCallback)(i, rowInfo.colIndex, val, columnDef, this.getDataItem(i), this as unknown as SlickGrid);
         } else if (columnDef.formatter) {
           // otherwise, use formatter
-          formatterResult = columnDef.formatter(i, rowInfo.colIndex, val, columnDef, this.getDataItem(i), this as unknown as SlickGridModel);
+          formatterResult = columnDef.formatter(i, rowInfo.colIndex, val, columnDef, this.getDataItem(i), this as unknown as SlickGrid);
         } else {
           // otherwise, use plain text
           formatterResult = '' + val;
@@ -3023,10 +3022,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       val = (rowInfo.valueArr ? rowInfo.valueArr[i] : rowInfo.getRowVal(i));
       if (columnDef.formatterOverride) {
         // use formatterOverride as first preference
-        formatterResult = (columnDef.formatterOverride as FormatterOverrideCallback)(i, rowInfo.colIndex, val, columnDef, this.getDataItem(i), this as unknown as SlickGridModel);
+        formatterResult = (columnDef.formatterOverride as FormatterOverrideCallback)(i, rowInfo.colIndex, val, columnDef, this.getDataItem(i), this as unknown as SlickGrid);
       } else if (columnDef.formatter) {
         // otherwise, use formatter
-        formatterResult = columnDef.formatter(i, rowInfo.colIndex, val, columnDef, this.getDataItem(i), this as unknown as SlickGridModel);
+        formatterResult = columnDef.formatter(i, rowInfo.colIndex, val, columnDef, this.getDataItem(i), this as unknown as SlickGrid);
       } else {
         // otherwise, use plain text
         formatterResult = '' + val;
@@ -3888,7 +3887,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let formatterResult: FormatterResultWithHtml | FormatterResultWithText | HTMLElement | string = '';
     if (item) {
       value = this.getDataItemValueForColumn(item, m);
-      formatterResult = this.getFormatter(row, m)(row, cell, value, m, item, this as unknown as SlickGridModel);
+      formatterResult = this.getFormatter(row, m)(row, cell, value, m, item, this as unknown as SlickGrid);
       if (formatterResult === null || formatterResult === undefined) {
         formatterResult = '';
       }
@@ -4099,7 +4098,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (this.currentEditor && this.activeRow === row && this.activeCell === cell) {
       this.currentEditor.loadValue(d);
     } else {
-      const formatterResult = d ? this.getFormatter(row, m)(row, cell, this.getDataItemValueForColumn(d, m), m, d, this as unknown as SlickGridModel) : '';
+      const formatterResult = d ? this.getFormatter(row, m)(row, cell, this.getDataItemValueForColumn(d, m), m, d, this as unknown as SlickGrid) : '';
       this.applyFormatResultToCellNode(formatterResult, cellNode);
       this.invalidatePostProcessingResults(row);
     }
@@ -4132,7 +4131,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (row === this.activeRow && columnIdx === this.activeCell && this.currentEditor) {
         this.currentEditor.loadValue(d);
       } else if (d) {
-        formatterResult = this.getFormatter(row, m)(row, columnIdx, this.getDataItemValueForColumn(d, m), m, d, this as unknown as SlickGridModel);
+        formatterResult = this.getFormatter(row, m)(row, columnIdx, this.getDataItemValueForColumn(d, m), m, d, this as unknown as SlickGrid);
         this.applyFormatResultToCellNode(formatterResult, node as HTMLDivElement);
       } else {
         Utils.emptyElement(node);
@@ -5781,7 +5780,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (d) {
         const column = this.columns[this.activeCell];
         const formatter = this.getFormatter(this.activeRow, column);
-        const formatterResult = formatter(this.activeRow, this.activeCell, this.getDataItemValueForColumn(d, column), column, d, this as unknown as SlickGridModel);
+        const formatterResult = formatter(this.activeRow, this.activeCell, this.getDataItemValueForColumn(d, column), column, d, this as unknown as SlickGrid);
         this.applyFormatResultToCellNode(formatterResult, this.activeCellNode);
         this.invalidatePostProcessingResults(this.activeRow);
       }

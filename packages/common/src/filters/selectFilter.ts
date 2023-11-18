@@ -13,13 +13,13 @@ import type {
   FilterCallback,
   GridOption,
   Locale,
-  SlickGridModel,
 } from './../interfaces/index';
 import type { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
 import { getDescendantProperty, getTranslationPrefix, unsubscribeAll } from '../services/utilities';
 import { buildMultipleSelectDataCollection, emptyElement, type RxJsFacade, sanitizeTextByAvailableSanitizer, type Subscription, type TranslaterService } from '../services/index';
 import { renderCollectionOptionsAsync } from './filterUtilities';
+import type { SlickGrid } from '../core/index';
 
 export class SelectFilter implements Filter {
   protected _isMultipleSelect = true;
@@ -37,7 +37,7 @@ export class SelectFilter implements Filter {
   /** The DOM element */
   filterElm?: HTMLElement;
 
-  grid!: SlickGridModel;
+  grid!: SlickGrid;
   searchTerms: SearchTerm[] | undefined;
   columnDef!: Column;
   callback!: FilterCallback;

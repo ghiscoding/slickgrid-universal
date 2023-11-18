@@ -15,7 +15,7 @@ import type {
   PubSubService,
   RowDetailView,
   RowDetailViewOption,
-  SlickGridModel,
+  SlickGrid,
   SlickRowDetailView as UniversalRowDetailView,
   UsabilityOverrideFn,
   SlickDataView,
@@ -60,7 +60,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   protected _eventHandler: SlickEventHandler;
   protected _expandableOverride: UsabilityOverrideFn | null = null;
   protected _expandedRows: any[] = [];
-  protected _grid!: SlickGridModel;
+  protected _grid!: SlickGrid;
   protected _gridRowBuffer = 0;
   protected _gridUid = '';
   protected _keyPrefix = '';
@@ -134,7 +134,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
    * @param _grid
    * @param _containerService
    */
-  init(grid: SlickGridModel) {
+  init(grid: SlickGrid) {
     this._grid = grid;
     if (!grid) {
       throw new Error('[Slickgrid-Universal] RowDetailView Plugin requires the Grid instance to be passed as argument to the "init()" method.');
@@ -575,7 +575,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
   }
 
-  protected checkExpandableOverride(row: number, dataContext: any, grid: SlickGridModel) {
+  protected checkExpandableOverride(row: number, dataContext: any, grid: SlickGrid) {
     if (typeof this._expandableOverride === 'function') {
       return this._expandableOverride(row, dataContext, grid);
     }
@@ -607,7 +607,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** The Formatter of the toggling icon of the Row Detail */
-  protected detailSelectionFormatter(row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGridModel): FormatterResultWithHtml | FormatterResultWithText | string {
+  protected detailSelectionFormatter(row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGrid): FormatterResultWithHtml | FormatterResultWithText | string {
     if (!this.checkExpandableOverride(row, dataContext, grid)) {
       return '';
     } else {

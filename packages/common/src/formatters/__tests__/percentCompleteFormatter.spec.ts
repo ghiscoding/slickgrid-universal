@@ -1,10 +1,11 @@
-import { Column, GridOption, SlickGridModel } from '../../interfaces/index';
+import { Column, GridOption } from '../../interfaces/index';
 import { percentCompleteFormatter } from '../percentCompleteFormatter';
+import { SlickGrid } from '../../core/index';
 
 describe('the Percent Complete Formatter', () => {
   const gridStub = {
     getOptions: jest.fn()
-  } as unknown as SlickGridModel;
+  } as unknown as SlickGrid;
 
   it('should return an empty string when no value is provided', () => {
     const output = percentCompleteFormatter(1, 1, '', {} as Column, {}, {} as any);

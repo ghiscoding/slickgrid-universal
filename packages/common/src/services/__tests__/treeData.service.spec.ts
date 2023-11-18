@@ -1,12 +1,12 @@
-import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler } from '../../core/index';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { Constants } from '../../constants';
-import { Column, GridOption, SlickGridModel, BackendService } from '../../interfaces/index';
+import { Column, GridOption, BackendService } from '../../interfaces/index';
 import { SumAggregator } from '../../aggregators';
 import { SharedService } from '../shared.service';
 import { SortService } from '../sort.service';
 import { TreeDataService } from '../treeData.service';
+import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../../core/index';
 import * as utilities from '../utilities';
 
 const mockUnflattenParentChildArrayToTree = jest.fn();
@@ -59,7 +59,7 @@ const gridStub = {
   onClick: new SlickEvent(),
   render: jest.fn(),
   setSortColumns: jest.fn(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 const fnCallbacks = {};
 const mockPubSub = {

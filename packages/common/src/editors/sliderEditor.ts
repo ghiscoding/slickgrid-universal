@@ -11,7 +11,6 @@ import type {
   EditorValidator,
   EditorValidationResult,
   GridOption,
-  SlickGridModel,
   SliderOption,
 } from '../interfaces/index';
 import { getEditorOptionByName } from './editorUtilities';
@@ -19,7 +18,7 @@ import { getDescendantProperty } from '../services/utilities';
 import { sliderValidator } from '../editorValidators/sliderValidator';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { createDomElement } from '../services/domUtilities';
-import { SlickEventData } from '../core/slickCore';
+import { SlickEventData, type SlickGrid } from '../core/index';
 
 /*
  * An example of a 'detached' editor.
@@ -41,7 +40,7 @@ export class SliderEditor implements Editor {
   disabled = false;
 
   /** SlickGrid Grid object */
-  grid: SlickGridModel;
+  grid: SlickGrid;
 
   /** Grid options */
   gridOptions: GridOption;

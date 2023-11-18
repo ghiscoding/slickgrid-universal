@@ -14,7 +14,6 @@ import type {
   Pagination,
   SelectEditor,
   ServicePagination,
-  SlickGridModel,
   Subscription,
   RxJsFacade,
 } from '@slickgrid-universal/common';
@@ -84,7 +83,7 @@ export class SlickVanillaGridBundle<TData = any> {
   protected _slickerGridInstances: SlickerGridInstance | undefined;
   backendServiceApi: BackendServiceApi | undefined;
   dataView?: SlickDataView<TData>;
-  slickGrid?: SlickGridModel;
+  slickGrid?: SlickGrid;
   metrics?: Metrics;
   customDataView = false;
   paginationData?: {
@@ -532,7 +531,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
     this.slickGrid = new SlickGrid<TData, Column<TData>, GridOption<Column<TData>>>(gridContainerElm, this.dataView as SlickDataView<TData>, this._columnDefinitions, this._gridOptions);
     this.sharedService.dataView = this.dataView as SlickDataView;
-    this.sharedService.slickGrid = this.slickGrid as SlickGridModel;
+    this.sharedService.slickGrid = this.slickGrid as SlickGrid;
     this.sharedService.gridContainerElement = this._gridContainerElm;
 
     this.extensionService.bindDifferentExtensions();
@@ -714,7 +713,7 @@ export class SlickVanillaGridBundle<TData = any> {
     }
   }
 
-  bindDifferentHooks(grid: SlickGridModel, gridOptions: GridOption, dataView: SlickDataView<TData>) {
+  bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: SlickDataView<TData>) {
     // if user is providing a Translate Service, we need to add our PubSub Service (but only after creating all dependencies)
     // so that we can later subscribe to the "onLanguageChange" event and translate any texts whenever that get triggered
     if (gridOptions.enableTranslate && this.translaterService?.addPubSubMessaging) {
@@ -910,7 +909,7 @@ export class SlickVanillaGridBundle<TData = any> {
     }
   }
 
-  bindResizeHook(grid: SlickGridModel, options: GridOption) {
+  bindResizeHook(grid: SlickGrid, options: GridOption) {
     if ((options.autoFitColumnsOnFirstLoad && options.autosizeColumnsByCellContentOnFirstLoad) || (options.enableAutoSizeColumns && options.enableAutoResizeColumnsByCellContent)) {
       throw new Error(`[Slickgrid-Universal] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use. You can enable these 2 options ("autoFitColumnsOnFirstLoad" and "enableAutoSizeColumns") OR these other 2 options ("autosizeColumnsByCellContentOnFirstLoad" and "enableAutoResizeColumnsByCellContent").`);
     }

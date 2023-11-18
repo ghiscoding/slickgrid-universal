@@ -1,7 +1,6 @@
-import { SlickEvent } from '../../core/index';
-
 import { Filters } from '../filters.index';
-import { Column, FilterArguments, GridOption , type SlickGridModel } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption } from '../../interfaces/index';
+import { SlickEvent, SlickGrid } from '../../core/index';
 import { SliderRangeFilter } from '../sliderRangeFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
@@ -23,7 +22,7 @@ const gridStub = {
   render: jest.fn(),
   onHeaderMouseLeave: new SlickEvent(),
   onHeaderRowMouseEnter: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('SliderRangeFilter', () => {
   let translateService: TranslateServiceStub;

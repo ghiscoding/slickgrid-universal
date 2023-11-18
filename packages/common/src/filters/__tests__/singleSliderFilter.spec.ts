@@ -1,8 +1,7 @@
-import { SlickEvent } from '../../core/index';
-
 import { Filters } from '../filters.index';
-import { Column, FilterArguments, GridOption, type SlickGridModel } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { SingleSliderFilter } from '../singleSliderFilter';
+import { SlickEvent, SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';
@@ -23,7 +22,7 @@ const gridStub = {
   render: jest.fn(),
   onHeaderMouseLeave: new SlickEvent(),
   onHeaderRowMouseEnter: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('SingleSliderFilter', () => {
   let translateService: TranslateServiceStub;

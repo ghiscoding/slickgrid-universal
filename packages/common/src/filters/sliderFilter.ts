@@ -1,6 +1,6 @@
 import { hasData, toSentenceCase } from '@slickgrid-universal/utils';
 
-import { SlickEventData } from '../core/index';
+import { SlickEventData, type SlickGrid } from '../core/index';
 import { Constants } from '../constants';
 import { type OperatorString, OperatorType, type SearchTerm, } from '../enums/index';
 import type {
@@ -12,7 +12,6 @@ import type {
   FilterCallback,
   GridOption,
   OperatorDetail,
-  SlickGridModel,
   SliderOption,
   SliderRangeOption,
   SliderType,
@@ -49,7 +48,7 @@ export class SliderFilter implements Filter {
   protected _sliderRightInputElm?: HTMLInputElement;
   protected _sliderTrackFilledColor = DEFAULT_SLIDER_TRACK_FILLED_COLOR;
   sliderType: SliderType = 'double';
-  grid!: SlickGridModel;
+  grid!: SlickGrid;
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;

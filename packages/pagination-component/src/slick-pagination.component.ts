@@ -5,7 +5,7 @@ import type {
   PubSubService,
   ServicePagination,
   SharedService,
-  SlickGridModel,
+  SlickGrid,
   Subscription,
   TranslaterService,
 } from '@slickgrid-universal/common';
@@ -99,7 +99,7 @@ export class SlickPaginationComponent {
     return this.paginationService.pageNumber;
   }
 
-  get grid(): SlickGridModel {
+  get grid(): SlickGrid {
     return this.sharedService.slickGrid;
   }
 

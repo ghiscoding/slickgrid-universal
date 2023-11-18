@@ -1,9 +1,9 @@
 import 'jest-extended';
-import { SlickEvent, SlickRange } from '../../core/index';
 
-import { GridOption, type SlickGridModel } from '../../interfaces/index';
+import type { GridOption } from '../../interfaces/index';
 import { SlickCellRangeSelector } from '../slickCellRangeSelector';
 import { SlickCellSelectionModel } from '../slickCellSelectionModel';
+import { SlickEvent, SlickGrid, SlickRange } from '../../core/index';
 
 const GRID_UID = 'slickgrid_12345';
 const NB_ITEMS = 200;
@@ -51,7 +51,7 @@ const gridStub = {
   getEditorLock: () => getEditorLockMock,
   getOptions: () => mockGridOptions,
   getUID: () => GRID_UID,
-  getScrollbarDimensions: () => ({ height: 17, width: 17}),
+  getScrollbarDimensions: () => ({ height: 17, width: 17 }),
   getViewportNode: jest.fn(),
   focus: jest.fn(),
   registerPlugin: jest.fn(),
@@ -63,7 +63,7 @@ const gridStub = {
   onKeyDown: new SlickEvent(),
   onCellRangeSelected: new SlickEvent(),
   onBeforeCellRangeSelected: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('CellSelectionModel Plugin', () => {
   let plugin: SlickCellSelectionModel;

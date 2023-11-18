@@ -1,4 +1,5 @@
-import type { Column, SlickGridModel } from './index';
+import type { Column } from './index';
+import type { SlickGrid } from '../core/index';
 
 export interface HeaderMenuOption {
   /** Auto-align drop menu to the left when not enough viewport space to show on the right */
@@ -83,5 +84,5 @@ export interface HeaderMenuOption {
   // Methods
 
   /** Callback method that user can override the default behavior of enabling/disabling an item from the list. */
-  menuUsabilityOverride?: (args: { grid: SlickGridModel, column: Column, menu: HTMLElement }) => boolean;
+  menuUsabilityOverride?: (args: { grid: SlickGrid, column: Column, menu: HTMLElement }) => boolean;
 }

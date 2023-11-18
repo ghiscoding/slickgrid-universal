@@ -1,9 +1,9 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy } from '@slickgrid-universal/utils';
-import { type SlickDataView, SlickEvent, SlickEventData } from '../../core/index';
+import { type SlickDataView, SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
 
 import { DelimiterType, FileType } from '../../enums/index';
-import { ContextMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, SlickGridModel, } from '../../interfaces/index';
+import type { ContextMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem } from '../../interfaces/index';
 import { BackendUtilityService, ExcelExportService, SharedService, TextExportService, TreeDataService, } from '../../services/index';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { Formatters } from '../../formatters';
@@ -115,7 +115,7 @@ const gridStub = {
   onContextMenu: new SlickEvent(),
   onScroll: new SlickEvent(),
   onSort: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 const dataViewStub = {
   collapseAllGroups: jest.fn(),

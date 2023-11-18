@@ -1,10 +1,10 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { type SlickDataView, SlickEvent, SlickEventData } from '../../core/index';
 
-import { Column, ColumnSort, ElementPosition, GridOption, MenuCommandItem, SlickGridModel } from '../../interfaces/index';
+import type { Column, ColumnSort, ElementPosition, GridOption, MenuCommandItem } from '../../interfaces/index';
 import { SlickHeaderMenu } from '../slickHeaderMenu';
 import { BackendUtilityService, FilterService, SharedService, SortService } from '../../services';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const removeExtraSpaces = (textS) => `${textS}`.replace(/[\n\r]\s+/g, '');
@@ -63,7 +63,7 @@ const gridStub = {
   onHeaderMouseEnter: new SlickEvent(),
   onMouseEnter: new SlickEvent(),
   onSort: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 const dataViewStub = {
   refresh: jest.fn(),

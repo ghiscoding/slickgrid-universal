@@ -1,19 +1,18 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import type {
-  Column,
-  ColumnPickerOption,
-  DOMMouseOrTouchEvent,
-  GridOption,
-  OnColumnsChangedArgs,
-  SlickGridModel,
-} from '../interfaces/index';
+import type { Column, ColumnPickerOption, DOMMouseOrTouchEvent, GridOption, OnColumnsChangedArgs } from '../interfaces/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { SharedService } from '../services/shared.service';
 import { createDomElement, emptyElement, findWidthOrDefault } from '../services/domUtilities';
-import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
-import { SlickEvent, SlickEventHandler } from '../core/index';
+import {
+  addColumnTitleElementWhenDefined,
+  addCloseButtomElement,
+  handleColumnPickerItemClick,
+  populateColumnPicker,
+  updateColumnPickerOrder
+} from '../extensions/extensionCommonUtils';
+import { SlickEvent, SlickEventHandler, type SlickGrid } from '../core/index';
 
 /**
  * A control to add a Column Picker (right+click on any column header to reveal the column picker)
@@ -79,7 +78,7 @@ export class SlickColumnPicker {
     return this.sharedService.gridOptions ?? {};
   }
 
-  get grid(): SlickGridModel {
+  get grid(): SlickGrid {
     return this.sharedService.slickGrid;
   }
 

@@ -11,16 +11,15 @@ import type {
   GridServiceUpdateOption,
   HideColumnOption,
   OnEventArgs,
-  SlickGridModel,
 } from '../interfaces/index';
 import type { FilterService } from './filter.service';
 import type { GridStateService } from './gridState.service';
 import type { PaginationService } from '../services/pagination.service';
 import type { SharedService } from './shared.service';
+import type { SlickDataView, SlickGrid } from '../core/index';
 import type { SortService } from './sort.service';
 import type { TreeDataService } from './treeData.service';
 import { SlickRowSelectionModel } from '../extensions/slickRowSelectionModel';
-import { type SlickDataView } from '../core/index';
 
 const GridServiceDeleteOptionDefaults: GridServiceDeleteOption = { skipError: false, triggerEvent: true };
 const GridServiceInsertOptionDefaults: GridServiceInsertOption = { highlightRow: true, resortGrid: false, selectRow: false, scrollRowIntoView: true, skipError: false, triggerEvent: true };
@@ -28,7 +27,7 @@ const GridServiceUpdateOptionDefaults: GridServiceUpdateOption = { highlightRow:
 const HideColumnOptionDefaults: HideColumnOption = { autoResizeColumns: true, triggerEvent: true, hideFromColumnPicker: false, hideFromGridMenu: false };
 
 export class GridService {
-  protected _grid!: SlickGridModel;
+  protected _grid!: SlickGrid;
   protected _rowSelectionPlugin?: SlickRowSelectionModel;
   protected _highlightTimer?: NodeJS.Timeout;
   protected _highlightTimerEnd?: NodeJS.Timeout;
@@ -58,7 +57,7 @@ export class GridService {
     this._rowSelectionPlugin?.dispose();
   }
 
-  init(grid: SlickGridModel): void {
+  init(grid: SlickGrid): void {
     this._grid = grid;
   }
 

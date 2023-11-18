@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { ExternalResource, SlickGridModel, TextExportOption } from '../interfaces/index';
+import type { ExternalResource, TextExportOption } from '../interfaces/index';
 import type { ContainerService } from '../services/container.service';
+import type { SlickGrid } from '../core/index';
 
 export abstract class TextExportService implements ExternalResource {
   /** ExcelExportService class name which is use to find service instance in the external registered services */
@@ -11,7 +12,7 @@ export abstract class TextExportService implements ExternalResource {
    * @param _grid
    * @param _containerService
    */
-  init(_grid: SlickGridModel, _containerService: ContainerService): void {
+  init(_grid: SlickGrid, _containerService: ContainerService): void {
     throw new Error('ExportService the "init" method must be implemented');
   }
 

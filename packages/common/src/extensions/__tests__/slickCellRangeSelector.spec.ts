@@ -1,8 +1,8 @@
 import 'jest-extended';
-import { SlickEvent } from '../../core/index';
 
-import { GridOption, type SlickGridModel } from '../../interfaces/index';
+import type { GridOption } from '../../interfaces/index';
 import { SlickCellRangeSelector } from '../slickCellRangeSelector';
+import { SlickEvent, SlickGrid } from '../../core/index';
 
 const GRID_UID = 'slickgrid_12345';
 jest.mock('flatpickr', () => { });
@@ -45,7 +45,7 @@ const gridStub = {
   onDrag: new SlickEvent(),
   onDragEnd: new SlickEvent(),
   onScroll: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('CellRangeSelector Plugin', () => {
   let plugin: SlickCellRangeSelector;

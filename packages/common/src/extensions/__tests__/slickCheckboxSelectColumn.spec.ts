@@ -1,11 +1,11 @@
 import 'jest-extended';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { SlickEvent } from '../../core/index';
 
 import { SlickCheckboxSelectColumn } from '../slickCheckboxSelectColumn';
-import type { Column, OnSelectedRowsChangedEventArgs, SlickGridModel } from '../../interfaces/index';
+import type { Column, OnSelectedRowsChangedEventArgs } from '../../interfaces/index';
 import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
 import { KeyCode } from '../../enums/index';
+import { SlickEvent, SlickGrid } from '../../core/index';
 
 const addVanillaEventPropagation = function (event, commandKey = '', keyName = '', target?: HTMLElement, which: string | number = '') {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
@@ -63,7 +63,7 @@ const gridStub = {
   onHeaderRowCellRendered: new SlickEvent(),
   onKeyDown: new SlickEvent(),
   onSelectedRowsChanged: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 const mockAddon = jest.fn().mockImplementation(() => ({
   init: jest.fn(),

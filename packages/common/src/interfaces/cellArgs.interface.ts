@@ -1,8 +1,8 @@
-import type { SlickGridModel } from './index';
+import type { SlickGrid } from '../core/index';
 
 export interface CellArgs {
   row: number;
   cell: number;
-  grid: SlickGridModel;
+  grid: SlickGrid;
   item?: any;
 }

@@ -16,7 +16,7 @@ import type {
   PaginationCursorChangedArgs,
   SharedService,
   SingleColumnSort,
-  SlickGridModel,
+  SlickGrid,
   SortDirectionString,
 } from '@slickgrid-universal/common';
 import {
@@ -47,7 +47,7 @@ export class GraphqlService implements BackendService {
   protected _currentPagination: CurrentPagination | null = null;
   protected _currentSorters: CurrentSorter[] = [];
   protected _columnDefinitions?: Column[];
-  protected _grid: SlickGridModel | undefined;
+  protected _grid: SlickGrid | undefined;
   protected _datasetIdPropName = 'id';
   options: GraphqlServiceOption | undefined;
   pagination: Pagination | undefined;
@@ -67,7 +67,7 @@ export class GraphqlService implements BackendService {
   }
 
   /** Initialization of the service, which acts as a constructor */
-  init(serviceOptions?: GraphqlServiceOption, pagination?: Pagination, grid?: SlickGridModel, sharedService?: SharedService): void {
+  init(serviceOptions?: GraphqlServiceOption, pagination?: Pagination, grid?: SlickGrid, sharedService?: SharedService): void {
     this._grid = grid;
     this.options = serviceOptions || { datasetName: '' };
     this.pagination = pagination;

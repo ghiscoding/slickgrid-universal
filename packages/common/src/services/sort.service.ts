@@ -6,7 +6,6 @@ import type {
   CurrentSorter,
   MultiColumnSort,
   SingleColumnSort,
-  SlickGridModel,
   TreeDataOption,
 } from '../interfaces/index';
 import { EmitterType, FieldType, SortDirection, SortDirectionNumber, type SortDirectionString, } from '../enums/index';
@@ -15,13 +14,13 @@ import { getDescendantProperty, flattenToParentChildArray } from './utilities';
 import { sortByFieldType } from '../sortComparers/sortUtilities';
 import type { SharedService } from './shared.service';
 import type { RxJsFacade, Subject } from './rxjsFacade';
-import { type SlickDataView, SlickEventData, SlickEventHandler } from '../core/index';
+import { type SlickDataView, SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
 
 export class SortService {
   protected _currentLocalSorters: CurrentSorter[] = [];
   protected _eventHandler: SlickEventHandler;
   protected _dataView!: SlickDataView;
-  protected _grid!: SlickGridModel;
+  protected _grid!: SlickGrid;
   protected _isBackendGrid = false;
   protected httpCancelRequests$?: Subject<void>; // this will be used to cancel any pending http request
 
@@ -67,7 +66,7 @@ export class SortService {
    * @param grid SlickGrid Grid object
    * @param dataView SlickGrid DataView object
    */
-  bindBackendOnSort(grid: SlickGridModel) {
+  bindBackendOnSort(grid: SlickGrid) {
     this._isBackendGrid = true;
     this._grid = grid;
     this._dataView = grid?.getData<SlickDataView>();
@@ -82,7 +81,7 @@ export class SortService {
    * @param gridOptions Grid Options object
    * @param dataView
    */
-  bindLocalOnSort(grid: SlickGridModel) {
+  bindLocalOnSort(grid: SlickGrid) {
     this._isBackendGrid = false;
     this._grid = grid;
     this._dataView = grid?.getData<SlickDataView>();
@@ -384,7 +383,7 @@ export class SortService {
   }
 
   /** When a Sort Changes on a Local grid (JSON dataset) */
-  async onLocalSortChanged(grid: SlickGridModel, sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, forceReSort = false, emitSortChanged = false) {
+  async onLocalSortChanged(grid: SlickGrid, sortColumns: Array<ColumnSort & { clearSortTriggered?: boolean; }>, forceReSort = false, emitSortChanged = false) {
     const datasetIdPropertyName = this._gridOptions?.datasetIdPropertyName ?? 'id';
     const isTreeDataEnabled = this._gridOptions?.enableTreeData ?? false;
     const dataView = grid.getData<SlickDataView>();

@@ -20,13 +20,13 @@ import type {
   FlatpickrOption,
   GridOption,
   OperatorDetail,
-  SlickGridModel,
 } from '../interfaces/index';
 import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
 import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
 import { mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
+import type { SlickGrid } from '../core/index';
 
 export class DateFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -42,7 +42,7 @@ export class DateFilter implements Filter {
   protected _shouldTriggerQuery = true;
   inputFilterType: 'compound' | 'range' = 'range';
   flatInstance!: FlatpickrInstance;
-  grid!: SlickGridModel;
+  grid!: SlickGrid;
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;

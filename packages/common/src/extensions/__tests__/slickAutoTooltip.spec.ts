@@ -1,8 +1,7 @@
-import { SlickEvent, SlickEventData } from '../../core/index';
-
-import { AutoTooltipOption, Column, type SlickGridModel } from '../../interfaces/index';
+import type { AutoTooltipOption, Column } from '../../interfaces/index';
 import { SharedService } from '../../services/shared.service';
 import { SlickAutoTooltip } from '../slickAutoTooltip';
+import { SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
 
 let addonOptions: AutoTooltipOption = {
   enableForCells: true,
@@ -18,7 +17,7 @@ const gridStub = {
   registerPlugin: jest.fn(),
   onHeaderMouseEnter: new SlickEvent(),
   onMouseEnter: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 const mockColumns = [      // The column definitions
   { name: 'Short', field: 'short', width: 100 },

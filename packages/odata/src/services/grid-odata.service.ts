@@ -18,7 +18,7 @@ import type {
   SearchTerm,
   SharedService,
   SingleColumnSort,
-  SlickGridModel,
+  SlickGrid,
 } from '@slickgrid-universal/common';
 import {
   CaseType,
@@ -41,7 +41,7 @@ export class GridOdataService implements BackendService {
   protected _currentPagination: CurrentPagination | null = null;
   protected _currentSorters: CurrentSorter[] = [];
   protected _columnDefinitions: Column[] = [];
-  protected _grid: SlickGridModel | undefined;
+  protected _grid: SlickGrid | undefined;
   protected _odataService: OdataQueryBuilderService;
   options?: Partial<OdataOption>;
   pagination: Pagination | undefined;
@@ -70,7 +70,7 @@ export class GridOdataService implements BackendService {
     this._odataService = new OdataQueryBuilderService();
   }
 
-  init(serviceOptions?: Partial<OdataOption>, pagination?: Pagination, grid?: SlickGridModel, sharedService?: SharedService): void {
+  init(serviceOptions?: Partial<OdataOption>, pagination?: Pagination, grid?: SlickGrid, sharedService?: SharedService): void {
     this._grid = grid;
     const mergedOptions = { ...this.defaultOptions, ...serviceOptions };
 

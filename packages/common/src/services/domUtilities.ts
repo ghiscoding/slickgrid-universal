@@ -3,7 +3,8 @@ import * as DOMPurify_ from 'dompurify';
 const DOMPurify = ((DOMPurify_ as any)?.['default'] ?? DOMPurify_); // patch for rollup
 
 import type { InferDOMType, SearchTerm } from '../enums/index';
-import type { Column, GridOption, HtmlElementPosition, SelectOption, SlickGridModel, } from '../interfaces/index';
+import type { Column, GridOption, HtmlElementPosition, SelectOption } from '../interfaces/index';
+import type { SlickGrid } from '../core/index';
 import type { TranslaterService } from './translater.service';
 
 /**
@@ -17,7 +18,7 @@ import type { TranslaterService } from './translater.service';
  * @param {Array<*>} searchTerms - optional array of search term (used by the "filter" type only)
  * @returns object with 2 properties for the select element & a boolean value telling us if any of the search terms were found and selected in the dropdown
  */
-export function buildMultipleSelectDataCollection(type: 'editor' | 'filter', collection: any[], columnDef: Column, grid: SlickGridModel, isMultiSelect = false, translaterService?: TranslaterService, searchTerms?: SearchTerm[]): { selectElement: HTMLSelectElement; dataCollection: OptionRowData[]; hasFoundSearchTerm: boolean; } {
+export function buildMultipleSelectDataCollection(type: 'editor' | 'filter', collection: any[], columnDef: Column, grid: SlickGrid, isMultiSelect = false, translaterService?: TranslaterService, searchTerms?: SearchTerm[]): { selectElement: HTMLSelectElement; dataCollection: OptionRowData[]; hasFoundSearchTerm: boolean; } {
   const columnId = columnDef?.id ?? '';
   const gridOptions = grid.getOptions();
   const columnFilterOrEditor = (type === 'editor' ? columnDef?.internalColumnEditor : columnDef?.filter) ?? {};

@@ -1,10 +1,11 @@
-import { Column, GridOption, SlickGridModel } from '../../interfaces/index';
+import type { Column, GridOption } from '../../interfaces/index';
 import { treeExportFormatter } from '../treeExportFormatter';
+import { SlickGrid } from '../../core';
 
 const gridStub = {
   getData: jest.fn(),
   getOptions: jest.fn(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('Tree Export Formatter', () => {
   let dataset: any[];

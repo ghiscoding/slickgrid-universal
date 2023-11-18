@@ -1,10 +1,10 @@
 import 'jest-extended';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { type SlickDataView, SlickEvent } from '../../core/index';
 
 import { FilterService, GridService, GridStateService, PaginationService, SharedService, SortService, TreeDataService } from '../index';
-import { GridOption, CellArgs, Column, OnEventArgs, SlickGridModel } from '../../interfaces/index';
+import { GridOption, CellArgs, Column, OnEventArgs } from '../../interfaces/index';
 import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
+import { type SlickDataView, SlickEvent, type SlickGrid } from '../../core/index';
 
 jest.useFakeTimers();
 jest.mock('flatpickr', () => { });
@@ -87,7 +87,7 @@ const gridStub = {
   setSelectedRows: jest.fn(),
   scrollRowIntoView: jest.fn(),
   updateRow: jest.fn(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 const paginationServiceStub = {
   goToFirstPage: jest.fn(),

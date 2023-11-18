@@ -13,7 +13,7 @@ import {
   OperatorType,
   Pagination,
   SharedService,
-  SlickGridModel,
+  SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
 
@@ -39,7 +39,7 @@ const gridStub = {
   registerPlugin: jest.fn(),
   setSelectedRows: jest.fn(),
   setSortColumns: jest.fn(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('GraphqlService', () => {
   let mockColumns: Column[];
@@ -639,7 +639,7 @@ describe('GraphqlService', () => {
         description           | cursorArgs                    | expectation
         ${"First page"}       | ${{ first: 20 }}              | ${'query{users(first:20) { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
         ${"Next Page"}        | ${{ first: 20, after: 'a' }}  | ${'query{users(first:20, after:"a") { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
-        ${"Previous Page"  }  | ${{ last: 20,  before: 'b' }} | ${'query{users(last:20, before:"b") { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
+        ${"Previous Page"}  | ${{ last: 20, before: 'b' }} | ${'query{users(last:20, before:"b") { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
         ${"Last Page"}        | ${{ last: 20 }}               | ${'query{users(last:20) { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
       `(`$description`, ({ description, cursorArgs, expectation }) => {
         it('should return a query with the new pagination and use pagination size options that was passed to service options when it is not provided as argument to "processOnPaginationChanged"', () => {

@@ -14,13 +14,12 @@ import type {
   GridOption,
   Grouping,
   GroupingGetterFunction,
-  SlickGridModel,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { SharedService } from '../services/shared.service';
 import { createDomElement, emptyElement } from '../services/domUtilities';
 import { sortByFieldType } from '../sortComparers';
-import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler } from '../core/index';
+import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
 
 /**
  *
@@ -55,7 +54,7 @@ export class SlickDraggableGrouping {
   protected _dropzoneElm!: HTMLDivElement;
   protected _dropzonePlaceholderElm!: HTMLDivElement;
   protected _eventHandler!: SlickEventHandler;
-  protected _grid?: SlickGridModel;
+  protected _grid?: SlickGrid;
   protected _gridColumns: Column[] = [];
   protected _gridUid = '';
   protected _groupToggler?: HTMLDivElement;
@@ -111,7 +110,7 @@ export class SlickDraggableGrouping {
     return this._eventHandler;
   }
 
-  get grid(): SlickGridModel {
+  get grid(): SlickGrid {
     return this._grid ?? this.sharedService.slickGrid ?? {};
   }
 
@@ -129,7 +128,7 @@ export class SlickDraggableGrouping {
   }
 
   /** Initialize plugin. */
-  init(grid: SlickGridModel, groupingOptions?: DraggableGrouping) {
+  init(grid: SlickGrid, groupingOptions?: DraggableGrouping) {
     this._addonOptions = { ...this._defaults, ...groupingOptions };
     this._grid = grid;
     if (grid) {
@@ -273,7 +272,7 @@ export class SlickDraggableGrouping {
    * @param uid - grid UID
    * @param trigger - callback to execute when triggering a column grouping
    */
-  setupColumnReorder(grid: SlickGridModel, headers: any, _headerColumnWidthDiff: any, setColumns: (columns: Column[]) => void, setupColumnResize: () => void, _columns: Column[], getColumnIndex: (columnId: string) => number, _uid: string, trigger: (slickEvent: SlickEvent, data?: any) => void) {
+  setupColumnReorder(grid: SlickGrid, headers: any, _headerColumnWidthDiff: any, setColumns: (columns: Column[]) => void, setupColumnResize: () => void, _columns: Column[], getColumnIndex: (columnId: string) => number, _uid: string, trigger: (slickEvent: SlickEvent, data?: any) => void) {
     this.destroySortableInstances();
     const dropzoneElm = grid.getPreHeaderPanel();
     const draggablePlaceholderElm = dropzoneElm.querySelector<HTMLDivElement>('.slick-draggable-dropzone-placeholder');

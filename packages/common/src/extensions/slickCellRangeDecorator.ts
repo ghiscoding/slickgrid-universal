@@ -1,7 +1,8 @@
 import { deepMerge } from '@slickgrid-universal/utils';
 
-import type { CellRange, CellRangeDecoratorOption, CSSStyleDeclarationWritable, SlickGridModel } from '../interfaces/index';
+import type { CellRange, CellRangeDecoratorOption, CSSStyleDeclarationWritable } from '../interfaces/index';
 import { createDomElement } from '../services/domUtilities';
+import { type SlickGrid } from '../core/index';
 
 /**
  * Displays an overlay on top of a given cell range.
@@ -26,7 +27,7 @@ export class SlickCellRangeDecorator {
     offset: { top: -1, left: -1, height: -2, width: -2 }
   } as CellRangeDecoratorOption;
 
-  constructor(protected readonly grid: SlickGridModel, options?: Partial<CellRangeDecoratorOption>) {
+  constructor(protected readonly grid: SlickGrid, options?: Partial<CellRangeDecoratorOption>) {
     this._options = deepMerge(this._defaults, options);
   }
 

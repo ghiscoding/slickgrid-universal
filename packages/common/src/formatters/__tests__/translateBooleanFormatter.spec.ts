@@ -1,6 +1,7 @@
-import { Column, type SlickGridModel } from '../../interfaces/index';
+import type { Column } from '../../interfaces/index';
 import { translateBooleanFormatter } from '../translateBooleanFormatter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import type { SlickGrid } from '../../core';
 
 describe('the Translate Boolean Formatter', () => {
   let translateService: TranslateServiceStub;
@@ -8,7 +9,7 @@ describe('the Translate Boolean Formatter', () => {
   // stub some methods of the SlickGrid Grid instance
   const gridStub = {
     getOptions: jest.fn()
-  } as unknown as SlickGridModel;
+  } as unknown as SlickGrid;
 
   beforeEach(() => {
     translateService = new TranslateServiceStub();

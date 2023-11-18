@@ -8,12 +8,11 @@ import type {
   Pagination,
   PaginationCursorChangedArgs,
   ServicePagination,
-  SlickGridModel,
 } from '../interfaces/index';
 import type { BackendUtilityService } from './backendUtility.service';
 import type { SharedService } from './shared.service';
 import type { Observable, RxJsFacade } from './rxjsFacade';
-import { type SlickDataView, SlickEventHandler } from '../core/index';
+import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
 export class PaginationService {
   protected _eventHandler = new SlickEventHandler();
@@ -34,7 +33,7 @@ export class PaginationService {
   protected _isCursorBased = false;
 
   /** SlickGrid Grid object */
-  grid!: SlickGridModel;
+  grid!: SlickGrid;
 
   /** Constructor */
   constructor(protected readonly pubSubService: BasePubSubService, protected readonly sharedService: SharedService, protected readonly backendUtilities?: BackendUtilityService, protected rxjs?: RxJsFacade) { }
@@ -111,7 +110,7 @@ export class PaginationService {
     this.rxjs = rxjs;
   }
 
-  init(grid: SlickGridModel, paginationOptions: Pagination, backendServiceApi?: BackendServiceApi) {
+  init(grid: SlickGrid, paginationOptions: Pagination, backendServiceApi?: BackendServiceApi) {
     this._availablePageSizes = paginationOptions.pageSizes;
     this.grid = grid;
     this._backendServiceApi = backendServiceApi;

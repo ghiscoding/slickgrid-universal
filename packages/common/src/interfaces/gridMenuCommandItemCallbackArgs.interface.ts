@@ -1,8 +1,8 @@
-import type { Column, SlickGridModel } from './index';
-import type { MenuCommandItem } from './menuCommandItem.interface';
+import type { Column, MenuCommandItem } from './index';
+import type { SlickGrid } from '../core/index';
 
 export interface GridMenuCallbackArgs {
-  grid: SlickGridModel;
+  grid: SlickGrid;
   menu: any;
   columns: Column[];
   visibleColumns: Column[]
@@ -16,7 +16,7 @@ export interface GridMenuCommandItemCallbackArgs {
   item: MenuCommandItem;
 
   /** Slick Grid object */
-  grid: SlickGridModel;
+  grid: SlickGrid;
 
   /** all columns (including hidden ones) */
   allColumns: Column[],

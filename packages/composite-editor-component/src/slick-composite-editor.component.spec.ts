@@ -9,7 +9,7 @@ import {
   type SlickDataView,
   SlickEvent,
   SlickRowSelectionModel,
-  type SlickGridModel,
+  type SlickGrid,
 } from '@slickgrid-universal/common';
 
 import { SlickCompositeEditorComponent } from './slick-composite-editor.component';
@@ -103,7 +103,7 @@ const gridStub = {
   setSelectedRows: jest.fn(),
   setActiveRow: jest.fn(),
   setSortColumns: jest.fn(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 const rowSelectionModelStub = {
   pluginName: 'RowSelectionModel',

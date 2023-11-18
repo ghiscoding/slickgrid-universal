@@ -12,7 +12,7 @@ import {
   GroupTotalFormatters,
   ItemMetadata,
   SlickDataView,
-  SlickGridModel,
+  SlickGrid,
   SortComparers,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
@@ -73,7 +73,7 @@ const gridStub = {
   getOptions: () => mockGridOptions,
   getColumns: jest.fn(),
   getGrouping: jest.fn(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('ExcelExportService', () => {
   let container: ContainerServiceStub;

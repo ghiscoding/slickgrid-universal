@@ -1,6 +1,6 @@
 import { delay, of, throwError } from 'rxjs';
 
-import { Column, getHtmlElementOffset, GridOption, SlickGridModel, SharedService, type SlickDataView, SlickEvent, SlickEventData, } from '@slickgrid-universal/common';
+import { Column, getHtmlElementOffset, GridOption, SlickGrid, SharedService, type SlickDataView, SlickEvent, SlickEventData, } from '@slickgrid-universal/common';
 
 import { SlickCustomTooltip } from '../slickCustomTooltip';
 import { ContainerServiceStub } from '../../../../test/containerServiceStub';
@@ -40,7 +40,7 @@ const gridStub = {
   onMouseLeave: new SlickEvent(),
   onHeaderMouseLeave: new SlickEvent(),
   onHeaderRowMouseLeave: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('SlickCustomTooltip plugin', () => {
   let divContainer = document.createElement('div');
@@ -476,7 +476,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
-    (getHtmlElementOffset as any).mockReturnValue({ top: 100, left: 1030, height: 75, width: 400 }); // mock cell position
+    (getHtmlElementOffset as jest.Mock).mockReturnValue({ top: 100, left: 1030, height: 75, width: 400 }); // mock cell position
 
     plugin.init(gridStub, container);
     plugin.setOptions({

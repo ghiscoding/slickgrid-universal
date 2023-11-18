@@ -1,7 +1,8 @@
-import { Column, FilterArguments, GridOption, SlickGridModel } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { Filters } from '../index';
 import { CompoundInputNumberFilter } from '../compoundInputNumberFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { SlickGrid } from '../../core/index';
 
 const containerId = 'demo-container';
 
@@ -18,7 +19,7 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('CompoundInputNumberFilter', () => {
   let translateService: TranslateServiceStub;

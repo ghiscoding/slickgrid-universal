@@ -18,14 +18,13 @@ import type {
   EditorValidationResult,
   FlatpickrOption,
   GridOption,
-  SlickGridModel,
 } from './../interfaces/index';
 import { getEditorOptionByName } from './editorUtilities';
 import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
 import { getDescendantProperty, mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, } from './../services/utilities';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
-import { SlickEventData } from '../core/slickCore';
+import { SlickEventData, type SlickGrid } from '../core/index';
 
 /*
  * An example of a date picker editor using Flatpickr
@@ -49,7 +48,7 @@ export class DateEditor implements Editor {
   disabled = false;
 
   /** SlickGrid Grid object */
-  grid: SlickGridModel;
+  grid: SlickGrid;
 
   /** Grid options */
   gridOptions: GridOption;

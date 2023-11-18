@@ -9,13 +9,12 @@ import type {
   HeaderButtonOnCommandArgs,
   HeaderButtonOption,
   OnHeaderCellRenderedEventArgs,
-  SlickGridModel,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import type { SharedService } from '../services/shared.service';
 import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from './menuBaseClass';
-import { SlickEventHandler } from '../core/index';
+import { SlickEventHandler, type SlickGrid } from '../core/index';
 
 /**
  * A plugin to add custom buttons to column headers.
@@ -55,7 +54,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
     return this._eventHandler;
   }
 
-  get grid(): SlickGridModel {
+  get grid(): SlickGrid {
     return this.sharedService.slickGrid;
   }
 

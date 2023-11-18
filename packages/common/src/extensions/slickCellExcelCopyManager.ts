@@ -1,4 +1,3 @@
-import { type SlickDataView, SlickEventHandler, SlickGlobalEditorLock } from '../core/index';
 import type {
   Column,
   EditCommand,
@@ -7,11 +6,11 @@ import type {
   FormatterResultWithHtml,
   FormatterResultWithText,
   GridOption,
-  SlickGridModel,
 } from '../interfaces/index';
 import { BindingEventService } from '../services/bindingEvent.service';
 import { sanitizeHtmlToText } from '../services/domUtilities';
 import { SlickCellExternalCopyManager, SlickCellSelectionModel } from './index';
+import { type SlickDataView, SlickEventHandler, SlickGlobalEditorLock, type SlickGrid } from '../core/index';
 
 /*
   This manager enables users to copy/paste data from/to an external Spreadsheet application
@@ -30,7 +29,7 @@ export class SlickCellExcelCopyManager {
   protected _cellSelectionModel!: SlickCellSelectionModel;
   protected _commandQueue!: EditCommand[];
   protected _eventHandler: SlickEventHandler;
-  protected _grid!: SlickGridModel;
+  protected _grid!: SlickGrid;
   protected _undoRedoBuffer!: EditUndoRedoBuffer;
 
   constructor() {
@@ -58,7 +57,7 @@ export class SlickCellExcelCopyManager {
     return this._undoRedoBuffer;
   }
 
-  init(grid: SlickGridModel, options?: ExcelCopyBufferOption) {
+  init(grid: SlickGrid, options?: ExcelCopyBufferOption) {
     this._grid = grid;
     this.createUndoRedoBuffer();
     this._cellSelectionModel = new SlickCellSelectionModel();

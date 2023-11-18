@@ -8,7 +8,7 @@ import type {
   Metrics,
   MetricTexts,
   Subscription,
-  SlickGridModel,
+  SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
 import { Constants, createDomElement, sanitizeTextByAvailableSanitizer, SlickEventHandler, } from '@slickgrid-universal/common';
@@ -66,7 +66,7 @@ export class SlickFooterComponent {
     this.renderRightFooterText(text);
   }
 
-  constructor(protected readonly grid: SlickGridModel, protected readonly customFooterOptions: CustomFooterOption, protected readonly pubSubService: BasePubSubService, protected readonly translaterService?: TranslaterService) {
+  constructor(protected readonly grid: SlickGrid, protected readonly customFooterOptions: CustomFooterOption, protected readonly pubSubService: BasePubSubService, protected readonly translaterService?: TranslaterService) {
     this._bindingHelper = new BindingHelper();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
     this._eventHandler = new SlickEventHandler();

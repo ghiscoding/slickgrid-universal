@@ -21,7 +21,7 @@ import {
   SlickDataView,
   SlickEditorLock,
   SlickEventHandler,
-  SlickGridModel,
+  SlickGrid,
   SortService,
   TreeDataService,
   TranslaterService,
@@ -226,7 +226,7 @@ const mockGrid = {
   onRendered: jest.fn(),
   onScroll: jest.fn(),
   onDataviewCreated: new MockSlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 const mockSlickCustomTooltip = {
   init: jest.fn(),
@@ -393,7 +393,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
     describe('options changed', () => {
       beforeEach(() => {
         jest.clearAllMocks();
-        sharedService.slickGrid = mockGrid as unknown as SlickGridModel;
+        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
         sharedService.gridOptions = gridOptions;
       });
 
@@ -460,7 +460,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
       afterEach(() => {
         jest.clearAllMocks();
         // component.dispose();
-        sharedService.slickGrid = mockGrid as unknown as SlickGridModel;
+        sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
       it('should initialize groupingAndColspanService when "createPreHeaderPanel" grid option is enabled and "enableDraggableGrouping" is disabled', () => {

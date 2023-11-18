@@ -8,11 +8,10 @@ import type {
   GridOption,
   MouseOffsetViewport,
   OnScrollEventArgs,
-  SlickGridModel,
 } from '../interfaces/index';
 import { emptyElement, getHtmlElementOffset, } from '../services/domUtilities';
 import { SlickCellRangeDecorator } from './index';
-import { SlickEvent, SlickEventData, SlickEventHandler, SlickRange } from '../core/index';
+import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange } from '../core/index';
 
 export class SlickCellRangeSelector {
   pluginName: 'CellRangeSelector' = 'CellRangeSelector' as const;
@@ -27,7 +26,7 @@ export class SlickCellRangeSelector {
   protected _decorator!: SlickCellRangeDecorator;
   protected _dragging = false;
   protected _eventHandler: SlickEventHandler;
-  protected _grid!: SlickGridModel;
+  protected _grid!: SlickGrid;
   protected _gridOptions!: GridOption;
   protected _gridUid = '';
 
@@ -82,7 +81,7 @@ export class SlickCellRangeSelector {
     return this.gridUid ? `.${this.gridUid}` : '';
   }
 
-  init(grid: SlickGridModel) {
+  init(grid: SlickGrid) {
     this._grid = grid;
     this._decorator = this._options.cellDecorator || new SlickCellRangeDecorator(grid, this._options);
     this._canvas = grid.getCanvasNode();

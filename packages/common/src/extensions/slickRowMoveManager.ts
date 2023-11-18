@@ -8,10 +8,9 @@ import type {
   GridOption,
   RowMoveManager,
   RowMoveManagerOption,
-  SlickGridModel,
 } from '../interfaces/index';
 import { createDomElement, findWidthOrDefault, getHtmlElementOffset } from '../services/domUtilities';
-import { SlickEvent, SlickEventData, SlickEventHandler } from '../core/index';
+import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
 
 /**
  * Row Move Manager options:
@@ -25,15 +24,15 @@ import { SlickEvent, SlickEventData, SlickEventHandler } from '../core/index';
  *
  */
 export class SlickRowMoveManager {
-  onBeforeMoveRows = new SlickEvent<{ grid: SlickGridModel; rows: number[]; insertBefore: number; }>();
-  onMoveRows = new SlickEvent<{ grid: SlickGridModel; rows: number[]; insertBefore: number; }>();
+  onBeforeMoveRows = new SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>();
+  onMoveRows = new SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>();
   pluginName: 'RowMoveManager' = 'RowMoveManager' as const;
 
   protected _addonOptions!: RowMoveManager;
   protected _canvas!: HTMLElement;
   protected _dragging = false;
   protected _eventHandler: SlickEventHandler;
-  protected _grid!: SlickGridModel;
+  protected _grid!: SlickGrid;
   protected _usabilityOverride?: UsabilityOverrideFn;
   protected _defaults = {
     autoScroll: true,
@@ -69,7 +68,7 @@ export class SlickRowMoveManager {
   }
 
   /** Initialize plugin. */
-  init(grid: SlickGridModel, options?: RowMoveManager) {
+  init(grid: SlickGrid, options?: RowMoveManager) {
     this._addonOptions = { ...this._defaults, ...options };
     this._grid = grid;
     this._canvas = this._grid.getCanvasNode();
@@ -305,14 +304,14 @@ export class SlickRowMoveManager {
     }
   }
 
-  protected checkUsabilityOverride(row: number, dataContext: any, grid: SlickGridModel) {
+  protected checkUsabilityOverride(row: number, dataContext: any, grid: SlickGrid) {
     if (typeof this._usabilityOverride === 'function') {
       return this._usabilityOverride(row, dataContext, grid);
     }
     return true;
   }
 
-  protected moveIconFormatter(row: number, cell: number, value: any, column: Column, dataContext: any, grid: SlickGridModel): FormatterResultWithHtml | string {
+  protected moveIconFormatter(row: number, cell: number, value: any, column: Column, dataContext: any, grid: SlickGrid): FormatterResultWithHtml | string {
     if (!this.checkUsabilityOverride(row, dataContext, grid)) {
       return '';
     } else {

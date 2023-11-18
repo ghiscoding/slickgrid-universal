@@ -1,9 +1,8 @@
-import { SlickEvent, type SlickDataView } from '../../core/index';
-
 import { Editors } from '../index';
 import { InputEditor } from '../inputEditor';
 import { KeyCode } from '../../enums/index';
-import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption, type SlickGridModel } from '../../interfaces/index';
+import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
+import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 
 jest.useFakeTimers();
 
@@ -37,7 +36,7 @@ const gridStub = {
   render: jest.fn(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('InputEditor (TextEditor)', () => {
   let divContainer: HTMLDivElement;

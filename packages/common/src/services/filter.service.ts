@@ -25,14 +25,13 @@ import type {
   FilterConditionOption,
   GridOption,
   SearchColumnFilter,
-  SlickGridModel,
 } from './../interfaces/index';
 import type { BackendUtilityService } from './backendUtility.service';
 import { getSelectorStringFromElement, sanitizeHtmlToText, } from '../services/domUtilities';
 import { findItemInTreeStructure, getDescendantProperty, mapOperatorByFieldType, } from './utilities';
 import type { SharedService } from './shared.service';
 import type { RxJsFacade, Subject } from './rxjsFacade';
-import { SlickDataView, SlickEvent, SlickEventData, SlickEventHandler } from '../core/index';
+import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
 
 interface OnSearchChangeEventArgs {
   clearFilterTriggered?: boolean;
@@ -43,7 +42,7 @@ interface OnSearchChangeEventArgs {
   operator: OperatorType | OperatorString | undefined;
   parsedSearchTerms?: SearchTerm | SearchTerm[] | undefined;
   searchTerms: SearchTerm[] | undefined;
-  grid: SlickGridModel;
+  grid: SlickGrid;
   target?: HTMLElement;
 }
 
@@ -53,7 +52,7 @@ export class FilterService {
   protected _firstColumnIdRendered: string | number = '';
   protected _filtersMetadata: Array<Filter> = [];
   protected _columnFilters: ColumnFilters = {};
-  protected _grid!: SlickGridModel;
+  protected _grid!: SlickGrid;
   protected _isTreePresetExecuted = false;
   protected _previousFilters: CurrentFilter[] = [];
   protected _onSearchChange: SlickEvent<OnSearchChangeEventArgs> | null;
@@ -106,7 +105,7 @@ export class FilterService {
    * Initialize the Service
    * @param grid
    */
-  init(grid: SlickGridModel): void {
+  init(grid: SlickGrid): void {
     this._grid = grid;
 
     if (this._gridOptions && this._gridOptions.enableTreeData && this._gridOptions.treeDataOptions) {
@@ -148,7 +147,7 @@ export class FilterService {
    * Bind a backend filter hook to the grid
    * @param grid SlickGrid Grid object
    */
-  bindBackendOnFilter(grid: SlickGridModel) {
+  bindBackendOnFilter(grid: SlickGrid) {
     this._filtersMetadata = [];
 
     // subscribe to SlickGrid onHeaderRowCellRendered event to create filter template
@@ -179,7 +178,7 @@ export class FilterService {
    * @param gridOptions Grid Options object
    * @param dataView
    */
-  bindLocalOnFilter(grid: SlickGridModel) {
+  bindLocalOnFilter(grid: SlickGrid) {
     this._filtersMetadata = [];
     this._dataView.setFilterArgs({ columnFilters: this._columnFilters, grid: this._grid, dataView: this._dataView });
     this._dataView.setFilter(this.customLocalFilter.bind(this));
@@ -312,7 +311,7 @@ export class FilterService {
   }
 
   /** Local Grid Filter search */
-  customLocalFilter(item: any, args: { columnFilters: ColumnFilters; dataView: SlickDataView; grid: SlickGridModel; }): boolean {
+  customLocalFilter(item: any, args: { columnFilters: ColumnFilters; dataView: SlickDataView; grid: SlickGrid; }): boolean {
     const grid = args?.grid;
     const columnFilters = args?.columnFilters ?? {};
     const isGridWithTreeData = this._gridOptions.enableTreeData ?? false;
@@ -460,7 +459,7 @@ export class FilterService {
    * @param grid - SlickGrid object
    * @returns FilterConditionOption or boolean
    */
-  preProcessFilterConditionOnDataContext(item: any, columnFilter: SearchColumnFilter, grid: SlickGridModel): FilterConditionOption | boolean {
+  preProcessFilterConditionOnDataContext(item: any, columnFilter: SearchColumnFilter, grid: SlickGrid): FilterConditionOption | boolean {
     const columnDef = columnFilter.columnDef;
     const columnId = columnFilter.columnId;
     let columnIndex = grid.getColumnIndex(columnId) as number;
@@ -1073,7 +1072,7 @@ export class FilterService {
   // -------------------
 
   /** Add all created filters (from their template) to the header row section area */
-  protected addFilterTemplateToHeaderRow(args: { column: Column; grid: SlickGridModel; node: HTMLElement }, isFilterFirstRender = true) {
+  protected addFilterTemplateToHeaderRow(args: { column: Column; grid: SlickGrid; node: HTMLElement }, isFilterFirstRender = true) {
     const columnDef = args.column;
     const columnId = columnDef?.id ?? '';
 
@@ -1277,7 +1276,7 @@ export class FilterService {
    * Subscribe to `onBeforeHeaderRowCellDestroy` to destroy Filter(s) to avoid leak and not keep orphan filters
    * @param {Object} grid - Slick Grid object
    */
-  protected subscribeToOnHeaderRowCellRendered(grid: SlickGridModel) {
+  protected subscribeToOnHeaderRowCellRendered(grid: SlickGrid) {
     this._eventHandler.subscribe(grid.onBeforeHeaderRowCellDestroy, (_e, args) => {
       const colFilter: Filter | undefined = this._filtersMetadata.find((filter: Filter) => filter.columnDef.id === args.column.id);
       colFilter?.destroy?.();

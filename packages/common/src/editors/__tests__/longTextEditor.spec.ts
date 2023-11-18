@@ -1,14 +1,16 @@
-import { SlickEvent, type SlickDataView } from '../../core/index';
+// mocked modules
+jest.mock('../../services/domUtilities', () => ({
+  ...(jest.requireActual('../../services/domUtilities') as any),
+  getHtmlElementOffset: jest.fn(),
+}));
 
 import { Editors } from '../index';
 import { LongTextEditor } from '../longTextEditor';
 import { KeyCode } from '../../enums/index';
-import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption, type SlickGridModel } from '../../interfaces/index';
+import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
+import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import * as domUtilities from '../../services/domUtilities';
-const mockGetHtmlElementOffset = jest.fn();
-// @ts-ignore:2540
-domUtilities.getHtmlElementOffset = mockGetHtmlElementOffset;
+import { getHtmlElementOffset } from '../../services/domUtilities';
 
 const KEY_CHAR_A = 97;
 const containerId = 'demo-container';
@@ -43,7 +45,7 @@ const gridStub = {
   render: jest.fn(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('LongTextEditor', () => {
   let divContainer: HTMLDivElement;
@@ -789,7 +791,7 @@ describe('LongTextEditor', () => {
       });
 
       it('should assume editor to positioned on the right & bottom of the cell when there is enough room', () => {
-        mockGetHtmlElementOffset.mockReturnValue({ top: 100, left: 200 }); // mock cell position
+        (getHtmlElementOffset as jest.Mock).mockReturnValue({ top: 100, left: 200 }); // mock cell position
 
         editor = new LongTextEditor(editorArguments);
         const editorElm = document.body.querySelector('.slick-large-editor-text') as HTMLDivElement;
@@ -799,7 +801,7 @@ describe('LongTextEditor', () => {
       });
 
       it('should assume editor to positioned on the right of the cell when there is NOT enough room on the left', () => {
-        mockGetHtmlElementOffset.mockReturnValue({ top: 100, left: 900 }); // mock cell position that will be over max of 1024px
+        (getHtmlElementOffset as jest.Mock).mockReturnValue({ top: 100, left: 900 }); // mock cell position that will be over max of 1024px
 
         editor = new LongTextEditor(editorArguments);
         const editorElm = document.body.querySelector('.slick-large-editor-text') as HTMLDivElement;
@@ -809,7 +811,7 @@ describe('LongTextEditor', () => {
       });
 
       it('should assume editor to positioned on the top of the cell when there is NOT enough room on the bottom', () => {
-        mockGetHtmlElementOffset.mockReturnValue({ top: 550, left: 200 }); // mock cell position that will be over max of 600px
+        (getHtmlElementOffset as jest.Mock).mockReturnValue({ top: 550, left: 200 }); // mock cell position that will be over max of 600px
 
         editor = new LongTextEditor(editorArguments);
         const editorElm = document.body.querySelector('.slick-large-editor-text') as HTMLDivElement;

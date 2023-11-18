@@ -1,11 +1,11 @@
 import 'jest-extended';
-import { SlickDataView, SlickEvent } from '../../core/index';
 
 import { Editors } from '../index';
 import { AutocompleterEditor } from '../autocompleterEditor';
 import { KeyCode, FieldType } from '../../enums/index';
-import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption, type SlickGridModel } from '../../interfaces/index';
+import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { SlickDataView, SlickEvent, type SlickGrid } from '../../core/index';
 
 const KEY_CHAR_A = 97;
 const containerId = 'demo-container';
@@ -38,7 +38,7 @@ const gridStub = {
   render: jest.fn(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 describe('AutocompleterEditor', () => {
   let divContainer: HTMLDivElement;

@@ -1,11 +1,11 @@
 import 'jest-extended';
-import { SlickEvent, SlickEventData, SlickRange } from '../../core/index';
 
 import { SelectionModel } from '../../enums/index';
-import { Column, GridOption, type SlickGridModel, } from '../../interfaces/index';
+import type { Column, GridOption, } from '../../interfaces/index';
 import { SlickCellSelectionModel } from '../slickCellSelectionModel';
 import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager';
 import { InputEditor } from '../../editors/inputEditor';
+import { SlickEvent, SlickEventData, SlickGrid, SlickRange } from '../../core/index';
 
 jest.mock('flatpickr', () => { });
 
@@ -33,7 +33,7 @@ const gridStub = {
   render: jest.fn(),
   onCellChange: new SlickEvent(),
   onKeyDown: new SlickEvent(),
-} as unknown as SlickGridModel;
+} as unknown as SlickGrid;
 
 const mockCellSelectionModel = {
   constructor: jest.fn(),

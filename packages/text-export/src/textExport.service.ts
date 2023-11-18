@@ -8,7 +8,7 @@ import type {
   Locale,
   PubSubService,
   SlickDataView,
-  SlickGridModel,
+  SlickGrid,
   TextExportOption,
   TextExportService as BaseTextExportService,
   TranslaterService,
@@ -46,7 +46,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   protected _exportOptions!: TextExportOption;
   protected _fileFormat = FileType.csv;
   protected _lineCarriageReturn = '\n';
-  protected _grid!: SlickGridModel;
+  protected _grid!: SlickGrid;
   protected _groupedColumnHeaders?: Array<KeyTitlePair>;
   protected _columnHeaders: Array<KeyTitlePair> = [];
   protected _hasGroupedItems = false;
@@ -82,7 +82,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    * @param grid
    * @param containerService
    */
-  init(grid: SlickGridModel, containerService: ContainerService): void {
+  init(grid: SlickGrid, containerService: ContainerService): void {
     this._grid = grid;
     this._pubSubService = containerService.get<PubSubService>('PubSubService');
 

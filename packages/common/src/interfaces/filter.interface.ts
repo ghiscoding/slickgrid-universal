@@ -1,5 +1,6 @@
-import type { Column, FilterArguments, FilterCallback, SlickGridModel } from './index';
+import type { Column, FilterArguments, FilterCallback } from './index';
 import type { OperatorType, OperatorString, SearchTerm, } from '../enums/index';
+import type { SlickGrid } from '../core/index';
 
 // export type Filter = (searchTerms: string | number | string[] | number[], columnDef: Column, params?: any) => string;
 export interface Filter {
@@ -12,7 +13,7 @@ export interface Filter {
   callback: FilterCallback;
 
   /** SlickGrid grid object */
-  grid: SlickGridModel;
+  grid: SlickGrid;
 
   /** The default search operator for the filter when not provided */
   defaultOperator?: OperatorString | OperatorType;

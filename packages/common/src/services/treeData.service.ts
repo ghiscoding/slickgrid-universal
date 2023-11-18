@@ -7,7 +7,6 @@ import type {
   ColumnSort,
   GridOption,
   OnClickEventArgs,
-  SlickGridModel,
   TreeDataOption,
   TreeToggledItem,
   TreeToggleStateChange,
@@ -19,12 +18,12 @@ import {
 } from './utilities';
 import type { SharedService } from './shared.service';
 import type { SortService } from './sort.service';
-import { type SlickDataView, SlickEventHandler } from '../core/index';
+import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
 export class TreeDataService {
   protected _lastToggleStateChange!: Omit<TreeToggleStateChange, 'fromItemId'>;
   protected _currentToggledItems: TreeToggledItem[] = [];
-  protected _grid!: SlickGridModel;
+  protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
   protected _isLastFullToggleCollapsed = false;
   protected _isOneCpuCyclePassed = false;
@@ -73,7 +72,7 @@ export class TreeDataService {
     this.pubSubService.unsubscribeAll(this._subscriptions);
   }
 
-  init(grid: SlickGridModel) {
+  init(grid: SlickGrid) {
     this._grid = grid;
     this._isTreeDataEnabled = this.gridOptions?.enableTreeData ?? false;
     this._isLastFullToggleCollapsed = this.treeDataOptions?.initiallyCollapsed ?? false;
