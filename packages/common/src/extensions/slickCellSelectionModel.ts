@@ -50,7 +50,7 @@ export class SlickCellSelectionModel implements SelectionModel {
 
   init(grid: SlickGrid) {
     this._grid = grid;
-    if (this.hasDataView()) {
+    if (grid.hasDataView()) {
       this._dataView = grid?.getData() ?? {} as SlickDataView;
     }
     this._addonOptions = { ...this._defaults, ...this._addonOptions } as CellSelectionModelOption;
@@ -80,23 +80,6 @@ export class SlickCellSelectionModel implements SelectionModel {
 
   getSelectedRanges(): SlickRange[] {
     return this._ranges;
-  }
-
-  /**
-   * Get the number of rows displayed in the viewport
-   * Note that the row count is an approximation because it is a calculated value using this formula (viewport / rowHeight = rowCount),
-   * the viewport must also be displayed for this calculation to work.
-   * @return {Number} rowCount
-   */
-  getViewportRowCount() {
-    const viewportElm = this._grid.getViewportNode();
-    const viewportHeight = viewportElm?.clientHeight ?? 0;
-    const scrollbarHeight = this._grid.getScrollbarDimensions()?.height ?? 0;
-    return Math.floor((viewportHeight - scrollbarHeight) / this._grid.getOptions().rowHeight!) || 1;
-  }
-
-  hasDataView() {
-    return !Array.isArray(this._grid.getData());
   }
 
   rangesAreEqual(range1: CellRange[], range2: CellRange[]) {
@@ -233,7 +216,7 @@ export class SlickCellSelectionModel implements SelectionModel {
         } else {
           // multiple cell moves: (Home, End, Page{Up/Down}), we need to know how many rows are displayed on a page
           if (this._cachedPageRowCount < 1) {
-            this._cachedPageRowCount = this.getViewportRowCount();
+            this._cachedPageRowCount = this._grid.getViewportRowCount();
           }
           if (this._prevSelectedRow === undefined) {
             this._prevSelectedRow = active.row;

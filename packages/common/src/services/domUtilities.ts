@@ -155,7 +155,7 @@ export function calculateAvailableSpace(element: HTMLElement): { top: number; bo
  */
 export function createDomElement<T extends keyof HTMLElementTagNameMap, K extends keyof HTMLElementTagNameMap[T]>(
   tagName: T,
-  elementOptions?: { [P in K]: InferDOMType<HTMLElementTagNameMap[T][P]> },
+  elementOptions?: null | { [P in K]: InferDOMType<HTMLElementTagNameMap[T][P]> },
   appendToParent?: Element
 ): HTMLElementTagNameMap[T] {
   const elm = document.createElement<T>(tagName);

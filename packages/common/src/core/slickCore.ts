@@ -8,7 +8,7 @@
  * @namespace Slick
  */
 
-import { InferDOMType, MergeTypes } from '../enums/index';
+import { MergeTypes } from '../enums/index';
 import type { CSSStyleDeclarationWritable, EditController } from '../interfaces';
 
 export type Handler<ArgType = any> = (e: any, args: ArgType) => void;
@@ -641,50 +641,6 @@ export class Utils {
     return target as T;
   }
 
-  /**
-   * Create a DOM Element with any optional attributes or properties.
-   * It will only accept valid DOM element properties that `createElement` would accept.
-   * For example: `createDomElement('div', { className: 'my-css-class' })`,
-   * for style or dataset you need to use nested object `{ style: { display: 'none' }}
-   * The last argument is to optionally append the created element to a parent container element.
-   * @param {String} tagName - html tag
-   * @param {Object} options - element properties
-   * @param {[HTMLElement]} appendToParent - parent element to append to
-   */
-  public static createDomElement<T extends keyof HTMLElementTagNameMap, K extends keyof HTMLElementTagNameMap[T]>(
-    tagName: T,
-    elementOptions?: null | { [P in K]: InferDOMType<HTMLElementTagNameMap[T][P]> },
-    appendToParent?: Element
-  ): HTMLElementTagNameMap[T] {
-    const elm = document.createElement<T>(tagName);
-
-    if (elementOptions) {
-      Object.keys(elementOptions).forEach((elmOptionKey) => {
-        const elmValue = elementOptions[elmOptionKey as keyof typeof elementOptions];
-        if (typeof elmValue === 'object') {
-          Object.assign(elm[elmOptionKey as K] as object, elmValue);
-        } else {
-          elm[elmOptionKey as K] = (elementOptions as any)[elmOptionKey as keyof typeof elementOptions];
-        }
-      });
-    }
-    if (appendToParent?.appendChild) {
-      appendToParent.appendChild(elm);
-    }
-    return elm;
-  }
-
-  public static emptyElement(element: HTMLElement | null) {
-    if (element?.firstChild) {
-      while (element.firstChild) {
-        if (element.lastChild) {
-          element.removeChild(element.lastChild);
-        }
-      }
-    }
-    return element;
-  }
-
   public static innerSize(elm: HTMLElement, type: 'height' | 'width') {
     let size = 0;
 
@@ -726,13 +682,6 @@ export class Utils {
     return {
       top: box.top + window.pageYOffset - docElem.clientTop,
       left: box.left + window.pageXOffset - docElem.clientLeft
-    };
-  }
-
-  public static windowScrollPosition() {
-    return {
-      left: window.pageXOffset || document.documentElement.scrollLeft || 0,
-      top: window.pageYOffset || document.documentElement.scrollTop || 0,
     };
   }
 

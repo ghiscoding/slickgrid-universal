@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import type { DOMMouseOrTouchEvent, DragPosition, DraggableOption, MouseWheelOption, ResizableOption } from '../interfaces/index';
-import { Utils } from './slickCore';
+import { windowScrollPosition } from '../services/domUtilities';
 
 /***
  * Interactions, add basic behaviors to any element.
@@ -73,7 +73,7 @@ export function Draggable(options: DraggableOption) {
 
     if (!options.allowDragFrom || (options.allowDragFrom && (element.matches(options.allowDragFrom)) || (options.allowDragFromClosest && element.closest(options.allowDragFromClosest)))) {
       originaldd.dragHandle = element as HTMLElement;
-      const winScrollPos = Utils.windowScrollPosition();
+      const winScrollPos = windowScrollPosition();
       startX = winScrollPos.left + targetEvent.clientX;
       startY = winScrollPos.top + targetEvent.clientY;
       deltaX = targetEvent.clientX - targetEvent.clientX;
