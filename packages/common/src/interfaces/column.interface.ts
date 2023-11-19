@@ -123,9 +123,6 @@ export interface Column<T = any> {
   /** Defaults to false, which leads to exclude the column from getting a header menu. For example, the checkbox row selection should not have a header menu. */
   excludeFromHeaderMenu?: boolean;
 
-  /** @deprecated @use `excelExportOptions` in the future. This option let you defined current column width in Excel. */
-  exportColumnWidth?: number;
-
   /**
    * Export with a Custom Formatter, useful when we want to use a different Formatter for the export.
    * For example, we might have a boolean field with "Formatters.checkmark" but we would like see a translated value for (True/False).

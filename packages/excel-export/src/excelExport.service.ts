@@ -317,7 +317,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
         columnStyles.push({
           bestFit: true,
-          width: columnDef.exportColumnWidth ?? columnDef.excelExportOptions?.width ?? this._gridOptions?.excelExportOptions?.customColumnWidth ?? 10
+          width: columnDef.excelExportOptions?.width ?? this._gridOptions?.excelExportOptions?.customColumnWidth ?? 10
         });
       }
     });

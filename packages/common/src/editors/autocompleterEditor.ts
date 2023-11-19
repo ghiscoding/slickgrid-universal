@@ -24,7 +24,6 @@ import type {
 } from '../interfaces/index';
 import { textValidator } from '../editorValidators/textValidator';
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter';
-import { getEditorOptionByName } from './editorUtilities';
 import { createDomElement, sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 import { findOrDefault, getDescendantProperty, } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
@@ -549,7 +548,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     this._editorInputGroupElm.appendChild(document.createElement('span'));
 
     // show clear date button (unless user specifically doesn't want it)
-    if (!getEditorOptionByName<AutocompleterOption, 'hideClearButton'>(this.columnEditor, 'hideClearButton', undefined, 'autocomplete')) {
+    if (!(this.columnEditor.editorOptions as AutocompleterOption)?.hideClearButton) {
       closeButtonGroupElm.appendChild(this._clearButtonElm);
       this._editorInputGroupElm.appendChild(closeButtonGroupElm);
       this._bindEventService.bind(this._clearButtonElm, 'click', () => this.clear());

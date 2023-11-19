@@ -592,8 +592,8 @@ describe('SortService', () => {
     let mockColumns: Column[];
     beforeEach(() => {
       mockColumns = [
-        { id: 'field1', field: 'field1', sortable: true, header: { menu: { items: [{ command: 'sort-asc' }, { command: 'sort-desc' }, { command: 'clear-sort' }] } } },
-        { id: 'field2', field: 'field2', sortable: true, header: { menu: { items: [{ command: 'sort-asc' }, { command: 'sort-desc' }, { command: 'clear-sort' }] } } },
+        { id: 'field1', field: 'field1', sortable: true, header: { menu: { commandItems: [{ command: 'sort-asc' }, { command: 'sort-desc' }, { command: 'clear-sort' }] } } },
+        { id: 'field2', field: 'field2', sortable: true, header: { menu: { commandItems: [{ command: 'sort-asc' }, { command: 'sort-desc' }, { command: 'clear-sort' }] } } },
       ] as Column[];
     });
 
@@ -610,7 +610,7 @@ describe('SortService', () => {
       mockColumns.forEach(col => {
         expect(col.sortable).toBeFalsy();
       });
-      mockColumns.forEach(col => col.header!.menu!.items.forEach(item => {
+      mockColumns.forEach(col => col.header!.menu!.commandItems!.forEach(item => {
         expect((item as MenuCommandItem).hidden).toBeTruthy();
       }));
       gridOptionMock.gridMenu!.commandItems!.forEach(item => {
@@ -631,7 +631,7 @@ describe('SortService', () => {
       mockColumns.forEach(col => {
         expect(col.sortable).toBeFalsy();
       });
-      mockColumns.forEach(col => col.header!.menu!.items.forEach(item => {
+      mockColumns.forEach(col => col.header!.menu!.commandItems!.forEach(item => {
         expect((item as MenuCommandItem).hidden).toBeTruthy();
       }));
       gridOptionMock.gridMenu!.commandItems!.forEach(item => {
@@ -650,7 +650,7 @@ describe('SortService', () => {
       mockColumns.forEach(col => {
         expect(col.sortable).toBeTruthy();
       });
-      mockColumns.forEach(col => col.header!.menu!.items.forEach(item => {
+      mockColumns.forEach(col => col.header!.menu!.commandItems!.forEach(item => {
         expect((item as MenuCommandItem).hidden).toBeFalsy();
       }));
       gridOptionMock.gridMenu!.commandItems!.forEach(item => {

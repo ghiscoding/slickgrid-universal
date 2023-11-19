@@ -76,9 +76,6 @@ export class GraphqlService implements BackendService {
     if (grid?.getColumns) {
       this._columnDefinitions = sharedService?.allColumns ?? grid.getColumns() ?? [];
     }
-    if (this.options?.isWithCursor) {
-      console.warn('[Slickgrid-Universal] The option `isWithCursor` is now deprecated and was replaced by `useCursor`.');
-    }
   }
 
   /**
@@ -121,7 +118,7 @@ export class GraphqlService implements BackendService {
     let graphqlNodeFields = [];
 
     if (this._gridOptions.enablePagination !== false) {
-      if (this.options.useCursor || this.options.isWithCursor) {
+      if (this.options.useCursor) {
         // ...pageInfo { hasNextPage, endCursor }, edges { cursor, node { _columns_ } }, totalCount: 100
         const edgesQb = new QueryBuilder('edges');
         const pageInfoQb = new QueryBuilder('pageInfo');
@@ -148,7 +145,7 @@ export class GraphqlService implements BackendService {
     if (this._gridOptions.enablePagination !== false) {
       datasetFilters = {};
 
-      if ((this.options.useCursor || this.options.isWithCursor) && this.options.paginationOptions) {
+      if (this.options.useCursor && this.options.paginationOptions) {
         datasetFilters = { ...this.options.paginationOptions };
       }
       else {
@@ -229,7 +226,9 @@ export class GraphqlService implements BackendService {
    */
   getInitPaginationOptions(): GraphqlDatasetFilter {
     const paginationFirst = this.pagination ? this.pagination.pageSize : DEFAULT_ITEMS_PER_PAGE;
-    return (this.options && (this.options.useCursor || this.options.isWithCursor)) ? { first: paginationFirst } : { first: paginationFirst, offset: 0 };
+    return this.options?.useCursor
+      ? { first: paginationFirst }
+      : { first: paginationFirst, offset: 0 };
   }
 
   /** Get the GraphQL dataset name */
@@ -258,7 +257,7 @@ export class GraphqlService implements BackendService {
   resetPaginationOptions() {
     let paginationOptions: GraphqlPaginationOption | GraphqlCursorPaginationOption;
 
-    if (this.options && (this.options.useCursor || this.options.isWithCursor)) {
+    if (this.options?.useCursor) {
       paginationOptions = this.getInitPaginationOptions();
     } else {
       // first, last, offset
@@ -518,7 +517,7 @@ export class GraphqlService implements BackendService {
     };
 
     let paginationOptions: GraphqlPaginationOption | GraphqlCursorPaginationOption = {};
-    if (this.options && (this.options.useCursor || this.options.isWithCursor)) {
+    if (this.options?.useCursor) {
       // use cursor based pagination
       // when using cursor pagination, expect to be given a PaginationCursorChangedArgs as arguments,
       // but still handle the case where it's not (can happen when initial configuration not pre-configured (automatically corrects itself next setCursorPageInfo() call))

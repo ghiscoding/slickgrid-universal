@@ -199,17 +199,6 @@ describe('HeaderMenu Plugin', () => {
       plugin.dispose();
     });
 
-    it('should display a console warning when using deprecated "items" instead of "commandItems"', () => {
-      plugin.dispose();
-      plugin.init({ buttonCssClass: 'mdi mdi-chevron-down' });
-      columnsMock[0].header!.menu!.items = columnsMock[0].header!.menu!.commandItems;
-
-      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
-
-      expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] Header Menu "items" property was deprecated in favor of "commandItems" to align with all other Menu plugins.');
-    });
-
     it('should populate a Header Menu button with extra button css classes when header menu option "buttonCssClass" and cell is being rendered', () => {
       plugin.dispose();
       plugin.init({ buttonCssClass: 'mdi mdi-chevron-down' });

@@ -14,7 +14,6 @@ import type {
   GridOption,
   SliderOption,
 } from '../interfaces/index';
-import { getEditorOptionByName } from './editorUtilities';
 import { getDescendantProperty } from '../services/utilities';
 import { sliderValidator } from '../editorValidators/sliderValidator';
 import { createDomElement } from '../services/domUtilities';
@@ -91,7 +90,7 @@ export class SliderEditor implements Editor {
 
   /** Get the Validator function, can be passed in Editor property or Column Definition */
   get validator(): EditorValidator | undefined {
-    return this.columnEditor?.validator ?? this.columnDef?.validator;
+    return this.columnEditor.validator ?? this.columnDef?.validator;
   }
 
   init(): void {
@@ -201,7 +200,7 @@ export class SliderEditor implements Editor {
       if (isComplexObject) {
         // when it's a complex object, user could override the object path (where the editable object is located)
         // else we use the path provided in the Field Column Definition
-        const objectPath = this.columnEditor?.complexObjectPath ?? fieldName ?? '';
+        const objectPath = this.columnEditor.complexObjectPath ?? fieldName ?? '';
         setDeepValue(item, objectPath, newValue);
       } else if (item) {
         item[fieldName] = newValue;
@@ -311,19 +310,19 @@ export class SliderEditor implements Editor {
    */
   protected buildDomElement(): HTMLDivElement {
     const columnId = this.columnDef?.id ?? '';
-    const title = this.columnEditor?.title ?? '';
-    const minValue = +(this.columnEditor?.minValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE);
-    const maxValue = +(this.columnEditor?.maxValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE);
-    const step = +(this.columnEditor?.valueStep ?? Constants.SLIDER_DEFAULT_STEP);
-    const defaultValue = getEditorOptionByName<SliderOption, 'sliderStartValue'>(this.columnEditor, 'sliderStartValue') ?? minValue;
+    const title = this.columnEditor.title ?? '';
+    const minValue = +(this.columnEditor.minValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE);
+    const maxValue = +(this.columnEditor.maxValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE);
+    const step = +(this.columnEditor.valueStep ?? Constants.SLIDER_DEFAULT_STEP);
+    const defaultValue = (this.columnEditor.editorOptions as SliderOption)?.sliderStartValue ?? minValue;
     this._defaultValue = +defaultValue;
 
     this._sliderTrackElm = createDomElement('div', { className: 'slider-track' });
     this._inputElm = createDomElement('input', {
       type: 'range', title,
       defaultValue: `${defaultValue}`, value: `${defaultValue}`, min: `${minValue}`, max: `${maxValue}`,
-      step: `${this.columnEditor?.valueStep ?? Constants.SLIDER_DEFAULT_STEP}`,
-      ariaLabel: this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Slider Editor`,
+      step: `${this.columnEditor.valueStep ?? Constants.SLIDER_DEFAULT_STEP}`,
+      ariaLabel: this.columnEditor.ariaLabel ?? `${toSentenceCase(columnId + '')} Slider Editor`,
       className: `slider-editor-input editor-${columnId}`,
     });
 
@@ -333,7 +332,7 @@ export class SliderEditor implements Editor {
     sliderInputContainerElm.appendChild(this._inputElm);
     divContainerElm.appendChild(sliderInputContainerElm);
 
-    if (!getEditorOptionByName<SliderOption, 'hideSliderNumber'>(this.columnEditor, 'hideSliderNumber')) {
+    if (!(this.columnEditor.editorOptions as SliderOption)?.hideSliderNumber) {
       divContainerElm.classList.add('input-group');
 
       const divGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-append slider-value' });
@@ -371,7 +370,7 @@ export class SliderEditor implements Editor {
   protected handleChangeSliderNumber(event: Event) {
     const value = (<HTMLInputElement>event.target)?.value ?? '';
     if (value !== '') {
-      if (!getEditorOptionByName<SliderOption, 'hideSliderNumber'>(this.columnEditor, 'hideSliderNumber') && this._sliderNumberElm) {
+      if (!(this.columnEditor.editorOptions as SliderOption)?.hideSliderNumber && this._sliderNumberElm) {
         this._sliderNumberElm.textContent = value;
       }
       this._inputElm.title = value;
@@ -426,12 +425,12 @@ export class SliderEditor implements Editor {
   }
 
   protected updateTrackFilledColorWhenEnabled() {
-    if (getEditorOptionByName<SliderOption, 'enableSliderTrackColoring'>(this.columnEditor, 'enableSliderTrackColoring') && this._inputElm) {
+    if ((this.columnEditor.editorOptions as SliderOption)?.enableSliderTrackColoring && this._inputElm) {
       const percent1 = 0;
       const percent2 = ((+this.getValue() - +this._inputElm.min) / (this.sliderOptions?.maxValue ?? 0 - +this._inputElm.min)) * 100;
       const bg = 'linear-gradient(to right, %b %p1, %c %p1, %c %p2, %b %p2)'
         .replace(/%b/g, '#eee')
-        .replace(/%c/g, (getEditorOptionByName<SliderOption, 'sliderTrackFilledColor'>(this.columnEditor, 'sliderTrackFilledColor') ?? 'var(--slick-slider-filter-thumb-color, #86bff8)') as string)
+        .replace(/%c/g, ((this.columnEditor.editorOptions as SliderOption)?.sliderTrackFilledColor ?? 'var(--slick-slider-filter-thumb-color, #86bff8)') as string)
         .replace(/%p1/g, `${percent1}%`)
         .replace(/%p2/g, `${percent2}%`);
 

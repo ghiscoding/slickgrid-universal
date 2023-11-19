@@ -68,7 +68,7 @@ const mockGridOptionWithCursorPaginationBackend = {
     options: {
       columnDefinitions: [{ id: 'name', field: 'name' }] as Column[],
       datasetName: 'user',
-      isWithCursor: true,
+      useCursor: true,
     }
   },
 } as GridOption;

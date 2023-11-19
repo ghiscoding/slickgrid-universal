@@ -1,5 +1,5 @@
 import { SliderFilter } from './sliderFilter';
-import  type { TranslaterService } from '../services';
+import type { TranslaterService } from '../services';
 
 export class SingleSliderFilter extends SliderFilter {
   /**
@@ -7,6 +7,6 @@ export class SingleSliderFilter extends SliderFilter {
    */
   constructor(protected readonly translaterService: TranslaterService) {
     super(translaterService);
-    super.sliderType = 'single';
+    this.sliderType = 'single';
   }
 }
