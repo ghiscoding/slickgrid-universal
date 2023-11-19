@@ -1214,7 +1214,7 @@ export class FilterService {
     // loop through column definition to hide/show header menu commands
     columnDefinitions.forEach((col) => {
       if (col?.header?.menu) {
-        (col.header.menu.commandItems || col.header.menu.items)?.forEach(menuItem => {
+        (col.header.menu.commandItems)?.forEach(menuItem => {
           if (menuItem && typeof menuItem !== 'string') {
             const menuCommand = menuItem.command;
             if (menuCommand === 'clear-filter') {

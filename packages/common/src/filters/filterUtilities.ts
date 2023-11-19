@@ -1,5 +1,5 @@
 import { Constants } from '../constants';
-import type { Column, ColumnFilter, GridOption, Locale, OperatorDetail } from '../interfaces/index';
+import type { Column, GridOption, Locale, OperatorDetail } from '../interfaces/index';
 import type { Observable, RxJsFacade, Subject, Subscription } from '../services/rxjsFacade';
 import { createDomElement, htmlEncodedStringWithPadding, sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 import { castObservableToPromise, getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
@@ -21,22 +21,6 @@ export function buildSelectOperator(optionValues: OperatorDetail[], gridOptions:
   }
 
   return selectElm;
-}
-
-/**
- * Get option from filter.params OR filter.filterOptions
- * @deprecated this should be removed when slider filterParams are replaced by filterOptions
- */
-export function getFilterOptionByName<T, K extends keyof T>(columnFilter: ColumnFilter, optionName: K, defaultValue?: any, filterName = 'Slider'): T[K] | undefined {
-  let outValue;
-
-  if (columnFilter.filterOptions?.[optionName] !== undefined) {
-    outValue = (columnFilter.filterOptions as T)[optionName];
-  } else if (columnFilter?.params?.[optionName] !== undefined) {
-    console.warn(`[Slickgrid-Universal] All filter.params from ${filterName} Filter are moving to "filterOptions" for better typing support and "params" will be deprecated in future release.`);
-    outValue = columnFilter?.params?.[optionName];
-  }
-  return outValue ?? defaultValue;
 }
 
 /**

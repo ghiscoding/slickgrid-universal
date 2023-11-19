@@ -99,14 +99,6 @@ describe('GraphqlService', () => {
       expect(spy).toHaveBeenCalled();
       expect(service.columnDefinitions).toEqual(columns);
     });
-
-    it('should display a console warning when using deprecated "isWithCursor" option', () => {
-      const consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
-
-      service.init({ datasetName: 'users', isWithCursor: true }, paginationOptions, gridStub);
-
-      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] The option `isWithCursor` is now deprecated and was replaced by `useCursor`.'));
-    });
   });
 
   describe('buildQuery method', () => {

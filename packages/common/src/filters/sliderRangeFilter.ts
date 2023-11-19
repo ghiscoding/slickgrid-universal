@@ -7,6 +7,6 @@ export class SliderRangeFilter extends SliderFilter {
    */
   constructor(protected readonly translaterService: TranslaterService) {
     super(translaterService);
-    super.sliderType = 'double';
+    this.sliderType = 'double';
   }
 }

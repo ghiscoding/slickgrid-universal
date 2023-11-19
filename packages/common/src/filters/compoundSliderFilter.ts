@@ -7,6 +7,6 @@ export class CompoundSliderFilter extends SliderFilter {
    */
   constructor(protected readonly translaterService: TranslaterService) {
     super(translaterService);
-    super.sliderType = 'compound';
+    this.sliderType = 'compound';
   }
 }

@@ -20,7 +20,6 @@ import type {
   FlatpickrOption,
   GridOption,
 } from './../interfaces/index';
-import { getEditorOptionByName } from './editorUtilities';
 import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
 import { getDescendantProperty, mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, } from './../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
@@ -161,7 +160,7 @@ export class DateEditor implements Editor {
       );
 
       // show clear date button (unless user specifically doesn't want it)
-      if (!getEditorOptionByName<FlatpickrOption, 'hideClearButton'>(this.columnEditor, 'hideClearButton', undefined, 'date')) {
+      if (!(this.columnEditor.editorOptions as FlatpickrOption)?.hideClearButton) {
         closeButtonGroupElm.appendChild(this._clearButtonElm);
         this._editorInputGroupElm.appendChild(closeButtonGroupElm);
         this._bindEventService.bind(this._clearButtonElm, 'click', () => this._lastTriggeredByClearDate = true);

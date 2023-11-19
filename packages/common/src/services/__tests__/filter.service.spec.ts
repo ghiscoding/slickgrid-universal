@@ -1528,8 +1528,8 @@ describe('FilterService', () => {
 
     it('should disable the Filter Functionality from the Grid Options & toggle the Header Filter row', () => {
       const mockColumns = [
-        { id: 'field1', field: 'field1', width: 100, header: { menu: { items: [{ command: 'clear-filter' }] } } },
-        { id: 'field2', field: 'field2', width: 100, header: { menu: { items: [{ command: 'clear-filter' }] } } }
+        { id: 'field1', field: 'field1', width: 100, header: { menu: { commandItems: [{ command: 'clear-filter' }] } } },
+        { id: 'field2', field: 'field2', width: 100, header: { menu: { commandItems: [{ command: 'clear-filter' }] } } }
       ];
       const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
       const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
@@ -1540,7 +1540,7 @@ describe('FilterService', () => {
       service.init(gridStub);
       service.disableFilterFunctionality();
 
-      mockColumns.forEach(col => col.header.menu.items.forEach(item => {
+      mockColumns.forEach(col => col.header.menu.commandItems.forEach(item => {
         expect((item as MenuCommandItem).hidden).toBeTruthy();
       }));
       gridOptionMock.gridMenu!.commandItems!.forEach(item => {
@@ -1556,8 +1556,8 @@ describe('FilterService', () => {
       gridOptionMock.showHeaderRow = false;
 
       const mockColumns = [
-        { id: 'field1', field: 'field1', width: 100, header: { menu: { items: [{ command: 'clear-filter' }] } } },
-        { id: 'field2', field: 'field2', width: 100, header: { menu: { items: [{ command: 'clear-filter' }] } } }
+        { id: 'field1', field: 'field1', width: 100, header: { menu: { commandItems: [{ command: 'clear-filter' }] } } },
+        { id: 'field2', field: 'field2', width: 100, header: { menu: { commandItems: [{ command: 'clear-filter' }] } } }
       ];
       const setOptionSpy = jest.spyOn(gridStub, 'setOptions');
       const setHeaderSpy = jest.spyOn(gridStub, 'setHeaderRowVisibility');
@@ -1568,7 +1568,7 @@ describe('FilterService', () => {
       service.init(gridStub);
       service.disableFilterFunctionality(false);
 
-      mockColumns.forEach(col => col.header.menu.items.forEach(item => {
+      mockColumns.forEach(col => col.header.menu.commandItems.forEach(item => {
         expect((item as MenuCommandItem).hidden).toBeFalsy();
       }));
       gridOptionMock.gridMenu!.commandItems!.forEach(item => {
