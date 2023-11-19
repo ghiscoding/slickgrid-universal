@@ -51,8 +51,10 @@ const gridStub = {
   getEditorLock: () => getEditorLockMock,
   getOptions: () => mockGridOptions,
   getUID: () => GRID_UID,
+  getViewportRowCount: () => 23,
   getScrollbarDimensions: () => ({ height: 17, width: 17 }),
   getViewportNode: jest.fn(),
+  hasDataView: () => true,
   focus: jest.fn(),
   registerPlugin: jest.fn(),
   setActiveCell: jest.fn(),
@@ -240,7 +242,7 @@ describe('CellSelectionModel Plugin', () => {
 
   it('should call "setSelectedRanges" with Slick Range with a Right direction when triggered by "onKeyDown" with key combo of Shift+ArrowRight', () => {
     // let's test this one without a DataView (aka SlickGrid only)
-    jest.spyOn(gridStub, 'getData').mockReturnValueOnce([]);
+    jest.spyOn(gridStub, 'hasDataView').mockReturnValueOnce(false);
     jest.spyOn(gridStub, 'getDataLength').mockReturnValueOnce(NB_ITEMS);
     jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: 3 });
 
