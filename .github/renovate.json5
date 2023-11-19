@@ -11,10 +11,6 @@
       depTypeList: ['peerDependencies'],
       enabled: false,
     },
-    {
-      packageNames: ['rxjs'],
-      allowedVersions: '7.8.1',
-    },
   ],
   ignoreDeps: [
     'node',
