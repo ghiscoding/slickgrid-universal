@@ -52,8 +52,7 @@
     "devDependencies": "The dev deps 'slickgrid', 'sortablejs' and 'whatwg-fetch' are simply installed for Jest unit tests."
   },
   "engines": {
-    "node": ">=16.15.0",
-    "npm": ">=8.5.0"
+    "node": "^18.0.0 || >=20.0.0"
   },
   "packageManager": "pnpm@8.10.5",
   "devDependencies": {
