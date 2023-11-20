@@ -915,8 +915,8 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   protected calculateTotals(totals: SlickGroupTotals) {
-    const group = totals.group;
-    const gi = this.groupingInfos[group.level ?? 0];
+    const group = totals.group as SlickGroup;
+    const gi = this.groupingInfos[group?.level ?? 0];
     const isLeafLevel = (group.level === this.groupingInfos.length);
     let agg: Aggregator;
     let idx = gi.aggregators.length;

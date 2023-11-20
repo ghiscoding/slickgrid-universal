@@ -23,7 +23,6 @@ export class SlickEventData<ArgType = any> {
   protected _isPropagationStopped = false;
   protected _isImmediatePropagationStopped = false;
   protected _isDefaultPrevented = false;
-  protected returnValues: string[] = [];
   protected returnValue: any = undefined;
   protected target?: EventTarget | null;
   protected nativeEvent?: Event | null;
@@ -105,7 +104,6 @@ export class SlickEventData<ArgType = any> {
   }
 
   addReturnValue(value: any) {
-    this.returnValues.push(value);
     if (this.returnValue === undefined && value !== undefined) {
       this.returnValue = value;
     }
@@ -127,6 +125,10 @@ export class SlickEventData<ArgType = any> {
  */
 export class SlickEvent<ArgType = any> {
   protected handlers: Handler<ArgType>[] = [];
+
+  get subscriberCount() {
+    return this.handlers.length;
+  }
 
   /**
    * Adds an event handler to be called when the event is fired.
@@ -166,9 +168,7 @@ export class SlickEvent<ArgType = any> {
    *      If not specified, the scope will be set to the <code>Event</code> instance.
    */
   notify(args: ArgType, evt?: SlickEventData | Event | MergeTypes<SlickEventData, Event> | null, scope?: any) {
-    const sed: SlickEventData = evt instanceof SlickEventData
-      ? evt
-      : new SlickEventData(evt, args);
+    const sed = evt instanceof SlickEventData ? evt : new SlickEventData(evt, args);
     scope = scope || this;
 
     for (let i = 0; i < this.handlers.length && !(sed.isPropagationStopped() || sed.isImmediatePropagationStopped()); i++) {
@@ -182,6 +182,10 @@ export class SlickEvent<ArgType = any> {
 
 export class SlickEventHandler<ArgType = any> {
   protected handlers: Array<{ event: SlickEvent; handler: Handler<ArgType>; }> = [];
+
+  get subscriberCount() {
+    return this.handlers.length;
+  }
 
   subscribe(event: SlickEvent, handler: Handler<ArgType>) {
     this.handlers.push({ event, handler });
@@ -261,6 +265,14 @@ export class SlickRange {
     this.toRow = Math.max(fromRow, toRow as number);
   }
 
+  /**
+   * Returns whether a range represents a single cell.
+   * @method isSingleCell
+   * @return {Boolean}
+   */
+  isSingleCell() {
+    return this.fromRow === this.toRow && this.fromCell === this.toCell;
+  }
 
   /**
    * Returns whether a range represents a single row.
@@ -269,15 +281,6 @@ export class SlickRange {
    */
   isSingleRow() {
     return this.fromRow === this.toRow;
-  }
-
-  /**
-   * Returns whether a range represents a single cell.
-   * @method isSingleCell
-   * @return {Boolean}
-   */
-  isSingleCell() {
-    return this.fromRow === this.toRow && this.fromCell === this.toCell;
   }
 
   /**
@@ -346,7 +349,7 @@ export class SlickGroup extends SlickNonDataItem {
    * @property value
    * @type {Object}
    */
-  value = null;
+  value: any = null;
 
   /**
    * Formatted display value of the group.
@@ -401,6 +404,7 @@ export class SlickGroup extends SlickNonDataItem {
   constructor() {
     super();
   }
+
   /**
    * Compares two Group instances.
    * @method equals
@@ -432,7 +436,7 @@ export class SlickGroupTotals extends SlickNonDataItem {
    * @param group
    * @type {Group}
    */
-  group: SlickGroup = null as any;
+  group: SlickGroup | null = null; // pre-assign to null
 
   /**
    * Whether the totals have been fully initialized / calculated.
@@ -480,13 +484,13 @@ export class SlickEditorLock {
       return;
     }
     if (this.activeEditController !== null) {
-      throw new Error(`Slick.EditorLock.activate: an editController is still active, can't activate another editController`);
+      throw new Error(`SlickEditorLock.activate: an editController is still active, can't activate another editController`);
     }
     if (!editController.commitCurrentEdit) {
-      throw new Error('Slick.EditorLock.activate: editController must implement .commitCurrentEdit()');
+      throw new Error('SlickEditorLock.activate: editController must implement .commitCurrentEdit()');
     }
     if (!editController.cancelCurrentEdit) {
-      throw new Error('Slick.EditorLock.activate: editController must implement .cancelCurrentEdit()');
+      throw new Error('SlickEditorLock.activate: editController must implement .cancelCurrentEdit()');
     }
     this.activeEditController = editController;
   };
@@ -502,7 +506,7 @@ export class SlickEditorLock {
       return;
     }
     if (this.activeEditController !== editController) {
-      throw new Error('Slick.EditorLock.deactivate: specified editController is not the currently active one');
+      throw new Error('SlickEditorLock.deactivate: specified editController is not the currently active one');
     }
     this.activeEditController = null;
   };

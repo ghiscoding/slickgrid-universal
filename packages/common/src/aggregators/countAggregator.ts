@@ -72,7 +72,7 @@ export class CountAggregator implements Aggregator {
       // when dealing with Tree Data, we also need to take the parent's total and add it to the final count
       itemCount += groupTotals[this._type][this._field] as number;
     } else {
-      itemCount = groupTotals.group.rows.length;
+      itemCount = groupTotals.group?.rows.length ?? 0;
     }
     groupTotals[this._type][this._field] = itemCount;
   }

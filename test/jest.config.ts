@@ -52,7 +52,6 @@ const config: Config.InitialOptions = {
   },
   transformIgnorePatterns: [
     'node_modules/(?!(@slickgrid-universal)/)',
-    '<rootDir>/node_modules/slickgrid/'
   ],
   testMatch: [
     '**/__tests__/**/*.+(ts|js)',
