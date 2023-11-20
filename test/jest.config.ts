@@ -7,7 +7,6 @@ const config: Config.InitialOptions = {
   collectCoverage: false,
   collectCoverageFrom: [
     'packages/**/*.ts',
-    'packages/**/core/*.ts',
     '!**/dist/**',
     '!src/assets/**',
     '!examples/vite-demo-vanilla-bundle/**',
