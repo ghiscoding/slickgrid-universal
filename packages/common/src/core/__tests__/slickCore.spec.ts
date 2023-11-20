@@ -111,9 +111,28 @@ describe('slick.core file', () => {
 
       expect(eventHandler.subscriberCount).toBe(2);
 
-      eventHandler.unsubscribe(onClick, spy1);
+      const chain = eventHandler.unsubscribe(onClick, spy1);
 
+      expect(chain).toBeUndefined(); // returns undefined when handler is found
       expect(eventHandler.subscriberCount).toBe(1);
+    });
+
+    it('should return same amount of handlers when calling unsubscribe() on an event that is not found', () => {
+      const spy1 = jest.fn();
+      const spy2 = jest.fn();
+      const eventHandler = new SlickEventHandler();
+      const onClick = new SlickEvent();
+      const onDblClick = new SlickEvent();
+
+      eventHandler.subscribe(onClick, spy1);
+      eventHandler.subscribe(onDblClick, spy2);
+
+      expect(eventHandler.subscriberCount).toBe(2);
+
+      const chain = eventHandler.unsubscribe({} as any, spy1);
+
+      expect(chain).toEqual(eventHandler);
+      expect(eventHandler.subscriberCount).toBe(2);
     });
 
     it('should be able to subscribe to multiple events and expect no more event handlers when calling unsubscribeAll()', () => {
@@ -128,9 +147,10 @@ describe('slick.core file', () => {
 
       expect(eventHandler.subscriberCount).toBe(2);
 
-      eventHandler.unsubscribeAll();
+      const chain = eventHandler.unsubscribeAll();
 
       expect(eventHandler.subscriberCount).toBe(0);
+      expect(chain).toEqual(eventHandler);
     });
   });
 
