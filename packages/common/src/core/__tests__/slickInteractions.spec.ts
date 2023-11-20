@@ -144,11 +144,11 @@ describe('MouseWheel class', () => {
     const mdEvt = new Event('wheel');
     Object.defineProperty(mdEvt, 'wheelDelta', { writable: true, configurable: true, value: -120 });
     Object.defineProperty(mdEvt, 'axis', { writable: true, configurable: true, value: 3 });
-    Object.defineProperty(mdEvt, 'HORIZONTAL_AXIS', { writable: true, configurable: true, value: -120 });
+    Object.defineProperty(mdEvt, 'HORIZONTAL_AXIS', { writable: true, configurable: true, value: 3 });
     element.dispatchEvent(mdEvt);
 
     expect(mw).toBeTruthy();
-    expect(wheelSpy).toHaveBeenCalledWith(mdEvt, -1, 0, -1);
+    expect(wheelSpy).toHaveBeenCalledWith(mdEvt, -1, 1, 0);
     expect(removeListenerSpy).toHaveBeenCalledTimes(5 * 2);
   });
 });
