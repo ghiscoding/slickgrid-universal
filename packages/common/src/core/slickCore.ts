@@ -432,7 +432,7 @@ export class SlickGroupTotals extends SlickNonDataItem {
    * @param group
    * @type {Group}
    */
-  group: SlickGroup | null = null;
+  group: SlickGroup | null = null; // pre-assign to null
 
   /**
    * Whether the totals have been fully initialized / calculated.
