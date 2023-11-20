@@ -189,6 +189,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected canvas: HTMLCanvasElement | null = null;
   protected canvas_context: CanvasRenderingContext2D | null = null;
+  protected _devMode = false;
 
   // settings
   protected _options!: O;
@@ -491,7 +492,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Array<C>} columns - An array of column definitions.
    * @param {Object} [options] - Grid this._options.
    **/
-  constructor(protected container: HTMLElement | string, protected data: CustomDataView<TData> | TData[], protected columns: C[], protected options: Partial<O>) {
+  constructor(protected container: HTMLElement | string, protected data: CustomDataView<TData> | TData[], protected columns: C[], protected options: Partial<O>, protected devMode = false) {
     this.initialize();
   }
 
@@ -2381,8 +2382,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!this.stylesheet) {
       const sheets: any = (this._options.shadowRoot || document).styleSheets;
       for (i = 0; i < sheets.length; i++) {
-        if ((sheets[i].ownerNode || sheets[i].owningElement) === this._style) {
-          this.stylesheet = sheets[i];
+        const sheet = sheets[i];
+        if ((sheet.ownerNode || sheet.owningElement) === this._style || this.devMode) {
+          this.stylesheet = sheet;
           break;
         }
       }
