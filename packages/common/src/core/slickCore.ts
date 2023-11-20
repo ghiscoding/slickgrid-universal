@@ -261,6 +261,14 @@ export class SlickRange {
     this.toRow = Math.max(fromRow, toRow as number);
   }
 
+  /**
+   * Returns whether a range represents a single cell.
+   * @method isSingleCell
+   * @return {Boolean}
+   */
+  isSingleCell() {
+    return this.fromRow === this.toRow && this.fromCell === this.toCell;
+  }
 
   /**
    * Returns whether a range represents a single row.
@@ -269,15 +277,6 @@ export class SlickRange {
    */
   isSingleRow() {
     return this.fromRow === this.toRow;
-  }
-
-  /**
-   * Returns whether a range represents a single cell.
-   * @method isSingleCell
-   * @return {Boolean}
-   */
-  isSingleCell() {
-    return this.fromRow === this.toRow && this.fromCell === this.toCell;
   }
 
   /**
@@ -346,7 +345,7 @@ export class SlickGroup extends SlickNonDataItem {
    * @property value
    * @type {Object}
    */
-  value = null;
+  value: any = null;
 
   /**
    * Formatted display value of the group.
@@ -401,6 +400,7 @@ export class SlickGroup extends SlickNonDataItem {
   constructor() {
     super();
   }
+
   /**
    * Compares two Group instances.
    * @method equals
@@ -432,7 +432,7 @@ export class SlickGroupTotals extends SlickNonDataItem {
    * @param group
    * @type {Group}
    */
-  group: SlickGroup = null as any;
+  group: SlickGroup | null = null;
 
   /**
    * Whether the totals have been fully initialized / calculated.
