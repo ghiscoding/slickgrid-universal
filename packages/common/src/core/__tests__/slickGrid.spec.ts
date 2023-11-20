@@ -4,6 +4,7 @@ import { SlickGrid } from '../slickGrid';
 
 describe('SlickGrid core file', () => {
   let container: HTMLElement;
+  let grid: SlickGrid;
 
   beforeEach(() => {
     container = document.createElement('div');
@@ -13,12 +14,14 @@ describe('SlickGrid core file', () => {
 
   afterEach(() => {
     document.body.textContent = '';
+    grid?.destroy(true);
   });
 
   it('should be able to instantiate SlickGrid without DataView', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     const options = { enableCellNavigation: true } as GridOption;
-    const grid = new SlickGrid<any, Column>('#myGrid', [], columns, options, true);
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options, true);
+    grid.init();
 
     expect(grid).toBeTruthy();
     expect(grid.getData()).toEqual([]);
@@ -28,7 +31,8 @@ describe('SlickGrid core file', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     const options = { enableCellNavigation: true } as GridOption;
     const dv = new SlickDataView({});
-    const grid = new SlickGrid<any, Column>('#myGrid', dv, columns, options, true);
+    grid = new SlickGrid<any, Column>('#myGrid', dv, columns, options, true);
+    grid.init();
 
     expect(grid).toBeTruthy();
     expect(grid.getData()).toEqual(dv);
