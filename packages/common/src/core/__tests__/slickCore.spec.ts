@@ -252,6 +252,7 @@ describe('slick.core file', () => {
 
       const elock = new SlickEditorLock();
       elock.activate(ec);
+      elock.activate(ec); // calling 2x shouldn't cause problem
 
       expect(elock.isActive()).toBeTruthy();
     });
@@ -296,6 +297,7 @@ describe('slick.core file', () => {
       expect(elock.isActive()).toBeTruthy();
 
       elock.deactivate(ec);
+      elock.deactivate(ec); // calling 2x should yield to same problem
       expect(elock.isActive()).toBeFalsy();
     });
 
