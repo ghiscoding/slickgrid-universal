@@ -809,7 +809,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /**
-   * @param varArgs Either a Slick.Group's "groupingKey" property, or a
+   * @param varArgs Either a SlickGroup's "groupingKey" property, or a
    *     variable argument list of grouping values denoting a unique path to the row.  For
    *     example, calling collapseGroup('high', '10%') will collapse the '10%' subgroup of
    *     the 'high' group.
@@ -833,7 +833,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   /**
-   * @param varArgs Either a Slick.Group's "groupingKey" property, or a
+   * @param varArgs Either a SlickGroup's "groupingKey" property, or a
    *     variable argument list of grouping values denoting a unique path to the row.  For
    *     example, calling expandGroup('high', '10%') will expand the '10%' subgroup of
    *     the 'high' group.

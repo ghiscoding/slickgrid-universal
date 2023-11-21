@@ -324,7 +324,7 @@ export class SlickNonDataItem {
 /**
  * Information about a group of rows.
  * @class Group
- * @extends Slick.NonDataItem
+ * @extends SlickNonDataItem
  * @constructor
  */
 export class SlickGroup extends SlickNonDataItem {
@@ -425,7 +425,7 @@ export class SlickGroup extends SlickNonDataItem {
  * so that they can store arbitrary data in it.  That data can later be accessed by group totals
  * formatters during the display.
  * @class GroupTotals
- * @extends Slick.NonDataItem
+ * @extends SlickNonDataItem
  * @constructor
  */
 export class SlickGroupTotals extends SlickNonDataItem {
@@ -736,48 +736,23 @@ export class Utils {
 }
 
 export const SlickGlobalEditorLock = new SlickEditorLock();
+export const preClickClassName = 'slick-edit-preclick';
 
-// export Slick namespace on both global & window objects
-const SlickCore = {
-  Event: SlickEvent,
-  EventData: SlickEventData,
-  EventHandler: SlickEventHandler,
-  Range: SlickRange,
-  NonDataRow: SlickNonDataItem,
-  Group: SlickGroup,
-  GroupTotals: SlickGroupTotals,
-  EditorLock: SlickEditorLock,
-
-  /**
-   * A global singleton editor lock.
-   * @class GlobalEditorLock
-   * @static
-   * @constructor
-   */
-  GlobalEditorLock: SlickGlobalEditorLock,
-
-  keyCode: {
-    SPACE: 8,
-    BACKSPACE: 8,
-    DELETE: 46,
-    DOWN: 40,
-    END: 35,
-    ENTER: 13,
-    ESCAPE: 27,
-    HOME: 36,
-    INSERT: 45,
-    LEFT: 37,
-    PAGE_DOWN: 34,
-    PAGE_UP: 33,
-    RIGHT: 39,
-    TAB: 9,
-    UP: 38,
-    A: 65
-  },
-  preClickClassName: 'slick-edit-preclick',
+export const keyCode = {
+  SPACE: 8,
+  BACKSPACE: 8,
+  DELETE: 46,
+  DOWN: 40,
+  END: 35,
+  ENTER: 13,
+  ESCAPE: 27,
+  HOME: 36,
+  INSERT: 45,
+  LEFT: 37,
+  PAGE_DOWN: 34,
+  PAGE_UP: 33,
+  RIGHT: 39,
+  TAB: 9,
+  UP: 38,
+  A: 65
 };
-
-export const {
-  EditorLock, Event, EventData, EventHandler, Group, GroupTotals, NonDataRow, Range,
-  GlobalEditorLock, keyCode, preClickClassName,
-} = SlickCore;
