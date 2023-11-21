@@ -265,9 +265,9 @@ export function getInnerSize(elm: HTMLElement, type: 'height' | 'width') {
   return size;
 }
 
-export function getElementProp(elm: HTMLElement & { getComputedStyle?: () => CSSStyleDeclaration; }, property: string) {
-  if (elm?.getComputedStyle) {
-    return window.getComputedStyle(elm, null).getPropertyValue(property);
+export function getElementProp(elm: HTMLElement, property: string) {
+  if (elm) {
+    return window.getComputedStyle(elm).getPropertyValue(property);
   }
   return null;
 }

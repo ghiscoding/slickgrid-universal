@@ -6,7 +6,9 @@ import {
   emptyElement,
   findFirstElementAttribute,
   getElementOffsetRelativeToParent,
+  getElementProp,
   getHtmlElementOffset,
+  getInnerSize,
   getSelectorStringFromElement,
   htmlEncode,
   htmlEntityDecode,
@@ -30,7 +32,7 @@ describe('Service/domUtilies', () => {
       });
     });
 
-    it('should calculate space ', () => {
+    it('should calculate space on all sides', () => {
       Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 400 });
       Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 1200 });
       jest.spyOn(div, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 25 } as any);
@@ -149,6 +151,36 @@ describe('Service/domUtilies', () => {
       expect(output).toEqual({ top: 10, left: 25 });
     });
   });
+
+  describe('getInnerSize() method', () => {
+    it('should return 0 when input element is null', () => {
+      const result = getInnerSize(null as any, 'height');
+
+      expect(result).toBe(0);
+    });
+
+    it('should return clientHeight when input element is defined with a certain height', () => {
+      const div = document.createElement('div');
+      Object.defineProperty(div, 'clientHeight', { writable: true, configurable: true, value: 324 });
+      const result = getInnerSize(div, 'height');
+
+      expect(result).toBe(324);
+    });
+
+    it('should return clientWidth when input element is defined with a certain width', () => {
+      const div = document.createElement('div');
+      Object.defineProperty(div, 'clientWidth', { writable: true, configurable: true, value: 324 });
+      const result = getInnerSize(div, 'width');
+
+      expect(result).toBe(324);
+    });
+
+    it('should return null when calling getElementProp() without a valid element', () => {
+      const prop = getElementProp(null as any, 'clientWidth');
+
+      expect(prop).toBeNull();
+    });
+  })
 
   describe('getSelectorStringFromElement() method', () => {
     it('should return html element selector without classes when div is created without classes', () => {
