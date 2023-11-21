@@ -20,17 +20,17 @@ export type Handler<ArgType = any> = (e: any, args: ArgType) => void;
  * @constructor
  */
 export class SlickEventData<ArgType = any> {
+  protected _arguments?: ArgType;
   protected _isPropagationStopped = false;
   protected _isImmediatePropagationStopped = false;
   protected _isDefaultPrevented = false;
+  protected nativeEvent?: Event | null;
   protected returnValue: any = undefined;
   protected target?: EventTarget | null;
-  protected nativeEvent?: Event | null;
-  protected arguments_?: ArgType;
 
   constructor(protected event?: Event | null, protected args?: ArgType) {
     this.nativeEvent = event;
-    this.arguments_ = args;
+    this._arguments = args;
 
     // when we already have an event, we want to keep some of the event properties
     // looping through some props is the only way to keep and sync these properties to the returned EventData
@@ -114,7 +114,7 @@ export class SlickEventData<ArgType = any> {
   }
 
   getArguments() {
-    return this.arguments_;
+    return this._arguments;
   }
 }
 
@@ -535,10 +535,6 @@ export class SlickEditorLock {
   };
 }
 
-function regexSanitizer(dirtyHtml: string) {
-  return dirtyHtml.replace(/(\b)(on[a-z]+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi, '');
-}
-
 export function isDefined<T>(value: T | undefined | null): value is T {
   return <T>value !== undefined && <T>value !== null;
 }
@@ -804,7 +800,6 @@ const SlickCore = {
   Group: SlickGroup,
   GroupTotals: SlickGroupTotals,
   EditorLock: SlickEditorLock,
-  RegexSanitizer: regexSanitizer,
 
   /**
    * A global singleton editor lock.
@@ -837,5 +832,5 @@ const SlickCore = {
 
 export const {
   EditorLock, Event, EventData, EventHandler, Group, GroupTotals, NonDataRow, Range,
-  RegexSanitizer, GlobalEditorLock, keyCode, preClickClassName,
+  GlobalEditorLock, keyCode, preClickClassName,
 } = SlickCore;
