@@ -1,5 +1,6 @@
+import 'jest-extended';
 import { EditController } from '../../interfaces';
-import { SlickEditorLock, SlickEvent, SlickEventData, SlickEventHandler, SlickGroup, SlickGroupTotals, SlickRange } from '../slickCore';
+import { SlickEditorLock, SlickEvent, SlickEventData, SlickEventHandler, SlickGroup, SlickGroupTotals, SlickRange, Utils } from '../slickCore';
 
 describe('slick.core file', () => {
   describe('SlickEventData class', () => {
@@ -364,5 +365,397 @@ describe('slick.core file', () => {
       expect(commitSpy).not.toHaveBeenCalled();
       expect(cancelled).toBeTrue();
     });
+  });
+
+  describe('Utils', () => {
+    describe('isPlainObject', () => {
+      it('should be falsy when object contains prototype methods', () => {
+        const l = console.log;
+        const obj = {
+          method: () => l("method in obj")
+        };
+        const obj2: any = { hello: 'world' };
+        obj2.__proto__ = obj;
+
+        expect(Utils.isPlainObject(obj2)).toBeFalsy();
+      });
+
+      it('should be truthy when object does not contains any prototype', () => {
+        const obj2: any = { hello: 'world' };
+        obj2.__proto__ = null;
+
+        expect(Utils.isPlainObject(obj2)).toBeTruthy();
+      });
+
+      it('should be truthy when object is a regular object without methods', () => {
+        const obj2 = { hello: 'world' };
+
+        expect(Utils.isPlainObject(obj2)).toBeTruthy();
+      });
+    });
+
+    describe('storage() function', () => {
+      it('should be able to store an object and retrieve it later', () => {
+        const div = document.createElement('div');
+        const col = { id: 'first', field: 'firstName', name: 'First Name' };
+
+        Utils.storage.put(div, 'column', col);
+        const result = Utils.storage.get(div, 'column');
+
+        expect(result).toEqual(col);
+      });
+
+      it('should be able to store an object and return null when element provided to .get() is invalid', () => {
+        const div = document.createElement('div');
+        const col = { id: 'first', field: 'firstName', name: 'First Name' };
+
+        Utils.storage.put(div, 'column', col);
+        const result = Utils.storage.get(null as any, 'column');
+
+        expect(result).toBeNull();
+      });
+
+      it('should be able to store an object and retrieve it, then remove it and expect null', () => {
+        const div = document.createElement('div');
+        const col = { id: 'first', field: 'firstName', name: 'First Name' };
+
+        Utils.storage.put(div, 'column', col);
+        const result = Utils.storage.get(div, 'column');
+        expect(result).toEqual(col);
+
+        const removed = Utils.storage.remove(div, 'column');
+        const result2 = Utils.storage.get(div, 'column');
+        expect(result2).toBeUndefined();
+        expect(removed).toBeTruthy();
+      });
+
+      it('should be able to store an object and return falsy when trying to remove something that does not exist', () => {
+        const div = document.createElement('div');
+        const col = { id: 'first', field: 'firstName', name: 'First Name' };
+
+        Utils.storage.put(div, 'column', col);
+        const result = Utils.storage.get(div, 'column');
+        expect(result).toEqual(col);
+
+        const removed = Utils.storage.remove(div, 'column2');
+        expect(removed).toBeFalsy();
+      });
+    });
+
+    describe('extend() function', () => {
+      it('should be able to make a perfect deep copy of an object', () => {
+        const obj1 = { hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'] } };
+        const obj2 = Utils.extend(true, {}, obj1, { another: 'prop' });
+
+        expect(obj2).toEqual({ hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'] }, another: 'prop' });
+      });
+
+      it('should be able to make a deep copy of an object and changing new object prop should not affect input object', () => {
+        const obj1 = { hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'] } };
+        const obj2 = Utils.extend(true, {}, obj1, { another: 'prop' });
+        obj2.hello.target = 'mum';
+
+        expect(obj1).toEqual({ hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'] } });
+        expect(obj2).toEqual({ hello: { sender: 'me', target: 'mum' }, deeper: { children: ['abc', 'cde'] }, another: 'prop' });
+      });
+
+      it('should assume an extended object when passing true boolean but ommitting empty object as target, so changing output object will impact input object as well', () => {
+        const obj1 = { hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'] } };
+        const obj2 = Utils.extend(true, obj1, { another: 'prop' });
+        obj2.hello.target = 'mum';
+
+        expect(obj1).toEqual({ hello: { sender: 'me', target: 'mum' }, deeper: { children: ['abc', 'cde'] }, another: 'prop' });
+        expect(obj2).toEqual({ hello: { sender: 'me', target: 'mum' }, deeper: { children: ['abc', 'cde'] }, another: 'prop' });
+      });
+
+      it('should assume an extended object when ommitting true boolean, so changing output object will impact input object as well', () => {
+        const obj1 = { hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'] } };
+        const obj2 = Utils.extend(obj1, { another: { age: 20 } });
+        obj2.hello.target = 'mum';
+
+        expect(obj1).toEqual({ hello: { sender: 'me', target: 'mum' }, deeper: { children: ['abc', 'cde'] }, another: { age: 20 } });
+        expect(obj2).toEqual({ hello: { sender: 'me', target: 'mum' }, deeper: { children: ['abc', 'cde'] }, another: { age: 20 } });
+      });
+
+      it('should return same object when passing input object twice', () => {
+        const obj1 = { hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'] } };
+        const obj2 = Utils.extend(true, {}, obj1, obj1);
+
+        expect(obj2).toEqual(obj1);
+      });
+
+      it('should do a deep copy of an array of objects with properties having objects and changing object property should not affect original object', () => {
+        const obj1 = { firstName: 'John', lastName: 'Doe', address: { zip: 123456 } };
+        const obj2 = { firstName: 'Jane', lastName: 'Doe', address: { zip: 222222 } };
+        const arr1 = [obj1, obj2];
+        const arr2 = Utils.extend(true, [], arr1);
+        arr2[0].address.zip = 888888;
+        arr2[1].address.zip = 999999;
+
+        expect(arr1[0].address.zip).toBe(123456);
+        expect(arr1[1].address.zip).toBe(222222);
+        expect(arr2[0].address.zip).toBe(888888);
+        expect(arr2[1].address.zip).toBe(999999);
+      });
+
+      it('should return same object when passing only a single object', () => {
+        expect(Utils.extend({ hello: 'world' })).toEqual({ hello: 'world' });
+      });
+
+      it('should expect Symbol to be converted to Object', () => {
+        const sym1 = Symbol("foo");
+        const sym2 = Symbol("bar");
+
+        expect(Utils.extend(sym1, sym2, { hello: 'world' })).toEqual({ hello: 'world' });
+      });
+    });
+
+    describe('noop() function', () => {
+      it('should return empty function', () => {
+        expect(typeof Utils.noop).toBe('function');
+        expect(Utils.noop()).toBeUndefined();
+      });
+    });
+
+    describe('height() function', () => {
+      it('should return null when calling without a valid element', () => {
+        const result = Utils.height(null as any);
+        expect(result).toBeUndefined();
+      });
+
+      it('should return client rect height when called without a 2nd argument value', () => {
+        const div = document.createElement('div');
+        jest.spyOn(div, 'getBoundingClientRect').mockReturnValue({ height: 120 } as DOMRect);
+
+        const result = Utils.height(div);
+
+        expect(result).toBe(120);
+      });
+
+      it('should apply height to element when called with a 2nd argument value', () => {
+        const div = document.createElement('div');
+        jest.spyOn(div, 'getBoundingClientRect').mockReturnValue({ height: 120 } as DOMRect);
+
+        Utils.height(div, 130);
+
+        expect(div.style.height).toBe('130px');
+      });
+    });
+
+    describe('width() function', () => {
+      it('should return null when calling without a valid element', () => {
+        const result = Utils.width(null as any);
+        expect(result).toBeUndefined();
+      });
+
+      it('should return client rect width when called without a 2nd argument value', () => {
+        const div = document.createElement('div');
+        jest.spyOn(div, 'getBoundingClientRect').mockReturnValue({ width: 120 } as DOMRect);
+
+        const result = Utils.width(div);
+
+        expect(result).toBe(120);
+      });
+
+      it('should apply width to element when called with a 2nd argument value', () => {
+        const div = document.createElement('div');
+        jest.spyOn(div, 'getBoundingClientRect').mockReturnValue({ width: 120 } as DOMRect);
+
+        Utils.width(div, 130);
+
+        expect(div.style.width).toBe('130px');
+      });
+    });
+
+    describe('parents() function', () => {
+      it('should return parent array when container element is hidden and we pass :hidden selector', () => {
+        const container = document.createElement('div');
+        const div = document.createElement('div');
+        const span = document.createElement('span');
+        const input = document.createElement('input');
+        Object.defineProperty(div, 'offsetWidth', { writable: true, configurable: true, value: 0 });
+        Object.defineProperty(div, 'offsetHeight', { writable: true, configurable: true, value: 0 });
+        span.appendChild(input);
+        div.appendChild(span);
+        container.appendChild(div);
+
+        const result = Utils.parents(span, ':hidden') as HTMLElement[];
+
+        expect(result).toEqual([div]);
+      });
+
+      it('should return no parent when container element is hidden and we pass :visible selector', () => {
+        const container = document.createElement('div');
+        const div = document.createElement('div');
+        const span = document.createElement('span');
+        const input = document.createElement('input');
+        Object.defineProperty(div, 'offsetWidth', { writable: true, configurable: true, value: 0 });
+        Object.defineProperty(div, 'offsetHeight', { writable: true, configurable: true, value: 0 });
+        span.appendChild(input);
+        div.appendChild(span);
+        container.appendChild(div);
+
+        const result = Utils.parents(span, ':visible') as HTMLElement[];
+
+        expect(result).toEqual([]);
+      });
+
+      it('should return no parent when container element itself has no parent', () => {
+        const div = document.createElement('div');
+        const span = document.createElement('span');
+        const input = document.createElement('input');
+        span.appendChild(input);
+        div.appendChild(span);
+
+        const result = Utils.parents(span, ':hidden') as HTMLElement[];
+
+        expect(result).toEqual([]);
+      });
+
+      it('should return parent array when container element is visible and we pass :visible selector', () => {
+        const container = document.createElement('div');
+        const div = document.createElement('div');
+        const span = document.createElement('span');
+        const input = document.createElement('input');
+        Object.defineProperty(div, 'offsetWidth', { writable: true, configurable: true, value: 12 });
+        Object.defineProperty(div, 'offsetHeight', { writable: true, configurable: true, value: 12 });
+        span.appendChild(input);
+        div.appendChild(span);
+        container.appendChild(div);
+
+        const result = Utils.parents(span, ':visible') as HTMLElement[];
+
+        expect(result).toEqual([div]);
+      });
+
+      it('should return list of parents with that includes querying selector with certain css class', () => {
+        const container = document.createElement('div');
+        const div = document.createElement('div');
+        const span = document.createElement('span');
+        const input = document.createElement('input');
+        div.className = 'my-class';
+        span.appendChild(input);
+        div.appendChild(span);
+        container.appendChild(div);
+
+        const result = Utils.parents(span, '.my-class') as HTMLElement[];
+
+        expect(result).toEqual([div]);
+      });
+    });
+
+    describe('setStyleSize() function', () => {
+      it('should execute value function when value is a function', () => {
+        const mockFn = jest.fn().mockReturnValue(110);
+        const div = document.createElement('div');
+        Utils.setStyleSize(div, 'width', mockFn);
+
+        expect(mockFn).toHaveBeenCalled();
+        expect(div.style.width).toBe('110px');
+      });
+    });
+
+    describe('isHidden() function', () => {
+      it('should be falsy when element has height/width greater than 0', () => {
+        const div = document.createElement('div');
+        Object.defineProperty(div, 'offsetWidth', { writable: true, configurable: true, value: 10 });
+        Object.defineProperty(div, 'offsetHeight', { writable: true, configurable: true, value: 10 });
+
+        const result = Utils.isHidden(div);
+
+        expect(result).toBeFalsy();
+      });
+
+      it('should be truthy when element has both height/width as 0', () => {
+        const div = document.createElement('div');
+        Object.defineProperty(div, 'offsetWidth', { writable: true, configurable: true, value: 0 });
+        Object.defineProperty(div, 'offsetHeight', { writable: true, configurable: true, value: 0 });
+
+        const result = Utils.isHidden(div);
+
+        expect(result).toBeTruthy();
+      });
+    });
+
+    describe('show() function', () => {
+      it('should make element visible when providing a single element', () => {
+        const div = document.createElement('div');
+        div.style.display = 'none';
+        Utils.show(div, 'block');
+
+        expect(div.style.display).toBe('block');
+      });
+
+      it('should make multiple elements visible when providing an array of elements', () => {
+        const div = document.createElement('div');
+        const span = document.createElement('span');
+        div.style.display = 'none';
+        span.style.display = 'none';
+
+        Utils.show([div, span], 'block');
+
+        expect(div.style.display).toBe('block');
+        expect(span.style.display).toBe('block');
+      });
+    });
+
+    describe('hide() function', () => {
+      it('should make element hidden when providing a single element', () => {
+        const div = document.createElement('div');
+        div.style.display = 'block';
+        Utils.hide(div);
+
+        expect(div.style.display).toBe('none');
+      });
+
+      it('should make multiple elements hidden when providing an array of elements', () => {
+        const div = document.createElement('div');
+        const span = document.createElement('span');
+        div.style.display = 'block';
+        span.style.display = 'block';
+
+        Utils.hide([div, span]);
+
+        expect(div.style.display).toBe('none');
+        expect(span.style.display).toBe('none');
+      });
+    });
+
+    describe('toFloat() function', () => {
+      it('should parse string as a number', () => {
+        const result = Utils.toFloat('120.2');
+
+        expect(result).toBe(120.2);
+      });
+
+      it('should be able to parse string that include other text', () => {
+        const result = Utils.toFloat('120.2px');
+
+        expect(result).toBe(120.2);
+      });
+
+      it('should return 0 when input is not a number', () => {
+        const result = Utils.toFloat('abc');
+
+        expect(result).toBe(0);
+      });
+    });
+
+    describe('applyDefaults() function', () => {
+      it('should apply default values to the input object', () => {
+        const defaults = {
+          alwaysShowVerticalScroll: false,
+          alwaysAllowHorizontalScroll: false,
+        };
+        const inputObj = { alwaysShowVerticalScroll: true };
+        Utils.applyDefaults(inputObj, defaults);
+
+        expect(inputObj).toEqual({
+          alwaysShowVerticalScroll: true,
+          alwaysAllowHorizontalScroll: false,
+        });
+      });
+    });
+
   });
 });

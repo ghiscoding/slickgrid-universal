@@ -591,13 +591,13 @@ export class Utils {
 
   public static extend<T = any>(...args: any[]): T {
     // eslint-disable-next-line one-var
-    let options, name, src, copy, copyIsArray, clone,
-      target = args[0],
-      i = 1,
-      deep = false;
+    let options, name, src, copy, copyIsArray, clone;
+    let target = args[0];
+    let i = 1;
+    let deep = false;
     const length = args.length;
 
-    if (typeof target === 'boolean') {
+    if (target === true) {
       deep = target;
       target = args[i] || {};
       i++;
@@ -605,8 +605,12 @@ export class Utils {
       target = target || {};
     }
     if (typeof target !== 'object' && !Utils.isFunction(target)) {
-      target = {};
+      target = {}; // Symbol and others will be converted to Object
     }
+    if (length === 1) {
+      return args[0];
+    }
+    /* istanbul ignore if */
     if (i === length) {
       // @ts-ignore
       // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -617,11 +621,11 @@ export class Utils {
       if (isDefined(options = args[i])) {
         for (name in options) {
           copy = options[name];
+          /* istanbul ignore if */
           if (name === '__proto__' || target === copy) {
             continue;
           }
-          if (deep && copy && (Utils.isPlainObject(copy) ||
-            (copyIsArray = Array.isArray(copy)))) {
+          if (deep && copy && (Utils.isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))) {
             src = target[name];
             if (copyIsArray && !Array.isArray(src)) {
               clone = [];
@@ -641,44 +645,7 @@ export class Utils {
     return target as T;
   }
 
-  public static innerSize(elm: HTMLElement, type: 'height' | 'width') {
-    let size = 0;
-
-    if (elm) {
-      const clientSize = type === 'height' ? 'clientHeight' : 'clientWidth';
-      const sides = type === 'height' ? ['top', 'bottom'] : ['left', 'right'];
-      size = elm[clientSize];
-      for (const side of sides) {
-        const sideSize = (parseFloat(Utils.getElementProp(elm, `padding-${side}`) || '') || 0);
-        size -= sideSize;
-      }
-    }
-    return size;
-  }
-
-  public static getElementProp(elm: HTMLElement & { getComputedStyle?: () => CSSStyleDeclaration }, property: string) {
-    if (elm?.getComputedStyle) {
-      return window.getComputedStyle(elm, null).getPropertyValue(property);
-    }
-    return null;
-  }
-
-  public static isEmptyObject(obj: any) {
-    if (obj === null || obj === undefined) {
-      return true;
-    }
-    return Object.entries(obj).length === 0;
-  }
-
   public static noop() { }
-
-  public static width(el: HTMLElement, value?: number | string): number | void {
-    if (!el || !el.getBoundingClientRect) { return; }
-    if (value === undefined) {
-      return el.getBoundingClientRect().width;
-    }
-    Utils.setStyleSize(el, 'width', value);
-  }
 
   public static height(el: HTMLElement, value?: number | string): number | void {
     if (!el) {
@@ -690,26 +657,21 @@ export class Utils {
     Utils.setStyleSize(el, 'height', value);
   }
 
+  public static width(el: HTMLElement, value?: number | string): number | void {
+    if (!el || !el.getBoundingClientRect) {
+      return;
+    }
+    if (value === undefined) {
+      return el.getBoundingClientRect().width;
+    }
+    Utils.setStyleSize(el, 'width', value);
+  }
+
   public static setStyleSize(el: HTMLElement, style: string, val?: number | string | Function) {
     if (typeof val === 'function') {
       val = val();
-    } else {
-      el.style[style as CSSStyleDeclarationWritable] = (typeof val === 'string') ? val : `${val}px`;
     }
-  }
-
-  public static contains(parent: HTMLElement, child: HTMLElement) {
-    if (!parent || !child) {
-      return false;
-    }
-
-    const parentList = Utils.parents(child);
-    return !parentList.every((p) => {
-      if (parent === p) {
-        return false;
-      }
-      return true;
-    });
+    el.style[style as CSSStyleDeclarationWritable] = (typeof val === 'string') ? val : `${val}px`;
   }
 
   public static isHidden(el: HTMLElement) {
