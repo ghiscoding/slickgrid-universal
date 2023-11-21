@@ -444,10 +444,11 @@ describe('slick.core file', () => {
 
     describe('extend() function', () => {
       it('should be able to make a perfect deep copy of an object', () => {
-        const obj1 = { hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'] } };
+        const callback = () => console.log('hello');
+        const obj1 = { hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'], callback } };
         const obj2 = Utils.extend(true, {}, obj1, { another: 'prop' });
 
-        expect(obj2).toEqual({ hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'] }, another: 'prop' });
+        expect(obj2).toEqual({ hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'], callback }, another: 'prop' });
       });
 
       it('should be able to make a deep copy of an object and changing new object prop should not affect input object', () => {
@@ -507,6 +508,21 @@ describe('slick.core file', () => {
         const sym2 = Symbol("bar");
 
         expect(Utils.extend(sym1, sym2, { hello: 'world' })).toEqual({ hello: 'world' });
+      });
+
+      it('should be able to make a copy of an object with prototype', () => {
+        const l = console.log;
+        const method = () => l("method in obj");
+        const obj = {
+          method
+        };
+        const obj2: any = { hello: 'world' };
+        obj2.__proto__ = obj;
+
+        const obj1 = { hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'] } };
+        const obj3 = Utils.extend(obj1, obj2);
+
+        expect(obj3).toEqual({ hello: 'world', deeper: { children: ['abc', 'cde'] }, method });
       });
     });
 
