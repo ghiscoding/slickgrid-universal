@@ -258,14 +258,18 @@ export function getInnerSize(elm: HTMLElement, type: 'height' | 'width') {
     const sides = type === 'height' ? ['top', 'bottom'] : ['left', 'right'];
     size = elm[clientSize];
     for (const side of sides) {
-      size -= (parseFloat(getElementProp(elm, `padding-${side}`)) || 0);
+      const sideSize = (parseFloat(getElementProp(elm, `padding-${side}`) || '') || 0);
+      size -= sideSize;
     }
   }
   return size;
 }
 
-export function getElementProp(elm: HTMLElement, property: string) {
-  return window.getComputedStyle(elm, null).getPropertyValue(property);
+export function getElementProp(elm: HTMLElement & { getComputedStyle?: () => CSSStyleDeclaration; }, property: string) {
+  if (elm?.getComputedStyle) {
+    return window.getComputedStyle(elm, null).getPropertyValue(property);
+  }
+  return null;
 }
 
 export function getSelectorStringFromElement(elm?: HTMLElement | null) {

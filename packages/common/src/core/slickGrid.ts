@@ -81,7 +81,7 @@ import type {
   SlickPlugin,
   SlickGridEventData,
 } from '../interfaces';
-import { createDomElement, emptyElement, getHtmlElementOffset } from '../services/domUtilities';
+import { createDomElement, emptyElement, getHtmlElementOffset, getInnerSize } from '../services/domUtilities';
 
 /**
  * @license
@@ -3674,7 +3674,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   getViewportWidth() {
-    this.viewportW = parseFloat(Utils.innerSize(this._container, 'width') as unknown as string);
+    this.viewportW = parseFloat(getInnerSize(this._container, 'width') as unknown as string);
     return this.viewportW;
   }
 
