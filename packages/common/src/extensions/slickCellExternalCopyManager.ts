@@ -1,6 +1,6 @@
 import { KeyCode } from '../enums/index';
 import type { CellRange, Column, ExcelCopyBufferOption, ExternalCopyClipCommand } from '../interfaces/index';
-import { createDomElement, sanitizeHtmlToText } from '../services/domUtilities';
+import { createDomElement, removeHtmlTags } from '../services/domUtilities';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange } from '../core/index';
 
 // using external SlickGrid JS libraries
@@ -82,17 +82,17 @@ export class SlickCellExternalCopyManager {
     if (typeof this._addonOptions.headerColumnValueExtractor === 'function') {
       const val = this._addonOptions.headerColumnValueExtractor(columnDef);
       if (val) {
-        return (val instanceof HTMLElement) ? sanitizeHtmlToText(val.innerHTML) : val;
+        return (val instanceof HTMLElement) ? removeHtmlTags(val.innerHTML) : val;
       }
     }
-    return columnDef.name instanceof HTMLElement ? sanitizeHtmlToText(columnDef.name.innerHTML) : columnDef.name;
+    return columnDef.name instanceof HTMLElement ? removeHtmlTags(columnDef.name.innerHTML) : columnDef.name;
   }
 
   getDataItemValueForColumn(item: any, columnDef: Column, event: Event) {
     if (typeof this._addonOptions.dataItemColumnValueExtractor === 'function') {
       const val = this._addonOptions.dataItemColumnValueExtractor(item, columnDef) as string | HTMLElement;
       if (val) {
-        return (val instanceof HTMLElement) ? sanitizeHtmlToText(val.innerHTML) : val;
+        return (val instanceof HTMLElement) ? removeHtmlTags(val.innerHTML) : val;
       }
     }
 
@@ -388,7 +388,7 @@ export class SlickCellExternalCopyManager {
                 const clipTextHeaders: string[] = [];
                 for (let j = range.fromCell; j < range.toCell + 1; j++) {
                   const colName: string = columns[j].name instanceof HTMLElement
-                    ? sanitizeHtmlToText((columns[j].name as HTMLElement).innerHTML)
+                    ? removeHtmlTags((columns[j].name as HTMLElement).innerHTML)
                     : columns[j].name as string;
                   if (colName.length > 0 && !columns[j].hidden) {
                     clipTextHeaders.push(this.getHeaderValueForColumn(columns[j]));
@@ -399,7 +399,7 @@ export class SlickCellExternalCopyManager {
 
               for (let j = range.fromCell; j < range.toCell + 1; j++) {
                 const colName: string = columns[j].name instanceof HTMLElement
-                  ? sanitizeHtmlToText((columns[j].name as HTMLElement).innerHTML)
+                  ? removeHtmlTags((columns[j].name as HTMLElement).innerHTML)
                   : columns[j].name as string;
                 if (colName.length > 0 && !columns[j].hidden) {
                   clipTextCells.push(this.getDataItemValueForColumn(dt, columns[j], e));

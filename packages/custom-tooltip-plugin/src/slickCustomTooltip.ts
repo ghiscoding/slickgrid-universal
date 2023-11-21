@@ -20,8 +20,8 @@ import {
   CancelledException,
   cancellablePromise,
   createDomElement,
-  findFirstElementAttribute,
-  getHtmlElementOffset,
+  findFirstAttribute,
+  getOffset,
   sanitizeTextByAvailableSanitizer,
   SlickEventHandler,
 } from '@slickgrid-universal/common';
@@ -332,13 +332,13 @@ export class SlickCustomTooltip {
         if (this._cellAddonOptions?.useRegularTooltipFromFormatterOnly) {
           tmpTitleElm = tmpDiv.querySelector<HTMLDivElement>('[title], [data-slick-tooltip]');
         } else {
-          tmpTitleElm = findFirstElementAttribute(this._cellNodeElm, ['title', 'data-slick-tooltip']) ? this._cellNodeElm : tmpDiv.querySelector<HTMLDivElement>('[title], [data-slick-tooltip]');
-          if ((!tmpTitleElm || !findFirstElementAttribute(tmpTitleElm, ['title', 'data-slick-tooltip'])) && this._cellNodeElm) {
+          tmpTitleElm = findFirstAttribute(this._cellNodeElm, ['title', 'data-slick-tooltip']) ? this._cellNodeElm : tmpDiv.querySelector<HTMLDivElement>('[title], [data-slick-tooltip]');
+          if ((!tmpTitleElm || !findFirstAttribute(tmpTitleElm, ['title', 'data-slick-tooltip'])) && this._cellNodeElm) {
             tmpTitleElm = this._cellNodeElm.querySelector<HTMLDivElement>('[title], [data-slick-tooltip]');
           }
         }
         if (!tooltipText || (typeof formatterOrText === 'function' && this._cellAddonOptions?.useRegularTooltipFromFormatterOnly)) {
-          tooltipText = findFirstElementAttribute(tmpTitleElm, ['title', 'data-slick-tooltip']) || '';
+          tooltipText = findFirstAttribute(tmpTitleElm, ['title', 'data-slick-tooltip']) || '';
         }
       }
     }
@@ -363,7 +363,7 @@ export class SlickCustomTooltip {
     // ie: when user is currently editing and uses the Slider, when dragging its value is changing, so we wish to use the editing value instead of the previous cell value.
     if (value === null || value === undefined) {
       const tmpTitleElm = this._cellNodeElm?.querySelector<HTMLDivElement>('[title], [data-slick-tooltip]');
-      value = findFirstElementAttribute(tmpTitleElm, ['title', 'data-slick-tooltip']) || value;
+      value = findFirstAttribute(tmpTitleElm, ['title', 'data-slick-tooltip']) || value;
     }
 
     let outputText = tooltipText || this.parseFormatterAndSanitize(formatter, cell, value, columnDef, item) || '';
@@ -415,7 +415,7 @@ export class SlickCustomTooltip {
   protected reposition(cell: { row: number; cell: number; }) {
     if (this._tooltipElm) {
       this._cellNodeElm = this._cellNodeElm || this._grid.getCellNode(cell.row, cell.cell) as HTMLDivElement;
-      const cellPosition = getHtmlElementOffset(this._cellNodeElm) || { top: 0, left: 0 };
+      const cellPosition = getOffset(this._cellNodeElm) || { top: 0, left: 0 };
       const cellContainerWidth = this._cellNodeElm.offsetWidth;
       const calculatedTooltipHeight = this._tooltipElm.getBoundingClientRect().height;
       const calculatedTooltipWidth = this._tooltipElm.getBoundingClientRect().width;

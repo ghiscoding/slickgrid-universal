@@ -3,7 +3,7 @@ const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "m
 
 import { FieldType } from '../enums/fieldType.enum';
 import type { Column, ExcelExportOption, Formatter, FormatterResultWithHtml, FormatterResultWithText, GridOption, TextExportOption } from '../interfaces/index';
-import { sanitizeHtmlToText } from '../services/domUtilities';
+import { removeHtmlTags } from '../services/domUtilities';
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { multipleFormatter } from './multipleFormatter';
 import { Constants } from '../constants';
@@ -157,7 +157,7 @@ export function exportWithFormatterWhenDefined<T = any>(row: number, col: number
   }
 
   const output = parseFormatterWhenExist(formatter, row, col, columnDef, dataContext, grid);
-  return (exportOptions?.sanitizeDataExport && typeof output === 'string') ? sanitizeHtmlToText(output) : output;
+  return (exportOptions?.sanitizeDataExport && typeof output === 'string') ? removeHtmlTags(output) : output;
 }
 
 /**

@@ -17,7 +17,7 @@ import type {
   Locale,
   LongTextEditorOption,
 } from '../interfaces/index';
-import { createDomElement, getHtmlElementOffset, } from '../services/domUtilities';
+import { createDomElement, getOffset, } from '../services/domUtilities';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import { textValidator } from '../editorValidators/textValidator';
@@ -304,7 +304,7 @@ export class LongTextEditor implements Editor {
    * NOTE: this only applies to Inline Editing and will not have any effect when using the Composite Editor modal window.
    */
   position(parentPosition: Partial<HtmlElementPosition>) {
-    const containerOffset = getHtmlElementOffset(this.args.container);
+    const containerOffset = getOffset(this.args.container);
     const containerHeight = this.args.container.offsetHeight;
     const containerWidth = this.args.container.offsetWidth;
     const calculatedEditorHeight = this._wrapperElm.getBoundingClientRect().height || (this.args.position as ElementPosition).height;

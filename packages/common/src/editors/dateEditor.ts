@@ -20,7 +20,7 @@ import type {
   FlatpickrOption,
   GridOption,
 } from './../interfaces/index';
-import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
+import { createDomElement, destroyAllElementProps, emptyElement, } from '../services/domUtilities';
 import { getDescendantProperty, mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, } from './../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import { SlickEventData, type SlickGrid } from '../core/index';
@@ -189,7 +189,7 @@ export class DateEditor implements Editor {
     if (typeof this.flatInstance?.destroy === 'function') {
       this.flatInstance.destroy();
       if (this.flatInstance?.element) {
-        setTimeout(() => destroyObjectDomElementProps(this.flatInstance));
+        setTimeout(() => destroyAllElementProps(this.flatInstance));
       }
     }
     emptyElement(this._editorInputGroupElm);

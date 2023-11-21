@@ -18,7 +18,7 @@ import type { TranslaterService } from './translater.service';
  * @param {Array<*>} searchTerms - optional array of search term (used by the "filter" type only)
  * @returns object with 2 properties for the select element & a boolean value telling us if any of the search terms were found and selected in the dropdown
  */
-export function buildMultipleSelectDataCollection(type: 'editor' | 'filter', collection: any[], columnDef: Column, grid: SlickGrid, isMultiSelect = false, translaterService?: TranslaterService, searchTerms?: SearchTerm[]): { selectElement: HTMLSelectElement; dataCollection: OptionRowData[]; hasFoundSearchTerm: boolean; } {
+export function buildMsSelectCollectionList(type: 'editor' | 'filter', collection: any[], columnDef: Column, grid: SlickGrid, isMultiSelect = false, translaterService?: TranslaterService, searchTerms?: SearchTerm[]): { selectElement: HTMLSelectElement; dataCollection: OptionRowData[]; hasFoundSearchTerm: boolean; } {
   const columnId = columnDef?.id ?? '';
   const gridOptions = grid.getOptions();
   const columnFilterOrEditor = (type === 'editor' ? columnDef?.internalColumnEditor : columnDef?.filter) ?? {};
@@ -129,7 +129,7 @@ export function calculateAvailableSpace(element: HTMLElement): { top: number; bo
   const scrollPosition = windowScrollPosition();
   const pageScrollTop = scrollPosition.top;
   const pageScrollLeft = scrollPosition.left;
-  const elmOffset = getHtmlElementOffset(element);
+  const elmOffset = getOffset(element);
 
   if (elmOffset) {
     const elementOffsetTop = elmOffset.top ?? 0;
@@ -185,11 +185,11 @@ export function createDomElement<T extends keyof HTMLElementTagNameMap, K extend
  * if we detect an array then use recursion to go inside it and apply same logic
  * @param obj - object containing 1 or more properties with DOM Elements
  */
-export function destroyObjectDomElementProps(obj: any) {
+export function destroyAllElementProps(obj: any) {
   if (obj) {
     for (const key of Object.keys(obj)) {
       if (Array.isArray(obj[key])) {
-        destroyObjectDomElementProps(obj[key]);
+        destroyAllElementProps(obj[key]);
       }
       if (obj[key] instanceof HTMLElement) {
         obj[key] = null;
@@ -214,7 +214,7 @@ export function emptyElement<T extends Element = Element>(element?: T | null): T
 }
 
 /** Get offset of HTML element relative to a parent element */
-export function getElementOffsetRelativeToParent(parentElm: HTMLElement | null, childElm: HTMLElement | null) {
+export function getOffsetRelativeToParent(parentElm: HTMLElement | null, childElm: HTMLElement | null) {
   if (!parentElm || !childElm) {
     return undefined;
   }
@@ -229,7 +229,7 @@ export function getElementOffsetRelativeToParent(parentElm: HTMLElement | null, 
 }
 
 /** Get HTML element offset with pure JS */
-export function getHtmlElementOffset(elm?: HTMLElement | null): HtmlElementPosition | undefined {
+export function getOffset(elm?: HTMLElement | null): HtmlElementPosition | undefined {
   if (!elm || !elm.getBoundingClientRect) {
     return undefined;
   }
@@ -258,29 +258,22 @@ export function getInnerSize(elm: HTMLElement, type: 'height' | 'width') {
     const sides = type === 'height' ? ['top', 'bottom'] : ['left', 'right'];
     size = elm[clientSize];
     for (const side of sides) {
-      const sideSize = (parseFloat(getElementProp(elm, `padding-${side}`) || '') || 0);
+      const sideSize = (parseFloat(getStyleProp(elm, `padding-${side}`) || '') || 0);
       size -= sideSize;
     }
   }
   return size;
 }
 
-export function getElementProp(elm: HTMLElement, property: string) {
+/** Get a DOM element style property value by calling getComputedStyle() on the element */
+export function getStyleProp(elm: HTMLElement, property: string) {
   if (elm) {
     return window.getComputedStyle(elm).getPropertyValue(property);
   }
   return null;
 }
 
-export function getSelectorStringFromElement(elm?: HTMLElement | null) {
-  let selector = '';
-  if (elm?.localName) {
-    selector = elm?.className ? `${elm.localName}.${Array.from(elm.classList).join('.')}` : elm.localName;
-  }
-  return selector;
-}
-
-export function findFirstElementAttribute(inputElm: Element | null | undefined, attributes: string[]): string | null {
+export function findFirstAttribute(inputElm: Element | null | undefined, attributes: string[]): string | null {
   if (inputElm) {
     for (const attribute of attributes) {
       const attrData = inputElm.getAttribute(attribute);
@@ -337,7 +330,7 @@ export function htmlEntityDecode(input: string): string {
  * @param {string} inputStr - input string
  * @param {number} paddingLength - padding to add
  */
-export function htmlEncodedStringWithPadding(inputStr: string, paddingLength: number): string {
+export function htmlEncodeWithPadding(inputStr: string, paddingLength: number): string {
   const inputStrLn = inputStr.length;
   let outputStr = htmlEncode(inputStr);
 
@@ -354,7 +347,7 @@ export function htmlEncodedStringWithPadding(inputStr: string, paddingLength: nu
  * @input htmlString
  * @return text
  */
-export function sanitizeHtmlToText(htmlString: string): string {
+export function removeHtmlTags(htmlString: string): string {
   const temp = document.createElement('div');
   temp.innerHTML = htmlString;
   return temp.textContent || temp.innerText || '';

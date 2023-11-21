@@ -15,7 +15,7 @@ import {
   getValueFromParamsOrFormatterOptions,
   GroupTotalFormatters,
   retrieveFormatterOptions,
-  sanitizeHtmlToText,
+  removeHtmlTags,
 } from '@slickgrid-universal/common';
 
 export type ExcelFormatter = object & { id: number; };
@@ -259,11 +259,11 @@ function createExcelFormatFromGridFormatter(columnDef: Column, grid: SlickGrid, 
   const testingNo = parseFloat(`${leftInteger}.${excelTestingDecimalNumberPadding(minDecimal, maxDecimal)}`);
 
   if (formatterType === 'group' && columnDef.groupTotalsFormatter) {
-    positiveFormat = sanitizeHtmlToText(columnDef.groupTotalsFormatter({ [groupType]: { [columnDef.field]: testingNo } }, columnDef, grid));
-    negativeFormat = sanitizeHtmlToText(columnDef.groupTotalsFormatter({ [groupType]: { [columnDef.field]: -testingNo } }, columnDef, grid));
+    positiveFormat = removeHtmlTags(columnDef.groupTotalsFormatter({ [groupType]: { [columnDef.field]: testingNo } }, columnDef, grid));
+    negativeFormat = removeHtmlTags(columnDef.groupTotalsFormatter({ [groupType]: { [columnDef.field]: -testingNo } }, columnDef, grid));
   } else if (columnDef.formatter) {
-    positiveFormat = sanitizeHtmlToText(columnDef.formatter(0, 0, testingNo, columnDef, {}, grid) as string);
-    negativeFormat = sanitizeHtmlToText(columnDef.formatter(0, 0, -testingNo, columnDef, {}, grid) as string);
+    positiveFormat = removeHtmlTags(columnDef.formatter(0, 0, testingNo, columnDef, {}, grid) as string);
+    negativeFormat = removeHtmlTags(columnDef.formatter(0, 0, -testingNo, columnDef, {}, grid) as string);
   }
   if (positiveFormat && negativeFormat) {
     outputFormat = createFormatFromNumber(positiveFormat) + ';' + createFormatFromNumber(negativeFormat);

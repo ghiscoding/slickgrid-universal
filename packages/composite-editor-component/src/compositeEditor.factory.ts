@@ -9,7 +9,7 @@ import type {
 } from '@slickgrid-universal/common';
 import {
   emptyElement,
-  getHtmlElementOffset,
+  getOffset,
 } from '@slickgrid-universal/common';
 
 export interface CompositeEditorArguments extends EditorArguments {
@@ -62,7 +62,7 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
 
   const getContainerBox = (i: number): ElementPosition => {
     const container = containers[i];
-    const offset = getHtmlElementOffset(container);
+    const offset = getOffset(container);
     const width = container?.clientWidth ?? 0;
     const height = container?.clientHeight ?? 0;
 

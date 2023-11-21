@@ -81,7 +81,7 @@ import type {
   SlickPlugin,
   SlickGridEventData,
 } from '../interfaces';
-import { createDomElement, emptyElement, getHtmlElementOffset, getInnerSize } from '../services/domUtilities';
+import { createDomElement, emptyElement, getOffset, getInnerSize } from '../services/domUtilities';
 
 /**
  * @license
@@ -1752,13 +1752,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       scroll: !this.hasFrozenColumns(), // enable auto-scroll
       onStart: (e: { item: any; originalEvent: MouseEvent; }) => {
         canDragScroll = !this.hasFrozenColumns() ||
-          getHtmlElementOffset(e.item)!.left > getHtmlElementOffset(this._viewportScrollContainerX)!.left;
+          getOffset(e.item)!.left > getOffset(this._viewportScrollContainerX)!.left;
 
         if (canDragScroll && e.originalEvent.pageX > this._container.clientWidth) {
           if (!(columnScrollTimer)) {
             columnScrollTimer = setInterval(scrollColumnsRight, 100);
           }
-        } else if (canDragScroll && e.originalEvent.pageX < getHtmlElementOffset(this._viewportScrollContainerX)!.left) {
+        } else if (canDragScroll && e.originalEvent.pageX < getOffset(this._viewportScrollContainerX)!.left) {
           if (!(columnScrollTimer)) {
             columnScrollTimer = setInterval(scrollColumnsLeft, 100);
           }
@@ -5048,7 +5048,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     if (this.hasFrozenRows) {
       let rowOffset = 0;
-      const c = getHtmlElementOffset(Utils.parents(cellNode, '.grid-canvas')[0] as HTMLElement);
+      const c = getOffset(Utils.parents(cellNode, '.grid-canvas')[0] as HTMLElement);
       const isBottom = Utils.parents(cellNode, '.grid-canvas-bottom').length;
 
       if (isBottom) {
@@ -5166,8 +5166,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.activeCellNode = newCell;
 
     if (isDefined(this.activeCellNode)) {
-      const activeCellOffset = getHtmlElementOffset(this.activeCellNode);
-      let rowOffset = Math.floor(getHtmlElementOffset(Utils.parents(this.activeCellNode, '.grid-canvas')[0] as HTMLElement)!.top);
+      const activeCellOffset = getOffset(this.activeCellNode);
+      let rowOffset = Math.floor(getOffset(Utils.parents(this.activeCellNode, '.grid-canvas')[0] as HTMLElement)!.top);
       const isBottom = Utils.parents(this.activeCellNode, '.grid-canvas-bottom').length;
 
       if (this.hasFrozenRows && isBottom) {

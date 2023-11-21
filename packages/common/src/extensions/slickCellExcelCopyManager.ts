@@ -9,7 +9,7 @@ import type {
   FormatterResultWithText,
   GridOption,
 } from '../interfaces/index';
-import { sanitizeHtmlToText } from '../services/domUtilities';
+import { removeHtmlTags } from '../services/domUtilities';
 import { SlickCellExternalCopyManager, SlickCellSelectionModel } from './index';
 import { type SlickDataView, SlickEventHandler, SlickGlobalEditorLock, type SlickGrid } from '../core/index';
 
@@ -152,7 +152,7 @@ export class SlickCellExcelCopyManager {
             const cellResult = (Object.prototype.toString.call(formattedOutput) !== '[object Object]' ? formattedOutput : (formattedOutput as FormatterResultWithHtml).html || (formattedOutput as FormatterResultWithText).text);
             if (columnDef.sanitizeDataExport || (this.gridOptions.textExportOptions?.sanitizeDataExport)) {
               const outputString = (cellResult instanceof HTMLElement) ? cellResult.innerHTML : cellResult as string;
-              return sanitizeHtmlToText(outputString ?? '');
+              return removeHtmlTags(outputString ?? '');
             }
             return formattedOutput;
           }
