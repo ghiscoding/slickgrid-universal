@@ -693,10 +693,8 @@ export class Utils {
   public static setStyleSize(el: HTMLElement, style: string, val?: number | string | Function) {
     if (typeof val === 'function') {
       val = val();
-    } else if (typeof val === 'string') {
-      el.style[style as CSSStyleDeclarationWritable] = val;
     } else {
-      el.style[style as CSSStyleDeclarationWritable] = val + 'px';
+      el.style[style as CSSStyleDeclarationWritable] = (typeof val === 'string') ? val : `${val}px`;
     }
   }
 
