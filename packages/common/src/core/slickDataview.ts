@@ -69,7 +69,6 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   // versions at endUpdate
   protected bulkDeleteIds = new Map<DataIdType, boolean>();
   protected sortAsc: boolean | undefined = true;
-  protected fastSortField?: string | null | (() => string);
   protected sortComparer!: ((a: TData, b: TData) => number);
   protected refreshHints: any = {};
   protected prevRefreshHints: any = {};
@@ -305,7 +304,6 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   sort(comparer: (a: TData, b: TData) => number, ascending?: boolean) {
     this.sortAsc = ascending;
     this.sortComparer = comparer;
-    this.fastSortField = null;
     if (ascending === false) {
       this.items.reverse();
     }
@@ -318,41 +316,10 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.refresh();
   }
 
-  /**
-   * Provides a workaround for the extremely slow sorting in IE.
-   * Does a [lexicographic] sort on a given column by temporarily overriding Object.prototype.toString
-   * to return the value of that field and then doing a native Array.sort().
-   */
-  fastSort(field: string | (() => string), ascending?: boolean) {
-    this.sortAsc = ascending;
-    this.fastSortField = field;
-    this.sortComparer = null as any;
-    const oldToString = Object.prototype.toString;
-    Object.prototype.toString = (typeof field === 'function') ? field : function () {
-      // @ts-ignore
-      return this[field];
-    };
-    // an extra reversal for descending sort keeps the sort stable
-    // (assuming a stable native sort implementation, which isn't true in some cases)
-    if (ascending === false) {
-      this.items.reverse();
-    }
-    this.items.sort();
-    Object.prototype.toString = oldToString;
-    if (ascending === false) {
-      this.items.reverse();
-    }
-    this.idxById = new Map();
-    this.updateIdxById();
-    this.refresh();
-  }
-
   /** Re-Sort the dataset */
   reSort() {
     if (this.sortComparer) {
       this.sort(this.sortComparer, this.sortAsc);
-    } else if (this.fastSortField) {
-      this.fastSort(this.fastSortField, this.sortAsc);
     }
   }
 
