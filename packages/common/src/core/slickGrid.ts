@@ -7,11 +7,11 @@ const DOMPurify = ((DOMPurify_ as any)?.['default'] ?? DOMPurify_); // patch for
 import { BindingEventService } from '@slickgrid-universal/binding';
 
 import {
-  GlobalEditorLock,
   isDefined,
   keyCode,
   preClickClassName,
   type SlickEditorLock,
+  SlickGlobalEditorLock,
   SlickEvent,
   SlickEventData,
   SlickRange,
@@ -209,7 +209,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     asyncPostRenderCleanupDelay: 40,
     auto: false,
     nonce: '',
-    editorLock: GlobalEditorLock,
+    editorLock: SlickGlobalEditorLock,
     showColumnHeader: true,
     showHeaderRow: false,
     headerRowHeight: 25,
@@ -253,7 +253,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     suppressCssChangesOnHiddenInit: false,
     ffMaxSupportedCssHeight: 6000000,
     maxSupportedCssHeight: 1000000000,
-    sanitizer: undefined,  // sanitize function, built in basic sanitizer is: Slick.RegexSanitizer(dirtyHtml)
+    sanitizer: undefined,  // sanitize function
     mixinDefaults: true,
     shadowRoot: undefined
   };
@@ -1826,7 +1826,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected setupColumnResize() {
     if (typeof Resizable === 'undefined') {
-      throw new Error(`Slick.Resizable is undefined, make sure to import "slick.interactions.js"`);
+      throw new Error(`SlickResizable is undefined, make sure to import "slick.interactions.js"`);
     }
 
     let j: number;

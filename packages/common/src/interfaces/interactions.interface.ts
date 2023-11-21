@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 // --
-// slick.interactions.ts
+// Slick Interactions
 
 import { DOMMouseOrTouchEvent } from './domEvent.interface';
 import { DragPosition } from './drag.interface';

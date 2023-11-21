@@ -2,7 +2,7 @@ import 'jest-extended';
 import { EditController } from '../../interfaces';
 import { SlickEditorLock, SlickEvent, SlickEventData, SlickEventHandler, SlickGroup, SlickGroupTotals, SlickRange, Utils } from '../slickCore';
 
-describe('slick.core file', () => {
+describe('SlickCore file', () => {
   describe('SlickEventData class', () => {
     it('should call isPropagationStopped() and expect truthy when event propagation is stopped by calling stopPropagation()', () => {
       const evt = new CustomEvent('click');
