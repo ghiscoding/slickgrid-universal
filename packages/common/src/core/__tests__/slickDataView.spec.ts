@@ -2,6 +2,7 @@ import { SlickDataView } from '../slickDataview';
 
 describe('SlickDatView core file', () => {
   let container: HTMLElement;
+  let dataView: SlickDataView;
 
   beforeEach(() => {
     container = document.createElement('div');
@@ -11,12 +12,13 @@ describe('SlickDatView core file', () => {
 
   afterEach(() => {
     document.body.textContent = '';
+    dataView.destroy();
   });
 
   it('should be able to instantiate SlickDataView', () => {
-    const dv = new SlickDataView({});
+    dataView = new SlickDataView({});
 
-    expect(dv.getItems()).toEqual([]);
+    expect(dataView.getItems()).toEqual([]);
   });
 
   it('should be able to add items to the DataView', () => {
@@ -24,12 +26,12 @@ describe('SlickDatView core file', () => {
       { id: 1, firstName: 'John', lastName: 'Doe' },
       { id: 2, firstName: 'Jane', lastName: 'Doe' },
     ]
-    const dv = new SlickDataView({});
-    dv.addItem(mockData[0]);
-    dv.addItem(mockData[1]);
+    dataView = new SlickDataView({});
+    dataView.addItem(mockData[0]);
+    dataView.addItem(mockData[1]);
 
-    expect(dv.getLength()).toBe(2);
-    expect(dv.getItemCount()).toBe(2);
-    expect(dv.getItems()).toEqual(mockData);
+    expect(dataView.getLength()).toBe(2);
+    expect(dataView.getItemCount()).toBe(2);
+    expect(dataView.getItems()).toEqual(mockData);
   });
 });
