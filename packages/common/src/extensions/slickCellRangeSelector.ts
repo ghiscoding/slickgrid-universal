@@ -9,7 +9,7 @@ import type {
   MouseOffsetViewport,
   OnScrollEventArgs,
 } from '../interfaces/index';
-import { emptyElement, getHtmlElementOffset, } from '../services/domUtilities';
+import { emptyElement, getOffset, } from '../services/domUtilities';
 import { SlickCellRangeDecorator } from './index';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange } from '../core/index';
 
@@ -124,7 +124,7 @@ export class SlickCellRangeSelector {
     const viewportRight = viewportLeft + this._viewportWidth;
     const viewportBottom = viewportTop + this._viewportHeight;
 
-    const viewportOffset = getHtmlElementOffset(this._activeViewport);
+    const viewportOffset = getOffset(this._activeViewport);
     const viewportOffsetLeft = viewportOffset?.left ?? 0;
     const viewportOffsetTop = viewportOffset?.top ?? 0;
     const viewportOffsetRight = viewportOffsetLeft + this._viewportWidth;
@@ -256,8 +256,8 @@ export class SlickCellRangeSelector {
   protected handleDragTo(e: { pageX: number; pageY: number; }, dd: DragPosition) {
     const targetEvent: MouseEvent | Touch = (e as unknown as TouchEvent)?.touches?.[0] ?? e;
     const end = this._grid.getCellFromPoint(
-      targetEvent.pageX - (getHtmlElementOffset(this._activeCanvas)?.left ?? 0) + this._columnOffset,
-      targetEvent.pageY - (getHtmlElementOffset(this._activeCanvas)?.top ?? 0) + this._rowOffset
+      targetEvent.pageX - (getOffset(this._activeCanvas)?.left ?? 0) + this._columnOffset,
+      targetEvent.pageY - (getOffset(this._activeCanvas)?.top ?? 0) + this._rowOffset
     );
 
     if (end !== undefined) {
@@ -360,7 +360,7 @@ export class SlickCellRangeSelector {
 
     this._grid.focus();
 
-    const canvasOffset = getHtmlElementOffset(this._canvas);
+    const canvasOffset = getOffset(this._canvas);
     let startX = dd.startX - (canvasOffset?.left ?? 0);
     if (this._gridOptions.frozenColumn! >= 0 && this._isRightCanvas) {
       startX += this._scrollLeft;

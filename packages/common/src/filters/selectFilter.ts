@@ -17,7 +17,7 @@ import type {
 import type { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
 import { getDescendantProperty, getTranslationPrefix, unsubscribeAll } from '../services/utilities';
-import { buildMultipleSelectDataCollection, emptyElement, type RxJsFacade, sanitizeTextByAvailableSanitizer, type Subscription, type TranslaterService } from '../services/index';
+import { buildMsSelectCollectionList, emptyElement, type RxJsFacade, sanitizeTextByAvailableSanitizer, type Subscription, type TranslaterService } from '../services/index';
 import { renderCollectionOptionsAsync } from './filterUtilities';
 import type { SlickGrid } from '../core/index';
 
@@ -347,7 +347,7 @@ export class SelectFilter implements Filter {
     newCollection = this.sortCollection(newCollection);
 
     // step 1, create HTML DOM element
-    const selectBuildResult = buildMultipleSelectDataCollection(
+    const selectBuildResult = buildMsSelectCollectionList(
       'filter',
       newCollection,
       this.columnDef,

@@ -2,7 +2,7 @@ import { addWhiteSpaces } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants';
 import { type Formatter } from './../interfaces/index';
-import { sanitizeHtmlToText, } from '../services/domUtilities';
+import { removeHtmlTags, } from '../services/domUtilities';
 import { getCellValueFromQueryFieldGetter, } from '../services/utilities';
 import { parseFormatterWhenExist } from './formatterUtilities';
 
@@ -49,7 +49,7 @@ export const treeExportFormatter: Formatter = (row, cell, value, columnDef, data
 
   const leadingChar = (treeLevel === 0 && toggleSymbol) ? '' : (treeLevel === 0 ? `${exportIndentationLeadingChar}${addWhiteSpaces(exportIndentationLeadingSpaceCount)}` : exportIndentationLeadingChar);
   outputValue = `${leadingChar}${indentSpacer}${toggleSymbol} ${outputValue}`;
-  const sanitizedOutputValue = sanitizeHtmlToText(outputValue); // also remove any html tags that might exist
+  const sanitizedOutputValue = removeHtmlTags(outputValue); // also remove any html tags that might exist
 
   return sanitizedOutputValue;
 };

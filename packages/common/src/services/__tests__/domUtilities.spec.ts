@@ -4,15 +4,14 @@ import {
   calculateAvailableSpace,
   createDomElement,
   emptyElement,
-  findFirstElementAttribute,
-  getElementOffsetRelativeToParent,
-  getElementProp,
-  getHtmlElementOffset,
+  findFirstAttribute,
+  getOffsetRelativeToParent,
+  getStyleProp,
+  getOffset,
   getInnerSize,
-  getSelectorStringFromElement,
   htmlEncode,
   htmlEntityDecode,
-  sanitizeHtmlToText,
+  removeHtmlTags,
   sanitizeTextByAvailableSanitizer,
 } from '../domUtilities';
 
@@ -79,23 +78,23 @@ describe('Service/domUtilies', () => {
     });
   });
 
-  describe('findFirstElementAttribute method', () => {
+  describe('findFirstAttribute method', () => {
     const div = document.createElement('div');
     div.innerHTML = `<ul><li>Item 1</li><li custom-title="custom text" title="some tooltip text">Item 2</li></ul>`;
     document.body.appendChild(div);
 
     it('should return [title] attribute when other attribute is not defined', () => {
-      const output = findFirstElementAttribute(div.querySelectorAll('li')[1], ['not-exist', 'title']);
+      const output = findFirstAttribute(div.querySelectorAll('li')[1], ['not-exist', 'title']);
       expect(output).toBe('some tooltip text');
     });
 
     it('should return [custom-title] attribute when both attributes are defined but custom-title is first found', () => {
-      const output = findFirstElementAttribute(div.querySelectorAll('li')[1], ['custom-title', 'title']);
+      const output = findFirstAttribute(div.querySelectorAll('li')[1], ['custom-title', 'title']);
       expect(output).toBe('custom text');
     });
 
     it('should return null when no attributes found', () => {
-      const output = findFirstElementAttribute(div.querySelectorAll('li')[1], ['not-exist', 'another']);
+      const output = findFirstAttribute(div.querySelectorAll('li')[1], ['not-exist', 'another']);
       expect(output).toBe(null);
     });
   });
@@ -107,12 +106,12 @@ describe('Service/domUtilies', () => {
     document.body.appendChild(parentDiv);
 
     it('should return undefined when element if not a valid html element', () => {
-      const output = getElementOffsetRelativeToParent(null, null);
+      const output = getOffsetRelativeToParent(null, null);
       expect(output).toEqual(undefined);
     });
 
     it('should return top/left 0 when creating a new element in the document without positions', () => {
-      const output = getElementOffsetRelativeToParent(parentDiv, childDiv);
+      const output = getOffsetRelativeToParent(parentDiv, childDiv);
       expect(output).toEqual({ top: 0, left: 0, bottom: 0, right: 0 });
     });
 
@@ -122,23 +121,23 @@ describe('Service/domUtilies', () => {
       parentDiv.style.top = '10px';
       parentDiv.style.left = '25px';
 
-      const output = getElementOffsetRelativeToParent(parentDiv, childDiv);
+      const output = getOffsetRelativeToParent(parentDiv, childDiv);
       expect(output).toEqual({ top: 110, left: 225, bottom: 37, right: 22 });
     });
   });
 
-  describe('getHtmlElementOffset method', () => {
+  describe('getOffset method', () => {
     const div = document.createElement('div');
     div.innerHTML = `<span></span>`;
     document.body.appendChild(div);
 
     it('should return undefined when element if not a valid html element', () => {
-      const output = getHtmlElementOffset(null as any);
+      const output = getOffset(null as any);
       expect(output).toEqual(undefined);
     });
 
     it('should return top/left 0 when creating a new element in the document without positions', () => {
-      const output = getHtmlElementOffset(div);
+      const output = getOffset(div);
       expect(output).toEqual({ top: 0, left: 0, bottom: 0, right: 0 });
     });
 
@@ -147,7 +146,7 @@ describe('Service/domUtilies', () => {
       div.style.top = '10px';
       div.style.left = '25px';
 
-      const output = getHtmlElementOffset(div);
+      const output = getOffset(div);
       expect(output).toEqual({ top: 10, left: 25 });
     });
   });
@@ -176,40 +175,9 @@ describe('Service/domUtilies', () => {
     });
 
     it('should return null when calling getElementProp() without a valid element', () => {
-      const prop = getElementProp(null as any, 'clientWidth');
+      const prop = getStyleProp(null as any, 'clientWidth');
 
       expect(prop).toBeNull();
-    });
-  })
-
-  describe('getSelectorStringFromElement() method', () => {
-    it('should return html element selector without classes when div is created without classes', () => {
-      const result = getSelectorStringFromElement(null);
-
-      expect(result).toBe('');
-    });
-
-    it('should return html element selector without classes when div is created without classes', () => {
-      const tmpDiv = document.createElement('div');
-      const result = getSelectorStringFromElement(tmpDiv);
-
-      expect(result).toBe('div');
-    });
-
-    it('should return html element selector with a single class name when exists', () => {
-      const tmpDiv = document.createElement('div');
-      tmpDiv.className = 'some-class'
-      const result = getSelectorStringFromElement(tmpDiv);
-
-      expect(result).toBe('div.some-class');
-    });
-
-    it('should return html element selector with multiple classes when exists', () => {
-      const tmpDiv = document.createElement('div');
-      tmpDiv.className = 'some-class other-class yet-more'
-      const result = getSelectorStringFromElement(tmpDiv);
-
-      expect(result).toBe('div.some-class.other-class.yet-more');
     });
   });
 
@@ -237,22 +205,22 @@ describe('Service/domUtilies', () => {
     });
   });
 
-  describe('sanitizeHtmlToText method', () => {
+  describe('removeHtmlTags method', () => {
     it('should return original value when input does not include any HTML tags', () => {
       const input = 'foo bar';
-      const output = sanitizeHtmlToText(input);
+      const output = removeHtmlTags(input);
       expect(output).toBe('foo bar');
     });
 
     it('should return a string with only the HTML text content without any HTML tags', () => {
       const input = '<div class="color: blue">Something</div>';
-      const output = sanitizeHtmlToText(input);
+      const output = removeHtmlTags(input);
       expect(output).toBe('Something');
     });
 
     it('should return the script content without javascript script tags when a script is provided', () => {
       const input = '<script>alert("Hello World")</script>';
-      const output = sanitizeHtmlToText(input);
+      const output = removeHtmlTags(input);
       expect(output).toBe('alert("Hello World")');
     });
   });

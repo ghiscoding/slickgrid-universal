@@ -14,7 +14,7 @@ import type {
 } from '../interfaces/index';
 import { DelimiterType, FileType } from '../enums/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
-import { calculateAvailableSpace, createDomElement, emptyElement, findWidthOrDefault, getHtmlElementOffset, getTranslationPrefix, } from '../services/index';
+import { calculateAvailableSpace, createDomElement, emptyElement, findWidthOrDefault, getOffset, getTranslationPrefix, } from '../services/index';
 import type { ExcelExportService } from '../services/excelExport.service';
 import type { FilterService } from '../services/filter.service';
 import type { SharedService } from '../services/shared.service';
@@ -351,8 +351,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
     if (parentElm) {
       const iconButtonElm = buttonElm || this._gridMenuButtonElm;
-      const menuIconOffset = getHtmlElementOffset(buttonElm); // get button offset position
-      const parentOffset = getHtmlElementOffset(parentElm);
+      const menuIconOffset = getOffset(buttonElm); // get button offset position
+      const parentOffset = getOffset(parentElm);
       const gridMenuOptions = addonOptions ?? this._addonOptions;
       const buttonComptStyle = getComputedStyle(iconButtonElm as HTMLButtonElement);
       const buttonWidth = parseInt(buttonComptStyle?.width ?? this._defaults?.menuWidth, 10);

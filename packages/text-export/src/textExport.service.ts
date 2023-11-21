@@ -21,7 +21,7 @@ import {
   exportWithFormatterWhenDefined,
   getTranslationPrefix,
   htmlEntityDecode,
-  sanitizeHtmlToText,
+  removeHtmlTags,
 } from '@slickgrid-universal/common';
 import { addWhiteSpaces, deepCopy, titleCase } from '@slickgrid-universal/utils';
 
@@ -230,7 +230,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     this._columnHeaders = this.getColumnHeaders(columns) || [];
     if (this._columnHeaders && Array.isArray(this._columnHeaders) && this._columnHeaders.length > 0) {
       // add the header row + add a new line at the end of the row
-      const outputHeaderTitles = this._columnHeaders.map((header) => sanitizeHtmlToText(`${this._exportQuoteWrapper}${header.title}${this._exportQuoteWrapper}`));
+      const outputHeaderTitles = this._columnHeaders.map((header) => removeHtmlTags(`${this._exportQuoteWrapper}${header.title}${this._exportQuoteWrapper}`));
       outputDataString += (outputHeaderTitles.join(this._delimiter) + this._lineCarriageReturn);
     }
 
@@ -383,7 +383,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
         // does the user want to sanitize the output data (remove HTML tags)?
         if (columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) {
-          itemData = sanitizeHtmlToText(itemData);
+          itemData = removeHtmlTags(itemData);
         }
 
         // when CSV we also need to escape double quotes twice, so " becomes ""
@@ -409,7 +409,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    * @param itemObj
    */
   protected readGroupedTitleRow(itemObj: any) {
-    let groupName = sanitizeHtmlToText(itemObj.title);
+    let groupName = removeHtmlTags(itemObj.title);
     const exportQuoteWrapper = this._exportQuoteWrapper;
 
     groupName = addWhiteSpaces(5 * itemObj.level) + groupName;
@@ -445,7 +445,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
       // does the user want to sanitize the output data (remove HTML tags)?
       if (columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) {
-        itemData = sanitizeHtmlToText(itemData);
+        itemData = removeHtmlTags(itemData);
       }
 
       if (format === FileType.csv) {

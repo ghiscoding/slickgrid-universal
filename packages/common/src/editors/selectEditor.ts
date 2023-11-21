@@ -19,7 +19,7 @@ import type {
   Locale,
   SelectOption,
 } from './../interfaces/index';
-import { buildMultipleSelectDataCollection, CollectionService, emptyElement, findOrDefault, sanitizeTextByAvailableSanitizer, type TranslaterService } from '../services/index';
+import { buildMsSelectCollectionList, CollectionService, emptyElement, findOrDefault, sanitizeTextByAvailableSanitizer, type TranslaterService } from '../services/index';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
 import { SlickEventData, type SlickGrid } from '../core/index';
 
@@ -699,7 +699,7 @@ export class SelectEditor implements Editor {
     this.finalCollection = finalCollection;
 
     // step 1, create HTML string template
-    const selectBuildResult = buildMultipleSelectDataCollection(
+    const selectBuildResult = buildMsSelectCollectionList(
       'editor',
       finalCollection,
       this.columnDef,

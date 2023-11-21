@@ -16,7 +16,7 @@ import type {
   MultiColumnSort,
   OnHeaderCellRenderedEventArgs,
 } from '../interfaces/index';
-import { calculateAvailableSpace, createDomElement, getElementOffsetRelativeToParent, getHtmlElementOffset, getTranslationPrefix } from '../services/index';
+import { calculateAvailableSpace, createDomElement, getOffsetRelativeToParent, getOffset, getTranslationPrefix } from '../services/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import type { FilterService } from '../services/filter.service';
 import type { SharedService } from '../services/shared.service';
@@ -138,10 +138,10 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       ? e.target.closest('.slick-menu-item') as HTMLDivElement
       : buttonElm as HTMLElement;
 
-    const relativePos = getElementOffsetRelativeToParent(this.sharedService.gridContainerElement, buttonElm);
+    const relativePos = getOffsetRelativeToParent(this.sharedService.gridContainerElement, buttonElm);
     const gridPos = this.grid.getGridPosition();
     const menuWidth = menuElm.offsetWidth;
-    const parentOffset = getHtmlElementOffset(parentElm);
+    const parentOffset = getOffset(parentElm);
     let menuOffsetLeft = isSubMenu ? parentOffset?.left ?? 0 : relativePos?.left ?? 0;
     let menuOffsetTop = isSubMenu
       ? parentOffset?.top ?? 0

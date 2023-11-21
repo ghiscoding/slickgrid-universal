@@ -26,7 +26,7 @@ import {
   mapOperatorByFieldType,
   OperatorType,
   parseUtcDate,
-  sanitizeHtmlToText,
+  removeHtmlTags,
   SortDirection,
 } from '@slickgrid-universal/common';
 import { titleCase } from '@slickgrid-universal/utils';
@@ -321,7 +321,7 @@ export class GridOdataService implements BackendService {
 
         let fieldName = columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || columnDef.name || '';
         if (fieldName instanceof HTMLElement) {
-          fieldName = sanitizeHtmlToText(fieldName.innerHTML);
+          fieldName = removeHtmlTags(fieldName.innerHTML);
         }
         const fieldType = columnDef.type || FieldType.string;
         let searchTerms = (columnFilter && columnFilter.searchTerms ? [...columnFilter.searchTerms] : null) || [];

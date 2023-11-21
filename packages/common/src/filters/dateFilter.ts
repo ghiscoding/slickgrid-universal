@@ -23,7 +23,7 @@ import type {
   OperatorDetail,
 } from '../interfaces/index';
 import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
-import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
+import { createDomElement, destroyAllElementProps, emptyElement, } from '../services/domUtilities';
 import { mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import type { SlickGrid } from '../core/index';
@@ -157,7 +157,7 @@ export class DateFilter implements Filter {
     if (typeof this.flatInstance?.destroy === 'function') {
       this.flatInstance.destroy();
       if (this.flatInstance.element) {
-        destroyObjectDomElementProps(this.flatInstance);
+        destroyAllElementProps(this.flatInstance);
       }
     }
     emptyElement(this.filterContainerElm);

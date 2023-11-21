@@ -29,7 +29,7 @@ import {
   getColumnFieldType,
   getTranslationPrefix,
   isColumnDateType,
-  sanitizeHtmlToText,
+  removeHtmlTags,
 } from '@slickgrid-universal/common';
 import { addWhiteSpaces, deepCopy, titleCase } from '@slickgrid-universal/utils';
 
@@ -365,7 +365,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     this._columnHeaders = this.getColumnHeaders(columns) || [];
     if (this._columnHeaders && Array.isArray(this._columnHeaders) && this._columnHeaders.length > 0) {
       // add the header row + add a new line at the end of the row
-      outputHeaderTitles = this._columnHeaders.map((header) => ({ value: sanitizeHtmlToText(header.title), metadata }));
+      outputHeaderTitles = this._columnHeaders.map((header) => ({ value: removeHtmlTags(header.title), metadata }));
     }
 
     // do we have a Group by title?
@@ -588,7 +588,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
         // sanitize early, when enabled, any HTML tags (remove HTML tags)
         if (typeof itemData === 'string' && (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport)) {
-          itemData = sanitizeHtmlToText(itemData as string);
+          itemData = removeHtmlTags(itemData as string);
         }
 
         const { stylesheetFormatterId, getDataValueParser } = this._regularCellExcelFormats[columnDef.id];
@@ -607,7 +607,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * @param itemObj
    */
   protected readGroupedRowTitle(itemObj: any): string {
-    const groupName = sanitizeHtmlToText(itemObj.title);
+    const groupName = removeHtmlTags(itemObj.title);
 
     if (this._excelExportOptions && this._excelExportOptions.addGroupIndentation) {
       const collapsedSymbol = this._excelExportOptions && this._excelExportOptions.groupCollapsedSymbol || '⮞';
@@ -663,7 +663,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
       // does the user want to sanitize the output data (remove HTML tags)?
       if (typeof itemData === 'string' && (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport)) {
-        itemData = sanitizeHtmlToText(itemData);
+        itemData = removeHtmlTags(itemData);
       }
 
       // add the column (unless user wants to skip it)

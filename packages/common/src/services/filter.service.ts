@@ -27,7 +27,7 @@ import type {
   SearchColumnFilter,
 } from './../interfaces/index';
 import type { BackendUtilityService } from './backendUtility.service';
-import { getSelectorStringFromElement, sanitizeHtmlToText, } from '../services/domUtilities';
+import { removeHtmlTags, } from '../services/domUtilities';
 import { findItemInTreeStructure, getDescendantProperty, mapOperatorByFieldType, } from './utilities';
 import type { SharedService } from './shared.service';
 import type { RxJsFacade, Subject } from './rxjsFacade';
@@ -518,7 +518,7 @@ export class FilterService {
       const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
       const rowIndex = (dataView && typeof dataView.getIdxById === 'function') ? dataView.getIdxById(item[idPropName]) : 0;
       const formattedCellValue = (columnDef && typeof columnDef.formatter === 'function') ? columnDef.formatter(rowIndex || 0, columnIndex, cellValue, columnDef, item, this._grid) : '';
-      cellValue = sanitizeHtmlToText(formattedCellValue as string);
+      cellValue = removeHtmlTags(formattedCellValue as string);
     }
 
     // make sure cell value is always a string
@@ -1151,7 +1151,7 @@ export class FilterService {
             columnDef,
             parsedSearchTerms: [],
             type: fieldType,
-            targetSelector: getSelectorStringFromElement(event?.target as HTMLElement | undefined)
+            targetSelector: this.getSelectorStringFromElement(event?.target as HTMLElement | undefined)
           };
           const inputSearchConditions = this.parseFormInputFilterConditions(searchTerms, colFilter);
           colFilter.operator = operator || inputSearchConditions.operator || mapOperatorByFieldType(fieldType);
@@ -1256,6 +1256,13 @@ export class FilterService {
       }
     }
     return filters;
+  }
+
+  protected getSelectorStringFromElement(elm?: HTMLElement | null) {
+    if (elm?.localName) {
+      return elm?.className ? `${elm.localName}.${Array.from(elm.classList).join('.')}` : elm.localName;
+    }
+    return '';
   }
 
   /**

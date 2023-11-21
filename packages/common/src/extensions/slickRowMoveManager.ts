@@ -9,7 +9,7 @@ import type {
   RowMoveManager,
   RowMoveManagerOption,
 } from '../interfaces/index';
-import { createDomElement, findWidthOrDefault, getHtmlElementOffset } from '../services/domUtilities';
+import { createDomElement, findWidthOrDefault, getOffset } from '../services/domUtilities';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
 
 /**
@@ -193,7 +193,7 @@ export class SlickRowMoveManager {
       const e = evt.getNativeEvent<MouseEvent | TouchEvent>();
 
       const targetEvent: MouseEvent | Touch = (e as TouchEvent)?.touches?.[0] ?? e;
-      const top = targetEvent.pageY - (getHtmlElementOffset(this._canvas)?.top ?? 0);
+      const top = targetEvent.pageY - (getOffset(this._canvas)?.top ?? 0);
       dd.selectionProxy.style.top = `${top - 5}px`;
       dd.selectionProxy.style.display = 'block';
 

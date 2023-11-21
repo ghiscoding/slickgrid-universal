@@ -9,7 +9,7 @@ import type {
   GridSize,
   ResizeByContentOption,
 } from '../interfaces/index';
-import { getInnerSize, getHtmlElementOffset, sanitizeHtmlToText } from '../services/index';
+import { getInnerSize, getOffset, removeHtmlTags } from '../services/index';
 import { parseFormatterWhenExist } from '../formatters/formatterUtilities';
 import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
@@ -169,7 +169,7 @@ export class ResizerService {
       this._resizeObserver.observe(this._pageContainerElm);
     } else {
       // if we can't find the grid to resize, return without binding anything
-      if (this._gridDomElm === undefined || getHtmlElementOffset(this._gridDomElm) === undefined) {
+      if (this._gridDomElm === undefined || getOffset(this._gridDomElm) === undefined) {
         return null;
       }
 
@@ -209,7 +209,7 @@ export class ResizerService {
    */
   calculateGridNewDimensions(gridOptions: GridOption): GridSize | null {
     const autoResizeOptions = gridOptions?.autoResize ?? {};
-    const gridElmOffset = getHtmlElementOffset(this._gridDomElm);
+    const gridElmOffset = getOffset(this._gridDomElm);
 
     if (!window || gridElmOffset === undefined) {
       return null;
@@ -503,7 +503,7 @@ export class ResizerService {
     if (!columnDef.originalWidth) {
       const charWidthPx = columnDef?.resizeCharWidthInPx ?? resizeCellCharWidthInPx;
       const formattedData = parseFormatterWhenExist(columnDef?.formatter, rowIdx, colIdx, columnDef, item, this._grid);
-      const formattedDataSanitized = sanitizeHtmlToText(formattedData);
+      const formattedDataSanitized = removeHtmlTags(formattedData);
       const formattedTextWidthInPx = Math.ceil(formattedDataSanitized.length * charWidthPx);
       const resizeMaxWidthThreshold = columnDef.resizeMaxWidthThreshold;
       if (columnDef && (initialMininalColumnWidth === undefined || formattedTextWidthInPx > initialMininalColumnWidth)) {
@@ -645,7 +645,7 @@ export class ResizerService {
 
       this._intervalId = setInterval(async () => {
         const headerTitleRowHeight = 44; // this one is set by SASS/CSS so let's hard code it
-        const headerPos = getHtmlElementOffset(headerElm);
+        const headerPos = getOffset(headerElm);
         let headerOffsetTop = headerPos?.top ?? 0;
         if (this.gridOptions && this.gridOptions.enableFiltering && this.gridOptions.headerRowHeight) {
           headerOffsetTop += this.gridOptions.headerRowHeight; // filter row height
@@ -655,13 +655,13 @@ export class ResizerService {
         }
         headerOffsetTop += headerTitleRowHeight; // header title row height
 
-        const viewportPos = getHtmlElementOffset(viewportElm);
+        const viewportPos = getOffset(viewportElm);
         const viewportOffsetTop = viewportPos?.top ?? 0;
 
         // if header row is Y coordinate 0 (happens when user is not in current Tab) or when header titles are lower than the viewport of dataset (this can happen when user change Tab and DOM is not shown)
         // another resize condition could be that if the grid location is at coordinate x/y 0/0, we assume that it's in a hidden tab and we'll need to resize whenever that tab becomes active
         // for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
-        const containerElmOffset = getHtmlElementOffset(this._gridContainerElm);
+        const containerElmOffset = getOffset(this._gridContainerElm);
         let isResizeRequired = (headerPos?.top === 0 || ((headerOffsetTop - viewportOffsetTop) > 2) || (containerElmOffset?.left === 0 && containerElmOffset?.top === 0)) ? true : false;
 
         // another condition for a required resize is when the grid is hidden (not in current tab) then its "rightPx" rendered range will be 0px

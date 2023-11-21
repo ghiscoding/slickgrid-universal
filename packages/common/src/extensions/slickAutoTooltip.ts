@@ -1,6 +1,6 @@
 
 import type { AutoTooltipOption, Column } from '../interfaces/index';
-import { sanitizeHtmlToText } from '../services';
+import { removeHtmlTags } from '../services';
 import { SlickEventHandler, type SlickGrid } from '../core/index';
 
 /**
@@ -100,7 +100,7 @@ export class SlickAutoTooltip {
       node = targetElm.closest<HTMLDivElement>('.slick-header-column');
       if (node && !(column?.toolTip)) {
         const titleVal = (targetElm.clientWidth < node.clientWidth) ? column?.name ?? '' : '';
-        node.title = titleVal instanceof HTMLElement ? sanitizeHtmlToText(titleVal.innerHTML) : titleVal;
+        node.title = titleVal instanceof HTMLElement ? removeHtmlTags(titleVal.innerHTML) : titleVal;
       }
     }
     node = null;
