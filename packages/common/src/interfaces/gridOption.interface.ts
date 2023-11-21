@@ -140,15 +140,6 @@ export interface GridOption<C extends Column = Column> {
   /** Auto-resize options (bottom padding, minHeight, ...)  */
   autoResize?: AutoResizeOption;
 
-  /** defaults to LegacyOff, Grid Autosize Columns Mode used when calling "autosizeColumns()" method */
-  autosizeColsMode?: string;
-
-  /** defaults to 4, autosize column padding in pixel */
-  autosizeColPaddingPx?: number;
-
-  /** defaults to 0.75, autosize text average to minimum width ratio */
-  autosizeTextAvgToMWidthRatio?: number;
-
   /** Auto-tooltip options (enableForCells, enableForHeaderCells, maxToolTipLength) */
   autoTooltipOptions?: AutoTooltipOption;
 
@@ -569,9 +560,6 @@ export interface GridOption<C extends Column = Column> {
   /** Set of Locale translations used by the library */
   locales?: Locale;
 
-  /** Should we log the sanitized html? */
-  logSanitizedHtml?: boolean;
-
   /** Max supported CSS height */
   maxSupportedCssHeight?: number;
 
@@ -745,13 +733,4 @@ export interface GridOption<C extends Column = Column> {
 
   /** Defaults to null, which is the default Viewport CSS class name */
   viewportClass?: string;
-
-  /** Viewport switch to scroll model with percentage */
-  viewportSwitchToScrollModeWidthPercent?: number;
-
-  /** Viewport min width in pixel */
-  viewportMinWidthPx?: number;
-
-  /** Viewport max width in pixel */
-  viewportMaxWidthPx?: number;
 }
