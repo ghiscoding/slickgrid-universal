@@ -9,7 +9,6 @@ export * from './fieldType.enum';
 export * from './fileType.enum';
 export * from './filterMultiplePassType.enum';
 export * from './filterMultiplePassTypeString.type';
-export * from './gridAutosizeColsMode.enum';
 export * from './gridStateType.enum';
 export * from './infer.type';
 export * from './keyCode.enum';

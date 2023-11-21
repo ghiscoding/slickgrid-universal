@@ -1,6 +1,6 @@
 import { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
 
-import { DelimiterType, FileType, GridAutosizeColsMode, OperatorType } from './enums/index';
+import { DelimiterType, FileType, OperatorType } from './enums/index';
 import type { Column, EmptyWarning, GridOption, TreeDataOption } from './interfaces/index';
 import { Filters } from './filters';
 
@@ -171,7 +171,6 @@ export const GlobalGridOptions: Partial<GridOption> = {
     sanitizeDataExport: true,
     useUtf8WithBom: true
   },
-  gridAutosizeColsMode: GridAutosizeColsMode.none,
   eventNamingStyle: EventNamingStyle.lowerCase,
   forceFitColumns: false,
   frozenHeaderWidthCalcDifferential: 1,
