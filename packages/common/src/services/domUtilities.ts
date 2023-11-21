@@ -229,21 +229,23 @@ export function getElementOffsetRelativeToParent(parentElm: HTMLElement | null, 
 }
 
 /** Get HTML element offset with pure JS */
-export function getHtmlElementOffset(element?: HTMLElement | null): HtmlElementPosition | undefined {
-  if (!element) {
+export function getHtmlElementOffset(elm?: HTMLElement | null): HtmlElementPosition | undefined {
+  if (!elm || !elm.getBoundingClientRect) {
     return undefined;
   }
-  const rect = element?.getBoundingClientRect?.();
+  const box = elm.getBoundingClientRect();
+  const docElem = document.documentElement;
+
   let top = 0;
   let left = 0;
   let bottom = 0;
   let right = 0;
 
-  if (rect?.top !== undefined && rect.left !== undefined) {
-    top = rect.top + window.pageYOffset;
-    left = rect.left + window.pageXOffset;
-    right = rect.right;
-    bottom = rect.bottom;
+  if (box?.top !== undefined && box.left !== undefined) {
+    top = box.top + window.pageYOffset - docElem.clientTop;
+    left = box.left + window.pageXOffset - docElem.clientLeft;
+    right = box.right;
+    bottom = box.bottom;
   }
   return { top, left, bottom, right };
 }

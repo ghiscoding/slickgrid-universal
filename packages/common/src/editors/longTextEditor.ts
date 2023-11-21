@@ -303,7 +303,7 @@ export class LongTextEditor implements Editor {
    * Same goes for the top/bottom position, Most of the time positioning the editor to the "bottom" but we are clicking on a cell at the bottom of the grid then we might need to reposition to "top" instead.
    * NOTE: this only applies to Inline Editing and will not have any effect when using the Composite Editor modal window.
    */
-  position(parentPosition: HtmlElementPosition) {
+  position(parentPosition: Partial<HtmlElementPosition>) {
     const containerOffset = getHtmlElementOffset(this.args.container);
     const containerHeight = this.args.container.offsetHeight;
     const containerWidth = this.args.container.offsetWidth;
