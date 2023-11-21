@@ -672,19 +672,6 @@ export class Utils {
 
   public static noop() { }
 
-  public static offset(el: HTMLElement | null) {
-    if (!el || !el.getBoundingClientRect) {
-      return undefined;
-    }
-    const box = el.getBoundingClientRect();
-    const docElem = document.documentElement;
-
-    return {
-      top: box.top + window.pageYOffset - docElem.clientTop,
-      left: box.left + window.pageXOffset - docElem.clientLeft
-    };
-  }
-
   public static width(el: HTMLElement, value?: number | string): number | void {
     if (!el || !el.getBoundingClientRect) { return; }
     if (value === undefined) {
