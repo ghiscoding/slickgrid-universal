@@ -37,7 +37,7 @@ import type {
   TextExportOption,
   TreeDataOption,
 } from './index';
-import type { ColumnReorderFunction, GridAutosizeColsMode, OperatorString, OperatorType, } from '../enums/index';
+import type { ColumnReorderFunction, OperatorString, OperatorType, } from '../enums/index';
 import type { TranslaterService } from '../services/translater.service';
 import type { SlickEditorLock } from '../core/index';
 
@@ -515,9 +515,6 @@ export interface GridOption<C extends Column = Column> {
 
   /** Defaults to false, which leads to have row(s) taking full width */
   fullWidthRows?: boolean;
-
-  /** defaults to None, Grid Autosize Columns Mode used when calling "autosizeColumns()" method */
-  gridAutosizeColsMode?: GridAutosizeColsMode;
 
   /** Grid DOM element container ID (used Slickgrid-Universal auto-resizer) */
   gridContainerId?: string;

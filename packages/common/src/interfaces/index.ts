@@ -131,7 +131,6 @@ export * from './resizer.interface';
 export * from './resizerOption.interface';
 export * from './rowDetailView.interface';
 export * from './rowDetailViewOption.interface';
-export * from './rowInfo.interface';
 export * from './rowMoveManager.interface';
 export * from './rowMoveManagerOption.interface';
 export * from './rowSelectionModelOption.interface';

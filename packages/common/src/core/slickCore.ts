@@ -833,48 +833,9 @@ const SlickCore = {
     A: 65
   },
   preClickClassName: 'slick-edit-preclick',
-
-  GridAutosizeColsMode: {
-    None: 'NOA',
-    LegacyOff: 'LOF',
-    LegacyForceFit: 'LFF',
-    IgnoreViewport: 'IGV',
-    FitColsToViewport: 'FCV',
-    FitViewportToCols: 'FVC'
-  },
-
-  'ColAutosizeMode': {
-    Locked: 'LCK',
-    Guide: 'GUI',
-    Content: 'CON',
-    ContentExpandOnly: 'CXO',
-    ContentIntelligent: 'CTI'
-  },
-
-  'RowSelectionMode': {
-    FirstRow: 'FS1',
-    FirstNRows: 'FSN',
-    AllRows: 'ALL',
-    LastRow: 'LS1'
-  },
-
-  'ValueFilterMode': {
-    None: 'NONE',
-    DeDuplicate: 'DEDP',
-    GetGreatestAndSub: 'GR8T',
-    GetLongestTextAndSub: 'LNSB',
-    GetLongestText: 'LNSC'
-  },
-
-  WidthEvalMode: {
-    Auto: 'AUTO',
-    TextOnly: 'CANV',
-    HTML: 'HTML'
-  }
 };
 
 export const {
   EditorLock, Event, EventData, EventHandler, Group, GroupTotals, NonDataRow, Range,
-  RegexSanitizer, GlobalEditorLock, keyCode, preClickClassName, GridAutosizeColsMode, ColAutosizeMode,
-  RowSelectionMode, ValueFilterMode, WidthEvalMode
+  RegexSanitizer, GlobalEditorLock, keyCode, preClickClassName,
 } = SlickCore;

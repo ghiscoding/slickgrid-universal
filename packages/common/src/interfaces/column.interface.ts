@@ -1,4 +1,3 @@
-import type { AutoSize, SlickGrid } from '../core/index';
 import type { FieldType } from '../enums/fieldType.enum';
 import type {
   CellMenu,
@@ -8,8 +7,6 @@ import type {
   CustomTooltipOption,
   EditorValidator,
   Formatter,
-  FormatterResultWithHtml,
-  FormatterResultWithText,
   Grouping,
   GroupTotalExportOption,
   GroupTotalsFormatter,
@@ -17,8 +14,6 @@ import type {
   OnEventArgs,
   SortComparer,
 } from './index';
-
-export type FormatterOverrideCallback = (row: number, cell: number, val: any, columnDef: Column, item: any, grid: SlickGrid) => string | FormatterResultWithHtml | FormatterResultWithText;
 
 type PathsToStringProps<T> = T extends string | number | boolean | Date ? [] : {
   [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>]
@@ -42,9 +37,6 @@ export interface Column<T = any> {
 
   /** async background post-render cleanup callback function */
   asyncPostRenderCleanup?: (node: HTMLElement, rowIdx: number, column: Column) => void;
-
-  /** column autosize feature */
-  autoSize?: AutoSize;
 
   /**
    * Defaults to true, when enabled it will parse the filter input string and extract filter operator (<, <=, >=, >, =, *) when found.
@@ -178,9 +170,6 @@ export interface Column<T = any> {
 
   /** Formatter function is meant to format, or visually change, the data shown in the grid (UI) in a different way without affecting the source. */
   formatter?: Formatter<T>;
-
-  /** Default Formatter override function */
-  formatterOverride?: { ReturnsTextOnly: boolean; } | FormatterOverrideCallback;
 
   /** Grouping option used by a Draggable Grouping Column */
   grouping?: Grouping;

@@ -2,26 +2,20 @@
 // @ts-ignore
 import SortableInstance, * as Sortable_ from 'sortablejs';
 const Sortable = ((Sortable_ as any)?.['default'] ?? Sortable_); // patch for rollup
-import moment from 'moment-mini';
 import * as DOMPurify_ from 'dompurify';
 const DOMPurify = ((DOMPurify_ as any)?.['default'] ?? DOMPurify_); // patch for rollup
 import { BindingEventService } from '@slickgrid-universal/binding';
 
 import {
-  ColAutosizeMode,
   GlobalEditorLock,
-  GridAutosizeColsMode,
   isDefined,
   keyCode,
   preClickClassName,
-  RowSelectionMode,
   type SlickEditorLock,
   SlickEvent,
   SlickEventData,
   SlickRange,
   Utils,
-  ValueFilterMode,
-  WidthEvalMode,
 } from './slickCore';
 import { Draggable, MouseWheel, Resizable } from './slickInteractions';
 import { SelectionModel } from '../enums/index';
@@ -39,7 +33,6 @@ import type {
   EditController,
   Editor,
   Formatter,
-  FormatterOverrideCallback,
   FormatterResultObject,
   FormatterResultWithHtml,
   FormatterResultWithText,
@@ -84,12 +77,10 @@ import type {
   OnSetOptionsEventArgs,
   OnValidationErrorEventArgs,
   PagingInfo,
-  RowInfo,
   SingleColumnSort,
   SlickPlugin,
   SlickGridEventData,
 } from '../interfaces';
-import type { AutoSize } from './models/autoSize.interface';
 import { createDomElement, emptyElement } from '../services/domUtilities';
 
 /**
@@ -258,10 +249,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     editorCellNavOnLRKeys: false,
     enableMouseWheelScrollHandler: true,
     doPaging: true,
-    autosizeColsMode: GridAutosizeColsMode.LegacyOff,
-    autosizeColPaddingPx: 4,
     scrollRenderThrottling: 50,
-    autosizeTextAvgToMWidthRatio: 0.75,
     viewportSwitchToScrollModeWidthPercent: undefined,
     viewportMinWidthPx: undefined,
     viewportMaxWidthPx: undefined,
@@ -287,24 +275,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     selectable: true,
     hidden: false
   } as Partial<C>;
-
-  protected _columnAutosizeDefaults: AutoSize = {
-    ignoreHeaderText: false,
-    colValueArray: undefined,
-    allowAddlPercent: undefined,
-    formatterOverride: undefined,
-    autosizeMode: ColAutosizeMode.ContentIntelligent,
-    rowSelectionModeOnInit: undefined,
-    rowSelectionMode: RowSelectionMode.FirstNRows,
-    rowSelectionCount: 100,
-    valueFilterMode: ValueFilterMode.None,
-    widthEvalMode: WidthEvalMode.Auto,
-    sizeToRemaining: undefined,
-    widthPx: undefined,
-    contentSizePx: 0,
-    headerWidthPx: 0,
-    colDataTypeOf: undefined
-  };
 
   // scroller
   protected th!: number;   // virtual height
@@ -2602,478 +2572,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   // Column Autosizing
 
-  /** Proportionally resize a specific column by its name, index or Id */
-  autosizeColumn(columnOrIndexOrId: number | string, isInit?: boolean) {
-    let colDef: C | null = null;
-    let colIndex = -1;
-    if (typeof columnOrIndexOrId === 'number') {
-      colDef = this.columns[columnOrIndexOrId];
-      colIndex = columnOrIndexOrId;
-    } else if (typeof columnOrIndexOrId === 'string') {
-      for (let i = 0; i < this.columns.length; i++) {
-        if (this.columns[i].id === columnOrIndexOrId) { colDef = this.columns[i]; colIndex = i; }
-      }
-    }
-    if (!colDef) {
-      return;
-    }
-    const gridCanvas = this.getCanvasNode(0, 0) as HTMLElement;
-    this.getColAutosizeWidth(colDef, colIndex, gridCanvas, isInit || false, colIndex);
+  autosizeColumns() {
+    this.legacyAutosizeColumns();
   }
 
-  protected treatAsLocked(autoSize: AutoSize = {}) {
-    // treat as locked (don't resize) if small and header is the widest part
-    return !autoSize.ignoreHeaderText
-      && !autoSize.sizeToRemaining
-      && (autoSize.contentSizePx === autoSize.headerWidthPx)
-      && ((autoSize.widthPx ?? 0) < 100);
-  }
-
-  /** Proportionately resizes all columns to fill available horizontal space. This does not take the cell contents into consideration. */
-  autosizeColumns(autosizeMode?: string, isInit?: boolean) {
-    this.cacheCssForHiddenInit();
-    this.internalAutosizeColumns(autosizeMode, isInit);
-    this.restoreCssFromHiddenInit();
-  }
-
-  protected internalAutosizeColumns(autosizeMode?: string, isInit?: boolean) {
-    // LogColWidths();
-    autosizeMode = autosizeMode || this._options.autosizeColsMode;
-    if (autosizeMode === GridAutosizeColsMode.LegacyForceFit || autosizeMode === GridAutosizeColsMode.LegacyOff) {
-      this.legacyAutosizeColumns();
-      return;
-    }
-
-    if (autosizeMode === GridAutosizeColsMode.None) {
-      return;
-    }
-
-    // test for brower canvas support, canvas_context!=null if supported
-    this.canvas = document.createElement('canvas');
-    if (this.canvas?.getContext) { this.canvas_context = this.canvas.getContext('2d'); }
-
-    // pass in the grid canvas
-    const gridCanvas = this.getCanvasNode(0, 0) as HTMLElement;
-    const viewportWidth = this.viewportHasVScroll ? this.viewportW - (this.scrollbarDimensions?.width ?? 0) : this.viewportW;
-
-    // iterate columns to get autosizes
-    let i: number;
-    let c: C;
-    let colWidth: number;
-    let reRender = false;
-    let totalWidth = 0;
-    let totalWidthLessSTR = 0;
-    let strColsMinWidth = 0;
-    let totalMinWidth = 0;
-    let totalLockedColWidth = 0;
-    for (i = 0; i < this.columns.length; i++) {
-      c = this.columns[i];
-      this.getColAutosizeWidth(c, i, gridCanvas, isInit || false, i);
-      totalLockedColWidth += (c.autoSize?.autosizeMode === ColAutosizeMode.Locked ? (c.width || 0) : (this.treatAsLocked(c.autoSize) ? c.autoSize?.widthPx || 0 : 0));
-      totalMinWidth += (c.autoSize?.autosizeMode === ColAutosizeMode.Locked ? (c.width || 0) : (this.treatAsLocked(c.autoSize) ? c.autoSize?.widthPx || 0 : c.minWidth || 0));
-      totalWidth += (c.autoSize?.widthPx || 0);
-      totalWidthLessSTR += (c.autoSize?.sizeToRemaining ? 0 : c.autoSize?.widthPx || 0);
-      strColsMinWidth += (c.autoSize?.sizeToRemaining ? c.minWidth || 0 : 0);
-    }
-    const strColTotalGuideWidth = totalWidth - totalWidthLessSTR;
-
-    if (autosizeMode === GridAutosizeColsMode.FitViewportToCols) {
-      // - if viewport with is outside MinViewportWidthPx and MaxViewportWidthPx, then the viewport is set to
-      //   MinViewportWidthPx or MaxViewportWidthPx and the FitColsToViewport algorithm is used
-      // - viewport is resized to fit columns
-      let setWidth = totalWidth + (this.scrollbarDimensions?.width ?? 0);
-      autosizeMode = GridAutosizeColsMode.IgnoreViewport;
-
-      if (this._options.viewportMaxWidthPx && setWidth > this._options.viewportMaxWidthPx) {
-        setWidth = this._options.viewportMaxWidthPx;
-        autosizeMode = GridAutosizeColsMode.FitColsToViewport;
-      } else if (this._options.viewportMinWidthPx && setWidth < this._options.viewportMinWidthPx) {
-        setWidth = this._options.viewportMinWidthPx;
-        autosizeMode = GridAutosizeColsMode.FitColsToViewport;
-      } else {
-        // falling back to IgnoreViewport will size the columns as-is, with render checking
-        // for (i = 0; i < columns.length; i++) { columns[i].width = columns[i].autoSize.widthPx; }
-      }
-      Utils.width(this._container, setWidth);
-    }
-
-    if (autosizeMode === GridAutosizeColsMode.FitColsToViewport) {
-      if (strColTotalGuideWidth > 0 && totalWidthLessSTR < viewportWidth - strColsMinWidth) {
-        // if addl space remains in the viewport and there are SizeToRemaining cols, just the SizeToRemaining cols expand proportionally to fill viewport
-        for (i = 0; i < this.columns.length; i++) {
-          c = this.columns[i];
-          if (!c || c.hidden) { continue; }
-
-          const totalSTRViewportWidth = viewportWidth - totalWidthLessSTR;
-          if (c.autoSize?.sizeToRemaining) {
-            colWidth = totalSTRViewportWidth * (c.autoSize?.widthPx || 0) / strColTotalGuideWidth;
-          } else {
-            colWidth = (c.autoSize?.widthPx || 0);
-          }
-          if (c.rerenderOnResize && (c.width || 0) !== colWidth) {
-            reRender = true;
-          }
-          c.width = colWidth;
-        }
-      } else if ((this._options.viewportSwitchToScrollModeWidthPercent && totalWidthLessSTR + strColsMinWidth > viewportWidth * this._options.viewportSwitchToScrollModeWidthPercent / 100)
-        || (totalMinWidth > viewportWidth)) {
-        // if the total columns width is wider than the viewport by switchToScrollModeWidthPercent, switch to IgnoreViewport mode
-        autosizeMode = GridAutosizeColsMode.IgnoreViewport;
-      } else {
-        // otherwise (ie. no SizeToRemaining cols or viewport smaller than columns) all cols other than 'Locked' scale in proportion to fill viewport
-        // and SizeToRemaining get minWidth
-        let unallocatedColWidth = totalWidthLessSTR - totalLockedColWidth;
-        let unallocatedViewportWidth = viewportWidth - totalLockedColWidth - strColsMinWidth;
-        for (i = 0; i < this.columns.length; i++) {
-          c = this.columns[i];
-          if (!c || c.hidden) { continue; }
-
-          colWidth = c.width || 0;
-          if (c.autoSize?.autosizeMode !== ColAutosizeMode.Locked && !this.treatAsLocked(c.autoSize)) {
-            if (c.autoSize?.sizeToRemaining) {
-              colWidth = c.minWidth || 0;
-            } else {
-              // size width proportionally to free space (we know we have enough room due to the earlier calculations)
-              colWidth = unallocatedViewportWidth / unallocatedColWidth * (c.autoSize?.widthPx || 0) - 1;
-              if (colWidth < (c.minWidth || 0)) {
-                colWidth = c.minWidth || 0;
-              }
-
-              // remove the just allocated widths from the allocation pool
-              unallocatedColWidth -= (c.autoSize?.widthPx || 0);
-              unallocatedViewportWidth -= colWidth;
-            }
-          }
-          if (this.treatAsLocked(c.autoSize)) {
-            colWidth = (c.autoSize?.widthPx || 0);
-            if (colWidth < (c.minWidth || 0)) {
-              colWidth = c.minWidth || 0;
-            }
-          }
-          if (c.rerenderOnResize && c.width !== colWidth) {
-            reRender = true;
-          }
-          c.width = colWidth;
-        }
-      }
-    }
-
-    if (autosizeMode === GridAutosizeColsMode.IgnoreViewport) {
-      // just size columns as-is
-      for (i = 0; i < this.columns.length; i++) {
-        if (!this.columns[i] || this.columns[i].hidden) { continue; }
-
-        colWidth = this.columns[i].autoSize?.widthPx || 0;
-        if (this.columns[i].rerenderOnResize && this.columns[i].width !== colWidth) {
-          reRender = true;
-        }
-        this.columns[i].width = colWidth;
-      }
-    }
-
-    this.reRenderColumns(reRender);
-  }
-
-  protected getColAutosizeWidth(columnDef: C, colIndex: number, gridCanvas: HTMLElement, isInit: boolean, colArrayIndex: number) {
-    const autoSize = columnDef.autoSize as AutoSize;
-
-    // set to width as default
-    autoSize.widthPx = columnDef.width;
-    if (autoSize.autosizeMode === ColAutosizeMode.Locked
-      || autoSize.autosizeMode === ColAutosizeMode.Guide) {
-      return;
-    }
-
-    const dl = this.getDataLength(); // getDataItem();
-    const isoDateRegExp = new RegExp(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z/);
-
-    // ContentIntelligent takes settings from column data type
-    if (autoSize.autosizeMode === ColAutosizeMode.ContentIntelligent) {
-      // default to column colDataTypeOf (can be used if initially there are no data rows)
-      let colDataTypeOf = autoSize.colDataTypeOf;
-      let colDataItem: any;
-      if (dl > 0) {
-        const tempRow = this.getDataItem(0);
-        if (tempRow) {
-          colDataItem = tempRow[columnDef.field as keyof TData];
-
-          // check for dates in hiding
-          if (isoDateRegExp.test(colDataItem)) { colDataItem = Date.parse(colDataItem); }
-
-          colDataTypeOf = typeof colDataItem;
-          if (colDataTypeOf === 'object') {
-            if (colDataItem instanceof Date) { colDataTypeOf = 'date'; }
-            if (typeof moment !== 'undefined' && colDataItem instanceof moment) { colDataTypeOf = 'moment'; }
-          }
-        }
-      }
-      if (colDataTypeOf === 'boolean') {
-        autoSize.colValueArray = [true, false];
-      }
-      if (colDataTypeOf === 'number') {
-        autoSize.valueFilterMode = ValueFilterMode.GetGreatestAndSub;
-        autoSize.rowSelectionMode = RowSelectionMode.AllRows;
-      }
-      if (colDataTypeOf === 'string') {
-        autoSize.valueFilterMode = ValueFilterMode.GetLongestText;
-        autoSize.rowSelectionMode = RowSelectionMode.AllRows;
-        autoSize.allowAddlPercent = 5;
-      }
-      if (colDataTypeOf === 'date') {
-        autoSize.colValueArray = [new Date(2009, 8, 30, 12, 20, 20)]; // Sep 30th 2009, 12:20:20 AM
-      }
-      if (colDataTypeOf === 'moment' && typeof moment !== 'undefined') {
-        autoSize.colValueArray = [moment([2009, 8, 30, 12, 20, 20])]; // Sep 30th 2009, 12:20:20 AM
-      }
-    }
-
-    // at this point, the autosizeMode is effectively 'Content', so proceed to get size
-    let colWidth = autoSize.contentSizePx = this.getColContentSize(columnDef, colIndex, gridCanvas, isInit, colArrayIndex);
-
-    if (colWidth === 0) {
-      colWidth = autoSize.widthPx || 0;
-    }
-
-    const addlPercentMultiplier = (autoSize.allowAddlPercent ? (1 + autoSize.allowAddlPercent / 100) : 1);
-    colWidth = colWidth * addlPercentMultiplier + (this._options.autosizeColPaddingPx || 0);
-    if (columnDef.minWidth && colWidth < columnDef.minWidth) { colWidth = columnDef.minWidth; }
-    if (columnDef.maxWidth && colWidth > columnDef.maxWidth) { colWidth = columnDef.maxWidth; }
-
-    if (autoSize.autosizeMode === ColAutosizeMode.ContentExpandOnly || ((columnDef?.editor as any)?.ControlFillsColumn)) {
-      // only use content width if it's wider than the default column width (this is used for dropdowns and other fixed width controls)
-      if (colWidth < (columnDef.width || 0)) {
-        colWidth = columnDef.width || 0;
-      }
-    }
-    autoSize.widthPx = colWidth;
-  }
-
-  protected getColContentSize(columnDef: C, colIndex: number, gridCanvas: HTMLElement, isInit: boolean, colArrayIndex: number) {
-    const autoSize = columnDef.autoSize as AutoSize;
-    let widthAdjustRatio = 1;
-
-    // at this point, the autosizeMode is effectively 'Content', so proceed to get size
-
-    // get header width, if we are taking notice of it
-    let i: number;
-    let tempVal: any;
-    let maxLen = 0;
-    let maxColWidth = 0;
-    autoSize.headerWidthPx = 0;
-    if (!autoSize.ignoreHeaderText) {
-      autoSize.headerWidthPx = this.getColHeaderWidth(columnDef);
-    }
-    if (autoSize.headerWidthPx === 0) {
-      autoSize.headerWidthPx = (columnDef.width ? columnDef.width
-        : (columnDef.maxWidth ? columnDef.maxWidth
-          : (columnDef.minWidth ? columnDef.minWidth : 20)
-        )
-      );
-    }
-
-    if (autoSize.colValueArray) {
-      // if an array of values are specified, just pass them in instead of data
-      maxColWidth = this.getColWidth(columnDef, gridCanvas, autoSize.colValueArray as any);
-      return Math.max(autoSize.headerWidthPx, maxColWidth);
-    }
-
-    // select rows to evaluate using rowSelectionMode and rowSelectionCount
-    const rowInfo = {} as RowInfo;
-    rowInfo.colIndex = colIndex;
-    rowInfo.rowCount = this.getDataLength();
-    rowInfo.startIndex = 0;
-    rowInfo.endIndex = rowInfo.rowCount - 1;
-    rowInfo.valueArr = null;
-    rowInfo.getRowVal = (j: number) => this.getDataItem(j)[columnDef.field as keyof TData];
-
-    const rowSelectionMode = (isInit ? autoSize.rowSelectionModeOnInit : undefined) || autoSize.rowSelectionMode;
-
-    if (rowSelectionMode === RowSelectionMode.FirstRow) { rowInfo.endIndex = 0; }
-    if (rowSelectionMode === RowSelectionMode.LastRow) { rowInfo.endIndex = rowInfo.startIndex = rowInfo.rowCount - 1; }
-    if (rowSelectionMode === RowSelectionMode.FirstNRows) { rowInfo.endIndex = Math.min(autoSize.rowSelectionCount || 0, rowInfo.rowCount) - 1; }
-
-    // now use valueFilterMode to further filter selected rows
-    if (autoSize.valueFilterMode === ValueFilterMode.DeDuplicate) {
-      const rowsDict: any = {};
-      for (i = rowInfo.startIndex; i <= rowInfo.endIndex; i++) {
-        rowsDict[rowInfo.getRowVal(i)] = true;
-      }
-      if (Object.keys) {
-        rowInfo.valueArr = Object.keys(rowsDict);
-      } else {
-        rowInfo.valueArr = [];
-        for (const v in rowsDict) {
-          if (rowsDict) {
-            rowInfo.valueArr.push(v);
-          }
-        }
-      }
-      rowInfo.startIndex = 0;
-      rowInfo.endIndex = rowInfo.length - 1;
-    }
-
-    if (autoSize.valueFilterMode === ValueFilterMode.GetGreatestAndSub) {
-      // get greatest abs value in data
-      let maxVal;
-      let maxAbsVal = 0;
-      for (i = rowInfo.startIndex; i <= rowInfo.endIndex; i++) {
-        tempVal = rowInfo.getRowVal(i);
-        if (Math.abs(tempVal) > maxAbsVal) {
-          maxVal = tempVal; maxAbsVal = Math.abs(tempVal);
-        }
-      }
-      // now substitute a '9' for all characters (to get widest width) and convert back to a number
-      maxVal = '' + maxVal;
-      maxVal = Array(maxVal.length + 1).join('9');
-      maxVal = +maxVal;
-
-      rowInfo.valueArr = [maxVal];
-      rowInfo.startIndex = rowInfo.endIndex = 0;
-    }
-
-    if (autoSize.valueFilterMode === ValueFilterMode.GetLongestTextAndSub) {
-      // get greatest abs value in data
-      for (i = rowInfo.startIndex; i <= rowInfo.endIndex; i++) {
-        tempVal = rowInfo.getRowVal(i);
-        if ((tempVal || '').length > maxLen) { maxLen = tempVal.length; }
-      }
-      // now substitute a 'm' for all characters
-      tempVal = Array(maxLen + 1).join('m');
-      widthAdjustRatio = this._options.autosizeTextAvgToMWidthRatio || 0;
-
-      rowInfo.maxLen = maxLen;
-      rowInfo.valueArr = [tempVal];
-      rowInfo.startIndex = rowInfo.endIndex = 0;
-    }
-
-    if (autoSize.valueFilterMode === ValueFilterMode.GetLongestText) {
-      // get greatest abs value in data
-      maxLen = 0; let maxIndex = 0;
-      for (i = rowInfo.startIndex; i <= rowInfo.endIndex; i++) {
-        tempVal = rowInfo.getRowVal(i);
-        if ((tempVal || '').length > maxLen) { maxLen = tempVal.length; maxIndex = i; }
-      }
-      // now substitute a 'c' for all characters
-      tempVal = rowInfo.getRowVal(maxIndex);
-      rowInfo.maxLen = maxLen;
-      rowInfo.valueArr = [tempVal];
-      rowInfo.startIndex = rowInfo.endIndex = 0;
-    }
-
-    // !!! HACK !!!!
-    if (rowInfo.maxLen && rowInfo.maxLen > 30 && colArrayIndex > 1) { autoSize.sizeToRemaining = true; }
-    maxColWidth = this.getColWidth(columnDef, gridCanvas, rowInfo) * widthAdjustRatio;
-    return Math.max(autoSize.headerWidthPx, maxColWidth);
-  }
-
-  protected getColWidth(columnDef: C, gridCanvas: HTMLElement, rowInfo: RowInfo) {
-    const rowEl = createDomElement('div', { className: 'slick-row ui-widget-content' }, gridCanvas);
-    const cellEl = createDomElement('div', { className: 'slick-cell' }, rowEl);
-
-    cellEl.style.position = 'absolute';
-    cellEl.style.visibility = 'hidden';
-    cellEl.style.textOverflow = 'initial';
-    cellEl.style.whiteSpace = 'nowrap';
-
-    let i: number;
-    let len: number;
-    let max = 0;
-    let maxText = '';
-    let formatterResult: string | FormatterResultWithHtml | FormatterResultWithText | HTMLElement;
-    let val: any;
-
-    // get mode - if text only display, use canvas otherwise html element
-    let useCanvas = (columnDef.autoSize!.widthEvalMode === WidthEvalMode.TextOnly);
-
-    if (columnDef.autoSize?.widthEvalMode === WidthEvalMode.Auto) {
-      const noFormatter = !columnDef.formatterOverride && !columnDef.formatter;
-      const formatterIsText = ((columnDef?.formatterOverride as { ReturnsTextOnly: boolean })?.ReturnsTextOnly)
-        || (!columnDef.formatterOverride && (columnDef.formatter as any)?.ReturnsTextOnly);
-      useCanvas = noFormatter || formatterIsText;
-    }
-
-    // use canvas - very fast, but text-only
-    if (this.canvas_context && useCanvas) {
-      const style = getComputedStyle(cellEl);
-      this.canvas_context.font = style.fontSize + ' ' + style.fontFamily;
-      for (i = rowInfo.startIndex; i <= rowInfo.endIndex; i++) {
-        // row is either an array or values or a single value
-        val = (rowInfo.valueArr ? rowInfo.valueArr[i] : rowInfo.getRowVal(i));
-        if (columnDef.formatterOverride) {
-          // use formatterOverride as first preference
-          formatterResult = (columnDef.formatterOverride as FormatterOverrideCallback)(i, rowInfo.colIndex, val, columnDef, this.getDataItem(i), this as unknown as SlickGrid);
-        } else if (columnDef.formatter) {
-          // otherwise, use formatter
-          formatterResult = columnDef.formatter(i, rowInfo.colIndex, val, columnDef, this.getDataItem(i), this as unknown as SlickGrid);
-        } else {
-          // otherwise, use plain text
-          formatterResult = '' + val;
-        }
-        len = formatterResult ? this.canvas_context.measureText(formatterResult as string).width : 0;
-        if (len > max) {
-          max = len;
-          maxText = formatterResult as string;
-        }
-      }
-
-      cellEl.textContent = maxText;
-      len = cellEl.offsetWidth;
-
-      rowEl.remove();
-      return len;
-    }
-
-    for (i = rowInfo.startIndex; i <= rowInfo.endIndex; i++) {
-      val = (rowInfo.valueArr ? rowInfo.valueArr[i] : rowInfo.getRowVal(i));
-      if (columnDef.formatterOverride) {
-        // use formatterOverride as first preference
-        formatterResult = (columnDef.formatterOverride as FormatterOverrideCallback)(i, rowInfo.colIndex, val, columnDef, this.getDataItem(i), this as unknown as SlickGrid);
-      } else if (columnDef.formatter) {
-        // otherwise, use formatter
-        formatterResult = columnDef.formatter(i, rowInfo.colIndex, val, columnDef, this.getDataItem(i), this as unknown as SlickGrid);
-      } else {
-        // otherwise, use plain text
-        formatterResult = '' + val;
-      }
-      this.applyFormatResultToCellNode(formatterResult, cellEl);
-      len = cellEl.offsetWidth;
-      if (len > max) { max = len; }
-    }
-
-    rowEl.remove();
-    return max;
-  }
-
-  protected getColHeaderWidth(columnDef: C) {
-    let width = 0;
-    // if (columnDef && (!columnDef.resizable || columnDef._autoCalcWidth === true)) { return; }
-    const headerColElId = this.getUID() + columnDef.id;
-    let headerColEl = document.getElementById(headerColElId) as HTMLElement;
-    const dummyHeaderColElId = `${headerColElId}_`;
-    const clone = headerColEl.cloneNode(true) as HTMLElement;
-    if (headerColEl) {
-      // headers have been created, use clone technique
-      clone.id = dummyHeaderColElId;
-      clone.style.cssText = 'position: absolute; visibility: hidden;right: auto;text-overflow: initial;white-space: nowrap;';
-      headerColEl.parentNode!.insertBefore(clone, headerColEl);
-      width = clone.offsetWidth;
-      clone.parentNode!.removeChild(clone);
-    } else {
-      // headers have not yet been created, create a new node
-      const header = this.getHeader(columnDef) as HTMLElement;
-      headerColEl = createDomElement('div', { id: dummyHeaderColElId, className: 'ui-state-default slick-state-default slick-header-column' }, header);
-      const colNameElm = createDomElement('span', { className: 'slick-column-name' }, headerColEl);
-      this.applyHtmlCode(colNameElm, columnDef.name!);
-      clone.style.cssText = 'position: absolute; visibility: hidden;right: auto;text-overflow: initial;white-space: nowrap;';
-      if (columnDef.headerCssClass) {
-        headerColEl.classList.add(...(columnDef.headerCssClass || '').split(' '));
-      }
-      width = headerColEl.offsetWidth;
-      header.removeChild(headerColEl);
-    }
-    return width;
-  }
-
+  /**
+   * legacy autosizeColumns() method that was used before 6pac/SlickGrid reimplemented autosizeColumns().
+   * We could simply rename the method to autosizeColumns() but let's keep separate for now
+   * to make it easier to compare against 6pac/SlickGrid fork
+   */
   protected legacyAutosizeColumns() {
     let i;
     let c: C | undefined;
@@ -3404,11 +2911,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       if (this.options.mixinDefaults) {
         Utils.applyDefaults(m, this._columnDefaults);
-        if (!m.autoSize) { m.autoSize = {}; }
-        Utils.applyDefaults(m.autoSize, this._columnAutosizeDefaults);
       } else {
         m = this.columns[i] = Utils.extend({}, this._columnDefaults, m);
-        m.autoSize = Utils.extend({}, this._columnAutosizeDefaults, m.autoSize);
       }
 
       this.columnsById[m.id] = i;
@@ -3451,7 +2955,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.createCssRules();
       this.resizeCanvas();
       this.updateCanvasWidth();
-      this.applyColumnHeaderWidths();
       this.applyColumnWidths();
       this.handleScroll();
       this.getSelectionModel()?.refreshSelections();
@@ -3558,10 +3061,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   validateAndEnforceOptions(): void {
     if (this._options.autoHeight) {
       this._options.leaveSpaceForNewRows = false;
-    }
-    if (this._options.forceFitColumns) {
-      this._options.autosizeColsMode = GridAutosizeColsMode.LegacyForceFit;
-      // console.log('forceFitColumns option is deprecated - use autosizeColsMode');
     }
   }
 
@@ -4185,7 +3684,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Execute a Resize of the Grid Canvas */
   resizeCanvas() {
-    if (!this.initialized) { return; }
+    if (!this.initialized) {
+      return;
+    }
     this.paneTopH = 0;
     this.paneBottomH = 0;
     this.viewportTopH = 0;
@@ -4279,8 +3780,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.scrollbarDimensions = this.measureScrollbar();
     }
 
-    if (this._options.autosizeColsMode === GridAutosizeColsMode.LegacyForceFit) {
-      this.autosizeColumns();
+    if (this._options.forceFitColumns) {
+      this.legacyAutosizeColumns();
     }
 
     this.updateRowCount();
@@ -4388,8 +3889,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.resizeCanvas();
     }
 
-    if (this._options.autosizeColsMode === GridAutosizeColsMode.LegacyForceFit && oldViewportHasVScroll !== this.viewportHasVScroll) {
-      this.autosizeColumns();
+    if (this._options.forceFitColumns && oldViewportHasVScroll !== this.viewportHasVScroll) {
+      this.legacyAutosizeColumns();
     }
     this.updateCanvasWidth(false);
   }
