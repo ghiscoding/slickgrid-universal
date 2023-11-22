@@ -1,6 +1,12 @@
 name: 🏷️👀 Publish (dry-run)
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      graduate:
+        type: boolean
+        required: false
+        description: Force Conventional Graduate
 
 permissions:
   contents: write
