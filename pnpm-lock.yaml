@@ -165,8 +165,8 @@ importers:
         specifier: ^2.29.4
         version: 2.29.4
       multiple-select-vanilla:
-        specifier: ^0.6.3
-        version: 0.6.3
+        specifier: ^1.0.1
+        version: 1.0.1
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -232,8 +232,8 @@ importers:
         specifier: ^2.29.4
         version: 2.29.4
       multiple-select-vanilla:
-        specifier: ^0.6.3
-        version: 0.6.3
+        specifier: ^1.0.1
+        version: 1.0.1
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -2471,8 +2471,8 @@ packages:
     resolution: {integrity: sha512-I3pkr8j/6tmQtKV/ZzHtuaqYSQvyjGRKH4go60Rr0IDLlFxuRT5V32uvB1mecM5G1EVAUyF/4r4QZ1GHgz+mxA==}
     dev: true
 
-  /@types/trusted-types@2.0.6:
-    resolution: {integrity: sha512-HYtNooPvUY9WAVRBr4u+4Qa9fYD1ze2IUlAD3HoA6oehn1taGwBx3Oa52U4mTslTS+GAExKpaFu39Y5xUEwfjg==}
+  /@types/trusted-types@2.0.7:
+    resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
     dev: false
 
   /@types/whatwg-fetch@0.0.33:
@@ -6988,10 +6988,10 @@ packages:
       minimatch: 3.1.2
     dev: true
 
-  /multiple-select-vanilla@0.6.3:
-    resolution: {integrity: sha512-vgLylsAMjrncodvoWu/x3i6o4f4i8hiyTezJ66HRCZLXVZPDO4hy4nSUZ9RNSXxeuDtkw41Ecl247Paf6x/zyg==}
+  /multiple-select-vanilla@1.0.1:
+    resolution: {integrity: sha512-fGQ2NXqMhhpbcD1xC1vszEOd8V25PRjghpJvfLpZGAVvKGGb4CNrVS8d5j4R4M/OuzkZDPyBbFQNRMhpaS4yUw==}
     dependencies:
-      '@types/trusted-types': 2.0.6
+      '@types/trusted-types': 2.0.7
     dev: false
 
   /mute-stream@1.0.0:

@@ -1,7 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
-import { KeyCode } from '../enums/keyCode.enum';
 import type {
   DOMEvent,
   Column,
@@ -161,7 +160,7 @@ export class DualInputEditor implements Editor {
       this._isRightValueTouched = true;
     }
     this._lastInputKeyEvent = event;
-    if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT || event.keyCode === KeyCode.TAB) {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab') {
       event.stopImmediatePropagation();
     }
   }
@@ -297,10 +296,10 @@ export class DualInputEditor implements Editor {
   isValueChanged(): boolean {
     const leftElmValue = this._leftInput.value;
     const rightElmValue = this._rightInput.value;
-    const leftEditorParams = this.editorParams && this.editorParams.leftInput;
-    const rightEditorParams = this.editorParams && this.editorParams.rightInput;
-    const lastKeyEvent = this._lastInputKeyEvent && this._lastInputKeyEvent.keyCode;
-    if ((leftEditorParams && leftEditorParams.alwaysSaveOnEnterKey || rightEditorParams && rightEditorParams.alwaysSaveOnEnterKey) && lastKeyEvent === KeyCode.ENTER) {
+    const leftEditorParams = this.editorParams?.leftInput;
+    const rightEditorParams = this.editorParams?.rightInput;
+    const lastEventKey = this._lastInputKeyEvent?.key;
+    if ((leftEditorParams && leftEditorParams.alwaysSaveOnEnterKey || rightEditorParams && rightEditorParams.alwaysSaveOnEnterKey) && lastEventKey === 'Enter') {
       return true;
     }
     const leftResult = (!(leftElmValue === '' && (this._originalLeftValue === null || this._originalLeftValue === undefined))) && (leftElmValue !== this._originalLeftValue);

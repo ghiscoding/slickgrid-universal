@@ -2,7 +2,6 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
 import { Constants } from './../constants';
-import { KeyCode } from '../enums/keyCode.enum';
 import type {
   Column,
   ColumnEditor,
@@ -408,22 +407,22 @@ export class LongTextEditor implements Editor {
   }
 
   protected handleKeyDown(event: KeyboardEvent) {
-    const keyCode = event.keyCode ?? event.code;
+    const key = event.key;
     this._isValueTouched = true;
 
     if (!this.args.compositeEditorOptions) {
-      if ((keyCode === KeyCode.ENTER && event.ctrlKey) || (event.ctrlKey && event.key.toUpperCase() === 'S')) {
+      if ((key === 'Enter' && event.ctrlKey) || (event.ctrlKey && event.key.toUpperCase() === 'S')) {
         event.preventDefault();
         this.save();
-      } else if (keyCode === KeyCode.ESCAPE) {
+      } else if (key === 'Escape') {
         event.preventDefault();
         this.cancel();
-      } else if (keyCode === KeyCode.TAB && event.shiftKey) {
+      } else if (key === 'Tab' && event.shiftKey) {
         event.preventDefault();
         if (this.args && this.grid) {
           this.grid.navigatePrev();
         }
-      } else if (keyCode === KeyCode.TAB) {
+      } else if (key === 'Tab') {
         event.preventDefault();
         if (this.args && this.grid) {
           this.grid.navigateNext();

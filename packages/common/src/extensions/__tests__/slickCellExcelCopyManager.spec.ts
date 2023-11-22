@@ -254,7 +254,7 @@ describe('CellExcelCopyManager', () => {
       plugin.undoRedoBuffer.queueAndExecuteCommand(queueCallback);
       const body = window.document.body;
       body.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
-        keyCode: 90,
+        key: 'Z',
         ctrlKey: true,
         shiftKey: true,
         bubbles: true,
@@ -271,7 +271,7 @@ describe('CellExcelCopyManager', () => {
       plugin.undoRedoBuffer.queueAndExecuteCommand(queueCallback);
       const body = window.document.body;
       body.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
-        keyCode: 90,
+        key: 'Z',
         ctrlKey: true,
         shiftKey: false,
         bubbles: true

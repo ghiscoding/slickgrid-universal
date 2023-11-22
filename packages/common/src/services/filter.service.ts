@@ -9,7 +9,6 @@ import { type FilterFactory } from './../filters/filterFactory';
 import {
   EmitterType,
   FieldType,
-  KeyCode,
   OperatorType,
   type OperatorString,
   type SearchTerm,
@@ -1174,8 +1173,7 @@ export class FilterService {
 
       // trigger an event only if Filters changed or if ENTER key was pressed
       const eventKey = (event as KeyboardEvent)?.key;
-      const eventKeyCode = (event as KeyboardEvent)?.keyCode;
-      if (this._onSearchChange && (args.forceOnSearchChangeEvent || eventKey === 'Enter' || eventKeyCode === KeyCode.ENTER || !dequal(oldColumnFilters, this._columnFilters))) {
+      if (this._onSearchChange && (args.forceOnSearchChangeEvent || eventKey === 'Enter' || !dequal(oldColumnFilters, this._columnFilters))) {
         const eventArgs = {
           clearFilterTriggered: args.clearFilterTriggered,
           shouldTriggerQuery: args.shouldTriggerQuery,

@@ -2,7 +2,6 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
-import { KeyCode } from '../enums/keyCode.enum';
 import type { CheckboxSelectorOption, Column, DOMMouseOrTouchEvent, GridOption, SelectableOverrideCallback } from '../interfaces/index';
 import { SlickRowSelectionModel } from './slickRowSelectionModel';
 import { createDomElement, emptyElement } from '../services/domUtilities';
@@ -448,7 +447,7 @@ export class SlickCheckboxSelectColumn<T = any> {
   }
 
   protected handleKeyDown(e: KeyboardEvent, args: any) {
-    if (e.which === KeyCode.SPACE || e.key === ' ') {
+    if (e.key === ' ') {
       if (this._grid.getColumns()[args.cell].id === this._addonOptions.columnId) {
         // if editing, try to commit
         if (!this._grid.getEditorLock().isActive() || this._grid.getEditorLock().commitCurrentEdit()) {

@@ -174,8 +174,7 @@ export class SlickCellExcelCopyManager {
 
   /** Hook an undo shortcut key hook that will redo/undo the copy buffer using Ctrl+(Shift)+Z keyboard events */
   protected handleBodyKeyDown(e: KeyboardEvent) {
-    const keyCode = e.keyCode || e.code;
-    if (keyCode === 90 && (e.ctrlKey || e.metaKey)) {
+    if (e.key === 'Z' && (e.ctrlKey || e.metaKey)) {
       if (e.shiftKey) {
         this._undoRedoBuffer.redo(); // Ctrl + Shift + Z
       } else {

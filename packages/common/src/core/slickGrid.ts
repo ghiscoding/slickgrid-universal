@@ -8,7 +8,6 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 
 import {
   isDefined,
-  keyCode,
   preClickClassName,
   type SlickEditorLock,
   SlickGlobalEditorLock,
@@ -4726,9 +4725,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             return;
           }
         }
-        if (e.which === keyCode.HOME) {
+        if (e.key === 'Home') {
           handled = (e.ctrlKey) ? this.navigateTop() : this.navigateRowStart();
-        } else if (e.which === keyCode.END) {
+        } else if (e.key === 'End') {
           handled = (e.ctrlKey) ? this.navigateBottom() : this.navigateRowEnd();
         }
       }
@@ -4741,28 +4740,28 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             return;
           }
         }
-        if (e.which === keyCode.ESCAPE) {
+        if (e.key === 'Escape') {
           if (!this.getEditorLock()?.isActive()) {
             return; // no editing mode to cancel, allow bubbling and default processing (exit without cancelling the event)
           }
           this.cancelEditAndSetFocus();
-        } else if (e.which === keyCode.PAGE_DOWN) {
+        } else if (e.key === 'PageDown') {
           this.navigatePageDown();
           handled = true;
-        } else if (e.which === keyCode.PAGE_UP) {
+        } else if (e.key === 'PageUp') {
           this.navigatePageUp();
           handled = true;
-        } else if (e.which === keyCode.LEFT) {
+        } else if (e.key === 'ArrowLeft') {
           handled = this.navigateLeft();
-        } else if (e.which === keyCode.RIGHT) {
+        } else if (e.key === 'ArrowRight') {
           handled = this.navigateRight();
-        } else if (e.which === keyCode.UP) {
+        } else if (e.key === 'ArrowUp') {
           handled = this.navigateUp();
-        } else if (e.which === keyCode.DOWN) {
+        } else if (e.key === 'ArrowDown') {
           handled = this.navigateDown();
-        } else if (e.which === keyCode.TAB) {
+        } else if (e.key === 'Tab') {
           handled = this.navigateNext();
-        } else if (e.which === keyCode.ENTER) {
+        } else if (e.key === 'Enter') {
           if (this._options.editable) {
             if (this.currentEditor) {
               // adding new row
@@ -4779,7 +4778,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           }
           handled = true;
         }
-      } else if (e.which === keyCode.TAB && e.shiftKey && !e.ctrlKey && !e.altKey) {
+      } else if (e.key === 'Tab' && e.shiftKey && !e.ctrlKey && !e.altKey) {
         handled = this.navigatePrev();
       }
     }
@@ -4788,13 +4787,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       // the event has been handled so don't let parent element (bubbling/propagation) or browser (default) handle it
       e.stopPropagation();
       e.preventDefault();
-      try {
-        (e as any).originalEvent.keyCode = 0; // prevent default behaviour for special keys in IE browsers (F3, F5, etc.)
-      }
-      // ignore exceptions - setting the original event's keycode throws access denied exception for "Ctrl"
-      // (hitting control key only, nothing else), "Shift" (maybe others)
-      // eslint-disable-next-line no-empty
-      catch (error) { }
     }
   }
 

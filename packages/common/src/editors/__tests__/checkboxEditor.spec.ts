@@ -3,7 +3,6 @@ import { CheckboxEditor } from '../checkboxEditor';
 import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 
-const KEY_CHAR_SPACE = 32;
 const containerId = 'demo-container';
 
 // define a <div> container to simulate the grid container
@@ -194,7 +193,7 @@ describe('CheckboxEditor', () => {
       });
 
       it('should return False when previous event is not a click event', () => {
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_SPACE, bubbles: true, cancelable: true });
+        const event = new (window.window as any).KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true });
 
         editor = new CheckboxEditor(editorArguments);
         editor.loadValue({ id: 1, title: 'task 1', isActive: true });

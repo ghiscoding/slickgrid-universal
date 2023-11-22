@@ -2,12 +2,11 @@ import 'jest-extended';
 
 import { Editors } from '../index';
 import { AutocompleterEditor } from '../autocompleterEditor';
-import { KeyCode, FieldType } from '../../enums/index';
+import { FieldType } from '../../enums/index';
 import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SlickDataView, SlickEvent, type SlickGrid } from '../../core/index';
 
-const KEY_CHAR_A = 97;
 const containerId = 'demo-container';
 
 jest.useFakeTimers();
@@ -184,7 +183,7 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Left Arrow key', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.LEFT, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true });
       const spyEvent = jest.spyOn(event, 'stopImmediatePropagation');
 
       editor = new AutocompleterEditor(editorArguments);
@@ -197,7 +196,7 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Right Arrow key', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.RIGHT, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true });
       const spyEvent = jest.spyOn(event, 'stopImmediatePropagation');
 
       editor = new AutocompleterEditor(editorArguments);
@@ -212,7 +211,7 @@ describe('AutocompleterEditor', () => {
     it('should render the DOM element with different key/value pair when user provide its own customStructure', () => {
       (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ option: 'male', text: 'Male' }, { option: 'female', text: 'Female' }];
       (mockColumn.internalColumnEditor as ColumnEditor).customStructure = { value: 'option', label: 'text' };
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: 109, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'm', bubbles: true, cancelable: true });
 
       editor = new AutocompleterEditor(editorArguments);
       const editorElm = divContainer.querySelector('input.editor-gender') as HTMLInputElement;
@@ -224,7 +223,7 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should return True when calling "isValueChanged()" method with previously dispatched keyboard event being char "a"', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true });
 
       editor = new AutocompleterEditor(editorArguments);
       editor.setValue('z');
@@ -237,7 +236,7 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should return False when calling "isValueChanged()" method with previously dispatched keyboard event is same char as current value', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true });
 
       editor = new AutocompleterEditor(editorArguments);
       const editorElm = divContainer.querySelector('input.editor-gender') as HTMLInputElement;
@@ -250,7 +249,7 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should return True when calling "isValueChanged()" method with previously dispatched keyboard event as ENTER and "alwaysSaveOnEnterKey" is enabled', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.ENTER, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
       (mockColumn.internalColumnEditor as ColumnEditor).alwaysSaveOnEnterKey = true;
 
       editor = new AutocompleterEditor(editorArguments);
@@ -660,7 +659,7 @@ describe('AutocompleterEditor', () => {
             },
           } as AutocompleterOption
         };
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.LEFT, bubbles: true, cancelable: true });
+        const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true });
         editor = new AutocompleterEditor(editorArguments);
         const editorElm = divContainer.querySelector('input.editor-gender') as HTMLInputElement;
         editorElm.focus();
@@ -690,7 +689,7 @@ describe('AutocompleterEditor', () => {
 
     it('should add custom "fetch" call and expect "renderCollectionItem" callback be called when focusing on the autocomplete input', async () => {
       const mockCollection = [{ value: 'male', label: 'Male' }, { value: 'unknown', label: 'Unknown' }];
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: 109, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'm', bubbles: true, cancelable: true });
 
       mockColumn.internalColumnEditor = {
         collection: mockCollection,
@@ -727,7 +726,7 @@ describe('AutocompleterEditor', () => {
 
     it('should add custom "fetch" call and expect "renderRegularItem" callback be called when focusing on the autocomplete input', async () => {
       const mockCollection = [{ value: 'female', label: 'Female' }, { value: 'undefined', label: 'Undefined' }];
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: 109, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'm', bubbles: true, cancelable: true });
 
       mockColumn.internalColumnEditor = {
         editorOptions: {

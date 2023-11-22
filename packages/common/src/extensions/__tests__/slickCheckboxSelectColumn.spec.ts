@@ -4,7 +4,6 @@ import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickCheckboxSelectColumn } from '../slickCheckboxSelectColumn';
 import type { Column, OnSelectedRowsChangedEventArgs } from '../../interfaces/index';
 import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
-import { KeyCode } from '../../enums/index';
 import { SlickEvent, SlickGrid } from '../../core/index';
 
 const addVanillaEventPropagation = function (event, commandKey = '', keyName = '', target?: HTMLElement, which: string | number = '') {
@@ -595,7 +594,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin.init(gridStub);
     const checkboxElm = document.createElement('input');
     checkboxElm.type = 'checkbox';
-    const keyboardEvent = addVanillaEventPropagation(new Event('keyDown'), '', ' ', checkboxElm, KeyCode.SPACE);
+    const keyboardEvent = addVanillaEventPropagation(new Event('keyDown'), '', ' ', checkboxElm, ' ');
     const preventDefaultSpy = jest.spyOn(keyboardEvent, 'preventDefault');
     const stopImmediatePropagationSpy = jest.spyOn(keyboardEvent, 'stopImmediatePropagation');
     gridStub.onKeyDown.notify({ cell: 0, row: 2, grid: gridStub }, keyboardEvent);

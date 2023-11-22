@@ -6,7 +6,7 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import { isObject, isPrimitiveValue, setDeepValue, toKebabCase } from '@slickgrid-universal/utils';
 
 import { Constants } from './../constants';
-import { FieldType, KeyCode, } from '../enums/index';
+import { FieldType } from '../enums/index';
 import type {
   AutocompleterOption,
   AutocompleteSearchItem,
@@ -296,8 +296,8 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
   isValueChanged(): boolean {
     const elmValue = this._inputElm.value;
-    const lastKeyCodeEvent = this._lastInputKeyEvent?.keyCode;
-    if (this.columnEditor?.alwaysSaveOnEnterKey && (lastKeyCodeEvent === KeyCode.ENTER)) {
+    const lastEventKey = this._lastInputKeyEvent?.key;
+    if (this.columnEditor?.alwaysSaveOnEnterKey && lastEventKey === 'Enter') {
       return true;
     }
     const isValueChanged = (!(elmValue === '' && (this._defaultTextValue === null || this._defaultTextValue === undefined))) && (elmValue !== this._defaultTextValue);
@@ -557,14 +557,14 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     this._bindEventService.bind(this._inputElm, 'focus', () => this._inputElm?.select());
     this._bindEventService.bind(this._inputElm, 'keydown', ((event: KeyboardEvent) => {
       this._lastInputKeyEvent = event;
-      if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT || event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
         event.stopImmediatePropagation();
       }
 
       // in case the user wants to save even an empty value,
       // we need to subscribe to the onKeyDown event for that use case and clear the current value
       if (this.columnEditor.alwaysSaveOnEnterKey) {
-        if (event.keyCode === KeyCode.ENTER || event.key === 'Enter') {
+        if (event.key === 'Enter') {
           this._currentValue = null;
         }
       }
