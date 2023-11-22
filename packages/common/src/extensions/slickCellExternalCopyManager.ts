@@ -1,4 +1,3 @@
-import { KeyCode } from '../enums/index';
 import type { CellRange, Column, ExcelCopyBufferOption, ExternalCopyClipCommand } from '../interfaces/index';
 import { createDomElement, removeHtmlTags } from '../services/domUtilities';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange } from '../core/index';
@@ -349,7 +348,7 @@ export class SlickCellExternalCopyManager {
   protected handleKeyDown(e: any): boolean | void {
     let ranges: CellRange[];
     if (!this._grid.getEditorLock().isActive() || this._grid.getOptions().autoEdit) {
-      if (e.which === KeyCode.ESCAPE || e.key === 'Escape') {
+      if (e.key === 'Escape') {
         if (this._copiedRanges) {
           e.preventDefault();
           this.clearCopySelection();
@@ -361,7 +360,7 @@ export class SlickCellExternalCopyManager {
         }
       }
 
-      if ((e.which === KeyCode.C || e.key === 'c' || e.which === KeyCode.INSERT || e.key === 'Insert') && (e.ctrlKey || e.metaKey) && !e.shiftKey) {    // CTRL+C or CTRL+INS
+      if ((e.key === 'c' || e.key === 'Insert') && (e.ctrlKey || e.metaKey) && !e.shiftKey) {    // CTRL+C or CTRL+INS
         if (typeof this._onCopyInit === 'function') {
           this._onCopyInit.call(this);
         }
@@ -436,8 +435,8 @@ export class SlickCellExternalCopyManager {
       }
 
       if (!this._addonOptions.readOnlyMode && (
-        ((e.which === KeyCode.V || e.key === 'v') && (e.ctrlKey || e.metaKey) && !e.shiftKey)
-        || ((e.which === KeyCode.INSERT || e.key === 'Insert') && e.shiftKey && !e.ctrlKey)
+        (e.key === 'v' && (e.ctrlKey || e.metaKey) && !e.shiftKey)
+        || e.key === 'Insert' && e.shiftKey && !e.ctrlKey
       )) {    // CTRL+V or Shift+INS
         const textBoxElm = this.createTextBox('');
         setTimeout(() => this.decodeTabularData(this._grid, textBoxElm), this.addonOptions?.clipboardPasteDelay ?? CLIPBOARD_PASTE_DELAY);

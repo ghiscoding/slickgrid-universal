@@ -1,7 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
-import { KeyCode } from '../enums/keyCode.enum';
 import type {
   Column,
   ColumnEditor,
@@ -110,7 +109,7 @@ export class InputEditor implements Editor {
     this._bindEventService.bind(this._input, 'keydown', ((event: KeyboardEvent) => {
       this._isValueTouched = true;
       this._lastInputKeyEvent = event;
-      if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT) {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
         event.stopImmediatePropagation();
       }
     }) as EventListener);
@@ -210,8 +209,8 @@ export class InputEditor implements Editor {
 
   isValueChanged(): boolean {
     const elmValue = this._input?.value;
-    const lastKeyEvent = this._lastInputKeyEvent && this._lastInputKeyEvent.keyCode;
-    if (this.columnEditor && this.columnEditor.alwaysSaveOnEnterKey && lastKeyEvent === KeyCode.ENTER) {
+    const lastEventKey = this._lastInputKeyEvent?.key;
+    if (this.columnEditor?.alwaysSaveOnEnterKey && lastEventKey === 'Enter') {
       return true;
     }
     return (!(elmValue === '' && (this._originalValue === null || this._originalValue === undefined))) && (elmValue !== this._originalValue);

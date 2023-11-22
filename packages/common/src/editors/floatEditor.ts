@@ -1,6 +1,5 @@
 import { toSentenceCase } from '@slickgrid-universal/utils';
 
-import { KeyCode } from '../enums/index';
 import type { EditorArguments, EditorValidationResult } from '../interfaces/index';
 import { floatValidator } from '../editorValidators/floatValidator';
 import { InputEditor } from './inputEditor';
@@ -36,7 +35,7 @@ export class FloatEditor extends InputEditor {
       this._bindEventService.bind(this._input, 'focus', () => this._input?.select());
       this._bindEventService.bind(this._input, 'keydown', ((event: KeyboardEvent) => {
         this._lastInputKeyEvent = event;
-        if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT) {
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
           event.stopImmediatePropagation();
         }
       }) as EventListener);

@@ -2,7 +2,7 @@ import { of, Subject } from 'rxjs';
 
 import { Filters } from '../index';
 import { AutocompleterFilter } from '../autocompleterFilter';
-import { FieldType, OperatorType, KeyCode } from '../../enums/index';
+import { FieldType, OperatorType } from '../../enums/index';
 import { AutocompleterOption, Column, ColumnFilter, FilterArguments, GridOption } from '../../interfaces/index';
 import { CollectionService } from '../../services/collection.service';
 import { HttpStub } from '../../../../../test/httpClientStub';
@@ -125,9 +125,9 @@ describe('AutocompleterFilter', () => {
     const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
 
     filterElm.focus();
-    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 109, bubbles: true, cancelable: true }));
-    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.ENTER, bubbles: true, cancelable: true }));
-    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 109, bubbles: true, cancelable: true }));
+    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { key: 'm', bubbles: true, cancelable: true }));
+    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { key: 'm', bubbles: true, cancelable: true }));
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
 
     expect(filterFilledElms.length).toBe(1);
@@ -145,7 +145,7 @@ describe('AutocompleterFilter', () => {
     const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
 
     filterElm.focus();
-    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 97, bubbles: true, cancelable: true }));
+    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { key: 'a', bubbles: true, cancelable: true }));
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
 
     expect(filterFilledElms.length).toBe(1);
@@ -164,7 +164,7 @@ describe('AutocompleterFilter', () => {
     const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
 
     filterElm.focus();
-    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 97, bubbles: true, cancelable: true }));
+    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { key: 'a', bubbles: true, cancelable: true }));
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-gender.filled');
 
     expect(filterFilledElms.length).toBe(1);
@@ -181,7 +181,7 @@ describe('AutocompleterFilter', () => {
 
     filterElm.focus();
     filterElm.value = 'a';
-    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 97, bubbles: true, cancelable: true }));
+    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { key: 'a', bubbles: true, cancelable: true }));
 
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'EQ', searchTerms: ['a'], shouldTriggerQuery: true });
   });
@@ -266,7 +266,7 @@ describe('AutocompleterFilter', () => {
     await filter.init(filterArguments);
     const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
     filterElm.focus();
-    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 97, bubbles: true, cancelable: true }));
+    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { key: 'a', bubbles: true, cancelable: true }));
 
     jest.runAllTimers(); // fast-forward timer
 
@@ -341,7 +341,7 @@ describe('AutocompleterFilter', () => {
     await filter.init(filterArguments);
     const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
     filterElm.focus();
-    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 97, bubbles: true, cancelable: true }));
+    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { key: 'a', bubbles: true, cancelable: true }));
 
     jest.runAllTimers(); // fast-forward time
 
@@ -368,7 +368,7 @@ describe('AutocompleterFilter', () => {
     await filter.init(filterArguments);
     const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
     filterElm.focus();
-    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { keyCode: 97, bubbles: true, cancelable: true }));
+    filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('input', { key: 'a', bubbles: true, cancelable: true }));
 
     jest.runAllTimers(); // fast-forward time
 
@@ -614,7 +614,7 @@ describe('AutocompleterFilter', () => {
       filter.init(filterArguments);
       const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
       filterElm.focus();
-      filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 97, bubbles: true, cancelable: true }));
+      filterElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true }));
 
       jest.runAllTimers(); // fast-forward timer
 
@@ -690,7 +690,7 @@ describe('AutocompleterFilter', () => {
       // filter.setValues('male');
 
       filterElm.focus();
-      filterElm.dispatchEvent(new (window.window as any).Event('input', { keyCode: 97, bubbles: true, cancelable: true }));
+      filterElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', bubbles: true, cancelable: true }));
 
       jest.runAllTimers(); // fast-forward time
 
@@ -713,7 +713,7 @@ describe('AutocompleterFilter', () => {
       // filter.setValues('male');
 
       filterElm.focus();
-      filterElm.dispatchEvent(new (window.window as any).Event('input', { keyCode: 97, bubbles: true, cancelable: true }));
+      filterElm.dispatchEvent(new (window.window as any).Event('input', { key: 'a', bubbles: true, cancelable: true }));
 
 
       // after await (or timeout delay) we'll get the Subject Observable

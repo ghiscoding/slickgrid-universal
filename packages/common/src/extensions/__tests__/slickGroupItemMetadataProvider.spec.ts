@@ -1,4 +1,3 @@
-import { KeyCode } from '../../enums/index';
 import type { Column, GridOption, GroupItemMetadataProviderOption } from '../../interfaces';
 import { SlickGroupItemMetadataProvider } from '../slickGroupItemMetadataProvider';
 import { type SlickDataView, SlickEvent, SlickGrid, SlickGroup } from '../../core/index';
@@ -301,7 +300,7 @@ describe('GroupItemMetadataProvider Service', () => {
       const targetElm = document.createElement('div');
       targetElm.className = 'slick-group-toggle';
       keyDownEvent = new Event('keydown');
-      Object.defineProperty(keyDownEvent, 'keyCode', { writable: true, configurable: true, value: KeyCode.SPACE });
+      Object.defineProperty(keyDownEvent, 'key', { writable: true, configurable: true, value: ' ' });
       Object.defineProperty(keyDownEvent, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
       Object.defineProperty(keyDownEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
       preventDefaultSpy = jest.spyOn(keyDownEvent, 'preventDefault');

@@ -11,7 +11,6 @@ export * from './filterMultiplePassType.enum';
 export * from './filterMultiplePassTypeString.type';
 export * from './gridStateType.enum';
 export * from './infer.type';
-export * from './keyCode.enum';
 export * from './operatorString.type';
 export * from './operatorType.enum';
 export * from './plainFunc.type';

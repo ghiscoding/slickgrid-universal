@@ -1,10 +1,8 @@
 import { Editors } from '../index';
 import { FloatEditor } from '../floatEditor';
-import { KeyCode } from '../../enums/index';
 import { Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 
-const KEY_CHAR_0 = 48;
 const containerId = 'demo-container';
 
 jest.useFakeTimers();
@@ -170,7 +168,7 @@ describe('FloatEditor', () => {
     });
 
     it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Left Arrow key', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.LEFT, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true });
       const spyEvent = jest.spyOn(event, 'stopImmediatePropagation');
 
       editor = new FloatEditor(editorArguments);
@@ -184,7 +182,7 @@ describe('FloatEditor', () => {
     });
 
     it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Right Arrow key', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.RIGHT, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true });
       const spyEvent = jest.spyOn(event, 'stopImmediatePropagation');
 
       editor = new FloatEditor(editorArguments);
@@ -199,7 +197,7 @@ describe('FloatEditor', () => {
 
     describe('isValueChanged method', () => {
       it('should return True when previously dispatched keyboard event is a new char 0', () => {
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_0, bubbles: true, cancelable: true });
+        const event = new (window.window as any).KeyboardEvent('keydown', { key: '0', bubbles: true, cancelable: true });
 
         editor = new FloatEditor(editorArguments);
         editor.setValue(9);
@@ -213,7 +211,7 @@ describe('FloatEditor', () => {
       });
 
       it('should return False when previously dispatched keyboard event is same number as current value', () => {
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_0, bubbles: true, cancelable: true });
+        const event = new (window.window as any).KeyboardEvent('keydown', { key: '0', bubbles: true, cancelable: true });
 
         editor = new FloatEditor(editorArguments);
         const editorElm = divContainer.querySelector('input.editor-price') as HTMLInputElement;
@@ -226,7 +224,7 @@ describe('FloatEditor', () => {
       });
 
       it('should return False when previously dispatched keyboard event is same string number as current value', () => {
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_0, bubbles: true, cancelable: true });
+        const event = new (window.window as any).KeyboardEvent('keydown', { key: '0', bubbles: true, cancelable: true });
 
         editor = new FloatEditor(editorArguments);
         const editorElm = divContainer.querySelector('input.editor-price') as HTMLInputElement;
@@ -239,7 +237,7 @@ describe('FloatEditor', () => {
       });
 
       it('should return True when previously dispatched keyboard event as ENTER and "alwaysSaveOnEnterKey" is enabled', () => {
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.ENTER, bubbles: true, cancelable: true });
+        const event = new (window.window as any).KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
         (mockColumn.internalColumnEditor as ColumnEditor).alwaysSaveOnEnterKey = true;
 
         editor = new FloatEditor(editorArguments);

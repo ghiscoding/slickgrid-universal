@@ -6,13 +6,11 @@ jest.mock('../../services/domUtilities', () => ({
 
 import { Editors } from '../index';
 import { LongTextEditor } from '../longTextEditor';
-import { KeyCode } from '../../enums/index';
 import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { getOffset } from '../../services/domUtilities';
 
-const KEY_CHAR_A = 97;
 const containerId = 'demo-container';
 
 // define a <div> container to simulate the grid container
@@ -243,8 +241,8 @@ describe('LongTextEditor', () => {
 
     describe('isValueChanged method', () => {
       it('should return True when previously dispatched keyboard event is a new char "a" and it should also update the text counter accordingly', () => {
-        const eventKeyDown = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
-        const eventInput = new (window.window as any).KeyboardEvent('input', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
+        const eventKeyDown = new (window.window as any).KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true });
+        const eventInput = new (window.window as any).KeyboardEvent('input', { key: 'a', bubbles: true, cancelable: true });
         (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 255;
 
         editor = new LongTextEditor(editorArguments);
@@ -265,7 +263,7 @@ describe('LongTextEditor', () => {
       });
 
       it('should return False when previously dispatched keyboard event is same string number as current value', () => {
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
+        const event = new (window.window as any).KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true });
 
         editor = new LongTextEditor(editorArguments);
         const editorElm = document.body.querySelector('.editor-title textarea') as HTMLTextAreaElement;
@@ -280,7 +278,7 @@ describe('LongTextEditor', () => {
       });
 
       it('should return True when previously dispatched keyboard event ENTER', () => {
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.ENTER, bubbles: true, cancelable: true });
+        const event = new (window.window as any).KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
 
         editor = new LongTextEditor(editorArguments);
         editor.setValue('a');
@@ -460,7 +458,7 @@ describe('LongTextEditor', () => {
         const editorElm = editor.editorDomElement;
 
         editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
-          keyCode: KeyCode.ENTER,
+          key: 'Enter',
           ctrlKey: true,
           bubbles: true
         }));
@@ -521,7 +519,7 @@ describe('LongTextEditor', () => {
         const editorElm = editor.editorDomElement;
 
         editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
-          keyCode: KeyCode.ESCAPE,
+          key: 'Escape',
           bubbles: true
         }));
 
@@ -535,7 +533,7 @@ describe('LongTextEditor', () => {
         const spyNavigate = jest.spyOn(gridStub, 'navigatePrev');
 
         editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
-          keyCode: KeyCode.TAB,
+          key: 'Tab',
           shiftKey: true,
           bubbles: true
         }));
@@ -551,7 +549,7 @@ describe('LongTextEditor', () => {
         const spyNavigate = jest.spyOn(gridStub, 'navigateNext');
 
         editorElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
-          keyCode: KeyCode.TAB,
+          key: 'Tab',
           shiftKey: false,
           bubbles: true
         }));
@@ -735,7 +733,7 @@ describe('LongTextEditor', () => {
 
     describe('Truncate Text when using maxLength', () => {
       it('should truncate text to 10 chars when the provided text (with input/keydown event) is more than maxLength(10)', () => {
-        const eventInput = new (window.window as any).KeyboardEvent('input', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
+        const eventInput = new (window.window as any).KeyboardEvent('input', { key: 'a', bubbles: true, cancelable: true });
         (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 10;
 
         editor = new LongTextEditor(editorArguments);

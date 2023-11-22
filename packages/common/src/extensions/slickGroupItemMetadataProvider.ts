@@ -1,5 +1,4 @@
 import { SlickEventHandler, Utils as SlickUtils, type SlickDataView, SlickGroup, type SlickGrid } from '../core/index';
-import { KeyCode } from '../enums/keyCode.enum';
 import type {
   Column,
   DOMEvent,
@@ -141,7 +140,7 @@ export class SlickGroupItemMetadataProvider {
    * TODO:  add -/+ handling
    */
   protected handleGridKeyDown(e: KeyboardEvent) {
-    if (this._options.enableExpandCollapse && (e.keyCode === KeyCode.SPACE)) {
+    if (this._options.enableExpandCollapse && (e.key === ' ')) {
       const activeCell = this._grid?.getActiveCell();
       if (activeCell) {
         const item = this._grid.getDataItem(activeCell.row);

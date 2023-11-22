@@ -1,4 +1,4 @@
-import { KeyCode, type SelectionModel } from '../enums/index';
+import { type SelectionModel } from '../enums/index';
 import type { CellRange, GridOption, OnActiveCellChangedEventArgs, RowSelectionModelOption, } from '../interfaces/index';
 import { SlickCellRangeSelector } from '../extensions/slickCellRangeSelector';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange } from '../core/index';
@@ -203,7 +203,7 @@ export class SlickRowSelectionModel implements SelectionModel {
 
     if (this.gridOptions.multiSelect && activeRow &&
       e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey &&
-      (e.which === KeyCode.UP || e.key === 'ArrowUp' || e.which === KeyCode.DOWN || e.key === 'ArrowDown')
+      (e.key === 'ArrowUp' || e.key === 'ArrowDown')
     ) {
       let selectedRows = this.getSelectedRows();
       selectedRows.sort((x: number, y: number) => x - y);
@@ -216,7 +216,7 @@ export class SlickRowSelectionModel implements SelectionModel {
       let top = selectedRows[0];
       let bottom = selectedRows[selectedRows.length - 1];
 
-      if (e.which === KeyCode.DOWN || e.key === 'ArrowDown') {
+      if (e.key === 'ArrowDown') {
         active = (activeRow.row < bottom || top === bottom) ? ++bottom : ++top;
       } else {
         active = activeRow.row < bottom ? --bottom : --top;
