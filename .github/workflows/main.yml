@@ -75,6 +75,15 @@ jobs:
       - name: TSC Full Bundle (all Bundler types)
         run: pnpm bundle
 
+      - name: Archive common build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist folders
+          path: |
+            packages/common/dist
+            dist
+          retention-days: 5
+
       - name: Run Jest unit tests
         if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
         run: pnpm test:ci
