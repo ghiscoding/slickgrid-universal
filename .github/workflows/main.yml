@@ -79,10 +79,9 @@ jobs:
       - name: Archive common build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: dist folders
+          name: dist-common
           path: |
             packages/common/dist
-            dist
           retention-days: 5
 
       - name: Run Jest unit tests
