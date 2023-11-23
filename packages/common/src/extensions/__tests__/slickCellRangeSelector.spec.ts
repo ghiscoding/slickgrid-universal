@@ -152,7 +152,7 @@ describe('CellRangeSelector Plugin', () => {
     gridStub.onDragEnd.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEventEnd, gridStub);
 
     expect(focusSpy).not.toHaveBeenCalled();
-    expect(decoratorHideSpy).not.toHaveBeenCalled();
+    expect(decoratorHideSpy).toHaveBeenCalled();
     expect(decoratorShowSpy).not.toHaveBeenCalled();
   });
 
