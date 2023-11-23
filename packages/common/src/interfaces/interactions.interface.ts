@@ -2,7 +2,6 @@
 // --
 // Slick Interactions
 
-import { DOMMouseOrTouchEvent } from './domEvent.interface';
 import { DragPosition } from './drag.interface';
 
 export interface InteractionBase {
@@ -48,11 +47,11 @@ export interface ResizableOption {
   resizeableHandleElement: HTMLElement;
 
   /** resize start callback */
-  onResizeStart?: (e: DOMMouseOrTouchEvent<HTMLDivElement>, resizeElms: { resizeableElement: HTMLElement; }) => boolean | void;
+  onResizeStart?: (e: MouseEvent | Touch | TouchEvent, resizeElms: { resizeableElement: HTMLElement; }) => boolean | void;
 
   /** resizing callback */
-  onResize?: (e: DOMMouseOrTouchEvent<HTMLDivElement>, resizeElms: { resizeableElement: HTMLElement; resizeableHandleElement: HTMLElement; }) => boolean | void;
+  onResize?: (e: MouseEvent | Touch | TouchEvent, resizeElms: { resizeableElement: HTMLElement; resizeableHandleElement: HTMLElement; }) => boolean | void;
 
   /** resize ended callback */
-  onResizeEnd?: (e: DOMMouseOrTouchEvent<HTMLDivElement>, resizeElms: { resizeableElement: HTMLElement; }) => boolean | void;
+  onResizeEnd?: (e: MouseEvent | Touch | TouchEvent, resizeElms: { resizeableElement: HTMLElement; }) => boolean | void;
 }
