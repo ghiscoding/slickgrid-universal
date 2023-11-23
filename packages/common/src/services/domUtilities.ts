@@ -366,7 +366,7 @@ export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyH
   if (typeof gridOptions?.sanitizer === 'function') {
     sanitizedText = gridOptions.sanitizer(dirtyHtml || '');
   } else if (typeof DOMPurify?.sanitize === 'function') {
-    sanitizedText = (DOMPurify.sanitize(dirtyHtml || '', sanitizerOptions || { RETURN_TRUSTED_TYPE: true }) || '').toString();
+    sanitizedText = (DOMPurify.sanitize(dirtyHtml || '', sanitizerOptions || { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }) || '').toString();
   }
 
   return sanitizedText;
