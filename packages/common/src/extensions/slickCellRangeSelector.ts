@@ -297,12 +297,13 @@ export class SlickCellRangeSelector {
   }
 
   protected handleDragEnd(e: any, dd: DragPosition) {
+    this._decorator.hide();
+
     if (this._dragging) {
       this._dragging = false;
       e.stopImmediatePropagation();
 
       this.stopIntervalTimer();
-      this._decorator.hide();
       this.onCellRangeSelected.notify({
         range: new SlickRange(dd.range.start.row ?? 0, dd.range.start.cell ?? 0, dd.range.end.row, dd.range.end.cell)
       });
