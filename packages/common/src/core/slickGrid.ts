@@ -475,11 +475,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param target - target element to apply to
    * @param val - input value can be either a string or an HTMLElement
    */
-  applyHtmlCode(target: HTMLElement, val: string | HTMLElement = '', sanitizerOptions?: DOMPurify_.Config) {
+  applyHtmlCode(target: HTMLElement, val: string | HTMLElement | DocumentFragment = '', sanitizerOptions?: DOMPurify_.Config) {
     if (target) {
-      if (val instanceof HTMLElement) {
+      if (val instanceof HTMLElement || val instanceof DocumentFragment) {
         target.appendChild(val);
-      } else {
+      } else if (typeof val === 'string') {
         let sanitizedText = val;
         if (typeof this._options?.sanitizer === 'function') {
           sanitizedText = this._options.sanitizer(val || '');

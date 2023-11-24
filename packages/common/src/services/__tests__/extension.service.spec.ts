@@ -19,7 +19,6 @@ import {
   SlickContextMenu,
   SlickDraggableGrouping,
   SlickGridMenu,
-  SlickGroupItemMetadataProvider,
   SlickHeaderButtons,
   SlickHeaderMenu,
   SlickRowMoveManager,
@@ -354,8 +353,6 @@ describe('ExtensionService', () => {
 
         const output = service.getExtensionByName(ExtensionName.draggableGrouping);
         const pluginInstance = service.getExtensionInstanceByName(ExtensionName.draggableGrouping);
-        const groupMetaInstance = service.getExtensionInstanceByName(ExtensionName.groupItemMetaProvider);
-        const output2 = service.getExtensionByName(ExtensionName.groupItemMetaProvider);
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.toBeObject());
         expect(output!.instance instanceof SlickDraggableGrouping).toBeTrue();
@@ -363,7 +360,6 @@ describe('ExtensionService', () => {
         expect(pluginInstance).toBeTruthy();
         expect(output!.instance).toEqual(pluginInstance);
         expect(output).toEqual({ name: ExtensionName.draggableGrouping, instance: pluginInstance } as ExtensionModel<any>);
-        expect(output2).toEqual({ name: ExtensionName.groupItemMetaProvider, instance: groupMetaInstance } as ExtensionModel<any>);
       });
 
       it('should register the GridMenu addon when "enableGridMenu" is set in the grid options', () => {
@@ -381,21 +377,6 @@ describe('ExtensionService', () => {
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.toBeObject());
         expect(output!.instance instanceof SlickGridMenu).toBeTrue();
-      });
-
-      it('should register the GroupItemMetaProvider addon when "enableGrouping" is set in the grid options', () => {
-        const gridOptionsMock = { enableGrouping: true } as GridOption;
-        const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-
-        service.bindDifferentExtensions();
-        const output = service.getExtensionByName(ExtensionName.groupItemMetaProvider);
-        const pluginInstance = service.getExtensionInstanceByName(ExtensionName.groupItemMetaProvider);
-
-        expect(gridSpy).toHaveBeenCalled();
-        expect(output!.instance instanceof SlickGroupItemMetadataProvider).toBeTrue();
-        expect(pluginInstance).toBeTruthy();
-        expect(output!.instance).toEqual(pluginInstance);
-        expect(output).toEqual({ name: ExtensionName.groupItemMetaProvider, instance: pluginInstance } as ExtensionModel<any>);
       });
 
       it('should register the CheckboxSelector addon when "enableCheckboxSelector" is set in the grid options', () => {

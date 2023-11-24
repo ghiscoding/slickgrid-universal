@@ -246,14 +246,6 @@ export class ExtensionService {
         this._extensionList[ExtensionName.gridMenu] = { name: ExtensionName.gridMenu, instance: this._gridMenuControl };
       }
 
-      // Grouping Plugin
-      // register the group item metadata provider to add expand/collapse group handlers
-      if (this.gridOptions.enableDraggableGrouping || this.gridOptions.enableGrouping) {
-        this._groupItemMetadataProviderService = this._groupItemMetadataProviderService ? this._groupItemMetadataProviderService : new SlickGroupItemMetadataProvider();
-        this._groupItemMetadataProviderService.init(this.sharedService.slickGrid);
-        this._extensionList[ExtensionName.groupItemMetaProvider] = { name: ExtensionName.groupItemMetaProvider, instance: this._groupItemMetadataProviderService };
-      }
-
       // Header Button Plugin
       if (this.gridOptions.enableHeaderButton) {
         const headerButtonPlugin = new SlickHeaderButtons(this.extensionUtility, this.pubSubService, this.sharedService);

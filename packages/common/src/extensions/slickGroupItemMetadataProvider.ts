@@ -7,6 +7,7 @@ import type {
   ItemMetadata,
   OnClickEventArgs,
 } from '../interfaces/index';
+import { createDomElement } from '../services/domUtilities';
 
 /**
  * Provides item metadata for group (SlickGroup) and totals (SlickTotals) rows produced by the DataView.
@@ -17,6 +18,7 @@ import type {
  * If "grid.registerPlugin(...)" is not called, expand & collapse will not work.
  */
 export class SlickGroupItemMetadataProvider {
+  pluginName = 'SlickGroupItemMetadataProvider' as const;
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
   protected _options: GroupItemMetadataProviderOption;
@@ -106,7 +108,7 @@ export class SlickGroupItemMetadataProvider {
   // protected functions
   // -------------------
 
-  protected defaultGroupCellFormatter(_row: number, _cell: number, _value: any, _columnDef: Column, item: any): string {
+  protected defaultGroupCellFormatter(_row: number, _cell: number, _value: any, _columnDef: Column, item: any) {
     if (!this._options.enableExpandCollapse) {
       return item.title;
     }
@@ -116,8 +118,25 @@ export class SlickGroupItemMetadataProvider {
     const marginLeft = `${groupLevel * indentation}px`;
     const toggleClass = item.collapsed ? this._options.toggleCollapsedCssClass : this._options.toggleExpandedCssClass;
 
-    return `<span class="${this._options.toggleCssClass} ${toggleClass}" aria-expanded="${!item.collapsed}" style="margin-left: ${marginLeft}"></span>` +
-      `<span class="${this._options.groupTitleCssClass}" level="${groupLevel}">${item.title || ''}</span>`;
+    // use a DocumentFragment to avoid creating an extra div container
+    const containerElm = document.createDocumentFragment();
+
+    // 1. group toggle span
+    containerElm.appendChild(createDomElement('span', {
+      className: `${this._options.toggleCssClass} ${toggleClass}`,
+      ariaExpanded: String(!item.collapsed),
+      style: { marginLeft }
+    }));
+
+    // 2. group title span
+    const groupTitleElm = createDomElement('span', { className: this._options.groupTitleCssClass || '' });
+    groupTitleElm.setAttribute('level', groupLevel);
+    (item.title instanceof HTMLElement)
+      ? groupTitleElm.appendChild(item.title)
+      : this._grid.applyHtmlCode(groupTitleElm, item.title ?? '');
+    containerElm.appendChild(groupTitleElm);
+
+    return containerElm;
   }
 
   protected defaultTotalsCellFormatter(_row: number, _cell: number, _value: any, columnDef: Column, item: any, grid: SlickGrid) {
