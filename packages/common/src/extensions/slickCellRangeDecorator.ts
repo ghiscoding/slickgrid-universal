@@ -1,8 +1,8 @@
 import { deepMerge } from '@slickgrid-universal/utils';
 
-import type { CellRange, CellRangeDecoratorOption, CSSStyleDeclarationWritable } from '../interfaces/index';
 import { createDomElement } from '../services/domUtilities';
-import { type SlickGrid } from '../core/index';
+import type { CellRangeDecoratorOption, CSSStyleDeclarationWritable } from '../interfaces/index';
+import type { SlickGrid, SlickRange } from '../core/index';
 
 /**
  * Displays an overlay on top of a given cell range.
@@ -51,7 +51,7 @@ export class SlickCellRangeDecorator {
     this._elem = null;
   }
 
-  show(range: CellRange) {
+  show(range: SlickRange) {
     if (!this._elem) {
       this._elem = createDomElement('div', { className: this._options.selectionCssClass });
       Object.keys(this._options.selectionCss as CSSStyleDeclaration).forEach((cssStyleKey) => {

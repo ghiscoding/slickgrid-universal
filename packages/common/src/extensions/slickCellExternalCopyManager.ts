@@ -1,4 +1,4 @@
-import type { CellRange, Column, ExcelCopyBufferOption, ExternalCopyClipCommand } from '../interfaces/index';
+import type { Column, ExcelCopyBufferOption, ExternalCopyClipCommand } from '../interfaces/index';
 import { createDomElement, removeHtmlTags } from '../services/domUtilities';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange } from '../core/index';
 
@@ -16,16 +16,16 @@ const CLIPBOARD_PASTE_DELAY = 100;
 */
 export class SlickCellExternalCopyManager {
   pluginName: 'CellExternalCopyManager' = 'CellExternalCopyManager' as const;
-  onCopyCells = new SlickEvent<{ ranges: CellRange[]; }>();
-  onCopyCancelled = new SlickEvent<{ ranges: CellRange[]; }>();
-  onPasteCells = new SlickEvent<{ ranges: CellRange[]; }>();
+  onCopyCells = new SlickEvent<{ ranges: SlickRange[]; }>();
+  onCopyCancelled = new SlickEvent<{ ranges: SlickRange[]; }>();
+  onPasteCells = new SlickEvent<{ ranges: SlickRange[]; }>();
 
   protected _addonOptions!: ExcelCopyBufferOption;
   protected _bodyElement = document.body;
   protected _clearCopyTI?: NodeJS.Timeout;
   protected _copiedCellStyle = 'copied';
   protected _copiedCellStyleLayerKey = 'copy-manager';
-  protected _copiedRanges: CellRange[] | null = null;
+  protected _copiedRanges: SlickRange[] | null = null;
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
   protected _onCopyInit?: () => void;
@@ -346,7 +346,7 @@ export class SlickCellExternalCopyManager {
 
 
   protected handleKeyDown(e: any): boolean | void {
-    let ranges: CellRange[];
+    let ranges: SlickRange[];
     if (!this._grid.getEditorLock().isActive() || this._grid.getOptions().autoEdit) {
       if (e.key === 'Escape') {
         if (this._copiedRanges) {
@@ -445,7 +445,7 @@ export class SlickCellExternalCopyManager {
     }
   }
 
-  protected markCopySelection(ranges: CellRange[]) {
+  protected markCopySelection(ranges: SlickRange[]) {
     this.clearCopySelection();
 
     const columns = this._grid.getColumns();

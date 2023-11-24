@@ -6,7 +6,6 @@ import type {
   Column,
   ColumnEditor,
   DataViewOption,
-  DataViewOption as DataViewOptionCore,
   ExtensionList,
   ExternalResource,
   GridOption,
@@ -488,7 +487,7 @@ export class SlickVanillaGridBundle<TData = any> {
         this.sharedService.groupItemMetadataProvider = this.groupItemMetadataProvider;
         dataViewOptions = { ...dataViewOptions, groupItemMetadataProvider: this.groupItemMetadataProvider };
       }
-      this.dataView = new SlickDataView<TData>(dataViewOptions as Partial<DataViewOptionCore>);
+      this.dataView = new SlickDataView<TData>(dataViewOptions as Partial<DataViewOption>);
       this._eventPubSubService.publish('onDataviewCreated', this.dataView);
     }
 

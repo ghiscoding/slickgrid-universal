@@ -1,5 +1,5 @@
 import { type SelectionModel } from '../enums/index';
-import type { CellRange, GridOption, OnActiveCellChangedEventArgs, RowSelectionModelOption, } from '../interfaces/index';
+import type { GridOption, OnActiveCellChangedEventArgs, RowSelectionModelOption, } from '../interfaces/index';
 import { SlickCellRangeSelector } from '../extensions/slickCellRangeSelector';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange } from '../core/index';
 
@@ -144,7 +144,7 @@ export class SlickRowSelectionModel implements SelectionModel {
     this._grid.setActiveCell(cell.row, cell.cell);
   }
 
-  protected handleCellRangeSelected(_e: SlickEventData, args: { range: CellRange; }): boolean | void {
+  protected handleCellRangeSelected(_e: SlickEventData, args: { range: SlickRange; }): boolean | void {
     if (!this.gridOptions.multiSelect || !this.addonOptions.selectActiveRow) {
       return false;
     }
@@ -239,7 +239,7 @@ export class SlickRowSelectionModel implements SelectionModel {
     return /move|selectAndMove/.test(col);
   }
 
-  protected rangesToRows(ranges: CellRange[]): number[] {
+  protected rangesToRows(ranges: SlickRange[]): number[] {
     const rows = [];
     for (let i = 0; i < ranges.length; i++) {
       for (let j = ranges[i].fromRow; j <= ranges[i].toRow; j++) {

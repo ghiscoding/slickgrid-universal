@@ -12,7 +12,6 @@ import type {
   ContextMenu,
   CustomFooterOption,
   CustomTooltipOption,
-  DataViewOption,
   DraggableGrouping,
   EditCommand,
   EmptyWarning,
@@ -39,7 +38,7 @@ import type {
 } from './index';
 import type { ColumnReorderFunction, OperatorString, OperatorType, } from '../enums/index';
 import type { TranslaterService } from '../services/translater.service';
-import type { SlickEditorLock } from '../core/index';
+import type { DataViewOption, SlickEditorLock } from '../core/index';
 
 export interface CellViewportRange {
   bottom: number;
@@ -219,7 +218,7 @@ export interface GridOption<C extends Column = Column> {
   datasetIdPropertyName?: string;
 
   /** Some of the SlickGrid DataView options */
-  dataView?: DataViewOption & {
+  dataView?: Partial<DataViewOption> & {
     /**
      * Wires the grid and the DataView together to keep row selection tied to item ids.
      * This is useful since, without it, the grid only knows about rows, so if the items

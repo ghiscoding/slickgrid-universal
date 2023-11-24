@@ -1,10 +1,10 @@
-import type { CellRange, EditCommand, Formatter, GridOption } from '../../interfaces/index';
+import type { EditCommand, Formatter, GridOption } from '../../interfaces/index';
 import { Formatters } from '../../formatters';
 import { SharedService } from '../../services/shared.service';
 import { SlickCellExcelCopyManager } from '../slickCellExcelCopyManager';
 import { SlickCellSelectionModel } from '../slickCellSelectionModel';
 import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager';
-import { SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
+import { SlickEvent, SlickEventData, SlickGrid, SlickRange } from '../../core/index';
 
 jest.mock('flatpickr', () => { });
 
@@ -57,7 +57,7 @@ jest.mock('../slickCellExternalCopyManager', () => ({
 describe('CellExcelCopyManager', () => {
   let queueCallback: EditCommand;
   const mockEventCallback = () => { };
-  const mockSelectRange = [{ fromCell: 1, fromRow: 1, toCell: 1, toRow: 1 }] as CellRange[];
+  const mockSelectRange = [{ fromCell: 1, fromRow: 1, toCell: 1, toRow: 1 }] as SlickRange[];
   const mockSelectRangeEvent = { ranges: mockSelectRange };
 
   let plugin: SlickCellExcelCopyManager;

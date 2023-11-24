@@ -1,4 +1,4 @@
-import { type CellRange, type Column, type GridOption, SlickEventHandler, } from '@slickgrid-universal/common';
+import { type Column, type GridOption, SlickEventHandler, type SlickRange } from '@slickgrid-universal/common';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 import '../salesforce-styles.scss';
@@ -29,7 +29,7 @@ export default class Example19 {
 
     // bind any of the grid events
     const cellSelectionModel = this.sgb.slickGrid!.getSelectionModel();
-    this._eventHandler.subscribe(cellSelectionModel!.onSelectedRangesChanged, (_e, args: CellRange[]) => {
+    this._eventHandler.subscribe(cellSelectionModel!.onSelectedRangesChanged, (_e, args: SlickRange[]) => {
       const targetRange = document.querySelector('#selectionRange') as HTMLSpanElement;
       targetRange.textContent = '';
 
