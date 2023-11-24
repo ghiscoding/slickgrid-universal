@@ -27,7 +27,7 @@ export function buildMsSelectCollectionList(type: 'editor' | 'filter', collectio
   const enableTranslateLabel = columnFilterOrEditor?.enableTranslateLabel ?? false;
   const isTranslateEnabled = gridOptions?.enableTranslate ?? false;
   const isRenderHtmlEnabled = columnFilterOrEditor?.enableRenderHtml ?? false;
-  const sanitizedOptions = gridOptions?.sanitizeHtmlOptions ?? {};
+  const sanitizedOptions = gridOptions?.sanitizerOptions ?? {};
   const labelName = columnFilterOrEditor?.customStructure?.label ?? 'label';
   const labelPrefixName = columnFilterOrEditor?.customStructure?.labelPrefix ?? 'labelPrefix';
   const labelSuffixName = columnFilterOrEditor?.customStructure?.labelSuffix ?? 'labelSuffix';
