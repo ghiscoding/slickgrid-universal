@@ -1,7 +1,7 @@
 
 import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, SlickRange, type SlickGrid } from '../core/index';
 import type { SelectionModel } from '../enums/index';
-import type { CellRange, OnActiveCellChangedEventArgs } from '../interfaces/index';
+import type { OnActiveCellChangedEventArgs } from '../interfaces/index';
 import { SlickCellRangeSelector } from './index';
 
 export interface CellSelectionModelOption {
@@ -82,7 +82,7 @@ export class SlickCellSelectionModel implements SelectionModel {
     return this._ranges;
   }
 
-  rangesAreEqual(range1: CellRange[], range2: CellRange[]) {
+  rangesAreEqual(range1: SlickRange[], range2: SlickRange[]) {
     let areDifferent = (range1.length !== range2.length);
     if (!areDifferent) {
       for (let i = 0; i < range1.length; i++) {
