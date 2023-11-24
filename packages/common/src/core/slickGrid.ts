@@ -474,20 +474,24 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * 3. value is string and `enableHtmlRendering` is disabled, then use `target.textContent = value;`
    * @param target - target element to apply to
    * @param val - input value can be either a string or an HTMLElement
-   * @param options - `emptyTarget` will empty the target
+   * @param options - `emptyTarget`, defaults to true, will empty the target. `sanitizerOptions` is to provide extra options when using `innerHTML` and the sanitizer
    */
-  applyHtmlCode(target: HTMLElement, val: string | HTMLElement | DocumentFragment = '', sanitizerOptions?: DOMPurify_.Config) {
+  applyHtmlCode(target: HTMLElement, val: string | HTMLElement | DocumentFragment = '', options?: { emptyTarget?: boolean; sanitizerOptions?: any; }) {
     if (target) {
       if (val instanceof HTMLElement || val instanceof DocumentFragment) {
         // first empty target and then append new HTML element
-        emptyElement(target);
+        const emptyTarget = options?.emptyTarget !== false;
+        if (emptyTarget) {
+          emptyElement(target);
+        }
         target.appendChild(val);
-      } else if (typeof val === 'string') {
+      } else {
         let sanitizedText = val;
         if (typeof this._options?.sanitizer === 'function') {
           sanitizedText = this._options.sanitizer(val || '');
         } else if (typeof DOMPurify?.sanitize === 'function') {
-          sanitizedText = DOMPurify.sanitize(val || '', sanitizerOptions || { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true });
+          const purifyOptions = (options?.sanitizerOptions ?? this._options.sanitizeHtmlOptions ?? { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }) as DOMPurify_.Config;
+          sanitizedText = DOMPurify.sanitize(val || '', purifyOptions);
         }
 
         if (this._options.enableHtmlRendering) {
@@ -730,7 +734,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         // disable text selection in grid cells except in input and textarea elements
         // (this is IE-specific, because selectstart event will only fire in IE)
         this._viewport.forEach((view) => {
-          this._bindingEventService.bind(view, 'selectstart', (event) => {
+          this._bindingEventService.bind(view, 'selectstart', (event: Event) => {
             if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
               return;
             }
