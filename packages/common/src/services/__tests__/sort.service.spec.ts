@@ -89,7 +89,7 @@ const pubSubServiceStub = {
   subscribe: jest.fn(),
   unsubscribe: jest.fn(),
   unsubscribeAll: jest.fn(),
-} as PubSubService;
+} as BasePubSubService;
 
 describe('SortService', () => {
   let backendUtilityService: BackendUtilityService;
@@ -529,10 +529,10 @@ describe('SortService', () => {
     it('should execute the "onError" method when the Observable throws an error', (done) => {
       const spyProcess = jest.fn();
       const errorExpected = 'observable error';
-      gridOptionMock.backendServiceApi.process = () => of(spyProcess);
-      gridOptionMock.backendServiceApi.onError = (e) => jest.fn();
-      const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi, 'onError');
-      jest.spyOn(gridOptionMock.backendServiceApi, 'process').mockReturnValue(throwError(errorExpected));
+      gridOptionMock.backendServiceApi!.process = () => of(spyProcess);
+      gridOptionMock.backendServiceApi!.onError = (e) => jest.fn();
+      const spyOnError = jest.spyOn(gridOptionMock.backendServiceApi!, 'onError');
+      jest.spyOn(gridOptionMock.backendServiceApi!, 'process').mockReturnValue(throwError(errorExpected));
 
       backendUtilityService.addRxJsResource(rxjsResourceStub);
       service.addRxJsResource(rxjsResourceStub);
@@ -616,7 +616,7 @@ describe('SortService', () => {
       mockColumns.forEach(col => {
         expect(col.sortable).toBeFalsy();
       });
-      mockColumns.forEach(col => col.header!.menu!.items.forEach(item => {
+      mockColumns.forEach(col => col.header!.menu!.items!.forEach(item => {
         expect((item as MenuCommandItem).hidden).toBeTruthy();
       }));
       gridOptionMock.gridMenu!.commandItems!.forEach(item => {
@@ -637,7 +637,7 @@ describe('SortService', () => {
       mockColumns.forEach(col => {
         expect(col.sortable).toBeFalsy();
       });
-      mockColumns.forEach(col => col.header!.menu!.items.forEach(item => {
+      mockColumns.forEach(col => col.header!.menu!.items!.forEach(item => {
         expect((item as MenuCommandItem).hidden).toBeTruthy();
       }));
       gridOptionMock.gridMenu!.commandItems!.forEach(item => {
@@ -656,7 +656,7 @@ describe('SortService', () => {
       mockColumns.forEach(col => {
         expect(col.sortable).toBeTruthy();
       });
-      mockColumns.forEach(col => col.header!.menu!.items.forEach(item => {
+      mockColumns.forEach(col => col.header!.menu!.items!.forEach(item => {
         expect((item as MenuCommandItem).hidden).toBeFalsy();
       }));
       gridOptionMock.gridMenu!.commandItems!.forEach(item => {
@@ -704,25 +704,43 @@ describe('SortService', () => {
   });
 
   describe('loadGridSorters method', () => {
-    const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'lastName', field: 'lastName' }] as Column[];
+    const mockColumns = [{ id: 'firstName', field: 'firstName', sortable: true }, { id: 'lastName', field: 'lastName', sortable: true }] as Column[];
 
     beforeEach(() => {
       gridOptionMock.presets = {
         sorters: [{ columnId: 'firstName', direction: 'ASC' }, { columnId: 'lastName', direction: 'DESC' }],
       };
+      gridOptionMock.enableTreeData = false;
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    });
+
+    it('should throw when trying to add sorter on a column that is not sortable', () => {
+      const colMock = { ...mockColumns[0], sortable: false } as Column;
+      jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce([colMock]);
+
+      service.bindLocalOnSort(gridStub);
+      expect(() => service.loadGridSorters(gridOptionMock.presets!.sorters!)).toThrow('[Slickgrid-Universal] Cannot add sort icon to a column that is not sortable, please add `sortable: true` to your column');
+    });
+
+    it('should throw when trying to add sorter on a TreeData grid with a column that is not sortable', () => {
+      const colMock = { ...mockColumns[0], sortable: false } as Column;
+      jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce([colMock]);
+      gridOptionMock.enableTreeData = true;
+
+      service.bindLocalOnSort(gridStub);
+      expect(() => service.loadGridSorters(gridOptionMock.presets!.sorters!)).toThrow('Also note that TreeData feature requires the column holding the tree (expand/collapse icons) to be sortable.');
     });
 
     it('should load local grid multiple presets sorting when multiColumnSort is enabled', () => {
       const spySetCols = jest.spyOn(gridStub, 'setSortColumns');
       const spySortChanged = jest.spyOn(service, 'onLocalSortChanged');
       const expectation = [
-        { columnId: 'firstName', sortAsc: true, sortCol: { id: 'firstName', field: 'firstName' } },
-        { columnId: 'lastName', sortAsc: false, sortCol: { id: 'lastName', field: 'lastName' } },
+        { columnId: 'firstName', sortAsc: true, sortCol: { id: 'firstName', field: 'firstName', sortable: true } },
+        { columnId: 'lastName', sortAsc: false, sortCol: { id: 'lastName', field: 'lastName', sortable: true } },
       ];
 
       service.bindLocalOnSort(gridStub);
-      service.loadGridSorters(gridOptionMock.presets.sorters);
+      service.loadGridSorters(gridOptionMock.presets!.sorters!);
 
       expect(spySetCols).toHaveBeenCalledWith([
         { columnId: 'firstName', sortAsc: true, },
@@ -735,13 +753,13 @@ describe('SortService', () => {
       const spySetCols = jest.spyOn(gridStub, 'setSortColumns');
       const spySortChanged = jest.spyOn(service, 'onLocalSortChanged');
       const expectation = [
-        { columnId: 'firstName', sortAsc: true, sortCol: { id: 'firstName', field: 'firstName' } },
-        { columnId: 'lastName', sortAsc: false, sortCol: { id: 'lastName', field: 'lastName' } },
+        { columnId: 'firstName', sortAsc: true, sortCol: { id: 'firstName', field: 'firstName', sortable: true } },
+        { columnId: 'lastName', sortAsc: false, sortCol: { id: 'lastName', field: 'lastName', sortable: true } },
       ];
 
       gridOptionMock.multiColumnSort = false;
       service.bindLocalOnSort(gridStub);
-      service.loadGridSorters(gridOptionMock.presets.sorters);
+      service.loadGridSorters(gridOptionMock.presets!.sorters!);
 
       expect(spySetCols).toHaveBeenCalledWith([{ columnId: 'firstName', sortAsc: true }]);
       expect(spySortChanged).toHaveBeenCalledWith(gridStub, [expectation[0]]);
@@ -754,20 +772,20 @@ describe('SortService', () => {
         sorters: [{ columnId: 'firstName', direction: 'ASC' }, { columnId: 'lastName', direction: 'DESC' }],
       };
       const spySetCols = jest.spyOn(gridStub, 'setSortColumns');
-      gridStub.getColumns = undefined;
+      gridStub.getColumns = undefined as any;
 
       service.bindLocalOnSort(gridStub);
-      service.loadGridSorters(gridOptionMock.presets.sorters);
+      service.loadGridSorters(gridOptionMock.presets!.sorters!);
 
       expect(spySetCols).toHaveBeenCalledWith([]);
     });
 
     it('should use an empty grid option object when grid "getOptions" method is not available', () => {
       const spySetCols = jest.spyOn(gridStub, 'setSortColumns');
-      gridStub.getOptions = undefined;
+      gridStub.getOptions = undefined as any;
 
       service.bindLocalOnSort(gridStub);
-      service.loadGridSorters(gridOptionMock.presets.sorters);
+      service.loadGridSorters(gridOptionMock.presets!.sorters!);
 
       expect(spySetCols).toHaveBeenCalledWith([]);
     });
@@ -1029,9 +1047,9 @@ describe('SortService', () => {
 
   describe('Tree Data View', () => {
     const mockColumns = [
-      { id: 'firstName', field: 'firstName' },
-      { id: 'lastName', field: 'lastName' },
-      { id: 'file', field: 'file', name: 'Files' }
+      { id: 'firstName', field: 'firstName', sortable: true },
+      { id: 'lastName', field: 'lastName', sortable: true },
+      { id: 'file', field: 'file', name: 'Files', sortable: true }
     ] as Column[];
 
     beforeEach(() => {
