@@ -111,7 +111,11 @@ describe('GridOdataService', () => {
 
     it('should use default pagination "$top" option when "paginationOptions" is not provided', () => {
       const expectation = `$top=${DEFAULT_ITEMS_PER_PAGE}`;
-      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100, excludeFromQuery: true }];
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', width: 100, excludeFromQuery: true },
+        { id: 'field3', field: 'field3', fields: ['field4', 'field5', 'field6'], width: 100, excludeFieldFromQuery: true }
+      ];
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init(null as any, undefined, gridStub);

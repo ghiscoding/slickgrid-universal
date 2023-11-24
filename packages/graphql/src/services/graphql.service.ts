@@ -98,7 +98,9 @@ export class GraphqlService implements BackendService {
     const columnIds: string[] = [];
     if (columnDefinitions && Array.isArray(columnDefinitions)) {
       for (const column of columnDefinitions) {
-        columnIds.push(column.field);
+        if (!column.excludeFieldFromQuery) {
+          columnIds.push(column.field);
+        }
 
         // if extra "fields" are passed, also push them to columnIds
         if (column.fields) {

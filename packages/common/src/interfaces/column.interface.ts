@@ -108,6 +108,9 @@ export interface Column<T = any> {
   /** Default to false, which leads to exclude the column title from the Grid Menu. */
   excludeFromGridMenu?: boolean;
 
+  /** Defaults to false, which leads to exclude the field property, but including the fields property, from the query (typically a backend service query) */
+  excludeFieldFromQuery?: boolean;
+
   /** Defaults to false, which leads to exclude the field from the query (typically a backend service query) */
   excludeFromQuery?: boolean;
 
