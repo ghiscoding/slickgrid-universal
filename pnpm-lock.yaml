@@ -165,8 +165,8 @@ importers:
         specifier: ^2.29.4
         version: 2.29.4
       multiple-select-vanilla:
-        specifier: ^0.6.3
-        version: 0.6.3
+        specifier: ^1.0.3
+        version: 1.0.3
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -229,8 +229,8 @@ importers:
         specifier: ^2.29.4
         version: 2.29.4
       multiple-select-vanilla:
-        specifier: ^0.6.3
-        version: 0.6.3
+        specifier: ^1.0.3
+        version: 1.0.3
       slickgrid:
         specifier: ^4.1.3
         version: 4.1.3
@@ -602,7 +602,7 @@ importers:
         version: 6.1.1
       vite:
         specifier: ^5.0.0
-        version: 5.0.0(@types/node@20.9.2)
+        version: 5.0.0(@types/node@20.9.2)(sass@1.69.5)
       yargs:
         specifier: ^17.7.2
         version: 17.7.2
@@ -2656,8 +2656,8 @@ packages:
     resolution: {integrity: sha512-I3pkr8j/6tmQtKV/ZzHtuaqYSQvyjGRKH4go60Rr0IDLlFxuRT5V32uvB1mecM5G1EVAUyF/4r4QZ1GHgz+mxA==}
     dev: true
 
-  /@types/trusted-types@2.0.6:
-    resolution: {integrity: sha512-HYtNooPvUY9WAVRBr4u+4Qa9fYD1ze2IUlAD3HoA6oehn1taGwBx3Oa52U4mTslTS+GAExKpaFu39Y5xUEwfjg==}
+  /@types/trusted-types@2.0.7:
+    resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
     dev: false
 
   /@types/whatwg-fetch@0.0.33:
@@ -7118,10 +7118,10 @@ packages:
       minimatch: 3.1.2
     dev: true
 
-  /multiple-select-vanilla@0.6.3:
-    resolution: {integrity: sha512-vgLylsAMjrncodvoWu/x3i6o4f4i8hiyTezJ66HRCZLXVZPDO4hy4nSUZ9RNSXxeuDtkw41Ecl247Paf6x/zyg==}
+  /multiple-select-vanilla@1.0.3:
+    resolution: {integrity: sha512-U4hzBz6A0aiYMWTi9K9Y6dapDNoQqCRBbJB1gC9vKut2Y2vWr2+IKiGJ9L3fjpt8PdzxDJ9BESsoa3LW+e0B/A==}
     dependencies:
-      '@types/trusted-types': 2.0.6
+      '@types/trusted-types': 2.0.7
     dev: false
 
   /mute-stream@1.0.0:
@@ -9526,42 +9526,6 @@ packages:
       assert-plus: 1.0.0
       core-util-is: 1.0.2
       extsprintf: 1.3.0
-    dev: true
-
-  /vite@5.0.0(@types/node@20.9.2):
-    resolution: {integrity: sha512-ESJVM59mdyGpsiNAeHQOR/0fqNoOyWPYesFto8FFZugfmhdHx8Fzd8sF3Q/xkVhZsyOxHfdM7ieiVAorI9RjFw==}
-    engines: {node: ^18.0.0 || >=20.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': ^18.0.0 || >=20.0.0
-      less: '*'
-      lightningcss: ^1.21.0
-      sass: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.4.0
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      less:
-        optional: true
-      lightningcss:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-    dependencies:
-      '@types/node': 20.9.2
-      esbuild: 0.19.6
-      postcss: 8.4.31
-      rollup: 4.3.1
-    optionalDependencies:
-      fsevents: 2.3.3
     dev: true
 
   /vite@5.0.0(@types/node@20.9.2)(sass@1.69.5):
