@@ -25,6 +25,3 @@ export interface CellRangeSelectorOption {
   /** styling (for example blue background on cell) */
   selectionCss: CSSStyleDeclaration;
 }
-
-export type CSSStyleDeclarationReadonly = 'length' | 'parentRule' | 'getPropertyPriority' | 'getPropertyValue' | 'item' | 'removeProperty' | 'setProperty';
-export type CSSStyleDeclarationWritable = keyof Omit<CSSStyleDeclaration, CSSStyleDeclarationReadonly>;

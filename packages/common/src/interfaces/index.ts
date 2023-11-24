@@ -30,6 +30,7 @@ export * from './compositeEditorOpenDetailOption.interface';
 export * from './compositeEditorOption.interface';
 export * from './contextMenu.interface';
 export * from './contextMenuOption.interface';
+export * from './cssDeclaration.interface';
 export * from './currentColumn.interface';
 export * from './currentFilter.interface';
 export * from './currentPagination.interface';
