@@ -639,7 +639,7 @@ export interface GridOption<C extends Column = Column> {
    * Optionally pass some options to the 3rd party lib "cure53/DOMPurify" used in some Filters.
    * For this to work, "enableRenderHtml" as to be enabled.
    */
-  sanitizeHtmlOptions?: any;
+  sanitizerOptions?: unknown;
 
   /**
    * By default the lib will use DOMPurify to sanitize any HTML strings before passing them to `innerHTML`,

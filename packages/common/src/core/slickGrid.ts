@@ -476,7 +476,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param val - input value can be either a string or an HTMLElement
    * @param options - `emptyTarget`, defaults to true, will empty the target. `sanitizerOptions` is to provide extra options when using `innerHTML` and the sanitizer
    */
-  applyHtmlCode(target: HTMLElement, val: string | HTMLElement | DocumentFragment = '', options?: { emptyTarget?: boolean; sanitizerOptions?: any; }) {
+  applyHtmlCode(target: HTMLElement, val: string | HTMLElement | DocumentFragment = '', options?: { emptyTarget?: boolean; sanitizerOptions?: unknown; }) {
     if (target) {
       if (val instanceof HTMLElement || val instanceof DocumentFragment) {
         // first empty target and then append new HTML element
@@ -490,7 +490,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         if (typeof this._options?.sanitizer === 'function') {
           sanitizedText = this._options.sanitizer(val || '');
         } else if (typeof DOMPurify?.sanitize === 'function') {
-          const purifyOptions = (options?.sanitizerOptions ?? this._options.sanitizeHtmlOptions ?? { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }) as DOMPurify_.Config;
+          const purifyOptions = (options?.sanitizerOptions ?? this._options.sanitizerOptions ?? { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }) as DOMPurify_.Config;
           sanitizedText = DOMPurify.sanitize(val || '', purifyOptions);
         }
 
