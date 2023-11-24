@@ -533,6 +533,9 @@ export class SlickVanillaGridBundle<TData = any> {
     this.sharedService.dataView = this.dataView as SlickDataView;
     this.sharedService.slickGrid = this.slickGrid as SlickGrid;
     this.sharedService.gridContainerElement = this._gridContainerElm;
+    if (this.groupItemMetadataProvider) {
+      this.slickGrid.registerPlugin(this.groupItemMetadataProvider); // register GroupItemMetadataProvider when Grouping is enabled
+    }
 
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.slickGrid, this._gridOptions, this.dataView as SlickDataView);

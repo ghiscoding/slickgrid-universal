@@ -801,6 +801,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(dataviewSpy).toHaveBeenCalledWith({ inlineFilters: false, groupItemMetadataProvider: expect.anything() });
         expect(sharedService.groupItemMetadataProvider instanceof SlickGroupItemMetadataProvider).toBeTruthy();
         expect(sharedMetaSpy).toHaveBeenCalledWith(expect.toBeObject());
+        expect(mockGrid.registerPlugin).toHaveBeenCalled();
 
         component.dispose();
       });
@@ -815,6 +816,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(dataviewSpy).toHaveBeenCalledWith({ inlineFilters: false, groupItemMetadataProvider: expect.anything() });
         expect(sharedMetaSpy).toHaveBeenCalledWith(expect.toBeObject());
         expect(sharedService.groupItemMetadataProvider instanceof SlickGroupItemMetadataProvider).toBeTruthy();
+        expect(mockGrid.registerPlugin).toHaveBeenCalled();
 
         component.dispose();
       });

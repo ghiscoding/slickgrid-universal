@@ -260,6 +260,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     maxItemToInspectSingleColumnWidthByContent: 5000,
     widthToRemoveFromExceededWidthReadjustment: 50,
   },
+  sanitizeHtmlOptions: { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }, // our default DOMPurify options
   treeDataOptions: {
     exportIndentMarginLeft: 5,
     exportIndentationLeadingChar: '͏͏͏͏͏͏͏͏͏·',
