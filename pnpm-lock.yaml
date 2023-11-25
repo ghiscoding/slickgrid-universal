@@ -93,8 +93,8 @@ importers:
         specifier: ^4.0.2
         version: 4.0.2
       slickgrid:
-        specifier: ^4.1.4
-        version: 4.1.4
+        specifier: ^4.1.5
+        version: 4.1.5
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -232,8 +232,8 @@ importers:
         specifier: ^0.6.3
         version: 0.6.3
       slickgrid:
-        specifier: ^4.1.4
-        version: 4.1.4
+        specifier: ^4.1.5
+        version: 4.1.5
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -524,8 +524,8 @@ importers:
         specifier: ^4.6.13
         version: 4.6.13
       slickgrid:
-        specifier: ^4.1.4
-        version: 4.1.4
+        specifier: ^4.1.5
+        version: 4.1.5
       sortablejs:
         specifier: ^1.15.0
         version: 1.15.0
@@ -8482,8 +8482,8 @@ packages:
       is-fullwidth-code-point: 3.0.0
     dev: true
 
-  /slickgrid@4.1.4:
-    resolution: {integrity: sha512-o7xCgpOFWXijG+9zaX8YSTuvqZ56/s/mGryzC7a0IAuEOG8NTMmVmD+ie/PMr4tAwdy9m+fu8hufYAkkQpa7PA==}
+  /slickgrid@4.1.5:
+    resolution: {integrity: sha512-riHpgidZ2qOinsthGCewFhAYbo7LX/rpXd9B6rGWaVqap1sbL8viGbe8ZCXu2SZvwaGC+LqkGisW77UzMOLoVg==}
     dependencies:
       sortablejs: 1.15.0
 
