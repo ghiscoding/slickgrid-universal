@@ -194,6 +194,20 @@ describe('GraphqlService', () => {
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
     });
 
+    it('should exclude a column field, and expect a query string without it, but still include any fields specified', () => {
+      const expectation = `query{ users(first:10, offset:0){ totalCount, nodes{ id, field1, field3, field4, field5 }}}`;
+      const columns = [
+        { id: 'field1', field: 'field1', width: 100 },
+        { id: 'field2', field: 'field2', fields: ['field3', 'field4', 'field5'], width: 100, excludeFieldFromQuery: true }
+      ];
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+
+      service.init({ datasetName: 'users' }, paginationOptions, gridStub);
+      const query = service.buildQuery();
+
+      expect(removeSpaces(query)).toBe(removeSpaces(expectation));
+    });
+
     it('should use default pagination "first" option when "paginationOptions" is not provided', () => {
       const expectation = `query{ users(first:${DEFAULT_ITEMS_PER_PAGE}, offset:0){ totalCount, nodes{ id, field1 }}}`;
       const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100, excludeFromQuery: true }];
