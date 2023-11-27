@@ -418,6 +418,21 @@ describe('GraphqlService', () => {
 
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
     });
+
+    it('should include the operationName if provided', () => {
+      const expectation = `query foo {users(first:10, offset:0, userId:123, firstName:"John"){ totalCount, nodes{id,field1,field2}}}`;
+      const columns = [{ id: 'field1', field: 'field1', width: 100 }, { id: 'field2', field: 'field2', width: 100 }];
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
+
+      service.init({
+        datasetName: 'users',
+        operationName: 'foo',
+        extraQueryArguments: [{ field: 'userId', value: 123 }, { field: 'firstName', value: 'John' }],
+      }, paginationOptions, gridStub);
+      const query = service.buildQuery();
+
+      expect(removeSpaces(query)).toBe(removeSpaces(expectation));
+    });
   });
 
   describe('buildFilterQuery method', () => {
