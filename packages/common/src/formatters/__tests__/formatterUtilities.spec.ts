@@ -3,7 +3,6 @@ import { FieldType } from '../../enums/index';
 import { Editors } from '../../editors/index';
 import { Column, Formatter, GridOption } from '../../interfaces/index';
 import { complexObjectFormatter } from '../complexObjectFormatter';
-import { italicFormatter } from '../italicFormatter';
 import { multipleFormatter } from '../multipleFormatter';
 import { type SlickGrid } from '../../core/index';
 
@@ -20,11 +19,12 @@ describe('formatterUtilities', () => {
       return isEditableLine ? `<div class="editing-field">${value}</div>` : value;
     };
     const myBoldFormatter: Formatter = (_row, _cell, value) => value ? `<b>${value}</b>` : '';
+    const myItalicFormatter: Formatter = (_row, _cell, value) => value ? `<i>${value}</i>` : '';
 
     beforeEach(() => {
       columnDefinitions = [
         { id: 'firstName', field: 'firstName', editor: { model: Editors.text } },
-        { id: 'lastName', field: 'lastName', editor: { model: Editors.text }, formatter: multipleFormatter, params: { formatters: [italicFormatter, myBoldFormatter] } },
+        { id: 'lastName', field: 'lastName', editor: { model: Editors.text }, formatter: multipleFormatter, params: { formatters: [myItalicFormatter, myBoldFormatter] } },
         { id: 'age', field: 'age', type: 'number', formatter: multipleFormatter },
         { id: 'address', field: 'address.street', editor: { model: Editors.longText }, formatter: complexObjectFormatter },
         { id: 'zip', field: 'address.zip', type: 'number', formatter: complexObjectFormatter },
@@ -36,7 +36,7 @@ describe('formatterUtilities', () => {
 
       expect(columnDefinitions).toEqual([
         { id: 'firstName', field: 'firstName', editor: { model: Editors.text }, formatter: customEditableInputFormatter },
-        { id: 'lastName', field: 'lastName', editor: { model: Editors.text }, formatter: multipleFormatter, params: { formatters: [italicFormatter, myBoldFormatter, customEditableInputFormatter] } },
+        { id: 'lastName', field: 'lastName', editor: { model: Editors.text }, formatter: multipleFormatter, params: { formatters: [myItalicFormatter, myBoldFormatter, customEditableInputFormatter] } },
         { id: 'age', field: 'age', type: 'number', formatter: multipleFormatter },
         { id: 'address', field: 'address.street', editor: { model: Editors.longText }, formatter: multipleFormatter, params: { formatters: [complexObjectFormatter, customEditableInputFormatter] } },
         { id: 'zip', field: 'address.zip', type: 'number', formatter: complexObjectFormatter },
@@ -49,7 +49,7 @@ describe('formatterUtilities', () => {
 
       expect(columnDefinitions).toEqual([
         { id: 'firstName', field: 'firstName', editor: { model: Editors.text }, formatter: customEditableInputFormatter },
-        { id: 'lastName', field: 'lastName', editor: { model: Editors.text }, formatter: multipleFormatter, params: { formatters: [italicFormatter, myBoldFormatter, customEditableInputFormatter] } },
+        { id: 'lastName', field: 'lastName', editor: { model: Editors.text }, formatter: multipleFormatter, params: { formatters: [myItalicFormatter, myBoldFormatter, customEditableInputFormatter] } },
         { id: 'age', field: 'age', type: 'number', formatter: multipleFormatter },
         { id: 'address', field: 'address.street', editor: { model: Editors.longText }, formatter: multipleFormatter, params: { formatters: [complexObjectFormatter, customEditableInputFormatter] } },
         { id: 'zip', field: 'address.zip', type: 'number', formatter: complexObjectFormatter },
