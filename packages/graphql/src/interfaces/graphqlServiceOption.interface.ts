@@ -16,7 +16,7 @@ export interface GraphqlServiceOption extends BackendServiceOption {
   /** What is the dataset, this is required for the GraphQL query to be built */
   datasetName: string;
 
-  /** Use for defining the operation name when building the GraphQL query */
+  /** Used for defining the operation name when building the GraphQL query */
   operationName?: string;
 
   /**
