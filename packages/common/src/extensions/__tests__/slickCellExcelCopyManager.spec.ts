@@ -59,7 +59,7 @@ describe('CellExcelCopyManager', () => {
   const mockEventCallback = () => { };
   const mockSelectRange = [{ fromCell: 1, fromRow: 1, toCell: 1, toRow: 1 }] as SlickRange[];
   const mockSelectRangeEvent = { ranges: mockSelectRange };
-  const myBoldFormatter: Formatter = (_row, _cell, value) => value ? { text: `<b>${value}</b>` } : null as any;
+  const myBoldFormatter: Formatter = (_row, _cell, value) => value ? `<b>${value}</b>` : null as any;
 
   let plugin: SlickCellExcelCopyManager;
   const gridOptionsMock = {

@@ -39,12 +39,14 @@ describe('Example 11 - Batch Editing', () => {
   });
 
   it('should have "TASK 0" (uppercase) incremented by 1 after each row', () => {
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 0');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 1');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 2');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 3');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 4');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 5}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 5');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`)
+      .contains('TASK 0', { matchCase: false })
+      .should('have.css', 'text-transform', 'uppercase');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).contains('TASK 1', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).contains('TASK 2', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).contains('TASK 3', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(1)`).contains('TASK 4', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 5}px;"] > .slick-cell:nth(1)`).contains('TASK 5', { matchCase: false });
   });
 
   it('should be able to change "Duration" values of first 4 rows', () => {
@@ -73,19 +75,19 @@ describe('Example 11 - Batch Editing', () => {
 
   it('should be able to change "Title" values of row indexes 1-3', () => {
     // change title
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 1').click();
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).contains('TASK 1', { matchCase: false }).click();
     cy.get('.editor-title').type('task 1111').type('{enter}');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 1111')
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).contains('TASK 1111', { matchCase: false })
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).click()
       .type('task 2222{enter}');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 2222')
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).contains('TASK 2222', { matchCase: false })
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).click()
       .type('task 3333').type('{enter}');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 3333')
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).contains('TASK 3333', { matchCase: false })
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).click()
@@ -543,12 +545,12 @@ describe('Example 11 - Batch Editing', () => {
   });
 
   it('should be able to click on the delete button from the "Action" column of the 2nd row and expect "Task 1" to be delete', () => {
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 0');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 1');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 2');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 3');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 4');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 5}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 5');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).contains('TASK 0', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).contains('TASK 1', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).contains('TASK 2', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).contains('TASK 3', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(1)`).contains('TASK 4', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 5}px;"] > .slick-cell:nth(1)`).contains('TASK 5', { matchCase: false });
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(10)`)
       .find('.mdi-close')
@@ -556,16 +558,16 @@ describe('Example 11 - Batch Editing', () => {
 
     cy.on('window:confirm', () => true);
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 0');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 2');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 3');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 4');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 5');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).contains('TASK 0', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).contains('TASK 2', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).contains('TASK 3', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).contains('TASK 4', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(1)`).contains('TASK 5', { matchCase: false });
   });
 
   it('should be able to click on the checked 2nd button from the "Action" column of the 2nd row and expect "Task 2" to be completed', () => {
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 0');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'TASK 2');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).contains('TASK 0', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).contains('TASK 2', { matchCase: false });
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(10)`)
       .find('.mdi-check-underline')
@@ -638,7 +640,7 @@ describe('Example 11 - Batch Editing', () => {
     cy.get('.grid-canvas-right > [style="top: 0px;"]').children().should('have.length', 8);
 
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(0)').should('contain', '');
-    cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(1)').contains(/^TASK [0-9]*$/);
+    cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(1)').contains(/^TASK [0-9]*$/i);
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(2)').contains(/^[0-9]*\sday[s]?$/);
 
     cy.get('.grid-canvas-right > [style="top: 0px;"] > .slick-cell:nth(0)').contains(/\$[0-9\.]*/);
@@ -734,7 +736,7 @@ describe('Example 11 - Batch Editing', () => {
     cy.get('.grid-canvas-right > [style="top: 0px;"]').children().should('have.length', 8);
 
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(0)').should('contain', '');
-    cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(1)').contains(/^TASK [0-9]*$/);
+    cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(1)').contains(/^TASK [0-9]*$/i);
     cy.get('.grid-canvas-left > [style="top: 0px;"] > .slick-cell:nth(2)').contains(/^[0-9]*\sday[s]?$/);
 
     cy.get('.grid-canvas-right > [style="top: 0px;"] > .slick-cell:nth(0)').contains(/\$?[0-9\.]*/);

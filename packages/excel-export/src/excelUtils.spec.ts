@@ -31,7 +31,7 @@ const stylesheetStub = {
 describe('excelUtils', () => {
   const mockedFormatId = 135;
   let createFormatSpy: any;
-  const myBoldFormatter: Formatter = (_row, _cell, value) => value ? { text: `<b>${value}</b>` } : '';
+  const myBoldFormatter: Formatter = (_row, _cell, value) => value ? `<b>${value}</b>` : '';
 
   beforeEach(() => {
     createFormatSpy = jest.spyOn(stylesheetStub, 'createFormat').mockReturnValue({ id: mockedFormatId });
