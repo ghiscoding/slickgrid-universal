@@ -698,21 +698,39 @@ describe('SortService', () => {
   });
 
   describe('loadGridSorters method', () => {
-    const mockColumns = [{ id: 'firstName', field: 'firstName' }, { id: 'lastName', field: 'lastName' }] as Column[];
+    const mockColumns = [{ id: 'firstName', field: 'firstName', sortable: true }, { id: 'lastName', field: 'lastName', sortable: true }] as Column[];
 
     beforeEach(() => {
       gridOptionMock.presets = {
         sorters: [{ columnId: 'firstName', direction: 'ASC' }, { columnId: 'lastName', direction: 'DESC' }],
       };
+      gridOptionMock.enableTreeData = false;
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    });
+
+    it('should throw when trying to add sorter on a column that is not sortable', () => {
+      const colMock = { ...mockColumns[0], sortable: false } as Column;
+      jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce([colMock]);
+
+      service.bindLocalOnSort(gridStub);
+      expect(() => service.loadGridSorters(gridOptionMock.presets!.sorters!)).toThrow('[Slickgrid-Universal] Cannot add sort icon to a column that is not sortable, please add `sortable: true` to your column');
+    });
+
+    it('should throw when trying to add sorter on a TreeData grid with a column that is not sortable', () => {
+      const colMock = { ...mockColumns[0], sortable: false } as Column;
+      jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce([colMock]);
+      gridOptionMock.enableTreeData = true;
+
+      service.bindLocalOnSort(gridStub);
+      expect(() => service.loadGridSorters(gridOptionMock.presets!.sorters!)).toThrow('Also note that TreeData feature requires the column holding the tree (expand/collapse icons) to be sortable.');
     });
 
     it('should load local grid multiple presets sorting when multiColumnSort is enabled', () => {
       const spySetCols = jest.spyOn(gridStub, 'setSortColumns');
       const spySortChanged = jest.spyOn(service, 'onLocalSortChanged');
       const expectation = [
-        { columnId: 'firstName', sortAsc: true, sortCol: { id: 'firstName', field: 'firstName' } },
-        { columnId: 'lastName', sortAsc: false, sortCol: { id: 'lastName', field: 'lastName' } },
+        { columnId: 'firstName', sortAsc: true, sortCol: { id: 'firstName', field: 'firstName', sortable: true } },
+        { columnId: 'lastName', sortAsc: false, sortCol: { id: 'lastName', field: 'lastName', sortable: true } },
       ];
 
       service.bindLocalOnSort(gridStub);
@@ -729,8 +747,8 @@ describe('SortService', () => {
       const spySetCols = jest.spyOn(gridStub, 'setSortColumns');
       const spySortChanged = jest.spyOn(service, 'onLocalSortChanged');
       const expectation = [
-        { columnId: 'firstName', sortAsc: true, sortCol: { id: 'firstName', field: 'firstName' } },
-        { columnId: 'lastName', sortAsc: false, sortCol: { id: 'lastName', field: 'lastName' } },
+        { columnId: 'firstName', sortAsc: true, sortCol: { id: 'firstName', field: 'firstName', sortable: true } },
+        { columnId: 'lastName', sortAsc: false, sortCol: { id: 'lastName', field: 'lastName', sortable: true } },
       ];
 
       gridOptionMock.multiColumnSort = false;
@@ -1023,9 +1041,9 @@ describe('SortService', () => {
 
   describe('Tree Data View', () => {
     const mockColumns = [
-      { id: 'firstName', field: 'firstName' },
-      { id: 'lastName', field: 'lastName' },
-      { id: 'file', field: 'file', name: 'Files' }
+      { id: 'firstName', field: 'firstName', sortable: true },
+      { id: 'lastName', field: 'lastName', sortable: true },
+      { id: 'file', field: 'file', name: 'Files', sortable: true }
     ] as Column[];
 
     beforeEach(() => {

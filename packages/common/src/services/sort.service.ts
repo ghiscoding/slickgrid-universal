@@ -288,17 +288,24 @@ export class SortService {
       const tmpSorters = this._gridOptions.multiColumnSort ? sorters : sorters.slice(0, 1);
 
       tmpSorters.forEach((sorter: CurrentSorter) => {
-        const gridColumn = this._columnDefinitions.find((col: Column) => col.id === sorter.columnId);
-        if (gridColumn) {
+        const column = this._columnDefinitions.find((col: Column) => col.id === sorter.columnId);
+        if (column) {
+          if (!column.sortable) {
+            let errorMsg = '[Slickgrid-Universal] Cannot add sort icon to a column that is not sortable, please add `sortable: true` to your column or remove it from your list of columns to sort.';
+            if (this._gridOptions.enableTreeData) {
+              errorMsg += ' Also note that TreeData feature requires the column holding the tree (expand/collapse icons) to be sortable.';
+            }
+            throw new Error(errorMsg);
+          }
           sortCols.push({
-            columnId: gridColumn.id,
+            columnId: column.id,
             sortAsc: ((sorter.direction.toUpperCase() === SortDirection.ASC) ? true : false),
-            sortCol: gridColumn
+            sortCol: column
           });
 
           // keep current sorters
           this._currentLocalSorters.push({
-            columnId: gridColumn.id + '',
+            columnId: String(column.id),
             direction: sorter.direction.toUpperCase() as SortDirectionString
           });
         }

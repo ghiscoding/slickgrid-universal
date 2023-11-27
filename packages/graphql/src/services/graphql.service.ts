@@ -91,7 +91,7 @@ export class GraphqlService implements BackendService {
     let columnDefinitions = this._columnDefinitions || [];
     columnDefinitions = columnDefinitions.filter((column: Column) => !column.excludeFromQuery);
 
-    const queryQb = new QueryBuilder('query');
+    const queryQb = new QueryBuilder(`query ${this.options.operationName ?? ''}`);
     const datasetQb = new QueryBuilder(this.options.datasetName);
     const nodesQb = new QueryBuilder('nodes');
 
@@ -99,7 +99,9 @@ export class GraphqlService implements BackendService {
     const columnIds: string[] = [];
     if (columnDefinitions && Array.isArray(columnDefinitions)) {
       for (const column of columnDefinitions) {
-        columnIds.push(column.field);
+        if (!column.excludeFieldFromQuery) {
+          columnIds.push(column.field);
+        }
 
         // when extra "fields" are provided, also push them to columnIds
         if (column.fields) {
