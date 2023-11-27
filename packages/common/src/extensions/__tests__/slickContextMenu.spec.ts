@@ -3,7 +3,7 @@ import { deepCopy } from '@slickgrid-universal/utils';
 import { type SlickDataView, SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
 
 import { DelimiterType, FileType } from '../../enums/index';
-import type { ContextMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem } from '../../interfaces/index';
+import type { ContextMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, Formatter } from '../../interfaces/index';
 import { BackendUtilityService, ExcelExportService, SharedService, TextExportService, TreeDataService, } from '../../services/index';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { Formatters } from '../../formatters';
@@ -159,6 +159,7 @@ describe('ContextMenu Plugin', () => {
   let translateService: TranslateServiceStub;
   let plugin: SlickContextMenu;
   let sharedService: SharedService;
+  const myUppercaseFormatter: Formatter = (_row, _cell, value) => value !== undefined ? { text: String(value).toUpperCase() } : '';
 
   beforeEach(() => {
     backendUtilityService = new BackendUtilityService();
@@ -827,7 +828,7 @@ describe('ContextMenu Plugin', () => {
 
       it('should call "copyToClipboard", WITH export formatter, when the command triggered is "copy"', () => {
         const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: false, enableTextExport: false, excelExportOptions: { exportWithFormatter: true } } as GridOption;
-        const columnMock = { id: 'firstName', name: 'First Name', field: 'firstName', formatter: Formatters.uppercase } as Column;
+        const columnMock = { id: 'firstName', name: 'First Name', field: 'firstName', formatter: myUppercaseFormatter } as Column;
         const dataContextMock = { id: 123, firstName: 'John', lastName: 'Doe', age: 50 };
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         const execSpy = jest.spyOn(window.document, 'execCommand');

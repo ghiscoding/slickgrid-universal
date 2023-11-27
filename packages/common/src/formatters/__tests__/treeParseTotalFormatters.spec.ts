@@ -1,5 +1,4 @@
-import { Column, GridOption } from '../../interfaces/index';
-import { italicFormatter } from '../italicFormatter';
+import { Column, Formatter, GridOption } from '../../interfaces/index';
 import { GroupTotalFormatters } from '../../grouping-formatters';
 import { treeParseTotalsFormatter } from '../treeParseTotalsFormatter';
 import { dollarFormatter } from '../dollarFormatter';
@@ -13,6 +12,7 @@ const gridStub = {
 describe('TreeParseTotalFormatters', () => {
   let mockGridOptions: GridOption;
   const colFieldName = 'fileSize';
+  const myItalicFormatter: Formatter = (_row, _cell, value) => value ? `<i>${value}</i>` : '';
 
   beforeEach(() => {
     mockGridOptions = {
@@ -24,7 +24,7 @@ describe('TreeParseTotalFormatters', () => {
   it('should return expected output of groupTotalsFormatter when detecting the dataContext has tree children and a "__treeTotals" prop', () => {
     const cellValue = 2.1;
     const sumTotal = 12.33;
-    const params = { formatters: [italicFormatter] };
+    const params = { formatters: [myItalicFormatter] };
     const result = treeParseTotalsFormatter(0, 0, cellValue, { field: colFieldName, groupTotalsFormatter: GroupTotalFormatters.sumTotalsBold, params } as Column, { __hasChildren: true, __treeTotals: { sum: { [colFieldName]: sumTotal } } }, gridStub);
     expect(result).toBe(`<b>${sumTotal}</b>`);
   });
@@ -32,21 +32,21 @@ describe('TreeParseTotalFormatters', () => {
   it('should return expected output of treeTotalsFormatter when detecting the dataContext has tree children and a "__treeTotals" prop', () => {
     const cellValue = 2.1;
     const sumTotal = 12.33;
-    const params = { formatters: [italicFormatter] };
+    const params = { formatters: [myItalicFormatter] };
     const result = treeParseTotalsFormatter(0, 0, cellValue, { field: colFieldName, treeTotalsFormatter: GroupTotalFormatters.sumTotalsBold, params } as Column, { __hasChildren: true, __treeTotals: { sum: { [colFieldName]: sumTotal } } }, gridStub);
     expect(result).toBe(`<b>${sumTotal}</b>`);
   });
 
   it('should return expected output of italic formatter when detecting the dataContext does not has tree children, neither a "__treeTotals" prop', () => {
     const cellValue = 2.1;
-    const params = { formatters: [italicFormatter] };
+    const params = { formatters: [myItalicFormatter] };
     const result = treeParseTotalsFormatter(0, 0, cellValue, { field: colFieldName, treeTotalsFormatter: GroupTotalFormatters.sumTotalsBold, params } as Column, {}, gridStub);
     expect(result).toBe(`<i>${cellValue}</i>`);
   });
 
   it('should return expected output of when multiple formatters (uppercase & italic) are provided and dataContext does not has tree children, neither a "__treeTotals" prop', () => {
     const cellValue = 2.1;
-    const params = { formatters: [dollarFormatter, italicFormatter] };
+    const params = { formatters: [dollarFormatter, myItalicFormatter] };
     const result = treeParseTotalsFormatter(0, 0, cellValue, { field: colFieldName, treeTotalsFormatter: GroupTotalFormatters.sumTotalsBold, params } as Column, {}, gridStub);
     expect(result).toBe(`<i>$2.10</i>`);
   });

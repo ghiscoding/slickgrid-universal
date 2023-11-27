@@ -2,6 +2,7 @@ import {
   Column,
   ExcelStylesheet,
   FieldType,
+  Formatter,
   Formatters,
   GridOption,
   GroupTotalFormatters,
@@ -30,6 +31,7 @@ const stylesheetStub = {
 describe('excelUtils', () => {
   const mockedFormatId = 135;
   let createFormatSpy: any;
+  const myBoldFormatter: Formatter = (_row, _cell, value) => value ? `<b>${value}</b>` : '';
 
   beforeEach(() => {
     createFormatSpy = jest.spyOn(stylesheetStub, 'createFormat').mockReturnValue({ id: mockedFormatId });
@@ -383,7 +385,7 @@ describe('excelUtils', () => {
       it('should get formatter options for Formatters.dollarColoredBold when using Formatters.multiple and 1 of its formatter is dollarColoredBold formatter', () => {
         const column = {
           type: FieldType.number, formatter: Formatters.multiple,
-          params: { formatters: [Formatters.dollarColoredBold, Formatters.bold], displayNegativeNumberWithParentheses: true, thousandSeparator: ',' }
+          params: { formatters: [Formatters.dollarColoredBold, myBoldFormatter], displayNegativeNumberWithParentheses: true, thousandSeparator: ',' }
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'cell');
 
@@ -463,7 +465,7 @@ describe('excelUtils', () => {
       it('should get formatter options for Formatters.percent when using Formatters.multiple and 1 of its formatter is percent formatter', () => {
         const column = {
           type: FieldType.number, formatter: Formatters.multiple,
-          params: { formatters: [Formatters.percent, Formatters.bold], displayNegativeNumberWithParentheses: true, thousandSeparator: ',' }
+          params: { formatters: [Formatters.percent, myBoldFormatter], displayNegativeNumberWithParentheses: true, thousandSeparator: ',' }
         } as Column;
         const output = getNumericFormatterOptions(column, gridStub, 'cell');
 
@@ -801,7 +803,7 @@ describe('excelUtils', () => {
         const columnDef = {
           type: FieldType.number,
           formatter: Formatters.multiple,
-          params: { formatters: [() => `Something rendered`, Formatters.bold], },
+          params: { formatters: [() => `Something rendered`, myBoldFormatter], },
         } as unknown as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, { numberFormatter: { id: 3 } }, columnDef, gridStub, 'cell');
 
@@ -812,7 +814,7 @@ describe('excelUtils', () => {
         const column = {
           type: FieldType.number,
           formatter: Formatters.multiple,
-          params: { formatters: [Formatters.currency, Formatters.bold], displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+          params: { formatters: [Formatters.currency, myBoldFormatter], displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 
@@ -823,7 +825,7 @@ describe('excelUtils', () => {
         const column = {
           type: FieldType.number,
           formatter: Formatters.multiple,
-          params: { formatters: [Formatters.bold, Formatters.dollar], displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
+          params: { formatters: [myBoldFormatter, Formatters.dollar], displayNegativeNumberWithParentheses: false, thousandSeparator: ' ' }
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'cell');
 

@@ -136,9 +136,9 @@ export default class Example11 {
     this.columnDefinitions = [
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 80,
+        cssClass: 'text-bold text-uppercase',
         editor: { model: Editors.text, massUpdate: true, required: true, alwaysSaveOnEnterKey: true, validator: myCustomTitleValidator, },
         filterable: true,
-        formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
       },
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, minWidth: 80,

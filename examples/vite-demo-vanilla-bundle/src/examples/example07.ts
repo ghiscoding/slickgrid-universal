@@ -239,7 +239,7 @@ export default class Example07 {
           // OR 2- use a Promise
           collectionAsync: new Promise<any>((resolve) => {
             setTimeout(() => {
-              resolve(Array.from(Array(this.dataset.length).keys()).map(k => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })));
+              resolve(Array.from(Array((this.dataset || []).length).keys()).map(k => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })));
             }, 500);
           }),
 
@@ -264,7 +264,7 @@ export default class Example07 {
           // collectionAsync: fetch(URL_SAMPLE_COLLECTION_DATA),
           collectionAsync: new Promise((resolve) => {
             setTimeout(() => {
-              resolve(Array.from(Array(this.dataset.length).keys()).map(k => ({ value: k, label: `Task ${k}` })));
+              resolve(Array.from(Array((this.dataset || []).length).keys()).map(k => ({ value: k, label: `Task ${k}` })));
             });
           }),
 

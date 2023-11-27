@@ -135,6 +135,7 @@ export default class Example14 {
     this.columnDefinitions = [
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string, minWidth: 65,
+        cssClass: 'text-bold text-uppercase',
         // you can adjust the resize calculation via multiple options
         resizeExtraWidthPadding: 4,
         resizeCharWidthInPx: 7.6,
@@ -142,7 +143,6 @@ export default class Example14 {
         resizeMaxWidthThreshold: 200,
         filterable: true, columnGroup: 'Common Factor',
         filter: { model: Filters.compoundInputText },
-        formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
         editor: {
           model: Editors.longText, required: true, alwaysSaveOnEnterKey: true,
           maxLength: 12,
@@ -217,9 +217,8 @@ export default class Example14 {
       },
       {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 75, maxWidth: 100,
-        sortable: true, filterable: true, columnGroup: 'Period',
-        formatter: Formatters.multiple,
-        params: { formatters: [Formatters.checkmarkMaterial, Formatters.center] },
+        sortable: true, filterable: true, columnGroup: 'Period', cssClass: 'text-center',
+        formatter: Formatters.checkmarkMaterial,
         exportWithFormatter: false,
         filter: {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],

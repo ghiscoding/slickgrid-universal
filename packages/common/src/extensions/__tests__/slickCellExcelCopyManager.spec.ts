@@ -59,6 +59,7 @@ describe('CellExcelCopyManager', () => {
   const mockEventCallback = () => { };
   const mockSelectRange = [{ fromCell: 1, fromRow: 1, toCell: 1, toRow: 1 }] as SlickRange[];
   const mockSelectRangeEvent = { ranges: mockSelectRange };
+  const myBoldFormatter: Formatter = (_row, _cell, value) => value ? `<b>${value}</b>` : null as any;
 
   let plugin: SlickCellExcelCopyManager;
   const gridOptionsMock = {
@@ -306,13 +307,12 @@ describe('CellExcelCopyManager', () => {
 
     it('should expect a formatted output after calling "dataItemColumnValueExtractor" callback', () => {
       plugin.init(gridStub);
-      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: 'John', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: Formatters.bold });
+      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: 'John', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: myBoldFormatter });
       expect(output).toBe('<b>John</b>');
     });
 
     it('should expect a sanitized formatted and empty output after calling "dataItemColumnValueExtractor" callback', () => {
       gridOptionsMock.textExportOptions = { sanitizeDataExport: true };
-      const myBoldFormatter: Formatter = (_row, _cell, value) => value ? { text: `<b>${value}</b>` } : null as any;
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       plugin.init(gridStub);
 
@@ -326,13 +326,12 @@ describe('CellExcelCopyManager', () => {
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       plugin.init(gridStub);
 
-      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: Formatters.bold });
+      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: myBoldFormatter });
 
       expect(output).toBe('John');
     });
 
     it('should expect a sanitized formatted output, from a Custom Formatter, after calling "dataItemColumnValueExtractor" callback', () => {
-      const myBoldFormatter: Formatter = (_row, _cell, value) => value ? { text: `<b>${value}</b>` } : '';
       gridOptionsMock.textExportOptions = { sanitizeDataExport: true };
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       plugin.init(gridStub);
