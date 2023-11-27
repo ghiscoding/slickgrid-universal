@@ -1,7 +1,6 @@
 export * from './alignRightFormatter';
 export * from './arrayObjectToCsvFormatter';
 export * from './arrayToCsvFormatter';
-export * from './boldFormatter';
 export * from './centerFormatter';
 export * from './checkboxFormatter';
 export * from './checkmarkMaterialFormatter';
@@ -35,5 +34,4 @@ export * from './translateBooleanFormatter';
 export * from './treeExportFormatter';
 export * from './treeFormatter';
 export * from './treeParseTotalsFormatter';
-export * from './uppercaseFormatter';
 export * from './yesNoFormatter';

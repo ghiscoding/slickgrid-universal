@@ -3,7 +3,6 @@ import { getAssociatedDateFormatter } from './formatterUtilities';
 import { alignRightFormatter } from './alignRightFormatter';
 import { arrayObjectToCsvFormatter } from './arrayObjectToCsvFormatter';
 import { arrayToCsvFormatter } from './arrayToCsvFormatter';
-import { boldFormatter } from './boldFormatter';
 import { centerFormatter } from './centerFormatter';
 import { checkboxFormatter } from './checkboxFormatter';
 import { checkmarkFormatter } from './checkmarkFormatter';
@@ -37,7 +36,6 @@ import { treeExportFormatter } from './treeExportFormatter';
 import { treeFormatter } from './treeFormatter';
 import { treeParseTotalsFormatter } from './treeParseTotalsFormatter';
 import { translateBooleanFormatter } from './translateBooleanFormatter';
-import { uppercaseFormatter } from './uppercaseFormatter';
 import { yesNoFormatter } from './yesNoFormatter';
 
 /** Provides a list of different Formatters that will change the cell value displayed in the UI */
@@ -58,9 +56,6 @@ export const Formatters = {
 
   /** Takes an array of string and converts it to a comma delimited string */
   arrayToCsv: arrayToCsvFormatter,
-
-  /** show value in bold font weight */
-  bold: boldFormatter,
 
   /** Center a text value horizontally */
   center: centerFormatter,
@@ -254,7 +249,7 @@ export const Formatters = {
    * You can pipe multiple formatters (executed in sequence), use params to pass the list of formatters.
    * Requires to pass an array of "formatters" in the column definition the generic "params" property
    * For example::
-   * { field: 'title', formatter: Formatters.multiple, params: { formatters: [ Formatters.lowercase, Formatters.uppercase ] }
+   * { field: 'title', formatter: Formatters.multiple, params: { formatters: [ Formatters.dollar, myCustomFormatter ] }
    */
   multiple: multipleFormatter,
 
@@ -298,9 +293,6 @@ export const Formatters = {
 
   /** Formatter that must be use with a Tree Data column for Exporting the data */
   treeExport: treeExportFormatter,
-
-  /** Takes a value and displays it all uppercase */
-  uppercase: uppercaseFormatter,
 
   /** Takes a boolean value and display a string 'Yes' or 'No' */
   yesNo: yesNoFormatter
