@@ -20,6 +20,7 @@ import { dollarFormatter } from './dollarFormatter';
 import { editIconFormatter } from './editIconFormatter';
 import { fakeHyperlinkFormatter } from './fakeHyperlinkFormatter';
 import { hyperlinkFormatter } from './hyperlinkFormatter';
+import { iconBooleanFormatter } from './iconBooleanFormatter';
 import { iconFormatter } from './iconFormatter';
 import { infoIconFormatter } from './infoIconFormatter';
 import { italicFormatter } from './italicFormatter';
@@ -234,6 +235,12 @@ export const Formatters = {
 
   /** Display whichever icon you want (library agnostic, it could be Font-Awesome or any other) */
   icon: iconFormatter,
+
+  /**
+   * Display whichever icon but only for boolean truthy values (library agnostic, it could be Font-Awesome or any other)
+   * Note: a value of "false", null, undefined, "1" or any number below 0 are all considered falsy and will not display the icon
+   */
+  iconBoolean: iconBooleanFormatter,
 
   /** @deprecated @use `Formatters.icon` instead. Displays a Font-Awesome edit icon (fa-info-circle) */
   infoIcon: infoIconFormatter,
