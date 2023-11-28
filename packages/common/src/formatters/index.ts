@@ -18,6 +18,7 @@ export * from './editIconFormatter';
 export * from './formatters.index';
 export * from './formatterUtilities';
 export * from './hyperlinkFormatter';
+export * from './iconBooleanFormatter';
 export * from './iconFormatter';
 export * from './infoIconFormatter';
 export * from './italicFormatter';
