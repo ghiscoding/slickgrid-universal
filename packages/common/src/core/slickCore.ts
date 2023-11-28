@@ -536,7 +536,7 @@ export class SlickEditorLock {
 }
 
 export function isDefined<T>(value: T | undefined | null): value is T {
-  return <T>value !== undefined && <T>value !== null;
+  return <T>value !== undefined && <T>value !== null && <T>value !== '';
 }
 
 export class Utils {

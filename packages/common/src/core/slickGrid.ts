@@ -474,9 +474,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * 3. value is string and `enableHtmlRendering` is disabled, then use `target.textContent = value;`
    * @param target - target element to apply to
    * @param val - input value can be either a string or an HTMLElement
-   * @param options - `emptyTarget`, defaults to true, will empty the target. `sanitizerOptions` is to provide extra options when using `innerHTML` and the sanitizer
+   * @param options -
+   *   `emptyTarget`, defaults to true, will empty the target.
+   *   `sanitizerOptions` is to provide extra options when using `innerHTML` and the sanitizer.
+   *   `skipEmptyReassignment`, defaults to true, when enabled it will not try to reapply an empty value when the target is already empty
    */
-  applyHtmlCode(target: HTMLElement, val: string | HTMLElement | DocumentFragment = '', options?: { emptyTarget?: boolean; sanitizerOptions?: unknown; }) {
+  applyHtmlCode(target: HTMLElement, val: string | HTMLElement | DocumentFragment = '', options?: { emptyTarget?: boolean; sanitizerOptions?: unknown; skipEmptyReassignment?: boolean; }) {
     if (target) {
       if (val instanceof HTMLElement || val instanceof DocumentFragment) {
         // first empty target and then append new HTML element
@@ -486,6 +489,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
         target.appendChild(val);
       } else {
+        // when it's already empty and we try to reassign empty, it's probably ok to skip the assignment
+        const skipEmptyReassignment = options?.skipEmptyReassignment !== false;
+        if (skipEmptyReassignment && !isDefined(val) && !target.innerHTML) {
+          return; // same result, just skip it
+        }
         let sanitizedText = val;
         if (typeof this._options?.sanitizer === 'function') {
           sanitizedText = this._options.sanitizer(val || '');
@@ -494,7 +502,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           sanitizedText = DOMPurify.sanitize(val || '', purifyOptions);
         }
 
-        if (this._options.enableHtmlRendering) {
+        // apply HTML when enableHtmlRendering is enabled but make sure we do have a value (without a value, it will simply use `textContent` to clear text content)
+        if (this._options.enableHtmlRendering && sanitizedText) {
           target.innerHTML = sanitizedText;
         } else {
           target.textContent = sanitizedText;
