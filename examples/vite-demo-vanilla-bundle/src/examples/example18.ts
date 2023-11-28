@@ -23,7 +23,14 @@ const currencyFormatter: Formatter = (_cell, _row, value: string) =>
 
 const priceFormatter: Formatter = (_cell, _row, value, _col, dataContext) => {
   const direction = dataContext.priceChange >= 0 ? 'up' : 'down';
-  return `<span class="mdi mdi-arrow-${direction} color-${direction === 'up' ? 'success' : 'danger'}"></span> ${value}`;
+  const fragment = document.createDocumentFragment();
+  const spanElm = document.createElement('span');
+  spanElm.className = `mdi mdi-arrow-${direction} color-${direction === 'up' ? 'success' : 'danger'}`;
+  fragment.appendChild(spanElm);
+  if (value instanceof HTMLElement) {
+    fragment.appendChild(value);
+  }
+  return fragment;
 };
 
 const transactionTypeFormatter: Formatter = (_row, _cell, value: string) =>
@@ -133,7 +140,6 @@ export default class Example18 {
           formatters: [Formatters.dollarColored, priceFormatter],
           maxDecimal: 2,
         }
-
       },
       {
         id: 'price', name: 'Price', field: 'price', filterable: true, sortable: true, minWidth: 70, width: 70,
