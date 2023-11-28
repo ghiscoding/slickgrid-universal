@@ -26,7 +26,7 @@ describe('the Multiple Formatter', () => {
 
   it('should throw an error when a formatter provided to "params.formatters" is invalid', () => {
     const value = 'john';
-    const params = { formatters: [boldFormatter, null] };
+    const params = { formatters: [myBoldFormatter, null] };
 
     expect(() => multipleFormatter(0, 0, value, { params } as Column, {}, {} as any)).toThrowError('[Slickgrid-Universal] One of the Formatter provided to the `Formatters.multiple` is invalid');
   });
