@@ -1,3 +1,4 @@
+import { createDomElement } from '../services';
 import type { Formatter } from './../interfaces/index';
 
 /**
@@ -12,7 +13,7 @@ export const arrayObjectToCsvFormatter: Formatter = (_row, _cell, value, columnD
   const isIncludingTitle = columnParams?.includeTitle ?? true;
   let parentObjectKeyName: string = columnParams.dataContextProperty;
   if (!parentObjectKeyName) {
-    parentObjectKeyName = columnDef && columnDef.field && columnDef.field.split('.')[0]; // e.g. "users.roles" would be "users"
+    parentObjectKeyName = columnDef?.field?.split('.')[0] || ''; // e.g. "users.roles" would be "users"
   }
 
   if (!propertyNames || !Array.isArray(propertyNames) || !parentObjectKeyName) {
@@ -40,7 +41,11 @@ export const arrayObjectToCsvFormatter: Formatter = (_row, _cell, value, columnD
 
       // finally join all the output strings by CSV (e.g.: 'John Doe, Jane Doe')
       const output = outputStrings.join(', ');
-      return isIncludingTitle ? `<span title="${output}">${output}</span>` : output;
+      const elm = createDomElement('span', { textContent: output });
+      if (isIncludingTitle) {
+        elm.title = output;
+      }
+      return elm;
     }
   }
   return value;

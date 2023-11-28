@@ -33,7 +33,7 @@ describe('the Hyperlink Formatter', () => {
     const inputValue = 'http://<script>alert("test")</script>company.com';
     const sanitizedValue = 'http://company.com';
     const result = hyperlinkFormatter(0, 0, inputValue, {} as Column, {}, gridStub);
-    expect(result).toBe(`<a href="${sanitizedValue}">${sanitizedValue}</a>`);
+    expect((result as HTMLElement).outerHTML).toBe(`<a href="${sanitizedValue}">${sanitizedValue}</a>`);
   });
 
   it('should return original value when value is not a valid hyperlink', () => {
@@ -60,9 +60,9 @@ describe('the Hyperlink Formatter', () => {
     const result3 = hyperlinkFormatter(0, 0, inputValue3, {} as Column, {}, gridStub);
 
 
-    expect(result1).toBe(`<a href="${inputValue1}">${inputValue1}</a>`);
-    expect(result2).toBe(`<a href="${inputValue2}">${inputValue2}</a>`);
-    expect(result3).toBe(`<a href="${inputValue3}">${inputValue3}</a>`);
+    expect((result1 as HTMLElement).outerHTML).toBe(`<a href="${inputValue1}">${inputValue1}</a>`);
+    expect((result2 as HTMLElement).outerHTML).toBe(`<a href="${inputValue2}">${inputValue2}</a>`);
+    expect((result3 as HTMLElement).outerHTML).toBe(`<a href="${inputValue3}">${inputValue3}</a>`);
   });
 
   it('should return an href link with a different text when input value is a valid hyperlink and has the generic params "hyperlinkText" provided', () => {
@@ -76,9 +76,9 @@ describe('the Hyperlink Formatter', () => {
     const result3 = hyperlinkFormatter(0, 0, inputValue3, { params: { hyperlinkText: linkText } } as Column, {}, gridStub);
 
 
-    expect(result1).toBe(`<a href="${inputValue1}">${linkText}</a>`);
-    expect(result2).toBe(`<a href="${inputValue2}">${linkText}</a>`);
-    expect(result3).toBe(`<a href="${inputValue3}">${linkText}</a>`);
+    expect((result1 as HTMLElement).outerHTML).toBe(`<a href="${inputValue1}">${linkText}</a>`);
+    expect((result2 as HTMLElement).outerHTML).toBe(`<a href="${inputValue2}">${linkText}</a>`);
+    expect((result3 as HTMLElement).outerHTML).toBe(`<a href="${inputValue3}">${linkText}</a>`);
   });
 
   it('should return an href link with a different url than value it is provided as a valid hyperlink through the generic params "hyperlinkUrl"', () => {
@@ -92,9 +92,9 @@ describe('the Hyperlink Formatter', () => {
     const result3 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl3 } } as Column, {}, gridStub);
 
 
-    expect(result1).toBe(`<a href="${hyperlinkUrl1}">${inputValue}</a>`);
-    expect(result2).toBe(`<a href="${hyperlinkUrl2}">${inputValue}</a>`);
-    expect(result3).toBe(`<a href="${hyperlinkUrl3}">${inputValue}</a>`);
+    expect((result1 as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl1}">${inputValue}</a>`);
+    expect((result2 as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl2}">${inputValue}</a>`);
+    expect((result3 as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl3}">${inputValue}</a>`);
   });
 
   it('should return an href link when hyperlink URL & Text are provided through the generic params "hyperlinkUrl" and "hyperlinkText"', () => {
@@ -110,8 +110,8 @@ describe('the Hyperlink Formatter', () => {
     const result2 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl2, hyperlinkText: linkText2 } } as Column, {}, gridStub);
     const result3 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl3, hyperlinkText: linkText3 } } as Column, {}, gridStub);
 
-    expect(result1).toBe(`<a href="${hyperlinkUrl1}">${linkText1}</a>`);
-    expect(result2).toBe(`<a href="${hyperlinkUrl2}">${linkText2}</a>`);
-    expect(result3).toBe(`<a href="${hyperlinkUrl3}">${linkText3}</a>`);
+    expect((result1 as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl1}">${linkText1}</a>`);
+    expect((result2 as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl2}">${linkText2}</a>`);
+    expect((result3 as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl3}">${linkText3}</a>`);
   });
 });

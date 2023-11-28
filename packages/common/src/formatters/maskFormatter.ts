@@ -15,7 +15,9 @@ export const maskFormatter: Formatter = (_row, _cell, value, columnDef) => {
   if (value) {
     let i = 0;
     const v = value.toString();
-    return mask.replace(/[09A]/gi, () => v[i++] || '');
+    const fragment = document.createDocumentFragment();
+    fragment.textContent = mask.replace(/[09A]/gi, () => v[i++] || '');
+    return fragment;
   }
   return value;
 };

@@ -1,5 +1,5 @@
 import { type Formatter } from './../interfaces/index';
-import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
+import { createDomElement, sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 
 /**
  * Takes an hyperlink cell value and transforms it into a real hyperlink, given that the value starts with 1 of these (http|ftp|https).
@@ -25,7 +25,7 @@ export const hyperlinkFormatter: Formatter = (_row, _cell, value, columnDef, _da
 
   if (matchUrl && Array.isArray(matchUrl) && matchUrl.length > 0) {
     const finalUrl = matchUrl[0];
-    return `<a href="${finalUrl}">${displayedText}</a>`;
+    return createDomElement('a', { href: finalUrl, textContent: displayedText });
   }
 
   return value;

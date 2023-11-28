@@ -1,7 +1,7 @@
 import { Constants } from '../constants';
 import { type Formatter } from './../interfaces/index';
 import { parseFormatterWhenExist } from './formatterUtilities';
-import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
+import { createDomElement, sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 import { getCellValueFromQueryFieldGetter, } from '../services/utilities';
 
 /** Formatter that must be use with a Tree Data column */
@@ -26,7 +26,7 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
   }
 
   const treeLevel = dataContext?.[treeLevelPropName] ?? 0;
-  const indentSpacer = `<span style="display:inline-block; width:${indentMarginLeft * treeLevel}px;"></span>`;
+  const indentSpacerElm = createDomElement('span', { style: { display: 'inline-block', width: `${indentMarginLeft * treeLevel}px` } });
   const slickTreeLevelClass = `slick-tree-level-${treeLevel}`;
   let toggleClass = '';
 
@@ -39,6 +39,16 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
   }
   const sanitizedOutputValue = sanitizeTextByAvailableSanitizer(gridOptions, outputValue, { ADD_ATTR: ['target'] });
   const spanToggleClass = `slick-group-toggle ${toggleClass}`.trim();
-  const outputHtml = `${indentSpacer}<span class="${spanToggleClass}" aria-expanded="${toggleClass === 'expanded'}"></span><span class="slick-tree-title" level="${treeLevel}">${sanitizedOutputValue}</span>`;
-  return { addClasses: slickTreeLevelClass, text: outputHtml };
+
+  const spanIconElm = createDomElement('div', { className: spanToggleClass, ariaExpanded: String(toggleClass === 'expanded') });
+  const spanTitleElm = createDomElement('span', { className: 'slick-tree-title' });
+  spanTitleElm.innerHTML = sanitizedOutputValue;
+  spanTitleElm.setAttribute('level', treeLevel);
+
+  const fragment = document.createDocumentFragment();
+  fragment.appendChild(indentSpacerElm);
+  fragment.appendChild(spanIconElm);
+  fragment.appendChild(spanTitleElm);
+
+  return { addClasses: slickTreeLevelClass, html: fragment };
 };

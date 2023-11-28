@@ -39,28 +39,28 @@ describe('the CollectionEditor Formatter', () => {
     const valueArray = [1, 2];
     const result = collectionEditorFormatter(0, 0, valueArray, columnDef, {}, {} as any);
     const outputCsv = 'foo, bar';
-    expect(result).toBe(`<span title="${outputCsv}">${outputCsv}</span>`);
+    expect((result as HTMLElement).outerHTML).toBe(`<span title="${outputCsv}">${outputCsv}</span>`);
   });
 
   it('should return a CSV string when provided collection is an array of strings', () => {
     const valueArray = ['foo', 'bar'];
-    columnDef.editor.collection = ['foo', 'bar', 'apple'];
+    columnDef.editor!.collection = ['foo', 'bar', 'apple'];
 
     const result = collectionEditorFormatter(0, 0, valueArray, columnDef, {}, {} as any);
 
     const outputCsv = 'foo, bar';
-    expect(result).toBe(`<span title="${outputCsv}">${outputCsv}</span>`);
+    expect((result as HTMLElement).outerHTML).toBe(`<span title="${outputCsv}">${outputCsv}</span>`);
   });
 
   it('should return a CSV string when provided collection is an array of objects', () => {
     const valueArray = [1, 2];
-    columnDef.editor.collection = [{ id: 1, name: 'John' }, { id: 2, name: 'Bob' }];
-    columnDef.editor.customStructure = { label: 'name', value: 'id' };
+    columnDef.editor!.collection = [{ id: 1, name: 'John' }, { id: 2, name: 'Bob' }];
+    columnDef.editor!.customStructure = { label: 'name', value: 'id' };
 
     const result = collectionEditorFormatter(0, 0, valueArray, columnDef, {}, {} as any);
 
     const outputCsv = 'John, Bob';
-    expect(result).toBe(`<span title="${outputCsv}">${outputCsv}</span>`);
+    expect((result as HTMLElement).outerHTML).toBe(`<span title="${outputCsv}">${outputCsv}</span>`);
   });
 
   it('should return a string when provided input value is an object', () => {
