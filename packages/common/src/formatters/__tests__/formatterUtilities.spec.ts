@@ -114,7 +114,13 @@ describe('formatterUtilities', () => {
     let mockItem;
     let mockColumn: Column;
     const myBoldHtmlFormatter: Formatter = (_row, _cell, value) => value !== null ? { text: value ? `<b>${value}</b>` : '' } : null as any;
-    const myUppercaseFormatter: Formatter = (_row, _cell, value) => value ? { text: value.toUpperCase() } : null as any;
+    const myUppercaseFormatter: Formatter = (_row, _cell, value) => {
+      const fragment = document.createDocumentFragment();
+      if (value) {
+        fragment.textContent = value.toUpperCase();
+      }
+      return value ? { html: fragment } : null as any;
+    };
 
     beforeEach(() => {
       mockItem = { firstName: 'John', lastName: 'Doe', age: 45, address: { zip: 12345 }, empty: {} };

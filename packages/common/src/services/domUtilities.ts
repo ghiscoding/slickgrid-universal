@@ -213,9 +213,9 @@ export function emptyElement<T extends Element = Element>(element?: T | null): T
  * From a DocumentFragment, get the innerHTML or outerHTML of all child elements.
  * We can get the HTML by looping through all fragment `childNodes`
  */
-export function getHTMLFromFragment(input: DocumentFragment, type: 'innerHTML' | 'outerHTML' = 'innerHTML') {
+export function getHTMLFromFragment(input: DocumentFragment, type: 'innerHTML' | 'outerHTML' = 'innerHTML'): string {
   if (input instanceof DocumentFragment) {
-    return [].map.call(input.childNodes, (x: HTMLElement) => x[type]).join('');
+    return [].map.call(input.childNodes, (x: HTMLElement) => x[type]).join('') || input.textContent || '';
   }
   return input;
 }
