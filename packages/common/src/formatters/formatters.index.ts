@@ -245,10 +245,10 @@ export const Formatters = {
   /** Takes a cell value and translates it. Requires an instance of the Translate Service:: `translater: this.translate */
   translate: translateFormatter,
 
-  /** Takes a boolean value, cast it to upperCase string and finally translates it. Requires an instance of the Translate Service:: `translater: this.translate */
+  /** Takes a translation key string and tries to translate it. Requires an instance of the Translate Service:: `translater: this.translate */
   translateBoolean: translateBooleanFormatter,
 
-  /** Formatter that must be use with a Tree Data column */
+  /** Formatter that must be used with a Tree Data column */
   tree: treeFormatter,
 
   /**
