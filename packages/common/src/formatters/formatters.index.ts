@@ -2,7 +2,6 @@ import { FieldType } from '../enums/index';
 import { getAssociatedDateFormatter } from './formatterUtilities';
 import { arrayObjectToCsvFormatter } from './arrayObjectToCsvFormatter';
 import { arrayToCsvFormatter } from './arrayToCsvFormatter';
-import { checkboxFormatter } from './checkboxFormatter';
 import { checkmarkFormatter } from './checkmarkFormatter';
 import { checkmarkMaterialFormatter } from './checkmarkMaterialFormatter';
 import { currencyFormatter } from './currencyFormatter';
@@ -42,9 +41,6 @@ export const Formatters = {
 
   /** Takes an array of string and converts it to a comma delimited string */
   arrayToCsv: arrayToCsvFormatter,
-
-  /** When value is filled (true), it will display a checkbox Unicode icon */
-  checkbox: checkboxFormatter,
 
   /**
    * When value is filled, or if the value is a number and is bigger than 0, it will display a Font-Awesome icon (fa-check).

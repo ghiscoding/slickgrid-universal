@@ -1,6 +1,5 @@
 export * from './arrayObjectToCsvFormatter';
 export * from './arrayToCsvFormatter';
-export * from './checkboxFormatter';
 export * from './checkmarkMaterialFormatter';
 export * from './checkmarkFormatter';
 export * from './collectionEditorFormatter';
