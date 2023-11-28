@@ -245,10 +245,10 @@ export const Formatters = {
   /** @deprecated @use `Formatters.icon` instead. Displays a Font-Awesome edit icon (fa-info-circle) */
   infoIcon: infoIconFormatter,
 
-  /** show input text value as italic text */
+  /** @deprecated @use Column `cssClass: 'text-italic'` instead. Show input text value as italic text */
   italic: italicFormatter,
 
-  /** @deprecated @use Column `cssClass: 'text-italic'` instead. Takes a value and displays it all lowercase */
+  /** @deprecated @use Column `cssClass: 'text-lowercase'` instead. Takes a value and displays it all lowercase */
   lowercase: lowercaseFormatter,
 
   /**
@@ -261,7 +261,7 @@ export const Formatters = {
    * You can pipe multiple formatters (executed in sequence), use params to pass the list of formatters.
    * Requires to pass an array of "formatters" in the column definition the generic "params" property
    * For example::
-   * { field: 'title', formatter: Formatters.multiple, params: { formatters: [ Formatters.lowercase, Formatters.uppercase ] }
+   * { field: 'title', formatter: Formatters.multiple, params: { formatters: [ Formatters.dollar, myCustomFormatter ] }
    */
   multiple: multipleFormatter,
 
@@ -286,10 +286,10 @@ export const Formatters = {
   /** Takes a cell value and translates it. Requires an instance of the Translate Service:: `translater: this.translate */
   translate: translateFormatter,
 
-  /** Takes a boolean value, cast it to upperCase string and finally translates it. Requires an instance of the Translate Service:: `translater: this.translate */
+  /** Takes a translation key string and tries to translate it. Requires an instance of the Translate Service:: `translater: this.translate */
   translateBoolean: translateBooleanFormatter,
 
-  /** Formatter that must be use with a Tree Data column */
+  /** Formatter that must be used with a Tree Data column */
   tree: treeFormatter,
 
   /**
