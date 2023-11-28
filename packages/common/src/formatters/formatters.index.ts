@@ -14,6 +14,7 @@ import { dollarColoredBoldFormatter } from './dollarColoredBoldFormatter';
 import { dollarColoredFormatter } from './dollarColoredFormatter';
 import { dollarFormatter } from './dollarFormatter';
 import { hyperlinkFormatter } from './hyperlinkFormatter';
+import { iconBooleanFormatter } from './iconBooleanFormatter';
 import { iconFormatter } from './iconFormatter';
 import { maskFormatter } from './maskFormatter';
 import { multipleFormatter } from './multipleFormatter';
@@ -202,6 +203,12 @@ export const Formatters = {
 
   /** Display whichever icon you want (library agnostic, it could be Font-Awesome or any other) */
   icon: iconFormatter,
+
+  /**
+   * Display whichever icon but only for boolean truthy values (library agnostic, it could be Font-Awesome or any other)
+   * Note: a value of "false", null, undefined, "1" or any number below 0 are all considered falsy and will not display the icon
+   */
+  iconBoolean: iconBooleanFormatter,
 
   /**
    * Takes a value display it according to a mask provided

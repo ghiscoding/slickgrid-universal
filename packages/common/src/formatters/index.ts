@@ -13,6 +13,7 @@ export * from './dollarColoredBoldFormatter';
 export * from './formatters.index';
 export * from './formatterUtilities';
 export * from './hyperlinkFormatter';
+export * from './iconBooleanFormatter';
 export * from './iconFormatter';
 export * from './maskFormatter';
 export * from './multipleFormatter';

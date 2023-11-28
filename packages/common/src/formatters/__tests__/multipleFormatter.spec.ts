@@ -20,7 +20,14 @@ describe('the Multiple Formatter', () => {
     expect(result).not.toBe(`<b><i>${value}</i></b>`);
   });
 
-  it('should throw an error when "formatters" is missing from the column definition "params"', () => {
-    expect(() => multipleFormatter(1, 1, null, {} as Column, {}, {} as any)).toThrowError('The multiple formatter requires the "formatters" to be provided');
+  it('should throw an error when "params.formatters" is missing from the column definition', () => {
+    expect(() => multipleFormatter(1, 1, null, {} as Column, {}, {} as any)).toThrowError('[Slickgrid-Universal] The multiple formatter requires the "formatters" to be provided');
+  });
+
+  it('should throw an error when a formatter provided to "params.formatters" is invalid', () => {
+    const value = 'john';
+    const params = { formatters: [boldFormatter, null] };
+
+    expect(() => multipleFormatter(0, 0, value, { params } as Column, {}, {} as any)).toThrowError('[Slickgrid-Universal] One of the Formatter provided to the `Formatters.multiple` is invalid');
   });
 });
