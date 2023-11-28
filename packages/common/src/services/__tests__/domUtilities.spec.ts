@@ -5,6 +5,7 @@ import {
   createDomElement,
   emptyElement,
   findFirstAttribute,
+  getHTMLFromFragment,
   getOffsetRelativeToParent,
   getStyleProp,
   getOffset,
@@ -96,6 +97,43 @@ describe('Service/domUtilies', () => {
     it('should return null when no attributes found', () => {
       const output = findFirstAttribute(div.querySelectorAll('li')[1], ['not-exist', 'another']);
       expect(output).toBe(null);
+    });
+  });
+
+  describe('getHTMLFromFragment() method', () => {
+    it('should return innerHTML from fragment', () => {
+      const div = document.createElement('div');
+      const span = document.createElement('span');
+      span.textContent = 'some text';
+      const fragment = document.createDocumentFragment();
+      div.appendChild(span);
+      fragment.appendChild(div);
+
+      const result = getHTMLFromFragment(fragment);
+
+      expect(result).toBe('<span>some text</span>');
+    });
+
+    it('should return outerHTML from fragment', () => {
+      const div = document.createElement('div');
+      const span = document.createElement('span');
+      span.textContent = 'some text';
+      const fragment = document.createDocumentFragment();
+      div.appendChild(span);
+      fragment.appendChild(div);
+
+      const result = getHTMLFromFragment(fragment, 'outerHTML');
+
+      expect(result).toBe('<div><span>some text</span></div>');
+    });
+
+    it('should return same input when it is not an instance of DocumentFragment', () => {
+      const div = document.createElement('div');
+      const span = document.createElement('span');
+      span.textContent = 'some text';
+      div.appendChild(span);
+
+      expect(getHTMLFromFragment(div as any)).toEqual(div);
     });
   });
 

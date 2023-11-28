@@ -3,7 +3,7 @@ const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "m
 
 import { FieldType } from '../enums/fieldType.enum';
 import type { Column, ExcelExportOption, Formatter, FormatterResultWithHtml, FormatterResultWithText, GridOption, TextExportOption } from '../interfaces/index';
-import { removeHtmlTags } from '../services/domUtilities';
+import { getHTMLFromFragment, removeHtmlTags } from '../services/domUtilities';
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { multipleFormatter } from './multipleFormatter';
 import { Constants } from '../constants';
@@ -186,7 +186,11 @@ export function parseFormatterWhenExist<T = any>(formatter: Formatter<T> | undef
   if (typeof formatter === 'function') {
     const formattedData = formatter(row, col, cellValue, columnDef, dataContext, grid);
     const cellResult = (Object.prototype.toString.call(formattedData) !== '[object Object]' ? formattedData : (formattedData as FormatterResultWithHtml).html || (formattedData as FormatterResultWithText).text);
-    output = (cellResult instanceof HTMLElement) ? cellResult.innerHTML : cellResult as string;
+    if (cellResult instanceof DocumentFragment) {
+      output = getHTMLFromFragment(cellResult);
+    } else {
+      output = (cellResult instanceof HTMLElement) ? cellResult.innerHTML : cellResult as string;
+    }
   } else {
     output = ((!dataContext?.hasOwnProperty(fieldProperty as keyof T)) ? '' : cellValue) as string;
   }

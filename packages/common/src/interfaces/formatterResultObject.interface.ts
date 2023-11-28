@@ -16,5 +16,5 @@ export interface FormatterResultWithText extends FormatterResultObject {
 
 export interface FormatterResultWithHtml extends FormatterResultObject {
   /** Text to be displayed in the cell, basically the formatter output. */
-  html: HTMLElement;
+  html: HTMLElement | DocumentFragment;
 }

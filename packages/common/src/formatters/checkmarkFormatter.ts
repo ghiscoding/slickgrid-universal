@@ -1,6 +1,7 @@
 import { isNumber } from '@slickgrid-universal/utils';
 
 import type { Formatter } from './../interfaces/index';
+import { createDomElement } from '../services';
 
 /**
  * When value is filled, or if the value is a number and is bigger than 0, it will display a Font-Awesome icon (fa-check).
@@ -20,5 +21,5 @@ export const checkmarkFormatter: Formatter = (_row, _cell, value) => {
     isChecked = true;
   }
 
-  return isChecked ? `<i class="fa fa-check checkmark-icon" aria-hidden="true"></i>` : '';
+  return isChecked ? createDomElement('i', { className: 'fa fa-check checkmark-icon', ariaHidden: 'true' }) : '';
 };

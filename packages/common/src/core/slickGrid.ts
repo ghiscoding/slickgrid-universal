@@ -3555,7 +3555,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return;
     }
 
-    const formatterVal: HTMLElement | string = (formatterResult as FormatterResultWithHtml).html || (formatterResult as FormatterResultWithText).text;
+    const formatterVal: HTMLElement | DocumentFragment | string = (formatterResult as FormatterResultWithHtml).html || (formatterResult as FormatterResultWithText).text;
     this.applyHtmlCode(cellNode, formatterVal);
 
     if ((formatterResult as FormatterResultObject).removeClasses && !suppressRemove) {
