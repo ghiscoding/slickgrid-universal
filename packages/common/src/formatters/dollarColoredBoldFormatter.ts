@@ -18,7 +18,10 @@ export const dollarColoredBoldFormatter: Formatter = (_row, _cell, value, column
   if (isNumber(value)) {
     const colorStyle = (value >= 0) ? 'green' : 'red';
     const formattedNumber = formatNumber(value, minDecimal, maxDecimal, wrapNegativeNumber, '$', '', decimalSeparator, thousandSeparator);
-    return createDomElement('span', { style: { color: colorStyle, fontWeight: 'bold' }, ariaHidden: 'true', textContent: formattedNumber });
+    const spanElm = createDomElement('span', { ariaHidden: 'true', textContent: formattedNumber });
+    spanElm.style.color = colorStyle;
+    spanElm.style.fontWeight = 'bold';
+    return spanElm;
   }
   return value;
 };

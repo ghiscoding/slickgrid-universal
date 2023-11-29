@@ -26,7 +26,9 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
   }
 
   const treeLevel = dataContext?.[treeLevelPropName] ?? 0;
-  const indentSpacerElm = createDomElement('span', { style: { display: 'inline-block', width: `${indentMarginLeft * treeLevel}px` } });
+  const indentSpacerElm = document.createElement('span');
+  indentSpacerElm.style.display = 'inline-block';
+  indentSpacerElm.style.width = `${indentMarginLeft * treeLevel}px`;
   const slickTreeLevelClass = `slick-tree-level-${treeLevel}`;
   let toggleClass = '';
 
