@@ -81,10 +81,14 @@ export class SlickCheckboxSelectColumn<T = any> {
       .subscribe(grid.onClick, this.handleClick.bind(this) as EventListener)
       .subscribe(grid.onKeyDown, this.handleKeyDown.bind(this) as EventListener);
 
-    if (this._isUsingDataView && this._dataView && this._addonOptions.applySelectOnAllPages) {
-      this._eventHandler
-        .subscribe(this._dataView.onSelectedRowIdsChanged, this.handleDataViewSelectedIdsChanged.bind(this) as EventListener)
-        .subscribe(this._dataView.onPagingInfoChanged, this.handleDataViewSelectedIdsChanged.bind(this) as EventListener);
+    if (this._isUsingDataView && this._dataView) {
+      this._eventHandler.subscribe(this._dataView.onRowsChanged, this.handleRowsChanged.bind(this) as EventListener);
+
+      if (this._addonOptions.applySelectOnAllPages) {
+        this._eventHandler
+          .subscribe(this._dataView.onSelectedRowIdsChanged, this.handleDataViewSelectedIdsChanged.bind(this) as EventListener)
+          .subscribe(this._dataView.onPagingInfoChanged, this.handleDataViewSelectedIdsChanged.bind(this) as EventListener);
+      }
     }
 
     if (!this._addonOptions.hideInFilterHeaderRow) {
@@ -461,6 +465,18 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
+  protected handleRowsChanged() {
+    let disableSelectAll = false;
+
+    if (!this._addonOptions.applySelectOnAllPages && typeof this._selectableOverride === 'function') {
+      const filteredItems = this._dataView.getFilteredItems();
+      // disable select all checkbox if 1) nothing to select or 2) no item can be selected
+      // requires applySelectOnAllPages to be false, as we don't want to make assumptions on data on other pages
+      disableSelectAll = filteredItems.length === 0 || filteredItems.every(dataItem => !this.checkSelectableOverride(0, dataItem, this._grid));
+    }
+    this.renderSelectAllCheckbox(false, disableSelectAll);
+  }
+
   protected handleSelectedRowsChanged() {
     const selectedRows = this._grid.getSelectedRows();
     const lookup: any = {};
@@ -527,12 +543,21 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
-  protected renderSelectAllCheckbox(isSelectAllChecked: boolean) {
-    const checkedStr = isSelectAllChecked ? ` checked="checked" aria-checked="true"` : ' aria-checked="false"';
-    this._grid.updateColumnHeader(
-      this._addonOptions.columnId || '',
-      `<input id="header-selector${this._selectAll_UID}" type="checkbox"${checkedStr}><label for="header-selector${this._selectAll_UID}"></label>`,
-      this._addonOptions.toolTip
-    );
+  protected renderSelectAllCheckbox(isSelectAllChecked: boolean, isDisabled: boolean = false) {
+    if (isDisabled) {
+      const selectionColumn: Column = this.getColumnDefinition();
+      const checkedStr = selectionColumn.cssClass ? ` class="${selectionColumn.cssClass}"` : '';
+      this._grid.updateColumnHeader(
+        this._addonOptions.columnId || '',
+        `<div${checkedStr}></div>`
+      );
+    } else {
+      const checkedStr = isSelectAllChecked ? ` checked="checked" aria-checked="true"` : ' aria-checked="false"';
+      this._grid.updateColumnHeader(
+        this._addonOptions.columnId || '',
+        `<input id="header-selector${this._selectAll_UID}" type="checkbox"${checkedStr}><label for="header-selector${this._selectAll_UID}"></label>`,
+        this._addonOptions.toolTip
+      );
+    }
   }
 }
