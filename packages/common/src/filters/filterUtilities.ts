@@ -1,22 +1,23 @@
 import { Constants } from '../constants';
 import type { Column, GridOption, Locale, OperatorDetail } from '../interfaces/index';
 import type { Observable, RxJsFacade, Subject, Subscription } from '../services/rxjsFacade';
-import { createDomElement, htmlEncodeWithPadding, sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
+import { createDomElement, htmlEncodeWithPadding, } from '../services/domUtilities';
 import { castObservableToPromise, getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
+import type { SlickGrid } from '../core';
 
 /**
  * Create and return a select dropdown HTML element with a list of Operators with descriptions
  * @param {Array<Object>} optionValues - list of operators and their descriptions
  * @returns {Object} selectElm - Select Dropdown HTML Element
  */
-export function buildSelectOperator(optionValues: OperatorDetail[], gridOptions: GridOption): HTMLSelectElement {
+export function buildSelectOperator(optionValues: OperatorDetail[], grid: SlickGrid): HTMLSelectElement {
   const selectElm = createDomElement('select', { className: 'form-control' });
 
   for (const option of optionValues) {
     const optionElm = document.createElement('option');
     optionElm.value = option.operator;
-    optionElm.innerHTML = sanitizeTextByAvailableSanitizer(gridOptions, `${htmlEncodeWithPadding(option.operatorAlt || option.operator, 3)}${option.descAlt || option.desc}`);
+    grid.applyHtmlCode(optionElm, `${htmlEncodeWithPadding(option.operatorAlt || option.operator, 3)}${option.descAlt || option.desc}`);
     selectElm.appendChild(optionElm);
   }
 

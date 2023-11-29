@@ -4,6 +4,7 @@ import { SlickGrid } from '../../core/index';
 import { getHTMLFromFragment } from '../../services';
 
 const gridStub = {
+  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   getData: jest.fn(),
   getOptions: jest.fn(),
 } as unknown as SlickGrid;

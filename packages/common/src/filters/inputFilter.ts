@@ -283,7 +283,7 @@ export class InputFilter implements Filter {
     } else {
       // compound filter
       this._filterInputElm.classList.add('compound-input');
-      this._selectOperatorElm = buildSelectOperator(this.getCompoundOperatorOptionValues(), this.gridOptions);
+      this._selectOperatorElm = buildSelectOperator(this.getCompoundOperatorOptionValues(), this.grid);
       this._filterContainerElm = createDomElement('div', { className: `form-group search-filter filter-${columnId}` });
       const containerInputGroupElm = createDomElement('div', { className: 'input-group' }, this._filterContainerElm);
       const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' }, containerInputGroupElm);
