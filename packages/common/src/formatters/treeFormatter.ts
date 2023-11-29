@@ -1,7 +1,7 @@
 import { Constants } from '../constants';
 import { type Formatter } from './../interfaces/index';
 import { parseFormatterWhenExist } from './formatterUtilities';
-import { createDomElement, sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
+import { createDomElement } from '../services/domUtilities';
 import { getCellValueFromQueryFieldGetter, } from '../services/utilities';
 
 /** Formatter that must be use with a Tree Data column */
@@ -39,12 +39,11 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
   if (treeDataOptions?.titleFormatter) {
     outputValue = parseFormatterWhenExist(treeDataOptions.titleFormatter, row, cell, columnDef, dataContext, grid);
   }
-  const sanitizedOutputValue = sanitizeTextByAvailableSanitizer(gridOptions, outputValue, { ADD_ATTR: ['target'] });
   const spanToggleClass = `slick-group-toggle ${toggleClass}`.trim();
 
   const spanIconElm = createDomElement('div', { className: spanToggleClass, ariaExpanded: String(toggleClass === 'expanded') });
   const spanTitleElm = createDomElement('span', { className: 'slick-tree-title' });
-  spanTitleElm.innerHTML = sanitizedOutputValue;
+  grid.applyHtmlCode(spanTitleElm, outputValue);
   spanTitleElm.setAttribute('level', treeLevel);
 
   const containerElm = gridOptions?.preventDocumentFragmentUsage ? document.createElement('span') : new DocumentFragment();

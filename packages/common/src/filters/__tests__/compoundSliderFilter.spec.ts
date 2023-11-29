@@ -21,6 +21,7 @@ const gridOptionMock = {
 } as GridOption;
 
 const gridStub = {
+  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   getOptions: () => gridOptionMock,
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),

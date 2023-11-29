@@ -275,7 +275,7 @@ export class SliderFilter implements Filter {
     // create Operator dropdown DOM element
     if (this.sliderType === 'compound') {
       const spanPrependElm = createDomElement('span', { className: 'input-group-addon input-group-prepend operator' });
-      this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.gridOptions);
+      this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.grid);
       spanPrependElm.appendChild(this._selectOperatorElm);
     }
 

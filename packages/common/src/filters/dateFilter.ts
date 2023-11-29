@@ -362,7 +362,7 @@ export class DateFilter implements Filter {
 
       return this._filterDivInputElm;
     } else {
-      this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.gridOptions);
+      this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.grid);
       const filterContainerElm = createDomElement('div', { className: `form-group search-filter filter-${columnId}` });
       const containerInputGroupElm = createDomElement('div', { className: 'input-group flatpickr' }, filterContainerElm);
       const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' }, containerInputGroupElm);
