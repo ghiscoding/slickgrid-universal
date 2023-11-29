@@ -93,7 +93,7 @@ export class GraphqlService implements BackendService {
     let columnDefinitions = this._columnDefinitions || [];
     columnDefinitions = columnDefinitions.filter((column: Column) => !column.excludeFromQuery);
 
-    const queryQb = new QueryBuilder('query');
+    const queryQb = new QueryBuilder(`query ${this.options.operationName ?? ''}`);
     const datasetQb = new QueryBuilder(this.options.datasetName);
     const nodesQb = new QueryBuilder('nodes');
 

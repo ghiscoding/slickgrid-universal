@@ -20,6 +20,7 @@ import { dollarFormatter } from './dollarFormatter';
 import { editIconFormatter } from './editIconFormatter';
 import { fakeHyperlinkFormatter } from './fakeHyperlinkFormatter';
 import { hyperlinkFormatter } from './hyperlinkFormatter';
+import { iconBooleanFormatter } from './iconBooleanFormatter';
 import { iconFormatter } from './iconFormatter';
 import { infoIconFormatter } from './infoIconFormatter';
 import { italicFormatter } from './italicFormatter';
@@ -42,10 +43,10 @@ import { yesNoFormatter } from './yesNoFormatter';
 
 /** Provides a list of different Formatters that will change the cell value displayed in the UI */
 export const Formatters = {
-  /** Align cell value to the center (alias to Formatters.center) */
+  /** @deprecated @use Column `cssClass: 'text-center'` instead. Align cell value to the center (alias to Formatters.center) */
   alignCenter: centerFormatter,
 
-  /** Align cell value to the right */
+  /** @deprecated @use Column `cssClass: 'text-right'` instead. Align cell value to the right */
   alignRight: alignRightFormatter,
 
   /**
@@ -59,10 +60,10 @@ export const Formatters = {
   /** Takes an array of string and converts it to a comma delimited string */
   arrayToCsv: arrayToCsvFormatter,
 
-  /** show value in bold font weight */
+  /** @deprecated @use Column `cssClass: 'text-bold'` instead. Show value in bold font weight */
   bold: boldFormatter,
 
-  /** Center a text value horizontally */
+  /** @deprecated @use Column `cssClass: 'text-center'` instead. Center a text value horizontally */
   center: centerFormatter,
 
   /** When value is filled (true), it will display a checkbox Unicode icon */
@@ -195,7 +196,7 @@ export const Formatters = {
   /** Takes a Date object and displays it as a regular TZ timestamp format (YYYY-MM-DDTHH:mm:ss.SSSZ) */
   dateUtc: getAssociatedDateFormatter(FieldType.dateUtc, '-'),
 
-  /** Displays a Font-Awesome delete icon (fa-trash) */
+  /** @deprecated @use `Formatters.icon` instead. Displays a Font-Awesome delete icon (fa-trash) */
   deleteIcon: deleteIconFormatter,
 
   /**
@@ -214,10 +215,10 @@ export const Formatters = {
   /** Display the value as 2 decimals formatted with dollar sign '$' at the end of of the value, change color of text to red/green on negative/positive value, show it in bold font weight as well */
   dollarColoredBold: dollarColoredBoldFormatter,
 
-  /** Displays a Font-Awesome edit icon (fa-pencil) */
+  /** @deprecated @use `Formatters.icon` instead. Displays a Font-Awesome edit icon (fa-pencil) */
   editIcon: editIconFormatter,
 
-  /** Takes any text value and display it as a fake a hyperlink (only styled as an hyperlink), this can be used in combo with "onCellClick" event */
+  /** @deprecated Takes any text value and display it as a fake a hyperlink (only styled as an hyperlink), this can be used in combo with "onCellClick" event */
   fakeHyperlink: fakeHyperlinkFormatter,
 
   /**
@@ -235,13 +236,19 @@ export const Formatters = {
   /** Display whichever icon you want (library agnostic, it could be Font-Awesome or any other) */
   icon: iconFormatter,
 
-  /** Displays a Font-Awesome edit icon (fa-info-circle) */
+  /**
+   * Display whichever icon but only for boolean truthy values (library agnostic, it could be Font-Awesome or any other)
+   * Note: a value of "false", null, undefined, "1" or any number below 0 are all considered falsy and will not display the icon
+   */
+  iconBoolean: iconBooleanFormatter,
+
+  /** @deprecated @use `Formatters.icon` instead. Displays a Font-Awesome edit icon (fa-info-circle) */
   infoIcon: infoIconFormatter,
 
-  /** show input text value as italic text */
+  /** @deprecated @use Column `cssClass: 'text-italic'` instead. Show input text value as italic text */
   italic: italicFormatter,
 
-  /** Takes a value and displays it all lowercase */
+  /** @deprecated @use Column `cssClass: 'text-lowercase'` instead. Takes a value and displays it all lowercase */
   lowercase: lowercaseFormatter,
 
   /**
@@ -254,7 +261,7 @@ export const Formatters = {
    * You can pipe multiple formatters (executed in sequence), use params to pass the list of formatters.
    * Requires to pass an array of "formatters" in the column definition the generic "params" property
    * For example::
-   * { field: 'title', formatter: Formatters.multiple, params: { formatters: [ Formatters.lowercase, Formatters.uppercase ] }
+   * { field: 'title', formatter: Formatters.multiple, params: { formatters: [ Formatters.dollar, myCustomFormatter ] }
    */
   multiple: multipleFormatter,
 
@@ -279,10 +286,10 @@ export const Formatters = {
   /** Takes a cell value and translates it. Requires an instance of the Translate Service:: `translater: this.translate */
   translate: translateFormatter,
 
-  /** Takes a boolean value, cast it to upperCase string and finally translates it. Requires an instance of the Translate Service:: `translater: this.translate */
+  /** Takes a translation key string and tries to translate it. Requires an instance of the Translate Service:: `translater: this.translate */
   translateBoolean: translateBooleanFormatter,
 
-  /** Formatter that must be use with a Tree Data column */
+  /** Formatter that must be used with a Tree Data column */
   tree: treeFormatter,
 
   /**
@@ -299,9 +306,9 @@ export const Formatters = {
   /** Formatter that must be use with a Tree Data column for Exporting the data */
   treeExport: treeExportFormatter,
 
-  /** Takes a value and displays it all uppercase */
+  /** @deprecated @use Column `cssClass: 'text-uppercase'` instead. Takes a value and displays it all uppercase */
   uppercase: uppercaseFormatter,
 
-  /** Takes a boolean value and display a string 'Yes' or 'No' */
+  /** @deprecated Takes a boolean value and display a string 'Yes' or 'No' */
   yesNo: yesNoFormatter
 };
