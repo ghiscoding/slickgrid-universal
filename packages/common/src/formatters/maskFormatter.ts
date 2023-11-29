@@ -4,7 +4,7 @@ import { type Formatter } from './../interfaces/index';
  * Takes a value display it according to a mask provided
  * e.: 1234567890 with mask "(000) 000-0000" will display "(123) 456-7890"
  */
-export const maskFormatter: Formatter = (_row, _cell, value, columnDef) => {
+export const maskFormatter: Formatter = (_row, _cell, value, columnDef, data, grid) => {
   const params = columnDef.params || {};
   const mask = params.mask;
 
@@ -15,9 +15,10 @@ export const maskFormatter: Formatter = (_row, _cell, value, columnDef) => {
   if (value) {
     let i = 0;
     const v = value.toString();
-    const fragment = document.createDocumentFragment();
-    fragment.textContent = mask.replace(/[09A]/gi, () => v[i++] || '');
-    return fragment;
+    const gridOptions = grid.getOptions() || {};
+    const containerElm = gridOptions?.preventDocumentFragmentUsage ? document.createElement('span') : new DocumentFragment();
+    containerElm.textContent = mask.replace(/[09A]/gi, () => v[i++] || '');
+    return containerElm;
   }
   return value;
 };

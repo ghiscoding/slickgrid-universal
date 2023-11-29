@@ -105,7 +105,7 @@ describe('Service/domUtilies', () => {
       const div = document.createElement('div');
       const span = document.createElement('span');
       span.textContent = 'some text';
-      const fragment = document.createDocumentFragment();
+      const fragment = new DocumentFragment();
       div.appendChild(span);
       fragment.appendChild(div);
 
@@ -118,7 +118,7 @@ describe('Service/domUtilies', () => {
       const div = document.createElement('div');
       const span = document.createElement('span');
       span.textContent = 'some text';
-      const fragment = document.createDocumentFragment();
+      const fragment = new DocumentFragment();
       div.appendChild(span);
       fragment.appendChild(div);
 

@@ -56,6 +56,15 @@ describe('Tree Formatter', () => {
       .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle"></div><span class="slick-tree-title" level="0">Barbara</span>`);
   });
 
+  it('should return the Tree content wrapped inside a span HTML element when "allowDocumentFragmentUsage" grid option is disabled', () => {
+    jest.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ ...mockGridOptions, preventDocumentFragmentUsage: true });
+    const output = treeFormatter(1, 1, dataset[3]['firstName'], {} as Column, dataset[3], gridStub) as FormatterResultWithHtml;
+
+    expect(output.addClasses).toBe('slick-tree-level-0');
+    expect((output.html as HTMLElement).outerHTML)
+      .toEqual(`<span><span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle"></div><span class="slick-tree-title" level="0">Barbara</span></span>`);
+  });
+
   it('should return a span without any toggle icon and have a 15px indentation with tree level 3', () => {
     const output = treeFormatter(1, 1, dataset[6]['firstName'], {} as Column, dataset[6], gridStub) as FormatterResultWithHtml;
 

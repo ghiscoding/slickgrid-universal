@@ -115,7 +115,7 @@ describe('formatterUtilities', () => {
     let mockColumn: Column;
     const myBoldHtmlFormatter: Formatter = (_row, _cell, value) => value !== null ? { text: value ? `<b>${value}</b>` : '' } : null as any;
     const myUppercaseFormatter: Formatter = (_row, _cell, value) => {
-      const fragment = document.createDocumentFragment();
+      const fragment = new DocumentFragment();
       if (value) {
         fragment.textContent = value.toUpperCase();
       }

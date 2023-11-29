@@ -2,6 +2,7 @@ import { SlickEventHandler, Utils as SlickUtils, type SlickDataView, SlickGroup,
 import type {
   Column,
   DOMEvent,
+  GridOption,
   GroupingFormatterItem,
   GroupItemMetadataProviderOption,
   ItemMetadata,
@@ -51,6 +52,10 @@ export class SlickGroupItemMetadataProvider {
   /** Getter of SlickGrid DataView object */
   protected get dataView(): SlickDataView {
     return this._grid?.getData<SlickDataView>() ?? {};
+  }
+
+  get gridOptions(): GridOption {
+    return this._grid?.getOptions() || {};
   }
 
   init(grid: SlickGrid, inputOptions?: GroupItemMetadataProviderOption) {
@@ -119,7 +124,7 @@ export class SlickGroupItemMetadataProvider {
     const toggleClass = item.collapsed ? this._options.toggleCollapsedCssClass : this._options.toggleExpandedCssClass;
 
     // use a DocumentFragment to avoid creating an extra div container
-    const containerElm = document.createDocumentFragment();
+    const containerElm = this.gridOptions?.preventDocumentFragmentUsage ? document.createElement('span') : new DocumentFragment();
 
     // 1. group toggle span
     containerElm.appendChild(createDomElement('span', {
