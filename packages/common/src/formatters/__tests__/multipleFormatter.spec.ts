@@ -28,6 +28,6 @@ describe('the Multiple Formatter', () => {
     const value = 'john';
     const params = { formatters: [myBoldFormatter, null] };
 
-    expect(() => multipleFormatter(0, 0, value, { params } as Column, {}, {} as any)).toThrowError('[Slickgrid-Universal] One of the Formatter provided to the `Formatters.multiple` is invalid');
+    expect(() => multipleFormatter(0, 0, value, { params } as Column, {}, {} as any)).toThrowError('[Slickgrid-Universal] the "params.formatters" at index(1) to be used by "Formatters.multiple" is invalid');
   });
 });

@@ -17,11 +17,11 @@ export const multipleFormatter: Formatter = (row, cell, value, columnDef, dataCo
   // loop through all Formatters, the value of 1st formatter will be used by 2nd formatter and so on.
   // they are piped and executed in sequences
   let currentValue = value;
-  for (const formatter of formatters) {
+  formatters.forEach((formatter, idx) => {
     if (typeof formatter !== 'function') {
-      throw new Error('[Slickgrid-Universal] One of the Formatter provided to the `Formatters.multiple` is invalid, please verify all formatters provided to column params.formatters.');
+      throw new Error(`[Slickgrid-Universal] the "params.formatters" at index(${idx}) to be used by "Formatters.multiple" is invalid, please verify all formatter functions.`);
     }
     currentValue = formatter.call(this, row, cell, currentValue, columnDef, dataContext, grid);
-  }
+  });
   return currentValue;
 };
