@@ -58,6 +58,7 @@ export interface CssStyleHash {
 }
 
 export interface GridOption<C extends Column = Column> {
+  /** Defaults to true, should we always allow the use of horizontal scrolling? */
   alwaysAllowHorizontalScroll?: boolean;
 
   /** CSS class name used on newly added row */
@@ -596,6 +597,9 @@ export interface GridOption<C extends Column = Column> {
 
   /** Query presets before grid load (filters, sorters, pagination) */
   presets?: GridState;
+
+  /** Defaults to false, do we want prevent the usage of DocumentFragment by the library (might not be supported by all environments, e.g. not supported by Salesforce) */
+  preventDocumentFragmentUsage?: boolean;
 
   /** Preselect certain rows by their row index ("enableCheckboxSelector" must be enabled) */
   preselectedRows?: number[];

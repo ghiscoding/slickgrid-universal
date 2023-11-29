@@ -60,6 +60,7 @@ export const SalesforceGlobalGridOptions = {
     iconSortAscCommand: 'fa fa-sort-amount-asc mdi mdi-arrow-up',
     iconSortDescCommand: 'fa fa-sort-amount-desc mdi mdi-arrow-down',
   },
+  preventDocumentFragmentUsage: true,
   sanitizer: (dirtyHtml: string) => typeof dirtyHtml === 'string' ? dirtyHtml.replace(/(\b)(on[a-z]+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi, '') : dirtyHtml,
   showCustomFooter: true,
   customFooterOptions: {

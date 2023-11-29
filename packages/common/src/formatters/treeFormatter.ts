@@ -45,10 +45,10 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
   spanTitleElm.innerHTML = sanitizedOutputValue;
   spanTitleElm.setAttribute('level', treeLevel);
 
-  const fragment = document.createDocumentFragment();
-  fragment.appendChild(indentSpacerElm);
-  fragment.appendChild(spanIconElm);
-  fragment.appendChild(spanTitleElm);
+  const containerElm = gridOptions?.preventDocumentFragmentUsage ? document.createElement('span') : new DocumentFragment();
+  containerElm.appendChild(indentSpacerElm);
+  containerElm.appendChild(spanIconElm);
+  containerElm.appendChild(spanTitleElm);
 
-  return { addClasses: slickTreeLevelClass, html: fragment };
+  return { addClasses: slickTreeLevelClass, html: containerElm };
 };

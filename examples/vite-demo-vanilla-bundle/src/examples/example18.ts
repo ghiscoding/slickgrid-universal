@@ -23,7 +23,7 @@ const currencyFormatter: Formatter = (_cell, _row, value: string) =>
 
 const priceFormatter: Formatter = (_cell, _row, value, _col, dataContext) => {
   const direction = dataContext.priceChange >= 0 ? 'up' : 'down';
-  const fragment = document.createDocumentFragment();
+  const fragment = new DocumentFragment();
   const spanElm = document.createElement('span');
   spanElm.className = `mdi mdi-arrow-${direction} color-${direction === 'up' ? 'success' : 'danger'}`;
   fragment.appendChild(spanElm);
