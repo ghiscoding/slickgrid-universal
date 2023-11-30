@@ -12,7 +12,6 @@ import {
   getInnerSize,
   htmlEncode,
   htmlEntityDecode,
-  removeHtmlTags,
   sanitizeTextByAvailableSanitizer,
 } from '../domUtilities';
 
@@ -240,26 +239,6 @@ describe('Service/domUtilies', () => {
     it('should be able to decode unicode characters and also latin accents', () => {
       const result = htmlEntityDecode(`&#83;&#97;&#109;&#39;&#115;&#32;&#55357;&#56960;&#55358;&#56708;&#32;&#101;&#115;&#112;&#97;&#241;&#111;&#108;`);
       expect(result).toBe(`Sam's 🚀🦄 español`);
-    });
-  });
-
-  describe('removeHtmlTags method', () => {
-    it('should return original value when input does not include any HTML tags', () => {
-      const input = 'foo bar';
-      const output = removeHtmlTags(input);
-      expect(output).toBe('foo bar');
-    });
-
-    it('should return a string with only the HTML text content without any HTML tags', () => {
-      const input = '<div class="color: blue">Something</div>';
-      const output = removeHtmlTags(input);
-      expect(output).toBe('Something');
-    });
-
-    it('should return the script content without javascript script tags when a script is provided', () => {
-      const input = '<script>alert("Hello World")</script>';
-      const output = removeHtmlTags(input);
-      expect(output).toBe('alert("Hello World")');
     });
   });
 

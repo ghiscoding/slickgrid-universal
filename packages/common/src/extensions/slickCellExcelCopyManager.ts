@@ -1,4 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
+import { stripTags } from '@slickgrid-universal/utils';
 
 import type {
   Column,
@@ -9,7 +10,6 @@ import type {
   FormatterResultWithText,
   GridOption,
 } from '../interfaces/index';
-import { removeHtmlTags } from '../services/domUtilities';
 import { SlickCellExternalCopyManager, SlickCellSelectionModel } from './index';
 import { type SlickDataView, SlickEventHandler, SlickGlobalEditorLock, type SlickGrid } from '../core/index';
 
@@ -152,7 +152,7 @@ export class SlickCellExcelCopyManager {
             const cellResult = (Object.prototype.toString.call(formattedOutput) !== '[object Object]' ? formattedOutput : (formattedOutput as FormatterResultWithHtml).html || (formattedOutput as FormatterResultWithText).text);
             if (columnDef.sanitizeDataExport || (this.gridOptions.textExportOptions?.sanitizeDataExport)) {
               const outputString = (cellResult instanceof HTMLElement) ? cellResult.innerHTML : cellResult as string;
-              return removeHtmlTags(outputString ?? '');
+              return stripTags(outputString ?? '');
             }
             return formattedOutput;
           }

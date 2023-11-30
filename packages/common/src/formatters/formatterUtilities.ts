@@ -1,9 +1,10 @@
+import { stripTags } from '@slickgrid-universal/utils';
 import * as moment_ from 'moment-mini';
 const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
 import { FieldType } from '../enums/fieldType.enum';
 import type { Column, ExcelExportOption, Formatter, FormatterResultWithHtml, FormatterResultWithText, GridOption, TextExportOption } from '../interfaces/index';
-import { getHTMLFromFragment, removeHtmlTags } from '../services/domUtilities';
+import { getHTMLFromFragment } from '../services/domUtilities';
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { multipleFormatter } from './multipleFormatter';
 import { Constants } from '../constants';
@@ -157,7 +158,7 @@ export function exportWithFormatterWhenDefined<T = any>(row: number, col: number
   }
 
   const output = parseFormatterWhenExist(formatter, row, col, columnDef, dataContext, grid);
-  return (exportOptions?.sanitizeDataExport && typeof output === 'string') ? removeHtmlTags(output) : output;
+  return (exportOptions?.sanitizeDataExport && typeof output === 'string') ? stripTags(output) : output;
 }
 
 /**

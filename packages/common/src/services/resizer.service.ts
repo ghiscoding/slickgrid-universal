@@ -1,5 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
+import { stripTags } from '@slickgrid-universal/utils';
 
 import { FieldType, } from '../enums/index';
 import type {
@@ -9,7 +10,7 @@ import type {
   GridSize,
   ResizeByContentOption,
 } from '../interfaces/index';
-import { getInnerSize, getOffset, removeHtmlTags } from '../services/index';
+import { getInnerSize, getOffset } from '../services/index';
 import { parseFormatterWhenExist } from '../formatters/formatterUtilities';
 import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
@@ -503,7 +504,7 @@ export class ResizerService {
     if (!columnDef.originalWidth) {
       const charWidthPx = columnDef?.resizeCharWidthInPx ?? resizeCellCharWidthInPx;
       const formattedData = parseFormatterWhenExist(columnDef?.formatter, rowIdx, colIdx, columnDef, item, this._grid);
-      const formattedDataSanitized = removeHtmlTags(formattedData);
+      const formattedDataSanitized = stripTags(formattedData);
       const formattedTextWidthInPx = Math.ceil(formattedDataSanitized.length * charWidthPx);
       const resizeMaxWidthThreshold = columnDef.resizeMaxWidthThreshold;
       if (columnDef && (initialMininalColumnWidth === undefined || formattedTextWidthInPx > initialMininalColumnWidth)) {

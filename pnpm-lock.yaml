@@ -388,6 +388,9 @@ importers:
       '@slickgrid-universal/common':
         specifier: workspace:~
         version: link:../common
+      '@slickgrid-universal/utils':
+        specifier: workspace:~
+        version: link:../utils
     devDependencies:
       cross-env:
         specifier: ^7.0.3
