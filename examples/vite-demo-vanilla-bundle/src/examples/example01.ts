@@ -6,7 +6,6 @@ import { ExampleGridOptions } from './example-grid-options';
 
 // use any of the Styling Theme
 // import '../material-styles.scss';
-// import '../salesforce-styles.scss';
 import './example01.scss';
 
 const NB_ITEMS = 995;
