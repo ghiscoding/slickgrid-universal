@@ -318,6 +318,9 @@ importers:
       '@slickgrid-universal/common':
         specifier: workspace:~
         version: link:../common
+      '@slickgrid-universal/utils':
+        specifier: workspace:~
+        version: link:../utils
       dompurify:
         specifier: ^3.0.6
         version: 3.0.6

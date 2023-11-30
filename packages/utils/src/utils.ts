@@ -210,7 +210,11 @@ export function isObject(item: any) {
  * @returns {boolean}
  */
 export function isPrimitiveValue(val: any) {
-  return val === null || val === undefined || typeof val === 'boolean' || typeof val === 'number' || typeof val === 'string';
+  return typeof val === 'boolean' || typeof val === 'number' || typeof val === 'string' || val === null || val === undefined;
+}
+
+export function isPrimitiveOrHTML(val: any) {
+  return val instanceof HTMLElement || val instanceof DocumentFragment || isPrimitiveValue(val);
 }
 
 /**

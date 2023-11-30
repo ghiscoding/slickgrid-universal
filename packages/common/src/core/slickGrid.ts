@@ -1,10 +1,10 @@
 /* eslint-disable no-cond-assign */
-// @ts-ignore
 import SortableInstance, * as Sortable_ from 'sortablejs';
 const Sortable = ((Sortable_ as any)?.['default'] ?? Sortable_); // patch for rollup
 import * as DOMPurify_ from 'dompurify';
 const DOMPurify = ((DOMPurify_ as any)?.['default'] ?? DOMPurify_); // patch for rollup
 import { BindingEventService } from '@slickgrid-universal/binding';
+import { isPrimitiveOrHTML } from '@slickgrid-universal/utils';
 
 import {
   isDefined,
@@ -3415,7 +3415,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     // if there is a corresponding row (if not, this is the Add New row or this data hasn't been loaded yet)
     if (item) {
-      const cellResult = (Object.prototype.toString.call(formatterResult) !== '[object Object]' ? formatterResult : (formatterResult as FormatterResultWithHtml).html || (formatterResult as FormatterResultWithText).text);
+      const cellResult = isPrimitiveOrHTML(formatterResult) ? formatterResult : (formatterResult as FormatterResultWithHtml).html || (formatterResult as FormatterResultWithText).text;
       this.applyHtmlCode(cellDiv, cellResult as string | HTMLElement);
     }
 
@@ -3558,8 +3558,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Apply a Formatter Result to a Cell DOM Node */
   applyFormatResultToCellNode(formatterResult: FormatterResultWithHtml | FormatterResultWithText | string | HTMLElement | DocumentFragment, cellNode: HTMLDivElement, suppressRemove?: boolean) {
-    if (formatterResult === null || formatterResult === undefined) { formatterResult = ''; }
-    if (Object.prototype.toString.call(formatterResult) !== '[object Object]') {
+    if (formatterResult === null || formatterResult === undefined) {
+      formatterResult = '';
+    }
+    if (isPrimitiveOrHTML(formatterResult)) {
       this.applyHtmlCode(cellNode, formatterResult as string | HTMLElement);
       return;
     }

@@ -1,4 +1,4 @@
-import { stripTags } from '@slickgrid-universal/utils';
+import { isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
 import * as moment_ from 'moment-mini';
 const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
@@ -186,7 +186,7 @@ export function parseFormatterWhenExist<T = any>(formatter: Formatter<T> | undef
 
   if (typeof formatter === 'function') {
     const formattedData = formatter(row, col, cellValue, columnDef, dataContext, grid);
-    const cellResult = (Object.prototype.toString.call(formattedData) !== '[object Object]' ? formattedData : (formattedData as FormatterResultWithHtml).html || (formattedData as FormatterResultWithText).text);
+    const cellResult = isPrimitiveOrHTML(formattedData) ? formattedData : (formattedData as FormatterResultWithHtml).html || (formattedData as FormatterResultWithText).text;
     if (cellResult instanceof DocumentFragment) {
       output = getHTMLFromFragment(cellResult);
     } else {
