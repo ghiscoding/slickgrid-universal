@@ -1,4 +1,4 @@
-import { stripTags } from '@slickgrid-universal/utils';
+import { isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
 import moment from 'moment-mini';
 
 import { FieldType } from '../enums/fieldType.enum';
@@ -185,7 +185,7 @@ export function parseFormatterWhenExist<T = any>(formatter: Formatter<T> | undef
 
   if (typeof formatter === 'function') {
     const formattedData = formatter(row, col, cellValue, columnDef, dataContext, grid);
-    const cellResult = (Object.prototype.toString.call(formattedData) !== '[object Object]' ? formattedData : (formattedData as FormatterResultWithHtml).html || (formattedData as FormatterResultWithText).text);
+    const cellResult = isPrimitiveOrHTML(formattedData) ? formattedData : (formattedData as FormatterResultWithHtml).html || (formattedData as FormatterResultWithText).text;
     if (cellResult instanceof DocumentFragment) {
       output = getHTMLFromFragment(cellResult);
     } else {

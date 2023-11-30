@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { stripTags } from '@slickgrid-universal/utils';
+import { isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
 
 import type {
   Column,
@@ -149,7 +149,7 @@ export class SlickCellExcelCopyManager {
           const isEvaluatingFormatter = (columnDef.exportWithFormatter !== undefined) ? columnDef.exportWithFormatter : (this.gridOptions.textExportOptions?.exportWithFormatter);
           if (columnDef.formatter && isEvaluatingFormatter) {
             const formattedOutput = columnDef.formatter(0, 0, item[columnDef.field], columnDef, item, this._grid);
-            const cellResult = (Object.prototype.toString.call(formattedOutput) !== '[object Object]' ? formattedOutput : (formattedOutput as FormatterResultWithHtml).html || (formattedOutput as FormatterResultWithText).text);
+            const cellResult = isPrimitiveOrHTML(formattedOutput) ? formattedOutput : (formattedOutput as FormatterResultWithHtml).html || (formattedOutput as FormatterResultWithText).text;
             if (columnDef.sanitizeDataExport || (this.gridOptions.textExportOptions?.sanitizeDataExport)) {
               const outputString = (cellResult instanceof HTMLElement) ? cellResult.innerHTML : cellResult as string;
               return stripTags(outputString ?? '');

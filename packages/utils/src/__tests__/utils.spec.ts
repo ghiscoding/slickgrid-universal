@@ -12,6 +12,7 @@ import {
   isEmptyObject,
   isNumber,
   isPrimitiveValue,
+  isPrimitiveOrHTML,
   isObject,
   isObjectEmpty,
   parseBoolean,
@@ -200,6 +201,50 @@ describe('Service/Utilies', () => {
     it('should return False when input is a function', () => {
       const result = isPrimitiveValue(() => true);
       expect(result).toBeFalsy();
+    });
+  });
+
+  describe('isPrimitiveOrHTML method', () => {
+    it('should return True when input is undefined', () => {
+      const result = isPrimitiveOrHTML(undefined);
+      expect(result).toBeTrue();
+    });
+
+    it('should return True when input is null', () => {
+      const result = isPrimitiveOrHTML(null);
+      expect(result).toBeTrue();
+    });
+
+    it('should return True when input is a number', () => {
+      const result = isPrimitiveOrHTML(0);
+      expect(result).toBeTrue();
+    });
+
+    it('should return True when input is a string', () => {
+      const result = isPrimitiveOrHTML('');
+      expect(result).toBeTrue();
+    });
+
+    it('should return False when input is an empty object', () => {
+      const result = isPrimitiveOrHTML({});
+      expect(result).toBeFalsy();
+    });
+
+    it('should return False when input is a function', () => {
+      const result = isPrimitiveOrHTML(() => true);
+      expect(result).toBeFalsy();
+    });
+
+    it('should return True when input is an instance of HTMLElement', () => {
+      const elm = document.createElement('div');
+      const result = isPrimitiveOrHTML(elm);
+      expect(result).toBeTruthy();
+    });
+
+    it('should return True when input is an instance of DocumentFragment', () => {
+      const fragment = new DocumentFragment();
+      const result = isPrimitiveOrHTML(fragment);
+      expect(result).toBeTruthy();
     });
   });
 

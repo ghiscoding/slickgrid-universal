@@ -25,6 +25,7 @@ import {
   sanitizeTextByAvailableSanitizer,
   SlickEventHandler,
 } from '@slickgrid-universal/common';
+import { isPrimitiveOrHTML } from '@slickgrid-universal/utils';
 
 type CellType = 'slick-cell' | 'slick-header-column' | 'slick-headerrow-column';
 
@@ -301,7 +302,7 @@ export class SlickCustomTooltip {
   protected parseFormatterAndSanitize(formatterOrText: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown): string {
     if (typeof formatterOrText === 'function') {
       const tooltipResult = formatterOrText(cell.row, cell.cell, value, columnDef, item, this._grid);
-      const formatterText = (Object.prototype.toString.call(tooltipResult) !== '[object Object]' ? tooltipResult : (tooltipResult as FormatterResultWithHtml).html || (tooltipResult as FormatterResultWithText).text);
+      const formatterText = isPrimitiveOrHTML(tooltipResult) ? tooltipResult : (tooltipResult as FormatterResultWithHtml).html || (tooltipResult as FormatterResultWithText).text;
       return sanitizeTextByAvailableSanitizer(this.gridOptions, (formatterText instanceof HTMLElement ? formatterText.textContent : formatterText as string) || '');
     } else if (typeof formatterOrText === 'string') {
       return sanitizeTextByAvailableSanitizer(this.gridOptions, formatterOrText);
