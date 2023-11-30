@@ -408,9 +408,9 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
   describe('initialization method', () => {
     const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef) => {
-      const isEditableLine = !!columnDef.editor;
+      const isEditableItem = !!columnDef.editor;
       value = (value === null || value === undefined) ? '' : value;
-      return isEditableLine ? `<div class="editing-field">${value}</div>` : value;
+      return isEditableItem ? `<div class="editing-field">${value}</div>` : value;
     };
 
     afterEach(() => {
