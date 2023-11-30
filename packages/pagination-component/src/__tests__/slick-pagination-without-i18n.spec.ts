@@ -1,4 +1,3 @@
-
 import { GridOption, Locale, PaginationService, SharedService, SlickGrid } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 

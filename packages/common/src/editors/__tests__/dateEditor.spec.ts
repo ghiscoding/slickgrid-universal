@@ -1,4 +1,4 @@
-import * as moment from 'moment-mini';
+import moment from 'moment-mini';
 
 import { Editors } from '../index';
 import { DateEditor } from '../dateEditor';

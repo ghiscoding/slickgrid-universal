@@ -22,7 +22,7 @@ describe('OdataService', () => {
     });
 
     it('should throw an error when odata options are null', () => {
-      service.options = undefined;
+      service.options = undefined as any;
       expect(() => service.buildQuery()).toThrow();
     });
 

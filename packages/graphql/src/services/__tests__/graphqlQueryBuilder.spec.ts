@@ -1,4 +1,4 @@
-import * as moment from 'moment-mini';
+import moment from 'moment-mini';
 import GraphqlQueryBuilder from '../graphqlQueryBuilder';
 
 function removeSpaces(textS) {

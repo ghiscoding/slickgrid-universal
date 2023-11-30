@@ -1,9 +1,6 @@
 /* eslint-disable no-cond-assign */
-// @ts-ignore
-import SortableInstance, * as Sortable_ from 'sortablejs';
-const Sortable = ((Sortable_ as any)?.['default'] ?? Sortable_); // patch for rollup
-import * as DOMPurify_ from 'dompurify';
-const DOMPurify = ((DOMPurify_ as any)?.['default'] ?? DOMPurify_); // patch for rollup
+import Sortable, { SortableEvent } from 'sortablejs';
+import DOMPurify from 'dompurify';
 import { BindingEventService } from '@slickgrid-universal/binding';
 
 import {
@@ -443,8 +440,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected slickDraggableInstance: InteractionBase | null = null;
   protected slickMouseWheelInstances: Array<InteractionBase> = [];
   protected slickResizableInstances: Array<InteractionBase> = [];
-  protected sortableSideLeftInstance?: SortableInstance;
-  protected sortableSideRightInstance?: SortableInstance;
+  protected sortableSideLeftInstance?: Sortable;
+  protected sortableSideRightInstance?: Sortable;
   protected logMessageMaxCount = 30;
 
   /**
@@ -498,8 +495,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         if (typeof this._options?.sanitizer === 'function') {
           sanitizedText = this._options.sanitizer(val || '');
         } else if (typeof DOMPurify?.sanitize === 'function') {
-          const purifyOptions = (options?.sanitizerOptions ?? this._options.sanitizerOptions ?? { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }) as DOMPurify_.Config;
-          sanitizedText = DOMPurify.sanitize(val || '', purifyOptions);
+          const purifyOptions = (options?.sanitizerOptions ?? this._options.sanitizerOptions ?? { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }) as DOMPurify.Config;
+          sanitizedText = DOMPurify.sanitize(val || '', purifyOptions) as unknown as string;
         }
 
         // apply HTML when enableHtmlRendering is enabled but make sure we do have a value (without a value, it will simply use `textContent` to clear text content)
@@ -1764,15 +1761,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       dragoverBubble: false,
       revertClone: true,
       scroll: !this.hasFrozenColumns(), // enable auto-scroll
-      onStart: (e: { item: any; originalEvent: MouseEvent; }) => {
+      onStart: (e: SortableEvent) => {
         canDragScroll = !this.hasFrozenColumns() ||
           getOffset(e.item)!.left > getOffset(this._viewportScrollContainerX)!.left;
 
-        if (canDragScroll && e.originalEvent.pageX > this._container.clientWidth) {
+        if (canDragScroll && (e as SortableEvent & { originalEvent: MouseEvent; }).originalEvent.pageX > this._container.clientWidth) {
           if (!(columnScrollTimer)) {
             columnScrollTimer = setInterval(scrollColumnsRight, 100);
           }
-        } else if (canDragScroll && e.originalEvent.pageX < getOffset(this._viewportScrollContainerX)!.left) {
+        } else if (canDragScroll && (e as SortableEvent & { originalEvent: MouseEvent; }).originalEvent.pageX < getOffset(this._viewportScrollContainerX)!.left) {
           if (!(columnScrollTimer)) {
             columnScrollTimer = setInterval(scrollColumnsLeft, 100);
           }
@@ -1781,7 +1778,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           columnScrollTimer = null;
         }
       },
-      onEnd: (e: MouseEvent & { item: any; originalEvent: MouseEvent; }) => {
+      onEnd: (e: SortableEvent) => {
         const cancel = false;
         clearInterval(columnScrollTimer);
         columnScrollTimer = null;
@@ -1807,7 +1804,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           this.setFocus(); // refocus on active cell
         }
       }
-    };
+    } as Sortable.Options;
 
     this.sortableSideLeftInstance = Sortable.create(this._headerL, sortableOptions);
     this.sortableSideRightInstance = Sortable.create(this._headerR, sortableOptions);

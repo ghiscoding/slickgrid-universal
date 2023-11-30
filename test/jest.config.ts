@@ -12,6 +12,7 @@ const config: Config.InitialOptions = {
     '!examples/vite-demo-vanilla-bundle/**',
     '!**/node_modules/**',
     '!**/test/**',
+    '!**/enums.index.ts',
     '!**/index.ts',
   ],
   coverageDirectory: '<rootDir>/test/jest-coverage',
