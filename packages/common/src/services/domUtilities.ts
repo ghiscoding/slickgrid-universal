@@ -1,6 +1,5 @@
 import { OptionRowData } from 'multiple-select-vanilla';
-import * as DOMPurify_ from 'dompurify';
-const DOMPurify = ((DOMPurify_ as any)?.['default'] ?? DOMPurify_); // patch for rollup
+import DOMPurify from 'dompurify';
 
 import type { InferDOMType, SearchTerm } from '../enums/index';
 import type { Column, GridOption, HtmlElementPosition, SelectOption } from '../interfaces/index';
@@ -357,7 +356,7 @@ export function htmlEncodeWithPadding(inputStr: string, paddingLength: number): 
  * @param dirtyHtml: dirty html string
  * @param sanitizerOptions: optional DOMPurify options when using that sanitizer
  */
-export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyHtml: string, sanitizerOptions?: DOMPurify_.Config): string {
+export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyHtml: string, sanitizerOptions?: DOMPurify.Config): string {
   let sanitizedText = dirtyHtml;
   if (typeof gridOptions?.sanitizer === 'function') {
     sanitizedText = gridOptions.sanitizer(dirtyHtml || '');

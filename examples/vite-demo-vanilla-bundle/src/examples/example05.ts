@@ -250,11 +250,15 @@ export default class Example05 {
         },
         // we can also add a custom Formatter just for the title text portion
         titleFormatter: (_row, _cell, value, _def, dataContext) => {
-          let prefix = '';
+          let titleResult = '';
           if (dataContext.treeLevel > 0) {
-            prefix = `<span class="mdi mdi-subdirectory-arrow-right mdi-v-align-sub color-se-secondary"></span>`;
+            titleResult = `<span class="mdi mdi-subdirectory-arrow-right mdi-v-align-sub color-se-secondary"></span>`;
           }
-          return `${prefix}<span class="bold">${value}</span> <span style="font-size:11px; margin-left: 15px;">(parentId: ${dataContext.parentId})</span>`;
+          titleResult += `<span class="bold">${value}</span>`;
+          if (dataContext.parentId) {
+            titleResult += ` <span style="font-size:11px; margin-left: 15px;">(parentId: ${dataContext.parentId})</span>`;
+          }
+          return titleResult;
         },
       },
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it

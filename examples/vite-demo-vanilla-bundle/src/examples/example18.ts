@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import * as sparkline from '@fnando/sparkline';
+import sparkline from '@fnando/sparkline';
 import {
   Aggregators,
   type Column,
@@ -42,7 +42,7 @@ const historicSparklineFormatter: Formatter = (_row, _cell, _value: string, _col
   svgElem.setAttributeNS(null, 'height', '30');
   svgElem.setAttributeNS(null, 'stroke-width', '2');
   svgElem.classList.add('sparkline');
-  sparkline.sparkline(svgElem, dataContext.historic, { interactive: true });
+  sparkline(svgElem, dataContext.historic, { interactive: true });
   return svgElem.outerHTML;
 };
 

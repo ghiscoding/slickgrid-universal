@@ -1,10 +1,8 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import * as flatpickr_ from 'flatpickr';
-import * as moment_ from 'moment-mini';
+import flatpickr from 'flatpickr';
+import moment from 'moment-mini';
 import type { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
-import type { Instance as FlatpickrInstance, FlatpickrFn } from 'flatpickr/dist/types/instance';
-const flatpickr: FlatpickrFn = (flatpickr_?.['default'] ?? flatpickr_) as any; // patch for rollup
-const moment = (moment_ as any)?.['default'] ?? moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
+import type { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
 
 import {
   FieldType,

@@ -1,6 +1,4 @@
-import * as ExcelBuilder_ from 'excel-builder-webpacker';
-const ExcelBuilder = (ExcelBuilder_ as any)['default'] || ExcelBuilder_; // patch to fix rollup "ExcelBuilder has no default export" issue, document here https://github.com/rollup/rollup/issues/670
-
+import ExcelBuilder from 'excel-builder-webpacker';
 import type {
   Column,
   ContainerService,

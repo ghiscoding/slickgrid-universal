@@ -1,6 +1,5 @@
 import { stripTags } from '@slickgrid-universal/utils';
-import * as moment_ from 'moment-mini';
-const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
+import moment from 'moment-mini';
 
 import { FieldType } from '../enums/fieldType.enum';
 import type { Column, ExcelExportOption, Formatter, FormatterResultWithHtml, FormatterResultWithText, GridOption, TextExportOption } from '../interfaces/index';

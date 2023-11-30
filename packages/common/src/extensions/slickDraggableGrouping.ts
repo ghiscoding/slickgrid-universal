@@ -1,9 +1,7 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { isEmptyObject } from '@slickgrid-universal/utils';
-import SortableInstance, { type Options as SortableOptions, type SortableEvent } from 'sortablejs';
-import * as Sortable_ from 'sortablejs';
-const Sortable = ((Sortable_ as any)?.['default'] ?? Sortable_); // patch for rollup
+import Sortable, { type Options as SortableOptions, type SortableEvent } from 'sortablejs';
 
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import { SortDirectionNumber } from '../enums/index';
@@ -50,7 +48,7 @@ export class SlickDraggableGrouping {
 
   protected _addonOptions!: DraggableGrouping;
   protected _bindingEventService: BindingEventService;
-  protected _droppableInstance?: SortableInstance;
+  protected _droppableInstance?: Sortable;
   protected _dropzoneElm!: HTMLDivElement;
   protected _dropzonePlaceholderElm!: HTMLDivElement;
   protected _eventHandler!: SlickEventHandler;
@@ -59,8 +57,8 @@ export class SlickDraggableGrouping {
   protected _gridUid = '';
   protected _groupToggler?: HTMLDivElement;
   protected _reorderedColumns: Column[] = [];
-  protected _sortableLeftInstance?: SortableInstance;
-  protected _sortableRightInstance?: SortableInstance;
+  protected _sortableLeftInstance?: Sortable;
+  protected _sortableRightInstance?: Sortable;
   protected _subscriptions: EventSubscription[] = [];
   protected _defaults = {
     dropPlaceHolderText: 'Drop a column header here to group by the column',
@@ -352,8 +350,8 @@ export class SlickDraggableGrouping {
       }
     } as SortableOptions;
 
-    this._sortableLeftInstance = Sortable.create(this.gridContainer.querySelector(`.${grid.getUID()} .slick-header-columns.slick-header-columns-left`) as HTMLDivElement, sortableOptions) as SortableInstance;
-    this._sortableRightInstance = Sortable.create(this.gridContainer.querySelector(`.${grid.getUID()} .slick-header-columns.slick-header-columns-right`) as HTMLDivElement, sortableOptions) as SortableInstance;
+    this._sortableLeftInstance = Sortable.create(this.gridContainer.querySelector(`.${grid.getUID()} .slick-header-columns.slick-header-columns-left`) as HTMLDivElement, sortableOptions) as Sortable;
+    this._sortableRightInstance = Sortable.create(this.gridContainer.querySelector(`.${grid.getUID()} .slick-header-columns.slick-header-columns-right`) as HTMLDivElement, sortableOptions) as Sortable;
 
     return {
       sortableLeftInstance: this._sortableLeftInstance,
