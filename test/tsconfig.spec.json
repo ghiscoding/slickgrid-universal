@@ -3,6 +3,8 @@
     "outDir": "../out-tsc/spec",
     "baseUrl": "./",
     "target": "es2021",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "module": "commonjs",
     "lib": [
       "es2021"

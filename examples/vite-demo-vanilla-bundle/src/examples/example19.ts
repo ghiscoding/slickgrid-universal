@@ -1,7 +1,6 @@
 import { type Column, type GridOption, SlickEventHandler, type SlickRange } from '@slickgrid-universal/common';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
-import '../salesforce-styles.scss';
 import './example19.scss';
 
 const NB_ITEMS = 100;

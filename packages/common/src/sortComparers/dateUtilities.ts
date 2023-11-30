@@ -1,18 +1,18 @@
+import moment from 'moment-mini';
+
 import { FieldType } from '../enums/fieldType.enum';
 import type { SortComparer } from '../interfaces/index';
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
-import * as moment_ from 'moment-mini';
-const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
 
-export function compareDates(value1: any, value2: any, sortDirection: number, format: string | moment_.MomentBuiltinFormat, strict?: boolean) {
+export function compareDates(value1: any, value2: any, sortDirection: number, format: string | moment.MomentBuiltinFormat, strict?: boolean) {
   let diff = 0;
 
   if (value1 === value2) {
     diff = 0;
   } else {
     // use moment to validate the date
-    let date1 = moment(value1, format, strict);
-    let date2 = moment(value2, format, strict);
+    let date1: moment.Moment | Date = moment(value1, format, strict);
+    let date2: moment.Moment | Date = moment(value2, format, strict);
 
     // when moment date is invalid, we'll create a temporary old Date
     if (!date1.isValid()) {

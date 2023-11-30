@@ -1,7 +1,5 @@
-import * as autocompleter_ from 'autocompleter';
-const autocomplete = (autocompleter_ && autocompleter_['default'] || autocompleter_) as <T extends AutocompleteItem>(settings: AutocompleteSettings<T>) => AutocompleteResult; // patch for rollup
-
-import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
+import autocompleter from 'autocompleter';
+import type { AutocompleteItem, AutocompleteSettings } from 'autocompleter';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { isPrimitiveValue, toKebabCase, toSentenceCase } from '@slickgrid-universal/utils';
 
@@ -455,9 +453,9 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       addAutocompleteLoadingByOverridingFetch(this._filterElm, this._autocompleterOptions);
 
       // create the Kraaden AutoComplete
-      this._instance = autocomplete(this._autocompleterOptions as AutocompleteSettings<any>);
+      this._instance = autocompleter(this._autocompleterOptions as AutocompleteSettings<any>);
     } else {
-      this._instance = autocomplete({
+      this._instance = autocompleter({
         ...this._autocompleterOptions,
         fetch: (searchText, updateCallback) => {
           if (collection) {

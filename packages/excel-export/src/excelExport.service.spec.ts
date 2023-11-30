@@ -16,7 +16,7 @@ import {
   SortComparers,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
-import * as ExcelBuilder from 'excel-builder-webpacker';
+import ExcelBuilder from 'excel-builder-webpacker';
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 import { ExcelExportService } from './excelExport.service';
@@ -886,7 +886,7 @@ describe('ExcelExportService', () => {
 
       it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
         parserCallbackSpy.mockReturnValue(8888);
-        groupTotalParserCallbackSpy.mockReturnValue(9999);
+        groupTotalParserCallbackSpy.mockReturnValueOnce(9999);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
@@ -1032,6 +1032,7 @@ describe('ExcelExportService', () => {
       const groupTotalParserCallbackSpy = jest.fn();
 
       beforeEach(() => {
+        jest.clearAllMocks();
         mockGridOptions.enableGrouping = true;
         mockGridOptions.enableTranslate = true;
         mockGridOptions.excelExportOptions = { autoDetectCellFormat: true, sanitizeDataExport: true, addGroupIndentation: true, exportWithFormatter: true };
@@ -1118,7 +1119,6 @@ describe('ExcelExportService', () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
-        groupTotalParserCallbackSpy.mockReturnValue(9999);
 
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
@@ -1152,9 +1152,6 @@ describe('ExcelExportService', () => {
 
       it(`should not call group total value parser when column "exportAutoDetectCellFormat" is disabled`, async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-        groupTotalParserCallbackSpy.mockReturnValue(9999);
 
         mockGridOptions.excelExportOptions!.autoDetectCellFormat = false;
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
@@ -1168,7 +1165,7 @@ describe('ExcelExportService', () => {
 
       it(`should have a xlsx export with grouping but without indentation when "addGroupIndentation" is set to False
       and field should be exported as metadata when "exportWithFormatter" is false and the field type is number`, async () => {
-        mockColumns[5].exportWithFormatter = false; // "order" field that is of type number will be exported as a number cell format metadata
+        mockColumns[5].exportWithFormatter = false; // "order" is a field of type number that will be exported as a number cell format metadata
         mockGridOptions.excelExportOptions!.addGroupIndentation = false;
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');

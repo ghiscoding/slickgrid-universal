@@ -73,7 +73,7 @@ function checkItemIsEditable(dataContext, columnDef, grid) {
 }
 
 const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, dataContext, grid) => {
-  const isEditableLine = checkItemIsEditable(dataContext, columnDef, grid);
+  const isEditableItem = checkItemIsEditable(dataContext, columnDef, grid);
   value = (value === null || value === undefined) ? '' : value;
   const divElm = document.createElement('div');
   divElm.className = 'editing-field';
@@ -82,7 +82,7 @@ const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, 
   } else {
     divElm.textContent = value;
   }
-  return isEditableLine ? divElm : value;
+  return isEditableItem ? divElm : value;
 };
 
 export default class Example14 {

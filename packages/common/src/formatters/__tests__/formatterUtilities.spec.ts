@@ -14,9 +14,9 @@ describe('formatterUtilities', () => {
   describe('autoAddEditorFormatterToColumnsWithEditor', () => {
     let columnDefinitions: Column[];
     const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef) => {
-      const isEditableLine = !!columnDef.editor;
+      const isEditableItem = !!columnDef.editor;
       value = (value === null || value === undefined) ? '' : value;
-      return isEditableLine ? `<div class="editing-field">${value}</div>` : value;
+      return isEditableItem ? `<div class="editing-field">${value}</div>` : value;
     };
     const myBoldFormatter: Formatter = (_row, _cell, value) => value ? `<b>${value}</b>` : '';
     const myItalicFormatter: Formatter = (_row, _cell, value) => value ? `<i>${value}</i>` : '';
