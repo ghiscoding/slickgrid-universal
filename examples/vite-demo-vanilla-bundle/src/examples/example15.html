@@ -75,7 +75,7 @@
   </div>
   <div class="column is-narrow" style="padding: 0">
     <div class.bind="errorStatusClass" style="padding: 0.75rem 1.0rem" data-test="error-status">
-      <em><strong>Backend Error:</strong> <span innerhtml.bind="errorStatus"></span></em>
+      <em><strong>Backend Error:</strong> <span textcontent.bind="errorStatus"></span></em>
     </div>
   </div>
 </div>
@@ -84,12 +84,12 @@
   <div class="column">
     <div class="notification is-info is-light" data-test="alert-odata-query">
       <strong>OData Query:</strong>
-      <span data-test="odata-query-result" innerhtml.bind="odataQuery"></span>
+      <span data-test="odata-query-result" textcontent.bind="odataQuery"></span>
     </div>
   </div>
   <div class="column is-narrow">
     <div class.bind="statusClass" data-test="status">
-      <strong>Status:</strong> <span innerhtml.bind="status"></span>
+      <strong>Status:</strong> <span textcontent.bind="status"></span>
     </div>
   </div>
 </div>

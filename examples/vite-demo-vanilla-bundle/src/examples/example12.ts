@@ -79,7 +79,7 @@ const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, 
   if (value instanceof HTMLElement) {
     divElm.appendChild(value);
   } else {
-    divElm.innerHTML = value;
+    divElm.textContent = value;
   }
   return isEditableLine ? divElm : value;
 };

@@ -618,7 +618,7 @@ export default class Example11 {
   recreatePredefinedViews() {
     // empty the Select dropdown element and re-populate it
     const viewSelectElm = document.querySelector('.selected-view') as HTMLElement;
-    viewSelectElm.innerHTML = '';
+    viewSelectElm.textContent = '';
     this.pushNewViewToViewsList(this.predefinedViews);
   }
 
