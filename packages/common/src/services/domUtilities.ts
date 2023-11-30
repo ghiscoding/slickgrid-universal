@@ -350,17 +350,6 @@ export function htmlEncodeWithPadding(inputStr: string, paddingLength: number): 
 }
 
 /**
- * Sanitizes all HTML tags and returns just the text content
- * @input htmlString
- * @return text
- */
-export function removeHtmlTags(htmlString: string): string {
-  const temp = document.createElement('div');
-  temp.innerHTML = htmlString;
-  return temp.textContent || temp.innerText || '';
-}
-
-/**
  * Sanitize possible dirty html string (remove any potential XSS code like scripts and others), we will use 2 possible sanitizer
  * 1. optional sanitizer method defined in the grid options
  * 2. DOMPurify sanitizer (defaults)

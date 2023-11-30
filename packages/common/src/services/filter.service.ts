@@ -1,5 +1,5 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { deepCopy } from '@slickgrid-universal/utils';
+import { deepCopy, stripTags } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import { Utils as SlickUtils } from '../core/index';
 
@@ -26,7 +26,6 @@ import type {
   SearchColumnFilter,
 } from './../interfaces/index';
 import type { BackendUtilityService } from './backendUtility.service';
-import { removeHtmlTags, } from '../services/domUtilities';
 import { findItemInTreeStructure, getDescendantProperty, mapOperatorByFieldType, } from './utilities';
 import type { SharedService } from './shared.service';
 import type { RxJsFacade, Subject } from './rxjsFacade';
@@ -517,7 +516,7 @@ export class FilterService {
       const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
       const rowIndex = (dataView && typeof dataView.getIdxById === 'function') ? dataView.getIdxById(item[idPropName]) : 0;
       const formattedCellValue = (columnDef && typeof columnDef.formatter === 'function') ? columnDef.formatter(rowIndex || 0, columnIndex, cellValue, columnDef, item, this._grid) : '';
-      cellValue = removeHtmlTags(formattedCellValue as string);
+      cellValue = stripTags(formattedCellValue as string);
     }
 
     // make sure cell value is always a string
