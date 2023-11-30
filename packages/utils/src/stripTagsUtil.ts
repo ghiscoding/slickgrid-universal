@@ -43,13 +43,10 @@ export function stripTags(htmlText: string | number | boolean | HTMLElement, all
       throw new TypeError(`'html' parameter must be a string`);
     }
 
-    html = html || '';
-    allowable_tags = allowable_tags || [];
-    tag_replacement = tag_replacement || '';
-
-    const context = init_context(allowable_tags, tag_replacement);
-
-    return striptags_internal(html, context);
+    return striptags_internal(
+      html || '',
+      init_context(allowable_tags || '', tag_replacement || '')
+    );
   }
 
   function init_context(allowable_tags: string | string[], tag_replacement: string): Context {
@@ -86,9 +83,7 @@ export function stripTags(htmlText: string | number | boolean | HTMLElement, all
             output += char;
             break;
         }
-      }
-
-      else if (state === STATE_HTML) {
+      } else if (state === STATE_HTML) {
         switch (char) {
           case '<':
             // ignore '<' if inside a quote
@@ -150,9 +145,7 @@ export function stripTags(htmlText: string | number | boolean | HTMLElement, all
             tag_buffer += char;
             break;
         }
-      }
-
-      else if (state === STATE_COMMENT) {
+      } else if (state === STATE_COMMENT) {
         switch (char) {
           case '>':
             if (tag_buffer.slice(-2) === '--') {
@@ -181,11 +174,10 @@ export function stripTags(htmlText: string | number | boolean | HTMLElement, all
 
     if (typeof allowable_tags === 'string') {
       let match;
-
       while ((match = ALLOWED_TAGS_REGEX.exec(allowable_tags))) {
         tag_set.add(match[1]);
       }
-    } else if (/* !Symbol.nonNative && */ typeof allowable_tags[Symbol.iterator] === 'function') {
+    } else if (typeof allowable_tags[Symbol.iterator] === 'function') {
       tag_set = new Set(allowable_tags);
     }
     return tag_set;
