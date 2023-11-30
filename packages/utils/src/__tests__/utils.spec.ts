@@ -24,7 +24,7 @@ import {
   toSnakeCase,
   uniqueArray,
   uniqueObjectArray,
-} from './utils';
+} from '../utils';
 
 describe('Service/Utilies', () => {
   describe('addToArrayWhenNotExists', () => {

@@ -25,9 +25,10 @@ import {
   mapOperatorType,
   mapOperatorByFieldType,
   OperatorType,
-  removeHtmlTags,
   SortDirection,
 } from '@slickgrid-universal/common';
+import { stripTags } from '@slickgrid-universal/utils';
+
 import {
   GraphqlCursorPaginationOption,
   GraphqlDatasetFilter,
@@ -402,7 +403,7 @@ export class GraphqlService implements BackendService {
 
         let fieldName = columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || columnDef.name || '';
         if (fieldName instanceof HTMLElement) {
-          fieldName = removeHtmlTags(fieldName.innerHTML);
+          fieldName = stripTags(fieldName.innerHTML);
         }
         const fieldType = columnDef.type || FieldType.string;
         let searchTerms = columnFilter?.searchTerms ?? [];

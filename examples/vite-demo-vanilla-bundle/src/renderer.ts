@@ -13,7 +13,7 @@ export class Renderer {
   private _observers: BindingService[] = [];
 
   constructor(private viewTemplate: HTMLElement) {
-    this.viewTemplate.innerHTML = `Loading`;
+    this.viewTemplate.textContent = `Loading...`;
   }
 
   get className(): string {

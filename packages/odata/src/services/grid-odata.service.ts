@@ -26,10 +26,9 @@ import {
   mapOperatorByFieldType,
   OperatorType,
   parseUtcDate,
-  removeHtmlTags,
   SortDirection,
 } from '@slickgrid-universal/common';
-import { titleCase } from '@slickgrid-universal/utils';
+import { stripTags, titleCase } from '@slickgrid-universal/utils';
 import { OdataQueryBuilderService } from './odataQueryBuilder.service';
 import { OdataOption, OdataSortingOption } from '../interfaces/index';
 
@@ -321,7 +320,7 @@ export class GridOdataService implements BackendService {
 
         let fieldName = columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || columnDef.name || '';
         if (fieldName instanceof HTMLElement) {
-          fieldName = removeHtmlTags(fieldName.innerHTML);
+          fieldName = stripTags(fieldName.innerHTML);
         }
         const fieldType = columnDef.type || FieldType.string;
         let searchTerms = (columnFilter && columnFilter.searchTerms ? [...columnFilter.searchTerms] : null) || [];

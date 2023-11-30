@@ -53,7 +53,7 @@
         Switch Language
       </button>
       <b>Locale:</b>
-      <span style="font-style: italic" data-test="selected-locale" innerhtml.bind="selectedLanguageFile">
+      <span style="font-style: italic" data-test="selected-locale" textcontent.bind="selectedLanguageFile">
       </span>
     </span>
 
@@ -78,12 +78,12 @@
   <div class="column">
     <div class="notification is-info is-light" data-test="alert-graphql-query">
       <strong>GraphQL Query:</strong>
-      <span data-test="graphql-query-result" innerhtml.bind="graphqlQuery"></span>
+      <span data-test="graphql-query-result" textcontent.bind="graphqlQuery"></span>
     </div>
   </div>
   <div class="column is-narrow">
     <div class.bind="statusClass" data-test="status">
-      <strong>Status:</strong> <span innerhtml.bind="status"></span>
+      <strong>Status:</strong> <span textcontent.bind="status"></span>
     </div>
   </div>
 </div>
