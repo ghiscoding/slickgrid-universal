@@ -439,7 +439,8 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
       // if there's a groupTotalsFormatter, we will re-run it to get the exact same output as what is shown in UI
       if (columnDef.groupTotalsFormatter) {
-        itemData = columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid);
+        const totalResult = columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid);
+        itemData = totalResult instanceof HTMLElement ? totalResult.textContent || '' : totalResult;
       }
 
       // does the user want to sanitize the output data (remove HTML tags)?

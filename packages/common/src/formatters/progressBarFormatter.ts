@@ -23,14 +23,6 @@ export const progressBarFormatter: Formatter = (_row, _cell, value) => {
     color = 'success';
   }
 
-  // const output = `<div class="progress">
-  //   <div class="progress-bar progress-bar-${color} bg-${color}" role="progressbar" aria-valuenow="${inputNumber}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: ${inputNumber}%;">
-  //   ${inputNumber}%
-  //   </div>
-  // </div>`;
-
-  // return output.replace(/\s{2,}/g, ' ').trim();
-
   const container = createDomElement('div', { className: 'progress' });
   container.appendChild(createDomElement('div', {
     className: `progress-bar progress-bar-${color} bg-${color}`,

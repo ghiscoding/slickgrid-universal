@@ -1,7 +1,7 @@
 import type { Column, GroupTotalsFormatter } from './../interfaces/index';
-import { formatNumber } from './../services/utilities';
 import { retrieveFormatterOptions } from '../formatters/formatterUtilities';
 import { type SlickGrid } from '../core/index';
+import { createDomElement, formatNumber } from '../services/index';
 
 export const sumTotalsDollarColoredFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column, grid: SlickGrid) => {
   const field = columnDef.field ?? '';
@@ -20,7 +20,7 @@ export const sumTotalsDollarColoredFormatter: GroupTotalsFormatter = (totals: an
   if (val !== null && !isNaN(+val)) {
     const colorStyle = (val >= 0) ? 'green' : 'red';
     const formattedNumber = formatNumber(val, minDecimal, maxDecimal, wrapNegativeNumber, '$', '', decimalSeparator, thousandSeparator);
-    return `<span style="color:${colorStyle}">${prefix}${formattedNumber}${suffix}</span>`;
+    return createDomElement('span', { style: { color: colorStyle }, textContent: `${prefix}${formattedNumber}${suffix}` });
   }
   return '';
 };
