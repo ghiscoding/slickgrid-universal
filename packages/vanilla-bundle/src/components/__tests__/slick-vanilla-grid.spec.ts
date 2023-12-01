@@ -977,6 +977,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const paginationServiceSpy = jest.spyOn(paginationServiceStub, 'addRxJsResource');
 
         component.gridOptions = { externalResources: [rxjsMock] } as unknown as GridOption;
+        component.resetExternalResources();
         component.registerExternalResources([rxjsMock], true);
         component.initialization(divContainer, slickEventHandler);
 
