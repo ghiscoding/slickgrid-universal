@@ -631,7 +631,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
       // if there's a exportCustomGroupTotalsFormatter or groupTotalsFormatter, we will re-run it to get the exact same output as what is shown in UI
       if (columnDef.exportCustomGroupTotalsFormatter) {
-        itemData = columnDef.exportCustomGroupTotalsFormatter(itemObj, columnDef, this._grid);
+        const totalResult = columnDef.exportCustomGroupTotalsFormatter(itemObj, columnDef, this._grid);
+        itemData = totalResult instanceof HTMLElement ? totalResult.textContent || '' : totalResult;
       }
 
       // auto-detect best possible Excel format for Group Totals, unless the user provide his own formatting,
@@ -655,7 +656,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           };
         }
       } else if (columnDef.groupTotalsFormatter) {
-        itemData = columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid);
+        const totalResult = columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid);
+        itemData = totalResult instanceof HTMLElement ? totalResult.textContent || '' : totalResult;
       }
 
       // does the user want to sanitize the output data (remove HTML tags)?
