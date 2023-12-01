@@ -39,7 +39,7 @@ export default class Example6 {
     this.datasetFlat = [];
     this.datasetHierarchical = this.mockDataset();
     const gridContainerElm = document.querySelector('.grid6') as HTMLDivElement;
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, null as any, this.datasetHierarchical);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, undefined, this.datasetHierarchical);
     document.body.classList.add('material-theme');
   }
 

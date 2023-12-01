@@ -325,6 +325,11 @@ export class SlickVanillaGridBundle {
     if (this._columnDefinitions.length > 0) {
       this.copyColumnWidthsReference(this._columnDefinitions);
     }
+
+    // save resource refs to register before the grid options are merged and possibly deep copied
+    // since a deep copy of grid options would lose original resource refs but we want to keep them as singleton
+    this._registeredResources = options?.registerExternalResources || [];
+
     this._gridOptions = this.mergeGridOptions(options || {});
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions?.enableDeepCopyDatasetOnPageLoad);
 
@@ -1322,8 +1327,6 @@ export class SlickVanillaGridBundle {
 
   /** Pre-Register any Resource that don't require SlickGrid to be instantiated (for example RxJS Resource) */
   protected preRegisterResources() {
-    this._registeredResources = this.gridOptions.registerExternalResources || [];
-
     // bind & initialize all Components/Services that were tagged as enabled
     // register all services by executing their init method and providing them with the Grid object
     if (Array.isArray(this._registeredResources)) {
