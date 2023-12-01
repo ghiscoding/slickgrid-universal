@@ -67,7 +67,7 @@
     "dequal": "^2.0.3",
     "flatpickr": "^4.6.13",
     "slickgrid": "^4.1.5",
-    "sortablejs": "^1.15.0",
+    "sortablejs": "^1.15.1",
     "whatwg-fetch": "^3.6.19"
   },
   "devDependencies": {
