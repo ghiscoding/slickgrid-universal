@@ -309,7 +309,7 @@ export default class Example7 {
       enableFiltering: true,
       enableTranslate: true,
       translater: this.translateService, // pass the TranslateService instance to the grid
-      registerExternalResources: [new ExcelExportService()],
+      externalResources: [new ExcelExportService()],
       enableCellNavigation: true,
       enableCheckboxSelector: true,
       enableRowSelection: true,

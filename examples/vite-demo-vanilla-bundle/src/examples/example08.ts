@@ -69,7 +69,7 @@ export default class Example08 {
         exportWithFormatter: true,
         sanitizeDataExport: true
       },
-      registerExternalResources: [new TextExportService(), new ExcelExportService()],
+      externalResources: [new TextExportService(), new ExcelExportService()],
       enableCellNavigation: true,
       enableColumnReorder: false,
       enableSorting: true,

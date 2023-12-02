@@ -175,7 +175,7 @@ export default class Example15 {
           this.getCustomerCallback(response);
         }
       } as OdataServiceApi,
-      registerExternalResources: [new RxJsResource(), new SlickCustomTooltip()]
+      externalResources: [new RxJsResource(), new SlickCustomTooltip()]
     };
   }
 
