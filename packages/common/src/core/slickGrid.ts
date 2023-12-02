@@ -5147,7 +5147,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected setActiveCellInternal(newCell: HTMLDivElement | null, opt_editMode?: boolean | null, preClickModeOn?: boolean | null, suppressActiveCellChangedEvent?: boolean, e?: Event | SlickEvent) {
-    if (this.activeCellNode !== null) {
+    if (isDefined(this.activeCellNode)) {
       this.makeActiveCellNormal();
       this.activeCellNode.classList.remove('active');
       this.rowsCache[this.activeRow]?.rowNode?.forEach((node) => node.classList.remove('active'));
