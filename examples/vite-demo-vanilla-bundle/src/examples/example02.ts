@@ -201,7 +201,7 @@ export default class Example2 {
         }
       },
       textExportOptions: { filename: 'my-export', sanitizeDataExport: true },
-      registerExternalResources: [this.excelExportService, new TextExportService()],
+      externalResources: [this.excelExportService, new TextExportService()],
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {
         // optionally display some text on the left footer container

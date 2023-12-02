@@ -325,6 +325,15 @@ export class SlickVanillaGridBundle {
     if (this._columnDefinitions.length > 0) {
       this.copyColumnWidthsReference(this._columnDefinitions);
     }
+
+    // save resource refs to register before the grid options are merged and possibly deep copied
+    // since a deep copy of grid options would lose original resource refs but we want to keep them as singleton
+    this._registeredResources = options?.externalResources || options?.registerExternalResources || [];
+    /* istanbul ignore if */
+    if (options?.registerExternalResources) {
+      console.warn('[Slickgrid-Universal] Please note that the grid option `registerExternalResources` was deprecated, please use `externalResources` instead.');
+    }
+
     this._gridOptions = this.mergeGridOptions(options || {});
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions?.enableDeepCopyDatasetOnPageLoad);
 
@@ -420,15 +429,7 @@ export class SlickVanillaGridBundle {
     this.universalContainerService?.dispose();
 
     // dispose all registered external resources
-    if (Array.isArray(this._registeredResources)) {
-      while (this._registeredResources.length > 0) {
-        const resource = this._registeredResources.pop();
-        if (resource?.dispose) {
-          resource.dispose();
-        }
-      }
-      this._registeredResources = [];
-    }
+    this.disposeExternalResources();
 
     // dispose the Components
     this.slickFooter?.dispose();
@@ -470,6 +471,18 @@ export class SlickVanillaGridBundle {
     }
     this._eventPubSubService?.dispose();
     this._slickerGridInstances = null as any;
+  }
+
+  disposeExternalResources() {
+    if (Array.isArray(this._registeredResources)) {
+      while (this._registeredResources.length > 0) {
+        const res = this._registeredResources.pop();
+        if (res?.dispose) {
+          res.dispose();
+        }
+      }
+    }
+    this._registeredResources = [];
   }
 
   initialization(gridContainerElm: HTMLElement, eventHandler: SlickEventHandler) {
@@ -1320,16 +1333,37 @@ export class SlickVanillaGridBundle {
     }
   }
 
+  /** Add a register a new external resource, user could also optional dispose all previous resources before pushing any new resources to the resources array list. */
+  registerExternalResources(resources: ExternalResource[], disposePreviousResources = false) {
+    if (disposePreviousResources) {
+      this.disposeExternalResources();
+    }
+    resources.forEach(res => this._registeredResources.push(res));
+    this.initializeExternalResources(resources);
+  }
+
+  resetExternalResources() {
+    this._registeredResources = [];
+  }
+
   /** Pre-Register any Resource that don't require SlickGrid to be instantiated (for example RxJS Resource) */
   protected preRegisterResources() {
-    this._registeredResources = this.gridOptions.registerExternalResources || [];
-
     // bind & initialize all Components/Services that were tagged as enabled
     // register all services by executing their init method and providing them with the Grid object
     if (Array.isArray(this._registeredResources)) {
       for (const resource of this._registeredResources) {
         if (resource?.className === 'RxJsResource') {
           this.registerRxJsResource(resource as RxJsFacade);
+        }
+      }
+    }
+  }
+
+  protected initializeExternalResources(resources: ExternalResource[]) {
+    if (Array.isArray(resources)) {
+      for (const resource of resources) {
+        if (this.slickGrid && typeof resource.init === 'function') {
+          resource.init(this.slickGrid, this.universalContainerService);
         }
       }
     }
@@ -1365,13 +1399,7 @@ export class SlickVanillaGridBundle {
 
     // bind & initialize all Components/Services that were tagged as enabled
     // register all services by executing their init method and providing them with the Grid object
-    if (Array.isArray(this._registeredResources)) {
-      for (const resource of this._registeredResources) {
-        if (this.slickGrid && typeof resource.init === 'function') {
-          resource.init(this.slickGrid, this.universalContainerService);
-        }
-      }
-    }
+    this.initializeExternalResources(this._registeredResources);
   }
 
   /** Register the RxJS Resource in all necessary services which uses */

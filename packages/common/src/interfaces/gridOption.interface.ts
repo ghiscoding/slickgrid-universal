@@ -551,8 +551,11 @@ export interface GridOption {
   /** Preselect certain rows by their row index ("enableCheckboxSelector" must be enabled) */
   preselectedRows?: number[];
 
-  /** Register any external Resources (Components, Services) like the ExcelExportService, TextExportService, SlickCompositeEditorComponent, ... */
+  /** @deprecated @use `externalResources` instead. */
   registerExternalResources?: ExternalResource[];
+
+  /** Register any external Resources (Components, Services) like the ExcelExportService, TextExportService, SlickCompositeEditorComponent, ... */
+  externalResources?: ExternalResource[];
 
   /** Defaults to true, should we reset (rollback) the search filter input value to its previous value when the `onBeforeSearchChange` event bubbling is prevented? */
   resetFilterSearchValueAfterOnBeforeCancellation?: boolean;

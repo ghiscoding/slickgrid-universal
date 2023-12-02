@@ -768,7 +768,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
               format: FileType.csv,
             });
           } else {
-            console.error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalResources: [new TextExportService()] };`);
+            console.error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`);
           }
           break;
         case 'export-excel':
@@ -776,7 +776,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           if (excelService?.exportToExcel) {
             excelService.exportToExcel();
           } else {
-            console.error(`[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu. Example:: this.gridOptions = { enableExcelExport: true, registerExternalResources: [new ExcelExportService()] };`);
+            console.error(`[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu. Example:: this.gridOptions = { enableExcelExport: true, externalResources: [new ExcelExportService()] };`);
           }
           break;
         case 'export-text-delimited':
@@ -787,7 +787,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
               format: FileType.txt,
             });
           } else {
-            console.error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalResources: [new TextExportService()] };`);
+            console.error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`);
           }
           break;
         case 'toggle-filter':

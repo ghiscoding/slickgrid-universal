@@ -217,7 +217,7 @@ export default class Example5 {
       enableExcelExport: true,
       textExportOptions: { exportWithFormatter: true },
       excelExportOptions: { exportWithFormatter: true },
-      registerExternalResources: [new ExcelExportService()],
+      externalResources: [new ExcelExportService()],
       enableFiltering: true,
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {

@@ -499,6 +499,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
 
       it('should initialize ExportService when "enableTextExport" is set when using Salesforce', () => {
         component.gridOptions = { enableTextExport: true, useSalesforceDefaultGridOptions: true } as unknown as GridOption;
+        component.resetExternalResources();
         component.initialization(divContainer, slickEventHandler);
 
         expect(TextExportService).toHaveBeenCalled();
@@ -513,7 +514,8 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         const sortServiceSpy = jest.spyOn(sortServiceStub, 'addRxJsResource');
         const paginationServiceSpy = jest.spyOn(paginationServiceStub, 'addRxJsResource');
 
-        component.gridOptions = { registerExternalResources: [rxjsMock] } as unknown as GridOption;
+        component.gridOptions = { externalResources: [rxjsMock] } as unknown as GridOption;
+        component.registerExternalResources([rxjsMock], true);
         component.initialization(divContainer, slickEventHandler);
 
         expect(backendUtilitySpy).toHaveBeenCalled();

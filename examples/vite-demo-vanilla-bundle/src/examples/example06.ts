@@ -39,7 +39,7 @@ export default class Example6 {
     this.datasetFlat = [];
     this.datasetHierarchical = this.mockDataset();
     const gridContainerElm = document.querySelector('.grid6') as HTMLDivElement;
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, null as any, this.datasetHierarchical);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, undefined, this.datasetHierarchical);
     document.body.classList.add('material-theme');
   }
 
@@ -127,7 +127,7 @@ export default class Example6 {
       gridMenu: {
         iconCssClass: 'mdi mdi-dots-grid',
       },
-      registerExternalResources: [new ExcelExportService(), new TextExportService()],
+      externalResources: [new ExcelExportService(), new TextExportService()],
       enableFiltering: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
