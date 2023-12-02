@@ -42,7 +42,7 @@ export class MyExample {
       textExportOptions: {
         sanitizeDataExport: true
       },
-      registerExternalResources: [new TextExportService()],
+      externalResources: [new TextExportService()],
     }
   }
 }
@@ -65,7 +65,7 @@ export class MyExample {
       textExportOptions: {
         sanitizeDataExport: true
       },
-      registerExternalResources: [this.exportService],
+      externalResources: [this.exportService],
     }
   }
 

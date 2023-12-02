@@ -46,7 +46,7 @@ export class MyExample {
         formatter: tooltipTaskFormatter,
         // ...
       },
-      registerExternalResources: [new SlickCustomTooltip(), this.excelExportService],
+      externalResources: [new SlickCustomTooltip(), this.excelExportService],
     };
   }
 }

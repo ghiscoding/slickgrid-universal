@@ -2,10 +2,9 @@
 import Sortable, { SortableEvent } from 'sortablejs';
 import DOMPurify from 'dompurify';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { isPrimitiveOrHTML } from '@slickgrid-universal/utils';
+import { isDefined, isPrimitiveOrHTML } from '@slickgrid-universal/utils';
 
 import {
-  isDefined,
   preClickClassName,
   type SlickEditorLock,
   SlickGlobalEditorLock,

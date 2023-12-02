@@ -38,7 +38,7 @@ export class MyExample {
       excelExportOptions: {
         sanitizeDataExport: true
       },
-      registerExternalResources: [new ExcelExportService()],
+      externalResources: [new ExcelExportService()],
     }
   }
 }
@@ -61,7 +61,7 @@ export class MyExample {
       excelExportOptions: {
         sanitizeDataExport: true
       },
-      registerExternalResources: [this.excelExportService],
+      externalResources: [this.excelExportService],
     }
   }
 

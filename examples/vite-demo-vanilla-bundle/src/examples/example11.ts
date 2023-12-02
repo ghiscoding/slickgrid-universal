@@ -293,7 +293,7 @@ export default class Example11 {
       excelExportOptions: {
         exportWithFormatter: true
       },
-      registerExternalResources: [new ExcelExportService()],
+      externalResources: [new ExcelExportService()],
       enableFiltering: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)

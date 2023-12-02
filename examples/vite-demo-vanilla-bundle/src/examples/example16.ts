@@ -340,7 +340,7 @@ export default class Example16 {
         thousandSeparator: ' '
       },
       // Custom Tooltip options can be defined in a Column or Grid Options or a mixed of both (first options found wins)
-      registerExternalResources: [new SlickCustomTooltip(), new ExcelExportService(), new TextExportService()],
+      externalResources: [new SlickCustomTooltip(), new ExcelExportService(), new TextExportService()],
       customTooltip: {
         formatter: this.tooltipFormatter.bind(this),
         headerFormatter: this.headerFormatter,

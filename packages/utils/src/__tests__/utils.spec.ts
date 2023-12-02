@@ -9,6 +9,7 @@ import {
   objectAssignAndExtend,
   emptyObject,
   hasData,
+  isDefined,
   isEmptyObject,
   isNumber,
   isPrimitiveValue,
@@ -96,6 +97,26 @@ describe('Service/Utilies', () => {
     it('should return False when input is undefined, null or false', () => {
       expect(hasData(undefined)).toBe(false);
       expect(hasData(null)).toBe(false);
+    });
+  });
+
+  describe('isDefined method', () => {
+    it('should be truthy when comparing against any defined variable', () => {
+      const result1 = isDefined({ firstName: 'John', lastName: 'Doe' });
+      const result2 = isDefined('hello');
+
+      expect(result1).toBeTruthy();
+      expect(result2).toBeTruthy();
+    });
+
+    it('should be falsy when comparing against empty string, null or undefined', () => {
+      const result1 = isDefined('');
+      const result2 = isDefined(null);
+      const result3 = isDefined(undefined);
+
+      expect(result1).toBeFalsy();
+      expect(result2).toBeFalsy();
+      expect(result3).toBeFalsy();
     });
   });
 

@@ -1,5 +1,7 @@
 /* eslint-disable no-new-func */
 /* eslint-disable no-bitwise */
+import { isDefined } from '@slickgrid-universal/utils';
+
 import { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider';
 import type {
   Aggregator,
@@ -17,7 +19,6 @@ import type {
 } from '../interfaces';
 import { CssStyleHash, CustomDataView } from '../interfaces/gridOption.interface';
 import {
-  isDefined,
   SlickEvent,
   SlickEventData,
   SlickGroup,
@@ -1557,7 +1558,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
           if (hashById) {
             const row = this.rowsById?.[id];
             if (isDefined(row)) {
-              newHash[row] = hashById[id];
+              newHash[row as number] = hashById[id];
             }
           }
         }
