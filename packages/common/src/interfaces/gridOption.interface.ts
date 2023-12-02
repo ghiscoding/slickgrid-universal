@@ -459,6 +459,9 @@ export interface GridOption<C extends Column = Column> {
   /** Some default options to set for the Excel export service */
   excelExportOptions?: ExcelExportOption;
 
+  /** Register any external Resources (Components, Services) like the ExcelExportService, TextExportService, SlickCompositeEditorComponent, ... */
+  externalResources?: ExternalResource[];
+
   /**
    * Default to 0, how long to wait between each characters that the user types before processing the filtering process (only applies for local/in-memory grid).
    * Especially useful when you have a big dataset and you want to limit the amount of search called (by default every keystroke will trigger a search on the dataset and that is sometime slow).
@@ -603,9 +606,6 @@ export interface GridOption<C extends Column = Column> {
 
   /** Preselect certain rows by their row index ("enableCheckboxSelector" must be enabled) */
   preselectedRows?: number[];
-
-  /** Register any external Resources (Components, Services) like the ExcelExportService, TextExportService, SlickCompositeEditorComponent, ... */
-  registerExternalResources?: ExternalResource[];
 
   /** Defaults to true, should we reset (rollback) the search filter input value to its previous value when the `onBeforeSearchChange` event bubbling is prevented? */
   resetFilterSearchValueAfterOnBeforeCancellation?: boolean;

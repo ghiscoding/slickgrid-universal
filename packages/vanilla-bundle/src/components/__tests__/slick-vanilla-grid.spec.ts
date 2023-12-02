@@ -754,7 +754,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync: of(mockCollection) } }] as Column[];
 
         const rxjsMock = new RxJsResourceStub();
-        component.gridOptions = { registerExternalResources: [rxjsMock] } as unknown as GridOption;
+        component.gridOptions = { externalResources: [rxjsMock] } as unknown as GridOption;
+        component.registerExternalResources([rxjsMock], true);
         component.initialization(divContainer, slickEventHandler);
         component.columnDefinitions = mockColDefs;
 
@@ -975,7 +976,9 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const sortServiceSpy = jest.spyOn(sortServiceStub, 'addRxJsResource');
         const paginationServiceSpy = jest.spyOn(paginationServiceStub, 'addRxJsResource');
 
-        component.gridOptions = { registerExternalResources: [rxjsMock] } as unknown as GridOption;
+        component.gridOptions = { externalResources: [rxjsMock] } as unknown as GridOption;
+        component.resetExternalResources();
+        component.registerExternalResources([rxjsMock], true);
         component.initialization(divContainer, slickEventHandler);
 
         expect(backendUtilitySpy).toHaveBeenCalled();
@@ -1258,7 +1261,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         jest.spyOn((component.gridOptions as any).backendServiceApi.service, 'buildQuery').mockReturnValue(query);
         const backendExecuteSpy = jest.spyOn(backendUtilityServiceStub, 'executeBackendProcessesCallback');
 
-        component.gridOptions.registerExternalResources = [rxjsMock];
+        component.gridOptions.externalResources = [rxjsMock];
+        component.registerExternalResources([rxjsMock], true);
         component.gridOptions.backendServiceApi!.service.options = { executeProcessCommandOnInit: true };
         component.initialization(divContainer, slickEventHandler);
 
@@ -1319,7 +1323,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         jest.spyOn((component.gridOptions as any).backendServiceApi.service, 'buildQuery').mockReturnValue(query);
         const backendErrorSpy = jest.spyOn(backendUtilityServiceStub, 'onBackendError');
 
-        component.gridOptions.registerExternalResources = [rxjsMock];
+        component.gridOptions.externalResources = [rxjsMock];
+        component.registerExternalResources([rxjsMock], true);
         component.gridOptions.backendServiceApi!.service.options = { executeProcessCommandOnInit: true };
         component.initialization(divContainer, slickEventHandler);
 

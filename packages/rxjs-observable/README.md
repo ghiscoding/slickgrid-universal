@@ -49,7 +49,7 @@ export class MyExample {
       } as OdataServiceApi,
 
       // ...
-      registerExternalResources: [new RxJsResource()],
+      externalResources: [new RxJsResource()],
     };
   }
 }

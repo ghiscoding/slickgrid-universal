@@ -211,7 +211,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
                   format: FileType.csv,
                 });
               } else {
-                throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalResources: [new TextExportService()] };`);
+                throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`);
               }
             },
           }
@@ -236,7 +236,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
               if (excelService?.exportToExcel) {
                 excelService.exportToExcel();
               } else {
-                throw new Error(`[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Context Menu. Example:: this.gridOptions = { enableExcelExport: true, registerExternalResources: [new ExcelExportService()] };`);
+                throw new Error(`[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Context Menu. Example:: this.gridOptions = { enableExcelExport: true, externalResources: [new ExcelExportService()] };`);
               }
             },
           }
@@ -264,7 +264,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
                   format: FileType.txt,
                 });
               } else {
-                throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableTextExport: true, registerExternalResources: [new TextExportService()] };`);
+                throw new Error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`);
               }
             },
           }

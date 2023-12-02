@@ -7,6 +7,7 @@
  * @module Core
  * @namespace Slick
  */
+import { isDefined } from '@slickgrid-universal/utils';
 
 import { MergeTypes } from '../enums/index';
 import type { CSSStyleDeclarationWritable, EditController } from '../interfaces';
@@ -253,16 +254,16 @@ export class SlickRange {
     this.fromCell = Math.min(fromCell, toCell as number);
 
     /**
-     * @property toCell
-     * @type {Integer}
-     */
-    this.toCell = Math.max(fromCell, toCell as number);
-
-    /**
      * @property toRow
      * @type {Integer}
      */
     this.toRow = Math.max(fromRow, toRow as number);
+
+    /**
+     * @property toCell
+     * @type {Integer}
+     */
+    this.toCell = Math.max(fromCell, toCell as number);
   }
 
   /**
@@ -533,10 +534,6 @@ export class SlickEditorLock {
   cancelCurrentEdit(): boolean {
     return (this.activeEditController ? this.activeEditController.cancelCurrentEdit() : true);
   };
-}
-
-export function isDefined<T>(value: T | undefined | null): value is T {
-  return <T>value !== undefined && <T>value !== null && <T>value !== '';
 }
 
 export class Utils {
