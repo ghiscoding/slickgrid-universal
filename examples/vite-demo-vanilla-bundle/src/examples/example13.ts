@@ -132,10 +132,11 @@ export default class Example13 {
         type: FieldType.number,
         editor: { model: Editors.integer },
         formatter: (_row, _cell, value, columnDef) => {
-          if (gridNo === 1 && columns1WithHighlightingById[columnDef.id] && value < 0) {
-            return `<div style="color:red; font-weight:bold;">${value}</div>`;
-          } else if (gridNo === 2 && columns2WithHighlightingById[columnDef.id] && value < 0) {
-            return `<div style="color:red; font-weight:bold;">${value}</div>`;
+          if (
+            gridNo === 1 && columns1WithHighlightingById[columnDef.id] && value < 0 ||
+            gridNo === 2 && columns2WithHighlightingById[columnDef.id] && value < 0
+          ) {
+            return `<div class="text-red text-bold">${value}</div>`;
           }
           return value;
         },

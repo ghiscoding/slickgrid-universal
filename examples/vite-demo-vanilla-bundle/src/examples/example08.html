@@ -1,6 +1,6 @@
 <h3 class="title is-3">
   Example 08 - Column Span &amp; Header Grouping
-  <div class="subtitle" style="float: right; margin-top: -20px">
+  <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a class="is-size-5"
        target="_blank"
@@ -16,12 +16,12 @@
 
 <hr />
 
-<div class="title is-4" style="margin-bottom: 12px">
+<div class="title is-4 mb-3">
   Grid 2
   <small>(with Header Grouping &amp; Frozen/Pinned Columns)</small>
 </div>
 
-<div class="column" style="padding-top: 10px; padding: 8px 0;">
+<div class="column pt-1 px-1">
   <div class="form-inline flex-container">
     <div>
       <label class="my-1 mr-2" for="columnSelect">Single Search:</label>
@@ -44,15 +44,15 @@
       </p>
       <p class="control pointer" onclick.delegate="cleargrid2SearchInput()" data-test="clear-search-input">
         <a class="button is-static is-small">
-          <span class="icon mdi mdi-close-thick" style="margin-top: 2px"></span>
+          <span class="icon mdi mdi-close-thick mt-1"></span>
         </a>
       </p>
     </div>
     <div>&nbsp;&nbsp;</div>
-    <div style="padding-left: 8px">
+    <div class="pl-2">
       <button class="button is-small" onclick.delegate="setFrozenColumns2(-1)"
               data-test="remove-frozen-column-button">
-        <span class="icon mdi mdi-close" style="margin-top: 2px"></span>
+        <span class="icon mdi mdi-close mt-1"></span>
         <span>Remove Frozen Columns</span>
       </button>
       <button class="button is-small" onclick.delegate="setFrozenColumns2(2)" data-test="set-3frozen-columns">

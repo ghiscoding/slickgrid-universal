@@ -10,6 +10,7 @@ $slick-link-color: #006DCC;
 @import './bulma.scss';
 
 .demo-container.container {
+  padding-top: 20px;
   margin-top: 50px;
 }
 .fake-hyperlink {
@@ -33,4 +34,36 @@ $slick-link-color: #006DCC;
 }
 .faded:hover {
   opacity: 1;
+}
+.subtitle.code-link {
+  float: right;
+  margin-top: -15px;
+}
+.notification.is-narrow {
+  padding: 0.75rem 1.0rem;
+}
+input.is-narrow {
+  width: 55px;
+}
+.ml-8 {
+  margin-left: 50px;
+}
+.float-right {
+  float: right;
+}
+.action-btn {
+  width: 35px;
+  margin-top: -1px;
+}
+.text-green {
+  color: green;
+}
+.text-violet {
+  color: #659bff;
+}
+.text-bluenavy {
+  color: #003597;
+}
+.text-red {
+  color: red;
 }

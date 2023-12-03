@@ -85,7 +85,7 @@ export default class Example03 {
         filterable: true,
         grouping: {
           getter: 'title',
-          formatter: (g) => `Title: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Title: ${g.value} <span class="text-green">(${g.count} items)</span>`,
           aggregators: [new Aggregators.Sum('cost')],
           aggregateCollapsed: false,
           collapsed: false
@@ -105,7 +105,7 @@ export default class Example03 {
         groupTotalsFormatter: GroupTotalFormatters.sumTotals,
         grouping: {
           getter: 'duration',
-          formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Duration: ${g.value} <span class="text-green">(${g.count} items)</span>`,
           comparer: (a, b) => {
             return this.durationOrderByCount ? (a.count - b.count) : SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc);
           },
@@ -126,7 +126,7 @@ export default class Example03 {
         type: FieldType.number,
         grouping: {
           getter: 'cost',
-          formatter: (g) => `Cost: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Cost: ${g.value} <span class="text-green">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -147,7 +147,7 @@ export default class Example03 {
         groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage,
         grouping: {
           getter: 'percentComplete',
-          formatter: (g) => `% Complete:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `% Complete:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -165,7 +165,7 @@ export default class Example03 {
         editor: { model: Editors.date },
         grouping: {
           getter: 'start',
-          formatter: (g) => `Start: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Start: ${g.value} <span class="text-green">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -182,7 +182,7 @@ export default class Example03 {
         filterable: true, filter: { model: Filters.dateRange },
         grouping: {
           getter: 'finish',
-          formatter: (g) => `Finish: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Finish: ${g.value} <span class="text-green">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -204,7 +204,7 @@ export default class Example03 {
         formatter: Formatters.checkmarkMaterial,
         grouping: {
           getter: 'effortDriven',
-          formatter: (g) => `Effort-Driven: ${g.value ? 'True' : 'False'} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Effort-Driven: ${g.value ? 'True' : 'False'} <span class="text-green">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -280,6 +280,9 @@ export default class Example03 {
       editable: true,
       autoResize: {
         container: '.demo-container',
+      },
+      dataView: {
+        useCSPSafeFilter: true
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,

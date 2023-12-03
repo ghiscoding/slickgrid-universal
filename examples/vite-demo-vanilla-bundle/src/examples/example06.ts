@@ -241,7 +241,7 @@ export default class Example06 {
     const treeLevel = dataContext[treeLevelPropName];
 
     value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    const spacer = `<span style="display:inline-block; width:${(15 * treeLevel)}px;"></span>`;
+    const spacer = `<span class="display-inline-block width-${(15 * treeLevel)}px"></span>`;
 
     if (data[idx + 1]?.[treeLevelPropName] > data[idx][treeLevelPropName] || data[idx]['__hasChildren']) {
       const folderPrefix = `<i class="mdi mdi-22px ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;

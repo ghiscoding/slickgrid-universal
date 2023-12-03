@@ -1,6 +1,6 @@
 <h3 class="title is-3">
   Example 04 - Pinned (frozen) Columns/Rows
-  <div class="subtitle" style="float: right; margin-top: -20px">
+  <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a class="is-size-5"
        target="_blank"
@@ -22,14 +22,14 @@
       Set
     </button>
   </span>
-  <span style="margin-left: 10px">
+  <span class="ml-1">
     <label for="">Pinned Columns: </label>
     <input type="number" class="frozen-column-count" value.bind="frozenColumnCount">
     <button class="btn btn-default btn-xs" onclick.delegate="changeFrozenColumnCount()">
       Set
     </button>
   </span>
-  <span style="margin-left: 15px">
+  <span class="ml-3">
     <button class="button is-small" onclick.delegate="setFrozenColumns(-1)"
             data-test="remove-frozen-column-button">
       <span class="icon mdi mdi-close"></span>
