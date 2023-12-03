@@ -98,7 +98,7 @@ const mockColumns = [
     id: 'age', name: 'Age', field: 'age', width: 50, sortable: true,
     grouping: {
       getter: 'age', aggregators: [new Aggregators.Avg('age')],
-      formatter: (g) => `Age: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+      formatter: (g) => `Age: ${g.value} <span class="text-green">(${g.count} items)</span>`,
       collapsed: true
     }
   },
@@ -106,7 +106,7 @@ const mockColumns = [
     id: 'medals', name: 'Medals', field: 'medals', width: 50, sortable: true,
     grouping: {
       getter: 'medals', aggregators: [new Aggregators.Sum('medals')],
-      formatter: (g) => `Medals: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+      formatter: (g) => `Medals: ${g.value} <span class="text-green">(${g.count} items)</span>`,
     }
   },
   { name: 'Gender', field: 'gender', width: 75 },

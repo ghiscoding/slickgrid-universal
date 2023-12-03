@@ -1237,7 +1237,7 @@ describe('GraphqlService', () => {
     it('should return a query using column name that is an HTML Element', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:Gender, operator:EQ, value:"female"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const nameElm = document.createElement('div');
-      nameElm.innerHTML = `<span class="red">Gender</span>`;
+      nameElm.innerHTML = `<span class="text-red">Gender</span>`;
       const mockColumn = { id: 'gender', name: nameElm } as unknown as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },

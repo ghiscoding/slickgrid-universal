@@ -1,6 +1,6 @@
 <h3 class="title is-3">Example 17 - Auto-Scroll with Range Selector
   <span class="subtitle">(with Salesforce Theme)</span>
-  <div class="subtitle" style="float: right; margin-top: -20px">
+  <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a class="is-size-5" target="_blank"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example17.ts">
@@ -12,22 +12,22 @@
   Dragging from 2nd column to make a selection, and the viewport will auto scroll.
 </h6>
 
-<div style="min-height: 975px">
+<div>
   <div class="row scroll-configs">
     <span>
       <label for="min-internal">MIN interval to show next cell (ms): </label>
       <input id="min-internal" type="number" data-test="min-interval-input" value.bind="minInterval" />
-      <label for="max-internal" style="margin-left: 15px;">MAX delay to show next cell (ms): </label>
+      <label for="max-internal" class="ml-2">MAX delay to show next cell (ms): </label>
       <input id="max-internal" type="number" data-test="max-interval-input" value.bind="maxInterval" />
-      <label for="delay-cursor" style="margin-left: 15px;">Delay when cursor outside 1px (ms): </label>
+      <label for="delay-cursor" class="ml-2">Delay when cursor outside 1px (ms): </label>
       <input id="delay-cursor" type="number" data-test="delay-cursor-input" value.bind="delayCursor" />
     </span>
   </div>
-  <div class="row" style="margin-bottom: 15px;">
+  <div class="row my-1">
     <label for="is-autoscroll">Auto Scroll: (need click Set Options): </label>
     <input id="is-autoscroll" type="checkbox" data-test="is-autoscroll-chk" checked.bind="isAutoScroll" />
 
-    <span style="margin-left: 20px;">
+    <span class="ml-2">
       <button class="button is-small" data-test="set-options-btn" onclick.delegate="setOptions()">
         Set Options
       </button>
@@ -48,7 +48,7 @@
   </div>
 
   <div class="column is-half">
-    <hr style="margin: 16px 0" />
+    <hr class="my-4" />
   </div>
 
   <h5 class="title is-5">Grid 2 - Using <code>SlickCellRangeSelector</code> and <code>SlickRowSelectionModel</code></h5>

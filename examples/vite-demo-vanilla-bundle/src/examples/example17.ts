@@ -115,7 +115,7 @@ export default class Example17 {
   groupByDuration1() {
     this.sgb1.dataView?.setGrouping({
       getter: 'duration',
-      formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+      formatter: (g) => `Duration: ${g.value} <span class="text-green">(${g.count} items)</span>`,
       aggregators: [
         new Aggregators.Avg('percentComplete'),
         new Aggregators.Sum('cost')
@@ -128,7 +128,7 @@ export default class Example17 {
   groupByDuration2() {
     this.sgb2.dataView?.setGrouping({
       getter: 'duration',
-      formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+      formatter: (g) => `Duration: ${g.value} <span class="text-green">(${g.count} items)</span>`,
       aggregators: [
         new Aggregators.Avg('percentComplete'),
         new Aggregators.Sum('cost')

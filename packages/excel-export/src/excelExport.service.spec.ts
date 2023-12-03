@@ -754,7 +754,7 @@ describe('ExcelExportService', () => {
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [jest.fn(), jest.fn()],
           displayTotalsRow: true,
-          formatter: (g) => `Order:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
           getterIsAFn: false,
           lazyTotalsCalculation: true,
@@ -766,7 +766,7 @@ describe('ExcelExportService', () => {
         mockGroup1 = {
           collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Order: 20 <span style="color:green">(2 items)</span>`,
+          title: `Order: 20 <span class="text-green">(2 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
@@ -856,7 +856,7 @@ describe('ExcelExportService', () => {
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [jest.fn(), jest.fn()],
           displayTotalsRow: true,
-          formatter: (g) => `Order:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
           getterIsAFn: false,
           lazyTotalsCalculation: true,
@@ -868,7 +868,7 @@ describe('ExcelExportService', () => {
         mockGroup1 = {
           collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Order: 20 <span style="color:green">(2 items)</span>`,
+          title: `Order: 20 <span class="text-green">(2 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
@@ -961,7 +961,7 @@ describe('ExcelExportService', () => {
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [jest.fn(), jest.fn()],
           displayTotalsRow: true,
-          formatter: (g) => `Order:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
           getterIsAFn: false,
           lazyTotalsCalculation: true,
@@ -973,7 +973,7 @@ describe('ExcelExportService', () => {
         mockGroup1 = {
           collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Order: 20 <span style="color:green">(2 items)</span>`,
+          title: `Order: 20 <span class="text-green">(2 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
@@ -1060,7 +1060,7 @@ describe('ExcelExportService', () => {
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [jest.fn(), jest.fn()],
           displayTotalsRow: true,
-          formatter: (g) => `Order:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
           getterIsAFn: false,
           lazyTotalsCalculation: true,
@@ -1072,25 +1072,25 @@ describe('ExcelExportService', () => {
         mockGroup1 = {
           collapsed: false, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Order: 20 <span style="color:green">(2 items)</span>`,
+          title: `Order: 20 <span class="text-green">(2 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
         mockGroup2 = {
           collapsed: false, count: 2, groupingKey: '10:|:X', groups: null, level: 1, selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Last Name: X <span style="color:green">(1 items)</span>`,
+          title: `Last Name: X <span class="text-green">(1 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
         };
         mockGroup3 = {
           collapsed: false, count: 2, groupingKey: '10:|:Doe', groups: null, level: 1, selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Last Name: Doe <span style="color:green">(1 items)</span>`,
+          title: `Last Name: Doe <span class="text-green">(1 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
         };
         mockGroup4 = {
           collapsed: true, count: 0, groupingKey: '10:|:', groups: null, level: 1, selectChecked: false,
           rows: [],
-          title: `Last Name: null <span style="color:green">(0 items)</span>`,
+          title: `Last Name: null <span class="text-green">(0 items)</span>`,
           totals: { value: '0', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
         };
 

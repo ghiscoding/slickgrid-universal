@@ -491,19 +491,24 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         if (skipEmptyReassignment && !isDefined(val) && !target.innerHTML) {
           return; // same result, just skip it
         }
-        let sanitizedText = val;
-        if (typeof this._options?.sanitizer === 'function') {
-          sanitizedText = this._options.sanitizer(val || '');
-        } else if (typeof DOMPurify?.sanitize === 'function') {
-          const purifyOptions = (options?.sanitizerOptions ?? this._options.sanitizerOptions ?? { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }) as DOMPurify.Config;
-          sanitizedText = DOMPurify.sanitize(val || '', purifyOptions) as unknown as string;
-        }
 
-        // apply HTML when enableHtmlRendering is enabled but make sure we do have a value (without a value, it will simply use `textContent` to clear text content)
-        if (this._options.enableHtmlRendering && sanitizedText) {
-          target.innerHTML = sanitizedText;
-        } else {
+        let sanitizedText = val;
+        if (typeof sanitizedText === 'number' || typeof sanitizedText === 'boolean') {
           target.textContent = sanitizedText;
+        } else {
+          if (typeof this._options?.sanitizer === 'function') {
+            sanitizedText = this._options.sanitizer(val);
+          } else if (typeof DOMPurify?.sanitize === 'function') {
+            const purifyOptions = (options?.sanitizerOptions ?? this._options.sanitizerOptions ?? { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }) as DOMPurify.Config;
+            sanitizedText = DOMPurify.sanitize(val, purifyOptions) as unknown as string;
+          }
+
+          // apply HTML when enableHtmlRendering is enabled but make sure we do have a value (without a value, it will simply use `textContent` to clear text content)
+          if (this._options.enableHtmlRendering && sanitizedText) {
+            target.innerHTML = sanitizedText;
+          } else {
+            target.textContent = sanitizedText;
+          }
         }
       }
     }

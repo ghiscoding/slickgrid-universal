@@ -1,6 +1,6 @@
 <h3 class="title is-3">
   Example 10 - Grid with GraphQL Backend Service
-  <div class="subtitle" style="float: right; margin-top: -20px">
+  <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a class="is-size-5" target="_blank"
        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example10.ts">
@@ -9,7 +9,7 @@
   </div>
 </h3>
 <h6 class="title is-6 italic">
-  <span style="color: red">(*) NO DATA SHOWN</span>
+  <span class="text-red">(*) NO DATA SHOWN</span>
   - just change any of Filters/Sorting/Pages and look at the "GraphQL Query" changing :)
 </h6>
 
@@ -33,7 +33,7 @@
   </button>
 
   <label for="serverdelay" class="ml-4">Server Delay: </label>
-  <input id="serverdelay" type="number" data-test="server-delay" style="width: 55px"
+  <input id="serverdelay" type="number" data-test="server-delay" class="is-narrow"
         value.bind="serverWaitDelay"
         title="input a fake timer delay to simulate slow server response" />
 
@@ -53,7 +53,7 @@
         Switch Language
       </button>
       <b>Locale:</b>
-      <span style="font-style: italic" data-test="selected-locale" textcontent.bind="selectedLanguageFile">
+      <span class="text-italic" data-test="selected-locale" textcontent.bind="selectedLanguageFile">
       </span>
     </span>
 

@@ -256,7 +256,7 @@ export default class Example05 {
           }
           titleResult += `<span class="bold">${value}</span>`;
           if (dataContext.parentId) {
-            titleResult += ` <span style="font-size:11px; margin-left: 15px;">(parentId: ${dataContext.parentId})</span>`;
+            titleResult += ` <span class="font-11px ml-2">(parentId: ${dataContext.parentId})</span>`;
           }
           return titleResult;
         },
