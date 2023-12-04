@@ -87,7 +87,9 @@ export default class Example11Modal {
 
   handleOnModalClose() {
     this.sgb?.dispose();
-    this.gridContainerElm = emptyElement(this.gridContainerElm) as HTMLDivElement;
+    if (this.gridContainerElm) {
+      this.gridContainerElm.textContent = '';
+    }
     this.closeBulmaModal();
   }
 

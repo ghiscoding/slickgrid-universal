@@ -1,4 +1,4 @@
-import { BindingService } from '@slickgrid-universal/vanilla-bundle';
+import { BindingService } from '@slickgrid-universal/binding';
 
 /**
  * This is a simple View/ViewModel Renderer (it will build the ViewModel and render the associated View)
@@ -58,7 +58,8 @@ export class Renderer {
 
   parseTemplate(viewTemplate: string) {
     return viewTemplate
-      .replace(/([a-z]*){1}.(delegate)="?(.*?)(\))/gi, this.parseMethodBinding.bind(this))
+      // .replace(/([a-z]*){1}.(delegate)="(.*?)(\(.*\))"/gi, this.parseMethodBinding.bind(this))
+      .replace(/([a-z]*){1}.(delegate)="?(.*?)(\))"/gi, this.parseMethodBinding.bind(this))
       .replace(/([a-z]*){1}.(bind)="?([^">\s]*)"?/gi, this.parsePropertyBinding.bind(this))
       .replace(/\${(.*)}/gi, this.parseLogicExecution.bind(this));
   }
@@ -69,6 +70,17 @@ export class Renderer {
 
   parseMethodBinding(_match: string, eventName: string, eventType: string, callbackFn: string, lastChar: string) {
     let output = '';
+
+    // // wait a cycle so that the View is rendered before observing anything
+    // setTimeout(() => {
+    //   const elements = document.querySelectorAll<HTMLElement>(`[${eventName}\\\.${eventType}]`);
+    //   let args: any = /\(\s*([^)]+?)\s*\)/.exec(fnArgs);
+    //   if (args?.[1]) {
+    //     args = args[1].split(/\s*,\s*/);
+    //   }
+    //   this._bindingEventService.bind(elements, eventName, window[this._className.trim()][fnName].bind(window[this._className.trim()], ...(args || [])));
+    // });
+    // return _match;
 
     switch (eventType) {
       case 'delegate':

@@ -202,6 +202,7 @@ export default class Example15 {
         // we do this because Filter(s) are shown at all time, while on Editor it's unnecessary since they are only shown when opening them
         if (filterCollectionAsync?.next) {
           filterCollectionAsync.next(editorCollection);
+          filterCollectionAsync.complete();
         }
       }
     }

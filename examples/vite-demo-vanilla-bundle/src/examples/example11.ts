@@ -78,6 +78,7 @@ export default class Example11 {
   editedItems = {};
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
+  viewSelectElm: HTMLSelectElement;
   currentYear = moment().year();
   defaultPredefinedPresets = [
     {
@@ -117,6 +118,7 @@ export default class Example11 {
     this.initializeGrid();
     this.dataset = this.loadData(500);
     this.gridContainerElm = document.querySelector(`.grid11`) as HTMLDivElement;
+    this.viewSelectElm = document.querySelector('.selected-view') as HTMLSelectElement;
 
     this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
@@ -127,8 +129,9 @@ export default class Example11 {
   }
 
   dispose() {
-    this.sgb?.dispose();
     this._bindingEventService.unbindAll();
+    this.sgb?.dispose();
+    this.viewSelectElm?.remove();
     this.gridContainerElm.remove();
   }
 
@@ -589,20 +592,18 @@ export default class Example11 {
       this.predefinedViews.forEach(viewSelect => viewSelect.isSelected = false); // reset selection
     }
     const presetViews: ViewDefinition[] = Array.isArray(predefinedViews) ? predefinedViews : [predefinedViews];
-    const viewSelect = document.querySelector('.selected-view') as HTMLElement;
 
     // empty an empty <option> when populating the array on page load
     if (Array.isArray(predefinedViews)) {
-      const emtySelectOption = document.createElement('option');
-      viewSelect.appendChild(emtySelectOption);
+      this.viewSelectElm.appendChild(document.createElement('option'));
     }
 
     for (const preset of presetViews) {
       const selectOption = document.createElement('option');
       selectOption.value = preset.value;
       selectOption.label = preset.label;
-      viewSelect.appendChild(selectOption);
       selectOption.selected = isOptionSelected || preset.isSelected || false;
+      this.viewSelectElm.appendChild(selectOption);
     }
   }
 
@@ -617,8 +618,9 @@ export default class Example11 {
 
   recreatePredefinedViews() {
     // empty the Select dropdown element and re-populate it
-    const viewSelectElm = document.querySelector('.selected-view') as HTMLElement;
-    viewSelectElm.textContent = '';
+    if (this.viewSelectElm) {
+      this.viewSelectElm.textContent = '';
+    }
     this.pushNewViewToViewsList(this.predefinedViews);
   }
 

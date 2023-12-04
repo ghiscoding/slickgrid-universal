@@ -269,7 +269,7 @@ export default class Example07 {
           }),
 
           // OR a regular collection load
-          // collection: Array.from(Array(NB_ITEMS).keys()).map(k => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })),
+          // collection: Array.from(Array((this.dataset || []).length).keys()).map(k => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })),
           collectionSortBy: {
             property: 'value',
             sortDesc: true,
