@@ -1,6 +1,5 @@
 import { titleCase, toKebabCase } from '@slickgrid-universal/utils';
-import type { BasePubSubService } from './basePubSub.service';
-import { EventNamingStyle, type EventSubscription, type Subscription, } from './types';
+import { type BasePubSubService, EventNamingStyle, type EventSubscription, type Subscription, } from './types';
 
 export interface PubSubEvent<T = any> {
   name: string;
