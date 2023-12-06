@@ -1,6 +1,15 @@
 import 'jest-extended';
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+
 import { EditController } from '../../interfaces';
 import { SlickEditorLock, SlickEvent, SlickEventData, SlickEventHandler, SlickGroup, SlickGroupTotals, SlickRange, Utils } from '../slickCore';
+
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as BasePubSubService;
 
 describe('SlickCore file', () => {
   describe('SlickEventData class', () => {
@@ -96,6 +105,44 @@ describe('SlickCore file', () => {
       onClick.notify({ hello: 'world' }, ed);
 
       expect(spy1).toHaveBeenCalledWith(ed, { hello: 'world' });
+    });
+
+    it('should be able to add a PubSub instance to the SlickEvent call notify() and expect PubSub .publish() to be called as well', () => {
+      const ed = new SlickEventData();
+      const onClick = new SlickEvent('onClick', pubSubServiceStub);
+
+      onClick.notify({ hello: 'world' }, ed);
+
+      expect(pubSubServiceStub.publish).toHaveBeenCalledWith('onClick', { eventData: ed, args: { hello: 'world' } });
+    });
+
+    it('should be able to mix a PubSub with regular SlickEvent subscribe and expect both to be triggered by the SlickEvent call notify()', () => {
+      const spy1 = jest.fn();
+      const spy2 = jest.fn();
+      const ed = new SlickEventData();
+      const onClick = new SlickEvent('onClick', pubSubServiceStub);
+      onClick.subscribe(spy1);
+      onClick.subscribe(spy2);
+
+      expect(onClick.subscriberCount).toBe(2);
+
+      onClick.notify({ hello: 'world' }, ed);
+
+      expect(spy1).toHaveBeenCalledWith(ed, { hello: 'world' });
+      expect(pubSubServiceStub.publish).toHaveBeenCalledWith('onClick', { eventData: ed, args: { hello: 'world' } });
+    });
+
+    it('should be able to call addSlickEventPubSubWhenDefined() and expect PubSub to be available in SlickEvent', () => {
+      const ed = new SlickEventData();
+      const onClick = new SlickEvent('onClick');
+      const scope = { onClick };
+      const setPubSubSpy = jest.spyOn(onClick, 'setPubSubService');
+
+      Utils.addSlickEventPubSubWhenDefined(pubSubServiceStub, scope);
+      onClick.notify({ hello: 'world' }, ed);
+
+      expect(setPubSubSpy).toHaveBeenCalledWith(pubSubServiceStub);
+      expect(pubSubServiceStub.publish).toHaveBeenCalledWith('onClick', { eventData: ed, args: { hello: 'world' } });
     });
   });
 

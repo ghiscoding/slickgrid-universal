@@ -799,7 +799,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const extensions = component.extensions as ExtensionList<any>;
 
         expect(Object.keys(extensions).length).toBe(1);
-        expect(dataviewSpy).toHaveBeenCalledWith({ inlineFilters: false, groupItemMetadataProvider: expect.anything() });
+        expect(dataviewSpy).toHaveBeenCalledWith({ inlineFilters: false, groupItemMetadataProvider: expect.anything() }, eventPubSubService);
         expect(sharedService.groupItemMetadataProvider instanceof SlickGroupItemMetadataProvider).toBeTruthy();
         expect(sharedMetaSpy).toHaveBeenCalledWith(expect.toBeObject());
         expect(mockGrid.registerPlugin).toHaveBeenCalled();
@@ -814,7 +814,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = { enableGrouping: true };
         component.initialization(divContainer, slickEventHandler);
 
-        expect(dataviewSpy).toHaveBeenCalledWith({ inlineFilters: false, groupItemMetadataProvider: expect.anything() });
+        expect(dataviewSpy).toHaveBeenCalledWith({ inlineFilters: false, groupItemMetadataProvider: expect.anything() }, eventPubSubService);
         expect(sharedMetaSpy).toHaveBeenCalledWith(expect.toBeObject());
         expect(sharedService.groupItemMetadataProvider instanceof SlickGroupItemMetadataProvider).toBeTruthy();
         expect(mockGrid.registerPlugin).toHaveBeenCalled();
@@ -1626,20 +1626,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(component.eventHandler).toEqual(slickEventHandler);
         expect(renderSpy).toHaveBeenCalled();
         expect(updateRowSpy).toHaveBeenCalledTimes(3);
-      });
-
-      it('should call "dispatchCustomEvent" when event gets trigger', () => {
-        const dispatchSpy = jest.spyOn(eventPubSubService, 'dispatchCustomEvent');
-        const callback = jest.fn();
-
-        component.gridOptions = { enableFiltering: true };
-        component.initialization(divContainer, slickEventHandler);
-
-        component.eventHandler.subscribe(mockEventPubSub as any, callback);
-        mockGrid.onClick.notify({ rows: [1, 2, 3] } as any);
-
-        // callback(new CustomEvent('onDblClick'), {});
-        expect(dispatchSpy).toHaveBeenCalledWith('onclick', { eventData: undefined, args: { rows: [1, 2, 3] } });
       });
     });
 

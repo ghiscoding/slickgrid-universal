@@ -113,8 +113,6 @@ export const GlobalGridOptions: Partial<GridOption> = {
   defaultFilterPlaceholder: '🔎︎',
   defaultFilterRangeOperator: OperatorType.rangeInclusive,
   defaultColumnSortFieldId: 'id',
-  defaultComponentEventPrefix: '',
-  defaultSlickgridEventPrefix: '',
   draggableGrouping: {
     hideToggleAllButton: false,
     toggleAllButtonText: '',
