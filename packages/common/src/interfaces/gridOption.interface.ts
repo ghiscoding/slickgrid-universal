@@ -247,9 +247,6 @@ export interface GridOption<C extends Column = Column> {
   /** Default column width, is set to 80 when null */
   defaultColumnWidth?: number;
 
-  /** Default prefix for Component Event names (events created in the Web Component) */
-  defaultComponentEventPrefix?: string;
-
   /** The default filter model to use when none is specified */
   defaultFilter?: any;
 
@@ -261,9 +258,6 @@ export interface GridOption<C extends Column = Column> {
 
   /** Default cell Formatter that will be used by the grid */
   defaultFormatter?: Formatter;
-
-  /** Default prefix for SlickGrid Event names (events created in the SlickGrid and/or DataView objects) */
-  defaultSlickgridEventPrefix?: string;
 
   /** Do we have paging enabled? */
   doPaging?: boolean;

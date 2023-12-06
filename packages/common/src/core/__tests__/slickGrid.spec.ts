@@ -20,7 +20,7 @@ describe('SlickGrid core file', () => {
   it('should be able to instantiate SlickGrid without DataView', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     const options = { enableCellNavigation: true } as GridOption;
-    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options, true);
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options, undefined, true);
     grid.init();
 
     expect(grid).toBeTruthy();
@@ -31,7 +31,7 @@ describe('SlickGrid core file', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     const options = { enableCellNavigation: true } as GridOption;
     const dv = new SlickDataView({});
-    grid = new SlickGrid<any, Column>('#myGrid', dv, columns, options, true);
+    grid = new SlickGrid<any, Column>('#myGrid', dv, columns, options, undefined, true);
     grid.init();
 
     expect(grid).toBeTruthy();

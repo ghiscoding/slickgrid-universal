@@ -496,7 +496,7 @@ export class SlickVanillaGridBundle<TData = any> {
         this.sharedService.groupItemMetadataProvider = this.groupItemMetadataProvider;
         dataViewOptions = { ...dataViewOptions, groupItemMetadataProvider: this.groupItemMetadataProvider };
       }
-      this.dataView = new SlickDataView<TData>(dataViewOptions as Partial<DataViewOption>);
+      this.dataView = new SlickDataView<TData>(dataViewOptions as Partial<DataViewOption>, this._eventPubSubService);
       this._eventPubSubService.publish('onDataviewCreated', this.dataView);
     }
 
@@ -537,7 +537,7 @@ export class SlickVanillaGridBundle<TData = any> {
       this.gridOptions = { ...this.gridOptions, ...this.gridOptions.presets.pinning };
     }
 
-    this.slickGrid = new SlickGrid<TData, Column<TData>, GridOption<Column<TData>>>(gridContainerElm, this.dataView as SlickDataView<TData>, this._columnDefinitions, this._gridOptions);
+    this.slickGrid = new SlickGrid<TData, Column<TData>, GridOption<Column<TData>>>(gridContainerElm, this.dataView as SlickDataView<TData>, this._columnDefinitions, this._gridOptions, this._eventPubSubService);
     this.sharedService.dataView = this.dataView as SlickDataView;
     this.sharedService.slickGrid = this.slickGrid as SlickGrid;
     this.sharedService.gridContainerElement = this._gridContainerElm;
@@ -762,26 +762,6 @@ export class SlickVanillaGridBundle<TData = any> {
     }
 
     if (dataView && grid) {
-      // expose all Slick Grid Events through dispatch
-      for (const prop in grid) {
-        if (grid.hasOwnProperty(prop) && prop.startsWith('on')) {
-          this._eventHandler.subscribe((grid as any)[prop], (event, args) => {
-            const gridEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions?.defaultSlickgridEventPrefix ?? '');
-            return this._eventPubSubService.dispatchCustomEvent(gridEventName, { eventData: event, args });
-          });
-        }
-      }
-
-      // expose all Slick DataView Events through dispatch
-      for (const prop in dataView) {
-        if (dataView.hasOwnProperty(prop) && prop.startsWith('on')) {
-          this._eventHandler.subscribe((dataView as any)[prop], (event, args) => {
-            const dataViewEventName = this._eventPubSubService.getEventNameByNamingConvention(prop, this._gridOptions?.defaultSlickgridEventPrefix ?? '');
-            return this._eventPubSubService.dispatchCustomEvent(dataViewEventName, { eventData: event, args });
-          });
-        }
-      }
-
       // after all events are exposed
       // we can bind external filter (backend) when available or default onFilter (dataView)
       if (gridOptions.enableFiltering) {

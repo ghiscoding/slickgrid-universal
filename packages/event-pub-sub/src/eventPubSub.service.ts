@@ -101,6 +101,7 @@ export class EventPubSubService implements BasePubSubService {
 
     if (delay) {
       return new Promise(resolve => {
+        clearTimeout(this._timer);
         this._timer = setTimeout(() => resolve(this.dispatchCustomEvent<T>(eventNameByConvention, data, true, true)), delay);
       });
     } else {
