@@ -25,7 +25,7 @@
         "--config",
         "${workspaceFolder}/test/jest.config.ts"
       ],
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "windows": {
         "name": "Jest",

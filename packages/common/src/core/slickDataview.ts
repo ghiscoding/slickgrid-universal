@@ -200,7 +200,9 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * by recomputing the items and idxById members.
    */
   protected processBulkDelete() {
-    if (!this.idxById) { return; }
+    if (!this.idxById) {
+      return;
+    }
 
     // the bulk update is processed by
     // recomputing the whole items array and the index lookup in one go.
@@ -486,7 +488,9 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * @param item The item which should be the new value for the given id.
    */
   updateSingleItem(id: DataIdType, item: TData) {
-    if (!this.idxById) { return; }
+    if (!this.idxById) {
+      return;
+    }
 
     // see also https://github.com/mleibman/SlickGrid/issues/1082
     if (!this.idxById.has(id)) {
@@ -599,7 +603,9 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * @param {String|Number} id The id identifying the object to delete.
    */
   deleteItem(id: DataIdType) {
-    if (!this.idxById) { return; }
+    if (!this.idxById) {
+      return;
+    }
     if (this.isBulkSuspend) {
       this.bulkDeleteIds.set(id, true);
     } else {
@@ -667,7 +673,9 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
 
   /** Update an item in a sorted dataset (a Sort function must be defined) */
   sortedUpdateItem(id: string | number, item: TData) {
-    if (!this.idxById) { return; }
+    if (!this.idxById) {
+      return;
+    }
     if (!this.idxById.has(id) || id !== item[this.idProperty as keyof TData]) {
       throw new Error('[SlickGrid DataView] Invalid or non-matching id ' + this.idxById.get(id));
     }
@@ -1577,8 +1585,9 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     };
 
     grid.onCellCssStylesChanged.subscribe((_e, args) => {
-      if (inHandler) { return; }
-      if (key !== args.key) { return; }
+      if (inHandler || key !== args.key) {
+        return;
+      }
       if (args.hash) {
         storeCellCssStyles(args.hash);
       } else {

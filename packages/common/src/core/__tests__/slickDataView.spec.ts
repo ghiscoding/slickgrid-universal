@@ -1,4 +1,5 @@
 import { SlickDataView } from '../slickDataview';
+import 'flatpickr';
 
 describe('SlickDatView core file', () => {
   let container: HTMLElement;
@@ -37,6 +38,7 @@ describe('SlickDatView core file', () => {
 
   describe('batch CRUD methods', () => {
     afterEach(() => {
+      dataView.endUpdate(); // close any batch that weren't closed because of potential error thrown
       dataView.destroy();
     });
 
@@ -111,6 +113,52 @@ describe('SlickDatView core file', () => {
         { id: 0, name: 'John', age: 20 },
         { id: 4, name: 'Ronald', age: 34 },
       ]);
+    });
+
+    it('should throw when trying to delete items with have invalid Ids', () => {
+      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+
+      dataView.setItems(items); // original items list
+
+      expect(() => dataView.deleteItems([-1, 1])).toThrow('[SlickGrid DataView] Invalid id');
+    });
+
+    it('should throw when trying to delete items with a batch that have invalid Ids', () => {
+      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+
+      dataView.setItems(items); // original items list
+
+      dataView.beginUpdate(true);
+      expect(() => dataView.deleteItems([-1, 1])).toThrow('[SlickGrid DataView] Invalid id');
+    });
+
+    it('should batch updateItems and expect a refresh to be called', () => {
+      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+      const updatedItems = [{ id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 }];
+      const refreshSpy = jest.spyOn(dataView, 'refresh');
+
+      dataView.setItems(items); // original items list
+
+      dataView.beginUpdate(true);
+      dataView.updateItems(updatedItems.map(item => item.id), updatedItems);
+      dataView.endUpdate();
+
+      expect(refreshSpy).toHaveBeenCalled();
+      expect(dataView.getItems()).toEqual([
+        { id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 },
+      ]);
+
+      dataView.deleteItem(1);
+
+      expect(dataView.getItems()).toEqual([
+        { id: 0, name: 'Smith', age: 30 }
+      ]);
+    });
+
+    it('should throw when trying to call setItems() with duplicate Ids', () => {
+      const items = [{ id: 0, name: 'John', age: 20 }, { id: 0, name: 'Jane', age: 24 }];
+
+      expect(() => dataView.setItems(items)).toThrow(`[SlickGrid DataView] Each data element must implement a unique 'id' property`);
     });
   });
 });
