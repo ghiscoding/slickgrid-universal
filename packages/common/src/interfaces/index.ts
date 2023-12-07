@@ -41,6 +41,7 @@ export * from './cursorPageInfo.interface';
 export * from './customFooterOption.interface';
 export * from './customTooltipOption.interface';
 export * from './dataViewEvents.interface';
+export * from './dataViewHints.interface';
 export * from './domEvent.interface';
 export * from './drag.interface';
 export * from './draggableGrouping.interface';
