@@ -163,27 +163,26 @@ export class SelectFilter implements Filter {
     // always render the Select (dropdown) DOM element,
     // if that is the case, the Select will simply be without any options but we still have to render it (else SlickGrid would throw an error)
     const newCollection = this.columnFilter.collection || [];
-    this.renderDomElement(newCollection);
 
     return new Promise(async (resolve, reject) => {
       try {
-        const collectionAsync = this.columnFilter.collectionAsync;
         let collectionOutput: Promise<any[]> | any[] | undefined;
 
-        if (collectionAsync && !this.columnFilter.collection) {
+        if (this.columnFilter.collectionAsync && !this.columnFilter.collection) {
           // only read the collectionAsync once (on the 1st load),
           // we do this because Http Fetch will throw an error saying body was already read and its streaming is locked
-          collectionOutput = renderCollectionOptionsAsync(collectionAsync, this.columnDef, this.renderDomElement.bind(this), this.rxjs, this.subscriptions);
+          collectionOutput = renderCollectionOptionsAsync(this.columnFilter.collectionAsync, this.columnDef, this.renderDomElement.bind(this), this.rxjs, this.subscriptions);
           resolve(collectionOutput);
         } else {
           collectionOutput = newCollection;
+          this.renderDomElement(newCollection);
           resolve(newCollection);
         }
 
         // subscribe to both CollectionObserver and PropertyObserver
         // any collection changes will trigger a re-render of the DOM element filter
-        if (collectionAsync || this.columnFilter.enableCollectionWatch) {
-          await (collectionOutput ?? collectionAsync);
+        if (this.columnFilter.collectionAsync || this.columnFilter.enableCollectionWatch) {
+          await (collectionOutput ?? this.columnFilter.collectionAsync);
           this.watchCollectionChanges();
         }
       } catch (e) {
@@ -286,23 +285,25 @@ export class SelectFilter implements Filter {
   protected watchCollectionChanges() {
     if (this.columnFilter?.collection) {
       // subscribe to the "collection" changes (array `push`, `unshift`, `splice`, ...)
-      collectionObserver(this.columnFilter.collection, (updatedArray) => {
-        this.renderDomElement(this.columnFilter.collection || updatedArray || []);
-      });
+      collectionObserver(this.columnFilter.collection, this.watchCallback.bind(this));
 
       // observe for any "collection" changes (array replace)
       // then simply recreate/re-render the Select (dropdown) DOM Element
-      propertyObserver(this.columnFilter, 'collection', (newValue) => {
-        this.renderDomElement(newValue || []);
-
-        // when new assignment arrives, we need to also reassign observer to the new reference
-        if (this.columnFilter.collection) {
-          collectionObserver(this.columnFilter.collection, (updatedArray) => {
-            this.renderDomElement(this.columnFilter.collection || updatedArray || []);
-          });
-        }
-      });
+      propertyObserver(this.columnFilter, 'collection', this.propertyObserverCallback.bind(this));
     }
+  }
+
+  protected propertyObserverCallback(newValue: any) {
+    this.renderDomElement(newValue || []);
+
+    // when new assignment arrives, we need to also reassign observer to the new reference
+    if (this.columnFilter.collection) {
+      collectionObserver(this.columnFilter.collection, this.watchCallback.bind(this));
+    }
+  }
+
+  protected watchCallback(updatedArray: any[]) {
+    this.renderDomElement(this.columnFilter.collection || updatedArray || []);
   }
 
   renderDomElement(inputCollection: any[]) {
