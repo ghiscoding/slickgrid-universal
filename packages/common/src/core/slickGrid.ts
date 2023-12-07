@@ -176,7 +176,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected canvas: HTMLCanvasElement | null = null;
   protected canvas_context: CanvasRenderingContext2D | null = null;
-  protected _devMode = false;
 
   // settings
   protected _options!: O;
@@ -454,7 +453,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Array<C>} columns - An array of column definitions.
    * @param {Object} [options] - Grid this._options.
    **/
-  constructor(protected container: HTMLElement | string, protected data: CustomDataView<TData> | TData[], protected columns: C[], protected options: Partial<O>, protected externalPubSub?: BasePubSub, protected devMode = false) {
+  constructor(protected container: HTMLElement | string, protected data: CustomDataView<TData> | TData[], protected columns: C[], protected options: Partial<O>, protected externalPubSub?: BasePubSub) {
     this.onActiveCellChanged = new SlickEvent<OnActiveCellChangedEventArgs>('onActiveCellChanged', externalPubSub);
     this.onActiveCellPositionChanged = new SlickEvent<SlickGridEventData>('onActiveCellPositionChanged', externalPubSub);
     this.onAddNewRow = new SlickEvent<OnAddNewRowEventArgs>('onAddNewRow', externalPubSub);
@@ -2417,9 +2416,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let i: number;
     if (!this.stylesheet) {
       const sheets: any = (this._options.shadowRoot || document).styleSheets;
+
+      if (typeof this.options.devMode?.ownerNodeIndex === 'number' && this.options.devMode.ownerNodeIndex >= 0) {
+        sheets[this.options.devMode.ownerNodeIndex].ownerNode = this._style;
+      }
+
       for (i = 0; i < sheets.length; i++) {
         const sheet = sheets[i];
-        if ((sheet.ownerNode || sheet.owningElement) === this._style || this.devMode) {
+        if ((sheet.ownerNode || sheet.owningElement) === this._style) {
           this.stylesheet = sheet;
           break;
         }
@@ -3745,7 +3749,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   getViewportWidth() {
-    this.viewportW = parseFloat(getInnerSize(this._container, 'width') as unknown as string);
+    this.viewportW = parseFloat(getInnerSize(this._container, 'width') as unknown as string) || this.options.devMode?.containerClientWidth || 0;
     return this.viewportW;
   }
 
