@@ -187,6 +187,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     }
   }
 
+  /** provide some refresh hints as to what to rows needs refresh */
   setRefreshHints(hints: DataViewHints) {
     this.refreshHints = hints;
   }
@@ -488,6 +489,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * @param item The item which should be the new value for the given id.
    */
   updateSingleItem(id: DataIdType, item: TData) {
+    /** istanbul ignore-if */
     if (!this.idxById) {
       return;
     }
@@ -603,6 +605,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * @param {String|Number} id The id identifying the object to delete.
    */
   deleteItem(id: DataIdType) {
+    /** istanbul ignore-if */
     if (!this.idxById) {
       return;
     }

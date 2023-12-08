@@ -132,16 +132,14 @@ describe('SlickDatView core file', () => {
       expect(() => dataView.deleteItems([-1, 1])).toThrow('[SlickGrid DataView] Invalid id');
     });
 
-    it('should batch updateItems and expect a refresh to be called', () => {
+    it('should call updateItems, without batch, and expect a refresh to be called', () => {
       const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
       const updatedItems = [{ id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 }];
       const refreshSpy = jest.spyOn(dataView, 'refresh');
 
       dataView.setItems(items); // original items list
 
-      dataView.beginUpdate(true);
       dataView.updateItems(updatedItems.map(item => item.id), updatedItems);
-      dataView.endUpdate();
 
       expect(refreshSpy).toHaveBeenCalled();
       expect(dataView.getItems()).toEqual([
@@ -153,6 +151,64 @@ describe('SlickDatView core file', () => {
       expect(dataView.getItems()).toEqual([
         { id: 0, name: 'Smith', age: 30 }
       ]);
+    });
+
+    it('should batch updateItems and expect a refresh to be called', () => {
+      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+      const updatedItems = [{ id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 }];
+      const refreshSpy = jest.spyOn(dataView, 'refresh');
+
+      dataView.setItems(items); // original items list
+
+      dataView.beginUpdate(true);
+      dataView.updateItems(updatedItems.map(item => item.id), updatedItems);
+
+      expect(refreshSpy).toHaveBeenCalled();
+      expect(dataView.getItems()).toEqual([
+        { id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 },
+      ]);
+
+      dataView.deleteItem(1);
+      dataView.endUpdate();
+
+      expect(dataView.getItems()).toEqual([
+        { id: 0, name: 'Smith', age: 30 }
+      ]);
+    });
+
+    it('should batch updateItems and expect a refresh to be called', () => {
+      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+      const updatedItems = [{ id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 }];
+      const refreshSpy = jest.spyOn(dataView, 'refresh');
+
+      dataView.setItems(items); // original items list
+
+      dataView.beginUpdate(true);
+      dataView.updateItems(updatedItems.map(item => item.id), updatedItems);
+
+      expect(refreshSpy).toHaveBeenCalled();
+      expect(dataView.getItems()).toEqual([
+        { id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 },
+      ]);
+
+      dataView.deleteItem(1);
+      dataView.endUpdate();
+
+      expect(dataView.getItems()).toEqual([
+        { id: 0, name: 'Smith', age: 30 }
+      ]);
+    });
+
+    it('should throw when batching updateItems with some invalid Ids', () => {
+      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+      const updatedItems = [{ id: 0, name: 'Smith', age: 30 }, { id: 1, name: 'Ronald', age: 34 }];
+      const refreshSpy = jest.spyOn(dataView, 'refresh');
+
+      dataView.setItems(items); // original items list
+
+      dataView.beginUpdate(true);
+
+      expect(() => dataView.updateItems([-1, 1], updatedItems)).toThrow('[SlickGrid DataView] Invalid id');
     });
 
     it('should throw when trying to call setItems() with duplicate Ids', () => {
