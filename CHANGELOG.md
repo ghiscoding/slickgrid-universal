@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.7.1](https://github.com/ghiscoding/slickgrid-universal/compare/v3.7.0...v3.7.1) (2023-12-08)
+
+### Bug Fixes
+
+* add missing `devMode` option into `GridOption` interface ([a963223](https://github.com/ghiscoding/slickgrid-universal/commit/a9632239b5773d27b3712f75fdc47f3c5d13406e)) - by @ghiscoding-SE
+
 # [3.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.6.0...v3.7.0) (2023-12-08)
 
 ### Bug Fixes
