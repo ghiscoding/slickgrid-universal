@@ -81,7 +81,7 @@
     "flatpickr": "^4.6.13",
     "moment-mini": "^2.29.4",
     "multiple-select-vanilla": "^0.6.3",
-    "slickgrid": "^4.1.6",
+    "slickgrid": "^4.1.7",
     "sortablejs": "^1.15.1",
     "un-flatten-tree": "^2.0.12"
   },
