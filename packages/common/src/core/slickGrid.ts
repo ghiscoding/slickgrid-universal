@@ -2417,7 +2417,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!this.stylesheet) {
       const sheets: any = (this._options.shadowRoot || document).styleSheets;
 
-      if (typeof this.options.devMode?.ownerNodeIndex === 'number' && this.options.devMode.ownerNodeIndex >= 0) {
+      if (this.options.devMode && typeof this.options.devMode.ownerNodeIndex === 'number' && this.options.devMode.ownerNodeIndex >= 0) {
         sheets[this.options.devMode.ownerNodeIndex].ownerNode = this._style;
       }
 
@@ -3749,7 +3749,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   getViewportWidth() {
-    this.viewportW = parseFloat(getInnerSize(this._container, 'width') as unknown as string) || this.options.devMode?.containerClientWidth || 0;
+    this.viewportW = parseFloat(getInnerSize(this._container, 'width') as unknown as string) || (this.options.devMode && this.options.devMode.containerClientWidth) || 0;
     return this.viewportW;
   }
 
