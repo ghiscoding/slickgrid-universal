@@ -10,6 +10,10 @@ on:
           - alpha
           - beta
           - next
+      dryrun:
+        type: boolean
+        required: false
+        description: Dry-Run
 
 permissions:
   contents: write
@@ -97,9 +101,19 @@ jobs:
               description: 'OTP from authenticator app'
 
       - name: Lerna Publish 📦
+        if: ${{ inputs.dryrun != true }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
         run: |
           pnpm exec lerna publish from-package --force-publish --dist-tag next --yes --otp ${{ steps.wait-for-secrets.outputs.OTP }}
+
+      - name: 🧪 Lerna Publish (dry-run) 📦
+        if: ${{ inputs.dryrun == true }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+        run: |
+          pnpm exec lerna publish from-package --force-publish --dist-tag next --yes --dry-run --otp ${{ steps.wait-for-secrets.outputs.OTP }}
