@@ -233,6 +233,9 @@ export interface GridOption {
   /** Default prefix for SlickGrid Event names (events created in the SlickGrid and/or DataView objects) */
   defaultSlickgridEventPrefix?: string;
 
+  /** Escape hatch geared towards testing Slickgrid in jsdom based environments to circumvent the lack of stylesheet.ownerNode and clientWidth calculations */
+  devMode?: false & { ownerNodeIndex?: number; containerClientWidth?: number; };
+
   /** Draggable Grouping Plugin options & events */
   draggableGrouping?: DraggableGrouping;
 
