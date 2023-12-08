@@ -56,6 +56,9 @@ importers:
       eslint-plugin-prefer-arrow:
         specifier: ^1.2.3
         version: 1.2.3(eslint@8.55.0)
+      flatpickr:
+        specifier: ^4.6.13
+        version: 4.6.13
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.10.4)(ts-node@10.9.1)
@@ -4707,7 +4710,6 @@ packages:
 
   /flatpickr@4.6.13:
     resolution: {integrity: sha512-97PMG/aywoYpB4IvbvUJi0RQi8vearvU0oov1WW3k0WZPBMrTQVqekSX5CjSG/M4Q3i6A/0FKXC7RyAoAUUSPw==}
-    dev: false
 
   /flatted@3.2.9:
     resolution: {integrity: sha512-36yxDn5H7OFZQla0/jFJmbIKTdZAQHngCedGxiMmpNfEZM0sdEeT+WczLQrjK6D7o2aiyLYDnkw0R3JK0Qv1RQ==}
