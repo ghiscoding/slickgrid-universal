@@ -207,6 +207,9 @@ export class SlickDraggableGrouping {
   /** Dispose the plugin. */
   dispose() {
     this.destroySortableInstances();
+    if (this._droppableInstance?.el) {
+      this._droppableInstance?.destroy();
+    }
     this.onGroupChanged.unsubscribe();
     this._eventHandler.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);

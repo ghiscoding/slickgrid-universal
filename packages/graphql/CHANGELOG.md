@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.6.0...v3.7.0) (2023-12-08)
+
+### Features
+
+* **GraphQL:** Provide ability to specify operationName ([#1224](https://github.com/ghiscoding/slickgrid-universal/issues/1224)) ([4db6c34](https://github.com/ghiscoding/slickgrid-universal/commit/4db6c343fd7ce5f4c81ee0d1df0f964d0aac9d48)) - by @Harsgalt86
+
 # 3.6.0 (2023-11-26)
 
 ### Features

@@ -4,6 +4,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.6.0...v3.7.0) (2023-12-08)
+
+**Note:** Version bump only for package @slickgrid-universal/odata
+
 # 3.6.0 (2023-11-26)
 
 ### Features

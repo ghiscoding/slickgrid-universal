@@ -87,23 +87,11 @@ describe('SelectFilter', () => {
   });
 
   it('should throw an error when collection is not a valid array', (done) => {
-    try {
-      mockColumn.filter!.collection = { hello: 'world' } as any;
-      filter.init(filterArguments);
-    } catch (e) {
+    mockColumn.filter!.collection = { hello: 'world' } as any;
+    filter.init(filterArguments).catch(e => {
       expect(e.message).toContain(`The "collection" passed to the Select Filter is not a valid array.`);
       done();
-    }
-  });
-
-  it('should throw an error when collection is not a valid value/label pair array', (done) => {
-    try {
-      mockColumn.filter!.collection = [{ hello: 'world' }];
-      filter.init(filterArguments);
-    } catch (e) {
-      expect(e.message).toContain(`[Slickgrid-Universal] Select Filter/Editor collection with value/label (or value/labelKey when using Locale) is required to populate the Select list`);
-      done();
-    }
+    });
   });
 
   it('should throw an error when "enableTranslateLabel" is set without a valid I18N Service', (done) => {

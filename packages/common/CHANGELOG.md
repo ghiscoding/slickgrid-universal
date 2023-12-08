@@ -4,6 +4,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.6.0...v3.7.0) (2023-12-08)
+
+### Bug Fixes
+
+* cell selection range with key combos were incorrect ([#1244](https://github.com/ghiscoding/slickgrid-universal/issues/1244)) ([79d86fe](https://github.com/ghiscoding/slickgrid-universal/commit/79d86fea99258ccf82a5d3d8c684410623e6753b)) - by @ghiscoding
+* DraggableGrouping & Select Filter `collectionAsync` mem leaks ([#1247](https://github.com/ghiscoding/slickgrid-universal/issues/1247)) ([7dcf53a](https://github.com/ghiscoding/slickgrid-universal/commit/7dcf53ac4d7873c75e82e01c2b4a806f88d8ff39)) - by @ghiscoding
+* **formatters:** show console error on invalid multiple formatters ([#1227](https://github.com/ghiscoding/slickgrid-universal/issues/1227)) ([fd69ac0](https://github.com/ghiscoding/slickgrid-universal/commit/fd69ac01c68496d4e7d5dd2f06186fba961016d9)) - by @ghiscoding
+* registered external resouces should keep singleton ref ([#1242](https://github.com/ghiscoding/slickgrid-universal/issues/1242)) ([adf2054](https://github.com/ghiscoding/slickgrid-universal/commit/adf2054bdc8ef7701e6fab78e685d49b8424da29)) - by @ghiscoding
+
+### Features
+
+* **Formatters:** add new `Formatters.iconBoolean` for icon w/truthy val ([#1228](https://github.com/ghiscoding/slickgrid-universal/issues/1228)) ([17ab965](https://github.com/ghiscoding/slickgrid-universal/commit/17ab965102c1f71270ea2423f9d6e0fd4ad73c14)) - by @ghiscoding
+
 # 3.6.0 (2023-11-26)
 
 ### Features
