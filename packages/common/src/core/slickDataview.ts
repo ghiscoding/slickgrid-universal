@@ -165,6 +165,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
 
   destroy() {
     this.items = [];
+    this.idProperty = 'id';
     this.idxById = null as any;
     this.rowsById = null as any;
     this.filter = null as any;
@@ -489,7 +490,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * @param item The item which should be the new value for the given id.
    */
   updateSingleItem(id: DataIdType, item: TData) {
-    /** istanbul ignore-if */
+    /** istanbul ignore if */
     if (!this.idxById) {
       return;
     }
@@ -519,13 +520,11 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       }
 
       // Also update the row indexes? no need since the `refresh()`, further down, blows away the `rowsById[]` cache!
-
       id = newId;
     }
     this.items[this.idxById.get(id) as number] = item;
 
     // Also update the rows? no need since the `refresh()`, further down, blows away the `rows[]` cache and recalculates it via `recalc()`!
-
     if (!this.updated) {
       this.updated = {};
     }
@@ -605,7 +604,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    * @param {String|Number} id The id identifying the object to delete.
    */
   deleteItem(id: DataIdType) {
-    /** istanbul ignore-if */
+    /** istanbul ignore if */
     if (!this.idxById) {
       return;
     }

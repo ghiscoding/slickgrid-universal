@@ -49,6 +49,7 @@ describe('SlickDatView core file', () => {
       dataView.addItems(items);
       dataView.endUpdate();
 
+      expect(dataView.getIdPropertyName()).toBe('id');
       expect(dataView.getItems()).toEqual(items);
     });
 
@@ -89,6 +90,17 @@ describe('SlickDatView core file', () => {
         { id: 4, name: 'Ronald', age: 34 },
         { id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }
       ]);
+    });
+
+    it('should be able to use different "id" when using setItems()', () => {
+      const items = [{ keyId: 0, name: 'John', age: 20 }, { keyId: 1, name: 'Jane', age: 24 }];
+
+      dataView.beginUpdate(true);
+      dataView.setItems(items, 'keyId');
+      dataView.endUpdate();
+
+      expect(dataView.getIdPropertyName()).toBe('keyId');
+      expect(dataView.getItems()).toEqual(items);
     });
 
     it('should batch more items with insertItems with begin/end batch update and expect them to be inserted at a certain index dataset', () => {
@@ -215,6 +227,41 @@ describe('SlickDatView core file', () => {
       const items = [{ id: 0, name: 'John', age: 20 }, { id: 0, name: 'Jane', age: 24 }];
 
       expect(() => dataView.setItems(items)).toThrow(`[SlickGrid DataView] Each data element must implement a unique 'id' property`);
+    });
+
+    it('should call insertItem() at a defined index location', () => {
+      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+      const newItem = { id: 2, name: 'Smith', age: 30 };
+      const refreshSpy = jest.spyOn(dataView, 'refresh');
+
+      dataView.setItems(items);
+      dataView.insertItem(1, newItem);
+
+      expect(refreshSpy).toHaveBeenCalled();
+      expect(dataView.getItems()).toEqual([
+        { id: 0, name: 'John', age: 20 },
+        { id: 2, name: 'Smith', age: 30 },
+        { id: 1, name: 'Jane', age: 24 }
+      ]);
+    });
+
+    it('should throw when trying to call insertItem() with undefined Id', () => {
+      const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+      const newItem = { id: undefined, name: 'Smith', age: 30 };
+
+      dataView.setItems(items);
+      expect(() => dataView.insertItem(1, newItem)).toThrow(`[SlickGrid DataView] Each data element must implement a unique 'id' property`);
+    });
+
+    it('should throw when trying to call insertItem() with undefined Id', () => {
+      const items = [
+        { id: 0, name: 'John', age: 20 },
+        { id: 1, name: 'Jane', age: 24 },
+        { id: undefined, name: 'Smith', age: 30 }];
+
+      dataView.beginUpdate(true);
+      dataView.setItems(items);
+      expect(() => dataView.endUpdate()).toThrow(`[SlickGrid DataView] Each data element must implement a unique 'id' property`);
     });
   });
 });
