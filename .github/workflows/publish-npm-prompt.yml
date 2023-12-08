@@ -118,3 +118,12 @@ jobs:
           NPM_CONFIG_PROVENANCE: true
         run: |
           pnpm exec lerna publish from-package --force-publish --yes --otp ${{ steps.wait-for-secrets.outputs.OTP }}
+
+      - name: Website Dev Build (served for Cypress)
+        run: pnpm build:dev
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
