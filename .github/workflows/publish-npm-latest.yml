@@ -114,10 +114,11 @@ jobs:
         run: |
           pnpm exec lerna publish from-package --force-publish --yes --otp ${{ steps.wait-for-secrets.outputs.OTP }}
 
-      - name: Website Dev Build (served for Cypress)
+      - name: Website Dev Build
         run: pnpm build:dev
 
       - name: Deploy to gh-pages
+        if: github.ref == 'refs/heads/master'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
