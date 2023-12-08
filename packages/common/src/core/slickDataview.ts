@@ -193,6 +193,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.refreshHints = hints;
   }
 
+  /** add extra filter arguments to the filter method */
   setFilterArgs(args: any) {
     this.filterArgs = args;
   }
@@ -909,6 +910,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return groups;
   }
 
+  /** claculate Group Totals */
   protected calculateTotals(totals: SlickGroupTotals) {
     const group = totals.group as SlickGroup;
     const gi = this.groupingInfos[group?.level ?? 0];
