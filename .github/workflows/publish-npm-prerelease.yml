@@ -1,13 +1,22 @@
-name: 🏷️ Publish NPM Beta
+name: 🏷️ Publish NPM prerelease
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        type: choice
+        description: Tag
+        options:
+          - alpha
+          - beta
+          - next
 
 permissions:
   contents: write
   id-token: write
 
 jobs:
-  deploy-npm-beta:
+  deploy-npm-prerelease:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -76,7 +85,7 @@ jobs:
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           pnpm whoami
-          pnpm exec lerna version prerelease --conventional-commits --conventional-prerelease --preid beta --force-publish --yes
+          pnpm exec lerna version prerelease --conventional-commits --conventional-prerelease --preid ${{ inputs.tag }} --force-publish --yes
 
       - name: OTP
         uses: step-security/wait-for-secrets@v1
