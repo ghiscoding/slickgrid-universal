@@ -108,7 +108,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
         run: |
-          pnpm exec lerna publish from-package --force-publish --dist-tag next --yes --dry-run
+          pnpm exec lerna publish from-package --force-publish --dist-tag ${{ inputs.tag }} --yes --dry-run
 
       - name: Lerna Version 🏷️
         if: ${{ inputs.dryrun != true }}
@@ -139,4 +139,4 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
         run: |
-          pnpm exec lerna publish from-package --force-publish --dist-tag next --yes --otp ${{ steps.wait-for-secrets.outputs.OTP }}
+          pnpm exec lerna publish from-package --force-publish --dist-tag ${{ inputs.tag }} --yes --otp ${{ steps.wait-for-secrets.outputs.OTP }}
