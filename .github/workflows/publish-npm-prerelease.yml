@@ -5,11 +5,15 @@ on:
     inputs:
       tag:
         type: choice
+        required: true
         description: Tag
         options:
           - alpha
           - beta
           - next
+      version:
+        description: 'Optional Version'
+        type: string
       dryrun:
         type: boolean
         required: false
@@ -90,7 +94,7 @@ jobs:
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           pnpm whoami
-          pnpm exec lerna version prerelease --conventional-commits --conventional-prerelease --dry-run --preid ${{ inputs.tag }} --force-publish --yes
+          pnpm exec lerna version ${{ inputs.version }} prerelease --conventional-commits --conventional-prerelease --dry-run --preid ${{ inputs.tag }} --force-publish --yes
 
       - name: 🧪 Lerna Publish (dry-run) 📦
         if: ${{ inputs.dryrun == true }}
@@ -111,7 +115,7 @@ jobs:
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           pnpm whoami
-          pnpm exec lerna version prerelease --conventional-commits --conventional-prerelease --preid ${{ inputs.tag }} --force-publish --yes
+          pnpm exec lerna version ${{ inputs.version }} prerelease --conventional-commits --conventional-prerelease --preid ${{ inputs.tag }} --force-publish --yes
 
       - name: OTP
         if: ${{ inputs.dryrun == true }}
