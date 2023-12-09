@@ -39,7 +39,7 @@ export function stripTags(htmlText: string | number | boolean | HTMLElement, all
     if (html instanceof HTMLElement) {
       html = html.innerHTML;
     }
-    if (typeof html !== 'string') {
+    if (typeof html !== 'string' && html !== undefined) {
       throw new TypeError(`'html' parameter must be a string`);
     }
 
