@@ -42,7 +42,7 @@ export interface CompositeEditorArguments extends EditorArguments {
  *  position                -   A function to be called when the grid asks the editor to reposition itself.
  *  destroy                 -   A function to be called when the editor is destroyed.
  */
-export function CompositeEditor(this: any, columns: Column[], containers: Array<HTMLDivElement>, options: CompositeEditorOption) {
+export function SlickCompositeEditor(this: any, columns: Column[], containers: Array<HTMLDivElement>, options: CompositeEditorOption) {
   let firstInvalidEditor: Editor | null;
   const defaultOptions = {
     modalType: 'edit', // available type (create, clone, edit, mass)
