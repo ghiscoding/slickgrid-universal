@@ -3,7 +3,6 @@ import type {
   DOMMouseOrTouchEvent,
   ExternalResource,
   FormatterResultWithHtml,
-  FormatterResultWithText,
   GridOption,
   OnAfterRowDetailToggleArgs,
   OnBeforeRowDetailToggleArgs,
@@ -16,11 +15,11 @@ import type {
   RowDetailViewOption,
   SlickGrid,
   SlickRowDetailView as UniversalRowDetailView,
-  UsabilityOverrideFn,
   SlickDataView,
   SlickEventData,
+  UsabilityOverrideFn,
 } from '@slickgrid-universal/common';
-import { SlickEvent, SlickEventHandler, } from '@slickgrid-universal/common';
+import { createDomElement, SlickEvent, SlickEventHandler, } from '@slickgrid-universal/common';
 import { objectAssignAndExtend } from '@slickgrid-universal/utils';
 
 /**
@@ -606,7 +605,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** The Formatter of the toggling icon of the Row Detail */
-  protected detailSelectionFormatter(row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGrid): FormatterResultWithHtml | FormatterResultWithText | string {
+  protected detailSelectionFormatter(row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGrid): FormatterResultWithHtml | HTMLElement | '' {
     if (!this.checkExpandableOverride(row, dataContext, grid)) {
       return '';
     } else {
@@ -626,9 +625,8 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         if (this._addonOptions.collapsedClass) {
           collapsedClasses += this._addonOptions.collapsedClass;
         }
-        return `<div class="${collapsedClasses.trim()}"></div>`;
+        return createDomElement('div', { className: collapsedClasses.trim() });
       } else {
-        const html: string[] = [];
         const rowHeight = this.gridOptions.rowHeight || 0;
         let outterHeight = (dataContext[`${this._keyPrefix}sizePadding`] || 0) * this.gridOptions.rowHeight!;
 
@@ -637,28 +635,30 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
           dataContext[`${this._keyPrefix}sizePadding`] = this._addonOptions.maxRows;
         }
 
-        // V313HAX:
-        // putting in an extra closing div after the closing toggle div and ommiting a
-        // final closing div for the detail ctr div causes the slickgrid renderer to
-        // insert our detail div as a new column ;) ~since it wraps whatever we provide
-        // in a generic div column container. so our detail becomes a child directly of
-        // the row not the cell. nice =)  ~no need to apply a css change to the parent
-        // slick-cell to escape the cell overflow clipping.
-
         // sneaky extra </div> inserted here-----------------v
         let expandedClasses = `${this._addonOptions.cssClass || ''} collapse `;
         if (this._addonOptions.expandedClass) {
           expandedClasses += this._addonOptions.expandedClass;
         }
-        html.push(`<div class="${expandedClasses.trim()}"></div></div>`);
-        html.push(`<div class="dynamic-cell-detail cellDetailView_${dataContext[this._dataViewIdProperty]}" `);   // apply custom css to detail
-        html.push(`style="height: ${outterHeight}px;`); // set total height of padding
-        html.push(`top: ${rowHeight}px">`);             // shift detail below 1st row
-        html.push(`<div class="detail-container detailViewContainer_${dataContext[this._dataViewIdProperty]}">`); // sub ctr for custom styling
-        html.push(`<div class="innerDetailView_${dataContext[this._dataViewIdProperty]}">${dataContext[`${this._keyPrefix}detailContent`]}</div></div>`);
-        // omit a final closing detail container </div> that would come next
 
-        return html.join('');
+        // create the Row Detail div container that will be inserted AFTER the `.slick-cell`
+        const cellDetailContainerElm = createDomElement('div', {
+          className: `dynamic-cell-detail cellDetailView_${dataContext[this._dataViewIdProperty]}`,
+          style: { height: `${outterHeight}px`, top: `${rowHeight}px` }
+        });
+        const innerContainerElm = createDomElement('div', { className: `detail-container detailViewContainer_${dataContext[this._dataViewIdProperty]}` });
+        const innerDetailViewElm = createDomElement('div', { className: `innerDetailView_${dataContext[this._dataViewIdProperty]}` });
+        innerDetailViewElm.innerHTML = this._grid.sanitizeHtmlString(dataContext[`${this._keyPrefix}detailContent`]);
+
+        innerContainerElm.appendChild(innerDetailViewElm);
+        cellDetailContainerElm.appendChild(innerContainerElm);
+
+        const result: FormatterResultWithHtml = {
+          html: createDomElement('div', { className: expandedClasses }),
+          insertElementAfterTarget: cellDetailContainerElm,
+        };
+
+        return result;
       }
     }
     return '';

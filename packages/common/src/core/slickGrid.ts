@@ -77,7 +77,7 @@ import type {
   SlickPlugin,
   SlickGridEventData,
 } from '../interfaces';
-import { createDomElement, emptyElement, getOffset, getInnerSize } from '../services/domUtilities';
+import { createDomElement, emptyElement, getInnerSize, getOffset, insertAfterElement } from '../services/domUtilities';
 
 /**
  * @license
@@ -3480,6 +3480,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     divRow.appendChild(cellDiv);
+
+    // Formatter can optional add an "insertElementAfterTarget" option but it must be inserted only after the `.slick-row` div exists
+    if ((formatterResult as FormatterResultObject).insertElementAfterTarget) {
+      insertAfterElement(cellDiv, (formatterResult as FormatterResultObject).insertElementAfterTarget as HTMLElement);
+    }
 
     this.rowsCache[row].cellRenderQueue.push(cell);
     this.rowsCache[row].cellColSpans[cell] = colspan;

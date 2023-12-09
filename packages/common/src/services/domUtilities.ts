@@ -348,6 +348,11 @@ export function htmlEncodeWithPadding(inputStr: string, paddingLength: number): 
   return outputStr;
 }
 
+/** insert an HTML Element after a target Element in the DOM */
+export function insertAfterElement(referenceNode: HTMLElement, newNode: HTMLElement) {
+  referenceNode.parentNode?.insertBefore(newNode, referenceNode.nextSibling);
+}
+
 /**
  * Sanitize possible dirty html string (remove any potential XSS code like scripts and others), we will use 2 possible sanitizer
  * 1. optional sanitizer method defined in the grid options
