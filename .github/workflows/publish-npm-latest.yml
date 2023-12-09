@@ -66,12 +66,41 @@ jobs:
         run: pnpm bundle
 
       - name: Archive common build artifacts
+        if: ${{ inputs.dryrun != true }}
         uses: actions/upload-artifact@v3
         with:
           name: dist-common
           path: |
             packages/common/dist
           retention-days: 5
+
+      - name: 🧪 Lerna Version (no graduate) (dry-run) 🏷️
+        if: |
+          ${{ inputs.dryrun == true }} &&
+          ${{ inputs.graduate == false }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          pnpm whoami
+          pnpm exec lerna version --yes --dry-run
+
+      - name: 🧪 Lerna Version (force graduate) (dry-run) 🏷️
+        if: |
+          ${{ inputs.dryrun == true }} &&
+          ${{ inputs.graduate == true }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          pnpm whoami
+          pnpm exec lerna version --conventional-commits --conventional-graduate --yes --dry-run
 
       - name: Lerna Version (no graduate) 🏷️
         if: ${{ inputs.graduate == false }}
@@ -98,6 +127,7 @@ jobs:
           pnpm exec lerna version --conventional-commits --conventional-graduate --yes
 
       - name: OTP
+        if: ${{ inputs.dryrun != true }}
         uses: step-security/wait-for-secrets@v1
         id: wait-for-secrets
         with:
@@ -107,6 +137,7 @@ jobs:
               description: 'OTP from authenticator app'
 
       - name: Lerna Publish 📦
+        if: ${{ inputs.dryrun != true }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
