@@ -118,7 +118,7 @@ jobs:
           pnpm exec lerna version ${{ inputs.version }} prerelease --conventional-commits --conventional-prerelease --preid ${{ inputs.tag }} --force-publish --yes
 
       - name: OTP
-        if: ${{ inputs.dryrun == true }}
+        if: ${{ inputs.dryrun != true }}
         uses: step-security/wait-for-secrets@v1
         id: wait-for-secrets
         with:
