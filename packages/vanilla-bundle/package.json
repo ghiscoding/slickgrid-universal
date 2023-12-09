@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/vanilla-bundle",
-  "version": "3.7.1",
+  "version": "4.0.0-alpha.0",
   "description": "Vanilla Slick Grid Bundle - Framework agnostic the output is to be used in vanilla JS/TS - Written in TypeScript and we also use Vite to bundle everything into a single JS file.",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",

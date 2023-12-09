@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-alpha.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.7.1...v4.0.0-alpha.0) (2023-12-09)
+
+### Features
+
+* convert GroupItemMetadataProvider Formatter to native HTML for CSP ([#1215](https://github.com/ghiscoding/slickgrid-universal/issues/1215)) ([d723856](https://github.com/ghiscoding/slickgrid-universal/commit/d723856777329f2e40fe3a12d3c59e33afd0e3a8)) - by @ghiscoding
+
 ## [3.7.1](https://github.com/ghiscoding/slickgrid-universal/compare/v3.7.0...v3.7.1) (2023-12-08)
 
 **Note:** Version bump only for package @slickgrid-universal/empty-warning-component
