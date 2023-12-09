@@ -58,13 +58,14 @@ $slick-padding-max-count: 30;
 }
 
 /* Text and Alignment Utilities */
-.text-center { text-align: center; }
-.text-left   { text-align: left;   }
-.text-right  { text-align: right;  }
-.text-lowercase { text-transform: lowercase;  }
-.text-uppercase { text-transform: uppercase;  }
-.text-underline { text-decoration: underline; }
-.text-italic { font-style: italic; }
+.text-bold { font-weight: bold !important; }
+.text-italic { font-style: italic !important; }
+.text-center { text-align: center !important; }
+.text-left   { text-align: left !important; }
+.text-right  { text-align: right !important; }
+.text-lowercase { text-transform: lowercase !important; }
+.text-uppercase { text-transform: uppercase !important; }
+.text-underline { text-decoration: underline !important; }
 
 .vertical-align-bottom {
   display: inline-block;
