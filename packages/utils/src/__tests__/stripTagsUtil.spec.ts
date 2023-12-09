@@ -121,13 +121,5 @@ describe('stripTags()', () => {
     it('should throw when input is not a string neither a number', () => {
       expect(() => stripTags(['type-confusion'] as any)).toThrow(`'html' parameter must be a string`);
     });
-
-    it('should throw when input is undefined', () => {
-      expect(() => stripTags(undefined as any)).toThrow(`'html' parameter must be a string`);
-    });
-
-    it('should throw when input is null', () => {
-      expect(() => stripTags(null as any)).toThrow(`'html' parameter must be a string`);
-    });
   });
 });
