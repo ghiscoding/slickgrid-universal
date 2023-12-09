@@ -17,7 +17,6 @@ import type {
   OnCompositeEditorChangeEventArgs,
   OnErrorOption,
   PlainFunc,
-  SlickCompositeEditor,
   SlickDataView,
   SlickGrid,
   TranslaterService,
@@ -31,7 +30,7 @@ import {
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
 
-import { CompositeEditor } from './compositeEditor.factory';
+import { SlickCompositeEditor } from './compositeEditor.factory';
 
 const DEFAULT_ON_ERROR = (error: OnErrorOption) => console.log(error.message);
 
@@ -482,7 +481,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         this._editors = {};
         this._editorContainers = modalColumns.map(col => modalBodyElm.querySelector<HTMLDivElement>(`[data-editorid=${col.id}]`)) || [];
         this._compositeOptions = { destroy: this.disposeComponent.bind(this), modalType, validationMsgPrefix: '* ', formValues: {}, editors: this._editors };
-        const compositeEditor = new (CompositeEditor as any)(modalColumns, this._editorContainers, this._compositeOptions) as SlickCompositeEditor;
+        const compositeEditor = new (SlickCompositeEditor as any)(modalColumns, this._editorContainers, this._compositeOptions) as typeof SlickCompositeEditor;
         this.grid.editActiveCell(compositeEditor as any);
 
         // --

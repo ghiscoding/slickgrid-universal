@@ -1,6 +1,6 @@
 import { Column, CompositeEditorOption, Editors, ElementPosition, GridOption, type SlickDataView, SlickEvent, type SlickGrid } from '@slickgrid-universal/common';
 
-import { CompositeEditor } from './compositeEditor.factory';
+import { SlickCompositeEditor } from './compositeEditor.factory';
 
 const dataViewStub = {
   getItem: jest.fn(),
@@ -127,7 +127,7 @@ describe('Composite Editor Factory', () => {
     compositeOptions = { destroy: destroyMock, modalType: 'create', validationMsgPrefix: '* ', formValues: {}, editors };
 
     containers = [container1, container2, container3, container4];
-    factory = new (CompositeEditor as any)(columnsMock, containers, compositeOptions);
+    factory = new (SlickCompositeEditor as any)(columnsMock, containers, compositeOptions);
   });
 
   afterEach(() => {

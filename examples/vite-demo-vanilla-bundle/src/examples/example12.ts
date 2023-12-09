@@ -24,7 +24,7 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { type SlickerGridInstance } from '@slickgrid-universal/vanilla-bundle';
 import { VanillaForceGridBundle, Slicker } from '@slickgrid-universal/vanilla-force-bundle';
-import { CompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
+import { SlickCompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { ExampleGridOptions } from './example-grid-options';
 import countriesJson from './data/countries.json?raw';
 import './example12.scss';
@@ -522,7 +522,7 @@ export default class Example12 {
     console.log('handleValidationError', event.detail);
     if (args.validationResults) {
       let errorMsg = args.validationResults.msg || '';
-      if (args?.editor instanceof CompositeEditor) {
+      if (args?.editor instanceof SlickCompositeEditor) {
         if (args.validationResults.errors) {
           errorMsg += '\n';
           for (const error of args.validationResults.errors) {

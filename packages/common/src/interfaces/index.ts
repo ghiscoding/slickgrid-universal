@@ -140,7 +140,6 @@ export * from './selectableOverrideCallback.interface';
 export * from './selectOption.interface';
 export * from './servicePagination.interface';
 export * from './singleColumnSort.interface';
-export * from './slickCompositeEditor.interface';
 export * from './slickPlugin.interface';
 export * from './slickRemoteModel.interface';
 export * from './slickResizer.interface';
