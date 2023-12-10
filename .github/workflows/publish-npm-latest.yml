@@ -3,6 +3,10 @@ name: 🏷️ Publish NPM Latest
 on:
   workflow_dispatch:
     inputs:
+      dryrun:
+        type: boolean
+        required: false
+        description: Dry-Run
       graduate:
         type: boolean
         required: false
