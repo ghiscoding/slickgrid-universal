@@ -31,12 +31,12 @@ export class GridEventService {
       if (typeof column.onBeforeEditCell === 'function') {
         // add to the output gridOptions & dataView since we'll need them inside the AJAX column.onBeforeEditCell
         const returnedArgs: OnEventArgs = {
-          row: args.row,
+          row: args.row!,
           cell: args.cell,
           dataView,
           grid,
           columnDef: column,
-          dataContext: grid.getDataItem(args.row)
+          dataContext: grid.getDataItem(args.row!)
         };
 
         // finally call up the Slick column.onBeforeEditCells.... function

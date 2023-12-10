@@ -1,4 +1,4 @@
-import { type Column, type GridOption, SlickEventHandler, type SlickRange } from '@slickgrid-universal/common';
+import { type Column, type GridOption, SlickEventHandler } from '@slickgrid-universal/common';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 import './example19.scss';
@@ -28,7 +28,7 @@ export default class Example19 {
 
     // bind any of the grid events
     const cellSelectionModel = this.sgb.slickGrid!.getSelectionModel();
-    this._eventHandler.subscribe(cellSelectionModel!.onSelectedRangesChanged, (_e, args: SlickRange[]) => {
+    this._eventHandler.subscribe(cellSelectionModel!.onSelectedRangesChanged, (_e, args) => {
       const targetRange = document.querySelector('#selectionRange') as HTMLSpanElement;
       targetRange.textContent = '';
 
