@@ -157,12 +157,12 @@ export class SlickRowMoveManager {
   // protected functions
   // ------------------
 
-  protected handleDragInit(e: SlickEventData) {
+  protected handleDragInit(e: MouseEvent) {
     // prevent the grid from cancelling drag'n'drop by default
     e.stopImmediatePropagation();
   }
 
-  protected handleDragEnd(e: SlickEventData, dd: DragRowMove) {
+  protected handleDragEnd(e: MouseEvent, dd: DragRowMove) {
     if (!this._dragging) {
       return;
     }

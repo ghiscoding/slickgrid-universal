@@ -2,7 +2,7 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
-import type { CheckboxSelectorOption, Column, DOMMouseOrTouchEvent, GridOption, SelectableOverrideCallback } from '../interfaces/index';
+import type { CheckboxSelectorOption, Column, DOMMouseOrTouchEvent, GridOption, OnHeaderClickEventArgs, SelectableOverrideCallback } from '../interfaces/index';
 import { SlickRowSelectionModel } from './slickRowSelectionModel';
 import { createDomElement, emptyElement } from '../services/domUtilities';
 import { SelectionModel } from '../enums/index';
@@ -383,7 +383,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
-  protected handleHeaderClick(e: DOMMouseOrTouchEvent<HTMLInputElement>, args: { column: Column; node: HTMLDivElement; grid: SlickGrid; }) {
+  protected handleHeaderClick(e: DOMMouseOrTouchEvent<HTMLInputElement>, args: OnHeaderClickEventArgs) {
     if (args.column.id === this._addonOptions.columnId && e.target.type === 'checkbox') {
       e.target.ariaChecked = String(e.target.checked);
 

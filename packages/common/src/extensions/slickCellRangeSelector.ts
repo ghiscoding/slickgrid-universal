@@ -5,6 +5,7 @@ import type {
   DOMMouseOrTouchEvent,
   DragPosition,
   DragRange,
+  DragRowMove,
   GridOption,
   MouseOffsetViewport,
   OnScrollEventArgs,
@@ -170,7 +171,7 @@ export class SlickCellRangeSelector {
   // protected functions
   // ---------------------
 
-  protected handleDrag(evt: SlickEventData, dd: DragPosition) {
+  protected handleDrag(evt: SlickEventData, dd: DragRowMove) {
     if (!this._dragging && !this._gridOptions.enableRowMoveManager) {
       return;
     }
@@ -296,7 +297,7 @@ export class SlickCellRangeSelector {
     }
   }
 
-  protected handleDragEnd(e: any, dd: DragPosition) {
+  protected handleDragEnd(e: any, dd: DragRowMove) {
     this._decorator.hide();
 
     if (this._dragging) {
@@ -348,7 +349,7 @@ export class SlickCellRangeSelector {
     }
   }
 
-  protected handleDragStart(e: DOMMouseOrTouchEvent<HTMLDivElement>, dd: DragPosition) {
+  protected handleDragStart(e: DOMMouseOrTouchEvent<HTMLDivElement>, dd: DragRowMove) {
     const cellObj = this._grid.getCellFromEvent(e);
     if (cellObj && this.onBeforeCellRangeSelected.notify(cellObj).getReturnValue() !== false && this._grid.canCellBeSelected(cellObj.row, cellObj.cell)) {
       this._dragging = true;
