@@ -449,11 +449,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @class SlickGrid
    * @constructor
    * @param {Node} container - Container node to create the grid in.
-   * @param {Array|Object} data - An array of objects for databinding.
+   * @param {Array|Object} data - An array of objects for databinding or an external DataView.
    * @param {Array<C>} columns - An array of column definitions.
-   * @param {Object} [options] - Grid this._options.
+   * @param {Object} [options] - Grid Options
+   * @param {Object} [externalPubSub] - optional External PubSub Service to use by SlickEvent
    **/
-  constructor(protected container: HTMLElement | string, protected data: CustomDataView<TData> | TData[], protected columns: C[], protected options: Partial<O>, protected externalPubSub?: BasePubSub) {
+  constructor(protected readonly container: HTMLElement | string, protected data: CustomDataView<TData> | TData[], protected columns: C[], options: Partial<O>, protected readonly externalPubSub?: BasePubSub) {
     this.onActiveCellChanged = new SlickEvent<OnActiveCellChangedEventArgs>('onActiveCellChanged', externalPubSub);
     this.onActiveCellPositionChanged = new SlickEvent<SlickGridEventData>('onActiveCellPositionChanged', externalPubSub);
     this.onAddNewRow = new SlickEvent<OnAddNewRowEventArgs>('onAddNewRow', externalPubSub);
@@ -506,7 +507,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.onValidationError = new SlickEvent<OnValidationErrorEventArgs>('onValidationError', externalPubSub);
     this.onViewportChanged = new SlickEvent<SlickGridEventData>('onViewportChanged', externalPubSub);
 
-    this.initialize();
+    this.initialize(options);
   }
 
   // Initialization
@@ -566,7 +567,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
   }
 
-  protected initialize() {
+  protected initialize(options: Partial<O>) {
     if (typeof this.container === 'string') {
       this._container = document.querySelector(this.container) as HTMLDivElement;
     } else {
@@ -578,11 +579,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     // calculate these only once and share between grid instances
-    if (this.options.mixinDefaults) {
-      if (!this.options) { this.options = {}; }
-      Utils.applyDefaults(this.options, this._defaults);
+    if (this._options.mixinDefaults) {
+      if (!options) { options = {}; }
+      Utils.applyDefaults(options, this._defaults);
     } else {
-      this._options = Utils.extend<O>(true, {}, this._defaults, this.options);
+      this._options = Utils.extend<O>(true, {}, this._defaults, options);
     }
     this.scrollThrottle = this.actionThrottle(this.render.bind(this), this._options.scrollRenderThrottling as number);
     this.maxSupportedCssHeight = this.maxSupportedCssHeight || this.getMaxSupportedCssHeight();
@@ -2417,8 +2418,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!this.stylesheet) {
       const sheets: any = (this._options.shadowRoot || document).styleSheets;
 
-      if (this.options.devMode && typeof this.options.devMode.ownerNodeIndex === 'number' && this.options.devMode.ownerNodeIndex >= 0) {
-        sheets[this.options.devMode.ownerNodeIndex].ownerNode = this._style;
+      if (this._options.devMode && typeof this._options.devMode.ownerNodeIndex === 'number' && this._options.devMode.ownerNodeIndex >= 0) {
+        sheets[this._options.devMode.ownerNodeIndex].ownerNode = this._style;
       }
 
       for (i = 0; i < sheets.length; i++) {
@@ -2981,7 +2982,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         m.widthRequest = m.width;
       }
 
-      if (this.options.mixinDefaults) {
+      if (this._options.mixinDefaults) {
         Utils.applyDefaults(m, this._columnDefaults);
       } else {
         m = this.columns[i] = Utils.extend({}, this._columnDefaults, m);
@@ -3754,7 +3755,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   getViewportWidth() {
-    this.viewportW = parseFloat(getInnerSize(this._container, 'width') as unknown as string) || (this.options.devMode && this.options.devMode.containerClientWidth) || 0;
+    this.viewportW = parseFloat(getInnerSize(this._container, 'width') as unknown as string) || (this._options.devMode && this._options.devMode.containerClientWidth) || 0;
     return this.viewportW;
   }
 
@@ -6088,7 +6089,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {number} col A column index.
    */
   canCellBeActive(row: number, cell: number) {
-    if (!this.options.enableCellNavigation || row >= this.getDataLengthIncludingAddNew() ||
+    if (!this._options.enableCellNavigation || row >= this.getDataLengthIncludingAddNew() ||
       row < 0 || cell >= this.columns.length || cell < 0) {
       return false;
     }
@@ -6209,9 +6210,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               }
             };
 
-            if (self.options.editCommandHandler) {
+            if (self._options.editCommandHandler) {
               self.makeActiveCellNormal(true);
-              self.options.editCommandHandler(item, column, editCommand);
+              self._options.editCommandHandler(item, column, editCommand);
             } else {
               editCommand.execute();
               self.makeActiveCellNormal(true);
