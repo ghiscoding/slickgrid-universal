@@ -18,10 +18,9 @@ export function addToArrayWhenNotExists<T = any>(inputArray: T[], inputItem: T, 
 }
 
 /**
- * Simple function to which will loop and create as demanded the number of white spaces,
- * this is used in the CSV export
+ * Simple function that will return a string with the number of whitespaces asked, mostly used by the CSV export
  * @param {Number} nbSpaces - number of white spaces to create
- * @param {String} spaceChar - optionally provide character to use as a space (could be override to use &nbsp; in html)
+ * @param {String} spaceChar - optionally provide a different character to use for the whitespace (e.g. could be override to use "&nbsp;" in html)
  */
 export function addWhiteSpaces(nbSpaces: number, spaceChar = ' '): string {
   let result = '';
@@ -33,7 +32,7 @@ export function addWhiteSpaces(nbSpaces: number, spaceChar = ' '): string {
 }
 
 /**
- * Remove a column from the grid by it's index in the grid
+ * Remove an item from the array by its index
  * @param array input
  * @param index
  */
