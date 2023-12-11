@@ -78,6 +78,7 @@ import type {
   SlickGridEventData,
 } from '../interfaces';
 import { createDomElement, emptyElement, getInnerSize, getOffset, insertAfterElement } from '../services/domUtilities';
+import type { SlickDataView } from './slickDataview';
 
 /**
  * @license
@@ -3152,7 +3153,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /** Returns an array of every data object, unless you're using DataView in which case it returns a DataView object. */
-  getData<U extends CustomDataView<TData> | U[]>(): U {
+  getData<U extends CustomDataView<TData> | U[] = SlickDataView<TData>>(): U {
     return this.data as U;
   }
 
