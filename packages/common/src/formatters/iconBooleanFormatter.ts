@@ -1,4 +1,5 @@
-import { createDomElement } from '../services';
+import { createDomElement } from '@slickgrid-universal/utils';
+
 import { type Formatter } from './../interfaces/index';
 
 /** Display whichever icon for a boolean value (library agnostic, it could be Font-Awesome or any other) */

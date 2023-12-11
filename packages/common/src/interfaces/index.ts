@@ -102,7 +102,6 @@ export * from './headerMenu.interface';
 export * from './headerMenuItems.interface';
 export * from './headerMenuOption.interface';
 export * from './hideColumnOption.interface';
-export * from './htmlElementPosition.interface';
 export * from './inputOption.interface';
 export * from './interactions.interface';
 export * from './itemMetadata.interface';

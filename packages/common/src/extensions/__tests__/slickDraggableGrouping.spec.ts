@@ -28,13 +28,13 @@ jest.mock('sortablejs', () => sortableMock);
 import 'jest-extended';
 import { SortableOptions } from 'sortablejs';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import { deepCopy } from '@slickgrid-universal/utils';
+import { createDomElement, deepCopy } from '@slickgrid-universal/utils';
 
 import { Aggregators } from '../../aggregators/aggregators.index';
 import { SlickDraggableGrouping } from '../slickDraggableGrouping';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import type { Column, DraggableGroupingOption, GridOption } from '../../interfaces/index';
-import { BackendUtilityService, createDomElement, } from '../../services';
+import { BackendUtilityService, } from '../../services';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SortDirectionNumber } from '../../enums/index';
@@ -268,18 +268,10 @@ describe('Draggable Grouping Plugin', () => {
       gridContainerDiv.appendChild(mockDivPaneContainerElm);
       gridContainerDiv.appendChild(mockDivPaneContainerElm2);
       dropEvent = new Event('mouseup');
-      headerColumnDiv1 = createDomElement('div', {
-        className: 'slick-header-column', id: `${GRID_UID}firstName`, dataset: { id: 'firstName' },
-      }, preHeaderDiv);
-      headerColumnDiv2 = createDomElement('div', {
-        className: 'slick-header-column', id: `${GRID_UID}lastName`, dataset: { id: 'lastName' },
-      }, preHeaderDiv);
-      headerColumnDiv3 = createDomElement('div', {
-        className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' },
-      }, preHeaderDiv);
-      headerColumnDiv4 = createDomElement('div', {
-        className: 'slick-header-column', id: `${GRID_UID}medals`, dataset: { id: 'medals' },
-      }, preHeaderDiv);
+      headerColumnDiv1 = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}firstName`, dataset: { id: 'firstName' } }, preHeaderDiv);
+      headerColumnDiv2 = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}lastName`, dataset: { id: 'lastName' } }, preHeaderDiv);
+      headerColumnDiv3 = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' } }, preHeaderDiv);
+      headerColumnDiv4 = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}medals`, dataset: { id: 'medals' } }, preHeaderDiv);
       headerColumnDiv1.appendChild(createDomElement('span', { className: 'slick-column-name', textContent: 'First Name' }));
       headerColumnDiv2.appendChild(createDomElement('span', { className: 'slick-column-name', textContent: 'Last Name' }));
       headerColumnDiv3.appendChild(createDomElement('span', { className: 'slick-column-name', textContent: 'Age' }));

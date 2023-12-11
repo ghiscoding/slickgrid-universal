@@ -1,7 +1,6 @@
-import { isNumber } from '@slickgrid-universal/utils';
+import { createDomElement, isNumber } from '@slickgrid-universal/utils';
 
 import { type Formatter } from './../interfaces/index';
-import { createDomElement } from '../services';
 
 /** Takes a cell value number (between 0-100) and displays Bootstrap "progress-bar" a red (<30), silver (>30 & <70) or green (>=70) bar */
 export const progressBarFormatter: Formatter = (_row, _cell, value) => {

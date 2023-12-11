@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { hasData, toSentenceCase } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, hasData, toSentenceCase } from '@slickgrid-universal/utils';
 
 import { SlickEventData, type SlickGrid } from '../core/index';
 import { Constants } from '../constants';
@@ -17,7 +17,6 @@ import type {
   SliderRangeOption,
   SliderType,
 } from '../interfaces/index';
-import { createDomElement, emptyElement } from '../services/domUtilities';
 import type { TranslaterService } from '../services/translater.service';
 import { mapOperatorToShorthandDesignation } from '../services/utilities';
 import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';

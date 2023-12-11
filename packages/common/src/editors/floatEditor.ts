@@ -1,9 +1,8 @@
-import { toSentenceCase } from '@slickgrid-universal/utils';
+import { createDomElement, toSentenceCase } from '@slickgrid-universal/utils';
 
 import type { EditorArguments, EditorValidationResult } from '../interfaces/index';
 import { floatValidator } from '../editorValidators/floatValidator';
 import { InputEditor } from './inputEditor';
-import { createDomElement } from '../services/domUtilities';
 import { getDescendantProperty } from '../services/utilities';
 
 const DEFAULT_DECIMAL_PLACES = 0;

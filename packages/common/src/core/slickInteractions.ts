@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import { windowScrollPosition } from '@slickgrid-universal/utils';
+
 import type { DragItem, DragPosition, DraggableOption, MouseWheelOption, ResizableOption } from '../interfaces/index';
-import { windowScrollPosition } from '../services/domUtilities';
 
 /***
  * Interactions, add basic behaviors to any element.

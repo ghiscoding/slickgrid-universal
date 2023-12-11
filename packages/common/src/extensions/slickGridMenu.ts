@@ -1,4 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { calculateAvailableSpace, createDomElement, emptyElement, findWidthOrDefault, getOffset, } from '@slickgrid-universal/utils';
 
 import type {
   Column,
@@ -14,7 +15,7 @@ import type {
 } from '../interfaces/index';
 import { DelimiterType, FileType } from '../enums/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
-import { calculateAvailableSpace, createDomElement, emptyElement, findWidthOrDefault, getOffset, getTranslationPrefix, } from '../services/index';
+import { getTranslationPrefix, } from '../services/index';
 import type { ExcelExportService } from '../services/excelExport.service';
 import type { FilterService } from '../services/filter.service';
 import type { SharedService } from '../services/shared.service';

@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { toSentenceCase } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, toSentenceCase } from '@slickgrid-universal/utils';
 
 import type {
   Column,
@@ -12,7 +12,7 @@ import type {
 } from '../interfaces/index';
 import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index';
 import { buildSelectOperator, compoundOperatorNumeric, compoundOperatorString } from './filterUtilities';
-import { createDomElement, emptyElement, mapOperatorToShorthandDesignation, type TranslaterService, } from '../services';
+import { mapOperatorToShorthandDesignation, type TranslaterService, } from '../services';
 import { type SlickGrid } from '../core/index';
 
 export class InputFilter implements Filter {

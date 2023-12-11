@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
+import { createDomElement, setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
 import type {
   Column,
@@ -13,7 +13,6 @@ import type {
 } from '../interfaces/index';
 import { getDescendantProperty } from '../services/utilities';
 import { textValidator } from '../editorValidators/textValidator';
-import { createDomElement } from '../services/domUtilities';
 import { SlickEventData, type SlickGrid } from '../core/index';
 
 /*

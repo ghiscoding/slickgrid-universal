@@ -1,9 +1,8 @@
-import { isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
+import { getHTMLFromFragment, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
 import moment from 'moment-mini';
 
 import { FieldType } from '../enums/fieldType.enum';
 import type { Column, ExcelExportOption, Formatter, FormatterResultWithHtml, FormatterResultWithText, GridOption, TextExportOption } from '../interfaces/index';
-import { getHTMLFromFragment } from '../services/domUtilities';
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { multipleFormatter } from './multipleFormatter';
 import { Constants } from '../constants';

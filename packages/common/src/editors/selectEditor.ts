@@ -1,4 +1,4 @@
-import { setDeepValue } from '@slickgrid-universal/utils';
+import { emptyElement, setDeepValue } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import { multipleSelect, MultipleSelectInstance, MultipleSelectOption, OptionRowData } from 'multiple-select-vanilla';
 
@@ -19,7 +19,7 @@ import type {
   Locale,
   SelectOption,
 } from './../interfaces/index';
-import { buildMsSelectCollectionList, CollectionService, emptyElement, findOrDefault, sanitizeTextByAvailableSanitizer, type TranslaterService } from '../services/index';
+import { buildMsSelectCollectionList, CollectionService, findOrDefault, sanitizeTextByAvailableSanitizer, type TranslaterService } from '../services/index';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
 import { SlickEventData, type SlickGrid } from '../core/index';
 

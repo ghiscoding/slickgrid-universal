@@ -1,5 +1,7 @@
+import { createDomElement } from '@slickgrid-universal/utils';
+
 import { type Formatter } from './../interfaces/index';
-import { createDomElement, sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
+import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 
 /**
  * Takes an hyperlink cell value and transforms it into a real hyperlink, given that the value starts with 1 of these (http|ftp|https).

@@ -1,6 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
-import { stripTags } from '@slickgrid-universal/utils';
+import { getInnerSize, getOffset, stripTags } from '@slickgrid-universal/utils';
 
 import { FieldType, } from '../enums/index';
 import type {
@@ -10,7 +10,6 @@ import type {
   GridSize,
   ResizeByContentOption,
 } from '../interfaces/index';
-import { getInnerSize, getOffset } from '../services/index';
 import { parseFormatterWhenExist } from '../formatters/formatterUtilities';
 import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 

@@ -1,7 +1,8 @@
+import { getHTMLFromFragment } from '@slickgrid-universal/utils';
+
 import { Column, FormatterResultWithHtml, GridOption } from '../../interfaces/index';
 import { treeFormatter } from '../treeFormatter';
 import { SlickGrid } from '../../core/index';
-import { getHTMLFromFragment } from '../../services';
 
 const gridStub = {
   applyHtmlCode: (elm, val) => elm.innerHTML = val || '',

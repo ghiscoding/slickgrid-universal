@@ -1,10 +1,10 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { createDomElement, emptyElement, findWidthOrDefault } from '@slickgrid-universal/utils';
 
 import type { Column, ColumnPickerOption, DOMMouseOrTouchEvent, GridOption, OnColumnsChangedArgs } from '../interfaces/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import type { SharedService } from '../services/shared.service';
-import { createDomElement, emptyElement, findWidthOrDefault } from '../services/domUtilities';
 import {
   addColumnTitleElementWhenDefined,
   addCloseButtomElement,

@@ -1,4 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { createDomElement, findWidthOrDefault, getOffset } from '@slickgrid-universal/utils';
 
 import type { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
 import type {
@@ -9,7 +10,6 @@ import type {
   RowMoveManager,
   RowMoveManagerOption,
 } from '../interfaces/index';
-import { createDomElement, findWidthOrDefault, getOffset } from '../services/domUtilities';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
 
 /**

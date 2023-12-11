@@ -1,9 +1,8 @@
-import { isNumber } from '@slickgrid-universal/utils';
+import { createDomElement, isNumber } from '@slickgrid-universal/utils';
 
 import { type Formatter } from './../interfaces/index';
 import { formatNumber } from './../services/utilities';
 import { retrieveFormatterOptions } from './formatterUtilities';
-import { createDomElement } from '../services';
 
 /** Display the value as 2 decimals formatted with dollar sign '$' at the end of of the value, change color of text to red/green on negative/positive value */
 export const dollarColoredFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {

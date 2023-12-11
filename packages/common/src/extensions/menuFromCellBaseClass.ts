@@ -1,5 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { titleCase } from '@slickgrid-universal/utils';
+import { calculateAvailableSpace, createDomElement, findWidthOrDefault, getOffset, titleCase } from '@slickgrid-universal/utils';
 
 import type {
   CellMenu,
@@ -13,7 +13,6 @@ import type {
   MenuOptionItemCallbackArgs,
 } from '../interfaces/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
-import { calculateAvailableSpace, createDomElement, findWidthOrDefault, getOffset, } from '../services/domUtilities';
 import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from './menuBaseClass';
 import type { SharedService } from '../services/shared.service';
 

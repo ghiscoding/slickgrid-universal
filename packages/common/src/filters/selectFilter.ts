@@ -1,5 +1,5 @@
 import { multipleSelect, MultipleSelectInstance, MultipleSelectOption, OptionRowData } from 'multiple-select-vanilla';
-import { isPrimitiveValue } from '@slickgrid-universal/utils';
+import { emptyElement, isPrimitiveValue } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants';
 import { type OperatorString, OperatorType, type SearchTerm, } from '../enums/index';
@@ -17,7 +17,7 @@ import type {
 import type { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
 import { getDescendantProperty, getTranslationPrefix, unsubscribeAll } from '../services/utilities';
-import { buildMsSelectCollectionList, emptyElement, type RxJsFacade, sanitizeTextByAvailableSanitizer, type Subscription, type TranslaterService } from '../services/index';
+import { buildMsSelectCollectionList, type RxJsFacade, sanitizeTextByAvailableSanitizer, type Subscription, type TranslaterService } from '../services/index';
 import { renderCollectionOptionsAsync } from './filterUtilities';
 import type { SlickGrid } from '../core/index';
 

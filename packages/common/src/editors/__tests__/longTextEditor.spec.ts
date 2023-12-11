@@ -1,6 +1,6 @@
 // mocked modules
-jest.mock('../../services/domUtilities', () => ({
-  ...(jest.requireActual('../../services/domUtilities') as any),
+jest.mock('@slickgrid-universal/utils', () => ({
+  ...(jest.requireActual('@slickgrid-universal/utils') as any),
   getOffset: jest.fn(),
 }));
 
@@ -9,7 +9,7 @@ import { LongTextEditor } from '../longTextEditor';
 import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { getOffset } from '../../services/domUtilities';
+import { getOffset } from '@slickgrid-universal/utils';
 
 const containerId = 'demo-container';
 
