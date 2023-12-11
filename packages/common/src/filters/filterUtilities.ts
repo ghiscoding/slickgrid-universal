@@ -1,7 +1,8 @@
+import { createDomElement, htmlEncodeWithPadding, } from '@slickgrid-universal/utils';
+
 import { Constants } from '../constants';
 import type { Column, GridOption, Locale, OperatorDetail } from '../interfaces/index';
 import type { Observable, RxJsFacade, Subject, Subscription } from '../services/rxjsFacade';
-import { createDomElement, htmlEncodeWithPadding, } from '../services/domUtilities';
 import { castObservableToPromise, getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import type { SlickGrid } from '../core';

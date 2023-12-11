@@ -1,9 +1,8 @@
-import { toSentenceCase } from '@slickgrid-universal/utils';
+import { createDomElement, toSentenceCase } from '@slickgrid-universal/utils';
 
 import type { EditorArguments, EditorValidationResult } from '../interfaces/index';
 import { integerValidator } from '../editorValidators/integerValidator';
 import { InputEditor } from './inputEditor';
-import { createDomElement } from '../services/domUtilities';
 import { getDescendantProperty } from '../services/utilities';
 
 export class IntegerEditor extends InputEditor {

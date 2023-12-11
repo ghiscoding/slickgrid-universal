@@ -1,7 +1,8 @@
+import { createDomElement } from '@slickgrid-universal/utils';
+
 import { Constants } from '../constants';
 import { type Formatter } from './../interfaces/index';
 import { parseFormatterWhenExist } from './formatterUtilities';
-import { createDomElement } from '../services/domUtilities';
 import { getCellValueFromQueryFieldGetter, } from '../services/utilities';
 
 /** Formatter that must be use with a Tree Data column */

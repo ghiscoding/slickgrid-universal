@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
+import { createDomElement, getOffset, type HtmlElementPosition, setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
 import { Constants } from './../constants';
 import type {
@@ -12,11 +12,9 @@ import type {
   EditorValidationResult,
   ElementPosition,
   GridOption,
-  HtmlElementPosition,
   Locale,
   LongTextEditorOption,
 } from '../interfaces/index';
-import { createDomElement, getOffset, } from '../services/domUtilities';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import { textValidator } from '../editorValidators/textValidator';

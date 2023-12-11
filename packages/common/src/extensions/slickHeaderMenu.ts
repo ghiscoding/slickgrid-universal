@@ -1,5 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { arrayRemoveItemByIndex } from '@slickgrid-universal/utils';
+import { arrayRemoveItemByIndex, calculateAvailableSpace, createDomElement, getOffsetRelativeToParent, getOffset, } from '@slickgrid-universal/utils';
 
 import { EmitterType } from '../enums/index';
 import type {
@@ -16,7 +16,7 @@ import type {
   MultiColumnSort,
   OnHeaderCellRenderedEventArgs,
 } from '../interfaces/index';
-import { calculateAvailableSpace, createDomElement, getOffsetRelativeToParent, getOffset, getTranslationPrefix } from '../services/index';
+import { getTranslationPrefix } from '../services/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import type { FilterService } from '../services/filter.service';
 import type { SharedService } from '../services/shared.service';

@@ -1,8 +1,9 @@
+import { createDomElement } from '@slickgrid-universal/utils';
+
 import type { Column, GroupTotalsFormatter } from './../interfaces/index';
 import { formatNumber } from './../services/utilities';
 import { retrieveFormatterOptions } from '../formatters/formatterUtilities';
 import { type SlickGrid } from '../core/index';
-import { createDomElement } from '../services';
 
 export const sumTotalsDollarBoldFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column, grid: SlickGrid) => {
   const field = columnDef.field ?? '';

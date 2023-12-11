@@ -1,10 +1,10 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { createDomElement, emptyElement } from '@slickgrid-universal/utils';
 
 import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 import type { CheckboxSelectorOption, Column, DOMMouseOrTouchEvent, GridOption, OnHeaderClickEventArgs, SelectableOverrideCallback } from '../interfaces/index';
 import { SlickRowSelectionModel } from './slickRowSelectionModel';
-import { createDomElement, emptyElement } from '../services/domUtilities';
 import { SelectionModel } from '../enums/index';
 
 export class SlickCheckboxSelectColumn<T = any> {

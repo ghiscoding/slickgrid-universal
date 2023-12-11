@@ -1,7 +1,6 @@
-import { stripTags } from '@slickgrid-universal/utils';
+import { createDomElement, stripTags } from '@slickgrid-universal/utils';
 
 import type { Column, ExcelCopyBufferOption, ExternalCopyClipCommand } from '../interfaces/index';
-import { createDomElement } from '../services/domUtilities';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange } from '../core/index';
 
 // using external SlickGrid JS libraries

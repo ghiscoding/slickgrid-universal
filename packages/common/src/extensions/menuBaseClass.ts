@@ -1,6 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { hasData } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, hasData } from '@slickgrid-universal/utils';
 
 import type {
   CellMenu,
@@ -18,7 +18,6 @@ import type {
 } from '../interfaces/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import type { SharedService } from '../services/shared.service';
-import { createDomElement, emptyElement } from '../services/domUtilities';
 import { SlickEventHandler, type SlickGrid } from '../core/index';
 
 export type MenuType = 'command' | 'option';

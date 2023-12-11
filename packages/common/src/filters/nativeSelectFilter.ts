@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { toSentenceCase } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, toSentenceCase } from '@slickgrid-universal/utils';
 
 import type {
   Column,
@@ -10,7 +10,6 @@ import type {
   GridOption,
 } from '../interfaces/index';
 import { OperatorType, type OperatorString, type SearchTerm } from '../enums/index';
-import { createDomElement, emptyElement, } from '../services/domUtilities';
 import type { TranslaterService } from '../services/translater.service';
 import { type SlickGrid } from '../core/index';
 

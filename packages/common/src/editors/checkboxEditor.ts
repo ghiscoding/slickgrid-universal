@@ -1,9 +1,8 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
+import { createDomElement, setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
 import { Constants } from './../constants';
 import type { Column, ColumnEditor, CompositeEditorOption, Editor, EditorArguments, EditorValidator, EditorValidationResult, GridOption } from './../interfaces/index';
-import { createDomElement } from '../services/domUtilities';
 import { getDescendantProperty, } from '../services/utilities';
 import { SlickEventData, type SlickGrid } from '../core/index';
 

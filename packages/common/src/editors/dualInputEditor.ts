@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
+import { createDomElement, setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
 import type {
   DOMEvent,
@@ -15,7 +15,6 @@ import type {
 } from '../interfaces/index';
 import { getDescendantProperty } from '../services/utilities';
 import { floatValidator, integerValidator, textValidator } from '../editorValidators';
-import { createDomElement } from '../services/domUtilities';
 import { SlickEventData, SlickEventHandler, type SlickGrid } from '../core';
 
 /*

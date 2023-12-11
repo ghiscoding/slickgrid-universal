@@ -1,4 +1,4 @@
-import { deepMerge } from '@slickgrid-universal/utils';
+import { deepMerge, emptyElement, getOffset, } from '@slickgrid-universal/utils';
 
 import type {
   CellRangeSelectorOption,
@@ -10,7 +10,6 @@ import type {
   MouseOffsetViewport,
   OnScrollEventArgs,
 } from '../interfaces/index';
-import { emptyElement, getOffset, } from '../services/domUtilities';
 import { SlickCellRangeDecorator } from './index';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange } from '../core/index';
 

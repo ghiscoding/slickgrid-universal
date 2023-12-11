@@ -1,16 +1,6 @@
-import type {
-  Column,
-  CompositeEditorOption,
-  Editor,
-  EditorArguments,
-  EditorValidationResult,
-  ElementPosition,
-  HtmlElementPosition,
-} from '@slickgrid-universal/common';
-import {
-  emptyElement,
-  getOffset,
-} from '@slickgrid-universal/common';
+import { emptyElement, getOffset, } from '@slickgrid-universal/common';
+import type { Column, CompositeEditorOption, Editor, EditorArguments, EditorValidationResult, ElementPosition, } from '@slickgrid-universal/common';
+import type { HtmlElementPosition } from '@slickgrid-universal/utils';
 
 export interface CompositeEditorArguments extends EditorArguments {
   formValues: any;

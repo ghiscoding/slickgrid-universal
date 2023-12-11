@@ -1,8 +1,8 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
+import { createDomElement, emptyElement } from '@slickgrid-universal/utils';
 
 import type { Column, GridOption, SlickResizer, } from './../interfaces/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
-import { createDomElement, emptyElement } from './domUtilities';
 import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
 export class GroupingAndColspanService {
