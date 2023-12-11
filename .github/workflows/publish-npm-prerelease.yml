@@ -102,7 +102,7 @@ jobs:
           pnpm whoami
           pnpm exec lerna version --conventional-commits --conventional-prerelease --dry-run --preid ${{ inputs.tag }} --force-publish --yes
 
-      - name: 🧪 Lerna Version with chosen pre-bump (dry-run) 🏷️
+      - name: 🧪 Lerna Version with selected pre-bump (dry-run) 🏷️
         if: ${{ inputs.dryrun == true && inputs.bump != 'auto' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -123,8 +123,20 @@ jobs:
         run: |
           pnpm exec lerna publish from-package --force-publish --dist-tag ${{ inputs.tag }} --yes --dry-run
 
-      - name: Lerna Version 🏷️
-        if: ${{ inputs.dryrun != true }}
+      - name: Lerna Version auto-bump 🏷️
+        if: ${{ inputs.dryrun != true && inputs.bump == 'auto' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          pnpm whoami
+          pnpm exec lerna version --conventional-commits --conventional-prerelease --preid ${{ inputs.tag }} --force-publish --yes
+
+      - name: Lerna Version with selected pre-bump 🏷️
+        if: ${{ inputs.dryrun != true && inputs.bump != 'auto' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
