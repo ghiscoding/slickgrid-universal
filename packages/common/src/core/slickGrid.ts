@@ -249,7 +249,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     ffMaxSupportedCssHeight: 6000000,
     maxSupportedCssHeight: 1000000000,
     sanitizer: undefined,  // sanitize function
-    mixinDefaults: true,
+    mixinDefaults: false,
     shadowRoot: undefined
   };
 
