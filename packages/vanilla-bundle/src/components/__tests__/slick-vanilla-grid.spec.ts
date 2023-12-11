@@ -205,12 +205,6 @@ const mockDataView = {
   syncGridSelection: jest.fn(),
 } as unknown as SlickDataView;
 
-const mockEventPubSub = {
-  notify: jest.fn(),
-  subscribe: jest.fn(),
-  unsubscribe: jest.fn(),
-} as unknown as EventPubSubService;
-
 const mockSlickEventHandler = {
   handlers: [],
   notify: jest.fn(),
@@ -282,7 +276,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   let dataset = [];
 
   beforeEach(() => {
-    dataset = [];
     divContainer = document.createElement('div');
     cellDiv = document.createElement('div');
     divContainer.innerHTML = template;
