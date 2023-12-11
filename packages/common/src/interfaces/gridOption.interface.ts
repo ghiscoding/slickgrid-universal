@@ -48,9 +48,9 @@ export interface CellViewportRange {
 }
 
 export interface CustomDataView<T = any> {
-  getLength: () => number;
   getItem: (index: number) => T;
   getItemMetadata(index: number): ItemMetadata | null;
+  getLength: () => number;
 }
 
 export interface CssStyleHash {
@@ -78,9 +78,6 @@ export interface GridOption<C extends Column = Column> {
 
   /** Defaults to 40, which is the delay before the asynchronous post renderer start cleanup execution */
   asyncPostRenderCleanupDelay?: number;
-
-  // TODO: not sure what that option does?
-  auto?: boolean;
 
   /**
    * Automatically add a Custom Formatter on all column definitions that have an Editor.

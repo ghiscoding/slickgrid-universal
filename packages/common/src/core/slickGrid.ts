@@ -202,7 +202,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     asyncPostRenderDelay: 50,
     enableAsyncPostRenderCleanup: false,
     asyncPostRenderCleanupDelay: 40,
-    auto: false,
     nonce: '',
     editorLock: SlickGlobalEditorLock,
     showColumnHeader: true,
