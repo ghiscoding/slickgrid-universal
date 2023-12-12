@@ -4,4 +4,4 @@
 
 ## Getting Started
 
-* [Quick start](getting-started/quick-install-guide.md)
+* [Quick start](getting-started/quick-start.md)
