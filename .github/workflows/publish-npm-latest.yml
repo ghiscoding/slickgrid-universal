@@ -99,7 +99,6 @@ jobs:
           fi
 
       - name: Version Type - ${{ env.LERNA_VERSION_TYPE }}
-        if: ${{ inputs.dryrun != true }}
         run: echo "${{ env.LERNA_VERSION_QUERY }}"
 
       # - name: Lerna Version 🏷️
