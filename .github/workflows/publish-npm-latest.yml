@@ -80,8 +80,7 @@ jobs:
 
       - name: 🧪 Lerna Version (no graduate) (dry-run) 🏷️
         if: |
-          ${{ inputs.dryrun == true }} &&
-          ${{ inputs.graduate == false }}
+          ${{ inputs.dryrun == true && inputs.graduate == false }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -94,8 +93,7 @@ jobs:
 
       - name: 🧪 Lerna Version (force graduate) (dry-run) 🏷️
         if: |
-          ${{ inputs.dryrun == true }} &&
-          ${{ inputs.graduate == true }}
+          ${{ inputs.dryrun == true && inputs.graduate == true }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -107,7 +105,7 @@ jobs:
           pnpm exec lerna version --conventional-commits --conventional-graduate --yes --dry-run
 
       - name: Lerna Version (no graduate) 🏷️
-        if: ${{ inputs.graduate == false }}
+        if: ${{ inputs.dryrun != true && inputs.graduate == false }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -119,7 +117,7 @@ jobs:
           pnpm exec lerna version --yes
 
       - name: Lerna Version (force graduate) 🏷️
-        if: ${{ inputs.graduate == true }}
+        if: ${{ inputs.dryrun != true && inputs.graduate == true }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
