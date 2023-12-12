@@ -9,8 +9,7 @@ export default defineConfig(() => {
     build: {
       chunkSizeWarningLimit: 6000,
       emptyOutDir: true,
-      // outDir: mode === 'production' ? '../../docs' : 'dist',
-      outDir: '../../docs',
+      outDir: '../../website',
       rollupOptions: {
         external: [
           './node_modules/flatpickr/dist/l10n/fr',

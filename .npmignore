@@ -15,6 +15,7 @@
 *.spec.ts
 /test
 **/docs
+**/website
 **/node_modules
 **/coverage
 **/jest-coverage

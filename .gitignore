@@ -47,7 +47,7 @@ Thumbs.db
 # Distribution folder
 dist
 dist-demo
-docs
+website
 
 # Tests Report & Coverage
 .jest-cache
