@@ -79,22 +79,22 @@ jobs:
       - name: Lerna Version (build query)
         shell: bash
         run: |
-          if [${{inputs.dryrun == true && inputs.graduate != true}}]
+          if [[${{inputs.dryrun == true && inputs.graduate != true}}]]
           then
               echo "LERNA_VERSION_TYPE=🧪 Dry-Run" >> $GITHUB_ENV
               echo "LERNA_VERSION_QUERY=pnpm exec lerna version --yes --dry-run" >> $GITHUB_ENV
               exit 1
-          elif [${{inputs.dryrun == true && inputs.graduate == true}}]
+          elif [[${{inputs.dryrun == true && inputs.graduate == true}}]]
           then
               echo "LERNA_VERSION_TYPE=🧪 Dry-Run w/Graduate" >> $GITHUB_ENV
               echo "LERNA_VERSION_QUERY=pnpm exec lerna version --yes --dry-run --conventional-graduate" >> $GITHUB_ENV
               exit 1
-          elif [${{inputs.dryrun != true && inputs.graduate == true}}]
+          elif [[${{inputs.dryrun != true && inputs.graduate == true}}]]
           then
               echo "LERNA_VERSION_TYPE=🏷️ Prod Version w/Graduate" >> $GITHUB_ENV
               echo "LERNA_VERSION_QUERY=pnpm exec lerna version --yes --conventional-graduate" >> $GITHUB_ENV
               exit 1
-          elif [${{inputs.dryrun != true && inputs.graduate != true}}]
+          elif [[${{inputs.dryrun != true && inputs.graduate != true}}]]
           then
               echo "LERNA_VERSION_TYPE=🏷️ Prod Version" >> $GITHUB_ENV
               echo "LERNA_VERSION_QUERY=pnpm exec lerna version --yes" >> $GITHUB_ENV
@@ -102,7 +102,7 @@ jobs:
           fi
 
       - name: Version Type - ${{ env.LERNA_VERSION_TYPE }}
-        run: echo "${{ env.LERNA_VERSION_QUERY }}"
+        run: echo ${{ env.LERNA_VERSION_QUERY }}"
 
       # - name: Lerna Version 🏷️
       #   env:
