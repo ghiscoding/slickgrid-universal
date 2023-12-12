@@ -89,15 +89,15 @@ jobs:
               echo "LERNA_VERSION_QUERY=pnpm exec lerna version --yes --dry-run --conventional-graduate" >> $GITHUB_ENV
           elif ${{inputs.dryrun != true && inputs.graduate == true}}
           then
-              echo "LERNA_VERSION_TYPE=🏷️ Prod Version w/Graduate" >> $GITHUB_ENV
+              echo "LERNA_VERSION_TYPE=🚀 Prod Version w/Graduate" >> $GITHUB_ENV
               echo "LERNA_VERSION_QUERY=pnpm exec lerna version --yes --conventional-graduate" >> $GITHUB_ENV
           elif ${{inputs.dryrun != true && inputs.graduate != true}}
           then
-              echo "LERNA_VERSION_TYPE=🏷️ Prod Version" >> $GITHUB_ENV
+              echo "LERNA_VERSION_TYPE=🚀 Prod Version" >> $GITHUB_ENV
               echo "LERNA_VERSION_QUERY=pnpm exec lerna version --yes" >> $GITHUB_ENV
           fi
 
-      - name: Version Type - ${{ env.LERNA_VERSION_TYPE }}
+      - name: Final version query type - ${{ env.LERNA_VERSION_TYPE }}
         run: echo "${{ env.LERNA_VERSION_QUERY }}"
 
       - name: Lerna Version 🏷️
