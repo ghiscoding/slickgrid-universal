@@ -92,6 +92,7 @@ jobs:
               echo "LERNA_VERSION_TYPE=🏷️ Prod Version w/Graduate" >> $GITHUB_ENV
               echo "LERNA_VERSION_QUERY=pnpm exec lerna version --yes --conventional-graduate" >> $GITHUB_ENV
           elif [inputs.dryrun != true && inputs.graduate != true]
+          then
               echo "LERNA_VERSION_TYPE=🏷️ Prod Version" >> $GITHUB_ENV
               echo "LERNA_VERSION_QUERY=pnpm exec lerna version --yes" >> $GITHUB_ENV
           fi
