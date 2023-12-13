@@ -11,6 +11,12 @@
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
+### Documentation
+[Documentation](https://ghiscoding.gitbook.io/slickgrid-universal/) website powered by GitBook
+
+### Live Demo
+[Live Demo](https://ghiscoding.github.io/slickgrid-universal/) website
+
 ### Description
 This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces)) which is regrouping a few packages under a single repository. It originally required SlickGrid as a dependency but that is no longer the case and is now a standalone library. The main goal of this project is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). The original SlickGrid is like an IKEA product that requires assembling everything yourself, however in this project here, we offer an all assembled product including a set of built-in Editors, Filters, Formatters and some optional pieces like OData, GraphQL, ... and SlickGrid simply did not offer that by default. See below for more project details.
 
