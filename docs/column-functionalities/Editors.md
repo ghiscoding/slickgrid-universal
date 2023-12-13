@@ -111,7 +111,7 @@ So to make it more clear, the `saveOutputType` is the format that will be sent t
 
 ## Perform an action After Inline Edit
 #### Recommended way
-What is ideal is to bind to a SlickGrid Event, for that you can take a look at this [Wiki - On Events](../slick-grid-dataview-objects/Grid-&-DataView-Events)
+What is ideal is to bind to a SlickGrid Event, for that you can take a look at this [Wiki - On Events](../events/Grid-&-DataView-Events)
 
 #### Not recommended
 You could also, perform an action after the item changed event with `onCellChange`. However, this is not the recommended way, since it would require to add a `onCellChange` on every every single column definition.

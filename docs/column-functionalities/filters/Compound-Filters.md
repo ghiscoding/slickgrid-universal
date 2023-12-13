@@ -25,7 +25,7 @@ There are multiple types of compound filters available
 5. `Filters.compoundSlider` adds an Operator combine to a Slider Filter.
 
 ### SASS Styling
-You can change the `$flatpickr-bgcolor` and any of the `$compound-filter-X` SASS [variables](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss#L660) for styling. For more info on how to use SASS in your project, read the [Wiki - Styling](https://github.com/ghiscoding/slickgrid-universal/wiki/Styling)
+You can change the `$flatpickr-bgcolor` and any of the `$compound-filter-X` SASS [variables](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss#L660) for styling. For more info on how to use SASS in your project, read the [Wiki - Styling](../../styling/styling.md)
 
 ### How to use CompoundInput Filter
 Simply set the flag `filterable` to True and use the filter type `Filters.compoundInput`. Here is an example with a full column definition:

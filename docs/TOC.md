@@ -5,7 +5,7 @@
 ## Getting Started
 
 * [Quick start](getting-started/quick-start.md)
-* [Salesforce (LWC)](getting-started/installation---Salesforce-(LWC).md)
+* [Salesforce (LWC)](getting-started/Installation---Salesforce-(LWC).md)
 
 ## Styling
 * [Styling CSS/SASS/Themes](/styling/styling.md)
@@ -13,22 +13,22 @@
 ## Interfaces/Models
 
 ## Column Functionalities
-* [Cell Menu (Action Menu)](/column-functionalities/Cell-Menu.md)
-* [Editors](/column-functionalities/Editors.md)
-  * [AutoComplete (jQueryUI)](/column-functionalities/AutoComplete-Editor.md)
-  * [new Autocomplete (Kraaden-lib)](/column-functionalities/Autocomplete-Editor-(Kraaden-lib).md)
-  * [Date Picker (flatpickr)](/column-functionalities/Date-Editor-(flatpickr).md)
-  * [LongText (textarea)](/column-functionalities/LongText-Editor-(textarea).md)
-  * [Select Dropdown Editor (single/multiple)](/column-functionalities/Select-Dropdown-Editor-(single,multiple).md)
+* [Cell Menu (Action Menu)](column-functionalities/Cell-Menu.md)
+* [Editors](column-functionalities/Editors.md)
+  * [AutoComplete (jQueryUI)](column-functionalities/AutoComplete-Editor.md)
+  * [new Autocomplete (Kraaden-lib)](column-functionalities/Autocomplete-Editor-(Kraaden-lib).md)
+  * [Date Picker (flatpickr)](column-functionalities/Date-Editor-(flatpickr).md)
+  * [LongText (textarea)](column-functionalities/LongText-Editor-(textarea).md)
+  * [Select Dropdown Editor (single/multiple)](column-functionalities/Select-Dropdown-Editor-(single,multiple).md)
 * Filters
-  * [Input Filter (default)](/column-functionalities/Input-Filter.md)
-  * [Select Filter (dropdown)](/column-functionalities/Select-Filter.md)
-  * [Compound Filters](/column-functionalities/Compound-Filters.md)
-  * [Range Filters](/column-functionalities/Range-Filters.md)
-  * [Styling Filled Filters](/column-functionalities/Styling-Filled-Filters.md)
-  * [Single Search Filter](/column-functionalities/Single-Search-Filter.md)
-* [Formatters](/column-functionalities/Formatters.md)
-* [Sorting](/column-functionalities/Sorting.md)
+  * [Input Filter (default)](column-functionalities/Input-Filter.md)
+  * [Select Filter (dropdown)](column-functionalities/Select-Filter.md)
+  * [Compound Filters](column-functionalities/Compound-Filters.md)
+  * [Range Filters](column-functionalities/Range-Filters.md)
+  * [Styling Filled Filters](column-functionalities/Styling-Filled-Filters.md)
+  * [Single Search Filter](column-functionalities/Single-Search-Filter.md)
+* [Formatters](column-functionalities/Formatters.md)
+* [Sorting](column-functionalities/Sorting.md)
 
 ## Column Functionalities
 
@@ -58,13 +58,13 @@
 
 ## Backend Services
 
-* [Custom Backend Service](backend-services/Custom-Backend-Service)
-* [OData](backend-services/OData)
-* [GraphQL](backend-services/GraphQL)
-  * [JSON Result Structure](backend-services/GraphQL-JSON-Result)
-  * [Filtering Schema](backend-services/GraphQL-Filtering)
-  * [Pagination Schema](backend-services/GraphQL-Pagination)
-  * [Sorting Schema](backend-services/GraphQL-Sorting)
+* [Custom Backend Service](backend-services/Custom-Backend-Service.md)
+* [OData](backend-services/OData.md)
+* [GraphQL](backend-services/GraphQL.md)
+  * [JSON Result Structure](backend-services/graphql/GraphQL-JSON-Result.md)
+  * [Filtering Schema](backend-services/graphql/GraphQL-Filtering.md)
+  * [Pagination Schema](backend-services/graphql/GraphQL-Pagination.md)
+  * [Sorting Schema](backend-services/graphql/GraphQL-Sorting.md)
 
 ## Migrations
 

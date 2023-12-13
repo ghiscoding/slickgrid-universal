@@ -88,7 +88,7 @@ If you want to load the grid with certain default filter(s), you can use the fol
 Even though the option of `searchTerms` it is much better to use the more powerful `presets` grid options, please refer to the [Grid State & Presets](../../grid-functionalities/Grid-State-&-Preset#grid-presets) for more info.
 
 **NOTE**
-If you also have `presets` in the grid options, then your `searchTerms` will be ignored completely (even if it's a different column) since `presets` have higher priority over `searchTerms`. See [Grid State & Grid Presets](../../grid-functionalities/Grid-State-&-Preset) from more info.
+If you also have `presets` in the grid options, then your `searchTerms` will be ignored completely (even if it's a different column) since `presets` have higher priority over `searchTerms`. See [Grid State & Grid Presets](../../grid-functionalities/Grid-State-&-Preset.md) from more info.
 
 #### Sample
 ```ts
