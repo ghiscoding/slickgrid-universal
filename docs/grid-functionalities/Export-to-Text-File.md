@@ -14,7 +14,7 @@ You can Export to File in 2 formats (csv/txt), the following formats are current
 **NOTE:** this is an opt-in Service, you must download the necessary Service from `@slickgrid-universal/text-export` and instantiate it in your grid options via `registerExternalResources`, see multiple examples below.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example02) / [Demo Component](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example02.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example02) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example02.ts)
 
 ### Grid Menu (hamburger menu)
 The Grid Menu already has the "Export to CSV" enabled by default, so you will see it automatically in your Grid Menu. You still have the options to show or hide the 2 types of export
@@ -65,22 +65,22 @@ import { TextExportService } from '@slickgrid-universal/text-export';
 
 initializeGrid() {
   this.columnDefinitions = [
-    { id: 'id', name: 'ID', field: 'id', 
+    { id: 'id', name: 'ID', field: 'id',
       excludeFromExport: true // skip the "id" column from the export
     },
     { id: 'title', name: 'Title', field: 'id', headerKey: 'TITLE',
       formatter: myCustomTitleFormatter,
-      exportWithFormatter: false // this Formatter will not be evaluated 
+      exportWithFormatter: false // this Formatter will not be evaluated
     },
-    { id: 'start', name: 'Start', field: 'start', 
-      headerKey: 'START', 
+    { id: 'start', name: 'Start', field: 'start',
+      headerKey: 'START',
       formatter: Formatters.dateIso // this formatter will be used for the export
     },
-    { id: 'finish', name: 'Finish', field: 'start', 
-      headerKey: 'FINISH', 
+    { id: 'finish', name: 'Finish', field: 'start',
+      headerKey: 'FINISH',
       formatter: Formatters.dateIso // this formatter will be used for the export
     },
-    { id: 'completed', name: 'Completed', field: 'completed', headerKey: 'COMPLETED', 
+    { id: 'completed', name: 'Completed', field: 'completed', headerKey: 'COMPLETED',
       formatter: Formatters.checkmark,              // will display a checkmark icon in the UI
       customFormatter: Formatters.translateBoolean, // will export a translated value, e.g. in French, True would show as 'Vrai'
     }
@@ -135,7 +135,7 @@ export class MySample {
 ```
 
 ### Show Loading Process Spinner
-If you have lots of data, you might want to show a spinner telling the user that something is happening. You can use the subscribe to the event `onBeforeExportToTextFile` to start your spinner and then `onAfterExportToTextFile` to stop the spinner once the process is done. You can see a this [Grouping Example](https://ghiscoding.github.io/slickgrid-universal/#/example03) demo which has this feature enabled. 
+If you have lots of data, you might want to show a spinner telling the user that something is happening. You can use the subscribe to the event `onBeforeExportToTextFile` to start your spinner and then `onAfterExportToTextFile` to stop the spinner once the process is done. You can see a this [Grouping Example](https://ghiscoding.github.io/slickgrid-universal/#/example03) demo which has this feature enabled.
 
 ##### View
 ```html

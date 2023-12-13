@@ -5,11 +5,11 @@ The `Grid Menu` (also known as the `Hamburger Menu`) is now part of `Slickgrid-U
 Technically, it's enable by default and so you don't have to do anything to enjoy it. However if you want to customize the content of the Grid Menu, then continue reading.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example9) / [Demo ViewModel](/ghiscoding/aurelia-slickgrid/blob/master/src/examples/slickgrid/example9.ts)
+[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example9) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/tree/master/src/examples/slickgrid/example9.ts)
 
 ## Customization
 ### Column Picker
-The Grid Menu comes, by default, with a `Column Picker`. This brings an easy way to show/hide certain column(s) from the grid. This functionality was copied from the [Column Picker Plugin](/ghiscoding/aurelia-slickgrid/wiki/SlickGrid-Controls-&-Plugins#column-picker) and brought over to the Grid Menu.
+The Grid Menu comes, by default, with a `Column Picker`. This brings an easy way to show/hide certain column(s) from the grid. This functionality was copied from the [Column Picker Plugin](Column-Picker.md) and brought over to the Grid Menu.
 
 ### Custom Commands
 The Grid Menu also comes, by default, with a list of built-in custom commands (all their `positionOrder` are in the reserved range of 40 to 60)

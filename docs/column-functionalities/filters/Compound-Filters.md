@@ -6,15 +6,15 @@
   - [Filter Options (`FlatpickrOption` interface)](#filter-options-flatpickroption-interface)
 - [Compound Operator List (custom list)](#compound-operator-list-custom-list)
 - [Compound Operator Alternate Texts](#compound-operator-alternate-texts)
-- [Filter Complex Object](/ghiscoding/slickgrid-universal/wiki/Input-Filter#how-to-filter-complex-objects)
-- [Update Filters Dynamically](/ghiscoding/slickgrid-universal/wiki/Input-Filter#update-filters-dynamically)
+- [Filter Complex Object](../Input-Filter.md#how-to-filter-complex-objects)
+- [Update Filters Dynamically](../Input-Filter.md#update-filters-dynamically)
 - [How to avoid filtering when only Operator dropdown is changed?](#how-to-avoid-filtering-when-only-operator-dropdown-is-changed)
 
 ### Description
 Compound filters are a combination of 2 elements (Operator Select + Input Filter) used as a filter on a column. This is very useful to make it obvious to the user that there are Operator available and even more useful with a date picker (`Flatpickr`).
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example02) / [Demo Component](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example02.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example02) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example02.ts)
 
 ### Available Types
 There are multiple types of compound filters available
@@ -61,7 +61,7 @@ this.columnDefinitions = [
   { id: 'usDateShort', name: 'US Date Short', field: 'usDateShort',
     type: 'dateUsShort',
     filterable: true,
-    filter: { 
+    filter: {
       model: Filters.compoundDate,
 
       // you can also add an optional placeholder
@@ -80,18 +80,18 @@ this.gridOptions = {
 What if your date input (from your dataset) has a different output on the screen (UI)?
 In that case, you will most probably have a Formatter and type representing the input type, we also provided an `outputType` that can be used to deal with that case.
 
-For example, if we have an input date in UTC format and we want to display a Date ISO format to the screen (UI) in the date picker. 
+For example, if we have an input date in UTC format and we want to display a Date ISO format to the screen (UI) in the date picker.
 
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
-this.columnDefinitions = [      
+this.columnDefinitions = [
   { id: 'title', name: 'Title', field: 'title' },
   { id: 'description', name: 'Description', field: 'description', filterable: true },
-  { id: 'utcDate', name: 'UTC Date', field: 'utcDate', 
+  { id: 'utcDate', name: 'UTC Date', field: 'utcDate',
     type: 'dateUtc',           // format used in the dataset (input)
     formatter: Formatters.dateTimeIso, // format to show in the cell on each row (formatter)
     outputType: 'dateTimeIso', // format to show in the date picker
-    filterable: true, filter: { model: Filters.compoundDate } 
+    filterable: true, filter: { model: Filters.compoundDate }
   }
 ];
 
@@ -126,7 +126,7 @@ this.gridOptions = {
 ```
 
 #### Filter Options (`FlatpickrOption` interface)
-All the available options that can be provided as `filterOptions` to your column definitions can be found under this [FlatpickrOption interface](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/flatpickrOption.interface.ts) and you should cast your `filterOptions` to that interface to make sure that you use only valid options of the [Flatpickr](https://flatpickr.js.org/) library. 
+All the available options that can be provided as `filterOptions` to your column definitions can be found under this [FlatpickrOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/flatpickrOption.interface.ts) and you should cast your `filterOptions` to that interface to make sure that you use only valid options of the [Flatpickr](https://flatpickr.js.org/) library.
 
 ```ts
 filter: {
@@ -148,7 +148,7 @@ this.columnDefinitions = [
     type: 'dateUtc',
     formatter: Formatters.dateTimeIsoAmPm,
     outputType: 'dateTimeIsoAmPm',
-    filterable: true, filter: { 
+    filterable: true, filter: {
       model: Filters.compoundSlider,
       // here is our custom list that will override default list
       compoundOperatorList: [
@@ -163,7 +163,7 @@ this.columnDefinitions = [
 ```
 
 ### Compound Operator Alternate Texts
-You can change any of the compound operator text or description shown in the select dropdown list by using `compoundOperatorAltTexts` to provide alternate texts. 
+You can change any of the compound operator text or description shown in the select dropdown list by using `compoundOperatorAltTexts` to provide alternate texts.
 
 **Note** make sure to not use more than 2 or 3 characters for the operator text, exceeding that will require CSS style changes.
 
@@ -180,21 +180,21 @@ this.gridOptions = {
 ![image](https://github.com/ghiscoding/slickgrid-universal/assets/643976/8f5cb431-d148-4c78-92fc-f1e3e48e64c4)
 
 ### How to avoid filtering when only Operator dropdown is changed?
-Starting with version `>=2.1.x`, you can now enable `skipCompoundOperatorFilterWithNullInput` that can be provided to your Grid Options (or via global grid options) and/or your Column Definition. 
+Starting with version `>=2.1.x`, you can now enable `skipCompoundOperatorFilterWithNullInput` that can be provided to your Grid Options (or via global grid options) and/or your Column Definition.
 
-What will this option do really? 
-- skip filtering (in other words do nothing) will occur when: 
+What will this option do really?
+- skip filtering (in other words do nothing) will occur when:
   - Operator select dropdown (left side) is changed without any value provided in the filter input (right).
 - start filtering when:
   - Operator select dropdown is changed **and** we have a value provided in the filter input, it will start filtering
   - Operator select dropdown is empty **but** we have a value provided in the filter input, it will start filtering
- 
-> **Note** the Compound Date Filter is the only filter that has this option enabled by default. 
+
+> **Note** the Compound Date Filter is the only filter that has this option enabled by default.
 
 ###### Code
 ```ts
-this.columnDefinitions = [{ 
-  id: 'name', field: 'name', 
+this.columnDefinitions = [{
+  id: 'name', field: 'name',
   filter: {
     model: Filters.compoundInput,
     skipCompoundOperatorFilterWithNullInput: true // change via column def, always has higher specificity over grid options

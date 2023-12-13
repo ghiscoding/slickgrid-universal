@@ -19,7 +19,7 @@
   - [Filter Options (`MultipleSelectOption` interface)](#filter-options-multipleselectoption-interface)
   - [Display shorter selected label text](#display-shorter-selected-label-text)
 - [Query against a different field](#query-against-another-field-property)
-- [Update Filters Dynamically](/ghiscoding/slickgrid-universal/wiki/Input-Filter#update-filters-dynamically)
+- [Update Filters Dynamically](Input-Filter.md#update-filters-dynamically)
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example10) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example10.ts)
@@ -47,7 +47,7 @@ There are 3 types of select filter
   - this one is less recommended, it is a simple and plain select dropdown. There are no styling applied and will be different in every browser. If you want a more consistent visual UI, it's suggested to use the other 2 filters (`multipleSelect` or `singleSelect`)
 
 ### SASS Styling
-You can change the `multipleSelect` and `singleSelect` styling with SASS [variables](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss#L736) for styling. For more info on how to use SASS in your project, read the [Wiki - Styling](/ghiscoding/slickgrid-universal/wiki/Styling)
+You can change the `multipleSelect` and `singleSelect` styling with SASS [variables](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss#L736) for styling. For more info on how to use SASS in your project, read the [Wiki - Styling](/ghiscoding/slickgrid-universal/wiki/Styling)
 
 ### How to use Select Filter
 Simply set the flag `filterable` to True and and enable the filters in the Grid Options. Here is an example with a full column definition:
@@ -85,10 +85,10 @@ If you want to load the grid with certain default filter(s), you can use the fol
 - `searchTerms` (array of values)
 
 #### Note
-Even though the option of `searchTerms` it is much better to use the more powerful `presets` grid options, please refer to the [Grid State & Presets](/ghiscoding/slickgrid-universal/wiki/Grid-State-&-Preset#grid-presets) for more info.
+Even though the option of `searchTerms` it is much better to use the more powerful `presets` grid options, please refer to the [Grid State & Presets](../../grid-functionalities/Grid-State-&-Preset#grid-presets) for more info.
 
 **NOTE**
-If you also have `presets` in the grid options, then your `searchTerms` will be ignored completely (even if it's a different column) since `presets` have higher priority over `searchTerms`. See [Grid State & Grid Presets](/ghiscoding/slickgrid-universal/wiki/Grid-State-&-Preset) from more info.
+If you also have `presets` in the grid options, then your `searchTerms` will be ignored completely (even if it's a different column) since `presets` have higher priority over `searchTerms`. See [Grid State & Grid Presets](../../grid-functionalities/Grid-State-&-Preset) from more info.
 
 #### Sample
 ```ts
@@ -192,7 +192,7 @@ this.columnDefinitions = [
 ```
 
 ### How to filter empty values?
-By default you cannot filter empty dataset values (unless you use a `multipleSelect` Filter). You might be wondering, why though? By default an empty value in a `singleSelect` Filter is equal to returning **all values**. You could however use this option `emptySearchTermReturnAllValues` set to `false` to add the ability to really search only empty values. 
+By default you cannot filter empty dataset values (unless you use a `multipleSelect` Filter). You might be wondering, why though? By default an empty value in a `singleSelect` Filter is equal to returning **all values**. You could however use this option `emptySearchTermReturnAllValues` set to `false` to add the ability to really search only empty values.
 
 Note: the defaults for single & multiple select filters are different
 - single select filter default is `emptySearchTermReturnAllValues: true`
@@ -431,8 +431,8 @@ If you find that the HTML that you passed is being sanitized and you wish to cha
 In some cases a blank entry at the beginning of the collection could be useful, the most common example for this is to use the first option as a blank entry to tell our Filter to show everything. So for that we can use the `addBlankEntry` flag in `collectionOptions
 
 ```typescript
-this.columnDefinitions = [      
-  { id: 'duration', name: 'Duration', field: 'duration', 
+this.columnDefinitions = [
+  { id: 'duration', name: 'Duration', field: 'duration',
     filter: {
       collection: [yourCollection],
       collectionOptions: {
@@ -448,14 +448,14 @@ this.columnDefinitions = [
 We can optionally add a custom entry at the beginning of the collection, the most common example for this is to use the first option as a blank entry to tell our Filter to show everything. So for that we can use the `addCustomFirstEntry` or `addCustomLastEntry` flag in `collectionOptions
 
 ```typescript
-this.columnDefinitions = [      
-  { id: 'duration', name: 'Duration', field: 'duration', 
+this.columnDefinitions = [
+  { id: 'duration', name: 'Duration', field: 'duration',
     filter: {
       collection: [yourCollection],
       collectionOptions: {
         addCustomFirstEntry: { value: '', label: '--n/a--' }
 
-        // or at the end 
+        // or at the end
         addCustomLastEntry: { value: 'end', label: 'end' }
       },
       model: Filters.multipleSelect
@@ -492,7 +492,7 @@ this.columnDefinitions = [
     filterable: true,
     filter: {
       model: Filters.multipleSelect,
-      
+
       // this async call will return the collection inside the response object in this format
       // { data: { myCollection: [ /*...*/ ] } }
       collectionAsync: this.http.fetch('api/data/pre-requisites'),
@@ -554,7 +554,7 @@ this.columnDefinitions = [
 ```
 
 ### Filter Options (`MultipleSelectOption` interface)
-All the available options that can be provided as `filterOptions` to your column definitions can be found under this [multipleSelectOption interface](/ghiscoding/slickgrid-universal/tree/master/packages/common/src/interfaces/multipleSelectOption.interface.ts) and you should cast your `filterOptions` to that interface to make sure that you use only valid options of the `multiple-select.js` library. 
+All the available options that can be provided as `filterOptions` to your column definitions can be found under this [multipleSelectOption interface](/ghiscoding/slickgrid-universal/tree/master/packages/common/src/interfaces/multipleSelectOption.interface.ts) and you should cast your `filterOptions` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
 
 ```ts
 filter: {
@@ -660,15 +660,3 @@ this.columnDefinitions = [
   }
 ];
 ```
-
-### UI Sample
-##### Filters.multipleSelect
-![Multiple-Select](/ghiscoding/aurelia-slickgrid/blob/master/screenshots/multipleSelectFilter.png)
-
-##### Filters.singleSelect
-![Single-Select](/ghiscoding/aurelia-slickgrid/blob/master/screenshots/singleFilter.png)
-
-##### Filters.select (regular dropdown select)
-This one is less recommended, it is a plain and simple select dropdown. Depending on your browser, the styling is expected to be different. If you want a more consistent styling, then it's suggested to use the other 2 filters (`multipleSelect` or `singleSelect`)
-
-![Select](/ghiscoding/aurelia-slickgrid/blob/master/screenshots/selectFilter.png)

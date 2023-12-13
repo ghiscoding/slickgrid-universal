@@ -33,6 +33,3 @@ export class MyApp {
   }
 }
 ```
-
-### Usage
-There's already all the necessary information on how to use this on the [Wiki - Grid & DataView Events](/ghiscoding/slickgrid-universal/wiki/Grid-&-DataView-Events#1-example-with-delegate-event-dispatch-asgonx) page, so I suggest you to head over to that Wiki page on how to use the `SlickGrid` and `DataView` objects

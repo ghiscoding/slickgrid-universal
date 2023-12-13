@@ -21,7 +21,7 @@
 - [Disabling Form Inputs (readonly)](#disabling-form-inputs-readonly)
 
 ### Demo
-[Demo](https://ghiscoding.github.io/slickgrid-universal/#/example12) / [Demo Component](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example12.ts)
+[Demo](https://ghiscoding.github.io/slickgrid-universal/#/example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example12.ts)
 
 ### Description
 The Composite Editor Modal allows you to (create, clone, edit, mass update & mass selection changes). I believe the SlickGrid author names it as Composite Editor because it loops through each editor of all the column definitions and displays them in one composed form, hence the name Composite Editors. Also note that each editor are pulled directly from the column definition itself (their column title as well), so for example if you use `Editors.longText` then you will have a text area input associated to that field with the appropriate input label.
@@ -36,7 +36,7 @@ The following 5 modal types (6 if we include the `auto-mass`) are available (via
     - most user find this one approach confusing, our users prefer to have 2 separate buttons (which is a lot less confusing)
 
 ## Create New Item
-You can Create a new row/item via the composite editor modal window, it will display all editors as blank input field. Also note that this feature requires the `enableAddRow` grid option to be enabled or else it will throw an error. 
+You can Create a new row/item via the composite editor modal window, it will display all editors as blank input field. Also note that this feature requires the `enableAddRow` grid option to be enabled or else it will throw an error.
 
 Note: the new item will be added to the top of the grid by default, if you wish to change that you can use `insertOptions`. The options are the same as calling `addItem()` from the Grid Service, so if you wish to add the new item to the bottom then you use this `insertOptions: { position: 'bottom' }`
 
@@ -63,7 +63,7 @@ example class MyCompositeDemo {
       enableCompositeEditor: true,
       registerExternalResources: [new ExcelExportService(), this.compositeEditorInstance],
     };
-  }  
+  }
 
   openCompositeModal(modalType: CompositeEditorModalType = 'create') {
     // you can use a switch/case when using the Composite Modal for more than 1 modal type
@@ -73,7 +73,7 @@ example class MyCompositeDemo {
       headerTitle: modalTitle,
       modalType,
       // insertNewId: 1234, // you can provide a custom Id (defaults to last Id+1)
-      // insertOptions: { position: 'bottom' }, // if you wish to add the item to the bottom (defaults to top of the grid) 
+      // insertOptions: { position: 'bottom' }, // if you wish to add the item to the bottom (defaults to top of the grid)
       onError: (error) => alert(error.message), // you should define how to deal with error coming from the modal
 
       // you can optionally provide an async callback method when dealing with a backend server
@@ -100,7 +100,7 @@ example class MyCompositeDemo {
       enableCellNavigation: true,
       enableCompositeEditor: true,
     };
-  }  
+  }
 
   openCompositeModal(modalType: CompositeEditorModalType = 'create') {
     // you can use a switch/case when using the Composite Modal for more than 1 modal type
@@ -122,23 +122,23 @@ example class MyCompositeDemo {
 ```
 
 ## Clone Item
-You can Clone an existing row/item via the composite editor modal window (basically allows you to copy a row but also to make edits before cloning it). The setup is nearly identical to the Create Item, just make sure to display appropriate modal title. Also note that this feature requires the `enableAddRow` grid option to be enabled or else it will throw an error. 
+You can Clone an existing row/item via the composite editor modal window (basically allows you to copy a row but also to make edits before cloning it). The setup is nearly identical to the Create Item, just make sure to display appropriate modal title. Also note that this feature requires the `enableAddRow` grid option to be enabled or else it will throw an error.
 
-Refer to the [Create Item](/ghiscoding/slickgrid-universal/wiki/Composite-Editor-Modal#create-new-item) section for code sample
+Refer to the [Create Item](#create-new-item) section for code sample
 
 Just a side note on the UI, a good way to use this composite editor feature is probably with a [Cell Menu](/ghiscoding/slickgrid-universal/wiki/Cell-Menu) (aka Action Menu)
 
 ![image](https://user-images.githubusercontent.com/643976/106016610-a03dec00-608d-11eb-80bd-1f6e0a404eb5.png)
 
 ## Edit Item
-You can Edit an existing row/item via the composite editor modal window. The setup is nearly identical to the Create Item, just make sure to display appropriate modal title. 
+You can Edit an existing row/item via the composite editor modal window. The setup is nearly identical to the Create Item, just make sure to display appropriate modal title.
 
-Refer to the [Create Item](/ghiscoding/slickgrid-universal/wiki/Composite-Editor-Modal#create-new-item) section for code sample
+Refer to the [Create Item](#create-new-item) section for code sample
 
 Similar to the Clone Item, a good way to use this composite editor feature is probably with a [Cell Menu](/ghiscoding/slickgrid-universal/wiki/Cell-Menu) (aka Action Menu)
 
 ## Mass Update
-Mass Update allows you to apply changes (from the modal form) to the entire dataset, internally it will apply the changes to all the items in the grid via the DataView. However, you could also choose to refresh the grid yourself after calling the backend and if you choose to do that then you'll want to do that via the `onSave` async callback (once backend is done, refresh the grid). 
+Mass Update allows you to apply changes (from the modal form) to the entire dataset, internally it will apply the changes to all the items in the grid via the DataView. However, you could also choose to refresh the grid yourself after calling the backend and if you choose to do that then you'll want to do that via the `onSave` async callback (once backend is done, refresh the grid).
 
 Note however that there is a subtle difference compare to the Create Item action, you need to specifically tag which column will show up in the Mass Update and you need to do that by adding `massUpdate: true` flag inside the `editor` property of each column definition that you wish to be included in the form.
 
@@ -159,8 +159,8 @@ example class MyCompositeDemo {
   prepareGrid() {
     this.columnDefinitions = [
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', 
-        type: FieldType.number, sortable: true, filterable: true, 
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete',
+        type: FieldType.number, sortable: true, filterable: true,
         filter: { model: Filters.compoundSlider, operator: '>=' },
         editor: {
           model: Editors.slider,
@@ -177,7 +177,7 @@ example class MyCompositeDemo {
        enableCompositeEditor: true,
        registerExternalResources: [new ExcelExportService(), this.compositeEditorInstance],
     };
-  }  
+  }
 
   openCompositeModal(modalType: CompositeEditorModalType = 'mass-update') {
     // you can use a switch/case when using the Composite Modal for more than 1 modal type
@@ -236,7 +236,7 @@ example class MyCompositeDemo {
 ## Mass Selection
 Similar to the Mass Update but apply changes only on the selected rows. The setup is nearly identical to the Mass Update, just make sure to display appropriate modal title. Also note that you also need to add `massUpdate: true` flag inside the `editor` property of each column definition that you wish to be included in the Mass Selection changes form.
 
-Refer to the [Mass Update](/ghiscoding/slickgrid-universal/wiki/Composite-Editor-Modal#mass-update) section for code sample.
+Refer to the [Mass Update](#mass-update) section for code sample.
 
 `auto-mass` option: If you decide to use Mass Update and Mass Selection and wish to only expose 1 button to do the action and let the system decide if it's doing a Mass Update or a Mass Selection change, you can use the modal type `auto-mass` (if it detect that some rows are selected it will use Mass Selection or else Mass Update). From our experience, user prefer to expose the 2 separate action buttons (less confusion), but this for you to decide, you have the option.
 
@@ -296,7 +296,7 @@ The available error `code` are the following:
 - `ROW_SELECTION_REQUIRED`: with default text of `"You must select some rows before trying to apply new value(s)."`
 
 ### onSave
-The `onSave` callback function is optional and is very useful whenever you have a backend API (which I assume is most of the time). This callback will provide you with 3 arguments `(formValues, selection, dataContext)` 
+The `onSave` callback function is optional and is very useful whenever you have a backend API (which I assume is most of the time). This callback will provide you with 3 arguments `(formValues, selection, dataContext)`
 1. `formValues`: all the input values changed in the modal window form
 2. `selection`: selected rows (commonly used with Mass Update/Mass Selection)
 3. `dataContext`: item data context object (commonly used with Create/Clone/Edit)
@@ -317,7 +317,7 @@ this.compositeEditorInstance.openDetails({
         resolve(success);
       } catch (backendError) {
         // when your backend API throws an error, we can reject the promise and that will show as a validation summary on top of the modal
-        reject(backendError); 
+        reject(backendError);
       }
     });
   }
@@ -325,7 +325,7 @@ this.compositeEditorInstance.openDetails({
 ```
 
 ##### Mass Selection changes demo
-Note that the `formValues` is an object with a very simple structure, the object properties are the column `id` with their new values. For example if we changed the column id of `percentCompleted` with a value of 100% and we also changed another column id `isCompleted` to `true`, then our `formValues` will be: 
+Note that the `formValues` is an object with a very simple structure, the object properties are the column `id` with their new values. For example if we changed the column id of `percentCompleted` with a value of 100% and we also changed another column id `isCompleted` to `true`, then our `formValues` will be:
 
 `const formValues = { percentCompleted: 100, isCompleted: true };`
 
@@ -361,7 +361,7 @@ this.compositeEditorInstance.openDetails({
   headerTitle: 'My Modal',
   modalType,
 
-  // you can validate each row item dataContext before applying a Mass Update/Selection changes 
+  // you can validate each row item dataContext before applying a Mass Update/Selection changes
   // via this validation callback (returning false would skip the change)
   validateMassUpdateChange: (fieldName, dataContext, formValues) => {
     const levelComplex = this.complexityLevelList.find(level => level.label === 'Complex');
@@ -371,7 +371,7 @@ this.compositeEditorInstance.openDetails({
     }
     return true; //expectation met, apply the mass change
   },
-  
+
   // you can optionally provide an async callback method when dealing with a backend server
   onSave: (formValues, selection, dataContextOrUpdatedDatasetPreview) => {
      // simulate a backend server call which returns true (successful) after 30sec
@@ -493,7 +493,7 @@ export class GridExample {
     const columnDef = args.column as Column;
     const formValues = args.formValues;
 
-    // you can also change some editor options 
+    // you can also change some editor options
     // not all Editors supports this functionality, so far only these Editors are supported: AutoComplete, Date, Single/Multiple Select
     if (columnDef.id === 'completed') {
       this.compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', true); // multiple-select.js, show filter in dropdown
@@ -525,7 +525,7 @@ export class GridExample {
   prepareGrid() {
     this.columnDefinitions = [
       {
-        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: FieldType.number, 
+        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: FieldType.number,
         editor: { model: Editors.float, massUpdate: true, decimal: 2, required: true },
       },
       {
@@ -555,7 +555,7 @@ export class GridExample {
     const formValues = args.formValues;
 
     // you can dynamically change a select dropdown collection,
-    // if the collection already got changed but you just need to re-render the editor 
+    // if the collection already got changed but you just need to re-render the editor
     // you can just call the `renderDomElement()` method to refresh the dropdown list
     if (columnDef.id === 'duration') {
       const editor = this.compositeEditorInstance.editors['percentComplete'] as SelectEditor;
@@ -582,7 +582,7 @@ export class GridExample {
   prepareGrid() {
     this.columnDefinitions = [
       {
-        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: FieldType.number, 
+        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: FieldType.number,
         editor: { model: Editors.float, massUpdate: true, decimal: 2, required: true },
       },
       {
@@ -645,7 +645,7 @@ checkItemIsEditable(dataContext: any, columnDef: Column, grid: SlickGrid) {
      // ... some other cases
     }
   }
-  
+
   return isEditable;
 }
 ```
@@ -680,7 +680,7 @@ checkItemIsEditable(dataContext: any, columnDef: Column, grid: SlickGrid, target
     // ... do grid checks
     // isEditable = true;
   }
-  
+
   return isEditable;
 }
 ```

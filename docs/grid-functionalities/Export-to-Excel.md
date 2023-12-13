@@ -12,19 +12,19 @@
 - [UI Sample](#ui-sample)
 
 ### Description
-You can Export to Excel, it will create an Excel file with the `.xlsx` default extension (you can also change it to be `.xls`). If you wish to export to CSV or other delimiter like Tab Delimited, you can refer to the other [Wiki - Export to File](/ghiscoding/slickgrid-universal/wiki/Export-to-File).
+You can Export to Excel, it will create an Excel file with the `.xlsx` default extension (you can also change it to be `.xls`). If you wish to export to CSV or other delimiter like Tab Delimited, you can refer to the other [Wiki - Export to File](Export-to-Text-File.md).
 
 **NOTE:** this is an opt-in Service, you must download the necessary Service from `@slickgrid-universal/excel-export` and instantiate it in your grid options via `registerExternalResources`, see multiple examples below.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example02) / [Demo Component](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example02.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example02) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example02.ts)
 
 ### Grid Menu (hamburger menu)
 The Grid Menu already has the "Export to Excel" enabled by default, so you will see it automatically in your Grid Menu. You still have the options to show/hide from the Grid Menu if you wish
 - `hideExportExcelCommand` false by default, so it's optional
 
 ### Grid Options
-You can set certain options for the entire grid, for example if you set `exportWithFormatter` it will evaluate the Formatter (when exist) output to export each cell. The Grid Menu also has the "Export to Excel" enabled by default. 
+You can set certain options for the entire grid, for example if you set `exportWithFormatter` it will evaluate the Formatter (when exist) output to export each cell. The Grid Menu also has the "Export to Excel" enabled by default.
 ```ts
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 
@@ -45,10 +45,10 @@ initializeGrid() {
 ### Column Definition and Options
 #### Column Definition
 - `excludeFromExport` flag, which as it's name suggest will skip that column from the export
-- `exportWithFormatter` flag (same as Grid Options but this flag defined in the Column Definition has higher priority). 
-  - So basically, if `exportWithFormatter` is set to True in the `excelExportOptions` of the Grid Options, but is set to False in the Column Definition, then the result will be False and will not evaluate it's Formatter. 
+- `exportWithFormatter` flag (same as Grid Options but this flag defined in the Column Definition has higher priority).
+  - So basically, if `exportWithFormatter` is set to True in the `excelExportOptions` of the Grid Options, but is set to False in the Column Definition, then the result will be False and will not evaluate it's Formatter.
 - `exportCustomFormatter` will let you choose a different Formatter when exporting
-  - For example, you might have `formatter: Formatters.checkmark` but you want to see a boolean translated value, in this case you would define an extra property of `customFormatter: Formatters.translateBoolean`. 
+  - For example, you might have `formatter: Formatters.checkmark` but you want to see a boolean translated value, in this case you would define an extra property of `customFormatter: Formatters.translateBoolean`.
 - set `sanitizeDataExport` to remove any HTML/Script code from being export. For example if your value is `<span class="fa fa-check">True</span>` will export `True` without any HTML (data is sanitized).
    - this flag can be used in the Grid Options (all columns) or in a Column Definition (per column).
 
@@ -57,8 +57,8 @@ Inside the column definition there are couple of flags you can set in `excelExpo
 - `addGroupIndentation` flag, enabled by default will add indentation and collapsed/expanded symbols when using grouping feature
    - `groupCollapsedSymbol` will let you choose a different group collapsed symbol, it must be a unicode string (for example "\u25B9" or "\u25B7")
    - `groupExpandedSymbol` will let you choose a different group collapsed symbol, it must be a unicode string (for example "\u25BF" or "\u25BD")
-- `exportWithFormatter` flag (same as Grid Options but this flag defined in the Column Definition has higher priority). 
-  - So basically, if `exportWithFormatter` is set to True in the `excelExportOptions` of the Grid Options, but is set to False in the Column Definition, then the result will be False and will not evaluate it's Formatter. 
+- `exportWithFormatter` flag (same as Grid Options but this flag defined in the Column Definition has higher priority).
+  - So basically, if `exportWithFormatter` is set to True in the `excelExportOptions` of the Grid Options, but is set to False in the Column Definition, then the result will be False and will not evaluate it's Formatter.
 - `filename` name of the Excel file export (without extension)
 - `format` file extension format `.xls`/`.xlsx`
 - `sheetName` allows you to change the Excel Sheet Name (defaults to "Sheet1")
@@ -76,22 +76,22 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 
 initializeGrid() {
   this.columnDefinitions = [
-    { id: 'id', name: 'ID', field: 'id', 
+    { id: 'id', name: 'ID', field: 'id',
       excludeFromExport: true // skip the "id" column from the export
     },
     { id: 'title', name: 'Title', field: 'id', headerKey: 'TITLE',
       formatter: myCustomTitleFormatter,
-      exportWithFormatter: false // this Formatter will not be evaluated 
+      exportWithFormatter: false // this Formatter will not be evaluated
     },
-    { id: 'start', name: 'Start', field: 'start', 
-      headerKey: 'START', 
+    { id: 'start', name: 'Start', field: 'start',
+      headerKey: 'START',
       formatter: Formatters.dateIso // this formatter will be used for the export
     },
-    { id: 'finish', name: 'Finish', field: 'start', 
-      headerKey: 'FINISH', 
+    { id: 'finish', name: 'Finish', field: 'start',
+      headerKey: 'FINISH',
       formatter: Formatters.dateIso // this formatter will be used for the export
     },
-    { id: 'completed', name: 'Completed', field: 'completed', headerKey: 'COMPLETED', 
+    { id: 'completed', name: 'Completed', field: 'completed', headerKey: 'COMPLETED',
       formatter: Formatters.checkmark,              // will display a checkmark icon in the UI
       customFormatter: Formatters.translateBoolean, // will export a translated value, e.g. in French, True would show as 'Vrai'
     }
@@ -112,7 +112,7 @@ What we can see from the example, is that it will use all Formatters (when exist
 
 **NOTE** now deprecated, please use [Custom Cell Styling](#custom-cell-styling) instead
 
-You can define a custom Excel column width (the width Excel's own width which is not in pixel). You can define a custom width per column (in your column definitions) and/or for the entire grid (in your grid options). 
+You can define a custom Excel column width (the width Excel's own width which is not in pixel). You can define a custom width per column (in your column definitions) and/or for the entire grid (in your grid options).
 
 #### Per Column
 You could set a custom width per column
@@ -149,10 +149,10 @@ this.gridOptions = {
 };
 ```
 
-### Provide a Custom Header Title 
+### Provide a Custom Header Title
 You can optionally add a custom header title, you can see the UI Sample below, (that will be shown on first row of the Excel file) through the `customExcelHeader` callback method. We use the library `Excel-Builder` to create the export, however note that this library is no longer supported (but still the best) and the documentation site no longer exist but you can find all info on [Web Archive - Excel Builder](http://web.archive.org/web/20160907052007/http://excelbuilderjs.com/cookbook/fontsAndColors.html)
 
-The example below shows a title which uses a merged cell from "B1" to "D1" with a red bold color (pay attention to the color code, you need to add an extra "FF" in front of an html color code). 
+The example below shows a title which uses a merged cell from "B1" to "D1" with a red bold color (pay attention to the color code, you need to add an extra "FF" in front of an html color code).
 #### ViewModel
 ```ts
 export class MyExample {
@@ -190,7 +190,7 @@ export class MyExample {
 ```
 
 ### Export from a Button Click Event
-You can use the export from the Grid Menu and/or you can simply create your own buttons to export. 
+You can use the export from the Grid Menu and/or you can simply create your own buttons to export.
 #### View
 ```html
 <button class="btn btn-default btn-sm" click.delegate="exportToExcel()">
@@ -199,7 +199,7 @@ You can use the export from the Grid Menu and/or you can simply create your own 
 ```
 
 ##### ViewModel
-The code below is just an example and it can be configured in many ways, see the `excelExportOptions`. 
+The code below is just an example and it can be configured in many ways, see the `excelExportOptions`.
 ```ts
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 
@@ -223,7 +223,7 @@ export class MySample {
 ```
 
 ### Show Loading Process Spinner
-If you have lots of data, you might want to show a spinner telling the user that something is happening. You can use the subscribe to the event `onBeforeExportToExcel` to start your spinner and then `onAfterExportToExcel` to stop the spinner once the process is done. You can see a this [Grouping Example](https://ghiscoding.github.io/slickgrid-universal/#/example03) demo which has this feature enabled. 
+If you have lots of data, you might want to show a spinner telling the user that something is happening. You can use the subscribe to the event `onBeforeExportToExcel` to start your spinner and then `onAfterExportToExcel` to stop the spinner once the process is done. You can see a this [Grouping Example](https://ghiscoding.github.io/slickgrid-universal/#/example03) demo which has this feature enabled.
 
 ##### View
 ```html
@@ -248,14 +248,14 @@ export class MyExample() {
 ```
 
 ### UI Sample
-The Export to Excel handles all characters quite well, from Latin, to Unicode and even Unicorn emoji, it all works on all browsers (`Chrome`, `Firefox`, even `IE11`, I don't have access to older versions). Here's a demo 
+The Export to Excel handles all characters quite well, from Latin, to Unicode and even Unicorn emoji, it all works on all browsers (`Chrome`, `Firefox`, even `IE11`, I don't have access to older versions). Here's a demo
 
 ![image](https://user-images.githubusercontent.com/643976/67049215-b1b2ed00-f103-11e9-8119-04f84d3e45c2.png)
 
 ### Custom Cell Styling
 You can customize the cell styling via `excelExportOptions` and `groupTotalsExcelExportOptions`
 
-Please note the following 
+Please note the following
 - custom stylings & formats are applied on the entire column (not by cell).
 - custom stylings will override any format that might have been detected by the system
 - adding more custom stylings can impact file download time (especially on large dataset)
@@ -319,7 +319,7 @@ Below is a preview of the previous customizations shown above
 
 ![image](https://user-images.githubusercontent.com/643976/208590003-b637dcda-5164-42cc-bfad-e921a22c1837.png)
 
-### Cell Value Parser 
+### Cell Value Parser
 This is not recommended but if you have no other ways, you can also provide a cell value parser function callback to override what the system detected.
 
 ```ts
@@ -333,12 +333,12 @@ this.columnDefinitions = [
     excelExportOptions: {
       valueParserCallback: (data, col, excelFormatterId, excelStylesheet) => {
         // when returned as string, it will skip Excel style format
-        return `Total: ${data}`; 
+        return `Total: ${data}`;
 
         // to keep Excel style format, you can use detected "excelFormatterId" OR use "excelStylesheet.createFormat()"
         return {
           value: isNaN(data as number) ? data : +data,
-          metadata: { style: excelFormatterId } // the excelFormatterId was created internally from the custom format 
+          metadata: { style: excelFormatterId } // the excelFormatterId was created internally from the custom format
         };
       }
     },

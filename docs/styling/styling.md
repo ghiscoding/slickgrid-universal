@@ -5,7 +5,7 @@
 - [Using CSS Variables (CSS hooks in LWC)](#using-css-variables-instead-of-sass)
 - [Using SVG with SASS](#using-custom-svgs-with-sass)
 - [How to change SVG color?](#how-to-change-svg-color)
-- [List of included Material SVG Icons](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/material-svg-icons.scss)
+- [List of included Material SVG Icons](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/material-svg-icons.scss)
   - We only included the most popular icons, about 100 out of the 5000+ available [Material Design icons](https://materialdesignicons.com/)
   - [Icon List & Utilities Demo](https://ghiscoding.github.io/slickgrid-universal/#/icons)
 - [SVG Colors CSS Classes](#svg-colors---css-classes)
@@ -48,7 +48,7 @@ $slick-row-mouse-hover-color: lightgreen;
 ```
 
 ### Using CSS Variables _(instead of SASS)_
-You could change the SlickGrid styling with your own customization using [CSS Variables](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties). The variables that you can use (over 800 of them) are all predefined as SASS variables in the [_variables.scss](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file, you will simply have to rename the `$slick-` prefix with a `--slick-` prefix to the variable name to use them as CSS Variables. To be clear, you don't need SASS but the variables names were all declared as SASS and that is what the lib will use internally but you can optionally use them all as plain CSS Variables.
+You could change the SlickGrid styling with your own customization using [CSS Variables](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties). The variables that you can use (over 800 of them) are all predefined as SASS variables in the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file, you will simply have to rename the `$slick-` prefix with a `--slick-` prefix to the variable name to use them as CSS Variables. To be clear, you don't need SASS but the variables names were all declared as SASS and that is what the lib will use internally but you can optionally use them all as plain CSS Variables.
 
 For example, if we take the following 3 SASS variables (`$slick-header-menu-display`, `$slick-primary-color-dark` and `$slick-header-filter-row-border-bottom`) we can use the CSS Variables equivalent as the following
 
@@ -64,7 +64,7 @@ For example, if we take the following 3 SASS variables (`$slick-header-menu-disp
 **NOTE:** you could use `:host` to only change current grid styling, **however** there are many DOM elements that are appended to the Document `body` (Grid Menu, Column Picker, Select Filter/Editor, Context Menu, ...) and the style **will not** be applied with `:host` and so in most cases you would want to use `:root` to make a global change which will also work with elements appended to the `body`. Also note that `:root` is not available in Salesforce LWC, so you won't be able to style everything in Salesforce.
 
 ### Using Custom SVGs with SASS
-You could use Custom SVGs and create your own Theme and/or a different set of SVG Icons, each of the icons used in Slickgrid-Universal has an associated SASS variables which allow you to override any one of them. All grid of the icons are loaded with the `content` property of the `:before` pseudo (for example, see this [line](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/slick-bootstrap.scss#L322) and the difference between Font and SVG is simple, if you want to use a Font then you use the Font unicode but if you want an SVG then you use a `url` with `svg+xml` as shown below. 
+You could use Custom SVGs and create your own Theme and/or a different set of SVG Icons, each of the icons used in Slickgrid-Universal has an associated SASS variables which allow you to override any one of them. All grid of the icons are loaded with the `content` property of the `:before` pseudo (for example, see this [line](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/slick-bootstrap.scss#L322) and the difference between Font and SVG is simple, if you want to use a Font then you use the Font unicode but if you want an SVG then you use a `url` with `svg+xml` as shown below.
 
 ##### with Font
 ```scss
@@ -128,13 +128,13 @@ Note that even though the code looks smaller and more human readable, in reality
 To help with all of this, we added a few icon colors (basically took the same colors used by Bootstrap [here](https://getbootstrap.com/docs/4.5/utilities/colors/) using CSS `filter` and we also added a `light` and `dark` shades for of each colors (except `color-light`, `color-dark` since there's no need), they both use a 6% lighter/darker shades (you can override the shade with `$color-lighten-percentage` and the same for darken). These colors can be used with the `color-X` (for example `color-primary`), also note that the primary color will follow your `$slick-primary-color` that you might have override (it could also be different in each styling theme, shown below is the Salesforce theme colors). If you find that the colors are not exactly the colors you're looking for, we've also took some colors taken from [UiKit](https://getuikit.com/) and tagged them as `color-alt-X`.
 
 **NOTE:** You can use these colors on Icon and/or Text **but** remember that we're using CSS `filter` here which is very different compare to using regular CSS `color` or `background-color`.
- 
+
 **NOTE 2:** The `colors.scss` is **only** included in the Material and Salesforce Themes since those are the only 2 themes currently using SVGs. If you wish to use these colors then simply add the necessary css/scss file.
 
 ![image](https://user-images.githubusercontent.com/643976/90913834-cce92b80-e3aa-11ea-8720-3be5b171288b.png)
 
 ```scss
-// SASS colors 
+// SASS colors
 $color-primary: $slick-primary-color;
 $color-secondary: #6c757d;
 $color-success: #28a745;

@@ -5,13 +5,13 @@
 - [Animated Gif Demo](#animated-gif-demo)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example04) / [Demo Component](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example04.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example04) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example04.ts)
 
 ### Introduction
 One of the requested features, columns or rows pinning (aka frozen). You can pin 1 or more Columns and/or 1 or more Rows. Columns can only be pinned starting from the left side, while Rows can be pinned starting from the Top (default) or Bottom. You can also change the pinning dynamically with `setOptions()`.
 
 ## Columns/Rows Pinning basic
-To set a pinning for the entire duration of the grid, simply use the Grid Options `frozenColumn` (starting from top) and `frozenRow` (starting from left), which are both `number` types. 
+To set a pinning for the entire duration of the grid, simply use the Grid Options `frozenColumn` (starting from top) and `frozenRow` (starting from left), which are both `number` types.
 
 ##### Component
 ```ts
@@ -34,7 +34,7 @@ export class GridBasicComponent {
 ```
 
 ## Rows Pinning starting from bottom
-This is basically the same thing as previous code sample, except that you will set the Grid Option property `frozenBottom` to true and that it's. 
+This is basically the same thing as previous code sample, except that you will set the Grid Option property `frozenBottom` to true and that it's.
 ##### Component
 ```ts
 export class GridBasicComponent {

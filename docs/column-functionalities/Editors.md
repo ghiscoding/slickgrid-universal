@@ -6,25 +6,20 @@
 - [Perform an Action after Inline Edit](#perform-an-action-after-inline-edit)
 - [How to prevent Editor from going to the next bottom cell](#how-to-prevent-editor-from-going-to-the-next-bottom-cell)
 - [onClick Action Editor (icon click)](#onclick-action-editor-icon-click)
-- [AutoComplete Editor](/ghiscoding/slickgrid-universal/wiki/AutoComplete-Editor)
-- [Select (single/multi) Editors](/ghiscoding/slickgrid-universal/wiki/Select-Dropdown-Editor-(single,multiple))
+- [AutoComplete Editor](editors/AutoComplete-Editor.md)
+- [Select (single/multi) Editors](editors/Select-Dropdown-Editor-(single,multiple).md)
 - [Validators](#validators)
    - [Custom Validator](#custom-validator)
 - [Disabling specific cell Edit](#disabling-specific-cell-edit)
 - [Editors on Mobile Phone](#editors-on-mobile-phone)
 
 ## Description
-`Slickgrid-Universal` ships with a few default inline editors (checkbox, dateEditor, float, integer, text, longText). You can see the full list [here](/ghiscoding/slickgrid-universal/tree/master/packages/common/src/editors).
+`Slickgrid-Universal` ships with a few default inline editors (checkbox, dateEditor, float, integer, text, longText).
 
 **Note:** For the Float Editor, you can provide decimal places with `params: { decimals: 2 }` to your column definition else it will be 0 decimal places by default.
 
 ### Required Grid Option
 Editors won't work without these 2 flags `enableCellNavigation: true` and `editable: true` enabled in your Grid Options, so make sure to always to always defined them. Also note that you can toggle the grid to read only (not editable) via the `editable` grid option flag.
-
-### Demo
-##### with plain javascript/jQuery
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example03) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/web-demo-vanilla-bundle/src/examples/example03.ts)
-
 
 ### How to use Inline Editors
 Simply call the editor in your column definition with the `Editors` you want, as for example (`editor: { model: Editors.text }`). Here is an example with a full column definition:
@@ -34,18 +29,18 @@ this.columnDefinitions = [
   { id: 'duration', name: 'Duration (days)', field: 'duration', type: FieldType.number, editor: { model: Editors.text } },
   { id: 'complete', name: '% Complete', field: 'percentComplete', type: FieldType.number, editor: { model: Editors.integer } },
   { id: 'start', name: 'Start', field: 'start', type: FieldType.date, editor: { model: Editors.date } },
-  { 
-    id: 'finish', name: 'Finish', field: 'finish', type: FieldType.date, 
-    editor: { 
+  {
+    id: 'finish', name: 'Finish', field: 'finish', type: FieldType.date,
+    editor: {
       model: Editors.date,
-      
+
       // you can also add an optional placeholder
       placeholder: 'choose a date'
     }
   },
-  { 
-    id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', formatter: Formatters.checkmark, 
-    type: FieldType.number, editor: { model: Editors.checkbox } 
+  {
+    id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', formatter: Formatters.checkmark,
+    type: FieldType.number, editor: { model: Editors.checkbox }
   }
 ];
 
@@ -64,18 +59,18 @@ this.columnDefinitions = [
   { id: 'duration', name: 'Duration (days)', field: 'duration', type: Slicker.FieldType.number, editor: { model: Slicker.Editors.text } },
   { id: 'complete', name: '% Complete', field: 'percentComplete', type: Slicker.FieldType.number, editor: { model: Slicker.Editors.integer } },
   { id: 'start', name: 'Start', field: 'start', type: Slicker.FieldType.date, editor: { model: Slicker.Editors.date } },
-  { 
-    id: 'finish', name: 'Finish', field: 'finish', type: Slicker.FieldType.date, 
-    editor: { 
+  {
+    id: 'finish', name: 'Finish', field: 'finish', type: Slicker.FieldType.date,
+    editor: {
       model: Slicker.Editors.date,
-      
+
       // you can also add an optional placeholder
       placeholder: 'choose a date'
     }
   },
-  { 
-    id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', formatter: Slicker.Formatters.checkmark, 
-    type: Slicker.FieldType.number, editor: { model: Slicker.Editors.checkbox } 
+  {
+    id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', formatter: Slicker.Formatters.checkmark,
+    type: Slicker.FieldType.number, editor: { model: Slicker.Editors.checkbox }
   }
 ];
 ```
@@ -84,13 +79,13 @@ this.columnDefinitions = [
 This probably comes often, so here's all the setting you would need for displaying & editing a dollar currency value with 2 decimal places.
 ```ts
 this.columnDefinitions = [
-  { 
-    id: 'cost', name: 'Cost', field: 'cost', 
-    type: FieldType.float, 
+  {
+    id: 'cost', name: 'Cost', field: 'cost',
+    type: FieldType.float,
     formatter: Formatters.dollar, // the Dollar Formatter will default to 2 decimals unless you provide a minDecimal/maxDecimal
     // params: { minDecimal: 2, maxDecimal: 4, }, // optionally provide different decimal places
 
-    // the float editor has its own settings, `decimal` that will be used only in the editor 
+    // the float editor has its own settings, `decimal` that will be used only in the editor
     // note: that it has nothing to do with the Dollar Formatter
     editor: { model: Editors.float, decimal: 2 },
   },
@@ -104,7 +99,7 @@ this.columnDefinitions = [
  {
    id: 'start', name: 'Start', field: 'start',
    type: FieldType.date,
-   editor: { model: Editors.date }, 
+   editor: { model: Editors.date },
    type: FieldType.date,              // dataset cell input format
    // outputType: FieldType.dateUs,   // date picker format
    saveOutputType: FieldType.dateUtc, // save output date format
@@ -116,13 +111,13 @@ So to make it more clear, the `saveOutputType` is the format that will be sent t
 
 ## Perform an action After Inline Edit
 #### Recommended way
-What is ideal is to bind to a SlickGrid Event, for that you can take a look at this [Wiki - On Events](/ghiscoding/slickgrid-universal/wiki/Grid-&-DataView-Events)
+What is ideal is to bind to a SlickGrid Event, for that you can take a look at this [Wiki - On Events](../slick-grid-dataview-objects/Grid-&-DataView-Events)
 
 #### Not recommended
 You could also, perform an action after the item changed event with `onCellChange`. However, this is not the recommended way, since it would require to add a `onCellChange` on every every single column definition.
 
 ## Custom Inline Editor
-To create a Custom Editor, you need to create a `class` that will extend the [`Editors` interface](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/editor.interface.ts) and then use it in your grid with `editor: { model: myCustomEditor }` and that should be it.
+To create a Custom Editor, you need to create a `class` that will extend the [`Editors` interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/editor.interface.ts) and then use it in your grid with `editor: { model: myCustomEditor }` and that should be it.
 
 Once you are done with the class, just reference it's class name as the `editor`, for example:
 
@@ -312,7 +307,7 @@ This can be answered by searching on Stack Overflow Stack Overflow and this is t
        // ... some other cases
       }
     }
-  
+
     return isEditable;
   }
 ```
@@ -323,8 +318,8 @@ For SalesForce it's nearly the same, the only difference is that we add our even
 #### View (SF)
 ```html
 <div class="grid-container slds-p-horizontal" style="padding: 10px">
-    <div class="grid1" 
-            onvalidationerror={handleOnValidationError} 
+    <div class="grid1"
+            onvalidationerror={handleOnValidationError}
             onbeforeeditcell={handleOnBeforeEditVerifyCellIsEditable}
             onslickergridcreated={handleOnSlickerGridCreated}>
     </div>
@@ -335,12 +330,12 @@ For SalesForce it's nearly the same, the only difference is that we add our even
 If your grid uses the `autoResize` and you use Editors in your grid on a mobile phone, Android for example, you might have undesired behaviors. It might call a grid resize (and lose input focus) since the touch keyboard appears. This in term, is a bad user experience to your user, but there is a way to avoid this, you could use the `pauseResizer`
 
 ##### View
-```
+```html
 <div id="grid1">
 </div>
 ```
 ##### Component
-```
+```ts
   attached() {
     const dataset = this.initializeGrid();
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid4`);
@@ -358,7 +353,7 @@ If your grid uses the `autoResize` and you use Editors in your grid on a mobile 
   onAfterEditCell($event) {
     // resume autoResize feature,  and after leaving cell editing mode
     // force a resize to make sure the grid fits the current dimensions
-    this.slickerGridInstance.resizerService.pauseResizer(false);    
+    this.slickerGridInstance.resizerService.pauseResizer(false);
     this.slickerGridInstance.resizerService.resizeGrid();
   }
 

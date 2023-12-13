@@ -1,13 +1,13 @@
 ##### index
-- [Editor Options](#editor-options) 
-- [Custom Validator](#custom-validator) 
+- [Editor Options](#editor-options)
+- [Custom Validator](#custom-validator)
 - See the [Editors - Wiki](/ghiscoding/slickgrid-universal/wiki/Editors) for more general info about Editors (validators, event handlers, ...)
 
 ### Information
 The Date Editor is provided through an external library named [Flatpickr](https://flatpickr.js.org/examples/) and all options from that library can be added to your `editorOptions` (see below [Editor Options]()), so in order to add things like minimum date, disabling dates, ... just review all the [Flatpickr Examples](https://flatpickr.js.org/examples/) and then add them into `editorOptions`. Also just so you know, `editorOptions` is use by all other editors as well to expose external library like Flatpickr, Multiple-Select.js, etc...
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example12) | [Demo Component](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example12.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example12) | [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example12.ts)
 
 ### Editor Options
 You can use any of the Flatpickr [options](https://flatpickr.js.org/options/) by adding them to `editorOptions` as shown below.
@@ -18,9 +18,9 @@ You can use any of the Flatpickr [options](https://flatpickr.js.org/options/) by
 initializeGrid() {
   this.columnDefinitions = [
     {
-      id: 'title', name: 'Title', field: 'title', 
+      id: 'title', name: 'Title', field: 'title',
       editor: {
-        model: Editors.date, 
+        model: Editors.date,
         editorOptions: {
           editorOptions: {
             minDate: 'today',
@@ -43,10 +43,10 @@ You can add a Custom Validator from an external function or inline (inline is sh
 initializeGrid() {
   this.columnDefinitions = [
     {
-      id: 'title', name: 'Title', field: 'title', 
+      id: 'title', name: 'Title', field: 'title',
       editor: {
-        model: Editors.date, 
-        required: true, 
+        model: Editors.date,
+        required: true,
         validator: (value, args) => {
           const dataContext = args && args.item;
           if (dataContext && (dataContext.completed && !value)) {

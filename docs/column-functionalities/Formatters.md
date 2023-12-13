@@ -15,7 +15,7 @@ A good example of a `Formatter` could be a column name `isActive` which is a `bo
 For a [UI sample](#ui-sample), scroll down below.
 
 ### Provided Formatters
-`Slickgrid-Universal` ships with a few `Formatters` by default which helps with common fields, you can see the [entire list here](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/index.ts#L37).
+`Slickgrid-Universal` ships with a few `Formatters` by default which helps with common fields, you can see the [entire list here](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/index.ts#L37).
 
 #### List of provided `Formatters`
 - `alignCenter`: Align cell value to the center (alias to `Formatters.center`)
@@ -40,7 +40,7 @@ For a [UI sample](#ui-sample), scroll down below.
 - `dateEuro`: Takes a Date object and displays it as an Euro Date format (DD/MM/YYYY)
 - `dateTimeEuro`: Takes a Date object and displays it as an Euro Date+Time format (DD/MM/YYYY HH:mm:ss)
 - `dateTimeShortEuro`: Takes a Date object and displays it as an Euro Date+Time (without seconds) format (DD/MM/YYYY HH:mm)
-- `dateTimeEuroAmPm`: Takes a Date object and displays it as an Euro Date+Time+(am/pm) format (DD/MM/YYYY hh:mm:ss a) 
+- `dateTimeEuroAmPm`: Takes a Date object and displays it as an Euro Date+Time+(am/pm) format (DD/MM/YYYY hh:mm:ss a)
 - `dateIso` : Takes a Date object and displays it as an ISO Date format (YYYY-MM-DD)
 - `dateTimeIso` : Takes a Date object and displays it as an ISO Date+Time format (YYYY-MM-DD HH:mm:ss)
 - `dateTimeIsoAmPm` : Takes a Date object and displays it as an ISO Date+Time+(am/pm) format (YYYY-MM-DD h:mm:ss a)
@@ -87,7 +87,7 @@ For a [UI sample](#ui-sample), scroll down below.
 - `yesNo` : Takes a boolean value and display a string 'Yes' or 'No'
   - `@deprecated` create your own custom Formatter instead
 
-**Note:** The list might not always be up to date, you can refer to the [Formatters export](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/index.ts#L37) to know exactly which ones are available.
+**Note:** The list might not always be up to date, you can refer to the [Formatters export](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/index.ts#L37) to know exactly which ones are available.
 
 ### Usage
 To use any of them, you need to import `Formatters` from `Slickgrid-Universal` and add a `formatter: ...` in your column definitions as shown below:
@@ -120,7 +120,7 @@ export class Example {
 ```
 
 #### SalesForce (ES6)
-For SalesForce the code is nearly the same, the only difference is to add the `Slicker` prefix, so instead of `Formatters.abc` we need to use `Slicker.Formatters.abc` 
+For SalesForce the code is nearly the same, the only difference is to add the `Slicker` prefix, so instead of `Formatters.abc` we need to use `Slicker.Formatters.abc`
 
 ```ts
 // ... SF_Slickgrid import
@@ -168,15 +168,15 @@ this.columnDefinitions = [
 SlickGrid only has 1 `formatter` property but if you want to use more than 1 Formatter then you'll want to use the `Formatters.multiple` and pass every Formatters inside your column definition `params: { formatters: [] }` as shown below.
 
 **Note:** please note that combining multiple Formatters has the side effect of cascading the formatted `value` output to the next Formatter. So for example if you use the `complexObject` and `dollar` Formatters, you want to make sure to define them in the correct order in your `formatters: []` array as shown below.
-- what if you want to avoid overwriting the `value` with a Custom Formatter? 
+- what if you want to avoid overwriting the `value` with a Custom Formatter?
    - in that case you can have your Formatter return a [FormatterResultObject](#formatterresultobject), see below.
 
 ```ts
-// Data Example:: 
+// Data Example::
 // data = [{ shipping: { cost: 123.22, address: { zip: 123456 } } }];
 
 this.columnDefinitions = [
-  { 
+  {
     id: 'shippingCost', field: 'shipping.cost', name: 'Shipping Cost',
     formatter: Formatters.multiple,
     params: {
@@ -223,14 +223,14 @@ const myCustomCheckboxFormatter: Formatter = (row: number, cell: number, value: 
 ```
 
 ### More Complex Example
-If you need to add more complex logic to a `Formatter`, you can take a look at the [percentCompleteBar](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/percentCompleteBarFormatter.ts) `Formatter` for more inspiration.
+If you need to add more complex logic to a `Formatter`, you can take a look at the [percentCompleteBar](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/percentCompleteBarFormatter.ts) `Formatter` for more inspiration.
 
 ## Common Formatter Options
 You can set some defined common Formatter Options in your Grid Options through the `formatterOptions` in the Grid Options (locally or globally) as seen below, and/or independently through the column definition `params` (the option names are the same in both locations)
 
 ```ts
 loadGrid() {
-  this.columnDefinitions = [ 
+  this.columnDefinitions = [
     // through the column definition "params"
     { id: 'price', field: 'price', params: { thousandSeparator: ',' } },
   ];

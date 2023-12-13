@@ -7,17 +7,17 @@
 - [UI Sample](#ui-sample)
 
 ### Demo
-[Demo](https://ghiscoding.github.io/slickgrid-universal/#/example12) / [Demo Component](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example12.ts)
+[Demo](https://ghiscoding.github.io/slickgrid-universal/#/example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example12.ts)
 
 ### Description
-A Cell Menu, most often used as an Action Menu and is more oriented on a row action (e.g. delete current row), it could be defined on 1 or more columns (defined in a column definition) and is triggered by a cell click or touch. The menu can show a list of Commands (to execute an action) and/or Options (to change the value of a field). Also note that the Commands list is following the same structure used in the [Context Menu](/ghiscoding/slickgrid-universal/wiki/Context-Menu), [Header Menu](/ghiscoding/slickgrid-universal/wiki/Header-Menu-&-Header-Buttons) & [Grid Menu](/ghiscoding/slickgrid-universal/wiki/Grid-Menu). The Cell Menu is very similar to the [Context Menu](/ghiscoding/slickgrid-universal/wiki/Context-Menu), both were create as SlickGrid plugins during the same period, their main difference is that they get triggered differently (cell click vs mouse right+click) and they serve different purposes. The Cell Menu is more oriented on a row action (e.g. delete current row) while the Context Menu is all about actions for the entire grid (e.g. export to Excel).
+A Cell Menu, most often used as an Action Menu and is more oriented on a row action (e.g. delete current row), it could be defined on 1 or more columns (defined in a column definition) and is triggered by a cell click or touch. The menu can show a list of Commands (to execute an action) and/or Options (to change the value of a field). Also note that the Commands list is following the same structure used in the [Context Menu](../grid-functionalities/Context-Menu), [Header Menu](../grid-functionalities/Header-Menu-&-Header-Buttons.md) & [Grid Menu](../grid-functionalities/Grid-Menu). The Cell Menu is very similar to the [Context Menu](../grid-functionalities/Context-Menu), both were create as SlickGrid plugins during the same period, their main difference is that they get triggered differently (cell click vs mouse right+click) and they serve different purposes. The Cell Menu is more oriented on a row action (e.g. delete current row) while the Context Menu is all about actions for the entire grid (e.g. export to Excel).
 
 This extensions is wrapped around the new SlickGrid Plugin **Slick.Plugins.CellMenu**
 
 ### Default Usage
-To use the Cell Menu, you will need to enable it in the Grid Options and also define its structure in the chose column. You can customize the menu with 2 different lists, Commands and/or Options, they can be used separately or at the same time (same as [Context Menu](/ghiscoding/slickgrid-universal/wiki/Context-Menu)). However please note that you will also need to use a Custom Formatter to display the Action button/text, it's easy enough as you can see below. Also note that even though the code shown below makes a separation between the Commands and Options, you can mix them in the same Cell Menu.
+To use the Cell Menu, you will need to enable it in the Grid Options and also define its structure in the chose column. You can customize the menu with 2 different lists, Commands and/or Options, they can be used separately or at the same time (same as [Context Menu](../grid-functionalities/Context-Menu)). However please note that you will also need to use a Custom Formatter to display the Action button/text, it's easy enough as you can see below. Also note that even though the code shown below makes a separation between the Commands and Options, you can mix them in the same Cell Menu.
 
-#### with Commands 
+#### with Commands
 ```ts
 this.columnDefinitions = [
   { id: 'firstName', field: 'firstName', name: 'First Name' },
@@ -31,7 +31,7 @@ this.columnDefinitions = [
       commandTitle: 'Commands', // optional title
       commandItems: [
         // array of command item objects, you can also use the "positionOrder" that will be used to sort the items in the list
-        { 
+        {
           command: 'command1', title: 'Command 1', positionOrder: 61,
           // you can use the "action" callback and/or use "onCommand" callback from the grid options, they both have the same arguments
           action: (e, args) => {
@@ -61,7 +61,7 @@ this.columnDefinitions = [
 ```
 
 #### with Options
-That is when you want to define a list of Options (only 1 list) that the user can choose from and once an option is selected we would do something (for example change the value of a cell in the grid). 
+That is when you want to define a list of Options (only 1 list) that the user can choose from and once an option is selected we would do something (for example change the value of a cell in the grid).
 ```ts
 this.columnDefinitions = [
   { id: 'firstName', field: 'firstName', name: 'First Name' },
@@ -73,7 +73,7 @@ this.columnDefinitions = [
     formatter: actionFormatter, // your Custom Formatter
     cellMenu: {
       optionTitle: 'Change Effort Driven Flag', // optional, add title
-      optionItems: [       
+      optionItems: [
         { option: true, title: 'True', iconCssClass: 'fa fa-check-square-o' },
         { option: false, title: 'False', iconCssClass: 'fa fa-square-o' },
         { divider: true, command: '', positionOrder: 60 },
@@ -88,7 +88,7 @@ this.columnDefinitions = [
 ```
 
 ### Action Callback Methods (preferred approach)
-There are 2 ways to execute an action after a Command is clicked (or an Option is selected), you could do it via the `action` callback or via the `onCommand` callback. You might be wondering why 2 and what's the difference? Well, the `action` would have to be defined on every single Command/Option while the `onCommand` (or `onOptionSelected`) is more of a global subscriber which gets triggered every time any of the Command/Option is clicked/selected, so for that, you would typically need to use `if/else` or a `switch/case`... hmm ok but I still don't understand when would I use the `onCommand`? Let say you combine the Cell Menu with the [Context Menu](/ghiscoding/slickgrid-universal/wiki/Context-Menu) and some of the commands are the same, well, in that case, it might be better to use the `onCommand` and centralize your commands in that callback, while in most other cases if you wish to do only 1 thing with a command, then using the `action` might be better. Also, note that they could also both be used if you wish. 
+There are 2 ways to execute an action after a Command is clicked (or an Option is selected), you could do it via the `action` callback or via the `onCommand` callback. You might be wondering why 2 and what's the difference? Well, the `action` would have to be defined on every single Command/Option while the `onCommand` (or `onOptionSelected`) is more of a global subscriber which gets triggered every time any of the Command/Option is clicked/selected, so for that, you would typically need to use `if/else` or a `switch/case`... hmm ok but I still don't understand when would I use the `onCommand`? Let say you combine the Cell Menu with the [Context Menu](../grid-functionalities/Context-Menu) and some of the commands are the same, well, in that case, it might be better to use the `onCommand` and centralize your commands in that callback, while in most other cases if you wish to do only 1 thing with a command, then using the `action` might be better. Also, note that they could also both be used if you wish.
 
 So if you decide to use the `action` callback, then your code would look like this
 ##### with `action` callback
@@ -145,7 +145,7 @@ What if you want to dynamically disable or hide a Command/Option or even disable
 - `menuUsabilityOverride` returning false would make the Cell Menu unavailable to the user
 - `itemVisibilityOverride` returning false would hide the item (command/option) from the list
 - `itemUsabilityOverride` return false would disabled the item (command/option) from the list
-  - **note** there is also a `disabled` property that you could use, however it is defined at the beginning while the override is meant to be used with certain logic dynamically. 
+  - **note** there is also a `disabled` property that you could use, however it is defined at the beginning while the override is meant to be used with certain logic dynamically.
 
 For example, say we want the Cell Menu to only be available on the first 20 rows of the grid, we could use the override this way
 ```ts

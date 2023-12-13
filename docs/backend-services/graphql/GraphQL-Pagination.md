@@ -1,13 +1,13 @@
 The implementation of a GraphQL Service requires a certain structure to follow for `Slickgrid-Universal` to work correctly (it will fail if your GraphQL Schema is any different than what is shown below).
 
 ### Implementation
-For the implementation in your code, refer to the [GraphQL Service](/ghiscoding/slickgrid-universal/wiki/GraphQL) section.
+For the implementation in your code, refer to the [GraphQL Service](../GraphQL.md) section.
 
 ### Without Cursor (recommended)
 Pagination without cursor, this is the simplest implementation and is what we use on our side. The query can have any of the 3 arguments:
 - `first`: integer representing how many rows of data to get from the start of dataset
 - `last`: integer representing how many rows of data to get from the end of dataset
-- `offset`: integer representing how many to skip 
+- `offset`: integer representing how many to skip
 
 For example
 ```ts
@@ -50,7 +50,7 @@ For example
 ```
 
 To retrieve subsequent data, the `pageInfo.endCursor` property should be used as part of the next query.
-eg: 
+eg:
 ```ts
 users (first:20, after:"${pageInfo.endCursor}")
 ```
@@ -58,7 +58,7 @@ users (first:20, after:"${pageInfo.endCursor}")
 or when navigating backwards
 ```ts
 users (last:20, before:"${pageInfo.startCursor}")
-``` 
+```
 
 When using the `paginationService`, this is handled by calling `setCursorPageInfo(pageInfo)`.
 

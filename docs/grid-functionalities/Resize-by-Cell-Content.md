@@ -4,14 +4,14 @@
 - [Resize by Content - Column Options](#resize-by-content---column-options)
 
 ### Demo
-[Demo](https://ghiscoding.github.io/slickgrid-universal/#/example14) / [Demo Component](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example14.ts)
+[Demo](https://ghiscoding.github.io/slickgrid-universal/#/example14) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example14.ts)
 
 ### Description
 The default of Slickgrid-Universal is to fit all columns in the container viewport and for the most part that is a good resize to use and it's fast. However if your grid has a lot of columns then doing a fit to viewport is not exactly great, you have lot of columns a few of these columns will become too small (we strongly suggest adding `minWidth` to every column) and you'll start seeing ellipsis to a few of these columns.
 
 The Auto-Resize by Cell Content will fix the problem described in previous paragraph, however it will come with a cost. It will read through all the cell content of all your items (because this could slow down the grid a lot, there's a default to not go over a 1000 rows but that could be overridden if you wish). For that reason the **resize by cell content** is an **opt-in** feature.
 
-How does it work? It loop through the dataset and try to calculate the best possible width, it does so by assuming a few things. For example we assume the a character is by default 7 pixels wide (via `resizeCellCharWidthInPx`), we also assume that not every data will be the same width for example string type might be a little less wide (with chars like "i", "l", "j" are thinner) compare to numbers which are always the same width and so have some ratio option for that (via `resizeDefaultRatioForStringType` and `resizeCalcWidthRatio`). 
+How does it work? It loop through the dataset and try to calculate the best possible width, it does so by assuming a few things. For example we assume the a character is by default 7 pixels wide (via `resizeCellCharWidthInPx`), we also assume that not every data will be the same width for example string type might be a little less wide (with chars like "i", "l", "j" are thinner) compare to numbers which are always the same width and so have some ratio option for that (via `resizeDefaultRatioForStringType` and `resizeCalcWidthRatio`).
 
 There are a few configuration options you can use
 - ratio (`resizeDefaultRatioForStringType` and `resizeCalcWidthRatio`)
@@ -32,7 +32,7 @@ defineGrid() {
     // ...
   ];
 
-  this.gridOptions = {    
+  this.gridOptions = {
     // ...
     enableAutoResize: true,
 

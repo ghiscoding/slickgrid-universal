@@ -1,9 +1,9 @@
 ## SlickGrid is now jQuery free 🌊
 
-In our previous v2.0 release (see [Migration to v2.0](https://github.com/ghiscoding/slickgrid-universal/wiki/Migration-to-2.x)), we dropped jQueryUI and now in v3.0 we are going even further and are now dropping [jQuery](https://jquery.com/) entirely. You can still use jQuery but it's no longer a dependency. There are multiple benefits in dropping jQuery and go the vanilla route, the biggest advantages are:
+In our previous v2.0 release (see [Migration to v2.0](Migration-to-2.x.md)), we dropped jQueryUI and now in v3.0 we are going even further and are now dropping [jQuery](https://jquery.com/) entirely. You can still use jQuery but it's no longer a dependency. There are multiple benefits in dropping jQuery and go the vanilla route, the biggest advantages are:
 
 1. it should provide better performance (browser native)
-2. build size should be smaller (see table below) 
+2. build size should be smaller (see table below)
 
 #### Major Changes - Quick Summary
 - minimum requirements bump
@@ -17,14 +17,14 @@ In our previous v2.0 release (see [Migration to v2.0](https://github.com/ghiscod
 
 ## Changes
 ### Replaced `multiple-select` with [`multiple-select-vanilla`](https://github.com/ghiscoding/multiple-select-vanilla)
-This change was required because the previous library was a jQuery based lib, so I rewrote the lib as a new native lib to drop jQuery. However with this change, there were a couple of options that were dropped and/or modified. 
+This change was required because the previous library was a jQuery based lib, so I rewrote the lib as a new native lib to drop jQuery. However with this change, there were a couple of options that were dropped and/or modified.
 
 ```diff
 // you can load `MultipleSelectOption` from either the new Multiple-Select-Vanilla lib or from Slickgrid-Universal (which is a re-export)
   import { MultipleSelectOption } from '@slickgrid-universal/common'; // still works, but is a re-export of the import shown below
 + import { MultipleSelectOption } from 'multiple-select-vanilla';     // preferred
 
-filterOptions: { 
+filterOptions: {
 -  autoDropWidth: true, // removed and no longer required
 } as MultipleSelectOption
 ```
@@ -32,7 +32,7 @@ filterOptions: {
 The new lib also offers a bunch of new options as well, you can see the full interface at [MultipleSelectOption](https://github.com/ghiscoding/multiple-select-vanilla/blob/main/lib/src/interfaces/multipleSelectOption.interface.ts)
 
 ### Slickgrid-Universal
-If you use any of the Slickgrid-Universal extra dependencies then make sure to upgrade them all to the new major `3.0.0` version 
+If you use any of the Slickgrid-Universal extra dependencies then make sure to upgrade them all to the new major `3.0.0` version
 
 ```diff
   "dependencies": {

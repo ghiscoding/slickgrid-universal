@@ -1,8 +1,8 @@
 #### Major Change List
-- [controls/plugins (extensions)](https://github.com/ghiscoding/slickgrid-universal/wiki/Migration-to-1.x#slickgrid-controlsplugins-extensions)... read below for more info
-  - replace Grid Menu `customItems` by `commandItems`, see [here](/ghiscoding/slickgrid-universal/wiki/Migration-to-1.x#grid-menu-customitems-renamed-to-commanditems)
-  - remove all `image` options in favor of css classes, see [here](/ghiscoding/slickgrid-universal/wiki/Migration-to-1.x#images-are-removed-in-favor-of-css-classes)
-- [CSS/SASS Styling Changes](https://github.com/ghiscoding/slickgrid-universal/wiki/Migration-to-1.x#csssass-styling-changes)
+- [controls/plugins (extensions)](#slickgrid-controlsplugins-extensions)... read below for more info
+  - replace Grid Menu `customItems` by `commandItems`, see [here](#grid-menu-customitems-renamed-to-commanditems)
+  - remove all `image` options in favor of css classes, see [here](#images-are-removed-in-favor-of-css-classes)
+- [CSS/SASS Styling Changes](#csssass-styling-changes)
 
 
 ### @deprecated Code (removed)
@@ -53,7 +53,7 @@ If you really want to use image, you can still work around that the new limitati
 ## CSS/SASS Styling Changes
 #### All SASS variables were renamed to add the `$slick-...` prefix
 - the prefix is to avoid conflicts with other frameworks (CSS variables were already including this prefix, so no changes there)
-- there is only 1 small exception with `$primary-color` (to avoid too many styling changes) but even then there's also a new variable `$slick-primary-color` 
+- there is only 1 small exception with `$primary-color` (to avoid too many styling changes) but even then there's also a new variable `$slick-primary-color`
 
 #### Simplify CSS
 To simplify and merge all menu styling together (now doable since all controls/plugins now exists in the lib source code), all the following CSS class names got changed with what is shown below

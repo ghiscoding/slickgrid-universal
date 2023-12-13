@@ -7,7 +7,7 @@
 The implementation of a GraphQL Service requires a certain structure to follow for `Slickgrid-Universal` to work correctly (it will fail if your GraphQL Schema is any different than what is shown below).
 
 ### Implementation
-For the implementation in your code, refer to the [GraphQL Service](/ghiscoding/slickgrid-universal/wiki/GraphQL) section.
+For the implementation in your code, refer to the [GraphQL Service](../GraphQL.md) section.
 
 ### filterBy
 The filtering uses `filterBy` with a structure which we think is flexible enough. The query will have a `filterBy` argument with an array of filter properties:
@@ -20,7 +20,7 @@ The filtering uses `filterBy` with a structure which we think is flexible enough
       - `IN` and `NIN` (alias to `NOT_IN`) are mainly used for multi-select filtering
 
 **Note:** the `filterBy` order is following the order of how the filter objects were entered in the array.
- 
+
 For example, a filter that would search for a firstName that starts with "John"
 - matches: "John", "Johnny", ...
 ```javascript

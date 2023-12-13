@@ -3,15 +3,15 @@
 - [Changing/Updating Options Dynamically](#changingupdating-options-dynamically)
 - [GraphQL without Pagination](#graphql-without-pagination)
 - [GraphQL Server Definitions](#graphql-server-definitions)
-  - [Pagination](/ghiscoding/slickgrid-universal/wiki/GraphQL-Pagination)
-  - [Sorting](/ghiscoding/slickgrid-universal/wiki/GraphQL-Sorting)
-  - [Filtering](/ghiscoding/slickgrid-universal/wiki/GraphQL-Filtering)
+  - [Pagination](graphql/GraphQL-Pagination.md)
+  - [Sorting](graphql/GraphQL-Sorting.md)
+  - [Filtering](graphql/GraphQL-Filtering.md)
 
 ### Description
 GraphQL Backend Service (for Pagination purposes) to get data from a backend server with the help of GraphQL.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example10) / [Demo ViewModel](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example10.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example10) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/vite-demo-vanilla-bundle/src/examples/example10.ts)
 
 ### Note
 You can use it when you need to support **Pagination** (though you could disable Pagination if you wish), that is when your dataset is rather large and has typically more than 5k rows, with a GraphQL endpoint. If your dataset is small (less than 5k rows), then you might be better off with [regular grid](https://ghiscoding.github.io/slickgrid-universal/#/example01) with the "dataset.bind" property. SlickGrid can easily handle million of rows using a DataView object, but personally when the dataset is known to be large, I usually use a backend service (OData or GraphQL) and when it's small I go with a [regular grid](https://ghiscoding.github.io/slickgrid-universal/#/example01).
@@ -41,9 +41,9 @@ backendServiceApi: {
   filterTypingDebounce?: number;
 }
 ```
-As you can see, you mainly need to define which service to use (GridODataService or GraphQLService) and finally add the `process` and `postProcess` callback, while all the rest are totally optional. 
+As you can see, you mainly need to define which service to use (GridODataService or GraphQLService) and finally add the `process` and `postProcess` callback, while all the rest are totally optional.
 
-### Typescript GraphQL Service Options 
+### Typescript GraphQL Service Options
 You can also pass certain options to the `backendServiceApi` through the `options` property. The list of options is the following
 ```typescript
 export interface GraphqlServiceOption extends BackendServiceOption {
@@ -93,7 +93,7 @@ export interface GraphqlServiceOption extends BackendServiceOption {
 
 #### Grid Definition & call of `backendServiceApi`
 ##### Notes
-- Pagination is optional and if not defined, it will use what is set in the  [Slickgrid-Universal - Global Options](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/global-grid-options.ts)
+- Pagination is optional and if not defined, it will use what is set in the  [Slickgrid-Universal - Global Options](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/global-grid-options.ts)
 - `onInit` is optional and is there to initialize the grid with data on first page load (typically the same call as `process`)
   - you could load the grid yourself outside of the `gridOptions` which is why it's optional
 - `filterTypingDebounce` is a timer (in milliseconds) that waits for user input pause before querying the backend server
@@ -158,7 +158,7 @@ export class Example {
   getAllCustomers(graphqlQuery) {
     // regular Http Client call
     return this.http.createRequest(`/api/customers?${graphqlQuery}`).asGet().send().then(response => response.content);
-  
+
     // or with Fetch Client
     // return this.http.fetch(`/api/customers?${graphqlQuery}`).then(response => response.json());
   }
@@ -253,7 +253,7 @@ changeQueryArguments() {
 ```
 
 ### GraphQL without Pagination
-By default, the Pagination is enabled and will produce a GraphQL query which includes page related information but you could also use the GraphQL Service without Pagination if you wish by disabling the flag `enablePagination: false` in the Grid Options. However please note that the GraphQL Query will be totally different since it won't include any page related information. 
+By default, the Pagination is enabled and will produce a GraphQL query which includes page related information but you could also use the GraphQL Service without Pagination if you wish by disabling the flag `enablePagination: false` in the Grid Options. However please note that the GraphQL Query will be totally different since it won't include any page related information.
 
 #### Code Example
 ```ts
@@ -279,6 +279,6 @@ If we take for example a GrahQL Query that includes Pagination versus without Pa
 
 ## GraphQL Server Definitions
 For the implementation of all 3 actions (filtering, sorting, pagination) with your GraphQL Server, please refer to the sections below to configure your GraphQL Schema accordingly.
-- [Pagination](/ghiscoding/slickgrid-universal/wiki/GraphQL-Pagination)
-- [Sorting](/ghiscoding/slickgrid-universal/wiki/GraphQL-Sorting)
-- [Filtering](/ghiscoding/slickgrid-universal/wiki/GraphQL-Filtering)
+- [Pagination](graphql/GraphQL-Pagination.md)
+- [Sorting](graphql/GraphQL-Sorting.md)
+- [Filtering](graphql/GraphQL-Filtering.md)

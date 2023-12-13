@@ -1,11 +1,8 @@
 #### Index
-- [Update Filters Dynamically](/ghiscoding/aurelia-slickgrid/wiki/Input-Filter#update-filters-dynamically)
+- [Update Filters Dynamically](Input-Filter.md#update-filters-dynamically)
 
 ### Description
 Some users might want to have 1 main single search for filtering the grid data instead of using multiple column filters. You can see a demo of that below
-
-### Demo
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example21) / [Demo Component](/ghiscoding/aurelia-slickgrid/blob/master/src/examples/slickgrid/example21.ts#L162)
 
 ### Code Sample
 #### View

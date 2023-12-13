@@ -24,10 +24,10 @@ To specify a tooltip when hovering a cell
 **NOTE:** this is an opt-in plugin, you must import the necessary plugin from `@slickgrid-universal/custom-tooltip-plugin` and instantiate it in your grid options via `registerExternalResources`, see multiple examples below.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example16) / [Demo Component](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example16.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example16) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example16.ts)
 
 ### via Column Definition
-You can set or change option of an individual column definition custom tooltip. 
+You can set or change option of an individual column definition custom tooltip.
 ```ts
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 
@@ -48,7 +48,7 @@ initializeGrid() {
 ```
 
 ### via Grid Options
-You can set certain options for the entire grid, for example if you set `exportWithFormatter` it will evaluate the Formatter (when exist) output to export each cell. The Grid Menu also has the "Export to Excel" enabled by default. 
+You can set certain options for the entire grid, for example if you set `exportWithFormatter` it will evaluate the Formatter (when exist) output to export each cell. The Grid Menu also has the "Export to Excel" enabled by default.
 ```ts
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 
@@ -57,7 +57,7 @@ initializeGrid() {
     registerExternalResources: [new SlickCustomTooltip()],
     customTooltip: {
       formatter: tooltipTaskFormatter,
-      
+
       // optionally skip tooltip on some of the column(s) (like 1st column when using row selection)
       usabilityOverride: (args) => (args.cell !== 0 && args?.column?.id !== 'action'), // disable on 1st and also "action" column
     },
@@ -79,14 +79,14 @@ customTooltip: {
 
 ## Tooltip Types
 ### Cell Custom Tooltip with `formatter`
-You can create a Custom Tooltip which will show up when hovering a cell by simply providing a `formatter` [via a Column Definition](/ghiscoding/slickgrid-universal/wiki/Custom-Tooltip-(plugin)#via-column-definition) (per column) OR [via Grid Options](/ghiscoding/slickgrid-universal/wiki/Custom-Tooltip-(plugin)#via-grid-options) (all columns of the grid), the formatter is the same structure as a regular formatter and accepts html string.
+You can create a Custom Tooltip which will show up when hovering a cell by simply providing a `formatter` [via a Column Definition](#via-column-definition) (per column) OR [via Grid Options](#via-grid-options) (all columns of the grid), the formatter is the same structure as a regular formatter and accepts html string.
 ```ts
 // define your custom tooltip in a Column Definition OR Grid Options
 customTooltip: {
   formatter: this.tooltipFormatter,
 },
 ```
-here's a simple formatter (you can see the result in the [UI Sample](/ghiscoding/slickgrid-universal/wiki/Custom-Tooltip-(plugin)#ui-sample) gif below)
+here's a simple formatter (you can see the result in the [UI Sample](#ui-sample) gif below)
 ```ts
 tooltipFormatter(row, cell, value, column, dataContext, grid) {
     const tooltipTitle = 'Custom Tooltip';
@@ -129,7 +129,7 @@ userFullDetailAsyncFormatter(row, cell, value, column, dataContext, grid) {
 ```
 
 ### Column Header Custom Tooltip with `headerFormatter`
-You can create a Custom Tooltip which will show up when hovering a column header (title) by simply providing a `headerFormatter` [via a Column Definition](/ghiscoding/slickgrid-universal/wiki/Custom-Tooltip-(plugin)#via-column-definition) (per column) OR [via Grid Options](/ghiscoding/slickgrid-universal/wiki/Custom-Tooltip-(plugin)#via-grid-options) (all columns of the grid), the formatter is the same structure as a regular formatter and accepts html string.
+You can create a Custom Tooltip which will show up when hovering a column header (title) by simply providing a `headerFormatter` [via a Column Definition](#via-column-definition) (per column) OR [via Grid Options](#via-grid-options) (all columns of the grid), the formatter is the same structure as a regular formatter and accepts html string.
 ```ts
 // define your custom tooltip in a Column Definition OR Grid Options
 customTooltip: {
@@ -146,7 +146,7 @@ headerFormatter(row, cell, value, column) {
 ```
 
 ### Column Header Custom Tooltip with `headerRowFormatter`
-You can create a Custom Tooltip which will show up when hovering a column header (title) by simply providing a `headerRowFormatter` [via a Column Definition](/ghiscoding/slickgrid-universal/wiki/Custom-Tooltip-(plugin)#via-column-definition) (per column) OR [via Grid Options](/ghiscoding/slickgrid-universal/wiki/Custom-Tooltip-(plugin)#via-grid-options) (all columns of the grid), the formatter is the same structure as a regular formatter and accepts html string.
+You can create a Custom Tooltip which will show up when hovering a column header (title) by simply providing a `headerRowFormatter` [via a Column Definition](#via-column-definition) (per column) OR [via Grid Options](#via-grid-options) (all columns of the grid), the formatter is the same structure as a regular formatter and accepts html string.
 ```ts
 // define your custom tooltip in a Column Definition OR Grid Options
 customTooltip: {
@@ -163,9 +163,9 @@ headerRowFormatter(row, cell, value, column) {
 ```
 
 ### Regular Tooltip with a `[title]` attribute
-You can create a regular tooltip simply by enabling `useRegularTooltip: true`, it will parse the regular cell formatter in search for a `title="..."` attribute (it won't work without a cell formatter, unless the cell text content is larger than the cell width when ellipsis shows up "some text..." and that will automatically create a tooltip, that could however be disabled if you wish). 
+You can create a regular tooltip simply by enabling `useRegularTooltip: true`, it will parse the regular cell formatter in search for a `title="..."` attribute (it won't work without a cell formatter, unless the cell text content is larger than the cell width when ellipsis shows up "some text..." and that will automatically create a tooltip, that could however be disabled if you wish).
 
-This feature is very useful so you probably want to enable this flag globally, but you could also still choose to add only [via a Column Definition](/ghiscoding/slickgrid-universal/wiki/Custom-Tooltip-(plugin)#via-column-definition) (per column) OR [via Grid Options](/ghiscoding/slickgrid-universal/wiki/Custom-Tooltip-(plugin)#via-grid-options) (all columns of the grid). 
+This feature is very useful so you probably want to enable this flag globally, but you could also still choose to add only [via a Column Definition](#via-column-definition) (per column) OR [via Grid Options](#via-grid-options) (all columns of the grid).
 
 NOTE: regular tooltip, as opposed to other type of custom tooltip, will be rendered as plain text. You could however change that by enabling this flag `renderRegularTooltipAsHtml: true`
 
@@ -191,7 +191,7 @@ this.gridOptions = {
 ```
 
 ### How to delay the opening of a tooltip?
-#### delay a Tooltip with Formatter 
+#### delay a Tooltip with Formatter
 There are no built-in option to delay a custom tooltip because it would add too much code complexity to the codebase, however you can simply do that by taking advantage of the Async Custom Tooltip. The only thing you might want to do though is to have the first custom tooltip `formatter` to return an empty string (so it won't show a loading tooltip) and then use the `asyncPostFormatter` for the tooltip (note that it will **not** read the cell formatter, if you have requirement for that then simply combined formatter into an external formatter function, see 2nd examples below).
 ```ts
 // define your custom tooltip in a Column Definition OR Grid Options
@@ -245,7 +245,7 @@ this.columnDefinitions = [{
 }];
 ```
 ### UI Sample
-The Export to Excel handles all characters quite well, from Latin, to Unicode and even Unicorn emoji, it all works on all browsers (`Chrome`, `Firefox`, even `IE11`, I don't have access to older versions). Here's a demo 
+The Export to Excel handles all characters quite well, from Latin, to Unicode and even Unicorn emoji, it all works on all browsers (`Chrome`, `Firefox`, even `IE11`, I don't have access to older versions). Here's a demo
 
 ![image](https://user-images.githubusercontent.com/643976/138971279-b835b8f5-93f1-4e77-bd90-f86599e199e9.png)
 

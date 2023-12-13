@@ -4,7 +4,7 @@ You can use and show the Custom Footer with 2 left/right containers and will by 
 **NOTE:** The Custom Footer cannot be used in combination with Pagination, you can only show 1 or the other.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example02) / [Demo Component](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example02.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example02) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example02.ts)
 
 ### Usage
 
@@ -27,7 +27,7 @@ initializeGrid() {
 ```
 
 #### CustomFooterOption Interface
-Below is the list of all options available with the Custom Footer, you can visit the [customFooterOption.interface.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/customFooterOption.interface.ts) to see latest code in case the code below is not up to date. 
+Below is the list of all options available with the Custom Footer, you can visit the [customFooterOption.interface.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/customFooterOption.interface.ts) to see latest code in case the code below is not up to date.
 ```ts
 export interface CustomFooterOption {
   /** Optionally provide some text to be displayed on the left side of the footer (in the "left-footer" css class) */

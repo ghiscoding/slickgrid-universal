@@ -1,4 +1,4 @@
-SlickGrid has a nice amount of [Grid Events](https://github.com/6pac/SlickGrid/wiki/Grid-Events) or [DataView Events](https://github.com/6pac/SlickGrid/wiki/Dataview-Events) which you can use by simply hook a `subscribe` to them (the `subscribe` are a custom `SlickGrid Event` and are **NOT** an `RxJS Observable` type but they very similar). You can access them in Slickgrid-Universal by following the documentation below
+See the full list of [Available Events](Available-Events.md) which you can use by simply hook a `subscribe` to them (the `subscribe` are a custom `SlickGrid Event` and are **NOT** an `RxJS Observable` type but they very similar). You can access them in Slickgrid-Universal by following the documentation below
 
 ##### View
 ```html
@@ -44,10 +44,10 @@ For SalesForce it's nearly the same, the only difference is that we add our even
 
 ```html
 <div class="grid-container">
-    <div class="grid1" 
-            onvalidationerror={handleOnValidationError} 
+    <div class="grid1"
+            onvalidationerror={handleOnValidationError}
             oncellchange={handleOnCellChange}
-            onclick={handleOnCellClick} 
+            onclick={handleOnCellClick}
             onbeforeeditcell={handleOnBeforeEditVerifyCellIsEditable}
             onslickergridcreated={handleOnSlickerGridCreated}>
     </div>

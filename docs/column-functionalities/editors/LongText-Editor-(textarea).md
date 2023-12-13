@@ -1,23 +1,23 @@
 ##### index
-- [Editor Options](#editor-options) 
-- [Custom Validator](#custom-validator) 
-- See the [Editors - Wiki](/ghiscoding/slickgrid-universal/wiki/Editors) for more general info about Editors (validators, event handlers, ...)
+- [Editor Options](#editor-options)
+- [Custom Validator](#custom-validator)
+- See the [Editors - Wiki](../Editors.md) for more general info about Editors (validators, event handlers, ...)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example12) | [Demo Component](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example12.ts) - ("Title" column to be more specific)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example12) | [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example12.ts) - ("Title" column to be more specific)
 
 ### Editor Options
 You can change button texts, textarea size (cols, rows) and also change position of the textarea (auto is the default which will try to automatically find best place to position the textarea).
 
-#### [LongTextEditorOption](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/longTextEditorOption.interface.ts) Interface.
+#### [LongTextEditorOption](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/longTextEditorOption.interface.ts) Interface.
 
 ```ts
 initializeGrid() {
   this.columnDefinitions = [
     {
-      id: 'title', name: 'Title', field: 'title', 
+      id: 'title', name: 'Title', field: 'title',
       editor: {
-        model: Editors.longText, 
+        model: Editors.longText,
         required: true, maxLength: 12,
         editorOptions: {
           cols: 45,
@@ -44,7 +44,7 @@ You can add a Custom Validator, from an external function or inline.
 ```ts
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator = (value, args) => {
-  if ((value === null || value === undefined || !value.length) && (args.compositeEditorOptions && args.compositeEditorOptions.modalType === 'create' || args.compositeEditorOptions.modalType === 'edit')) {
+  if ((value === null || value === undefined || !value.length) && (args.compositeEditorOptions?.modalType === 'create' || args.compositeEditorOptions.modalType === 'edit')) {
     // we will only check if the field is supplied when it's an inline editing OR a composite editor of type create/edit
     return { valid: false, msg: 'This is a required field.' };
   } else if (!/^(task\s\d+)*$/i.test(value)) {
@@ -56,10 +56,10 @@ const myCustomTitleValidator = (value, args) => {
 initializeGrid() {
   this.columnDefinitions = [
     {
-      id: 'title', name: 'Title', field: 'title', 
+      id: 'title', name: 'Title', field: 'title',
       editor: {
-        model: Editors.longText, 
-        required: true, 
+        model: Editors.longText,
+        required: true,
         validator: myCustomTitleValidator,
       },
     },

@@ -1,7 +1,7 @@
 The implementation of a GraphQL Service requires a certain structure to follow for `Slickgrid-Universal` to work correctly (it will fail if your GraphQL Schema is any different than what is shown below).
 
 ### Implementation
-For the implementation in your code, refer to the [GraphQL Service](/ghiscoding/slickgrid-universal/wiki/GraphQL) section.
+For the implementation in your code, refer to the [GraphQL Service](../GraphQL.md) section.
 
 ### orderBy
 The sorting uses `orderBy` as per this [GitHub Suggestion](https://github.com/graphql/graphql-relay-js/issues/20#issuecomment-220494222) of a Facebook employee. The query will have a `orderBy` argument with an array of filter properties:
@@ -11,7 +11,7 @@ The sorting uses `orderBy` as per this [GitHub Suggestion](https://github.com/gr
     - `ASC`, `DESC`
 
 **Note:** the `orderBy` order is following the order of how the filter objects were entered in the array.
- 
+
 For example
 ```ts
   users (first: 20, offset: 10, orderBy: [{field: lastName, direction: ASC}, {field: firstName, direction: DESC}]) {

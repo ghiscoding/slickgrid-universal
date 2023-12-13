@@ -3,7 +3,7 @@
 - [Description](#description)
 - [Setup](#setup)
 - [Aggregators](#aggregators)
-- [SortComparers](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/sortComparers/sortComparers.index.ts)
+- [SortComparers](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/sortComparers/sortComparers.index.ts)
 - [GroupTotalsFormatter](#group-totals-formatter)
 - [Custom GroupTotalsFormatter](#custom-grouptotalsformatter)
 - [Set a Grouping](#set-a-grouping)
@@ -21,7 +21,7 @@
 ### Description
 Fully dynamic and interactive multi-level grouping with filtering and aggregates that is achieved with the help of the `DataView` object in `SlickGrid`. Each grouping level can have its own aggregates (over child rows, child groups, or all descendant rows). An aggregate can be seen as sub-totals, totals, average, ... or any defined group(s).
 
-How does it work in `SlickGrid`? 
+How does it work in `SlickGrid`?
 The important thing to understand while working with `SlickGrid` is that Grouping requires you to provide 2 things, if you omit 1 of them, it will simply not work. These 2 things are
 1. You will need to define which type of aggregate (accumulator) you want to use
    - Slickgrid-Universal provides the following built-in `Aggregators`: `Avg`, `Min`, `Max`, `Sum`, `Clone`, `Distinct`
@@ -46,7 +46,7 @@ When defining your column definitions, you will need to decide which of the colu
 
 ##### Available Group Total Formatters
 You can see the full list under [`groupingFormatters.index.ts`](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/grouping-formatters/groupingFormatters.index.ts)
-Note: the Group Total Formatters named as currency will have these extra `params` (`groupFormatterPrefix`, `groupFormatterSuffix`, `groupFormatterCurrencyPrefix`, `groupFormatterCurrencySuffix`) and also the other common Formatter `params` (`minDecimal`, `maxDecimal`, `decimalSeparator`, `thousandSeparator`, `displayNegativeNumberWithParentheses`). 
+Note: the Group Total Formatters named as currency will have these extra `params` (`groupFormatterPrefix`, `groupFormatterSuffix`, `groupFormatterCurrencyPrefix`, `groupFormatterCurrencySuffix`) and also the other common Formatter `params` (`minDecimal`, `maxDecimal`, `decimalSeparator`, `thousandSeparator`, `displayNegativeNumberWithParentheses`).
 
 - `avgTotalsPercentageFormatter`
 - `avgTotalsDollarFormatter`
@@ -132,7 +132,7 @@ sumTotalsFormatter(totals, columnDef) {
 }
 ```
 
-### Set a Grouping 
+### Set a Grouping
 Once you have added a `groupTotalsFormatter` and defined which aggregate you want to use, you will want to create a grouping function. If we take again our example of a grid with multiple task and we want to group our task by duration and calculate the duration average and the cost total sum, we can write the following function
 
 ##### ViewModel
@@ -196,4 +196,4 @@ $group-totals-formatter-bgcolor:        white;
 $group-totals-formatter-font-size:      14px;
 ```
 
-For more info on SASS styling and variables, please read the [Wiki - SASS Styling](/ghiscoding/Angular-Slickgrid/wiki/Styling),
+For more info on SASS styling and variables, please read the [Wiki - SASS Styling](../styling/styling.md),

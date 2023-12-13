@@ -6,7 +6,7 @@
 - [Dynamic Query Field](#dynamic-query-field)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example01) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example01.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example01) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example01.ts)
 
 ### Description
 Sorting on the client side is really easy, you simply need to enable `sortable` (when not provided, it is considered as disabled) on each columns you want to sort and it will sort as a type string. Oh but wait, sorting as string might not always be ideal, what if we want to sort by number or by date? The answer is to simply pass a `type` as shown below.
@@ -66,7 +66,7 @@ this.columnDefinitions = [
 ### Custom Sort Comparer
 If the builtin sort comparer methods are not sufficient for your use case, you could add your own custom Sort Comparer in your Column Definitions as shown below. Note that we are only showing a simple numeric sort, just adjust it to your needs.
 ```ts
-this.columnDefinitions = [{ 
+this.columnDefinitions = [{
   id: 'myField', name: 'My Field',
   sorter: (a, b) => a > b ? 1 : -1,
 }];
@@ -75,7 +75,7 @@ similarly with a complex object
 ```ts
 // data = { user: { firstName: 'John', lastName: 'Doe', fullName: 'John Doe' }, address: { zip: 123456 } }};
 
-this.columnDefinitions = [{ 
+this.columnDefinitions = [{
   id: 'firstName', name: 'First Name', field: 'user.firstName',
   sorter: (a, b) => a.fullName > b.fullName ? 1 : -1,
 }];
@@ -110,13 +110,13 @@ export class Example {
 
 #### Extra Arguments
 The `updateSorting` method has 2 extra arguments:
-- 2nd argument, defaults to true, is to emit a sort changed event (the GridStateService uses this event) 
+- 2nd argument, defaults to true, is to emit a sort changed event (the GridStateService uses this event)
   - optional and defaults to true `updateSorting([], true)`
 - 3rd argument is to trigger a backend query (when using a Backend Service like OData/GraphQL), this could be useful when using updateFilters & updateSorting and you wish to only send the backend query once.
   - optional and defaults to true `updateSorting([], true, true)`
 
 ### Dynamic Query Field
-What if you a field that you only know which field to query only at run time and depending on the item object (`dataContext`)? 
+What if you a field that you only know which field to query only at run time and depending on the item object (`dataContext`)?
 We can defined a `queryFieldNameGetterFn` callback that will be executed on each row when Filtering and/or Sorting.
 ```ts
 queryFieldNameGetterFn: (dataContext) => {

@@ -11,28 +11,28 @@
 ### Demo
 
 #### Context Menu with Grouping
-[Context Menu Demo](https://ghiscoding.github.io/slickgrid-universal/#/example06) / [Demo Component](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example12.ts)
+[Context Menu Demo](https://ghiscoding.github.io/slickgrid-universal/#/example06) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example12.ts)
 
 ### Description
-A Context Menu is triggered by a mouse right+click and can show a list of Commands (to execute an action) and/or Options (to change the value of a field). The lib comes with a default list of custom commands (copy cell, export & grouping commands). Also note that the Commands list is following the same structure used in the [Cell Menu](/ghiscoding/slickgrid-universal/wiki/Cell-Menu), [Header Menu](/ghiscoding/slickgrid-universal/wiki/Header-Menu-&-Header-Buttons) & [Grid Menu](/ghiscoding/slickgrid-universal/wiki/Grid-Menu). Very similar to the [Cell Menu](/ghiscoding/slickgrid-universal/wiki/Cell-Menu), they were both created as SlickGrid plugins during the same period, their main difference is that they get triggered differently (mouse right+click vs cell click) and they serve different purposes. The Cell Menu is more oriented on a row action (e.g. delete current row) while the Context Menu is all about actions for the entire grid (e.g. export to Excel).
+A Context Menu is triggered by a mouse right+click and can show a list of Commands (to execute an action) and/or Options (to change the value of a field). The lib comes with a default list of custom commands (copy cell, export & grouping commands). Also note that the Commands list is following the same structure used in the [Cell Menu](Cell-Menu.md), [Header Menu](Header-Menu-&-Header-Buttons.md) & [Grid Menu](Grid-Menu.md). Very similar to the [Cell Menu](Cell-Menu.md), they were both created as SlickGrid plugins during the same period, their main difference is that they get triggered differently (mouse right+click vs cell click) and they serve different purposes. The Cell Menu is more oriented on a row action (e.g. delete current row) while the Context Menu is all about actions for the entire grid (e.g. export to Excel).
 
 This extensions is wrapped around the new SlickGrid Plugin **Slick.Plugins.ContextMenu**
 
 ### Default Usage
 Technically, the Context Menu is enabled by default (copy, export) and so you don't have anything to do to enjoy it (you could disable it at any time). However, if you want to customize the content of the Context Menu, then continue reading. You can customize the menu with 2 different lists, Commands and/or Options, they can be used separately or at the same time. Also note that even though the code shown below makes a separation between the Commands and Options, you can mix them in the same Context Menu.
 
-#### with Commands 
+#### with Commands
 ```ts
 this.gridOptions = {
   enableFiltering: true,
-  enableContextMenu: true, // enabled by default 
+  enableContextMenu: true, // enabled by default
   contextMenu: {
     hideCloseButton: false,
     commandTitle: 'Commands', // optional, add title
     commandItems: [
       'divider',
       { divider: true, command: '', positionOrder: 60 },
-      { 
+      {
         command: 'command1', title: 'Command 1', positionOrder: 61,
         // you can use the "action" callback and/or use "onCommand" callback from the grid options, they both have the same arguments
         action: (e, args) => {
@@ -61,13 +61,13 @@ this.gridOptions = {
 ```
 
 #### with Options
-That is when you want to define a list of Options (only 1 list) that the user can choose from and once is selected we would do something (for example change the value of a cell in the grid). 
+That is when you want to define a list of Options (only 1 list) that the user can choose from and once is selected we would do something (for example change the value of a cell in the grid).
 ```ts
 this.gridOptions = {
   contextMenu: {
     hideCloseButton: false,
     optionTitle: 'Change Effort Driven Flag', // optional, add title
-    optionItems: [       
+    optionItems: [
       { option: true, title: 'True', iconCssClass: 'fa fa-check-square-o' },
       { option: false, title: 'False', iconCssClass: 'fa fa-square-o' },
       { divider: true, command: '', positionOrder: 60 },
@@ -86,7 +86,7 @@ this.gridOptions = {
 ```
 
 ### Action Callback Methods
-There are 2 ways to execute an action after a Command is clicked (or an Option is selected), you could do it via the `action` callback or via the `onCommand` callback. You might be wondering why 2 and what's the difference? Well the `action` would have to be defined on every single Command/Option while the `onCommand` (or `onOptionSelected`) is more of a global subscriber which gets triggered every time any of the Command/Option is clicked/selected, so for that, you would typically need to use `if/else` or a `switch/case`... hmm ok but I still don't understand when would I use the `onCommand`? Let say you combine the Context Menu with the (Action) [Cell Menu](/ghiscoding/slickgrid-universal/wiki/Cell-Menu) and some of the commands are the same, well, in that case, it might be better to use the `onCommand` and centralize your commands in that callback, while in most other cases if you wish to do only 1 thing with a command, then using the `action` might be better. Also, note that they could also both be used at the same time if you wish. 
+There are 2 ways to execute an action after a Command is clicked (or an Option is selected), you could do it via the `action` callback or via the `onCommand` callback. You might be wondering why 2 and what's the difference? Well the `action` would have to be defined on every single Command/Option while the `onCommand` (or `onOptionSelected`) is more of a global subscriber which gets triggered every time any of the Command/Option is clicked/selected, so for that, you would typically need to use `if/else` or a `switch/case`... hmm ok but I still don't understand when would I use the `onCommand`? Let say you combine the Context Menu with the (Action) [Cell Menu](Cell-Menu.md) and some of the commands are the same, well, in that case, it might be better to use the `onCommand` and centralize your commands in that callback, while in most other cases if you wish to do only 1 thing with a command, then using the `action` might be better. Also, note that they could also both be used at the same time if you wish.
 
 So if you decide to use the `action` callback, then your code would look like this
 ##### with `action` callback
@@ -127,7 +127,7 @@ What if you want to dynamically disable or hide a Command/Option or even disable
 - `menuUsabilityOverride` returning false would make the Context Menu unavailable to the user
 - `itemVisibilityOverride` returning false would hide the item (command/option) from the list
 - `itemUsabilityOverride` return false would disabled the item (command/option) from the list
-  - **note** there is also a `disabled` property that you could use, however it is defined at the beginning while the override is meant to be used with certain logic dynamically. 
+  - **note** there is also a `disabled` property that you could use, however it is defined at the beginning while the override is meant to be used with certain logic dynamically.
 
 For example, say we want the Context Menu to only be available on the first 20 rows of the grid, we could use the override this way
 ```ts
@@ -179,11 +179,11 @@ cellMenu: {
 ```
 
 ### Default Internal Commands
-By defaults, the Context Menu will come with a few different preset Commands (copy, export). The Copy is straightforward, it allows you to copy the cell value, on the other hand, the export command(s) is dependent on the flags you have enabled in your Grid Options. For example, if you have only `enableExport` then you will get the `Export to CSV` and you might get as well `Export Tab-Delimited`, again that depends on which Grid Options you have enabled. Note that all internal commands have a `positionOrder` in the range of 50 to 60 (which is used to sort the Commands list), this allows you to append or prepend Commands to the list. 
+By defaults, the Context Menu will come with a few different preset Commands (copy, export). The Copy is straightforward, it allows you to copy the cell value, on the other hand, the export command(s) is dependent on the flags you have enabled in your Grid Options. For example, if you have only `enableExport` then you will get the `Export to CSV` and you might get as well `Export Tab-Delimited`, again that depends on which Grid Options you have enabled. Note that all internal commands have a `positionOrder` in the range of 50 to 60 (which is used to sort the Commands list), this allows you to append or prepend Commands to the list.
 
-Another set of possible Commands would be related to Grouping, so if you are using Grouping in your grid then you will get 3 extra Commands (clear grouping, collapse groups, expand groups). 
+Another set of possible Commands would be related to Grouping, so if you are using Grouping in your grid then you will get 3 extra Commands (clear grouping, collapse groups, expand groups).
 
-All of these internal commands, you can choose to hide them and/or change their icons, the default global options are the following and you can change any of them. 
+All of these internal commands, you can choose to hide them and/or change their icons, the default global options are the following and you can change any of them.
 ```ts
 contextMenu: {
     autoAdjustDrop: true,

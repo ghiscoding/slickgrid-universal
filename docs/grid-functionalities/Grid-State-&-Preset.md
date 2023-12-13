@@ -8,10 +8,10 @@
 ### Demo
 Look at your developer console before leaving the page
 #### Regular grid
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example4) / [Demo Component](/ghiscoding/aurelia-slickgrid/blob/master/src/examples/slickgrid/example4.ts)
+[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example4) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/tree/master/src/examples/slickgrid/example4.ts)
 
 #### with Backend Service
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example6) / [Demo Component](/ghiscoding/aurelia-slickgrid/blob/master/src/examples/slickgrid/example6.ts)
+[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example6) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/tree/master/src/examples/slickgrid/example6.ts)
 
 ### Descriptions
 #### Grid State
@@ -55,7 +55,7 @@ export class GridExample {
 ```
 
 ### Using Grid Presets & Filter SearchTerm(s)
-What happens when we use the grid `presets` and a [Filter Default SearchTerms](/ghiscoding/aurelia-slickgrid/wiki/Select-Filter#default-search-terms)? In this case, the `presets` will win over filter `searchTerms`. The cascading order of priorities is the following
+What happens when we use the grid `presets` and a [Filter Default SearchTerms](../column-functionalities/filters/Select-Filter.md#default-search-terms)? In this case, the `presets` will win over filter `searchTerms`. The cascading order of priorities is the following
 1. Do we have any `presets`? Yes use them, else go to step 2
 2. Do we have any Filter `searchTerms`? Yes use them, else go to step 3
 3. No `presets` and no `searchTerms`, load grid with default grid & column definitions
@@ -166,7 +166,7 @@ export class GridExample {
     gridContainerElm.addEventListener('ongridstatechanged', this.handleOnGridStateChanged.bind(this));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, dataset);
   }
- 
+
   handleOnGridStateChanged(gridState) {
     console.log(gridState);
   }
@@ -176,13 +176,13 @@ export class GridExample {
 ##### View - SalesForce (ES6)
 ```html
 <div class="grid-container">
-    <div class="grid1" 
+    <div class="grid1"
             ongridstatechanged={handleOnGridStateChanged}>
     </div>
 </div>
 ```
 ## How to Load Grid with certain Columns Preset (example hide certain Column(s) on load)
-You can show/hide or even change column position all via the `presets`, yes `presets` is that powerful. All you need is to pass all Columns that you want to show as part of the `columns` property of `presets`. Typically you already have the entire columns definition since you just defined it, so you can re-use that and just use `map` to loop through and populate the `columns` according to the structure needed (see [preset structure](/ghiscoding/aurelia-slickgrid/wiki/Grid-State-&-Preset#structure)). What you have to know is that whatever array you pass will drive what the user will see and at which order the columns will show (basically the array order does matter). If a Columns is omitted from that array, then it will become a hidden column (you can still show it through Grid Menu or Column Picker).
+You can show/hide or even change column position all via the `presets`, yes `presets` is that powerful. All you need is to pass all Columns that you want to show as part of the `columns` property of `presets`. Typically you already have the entire columns definition since you just defined it, so you can re-use that and just use `map` to loop through and populate the `columns` according to the structure needed (see [preset structure](Grid-State-&-Preset#structure.md)). What you have to know is that whatever array you pass will drive what the user will see and at which order the columns will show (basically the array order does matter). If a Columns is omitted from that array, then it will become a hidden column (you can still show it through Grid Menu or Column Picker).
 
 So let say that we want to hide the last Column on page load, we can just find the column by it's `id` that you want to hide and pass the new column definition to the `presets` (again make sure to follow the correct preset structure).
 

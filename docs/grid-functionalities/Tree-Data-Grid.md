@@ -1,10 +1,10 @@
 #### Index
 - [Parent/Child Relation Dataset](#parentchild-relation-dataset)
 - [Hierarchical (Tree) Dataset](#hierarchical-tree-dataset)
-- [Tree Formatter (with Collapsing icons](#tree-formatter) 
+- [Tree Formatter (with Collapsing icons](#tree-formatter)
 - [Tree Custom Title Formatter](#tree-custom-title-formatter)
 - [Exporting Options (data export to Excel/Text File)](#exporting-options-data-export-to-exceltext-file)
-- [Full List of `treeDataOptions`](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/treeDataOption.interface.ts)
+- [Full List of `treeDataOptions`](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/treeDataOption.interface.ts)
 - Filtering Options
   - [`excludeChildrenWhenFilteringTree`](#excludechildrenwhenfilteringtree-boolean-option)
   - [`autoApproveParentItemWhenTreeColumnIsValid`](#autoapproveparentitemwhentreecolumnisvalid-boolean-option)
@@ -20,9 +20,9 @@ Tree Data allows you to display a hierarchical (tree) dataset into the grid, it 
 For Tree Data to work with SlickGrid we need to **mutate** the original dataset, it will add a couple of new properties to your data, these properties are: `__treeLevel`, `__parentId` and `children` (these key names could be changed via the `treeDataOptions`). Also note that these properties become available in every Formatter (built-in and custom) which can be quite useful (especially in the tree level) in some cases... You might be thinking, could we do it without mutating the data? Probably but that would require to do a deep copy of the original data and that can be expensive on the performance side (no one it stopping you from doing a deep copy on your side though). The last thing to note is that internally for Tree Data to work, the lib always has 2 dataset (1x flat dataset and 1x hierarchical dataset which is basically a tree structure) and the lib keeps them in sync internally. So why do we do all of this? Well simply put, SlickGrid itself does not support a Tree Data structure and that is the reason we always have to keep 2 dataset structures internally because SlickGrid only works a flat dataset and nothing else.
 
 ### Demo
-[Demo Parent/Child Relationship](https://ghiscoding.github.io/slickgrid-universal/#/example05) / [Component](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example05.ts)
+[Demo Parent/Child Relationship](https://ghiscoding.github.io/slickgrid-universal/#/example05) / [Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example05.ts)
 
-[Hierarchial Dataset](https://ghiscoding.github.io/slickgrid-universal/#/example06) / [Component](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example06.ts)
+[Hierarchial Dataset](https://ghiscoding.github.io/slickgrid-universal/#/example06) / [Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example06.ts)
 
 ## Parent/Child Relation Dataset
 This is the most common Tree Data to use, we only use that one in our projects, and requires you to provide a key representing the relation between the parent and children (typically a `parentId`, which the default key when nothing is provided).
@@ -33,15 +33,15 @@ For example, we can see below is that we have a regular flat dataset with items 
 ```ts
 const dataset = [
   { id: 0, file: 'documents', parentId: null, },
-  { id: 1, file: 'vacation.txt', parentId: 0, }, 
-  { id: 2, file: 'bills.txt', parentId: 0, }, 
+  { id: 1, file: 'vacation.txt', parentId: 0, },
+  { id: 2, file: 'bills.txt', parentId: 0, },
   { id: 55: file: 'music', parentId: null, },
-  { id: 60, file: 'favorite-song.mp3', parentId: 55, }, 
-  { id: 61, file: 'blues.mp3', parentId: 61, }, 
+  { id: 60, file: 'favorite-song.mp3', parentId: 55, },
+  { id: 61, file: 'blues.mp3', parentId: 61, },
 ];
 ```
 
-_For the full list of options, refer to the [treeDataOptions](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/treeDataOption.interface.ts) interface_
+_For the full list of options, refer to the [treeDataOptions](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/treeDataOption.interface.ts) interface_
 
 ###### define your grid
 ```ts
@@ -49,7 +49,7 @@ initializeGrid() {
   this.columnDefinitions = [
     {
       id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title',
-      filterable: true, sortable: true, 
+      filterable: true, sortable: true,
       formatter: Formatters.tree, exportCustomFormatter: Formatters.treeExport
     },
     // ...
@@ -82,20 +82,20 @@ This is when your dataset is already in hierarchical (tree) structure, for examp
 
 For example, we can see below the children are in the `files` array and the entire dataset is already in a hierarchical (tree) structure.
 
-_For the full list of options, refer to the [treeDataOptions](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/treeDataOption.interface.ts) interface_
+_For the full list of options, refer to the [treeDataOptions](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/treeDataOption.interface.ts) interface_
 
 ###### dataset sample
 ```ts
 const dataset = [
   { id: 0, file: 'documents', files: [
-      { id: 1, file: 'vacation.txt', size: 12 }, 
+      { id: 1, file: 'vacation.txt', size: 12 },
       { id: 2, file: 'bills.txt', size: 0.5 }
-    ] 
+    ]
   },
   { id: 55: file: 'music', files: [
-      { id: 60, file: 'favorite-song.mp3': size: 2.3 }, 
+      { id: 60, file: 'favorite-song.mp3': size: 2.3 },
       { id: 61, file: 'blues.mp3', size: 5.5 }
-    ] 
+    ]
   },
 ];
 ```
@@ -120,7 +120,7 @@ initializeGrid() {
       columnId: 'file',           // the column where you will have the Tree with collapse/expand icons
       parentPropName: 'files',  // the parent/child key relation in your dataset
       levelPropName: 'treeLevel',  // optionally, you can define the tree level property name, it nothing is provided it will use "__treeLevel"
-      
+
       // you can optionally sort by a different column and/or sort direction
       // this is the RECOMMENDED approach, unless you are 100% that your original array is already sorted (in most cases it's not)
       initialSort: {
@@ -194,7 +194,7 @@ treeFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
 ### Exporting Options (data export to Excel/Text File)
 Exporting the data and keeping the tree level indentation requires a few little tricks and a few options were added to configure them. First off we need a leading character on the left because Excel will trim any spaces and so if our indentation is only spaces then everything gets trimmed and so for that we reason we have the character `·` at the start of every text and then the indentation spaces and that won't be trimmed. Here's a few of the options available.
 
-_For the full list of options, refer to the [treeDataOptions](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/treeDataOption.interface.ts) interface_
+_For the full list of options, refer to the [treeDataOptions](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/treeDataOption.interface.ts) interface_
 
 ```ts
 /**
@@ -219,7 +219,7 @@ exportIndentationLeadingSpaceCount?: number;
 ### Filtering Options
 #### `excludeChildrenWhenFilteringTree` boolean option
 ##### (see animated gif below for a demo)
-When using Tree Data, in most cases we will want to see the content (children) of a parent item when filtering but in some cases we might actually want to exclude them and that is what this flag is for. 
+When using Tree Data, in most cases we will want to see the content (children) of a parent item when filtering but in some cases we might actually want to exclude them and that is what this flag is for.
 
 The full explanation of how filter works is the following
 by default (unless this feature is disabled) all child nodes of the tree will be included when a parent passes a filter and a group will be included if
@@ -233,7 +233,7 @@ by default (unless this feature is disabled) all child nodes of the tree will be
 
 #### `autoApproveParentItemWhenTreeColumnIsValid` boolean option
 ##### (see animated gif below for a demo)
-as described in previous paragraph on the number 3), we can auto-approve item if it's the column holding the Tree structure and is a Parent that passes the first filter criteria, in other words if we are on the column holding the Tree and its filter is valid (and is also a parent), then skip any other filter(s) that exist on the same line. 
+as described in previous paragraph on the number 3), we can auto-approve item if it's the column holding the Tree structure and is a Parent that passes the first filter criteria, in other words if we are on the column holding the Tree and its filter is valid (and is also a parent), then skip any other filter(s) that exist on the same line.
 
 For demo purpose, let's take [Example 6](https://ghiscoding.github.io/slickgrid-universal/#/example06) live demo, if we filter with the word `music` on the "Files" column and also a Size that is `> 15` nothing will show up unless we have this flag enabled. The reason is because none of the files have both criteria passing at the same time, however the "Files" column (which is the Tree column) does pass the filter criteria of `music` and so this flag will work and show the folder "music" because we skipped all other criteria, in our case `> 15` on that line, note however that on the following lines (all children), it will require all filters to be valid (and so we are able to see any files under the "music" folder that have a size greater than 15Mb).
 
@@ -244,7 +244,7 @@ There are a few methods available from the `TreeDataService` (only listing the i
 - `getItemCount(x)`: returns item count of a group
 - `getToggledItems()`: returns all toggled items
 - `getCurrentToggleState()`: get the current toggle state that includes the toggled type and toggled items
-- `dynamicallyToggleItemState(x)`: dynamically toggle and change state of certain parent items by providing an array of parentIds 
+- `dynamicallyToggleItemState(x)`: dynamically toggle and change state of certain parent items by providing an array of parentIds
 - `applyToggledItemStateChanges(x)`: apply different tree toggle state changes (to ALL rows, the entire dataset) by providing an array of parentIds
 
 For example
@@ -276,7 +276,7 @@ You can calculate Tree Totals by adding Aggregators to your `treeDataOptions` co
 > **Note** if you were thinking to add both `AvgAggregator` and `SumAggregator`, well the latter can be omitted since the `AvgAggregator` will automatically give you access to the exact same tree totals properties which are `sum`, `count` and `avg` since it needs them all to calculate its average. So if you want to improve perf, you can skip the `SumAggregator` and keep only `AvgAggregator` to still gain access to all 3 totals props simply by calling the Average Aggregator (and that was intentional and not a coincidence). Incidentally, the same is true for `CountAggregator` as well.
 
 The available Aggregators that were modified to support Tree Totals aggregations are:
-- `AvgAggregator`: average of a tree 
+- `AvgAggregator`: average of a tree
 - `CountAggregator`: count all items of a tree
 - `SumAggregator`: sum of a tree
 - `MinAggregator`: minimum value found in the tree
@@ -318,7 +318,7 @@ this.columnDefinitions = [
     // provide any regular formatters inside the params.formatters
     formatter: Formatters.treeParseTotals,
     treeTotalsFormatter: GroupTotalFormatters.sumTotalsBold,
-    // groupTotalsFormatter: GroupTotalFormatters.sumTotalsBold, // alias 
+    // groupTotalsFormatter: GroupTotalFormatters.sumTotalsBold, // alias
 
     // you can add extra settings to your regular GroupTotalFormatters via the `params`
     params: {

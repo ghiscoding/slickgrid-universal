@@ -8,14 +8,14 @@
   - [Basic Usage with Object Result (**preferred way**)](#remote-api-basic-with-object-result)
   - [with `renderItem` + custom Layout (`twoRows` or `fourCorners`)](#remote-api-with-renderitem--custom-layout-tworows-or-fourcorners)
   - [with jQueryUI `_renderItem` callback + custom Layout (`twoRows` or `fourCorners`)](#remote-api-with-jquery-ui-_renderitem-callback--custom-layout-tworows-or-fourcorners)
-  - [Custom Styling - SASS variables](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss#L141)
+  - [Custom Styling - SASS variables](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss#L141)
 - [Force User Input](#autocomplete---force-user-input)
 - [`onSelect` callback](#use-onselect-callback)
 - [Animated Gif Demo](#animated-gif-demo)
   - See the [Editors - Wiki](https://github.com/ghiscoding/slickgrid-universal/wiki/Editors) for more general info about Editors (validators, event handlers, ...)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example11) | [Demo Component](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example11.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example11) | [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example11.ts)
 
 ### Introduction
 AutoComplete is a functionality that let the user start typing characters and the autocomplete will try to give suggestions according to the characters entered. The collection can be a fixed JSON files (collection of strings or objects) or can also be an external remote resource to an external API. For a demo of what that could look like, take a look at the [animated gif demo](#animated-gif-demo) below.
@@ -96,7 +96,7 @@ this.columnDefinitions = [
 ```
 
 ### Editor Options (`AutocompleteOption` interface)
-All the available options that can be provided as `editorOptions` to your column definitions can be found under this [AutocompleteOption interface](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/autocompleteOption.interface.ts) and you should cast your `editorOptions` to that interface to make sure that you use only valid options of the jQueryUI autocomplete library. 
+All the available options that can be provided as `editorOptions` to your column definitions can be found under this [AutocompleteOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/autocompleteOption.interface.ts) and you should cast your `editorOptions` to that interface to make sure that you use only valid options of the jQueryUI autocomplete library.
 
 ```ts
 editor: {
@@ -243,7 +243,7 @@ export class GridBasicComponent {
 
 ### Remote API with jQuery UI `_renderItem` callback + custom layout (`twoRows` or `fourCorners`)
 #### See animated gif ([twoRows](#with-tworows-custom-layout-without-optional-left-icon) or [fourCorners](#with-fourcorners-custom-layout-with-extra-optional-left-icon))
-The previous example can also be written using the jQuery UI `_renderItem` callback and adding `classes`, this is actually what Slickgrid-Universal does internally, you can do it yourself if you wish to have more control on the render callback result. 
+The previous example can also be written using the jQuery UI `_renderItem` callback and adding `classes`, this is actually what Slickgrid-Universal does internally, you can do it yourself if you wish to have more control on the render callback result.
 
 ##### Component
 ```javascript
@@ -271,7 +271,7 @@ export class GridBasicComponent {
             minLength: 1,
             classes: {
               // choose a custom style layout
-              // 'ui-autocomplete': 'autocomplete-custom-two-rows', 
+              // 'ui-autocomplete': 'autocomplete-custom-two-rows',
               'ui-autocomplete': 'autocomplete-custom-four-corners',
             },
             source: (request, response) => {
@@ -334,7 +334,7 @@ export class GridBasicComponent {
 ```
 
 #### with JSONP
-Example from an external remote API (geobytes) returning a JSONP response. 
+Example from an external remote API (geobytes) returning a JSONP response.
 
 ##### Component
 ```javascript

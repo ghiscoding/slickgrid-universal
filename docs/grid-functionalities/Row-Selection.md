@@ -15,13 +15,13 @@ For row selection, you can simply play with couple of grid options (see below) a
 **Note:** `enableCheckboxSelector` and `enableExcelCopyBuffer` do not work well together, this is because they both share the same `Row.SelectionModel` and one cancels the other. It is recommended to not use `enableExcelCopyBuffer` in that case.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example07) / [Demo ViewModel](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example07.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example07) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example07.ts)
 
 ## Single Row Selection
 For a single row selection, you need to have `enableCellNavigation: true`, `enableRowSelection: true` and `multiSelect: false` and as described earlier, subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
 
 ### 1. with Delegate (preferred way)
-You can also do it through a `delegate` since all SlickGrid events are exposed as `delegate`. For more info see [Wiki - OnEvents - `3. delegate`](/ghiscoding/slickgrid-universal/wiki/Grid-&-DataView-Events)
+You can also do it through a `delegate` since all SlickGrid events are exposed as `delegate`. For more info see [Wiki - OnEvents - `3. delegate`](Grid-&-DataView-Events.md)
 
 #### ViewModel
 ```ts
@@ -82,7 +82,7 @@ gridObjChanged(grid) {
 As for multiple row selections, you need to disable `enableCellNavigation` and enable `enableCheckboxSelector` and `enableRowSelection`. Then as describe earlier, you will subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
 
 ### 1. with Delegate (preferred way)
-You can also do it through a `delegate` since all SlickGrid events are exposed as `delegate`. For more info see [Wiki - OnEvents - `3. delegate`](/ghiscoding/slickgrid-universal/wiki/Grid-&-DataView-Events)
+You can also do it through a `delegate` since all SlickGrid events are exposed as `delegate`. For more info see [Wiki - OnEvents - `3. delegate`](Grid-&-DataView-Events.md)
 
 #### ViewModel
 ```ts
@@ -220,7 +220,7 @@ handleOnSelectedRowsChanged(event) {
   this.isMyButtonDisabled = args.rows?.length === 0;
 }
 ```
-2. use the `onGridStateChanged` event (see [Grid State & Presets](/ghiscoding/slickgrid-universal/wiki/Grid-State-&-Preset) Wiki)
+2. use the `onGridStateChanged` event (see [Grid State & Presets](Grid-State-&-Preset.md) Wiki)
 ```html
 <button disabled.bind="isMyButtonDisabled">My Button</button>
 <div class="myGrid"
@@ -254,10 +254,10 @@ export class Example1 {
     this.sgb.slickGrid.setSelectedRows([]); // empty array will clear the row selection
   }
   changeRowSelections() {
-    this.sgb.slickGrid.setSelectedRows(rowIndexes); 
+    this.sgb.slickGrid.setSelectedRows(rowIndexes);
 
     // OR providing an empty array will clear the row selection
-    // this.sgb.slickGrid.setSelectedRows([]); 
+    // this.sgb.slickGrid.setSelectedRows([]);
   }
 }
 ```

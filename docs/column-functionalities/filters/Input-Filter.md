@@ -14,7 +14,7 @@
 Input filter is the default filter when enabling filters.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example02) / [Demo Component](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example02.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example02) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example02.ts)
 
 ### UI Usage
 All column types support the following operators: (`>`, `>=`, `<`, `<=`, `<>`, `!=`, `=`, `==`, `*`), range filters can also have 1 of these options (`rangeInclusive` or `rangeExclusive`, the inclusive is default)
@@ -34,7 +34,7 @@ Example:
   - `ab..ef` => anything between "af" and "ef"
     - refer to ASCII table, it is however case insensitive
 
-Note that you could do the same functionality with a Compound Filter. 
+Note that you could do the same functionality with a Compound Filter.
 
 #### Note
 For filters to work properly (default is `string`), make sure to provide a `FieldType` (type is against the dataset, not the Formatter), for example on a Date Filters, we can set the `FieldType` of dateUtc/date (from dataset) can use an extra option of `filterSearchType` to let user filter more easily. For example, with a column having a "UTC Date" coming from the dataset but has a `formatter: Formatters.dateUs`, you can type a date in US format `>02/28/2017`, also when dealing with UTC you have to take the time difference in consideration.
@@ -130,20 +130,20 @@ export class Example {
 
 #### Extra Arguments
 The `updateFilters` method has 2 extra arguments:
-- 2nd argument, defaults to true, is to emit a filter changed event (the GridStateService uses this event) 
+- 2nd argument, defaults to true, is to emit a filter changed event (the GridStateService uses this event)
   - optional and defaults to true `updateFilters([], true)`
 - 3rd argument is to trigger a backend query (when using a Backend Service like OData/GraphQL), this could be useful when using updateFilters & updateSorting and you wish to only send the backend query once.
   - optional and defaults to true `updateFilters([], true, true)`
 
 ### Query Different Field
-Sometime you want to display a certain column (let say `countryName`) but you want to filter from a different column (say `countryCode`), in such use case you can use 1 of these 4 optional 
+Sometime you want to display a certain column (let say `countryName`) but you want to filter from a different column (say `countryCode`), in such use case you can use 1 of these 4 optional
 - `queryField`: this will affect both the Filter & Sort
 - `queryFieldFilter`: this will affect only the Filter
-- `queryFieldSorter`: this will affect only the Sort 
+- `queryFieldSorter`: this will affect only the Sort
 - `queryFieldNameGetterFn`: dynamically change column to do Filter/Sort (see below)
 
 ### Dynamic Query Field
-What if you a field that you only know which field to query only at run time and depending on the item object (`dataContext`)? 
+What if you a field that you only know which field to query only at run time and depending on the item object (`dataContext`)?
 We can defined a `queryFieldNameGetterFn` callback that will be executed on each row when Filtering and/or Sorting.
 ```ts
 queryFieldNameGetterFn: (dataContext) => {

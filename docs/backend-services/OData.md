@@ -14,12 +14,12 @@ Use it when you need to support **Pagination** (that is when your dataset is rat
 To connect a backend service into `Slickgrid-Universal`, you simply need to modify your `gridOptions` and add a declaration of `backendServiceApi` and pass it the `service`. See below for the signature and an example further down below.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example09) / [Demo ViewModel](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example09.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example09) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/tree/master/examples/vite-demo-vanilla-bundle/src/examples/example09.ts)
 
 ### IMPORTANT NOTE
 All the code below assumes that your Backend Server (probably in C#) will return the data into an `items` property. You could return the array directly **but it is strongly discouraged to do that** because that will conflict with the `metrics` that you will see in the code below. The best approach is to return your data into a property, like `items` or any property name you wish to use, on your backend server side. Your result should have this kind of structure
 ```ts
-{ 
+{
   items: [ /* your data */ ]
 }
 ```
@@ -53,7 +53,7 @@ As you can see, you mainly need to define which service to use (GridODataService
 
 #### Grid Definition & call of `backendServiceApi`
 ##### Notes
-- Pagination is optional and if not defined, it will use what is set in the [Slickgrid-Universal - Global Options](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/global-grid-options.ts)
+- Pagination is optional and if not defined, it will use what is set in the [Slickgrid-Universal - Global Options](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/global-grid-options.ts)
 - `onInit` is optional and is there to initialize (pre-populate) the grid with data on first page load (typically the same call as `process`)
   - you could load the grid yourself outside of the `gridOptions` which is why it's optional
 - `filterTypingDebounce` is a timer (in milliseconds) that waits for user input pause before querying the backend server
@@ -110,7 +110,7 @@ export class Example {
   getCustomerApiCall(odataQuery) {
     // regular Http Client call
     return this.http.createRequest(`/api/customers?${odataQuery}`).asGet().send().then(response => response.content);
- 
+
     // or with Fetch Client
     // return this.http.fetch(`/api/customers?${odataQuery}`).then(response => response.json());
   }
@@ -144,16 +144,16 @@ You might need to pass extra arguments to your OData query, for example passing 
 
 ## OData options
 
-All options can be found here: [Slickgrid-Universal - OData Options](/ghiscoding/slickgrid-universal/blob/master/packages/odata/src/interfaces/odataOption.interface.ts)
+All options can be found here: [Slickgrid-Universal - OData Options](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/odata/src/interfaces/odataOption.interface.ts)
 
 Some are described in more detail below.
 
 ### OData version
 
-By default the OData version is set to 2 because it was implemented with that version. If you wish to use version 4, then just change the `version: 4`, there are subtle differences. 
+By default the OData version is set to 2 because it was implemented with that version. If you wish to use version 4, then just change the `version: 4`, there are subtle differences.
 
 ```ts
-this.gridOptions = {      
+this.gridOptions = {
   backendServiceApi: {
     service: new GridOdataService(),
       options: {

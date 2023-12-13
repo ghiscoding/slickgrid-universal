@@ -1,8 +1,8 @@
 ## Installation Instructions for Salesforce
-This document shows how to get this Slickgrid bundle working with Salesforce LWC (Lighning Web Component). 
+This document shows how to get this Slickgrid bundle working with Salesforce LWC (Lighning Web Component).
 
 ### Step 1. install dependencies (static resources) one time setup in your org
-The first thing you'll need to do is to add the slickgrid bundle zip file as a new static resource, you can see below the name that we used in our Salesforce org (you can name then differently). The resource named `Sf_SlickGrid` comes from the zip file that gets created every time a new dist build is updated, the zip file can be downloaded [here](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle/dist-grid-bundle-zip). 
+The first thing you'll need to do is to add the slickgrid bundle zip file as a new static resource, you can see below the name that we used in our Salesforce org (you can name then differently). The resource named `Sf_SlickGrid` comes from the zip file that gets created every time a new dist build is updated, the zip file can be downloaded [here](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle/dist-grid-bundle-zip).
 
 #### Here are the 3 static resource files
 Click on the `zip` link and then the `Download` button on the top right to download it locally, then upload it to your org.
@@ -13,7 +13,7 @@ Click on the `zip` link and then the `Download` button on the top right to downl
 
 | Static Resource Name | Zip | Notes |
 | -------- | --- | ----------- |
-| `Sf_SlickGrid` | [zip](/ghiscoding/slickgrid-universal/blob/master/packages/vanilla-force-bundle/dist-grid-bundle-zip/slickgrid-vanilla-bundle.zip) | the file name is `slickgrid-vanilla-bundle.zip` and we named our static resource as **`Sf_SlickGrid`** but it could be any name really |
+| `Sf_SlickGrid` | [zip](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/vanilla-force-bundle/dist-grid-bundle-zip/slickgrid-vanilla-bundle.zip) | the file name is `slickgrid-vanilla-bundle.zip` and we named our static resource as **`Sf_SlickGrid`** but it could be any name really |
 
 ### Step 2. load Slickgrid
 
@@ -67,7 +67,7 @@ export default class YourComponent extends LightningElement {
   wiredGetSomeData({ error, data }) {
     if (data) {
         this.dataset = data || [];
-        
+
         if (window.Slicker && window.Slicker.Utilities && this.sgb) {
             this.sgb.dataset = this.dataset;
         }
@@ -90,7 +90,7 @@ export default class YourComponent extends LightningElement {
         await loadScript(this, `${sf_slickGrid_bundle}/slickgrid-vanilla-bundle.js`);
 
         // create the grid (column definitions, grid options & dataset)
-        this.initializeGrid();        
+        this.initializeGrid();
     } catch (error) {
         this.dispatchEvent(new ShowToastEvent({ title: 'Error loading SlickGrid', message: error && error.message || '', variant: 'error', }));
     }
@@ -103,7 +103,7 @@ export default class YourComponent extends LightningElement {
       // ...
    ];
 
-    this.gridOptions = { 
+    this.gridOptions = {
       useSalesforceDefaultGridOptions: true,  // enable this flag to use regular grid options used for SF project
 
       autoResize: {
@@ -119,7 +119,7 @@ export default class YourComponent extends LightningElement {
 
       // datasetIdPropertyName: 'someOtherId', // default is "Id" (case sensitive)
 
-      /** other options... */ 
+      /** other options... */
     };
 
     // find your HTML slickGrid container & pass it to the Slicker.GridBundle instantiation

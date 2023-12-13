@@ -11,13 +11,13 @@
 - [Troubleshooting](#troubleshooting)
 
 ### Description
-Almost all grids from the demos are using the auto-resize feature, and the feature does what its name suggest, it resizes the grid to fill entirely within the container it is contained. It also automatically resizes when the user changes its browser size. 
+Almost all grids from the demos are using the auto-resize feature, and the feature does what its name suggest, it resizes the grid to fill entirely within the container it is contained. It also automatically resizes when the user changes its browser size.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example02) / [Demo ViewModel](/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example02.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example02) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example02.ts)
 
 ### Usage
-All you need to do is enable the Grid Option `enableAutoResize: true` and provide necessary information in the `autoResize`, at minimum you should provide your container an id or class name. 
+All you need to do is enable the Grid Option `enableAutoResize: true` and provide necessary information in the `autoResize`, at minimum you should provide your container an id or class name.
 ##### View
 ```html
 <div class="demo-container">
@@ -36,7 +36,7 @@ this.gridOptions = {
 ```
 
 #### AutoResize Options
-There are multiple options you can pass to the `autoResize` in the Grid Options, you can see them all in the [autoResizeOption.interface](/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/resizerOption.interface.ts)
+There are multiple options you can pass to the `autoResize` in the Grid Options, you can see them all in the [autoResizeOption.interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/resizerOption.interface.ts)
 
 ### Delay a Grid Resize
 Note that you can also delay the resize via the 1st argument to the `resizeGrid()` call.
@@ -62,7 +62,7 @@ async openSidebar() {
 }
 ```
 ### Pause the resizer (when auto-resize is enabled)
-User can pause the resizer at any time and later resume the auto-resize. This might be useful in some use case, for example if you don't want the grid to resize after a certain event, you can pause the resizer before the action. 
+User can pause the resizer at any time and later resume the auto-resize. This might be useful in some use case, for example if you don't want the grid to resize after a certain event, you can pause the resizer before the action.
 
 ##### View
 ```html
@@ -91,7 +91,7 @@ export class MyComponent {
 }
 ```
 
-### Add Grid Min/Max Height/Width 
+### Add Grid Min/Max Height/Width
 You can set some values for minimum, maximum grid height and width that will be analyzed while executing the calculate available space for the grid.
 
 ```ts
@@ -114,7 +114,7 @@ this.gridOptions = {
   enableAutoResize: true,
   autoResize: {
     rightPadding: 20,  // note that there's no left option since we don't control the grid position
-    bottomPadding: 25, // a good example of this usage is when the user adds Pagination, it adds a bottomPadding of about 30px 
+    bottomPadding: 25, // a good example of this usage is when the user adds Pagination, it adds a bottomPadding of about 30px
   }
 }
 ```
@@ -156,7 +156,7 @@ For example you could add a resize handle to the grid container (shown on the bo
 ```
 
 ### Resize the Grid with fixed Dimensions
-You can call `resizeGrid()` method at any point in time by passing dimensions as the 2nd argument of that method, that would in terms bypass the auto-resize (if enabled that is). 
+You can call `resizeGrid()` method at any point in time by passing dimensions as the 2nd argument of that method, that would in terms bypass the auto-resize (if enabled that is).
 
 ##### Component
 ```ts
