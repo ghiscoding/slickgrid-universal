@@ -45,6 +45,7 @@ As you can see, you mainly need to define which service to use (GridODataService
 
 ### Typescript GraphQL Service Options
 You can also pass certain options to the `backendServiceApi` through the `options` property. The list of options is the following
+
 ```typescript
 export interface GraphqlServiceOption extends BackendServiceOption {
   /**
@@ -162,37 +163,37 @@ export class Example {
     // or with Fetch Client
     // return this.http.fetch(`/api/customers?${graphqlQuery}`).then(response => response.json());
   }
+}
 ```
 
 ### Extra Query Arguments
 You can pass extra query arguments to the GraphQL query via the `extraQueryArguments` property defined in the `backendServiceApi.options`. For example let say you have a list of users and your GraphQL query accepts an optional `userId`, you can write it in code this way:
 ```ts
-  this.gridOptions = {
-      backendServiceApi: {
-        service: new GraphqlService(),
+this.gridOptions = {
+  backendServiceApi: {
+    service: new GraphqlService(),
 
-        // add some options to the backend service to work
-        options: {
-          columnDefinitions: this.columnDefinitions,
-          executeProcessCommandOnInit: false, // true by default, which load the data on page load
-          datasetName: 'users',
-          paginationOptions: {
-            first: 25,
-            offset: 0
-          },
-          extraQueryArguments: [{
-            field: 'userId',
-            value: 567
-          }]
-        },
+    // add some options to the backend service to work
+    options: {
+      columnDefinitions: this.columnDefinitions,
+      executeProcessCommandOnInit: false, // true by default, which load the data on page load
+      datasetName: 'users',
+      paginationOptions: {
+        first: 25,
+        offset: 0
+      },
+      extraQueryArguments: [{
+        field: 'userId',
+        value: 567
+      }]
+    },
 
-        // define all the on Event callbacks
-        preProcess: () => this.displaySpinner(true),
-        process: (query) => this.getCustomerApiCall(query),
-        postProcess: (response) => this.displaySpinner(false)
-      }
-    };
+    // define all the on Event callbacks
+    preProcess: () => this.displaySpinner(true),
+    process: (query) => this.getCustomerApiCall(query),
+    postProcess: (response) => this.displaySpinner(false)
   }
+};
 ```
 
 The GraphQL query built with these options will be

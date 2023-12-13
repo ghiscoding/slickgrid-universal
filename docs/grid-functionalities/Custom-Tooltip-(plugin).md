@@ -42,7 +42,7 @@ initializeGrid() {
 
   // make sure to register the plugin in your grid options
   this.gridOptions = {
-    registerExternalResources: [new SlickCustomTooltip()],
+    externalResources: [new SlickCustomTooltip()],
   };
 }
 ```
@@ -54,7 +54,7 @@ import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 
 initializeGrid() {
   this.gridOptions = {
-    registerExternalResources: [new SlickCustomTooltip()],
+    externalResources: [new SlickCustomTooltip()],
     customTooltip: {
       formatter: tooltipTaskFormatter,
 

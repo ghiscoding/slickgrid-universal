@@ -110,7 +110,7 @@ this.columnDefinitions = [
 ### How to add Translation?
 #### LabelKey
 For the Select (dropdown) filter, you can fill in the "labelKey" property, if found it will translate it right away. If no `labelKey` is provided nothing will be translated (unless you have `enableTranslateLabel` set to true), else it will use "label"
-```javascript
+```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
 this.columnDefinitions = [
   { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
@@ -126,7 +126,7 @@ this.columnDefinitions = [
 
 #### enableTranslateLabel
 You could also use the `enableTranslateLabel` which will translate regardless of the label key name (so it could be used with `label`, `labelKey` or even a `customStructure` label).
-```javascript
+```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
 this.columnDefinitions = [
   { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
@@ -143,7 +143,7 @@ this.columnDefinitions = [
 
 ### Custom Structure (key/label pair)
 What if your select options (collection) have totally different value/label pair? In this case, you can use the `customStructure` to change the property name(s) to use. You can change the label and/or the value, they can be passed independently.
-```javascript
+```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
 this.columnDefinitions = [
   { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
@@ -168,7 +168,7 @@ this.columnDefinitions = [
 ### Custom Structure with Translation
 What if you want to use `customStructure` and translate the labels? Simply pass the flag `enableTranslateLabel: true`
 
-```javascript
+```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
 this.columnDefinitions = [
   { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
@@ -222,7 +222,7 @@ You can also pre-sort or pre-filter the collection given to the multipleSelect/s
 5. `contains`: assumes the `collectionFilterBy.value` is an array and will check if any of those values exists in the `collectionFilterBy.property`. For example: `collection: [{ foo: 'bar' }, { foo: 'foo' }]`, `collectionFilterBy.property: 'foo'`, `collectionFilterBy.value: [ 'bar', 'foo' ]` will return bot items
 
 Full example:
-```javascript
+```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
 this.columnDefinitions = [
   { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
@@ -309,7 +309,7 @@ this.columnDefinitions = [
 ### Custom Structure with Translation
 What if you want to use `customStructure` and translate the labels? Simply pass the flag `enableTranslateLabel: true`
 
-```javascript
+```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
 this.columnDefinitions = [
   { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
@@ -334,7 +334,7 @@ this.columnDefinitions = [
 
 ### Collection FilterBy/SortBy
 You can also pre-sort or pre-filter the collection given to the multipleSelect/singleSelect Filters. Also note that if the `enableTranslateLabel` flag is set to `True`, it will use the translated value to filter or sort the collection. For example:
-```javascript
+```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
 this.columnDefinitions = [
   { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
@@ -370,7 +370,7 @@ You can use `labelPrefix` and/or `labelSuffix` which will concatenate the multip
 If `enableTranslateLabel` flag is set to `True`, it will also try to translate the Prefix / Suffix / OptionLabel texts.
 
 For example, say you have this collection
-```javascript
+```typescript
 const currencies = [
   { symbol: '$', currency: 'USD', country: 'USA' },
   { symbol: '$', currency: 'CAD', country: 'Canada' }
@@ -384,7 +384,7 @@ So you can create the  `multipleSelect` Filter with a `customStructure` by using
 - $ CAD Canada
 
 with a `customStructure` defined as
-```javascript
+```typescript
 filter: {
   collection: this.currencies,
   customStructure: {
@@ -406,7 +406,7 @@ By default HTML is not rendered and the `label` will simply show HTML as text. B
 
 **NOTE:** this is currently only used by the Filters that have a `collection` which are the `MultipleSelect` & `SingleSelect` Filters.
 
-```javascript
+```typescript
 this.columnDefinitions = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
@@ -585,7 +585,7 @@ Couple of small options were added to suit SlickGrid-Universal needs, which is w
    - `useSelectOptionLabelToHtml` is also available if you wish to render label text as HTML for these to work, you have define the `optionLabel` in the `customStructure`
 
 ##### Code
-```javascript
+```typescript
 this.columnDefinitions = [
   {
     id: 'isActive', name: 'Is Active', field: 'isActive',
@@ -605,7 +605,7 @@ this.columnDefinitions = [
 
 #### Display shorter selected label text
 If we find that our text shown as selected text is too wide, we can choose change that by using `optionLabel` in Custom Structure.
-```javascript
+```typescript
 this.columnDefinitions = [
   {
     id: 'isActive', name: 'Is Active', field: 'isActive',

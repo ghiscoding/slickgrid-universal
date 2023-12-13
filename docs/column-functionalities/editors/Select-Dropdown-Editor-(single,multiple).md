@@ -106,7 +106,7 @@ You can use `labelPrefix` and/or `labelSuffix` which will concatenate the multip
 If `enableTranslateLabel` flag is set to `True`, it will also try to translate the Prefix / Suffix / OptionLabel texts.
 
 For example, say you have this collection
-```javascript
+```typescript
 const currencies = [
   { symbol: '$', currency: 'USD', country: 'USA' },
   { symbol: '$', currency: 'CAD', country: 'Canada' }
@@ -120,7 +120,7 @@ So you can create the  `multipleSelect` Filter with a `customStructure` by using
 - $ CAD Canada
 
 with a `customStructure` defined as
-```javascript
+```typescript
 editor: {
   collection: this.currencies,
   customStructure: {
@@ -194,7 +194,7 @@ Couple of small options were added to suit SlickGrid-Universal needs, which is w
    - `maxHeight` (defaults to 275, to use when `autoAdjustDropHeight` is enabled)
 
 ##### Code
-```javascript
+```typescript
 this.columnDefinitions = [
   {
     id: 'isActive', name: 'Is Active', field: 'isActive',

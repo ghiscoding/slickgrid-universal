@@ -126,7 +126,7 @@ The date range filter allows you to search data between 2 dates (it uses [Flatpi
 ##### Component
 import { Filters, FlatpickrOption, Formatters, GridOption, OperatorType } from '@slickgrid-universal/common';
 
-```javascript
+```typescript
 export class GridBasicComponent {
   columnDefinitions: Column[];
   gridOptions: GridOption;

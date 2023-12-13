@@ -23,16 +23,16 @@ The filtering uses `filterBy` with a structure which we think is flexible enough
 
 For example, a filter that would search for a firstName that starts with "John"
 - matches: "John", "Johnny", ...
-```javascript
-  users (first: 20, offset: 10, filterBy: [{field: firstName, operator: StartsWith, value: 'John'}]) {
-    totalCount
-    nodes {
-      name
-      firstName
-      lastName
-      gender
-    }
+```typescript
+users (first: 20, offset: 10, filterBy: [{field: firstName, operator: StartsWith, value: 'John'}]) {
+  totalCount
+  nodes {
+    name
+    firstName
+    lastName
+    gender
   }
+}
 ```
 
 ### Complex Objects
@@ -40,15 +40,14 @@ Dealing with complex objects are a little bit more involving. Because of some li
 
 ##### Grid Definition example
 ```ts
-import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, } from '@slickgrid-universal/graphql';
+import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi } from '@slickgrid-universal/graphql';
 
-@autoinject()
 export class Example {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
-  prepareDatagrid(private graphqlService: GraphqlService ) {
+  prepareDatagrid(private graphqlService: GraphqlService) {
     this.columnDefinitions = [
       { id: 'name', name: 'Name', field: 'name', filterable: true, sortable: true },
       { id: 'company', name: 'Company', field: 'company', filterable: true },
@@ -72,7 +71,7 @@ export class Example {
 
 ```
 ##### GraphQL Query
-```javascript
+```typescript
 // the orderBy/filterBy fields will keep the dot notation while nodes are exploded
 {
   users(first: 20, offset: 0, filterBy: [{field: "billing.address.street", operator: EQ, value: "123 Queens Street"}]) {
@@ -99,24 +98,23 @@ If you want to pass extra arguments outside of the `filterBy` argument, that wil
 ##### Component
 ```ts
 this.gridOptions = {
-    backendServiceApi: {
-      service: new GraphqlService(),
-      process: (query) => this.userService.getAll<User[]>(query),
-      options: {
-        columnDefinitions: this.columnDefinitions,
-        datasetName: 'users',
-        extraQueryArguments: [{
-          field: 'userId',
-          value: 123
-        }]
-      }
+  backendServiceApi: {
+    service: new GraphqlService(),
+    process: (query) => this.userService.getAll<User[]>(query),
+    options: {
+      columnDefinitions: this.columnDefinitions,
+      datasetName: 'users',
+      extraQueryArguments: [{
+        field: 'userId',
+        value: 123
+      }]
     }
-  };
-}
+  }
+};
 ```
 
 ##### GraphQL Query
-```javascript
+```typescript
 // the orderBy/filterBy fields will keep the dot notation while nodes are exploded
 {
   users(first: 20, offset: 0, userId: 123) {

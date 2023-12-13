@@ -94,7 +94,7 @@ this.columnDefinitions = [
 
 #### Editor Output Type & Save Output Type
 You could also define an `outputType` and a `saveOutputType` to an inline editor. There is only 1 built-in Editor with this functionality for now which is the `dateEditor`. For example, on a date field, we can call this `outputType: FieldType.dateIso` (by default it uses `dateUtc` as the output):
-```javascript
+```typescript
 this.columnDefinitions = [
  {
    id: 'start', name: 'Start', field: 'start',
@@ -122,7 +122,7 @@ To create a Custom Editor, you need to create a `class` that will extend the [`E
 Once you are done with the class, just reference it's class name as the `editor`, for example:
 
 ##### Class implementing Editor
-```javascript
+```typescript
 export class IntegerEditor implements Editor {
   constructor(private args: any) {
     this.init();
@@ -140,7 +140,6 @@ export class IntegerEditor implements Editor {
 ```
 
 ##### Use it in your Column Definition
-TODO add more docs
 
 ```ts
 this.columnDefinitions = [
@@ -167,7 +166,7 @@ this.gridOptions = {
 ## OnClick Action Editor (icon click)
 Instead of an inline editor, you might want to simply click on an edit icon that could call a modal window, or a redirect URL, or whatever you wish to do. For that you can use the inline `onCellClick` event and define a callback function for the action (you could also create your own [Custom Formatter](https://github.com/ghiscoding/slickgrid-universal/wiki/Formatters)).
 - The `Formatters.editIcon` will give you a pen icon, while a `Formatters.deleteIcon` is an "x" icon
-```javascript
+```typescript
 this.columnDefinitions = [
    {
       id: 'edit', field: 'id',
@@ -181,7 +180,7 @@ this.columnDefinitions = [
 ];
 ```
 The `args` returned to the `onCellClick` callback is of type `OnEventArgs` which is the following:
-```javascript
+```typescript
 export interface OnEventArgs {
   row: number;
   cell: number;

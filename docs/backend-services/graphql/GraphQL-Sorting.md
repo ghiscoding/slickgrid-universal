@@ -14,15 +14,15 @@ The sorting uses `orderBy` as per this [GitHub Suggestion](https://github.com/gr
 
 For example
 ```ts
-  users (first: 20, offset: 10, orderBy: [{field: lastName, direction: ASC}, {field: firstName, direction: DESC}]) {
-    totalCount
-    nodes {
-      name
-      firstName
-      lastName
-      gender
-    }
+users (first: 20, offset: 10, orderBy: [{field: lastName, direction: ASC}, {field: firstName, direction: DESC}]) {
+  totalCount
+  nodes {
+    name
+    firstName
+    lastName
+    gender
   }
+}
 ```
 
 ### Complex Objects
@@ -53,9 +53,10 @@ export class Sample {
     };
   }
 }
-
 ```
+
 ##### GraphQL Query
+
 ```ts
 // the orderBy/filterBy fields will keep the dot notation while nodes are exploded
 {

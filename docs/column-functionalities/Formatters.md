@@ -18,15 +18,8 @@ For a [UI sample](#ui-sample), scroll down below.
 `Slickgrid-Universal` ships with a few `Formatters` by default which helps with common fields, you can see the [entire list here](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/index.ts#L37).
 
 #### List of provided `Formatters`
-- `alignCenter`: Align cell value to the center (alias to `Formatters.center`)
-- `alignRight`: Align cell value to the right
 - `arrayObjectToCsv`: Takes an array of complex objects converts it to a comma delimited string.
 - `arrayToCsv` : takes an array of text and returns it as CSV string
-- `bold`: show value in bold font weight
-  - `@deprecated` use Column `cssClass: 'text-bold'` instead of a Formatter
-- `center`: Center a text value horizontally
-- `checkbox` : a simple HTML checkbox (it's preferable to use `checkmark` for a better UI)
-  - `@deprecated` use `icon` Formatter instead
 - `checkmark` : uses Font-Awesome [(fa-check)](http://fontawesome.io/icon/check/)
 - `checkmarkMaterial` use Material Design to display a checkmark icon
 - `collection`: Looks up values from the columnDefinition.params.collection property and displays the label in CSV or string format
@@ -50,24 +43,14 @@ For a [UI sample](#ui-sample), scroll down below.
 - `dateTimeShortUs`: Takes a Date object and displays it as an US Date+Time (without seconds) format (MM/DD/YYYY HH:mm:ss)
 - `dateTimeUsAmPm` : Takes a Date object and displays it as an US Date+Time+(am/pm) format (MM/DD/YYYY hh:mm:ss a)
 - `decimal`: Display the value as x decimals formatted, defaults to 2 decimals. You can pass "minDecimal" and/or "maxDecimal" to the "params" property.
-- `deleteIcon`: add an delete icon using Font Awesome (`fa-trash`), you can change the color via the CSS class `delete-icon`.
-  - `@deprecated` use `icon` Formatter instead
 - `dollar`: Display the value as 2 decimals formatted with dollar sign '$' at the end of of the value.
 - `dollarColored`: Display the value as 2 decimals formatted with dollar sign '$' at the end of of the value, change color of text to red/green on negative/positive value
 - `dollarColoredBoldFormatter`: Display the value as 2 decimals formatted with dollar sign '$' at the end of of the value, change color of text to red/green on negative/positive value, show it in bold font weight as well
-- `editIcon`: add an edit icon using Font Awesome (`fa-pencil`), you can change the color via the CSS class `edit-icon`.
-  - `@deprecated` use `icon` Formatter instead
-- `fakeHyperlink`: takes any text value and display it as a fake a hyperlink
-   - it simply wraps the value like this `<span class="fake-hyperlink">value</span>` you then need to provide global CSS for it `.fake-hyperlink:hover { text-decoration: underline; }`
 - `hyperlink`: takes a URL cell value and wraps it into a clickable hyperlink `<a href="value">value</a>`
    - the cell value **must contain** (`ftp://abc`, `http://abc` or `https://abc`), if it doesn't then use `fakeHyperlink`
 - `hyperlinkUriPrefix`: format a URI prefix into an hyperlink
 - `icon`: to display an icon with defined CSS class name, use `params` to pass a `cssClass` property
 - `iconBoolean`: similar to `icon` but will only be displayed on a Boolean truthy value, use `params` to pass a `cssClass` property
-- `italic`: Takes a value and displays it in italic
-  - `@deprecated` use Column `cssClass: 'text-italic'` instead of a Formatter
-- `lowercase`: to lowercase the cell value text
-  - `@deprecated` use Column `cssClass: 'text-lowercase'` instead of a Formatter
 - `mask`: to change the string output using a mask, use `params` to pass a `mask` property
    - example: `{ field: 'phone', formatter: Formatters.mask, params: { mask: '(000) 000-0000' }}`
 - `multiple`: pipe multiple formatters (executed in sequence), use `params` to pass the list of formatters.
@@ -82,10 +65,6 @@ For a [UI sample](#ui-sample), scroll down below.
 - `translate`: Takes a cell value and translates it (i18n). Requires an instance of the Translate Service:: `i18n: this.translate
 - `translateBoolean`: Takes a boolean value, cast it to upperCase string and finally translates it (i18n).
 - `tree`: Formatter that must be used when the column is a Tree Data column
-- `uppercase`: Takes a value and displays it all uppercase
-  - `@deprecated` use Column `cssClass: 'text-uppercase'` instead of a Formatter
-- `yesNo` : Takes a boolean value and display a string 'Yes' or 'No'
-  - `@deprecated` create your own custom Formatter instead
 
 **Note:** The list might not always be up to date, you can refer to the [Formatters export](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/index.ts#L37) to know exactly which ones are available.
 

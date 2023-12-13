@@ -56,7 +56,7 @@ There are 2 callback hooks which are accessible in the Grid Options
 - `onBeforeMenuShow`
 - `onCommand`
 
-For more info on all the available properties of the custom commands, you can read refer to the doc written in the Grid Menu [implementation](https://github.com/6pac/SlickGrid/blob/master/plugins/slick.headerbuttons.js) itself.
+For more info on all the available properties of the custom commands, you can read refer to the doc written in the Grid Menu [implementation](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/extensions/slickHeaderButtons.ts) itself.
 
 ### How to change icon(s) of the default commands?
 You can change any of the default command icon(s) by changing the `icon[X-command]`, for example, see below for the defaults.

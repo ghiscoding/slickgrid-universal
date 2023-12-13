@@ -9,7 +9,7 @@ See the full list of [Available Events](Available-Events.md) which you can use b
 ##### ViewModel
 Hook yourself to the Changed event of the bindable grid object.
 
-```javascript
+```typescript
 export class GridExample {
   sgb;
 

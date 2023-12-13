@@ -33,7 +33,7 @@ export class MyGrid {
       textExportOptions: {
         exportWithFormatter: true
       },
-      registerExternalResources: [new TextExportService()],
+      externalResources: [new TextExportService()],
       gridMenu: {
         showExportCsvCommand: true,           // true by default, so it's optional
         showExportTextDelimitedCommand: true  // false by default, so if you want it, you will need to enable it
@@ -91,7 +91,7 @@ initializeGrid() {
     textExportOptions: {
       exportWithFormatter: true
     },
-    registerExternalResources: [new TextExportService()],
+    externalResources: [new TextExportService()],
   };
 ```
 
@@ -120,7 +120,7 @@ export class MySample {
   initializeGrid() {
     this.gridOptions = {
       enableTextExport: true,
-      registerExternalResources: [this.textExportService],
+      externalResources: [this.textExportService],
     };
   }
 

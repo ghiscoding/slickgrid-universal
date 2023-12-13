@@ -11,13 +11,13 @@ Pagination without cursor, this is the simplest implementation and is what we us
 
 For example
 ```ts
-  users (first:20, offset: 10) {
-    totalCount
-    nodes {
-      name
-      gender
-    }
+users (first:20, offset: 10) {
+  totalCount
+  nodes {
+    name
+    gender
   }
+}
 ```
 
 ### With Cursor `useCursor`
@@ -31,22 +31,22 @@ Pagination with cursor, the query can have any of the 4 arguments:
 
 For example
 ```ts
-  users (first:20, after:"YXJyYXljb25uZWN0aW9uOjM=") {
-    totalCount
-    pageInfo {
-      hasPreviousPage
-      hasNextPage
-      startCursor
-      endCursor
-    }
-    edges {
-      cursor
-      node {
-        name
-        gender
-      }
+users (first:20, after:"YXJyYXljb25uZWN0aW9uOjM=") {
+  totalCount
+  pageInfo {
+    hasPreviousPage
+    hasNextPage
+    startCursor
+    endCursor
+  }
+  edges {
+    cursor
+    node {
+      name
+      gender
     }
   }
+}
 ```
 
 To retrieve subsequent data, the `pageInfo.endCursor` property should be used as part of the next query.

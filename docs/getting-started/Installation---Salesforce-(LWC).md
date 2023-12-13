@@ -132,7 +132,7 @@ export default class YourComponent extends LightningElement {
 #### 2.2 Second Approach for loading Static Resources (Recommended Approach)
 **NOTE:** in our implementation, we moved all the common css/script imports into a `slickGridHelper` LWC component, this allowed us to have much simpler imports in our external components (see next paragraph below).
 
-```javascript
+```typescript
 import sf_slickGrid_bundle from '@salesforce/resourceUrl/Sf_SlickGrid';
 import { loadStyle, loadScript } from 'lightning/platformResourceLoader';
 
@@ -168,7 +168,7 @@ export async function loadResources(component) {
 
 and finally the setup of Slickgrid becomes a lot more simplified in our external component (the other advantage is that all Wikis are written with this approach, that is without the `Slicker` namespace and it is closer to what we could do with TypeScript since all Wikis are actually written with TypeScript code)
 
-```javascript
+```typescript
 import { Editors, Filters, Formatters, GridBundle, loadResources } from 'c/slickGridHelper';
 
 export default class SlickGridDemo extends LightningElement {

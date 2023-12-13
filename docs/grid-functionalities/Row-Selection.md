@@ -182,7 +182,7 @@ export class Example1 {
 You can use `selectableOverride` to provide custom logic to disable certain rows selections, for example the code below will remove the row selection on every second row.
 
 #### Component
-```javascript
+```typescript
 export class Example1 implements OnInit {
   prepareGrid() {
     this.gridOptions = {

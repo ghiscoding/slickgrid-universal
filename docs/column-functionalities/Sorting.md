@@ -13,7 +13,7 @@ Sorting on the client side is really easy, you simply need to enable `sortable` 
 
 ### Usage
 To use any of them, you can use the `FieldType` interface or enter a type via a string as shown below. Also please note that `FieldType.string` is the default and you don't necessarily need to define it, though you could if you wish to see it in your column definition.
-```javascript
+```ts
 import { FieldType } from '@slickgrid-universal/common';
 
 export class Example {
@@ -47,8 +47,8 @@ You can sort complex objects using the dot (.) notation inside the `field` prope
 For example, let say that we have this dataset
 ```typescript
 const dataset = [
- { item: 'HP Desktop', buyer: { id: 1234, address: { street: '123 Belleville', zip: 123456 }},
- { item: 'Lenovo Mouse', buyer: { id: 456, address: { street: '456 Hollywood blvd', zip: 789123 }}
+ { item: 'HP Desktop', buyer: { id: 1234, address: { street: '123 Belleville', zip: 123456 }} },
+ { item: 'Lenovo Mouse', buyer: { id: 456, address: { street: '456 Hollywood blvd', zip: 789123 }} }
 ];
 ```
 
@@ -59,7 +59,8 @@ this.columnDefinitions = [
     // the zip is a property of a complex object which is under the "buyer" property
     // it will use the "field" property to explode (from "." notation) and find the child value
     id: 'zip', name: 'Zip Code', field: 'buyer.address.zip', sortable: true
-   // id: 'street',  ...
+  }
+  // { id: 'street',  ... },
 ];
 ```
 

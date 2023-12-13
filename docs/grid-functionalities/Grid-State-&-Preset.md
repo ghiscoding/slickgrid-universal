@@ -63,7 +63,7 @@ What happens when we use the grid `presets` and a [Filter Default SearchTerms](.
 ## Grid Presets
 ### Structure
 The current structure of a Grid Presets is the following
-```javascript
+```typescript
 export interface CurrentColumn {
   columnId: string;
   cssClass?: string;

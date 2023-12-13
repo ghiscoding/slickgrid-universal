@@ -25,7 +25,7 @@ All the code below assumes that your Backend Server (probably in C#) will return
 ```
 
 ### TypeScript Signature
-```javascript
+```typescript
 backendServiceApi: {
   // Backend Service instance (could be OData or GraphQL Service)
   service: BackendService;
@@ -130,16 +130,17 @@ export class Example {
     this.sgb.paginationOptions.totalItems = data[countPropName];
     this.sgb.dataset = data.items as Customer[];
   }
+}
 ```
 
 ### Passing Extra Arguments to the Query
 You might need to pass extra arguments to your OData query, for example passing a `userId`, you can do that simply by modifying the query you sent to your `process` callback method. For example
 ```ts
-  // Web API call
-  getCustomerApiCall(odataQuery) { with Fetch Client
-    const finalQuery = `${odataQuery}$filter=(userId eq 12345)`;
-    return this.http.get(`/api/getCustomers?${finalQuery}`);
-  }
+// Web API call
+getCustomerApiCall(odataQuery) { with Fetch Client
+  const finalQuery = `${odataQuery}$filter=(userId eq 12345)`;
+  return this.http.get(`/api/getCustomers?${finalQuery}`);
+}
 ```
 
 ## OData options
@@ -174,9 +175,9 @@ this.gridOptions = {
 
 The total items count can be queried from the backend by:
 ```ts
- const oDataOptions: OdataOption = {
-     enableCount: true;
-  }
+const oDataOptions: OdataOption = {
+  enableCount: true;
+}
 ```
 
 When enabled that will add `$inlinecount=allpages` (v2/v3) or `$count=true` (v4) to the query. And the count from the backend's response is extracted and `pagination.totalItems` is updated with that count. The property in the response that is used depends on the oData version specified: `d.__count` for v2, `__count` for v3 and `@odata.count` for v4. If needed a custom extractor function can be set through `oDataOptions.countExtractor`.
@@ -185,9 +186,9 @@ When enabled that will add `$inlinecount=allpages` (v2/v3) or `$count=true` (v4)
 
 Query only the grid column's fields from the backend by:
 ```ts
- const oDataOptions: OdataOption = {
-     enableSelect: true;
-  }
+const oDataOptions: OdataOption = {
+  enableSelect: true;
+}
 ```
 
 For example `columns: [{ id: 'col1', field: 'field1' }, { id: 'col2', field: 'field2' }]` results in the query: `?$select=id,field1,field2`.
@@ -198,9 +199,9 @@ A property `id` is always selected from the backend because the grid requires it
 
 Specify that related resources (navigation properties) should be retrieved from the backend:
 ```ts
- const oDataOptions: OdataOption = {
-     enableExpand: true;
-  }
+const oDataOptions: OdataOption = {
+  enableExpand: true;
+}
 ```
 
 A navigation property is identified as a field having `/` in it's name. For example `columns: [{ id: 'col1', field: 'nav1/field1' }, { id: 'col2', field: 'nav2/field1' }]` results in the query `?$expand=nav1,nav2`
@@ -208,11 +209,11 @@ A navigation property is identified as a field having `/` in it's name. For exam
 Often `enableSelect` and `enableExpand` are used in conjunction. And with oData v4 then also navigation properties are selected from the backend. For example `columns: [{ id: 'col1', field: 'nav1/field1' }, { id: 'col2', field: 'nav2/field1' }]` results in the query `?$select=id,$expand=nav1($select=field1),nav2($select=field2)`
 
 ```ts
- const oDataOptions: OdataOption = {
-     enableSelect: true;
-     enableExpand: true;
-     version: 4
-  }
+const oDataOptions: OdataOption = {
+  enableSelect: true;
+  enableExpand: true;
+  version: 4
+}
 ```
 
 Navigations within navigations are also supported. For example `columns: [{ id: 'col1', field: 'nav1/subnav1/field1' }]`.

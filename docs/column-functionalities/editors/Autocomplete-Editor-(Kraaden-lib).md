@@ -23,7 +23,7 @@ AutoComplete is a functionality that let the user start typing characters and th
 If you want to pass the entire list to the AutoComplete (like a JSON file or a Web API call), you can do so using the `collection` or the `collectionAsync` (the latter will load it asynchronously). You can also see that the Editor and Filter have almost the exact same configuration (apart from the `model` that is obviously different).
 
 ##### Component
-```javascript
+```typescript
 export class GridBasicComponent {
   columnDefinitions: Column[];
   gridOptions: GridOption;
@@ -67,7 +67,7 @@ By default HTML is not rendered and the `label` will simply show HTML as text. B
 
 **NOTE:** this is currently only used by the Editors that have a `collection` which are the `MultipleSelect` & `SingleSelect` Editors.
 
-```javascript
+```typescript
 this.columnDefinitions = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
@@ -113,7 +113,7 @@ You could also use external 3rd party Web API (can be JSONP query or regular JSO
 The basic functionality will use built-in 3rd party lib styling that is to display a label/value pair item result.
 
 ##### Component
-```javascript
+```typescript
 export class GridBasicComponent {
   columnDefinitions: Column[];
   gridOptions: GridOption;
@@ -182,7 +182,7 @@ this.columnDefinitions = [
 The lib comes with 2 built-in custom layouts, these 2 layouts also have SASS variables if anyone wants to style it differently. When using the `renderItem`, it will require the user to provide a `layout` (2 possible options `twoRows` or `fourCorners`) and also a `templateCallback` that will be executed when rendering the AutoComplete Search List Item. For example:
 
 ##### Component
-```javascript
+```typescript
 export class GridBasicComponent {
   columnDefinitions: Column[];
   gridOptions: GridOption;
@@ -333,7 +333,7 @@ export class GridBasicComponent {
 Example from an external remote API (geobytes) returning a JSONP response.
 
 ##### Component
-```javascript
+```typescript
 export class GridBasicComponent {
   columnDefinitions: Column[];
   gridOptions: GridOption;
@@ -402,23 +402,23 @@ export class GridBasicComponent {
 If you want to add the autocomplete functionality but want the user to be able to input a new option, then follow the example below:
 
 ```ts
-  this.columnDefinitions = [{
-        id: 'area',
-        name: 'Area',
-        field: 'area',
-        type: FieldType.string,
-        editor: {
-          model: Editors.autocompleter,
-          editorOptions: {
-            minLength: 0,
-            forceUserInput: true,
-            fetch: (searchText, updateCallback) => {
-              updateCallback(this.areas); // add here the array
-            },
-          }
-        }
+this.columnDefinitions = [{
+  id: 'area',
+  name: 'Area',
+  field: 'area',
+  type: FieldType.string,
+  editor: {
+    model: Editors.autocompleter,
+    editorOptions: {
+      minLength: 0,
+      forceUserInput: true,
+      fetch: (searchText, updateCallback) => {
+        updateCallback(this.areas); // add here the array
       },
-  ];
+    }
+  }
+},
+];
 ```
 You can also use the `minLength` to limit the autocomplete text to `0` characters or more, the default number is `3`.
 
@@ -446,6 +446,7 @@ this.columnDefinitions = [
         },
       } as AutocompleterOption,
     },
+  }
 ];
 ```
 

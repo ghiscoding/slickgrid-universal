@@ -35,7 +35,7 @@ initializeGrid() {
     excelExportOptions: {
       exportWithFormatter: true
     },
-    registerExternalResources: [new ExcelExportService()],
+    externalResources: [new ExcelExportService()],
     gridMenu: {
       hideExportExcelCommand: false,        // false by default, so it's optional
     }
@@ -102,7 +102,7 @@ initializeGrid() {
     excelExportOptions: {
       exportWithFormatter: true
     },
-    registerExternalResources: [new ExcelExportService()],
+    externalResources: [new ExcelExportService()],
   };
 ```
 
@@ -131,7 +131,7 @@ this.gridOptions = {
   excelExportOptions: {
     customColumnWidth: 15,
   },
-  registerExternalResources: [new ExcelExportService()],
+  externalResources: [new ExcelExportService()],
 };
 ```
 
@@ -145,7 +145,7 @@ this.gridOptions = {
     // you can customize how the header titles will be styled (defaults to Bold)
     columnHeaderStyle: { font: { bold: true, italic: true } }
   },
-  registerExternalResources: [new ExcelExportService()],
+  externalResources: [new ExcelExportService()],
 };
 ```
 
@@ -160,7 +160,7 @@ export class MyExample {
     this.columnDefinitions = [];
 
     this.gridOptions = {
-      registerExternalResources: [new ExcelExportService()],
+      externalResources: [new ExcelExportService()],
       excelExportOptions: {
         // optionally pass a custom header to the Excel Sheet
         // a lot of the info can be found on Web Archive of Excel-Builder
@@ -209,7 +209,7 @@ export class MySample {
   initializeGrid() {
     this.gridOptions = {
       enableExcelExport: true,
-      registerExternalResources: [this.excelExportService],
+      externalResources: [this.excelExportService],
     };
   }
 
@@ -310,7 +310,7 @@ this.gridOptions = {
       fill: { type: 'pattern', patternType: 'solid', fgColor: 'FF4a6c91' }
     }
   },
-  registerExternalResources: [new ExcelExportService()],
+  externalResources: [new ExcelExportService()],
 };
 ```
 

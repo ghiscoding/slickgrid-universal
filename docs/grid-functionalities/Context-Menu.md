@@ -16,7 +16,7 @@
 ### Description
 A Context Menu is triggered by a mouse right+click and can show a list of Commands (to execute an action) and/or Options (to change the value of a field). The lib comes with a default list of custom commands (copy cell, export & grouping commands). Also note that the Commands list is following the same structure used in the [Cell Menu](../column-functionalities/Cell-Menu.md), [Header Menu](Header-Menu-&-Header-Buttons.md) & [Grid Menu](Grid-Menu.md). Very similar to the [Cell Menu](../column-functionalities/Cell-Menu.md), they were both created as SlickGrid plugins during the same period, their main difference is that they get triggered differently (mouse right+click vs cell click) and they serve different purposes. The Cell Menu is more oriented on a row action (e.g. delete current row) while the Context Menu is all about actions for the entire grid (e.g. export to Excel).
 
-This extensions is wrapped around the new SlickGrid Plugin **Slick.Plugins.ContextMenu**
+This extensions is wrapped around the new SlickGrid Plugin **SlickContextMenu**
 
 ### Default Usage
 Technically, the Context Menu is enabled by default (copy, export) and so you don't have anything to do to enjoy it (you could disable it at any time). However, if you want to customize the content of the Context Menu, then continue reading. You can customize the menu with 2 different lists, Commands and/or Options, they can be used separately or at the same time. Also note that even though the code shown below makes a separation between the Commands and Options, you can mix them in the same Context Menu.
@@ -209,7 +209,7 @@ contextMenu: {
 
 ### How to Disable the Context Menu?
 You can disable the Context Menu, by calling `enableContextMenu: false` from the Grid Options.
-```javascript
+```typescript
 this.gridOptions = {
    enableContextMenu: false
 };
