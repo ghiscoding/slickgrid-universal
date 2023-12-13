@@ -14,19 +14,19 @@
 
 ## Column Functionalities
 * [Cell Menu (Action Menu)](/column-functionalities/Cell-Menu.md)
-  * [Editors](/column-functionalities/Editors.md)
-    * [AutoComplete (jQueryUI)](/column-functionalities/AutoComplete-Editor.md)
-    * [new Autocomplete (Kraaden-lib)](/column-functionalities/Autocomplete-Editor-(Kraaden-lib).md)
-    * [Date Picker (flatpickr)](/column-functionalities/Date-Editor-(flatpickr).md)
-    * [LongText (textarea)](/column-functionalities/LongText-Editor-(textarea).md)
-    * [Select Dropdown Editor (single/multiple)](/column-functionalities/Select-Dropdown-Editor-(single,multiple).md)
-    ### Filters
-      * [Input Filter (default)](/column-functionalities/Input-Filter.md)
-      * [Select Filter (dropdown)](/column-functionalities/Select-Filter.md)
-      * [Compound Filters](/column-functionalities/Compound-Filters.md)
-      * [Range Filters](/column-functionalities/Range-Filters.md)
-      * [Styling Filled Filters](/column-functionalities/Styling-Filled-Filters.md)
-      * [Single Search Filter](/column-functionalities/Single-Search-Filter.md)
+* [Editors](/column-functionalities/Editors.md)
+  * [AutoComplete (jQueryUI)](/column-functionalities/AutoComplete-Editor.md)
+  * [new Autocomplete (Kraaden-lib)](/column-functionalities/Autocomplete-Editor-(Kraaden-lib).md)
+  * [Date Picker (flatpickr)](/column-functionalities/Date-Editor-(flatpickr).md)
+  * [LongText (textarea)](/column-functionalities/LongText-Editor-(textarea).md)
+  * [Select Dropdown Editor (single/multiple)](/column-functionalities/Select-Dropdown-Editor-(single,multiple).md)
+* Filters
+  * [Input Filter (default)](/column-functionalities/Input-Filter.md)
+  * [Select Filter (dropdown)](/column-functionalities/Select-Filter.md)
+  * [Compound Filters](/column-functionalities/Compound-Filters.md)
+  * [Range Filters](/column-functionalities/Range-Filters.md)
+  * [Styling Filled Filters](/column-functionalities/Styling-Filled-Filters.md)
+  * [Single Search Filter](/column-functionalities/Single-Search-Filter.md)
 * [Formatters](/column-functionalities/Formatters.md)
 * [Sorting](/column-functionalities/Sorting.md)
 
@@ -58,13 +58,13 @@
 
 ## Backend Services
 
-* [Custom Backend Service](/ghiscoding/slickgrid-universal/wiki/Custom-Backend-Service)
-* [OData](/ghiscoding/slickgrid-universal/wiki/OData)
-* [GraphQL](/ghiscoding/slickgrid-universal/wiki/GraphQL)
-  * [JSON Result Structure](/ghiscoding/slickgrid-universal/wiki/GraphQL-JSON-Result)
-  * [Filtering Schema](/ghiscoding/slickgrid-universal/wiki/GraphQL-Filtering)
-  * [Pagination Schema](/ghiscoding/slickgrid-universal/wiki/GraphQL-Pagination)
-  * [Sorting Schema](/ghiscoding/slickgrid-universal/wiki/GraphQL-Sorting)
+* [Custom Backend Service](backend-services/Custom-Backend-Service)
+* [OData](backend-services/OData)
+* [GraphQL](backend-services/GraphQL)
+  * [JSON Result Structure](backend-services/GraphQL-JSON-Result)
+  * [Filtering Schema](backend-services/GraphQL-Filtering)
+  * [Pagination Schema](backend-services/GraphQL-Pagination)
+  * [Sorting Schema](backend-services/GraphQL-Sorting)
 
 ## Migrations
 
