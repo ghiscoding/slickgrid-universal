@@ -18,6 +18,10 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * remove unnecessary Formatters, replace by `cssClass` ([#1225](https://github.com/ghiscoding/slickgrid-universal/issues/1225)) ([de26496](https://github.com/ghiscoding/slickgrid-universal/commit/de26496aa5dc462869a4a1ff966b32baf86e188b)) - by @ghiscoding
 
+## [3.7.2](https://github.com/ghiscoding/slickgrid-universal/compare/v3.7.1...v3.7.2) (2023-12-12)
+
+**Note:** Version bump only for package @slickgrid-universal/excel-export
+
 ## [3.7.1](https://github.com/ghiscoding/slickgrid-universal/compare/v3.7.0...v3.7.1) (2023-12-08)
 
 **Note:** Version bump only for package @slickgrid-universal/excel-export

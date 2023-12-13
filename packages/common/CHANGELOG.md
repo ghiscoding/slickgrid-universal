@@ -43,6 +43,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * skip reapplying empty html when target is already empty ([#1230](https://github.com/ghiscoding/slickgrid-universal/issues/1230)) ([ba99fae](https://github.com/ghiscoding/slickgrid-universal/commit/ba99fae664f8a35573f00cf4719f1d70bcb9e37d)) - by @ghiscoding
 
+## [3.7.2](https://github.com/ghiscoding/slickgrid-universal/compare/v3.7.1...v3.7.2) (2023-12-12)
+
+### Bug Fixes
+
+* the `devMode` should be `false` or an object with other options ([ad2285a](https://github.com/ghiscoding/slickgrid-universal/commit/ad2285a3890442b28dfc7c668ab1b1376e17d3df)) - by @ghiscoding-SE
+* use !important on CSS text utils ([7fdbeb6](https://github.com/ghiscoding/slickgrid-universal/commit/7fdbeb6c46201ae80d6e71e2df7016735b771bf2)) - by @ghiscoding
+
 ## [3.7.1](https://github.com/ghiscoding/slickgrid-universal/compare/v3.7.0...v3.7.1) (2023-12-08)
 
 ### Bug Fixes
