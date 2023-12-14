@@ -17,6 +17,8 @@ For a [UI sample](#ui-sample), scroll down below.
 ### Provided Formatters
 `Slickgrid-Universal` ships with a few `Formatters` by default which helps with common fields, you can see the [entire list here](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/index.ts#L37).
 
+> **Note** you might not need a Formatter when a simple CSS style is needed, think about using `cssClass` column property instead.
+
 #### List of provided `Formatters`
 - `arrayObjectToCsv`: Takes an array of complex objects converts it to a comma delimited string.
 - `arrayToCsv` : takes an array of text and returns it as CSV string
