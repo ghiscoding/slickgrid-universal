@@ -5,7 +5,7 @@
 ## Getting Started
 
 * [Quick start](getting-started/quick-start.md)
-* [Salesforce (LWC)](getting-started/Installation---Salesforce-(LWC).md)
+* [Salesforce (LWC)](getting-started/installation-salesforce.md)
 
 ## Styling
 * [Styling CSS/SASS/Themes](/styling/styling.md)
@@ -20,7 +20,7 @@
   * [Date Picker (flatpickr)](column-functionalities/editors/Date-Editor-(flatpickr).md)
   * [LongText (textarea)](column-functionalities/editors/LongText-Editor-(textarea).md)
   * [Select Dropdown Editor (single/multiple)](column-functionalities/editors/Select-Dropdown-Editor-(single,multiple).md)
-* Filters
+* [Filters](column-functionalities/filters/README.md)
   * [Input Filter (default)](column-functionalities/filters/Input-Filter.md)
   * [Select Filter (dropdown)](column-functionalities/filters/Select-Filter.md)
   * [Compound Filters](column-functionalities/filters/Compound-Filters.md)

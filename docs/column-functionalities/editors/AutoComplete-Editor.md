@@ -12,7 +12,7 @@
 - [Force User Input](#autocomplete---force-user-input)
 - [`onSelect` callback](#use-onselect-callback)
 - [Animated Gif Demo](#animated-gif-demo)
-  - See the [Editors - Wiki](https://github.com/ghiscoding/slickgrid-universal/wiki/Editors) for more general info about Editors (validators, event handlers, ...)
+  - See the [Editors - Docs](../Editors.md) for more general info about Editors (validators, event handlers, ...)
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example11) | [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example11.ts)

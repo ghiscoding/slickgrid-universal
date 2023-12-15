@@ -39,4 +39,4 @@ This Vanilla Bundle is used in our SalesForce implementation (since it requires 
 Go to the root of the repo and follow the instructions provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)
 
 ### Salesforce Installation
-Consult the [Installation, Salesforce - Wiki](https://github.com/ghiscoding/slickgrid-universal/wiki/Installation---Salesforce-(LWC)) for more info.
+Consult the [Installation, Salesforce - Wiki](https://ghiscoding.gitbook.io/aurelia-slickgrid/getting-started/installation-salesforce) for more info.

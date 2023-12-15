@@ -1,7 +1,7 @@
 ##### index
 - [Editor Options](#editor-options)
 - [Custom Validator](#custom-validator)
-- See the [Editors - Wiki](/ghiscoding/slickgrid-universal/wiki/Editors) for more general info about Editors (validators, event handlers, ...)
+- See the [Editors - Wiki](../Editors.md) for more general info about Editors (validators, event handlers, ...)
 
 ### Information
 The Date Editor is provided through an external library named [Flatpickr](https://flatpickr.js.org/examples/) and all options from that library can be added to your `editorOptions` (see below [Editor Options]()), so in order to add things like minimum date, disabling dates, ... just review all the [Flatpickr Examples](https://flatpickr.js.org/examples/) and then add them into `editorOptions`. Also just so you know, `editorOptions` is use by all other editors as well to expose external library like Flatpickr, Multiple-Select.js, etc...

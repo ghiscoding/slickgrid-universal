@@ -6,9 +6,9 @@ To get started follow any of these instruction Wikis depending on your choice of
 
 | Framework  | Wiki                                                                                                     | Demo                                                                                                  |
 | ---------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Angular    | [Wiki - HOWTO (Step by Step)](https://github.com/ghiscoding/angular-slickgrid/wiki/HOWTO---Step-by-Step) | [Live Demo](https://ghiscoding.github.io/Angular-Slickgrid/)                                          |
-| Aurelia    | [Wiki - HOWTO (Step by Step)](https://github.com/ghiscoding/aurelia-slickgrid/wiki/HOWTO--Step-by-Step)  | [Live Demo](https://ghiscoding.github.io/aurelia-slickgrid/)                                          |
-| React      | [Wiki - HOWTO (Step by Step)](https://github.com/ghiscoding/slickgrid-react/wiki/HOWTO--Step-by-Step)    | [Live Demo](https://ghiscoding.github.io/slickgrid-react/)                                            |
+| Angular    | [Wiki - HOWTO (Step by Step)](https://ghiscoding.gitbook.io/angular-slickgrid/getting-started/quick-start) | [Live Demo](https://ghiscoding.github.io/Angular-Slickgrid/)                                          |
+| Aurelia    | [Wiki - HOWTO (Step by Step)](https://ghiscoding.gitbook.io/aurelia-slickgrid/getting-started/quick-start)  | [Live Demo](https://ghiscoding.github.io/aurelia-slickgrid/)                                          |
+| React      | [Wiki - HOWTO (Step by Step)](https://ghiscoding.gitbook.io/slickgrid-react/getting-started/quick-start)    | [Live Demo](https://ghiscoding.github.io/slickgrid-react/)                                            |
 | Salesforce | Installation                                                                                             | [Print Screen](https://github.com/ghiscoding/slickgrid-universal/wiki#salesforce-demo---print-screen) |
 | ----       |                                                                                                          |                                                                                                       |
 

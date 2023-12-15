@@ -164,7 +164,7 @@ this.gridOptions = {
 ```
 
 ## OnClick Action Editor (icon click)
-Instead of an inline editor, you might want to simply click on an edit icon that could call a modal window, or a redirect URL, or whatever you wish to do. For that you can use the inline `onCellClick` event and define a callback function for the action (you could also create your own [Custom Formatter](https://github.com/ghiscoding/slickgrid-universal/wiki/Formatters)).
+Instead of an inline editor, you might want to simply click on an edit icon that could call a modal window, or a redirect URL, or whatever you wish to do. For that you can use the inline `onCellClick` event and define a callback function for the action (you could also create your own [Custom Formatter](../column-functionalities/Formatters.md)).
 - The `Formatters.editIcon` will give you a pen icon, while a `Formatters.deleteIcon` is an "x" icon
 ```typescript
 this.columnDefinitions = [

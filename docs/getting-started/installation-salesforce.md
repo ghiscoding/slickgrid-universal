@@ -7,9 +7,9 @@ The first thing you'll need to do is to add the slickgrid bundle zip file as a n
 #### Here are the 3 static resource files
 Click on the `zip` link and then the `Download` button on the top right to download it locally, then upload it to your org.
 
-**Note** Slickgrid-Universal 2.0 dropped jQueryUI requirement. If you come from Slickgrid-Universal version 1.x, then you will also need to follow the [Migration Guide 2.0](https://github.com/ghiscoding/slickgrid-universal/wiki/Migration-to-2.x) to upgrade to 2.x
+**Note** Slickgrid-Universal 2.0 dropped jQueryUI requirement. If you come from Slickgrid-Universal version 1.x, then you will also need to follow the [Migration Guide 2.0](../migrations/migration-to-2.x.md) to upgrade to 2.x
 
-**Note** Slickgrid-Universal 3.0 dropped jQuery requirement, now the only requirement left is really the slickgrid bundle itself (see static resource below). Also note that if you come from an earlier version then make sure to follow [Migration Guide 3.0](https://github.com/ghiscoding/slickgrid-universal/wiki/Migration-to-3.x) to upgrade to 3.x
+**Note** Slickgrid-Universal 3.0 dropped jQuery requirement, now the only requirement left is really the slickgrid bundle itself (see static resource below). Also note that if you come from an earlier version then make sure to follow [Migration Guide 3.0](../migrations/migration-to-3.x.md) to upgrade to 3.x
 
 | Static Resource Name | Zip | Notes |
 | -------- | --- | ----------- |

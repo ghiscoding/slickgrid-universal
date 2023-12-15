@@ -1,6 +1,6 @@
 ## Bye Bye jQueryUI... 👋🏻 welcome [SortableJS](https://sortablejs.github.io/Sortable/) 🚀
 
-This new release is rather small for the developer, but a lot have changed internally and SortableJS will improve performance and usability since it also works great with touch. The main change for the developer would be if you use the `Editors.autoComplete` which has changed to `Editors.autocompleter` (same for Filters), and that's about it since the rest of the changes are mostly removal of deprecated things. If you want to know more about the reason behind the removal of jQueryUI (internally), then read the "Why replace jQueryUI with SortableJS?" section below. 
+This new release is rather small for the developer, but a lot have changed internally and SortableJS will improve performance and usability since it also works great with touch. The main change for the developer would be if you use the `Editors.autoComplete` which has changed to `Editors.autocompleter` (same for Filters), and that's about it since the rest of the changes are mostly removal of deprecated things. If you want to know more about the reason behind the removal of jQueryUI (internally), then read the "Why replace jQueryUI with SortableJS?" section below.
 
 #### Major Changes - Quick Summary
 - replaced jQueryUI with [SortableJS](https://sortablejs.github.io/Sortable/)
@@ -19,7 +19,7 @@ This new release is rather small for the developer, but a lot have changed inter
 - `enableExport` was renamed to `enableTextExport`
 - `exportOptions` was renamed to `textExportOptions`
 
-##### SASS - Autocomplete 
+##### SASS - Autocomplete
 Since we replaced the jQueryUI Autocomplete with the 3rd party lib [Kraaden Autocomplete](https://github.com/kraaden/autocomplete) (see below), there are a few SASS/CSS variables that we no longer need and were removed.
 
 ###### variables removed
@@ -51,7 +51,7 @@ this.gridOptions = {
 ```
 
 ### Replaced JqueryUI Autocomplete with [Kraaden Autocomplete](https://github.com/kraaden/autocomplete)
-Since we dropped jQueryUI, we had to find an alternative for the AutoComplete Editor/Filter and we settled on the 3rd party lib [Kraaden Autocomplete](https://github.com/kraaden/autocomplete) which does nearly everything that the jQueryUI one was providing. There are subtle changes requiring few line of code change (see below). We also have a new [Autocomplete Editor (Kraaden)](https://github.com/ghiscoding/Angular-Slickgrid/wiki/Autocomplete-Editor-(Kraaden-lib)) Wiki (and we kept a reference to the old jQueryUI AutoComplete Wiki for users of older Angular-Slickgrid versions).
+Since we dropped jQueryUI, we had to find an alternative for the AutoComplete Editor/Filter and we settled on the 3rd party lib [Kraaden Autocomplete](https://github.com/kraaden/autocomplete) which does nearly everything that the jQueryUI one was providing. There are subtle changes requiring few line of code change (see below). We also have a new [Autocomplete Editor (Kraaden)](../column-functionalities/editors/Autocomplete-Editor-(Kraaden-lib).md) Wiki (and we kept a reference to the old jQueryUI AutoComplete Wiki for users of older Angular-Slickgrid versions).
 
 You will notice that the Editor/Filter `model` name is quite similar, there are only 2 chars that are different to make it clear that there's a change for the developer (a lower `c` and a `r` at the end of the word which is forming the new name `model: Editors.autocompleter` and the same goes for `AutocompleterOption`)
 

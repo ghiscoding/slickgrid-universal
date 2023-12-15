@@ -1,5 +1,3 @@
-##### updated to version 1.x
-
 #### index
 - [Using built-in Themes](#using-built-in-themes)
 - [Using CSS Variables (CSS hooks in LWC)](#using-css-variables-instead-of-sass)
