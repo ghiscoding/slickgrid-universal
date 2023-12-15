@@ -49,7 +49,7 @@ undo() {
 ### Composite Editor
 The `CompositeEditor` class got renamed to `SlickCompositeEditor`, so if you were using it with an `instanceof` then you will have to update your code.
 ```diff
-- if (args.editor instanceof CompositeEditor) {
+- if (args.editor instanceof Slick.CompositeEditor) {
 + if (args.editor instanceof SlickCompositeEditor) {
   // ...
 }
