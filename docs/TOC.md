@@ -8,11 +8,11 @@
 * [Salesforce (LWC)](getting-started/installation-salesforce.md)
 
 ## Styling
-* [Styling CSS/SASS/Themes](/styling/styling.md)
 
-## Interfaces/Models
+* [Styling CSS/SASS/Themes](styling/styling.md)
 
 ## Column Functionalities
+
 * [Cell Menu (Action Menu)](column-functionalities/Cell-Menu.md)
 * [Editors](column-functionalities/Editors.md)
   * [AutoComplete (jQueryUI)](column-functionalities/editors/AutoComplete-Editor.md)
@@ -41,20 +41,18 @@
 * [Resize by Cell Content](grid-functionalities/Resize-by-Cell-Content.md)
 * [Column Picker](grid-functionalities/Column-Picker.md)
 * [Composite Editor Modal](grid-functionalities/Composite-Editor-Modal.md)
-* [Custom Tooltip](grid-functionalities/Custom-Tooltip-(plugin).md)
+* [Custom Tooltip](grid-functionalities/custom-tooltip.md)
 * [Context Menu](grid-functionalities/Context-Menu.md)
 * [Custom Footer](grid-functionalities/Custom-Footer.md)
 * [Export to Excel](grid-functionalities/Export-to-Excel.md)
 * [Export to File (csv/txt)](grid-functionalities/Export-to-Text-File.md)
 * [Grid Menu](grid-functionalities/Grid-Menu.md)
-* [Grid State & Presets](grid-functionalities/Grid-State-&-Preset.md)
-* [Grouping & Aggregators](grid-functionalities/Grouping-&-Aggregators.md)
-* [Header Menu & Header Buttons](grid-functionalities/Header-Menu-&-Header-Buttons.md)
-* [Pinning (frozen) of Columns/Rows](grid-functionalities/Pinned-(aka-Frozen)-Columns-Rows.md)
+* [Grid State & Presets](grid-functionalities/grid-state-preset.md)
+* [Grouping & Aggregators](grid-functionalities/grouping-aggregators.md)
+* [Header Menu & Header Buttons](grid-functionalities/header-menu-header-buttons.md)
+* [Pinning (frozen) of Columns/Rows](grid-functionalities/frozen-columns-rows.md)
 * [Row Selection](grid-functionalities/Row-Selection.md)
 * [Tree Data Grid](grid-functionalities/Tree-Data-Grid.md)
-
-## [SlickGrid & DataView objects](slick-grid-dataview-objects/SlickGrid-&-DataView-Objects.md)
 
 ## Backend Services
 

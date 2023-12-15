@@ -1,6 +1,8 @@
+import 'jest-extended';
 import type { Column, GridOption, GroupItemMetadataProviderOption } from '../../interfaces';
 import { SlickGroupItemMetadataProvider } from '../slickGroupItemMetadataProvider';
 import { type SlickDataView, SlickEvent, SlickGrid, SlickGroup } from '../../core/index';
+import { getHTMLFromFragment } from '@slickgrid-universal/utils';
 
 const gridOptionMock = {
   enablePagination: true,
@@ -114,20 +116,47 @@ describe('GroupItemMetadataProvider Service', () => {
       const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: 'Some Title' }, gridStub);
       expect(output).toBe('Some Title');
     });
+    it('should provide HTMLElement and expect item title HTMLElement returned when calling "defaultGroupCellFormatter" with option "enableExpandCollapse" set to False', () => {
+      service.setOptions({ enableExpandCollapse: false });
+      const spanElm = document.createElement('span');
+      spanElm.textContent = 'Another Title';
+      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: spanElm }, gridStub);
+      expect(output).toBe(spanElm);
+    });
 
     it('should return Grouping info formatted with a group level 0 without indentation when calling "defaultGroupCellFormatter" with option "enableExpandCollapse" set to True', () => {
       service.init(gridStub);
       service.setOptions({ enableExpandCollapse: true });
       const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: 'Some Title' }, gridStub) as DocumentFragment;
-      const htmlContent = [].map.call(output.childNodes, x => x.outerHTML).join('')
+      const htmlContent = [].map.call(output.childNodes, x => x.outerHTML).join('');
       expect(htmlContent).toBe('<span class="slick-group-toggle expanded" style="margin-left: 0px;"></span><span class="slick-group-title" level="0">Some Title</span>');
+    });
+
+    it('should provide HTMLElement and return same Grouping info formatted with a group level 0 without indentation when calling "defaultGroupCellFormatter" with option "enableExpandCollapse" set to True', () => {
+      service.init(gridStub);
+      service.setOptions({ enableExpandCollapse: true });
+      const spanElm = document.createElement('span');
+      spanElm.textContent = 'Another Title';
+      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: spanElm }, gridStub) as DocumentFragment;
+      const htmlContent = getHTMLFromFragment(output, 'outerHTML');
+      expect(htmlContent).toBe('<span class="slick-group-toggle expanded" style="margin-left: 0px;"></span><span class="slick-group-title" level="0"><span>Another Title</span></span>');
+    });
+
+    it('should provide a DocumentFragment as header title and return same Grouping info formatted with a group level 0 without indentation when calling "defaultGroupCellFormatter" with option "enableExpandCollapse" set to True', () => {
+      service.init(gridStub);
+      service.setOptions({ enableExpandCollapse: true });
+      const fragment = document.createDocumentFragment();
+      fragment.textContent = 'Fragment Title';
+      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: fragment }, gridStub) as DocumentFragment;
+      const htmlContent = getHTMLFromFragment(output, 'outerHTML');
+      expect(htmlContent).toBe('<span class="slick-group-toggle expanded" style="margin-left: 0px;"></span><span class="slick-group-title" level="0">Fragment Title</span>');
     });
 
     it('should return Grouping info formatted with a group level 2 with indentation of 30px when calling "defaultGroupCellFormatter" with option "enableExpandCollapse" set to True and level 2', () => {
       service.init(gridStub);
       service.setOptions({ enableExpandCollapse: true, toggleCssClass: 'groupy-toggle', toggleExpandedCssClass: 'groupy-expanded' });
       const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { level: 2, title: 'Some Title' }, gridStub) as DocumentFragment;
-      const htmlContent = [].map.call(output.childNodes, x => x.outerHTML).join('')
+      const htmlContent = getHTMLFromFragment(output, 'outerHTML');
       expect(htmlContent).toBe('<span class="groupy-toggle groupy-expanded" style="margin-left: 30px;"></span><span class="slick-group-title" level="2">Some Title</span>');
     });
 

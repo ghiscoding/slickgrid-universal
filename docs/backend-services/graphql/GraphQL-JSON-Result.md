@@ -1,9 +1,13 @@
+# JSON Result Structure
+
 The GraphQL JSON result will always follow a certain structure where only the dataset name and the `nodes` array will change. With that in mind, if we look at the `GraphqlResult` TypeScript interface, the JSON result will mostly follow this structure (except when Pagination is disabled if so continue reading):
 
-#### `GraphqlResult` TypeScript interface
+**`GraphqlResult` TypeScript interface**
+
 The `datasetName` is the only dynamic portion of the structure and in our demo will be `users`.
 
-##### with Pagination
+**with Pagination**
+
 ```ts
 export interface GraphqlPaginatedResult {
   data: {
@@ -21,7 +25,8 @@ export interface GraphqlPaginatedResult {
 }
 ```
 
-##### without Pagination
+**without Pagination**
+
 ```ts
 export interface GraphqlResult {
   data: {
@@ -33,8 +38,10 @@ export interface GraphqlResult {
 }
 ```
 
-### ResultSet
-#### Users demo (with Pagination)
+#### ResultSet
+
+**Users demo (with Pagination)**
+
 If we consider that we defined a grid of Users and we provided the `datasetName: 'users'` with 3 defined columns (firstName, lastName, email), note that `id` will **always** be included as it is a requirement from SlickGrid itself and it must be unique ids. The JSON result could look like the following:
 
 ```ts
@@ -53,7 +60,7 @@ If we consider that we defined a grid of Users and we provided the `datasetName:
           "id": 1,
           "firstName": "Jane",
           "lastName": "Doe",
-          "email": "john@doe.com"
+          "email": "jane@doe.com"
         }
       ]
     }
@@ -61,7 +68,7 @@ If we consider that we defined a grid of Users and we provided the `datasetName:
 }
 ```
 
-#### Users demo (**without** Pagination)
+**Users demo (without Pagination)**
 
 ```ts
 {
@@ -77,7 +84,7 @@ If we consider that we defined a grid of Users and we provided the `datasetName:
         "id": 1,
         "firstName": "Jane",
         "lastName": "Doe",
-        "email": "john@doe.com"
+        "email": "jane@doe.com"
       }
     ]
   }

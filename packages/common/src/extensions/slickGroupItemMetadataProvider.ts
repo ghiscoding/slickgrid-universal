@@ -137,7 +137,7 @@ export class SlickGroupItemMetadataProvider {
     // 2. group title span
     const groupTitleElm = createDomElement('span', { className: this._options.groupTitleCssClass || '' });
     groupTitleElm.setAttribute('level', groupLevel);
-    (item.title instanceof HTMLElement)
+    (item.title instanceof HTMLElement || item.title instanceof DocumentFragment)
       ? groupTitleElm.appendChild(item.title)
       : this._grid.applyHtmlCode(groupTitleElm, item.title ?? '');
     containerElm.appendChild(groupTitleElm);

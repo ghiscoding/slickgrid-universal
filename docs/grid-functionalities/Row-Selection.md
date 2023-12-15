@@ -220,7 +220,7 @@ handleOnSelectedRowsChanged(event) {
   this.isMyButtonDisabled = args.rows?.length === 0;
 }
 ```
-2. use the `onGridStateChanged` event (see [Grid State & Presets](Grid-State-&-Preset.md) Wiki)
+2. use the `onGridStateChanged` event (see [Grid State & Presets](grid-state-preset.md) Wiki)
 ```html
 <button disabled.bind="isMyButtonDisabled">My Button</button>
 <div class="myGrid"

@@ -528,7 +528,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    *   `sanitizerOptions` is to provide extra options when using `innerHTML` and the sanitizer.
    *   `skipEmptyReassignment`, defaults to true, when enabled it will not try to reapply an empty value when the target is already empty
    */
-  applyHtmlCode(target: HTMLElement, val: string | HTMLElement | DocumentFragment = '', options?: { emptyTarget?: boolean; sanitizerOptions?: unknown; skipEmptyReassignment?: boolean; }) {
+  applyHtmlCode(target: HTMLElement, val: string | boolean | number | HTMLElement | DocumentFragment = '', options?: { emptyTarget?: boolean; sanitizerOptions?: unknown; skipEmptyReassignment?: boolean; }) {
     if (target) {
       if (val instanceof HTMLElement || val instanceof DocumentFragment) {
         // first empty target and then append new HTML element
@@ -546,13 +546,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
         let sanitizedText = val;
         if (typeof sanitizedText === 'number' || typeof sanitizedText === 'boolean') {
-          target.textContent = sanitizedText;
+          target.textContent = String(sanitizedText);
         } else {
           if (typeof this._options?.sanitizer === 'function') {
-            sanitizedText = this._options.sanitizer(val);
+            sanitizedText = this._options.sanitizer(val as string);
           } else if (typeof DOMPurify?.sanitize === 'function') {
             const purifyOptions = (options?.sanitizerOptions ?? this._options.sanitizerOptions ?? { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }) as DOMPurify.Config;
-            sanitizedText = DOMPurify.sanitize(val, purifyOptions) as unknown as string;
+            sanitizedText = DOMPurify.sanitize(val as string, purifyOptions) as unknown as string;
           }
 
           // apply HTML when enableHtmlRendering is enabled but make sure we do have a value (without a value, it will simply use `textContent` to clear text content)
@@ -3622,7 +3622,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /** Apply a Formatter Result to a Cell DOM Node */
-  applyFormatResultToCellNode(formatterResult: FormatterResultWithHtml | FormatterResultWithText | string | HTMLElement | DocumentFragment, cellNode: HTMLDivElement, suppressRemove?: boolean) {
+  applyFormatResultToCellNode(formatterResult: FormatterResultWithHtml | FormatterResultWithText | string | HTMLElement | DocumentFragment, cellNode: HTMLElement, suppressRemove?: boolean) {
     if (formatterResult === null || formatterResult === undefined) {
       formatterResult = '';
     }
