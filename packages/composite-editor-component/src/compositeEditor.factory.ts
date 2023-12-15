@@ -1,20 +1,6 @@
-import type {
-  Column,
-  CompositeEditorOption,
-  Editor,
-  EditorArguments,
-  EditorValidationResult,
-  ElementPosition,
-  HtmlElementPosition,
-  SlickNamespace
-} from '@slickgrid-universal/common';
-import {
-  emptyElement,
-  getHtmlElementOffset,
-} from '@slickgrid-universal/common';
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
+import { emptyElement, getOffset, } from '@slickgrid-universal/common';
+import type { Column, CompositeEditorOption, Editor, EditorArguments, EditorValidationResult, ElementPosition, } from '@slickgrid-universal/common';
+import type { HtmlElementPosition } from '@slickgrid-universal/utils';
 
 export interface CompositeEditorArguments extends EditorArguments {
   formValues: any;
@@ -46,7 +32,7 @@ export interface CompositeEditorArguments extends EditorArguments {
  *  position                -   A function to be called when the grid asks the editor to reposition itself.
  *  destroy                 -   A function to be called when the editor is destroyed.
  */
-export function CompositeEditor(this: any, columns: Column[], containers: Array<HTMLDivElement>, options: CompositeEditorOption) {
+export function SlickCompositeEditor(this: any, columns: Column[], containers: Array<HTMLDivElement>, options: CompositeEditorOption) {
   let firstInvalidEditor: Editor | null;
   const defaultOptions = {
     modalType: 'edit', // available type (create, clone, edit, mass)
@@ -66,7 +52,7 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
 
   const getContainerBox = (i: number): ElementPosition => {
     const container = containers[i];
-    const offset = getHtmlElementOffset(container);
+    const offset = getOffset(container);
     const width = container?.clientWidth ?? 0;
     const height = container?.clientHeight ?? 0;
 
@@ -268,8 +254,8 @@ export function CompositeEditor(this: any, columns: Column[], containers: Array<
     init();
   }
 
-  // so we can do editor instanceof Slick.CompositeEditor OR instanceof CompositeEditor
+  // so we can do editor instanceof SlickCompositeEditor OR instanceof CompositeEditor
   editor.prototype = this;
-  Slick.CompositeEditor = editor as any;
+
   return editor;
 }

@@ -1,5 +1,6 @@
-import { BindingEventService, Column, FieldType, Filters, GridOption, GridStateChange, Metrics, OperatorType, } from '@slickgrid-universal/common';
-import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-universal/odata';
+import { BindingEventService } from '@slickgrid-universal/binding';
+import { type Column, FieldType, Filters, type GridOption, type GridStateChange, type Metrics, OperatorType, } from '@slickgrid-universal/common';
+import { GridOdataService, OdataServiceApi, type OdataOption } from '@slickgrid-universal/odata';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 import Data from './data/customers_100.json';

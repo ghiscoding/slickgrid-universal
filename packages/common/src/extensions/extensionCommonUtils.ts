@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
-import { titleCase } from '@slickgrid-universal/utils';
+import { createDomElement, titleCase } from '@slickgrid-universal/utils';
 
 import type { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../interfaces/index';
-import { createDomElement, sanitizeTextByAvailableSanitizer } from '../services/domUtilities';
 import { SlickColumnPicker } from './slickColumnPicker';
 import { SlickGridMenu } from './slickGridMenu';
 
@@ -143,7 +142,7 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
 
     const labelElm = document.createElement('label');
     labelElm.htmlFor = `${context._gridUid}-${menuPrefix}colpicker-${columnId}`;
-    labelElm.innerHTML = sanitizeTextByAvailableSanitizer(context.gridOptions, columnLabel);
+    this.grid.applyHtmlCode(labelElm, columnLabel);
     columnLiElm.appendChild(labelElm);
     context._listElm.appendChild(columnLiElm);
   }

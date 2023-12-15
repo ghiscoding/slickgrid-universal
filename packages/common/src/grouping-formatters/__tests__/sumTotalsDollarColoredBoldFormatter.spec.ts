@@ -1,5 +1,6 @@
-import { Column, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, GridOption } from '../../interfaces/index';
 import { sumTotalsDollarColoredBoldFormatter } from '../sumTotalsDollarColoredBoldFormatter';
+import { type SlickGrid } from '../../core/index';
 
 describe('sumTotalsDollarColoredBoldFormatter', () => {
   // stub some methods of the SlickGrid Grid instance
@@ -8,73 +9,73 @@ describe('sumTotalsDollarColoredBoldFormatter', () => {
   } as unknown as SlickGrid;
 
   it('should display an empty string when no value is provided', () => {
-    const output = sumTotalsDollarColoredBoldFormatter({}, {} as Column);
+    const output = sumTotalsDollarColoredBoldFormatter({}, {} as Column, {} as SlickGrid);
     expect(output).toBe('');
   });
 
   it('should display an empty string when the "sum" does not find the field property in its object', () => {
     const columnDef = { id: 'column3', field: 'column3' } as Column;
     const totals = { sum: { column1: 123, column2: 345 } };
-    const output = sumTotalsDollarColoredBoldFormatter(totals, columnDef, {});
+    const output = sumTotalsDollarColoredBoldFormatter(totals, columnDef, {} as SlickGrid);
     expect(output).toBe('');
   });
 
   it('should display an empty string when the sum property is null', () => {
     const columnDef = { id: 'column1', field: 'column1' } as Column;
     const totals = { sum: { column1: null } };
-    const output = sumTotalsDollarColoredBoldFormatter(totals, columnDef, {});
+    const output = sumTotalsDollarColoredBoldFormatter(totals, columnDef, {} as SlickGrid);
     expect(output).toBe('');
   });
 
   it('should display an empty string when the average input is not a number', () => {
     const columnDef = { id: 'column1', field: 'column1' } as Column;
     const totals = { sum: { column1: 'abc' } };
-    const output = sumTotalsDollarColoredBoldFormatter(totals, columnDef, {});
+    const output = sumTotalsDollarColoredBoldFormatter(totals, columnDef, {} as SlickGrid);
     expect(output).toBe('');
   });
 
   it('should display a negative sum with at least 2 decimals in red when its input is negative', () => {
     const totals = { sum: { column1: -123, column2: -34.5678, column3: -2.4 } };
 
-    const output1 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column1', field: 'column1' } as Column, {});
-    const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2 } } as Column, {});
+    const output1 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column1', field: 'column1' } as Column, {} as SlickGrid);
+    const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2 } } as Column, {} as SlickGrid);
 
-    expect(output1).toBe('<span style="color:red; font-weight: bold;">-$123.00</span>');
-    expect(output2).toBe('<span style="color:red; font-weight: bold;">-$34.57</span>');
+    expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: red; font-weight: bold;">-$123.00</span>');
+    expect((output2 as HTMLElement).outerHTML).toBe('<span style="color: red; font-weight: bold;">-$34.57</span>');
   });
 
   it('should display a negative sum in red and thousand separator when its input is negative', () => {
     const totals = { sum: { column1: -12345678, column2: -345678.5678, column3: -2.4 } };
 
-    const output1 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column1', field: 'column1', params: { thousandSeparator: ',' } } as Column, {});
-    const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2, thousandSeparator: ',' } } as Column, {});
-    const output3 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2, decimalSeparator: ',', thousandSeparator: '_' } } as Column, {});
+    const output1 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column1', field: 'column1', params: { thousandSeparator: ',' } } as Column, {} as SlickGrid);
+    const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2, thousandSeparator: ',' } } as Column, {} as SlickGrid);
+    const output3 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2, decimalSeparator: ',', thousandSeparator: '_' } } as Column, {} as SlickGrid);
 
-    expect(output1).toBe('<span style="color:red; font-weight: bold;">-$12,345,678.00</span>');
-    expect(output2).toBe('<span style="color:red; font-weight: bold;">-$345,678.57</span>');
-    expect(output3).toBe('<span style="color:red; font-weight: bold;">-$345_678,57</span>');
+    expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: red; font-weight: bold;">-$12,345,678.00</span>');
+    expect((output2 as HTMLElement).outerHTML).toBe('<span style="color: red; font-weight: bold;">-$345,678.57</span>');
+    expect((output3 as HTMLElement).outerHTML).toBe('<span style="color: red; font-weight: bold;">-$345_678,57</span>');
   });
 
   it('should display a negative sum in red with parentheses instead of the negative sign when its input is negative', () => {
     const totals = { sum: { column1: -123, column2: -34.5678, column3: -2.4 } };
 
-    const output1 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column1', field: 'column1', params: { displayNegativeNumberWithParentheses: true } } as Column, {});
-    const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true } } as Column, {});
+    const output1 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column1', field: 'column1', params: { displayNegativeNumberWithParentheses: true } } as Column, {} as SlickGrid);
+    const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true } } as Column, {} as SlickGrid);
 
-    expect(output1).toBe('<span style="color:red; font-weight: bold;">($123.00)</span>');
-    expect(output2).toBe('<span style="color:red; font-weight: bold;">($34.57)</span>');
+    expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: red; font-weight: bold;">($123.00)</span>');
+    expect((output2 as HTMLElement).outerHTML).toBe('<span style="color: red; font-weight: bold;">($34.57)</span>');
   });
 
   it('should display a negative sum with thousand separator and parentheses instead of the negative sign when its input is negative', () => {
     const totals = { sum: { column1: -12345678, column2: -345678.5678, column3: -2.4 } };
 
-    const output1 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column1', field: 'column1', params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column, {});
-    const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column, {});
-    const output3 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true, decimalSeparator: ',', thousandSeparator: '_' } } as Column, {});
+    const output1 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column1', field: 'column1', params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column, {} as SlickGrid);
+    const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column, {} as SlickGrid);
+    const output3 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true, decimalSeparator: ',', thousandSeparator: '_' } } as Column, {} as SlickGrid);
 
-    expect(output1).toBe('<span style="color:red; font-weight: bold;">($12,345,678.00)</span>');
-    expect(output2).toBe('<span style="color:red; font-weight: bold;">($345,678.57)</span>');
-    expect(output3).toBe('<span style="color:red; font-weight: bold;">($345_678,57)</span>');
+    expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: red; font-weight: bold;">($12,345,678.00)</span>');
+    expect((output2 as HTMLElement).outerHTML).toBe('<span style="color: red; font-weight: bold;">($345,678.57)</span>');
+    expect((output3 as HTMLElement).outerHTML).toBe('<span style="color: red; font-weight: bold;">($345_678,57)</span>');
   });
 
   it('should display a negative sum in red with parentheses when input is negative and "displayNegativeNumberWithParentheses" is enabled in the Formatter Options', () => {
@@ -82,27 +83,27 @@ describe('sumTotalsDollarColoredBoldFormatter', () => {
     const columnDef = { id: 'column3', field: 'column3' } as Column;
     const totals = { sum: { column1: 123, column2: 345, column3: -2.4 } };
     const output = sumTotalsDollarColoredBoldFormatter(totals, columnDef, gridStub);
-    expect(output).toBe('<span style="color:red; font-weight: bold;">($2.40)</span>');
+    expect((output as HTMLElement).outerHTML).toBe('<span style="color: red; font-weight: bold;">($2.40)</span>');
   });
 
   it('should display a positive sum number with at least 2 decimals, even when displayNegativeNumberWithParentheses is enabled', () => {
     const totals = { sum: { column1: 123, column2: 34.5678, column3: 2.4 } };
 
-    const output1 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column1', field: 'column1', params: { displayNegativeNumberWithParentheses: true } } as Column, {});
-    const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true } } as Column, {});
+    const output1 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column1', field: 'column1', params: { displayNegativeNumberWithParentheses: true } } as Column, {} as SlickGrid);
+    const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true } } as Column, {} as SlickGrid);
 
-    expect(output1).toBe('<span style="color:green; font-weight: bold;">$123.00</span>');
-    expect(output2).toBe('<span style="color:green; font-weight: bold;">$34.57</span>');
+    expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: green; font-weight: bold;">$123.00</span>');
+    expect((output2 as HTMLElement).outerHTML).toBe('<span style="color: green; font-weight: bold;">$34.57</span>');
   });
 
   it('should display the same sum value in green with at least 2 decimals when a number with decimals is provided', () => {
     const totals = { sum: { column1: 123.55678, column2: 345.2, column3: -2.45 } };
 
-    const output1 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column1', field: 'column1' } as Column, {});
-    const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2' } as Column, {});
+    const output1 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column1', field: 'column1' } as Column, {} as SlickGrid);
+    const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2' } as Column, {} as SlickGrid);
 
-    expect(output1).toBe('<span style="color:green; font-weight: bold;">$123.5568</span>');
-    expect(output2).toBe('<span style="color:green; font-weight: bold;">$345.20</span>');
+    expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: green; font-weight: bold;">$123.5568</span>');
+    expect((output2 as HTMLElement).outerHTML).toBe('<span style="color: green; font-weight: bold;">$345.20</span>');
   });
 
   it('should display an sum number with user defined minimum & maximum decimal count in his grid option', () => {
@@ -113,54 +114,54 @@ describe('sumTotalsDollarColoredBoldFormatter', () => {
     const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2' } as Column, gridStub);
     const output3 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column3', field: 'column3' } as Column, gridStub);
 
-    expect(output1).toBe('<span style="color:green; font-weight: bold;">$123.457</span>');
-    expect(output2).toBe('<span style="color:green; font-weight: bold;">$345</span>');
-    expect(output3).toBe('<span style="color:red; font-weight: bold;">($2.45)</span>');
+    expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: green; font-weight: bold;">$123.457</span>');
+    expect((output2 as HTMLElement).outerHTML).toBe('<span style="color: green; font-weight: bold;">$345</span>');
+    expect((output3 as HTMLElement).outerHTML).toBe('<span style="color: red; font-weight: bold;">($2.45)</span>');
   });
 
   it('should display a sum number in correct color with at least 2 decimals when user provided minimum & maximum decimal count', () => {
     const totals = { sum: { column1: 123.45678, column2: 345.2, column3: -2.45 } };
 
-    const output1 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column1', field: 'column1', params: { maxDecimal: 2 } } as Column, {});
-    const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { minDecimal: 0 } } as Column, {});
-    const output3 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column3', field: 'column3', params: { minDecimal: 3, displayNegativeNumberWithParentheses: true } } as Column, {});
+    const output1 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column1', field: 'column1', params: { maxDecimal: 2 } } as Column, {} as SlickGrid);
+    const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { minDecimal: 0 } } as Column, {} as SlickGrid);
+    const output3 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column3', field: 'column3', params: { minDecimal: 3, displayNegativeNumberWithParentheses: true } } as Column, {} as SlickGrid);
 
-    expect(output1).toBe('<span style="color:green; font-weight: bold;">$123.46</span>');
-    expect(output2).toBe('<span style="color:green; font-weight: bold;">$345.2</span>');
-    expect(output3).toBe('<span style="color:red; font-weight: bold;">($2.450)</span>');
+    expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: green; font-weight: bold;">$123.46</span>');
+    expect((output2 as HTMLElement).outerHTML).toBe('<span style="color: green; font-weight: bold;">$345.2</span>');
+    expect((output3 as HTMLElement).outerHTML).toBe('<span style="color: red; font-weight: bold;">($2.450)</span>');
   });
 
   it('should display a sum number with at least 2 decimals with prefix and suffix', () => {
     const totals = { sum: { column1: 123.45678, column2: 345.2, column3: -2.45 } };
 
-    const output1 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column1', field: 'column1', params: { maxDecimal: 2, groupFormatterPrefix: 'sum: ' } } as Column, {});
-    const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { minDecimal: 0, groupFormatterSuffix: ' (max)' } } as Column, {});
+    const output1 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column1', field: 'column1', params: { maxDecimal: 2, groupFormatterPrefix: 'sum: ' } } as Column, {} as SlickGrid);
+    const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { minDecimal: 0, groupFormatterSuffix: ' (max)' } } as Column, {} as SlickGrid);
     const output3 = sumTotalsDollarColoredBoldFormatter(
       totals, {
         id: 'column3',
         field: 'column3',
         params: { minDecimal: 3, displayNegativeNumberWithParentheses: true, groupFormatterPrefix: 'sum: ', groupFormatterSuffix: '/item' }
-      } as Column
+      } as Column, {} as SlickGrid
     );
 
-    expect(output1).toBe('<span style="color:green; font-weight: bold;">sum: $123.46</span>');
-    expect(output2).toBe('<span style="color:green; font-weight: bold;">$345.2 (max)</span>');
-    expect(output3).toBe('<span style="color:red; font-weight: bold;">sum: ($2.450)/item</span>');
+    expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: green; font-weight: bold;">sum: $123.46</span>');
+    expect((output2 as HTMLElement).outerHTML).toBe('<span style="color: green; font-weight: bold;">$345.2 (max)</span>');
+    expect((output3 as HTMLElement).outerHTML).toBe('<span style="color: red; font-weight: bold;">sum: ($2.450)/item</span>');
   });
 
   it('should display a sum number with prefix, suffix and thousand separator', () => {
     const totals = { sum: { column1: 12345678.45678, column2: 345678.2, column3: -345678.45 } };
 
-    const output1 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column1', field: 'column1', params: { maxDecimal: 2, groupFormatterPrefix: 'Sum: ', decimalSeparator: ',', thousandSeparator: '_' } } as Column, {});
-    const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { minDecimal: 0, groupFormatterSuffix: ' (sum)', decimalSeparator: ',', thousandSeparator: '_' } } as Column, {});
+    const output1 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column1', field: 'column1', params: { maxDecimal: 2, groupFormatterPrefix: 'Sum: ', decimalSeparator: ',', thousandSeparator: '_' } } as Column, {} as SlickGrid);
+    const output2 = sumTotalsDollarColoredBoldFormatter(totals, { id: 'column2', field: 'column2', params: { minDecimal: 0, groupFormatterSuffix: ' (sum)', decimalSeparator: ',', thousandSeparator: '_' } } as Column, {} as SlickGrid);
     const output3 = sumTotalsDollarColoredBoldFormatter(
       totals, {
         id: 'column3', field: 'column3',
         params: { minDecimal: 3, displayNegativeNumberWithParentheses: true, groupFormatterPrefix: 'Sum: ', groupFormatterSuffix: '/item', decimalSeparator: ',', thousandSeparator: '_' }
-      } as Column);
+      } as Column, {} as SlickGrid);
 
-    expect(output1).toBe('<span style="color:green; font-weight: bold;">Sum: $12_345_678,46</span>');
-    expect(output2).toBe('<span style="color:green; font-weight: bold;">$345_678,2 (sum)</span>');
-    expect(output3).toBe('<span style="color:red; font-weight: bold;">Sum: ($345_678,450)/item</span>');
+    expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: green; font-weight: bold;">Sum: $12_345_678,46</span>');
+    expect((output2 as HTMLElement).outerHTML).toBe('<span style="color: green; font-weight: bold;">$345_678,2 (sum)</span>');
+    expect((output3 as HTMLElement).outerHTML).toBe('<span style="color: red; font-weight: bold;">Sum: ($345_678,450)/item</span>');
   });
 });

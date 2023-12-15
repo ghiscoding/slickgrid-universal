@@ -1,23 +1,23 @@
 import {
-  BindingEventService,
-  Column,
+  type Column,
   Editors,
   FieldType,
   Filters,
   Formatters,
-  GridOption,
+  type GridOption,
   OperatorType,
 } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import DOMPurify from 'dompurify';
 
-import { TranslateService } from '../translate.service';
 import { ExampleGridOptions } from './example-grid-options';
+import { TranslateService } from '../translate.service';
 import './example07.scss';
 import '../material-styles.scss';
 
-export default class Example7 {
+export default class Example07 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
@@ -75,7 +75,7 @@ export default class Example7 {
       {
         id: 'action', name: 'Action', field: 'action', minWidth: 60, maxWidth: 60,
         excludeFromExport: true, excludeFromHeaderMenu: true,
-        formatter: () => `<div class="button-style margin-auto" style="width: 35px; margin-top: -1px;"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
@@ -238,7 +238,7 @@ export default class Example7 {
           // OR 2- use a Promise
           collectionAsync: new Promise<any>((resolve) => {
             setTimeout(() => {
-              resolve(Array.from(Array(this.dataset.length).keys()).map(k => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })));
+              resolve(Array.from(Array((this.dataset || []).length).keys()).map(k => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })));
             }, 500);
           }),
 
@@ -263,12 +263,12 @@ export default class Example7 {
           // collectionAsync: fetch(URL_SAMPLE_COLLECTION_DATA),
           collectionAsync: new Promise((resolve) => {
             setTimeout(() => {
-              resolve(Array.from(Array(this.dataset.length).keys()).map(k => ({ value: k, label: `Task ${k}` })));
+              resolve(Array.from(Array((this.dataset || []).length).keys()).map(k => ({ value: k, label: `Task ${k}` })));
             });
           }),
 
           // OR a regular collection load
-          // collection: Array.from(Array(NB_ITEMS).keys()).map(k => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })),
+          // collection: Array.from(Array((this.dataset || []).length).keys()).map(k => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })),
           collectionSortBy: {
             property: 'value',
             sortDesc: true,
@@ -487,7 +487,7 @@ export default class Example7 {
     return collection.sort((item1, item2) => item1.value - item2.value);
   }
 
-  onBeforeMoveRow(e: Event, data: { rows: number[]; insertBefore: number; }) {
+  onBeforeMoveRow(e: MouseEvent | TouchEvent, data: { rows: number[]; insertBefore: number; }) {
     for (const rowIdx of data.rows) {
       // no point in moving before or after itself
       if (rowIdx === data.insertBefore || (rowIdx === data.insertBefore - 1 && ((data.insertBefore - 1) !== this.sgb.dataView?.getItemCount()))) {
@@ -498,7 +498,7 @@ export default class Example7 {
     return true;
   }
 
-  onMoveRows(_e: Event, args: { rows: number[]; insertBefore: number; }) {
+  onMoveRows(_e: MouseEvent | TouchEvent, args: { rows: number[]; insertBefore: number; }) {
     // rows and insertBefore references,
     // note that these references are assuming that the dataset isn't filtered at all
     // which is not always the case so we will recalcualte them and we won't use these reference afterward

@@ -1,31 +1,28 @@
 import {
   Aggregators,
-  BindingEventService,
-  Column,
-  EditCommand,
+  type Column,
+  type EditCommand,
   Editors,
   FieldType,
   FileType,
   Filters,
   Formatters,
-  GridOption,
-  Grouping,
-  GroupingGetterFunction,
+  type GridOption,
+  type Grouping,
+  type GroupingGetterFunction,
   GroupTotalFormatters,
-  SlickDraggableGrouping,
-  SlickNamespace,
+  type SlickDraggableGrouping,
+  SlickGlobalEditorLock,
   SortComparers,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
 import './example03.scss?inline';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
 
 interface ReportItem {
   title: string;
@@ -37,14 +34,14 @@ interface ReportItem {
   effortDriven: boolean;
 }
 
-export default class Example3 {
+export default class Example03 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column<ReportItem & { action: string; }>[];
   gridOptions: GridOption;
   dataset: any[];
   editCommandQueue: EditCommand[] = [];
   excelExportService: ExcelExportService;
-  sgb: SlickVanillaGridBundle;
+  sgb: SlickVanillaGridBundle<ReportItem & { action: string; }>;
   durationOrderByCount = false;
   draggableGroupingPlugin: SlickDraggableGrouping;
   loadingClass = '';
@@ -88,7 +85,7 @@ export default class Example3 {
         filterable: true,
         grouping: {
           getter: 'title',
-          formatter: (g) => `Title: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Title: ${g.value} <span class="text-green">(${g.count} items)</span>`,
           aggregators: [new Aggregators.Sum('cost')],
           aggregateCollapsed: false,
           collapsed: false
@@ -108,7 +105,7 @@ export default class Example3 {
         groupTotalsFormatter: GroupTotalFormatters.sumTotals,
         grouping: {
           getter: 'duration',
-          formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Duration: ${g.value} <span class="text-green">(${g.count} items)</span>`,
           comparer: (a, b) => {
             return this.durationOrderByCount ? (a.count - b.count) : SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc);
           },
@@ -129,7 +126,7 @@ export default class Example3 {
         type: FieldType.number,
         grouping: {
           getter: 'cost',
-          formatter: (g) => `Cost: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Cost: ${g.value} <span class="text-green">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -150,7 +147,7 @@ export default class Example3 {
         groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage,
         grouping: {
           getter: 'percentComplete',
-          formatter: (g) => `% Complete:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `% Complete:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -168,7 +165,7 @@ export default class Example3 {
         editor: { model: Editors.date },
         grouping: {
           getter: 'start',
-          formatter: (g) => `Start: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Start: ${g.value} <span class="text-green">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -185,7 +182,7 @@ export default class Example3 {
         filterable: true, filter: { model: Filters.dateRange },
         grouping: {
           getter: 'finish',
-          formatter: (g) => `Finish: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Finish: ${g.value} <span class="text-green">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -207,7 +204,7 @@ export default class Example3 {
         formatter: Formatters.checkmarkMaterial,
         grouping: {
           getter: 'effortDriven',
-          formatter: (g) => `Effort-Driven: ${g.value ? 'True' : 'False'} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Effort-Driven: ${g.value ? 'True' : 'False'} <span class="text-green">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -283,6 +280,9 @@ export default class Example3 {
       editable: true,
       autoResize: {
         container: '.demo-container',
+      },
+      dataView: {
+        useCSPSafeFilter: true
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
@@ -374,6 +374,9 @@ export default class Example3 {
     if (this.sgb) {
       this.sgb.dataset = tmpArray;
     }
+    // const item = this.sgb.dataView?.getItemById<ReportItem & { myAction: string; }>(0);
+    // const item = this.sgb?.dataView?.getItemById(0);
+    // console.log('item', item);
     return tmpArray;
   }
 
@@ -504,7 +507,7 @@ export default class Example3 {
 
   undo() {
     const command = this.editCommandQueue.pop();
-    if (command && Slick.GlobalEditorLock.cancelCurrentEdit()) {
+    if (command && SlickGlobalEditorLock.cancelCurrentEdit()) {
       command.undo();
       this.sgb?.slickGrid?.gotoCell(command.row, command.cell, false);
     }

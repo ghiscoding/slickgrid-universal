@@ -1,6 +1,7 @@
-import { BindingEventService, Column, Editors, FieldType, Filters, GridOption, GridStateChange, Metrics, OperatorType, } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
+import { type Column, Editors, FieldType, Filters, type GridOption, type GridStateChange, type Metrics, OperatorType, } from '@slickgrid-universal/common';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
-import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-universal/odata';
+import { GridOdataService, type OdataServiceApi, type OdataOption } from '@slickgrid-universal/odata';
 import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { delay, Observable, of, Subject } from 'rxjs';
@@ -201,6 +202,7 @@ export default class Example15 {
         // we do this because Filter(s) are shown at all time, while on Editor it's unnecessary since they are only shown when opening them
         if (filterCollectionAsync?.next) {
           filterCollectionAsync.next(editorCollection);
+          filterCollectionAsync.complete();
         }
       }
     }
@@ -422,7 +424,7 @@ export default class Example15 {
 
     // display random address and zip code to simulate company address
     const randomStreet = dataContext.id % 3 ? 'Belleville' : 'Hollywood';
-    return `<div class="color-se-danger" style="font-weight: bold">${tooltipTitle}</div>
+    return `<div class="color-se-danger text-bold">${tooltipTitle}</div>
       <div class="tooltip-2cols-row"><div>Address:</div> <div>${dataContext.__params.doorNumber.toFixed(0)} ${randomStreet} blvd</div></div>
       <div class="tooltip-2cols-row"><div>Zip:</div> <div>${dataContext.__params.zip.toFixed(0)}</div></div>`;
   }

@@ -1,4 +1,6 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
+import { getInnerSize, getOffset, stripTags } from '@slickgrid-universal/utils';
 
 import { FieldType, } from '../enums/index';
 import type {
@@ -7,16 +9,11 @@ import type {
   GridOption,
   GridSize,
   ResizeByContentOption,
-  SlickDataView,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
 } from '../interfaces/index';
-import { BindingEventService, getInnerSize, getHtmlElementOffset, sanitizeHtmlToText, } from '../services/index';
 import { parseFormatterWhenExist } from '../formatters/formatterUtilities';
+import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
 // using external non-typed js libraries
-declare const Slick: SlickNamespace;
 const DATAGRID_BOTTOM_PADDING = 20;
 const DATAGRID_FOOTER_HEIGHT = 25;
 const DATAGRID_PAGINATION_HEIGHT = 35;
@@ -51,12 +48,12 @@ export class ResizerService {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return this._grid?.getOptions?.() ?? {};
+    return this._grid?.getOptions() ?? {};
   }
 
   /** Getter for the SlickGrid DataView */
   get dataView(): SlickDataView {
-    return this._grid?.getData() as SlickDataView;
+    return this._grid?.getData<SlickDataView>();
   }
 
   /** Getter for the grid uid */
@@ -79,7 +76,7 @@ export class ResizerService {
   }
 
   constructor(protected readonly pubSubService: BasePubSubService) {
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
     this._bindingEventService = new BindingEventService();
   }
 
@@ -115,7 +112,7 @@ export class ResizerService {
       gridParentContainerElm.style.width = typeof fixedGridSizes.width === 'string' ? fixedGridSizes.width : `${fixedGridSizes.width}px`;
     }
 
-    this._gridDomElm = grid?.getContainerNode?.() as HTMLDivElement;
+    this._gridDomElm = grid?.getContainerNode() as HTMLDivElement;
 
     if (typeof this._autoResizeOptions.container === 'string') {
       this._pageContainerElm = typeof this._autoResizeOptions.container === 'string' ? document.querySelector(this._autoResizeOptions.container) as HTMLElement : this._autoResizeOptions.container;
@@ -172,7 +169,7 @@ export class ResizerService {
       this._resizeObserver.observe(this._pageContainerElm);
     } else {
       // if we can't find the grid to resize, return without binding anything
-      if (this._gridDomElm === undefined || getHtmlElementOffset(this._gridDomElm) === undefined) {
+      if (this._gridDomElm === undefined || getOffset(this._gridDomElm) === undefined) {
         return null;
       }
 
@@ -212,7 +209,7 @@ export class ResizerService {
    */
   calculateGridNewDimensions(gridOptions: GridOption): GridSize | null {
     const autoResizeOptions = gridOptions?.autoResize ?? {};
-    const gridElmOffset = getHtmlElementOffset(this._gridDomElm);
+    const gridElmOffset = getOffset(this._gridDomElm);
 
     if (!window || gridElmOffset === undefined) {
       return null;
@@ -317,7 +314,7 @@ export class ResizerService {
     this.pubSubService.publish('onGridAfterResize', dimensions);
 
     // we can call our resize by content here (when enabled)
-    // since the core Slick.Resizer plugin only supports the "autosizeColumns"
+    // since the core SlickResizer plugin only supports the "autosizeColumns"
     if (this.gridOptions.enableAutoResizeColumnsByCellContent && (!this._lastDimensions?.width || dimensions?.width !== this._lastDimensions?.width)) {
       this.resizeColumnsByCellContent(false);
     }
@@ -359,7 +356,7 @@ export class ResizerService {
         }
       } else if (this.gridOptions.enableAutoResizeColumnsByCellContent && (!this._lastDimensions?.width || newWidth !== this._lastDimensions?.width)) {
         // we can call our resize by content here (when enabled)
-        // since the core Slick.Resizer plugin only supports the "autosizeColumns"
+        // since the core SlickResizer plugin only supports the "autosizeColumns"
         this.resizeColumnsByCellContent(false);
       }
 
@@ -467,8 +464,6 @@ export class ResizerService {
    */
   protected calculateCellWidthByReadingDataset(columnOrColumns: Column | Column[], columnWidths: { [columnId in string | number]: number; }, maxItemToInspect = 1000, columnIndexOverride?: number) {
     const columnDefinitions = Array.isArray(columnOrColumns) ? columnOrColumns : [columnOrColumns];
-
-    // const columnDefinitions = this._grid.getColumns();
     const dataset = this.dataView.getItems() as any[];
 
     let readItemCount = 0;
@@ -508,7 +503,7 @@ export class ResizerService {
     if (!columnDef.originalWidth) {
       const charWidthPx = columnDef?.resizeCharWidthInPx ?? resizeCellCharWidthInPx;
       const formattedData = parseFormatterWhenExist(columnDef?.formatter, rowIdx, colIdx, columnDef, item, this._grid);
-      const formattedDataSanitized = sanitizeHtmlToText(formattedData);
+      const formattedDataSanitized = stripTags(formattedData);
       const formattedTextWidthInPx = Math.ceil(formattedDataSanitized.length * charWidthPx);
       const resizeMaxWidthThreshold = columnDef.resizeMaxWidthThreshold;
       if (columnDef && (initialMininalColumnWidth === undefined || formattedTextWidthInPx > initialMininalColumnWidth)) {
@@ -537,7 +532,7 @@ export class ResizerService {
 
     // apply optional ratio which is typically 1, except for string where we use a ratio of around ~0.9 since we have more various thinner characters like (i, l, t, ...)
     const stringWidthRatio = column?.resizeCalcWidthRatio ?? this.resizeByContentOptions.defaultRatioForStringType ?? 0.9;
-    newColWidth *= fieldType === 'string' ? stringWidthRatio : 1;
+    newColWidth *= (fieldType === 'string' ? stringWidthRatio : 1);
 
     // apply extra cell padding, custom padding & editor formatter padding
     // --
@@ -650,7 +645,7 @@ export class ResizerService {
 
       this._intervalId = setInterval(async () => {
         const headerTitleRowHeight = 44; // this one is set by SASS/CSS so let's hard code it
-        const headerPos = getHtmlElementOffset(headerElm);
+        const headerPos = getOffset(headerElm);
         let headerOffsetTop = headerPos?.top ?? 0;
         if (this.gridOptions && this.gridOptions.enableFiltering && this.gridOptions.headerRowHeight) {
           headerOffsetTop += this.gridOptions.headerRowHeight; // filter row height
@@ -660,18 +655,18 @@ export class ResizerService {
         }
         headerOffsetTop += headerTitleRowHeight; // header title row height
 
-        const viewportPos = getHtmlElementOffset(viewportElm);
+        const viewportPos = getOffset(viewportElm);
         const viewportOffsetTop = viewportPos?.top ?? 0;
 
         // if header row is Y coordinate 0 (happens when user is not in current Tab) or when header titles are lower than the viewport of dataset (this can happen when user change Tab and DOM is not shown)
         // another resize condition could be that if the grid location is at coordinate x/y 0/0, we assume that it's in a hidden tab and we'll need to resize whenever that tab becomes active
         // for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
-        const containerElmOffset = getHtmlElementOffset(this._gridContainerElm);
+        const containerElmOffset = getOffset(this._gridContainerElm);
         let isResizeRequired = (headerPos?.top === 0 || ((headerOffsetTop - viewportOffsetTop) > 2) || (containerElmOffset?.left === 0 && containerElmOffset?.top === 0)) ? true : false;
 
         // another condition for a required resize is when the grid is hidden (not in current tab) then its "rightPx" rendered range will be 0px
         // if that's the case then we know the grid is still hidden and we need to resize it whenever it becomes visible (when its "rightPx" becomes greater than 0 then it's visible)
-        const renderedRangeRightPx = this._grid.getRenderedRange?.()?.rightPx ?? 0;
+        const renderedRangeRightPx = this._grid.getRenderedRange()?.rightPx ?? 0;
         if (!isResizeRequired && dataLn > 0 && renderedRangeRightPx === 0 && columns.length > 1) {
           isResizeRequired = true;
         }

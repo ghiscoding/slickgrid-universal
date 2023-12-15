@@ -27,7 +27,7 @@ describe('the Collection Formatter', () => {
     const columnDef = { params: { collection: [{ value: 1, label: 'foo' }, { value: 2, label: 'bar' }] } } as Column;
     const result = collectionFormatter(0, 0, valueArray, columnDef, {}, {} as any);
     const outputCsv = 'foo, bar';
-    expect(result).toBe(`<span title="${outputCsv}">${outputCsv}</span>`);
+    expect((result as HTMLElement).outerHTML).toBe(`<span title="${outputCsv}">${outputCsv}</span>`);
   });
 
   it('should return a CSV string when value passed is an array of objects', () => {
@@ -40,7 +40,7 @@ describe('the Collection Formatter', () => {
     } as Column;
     const result = collectionFormatter(0, 0, valueArray, columnDef, {}, {} as any);
     const outputCsv = 'John, Bob';
-    expect(result).toBe(`<span title="${outputCsv}">${outputCsv}</span>`);
+    expect((result as HTMLElement).outerHTML).toBe(`<span title="${outputCsv}">${outputCsv}</span>`);
   });
 
   it('should return a string when value passed is an object', () => {

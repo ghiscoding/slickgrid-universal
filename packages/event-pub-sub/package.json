@@ -1,8 +1,8 @@
 {
   "name": "@slickgrid-universal/event-pub-sub",
-  "version": "3.7.0",
+  "version": "4.0.1-alpha.1",
   "description": "Simple Vanilla Implementation of an Event PubSub Service to do simply publish/subscribe inter-communication while optionally providing data in the event",
-  "main": "./dist/commonjs/index.js",
+  "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "index.d.ts",
   "typesVersions": {
@@ -15,8 +15,8 @@
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "node": "./dist/commonjs/index.js",
-      "require": "./dist/commonjs/index.js",
+      "node": "./dist/cjs/index.js",
+      "require": "./dist/cjs/index.js",
       "default": "./dist/esm/index.js"
     },
     "./package.json": "./package.json"
@@ -33,9 +33,9 @@
     "build:incremental": "tsc --incremental --declaration",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "dev": "pnpm build:incremental",
-    "bundle": "pnpm bundle:commonjs",
-    "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
-    "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
+    "bundle": "pnpm bundle:cjs",
+    "bundle:cjs": "tsc --project tsconfig.bundle.json --outDir dist/cjs --module commonjs",
+    "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2021",
     "bundle:types": "tsc --emitDeclarationOnly --declarationMap --outDir dist/types"
   },
   "license": "MIT",

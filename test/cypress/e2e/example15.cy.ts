@@ -658,10 +658,10 @@ describe('Example 15 - OData Grid using RxJS', () => {
     it('should be able to open "Gender" on the first row and expect to find 2 options the editor list (male, female) and expect male to be selected', () => {
       const expectedOptions = ['male', 'female'];
 
-      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0)`)
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`)
         .click();
 
-      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
         .should('contain', 'male')
         .dblclick(); // use double-click since the 1st click will be catch by the row selection because we changed row
 
@@ -688,7 +688,7 @@ describe('Example 15 - OData Grid using RxJS', () => {
     it('should open the "Gender" editor on the first row and expect to find 1 more option the editor list (male, female, other)', () => {
       const expectedOptions = ['male', 'female', 'other'];
 
-      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`)
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
         .should('contain', 'male')
         .click();
 
@@ -736,9 +736,9 @@ describe('Example 15 - OData Grid using RxJS', () => {
         .find('.slick-row')
         .should('have.length', 1);
 
-      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', 'Ayers Hood');
-      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(2)`).should('contain', 'other');
-      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).should('contain', 'Accuprint');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Ayers Hood');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', 'other');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`).should('contain', 'Accuprint');
     });
 
     it('should display an error when trying to sort by "Company" and the query & sort icons should remain the same', () => {
@@ -774,7 +774,7 @@ describe('Example 15 - OData Grid using RxJS', () => {
         .find('.slick-row')
         .should('have.length', 1);
 
-      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(1)`).should('contain', 'Alisha Myers');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Alisha Myers');
 
       // query should still contain previous sort by + new gender filter
       cy.get('[data-test=odata-query-result]')
@@ -927,7 +927,7 @@ describe('Example 15 - OData Grid using RxJS', () => {
     });
 
     it('should mouse over Task 2 cell of last column and expect async tooltip to show up', () => {
-      cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(3)`).as('task2-cell');
+      cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`).as('task2-cell');
       cy.get('@task2-cell').should('contain', 'Netility');
       cy.get('@task2-cell').trigger('mouseover');
       cy.get('.slick-custom-tooltip').contains('loading...');

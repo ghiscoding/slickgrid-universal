@@ -47,7 +47,7 @@ There are 3 types of select filter
   - this one is less recommended, it is a simple and plain select dropdown. There are no styling applied and will be different in every browser. If you want a more consistent visual UI, it's suggested to use the other 2 filters (`multipleSelect` or `singleSelect`)
 
 ### SASS Styling
-You can change the `multipleSelect` and `singleSelect` styling with SASS [variables](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss#L736) for styling. For more info on how to use SASS in your project, read the [Wiki - Styling](/ghiscoding/slickgrid-universal/wiki/Styling)
+You can change the `multipleSelect` and `singleSelect` styling with SASS [variables](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss#L736) for styling. For more info on how to use SASS in your project, read the [Docs - Styling](../../styling/styling.md)
 
 ### How to use Select Filter
 Simply set the flag `filterable` to True and and enable the filters in the Grid Options. Here is an example with a full column definition:
@@ -85,10 +85,10 @@ If you want to load the grid with certain default filter(s), you can use the fol
 - `searchTerms` (array of values)
 
 #### Note
-Even though the option of `searchTerms` it is much better to use the more powerful `presets` grid options, please refer to the [Grid State & Presets](../../grid-functionalities/Grid-State-&-Preset#grid-presets) for more info.
+Even though the option of `searchTerms` it is much better to use the more powerful `presets` grid options, please refer to the [Grid State & Presets](../../grid-functionalities/grid-state-preset#grid-presets) for more info.
 
 **NOTE**
-If you also have `presets` in the grid options, then your `searchTerms` will be ignored completely (even if it's a different column) since `presets` have higher priority over `searchTerms`. See [Grid State & Grid Presets](../../grid-functionalities/Grid-State-&-Preset.md) from more info.
+If you also have `presets` in the grid options, then your `searchTerms` will be ignored completely (even if it's a different column) since `presets` have higher priority over `searchTerms`. See [Grid State & Grid Presets](../../grid-functionalities/grid-state-preset.md) from more info.
 
 #### Sample
 ```ts
@@ -424,7 +424,7 @@ this.columnDefinitions = [
 ```
 
 #### Change Default DOMPurify Options (sanitize html)
-If you find that the HTML that you passed is being sanitized and you wish to change it, then you can change the default `sanitizeHtmlOptions` property defined in the Global Grid Options, for more info on how to change these global options, see the [Wiki - Global Grid Options](/ghiscoding/slickgrid-universal/wiki/Global-Options) and also take a look at the [GitHub - DOMPurify](https://github.com/cure53/DOMPurify#can-i-configure-it) configurations.
+If you find that the HTML that you passed is being sanitized and you wish to change it, then you can change the default `sanitizeHtmlOptions` property defined in the Global Grid Options, for more info on how to change these [global options](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/global-grid-options.ts).
 
 
 ### Collection Add Blank Entry

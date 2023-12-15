@@ -1,6 +1,6 @@
-import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
+import { BindingEventService } from '@slickgrid-universal/binding';
+import { createDomElement, setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
-import { KeyCode } from '../enums/keyCode.enum';
 import type {
   Column,
   ColumnEditor,
@@ -10,16 +10,10 @@ import type {
   EditorValidator,
   EditorValidationResult,
   GridOption,
-  SlickGrid,
-  SlickNamespace,
 } from '../interfaces/index';
 import { getDescendantProperty } from '../services/utilities';
 import { textValidator } from '../editorValidators/textValidator';
-import { BindingEventService } from '../services/bindingEvent.service';
-import { createDomElement } from '../services/domUtilities';
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
+import { SlickEventData, type SlickGrid } from '../core/index';
 
 /*
  * An example of a 'detached' editor.
@@ -61,7 +55,7 @@ export class InputEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef && this.columnDef.internalColumnEditor || {};
+    return this.columnDef?.internalColumnEditor || {} as ColumnEditor;
   }
 
   /** Getter for the item data context object */
@@ -114,7 +108,7 @@ export class InputEditor implements Editor {
     this._bindEventService.bind(this._input, 'keydown', ((event: KeyboardEvent) => {
       this._isValueTouched = true;
       this._lastInputKeyEvent = event;
-      if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT) {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
         event.stopImmediatePropagation();
       }
     }) as EventListener);
@@ -214,8 +208,8 @@ export class InputEditor implements Editor {
 
   isValueChanged(): boolean {
     const elmValue = this._input?.value;
-    const lastKeyEvent = this._lastInputKeyEvent && this._lastInputKeyEvent.keyCode;
-    if (this.columnEditor && this.columnEditor.alwaysSaveOnEnterKey && lastKeyEvent === KeyCode.ENTER) {
+    const lastEventKey = this._lastInputKeyEvent?.key;
+    if (this.columnEditor?.alwaysSaveOnEnterKey && lastEventKey === 'Enter') {
       return true;
     }
     return (!(elmValue === '' && (this._originalValue === null || this._originalValue === undefined))) && (elmValue !== this._originalValue);
@@ -331,7 +325,7 @@ export class InputEditor implements Editor {
     }
     grid.onCompositeEditorChange.notify(
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
-      { ...new Slick.EventData(), ...event }
+      { ...new SlickEventData(), ...event as Event }
     );
   }
 

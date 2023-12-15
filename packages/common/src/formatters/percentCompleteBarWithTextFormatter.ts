@@ -1,4 +1,4 @@
-import { isNumber } from '@slickgrid-universal/utils';
+import { createDomElement, isNumber } from '@slickgrid-universal/utils';
 
 import { type Formatter } from './../interfaces/index';
 
@@ -22,5 +22,5 @@ export const percentCompleteBarWithTextFormatter: Formatter = (_row, _cell, valu
     color = 'green';
   }
 
-  return `<div class="percent-complete-bar-with-text" title="${inputNumber}%" style="background:${color}; width:${inputNumber}%">${inputNumber}%</div>`;
+  return createDomElement('div', { className: 'percent-complete-bar-with-text', title: `${inputNumber}%`, textContent: `${inputNumber}%`, style: { background: color, width: `${inputNumber}%` } });
 };

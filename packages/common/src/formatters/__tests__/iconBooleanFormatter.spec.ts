@@ -35,22 +35,22 @@ describe('the Checkmark Formatter', () => {
     const cssClass = 'fa fa-check';
     const result1 = iconBooleanFormatter(0, 0, value.toLowerCase(), { field: 'user', params: { cssClass } } as Column, {}, {} as any);
     const result2 = iconBooleanFormatter(0, 0, value.toUpperCase(), { field: 'user', params: { cssClass } } as Column, {}, {} as any);
-    expect(result1).toBe('<i class="fa fa-check" aria-hidden="true"></i>');
-    expect(result2).toBe('<i class="fa fa-check" aria-hidden="true"></i>');
+    expect((result1 as HTMLElement).outerHTML).toBe('<i class="fa fa-check"></i>');
+    expect((result2 as HTMLElement).outerHTML).toBe('<i class="fa fa-check"></i>');
   });
 
   it('should return the Font Awesome Checkmark icon when input is True', () => {
     const value = true;
     const cssClass = 'fa fa-check';
     const result = iconBooleanFormatter(0, 0, value, { field: 'user', params: { cssClass } } as Column, {}, {} as any);
-    expect(result).toBe('<i class="fa fa-check" aria-hidden="true"></i>');
+    expect((result as HTMLElement).outerHTML).toBe('<i class="fa fa-check"></i>');
   });
 
   it('should return the Font Awesome Checkmark icon when input is a string even if it start with 0', () => {
     const value = '005A00ABC';
     const cssClass = 'fa fa-check';
     const result1 = iconBooleanFormatter(0, 0, value, { field: 'user', params: { cssClass } } as Column, {}, {} as any);
-    expect(result1).toBe('<i class="fa fa-check" aria-hidden="true"></i>');
+    expect((result1 as HTMLElement).outerHTML).toBe('<i class="fa fa-check"></i>');
   });
 
   it('should return an empty string when the string "0" is provided', () => {
@@ -64,14 +64,14 @@ describe('the Checkmark Formatter', () => {
     const value = 0.000001;
     const cssClass = 'fa fa-check';
     const result1 = iconBooleanFormatter(0, 0, value, { field: 'user', params: { cssClass } } as Column, {}, {} as any);
-    expect(result1).toBe('<i class="fa fa-check" aria-hidden="true"></i>');
+    expect((result1 as HTMLElement).outerHTML).toBe('<i class="fa fa-check"></i>');
   });
 
   it('should return the Font Awesome Checkmark icon when input is a number as a text greater than 0', () => {
     const value = '0.000001';
     const cssClass = 'fa fa-check';
     const result1 = iconBooleanFormatter(0, 0, value, { field: 'user', params: { cssClass } } as Column, {}, {} as any);
-    expect(result1).toBe('<i class="fa fa-check" aria-hidden="true"></i>');
+    expect((result1 as HTMLElement).outerHTML).toBe('<i class="fa fa-check"></i>');
   });
 
   it('should return an empty string when input is a number lower or equal to 0', () => {
@@ -110,7 +110,7 @@ describe('the Checkmark Formatter', () => {
     const cssClass = 'fa fa-check';
     const result1 = iconBooleanFormatter(0, 0, value1, { field: 'user', params: { cssClass } } as Column, {}, {} as any);
     const result2 = iconBooleanFormatter(0, 0, value2, { field: 'user', params: { cssClass } } as Column, {}, {} as any);
-    expect(result1).toBe('<i class="fa fa-check" aria-hidden="true"></i>');
-    expect(result2).toBe('<i class="fa fa-check" aria-hidden="true"></i>');
+    expect((result1 as HTMLElement).outerHTML).toBe('<i class="fa fa-check"></i>');
+    expect((result2 as HTMLElement).outerHTML).toBe('<i class="fa fa-check"></i>');
   });
 });

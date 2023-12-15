@@ -1,18 +1,18 @@
 import {
   AutocompleterOption,
-  BindingEventService,
-  Column,
-  ColumnEditorDualInput,
-  EditCommand,
+  type Column,
+  type ColumnEditorDualInput,
+  type EditCommand,
   Editors,
   FieldType,
   Filters,
-  Formatter,
+  type Formatter,
   Formatters,
-  GridOption,
+  type GridOption,
   OperatorType,
-  SlickDataView,
+  type SlickDataView,
 } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import fetchJsonp from 'fetch-jsonp';
@@ -46,11 +46,11 @@ interface ReportItem {
   effortDriven: boolean;
 }
 
-const customEditableInputFormatter: Formatter<ReportItem> = (_row: number, _cell: number, _value: any, _columnDef: Column, item: ReportItem) => {
+const customEditableInputFormatter: Formatter<ReportItem> = (_row, _cell, _value, _columnDef, item) => {
   return item.title;
 };
 
-export default class Example4 {
+export default class Example04 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column<ReportItem & { action?: string; }>[];
   gridOptions: GridOption;

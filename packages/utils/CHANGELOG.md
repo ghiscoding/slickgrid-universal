@@ -4,6 +4,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.1-alpha.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.0.1-alpha.0...v4.0.1-alpha.1) (2023-12-12)
+
+**Note:** Version bump only for package @slickgrid-universal/utils
+
+## [4.0.1-alpha.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.0.0-alpha.0...v4.0.1-alpha.0) (2023-12-10)
+
+### Bug Fixes
+
+* `stripTags` shouldn't throw with null/undefined ([8f706fc](https://github.com/ghiscoding/slickgrid-universal/commit/8f706fc95f837c6352fb3217952c86b4326f8aaf)) - by @ghiscoding
+* **utils:** undefined html shouldn't throw on stripTags ([05361e7](https://github.com/ghiscoding/slickgrid-universal/commit/05361e7430694d9a41075f744460eaf187a50b11)) - by @ghiscoding
+
+# [4.0.0-alpha.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.7.1...v4.0.0-alpha.0) (2023-12-09)
+
+**Note:** Version bump only for package @slickgrid-universal/utils
+
 # [3.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.6.0...v3.7.0) (2023-12-08)
 
 ### Bug Fixes

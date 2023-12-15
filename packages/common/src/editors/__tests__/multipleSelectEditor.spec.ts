@@ -3,8 +3,10 @@ import 'multiple-select-vanilla';
 
 import { Editors } from '../index';
 import { MultipleSelectEditor } from '../multipleSelectEditor';
-import { Column, SlickDataView, EditorArguments, GridOption, SlickGrid, ColumnEditor } from '../../interfaces/index';
+import { Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
+import type { SlickDataView } from '../../core';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { type SlickGrid } from '../../core/index';
 
 const containerId = 'demo-container';
 

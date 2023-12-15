@@ -3,16 +3,16 @@ import type {
   Column,
   ContainerService,
   CustomTooltipOption,
+  DOMEvent,
   Formatter,
+  FormatterResultWithHtml,
+  FormatterResultWithText,
   GridOption,
   Observable,
   RxJsFacade,
   SharedService,
   SlickDataView,
-  SlickEventData,
-  SlickEventHandler,
   SlickGrid,
-  SlickNamespace,
   Subscription,
 } from '@slickgrid-universal/common';
 import {
@@ -20,13 +20,12 @@ import {
   CancelledException,
   cancellablePromise,
   createDomElement,
-  findFirstElementAttribute,
-  getHtmlElementOffset,
+  findFirstAttribute,
+  getOffset,
   sanitizeTextByAvailableSanitizer,
+  SlickEventHandler,
 } from '@slickgrid-universal/common';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
+import { isPrimitiveOrHTML } from '@slickgrid-universal/utils';
 
 type CellType = 'slick-cell' | 'slick-header-column' | 'slick-headerrow-column';
 
@@ -55,6 +54,8 @@ type CellType = 'slick-cell' | 'slick-header-column' | 'slick-headerrow-column';
  *  };
  */
 export class SlickCustomTooltip {
+  name: 'CustomTooltip' = 'CustomTooltip' as const;
+
   protected _addonOptions?: CustomTooltipOption;
   protected _cellAddonOptions?: CustomTooltipOption;
   protected _cellNodeElm?: HTMLDivElement;
@@ -75,10 +76,9 @@ export class SlickCustomTooltip {
   } as CustomTooltipOption;
   protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
-  name: 'CustomTooltip' = 'CustomTooltip' as const;
 
   constructor() {
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
   }
 
   get addonOptions(): CustomTooltipOption | undefined {
@@ -102,7 +102,7 @@ export class SlickCustomTooltip {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return this._grid.getOptions() || {};
+    return this._grid?.getOptions() || {} as GridOption;
   }
 
   /** Getter for the grid uid */
@@ -180,7 +180,7 @@ export class SlickCustomTooltip {
   }
 
   /** depending on the selector type, execute the necessary handler code */
-  protected handleOnHeaderMouseEnterByType(event: SlickEventData, args: any, selector: CellType) {
+  protected handleOnHeaderMouseEnterByType(event: DOMEvent<HTMLDivElement>, args: any, selector: CellType) {
     this._cellType = selector;
 
     // before doing anything, let's remove any previous tooltip before
@@ -221,7 +221,7 @@ export class SlickCustomTooltip {
     }
   }
 
-  protected async handleOnMouseEnter(event: SlickEventData) {
+  protected async handleOnMouseEnter(event: DOMEvent<HTMLDivElement>) {
     this._cellType = 'slick-cell';
 
     // before doing anything, let's remove any previous tooltip before
@@ -230,7 +230,7 @@ export class SlickCustomTooltip {
 
     if (event && this._grid) {
       // get cell only when it's possible (ie, Composite Editor will not be able to get cell and so it will never show any tooltip)
-      const targetClassName = (event?.target as HTMLDivElement)?.closest('.slick-cell')?.className;
+      const targetClassName = event?.target?.closest('.slick-cell')?.className;
       const cell = (targetClassName && /l\d+/.exec(targetClassName || '')) ? this._grid.getCellFromEvent(event) : null;
 
       if (cell) {
@@ -301,9 +301,9 @@ export class SlickCustomTooltip {
    */
   protected parseFormatterAndSanitize(formatterOrText: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown): string {
     if (typeof formatterOrText === 'function') {
-      const tooltipText = formatterOrText(cell.row, cell.cell, value, columnDef, item, this._grid);
-      const formatterText = (typeof tooltipText === 'object' && tooltipText?.text) ? tooltipText.text : (typeof tooltipText === 'string' ? tooltipText : '');
-      return sanitizeTextByAvailableSanitizer(this.gridOptions, formatterText);
+      const tooltipResult = formatterOrText(cell.row, cell.cell, value, columnDef, item, this._grid);
+      const formatterText = isPrimitiveOrHTML(tooltipResult) ? tooltipResult : (tooltipResult as FormatterResultWithHtml).html || (tooltipResult as FormatterResultWithText).text;
+      return sanitizeTextByAvailableSanitizer(this.gridOptions, (formatterText instanceof HTMLElement ? formatterText.textContent : formatterText as string) || '');
     } else if (typeof formatterOrText === 'string') {
       return sanitizeTextByAvailableSanitizer(this.gridOptions, formatterOrText);
     }
@@ -317,7 +317,7 @@ export class SlickCustomTooltip {
    */
   protected renderRegularTooltip(formatterOrText: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: any) {
     const tmpDiv = document.createElement('div');
-    tmpDiv.innerHTML = this.parseFormatterAndSanitize(formatterOrText, cell, value, columnDef, item);
+    this._grid.applyHtmlCode(tmpDiv, this.parseFormatterAndSanitize(formatterOrText, cell, value, columnDef, item));
 
     let tooltipText = columnDef?.toolTip ?? '';
     let tmpTitleElm: HTMLDivElement | null | undefined;
@@ -333,13 +333,13 @@ export class SlickCustomTooltip {
         if (this._cellAddonOptions?.useRegularTooltipFromFormatterOnly) {
           tmpTitleElm = tmpDiv.querySelector<HTMLDivElement>('[title], [data-slick-tooltip]');
         } else {
-          tmpTitleElm = findFirstElementAttribute(this._cellNodeElm, ['title', 'data-slick-tooltip']) ? this._cellNodeElm : tmpDiv.querySelector<HTMLDivElement>('[title], [data-slick-tooltip]');
-          if ((!tmpTitleElm || !findFirstElementAttribute(tmpTitleElm, ['title', 'data-slick-tooltip'])) && this._cellNodeElm) {
+          tmpTitleElm = findFirstAttribute(this._cellNodeElm, ['title', 'data-slick-tooltip']) ? this._cellNodeElm : tmpDiv.querySelector<HTMLDivElement>('[title], [data-slick-tooltip]');
+          if ((!tmpTitleElm || !findFirstAttribute(tmpTitleElm, ['title', 'data-slick-tooltip'])) && this._cellNodeElm) {
             tmpTitleElm = this._cellNodeElm.querySelector<HTMLDivElement>('[title], [data-slick-tooltip]');
           }
         }
         if (!tooltipText || (typeof formatterOrText === 'function' && this._cellAddonOptions?.useRegularTooltipFromFormatterOnly)) {
-          tooltipText = findFirstElementAttribute(tmpTitleElm, ['title', 'data-slick-tooltip']) || '';
+          tooltipText = findFirstAttribute(tmpTitleElm, ['title', 'data-slick-tooltip']) || '';
         }
       }
     }
@@ -364,7 +364,7 @@ export class SlickCustomTooltip {
     // ie: when user is currently editing and uses the Slider, when dragging its value is changing, so we wish to use the editing value instead of the previous cell value.
     if (value === null || value === undefined) {
       const tmpTitleElm = this._cellNodeElm?.querySelector<HTMLDivElement>('[title], [data-slick-tooltip]');
-      value = findFirstElementAttribute(tmpTitleElm, ['title', 'data-slick-tooltip']) || value;
+      value = findFirstAttribute(tmpTitleElm, ['title', 'data-slick-tooltip']) || value;
     }
 
     let outputText = tooltipText || this.parseFormatterAndSanitize(formatter, cell, value, columnDef, item) || '';
@@ -373,7 +373,7 @@ export class SlickCustomTooltip {
     let finalOutputText = '';
     if (!tooltipText || this._cellAddonOptions?.renderRegularTooltipAsHtml) {
       finalOutputText = sanitizeTextByAvailableSanitizer(this.gridOptions, outputText);
-      this._tooltipElm.innerHTML = finalOutputText;
+      this._grid.applyHtmlCode(this._tooltipElm, finalOutputText);
       this._tooltipElm.style.whiteSpace = this._cellAddonOptions?.whiteSpace ?? this._defaultOptions.whiteSpace as string;
     } else {
       finalOutputText = outputText || '';
@@ -416,7 +416,7 @@ export class SlickCustomTooltip {
   protected reposition(cell: { row: number; cell: number; }) {
     if (this._tooltipElm) {
       this._cellNodeElm = this._cellNodeElm || this._grid.getCellNode(cell.row, cell.cell) as HTMLDivElement;
-      const cellPosition = getHtmlElementOffset(this._cellNodeElm) || { top: 0, left: 0 };
+      const cellPosition = getOffset(this._cellNodeElm) || { top: 0, left: 0 };
       const cellContainerWidth = this._cellNodeElm.offsetWidth;
       const calculatedTooltipHeight = this._tooltipElm.getBoundingClientRect().height;
       const calculatedTooltipWidth = this._tooltipElm.getBoundingClientRect().width;

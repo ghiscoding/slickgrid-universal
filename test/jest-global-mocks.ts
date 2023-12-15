@@ -1,5 +1,5 @@
 const mock = () => {
-  let storage = {};
+  let storage: any = {};
   return {
     getItem: (key: any) => key in storage ? storage[key] : null,
     setItem: (key: any, value: any) => storage[key] = value || '',
@@ -22,4 +22,14 @@ Object.defineProperty(window, 'getComputedStyle', {
       return '';
     }
   })
+});
+
+// Jest has a hard time with Flatpickr/MomentJS because they export as default, to bypass this problem we can mock the require .default
+jest.mock('flatpickr', () => {
+  const actual = jest.requireActual('flatpickr');
+  return { __esModule: true, ...actual, default: actual };
+});
+jest.mock('moment-mini', () => {
+  const actual = jest.requireActual('moment-mini');
+  return { __esModule: true, ...actual, default: actual };
 });

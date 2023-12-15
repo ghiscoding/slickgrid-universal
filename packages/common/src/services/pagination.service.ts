@@ -8,19 +8,14 @@ import type {
   Pagination,
   PaginationCursorChangedArgs,
   ServicePagination,
-  SlickDataView,
-  SlickGrid,
-  SlickNamespace,
 } from '../interfaces/index';
 import type { BackendUtilityService } from './backendUtility.service';
 import type { SharedService } from './shared.service';
 import type { Observable, RxJsFacade } from './rxjsFacade';
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
+import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
 export class PaginationService {
-  protected _eventHandler = new Slick.EventHandler();
+  protected _eventHandler = new SlickEventHandler();
   protected _initialized = false;
   protected _isLocalGrid = true;
   protected _backendServiceApi: BackendServiceApi | undefined;
@@ -45,7 +40,7 @@ export class PaginationService {
 
   /** Getter of SlickGrid DataView object */
   get dataView(): SlickDataView | undefined {
-    return this.grid?.getData?.() ?? {} as SlickDataView;
+    return this.grid?.getData<SlickDataView>() ?? {};
   }
 
   set paginationOptions(paginationOptions: Pagination) {
@@ -122,8 +117,7 @@ export class PaginationService {
     this._paginationOptions = paginationOptions;
     this._isLocalGrid = !backendServiceApi;
     this._pageNumber = paginationOptions.pageNumber || 1;
-    const backendServOptions = backendServiceApi?.options ?? {};
-    this._isCursorBased = (backendServOptions.useCursor || backendServOptions.isWithCursor);
+    this._isCursorBased = backendServiceApi?.options?.useCursor ?? false;
 
     if (backendServiceApi && (!backendServiceApi.service || !backendServiceApi.process)) {
       throw new Error(`BackendServiceApi requires the following 2 properties "process" and "service" to be defined.`);

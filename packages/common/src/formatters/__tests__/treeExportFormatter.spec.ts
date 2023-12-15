@@ -1,5 +1,6 @@
-import { Column, GridOption, SlickGrid } from '../../interfaces/index';
+import type { Column, GridOption } from '../../interfaces/index';
 import { treeExportFormatter } from '../treeExportFormatter';
+import { SlickGrid } from '../../core';
 
 const gridStub = {
   getData: jest.fn(),
@@ -90,16 +91,16 @@ describe('Tree Export Formatter', () => {
   });
 
   it('should return a span with expanded icon and 15px indentation of a tree level 1 with a value prefix when provided', () => {
-    mockGridOptions.treeDataOptions.levelPropName = 'indent';
-    mockGridOptions.treeDataOptions.titleFormatter = (_row, _cell, value, _def) => `++${value}++`;
+    mockGridOptions.treeDataOptions!.levelPropName = 'indent';
+    mockGridOptions.treeDataOptions!.titleFormatter = (_row, _cell, value, _def) => `++${value}++`;
 
     const output = treeExportFormatter(1, 1, dataset[3]['firstName'], { field: 'firstName' } as Column, dataset[3], gridStub);
     expect(output).toEqual(`.    ++Barbara++`);
   });
 
   it('should return a span with expanded icon and expected indentation and expanded icon of a tree level 1 with a value prefix when provided', () => {
-    mockGridOptions.treeDataOptions.levelPropName = 'indent';
-    mockGridOptions.treeDataOptions.titleFormatter = (_row, _cell, value, _def, dataContext) => {
+    mockGridOptions.treeDataOptions!.levelPropName = 'indent';
+    mockGridOptions.treeDataOptions!.titleFormatter = (_row, _cell, value, _def, dataContext) => {
       if (dataContext.indent > 0) {
         return `++${value}++`;
       }

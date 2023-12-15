@@ -1,11 +1,10 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { titleCase } from '@slickgrid-universal/utils';
+import { calculateAvailableSpace, createDomElement, findWidthOrDefault, getOffset, titleCase } from '@slickgrid-universal/utils';
 
 import type {
   CellMenu,
   ContextMenu,
   DOMMouseOrTouchEvent,
-  HeaderMenuCommandItem,
   MenuCallbackArgs,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
@@ -14,7 +13,6 @@ import type {
   MenuOptionItemCallbackArgs,
 } from '../interfaces/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
-import { calculateAvailableSpace, createDomElement, findWidthOrDefault, getHtmlElementOffset, } from '../services/domUtilities';
 import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from './menuBaseClass';
 import type { SharedService } from '../services/shared.service';
 
@@ -264,7 +262,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
 
   protected handleMenuItemMouseOver(e: DOMMouseOrTouchEvent<HTMLElement>, type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level = 0) {
     if ((item as never)?.[type] !== undefined && item !== 'divider' && !item.disabled && !(item as MenuCommandItem | MenuOptionItem).divider) {
-      if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems || (item as HeaderMenuCommandItem).items) {
+      if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems) {
         this.repositionSubMenu(item, type, level, e);
         this._lastMenuTypeClicked = type;
       } else if (level === 0) {
@@ -359,7 +357,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
       menuElm.style.left = `0px`;
 
       const targetEvent: MouseEvent | Touch = (event as TouchEvent)?.touches?.[0] ?? event;
-      const parentOffset = getHtmlElementOffset(parentElm);
+      const parentOffset = getOffset(parentElm);
       let menuOffsetLeft = (parentElm && this._camelPluginName === 'cellMenu') ? parentOffset?.left ?? 0 : targetEvent.pageX;
       let menuOffsetTop = (parentElm && this._camelPluginName === 'cellMenu') ? parentOffset?.top ?? 0 : targetEvent.pageY;
       if (isSubMenu && this._camelPluginName === 'contextMenu') {

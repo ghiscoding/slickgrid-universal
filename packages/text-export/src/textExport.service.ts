@@ -21,9 +21,8 @@ import {
   exportWithFormatterWhenDefined,
   getTranslationPrefix,
   htmlEntityDecode,
-  sanitizeHtmlToText,
 } from '@slickgrid-universal/common';
-import { addWhiteSpaces, deepCopy, titleCase } from '@slickgrid-universal/utils';
+import { addWhiteSpaces, deepCopy, stripTags, titleCase } from '@slickgrid-universal/utils';
 
 const DEFAULT_EXPORT_OPTIONS: TextExportOption = {
   delimiter: DelimiterType.comma,
@@ -65,12 +64,12 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
   /** Getter of SlickGrid DataView object */
   get _dataView(): SlickDataView {
-    return (this._grid?.getData && this._grid.getData()) as SlickDataView;
+    return this._grid?.getData<SlickDataView>();
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return (this._grid?.getOptions) ? this._grid.getOptions() : {};
+    return this._grid?.getOptions() ?? {} as GridOption;
   }
 
   dispose() {
@@ -230,7 +229,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     this._columnHeaders = this.getColumnHeaders(columns) || [];
     if (this._columnHeaders && Array.isArray(this._columnHeaders) && this._columnHeaders.length > 0) {
       // add the header row + add a new line at the end of the row
-      const outputHeaderTitles = this._columnHeaders.map((header) => sanitizeHtmlToText(`${this._exportQuoteWrapper}${header.title}${this._exportQuoteWrapper}`));
+      const outputHeaderTitles = this._columnHeaders.map((header) => stripTags(`${this._exportQuoteWrapper}${header.title}${this._exportQuoteWrapper}`));
       outputDataString += (outputHeaderTitles.join(this._delimiter) + this._lineCarriageReturn);
     }
 
@@ -315,7 +314,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         if ((columnDef.nameKey || columnDef.nameKey) && this._gridOptions.enableTranslate && this._translaterService?.translate && this._translaterService?.getCurrentLanguage?.()) {
           headerTitle = this._translaterService.translate((columnDef.nameKey || columnDef.nameKey));
         } else {
-          headerTitle = columnDef.name || titleCase(columnDef.field);
+          headerTitle = (columnDef.name instanceof HTMLElement ? columnDef.name.innerHTML : columnDef.name) || titleCase(columnDef.field);
         }
         const skippedField = columnDef.excludeFromExport || false;
 
@@ -383,7 +382,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
         // does the user want to sanitize the output data (remove HTML tags)?
         if (columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) {
-          itemData = sanitizeHtmlToText(itemData);
+          itemData = stripTags(itemData);
         }
 
         // when CSV we also need to escape double quotes twice, so " becomes ""
@@ -409,7 +408,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    * @param itemObj
    */
   protected readGroupedTitleRow(itemObj: any) {
-    let groupName = sanitizeHtmlToText(itemObj.title);
+    let groupName = stripTags(itemObj.title);
     const exportQuoteWrapper = this._exportQuoteWrapper;
 
     groupName = addWhiteSpaces(5 * itemObj.level) + groupName;
@@ -440,12 +439,13 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
       // if there's a groupTotalsFormatter, we will re-run it to get the exact same output as what is shown in UI
       if (columnDef.groupTotalsFormatter) {
-        itemData = columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid);
+        const totalResult = columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid);
+        itemData = totalResult instanceof HTMLElement ? totalResult.textContent || '' : totalResult;
       }
 
       // does the user want to sanitize the output data (remove HTML tags)?
       if (columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) {
-        itemData = sanitizeHtmlToText(itemData);
+        itemData = stripTags(itemData);
       }
 
       if (format === FileType.csv) {

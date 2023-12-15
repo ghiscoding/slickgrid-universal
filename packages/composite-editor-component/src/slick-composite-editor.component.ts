@@ -1,3 +1,4 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { deepCopy, deepMerge, emptyObject, setDeepValue } from '@slickgrid-universal/utils';
 import type {
   Column,
@@ -13,29 +14,23 @@ import type {
   GridOption,
   GridService,
   Locale,
-  OnErrorOption,
   OnCompositeEditorChangeEventArgs,
+  OnErrorOption,
   PlainFunc,
-  SlickCompositeEditor,
   SlickDataView,
-  SlickEventHandler,
   SlickGrid,
-  SlickNamespace,
   TranslaterService,
 } from '@slickgrid-universal/common';
 import {
-  BindingEventService,
   Constants,
   createDomElement,
   getDescendantProperty,
   numericSortComparer,
-  sanitizeTextByAvailableSanitizer,
+  SlickEventHandler,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
-import { CompositeEditor } from './compositeEditor.factory';
 
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
+import { SlickCompositeEditor } from './compositeEditor.factory';
 
 const DEFAULT_ON_ERROR = (error: OnErrorOption) => console.log(error.message);
 
@@ -75,7 +70,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   get dataView(): SlickDataView {
-    return this.grid.getData() as SlickDataView;
+    return this.grid?.getData<SlickDataView>();
   }
 
   get dataViewLength(): number {
@@ -98,7 +93,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   constructor() {
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
     this._bindEventService = new BindingEventService();
   }
 
@@ -372,7 +367,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         }
 
         const modalHeaderTitleElm = createDomElement('div', { className: 'slick-editor-modal-title' });
-        modalHeaderTitleElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, parsedHeaderTitle);
+        this.grid.applyHtmlCode(modalHeaderTitleElm, parsedHeaderTitle);
 
         const modalCloseButtonElm = createDomElement('button', { type: 'button', ariaLabel: 'Close', textContent: '×', className: 'close', dataset: { action: 'close' } });
         if (this._options.showCloseButtonOutside) {
@@ -451,7 +446,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
             }
 
             const templateItemLabelElm = createDomElement('div', { className: `item-details-label editor-${columnDef.id}` });
-            templateItemLabelElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, this.getColumnLabel(columnDef) || 'n/a');
+            this.grid.applyHtmlCode(templateItemLabelElm, this.getColumnLabel(columnDef) || 'n/a');
             const templateItemEditorElm = createDomElement('div', {
               className: 'item-details-editor-container slick-cell',
               dataset: { editorid: `${columnDef.id}` },
@@ -486,8 +481,8 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         this._editors = {};
         this._editorContainers = modalColumns.map(col => modalBodyElm.querySelector<HTMLDivElement>(`[data-editorid=${col.id}]`)) || [];
         this._compositeOptions = { destroy: this.disposeComponent.bind(this), modalType, validationMsgPrefix: '* ', formValues: {}, editors: this._editors };
-        const compositeEditor = new (CompositeEditor as any)(modalColumns, this._editorContainers, this._compositeOptions) as SlickCompositeEditor;
-        this.grid.editActiveCell(compositeEditor);
+        const compositeEditor = new (SlickCompositeEditor as any)(modalColumns, this._editorContainers, this._compositeOptions) as typeof SlickCompositeEditor;
+        this.grid.editActiveCell(compositeEditor as any);
 
         // --
         // Add a few Event Handlers
@@ -529,7 +524,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     }
 
     if (confirmed) {
-      this.grid.getEditController().cancelCurrentEdit();
+      this.grid.getEditController()?.cancelCurrentEdit();
 
       // cancel current edit is not enough when editing/cloning,
       // we also need to reset with the original item data context to undo/reset the entire row
@@ -820,7 +815,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     }
 
     const columnLabel = columnGroup ? `${columnGroup}${columnGroupSeparator}${columnName}` : columnName;
-    return columnLabel || '';
+    return columnLabel instanceof HTMLElement ? columnLabel.innerHTML : columnLabel || '';
   }
 
   /** Get the correct label text depending, if we use a Translater Service then translate the text when possible else use default text */
@@ -903,10 +898,10 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Check wether the grid has the Row Selection enabled */
-  protected hasRowSelectionEnabled() {
+  protected hasRowSelectionEnabled(): boolean {
     const selectionModel = this.grid.getSelectionModel();
     const isRowSelectionEnabled = this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector;
-    return (isRowSelectionEnabled && selectionModel);
+    return !!(isRowSelectionEnabled && selectionModel);
   }
 
   /** Reset Form button handler */
@@ -927,7 +922,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     switch (modalType) {
       case 'mass-update':
         this.handleMassSaving(modalType, () => {
-          this.grid.getEditController().cancelCurrentEdit();
+          this.grid.getEditController()?.cancelCurrentEdit();
           this.grid.setActiveCell(0, 0, false);
           if (this._options.shouldClearRowSelectionAfterMassAction) {
             this.grid.setSelectedRows([]);
@@ -936,7 +931,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         break;
       case 'mass-selection':
         this.handleMassSaving(modalType, () => {
-          this.grid.getEditController().cancelCurrentEdit();
+          this.grid.getEditController()?.cancelCurrentEdit();
           this.grid.setActiveRow(this._lastActiveRowNumber);
           if (this._options.shouldClearRowSelectionAfterMassAction) {
             this.grid.setSelectedRows([]);
@@ -949,7 +944,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
         // post save callback (before closing modal)
         const postSaveCloneCallback = () => {
-          this.grid.getEditController().cancelCurrentEdit();
+          this.grid.getEditController()?.cancelCurrentEdit();
           this.grid.setActiveCell(0, 0, false);
         };
 
@@ -967,7 +962,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         // commit the changes into the grid
         // if it's a "create" then it will triggered the "onAddNewRow" event which will in term push it to the grid
         // while an "edit" will simply applies the changes directly on the same row
-        this.grid.getEditController().commitCurrentEdit();
+        this.grid.getEditController()?.commitCurrentEdit();
 
         // if the user provided the "onSave" callback, let's execute it with the item data context
         if (typeof this._options?.onSave === 'function') {
@@ -1001,7 +996,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   /** Put back the current row to its original item data context using the DataView without triggering a change */
   protected resetCurrentRowDataContext() {
     const idPropName = this.gridOptions.datasetIdPropertyName || 'id';
-    const dataView = this.grid.getData();
+    const dataView = this.grid.getData<SlickDataView>();
     dataView.updateItem(this._originalDataContext[idPropName], this._originalDataContext);
   }
 

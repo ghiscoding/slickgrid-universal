@@ -1,15 +1,15 @@
 import {
   Aggregators,
-  Column,
+  type Column,
   decimalFormatted,
   FieldType,
   Filters,
   findItemInTreeStructure,
-  Formatter,
+  type Formatter,
   Formatters,
-  GridOption,
+  type GridOption,
   isNumber,
-  SlickDataView,
+  type SlickDataView,
   // GroupTotalFormatters,
   // italicFormatter,
 } from '@slickgrid-universal/common';
@@ -20,7 +20,7 @@ import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bu
 import './example06.scss';
 import { ExampleGridOptions } from './example-grid-options';
 
-export default class Example6 {
+export default class Example06 {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   datasetFlat: any[];
@@ -228,12 +228,12 @@ export default class Example6 {
   }
 
   treeFormatter: Formatter = (_row, _cell, value, _columnDef, dataContext, grid) => {
-    const gridOptions = grid.getOptions() as GridOption;
+    const gridOptions = grid.getOptions();
     const treeLevelPropName = gridOptions?.treeDataOptions?.levelPropName || '__treeLevel';
     if (value === null || value === undefined || dataContext === undefined) {
       return '';
     }
-    const dataView = grid.getData() as SlickDataView;
+    const dataView = grid.getData<SlickDataView>();
     const data = dataView.getItems();
     const identifierPropName = dataView.getIdPropertyName() || 'id';
     const idx = dataView.getIdxById(dataContext[identifierPropName]) as number;
@@ -241,7 +241,7 @@ export default class Example6 {
     const treeLevel = dataContext[treeLevelPropName];
 
     value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    const spacer = `<span style="display:inline-block; width:${(15 * treeLevel)}px;"></span>`;
+    const spacer = `<span class="display-inline-block width-${(15 * treeLevel)}px"></span>`;
 
     if (data[idx + 1]?.[treeLevelPropName] > data[idx][treeLevelPropName] || data[idx]['__hasChildren']) {
       const folderPrefix = `<i class="mdi mdi-22px ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;

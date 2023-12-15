@@ -1,7 +1,11 @@
-import { Column, GridOption, SlickGrid } from '../../interfaces/index';
+import { getHTMLFromFragment } from '@slickgrid-universal/utils';
+
+import { Column, FormatterResultWithHtml, GridOption } from '../../interfaces/index';
 import { treeFormatter } from '../treeFormatter';
+import { SlickGrid } from '../../core/index';
 
 const gridStub = {
+  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   getData: jest.fn(),
   getOptions: jest.fn(),
 } as unknown as SlickGrid;
@@ -47,85 +51,94 @@ describe('Tree Formatter', () => {
   });
 
   it('should return a span without any toggle icon when item is not a parent item', () => {
-    const output = treeFormatter(1, 1, dataset[3]['firstName'], {} as Column, dataset[3], gridStub);
-    expect(output).toEqual({
-      addClasses: 'slick-tree-level-0',
-      text: `<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle" aria-expanded="false"></span><span class="slick-tree-title" level="0">Barbara</span>`
-    });
+    const output = treeFormatter(1, 1, dataset[3]['firstName'], {} as Column, dataset[3], gridStub) as FormatterResultWithHtml;
+
+    expect(output.addClasses).toBe('slick-tree-level-0');
+    expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
+      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle"></div><span class="slick-tree-title" level="0">Barbara</span>`);
+  });
+
+  it('should return the Tree content wrapped inside a span HTML element when "allowDocumentFragmentUsage" grid option is disabled', () => {
+    jest.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ ...mockGridOptions, preventDocumentFragmentUsage: true });
+    const output = treeFormatter(1, 1, dataset[3]['firstName'], {} as Column, dataset[3], gridStub) as FormatterResultWithHtml;
+
+    expect(output.addClasses).toBe('slick-tree-level-0');
+    expect((output.html as HTMLElement).outerHTML)
+      .toEqual(`<span><span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle"></div><span class="slick-tree-title" level="0">Barbara</span></span>`);
   });
 
   it('should return a span without any toggle icon and have a 15px indentation with tree level 3', () => {
-    const output = treeFormatter(1, 1, dataset[6]['firstName'], {} as Column, dataset[6], gridStub);
-    expect(output).toEqual({
-      addClasses: 'slick-tree-level-1',
-      text: `<span style="display:inline-block; width:15px;"></span><span class="slick-group-toggle" aria-expanded="false"></span><span class="slick-tree-title" level="1">Bobby</span>`
-    });
+    const output = treeFormatter(1, 1, dataset[6]['firstName'], {} as Column, dataset[6], gridStub) as FormatterResultWithHtml;
+
+    expect(output.addClasses).toBe('slick-tree-level-1');
+    expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
+      .toEqual(`<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle"></div><span class="slick-tree-title" level="1">Bobby</span>`);
   });
 
   it('should return a span without any toggle icon and have a 45px indentation of a tree level 3', () => {
-    const output = treeFormatter(1, 1, dataset[5]['firstName'], {} as Column, dataset[5], gridStub);
-    expect(output).toEqual({
-      addClasses: 'slick-tree-level-3',
-      text: `<span style="display:inline-block; width:45px;"></span><span class="slick-group-toggle" aria-expanded="false"></span><span class="slick-tree-title" level="3">Sponge</span>`
-    });
+    const output = treeFormatter(1, 1, dataset[5]['firstName'], {} as Column, dataset[5], gridStub) as FormatterResultWithHtml;
+
+    expect(output.addClasses).toBe('slick-tree-level-3');
+    expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
+      .toEqual(`<span style="display: inline-block; width: 45px;"></span><div class="slick-group-toggle"></div><span class="slick-tree-title" level="3">Sponge</span>`);
   });
 
   it('should return a span with expanded icon and 15px indentation when item is a parent and is not collapsed', () => {
-    const output = treeFormatter(1, 1, dataset[1]['firstName'], {} as Column, dataset[1], gridStub);
-    expect(output).toEqual({
-      addClasses: 'slick-tree-level-1',
-      text: `<span style="display:inline-block; width:15px;"></span><span class="slick-group-toggle expanded" aria-expanded="true"></span><span class="slick-tree-title" level="1">Jane</span>`
-    });
+    const output = treeFormatter(1, 1, dataset[1]['firstName'], {} as Column, dataset[1], gridStub) as FormatterResultWithHtml;
+
+    expect(output.addClasses).toBe('slick-tree-level-1');
+    expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
+      .toEqual(`<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle expanded"></div><span class="slick-tree-title" level="1">Jane</span>`);
   });
 
   it('should return a span with collapsed icon and 0px indentation of a tree level 0 when item is a parent and is collapsed', () => {
-    const output = treeFormatter(1, 1, dataset[4]['firstName'], {} as Column, dataset[4], gridStub);
-    expect(output).toEqual({
-      addClasses: 'slick-tree-level-0',
-      text: `<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle collapsed" aria-expanded="false"></span><span class="slick-tree-title" level="0">Anonymous</span>`
-    });
+    const output = treeFormatter(1, 1, dataset[4]['firstName'], {} as Column, dataset[4], gridStub) as FormatterResultWithHtml;
+
+    expect(output.addClasses).toBe('slick-tree-level-0');
+    expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
+      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle collapsed"></div><span class="slick-tree-title" level="0">Anonymous</span>`);
   });
 
   it('should return a span with expanded icon and 15px indentation of a tree level 1 with a value prefix when provided', () => {
-    mockGridOptions.treeDataOptions.levelPropName = 'indent';
-    mockGridOptions.treeDataOptions.titleFormatter = (_row, _cell, value, _def, dataContext) => {
+    mockGridOptions.treeDataOptions!.levelPropName = 'indent';
+    mockGridOptions.treeDataOptions!.titleFormatter = (_row, _cell, value, _def, dataContext) => {
       if (dataContext.indent > 0) {
         return `<span class="mdi mdi-subdirectory-arrow-right"></span>${value}`;
       }
       return value || '';
     };
 
-    const output = treeFormatter(1, 1, { ...dataset[1]['firstName'], indent: 1 }, { field: 'firstName' } as Column, dataset[1], gridStub);
-    expect(output).toEqual({
-      addClasses: 'slick-tree-level-1',
-      text: `<span style="display:inline-block; width:15px;"></span><span class="slick-group-toggle expanded" aria-expanded="true"></span><span class="slick-tree-title" level="1"><span class="mdi mdi-subdirectory-arrow-right"></span>Jane</span>`
-    });
+    const output = treeFormatter(1, 1, { ...dataset[1]['firstName'], indent: 1 }, { field: 'firstName' } as Column, dataset[1], gridStub) as FormatterResultWithHtml;
+
+    expect(output.addClasses).toBe('slick-tree-level-1');
+    expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
+      .toEqual(`<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle expanded"></div><span class="slick-tree-title" level="1"><span class="mdi mdi-subdirectory-arrow-right"></span>Jane</span>`);
   });
 
   it('should execute "queryFieldNameGetterFn" callback to get field name to use when it is defined', () => {
     const mockColumn = { id: 'firstName', field: 'firstName', queryFieldNameGetterFn: () => 'fullName' } as Column;
-    const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[3], gridStub);
-    expect(output).toEqual({
-      addClasses: 'slick-tree-level-0',
-      text: `<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle" aria-expanded="false"></span><span class="slick-tree-title" level="0">Barbara Cane</span>`
-    });
+    const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[3], gridStub) as FormatterResultWithHtml;
+
+    expect(output.addClasses).toBe('slick-tree-level-0');
+    expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
+      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle"></div><span class="slick-tree-title" level="0">Barbara Cane</span>`);
   });
 
   it('should execute "queryFieldNameGetterFn" callback to get field name and also apply html encoding when output value includes a character that should be encoded', () => {
     const mockColumn = { id: 'firstName', field: 'firstName', queryFieldNameGetterFn: () => 'fullName' } as Column;
-    const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[4], gridStub);
-    expect(output).toEqual({
-      addClasses: 'slick-tree-level-0',
-      text: `<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle collapsed" aria-expanded="false"></span><span class="slick-tree-title" level="0">Anonymous &lt; Doe</span>`
-    });
+    const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[4], gridStub) as FormatterResultWithHtml;
+
+    expect(output.addClasses).toBe('slick-tree-level-0');
+    expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
+      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle collapsed"></div><span class="slick-tree-title" level="0">Anonymous &lt; Doe</span>`);
   });
 
   it('should execute "queryFieldNameGetterFn" callback to get field name, which has (.) dot notation reprensenting complex object', () => {
     const mockColumn = { id: 'zip', field: 'zip', queryFieldNameGetterFn: () => 'address.zip' } as Column;
-    const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[3], gridStub);
-    expect(output).toEqual({
-      addClasses: 'slick-tree-level-0',
-      text: `<span style="display:inline-block; width:0px;"></span><span class="slick-group-toggle" aria-expanded="false"></span><span class="slick-tree-title" level="0">444444</span>`
-    });
+    const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[3], gridStub) as FormatterResultWithHtml;
+
+    expect(output.addClasses).toBe('slick-tree-level-0');
+    expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
+      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle"></div><span class="slick-tree-title" level="0">444444</span>`);
   });
 });

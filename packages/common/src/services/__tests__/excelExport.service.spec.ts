@@ -1,6 +1,6 @@
-import { SlickGrid } from '../../interfaces/slickGrid.interface';
 import { ContainerService } from '../container.service';
 import { ExcelExportService } from '../excelExport.service';
+import { SlickGrid } from '../../core/index';
 
 describe('ExcelExport Service', () => {
   it('should display a not implemented when calling "init" method', () => {

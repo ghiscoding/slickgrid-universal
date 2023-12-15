@@ -1,4 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { calculateAvailableSpace, createDomElement, emptyElement, findWidthOrDefault, getOffset, } from '@slickgrid-universal/utils';
 
 import type {
   Column,
@@ -10,11 +11,11 @@ import type {
   GridMenuItem,
   GridMenuOption,
   GridOption,
-  SlickNamespace,
+  onGridMenuColumnsChangedCallbackArgs,
 } from '../interfaces/index';
 import { DelimiterType, FileType } from '../enums/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
-import { calculateAvailableSpace, createDomElement, emptyElement, findWidthOrDefault, getHtmlElementOffset, getTranslationPrefix, } from '../services/index';
+import { getTranslationPrefix, } from '../services/index';
 import type { ExcelExportService } from '../services/excelExport.service';
 import type { FilterService } from '../services/filter.service';
 import type { SharedService } from '../services/shared.service';
@@ -22,9 +23,7 @@ import type { SortService } from '../services/sort.service';
 import type { TextExportService } from '../services/textExport.service';
 import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
 import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from '../extensions/menuBaseClass';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
+import { SlickEvent } from '../core/index';
 
 /**
  * A control to add a Grid Menu with Extra Commands & Column Picker (hambuger menu on top-right of the grid)
@@ -40,6 +39,13 @@ declare const Slick: SlickNamespace;
  * @constructor
  */
 export class SlickGridMenu extends MenuBaseClass<GridMenu> {
+  // public events
+  onAfterMenuShow = new SlickEvent<GridMenuEventWithElementCallbackArgs>();
+  onBeforeMenuShow = new SlickEvent<GridMenuEventWithElementCallbackArgs>();
+  onMenuClose = new SlickEvent<GridMenuEventWithElementCallbackArgs>();
+  onCommand = new SlickEvent<GridMenuCommandItemCallbackArgs>();
+  onColumnsChanged = new SlickEvent<onGridMenuColumnsChangedCallbackArgs>();
+
   protected _areVisibleColumnDifferent = false;
   protected _columns: Column[] = [];
   protected _columnCheckboxes: HTMLInputElement[] = [];
@@ -67,13 +73,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     headerColumnValueExtractor: (columnDef: Column) => columnDef.name
   } as GridMenuOption;
 
-  // public events
-  onAfterMenuShow = new Slick.Event();
-  onBeforeMenuShow = new Slick.Event();
-  onMenuClose = new Slick.Event();
-  onCommand = new Slick.Event();
-  onColumnsChanged = new Slick.Event();
-
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
     protected readonly extensionUtility: ExtensionUtility,
@@ -87,7 +86,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     this._menuPluginCssPrefix = 'slick-grid-menu';
     this._camelPluginName = 'gridMenu';
     this._columns = this.sharedService.allColumns ?? [];
-    this._gridUid = this.grid?.getUID?.() ?? '';
+    this._gridUid = this.grid?.getUID() ?? '';
 
     this.initEventHandlers();
     this.init();
@@ -105,7 +104,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   }
 
   get gridOptions(): GridOption {
-    return this.grid.getOptions() || {};
+    return this.grid?.getOptions() || {};
   }
 
   get gridUidSelector(): string {
@@ -353,8 +352,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
     if (parentElm) {
       const iconButtonElm = buttonElm || this._gridMenuButtonElm;
-      const menuIconOffset = getHtmlElementOffset(buttonElm); // get button offset position
-      const parentOffset = getHtmlElementOffset(parentElm);
+      const menuIconOffset = getOffset(buttonElm); // get button offset position
+      const parentOffset = getOffset(parentElm);
       const gridMenuOptions = addonOptions ?? this._addonOptions;
       const buttonComptStyle = getComputedStyle(iconButtonElm as HTMLButtonElement);
       const buttonWidth = parseInt(buttonComptStyle?.width ?? this._defaults?.menuWidth, 10);

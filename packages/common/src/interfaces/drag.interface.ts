@@ -1,4 +1,15 @@
-import type { SlickGrid } from './index';
+import type { SlickGrid } from '../core/index';
+
+export interface DragItem {
+  dragSource: HTMLElement | Document | null;
+  dragHandle: HTMLElement | null;
+  deltaX: number;
+  deltaY: number;
+  range: DragRange;
+  target: HTMLElement;
+  startX: number;
+  startY: number;
+}
 
 export interface DragPosition {
   startX: number;
@@ -38,4 +49,5 @@ export interface DragRowMove {
   selectedRows: number[];
   startX: number;
   startY: number;
+  range: DragRange;
 }

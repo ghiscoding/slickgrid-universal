@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/indent */
+import type { FieldType } from '../enums/fieldType.enum';
 import type {
   CellMenu,
   ColumnEditor,
@@ -12,11 +12,8 @@ import type {
   GroupTotalsFormatter,
   HeaderButtonsOrMenu,
   OnEventArgs,
-  SlickEventData,
-  SlickGrid,
   SortComparer,
 } from './index';
-import type { FieldType } from '../enums/fieldType.enum';
 
 type PathsToStringProps<T> = T extends string | number | boolean | Date ? [] : {
   [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>]
@@ -36,7 +33,7 @@ export interface Column<T = any> {
   alwaysRenderColumn?: boolean;
 
   /** async background post-rendering formatter */
-  asyncPostRender?: (domCellNode: any, row: number, dataContext: T, columnDef: Column) => void;
+  asyncPostRender?: (domCellNode: HTMLElement, row: number, dataContext: T, columnDef: Column, process?: boolean) => void;
 
   /** async background post-render cleanup callback function */
   asyncPostRenderCleanup?: (node: HTMLElement, rowIdx: number, column: Column) => void;
@@ -52,7 +49,7 @@ export interface Column<T = any> {
   /** optional Behavior of a column with action, for example it's used by the Row Move Manager Plugin */
   behavior?: string;
 
-  /** Block event triggering of a new row insert? */
+  /** Block event triggering of a new row insert */
   cannotTriggerInsert?: boolean;
 
   /** slick cell attributes */
@@ -67,7 +64,7 @@ export interface Column<T = any> {
   /** Column group name translation key that can be used by the Translate Service (i18n) for grouping of column headers spanning accross multiple columns */
   columnGroupKey?: string;
 
-  /** Column span in pixels or `*`, only input the number value */
+  /** Column span in cell count or use `*` to span across the entire row */
   colspan?: number | '*';
 
   /** CSS class to add to the column cell */
@@ -75,7 +72,7 @@ export interface Column<T = any> {
 
   /**
    * Custom Tooltip Options, the tooltip could be defined in any of the Column Definition or in the Grid Options,
-   * it will first try to find it in the Column that the user is hovering over or else (when not found) go and try to find it in the Grid Options
+   * it will first try to find it in the Column that the user is hovering over or else (when not found) it will try to find it in the Grid Options
    */
   customTooltip?: CustomTooltipOption;
 
@@ -87,6 +84,7 @@ export interface Column<T = any> {
 
   /** Defaults to false, do we want to deny executing a Paste (from a Copy of CellExternalCopyManager)? */
   denyPaste?: boolean;
+
   /**
    * defaults to False, optionally enable/disable tooltip.
    * This is typically used on a specific column that you would like to completely disable the custom/regular tooltip.
@@ -95,6 +93,9 @@ export interface Column<T = any> {
 
   /** Any inline editor function that implements Editor for the cell value or ColumnEditor */
   editor?: ColumnEditor;
+
+  /** Editor number fixed decimal places */
+  editorFixedDecimalPlaces?: number;
 
   /** Excel export custom options for cell formatting & width */
   excelExportOptions?: ColumnExcelExportOption;
@@ -116,9 +117,6 @@ export interface Column<T = any> {
 
   /** Defaults to false, which leads to exclude the column from getting a header menu. For example, the checkbox row selection should not have a header menu. */
   excludeFromHeaderMenu?: boolean;
-
-  /** @deprecated @use `excelExportOptions` in the future. This option let you defined current column width in Excel. */
-  exportColumnWidth?: number;
 
   /**
    * Export with a Custom Formatter, useful when we want to use a different Formatter for the export.
@@ -173,11 +171,8 @@ export interface Column<T = any> {
   /** are we allowed to focus on the column? */
   focusable?: boolean;
 
-  /** Formatter function is to format, or visually change, the data shown in the grid (UI) in a different way without affecting the source. */
+  /** Formatter function is meant to format, or visually change, the data shown in the grid (UI) in a different way without affecting the source. */
   formatter?: Formatter<T>;
-
-  /** Default Formatter override function */
-  formatterOverride?: { ReturnsTextOnly?: boolean; } | ((row: number, cell: number, val: any, columnDef: Column, item: any, grid: SlickGrid) => Formatter<T>);
 
   /** Grouping option used by a Draggable Grouping Column */
   grouping?: Grouping;
@@ -195,14 +190,17 @@ export interface Column<T = any> {
   headerCellAttrs?: any;
 
   /** CSS class that can be added to the column header */
-  headerCssClass?: string;
+  headerCssClass?: string | null;
 
-  /** ID of the column, each row have to be unique or SlickGrid will throw an error. */
+  /** is the column hidden? */
+  hidden?: boolean;
+
+  /** ID of the column, each column definition ID must be unique or else SlickGrid will throw an error. */
   id: number | string;
 
   /**
    * @reserved This is a RESERVED property and is used internally by the library to copy over the Column Editor Options.
-   * You can read this property if you wish, but DO NOT override this property (unless you know what you're doing) as it will cause other issues with your editors.
+   * You can read this property if you wish, but DO NOT override it (unless you know what you're doing) since could cause serious problems with your editors.
    */
   internalColumnEditor?: ColumnEditor;
 
@@ -224,7 +222,7 @@ export interface Column<T = any> {
   originalWidth?: number;
 
   /** Column Title Name to be displayed in the Grid (UI) */
-  name?: string;
+  name?: string | HTMLElement;
 
   /** Alternative Column Title Name that could be used by the Composite Editor Modal, it has precedence over the column "name" property. */
   nameCompositeEditor?: string;
@@ -235,62 +233,64 @@ export interface Column<T = any> {
   /** Alternative Column Title Name translation key that could be used by the Composite Editor Modal, it has precedence over the column "name" property. */
   nameCompositeEditorKey?: string;
 
-  /** an event that can be used for executing an action before the cell becomes editable (that event happens before the "onCellChange" event) */
-  onBeforeEditCell?: (e: SlickEventData, args: OnEventArgs) => void;
+  /** column offset width */
+  offsetWidth?: number;
 
-  /** an event that can be used for executing an action after a cell change */
-  onCellChange?: (e: SlickEventData, args: OnEventArgs) => void;
+  /** an event handler callback that can be used to execute code before the cell becomes editable (that event happens before the "onCellChange" event) */
+  onBeforeEditCell?: (e: Event, args: OnEventArgs) => void;
 
-  /** an event that can be used for executing an action after a cell click */
-  onCellClick?: (e: SlickEventData, args: OnEventArgs) => void;
+  /** an event handler callback that can be used to execute code after a cell value changed */
+  onCellChange?: (e: Event, args: OnEventArgs) => void;
+
+  /** an event handler callback that can be used to execute code when a cell click event is triggered */
+  onCellClick?: (e: Event, args: OnEventArgs) => void;
 
   /**
    * Column output type (e.g. Date Picker, the output format that we will see in the picker)
-   * NOTE: this is only currently used by the Editors/Filters with a Date Picker
+   * NOTE: this is currently only used by the Editors/Filters with a Date Picker
    */
   outputType?: typeof FieldType[keyof typeof FieldType];
 
   /**
    * Column Editor save format type (e.g. which date format to use when saving after choosing a date from the Date Editor picker)
-   * NOTE: this is only currently used by the Date Editor (date picker)
+   * NOTE: this is currently only used by the Date Editor (date picker)
    */
   saveOutputType?: typeof FieldType[keyof typeof FieldType];
 
-  /** if you want to pass custom paramaters to your Formatter/Editor or anything else */
+  /** extra custom generic parameters that could be used by your Formatter/Editor or anything else */
   params?: any | any[];
 
-  /** The previous column width in pixels (number only) */
+  /** The previous column width in pixels (must be a number) */
   previousWidth?: number;
 
   /**
    * Useful when you want to display a certain field to the UI, but you want to use another field to query when Filtering/Sorting.
-   * Please note that it has higher precendence over the "field" property.
+   * Please note that it has higher precedence over the "field" property.
    */
   queryField?: string;
 
   /**
-   * When you do not know at hand the name of the Field to use for querying,
-   * the lib will run this callback when provided to find out which Field name you want to use by the logic you defined.
+   * Callback that can be used when you only know the name of the Field to use at runtime when querying (filtering/sorting),
    * Useful when you don't know in advance the field name to query from and/or is returned dynamically
-   * and can change on earch row while executing the code at that moment.
+   * and could change depending on the row that got called at runtime.
    * @param {Object} dataContext - item data object
    * @return {string} name of the Field that will end up being used to query
    */
   queryFieldNameGetterFn?: (dataContext: T) => string;
 
   /**
-   * Similar to "queryField" but only used when Filtering (please note that it has higher precendence over "queryField").
+   * Similar to "queryField" but only used when Filtering (please note that it has higher precedence over "queryField").
    * Useful when you want to display a certain field to the UI, but you want to use another field to query for Filtering.
    */
   queryFieldFilter?: string;
 
   /**
-   * Similar to "queryField" but only used when Sorting (please note that it has higher precendence over "queryField").
+   * Similar to "queryField" but only used when Sorting (please note that it has higher precedence over "queryField").
    * Useful when you want to display a certain field to the UI, but you want to use another field to query for Sorting.
    */
   queryFieldSorter?: string;
 
-  /** Is the column resizable, can we make it wider/thinner? A resize cursor will show on the right side of the column when enabled. */
+  /** Is the column resizable, can we make it wider/thinner? A resize cursor icon will show on the right side of the column when enabled. */
   resizable?: boolean;
 
   /** defaults to false, if a column `width` is provided (or was previously calculated) should we recalculate it or not when resizing by cell content? */
@@ -332,7 +332,7 @@ export interface Column<T = any> {
   /** Custom Sort Comparer function that can be provided to the column */
   sortComparer?: SortComparer;
 
-  /** Custom Tooltip that can ben shown to the column */
+  /** Custom Tooltip that will shown when hovering a column */
   toolTip?: string;
 
   /**
@@ -341,20 +341,20 @@ export interface Column<T = any> {
    */
   treeTotalsFormatter?: GroupTotalsFormatter;
 
-  /** What is the Field Type, this can be used in the Formatters/Editors/Filters/... */
+  /** What is the Field Type, this could be used by Formatters/Editors/Filters/... */
   type?: typeof FieldType[keyof typeof FieldType];
 
-  /** Defaults to false, when set to True will lead to the column being unselected in the UI */
+  /** Defaults to false, when enabled it will lead to the column being unselected in the UI */
   unselectable?: boolean;
 
   /** Editor Validator */
   validator?: EditorValidator;
 
   /**
-   * Defaults to false, can the value be undefined?
-   * Typically undefined values are disregarded when sorting, when setting this flag it will adds extra logic to Sorting and also sort undefined value.
-   * This is an extra flag that user has to enable by themselve because Sorting undefined values has unwanted behavior in some use case
-   * (for example Row Detail has UI inconsistencies since undefined is used in the plugin's logic)
+   * Defaults to false, can the value be `undefined`?
+   * Typically `undefined` values are disregarded when sorting, when setting this flag it will add extra logic to Sorting and also sort `undefined` value.
+   * This is an opt-in flag because Sorting `undefined` values could have unwanted side effect for some use case and is mostly only useful for Salesforce environment.
+   * (e.g. Row Detail plugin will have UI inconsistencies because `undefined` is also used by the plugin's logic itself, hence why this option is opt-in)
    */
   valueCouldBeUndefined?: boolean;
 

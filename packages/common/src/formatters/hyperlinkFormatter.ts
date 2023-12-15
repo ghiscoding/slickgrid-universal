@@ -1,3 +1,5 @@
+import { createDomElement } from '@slickgrid-universal/utils';
+
 import { type Formatter } from './../interfaces/index';
 import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 
@@ -13,7 +15,7 @@ import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
  */
 export const hyperlinkFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
   const columnParams = columnDef && columnDef.params || {};
-  const gridOptions = (grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {};
+  const gridOptions = grid?.getOptions() ?? {};
 
   let displayedText = columnParams.hyperlinkText ? columnParams.hyperlinkText : value;
   displayedText = sanitizeTextByAvailableSanitizer(gridOptions, displayedText);
@@ -25,7 +27,7 @@ export const hyperlinkFormatter: Formatter = (_row, _cell, value, columnDef, _da
 
   if (matchUrl && Array.isArray(matchUrl) && matchUrl.length > 0) {
     const finalUrl = matchUrl[0];
-    return `<a href="${finalUrl}">${displayedText}</a>`;
+    return createDomElement('a', { href: finalUrl, textContent: displayedText });
   }
 
   return value;

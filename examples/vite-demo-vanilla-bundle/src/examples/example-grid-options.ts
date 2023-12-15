@@ -1,4 +1,4 @@
-import { GridOption } from '@slickgrid-universal/common';
+import type { GridOption } from '@slickgrid-universal/common';
 
 /** Default Grid Options */
 export const ExampleGridOptions: GridOption = {

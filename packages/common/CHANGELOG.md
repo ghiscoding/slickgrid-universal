@@ -4,6 +4,45 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.1-alpha.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.0.1-alpha.0...v4.0.1-alpha.1) (2023-12-12)
+
+### Bug Fixes
+
+* changing `enableCellNavigation` grid option not working ([#1262](https://github.com/ghiscoding/slickgrid-universal/issues/1262)) ([b7de0f1](https://github.com/ghiscoding/slickgrid-universal/commit/b7de0f12546a6cc02222ed747015e65c90bb7f7d)) - by @ghiscoding
+
+## [4.0.1-alpha.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.0.0-alpha.0...v4.0.1-alpha.0) (2023-12-10)
+
+### Bug Fixes
+
+* **core:** SlickEventHandler handler args should have Types ([#1261](https://github.com/ghiscoding/slickgrid-universal/issues/1261)) ([a33129b](https://github.com/ghiscoding/slickgrid-universal/commit/a33129b0ce1443443e7dcebb3562ffd538b6a731)) - by @ghiscoding
+* regression, Row Detail no longer displayed after CSP safe code ([#1259](https://github.com/ghiscoding/slickgrid-universal/issues/1259)) ([a35f0a4](https://github.com/ghiscoding/slickgrid-universal/commit/a35f0a488775e8ccb68ec8fe0ece9abc47c358f4)) - by @ghiscoding
+
+# [4.0.0-alpha.0](https://github.com/ghiscoding/slickgrid-universal/compare/v3.7.1...v4.0.0-alpha.0) (2023-12-09)
+
+### Bug Fixes
+
+* `setActiveCellInternal()` should not throw when cell/row undefined ([dbe6413](https://github.com/ghiscoding/slickgrid-universal/commit/dbe64132294bc88f5dc13ac23a6f6f84ac5e1ffd)) - by @ghiscoding
+* change dynamic html string w/CSP safe code to fix scroll ([#1210](https://github.com/ghiscoding/slickgrid-universal/issues/1210)) ([cd03907](https://github.com/ghiscoding/slickgrid-universal/commit/cd03907b20468190db7f84f3ae24fbd531e4f6e4)) - by @ghiscoding
+* Draggable shouldn't trigger dragEnd without first dragging ([#1211](https://github.com/ghiscoding/slickgrid-universal/issues/1211)) ([47cb36e](https://github.com/ghiscoding/slickgrid-universal/commit/47cb36e78995f70933807aa33ba3afa0fecf491e)) - by @ghiscoding
+* escape glob pattern for SASS copy to work in CI ([0590b24](https://github.com/ghiscoding/slickgrid-universal/commit/0590b24bf2ac140ba69149bd55cbff95b3493112)) - by @ghiscoding-SE
+* only allow row drag on cell w/`dnd` or `cell-reorder`, fix [#937](https://github.com/ghiscoding/slickgrid-universal/issues/937) ([6a2ab55](https://github.com/ghiscoding/slickgrid-universal/commit/6a2ab550a253a4a1f35e4e81a120fa9247ce753b)), closes [#897](https://github.com/ghiscoding/slickgrid-universal/issues/897) - by @ghiscoding-SE
+* remove CellRange, SlickRange, SlickGroup, ... unused interfaces ([#1219](https://github.com/ghiscoding/slickgrid-universal/issues/1219)) ([a4cc469](https://github.com/ghiscoding/slickgrid-universal/commit/a4cc469e9c21c5ed851bfbaafdc6b580e7389272)) - by @ghiscoding
+* the `devMode` should be `false` or an object with other options ([ac57992](https://github.com/ghiscoding/slickgrid-universal/commit/ac57992abd821cdd6fec823464944dadfa1e7b2c)) - by @ghiscoding-SE
+* the `devMode` should be `false` or an object with other options ([ad2285a](https://github.com/ghiscoding/slickgrid-universal/commit/ad2285a3890442b28dfc7c668ab1b1376e17d3df)) - by @ghiscoding-SE
+* try adding sort icon on non `sortable` column shouldn't throw ([4791fc8](https://github.com/ghiscoding/slickgrid-universal/commit/4791fc89078d9f3212d034fb1d5e43b8bbfffc5d)) - by @ghiscoding-SE
+
+### Features
+
+* convert GroupItemMetadataProvider Formatter to native HTML for CSP ([#1215](https://github.com/ghiscoding/slickgrid-universal/issues/1215)) ([d723856](https://github.com/ghiscoding/slickgrid-universal/commit/d723856777329f2e40fe3a12d3c59e33afd0e3a8)) - by @ghiscoding
+* introduce devMode to support nodejs based unit testing ([#1251](https://github.com/ghiscoding/slickgrid-universal/issues/1251)) ([596737d](https://github.com/ghiscoding/slickgrid-universal/commit/596737d52a2ec8c42320152342144ff32191ebfd)) - by @ghiscoding
+* remove unnecessary Formatters, replace by `cssClass` ([#1225](https://github.com/ghiscoding/slickgrid-universal/issues/1225)) ([de26496](https://github.com/ghiscoding/slickgrid-universal/commit/de26496aa5dc462869a4a1ff966b32baf86e188b)) - by @ghiscoding
+* rewrite all Formatters as native HTML elements ([#1229](https://github.com/ghiscoding/slickgrid-universal/issues/1229)) ([5cb4dd5](https://github.com/ghiscoding/slickgrid-universal/commit/5cb4dd5757adc401ed4e6deab0e41bcd08a827a3)) - by @ghiscoding
+* use PubSub Service singleton to subscribe to any SlickEvent ([#1248](https://github.com/ghiscoding/slickgrid-universal/issues/1248)) ([388bd11](https://github.com/ghiscoding/slickgrid-universal/commit/388bd115c1a15f853da8ac943a6e5e3574630438)) - by @ghiscoding
+
+### Performance Improvements
+
+* skip reapplying empty html when target is already empty ([#1230](https://github.com/ghiscoding/slickgrid-universal/issues/1230)) ([ba99fae](https://github.com/ghiscoding/slickgrid-universal/commit/ba99fae664f8a35573f00cf4719f1d70bcb9e37d)) - by @ghiscoding
+
 ## [3.7.2](https://github.com/ghiscoding/slickgrid-universal/compare/v3.7.1...v3.7.2) (2023-12-12)
 
 ### Bug Fixes

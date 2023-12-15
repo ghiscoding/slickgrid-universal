@@ -1,9 +1,10 @@
+import { createDomElement } from '@slickgrid-universal/utils';
 import { OptionRowData } from 'multiple-select-vanilla';
-import * as DOMPurify_ from 'dompurify';
-const DOMPurify = ((DOMPurify_ as any)?.['default'] ?? DOMPurify_); // patch for rollup
+import DOMPurify from 'dompurify';
 
-import type { InferDOMType, SearchTerm } from '../enums/index';
-import type { Column, GridOption, HtmlElementPosition, SelectOption, SlickGrid, } from '../interfaces/index';
+import type { SearchTerm } from '../enums/index';
+import type { Column, GridOption, SelectOption } from '../interfaces/index';
+import type { SlickGrid } from '../core/index';
 import type { TranslaterService } from './translater.service';
 
 /**
@@ -17,7 +18,7 @@ import type { TranslaterService } from './translater.service';
  * @param {Array<*>} searchTerms - optional array of search term (used by the "filter" type only)
  * @returns object with 2 properties for the select element & a boolean value telling us if any of the search terms were found and selected in the dropdown
  */
-export function buildMultipleSelectDataCollection(type: 'editor' | 'filter', collection: any[], columnDef: Column, grid: SlickGrid, isMultiSelect = false, translaterService?: TranslaterService, searchTerms?: SearchTerm[]): { selectElement: HTMLSelectElement; dataCollection: OptionRowData[]; hasFoundSearchTerm: boolean; } {
+export function buildMsSelectCollectionList(type: 'editor' | 'filter', collection: any[], columnDef: Column, grid: SlickGrid, isMultiSelect = false, translaterService?: TranslaterService, searchTerms?: SearchTerm[]): { selectElement: HTMLSelectElement; dataCollection: OptionRowData[]; hasFoundSearchTerm: boolean; } {
   const columnId = columnDef?.id ?? '';
   const gridOptions = grid.getOptions();
   const columnFilterOrEditor = (type === 'editor' ? columnDef?.internalColumnEditor : columnDef?.filter) ?? {};
@@ -26,7 +27,7 @@ export function buildMultipleSelectDataCollection(type: 'editor' | 'filter', col
   const enableTranslateLabel = columnFilterOrEditor?.enableTranslateLabel ?? false;
   const isTranslateEnabled = gridOptions?.enableTranslate ?? false;
   const isRenderHtmlEnabled = columnFilterOrEditor?.enableRenderHtml ?? false;
-  const sanitizedOptions = gridOptions?.sanitizeHtmlOptions ?? {};
+  const sanitizedOptions = gridOptions?.sanitizerOptions ?? {};
   const labelName = columnFilterOrEditor?.customStructure?.label ?? 'label';
   const labelPrefixName = columnFilterOrEditor?.customStructure?.labelPrefix ?? 'labelPrefix';
   const labelSuffixName = columnFilterOrEditor?.customStructure?.labelSuffix ?? 'labelSuffix';
@@ -116,269 +117,21 @@ export function buildMultipleSelectDataCollection(type: 'editor' | 'filter', col
   return { selectElement, dataCollection, hasFoundSearchTerm };
 }
 
-/** calculate available space for each side of the DOM element */
-export function calculateAvailableSpace(element: HTMLElement): { top: number; bottom: number; left: number; right: number; } {
-  let bottom = 0;
-  let top = 0;
-  let left = 0;
-  let right = 0;
-
-  const windowHeight = window.innerHeight ?? 0;
-  const windowWidth = window.innerWidth ?? 0;
-  const scrollPosition = windowScrollPosition();
-  const pageScrollTop = scrollPosition.top;
-  const pageScrollLeft = scrollPosition.left;
-  const elmOffset = getHtmlElementOffset(element);
-
-  if (elmOffset) {
-    const elementOffsetTop = elmOffset.top ?? 0;
-    const elementOffsetLeft = elmOffset.left ?? 0;
-    top = elementOffsetTop - pageScrollTop;
-    bottom = windowHeight - (elementOffsetTop - pageScrollTop);
-    left = elementOffsetLeft - pageScrollLeft;
-    right = windowWidth - (elementOffsetLeft - pageScrollLeft);
-  }
-
-  return { top, bottom, left, right };
-}
-
-/**
- * Create a DOM Element with any optional attributes or properties.
- * It will only accept valid DOM element properties that `createElement` would accept.
- * For example: `createDomElement('div', { className: 'my-css-class' })`,
- * for style or dataset you need to use nested object `{ style: { display: 'none' }}
- * The last argument is to optionally append the created element to a parent container element.
- * @param {String} tagName - html tag
- * @param {Object} options - element properties
- * @param {[Element]} appendToParent - parent element to append to
- */
-export function createDomElement<T extends keyof HTMLElementTagNameMap, K extends keyof HTMLElementTagNameMap[T]>(
-  tagName: T,
-  elementOptions?: { [P in K]: InferDOMType<HTMLElementTagNameMap[T][P]> },
-  appendToParent?: Element
-): HTMLElementTagNameMap[T] {
-  const elm = document.createElement<T>(tagName);
-
-  if (elementOptions) {
-    Object.keys(elementOptions).forEach((elmOptionKey) => {
-      if (elmOptionKey === 'innerHTML') {
-        console.warn(`[Slickgrid-Universal] For better CSP (Content Security Policy) support, do not use "innerHTML" directly in "createDomElement('${tagName}', { innerHTML: 'some html'})", ` +
-          `it is better as separate assignment: "const elm = createDomElement('span'); elm.innerHTML = 'some html';"`);
-      }
-      const elmValue = elementOptions[elmOptionKey as keyof typeof elementOptions];
-      if (typeof elmValue === 'object') {
-        Object.assign(elm[elmOptionKey as K] as object, elmValue);
-      } else {
-        elm[elmOptionKey as K] = (elementOptions as any)[elmOptionKey as keyof typeof elementOptions];
-      }
-    });
-  }
-  if (appendToParent?.appendChild) {
-    appendToParent.appendChild(elm);
-  }
-  return elm;
-}
-
-/**
- * Loop through all properties of an object and nullify any properties that are instanceof HTMLElement,
- * if we detect an array then use recursion to go inside it and apply same logic
- * @param obj - object containing 1 or more properties with DOM Elements
- */
-export function destroyObjectDomElementProps(obj: any) {
-  if (obj) {
-    for (const key of Object.keys(obj)) {
-      if (Array.isArray(obj[key])) {
-        destroyObjectDomElementProps(obj[key]);
-      }
-      if (obj[key] instanceof HTMLElement) {
-        obj[key] = null;
-      }
-    }
-  }
-}
-
-/**
- * Empty a DOM element by removing all of its DOM element children leaving with an empty element (basically an empty shell)
- * @return {object} element - updated element
- */
-export function emptyElement<T extends Element = Element>(element?: T | null): T | undefined | null {
-  if (element?.firstChild) {
-    while (element.firstChild) {
-      if (element.lastChild) {
-        element.removeChild(element.lastChild);
-      }
-    }
-  }
-  return element;
-}
-
-/** Get offset of HTML element relative to a parent element */
-export function getElementOffsetRelativeToParent(parentElm: HTMLElement | null, childElm: HTMLElement | null) {
-  if (!parentElm || !childElm) {
-    return undefined;
-  }
-  const parentPos = parentElm.getBoundingClientRect();
-  const childPos = childElm.getBoundingClientRect();
-  return {
-    top: childPos.top - parentPos.top,
-    right: childPos.right - parentPos.right,
-    bottom: childPos.bottom - parentPos.bottom,
-    left: childPos.left - parentPos.left,
-  };
-}
-
-/** Get HTML element offset with pure JS */
-export function getHtmlElementOffset(element?: HTMLElement): HtmlElementPosition | undefined {
-  if (!element) {
-    return undefined;
-  }
-  const rect = element?.getBoundingClientRect?.();
-  let top = 0;
-  let left = 0;
-  let bottom = 0;
-  let right = 0;
-
-  if (rect?.top !== undefined && rect.left !== undefined) {
-    top = rect.top + window.pageYOffset;
-    left = rect.left + window.pageXOffset;
-    right = rect.right;
-    bottom = rect.bottom;
-  }
-  return { top, left, bottom, right };
-}
-
-export function getInnerSize(elm: HTMLElement, type: 'height' | 'width') {
-  let size = 0;
-
-  if (elm) {
-    const clientSize = type === 'height' ? 'clientHeight' : 'clientWidth';
-    const sides = type === 'height' ? ['top', 'bottom'] : ['left', 'right'];
-    size = elm[clientSize];
-    for (const side of sides) {
-      size -= (parseFloat(getElementProp(elm, `padding-${side}`)) || 0);
-    }
-  }
-  return size;
-}
-
-export function getElementProp(elm: HTMLElement, property: string) {
-  return window.getComputedStyle(elm, null).getPropertyValue(property);
-}
-
-export function getSelectorStringFromElement(elm?: HTMLElement | null) {
-  let selector = '';
-  if (elm?.localName) {
-    selector = elm?.className ? `${elm.localName}.${Array.from(elm.classList).join('.')}` : elm.localName;
-  }
-  return selector;
-}
-
-export function findFirstElementAttribute(inputElm: Element | null | undefined, attributes: string[]): string | null {
-  if (inputElm) {
-    for (const attribute of attributes) {
-      const attrData = inputElm.getAttribute(attribute);
-      if (attrData) {
-        return attrData;
-      }
-    }
-  }
-  return null;
-}
-
-/**
- * Provide a width as a number or a string and find associated value in valid css style format or use default value when provided (or "auto" otherwise).
- * @param {Number|String} inputWidth - input width, could be a string or number
- * @param {Number | String} defaultValue [defaultValue=auto] - optional default value or use "auto" when nothing is provided
- * @returns {String} string output
- */
-export function findWidthOrDefault(inputWidth?: number | string, defaultValue = 'auto'): string {
-  return (/^[0-9]+$/i.test(`${inputWidth}`) ? `${+(inputWidth as number)}px` : inputWidth as string) || defaultValue;
-}
-
-/**
- * HTML encode using a plain <div>
- * Create a in-memory div, set it's inner text(which a div can encode)
- * then grab the encoded contents back out.  The div never exists on the page.
- * @param {String} inputValue - input value to be encoded
- * @return {String}
- */
-export function htmlEncode(inputValue: string): string {
-  const val = typeof inputValue === 'string' ? inputValue : String(inputValue);
-  const entityMap: { [char: string]: string; } = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    '\'': '&#39;',
-  };
-  return (val || '').toString().replace(/[&<>"']/g, (s) => entityMap[s as keyof { [char: string]: string; }]);
-}
-
-/**
- * Decode text into html entity
- * @param string text: input text
- * @param string text: output text
- */
-export function htmlEntityDecode(input: string): string {
-  return input.replace(/&#(\d+);/g, (_match, dec) => {
-    return String.fromCharCode(dec);
-  });
-}
-
-/**
- * Encode string to html special char and add html space padding defined
- * @param {string} inputStr - input string
- * @param {number} paddingLength - padding to add
- */
-export function htmlEncodedStringWithPadding(inputStr: string, paddingLength: number): string {
-  const inputStrLn = inputStr.length;
-  let outputStr = htmlEncode(inputStr);
-
-  if (inputStrLn < paddingLength) {
-    for (let i = inputStrLn; i < paddingLength; i++) {
-      outputStr += `&nbsp;`;
-    }
-  }
-  return outputStr;
-}
-
-/**
- * Sanitize, return only the text without HTML tags
- * @input htmlString
- * @return text
- */
-export function sanitizeHtmlToText(htmlString: string): string {
-  const temp = document.createElement('div');
-  temp.innerHTML = htmlString;
-  return temp.textContent || temp.innerText || '';
-}
-
 /**
  * Sanitize possible dirty html string (remove any potential XSS code like scripts and others), we will use 2 possible sanitizer
  * 1. optional sanitizer method defined in the grid options
  * 2. DOMPurify sanitizer (defaults)
  * @param gridOptions: grid options
  * @param dirtyHtml: dirty html string
- * @param domPurifyOptions: optional DOMPurify options when using that sanitizer
+ * @param sanitizerOptions: optional DOMPurify options when using that sanitizer
  */
-export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyHtml: string, domPurifyOptions?: DOMPurify_.Config): string {
+export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyHtml: string, sanitizerOptions?: DOMPurify.Config): string {
   let sanitizedText = dirtyHtml;
   if (typeof gridOptions?.sanitizer === 'function') {
     sanitizedText = gridOptions.sanitizer(dirtyHtml || '');
   } else if (typeof DOMPurify?.sanitize === 'function') {
-    sanitizedText = (DOMPurify.sanitize(dirtyHtml || '', domPurifyOptions || { RETURN_TRUSTED_TYPE: true }) || '').toString();
+    sanitizedText = (DOMPurify.sanitize(dirtyHtml || '', sanitizerOptions || { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }) || '').toString();
   }
 
   return sanitizedText;
-}
-
-/**
- * Get the Window Scroll top/left Position
- * @returns
- */
-export function windowScrollPosition(): { left: number; top: number; } {
-  return {
-    left: window.pageXOffset || document.documentElement.scrollLeft || 0,
-    top: window.pageYOffset || document.documentElement.scrollTop || 0,
-  };
 }

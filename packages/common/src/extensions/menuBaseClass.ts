@@ -1,5 +1,6 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { hasData } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, hasData } from '@slickgrid-universal/utils';
 
 import type {
   CellMenu,
@@ -12,20 +13,12 @@ import type {
   HeaderButton,
   HeaderButtonItem,
   HeaderMenu,
-  HeaderMenuCommandItem,
   MenuCommandItem,
   MenuOptionItem,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
 } from '../interfaces/index';
-import { BindingEventService } from '../services/bindingEvent.service';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import type { SharedService } from '../services/shared.service';
-import { createDomElement, emptyElement } from '../services/domUtilities';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
+import { SlickEventHandler, type SlickGrid } from '../core/index';
 
 export type MenuType = 'command' | 'option';
 export type ExtendableItemTypes = HeaderButtonItem | MenuCommandItem | MenuOptionItem | 'divider';
@@ -56,7 +49,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     protected readonly sharedService: SharedService,
   ) {
     this._bindEventService = new BindingEventService();
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
   }
 
   get addonOptions(): M {
@@ -262,7 +255,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
 
         if ((item as MenuCommandItem | MenuOptionItem).iconCssClass) {
           iconElm.classList.add(...(item as MenuCommandItem | MenuOptionItem).iconCssClass!.split(' '));
-        } else if (!(item as MenuCommandItem).commandItems && !(item as MenuOptionItem).optionItems && !(item as HeaderMenuCommandItem).items) {
+        } else if (!(item as MenuCommandItem).commandItems && !(item as MenuOptionItem).optionItems) {
           iconElm.textContent = '◦';
         }
 
@@ -302,7 +295,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       }
 
       // the option/command item could be a sub-menu if it has another list of commands/options
-      if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems || (item as HeaderMenuCommandItem).items) {
+      if ((item as MenuCommandItem).commandItems || (item as MenuOptionItem).optionItems) {
         const chevronElm = document.createElement('span');
         chevronElm.className = 'sub-item-chevron';
         if ((this._addonOptions as any).subItemChevronClass) {

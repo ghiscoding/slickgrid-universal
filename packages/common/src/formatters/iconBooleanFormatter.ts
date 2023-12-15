@@ -1,11 +1,13 @@
+import { createDomElement } from '@slickgrid-universal/utils';
+
 import { type Formatter } from './../interfaces/index';
 
 /** Display whichever icon for a boolean value (library agnostic, it could be Font-Awesome or any other) */
 export const iconBooleanFormatter: Formatter = (_row, _cell, value, columnDef) => {
   const columnParams = columnDef?.params || {};
-  const cssClass = columnParams.cssClass;
+  const cssClasses = columnParams.cssClass;
 
-  if (!cssClass) {
+  if (!cssClasses) {
     throw new Error('[Slickgrid-Universal] When using `Formatters.iconBoolean`, you must provide You must provide the "cssClass", e.g.: { formatter: Formatters.iconBoolean, params: { cssClass: "fa fa-check" }}');
   }
 
@@ -15,5 +17,5 @@ export const iconBooleanFormatter: Formatter = (_row, _cell, value, columnDef) =
     isTruthy = true;
   }
 
-  return isTruthy ? `<i class="${cssClass}" aria-hidden="true"></i>` : '';
+  return isTruthy ? createDomElement('i', { className: cssClasses, ariaHidden: 'true' }) : '';
 };

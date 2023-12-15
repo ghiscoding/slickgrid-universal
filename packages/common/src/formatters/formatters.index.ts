@@ -1,11 +1,7 @@
 import { FieldType } from '../enums/index';
 import { getAssociatedDateFormatter } from './formatterUtilities';
-import { alignRightFormatter } from './alignRightFormatter';
 import { arrayObjectToCsvFormatter } from './arrayObjectToCsvFormatter';
 import { arrayToCsvFormatter } from './arrayToCsvFormatter';
-import { boldFormatter } from './boldFormatter';
-import { centerFormatter } from './centerFormatter';
-import { checkboxFormatter } from './checkboxFormatter';
 import { checkmarkFormatter } from './checkmarkFormatter';
 import { checkmarkMaterialFormatter } from './checkmarkMaterialFormatter';
 import { currencyFormatter } from './currencyFormatter';
@@ -13,18 +9,12 @@ import { collectionFormatter } from './collectionFormatter';
 import { collectionEditorFormatter } from './collectionEditorFormatter';
 import { complexObjectFormatter } from './complexObjectFormatter';
 import { decimalFormatter } from './decimalFormatter';
-import { deleteIconFormatter } from './deleteIconFormatter';
 import { dollarColoredBoldFormatter } from './dollarColoredBoldFormatter';
 import { dollarColoredFormatter } from './dollarColoredFormatter';
 import { dollarFormatter } from './dollarFormatter';
-import { editIconFormatter } from './editIconFormatter';
-import { fakeHyperlinkFormatter } from './fakeHyperlinkFormatter';
 import { hyperlinkFormatter } from './hyperlinkFormatter';
 import { iconBooleanFormatter } from './iconBooleanFormatter';
 import { iconFormatter } from './iconFormatter';
-import { infoIconFormatter } from './infoIconFormatter';
-import { italicFormatter } from './italicFormatter';
-import { lowercaseFormatter } from './lowercaseFormatter';
 import { maskFormatter } from './maskFormatter';
 import { multipleFormatter } from './multipleFormatter';
 import { percentFormatter } from './percentFormatter';
@@ -38,17 +28,9 @@ import { treeExportFormatter } from './treeExportFormatter';
 import { treeFormatter } from './treeFormatter';
 import { treeParseTotalsFormatter } from './treeParseTotalsFormatter';
 import { translateBooleanFormatter } from './translateBooleanFormatter';
-import { uppercaseFormatter } from './uppercaseFormatter';
-import { yesNoFormatter } from './yesNoFormatter';
 
 /** Provides a list of different Formatters that will change the cell value displayed in the UI */
 export const Formatters = {
-  /** @deprecated @use Column `cssClass: 'text-center'` instead. Align cell value to the center (alias to Formatters.center) */
-  alignCenter: centerFormatter,
-
-  /** @deprecated @use Column `cssClass: 'text-right'` instead. Align cell value to the right */
-  alignRight: alignRightFormatter,
-
   /**
    * Takes an array of complex objects converts it to a comma delimited string.
    * Requires to pass an array of "propertyNames" in the column definition the generic "params" property
@@ -59,15 +41,6 @@ export const Formatters = {
 
   /** Takes an array of string and converts it to a comma delimited string */
   arrayToCsv: arrayToCsvFormatter,
-
-  /** @deprecated @use Column `cssClass: 'text-bold'` instead. Show value in bold font weight */
-  bold: boldFormatter,
-
-  /** @deprecated @use Column `cssClass: 'text-center'` instead. Center a text value horizontally */
-  center: centerFormatter,
-
-  /** When value is filled (true), it will display a checkbox Unicode icon */
-  checkbox: checkboxFormatter,
 
   /**
    * When value is filled, or if the value is a number and is bigger than 0, it will display a Font-Awesome icon (fa-check).
@@ -196,9 +169,6 @@ export const Formatters = {
   /** Takes a Date object and displays it as a regular TZ timestamp format (YYYY-MM-DDTHH:mm:ss.SSSZ) */
   dateUtc: getAssociatedDateFormatter(FieldType.dateUtc, '-'),
 
-  /** @deprecated @use `Formatters.icon` instead. Displays a Font-Awesome delete icon (fa-trash) */
-  deleteIcon: deleteIconFormatter,
-
   /**
    * Display the value as x decimals formatted, defaults to 2 decimals.
    * You can pass "minDecimal" and/or "maxDecimal" to the "params" property.
@@ -214,12 +184,6 @@ export const Formatters = {
 
   /** Display the value as 2 decimals formatted with dollar sign '$' at the end of of the value, change color of text to red/green on negative/positive value, show it in bold font weight as well */
   dollarColoredBold: dollarColoredBoldFormatter,
-
-  /** @deprecated @use `Formatters.icon` instead. Displays a Font-Awesome edit icon (fa-pencil) */
-  editIcon: editIconFormatter,
-
-  /** @deprecated Takes any text value and display it as a fake a hyperlink (only styled as an hyperlink), this can be used in combo with "onCellClick" event */
-  fakeHyperlink: fakeHyperlinkFormatter,
 
   /**
    * Takes an hyperlink cell value and transforms it into a real hyperlink, given that the value starts with 1 of these (http|ftp|https).
@@ -241,15 +205,6 @@ export const Formatters = {
    * Note: a value of "false", null, undefined, "1" or any number below 0 are all considered falsy and will not display the icon
    */
   iconBoolean: iconBooleanFormatter,
-
-  /** @deprecated @use `Formatters.icon` instead. Displays a Font-Awesome edit icon (fa-info-circle) */
-  infoIcon: infoIconFormatter,
-
-  /** @deprecated @use Column `cssClass: 'text-italic'` instead. Show input text value as italic text */
-  italic: italicFormatter,
-
-  /** @deprecated @use Column `cssClass: 'text-lowercase'` instead. Takes a value and displays it all lowercase */
-  lowercase: lowercaseFormatter,
 
   /**
    * Takes a value display it according to a mask provided
@@ -305,10 +260,4 @@ export const Formatters = {
 
   /** Formatter that must be use with a Tree Data column for Exporting the data */
   treeExport: treeExportFormatter,
-
-  /** @deprecated @use Column `cssClass: 'text-uppercase'` instead. Takes a value and displays it all uppercase */
-  uppercase: uppercaseFormatter,
-
-  /** @deprecated Takes a boolean value and display a string 'Yes' or 'No' */
-  yesNo: yesNoFormatter
 };

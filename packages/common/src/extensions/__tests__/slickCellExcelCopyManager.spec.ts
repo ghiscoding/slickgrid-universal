@@ -1,11 +1,11 @@
-import { CellRange, EditCommand, Formatter, GridOption, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import type { EditCommand, Formatter, GridOption } from '../../interfaces/index';
 import { Formatters } from '../../formatters';
 import { SharedService } from '../../services/shared.service';
 import { SlickCellExcelCopyManager } from '../slickCellExcelCopyManager';
 import { SlickCellSelectionModel } from '../slickCellSelectionModel';
 import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager';
+import { SlickEvent, SlickEventData, SlickGrid, SlickRange } from '../../core/index';
 
-declare const Slick: SlickNamespace;
 jest.mock('flatpickr', () => { });
 
 const getEditorLockMock = {
@@ -21,7 +21,7 @@ const gridStub = {
   focus: jest.fn(),
   registerPlugin: jest.fn(),
   setSelectionModel: jest.fn(),
-  onKeyDown: new Slick.Event(),
+  onKeyDown: new SlickEvent(),
 } as unknown as SlickGrid;
 
 const mockCellExternalCopyManager = {
@@ -31,9 +31,9 @@ const mockCellExternalCopyManager = {
   getHeaderValueForColumn: jest.fn(),
   getDataItemValueForColumn: jest.fn(),
   setDataItemValueForColumn: jest.fn(),
-  onCopyCells: new Slick.Event(),
-  onCopyCancelled: new Slick.Event(),
-  onPasteCells: new Slick.Event(),
+  onCopyCells: new SlickEvent(),
+  onCopyCancelled: new SlickEvent(),
+  onPasteCells: new SlickEvent(),
 } as unknown as SlickCellExternalCopyManager;
 
 const mockCellSelectionModel = {
@@ -44,7 +44,7 @@ const mockCellSelectionModel = {
   setSelectedRanges: jest.fn(),
   getSelectedRows: jest.fn(),
   setSelectedRows: jest.fn(),
-  onSelectedRangesChanged: new Slick.Event(),
+  onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickCellSelectionModel;
 
 jest.mock('../slickCellSelectionModel', () => ({
@@ -57,8 +57,9 @@ jest.mock('../slickCellExternalCopyManager', () => ({
 describe('CellExcelCopyManager', () => {
   let queueCallback: EditCommand;
   const mockEventCallback = () => { };
-  const mockSelectRange = [{ fromCell: 1, fromRow: 1, toCell: 1, toRow: 1 }] as CellRange[];
+  const mockSelectRange = [{ fromCell: 1, fromRow: 1, toCell: 1, toRow: 1 }] as SlickRange[];
   const mockSelectRangeEvent = { ranges: mockSelectRange };
+  const myBoldFormatter: Formatter = (_row, _cell, value) => value ? `<b>${value}</b>` : null as any;
 
   let plugin: SlickCellExcelCopyManager;
   const gridOptionsMock = {
@@ -125,11 +126,11 @@ describe('CellExcelCopyManager', () => {
       const mockOnPasteCell = jest.fn();
 
       plugin.init(gridStub, { onCopyCells: mockOnCopy, onCopyCancelled: mockOnCopyCancel, onPasteCells: mockOnPasteCell });
-      mockCellExternalCopyManager.onCopyCells.notify(mockSelectRangeEvent, new Slick.EventData(), gridStub);
+      mockCellExternalCopyManager.onCopyCells.notify(mockSelectRangeEvent, new SlickEventData(), gridStub);
 
       expect(handlerSpy).toHaveBeenCalledTimes(3);
       expect(handlerSpy).toHaveBeenCalledWith(
-        { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
+        expect.any(SlickEvent),
         expect.anything()
       );
       expect(mockOnCopy).toHaveBeenCalledWith(expect.anything(), mockSelectRangeEvent);
@@ -144,11 +145,11 @@ describe('CellExcelCopyManager', () => {
       const mockOnPasteCell = jest.fn();
 
       plugin.init(gridStub, { onCopyCells: mockOnCopy, onCopyCancelled: mockOnCopyCancel, onPasteCells: mockOnPasteCell });
-      mockCellExternalCopyManager.onCopyCancelled.notify(mockSelectRangeEvent, new Slick.EventData(), gridStub);
+      mockCellExternalCopyManager.onCopyCancelled.notify(mockSelectRangeEvent, new SlickEventData(), gridStub);
 
       expect(handlerSpy).toHaveBeenCalledTimes(3);
       expect(handlerSpy).toHaveBeenCalledWith(
-        { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
+        expect.any(SlickEvent),
         expect.anything()
       );
       expect(mockOnCopy).not.toHaveBeenCalledWith(expect.anything(), mockSelectRangeEvent);
@@ -163,11 +164,11 @@ describe('CellExcelCopyManager', () => {
       const mockOnPasteCell = jest.fn();
 
       plugin.init(gridStub, { onCopyCells: mockOnCopy, onCopyCancelled: mockOnCopyCancel, onPasteCells: mockOnPasteCell });
-      mockCellExternalCopyManager.onPasteCells.notify(mockSelectRangeEvent, new Slick.EventData(), gridStub);
+      mockCellExternalCopyManager.onPasteCells.notify(mockSelectRangeEvent, new SlickEventData(), gridStub);
 
       expect(handlerSpy).toHaveBeenCalledTimes(3);
       expect(handlerSpy).toHaveBeenCalledWith(
-        { notify: expect.anything(), subscribe: expect.anything(), unsubscribe: expect.anything(), },
+        expect.any(SlickEvent),
         expect.anything()
       );
       expect(mockOnCopy).not.toHaveBeenCalledWith(expect.anything(), mockSelectRangeEvent);
@@ -254,7 +255,7 @@ describe('CellExcelCopyManager', () => {
       plugin.undoRedoBuffer.queueAndExecuteCommand(queueCallback);
       const body = window.document.body;
       body.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
-        keyCode: 90,
+        key: 'Z',
         ctrlKey: true,
         shiftKey: true,
         bubbles: true,
@@ -271,7 +272,7 @@ describe('CellExcelCopyManager', () => {
       plugin.undoRedoBuffer.queueAndExecuteCommand(queueCallback);
       const body = window.document.body;
       body.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', {
-        keyCode: 90,
+        key: 'Z',
         ctrlKey: true,
         shiftKey: false,
         bubbles: true
@@ -294,7 +295,7 @@ describe('CellExcelCopyManager', () => {
     it('should expect "addItem" method to be called after calling "newRowCreator" callback', () => {
       plugin.init(gridStub);
       const mockGetData = { addItem: jest.fn() };
-      const getDataSpy = jest.spyOn(gridStub, 'getData').mockReturnValue(mockGetData);
+      const getDataSpy = jest.spyOn(gridStub, 'getData').mockReturnValue(mockGetData as any);
       const addItemSpy = jest.spyOn(mockGetData, 'addItem');
 
       plugin.addonOptions!.newRowCreator!(2);
@@ -306,13 +307,12 @@ describe('CellExcelCopyManager', () => {
 
     it('should expect a formatted output after calling "dataItemColumnValueExtractor" callback', () => {
       plugin.init(gridStub);
-      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: 'John', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: Formatters.bold });
+      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: 'John', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: myBoldFormatter });
       expect(output).toBe('<b>John</b>');
     });
 
     it('should expect a sanitized formatted and empty output after calling "dataItemColumnValueExtractor" callback', () => {
       gridOptionsMock.textExportOptions = { sanitizeDataExport: true };
-      const myBoldFormatter: Formatter = (_row, _cell, value) => value ? { text: `<b>${value}</b>` } : null as any;
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       plugin.init(gridStub);
 
@@ -326,13 +326,12 @@ describe('CellExcelCopyManager', () => {
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       plugin.init(gridStub);
 
-      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: Formatters.bold });
+      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: myBoldFormatter });
 
       expect(output).toBe('John');
     });
 
     it('should expect a sanitized formatted output, from a Custom Formatter, after calling "dataItemColumnValueExtractor" callback', () => {
-      const myBoldFormatter: Formatter = (_row, _cell, value) => value ? { text: `<b>${value}</b>` } : '';
       gridOptionsMock.textExportOptions = { sanitizeDataExport: true };
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       plugin.init(gridStub);

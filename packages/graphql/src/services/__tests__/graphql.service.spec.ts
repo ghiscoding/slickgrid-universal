@@ -99,14 +99,6 @@ describe('GraphqlService', () => {
       expect(spy).toHaveBeenCalled();
       expect(service.columnDefinitions).toEqual(columns);
     });
-
-    it('should display a console warning when using deprecated "isWithCursor" option', () => {
-      const consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
-
-      service.init({ datasetName: 'users', isWithCursor: true }, paginationOptions, gridStub);
-
-      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('[Slickgrid-Universal] The option `isWithCursor` is now deprecated and was replaced by `useCursor`.'));
-    });
   });
 
   describe('buildQuery method', () => {
@@ -668,7 +660,7 @@ describe('GraphqlService', () => {
         description           | cursorArgs                    | expectation
         ${"First page"}       | ${{ first: 20 }}              | ${'query{users(first:20) { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
         ${"Next Page"}        | ${{ first: 20, after: 'a' }}  | ${'query{users(first:20, after:"a") { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
-        ${"Previous Page"  }  | ${{ last: 20,  before: 'b' }} | ${'query{users(last:20, before:"b") { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
+        ${"Previous Page"}  | ${{ last: 20, before: 'b' }} | ${'query{users(last:20, before:"b") { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
         ${"Last Page"}        | ${{ last: 20 }}               | ${'query{users(last:20) { totalCount,nodes { id, field1, field2 }, pageInfo{hasNextPage,hasPreviousPage,endCursor,startCursor},edges{cursor}}}'}
       `(`$description`, ({ description, cursorArgs, expectation }) => {
         it('should return a query with the new pagination and use pagination size options that was passed to service options when it is not provided as argument to "processOnPaginationChanged"', () => {
@@ -1231,6 +1223,22 @@ describe('GraphqlService', () => {
     it('should return a query using a different field to query when the column has a "queryFieldFilter" defined in its definition', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:hasPriority, operator:EQ, value:"female"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender', queryField: 'isAfter', queryFieldFilter: 'hasPriority' } as Column;
+      const mockColumnFilters = {
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
+      } as ColumnFilters;
+
+      service.init(serviceOptions, paginationOptions, gridStub);
+      service.updateFilters(mockColumnFilters, false);
+      const query = service.buildQuery();
+
+      expect(removeSpaces(query)).toBe(removeSpaces(expectation));
+    });
+
+    it('should return a query using column name that is an HTML Element', () => {
+      const expectation = `query{users(first:10, offset:0, filterBy:[{field:Gender, operator:EQ, value:"female"}]) { totalCount,nodes{ id,company,gender,name } }}`;
+      const nameElm = document.createElement('div');
+      nameElm.innerHTML = `<span class="text-red">Gender</span>`;
+      const mockColumn = { id: 'gender', name: nameElm } as unknown as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
       } as ColumnFilters;

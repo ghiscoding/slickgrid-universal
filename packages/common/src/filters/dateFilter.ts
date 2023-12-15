@@ -1,9 +1,9 @@
-import * as flatpickr_ from 'flatpickr';
-import * as moment_ from 'moment-mini';
+import { BindingEventService } from '@slickgrid-universal/binding';
+import { createDomElement, destroyAllElementProps, emptyElement, } from '@slickgrid-universal/utils';
+import flatpickr from 'flatpickr';
+import moment from 'moment-mini';
 import type { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
-import type { Instance as FlatpickrInstance, FlatpickrFn } from 'flatpickr/dist/types/instance';
-const flatpickr: FlatpickrFn = (flatpickr_?.['default'] ?? flatpickr_) as any; // patch for rollup
-const moment = (moment_ as any)?.['default'] ?? moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
+import type { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
 
 import {
   FieldType,
@@ -20,13 +20,11 @@ import type {
   FlatpickrOption,
   GridOption,
   OperatorDetail,
-  SlickGrid,
 } from '../interfaces/index';
 import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
-import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
 import { mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
-import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
+import type { SlickGrid } from '../core/index';
 
 export class DateFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -54,12 +52,12 @@ export class DateFilter implements Filter {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get gridOptions(): GridOption {
-    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+    return this.grid?.getOptions() ?? {};
   }
 
   /** Getter for the Column Filter */
   get columnFilter(): ColumnFilter {
-    return this.columnDef && this.columnDef.filter || {};
+    return this.columnDef?.filter || {} as ColumnFilter;
   }
 
   /** Getter for the Current Date(s) selected */
@@ -157,7 +155,7 @@ export class DateFilter implements Filter {
     if (typeof this.flatInstance?.destroy === 'function') {
       this.flatInstance.destroy();
       if (this.flatInstance.element) {
-        destroyObjectDomElementProps(this.flatInstance);
+        destroyAllElementProps(this.flatInstance);
       }
     }
     emptyElement(this.filterContainerElm);
@@ -362,7 +360,7 @@ export class DateFilter implements Filter {
 
       return this._filterDivInputElm;
     } else {
-      this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.gridOptions);
+      this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.grid);
       const filterContainerElm = createDomElement('div', { className: `form-group search-filter filter-${columnId}` });
       const containerInputGroupElm = createDomElement('div', { className: 'input-group flatpickr' }, filterContainerElm);
       const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' }, containerInputGroupElm);

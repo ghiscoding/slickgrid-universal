@@ -1,10 +1,8 @@
-import { toSentenceCase } from '@slickgrid-universal/utils';
+import { createDomElement, toSentenceCase } from '@slickgrid-universal/utils';
 
-import { KeyCode } from '../enums/index';
 import type { EditorArguments, EditorValidationResult } from '../interfaces/index';
 import { integerValidator } from '../editorValidators/integerValidator';
 import { InputEditor } from './inputEditor';
-import { createDomElement } from '../services/domUtilities';
 import { getDescendantProperty } from '../services/utilities';
 
 export class IntegerEditor extends InputEditor {
@@ -34,7 +32,7 @@ export class IntegerEditor extends InputEditor {
       this._bindEventService.bind(this._input, 'focus', () => this._input?.select());
       this._bindEventService.bind(this._input, 'keydown', ((event: KeyboardEvent) => {
         this._lastInputKeyEvent = event;
-        if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT) {
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
           event.stopImmediatePropagation();
         }
       }) as EventListener);

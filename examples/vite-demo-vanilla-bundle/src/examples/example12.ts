@@ -1,37 +1,33 @@
 // import { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
 import {
   AutocompleterOption,
-  BindingEventService,
-  Column,
+  type Column,
   CompositeEditorModalType,
   Editors,
   EventNamingStyle,
   FieldType,
   Filters,
-  FlatpickrOption,
-  Formatter,
+  type FlatpickrOption,
+  type Formatter,
   Formatters,
-  GridOption,
-  LongTextEditorOption,
-  OnCompositeEditorChangeEventArgs,
-  SlickNamespace,
-  SliderOption,
+  type GridOption,
+  type LongTextEditorOption,
+  type OnCompositeEditorChangeEventArgs,
+  SlickGlobalEditorLock,
+  type SliderOption,
   SortComparers,
 
   // utilities
   formatNumber,
 } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { SlickerGridInstance } from '@slickgrid-universal/vanilla-bundle';
+import { type SlickerGridInstance } from '@slickgrid-universal/vanilla-bundle';
 import { VanillaForceGridBundle, Slicker } from '@slickgrid-universal/vanilla-force-bundle';
-import { CompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
-
+import { SlickCompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { ExampleGridOptions } from './example-grid-options';
 import countriesJson from './data/countries.json?raw';
 import './example12.scss';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
 
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator = (value, args) => {
@@ -57,7 +53,7 @@ function checkItemIsEditable(dataContext, columnDef, grid) {
   const isGridEditable = gridOptions.editable;
   let isEditable = (isGridEditable && hasEditor);
 
-  if (dataContext && columnDef && gridOptions && gridOptions.editable) {
+  if (dataContext && columnDef && gridOptions?.editable) {
     switch (columnDef.id) {
       case 'finish':
         // case 'percentComplete':
@@ -76,9 +72,16 @@ function checkItemIsEditable(dataContext, columnDef, grid) {
 }
 
 const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, dataContext, grid) => {
-  const isEditableLine = checkItemIsEditable(dataContext, columnDef, grid);
+  const isEditableItem = checkItemIsEditable(dataContext, columnDef, grid);
   value = (value === null || value === undefined) ? '' : value;
-  return isEditableLine ? `<div class="editing-field">${value}</div>` : value;
+  const divElm = document.createElement('div');
+  divElm.className = 'editing-field';
+  if (value instanceof HTMLElement) {
+    divElm.appendChild(value);
+  } else {
+    divElm.textContent = value;
+  }
+  return isEditableItem ? divElm : value;
 };
 
 export default class Example12 {
@@ -147,9 +150,9 @@ export default class Example12 {
     this.columnDefinitions = [
       {
         id: 'title', name: '<span title="Task must always be followed by a number" class="color-info mdi mdi-alert-circle"></span> Title', field: 'title', sortable: true, type: FieldType.string, minWidth: 75,
+        cssClass: 'text-bold text-uppercase',
         filterable: true, columnGroup: 'Common Factor',
         filter: { model: Filters.compoundInputText },
-        formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
         editor: {
           model: Editors.longText, massUpdate: false, required: true, alwaysSaveOnEnterKey: true,
           maxLength: 12,
@@ -243,9 +246,8 @@ export default class Example12 {
       },
       {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 75, maxWidth: 100,
-        sortable: true, filterable: true, columnGroup: 'Period',
-        formatter: Formatters.multiple,
-        params: { formatters: [Formatters.checkmarkMaterial, Formatters.center] },
+        sortable: true, filterable: true, columnGroup: 'Period', cssClass: 'text-center',
+        formatter: Formatters.checkmarkMaterial,
         exportWithFormatter: false,
         filter: {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
@@ -356,7 +358,7 @@ export default class Example12 {
       {
         id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
         excludeFromExport: true,
-        formatter: () => `<div class="button-style margin-auto" style="width: 35px; margin-top: -1px;"><span class="mdi mdi-dots-vertical mdi-22px color-primary"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-dots-vertical mdi-22px color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           commandTitle: 'Commands',
@@ -520,7 +522,7 @@ export default class Example12 {
     console.log('handleValidationError', event.detail);
     if (args.validationResults) {
       let errorMsg = args.validationResults.msg || '';
-      if (args?.editor instanceof CompositeEditor) {
+      if (args?.editor instanceof SlickCompositeEditor) {
         if (args.validationResults.errors) {
           errorMsg += '\n';
           for (const error of args.validationResults.errors) {
@@ -709,7 +711,7 @@ export default class Example12 {
   undoLastEdit(showLastEditor = false) {
     const lastEdit = this.editQueue.pop();
     const lastEditCommand = lastEdit?.editCommand;
-    if (lastEdit && lastEditCommand && Slick.GlobalEditorLock.cancelCurrentEdit()) {
+    if (lastEdit && lastEditCommand && SlickGlobalEditorLock.cancelCurrentEdit()) {
       lastEditCommand.undo();
 
       // remove unsaved css class from that cell
@@ -729,7 +731,7 @@ export default class Example12 {
   undoAllEdits() {
     for (const lastEdit of this.editQueue) {
       const lastEditCommand = lastEdit?.editCommand;
-      if (lastEditCommand && Slick.GlobalEditorLock.cancelCurrentEdit()) {
+      if (lastEditCommand && SlickGlobalEditorLock.cancelCurrentEdit()) {
         lastEditCommand.undo();
 
         // remove unsaved css class from that cell

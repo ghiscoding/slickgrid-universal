@@ -1,5 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { arrayRemoveItemByIndex } from '@slickgrid-universal/utils';
+import { arrayRemoveItemByIndex, calculateAvailableSpace, createDomElement, getOffsetRelativeToParent, getOffset, } from '@slickgrid-universal/utils';
 
 import { EmitterType } from '../enums/index';
 import type {
@@ -8,7 +8,6 @@ import type {
   DOMEvent,
   DOMMouseOrTouchEvent,
   HeaderMenu,
-  HeaderMenuCommandItem,
   HeaderMenuCommandItemCallbackArgs,
   HeaderMenuItems,
   HeaderMenuOption,
@@ -17,7 +16,7 @@ import type {
   MultiColumnSort,
   OnHeaderCellRenderedEventArgs,
 } from '../interfaces/index';
-import { calculateAvailableSpace, createDomElement, getElementOffsetRelativeToParent, getHtmlElementOffset, getTranslationPrefix } from '../services/index';
+import { getTranslationPrefix } from '../services/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import type { FilterService } from '../services/filter.service';
 import type { SharedService } from '../services/shared.service';
@@ -125,9 +124,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     this._activeHeaderColumnElm?.classList.remove('slick-header-column-active');
   }
 
-  repositionSubMenu(e: DOMMouseOrTouchEvent<HTMLElement>, item: HeaderMenuCommandItem, level: number, columnDef: Column) {
+  repositionSubMenu(e: DOMMouseOrTouchEvent<HTMLElement>, item: MenuCommandItem, level: number, columnDef: Column) {
     // creating sub-menu, we'll also pass level & the item object since we might have "subMenuTitle" to show
-    const subMenuElm = this.createCommandMenu(item.commandItems || item.items || [], columnDef, level + 1, item);
+    const subMenuElm = this.createCommandMenu(item.commandItems || [], columnDef, level + 1, item);
     document.body.appendChild(subMenuElm);
     this.repositionMenu(e, subMenuElm);
   }
@@ -139,10 +138,10 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       ? e.target.closest('.slick-menu-item') as HTMLDivElement
       : buttonElm as HTMLElement;
 
-    const relativePos = getElementOffsetRelativeToParent(this.sharedService.gridContainerElement, buttonElm);
+    const relativePos = getOffsetRelativeToParent(this.sharedService.gridContainerElement, buttonElm);
     const gridPos = this.grid.getGridPosition();
     const menuWidth = menuElm.offsetWidth;
-    const parentOffset = getHtmlElementOffset(parentElm);
+    const parentOffset = getOffset(parentElm);
     let menuOffsetLeft = isSubMenu ? parentOffset?.left ?? 0 : relativePos?.left ?? 0;
     let menuOffsetTop = isSubMenu
       ? parentOffset?.top ?? 0
@@ -221,10 +220,6 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     const column = args.column;
     const menu = column.header?.menu as HeaderMenuItems;
 
-    if (menu?.items) {
-      console.warn('[Slickgrid-Universal] Header Menu "items" property was deprecated in favor of "commandItems" to align with all other Menu plugins.');
-    }
-
     if (menu && args.node) {
       // run the override function (when defined), if the result is false we won't go further
       if (!this.extensionUtility.runOverrideFunctionWhenExists(this.addonOptions.menuUsabilityOverride, args)) {
@@ -283,10 +278,10 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   }
 
   protected handleMenuItemCommandClick(event: DOMMouseOrTouchEvent<HTMLDivElement>, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level = 0, columnDef?: Column): boolean | void {
-    if (item !== 'divider' && !item.disabled && !(item as HeaderMenuCommandItem).divider) {
-      const command = (item as HeaderMenuCommandItem).command || '';
+    if (item !== 'divider' && !item.disabled && !(item as MenuCommandItem).divider) {
+      const command = (item as MenuCommandItem).command || '';
 
-      if (command && !(item as HeaderMenuCommandItem).commandItems && !(item as HeaderMenuCommandItem).items) {
+      if (command && !(item as MenuCommandItem).commandItems) {
         const callbackArgs = {
           grid: this.grid,
           command: (item as MenuCommandItem).command,
@@ -315,16 +310,16 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         // Stop propagation so that it doesn't register as a header click event.
         event.preventDefault();
         event.stopPropagation();
-      } else if ((item as HeaderMenuCommandItem).commandItems || (item as HeaderMenuCommandItem).items) {
-        this.repositionSubMenu(event, item as HeaderMenuCommandItem, level, columnDef as Column);
+      } else if ((item as MenuCommandItem).commandItems) {
+        this.repositionSubMenu(event, item as MenuCommandItem, level, columnDef as Column);
       }
     }
   }
 
   protected handleMenuItemMouseOver(e: DOMMouseOrTouchEvent<HTMLElement>, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level = 0, columnDef?: Column) {
-    if (item !== 'divider' && !item.disabled && !(item as HeaderMenuCommandItem).divider) {
-      if ((item as HeaderMenuCommandItem).commandItems || (item as HeaderMenuCommandItem).items) {
-        this.repositionSubMenu(e, item as HeaderMenuCommandItem, level, columnDef as Column);
+    if (item !== 'divider' && !item.disabled && !(item as MenuCommandItem).divider) {
+      if ((item as MenuCommandItem).commandItems) {
+        this.repositionSubMenu(e, item as MenuCommandItem, level, columnDef as Column);
       } else if (level === 0) {
         this.disposeSubMenus();
       }
@@ -360,7 +355,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             // so only initialize the header menu without overwrite header buttons
             columnDef.header.menu = { commandItems: [] };
           }
-          const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef?.header?.menu?.commandItems ?? columnDef?.header?.menu?.items ?? [];
+          const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef?.header?.menu?.commandItems ?? [];
 
           // Freeze Column (pinning)
           let hasFrozenOrResizeCommand = false;
@@ -539,7 +534,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       grid: this.grid,
       column: columnDef,
       menu
-    } as unknown as HeaderMenuCommandItemCallbackArgs;
+    } as HeaderMenuCommandItemCallbackArgs;
 
     // execute optional callback method defined by the user, if it returns false then we won't go further and not open the grid menu
     if (typeof e.stopPropagation === 'function') {
@@ -550,7 +545,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     }
 
     // create 1st parent menu container & reposition it
-    this._menuElm = this.createCommandMenu((menu.commandItems || menu.items) as Array<HeaderMenuCommandItem | 'divider'>, columnDef);
+    this._menuElm = this.createCommandMenu((menu.commandItems) as Array<MenuCommandItem | 'divider'>, columnDef);
     this.grid.getContainerNode()?.appendChild(this._menuElm);
     this.repositionMenu(e, this._menuElm);
 
@@ -566,11 +561,11 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   }
 
   /** Create the menu or sub-menu(s) but without the column picker which is a separate single process */
-  protected createCommandMenu(commandItems: Array<HeaderMenuCommandItem | 'divider'>, columnDef: Column, level = 0, item?: HeaderMenuCommandItem | 'divider') {
+  protected createCommandMenu(commandItems: Array<MenuCommandItem | 'divider'>, columnDef: Column, level = 0, item?: MenuCommandItem | 'divider') {
     // to avoid having multiple sub-menu trees opened
     // we need to somehow keep trace of which parent menu the tree belongs to
     // and we should keep ref of only the first sub-menu parent, we can use the command name (remove any whitespaces though)
-    const subMenuCommand = (item as HeaderMenuCommandItem)?.command;
+    const subMenuCommand = (item as MenuCommandItem)?.command;
     let subMenuId = (level === 1 && subMenuCommand) ? subMenuCommand.replace(/\s/g, '') : '';
     if (subMenuId) {
       this._subMenuParentId = subMenuId;
@@ -615,7 +610,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
     // when creating sub-menu also add its sub-menu title when exists
     if (item && level > 0) {
-      this.addSubMenuTitleWhenExists(item as HeaderMenuCommandItem, commandMenuElm); // add sub-menu title when exists
+      this.addSubMenuTitleWhenExists(item as MenuCommandItem, commandMenuElm); // add sub-menu title when exists
     }
 
     this.populateCommandOrOptionItems(
@@ -640,8 +635,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
    */
   protected resetHeaderMenuTranslations(columnDefinitions: Column[]) {
     columnDefinitions.forEach((columnDef: Column) => {
-      if ((columnDef?.header?.menu?.commandItems ?? columnDef?.header?.menu?.items) && !columnDef.excludeFromHeaderMenu) {
-        const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef.header.menu.commandItems || columnDef.header.menu.items || [];
+      if (columnDef?.header?.menu?.commandItems && !columnDef.excludeFromHeaderMenu) {
+        const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef.header.menu.commandItems || [];
         this.extensionUtility.translateMenuItemsFromTitleKey(columnHeaderMenuItems);
       }
     });

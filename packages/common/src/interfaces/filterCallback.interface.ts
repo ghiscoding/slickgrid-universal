@@ -1,4 +1,4 @@
-import type { Column, SlickEventData } from './index';
+import type { Column } from './index';
 import type { OperatorString, OperatorType, SearchTerm } from '../enums/index';
 
 export interface FilterCallbackArg {
@@ -27,4 +27,4 @@ export interface FilterCallbackArg {
   shouldTriggerQuery?: boolean;
 }
 
-export type FilterCallback = (e: Event | SlickEventData | undefined, args: FilterCallbackArg) => void;
+export type FilterCallback = (e: Event | undefined, args: FilterCallbackArg) => void;

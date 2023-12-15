@@ -34,3 +34,11 @@
     @include recolor(#686868, 0.9);
   }
 }
+.display-inline-block {
+  display: inline-block;
+}
+
+// font-5px up to font-50px
+@for $i from 1 through 6 {
+  .width-#{$i*15}px { width: #{$i * 15}px; }
+}

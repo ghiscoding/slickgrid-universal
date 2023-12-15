@@ -1,22 +1,16 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { createDomElement, findWidthOrDefault, getOffset } from '@slickgrid-universal/utils';
 
 import type { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
 import type {
   Column,
   DragRowMove,
-  FormatterResultObject,
+  FormatterResultWithHtml,
   GridOption,
   RowMoveManager,
   RowMoveManagerOption,
-  SlickEventData,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
 } from '../interfaces/index';
-import { createDomElement, findWidthOrDefault, getHtmlElementOffset } from '../services/domUtilities';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
+import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
 
 /**
  * Row Move Manager options:
@@ -30,12 +24,15 @@ declare const Slick: SlickNamespace;
  *
  */
 export class SlickRowMoveManager {
+  onBeforeMoveRows = new SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>();
+  onMoveRows = new SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>();
+  pluginName: 'RowMoveManager' = 'RowMoveManager' as const;
+
   protected _addonOptions!: RowMoveManager;
   protected _canvas!: HTMLElement;
   protected _dragging = false;
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
-  protected _handler = new Slick.EventHandler();
   protected _usabilityOverride?: UsabilityOverrideFn;
   protected _defaults = {
     autoScroll: true,
@@ -51,17 +48,14 @@ export class SlickRowMoveManager {
     singleRowMove: false,
     width: 40,
   } as RowMoveManagerOption;
-  onBeforeMoveRows = new Slick.Event<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>();
-  onMoveRows = new Slick.Event<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>();
-  pluginName: 'RowMoveManager' = 'RowMoveManager' as const;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(protected readonly pubSubService: BasePubSubService) {
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
   }
 
   get addonOptions(): RowMoveManagerOption {
-    return this._addonOptions as RowMoveManagerOption;
+    return this._addonOptions;
   }
 
   get eventHandler(): SlickEventHandler {
@@ -70,7 +64,7 @@ export class SlickRowMoveManager {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return this._grid?.getOptions?.() ?? {};
+    return this._grid?.getOptions() ?? {};
   }
 
   /** Initialize plugin. */
@@ -163,12 +157,12 @@ export class SlickRowMoveManager {
   // protected functions
   // ------------------
 
-  protected handleDragInit(e: SlickEventData) {
+  protected handleDragInit(e: MouseEvent) {
     // prevent the grid from cancelling drag'n'drop by default
     e.stopImmediatePropagation();
   }
 
-  protected handleDragEnd(e: SlickEventData, dd: DragRowMove) {
+  protected handleDragEnd(e: MouseEvent, dd: DragRowMove) {
     if (!this._dragging) {
       return;
     }
@@ -193,12 +187,13 @@ export class SlickRowMoveManager {
     }
   }
 
-  protected handleDrag(e: SlickEventData, dd: DragRowMove): boolean | void {
+  protected handleDrag(evt: SlickEventData, dd: DragRowMove): boolean | void {
     if (this._dragging) {
-      e.stopImmediatePropagation();
+      evt.stopImmediatePropagation();
+      const e = evt.getNativeEvent<MouseEvent | TouchEvent>();
 
       const targetEvent: MouseEvent | Touch = (e as TouchEvent)?.touches?.[0] ?? e;
-      const top = targetEvent.pageY - (getHtmlElementOffset(this._canvas)?.top ?? 0);
+      const top = targetEvent.pageY - (getOffset(this._canvas)?.top ?? 0);
       dd.selectionProxy.style.top = `${top - 5}px`;
       dd.selectionProxy.style.display = 'block';
 
@@ -316,11 +311,13 @@ export class SlickRowMoveManager {
     return true;
   }
 
-  protected moveIconFormatter(row: number, cell: number, value: any, column: Column, dataContext: any, grid: SlickGrid): FormatterResultObject | string {
+  protected moveIconFormatter(row: number, cell: number, value: any, column: Column, dataContext: any, grid: SlickGrid): FormatterResultWithHtml | string {
     if (!this.checkUsabilityOverride(row, dataContext, grid)) {
       return '';
     } else {
-      return { addClasses: `cell-reorder dnd ${this._addonOptions.cssClass || ''}`, text: '' };
+      const iconElm = document.createElement('div');
+      iconElm.className = this._addonOptions.cssClass || '';
+      return { addClasses: `cell-reorder dnd ${this._addonOptions.cssClass || ''}`, html: iconElm };
     }
   }
 }

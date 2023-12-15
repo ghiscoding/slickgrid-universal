@@ -5,19 +5,18 @@ import type {
   CellArgs,
   Column,
   CurrentPinning,
-  SlickDataView,
   GridOption,
   GridServiceDeleteOption,
   GridServiceInsertOption,
   GridServiceUpdateOption,
   HideColumnOption,
   OnEventArgs,
-  SlickGrid,
 } from '../interfaces/index';
 import type { FilterService } from './filter.service';
 import type { GridStateService } from './gridState.service';
 import type { PaginationService } from '../services/pagination.service';
 import type { SharedService } from './shared.service';
+import type { SlickDataView, SlickGrid } from '../core/index';
 import type { SortService } from './sort.service';
 import type { TreeDataService } from './treeData.service';
 import { SlickRowSelectionModel } from '../extensions/slickRowSelectionModel';
@@ -45,12 +44,12 @@ export class GridService {
 
   /** Getter of SlickGrid DataView object */
   get _dataView(): SlickDataView {
-    return (this._grid?.getData && this._grid.getData()) as SlickDataView;
+    return this._grid?.getData<SlickDataView>();
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get _gridOptions(): GridOption {
-    return (this._grid?.getOptions) ? this._grid.getOptions() : {};
+    return this._grid?.getOptions() ?? {};
   }
 
   dispose() {
@@ -148,11 +147,11 @@ export class GridService {
   }
 
   /** Get data item by it's row index number */
-  getDataItemByRowNumber<T = any>(rowNumber: number): T {
+  getDataItemByRowNumber(rowNumber: number) {
     if (!this._grid || typeof this._grid.getDataItem !== 'function') {
       throw new Error(`[Slickgrid-Universal] We could not find SlickGrid Grid object or it's "getDataItem" method`);
     }
-    return this._grid.getDataItem<T>(rowNumber);
+    return this._grid.getDataItem(rowNumber);
   }
 
   /** Chain the item Metadata with our implementation of Metadata at given row index */
@@ -161,7 +160,7 @@ export class GridService {
       const item = this._dataView.getItem(rowNumber);
       let meta = { cssClasses: '' };
       if (typeof previousItemMetadata === 'function') {
-        meta = previousItemMetadata(rowNumber);
+        meta = previousItemMetadata.call(this._dataView, rowNumber);
       }
 
       if (!meta) {
@@ -719,7 +718,7 @@ export class GridService {
     });
 
     // Update the items in the dataView, note that the itemIds must be in the same order as the items
-    this._dataView.updateItems<T>(itemIds, items);
+    this._dataView.updateItems(itemIds, items);
 
     // end the bulk transaction since we're all done
     this._dataView.endUpdate();
@@ -769,7 +768,7 @@ export class GridService {
 
     if (this._dataView.getIdxById(itemId) !== undefined) {
       // Update the item itself inside the dataView
-      this._dataView.updateItem<T>(itemId, item);
+      this._dataView.updateItem(itemId, item);
       if (rowNumber !== undefined) {
         this._grid.updateRow(rowNumber);
       }

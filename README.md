@@ -11,8 +11,14 @@
 [![jest](https://jestjs.io/img/jest-badge.svg)](https://github.com/facebook/jest)
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
+### Documentation
+[Documentation](https://ghiscoding.gitbook.io/slickgrid-universal/) website powered by GitBook
+
+### Live Demo
+[Live Demo](https://ghiscoding.github.io/slickgrid-universal/) website
+
 ### Description
-This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces)) which is regrouping a few packages under a single repository. It is using and requiring SlickGrid core library (more specifically the [6pac/SlickGrid](https://github.com/6pac/SlickGrid/) fork) and behind the scene (the "Why?" is simply because there is no need to rewrite the core library itself, in other words this is a wrapper library). The main goal of this library is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). The original SlickGrid is like an IKEA product that requires assembling everything yourself, however in this project here, we offer an all assembled product including a lot more available Editors, Filters, OData, GraphQL, ... and SlickGrid simply does not offer that by default. See below for more project details.
+This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces)) which is regrouping a few packages under a single repository. It originally required SlickGrid as a dependency but that is no longer the case and is now a standalone library. The main goal of this project is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any Framework (it is framework agnostic). The original SlickGrid is like an IKEA product that requires assembling everything yourself, however in this project here, we offer an all assembled product including a set of built-in Editors, Filters, Formatters and some optional pieces like OData, GraphQL, ... and SlickGrid simply did not offer that by default. See below for more project details.
 
 ### Why create this monorepo?
 Below is a list of reasons why this project was created and why it is a monorepo project:
@@ -44,10 +50,10 @@ The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2
 | [Slickgrid-Universal-WebPack-Demo](https://github.com/ghiscoding/slickgrid-universal-webpack-demo) | [demo](https://ghiscoding.github.io/slickgrid-universal-webpack-demo) | Bulma | Slickgrid-Universal demo with WebPack & TypeScript (**demo purposes only**) |
 | [Slickgrid-Universal-Vite-Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) | [demo](https://ghiscoding.github.io/slickgrid-universal-vite-demo) | Bulma | Slickgrid-Universal demo with Vite & TypeScript (**demo purposes only**) |
 
-The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) is a Vanilla Implementation (which is not associated to any framework) built with [ViteJS](https://vitejs.dev/) (originally [WebPack](https://webpack.js.org/)) and is also used by [Cypress](https://www.cypress.io/) for E2E testing all the UI functionalities. The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle), which extends the [vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package is also what we use in our SalesForce implementation (with Lightning Web Component), which was the original reason to create this monorepo library and avoid code duplication.
+The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) is a Vanilla Implementation (which is not associated to any framework) built with [ViteJS](https://vitejs.dev/) (originally [WebPack](https://webpack.js.org/)) and is also used to run the E2E tests with [Cypress](https://www.cypress.io/) for testing all UI functionalities. The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle), which extends the [vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package is also what we use in our SalesForce implementation (with Lightning Web Component), which was the original reason to create this monorepo library and avoid code duplication.
 
 ### Fully Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has **100%** Unit Test Coverage, about +4,000 Jest unit tests and also +500 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementation also have an additional 500 tests), the goal is to test everything and offer peace of mind that whenever a new PR is opened, we have tests to cover them.
+Slickgrid-Universal has **100%** Unit Test Coverage, about +4,000 Jest unit tests and also +500 Cypress E2E tests to cover all [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementation also have an additional 500 tests), the goal is to test everything and offer peace of mind that all the code that goes in is fully tested and we have tests to cover them.
 
 ### Available Public Packages
 

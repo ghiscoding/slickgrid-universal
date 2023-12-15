@@ -1,11 +1,11 @@
 import { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
 
-import { DelimiterType, FileType, GridAutosizeColsMode, OperatorType } from './enums/index';
+import { DelimiterType, FileType, OperatorType } from './enums/index';
 import type { Column, EmptyWarning, GridOption, TreeDataOption } from './interfaces/index';
 import { Filters } from './filters';
 
 /** Global Grid Options Defaults */
-export const GlobalGridOptions: GridOption = {
+export const GlobalGridOptions: Partial<GridOption> = {
   alwaysShowVerticalScroll: true,
   autoEdit: false,
   asyncEditorLoading: false,
@@ -29,7 +29,6 @@ export const GlobalGridOptions: GridOption = {
   },
   columnGroupSeparator: ' - ',
   columnPicker: {
-    fadeSpeed: 0,
     hideForceFitButton: false,
     hideSyncResizeButton: true,
     headerColumnValueExtractor: pickerHeaderColumnValueExtractor
@@ -114,8 +113,6 @@ export const GlobalGridOptions: GridOption = {
   defaultFilterPlaceholder: '🔎︎',
   defaultFilterRangeOperator: OperatorType.rangeInclusive,
   defaultColumnSortFieldId: 'id',
-  defaultComponentEventPrefix: '',
-  defaultSlickgridEventPrefix: '',
   draggableGrouping: {
     hideToggleAllButton: false,
     toggleAllButtonText: '',
@@ -172,7 +169,6 @@ export const GlobalGridOptions: GridOption = {
     sanitizeDataExport: true,
     useUtf8WithBom: true
   },
-  gridAutosizeColsMode: GridAutosizeColsMode.none,
   eventNamingStyle: EventNamingStyle.lowerCase,
   forceFitColumns: false,
   frozenHeaderWidthCalcDifferential: 1,
@@ -262,6 +258,7 @@ export const GlobalGridOptions: GridOption = {
     maxItemToInspectSingleColumnWidthByContent: 5000,
     widthToRemoveFromExceededWidthReadjustment: 50,
   },
+  sanitizerOptions: { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }, // our default DOMPurify options
   treeDataOptions: {
     exportIndentMarginLeft: 5,
     exportIndentationLeadingChar: '͏͏͏͏͏͏͏͏͏·',

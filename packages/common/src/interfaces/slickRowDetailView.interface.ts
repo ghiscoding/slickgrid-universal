@@ -1,6 +1,17 @@
-import type { Column, GridOption, RowDetailViewOption, SlickEvent, SlickGrid, } from './index';
+import type {
+  Column,
+  GridOption,
+  OnAfterRowDetailToggleArgs,
+  OnBeforeRowDetailToggleArgs,
+  OnRowBackToViewportRangeArgs,
+  OnRowDetailAsyncEndUpdateArgs,
+  OnRowDetailAsyncResponseArgs,
+  OnRowOutOfViewportRangeArgs,
+  RowDetailViewOption,
+} from './index';
 import type { ContainerService } from '../services/container.service';
-import type { UsabilityOverrideFn } from '../enums';
+import type { UsabilityOverrideFn } from '../enums/index';
+import type { SlickEvent, SlickGrid } from '../core/index';
 
 /** A plugin to add row detail panel. */
 export interface SlickRowDetailView {
@@ -13,7 +24,7 @@ export interface SlickRowDetailView {
   dispose(): void;
 
   /** Create the plugin */
-  create(columnDefinitions: Column[], gridOptions: GridOption): SlickRowDetailView | null;
+  create(columnDefinitions: Column[], gridOptions?: GridOption): SlickRowDetailView | null;
 
   /** Collapse all of the open items */
   collapseAll(): void;
@@ -58,20 +69,20 @@ export interface SlickRowDetailView {
   // Events
 
   /** Fired when the async response finished */
-  onAsyncEndUpdate?: SlickEvent<{ item: any; grid: SlickGrid; }>;
+  onAsyncEndUpdate?: SlickEvent<OnRowDetailAsyncEndUpdateArgs>;
 
   /** This event must be used with the "notify" by the end user once the Asynchronous Server call returns the item detail */
-  onAsyncResponse?: SlickEvent<{ item: any; detailView?: any }>;
+  onAsyncResponse?: SlickEvent<OnRowDetailAsyncResponseArgs>;
 
   /** Fired after the row detail gets toggled */
-  onAfterRowDetailToggle?: SlickEvent<{ item: any; expandedRows: Array<number | string>; grid: SlickGrid; }>;
+  onAfterRowDetailToggle?: SlickEvent<OnAfterRowDetailToggleArgs>;
 
   /** Fired before the row detail gets toggled */
-  onBeforeRowDetailToggle?: SlickEvent<{ item: any; grid: SlickGrid; }>;
+  onBeforeRowDetailToggle?: SlickEvent<OnBeforeRowDetailToggleArgs>;
 
   /** Fired after the row detail gets toggled */
-  onRowBackToViewportRange?: SlickEvent<{ item: any; rowId: number | string; rowIndex: number; expandedRows: Array<number | string>; rowIdsOutOfViewport: Array<number | string>; grid: SlickGrid; }>;
+  onRowBackToViewportRange?: SlickEvent<OnRowBackToViewportRangeArgs>;
 
   /** Fired after a row becomes out of viewport range (user can't see the row anymore) */
-  onRowOutOfViewportRange?: SlickEvent<{ item: any; rowId: number | string; rowIndex: number; expandedRows: Array<number | string>; rowIdsOutOfViewport: Array<number | string>; grid: SlickGrid; }>;
+  onRowOutOfViewportRange?: SlickEvent<OnRowOutOfViewportRangeArgs>;
 }

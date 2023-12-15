@@ -1,8 +1,8 @@
 {
   "name": "@slickgrid-universal/common",
-  "version": "3.7.2",
+  "version": "4.0.1-alpha.1",
   "description": "SlickGrid-Universal Common Code",
-  "main": "./dist/commonjs/index.js",
+  "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "index.d.ts",
   "typesVersions": {
@@ -15,8 +15,8 @@
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "node": "./dist/commonjs/index.js",
-      "require": "./dist/commonjs/index.js",
+      "node": "./dist/cjs/index.js",
+      "require": "./dist/cjs/index.js",
       "default": "./dist/esm/index.js"
     },
     "./dist/styles/*": "./dist/styles/*",
@@ -46,10 +46,10 @@
     "build:incremental": "tsc --incremental --declaration",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "dev": "node build-watch.mjs",
-    "bundle": "pnpm bundle:commonjs",
+    "bundle": "pnpm bundle:cjs",
     "postbundle": "run-s sass:build sass:copy",
-    "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
-    "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
+    "bundle:cjs": "tsc --project tsconfig.bundle.json --outDir dist/cjs --module commonjs",
+    "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2021",
     "bundle:types": "tsc --emitDeclarationOnly --declarationMap --outDir dist/types",
     "sass-build-task:scss-compile:bootstrap": "sass src/styles/slickgrid-theme-bootstrap.scss dist/styles/css/slickgrid-theme-bootstrap.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
     "sass-build-task:scss-compile:material": "sass src/styles/slickgrid-theme-material.scss dist/styles/css/slickgrid-theme-material.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
@@ -73,6 +73,7 @@
     "not dead"
   ],
   "dependencies": {
+    "@slickgrid-universal/binding": "workspace:~",
     "@slickgrid-universal/event-pub-sub": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
     "autocompleter": "^9.1.2",
@@ -80,8 +81,7 @@
     "dompurify": "^3.0.6",
     "flatpickr": "^4.6.13",
     "moment-mini": "^2.29.4",
-    "multiple-select-vanilla": "^0.6.3",
-    "slickgrid": "^4.1.7",
+    "multiple-select-vanilla": "^1.1.1",
     "sortablejs": "^1.15.1",
     "un-flatten-tree": "^2.0.12"
   },
@@ -98,8 +98,7 @@
     "sass": "^1.69.5"
   },
   "engines": {
-    "node": ">=16.15.0",
-    "npm": ">=8.5.0"
+    "node": "^18.0.0 || >=20.0.0"
   },
   "funding": {
     "type": "ko_fi",

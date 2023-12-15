@@ -1,4 +1,5 @@
-import { toSentenceCase } from '@slickgrid-universal/utils';
+import { BindingEventService } from '@slickgrid-universal/binding';
+import { createDomElement, emptyElement, toSentenceCase } from '@slickgrid-universal/utils';
 
 import type {
   Column,
@@ -7,12 +8,10 @@ import type {
   FilterArguments,
   FilterCallback,
   GridOption,
-  SlickGrid,
 } from '../interfaces/index';
 import { OperatorType, type OperatorString, type SearchTerm } from '../enums/index';
-import { createDomElement, emptyElement, } from '../services/domUtilities';
 import type { TranslaterService } from '../services/translater.service';
-import { BindingEventService } from '../services/bindingEvent.service';
+import { type SlickGrid } from '../core/index';
 
 export class NativeSelectFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -42,7 +41,7 @@ export class NativeSelectFilter implements Filter {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get gridOptions(): GridOption {
-    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+    return this.grid?.getOptions() ?? {};
   }
 
   /** Getter for the current Operator */

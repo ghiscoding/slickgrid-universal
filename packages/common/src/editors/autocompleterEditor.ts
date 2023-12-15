@@ -1,11 +1,10 @@
-import * as autocompleter_ from 'autocompleter';
-const autocomplete = (autocompleter_ && autocompleter_['default'] || autocompleter_) as <T extends AutocompleteItem>(settings: AutocompleteSettings<T>) => AutocompleteResult; // patch for rollup
-
+import autocompleter from 'autocompleter';
 import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
-import { isObject, isPrimitiveValue, setDeepValue, toKebabCase } from '@slickgrid-universal/utils';
+import { BindingEventService } from '@slickgrid-universal/binding';
+import { createDomElement, isObject, isPrimitiveValue, setDeepValue, toKebabCase } from '@slickgrid-universal/utils';
 
 import { Constants } from './../constants';
-import { FieldType, KeyCode, } from '../enums/index';
+import { FieldType } from '../enums/index';
 import type {
   AutocompleterOption,
   AutocompleteSearchItem,
@@ -19,23 +18,17 @@ import type {
   EditorValidator,
   EditorValidationResult,
   GridOption,
-  SlickGrid,
-  SlickNamespace,
   Locale,
 } from '../interfaces/index';
 import { textValidator } from '../editorValidators/textValidator';
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter';
-import { getEditorOptionByName } from './editorUtilities';
-import { createDomElement, sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
+import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 import { findOrDefault, getDescendantProperty, } from '../services/utilities';
-import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
+import { SlickEventData, type SlickGrid } from '../core/index';
 
 // minimum length of chars to type before starting to start querying
 const MIN_LENGTH = 3;
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
 
 /*
  * An example of a 'detached' editor.
@@ -129,7 +122,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef?.internalColumnEditor || {};
+    return this.columnDef?.internalColumnEditor || {} as ColumnEditor;
   }
 
   /** Getter for the Custom Structure if exist */
@@ -156,7 +149,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return this.grid?.getOptions?.() ?? {};
+    return this.grid?.getOptions() ?? {};
   }
 
   /** Kraaden AutoComplete instance */
@@ -301,8 +294,8 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
   isValueChanged(): boolean {
     const elmValue = this._inputElm.value;
-    const lastKeyCodeEvent = this._lastInputKeyEvent?.keyCode;
-    if (this.columnEditor?.alwaysSaveOnEnterKey && (lastKeyCodeEvent === KeyCode.ENTER)) {
+    const lastEventKey = this._lastInputKeyEvent?.key;
+    if (this.columnEditor?.alwaysSaveOnEnterKey && lastEventKey === 'Enter') {
       return true;
     }
     const isValueChanged = (!(elmValue === '' && (this._defaultTextValue === null || this._defaultTextValue === undefined))) && (elmValue !== this._defaultTextValue);
@@ -461,7 +454,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     }
     grid.onCompositeEditorChange.notify(
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
-      { ...new Slick.EventData(), ...event }
+      { ...new SlickEventData(), ...event as Event }
     );
   }
 
@@ -491,7 +484,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       // if user wants to hook to the "select", he can do via this "onSelect"
       // its signature is purposely similar to the "onSelect" callback + some extra arguments (row, cell, column, dataContext)
       if (typeof this.editorOptions.onSelectItem === 'function') {
-        const { row, cell } = this.grid.getActiveCell();
+        const { row, cell } = this.grid.getActiveCell() || {};
         this.editorOptions.onSelectItem(item, row, cell, this.args.column, this.args.item);
       }
 
@@ -509,11 +502,8 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     const templateString = this._autocompleterOptions?.renderItem?.templateCallback(item) ?? '';
 
     // sanitize any unauthorized html tags like script and others
-    // for the remaining allowed tags we'll permit all attributes
-    const sanitizedTemplateText = sanitizeTextByAvailableSanitizer(this.gridOptions, templateString) || '';
-
     const tmpElm = document.createElement('div');
-    tmpElm.innerHTML = sanitizedTemplateText;
+    this.grid.applyHtmlCode(tmpElm, templateString);
     return tmpElm;
   }
 
@@ -556,7 +546,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     this._editorInputGroupElm.appendChild(document.createElement('span'));
 
     // show clear date button (unless user specifically doesn't want it)
-    if (!getEditorOptionByName<AutocompleterOption, 'hideClearButton'>(this.columnEditor, 'hideClearButton', undefined, 'autocomplete')) {
+    if (!(this.columnEditor.editorOptions as AutocompleterOption)?.hideClearButton) {
       closeButtonGroupElm.appendChild(this._clearButtonElm);
       this._editorInputGroupElm.appendChild(closeButtonGroupElm);
       this._bindEventService.bind(this._clearButtonElm, 'click', () => this.clear());
@@ -565,14 +555,14 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     this._bindEventService.bind(this._inputElm, 'focus', () => this._inputElm?.select());
     this._bindEventService.bind(this._inputElm, 'keydown', ((event: KeyboardEvent) => {
       this._lastInputKeyEvent = event;
-      if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT || event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
         event.stopImmediatePropagation();
       }
 
       // in case the user wants to save even an empty value,
       // we need to subscribe to the onKeyDown event for that use case and clear the current value
       if (this.columnEditor.alwaysSaveOnEnterKey) {
-        if (event.keyCode === KeyCode.ENTER || event.key === 'Enter') {
+        if (event.key === 'Enter') {
           this._currentValue = null;
         }
       }
@@ -649,9 +639,9 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       addAutocompleteLoadingByOverridingFetch(this._inputElm, this._autocompleterOptions);
 
       // create the Kraaden AutoComplete
-      this._instance = autocomplete(this._autocompleterOptions as AutocompleteSettings<any>);
+      this._instance = autocompleter(this._autocompleterOptions as AutocompleteSettings<any>);
     } else {
-      this._instance = autocomplete({
+      this._instance = autocompleter({
         ...this._autocompleterOptions,
         fetch: (searchTerm, updateCallback) => {
           if (finalCollection) {

@@ -1,15 +1,14 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy } from '@slickgrid-universal/utils';
+import { type SlickDataView, SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
 
 import { DelimiterType, FileType } from '../../enums/index';
-import { ContextMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, SlickDataView, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import type { ContextMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, Formatter } from '../../interfaces/index';
 import { BackendUtilityService, ExcelExportService, SharedService, TextExportService, TreeDataService, } from '../../services/index';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 import { Formatters } from '../../formatters';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SlickContextMenu } from '../slickContextMenu';
-
-declare const Slick: SlickNamespace;
 
 const removeExtraSpaces = (textS) => `${textS}`.replace(/[\n\r]\s+/g, '');
 
@@ -112,10 +111,10 @@ const gridStub = {
   setOptions: jest.fn(),
   setSortColumns: jest.fn(),
   updateColumnHeader: jest.fn(),
-  onClick: new Slick.Event(),
-  onContextMenu: new Slick.Event(),
-  onScroll: new Slick.Event(),
-  onSort: new Slick.Event(),
+  onClick: new SlickEvent(),
+  onContextMenu: new SlickEvent(),
+  onScroll: new SlickEvent(),
+  onSort: new SlickEvent(),
 } as unknown as SlickGrid;
 
 const dataViewStub = {
@@ -160,6 +159,7 @@ describe('ContextMenu Plugin', () => {
   let translateService: TranslateServiceStub;
   let plugin: SlickContextMenu;
   let sharedService: SharedService;
+  const myUppercaseFormatter: Formatter = (_row, _cell, value) => value !== undefined ? { text: String(value).toUpperCase() } : '';
 
   beforeEach(() => {
     backendUtilityService = new BackendUtilityService();
@@ -221,7 +221,7 @@ describe('ContextMenu Plugin', () => {
     beforeEach(() => {
       slickCellElm = document.createElement('div');
       slickCellElm.className = 'slick-cell';
-      eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+      eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
       eventData.target = slickCellElm;
 
       jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
@@ -760,7 +760,7 @@ describe('ContextMenu Plugin', () => {
       beforeEach(() => {
         slickCellElm = document.createElement('div');
         slickCellElm.className = 'slick-cell';
-        eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+        eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
         eventData.target = slickCellElm;
 
         jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
@@ -828,7 +828,7 @@ describe('ContextMenu Plugin', () => {
 
       it('should call "copyToClipboard", WITH export formatter, when the command triggered is "copy"', () => {
         const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: false, enableTextExport: false, excelExportOptions: { exportWithFormatter: true } } as GridOption;
-        const columnMock = { id: 'firstName', name: 'First Name', field: 'firstName', formatter: Formatters.uppercase } as Column;
+        const columnMock = { id: 'firstName', name: 'First Name', field: 'firstName', formatter: myUppercaseFormatter } as Column;
         const dataContextMock = { id: 123, firstName: 'John', lastName: 'Doe', age: 50 };
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         const execSpy = jest.spyOn(window.document, 'execCommand');

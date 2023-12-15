@@ -1,6 +1,7 @@
 import { InputFilter } from '../inputFilter';
-import { GridOption, FilterArguments, Column, SlickGrid, BackendServiceApi } from '../../interfaces/index';
+import { BackendServiceApi, Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { Filters } from '../filters.index';
+import { SlickGrid } from '../../core/index';
 
 const containerId = 'demo-container';
 
@@ -40,7 +41,7 @@ describe('InputFilter', () => {
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
 
-    filter = new InputFilter();
+    filter = new InputFilter({} as any);
   });
 
   afterEach(() => {

@@ -1,13 +1,13 @@
-import { CustomFooterOption, GridOption, SlickGrid } from '@slickgrid-universal/common';
-import { SlickFooterComponent } from './slick-footer.component';
+import 'jest-extended';
+import { CustomFooterOption, GridOption, SlickEvent, type SlickGrid } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
+
+import { SlickFooterComponent } from './slick-footer.component';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 
 function removeExtraSpaces(text: string) {
   return `${text}`.replace(/\s{2,}/g, '');
 }
-
-declare const Slick: any;
 
 const mockGridOptions = {
   enableTranslate: false,
@@ -15,9 +15,10 @@ const mockGridOptions = {
 } as GridOption;
 
 const gridStub = {
+  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   getOptions: () => mockGridOptions,
   getUID: () => 'slickgrid_123456',
-  onSelectedRowsChanged: new Slick.Event(),
+  onSelectedRowsChanged: new SlickEvent(),
   registerPlugin: jest.fn(),
 } as unknown as SlickGrid;
 
@@ -188,7 +189,7 @@ describe('Slick-Footer Component', () => {
 
     it('should throw an error when enabling translate without a Translate Service', () => {
       mockGridOptions.enableTranslate = true;
-      expect(() => new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, null))
+      expect(() => new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, null as any))
         .toThrow('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     });
 
@@ -263,7 +264,7 @@ describe('Slick-Footer Component', () => {
       component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
-      gridStub.onSelectedRowsChanged.notify({ rows: [1], grid: gridStub, previousSelectedRows: [] });
+      gridStub.onSelectedRowsChanged.notify({ rows: [1], grid: gridStub, previousSelectedRows: [] } as any);
 
       const footerContainerElm = document.querySelector('div.slick-custom-footer.slickgrid_123456') as HTMLDivElement;
       const leftFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.left-footer') as HTMLSpanElement;
@@ -280,17 +281,17 @@ describe('Slick-Footer Component', () => {
           <span class="item-count">7</span><span class="text-of">some of</span><span class="total-count">99</span>
           <span class="text-items">some items</span>`));
 
-      gridStub.onSelectedRowsChanged.notify({ rows: [1, 2, 3, 4, 5], grid: gridStub, previousSelectedRows: [] });
+      gridStub.onSelectedRowsChanged.notify({ rows: [1, 2, 3, 4, 5], grid: gridStub, previousSelectedRows: [] } as any);
       expect(leftFooterElm.innerHTML).toBe('5 items selected');
     });
 
     it('should not not display row selection count after triggering "onSelectedRowsChanged" event when "hideRowSelectionCount" is set to True', () => {
       mockGridOptions.enableCheckboxSelector = true;
-      mockGridOptions.customFooterOptions.hideRowSelectionCount = true;
+      mockGridOptions.customFooterOptions!.hideRowSelectionCount = true;
       component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
       component.metrics = { startTime: mockTimestamp, endTime: mockTimestamp, itemCount: 7, totalItemCount: 99 };
-      gridStub.onSelectedRowsChanged.notify({ rows: [1], grid: gridStub, previousSelectedRows: [] });
+      gridStub.onSelectedRowsChanged.notify({ rows: [1], grid: gridStub, previousSelectedRows: [] } as any);
 
       const footerContainerElm = document.querySelector('div.slick-custom-footer.slickgrid_123456') as HTMLDivElement;
       const leftFooterElm = document.querySelector('div.slick-custom-footer.slickgrid_123456 > div.left-footer') as HTMLSpanElement;
@@ -312,12 +313,12 @@ describe('Slick-Footer Component', () => {
       mockGridOptions.enableCheckboxSelector = true;
       component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
-      gridStub.onSelectedRowsChanged.notify({ rows: [1], previousSelectedRows: [], grid: gridStub, });
+      gridStub.onSelectedRowsChanged.notify({ rows: [1], previousSelectedRows: [], grid: gridStub, } as any);
 
       expect(component).toBeTruthy();
       expect(component.leftFooterText).toEqual('1 items selected');
 
-      gridStub.onSelectedRowsChanged.notify({ rows: [1, 2, 3, 4, 5], previousSelectedRows: [], grid: gridStub, });
+      gridStub.onSelectedRowsChanged.notify({ rows: [1, 2, 3, 4, 5], previousSelectedRows: [], grid: gridStub, } as any);
       expect(component.leftFooterText).toEqual('5 items selected');
     });
 
@@ -329,18 +330,18 @@ describe('Slick-Footer Component', () => {
       component = new SlickFooterComponent(gridStub, mockGridOptions.customFooterOptions as CustomFooterOption, eventPubSubService, translateService);
       component.renderFooter(div);
 
-      gridStub.onSelectedRowsChanged.notify({ rows: [1], previousSelectedRows: [], grid: gridStub, });
+      gridStub.onSelectedRowsChanged.notify({ rows: [1], previousSelectedRows: [], grid: gridStub, } as any);
       expect(component.leftFooterText).toEqual('1 éléments sélectionnés');
 
-      gridStub.onSelectedRowsChanged.notify({ rows: [1, 2, 3, 4, 5], previousSelectedRows: [], grid: gridStub, });
+      gridStub.onSelectedRowsChanged.notify({ rows: [1, 2, 3, 4, 5], previousSelectedRows: [], grid: gridStub, } as any);
       expect(component.leftFooterText).toEqual('5 éléments sélectionnés');
     });
 
     it('should not display row selection count after triggering "onSelectedRowsChanged" event if "hideRowSelectionCount" is set to True', () => {
       mockGridOptions.enableCheckboxSelector = true;
-      mockGridOptions.customFooterOptions.hideRowSelectionCount = true;
+      mockGridOptions.customFooterOptions!.hideRowSelectionCount = true;
       component.renderFooter(div);
-      gridStub.onSelectedRowsChanged.notify({ rows: [1], previousSelectedRows: [], grid: gridStub, });
+      gridStub.onSelectedRowsChanged.notify({ rows: [1], previousSelectedRows: [], grid: gridStub, } as any);
       expect(component.leftFooterText).toBe('0 items selected');
     });
 

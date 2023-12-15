@@ -1,4 +1,5 @@
 {
+  '$schema': 'https://docs.renovatebot.com/renovate-schema.json',
   extends: ['config:base', 'group:allNonMajor'],
   labels: ['dependencies'],
   ignorePaths: ['**/__tests__/**'],
@@ -10,23 +11,9 @@
       depTypeList: ['peerDependencies'],
       enabled: false,
     },
-    // allow Node14/npm8 until its EOL June 2023
-    {
-      packageNames: ['node'],
-      allowedVersions: '16.15.0',
-    },
-    {
-      packageNames: ['npm'],
-      allowedVersions: '8.5.0',
-    },
-    {
-      packageNames: ['rxjs'],
-      allowedVersions: '7.8.1',
-    },
-    {
-      packageNames: ['slickgrid'],
-      allowedVersions: '4.x',
-    }
+  ],
+  ignoreDeps: [
+    'node',
   ],
   schedule: ['on friday'],
 }

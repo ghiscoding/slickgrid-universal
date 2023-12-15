@@ -1,9 +1,10 @@
 import 'jest-extended';
 import { Filters } from '../filters.index';
 import { FieldType, OperatorType } from '../../enums/index';
-import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { CompoundDateFilter } from '../compoundDateFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { SlickGrid } from '../../core/index';
 
 const containerId = 'demo-container';
 
@@ -20,6 +21,7 @@ const gridOptionMock = {
 } as GridOption;
 
 const gridStub = {
+  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   getOptions: jest.fn(),
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),

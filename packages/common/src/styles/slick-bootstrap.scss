@@ -194,12 +194,13 @@
         vertical-align: var(--slick-draggable-group-title-vertical-align, $slick-draggable-group-title-vertical-align);
       }
       .slick-group-toggle {
+        cursor: pointer;
+        display: inline-block;
         color: var(--slick-icon-group-color, $slick-icon-group-color);
         font-weight: var(--slick-icon-group-font-weight, $slick-icon-group-font-weight);
         width: var(--slick-icon-group-width, $slick-icon-group-width);
         height: var(--slick-icon-group-height, $slick-icon-group-height);
         margin-right: var(--slick-icon-group-margin-right, $slick-icon-group-margin-right);
-        cursor: pointer;
 
         &.expanded:before {
           display: inline-block;

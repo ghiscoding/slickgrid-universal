@@ -1,18 +1,18 @@
 import {
   Aggregators,
-  BindingEventService,
-  Column,
+  type Column,
   FieldType,
   Filters,
   FileType,
   Formatters,
-  GridOption,
-  Grouping,
+  type GridOption,
+  type Grouping,
   GroupTotalFormatters,
-  SliderOption,
+  type SliderOption,
   SortComparers,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -23,7 +23,7 @@ import '../material-styles.scss';
 
 const NB_ITEMS = 500;
 
-export default class Example2 {
+export default class Example02 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
@@ -261,7 +261,7 @@ export default class Example2 {
   groupByDuration() {
     this.sgb?.dataView?.setGrouping({
       getter: 'duration',
-      formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+      formatter: (g) => `Duration: ${g.value} <span class="text-green">(${g.count} items)</span>`,
       comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
       aggregators: [
         new Aggregators.Avg('percentComplete'),
@@ -280,7 +280,7 @@ export default class Example2 {
     this.sgb?.slickGrid?.setSortColumns([]);
     this.sgb?.dataView?.setGrouping({
       getter: 'duration',
-      formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+      formatter: (g) => `Duration: ${g.value} <span class="text-green">(${g.count} items)</span>`,
       comparer: (a, b) => a.count - b.count,
       aggregators: [
         new Aggregators.Avg('percentComplete'),
@@ -297,7 +297,7 @@ export default class Example2 {
     this.sgb?.dataView?.setGrouping([
       {
         getter: 'duration',
-        formatter: (g) => `Duration: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+        formatter: (g) => `Duration: ${g.value}  <span class="text-green">(${g.count} items)</span>`,
         aggregators: [
           new Aggregators.Sum('duration'),
           new Aggregators.Sum('cost')
@@ -307,7 +307,7 @@ export default class Example2 {
       },
       {
         getter: 'effortDriven',
-        formatter: (g) => `Effort-Driven: ${(g.value ? 'True' : 'False')} <span style="color:green">(${g.count} items)</span>`,
+        formatter: (g) => `Effort-Driven: ${(g.value ? 'True' : 'False')} <span class="text-green">(${g.count} items)</span>`,
         aggregators: [
           new Aggregators.Avg('percentComplete'),
           new Aggregators.Sum('cost')
@@ -328,7 +328,7 @@ export default class Example2 {
     this.sgb?.dataView?.setGrouping([
       {
         getter: 'duration',
-        formatter: (g) => `Duration: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+        formatter: (g) => `Duration: ${g.value}  <span class="text-green">(${g.count} items)</span>`,
         aggregators: [
           new Aggregators.Sum('duration'),
           new Aggregators.Sum('cost')
@@ -338,7 +338,7 @@ export default class Example2 {
       },
       {
         getter: 'effortDriven',
-        formatter: (g) => `Effort-Driven: ${(g.value ? 'True' : 'False')}  <span style="color:green">(${g.count} items)</span>`,
+        formatter: (g) => `Effort-Driven: ${(g.value ? 'True' : 'False')}  <span class="text-green">(${g.count} items)</span>`,
         aggregators: [
           new Aggregators.Sum('duration'),
           new Aggregators.Sum('cost')
@@ -347,7 +347,7 @@ export default class Example2 {
       },
       {
         getter: 'percentComplete',
-        formatter: (g) => `% Complete: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+        formatter: (g) => `% Complete: ${g.value}  <span class="text-green">(${g.count} items)</span>`,
         aggregators: [
           new Aggregators.Avg('percentComplete')
         ],

@@ -1,7 +1,7 @@
 <h3 class="title is-3">Example 06 - Tree Data with Aggregators
   <span class="mdi mdi-file-tree mdi-25px subtitle"></span>
   <span class="subtitle">(from a Hierarchical Dataset)</span>
-  <div class="subtitle" style="float: right; margin-top: -20px">
+  <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a class="is-size-5"
        target="_blank"
@@ -63,7 +63,7 @@
             </p>
             <p class="control pointer" onclick.delegate="clearSearch()" data-test="clear-search-string">
               <a class="button is-static is-small">
-                <span class="icon mdi mdi-close-thick" style="margin-top: 2px"></span>
+                <span class="icon mdi mdi-close-thick mt-1"></span>
               </a>
             </p>
           </div>
@@ -74,7 +74,7 @@
 </div>
 
 <div>
-  <label class="checkbox-inline control-label" for="excludeChildWhenFiltering" style="margin-left: 20px">
+  <label class="checkbox-inline control-label ml-3" for="excludeChildWhenFiltering">
     <input type="checkbox" id="excludeChildWhenFiltering" data-test="exclude-child-when-filtering"
            checked.bind="isExcludingChildWhenFiltering"
            onclick.delegate="changeExcludeChildWhenFiltering()">
@@ -83,7 +83,7 @@
       Exclude Children when Filtering Tree
     </span>
   </label>
-  <label class="checkbox-inline control-label" for="autoApproveParentItem" style="margin-left: 20px">
+  <label class="checkbox-inline control-label ml-3" for="autoApproveParentItem">
     <input type="checkbox" id="autoApproveParentItem" data-test="auto-approve-parent-item"
            checked.bind="isAutoApproveParentItemWhenTreeColumnIsValid"
            onclick.delegate="changeAutoApproveParentItem()">
@@ -94,7 +94,7 @@
       Skip Other Filter Criteria when Parent with Tree is valid
     </span>
   </label>
-  <label class="checkbox-inline control-label" for="autoRecalcTotalsOnFilterChange" style="margin-left: 20px">
+  <label class="checkbox-inline control-label ml-3" for="autoRecalcTotalsOnFilterChange">
     <input type="checkbox" id="autoRecalcTotalsOnFilterChange" data-test="auto-recalc-totals"
            checked.bind="isAutoRecalcTotalsOnFilterChange"
            onclick.delegate="changeAutoRecalcTotalsOnFilterChange()">

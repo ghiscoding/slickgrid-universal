@@ -1,12 +1,12 @@
 import 'jest-extended';
+
 import { Editors } from '../index';
 import { AutocompleterEditor } from '../autocompleterEditor';
-import { KeyCode, FieldType } from '../../enums/index';
-import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { FieldType } from '../../enums/index';
+import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { SlickDataView, SlickEvent, type SlickGrid } from '../../core/index';
 
-declare const Slick: SlickNamespace;
-const KEY_CHAR_A = 97;
 const containerId = 'demo-container';
 
 jest.useFakeTimers();
@@ -28,6 +28,7 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
+  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   focus: jest.fn(),
   getActiveCell: jest.fn(),
   getOptions: () => gridOptionMock,
@@ -35,8 +36,8 @@ const gridStub = {
   getEditorLock: () => getEditorLockMock,
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-  onBeforeEditCell: new Slick.Event(),
-  onCompositeEditorChange: new Slick.Event(),
+  onBeforeEditCell: new SlickEvent(),
+  onCompositeEditorChange: new SlickEvent(),
 } as unknown as SlickGrid;
 
 describe('AutocompleterEditor', () => {
@@ -182,7 +183,7 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Left Arrow key', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.LEFT, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true });
       const spyEvent = jest.spyOn(event, 'stopImmediatePropagation');
 
       editor = new AutocompleterEditor(editorArguments);
@@ -195,7 +196,7 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Right Arrow key', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.RIGHT, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true });
       const spyEvent = jest.spyOn(event, 'stopImmediatePropagation');
 
       editor = new AutocompleterEditor(editorArguments);
@@ -210,7 +211,7 @@ describe('AutocompleterEditor', () => {
     it('should render the DOM element with different key/value pair when user provide its own customStructure', () => {
       (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ option: 'male', text: 'Male' }, { option: 'female', text: 'Female' }];
       (mockColumn.internalColumnEditor as ColumnEditor).customStructure = { value: 'option', label: 'text' };
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: 109, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'm', bubbles: true, cancelable: true });
 
       editor = new AutocompleterEditor(editorArguments);
       const editorElm = divContainer.querySelector('input.editor-gender') as HTMLInputElement;
@@ -222,7 +223,7 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should return True when calling "isValueChanged()" method with previously dispatched keyboard event being char "a"', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true });
 
       editor = new AutocompleterEditor(editorArguments);
       editor.setValue('z');
@@ -235,7 +236,7 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should return False when calling "isValueChanged()" method with previously dispatched keyboard event is same char as current value', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true });
 
       editor = new AutocompleterEditor(editorArguments);
       const editorElm = divContainer.querySelector('input.editor-gender') as HTMLInputElement;
@@ -248,7 +249,7 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should return True when calling "isValueChanged()" method with previously dispatched keyboard event as ENTER and "alwaysSaveOnEnterKey" is enabled', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.ENTER, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
       (mockColumn.internalColumnEditor as ColumnEditor).alwaysSaveOnEnterKey = true;
 
       editor = new AutocompleterEditor(editorArguments);
@@ -658,7 +659,7 @@ describe('AutocompleterEditor', () => {
             },
           } as AutocompleterOption
         };
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.LEFT, bubbles: true, cancelable: true });
+        const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true });
         editor = new AutocompleterEditor(editorArguments);
         const editorElm = divContainer.querySelector('input.editor-gender') as HTMLInputElement;
         editorElm.focus();
@@ -688,7 +689,7 @@ describe('AutocompleterEditor', () => {
 
     it('should add custom "fetch" call and expect "renderCollectionItem" callback be called when focusing on the autocomplete input', async () => {
       const mockCollection = [{ value: 'male', label: 'Male' }, { value: 'unknown', label: 'Unknown' }];
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: 109, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'm', bubbles: true, cancelable: true });
 
       mockColumn.internalColumnEditor = {
         collection: mockCollection,
@@ -725,7 +726,7 @@ describe('AutocompleterEditor', () => {
 
     it('should add custom "fetch" call and expect "renderRegularItem" callback be called when focusing on the autocomplete input', async () => {
       const mockCollection = [{ value: 'female', label: 'Female' }, { value: 'undefined', label: 'Undefined' }];
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: 109, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'm', bubbles: true, cancelable: true });
 
       mockColumn.internalColumnEditor = {
         editorOptions: {
@@ -767,7 +768,7 @@ describe('AutocompleterEditor', () => {
       jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       editor = new AutocompleterEditor(editorArguments);
       editor.setValue({ value: 'male', label: 'Male' }, true);
 
@@ -783,7 +784,7 @@ describe('AutocompleterEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
-      });
+      } as any);
 
       editor = new AutocompleterEditor(editorArguments);
       const disableSpy = jest.spyOn(editor, 'disable');
@@ -799,10 +800,10 @@ describe('AutocompleterEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
 
       editor = new AutocompleterEditor(editorArguments);
       editor.loadValue(mockItemData);
@@ -825,10 +826,10 @@ describe('AutocompleterEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.compositeEditorOptions = {
         excludeDisabledFieldFormValues: true
       };
@@ -851,7 +852,7 @@ describe('AutocompleterEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.compositeEditorOptions = {
         excludeDisabledFieldFormValues: true
       };
@@ -875,7 +876,7 @@ describe('AutocompleterEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.compositeEditorOptions = {
         excludeDisabledFieldFormValues: true
       };
@@ -899,10 +900,10 @@ describe('AutocompleterEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.autoCommitEdit = true;
       (mockColumn.internalColumnEditor as ColumnEditor).collection = ['male', 'female'];
       mockItemData = { id: 123, gender: 'female', isActive: true };
@@ -927,7 +928,7 @@ describe('AutocompleterEditor', () => {
         jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
         const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
           getReturnValue: () => false
-        });
+        } as any);
         mockColumn.internalColumnEditor = {
           collection: ['Other', 'Male', 'Female'],
           collectionOverride: (inputCollection) => inputCollection.filter(item => item !== 'other')

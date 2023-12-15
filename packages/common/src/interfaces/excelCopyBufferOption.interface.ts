@@ -1,10 +1,7 @@
-import type {
-  Column,
-  CellRange,
-  FormatterResultObject,
-  SlickEventData,
-} from './index';
+
+import type { Column, FormatterResultWithHtml, FormatterResultWithText, } from './index';
 import type { SlickCellExcelCopyManager, } from '../extensions/slickCellExcelCopyManager';
+import type { SlickEventData, SlickRange } from '../core/index';
 
 export interface ExcelCopyBufferOption<T = any> {
   /** defaults to 2000(ms), delay in ms to wait before clearing the selection after a paste action */
@@ -20,10 +17,10 @@ export interface ExcelCopyBufferOption<T = any> {
   copiedCellStyleLayerKey?: string;
 
   /** option to specify a custom column value extractor function */
-  dataItemColumnValueExtractor?: (item: any, columnDef: Column<T>) => string | FormatterResultObject | null;
+  dataItemColumnValueExtractor?: (item: any, columnDef: Column<T>) => string | HTMLElement | DocumentFragment | FormatterResultWithHtml | FormatterResultWithText | null;
 
   /** option to specify a custom column value setter function */
-  dataItemColumnValueSetter?: (item: any, columnDef: Column<T>, value: any) => string | FormatterResultObject | null;
+  dataItemColumnValueSetter?: (item: any, columnDef: Column<T>, value: any) => string | FormatterResultWithHtml | FormatterResultWithText | null;
 
   /** option to specify a custom handler for paste actions */
   clipboardCommandHandler?: (editCommand: any) => void;
@@ -57,11 +54,11 @@ export interface ExcelCopyBufferOption<T = any> {
   onExtensionRegistered?: (plugin: SlickCellExcelCopyManager) => void;
 
   /** Fired when a copy cell is triggered */
-  onCopyCells?: (e: SlickEventData, args: { ranges: CellRange[] }) => void;
+  onCopyCells?: (e: SlickEventData, args: { ranges: SlickRange[]; }) => void;
 
   /** Fired when the command to copy the cells is cancelled */
-  onCopyCancelled?: (e: SlickEventData, args: { ranges: CellRange[] }) => void;
+  onCopyCancelled?: (e: SlickEventData, args: { ranges: SlickRange[]; }) => void;
 
   /** Fired when the user paste cells to the grid */
-  onPasteCells?: (e: SlickEventData, args: { ranges: CellRange[] }) => void;
+  onPasteCells?: (e: SlickEventData, args: { ranges: SlickRange[]; }) => void;
 }

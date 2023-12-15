@@ -2,9 +2,9 @@
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "node",
-    "target": "es2018",
+    "target": "es2021",
     "lib": [
-      "es2020",
+      "es2021",
       "dom"
     ],
     "types": [

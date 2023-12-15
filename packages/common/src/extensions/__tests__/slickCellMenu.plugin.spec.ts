@@ -1,13 +1,12 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy } from '@slickgrid-universal/utils';
 
-import { CellMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import type { CellMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem } from '../../interfaces/index';
 import { SlickCellMenu } from '../slickCellMenu';
 import { BackendUtilityService, SharedService, } from '../../services';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
+import { SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-
-declare const Slick: SlickNamespace;
 
 const removeExtraSpaces = (textS) => `${textS}`.replace(/[\n\r]\s+/g, '');
 
@@ -71,9 +70,9 @@ const gridStub = {
   setOptions: jest.fn(),
   setSortColumns: jest.fn(),
   updateColumnHeader: jest.fn(),
-  onClick: new Slick.Event(),
-  onScroll: new Slick.Event(),
-  onSort: new Slick.Event(),
+  onClick: new SlickEvent(),
+  onScroll: new SlickEvent(),
+  onSort: new SlickEvent(),
 } as unknown as SlickGrid;
 
 const pubSubServiceStub = {
@@ -201,7 +200,7 @@ describe('CellMenu Plugin', () => {
     beforeEach(() => {
       slickCellElm = document.createElement('div');
       slickCellElm.className = 'slick-cell';
-      eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+      eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
       eventData.target = slickCellElm;
 
       jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
@@ -618,7 +617,7 @@ describe('CellMenu Plugin', () => {
         plugin.init({ commandItems: deepCopy(commandItemsMock), dropSide: 'left' });
         (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).action = actionMock;
         plugin.addonOptions.subItemChevronClass = 'mdi mdi-chevron-right';
-        plugin.addonOptions.autoAdjustDropOffset = '-780';
+        plugin.addonOptions.autoAdjustDropOffset = -780;
         plugin.addonOptions.dropSide = 'left';
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
@@ -669,7 +668,7 @@ describe('CellMenu Plugin', () => {
         plugin.init({ commandItems: deepCopy(commandItemsMock) });
         (columnsMock[3].cellMenu!.commandItems![1] as MenuCommandItem).action = actionMock;
         plugin.addonOptions.subItemChevronClass = 'mdi mdi-chevron-right';
-        plugin.addonOptions.autoAdjustDropOffset = '-780';
+        plugin.addonOptions.autoAdjustDropOffset = -780;
         plugin.addonOptions.dropSide = 'right';
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 

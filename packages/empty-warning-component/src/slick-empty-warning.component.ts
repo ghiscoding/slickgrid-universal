@@ -6,7 +6,6 @@ import type {
   SlickGrid,
   TranslaterService
 } from '@slickgrid-universal/common';
-import { sanitizeTextByAvailableSanitizer } from '@slickgrid-universal/common';
 
 export class SlickEmptyWarningComponent implements ExternalResource {
   protected _warningLeftElement: HTMLDivElement | null = null;
@@ -18,7 +17,7 @@ export class SlickEmptyWarningComponent implements ExternalResource {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+    return this.grid?.getOptions() ?? {};
   }
 
   constructor() { }
@@ -95,12 +94,10 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     }
 
     if (!this._warningLeftElement && gridCanvasLeftElm && gridCanvasRightElm) {
-      const sanitizedOptions = this.gridOptions?.sanitizeHtmlOptions ?? {};
-
       this._warningLeftElement = document.createElement('div');
       this._warningLeftElement.classList.add(emptyDataClassName);
       this._warningLeftElement.classList.add('left');
-      this._warningLeftElement.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, warningMessage, sanitizedOptions);
+      this.grid.applyHtmlCode(this._warningLeftElement, warningMessage);
 
       // clone the warning element and add the "right" class to it so we can distinguish
       this._warningRightElement = this._warningLeftElement.cloneNode(true) as HTMLDivElement;

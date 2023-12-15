@@ -1,23 +1,18 @@
-import * as moment_ from 'moment-mini';
-const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
-
+import moment from 'moment-mini';
 import type {
   CustomFooterOption,
   GridOption,
   Locale,
   Metrics,
   MetricTexts,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
   Subscription,
+  SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import { Constants, createDomElement, sanitizeTextByAvailableSanitizer, } from '@slickgrid-universal/common';
+import { Constants, createDomElement, SlickEventHandler, } from '@slickgrid-universal/common';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { BindingHelper } from '@slickgrid-universal/binding';
 
-declare const Slick: SlickNamespace;
 export class SlickFooterComponent {
   protected _bindingHelper: BindingHelper;
   protected _enableTranslate = false;
@@ -43,7 +38,7 @@ export class SlickFooterComponent {
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+    return this.grid?.getOptions() ?? {};
   }
 
   get locales(): Locale {
@@ -72,7 +67,7 @@ export class SlickFooterComponent {
   constructor(protected readonly grid: SlickGrid, protected readonly customFooterOptions: CustomFooterOption, protected readonly pubSubService: BasePubSubService, protected readonly translaterService?: TranslaterService) {
     this._bindingHelper = new BindingHelper();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
     this._enableTranslate = this.gridOptions?.enableTranslate ?? false;
     this._isLeftFooterOriginallyEmpty = !(this.gridOptions.customFooterOptions?.leftFooterText);
     this._isRightFooterOriginallyEmpty = !(this.gridOptions.customFooterOptions?.rightFooterText);
@@ -177,7 +172,7 @@ export class SlickFooterComponent {
     });
 
     const leftFooterElm = createDomElement('div', { className: `left-footer ${this.customFooterOptions.leftContainerClass}` });
-    leftFooterElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, this.customFooterOptions.leftFooterText || '');
+    this.grid.applyHtmlCode(leftFooterElm, this.customFooterOptions.leftFooterText);
     footerElm.appendChild(leftFooterElm);
     footerElm.appendChild(this.createFooterRightContainer());
     this._footerElement = footerElm;
@@ -192,7 +187,7 @@ export class SlickFooterComponent {
     const rightFooterElm = createDomElement('div', { className: `right-footer ${this.customFooterOptions.rightContainerClass || ''}` });
 
     if (!this._isRightFooterOriginallyEmpty) {
-      rightFooterElm.innerHTML = sanitizeTextByAvailableSanitizer(this.gridOptions, this.customFooterOptions.rightFooterText || '');
+      this.grid.applyHtmlCode(rightFooterElm, this.customFooterOptions.rightFooterText);
     } else if (!this.customFooterOptions.hideMetrics) {
       rightFooterElm.classList.add('metrics');
       const lastUpdateElm = createDomElement('span', { className: 'timestamp' }, rightFooterElm);

@@ -1,5 +1,6 @@
 import { delay, of, throwError } from 'rxjs';
-import { Column, getHtmlElementOffset, GridOption, SlickDataView, SlickGrid, SlickNamespace, SharedService, } from '@slickgrid-universal/common';
+
+import { Column, getOffset, GridOption, SlickGrid, SharedService, type SlickDataView, SlickEvent, SlickEventData, } from '@slickgrid-universal/common';
 
 import { SlickCustomTooltip } from '../slickCustomTooltip';
 import { ContainerServiceStub } from '../../../../test/containerServiceStub';
@@ -8,10 +9,9 @@ import { RxJsResourceStub } from '../../../../test/rxjsResourceStub';
 // mocked modules
 jest.mock('@slickgrid-universal/common', () => ({
   ...(jest.requireActual('@slickgrid-universal/common') as any),
-  getHtmlElementOffset: jest.fn(),
+  getOffset: jest.fn(),
 }));
 
-declare const Slick: SlickNamespace;
 const GRID_UID = 'slickgrid12345';
 
 const gridOptionsMock = { enableAutoTooltip: true } as GridOption;
@@ -25,6 +25,7 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
+  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   getCellFromEvent: jest.fn(),
   getCellNode: jest.fn(),
   getColumns: jest.fn(),
@@ -33,12 +34,13 @@ const gridStub = {
   getOptions: () => gridOptionsMock,
   getUID: () => GRID_UID,
   registerPlugin: jest.fn(),
-  onMouseEnter: new Slick.Event(),
-  onHeaderMouseEnter: new Slick.Event(),
-  onHeaderRowMouseEnter: new Slick.Event(),
-  onMouseLeave: new Slick.Event(),
-  onHeaderMouseLeave: new Slick.Event(),
-  onHeaderRowMouseLeave: new Slick.Event(),
+  sanitizeHtmlString: (s) => s,
+  onMouseEnter: new SlickEvent(),
+  onHeaderMouseEnter: new SlickEvent(),
+  onHeaderRowMouseEnter: new SlickEvent(),
+  onMouseLeave: new SlickEvent(),
+  onHeaderMouseLeave: new SlickEvent(),
+  onHeaderRowMouseLeave: new SlickEvent(),
 } as unknown as SlickGrid;
 
 describe('SlickCustomTooltip plugin', () => {
@@ -93,7 +95,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
-    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
     expect(document.body.querySelector('.slick-custom-tooltip')).toBeFalsy();
   });
@@ -132,7 +134,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ usabilityOverride: () => false });
-    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
     expect(document.body.querySelector('.slick-custom-tooltip')).toBeFalsy();
   });
@@ -149,7 +151,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true });
-    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
     expect(document.body.querySelector('.slick-custom-tooltip')).toBeFalsy();
   });
@@ -169,7 +171,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true });
-    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -193,7 +195,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: false, formatter: () => 'EDITING FORMATTER' });
-    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -214,7 +216,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true });
-    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -235,7 +237,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, position: 'right-align' });
-    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -258,7 +260,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, position: 'center' });
-    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -281,7 +283,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, tooltipTextMaxLength: 23 });
-    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -305,7 +307,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, maxWidth: 85 });
-    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -316,7 +318,7 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
     expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
 
-    gridStub.onMouseLeave.notify({ grid: gridStub });
+    gridStub.onMouseLeave.notify({ grid: gridStub } as any);
     expect(hideColumnSpy).toHaveBeenCalled();
   });
 
@@ -334,7 +336,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, tooltipTextMaxLength: 23 });
-    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -357,7 +359,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, tooltipTextMaxLength: 23 });
-    gridStub.onHeaderMouseEnter.notify({ column: mockColumns[0], grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onHeaderMouseEnter.notify({ column: mockColumns[0], grid: gridStub }, { ...new SlickEventData(), target: cellNode } as any);
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeFalsy();
@@ -375,7 +377,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, useRegularTooltipFromFormatterOnly: true, maxHeight: 100 });
-    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -403,7 +405,7 @@ describe('SlickCustomTooltip plugin', () => {
       formatter: () => 'loading...',
       asyncPostFormatter: undefined
     });
-    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
     expect(consoleSpy).toHaveBeenCalledWith(`[Slickgrid-Universal] when using "asyncProcess" with Custom Tooltip, you must also provide an "asyncPostFormatter" formatter.`);
   });
@@ -424,7 +426,7 @@ describe('SlickCustomTooltip plugin', () => {
       formatter: () => 'loading...',
       asyncPostFormatter: (row, cell, val, column, dataContext) => `async post text with ratio: ${dataContext.__params.ratio || ''}`,
     });
-    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
     let tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -455,7 +457,7 @@ describe('SlickCustomTooltip plugin', () => {
       formatter: () => 'loading...',
       asyncPostFormatter: (row, cell, val, column, dataContext) => `async post text with ratio: ${dataContext.__params.ratio || ''}`,
     });
-    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
     let tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -475,7 +477,7 @@ describe('SlickCustomTooltip plugin', () => {
     jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
-    (getHtmlElementOffset as any).mockReturnValue({ top: 100, left: 1030, height: 75, width: 400 }); // mock cell position
+    (getOffset as jest.Mock).mockReturnValue({ top: 100, left: 1030, height: 75, width: 400 }); // mock cell position
 
     plugin.init(gridStub, container);
     plugin.setOptions({
@@ -485,7 +487,7 @@ describe('SlickCustomTooltip plugin', () => {
       asyncProcess: () => Promise.resolve({ ratio: 1.2 }),
       asyncPostFormatter: (row, cell, val, column, dataContext) => `async post text with ratio: ${dataContext.__params.ratio || ''}`,
     });
-    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
     let tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     jest.spyOn(tooltipElm, 'getBoundingClientRect').mockReturnValue({ top: 22, left: 11, height: 100, width: 250 } as any);
@@ -523,7 +525,7 @@ describe('SlickCustomTooltip plugin', () => {
       asyncProcess: () => Promise.resolve({ ratio: 1.2 }),
       asyncPostFormatter: (row, cell, val, column, dataContext) => `<span title="tooltip title text with ratio: ${dataContext.__params.ratio || ''}">cell value</span>`,
     });
-    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
     let tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
 
@@ -553,7 +555,7 @@ describe('SlickCustomTooltip plugin', () => {
       formatter: () => 'loading...',
       asyncPostFormatter: (row, cell, val, column, dataContext) => `async post text with ratio: ${dataContext.__params.ratio || ''}`,
     });
-    gridStub.onMouseEnter.notify({ grid: gridStub }, { ...new Slick.EventData(), target: cellNode });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
     const cancellablePromise = plugin.cancellablePromise;
     let tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -580,7 +582,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, headerFormatter: mockFormatter });
-    const eventData = new Slick.EventData();
+    const eventData = new SlickEventData();
     const div = document.createElement('div');
     div.className = 'toggle';
     Object.defineProperty(eventData, 'target', { writable: true, value: div });
@@ -605,7 +607,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ headerFormatter: () => 'header tooltip text' });
-    const eventData = new Slick.EventData();
+    const eventData = new SlickEventData();
     const divHeaders = document.createElement('div');
     divHeaders.className = 'slick-header-columns';
     const divHeaderColumn = document.createElement('div');
@@ -634,7 +636,7 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ headerRowFormatter: () => 'header row tooltip text' });
-    const eventData = new Slick.EventData();
+    const eventData = new SlickEventData();
     const divHeaders = document.createElement('div');
     divHeaders.className = 'slick-header-columns';
     const divHeaderColumn = document.createElement('div');

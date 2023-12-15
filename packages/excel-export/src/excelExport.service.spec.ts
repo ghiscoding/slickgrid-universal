@@ -16,11 +16,11 @@ import {
   SortComparers,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
-import * as ExcelBuilder from 'excel-builder-webpacker';
+import ExcelBuilder from 'excel-builder-webpacker';
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 import { ExcelExportService } from './excelExport.service';
-import { getExcelNumberCallback, getExcelSameInputDataCallback, useCellFormatByFieldType } from './excelUtils';
+import { getExcelSameInputDataCallback, useCellFormatByFieldType } from './excelUtils';
 
 const pubSubServiceStub = {
   publish: jest.fn(),
@@ -754,7 +754,7 @@ describe('ExcelExportService', () => {
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [jest.fn(), jest.fn()],
           displayTotalsRow: true,
-          formatter: (g) => `Order:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
           getterIsAFn: false,
           lazyTotalsCalculation: true,
@@ -766,7 +766,7 @@ describe('ExcelExportService', () => {
         mockGroup1 = {
           collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Order: 20 <span style="color:green">(2 items)</span>`,
+          title: `Order: 20 <span class="text-green">(2 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
@@ -856,7 +856,7 @@ describe('ExcelExportService', () => {
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [jest.fn(), jest.fn()],
           displayTotalsRow: true,
-          formatter: (g) => `Order:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
           getterIsAFn: false,
           lazyTotalsCalculation: true,
@@ -868,7 +868,7 @@ describe('ExcelExportService', () => {
         mockGroup1 = {
           collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Order: 20 <span style="color:green">(2 items)</span>`,
+          title: `Order: 20 <span class="text-green">(2 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
@@ -886,7 +886,7 @@ describe('ExcelExportService', () => {
 
       it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
         parserCallbackSpy.mockReturnValue(8888);
-        groupTotalParserCallbackSpy.mockReturnValue(9999);
+        groupTotalParserCallbackSpy.mockReturnValueOnce(9999);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
@@ -961,7 +961,7 @@ describe('ExcelExportService', () => {
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [jest.fn(), jest.fn()],
           displayTotalsRow: true,
-          formatter: (g) => `Order:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
           getterIsAFn: false,
           lazyTotalsCalculation: true,
@@ -973,7 +973,7 @@ describe('ExcelExportService', () => {
         mockGroup1 = {
           collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Order: 20 <span style="color:green">(2 items)</span>`,
+          title: `Order: 20 <span class="text-green">(2 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
@@ -1032,6 +1032,7 @@ describe('ExcelExportService', () => {
       const groupTotalParserCallbackSpy = jest.fn();
 
       beforeEach(() => {
+        jest.clearAllMocks();
         mockGridOptions.enableGrouping = true;
         mockGridOptions.enableTranslate = true;
         mockGridOptions.excelExportOptions = { autoDetectCellFormat: true, sanitizeDataExport: true, addGroupIndentation: true, exportWithFormatter: true };
@@ -1059,7 +1060,7 @@ describe('ExcelExportService', () => {
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [jest.fn(), jest.fn()],
           displayTotalsRow: true,
-          formatter: (g) => `Order:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
           getterIsAFn: false,
           lazyTotalsCalculation: true,
@@ -1071,25 +1072,25 @@ describe('ExcelExportService', () => {
         mockGroup1 = {
           collapsed: false, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Order: 20 <span style="color:green">(2 items)</span>`,
+          title: `Order: 20 <span class="text-green">(2 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
         mockGroup2 = {
           collapsed: false, count: 2, groupingKey: '10:|:X', groups: null, level: 1, selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Last Name: X <span style="color:green">(1 items)</span>`,
+          title: `Last Name: X <span class="text-green">(1 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
         };
         mockGroup3 = {
           collapsed: false, count: 2, groupingKey: '10:|:Doe', groups: null, level: 1, selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Last Name: Doe <span style="color:green">(1 items)</span>`,
+          title: `Last Name: Doe <span class="text-green">(1 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
         };
         mockGroup4 = {
           collapsed: true, count: 0, groupingKey: '10:|:', groups: null, level: 1, selectChecked: false,
           rows: [],
-          title: `Last Name: null <span style="color:green">(0 items)</span>`,
+          title: `Last Name: null <span class="text-green">(0 items)</span>`,
           totals: { value: '0', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
         };
 
@@ -1118,7 +1119,6 @@ describe('ExcelExportService', () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
         const spyDownload = jest.spyOn(service, 'startDownloadFile');
-        groupTotalParserCallbackSpy.mockReturnValue(9999);
 
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
@@ -1152,9 +1152,6 @@ describe('ExcelExportService', () => {
 
       it(`should not call group total value parser when column "exportAutoDetectCellFormat" is disabled`, async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-        groupTotalParserCallbackSpy.mockReturnValue(9999);
 
         mockGridOptions.excelExportOptions!.autoDetectCellFormat = false;
         const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
@@ -1168,7 +1165,7 @@ describe('ExcelExportService', () => {
 
       it(`should have a xlsx export with grouping but without indentation when "addGroupIndentation" is set to False
       and field should be exported as metadata when "exportWithFormatter" is false and the field type is number`, async () => {
-        mockColumns[5].exportWithFormatter = false; // "order" field that is of type number will be exported as a number cell format metadata
+        mockColumns[5].exportWithFormatter = false; // "order" is a field of type number that will be exported as a number cell format metadata
         mockGridOptions.excelExportOptions!.addGroupIndentation = false;
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
         const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');

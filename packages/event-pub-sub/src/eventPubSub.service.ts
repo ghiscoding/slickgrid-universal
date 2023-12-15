@@ -1,6 +1,5 @@
 import { titleCase, toKebabCase } from '@slickgrid-universal/utils';
-import type { BasePubSubService } from './basePubSub.service';
-import { EventNamingStyle, type EventSubscription, type Subscription, } from './types';
+import { type BasePubSubService, EventNamingStyle, type EventSubscription, type Subscription, } from './types';
 
 export interface PubSubEvent<T = any> {
   name: string;
@@ -101,6 +100,7 @@ export class EventPubSubService implements BasePubSubService {
 
     if (delay) {
       return new Promise(resolve => {
+        clearTimeout(this._timer);
         this._timer = setTimeout(() => resolve(this.dispatchCustomEvent<T>(eventNameByConvention, data, true, true)), delay);
       });
     } else {

@@ -31,14 +31,14 @@ describe('the ArrayObjectToCsv Formatter', () => {
     const params = { propertyNames: ['name'] };
     const expectedOutput = 'Administrator, Regular User';
     const result = arrayObjectToCsvFormatter(0, 0, 'anything', { field: 'roles', params } as Column, dataset[0], {} as any);
-    expect(result).toBe(`<span title="${expectedOutput}">${expectedOutput}</span>`);
+    expect((result as HTMLElement).outerHTML).toBe(`<span title="${expectedOutput}">${expectedOutput}</span>`);
   });
 
   it('should return regular string in a span (with it\'s content and title attribute to be the same) when 1 input value is passed', () => {
     const params = { propertyNames: ['name'] };
     const expectedOutput = 'Regular User';
     const result = arrayObjectToCsvFormatter(0, 0, 'anything', { field: 'roles', params } as Column, dataset[1], {} as any);
-    expect(result).toBe(`<span title="${expectedOutput}">${expectedOutput}</span>`);
+    expect((result as HTMLElement).outerHTML).toBe(`<span title="${expectedOutput}">${expectedOutput}</span>`);
   });
 
   it(`should return csv string in a span when multiple input values are passed
@@ -46,6 +46,6 @@ describe('the ArrayObjectToCsv Formatter', () => {
     const params = { dataContextProperty: 'roles', propertyNames: ['name'] };
     const expectedOutput = 'Administrator, Regular User';
     const result = arrayObjectToCsvFormatter(0, 0, 'anything', { field: 'email', params } as Column, dataset[0], {} as any);
-    expect(result).toBe(`<span title="${expectedOutput}">${expectedOutput}</span>`);
+    expect((result as HTMLElement).outerHTML).toBe(`<span title="${expectedOutput}">${expectedOutput}</span>`);
   });
 });

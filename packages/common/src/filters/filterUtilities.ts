@@ -1,42 +1,28 @@
+import { createDomElement, htmlEncodeWithPadding, } from '@slickgrid-universal/utils';
+
 import { Constants } from '../constants';
-import type { Column, ColumnFilter, GridOption, Locale, OperatorDetail } from '../interfaces/index';
+import type { Column, GridOption, Locale, OperatorDetail } from '../interfaces/index';
 import type { Observable, RxJsFacade, Subject, Subscription } from '../services/rxjsFacade';
-import { createDomElement, htmlEncodedStringWithPadding, sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 import { castObservableToPromise, getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
+import type { SlickGrid } from '../core';
 
 /**
  * Create and return a select dropdown HTML element with a list of Operators with descriptions
  * @param {Array<Object>} optionValues - list of operators and their descriptions
  * @returns {Object} selectElm - Select Dropdown HTML Element
  */
-export function buildSelectOperator(optionValues: OperatorDetail[], gridOptions: GridOption): HTMLSelectElement {
+export function buildSelectOperator(optionValues: OperatorDetail[], grid: SlickGrid): HTMLSelectElement {
   const selectElm = createDomElement('select', { className: 'form-control' });
 
   for (const option of optionValues) {
     const optionElm = document.createElement('option');
     optionElm.value = option.operator;
-    optionElm.innerHTML = sanitizeTextByAvailableSanitizer(gridOptions, `${htmlEncodedStringWithPadding(option.operatorAlt || option.operator, 3)}${option.descAlt || option.desc}`);
+    grid.applyHtmlCode(optionElm, `${htmlEncodeWithPadding(option.operatorAlt || option.operator, 3)}${option.descAlt || option.desc}`);
     selectElm.appendChild(optionElm);
   }
 
   return selectElm;
-}
-
-/**
- * Get option from filter.params OR filter.filterOptions
- * @deprecated this should be removed when slider filterParams are replaced by filterOptions
- */
-export function getFilterOptionByName<T, K extends keyof T>(columnFilter: ColumnFilter, optionName: K, defaultValue?: any, filterName = 'Slider'): T[K] | undefined {
-  let outValue;
-
-  if (columnFilter.filterOptions?.[optionName] !== undefined) {
-    outValue = (columnFilter.filterOptions as T)[optionName];
-  } else if (columnFilter?.params?.[optionName] !== undefined) {
-    console.warn(`[Slickgrid-Universal] All filter.params from ${filterName} Filter are moving to "filterOptions" for better typing support and "params" will be deprecated in future release.`);
-    outValue = columnFilter?.params?.[optionName];
-  }
-  return outValue ?? defaultValue;
 }
 
 /**

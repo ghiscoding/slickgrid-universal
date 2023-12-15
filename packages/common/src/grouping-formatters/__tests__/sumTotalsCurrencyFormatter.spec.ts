@@ -1,5 +1,6 @@
-import { Column, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, GridOption } from '../../interfaces/index';
 import { sumTotalsCurrencyFormatter } from '../sumTotalsCurrencyFormatter';
+import { type SlickGrid } from '../../core/index';
 
 describe('sumTotalsCurrencyFormatter', () => {
   // stub some methods of the SlickGrid Grid instance

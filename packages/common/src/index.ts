@@ -18,6 +18,7 @@ export {
 export * from './constants';
 export * from './global-grid-options';
 
+export * from './core/index';
 export * from './enums/index';
 export * from './interfaces/index';
 export * from './aggregators/index';
@@ -45,4 +46,3 @@ export { SlickgridConfig } from './slickgrid-config';
 
 // re-export MultipleSelectOption to avoid breaking previous code implementation
 export { MultipleSelectOption } from 'multiple-select-vanilla';
-

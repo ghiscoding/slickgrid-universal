@@ -11,8 +11,8 @@ import type {
   PaginationCursorChangedArgs,
   SingleColumnSort,
 } from './index';
-import { SlickGrid } from './slickGrid.interface';
-import { SharedService } from '../services';
+import type { SharedService } from '../services';
+import type { SlickGrid } from '../core/index';
 
 export interface BackendService {
   /** Backend Service options */

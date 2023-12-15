@@ -1,10 +1,10 @@
 import { Filters } from '../filters.index';
-import { Column, FilterArguments, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption } from '../../interfaces/index';
+import { SlickEvent, SlickGrid } from '../../core/index';
 import { SliderRangeFilter } from '../sliderRangeFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';
-declare const Slick: SlickNamespace;
 jest.useFakeTimers();
 
 // define a <div> container to simulate the grid container
@@ -20,8 +20,8 @@ const gridStub = {
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-  onHeaderMouseLeave: new Slick.Event(),
-  onHeaderRowMouseEnter: new Slick.Event(),
+  onHeaderMouseLeave: new SlickEvent(),
+  onHeaderRowMouseEnter: new SlickEvent(),
 } as unknown as SlickGrid;
 
 describe('SliderRangeFilter', () => {
@@ -242,25 +242,6 @@ describe('SliderRangeFilter', () => {
     const filterLowestElm = divContainer.querySelector('.lowest-range-duration') as HTMLInputElement;
     const filterHighestElm = divContainer.querySelector('.highest-range-duration') as HTMLInputElement;
 
-    expect(filterLowestElm.textContent).toBe('4');
-    expect(filterHighestElm.textContent).toBe('69');
-    expect(filter.currentValues).toEqual([4, 69]);
-  });
-
-  it('should create the input filter with min/max slider values defined in params and expect deprecated console warning', () => {
-    mockColumn.filter = {
-      params: {
-        sliderStartValue: 4,
-        sliderEndValue: 69,
-      }
-    };
-
-    filter.init(filterArguments);
-
-    const filterLowestElm = divContainer.querySelector('.lowest-range-duration') as HTMLInputElement;
-    const filterHighestElm = divContainer.querySelector('.highest-range-duration') as HTMLInputElement;
-
-    expect(consoleSpy).toHaveBeenCalledWith('[Slickgrid-Universal] All filter.params from Slider Filter are moving to "filterOptions" for better typing support and "params" will be deprecated in future release.');
     expect(filterLowestElm.textContent).toBe('4');
     expect(filterHighestElm.textContent).toBe('69');
     expect(filter.currentValues).toEqual([4, 69]);

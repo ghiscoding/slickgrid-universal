@@ -28,18 +28,18 @@ jest.mock('sortablejs', () => sortableMock);
 import 'jest-extended';
 import { SortableOptions } from 'sortablejs';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
+import { createDomElement, deepCopy } from '@slickgrid-universal/utils';
 
 import { Aggregators } from '../../aggregators/aggregators.index';
 import { SlickDraggableGrouping } from '../slickDraggableGrouping';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
-import { Column, DraggableGroupingOption, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
-import { BackendUtilityService, createDomElement, } from '../../services';
+import type { Column, DraggableGroupingOption, GridOption } from '../../interfaces/index';
+import { BackendUtilityService, } from '../../services';
 import { SharedService } from '../../services/shared.service';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import { SortDirectionNumber } from '../../enums';
-import { deepCopy } from '@slickgrid-universal/utils';
+import { SortDirectionNumber } from '../../enums/index';
+import { SlickEvent, SlickEventData, SlickGrid } from '../../core/index';
 
-declare const Slick: SlickNamespace;
 const GRID_UID = 'slickgrid12345';
 
 let addonOptions: DraggableGroupingOption = {
@@ -85,10 +85,10 @@ const gridStub = {
   invalidate: jest.fn(),
   registerPlugin: jest.fn(),
   updateColumnHeader: jest.fn(),
-  onColumnsReordered: new Slick.Event(),
-  onHeaderCellRendered: new Slick.Event(),
-  onHeaderMouseEnter: new Slick.Event(),
-  onMouseEnter: new Slick.Event(),
+  onColumnsReordered: new SlickEvent(),
+  onHeaderCellRendered: new SlickEvent(),
+  onHeaderMouseEnter: new SlickEvent(),
+  onMouseEnter: new SlickEvent(),
 } as unknown as SlickGrid;
 
 const mockColumns = [
@@ -98,7 +98,7 @@ const mockColumns = [
     id: 'age', name: 'Age', field: 'age', width: 50, sortable: true,
     grouping: {
       getter: 'age', aggregators: [new Aggregators.Avg('age')],
-      formatter: (g) => `Age: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+      formatter: (g) => `Age: ${g.value} <span class="text-green">(${g.count} items)</span>`,
       collapsed: true
     }
   },
@@ -106,7 +106,7 @@ const mockColumns = [
     id: 'medals', name: 'Medals', field: 'medals', width: 50, sortable: true,
     grouping: {
       getter: 'medals', aggregators: [new Aggregators.Sum('medals')],
-      formatter: (g) => `Medals: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+      formatter: (g) => `Medals: ${g.value} <span class="text-green">(${g.count} items)</span>`,
     }
   },
   { name: 'Gender', field: 'gender', width: 75 },
@@ -225,8 +225,8 @@ describe('Draggable Grouping Plugin', () => {
     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableTranslate: true });
     translateService.use('fr');
     plugin.init(gridStub, { ...addonOptions, groupIconCssClass: 'mdi mdi-drag' });
-    const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-    gridStub.onHeaderCellRendered.notify({ column: mockColumns[2], node: headerDiv, grid: gridStub }, eventData, gridStub);
+    const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+    gridStub.onHeaderCellRendered.notify({ column: mockColumns[2], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
     const groupableElm = headerDiv.querySelector('.slick-column-groupable') as HTMLSpanElement;
 
     expect(headerDiv.style.cursor).toBe('pointer');
@@ -268,18 +268,10 @@ describe('Draggable Grouping Plugin', () => {
       gridContainerDiv.appendChild(mockDivPaneContainerElm);
       gridContainerDiv.appendChild(mockDivPaneContainerElm2);
       dropEvent = new Event('mouseup');
-      headerColumnDiv1 = createDomElement('div', {
-        className: 'slick-header-column', id: `${GRID_UID}firstName`, dataset: { id: 'firstName' },
-      }, preHeaderDiv);
-      headerColumnDiv2 = createDomElement('div', {
-        className: 'slick-header-column', id: `${GRID_UID}lastName`, dataset: { id: 'lastName' },
-      }, preHeaderDiv);
-      headerColumnDiv3 = createDomElement('div', {
-        className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' },
-      }, preHeaderDiv);
-      headerColumnDiv4 = createDomElement('div', {
-        className: 'slick-header-column', id: `${GRID_UID}medals`, dataset: { id: 'medals' },
-      }, preHeaderDiv);
+      headerColumnDiv1 = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}firstName`, dataset: { id: 'firstName' } }, preHeaderDiv);
+      headerColumnDiv2 = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}lastName`, dataset: { id: 'lastName' } }, preHeaderDiv);
+      headerColumnDiv3 = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}age`, dataset: { id: 'age' } }, preHeaderDiv);
+      headerColumnDiv4 = createDomElement('div', { className: 'slick-header-column', id: `${GRID_UID}medals`, dataset: { id: 'medals' } }, preHeaderDiv);
       headerColumnDiv1.appendChild(createDomElement('span', { className: 'slick-column-name', textContent: 'First Name' }));
       headerColumnDiv2.appendChild(createDomElement('span', { className: 'slick-column-name', textContent: 'Last Name' }));
       headerColumnDiv3.appendChild(createDomElement('span', { className: 'slick-column-name', textContent: 'Age' }));

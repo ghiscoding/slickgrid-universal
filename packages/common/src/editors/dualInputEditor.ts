@@ -1,6 +1,6 @@
-import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
+import { BindingEventService } from '@slickgrid-universal/binding';
+import { createDomElement, setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
-import { KeyCode } from '../enums/keyCode.enum';
 import type {
   DOMEvent,
   Column,
@@ -12,17 +12,10 @@ import type {
   EditorValidator,
   EditorValidationResult,
   GridOption,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
 } from '../interfaces/index';
 import { getDescendantProperty } from '../services/utilities';
 import { floatValidator, integerValidator, textValidator } from '../editorValidators';
-import { BindingEventService } from '../services/bindingEvent.service';
-import { createDomElement } from '../services/domUtilities';
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
+import { SlickEventData, SlickEventHandler, type SlickGrid } from '../core';
 
 /*
  * An example of a 'detached' editor.
@@ -59,7 +52,7 @@ export class DualInputEditor implements Editor {
     }
     this.grid = args.grid;
     this.gridOptions = (this.grid.getOptions() || {}) as GridOption;
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
     this._bindEventService = new BindingEventService();
     this.init();
 
@@ -73,7 +66,7 @@ export class DualInputEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef && this.columnDef.internalColumnEditor || {};
+    return this.columnDef?.internalColumnEditor || {} as ColumnEditor;
   }
 
   /** Getter for the item data context object */
@@ -166,7 +159,7 @@ export class DualInputEditor implements Editor {
       this._isRightValueTouched = true;
     }
     this._lastInputKeyEvent = event;
-    if (event.keyCode === KeyCode.LEFT || event.keyCode === KeyCode.RIGHT || event.keyCode === KeyCode.TAB) {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Tab') {
       event.stopImmediatePropagation();
     }
   }
@@ -302,10 +295,10 @@ export class DualInputEditor implements Editor {
   isValueChanged(): boolean {
     const leftElmValue = this._leftInput.value;
     const rightElmValue = this._rightInput.value;
-    const leftEditorParams = this.editorParams && this.editorParams.leftInput;
-    const rightEditorParams = this.editorParams && this.editorParams.rightInput;
-    const lastKeyEvent = this._lastInputKeyEvent && this._lastInputKeyEvent.keyCode;
-    if ((leftEditorParams && leftEditorParams.alwaysSaveOnEnterKey || rightEditorParams && rightEditorParams.alwaysSaveOnEnterKey) && lastKeyEvent === KeyCode.ENTER) {
+    const leftEditorParams = this.editorParams?.leftInput;
+    const rightEditorParams = this.editorParams?.rightInput;
+    const lastEventKey = this._lastInputKeyEvent?.key;
+    if ((leftEditorParams && leftEditorParams.alwaysSaveOnEnterKey || rightEditorParams && rightEditorParams.alwaysSaveOnEnterKey) && lastEventKey === 'Enter') {
       return true;
     }
     const leftResult = (!(leftElmValue === '' && (this._originalLeftValue === null || this._originalLeftValue === undefined))) && (leftElmValue !== this._originalLeftValue);
@@ -547,7 +540,7 @@ export class DualInputEditor implements Editor {
     }
     grid.onCompositeEditorChange.notify(
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
-      { ...new Slick.EventData(), ...event }
+      { ...new SlickEventData(), ...event as Event }
     );
   }
 

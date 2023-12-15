@@ -1,26 +1,26 @@
 import {
-  AutocompleterOption,
-  BindingEventService,
-  Column,
-  EditCommand,
+  type AutocompleterOption,
+  type Column,
+  type EditCommand,
   Editors,
   EventNamingStyle,
   FieldType,
   Filters,
-  FlatpickrOption,
-  Formatter,
+  type FlatpickrOption,
+  type Formatter,
   Formatters,
-  GridOption,
-  LongTextEditorOption,
-  SlickNamespace,
-  SliderRangeOption,
+  type GridOption,
+  type GridStateChange,
+  type LongTextEditorOption,
+  SlickGlobalEditorLock,
+  type SliderRangeOption,
   SortComparers,
 
   // utilities
   formatNumber,
   Utilities,
-  GridStateChange,
 } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
@@ -29,9 +29,6 @@ import { ExampleGridOptions } from './example-grid-options';
 import './example14.scss';
 
 const NB_ITEMS = 400;
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
 
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator = (value) => {
@@ -76,9 +73,16 @@ function checkItemIsEditable(dataContext, columnDef, grid) {
 }
 
 const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, dataContext, grid) => {
-  const isEditableLine = checkItemIsEditable(dataContext, columnDef, grid);
+  const isEditableItem = checkItemIsEditable(dataContext, columnDef, grid);
   value = (value === null || value === undefined) ? '' : value;
-  return isEditableLine ? `<div class="editing-field">${value}</div>` : value;
+  const divElm = document.createElement('div');
+  divElm.className = 'editing-field';
+  if (value instanceof HTMLElement) {
+    divElm.appendChild(value);
+  } else {
+    divElm.textContent = value;
+  }
+  return isEditableItem ? divElm : value;
 };
 
 export default class Example14 {
@@ -138,6 +142,7 @@ export default class Example14 {
     this.columnDefinitions = [
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, type: FieldType.string, minWidth: 65,
+        cssClass: 'text-bold text-uppercase',
         // you can adjust the resize calculation via multiple options
         resizeExtraWidthPadding: 4,
         resizeCharWidthInPx: 7.6,
@@ -145,7 +150,6 @@ export default class Example14 {
         resizeMaxWidthThreshold: 200,
         filterable: true, columnGroup: 'Common Factor',
         filter: { model: Filters.compoundInputText },
-        formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
         editor: {
           model: Editors.longText, required: true, alwaysSaveOnEnterKey: true,
           maxLength: 12,
@@ -220,9 +224,8 @@ export default class Example14 {
       },
       {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 75, maxWidth: 100,
-        sortable: true, filterable: true, columnGroup: 'Period',
-        formatter: Formatters.multiple,
-        params: { formatters: [Formatters.checkmarkMaterial, Formatters.center] },
+        sortable: true, filterable: true, columnGroup: 'Period', cssClass: 'text-center',
+        formatter: Formatters.checkmarkMaterial,
         exportWithFormatter: false,
         filter: {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
@@ -323,7 +326,7 @@ export default class Example14 {
       {
         id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
         excludeFromExport: true,
-        formatter: () => `<div class="button-style margin-auto" style="width: 35px; margin-top: -1px;"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           commandTitle: 'Commands',
@@ -716,7 +719,7 @@ export default class Example14 {
   undoLastEdit(showLastEditor = false) {
     const lastEdit = this.editQueue.pop();
     const lastEditCommand = lastEdit?.editCommand;
-    if (lastEdit && lastEditCommand && Slick.GlobalEditorLock.cancelCurrentEdit()) {
+    if (lastEdit && lastEditCommand && SlickGlobalEditorLock.cancelCurrentEdit()) {
       lastEditCommand.undo();
 
       // remove unsaved css class from that cell
@@ -736,7 +739,7 @@ export default class Example14 {
   undoAllEdits() {
     for (const lastEdit of this.editQueue) {
       const lastEditCommand = lastEdit?.editCommand;
-      if (lastEditCommand && Slick.GlobalEditorLock.cancelCurrentEdit()) {
+      if (lastEditCommand && SlickGlobalEditorLock.cancelCurrentEdit()) {
         lastEditCommand.undo();
 
         // remove unsaved css class from that cell

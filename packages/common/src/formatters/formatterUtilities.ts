@@ -1,11 +1,12 @@
+import { getHTMLFromFragment, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
+import moment from 'moment-mini';
+
 import { FieldType } from '../enums/fieldType.enum';
-import type { Column, ExcelExportOption, Formatter, GridOption, SlickGrid, TextExportOption } from '../interfaces/index';
-import { sanitizeHtmlToText } from '../services/domUtilities';
+import type { Column, ExcelExportOption, Formatter, FormatterResultWithHtml, FormatterResultWithText, GridOption, TextExportOption } from '../interfaces/index';
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 import { multipleFormatter } from './multipleFormatter';
-import * as moment_ from 'moment-mini';
 import { Constants } from '../constants';
-const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
+import { type SlickGrid } from '../core/index';
 
 export type FormatterType = 'group' | 'cell';
 export type NumberType = 'decimal' | 'currency' | 'percent' | 'regular';
@@ -155,7 +156,7 @@ export function exportWithFormatterWhenDefined<T = any>(row: number, col: number
   }
 
   const output = parseFormatterWhenExist(formatter, row, col, columnDef, dataContext, grid);
-  return (exportOptions?.sanitizeDataExport && typeof output === 'string') ? sanitizeHtmlToText(output) : output;
+  return (exportOptions?.sanitizeDataExport && typeof output === 'string') ? stripTags(output) : output;
 }
 
 /**
@@ -183,18 +184,18 @@ export function parseFormatterWhenExist<T = any>(formatter: Formatter<T> | undef
 
   if (typeof formatter === 'function') {
     const formattedData = formatter(row, col, cellValue, columnDef, dataContext, grid);
-    output = formattedData as string;
-    if (formattedData && typeof formattedData === 'object' && formattedData.hasOwnProperty('text')) {
-      output = formattedData.text;
-    }
-    if (output === null || output === undefined) {
-      output = '';
+    const cellResult = isPrimitiveOrHTML(formattedData) ? formattedData : (formattedData as FormatterResultWithHtml).html || (formattedData as FormatterResultWithText).text;
+    if (cellResult instanceof DocumentFragment) {
+      output = getHTMLFromFragment(cellResult);
+    } else {
+      output = (cellResult instanceof HTMLElement) ? cellResult.innerHTML : cellResult as string;
     }
   } else {
     output = ((!dataContext?.hasOwnProperty(fieldProperty as keyof T)) ? '' : cellValue) as string;
-    if (output === null || output === undefined) {
-      output = '';
-    }
+  }
+
+  if (output === null || output === undefined) {
+    output = '';
   }
 
   // if at the end we have an empty object, then replace it with an empty string

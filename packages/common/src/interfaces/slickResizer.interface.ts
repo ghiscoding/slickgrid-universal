@@ -1,10 +1,5 @@
-import type {
-  GridSize,
-  ResizerOption,
-  SlickEvent,
-  SlickEventData,
-  SlickGrid,
-} from './index';
+import type { GridSize, ResizerOption } from './index';
+import type { SlickEvent, SlickEventData, SlickGrid } from '../core/index';
 
 /**
  * A Resizer plugin that can be used to auto-resize a grid and/or resize with fixed dimensions.

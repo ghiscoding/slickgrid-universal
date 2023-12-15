@@ -1,4 +1,4 @@
-import { isNumber } from '@slickgrid-universal/utils';
+import { createDomElement, isNumber } from '@slickgrid-universal/utils';
 
 import { type Formatter } from './../interfaces/index';
 import { formatNumber } from './../services/utilities';
@@ -17,7 +17,9 @@ export const dollarColoredFormatter: Formatter = (_row, _cell, value, columnDef,
   if (isNumber(value)) {
     const colorStyle = (value >= 0) ? 'green' : 'red';
     const formattedNumber = formatNumber(value, minDecimal, maxDecimal, wrapNegativeNumber, '$', '', decimalSeparator, thousandSeparator);
-    return `<span style="color:${colorStyle}">${formattedNumber}</span>`;
+    const spanElm = createDomElement('span', { ariaHidden: 'true', textContent: formattedNumber });
+    spanElm.style.color = colorStyle;
+    return spanElm;
   }
   return value;
 };

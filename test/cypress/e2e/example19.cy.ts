@@ -129,7 +129,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
         .type('{shift}{pagedown}{pagedown}');
 
       cy.get('#selectionRange')
-        .should('contains', /{"fromRow":10,"fromCell":4,"toRow":5[0-2],"toCell":4}/);
+        .should('contains', /{"fromRow":10,"fromCell":4,"toCell":4,"toRow":5[0-2]}/);
     });
 
     it('should click on cell D10 then PageDown 3 times then PageUp 1 time with selection D10-D50 (or D10-D52)', () => {
@@ -141,7 +141,7 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
         .type('{shift}{pagedown}{pagedown}{pagedown}{pageup}');
 
       cy.get('#selectionRange')
-        .should('contains', /{"fromRow":10,"fromCell":4,"toRow":5[0-2],"toCell":4}/);
+        .should('contains', /{"fromRow":10,"fromCell":4,"toCell":4,"toRow":5[0-2]}/);
     });
 
     it('should click on cell E46 then Shift+End key with full row horizontal selection E46-CV46', () => {

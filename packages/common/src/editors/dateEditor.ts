@@ -1,10 +1,9 @@
-import { setDeepValue } from '@slickgrid-universal/utils';
-import * as flatpickr_ from 'flatpickr';
-import * as moment_ from 'moment-mini';
+import { BindingEventService } from '@slickgrid-universal/binding';
+import { createDomElement, destroyAllElementProps, emptyElement, setDeepValue } from '@slickgrid-universal/utils';
+import flatpickr from 'flatpickr';
 import type { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
-import type { Instance as FlatpickrInstance, FlatpickrFn } from 'flatpickr/dist/types/instance';
-const flatpickr: FlatpickrFn = (flatpickr_ && flatpickr_['default'] || flatpickr_) as any; // patch for rollup
-const moment = (moment_ as any)['default'] || moment_; // patch to fix rollup "moment has no default export" issue, document here https://github.com/rollup/rollup/issues/670
+import type { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
+import moment from 'moment-mini';
 
 import { Constants } from './../constants';
 import { FieldType } from '../enums/index';
@@ -18,17 +17,10 @@ import type {
   EditorValidationResult,
   FlatpickrOption,
   GridOption,
-  SlickGrid,
-  SlickNamespace,
 } from './../interfaces/index';
-import { getEditorOptionByName } from './editorUtilities';
-import { createDomElement, destroyObjectDomElementProps, emptyElement, } from '../services/domUtilities';
 import { getDescendantProperty, mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, } from './../services/utilities';
-import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
+import { SlickEventData, type SlickGrid } from '../core/index';
 
 /*
  * An example of a date picker editor using Flatpickr
@@ -80,7 +72,7 @@ export class DateEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef && this.columnDef.internalColumnEditor || {};
+    return this.columnDef?.internalColumnEditor || {} as ColumnEditor;
   }
 
   /** Getter for the item data context object */
@@ -165,7 +157,7 @@ export class DateEditor implements Editor {
       );
 
       // show clear date button (unless user specifically doesn't want it)
-      if (!getEditorOptionByName<FlatpickrOption, 'hideClearButton'>(this.columnEditor, 'hideClearButton', undefined, 'date')) {
+      if (!(this.columnEditor.editorOptions as FlatpickrOption)?.hideClearButton) {
         closeButtonGroupElm.appendChild(this._clearButtonElm);
         this._editorInputGroupElm.appendChild(closeButtonGroupElm);
         this._bindEventService.bind(this._clearButtonElm, 'click', () => this._lastTriggeredByClearDate = true);
@@ -194,7 +186,7 @@ export class DateEditor implements Editor {
     if (typeof this.flatInstance?.destroy === 'function') {
       this.flatInstance.destroy();
       if (this.flatInstance?.element) {
-        setTimeout(() => destroyObjectDomElementProps(this.flatInstance));
+        setTimeout(() => destroyAllElementProps(this.flatInstance));
       }
     }
     emptyElement(this._editorInputGroupElm);
@@ -465,7 +457,7 @@ export class DateEditor implements Editor {
     }
     grid.onCompositeEditorChange.notify(
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
-      new Slick.EventData()
+      new SlickEventData()
     );
   }
 }

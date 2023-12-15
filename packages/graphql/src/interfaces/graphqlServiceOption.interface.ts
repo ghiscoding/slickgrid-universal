@@ -41,9 +41,6 @@ export interface GraphqlServiceOption extends BackendServiceOption {
    */
   keepArgumentFieldDoubleQuotes?: boolean;
 
-  /** @deprecated @use `useCursor` Is the GraphQL Server using cursors? */
-  isWithCursor?: boolean;
-
   /** Use Pagination Cursor in the GraphQL Server */
   useCursor?: boolean;
 

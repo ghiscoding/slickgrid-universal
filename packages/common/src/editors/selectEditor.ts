@@ -1,6 +1,6 @@
-import { multipleSelect, MultipleSelectInstance, MultipleSelectOption, OptionRowData } from 'multiple-select-vanilla';
-import { setDeepValue } from '@slickgrid-universal/utils';
+import { emptyElement, setDeepValue } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
+import { multipleSelect, MultipleSelectInstance, MultipleSelectOption, OptionRowData } from 'multiple-select-vanilla';
 
 import { Constants } from '../constants';
 import { FieldType } from './../enums/index';
@@ -18,14 +18,10 @@ import type {
   GridOption,
   Locale,
   SelectOption,
-  SlickGrid,
-  SlickNamespace,
 } from './../interfaces/index';
-import { buildMultipleSelectDataCollection, CollectionService, emptyElement, findOrDefault, sanitizeTextByAvailableSanitizer, type TranslaterService } from '../services/index';
+import { buildMsSelectCollectionList, CollectionService, findOrDefault, sanitizeTextByAvailableSanitizer, type TranslaterService } from '../services/index';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
+import { SlickEventData, type SlickGrid } from '../core/index';
 
 /**
  * Slickgrid editor class for multiple/single select lists
@@ -179,7 +175,7 @@ export class SelectEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor | undefined {
-    return this.columnDef?.internalColumnEditor ?? {};
+    return this.columnDef?.internalColumnEditor ?? {} as ColumnEditor;
   }
 
   /** Getter for item data context object */
@@ -703,7 +699,7 @@ export class SelectEditor implements Editor {
     this.finalCollection = finalCollection;
 
     // step 1, create HTML string template
-    const selectBuildResult = buildMultipleSelectDataCollection(
+    const selectBuildResult = buildMsSelectCollectionList(
       'editor',
       finalCollection,
       this.columnDef,
@@ -776,7 +772,7 @@ export class SelectEditor implements Editor {
     }
     grid.onCompositeEditorChange.notify(
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
-      new Slick.EventData()
+      new SlickEventData()
     );
   }
 }

@@ -6,6 +6,7 @@ import type {
   CollectionOption,
   CollectionOverrideArgs,
   CollectionSortBy,
+  // Editor,
   EditorValidator,
 } from './index';
 

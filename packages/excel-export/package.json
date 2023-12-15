@@ -1,8 +1,8 @@
 {
   "name": "@slickgrid-universal/excel-export",
-  "version": "3.7.2",
+  "version": "4.0.1-alpha.1",
   "description": "Excel Export (xls/xlsx) Service.",
-  "main": "./dist/commonjs/index.js",
+  "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "index.d.ts",
   "typesVersions": {
@@ -15,8 +15,8 @@
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "node": "./dist/commonjs/index.js",
-      "require": "./dist/commonjs/index.js",
+      "node": "./dist/cjs/index.js",
+      "require": "./dist/cjs/index.js",
       "default": "./dist/esm/index.js"
     },
     "./package.json": "./package.json"
@@ -33,10 +33,10 @@
     "build:incremental": "tsc --incremental --declaration",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "dev": "pnpm build:incremental",
-    "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
-    "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
+    "bundle:cjs": "tsc --project tsconfig.bundle.json --outDir dist/cjs --module commonjs",
+    "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2021",
     "bundle:types": "tsc --emitDeclarationOnly --declarationMap --outDir dist/types",
-    "bundle": "pnpm bundle:commonjs"
+    "bundle": "pnpm bundle:cjs"
   },
   "license": "MIT",
   "author": "Ghislain B.",

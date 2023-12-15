@@ -1,10 +1,8 @@
 import { Editors } from '../index';
 import { IntegerEditor } from '../integerEditor';
-import { KeyCode } from '../../enums/index';
-import { Column, ColumnEditor, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
+import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 
-declare const Slick: SlickNamespace;
-const KEY_CHAR_0 = 48;
 const containerId = 'demo-container';
 
 jest.useFakeTimers();
@@ -34,8 +32,8 @@ const gridStub = {
   getHeaderRowColumn: jest.fn(),
   getOptions: () => gridOptionMock,
   render: jest.fn(),
-  onBeforeEditCell: new Slick.Event(),
-  onCompositeEditorChange: new Slick.Event(),
+  onBeforeEditCell: new SlickEvent(),
+  onCompositeEditorChange: new SlickEvent(),
 } as unknown as SlickGrid;
 
 describe('IntegerEditor', () => {
@@ -172,7 +170,7 @@ describe('IntegerEditor', () => {
     });
 
     it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Left Arrow key', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.LEFT, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true });
       const spyEvent = jest.spyOn(event, 'stopImmediatePropagation');
 
       editor = new IntegerEditor(editorArguments);
@@ -186,7 +184,7 @@ describe('IntegerEditor', () => {
     });
 
     it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Right Arrow key', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.RIGHT, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true });
       const spyEvent = jest.spyOn(event, 'stopImmediatePropagation');
 
       editor = new IntegerEditor(editorArguments);
@@ -201,7 +199,7 @@ describe('IntegerEditor', () => {
 
     describe('isValueChanged method', () => {
       it('should return True when previously dispatched keyboard event is a new char 0', () => {
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_0, bubbles: true, cancelable: true });
+        const event = new (window.window as any).KeyboardEvent('keydown', { key: '0', bubbles: true, cancelable: true });
 
         editor = new IntegerEditor(editorArguments);
         editor.setValue(9);
@@ -215,7 +213,7 @@ describe('IntegerEditor', () => {
       });
 
       it('should return False when previously dispatched keyboard event is same number as current value', () => {
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_0, bubbles: true, cancelable: true });
+        const event = new (window.window as any).KeyboardEvent('keydown', { key: '0', bubbles: true, cancelable: true });
 
         editor = new IntegerEditor(editorArguments);
         const editorElm = divContainer.querySelector('input.editor-price') as HTMLInputElement;
@@ -229,7 +227,7 @@ describe('IntegerEditor', () => {
       });
 
       it('should return False when previously dispatched keyboard event is same string number as current value', () => {
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_0, bubbles: true, cancelable: true });
+        const event = new (window.window as any).KeyboardEvent('keydown', { key: '0', bubbles: true, cancelable: true });
 
         editor = new IntegerEditor(editorArguments);
         const editorElm = divContainer.querySelector('input.editor-price') as HTMLInputElement;
@@ -243,7 +241,7 @@ describe('IntegerEditor', () => {
       });
 
       it('should return True when previously dispatched keyboard event as ENTER and "alwaysSaveOnEnterKey" is enabled', () => {
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.ENTER, bubbles: true, cancelable: true });
+        const event = new (window.window as any).KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
         (mockColumn.internalColumnEditor as ColumnEditor).alwaysSaveOnEnterKey = true;
 
         editor = new IntegerEditor(editorArguments);
@@ -585,7 +583,7 @@ describe('IntegerEditor', () => {
       jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       editor = new IntegerEditor(editorArguments);
       editor.setValue(123, true);
 
@@ -601,7 +599,7 @@ describe('IntegerEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
-      });
+      } as any);
 
       editor = new IntegerEditor(editorArguments);
       const disableSpy = jest.spyOn(editor, 'disable');
@@ -617,10 +615,10 @@ describe('IntegerEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
 
       editor = new IntegerEditor(editorArguments);
       editor.loadValue(mockItemData);
@@ -643,7 +641,7 @@ describe('IntegerEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.compositeEditorOptions = {
         excludeDisabledFieldFormValues: true
       };
@@ -667,7 +665,7 @@ describe('IntegerEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.compositeEditorOptions = {
         excludeDisabledFieldFormValues: true
       };
@@ -692,10 +690,10 @@ describe('IntegerEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.autoCommitEdit = true;
       mockItemData = { id: 1, price: 35, isActive: true };
 
@@ -721,10 +719,10 @@ describe('IntegerEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.autoCommitEdit = true;
       mockItemData = { id: 1, price: 35, isActive: true };
 

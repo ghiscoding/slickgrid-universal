@@ -1,22 +1,18 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { createDomElement, emptyElement, findWidthOrDefault } from '@slickgrid-universal/utils';
 
-import type {
-  Column,
-  ColumnPickerOption,
-  DOMMouseOrTouchEvent,
-  GridOption,
-  SlickEventHandler,
-  SlickGrid,
-  SlickNamespace,
-} from '../interfaces/index';
+import type { Column, ColumnPickerOption, DOMMouseOrTouchEvent, GridOption, OnColumnsChangedArgs } from '../interfaces/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
-import { BindingEventService } from '../services/bindingEvent.service';
 import type { SharedService } from '../services/shared.service';
-import { createDomElement, emptyElement, findWidthOrDefault } from '../services/domUtilities';
-import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
-
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
+import {
+  addColumnTitleElementWhenDefined,
+  addCloseButtomElement,
+  handleColumnPickerItemClick,
+  populateColumnPicker,
+  updateColumnPickerOrder
+} from '../extensions/extensionCommonUtils';
+import { SlickEvent, SlickEventHandler, type SlickGrid } from '../core/index';
 
 /**
  * A control to add a Column Picker (right+click on any column header to reveal the column picker)
@@ -31,6 +27,8 @@ declare const Slick: SlickNamespace;
  * @constructor
  */
 export class SlickColumnPicker {
+  onColumnsChanged = new SlickEvent<OnColumnsChangedArgs>();
+
   protected _areVisibleColumnDifferent = false;
   protected _bindEventService: BindingEventService;
   protected _columns: Column[] = [];
@@ -40,7 +38,6 @@ export class SlickColumnPicker {
   protected _listElm!: HTMLSpanElement;
   protected _menuElm: HTMLDivElement | null = null;
   protected _columnCheckboxes: HTMLInputElement[] = [];
-  onColumnsChanged = new Slick.Event();
 
   protected _defaults = {
     // the last 2 checkboxes titles
@@ -55,7 +52,7 @@ export class SlickColumnPicker {
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(protected readonly extensionUtility: ExtensionUtility, protected readonly pubSubService: BasePubSubService, protected readonly sharedService: SharedService) {
     this._bindEventService = new BindingEventService();
-    this._eventHandler = new Slick.EventHandler();
+    this._eventHandler = new SlickEventHandler();
     this._columns = this.sharedService.allColumns ?? [];
     this._gridUid = this.grid?.getUID?.() ?? '';
 
@@ -99,8 +96,8 @@ export class SlickColumnPicker {
     this.addonOptions.forceFitTitle = this.extensionUtility.getPickerTitleOutputString('forceFitTitle', 'columnPicker');
     this.addonOptions.syncResizeTitle = this.extensionUtility.getPickerTitleOutputString('syncResizeTitle', 'columnPicker');
 
-    this._eventHandler.subscribe(this.grid.onHeaderContextMenu, this.handleHeaderContextMenu.bind(this) as EventListener);
-    this._eventHandler.subscribe(this.grid.onColumnsReordered, updateColumnPickerOrder.bind(this) as EventListener);
+    this._eventHandler.subscribe(this.grid.onHeaderContextMenu, this.handleHeaderContextMenu.bind(this));
+    this._eventHandler.subscribe(this.grid.onColumnsReordered, updateColumnPickerOrder.bind(this));
 
     // Hide the menu on outside click.
     this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener, undefined, 'body');

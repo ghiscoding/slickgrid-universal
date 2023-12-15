@@ -1,12 +1,10 @@
 import { Editors } from '../index';
 import { InputPasswordEditor } from '../inputPasswordEditor';
-import { KeyCode } from '../../enums/index';
-import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
+import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 
-declare const Slick: SlickNamespace;
 jest.useFakeTimers();
 
-const KEY_CHAR_A = 97;
 const containerId = 'demo-container';
 
 // define a <div> container to simulate the grid container
@@ -34,8 +32,8 @@ const gridStub = {
   getHeaderRowColumn: jest.fn(),
   getOptions: () => gridOptionMock,
   render: jest.fn(),
-  onBeforeEditCell: new Slick.Event(),
-  onCompositeEditorChange: new Slick.Event(),
+  onBeforeEditCell: new SlickEvent(),
+  onCompositeEditorChange: new SlickEvent(),
 } as unknown as SlickGrid;
 
 describe('InputPasswordEditor', () => {
@@ -180,7 +178,7 @@ describe('InputPasswordEditor', () => {
     });
 
     it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Left Arrow key', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.LEFT, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true });
       const spyEvent = jest.spyOn(event, 'stopImmediatePropagation');
 
       editor = new InputPasswordEditor(editorArguments);
@@ -195,7 +193,7 @@ describe('InputPasswordEditor', () => {
     });
 
     it('should dispatch a keyboard event and expect "stopImmediatePropagation()" to have been called when using Right Arrow key', () => {
-      const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.RIGHT, bubbles: true, cancelable: true });
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true });
       const spyEvent = jest.spyOn(event, 'stopImmediatePropagation');
 
       editor = new InputPasswordEditor(editorArguments);
@@ -210,7 +208,7 @@ describe('InputPasswordEditor', () => {
 
     describe('isValueChanged method', () => {
       it('should return True when previously dispatched keyboard event is a new char "a"', () => {
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
+        const event = new (window.window as any).KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true });
 
         editor = new InputPasswordEditor(editorArguments);
         editor.setValue('z');
@@ -224,7 +222,7 @@ describe('InputPasswordEditor', () => {
       });
 
       it('should return False when previously dispatched keyboard event is same string number as current value', () => {
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KEY_CHAR_A, bubbles: true, cancelable: true });
+        const event = new (window.window as any).KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true });
 
         editor = new InputPasswordEditor(editorArguments);
         const editorElm = divContainer.querySelector('input.editor-title') as HTMLInputElement;
@@ -238,7 +236,7 @@ describe('InputPasswordEditor', () => {
       });
 
       it('should return True when previously dispatched keyboard event as ENTER and "alwaysSaveOnEnterKey" is enabled', () => {
-        const event = new (window.window as any).KeyboardEvent('keydown', { keyCode: KeyCode.ENTER, bubbles: true, cancelable: true });
+        const event = new (window.window as any).KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
         (mockColumn.internalColumnEditor as ColumnEditor).alwaysSaveOnEnterKey = true;
 
         editor = new InputPasswordEditor(editorArguments);
@@ -549,7 +547,7 @@ describe('InputPasswordEditor', () => {
       jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       editor = new InputPasswordEditor(editorArguments);
       editor.setValue('task 1', true);
 
@@ -565,7 +563,7 @@ describe('InputPasswordEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
-      });
+      } as any);
 
       editor = new InputPasswordEditor(editorArguments);
       const disableSpy = jest.spyOn(editor, 'disable');
@@ -581,10 +579,10 @@ describe('InputPasswordEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
 
       editor = new InputPasswordEditor(editorArguments);
       editor.loadValue(mockItemData);
@@ -607,10 +605,10 @@ describe('InputPasswordEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.compositeEditorOptions = {
         excludeDisabledFieldFormValues: true
       };
@@ -633,7 +631,7 @@ describe('InputPasswordEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.compositeEditorOptions = {
         excludeDisabledFieldFormValues: true
       };
@@ -658,10 +656,10 @@ describe('InputPasswordEditor', () => {
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined
-      });
+      } as any);
       const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false
-      });
+      } as any);
       gridOptionMock.autoCommitEdit = true;
       mockItemData = { id: 1, title: 'task 2', isActive: true };
 

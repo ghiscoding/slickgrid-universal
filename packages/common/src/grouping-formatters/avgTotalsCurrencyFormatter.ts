@@ -1,6 +1,7 @@
-import type { Column, GroupTotalsFormatter, SlickGrid } from '../interfaces/index';
+import type { Column, GroupTotalsFormatter } from '../interfaces/index';
 import { retrieveFormatterOptions } from '../formatters/formatterUtilities';
 import { formatNumber } from '../services/utilities';
+import { type SlickGrid } from '../core/index';
 
 export const avgTotalsCurrencyFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column, grid: SlickGrid) => {
   const field = columnDef.field ?? '';

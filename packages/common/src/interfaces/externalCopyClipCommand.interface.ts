@@ -1,11 +1,12 @@
 import type { SlickCellExternalCopyManager } from '../extensions/slickCellExternalCopyManager';
-import type { CellRange, Column, ExcelCopyBufferOption } from './index';
+import type { Column, ExcelCopyBufferOption } from './index';
+import type { SlickRange } from '../core';
 
 export interface ExternalCopyClipCommand {
   activeCell: number;
   activeRow: number;
   cellExternalCopyManager: SlickCellExternalCopyManager;
-  clippedRange: CellRange[];
+  clippedRange: SlickRange[];
   destH: number;
   destW: number;
   h: number;
@@ -18,7 +19,7 @@ export interface ExternalCopyClipCommand {
   _options: ExcelCopyBufferOption;
 
   execute: () => void;
-  markCopySelection: (ranges: CellRange[]) => void;
+  markCopySelection: (ranges: SlickRange[]) => void;
   setDataItemValueForColumn: (item: any, columnDef: Column, value: any) => any | void;
   undo: () => void;
 }

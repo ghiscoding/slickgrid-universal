@@ -1,7 +1,7 @@
-import { setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
+import { BindingEventService } from '@slickgrid-universal/binding';
+import { createDomElement, getOffset, type HtmlElementPosition, setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
 
 import { Constants } from './../constants';
-import { KeyCode } from '../enums/keyCode.enum';
 import type {
   Column,
   ColumnEditor,
@@ -12,20 +12,13 @@ import type {
   EditorValidationResult,
   ElementPosition,
   GridOption,
-  HtmlElementPosition,
   Locale,
   LongTextEditorOption,
-  SlickGrid,
-  SlickNamespace,
 } from '../interfaces/index';
-import { createDomElement, getHtmlElementOffset, } from '../services/domUtilities';
 import { getDescendantProperty, getTranslationPrefix, } from '../services/utilities';
-import { BindingEventService } from '../services/bindingEvent.service';
 import type { TranslaterService } from '../services/translater.service';
 import { textValidator } from '../editorValidators/textValidator';
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
+import { SlickEventData, type SlickGrid } from '../core/index';
 
 /*
  * An example of a 'detached' editor.
@@ -79,7 +72,7 @@ export class LongTextEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef?.internalColumnEditor ?? {};
+    return this.columnDef?.internalColumnEditor ?? {} as ColumnEditor;
   }
 
   /** Getter for the item data context object */
@@ -307,8 +300,8 @@ export class LongTextEditor implements Editor {
    * Same goes for the top/bottom position, Most of the time positioning the editor to the "bottom" but we are clicking on a cell at the bottom of the grid then we might need to reposition to "top" instead.
    * NOTE: this only applies to Inline Editing and will not have any effect when using the Composite Editor modal window.
    */
-  position(parentPosition: HtmlElementPosition) {
-    const containerOffset = getHtmlElementOffset(this.args.container);
+  position(parentPosition: Partial<HtmlElementPosition>) {
+    const containerOffset = getOffset(this.args.container);
     const containerHeight = this.args.container.offsetHeight;
     const containerWidth = this.args.container.offsetWidth;
     const calculatedEditorHeight = this._wrapperElm.getBoundingClientRect().height || (this.args.position as ElementPosition).height;
@@ -412,22 +405,22 @@ export class LongTextEditor implements Editor {
   }
 
   protected handleKeyDown(event: KeyboardEvent) {
-    const keyCode = event.keyCode ?? event.code;
+    const key = event.key;
     this._isValueTouched = true;
 
     if (!this.args.compositeEditorOptions) {
-      if ((keyCode === KeyCode.ENTER && event.ctrlKey) || (event.ctrlKey && event.key.toUpperCase() === 'S')) {
+      if ((key === 'Enter' && event.ctrlKey) || (event.ctrlKey && event.key.toUpperCase() === 'S')) {
         event.preventDefault();
         this.save();
-      } else if (keyCode === KeyCode.ESCAPE) {
+      } else if (key === 'Escape') {
         event.preventDefault();
         this.cancel();
-      } else if (keyCode === KeyCode.TAB && event.shiftKey) {
+      } else if (key === 'Tab' && event.shiftKey) {
         event.preventDefault();
         if (this.args && this.grid) {
           this.grid.navigatePrev();
         }
-      } else if (keyCode === KeyCode.TAB) {
+      } else if (key === 'Tab') {
         event.preventDefault();
         if (this.args && this.grid) {
           this.grid.navigateNext();
@@ -483,7 +476,7 @@ export class LongTextEditor implements Editor {
     }
     grid.onCompositeEditorChange.notify(
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
-      { ...new Slick.EventData(), ...event }
+      { ...new SlickEventData(), ...event as Event }
     );
   }
 

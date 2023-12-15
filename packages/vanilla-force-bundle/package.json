@@ -1,8 +1,8 @@
 {
   "name": "@slickgrid-universal/vanilla-force-bundle",
-  "version": "3.7.2",
+  "version": "4.0.1-alpha.1",
   "description": "Vanilla Slick Grid Bundle (mostly exist for our Salesforce implementation) - Similar to Vanilla Bundle, the only difference is that it adds extra packages within its bundle (CustomTooltip, CompositeEditor & TextExport)",
-  "main": "./dist/commonjs/index.js",
+  "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "index.d.ts",
   "typesVersions": {
@@ -15,8 +15,8 @@
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "node": "./dist/commonjs/index.js",
-      "require": "./dist/commonjs/index.js",
+      "node": "./dist/cjs/index.js",
+      "require": "./dist/cjs/index.js",
       "default": "./dist/esm/index.js"
     },
     "./package.json": "./package.json"
@@ -30,12 +30,12 @@
   "scripts": {
     "prebuild": "pnpm run clean",
     "build": "tsc --build",
-    "postbuild": "pnpm run bundle:commonjs",
+    "postbuild": "pnpm run bundle:cjs",
     "build:incremental": "tsc --incremental --declaration",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
-    "bundle": "npm-run-all bundle:commonjs bundle:vite",
-    "bundle:commonjs": "tsc --project tsconfig.bundle.json --outDir dist/commonjs --module commonjs",
-    "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2018",
+    "bundle": "npm-run-all bundle:cjs bundle:vite",
+    "bundle:cjs": "tsc --project tsconfig.bundle.json --outDir dist/cjs --module commonjs",
+    "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2021",
     "bundle:types": "tsc --emitDeclarationOnly --declarationMap --outDir dist/types",
     "bundle:esbuild": "node esbuild.mjs",
     "bundle:vite": "vite build",

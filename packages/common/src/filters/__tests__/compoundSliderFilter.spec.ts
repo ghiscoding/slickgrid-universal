@@ -1,11 +1,11 @@
 import { FieldType, OperatorType } from '../../enums/index';
-import { Column, FilterArguments, GridOption, SlickGrid, SlickNamespace } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { Filters } from '../index';
 import { CompoundSliderFilter } from '../compoundSliderFilter';
+import { SlickEvent, SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 const containerId = 'demo-container';
-declare const Slick: SlickNamespace;
 jest.useFakeTimers();
 
 // define a <div> container to simulate the grid container
@@ -21,12 +21,13 @@ const gridOptionMock = {
 } as GridOption;
 
 const gridStub = {
+  applyHtmlCode: (elm, val) => elm.innerHTML = val || '',
   getOptions: () => gridOptionMock,
   getColumns: jest.fn(),
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
-  onHeaderMouseLeave: new Slick.Event(),
-  onHeaderRowMouseEnter: new Slick.Event(),
+  onHeaderMouseLeave: new SlickEvent(),
+  onHeaderRowMouseEnter: new SlickEvent(),
 } as unknown as SlickGrid;
 
 describe('CompoundSliderFilter', () => {

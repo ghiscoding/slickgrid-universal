@@ -1,4 +1,5 @@
-import { toSentenceCase } from '@slickgrid-universal/utils';
+import { BindingEventService } from '@slickgrid-universal/binding';
+import { createDomElement, emptyElement, toSentenceCase } from '@slickgrid-universal/utils';
 
 import type {
   Column,
@@ -8,12 +9,11 @@ import type {
   FilterCallback,
   GridOption,
   OperatorDetail,
-  SlickGrid,
 } from '../interfaces/index';
 import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index';
-import { BindingEventService } from '../services/bindingEvent.service';
 import { buildSelectOperator, compoundOperatorNumeric, compoundOperatorString } from './filterUtilities';
-import { createDomElement, emptyElement, mapOperatorToShorthandDesignation, type TranslaterService, } from '../services';
+import { mapOperatorToShorthandDesignation, type TranslaterService, } from '../services';
+import { type SlickGrid } from '../core/index';
 
 export class InputFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -283,7 +283,7 @@ export class InputFilter implements Filter {
     } else {
       // compound filter
       this._filterInputElm.classList.add('compound-input');
-      this._selectOperatorElm = buildSelectOperator(this.getCompoundOperatorOptionValues(), this.gridOptions);
+      this._selectOperatorElm = buildSelectOperator(this.getCompoundOperatorOptionValues(), this.grid);
       this._filterContainerElm = createDomElement('div', { className: `form-group search-filter filter-${columnId}` });
       const containerInputGroupElm = createDomElement('div', { className: 'input-group' }, this._filterContainerElm);
       const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' }, containerInputGroupElm);

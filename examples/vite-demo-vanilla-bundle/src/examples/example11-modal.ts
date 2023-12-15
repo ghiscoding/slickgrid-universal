@@ -1,16 +1,15 @@
 import {
-  BindingEventService,
-  Column,
-  DOMEvent,
+  type Column,
+  type DOMEvent,
   emptyElement,
-  Formatter,
+  type Formatter,
   Formatters,
-  GridOption,
+  type GridOption,
 } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
-import '../salesforce-styles.scss';
 import './example11-modal.scss';
 
 export default class Example11Modal {
@@ -88,7 +87,9 @@ export default class Example11Modal {
 
   handleOnModalClose() {
     this.sgb?.dispose();
-    this.gridContainerElm = emptyElement(this.gridContainerElm) as HTMLDivElement;
+    if (this.gridContainerElm) {
+      this.gridContainerElm.textContent = '';
+    }
     this.closeBulmaModal();
   }
 

@@ -50,7 +50,7 @@ describe('Example 13 - Header Button Plugin', () => {
               const numberValue = $cell.text();
               const htmlValue = $cell.html();
               if (+numberValue < 0) {
-                expect(htmlValue).to.eq(`<div style="color:red; font-weight:bold;">${numberValue}</div>`);
+                expect(htmlValue).to.eq(`<div class="text-red text-bold">${numberValue}</div>`);
               } else {
                 expect(htmlValue).to.eq(numberValue);
               }
@@ -244,7 +244,7 @@ describe('Example 13 - Header Button Plugin', () => {
               const numberValue = $cell.text();
               const htmlValue = $cell.html();
               if (+numberValue < 0) {
-                expect(htmlValue).to.eq(`<div style="color:red; font-weight:bold;">${numberValue}</div>`);
+                expect(htmlValue).to.eq(`<div class="text-red text-bold">${numberValue}</div>`);
               } else {
                 expect(htmlValue).to.eq(numberValue);
               }
@@ -477,7 +477,7 @@ describe('Example 13 - Header Button Plugin', () => {
             .each($cell => {
               const numberValue = $cell.text();
               const htmlValue = $cell.html();
-              expect(htmlValue).to.eq(`<div style="color:red; font-weight:bold;">${numberValue}</div>`);
+              expect(htmlValue).to.eq(`<div class="text-red text-bold">${numberValue}</div>`);
             });
         });
     });

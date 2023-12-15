@@ -67,11 +67,11 @@ describe('Example 01 - Basic Grids', () => {
       .invoke('val')
       .then(text => expect(text).to.eq('2'));
 
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0)`).should('contain', 'Task 122');
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0)`).should('contain', 'Task 123');
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(0)`).should('contain', 'Task 124');
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(0)`).should('contain', 'Task 125');
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(0)`).should('contain', 'Task 126');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 122');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 123');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 124');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 125');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 126');
   });
 
   it('should hover over the "Title" column of 2nd grid and click on "Sort Ascending" command', () => {
@@ -90,11 +90,11 @@ describe('Example 01 - Basic Grids', () => {
       .should('contain', 'Sort Ascending')
       .click();
 
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0)`).should('contain', 'Task 122');
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0)`).should('contain', 'Task 123');
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(0)`).should('contain', 'Task 124');
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(0)`).should('contain', 'Task 125');
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(0)`).should('contain', 'Task 126');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 122');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 123');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 124');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 125');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 126');
   });
 
   it('should hover over the "Duration" column of 2nd grid, Sort Ascending and have 2 sorts', () => {
@@ -163,11 +163,11 @@ describe('Example 01 - Basic Grids', () => {
       .find('.slick-sort-indicator-desc')
       .should('have.length', 0);
 
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(0)`).should('contain', 'Task 23');
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(0)`).should('contain', 'Task 24');
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 2}px"] > .slick-cell:nth(0)`).should('contain', 'Task 25');
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(0)`).should('contain', 'Task 26');
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 4}px"] > .slick-cell:nth(0)`).should('contain', 'Task 27');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 23');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 24');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 25');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 26');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 27');
   });
 
   it('should retain sorting in 1st grid', () => {
@@ -519,11 +519,11 @@ describe('Example 01 - Basic Grids', () => {
       .scrollTo('bottom')
       .wait(10);
 
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 14}px"] > .slick-cell:nth(0)`).should('contain', 'Task 544');
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 15}px"] > .slick-cell:nth(0)`).should('contain', 'Task 644');
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 16}px"] > .slick-cell:nth(0)`).should('contain', 'Task 744');
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 17}px"] > .slick-cell:nth(0)`).should('contain', 'Task 844');
-    cy.get(`.grid2 [style="top:${GRID_ROW_HEIGHT * 18}px"] > .slick-cell:nth(0)`).should('contain', 'Task 944');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 14}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 544');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 15}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 644');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 16}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 744');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 17}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 844');
+    cy.get(`.grid2 [style="top: ${GRID_ROW_HEIGHT * 18}px;"] > .slick-cell:nth(0)`).should('contain', 'Task 944');
   });
 
   it('should toggle again (show) the Pagination and expect to see it show it again below the grid at Page 1', () => {

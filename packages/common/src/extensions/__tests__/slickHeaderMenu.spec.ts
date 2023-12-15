@@ -1,12 +1,11 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { Column, ColumnSort, ElementPosition, GridOption, MenuCommandItem, SlickDataView, SlickEventData, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import type { Column, ColumnSort, ElementPosition, GridOption, MenuCommandItem } from '../../interfaces/index';
 import { SlickHeaderMenu } from '../slickHeaderMenu';
 import { BackendUtilityService, FilterService, SharedService, SortService } from '../../services';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
+import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-
-declare const Slick: SlickNamespace;
 
 const removeExtraSpaces = (textS) => `${textS}`.replace(/[\n\r]\s+/g, '');
 
@@ -58,12 +57,12 @@ const gridStub = {
   setOptions: jest.fn(),
   setSortColumns: jest.fn(),
   updateColumnHeader: jest.fn(),
-  onBeforeSetColumns: new Slick.Event(),
-  onBeforeHeaderCellDestroy: new Slick.Event(),
-  onHeaderCellRendered: new Slick.Event(),
-  onHeaderMouseEnter: new Slick.Event(),
-  onMouseEnter: new Slick.Event(),
-  onSort: new Slick.Event(),
+  onBeforeSetColumns: new SlickEvent(),
+  onBeforeHeaderCellDestroy: new SlickEvent(),
+  onHeaderCellRendered: new SlickEvent(),
+  onHeaderMouseEnter: new SlickEvent(),
+  onMouseEnter: new SlickEvent(),
+  onSort: new SlickEvent(),
 } as unknown as SlickGrid;
 
 const dataViewStub = {
@@ -200,24 +199,13 @@ describe('HeaderMenu Plugin', () => {
       plugin.dispose();
     });
 
-    it('should display a console warning when using deprecated "items" instead of "commandItems"', () => {
-      plugin.dispose();
-      plugin.init({ buttonCssClass: 'mdi mdi-chevron-down' });
-      columnsMock[0].header!.menu!.items = columnsMock[0].header!.menu!.commandItems;
-
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
-
-      expect(consoleWarnSpy).toHaveBeenCalledWith('[Slickgrid-Universal] Header Menu "items" property was deprecated in favor of "commandItems" to align with all other Menu plugins.');
-    });
-
     it('should populate a Header Menu button with extra button css classes when header menu option "buttonCssClass" and cell is being rendered', () => {
       plugin.dispose();
       plugin.init({ buttonCssClass: 'mdi mdi-chevron-down' });
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => undefined as any;
 
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
         `<div class="slick-header-menu-button mdi mdi-chevron-down"></div>`));
@@ -228,8 +216,8 @@ describe('HeaderMenu Plugin', () => {
       plugin.init({ tooltip: 'some tooltip text' });
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => undefined as any;
 
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
         `<div class="slick-header-menu-button" title="some tooltip text"></div>`));
@@ -240,14 +228,14 @@ describe('HeaderMenu Plugin', () => {
       plugin.init();
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => undefined as any;
 
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       // add Header Menu which is visible
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
         `<div class="slick-header-menu-button"></div>`));
 
-      gridStub.onBeforeHeaderCellDestroy.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      gridStub.onBeforeHeaderCellDestroy.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       expect(headerDiv.innerHTML).toBe('');
     });
 
@@ -256,8 +244,8 @@ describe('HeaderMenu Plugin', () => {
       plugin.init();
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => false;
 
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       // add Header Menu which is visible
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
@@ -270,8 +258,8 @@ describe('HeaderMenu Plugin', () => {
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
 
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
 
       // add Header Menu which is visible
@@ -295,8 +283,8 @@ describe('HeaderMenu Plugin', () => {
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => false;
       const publishSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button:nth-child(1)') as HTMLDivElement;
       headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item.slick-menu-item-disabled') as HTMLDivElement;
@@ -319,8 +307,8 @@ describe('HeaderMenu Plugin', () => {
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = undefined;
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).disabled = true;
 
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
       headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item.slick-menu-item-disabled') as HTMLDivElement;
@@ -339,8 +327,8 @@ describe('HeaderMenu Plugin', () => {
       plugin.init();
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).hidden = true;
 
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
       headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item.slick-menu-item-hidden') as HTMLDivElement;
@@ -359,8 +347,8 @@ describe('HeaderMenu Plugin', () => {
       plugin.init();
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).tooltip = 'Some Tooltip';
 
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
       headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item[data-command="show-negative-numbers"]') as HTMLDivElement;
@@ -381,8 +369,8 @@ describe('HeaderMenu Plugin', () => {
       plugin.init();
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).action = actionMock;
 
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
       headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item[data-command="show-negative-numbers"]') as HTMLDivElement;
@@ -407,8 +395,8 @@ describe('HeaderMenu Plugin', () => {
       plugin.init();
       plugin.addonOptions.onCommand = onCommandMock;
 
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
       headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item[data-command="show-negative-numbers"]') as HTMLDivElement;
@@ -435,9 +423,9 @@ describe('HeaderMenu Plugin', () => {
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).disabled = true;
 
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
       headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item[data-command="show-negative-numbers"]') as HTMLDivElement;
@@ -455,9 +443,9 @@ describe('HeaderMenu Plugin', () => {
       plugin.dispose();
       plugin.init({ autoAlign: true });
 
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const buttonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
       buttonElm.dispatchEvent(new Event('click'));
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item[data-command="show-negative-numbers"]') as HTMLDivElement;
@@ -484,8 +472,8 @@ describe('HeaderMenu Plugin', () => {
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => false;
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => false;
 
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button:nth-child(1)') as HTMLDivElement;
       headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item.slick-menu-item-disabled') as HTMLDivElement;
@@ -502,9 +490,9 @@ describe('HeaderMenu Plugin', () => {
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).disabled = true;
 
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
 
       expect(headerButtonElm).toBeFalsy();
@@ -517,9 +505,9 @@ describe('HeaderMenu Plugin', () => {
       plugin.dispose();
       plugin.init();
 
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+      gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
       headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item[data-command="show-negative-numbers"]') as HTMLDivElement;
@@ -645,8 +633,8 @@ describe('HeaderMenu Plugin', () => {
         plugin.init({ autoAlign: true });
         plugin.addonOptions.onCommand = onCommandMock;
 
-        const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const headerMenu1Elm = gridContainerDiv.querySelector('.slick-header-menu.slick-menu-level-0') as HTMLDivElement;
@@ -704,8 +692,8 @@ describe('HeaderMenu Plugin', () => {
         plugin.init({ autoAlign: true, subItemChevronClass: 'mdi mdi-chevron-right' });
         plugin.addonOptions.onCommand = onCommandMock;
 
-        const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const headerMenu1Elm = gridContainerDiv.querySelector('.slick-header-menu.slick-menu-level-0') as HTMLDivElement;
@@ -755,8 +743,8 @@ describe('HeaderMenu Plugin', () => {
         plugin.init({ autoAlign: true });
         plugin.addonOptions.onCommand = onCommandMock;
 
-        const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const headerMenu1Elm = gridContainerDiv.querySelector('.slick-header-menu.slick-menu-level-0') as HTMLDivElement;
@@ -799,7 +787,7 @@ describe('HeaderMenu Plugin', () => {
         columnsMock[2].header!.menu = undefined;
         headerDiv = document.createElement('div');
         headerDiv.className = 'slick-header-column';
-        eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
+        eventData = { ...new SlickEventData(), preventDefault: jest.fn() } as unknown as SlickEventData;
       });
 
       afterEach(() => {
@@ -819,8 +807,8 @@ describe('HeaderMenu Plugin', () => {
         });
 
         plugin.init({ onBeforeMenuShow: () => false });
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: originalColumnDefinitions, grid: gridStub }, eventData, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: originalColumnDefinitions[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: originalColumnDefinitions, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: originalColumnDefinitions[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
@@ -841,8 +829,8 @@ describe('HeaderMenu Plugin', () => {
 
         plugin.init({ onAfterMenuShow: () => false });
         const onAfterSpy = jest.spyOn(plugin.addonOptions, 'onAfterMenuShow').mockReturnValue(false);
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const clearFilterSpy = jest.spyOn(filterServiceStub, 'clearFilterByColumnId');
@@ -874,10 +862,10 @@ describe('HeaderMenu Plugin', () => {
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate any column menus
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
@@ -908,10 +896,10 @@ describe('HeaderMenu Plugin', () => {
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate hide column menu
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const autosizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
@@ -939,9 +927,9 @@ describe('HeaderMenu Plugin', () => {
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear filter menu
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const clearFilterSpy = jest.spyOn(filterServiceStub, 'clearFilterByColumnId');
@@ -966,10 +954,10 @@ describe('HeaderMenu Plugin', () => {
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear sort menu
-        const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const clearSortSpy = jest.spyOn(sortServiceStub, 'clearSortByColumnId');
@@ -1008,9 +996,9 @@ describe('HeaderMenu Plugin', () => {
         });
 
         // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear sort menu
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
@@ -1044,8 +1032,8 @@ describe('HeaderMenu Plugin', () => {
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
         });
 
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[2], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[2], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
@@ -1072,8 +1060,8 @@ describe('HeaderMenu Plugin', () => {
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
         });
 
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: originalColumnDefinitions, grid: gridStub }, eventData, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: originalColumnDefinitions[0], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: originalColumnDefinitions, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: originalColumnDefinitions[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
@@ -1099,8 +1087,8 @@ describe('HeaderMenu Plugin', () => {
           headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
         });
 
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
@@ -1131,8 +1119,8 @@ describe('HeaderMenu Plugin', () => {
           headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
         });
 
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
@@ -1164,8 +1152,8 @@ describe('HeaderMenu Plugin', () => {
           headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
         });
 
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         gridContainerDiv.querySelector('[data-command="sort-desc"]')!.dispatchEvent(new Event('click'));
@@ -1188,8 +1176,8 @@ describe('HeaderMenu Plugin', () => {
           headerMenu: { hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true, }
         });
 
-        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
-        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         gridContainerDiv.querySelector('[data-command="sort-desc"]')!.dispatchEvent(new Event('click'));

@@ -23,6 +23,6 @@ describe('the ArrayToCsv Formatter', () => {
   it('should return a CSV string when value passed is an array of string', () => {
     const valueArray = ['john', 'doe'];
     const result = arrayToCsvFormatter(0, 0, valueArray, {} as Column, {}, {} as any);
-    expect(result).toBe(`<span title="${valueArray.join(', ')}">${valueArray.join(', ')}</span>`);
+    expect((result as HTMLElement).outerHTML).toBe(`<span title="${valueArray.join(', ')}">${valueArray.join(', ')}</span>`);
   });
 });

@@ -1,11 +1,12 @@
 import 'jest-extended';
 
-import { Column, GridOption, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import { SelectionModel } from '../../enums/index';
+import type { Column, GridOption, } from '../../interfaces/index';
 import { SlickCellSelectionModel } from '../slickCellSelectionModel';
 import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager';
 import { InputEditor } from '../../editors/inputEditor';
+import { SlickEvent, SlickEventData, SlickGrid, SlickRange } from '../../core/index';
 
-declare const Slick: SlickNamespace;
 jest.mock('flatpickr', () => { });
 
 const mockGetSelectionModel = {
@@ -30,8 +31,8 @@ const gridStub = {
   setSelectionModel: jest.fn(),
   updateCell: jest.fn(),
   render: jest.fn(),
-  onCellChange: new Slick.Event(),
-  onKeyDown: new Slick.Event(),
+  onCellChange: new SlickEvent(),
+  onKeyDown: new SlickEvent(),
 } as unknown as SlickGrid;
 
 const mockCellSelectionModel = {
@@ -42,7 +43,7 @@ const mockCellSelectionModel = {
   setSelectedRanges: jest.fn(),
   getSelectedRows: jest.fn(),
   setSelectedRows: jest.fn(),
-  onSelectedRangesChanged: new Slick.Event(),
+  onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickCellSelectionModel;
 
 const mockTextEditor = {
@@ -61,10 +62,12 @@ const Editors = {
 };
 
 describe('CellExternalCopyManager', () => {
+  const lastNameElm = document.createElement('div');
+  lastNameElm.textContent = 'Last Name';
   const mockEventCallback = () => { };
   const mockColumns = [
     { id: 'firstName', field: 'firstName', name: 'First Name', editor: Editors.text, internalColumnEditor: Editors.text },
-    { id: 'lastName', field: 'lastName', name: 'Last Name', },
+    { id: 'lastName', field: 'lastName', name: lastNameElm, },
     { id: 'age', field: 'age', name: 'Age', editor: Editors.text, internalColumnEditor: Editors.text },
   ] as Column[];
   let plugin: SlickCellExternalCopyManager;
@@ -103,11 +106,11 @@ describe('CellExternalCopyManager', () => {
     });
 
     it('should throw an error initializing the plugin without a selection model', (done) => {
-      jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(null);
+      jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(null as any);
       try {
         plugin.init(gridStub);
       } catch (error) {
-        expect(error.message).toBe('Selection model is mandatory for this plugin. Please set a selection model on the grid before adding this plugin: grid.setSelectionModel(new Slick.CellSelectionModel())');
+        expect(error.message).toBe('Selection model is mandatory for this plugin. Please set a selection model on the grid before adding this plugin: grid.setSelectionModel(new SlickCellSelectionModel())');
         done();
       }
     });
@@ -117,8 +120,8 @@ describe('CellExternalCopyManager', () => {
       const gridFocusSpy = jest.spyOn(gridStub, 'focus');
 
       plugin.init(gridStub);
-      const eventData = { ...new Slick.EventData(), preventDefault: jest.fn() };
-      mockCellSelectionModel.onSelectedRangesChanged.notify([{ fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 }], eventData, gridStub);
+      const eventData = { ...new SlickEventData(), preventDefault: jest.fn() } as unknown as SlickEventData;
+      mockCellSelectionModel.onSelectedRangesChanged.notify([new SlickRange(0, 0, 0, 0)], eventData, gridStub);
 
       expect(gridFocusSpy).toHaveBeenCalled();
     });
@@ -212,7 +215,7 @@ describe('CellExternalCopyManager', () => {
         const mockOnCopySuccess = jest.fn();
 
         const clearSpy = jest.spyOn(plugin, 'clearCopySelection');
-        jest.spyOn(gridStub.getSelectionModel(), 'getSelectedRanges').mockReturnValue([{ fromRow: 0, fromCell: 1, toRow: 2, toCell: 2 }]);
+        jest.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValue([new SlickRange(0, 1, 2, 2)]);
 
         plugin.init(gridStub, { clearCopySelectionDelay: 1, clipboardPasteDelay: 2, includeHeaderWhenCopying: true, onCopyCancelled: mockOnCopyCancelled, onCopyInit: mockOnCopyInit, onCopyCells: mockOnCopyCells, onCopySuccess: mockOnCopySuccess });
 
@@ -231,7 +234,7 @@ describe('CellExternalCopyManager', () => {
 
         expect(clearSpy).toHaveBeenCalled();
         expect(mockOnCopyInit).toHaveBeenCalled();
-        expect(mockOnCopyCancelled).toHaveBeenCalledWith(expect.any(Object), { ranges: [{ fromCell: 1, fromRow: 0, toCell: 2, toRow: 2 }] });
+        expect(mockOnCopyCancelled).toHaveBeenCalledWith(expect.any(Object), { ranges: [new SlickRange(0, 1, 2, 2)] });
         expect(mockOnCopyCells).toHaveBeenCalledWith(expect.any(Object), { ranges: expect.toBeArray() });
 
         const getActiveCellSpy = jest.spyOn(gridStub, 'getActiveCell');
@@ -256,7 +259,7 @@ describe('CellExternalCopyManager', () => {
         const mockClipboard = () => ({ setData: mockSetData });
         Object.defineProperty(window, 'clipboardData', { writable: true, configurable: true, value: mockClipboard() });
         const clearSpy = jest.spyOn(plugin, 'clearCopySelection');
-        jest.spyOn(gridStub.getSelectionModel(), 'getSelectedRanges').mockReturnValue([{ fromRow: 0, fromCell: 1, toRow: 1, toCell: 2 }]);
+        jest.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValue([new SlickRange(0, 1, 1, 2)]);
 
         plugin.init(gridStub, { clipboardPasteDelay: 1, clearCopySelectionDelay: 1, includeHeaderWhenCopying: true, onCopyInit: mockOnCopyInit, onCopyCells: mockOnCopyCells });
 
@@ -294,7 +297,7 @@ describe('CellExternalCopyManager', () => {
           clipCommand = cmd;
           cmd.execute();
         };
-        jest.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new Slick.Range(0, 1, 1, 2)]).mockReturnValueOnce(null as any);
+        jest.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]).mockReturnValueOnce(null as any);
         plugin.init(gridStub, { clipboardPasteDelay: 1, clearCopySelectionDelay: 1, includeHeaderWhenCopying: true, clipboardCommandHandler });
 
         const keyDownCtrlCopyEvent = new Event('keydown');
@@ -314,7 +317,7 @@ describe('CellExternalCopyManager', () => {
         Object.defineProperty(keyDownCtrlPasteEvent, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
         Object.defineProperty(keyDownCtrlPasteEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
         gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub);
-        document.querySelector('textarea').value = `Doe\tserialized output`;
+        document.querySelector('textarea')!.value = `Doe\tserialized output`;
 
         setTimeout(() => {
           expect(getActiveCellSpy).toHaveBeenCalled();
@@ -329,7 +332,7 @@ describe('CellExternalCopyManager', () => {
       });
 
       it('should Copy, Paste and run Execute clip command with only 1 cell to copy', (done) => {
-        jest.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new Slick.Range(0, 1, 1, 2)]).mockReturnValueOnce([new Slick.Range(0, 1, 1, 2)]);
+        jest.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]).mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]);
         let clipCommand;
         const clipboardCommandHandler = (cmd) => {
           clipCommand = cmd;
@@ -355,7 +358,7 @@ describe('CellExternalCopyManager', () => {
         Object.defineProperty(keyDownCtrlPasteEvent, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
         Object.defineProperty(keyDownCtrlPasteEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
         gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub);
-        document.querySelector('textarea').value = `Smith`;
+        document.querySelector('textarea')!.value = `Smith`;
 
         setTimeout(() => {
           expect(getActiveCellSpy).toHaveBeenCalled();
@@ -379,7 +382,7 @@ describe('CellExternalCopyManager', () => {
 
       it('should Copy, Paste but not execute run clipCommandHandler when defined', (done) => {
         const mockClipboardCommandHandler = jest.fn();
-        jest.spyOn(gridStub.getSelectionModel(), 'getSelectedRanges').mockReturnValueOnce([{ fromRow: 0, fromCell: 1, toRow: 2, toCell: 2 }]).mockReturnValueOnce(null);
+        jest.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new SlickRange(0, 1, 2, 2)]).mockReturnValueOnce(null as any);
 
         plugin.init(gridStub, { clearCopySelectionDelay: 1, clipboardPasteDelay: 1, includeHeaderWhenCopying: true, clipboardCommandHandler: mockClipboardCommandHandler });
 
@@ -398,7 +401,7 @@ describe('CellExternalCopyManager', () => {
         Object.defineProperty(keyDownCtrlPasteEvent, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
         Object.defineProperty(keyDownCtrlPasteEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
         gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub);
-        document.querySelector('textarea').value = `Doe\tserialized output`;
+        document.querySelector('textarea')!.value = `Doe\tserialized output`;
 
         setTimeout(() => {
           expect(getActiveCellSpy).toHaveBeenCalled();
@@ -409,7 +412,7 @@ describe('CellExternalCopyManager', () => {
 
       it('should Copy, Paste without completing it because it does not know where to paste it', (done) => {
         const mockClipboardCommandHandler = jest.fn();
-        jest.spyOn(gridStub.getSelectionModel(), 'getSelectedRanges').mockReturnValueOnce([{ fromRow: 0, fromCell: 1, toRow: 2, toCell: 2 }]).mockReturnValueOnce(null);
+        jest.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new SlickRange(0, 1, 2, 2)]).mockReturnValueOnce(null as any);
 
         plugin.init(gridStub, { clearCopySelectionDelay: 1, clipboardPasteDelay: 1, includeHeaderWhenCopying: true, clipboardCommandHandler: mockClipboardCommandHandler });
 
@@ -428,7 +431,7 @@ describe('CellExternalCopyManager', () => {
         Object.defineProperty(keyDownCtrlPasteEvent, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
         Object.defineProperty(keyDownCtrlPasteEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: jest.fn() });
         gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub);
-        document.querySelector('textarea').value = `Doe\tserialized output`;
+        document.querySelector('textarea')!.value = `Doe\tserialized output`;
 
         setTimeout(() => {
           expect(getActiveCellSpy).toHaveBeenCalled();
@@ -442,7 +445,7 @@ describe('CellExternalCopyManager', () => {
         const mockOnPasteCells = jest.fn();
         const renderSpy = jest.spyOn(gridStub, 'render');
         const setDataSpy = jest.spyOn(gridStub, 'setData');
-        jest.spyOn(gridStub.getSelectionModel(), 'getSelectedRanges').mockReturnValueOnce([{ fromRow: 0, fromCell: 1, toRow: 2, toCell: 2 }]).mockReturnValueOnce(null);
+        jest.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new SlickRange(0, 1, 2, 2)]).mockReturnValueOnce(null as any);
         let clipCommand;
         const clipboardCommandHandler = (cmd) => {
           clipCommand = cmd;
@@ -480,7 +483,7 @@ describe('CellExternalCopyManager', () => {
           expect(getDataItemSpy).toHaveBeenCalled();
           expect(setData2Spy).toHaveBeenCalledWith([{ firstName: 'John', lastName: 'Doe', age: 30 }, { firstName: 'Jane', lastName: 'Doe' }]);
           expect(render2Spy).toHaveBeenCalled();
-          expect(mockOnPasteCells).toHaveBeenCalledWith(expect.toBeObject(), { ranges: [{ fromCell: 0, fromRow: 3, toCell: 1, toRow: 3 }] });
+          expect(mockOnPasteCells).toHaveBeenCalledWith(expect.toBeObject(), { ranges: [new SlickRange(3, 0, 3, 1)] });
           done();
         }, 2);
       });

@@ -1,28 +1,28 @@
 import {
-  AutocompleterOption,
-  BindingEventService,
+  type AutocompleterOption,
   DOMEvent,
-  Column,
-  CurrentColumn,
-  CurrentFilter,
-  CurrentPinning,
-  CurrentSorter,
-  EditCommand,
+  type Column,
+  type CurrentColumn,
+  type CurrentFilter,
+  type CurrentPinning,
+  type CurrentSorter,
+  type EditCommand,
   Editors,
   FieldType,
   Filters,
-  Formatter,
+  type Formatter,
   Formatters,
-  GridOption,
+  type GridOption,
   OperatorType,
-  SlickNamespace,
+  SlickGlobalEditorLock,
+  type SliderOption,
   SortComparers,
 
   // utilities
   deepCopy,
   formatNumber,
-  SliderOption,
 } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import moment from 'moment-mini';
@@ -34,8 +34,6 @@ import { ExampleGridOptions } from './example-grid-options';
 import { loadComponent } from './utilities';
 import './example11.scss';
 
-// using external SlickGrid JS libraries
-declare const Slick: SlickNamespace;
 const LOCAL_STORAGE_KEY = 'gridViewPreset';
 
 // you can create custom validator to pass to an inline editor
@@ -49,10 +47,10 @@ const myCustomTitleValidator = (value) => {
 };
 
 const customEditableInputFormatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
-  const gridOptions = grid && grid.getOptions && grid.getOptions();
-  const isEditableLine = gridOptions.editable && columnDef.editor;
+  const gridOptions = grid?.getOptions() ?? {};
+  const isEditableItem = gridOptions.editable && columnDef.editor;
   value = (value === null || value === undefined) ? '' : value;
-  return isEditableLine ? { text: value, addClasses: 'editable-field', toolTip: 'Click to Edit' } : value;
+  return isEditableItem ? { html: value, addClasses: 'editable-field', toolTip: 'Click to Edit' } : value;
 };
 
 export interface ViewDefinition {
@@ -80,6 +78,7 @@ export default class Example11 {
   editedItems = {};
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
+  viewSelectElm: HTMLSelectElement;
   currentYear = moment().year();
   defaultPredefinedPresets = [
     {
@@ -119,6 +118,7 @@ export default class Example11 {
     this.initializeGrid();
     this.dataset = this.loadData(500);
     this.gridContainerElm = document.querySelector(`.grid11`) as HTMLDivElement;
+    this.viewSelectElm = document.querySelector('.selected-view') as HTMLSelectElement;
 
     this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
@@ -129,8 +129,9 @@ export default class Example11 {
   }
 
   dispose() {
-    this.sgb?.dispose();
     this._bindingEventService.unbindAll();
+    this.sgb?.dispose();
+    this.viewSelectElm?.remove();
     this.gridContainerElm.remove();
   }
 
@@ -138,9 +139,9 @@ export default class Example11 {
     this.columnDefinitions = [
       {
         id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 80,
+        cssClass: 'text-bold text-uppercase',
         editor: { model: Editors.text, massUpdate: true, required: true, alwaysSaveOnEnterKey: true, validator: myCustomTitleValidator, },
         filterable: true,
-        formatter: Formatters.multiple, params: { formatters: [Formatters.uppercase, Formatters.bold] },
       },
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, minWidth: 80,
@@ -261,9 +262,9 @@ export default class Example11 {
       {
         id: 'action', name: 'Action', field: 'action', minWidth: 70, width: 75, maxWidth: 75,
         excludeFromExport: true,
-        formatter: () => `<span class="button-style padding-1px" style="display: inline-block; line-height: 18px;" title"Delete the Row"><span class="mdi mdi-close color-danger" title="Delete Current Row"></span></span>
-        &nbsp;<span class="button-style padding-1px" style="display: inline-block; line-height: 18px;" title="Mark as Completed"><span class="mdi mdi-check-underline"></span></span>`,
-        onCellClick: (event, args) => {
+        formatter: () => `<span class="button-style padding-1px action-btns"title"Delete the Row"><span class="mdi mdi-close color-danger" title="Delete Current Row"></span></span>
+        &nbsp;<span class="button-style padding-1px action-btns" title="Mark as Completed"><span class="mdi mdi-check-underline"></span></span>`,
+        onCellClick: (event: Event, args) => {
           const dataContext = args.dataContext;
           if ((event.target as HTMLElement).classList.contains('mdi-close')) {
             if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"`)) {
@@ -553,7 +554,7 @@ export default class Example11 {
   undoLastEdit(showLastEditor = false) {
     const lastEdit = this.editQueue.pop();
     const lastEditCommand = lastEdit?.editCommand;
-    if (lastEdit && lastEditCommand && Slick.GlobalEditorLock.cancelCurrentEdit()) {
+    if (lastEdit && lastEditCommand && SlickGlobalEditorLock.cancelCurrentEdit()) {
       lastEditCommand.undo();
 
       // remove unsaved css class from that cell
@@ -571,7 +572,7 @@ export default class Example11 {
   undoAllEdits() {
     for (const lastEdit of this.editQueue) {
       const lastEditCommand = lastEdit?.editCommand;
-      if (lastEditCommand && Slick.GlobalEditorLock.cancelCurrentEdit()) {
+      if (lastEditCommand && SlickGlobalEditorLock.cancelCurrentEdit()) {
         lastEditCommand.undo();
 
         // remove unsaved css class from that cell
@@ -591,20 +592,18 @@ export default class Example11 {
       this.predefinedViews.forEach(viewSelect => viewSelect.isSelected = false); // reset selection
     }
     const presetViews: ViewDefinition[] = Array.isArray(predefinedViews) ? predefinedViews : [predefinedViews];
-    const viewSelect = document.querySelector('.selected-view') as HTMLElement;
 
     // empty an empty <option> when populating the array on page load
     if (Array.isArray(predefinedViews)) {
-      const emtySelectOption = document.createElement('option');
-      viewSelect.appendChild(emtySelectOption);
+      this.viewSelectElm.appendChild(document.createElement('option'));
     }
 
     for (const preset of presetViews) {
       const selectOption = document.createElement('option');
       selectOption.value = preset.value;
       selectOption.label = preset.label;
-      viewSelect.appendChild(selectOption);
       selectOption.selected = isOptionSelected || preset.isSelected || false;
+      this.viewSelectElm.appendChild(selectOption);
     }
   }
 
@@ -619,8 +618,9 @@ export default class Example11 {
 
   recreatePredefinedViews() {
     // empty the Select dropdown element and re-populate it
-    const viewSelectElm = document.querySelector('.selected-view') as HTMLElement;
-    viewSelectElm.innerHTML = '';
+    if (this.viewSelectElm) {
+      this.viewSelectElm.textContent = '';
+    }
     this.pushNewViewToViewsList(this.predefinedViews);
   }
 

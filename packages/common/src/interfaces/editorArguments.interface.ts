@@ -1,5 +1,6 @@
-import type { Column, CompositeEditorOption, ElementPosition, SlickDataView, SlickGrid } from './index';
+import type { Column, CompositeEditorOption, ElementPosition } from './index';
 import type { PositionMethod } from '../enums/positionMethod.type';
+import type { SlickDataView, SlickGrid } from '../core/index';
 
 export interface EditorArguments {
   /** Column Definition */

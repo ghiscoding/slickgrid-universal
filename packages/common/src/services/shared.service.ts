@@ -1,4 +1,5 @@
-import type { Column, CurrentPagination, GridOption, SlickDataView, SlickGrid, } from '../interfaces/index';
+import type { SlickDataView, SlickGrid } from '../core/index';
+import type { Column, CurrentPagination, GridOption } from '../interfaces/index';
 import type { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider';
 
 export class SharedService {
@@ -30,7 +31,7 @@ export class SharedService {
 
   /** Getter for the Column Definitions pulled through the Grid Object */
   get columnDefinitions(): Column[] {
-    return (this._grid && this._grid.getColumns) ? this._grid.getColumns() : [];
+    return this._grid?.getColumns() ?? [];
   }
 
   /** Getter for the Current Pagination (when Pagination is enabled) */

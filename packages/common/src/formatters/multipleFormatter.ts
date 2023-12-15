@@ -4,7 +4,7 @@ import { type Formatter } from './../interfaces/index';
  * You can pipe multiple formatters (executed in sequence), use params to pass the list of formatters.
  * Requires to pass an array of "formatters" in the column definition the generic "params" property
  * For example::
- * { field: 'title', formatter: Formatters.multiple, params: { formatters: [ Formatters.lowercase, Formatters.uppercase ] }
+ * { field: 'title', formatter: Formatters.multiple, params: { formatters: [ Formatters.dollar, myCustomFormatter ] }
  */
 export const multipleFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
   const params = columnDef.params || {};

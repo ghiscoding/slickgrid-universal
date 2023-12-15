@@ -1,9 +1,10 @@
 import 'jest-extended';
 import { FieldType } from '../../enums/index';
-import { Column, FilterArguments, GridOption, SlickGrid } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { Filters } from '../filters.index';
 import { DateRangeFilter } from '../dateRangeFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import { SlickGrid } from '../../core/index';
 
 const containerId = 'demo-container';
 

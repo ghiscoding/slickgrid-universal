@@ -1,4 +1,5 @@
 import {
+  BackendService,
   CaseType,
   Column,
   ColumnFilter,
@@ -13,11 +14,10 @@ import {
   FieldType,
   CurrentSorter,
   SharedService,
-  SlickGrid,
-  BackendService,
+  type SlickGrid,
 } from '@slickgrid-universal/common';
 import { GridOdataService } from '../grid-odata.service';
-import { OdataOption } from '../../interfaces/odataOption.interface';
+import type { OdataOption } from '../../interfaces/odataOption.interface';
 
 const DEFAULT_ITEMS_PER_PAGE = 25;
 const DEFAULT_PAGE_SIZE = 20;
@@ -925,6 +925,22 @@ describe('GridOdataService', () => {
     it('should return a query using a different field to query when the column has a "queryFieldFilter" defined in its definition', () => {
       const expectation = `$top=10&$filter=(HasPriority eq 'female')`;
       const mockColumn = { id: 'gender', field: 'gender', queryField: 'isAfter', queryFieldFilter: 'hasPriority' } as Column;
+      const mockColumnFilters = {
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
+      } as ColumnFilters;
+
+      service.init(serviceOptions, paginationOptions, gridStub);
+      service.updateFilters(mockColumnFilters, false);
+      const query = service.buildQuery();
+
+      expect(query).toBe(expectation);
+    });
+
+    it('should return a query using column name that is an HTML Element', () => {
+      const expectation = `$top=10&$filter=(Gender eq 'female')`;
+      const nameElm = document.createElement('div');
+      nameElm.innerHTML = `<span class="text-red">Gender</span>`;
+      const mockColumn = { id: 'gender', name: nameElm } as unknown as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: FieldType.string },
       } as ColumnFilters;

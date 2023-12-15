@@ -1,6 +1,6 @@
 <h3 class="title is-3">
   Example 15 - Grid with OData Backend Service using RxJS Observables
-  <div class="subtitle" style="float: right; margin-top: -20px">
+  <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a class="is-size-5"
        target="_blank"
@@ -29,11 +29,11 @@
   <button class="button is-small" data-test="set-dynamic-sorting-btn" onclick.delegate="setSortingDynamically()">
     Set Sorting Dynamically
   </button>
-  <button class="button is-small" style="margin-left: 10px" data-test="add-gender-btn"
+  <button class="button is-small ml-1" data-test="add-gender-btn"
           onclick.delegate="addOtherGender()" disabled.bind="isOtherGenderAdded">
     Add Other Gender via RxJS
   </button>
-  <button class="button is-small is-danger is-outlined" style="margin-left: 50px" data-test="throw-page-error-btn"
+  <button class="button is-small is-danger is-outlined ml-6" data-test="throw-page-error-btn"
           onclick.delegate="throwPageChangeError()">
     <span>Throw Error Going to Last Page... </span>
     <i class="mdi mdi-page-last"></i>
@@ -54,7 +54,7 @@
       </button>
     </span>
 
-    <span style="margin-left: 10px">
+    <span class="ml-1">
       <label>OData Version: </label>
       <span data-test="radioVersion">
         <label class="radio-inline control-label" for="radio2">
@@ -67,29 +67,29 @@
         </label>
       </span>
     </span>
-    <label class="checkbox-inline control-label" for="enableCount" style="margin-left: 20px">
+    <label class="checkbox-inline control-label ml-2" for="enableCount">
       <input type="checkbox" id="enableCount" data-test="enable-count" checked.bind="isCountEnabled"
              onclick.delegate="changeCountEnableFlag()">
-      <span style="font-weight: bold">Enable Count</span> (add to OData query)
+      <span class="text-bold">Enable Count</span> (add to OData query)
     </label>
   </div>
-  <div class="column is-narrow" style="padding: 0">
-    <div class.bind="errorStatusClass" style="padding: 0.75rem 1.0rem" data-test="error-status">
-      <em><strong>Backend Error:</strong> <span innerhtml.bind="errorStatus"></span></em>
+  <div class="column is-narrow px-0">
+    <div class.bind="errorStatusClass" data-test="error-status">
+      <em><strong>Backend Error:</strong> <span textcontent.bind="errorStatus"></span></em>
     </div>
   </div>
 </div>
 
-<div class="columns" style="margin-top: 5px">
+<div class="columns mt-1">
   <div class="column">
     <div class="notification is-info is-light" data-test="alert-odata-query">
       <strong>OData Query:</strong>
-      <span data-test="odata-query-result" innerhtml.bind="odataQuery"></span>
+      <span data-test="odata-query-result" textcontent.bind="odataQuery"></span>
     </div>
   </div>
   <div class="column is-narrow">
     <div class.bind="statusClass" data-test="status">
-      <strong>Status:</strong> <span innerhtml.bind="status"></span>
+      <strong>Status:</strong> <span textcontent.bind="status"></span>
     </div>
   </div>
 </div>

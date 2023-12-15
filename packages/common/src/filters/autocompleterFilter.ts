@@ -1,8 +1,7 @@
-import * as autocompleter_ from 'autocompleter';
-const autocomplete = (autocompleter_ && autocompleter_['default'] || autocompleter_) as <T extends AutocompleteItem>(settings: AutocompleteSettings<T>) => AutocompleteResult; // patch for rollup
-
-import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
-import { isPrimitiveValue, toKebabCase, toSentenceCase } from '@slickgrid-universal/utils';
+import autocompleter from 'autocompleter';
+import type { AutocompleteItem, AutocompleteSettings } from 'autocompleter';
+import { BindingEventService } from '@slickgrid-universal/binding';
+import { createDomElement, emptyElement, isPrimitiveValue, toKebabCase, toSentenceCase } from '@slickgrid-universal/utils';
 
 import {
   FieldType,
@@ -24,11 +23,8 @@ import type {
   FilterCallbackArg,
   GridOption,
   Locale,
-  SlickGrid,
 } from '../interfaces/index';
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter';
-import { createDomElement, emptyElement, } from '../services';
-import { BindingEventService } from '../services/bindingEvent.service';
 import type { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
 import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
@@ -37,6 +33,7 @@ import type { TranslaterService } from '../services/translater.service';
 import { renderCollectionOptionsAsync } from './filterUtilities';
 import type { RxJsFacade, Subscription } from '../services/rxjsFacade';
 import { Constants } from '../constants';
+import { type SlickGrid } from '../core/index';
 
 export class AutocompleterFilter<T extends AutocompleteItem = any> implements Filter {
   protected _autocompleterOptions!: Partial<AutocompleterOption<T>>;
@@ -137,7 +134,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return (this.grid && this.grid.getOptions) ? this.grid.getOptions() : {};
+    return this.grid?.getOptions() ?? {};
   }
 
   /** Kraaden AutoComplete instance */
@@ -455,9 +452,9 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       addAutocompleteLoadingByOverridingFetch(this._filterElm, this._autocompleterOptions);
 
       // create the Kraaden AutoComplete
-      this._instance = autocomplete(this._autocompleterOptions as AutocompleteSettings<any>);
+      this._instance = autocompleter(this._autocompleterOptions as AutocompleteSettings<any>);
     } else {
-      this._instance = autocomplete({
+      this._instance = autocompleter({
         ...this._autocompleterOptions,
         fetch: (searchText, updateCallback) => {
           if (collection) {
@@ -569,12 +566,9 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     const templateString = this._autocompleterOptions?.renderItem?.templateCallback(item) ?? '';
 
     // sanitize any unauthorized html tags like script and others
-    // for the remaining allowed tags we'll permit all attributes
-    const sanitizedTemplateText = sanitizeTextByAvailableSanitizer(this.gridOptions, templateString) || '';
-
-    const tmpDiv = document.createElement('div');
-    tmpDiv.innerHTML = sanitizedTemplateText;
-    return tmpDiv;
+    const tmpElm = document.createElement('div');
+    this.grid.applyHtmlCode(tmpElm, templateString);
+    return tmpElm;
   }
 
   protected renderCollectionItem(item: any) {

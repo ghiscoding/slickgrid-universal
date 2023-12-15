@@ -20,7 +20,7 @@ export const treeParseTotalsFormatter: Formatter = (row, cell, value, columnDef,
     // they are piped and executed in sequences
     let currentValue = value;
     for (const formatter of params.formatters) {
-      if (!dataContext[hasChildrenPropName] && !dataContext?.__treeTotals) {
+      if (!dataContext[hasChildrenPropName] && !dataContext?.__treeTotals && typeof formatter === 'function') {
         currentValue = (formatter as Formatter)(row, cell, currentValue, columnDef, dataContext, grid) || value;
       }
     }

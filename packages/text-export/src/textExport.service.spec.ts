@@ -86,7 +86,7 @@ describe('ExportService', () => {
       mockGridOptions.translater = translateService;
 
       (navigator as any).__defineGetter__('appName', () => 'Netscape');
-      navigator.msSaveOrOpenBlob = undefined as any;
+      (navigator as any).msSaveOrOpenBlob = undefined as any;
       mockCsvBlob = new Blob(['', ''], { type: `text/csv` });
       mockTxtBlob = new Blob(['\uFEFF', ''], { type: `text/plain` });
 
@@ -187,9 +187,9 @@ describe('ExportService', () => {
       });
 
       it('should call "msSaveOrOpenBlob" with a Blob and CSV file when browser is IE11 when exporting as CSV', async () => {
-        navigator.msSaveOrOpenBlob = jest.fn();
+        (navigator as any).msSaveOrOpenBlob = jest.fn();
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyMsSave = jest.spyOn(navigator, 'msSaveOrOpenBlob');
+        const spyMsSave = jest.spyOn(navigator as any, 'msSaveOrOpenBlob');
 
         service.init(gridStub, container);
         await service.exportToFile(mockExportCsvOptions);
@@ -210,9 +210,9 @@ describe('ExportService', () => {
       });
 
       it('should call "msSaveOrOpenBlob" with a Blob and TXT file when browser is IE11 when exporting as TXT', async () => {
-        navigator.msSaveOrOpenBlob = jest.fn();
+        (navigator as any).msSaveOrOpenBlob = jest.fn();
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyMsSave = jest.spyOn(navigator, 'msSaveOrOpenBlob');
+        const spyMsSave = jest.spyOn(navigator as any, 'msSaveOrOpenBlob');
 
         service.init(gridStub, container);
         await service.exportToFile(mockExportTxtOptions);
@@ -586,7 +586,7 @@ describe('ExportService', () => {
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [jest.fn(), jest.fn()],
           displayTotalsRow: true,
-          formatter: (g) => `Order:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
           getterIsAFn: false,
           lazyTotalsCalculation: true,
@@ -598,7 +598,7 @@ describe('ExportService', () => {
         mockGroup1 = {
           collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Order: 20 <span style="color:green">(2 items)</span>`,
+          title: `Order: 20 <span class="text-green">(2 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
@@ -692,7 +692,7 @@ describe('ExportService', () => {
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [jest.fn(), jest.fn()],
           displayTotalsRow: true,
-          formatter: (g) => `Order:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
           getterIsAFn: false,
           lazyTotalsCalculation: true,
@@ -704,7 +704,7 @@ describe('ExportService', () => {
         mockGroup1 = {
           collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Order: 20 <span style="color:green">(2 items)</span>`,
+          title: `Order: 20 <span class="text-green">(2 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
@@ -800,7 +800,7 @@ describe('ExportService', () => {
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [jest.fn(), jest.fn()],
           displayTotalsRow: true,
-          formatter: (g) => `Order:  ${g.value} <span style="color:green">(${g.count} items)</span>`,
+          formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
           getterIsAFn: false,
           lazyTotalsCalculation: true,
@@ -812,19 +812,19 @@ describe('ExportService', () => {
         mockGroup1 = {
           collapsed: 0, count: 2, groupingKey: '10', groups: null, level: 0, selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Order: 20 <span style="color:green">(2 items)</span>`,
+          title: `Order: 20 <span class="text-green">(2 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
         mockGroup2 = {
           collapsed: 0, count: 2, groupingKey: '10:|:Z', groups: null, level: 0, selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Last Name: Z <span style="color:green">(1 items)</span>`,
+          title: `Last Name: Z <span class="text-green">(1 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
         };
         mockGroup3 = {
           collapsed: 0, count: 2, groupingKey: '10:|:Doe', groups: null, level: 0, selectChecked: false,
           rows: [mockItem1, mockItem2],
-          title: `Last Name: Doe <span style="color:green">(1 items)</span>`,
+          title: `Last Name: Doe <span class="text-green">(1 items)</span>`,
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
         };
 

@@ -1,7 +1,6 @@
-import { Column, CompositeEditorOption, Editors, ElementPosition, GridOption, SlickDataView, SlickGrid, SlickNamespace } from '@slickgrid-universal/common';
-import { CompositeEditor } from './compositeEditor.factory';
+import { Column, CompositeEditorOption, Editors, ElementPosition, GridOption, type SlickDataView, SlickEvent, type SlickGrid } from '@slickgrid-universal/common';
 
-declare const Slick: SlickNamespace;
+import { SlickCompositeEditor } from './compositeEditor.factory';
 
 const dataViewStub = {
   getItem: jest.fn(),
@@ -45,10 +44,10 @@ const gridStub = {
   getSortColumns: jest.fn(),
   invalidate: jest.fn(),
   onLocalSortChanged: jest.fn(),
-  onAddNewRow: new Slick.Event(),
-  onBeforeEditCell: new Slick.Event(),
-  onClick: new Slick.Event(),
-  onCompositeEditorChange: new Slick.Event(),
+  onAddNewRow: new SlickEvent(),
+  onBeforeEditCell: new SlickEvent(),
+  onClick: new SlickEvent(),
+  onCompositeEditorChange: new SlickEvent(),
   render: jest.fn(),
   setActiveCell: jest.fn(),
   setSelectedRows: jest.fn(),
@@ -128,7 +127,7 @@ describe('Composite Editor Factory', () => {
     compositeOptions = { destroy: destroyMock, modalType: 'create', validationMsgPrefix: '* ', formValues: {}, editors };
 
     containers = [container1, container2, container3, container4];
-    factory = new (CompositeEditor as any)(columnsMock, containers, compositeOptions);
+    factory = new (SlickCompositeEditor as any)(columnsMock, containers, compositeOptions);
   });
 
   afterEach(() => {

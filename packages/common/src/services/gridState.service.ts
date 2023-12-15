@@ -11,9 +11,6 @@ import type {
   CurrentSorter,
   GridOption,
   GridState,
-  SlickDataView,
-  SlickGrid,
-  SlickNamespace,
   TreeToggleStateChange,
 } from '../interfaces/index';
 import type { ExtensionService } from './extension.service';
@@ -21,12 +18,10 @@ import type { FilterService } from './filter.service';
 import type { SharedService } from './shared.service';
 import type { SortService } from './sort.service';
 import type { TreeDataService } from './treeData.service';
-
-// using external non-typed js libraries
-declare const Slick: SlickNamespace;
+import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
 
 export class GridStateService {
-  protected _eventHandler = new Slick.EventHandler();
+  protected _eventHandler = new SlickEventHandler();
   protected _columns: Column[] = [];
   protected _grid!: SlickGrid;
   protected _subscriptions: EventSubscription[] = [];
@@ -45,12 +40,12 @@ export class GridStateService {
 
   /** Getter of SlickGrid DataView object */
   get _dataView(): SlickDataView {
-    return this._grid?.getData?.() ?? {} as SlickDataView;
+    return this._grid?.getData<SlickDataView>() ?? {};
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return this._grid?.getOptions?.() ?? {};
+    return this._grid?.getOptions() ?? {};
   }
 
   /** Getter of the selected data context object IDs */

@@ -1,16 +1,16 @@
 import {
-  BindingEventService,
-  Column,
+  type Column,
   FieldType,
   Filters,
   Formatters,
-  GridOption,
-  GridStateChange,
+  type GridOption,
+  type GridStateChange,
   GridStateType,
-  OnSelectedRowsChangedEventArgs,
-  TreeToggledItem,
-  TreeToggleStateChange,
+  type OnSelectedRowsChangedEventArgs,
+  type TreeToggledItem,
+  type TreeToggleStateChange,
 } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
@@ -19,7 +19,7 @@ import './example05.scss';
 
 const NB_ITEMS = 500;
 
-export default class Example5 {
+export default class Example05 {
   private _bindingEventService: BindingEventService;
   columnDefinitions: Column[];
   gridOptions: GridOption;
@@ -250,11 +250,15 @@ export default class Example5 {
         },
         // we can also add a custom Formatter just for the title text portion
         titleFormatter: (_row, _cell, value, _def, dataContext) => {
-          let prefix = '';
+          let titleResult = '';
           if (dataContext.treeLevel > 0) {
-            prefix = `<span class="mdi mdi-subdirectory-arrow-right mdi-v-align-sub color-se-secondary"></span>`;
+            titleResult = `<span class="mdi mdi-subdirectory-arrow-right mdi-v-align-sub color-se-secondary"></span>`;
           }
-          return `${prefix}<span class="bold">${value}</span> <span style="font-size:11px; margin-left: 15px;">(parentId: ${dataContext.parentId})</span>`;
+          titleResult += `<span class="bold">${value}</span>`;
+          if (dataContext.parentId) {
+            titleResult += ` <span class="font-11px ml-2">(parentId: ${dataContext.parentId})</span>`;
+          }
+          return titleResult;
         },
       },
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
@@ -318,7 +322,7 @@ export default class Example5 {
   updateFirstRow() {
     // to update any of the grid rows, we CANNOT simply pass a new updated object
     // we MUST read it from the DataView first (that will include all mutated Tree Data props, like `__treeLevel`, `__parentId`, ...) and then update it
-    const item = this.sgb.dataView?.getItemById<any>(0);
+    const item = this.sgb.dataView?.getItemById(0);
 
     // option 1
     /*

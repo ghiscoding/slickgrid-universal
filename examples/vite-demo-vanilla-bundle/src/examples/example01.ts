@@ -1,4 +1,4 @@
-import { Column, ExtensionName, FieldType, Formatters, GridOption } from '@slickgrid-universal/common';
+import { type Column, ExtensionName, FieldType, Formatters, type GridOption } from '@slickgrid-universal/common';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 // import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss?inline';
@@ -6,12 +6,11 @@ import { ExampleGridOptions } from './example-grid-options';
 
 // use any of the Styling Theme
 // import '../material-styles.scss';
-// import '../salesforce-styles.scss';
 import './example01.scss';
 
 const NB_ITEMS = 995;
 
-export default class Example1 {
+export default class Example01 {
   gridOptions1!: GridOption;
   gridOptions2!: GridOption;
   columnDefinitions1!: Column[];

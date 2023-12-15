@@ -1,4 +1,4 @@
-import { isNumber } from '@slickgrid-universal/utils';
+import { createDomElement, isNumber } from '@slickgrid-universal/utils';
 
 import type { Formatter } from './../interfaces/index';
 
@@ -20,5 +20,5 @@ export const checkmarkFormatter: Formatter = (_row, _cell, value) => {
     isChecked = true;
   }
 
-  return isChecked ? `<i class="fa fa-check checkmark-icon" aria-hidden="true"></i>` : '';
+  return isChecked ? createDomElement('i', { className: 'fa fa-check checkmark-icon', ariaHidden: 'true' }) : '';
 };

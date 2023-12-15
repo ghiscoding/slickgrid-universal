@@ -1,14 +1,14 @@
 import { faker } from '@faker-js/faker';
-import * as sparkline from '@fnando/sparkline';
+import sparkline from '@fnando/sparkline';
 import {
   Aggregators,
-  Column,
+  type Column,
   deepCopy,
   FieldType,
   Filters,
-  Formatter,
+  type Formatter,
   Formatters,
-  GridOption,
+  type GridOption,
   GroupTotalFormatters,
 } from '@slickgrid-universal/common';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -18,24 +18,31 @@ import '../material-styles.scss';
 
 const NB_ITEMS = 200;
 
-const currencyFormatter: Formatter = (_cell: number, _row: number, value: string) =>
+const currencyFormatter: Formatter = (_cell, _row, value: string) =>
   `<img src="https://flags.fmcdn.net/data/flags/mini/${value.substring(0, 2).toLowerCase()}.png" width="20"/> ${value}`;
 
-const priceFormatter: Formatter = (_cell: number, _row: number, value: number, _col: Column, dataContext: any) => {
+const priceFormatter: Formatter = (_cell, _row, value, _col, dataContext) => {
   const direction = dataContext.priceChange >= 0 ? 'up' : 'down';
-  return `<span class="mdi mdi-arrow-${direction} color-${direction === 'up' ? 'success' : 'danger'}"></span> ${value}`;
+  const fragment = new DocumentFragment();
+  const spanElm = document.createElement('span');
+  spanElm.className = `mdi mdi-arrow-${direction} color-${direction === 'up' ? 'success' : 'danger'}`;
+  fragment.appendChild(spanElm);
+  if (value instanceof HTMLElement) {
+    fragment.appendChild(value);
+  }
+  return fragment;
 };
 
-const transactionTypeFormatter: Formatter = (_row: number, _cell: number, value: string) =>
+const transactionTypeFormatter: Formatter = (_row, _cell, value: string) =>
   `<span class="mdi mdi-16px mdi-v-align-sub mdi-${value === 'Buy' ? 'plus' : 'minus'}-circle ${value === 'Buy' ? 'color-info' : 'color-warning'}"></span> ${value}`;
 
-const historicSparklineFormatter: Formatter = (_row: number, _cell: number, _value: string, _col: Column, dataContext: any) => {
+const historicSparklineFormatter: Formatter = (_row, _cell, _value: string, _col, dataContext) => {
   const svgElem = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svgElem.setAttributeNS(null, 'width', '135');
   svgElem.setAttributeNS(null, 'height', '30');
   svgElem.setAttributeNS(null, 'stroke-width', '2');
   svgElem.classList.add('sparkline');
-  sparkline.sparkline(svgElem, dataContext.historic, { interactive: true });
+  sparkline(svgElem, dataContext.historic, { interactive: true });
   return svgElem.outerHTML;
 };
 
@@ -86,7 +93,7 @@ export default class Example18 {
         },
         grouping: {
           getter: 'currency',
-          formatter: (g) => `Currency: <span style="color: #003597; font-weight: bold;">${g.value}</span>  <span style="color: #659bff;">(${g.count} items)</span>`,
+          formatter: (g) => `Currency: <span class="text-bluenavy text-bold">${g.value}</span>  <span class="text-violet">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('amount')
           ],
@@ -99,7 +106,7 @@ export default class Example18 {
         id: 'market', name: 'Market', field: 'market', filterable: true, sortable: true, minWidth: 75, width: 75,
         grouping: {
           getter: 'market',
-          formatter: (g) => `Market: <span style="color: #003597; font-weight: bold;">${g.value}</span>  <span style="color: #659bff;">(${g.count} items)</span>`,
+          formatter: (g) => `Market: <span class="text-bluenavy text-bold">${g.value}</span>  <span class="text-violet">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('amount')
           ],
@@ -117,7 +124,7 @@ export default class Example18 {
         },
         grouping: {
           getter: 'trsnType',
-          formatter: (g) => `Type: <span style="color: #003597; font-weight: bold;">${g.value}</span>  <span style="color: #659bff;">(${g.count} items)</span>`,
+          formatter: (g) => `Type: <span class="text-bluenavy text-bold">${g.value}</span>  <span class="text-violet">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('amount')
           ],
@@ -133,7 +140,6 @@ export default class Example18 {
           formatters: [Formatters.dollarColored, priceFormatter],
           maxDecimal: 2,
         }
-
       },
       {
         id: 'price', name: 'Price', field: 'price', filterable: true, sortable: true, minWidth: 70, width: 70,
@@ -238,8 +244,10 @@ export default class Example18 {
       itemTmp.amount = itemTmp.price * itemTmp.quantity;
       itemTmp.trsnType = (Math.round(Math.random() * 100)) % 2 ? 'Buy' : 'Sell';
       itemTmp.execution = new Date();
-      itemTmp.historic.push(itemTmp.price);
-      itemTmp.historic = itemTmp.historic.slice(-20); // keep a max of X historic values
+      if (itemTmp.price !== undefined) {
+        itemTmp.historic.push(itemTmp.price);
+        itemTmp.historic = itemTmp.historic.slice(-20); // keep a max of X historic values
+      }
 
       if (!changes[rowNumber]) {
         changes[rowNumber] = {};

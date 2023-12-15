@@ -1,5 +1,5 @@
 import { multipleSelect, MultipleSelectInstance, MultipleSelectOption, OptionRowData } from 'multiple-select-vanilla';
-import { isPrimitiveValue } from '@slickgrid-universal/utils';
+import { emptyElement, isPrimitiveValue } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants';
 import { type OperatorString, OperatorType, type SearchTerm, } from '../enums/index';
@@ -13,13 +13,13 @@ import type {
   FilterCallback,
   GridOption,
   Locale,
-  SlickGrid,
 } from './../interfaces/index';
 import type { CollectionService } from '../services/collection.service';
 import { collectionObserver, propertyObserver } from '../services/observers';
 import { getDescendantProperty, getTranslationPrefix, unsubscribeAll } from '../services/utilities';
-import { buildMultipleSelectDataCollection, emptyElement, type RxJsFacade, sanitizeTextByAvailableSanitizer, type Subscription, type TranslaterService } from '../services/index';
+import { buildMsSelectCollectionList, type RxJsFacade, sanitizeTextByAvailableSanitizer, type Subscription, type TranslaterService } from '../services/index';
 import { renderCollectionOptionsAsync } from './filterUtilities';
+import type { SlickGrid } from '../core/index';
 
 export class SelectFilter implements Filter {
   protected _isMultipleSelect = true;
@@ -348,7 +348,7 @@ export class SelectFilter implements Filter {
     newCollection = this.sortCollection(newCollection);
 
     // step 1, create HTML DOM element
-    const selectBuildResult = buildMultipleSelectDataCollection(
+    const selectBuildResult = buildMsSelectCollectionList(
       'filter',
       newCollection,
       this.columnDef,

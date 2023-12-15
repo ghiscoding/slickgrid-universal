@@ -1,6 +1,4 @@
-import * as ExcelBuilder_ from 'excel-builder-webpacker';
-const ExcelBuilder = (ExcelBuilder_ as any)['default'] || ExcelBuilder_; // patch to fix rollup "ExcelBuilder has no default export" issue, document here https://github.com/rollup/rollup/issues/670
-
+import ExcelBuilder from 'excel-builder-webpacker';
 import type {
   Column,
   ContainerService,
@@ -29,9 +27,8 @@ import {
   getColumnFieldType,
   getTranslationPrefix,
   isColumnDateType,
-  sanitizeHtmlToText,
 } from '@slickgrid-universal/common';
-import { addWhiteSpaces, deepCopy, titleCase } from '@slickgrid-universal/utils';
+import { addWhiteSpaces, deepCopy, stripTags, titleCase } from '@slickgrid-universal/utils';
 
 import { ExcelCellFormat, ExcelMetadata, ExcelStylesheet, } from './interfaces/index';
 import {
@@ -75,12 +72,12 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   /** Getter of SlickGrid DataView object */
   get _dataView(): SlickDataView {
-    return (this._grid?.getData()) as SlickDataView;
+    return this._grid?.getData<SlickDataView>();
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
-    return this._grid?.getOptions() || {};
+    return this._grid?.getOptions() || {} as GridOption;
   }
 
   get stylesheet() {
@@ -317,7 +314,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
         columnStyles.push({
           bestFit: true,
-          width: columnDef.exportColumnWidth ?? columnDef.excelExportOptions?.width ?? this._gridOptions?.excelExportOptions?.customColumnWidth ?? 10
+          width: columnDef.excelExportOptions?.width ?? this._gridOptions?.excelExportOptions?.customColumnWidth ?? 10
         });
       }
     });
@@ -365,7 +362,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     this._columnHeaders = this.getColumnHeaders(columns) || [];
     if (this._columnHeaders && Array.isArray(this._columnHeaders) && this._columnHeaders.length > 0) {
       // add the header row + add a new line at the end of the row
-      outputHeaderTitles = this._columnHeaders.map((header) => ({ value: sanitizeHtmlToText(header.title), metadata }));
+      outputHeaderTitles = this._columnHeaders.map((header) => ({ value: stripTags(header.title), metadata }));
     }
 
     // do we have a Group by title?
@@ -442,7 +439,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         if ((columnDef.nameKey || columnDef.nameKey) && this._gridOptions.enableTranslate && this._translaterService?.translate) {
           headerTitle = this._translaterService.translate((columnDef.nameKey || columnDef.nameKey));
         } else {
-          headerTitle = columnDef.name || titleCase(columnDef.field);
+          headerTitle = (columnDef.name instanceof HTMLElement ? columnDef.name.innerHTML : columnDef.name) || titleCase(columnDef.field);
         }
         const skippedField = columnDef.excludeFromExport || false;
 
@@ -588,7 +585,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
         // sanitize early, when enabled, any HTML tags (remove HTML tags)
         if (typeof itemData === 'string' && (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport)) {
-          itemData = sanitizeHtmlToText(itemData as string);
+          itemData = stripTags(itemData as string);
         }
 
         const { stylesheetFormatterId, getDataValueParser } = this._regularCellExcelFormats[columnDef.id];
@@ -607,7 +604,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * @param itemObj
    */
   protected readGroupedRowTitle(itemObj: any): string {
-    const groupName = sanitizeHtmlToText(itemObj.title);
+    const groupName = stripTags(itemObj.title);
 
     if (this._excelExportOptions && this._excelExportOptions.addGroupIndentation) {
       const collapsedSymbol = this._excelExportOptions && this._excelExportOptions.groupCollapsedSymbol || '⮞';
@@ -634,7 +631,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
       // if there's a exportCustomGroupTotalsFormatter or groupTotalsFormatter, we will re-run it to get the exact same output as what is shown in UI
       if (columnDef.exportCustomGroupTotalsFormatter) {
-        itemData = columnDef.exportCustomGroupTotalsFormatter(itemObj, columnDef, this._grid);
+        const totalResult = columnDef.exportCustomGroupTotalsFormatter(itemObj, columnDef, this._grid);
+        itemData = totalResult instanceof HTMLElement ? totalResult.textContent || '' : totalResult;
       }
 
       // auto-detect best possible Excel format for Group Totals, unless the user provide his own formatting,
@@ -658,12 +656,13 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           };
         }
       } else if (columnDef.groupTotalsFormatter) {
-        itemData = columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid);
+        const totalResult = columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid);
+        itemData = totalResult instanceof HTMLElement ? totalResult.textContent || '' : totalResult;
       }
 
       // does the user want to sanitize the output data (remove HTML tags)?
       if (typeof itemData === 'string' && (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport)) {
-        itemData = sanitizeHtmlToText(itemData);
+        itemData = stripTags(itemData);
       }
 
       // add the column (unless user wants to skip it)

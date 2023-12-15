@@ -1,10 +1,10 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import 'jest-extended';
 
-import { Column, DragRowMove, GridOption, OnDragEventArgs, SlickGrid, SlickNamespace, } from '../../interfaces/index';
+import type { Column, DragRowMove, GridOption } from '../../interfaces/index';
 import { SlickRowMoveManager } from '../slickRowMoveManager';
+import { SlickEvent, SlickGrid } from '../../core/index';
 
-declare const Slick: SlickNamespace;
 const GRID_UID = 'slickgrid_12345';
 jest.mock('flatpickr', () => { });
 
@@ -52,10 +52,10 @@ const gridStub = {
   scrollCellIntoView: jest.fn(),
   scrollRowIntoView: jest.fn(),
   unregisterPlugin: jest.fn(),
-  onDrag: new Slick.Event(),
-  onDragInit: new Slick.Event(),
-  onDragEnd: new Slick.Event(),
-  onDragStart: new Slick.Event(),
+  onDrag: new SlickEvent(),
+  onDragInit: new SlickEvent(),
+  onDragEnd: new SlickEvent(),
+  onDragStart: new SlickEvent(),
 } as unknown as SlickGrid;
 
 const pubSubServiceStub = {
@@ -220,21 +220,27 @@ describe('SlickRowMoveManager Plugin', () => {
   });
 
   it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return regular formatter when usabilityOverride is returning True', () => {
+    const iconElm = document.createElement('div');
+    iconElm.className = 'slick-row-move-column';
+
     plugin.init(gridStub);
     plugin.usabilityOverride(() => true);
     const output = plugin.getColumnDefinition().formatter!(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
 
     expect(plugin).toBeTruthy();
-    expect(output).toEqual({ addClasses: 'cell-reorder dnd slick-row-move-column', text: '' });
+    expect(output).toEqual({ addClasses: 'cell-reorder dnd slick-row-move-column', html: iconElm });
   });
 
   it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return regular formatter when usabilityOverride is not a function', () => {
+    const iconElm = document.createElement('div');
+    iconElm.className = 'slick-row-move-column';
+
     plugin.init(gridStub);
     plugin.usabilityOverride(null as any);
     const output = plugin.getColumnDefinition().formatter!(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
 
     expect(plugin).toBeTruthy();
-    expect(output).toEqual({ addClasses: 'cell-reorder dnd slick-row-move-column', text: '' });
+    expect(output).toEqual({ addClasses: 'cell-reorder dnd slick-row-move-column', html: iconElm });
   });
 
   it('should create the plugin and trigger "dragInit" event and expect "stopImmediatePropagation" to be called', () => {
