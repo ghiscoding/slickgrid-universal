@@ -91,7 +91,7 @@
     "autoprefixer": "^10.4.16",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
-    "cssnano": "^6.0.1",
+    "cssnano": "^6.0.2",
     "npm-run-all2": "^6.1.1",
     "postcss": "^8.4.32",
     "postcss-cli": "^11.0.0",
