@@ -168,8 +168,8 @@ importers:
         specifier: ^2.29.4
         version: 2.29.4
       multiple-select-vanilla:
-        specifier: ^1.1.0
-        version: 1.1.0
+        specifier: ^1.1.1
+        version: 1.1.1
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -6695,12 +6695,6 @@ packages:
       array-union: 3.0.1
       minimatch: 9.0.3
     dev: true
-
-  /multiple-select-vanilla@1.1.0:
-    resolution: {integrity: sha512-6omDTMWvoPGarv3A3crCYxHVnoxr9g0ZpzLZn183qgqhoEo3uVtb/W0uZo94l9ZItYrxtwVe5WHiQAah0CxfPQ==}
-    dependencies:
-      '@types/trusted-types': 2.0.7
-    dev: false
 
   /multiple-select-vanilla@1.1.1:
     resolution: {integrity: sha512-bSRyHinSNnTOAirlTxdXYor1c4yUYlQPHmODowq+r6S56bVe5vn2wtnZ/WYi+kBiolMb8LsYw4d9ubDPwhwgTw==}
