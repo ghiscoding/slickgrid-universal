@@ -1,6 +1,7 @@
 import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { flatten } from 'un-flatten-tree';
-import moment from 'moment-mini';
+import * as moment_ from 'moment-mini';
+const moment = (moment_ as any)['default'] || moment_;
 
 import { Constants } from '../constants';
 import { FieldType, type OperatorString, OperatorType } from '../enums/index';

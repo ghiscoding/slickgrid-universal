@@ -1,7 +1,9 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, destroyAllElementProps, emptyElement, } from '@slickgrid-universal/utils';
 import flatpickr from 'flatpickr';
-import moment from 'moment-mini';
+import * as moment_ from 'moment-mini';
+const moment = (moment_ as any)['default'] || moment_;
+
 import type { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
 import type { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
 

@@ -1,24 +1,25 @@
-import moment from 'moment-mini';
+import * as moment_ from 'moment-mini';
+const moment = (moment_ as any)['default'] || moment_;
 
 import { FieldType } from '../enums/fieldType.enum';
 import type { SortComparer } from '../interfaces/index';
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 
-export function compareDates(value1: any, value2: any, sortDirection: number, format: string | moment.MomentBuiltinFormat, strict?: boolean) {
+export function compareDates(value1: any, value2: any, sortDirection: number, format: string | moment_.MomentBuiltinFormat, strict?: boolean) {
   let diff = 0;
 
   if (value1 === value2) {
     diff = 0;
   } else {
     // use moment to validate the date
-    let date1: moment.Moment | Date = moment(value1, format, strict);
-    let date2: moment.Moment | Date = moment(value2, format, strict);
+    let date1: moment_.Moment | Date = moment(value1, format, strict);
+    let date2: moment_.Moment | Date = moment(value2, format, strict);
 
     // when moment date is invalid, we'll create a temporary old Date
-    if (!date1.isValid()) {
+    if (!(date1 as moment_.Moment).isValid()) {
       date1 = new Date(1001, 1, 1);
     }
-    if (!date2.isValid()) {
+    if (!(date2 as moment_.Moment).isValid()) {
       date2 = new Date(1001, 1, 1);
     }
 
