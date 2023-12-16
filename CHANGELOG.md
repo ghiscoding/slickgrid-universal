@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.3](https://github.com/ghiscoding/slickgrid-universal/compare/v4.0.2...v4.0.3) (2023-12-16)
+
+### Bug Fixes
+
+* add back moment rollup patch with default import ([2e81421](https://github.com/ghiscoding/slickgrid-universal/commit/2e814214fe7246c76fe8e1398c87cd20cc41c862)) - by @ghiscoding
+
 ## [4.0.2](https://github.com/ghiscoding/slickgrid-universal/compare/v3.7.2...v4.0.2) (2023-12-15)
 ### Follow the [Migration 4.x Guide](https://ghiscoding.gitbook.io/slickgrid-universal/migrations/migration-to-4.x)
 
