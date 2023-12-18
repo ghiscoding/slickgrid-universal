@@ -24,8 +24,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "/dist"
+ "files": [
+    "/dist",
+    "/src"
   ],
   "scripts": {
     "prebuild": "pnpm run clean",

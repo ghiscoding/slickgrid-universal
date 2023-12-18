@@ -25,7 +25,8 @@
     "access": "public"
   },
   "files": [
-    "/dist"
+    "/dist",
+    "/src"
   ],
   "scripts": {
     "prebuild": "pnpm run clean",

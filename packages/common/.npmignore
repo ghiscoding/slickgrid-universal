@@ -1,7 +1,0 @@
-src/**/styles/*.*
-src/**/__tests__/*.*
-typing/**/*.*
-build-watch.mjs
-tsconfig.json
-tsconfig.bundle.json
-CHANGELOG.md
