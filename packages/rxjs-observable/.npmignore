@@ -1,7 +1,5 @@
 src/**/__tests__/*.*
 typing/**/*.*
-dist-grid-bundle-zip/*.zip
-external-libs/*.zip
 tsconfig.json
 tsconfig.bundle.json
 CHANGELOG.md
