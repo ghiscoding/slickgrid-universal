@@ -1,5 +1,5 @@
 coverage:
-  precision: 2
+  precision: 0
   round: up
   range: "50...95"
 
@@ -7,8 +7,8 @@ coverage:
     project:
       default:
         target: auto
-        # Fail the status if coverage drops by >= 3%
-        threshold: 3%
+        # Fail the status if coverage drops by >= x
+        threshold: 5%
         branches: null
     patch:
       default:

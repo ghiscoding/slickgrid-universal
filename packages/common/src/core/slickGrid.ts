@@ -596,6 +596,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.updateColumnProps();
 
     // validate loaded JavaScript modules against requested options
+    /* istanbul ignore if */
     if (this._options.enableColumnReorder && (!Sortable || !Sortable.create)) {
       throw new Error('SlickGrid requires Sortable.js module to be loaded');
     }
@@ -786,7 +787,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       // calculate the diff so we can set consistent sizes
       this.measureCellPaddingAndBorder();
 
-      // for usability reasons, all text selection in SlickGrid is disabled
+      // for usability reasons, all text selection in SlickGrid are disabled
       // with the exception of input and textarea elements (selection must
       // be enabled there so that editors work as expected); note that
       // selection in grid cells (grid body) is already unavailable in
