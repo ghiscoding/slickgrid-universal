@@ -500,9 +500,8 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
         // when adding a new row to the grid, we need to invalidate that row and re-render the grid
         this._eventHandler.subscribe(this.grid.onAddNewRow, (_e, args) => {
-          this.insertNewItemInDataView(args.item);
-          this._originalDataContext = args.item; // this becomes the new data context
-          this.dispose();
+          this._originalDataContext = this.insertNewItemInDataView(args.item); // this becomes the new data context
+          // this.disposeComponent();
         });
       }
       return this;
@@ -917,7 +916,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** switch case handler to determine which code to execute depending on the modal type */
-  protected handleSaveClicked() {
+  protected async handleSaveClicked() {
     const modalType = this._options?.modalType;
     switch (modalType) {
       case 'mass-update':
@@ -962,14 +961,18 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         // commit the changes into the grid
         // if it's a "create" then it will triggered the "onAddNewRow" event which will in term push it to the grid
         // while an "edit" will simply applies the changes directly on the same row
-        this.grid.getEditController()?.commitCurrentEdit();
+        let isFormValid = this.grid.getEditController()?.commitCurrentEdit();
 
         // if the user provided the "onSave" callback, let's execute it with the item data context
-        if (typeof this._options?.onSave === 'function') {
-          const itemDataContext = this.grid.getDataItem(this._lastActiveRowNumber); // we can get item data context directly from DataView
-          this._options?.onSave(this.formValues, this.getCurrentRowSelections(), itemDataContext);
+        if (isFormValid && typeof this._options?.onSave === 'function') {
+          const itemDataContext = (modalType === 'create')
+            ? this._originalDataContext // the inserted item was copied to our ref by the "onAddNewRow" event
+            : this.grid.getDataItem(this._lastActiveRowNumber); // for clone, we can get item data context directly from DataView
+          isFormValid = await this._options?.onSave(this.formValues, this.getCurrentRowSelections(), itemDataContext);
         }
-
+        if (isFormValid) {
+          this.dispose(); // when the form is valid, we can close the modal
+        }
         break;
     }
   }
@@ -985,6 +988,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     } else {
       this.executeOnError({ type: 'error', code: 'ITEM_ALREADY_EXIST', message: `The item object which you are trying to add already exist with the same Id:: ${newId}` });
     }
+    return item;
   }
 
   protected parseText(inputText: string, mappedArgs: any): string {

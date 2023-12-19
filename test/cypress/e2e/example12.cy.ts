@@ -241,16 +241,63 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.item-details-container.editor-title .item-details-validation').contains('* This is a required field.');
   });
 
-  it('should fill in the (Create Item) form inputs and expect a new row in the grid', () => {
+  it('should fill in the (Create Item) as Task 7777 and expect a new row in the grid', () => {
+    cy.get('textarea').type('Task 7777');
+    cy.get('.item-details-container.editor-title .item-details-validation').should('be.empty');
+    cy.get('.item-details-container.editor-title .modified').should('have.length', 1);
+
+    cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 44).trigger('change', { force: true });
+    cy.get('.item-details-editor-container .input-group-text').contains('44');
+    cy.get('.item-details-container.editor-percentComplete .modified').should('have.length', 1);
+
+    cy.get('.item-details-container.editor-product .autocomplete').type('sleek');
+    cy.get('.slick-autocomplete.autocomplete-custom-four-corners').should('be.visible');
+    cy.get('.slick-autocomplete.autocomplete-custom-four-corners').find('div:nth(0)').click();
+    cy.get('.item-details-container.editor-product .modified').should('have.length', 1);
+
+    cy.get('.item-details-container.editor-duration .editor-text').type('33');
+    cy.get('.item-details-container.editor-duration .modified').should('have.length', 1);
+
+    cy.get('.item-details-container.editor-origin .autocomplete').type('au');
+    cy.get('.slick-autocomplete:visible').find('div:nth(1)').click();
+    cy.get('.item-details-container.editor-origin .autocomplete').invoke('val').then(text => expect(text).to.eq('Austria'));
+    cy.get('.item-details-container.editor-origin .modified').should('have.length', 1);
+
+    cy.get('.btn-save').contains('Save').click();
+    cy.get('.slick-editor-modal').should('not.exist');
+
+    cy.window().then((win) => {
+      expect(win.console.log).to.be.calledWithMatch('create item data context', {
+        id: 501, title: 'Task 7777', completed: false, complexity: '', duration: 33, finish: '',
+        percentComplete: 44, start: '', origin: { name: 'Austria', code: 'AT' },
+        product: { id: 0, icon: 'mdi-arrow-collapse', itemName: 'Sleek Metal Computer', itemTypeName: 'I', listPrice: 2100.23 },
+      });
+    });
+  });
+
+  it('should have new TASK 7777 displayed on first row', () => {
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).contains('TASK 7777', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '33 days');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`).should('contain', '44');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(5)`).find('.editing-field').should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 0);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(8)`).should('be.empty');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(9)`).should('contain', 'Sleek Metal Computer');
+
+    // next few rows Title should be unchanged
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).contains('TASK 0', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).contains('TASK 1111', { matchCase: false });
+  });
+
+  it('should fill in the (Create Item) form inputs with Task 8888 and expect a new row in the grid', () => {
+    cy.get('[data-test="open-modal-create-btn"]').click();
+    cy.get('.slick-editor-modal-title').contains('Inserting New Task');
+
     cy.get('textarea').type('Task');
     cy.get('.item-details-container.editor-title .item-details-validation').contains('* Your title is invalid, it must start with "Task" followed by a number.');
     cy.get('textarea').type(' 8888');
     cy.get('.item-details-container.editor-title .item-details-validation').should('be.empty');
     cy.get('.item-details-container.editor-title .modified').should('have.length', 1);
-
-    // cy.get('.slick-large-editor-text.editor-title')
-    //   .should('have.css', 'border')
-    //   .and('contain', `solid ${UNSAVED_RGB_COLOR}`);
 
     cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 5).trigger('change', { force: true });
     cy.get('.item-details-editor-container .input-group-text').contains('5');
@@ -279,6 +326,14 @@ describe('Example 12 - Composite Editor Modal', () => {
 
     cy.get('.btn-save').contains('Save').click();
     cy.get('.slick-editor-modal').should('not.exist');
+
+    cy.window().then((win) => {
+      expect(win.console.log).to.be.calledWithMatch('create item data context', {
+        id: 502, title: 'Task 8888', completed: true, complexity: '', duration: 22, percentComplete: 5,
+        start: '', origin: { name: 'Antarctica', code: 'AQ' },
+        product: { id: 1, icon: 'mdi-arrow-expand', itemName: 'Tasty Granite Table', itemTypeName: 'I', listPrice: 3200.12 },
+      });
+    });
   });
 
   it('should have new TASK 8888 displayed on first row', () => {
@@ -291,14 +346,16 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(9)`).should('contain', 'Tasty Granite Table');
 
     // next few rows Title should be unchanged
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).contains('TASK 0', { matchCase: false });
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).contains('TASK 1111', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).contains('TASK 8888', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).contains('TASK 7777', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).contains('TASK 0', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).contains('TASK 1111', { matchCase: false });
   });
 
-  it('should open the Composite Editor (Edit Item) and expect all form inputs to be filled with TASK 8888 data of previous create item', () => {
+  it('should open the Composite Editor (Edit Item) and expect all form inputs to be filled with TASK 8888 data of previously created item', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`).click({ force: true });
     cy.get('[data-test="open-modal-edit-btn"]').click();
-    cy.get('.slick-editor-modal-title').contains('Editing - Task 8888 (id: 501)');
+    cy.get('.slick-editor-modal-title').contains('Editing - Task 8888 (id: 502)');
 
     cy.get('textarea').contains('Task 8888').type('Task 8899');
     cy.get('.item-details-editor-container .slider-editor-input.editor-percentComplete').as('range').invoke('val', 7).trigger('change', { force: true });
@@ -325,15 +382,16 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(9)`).should('contain', 'Tasty Granite Table');
 
     // next few rows Title should be unchanged
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).contains('TASK 0', { matchCase: false });
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).contains('TASK 1111', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).contains('TASK 7777', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).contains('TASK 0', { matchCase: false });
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).contains('TASK 1111', { matchCase: false });
   });
 
   it('should open the Composite Editor (Mass Update) and be able to change some of the inputs in the form', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`).click();
     cy.get('[data-test="open-modal-mass-update-btn"]').wait(200).click();
     cy.get('.slick-editor-modal-title').should('contain', 'Mass Update All Records');
-    cy.get('.footer-status-text').should('contain', 'All 501 records selected');
+    cy.get('.footer-status-text').should('contain', 'All 502 records selected');
 
     cy.get('.item-details-editor-container .editor-checkbox').check();
     cy.get('.item-details-container.editor-completed .modified').should('have.length', 1);
@@ -393,7 +451,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`).click();
     cy.get('[data-test="open-modal-mass-update-btn"]').wait(200).click();
     cy.get('.slick-editor-modal-title').should('contain', 'Mass Update All Records');
-    cy.get('.footer-status-text').should('contain', 'All 501 records selected');
+    cy.get('.footer-status-text').should('contain', 'All 502 records selected');
 
     cy.get('.item-details-editor-container .editor-checkbox').check();
     cy.get('.item-details-container.editor-completed .modified').should('have.length', 1);
@@ -449,7 +507,7 @@ describe('Example 12 - Composite Editor Modal', () => {
 
   it('should be able to open the Composite Editor (Mass Selection) and be able to change some of the inputs in the form', () => {
     cy.get('.slick-editor-modal-title').should('contain', 'Update Selected Records');
-    cy.get('.footer-status-text').should('contain', '2 of 501 selected');
+    cy.get('.footer-status-text').should('contain', '2 of 502 selected');
 
     cy.get('.item-details-editor-container .editor-checkbox').check();
     cy.get('.item-details-container.editor-completed .modified').should('have.length', 1);
