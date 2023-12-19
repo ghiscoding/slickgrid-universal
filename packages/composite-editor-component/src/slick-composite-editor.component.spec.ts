@@ -1004,7 +1004,10 @@ describe('CompositeEditorService', () => {
         jest.spyOn(dataViewStub, 'getItemCount').mockReturnValue(1);
         jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
         const gridSrvAddItemSpy = jest.spyOn(gridServiceStub, 'addItem');
-        const saveSpy = jest.spyOn(gridStub.getEditController() as any, 'commitCurrentEdit');
+        (getEditControllerMock as any).commitCurrentEdit = () => {
+          gridStub.onAddNewRow.notify({ grid: gridStub, item: mockProduct2, column: columnsMock[0] });
+          return true;
+        };
 
         const mockModalOptions = { headerTitle: 'Details', modalType: 'create' } as CompositeEditorOpenDetailOption;
         component = new SlickCompositeEditorComponent();
@@ -1025,7 +1028,6 @@ describe('CompositeEditorService', () => {
         gridStub.onCompositeEditorChange.notify({ row: 0, cell: 0, column: columnsMock[0], item: mockProduct2, formValues: { productName: 'test' }, editors: {}, grid: gridStub });
 
         compositeFooterSaveBtnElm.click();
-        gridStub.onAddNewRow.notify({ grid: gridStub, item: mockProduct2, column: columnsMock[0] });
 
         setTimeout(() => {
           expect(component).toBeTruthy();
@@ -1037,7 +1039,6 @@ describe('CompositeEditorService', () => {
           expect(productNameLabelElm.textContent).toBe('Product');
           expect(productNameDetailCellElm.classList.contains('modified')).toBe(true);
           expect(gridSrvAddItemSpy).toHaveBeenCalledWith({ ...mockProduct2, id: 2 }, undefined);
-          expect(saveSpy).toHaveBeenCalled();
           done();
         });
       });
@@ -1148,10 +1149,13 @@ describe('CompositeEditorService', () => {
         jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockNewProduct2);
         jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
         const gridSrvAddItemSpy = jest.spyOn(gridServiceStub, 'addItem');
-        const saveSpy = jest.spyOn(gridStub.getEditController() as any, 'commitCurrentEdit');
-
+        (getEditControllerMock as any).commitCurrentEdit = () => {
+          gridStub.onAddNewRow.notify({ grid: gridStub, item: mockNewProduct2, column: columnsMock[0] });
+          return true;
+        };
         const mockCreateOnSave = jest.fn();
         mockCreateOnSave.mockResolvedValue(Promise.resolve(true));
+
         const mockModalOptions = { headerTitle: 'Details', modalType: 'create', insertNewId: 3, onSave: mockCreateOnSave } as CompositeEditorOpenDetailOption;
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
@@ -1171,7 +1175,6 @@ describe('CompositeEditorService', () => {
         gridStub.onCompositeEditorChange.notify({ row: 0, cell: 0, column: columnsMock[0], item: mockNewProduct2, formValues: { productName: 'test' }, editors: {}, grid: gridStub });
 
         compositeFooterSaveBtnElm.click();
-        gridStub.onAddNewRow.notify({ grid: gridStub, item: mockNewProduct2, column: columnsMock[0] });
 
         setTimeout(() => {
           expect(component).toBeTruthy();
@@ -1183,7 +1186,6 @@ describe('CompositeEditorService', () => {
           expect(productNameLabelElm.textContent).toBe('Product');
           expect(productNameDetailCellElm.classList.contains('modified')).toBe(true);
           expect(gridSrvAddItemSpy).toHaveBeenCalledWith({ ...mockNewProduct2, id: 3 }, undefined);
-          expect(saveSpy).toHaveBeenCalled();
           expect(mockCreateOnSave).toHaveBeenCalledWith({ productName: 'test' }, { gridRowIndexes: [], dataContextIds: [] }, { ...mockNewProduct2, id: 3 });
           done();
         });
