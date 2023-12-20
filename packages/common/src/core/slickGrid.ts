@@ -4751,21 +4751,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /**
    * Highlight a row for a certain duration (ms) of time.
-   * If the duration is set to null/undefined, then the row will remain highlighted indifinitely.
    * @param {Number} row - grid row number
-   * @param {Number} duration - duration (ms)
+   * @param {Number} [duration] - duration (ms), defaults to 500ms
    */
-  highlightRow(row: number, duration?: number) {
+  highlightRow(row: number, duration = 500) {
     const rowCache = this.rowsCache[row];
 
     if (Array.isArray(rowCache?.rowNode) && this._options.rowHighlightCssClass) {
       rowCache.rowNode.forEach(node => node.classList.add(this._options.rowHighlightCssClass || ''));
-      if (typeof duration === 'number') {
-        clearTimeout(this._highlightRowTimer);
-        this._highlightRowTimer = setTimeout(() => {
-          rowCache.rowNode?.forEach(node => node.classList.remove(this._options.rowHighlightCssClass || ''));
-        }, duration);
-      }
+      clearTimeout(this._highlightRowTimer);
+      this._highlightRowTimer = setTimeout(() => {
+        rowCache.rowNode?.forEach(node => node.classList.remove(this._options.rowHighlightCssClass || ''));
+      }, duration);
     }
   }
 
