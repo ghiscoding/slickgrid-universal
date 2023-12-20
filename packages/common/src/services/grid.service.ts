@@ -273,22 +273,6 @@ export class GridService {
     }
   }
 
-  protected fadeHighlight(item: any, idPropName: string) {
-    item.__slickRowCssClasses = 'highlight-end';
-    this._dataView.updateItem(item[idPropName], item);
-    this.renderGrid();
-  }
-
-  protected removeHighlight(item: any, idPropName: string) {
-    if (item?.[idPropName] !== undefined) {
-      delete item.__slickRowCssClasses;
-      if (this._dataView.getIdxById(item[idPropName]) !== undefined) {
-        this._dataView.updateItem(item[idPropName], item);
-        this.renderGrid();
-      }
-    }
-  }
-
   /** Select the selected row by a row index */
   setSelectedRow(rowIndex: number) {
     if (this._grid?.setSelectedRows) {
