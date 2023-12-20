@@ -498,6 +498,14 @@ describe('SlickCore file', () => {
         expect(obj2).toEqual({ hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'], callback }, another: 'prop' });
       });
 
+      it('should be able to make a perfect deep copy of an object that includes String() and Boolean() constructors', () => {
+        const callback = () => console.log('hello');
+        const obj1 = { hello: { sender: 'me', target: String(123), valid: Boolean(null) }, deeper: { children: ['abc', 'cde'], callback } };
+        const obj2 = Utils.extend(true, {}, obj1, { another: 'prop' });
+
+        expect(obj2).toEqual({ hello: { sender: 'me', target: '123', valid: false }, deeper: { children: ['abc', 'cde'], callback }, another: 'prop' });
+      });
+
       it('should be able to make a deep copy of an object and changing new object prop should not affect input object', () => {
         const obj1 = { hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'] } };
         const obj2 = Utils.extend(true, {}, obj1, { another: 'prop' });
