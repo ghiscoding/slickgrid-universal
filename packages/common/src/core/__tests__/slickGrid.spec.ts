@@ -1,3 +1,4 @@
+import { SlickRowSelectionModel } from '../../extensions';
 import { Column, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces';
 import { SlickDataView } from '../slickDataview';
 import { SlickGrid } from '../slickGrid';
@@ -399,6 +400,34 @@ describe('SlickGrid core file', () => {
       expect(slickRowElms.length).toBe(2);
       expect(slickRowElms[0].classList.contains('highlight-animate')).toBeFalsy();
       expect(slickRowElms[1].classList.contains('highlight-animate')).toBeFalsy();
+    });
+  });
+
+  describe('plugins', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    const dv = new SlickDataView({});
+    const cellNodeElm = document.createElement('div');
+
+    it('should be able to register a plugin', () => {
+      const rowSelectionModel = new SlickRowSelectionModel();
+      grid = new SlickGrid<any, Column>(container, dv, columns, options);
+      grid.setSelectionModel(rowSelectionModel);
+      rowSelectionModel.init(grid);
+
+      grid.registerPlugin(rowSelectionModel);
+      const loadedPlugin = grid.getPluginByName<SlickRowSelectionModel>('RowSelectionModel');
+      const selectionModel = grid.getSelectionModel();
+      expect(loadedPlugin).toBeTruthy();
+      expect(selectionModel).toBeTruthy();
+
+      grid.unregisterPlugin(loadedPlugin!);
+      expect(loadedPlugin).toBeFalsy();
+
+      const p = grid.getPluginByName('RowSelectionModel');
+      const sm = grid.getSelectionModel();
+      expect(p).toBeFalsy();
+      expect(sm).toBeFalsy();
     });
   });
 });

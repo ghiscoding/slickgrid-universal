@@ -3,6 +3,7 @@ import 'jest-extended';
 import {
   calculateAvailableSpace,
   createDomElement,
+  destroyAllElementProps,
   emptyElement,
   findFirstAttribute,
   getHTMLFromFragment,
@@ -64,6 +65,18 @@ describe('Service/domUtilies', () => {
       expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining(`[Slickgrid-Universal] For better CSP (Content Security Policy) support, do not use "innerHTML" directly in "createDomElement('div', { innerHTML: 'some html'})"`));
     });
   });
+
+  describe('destroyAllElementProps() method', () => {
+    it('should clear all object props', () => {
+      const obj = {
+        age: 20,
+        elm: document.createElement('div')
+      };
+      destroyAllElementProps(obj);
+
+      expect(obj).toEqual({ age: 20, elm: null });
+    })
+  })
 
   describe('emptyElement method', () => {
     const div = document.createElement('div');
