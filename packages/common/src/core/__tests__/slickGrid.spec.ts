@@ -2,6 +2,8 @@ import { Column, FormatterResultWithHtml, FormatterResultWithText, GridOption } 
 import { SlickDataView } from '../slickDataview';
 import { SlickGrid } from '../slickGrid';
 
+jest.useFakeTimers();
+
 describe('SlickGrid core file', () => {
   let container: HTMLElement;
   let grid: SlickGrid;
@@ -188,6 +190,41 @@ describe('SlickGrid core file', () => {
       grid.applyFormatResultToCellNode(formatterResult, cellNodeElm);
 
       expect(cellNodeElm.outerHTML).toBe('<div class="some-class" title="some tooltip">some content</div>');
+    });
+  });
+
+  describe('highlightRow() method', () => {
+    const columns = [
+      { id: 'firstName', field: 'firstName', name: 'First Name' },
+      { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      { id: 'age', field: 'age', name: 'Age' },
+    ] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    const dv = new SlickDataView({});
+
+    it('should call the method and expect the highlight to happen for a certain duration', () => {
+      const mockItems = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 0, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+
+      grid = new SlickGrid<any, Column>(container, dv, columns, options);
+      dv.addItems(mockItems);
+      grid.init();
+      grid.render();
+
+      grid.highlightRow(0, 10);
+      expect(grid).toBeTruthy();
+      expect(grid.getDataLength()).toBe(2);
+
+      let slickRowElms = container.querySelectorAll<HTMLDivElement>('.slick-row');
+      expect(slickRowElms.length).toBe(2);
+      expect(slickRowElms[0].classList.contains('highlight-animate')).toBeTruthy(); // only 1st row is highlighted
+      expect(slickRowElms[1].classList.contains('highlight-animate')).toBeFalsy();
+
+      jest.runAllTimers(); // fast-forward timer
+
+      slickRowElms = container.querySelectorAll<HTMLDivElement>('.slick-row');
+      expect(slickRowElms.length).toBe(2);
+      expect(slickRowElms[0].classList.contains('highlight-animate')).toBeFalsy();
+      expect(slickRowElms[1].classList.contains('highlight-animate')).toBeFalsy();
     });
   });
 });

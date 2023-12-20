@@ -1,24 +1,9 @@
 /* Mixins for SlickGrid */
 @import './variables';
 
-@-webkit-keyframes highlight-start {
-  to { background: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color); }
-  from { background: none; }
-}
-
-@keyframes highlight-start {
-  to { background: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color); }
-  from { background: none; }
-}
-
-@-webkit-keyframes highlight-end {
-  from { background: var(--slick-row-highlight-fade-out-animation, $slick-row-highlight-fade-out-animation); }
-  to { background: none; }
-}
-
-@keyframes highlight-end {
-  from { background: var(--slick-row-highlight-fade-out-animation, $slick-row-highlight-fade-out-animation); }
-  to { background: none; }
+@keyframes fade {
+  0%, 100% { background: none }
+  50% { background: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color) }
 }
 
 .slickgrid-container {
@@ -72,34 +57,6 @@
       &.active {
         padding: var(--slick-cell-padding, $slick-cell-padding);
       }
-      &.highlight {
-        background-color: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color);
-        animation: highlight-start $slick-row-highlight-fade-animation;
-        .slick-cell {
-          &.copied {
-            background: var(--slick-copied-cell-bg-color-transition, $slick-copied-cell-bg-color-transition);
-            transition: var(--slick-copied-cell-transition, $slick-copied-cell-transition);
-          }
-        }
-        &.odd {
-          background-color: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color);
-          animation: highlight-start #{var(--slick-row-highlight-fade-animation, $slick-row-highlight-fade-animation)};
-        }
-        &.odd .slick-cell {
-          &.copied {
-            background: var(--slick-copied-cell-bg-color-transition, $slick-copied-cell-bg-color-transition);
-            transition: var(--slick-copied-cell-transition, $slick-copied-cell-transition);
-          }
-        }
-      }
-      &.highlight-end {
-        background-color: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color);
-        animation: highlight-end #{var(--slick-row-highlight-fade-animation, $slick-row-highlight-fade-animation)};
-        &.odd {
-          background-color: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color);
-          animation: highlight-end #{var(--slick-row-highlight-fade-animation, $slick-row-highlight-fade-animation)};
-        }
-      }
       &.highlighter {
         background: orange !important;
         transition-property: background;
@@ -135,6 +92,13 @@
           transition: var(--slick-copied-cell-transition, $slick-copied-cell-transition);
         }
         background: inherit;
+      }
+      &.highlight {
+        background: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color);
+      }
+      &.highlight-animate {
+        background: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color);
+        animation: fade var(--slick-row-highlight-fade-animation, $slick-row-highlight-fade-animation);
       }
       &.slick-group-totals {
         color: var(--slick-group-totals-formatter-color, $slick-group-totals-formatter-color);

@@ -29,8 +29,6 @@ const HideColumnOptionDefaults: HideColumnOption = { autoResizeColumns: true, tr
 export class GridService {
   protected _grid!: SlickGrid;
   protected _rowSelectionPlugin?: SlickRowSelectionModel;
-  protected _highlightTimer?: NodeJS.Timeout;
-  protected _highlightTimerEnd?: NodeJS.Timeout;
 
   constructor(
     protected readonly gridStateService: GridStateService,
@@ -53,7 +51,6 @@ export class GridService {
   }
 
   dispose() {
-    this.clearHighlightTimer();
     this._rowSelectionPlugin?.dispose();
   }
 
@@ -70,12 +67,6 @@ export class GridService {
     if (this.filterService && this.filterService.clearFilters) {
       this.filterService.clearFilters();
     }
-  }
-
-  /** Clear any highlight timer that might have been left opened */
-  clearHighlightTimer() {
-    clearTimeout(this._highlightTimer);
-    clearTimeout(this._highlightTimerEnd);
   }
 
   /** Clear all the pinning (frozen) options */
@@ -152,32 +143,6 @@ export class GridService {
       throw new Error(`[Slickgrid-Universal] We could not find SlickGrid Grid object or it's "getDataItem" method`);
     }
     return this._grid.getDataItem(rowNumber);
-  }
-
-  /** Chain the item Metadata with our implementation of Metadata at given row index */
-  getItemRowMetadataToHighlight(previousItemMetadata: any) {
-    return (rowNumber: number) => {
-      const item = this._dataView.getItem(rowNumber);
-      let meta = { cssClasses: '' };
-      if (typeof previousItemMetadata === 'function') {
-        meta = previousItemMetadata.call(this._dataView, rowNumber);
-      }
-
-      if (!meta) {
-        meta = { cssClasses: '' };
-      }
-
-      if (item && item._dirty) {
-        meta.cssClasses = (meta && meta.cssClasses || '') + ' dirty';
-      }
-
-      if (item && item.rowClass && meta) {
-        meta.cssClasses += ` ${item.rowClass}`;
-        meta.cssClasses += ` row${rowNumber}`;
-      }
-
-      return meta;
-    };
   }
 
   /** Get the Data Item from a grid row index */
@@ -290,12 +255,11 @@ export class GridService {
   }
 
   /**
-   * Highlight then fade a row for x seconds.
-   * The implementation follows this SO answer: https://stackoverflow.com/a/19985148/1212166
-   * @param rowNumber
-   * @param fadeDelay
+   * Highlight then fade a row for certain duration (ms).
+   * @param {Number} rowNumber - grid row number
+   * @param {Number} duration - duration in ms
    */
-  highlightRow(rowNumber: number | number[], fadeDelay = 1500, fadeOutDelay = 300) {
+  highlightRow(rowNumber: number | number[], duration = 750) {
     // create a SelectionModel if there's not one yet
     if (!this._grid.getSelectionModel()) {
       this._rowSelectionPlugin = new SlickRowSelectionModel(this._gridOptions.rowSelectionOptions);
@@ -303,43 +267,25 @@ export class GridService {
     }
 
     if (Array.isArray(rowNumber)) {
-      rowNumber.forEach(row => this.highlightRowByMetadata(row, fadeDelay, fadeOutDelay));
+      rowNumber.forEach(row => this._grid.highlightRow(row));
     } else {
-      this.highlightRowByMetadata(rowNumber, fadeDelay, fadeOutDelay);
+      this._grid.highlightRow(rowNumber, duration);
     }
   }
 
-  highlightRowByMetadata(rowNumber: number, fadeDelay = 1500, fadeOutDelay = 300) {
-    this._dataView.getItemMetadata = this.getItemRowMetadataToHighlight(this._dataView.getItemMetadata);
+  protected fadeHighlight(item: any, idPropName: string) {
+    item.__slickRowCssClasses = 'highlight-end';
+    this._dataView.updateItem(item[idPropName], item);
+    this.renderGrid();
+  }
 
-    const item = this._dataView.getItem(rowNumber);
-    const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
-
+  protected removeHighlight(item: any, idPropName: string) {
     if (item?.[idPropName] !== undefined) {
-      item.rowClass = 'highlight';
-      this._dataView.updateItem(item[idPropName], item);
-      this.renderGrid();
-
-      // clear both timers
-      this.clearHighlightTimer();
-
-      // fade out
-      this._highlightTimerEnd = setTimeout(() => {
-        item.rowClass = 'highlight-end';
+      delete item.__slickRowCssClasses;
+      if (this._dataView.getIdxById(item[idPropName]) !== undefined) {
         this._dataView.updateItem(item[idPropName], item);
         this.renderGrid();
-      }, fadeOutDelay);
-
-      // delete the row's CSS highlight classes once the delay is passed
-      this._highlightTimer = setTimeout(() => {
-        if (item?.[idPropName] !== undefined) {
-          delete item.rowClass;
-          if (this._dataView.getIdxById(item[idPropName]) !== undefined) {
-            this._dataView.updateItem(item[idPropName], item);
-            this.renderGrid();
-          }
-        }
-      }, fadeDelay + fadeOutDelay);
+      }
     }
   }
 
