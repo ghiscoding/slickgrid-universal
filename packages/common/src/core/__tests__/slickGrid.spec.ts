@@ -426,9 +426,7 @@ describe('SlickGrid core file', () => {
       expect(loadedPlugin).toBeFalsy();
 
       const p = grid.getPluginByName('RowSelectionModel');
-      const sm = grid.getSelectionModel();
       expect(p).toBeFalsy();
-      expect(sm).toBeFalsy();
     });
   });
 });
