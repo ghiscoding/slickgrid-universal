@@ -28,13 +28,13 @@
     "fetch-jsonp": "^1.3.0",
     "flatpickr": "^4.6.13",
     "moment-mini": "^2.29.4",
-    "multiple-select-vanilla": "^1.1.1",
+    "multiple-select-vanilla": "^1.1.2",
     "rxjs": "^7.8.1",
     "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
     "@types/fnando__sparkline": "^0.3.7",
-    "@types/node": "^20.10.4",
+    "@types/node": "^20.10.5",
     "@types/whatwg-fetch": "^0.0.33",
     "sass": "^1.69.5",
     "typescript": "^5.3.3",
