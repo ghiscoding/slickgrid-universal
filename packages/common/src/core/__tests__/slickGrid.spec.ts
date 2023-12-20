@@ -416,12 +416,13 @@ describe('SlickGrid core file', () => {
       rowSelectionModel.init(grid);
 
       grid.registerPlugin(rowSelectionModel);
-      const loadedPlugin = grid.getPluginByName<SlickRowSelectionModel>('RowSelectionModel');
+      let loadedPlugin = grid.getPluginByName<SlickRowSelectionModel>('RowSelectionModel');
       const selectionModel = grid.getSelectionModel();
       expect(loadedPlugin).toBeTruthy();
       expect(selectionModel).toBeTruthy();
 
-      grid.unregisterPlugin(loadedPlugin!);
+      grid.unregisterPlugin(loadedPlugin as SlickRowSelectionModel);
+      loadedPlugin = grid.getPluginByName<SlickRowSelectionModel>('RowSelectionModel');
       expect(loadedPlugin).toBeFalsy();
 
       const p = grid.getPluginByName('RowSelectionModel');
