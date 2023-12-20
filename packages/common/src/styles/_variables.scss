@@ -71,8 +71,7 @@ $slick-row-mouse-hover-box-shadow:                          none !default;
 $slick-row-mouse-hover-z-index:                             5 !default;
 $slick-row-selected-color:                                  #dae8f1 !default;
 $slick-row-highlight-background-color:                      darken($slick-row-selected-color, 5%) !default;
-$slick-row-highlight-fade-animation:                        1.5s ease 1 !default;
-$slick-row-highlight-fade-out-animation:                    0.3s ease 1 !default;
+$slick-row-highlight-fade-animation:                        1s linear !default;
 $slick-row-checkbox-selector-background:                    inherit !default;
 $slick-row-checkbox-selector-border:                        none !default;
 

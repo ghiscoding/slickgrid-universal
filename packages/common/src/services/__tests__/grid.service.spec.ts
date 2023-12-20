@@ -6,7 +6,6 @@ import { GridOption, CellArgs, Column, OnEventArgs } from '../../interfaces/inde
 import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
 import { type SlickDataView, SlickEvent, type SlickGrid } from '../../core/index';
 
-jest.useFakeTimers();
 jest.mock('flatpickr', () => { });
 
 const mockRowSelectionModel = {
@@ -79,6 +78,7 @@ const gridStub = {
   getSelectionModel: jest.fn(),
   setSelectionModel: jest.fn(),
   getSelectedRows: jest.fn(),
+  highlightRow: jest.fn(),
   navigateBottom: jest.fn(),
   navigateTop: jest.fn(),
   render: jest.fn(),
@@ -126,10 +126,15 @@ describe('Grid Service', () => {
   it('should dispose of the service', () => {
     const disposeSpy = jest.spyOn(mockRowSelectionModel, 'dispose');
 
-    service.highlightRow(0, 10, 15);
+    service.highlightRow(0, 10);
     service.dispose();
 
     expect(disposeSpy).toHaveBeenCalled();
+  });
+
+  it('should be able to highlight first row at zero index', () => {
+    service.highlightRow(0, 10);
+    expect(gridStub.highlightRow).toHaveBeenCalled();
   });
 
   describe('getAllColumnDefinitions method', () => {
@@ -1406,105 +1411,6 @@ describe('Grid Service', () => {
     });
   });
 
-  describe('getItemRowMetadataToHighlight method', () => {
-    const options = { groupItemMetadataProvider: { getGroupRowMetadata: jest.fn(), getTotalsRowMetadata: jest.fn() } };
-    const columnDefinitions = [
-      { id: 'field1', width: 100, __group: {}, __groupTotals: {} },
-      { id: 'field2', width: 150, rowClass: 'red' },
-      { id: 'field3', field: 'field3', cssClasses: 'highlight', _dirty: true }
-    ];
-
-    // this mock is a typical callback function returned by SlickGrid internally, without anything changed to it's logic
-    const mockItemMetadataFn = (i: number) => {
-      const columnDef = columnDefinitions[i];
-      if (columnDef === undefined) {
-        return null;
-      }
-      if (columnDef.__group) { // overrides for grouping rows
-        return options.groupItemMetadataProvider.getGroupRowMetadata(columnDef);
-      }
-      if (columnDef.__groupTotals) { // overrides for totals rows
-        return options.groupItemMetadataProvider.getTotalsRowMetadata(columnDef);
-      }
-      return null;
-    };
-
-    it('should return a callback function when method is called', () => {
-      const callback = service.getItemRowMetadataToHighlight(mockItemMetadataFn);
-      expect(typeof callback === 'function').toBe(true);
-    });
-
-    it('should return an Item Metadata object with empty "cssClasses" property after executing the callback function', () => {
-      const rowNumber = 0;
-      const dataviewSpy = jest.spyOn(dataviewStub, 'getItem').mockReturnValue(columnDefinitions[rowNumber]);
-
-      const callback = service.getItemRowMetadataToHighlight(mockItemMetadataFn);
-      const output = callback(rowNumber); // execute callback with a row number
-
-      expect(dataviewSpy).toHaveBeenCalled();
-      expect(typeof callback === 'function').toBe(true);
-      expect(output).toEqual({ cssClasses: '' });
-    });
-
-    it('should return an Item Metadata object with a "dirty" string in the "cssClasses" property after executing the callback function', () => {
-      const rowNumber = 2;
-      const dataviewSpy = jest.spyOn(dataviewStub, 'getItem').mockReturnValue(columnDefinitions[rowNumber]);
-
-      const callback = service.getItemRowMetadataToHighlight(mockItemMetadataFn);
-      const output = callback(rowNumber); // execute callback with a row number
-
-      expect(dataviewSpy).toHaveBeenCalled();
-      expect(typeof callback === 'function').toBe(true);
-      expect(output).toEqual({ cssClasses: ' dirty' });
-    });
-
-    it('should return an Item Metadata object with filled "cssClasses" property when callback provided already returns a "cssClasses" property', () => {
-      const rowNumber = 2;
-      const dataviewSpy = jest.spyOn(dataviewStub, 'getItem').mockReturnValue(columnDefinitions[rowNumber]);
-
-      const callback = service.getItemRowMetadataToHighlight(() => {
-        return { cssClasses: 'highlight' };
-      });
-      const output = callback(rowNumber); // execute callback with a row number
-
-      expect(dataviewSpy).toHaveBeenCalled();
-      expect(typeof callback === 'function').toBe(true);
-      expect(output).toEqual({ cssClasses: 'highlight dirty' });
-    });
-
-    it(`should return an Item Metadata object with filled "cssClasses" property including a row number in the string
-    when the column definition has a "rowClass" property and when callback provided already returns a "cssClasses" property`, () => {
-      const rowNumber = 1;
-      const dataviewSpy = jest.spyOn(dataviewStub, 'getItem').mockReturnValue(columnDefinitions[rowNumber]);
-
-      const callback = service.getItemRowMetadataToHighlight(mockItemMetadataFn);
-      const output = callback(rowNumber); // execute callback with a row number
-
-      expect(dataviewSpy).toHaveBeenCalled();
-      expect(typeof callback === 'function').toBe(true);
-      expect(output).toEqual({ cssClasses: ' red row1' });
-    });
-  });
-
-  describe('highlightRowByMetadata method', () => {
-    it('should hightlight a row with a fading start & end delay', () => {
-      const mockColumn = { id: 'field2', field: 'field2', width: 150, rowClass: 'red' } as Column;
-      const getItemSpy = jest.spyOn(dataviewStub, 'getItem').mockReturnValue(mockColumn);
-      const getIndexSpy = jest.spyOn(dataviewStub, 'getIdxById').mockReturnValue(0);
-      const updateSpy = jest.spyOn(dataviewStub, 'updateItem');
-      const renderSpy = jest.spyOn(service, 'renderGrid');
-
-      service.highlightRowByMetadata(2, 1, 1);
-      jest.runAllTimers(); // fast-forward timer
-
-      expect(getItemSpy).toHaveBeenCalledWith(2);
-      expect(updateSpy).toHaveBeenCalledTimes(3);
-      expect(updateSpy).toHaveBeenCalledWith(mockColumn.id, mockColumn);
-      expect(renderSpy).toHaveBeenCalled();
-      expect(getIndexSpy).toHaveBeenCalled();
-    });
-  });
-
   describe('getDataItemByRowIndex method', () => {
     afterEach(() => {
       gridStub.getDataItem = jest.fn(); // put it back as a valid mock for later tests
@@ -1818,28 +1724,6 @@ describe('Grid Service', () => {
       expect(clearPinningSpy).toHaveBeenCalledWith(false);
       expect(filterSpy).toHaveBeenCalled();
       expect(sortSpy).toHaveBeenCalled();
-    });
-  });
-
-  describe('highlightRow method', () => {
-    afterEach(() => {
-      jest.clearAllMocks();
-    });
-
-    it('should be able to highlight first row at zero index', () => {
-      const mockRowMetadata = (rowNumber) => ({ cssClasses: `row-${rowNumber}` });
-      const mockItem = { id: 0, firstName: 'John', lastName: 'Doe' };
-      jest.spyOn(service, 'getItemRowMetadataToHighlight').mockReturnValue(mockRowMetadata);
-      jest.spyOn(dataviewStub, 'getItem').mockReturnValue(mockItem);
-      jest.spyOn(dataviewStub, 'getIdxById').mockReturnValue(0);
-      const updateSpy = jest.spyOn(dataviewStub, 'updateItem');
-      const renderSpy = jest.spyOn(service, 'renderGrid');
-
-      service.highlightRow(0, 10, 15);
-      jest.runAllTimers(); // fast-forward timer
-
-      expect(updateSpy).toHaveBeenCalledWith(0, mockItem);
-      expect(renderSpy).toHaveBeenCalledTimes(3);
     });
   });
 });

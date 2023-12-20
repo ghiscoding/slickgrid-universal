@@ -501,7 +501,6 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         // when adding a new row to the grid, we need to invalidate that row and re-render the grid
         this._eventHandler.subscribe(this.grid.onAddNewRow, (_e, args) => {
           this._originalDataContext = this.insertNewItemInDataView(args.item); // this becomes the new data context
-          // this.disposeComponent();
         });
       }
       return this;

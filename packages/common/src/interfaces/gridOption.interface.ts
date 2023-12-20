@@ -628,6 +628,13 @@ export interface GridOption<C extends Column = Column> {
   /** Grid row height in pixels (only type the number). Row of cell values. */
   rowHeight?: number;
 
+  /**
+   * Defaults to "highlight-animate", a CSS class name used to simulate row highlight with an optional duration (e.g. after insert).
+   * The default class is "highlight-animate" but you could also use "highlight" if you don't plan on using duration neither animation.
+   * Note: when having a duration, make sure that it's always lower than the duration defined in the CSS/SASS variable `$slick-row-highlight-fade-animation`
+   */
+  rowHighlightCssClass?: string;
+
   /** Row Move Manager Plugin options & events */
   rowMoveManager?: RowMoveManager;
 
