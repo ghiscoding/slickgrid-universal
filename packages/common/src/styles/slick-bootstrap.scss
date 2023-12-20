@@ -97,7 +97,7 @@
         background: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color);
       }
       &.highlight-animate {
-        background: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color);
+        background: var(--slick-row-highlight-background-color, $slick-row-highlight-background-color) !important;
         animation: fade var(--slick-row-highlight-fade-animation, $slick-row-highlight-fade-animation);
       }
       &.slick-group-totals {

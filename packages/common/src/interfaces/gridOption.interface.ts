@@ -630,8 +630,8 @@ export interface GridOption<C extends Column = Column> {
 
   /**
    * Defaults to "highlight-animate", a CSS class name used to simulate row highlight with an optional duration (e.g. after insert).
-   * The default class is "highlight-animate" but you could also use "highlight" if you don't plan on using duration neither animation.
-   * Note: when having a duration, make sure that it's always lower than the duration defined in the CSS/SASS variable `$slick-row-highlight-fade-animation`
+   * Note: make sure that the duration is always lower than the duration defined in the CSS/SASS variable `$slick-row-highlight-fade-animation`.
+   * Also note that the highlight is temporary and will also disappear as soon as the user starts scrolling or a `render()` is being called
    */
   rowHighlightCssClass?: string;
 
