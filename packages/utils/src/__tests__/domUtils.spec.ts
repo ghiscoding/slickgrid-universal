@@ -58,6 +58,14 @@ describe('Service/domUtilies', () => {
       expect(cdiv.outerHTML).toEqual(div.outerHTML);
     });
 
+    it('should create a DOM element via the method to equal a regular DOM element', () => {
+      const div = document.createElement('div');
+      div.className = 'red bold';
+      createDomElement('span', { className: 'blue', textContent: 'some text', style: { fontWeight: 'bold' } }, div);
+
+      expect(div.outerHTML).toBe('<div class="red bold"><span class="blue" style="font-weight: bold;">some text</span></div>');
+    });
+
     it('should display a warning when trying to use innerHTML via the method', () => {
       const consoleWarnSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
       createDomElement('div', { className: 'red bold', innerHTML: '<input />' });
@@ -67,14 +75,15 @@ describe('Service/domUtilies', () => {
   });
 
   describe('destroyAllElementProps() method', () => {
-    it('should clear all object props', () => {
+    it('should clear all DOM element props from the object', () => {
       const obj = {
         age: 20,
-        elm: document.createElement('div')
+        elm: document.createElement('div'),
+        elms: [document.createElement('div')]
       };
       destroyAllElementProps(obj);
 
-      expect(obj).toEqual({ age: 20, elm: null });
+      expect(obj).toEqual({ age: 20, elm: null, elms: [null] });
     })
   })
 

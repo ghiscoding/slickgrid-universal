@@ -1,4 +1,4 @@
-import { SlickRowSelectionModel } from '../../extensions';
+import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions';
 import { Column, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces';
 import { SlickDataView } from '../slickDataview';
 import { SlickGrid } from '../slickGrid';
@@ -30,6 +30,19 @@ describe('SlickGrid core file', () => {
     expect(grid.getData()).toEqual([]);
     expect(grid.getCanvases()).toBeTruthy();
     expect(grid.getCanvasNode()).toBeTruthy();
+    expect(grid.getActiveCanvasNode()).toBeTruthy();
+  });
+
+  it('should be able to instantiate SlickGrid without DataView', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options);
+    const dim = grid.getScrollbarDimensions();
+    const dim2 = grid.getDisplayedScrollbarDimensions();
+
+    expect(grid).toBeTruthy();
+    expect(dim).toEqual({ height: 0, width: 0 });
+    expect(dim2).toEqual({ height: 0, width: 0 });
   });
 
   it('should be able to instantiate SlickGrid with a DataView', () => {
@@ -42,6 +55,7 @@ describe('SlickGrid core file', () => {
     expect(grid).toBeTruthy();
     expect(grid.getData()).toEqual(dv);
     expect(dv.getItems()).toEqual([]);
+    expect(grid.getUID()).toMatch(/slickgrid_\d*$/);
   });
 
   it('should be able to add CSS classes to all Viewports', () => {
@@ -111,6 +125,7 @@ describe('SlickGrid core file', () => {
       grid.init();
       const headerElm = container.querySelector('.slick-header') as HTMLDivElement;
 
+      expect(grid.getHeaderRow()).toBeTruthy();
       expect(grid).toBeTruthy();
       expect(headerElm).toBeTruthy();
       expect(headerElm.style.display).not.toBe('none');
@@ -153,6 +168,7 @@ describe('SlickGrid core file', () => {
       grid.init();
       const footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
 
+      expect(grid.getFooterRow()).toBeTruthy();
       expect(grid).toBeTruthy();
       expect(footerElms).toBeTruthy();
       expect(footerElms[0].style.display).toBe('none');
@@ -388,6 +404,8 @@ describe('SlickGrid core file', () => {
       grid.highlightRow(0, 10);
       expect(grid).toBeTruthy();
       expect(grid.getDataLength()).toBe(2);
+      expect(grid.getHeader(columns[0])).toBeInstanceOf(HTMLDivElement);
+      expect(grid.getHeaderColumn(columns[0].id)).toBeInstanceOf(HTMLDivElement);
 
       let slickRowElms = container.querySelectorAll<HTMLDivElement>('.slick-row');
       expect(slickRowElms.length).toBe(2);
@@ -411,6 +429,7 @@ describe('SlickGrid core file', () => {
 
     it('should be able to register a plugin', () => {
       const rowSelectionModel = new SlickRowSelectionModel();
+      const cellSelectionModel = new SlickCellSelectionModel();
       grid = new SlickGrid<any, Column>(container, dv, columns, options);
       grid.setSelectionModel(rowSelectionModel);
       rowSelectionModel.init(grid);
@@ -427,6 +446,18 @@ describe('SlickGrid core file', () => {
 
       const p = grid.getPluginByName('RowSelectionModel');
       expect(p).toBeFalsy();
+    });
+
+    it('should clear previous selection model when calling setSelectionModel() with a different model', () => {
+      const rowSelectionModel = new SlickRowSelectionModel();
+      const rowSelectSpy = jest.spyOn(rowSelectionModel, 'destroy');
+      const cellSelectionModel = new SlickCellSelectionModel();
+
+      grid = new SlickGrid<any, Column>(container, dv, columns, options);
+      grid.setSelectionModel(rowSelectionModel);
+      grid.setSelectionModel(cellSelectionModel);
+
+      expect(rowSelectSpy).toHaveBeenCalled();
     });
   });
 });
