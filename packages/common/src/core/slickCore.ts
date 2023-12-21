@@ -7,8 +7,6 @@
  * @module Core
  * @namespace Slick
  */
-import { isDefined } from '@slickgrid-universal/utils';
-
 import { MergeTypes } from '../enums/index';
 import type { CSSStyleDeclarationWritable, EditController } from '../interfaces';
 
@@ -557,13 +555,6 @@ export class SlickEditorLock {
 }
 
 export class Utils {
-  // jQuery's extend
-  private static getProto = Object.getPrototypeOf;
-  private static class2type: any = {};
-  private static toString = Utils.class2type.toString;
-  private static hasOwn = Utils.class2type.hasOwnProperty;
-  private static fnToString = Utils.hasOwn.toString;
-  private static ObjectFunctionString = Utils.fnToString.call(Object);
   public static storage = {
     // https://stackoverflow.com/questions/29222027/vanilla-alternative-to-jquery-data-function-any-native-javascript-alternati
     _storage: new WeakMap(),
@@ -588,81 +579,6 @@ export class Utils {
       return ret;
     }
   };
-
-  public static isFunction(obj: any) {
-    return typeof obj === 'function' && typeof obj.nodeType !== 'number' && typeof obj.item !== 'function';
-  }
-
-  public static isPlainObject(obj: any) {
-    if (!obj || Utils.toString.call(obj) !== '[object Object]') {
-      return false;
-    }
-
-    const proto = Utils.getProto(obj);
-    if (!proto) {
-      return true;
-    }
-    const Ctor = Utils.hasOwn.call(proto, 'constructor') && proto.constructor;
-    return typeof Ctor === 'function' && Utils.fnToString.call(Ctor) === Utils.ObjectFunctionString;
-  }
-
-  public static extend<T = any>(...args: any[]): T {
-    // eslint-disable-next-line one-var
-    let options, name, src, copy, copyIsArray, clone;
-    let target = args[0];
-    let i = 1;
-    let deep = false;
-    const length = args.length;
-
-    if (target === true) {
-      deep = target;
-      target = args[i] || {};
-      i++;
-    } else {
-      target = target || {};
-    }
-    if (typeof target !== 'object' && !Utils.isFunction(target)) {
-      target = {}; // Symbol and others will be converted to Object
-    }
-    if (length === 1) {
-      return args[0];
-    }
-    /* istanbul ignore if */
-    if (i === length) {
-      // @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/no-this-alias
-      target = this;
-      i--;
-    }
-    for (; i < length; i++) {
-      if (isDefined(options = args[i])) {
-        for (name in options) {
-          copy = options[name];
-          /* istanbul ignore if */
-          if (name === '__proto__' || target === copy) {
-            continue;
-          }
-          if (deep && copy && (Utils.isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))) {
-            src = target[name];
-            if (copyIsArray && !Array.isArray(src)) {
-              clone = [];
-            } else if (!copyIsArray && !Utils.isPlainObject(src)) {
-              clone = {};
-            } else {
-              clone = src;
-            }
-            copyIsArray = false;
-            target[name] = Utils.extend(deep, clone, copy);
-          } else if (copy !== undefined) {
-            target[name] = copy;
-          }
-        }
-      }
-    }
-    return target as T;
-  }
-
-  public static noop() { }
 
   public static height(el: HTMLElement, value?: number | string): number | void {
     if (!el) {

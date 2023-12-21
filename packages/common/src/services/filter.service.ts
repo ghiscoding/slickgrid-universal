@@ -1,7 +1,6 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { deepCopy, stripTags } from '@slickgrid-universal/utils';
+import { deepCopy, extend, stripTags } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
-import { Utils as SlickUtils } from '../core/index';
 
 import { Constants } from '../constants';
 import { FilterConditions, getParsedSearchTermsByFieldType } from './../filter-conditions/index';
@@ -1168,7 +1167,7 @@ export class FilterService {
 
       // event might have been created as a CustomEvent (e.g. CompoundDateFilter), without being a valid SlickEventData,
       // if so we will create a new SlickEventData and merge it with that CustomEvent to avoid having SlickGrid errors
-      const eventData = ((event && typeof (event as any).isPropagationStopped !== 'function') ? SlickUtils.extend({}, new SlickEventData(), event) : event);
+      const eventData = ((event && typeof (event as any).isPropagationStopped !== 'function') ? extend({}, new SlickEventData(), event) : event);
 
       // trigger an event only if Filters changed or if ENTER key was pressed
       const eventKey = (event as KeyboardEvent)?.key;

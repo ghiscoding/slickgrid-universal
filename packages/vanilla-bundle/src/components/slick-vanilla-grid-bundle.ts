@@ -48,7 +48,6 @@ import {
   deepCopy,
   emptyElement,
   unsubscribeAll,
-  Utils as SlickUtils,
   SlickEventHandler,
   SlickDataView,
   SlickGrid
@@ -57,6 +56,7 @@ import { EventNamingStyle, EventPubSubService } from '@slickgrid-universal/event
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
+import { extend } from '@slickgrid-universal/utils';
 
 import { SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
 import { UniversalContainerService } from '../services/universalContainer.service';
@@ -209,7 +209,7 @@ export class SlickVanillaGridBundle<TData = any> {
     // if we already have grid options, when grid was already initialized, we'll merge with those options
     // else we'll merge with global grid options
     if (this.slickGrid?.getOptions) {
-      mergedOptions = (SlickUtils.extend<GridOption>(true, {} as GridOption, this.slickGrid.getOptions() as GridOption, options)) as GridOption;
+      mergedOptions = (extend<GridOption>(true, {} as GridOption, this.slickGrid.getOptions() as GridOption, options)) as GridOption;
     } else {
       mergedOptions = this.mergeGridOptions(options);
     }
@@ -674,7 +674,7 @@ export class SlickVanillaGridBundle<TData = any> {
   }
 
   mergeGridOptions(gridOptions: GridOption) {
-    const options = SlickUtils.extend<GridOption>(true, {}, GlobalGridOptions, gridOptions);
+    const options = extend<GridOption>(true, {}, GlobalGridOptions, gridOptions);
 
     // also make sure to show the header row if user have enabled filtering
     if (options.enableFiltering && !options.showHeaderRow) {

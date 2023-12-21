@@ -1,4 +1,3 @@
-/* eslint-disable eqeqeq */
 /* eslint-disable guard-for-in */
 /**
  * This extend function is a reimplementation of the npm package `extend` (also named `node-extend`).
@@ -72,7 +71,7 @@ const getProperty = function getProperty(obj: any, name: any) {
   return obj[name];
 };
 
-export function extend(...args: any[]) {
+export function extend<T = any>(...args: any[]): T {
   let options;
   let name;
   let src;
@@ -91,14 +90,14 @@ export function extend(...args: any[]) {
     // skip the boolean and the target
     i = 2;
   }
-  if (target == null || (typeof target !== 'object' && typeof target !== 'function')) {
+  if (target === null || target === undefined || (typeof target !== 'object' && typeof target !== 'function')) {
     target = {};
   }
 
   for (; i < length; ++i) {
     options = args[i];
     // Only deal with non-null/undefined values
-    if (options != null) {
+    if (options !== null && options !== undefined) {
       // Extend the base object
       for (name in options) {
         src = getProperty(target, name);
