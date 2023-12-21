@@ -20,7 +20,7 @@ const isArray = function isArray(arr: any) {
   if (typeof Array.isArray === 'function') {
     return Array.isArray(arr);
   }
-  /* istanbul ignore */
+  /* istanbul ignore next */
   return toStr.call(arr) === '[object Array]';
 };
 
