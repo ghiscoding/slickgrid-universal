@@ -219,6 +219,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     editorFactory: null,
     cellFlashingCssClass: 'flashing',
     rowHighlightCssClass: 'highlight-animate',
+    rowHighlightDuration: 400,
     selectedCellCssClass: 'selected',
     multiSelect: true,
     enableTextSelectionOnCells: false,
@@ -4754,8 +4755,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Number} row - grid row number
    * @param {Number} [duration] - duration (ms), defaults to 500ms
    */
-  highlightRow(row: number, duration = 500) {
+  highlightRow(row: number, duration?: number) {
     const rowCache = this.rowsCache[row];
+    duration ||= this._options.rowHighlightDuration;
 
     if (Array.isArray(rowCache?.rowNode) && this._options.rowHighlightCssClass) {
       rowCache.rowNode.forEach(node => node.classList.add(this._options.rowHighlightCssClass || ''));
