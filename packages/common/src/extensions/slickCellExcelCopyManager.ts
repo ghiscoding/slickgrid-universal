@@ -166,7 +166,7 @@ export class SlickCellExcelCopyManager {
       includeHeaderWhenCopying: false,
       newRowCreator: (count: number) => {
         for (let i = 0; i < count; i++) {
-          this._grid.getData<SlickDataView>().addItem({ id: `newRow_${newRowIds++}` });
+          this._grid.getData<SlickDataView>().addItem({ [this.gridOptions.datasetIdPropertyName || 'id']: `newRow_${newRowIds++}` });
         }
       }
     };
