@@ -1,6 +1,6 @@
-import { createDomElement } from '@slickgrid-universal/utils';
+import { createDomElement, extend } from '@slickgrid-universal/utils';
 
-import { SlickEventHandler, Utils as SlickUtils, type SlickDataView, SlickGroup, type SlickGrid } from '../core/index';
+import { SlickEventHandler, type SlickDataView, SlickGroup, type SlickGrid } from '../core/index';
 import type {
   Column,
   DOMEvent,
@@ -42,7 +42,7 @@ export class SlickGroupItemMetadataProvider {
 
   constructor(inputOptions?: GroupItemMetadataProviderOption) {
     this._eventHandler = new SlickEventHandler();
-    this._options = SlickUtils.extend<GroupItemMetadataProviderOption>(true, {}, this._defaults, inputOptions);
+    this._options = extend<GroupItemMetadataProviderOption>(true, {}, this._defaults, inputOptions);
   }
 
   /** Getter of the SlickGrid Event Handler */

@@ -1,6 +1,6 @@
 /* eslint-disable no-new-func */
 /* eslint-disable no-bitwise */
-import { isDefined } from '@slickgrid-universal/utils';
+import { extend, isDefined } from '@slickgrid-universal/utils';
 
 import { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider';
 import type {
@@ -26,7 +26,6 @@ import {
   SlickGroup,
   SlickGroupTotals,
   SlickNonDataItem,
-  Utils,
 } from './slickCore';
 import type { SlickGrid } from './slickGrid';
 
@@ -137,7 +136,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.onSelectedRowIdsChanged = new SlickEvent<OnSelectedRowIdsChangedEventArgs>('onSelectedRowIdsChanged', externalPubSub);
     this.onSetItemsCalled = new SlickEvent<OnSetItemsCalledEventArgs>('onSetItemsCalled', externalPubSub);
 
-    this._options = Utils.extend(true, {}, this.defaults, options);
+    this._options = extend(true, {}, this.defaults, options);
   }
 
   /**
@@ -394,7 +393,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.groupingInfos = ((groupingInfo instanceof Array) ? groupingInfo : [groupingInfo]) as any;
 
     for (let i = 0; i < this.groupingInfos.length; i++) {
-      const gi = this.groupingInfos[i] = Utils.extend(true, {}, this.groupingInfoDefaults, this.groupingInfos[i]);
+      const gi = this.groupingInfos[i] = extend(true, {}, this.groupingInfoDefaults, this.groupingInfos[i]);
       gi.getterIsAFn = typeof gi.getter === 'function';
 
       // pre-compile accumulator loops
@@ -1319,7 +1318,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       return;
     }
 
-    const previousPagingInfo = Utils.extend(true, {}, this.getPagingInfo());
+    const previousPagingInfo = extend(true, {}, this.getPagingInfo());
 
     const countBefore = this.rows.length;
     const totalRowsBefore = this.totalRows;

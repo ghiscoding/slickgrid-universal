@@ -2,7 +2,7 @@
 import Sortable, { SortableEvent } from 'sortablejs';
 import DOMPurify from 'dompurify';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { createDomElement, emptyElement, getInnerSize, getOffset, insertAfterElement, isDefined, isPrimitiveOrHTML } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, extend, getInnerSize, getOffset, insertAfterElement, isDefined, isPrimitiveOrHTML } from '@slickgrid-universal/utils';
 
 import {
   type BasePubSub,
@@ -588,7 +588,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (!options) { this._options = {} as O; }
       Utils.applyDefaults(this._options, this._defaults);
     } else {
-      this._options = Utils.extend<O>(true, {}, this._defaults, options);
+      this._options = extend<O>(true, {}, this._defaults, options);
     }
     this.scrollThrottle = this.actionThrottle(this.render.bind(this), this._options.scrollRenderThrottling as number);
     this.maxSupportedCssHeight = this.maxSupportedCssHeight || this.getMaxSupportedCssHeight();
@@ -3002,7 +3002,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (this._options.mixinDefaults) {
         Utils.applyDefaults(m, this._columnDefaults);
       } else {
-        m = this.columns[i] = Utils.extend({}, this._columnDefaults, m);
+        m = this.columns[i] = extend({}, this._columnDefaults, m);
       }
 
       this.columnsById[m.id] = i;
@@ -3076,8 +3076,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.handleScroll(); // trigger scroll to realign column headers as well
     }
 
-    const originalOptions = Utils.extend(true, {}, this._options);
-    this._options = Utils.extend(this._options, newOptions);
+    const originalOptions = extend(true, {}, this._options);
+    this._options = extend(this._options, newOptions);
     this.trigger(this.onSetOptions, { optionsBefore: originalOptions, optionsAfter: this._options });
 
     this.internal_setOptions(suppressRender, suppressColumnSet, suppressSetOverflow);
@@ -4339,7 +4339,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // add new rows & missing cells in existing rows
     if (this.lastRenderedScrollLeft !== this.scrollLeft) {
       if (this.hasFrozenRows) {
-        const renderedFrozenRows = Utils.extend(true, {}, rendered);
+        const renderedFrozenRows = extend(true, {}, rendered);
 
         if (this._options.frozenBottom) {
           renderedFrozenRows.top = this.actualFrozenRow;

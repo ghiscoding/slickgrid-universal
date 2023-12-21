@@ -181,7 +181,7 @@ export function findFirstAttribute(inputElm: Element | null | undefined, attribu
  * @param {Number | String} defaultValue [defaultValue=auto] - optional default value or use "auto" when nothing is provided
  * @returns {String} string output
  */
-export function findWidthOrDefault(inputWidth?: number | string, defaultValue = 'auto'): string {
+export function findWidthOrDefault(inputWidth?: number | string | null, defaultValue = 'auto'): string {
   return (/^[0-9]+$/i.test(`${inputWidth}`) ? `${+(inputWidth as number)}px` : inputWidth as string) || defaultValue;
 }
 

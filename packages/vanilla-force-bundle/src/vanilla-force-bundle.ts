@@ -19,13 +19,14 @@ import type {
   TranslaterService,
   TreeDataService,
 } from '@slickgrid-universal/common';
-import { GlobalGridOptions, Utils as SlickUtils } from '@slickgrid-universal/common';
+import { GlobalGridOptions } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { TextExportService } from '@slickgrid-universal/text-export';
+import { extend } from '@slickgrid-universal/utils';
 import { SlickVanillaGridBundle, UniversalContainerService } from '@slickgrid-universal/vanilla-bundle';
 
 import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options';
@@ -74,7 +75,7 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
 
   mergeGridOptions(gridOptions: GridOption) {
     const extraOptions = (gridOptions.useSalesforceDefaultGridOptions || (this._gridOptions?.useSalesforceDefaultGridOptions)) ? SalesforceGlobalGridOptions : {};
-    const options = SlickUtils.extend(true, {}, GlobalGridOptions, extraOptions, gridOptions);
+    const options = extend(true, {}, GlobalGridOptions, extraOptions, gridOptions);
 
     // also make sure to show the header row if user have enabled filtering
     if (options.enableFiltering && !options.showHeaderRow) {

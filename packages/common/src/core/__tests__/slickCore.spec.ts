@@ -415,32 +415,6 @@ describe('SlickCore file', () => {
   });
 
   describe('Utils', () => {
-    describe('isPlainObject', () => {
-      it('should be falsy when object contains prototype methods', () => {
-        const l = console.log;
-        const obj = {
-          method: () => l("method in obj")
-        };
-        const obj2: any = { hello: 'world' };
-        obj2.__proto__ = obj;
-
-        expect(Utils.isPlainObject(obj2)).toBeFalsy();
-      });
-
-      it('should be truthy when object does not contains any prototype', () => {
-        const obj2: any = { hello: 'world' };
-        obj2.__proto__ = null;
-
-        expect(Utils.isPlainObject(obj2)).toBeTruthy();
-      });
-
-      it('should be truthy when object is a regular object without methods', () => {
-        const obj2 = { hello: 'world' };
-
-        expect(Utils.isPlainObject(obj2)).toBeTruthy();
-      });
-    });
-
     describe('storage() function', () => {
       it('should be able to store an object and retrieve it later', () => {
         const div = document.createElement('div');
@@ -486,105 +460,6 @@ describe('SlickCore file', () => {
 
         const removed = Utils.storage.remove(div, 'column2');
         expect(removed).toBeFalsy();
-      });
-    });
-
-    describe('extend() function', () => {
-      it('should be able to make a perfect deep copy of an object', () => {
-        const callback = () => console.log('hello');
-        const obj1 = { hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'], callback } };
-        const obj2 = Utils.extend(true, {}, obj1, { another: 'prop' });
-
-        expect(obj2).toEqual({ hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'], callback }, another: 'prop' });
-      });
-
-      it('should be able to make a perfect deep copy of an object that includes String() and Boolean() constructors', () => {
-        const callback = () => console.log('hello');
-        const obj1 = { hello: { sender: 'me', target: String(123), valid: Boolean(null) }, deeper: { children: ['abc', 'cde'], callback } };
-        const obj2 = Utils.extend(true, {}, obj1, { another: 'prop' });
-
-        expect(obj2).toEqual({ hello: { sender: 'me', target: '123', valid: false }, deeper: { children: ['abc', 'cde'], callback }, another: 'prop' });
-      });
-
-      it('should be able to make a deep copy of an object and changing new object prop should not affect input object', () => {
-        const obj1 = { hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'] } };
-        const obj2 = Utils.extend(true, {}, obj1, { another: 'prop' });
-        obj2.hello.target = 'mum';
-
-        expect(obj1).toEqual({ hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'] } });
-        expect(obj2).toEqual({ hello: { sender: 'me', target: 'mum' }, deeper: { children: ['abc', 'cde'] }, another: 'prop' });
-      });
-
-      it('should assume an extended object when passing true boolean but ommitting empty object as target, so changing output object will impact input object as well', () => {
-        const obj1 = { hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'] } };
-        const obj2 = Utils.extend(true, obj1, { another: 'prop' });
-        obj2.hello.target = 'mum';
-
-        expect(obj1).toEqual({ hello: { sender: 'me', target: 'mum' }, deeper: { children: ['abc', 'cde'] }, another: 'prop' });
-        expect(obj2).toEqual({ hello: { sender: 'me', target: 'mum' }, deeper: { children: ['abc', 'cde'] }, another: 'prop' });
-      });
-
-      it('should assume an extended object when ommitting true boolean, so changing output object will impact input object as well', () => {
-        const obj1 = { hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'] } };
-        const obj2 = Utils.extend(obj1, { another: { age: 20 } });
-        obj2.hello.target = 'mum';
-
-        expect(obj1).toEqual({ hello: { sender: 'me', target: 'mum' }, deeper: { children: ['abc', 'cde'] }, another: { age: 20 } });
-        expect(obj2).toEqual({ hello: { sender: 'me', target: 'mum' }, deeper: { children: ['abc', 'cde'] }, another: { age: 20 } });
-      });
-
-      it('should return same object when passing input object twice', () => {
-        const obj1 = { hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'] } };
-        const obj2 = Utils.extend(true, {}, obj1, obj1);
-
-        expect(obj2).toEqual(obj1);
-      });
-
-      it('should do a deep copy of an array of objects with properties having objects and changing object property should not affect original object', () => {
-        const obj1 = { firstName: 'John', lastName: 'Doe', address: { zip: 123456 } };
-        const obj2 = { firstName: 'Jane', lastName: 'Doe', address: { zip: 222222 } };
-        const arr1 = [obj1, obj2];
-        const arr2 = Utils.extend(true, [], arr1);
-        arr2[0].address.zip = 888888;
-        arr2[1].address.zip = 999999;
-
-        expect(arr1[0].address.zip).toBe(123456);
-        expect(arr1[1].address.zip).toBe(222222);
-        expect(arr2[0].address.zip).toBe(888888);
-        expect(arr2[1].address.zip).toBe(999999);
-      });
-
-      it('should return same object when passing only a single object', () => {
-        expect(Utils.extend({ hello: 'world' })).toEqual({ hello: 'world' });
-      });
-
-      it('should expect Symbol to be converted to Object', () => {
-        const sym1 = Symbol("foo");
-        const sym2 = Symbol("bar");
-
-        expect(Utils.extend(sym1, sym2, { hello: 'world' })).toEqual({ hello: 'world' });
-      });
-
-      it('should be able to make a copy of an object with prototype', () => {
-        const l = console.log;
-        const method = () => l("method in obj");
-        const obj = {
-          method
-        };
-        const obj2: any = { hello: 'world' };
-        obj2.__proto__ = obj;
-
-        const obj1 = { hello: { sender: 'me', target: 'world' }, deeper: { children: ['abc', 'cde'] } };
-        const obj3 = Utils.extend(obj1, obj2);
-
-        expect(obj3).toEqual({ hello: 'world', deeper: { children: ['abc', 'cde'] }, method });
-      });
-    });
-
-    describe('noop() function', () => {
-      it('should return empty function', () => {
-        expect(typeof Utils.noop).toBe('function');
-        expect(Utils.noop()).toBeUndefined();
       });
     });
 
