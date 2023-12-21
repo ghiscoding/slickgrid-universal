@@ -305,6 +305,21 @@ describe('CellExcelCopyManager', () => {
       expect(addItemSpy).toHaveBeenCalledWith(expect.objectContaining({ id: 'newRow_1' }));
     });
 
+    it('should respect datasetIdPropertyName when calling "newRowCreator" callback', () => {
+      const expectedColumnName = 'mySuperSpecialId';
+      gridOptionsMock.datasetIdPropertyName = expectedColumnName;
+      plugin.init(gridStub);
+      const mockGetData = { addItem: jest.fn() };
+      const getDataSpy = jest.spyOn(gridStub, 'getData').mockReturnValue(mockGetData as any);
+      const addItemSpy = jest.spyOn(mockGetData, 'addItem');
+
+      plugin.addonOptions!.newRowCreator!(2);
+
+      expect(getDataSpy).toHaveBeenCalled();
+      expect(addItemSpy).toHaveBeenCalledWith(expect.objectContaining({ [expectedColumnName]: 'newRow_0' }));
+      expect(addItemSpy).toHaveBeenCalledWith(expect.objectContaining({ [expectedColumnName]: 'newRow_1' }));
+    });
+
     it('should expect a formatted output after calling "dataItemColumnValueExtractor" callback', () => {
       plugin.init(gridStub);
       const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: 'John', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: myBoldFormatter });
