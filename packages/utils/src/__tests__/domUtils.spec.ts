@@ -6,6 +6,7 @@ import {
   destroyAllElementProps,
   emptyElement,
   findFirstAttribute,
+  findWidthOrDefault,
   getHTMLFromFragment,
   getOffsetRelativeToParent,
   getStyleProp,
@@ -13,10 +14,12 @@ import {
   getInnerSize,
   htmlEncode,
   htmlEntityDecode,
+  htmlEncodeWithPadding,
+  insertAfterElement,
 } from '../domUtils';
 
 describe('Service/domUtilies', () => {
-  describe('calculateAvailableSpace method', () => {
+  describe('calculateAvailableSpace()  method', () => {
     const div = document.createElement('div');
     div.innerHTML = `<ul><li>Item 1</li><li>Item 2</li></ul>`;
     document.body.appendChild(div);
@@ -48,7 +51,7 @@ describe('Service/domUtilies', () => {
     });
   });
 
-  describe('createDomElement method', () => {
+  describe('createDomElement()  method', () => {
     it('should create a DOM element via the method to equal a regular DOM element', () => {
       const div = document.createElement('div');
       div.className = 'red bold';
@@ -66,7 +69,7 @@ describe('Service/domUtilies', () => {
       expect(div.outerHTML).toBe('<div class="red bold"><span class="blue" style="font-weight: bold;">some text</span></div>');
     });
 
-    it('should display a warning when trying to use innerHTML via the method', () => {
+    it('should display a warning when trying to use innerHTML via the  method', () => {
       const consoleWarnSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
       createDomElement('div', { className: 'red bold', innerHTML: '<input />' });
 
@@ -87,7 +90,7 @@ describe('Service/domUtilies', () => {
     })
   })
 
-  describe('emptyElement method', () => {
+  describe('emptyElement() method', () => {
     const div = document.createElement('div');
     div.innerHTML = `<ul><li>Item 1</li><li>Item 2</li></ul>`;
     document.body.appendChild(div);
@@ -99,7 +102,7 @@ describe('Service/domUtilies', () => {
     });
   });
 
-  describe('findFirstAttribute method', () => {
+  describe('findFirstAttribute() method', () => {
     const div = document.createElement('div');
     div.innerHTML = `<ul><li>Item 1</li><li custom-title="custom text" title="some tooltip text">Item 2</li></ul>`;
     document.body.appendChild(div);
@@ -117,6 +120,20 @@ describe('Service/domUtilies', () => {
     it('should return null when no attributes found', () => {
       const output = findFirstAttribute(div.querySelectorAll('li')[1], ['not-exist', 'another']);
       expect(output).toBe(null);
+    });
+  });
+
+  describe('findWidthOrDefault() method', () => {
+    it('should return default value when input is null', () => {
+      expect(findWidthOrDefault(null, '20px')).toBe('20px');
+    });
+
+    it('should return default value when input is undefined', () => {
+      expect(findWidthOrDefault(undefined, '20px')).toBe('20px');
+    });
+
+    it('should return value in pixel when input is a number', () => {
+      expect(findWidthOrDefault(33, '20px')).toBe('33px');
     });
   });
 
@@ -157,7 +174,7 @@ describe('Service/domUtilies', () => {
     });
   });
 
-  describe('getElementOffsetRelativeToParent method', () => {
+  describe('getElementOffsetRelativeToParent() method', () => {
     const parentDiv = document.createElement('div');
     const childDiv = document.createElement('div');
     parentDiv.innerHTML = `<span></span>`;
@@ -184,7 +201,7 @@ describe('Service/domUtilies', () => {
     });
   });
 
-  describe('getOffset method', () => {
+  describe('getOffset() method', () => {
     const div = document.createElement('div');
     div.innerHTML = `<span></span>`;
     document.body.appendChild(div);
@@ -239,7 +256,7 @@ describe('Service/domUtilies', () => {
     });
   });
 
-  describe('htmlEncode method', () => {
+  describe('htmlEncode()  method', () => {
     it('should return a encoded HTML string', () => {
       const result = htmlEncode(`<div class="color: blue">Something</div>`);
       expect(result).toBe(`&lt;div class=&quot;color: blue&quot;&gt;Something&lt;/div&gt;`);
@@ -251,7 +268,7 @@ describe('Service/domUtilies', () => {
     });
   });
 
-  describe('htmlEntityDecode method', () => {
+  describe('htmlEntityDecode()  method', () => {
     it('should be able to decode HTML entity of an HTML string', () => {
       const result = htmlEntityDecode(`&#60;&#100;&#105;&#118;&#62;&#97;&#60;&#47;&#100;&#105;&#118;&#62;`);
       expect(result).toBe(`<div>a</div>`);
@@ -260,6 +277,36 @@ describe('Service/domUtilies', () => {
     it('should be able to decode unicode characters and also latin accents', () => {
       const result = htmlEntityDecode(`&#83;&#97;&#109;&#39;&#115;&#32;&#55357;&#56960;&#55358;&#56708;&#32;&#101;&#115;&#112;&#97;&#241;&#111;&#108;`);
       expect(result).toBe(`Sam's 🚀🦄 español`);
+    });
+  });
+
+  describe('htmlEncodeWithPadding()  method', () => {
+    it('should return 2 spaces HTML encoded when input is empty', () => {
+      const result = htmlEncodeWithPadding('', 2);
+      expect(result).toBe(`&nbsp;&nbsp;`);
+    });
+
+    it('should be able to encore HTML entity to an encoded HTML string', () => {
+      const result = htmlEncodeWithPadding(`<div>some text</div>`, 2);
+      expect(result).toBe(`&lt;div&gt;some text&lt;/div&gt;`);
+    });
+  });
+
+  describe('insertAfterElement()  method', () => {
+    it('should insert span3 after span1', () => {
+      const div = document.createElement('div');
+      div.className = 'div-one';
+      const span1 = document.createElement('span');
+      span1.className = 'span-one';
+      const span2 = document.createElement('span');
+      span2.className = 'span-two';
+      const span3 = document.createElement('span');
+      span3.className = 'span-three';
+      div.appendChild(span1);
+      div.appendChild(span2);
+
+      insertAfterElement(span1, span3);
+      expect(div.outerHTML).toBe(`<div class="div-one"><span class="span-one"></span><span class="span-three"></span><span class="span-two"></span></div>`);
     });
   });
 });
