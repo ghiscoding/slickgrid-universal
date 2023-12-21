@@ -635,6 +635,9 @@ export interface GridOption<C extends Column = Column> {
    */
   rowHighlightCssClass?: string;
 
+  /** Defaults to 400, duration to show the row highlight (e.g. after insert/edit/...) */
+  rowHighlightDuration?: number;
+
   /** Row Move Manager Plugin options & events */
   rowMoveManager?: RowMoveManager;
 

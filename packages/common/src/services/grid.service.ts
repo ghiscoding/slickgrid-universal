@@ -257,15 +257,16 @@ export class GridService {
   /**
    * Highlight then fade a row for certain duration (ms).
    * @param {Number} rowNumber - grid row number
-   * @param {Number} duration - duration in ms
+   * @param {Number} [duration] - duration in ms
    */
-  highlightRow(rowNumber: number | number[], duration = 750) {
+  highlightRow(rowNumber: number | number[], duration?: number) {
     // create a SelectionModel if there's not one yet
     if (!this._grid.getSelectionModel()) {
       this._rowSelectionPlugin = new SlickRowSelectionModel(this._gridOptions.rowSelectionOptions);
       this._grid.setSelectionModel(this._rowSelectionPlugin);
     }
 
+    duration ||= this._gridOptions.rowHighlightDuration;
     if (Array.isArray(rowNumber)) {
       rowNumber.forEach(row => this._grid.highlightRow(row));
     } else {
