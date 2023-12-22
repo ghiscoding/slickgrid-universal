@@ -86,10 +86,11 @@ describe('SlickRowDetailView plugin', () => {
   it('should be able to change plugin options and "collapseAll" be called when "singleRowExpand" is enabled', () => {
     const collapseAllSpy = jest.spyOn(plugin, 'collapseAll');
     const mockOptions = {
-      columnId: 'selector',
+      columnId: '_detail_selector',
       cssClass: 'some-detailView-toggle',
       expandedClass: 'some-class',
       collapsedClass: 'some-collapsed-class',
+      field: '_detail_selector',
       keyPrefix: '::',
       loadOnce: true,
       collapseAllOnSort: true,
