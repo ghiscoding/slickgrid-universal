@@ -560,7 +560,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
     // from the "lastCompositeEditor" object that we kept as reference, it contains all the changes inside the "formValues" property
     // we can loop through these changes and apply them on the selected row indexes
-    for (const itemProp in formValues) {
+    Object.keys(formValues).forEach(itemProp => {
       if (itemProp in formValues) {
         data.forEach((dataContext: any) => {
           if (itemProp in formValues && (this._options?.validateMassUpdateChange === undefined || this._options.validateMassUpdateChange(itemProp, dataContext, formValues) !== false)) {
@@ -568,7 +568,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
           }
         });
       }
-    }
+    });
 
     // change the entire dataset with our updated dataset
     if (applyToDataview) {
@@ -588,7 +588,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
     // from the "lastCompositeEditor" object that we kept as reference, it contains all the changes inside the "formValues" property
     // we can loop through these changes and apply them on the selected row indexes
-    for (const itemProp in formValues) {
+    Object.keys(formValues).forEach(itemProp => {
       if (itemProp in formValues) {
         selectedItems.forEach((dataContext: any) => {
           if (itemProp in formValues && (this._options?.validateMassUpdateChange === undefined || this._options.validateMassUpdateChange(itemProp, dataContext, formValues) !== false)) {
@@ -596,7 +596,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
           }
         });
       }
-    }
+    });
 
     // update all items in the grid with the grid service
     if (applyToDataview) {

@@ -69,16 +69,22 @@ export class ExtensionService {
     this.sharedService.visibleColumns = [];
 
     // dispose of each control/plugin & reset the list
-    for (const extensionName of Object.keys(this._extensionList)) {
-      if (this._extensionList.hasOwnProperty(extensionName)) {
-        const extension = this._extensionList[extensionName as keyof Record<ExtensionName, ExtensionModel<any>>] as ExtensionModel<any>;
-        if (extension?.instance?.dispose) {
-          extension.instance.dispose();
+    if (typeof this._extensionList === 'object') {
+      const extensionNames = Object.keys(this._extensionList);
+
+      // dispose each extension
+      extensionNames.forEach(extensionName => {
+        if (this._extensionList.hasOwnProperty(extensionName)) {
+          const extension = this._extensionList[extensionName as keyof Record<ExtensionName, ExtensionModel<any>>] as ExtensionModel<any>;
+          if (typeof extension?.instance?.dispose === 'function') {
+            extension.instance.dispose();
+          }
         }
-      }
-    }
-    for (const key of Object.keys(this._extensionList)) {
-      delete this._extensionList[key as keyof Record<ExtensionName, ExtensionModel<any>>];
+      });
+      // delete the extension from the _extensionList object
+      extensionNames.forEach(key => {
+        delete this._extensionList[key as keyof Record<ExtensionName, ExtensionModel<any>>];
+      });
     }
     this._cellMenuPlugin = null as any;
     this._cellExcelCopyManagerPlugin = null as any;
@@ -470,11 +476,11 @@ export class ExtensionService {
     }
 
     if (Array.isArray(items)) {
-      for (const item of items) {
+      items.forEach(item => {
         if (item[inputKey]) {
           item[outputKey] = this.translaterService?.translate(item[inputKey]);
         }
-      }
+      });
     }
   }
 }

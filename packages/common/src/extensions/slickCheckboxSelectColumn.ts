@@ -492,10 +492,12 @@ export class SlickCheckboxSelectColumn<T = any> {
         removeList.push(row);
       }
     }
-    for (const selectedRow in this._selectedRowsLookup) {
-      if (selectedRow !== undefined) {
-        this._grid.invalidateRow(+selectedRow);
-      }
+    if (typeof this._selectedRowsLookup === 'object') {
+      Object.keys(this._selectedRowsLookup).forEach(selectedRow => {
+        if (selectedRow !== undefined) {
+          this._grid.invalidateRow(+selectedRow);
+        }
+      });
     }
 
     this._selectedRowsLookup = lookup;

@@ -250,11 +250,9 @@ export class SlickRowSelectionModel implements SelectionModel {
   }
 
   protected rowsToRanges(rows: number[]) {
-    const ranges = [];
+    const ranges: SlickRange[] = [];
     const lastCell = this._grid.getColumns().length - 1;
-    for (const row of rows) {
-      ranges.push(new SlickRange(row, 0, row, lastCell));
-    }
+    rows.forEach(row => ranges.push(new SlickRange(row, 0, row, lastCell)));
     return ranges;
   }
 }

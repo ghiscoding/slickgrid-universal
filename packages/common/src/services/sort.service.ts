@@ -440,9 +440,9 @@ export class SortService {
     if (emitSortChanged) {
       // update current sorters
       this._currentLocalSorters = [];
-      for (const sortCol of sortColumns) {
+      sortColumns.forEach(sortCol => {
         this._currentLocalSorters.push({ columnId: sortCol.columnId, direction: sortCol.sortAsc ? 'ASC' : 'DESC' });
-      }
+      });
       const emitterType = this._gridOptions?.backendServiceApi ? EmitterType.remote : EmitterType.local;
       this.emitSortChanged(emitterType);
     }
@@ -512,9 +512,9 @@ export class SortService {
 
   sortTreeData(treeArray: any[], sortColumns: Array<ColumnSort>) {
     if (Array.isArray(sortColumns)) {
-      for (const sortColumn of sortColumns) {
+      sortColumns.forEach(sortColumn => {
         this.sortTreeChildren(treeArray, sortColumn, 0);
-      }
+      });
     }
   }
 
@@ -525,7 +525,7 @@ export class SortService {
     treeArray.sort((a: any, b: any) => this.sortComparer(sortColumn, a, b) ?? SortDirectionNumber.neutral);
 
     // when item has a child, we'll sort recursively
-    for (const item of treeArray) {
+    treeArray.forEach(item => {
       if (item) {
         const hasChildren = item.hasOwnProperty(childrenPropName) && Array.isArray(item[childrenPropName]);
         // when item has a child, we'll sort recursively
@@ -535,7 +535,7 @@ export class SortService {
           treeLevel--;
         }
       }
-    }
+    });
   }
 
   /**
