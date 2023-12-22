@@ -20,7 +20,7 @@ import type {
   UsabilityOverrideFn,
 } from '@slickgrid-universal/common';
 import { createDomElement, SlickEvent, SlickEventHandler, } from '@slickgrid-universal/common';
-import { objectAssignAndExtend } from '@slickgrid-universal/utils';
+import { extend } from '@slickgrid-universal/utils';
 
 /**
  * A plugin to add Row Detail Panel View (for example providing order detail info when clicking on the order row in the grid)
@@ -140,7 +140,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     this._grid = grid;
     this._gridUid = grid.getUID();
     if (!this._addonOptions) {
-      this._addonOptions = objectAssignAndExtend(this.gridOptions.rowDetailView, this._defaults) as RowDetailView;
+      this._addonOptions = extend(true, {}, this._defaults, this.gridOptions.rowDetailView) as RowDetailView;
     }
     this._keyPrefix = this._addonOptions?.keyPrefix || '_';
 
@@ -200,7 +200,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       throw new Error('[Slickgrid-Universal] The Row Detail View requires options to be passed via the "rowDetailView" property of the Grid Options');
     }
 
-    this._addonOptions = objectAssignAndExtend(gridOptions.rowDetailView, this._defaults) as RowDetailView;
+    this._addonOptions = extend(true, {}, this._defaults, gridOptions.rowDetailView) as RowDetailView;
 
     // user could override the expandable icon logic from within the options or after instantiating the plugin
     if (typeof this._addonOptions.expandableOverride === 'function') {
@@ -239,7 +239,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /** set or change some of the plugin options */
   setOptions(options: Partial<RowDetailViewOption>) {
-    this._addonOptions = objectAssignAndExtend(options, this._addonOptions);
+    this._addonOptions = extend(true, {}, this._addonOptions, options) as RowDetailView;
     if (this._addonOptions?.singleRowExpand) {
       this.collapseAll();
     }
@@ -248,9 +248,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   /** Collapse all of the open items */
   collapseAll() {
     this.dataView.beginUpdate();
-    for (const expandedRow of this._expandedRows) {
+    this._expandedRows.forEach(expandedRow => {
       this.collapseDetailView(expandedRow, true);
-    }
+    });
     this.dataView.endUpdate();
   }
 

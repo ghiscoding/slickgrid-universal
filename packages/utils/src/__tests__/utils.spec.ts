@@ -6,7 +6,6 @@ import {
   arrayRemoveItemByIndex,
   deepCopy,
   deepMerge,
-  objectAssignAndExtend,
   emptyObject,
   hasData,
   isDefined,
@@ -413,95 +412,6 @@ describe('Service/Utilies', () => {
       expect(output).toEqual({
         a: 1, b: 2, c: { x: 1, y: 2, z: 2 },
         d: [1, 1, 2, 2],
-        e: 2
-      });
-    });
-  });
-
-  describe('objectAssignAndExtend method', () => {
-    it('should return undefined when both inputs are undefined', () => {
-      const obj1 = undefined;
-      const obj2 = null;
-      const output = objectAssignAndExtend(obj1, obj2);
-      expect(output).toEqual(undefined);
-    });
-
-    it('should merge object even when 1st input is undefined because 2nd input is an object', () => {
-      const input1 = undefined;
-      const input2 = { firstName: 'John' };
-      const output = objectAssignAndExtend(input1, input2);
-      expect(output).toEqual({ firstName: 'John' });
-    });
-
-    it('should merge object even when 1st input is undefined because 2nd input is an object', () => {
-      const input1 = { firstName: 'John' };
-      const input2 = undefined;
-      const output = objectAssignAndExtend(input1, input2);
-      expect(output).toEqual({ firstName: 'John' });
-    });
-
-    it('should provide empty object as input and expect output object to include 2nd object', () => {
-      const input1 = {};
-      const input2 = { firstName: 'John' };
-      const output = objectAssignAndExtend(input1, input2);
-      expect(output).toEqual({ firstName: 'John' });
-    });
-
-    it('should not overwrite property when already filled with a value', () => {
-      const input1 = { firstName: 'Jane' };
-      const input2 = { firstName: { name: 'John' } };
-      const output = objectAssignAndExtend(input1, input2);
-      expect(output).toEqual({ firstName: 'Jane' });
-    });
-
-    it('should provide input object with undefined property and expect output object to return merged object from 2nd object when that one is filled', () => {
-      const input1 = { firstName: undefined };
-      const input2 = { firstName: {} };
-      const output = objectAssignAndExtend(input1, input2);
-      expect(output).toEqual({ firstName: {} });
-    });
-
-    it('should provide input object with undefined property and not expect it to overwrite property since it already has a value', () => {
-      const input1 = { firstName: { name: 'John' } };
-      const input2 = { firstName: undefined };
-      const output = objectAssignAndExtend(input1, input2);
-      expect(output).toEqual({ firstName: { name: 'John' } });
-    });
-
-    it('should merge 2 objects and expect objects to be merged with both side', () => {
-      const input1 = { a: 1, b: 1, c: { x: 1, y: 1 }, d: [1, 1] };
-      const input2 = { b: 2, c: { y: 2, z: 2 }, d: [2, 2], e: 2 };
-
-      const output = objectAssignAndExtend(input1, input2);
-      expect(output).toEqual({
-        a: 1, b: 1, c: { x: 1, y: 1, z: 2 },
-        d: [1, 1],
-        e: 2
-      });
-    });
-
-    it('should merge 3 objects and expect objects to be merged with both side', () => {
-      const input1 = { a: 1, b: 1, c: { x: 1, y: 1 }, d: [1, 1] };
-      const input2 = { b: 2, c: { y: 2, z: 2 } };
-      const input3 = { d: [2, 2], e: 2 };
-
-      const output = objectAssignAndExtend(input1, input2, input3);
-      expect(output).toEqual({
-        a: 1, b: 1, c: { x: 1, y: 1, z: 2 },
-        d: [1, 1],
-        e: 2
-      });
-    });
-
-    it('should merge 3 objects, by calling objectAssignAndExtend 2 times, and expect objects to be merged with both side', () => {
-      const input1 = { a: 1, b: 1, c: { x: 1, y: 1 }, d: [1, 1] };
-      const input2 = { b: 2, c: { y: 2, z: 2 } };
-      const input3 = { d: [2, 2], e: 2 };
-
-      const output = objectAssignAndExtend(objectAssignAndExtend(input1, input2), input3);
-      expect(output).toEqual({
-        a: 1, b: 1, c: { x: 1, y: 1, z: 2 },
-        d: [1, 1],
         e: 2
       });
     });
