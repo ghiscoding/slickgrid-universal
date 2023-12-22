@@ -69,15 +69,15 @@ export function createDomElement<T extends keyof HTMLElementTagNameMap, K extend
  * @param obj - object containing 1 or more properties with DOM Elements
  */
 export function destroyAllElementProps(obj: any) {
-  if (obj) {
-    for (const key of Object.keys(obj)) {
+  if (typeof obj === 'object') {
+    Object.keys(obj).forEach(key => {
       if (Array.isArray(obj[key])) {
         destroyAllElementProps(obj[key]);
       }
       if (obj[key] instanceof HTMLElement) {
         obj[key] = null;
       }
-    }
+    });
   }
 }
 

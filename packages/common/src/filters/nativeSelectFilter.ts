@@ -159,13 +159,13 @@ export class NativeSelectFilter implements Filter {
 
     // collection could be an Array of Strings OR Objects
     if (collection.every(x => typeof x === 'string')) {
-      for (const option of collection) {
+      collection.forEach(option => {
         selectElm.appendChild(
           createDomElement('option', { value: option, label: option, textContent: option })
         );
-      }
+      });
     } else {
-      for (const option of collection) {
+      collection.forEach(option => {
         if (!option || (option[labelName] === undefined && option.labelKey === undefined)) {
           throw new Error(`A collection with value/label (or value/labelKey when using Locale) is required to populate the Native Select Filter list, for example:: { filter: model: Filters.select, collection: [ { value: '1', label: 'One' } ]')`);
         }
@@ -176,7 +176,7 @@ export class NativeSelectFilter implements Filter {
         selectElm.appendChild(
           createDomElement('option', { value: option[valueName], textContent: textLabel })
         );
-      }
+      });
     }
 
     return selectElm;

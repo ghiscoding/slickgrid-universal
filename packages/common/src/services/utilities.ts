@@ -70,7 +70,7 @@ export function addTreeLevelByMutation<T>(treeArray: T[], options: { childrenPro
   const childrenPropName = (options?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP) as keyof T;
 
   if (Array.isArray(treeArray)) {
-    for (const item of treeArray) {
+    treeArray.forEach(item => {
       if (item) {
         if (Array.isArray(item[childrenPropName]) && (item[childrenPropName] as Array<T>).length > 0) {
           treeLevel++;
@@ -79,7 +79,7 @@ export function addTreeLevelByMutation<T>(treeArray: T[], options: { childrenPro
         }
         (item as any)[options.levelPropName] = treeLevel;
       }
-    }
+    });
   }
 }
 
@@ -88,7 +88,7 @@ export function addTreeLevelAndAggregatorsByMutation<T = any>(treeArray: T[], op
   const { aggregator } = options;
 
   if (Array.isArray(treeArray)) {
-    for (const item of treeArray) {
+    treeArray.forEach(item => {
       if (item) {
         const isParent = Array.isArray(item[childrenPropName]);
 
@@ -105,7 +105,7 @@ export function addTreeLevelAndAggregatorsByMutation<T = any>(treeArray: T[], op
         }
         (item as any)[options.levelPropName] = treeLevel;
       }
-    }
+    });
   }
 }
 

@@ -27,14 +27,14 @@ export class CollectionService<T = any> {
     if (Array.isArray(filterByOptions)) {
       filteredCollection = (filterResultBy === FilterMultiplePassType.merge) ? [] : [...collection];
 
-      for (const filter of filterByOptions) {
+      filterByOptions.forEach(filter => {
         if (filterResultBy === FilterMultiplePassType.merge) {
           const filteredPass = this.singleFilterCollection(collection, filter);
           filteredCollection = uniqueArray([...filteredCollection, ...filteredPass]);
         } else {
           filteredCollection = this.singleFilterCollection(filteredCollection, filter);
         }
-      }
+      });
     } else {
       filteredCollection = this.singleFilterCollection(collection, filterByOptions);
     }

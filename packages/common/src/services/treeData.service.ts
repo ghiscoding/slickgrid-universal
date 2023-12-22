@@ -180,7 +180,7 @@ export class TreeDataService {
       this.dataView.beginUpdate(true);
 
       // then we reapply only the ones that changed (provided as argument to the function)
-      for (const collapsedItem of treeToggledItems) {
+      treeToggledItems.forEach(collapsedItem => {
         const item = this.dataView.getItemById(collapsedItem.itemId);
         this.updateToggledItem(item, collapsedItem.isCollapsed);
 
@@ -199,7 +199,7 @@ export class TreeDataService {
             type: collapsedItem.isCollapsed ? ToggleStateChangeType.toggleCollapse : ToggleStateChangeType.toggleExpand
           } as TreeToggleStateChange);
         }
-      }
+      });
 
       // close the update transaction & call a refresh which will trigger a re-render with filters applied (including expand/collapse)
       this.dataView.endUpdate();

@@ -561,32 +561,34 @@ export class FilterService {
     const filteredParents = new Map<number | string, boolean>();
 
     if (Array.isArray(inputItems)) {
-      for (const inputItem of inputItems) {
+      inputItems.forEach(inputItem => {
         (treeObj as any)[inputItem[primaryDataId]] = inputItem;
         // as the filtered data is then used again as each subsequent letter
         // we need to delete the .__used property, otherwise the logic below
         // in the while loop (which checks for parents) doesn't work
         delete (treeObj as any)[inputItem[primaryDataId]].__used;
-      }
+      });
 
       // Step 1. prepare search filter by getting their parsed value(s), for example if it's a date filter then parse it to a Moment object
       // loop through all column filters once and get parsed filter search value then save a reference in the columnFilter itself
       // it is much more effective to do it outside and prior to Step 2 so that we don't re-parse search filter for no reason while checking every row
-      for (const columnId of Object.keys(columnFilters)) {
-        const columnFilter = columnFilters[columnId] as SearchColumnFilter;
-        const searchValues: SearchTerm[] = columnFilter?.searchTerms ? deepCopy(columnFilter.searchTerms) : [];
-        const inputSearchConditions = this.parseFormInputFilterConditions(searchValues, columnFilter);
+      if (typeof columnFilters === 'object') {
+        Object.keys(columnFilters).forEach(columnId => {
+          const columnFilter = columnFilters[columnId] as SearchColumnFilter;
+          const searchValues: SearchTerm[] = columnFilter?.searchTerms ? deepCopy(columnFilter.searchTerms) : [];
+          const inputSearchConditions = this.parseFormInputFilterConditions(searchValues, columnFilter);
 
-        const columnDef = columnFilter.columnDef;
-        const fieldType = columnDef?.filter?.type ?? columnDef?.type ?? FieldType.string;
-        const parsedSearchTerms = getParsedSearchTermsByFieldType(inputSearchConditions.searchTerms, fieldType); // parsed term could be a single value or an array of values
-        if (parsedSearchTerms !== undefined) {
-          columnFilter.parsedSearchTerms = parsedSearchTerms;
-        }
+          const columnDef = columnFilter.columnDef;
+          const fieldType = columnDef?.filter?.type ?? columnDef?.type ?? FieldType.string;
+          const parsedSearchTerms = getParsedSearchTermsByFieldType(inputSearchConditions.searchTerms, fieldType); // parsed term could be a single value or an array of values
+          if (parsedSearchTerms !== undefined) {
+            columnFilter.parsedSearchTerms = parsedSearchTerms;
+          }
+        });
       }
 
       // Step 2. loop through every item data context to execute filter condition check
-      for (const item of inputItems) {
+      inputItems.forEach(item => {
         const hasChildren = item[hasChildrenPropName];
         let matchFilter = true; // valid until proven otherwise
 
@@ -652,7 +654,7 @@ export class FilterService {
             parent = (treeObj as any)[parent[parentPropName]] ?? false;
           }
         }
-      }
+      });
     }
     this._isTreePresetExecuted = true;
 
@@ -1238,7 +1240,7 @@ export class FilterService {
   }
 
   /**
-   * From a ColumnFilters object, extra only the basic filter details (columnId, operator & searchTerms)
+   * From a ColumnFilters object, extract only the basic filter details (columnId, operator & searchTerms)
    * @param {Object} columnFiltersObject - columnFilters object
    * @returns - basic details of a column filter
    */
@@ -1267,11 +1269,11 @@ export class FilterService {
    */
   protected removeAllColumnFiltersProperties() {
     if (typeof this._columnFilters === 'object') {
-      for (const columnId in this._columnFilters) {
+      Object.keys(this._columnFilters).forEach(columnId => {
         if (columnId && this._columnFilters[columnId]) {
           delete this._columnFilters[columnId];
         }
-      }
+      });
     }
   }
 
