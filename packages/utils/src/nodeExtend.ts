@@ -58,7 +58,7 @@ const setProperty = function setProperty(target: any, options: any) {
 };
 
 // Return undefined instead of __proto__ if '__proto__' is not an own property
-const getProperty = function getProperty(obj: any, name: any) {
+const getProperty = function getProperty(obj: any, name: string) {
   if (name === '__proto__') {
     if (!hasOwn.call(obj, name)) {
       return void 0;

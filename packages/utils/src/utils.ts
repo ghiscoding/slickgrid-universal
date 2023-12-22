@@ -57,11 +57,11 @@ export function deepCopy(objectOrArray: any | any[]): any | any[] {
 
     // Loop through each item in the original
     // Recursively copy it's value and add to the clone
-    for (const key in objectOrArray) {
+    Object.keys(objectOrArray).forEach(key => {
       if (Object.prototype.hasOwnProperty.call(objectOrArray, key)) {
         (clone as any)[key] = deepCopy(objectOrArray[key]);
       }
-    }
+    });
     return clone;
   };
 
@@ -104,7 +104,7 @@ export function deepMerge(target: any, ...sources: any[]): any {
   target = (!isObject(target) && isObject(source)) ? {} : target;
 
   if (isObject(target) && isObject(source)) {
-    for (const prop in source) {
+    Object.keys(source).forEach(prop => {
       if (source.hasOwnProperty(prop)) {
         if (prop in target) {
           // handling merging of two properties with equal names
@@ -128,42 +128,9 @@ export function deepMerge(target: any, ...sources: any[]): any {
           target[prop] = source[prop];
         }
       }
-    }
+    });
   }
   return deepMerge(target, ...sources);
-}
-
-/**
- * This method is similar to `Object.assign` with the exception that it will also extend the object properties when filled.
- * There's also a distinction with extend vs merge, we are only extending when the property is not filled (if it is filled then it remains untouched and will not be merged)
- * It also applies the change directly on the target object which mutates the original object.
- * For example using these 2 objects: obj1 = { a: 1, b: { c: 2, d: 3 }} and obj2 = { b: { d: 2, e: 3}}:
- *   - Object.assign(obj1, obj2) => { a: 1, b: { e: 4 }}
- *   - objectAssignAndExtend(obj1, obj2) => { a: 1, b: { c: 2, d: 3, e: 4 }
- * @param {Object} target - the target object — what to apply the sources properties and mutate into
- * @param {Object} sources - the source object(s) — objects containing the properties you want to apply.
- * @returns {Object} The target object.
- */
-export function objectAssignAndExtend(target: any, ...sources: any): any {
-  if (!sources.length || sources[0] === undefined) {
-    return target;
-  }
-  const source = sources.shift();
-
-  // when target is not an object but source is an object, then we'll assign as object
-  target = (!isObject(target) && isObject(source)) ? {} : target;
-
-  if (isObject(target) && isObject(source)) {
-    for (const key of Object.keys(source)) {
-      if (typeof source[key] === 'object' && source[key] !== null) {
-        objectAssignAndExtend(target[key], source[key]);
-      }
-      if ((target[key] === null || target[key] === undefined) && source[key] !== null && source[key] !== undefined) {
-        target[key] = source[key];
-      }
-    }
-  }
-  return objectAssignAndExtend(target, ...sources);
 }
 
 /**
@@ -171,10 +138,12 @@ export function objectAssignAndExtend(target: any, ...sources: any): any {
  * @param obj - input object
  */
 export function emptyObject(obj: any) {
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      delete obj[key];
-    }
+  if (isObject(obj)) {
+    Object.keys(obj).forEach(key => {
+      if (obj.hasOwnProperty(key)) {
+        delete obj[key];
+      }
+    });
   }
   obj = null;
   obj = {};
