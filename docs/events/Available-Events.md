@@ -28,11 +28,16 @@ this.gridContainerElm.addEventListener('onheadermenucommand', (e) => this.handle
 
 handleOnHeaderMenuCommand(e) {
   // detail is the args data payload
-  const args = e.detail; 
+  const args = e.detail;
   console.log('header menu command', args);
 }
 ```
 ---
+
+#### SlickCellExternalCopyManager (extension)
+  - `onCopyCells`
+  - `onCopyCancelled`
+  - `onPasteCells`
 
 #### SlickContextMenu (extension)
   - `onContextMenuClearGrouping`
@@ -155,7 +160,7 @@ handleOnHeaderMenuCommand(e) {
   - `onValidationError`
   - `onViewportChanged`
 
-#### SlickDataView 
+#### SlickDataView
   - `onBeforePagingInfoChanged`
   - `onGroupExpanded`
   - `onGroupCollapsed`
