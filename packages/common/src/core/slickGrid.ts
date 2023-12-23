@@ -996,7 +996,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       e = e.getNativeEvent<Event>();
     }
 
-    this._activeCanvasNode = (e as any)?.target.closest('.grid-canvas');
+    this._activeCanvasNode = (e as Event & { target: HTMLElement })?.target?.closest('.grid-canvas') as HTMLDivElement;
     return this._activeCanvasNode;
   }
 
@@ -1026,7 +1026,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (e instanceof SlickEventData) {
       e = e.getNativeEvent<Event>();
     }
-    this._activeViewportNode = (e as any)?.target.closest('.slick-viewport');
+    this._activeViewportNode = (e as Event & { target: HTMLDivElement })?.target?.closest('.slick-viewport') as HTMLDivElement;
     return this._activeViewportNode;
   }
 
@@ -1065,10 +1065,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let i = 0;
     const ii = this.columns.length;
     for (i = 0; i < ii; i++) {
-      if (!this.columns[i] || this.columns[i].hidden) { continue; }
-
+      if (!this.columns[i] || this.columns[i].hidden) {
+        continue;
+      }
       const width = this.columns[i].width;
-
       if ((this._options.frozenColumn!) > -1 && (i > this._options.frozenColumn!)) {
         this.headersWidthR += width || 0;
       } else {
@@ -1086,7 +1086,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     if (this.hasFrozenColumns()) {
       this.headersWidthL = this.headersWidthL + 1000;
-
       this.headersWidthR = Math.max(this.headersWidthR, this.viewportW) + this.headersWidthL;
       this.headersWidthR += this.scrollbarDimensions?.width ?? 0;
     } else {
@@ -1096,45 +1095,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     this.headersWidth = this.headersWidthL + this.headersWidthR;
     return Math.max(this.headersWidth, this.viewportW) + 1000;
-  }
-
-  protected getHeadersWidthL() {
-    this.headersWidthL = 0;
-
-    this.columns.forEach((column, i) => {
-      if (column.hidden) { return; }
-
-      if (!((this._options.frozenColumn!) > -1 && (i > this._options.frozenColumn!))) {
-        this.headersWidthL += column.width || 0;
-      }
-    });
-
-    if (this.hasFrozenColumns()) {
-      this.headersWidthL += 1000;
-    } else {
-      this.headersWidthL += this.scrollbarDimensions?.width ?? 0;
-      this.headersWidthL = Math.max(this.headersWidthL, this.viewportW) + 1000;
-    }
-
-    return this.headersWidthL;
-  }
-
-  protected getHeadersWidthR() {
-    this.headersWidthR = 0;
-
-    this.columns.forEach((column, i) => {
-      if (column.hidden) { return; }
-      if ((this._options.frozenColumn!) > -1 && (i > this._options.frozenColumn!)) {
-        this.headersWidthR += column.width || 0;
-      }
-    });
-
-    if (this.hasFrozenColumns()) {
-      this.headersWidthR = Math.max(this.headersWidthR, this.viewportW) + this.getHeadersWidthL();
-      this.headersWidthR += this.scrollbarDimensions?.width ?? 0;
-    }
-
-    return this.headersWidthR;
   }
 
   /** Get the grid canvas width */

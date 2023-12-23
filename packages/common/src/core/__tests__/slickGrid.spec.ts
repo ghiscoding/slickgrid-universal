@@ -1,9 +1,25 @@
 import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions';
 import { Column, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces';
+import { SlickEventData } from '../slickCore';
 import { SlickDataView } from '../slickDataview';
 import { SlickGrid } from '../slickGrid';
 
 jest.useFakeTimers();
+
+const gridId = 'grid1';
+const gridUid = 'slickgrid_124343';
+const containerId = 'demo-container';
+const template =
+  `<div id="${containerId}" style="height: 800px; width: 600px; overflow: hidden; display: block;">
+    <div id="slickGridContainer-${gridId}" class="grid-pane" style="width: 100%;">
+      <div id="${gridId}" class="${gridUid}" style="width: 100%">
+      <div class="slick-pane slick-pane-header slick-pane-left" tabindex="0" style="width: 100%;">
+        <div class="slick-viewport slick-viewport-top slick-viewport-left" style="overflow:hidden;position:relative;">
+          <div class="grid-canvas" style="height: 12500px; width: 500px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
 
 describe('SlickGrid core file', () => {
   let container: HTMLElement;
@@ -12,6 +28,7 @@ describe('SlickGrid core file', () => {
   beforeEach(() => {
     container = document.createElement('div');
     container.id = 'myGrid';
+    container.innerHTML = template;
     document.body.appendChild(container);
   });
 
@@ -67,6 +84,7 @@ describe('SlickGrid core file', () => {
 
     expect(grid).toBeTruthy();
     expect(vpElms.length).toBe(4);
+    expect(grid.getViewport()).toBeTruthy();
     expect(grid.getViewports().length).toBe(4);
     expect(vpElms[0].classList.contains('slick-viewport')).toBeTruthy();
     expect(vpElms[0].classList.contains('vp-class1')).toBeTruthy();
@@ -424,13 +442,10 @@ describe('SlickGrid core file', () => {
   describe('plugins', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
-    const dv = new SlickDataView({});
-    const cellNodeElm = document.createElement('div');
 
     it('should be able to register a plugin', () => {
       const rowSelectionModel = new SlickRowSelectionModel();
-      const cellSelectionModel = new SlickCellSelectionModel();
-      grid = new SlickGrid<any, Column>(container, dv, columns, options);
+      grid = new SlickGrid<any, Column>(container, [], columns, options);
       grid.setSelectionModel(rowSelectionModel);
       rowSelectionModel.init(grid);
 
@@ -453,11 +468,149 @@ describe('SlickGrid core file', () => {
       const rowSelectSpy = jest.spyOn(rowSelectionModel, 'destroy');
       const cellSelectionModel = new SlickCellSelectionModel();
 
-      grid = new SlickGrid<any, Column>(container, dv, columns, options);
+      grid = new SlickGrid<any, Column>(container, [], columns, options);
       grid.setSelectionModel(rowSelectionModel);
       grid.setSelectionModel(cellSelectionModel);
 
       expect(rowSelectSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('Node Getters', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+    describe('getActiveCanvasNode() function', () => {
+      it('should return undefined when calling the method when the Event does not include any target', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, options);
+        const mockEvent = new CustomEvent('click');
+        const result = grid.getActiveCanvasNode(mockEvent);
+
+        expect(result).toBeFalsy();
+      });
+
+      it('should return closest grid canvas when calling the method when the Event includes grid canvas', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, options);
+        const mockEvent = new MouseEvent('click');
+        const gridCanvasElm = container.querySelector('.grid-canvas');
+        Object.defineProperty(mockEvent, 'target', { writable: true, configurable: true, value: gridCanvasElm });
+        const result = grid.getActiveCanvasNode(mockEvent);
+
+        expect(result).toEqual(gridCanvasElm);
+      });
+
+      it('should return grid canvas when event is null', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, options);
+        const result = grid.getActiveCanvasNode();
+
+        expect(result).toEqual(container.querySelector('.grid-canvas'));
+      });
+
+      it('should return native event from SlickEventData when it is an instance of it', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, options);
+        const mockEvent = new MouseEvent('click');
+        const gridCanvasElm = container.querySelector('.grid-canvas');
+        Object.defineProperty(mockEvent, 'target', { writable: true, configurable: true, value: gridCanvasElm });
+        const ed = new SlickEventData(mockEvent);
+        const result = grid.getActiveCanvasNode(ed);
+
+        expect(result).toEqual(gridCanvasElm);
+      });
+    });
+
+    describe('getActiveViewportNode() function', () => {
+      it('should return undefined when calling the method when the Event does not include any target', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, options);
+        const mockEvent = new CustomEvent('click');
+        const result = grid.getActiveViewportNode(mockEvent);
+
+        expect(result).toBeFalsy();
+      });
+
+      it('should return closest grid canvas when calling the method when the Event includes grid canvas', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, options);
+        const mockEvent = new MouseEvent('click');
+        const viewportElm = container.querySelector('.slick-viewport');
+        Object.defineProperty(mockEvent, 'target', { writable: true, configurable: true, value: viewportElm });
+        const result = grid.getActiveViewportNode(mockEvent);
+
+        expect(result).toEqual(viewportElm);
+      });
+
+      it('should return native event from SlickEventData when it is an instance of it', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, options);
+        const mockEvent = new MouseEvent('click');
+        const viewportElm = container.querySelector('.slick-viewport');
+        Object.defineProperty(mockEvent, 'target', { writable: true, configurable: true, value: viewportElm });
+        const ed = new SlickEventData(mockEvent);
+        const result = grid.getActiveViewportNode(ed);
+
+        expect(result).toEqual(viewportElm);
+      });
+    });
+
+    describe('getViewportNode() function', () => {
+      it('should return viewport element when calling the function when found in the grid container', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, options);
+        const result = grid.getViewportNode();
+
+        expect(result).toBeTruthy();
+        expect(result).toEqual(container.querySelector('.slick-viewport'));
+      });
+
+      it('should return viewport element when calling the function when found in the grid container', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, frozenRow: 2, frozenBottom: true });
+        const result = grid.getViewportNode(22, 3);
+
+        expect(result).toBeTruthy();
+        expect(result!.className).toEqual('slick-viewport slick-viewport-bottom slick-viewport-left');
+        expect(result!.querySelector('div')!.className).toEqual('grid-canvas grid-canvas-bottom grid-canvas-left');
+        expect(result!.querySelector('.slick-row.frozen')).toBeTruthy();
+        expect(result!.querySelector('.slick-cell')).toBeTruthy();
+      });
+
+      it('should return undefined when calling the function when getViewports() is returning undefined', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, options);
+        jest.spyOn(grid, 'getViewports').mockReturnValueOnce(null as any);
+        const result = grid.getViewportNode();
+
+        expect(result).toBeFalsy();
+      });
+    });
+
+    describe('Grid Dimensions', () => {
+      it('should return viewport element when calling the function when found in the grid container', () => {
+        const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, options);
+        const result = grid.getHeadersWidth();
+
+        expect(result).toBe(2080); // (1000 * 1) + defaultColumnWidth + 1000
+      });
+
+      it('should return viewport element when calling the function when found in the grid container', () => {
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name' },
+          { id: 'age', field: 'age', name: 'age' },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, frozenColumn: 1 });
+        grid.init();
+        const result = grid.getHeadersWidth();
+
+        expect(result).toBe((1000 + 80 * 3) + 1000 + 1000); // Left + Right => (1000 + (defaultColumnWidth * 2)) * 2 + 1000
+      });
+
+      it('should return viewport element when calling the function when found in the grid container', () => {
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name' },
+          { id: 'lastName', field: 'lastName', name: 'Last Name' },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, frozenColumn: 1 });
+        grid.init();
+        const result = grid.getHeadersWidth();
+
+        expect(result).toBe((1000 + 80 * 2) * 2 + 1000); // Left + Right => (1000 + (defaultColumnWidth * 2)) * 2 + 1000
+      });
     });
   });
 });
