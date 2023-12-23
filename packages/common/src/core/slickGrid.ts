@@ -586,7 +586,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     // calculate these only once and share between grid instances
     if (options?.mixinDefaults) {
-      if (!options) { this._options = {} as O; }
+      // use provided options and then assign defaults
+      if (!this._options) { this._options = options as O; }
       Utils.applyDefaults(this._options, this._defaults);
     } else {
       this._options = extend<O>(true, {}, this._defaults, options);
@@ -1351,7 +1352,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * Get the Header DOM element
    * @param {C} columnDef - column definition
    */
-  getHeader(columnDef: C) {
+  getHeader(columnDef?: C) {
     if (!columnDef) {
       return this.hasFrozenColumns() ? this._headers : this._headerL;
     }

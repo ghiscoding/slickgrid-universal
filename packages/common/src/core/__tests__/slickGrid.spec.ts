@@ -30,6 +30,8 @@ describe('SlickGrid core file', () => {
     container.id = 'myGrid';
     container.innerHTML = template;
     document.body.appendChild(container);
+    Object.defineProperty(container, 'clientHeight', { writable: true, configurable: true, value: 600 });
+    Object.defineProperty(container, 'clientWidth', { writable: true, configurable: true, value: 800 });
   });
 
   afterEach(() => {
@@ -119,6 +121,9 @@ describe('SlickGrid core file', () => {
       expect(preheaderElm?.querySelectorAll('div').length).toBe(3);
       expect(preheaderElms[0].style.display).not.toBe('none');
       expect(preheaderElms[1].style.display).not.toBe('none');
+      expect(grid.getPreHeaderPanel()).toBeTruthy();
+      expect(grid.getPreHeaderPanel()).toEqual(grid.getPreHeaderPanelLeft());
+      expect(grid.getPreHeaderPanelRight().outerHTML).toBe('<div></div>');
     });
 
     it('should hide column headers div when "showPreHeaderPanel" is disabled', () => {
@@ -576,15 +581,85 @@ describe('SlickGrid core file', () => {
 
         expect(result).toBeFalsy();
       });
+
+      it('should return slick header left & right depending on frozenColumn index', () => {
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name' },
+          { id: 'age', field: 'age', name: 'age' },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, fullWidthRows: true, frozenColumn: 1 });
+
+        expect(grid.getHeader()[0]).toBeInstanceOf(HTMLDivElement);
+        expect((grid.getHeader()[0] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-left');
+        expect((grid.getHeader()[1] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-right');
+      });
     });
 
     describe('Grid Dimensions', () => {
+      it('should return default column width when column is not wider than grid and fullWidthRows is disabled with mixinDefaults is enabled', () => {
+        const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, mixinDefaults: true });
+        const result = grid.getCanvasWidth();
+
+        expect(result).toBe(80);
+      });
+
+      it('should return default full grid width when column is not wider than grid but fullWidthRows is enabled', () => {
+        const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, fullWidthRows: true });
+        const result = grid.getCanvasWidth();
+
+        expect(result).toBe(800);
+      });
+
+      it('should return original grid width of 800px', () => {
+        const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, fullWidthRows: true });
+        const result = grid.getCanvasWidth();
+
+        expect(result).toBe(800);
+      });
+
+      it('should return left viewport width of 160px which is the default column width times 2', () => {
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name' },
+          { id: 'age', field: 'age', name: 'age' },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, frozenColumn: 1 });
+        const result = grid.getCanvasWidth();
+        grid.autosizeColumns();
+        grid.reRenderColumns();
+
+        expect(grid.getHeader()[0]).toBeInstanceOf(HTMLDivElement);
+        expect(grid.getHeader(columns[0])).toBeInstanceOf(HTMLDivElement);
+        expect(grid.getVisibleColumns().length).toBe(2);
+        expect(result).toBe(80 * 2);
+      });
+
+      it('should return full grid width when fullWidthRows is enabled even with frozenColumn defined', () => {
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name' },
+          { id: 'age', field: 'age', name: 'age' },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, fullWidthRows: true, frozenColumn: 1 });
+        const result = grid.getCanvasWidth();
+
+        expect(grid.getVisibleColumns().length).toBe(2);
+        expect(result).toBe(800);
+        expect(grid.getHeader()[0]).toBeInstanceOf(HTMLDivElement);
+        expect((grid.getHeader()[0] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-left');
+        expect((grid.getHeader()[1] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-right');
+      });
+
       it('should return viewport element when calling the function when found in the grid container', () => {
         const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
         grid = new SlickGrid<any, Column>(container, [], columns, options);
         const result = grid.getHeadersWidth();
 
-        expect(result).toBe(2080); // (1000 * 1) + defaultColumnWidth + 1000
+        expect(result).toBe(2800); // (1000 * 1) + 1000 + gridWidth 800
       });
 
       it('should return viewport element when calling the function when found in the grid container', () => {
@@ -597,7 +672,7 @@ describe('SlickGrid core file', () => {
         grid.init();
         const result = grid.getHeadersWidth();
 
-        expect(result).toBe((1000 + 80 * 3) + 1000 + 1000); // Left + Right => (1000 + (defaultColumnWidth * 2)) * 2 + 1000
+        expect(result).toBe(800 + (1000 + 80 * 2) + 1000 + 1000); // Left + Right => 800 + (1000 + (defaultColumnWidth * 2)) * 2 + 1000
       });
 
       it('should return viewport element when calling the function when found in the grid container', () => {
@@ -609,8 +684,53 @@ describe('SlickGrid core file', () => {
         grid.init();
         const result = grid.getHeadersWidth();
 
-        expect(result).toBe((1000 + 80 * 2) * 2 + 1000); // Left + Right => (1000 + (defaultColumnWidth * 2)) * 2 + 1000
+        expect(result).toBe(800 + (1000 + 80 * 2) * 2 + 1000); // Left + Right => 800 + (1000 + (defaultColumnWidth * 2)) * 2 + 1000
       });
+    });
+  });
+
+  describe('updateColumnHeader() method', () => {
+    const columns = [
+      { id: 'firstName', field: 'firstName', name: 'First Name' },
+      { id: 'lastName', field: 'lastName', name: 'Last Name' },
+    ] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+    it('should be able to change Header text content and title tooltip', () => {
+      grid = new SlickGrid<any, Column>(container, [], [...columns], options);
+      const onBeforeHeaderSpy = jest.spyOn(grid.onBeforeHeaderCellDestroy, 'notify');
+      const onHeaderCellRenderSpy = jest.spyOn(grid.onHeaderCellRendered, 'notify');
+      let column2Elm = container.querySelectorAll<HTMLDivElement>('.slick-header-columns .slick-header-column');
+      expect(column2Elm[1].textContent).toBe('Last Name');
+
+      grid.updateColumnHeader('lastName', 'Middle Name', 'middle name tooltip');
+
+      column2Elm = container.querySelectorAll<HTMLDivElement>('.slick-header-columns .slick-header-column');
+      expect(column2Elm[1].textContent).toBe('Middle Name');
+      expect(column2Elm[1].title).toBe('middle name tooltip');
+      expect(onBeforeHeaderSpy).toHaveBeenCalled();
+      expect(onHeaderCellRenderSpy).toHaveBeenCalled();
+    });
+
+    it('should not be able to change Header text content when enabling "explicitInitialization" and we called updateColumnHeader() and init() was not called', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...options, explicitInitialization: true });
+
+      grid.updateColumnHeader('lastName', 'Middle Name', 'middle name tooltip');
+
+      const column2Elm = container.querySelectorAll<HTMLDivElement>('.slick-header-columns .slick-header-column');
+      expect(column2Elm.length).toBe(0);
+    });
+
+    it('should not be able to change any Header text content when column provided is invalid', () => {
+      grid = new SlickGrid<any, Column>(container, [], [...columns], options);
+      let column2Elm = container.querySelectorAll<HTMLDivElement>('.slick-header-columns .slick-header-column');
+      expect(column2Elm[1].textContent).toBe('Last Name');
+
+      grid.updateColumnHeader('unknown', 'Middle Name', 'middle name tooltip');
+
+      column2Elm = container.querySelectorAll<HTMLDivElement>('.slick-header-columns .slick-header-column');
+      expect(column2Elm[0].textContent).toBe('First Name');
+      expect(column2Elm[1].textContent).toBe('Last Name');
     });
   });
 });
