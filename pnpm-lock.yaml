@@ -455,6 +455,9 @@ importers:
         specifier: workspace:~
         version: link:../utils
     devDependencies:
+      '@slickgrid-universal/event-pub-sub':
+        specifier: workspace:~
+        version: link:../event-pub-sub
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3

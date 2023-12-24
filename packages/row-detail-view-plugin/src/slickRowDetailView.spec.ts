@@ -1,5 +1,6 @@
 import 'jest-extended';
-import { Column, GridOption, PubSubService, type SlickDataView, SlickEvent, SlickEventData, SlickGrid, FormatterResultWithHtml } from '@slickgrid-universal/common';
+import { Column, type FormatterResultWithHtml, GridOption, type SlickDataView, SlickEvent, SlickEventData, SlickGrid, createDomElement } from '@slickgrid-universal/common';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { SlickRowDetailView } from './slickRowDetailView';
 
@@ -48,16 +49,10 @@ const gridStub = {
   onSort: new SlickEvent(),
 } as unknown as SlickGrid;
 
-const pubSubServiceStub = {
-  publish: jest.fn(),
-  subscribe: jest.fn(),
-  unsubscribe: jest.fn(),
-  unsubscribeAll: jest.fn(),
-} as PubSubService;
-
 let mockColumns: Column[];
 
 describe('SlickRowDetailView plugin', () => {
+  let eventPubSubService: EventPubSubService;
   const divContainer = document.createElement('div');
   let plugin: SlickRowDetailView;
   const gridContainerElm = document.createElement('div');
@@ -68,7 +63,8 @@ describe('SlickRowDetailView plugin', () => {
       { id: 'firstName', name: 'First Name', field: 'firstName', width: 100 },
       { id: 'lasstName', name: 'Last Name', field: 'lasstName', width: 100 },
     ];
-    plugin = new SlickRowDetailView(pubSubServiceStub);
+    eventPubSubService = new EventPubSubService();
+    plugin = new SlickRowDetailView(eventPubSubService);
     divContainer.className = `slickgrid-container ${GRID_UID}`;
     document.body.appendChild(divContainer);
   });
@@ -134,8 +130,7 @@ describe('SlickRowDetailView plugin', () => {
     jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { collapseAllOnSort: true } as any });
 
     plugin.init(gridStub);
-    const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
-    gridStub.onSort.notify({ sortCols: [{ columnId: mockColumns[0].id, sortCol: mockColumns[0], sortAsc: true }], multiColumnSort: true, previousSortColumns: [], grid: gridStub }, eventData as any, gridStub);
+    eventPubSubService.publish('onSortChanged', {});
 
     expect(plugin.getExpandedRows()).toEqual([]);
     expect(plugin.getOutOfViewportRows()).toEqual([]);
@@ -201,7 +196,7 @@ describe('SlickRowDetailView plugin', () => {
   });
 
   it('should add the Row Detail to the column definitions at index when calling "create" without specifying position', () => {
-    const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+    const pubSubSpy = jest.spyOn(eventPubSubService, 'publish');
     const processMock = jest.fn();
     const overrideMock = jest.fn();
     const rowDetailColumnMock = {
@@ -255,7 +250,7 @@ describe('SlickRowDetailView plugin', () => {
     expect(updateItemSpy).not.toHaveBeenCalled();
   });
 
-  it('should trigger "onAsyncResponse" with Row Detail from post template when no detailView is provided and expect "updateItem" from DataView to be called with new template & data', () => {
+  it('should trigger "onAsyncResponse" with Row Detail from post template from HTML string when no detailView is provided and expect "updateItem" from DataView to be called with new template & data', () => {
     const updateItemSpy = jest.spyOn(dataviewStub, 'updateItem');
     const asyncEndUpdateSpy = jest.spyOn(plugin.onAsyncEndUpdate, 'notify');
     const itemMock = { id: 123, firstName: 'John', lastName: 'Doe' };
@@ -267,6 +262,20 @@ describe('SlickRowDetailView plugin', () => {
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, { _detailContent: '<span>Post 123</span>', _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' });
     expect(asyncEndUpdateSpy).toHaveBeenCalledWith({ grid: gridStub, item: itemMock, itemDetail: { _detailContent: '<span>Post 123</span>', _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } });
+  });
+
+  it('should trigger "onAsyncResponse" with Row Detail from post template with HTML Element when no detailView is provided and expect "updateItem" from DataView to be called with new template & data', () => {
+    const updateItemSpy = jest.spyOn(dataviewStub, 'updateItem');
+    const asyncEndUpdateSpy = jest.spyOn(plugin.onAsyncEndUpdate, 'notify');
+    const itemMock = { id: 123, firstName: 'John', lastName: 'Doe' };
+    const postViewMock = (item) => createDomElement('span', { textContent: `Post ${item.id}` });
+    jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { postTemplate: postViewMock } as any });
+
+    plugin.init(gridStub);
+    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, }, new SlickEventData());
+
+    expect(updateItemSpy).toHaveBeenCalledWith(123, { _detailContent: createDomElement('span', { textContent: 'Post 123' }), _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' });
+    expect(asyncEndUpdateSpy).toHaveBeenCalledWith({ grid: gridStub, item: itemMock, itemDetail: { _detailContent: createDomElement('span', { textContent: 'Post 123' }), _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } });
   });
 
   it('should trigger "onAsyncResponse" with Row Detail template when detailView is provided and expect "updateItem" from DataView to be called with new template & data', () => {
@@ -729,14 +738,24 @@ describe('SlickRowDetailView plugin', () => {
       expect(formattedVal).toBe(``);
     });
 
-    it('should execute formatter and expect it to return empty string and render nothing when isPadding is True', () => {
-      const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', _collapsed: false, _isPadding: false, _sizePadding: 5 };
+    it('should execute formatter and expect it to render detail content from HTML string', () => {
+      const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', _collapsed: false, _isPadding: false, _sizePadding: 5, _detailContent: `<div>Loading...</div>` };
       plugin.init(gridStub);
       plugin.setOptions({ expandedClass: 'some-expanded', maxRows: 2 });
       plugin.expandableOverride(() => true);
       const formattedVal = plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub);
       expect(((formattedVal as FormatterResultWithHtml).html as HTMLElement).outerHTML).toBe(`<div class="detailView-toggle collapse some-expanded"></div>`);
-      expect((formattedVal as FormatterResultWithHtml).insertElementAfterTarget!.outerHTML).toBe(`<div class=\"dynamic-cell-detail cellDetailView_123\" style=\"height: 50px; top: 25px;\"><div class=\"detail-container detailViewContainer_123\"><div class=\"innerDetailView_123\">undefined</div></div></div>`);
+      expect((formattedVal as FormatterResultWithHtml).insertElementAfterTarget!.outerHTML).toBe(`<div class=\"dynamic-cell-detail cellDetailView_123\" style=\"height: 50px; top: 25px;\"><div class=\"detail-container detailViewContainer_123\"><div class=\"innerDetailView_123\"><div>Loading...</div></div></div></div>`);
+    });
+
+    it('should execute formatter and expect it to render detail content from HTML Element', () => {
+      const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', _collapsed: false, _isPadding: false, _sizePadding: 5, _detailContent: createDomElement('div', { textContent: 'Loading...' }) };
+      plugin.init(gridStub);
+      plugin.setOptions({ expandedClass: 'some-expanded', maxRows: 2 });
+      plugin.expandableOverride(() => true);
+      const formattedVal = plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub);
+      expect(((formattedVal as FormatterResultWithHtml).html as HTMLElement).outerHTML).toBe(`<div class="detailView-toggle collapse some-expanded"></div>`);
+      expect((formattedVal as FormatterResultWithHtml).insertElementAfterTarget!.outerHTML).toBe(`<div class=\"dynamic-cell-detail cellDetailView_123\" style=\"height: 50px; top: 25px;\"><div class=\"detail-container detailViewContainer_123\"><div class=\"innerDetailView_123\"><div>Loading...</div></div></div></div>`);
     });
   });
 });

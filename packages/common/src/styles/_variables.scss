@@ -254,6 +254,7 @@ $slick-detail-view-icon-expand:                             "\f055" !default;
 $slick-detail-view-icon-expand-color:                       lighten($slick-primary-color, 25%) !default;
 $slick-detail-view-icon-expand-color-hover:                 darken($slick-detail-view-icon-expand-color, 10%) !default;
 $slick-detail-view-icon-size:                               calc(#{$slick-icon-font-size} + 2px) !default;
+$slick-detail-view-icon-width:                              18px !default;
 $slick-detail-view-container-bgcolor:                       #f7f7f7 !default;
 $slick-detail-view-container-border:                        1px solid #c0c0c0 !default;
 $slick-detail-view-container-left:                          0 !default;

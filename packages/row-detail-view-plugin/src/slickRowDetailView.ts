@@ -155,7 +155,8 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
     // Sort will, by default, Collapse all of the open items (unless user implements his own onSort which deals with open row and padding)
     if (this._addonOptions.collapseAllOnSort) {
-      this._eventHandler.subscribe(this._grid.onSort, this.collapseAll.bind(this));
+      // sort event can be triggered by column header click or from header menu
+      this.pubSubService.subscribe('onSortChanged', () => this.collapseAll());
       this._expandedRows = [];
       this._rowIdsOutOfViewport = [];
     }
@@ -605,7 +606,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** The Formatter of the toggling icon of the Row Detail */
-  protected detailSelectionFormatter(row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid: SlickGrid): FormatterResultWithHtml | HTMLElement | '' {
+  protected detailSelectionFormatter(row: number, _cell: number, _val: any, _colDef: Column, dataContext: any, grid: SlickGrid): FormatterResultWithHtml | HTMLElement | '' {
     if (!this.checkExpandableOverride(row, dataContext, grid)) {
       return '';
     } else {
@@ -648,13 +649,17 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         });
         const innerContainerElm = createDomElement('div', { className: `detail-container detailViewContainer_${dataContext[this._dataViewIdProperty]}` });
         const innerDetailViewElm = createDomElement('div', { className: `innerDetailView_${dataContext[this._dataViewIdProperty]}` });
-        innerDetailViewElm.innerHTML = this._grid.sanitizeHtmlString(dataContext[`${this._keyPrefix}detailContent`]);
+        if (dataContext[`${this._keyPrefix}detailContent`] instanceof HTMLElement) {
+          innerDetailViewElm.appendChild(dataContext[`${this._keyPrefix}detailContent`]);
+        } else {
+          innerDetailViewElm.innerHTML = this._grid.sanitizeHtmlString(dataContext[`${this._keyPrefix}detailContent`]);
+        }
 
         innerContainerElm.appendChild(innerDetailViewElm);
         cellDetailContainerElm.appendChild(innerContainerElm);
 
         const result: FormatterResultWithHtml = {
-          html: createDomElement('div', { className: expandedClasses }),
+          html: createDomElement('div', { className: expandedClasses.trim() }),
           insertElementAfterTarget: cellDetailContainerElm,
         };
 
