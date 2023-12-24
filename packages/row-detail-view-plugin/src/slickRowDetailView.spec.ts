@@ -1,5 +1,6 @@
 import 'jest-extended';
-import { Column, GridOption, PubSubService, type SlickDataView, SlickEvent, SlickEventData, SlickGrid, FormatterResultWithHtml } from '@slickgrid-universal/common';
+import { Column, type FormatterResultWithHtml, GridOption, type SlickDataView, SlickEvent, SlickEventData, SlickGrid } from '@slickgrid-universal/common';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { SlickRowDetailView } from './slickRowDetailView';
 
@@ -48,16 +49,10 @@ const gridStub = {
   onSort: new SlickEvent(),
 } as unknown as SlickGrid;
 
-const pubSubServiceStub = {
-  publish: jest.fn(),
-  subscribe: jest.fn(),
-  unsubscribe: jest.fn(),
-  unsubscribeAll: jest.fn(),
-} as PubSubService;
-
 let mockColumns: Column[];
 
 describe('SlickRowDetailView plugin', () => {
+  let eventPubSubService: EventPubSubService;
   const divContainer = document.createElement('div');
   let plugin: SlickRowDetailView;
   const gridContainerElm = document.createElement('div');
@@ -68,7 +63,8 @@ describe('SlickRowDetailView plugin', () => {
       { id: 'firstName', name: 'First Name', field: 'firstName', width: 100 },
       { id: 'lasstName', name: 'Last Name', field: 'lasstName', width: 100 },
     ];
-    plugin = new SlickRowDetailView(pubSubServiceStub);
+    eventPubSubService = new EventPubSubService();
+    plugin = new SlickRowDetailView(eventPubSubService);
     divContainer.className = `slickgrid-container ${GRID_UID}`;
     document.body.appendChild(divContainer);
   });
@@ -134,8 +130,7 @@ describe('SlickRowDetailView plugin', () => {
     jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { collapseAllOnSort: true } as any });
 
     plugin.init(gridStub);
-    const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
-    gridStub.onSort.notify({ sortCols: [{ columnId: mockColumns[0].id, sortCol: mockColumns[0], sortAsc: true }], multiColumnSort: true, previousSortColumns: [], grid: gridStub }, eventData as any, gridStub);
+    eventPubSubService.publish('onSortChanged', {});
 
     expect(plugin.getExpandedRows()).toEqual([]);
     expect(plugin.getOutOfViewportRows()).toEqual([]);
@@ -201,7 +196,7 @@ describe('SlickRowDetailView plugin', () => {
   });
 
   it('should add the Row Detail to the column definitions at index when calling "create" without specifying position', () => {
-    const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
+    const pubSubSpy = jest.spyOn(eventPubSubService, 'publish');
     const processMock = jest.fn();
     const overrideMock = jest.fn();
     const rowDetailColumnMock = {

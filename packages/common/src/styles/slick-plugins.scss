@@ -1279,7 +1279,6 @@ input.flatpickr.form-control {
 .slick-row {
   .detail-view-toggle {
     display: inline-block;
-    cursor: pointer;
 
     &.expand {
       display: inline-block;
@@ -1302,10 +1301,16 @@ input.flatpickr.form-control {
         content: var(--slick-detail-view-icon-collapse, $slick-detail-view-icon-collapse);
       }
     }
+    &.expand,
+    &.collapse {
+      cursor: pointer;
+    }
     &.expand:before,
     &.collapse:before {
+      display: inline-block;
       font-family: var(--slick-icon-font-family, $slick-icon-font-family);
       font-size: var(--slick-detail-view-icon-size, $slick-detail-view-icon-size);
+      width: var(--slick-detail-view-icon-width, $slick-detail-view-icon-width);
     }
   }
 
