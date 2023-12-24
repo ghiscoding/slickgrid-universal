@@ -1,5 +1,5 @@
 import 'jest-extended';
-import { Column, type FormatterResultWithHtml, GridOption, type SlickDataView, SlickEvent, SlickEventData, SlickGrid } from '@slickgrid-universal/common';
+import { Column, type FormatterResultWithHtml, GridOption, type SlickDataView, SlickEvent, SlickEventData, SlickGrid, createDomElement } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { SlickRowDetailView } from './slickRowDetailView';
@@ -250,7 +250,7 @@ describe('SlickRowDetailView plugin', () => {
     expect(updateItemSpy).not.toHaveBeenCalled();
   });
 
-  it('should trigger "onAsyncResponse" with Row Detail from post template when no detailView is provided and expect "updateItem" from DataView to be called with new template & data', () => {
+  it('should trigger "onAsyncResponse" with Row Detail from post template from HTML string when no detailView is provided and expect "updateItem" from DataView to be called with new template & data', () => {
     const updateItemSpy = jest.spyOn(dataviewStub, 'updateItem');
     const asyncEndUpdateSpy = jest.spyOn(plugin.onAsyncEndUpdate, 'notify');
     const itemMock = { id: 123, firstName: 'John', lastName: 'Doe' };
@@ -262,6 +262,20 @@ describe('SlickRowDetailView plugin', () => {
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, { _detailContent: '<span>Post 123</span>', _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' });
     expect(asyncEndUpdateSpy).toHaveBeenCalledWith({ grid: gridStub, item: itemMock, itemDetail: { _detailContent: '<span>Post 123</span>', _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } });
+  });
+
+  it('should trigger "onAsyncResponse" with Row Detail from post template with HTML Element when no detailView is provided and expect "updateItem" from DataView to be called with new template & data', () => {
+    const updateItemSpy = jest.spyOn(dataviewStub, 'updateItem');
+    const asyncEndUpdateSpy = jest.spyOn(plugin.onAsyncEndUpdate, 'notify');
+    const itemMock = { id: 123, firstName: 'John', lastName: 'Doe' };
+    const postViewMock = (item) => createDomElement('span', { textContent: `Post ${item.id}` });
+    jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { postTemplate: postViewMock } as any });
+
+    plugin.init(gridStub);
+    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, }, new SlickEventData());
+
+    expect(updateItemSpy).toHaveBeenCalledWith(123, { _detailContent: createDomElement('span', { textContent: 'Post 123' }), _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' });
+    expect(asyncEndUpdateSpy).toHaveBeenCalledWith({ grid: gridStub, item: itemMock, itemDetail: { _detailContent: createDomElement('span', { textContent: 'Post 123' }), _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } });
   });
 
   it('should trigger "onAsyncResponse" with Row Detail template when detailView is provided and expect "updateItem" from DataView to be called with new template & data', () => {
