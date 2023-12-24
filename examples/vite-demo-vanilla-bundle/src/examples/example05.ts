@@ -197,9 +197,9 @@ export default class Example05 {
         formatter: Formatters.dateIso,
       },
       {
-        id: 'effortDriven', name: 'Effort Driven', width: 80, minWidth: 20, maxWidth: 80, cssClass: 'cell-effort-driven', field: 'effortDriven',
+        id: 'effortDriven', name: 'Effort Driven', width: 80, minWidth: 20, maxWidth: 120, cssClass: 'cell-effort-driven', field: 'effortDriven',
         exportWithFormatter: false,
-        formatter: Formatters.checkmark, cannotTriggerInsert: true,
+        formatter: Formatters.checkmarkMaterial, cannotTriggerInsert: true,
         filterable: true,
         filter: {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
