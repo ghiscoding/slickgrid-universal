@@ -143,6 +143,9 @@ importers:
       '@slickgrid-universal/odata':
         specifier: workspace:~
         version: link:../../packages/odata
+      '@slickgrid-universal/row-detail-view-plugin':
+        specifier: workspace:~
+        version: link:../../packages/row-detail-view-plugin
       '@slickgrid-universal/rxjs-observable':
         specifier: workspace:~
         version: link:../../packages/rxjs-observable

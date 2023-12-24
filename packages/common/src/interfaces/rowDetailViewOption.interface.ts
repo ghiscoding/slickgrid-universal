@@ -78,14 +78,14 @@ export interface RowDetailViewOption {
    * It's preferable to use the "preloadView" property to use a framework View instead of plain HTML.
    * If you still wish to use these methods, we strongly suggest you to sanitize your HTML, e.g. "DOMPurify.sanitize()"
    */
-  preTemplate?: (item?: any) => string;
+  preTemplate?: (item?: any) => string | HTMLElement;
 
   /**
    * HTML Post Template (when Row Detail data is available) that will be loaded once the async function finishes
    * It's preferable to use the "preloadView" property to use a framework View instead of plain HTML
    * If you still wish to use these methods, we strongly suggest you to sanitize your HTML, e.g. "DOMPurify.sanitize()"
    */
-  postTemplate?: (item: any) => string;
+  postTemplate?: (item: any) => string | HTMLElement;
 
   /** Async server function call */
   process: (item: any) => Promise<any> | Observable<any> | Subject<any>;
