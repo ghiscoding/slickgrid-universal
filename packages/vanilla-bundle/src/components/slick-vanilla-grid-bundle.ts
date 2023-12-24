@@ -801,7 +801,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
       // when filtering data with local dataset, we need to update each row else it will not always show correctly in the UI
       // also don't use "invalidateRows" since it destroys the entire row and as bad user experience when updating a row
-      if (gridOptions && gridOptions.enableFiltering && !gridOptions.enableRowDetailView) {
+      if (gridOptions?.enableFiltering && !gridOptions.enableRowDetailView) {
         this._eventHandler.subscribe(dataView.onRowsChanged, (_e, args) => {
           if (args?.rows && Array.isArray(args.rows)) {
             args.rows.forEach((row: number) => grid.updateRow(row));

@@ -1,0 +1,42 @@
+<h3 class="title is-3">
+  Example 21 - Row Detail View
+  <span class="subtitle">(with Salesforce Theme)</span>
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a class="is-size-5" target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example21.ts">
+      <span class="mdi mdi-link-variant mdi-v-align-sub"></span> code
+    </a>
+  </div>
+</h3>
+
+<div class="columns">
+  <div class="column is-6">
+    <button class="button is-small" onclick.delegate="changeEditableGrid()" data-test="editable-grid-btn">
+      Make Grid Editable
+    </button>
+    <button class="button is-small" onclick.delegate="closeAllRowDetail()" data-test="collapse-all-btn">
+      Close All Row Details
+    </button>
+    &nbsp;&nbsp;
+    <label for="">Detail View Rows Shown: </label>
+    <input type="number" style="height: 22px; width: 40px" value.bind="detailViewRowCount">
+    <button class="button is-small" onclick.delegate="changeDetailViewRowCount()" data-test="set-count-btn">
+      Set
+    </button>
+    <hr/>
+  </div>
+
+  <div class="column is-narrow">
+    <div class.bind="statusClass" data-test="status">
+      <span textcontent.bind="status"></span>
+    </div>
+  </div>
+</div>
+
+<div class="grid21">
+</div>
+
+<div class="column is-half">
+  <hr class="my-4" />
+</div>
