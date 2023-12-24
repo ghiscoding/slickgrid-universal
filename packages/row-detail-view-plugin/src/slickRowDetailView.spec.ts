@@ -738,14 +738,24 @@ describe('SlickRowDetailView plugin', () => {
       expect(formattedVal).toBe(``);
     });
 
-    it('should execute formatter and expect it to return empty string and render nothing when isPadding is True', () => {
-      const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', _collapsed: false, _isPadding: false, _sizePadding: 5 };
+    it('should execute formatter and expect it to render detail content from HTML string', () => {
+      const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', _collapsed: false, _isPadding: false, _sizePadding: 5, _detailContent: `<div>Loading...</div>` };
       plugin.init(gridStub);
       plugin.setOptions({ expandedClass: 'some-expanded', maxRows: 2 });
       plugin.expandableOverride(() => true);
       const formattedVal = plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub);
       expect(((formattedVal as FormatterResultWithHtml).html as HTMLElement).outerHTML).toBe(`<div class="detailView-toggle collapse some-expanded"></div>`);
-      expect((formattedVal as FormatterResultWithHtml).insertElementAfterTarget!.outerHTML).toBe(`<div class=\"dynamic-cell-detail cellDetailView_123\" style=\"height: 50px; top: 25px;\"><div class=\"detail-container detailViewContainer_123\"><div class=\"innerDetailView_123\">undefined</div></div></div>`);
+      expect((formattedVal as FormatterResultWithHtml).insertElementAfterTarget!.outerHTML).toBe(`<div class=\"dynamic-cell-detail cellDetailView_123\" style=\"height: 50px; top: 25px;\"><div class=\"detail-container detailViewContainer_123\"><div class=\"innerDetailView_123\"><div>Loading...</div></div></div></div>`);
+    });
+
+    it('should execute formatter and expect it to render detail content from HTML Element', () => {
+      const mockItem = { id: 123, firstName: 'John', lastName: 'Doe', _collapsed: false, _isPadding: false, _sizePadding: 5, _detailContent: createDomElement('div', { textContent: 'Loading...' }) };
+      plugin.init(gridStub);
+      plugin.setOptions({ expandedClass: 'some-expanded', maxRows: 2 });
+      plugin.expandableOverride(() => true);
+      const formattedVal = plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub);
+      expect(((formattedVal as FormatterResultWithHtml).html as HTMLElement).outerHTML).toBe(`<div class="detailView-toggle collapse some-expanded"></div>`);
+      expect((formattedVal as FormatterResultWithHtml).insertElementAfterTarget!.outerHTML).toBe(`<div class=\"dynamic-cell-detail cellDetailView_123\" style=\"height: 50px; top: 25px;\"><div class=\"detail-container detailViewContainer_123\"><div class=\"innerDetailView_123\"><div>Loading...</div></div></div></div>`);
     });
   });
 });
