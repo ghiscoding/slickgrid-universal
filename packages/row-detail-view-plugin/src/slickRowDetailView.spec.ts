@@ -318,7 +318,7 @@ describe('SlickRowDetailView plugin', () => {
   it('should trigger onClick and NOT expect Row Detail to be toggled when onBeforeRowDetailToggle returns false', () => {
     const mockProcess = jest.fn();
     const expandDetailViewSpy = jest.spyOn(plugin, 'expandDetailView');
-    const onBeforeSlickEventData = new Slick.EventData();
+    const onBeforeSlickEventData = new SlickEventData();
     jest.spyOn(onBeforeSlickEventData, 'getReturnValue').mockReturnValue(false);
     const beforeRowDetailToggleSpy = jest.spyOn(plugin.onBeforeRowDetailToggle, 'notify').mockReturnValueOnce(onBeforeSlickEventData);
     const afterRowDetailToggleSpy = jest.spyOn(plugin.onAfterRowDetailToggle, 'notify');
@@ -358,7 +358,7 @@ describe('SlickRowDetailView plugin', () => {
     jest.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { process: mockProcess, columnIndexPosition: 0, useRowClick: true, maxRows: 2, panelRows: 2 } as any });
 
     plugin.init(gridStub);
-    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView, }, new Slick.EventData());
+    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView, }, new SlickEventData());
 
     const clickEvent = new Event('click');
     Object.defineProperty(clickEvent, 'target', { writable: true, configurable: true, value: document.createElement('div') });
@@ -450,7 +450,7 @@ describe('SlickRowDetailView plugin', () => {
         _collapsed: true, _detailViewLoaded: true, _sizePadding: 0, _height: 150, _detailContent: '<span>loading...</span>',
         id: 123, firstName: 'John', lastName: 'Doe',
       }
-    }, expect.anything(), expect.anything());
+    }, expect.anything(), expect.anything(), true);
     expect(afterRowDetailToggleSpy).toHaveBeenCalledWith({
       grid: gridStub,
       item: {

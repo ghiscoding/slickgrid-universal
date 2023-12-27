@@ -76,6 +76,16 @@ describe('SlickCore file', () => {
       ed.addReturnValue(false);
       expect(ed.getReturnValue()).toBe('last value');
     });
+
+    it('should be able to reset value returned', () => {
+      const ed = new SlickEventData();
+      ed.addReturnValue('last value');
+
+      expect(ed.getReturnValue()).toBe('last value');
+
+      ed.resetReturnValue();
+      expect(ed.getReturnValue()).toBeUndefined();
+    });
   });
 
   describe('SlickEvent class', () => {
@@ -90,6 +100,24 @@ describe('SlickCore file', () => {
 
       onClick.unsubscribe(spy1);
       expect(onClick.subscriberCount).toBe(1);
+    });
+
+    it('should be able to call notify on SlickEventData and ignore any previous value', () => {
+      const spy1 = jest.fn();
+      const spy2 = jest.fn();
+      const ed = new SlickEventData();
+      const onClick = new SlickEvent('onClick');
+      const scope = { onClick };
+      const resetValSpy = jest.spyOn(ed, 'resetReturnValue');
+      onClick.subscribe(spy1);
+      onClick.subscribe(spy2);
+
+      expect(onClick.subscriberCount).toBe(2);
+
+      onClick.notify({ hello: 'world' }, ed, scope, true);
+
+      expect(spy1).toHaveBeenCalledWith(ed, { hello: 'world' });
+      expect(resetValSpy).toHaveBeenCalled();
     });
 
     it('should be able to subscribe to an event, call notify() and all subscribers to receive what was sent', () => {
