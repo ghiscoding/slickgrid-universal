@@ -133,7 +133,7 @@ export default class Example21 {
   }
 
   addRowDetailEventHandlers() {
-    this.rowDetail.onBeforeRowDetailToggle.subscribe((e, args) => {
+    this.rowDetail.onBeforeRowDetailToggle.subscribe((_e, args) => {
       // you coud cancel opening certain rows
       // if (args.item.id === 1) {
       //   e.preventDefault();
