@@ -2357,6 +2357,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         sheet.insertRule(`.${this.uid} .l${i} { }`);
         sheet.insertRule(`.${this.uid} .r${i} { }`);
       }
+      /* istanbul ignore else */
     } else {
       // fallback in case the 1st approach doesn't work, let's use our previous way of creating the css rules which is what works in Salesforce :(
       this.createCssRulesAlternative(rules);
@@ -2364,6 +2365,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /** Create CSS rules via template in case the first approach with createElement('style') doesn't work */
+  /* istanbul ignore next */
   protected createCssRulesAlternative(rules: string[]) {
     const template = document.createElement('template');
     template.innerHTML = '<style type="text/css" rel="stylesheet" />';
@@ -2401,6 +2403,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
       }
 
+      /* istanbul ignore if */
       if (!this.stylesheet) {
         throw new Error('SlickGrid Cannot find stylesheet.');
       }
@@ -3528,20 +3531,21 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Number[]} rows
    */
   invalidateRows(rows: number[]) {
-    if (!rows || !rows.length) {
-      return;
-    }
-    this.vScrollDir = 0;
-    const rl = rows.length;
-    for (let i = 0; i < rl; i++) {
-      if (this.currentEditor && this.activeRow === rows[i]) {
-        this.makeActiveCellNormal();
+    if (rows?.length) {
+      this.vScrollDir = 0;
+      const rl = rows.length;
+      for (let i = 0; i < rl; i++) {
+        if (this.currentEditor && this.activeRow === rows[i]) {
+          this.makeActiveCellNormal();
+        }
+        if (this.rowsCache[rows[i]]) {
+          this.removeRowFromCache(rows[i]);
+        }
       }
-      if (this.rowsCache[rows[i]]) {
-        this.removeRowFromCache(rows[i]);
+      if (this._options.enableAsyncPostRenderCleanup) {
+        this.startPostProcessingCleanup();
       }
     }
-    if (this._options.enableAsyncPostRenderCleanup) { this.startPostProcessingCleanup(); }
   }
 
   /**
@@ -3549,8 +3553,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Number} row
    */
   invalidateRow(row: number) {
-    if (!row && row !== 0) { return; }
-    this.invalidateRows([row]);
+    if (row >= 0) {
+      this.invalidateRows([row]);
+    }
   }
 
   protected queuePostProcessedRowForCleanup(cacheEntry: RowCaching, postProcessedRow: any, rowIdx: number) {
@@ -5369,7 +5374,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return;
     }
     if (!this._options.editable) {
-      throw new Error('SlickGrid makeActiveCellEditable : should never get called when this._options.editable is false');
+      throw new Error('SlickGrid makeActiveCellEditable : should never get called when grid options.editable is false');
     }
 
     // cancel pending async call if there is one

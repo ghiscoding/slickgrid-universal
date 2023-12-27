@@ -1,6 +1,6 @@
-import { LongTextEditor } from '../../editors';
+import { InputEditor, LongTextEditor } from '../../editors';
 import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions';
-import { Column, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces';
+import { Column, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces';
 import { SlickEventData } from '../slickCore';
 import { SlickDataView } from '../slickDataview';
 import { SlickGrid } from '../slickGrid';
@@ -54,6 +54,31 @@ describe('SlickGrid core file', () => {
     expect(grid.getContainerNode()).toEqual(container);
   });
 
+  it('should be able to instantiate SlickGrid and get columns', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options);
+    grid.init();
+    grid.setOptions({ addNewRowCssClass: 'new-class' });
+
+    expect(grid).toBeTruthy();
+    expect(grid.getOptions().addNewRowCssClass).toBe('new-class');
+    expect(grid.getData()).toEqual([]);
+    expect(grid.getColumns()).toEqual(columns);
+    expect(grid.getColumnIndex('firstName')).toBe(0);
+
+    const columnsMock = [
+      { id: 'firstName', field: 'firstName', name: 'First Name' },
+      { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      { id: 'age', field: 'age', name: 'Age' },
+    ] as Column[];
+    grid.setColumns(columnsMock);
+
+    expect(grid.getColumns()).toEqual(columnsMock);
+    expect(grid.getColumnIndex('age')).toBe(2);
+    expect(grid.getColumnIndex('invalid')).toBeUndefined();
+  });
+
   it('should be able to instantiate SlickGrid without data and later add data with "setData()"', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
@@ -82,6 +107,71 @@ describe('SlickGrid core file', () => {
     expect(dim2).toEqual({ height: 0, width: 0 });
   });
 
+  it('should be able to instantiate SlickGrid and invalidate some rows', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options);
+    const invalidSpy = jest.spyOn(grid, 'invalidateAllRows');
+    const renderSpy = jest.spyOn(grid, 'render');
+    const updateSpy = jest.spyOn(grid, 'updateRowCount');
+
+    grid.setData(data);
+    grid.invalidate();
+
+    expect(grid).toBeTruthy();
+    expect(invalidSpy).toHaveBeenCalled();
+    expect(updateSpy).toHaveBeenCalled();
+    expect(renderSpy).toHaveBeenCalled();
+  });
+
+  it('should be able to edit when editable grid option is enabled and invalidate some rows', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', editor: InputEditor }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, { ...options, editable: true, enableAsyncPostRenderCleanup: true });
+    grid.setData(data);
+    grid.setActiveCell(0, 0);
+    grid.editActiveCell(InputEditor as any, true);
+
+    const onBeforeSpy = jest.spyOn(grid.onBeforeCellEditorDestroy, 'notify');
+    grid.invalidateAllRows();
+
+    expect(onBeforeSpy).toHaveBeenCalled();
+  });
+
+  it('should be able to edit when editable grid option is enabled and invalidate all rows', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', editor: InputEditor }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, { ...options, editable: true });
+    grid.setData(data);
+    grid.setActiveCell(0, 0);
+    grid.editActiveCell(InputEditor as any, true);
+
+    const onBeforeSpy = jest.spyOn(grid.onBeforeCellEditorDestroy, 'notify');
+    grid.invalidateRows([0, 1]);
+
+    expect(onBeforeSpy).toHaveBeenCalled();
+  });
+
+  it('should throw when trying to edit cell when editable grid option is disabled', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options);
+    grid.setData(data);
+    grid.setActiveRow(0, 0);
+    grid.setActiveCell(0, 0);
+    expect(() => grid.editActiveCell(new InputEditor({ container: document.createElement('div'), column: columns[0], grid } as any, 'text'), true))
+      .toThrow('SlickGrid makeActiveCellEditable : should never get called when grid options.editable is false');
+    grid.invalidateRows([0, 1]);
+  });
+
   it('should be able to instantiate SlickGrid with a DataView', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
@@ -106,6 +196,7 @@ describe('SlickGrid core file', () => {
     expect(vpElms.length).toBe(4);
     expect(grid.getViewport()).toBeTruthy();
     expect(grid.getViewports().length).toBe(4);
+    expect(grid.getViewportRowCount()).toBe(0);
     expect(vpElms[0].classList.contains('slick-viewport')).toBeTruthy();
     expect(vpElms[0].classList.contains('vp-class1')).toBeTruthy();
     expect(vpElms[0].classList.contains('vp-class1')).toBeTruthy();
@@ -647,6 +738,7 @@ describe('SlickGrid core file', () => {
         const result = grid.getCanvasWidth();
 
         expect(result).toBe(80);
+        expect(grid.getAbsoluteColumnMinWidth()).toBe(0);
       });
 
       it('should return default full grid width when column is not wider than grid but fullWidthRows is enabled', () => {
