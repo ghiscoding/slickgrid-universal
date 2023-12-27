@@ -55,13 +55,17 @@ describe('SlickGrid core file', () => {
   });
 
   it('should be able to instantiate SlickGrid and get columns', () => {
-    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', headerCssClass: 'header-class', headerCellAttrs: { 'some-attr': 3 } }] as Column[];
     const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
     grid = new SlickGrid<any, Column>('#myGrid', [], columns, options);
     grid.init();
     grid.setOptions({ addNewRowCssClass: 'new-class' });
+    const colHeaderElms = container.querySelectorAll('.slick-header-columns .slick-header-column');
 
     expect(grid).toBeTruthy();
+    expect(colHeaderElms.length).toBe(1);
+    expect(colHeaderElms[0].classList.contains('header-class')).toBeTruthy();
+    expect(colHeaderElms[0].getAttribute('some-attr')).toBe('3');
     expect(grid.getOptions().addNewRowCssClass).toBe('new-class');
     expect(grid.getData()).toEqual([]);
     expect(grid.getColumns()).toEqual(columns);
@@ -77,6 +81,54 @@ describe('SlickGrid core file', () => {
     expect(grid.getColumns()).toEqual(columnsMock);
     expect(grid.getColumnIndex('age')).toBe(2);
     expect(grid.getColumnIndex('invalid')).toBeUndefined();
+  });
+
+  it('should be able to instantiate SlickGrid and set headerCssClass and expect it in column header', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', headerCssClass: 'header-class' }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options);
+    grid.init();
+    grid.setOptions({ addNewRowCssClass: 'new-class' });
+    const colHeaderElms = container.querySelectorAll('.slick-header-columns .slick-header-column');
+
+    expect(colHeaderElms.length).toBe(1);
+    expect(colHeaderElms[0].classList.contains('header-class')).toBeTruthy();
+  });
+
+  it('should be able to instantiate SlickGrid and set headerCellAttrs and expect it in column header', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', headerCellAttrs: { 'some-attr': 3 } }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options);
+    grid.init();
+    grid.setOptions({ addNewRowCssClass: 'new-class' });
+    const colHeaderElms = container.querySelectorAll('.slick-header-columns .slick-header-column');
+
+    expect(colHeaderElms.length).toBe(1);
+    expect(colHeaderElms[0].getAttribute('some-attr')).toBe('3');
+  });
+
+  it('should expect "slick-header-sortable" when column is sortable', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', sortable: true }] as Column[];
+    const options = { enableCellNavigation: true, enableColumnReorder: () => true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options);
+    grid.init();
+    grid.setOptions({ addNewRowCssClass: 'new-class' });
+    const colHeaderElms = container.querySelectorAll('.slick-header-columns .slick-header-column');
+
+    expect(colHeaderElms.length).toBe(1);
+    expect(colHeaderElms[0].classList.contains('slick-header-sortable')).toBeTruthy();
+  });
+
+  it('should expect "slick-header-sortable" when column is sortable', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', sortable: true }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options);
+    grid.init();
+    grid.setOptions({ addNewRowCssClass: 'new-class' });
+    const colHeaderElms = container.querySelectorAll('.slick-header-columns .slick-header-column');
+
+    expect(colHeaderElms.length).toBe(1);
+    expect(colHeaderElms[0].classList.contains('slick-header-sortable')).toBeTruthy();
   });
 
   it('should be able to instantiate SlickGrid without data and later add data with "setData()"', () => {
