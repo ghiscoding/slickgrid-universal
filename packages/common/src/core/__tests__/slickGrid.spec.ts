@@ -1,5 +1,6 @@
+import { InputEditor, LongTextEditor } from '../../editors';
 import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions';
-import { Column, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces';
+import { Column, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces';
 import { SlickEventData } from '../slickCore';
 import { SlickDataView } from '../slickDataview';
 import { SlickGrid } from '../slickGrid';
@@ -50,6 +51,100 @@ describe('SlickGrid core file', () => {
     expect(grid.getCanvases()).toBeTruthy();
     expect(grid.getCanvasNode()).toBeTruthy();
     expect(grid.getActiveCanvasNode()).toBeTruthy();
+    expect(grid.getContainerNode()).toEqual(container);
+  });
+
+  it('should be able to instantiate SlickGrid and get columns', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', headerCssClass: 'header-class', headerCellAttrs: { 'some-attr': 3 } }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options);
+    grid.init();
+    grid.setOptions({ addNewRowCssClass: 'new-class' });
+    const colHeaderElms = container.querySelectorAll('.slick-header-columns .slick-header-column');
+
+    expect(grid).toBeTruthy();
+    expect(colHeaderElms.length).toBe(1);
+    expect(colHeaderElms[0].classList.contains('header-class')).toBeTruthy();
+    expect(colHeaderElms[0].getAttribute('some-attr')).toBe('3');
+    expect(grid.getOptions().addNewRowCssClass).toBe('new-class');
+    expect(grid.getData()).toEqual([]);
+    expect(grid.getColumns()).toEqual(columns);
+    expect(grid.getColumnIndex('firstName')).toBe(0);
+
+    const columnsMock = [
+      { id: 'firstName', field: 'firstName', name: 'First Name' },
+      { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      { id: 'age', field: 'age', name: 'Age' },
+    ] as Column[];
+    grid.setColumns(columnsMock);
+
+    expect(grid.getColumns()).toEqual(columnsMock);
+    expect(grid.getColumnIndex('age')).toBe(2);
+    expect(grid.getColumnIndex('invalid')).toBeUndefined();
+  });
+
+  it('should be able to instantiate SlickGrid and set headerCssClass and expect it in column header', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', headerCssClass: 'header-class' }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options);
+    grid.init();
+    grid.setOptions({ addNewRowCssClass: 'new-class' });
+    const colHeaderElms = container.querySelectorAll('.slick-header-columns .slick-header-column');
+
+    expect(colHeaderElms.length).toBe(1);
+    expect(colHeaderElms[0].classList.contains('header-class')).toBeTruthy();
+  });
+
+  it('should be able to instantiate SlickGrid and set headerCellAttrs and expect it in column header', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', headerCellAttrs: { 'some-attr': 3 } }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options);
+    grid.init();
+    grid.setOptions({ addNewRowCssClass: 'new-class' });
+    const colHeaderElms = container.querySelectorAll('.slick-header-columns .slick-header-column');
+
+    expect(colHeaderElms.length).toBe(1);
+    expect(colHeaderElms[0].getAttribute('some-attr')).toBe('3');
+  });
+
+  it('should expect "slick-header-sortable" when column is sortable', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', sortable: true }] as Column[];
+    const options = { enableCellNavigation: true, enableColumnReorder: () => true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options);
+    grid.init();
+    grid.setOptions({ addNewRowCssClass: 'new-class' });
+    const colHeaderElms = container.querySelectorAll('.slick-header-columns .slick-header-column');
+
+    expect(colHeaderElms.length).toBe(1);
+    expect(colHeaderElms[0].classList.contains('slick-header-sortable')).toBeTruthy();
+  });
+
+  it('should expect "slick-header-sortable" when column is sortable', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', sortable: true }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options);
+    grid.init();
+    grid.setOptions({ addNewRowCssClass: 'new-class' });
+    const colHeaderElms = container.querySelectorAll('.slick-header-columns .slick-header-column');
+
+    expect(colHeaderElms.length).toBe(1);
+    expect(colHeaderElms[0].classList.contains('slick-header-sortable')).toBeTruthy();
+  });
+
+  it('should be able to instantiate SlickGrid without data and later add data with "setData()"', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options);
+    grid.init();
+
+    expect(grid).toBeTruthy();
+    expect(grid.getData()).toEqual([]);
+
+    const scrollToSpy = jest.spyOn(grid, 'scrollTo');
+    grid.setData([{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }], true);
+
+    expect(grid.getDataLength()).toBe(2);
+    expect(scrollToSpy).toHaveBeenCalledWith(0);
   });
 
   it('should be able to instantiate SlickGrid without DataView', () => {
@@ -62,6 +157,71 @@ describe('SlickGrid core file', () => {
     expect(grid).toBeTruthy();
     expect(dim).toEqual({ height: 0, width: 0 });
     expect(dim2).toEqual({ height: 0, width: 0 });
+  });
+
+  it('should be able to instantiate SlickGrid and invalidate some rows', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options);
+    const invalidSpy = jest.spyOn(grid, 'invalidateAllRows');
+    const renderSpy = jest.spyOn(grid, 'render');
+    const updateSpy = jest.spyOn(grid, 'updateRowCount');
+
+    grid.setData(data);
+    grid.invalidate();
+
+    expect(grid).toBeTruthy();
+    expect(invalidSpy).toHaveBeenCalled();
+    expect(updateSpy).toHaveBeenCalled();
+    expect(renderSpy).toHaveBeenCalled();
+  });
+
+  it('should be able to edit when editable grid option is enabled and invalidate some rows', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', editor: InputEditor }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, { ...options, editable: true, enableAsyncPostRenderCleanup: true });
+    grid.setData(data);
+    grid.setActiveCell(0, 0);
+    grid.editActiveCell(InputEditor as any, true);
+
+    const onBeforeSpy = jest.spyOn(grid.onBeforeCellEditorDestroy, 'notify');
+    grid.invalidateAllRows();
+
+    expect(onBeforeSpy).toHaveBeenCalled();
+  });
+
+  it('should be able to edit when editable grid option is enabled and invalidate all rows', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', editor: InputEditor }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, { ...options, editable: true });
+    grid.setData(data);
+    grid.setActiveCell(0, 0);
+    grid.editActiveCell(InputEditor as any, true);
+
+    const onBeforeSpy = jest.spyOn(grid.onBeforeCellEditorDestroy, 'notify');
+    grid.invalidateRows([0, 1]);
+
+    expect(onBeforeSpy).toHaveBeenCalled();
+  });
+
+  it('should throw when trying to edit cell when editable grid option is disabled', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options);
+    grid.setData(data);
+    grid.setActiveRow(0, 0);
+    grid.setActiveCell(0, 0);
+    expect(() => grid.editActiveCell(new InputEditor({ container: document.createElement('div'), column: columns[0], grid } as any, 'text'), true))
+      .toThrow('SlickGrid makeActiveCellEditable : should never get called when grid options.editable is false');
+    grid.invalidateRows([0, 1]);
   });
 
   it('should be able to instantiate SlickGrid with a DataView', () => {
@@ -88,6 +248,7 @@ describe('SlickGrid core file', () => {
     expect(vpElms.length).toBe(4);
     expect(grid.getViewport()).toBeTruthy();
     expect(grid.getViewports().length).toBe(4);
+    expect(grid.getViewportRowCount()).toBe(0);
     expect(vpElms[0].classList.contains('slick-viewport')).toBeTruthy();
     expect(vpElms[0].classList.contains('vp-class1')).toBeTruthy();
     expect(vpElms[0].classList.contains('vp-class1')).toBeTruthy();
@@ -131,12 +292,17 @@ describe('SlickGrid core file', () => {
       const options = { enableCellNavigation: true, preHeaderPanelHeight: 30, showPreHeaderPanel: false, createPreHeaderPanel: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, options);
       grid.init();
-      const preheaderElms = container.querySelectorAll<HTMLDivElement>('.slick-preheader-panel');
+      let preheaderElms = container.querySelectorAll<HTMLDivElement>('.slick-preheader-panel');
 
       expect(grid).toBeTruthy();
       expect(preheaderElms).toBeTruthy();
       expect(preheaderElms[0].style.display).toBe('none');
       expect(preheaderElms[1].style.display).toBe('none');
+
+      grid.setPreHeaderPanelVisibility(true);
+      preheaderElms = container.querySelectorAll<HTMLDivElement>('.slick-preheader-panel');
+      expect(preheaderElms[0].style.display).not.toBe('none');
+      expect(preheaderElms[1].style.display).not.toBe('none');
     });
   });
 
@@ -149,6 +315,7 @@ describe('SlickGrid core file', () => {
       const headerElm = container.querySelector('.slick-header') as HTMLDivElement;
 
       expect(grid.getHeaderRow()).toBeTruthy();
+      expect(grid.getHeaderRowColumn('firstName')).toBeUndefined();
       expect(grid).toBeTruthy();
       expect(headerElm).toBeTruthy();
       expect(headerElm.style.display).not.toBe('none');
@@ -159,43 +326,84 @@ describe('SlickGrid core file', () => {
       const options = { enableCellNavigation: true, showColumnHeader: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, options);
       grid.init();
-      const headerElms = container.querySelectorAll<HTMLDivElement>('.slick-header');
+      let headerElms = container.querySelectorAll<HTMLDivElement>('.slick-header');
 
       expect(grid).toBeTruthy();
       expect(headerElms).toBeTruthy();
       expect(headerElms[0].style.display).toBe('none');
       expect(headerElms[1].style.display).toBe('none');
+
+      grid.setColumnHeaderVisibility(true);
+      headerElms = container.querySelectorAll<HTMLDivElement>('.slick-header');
+      expect(headerElms[0].style.display).not.toBe('none');
+      expect(headerElms[1].style.display).not.toBe('none');
     });
   });
 
   describe('Footer', () => {
     it('should show footer when "showFooterRow" is enabled', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }, { id: 'lastName', field: 'lastName', name: 'Last Name' }] as Column[];
       const options = { enableCellNavigation: true, createFooterRow: true, showFooterRow: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, options);
       grid.init();
       const headerElm = container.querySelector('.slick-footerrow') as HTMLDivElement;
       const footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
 
-      expect(grid).toBeTruthy();
       expect(headerElm).toBeTruthy();
       expect(headerElm.style.display).not.toBe('none');
       expect(footerElms[0].style.display).not.toBe('none');
       expect(footerElms[1].style.display).not.toBe('none');
+      expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
     });
 
-    it('should hide column headers div when "showFooterRow" is disabled', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      const options = { enableCellNavigation: true, createFooterRow: true, showFooterRow: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    it('should hide column headers div when "showFooterRow" is disabled and expect defined footer row column', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }, { id: 'lastName', field: 'lastName', name: 'Last Name' }] as Column[];
+      const options = { enableCellNavigation: true, createFooterRow: true, showFooterRow: false, frozenColumn: 1, devMode: { ownerNodeIndex: 0 } } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, options);
       grid.init();
-      const footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      let footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
 
       expect(grid.getFooterRow()).toBeTruthy();
-      expect(grid).toBeTruthy();
       expect(footerElms).toBeTruthy();
       expect(footerElms[0].style.display).toBe('none');
       expect(footerElms[1].style.display).toBe('none');
+
+      grid.setFooterRowVisibility(true);
+      footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      expect(footerElms[0].style.display).not.toBe('none');
+      expect(footerElms[1].style.display).not.toBe('none');
+      expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
+    });
+
+    it('should hide column headers div when "showFooterRow" is disabled and expect undefined footer row column', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }, { id: 'lastName', field: 'lastName', name: 'Last Name' }] as Column[];
+      const options = { enableCellNavigation: true, createFooterRow: true, showFooterRow: false, frozenColumn: 1, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      grid = new SlickGrid<any, Column>(container, [], columns, options);
+      grid.init();
+      let footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+
+      expect(grid.getFooterRow()).toBeTruthy();
+      expect(footerElms).toBeTruthy();
+      expect(footerElms[0].style.display).toBe('none');
+      expect(footerElms[1].style.display).toBe('none');
+
+      grid.setFooterRowVisibility(true);
+      footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      expect(footerElms[0].style.display).not.toBe('none');
+      expect(footerElms[1].style.display).not.toBe('none');
+      expect(grid.getFooterRowColumn(2)).toBeUndefined();
+    });
+
+    it('should hide column headers div when "showFooterRow" is disabled and return undefined footer row column', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }, { id: 'lastName', field: 'lastName', name: 'Last Name' }] as Column[];
+      const options = { enableCellNavigation: true, createFooterRow: false, showFooterRow: false, frozenColumn: 1, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      grid = new SlickGrid<any, Column>(container, [], columns, options);
+      grid.init();
+      let footerElm = container.querySelector<HTMLDivElement>('.slick-footerrow');
+
+      expect(grid.getFooterRow()).toBeFalsy();
+      expect(footerElm).toBeFalsy();
+      expect(grid.getFooterRowColumn('firstName')).toBeUndefined();
     });
   });
 
@@ -205,12 +413,14 @@ describe('SlickGrid core file', () => {
       const options = { enableCellNavigation: true, showTopPanel: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, options);
       grid.init();
-      const topPanelElms = container.querySelectorAll<HTMLDivElement>('.slick-top-panel-scroller');
+      const topPanelElms = container.querySelectorAll<HTMLDivElement>('.slick-top-panel');
+      const topPanelScrollerElms = container.querySelectorAll<HTMLDivElement>('.slick-top-panel-scroller');
 
-      expect(grid).toBeTruthy();
-      expect(topPanelElms.length).toBe(2);
-      expect(topPanelElms[0].style.display).not.toBe('none');
-      expect(topPanelElms[1].style.display).not.toBe('none');
+      expect(grid.getTopPanel()).toEqual(topPanelElms[0]);
+      expect(grid.getTopPanels()).toEqual([topPanelElms[0], topPanelElms[1]]);
+      expect(topPanelScrollerElms.length).toBe(2);
+      expect(topPanelScrollerElms[0].style.display).not.toBe('none');
+      expect(topPanelScrollerElms[1].style.display).not.toBe('none');
     });
 
     it('should hide top panel div when "showTopPanel" is disabled', () => {
@@ -218,18 +428,22 @@ describe('SlickGrid core file', () => {
       const options = { enableCellNavigation: true, showTopPanel: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, options);
       grid.init();
-      const topPanelElms = container.querySelectorAll<HTMLDivElement>('.slick-top-panel-scroller');
+      let topPanelElms = container.querySelectorAll<HTMLDivElement>('.slick-top-panel-scroller');
 
-      expect(grid).toBeTruthy();
       expect(topPanelElms).toBeTruthy();
       expect(topPanelElms[0].style.display).toBe('none');
       expect(topPanelElms[1].style.display).toBe('none');
+
+      grid.setTopPanelVisibility(true);
+      topPanelElms = container.querySelectorAll<HTMLDivElement>('.slick-top-panel-scroller');
+      expect(topPanelElms[0].style.display).not.toBe('none');
+      expect(topPanelElms[1].style.display).not.toBe('none');
     });
   });
 
   describe('Header Row', () => {
     it('should show top panel div when "showHeaderRow" is enabled', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }, { id: 'lastName', field: 'lastName', name: 'Last Name' }] as Column[];
       const options = { enableCellNavigation: true, showHeaderRow: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, options);
       grid.init();
@@ -239,19 +453,45 @@ describe('SlickGrid core file', () => {
       expect(headerElms.length).toBe(2);
       expect(headerElms[0].style.display).not.toBe('none');
       expect(headerElms[1].style.display).not.toBe('none');
+      expect(grid.getHeaderRowColumn('firstName')).toEqual(headerElms[0].querySelector('.slick-headerrow-column'));
     });
 
     it('should hide top panel div when "showHeaderRow" is disabled', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      const options = { enableCellNavigation: true, showHeaderRow: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }, { id: 'lastName', field: 'lastName', name: 'Last Name' }] as Column[];
+      const options = { enableCellNavigation: true, showHeaderRow: false, frozenColumn: 1, devMode: { ownerNodeIndex: 0 } } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, options);
       grid.init();
-      const headerElm = container.querySelectorAll<HTMLDivElement>('.slick-headerrow');
+      let headerElm = container.querySelectorAll<HTMLDivElement>('.slick-headerrow');
 
       expect(grid).toBeTruthy();
       expect(headerElm).toBeTruthy();
       expect(headerElm[0].style.display).toBe('none');
       expect(headerElm[1].style.display).toBe('none');
+
+      grid.setHeaderRowVisibility(true);
+      headerElm = container.querySelectorAll<HTMLDivElement>('.slick-headerrow');
+      expect(headerElm[0].style.display).not.toBe('none');
+      expect(headerElm[1].style.display).not.toBe('none');
+      expect(grid.getHeaderRowColumn('firstName')).toBeUndefined();
+    });
+
+    it('should hide top panel div when "showHeaderRow" is disabled and return undefined header row column', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }, { id: 'lastName', field: 'lastName', name: 'Last Name' }] as Column[];
+      const options = { enableCellNavigation: true, showHeaderRow: false, frozenColumn: 1, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      grid = new SlickGrid<any, Column>(container, [], columns, options);
+      grid.init();
+      let headerElm = container.querySelectorAll<HTMLDivElement>('.slick-headerrow');
+
+      expect(grid).toBeTruthy();
+      expect(headerElm).toBeTruthy();
+      expect(headerElm[0].style.display).toBe('none');
+      expect(headerElm[1].style.display).toBe('none');
+
+      grid.setHeaderRowVisibility(true);
+      headerElm = container.querySelectorAll<HTMLDivElement>('.slick-headerrow');
+      expect(headerElm[0].style.display).not.toBe('none');
+      expect(headerElm[1].style.display).not.toBe('none');
+      expect(grid.getHeaderRowColumn(2)).toBeUndefined();
     });
   });
 
@@ -603,6 +843,8 @@ describe('SlickGrid core file', () => {
         const result = grid.getCanvasWidth();
 
         expect(result).toBe(80);
+        expect(grid.getAbsoluteColumnMinWidth()).toBe(0);
+        expect(grid.getHeaderColumnWidthDiff()).toBe(0);
       });
 
       it('should return default full grid width when column is not wider than grid but fullWidthRows is enabled', () => {
@@ -631,6 +873,8 @@ describe('SlickGrid core file', () => {
         const result = grid.getCanvasWidth();
         grid.autosizeColumns();
         grid.reRenderColumns();
+        grid.render();
+        grid.updateColumnHeader(1);
 
         expect(grid.getHeader()[0]).toBeInstanceOf(HTMLDivElement);
         expect(grid.getHeader(columns[0])).toBeInstanceOf(HTMLDivElement);
@@ -731,6 +975,35 @@ describe('SlickGrid core file', () => {
       column2Elm = container.querySelectorAll<HTMLDivElement>('.slick-header-columns .slick-header-column');
       expect(column2Elm[0].textContent).toBe('First Name');
       expect(column2Elm[1].textContent).toBe('Last Name');
+    });
+  });
+
+  describe('reRenderColumns() method', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+    it('should force grid render when calling method with true argument provided', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, options);
+      const invalidateSpy = jest.spyOn(grid, 'invalidateAllRows');
+      const renderSpy = jest.spyOn(grid, 'render');
+
+      grid.reRenderColumns(true);
+
+      expect(invalidateSpy).toHaveBeenCalled();
+      expect(renderSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('Editors', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', editor: LongTextEditor }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+    it('should ', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, options);
+
+      const result = grid.getEditController();
+
+      expect(result).toBeTruthy();
     });
   });
 });
