@@ -3123,7 +3123,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {CustomDataView|Array<*>} newData New databinding source using a regular JavaScript array.. or a custom object exposing getItem(index) and getLength() functions.
    * @param {Number} [scrollToTop] If true, the grid will reset the vertical scroll position to the top of the grid.
    */
-  setData(newData: CustomDataView<TData> | TData[], scrollToTop?: number) {
+  setData(newData: CustomDataView<TData> | TData[], scrollToTop?: boolean) {
     this.data = newData;
     this.invalidateAllRows();
     this.updateRowCount();
@@ -3409,11 +3409,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let cellCss = 'slick-cell l' + cell + ' r' + Math.min(this.columns.length - 1, cell + colspan - 1) + (m.cssClass ? ' ' + m.cssClass : '');
 
     if (this.hasFrozenColumns() && cell <= this._options.frozenColumn!) {
-      cellCss += (' frozen');
+      cellCss += ' frozen';
     }
 
     if (row === this.activeRow && cell === this.activeCell && this._options.showCellSelection) {
-      cellCss += (' active');
+      cellCss += ' active';
     }
 
     // TODO:  merge them together in the setter
