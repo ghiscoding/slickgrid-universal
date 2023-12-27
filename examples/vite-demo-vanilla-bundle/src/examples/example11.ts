@@ -47,7 +47,7 @@ const myCustomTitleValidator = (value) => {
 };
 
 const customEditableInputFormatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
-  const gridOptions = grid?.getOptions() ?? {};
+  const gridOptions = grid.getOptions();
   const isEditableItem = gridOptions.editable && columnDef.editor;
   value = (value === null || value === undefined) ? '' : value;
   return isEditableItem ? { html: value, addClasses: 'editable-field', toolTip: 'Click to Edit' } : value;

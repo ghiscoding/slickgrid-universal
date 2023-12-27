@@ -117,6 +117,10 @@ export class SlickEventData<ArgType = any> {
   getArguments() {
     return this._arguments;
   }
+
+  resetReturnValue() {
+    this.returnValue = undefined;
+  }
 }
 
 /**
@@ -174,8 +178,11 @@ export class SlickEvent<ArgType = any> {
    * @param {Object} [scope] - The scope ("this") within which the handler will be executed.
    *      If not specified, the scope will be set to the <code>Event</code> instance.
    */
-  notify(args: ArgType, evt?: SlickEventData | Event | MergeTypes<SlickEventData, Event> | null, scope?: any) {
+  notify(args: ArgType, evt?: SlickEventData | Event | MergeTypes<SlickEventData, Event> | null, scope?: any, ignorePrevEventDataValue = false) {
     const sed = evt instanceof SlickEventData ? evt : new SlickEventData(evt, args);
+    if (ignorePrevEventDataValue) {
+      sed.resetReturnValue();
+    }
     scope = scope || this;
 
     for (let i = 0; i < this._handlers.length && !(sed.isPropagationStopped() || sed.isImmediatePropagationStopped()); i++) {

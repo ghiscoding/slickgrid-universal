@@ -384,6 +384,7 @@ describe('ExtensionService', () => {
         const gridOptionsMock = { enableCheckboxSelector: true } as GridOption;
         const extCreateSpy = jest.spyOn(mockCheckboxSelectColumn, 'create').mockReturnValue(mockCheckboxSelectColumn);
         const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+        const rowSelectionSpy = jest.spyOn(SlickRowSelectionModel.prototype, 'constructor' as any);
 
         service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
         service.bindDifferentExtensions();
@@ -393,6 +394,7 @@ describe('ExtensionService', () => {
         expect(gridSpy).toHaveBeenCalled();
         expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
         expect(rowSelectionInstance).not.toBeNull();
+        expect(rowSelectionSpy).toHaveBeenCalledWith({});
         expect(output).toEqual({ name: ExtensionName.checkboxSelector, instance: mockCheckboxSelectColumn as unknown } as ExtensionModel<any>);
       });
 
@@ -401,6 +403,7 @@ describe('ExtensionService', () => {
         const gridOptionsMock = { enableRowMoveManager: true } as GridOption;
         const extCreateSpy = jest.spyOn(mockRowMoveManager, 'create').mockReturnValue(mockRowMoveManager);
         const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+        const rowSelectionSpy = jest.spyOn(SlickRowSelectionModel.prototype, 'constructor' as any);
 
         service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
         service.bindDifferentExtensions();
@@ -410,6 +413,7 @@ describe('ExtensionService', () => {
         expect(gridSpy).toHaveBeenCalled();
         expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
         expect(rowSelectionInstance).not.toBeNull();
+        expect(rowSelectionSpy).toHaveBeenCalledWith({ dragToSelect: true });
         expect(output).toEqual({ name: ExtensionName.rowMoveManager, instance: mockRowMoveManager as unknown } as ExtensionModel<any>);
       });
 

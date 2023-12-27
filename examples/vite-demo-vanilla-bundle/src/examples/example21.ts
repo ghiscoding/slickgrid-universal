@@ -81,7 +81,6 @@ export default class Example21 {
       autoResize: {
         container: '.demo-container',
       },
-      enableCellNavigation: true,
       enableColumnReorder: true,
       enableFiltering: true,
       enableRowDetailView: true,
@@ -110,6 +109,7 @@ export default class Example21 {
   }
 
   changeEditableGrid() {
+    this.rowDetail.collapseAll();
     this.rowDetail.addonOptions.useRowClick = false;
     this.gridOptions.autoCommitEdit = !this.gridOptions.autoCommitEdit;
     this.sgb.slickGrid?.setOptions({
@@ -133,6 +133,15 @@ export default class Example21 {
   }
 
   addRowDetailEventHandlers() {
+    this.rowDetail.onBeforeRowDetailToggle.subscribe((_e, args) => {
+      // you coud cancel opening certain rows
+      // if (args.item.id === 1) {
+      //   e.preventDefault();
+      //   return false;
+      // }
+      console.log('before toggling row detail', args.item);
+    });
+
     this._eventHandler.subscribe(this.rowDetail.onAfterRowDetailToggle, (_e, args) => {
       console.log('after toggling row detail', args.item);
       if (args.item._collapsed) {

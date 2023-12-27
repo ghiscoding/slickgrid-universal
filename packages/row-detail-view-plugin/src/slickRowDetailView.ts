@@ -1,3 +1,4 @@
+import { createDomElement, SlickEvent, SlickEventHandler, } from '@slickgrid-universal/common';
 import type {
   Column,
   DOMMouseOrTouchEvent,
@@ -19,7 +20,6 @@ import type {
   SlickEventData,
   UsabilityOverrideFn,
 } from '@slickgrid-universal/common';
-import { createDomElement, SlickEvent, SlickEventHandler, } from '@slickgrid-universal/common';
 import { extend } from '@slickgrid-universal/utils';
 
 /**
@@ -683,6 +683,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   /** Handle mouse click event */
   protected handleClick(e: DOMMouseOrTouchEvent<HTMLDivElement>, args: { row: number; cell: number; }) {
     const dataContext = this._grid.getDataItem(args.row);
+
     if (this.checkExpandableOverride(args.row, dataContext, this._grid)) {
       // clicking on a row select checkbox
       const columnDef = this._grid.getColumns()[args.cell];
@@ -695,10 +696,11 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         }
 
         // trigger an event before toggling
-        this.onBeforeRowDetailToggle.notify({
-          grid: this._grid,
-          item: dataContext
-        });
+        // user could cancel the Row Detail opening when event is returning false
+        const ignorePrevEventDataValue = true; // click event might return false from Row Selection canCellBeActive() validation, we need to ignore that
+        if (this.onBeforeRowDetailToggle.notify({ grid: this._grid, item: dataContext }, e, this, ignorePrevEventDataValue).getReturnValue() === false) {
+          return;
+        }
 
         this.toggleRowSelection(args.row, dataContext);
 

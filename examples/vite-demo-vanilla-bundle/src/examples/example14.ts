@@ -49,7 +49,7 @@ const myCustomTitleValidator = (value) => {
  * @returns {boolean} isEditable
  */
 function checkItemIsEditable(dataContext, columnDef, grid) {
-  const gridOptions = grid && grid.getOptions && grid.getOptions();
+  const gridOptions = grid.getOptions();
   const hasEditor = columnDef.editor;
   const isGridEditable = gridOptions.editable;
   let isEditable = (isGridEditable && hasEditor);
