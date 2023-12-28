@@ -41,12 +41,12 @@ export class GridService {
   ) { }
 
   /** Getter of SlickGrid DataView object */
-  get _dataView(): SlickDataView {
+  protected get _dataView(): SlickDataView {
     return this._grid?.getData<SlickDataView>();
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
-  get _gridOptions(): GridOption {
+  protected get _gridOptions(): GridOption {
     return this._grid?.getOptions() ?? {};
   }
 
