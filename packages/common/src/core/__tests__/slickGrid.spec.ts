@@ -1,3 +1,4 @@
+import { createDomElement } from '@slickgrid-universal/utils';
 import { InputEditor, LongTextEditor } from '../../editors';
 import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions';
 import { Column, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces';
@@ -1022,12 +1023,161 @@ describe('SlickGrid core file', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', editor: LongTextEditor }] as Column[];
     const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
 
-    it('should ', () => {
+    it('should expect editor when calling getEditController()', () => {
       grid = new SlickGrid<any, Column>(container, [], columns, options);
 
       const result = grid.getEditController();
 
       expect(result).toBeTruthy();
+    });
+  });
+
+  describe('Sorting', () => {
+    const columns = [
+      { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+      { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+      { id: 'age', field: 'age', name: 'Age', sortable: true },
+    ] as Column[];
+    const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+    it('should find a single sort icons to sorted column when calling setSortColumn() with a single column to sort ascending', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, options);
+      grid.setSortColumn('firstName', true);
+
+      const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
+      const sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+      const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
+
+      expect(sortIndicators.length).toBe(columns.length);
+      expect(sortAscIndicators.length).toBe(1);
+      expect(sortDescIndicators.length).toBe(0);
+      expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: true }]);
+    });
+
+    it('should find a single sorted icons when calling setSortColumn() with a single being sorted when multiSort is disabled', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...options, multiColumnSort: false });
+      grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
+      const onBeforeSortSpy = jest.spyOn(grid.onBeforeSort, 'notify');
+
+      const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
+      let sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+      const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
+      const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
+      const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
+
+      expect(sortIndicators.length).toBe(columns.length);
+      expect(sortAscIndicators.length).toBe(0);
+      expect(sortDescIndicators.length).toBe(1);
+      expect(sortedColElms.length).toBe(0);
+      expect(sortNumberedIndicators.length).toBe(0);
+      expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: false }]);
+
+      const firstColHeaderElm = container.querySelector('.slick-header-columns');
+      const click = new CustomEvent('click');
+      firstColHeaderElm?.dispatchEvent(click);
+
+      sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+      expect(sortAscIndicators.length).toBe(0); // same because closest .slick-header-column not found
+
+      const click2 = new CustomEvent('click');
+      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
+      Object.defineProperty(click2, 'target', { writable: true, value: firstNameHeaderColumnElm });
+      firstColHeaderElm?.dispatchEvent(click2);
+
+      // clicking on firstName with legacy behavior
+      expect(onBeforeSortSpy).toHaveBeenCalledWith({
+        grid,
+        multiColumnSort: false,
+        sortAsc: true,
+        columnId: 'firstName',
+        previousSortColumns: [{ columnId: 'firstName', sortAsc: true }],
+        sortCol: columns[0]
+      }, click2, grid);
+    });
+
+    it('should find multiple sorted icons when calling setSortColumn() with 2 columns being sorted when multiSort is enabled', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...options, multiColumnSort: true, numberedMultiColumnSort: true });
+      grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName' }]);
+      const onBeforeSortSpy = jest.spyOn(grid.onBeforeSort, 'notify');
+
+      const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
+      let sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+      const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
+      const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
+      const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
+
+      expect(sortIndicators.length).toBe(columns.length);
+      expect(sortAscIndicators.length).toBe(1);
+      expect(sortDescIndicators.length).toBe(1);
+      expect(sortedColElms.length).toBe(0);
+      expect(sortNumberedIndicators[0]?.classList.contains('slick-sort-indicator-desc')).toBeTruthy();
+      expect(sortNumberedIndicators[0]?.textContent).toBe('1');
+      expect(sortNumberedIndicators[1]?.classList.contains('slick-sort-indicator-asc')).toBeTruthy();
+      expect(sortNumberedIndicators[1]?.textContent).toBe('2');
+      expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName', sortAsc: true }]);
+
+      const firstColHeaderElm = container.querySelector('.slick-header-columns');
+      const click = new CustomEvent('click');
+      firstColHeaderElm?.dispatchEvent(click);
+
+      sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+      expect(sortAscIndicators.length).toBe(1); // same because closest .slick-header-column not found
+
+      const click2 = new CustomEvent('click');
+      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
+      Object.defineProperty(click2, 'target', { writable: true, value: firstNameHeaderColumnElm });
+      firstColHeaderElm?.dispatchEvent(click2);
+
+      // clicking on firstName with legacy behavior
+      expect(onBeforeSortSpy).toHaveBeenCalledWith({
+        grid,
+        multiColumnSort: true,
+        previousSortColumns: [{ columnId: 'firstName', sortAsc: true }, { columnId: 'lastName', sortAsc: true }],
+        sortCols: [{ columnId: 'firstName', sortAsc: true, sortCol: columns[0] }]
+      }, click2, grid);
+    });
+
+    it('should find multiple sorted icons with separate numbered icons when calling setSortColumn() with 2 columns being sorted when multiSort, tristateMultiColumnSort and sortColNumberInSeparateSpan are enabled', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...options, multiColumnSort: true, numberedMultiColumnSort: true, tristateMultiColumnSort: true, sortColNumberInSeparateSpan: true });
+      grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName' }]);
+      const onBeforeSortSpy = jest.spyOn(grid.onBeforeSort, 'notify');
+
+      let sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+      const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
+      const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
+      const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
+      const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
+
+      expect(sortIndicators.length).toBe(columns.length);
+      expect(sortAscIndicators.length).toBe(1);
+      expect(sortDescIndicators.length).toBe(1);
+      expect(sortedColElms.length).toBe(0);
+      expect(sortIndicators[0]?.classList.contains('slick-sort-indicator-desc')).toBeTruthy();
+      expect(sortNumberedIndicators[0]?.textContent).toBe('1');
+      expect(sortIndicators[1]?.classList.contains('slick-sort-indicator-asc')).toBeTruthy();
+      expect(sortNumberedIndicators[1]?.textContent).toBe('2');
+      expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName', sortAsc: true }]);
+
+      const firstColHeaderElm = container.querySelector('.slick-header-columns');
+      const click = new CustomEvent('click');
+      firstColHeaderElm?.dispatchEvent(click);
+
+      sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+      expect(sortAscIndicators.length).toBe(1); // same because closest .slick-header-column not found
+
+      const click2 = new CustomEvent('click');
+      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
+      Object.defineProperty(click2, 'target', { writable: true, value: firstNameHeaderColumnElm });
+      firstColHeaderElm?.dispatchEvent(click2);
+
+      // only left with lastName since firstName is now sorted ascending because of tristate
+      expect(onBeforeSortSpy).toHaveBeenCalledWith({
+        grid,
+        multiColumnSort: true,
+        previousSortColumns: [{ columnId: 'firstName', sortAsc: true }, { columnId: 'lastName', sortAsc: true }],
+        sortCols: [{ columnId: 'lastName', sortAsc: true, sortCol: columns[1] }]
+      }, click2, grid);
     });
   });
 });

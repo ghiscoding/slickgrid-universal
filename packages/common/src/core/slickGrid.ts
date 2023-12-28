@@ -1654,11 +1654,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected setupColumnSort() {
     this._headers.forEach((header) => {
       this._bindingEventService.bind(header, 'click', (e: any) => {
-        if (this.columnResizeDragging) {
-          return;
-        }
-
-        if (e.target.classList.contains('slick-resizable-handle')) {
+        if (this.columnResizeDragging || e.target.classList.contains('slick-resizable-handle')) {
           return;
         }
 
@@ -1668,7 +1664,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
 
         const column = Utils.storage.get(coll, 'column');
-        if (column.sortable) {
+        if (column?.sortable) {
           if (!this.getEditorLock()?.commitCurrentEdit()) {
             return;
           }
@@ -2845,19 +2841,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const numberCols = this._options.numberedMultiColumnSort && this.sortColumns.length > 1;
     this._headers.forEach((header) => {
       let indicators = header.querySelectorAll('.slick-header-column-sorted');
-      indicators.forEach((indicator) => {
-        indicator.classList.remove('slick-header-column-sorted');
-      });
+      indicators.forEach((indicator) => indicator.classList.remove('slick-header-column-sorted'));
 
       indicators = header.querySelectorAll('.slick-sort-indicator');
-      indicators.forEach((indicator) => {
-        indicator.classList.remove('slick-sort-indicator-asc');
-        indicator.classList.remove('slick-sort-indicator-desc');
-      });
+      indicators.forEach((indicator) => indicator.classList.remove('slick-sort-indicator-asc', 'slick-sort-indicator-desc'));
+
       indicators = header.querySelectorAll('.slick-sort-indicator-numbered');
-      indicators.forEach((el) => {
-        el.textContent = '';
-      });
+      indicators.forEach((el) => el.textContent = '');
     });
 
     let i = 1;
