@@ -1747,8 +1747,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected currentPositionInHeader(id: number | string) {
     let currentPosition = 0;
     this._headers.forEach((header) => {
-      const columnElements = header.querySelectorAll('.slick-header-column');
-      columnElements.forEach((column, i) => {
+      header.querySelectorAll('.slick-header-column').forEach((column, i) => {
         if (column.id === id) {
           currentPosition = i;
         }
@@ -3337,7 +3336,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const metadata = (this.data as CustomDataView<TData>)?.getItemMetadata?.(row);
 
     if (metadata?.cssClasses) {
-      rowCss += ' ' + metadata.cssClasses;
+      rowCss += ` ${metadata.cssClasses}`;
     }
 
     const frozenRowOffset = this.getFrozenRowOffset(row);
@@ -3410,7 +3409,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // TODO:  merge them together in the setter
     for (const key in this.cellCssClasses) {
       if (this.cellCssClasses[key][row]?.[m.id]) {
-        cellCss += (' ' + this.cellCssClasses[key][row][m.id]);
+        cellCss += ` ${this.cellCssClasses[key][row][m.id]}`;
       }
     }
 
