@@ -2345,6 +2345,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     ];
 
     const sheet = this._style.sheet;
+
+    /* istanbul ignore else */
     if (sheet) {
       rules.forEach(rule => {
         sheet.insertRule(rule);
@@ -2356,7 +2358,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         sheet.insertRule(`.${this.uid} .l${i} { }`);
         sheet.insertRule(`.${this.uid} .r${i} { }`);
       }
-      /* istanbul ignore else */
     } else {
       // fallback in case the 1st approach doesn't work, let's use our previous way of creating the css rules which is what works in Salesforce :(
       this.createCssRulesAlternative(rules);
@@ -2763,24 +2764,22 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected applyColumnHeaderWidths() {
-    if (!this.initialized) {
-      return;
-    }
-
-    let columnIndex = 0;
-    const vc = this.getVisibleColumns();
-    this._headers.forEach((header) => {
-      for (let i = 0; i < header.children.length; i++, columnIndex++) {
-        const h = header.children[i] as HTMLElement;
-        const col = vc[columnIndex] || {};
-        const width = (col.width || 0) - this.headerColumnWidthDiff;
-        if (Utils.width(h) !== width) {
-          Utils.width(h, width);
+    if (this.initialized) {
+      let columnIndex = 0;
+      const vc = this.getVisibleColumns();
+      this._headers.forEach((header) => {
+        for (let i = 0; i < header.children.length; i++, columnIndex++) {
+          const h = header.children[i] as HTMLElement;
+          const col = vc[columnIndex] || {};
+          const width = (col.width || 0) - this.headerColumnWidthDiff;
+          if (Utils.width(h) !== width) {
+            Utils.width(h, width);
+          }
         }
-      }
-    });
+      });
 
-    this.updateColumnCaches();
+      this.updateColumnCaches();
+    }
   }
 
   protected applyColumnWidths() {
@@ -2991,7 +2990,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.updateColumnsInternal();
   }
 
-  protected updateColumns() {
+  /** Update columns for when a hidden property has changed but the column list itself has not changed. */
+  updateColumns() {
     this.trigger(this.onBeforeUpdateColumns, { columns: this.columns, grid: this });
     this.updateColumnsInternal();
   }
@@ -3003,7 +3003,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (this.initialized) {
       this.setPaneVisibility();
       this.setOverflow();
-
       this.invalidateAllRows();
       this.createColumnHeaders();
       this.createColumnFooter();
@@ -3342,7 +3341,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       (row % 2 === 1 ? ' odd' : ' even');
 
     if (!d) {
-      rowCss += ' ' + this._options.addNewRowCssClass;
+      rowCss += ` ${this._options.addNewRowCssClass}`;
     }
 
     const metadata = (this.data as CustomDataView<TData>)?.getItemMetadata?.(row);

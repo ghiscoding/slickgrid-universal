@@ -160,7 +160,7 @@ describe('SlickGrid core file', () => {
   });
 
   it('should be able to instantiate SlickGrid and invalidate some rows', () => {
-    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', cellAttrs: { 'cell-attr': 22 }, }] as Column[];
     const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
     const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
 
@@ -171,8 +171,9 @@ describe('SlickGrid core file', () => {
 
     grid.setData(data);
     grid.invalidate();
+    const cellElms = container.querySelectorAll('.slick-cell.l0.r0');
 
-    expect(grid).toBeTruthy();
+    expect(cellElms[0].getAttribute('cell-attr')).toBe('22');
     expect(invalidSpy).toHaveBeenCalled();
     expect(updateSpy).toHaveBeenCalled();
     expect(renderSpy).toHaveBeenCalled();
@@ -880,6 +881,29 @@ describe('SlickGrid core file', () => {
         expect(grid.getHeader(columns[0])).toBeInstanceOf(HTMLDivElement);
         expect(grid.getVisibleColumns().length).toBe(2);
         expect(result).toBe(80 * 2);
+      });
+
+      it('should return visible columns', () => {
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name' },
+          { id: 'age', field: 'age', name: 'age' },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, frozenColumn: 1 });
+        const updateSpy = jest.spyOn(grid.onBeforeUpdateColumns, 'notify');
+        grid.updateColumns();
+        expect(grid.getVisibleColumns().length).toBe(2);
+
+        const newColumns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: false },
+          { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
+          { id: 'age', field: 'age', name: 'age', hidden: true },
+        ] as Column[];
+        grid.setColumns(newColumns);
+
+        expect(updateSpy).toHaveBeenCalled();
+        expect(grid.getHeader()[0]).toBeInstanceOf(HTMLDivElement);
+        expect(grid.getVisibleColumns().length).toBe(1);
       });
 
       it('should return full grid width when fullWidthRows is enabled even with frozenColumn defined', () => {
