@@ -13,7 +13,7 @@ const containerId = 'demo-container';
 const template =
   `<div id="${containerId}" style="height: 800px; width: 600px; overflow: hidden; display: block;">
     <div id="slickGridContainer-${gridId}" class="grid-pane" style="width: 100%;">
-      <div id="${gridId}" class="${gridUid}" style="width: 100%">
+      <div id="${gridId}" class="${gridUid}" style="width: 100%"></div>
     </div>
   </div>`;
 
@@ -1289,7 +1289,7 @@ describe('SlickGrid core file', () => {
       expect(viewportElm.scrollLeft).toBe(0);
     });
   });
-
+  
   describe('Navigation', () => {
     const columns = [
       { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
