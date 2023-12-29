@@ -3,7 +3,7 @@
   extends: ['config:base', 'group:allNonMajor'],
   labels: ['dependencies'],
   ignorePaths: ['**/__tests__/**'],
-  dependencyDashboard: true,
+  dependencyDashboard: false,
   pin: false,
   rangeStrategy: 'bump',
   packageRules: [
