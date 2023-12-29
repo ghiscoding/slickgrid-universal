@@ -1,8 +1,6 @@
-import { createDomElement } from '@slickgrid-universal/utils';
-
 import { InputEditor, LongTextEditor } from '../../editors';
 import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions';
-import { Column, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces';
+import { Column, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces';
 import { SlickEventData } from '../slickCore';
 import { SlickDataView } from '../slickDataview';
 import { SlickGrid } from '../slickGrid';
@@ -17,8 +15,11 @@ const template =
     <div id="slickGridContainer-${gridId}" class="grid-pane" style="width: 100%;">
       <div id="${gridId}" class="${gridUid}" style="width: 100%">
       <div class="slick-pane slick-pane-header slick-pane-left" tabindex="0" style="width: 100%;">
-        <div class="slick-viewport slick-viewport-top slick-viewport-left" style="overflow:hidden;position:relative;">
+        <div class="slick-viewport slick-viewport-top slick-viewport-left" style="overflow:hidden;position:relative;width:500px">
           <div class="grid-canvas" style="height: 12500px; width: 500px;"></div>
+        </div>
+        <div class="slick-viewport slick-viewport-bottom slick-viewport-left" style="overflow:hidden;position:relative;">
+          <div class="grid-canvas" style="height: 100px; width: 500px;"></div>
         </div>
       </div>
     </div>
@@ -1298,7 +1299,7 @@ describe('SlickGrid core file', () => {
       expect(onActiveCellSpy).toHaveBeenCalled();
     });
 
-    it('should navigate to left then bottom and expect active cell to change with previous that was activated by the left navigation', () => {
+    it('should navigate to left then bottom and expect active cell to change with previous cell position that was activated by the left navigation', () => {
       const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
       const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
@@ -1312,6 +1313,27 @@ describe('SlickGrid core file', () => {
 
       expect(result).toBe(true);
       expect(scrollCellSpy).toHaveBeenCalledWith(data.length - 1, 0, true);
+      expect(scrollToSpy).toHaveBeenCalledWith(25);
+      expect(canCellActiveSpy).toHaveBeenCalledTimes(3);
+      expect(resetCellSpy).not.toHaveBeenCalled();
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate to left then page down and expect active cell to change with previous cell position that was activated by the left navigation', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const viewportElm = container.querySelector('.slick-viewport-top') as HTMLDivElement;
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      Object.defineProperty(viewportElm, 'scrollLeft', { writable: true, configurable: true, value: 10 });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const resetCellSpy = jest.spyOn(grid, 'resetActiveCell');
+      const canCellActiveSpy = jest.spyOn(grid, 'canCellBeActive');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      const scrollToSpy = jest.spyOn(grid, 'scrollTo');
+      grid.setActiveCell(0, 1);
+      grid.navigateLeft();
+      grid.navigatePageDown();
+
+      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, true);
       expect(scrollToSpy).toHaveBeenCalledWith(25);
       expect(canCellActiveSpy).toHaveBeenCalledTimes(3);
       expect(resetCellSpy).not.toHaveBeenCalled();
