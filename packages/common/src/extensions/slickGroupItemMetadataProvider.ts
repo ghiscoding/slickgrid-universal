@@ -9,6 +9,7 @@ import type {
   GroupItemMetadataProviderOption,
   ItemMetadata,
   OnClickEventArgs,
+  SlickPlugin,
 } from '../interfaces/index';
 
 /**
@@ -19,8 +20,8 @@ import type {
  * This class also acts as a grid plugin providing event handlers to expand & collapse groups.
  * If "grid.registerPlugin(...)" is not called, expand & collapse will not work.
  */
-export class SlickGroupItemMetadataProvider {
-  pluginName = 'SlickGroupItemMetadataProvider' as const;
+export class SlickGroupItemMetadataProvider implements SlickPlugin {
+  pluginName = 'GroupItemMetadataProvider' as const;
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
   protected _options: GroupItemMetadataProviderOption;
