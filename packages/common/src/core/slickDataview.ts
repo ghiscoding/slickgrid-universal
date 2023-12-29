@@ -30,13 +30,19 @@ import {
 import type { SlickGrid } from './slickGrid';
 
 export interface DataViewOption {
-  /** Defaults to false, use with great care as this will break built-in filters */
+  /**
+   * Defaults to false, are we using inline filters?
+   * Note: please use with great care as this will break built-in filters
+   */
   inlineFilters: boolean;
 
-  /** Optionally provide a Group Item Metatadata Provider when using Grouping/DraggableGrouping feature */
+  /** Optionally provide a GroupItemMetadataProvider in order to use Grouping/DraggableGrouping features */
   groupItemMetadataProvider: SlickGroupItemMetadataProvider | null;
 
-  /** Defaults to false, should we use CSP Safe filter method? The CSP safe is slighly slower compare to dynamic function default */
+  /**
+   * defaults to false, option to use CSP Safe approach,
+   * Note: it is an opt-in option because it is slightly slower (perf impact) when compared to the non-CSP safe approach.
+   */
   useCSPSafeFilter: boolean;
 }
 
