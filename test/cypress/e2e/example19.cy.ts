@@ -22,6 +22,10 @@ describe('Example 19 - ExcelCopyBuffer with Cell Selection', () => {
       });
   });
 
+  it('should make grid readonly and not editable', () => {
+    cy.get('[data-test="toggle-readonly-btn"]').click();
+  });
+
   describe('with Pagination of size 20', () => {
     it('should click on cell B14 then Ctrl+Shift+End with selection B14-CV19', () => {
       cy.getCell(14, 2, '', { parentSelector: '.grid19', rowHeight: GRID_ROW_HEIGHT })

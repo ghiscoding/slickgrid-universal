@@ -1,9 +1,10 @@
-import { type Column, type GridOption, SlickEventHandler } from '@slickgrid-universal/common';
+import { type Column, type GridOption, SlickEventHandler, Editors } from '@slickgrid-universal/common';
 import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 import './example19.scss';
 
 const NB_ITEMS = 100;
+
 export default class Example19 {
   protected _eventHandler: SlickEventHandler;
 
@@ -13,6 +14,7 @@ export default class Example19 {
   gridContainerElm: HTMLDivElement;
   isWithPagination = true;
   sgb: SlickVanillaGridBundle;
+  isGridEditable = true;
 
   attached() {
     this._eventHandler = new SlickEventHandler();
@@ -52,7 +54,7 @@ export default class Example19 {
         id: 'selector',
         name: '',
         field: 'num',
-        width: 30
+        width: 30,
       }
     ];
 
@@ -62,9 +64,10 @@ export default class Example19 {
         name: i < 26
           ? String.fromCharCode('A'.charCodeAt(0) + (i % 26))
           : String.fromCharCode('A'.charCodeAt(0) + (Math.floor(i / 26)) - 1) + String.fromCharCode('A'.charCodeAt(0) + (i % 26)),
-        field: i as any,
+        field: String(i),
         minWidth: 60,
         width: 60,
+        editor: { model: Editors.text }
       });
     }
 
@@ -74,6 +77,8 @@ export default class Example19 {
       },
       enableCellNavigation: true,
       enablePagination: true,
+      autoEdit: true,
+      editable: this.isGridEditable,
       pagination: {
         pageSizes: [5, 10, 15, 20, 25, 50, 75, 100],
         pageSize: 20
@@ -118,5 +123,12 @@ export default class Example19 {
     this.isWithPagination = !this.isWithPagination;
     this.sgb.paginationService!.togglePaginationVisibility(this.isWithPagination);
     this.sgb.slickGrid!.setSelectedRows([]);
+  }
+
+  toggleGridEditReadonly() {
+    // then change a single grid options to make the grid non-editable (readonly)
+    this.isGridEditable = !this.isGridEditable;
+    this.sgb.gridOptions = { editable: this.isGridEditable };
+    this.gridOptions = this.sgb.gridOptions;
   }
 }
