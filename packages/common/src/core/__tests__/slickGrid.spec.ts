@@ -14,14 +14,6 @@ const template =
   `<div id="${containerId}" style="height: 800px; width: 600px; overflow: hidden; display: block;">
     <div id="slickGridContainer-${gridId}" class="grid-pane" style="width: 100%;">
       <div id="${gridId}" class="${gridUid}" style="width: 100%">
-      <div class="slick-pane slick-pane-header slick-pane-left" tabindex="0" style="width: 100%;">
-        <div class="slick-viewport slick-viewport-top slick-viewport-left" style="overflow:hidden;position:relative;width:500px">
-          <div class="grid-canvas" style="height: 12500px; width: 500px;"></div>
-        </div>
-        <div class="slick-viewport slick-viewport-bottom slick-viewport-left" style="overflow:hidden;position:relative;">
-          <div class="grid-canvas" style="height: 100px; width: 500px;"></div>
-        </div>
-      </div>
     </div>
   </div>`;
 
@@ -800,6 +792,21 @@ describe('SlickGrid core file', () => {
 
         expect(result).toEqual(viewportElm);
       });
+
+      it('should call getCellNode() and return null when dataset is empty', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, options);
+        const result = grid.getCellNode(0, 3);
+
+        expect(result).toBeNull();
+      });
+
+      it('should call getCellNode() and return null trying to retrieve cell higher than what is in the dataset', () => {
+        const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+        grid = new SlickGrid<any, Column>(container, data, columns, options);
+        const result = grid.getCellNode(0, 3);
+
+        expect(result).toBeNull();
+      });
     });
 
     describe('getViewportNode() function', () => {
@@ -1229,6 +1236,60 @@ describe('SlickGrid core file', () => {
     });
   });
 
+  describe('Scrolling', () => {
+    const columns = [
+      { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+      { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+      { id: 'age', field: 'age', name: 'Age', sortable: true },
+    ] as Column[];
+    const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+    it('should not scroll when calling scrollCellIntoView() with same position to frozen column', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, frozenColumn: 1 });
+      const renderSpy = jest.spyOn(grid, 'render');
+      grid.scrollCellIntoView(1, 1, true);
+
+      expect(renderSpy).toHaveBeenCalledTimes(1); // 1x by the grid initialization
+    });
+
+    it('should scroll when calling scrollCellIntoView() with lower position than frozen column', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, frozenColumn: 0 });
+      const renderSpy = jest.spyOn(grid, 'render');
+      grid.scrollCellIntoView(1, 1, true);
+
+      expect(renderSpy).toHaveBeenCalledTimes(3);
+    });
+
+    it('should call scrollColumnIntoView() and expect left scroll to become 80 which is default column width', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, frozenColumn: 0 });
+      let viewportElm = container.querySelector('.slick-viewport-top.slick-viewport-right') as HTMLDivElement;
+      Object.defineProperty(viewportElm, 'scrollLeft', { writable: true, value: 20 });
+      Object.defineProperty(viewportElm, 'scrollWidth', { writable: true, value: 10 });
+      viewportElm.dispatchEvent(new CustomEvent('scroll'));
+      const renderSpy = jest.spyOn(grid, 'render');
+      grid.scrollColumnIntoView(2);
+      viewportElm = container.querySelector('.slick-viewport-top.slick-viewport-right') as HTMLDivElement;
+
+      expect(renderSpy).toHaveBeenCalledTimes(1);
+      expect(viewportElm.scrollLeft).toBe(80);
+    });
+
+    it('should call scrollColumnIntoView() and expect left scroll to be lower than scrollLeft and become 0', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, frozenColumn: 0 });
+      let viewportElm = container.querySelector('.slick-viewport-top.slick-viewport-right') as HTMLDivElement;
+      Object.defineProperty(viewportElm, 'scrollLeft', { writable: true, value: 10 });
+      Object.defineProperty(viewportElm, 'scrollWidth', { writable: true, value: 20 });
+      viewportElm.dispatchEvent(new CustomEvent('scroll'));
+      const renderSpy = jest.spyOn(grid, 'render');
+      grid.scrollColumnIntoView(1);
+      viewportElm = container.querySelector('.slick-viewport-top.slick-viewport-right') as HTMLDivElement;
+
+      expect(renderSpy).toHaveBeenCalledTimes(1);
+      expect(viewportElm.scrollLeft).toBe(0);
+    });
+  });
+
   describe('Navigation', () => {
     const columns = [
       { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
@@ -1321,9 +1382,7 @@ describe('SlickGrid core file', () => {
 
     it('should navigate to left then page down and expect active cell to change with previous cell position that was activated by the left navigation', () => {
       const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
-      const viewportElm = container.querySelector('.slick-viewport-top') as HTMLDivElement;
       grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
-      Object.defineProperty(viewportElm, 'scrollLeft', { writable: true, configurable: true, value: 10 });
       const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
       const resetCellSpy = jest.spyOn(grid, 'resetActiveCell');
       const canCellActiveSpy = jest.spyOn(grid, 'canCellBeActive');
@@ -1507,6 +1566,7 @@ describe('SlickGrid core file', () => {
       const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
       grid.setActiveCell(0, 0);
       const result = grid.navigateUp();
+      grid.focus();
 
       expect(result).toBe(false);
       expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
