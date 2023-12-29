@@ -12,6 +12,7 @@ export enum ExtensionName {
   gridMenu = 'gridMenu',
   headerButton = 'headerButton',
   headerMenu = 'headerMenu',
+  rowBasedEdit = 'rowBasedEdit',
   rowDetailView = 'rowDetailView',
   rowMoveManager = 'rowMoveManager',
   rowSelection = 'rowSelection',

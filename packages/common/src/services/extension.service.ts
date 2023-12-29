@@ -17,12 +17,14 @@ import {
   SlickGroupItemMetadataProvider,
   SlickHeaderButtons,
   SlickHeaderMenu,
+  SlickRowBasedEdit,
   SlickRowMoveManager,
   SlickRowSelectionModel
 } from '../extensions/index';
 import type { FilterService } from './filter.service';
 import type { SortService } from './sort.service';
 import type { TreeDataService } from './treeData.service';
+import { GridService } from './grid.service';
 
 interface ExtensionWithColumnIndexPosition {
   name: ExtensionName;
@@ -62,6 +64,7 @@ export class ExtensionService {
     protected readonly sortService: SortService,
     protected readonly treeDataService: TreeDataService,
     protected readonly translaterService?: TranslaterService,
+    protected readonly lazyGridService?: () => GridService
   ) { }
 
   /** Dispose of all the controls & plugins */
@@ -160,6 +163,18 @@ export class ExtensionService {
       // this is to avoid having hidden columns not being translated on first load
       if (this.gridOptions.enableTranslate) {
         this.translateItems(this.sharedService.allColumns, 'nameKey', 'name');
+      }
+
+      // Row Based Edit Plugin
+      if (this.gridOptions.enableRowBasedEdit) {
+        const instance = new SlickRowBasedEdit(this.gridOptions.rowBasedEditOptions);
+        const gridService = this.lazyGridService?.();
+        if (!gridService) {
+          throw new Error('[Slickgrid-Universal] requires a GridService to be configured and available');
+        }
+
+        instance.init(this.sharedService.slickGrid, gridService);
+        this._extensionList[ExtensionName.rowBasedEdit] = { name: ExtensionName.rowBasedEdit, instance };
       }
 
       // Auto Tooltip Plugin

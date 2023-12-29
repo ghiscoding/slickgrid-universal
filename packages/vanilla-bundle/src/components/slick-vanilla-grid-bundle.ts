@@ -350,6 +350,7 @@ export class SlickVanillaGridBundle<TData = any> {
       this.sortService,
       this.treeDataService,
       this.translaterService,
+      () => this.gridService
     );
 
     this.gridStateService = services?.gridStateService ?? new GridStateService(this.extensionService, this.filterService, this._eventPubSubService, this.sharedService, this.sortService, this.treeDataService);

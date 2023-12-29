@@ -5,7 +5,7 @@ import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { ExtensionName } from '../../enums/index';
 import { Column, ExtensionModel, GridOption } from '../../interfaces/index';
-import { ExtensionUtility } from '../../extensions';
+import { ExtensionUtility, SlickRowBasedEdit } from '../../extensions';
 import { ExtensionService, FilterService, SharedService, SortService, TreeDataService } from '../index';
 import { SlickEvent, SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -307,6 +307,20 @@ describe('ExtensionService', () => {
         expect(extSpy).toHaveBeenCalled();
         expect(output).toEqual({ name: ExtensionName.autoTooltip, instance: pluginInstance } as ExtensionModel<any>);
         expect(output!.instance instanceof SlickAutoTooltip).toBeTrue();
+      });
+
+      it('should register the row based edit plugin when "enableRowBasedEdit" and "editable" is set in the grid options', () => {
+        const gridOptionsMock = { enableRowBasedEdit: true, editable: true } as GridOption;
+        const extSpy = jest.spyOn(gridStub, 'registerPlugin');
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+
+        service.bindDifferentExtensions();
+        const output = service.getExtensionByName<SlickRowBasedEdit>(ExtensionName.rowBasedEdit);
+        const pluginInstance = service.getExtensionInstanceByName(ExtensionName.rowBasedEdit);
+
+        expect(extSpy).toHaveBeenCalled();
+        expect(output).toEqual({ name: ExtensionName.rowBasedEdit, instance: pluginInstance } as ExtensionModel<any>);
+        expect(output!.instance instanceof SlickRowBasedEdit).toBeTrue();
       });
 
       it('should register the ColumnPicker addon when "enableColumnPicker" is set in the grid options', () => {
