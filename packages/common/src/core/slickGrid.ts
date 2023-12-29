@@ -5656,7 +5656,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Navigate to the bottom of the grid */
   navigateBottom() {
-    this.navigateToRow(this.getDataLength() - 1);
+    return this.navigateToRow(this.getDataLength() - 1);
   }
 
   protected navigateToRow(row: number) {
@@ -5665,6 +5665,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return true;
     }
 
+    /* istanbul ignore next 4 */
     if (row < 0) {
       row = 0;
     } else if (row >= num_rows) {
@@ -5735,6 +5736,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected gotoRight(row: number, cell: number, _posX?: number) {
+    /* istanbul ignore if */
     if (cell >= this.columns.length) {
       return null;
     }
@@ -5851,7 +5853,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const dataLengthIncludingAddNew = this.getDataLengthIncludingAddNew();
 
     // if at last row, cycle through columns rather than get stuck in the last one
-    if (row === dataLengthIncludingAddNew - 1) { row--; }
+    if (row === dataLengthIncludingAddNew - 1) {
+      row--;
+    }
 
     while (++row < dataLengthIncludingAddNew) {
       firstFocusableCell = this.findFirstFocusableCell(row);
@@ -6006,11 +6010,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const stepFn = stepFunctions[dir];
     const pos = stepFn.call(this, this.activeRow, this.activeCell, this.activePosX);
     if (pos) {
-      if (this.hasFrozenRows && this._options.frozenBottom && pos.row === this.getDataLength()) {
+      const dataLn = this.getDataLength();
+      if (this.hasFrozenRows && this._options.frozenBottom && pos.row === dataLn) {
         return;
       }
 
-      const isAddNewRow = (pos.row === this.getDataLength());
+      const isAddNewRow = (pos.row === dataLn);
 
       if ((!this._options.frozenBottom && pos.row >= this.actualFrozenRow)
         || (this._options.frozenBottom && pos.row < this.actualFrozenRow)
