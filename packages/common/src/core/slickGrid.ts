@@ -5656,13 +5656,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Navigate to the bottom of the grid */
   navigateBottom() {
-    this.navigateToRow(this.getDataLength() - 1);
+    return this.navigateToRow(this.getDataLength() - 1);
   }
 
   protected navigateToRow(row: number) {
     const num_rows = this.getDataLength();
-    if (!num_rows) { return true; }
+    if (!num_rows) {
+      return true;
+    }
 
+    /* istanbul ignore next 4 */
     if (row < 0) {
       row = 0;
     } else if (row >= num_rows) {
@@ -5733,6 +5736,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected gotoRight(row: number, cell: number, _posX?: number) {
+    /* istanbul ignore if */
     if (cell >= this.columns.length) {
       return null;
     }
@@ -5849,7 +5853,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const dataLengthIncludingAddNew = this.getDataLengthIncludingAddNew();
 
     // if at last row, cycle through columns rather than get stuck in the last one
-    if (row === dataLengthIncludingAddNew - 1) { row--; }
+    if (row === dataLengthIncludingAddNew - 1) {
+      row--;
+    }
 
     while (++row < dataLengthIncludingAddNew) {
       firstFocusableCell = this.findFirstFocusableCell(row);
@@ -5970,11 +5976,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @return {boolean} Whether navigation resulted in a change of active cell.
    */
   protected navigate(dir: 'up' | 'down' | 'left' | 'right' | 'prev' | 'next' | 'home' | 'end') {
-    if (!this._options.enableCellNavigation) {
-      return false;
-    }
-
-    if (!this.activeCellNode && dir !== 'prev' && dir !== 'next') {
+    if (!this._options.enableCellNavigation || (!this.activeCellNode && dir !== 'prev' && dir !== 'next')) {
       return false;
     }
 
@@ -6008,11 +6010,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const stepFn = stepFunctions[dir];
     const pos = stepFn.call(this, this.activeRow, this.activeCell, this.activePosX);
     if (pos) {
-      if (this.hasFrozenRows && this._options.frozenBottom && pos.row === this.getDataLength()) {
+      const dataLn = this.getDataLength();
+      if (this.hasFrozenRows && this._options.frozenBottom && pos.row === dataLn) {
         return;
       }
 
-      const isAddNewRow = (pos.row === this.getDataLength());
+      const isAddNewRow = (pos.row === dataLn);
 
       if ((!this._options.frozenBottom && pos.row >= this.actualFrozenRow)
         || (this._options.frozenBottom && pos.row < this.actualFrozenRow)
@@ -6059,12 +6062,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {boolean} [suppressActiveCellChangedEvent] Are we suppressing Active Cell Changed Event (defaults to false)
    */
   setActiveCell(row: number, cell: number, opt_editMode?: boolean, preClickModeOn?: boolean, suppressActiveCellChangedEvent?: boolean) {
-    if (!this.initialized) { return; }
-    if (row > this.getDataLength() || row < 0 || cell >= this.columns.length || cell < 0) {
-      return;
-    }
-
-    if (!this._options.enableCellNavigation) {
+    if (!this.initialized || !this._options.enableCellNavigation
+      || row > this.getDataLength() || row < 0 || cell >= this.columns.length || cell < 0
+    ) {
       return;
     }
 
@@ -6079,14 +6079,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {boolean} [suppressScrollIntoView] - optionally suppress the ScrollIntoView that happens by default (defaults to false)
    */
   setActiveRow(row: number, cell?: number, suppressScrollIntoView?: boolean) {
-    if (!this.initialized) { return; }
-    if (row > this.getDataLength() || row < 0 || (cell ?? 0) >= this.columns.length || (cell ?? 0) < 0) {
+    cell ??= 0;
+
+    if (!this.initialized || row > this.getDataLength() || row < 0 || cell >= this.columns.length || cell < 0) {
       return;
     }
 
     this.activeRow = row;
     if (!suppressScrollIntoView) {
-      this.scrollCellIntoView(row, cell || 0, false);
+      this.scrollCellIntoView(row, cell, false);
     }
   }
 
@@ -6096,8 +6097,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {number} col A column index.
    */
   canCellBeActive(row: number, cell: number) {
-    if (!this._options.enableCellNavigation || row >= this.getDataLengthIncludingAddNew() ||
-      row < 0 || cell >= this.columns.length || cell < 0) {
+    if (!this._options.enableCellNavigation || row >= this.getDataLengthIncludingAddNew()
+      || row < 0 || cell >= this.columns.length || cell < 0) {
       return false;
     }
 

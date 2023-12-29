@@ -1,7 +1,6 @@
-import { createDomElement } from '@slickgrid-universal/utils';
 import { InputEditor, LongTextEditor } from '../../editors';
 import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions';
-import { Column, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces';
+import { Column, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces';
 import { SlickEventData } from '../slickCore';
 import { SlickDataView } from '../slickDataview';
 import { SlickGrid } from '../slickGrid';
@@ -16,8 +15,11 @@ const template =
     <div id="slickGridContainer-${gridId}" class="grid-pane" style="width: 100%;">
       <div id="${gridId}" class="${gridUid}" style="width: 100%">
       <div class="slick-pane slick-pane-header slick-pane-left" tabindex="0" style="width: 100%;">
-        <div class="slick-viewport slick-viewport-top slick-viewport-left" style="overflow:hidden;position:relative;">
+        <div class="slick-viewport slick-viewport-top slick-viewport-left" style="overflow:hidden;position:relative;width:500px">
           <div class="grid-canvas" style="height: 12500px; width: 500px;"></div>
+        </div>
+        <div class="slick-viewport slick-viewport-bottom slick-viewport-left" style="overflow:hidden;position:relative;">
+          <div class="grid-canvas" style="height: 100px; width: 500px;"></div>
         </div>
       </div>
     </div>
@@ -31,7 +33,10 @@ describe('SlickGrid core file', () => {
     container = document.createElement('div');
     container.id = 'myGrid';
     container.innerHTML = template;
+    container.style.height = '600px';
+    container.style.width = '800px';
     document.body.appendChild(container);
+    Object.defineProperty(container, 'height', { writable: true, configurable: true, value: 600 });
     Object.defineProperty(container, 'clientHeight', { writable: true, configurable: true, value: 600 });
     Object.defineProperty(container, 'clientWidth', { writable: true, configurable: true, value: 800 });
   });
@@ -189,6 +194,7 @@ describe('SlickGrid core file', () => {
     grid.setData(data);
     grid.setActiveCell(0, 0);
     grid.editActiveCell(InputEditor as any, true);
+    expect(grid.getCellEditor()).toBeTruthy();
 
     const onBeforeSpy = jest.spyOn(grid.onBeforeCellEditorDestroy, 'notify');
     grid.invalidateAllRows();
@@ -250,7 +256,7 @@ describe('SlickGrid core file', () => {
     expect(vpElms.length).toBe(4);
     expect(grid.getViewport()).toBeTruthy();
     expect(grid.getViewports().length).toBe(4);
-    expect(grid.getViewportRowCount()).toBe(0);
+    expect(grid.getViewportRowCount()).toBe(24);
     expect(vpElms[0].classList.contains('slick-viewport')).toBeTruthy();
     expect(vpElms[0].classList.contains('vp-class1')).toBeTruthy();
     expect(vpElms[0].classList.contains('vp-class1')).toBeTruthy();
@@ -1220,6 +1226,528 @@ describe('SlickGrid core file', () => {
         previousSortColumns: [{ columnId: 'firstName', sortAsc: true }, { columnId: 'lastName', sortAsc: true }],
         sortCols: [{ columnId: 'lastName', sortAsc: true, sortCol: columns[1] }]
       }, click2, grid);
+    });
+  });
+
+  describe('Navigation', () => {
+    const columns = [
+      { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+      { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+      { id: 'age', field: 'age', name: 'Age', sortable: true },
+    ] as Column[];
+    const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+    it('should scroll to defined row position when calling scrollRowToTop()', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, frozenRow: 0 });
+      const scrollToSpy = jest.spyOn(grid, 'scrollTo');
+      const renderSpy = jest.spyOn(grid, 'render');
+
+      grid.scrollRowToTop(2);
+
+      expect(scrollToSpy).toHaveBeenCalledWith(2 * 25); // default rowHeight: 25
+      expect(renderSpy).toHaveBeenCalled();
+    });
+
+    it('should do page up when calling scrollRowIntoView() and we are further than row index that we want to scroll to', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, frozenRow: 0 });
+      const scrollToSpy = jest.spyOn(grid, 'scrollTo');
+      const renderSpy = jest.spyOn(grid, 'render');
+
+      grid.scrollRowToTop(2);
+      grid.scrollRowIntoView(1, true);
+
+      expect(scrollToSpy).toHaveBeenCalledWith(2 * 25); // default rowHeight: 25
+      expect(renderSpy).toHaveBeenCalled();
+    });
+
+    it('should do nothing when trying to navigateTop when the dataset is empty', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, options);
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      grid.navigateTop();
+
+      expect(scrollCellSpy).not.toHaveBeenCalled();
+    });
+
+    it('should scroll when calling to navigateTop with dataset', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const resetCellSpy = jest.spyOn(grid, 'resetActiveCell');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      grid.setActiveRow(0, 0);
+      grid.navigateTop();
+
+      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, true);
+      expect(resetCellSpy).toHaveBeenCalled();
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll when calling to navigateBottom with dataset', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const resetCellSpy = jest.spyOn(grid, 'resetActiveCell');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      const scrollToSpy = jest.spyOn(grid, 'scrollTo');
+      grid.setActiveRow(0, 0);
+      grid.navigateBottom();
+
+      expect(scrollCellSpy).toHaveBeenCalledWith(data.length - 1, 0, true);
+      expect(scrollToSpy).toHaveBeenCalledWith(25);
+      expect(resetCellSpy).toHaveBeenCalled();
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate to left then bottom and expect active cell to change with previous cell position that was activated by the left navigation', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const resetCellSpy = jest.spyOn(grid, 'resetActiveCell');
+      const canCellActiveSpy = jest.spyOn(grid, 'canCellBeActive');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      const scrollToSpy = jest.spyOn(grid, 'scrollTo');
+      grid.setActiveCell(0, 1);
+      grid.navigateLeft();
+      const result = grid.navigateBottom();
+
+      expect(result).toBe(true);
+      expect(scrollCellSpy).toHaveBeenCalledWith(data.length - 1, 0, true);
+      expect(scrollToSpy).toHaveBeenCalledWith(25);
+      expect(canCellActiveSpy).toHaveBeenCalledTimes(3);
+      expect(resetCellSpy).not.toHaveBeenCalled();
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate to left then page down and expect active cell to change with previous cell position that was activated by the left navigation', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      const viewportElm = container.querySelector('.slick-viewport-top') as HTMLDivElement;
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      Object.defineProperty(viewportElm, 'scrollLeft', { writable: true, configurable: true, value: 10 });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const resetCellSpy = jest.spyOn(grid, 'resetActiveCell');
+      const canCellActiveSpy = jest.spyOn(grid, 'canCellBeActive');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      const scrollToSpy = jest.spyOn(grid, 'scrollTo');
+      grid.setActiveCell(0, 1);
+      grid.navigateLeft();
+      grid.navigatePageDown();
+
+      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, true);
+      expect(scrollToSpy).toHaveBeenCalledWith(25);
+      expect(canCellActiveSpy).toHaveBeenCalledTimes(3);
+      expect(resetCellSpy).not.toHaveBeenCalled();
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll when calling to navigatePageDown with dataset', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const resetCellSpy = jest.spyOn(grid, 'resetActiveCell');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      const scrollToSpy = jest.spyOn(grid, 'scrollTo');
+      const renderSpy = jest.spyOn(grid, 'render');
+      grid.setActiveRow(0, 0);
+      grid.navigatePageDown();
+
+      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
+      expect(scrollToSpy).toHaveBeenCalledWith(600);
+      expect(resetCellSpy).toHaveBeenCalled();
+      expect(renderSpy).toHaveBeenCalled();
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll when calling to navigatePageUp with dataset', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const resetCellSpy = jest.spyOn(grid, 'resetActiveCell');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      const scrollToSpy = jest.spyOn(grid, 'scrollTo');
+      const renderSpy = jest.spyOn(grid, 'render');
+      grid.setActiveRow(0, 0);
+      grid.navigatePageUp();
+
+      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
+      expect(scrollToSpy).toHaveBeenCalledWith(-600);
+      expect(resetCellSpy).toHaveBeenCalled();
+      expect(renderSpy).toHaveBeenCalled();
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should return false when trying to scroll to left but enableCellNavigation is disabled', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: false });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      grid.setActiveCell(0, 0);
+      const result = grid.navigateLeft();
+
+      expect(result).toBe(false);
+      expect(grid.getActiveCellNode()).toBeFalsy();
+      expect(scrollCellSpy).not.toHaveBeenCalled();
+      expect(onActiveCellSpy).not.toHaveBeenCalled();
+    });
+
+    it('should try to scroll to left but return false cell is already at column index 0 and cannot go further', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      grid.setActiveCell(0, 0);
+      const result = grid.navigateLeft();
+
+      expect(result).toBe(false);
+      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll to left but return false when calling navigateLeft but cannot find first focusable cell', () => {
+      const data = [{ id: 0, firstName: 'John' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      jest.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
+      grid.setActiveCell(0, 2);
+      const result = grid.navigateLeft();
+
+      expect(result).toBe(false);
+      expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll to left and return true when calling navigateLeft with valid navigation', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      grid.setActiveCell(0, 1);
+      const result = grid.navigateLeft();
+
+      expect(result).toBe(true);
+      expect(grid.getGridPosition()).toMatchObject({ left: 0 });
+      expect(grid.getActiveCellPosition()).toMatchObject({ left: 0 });
+      expect(grid.getActiveCellNode()).toBeTruthy();
+      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, true);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll to left and return true but stay at same cell column when calling navigateLeft with an active editor', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      jest.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
+      grid.setActiveCell(0, 1);
+      const result = grid.navigateLeft();
+
+      expect(result).toBe(true);
+    });
+
+    it('should scroll to right but return false when calling navigateRight but cannot go further', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      grid.setActiveCell(0, 2);
+      const result = grid.navigateRight();
+
+      expect(result).toBe(false);
+      expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll to right and return true when calling navigateRight with valid navigation', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      grid.setActiveCell(0, 1);
+      const result = grid.navigateRight();
+
+      expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, true);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate left but return false when calling navigateLeft and nothing is available on the left & right', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true, frozenRow: 2, frozenBottom: true });
+      jest.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      grid.setActiveCell(2, 1);
+      // @ts-ignore
+      jest.spyOn(grid, 'gotoRight').mockReturnValueOnce(null);
+      const result = grid.navigateLeft();
+
+      expect(result).toBe(false);
+      expect(scrollCellSpy).toHaveBeenCalledWith(2, 1, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate left and return true when calling navigateLeft and only right is available', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true, frozenRow: 2, frozenBottom: true });
+      jest.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      grid.setActiveCell(2, 1);
+      // @ts-ignore
+      jest.spyOn(grid, 'gotoRight').mockReturnValueOnce({ cell: 0, posX: 0, row: 1 });
+      const result = grid.navigateLeft();
+
+      expect(result).toBe(true);
+      expect(scrollCellSpy).toHaveBeenCalledWith(2, 1, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll up but return false when calling navigateUp but cannot go further', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      grid.setActiveCell(0, 0);
+      const result = grid.navigateUp();
+
+      expect(result).toBe(false);
+      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll to right and return true when calling navigateUp with valid navigation', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      jest.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+      grid.setActiveCell(1, 1);
+      const result = grid.navigateUp();
+
+      expect(result).toBe(true);
+      expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll down but return false when calling navigateDown but cannot go further', () => {
+      const data = [{ id: 0, firstName: 'John' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      grid.setActiveCell(0, 0);
+      const result = grid.navigateDown();
+
+      expect(result).toBe(false);
+      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll down and return true when calling navigateDown with valid navigation', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      jest.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+      grid.setActiveCell(1, 1);
+      const result = grid.navigateDown();
+
+      expect(result).toBe(true);
+      expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll down and return true when calling navigateDown with valid navigation', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true, frozenRow: 2, frozenBottom: true });
+      jest.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      grid.setActiveCell(2, 1);
+      // @ts-ignore
+      jest.spyOn(grid, 'gotoLeft').mockReturnValueOnce({ cell: 0, posX: 0, row: 3 });
+      const result = grid.navigatePrev();
+
+      expect(result).toBeUndefined();
+      expect(scrollCellSpy).toHaveBeenCalledWith(2, 1, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate to previous cell but return false when calling navigatePrev but cannot go further', () => {
+      const data = [{ id: 0, firstName: 'John' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      grid.setActiveCell(0, 0);
+      const result = grid.navigatePrev();
+
+      expect(result).toBe(false);
+      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate to previous cell and return true when calling navigatePrev but scroll to 0,0 when providing out of bound cell', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      grid.setActiveCell(0, -1);
+      const result = grid.navigatePrev();
+
+      expect(result).toBe(true);
+      expect(scrollCellSpy).toHaveBeenCalledWith(1, 2, true);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate to previous cell and return true when calling navigatePrev with valid navigation', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      jest.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+      grid.setActiveCell(1, 1);
+      const result = grid.navigatePrev();
+
+      expect(result).toBe(true);
+      expect(grid.getActiveCellPosition()).toMatchObject({ left: 0 });
+      expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate to previous cell and return false when calling navigatePrev with invalid navigation', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      jest.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      jest.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+      grid.setActiveCell(1, 1);
+      const result = grid.navigatePrev();
+
+      expect(result).toBe(true);
+      expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate to next but decrease row count when calling navigateNext and cell is detected as out of bound', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      jest.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+      grid.setActiveCell(1, 2);
+      const result = grid.navigateNext();
+
+      expect(result).toBe(true);
+      expect(scrollCellSpy).toHaveBeenCalledWith(1, 2, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate to next but return false when calling navigateNext and cannot find any first focusable cell', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      jest.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      grid.setActiveCell(1, 2);
+      const result = grid.navigateNext();
+
+      expect(result).toBe(false);
+      expect(scrollCellSpy).toHaveBeenCalledWith(1, 2, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate to next cell and return true when calling navigateNext but cannot go further it will find next focusable cell nonetheless', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      grid.setActiveCell(0, 2);
+      const result = grid.navigateNext();
+
+      expect(result).toBe(true);
+      expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate to next cell and return true when calling navigateNext but scroll to 0,0 when providing out of bound cell', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      grid.setActiveCell(0, 3);
+      const result = grid.navigateNext();
+
+      expect(result).toBe(true);
+      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, true);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate to next cell and return true when calling navigateNext with valid navigation', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      jest.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+      grid.setActiveCell(1, 1);
+      const result = grid.navigateNext();
+
+      expect(result).toBe(true);
+      expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate to first row start but return false when calling navigateRowStart but cannot go further', () => {
+      const data = [{ id: 0, firstName: 'John' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      jest.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      grid.setActiveCell(0, 0);
+      const result = grid.navigateRowStart();
+
+      expect(result).toBe(false);
+      expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate to first row start and return true when calling navigateRowStart with valid navigation', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      jest.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+      grid.setActiveCell(1, 1);
+      const result = grid.navigateRowStart();
+
+      expect(result).toBe(true);
+      expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate to end of row but return false when calling navigateRowEnd but cannot go further', () => {
+      const data = [{ id: 0, firstName: 'John' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      jest.spyOn(grid, 'canCellBeActive').mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(false);
+      grid.setActiveCell(0, 2);
+      const result = grid.navigateRowEnd();
+
+      expect(result).toBe(false);
+      expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate to end of row and return true when calling navigateRowEnd with valid navigation', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      jest.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+      grid.setActiveCell(1, 1);
+      const result = grid.navigateRowEnd();
+
+      expect(result).toBe(true);
+      expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
     });
   });
 });
