@@ -6043,10 +6043,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         if (this.rowsCache[row].cellNodesByColumnIdx.length > cell) {
           return this.rowsCache[row].cellNodesByColumnIdx[cell] as HTMLDivElement | null;
         }
-        else {
-          return null;
-        }
+        return null;
       } catch (e) {
+        /* istanbul ignore next */
         return this.rowsCache[row].cellNodesByColumnIdx[cell] as HTMLDivElement | null;
       }
     }
