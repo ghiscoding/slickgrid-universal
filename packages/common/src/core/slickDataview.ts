@@ -1024,9 +1024,11 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     if (aggregator.accumulate) {
       return function (items: any[]) {
         let result;
-        for (let i = 0; i < items.length; i++) {
-          const item = items[i];
-          result = aggregator.accumulate!.call(aggregator, item);
+        if (Array.isArray(items)) {
+          for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            result = aggregator.accumulate!.call(aggregator, item);
+          }
         }
         return result;
       };

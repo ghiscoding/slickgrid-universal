@@ -327,6 +327,7 @@ describe('SlickDatView core file', () => {
         formatter: (g) => `Family: ${g.value} <span class="text-green">(${g.count} items)</span>`,
         aggregators: [agg],
         aggregateCollapsed: false,
+        sortAsc: true,
       } as Grouping);
 
       expect(refreshSpy).toHaveBeenCalled();
@@ -475,8 +476,10 @@ describe('SlickDatView core file', () => {
       dv.setGrouping({
         getter: 'lastName',
         formatter: (g) => `Family: ${g.value} <span class="text-green">(${g.count} items)</span>`,
-        comparer: (a, b) => SortComparers.string(a.value, b.value, SortDirectionNumber.desc),
         aggregators: [agg1, agg2],
+        lazyTotalsCalculation: false,
+        displayTotalsRow: false,
+        aggregateChildGroups: true,
       } as Grouping);
 
       dv.expandGroup('Smith');
@@ -484,6 +487,26 @@ describe('SlickDatView core file', () => {
       // Groups should be expanded
       expect(refreshSpy).toHaveBeenCalledTimes(3);
       expect(dv.getItem(0)).toEqual({
+        __group: true,
+        __nonDataRow: true,
+        collapsed: 0,
+        count: 2,
+        groupingKey: 'Doe',
+        groups: null,
+        level: 0,
+        rows: [
+          { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
+          { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 }
+        ],
+        selectChecked: false,
+        title: 'Family: Doe <span class="text-green">(2 items)</span>',
+        totals: expect.anything(),
+        value: 'Doe'
+      });
+
+      expect(dv.getItem(1)).toEqual({ id: 1, firstName: 'John', lastName: 'Doe', age: 30 });
+      expect(dv.getItem(2)).toEqual({ id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 });
+      expect(dv.getItem(3)).toEqual({
         __group: true,
         __nonDataRow: true,
         collapsed: 0,
@@ -495,12 +518,7 @@ describe('SlickDatView core file', () => {
         selectChecked: false,
         title: 'Family: Smith <span class="text-green">(1 items)</span>',
         totals: expect.anything(),
-        value: 'Smith'
-      });
-
-      expect(dv.getItem(1)).toEqual({ id: 3, firstName: 'John', lastName: 'Smith', age: 26 });
-      expect(dv.getItem(2)).toEqual({
-        __groupTotals: true, __nonDataRow: true, group: expect.anything(), initialized: true, count: { lastName: 1 }, sum: { age: 26 }
+        value: 'Smith',
       });
 
       dv.collapseGroup('Smith');
@@ -510,16 +528,19 @@ describe('SlickDatView core file', () => {
       expect(dv.getItem(0)).toEqual({
         __group: true,
         __nonDataRow: true,
-        collapsed: 1,
-        count: 1,
-        groupingKey: 'Smith',
+        collapsed: 0,
+        count: 2,
+        groupingKey: 'Doe',
         groups: null,
         level: 0,
-        rows: [{ id: 3, firstName: 'John', lastName: 'Smith', age: 26 }],
+        rows: [
+          { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
+          { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 }
+        ],
         selectChecked: false,
-        title: 'Family: Smith <span class="text-green">(1 items)</span>',
+        title: 'Family: Doe <span class="text-green">(2 items)</span>',
         totals: expect.anything(),
-        value: 'Smith'
+        value: 'Doe'
       });
       expect(dv.getItem(1)).not.toEqual({ id: 3, firstName: 'John', lastName: 'Smith', age: 26 });
     });
@@ -623,16 +644,37 @@ describe('SlickDatView core file', () => {
           formatter: (g) => `Family: ${g.value} <span class="text-green">(${g.count} items)</span>`,
           comparer: (a, b) => SortComparers.string(a.value, b.value, SortDirectionNumber.desc),
           aggregators: [agg1, agg2],
+          lazyTotalsCalculation: true,
+          aggregateEmpty: true,
+          displayTotalsRow: false,
         },
         {
           getter: 'age',
           formatter: (g) => `Age: ${g.value} <span class="text-green">(${g.count} items)</span>`,
           comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.desc),
           aggregators: [agg1, agg2],
+          lazyTotalsCalculation: true,
+          aggregateEmpty: true,
+          displayTotalsRow: true,
         }
       ]);
+      expect(dv.getItemMetadata(99)).toBeNull();
+      expect(dv.getItemMetadata(2)).toBeNull();
+      expect(dv.getItemMetadata(0)).toEqual({
+        columns: {
+          0: {
+            colspan: '*',
+            editor: null,
+            formatter: expect.anything(),
+          },
+        },
+        cssClasses: 'slick-group slick-group-level-0',
+        focusable: true,
+        formatter: undefined,
+        selectable: false,
+      });
 
-      dv.expandAllGroups();
+      dv.expandAllGroups(0);
 
       // Groups should be expanded
       expect(refreshSpy).toHaveBeenCalledTimes(3);
@@ -673,8 +715,15 @@ describe('SlickDatView core file', () => {
         initialized: true,
         sum: { age: 26 }
       });
+      expect(dv.getItemMetadata(3)).toEqual({
+        cssClasses: 'slick-group-totals slick-group-level-1',
+        editor: null,
+        focusable: false,
+        formatter: expect.anything(),
+        selectable: false,
+      });
 
-      dv.collapseAllGroups();
+      dv.collapseAllGroups(0);
 
       // Groups should now be collapsed
       expect(refreshSpy).toHaveBeenCalledTimes(4);
