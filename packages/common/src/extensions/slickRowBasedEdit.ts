@@ -22,7 +22,7 @@ export class SlickRowBasedEdit {
     allowMultipleRows: false,
   } as RowBasedEditOptions;
 
-  protected _editedRows: any[] = [];
+  protected _editedRows: Set<any> = new Set();
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(options?: RowBasedEditOptions) {
@@ -47,28 +47,6 @@ export class SlickRowBasedEdit {
       this._grid.onBeforeEditCell,
       this.onBeforeEditCellHandler
     );
-
-    const dataview = this._grid.getData();
-    const originalGetItemMetadata = dataview.getItemMetadata.bind(dataview);
-    const itemMetadataOverride = (rowNumber: number) => {
-      const originalResult = originalGetItemMetadata(rowNumber);
-
-      if (this._editedRows.includes(rowNumber)) {
-        const newResult = {
-          ...(originalResult ?? {}),
-          cssClasses:
-            (originalResult?.cssClasses
-              ? originalResult?.cssClasses + ' '
-              : '') + ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS,
-        };
-
-        return newResult;
-      }
-
-      return originalResult;
-    };
-
-    this._grid.getData().getItemMetadata = itemMetadataOverride;
   }
 
   destroy() {
@@ -84,7 +62,7 @@ export class SlickRowBasedEdit {
     e: Event,
     args: OnBeforeEditCellEventArgs
   ) => {
-    return this._editedRows.includes(
+    return this._editedRows.has(
       args.item?.[this._grid.getOptions().datasetIdPropertyName ?? 'id']
     );
   };
@@ -105,18 +83,25 @@ export class SlickRowBasedEdit {
           cell: number,
           value: any,
           columnDef: Column,
-          dataContext: any,
+          dataContext: any
         ) => {
-          console.log(dataContext);
-          const isInEditMode = this._editedRows.includes(
+          const isInEditMode = this._editedRows.has(
             dataContext?.[this._grid.getOptions().datasetIdPropertyName ?? 'id']
           );
 
           return `
-          <span ${ isInEditMode ? 'style="display: none"' : '' } class="button-style padding-1px action-btns action-btns--edit" title="Edit the Row"><span class="mdi mdi-table-edit color-primary" title="Edit Current Row"></span></span>
-          <span ${ isInEditMode ? 'style="display: none"' : '' } class="button-style padding-1px action-btns action-btns--delete" title="Delete the Row"><span class="mdi mdi-close color-danger" title="Delete Current Row"></span></span>
-          <span ${ !isInEditMode ? 'style="display: none"' : '' } class="button-style padding-1px action-btns action-btns--update" title="Update row"><span class="mdi mdi-check-bold color-success" title="Update Current Row"></span></span>
-          <span ${ !isInEditMode ? 'style="display: none"' : '' } class="button-style padding-1px action-btns action-btns--cancel" title="Cancel changes"><span class="mdi mdi-cancel color-danger" title="Cancel Current Row's changes"></span></span>
+          <span ${
+            isInEditMode ? 'style="display: none"' : ''
+          } class="button-style padding-1px action-btns action-btns--edit" title="Edit the Row"><span class="mdi mdi-table-edit color-primary" title="Edit Current Row"></span></span>
+          <span ${
+            isInEditMode ? 'style="display: none"' : ''
+          } class="button-style padding-1px action-btns action-btns--delete" title="Delete the Row"><span class="mdi mdi-close color-danger" title="Delete Current Row"></span></span>
+          <span ${
+            !isInEditMode ? 'style="display: none"' : ''
+          } class="button-style padding-1px action-btns action-btns--update" title="Update row"><span class="mdi mdi-check-bold color-success" title="Update Current Row"></span></span>
+          <span ${
+            !isInEditMode ? 'style="display: none"' : ''
+          } class="button-style padding-1px action-btns action-btns--cancel" title="Cancel changes"><span class="mdi mdi-cancel color-danger" title="Cancel Current Row's changes"></span></span>
         `;
         },
         onCellClick: (event: Event, args) => {
@@ -129,7 +114,7 @@ export class SlickRowBasedEdit {
           } else if (target.classList.contains('mdi-table-edit')) {
             if (
               !this._addonOptions?.allowMultipleRows &&
-              this._editedRows.length > 0
+              this._editedRows.size > 0
             ) {
               return;
             }
@@ -175,15 +160,13 @@ export class SlickRowBasedEdit {
       btnDelete.style.display = 'none';
       btnUpdate.style.display = 'inline-block';
       btnCancel.style.display = 'inline-block';
-      this._editedRows = [...this._editedRows, dataContext[idProperty]];
+      this._editedRows.add(dataContext[idProperty]);
     } else {
       btnEdit.style.display = 'inline-block';
       btnDelete.style.display = 'inline-block';
       btnUpdate.style.display = 'none';
       btnCancel.style.display = 'none';
-      this._editedRows = this._editedRows.filter(
-        (r) => r !== dataContext[idProperty]
-      );
+      this._editedRows.delete(dataContext[idProperty]);
     }
 
     slickRow?.classList.toggle(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS, editMode);
