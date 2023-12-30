@@ -626,7 +626,7 @@ describe('SlickDatView core file', () => {
       expect(dv.getItem(1)).toEqual({ id: 3, firstName: 'John', lastName: 'Smith', age: 26 });
     });
 
-    it('should call setGrouping() with multiple Groups from array', () => {
+    it('should call setGrouping() with multiple Groups from array and lazyTotalsCalculation with Group Totals calculation', () => {
       const mockData = [
         { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
         { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 },
@@ -660,6 +660,7 @@ describe('SlickDatView core file', () => {
           aggregateCollapsed: false,
         }
       ]);
+
       expect(dv.getItemMetadata(99)).toBeNull();
       expect(dv.getItemMetadata(2)).toBeNull();
       expect(dv.getItemMetadata(0)).toEqual({
@@ -724,8 +725,249 @@ describe('SlickDatView core file', () => {
         formatter: expect.anything(),
         selectable: false,
       });
+      expect(dv.getItem(10)).toEqual({
+        __groupTotals: true,
+        __nonDataRow: true,
+        count: { lastName: 1 },
+        group: expect.anything(),
+        initialized: true,
+        sum: { age: 28 },
+      });
 
       dv.collapseAllGroups(0);
+
+      // Groups should now be collapsed
+      expect(refreshSpy).toHaveBeenCalledTimes(4);
+      expect(dv.getItem(0)).toEqual({
+        __group: true,
+        __nonDataRow: true,
+        collapsed: 1,
+        count: 1,
+        groupingKey: 'Smith',
+        groups: expect.anything(),
+        level: 0,
+        rows: [{ id: 3, firstName: 'John', lastName: 'Smith', age: 26 }],
+        selectChecked: false,
+        title: 'Family: Smith <span class="text-green">(1 items)</span>',
+        totals: expect.anything(),
+        value: 'Smith'
+      });
+      expect(dv.getItem(1)).toEqual({
+        __group: true,
+        __nonDataRow: true,
+        collapsed: 1,
+        count: 2,
+        groupingKey: 'Doe',
+        groups: [expect.anything(), expect.anything()],
+        level: 0,
+        rows: [{ id: 1, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 }],
+        selectChecked: false,
+        title: 'Family: Doe <span class="text-green">(2 items)</span>',
+        totals: expect.anything(),
+        value: 'Doe',
+      });
+      expect(dv.getItem(2)).toBeUndefined();
+    });
+
+    it('should call setGrouping() with multiple Groups from array and calculate totals afterward when getting item', () => {
+      const mockData = [
+        { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        { id: 3, firstName: 'John', lastName: 'Smith', age: 26 },
+      ]
+      dv = new SlickDataView({});
+      dv.setItems([...mockData]);
+      const refreshSpy = jest.spyOn(dv, 'refresh');
+
+      const agg1 = new Aggregators.Count('lastName');
+      const agg2 = new Aggregators.Sum('age');
+      dv.setGrouping([
+        {
+          getter: 'lastName',
+          formatter: (g) => `Family: ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          comparer: (a, b) => SortComparers.string(a.value, b.value, SortDirectionNumber.desc),
+          aggregators: [agg1, agg2],
+          lazyTotalsCalculation: false,
+          displayTotalsRow: false,
+          aggregateChildGroups: true,
+          aggregateCollapsed: true,
+        },
+        {
+          getter: 'age',
+          formatter: (g) => `Age: ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          // comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.desc),
+          aggregators: [agg1, agg2],
+          lazyTotalsCalculation: false,
+          displayTotalsRow: true,
+          aggregateChildGroups: true,
+          aggregateCollapsed: true,
+        }
+      ]);
+
+      expect(dv.getItemMetadata(99)).toBeNull();
+      expect(dv.getItemMetadata(2)).toBeNull();
+      expect(dv.getItemMetadata(0)).toEqual({
+        columns: {
+          0: {
+            colspan: '*',
+            editor: null,
+            formatter: expect.anything(),
+          },
+        },
+        cssClasses: 'slick-group slick-group-level-0',
+        focusable: true,
+        formatter: undefined,
+        selectable: false,
+      });
+      expect(dv.getItem(0)).toEqual({
+        __group: true,
+        __nonDataRow: true,
+        collapsed: 0,
+        count: 1,
+        groupingKey: 'Smith',
+        groups: expect.anything(),
+        level: 0,
+        rows: [{ id: 3, firstName: 'John', lastName: 'Smith', age: 26 }],
+        selectChecked: false,
+        title: 'Family: Smith <span class="text-green">(1 items)</span>',
+        totals: expect.anything(),
+        value: 'Smith'
+      });
+      expect(dv.getItem(1)).toEqual({
+        __group: true,
+        __nonDataRow: true,
+        collapsed: 0,
+        count: 1,
+        groupingKey: 'Smith:|:26',
+        groups: null,
+        level: 1,
+        rows: [{ id: 3, firstName: 'John', lastName: 'Smith', age: 26 }],
+        selectChecked: false,
+        title: 'Age: 26 <span class="text-green">(1 items)</span>',
+        totals: expect.anything(),
+        value: 26
+      });
+      expect(dv.getItem(2)).toEqual({ id: 3, firstName: 'John', lastName: 'Smith', age: 26 });
+      expect(dv.getItem(3)).toEqual({
+        __groupTotals: true,
+        __nonDataRow: true,
+        count: { lastName: 1 },
+        group: expect.anything(),
+        initialized: true,
+        sum: { age: 0 }
+      });
+
+      dv.expandAllGroups(0);
+
+      // Groups should be expanded
+      expect(refreshSpy).toHaveBeenCalledTimes(2);
+      expect(dv.getItem(0)).toEqual({
+        __group: true,
+        __nonDataRow: true,
+        collapsed: 0,
+        count: 1,
+        groupingKey: 'Smith',
+        groups: expect.anything(),
+        level: 0,
+        rows: [{ id: 3, firstName: 'John', lastName: 'Smith', age: 26 }],
+        selectChecked: false,
+        title: 'Family: Smith <span class="text-green">(1 items)</span>',
+        totals: expect.anything(),
+        value: 'Smith'
+      });
+    });
+
+    it('should call setGrouping() with multiple Groups from array with Group Totals calculation', () => {
+      const mockData = [
+        { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        { id: 3, firstName: 'John', lastName: 'Smith', age: 26 },
+      ]
+      dv = new SlickDataView({});
+      const refreshSpy = jest.spyOn(dv, 'refresh');
+      dv.setItems([...mockData]);
+
+      const agg1 = new Aggregators.Count('lastName');
+      const agg2 = new Aggregators.Sum('age');
+      dv.setGrouping([
+        {
+          getter: 'lastName',
+          formatter: (g) => `Family: ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          comparer: (a, b) => SortComparers.string(a.value, b.value, SortDirectionNumber.desc),
+          aggregators: [agg1, agg2],
+          lazyTotalsCalculation: false,
+          aggregateChildGroups: true,
+          displayTotalsRow: true,
+          aggregateEmpty: true
+        },
+        {
+          getter: 'age',
+          formatter: (g) => `Age: ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.desc),
+          aggregators: [agg1, agg2],
+          lazyTotalsCalculation: false,
+          displayTotalsRow: true,
+        }
+      ]);
+
+      expect(dv.getItem(1)).toEqual({
+        __group: true,
+        __nonDataRow: true,
+        collapsed: 0,
+        count: 1,
+        groupingKey: 'Smith:|:26',
+        groups: null,
+        level: 1,
+        rows: [{ id: 3, firstName: 'John', lastName: 'Smith', age: 26 }],
+        selectChecked: false,
+        title: 'Age: 26 <span class="text-green">(1 items)</span>',
+        totals: expect.anything(),
+        value: 26
+      });
+
+      dv.expandAllGroups();
+
+      // Groups should be expanded
+      expect(refreshSpy).toHaveBeenCalledTimes(3);
+      expect(dv.getItem(0)).toEqual({
+        __group: true,
+        __nonDataRow: true,
+        collapsed: 0,
+        count: 1,
+        groupingKey: 'Smith',
+        groups: expect.anything(),
+        level: 0,
+        rows: [{ id: 3, firstName: 'John', lastName: 'Smith', age: 26 }],
+        selectChecked: false,
+        title: 'Family: Smith <span class="text-green">(1 items)</span>',
+        totals: expect.anything(),
+        value: 'Smith'
+      });
+      expect(dv.getItem(1)).toEqual({
+        __group: true,
+        __nonDataRow: true,
+        collapsed: 0,
+        count: 1,
+        groupingKey: 'Smith:|:26',
+        groups: null,
+        level: 1,
+        rows: [{ id: 3, firstName: 'John', lastName: 'Smith', age: 26 }],
+        selectChecked: false,
+        title: 'Age: 26 <span class="text-green">(1 items)</span>',
+        totals: expect.anything(),
+        value: 26
+      });
+      expect(dv.getItem(2)).toEqual({ id: 3, firstName: 'John', lastName: 'Smith', age: 26 });
+      expect(dv.getItem(3)).toEqual({
+        __groupTotals: true,
+        __nonDataRow: true,
+        count: { lastName: 1 },
+        group: expect.anything(),
+        initialized: true,
+        sum: { age: 26 }
+      });
+
+      dv.collapseAllGroups();
 
       // Groups should now be collapsed
       expect(refreshSpy).toHaveBeenCalledTimes(4);
