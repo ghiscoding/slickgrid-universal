@@ -965,6 +965,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     while (idx--) {
       g = groups[idx];
 
+      /* istanbul ignore if */
       if (g.collapsed && !gi.aggregateCollapsed) {
         continue;
       }

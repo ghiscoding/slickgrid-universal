@@ -644,6 +644,7 @@ describe('SlickDatView core file', () => {
           formatter: (g) => `Family: ${g.value} <span class="text-green">(${g.count} items)</span>`,
           comparer: (a, b) => SortComparers.string(a.value, b.value, SortDirectionNumber.desc),
           aggregators: [agg1, agg2],
+          aggregateChildGroups: true,
           lazyTotalsCalculation: true,
           aggregateEmpty: true,
           displayTotalsRow: false,
@@ -656,6 +657,7 @@ describe('SlickDatView core file', () => {
           lazyTotalsCalculation: true,
           aggregateEmpty: true,
           displayTotalsRow: true,
+          aggregateCollapsed: false,
         }
       ]);
       expect(dv.getItemMetadata(99)).toBeNull();
