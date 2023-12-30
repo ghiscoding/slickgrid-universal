@@ -183,14 +183,11 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.compiledFilterCSPSafe = null;
     this.compiledFilterWithCaching = null;
     this.compiledFilterWithCachingCSPSafe = null;
-
-    if (this._grid && this._grid.onSelectedRowsChanged && this._grid.onCellCssStylesChanged) {
-      this._grid.onSelectedRowsChanged.unsubscribe();
-      this._grid.onCellCssStylesChanged.unsubscribe();
+    if (this._grid) {
+      this._grid.onSelectedRowsChanged?.unsubscribe();
+      this._grid.onCellCssStylesChanged?.unsubscribe();
     }
-    if (this.onRowsOrCountChanged) {
-      this.onRowsOrCountChanged.unsubscribe();
-    }
+    this.onRowsOrCountChanged?.unsubscribe();
   }
 
   /** provide some refresh hints as to what to rows needs refresh */
@@ -804,8 +801,10 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   expandCollapseGroup(level: number, groupingKey: string, collapse?: boolean) {
-    // @ts-ignore
-    this.toggledGroupsByLevel[level][groupingKey] = this.groupingInfos[level].collapsed ^ collapse;
+    if (this.toggledGroupsByLevel[level]) {
+      // @ts-ignore
+      this.toggledGroupsByLevel[level][groupingKey] = this.groupingInfos[level].collapsed ^ collapse;
+    }
     this.refresh();
   }
 
