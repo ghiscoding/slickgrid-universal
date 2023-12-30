@@ -1,5 +1,5 @@
 
-import type { Column, FormatterResultWithHtml, FormatterResultWithText, } from './index';
+import type { Column, FormatterResultWithHtml, FormatterResultWithText, OnEventArgs, } from './index';
 import type { SlickCellExcelCopyManager, } from '../extensions/slickCellExcelCopyManager';
 import type { SlickEventData, SlickRange } from '../core/index';
 
@@ -61,4 +61,7 @@ export interface ExcelCopyBufferOption<T = any> {
 
   /** Fired when the user paste cells to the grid */
   onPasteCells?: (e: SlickEventData, args: { ranges: SlickRange[]; }) => void;
+
+  /** Fired for each cell before pasting. Return false if you want to deny pasting for the specific cell */
+  onBeforePasteCell?: (e: SlickEventData, args: OnEventArgs) => boolean;
 }

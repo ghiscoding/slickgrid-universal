@@ -1,7 +1,7 @@
 import { createDomElement, stripTags } from '@slickgrid-universal/utils';
 
-import type { Column, ExcelCopyBufferOption, ExternalCopyClipCommand } from '../interfaces/index';
-import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange } from '../core/index';
+import type { Column, ExcelCopyBufferOption, ExternalCopyClipCommand, OnEventArgs } from '../interfaces/index';
+import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange, SlickDataView } from '../core/index';
 
 // using external SlickGrid JS libraries
 const CLEAR_COPY_SELECTION_DELAY = 2000;
@@ -20,6 +20,7 @@ export class SlickCellExternalCopyManager {
   onCopyCells = new SlickEvent<{ ranges: SlickRange[]; }>();
   onCopyCancelled = new SlickEvent<{ ranges: SlickRange[]; }>();
   onPasteCells = new SlickEvent<{ ranges: SlickRange[]; }>();
+  onBeforePasteCell = new SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any; }>();
 
   protected _addonOptions!: ExcelCopyBufferOption;
   protected _bodyElement = document.body;
@@ -68,6 +69,30 @@ export class SlickCellExternalCopyManager {
         this._grid.focus();
       }
     });
+
+    if (typeof this._addonOptions?.onBeforePasteCell === 'function') {
+      const dataView = grid?.getData<SlickDataView>();
+
+      // subscribe to this Slickgrid event of onBeforeEditCell
+      this._eventHandler.subscribe(this.onBeforePasteCell, (e, args) => {
+        if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
+          return;
+        }
+
+        const column: Column = grid.getColumns()[args.cell];
+        const returnedArgs: OnEventArgs = {
+          row: args.row!,
+          cell: args.cell,
+          dataView,
+          grid,
+          columnDef: column,
+          dataContext: grid.getDataItem(args.row!)
+        };
+
+        // finally call up the Slick column.onBeforeEditCells.... function
+        return this._addonOptions.onBeforePasteCell?.(e, returnedArgs);
+      });
+    }
   }
 
   dispose() {
@@ -258,6 +283,11 @@ export class SlickCellExternalCopyManager {
             if (desty < clipCommand.maxDestY && destx < clipCommand.maxDestX) {
               // const nd = this._grid.getCellNode(desty, destx);
               const dt = this._grid.getDataItem(desty);
+
+              if (this.trigger(this.onBeforePasteCell, { row: desty, cell: destx, dt, column: columns[destx], target: 'grid' }).getReturnValue() === false) {
+                 continue;
+              }
+
               clipCommand.oldValues[y][x] = dt[columns[destx]['field']];
               if (oneCellToMultiple) {
                 this.setDataItemValueForColumn(dt, columns[destx], clippedRange[0][0]);
@@ -345,6 +375,12 @@ export class SlickCellExternalCopyManager {
     }
   }
 
+  protected trigger<ArgType = any>(evt: SlickEvent, args?: ArgType, e?: Event | SlickEventData) {
+    const event: SlickEventData = (e || new SlickEventData(e, args)) as SlickEventData;
+    const eventArgs = (args || {}) as ArgType & { grid: SlickGrid; };
+    eventArgs.grid = this._grid;
+    return evt.notify(eventArgs, event, this._grid);
+  }
 
   protected handleKeyDown(e: any): boolean | void {
     let ranges: SlickRange[];
