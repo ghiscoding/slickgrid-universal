@@ -54,7 +54,7 @@
   "engines": {
     "node": "^18.0.0 || >=20.0.0"
   },
-  "packageManager": "pnpm@8.12.1",
+  "packageManager": "pnpm@8.13.1",
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^2.2.5",
     "@jest/types": "^29.6.3",
@@ -63,11 +63,11 @@
     "@lerna-lite/run": "^3.1.0",
     "@lerna-lite/watch": "^3.1.0",
     "@types/jest": "^29.5.11",
-    "@types/node": "^20.10.5",
-    "@typescript-eslint/eslint-plugin": "^6.15.0",
-    "@typescript-eslint/parser": "^6.15.0",
+    "@types/node": "^20.10.6",
+    "@typescript-eslint/eslint-plugin": "^6.16.0",
+    "@typescript-eslint/parser": "^6.16.0",
     "cross-env": "^7.0.3",
-    "cypress": "^13.6.1",
+    "cypress": "^13.6.2",
     "dotenv": "^16.3.1",
     "eslint": "^8.56.0",
     "eslint-plugin-cypress": "^2.15.1",
@@ -82,7 +82,7 @@
     "jsdom-global": "^3.0.2",
     "moment-mini": "^2.29.4",
     "npm-run-all2": "^6.1.1",
-    "pnpm": "^8.12.1",
+    "pnpm": "^8.13.1",
     "rimraf": "^5.0.5",
     "rxjs": "^7.8.1",
     "servor": "^4.0.2",

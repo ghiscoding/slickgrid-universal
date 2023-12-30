@@ -30,13 +30,19 @@ import {
 import type { SlickGrid } from './slickGrid';
 
 export interface DataViewOption {
-  /** Defaults to false, use with great care as this will break built-in filters */
+  /**
+   * Defaults to false, are we using inline filters?
+   * Note: please use with great care as this will break built-in filters
+   */
   inlineFilters: boolean;
 
-  /** Optionally provide a Group Item Metatadata Provider when using Grouping/DraggableGrouping feature */
+  /** Optionally provide a GroupItemMetadataProvider in order to use Grouping/DraggableGrouping features */
   groupItemMetadataProvider: SlickGroupItemMetadataProvider | null;
 
-  /** Defaults to false, should we use CSP Safe filter method? The CSP safe is slighly slower compare to dynamic function default */
+  /**
+   * defaults to false, option to use CSP Safe approach,
+   * Note: it is an opt-in option because it is slightly slower (perf impact) when compared to the non-CSP safe approach.
+   */
   useCSPSafeFilter: boolean;
 }
 
@@ -177,14 +183,11 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.compiledFilterCSPSafe = null;
     this.compiledFilterWithCaching = null;
     this.compiledFilterWithCachingCSPSafe = null;
-
-    if (this._grid && this._grid.onSelectedRowsChanged && this._grid.onCellCssStylesChanged) {
-      this._grid.onSelectedRowsChanged.unsubscribe();
-      this._grid.onCellCssStylesChanged.unsubscribe();
+    if (this._grid) {
+      this._grid.onSelectedRowsChanged?.unsubscribe();
+      this._grid.onCellCssStylesChanged?.unsubscribe();
     }
-    if (this.onRowsOrCountChanged) {
-      this.onRowsOrCountChanged.unsubscribe();
-    }
+    this.onRowsOrCountChanged?.unsubscribe();
   }
 
   /** provide some refresh hints as to what to rows needs refresh */
@@ -400,7 +403,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       gi.compiledAccumulators = [];
       let idx = gi.aggregators.length;
       while (idx--) {
-        gi.compiledAccumulators[idx] = this.compileAccumulatorLoop(gi.aggregators[idx]);
+        gi.compiledAccumulators[idx] = this.compileAccumulatorLoopCSPSafe(gi.aggregators[idx]);
       }
 
       this.toggledGroupsByLevel[i] = {};
@@ -798,8 +801,10 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   expandCollapseGroup(level: number, groupingKey: string, collapse?: boolean) {
-    // @ts-ignore
-    this.toggledGroupsByLevel[level][groupingKey] = this.groupingInfos[level].collapsed ^ collapse;
+    if (this.toggledGroupsByLevel[level]) {
+      // @ts-ignore
+      this.toggledGroupsByLevel[level][groupingKey] = this.groupingInfos[level].collapsed ^ collapse;
+    }
     this.refresh();
   }
 
@@ -1015,20 +1020,18 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     };
   }
 
-  protected compileAccumulatorLoop(aggregator: Aggregator) {
+  protected compileAccumulatorLoopCSPSafe(aggregator: Aggregator) {
     if (aggregator.accumulate) {
-      const accumulatorInfo = this.getFunctionInfo(aggregator.accumulate);
-      const fn: any = new Function(
-        '_items',
-        'for (var ' + accumulatorInfo.params[0] + ', _i=0, _il=_items.length; _i<_il; _i++) {' +
-        accumulatorInfo.params[0] + ' = _items[_i]; ' +
-        accumulatorInfo.body +
-        '}'
-      );
-      const fnName = 'compiledAccumulatorLoop';
-      fn.displayName = fnName;
-      fn.name = this.setFunctionName(fn, fnName);
-      return fn;
+      return function (items: any[]) {
+        let result;
+        if (Array.isArray(items)) {
+          for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            result = aggregator.accumulate!.call(aggregator, item);
+          }
+        }
+        return result;
+      };
     } else {
       return function noAccumulator() { };
     }

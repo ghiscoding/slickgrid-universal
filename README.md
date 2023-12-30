@@ -12,7 +12,7 @@
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
 ### Documentation
-[Documentation](https://ghiscoding.gitbook.io/slickgrid-universal/) website powered by GitBook
+📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-universal/) website powered by GitBook
 
 ### Live Demo
 [Live Demo](https://ghiscoding.github.io/slickgrid-universal/) website
