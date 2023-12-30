@@ -1,21 +1,24 @@
 import type {
+  Column,
   OnBeforeEditCellEventArgs,
   RowBasedEditOptions,
-} from "../interfaces/index";
-import { SlickEventHandler, type SlickGrid } from "../core/index";
-import { GridService } from "../services";
+} from '../interfaces/index';
+import { SlickEventHandler, type SlickGrid } from '../core/index';
+import { GridService } from '../services';
+
+export const ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS = 'slick-rbe-editmode';
 
 /**
  * Row based edit plugin to add edit/delete buttons to each row and only allow editing rows currently in editmode
  */
 export class SlickRowBasedEdit {
-  pluginName = "RowBasedEdit" as const;
+  pluginName = 'RowBasedEdit' as const;
 
   protected _addonOptions?: RowBasedEditOptions;
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
   protected _defaults = {
-    actionsColumnLabel: "Actions",
+    actionsColumnLabel: 'Actions',
     allowMultipleRows: false,
   } as RowBasedEditOptions;
 
@@ -44,6 +47,28 @@ export class SlickRowBasedEdit {
       this._grid.onBeforeEditCell,
       this.onBeforeEditCellHandler
     );
+
+    const dataview = this._grid.getData();
+    const originalGetItemMetadata = dataview.getItemMetadata.bind(dataview);
+    const itemMetadataOverride = (rowNumber: number) => {
+      const originalResult = originalGetItemMetadata(rowNumber);
+
+      if (this._editedRows.includes(rowNumber)) {
+        const newResult = {
+          ...(originalResult ?? {}),
+          cssClasses:
+            (originalResult?.cssClasses
+              ? originalResult?.cssClasses + ' '
+              : '') + ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS,
+        };
+
+        return newResult;
+      }
+
+      return originalResult;
+    };
+
+    this._grid.getData().getItemMetadata = itemMetadataOverride;
   }
 
   destroy() {
@@ -59,82 +84,108 @@ export class SlickRowBasedEdit {
     e: Event,
     args: OnBeforeEditCellEventArgs
   ) => {
-    return this._editedRows.includes(args.row);
+    return this._editedRows.includes(
+      args.item?.[this._grid.getOptions().datasetIdPropertyName ?? 'id']
+    );
   };
 
   protected addActionsColumn(gridService: GridService) {
     this._grid.setColumns([
       ...this._grid.getColumns(),
       {
-        id: "slick_rowbasededit_action",
+        id: 'slick_rowbasededit_action',
         name: this._addonOptions?.actionsColumnLabel,
-        field: "action",
+        field: 'action',
         minWidth: 70,
         width: 75,
         maxWidth: 75,
         excludeFromExport: true,
-        formatter: () => `
-          <span class="button-style padding-1px action-btns action-btns--edit" title="Edit the Row"><span class="mdi mdi-table-edit color-primary" title="Edit Current Row"></span></span>
-          <span class="button-style padding-1px action-btns action-btns--delete" title="Delete the Row"><span class="mdi mdi-close color-danger" title="Delete Current Row"></span></span>
-          <span style="display: none" class="button-style padding-1px action-btns action-btns--update" title="Update row"><span class="mdi mdi-check-bold color-success" title="Update Current Row"></span></span>
-          <span style="display: none" class="button-style padding-1px action-btns action-btns--cancel" title="Cancel changes"><span class="mdi mdi-cancel color-danger" title="Cancel Current Row's changes"></span></span>
-      `,
+        formatter: (
+          row: number,
+          cell: number,
+          value: any,
+          columnDef: Column,
+          dataContext: any,
+        ) => {
+          console.log(dataContext);
+          const isInEditMode = this._editedRows.includes(
+            dataContext?.[this._grid.getOptions().datasetIdPropertyName ?? 'id']
+          );
+
+          return `
+          <span ${ isInEditMode ? 'style="display: none"' : '' } class="button-style padding-1px action-btns action-btns--edit" title="Edit the Row"><span class="mdi mdi-table-edit color-primary" title="Edit Current Row"></span></span>
+          <span ${ isInEditMode ? 'style="display: none"' : '' } class="button-style padding-1px action-btns action-btns--delete" title="Delete the Row"><span class="mdi mdi-close color-danger" title="Delete Current Row"></span></span>
+          <span ${ !isInEditMode ? 'style="display: none"' : '' } class="button-style padding-1px action-btns action-btns--update" title="Update row"><span class="mdi mdi-check-bold color-success" title="Update Current Row"></span></span>
+          <span ${ !isInEditMode ? 'style="display: none"' : '' } class="button-style padding-1px action-btns action-btns--cancel" title="Cancel changes"><span class="mdi mdi-cancel color-danger" title="Cancel Current Row's changes"></span></span>
+        `;
+        },
         onCellClick: (event: Event, args) => {
           const dataContext = args.dataContext;
           const target = event.target as HTMLElement;
-          if (target.classList.contains("mdi-close")) {
+
+          if (target.classList.contains('mdi-close')) {
+            this.toggleEditmode(target, dataContext, false);
             gridService.deleteItem(dataContext);
-          } else if (target.classList.contains("mdi-table-edit")) {
-            if (!this._addonOptions?.allowMultipleRows && this._editedRows.length > 0) {
+          } else if (target.classList.contains('mdi-table-edit')) {
+            if (
+              !this._addonOptions?.allowMultipleRows &&
+              this._editedRows.length > 0
+            ) {
               return;
             }
 
-            this.toggleActionButtons(target, true);
-            this._editedRows = [...this._editedRows, args.row];
-          } else if (target.classList.contains("mdi-check-bold")) {
-            this.toggleActionButtons(target, false);
-            this._editedRows = this._editedRows.filter(
-              (row) => row !== args.row
-            );
+            this.toggleEditmode(target, dataContext, true);
+          } else if (target.classList.contains('mdi-check-bold')) {
+            this.toggleEditmode(target, dataContext, false);
+
             if (this._addonOptions?.onAfterRowUpdated) {
               this._addonOptions.onAfterRowUpdated(args);
             }
-          } else if (target.classList.contains("mdi-cancel")) {
-            this.toggleActionButtons(target, false);
-            this._editedRows = this._editedRows.filter(
-              (row) => row !== args.row
-            );
+          } else if (target.classList.contains('mdi-cancel')) {
+            this.toggleEditmode(target, dataContext, false);
           }
         },
       },
     ]);
   }
 
-  private toggleActionButtons(target: HTMLElement, editMode: boolean) {
-    const slickCell = target.closest(".slick-cell");
+  private toggleEditmode(
+    target: HTMLElement,
+    dataContext: any,
+    editMode: boolean
+  ) {
+    const slickCell = target.closest('.slick-cell');
+    const slickRow = target.closest('.slick-row');
     const btnEdit = slickCell?.querySelector(
-      ".action-btns--edit"
+      '.action-btns--edit'
     ) as HTMLElement;
     const btnDelete = slickCell?.querySelector(
-      ".action-btns--delete"
+      '.action-btns--delete'
     ) as HTMLElement;
     const btnUpdate = slickCell?.querySelector(
-      ".action-btns--update"
+      '.action-btns--update'
     ) as HTMLElement;
     const btnCancel = slickCell?.querySelector(
-      ".action-btns--cancel"
+      '.action-btns--cancel'
     ) as HTMLElement;
 
+    const idProperty = this._grid.getOptions().datasetIdPropertyName ?? 'id';
     if (editMode) {
-      btnEdit.style.display = "none";
-      btnDelete.style.display = "none";
-      btnUpdate.style.display = "inline-block";
-      btnCancel.style.display = "inline-block";
+      btnEdit.style.display = 'none';
+      btnDelete.style.display = 'none';
+      btnUpdate.style.display = 'inline-block';
+      btnCancel.style.display = 'inline-block';
+      this._editedRows = [...this._editedRows, dataContext[idProperty]];
     } else {
-      btnEdit.style.display = "inline-block";
-      btnDelete.style.display = "inline-block";
-      btnUpdate.style.display = "none";
-      btnCancel.style.display = "none";
+      btnEdit.style.display = 'inline-block';
+      btnDelete.style.display = 'inline-block';
+      btnUpdate.style.display = 'none';
+      btnCancel.style.display = 'none';
+      this._editedRows = this._editedRows.filter(
+        (r) => r !== dataContext[idProperty]
+      );
     }
+
+    slickRow?.classList.toggle(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS, editMode);
   }
 }

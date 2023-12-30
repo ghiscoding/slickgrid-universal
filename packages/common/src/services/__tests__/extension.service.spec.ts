@@ -6,7 +6,7 @@ import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { ExtensionName } from '../../enums/index';
 import { Column, ExtensionModel, GridOption } from '../../interfaces/index';
 import { ExtensionUtility, SlickRowBasedEdit } from '../../extensions';
-import { ExtensionService, FilterService, SharedService, SortService, TreeDataService } from '../index';
+import { ExtensionService, FilterService, GridService, SharedService, SortService, TreeDataService } from '../index';
 import { SlickEvent, SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import {
@@ -190,6 +190,7 @@ describe('ExtensionService', () => {
         sortServiceStub,
         treeDataServiceStub,
         translateService,
+        () => ({}) as GridService
       );
       jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(document.body as HTMLDivElement);
     });
@@ -311,8 +312,8 @@ describe('ExtensionService', () => {
 
       it('should register the row based edit plugin when "enableRowBasedEdit" and "editable" is set in the grid options', () => {
         const gridOptionsMock = { enableRowBasedEdit: true, editable: true } as GridOption;
-        const extSpy = jest.spyOn(gridStub, 'registerPlugin');
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+        const extSpy = jest.spyOn(SlickRowBasedEdit.prototype, 'init').mockImplementation();
 
         service.bindDifferentExtensions();
         const output = service.getExtensionByName<SlickRowBasedEdit>(ExtensionName.rowBasedEdit);

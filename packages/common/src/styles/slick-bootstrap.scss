@@ -107,6 +107,14 @@
           font-size: var(--slick-group-totals-formatter-font-size, $slick-group-totals-formatter-font-size);
         }
       }
+
+      &.slick-rbe-editmode {
+        background-color: var(--slick-row-based-edit-editmode-bgcolor, $slick-row-based-edit-editmode-bgcolor);
+
+        &:hover {
+          background-color: var(--slick-row-based-edit-editmode-hover-bgcolor, $slick-row-based-edit-editmode-hover-bgcolor);
+        }
+      }
     }
     .slick-cell, .slick-headerrow-column {
       border-top: var(--slick-cell-border-top, $slick-cell-border-top);

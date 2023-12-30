@@ -23,6 +23,9 @@ const mockColumns = [
 ] as Column[];
 
 const gridStubBlueprint = {
+  getData: jest.fn().mockReturnValue({
+    getItemMetadata: jest.fn(),
+  }),
   getCellNode: jest.fn(),
   getCellFromEvent: jest.fn(),
   getOptions: jest.fn(),
