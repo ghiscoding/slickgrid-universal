@@ -4,6 +4,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.1.0...v4.2.0) (2023-12-30)
+
+### Bug Fixes
+
+* `updateColumns()` should be public use with column hidden ([#1288](https://github.com/ghiscoding/slickgrid-universal/issues/1288)) ([211180b](https://github.com/ghiscoding/slickgrid-universal/commit/211180b8c1f32250e6fc7a559baaa203154473e0)) - by @ghiscoding
+* applyDefaults use provided grid options before applying defaults ([#1283](https://github.com/ghiscoding/slickgrid-universal/issues/1283)) ([7fc772f](https://github.com/ghiscoding/slickgrid-universal/commit/7fc772fb80a80e0eafa900fc688667d12e1f9429)) - by @ghiscoding
+* **core:** `SlickGroupItemMetadataProvider` should implements `SlickPlugin` ([#1294](https://github.com/ghiscoding/slickgrid-universal/issues/1294)) ([5aac2b6](https://github.com/ghiscoding/slickgrid-universal/commit/5aac2b6a37cdd21938fa54769b72ce317562e45d)) - by @ghiscoding
+* **core:** add missing option to control row highlight duration after CRUD ([#1278](https://github.com/ghiscoding/slickgrid-universal/issues/1278)) ([8240c8c](https://github.com/ghiscoding/slickgrid-universal/commit/8240c8c9710f4e5d902ec9961f6a721ae0f84f7f)) - by @ghiscoding
+* GroupingGetterFunction should be allowed to return arbitrary value ([#1296](https://github.com/ghiscoding/slickgrid-universal/issues/1296)) ([3807116](https://github.com/ghiscoding/slickgrid-universal/commit/38071168e0fe5eea7d5e1ee117fae98c09057a4c)) - by @ghiscoding
+* **RowDetail:** sort change should collapse all Row Detail ([#1284](https://github.com/ghiscoding/slickgrid-universal/issues/1284)) ([21f6031](https://github.com/ghiscoding/slickgrid-universal/commit/21f60310a402dd12c80bf4553588c6cd777a131a)) - by @ghiscoding
+* use correct argument type on `setData()` ([#1287](https://github.com/ghiscoding/slickgrid-universal/issues/1287)) ([0b0b86c](https://github.com/ghiscoding/slickgrid-universal/commit/0b0b86c2325ea2a11b74d8fe8debeb02e23bb014)) - by @ghiscoding
+
+### Features
+
+* (re)add option to cancel Row Detail opening ([#1286](https://github.com/ghiscoding/slickgrid-universal/issues/1286)) ([f08925c](https://github.com/ghiscoding/slickgrid-universal/commit/f08925c50c1dd18448a04a55c8303736e3cc2289)) - by @ghiscoding
+* datasetIdPropertyName respected in newRowCreator ([#1279](https://github.com/ghiscoding/slickgrid-universal/issues/1279)) ([9d60a9d](https://github.com/ghiscoding/slickgrid-universal/commit/9d60a9d82e605ae2351822c66ff8757349b906cf)) - by @zewa666
+* make DataView Grouping `compileAccumulatorLoop` CSP safe ([#1295](https://github.com/ghiscoding/slickgrid-universal/issues/1295)) ([af82208](https://github.com/ghiscoding/slickgrid-universal/commit/af8220881b2791be2cc3f6605eda3955428094c7)) - by @ghiscoding
+
+### Performance Improvements
+
+* prefer `.forEach` over `for...in` and `for...of` ([#1281](https://github.com/ghiscoding/slickgrid-universal/issues/1281)) ([9cc6941](https://github.com/ghiscoding/slickgrid-universal/commit/9cc69410c25685c9251606fc82b91f8fd157be27)) - by @ghiscoding
+
 # [4.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.0.3...v4.1.0) (2023-12-21)
 
 ### Bug Fixes
