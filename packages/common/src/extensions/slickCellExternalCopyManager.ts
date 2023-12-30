@@ -75,10 +75,6 @@ export class SlickCellExternalCopyManager {
 
       // subscribe to this Slickgrid event of onBeforeEditCell
       this._eventHandler.subscribe(this.onBeforePasteCell, (e, args) => {
-        if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
-          return;
-        }
-
         const column: Column = grid.getColumns()[args.cell];
         const returnedArgs: OnEventArgs = {
           row: args.row!,
