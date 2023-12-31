@@ -1563,6 +1563,10 @@ describe('SlickDatView core file', () => {
       items[0].id = 11;
       dv.setPagingOptions({ dataView: dv, pageNum: 2, pageSize: 2 });
 
+      // calling it again will reuse the cached filter result
+      dv.setRefreshHints({ isFilterExpanding: true });
+      dv.refresh();
+
       // change filter without changing pagination & expect pageNum to be recalculated
       dv.setFilter(function (item) { return item.id >= 10 });
       expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 1, totalRows: 1 }, null, dv);
