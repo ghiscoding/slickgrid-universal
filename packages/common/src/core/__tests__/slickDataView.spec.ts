@@ -40,10 +40,249 @@ describe('SlickDatView core file', () => {
     expect(dv.getItems()).toEqual(mockData);
   });
 
+  describe('Item Getters', () => {
+    afterEach(() => {
+      dv.destroy();
+    });
+
+    test('retrieve an item from the DataView at specific index by calling getItem()', () => {
+      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      dv.setItems(items);
+
+      expect(dv.getItemCount()).toBe(2);
+      expect(dv.getLength()).toBe(2);
+      expect(dv.getItem(1)).toEqual({ id: 3, name: 'Jane', age: 24 });
+    });
+
+    describe('getRowByItem()', () => {
+      test('get row number in the grid by its item object by calling getRowByItem()', () => {
+        const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+        dv.setItems(items);
+
+        expect(dv.getRowByItem(items[1])).toBe(1);
+      });
+
+      it('should return undefined when calling getRowByItem() with an invalid item', () => {
+        const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+        const newItem = { id: 2, name: 'Bob', age: 30 };
+        dv.setItems(items);
+
+        expect(dv.getRowByItem(newItem)).toBeUndefined();
+      });
+    });
+
+    test('get row number in the grid by its Id by calling getRowById()', () => {
+      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      dv.setItems(items);
+
+      expect(dv.getRowById(3)).toBe(1);
+    });
+
+    test('get an item in the DataView by its Id by calling getItemById()', () => {
+      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      dv.setItems(items);
+
+      expect(dv.getItemById(3)).toEqual({ id: 3, name: 'Jane', age: 24 });
+    });
+
+    test('retrieve an item from the DataView at specific index by calling getItem()', () => {
+      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      dv.setItems(items);
+      expect(dv.getItem(1)).toEqual({ id: 3, name: 'Jane', age: 24 });
+    });
+
+    it('should return mapping of items with their row indexes', () => {
+      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      dv.setItems(items);
+      expect(dv.mapItemsToRows(items)).toEqual([0, 1]);
+    });
+
+    it('should return mapping of item Ids with their row indexes and exclude any Ids not found', () => {
+      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      dv.setItems(items);
+      expect(dv.mapIdsToRows([3, 4, 999])).toEqual([1, 0]);
+    });
+
+    it('should return mapping of row indexes with their item Ids and exclude any indexes not found', () => {
+      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      dv.setItems(items);
+      expect(dv.mapRowsToIds([0, 1, 999])).toEqual([4, 3]);
+    });
+  });
+
+  describe('CRUD methods', () => {
+    afterEach(() => {
+      dv.destroy();
+    });
+
+    describe('addItem()', () => {
+      it('should call the method and expect item to be added', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const newItem = { id: 2, name: 'Bob', age: 30 };
+
+        dv.setItems(items);
+        dv.addItem(newItem);
+
+        expect(dv.getItems().length).toBe(3);
+        expect(dv.getItems()).toEqual([
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+          { id: 2, name: 'Bob', age: 30 }
+        ]);
+      });
+    });
+
+    describe('deleteItem()', () => {
+      it('should call the method and return undefined when item Map is undefined', () => {
+        expect(dv.deleteItem(99)).toBeUndefined();
+      });
+
+      it('should throw when item Id is not found in the items array', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        dv.setItems(items);
+        expect(() => dv.deleteItem(99)).toThrow('[SlickGrid DataView] Invalid id');
+      });
+
+      test('delete an item from the items array', () => {
+        const refreshSpy = jest.spyOn(dv, 'refresh');
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+
+        dv.setItems(items);
+        dv.deleteItem(1);
+
+        expect(dv.getItems()).toEqual([{ id: 0, name: 'John', age: 20 }]);
+        expect(refreshSpy).toHaveBeenCalled();
+      });
+    });
+
+    describe('deleteItems()', () => {
+      it('should call the method and return undefined when item Map is undefined', () => {
+        expect(dv.deleteItems([99])).toBeUndefined();
+      });
+
+      it('should throw when item Id is not found in the items array', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        dv.setItems(items);
+        expect(() => dv.deleteItems([99])).toThrow('[SlickGrid DataView] Invalid id');
+      });
+
+      test('delete an item from the items array', () => {
+        const refreshSpy = jest.spyOn(dv, 'refresh');
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+
+        dv.setItems(items);
+        dv.deleteItems([1]);
+
+        expect(dv.getItems()).toEqual([{ id: 0, name: 'John', age: 20 }]);
+        expect(refreshSpy).toHaveBeenCalled();
+      });
+    });
+
+    describe('updateItem()', () => {
+      it('should throw when calling the method with input Ids array does not match items array', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        expect(() => dv.updateItems([0, 1, 99], items)).toThrow('[SlickGrid DataView] Mismatch on the length of ids and items provided to update');
+      });
+
+      it('should update item when calling the method', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const updatedItem = { id: 1, name: 'Bob', age: 30 };
+
+        dv.setItems(items);
+        dv.updateItem(1, updatedItem);
+
+        expect(dv.getItems().length).toBe(2);
+        expect(dv.getItems()).toEqual([
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Bob', age: 30 }
+        ]);
+      });
+    });
+
+    describe('updateSingleItem()', () => {
+      it('should call the method and return undefined when item Map is undefined', () => {
+        expect(dv.updateSingleItem(99, {})).toBeUndefined();
+      });
+
+      it('should throw when calling the method with an Id that is not found', () => {
+        dv.setItems([]);
+        expect(() => dv.updateSingleItem(99, {})).toThrow('[SlickGrid DataView] Invalid id');
+      });
+
+      it('should call the method and expect item to be updated', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        dv.setItems(items);
+        dv.updateSingleItem(1, { id: 1, name: 'Bob', age: 30 });
+
+        expect(dv.getItems().length).toBe(2);
+        expect(dv.getItems()).toEqual([
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Bob', age: 30 }
+        ]);
+        expect(dv.getItemByIdx(1)).toEqual({ id: 1, name: 'Bob', age: 30 });
+      });
+
+      it('should call the method and expect item to be updated when passing different Id', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+
+        dv.setItems(items);
+        dv.updateSingleItem(1, { id: 2, name: 'Bob', age: 30 });
+        expect(dv.getIdxById(2)).toBe(1);
+        dv.updateSingleItem(2, { id: 1, name: 'Bob', age: 30 });
+
+        expect(dv.getItems().length).toBe(2);
+        expect(dv.getItems()).toEqual([
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Bob', age: 30 }
+        ]);
+        expect(dv.getIdxById(1)).toBe(1);
+      });
+
+      test('cannot update item to associate with a non-unique id', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const updatedItem = { id: 1, name: 'Bob', age: 30 };
+
+        dv.setItems(items);
+        expect(() => dv.updateSingleItem(0, updatedItem)).toThrow('[SlickGrid DataView] Cannot update item to associate with a non-unique id');
+      });
+
+      test('cannot update item to associate with a null id', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const updatedItem = { name: 'Bob', age: 30 };
+
+        dv.setItems(items);
+        expect(() => dv.updateSingleItem(0, updatedItem)).toThrow('[SlickGrid DataView] Cannot update item to associate with a null id');
+      });
+    });
+  });
+
   describe('batch CRUD methods', () => {
     afterEach(() => {
       dv.endUpdate(); // close any batch that weren't closed because of potential error thrown
       dv.destroy();
+    });
+
+    describe('deleteItems()', () => {
+      it('should throw when calling the method with an index not found in the items array', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+
+        dv.setItems(items);
+        dv.beginUpdate(true);
+        expect(() => dv.deleteItems([99])).toThrow('[SlickGrid DataView] Invalid id');
+      });
+
+      test('delete an item from the items array in bulk', () => {
+        const refreshSpy = jest.spyOn(dv, 'refresh');
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+
+        dv.setItems(items);
+        dv.beginUpdate(true);
+        dv.deleteItems([1]);
+        dv.endUpdate();
+
+        expect(dv.getItems()).toEqual([{ id: 0, name: 'John', age: 20 }]);
+        expect(refreshSpy).toHaveBeenCalled();
+      });
     });
 
     it('should batch items with addItems and begin/end batch update', () => {
