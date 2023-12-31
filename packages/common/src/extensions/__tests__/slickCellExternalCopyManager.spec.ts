@@ -12,6 +12,7 @@ jest.mock('flatpickr', () => { });
 const mockGetSelectionModel = {
   getSelectedRanges: jest.fn(),
 };
+const returnValueStub = jest.fn();
 const gridStub = {
   getActiveCell: jest.fn(),
   getColumns: jest.fn(),
@@ -31,6 +32,7 @@ const gridStub = {
   setSelectionModel: jest.fn(),
   updateCell: jest.fn(),
   render: jest.fn(),
+  triggerEvent: jest.fn().mockReturnValue({ getReturnValue: returnValueStub }),
   onCellChange: new SlickEvent(),
   onKeyDown: new SlickEvent(),
 } as unknown as SlickGrid;
@@ -338,6 +340,9 @@ describe('CellExternalCopyManager', () => {
           cmd.execute();
         };
         jest.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]).mockReturnValueOnce(null as any);
+
+        // first one should be denied
+        returnValueStub.mockReturnValueOnce(false);
         plugin.init(gridStub, { clipboardPasteDelay: 1, clearCopySelectionDelay: 1, includeHeaderWhenCopying: true, clipboardCommandHandler, onBeforePasteCell: (e: SlickEventData, args: OnEventArgs) => args.cell > 0 });
 
         const keyDownCtrlCopyEvent = new Event('keydown');

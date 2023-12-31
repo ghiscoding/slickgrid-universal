@@ -70,7 +70,7 @@ export class SlickCellExternalCopyManager {
       }
     });
 
-    if (typeof this._addonOptions?.onBeforePasteCell === 'function') {
+    if (grid && typeof this._addonOptions?.onBeforePasteCell === 'function') {
       const dataView = grid?.getData<SlickDataView>();
 
       // subscribe to this Slickgrid event of onBeforeEditCell
@@ -280,7 +280,7 @@ export class SlickCellExternalCopyManager {
               // const nd = this._grid.getCellNode(desty, destx);
               const dt = this._grid.getDataItem(desty);
 
-              if (this.trigger(this.onBeforePasteCell, { row: desty, cell: destx, dt, column: columns[destx], target: 'grid' }).getReturnValue() === false) {
+              if (this._grid.triggerEvent(this.onBeforePasteCell, { row: desty, cell: destx, dt, column: columns[destx], target: 'grid' }).getReturnValue() === false) {
                  continue;
               }
 
@@ -369,13 +369,6 @@ export class SlickCellExternalCopyManager {
     } else {
       clipCommand.execute();
     }
-  }
-
-  protected trigger<ArgType = any>(evt: SlickEvent, args?: ArgType, e?: Event | SlickEventData) {
-    const event: SlickEventData = (e || new SlickEventData(e, args)) as SlickEventData;
-    const eventArgs = (args || {}) as ArgType & { grid: SlickGrid; };
-    eventArgs.grid = this._grid;
-    return evt.notify(eventArgs, event, this._grid);
   }
 
   protected handleKeyDown(e: any): boolean | void {
