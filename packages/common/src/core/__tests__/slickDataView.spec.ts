@@ -5,6 +5,11 @@ import { SortComparers } from '../../sortComparers';
 import { SlickDataView } from '../slickDataview';
 import 'flatpickr';
 
+class FakeAggregator {
+  init() { }
+  storeResult() { }
+}
+
 describe('SlickDatView core file', () => {
   let container: HTMLElement;
   let dv: SlickDataView;
@@ -561,17 +566,18 @@ describe('SlickDatView core file', () => {
       dv.setItems(mockData);
 
       const agg = new Aggregators.Count('lastName');
+      const agg2 = new FakeAggregator();
       dv.setGrouping({
         getter: 'lastName',
         formatter: (g) => `Family: ${g.value} <span class="text-green">(${g.count} items)</span>`,
-        aggregators: [agg],
+        aggregators: [agg, agg2],
         aggregateCollapsed: false,
         sortAsc: true,
       } as Grouping);
 
       expect(refreshSpy).toHaveBeenCalled();
       expect(dv.getGrouping().length).toBe(1);
-      expect(dv.getGrouping()[0]).toMatchObject({ aggregators: [agg], getter: 'lastName' });
+      expect(dv.getGrouping()[0]).toMatchObject({ aggregators: [agg, agg2], getter: 'lastName' });
 
       expect(dv.getItem(0)).toEqual({
         __group: true,
@@ -1392,6 +1398,234 @@ describe('SlickDatView core file', () => {
           { id: 1, name: 'Bob', age: 22 },
         ]);
       });
+    });
+  });
+
+  describe('Filteringg', () => {
+    afterEach(() => {
+      dv.destroy();
+      jest.clearAllMocks();
+    });
+
+    it('should be able to set a filter and expect items to be filtered', () => {
+      const refreshSpy = jest.spyOn(dv, 'refresh');
+
+      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const filter = (item) => item.id >= 2;
+      dv.setItems(items);
+      dv.setFilter(filter);
+
+      expect(dv.getItemCount()).toBe(3);
+      expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilteredItemCount()).toBe(2);
+      expect(dv.getFilteredItems()).toEqual([{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }]);
+      expect(refreshSpy).toHaveBeenCalled();
+    });
+
+    it('should be able to set a filter with Pagination and expect items to be filtered on first page', () => {
+      const refreshSpy = jest.spyOn(dv, 'refresh');
+
+      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const filter = (item) => item.id >= 2;
+      dv.setItems(items);
+      dv.setFilter(filter);
+
+      expect(dv.getItemCount()).toBe(3);
+      expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilteredItemCount()).toBe(2);
+      expect(dv.getFilteredItems()).toEqual([{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }]);
+      expect(refreshSpy).toHaveBeenCalled();
+    });
+
+    it('should be able to set a filter with CSP Safe approach and expect items to be filtered', () => {
+      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const filter = (item) => item.id >= 2;
+
+      dv = new SlickDataView({ useCSPSafeFilter: true });
+      dv.setItems(items);
+      dv.setFilter(filter);
+
+      expect(dv.getItemCount()).toBe(3);
+      expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilteredItemCount()).toBe(2);
+      expect(dv.getFilteredItems()).toEqual([{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }]);
+    });
+
+    it('should be able to set a filter and extra filter arguments and expect items to be filtered', () => {
+      const searchString = 'Ob'; // we'll provide "searchString" as filter args
+      function myFilter(item, args) {
+        return item.name.toLowerCase().includes(args.searchString?.toLowerCase());
+      }
+      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 0, name: 'Hobby', age: 44 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+
+      dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: false });
+      dv.setItems(items);
+      dv.setFilterArgs({ searchString });
+      dv.setFilter(myFilter);
+
+      expect(dv.getItemCount()).toBe(4);
+      expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilteredItemCount()).toBe(2);
+      expect(dv.getFilteredItems()).toEqual([{ id: 1, name: 'Bob', age: 33 }, { id: 0, name: 'Hobby', age: 44 }]);
+    });
+
+    it('should be able to set a filter as CSP Safe and extra filter arguments and expect items to be filtered', () => {
+      const searchString = 'Ob'; // we'll provide "searchString" as filter args
+      function myFilter(item, args) {
+        return item.name.toLowerCase().includes(args.searchString?.toLowerCase());
+      }
+      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 0, name: 'Hobby', age: 44 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+
+      dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: true });
+      dv.setItems(items);
+      dv.setFilterArgs({ searchString });
+      dv.setFilter(myFilter);
+
+      expect(dv.getItemCount()).toBe(4);
+      expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilteredItemCount()).toBe(2);
+      expect(dv.getFilteredItems()).toEqual([{ id: 1, name: 'Bob', age: 33 }, { id: 0, name: 'Hobby', age: 44 }]);
+    });
+  });
+
+  describe('Pagination', () => {
+    afterEach(() => {
+      dv.destroy();
+      jest.clearAllMocks();
+    });
+
+    it('should be able to set a filter with Pagination and expect items to be filtered on 2nd page', () => {
+      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const filter = (item) => item.id >= 2;
+
+      dv = new SlickDataView({ inlineFilters: false, useCSPSafeFilter: false });
+      const onPagingInfoSpy = jest.spyOn(dv.onPagingInfoChanged, 'notify');
+      dv.setItems(items);
+      dv.setFilter(filter);
+      dv.setPagingOptions({ dataView: dv, pageNum: 1, pageSize: 1 });
+      dv.refresh();
+
+      expect(dv.getPagingInfo()).toEqual({ dataView: dv, pageNum: 1, pageSize: 1, totalPages: 2, totalRows: 2 });
+      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 1, pageSize: 1, totalPages: 2, totalRows: 2 }, null, dv);
+      expect(dv.getItemCount()).toBe(3);
+      expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilteredItemCount()).toBe(2);
+      expect(dv.getFilteredItems()).toEqual([{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }]);
+    });
+
+    it('should be able to set an inline filter with Pagination and expect items to be filtered on 2nd page', () => {
+      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const filter = (item) => item.id >= 2;
+
+      dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: true });
+      const onPagingInfoSpy = jest.spyOn(dv.onPagingInfoChanged, 'notify');
+      dv.setItems(items);
+      dv.setFilter(filter);
+      dv.setPagingOptions({ dataView: dv, pageNum: 1, pageSize: 1 });
+      dv.refresh();
+
+      expect(dv.getPagingInfo()).toEqual({ dataView: dv, pageNum: 1, pageSize: 1, totalPages: 2, totalRows: 2 });
+      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 1, pageSize: 1, totalPages: 2, totalRows: 2 }, null, dv);
+      expect(dv.getItemCount()).toBe(3);
+      expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilteredItemCount()).toBe(2);
+      expect(dv.getFilteredItems()).toEqual([{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }]);
+    });
+
+    it('should be able to set a filter with Pagination and expect items to be filtered on 1st page', () => {
+      const items = [
+        { id: 1, name: 'Bob', age: 33 },
+        { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 },
+        { id: 5, name: 'Alpha', age: 12 }, { id: 6, name: 'Omega', age: 24 },
+      ];
+      function myFilter(item) { return item.id >= 2; }
+
+      dv = new SlickDataView({ inlineFilters: false, useCSPSafeFilter: false });
+      const onPagingInfoSpy = jest.spyOn(dv.onPagingInfoChanged, 'notify');
+      const onRowCountChangeSpy = jest.spyOn(dv.onRowCountChanged, 'notify');
+      const onRowsChangeSpy = jest.spyOn(dv.onRowsChanged, 'notify');
+      dv.setPagingOptions({ dataView: dv, pageNum: 1, pageSize: 10 });
+      dv.setItems(items);
+      dv.setRefreshHints({ isFilterNarrowing: true });
+      dv.setFilter(myFilter);
+
+      expect(dv.getPagingInfo()).toEqual({ dataView: dv, pageNum: 0, pageSize: 10, totalPages: 1, totalRows: 4 });
+      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 10, totalPages: 1, totalRows: 5 }, null, dv);
+      expect(dv.getItemCount()).toBe(items.length);
+      expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilteredItemCount()).toBe(4);
+      expect(dv.getFilteredItems()).toEqual([
+        { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 },
+        { id: 5, name: 'Alpha', age: 12 }, { id: 6, name: 'Omega', age: 24 }
+      ]);
+
+      dv.setRefreshHints({ isFilterExpanding: true });
+      items[0].id = 11;
+      dv.setPagingOptions({ dataView: dv, pageNum: 2, pageSize: 2 });
+
+      // calling it again will reuse the cached filter result
+      dv.setRefreshHints({ isFilterExpanding: true });
+      dv.refresh();
+
+      // change filter without changing pagination & expect pageNum to be recalculated
+      dv.setFilter(function (item) { return item.id >= 10 });
+      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 1, totalRows: 1 }, null, dv);
+      expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
+      expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [0, 1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
+
+      // change filter without changing pagination will result in 2 changes but only 1 defined as changed because we ignore diffs from 0-1
+      dv.setRefreshHints({ ignoreDiffsBefore: 1, ignoreDiffsAfter: 3 });
+      items[0].id = 8;
+      dv.setFilter(function (item) { return item.id >= 0 });
+      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 3, totalRows: 5 }, null, dv);
+      expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
+      expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
+    });
+
+    it('should be able to set a inline filter with Pagination and expect items to be filtered on 1st page', () => {
+      const items = [
+        { id: 1, name: 'Bob', age: 33 },
+        { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 },
+        { id: 5, name: 'Alpha', age: 12 }, { id: 6, name: 'Omega', age: 24 },
+      ];
+      function myFilter(item) { return item.id >= 2; }
+
+      dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: true });
+      const onPagingInfoSpy = jest.spyOn(dv.onPagingInfoChanged, 'notify');
+      const onRowCountChangeSpy = jest.spyOn(dv.onRowCountChanged, 'notify');
+      const onRowsChangeSpy = jest.spyOn(dv.onRowsChanged, 'notify');
+      dv.setPagingOptions({ dataView: dv, pageNum: 1, pageSize: 10 });
+      dv.setItems(items);
+      dv.setRefreshHints({ isFilterNarrowing: true });
+      dv.setFilter(myFilter);
+
+      expect(dv.getPagingInfo()).toEqual({ dataView: dv, pageNum: 0, pageSize: 10, totalPages: 1, totalRows: 4 });
+      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 10, totalPages: 1, totalRows: 5 }, null, dv);
+      expect(dv.getItemCount()).toBe(items.length);
+      expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilteredItemCount()).toBe(4);
+      expect(dv.getFilteredItems()).toEqual([
+        { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 },
+        { id: 5, name: 'Alpha', age: 12 }, { id: 6, name: 'Omega', age: 24 }
+      ]);
+
+      dv.setRefreshHints({ isFilterExpanding: true });
+      items[0].id = 11;
+      dv.setPagingOptions({ dataView: dv, pageNum: 2, pageSize: 2 });
+
+      // change filter without changing pagination & expect pageNum to be recalculated
+      dv.setFilter(function (item) { return item.id >= 10 });
+      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 1, totalRows: 1 }, null, dv);
+      expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
+      expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [0, 1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
+
+      // change filter without changing pagination will result in 2 changes but only 1 defined as changed because we ignore diffs from 0-1
+      dv.setRefreshHints({ ignoreDiffsBefore: 1, ignoreDiffsAfter: 3 });
+      items[0].id = 8;
+      dv.setFilter(function (item) { return item.id >= 0 || item.name.includes('a') });
+      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 3, totalRows: 5 }, null, dv);
+      expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
+      expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
     });
   });
 });

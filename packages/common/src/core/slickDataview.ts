@@ -1036,6 +1036,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   protected compileFilterCSPSafe(items: TData[], args: any): TData[] {
+    /* istanbul ignore if */
     if (typeof this.filterCSPSafe !== 'function') {
       return [];
     }
@@ -1140,6 +1141,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   }
 
   protected compileFilterWithCachingCSPSafe(items: TData[], args: any, filterCache: any[]): TData[] {
+    /* istanbul ignore if */
     if (typeof this.filterCSPSafe !== 'function') {
       return [];
     }
@@ -1166,7 +1168,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected setFunctionName(fn: any, fnName: string) {
     try {
       Object.defineProperty(fn, 'name', { writable: true, value: fnName });
-    } catch (err) {
+    } catch (err) /* istanbul ignore next */ {
       fn.name = fnName;
     }
   }
