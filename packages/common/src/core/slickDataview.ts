@@ -680,7 +680,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       return;
     }
     if (!this.idxById.has(id) || id !== item[this.idProperty as keyof TData]) {
-      throw new Error('[SlickGrid DataView] Invalid or non-matching id ' + this.idxById.get(id));
+      throw new Error(`[SlickGrid DataView] Invalid or non-matching id ${id}`);
     }
     if (!this.sortComparer) {
       throw new Error('[SlickGrid DataView] sortedUpdateItem() requires a sort comparer, use sort()');
