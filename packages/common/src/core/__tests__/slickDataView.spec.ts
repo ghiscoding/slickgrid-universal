@@ -1241,4 +1241,157 @@ describe('SlickDatView core file', () => {
       expect(dv.getItem(2)).toBeUndefined();
     });
   });
+
+  describe('Sorting', () => {
+    afterEach(() => {
+      dv.destroy();
+      jest.clearAllMocks();
+    });
+
+    describe('sortedAddItem()', () => {
+      it('should throw when calling the method without a sort comparer', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const newItem = { id: 2, name: 'Bob', age: 30 };
+
+        dv.setItems(items);
+        expect(() => dv.sortedAddItem(newItem)).toThrow('[SlickGrid DataView] sortedAddItem() requires a sort comparer, use sort()');
+      });
+
+      it('should call the method and expect item to be added and sorted in ascending order when no sort direction is provided', () => {
+        const refreshSpy = jest.spyOn(dv, 'refresh');
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const newItem = { id: 2, name: 'Bob', age: 30 };
+        // const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
+        const comparer = (a, b) => a.id === b.id ? 0 : (a.id > b.id ? 1 : -1);
+        const sortSpy = jest.spyOn(dv, 'sort');
+
+        dv.setItems(items);
+        dv.sort(comparer, true);
+        dv.sortedAddItem(newItem);
+
+        expect(refreshSpy).toHaveBeenCalledTimes(3);
+        expect(sortSpy).toHaveBeenCalledTimes(1);
+        expect(dv.getItems().length).toBe(3);
+        expect(dv.getItems()).toEqual([
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+          { id: 2, name: 'Bob', age: 30 },
+        ]);
+
+        dv.reSort(); // calling resort will expect same result
+
+        expect(refreshSpy).toHaveBeenCalledTimes(4);
+        expect(sortSpy).toHaveBeenCalledTimes(2);
+        expect(dv.getItems()).toEqual([
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+          { id: 2, name: 'Bob', age: 30 },
+        ]);
+      });
+
+      it('should call the method and expect item to be added when called with a descending sort comparer', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const newItem = { id: 2, name: 'Bob', age: 30 };
+        const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
+
+        dv.setItems(items);
+        dv.sort(comparer, false);
+        dv.sortedAddItem(newItem);
+        dv.sort(comparer, false);
+
+        expect(dv.getItems().length).toBe(3);
+        expect(dv.getItems()).toEqual([
+          { id: 2, name: 'Bob', age: 30 },
+          { id: 1, name: 'Jane', age: 24 },
+          { id: 0, name: 'John', age: 20 },
+        ]);
+
+        dv.reSort(); // calling resort will expect same result
+
+        expect(dv.getItems()).toEqual([
+          { id: 2, name: 'Bob', age: 30 },
+          { id: 1, name: 'Jane', age: 24 },
+          { id: 0, name: 'John', age: 20 },
+        ]);
+      });
+    });
+
+    describe('sortedUpdateItem()', () => {
+      it('should call the method and return undefined when item Map is undefined', () => {
+        expect(dv.sortedUpdateItem(99, {})).toBeUndefined();
+      });
+
+      it('should throw when calling the method with input Ids array does not match items array', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
+        dv.setItems(items);
+        dv.sort(comparer);
+
+        expect(() => dv.sortedUpdateItem(99, items[0])).toThrow('[SlickGrid DataView] Invalid or non-matching id 99');
+      });
+
+      it('should throw when calling the method with an input Id that does not match the updated item Id', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
+        dv.setItems(items);
+        dv.sort(comparer);
+
+        expect(() => dv.sortedUpdateItem(0, items[1])).toThrow('[SlickGrid DataView] Invalid or non-matching id 0');
+      });
+
+      it('should throw when calling the method without a sort comparer', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+
+        dv.setItems(items);
+        expect(() => dv.sortedUpdateItem(0, items[0])).toThrow('[SlickGrid DataView] sortedUpdateItem() requires a sort comparer, use sort()');
+      });
+
+      it('should call the method and expect item to be added and sorted in ascending order when no sort direction is provided', () => {
+        const refreshSpy = jest.spyOn(dv, 'refresh');
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const updatedItem = { id: 1, name: 'Bob', age: 30 };
+        const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
+        const sortSpy = jest.spyOn(dv, 'sort');
+
+        dv.setItems(items);
+        dv.sort(comparer, true);
+        dv.sortedUpdateItem(1, updatedItem);
+
+        expect(refreshSpy).toHaveBeenCalledTimes(3);
+        expect(sortSpy).toHaveBeenCalledTimes(1);
+        expect(dv.getItems().length).toBe(2);
+        expect(dv.getItems()).toEqual([
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Bob', age: 30 },
+        ]);
+
+        dv.reSort(); // calling resort will expect same result
+
+        expect(refreshSpy).toHaveBeenCalledTimes(4);
+        expect(sortSpy).toHaveBeenCalledTimes(2);
+        expect(dv.getItems()).toEqual([
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Bob', age: 30 },
+        ]);
+      });
+
+      it('should call the method and expect item to be added when called with a descending sort comparer', () => {
+        const items = [{ id: 2, name: 'John', age: 20 }, { id: 0, name: 'Jane', age: 24 }, { id: 1, name: 'Bob', age: 22 }];
+        const updatedItem = { id: 2, name: 'Bobby', age: 30 };
+        const comparer = (a, b) => 1; // just return some static value
+
+        dv.setItems(items);
+        dv.sort(comparer, false);
+        dv.sortedUpdateItem(2, updatedItem);
+        dv.sort(comparer, false);
+
+        // expect(dv.getItems().length).toBe(2);
+        expect(dv.getItems()).toEqual([
+          { id: 2, name: 'Bobby', age: 30 },
+          { id: 0, name: 'Jane', age: 24 },
+          { id: 1, name: 'Bob', age: 22 },
+        ]);
+      });
+    });
+  });
 });
