@@ -15,7 +15,10 @@ const mockGetSelectionModel = {
 const returnValueStub = jest.fn();
 const gridStub = {
   getActiveCell: jest.fn(),
-  getColumns: jest.fn(),
+  getColumns: jest.fn().mockReturnValue([
+    { id: 'firstName', field: 'firstName', name: 'First Name', },
+    { id: 'lastName', field: 'lastName', name: 'Last Name' },
+  ]),
   getData: jest.fn(),
   getDataItem: jest.fn(),
   getDataLength: jest.fn(),
@@ -196,6 +199,23 @@ describe('CellExternalCopyManager', () => {
       plugin.init(gridStub);
       plugin.setIncludeHeaderWhenCopying(true);
       expect(plugin.addonOptions.includeHeaderWhenCopying).toBeTruthy();
+    });
+
+    it('should call onBeforePasteCell with current row and column info', () => {
+      const sutSpy = jest.fn();
+      plugin.init(gridStub, { onBeforePasteCell: sutSpy });
+
+      plugin.onBeforePasteCell.notify({
+        row: 0,
+        cell: 0,
+        item: {
+          firstName: 'John',
+          lastName: 'Doe'
+        },
+        value: 'Foobar', columnDef: {} as Column
+      });
+
+      expect(sutSpy).toHaveBeenCalled();
     });
 
     describe('keyDown handler', () => {
