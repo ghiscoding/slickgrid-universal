@@ -2,7 +2,17 @@
 import Sortable, { SortableEvent } from 'sortablejs';
 import DOMPurify from 'dompurify';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { createDomElement, emptyElement, extend, getInnerSize, getOffset, insertAfterElement, isDefined, isPrimitiveOrHTML, classNameToList } from '@slickgrid-universal/utils';
+import {
+  classNameToList,
+  createDomElement,
+  emptyElement,
+  extend,
+  getInnerSize,
+  getOffset,
+  insertAfterElement,
+  isDefined,
+  isPrimitiveOrHTML,
+} from '@slickgrid-universal/utils';
 
 import {
   type BasePubSub,

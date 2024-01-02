@@ -1471,9 +1471,7 @@ describe('SlickDatView core file', () => {
 
     it('should be able to set a filter as CSP Safe and extra filter arguments and expect items to be filtered', () => {
       const searchString = 'Ob'; // we'll provide "searchString" as filter args
-      function myFilter(item, args) {
-        return item.name.toLowerCase().includes(args.searchString?.toLowerCase());
-      }
+      const myFilter = (item, args) => item.name.toLowerCase().includes(args.searchString?.toLowerCase());
       const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 0, name: 'Hobby', age: 44 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
 
       dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: true });
@@ -1568,7 +1566,7 @@ describe('SlickDatView core file', () => {
       dv.refresh();
 
       // change filter without changing pagination & expect pageNum to be recalculated
-      dv.setFilter(function (item) { return item.id >= 10 });
+      dv.setFilter((item) => item.id >= 10);
       expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 1, totalRows: 1 }, null, dv);
       expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
       expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [0, 1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
@@ -1622,7 +1620,7 @@ describe('SlickDatView core file', () => {
       // change filter without changing pagination will result in 2 changes but only 1 defined as changed because we ignore diffs from 0-1
       dv.setRefreshHints({ ignoreDiffsBefore: 1, ignoreDiffsAfter: 3 });
       items[0].id = 8;
-      dv.setFilter(function (item) { return item.id >= 0 || item.name.includes('a') });
+      dv.setFilter((item) => item.id >= 0 || item.name.includes('a'));
       expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 3, totalRows: 5 }, null, dv);
       expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
       expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
