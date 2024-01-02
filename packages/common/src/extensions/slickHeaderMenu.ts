@@ -1,5 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { arrayRemoveItemByIndex, calculateAvailableSpace, createDomElement, getOffsetRelativeToParent, getOffset, } from '@slickgrid-universal/utils';
+import { arrayRemoveItemByIndex, calculateAvailableSpace, createDomElement, getOffsetRelativeToParent, getOffset, classNameToList } from '@slickgrid-universal/utils';
 
 import { EmitterType } from '../enums/index';
 import type {
@@ -229,7 +229,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       const headerButtonDivElm = createDomElement('div', { className: 'slick-header-menu-button', ariaLabel: 'Header Menu' }, args.node);
 
       if (this.addonOptions.buttonCssClass) {
-        headerButtonDivElm.classList.add(...this.addonOptions.buttonCssClass.split(' '));
+        headerButtonDivElm.classList.add(...classNameToList(this.addonOptions.buttonCssClass));
       }
 
       if (this.addonOptions.tooltip) {

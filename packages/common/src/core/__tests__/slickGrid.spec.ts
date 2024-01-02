@@ -82,7 +82,7 @@ describe('SlickGrid core file', () => {
   });
 
   it('should be able to instantiate SlickGrid and set headerCssClass and expect it in column header', () => {
-    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', headerCssClass: 'header-class' }] as Column[];
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', headerCssClass: 'header-class  other-class' }] as Column[];
     const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
     grid = new SlickGrid<any, Column>('#myGrid', [], columns, options);
     grid.init();
@@ -239,7 +239,7 @@ describe('SlickGrid core file', () => {
 
   it('should be able to add CSS classes to all Viewports', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-    const options = { enableCellNavigation: true, viewportClass: 'vp-class1 vp-class2', devMode: { ownerNodeIndex: 0 } } as GridOption;
+    const options = { enableCellNavigation: true, viewportClass: 'vp-class1   vp-class2', devMode: { ownerNodeIndex: 0 } } as GridOption;
     grid = new SlickGrid<any, Column>(container, [], columns, options);
     grid.init();
     const vpElms = container.querySelectorAll('.slick-viewport');
@@ -1289,7 +1289,7 @@ describe('SlickGrid core file', () => {
       expect(viewportElm.scrollLeft).toBe(0);
     });
   });
-  
+
   describe('Navigation', () => {
     const columns = [
       { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },

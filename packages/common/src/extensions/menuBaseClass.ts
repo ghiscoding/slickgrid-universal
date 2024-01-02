@@ -1,6 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { createDomElement, emptyElement, hasData } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, hasData, classNameToList } from '@slickgrid-universal/utils';
 
 import type {
   CellMenu,
@@ -135,7 +135,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       subMenuTitleElm.textContent = (item as MenuCommandItem | MenuOptionItem | GridMenuItem).subMenuTitle as string;
       const subMenuTitleClass = (item as MenuCommandItem | MenuOptionItem | GridMenuItem).subMenuTitleCssClass as string;
       if (subMenuTitleClass) {
-        subMenuTitleElm.classList.add(...subMenuTitleClass.split(' '));
+        subMenuTitleElm.classList.add(...classNameToList(subMenuTitleClass));
       }
       commandOrOptionMenu.appendChild(subMenuTitleElm);
     }
@@ -241,7 +241,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       }
 
       if (item.cssClass) {
-        commandLiElm.classList.add(...item.cssClass.split(' '));
+        commandLiElm.classList.add(...classNameToList(item.cssClass));
       }
 
       if (item.tooltip) {
@@ -254,7 +254,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
         commandLiElm.appendChild(iconElm);
 
         if ((item as MenuCommandItem | MenuOptionItem).iconCssClass) {
-          iconElm.classList.add(...(item as MenuCommandItem | MenuOptionItem).iconCssClass!.split(' '));
+          iconElm.classList.add(...classNameToList((item as MenuCommandItem | MenuOptionItem).iconCssClass));
         } else if (!(item as MenuCommandItem).commandItems && !(item as MenuOptionItem).optionItems) {
           iconElm.textContent = '◦';
         }
@@ -269,7 +269,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
         );
 
         if ((item as MenuCommandItem | MenuOptionItem).textCssClass) {
-          textElm.classList.add(...(item as MenuCommandItem | MenuOptionItem).textCssClass!.split(' '));
+          textElm.classList.add(...classNameToList((item as MenuCommandItem | MenuOptionItem).textCssClass));
         }
       }
 
@@ -299,7 +299,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
         const chevronElm = document.createElement('span');
         chevronElm.className = 'sub-item-chevron';
         if ((this._addonOptions as any).subItemChevronClass) {
-          chevronElm.classList.add(...(this._addonOptions as any).subItemChevronClass.split(' '));
+          chevronElm.classList.add(...classNameToList((this._addonOptions as any).subItemChevronClass));
         } else {
           chevronElm.textContent = '⮞'; // ⮞ or ▸
         }
