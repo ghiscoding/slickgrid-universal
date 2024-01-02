@@ -63,6 +63,11 @@ export function createDomElement<T extends keyof HTMLElementTagNameMap, K extend
   return elm;
 }
 
+/** Takes an input string and splits it into an array of words (extra whitespaces are ignored). */
+export function classNameToList(s = ''): string[] {
+  return s.split(' ').filter(cls => cls); // filter will remove whitespace entries
+}
+
 /**
  * Loop through all properties of an object and nullify any properties that are instanceof HTMLElement,
  * if we detect an array then use recursion to go inside it and apply same logic

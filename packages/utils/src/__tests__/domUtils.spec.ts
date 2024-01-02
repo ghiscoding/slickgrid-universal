@@ -2,6 +2,7 @@ import 'jest-extended';
 
 import {
   calculateAvailableSpace,
+  classNameToList,
   createDomElement,
   destroyAllElementProps,
   emptyElement,
@@ -48,6 +49,22 @@ describe('Service/domUtilies', () => {
         right: 1175, // 1200px - 25px
         top: 10,
       });
+    });
+  });
+
+  describe('classNameToList() method', () => {
+    it('should return empty array when input string is undefined', () => {
+      expect(classNameToList(undefined)).toEqual([]);
+    });
+
+    it('should return an array with 2 words when multiple whitespaces are part of the string', () => {
+      const input = '   hello    world  ';
+      expect(classNameToList(input)).toEqual(['hello', 'world']);
+    });
+
+    it('should return an array with 4 words when input includes hypens and multiple whitespaces', () => {
+      const input = '   my-class  another--class    hello world!  ';
+      expect(classNameToList(input)).toEqual(['my-class', 'another--class', 'hello', 'world!']);
     });
   });
 

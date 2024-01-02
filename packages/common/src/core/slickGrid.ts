@@ -2,7 +2,7 @@
 import Sortable, { SortableEvent } from 'sortablejs';
 import DOMPurify from 'dompurify';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { createDomElement, emptyElement, extend, getInnerSize, getOffset, insertAfterElement, isDefined, isPrimitiveOrHTML } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, extend, getInnerSize, getOffset, insertAfterElement, isDefined, isPrimitiveOrHTML, classNameToList } from '@slickgrid-universal/utils';
 
 import {
   type BasePubSub,
@@ -719,7 +719,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._viewport = [this._viewportTopL, this._viewportTopR, this._viewportBottomL, this._viewportBottomR];
     if (this._options.viewportClass) {
       this._viewport.forEach((view) => {
-        view.classList.add(...(this._options.viewportClass || '').split(' '));
+        view.classList.add(...classNameToList(this._options.viewportClass));
       });
     }
 
@@ -1570,7 +1570,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       let classname = m.headerCssClass || null;
       if (classname) {
-        header.classList.add(...classname.split(' '));
+        header.classList.add(...classNameToList(classname));
       }
       classname = this.hasFrozenColumns() && i <= this._options.frozenColumn! ? 'frozen' : null;
       if (classname) {
@@ -2253,10 +2253,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._viewportBottomR.style.overflowY = this._options.alwaysShowVerticalScroll ? 'scroll' : ((this.hasFrozenColumns()) ? (this.hasFrozenRows ? 'auto' : 'auto') : (this.hasFrozenRows ? 'auto' : 'auto'));
 
     if (this._options.viewportClass) {
-      this._viewportTopL.classList.add(...this._options.viewportClass.split(' '));
-      this._viewportTopR.classList.add(...this._options.viewportClass.split(' '));
-      this._viewportBottomL.classList.add(...this._options.viewportClass.split(' '));
-      this._viewportBottomR.classList.add(...this._options.viewportClass.split(' '));
+      const viewportClasses = classNameToList(this._options.viewportClass);
+      this._viewportTopL.classList.add(...viewportClasses);
+      this._viewportTopR.classList.add(...viewportClasses);
+      this._viewportBottomL.classList.add(...viewportClasses);
+      this._viewportBottomR.classList.add(...viewportClasses);
     }
   }
 
@@ -3617,11 +3618,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.applyHtmlCode(cellNode, formatterVal);
 
     if ((formatterResult as FormatterResultObject).removeClasses && !suppressRemove) {
-      const classes = (formatterResult as FormatterResultObject).removeClasses!.split(' ');
+      const classes = classNameToList((formatterResult as FormatterResultObject).removeClasses);
       classes.forEach((c) => cellNode.classList.remove(c));
     }
     if ((formatterResult as FormatterResultObject).addClasses) {
-      const classes = (formatterResult as FormatterResultObject).addClasses!.split(' ');
+      const classes = classNameToList((formatterResult as FormatterResultObject).addClasses);
       classes.forEach((c) => cellNode.classList.add(c));
     }
     if ((formatterResult as FormatterResultObject).toolTip) {
