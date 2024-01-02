@@ -1,6 +1,6 @@
 /* eslint-disable no-new-func */
 /* eslint-disable no-bitwise */
-import { extend, isDefined } from '@slickgrid-universal/utils';
+import { type AnyFunction, extend, getFunctionDetails, isDefined } from '@slickgrid-universal/utils';
 
 import { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider';
 import type {
@@ -52,7 +52,6 @@ export type FilterWithCspCachingFn<T> = (item: T[], args: any, filterCache: any[
 export type DataIdType = number | string;
 export type SlickDataItem = SlickNonDataItem | SlickGroup | SlickGroupTotals | any;
 export type GroupGetterFn = (val: any) => string | number;
-export type AnyFunction = (...args: any[]) => any;
 
 /**
    * A sample Model implementation.
@@ -1007,17 +1006,6 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return groupedRows;
   }
 
-  protected getFunctionInfo(fn: AnyFunction) {
-    const fnStr = fn.toString();
-    const usingEs5 = fnStr.indexOf('function') >= 0; // with ES6, the word function is not present
-    const fnRegex = usingEs5 ? /^function[^(]*\(([^)]*)\)\s*{([\s\S]*)}$/ : /^[^(]*\(([^)]*)\)\s*{([\s\S]*)}$/;
-    const matches = fn.toString().match(fnRegex) || [];
-    return {
-      params: matches[1].split(','),
-      body: matches[2]
-    };
-  }
-
   protected compileAccumulatorLoopCSPSafe(aggregator: Aggregator) {
     if (aggregator.accumulate) {
       return function (items: any[]) {
@@ -1056,7 +1044,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     if (stopRunningIfCSPSafeIsActive) {
       return null;
     }
-    const filterInfo = this.getFunctionInfo(this.filter as FilterFn<TData>);
+    const filterInfo = getFunctionDetails(this.filter as FilterFn<TData>);
 
     const filterPath1 = '{ continue _coreloop; }$1';
     const filterPath2 = '{ _retval[_idx++] = $item$; continue _coreloop; }$1';
@@ -1098,7 +1086,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       return null;
     }
 
-    const filterInfo = this.getFunctionInfo(this.filter as FilterFn<TData>);
+    const filterInfo = getFunctionDetails(this.filter as FilterFn<TData>);
 
     const filterPath1 = '{ continue _coreloop; }$1';
     const filterPath2 = '{ _cache[_i] = true;_retval[_idx++] = $item$; continue _coreloop; }$1';

@@ -1,4 +1,4 @@
-import type { HtmlElementPosition, InferDOMType } from './types/index';
+import type { HtmlElementPosition, InferDOMType } from './models/index';
 
 /** calculate available space for each side of the DOM element */
 export function calculateAvailableSpace(element: HTMLElement): { top: number; bottom: number; left: number; right: number; } {
