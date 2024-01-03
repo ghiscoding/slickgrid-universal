@@ -1,9 +1,11 @@
 import { Aggregators } from '../../aggregators';
 import { SortDirectionNumber } from '../../enums';
-import { Grouping } from '../../interfaces';
+import { GridOption, Grouping } from '../../interfaces';
 import { SortComparers } from '../../sortComparers';
 import { SlickDataView } from '../slickDataview';
 import 'flatpickr';
+import { SlickGrid } from '../slickGrid';
+import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
 
 class FakeAggregator {
   init() { }
@@ -1401,7 +1403,7 @@ describe('SlickDatView core file', () => {
     });
   });
 
-  describe('Filteringg', () => {
+  describe('Filtering', () => {
     afterEach(() => {
       dv.destroy();
       jest.clearAllMocks();
@@ -1624,6 +1626,102 @@ describe('SlickDatView core file', () => {
       expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 3, totalRows: 5 }, null, dv);
       expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
       expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
+    });
+  });
+
+  describe('Row Selection', () => {
+    let items: any[] = [];
+    beforeEach(() => {
+      items = [
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 1, name: 'Bob', age: 20 },
+        { id: 5, name: 'Arnold', age: 50 },
+        { id: 0, name: 'Avery', age: 44 },
+        { id: 2, name: 'Rachel', age: 46 },
+        { id: 6, name: 'Carole', age: 40 },
+        { id: 8, name: 'Julie', age: 42 },
+        { id: 7, name: 'Jason', age: 48 },
+        { id: 9, name: 'Aaron', age: 23 },
+        { id: 10, name: 'Ariane', age: 43 },
+      ];
+    });
+
+    afterEach(() => {
+      dv.destroy();
+      jest.clearAllMocks();
+    });
+
+    it('should throw when calling syncGridSelection() and selection model is undefined', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const gridOptions = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
+      dv.setItems(items);
+      expect(() => dv.syncGridSelection(grid, true)).toThrow('SlickGrid Selection model is not set');
+    });
+
+    it('should enable "preserveHidden" but keep "preserveHiddenOnSelectionChange" disabled and expect to only return current page selection when calling getAll methods', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const gridOptions = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
+      grid.setSelectionModel(new SlickRowSelectionModel({ selectActiveRow: false }));
+      dv.setItems(items);
+      dv.setPagingOptions({ dataView: dv, pageNum: 0, pageSize: 4 });
+      dv.syncGridSelection(grid, true);
+      grid.setSelectedRows([0, 1, 7]);
+
+      expect(dv.getItemCount()).toBe(11); // full count
+      expect(dv.getLength()).toBe(4); // page count
+      expect(dv.getAllSelectedIds()).toEqual([3, 4]); // only 3, 4 because 7 is not on current page
+      expect(dv.getAllSelectedItems()).toEqual([
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 4, name: 'John', age: 20 },
+      ]);
+
+      // go to next page & change selection, only current page selection is kept
+      dv.setPagingOptions({ dataView: dv, pageNum: 1, pageSize: 4 });
+      grid.setSelectedRows([2, 3]);
+
+      expect(dv.getAllSelectedIds()).toEqual([6, 8]); // only 6, 8 because 7 is not on current page
+      expect(dv.getAllSelectedItems()).toEqual([
+        { id: 6, name: 'Carole', age: 40 },
+        { id: 8, name: 'Julie', age: 42 },
+      ]);
+    });
+
+    it('should disable "preserveHidden" and enable "preserveHiddenOnSelectionChange" and expect to return previous page + current page selections when calling getAll methods', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const gridOptions = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
+      grid.setSelectionModel(new SlickRowSelectionModel({ selectActiveRow: false }));
+      dv.setItems(items);
+      dv.setPagingOptions({ dataView: dv, pageNum: 0, pageSize: 4 });
+      dv.syncGridSelection(grid, false, true);
+      grid.setSelectedRows([0, 1, 7]);
+
+      expect(dv.getItemCount()).toBe(11); // full count
+      expect(dv.getLength()).toBe(4); // page count
+      expect(dv.getAllSelectedIds()).toEqual([3, 4]);
+      expect(dv.getAllSelectedItems()).toEqual([
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 4, name: 'John', age: 20 },
+      ]);
+
+      // go to next page & change selection, selection also includes previous page(s)
+      dv.setPagingOptions({ dataView: dv, pageNum: 1, pageSize: 4 });
+      grid.setSelectedRows([2, 3]);
+
+      expect(dv.getAllSelectedIds()).toEqual([3, 4, 6, 8]); // includes previous page + current page selection
+      expect(dv.getAllSelectedItems()).toEqual([
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 6, name: 'Carole', age: 40 },
+        { id: 8, name: 'Julie', age: 42 },
+      ]);
     });
   });
 });

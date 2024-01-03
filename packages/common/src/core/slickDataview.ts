@@ -1357,10 +1357,12 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    *
    * @param {SlickGrid} grid - The grid to sync selection with.
    * @param {Boolean} preserveHidden - Whether to keep selected items that go out of the
-   *     view due to them getting filtered out.
+   *     view due to them getting filtered out. When used with pagination,
+   *     changing selection on different page will cancel previous page selection
    * @param {Boolean} [preserveHiddenOnSelectionChange] - Whether to keep selected items
    *     that are currently out of the view (see preserveHidden) as selected when selection
-   *     changes.
+   *     changes. When used with pagination, changing selection on different page
+   *     will keep previous page selection (this is different compared to `preserveHidden`)
    * @return {Event} An event that notifies when an internal list of selected row ids
    *     changes.  This is useful since, in combination with the above two options, it allows
    *     access to the full list selected row ids, and not just the ones visible to the grid.
