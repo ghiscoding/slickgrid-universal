@@ -1242,6 +1242,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     target.forEach((el) => {
       el.setAttribute('unselectable', 'on');
       (el.style as any).mozUserSelect = 'none';
+      /* istanbul ignore next */
       this._bindingEventService.bind(el, 'selectstart', () => false);
     });
   }
@@ -3113,7 +3114,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
   }
 
-  validateAndEnforceOptions(): void {
+  protected validateAndEnforceOptions(): void {
     if (this._options.autoHeight) {
       this._options.leaveSpaceForNewRows = false;
     }
@@ -5160,7 +5161,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const y2 = y1 + this._options.rowHeight! - 1;
     let x1 = 0;
     for (let i = 0; i < cell; i++) {
-      if (!this.columns[i] || this.columns[i].hidden) { continue; }
+      if (!this.columns[i] || this.columns[i].hidden) {
+        continue;
+      }
 
       x1 += (this.columns[i].width || 0);
 
