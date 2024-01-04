@@ -1,3 +1,10 @@
+<style>
+  .blocked-cell {
+    background: darkred!important;
+    color: #999;
+  }
+
+</style>
 <h3 class="title is-3">
   Example 19 - ExcelCopyBuffer with Cell Selection
   <span class="subtitle">(with Salesforce Theme)</span>
@@ -11,7 +18,8 @@
 </h3>
 
 <h5 class="title is-5 mb-3">
-  Grid - using <code>enableExcelCopyBuffer</code> which uses <code>SlickCellSelectionModel</code>
+  Grid - using <code>enableExcelCopyBuffer</code> which uses <code>SlickCellSelectionModel</code><br />
+  The complete first row and the cells C - E of the second row are not allowing to paste values.
 </h5>
 <h6 class="title is-6">
   <button class="button is-small is-primary" onclick.delegate="togglePagination()"

@@ -38,6 +38,7 @@ handleOnHeaderMenuCommand(e) {
   - `onCopyCells`
   - `onCopyCancelled`
   - `onPasteCells`
+  - `onBeforePasteCell`
 
 #### SlickContextMenu (extension)
   - `onContextMenuClearGrouping`
