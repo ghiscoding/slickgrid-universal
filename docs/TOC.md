@@ -44,6 +44,7 @@
 * [Custom Tooltip](grid-functionalities/custom-tooltip.md)
 * [Context Menu](grid-functionalities/Context-Menu.md)
 * [Custom Footer](grid-functionalities/Custom-Footer.md)
+* [Excel Copy Buffer Plugin](grid-functionalities/excel-copy-buffer.md)
 * [Export to Excel](grid-functionalities/Export-to-Excel.md)
 * [Export to File (csv/txt)](grid-functionalities/Export-to-Text-File.md)
 * [Grid Menu](grid-functionalities/Grid-Menu.md)

@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { deepCopy, deepMerge, emptyObject, setDeepValue } from '@slickgrid-universal/utils';
+import { deepCopy, deepMerge, emptyObject, setDeepValue, classNameToList } from '@slickgrid-universal/utils';
 import type {
   Column,
   CompositeEditorLabel,
@@ -634,7 +634,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     });
 
     if (this._options?.resetEditorButtonCssClass) {
-      const resetBtnClasses = this._options?.resetEditorButtonCssClass.split(' ');
+      const resetBtnClasses = classNameToList(this._options?.resetEditorButtonCssClass);
       for (const cssClass of resetBtnClasses) {
         resetButtonElm.classList.add(cssClass);
       }

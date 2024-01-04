@@ -1,4 +1,4 @@
-import type { HtmlElementPosition, InferDOMType } from './types/index';
+import type { HtmlElementPosition, InferDOMType } from './models/index';
 
 /** calculate available space for each side of the DOM element */
 export function calculateAvailableSpace(element: HTMLElement): { top: number; bottom: number; left: number; right: number; } {
@@ -61,6 +61,11 @@ export function createDomElement<T extends keyof HTMLElementTagNameMap, K extend
     appendToParent.appendChild(elm);
   }
   return elm;
+}
+
+/** Takes an input string and splits it into an array of words (extra whitespaces are ignored). */
+export function classNameToList(s = ''): string[] {
+  return s.split(' ').filter(cls => cls); // filter will remove whitespace entries
 }
 
 /**

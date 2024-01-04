@@ -1,6 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
-import { createDomElement, emptyElement, isEmptyObject } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, isEmptyObject, classNameToList } from '@slickgrid-universal/utils';
 import Sortable, { type Options as SortableOptions, type SortableEvent } from 'sortablejs';
 
 import type { ExtensionUtility } from '../extensions/extensionUtility';
@@ -16,7 +16,7 @@ import type {
 } from '../interfaces/index';
 import type { SharedService } from '../services/shared.service';
 import { sortByFieldType } from '../sortComparers';
-import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
+import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, } from '../core/index';
 
 /**
  *
@@ -186,7 +186,7 @@ export class SlickDraggableGrouping {
           if (this._addonOptions.groupIconCssClass) {
             const groupableIconElm = createDomElement('span', { className: 'slick-column-groupable' }, node);
             if (this._addonOptions.groupIconCssClass) {
-              groupableIconElm.classList.add(...this._addonOptions.groupIconCssClass.split(' '));
+              groupableIconElm.classList.add(...classNameToList(this._addonOptions.groupIconCssClass));
             }
           }
         }
@@ -401,8 +401,8 @@ export class SlickDraggableGrouping {
     if (sortAsc) {
       // ascending icon
       if (this._addonOptions.sortAscIconCssClass) {
-        groupSortContainerElm.classList.remove(...this._addonOptions.sortDescIconCssClass?.split(' ') ?? '');
-        groupSortContainerElm.classList.add(...this._addonOptions.sortAscIconCssClass.split(' '));
+        groupSortContainerElm.classList.remove(...classNameToList(this._addonOptions.sortDescIconCssClass));
+        groupSortContainerElm.classList.add(...classNameToList(this._addonOptions.sortAscIconCssClass));
       } else {
         groupSortContainerElm.classList.add('slick-groupby-sort-asc-icon');
         groupSortContainerElm.classList.remove('slick-groupby-sort-desc-icon');
@@ -410,8 +410,8 @@ export class SlickDraggableGrouping {
     } else {
       // descending icon
       if (this._addonOptions.sortDescIconCssClass) {
-        groupSortContainerElm.classList.remove(...this._addonOptions.sortAscIconCssClass?.split(' ') ?? '');
-        groupSortContainerElm.classList.add(...this._addonOptions.sortDescIconCssClass.split(' '));
+        groupSortContainerElm.classList.remove(...classNameToList(this._addonOptions.sortAscIconCssClass));
+        groupSortContainerElm.classList.add(...classNameToList(this._addonOptions.sortDescIconCssClass));
       } else {
         if (!this._addonOptions.sortDescIconCssClass) {
           groupSortContainerElm.classList.add('slick-groupby-sort-desc-icon');
@@ -448,7 +448,7 @@ export class SlickDraggableGrouping {
           // delete icon
           const groupRemoveIconElm = createDomElement('div', { className: 'slick-groupby-remove' });
           if (this._addonOptions.deleteIconCssClass) {
-            groupRemoveIconElm.classList.add(...this._addonOptions.deleteIconCssClass.split(' '));
+            groupRemoveIconElm.classList.add(...classNameToList(this._addonOptions.deleteIconCssClass));
           }
           if (!this._addonOptions.deleteIconCssClass) {
             groupRemoveIconElm.classList.add('slick-groupby-remove-icon');

@@ -1,5 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { calculateAvailableSpace, createDomElement, emptyElement, findWidthOrDefault, getOffset, } from '@slickgrid-universal/utils';
+import { calculateAvailableSpace, createDomElement, emptyElement, findWidthOrDefault, getOffset, classNameToList, } from '@slickgrid-universal/utils';
 
 import type {
   Column,
@@ -207,7 +207,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       if (showButton) {
         this._gridMenuButtonElm = createDomElement('button', { className: 'slick-grid-menu-button', ariaLabel: 'Grid Menu' });
         if (this._addonOptions?.iconCssClass) {
-          this._gridMenuButtonElm.classList.add(...this._addonOptions.iconCssClass.split(' '));
+          this._gridMenuButtonElm.classList.add(...classNameToList(this._addonOptions.iconCssClass));
         }
         this._headerElm.parentElement!.insertBefore(this._gridMenuButtonElm, this._headerElm.parentElement!.firstChild);
 

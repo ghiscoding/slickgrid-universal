@@ -1,9 +1,17 @@
 import { Aggregators } from '../../aggregators';
 import { SortDirectionNumber } from '../../enums';
-import { Grouping } from '../../interfaces';
+import { GridOption, Grouping } from '../../interfaces';
 import { SortComparers } from '../../sortComparers';
 import { SlickDataView } from '../slickDataview';
 import 'flatpickr';
+import { SlickGrid } from '../slickGrid';
+import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
+import { SlickEventData } from '../slickCore';
+
+class FakeAggregator {
+  init() { }
+  storeResult() { }
+}
 
 describe('SlickDatView core file', () => {
   let container: HTMLElement;
@@ -40,10 +48,249 @@ describe('SlickDatView core file', () => {
     expect(dv.getItems()).toEqual(mockData);
   });
 
+  describe('Item Getters', () => {
+    afterEach(() => {
+      dv.destroy();
+    });
+
+    test('retrieve an item from the DataView at specific index by calling getItem()', () => {
+      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      dv.setItems(items);
+
+      expect(dv.getItemCount()).toBe(2);
+      expect(dv.getLength()).toBe(2);
+      expect(dv.getItem(1)).toEqual({ id: 3, name: 'Jane', age: 24 });
+    });
+
+    describe('getRowByItem()', () => {
+      test('get row number in the grid by its item object by calling getRowByItem()', () => {
+        const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+        dv.setItems(items);
+
+        expect(dv.getRowByItem(items[1])).toBe(1);
+      });
+
+      it('should return undefined when calling getRowByItem() with an invalid item', () => {
+        const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+        const newItem = { id: 2, name: 'Bob', age: 30 };
+        dv.setItems(items);
+
+        expect(dv.getRowByItem(newItem)).toBeUndefined();
+      });
+    });
+
+    test('get row number in the grid by its Id by calling getRowById()', () => {
+      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      dv.setItems(items);
+
+      expect(dv.getRowById(3)).toBe(1);
+    });
+
+    test('get an item in the DataView by its Id by calling getItemById()', () => {
+      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      dv.setItems(items);
+
+      expect(dv.getItemById(3)).toEqual({ id: 3, name: 'Jane', age: 24 });
+    });
+
+    test('retrieve an item from the DataView at specific index by calling getItem()', () => {
+      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      dv.setItems(items);
+      expect(dv.getItem(1)).toEqual({ id: 3, name: 'Jane', age: 24 });
+    });
+
+    it('should return mapping of items with their row indexes', () => {
+      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      dv.setItems(items);
+      expect(dv.mapItemsToRows(items)).toEqual([0, 1]);
+    });
+
+    it('should return mapping of item Ids with their row indexes and exclude any Ids not found', () => {
+      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      dv.setItems(items);
+      expect(dv.mapIdsToRows([3, 4, 999])).toEqual([1, 0]);
+    });
+
+    it('should return mapping of row indexes with their item Ids and exclude any indexes not found', () => {
+      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      dv.setItems(items);
+      expect(dv.mapRowsToIds([0, 1, 999])).toEqual([4, 3]);
+    });
+  });
+
+  describe('CRUD methods', () => {
+    afterEach(() => {
+      dv.destroy();
+    });
+
+    describe('addItem()', () => {
+      it('should call the method and expect item to be added', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const newItem = { id: 2, name: 'Bob', age: 30 };
+
+        dv.setItems(items);
+        dv.addItem(newItem);
+
+        expect(dv.getItems().length).toBe(3);
+        expect(dv.getItems()).toEqual([
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+          { id: 2, name: 'Bob', age: 30 }
+        ]);
+      });
+    });
+
+    describe('deleteItem()', () => {
+      it('should call the method and return undefined when item Map is undefined', () => {
+        expect(dv.deleteItem(99)).toBeUndefined();
+      });
+
+      it('should throw when item Id is not found in the items array', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        dv.setItems(items);
+        expect(() => dv.deleteItem(99)).toThrow('[SlickGrid DataView] Invalid id');
+      });
+
+      test('delete an item from the items array', () => {
+        const refreshSpy = jest.spyOn(dv, 'refresh');
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+
+        dv.setItems(items);
+        dv.deleteItem(1);
+
+        expect(dv.getItems()).toEqual([{ id: 0, name: 'John', age: 20 }]);
+        expect(refreshSpy).toHaveBeenCalled();
+      });
+    });
+
+    describe('deleteItems()', () => {
+      it('should call the method and return undefined when item Map is undefined', () => {
+        expect(dv.deleteItems([99])).toBeUndefined();
+      });
+
+      it('should throw when item Id is not found in the items array', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        dv.setItems(items);
+        expect(() => dv.deleteItems([99])).toThrow('[SlickGrid DataView] Invalid id');
+      });
+
+      test('delete an item from the items array', () => {
+        const refreshSpy = jest.spyOn(dv, 'refresh');
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+
+        dv.setItems(items);
+        dv.deleteItems([1]);
+
+        expect(dv.getItems()).toEqual([{ id: 0, name: 'John', age: 20 }]);
+        expect(refreshSpy).toHaveBeenCalled();
+      });
+    });
+
+    describe('updateItem()', () => {
+      it('should throw when calling the method with input Ids array does not match items array', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        expect(() => dv.updateItems([0, 1, 99], items)).toThrow('[SlickGrid DataView] Mismatch on the length of ids and items provided to update');
+      });
+
+      it('should update item when calling the method', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const updatedItem = { id: 1, name: 'Bob', age: 30 };
+
+        dv.setItems(items);
+        dv.updateItem(1, updatedItem);
+
+        expect(dv.getItems().length).toBe(2);
+        expect(dv.getItems()).toEqual([
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Bob', age: 30 }
+        ]);
+      });
+    });
+
+    describe('updateSingleItem()', () => {
+      it('should call the method and return undefined when item Map is undefined', () => {
+        expect(dv.updateSingleItem(99, {})).toBeUndefined();
+      });
+
+      it('should throw when calling the method with an Id that is not found', () => {
+        dv.setItems([]);
+        expect(() => dv.updateSingleItem(99, {})).toThrow('[SlickGrid DataView] Invalid id');
+      });
+
+      it('should call the method and expect item to be updated', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        dv.setItems(items);
+        dv.updateSingleItem(1, { id: 1, name: 'Bob', age: 30 });
+
+        expect(dv.getItems().length).toBe(2);
+        expect(dv.getItems()).toEqual([
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Bob', age: 30 }
+        ]);
+        expect(dv.getItemByIdx(1)).toEqual({ id: 1, name: 'Bob', age: 30 });
+      });
+
+      it('should call the method and expect item to be updated when passing different Id', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+
+        dv.setItems(items);
+        dv.updateSingleItem(1, { id: 2, name: 'Bob', age: 30 });
+        expect(dv.getIdxById(2)).toBe(1);
+        dv.updateSingleItem(2, { id: 1, name: 'Bob', age: 30 });
+
+        expect(dv.getItems().length).toBe(2);
+        expect(dv.getItems()).toEqual([
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Bob', age: 30 }
+        ]);
+        expect(dv.getIdxById(1)).toBe(1);
+      });
+
+      test('cannot update item to associate with a non-unique id', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const updatedItem = { id: 1, name: 'Bob', age: 30 };
+
+        dv.setItems(items);
+        expect(() => dv.updateSingleItem(0, updatedItem)).toThrow('[SlickGrid DataView] Cannot update item to associate with a non-unique id');
+      });
+
+      test('cannot update item to associate with a null id', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const updatedItem = { name: 'Bob', age: 30 };
+
+        dv.setItems(items);
+        expect(() => dv.updateSingleItem(0, updatedItem)).toThrow('[SlickGrid DataView] Cannot update item to associate with a null id');
+      });
+    });
+  });
+
   describe('batch CRUD methods', () => {
     afterEach(() => {
       dv.endUpdate(); // close any batch that weren't closed because of potential error thrown
       dv.destroy();
+    });
+
+    describe('deleteItems()', () => {
+      it('should throw when calling the method with an index not found in the items array', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+
+        dv.setItems(items);
+        dv.beginUpdate(true);
+        expect(() => dv.deleteItems([99])).toThrow('[SlickGrid DataView] Invalid id');
+      });
+
+      test('delete an item from the items array in bulk', () => {
+        const refreshSpy = jest.spyOn(dv, 'refresh');
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+
+        dv.setItems(items);
+        dv.beginUpdate(true);
+        dv.deleteItems([1]);
+        dv.endUpdate();
+
+        expect(dv.getItems()).toEqual([{ id: 0, name: 'John', age: 20 }]);
+        expect(refreshSpy).toHaveBeenCalled();
+      });
     });
 
     it('should batch items with addItems and begin/end batch update', () => {
@@ -322,17 +569,18 @@ describe('SlickDatView core file', () => {
       dv.setItems(mockData);
 
       const agg = new Aggregators.Count('lastName');
+      const agg2 = new FakeAggregator();
       dv.setGrouping({
         getter: 'lastName',
         formatter: (g) => `Family: ${g.value} <span class="text-green">(${g.count} items)</span>`,
-        aggregators: [agg],
+        aggregators: [agg, agg2],
         aggregateCollapsed: false,
         sortAsc: true,
       } as Grouping);
 
       expect(refreshSpy).toHaveBeenCalled();
       expect(dv.getGrouping().length).toBe(1);
-      expect(dv.getGrouping()[0]).toMatchObject({ aggregators: [agg], getter: 'lastName' });
+      expect(dv.getGrouping()[0]).toMatchObject({ aggregators: [agg, agg2], getter: 'lastName' });
 
       expect(dv.getItem(0)).toEqual({
         __group: true,
@@ -1000,6 +1248,630 @@ describe('SlickDatView core file', () => {
         value: 'Doe',
       });
       expect(dv.getItem(2)).toBeUndefined();
+    });
+  });
+
+  describe('Sorting', () => {
+    afterEach(() => {
+      dv.destroy();
+      jest.clearAllMocks();
+    });
+
+    describe('sortedAddItem()', () => {
+      it('should throw when calling the method without a sort comparer', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const newItem = { id: 2, name: 'Bob', age: 30 };
+
+        dv.setItems(items);
+        expect(() => dv.sortedAddItem(newItem)).toThrow('[SlickGrid DataView] sortedAddItem() requires a sort comparer, use sort()');
+      });
+
+      it('should call the method and expect item to be added and sorted in ascending order when no sort direction is provided', () => {
+        const refreshSpy = jest.spyOn(dv, 'refresh');
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const newItem = { id: 2, name: 'Bob', age: 30 };
+        // const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
+        const comparer = (a, b) => a.id === b.id ? 0 : (a.id > b.id ? 1 : -1);
+        const sortSpy = jest.spyOn(dv, 'sort');
+
+        dv.setItems(items);
+        dv.sort(comparer, true);
+        dv.sortedAddItem(newItem);
+
+        expect(refreshSpy).toHaveBeenCalledTimes(3);
+        expect(sortSpy).toHaveBeenCalledTimes(1);
+        expect(dv.getItems().length).toBe(3);
+        expect(dv.getItems()).toEqual([
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+          { id: 2, name: 'Bob', age: 30 },
+        ]);
+
+        dv.reSort(); // calling resort will expect same result
+
+        expect(refreshSpy).toHaveBeenCalledTimes(4);
+        expect(sortSpy).toHaveBeenCalledTimes(2);
+        expect(dv.getItems()).toEqual([
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Jane', age: 24 },
+          { id: 2, name: 'Bob', age: 30 },
+        ]);
+      });
+
+      it('should call the method and expect item to be added when called with a descending sort comparer', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const newItem = { id: 2, name: 'Bob', age: 30 };
+        const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
+
+        dv.setItems(items);
+        dv.sort(comparer, false);
+        dv.sortedAddItem(newItem);
+        dv.sort(comparer, false);
+
+        expect(dv.getItems().length).toBe(3);
+        expect(dv.getItems()).toEqual([
+          { id: 2, name: 'Bob', age: 30 },
+          { id: 1, name: 'Jane', age: 24 },
+          { id: 0, name: 'John', age: 20 },
+        ]);
+
+        dv.reSort(); // calling resort will expect same result
+
+        expect(dv.getItems()).toEqual([
+          { id: 2, name: 'Bob', age: 30 },
+          { id: 1, name: 'Jane', age: 24 },
+          { id: 0, name: 'John', age: 20 },
+        ]);
+      });
+    });
+
+    describe('sortedUpdateItem()', () => {
+      it('should call the method and return undefined when item Map is undefined', () => {
+        expect(dv.sortedUpdateItem(99, {})).toBeUndefined();
+      });
+
+      it('should throw when calling the method with input Ids array does not match items array', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
+        dv.setItems(items);
+        dv.sort(comparer);
+
+        expect(() => dv.sortedUpdateItem(99, items[0])).toThrow('[SlickGrid DataView] Invalid or non-matching id 99');
+      });
+
+      it('should throw when calling the method with an input Id that does not match the updated item Id', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
+        dv.setItems(items);
+        dv.sort(comparer);
+
+        expect(() => dv.sortedUpdateItem(0, items[1])).toThrow('[SlickGrid DataView] Invalid or non-matching id 0');
+      });
+
+      it('should throw when calling the method without a sort comparer', () => {
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+
+        dv.setItems(items);
+        expect(() => dv.sortedUpdateItem(0, items[0])).toThrow('[SlickGrid DataView] sortedUpdateItem() requires a sort comparer, use sort()');
+      });
+
+      it('should call the method and expect item to be added and sorted in ascending order when no sort direction is provided', () => {
+        const refreshSpy = jest.spyOn(dv, 'refresh');
+        const items = [{ id: 0, name: 'John', age: 20 }, { id: 1, name: 'Jane', age: 24 }];
+        const updatedItem = { id: 1, name: 'Bob', age: 30 };
+        const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
+        const sortSpy = jest.spyOn(dv, 'sort');
+
+        dv.setItems(items);
+        dv.sort(comparer, true);
+        dv.sortedUpdateItem(1, updatedItem);
+
+        expect(refreshSpy).toHaveBeenCalledTimes(3);
+        expect(sortSpy).toHaveBeenCalledTimes(1);
+        expect(dv.getItems().length).toBe(2);
+        expect(dv.getItems()).toEqual([
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Bob', age: 30 },
+        ]);
+
+        dv.reSort(); // calling resort will expect same result
+
+        expect(refreshSpy).toHaveBeenCalledTimes(4);
+        expect(sortSpy).toHaveBeenCalledTimes(2);
+        expect(dv.getItems()).toEqual([
+          { id: 0, name: 'John', age: 20 },
+          { id: 1, name: 'Bob', age: 30 },
+        ]);
+      });
+
+      it('should call the method and expect item to be added when called with a descending sort comparer', () => {
+        const items = [{ id: 2, name: 'John', age: 20 }, { id: 0, name: 'Jane', age: 24 }, { id: 1, name: 'Bob', age: 22 }];
+        const updatedItem = { id: 2, name: 'Bobby', age: 30 };
+        const comparer = (a, b) => 1; // just return some static value
+
+        dv.setItems(items);
+        dv.sort(comparer, false);
+        dv.sortedUpdateItem(2, updatedItem);
+        dv.sort(comparer, false);
+
+        // expect(dv.getItems().length).toBe(2);
+        expect(dv.getItems()).toEqual([
+          { id: 2, name: 'Bobby', age: 30 },
+          { id: 0, name: 'Jane', age: 24 },
+          { id: 1, name: 'Bob', age: 22 },
+        ]);
+      });
+    });
+  });
+
+  describe('Filtering', () => {
+    afterEach(() => {
+      dv.destroy();
+      jest.clearAllMocks();
+    });
+
+    it('should be able to set a filter and expect items to be filtered', () => {
+      const refreshSpy = jest.spyOn(dv, 'refresh');
+
+      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const filter = (item) => item.id >= 2;
+      dv.setItems(items);
+      dv.setFilter(filter);
+
+      expect(dv.getItemCount()).toBe(3);
+      expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilteredItemCount()).toBe(2);
+      expect(dv.getFilteredItems()).toEqual([{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }]);
+      expect(refreshSpy).toHaveBeenCalled();
+    });
+
+    it('should be able to set a filter with Pagination and expect items to be filtered on first page', () => {
+      const refreshSpy = jest.spyOn(dv, 'refresh');
+
+      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const filter = (item) => item.id >= 2;
+      dv.setItems(items);
+      dv.setFilter(filter);
+
+      expect(dv.getItemCount()).toBe(3);
+      expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilteredItemCount()).toBe(2);
+      expect(dv.getFilteredItems()).toEqual([{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }]);
+      expect(refreshSpy).toHaveBeenCalled();
+    });
+
+    it('should be able to set a filter with CSP Safe approach and expect items to be filtered', () => {
+      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const filter = (item) => item.id >= 2;
+
+      dv = new SlickDataView({ useCSPSafeFilter: true });
+      dv.setItems(items);
+      dv.setFilter(filter);
+
+      expect(dv.getItemCount()).toBe(3);
+      expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilteredItemCount()).toBe(2);
+      expect(dv.getFilteredItems()).toEqual([{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }]);
+    });
+
+    it('should be able to set a filter and extra filter arguments and expect items to be filtered', () => {
+      const searchString = 'Ob'; // we'll provide "searchString" as filter args
+      function myFilter(item, args) {
+        return item.name.toLowerCase().includes(args.searchString?.toLowerCase());
+      }
+      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 0, name: 'Hobby', age: 44 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+
+      dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: false });
+      dv.setItems(items);
+      dv.setFilterArgs({ searchString });
+      dv.setFilter(myFilter);
+
+      expect(dv.getItemCount()).toBe(4);
+      expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilteredItemCount()).toBe(2);
+      expect(dv.getFilteredItems()).toEqual([{ id: 1, name: 'Bob', age: 33 }, { id: 0, name: 'Hobby', age: 44 }]);
+    });
+
+    it('should be able to set a filter as CSP Safe and extra filter arguments and expect items to be filtered', () => {
+      const searchString = 'Ob'; // we'll provide "searchString" as filter args
+      const myFilter = (item, args) => item.name.toLowerCase().includes(args.searchString?.toLowerCase());
+      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 0, name: 'Hobby', age: 44 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+
+      dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: true });
+      dv.setItems(items);
+      dv.setFilterArgs({ searchString });
+      dv.setFilter(myFilter);
+
+      expect(dv.getItemCount()).toBe(4);
+      expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilteredItemCount()).toBe(2);
+      expect(dv.getFilteredItems()).toEqual([{ id: 1, name: 'Bob', age: 33 }, { id: 0, name: 'Hobby', age: 44 }]);
+    });
+  });
+
+  describe('Pagination', () => {
+    afterEach(() => {
+      dv.destroy();
+      jest.clearAllMocks();
+    });
+
+    it('should be able to set a filter with Pagination and expect items to be filtered on 2nd page', () => {
+      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const filter = (item) => item.id >= 2;
+
+      dv = new SlickDataView({ inlineFilters: false, useCSPSafeFilter: false });
+      const onPagingInfoSpy = jest.spyOn(dv.onPagingInfoChanged, 'notify');
+      dv.setItems(items);
+      dv.setFilter(filter);
+      dv.setPagingOptions({ dataView: dv, pageNum: 1, pageSize: 1 });
+      dv.refresh();
+
+      expect(dv.getPagingInfo()).toEqual({ dataView: dv, pageNum: 1, pageSize: 1, totalPages: 2, totalRows: 2 });
+      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 1, pageSize: 1, totalPages: 2, totalRows: 2 }, null, dv);
+      expect(dv.getItemCount()).toBe(3);
+      expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilteredItemCount()).toBe(2);
+      expect(dv.getFilteredItems()).toEqual([{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }]);
+    });
+
+    it('should be able to set an inline filter with Pagination and expect items to be filtered on 2nd page', () => {
+      const items = [{ id: 1, name: 'Bob', age: 33 }, { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      const filter = (item) => item.id >= 2;
+
+      dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: true });
+      const onPagingInfoSpy = jest.spyOn(dv.onPagingInfoChanged, 'notify');
+      dv.setItems(items);
+      dv.setFilter(filter);
+      dv.setPagingOptions({ dataView: dv, pageNum: 1, pageSize: 1 });
+      dv.refresh();
+
+      expect(dv.getPagingInfo()).toEqual({ dataView: dv, pageNum: 1, pageSize: 1, totalPages: 2, totalRows: 2 });
+      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 1, pageSize: 1, totalPages: 2, totalRows: 2 }, null, dv);
+      expect(dv.getItemCount()).toBe(3);
+      expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilteredItemCount()).toBe(2);
+      expect(dv.getFilteredItems()).toEqual([{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }]);
+    });
+
+    it('should be able to set a filter with Pagination and expect items to be filtered on 1st page', () => {
+      const items = [
+        { id: 1, name: 'Bob', age: 33 },
+        { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 },
+        { id: 5, name: 'Alpha', age: 12 }, { id: 6, name: 'Omega', age: 24 },
+      ];
+      function myFilter(item) { return item.id >= 2; }
+
+      dv = new SlickDataView({ inlineFilters: false, useCSPSafeFilter: false });
+      const onPagingInfoSpy = jest.spyOn(dv.onPagingInfoChanged, 'notify');
+      const onRowCountChangeSpy = jest.spyOn(dv.onRowCountChanged, 'notify');
+      const onRowsChangeSpy = jest.spyOn(dv.onRowsChanged, 'notify');
+      dv.setPagingOptions({ dataView: dv, pageNum: 1, pageSize: 10 });
+      dv.setItems(items);
+      dv.setRefreshHints({ isFilterNarrowing: true });
+      dv.setFilter(myFilter);
+
+      expect(dv.getPagingInfo()).toEqual({ dataView: dv, pageNum: 0, pageSize: 10, totalPages: 1, totalRows: 4 });
+      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 10, totalPages: 1, totalRows: 5 }, null, dv);
+      expect(dv.getItemCount()).toBe(items.length);
+      expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilteredItemCount()).toBe(4);
+      expect(dv.getFilteredItems()).toEqual([
+        { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 },
+        { id: 5, name: 'Alpha', age: 12 }, { id: 6, name: 'Omega', age: 24 }
+      ]);
+
+      dv.setRefreshHints({ isFilterExpanding: true });
+      items[0].id = 11;
+      dv.setPagingOptions({ dataView: dv, pageNum: 2, pageSize: 2 });
+
+      // calling it again will reuse the cached filter result
+      dv.setRefreshHints({ isFilterExpanding: true });
+      dv.refresh();
+
+      // change filter without changing pagination & expect pageNum to be recalculated
+      dv.setFilter((item) => item.id >= 10);
+      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 1, totalRows: 1 }, null, dv);
+      expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
+      expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [0, 1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
+
+      // change filter without changing pagination will result in 2 changes but only 1 defined as changed because we ignore diffs from 0-1
+      dv.setRefreshHints({ ignoreDiffsBefore: 1, ignoreDiffsAfter: 3 });
+      items[0].id = 8;
+      dv.setFilter(function (item) { return item.id >= 0 });
+      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 3, totalRows: 5 }, null, dv);
+      expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
+      expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
+    });
+
+    it('should be able to set a inline filter with Pagination and expect items to be filtered on 1st page', () => {
+      const items = [
+        { id: 1, name: 'Bob', age: 33 },
+        { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 },
+        { id: 5, name: 'Alpha', age: 12 }, { id: 6, name: 'Omega', age: 24 },
+      ];
+      function myFilter(item) { return item.id >= 2; }
+
+      dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: true });
+      const onPagingInfoSpy = jest.spyOn(dv.onPagingInfoChanged, 'notify');
+      const onRowCountChangeSpy = jest.spyOn(dv.onRowCountChanged, 'notify');
+      const onRowsChangeSpy = jest.spyOn(dv.onRowsChanged, 'notify');
+      dv.setPagingOptions({ dataView: dv, pageNum: 1, pageSize: 10 });
+      dv.setItems(items);
+      dv.setRefreshHints({ isFilterNarrowing: true });
+      dv.setFilter(myFilter);
+
+      expect(dv.getPagingInfo()).toEqual({ dataView: dv, pageNum: 0, pageSize: 10, totalPages: 1, totalRows: 4 });
+      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 10, totalPages: 1, totalRows: 5 }, null, dv);
+      expect(dv.getItemCount()).toBe(items.length);
+      expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilteredItemCount()).toBe(4);
+      expect(dv.getFilteredItems()).toEqual([
+        { id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 },
+        { id: 5, name: 'Alpha', age: 12 }, { id: 6, name: 'Omega', age: 24 }
+      ]);
+
+      dv.setRefreshHints({ isFilterExpanding: true });
+      items[0].id = 11;
+      dv.setPagingOptions({ dataView: dv, pageNum: 2, pageSize: 2 });
+
+      // change filter without changing pagination & expect pageNum to be recalculated
+      dv.setFilter(function (item) { return item.id >= 10 });
+      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 1, totalRows: 1 }, null, dv);
+      expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
+      expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [0, 1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
+
+      // change filter without changing pagination will result in 2 changes but only 1 defined as changed because we ignore diffs from 0-1
+      dv.setRefreshHints({ ignoreDiffsBefore: 1, ignoreDiffsAfter: 3 });
+      items[0].id = 8;
+      dv.setFilter((item) => item.id >= 0 || item.name.includes('a'));
+      expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 3, totalRows: 5 }, null, dv);
+      expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
+      expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
+    });
+  });
+
+  describe('Row Selection', () => {
+    let items: any[] = [];
+    beforeEach(() => {
+      items = [
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 1, name: 'Bob', age: 20 },
+        { id: 5, name: 'Arnold', age: 50 },
+        { id: 0, name: 'Avery', age: 44 },
+        { id: 2, name: 'Rachel', age: 46 },
+        { id: 6, name: 'Carole', age: 40 },
+        { id: 8, name: 'Julie', age: 42 },
+        { id: 7, name: 'Jason', age: 48 },
+        { id: 9, name: 'Aaron', age: 23 },
+        { id: 10, name: 'Ariane', age: 43 },
+      ];
+    });
+
+    afterEach(() => {
+      dv.destroy();
+      jest.clearAllMocks();
+    });
+
+    it('should throw when calling syncGridSelection() and selection model is undefined', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const gridOptions = { enableCellNavigation: true, multiSelect: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
+      dv.setItems(items);
+      expect(() => dv.syncGridSelection(grid, true)).toThrow('SlickGrid Selection model is not set');
+    });
+
+    it('should enable "preserveHidden" but keep "preserveHiddenOnSelectionChange" disabled and expect to only return current page selection when calling getAll methods', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const gridOptions = { enableCellNavigation: true, multiSelect: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
+      grid.setSelectionModel(new SlickRowSelectionModel({ selectActiveRow: false }));
+      dv.setItems(items);
+      dv.setPagingOptions({ dataView: dv, pageNum: 0, pageSize: 4 });
+      dv.syncGridSelection(grid, true);
+      grid.setSelectedRows([0, 1, 7]);
+
+      expect(dv.getItemCount()).toBe(11); // full count
+      expect(dv.getLength()).toBe(4); // page count
+      expect(dv.getAllSelectedIds()).toEqual([3, 4]); // only 3, 4 because 7 is not on current page
+      expect(dv.getAllSelectedItems()).toEqual([
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 4, name: 'John', age: 20 },
+      ]);
+
+      // go to next page & change selection, only current page selection is kept
+      dv.setPagingOptions({ dataView: dv, pageNum: 1, pageSize: 4 });
+      grid.setSelectedRows([2, 3]);
+
+      expect(dv.getAllSelectedIds()).toEqual([6, 8]); // only 6, 8 because 7 is not on current page
+      expect(dv.getAllSelectedItems()).toEqual([
+        { id: 6, name: 'Carole', age: 40 },
+        { id: 8, name: 'Julie', age: 42 },
+      ]);
+    });
+
+    it('should disable "preserveHidden" and enable "preserveHiddenOnSelectionChange" and expect to return previous page + current page selections when calling getAll methods', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const gridOptions = { enableCellNavigation: true, multiSelect: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
+      grid.setSelectionModel(new SlickRowSelectionModel({ selectActiveRow: false }));
+      dv.setItems(items);
+      dv.setPagingOptions({ dataView: dv, pageNum: 0, pageSize: 4 });
+      dv.syncGridSelection(grid, false, true);
+      grid.setSelectedRows([0, 1, 7]);
+
+      expect(dv.getItemCount()).toBe(11); // full count
+      expect(dv.getLength()).toBe(4); // page count
+      expect(dv.getAllSelectedIds()).toEqual([3, 4]);
+      expect(dv.getAllSelectedItems()).toEqual([
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 4, name: 'John', age: 20 },
+      ]);
+
+      // go to next page & change selection, selection also includes previous page(s)
+      dv.setPagingOptions({ dataView: dv, pageNum: 1, pageSize: 4 });
+      grid.setSelectedRows([2, 3]);
+
+      expect(dv.getAllSelectedIds()).toEqual([3, 4, 6, 8]); // includes previous page + current page selection
+      expect(dv.getAllSelectedItems()).toEqual([
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 6, name: 'Carole', age: 40 },
+        { id: 8, name: 'Julie', age: 42 },
+      ]);
+    });
+
+    it('should use setSelectedIds() to add/remove row selection with "preserveHiddenOnSelectionChange" enabled and "preserveHidden" disabled', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const gridOptions = { enableCellNavigation: true, multiSelect: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
+      const setSelectedRowSpy = jest.spyOn(grid, 'setSelectedRows');
+      const onSelectedRowIdsSpy = jest.spyOn(dv.onSelectedRowIdsChanged, 'notify');
+      grid.setSelectionModel(new SlickRowSelectionModel({ selectActiveRow: false }));
+      dv.setItems(items);
+      dv.setPagingOptions({ dataView: dv, pageNum: 0, pageSize: 4 });
+      dv.syncGridSelection(grid, false, true);
+      dv.setSelectedIds([3, 4, 8], { isRowBeingAdded: true, applyRowSelectionToGrid: true });
+
+      expect(dv.getItemCount()).toBe(11); // full count
+      expect(dv.getLength()).toBe(4); // page count
+      expect(setSelectedRowSpy).toHaveBeenCalledWith([1, 0]); // 8 is outside of current page so not included
+      expect(dv.getAllSelectedIds()).toEqual([3, 4, 8]); // 8 is also included even though it's not in current page
+      expect(dv.getAllSelectedItems()).toEqual([
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 8, name: 'Julie', age: 42 },
+      ]);
+
+      // remove selection
+      dv.setSelectedIds([3], { isRowBeingAdded: false, applyRowSelectionToGrid: false });
+
+      expect(onSelectedRowIdsSpy).toHaveBeenCalledWith({
+        added: false, dataView: dv, filteredIds: [4, 8], grid, ids: [3], rows: [1], selectedRowIds: [4, 8]
+      }, new SlickEventData(), dv);
+      expect(dv.getAllSelectedIds()).toEqual([4, 8]);
+      expect(dv.getAllSelectedItems()).toEqual([
+        { id: 4, name: 'John', age: 20 },
+        { id: 8, name: 'Julie', age: 42 },
+      ]);
+    });
+
+    it('should not expect row selections to be preserved when using "multiSelect:false" and setSelectedIds() even when either preseve is enabled ("preserveHidden" or "preserveHiddenOnSelectionChange")', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const gridOptions = { enableCellNavigation: true, multiSelect: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
+      const setCssStyleSpy = jest.spyOn(grid, 'setCellCssStyles');
+      const setSelectedRowSpy = jest.spyOn(grid, 'setSelectedRows');
+      const onSelectedRowIdsSpy = jest.spyOn(dv.onSelectedRowIdsChanged, 'notify');
+      grid.setSelectionModel(new SlickRowSelectionModel({ selectActiveRow: false }));
+      dv.setItems(items);
+      dv.setPagingOptions({ dataView: dv, pageNum: 0, pageSize: 4 });
+      dv.syncGridSelection(grid, false, true);
+      dv.setSelectedIds([3, 4, 8], { isRowBeingAdded: true, applyRowSelectionToGrid: true });
+
+      expect(dv.getItemCount()).toBe(11); // full count
+      expect(dv.getLength()).toBe(4); // page count
+      expect(setSelectedRowSpy).toHaveBeenCalledWith([1, 0]); // 8 is outside of current page so not included
+      expect(dv.getAllSelectedIds()).toEqual([3, 4]); // 8 is also included even though it's not in current page
+      expect(dv.getAllSelectedItems()).toEqual([
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 4, name: 'John', age: 20 },
+      ]);
+
+      // remove selection
+      dv.setSelectedIds([3], { isRowBeingAdded: false, applyRowSelectionToGrid: false });
+
+      expect(onSelectedRowIdsSpy).toHaveBeenCalledWith({
+        // filteredIds & selectedRowIds becomes empty because of disabled multiSelect not preserving row selections
+        added: false, dataView: dv, filteredIds: [], grid, ids: [3], rows: [1], selectedRowIds: []
+      }, new SlickEventData(), dv);
+      expect(dv.getAllSelectedIds()).toEqual([]);
+      expect(dv.getAllSelectedItems()).toEqual([]);
+    });
+  });
+
+  describe('CSS Style Sync', () => {
+    let items: any[] = [];
+    let hash: any = {};
+
+    beforeEach(() => {
+      items = [
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 1, name: 'Bob', age: 20 },
+        { id: 5, name: 'Arnold', age: 50 },
+        { id: 0, name: 'Avery', age: 44 },
+        { id: 2, name: 'Rachel', age: 46 },
+        { id: 6, name: 'Carole', age: 40 },
+        { id: 8, name: 'Julie', age: 42 },
+        { id: 7, name: 'Jason', age: 48 },
+        { id: 9, name: 'Aaron', age: 23 },
+        { id: 10, name: 'Ariane', age: 43 },
+      ];
+      hash = {};
+      for (let item of items) {
+        if (item.age >= 30) {
+          hash[item.id] = 'highlight';
+        }
+      }
+    });
+
+    afterEach(() => {
+      dv.destroy();
+      jest.clearAllMocks();
+    });
+
+    it('should call syncGridCellCssStyles() with CSS style hashes and expect it sync it in the grid when onRowsOrCountChanged event is triggered', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const gridOptions = { enableCellNavigation: true, multiSelect: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
+      const setCssStyleSpy = jest.spyOn(grid, 'setCellCssStyles');
+
+      dv.setItems(items);
+      grid.setCellCssStyles('age_greater30_highlight', hash);
+      dv.syncGridCellCssStyles(grid, 'age_greater30_highlight');
+      dv.onRowsOrCountChanged.notify({ currentRowCount: 11, dataView: dv, itemCount: 11, previousRowCount: 11, rowCountChanged: true, rowsChanged: true, rowsDiff: [0] });
+
+      expect(setCssStyleSpy).toHaveBeenCalledWith('age_greater30_highlight', hash);
+    });
+
+    it('should call syncGridCellCssStyles() with CSS style hashes and expect it sync it in the grid when onCellCssStylesChanged event is triggered', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const gridOptions = { enableCellNavigation: true, multiSelect: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
+      const setCssStyleSpy = jest.spyOn(grid, 'setCellCssStyles');
+
+      dv.setItems(items);
+      grid.setCellCssStyles('age_greater30_highlight', hash);
+      dv.syncGridCellCssStyles(grid, 'age_greater30_highlight');
+      grid.onCellCssStylesChanged.notify({ grid, hash, key: 'age_greater30_highlight' });
+
+      expect(setCssStyleSpy).toHaveBeenCalledWith('age_greater30_highlight', hash);
+    });
+
+    it('should unsubscribe onCellCssStylesChanged & onRowsOrCountChanged when onCellCssStylesChanged event is triggered without a hash', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const gridOptions = { enableCellNavigation: true, multiSelect: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
+      const unsubscribeCellCssStyleSpy = jest.spyOn(grid.onCellCssStylesChanged, 'unsubscribe');
+      const unsubscribeRowOrCountSpy = jest.spyOn(dv.onRowsOrCountChanged, 'unsubscribe');
+
+      dv.setItems(items);
+      grid.setCellCssStyles('age_greater30_highlight', hash);
+      dv.syncGridCellCssStyles(grid, 'age_greater30_highlight');
+      grid.onCellCssStylesChanged.notify({ grid, hash: null as any, key: 'age_greater30_highlight' });
+
+      expect(unsubscribeCellCssStyleSpy).toHaveBeenCalled();
+      expect(unsubscribeRowOrCountSpy).toHaveBeenCalledWith(expect.toBeFunction());
     });
   });
 });

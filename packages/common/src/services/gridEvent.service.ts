@@ -16,7 +16,7 @@ export class GridEventService {
     this._eventHandler.unsubscribeAll();
   }
 
-  /* OnCellChange Event */
+  /* OnBeforeEditCell Event */
   bindOnBeforeEditCell(grid: SlickGrid) {
     const dataView = grid?.getData<SlickDataView>();
 

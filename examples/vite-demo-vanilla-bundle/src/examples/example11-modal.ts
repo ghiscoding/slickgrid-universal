@@ -1,7 +1,6 @@
 import {
   type Column,
   type DOMEvent,
-  emptyElement,
   type Formatter,
   Formatters,
   type GridOption,

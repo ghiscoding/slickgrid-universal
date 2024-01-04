@@ -7,6 +7,7 @@ import {
   deepCopy,
   deepMerge,
   emptyObject,
+  getFunctionDetails,
   hasData,
   isDefined,
   isEmptyObject,
@@ -27,8 +28,12 @@ import {
   uniqueObjectArray,
 } from '../utils';
 
+function removeExtraSpaces(text: string) {
+  return `${text}`.replace(/\s+/g, ' ').replace(/\r\n/g, '').trim();
+}
+
 describe('Service/Utilies', () => {
-  describe('addToArrayWhenNotExists', () => {
+  describe('addToArrayWhenNotExists() method', () => {
     it('should add an item to the array when input item has an "id" and is not in the array', () => {
       const array = [{ id: 1, firstName: 'John' }];
       addToArrayWhenNotExists(array, { id: 2, firstName: 'Jane' });
@@ -60,7 +65,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('addWhiteSpaces method', () => {
+  describe('addWhiteSpaces() method', () => {
     it('should return the an empty string when argument provided is lower or equal to 0', () => {
       expect(addWhiteSpaces(-2)).toBe('');
       expect(addWhiteSpaces(0)).toBe('');
@@ -75,7 +80,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('arrayRemoveItemByIndex method', () => {
+  describe('arrayRemoveItemByIndex() method', () => {
     it('should remove an item from the array', () => {
       const input = [{ field: 'field1', name: 'Field 1' }, { field: 'field2', name: 'Field 2' }, { field: 'field3', name: 'Field 3' }];
       const expected = [{ field: 'field1', name: 'Field 1' }, { field: 'field3', name: 'Field 3' }];
@@ -85,7 +90,148 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('hasData method', () => {
+  describe('getFunctionDetails() method', () => {
+    test('regular function without arguments and with defined body', () => {
+      function fn() {
+        return true;
+      }
+      const result = getFunctionDetails(fn);
+
+      expect(result.params).toEqual([]);
+      expect(result.isAsync).toBe(false);
+      expect(result.body).toInclude('return true;');
+    });
+
+    test('regular function with defined arguments and body', () => {
+      function fn(input: string, args: any) {
+        if (input.length > 1) {
+          return true;
+        }
+        return input['age'].toString().includes(args.searchString)
+      }
+      const result = getFunctionDetails(fn);
+
+      expect(result.params).toEqual(['input', 'args']);
+      expect(result.isAsync).toBe(false);
+      expect(removeExtraSpaces(result.body)).toInclude(removeExtraSpaces(`
+        if (input.length > 1) {
+          return true;
+        }
+        return input['age'].toString().includes(args.searchString)
+      `));
+    });
+
+    test('regular async function with arguments', () => {
+      async function fn(input: string, args: any) {
+        if (input.length > 1) {
+          return true;
+        }
+        return input['age'].toString().includes(args.searchString)
+      }
+      const result = getFunctionDetails(fn);
+
+      expect(result.params).toEqual(['input', 'args']);
+      expect(result.isAsync).toBe(true);
+      expect(removeExtraSpaces(result.body)).toInclude(removeExtraSpaces(`
+        if (input.length > 1) {
+          return true;
+        }
+        return input['age'].toString().includes(args.searchString)
+      `));
+    });
+
+    test('nested ES6 arrow async functions with arguments', () => {
+      const fn = async (x) => async (y) => async (z) => z(x)(y);
+      const result = getFunctionDetails(fn);
+
+      expect(result.params).toEqual(['x']);
+      expect(result.isAsync).toBe(true);
+      expect(removeExtraSpaces(result.body)).toInclude(removeExtraSpaces(`
+        return async (y) => async (z) => z(x)(y)
+      `));
+    });
+
+    test('ES6 arrow function returning object in brackets', () => {
+      const fn = () => ({ status: 200, body: 'hello world' });
+      const result = getFunctionDetails(fn);
+
+      expect(result.params).toEqual([]);
+      expect(result.isAsync).toBe(false);
+      expect(removeExtraSpaces(result.body)).toInclude(removeExtraSpaces(`
+        return { status: 200, body: 'hello world' }
+      `));
+    });
+
+    test('ES6 arrow function returning object in brackets minified without spaces', () => {
+      const fn = `()=>({status: 200, body: 'hello world'})`;
+      const result = getFunctionDetails(fn as any);
+
+      expect(result.params).toEqual([]);
+      expect(result.isAsync).toBe(false);
+      expect(removeExtraSpaces(result.body)).toInclude(removeExtraSpaces(`
+        return {status: 200, body: 'hello world'}
+      `));
+    });
+
+    test('ES6 arrow async function and spread arguments', () => {
+      const fn = (async (a: number, b: number, ...rest: number[]) => {
+        let sum = a + b;
+        for (let n of rest) {
+          sum += n;
+        }
+        return sum;
+      });
+      const result = getFunctionDetails(fn);
+
+      expect(result.params).toEqual(['a', 'b', '...rest']);
+      expect(result.isAsync).toBe(true);
+      expect(removeExtraSpaces(result.body)).toInclude(removeExtraSpaces(`
+        let sum = a + b;
+        for (let n of rest) {
+          sum += n;
+        }
+        return sum;
+      `));
+    });
+
+    test('one liner ES6 arrow function without arguments', () => {
+      const fn = () => true;
+      const result = getFunctionDetails(fn);
+
+      expect(result.params).toEqual([]);
+      expect(result.body).toInclude('return true');
+    });
+
+    test('one liner ES6 arrow function with arguments', () => {
+      const fn = (input) => input ? input.lenght > 1 : false;
+      const result = getFunctionDetails(fn);
+
+      expect(result.params).toEqual(['input']);
+      expect(result.isAsync).toBe(false);
+      expect(result.body).toInclude('return input ? input.lenght > 1 : false');
+    });
+
+    test('ES6 arrow function written in TypeScript', () => {
+      const fn = (input: string, args: any) => {
+        if (input.length > 1) {
+          return true;
+        }
+        return input['age'].toString().includes(args.searchString);
+      }
+      const result = getFunctionDetails(fn);
+
+      expect(result.params).toEqual(['input', 'args']);
+      expect(result.isAsync).toBe(false);
+      expect(removeExtraSpaces(result.body)).toInclude(removeExtraSpaces(`
+        if (input.length > 1) {
+          return true;
+        }
+        return input['age'].toString().includes(args.searchString);
+      `));
+    });
+  });
+
+  describe('hasData() method', () => {
     it('should return True when input has test, or is a boolean (true or false) or if it is an object', () => {
       expect(hasData('test')).toBe(true);
       expect(hasData(true)).toBe(true);
@@ -99,7 +245,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('isDefined method', () => {
+  describe('isDefined() method', () => {
     it('should be truthy when comparing against any defined variable', () => {
       const result1 = isDefined({ firstName: 'John', lastName: 'Doe' });
       const result2 = isDefined('hello');
@@ -119,7 +265,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('isEmptyObject method', () => {
+  describe('isEmptyObject() method', () => {
     it('should return True when comparing against an object that has properties', () => {
       const result = isEmptyObject({ firstName: 'John', lastName: 'Doe' });
       expect(result).toBeFalse();
@@ -136,7 +282,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('isObject method', () => {
+  describe('isObject() method', () => {
     it('should return false when input is undefined', () => {
       expect(isObject(undefined)).toBeFalse();
     });
@@ -170,7 +316,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('isObjectEmpty method', () => {
+  describe('isObjectEmpty() method', () => {
     it('should return True when input is undefined', () => {
       const result = isObjectEmpty(undefined);
       expect(result).toBeTrue();
@@ -192,7 +338,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('isPrimitiveValue method', () => {
+  describe('isPrimitiveValue() method', () => {
     it('should return True when input is undefined', () => {
       const result = isPrimitiveValue(undefined);
       expect(result).toBeTrue();
@@ -224,7 +370,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('isPrimitiveOrHTML method', () => {
+  describe('isPrimitiveOrHTML() method', () => {
     it('should return True when input is undefined', () => {
       const result = isPrimitiveOrHTML(undefined);
       expect(result).toBeTrue();
@@ -268,7 +414,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('isNumber method', () => {
+  describe('isNumber() method', () => {
     it('should return True when comparing a number from a number/string variable when strict mode is disable', () => {
       const result1 = isNumber(22);
       const result2 = isNumber('33');
@@ -295,7 +441,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('deepCopy method', () => {
+  describe('deepCopy() method', () => {
     it('should return original input when it is not an object neither an array', () => {
       const msg = 'hello world';
       const age = 20;
@@ -328,7 +474,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('deepMerge method', () => {
+  describe('deepMerge() method', () => {
     it('should return undefined when both inputs are undefined', () => {
       const obj1 = undefined;
       const obj2 = null;
@@ -417,14 +563,14 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('emptyObject method', () => {
+  describe('emptyObject() method', () => {
     it('should empty all object properties', () => {
       const obj = { firstName: 'John', address: { zip: 123456, streetNumber: '123 Belleville Blvd' } };
       expect(emptyObject(obj)).toEqual({});
     });
   });
 
-  describe('parseBoolean method', () => {
+  describe('parseBoolean() method', () => {
     it('should return false when input value is not parseable to a boolean', () => {
       const output = parseBoolean('abc');
       expect(output).toBe(false);
@@ -464,7 +610,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('removeAccentFromText method', () => {
+  describe('removeAccentFromText() method', () => {
     it('should return a normalized string without accent', () => {
       const input1 = 'José';
       const input2 = 'Chêvre';
@@ -486,7 +632,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('setDeepValue method', () => {
+  describe('setDeepValue() method', () => {
     let obj: any = {};
     beforeEach(() => {
       obj = { id: 1, user: { firstName: 'John', lastName: 'Doe', age: null, address: { number: 123, street: 'Broadway' } } };
@@ -546,7 +692,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('titleCase method', () => {
+  describe('titleCase() method', () => {
     const sentence = 'the quick brown fox';
 
     it('should return empty string when input is empty', () => {
@@ -572,7 +718,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('toCamelCase method', () => {
+  describe('toCamelCase() method', () => {
     const sentence = 'the quick brown fox';
 
     it('should return empty string when input is empty', () => {
@@ -597,7 +743,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('toKebabCase method', () => {
+  describe('toKebabCase() method', () => {
     const sentence = 'the quick brown fox';
 
     it('should return empty string when input is empty', () => {
@@ -622,7 +768,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('toSentenceCase method', () => {
+  describe('toSentenceCase() method', () => {
     const camelCaseSentence = 'theQuickBrownFox';
     const kebabCaseSentence = 'the-quick-brown-fox';
 
@@ -653,7 +799,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('toSnakeCase method', () => {
+  describe('toSnakeCase() method', () => {
     const sentence = 'the quick brown fox';
 
     it('should return empty string when input is empty', () => {
@@ -678,7 +824,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('uniqueArray method', () => {
+  describe('uniqueArray() method', () => {
     it('should return original value when input is not an array', () => {
       const output1 = uniqueArray(null as any);
       const output2 = uniqueArray(undefined as any);
@@ -703,7 +849,7 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('uniqueObjectArray method', () => {
+  describe('uniqueObjectArray() method', () => {
     it('should return original value when input is not an array', () => {
       const output1 = uniqueObjectArray(null as any);
       const output2 = uniqueObjectArray(undefined as any);
