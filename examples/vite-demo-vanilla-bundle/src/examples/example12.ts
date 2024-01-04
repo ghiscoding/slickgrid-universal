@@ -3,6 +3,7 @@ import {
   AutocompleterOption,
   type Column,
   CompositeEditorModalType,
+  type EditCommand,
   Editors,
   EventNamingStyle,
   FieldType,
@@ -679,13 +680,13 @@ export default class Example12 {
     }
   }
 
-  renderUnsavedCellStyling(item, column, editCommand) {
+  renderUnsavedCellStyling(item: any, column: Column, editCommand: EditCommand) {
     if (editCommand && item && column) {
-      const row = this.sgb.dataView?.getRowByItem(item) ?? 0;
-      if (row >= 0) {
+      const row = this.sgb.dataView?.getRowByItem(item);
+      if (row !== undefined && row >= 0) {
         const hash = { [row]: { [column.id]: 'unsaved-editable-field' } };
         const cssStyleKey = `unsaved_highlight_${[column.id]}${row}`;
-        this.sgb.slickGrid?.setCellCssStyles(`unsaved_highlight_${[column.id]}${row}`, hash);
+        this.sgb.slickGrid?.setCellCssStyles(cssStyleKey, hash);
         this.cellCssStyleQueue.push(cssStyleKey);
       }
     }
