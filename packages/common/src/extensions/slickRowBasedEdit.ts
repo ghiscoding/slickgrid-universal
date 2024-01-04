@@ -2,6 +2,7 @@ import type {
   Column,
   GridOption,
   OnBeforeEditCellEventArgs,
+  OnSetOptionsEventArgs,
   RowBasedEditOptions,
 } from '../interfaces/index';
 import { SlickEventHandler, type SlickGrid } from '../core/index';
@@ -48,15 +49,12 @@ export class SlickRowBasedEdit {
     this._grid = grid;
     this._gridService = gridService;
     this._addonOptions = { ...this._defaults, ...this.addonOptions };
-    this.addActionsColumn();
     this._eventHandler.subscribe(
       this._grid.onBeforeEditCell,
       this.onBeforeEditCellHandler
     );
 
-    this._eventHandler.subscribe(this._grid.onSetOptions, (_e, args) => {
-      this._addonOptions = { ...this._defaults, ...args.optionsAfter.rowBasedEditOptions } as RowBasedEditOptions;
-    });
+    this._eventHandler.subscribe(this._grid.onSetOptions, this.optionsUpdatedHandler.bind(this));
   }
 
   destroy() {
@@ -66,6 +64,7 @@ export class SlickRowBasedEdit {
   /** Dispose (destroy) the SlickGrid 3rd party plugin */
   dispose() {
     this._eventHandler?.unsubscribeAll();
+    this.pubSubService?.unsubscribeAll();
   }
 
   create(columnDefinitions: Column[], gridOptions: GridOption): SlickRowBasedEdit | null {
@@ -73,7 +72,7 @@ export class SlickRowBasedEdit {
     if (Array.isArray(columnDefinitions) && gridOptions) {
       const selectionColumn: Column = this.getColumnDefinition();
 
-      // add new checkbox column unless it was already added
+      // add new action column unless it was already added
       if (!columnDefinitions.some(col => col.id === selectionColumn.id)) {
         // column index position in the grid
         const columnPosition = gridOptions?.rowBasedEditOptions?.columnIndexPosition ?? -1;
@@ -108,6 +107,10 @@ export class SlickRowBasedEdit {
       formatter: this.actionColumnFormatter.bind(this),
       onCellClick: this.onCellClickHandler.bind(this),
     } as Column;
+  }
+
+  protected optionsUpdatedHandler(e: Event, args: OnSetOptionsEventArgs) {
+    this._addonOptions = { ...this._defaults, ...args.optionsAfter.rowBasedEditOptions } as RowBasedEditOptions;
   }
 
   protected onCellClickHandler (event: Event, args: any) {
@@ -172,13 +175,6 @@ export class SlickRowBasedEdit {
       args.item?.[this._grid.getOptions().datasetIdPropertyName ?? 'id']
     );
   };
-
-  protected addActionsColumn() {
-    this._grid.setColumns([
-      ...this._grid.getColumns(),
-
-    ]);
-  }
 
   private toggleEditmode(
     target: HTMLElement,

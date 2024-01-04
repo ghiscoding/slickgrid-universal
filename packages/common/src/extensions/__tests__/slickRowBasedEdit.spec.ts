@@ -1,10 +1,14 @@
-import type { Column, RowBasedEditOptions } from "../../interfaces/index";
+import { BasePubSubService } from "@slickgrid-universal/event-pub-sub";
+
+import type { Column, GridOption, RowBasedEditOptions } from "../../interfaces/index";
 import { SlickEvent, SlickGrid } from "../../core/index";
 import { SlickRowBasedEdit } from "../slickRowBasedEdit";
 import { GridService } from "../../services";
 
 let addonOptions: RowBasedEditOptions = {
   actionsColumnLabel: "MyActions",
+  columnId: "_my_fancy_column_id",
+  allowMultipleRows: false
 };
 
 const mockColumns = [
@@ -30,6 +34,7 @@ const gridStubBlueprint = {
   getCellFromEvent: jest.fn(),
   getOptions: jest.fn(),
   registerPlugin: jest.fn(),
+  onSetOptions: new SlickEvent(),
   onBeforeEditCell: new SlickEvent(),
   setColumns: jest.fn().mockImplementation((columns) => {
     (gridStubBlueprint as any).columns = columns;
@@ -38,6 +43,14 @@ const gridStubBlueprint = {
     .fn()
     .mockImplementation(() => (gridStubBlueprint as any).columns || []),
 } as unknown as SlickGrid;
+
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  subscribeEvent: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as BasePubSubService;
 
 describe("Row Based Edit Plugin", () => {
   let plugin: SlickRowBasedEdit;
@@ -51,7 +64,7 @@ describe("Row Based Edit Plugin", () => {
       columns: [...mockColumns],
     } as unknown as SlickGrid;
     gridService = new GridService(_any, _any, _any, _any, _any, _any, _any);
-    plugin = new SlickRowBasedEdit(addonOptions);
+    plugin = new SlickRowBasedEdit(pubSubServiceStub, addonOptions);
   });
 
   afterEach(() => {
@@ -65,7 +78,7 @@ describe("Row Based Edit Plugin", () => {
   });
 
   it("should use default options when instantiating the plugin without passing any arguments", () => {
-    plugin = new SlickRowBasedEdit();
+    plugin = new SlickRowBasedEdit(pubSubServiceStub);
     plugin.init(gridStub, gridService);
 
     expect(plugin.addonOptions).toEqual((plugin as any)._defaults);
@@ -74,9 +87,18 @@ describe("Row Based Edit Plugin", () => {
   it("should append a new column for actions using the defined column label", () => {
     plugin.init(gridStub, gridService);
 
-    expect(gridStub.getColumns()[gridStub.getColumns().length - 1]).toMatchObject({
-      id: "slick_rowbasededit_action",
+    expect(plugin.getColumnDefinition()).toMatchObject({
+      id: addonOptions.columnId,
       name: addonOptions.actionsColumnLabel
     });
+  });
+
+  it("should position the new column as configured via columnIndexPosition", () => {
+    plugin.init(gridStub, gridService);
+    const colDefs = [...mockColumns];
+
+    plugin.create(colDefs, { rowBasedEditOptions: { ...plugin.addonOptions, columnIndexPosition: 1} } as GridOption);
+    console.log(colDefs);
+    expect(colDefs[1].id).toBe(addonOptions.columnId);
   });
 });
