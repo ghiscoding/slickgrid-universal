@@ -76,9 +76,13 @@
        }
      }
 
-     &.slick-rbe-editmode {
-      background-color: $slick-row-based-edit-editmode-bgcolor;
-     }
+    &.slick-rbe-editmode {
+      background-color: var(--slick-row-based-edit-editmode-bgcolor, $slick-row-based-edit-editmode-bgcolor);
+
+      &:hover {
+        background-color: var(--slick-row-based-edit-editmode-hover-bgcolor, $slick-row-based-edit-editmode-hover-bgcolor);
+      }
+    }
 
      &.active-row .slick-cell {
        background-color: rgb(226, 255, 253);
