@@ -1318,6 +1318,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
 
     // if the current page is no longer valid, go to last page and recalc
     // we suffer a performance penalty here, but the main loop (recalc) remains highly optimized
+    /* istanbul ignore if - not sure how this could occur */
     if (this.pagesize && this.totalRows < this.pagenum * this.pagesize) {
       this.pagenum = Math.max(0, Math.ceil(this.totalRows / this.pagesize) - 1);
       diff = this.recalc(this.items);
@@ -1357,10 +1358,12 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
    *
    * @param {SlickGrid} grid - The grid to sync selection with.
    * @param {Boolean} preserveHidden - Whether to keep selected items that go out of the
-   *     view due to them getting filtered out.
+   *     view due to them getting filtered out. When used with pagination,
+   *     changing selection on different page will cancel previous page selection
    * @param {Boolean} [preserveHiddenOnSelectionChange] - Whether to keep selected items
    *     that are currently out of the view (see preserveHidden) as selected when selection
-   *     changes.
+   *     changes. When used with pagination, changing selection on different page
+   *     will keep previous page selection (this is different compared to `preserveHidden`)
    * @return {Event} An event that notifies when an internal list of selected row ids
    *     changes.  This is useful since, in combination with the above two options, it allows
    *     access to the full list selected row ids, and not just the ones visible to the grid.
@@ -1370,9 +1373,11 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this._grid = grid;
     let inHandler: boolean;
     this.selectedRowIds = this.mapRowsToIds(grid.getSelectedRows());
+    const gridOptions = grid.getOptions();
 
     /** @param {Array} rowIds */
     const setSelectedRowIds = (rowIds: DataIdType[] | false) => {
+      /* istanbul ignore if */
       if (rowIds === false) {
         this.selectedRowIds = [];
       } else {
@@ -1425,14 +1430,15 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.preSelectedRowIdsChangeFn = (args: { ids: DataIdType[]; added?: boolean; }) => {
       if (!inHandler) {
         inHandler = true;
-        const overwrite = (typeof args.added === typeof undefined);
+        const overwrite = (typeof args.added === 'undefined');
 
+        /* istanbul ignore if */
         if (overwrite) {
           setSelectedRowIds(args.ids);
         } else {
           let rowIds: DataIdType[];
           if (args.added) {
-            if (preserveHiddenOnSelectionChange && grid.getOptions().multiSelect) {
+            if (preserveHiddenOnSelectionChange && gridOptions.multiSelect) {
               // find the ones that are hidden
               const hiddenSelectedRowIds = this.selectedRowIds?.filter((id) => this.getRowById(id) === undefined);
               // add the newly selected ones
@@ -1441,9 +1447,9 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
               rowIds = args.ids;
             }
           } else {
-            if (preserveHiddenOnSelectionChange && grid.getOptions().multiSelect) {
+            if (preserveHiddenOnSelectionChange && gridOptions.multiSelect) {
               // remove rows whose id is on the list
-              rowIds = this.selectedRowIds!.filter((id) => args.ids.indexOf(id) === -1);
+              rowIds = this.selectedRowIds?.filter((id) => args.ids.indexOf(id) === -1);
             } else {
               rowIds = [];
             }
@@ -1534,6 +1540,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   * Note: when using Pagination it will also include hidden selections assuming `preserveHiddenOnSelectionChange` is set to true.
   */
   getAllSelectedFilteredItems<T extends TData>() {
+    /* istanbul ignore if */
     if (!Array.isArray(this.selectedRowIds)) {
       return [];
     }
@@ -1550,7 +1557,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       hashById = {};
       if (typeof hash === 'object') {
         Object.keys(hash).forEach(row => {
-          if (hash) {
+          if (hash && this.rows[row as any]) {
             const id = this.rows[row as any][this.idProperty as keyof TData];
             hashById[id] = hash[row];
           }
