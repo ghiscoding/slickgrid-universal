@@ -29,7 +29,7 @@ import { GridService } from './grid.service';
 interface ExtensionWithColumnIndexPosition {
   name: ExtensionName;
   columnIndexPosition: number;
-  extension: SlickCheckboxSelectColumn | SlickRowDetailView | SlickRowMoveManager;
+  extension: SlickCheckboxSelectColumn | SlickRowDetailView | SlickRowMoveManager | SlickRowBasedEdit;
 }
 
 export class ExtensionService {
@@ -47,6 +47,7 @@ export class ExtensionService {
   protected _headerMenuPlugin?: SlickHeaderMenu;
   protected _rowMoveManagerPlugin?: SlickRowMoveManager;
   protected _rowSelectionModel?: SlickRowSelectionModel;
+  protected _rowBasedEdit?: SlickRowBasedEdit;
 
   get extensionList() {
     return this._extensionList;
@@ -167,14 +168,18 @@ export class ExtensionService {
 
       // Row Based Edit Plugin
       if (this.gridOptions.enableRowBasedEdit) {
-        const instance = new SlickRowBasedEdit(this.gridOptions.rowBasedEditOptions);
+        this._rowBasedEdit = this._rowBasedEdit || new SlickRowBasedEdit(this.pubSubService, this.gridOptions.rowBasedEditOptions);
         const gridService = this.lazyGridService?.();
         if (!gridService) {
           throw new Error('[Slickgrid-Universal] requires a GridService to be configured and available');
         }
 
-        instance.init(this.sharedService.slickGrid, gridService);
-        this._extensionList[ExtensionName.rowBasedEdit] = { name: ExtensionName.rowBasedEdit, instance };
+        this._rowBasedEdit.init(this.sharedService.slickGrid, gridService);
+        const createdExtension = this.getCreatedExtensionByName(ExtensionName.rowBasedEdit); // get the instance from when it was really created earlier
+        const instance = createdExtension && createdExtension.instance;
+        if (instance) {
+          this._extensionList[ExtensionName.rowBasedEdit] = { name: ExtensionName.rowBasedEdit, instance: this._rowBasedEdit };
+        }
       }
 
       // Auto Tooltip Plugin
@@ -319,6 +324,12 @@ export class ExtensionService {
       if (!this.getCreatedExtensionByName(ExtensionName.rowMoveManager)) {
         this._rowMoveManagerPlugin = new SlickRowMoveManager(this.pubSubService);
         featureWithColumnIndexPositions.push({ name: ExtensionName.rowMoveManager, extension: this._rowMoveManagerPlugin, columnIndexPosition: gridOptions?.rowMoveManager?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
+      }
+    }
+    if (gridOptions.enableRowBasedEdit) {
+      if (!this.getCreatedExtensionByName(ExtensionName.rowBasedEdit)) {
+        this._rowBasedEdit = new SlickRowBasedEdit(this.pubSubService);
+        featureWithColumnIndexPositions.push({ name: ExtensionName.rowBasedEdit, extension: this._rowBasedEdit, columnIndexPosition: gridOptions?.rowMoveManager?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
       }
     }
 
