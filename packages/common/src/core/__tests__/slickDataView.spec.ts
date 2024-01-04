@@ -6,6 +6,7 @@ import { SlickDataView } from '../slickDataview';
 import 'flatpickr';
 import { SlickGrid } from '../slickGrid';
 import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
+import { SlickEventData } from '../slickCore';
 
 class FakeAggregator {
   init() { }
@@ -1654,7 +1655,7 @@ describe('SlickDatView core file', () => {
 
     it('should throw when calling syncGridSelection() and selection model is undefined', () => {
       const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
-      const gridOptions = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      const gridOptions = { enableCellNavigation: true, multiSelect: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
       const items = [{ id: 4, name: 'John', age: 20 }, { id: 3, name: 'Jane', age: 24 }];
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
@@ -1664,7 +1665,7 @@ describe('SlickDatView core file', () => {
 
     it('should enable "preserveHidden" but keep "preserveHiddenOnSelectionChange" disabled and expect to only return current page selection when calling getAll methods', () => {
       const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
-      const gridOptions = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      const gridOptions = { enableCellNavigation: true, multiSelect: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
       grid.setSelectionModel(new SlickRowSelectionModel({ selectActiveRow: false }));
@@ -1694,7 +1695,7 @@ describe('SlickDatView core file', () => {
 
     it('should disable "preserveHidden" and enable "preserveHiddenOnSelectionChange" and expect to return previous page + current page selections when calling getAll methods', () => {
       const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
-      const gridOptions = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      const gridOptions = { enableCellNavigation: true, multiSelect: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
       grid.setSelectionModel(new SlickRowSelectionModel({ selectActiveRow: false }));
@@ -1722,6 +1723,155 @@ describe('SlickDatView core file', () => {
         { id: 6, name: 'Carole', age: 40 },
         { id: 8, name: 'Julie', age: 42 },
       ]);
+    });
+
+    it('should use setSelectedIds() to add/remove row selection with "preserveHiddenOnSelectionChange" enabled and "preserveHidden" disabled', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const gridOptions = { enableCellNavigation: true, multiSelect: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
+      const setSelectedRowSpy = jest.spyOn(grid, 'setSelectedRows');
+      const onSelectedRowIdsSpy = jest.spyOn(dv.onSelectedRowIdsChanged, 'notify');
+      grid.setSelectionModel(new SlickRowSelectionModel({ selectActiveRow: false }));
+      dv.setItems(items);
+      dv.setPagingOptions({ dataView: dv, pageNum: 0, pageSize: 4 });
+      dv.syncGridSelection(grid, false, true);
+      dv.setSelectedIds([3, 4, 8], { isRowBeingAdded: true, applyRowSelectionToGrid: true });
+
+      expect(dv.getItemCount()).toBe(11); // full count
+      expect(dv.getLength()).toBe(4); // page count
+      expect(setSelectedRowSpy).toHaveBeenCalledWith([1, 0]); // 8 is outside of current page so not included
+      expect(dv.getAllSelectedIds()).toEqual([3, 4, 8]); // 8 is also included even though it's not in current page
+      expect(dv.getAllSelectedItems()).toEqual([
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 8, name: 'Julie', age: 42 },
+      ]);
+
+      // remove selection
+      dv.setSelectedIds([3], { isRowBeingAdded: false, applyRowSelectionToGrid: false });
+
+      expect(onSelectedRowIdsSpy).toHaveBeenCalledWith({
+        added: false, dataView: dv, filteredIds: [4, 8], grid, ids: [3], rows: [1], selectedRowIds: [4, 8]
+      }, new SlickEventData(), dv);
+      expect(dv.getAllSelectedIds()).toEqual([4, 8]);
+      expect(dv.getAllSelectedItems()).toEqual([
+        { id: 4, name: 'John', age: 20 },
+        { id: 8, name: 'Julie', age: 42 },
+      ]);
+    });
+
+    it('should not expect row selections to be preserved when using "multiSelect:false" and setSelectedIds() even when either preseve is enabled ("preserveHidden" or "preserveHiddenOnSelectionChange")', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const gridOptions = { enableCellNavigation: true, multiSelect: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
+      const setCssStyleSpy = jest.spyOn(grid, 'setCellCssStyles');
+      const setSelectedRowSpy = jest.spyOn(grid, 'setSelectedRows');
+      const onSelectedRowIdsSpy = jest.spyOn(dv.onSelectedRowIdsChanged, 'notify');
+      grid.setSelectionModel(new SlickRowSelectionModel({ selectActiveRow: false }));
+      dv.setItems(items);
+      dv.setPagingOptions({ dataView: dv, pageNum: 0, pageSize: 4 });
+      dv.syncGridSelection(grid, false, true);
+      dv.setSelectedIds([3, 4, 8], { isRowBeingAdded: true, applyRowSelectionToGrid: true });
+
+      expect(dv.getItemCount()).toBe(11); // full count
+      expect(dv.getLength()).toBe(4); // page count
+      expect(setSelectedRowSpy).toHaveBeenCalledWith([1, 0]); // 8 is outside of current page so not included
+      expect(dv.getAllSelectedIds()).toEqual([3, 4]); // 8 is also included even though it's not in current page
+      expect(dv.getAllSelectedItems()).toEqual([
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 4, name: 'John', age: 20 },
+      ]);
+
+      // remove selection
+      dv.setSelectedIds([3], { isRowBeingAdded: false, applyRowSelectionToGrid: false });
+
+      expect(onSelectedRowIdsSpy).toHaveBeenCalledWith({
+        // filteredIds & selectedRowIds becomes empty because of disabled multiSelect not preserving row selections
+        added: false, dataView: dv, filteredIds: [], grid, ids: [3], rows: [1], selectedRowIds: []
+      }, new SlickEventData(), dv);
+      expect(dv.getAllSelectedIds()).toEqual([]);
+      expect(dv.getAllSelectedItems()).toEqual([]);
+    });
+  });
+
+  describe('CSS Style Sync', () => {
+    let items: any[] = [];
+    let hash: any = {};
+
+    beforeEach(() => {
+      items = [
+        { id: 4, name: 'John', age: 20 },
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 1, name: 'Bob', age: 20 },
+        { id: 5, name: 'Arnold', age: 50 },
+        { id: 0, name: 'Avery', age: 44 },
+        { id: 2, name: 'Rachel', age: 46 },
+        { id: 6, name: 'Carole', age: 40 },
+        { id: 8, name: 'Julie', age: 42 },
+        { id: 7, name: 'Jason', age: 48 },
+        { id: 9, name: 'Aaron', age: 23 },
+        { id: 10, name: 'Ariane', age: 43 },
+      ];
+      hash = {};
+      for (let item of items) {
+        if (item.age >= 30) {
+          hash[item.id] = 'highlight';
+        }
+      }
+    });
+
+    afterEach(() => {
+      dv.destroy();
+      jest.clearAllMocks();
+    });
+
+    it('should call syncGridCellCssStyles() with CSS style hashes and expect it sync it in the grid when onRowsOrCountChanged event is triggered', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const gridOptions = { enableCellNavigation: true, multiSelect: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
+      const setCssStyleSpy = jest.spyOn(grid, 'setCellCssStyles');
+
+      dv.setItems(items);
+      grid.setCellCssStyles('age_greater30_highlight', hash);
+      dv.syncGridCellCssStyles(grid, 'age_greater30_highlight');
+      dv.onRowsOrCountChanged.notify({ currentRowCount: 11, dataView: dv, itemCount: 11, previousRowCount: 11, rowCountChanged: true, rowsChanged: true, rowsDiff: [0] });
+
+      expect(setCssStyleSpy).toHaveBeenCalledWith('age_greater30_highlight', hash);
+    });
+
+    it('should call syncGridCellCssStyles() with CSS style hashes and expect it sync it in the grid when onCellCssStylesChanged event is triggered', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const gridOptions = { enableCellNavigation: true, multiSelect: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
+      const setCssStyleSpy = jest.spyOn(grid, 'setCellCssStyles');
+
+      dv.setItems(items);
+      grid.setCellCssStyles('age_greater30_highlight', hash);
+      dv.syncGridCellCssStyles(grid, 'age_greater30_highlight');
+      grid.onCellCssStylesChanged.notify({ grid, hash, key: 'age_greater30_highlight' });
+
+      expect(setCssStyleSpy).toHaveBeenCalledWith('age_greater30_highlight', hash);
+    });
+
+    it('should unsubscribe onCellCssStylesChanged & onRowsOrCountChanged when onCellCssStylesChanged event is triggered without a hash', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const gridOptions = { enableCellNavigation: true, multiSelect: false, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      dv = new SlickDataView({});
+      const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
+      const unsubscribeCellCssStyleSpy = jest.spyOn(grid.onCellCssStylesChanged, 'unsubscribe');
+      const unsubscribeRowOrCountSpy = jest.spyOn(dv.onRowsOrCountChanged, 'unsubscribe');
+
+      dv.setItems(items);
+      grid.setCellCssStyles('age_greater30_highlight', hash);
+      dv.syncGridCellCssStyles(grid, 'age_greater30_highlight');
+      grid.onCellCssStylesChanged.notify({ grid, hash: null as any, key: 'age_greater30_highlight' });
+
+      expect(unsubscribeCellCssStyleSpy).toHaveBeenCalled();
+      expect(unsubscribeRowOrCountSpy).toHaveBeenCalledWith(expect.toBeFunction());
     });
   });
 });
