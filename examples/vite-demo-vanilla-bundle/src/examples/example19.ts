@@ -106,7 +106,7 @@ export default class Example19 {
       //   onCopyCells: (e, args: { ranges: SelectedRange[] }) => console.log('onCopyCells', args.ranges),
       //   onPasteCells: (e, args: { ranges: SelectedRange[] }) => console.log('onPasteCells', args.ranges),
       //   onCopyCancelled: (e, args: { ranges: SelectedRange[] }) => console.log('onCopyCancelled', args.ranges),
-        onBeforePasteCell: (e, args) => {
+        onBeforePasteCell: (_e, args) => {
           // deny the whole first row and the cells C-E of the second row
           return !(args.row === 0 || (args.row === 1 && args.cell > 2 && args.cell < 6));
         }
