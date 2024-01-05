@@ -3,6 +3,9 @@
 - [Extra Params/Arguments](#extra-argumentsparams)
 - [Using Multiple Formatters](#using-multiple-formatters)
 - [Custom Formatter](#custom-formatter)
+  - [Example of a Custom Formatter with HTML string](#example-of-a-custom-formatter-with-html-string)
+  - [Example with `FormatterResultObject` instead of a string](#example-with-formatterresultobject-instead-of-a-string)
+  - [Example of Custom Formatter with Native DOM Element](#example-of-custom-formatter-with-native-dom-element)
 - [Common Formatter Options](#common-formatter-options)
 - [PostRenderer Formatter](#postrender-formatter)
 - [UI Sample](#ui-sample)
@@ -187,7 +190,7 @@ export interface FormatterResultObject {
 }
 ```
 
-### Example of a Custom Formatter with string output
+### Example of a Custom Formatter with HTML string
 For example, we will use `Font-Awesome` with a `boolean` as input data, and display a (fire) icon when `True` or a (snowflake) when `False`. This custom formatter is actually display in the [UI sample](#ui-sample) shown below.
 ```ts
 // create a custom Formatter with the Formatter type
@@ -195,13 +198,34 @@ const myCustomCheckboxFormatter: Formatter = (row: number, cell: number, value: 
   value ? `<i class="fa fa-fire" aria-hidden="true"></i>` : '<i class="fa fa-snowflake-o" aria-hidden="true"></i>';
 ```
 
-#### or with `FormatterResultObject` instead of a string
+#### Example with `FormatterResultObject` instead of a string
 Using this object return type will provide the user the same look and feel, it will actually be quite different. The major difference is that all of the options (`addClasses`, `tooltip`, ...) will be added the CSS container of the cell instead of the content of that container. For example a typically cell looks like the following `<div class="slick-cell l4 r4">Task 4</div>` and if use `addClasses: 'red'`, it will end up being `<div class="slick-cell l4 r4 red">Task 4</div>` while if we use a string output of let say `<span class="red">${value></span>`, then our final result of the cell will be `<div class="slick-cell l4 r4"><span class="red">Task 4</span></div>`. This can be useful if you plan to use multiple Formatters and don't want to lose or overwrite the previous Formatter result (we do that in our project).
 ```ts
 // create a custom Formatter and returning a string and/or an object of type FormatterResultObject
 const myCustomCheckboxFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid?: any) =>
   value ? { addClasses: 'fa fa-fire', text: '', tooltip: 'burning fire' } : '<i class="fa fa-snowflake-o" aria-hidden="true"></i>';
 ```
+
+### Example of Custom Formatter with Native DOM Element
+Since version 4.x, you can now also return native DOM element instead of an HTML string. There are 2 main reasons for going with this approach:
+1. CSP Safe by default, since it's native it is 100% CSP Safe (CSP: Content Security Policy)
+2. Performance (the reasons are similar to point 1.)
+   - since it's native it can be appended directly to the grid cell
+   - when it's an HTML string, it has to do 2 extra steps (which is an overhead process)
+      i. sanitize the string (we use [DOMPurify](https://github.com/cure53/DOMPurify) by default)
+      ii. SlickGrid then has to convert it to native element by using `innerHTML` on the grid cell
+
+Demo
+```ts
+export const iconFormatter: Formatter = (_row, _cell, _value, columnDef) => {
+  const iconElm = document.createElement('span');
+  iconElm.className = 'mdi mdi-check';
+
+  return iconElm;
+};
+```
+
+> **Note** you could also use our helper `createDomElement` which allows to create a DOM element and pass properties like `className` in 1 liner (and it also works with intellisense). For example `createDomElement('span', { className: 'bold title', textContent: 'Hello World', title: 'some tooltip description' })` would equal to 4 lines of code.
 
 ### More Complex Example
 If you need to add more complex logic to a `Formatter`, you can take a look at the [percentCompleteBar](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/percentCompleteBarFormatter.ts) `Formatter` for more inspiration.
