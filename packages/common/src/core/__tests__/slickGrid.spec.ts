@@ -272,6 +272,65 @@ describe('SlickGrid core file', () => {
     expect(() => new SlickGrid<any, Column>(null as any, dv, columns, options)).toThrow('SlickGrid requires a valid container');
   });
 
+  describe('Row Selections', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+    describe('setSelectedRows() method', () => {
+      it('should throw when calling setSelectedRows() without a selection model', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, options);
+
+        expect(() => grid.setSelectedRows([0, 1])).toThrow('SlickGrid Selection model is not set');
+      });
+
+      it('should call setSelectedRanges() when editor lock isActive() is define and is returning false', () => {
+        const rowSelectionModel = new SlickRowSelectionModel();
+        const setRangeSpy = jest.spyOn(rowSelectionModel, 'setSelectedRanges');
+
+        grid = new SlickGrid<any, Column>(container, data, columns, options);
+        grid.setSelectionModel(rowSelectionModel);
+        jest.spyOn(grid.getEditorLock(), 'isActive').mockReturnValueOnce(false);
+
+        grid.setSelectedRows([0, 1]);
+
+        expect(setRangeSpy).toHaveBeenCalledWith([
+          { fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 },
+          { fromCell: 0, fromRow: 1, toCell: 0, toRow: 1 }
+        ], 'SlickGrid.setSelectedRows');
+      });
+
+      it('should not call setSelectedRanges() when editor lock isActive() is define and is returning true', () => {
+        const rowSelectionModel = new SlickRowSelectionModel();
+        const setRangeSpy = jest.spyOn(rowSelectionModel, 'setSelectedRanges');
+
+        grid = new SlickGrid<any, Column>(container, data, columns, options);
+        grid.setSelectionModel(rowSelectionModel);
+        jest.spyOn(grid.getEditorLock(), 'isActive').mockReturnValueOnce(true);
+
+        grid.setSelectedRows([0, 1]);
+
+        expect(setRangeSpy).not.toHaveBeenCalled();
+      });
+
+      it('should not call setSelectedRanges() when editor lock is undefined', () => {
+        const rowSelectionModel = new SlickRowSelectionModel();
+        const setRangeSpy = jest.spyOn(rowSelectionModel, 'setSelectedRanges');
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...options, editorLock: undefined });
+        grid.setSelectionModel(rowSelectionModel);
+
+        jest.spyOn(grid, 'getEditorLock').mockReturnValue(undefined as any)
+        grid.setSelectedRows([0, 1]);
+
+        expect(grid.getEditorLock()).toBeUndefined();
+        expect(setRangeSpy).not.toHaveBeenCalledWith([
+          { fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 },
+          { fromCell: 0, fromRow: 1, toCell: 0, toRow: 1 }
+        ], 'SlickGrid.setSelectedRows');
+      });
+    });
+  });
+
   describe('Pre-Header Panel', () => {
     it('should create a preheader panel when enabled', () => {
       const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
@@ -2012,6 +2071,33 @@ describe('SlickGrid core file', () => {
       expect(result).toBe(true);
       expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
       expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('Sanitizer', () => {
+    const columns = [
+      { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+      { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+      { id: 'age', field: 'age', name: 'Age', sortable: true },
+    ] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+    it('should use sanitizer when provided in grid options and expect <script> to be removed', () => {
+      const sanitizer = (dirtyHtml: string) => typeof dirtyHtml === 'string' ? dirtyHtml.replace(/(\b)(on[a-z]+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi, '') : dirtyHtml;
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...options, sanitizer });
+
+      const dirtyHtml = '<div class="some-class"><script>alert("hello world")</script></div>';
+      const cleanHtml = '<div class="some-class"></div>';
+
+      expect(grid.sanitizeHtmlString(dirtyHtml)).toBe(cleanHtml);
+    });
+
+    it('should return same input string when no sanitizer provided', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...options, sanitizer: undefined });
+
+      const dirtyHtml = '<div class="some-class"><script>alert("hello world")</script></div>';
+
+      expect(grid.sanitizeHtmlString(dirtyHtml)).toBe(dirtyHtml);
     });
   });
 });
