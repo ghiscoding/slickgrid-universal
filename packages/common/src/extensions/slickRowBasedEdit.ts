@@ -6,13 +6,19 @@ import type {
   OnSetOptionsEventArgs,
   RowBasedEditOptions,
 } from '../interfaces/index';
-import { SlickEventHandler, SlickGlobalEditorLock, type SlickGrid } from '../core/index';
+import {
+  SlickEventHandler,
+  SlickGlobalEditorLock,
+  type SlickGrid,
+} from '../core/index';
 import { GridService } from '../services';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { createDomElement } from '@slickgrid-universal/utils';
 
 export const ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS = 'slick-rbe-editmode';
 export const ROW_BASED_EDIT_UNSAVED_CELL = 'slick-rbe-unsaved-cell';
-export const ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX = 'slick-rbe-unsaved-highlight';
+export const ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX =
+  'slick-rbe-unsaved-highlight';
 
 export interface EditedRowDetails {
   columns: Column[];
@@ -72,7 +78,9 @@ export class SlickRowBasedEdit {
 
     if (!this._grid.getOptions().autoEdit) {
       this._grid.setOptions({ autoEdit: true });
-      console.warn('SlickGrid Row Based Edit Plugin works best with the gridOption "autoEdit" enabled, the option has now been set automatically for you.');
+      console.warn(
+        'SlickGrid Row Based Edit Plugin works best with the gridOption "autoEdit" enabled, the option has now been set automatically for you.'
+      );
     }
 
     this._existingEditCommandHandler =
@@ -225,7 +233,12 @@ export class SlickRowBasedEdit {
     const idProperty = this._grid.getOptions().datasetIdPropertyName ?? 'id';
     const targetRow = this._editedRows.get(item[idProperty]);
     const row = this._grid.getData().getRowByItem(item);
-    if (row !== undefined && targetRow?.editCommands && targetRow.editCommands.length || 0 > 0 && SlickGlobalEditorLock.cancelCurrentEdit()) {
+    if (
+      (row !== undefined &&
+        targetRow?.editCommands &&
+        targetRow.editCommands.length) ||
+      (0 > 0 && SlickGlobalEditorLock.cancelCurrentEdit())
+    ) {
       while (targetRow!.editCommands.length > 0) {
         const lastEdit = targetRow!.editCommands.pop();
         if (lastEdit) {
@@ -242,31 +255,27 @@ export class SlickRowBasedEdit {
     }
   }
 
-  protected renderUnsavedCellStyling(
-    item: any,
-    column: Column,
-  ) {
+  protected renderUnsavedCellStyling(item: any, column: Column) {
     if (item && column) {
       const row = this._grid.getData()?.getRowByItem(item);
       if (row !== undefined && row >= 0) {
         const hash = { [row]: { [column.id]: ROW_BASED_EDIT_UNSAVED_CELL } };
-        const cssStyleKey = `${ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX}_${[column.id]}${row}`;
+        const cssStyleKey = `${ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX}_${[
+          column.id,
+        ]}${row}`;
         this._grid.setCellCssStyles(cssStyleKey, hash);
       }
     }
   }
 
-  protected removeUnsavedStylingFromCell(
-    column: Column,
-    row: number
-  ) {
-    const cssStyleKey = `${ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX}_${[column.id]}${row}`;
+  protected removeUnsavedStylingFromCell(column: Column, row: number) {
+    const cssStyleKey = `${ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX}_${[
+      column.id,
+    ]}${row}`;
     this._grid.removeCellCssStyles(cssStyleKey);
   }
 
-  protected removeUnsavedStylingFromRow(
-    row: number
-  ) {
+  protected removeUnsavedStylingFromRow(row: number) {
     this._grid.getColumns().forEach((column) => {
       this.removeUnsavedStylingFromCell(column, row);
     });
@@ -316,20 +325,57 @@ export class SlickRowBasedEdit {
       dataContext?.[this._grid.getOptions().datasetIdPropertyName ?? 'id']
     );
 
-    return `
-    <span ${
-      isInEditMode ? 'style="display: none"' : ''
-    } class="button-style padding-1px action-btns action-btns--edit" title="Edit the Row"><span class="mdi mdi-table-edit color-primary" title="Edit Current Row"></span></span>
-    <span ${
-      isInEditMode ? 'style="display: none"' : ''
-    } class="button-style padding-1px action-btns action-btns--delete" title="Delete the Row"><span class="mdi mdi-close color-danger" title="Delete Current Row"></span></span>
-    <span ${
-      !isInEditMode ? 'style="display: none"' : ''
-    } class="button-style padding-1px action-btns action-btns--update" title="Update row"><span class="mdi mdi-check-bold color-success" title="Update Current Row"></span></span>
-    <span ${
-      !isInEditMode ? 'style="display: none"' : ''
-    } class="button-style padding-1px action-btns action-btns--cancel" title="Cancel changes"><span class="mdi mdi-cancel color-danger" title="Cancel Current Row's changes"></span></span>
-  `;
+    const actionFragment = document.createDocumentFragment();
+    actionFragment.appendChild(
+      createDomElement('span', {
+        className: 'button-style padding-1px action-btns action-btns--edit',
+        title: 'Edit the Row',
+        style: { display: isInEditMode ? 'none' : '' },
+      })
+    ).appendChild(
+      createDomElement('span', {
+        className: 'mdi mdi-table-edit color-primary',
+        title: 'Edit Current Row',
+      })
+    );
+    actionFragment.appendChild(
+      createDomElement('span', {
+        className: 'button-style padding-1px action-btns action-btns--delete',
+        title: 'Delete the Row',
+        style: { display: isInEditMode ? 'none' : '' },
+      })
+    ).appendChild(
+      createDomElement('span', {
+        className: 'mdi mdi-close color-danger',
+        title: 'Delete Current Row',
+      })
+    );
+    actionFragment.appendChild(
+      createDomElement('span', {
+        className: 'button-style padding-1px action-btns action-btns--update',
+        title: 'Update the Row',
+        style: { display: !isInEditMode ? 'none' : '' },
+      })
+    ).appendChild(
+      createDomElement('span', {
+        className: 'mdi mdi-check-bold color-success',
+        title: 'Update Current Row',
+      })
+    );
+    actionFragment.appendChild(
+      createDomElement('span', {
+        className: 'button-style padding-1px action-btns action-btns--cancel',
+        title: 'Cancel changes of the Row',
+        style: { display: !isInEditMode ? 'none' : '' },
+      })
+    ).appendChild(
+      createDomElement('span', {
+        className: 'mdi mdi-cancel color-danger',
+        title: 'Cancel Current Row\'s changes',
+      })
+    );
+
+    return actionFragment;
   }
 
   protected onBeforeEditCellHandler = (
@@ -341,16 +387,14 @@ export class SlickRowBasedEdit {
     );
   };
 
-  protected toggleEditmode(
-    dataContext: any,
-    editMode: boolean
-  ) {
+  protected toggleEditmode(dataContext: any, editMode: boolean) {
     const idProperty = this._grid.getOptions().datasetIdPropertyName ?? 'id';
     if (editMode) {
-
-      this._editedRows.set(dataContext[idProperty], { columns: [], editCommands: [] });
+      this._editedRows.set(dataContext[idProperty], {
+        columns: [],
+        editCommands: [],
+      });
     } else {
-
       this._editedRows.delete(dataContext[idProperty]);
     }
 
@@ -369,7 +413,8 @@ export class SlickRowBasedEdit {
       }
 
       if (meta && item) {
-        const idProperty = this._grid.getOptions().datasetIdPropertyName ?? 'id';
+        const idProperty =
+          this._grid.getOptions().datasetIdPropertyName ?? 'id';
         if (
           this._editedRows.has(item[idProperty]) &&
           !meta.cssClasses.includes(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS)
