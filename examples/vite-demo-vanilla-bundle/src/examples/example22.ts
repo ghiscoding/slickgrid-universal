@@ -116,7 +116,6 @@ export default class Example22 {
       },
 
       editable: true,
-      autoEdit: false,
       enableCellNavigation: true,
       enableRowBasedEdit: true,
       rowBasedEditOptions: {

@@ -68,6 +68,13 @@ export class SlickRowBasedEdit {
       this.onBeforeEditCellHandler
     );
 
+    this.checkOptionsRequirements(this._grid.getOptions());
+
+    if (!this._grid.getOptions().autoEdit) {
+      this._grid.setOptions({ autoEdit: true });
+      console.warn('SlickGrid Row Based Edit Plugin works best with the gridOption "autoEdit" enabled, the option has now been set automatically for you.');
+    }
+
     this._existingEditCommandHandler =
       this._grid.getOptions().editCommandHandler;
     this._grid.setOptions({
@@ -84,6 +91,20 @@ export class SlickRowBasedEdit {
 
     this._grid.invalidate();
     this._grid.render();
+  }
+
+  checkOptionsRequirements(options: GridOption) {
+    if (!options?.enableCellNavigation) {
+      throw new Error(
+        `Row Based Edit Plugin requires the gridOption cell navigation (enableCellNavigation = true)`
+      );
+    }
+
+    if (!options?.editable) {
+      throw new Error(
+        `Row Based Edit Plugin requires the gridOption editable (editable = true)`
+      );
+    }
   }
 
   destroy() {
@@ -213,7 +234,7 @@ export class SlickRowBasedEdit {
       }
 
       targetRow!.columns.forEach((column) => {
-        this.removeUnsavedStylingFromCell(item, column, row!);
+        this.removeUnsavedStylingFromCell(column, row!);
       });
       targetRow!.columns = [];
 
@@ -236,12 +257,19 @@ export class SlickRowBasedEdit {
   }
 
   protected removeUnsavedStylingFromCell(
-    _item: any,
     column: Column,
     row: number
   ) {
     const cssStyleKey = `${ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX}_${[column.id]}${row}`;
     this._grid.removeCellCssStyles(cssStyleKey);
+  }
+
+  protected removeUnsavedStylingFromRow(
+    row: number
+  ) {
+    this._grid.getColumns().forEach((column) => {
+      this.removeUnsavedStylingFromCell(column, row);
+    });
   }
 
   protected optionsUpdatedHandler(e: Event, args: OnSetOptionsEventArgs) {
@@ -265,6 +293,7 @@ export class SlickRowBasedEdit {
 
       this.toggleEditmode(dataContext, true);
     } else if (target.classList.contains('mdi-check-bold')) {
+      this.removeUnsavedStylingFromRow(args.row);
       this.toggleEditmode(dataContext, false);
 
       if (this._addonOptions?.onAfterRowUpdated) {
