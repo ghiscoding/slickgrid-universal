@@ -80,14 +80,6 @@
        }
      }
 
-    &.slick-rbe-editmode {
-      background-color: var(--slick-row-based-edit-editmode-bgcolor, $slick-row-based-edit-editmode-bgcolor);
-
-      &:hover {
-        background-color: var(--slick-row-based-edit-editmode-hover-bgcolor, $slick-row-based-edit-editmode-hover-bgcolor);
-      }
-    }
-
      &.active-row .slick-cell {
        background-color: rgb(226, 255, 253);
      }
@@ -95,6 +87,26 @@
      &.active-row.odd .slick-cell {
        background-color: $slick-cell-odd-active-background-color;
      }
+
+     &.slick-rbe-editmode {
+      background-color: var(--slick-row-based-edit-editmode-bgcolor, $slick-row-based-edit-editmode-bgcolor);
+
+      &:hover {
+        background-color: var(--slick-row-based-edit-editmode-hover-bgcolor, $slick-row-based-edit-editmode-hover-bgcolor);
+
+        & .active {
+          background-color: var(--slick-row-based-edit-editmode-active-hover-bgcolor, $slick-row-based-edit-editmode-active-hover-bgcolor) !important;
+        }
+      }
+
+      & .active {
+        background-color: var(--slick-row-based-edit-editmode-active-bgcolor, $slick-row-based-edit-editmode-active-bgcolor);
+
+        &:hover {
+          background-color: var(--slick-row-based-edit-editmode-active-hover-bgcolor, $slick-row-based-edit-editmode-active-hover-bgcolor);
+        }
+      }
+    }
    }
 
    .slick-group {
