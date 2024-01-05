@@ -75,7 +75,7 @@ export class SlickDraggableGrouping {
   ) {
     this._bindingEventService = new BindingEventService();
     this._eventHandler = new SlickEventHandler();
-    this.onGroupChanged = new SlickEvent<{ caller?: string; groupColumns: Grouping[]; }>();
+    this.onGroupChanged = new SlickEvent<{ caller?: string; groupColumns: Grouping[]; }>('onGroupChanged');
   }
 
   get addonOptions(): DraggableGroupingOption {
@@ -133,6 +133,9 @@ export class SlickDraggableGrouping {
       this._gridColumns = grid.getColumns();
       this._dropzoneElm = grid.getPreHeaderPanel();
       this._dropzoneElm.classList.add('slick-dropzone');
+
+      // add PubSub instance to all SlickEvent
+      this.onGroupChanged.setPubSubService(this.pubSubService);
 
       // add optional group "Toggle All" with its button & text when provided
       if (!this._addonOptions.hideToggleAllButton) {

@@ -3,6 +3,7 @@ import 'jest-extended';
 import type { GridOption } from '../../interfaces/index';
 import { SlickCellRangeSelector } from '../slickCellRangeSelector';
 import { SlickEvent, SlickGrid } from '../../core/index';
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 const GRID_UID = 'slickgrid_12345';
 jest.mock('flatpickr', () => { });
@@ -18,6 +19,13 @@ const mockGridOptions = {
   frozenRow: -1,
   rowHeight: 30,
 } as GridOption;
+
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as BasePubSubService;
 
 const getEditorLockMock = {
   commitCurrentEdit: jest.fn(),
@@ -35,6 +43,7 @@ const gridStub = {
   getCellFromPoint: jest.fn(),
   getCellNodeBox: jest.fn(),
   getDisplayedScrollbarDimensions: jest.fn(),
+  getPubSubService: () => pubSubServiceStub,
   getEditorLock: () => getEditorLockMock,
   getOptions: () => mockGridOptions,
   getUID: () => GRID_UID,

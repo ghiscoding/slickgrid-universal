@@ -1,7 +1,7 @@
 import { createDomElement, stripTags } from '@slickgrid-universal/utils';
 
 import type { Column, ExcelCopyBufferOption, ExternalCopyClipCommand, OnEventArgs } from '../interfaces/index';
-import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange, SlickDataView } from '../core/index';
+import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange, SlickDataView, Utils as SlickUtils } from '../core/index';
 
 // using external SlickGrid JS libraries
 const CLEAR_COPY_SELECTION_DELAY = 2000;
@@ -17,10 +17,10 @@ const CLIPBOARD_PASTE_DELAY = 100;
 */
 export class SlickCellExternalCopyManager {
   pluginName: 'CellExternalCopyManager' = 'CellExternalCopyManager' as const;
-  onCopyCells = new SlickEvent<{ ranges: SlickRange[]; }>();
-  onCopyCancelled = new SlickEvent<{ ranges: SlickRange[]; }>();
-  onPasteCells = new SlickEvent<{ ranges: SlickRange[]; }>();
-  onBeforePasteCell = new SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any; }>();
+  onCopyCells = new SlickEvent<{ ranges: SlickRange[]; }>('onCopyCells');
+  onCopyCancelled = new SlickEvent<{ ranges: SlickRange[]; }>('onCopyCancelled');
+  onPasteCells = new SlickEvent<{ ranges: SlickRange[]; }>('onPasteCells');
+  onBeforePasteCell = new SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any; }>('onBeforePasteCell');
 
   protected _addonOptions!: ExcelCopyBufferOption;
   protected _bodyElement = document.body;
@@ -53,6 +53,12 @@ export class SlickCellExternalCopyManager {
     this._bodyElement = this._addonOptions.bodyElement || document.body;
     this._onCopyInit = this._addonOptions.onCopyInit || undefined;
     this._onCopySuccess = this._addonOptions.onCopySuccess || undefined;
+
+    // add PubSub instance to all SlickEvent
+    const pubSub = grid.getPubSubService();
+    if (pubSub) {
+      SlickUtils.addSlickEventPubSubWhenDefined(pubSub, this);
+    }
 
     this._eventHandler.subscribe(this._grid.onKeyDown, this.handleKeyDown.bind(this));
 

@@ -6,8 +6,16 @@ import { SlickCellSelectionModel } from '../slickCellSelectionModel';
 import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager';
 import { InputEditor } from '../../editors/inputEditor';
 import { SlickEvent, SlickEventData, SlickGrid, SlickRange } from '../../core/index';
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 jest.mock('flatpickr', () => { });
+
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as BasePubSubService;
 
 const mockGetSelectionModel = {
   getSelectedRanges: jest.fn(),
@@ -22,6 +30,7 @@ const gridStub = {
   getData: jest.fn(),
   getDataItem: jest.fn(),
   getDataLength: jest.fn(),
+  getPubSubService: () => pubSubServiceStub,
   getEditorLock: () => ({
     isActive: () => false,
   }),

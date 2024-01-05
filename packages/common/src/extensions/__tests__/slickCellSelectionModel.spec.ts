@@ -4,6 +4,7 @@ import type { GridOption } from '../../interfaces/index';
 import { SlickCellRangeSelector } from '../slickCellRangeSelector';
 import { SlickCellSelectionModel } from '../slickCellSelectionModel';
 import { SlickEvent, SlickGrid, SlickRange } from '../../core/index';
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 const GRID_UID = 'slickgrid_12345';
 const NB_ITEMS = 200;
@@ -44,7 +45,14 @@ const mockColumns = [
   { id: 'firstName', field: 'firstName' },
   { id: 'lastName', field: 'lastName' },
   { id: 'age', field: 'age' },
-]
+];
+
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as BasePubSubService;
 
 const gridStub = {
   canCellBeSelected: jest.fn(),
@@ -54,6 +62,7 @@ const gridStub = {
   getCellFromEvent: jest.fn(),
   getCellFromPoint: jest.fn(),
   getCellNodeBox: jest.fn(),
+  getPubSubService: () => pubSubServiceStub,
   getColumns: () => mockColumns,
   getData: () => dataViewStub,
   getDataLength: jest.fn(),
@@ -556,8 +565,8 @@ describe('CellSelectionModel Plugin', () => {
 
     plugin.init(gridStub);
     const output = plugin.rangesAreEqual(
-      [{ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 }],
-      [{ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 }]
+      [{ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 } as SlickRange],
+      [{ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 } as SlickRange]
     );
 
     expect(output).toBeTrue();
@@ -568,8 +577,8 @@ describe('CellSelectionModel Plugin', () => {
 
     plugin.init(gridStub);
     const output = plugin.rangesAreEqual(
-      [{ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 }],
-      [{ fromCell: 2, fromRow: 3, toCell: 3, toRow: 4 }]
+      [{ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 } as SlickRange],
+      [{ fromCell: 2, fromRow: 3, toCell: 3, toRow: 4 } as SlickRange]
     );
 
     expect(output).toBeFalse();

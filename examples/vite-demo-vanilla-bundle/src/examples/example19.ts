@@ -28,16 +28,27 @@ export default class Example19 {
     this.sgb = new Slicker.GridBundle(document.querySelector(`.grid19`) as HTMLDivElement, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
     document.body.classList.add('salesforce-theme');
 
-    // bind any of the grid events
+    // bind any of the grid events, e.g. onSelectedRangesChanged to show selection range on screen
     const cellSelectionModel = this.sgb.slickGrid!.getSelectionModel();
     this._eventHandler.subscribe(cellSelectionModel!.onSelectedRangesChanged, (_e, args) => {
       const targetRange = document.querySelector('#selectionRange') as HTMLSpanElement;
       targetRange.textContent = '';
-
       for (const slickRange of args) {
         targetRange.textContent += JSON.stringify(slickRange);
       }
     });
+
+    // or subscribe to any events via internal PubSub (from `this.sgb.instances?.eventPubSubService` or `this.sgb.slickGrid?.getPubSubService()`)
+    // Note: SlickEvent use the structure:: { eventData: SlickEventData; args: any; }
+    //       while other regular PubSub events use the structure:: args: any;
+    // this.sgb.instances?.eventPubSubService?.subscribe('onSelectedRangesChanged', (e) => console.log(e));
+    // this.sgb.slickGrid?.getPubSubService()?.subscribe('onSelectedRangesChanged', (e) => {
+    //   const targetRange = document.querySelector('#selectionRange') as HTMLSpanElement;
+    //   targetRange.textContent = '';
+    //   for (const slickRange of e.args) {
+    //     targetRange.textContent += JSON.stringify(slickRange);
+    //   }
+    // });
 
     const hash = {
       0: {},

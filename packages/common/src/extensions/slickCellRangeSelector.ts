@@ -11,13 +11,13 @@ import type {
   OnScrollEventArgs,
 } from '../interfaces/index';
 import { SlickCellRangeDecorator } from './index';
-import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange } from '../core/index';
+import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange, Utils as SlickUtils } from '../core/index';
 
 export class SlickCellRangeSelector {
   pluginName: 'CellRangeSelector' = 'CellRangeSelector' as const;
-  onBeforeCellRangeSelected = new SlickEvent<{ row: number; cell: number; }>();
-  onCellRangeSelecting = new SlickEvent<{ range: SlickRange; }>();
-  onCellRangeSelected = new SlickEvent<{ range: SlickRange; }>();
+  onBeforeCellRangeSelected = new SlickEvent<{ row: number; cell: number; }>('onBeforeCellRangeSelected');
+  onCellRangeSelecting = new SlickEvent<{ range: SlickRange; }>('onCellRangeSelecting');
+  onCellRangeSelected = new SlickEvent<{ range: SlickRange; }>('onCellRangeSelected');
 
   protected _activeCanvas!: HTMLElement;
   protected _options!: CellRangeSelectorOption;
@@ -87,6 +87,12 @@ export class SlickCellRangeSelector {
     this._canvas = grid.getCanvasNode();
     this._gridOptions = grid.getOptions();
     this._gridUid = grid.getUID();
+
+    // add PubSub instance to all SlickEvent
+    const pubSub = grid.getPubSubService();
+    if (pubSub) {
+      SlickUtils.addSlickEventPubSubWhenDefined(pubSub, this);
+    }
 
     this._eventHandler
       .subscribe(this._grid.onDrag, this.handleDrag.bind(this))

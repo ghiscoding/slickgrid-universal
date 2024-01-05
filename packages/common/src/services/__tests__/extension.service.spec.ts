@@ -83,10 +83,18 @@ jest.mock('../../extensions/slickRowMoveManager', () => ({
   SlickRowMoveManager: jest.fn().mockImplementation(() => mockRowMoveManager),
 }));
 
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as BasePubSubService;
+
 const gridStub = {
   autosizeColumns: jest.fn(),
   getColumnIndex: jest.fn(),
   getContainerNode: jest.fn(),
+  getPubSubService: () => pubSubServiceStub,
   getOptions: jest.fn(),
   getPluginByName: jest.fn(),
   getPreHeaderPanel: jest.fn(),
@@ -127,14 +135,6 @@ const filterServiceStub = {
   refreshTreeDataFilters: jest.fn(),
   getColumnFilters: jest.fn(),
 } as unknown as FilterService;
-
-const pubSubServiceStub = {
-  publish: jest.fn(),
-  subscribe: jest.fn(),
-  subscribeEvent: jest.fn(),
-  unsubscribe: jest.fn(),
-  unsubscribeAll: jest.fn(),
-} as BasePubSubService;
 
 const sortServiceStub = {
   addRxJsResource: jest.fn(),

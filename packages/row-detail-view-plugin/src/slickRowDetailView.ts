@@ -1,4 +1,4 @@
-import { createDomElement, SlickEvent, SlickEventHandler, } from '@slickgrid-universal/common';
+import { createDomElement, SlickEvent, SlickEventHandler, Utils as SlickUtils } from '@slickgrid-universal/common';
 import type {
   Column,
   DOMMouseOrTouchEvent,
@@ -34,22 +34,22 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   pluginName = 'RowDetailView' as const;
 
   /** Fired when the async response finished */
-  onAsyncEndUpdate = new SlickEvent<OnRowDetailAsyncEndUpdateArgs>();
+  onAsyncEndUpdate = new SlickEvent<OnRowDetailAsyncEndUpdateArgs>('onAsyncEndUpdate');
 
   /** This event must be used with the "notify" by the end user once the Asynchronous Server call returns the item detail */
-  onAsyncResponse = new SlickEvent<OnRowDetailAsyncResponseArgs>();
+  onAsyncResponse = new SlickEvent<OnRowDetailAsyncResponseArgs>('onAsyncResponse');
 
   /** Fired after the row detail gets toggled */
-  onAfterRowDetailToggle = new SlickEvent<OnAfterRowDetailToggleArgs>();
+  onAfterRowDetailToggle = new SlickEvent<OnAfterRowDetailToggleArgs>('onAfterRowDetailToggle');
 
   /** Fired before the row detail gets toggled */
-  onBeforeRowDetailToggle = new SlickEvent<OnBeforeRowDetailToggleArgs>();
+  onBeforeRowDetailToggle = new SlickEvent<OnBeforeRowDetailToggleArgs>('onBeforeRowDetailToggle');
 
   /** Fired after the row detail gets toggled */
-  onRowBackToViewportRange = new SlickEvent<OnRowBackToViewportRangeArgs>();
+  onRowBackToViewportRange = new SlickEvent<OnRowBackToViewportRangeArgs>('onRowBackToViewportRange');
 
   /** Fired after a row becomes out of viewport range (when user can't see the row anymore) */
-  onRowOutOfViewportRange = new SlickEvent<OnRowOutOfViewportRangeArgs>();
+  onRowOutOfViewportRange = new SlickEvent<OnRowOutOfViewportRangeArgs>('onRowOutOfViewportRange');
 
   // --
   // protected props
@@ -143,6 +143,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       this._addonOptions = extend(true, {}, this._defaults, this.gridOptions.rowDetailView) as RowDetailView;
     }
     this._keyPrefix = this._addonOptions?.keyPrefix || '_';
+
+    // add PubSub instance to all SlickEvent
+    SlickUtils.addSlickEventPubSubWhenDefined(this.pubSubService, this);
 
     // Update the minRowBuffer so that the view doesn't disappear when it's at top of screen + the original default 3
     this._gridRowBuffer = this.gridOptions.minRowBuffer || 0;

@@ -27,7 +27,7 @@ import { SlickEvent, SlickEventHandler, type SlickGrid } from '../core/index';
  * @constructor
  */
 export class SlickColumnPicker {
-  onColumnsChanged = new SlickEvent<OnColumnsChangedArgs>();
+  onColumnsChanged = new SlickEvent<OnColumnsChangedArgs>('onColumnsChanged');
 
   protected _areVisibleColumnDifferent = false;
   protected _bindEventService: BindingEventService;
@@ -90,6 +90,9 @@ export class SlickColumnPicker {
   init() {
     this._gridUid = this.grid.getUID() ?? '';
     this.gridOptions.columnPicker = { ...this._defaults, ...this.gridOptions.columnPicker };
+
+    // add PubSub instance to all SlickEvent
+    this.onColumnsChanged.setPubSubService(this.pubSubService);
 
     // localization support for the picker
     this.addonOptions.columnTitle = this.extensionUtility.getPickerTitleOutputString('columnTitle', 'columnPicker');
