@@ -11,21 +11,41 @@
       <span class="mdi mdi-link-variant mdi-v-align-sub"></span> code
     </a>
   </div>
-  <h6 class="title is-6 italic">
-    The Row Based Edit plugin allows you to edit either a single or multiple specific rows at a time, while disabling the rest of the grid rows.
-    Editedable rows, as well as modified cells are highlighted with a different color, which you can customize using css variables (see <a
-    target="_blank"
-    href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example22.scss"
-  >
-    example22.scss
-  </a>) <br />
-    Modifications are kept track of and if the cancel button is pressed, all modifications are rolled back.
+  <h6 class="title is-6 italic content">
+    <ul>
+      <li>
+        The Row Based Edit plugin allows you to edit either a single or multiple
+        specific rows at a time, while disabling the rest of the grid rows.
+      </li>
+      <li>
+        Editedable rows, as well as modified cells are highlighted with a
+        different color, which you can customize using css variables (see
+        <a
+          target="_blank"
+          href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example22.scss"
+        >
+          example22.scss </a
+        >)
+      </li>
+      <li>
+        Modifications are kept track of and if the cancel button is pressed, all
+        modifications are rolled back.
+      </li>
+      <li>
+        If the save button is pressed, a custom "onAfterRowUpdated" callback is called, which you can use to save the data with your backend.<br />
+        <small><span class="has-text-danger">NOTE:</span> You can also combine this with e.g. Batch Editing like shown <a href="#/example11">in Example 11</a></small>
+      </li>
+    </ul>
   </h6>
 </h3>
 
 <section>
   <div class="row mb=1">
-    <button class="button is-small" data-test="single-multi-toggle" onclick.delegate="toggleSingleMultiRowEdit()">
+    <button
+      class="button is-small"
+      data-test="single-multi-toggle"
+      onclick.delegate="toggleSingleMultiRowEdit()"
+    >
       Toggle Single/Multi Row Edit
     </button>
   </div>

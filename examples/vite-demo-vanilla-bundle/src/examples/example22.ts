@@ -121,6 +121,19 @@ export default class Example22 {
       enableRowBasedEdit: true,
       rowBasedEditOptions: {
         allowMultipleRows: false,
+        onAfterRowUpdated(args) {
+          const { effortDriven, percentComplete, finish, start, duration, title } = args.dataContext;
+
+          fakeFetch('your-backend-api/endpoint', {
+            method: 'POST',
+            body: JSON.stringify({ effortDriven, percentComplete, finish, start, duration, title }),
+            headers: {
+              'Content-type': 'application/json; charset=UTF-8'
+            }
+          }).catch(err => console.error(err))
+          .then(response => response!.json())
+          .then(json => alert(json.message));
+        },
       },
     };
   }
@@ -161,4 +174,12 @@ export default class Example22 {
 
     this.gridOptions = this.sgb.gridOptions;
   }
+}
+
+function fakeFetch(_input: string | URL | Request, _init?: RequestInit | undefined): Promise<Response> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(new Response(JSON.stringify({ status: 200, message: 'success' })));
+    }, 500);
+  });
 }
