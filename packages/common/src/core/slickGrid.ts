@@ -2471,9 +2471,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.unregisterPlugin(this.plugins[i]);
     }
 
-    if (this._options.enableColumnReorder && typeof this.sortableSideLeftInstance?.destroy === 'function') {
-      this.sortableSideLeftInstance?.destroy();
-      this.sortableSideRightInstance?.destroy();
+    if (this._options.enableColumnReorder
+      && typeof this.sortableSideLeftInstance?.destroy === 'function'
+      && typeof this.sortableSideRightInstance?.destroy === 'function'
+    ) {
+      this.sortableSideLeftInstance.destroy();
+      this.sortableSideRightInstance.destroy();
     }
 
     this.unbindAncestorScrollEvents();
@@ -3067,7 +3070,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected prepareForOptionsChange() {
-    if (!this.getEditorLock().commitCurrentEdit()) {
+    if (!this.getEditorLock()?.commitCurrentEdit()) {
       return;
     }
 
@@ -6306,7 +6309,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!this.selectionModel) {
       throw new Error('SlickGrid Selection model is not set');
     }
-    if (this && this.getEditorLock && !this.getEditorLock()?.isActive()) {
+
+    const elock = this.getEditorLock();
+    if (typeof elock?.isActive === 'function' && !elock.isActive()) {
       this.selectionModel.setSelectedRanges(this.rowsToRanges(rows), caller || 'SlickGrid.setSelectedRows');
     }
   }
