@@ -114,7 +114,7 @@ export default class Example22 {
           return args.cell > 0;
         },
       },
-
+      autoEdit: false, // NOTE: this will be automatically turned to true by the Row Based Edit Plugin
       editable: true,
       enableCellNavigation: true,
       enableRowBasedEdit: true,
@@ -133,6 +133,20 @@ export default class Example22 {
           .then(response => response!.json())
           .then(json => alert(json.message));
         },
+        actionButtons: {
+          editButtonClassName: 'button-style padding-1px mr-2',
+          iconEditButtonClassName: 'mdi mdi-pencil',
+          editButtonTitle: 'Edit row',
+          cancelButtonClassName: 'button-style padding-1px',
+          cancelButtonTitle: 'Cancel row',
+          iconCancelButtonClassName: 'mdi mdi-undo color-danger',
+          updateButtonClassName: 'button-style padding-1px mr-2',
+          updateButtonTitle: 'Update row',
+          iconUpdateButtonClassName: 'mdi mdi-check color-success',
+          deleteButtonClassName: 'button-style padding-1px',
+          deleteButtonTitle: 'Delete row',
+          iconDeleteButtonClassName: 'mdi mdi-trash-can color-danger',
+        }
       },
     };
   }

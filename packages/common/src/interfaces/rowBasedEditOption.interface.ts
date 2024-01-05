@@ -17,4 +17,23 @@ export interface RowBasedEditOptions {
    * it will add an offset to take into consideration (1.CheckboxSelector, 2.RowDetail, 3.RowMove)
    */
   columnIndexPosition?: number;
+
+  /** Allows to override the styling and titles of the actions buttons */
+  actionButtons?: {
+    editButtonClassName?: string;
+    iconEditButtonClassName?: string;
+    editButtonTitle?: string;
+
+    deleteButtonClassName?: string;
+    iconDeleteButtonClassName?: string;
+    deleteButtonTitle?: string;
+
+    cancelButtonClassName?: string;
+    iconCancelButtonClassName?: string;
+    cancelButtonTitle?: string;
+
+    updateButtonClassName?: string;
+    iconUpdateButtonClassName?: string;
+    updateButtonTitle?: string;
+  }
 }

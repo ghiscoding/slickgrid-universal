@@ -1,3 +1,6 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { createDomElement } from '@slickgrid-universal/utils';
+
 import type {
   Column,
   EditCommand,
@@ -12,8 +15,6 @@ import {
   type SlickGrid,
 } from '../core/index';
 import { GridService } from '../services';
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { createDomElement } from '@slickgrid-universal/utils';
 
 export const ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS = 'slick-rbe-editmode';
 export const ROW_BASED_EDIT_UNSAVED_CELL = 'slick-rbe-unsaved-cell';
@@ -104,13 +105,13 @@ export class SlickRowBasedEdit {
   checkOptionsRequirements(options: GridOption) {
     if (!options?.enableCellNavigation) {
       throw new Error(
-        `Row Based Edit Plugin requires the gridOption cell navigation (enableCellNavigation = true)`
+        `[Slickgrid-Universal] Row Based Edit Plugin requires the gridOption cell navigation (enableCellNavigation = true)`
       );
     }
 
     if (!options?.editable) {
       throw new Error(
-        `Row Based Edit Plugin requires the gridOption editable (editable = true)`
+        `[Slickgrid-Universal] Row Based Edit Plugin requires the gridOption editable (editable = true)`
       );
     }
   }
@@ -292,23 +293,36 @@ export class SlickRowBasedEdit {
     const dataContext = args.dataContext;
     const target = event.target as HTMLElement;
 
-    if (target.classList.contains('mdi-close') && this._gridService) {
+    if (
+      (target.classList.contains('action-btns--delete') ||
+        target.parentElement?.classList.contains('action-btns--delete')) &&
+      this._gridService
+    ) {
       this.toggleEditmode(dataContext, false);
       this._gridService.deleteItem(dataContext);
-    } else if (target.classList.contains('mdi-table-edit')) {
+    } else if (
+      target.classList.contains('action-btns--edit') ||
+      target.parentElement?.classList.contains('action-btns--edit')
+    ) {
       if (!this._addonOptions?.allowMultipleRows && this._editedRows.size > 0) {
         return;
       }
 
       this.toggleEditmode(dataContext, true);
-    } else if (target.classList.contains('mdi-check-bold')) {
+    } else if (
+      target.classList.contains('action-btns--update') ||
+      target.parentElement?.classList.contains('action-btns--update')
+    ) {
       this.removeUnsavedStylingFromRow(args.row);
       this.toggleEditmode(dataContext, false);
 
       if (this._addonOptions?.onAfterRowUpdated) {
         this._addonOptions.onAfterRowUpdated(args);
       }
-    } else if (target.classList.contains('mdi-cancel')) {
+    } else if (
+      target.classList.contains('action-btns--cancel') ||
+      target.parentElement?.classList.contains('action-btns--cancel')
+    ) {
       this.undoRowEdit(dataContext);
       this.toggleEditmode(dataContext, false);
     }
@@ -321,59 +335,92 @@ export class SlickRowBasedEdit {
     columnDef: Column,
     dataContext: any
   ) {
+    const options = this._grid.getOptions();
     const isInEditMode = this._editedRows.has(
-      dataContext?.[this._grid.getOptions().datasetIdPropertyName ?? 'id']
+      dataContext?.[options.datasetIdPropertyName ?? 'id']
     );
 
     const actionFragment = document.createDocumentFragment();
-    actionFragment.appendChild(
-      createDomElement('span', {
-        className: 'button-style padding-1px action-btns action-btns--edit',
-        title: 'Edit the Row',
-        style: { display: isInEditMode ? 'none' : '' },
-      })
-    ).appendChild(
-      createDomElement('span', {
-        className: 'mdi mdi-table-edit color-primary',
-        title: 'Edit Current Row',
-      })
-    );
-    actionFragment.appendChild(
-      createDomElement('span', {
-        className: 'button-style padding-1px action-btns action-btns--delete',
-        title: 'Delete the Row',
-        style: { display: isInEditMode ? 'none' : '' },
-      })
-    ).appendChild(
-      createDomElement('span', {
-        className: 'mdi mdi-close color-danger',
-        title: 'Delete Current Row',
-      })
-    );
-    actionFragment.appendChild(
-      createDomElement('span', {
-        className: 'button-style padding-1px action-btns action-btns--update',
-        title: 'Update the Row',
-        style: { display: !isInEditMode ? 'none' : '' },
-      })
-    ).appendChild(
-      createDomElement('span', {
-        className: 'mdi mdi-check-bold color-success',
-        title: 'Update Current Row',
-      })
-    );
-    actionFragment.appendChild(
-      createDomElement('span', {
-        className: 'button-style padding-1px action-btns action-btns--cancel',
-        title: 'Cancel changes of the Row',
-        style: { display: !isInEditMode ? 'none' : '' },
-      })
-    ).appendChild(
-      createDomElement('span', {
-        className: 'mdi mdi-cancel color-danger',
-        title: 'Cancel Current Row\'s changes',
-      })
-    );
+    actionFragment
+      .appendChild(
+        createDomElement('span', {
+          className: `${
+            options.rowBasedEditOptions?.actionButtons?.editButtonClassName ||
+            'button-style padding-1px mr-2'
+          } action-btns action-btns--edit`,
+          title:
+            options.rowBasedEditOptions?.actionButtons?.editButtonTitle ||
+            'Edit the Row',
+          style: { display: isInEditMode ? 'none' : '' },
+        })
+      )
+      .appendChild(
+        createDomElement('span', {
+          className:
+            options.rowBasedEditOptions?.actionButtons
+              ?.iconEditButtonClassName || 'mdi mdi-table-edit color-primary',
+        })
+      );
+    actionFragment
+      .appendChild(
+        createDomElement('span', {
+          className: `${
+            options.rowBasedEditOptions?.actionButtons?.deleteButtonClassName ||
+            'button-style padding-1px'
+          } action-btns action-btns--delete`,
+          title:
+            options.rowBasedEditOptions?.actionButtons?.deleteButtonTitle ||
+            'Delete the Row',
+          style: { display: isInEditMode ? 'none' : '' },
+        })
+      )
+      .appendChild(
+        createDomElement('span', {
+          className:
+            options.rowBasedEditOptions?.actionButtons
+              ?.iconDeleteButtonClassName || 'mdi mdi-close color-danger',
+        })
+      );
+    actionFragment
+      .appendChild(
+        createDomElement('span', {
+          className: `${
+            options.rowBasedEditOptions?.actionButtons?.updateButtonClassName ||
+            'button-style padding-1px mr-2'
+          } action-btns action-btns--update`,
+          title:
+            options.rowBasedEditOptions?.actionButtons?.updateButtonTitle ||
+            'Update the Row',
+          style: { display: !isInEditMode ? 'none' : '' },
+        })
+      )
+      .appendChild(
+        createDomElement('span', {
+          className:
+            options.rowBasedEditOptions?.actionButtons
+              ?.iconUpdateButtonClassName || 'mdi mdi-check-bold color-success',
+        })
+      );
+    actionFragment
+      .appendChild(
+        createDomElement('span', {
+          className: `${
+            options.rowBasedEditOptions?.actionButtons?.cancelButtonClassName ||
+            'button-style padding-1px'
+          } action-btns action-btns--cancel`,
+          title:
+            options.rowBasedEditOptions?.actionButtons?.cancelButtonTitle ||
+            'Cancel changes of the Row',
+          style: { display: !isInEditMode ? 'none' : '' },
+        })
+      )
+      .appendChild(
+        createDomElement('span', {
+          className:
+            options.rowBasedEditOptions?.actionButtons
+              ?.iconCancelButtonClassName || 'mdi mdi-cancel color-danger',
+        })
+      );
 
     return actionFragment;
   }
