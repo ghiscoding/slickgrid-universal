@@ -262,6 +262,7 @@ $slick-detail-view-container-padding:                       10px !default;
 $slick-detail-view-container-z-index:                       10 !default;
 
 /** Row based edit plugin */
+$slick-row-based-edit-unsaved-cell-bgcolor:                #f3ed91 !default;
 $slick-row-based-edit-editmode-bgcolor:                     darken($slick-grid-cell-color, 15%) !default;
 $slick-row-based-edit-editmode-hover-bgcolor:               darken($slick-grid-cell-color, 10%) !default;
 

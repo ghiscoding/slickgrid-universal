@@ -1,15 +1,23 @@
 import type {
   Column,
+  EditCommand,
   GridOption,
   OnBeforeEditCellEventArgs,
   OnSetOptionsEventArgs,
   RowBasedEditOptions,
 } from '../interfaces/index';
-import { SlickEventHandler, type SlickGrid } from '../core/index';
+import { SlickEventHandler, SlickGlobalEditorLock, type SlickGrid } from '../core/index';
 import { GridService } from '../services';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 export const ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS = 'slick-rbe-editmode';
+export const ROW_BASED_EDIT_UNSAVED_CELL = 'slick-rbe-unsaved-cell';
+export const ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX = 'slick-rbe-unsaved-highlight';
+
+export interface EditedRowDetails {
+  columns: Column[];
+  editCommands: EditCommand[];
+}
 
 /**
  * Row based edit plugin to add edit/delete buttons to each row and only allow editing rows currently in editmode
@@ -28,7 +36,10 @@ export class SlickRowBasedEdit {
     columnIndexPosition: -1,
   } as RowBasedEditOptions;
 
-  protected _editedRows: Map<string, any> = new Map();
+  protected _editedRows: Map<string, EditedRowDetails> = new Map();
+  private _existingEditCommandHandler:
+    | ((item: any, column: Column<any>, command: EditCommand) => void)
+    | undefined;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
@@ -57,7 +68,15 @@ export class SlickRowBasedEdit {
       this.onBeforeEditCellHandler
     );
 
-    this._grid.getData().getItemMetadata = this.updateItemMetadata(this._grid.getData().getItemMetadata);
+    this._existingEditCommandHandler =
+      this._grid.getOptions().editCommandHandler;
+    this._grid.setOptions({
+      editCommandHandler: this.rowBasedEditCommandHandler.bind(this),
+    });
+
+    this._grid.getData().getItemMetadata = this.updateItemMetadata(
+      this._grid.getData().getItemMetadata
+    );
     this._eventHandler.subscribe(
       this._grid.onSetOptions,
       this.optionsUpdatedHandler.bind(this)
@@ -127,6 +146,104 @@ export class SlickRowBasedEdit {
     } as Column;
   }
 
+  rowBasedEditCommandHandler(
+    item: any,
+    column: Column<any>,
+    editCommand: EditCommand
+  ) {
+    if (this._existingEditCommandHandler) {
+      this._existingEditCommandHandler(item, column, editCommand);
+    }
+
+    const prevSerializedValues = Array.isArray(editCommand.prevSerializedValue)
+      ? editCommand.prevSerializedValue
+      : [editCommand.prevSerializedValue];
+    const serializedValues = Array.isArray(editCommand.serializedValue)
+      ? editCommand.serializedValue
+      : [editCommand.serializedValue];
+    const editorColumns = this._gridService
+      ?.getAllColumnDefinitions()
+      .filter((col) => col.editor !== undefined);
+
+    const modifiedColumns: Column[] = [];
+    prevSerializedValues.forEach((_val, index) => {
+      const prevSerializedValue = prevSerializedValues[index];
+      const serializedValue = serializedValues[index];
+
+      if (prevSerializedValue !== serializedValue || serializedValue === '') {
+        const finalColumn = Array.isArray(editCommand.prevSerializedValue)
+          ? editorColumns?.[index]
+          : column;
+
+        if (!finalColumn) {
+          return;
+        }
+
+        this._grid.invalidate();
+        editCommand.execute();
+
+        this.renderUnsavedCellStyling(item, finalColumn);
+        modifiedColumns.push(finalColumn);
+      }
+    });
+
+    const idProperty = this._grid.getOptions().datasetIdPropertyName ?? 'id';
+    const editedRow = this._editedRows.get(item[idProperty]);
+    const newCommands = [...(editedRow?.editCommands || [])];
+    if (modifiedColumns.length > 0) {
+      newCommands.push(editCommand);
+    }
+
+    this._editedRows.set(item[idProperty], {
+      columns: [...(editedRow?.columns || []), ...modifiedColumns],
+      editCommands: newCommands,
+    });
+  }
+
+  protected undoRowEdit(item: any) {
+    const idProperty = this._grid.getOptions().datasetIdPropertyName ?? 'id';
+    const targetRow = this._editedRows.get(item[idProperty]);
+    const row = this._grid.getData().getRowByItem(item);
+    if (row !== undefined && targetRow?.editCommands && targetRow.editCommands.length || 0 > 0 && SlickGlobalEditorLock.cancelCurrentEdit()) {
+      while (targetRow!.editCommands.length > 0) {
+        const lastEdit = targetRow!.editCommands.pop();
+        if (lastEdit) {
+          lastEdit.undo();
+        }
+      }
+
+      targetRow!.columns.forEach((column) => {
+        this.removeUnsavedStylingFromCell(item, column, row!);
+      });
+      targetRow!.columns = [];
+
+      this._grid.invalidate();
+    }
+  }
+
+  protected renderUnsavedCellStyling(
+    item: any,
+    column: Column,
+  ) {
+    if (item && column) {
+      const row = this._grid.getData()?.getRowByItem(item);
+      if (row !== undefined && row >= 0) {
+        const hash = { [row]: { [column.id]: ROW_BASED_EDIT_UNSAVED_CELL } };
+        const cssStyleKey = `${ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX}_${[column.id]}${row}`;
+        this._grid.setCellCssStyles(cssStyleKey, hash);
+      }
+    }
+  }
+
+  protected removeUnsavedStylingFromCell(
+    _item: any,
+    column: Column,
+    row: number
+  ) {
+    const cssStyleKey = `${ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX}_${[column.id]}${row}`;
+    this._grid.removeCellCssStyles(cssStyleKey);
+  }
+
   protected optionsUpdatedHandler(e: Event, args: OnSetOptionsEventArgs) {
     this._addonOptions = {
       ...this._defaults,
@@ -139,22 +256,23 @@ export class SlickRowBasedEdit {
     const target = event.target as HTMLElement;
 
     if (target.classList.contains('mdi-close') && this._gridService) {
-      this.toggleEditmode(target, dataContext, false);
+      this.toggleEditmode(dataContext, false);
       this._gridService.deleteItem(dataContext);
     } else if (target.classList.contains('mdi-table-edit')) {
       if (!this._addonOptions?.allowMultipleRows && this._editedRows.size > 0) {
         return;
       }
 
-      this.toggleEditmode(target, dataContext, true);
+      this.toggleEditmode(dataContext, true);
     } else if (target.classList.contains('mdi-check-bold')) {
-      this.toggleEditmode(target, dataContext, false);
+      this.toggleEditmode(dataContext, false);
 
       if (this._addonOptions?.onAfterRowUpdated) {
         this._addonOptions.onAfterRowUpdated(args);
       }
     } else if (target.classList.contains('mdi-cancel')) {
-      this.toggleEditmode(target, dataContext, false);
+      this.undoRowEdit(dataContext);
+      this.toggleEditmode(dataContext, false);
     }
   }
 
@@ -195,36 +313,15 @@ export class SlickRowBasedEdit {
   };
 
   protected toggleEditmode(
-    target: HTMLElement,
     dataContext: any,
     editMode: boolean
   ) {
-    const slickCell = target.closest('.slick-cell');
-    const btnEdit = slickCell?.querySelector(
-      '.action-btns--edit'
-    ) as HTMLElement;
-    const btnDelete = slickCell?.querySelector(
-      '.action-btns--delete'
-    ) as HTMLElement;
-    const btnUpdate = slickCell?.querySelector(
-      '.action-btns--update'
-    ) as HTMLElement;
-    const btnCancel = slickCell?.querySelector(
-      '.action-btns--cancel'
-    ) as HTMLElement;
-
     const idProperty = this._grid.getOptions().datasetIdPropertyName ?? 'id';
     if (editMode) {
-      btnEdit.style.display = 'none';
-      btnDelete.style.display = 'none';
-      btnUpdate.style.display = 'inline-block';
-      btnCancel.style.display = 'inline-block';
-      this._editedRows.set(dataContext[idProperty], []);
+
+      this._editedRows.set(dataContext[idProperty], { columns: [], editCommands: [] });
     } else {
-      btnEdit.style.display = 'inline-block';
-      btnDelete.style.display = 'inline-block';
-      btnUpdate.style.display = 'none';
-      btnCancel.style.display = 'none';
+
       this._editedRows.delete(dataContext[idProperty]);
     }
 
@@ -243,10 +340,21 @@ export class SlickRowBasedEdit {
       }
 
       if (meta && item) {
-        if (this._editedRows.has(item.id) && !meta.cssClasses.includes(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS)) {
-          meta.cssClasses = (meta.cssClasses || '') + ' ' + ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS;
-        } else if (!this._editedRows.has(item.id) && meta.cssClasses.includes(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS)) {
-          meta.cssClasses = meta.cssClasses.replace(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS, '');
+        const idProperty = this._grid.getOptions().datasetIdPropertyName ?? 'id';
+        if (
+          this._editedRows.has(item[idProperty]) &&
+          !meta.cssClasses.includes(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS)
+        ) {
+          meta.cssClasses =
+            (meta.cssClasses || '') + ' ' + ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS;
+        } else if (
+          !this._editedRows.has(item[idProperty]) &&
+          meta.cssClasses.includes(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS)
+        ) {
+          meta.cssClasses = meta.cssClasses.replace(
+            ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS,
+            ''
+          );
         }
       }
 

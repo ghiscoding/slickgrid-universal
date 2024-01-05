@@ -53,6 +53,10 @@
        border: 1px transparent;
        box-sizing: border-box;
 
+       &.slick-rbe-unsaved-cell {
+         background-color: var(--slick-row-based-edit-unsaved-cell-bgcolor, $slick-row-based-edit-unsaved-cell-bgcolor);
+       }
+
        &.invalid {
          border-color: red;
          animation-duration: 0.2s;

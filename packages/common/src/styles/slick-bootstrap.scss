@@ -132,6 +132,10 @@
     .slick-cell {
       @include resetSlickCell();
 
+      &.slick-rbe-unsaved-cell {
+        background-color: var(--slick-row-based-edit-unsaved-cell-bgcolor, $slick-row-based-edit-unsaved-cell-bgcolor);
+      }
+
       a, a:visited, .ui-widget-content a, .ui-widget-content a:visited {
         color: var(--slick-link-color, $slick-link-color);
       }
