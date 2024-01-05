@@ -31,7 +31,10 @@ export class SlickRowBasedEdit {
   protected _editedRows: Map<string, any> = new Map();
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
-  constructor(protected readonly pubSubService: BasePubSubService, options?: RowBasedEditOptions) {
+  constructor(
+    protected readonly pubSubService: BasePubSubService,
+    options?: RowBasedEditOptions
+  ) {
     this._eventHandler = new SlickEventHandler();
     this._addonOptions = options;
   }
@@ -54,7 +57,14 @@ export class SlickRowBasedEdit {
       this.onBeforeEditCellHandler
     );
 
-    this._eventHandler.subscribe(this._grid.onSetOptions, this.optionsUpdatedHandler.bind(this));
+    this._grid.getData().getItemMetadata = this.updateItemMetadata(this._grid.getData().getItemMetadata);
+    this._eventHandler.subscribe(
+      this._grid.onSetOptions,
+      this.optionsUpdatedHandler.bind(this)
+    );
+
+    this._grid.invalidate();
+    this._grid.render();
   }
 
   destroy() {
@@ -67,26 +77,32 @@ export class SlickRowBasedEdit {
     this.pubSubService?.unsubscribeAll();
   }
 
-  create(columnDefinitions: Column[], gridOptions: GridOption): SlickRowBasedEdit | null {
-    this._addonOptions = { ...this._defaults, ...gridOptions.rowBasedEditOptions } as RowBasedEditOptions;
+  create(
+    columnDefinitions: Column[],
+    gridOptions: GridOption
+  ): SlickRowBasedEdit | null {
+    this._addonOptions = {
+      ...this._defaults,
+      ...gridOptions.rowBasedEditOptions,
+    } as RowBasedEditOptions;
     if (Array.isArray(columnDefinitions) && gridOptions) {
       const selectionColumn: Column = this.getColumnDefinition();
 
       // add new action column unless it was already added
-      if (!columnDefinitions.some(col => col.id === selectionColumn.id)) {
+      if (!columnDefinitions.some((col) => col.id === selectionColumn.id)) {
         // column index position in the grid
-        const columnPosition = gridOptions?.rowBasedEditOptions?.columnIndexPosition ?? -1;
+        const columnPosition =
+          gridOptions?.rowBasedEditOptions?.columnIndexPosition ?? -1;
         if (columnPosition === -1) {
           columnDefinitions.push(selectionColumn);
-        }
-        else if (columnPosition > 0) {
+        } else if (columnPosition > 0) {
           columnDefinitions.splice(columnPosition, 0, selectionColumn);
         } else {
           columnDefinitions.unshift(selectionColumn);
         }
         this.pubSubService.publish(`onPluginColumnsChanged`, {
           columns: columnDefinitions,
-          pluginName: this.pluginName
+          pluginName: this.pluginName,
         });
       }
     }
@@ -94,7 +110,9 @@ export class SlickRowBasedEdit {
   }
 
   getColumnDefinition(): Column {
-    const columnId = String(this._addonOptions?.columnId ?? this._defaults.columnId);
+    const columnId = String(
+      this._addonOptions?.columnId ?? this._defaults.columnId
+    );
 
     return {
       id: columnId,
@@ -110,10 +128,13 @@ export class SlickRowBasedEdit {
   }
 
   protected optionsUpdatedHandler(e: Event, args: OnSetOptionsEventArgs) {
-    this._addonOptions = { ...this._defaults, ...args.optionsAfter.rowBasedEditOptions } as RowBasedEditOptions;
+    this._addonOptions = {
+      ...this._defaults,
+      ...args.optionsAfter.rowBasedEditOptions,
+    } as RowBasedEditOptions;
   }
 
-  protected onCellClickHandler (event: Event, args: any) {
+  protected onCellClickHandler(event: Event, args: any) {
     const dataContext = args.dataContext;
     const target = event.target as HTMLElement;
 
@@ -121,10 +142,7 @@ export class SlickRowBasedEdit {
       this.toggleEditmode(target, dataContext, false);
       this._gridService.deleteItem(dataContext);
     } else if (target.classList.contains('mdi-table-edit')) {
-      if (
-        !this._addonOptions?.allowMultipleRows &&
-        this._editedRows.size > 0
-      ) {
+      if (!this._addonOptions?.allowMultipleRows && this._editedRows.size > 0) {
         return;
       }
 
@@ -176,13 +194,12 @@ export class SlickRowBasedEdit {
     );
   };
 
-  private toggleEditmode(
+  protected toggleEditmode(
     target: HTMLElement,
     dataContext: any,
     editMode: boolean
   ) {
     const slickCell = target.closest('.slick-cell');
-    const slickRow = target.closest('.slick-row');
     const btnEdit = slickCell?.querySelector(
       '.action-btns--edit'
     ) as HTMLElement;
@@ -211,6 +228,29 @@ export class SlickRowBasedEdit {
       this._editedRows.delete(dataContext[idProperty]);
     }
 
-    slickRow?.classList.toggle(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS, editMode);
+    this._grid.invalidate();
+    this._grid.render();
+  }
+
+  protected updateItemMetadata(previousItemMetadata: any) {
+    return (rowNumber: number) => {
+      const item = this._grid.getData().getItem(rowNumber);
+      let meta = {
+        cssClasses: '',
+      };
+      if (typeof previousItemMetadata === 'object') {
+        meta = previousItemMetadata(rowNumber);
+      }
+
+      if (meta && item) {
+        if (this._editedRows.has(item.id) && !meta.cssClasses.includes(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS)) {
+          meta.cssClasses = (meta.cssClasses || '') + ' ' + ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS;
+        } else if (!this._editedRows.has(item.id) && meta.cssClasses.includes(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS)) {
+          meta.cssClasses = meta.cssClasses.replace(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS, '');
+        }
+      }
+
+      return meta;
+    };
   }
 }
