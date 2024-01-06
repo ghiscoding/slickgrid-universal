@@ -120,18 +120,36 @@ export default class Example22 {
       enableRowBasedEdit: true,
       rowBasedEditOptions: {
         allowMultipleRows: false,
-        onAfterRowUpdated(args) {
+        onBeforeRowUpdated(args) {
           const { effortDriven, percentComplete, finish, start, duration, title } = args.dataContext;
 
-          fakeFetch('your-backend-api/endpoint', {
+          if (duration > 40) {
+            alert('Sorry, 40 is the maximum allowed duration.');
+            return Promise.resolve(false);
+          }
+
+          return fakeFetch('your-backend-api/endpoint', {
             method: 'POST',
             body: JSON.stringify({ effortDriven, percentComplete, finish, start, duration, title }),
             headers: {
               'Content-type': 'application/json; charset=UTF-8'
             }
-          }).catch(err => console.error(err))
-          .then(response => response!.json())
-          .then(json => alert(json.message));
+          }).catch(err => {
+            console.error(err);
+            return false;
+          })
+          .then(response => {
+            if (response === false) {
+              return false;
+            }
+            if (typeof response === 'object') {
+              return response!.json();
+            }
+          })
+          .then(json => {
+            alert(json.message);
+            return true;
+          });
         },
         actionButtons: {
           editButtonClassName: 'button-style padding-1px mr-2',
@@ -169,7 +187,7 @@ export default class Example22 {
       mockDataset[i] = {
         id: i,
         title: 'Task ' + i,
-        duration: Math.round(Math.random() * 100) + '',
+        duration: Math.round(Math.random() * 40) + '',
         percentComplete: randomPercent,
         start: new Date(randomYear, randomMonth + 1, randomDay),
         finish: new Date(randomYear + 1, randomMonth + 1, randomDay),

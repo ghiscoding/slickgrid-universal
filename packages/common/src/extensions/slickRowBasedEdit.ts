@@ -289,7 +289,7 @@ export class SlickRowBasedEdit {
     } as RowBasedEditOptions;
   }
 
-  protected onCellClickHandler(event: Event, args: any) {
+  protected async onCellClickHandler(event: Event, args: any) {
     const dataContext = args.dataContext;
     const target = event.target as HTMLElement;
     const idProperty = this._grid.getOptions().datasetIdPropertyName ?? 'id';
@@ -327,12 +327,16 @@ export class SlickRowBasedEdit {
         }
       }
 
+      if (this._addonOptions?.onBeforeRowUpdated) {
+        const result = await this._addonOptions.onBeforeRowUpdated(args);
+
+        if (result !== true) {
+          return;
+        }
+      }
+
       this.removeUnsavedStylingFromRow(args.row);
       this.toggleEditmode(dataContext, false);
-
-      if (this._addonOptions?.onAfterRowUpdated) {
-        this._addonOptions.onAfterRowUpdated(args);
-      }
     } else if (
       target.classList.contains('action-btns--cancel') ||
       target.parentElement?.classList.contains('action-btns--cancel')

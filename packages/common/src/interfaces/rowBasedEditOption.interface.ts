@@ -3,8 +3,8 @@ import { OnEventArgs } from './onEventArgs.interface';
 export interface RowBasedEditOptions {
   /** the display name of the added actions column */
   actionsColumnLabel?: string;
-  /** method called after row gets updated */
-  onAfterRowUpdated?: (args: OnEventArgs) => void;
+  /** method called before row gets updated. Needs to return a promised boolean. True will continue; False will halt the update */
+  onBeforeRowUpdated?: (args: OnEventArgs) => Promise<boolean>;
   /** whether multiple rows can be toggled into edit mode at the same itme (default: false) */
   allowMultipleRows?: boolean;
 
