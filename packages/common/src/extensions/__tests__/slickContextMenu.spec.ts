@@ -323,25 +323,25 @@ describe('ContextMenu Plugin', () => {
         expect(document.body.querySelector('button.close')!.ariaLabel).toBe('Close'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
           `<div class="slick-context-menu slick-menu-level-0 slickgrid12345 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
-            <div class="slick-menu-command-list">
+            <div class="slick-menu-command-list" role="menu">
               <div class="slick-command-header no-title with-close">
-                <button class="close" type="button" data-dismiss="slick-menu">×</button>
+                <button aria-label="Close" class="close" type="button" data-dismiss="slick-menu">×</button>
               </div>
-              <li class="slick-menu-item orange" data-command="command1">
+              <li class="slick-menu-item orange" role="menuitem" data-command="command1">
                 <div class="slick-menu-icon">◦</div>
                 <span class="slick-menu-content">Command 1</span>
               </li>
-              <li class="slick-menu-item" data-command="command2">
+              <li class="slick-menu-item" role="menuitem" data-command="command2">
                 <div class="slick-menu-icon">◦</div>
                 <span class="slick-menu-content">Command 2</span>
               </li>
-              <li class="slick-menu-item slick-menu-item-divider"></li>
-              <li class="slick-menu-item red" data-command="delete-row">
+              <li class="slick-menu-item slick-menu-item-divider" role="menuitem"></li>
+              <li class="slick-menu-item red" role="menuitem" data-command="delete-row">
                 <div class="slick-menu-icon mdi mdi-close"></div>
                 <span class="slick-menu-content bold">Delete Row</span>
               </li>
-              <li class="slick-menu-item slick-menu-item-divider"></li>
-              <li class=\"slick-menu-item slick-submenu-item\" data-command=\"sub-commands\">
+              <li class="slick-menu-item slick-menu-item-divider" role="menuitem"></li>
+              <li class=\"slick-menu-item slick-submenu-item\" role="menuitem" data-command=\"sub-commands\">
                 <div class=\"slick-menu-icon\"></div>
                 <span class=\"slick-menu-content\">Sub Commands</span>
                 <span class=\"sub-item-chevron\">⮞</span>
@@ -1336,25 +1336,25 @@ describe('ContextMenu Plugin', () => {
         expect(document.body.querySelector('button.close')!.ariaLabel).toBe('Close'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
           `<div class="slick-context-menu slick-menu-level-0 slickgrid12345 dropdown dropright" style="display: block; top: 0px; left: 0px;" aria-expanded="true">
-            <div class="slick-menu-option-list">
+            <div class="slick-menu-option-list" role="menu">
               <div class="slick-option-header no-title with-close">
-                <button class="close" type="button" data-dismiss="slick-menu">×</button>
+                <button aria-label="Close" class="close" type="button" data-dismiss="slick-menu">×</button>
               </div>
-              <li class="slick-menu-item purple" data-option="option1">
+              <li class="slick-menu-item purple" role="menuitem" data-option="option1">
                 <div class="slick-menu-icon">◦</div>
                 <span class="slick-menu-content">Option 1</span>
               </li>
-              <li class="slick-menu-item" data-option="option2">
+              <li class="slick-menu-item" role="menuitem" data-option="option2">
                 <div class="slick-menu-icon">◦</div>
                 <span class="slick-menu-content">Option 2</span>
               </li>
-              <li class="slick-menu-item slick-menu-item-divider"></li>
-              <li class="slick-menu-item sky" data-option="delete-row">
+              <li class="slick-menu-item slick-menu-item-divider" role="menuitem"></li>
+              <li class="slick-menu-item sky" role="menuitem" data-option="delete-row">
                 <div class="slick-menu-icon mdi mdi-checked"></div>
                 <span class="slick-menu-content underline">Delete Row</span>
               </li>
-              <li class="slick-menu-item slick-menu-item-divider"></li>
-              <li class=\"slick-menu-item slick-submenu-item\" data-option=\"sub-options\">
+              <li class="slick-menu-item slick-menu-item-divider" role="menuitem"></li>
+              <li class=\"slick-menu-item slick-submenu-item\" role="menuitem" data-option=\"sub-options\">
                 <div class=\"slick-menu-icon\"></div>
                 <span class=\"slick-menu-content\">Sub Options</span>
                 <span class=\"sub-item-chevron\">⮞</span>
