@@ -1,3 +1,4 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { InputEditor, LongTextEditor } from '../../editors';
 import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions';
 import { Column, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces';
@@ -7,11 +8,22 @@ import { SlickGrid } from '../slickGrid';
 
 jest.useFakeTimers();
 
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as BasePubSubService;
+
+const DEFAULT_COLUMN_HEIGHT = 25;
+const DEFAULT_GRID_HEIGHT = 600;
+const DEFAULT_GRID_WIDTH = 800;
+
 const gridId = 'grid1';
 const gridUid = 'slickgrid_124343';
 const containerId = 'demo-container';
 const template =
-  `<div id="${containerId}" style="height: 800px; width: 600px; overflow: hidden; display: block;">
+  `<div id="${containerId}" style="height: ${DEFAULT_GRID_HEIGHT}px; width: ${DEFAULT_GRID_WIDTH}px; overflow: hidden; display: block;">
     <div id="slickGridContainer-${gridId}" class="grid-pane" style="width: 100%;">
       <div id="${gridId}" class="${gridUid}" style="width: 100%"></div>
     </div>
@@ -25,12 +37,12 @@ describe('SlickGrid core file', () => {
     container = document.createElement('div');
     container.id = 'myGrid';
     container.innerHTML = template;
-    container.style.height = '600px';
-    container.style.width = '800px';
+    container.style.height = `${DEFAULT_GRID_HEIGHT}px`;
+    container.style.width = `${DEFAULT_GRID_WIDTH}px`;
     document.body.appendChild(container);
-    Object.defineProperty(container, 'height', { writable: true, configurable: true, value: 600 });
-    Object.defineProperty(container, 'clientHeight', { writable: true, configurable: true, value: 600 });
-    Object.defineProperty(container, 'clientWidth', { writable: true, configurable: true, value: 800 });
+    Object.defineProperty(container, 'height', { writable: true, configurable: true, value: DEFAULT_GRID_HEIGHT });
+    Object.defineProperty(container, 'clientHeight', { writable: true, configurable: true, value: DEFAULT_GRID_HEIGHT });
+    Object.defineProperty(container, 'clientWidth', { writable: true, configurable: true, value: DEFAULT_GRID_WIDTH });
   });
 
   afterEach(() => {
@@ -50,6 +62,17 @@ describe('SlickGrid core file', () => {
     expect(grid.getCanvasNode()).toBeTruthy();
     expect(grid.getActiveCanvasNode()).toBeTruthy();
     expect(grid.getContainerNode()).toEqual(container);
+  });
+
+  it('should be able to instantiate SlickGrid with an external PubSub Service', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options, pubSubServiceStub);
+    grid.init();
+
+    expect(grid).toBeTruthy();
+    expect(grid.getData()).toEqual([]);
+    expect(grid.getPubSubService()).toEqual(pubSubServiceStub);
   });
 
   it('should be able to instantiate SlickGrid and get columns', () => {
@@ -268,6 +291,65 @@ describe('SlickGrid core file', () => {
     expect(() => new SlickGrid<any, Column>(null as any, dv, columns, options)).toThrow('SlickGrid requires a valid container');
   });
 
+  describe('Row Selections', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+    describe('setSelectedRows() method', () => {
+      it('should throw when calling setSelectedRows() without a selection model', () => {
+        grid = new SlickGrid<any, Column>(container, [], columns, options);
+
+        expect(() => grid.setSelectedRows([0, 1])).toThrow('SlickGrid Selection model is not set');
+      });
+
+      it('should call setSelectedRanges() when editor lock isActive() is define and is returning false', () => {
+        const rowSelectionModel = new SlickRowSelectionModel();
+        const setRangeSpy = jest.spyOn(rowSelectionModel, 'setSelectedRanges');
+
+        grid = new SlickGrid<any, Column>(container, data, columns, options);
+        grid.setSelectionModel(rowSelectionModel);
+        jest.spyOn(grid.getEditorLock(), 'isActive').mockReturnValueOnce(false);
+
+        grid.setSelectedRows([0, 1]);
+
+        expect(setRangeSpy).toHaveBeenCalledWith([
+          { fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 },
+          { fromCell: 0, fromRow: 1, toCell: 0, toRow: 1 }
+        ], 'SlickGrid.setSelectedRows');
+      });
+
+      it('should not call setSelectedRanges() when editor lock isActive() is define and is returning true', () => {
+        const rowSelectionModel = new SlickRowSelectionModel();
+        const setRangeSpy = jest.spyOn(rowSelectionModel, 'setSelectedRanges');
+
+        grid = new SlickGrid<any, Column>(container, data, columns, options);
+        grid.setSelectionModel(rowSelectionModel);
+        jest.spyOn(grid.getEditorLock(), 'isActive').mockReturnValueOnce(true);
+
+        grid.setSelectedRows([0, 1]);
+
+        expect(setRangeSpy).not.toHaveBeenCalled();
+      });
+
+      it('should not call setSelectedRanges() when editor lock is undefined', () => {
+        const rowSelectionModel = new SlickRowSelectionModel();
+        const setRangeSpy = jest.spyOn(rowSelectionModel, 'setSelectedRanges');
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...options, editorLock: undefined });
+        grid.setSelectionModel(rowSelectionModel);
+
+        jest.spyOn(grid, 'getEditorLock').mockReturnValue(undefined as any)
+        grid.setSelectedRows([0, 1]);
+
+        expect(grid.getEditorLock()).toBeUndefined();
+        expect(setRangeSpy).not.toHaveBeenCalledWith([
+          { fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 },
+          { fromCell: 0, fromRow: 1, toCell: 0, toRow: 1 }
+        ], 'SlickGrid.setSelectedRows');
+      });
+    });
+  });
+
   describe('Pre-Header Panel', () => {
     it('should create a preheader panel when enabled', () => {
       const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
@@ -444,16 +526,18 @@ describe('SlickGrid core file', () => {
   describe('Header Row', () => {
     it('should show top panel div when "showHeaderRow" is enabled', () => {
       const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }, { id: 'lastName', field: 'lastName', name: 'Last Name' }] as Column[];
-      const options = { enableCellNavigation: true, showHeaderRow: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      const options = { enableCellNavigation: true, showHeaderRow: true, frozenColumn: 0, devMode: { ownerNodeIndex: 0 } } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, options);
       grid.init();
       const headerElms = container.querySelectorAll<HTMLDivElement>('.slick-headerrow');
+      const firstNameColHeader = grid.getHeaderRowColumn('firstName');
 
       expect(grid).toBeTruthy();
       expect(headerElms.length).toBe(2);
       expect(headerElms[0].style.display).not.toBe('none');
       expect(headerElms[1].style.display).not.toBe('none');
-      expect(grid.getHeaderRowColumn('firstName')).toEqual(headerElms[0].querySelector('.slick-headerrow-column'));
+      expect(firstNameColHeader).toEqual(headerElms[0].querySelector('.slick-headerrow-column'));
+      expect(firstNameColHeader.classList.contains('frozen')).toBeTruthy();
     });
 
     it('should hide top panel div when "showHeaderRow" is disabled', () => {
@@ -851,124 +935,322 @@ describe('SlickGrid core file', () => {
       });
     });
 
-    describe('Grid Dimensions', () => {
-      it('should return default column width when column is not wider than grid and fullWidthRows is disabled with mixinDefaults is enabled', () => {
-        const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, mixinDefaults: true });
-        const result = grid.getCanvasWidth();
-
-        expect(result).toBe(80);
-        expect(grid.getAbsoluteColumnMinWidth()).toBe(0);
-        expect(grid.getHeaderColumnWidthDiff()).toBe(0);
-      });
-
-      it('should return default full grid width when column is not wider than grid but fullWidthRows is enabled', () => {
-        const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, fullWidthRows: true });
-        const result = grid.getCanvasWidth();
-
-        expect(result).toBe(800);
-      });
-
-      it('should return original grid width of 800px', () => {
-        const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, fullWidthRows: true });
-        const result = grid.getCanvasWidth();
-
-        expect(result).toBe(800);
-      });
-
-      it('should return left viewport width of 160px which is the default column width times 2', () => {
+    describe('getCellNodeBox() function', () => {
+      it('should return null when no data is empty', () => {
         const columns = [
           { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
           { id: 'lastName', field: 'lastName', name: 'Last Name' },
           { id: 'age', field: 'age', name: 'age' },
         ] as Column[];
-        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, frozenColumn: 1 });
-        const result = grid.getCanvasWidth();
-        grid.autosizeColumns();
-        grid.reRenderColumns();
-        grid.render();
-        grid.updateColumnHeader(1);
-
-        expect(grid.getHeader()[0]).toBeInstanceOf(HTMLDivElement);
-        expect(grid.getHeader(columns[0])).toBeInstanceOf(HTMLDivElement);
-        expect(grid.getVisibleColumns().length).toBe(2);
-        expect(result).toBe(80 * 2);
-      });
-
-      it('should return visible columns', () => {
-        const columns = [
-          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
-          { id: 'lastName', field: 'lastName', name: 'Last Name' },
-          { id: 'age', field: 'age', name: 'age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, frozenColumn: 1 });
-        const updateSpy = jest.spyOn(grid.onBeforeUpdateColumns, 'notify');
-        grid.updateColumns();
-        expect(grid.getVisibleColumns().length).toBe(2);
-
-        const newColumns = [
-          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: false },
-          { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
-          { id: 'age', field: 'age', name: 'age', hidden: true },
-        ] as Column[];
-        grid.setColumns(newColumns);
-
-        expect(updateSpy).toHaveBeenCalled();
-        expect(grid.getHeader()[0]).toBeInstanceOf(HTMLDivElement);
-        expect(grid.getVisibleColumns().length).toBe(1);
-      });
-
-      it('should return full grid width when fullWidthRows is enabled even with frozenColumn defined', () => {
-        const columns = [
-          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
-          { id: 'lastName', field: 'lastName', name: 'Last Name' },
-          { id: 'age', field: 'age', name: 'age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, fullWidthRows: true, frozenColumn: 1 });
-        const result = grid.getCanvasWidth();
-
-        expect(grid.getVisibleColumns().length).toBe(2);
-        expect(result).toBe(800);
-        expect(grid.getHeader()[0]).toBeInstanceOf(HTMLDivElement);
-        expect((grid.getHeader()[0] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-left');
-        expect((grid.getHeader()[1] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-right');
-      });
-
-      it('should return viewport element when calling the function when found in the grid container', () => {
-        const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
         grid = new SlickGrid<any, Column>(container, [], columns, options);
-        const result = grid.getHeadersWidth();
 
-        expect(result).toBe(2800); // (1000 * 1) + 1000 + gridWidth 800
+        expect(grid.getCellNodeBox(0, 0)).toBeNull();
       });
 
-      it('should return viewport element when calling the function when found in the grid container', () => {
-        const columns = [
-          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
-          { id: 'lastName', field: 'lastName', name: 'Last Name' },
-          { id: 'age', field: 'age', name: 'age' },
-        ] as Column[];
-        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, frozenColumn: 1 });
-        grid.init();
-        const result = grid.getHeadersWidth();
-
-        expect(result).toBe(800 + (1000 + 80 * 2) + 1000 + 1000); // Left + Right => 800 + (1000 + (defaultColumnWidth * 2)) * 2 + 1000
-      });
-
-      it('should return viewport element when calling the function when found in the grid container', () => {
+      it('should return cell node box dimension for first cell (top/left) when data is found in the grid', () => {
         const columns = [
           { id: 'firstName', field: 'firstName', name: 'First Name' },
           { id: 'lastName', field: 'lastName', name: 'Last Name' },
+          { id: 'age', field: 'age', name: 'age', hidden: true },
         ] as Column[];
-        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, frozenColumn: 1 });
-        grid.init();
-        const result = grid.getHeadersWidth();
+        const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+        grid = new SlickGrid<any, Column>(container, data, columns, options);
 
-        expect(result).toBe(800 + (1000 + 80 * 2) * 2 + 1000); // Left + Right => 800 + (1000 + (defaultColumnWidth * 2)) * 2 + 1000
+        expect(grid.getCellNodeBox(0, 0)).toEqual({
+          left: 0,
+          top: 0,
+          bottom: expect.any(Number),
+          right: expect.any(Number),
+        });
+      });
+
+      it('should return cell node box dimension for other cell when data is found in the grid', () => {
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name' },
+          { id: 'lastName', field: 'lastName', name: 'Last Name' },
+          { id: 'age', field: 'age', name: 'age', hidden: true },
+        ] as Column[];
+        const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+        grid = new SlickGrid<any, Column>(container, data, columns, options);
+
+        expect(grid.getCellNodeBox(1, 1)).toEqual({
+          left: 80, // default column width
+          top: DEFAULT_COLUMN_HEIGHT, // default column height
+          bottom: expect.any(Number),
+          right: expect.any(Number),
+        });
+      });
+
+      it('should return cell node box dimension for other cell but expect to skip hidden cells from calculation', () => {
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name' },
+          { id: 'age', field: 'age', name: 'age' },
+        ] as Column[];
+        const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+        grid = new SlickGrid<any, Column>(container, data, columns, options);
+
+        expect(grid.getCellNodeBox(1, 1)).toEqual({
+          left: 0, // 0 because 1st cell is hidden
+          top: DEFAULT_COLUMN_HEIGHT, // default column height
+          bottom: expect.any(Number),
+          right: expect.any(Number),
+        });
+      });
+
+      it('should return cell node box dimension on Frozen grid for other cell but expect to start our left calculation minus left frozen row', () => {
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name' },
+          { id: 'age', field: 'age', name: 'age' },
+        ] as Column[];
+        const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...options, frozenColumn: 1 });
+
+        expect(grid.getCellNodeBox(1, 2)).toEqual({
+          left: 0, // 0 because previous cell is frozen
+          top: DEFAULT_COLUMN_HEIGHT, // default column height
+          bottom: expect.any(Number),
+          right: expect.any(Number),
+        });
       });
     });
+
+    describe('getFrozenRowOffset() function', () => {
+      it('should return 0 offset when frozenRow is undefined', () => {
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name' },
+          { id: 'age', field: 'age', name: 'age' },
+        ] as Column[];
+        const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...options, frozenColumn: 1 });
+
+        expect(grid.getFrozenRowOffset(1)).toBe(0);
+      });
+
+      it('should return offset of 0 when frozenRow is defined as 0', () => {
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name' },
+          { id: 'age', field: 'age', name: 'age' },
+        ] as Column[];
+        const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...options, frozenRow: 0 });
+
+        expect(grid.getFrozenRowOffset(2)).toBe(0);
+      });
+
+      it('should return offset of default column height when frozenRow is defined as 1', () => {
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name' },
+          { id: 'age', field: 'age', name: 'age' },
+        ] as Column[];
+        const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...options, frozenRow: 1 });
+
+        expect(grid.getFrozenRowOffset(2)).toBe(DEFAULT_COLUMN_HEIGHT);
+      });
+
+      it('should return offset of default column height when frozenBottom is enabled and frozenRow is defined as 2 but actual frozen row is calculated to 0 because of frozen bottom and data length of 2 (2-2=0)', () => {
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name' },
+          { id: 'age', field: 'age', name: 'age' },
+        ] as Column[];
+        const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...options, frozenBottom: true, frozenRow: 2 }); // 2 - 2 = 0 as actual frozen row
+
+        expect(grid.getFrozenRowOffset(2)).toBe(0);
+      });
+
+      it('should return offset of default column height * 2 when frozenBottom is enabled and frozenRow is defined as 2 and column height is lower than viewport offset top', () => {
+        const columns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
+          { id: 'lastName', field: 'lastName', name: 'Last Name' },
+          { id: 'age', field: 'age', name: 'age' },
+        ] as Column[];
+        const data = [
+          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+          { id: 2, firstName: 'Bob', lastName: 'Smith', age: 48 },
+          { id: 3, firstName: 'Arnold', lastName: 'Smith', age: 37 },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...options, frozenBottom: true, frozenRow: 2, topPanelHeight: 540, showTopPanel: true });
+
+        expect(grid.getFrozenRowOffset(2)).toBe(DEFAULT_COLUMN_HEIGHT * 2);
+      });
+    });
+  });
+
+  describe('Grid Dimensions', () => {
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+    it('should return default column width when column is not wider than grid and fullWidthRows is disabled with mixinDefaults is enabled', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...options, mixinDefaults: true });
+      const result = grid.getCanvasWidth();
+
+      expect(result).toBe(80);
+      expect(grid.getAbsoluteColumnMinWidth()).toBe(0);
+      expect(grid.getHeaderColumnWidthDiff()).toBe(0);
+    });
+
+    it('should return default full grid width when column is not wider than grid but fullWidthRows is enabled', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...options, fullWidthRows: true });
+      const result = grid.getCanvasWidth();
+
+      expect(result).toBe(DEFAULT_GRID_WIDTH);
+    });
+
+    it('should return original grid width of 800px', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...options, fullWidthRows: true });
+      const result = grid.getCanvasWidth();
+
+      expect(result).toBe(DEFAULT_GRID_WIDTH);
+    });
+
+    it('should return left viewport width of 160px which is the default column width times 2', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+        { id: 'age', field: 'age', name: 'age' },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...options, frozenColumn: 1 });
+      const result = grid.getCanvasWidth();
+      grid.autosizeColumns();
+      grid.reRenderColumns();
+      grid.render();
+      grid.updateColumnHeader(1);
+
+      expect(grid.getHeader()[0]).toBeInstanceOf(HTMLDivElement);
+      expect(grid.getHeader(columns[0])).toBeInstanceOf(HTMLDivElement);
+      expect(grid.getVisibleColumns().length).toBe(2);
+      expect(result).toBe(80 * 2);
+    });
+
+    it('should return visible columns', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+        { id: 'age', field: 'age', name: 'age' },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...options, frozenColumn: 1 });
+      const updateSpy = jest.spyOn(grid.onBeforeUpdateColumns, 'notify');
+      grid.updateColumns();
+      expect(grid.getVisibleColumns().length).toBe(2);
+
+      const newColumns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', hidden: false },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
+        { id: 'age', field: 'age', name: 'age', hidden: true },
+      ] as Column[];
+      grid.setColumns(newColumns);
+
+      expect(updateSpy).toHaveBeenCalled();
+      expect(grid.getHeader()[0]).toBeInstanceOf(HTMLDivElement);
+      expect(grid.getVisibleColumns().length).toBe(1);
+    });
+
+    it('should return full grid width when fullWidthRows is enabled even with frozenColumn defined', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+        { id: 'age', field: 'age', name: 'age' },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...options, fullWidthRows: true, frozenColumn: 1 });
+      const result = grid.getCanvasWidth();
+
+      expect(grid.getVisibleColumns().length).toBe(2);
+      expect(result).toBe(DEFAULT_GRID_WIDTH);
+      expect(grid.getHeader()[0]).toBeInstanceOf(HTMLDivElement);
+      expect((grid.getHeader()[0] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-left');
+      expect((grid.getHeader()[1] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-right');
+    });
+
+    it('should return viewport element when calling the function when found in the grid container', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, options);
+      const result = grid.getHeadersWidth();
+
+      expect(result).toBe(2000 + DEFAULT_GRID_WIDTH); // (1000 * 1) + 1000 + gridWidth 800
+    });
+
+    it('should return viewport element when calling the function when found in the grid container', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+        { id: 'age', field: 'age', name: 'age' },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...options, frozenColumn: 1 });
+      grid.init();
+      const result = grid.getHeadersWidth();
+
+      expect(result).toBe(DEFAULT_GRID_WIDTH + (1000 + 80 * 2) + 1000 + 1000); // Left + Right => 800 + (1000 + (defaultColumnWidth * 2)) * 2 + 1000
+    });
+
+    it('should return viewport element when calling the function when found in the grid container', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...options, frozenColumn: 1 });
+      grid.init();
+      const result = grid.getHeadersWidth();
+
+      expect(result).toBe(DEFAULT_GRID_WIDTH + (1000 + 80 * 2) * 2 + 1000); // Left + Right => 800 + (1000 + (defaultColumnWidth * 2)) * 2 + 1000
+    });
+
+    describe('getViewportHeight() method', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+      ] as Column[];
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        { id: 2, firstName: 'Bob', lastName: 'Smith', age: 48 },
+        { id: 3, firstName: 'Arnold', lastName: 'Smith', age: 37 },
+      ];
+
+      it('should return full viewport height by data size when "autoHeight" is enabled', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...options, autoHeight: true });
+        grid.init();
+
+        expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length);
+      });
+
+      it('should return full viewport height by data size + headerRow & footerRow when they are enabled with "autoHeight"', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...options, autoHeight: true, headerRowHeight: 50, showHeaderRow: true, footerRowHeight: 40, createFooterRow: true, showFooterRow: true });
+        grid.init();
+
+        expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length + 50 + 40);
+      });
+
+      it('should return original grid height when calling method', () => {
+        const data = [
+          { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+          { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+          { id: 2, firstName: 'Bob', lastName: 'Smith', age: 48 },
+          { id: 3, firstName: 'Arnold', lastName: 'Smith', age: 37 },
+        ];
+        grid = new SlickGrid<any, Column>(container, data, columns, options);
+        grid.init();
+
+        expect(grid.getViewportHeight()).toBe(DEFAULT_GRID_HEIGHT);
+      });
+
+      it('should return original grid height minus headerRow & footerRow heights when calling method', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...options, headerRowHeight: 50, showHeaderRow: true, footerRowHeight: 40, createFooterRow: true, showFooterRow: true });
+        grid.init();
+
+        expect(grid.getViewportHeight()).toBe(DEFAULT_GRID_HEIGHT - 50 - 40);
+      });
+    })
   });
 
   describe('updateColumnHeader() method', () => {
@@ -1306,7 +1588,7 @@ describe('SlickGrid core file', () => {
 
       grid.scrollRowToTop(2);
 
-      expect(scrollToSpy).toHaveBeenCalledWith(2 * 25); // default rowHeight: 25
+      expect(scrollToSpy).toHaveBeenCalledWith(2 * DEFAULT_COLUMN_HEIGHT); // default rowHeight: 25
       expect(renderSpy).toHaveBeenCalled();
     });
 
@@ -1318,7 +1600,7 @@ describe('SlickGrid core file', () => {
       grid.scrollRowToTop(2);
       grid.scrollRowIntoView(1, true);
 
-      expect(scrollToSpy).toHaveBeenCalledWith(2 * 25); // default rowHeight: 25
+      expect(scrollToSpy).toHaveBeenCalledWith(2 * DEFAULT_COLUMN_HEIGHT); // default rowHeight: 25
       expect(renderSpy).toHaveBeenCalled();
     });
 
@@ -1355,7 +1637,7 @@ describe('SlickGrid core file', () => {
       grid.navigateBottom();
 
       expect(scrollCellSpy).toHaveBeenCalledWith(data.length - 1, 0, true);
-      expect(scrollToSpy).toHaveBeenCalledWith(25);
+      expect(scrollToSpy).toHaveBeenCalledWith(DEFAULT_COLUMN_HEIGHT);
       expect(resetCellSpy).toHaveBeenCalled();
       expect(onActiveCellSpy).toHaveBeenCalled();
     });
@@ -1374,7 +1656,7 @@ describe('SlickGrid core file', () => {
 
       expect(result).toBe(true);
       expect(scrollCellSpy).toHaveBeenCalledWith(data.length - 1, 0, true);
-      expect(scrollToSpy).toHaveBeenCalledWith(25);
+      expect(scrollToSpy).toHaveBeenCalledWith(DEFAULT_COLUMN_HEIGHT);
       expect(canCellActiveSpy).toHaveBeenCalledTimes(3);
       expect(resetCellSpy).not.toHaveBeenCalled();
       expect(onActiveCellSpy).toHaveBeenCalled();
@@ -1393,7 +1675,7 @@ describe('SlickGrid core file', () => {
       grid.navigatePageDown();
 
       expect(scrollCellSpy).toHaveBeenCalledWith(0, 0, true);
-      expect(scrollToSpy).toHaveBeenCalledWith(25);
+      expect(scrollToSpy).toHaveBeenCalledWith(DEFAULT_COLUMN_HEIGHT);
       expect(canCellActiveSpy).toHaveBeenCalledTimes(3);
       expect(resetCellSpy).not.toHaveBeenCalled();
       expect(onActiveCellSpy).toHaveBeenCalled();
@@ -1808,6 +2090,33 @@ describe('SlickGrid core file', () => {
       expect(result).toBe(true);
       expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
       expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('Sanitizer', () => {
+    const columns = [
+      { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+      { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+      { id: 'age', field: 'age', name: 'Age', sortable: true },
+    ] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+    it('should use sanitizer when provided in grid options and expect <script> to be removed', () => {
+      const sanitizer = (dirtyHtml: string) => typeof dirtyHtml === 'string' ? dirtyHtml.replace(/(\b)(on[a-z]+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi, '') : dirtyHtml;
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...options, sanitizer });
+
+      const dirtyHtml = '<div class="some-class"><script>alert("hello world")</script></div>';
+      const cleanHtml = '<div class="some-class"></div>';
+
+      expect(grid.sanitizeHtmlString(dirtyHtml)).toBe(cleanHtml);
+    });
+
+    it('should return same input string when no sanitizer provided', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...options, sanitizer: undefined });
+
+      const dirtyHtml = '<div class="some-class"><script>alert("hello world")</script></div>';
+
+      expect(grid.sanitizeHtmlString(dirtyHtml)).toBe(dirtyHtml);
     });
   });
 });

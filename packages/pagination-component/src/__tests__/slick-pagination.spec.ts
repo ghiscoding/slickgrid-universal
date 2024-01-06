@@ -126,8 +126,8 @@ describe('Slick-Pagination Component', () => {
         expect(pageInfoFromTo.querySelector('span.item-from')!.ariaLabel).toBe('Page Item From'); // JSDom doesn't support ariaLabel, but we can test attribute this way
         expect(pageInfoFromTo.querySelector('span.item-to')!.ariaLabel).toBe('Page Item To');
         expect(pageInfoTotalItems.querySelector('span.total-items')!.ariaLabel).toBe('Total Items');
-        expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe('<span class="item-from" data-test="item-from">10</span>-<span class="item-to" data-test="item-to">15</span> <span class="text-of">of</span> ');
-        expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe('<span class="total-items" data-test="total-items">95</span> <span class="text-items">items</span> ');
+        expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe('<span class="item-from" aria-label="Page Item From" data-test="item-from">10</span>-<span class="item-to" aria-label="Page Item To" data-test="item-to">15</span> <span class="text-of">of</span> ');
+        expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe('<span class="total-items" aria-label="Total Items" data-test="total-items">95</span> <span class="text-items">items</span> ');
         expect(itemsPerPage.selectedOptions[0].value).toBe('5');
       });
 
@@ -344,8 +344,8 @@ describe('with different i18n locale', () => {
       expect(pageInfoFromTo.querySelector('span.item-from')!.ariaLabel).toBe('Page Item From'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
       expect(pageInfoFromTo.querySelector('span.item-to')!.ariaLabel).toBe('Page Item To');
       expect(pageInfoTotalItems.querySelector('span.total-items')!.ariaLabel).toBe('Total Items');
-      expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe(`<span class="item-from" data-test="item-from">10</span>-<span class="item-to" data-test="item-to">15</span> <span class="text-of">de</span> `);
-      expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe(`<span class="total-items" data-test="total-items">95</span> <span class="text-items">éléments</span> `);
+      expect(removeExtraSpaces(pageInfoFromTo.innerHTML)).toBe(`<span class="item-from" aria-label="Page Item From" data-test="item-from">10</span>-<span class="item-to" aria-label="Page Item To" data-test="item-to">15</span> <span class="text-of">de</span> `);
+      expect(removeExtraSpaces(pageInfoTotalItems.innerHTML)).toBe(`<span class="total-items" aria-label="Total Items" data-test="total-items">95</span> <span class="text-items">éléments</span> `);
       done();
     }, 50);
   });

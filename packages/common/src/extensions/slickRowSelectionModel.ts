@@ -7,7 +7,7 @@ export class SlickRowSelectionModel implements SelectionModel {
   pluginName: 'RowSelectionModel' = 'RowSelectionModel' as const;
 
   /** triggered when selected ranges changes */
-  onSelectedRangesChanged = new SlickEvent<SlickRange[]>();
+  onSelectedRangesChanged = new SlickEvent<SlickRange[]>('onSelectedRangesChanged');
 
   protected _options: RowSelectionModelOption;
   protected _eventHandler: SlickEventHandler;
@@ -43,6 +43,12 @@ export class SlickRowSelectionModel implements SelectionModel {
     this._grid = grid;
     this._options = { ...this._defaults, ...this._options };
     this._selector = this.addonOptions.cellRangeSelector;
+
+    // add PubSub instance to all SlickEvent
+    const pubSub = grid.getPubSubService();
+    if (pubSub) {
+      this.onSelectedRangesChanged.setPubSubService(pubSub);
+    }
 
     if (!this._selector && this._options.dragToSelect) {
       this._selector = new SlickCellRangeSelector({

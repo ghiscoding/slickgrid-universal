@@ -55,7 +55,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle"></div><span class="slick-tree-title" level="0">Barbara</span>`);
+      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara</span>`);
   });
 
   it('should return the Tree content wrapped inside a span HTML element when "allowDocumentFragmentUsage" grid option is disabled', () => {
@@ -64,7 +64,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect((output.html as HTMLElement).outerHTML)
-      .toEqual(`<span><span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle"></div><span class="slick-tree-title" level="0">Barbara</span></span>`);
+      .toEqual(`<span><span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara</span></span>`);
   });
 
   it('should return a span without any toggle icon and have a 15px indentation with tree level 3', () => {
@@ -72,7 +72,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-1');
     expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle"></div><span class="slick-tree-title" level="1">Bobby</span>`);
+      .toEqual(`<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="1">Bobby</span>`);
   });
 
   it('should return a span without any toggle icon and have a 45px indentation of a tree level 3', () => {
@@ -80,7 +80,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-3');
     expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 45px;"></span><div class="slick-group-toggle"></div><span class="slick-tree-title" level="3">Sponge</span>`);
+      .toEqual(`<span style="display: inline-block; width: 45px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="3">Sponge</span>`);
   });
 
   it('should return a span with expanded icon and 15px indentation when item is a parent and is not collapsed', () => {
@@ -88,7 +88,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-1');
     expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle expanded"></div><span class="slick-tree-title" level="1">Jane</span>`);
+      .toEqual(`<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle expanded" aria-expanded="true"></div><span class="slick-tree-title" level="1">Jane</span>`);
   });
 
   it('should return a span with collapsed icon and 0px indentation of a tree level 0 when item is a parent and is collapsed', () => {
@@ -96,7 +96,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle collapsed"></div><span class="slick-tree-title" level="0">Anonymous</span>`);
+      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle collapsed" aria-expanded="false"></div><span class="slick-tree-title" level="0">Anonymous</span>`);
   });
 
   it('should return a span with expanded icon and 15px indentation of a tree level 1 with a value prefix when provided', () => {
@@ -112,7 +112,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-1');
     expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle expanded"></div><span class="slick-tree-title" level="1"><span class="mdi mdi-subdirectory-arrow-right"></span>Jane</span>`);
+      .toEqual(`<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle expanded" aria-expanded="true"></div><span class="slick-tree-title" level="1"><span class="mdi mdi-subdirectory-arrow-right"></span>Jane</span>`);
   });
 
   it('should execute "queryFieldNameGetterFn" callback to get field name to use when it is defined', () => {
@@ -121,7 +121,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle"></div><span class="slick-tree-title" level="0">Barbara Cane</span>`);
+      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara Cane</span>`);
   });
 
   it('should execute "queryFieldNameGetterFn" callback to get field name and also apply html encoding when output value includes a character that should be encoded', () => {
@@ -130,7 +130,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle collapsed"></div><span class="slick-tree-title" level="0">Anonymous &lt; Doe</span>`);
+      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle collapsed" aria-expanded="false"></div><span class="slick-tree-title" level="0">Anonymous &lt; Doe</span>`);
   });
 
   it('should execute "queryFieldNameGetterFn" callback to get field name, which has (.) dot notation reprensenting complex object', () => {
@@ -139,6 +139,6 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle"></div><span class="slick-tree-title" level="0">444444</span>`);
+      .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">444444</span>`);
   });
 });

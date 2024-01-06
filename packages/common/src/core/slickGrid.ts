@@ -459,6 +459,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected sortableSideLeftInstance?: Sortable;
   protected sortableSideRightInstance?: Sortable;
   protected logMessageMaxCount = 30;
+  protected _pubSubService?: BasePubSub;
 
   /**
    * Creates a new instance of the grid.
@@ -471,6 +472,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Object} [externalPubSub] - optional External PubSub Service to use by SlickEvent
    **/
   constructor(protected readonly container: HTMLElement | string, protected data: CustomDataView<TData> | TData[], protected columns: C[], options: Partial<O>, protected readonly externalPubSub?: BasePubSub) {
+    this._container = typeof this.container === 'string'
+      ? document.querySelector(this.container) as HTMLDivElement
+      : this.container;
+
+    if (!this._container) {
+      throw new Error(`SlickGrid requires a valid container, ${this.container} does not exist in the DOM.`);
+    }
+
+    this._pubSubService = externalPubSub;
     this.onActiveCellChanged = new SlickEvent<OnActiveCellChangedEventArgs>('onActiveCellChanged', externalPubSub);
     this.onActiveCellPositionChanged = new SlickEvent<SlickGridEventData>('onActiveCellPositionChanged', externalPubSub);
     this.onAddNewRow = new SlickEvent<OnAddNewRowEventArgs>('onAddNewRow', externalPubSub);
@@ -584,16 +594,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected initialize(options: Partial<O>) {
-    if (typeof this.container === 'string') {
-      this._container = document.querySelector(this.container) as HTMLDivElement;
-    } else {
-      this._container = this.container;
-    }
-
-    if (!this._container) {
-      throw new Error(`SlickGrid requires a valid container, ${this.container} does not exist in the DOM.`);
-    }
-
     // calculate these only once and share between grid instances
     if (options?.mixinDefaults) {
       // use provided options and then assign defaults
@@ -968,6 +968,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return undefined;
   }
 
+  getPubSubService(): BasePubSub | undefined {
+    return this._pubSubService;
+  }
+
   /**
    * Unregisters a current selection model and registers a new one. See the definition of SelectionModel for more information.
    * @param {Object} selectionModel A SelectionModel.
@@ -1242,6 +1246,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     target.forEach((el) => {
       el.setAttribute('unselectable', 'on');
       (el.style as any).mozUserSelect = 'none';
+      /* istanbul ignore next */
       this._bindingEventService.bind(el, 'selectstart', () => false);
     });
   }
@@ -2470,9 +2475,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.unregisterPlugin(this.plugins[i]);
     }
 
-    if (this._options.enableColumnReorder && typeof this.sortableSideLeftInstance?.destroy === 'function') {
-      this.sortableSideLeftInstance?.destroy();
-      this.sortableSideRightInstance?.destroy();
+    if (this._options.enableColumnReorder
+      && typeof this.sortableSideLeftInstance?.destroy === 'function'
+      && typeof this.sortableSideRightInstance?.destroy === 'function'
+    ) {
+      this.sortableSideLeftInstance.destroy();
+      this.sortableSideRightInstance.destroy();
     }
 
     this.unbindAncestorScrollEvents();
@@ -3066,7 +3074,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected prepareForOptionsChange() {
-    if (!this.getEditorLock().commitCurrentEdit()) {
+    if (!this.getEditorLock()?.commitCurrentEdit()) {
       return;
     }
 
@@ -3113,7 +3121,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
   }
 
-  validateAndEnforceOptions(): void {
+  protected validateAndEnforceOptions(): void {
     if (this._options.autoHeight) {
       this._options.leaveSpaceForNewRows = false;
     }
@@ -5160,7 +5168,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const y2 = y1 + this._options.rowHeight! - 1;
     let x1 = 0;
     for (let i = 0; i < cell; i++) {
-      if (!this.columns[i] || this.columns[i].hidden) { continue; }
+      if (!this.columns[i] || this.columns[i].hidden) {
+        continue;
+      }
 
       x1 += (this.columns[i].width || 0);
 
@@ -6303,7 +6313,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!this.selectionModel) {
       throw new Error('SlickGrid Selection model is not set');
     }
-    if (this && this.getEditorLock && !this.getEditorLock()?.isActive()) {
+
+    const elock = this.getEditorLock();
+    if (typeof elock?.isActive === 'function' && !elock.isActive()) {
       this.selectionModel.setSelectedRanges(this.rowsToRanges(rows), caller || 'SlickGrid.setSelectedRows');
     }
   }

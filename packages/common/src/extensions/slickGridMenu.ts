@@ -23,7 +23,7 @@ import type { SortService } from '../services/sort.service';
 import type { TextExportService } from '../services/textExport.service';
 import { addColumnTitleElementWhenDefined, addCloseButtomElement, handleColumnPickerItemClick, populateColumnPicker, updateColumnPickerOrder } from '../extensions/extensionCommonUtils';
 import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from '../extensions/menuBaseClass';
-import { SlickEvent } from '../core/index';
+import { SlickEvent, Utils as SlickUtils } from '../core/index';
 
 /**
  * A control to add a Grid Menu with Extra Commands & Column Picker (hambuger menu on top-right of the grid)
@@ -40,11 +40,11 @@ import { SlickEvent } from '../core/index';
  */
 export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   // public events
-  onAfterMenuShow = new SlickEvent<GridMenuEventWithElementCallbackArgs>();
-  onBeforeMenuShow = new SlickEvent<GridMenuEventWithElementCallbackArgs>();
-  onMenuClose = new SlickEvent<GridMenuEventWithElementCallbackArgs>();
-  onCommand = new SlickEvent<GridMenuCommandItemCallbackArgs>();
-  onColumnsChanged = new SlickEvent<onGridMenuColumnsChangedCallbackArgs>();
+  onAfterMenuShow = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onAfterMenuShow');
+  onBeforeMenuShow = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onBeforeMenuShow');
+  onMenuClose = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onMenuClose');
+  onCommand = new SlickEvent<GridMenuCommandItemCallbackArgs>('onCommand');
+  onColumnsChanged = new SlickEvent<onGridMenuColumnsChangedCallbackArgs>('onColumnsChanged');
 
   protected _areVisibleColumnDifferent = false;
   protected _columns: Column[] = [];
@@ -134,6 +134,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   /** Initialize plugin. */
   init() {
     this._gridUid = this.grid.getUID() ?? '';
+
+    // add PubSub instance to all SlickEvent
+    SlickUtils.addSlickEventPubSubWhenDefined(this.pubSubService, this);
 
     // keep original user grid menu, useful when switching locale to translate
     this._userOriginalGridMenu = { ...this.sharedService.gridOptions.gridMenu };
