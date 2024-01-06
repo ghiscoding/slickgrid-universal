@@ -11,7 +11,7 @@ export interface CellSelectionModelOption {
 }
 
 export class SlickCellSelectionModel implements SelectionModel {
-  onSelectedRangesChanged = new SlickEvent<SlickRange[]>();
+  onSelectedRangesChanged = new SlickEvent<SlickRange[]>('onSelectedRangesChanged');
   pluginName: 'CellSelectionModel' = 'CellSelectionModel' as const;
 
   protected _addonOptions?: CellSelectionModelOption;
@@ -55,6 +55,13 @@ export class SlickCellSelectionModel implements SelectionModel {
       this._dataView = grid?.getData() ?? {} as SlickDataView;
     }
     this._addonOptions = { ...this._defaults, ...this._addonOptions } as CellSelectionModelOption;
+
+    // add PubSub instance to all SlickEvent
+    const pubSub = grid.getPubSubService();
+    if (pubSub) {
+      this.onSelectedRangesChanged.setPubSubService(pubSub);
+    }
+
     this._eventHandler
       .subscribe(this._grid.onActiveCellChanged, this.handleActiveCellChange.bind(this))
       .subscribe(this._grid.onKeyDown, this.handleKeyDown.bind(this))

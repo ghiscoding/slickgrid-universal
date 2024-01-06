@@ -10,7 +10,7 @@ import type {
   RowMoveManager,
   RowMoveManagerOption,
 } from '../interfaces/index';
-import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
+import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, Utils as SlickUtils } from '../core/index';
 
 /**
  * Row Move Manager options:
@@ -24,8 +24,8 @@ import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '.
  *
  */
 export class SlickRowMoveManager {
-  onBeforeMoveRows = new SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>();
-  onMoveRows = new SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>();
+  onBeforeMoveRows = new SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>('onBeforeMoveRows');
+  onMoveRows = new SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number; }>('onMoveRows');
   pluginName: 'RowMoveManager' = 'RowMoveManager' as const;
 
   protected _addonOptions!: RowMoveManager;
@@ -72,6 +72,9 @@ export class SlickRowMoveManager {
     this._addonOptions = { ...this._defaults, ...options };
     this._grid = grid;
     this._canvas = this._grid.getCanvasNode();
+
+    // add PubSub instance to all SlickEvent
+    SlickUtils.addSlickEventPubSubWhenDefined(this.pubSubService, this);
 
     // user could override the expandable icon logic from within the options or after instantiating the plugin
     if (typeof this._addonOptions?.usabilityOverride === 'function') {

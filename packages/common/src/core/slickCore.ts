@@ -679,7 +679,7 @@ export class Utils {
    * @param {BasePubSub} [pubSubService]
    * @param {*} scope
    */
-  public static addSlickEventPubSubWhenDefined<T = any>(pubSub?: BasePubSub, scope?: T) {
+  public static addSlickEventPubSubWhenDefined<T = any>(pubSub: BasePubSub, scope: T) {
     if (pubSub) {
       for (const prop in scope) {
         if (scope[prop] instanceof SlickEvent && typeof (scope[prop] as SlickEvent).setPubSubService === 'function') {

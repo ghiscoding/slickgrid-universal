@@ -1,3 +1,4 @@
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { InputEditor, LongTextEditor } from '../../editors';
 import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions';
 import { Column, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces';
@@ -6,6 +7,13 @@ import { SlickDataView } from '../slickDataview';
 import { SlickGrid } from '../slickGrid';
 
 jest.useFakeTimers();
+
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as BasePubSubService;
 
 const DEFAULT_COLUMN_HEIGHT = 25;
 const DEFAULT_GRID_HEIGHT = 600;
@@ -54,6 +62,17 @@ describe('SlickGrid core file', () => {
     expect(grid.getCanvasNode()).toBeTruthy();
     expect(grid.getActiveCanvasNode()).toBeTruthy();
     expect(grid.getContainerNode()).toEqual(container);
+  });
+
+  it('should be able to instantiate SlickGrid with an external PubSub Service', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, options, pubSubServiceStub);
+    grid.init();
+
+    expect(grid).toBeTruthy();
+    expect(grid.getData()).toEqual([]);
+    expect(grid.getPubSubService()).toEqual(pubSubServiceStub);
   });
 
   it('should be able to instantiate SlickGrid and get columns', () => {

@@ -4,6 +4,7 @@ import { SlickEvent, SlickGrid, SlickRange } from '../../core/index';
 import type { Column, GridOption } from '../../interfaces/index';
 import { SlickCellRangeSelector } from '../slickCellRangeSelector';
 import { SlickRowSelectionModel } from '../slickRowSelectionModel';
+import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 const GRID_UID = 'slickgrid_12345';
 jest.mock('flatpickr', () => { });
@@ -26,6 +27,13 @@ const mockGridOptions = {
   multiSelect: true,
 } as GridOption;
 
+const pubSubServiceStub = {
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  unsubscribe: jest.fn(),
+  unsubscribeAll: jest.fn(),
+} as BasePubSubService;
+
 const getEditorLockMock = {
   commitCurrentEdit: jest.fn(),
   isActive: jest.fn(),
@@ -41,6 +49,7 @@ const gridStub = {
   getCellNodeBox: jest.fn(),
   getColumns: jest.fn(),
   getDataLength: jest.fn(),
+  getPubSubService: () => pubSubServiceStub,
   getEditorLock: () => getEditorLockMock,
   getOptions: () => mockGridOptions,
   getUID: () => GRID_UID,

@@ -459,6 +459,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected sortableSideLeftInstance?: Sortable;
   protected sortableSideRightInstance?: Sortable;
   protected logMessageMaxCount = 30;
+  protected _pubSubService?: BasePubSub;
 
   /**
    * Creates a new instance of the grid.
@@ -471,6 +472,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Object} [externalPubSub] - optional External PubSub Service to use by SlickEvent
    **/
   constructor(protected readonly container: HTMLElement | string, protected data: CustomDataView<TData> | TData[], protected columns: C[], options: Partial<O>, protected readonly externalPubSub?: BasePubSub) {
+    this._container = typeof this.container === 'string'
+      ? document.querySelector(this.container) as HTMLDivElement
+      : this.container;
+
+    if (!this._container) {
+      throw new Error(`SlickGrid requires a valid container, ${this.container} does not exist in the DOM.`);
+    }
+
+    this._pubSubService = externalPubSub;
     this.onActiveCellChanged = new SlickEvent<OnActiveCellChangedEventArgs>('onActiveCellChanged', externalPubSub);
     this.onActiveCellPositionChanged = new SlickEvent<SlickGridEventData>('onActiveCellPositionChanged', externalPubSub);
     this.onAddNewRow = new SlickEvent<OnAddNewRowEventArgs>('onAddNewRow', externalPubSub);
@@ -584,16 +594,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected initialize(options: Partial<O>) {
-    if (typeof this.container === 'string') {
-      this._container = document.querySelector(this.container) as HTMLDivElement;
-    } else {
-      this._container = this.container;
-    }
-
-    if (!this._container) {
-      throw new Error(`SlickGrid requires a valid container, ${this.container} does not exist in the DOM.`);
-    }
-
     // calculate these only once and share between grid instances
     if (options?.mixinDefaults) {
       // use provided options and then assign defaults
@@ -966,6 +966,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
     }
     return undefined;
+  }
+
+  getPubSubService(): BasePubSub | undefined {
+    return this._pubSubService;
   }
 
   /**
