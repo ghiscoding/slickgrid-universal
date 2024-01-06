@@ -1871,7 +1871,7 @@ describe('SlickDatView core file', () => {
       grid.onCellCssStylesChanged.notify({ grid, hash: null as any, key: 'age_greater30_highlight' });
 
       expect(unsubscribeCellCssStyleSpy).toHaveBeenCalled();
-      expect(unsubscribeRowOrCountSpy).toHaveBeenCalledWith(expect.toBeFunction());
+      expect(unsubscribeRowOrCountSpy).toHaveBeenCalledWith(expect.any(Function));
     });
   });
 });

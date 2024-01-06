@@ -768,6 +768,32 @@ describe('SlickGrid core file', () => {
     });
   });
 
+  describe('flashCell() method', () => {
+    it('should flash cell 2 times', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+      const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true });
+      grid.flashCell(1, 1, 10);
+
+      let secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+      expect(secondItemAgeCell.textContent).toBe('20');
+      expect(secondItemAgeCell.classList.contains('flashing')).toBeFalsy();
+
+      for (let i = 0; i < 5; i++) {
+        jest.advanceTimersByTime(10);
+
+        secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+        if (i % 2) {
+          expect(secondItemAgeCell.classList.contains('flashing')).toBeTruthy();
+        } else {
+          expect(secondItemAgeCell.classList.contains('flashing')).toBeFalsy();
+        }
+      }
+    });
+  });
+
   describe('plugins', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
@@ -2090,6 +2116,82 @@ describe('SlickGrid core file', () => {
       expect(result).toBe(true);
       expect(scrollCellSpy).toHaveBeenCalledWith(1, 1, false);
       expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('CSS Styles', () => {
+    const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+    const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+    let items: Array<{ id: number; name: string; age: number; }> = [];
+    let hash: any = {};
+
+    beforeEach(() => {
+      items = [
+        { id: 0, name: 'Avery', age: 44 },
+        { id: 1, name: 'Bob', age: 20 },
+        { id: 2, name: 'Rachel', age: 46 },
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 5, name: 'Arnold', age: 50 },
+        { id: 6, name: 'Carole', age: 40 },
+        { id: 7, name: 'Jason', age: 48 },
+        { id: 8, name: 'Julie', age: 42 },
+        { id: 9, name: 'Aaron', age: 23 },
+        { id: 10, name: 'Ariane', age: 43 },
+      ];
+      hash = {};
+      for (let item of items) {
+        if (item.age >= 30) {
+          hash[item.id] = { age: 'highlight' };
+        }
+      }
+    });
+
+    it('should throw when trying to add already existing hash', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true });
+
+      grid.setCellCssStyles('age_greater30_highlight', hash);
+      expect(() => grid.addCellCssStyles('age_greater30_highlight', hash)).toThrow('SlickGrid addCellCssStyles: cell CSS hash with key "age_greater30_highlight" already exists.')
+    });
+
+    it('should exit early when trying to remove CSS Style key that does not exist in hash', () => {
+      const hashCopy = { ...hash };
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true });
+
+      grid.setCellCssStyles('age_greater30_highlight', hash);
+      grid.removeCellCssStyles('something_else');
+
+      expect(hash).toEqual(hashCopy);
+    });
+
+    it('should addCellCssStyles/removeCellCssStyles with CSS style hashes and expect onCellCssStylesChanged event to be triggered and styling applied to cells', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true });
+      const onCellStyleSpy = jest.spyOn(grid.onCellCssStylesChanged, 'notify');
+
+      // 1. add CSS Cell Style
+      grid.addCellCssStyles('age_greater30_highlight', hash);
+
+      let firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
+      let secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+
+      expect(onCellStyleSpy).toHaveBeenNthCalledWith(1, { key: 'age_greater30_highlight', hash, grid }, expect.anything(), grid);
+      expect(firstItemAgeCell.textContent).toBe('44');
+      expect(firstItemAgeCell.classList.contains('highlight')).toBeTruthy();
+      expect(secondItemAgeCell.textContent).toBe('20');
+      expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
+
+      // 2. then remove CSS Cell Style
+      grid.removeCellCssStyles('age_greater30_highlight');
+
+      firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
+      secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+
+      expect(onCellStyleSpy).toHaveBeenLastCalledWith({ key: 'age_greater30_highlight', hash: null, grid }, expect.anything(), grid);
+      expect(onCellStyleSpy).toHaveBeenCalledWith({ key: 'age_greater30_highlight', hash, grid }, expect.anything(), grid);
+      expect(firstItemAgeCell.textContent).toBe('44');
+      expect(firstItemAgeCell.classList.contains('highlight')).toBeFalsy();
+      expect(secondItemAgeCell.textContent).toBe('20');
+      expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
     });
   });
 
