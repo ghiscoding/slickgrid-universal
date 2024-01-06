@@ -292,12 +292,20 @@ export class SlickRowBasedEdit {
   protected onCellClickHandler(event: Event, args: any) {
     const dataContext = args.dataContext;
     const target = event.target as HTMLElement;
+    const idProperty = this._grid.getOptions().datasetIdPropertyName ?? 'id';
+    const targetRow = this._editedRows.get(dataContext[idProperty]);
 
     if (
       (target.classList.contains('action-btns--delete') ||
         target.parentElement?.classList.contains('action-btns--delete')) &&
       this._gridService
     ) {
+      if (this._addonOptions?.actionButtons?.deleteButtonPrompt) {
+        if (!confirm(this._addonOptions.actionButtons.deleteButtonPrompt)) {
+          return;
+        }
+      }
+
       this.toggleEditmode(dataContext, false);
       this._gridService.deleteItem(dataContext);
     } else if (
@@ -313,6 +321,12 @@ export class SlickRowBasedEdit {
       target.classList.contains('action-btns--update') ||
       target.parentElement?.classList.contains('action-btns--update')
     ) {
+      if (this._addonOptions?.actionButtons?.updateButtonPrompt && (targetRow?.editCommands.length || 0) > 0) {
+        if (!confirm(this._addonOptions.actionButtons.updateButtonPrompt)) {
+          return;
+        }
+      }
+
       this.removeUnsavedStylingFromRow(args.row);
       this.toggleEditmode(dataContext, false);
 
@@ -323,6 +337,12 @@ export class SlickRowBasedEdit {
       target.classList.contains('action-btns--cancel') ||
       target.parentElement?.classList.contains('action-btns--cancel')
     ) {
+      if (this._addonOptions?.actionButtons?.cancelButtonPrompt && (targetRow?.editCommands.length || 0) > 0) {
+        if (!confirm(this._addonOptions.actionButtons.cancelButtonPrompt)) {
+          return;
+        }
+      }
+
       this.undoRowEdit(dataContext);
       this.toggleEditmode(dataContext, false);
     }

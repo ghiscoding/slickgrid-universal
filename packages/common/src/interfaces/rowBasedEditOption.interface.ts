@@ -27,13 +27,16 @@ export interface RowBasedEditOptions {
     deleteButtonClassName?: string;
     iconDeleteButtonClassName?: string;
     deleteButtonTitle?: string;
+    deleteButtonPrompt?: string;
 
     cancelButtonClassName?: string;
     iconCancelButtonClassName?: string;
     cancelButtonTitle?: string;
+    cancelButtonPrompt?: string;
 
     updateButtonClassName?: string;
     iconUpdateButtonClassName?: string;
     updateButtonTitle?: string;
+    updateButtonPrompt?: string;
   }
 }

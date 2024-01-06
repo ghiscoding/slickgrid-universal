@@ -137,15 +137,21 @@ export default class Example22 {
           editButtonClassName: 'button-style padding-1px mr-2',
           iconEditButtonClassName: 'mdi mdi-pencil',
           editButtonTitle: 'Edit row',
+
           cancelButtonClassName: 'button-style padding-1px',
           cancelButtonTitle: 'Cancel row',
           iconCancelButtonClassName: 'mdi mdi-undo color-danger',
+          cancelButtonPrompt: 'Are you sure you want to cancel your changes?',
+
           updateButtonClassName: 'button-style padding-1px mr-2',
           updateButtonTitle: 'Update row',
           iconUpdateButtonClassName: 'mdi mdi-check color-success',
+          updateButtonPrompt: 'Save changes?',
+
           deleteButtonClassName: 'button-style padding-1px',
           deleteButtonTitle: 'Delete row',
           iconDeleteButtonClassName: 'mdi mdi-trash-can color-danger',
+          deleteButtonPrompt: 'Are you sure you want to delete this row?',
         }
       },
     };
