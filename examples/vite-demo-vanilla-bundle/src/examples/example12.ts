@@ -136,8 +136,7 @@ export default class Example12 {
     this._bindingEventService.bind(this.gridContainerElm, 'ongridstatechanged', this.handleOnGridStateChanged.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'ondblclick', () => this.openCompositeModal('edit', 50));
     this._bindingEventService.bind(this.gridContainerElm, 'oncompositeeditorchange', this.handleOnCompositeEditorChange.bind(this));
-    this._bindingEventService.bind(this.gridContainerElm, 'onpaginationchanged', this.handleReRenderUnsavedStyling.bind(this));
-    this._bindingEventService.bind(this.gridContainerElm, 'onfilterchanged', this.handleReRenderUnsavedStyling.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onrowsorcountchanged', this.handleReRenderUnsavedStyling.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'onselectedrowidschanged', this.handleOnSelectedRowIdsChanged.bind(this));
   }
 
