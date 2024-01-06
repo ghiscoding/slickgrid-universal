@@ -109,8 +109,9 @@ export default class Example22 {
       rowHeight: 33,
       enableExcelCopyBuffer: true,
       excelCopyBufferOptions: {
-        onBeforePasteCell: (e, args) => {
-          console.log('paste', e, args);
+        onBeforePasteCell: (_e, args) => {
+          // for the sake of the demo, do not allow to paste into the first column title
+          // this will be overriden by the row based edit plugin to additionally only work if the row is in editmode
           return args.cell > 0;
         },
       },

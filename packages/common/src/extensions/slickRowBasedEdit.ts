@@ -6,10 +6,12 @@ import type {
   EditCommand,
   GridOption,
   OnBeforeEditCellEventArgs,
+  OnEventArgs,
   OnSetOptionsEventArgs,
   RowBasedEditOptions,
 } from '../interfaces/index';
 import {
+  SlickEventData,
   SlickEventHandler,
   SlickGlobalEditorLock,
   type SlickGrid,
@@ -74,21 +76,52 @@ export class SlickRowBasedEdit {
       this._grid.onBeforeEditCell,
       this.onBeforeEditCellHandler
     );
+    const options = this._grid.getOptions();
 
-    this.checkOptionsRequirements(this._grid.getOptions());
+    this.checkOptionsRequirements(options);
 
-    if (!this._grid.getOptions().autoEdit) {
+    if (!options.autoEdit) {
       this._grid.setOptions({ autoEdit: true });
       console.warn(
-        'SlickGrid Row Based Edit Plugin works best with the gridOption "autoEdit" enabled, the option has now been set automatically for you.'
+        '[Slickgrid-Universal] The Row Based Edit Plugin works best with the gridOption "autoEdit" enabled, the option has now been set automatically for you.'
       );
     }
 
-    this._existingEditCommandHandler =
-      this._grid.getOptions().editCommandHandler;
+    this._existingEditCommandHandler = options.editCommandHandler;
     this._grid.setOptions({
       editCommandHandler: this.rowBasedEditCommandHandler.bind(this),
     });
+
+    if (options.enableExcelCopyBuffer === true) {
+      const existingBeforePasteCellHandler =
+        options.excelCopyBufferOptions?.onBeforePasteCell;
+
+      this._grid.setOptions({
+        excelCopyBufferOptions: {
+          ...options.excelCopyBufferOptions,
+          onBeforePasteCell: (e: SlickEventData<any>, args: OnEventArgs) => {
+            let userResult = true;
+            if (existingBeforePasteCellHandler) {
+              userResult = existingBeforePasteCellHandler(e, args);
+
+              if (userResult === false) {
+                return false;
+              }
+            }
+
+            const item = this._grid.getData().getItem(args.row);
+            const idProperty =
+              this._grid.getOptions().datasetIdPropertyName ?? 'id';
+
+            if (this._editedRows.has(item[idProperty]) && userResult === true) {
+              return true;
+            }
+
+            return false;
+          },
+        },
+      });
+    }
 
     this._grid.getData().getItemMetadata = this.updateItemMetadata(
       this._grid.getData().getItemMetadata
@@ -321,7 +354,10 @@ export class SlickRowBasedEdit {
       target.classList.contains('action-btns--update') ||
       target.parentElement?.classList.contains('action-btns--update')
     ) {
-      if (this._addonOptions?.actionButtons?.updateButtonPrompt && (targetRow?.editCommands.length || 0) > 0) {
+      if (
+        this._addonOptions?.actionButtons?.updateButtonPrompt &&
+        (targetRow?.editCommands.length || 0) > 0
+      ) {
         if (!confirm(this._addonOptions.actionButtons.updateButtonPrompt)) {
           return;
         }
@@ -341,7 +377,10 @@ export class SlickRowBasedEdit {
       target.classList.contains('action-btns--cancel') ||
       target.parentElement?.classList.contains('action-btns--cancel')
     ) {
-      if (this._addonOptions?.actionButtons?.cancelButtonPrompt && (targetRow?.editCommands.length || 0) > 0) {
+      if (
+        this._addonOptions?.actionButtons?.cancelButtonPrompt &&
+        (targetRow?.editCommands.length || 0) > 0
+      ) {
         if (!confirm(this._addonOptions.actionButtons.cancelButtonPrompt)) {
           return;
         }

@@ -27,16 +27,19 @@ export interface RowBasedEditOptions {
     deleteButtonClassName?: string;
     iconDeleteButtonClassName?: string;
     deleteButtonTitle?: string;
+    /** if defined, a confirm prompt will be shown before deleting a row */
     deleteButtonPrompt?: string;
 
     cancelButtonClassName?: string;
     iconCancelButtonClassName?: string;
     cancelButtonTitle?: string;
+    /** if defined, a confirm prompt will be shown before canceling the changes of a row */
     cancelButtonPrompt?: string;
 
     updateButtonClassName?: string;
     iconUpdateButtonClassName?: string;
     updateButtonTitle?: string;
+    /** if defined, a confirm prompt will be shown before saving the changes of a row */
     updateButtonPrompt?: string;
   }
 }
