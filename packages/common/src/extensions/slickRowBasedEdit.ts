@@ -7,10 +7,12 @@ import type {
   GridOption,
   OnBeforeEditCellEventArgs,
   OnEventArgs,
+  OnRowsOrCountChangedEventArgs,
   OnSetOptionsEventArgs,
   RowBasedEditOptions,
 } from '../interfaces/index';
 import {
+  SlickEvent,
   SlickEventData,
   SlickEventHandler,
   SlickGlobalEditorLock,
@@ -26,6 +28,8 @@ export const ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX =
 export interface EditedRowDetails {
   columns: Column[];
   editCommands: EditCommand[];
+  // stores style keys for unsaved cells
+  cssStyleKeys: string[];
 }
 
 /**
@@ -130,6 +134,10 @@ export class SlickRowBasedEdit {
       this._grid.onSetOptions,
       this.optionsUpdatedHandler.bind(this)
     );
+    this._eventHandler.subscribe(
+      this._grid.getData().onRowsOrCountChanged,
+      this.handleAllRowRerender.bind(this)
+    );
 
     this._grid.invalidate();
     this._grid.render();
@@ -229,6 +237,7 @@ export class SlickRowBasedEdit {
       .filter((col) => col.editor !== undefined);
 
     const modifiedColumns: Column[] = [];
+    const idProperty = this._grid.getOptions().datasetIdPropertyName ?? 'id';
     prevSerializedValues.forEach((_val, index) => {
       const prevSerializedValue = prevSerializedValues[index];
       const serializedValue = serializedValues[index];
@@ -245,12 +254,11 @@ export class SlickRowBasedEdit {
         this._grid.invalidate();
         editCommand.execute();
 
-        this.renderUnsavedCellStyling(item, finalColumn);
+        this.renderUnsavedCellStyling(item[idProperty], finalColumn);
         modifiedColumns.push(finalColumn);
       }
     });
 
-    const idProperty = this._grid.getOptions().datasetIdPropertyName ?? 'id';
     const editedRow = this._editedRows.get(item[idProperty]);
     const newCommands = [...(editedRow?.editCommands || [])];
     if (modifiedColumns.length > 0) {
@@ -260,6 +268,7 @@ export class SlickRowBasedEdit {
     this._editedRows.set(item[idProperty], {
       columns: [...(editedRow?.columns || []), ...modifiedColumns],
       editCommands: newCommands,
+      cssStyleKeys: editedRow?.cssStyleKeys || [],
     });
   }
 
@@ -289,17 +298,33 @@ export class SlickRowBasedEdit {
     }
   }
 
-  protected renderUnsavedCellStyling(item: any, column: Column) {
-    if (item && column) {
-      const row = this._grid.getData()?.getRowByItem(item);
+  protected renderUnsavedCellStyling(id: any, column: Column) {
+    if (column) {
+      const row = this._grid.getData()?.getRowById(id);
       if (row !== undefined && row >= 0) {
         const hash = { [row]: { [column.id]: ROW_BASED_EDIT_UNSAVED_CELL } };
         const cssStyleKey = `${ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX}_${[
           column.id,
         ]}${row}`;
         this._grid.setCellCssStyles(cssStyleKey, hash);
+        this._editedRows.get(id)?.cssStyleKeys.push(cssStyleKey);
       }
     }
+  }
+
+  protected handleAllRowRerender(_e: SlickEvent, _args: OnRowsOrCountChangedEventArgs) {
+    // iterate over all _editedRows and loop through their cssStyleKeys to remove them
+    this._editedRows.forEach((editedRow, key) => {
+      editedRow.cssStyleKeys.forEach((cssStyleKey) => {
+        this._grid.removeCellCssStyles(cssStyleKey);
+      });
+      editedRow.cssStyleKeys = [];
+
+      // re-render the unsaved cell styling
+      editedRow.columns.forEach((column) => {
+        this.renderUnsavedCellStyling(key, column);
+      });
+    });
   }
 
   protected removeUnsavedStylingFromCell(column: Column, row: number) {
@@ -503,6 +528,7 @@ export class SlickRowBasedEdit {
       this._editedRows.set(dataContext[idProperty], {
         columns: [],
         editCommands: [],
+        cssStyleKeys: [],
       });
     } else {
       this._editedRows.delete(dataContext[idProperty]);
