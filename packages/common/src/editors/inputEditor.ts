@@ -220,7 +220,7 @@ export class InputEditor implements Editor {
   }
 
   loadValue(item: any) {
-    const fieldName = this.columnDef && this.columnDef.field;
+    const fieldName = this.columnDef?.field;
 
     if (item && fieldName !== undefined && this._input) {
       // is the field a complex object, "address.streetNumber"

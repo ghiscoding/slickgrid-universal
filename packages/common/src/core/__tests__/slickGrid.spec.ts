@@ -1,7 +1,7 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { InputEditor, LongTextEditor } from '../../editors';
 import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions';
-import { Column, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces';
+import { Column, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces';
 import { SlickEventData } from '../slickCore';
 import { SlickDataView } from '../slickDataview';
 import { SlickGrid } from '../slickGrid';
@@ -2219,6 +2219,149 @@ describe('SlickGrid core file', () => {
       const dirtyHtml = '<div class="some-class"><script>alert("hello world")</script></div>';
 
       expect(grid.sanitizeHtmlString(dirtyHtml)).toBe(dirtyHtml);
+    });
+  });
+
+  describe('Update UI', () => {
+    describe('updateCell() method', () => {
+      it('should change an item property then call updateCell() and expect it to be updated in the UI with Formatter result', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => `<strong>${val}</strong>` }];
+        const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+        let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true });
+        const getDataItemSpy = jest.spyOn(grid, 'getDataItem');
+        items[1].age = 25;
+        grid.updateCell(1, 1);
+
+        let secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+
+        expect(getDataItemSpy).toHaveBeenCalledTimes(1);
+        expect(secondItemAgeCell.innerHTML).toBe('<strong>25</strong>');
+      });
+
+      it('should change an item value via asyncPostRenderer then call updateCell() and expect it to be updated in the UI with Formatter result', () => {
+        const newValue = '25';
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', asyncPostRender: (node, row, item, colDef) => node.textContent = newValue }] as Column[];
+        const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+        let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, enableAsyncPostRender: true });
+        let firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
+        expect(firstItemAgeCell.innerHTML).toBe('44');
+
+        const getDataItemSpy = jest.spyOn(grid, 'getDataItem');
+        grid.updateCell(0, 1);
+        jest.advanceTimersByTime(50);
+
+        firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
+        expect(getDataItemSpy).toHaveBeenCalledTimes(2);
+        expect(firstItemAgeCell.innerHTML).toBe('25');
+      });
+
+      it('should change an item from an Editor then call updateCell() and expect it call the editor loadValue() method', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+        let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, editable: true });
+        grid.setActiveCell(0, 1);
+        grid.editActiveCell(InputEditor as any, true);
+        const currentEditor = grid.getCellEditor() as Editor;
+        const editorSpy = jest.spyOn(currentEditor, 'loadValue');
+
+        grid.updateCell(0, 1);
+
+        expect(editorSpy).toHaveBeenCalledWith({ id: 0, name: 'Avery', age: 44 });
+      });
+    });
+
+    describe('updateRow() method', () => {
+      it('should call the method but expect nothing to happen when row number is invalid', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => `<strong>${val}</strong>` }];
+        const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+        let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true });
+        const getDataItemSpy = jest.spyOn(grid, 'getDataItem');
+        grid.updateRow(999);
+
+        expect(getDataItemSpy).not.toHaveBeenCalled();
+      });
+
+      it('should call the method but expect it to empty the cell node when getDataItem() returns no item', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
+        const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+        let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true });
+        const getDataItemSpy = jest.spyOn(grid, 'getDataItem').mockReturnValueOnce(null);
+        items[1].age = 25;
+        grid.updateRow(1);
+
+        let secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+
+        expect(getDataItemSpy).toHaveBeenCalledTimes(1);
+        expect(secondItemAgeCell.innerHTML).toBe('');
+      });
+
+      it('should change an item property then call updateRow() and expect it to be updated in the UI with Formatter result', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => `<strong>${val}</strong>` }];
+        const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+        let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true });
+        const getDataItemSpy = jest.spyOn(grid, 'getDataItem');
+        items[1].age = 25;
+        grid.updateRow(1);
+
+        let secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+
+        expect(getDataItemSpy).toHaveBeenCalledTimes(1);
+        expect(secondItemAgeCell.innerHTML).toBe('<strong>25</strong>');
+      });
+
+      it('should change an item value via asyncPostRenderer then call updateRow() and expect it to be updated in the UI with Formatter result', () => {
+        const newValue = '25';
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          {
+            id: 'age', field: 'age', name: 'Age',
+            asyncPostRender: (node) => node.textContent = newValue,
+            asyncPostRenderCleanup: (node) => node.textContent = ''
+          },
+        ] as Column[];
+        const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+        let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, enableAsyncPostRender: true, enableAsyncPostRenderCleanup: true });
+        let firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
+        expect(firstItemAgeCell.innerHTML).toBe('44');
+
+        const getDataItemSpy = jest.spyOn(grid, 'getDataItem');
+        grid.updateRow(0);
+        jest.advanceTimersByTime(50);
+
+        firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
+        expect(getDataItemSpy).toHaveBeenCalledTimes(2);
+        expect(firstItemAgeCell.innerHTML).toBe('25');
+      });
+
+      it('should change an item from an Editor then call updateRow() and expect it call the editor loadValue() method', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+        let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
+
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, editable: true });
+        grid.setActiveCell(0, 1);
+        grid.editActiveCell(InputEditor as any, true);
+        const currentEditor = grid.getCellEditor() as Editor;
+        const editorSpy = jest.spyOn(currentEditor, 'loadValue');
+
+        grid.updateRow(0);
+
+        expect(editorSpy).toHaveBeenCalledWith({ id: 0, name: 'Avery', age: 44 });
+      });
     });
   });
 });

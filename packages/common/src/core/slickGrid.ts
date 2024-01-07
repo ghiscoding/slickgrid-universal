@@ -3655,18 +3655,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   updateCell(row: number, cell: number) {
     const cellNode = this.getCellNode(row, cell);
-    if (!cellNode) {
-      return;
-    }
-
-    const m = this.columns[cell];
-    const d = this.getDataItem(row);
-    if (this.currentEditor && this.activeRow === row && this.activeCell === cell) {
-      this.currentEditor.loadValue(d);
-    } else {
-      const formatterResult = d ? this.getFormatter(row, m)(row, cell, this.getDataItemValueForColumn(d, m), m, d, this as unknown as SlickGrid) : '';
-      this.applyFormatResultToCellNode(formatterResult, cellNode);
-      this.invalidatePostProcessingResults(row);
+    if (cellNode) {
+      const m = this.columns[cell];
+      const d = this.getDataItem(row);
+      if (this.currentEditor && this.activeRow === row && this.activeCell === cell) {
+        this.currentEditor.loadValue(d);
+      } else {
+        const formatterResult = d ? this.getFormatter(row, m)(row, cell, this.getDataItemValueForColumn(d, m), m, d, this as unknown as SlickGrid) : '';
+        this.applyFormatResultToCellNode(formatterResult, cellNode);
+        this.invalidatePostProcessingResults(row);
+      }
     }
   }
 
@@ -3686,6 +3684,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const d = this.getDataItem(row);
 
     for (const colIdx in cacheEntry.cellNodesByColumnIdx) {
+      /* istanbul ignore next */
       if (!cacheEntry.cellNodesByColumnIdx.hasOwnProperty(colIdx)) {
         continue;
       }
@@ -3694,7 +3693,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const m = this.columns[columnIdx];
       const node = cacheEntry.cellNodesByColumnIdx[columnIdx];
 
-      if (row === this.activeRow && columnIdx === this.activeCell && this.currentEditor) {
+      if (this.currentEditor && row === this.activeRow && columnIdx === this.activeCell) {
         this.currentEditor.loadValue(d);
       } else if (d) {
         formatterResult = this.getFormatter(row, m)(row, columnIdx, this.getDataItemValueForColumn(d, m), m, d, this as unknown as SlickGrid);
