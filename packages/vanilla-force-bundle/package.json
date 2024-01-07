@@ -38,7 +38,6 @@
     "bundle:cjs": "tsc --project tsconfig.bundle.json --outDir dist/cjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2021",
     "bundle:types": "tsc --emitDeclarationOnly --declarationMap --outDir dist/types",
-    "bundle:esbuild": "node esbuild.mjs",
     "bundle:vite": "vite build",
     "prebundle:zip": "pnpm run delete:zip",
     "bundle:zip": "pnpm run zip:dist",
@@ -46,7 +45,6 @@
     "zip:dist": "node compress.mjs --output-filename=slickgrid-vanilla-bundle --output-folder=\"dist-grid-bundle-zip/\"",
     "test": "echo testing slickgrid-universal vanilla-force-bundle code"
   },
-  "note": "there are 2 bundler available vite & esbuild, but we really only use Vite only but we keep esbuild for reference",
   "license": "MIT",
   "author": "Ghislain B.",
   "homepage": "https://github.com/ghiscoding/slickgrid-universal",
@@ -81,7 +79,6 @@
   "devDependencies": {
     "archiver": "^6.0.1",
     "cross-env": "^7.0.3",
-    "esbuild": "^0.19.11",
     "npm-run-all2": "^6.1.1",
     "vite": "^5.0.10",
     "yargs": "^17.7.2"
