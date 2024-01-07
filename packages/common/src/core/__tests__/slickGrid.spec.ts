@@ -2242,11 +2242,14 @@ describe('SlickGrid core file', () => {
 
       it('should change an item value via asyncPostRenderer then call updateCell() and expect it to be updated in the UI with Formatter result', () => {
         const newValue = '25';
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', asyncPostRender: (node, row, item, colDef) => node.textContent = newValue }] as Column[];
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', asyncPostRender: (node) => node.textContent = newValue }
+        ] as Column[];
         const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
         let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
 
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, enableAsyncPostRender: true });
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, enableAsyncPostRender: true, enableAsyncPostRenderCleanup: true });
         let firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
         expect(firstItemAgeCell.innerHTML).toBe('44');
 
@@ -2277,10 +2280,27 @@ describe('SlickGrid core file', () => {
     });
 
     describe('updateRow() method', () => {
+      let items: Array<{ id: number; name: string; age: number; }> = [];
+
+      beforeEach(() => {
+        items = [
+          { id: 0, name: 'Avery', age: 44 },
+          { id: 1, name: 'Bob', age: 20 },
+          { id: 2, name: 'Rachel', age: 46 },
+          { id: 3, name: 'Jane', age: 24 },
+          { id: 4, name: 'John', age: 20 },
+          { id: 5, name: 'Arnold', age: 50 },
+          { id: 6, name: 'Carole', age: 40 },
+          { id: 7, name: 'Jason', age: 48 },
+          { id: 8, name: 'Julie', age: 42 },
+          { id: 9, name: 'Aaron', age: 23 },
+          { id: 10, name: 'Ariane', age: 43 },
+        ];
+      });
+
       it('should call the method but expect nothing to happen when row number is invalid', () => {
         const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => `<strong>${val}</strong>` }];
         const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
-        let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true });
         const getDataItemSpy = jest.spyOn(grid, 'getDataItem');
@@ -2292,7 +2312,6 @@ describe('SlickGrid core file', () => {
       it('should call the method but expect it to empty the cell node when getDataItem() returns no item', () => {
         const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }];
         const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
-        let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true });
         const getDataItemSpy = jest.spyOn(grid, 'getDataItem').mockReturnValueOnce(null);
@@ -2308,7 +2327,6 @@ describe('SlickGrid core file', () => {
       it('should change an item property then call updateRow() and expect it to be updated in the UI with Formatter result', () => {
         const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => `<strong>${val}</strong>` }];
         const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
-        let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true });
         const getDataItemSpy = jest.spyOn(grid, 'getDataItem');
@@ -2332,7 +2350,6 @@ describe('SlickGrid core file', () => {
           },
         ] as Column[];
         const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
-        let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, enableAsyncPostRender: true, enableAsyncPostRenderCleanup: true });
         let firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
@@ -2345,12 +2362,18 @@ describe('SlickGrid core file', () => {
         firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
         expect(getDataItemSpy).toHaveBeenCalledTimes(2);
         expect(firstItemAgeCell.innerHTML).toBe('25');
+
+        grid.gotoCell(10, 1);
+        grid.render();
+        jest.advanceTimersByTime(40); // cleanup asyncPostRender
+
+        firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
+        expect(firstItemAgeCell.innerHTML).not.toBe('25');
       });
 
       it('should change an item from an Editor then call updateRow() and expect it call the editor loadValue() method', () => {
         const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
         const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
-        let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, editable: true });
         grid.setActiveCell(0, 1);

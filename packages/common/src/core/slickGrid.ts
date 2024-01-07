@@ -3503,7 +3503,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
       }
     }
-    if (this._options.enableAsyncPostRenderCleanup) { this.startPostProcessingCleanup(); }
+    if (this._options.enableAsyncPostRenderCleanup) {
+      this.startPostProcessingCleanup();
+    }
   }
 
   /** Invalidate all grid rows and re-render the grid rows */
