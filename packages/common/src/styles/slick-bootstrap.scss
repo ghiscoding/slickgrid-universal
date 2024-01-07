@@ -108,7 +108,8 @@
         }
       }
 
-      &.slick-rbe-editmode {
+      &.slick-rbe-editmode.active .slick-cell,
+      &.slick-rbe-editmode .slick-cell {
         background-color: var(--slick-row-based-edit-editmode-bgcolor, $slick-row-based-edit-editmode-bgcolor);
 
         &:hover {
@@ -145,7 +146,7 @@
       @include resetSlickCell();
 
       &.slick-rbe-unsaved-cell {
-        background-color: var(--slick-row-based-edit-unsaved-cell-bgcolor, $slick-row-based-edit-unsaved-cell-bgcolor);
+        background-color: var(--slick-row-based-edit-unsaved-cell-bgcolor, $slick-row-based-edit-unsaved-cell-bgcolor) !important;
       }
 
       a, a:visited, .ui-widget-content a, .ui-widget-content a:visited {
