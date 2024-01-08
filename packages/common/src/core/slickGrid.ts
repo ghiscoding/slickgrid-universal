@@ -1475,7 +1475,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       for (let i = 0; i < this.columns.length; i++) {
         const m = this.columns[i];
-        if (!m || m.hidden) { continue; }
+        if (!m || m.hidden) {
+          continue;
+        }
 
         const footerRowCell = createDomElement('div', { className: `ui-state-default slick-state-default slick-footerrow-column l${i} r${i}` }, this.hasFrozenColumns() && (i > this._options.frozenColumn!) ? this._footerRowR : this._footerRowL);
         const className = this.hasFrozenColumns() && i <= this._options.frozenColumn! ? 'frozen' : null;
@@ -3880,101 +3882,101 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Update the dataset row count */
   updateRowCount() {
-    if (!this.initialized) { return; }
+    if (this.initialized) {
+      const dataLength = this.getDataLength();
+      const dataLengthIncludingAddNew = this.getDataLengthIncludingAddNew();
+      let numberOfRows = 0;
+      let oldH = ((this.hasFrozenRows && !this._options.frozenBottom) ? Utils.height(this._canvasBottomL) : Utils.height(this._canvasTopL)) as number;
 
-    const dataLength = this.getDataLength();
-    const dataLengthIncludingAddNew = this.getDataLengthIncludingAddNew();
-    let numberOfRows = 0;
-    let oldH = ((this.hasFrozenRows && !this._options.frozenBottom) ? Utils.height(this._canvasBottomL) : Utils.height(this._canvasTopL)) as number;
-
-    if (this.hasFrozenRows) {
-      numberOfRows = this.getDataLength() - this._options.frozenRow!;
-    } else {
-      numberOfRows = dataLengthIncludingAddNew + (this._options.leaveSpaceForNewRows ? this.numVisibleRows - 1 : 0);
-    }
-
-    const tempViewportH = Utils.height(this._viewportScrollContainerY) as number;
-    const oldViewportHasVScroll = this.viewportHasVScroll;
-    // with autoHeight, we do not need to accommodate the vertical scroll bar
-    this.viewportHasVScroll = this._options.alwaysShowVerticalScroll || !this._options.autoHeight && (numberOfRows * this._options.rowHeight! > tempViewportH);
-
-    this.makeActiveCellNormal();
-
-    // remove the rows that are now outside of the data range
-    // this helps avoid redundant calls to .removeRow() when the size of the data decreased by thousands of rows
-    const r1 = dataLength - 1;
-    if (typeof this.rowsCache === 'object') {
-      Object.keys(this.rowsCache).forEach(row => {
-        const cachedRow = +row;
-        if (cachedRow > r1) {
-          this.removeRowFromCache(cachedRow);
-        }
-      });
-    }
-
-    if (this._options.enableAsyncPostRenderCleanup) {
-      this.startPostProcessingCleanup();
-    }
-
-    if (this.activeCellNode && this.activeRow > r1) {
-      this.resetActiveCell();
-    }
-
-    oldH = this.h;
-    if (this._options.autoHeight) {
-      this.h = this._options.rowHeight! * numberOfRows;
-    } else {
-      this.th = Math.max(this._options.rowHeight! * numberOfRows, tempViewportH - (this.scrollbarDimensions?.height ?? 0));
-      if (this.th < this.maxSupportedCssHeight) {
-        // just one page
-        this.h = this.ph = this.th;
-        this.n = 1;
-        this.cj = 0;
+      if (this.hasFrozenRows) {
+        numberOfRows = this.getDataLength() - this._options.frozenRow!;
       } else {
-        // break into pages
-        this.h = this.maxSupportedCssHeight;
-        this.ph = this.h / 100;
-        this.n = Math.floor(this.th / this.ph);
-        this.cj = (this.th - this.h) / (this.n - 1);
-      }
-    }
-
-    if (this.h !== oldH || this.enforceFrozenRowHeightRecalc) {
-      if (this.hasFrozenRows && !this._options.frozenBottom) {
-        Utils.height(this._canvasBottomL, this.h);
-
-        if (this.hasFrozenColumns()) {
-          Utils.height(this._canvasBottomR, this.h);
-        }
-      } else {
-        Utils.height(this._canvasTopL, this.h);
-        Utils.height(this._canvasTopR, this.h);
+        numberOfRows = dataLengthIncludingAddNew + (this._options.leaveSpaceForNewRows ? this.numVisibleRows - 1 : 0);
       }
 
-      this.scrollTop = this._viewportScrollContainerY.scrollTop;
-      this.enforceFrozenRowHeightRecalc = false; // reset enforce flag
-    }
+      const tempViewportH = Utils.height(this._viewportScrollContainerY) as number;
+      const oldViewportHasVScroll = this.viewportHasVScroll;
+      // with autoHeight, we do not need to accommodate the vertical scroll bar
+      this.viewportHasVScroll = this._options.alwaysShowVerticalScroll || !this._options.autoHeight && (numberOfRows * this._options.rowHeight! > tempViewportH);
 
-    const oldScrollTopInRange = (this.scrollTop + this.offset <= this.th - tempViewportH);
+      this.makeActiveCellNormal();
 
-    if (this.th === 0 || this.scrollTop === 0) {
-      this.page = this.offset = 0;
-    } else if (oldScrollTopInRange) {
-      // maintain virtual position
-      this.scrollTo(this.scrollTop + this.offset);
-    } else {
-      // scroll to bottom
-      this.scrollTo(this.th - tempViewportH + (this.scrollbarDimensions?.height ?? 0));
-    }
+      // remove the rows that are now outside of the data range
+      // this helps avoid redundant calls to .removeRow() when the size of the data decreased by thousands of rows
+      const r1 = dataLength - 1;
+      if (typeof this.rowsCache === 'object') {
+        Object.keys(this.rowsCache).forEach(row => {
+          const cachedRow = +row;
+          if (cachedRow > r1) {
+            this.removeRowFromCache(cachedRow);
+          }
+        });
+      }
 
-    if (this.h !== oldH && this._options.autoHeight) {
-      this.resizeCanvas();
-    }
+      if (this._options.enableAsyncPostRenderCleanup) {
+        this.startPostProcessingCleanup();
+      }
 
-    if (this._options.forceFitColumns && oldViewportHasVScroll !== this.viewportHasVScroll) {
-      this.legacyAutosizeColumns();
+      if (this.activeCellNode && this.activeRow > r1) {
+        this.resetActiveCell();
+      }
+
+      oldH = this.h;
+      if (this._options.autoHeight) {
+        this.h = this._options.rowHeight! * numberOfRows;
+      } else {
+        this.th = Math.max(this._options.rowHeight! * numberOfRows, tempViewportH - (this.scrollbarDimensions?.height ?? 0));
+        if (this.th < this.maxSupportedCssHeight) {
+          // just one page
+          this.h = this.ph = this.th;
+          this.n = 1;
+          this.cj = 0;
+        } else {
+          // break into pages
+          this.h = this.maxSupportedCssHeight;
+          this.ph = this.h / 100;
+          this.n = Math.floor(this.th / this.ph);
+          this.cj = (this.th - this.h) / (this.n - 1);
+        }
+      }
+
+      if (this.h !== oldH || this.enforceFrozenRowHeightRecalc) {
+        if (this.hasFrozenRows && !this._options.frozenBottom) {
+          Utils.height(this._canvasBottomL, this.h);
+
+          if (this.hasFrozenColumns()) {
+            Utils.height(this._canvasBottomR, this.h);
+          }
+        } else {
+          Utils.height(this._canvasTopL, this.h);
+          Utils.height(this._canvasTopR, this.h);
+        }
+
+        this.scrollTop = this._viewportScrollContainerY.scrollTop;
+        this.enforceFrozenRowHeightRecalc = false; // reset enforce flag
+      }
+
+      const oldScrollTopInRange = (this.scrollTop + this.offset <= this.th - tempViewportH);
+
+      if (this.th === 0 || this.scrollTop === 0) {
+        this.page = this.offset = 0;
+      } else if (oldScrollTopInRange) {
+        // maintain virtual position
+        this.scrollTo(this.scrollTop + this.offset);
+      } else {
+        // scroll to bottom
+        this.scrollTo(this.th - tempViewportH + (this.scrollbarDimensions?.height ?? 0));
+      }
+
+      if (this.h !== oldH && this._options.autoHeight) {
+        this.resizeCanvas();
+      }
+
+      if (this._options.forceFitColumns && oldViewportHasVScroll !== this.viewportHasVScroll) {
+        this.legacyAutosizeColumns();
+      }
+      this.updateCanvasWidth(false);
     }
-    this.updateCanvasWidth(false);
   }
 
   /** @alias `getVisibleRange` */
@@ -4316,57 +4318,57 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** (re)Render the grid */
   render() {
-    if (!this.initialized) { return; }
+    if (this.initialized) {
+      this.scrollThrottle.dequeue();
 
-    this.scrollThrottle.dequeue();
+      const visible = this.getVisibleRange();
+      const rendered = this.getRenderedRange();
 
-    const visible = this.getVisibleRange();
-    const rendered = this.getRenderedRange();
+      // remove rows no longer in the viewport
+      this.cleanupRows(rendered);
 
-    // remove rows no longer in the viewport
-    this.cleanupRows(rendered);
+      // add new rows & missing cells in existing rows
+      if (this.lastRenderedScrollLeft !== this.scrollLeft) {
+        if (this.hasFrozenRows) {
+          const renderedFrozenRows = extend(true, {}, rendered);
 
-    // add new rows & missing cells in existing rows
-    if (this.lastRenderedScrollLeft !== this.scrollLeft) {
-      if (this.hasFrozenRows) {
-        const renderedFrozenRows = extend(true, {}, rendered);
-
-        if (this._options.frozenBottom) {
-          renderedFrozenRows.top = this.actualFrozenRow;
-          renderedFrozenRows.bottom = this.getDataLength();
-        } else {
-          renderedFrozenRows.top = 0;
-          renderedFrozenRows.bottom = this._options.frozenRow;
+          if (this._options.frozenBottom) {
+            renderedFrozenRows.top = this.actualFrozenRow;
+            renderedFrozenRows.bottom = this.getDataLength();
+          } else {
+            renderedFrozenRows.top = 0;
+            renderedFrozenRows.bottom = this._options.frozenRow;
+          }
+          this.cleanUpAndRenderCells(renderedFrozenRows);
         }
-        this.cleanUpAndRenderCells(renderedFrozenRows);
+        this.cleanUpAndRenderCells(rendered);
       }
-      this.cleanUpAndRenderCells(rendered);
-    }
 
-    // render missing rows
-    this.renderRows(rendered);
+      // render missing rows
+      this.renderRows(rendered);
 
-    // Render frozen rows
-    if (this.hasFrozenRows) {
-      if (this._options.frozenBottom) {
-        this.renderRows({
-          top: this.actualFrozenRow, bottom: this.getDataLength() - 1, leftPx: rendered.leftPx, rightPx: rendered.rightPx
-        });
-      } else {
-        this.renderRows({
-          top: 0, bottom: this._options.frozenRow! - 1, leftPx: rendered.leftPx, rightPx: rendered.rightPx
-        });
+      // Render frozen rows
+      if (this.hasFrozenRows) {
+        if (this._options.frozenBottom) {
+          this.renderRows({
+            top: this.actualFrozenRow, bottom: this.getDataLength() - 1, leftPx: rendered.leftPx, rightPx: rendered.rightPx
+          });
+        } else {
+          this.renderRows({
+            top: 0, bottom: this._options.frozenRow! - 1, leftPx: rendered.leftPx, rightPx: rendered.rightPx
+          });
+        }
       }
+
+      this.postProcessFromRow = visible.top;
+      this.postProcessToRow = Math.min(this.getDataLengthIncludingAddNew() - 1, visible.bottom);
+      this.startPostProcessing();
+
+      this.lastRenderedScrollTop = this.scrollTop;
+      this.lastRenderedScrollLeft = this.scrollLeft;
+      this.h_render = null;
+      this.triggerEvent(this.onRendered, { startRow: visible.top, endRow: visible.bottom, grid: this });
     }
-
-    this.postProcessFromRow = visible.top;
-    this.postProcessToRow = Math.min(this.getDataLengthIncludingAddNew() - 1, visible.bottom);
-    this.startPostProcessing();
-
-    this.lastRenderedScrollTop = this.scrollTop;
-    this.lastRenderedScrollLeft = this.scrollLeft;
-    this.h_render = null;
-    this.triggerEvent(this.onRendered, { startRow: visible.top, endRow: visible.bottom, grid: this });
   }
 
   protected handleHeaderRowScroll() {
