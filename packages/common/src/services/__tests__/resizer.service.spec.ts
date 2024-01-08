@@ -101,7 +101,7 @@ describe('Resizer Service', () => {
       resizeByContentOptions: {},
     } as GridOption;
     jest.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
-    jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(divContainer.querySelector(`#${GRID_ID}`) as HTMLDivElement);
+    jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(divContainer.querySelector(`.${GRID_UID}`) as HTMLDivElement);
   });
 
   afterEach(() => {
@@ -120,7 +120,7 @@ describe('Resizer Service', () => {
 
     it('should call "bindAutoResizeDataGrid" when autoResize is enabled', () => {
       mockGridOptions.enableAutoResize = true;
-      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(null as any);
+      jest.spyOn(gridStub, 'getContainerNode').mockReturnValueOnce(null as any);
       const bindAutoResizeDataGridSpy = jest.spyOn(service, 'bindAutoResizeDataGrid').mockImplementation();
 
       service.init(gridStub, divContainer);
@@ -130,7 +130,7 @@ describe('Resizer Service', () => {
 
     it('should not call "bindAutoResizeDataGrid" when autoResize is not enabled', () => {
       mockGridOptions.enableAutoResize = false;
-      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(null as any);
+      jest.spyOn(gridStub, 'getContainerNode').mockReturnValueOnce(null as any);
       const bindAutoResizeDataGridSpy = jest.spyOn(service, 'bindAutoResizeDataGrid').mockImplementation();
 
       service.init(gridStub, divContainer);
@@ -233,7 +233,7 @@ describe('Resizer Service', () => {
     });
 
     it('should return null when calling "bindAutoResizeDataGrid" method with a gridId that is not found in the DOM', () => {
-      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(null as any);
+      jest.spyOn(gridStub, 'getContainerNode').mockReturnValueOnce(null as any);
       service.init(gridStub, divContainer);
       const output = service.bindAutoResizeDataGrid();
 
@@ -242,7 +242,7 @@ describe('Resizer Service', () => {
     });
 
     it('should return null when calling "calculateGridNewDimensions" method with a gridId that is not found in the DOM', () => {
-      jest.spyOn(gridStub, 'getContainerNode').mockReturnValue(null as any);
+      jest.spyOn(gridStub, 'getContainerNode').mockReturnValueOnce(null as any);
       service.init(gridStub, divContainer);
       const output = service.calculateGridNewDimensions(mockGridOptions);
       expect(output).toBe(null as any);
