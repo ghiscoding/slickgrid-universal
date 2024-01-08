@@ -112,7 +112,7 @@ export class ResizerService {
       gridParentContainerElm.style.width = typeof fixedGridSizes.width === 'string' ? fixedGridSizes.width : `${fixedGridSizes.width}px`;
     }
 
-    this._gridDomElm = grid?.getContainerNode() as HTMLDivElement;
+    this._gridDomElm = grid.getContainerNode() as HTMLDivElement;
 
     if (typeof this._autoResizeOptions.container === 'string') {
       this._pageContainerElm = typeof this._autoResizeOptions.container === 'string' ? document.querySelector(this._autoResizeOptions.container) as HTMLElement : this._autoResizeOptions.container;
@@ -120,13 +120,12 @@ export class ResizerService {
       this._pageContainerElm = this._autoResizeOptions.container!;
     }
 
-
     if (fixedGridSizes) {
       this._fixedHeight = fixedGridSizes.height;
       this._fixedWidth = fixedGridSizes.width;
     }
 
-    if (this.gridOptions && this.gridOptions.enableAutoResize) {
+    if (this.gridOptions.enableAutoResize) {
       this.bindAutoResizeDataGrid();
     }
 
@@ -140,7 +139,7 @@ export class ResizerService {
 
     // on double-click resize, should we resize the cell by its cell content?
     // the same action can be called from a double-click and/or from column header menu
-    if (this.gridOptions?.enableColumnResizeOnDoubleClick) {
+    if (this.gridOptions.enableColumnResizeOnDoubleClick) {
       this._subscriptions.push(
         this.pubSubService.subscribe('onHeaderMenuColumnResizeByContent', (data => {
           this.handleSingleColumnResizeByContent(data.columnId);
@@ -647,10 +646,10 @@ export class ResizerService {
         const headerTitleRowHeight = 44; // this one is set by SASS/CSS so let's hard code it
         const headerPos = getOffset(headerElm);
         let headerOffsetTop = headerPos?.top ?? 0;
-        if (this.gridOptions && this.gridOptions.enableFiltering && this.gridOptions.headerRowHeight) {
+        if (this.gridOptions?.enableFiltering && this.gridOptions.headerRowHeight) {
           headerOffsetTop += this.gridOptions.headerRowHeight; // filter row height
         }
-        if (this.gridOptions && this.gridOptions.createPreHeaderPanel && this.gridOptions.showPreHeaderPanel && this.gridOptions.preHeaderPanelHeight) {
+        if (this.gridOptions?.createPreHeaderPanel && this.gridOptions.showPreHeaderPanel && this.gridOptions.preHeaderPanelHeight) {
           headerOffsetTop += this.gridOptions.preHeaderPanelHeight; // header grouping titles row height
         }
         headerOffsetTop += headerTitleRowHeight; // header title row height

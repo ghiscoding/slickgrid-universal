@@ -17,7 +17,7 @@ describe('the Progress Bar Formatter', () => {
     const barType = 'danger';
     const template = `<div class="progress"><div class="progress-bar progress-bar-${barType} bg-${barType}" role="progressbar" aria-valuenow="${inputValue}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: ${inputValue}%;">${inputValue}%</div></div>`;
     const output = progressBarFormatter(1, 1, inputValue, {} as Column, {}, {} as any) as HTMLDivElement;
-    const innerDiv = output.querySelector('div') as HTMLDivElement;
+    const innerDiv = output.querySelector('div.progress-bar') as HTMLDivElement;
 
     expect(output.outerHTML).toBe(template.trim());
     expect(innerDiv.className).toBe(`progress-bar progress-bar-${barType} bg-${barType}`);
@@ -32,7 +32,7 @@ describe('the Progress Bar Formatter', () => {
     const barType = 'danger';
     const template = `<div class="progress"><div class="progress-bar progress-bar-${barType} bg-${barType}" role="progressbar" aria-valuenow="${inputValue}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: ${inputValue}%;">${inputValue}%</div></div>`;
     const output = progressBarFormatter(1, 1, inputValue, {} as Column, {}, {} as any) as HTMLDivElement;
-    const innerDiv = output.querySelector('div') as HTMLDivElement;
+    const innerDiv = output.querySelector('div.progress-bar') as HTMLDivElement;
 
     expect(output.outerHTML).toBe(template.trim());
     expect(innerDiv.className).toBe(`progress-bar progress-bar-${barType} bg-${barType}`);
@@ -51,8 +51,8 @@ describe('the Progress Bar Formatter', () => {
 
     const output1 = progressBarFormatter(1, 1, inputValue1, {} as Column, {}, {} as any) as HTMLDivElement;
     const output2 = progressBarFormatter(1, 1, inputValue2, {} as Column, {}, {} as any) as HTMLDivElement;
-    const innerDiv1 = output1.querySelector('div') as HTMLDivElement;
-    const innerDiv2 = output2.querySelector('div') as HTMLDivElement;
+    const innerDiv1 = output1.querySelector('div.progress-bar') as HTMLDivElement;
+    const innerDiv2 = output2.querySelector('div.progress-bar') as HTMLDivElement;
 
     expect(output1.outerHTML).toBe(template1.trim());
     expect(innerDiv1.className).toBe(`progress-bar progress-bar-${barType} bg-${barType}`);
@@ -74,7 +74,7 @@ describe('the Progress Bar Formatter', () => {
     const barType = 'success';
     const template = `<div class="progress"><div class="progress-bar progress-bar-${barType} bg-${barType}" role="progressbar" aria-valuenow="${inputValue}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: ${inputValue}%;">${inputValue}%</div></div>`;
     const output = progressBarFormatter(1, 1, inputValue, {} as Column, {}, {} as any) as HTMLDivElement;
-    const innerDiv = output.querySelector('div') as HTMLDivElement;
+    const innerDiv = output.querySelector('div.progress-bar') as HTMLDivElement;
 
     expect(output.outerHTML).toBe(template.trim());
     expect(innerDiv.className).toBe(`progress-bar progress-bar-${barType} bg-${barType}`);
@@ -90,7 +90,7 @@ describe('the Progress Bar Formatter', () => {
     const barType = 'success';
     const template = `<div class="progress"><div class="progress-bar progress-bar-${barType} bg-${barType}" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: ${inputMaxValue}%;">${inputMaxValue}%</div></div>`;
     const output = progressBarFormatter(1, 1, inputValue, {} as Column, {}, {} as any) as HTMLElement;
-    const innerDiv = output.querySelector('div') as HTMLDivElement;
+    const innerDiv = output.querySelector('div.progress-bar') as HTMLDivElement;
 
     expect(output.outerHTML).toBe(template.trim());
     expect(innerDiv.className).toBe(`progress-bar progress-bar-${barType} bg-${barType}`);

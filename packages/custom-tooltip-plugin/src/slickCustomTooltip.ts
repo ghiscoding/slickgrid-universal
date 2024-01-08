@@ -2,6 +2,7 @@ import type {
   CancellablePromiseWrapper,
   Column,
   ContainerService,
+  CustomDataView,
   CustomTooltipOption,
   DOMEvent,
   Formatter,
@@ -11,7 +12,6 @@ import type {
   Observable,
   RxJsFacade,
   SharedService,
-  SlickDataView,
   SlickGrid,
   Subscription,
 } from '@slickgrid-universal/common';
@@ -96,8 +96,8 @@ export class SlickCustomTooltip {
   get className(): string {
     return this._cellAddonOptions?.className ?? 'slick-custom-tooltip';
   }
-  get dataView(): SlickDataView {
-    return this._grid.getData<SlickDataView>() || {};
+  get dataView(): CustomDataView {
+    return this._grid.getData<CustomDataView>() || {};
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
