@@ -1,6 +1,10 @@
+import { SlickRowBasedEdit } from '../extensions';
 import { OnEventArgs } from './onEventArgs.interface';
 
 export interface RowBasedEditOptions {
+  /** Fired after extension (plugin) is registered by SlickGrid */
+  onExtensionRegistered?: (plugin: SlickRowBasedEdit) => void;
+
   /** the display name of the added actions column */
   actionsColumnLabel?: string;
   /** method called before row gets updated. Needs to return a promised boolean. True will continue; False will halt the update */

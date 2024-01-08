@@ -311,17 +311,57 @@ describe('ExtensionService', () => {
       });
 
       it('should register the row based edit plugin when "enableRowBasedEdit" and "editable" is set in the grid options', () => {
-        const gridOptionsMock = { enableRowBasedEdit: true, editable: true } as GridOption;
+        const onRegisteredMock = jest.fn();
+        const gridOptionsMock = {
+          enableRowBasedEdit: true,
+          editable: true,
+          rowBasedEditOptions: {
+            onExtensionRegistered: onRegisteredMock
+          }
+        } as GridOption;
+        const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
+        const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         const extSpy = jest.spyOn(SlickRowBasedEdit.prototype, 'init').mockImplementation();
 
+        service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
         service.bindDifferentExtensions();
-        const output = service.getExtensionByName<SlickRowBasedEdit>(ExtensionName.rowBasedEdit);
+        const output = service.getExtensionByName(ExtensionName.rowBasedEdit);
         const pluginInstance = service.getExtensionInstanceByName(ExtensionName.rowBasedEdit);
 
+        expect(onRegisteredMock).toHaveBeenCalledWith(expect.toBeObject());
+        expect(gridSpy).toHaveBeenCalled();
         expect(extSpy).toHaveBeenCalled();
+        expect(pluginInstance).toBeTruthy();
+        expect(output!.instance).toEqual(pluginInstance);
         expect(output).toEqual({ name: ExtensionName.rowBasedEdit, instance: pluginInstance } as ExtensionModel<any>);
-        expect(output!.instance instanceof SlickRowBasedEdit).toBeTrue();
+      });
+
+      it('should throw a custom exception if gridService not ready during row based plugin instantiation', () => {
+        const onRegisteredMock = jest.fn();
+        const gridOptionsMock = {
+          enableRowBasedEdit: true,
+          editable: true,
+          rowBasedEditOptions: {
+            onExtensionRegistered: onRegisteredMock
+          }
+        } as GridOption;
+        const gridSpy = jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+        jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+        const extSpy = jest.spyOn(SlickRowBasedEdit.prototype, 'init').mockImplementation();
+
+        service = new ExtensionService(
+          extensionUtilityStub,
+          filterServiceStub,
+          pubSubServiceStub,
+          sharedService,
+          sortServiceStub,
+          treeDataServiceStub,
+          translateService,
+          () => undefined as unknown as GridService
+        );
+
+        expect(() => service.bindDifferentExtensions()).toThrow();
       });
 
       it('should register the ColumnPicker addon when "enableColumnPicker" is set in the grid options', () => {
@@ -541,6 +581,16 @@ describe('ExtensionService', () => {
         const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
         const gridOptionsMock = { enableCheckboxSelector: true } as GridOption;
         const extSpy = jest.spyOn(mockCheckboxSelectColumn, 'create');
+
+        service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
+
+        expect(extSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
+      });
+
+      it('should call rowBasedEditplugin create when "enableRowBasedEdit" is set in the grid options provided', () => {
+        const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
+        const gridOptionsMock = { enableRowBasedEdit: true } as GridOption;
+        const extSpy = jest.spyOn(SlickRowBasedEdit.prototype, 'create');
 
         service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
 

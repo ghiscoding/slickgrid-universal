@@ -175,11 +175,10 @@ export class ExtensionService {
         }
 
         this._rowBasedEdit.init(this.sharedService.slickGrid, gridService);
-        const createdExtension = this.getCreatedExtensionByName(ExtensionName.rowBasedEdit); // get the instance from when it was really created earlier
-        const instance = createdExtension && createdExtension.instance;
-        if (instance) {
-          this._extensionList[ExtensionName.rowBasedEdit] = { name: ExtensionName.rowBasedEdit, instance: this._rowBasedEdit };
+        if (this.gridOptions.rowBasedEditOptions?.onExtensionRegistered) {
+          this.gridOptions.rowBasedEditOptions.onExtensionRegistered(this._rowBasedEdit);
         }
+        this._extensionList[ExtensionName.rowBasedEdit] = { name: ExtensionName.rowBasedEdit, instance: this._rowBasedEdit };
       }
 
       // Auto Tooltip Plugin
