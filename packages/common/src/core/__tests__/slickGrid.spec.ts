@@ -390,7 +390,7 @@ describe('SlickGrid core file', () => {
   describe('Pre-Header Panel', () => {
     it('should create a preheader panel when enabled', () => {
       const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      const options = { enableCellNavigation: true, preHeaderPanelHeight: 30, showPreHeaderPanel: true, createPreHeaderPanel: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+      const options = { enableCellNavigation: true, preHeaderPanelHeight: 30, showPreHeaderPanel: true, frozenColumn: 0, createPreHeaderPanel: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
       grid = new SlickGrid<any, Column>(container, [], columns, options);
       grid.init();
       const preheaderElm = container.querySelector('.slick-preheader-panel');
@@ -603,6 +603,15 @@ describe('SlickGrid core file', () => {
       const firstNameColHeader = grid.getHeaderRowColumn('firstName');
 
       expect(grid).toBeTruthy();
+      expect(headerElms.length).toBe(2);
+      expect(headerElms[0].style.display).not.toBe('none');
+      expect(headerElms[1].style.display).not.toBe('none');
+      expect(firstNameColHeader).toEqual(headerElms[0].querySelector('.slick-headerrow-column'));
+      expect(firstNameColHeader.classList.contains('frozen')).toBeTruthy();
+
+      // recreate column headers
+      grid.updateColumns();
+
       expect(headerElms.length).toBe(2);
       expect(headerElms[0].style.display).not.toBe('none');
       expect(headerElms[1].style.display).not.toBe('none');
@@ -2437,11 +2446,14 @@ describe('SlickGrid core file', () => {
         expect(firstItemAgeCell.innerHTML).toBe('25');
 
         grid.gotoCell(10, 1);
+        expect(grid.getViewports()[0].scrollLeft).toBe(80);
+        grid.setOptions({ frozenColumn: 2 });
         grid.render();
         jest.advanceTimersByTime(40); // cleanup asyncPostRender
 
         firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
         expect(firstItemAgeCell.innerHTML).not.toBe('25');
+        expect(grid.getViewports()[0].scrollLeft).toBe(0); // scroll left is 0 because it was reset by setOptions to avoid UI issues
       });
 
       it('should change an item from an Editor then call updateRow() and expect it call the editor loadValue() method', () => {

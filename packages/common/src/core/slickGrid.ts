@@ -1263,6 +1263,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       Utils.height(div, test);
       const height = Utils.height(div);
 
+      /* istanbul ignore else */
       if (test > testUpTo! || height !== test) {
         break;
       } else {
@@ -1302,7 +1303,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return this.absoluteColumnMinWidth;
   }
 
-  // TODO:  this is static.  need to handle page mutation.
+  // TODO:  this is static. we need to handle page mutation.
   protected bindAncestorScrollEvents() {
     let elem: HTMLElement | null = (this.hasFrozenRows && !this._options.frozenBottom) ? this._canvasBottomL : this._canvasTopL;
     while ((elem = elem!.parentNode as HTMLElement) !== document.body && elem) {
