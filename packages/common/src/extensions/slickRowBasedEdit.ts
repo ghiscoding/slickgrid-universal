@@ -514,7 +514,7 @@ export class SlickRowBasedEdit {
   }
 
   protected onBeforeEditCellHandler = (
-    e: Event,
+    _e: Event,
     args: OnBeforeEditCellEventArgs
   ) => {
     return this._editedRows.has(
