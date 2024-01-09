@@ -4987,14 +4987,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     let w = 0;
     for (let i = 0; i < this.columns.length && w < x; i++) {
-      if (!this.columns[i] || this.columns[i].hidden) { continue; }
-
+      if (!this.columns[i] || this.columns[i].hidden) {
+        continue;
+      }
       w += this.columns[i].width as number;
       cell++;
     }
 
     if (cell < 0) {
-      cell = 0;
+      cell = 0; // TODO: need to investigate, this is technically unreachable
     }
 
     return { row, cell: (cell - 1) };
