@@ -4994,8 +4994,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       cell++;
     }
 
-    // TODO: need to investigate, this is technically unreachable
-    /* istanbul ignore if */
+    /* istanbul ignore if - TODO: need to investigate, this is technically unreachable */
     if (cell < 0) {
       cell = 0;
     }
