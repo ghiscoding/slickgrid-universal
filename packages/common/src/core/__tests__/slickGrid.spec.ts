@@ -2413,12 +2413,23 @@ describe('SlickGrid core file', () => {
         expect(result).toBeNull();
       });
 
-      it('should return { row:0, cell:0 } when clicked cell is first cell top left', () => {
+      it('should return { row:0, cell:0 } when clicked cell is first cell top left a native Event', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
         const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(1) .slick-cell');
         const event = new CustomEvent('click');
         Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[0] });
         const result = grid.getCellFromEvent(event);
+
+        expect(result).toEqual({ row: 0, cell: 0 });
+      });
+
+      it('should return { row:0, cell:0 } when clicked cell is first cell top left and is provided as a SlickEventData', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(1) .slick-cell');
+        const event = new CustomEvent('click');
+        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[0] });
+        const sed = new SlickEventData(event);
+        const result = grid.getCellFromEvent(sed);
 
         expect(result).toEqual({ row: 0, cell: 0 });
       });
