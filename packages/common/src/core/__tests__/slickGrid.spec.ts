@@ -1659,6 +1659,21 @@ describe('SlickGrid core file', () => {
       expect(renderSpy).toHaveBeenCalledTimes(3);
     });
 
+    it('should scroll when calling scrollCellIntoView() with row having colspan returned from DataView getItemMetadata()', () => {
+      const columnsCopy = [...columns];
+      columnsCopy[1].colspan = '*';
+      columnsCopy[2].colspan = '1';
+      const dv = new SlickDataView();
+      dv.setItems(data);
+      grid = new SlickGrid<any, Column>(container, dv, columns, { ...options, frozenColumn: 0 });
+      jest.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns: { lastName: { colspan: '*' } } } as any)
+      const renderSpy = jest.spyOn(grid, 'render');
+      grid.scrollCellIntoView(1, 1, true);
+      grid.scrollCellIntoView(1, 2, true);
+
+      expect(renderSpy).toHaveBeenCalledTimes(6);
+    });
+
     it('should call scrollColumnIntoView() and expect left scroll to become 80 which is default column width', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...options, frozenColumn: 0 });
       let viewportElm = container.querySelector('.slick-viewport-top.slick-viewport-right') as HTMLDivElement;
@@ -1714,6 +1729,7 @@ describe('SlickGrid core file', () => {
       const renderSpy = jest.spyOn(grid, 'render');
 
       grid.scrollRowToTop(2);
+      grid.updatePagingStatusFromView({ pageNum: 0, pageSize: 10, totalPages: 2 });
       grid.scrollRowIntoView(1, true);
 
       expect(scrollToSpy).toHaveBeenCalledWith(2 * DEFAULT_COLUMN_HEIGHT); // default rowHeight: 25
@@ -2478,6 +2494,259 @@ describe('SlickGrid core file', () => {
         grid.updateRow(0);
 
         expect(editorSpy).toHaveBeenCalledWith({ id: 0, name: 'Avery', age: 44 });
+      });
+    });
+  });
+
+  describe('Activate Cell/Row methods', () => {
+    let items: Array<{ id: number; name: string; age: number; }> = [];
+
+    beforeEach(() => {
+      items = [
+        { id: 0, name: 'Avery', age: 44 },
+        { id: 1, name: 'Bob', age: 20 },
+        { id: 2, name: 'Rachel', age: 46 },
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 5, name: 'Arnold', age: 50 },
+        { id: 6, name: 'Carole', age: 40 },
+        { id: 7, name: 'Jason', age: 48 },
+        { id: 8, name: 'Julie', age: 42 },
+        { id: 9, name: 'Aaron', age: 23 },
+        { id: 10, name: 'Ariane', age: 43 },
+      ];
+    });
+
+    describe('setActiveRow() method', () => {
+      it('should do nothing when row to activate is greater than data length or cell is greater than available column length', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, editable: true });
+        const scrollViewSpy = jest.spyOn(grid, 'scrollCellIntoView');
+        grid.setActiveRow(99, 1);
+        grid.setActiveRow(1, 99);
+
+        expect(scrollViewSpy).not.toHaveBeenCalled();
+      });
+
+      it('should do nothing when row or cell is a negative number', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, editable: true });
+        const scrollViewSpy = jest.spyOn(grid, 'scrollCellIntoView');
+        grid.setActiveRow(-1, 1);
+        grid.setActiveRow(1, -1);
+
+        expect(scrollViewSpy).not.toHaveBeenCalled();
+      });
+
+      it('should do nothing when row to activate is greater than data length', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, editable: true });
+        const scrollViewSpy = jest.spyOn(grid, 'scrollCellIntoView');
+        grid.setActiveRow(1, 1);
+
+        expect(scrollViewSpy).toHaveBeenCalledWith(1, 1, false);
+      });
+    });
+
+    describe('gotoCell() method', () => {
+      it('should call gotoCell() and expect it to scroll to the cell', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, editable: true });
+        const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+        grid.gotoCell(0, 1);
+
+        expect(scrollCellSpy).toHaveBeenCalledWith(0, 1, false);
+      });
+
+      it('should call gotoCell() with invalid cell and expect to NOT scroll to the cell', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, editable: true });
+        const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+        grid.gotoCell(99, 1);
+
+        expect(scrollCellSpy).not.toHaveBeenCalled();
+      });
+
+      it('should call gotoCell() with commitCurrentEdit() returning false and expect to NOT scroll to the cell', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, editable: true });
+        const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+        jest.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
+        grid.gotoCell(0, 1);
+
+        expect(scrollCellSpy).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('canCellBeActive() method', () => {
+      const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+      it('should return false when no items provided', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, enableCellNavigation: true, editable: true });
+        const result = grid.canCellBeActive(0, 0);
+
+        expect(result).toBe(false);
+      });
+
+      it('should return false when column is hidden', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name', hidden: true }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, editable: true });
+        const result = grid.canCellBeActive(0, 0);
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when cell is assign with default props', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, editable: true });
+        const result = grid.canCellBeActive(0, 0);
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false when column has column focusable assigned as false', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name', focusable: false }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, editable: true });
+        const result = grid.canCellBeActive(0, 0);
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when using DataView with a getItemMetadata() method available returning column focusable as true', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+        const dv = new SlickDataView();
+        dv.setItems(items);
+        grid = new SlickGrid<any, Column>(container, dv, columns, { ...options, enableCellNavigation: true, editable: true });
+        jest.spyOn(dv, 'getItemMetadata').mockReturnValue({ focusable: true });
+        const result = grid.canCellBeActive(0, 0);
+
+        expect(result).toBe(true);
+      });
+
+      it('should return true when using DataView with a getItemMetadata() method available returning column focusable as false', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+        const dv = new SlickDataView();
+        dv.setItems(items);
+        grid = new SlickGrid<any, Column>(container, dv, columns, { ...options, enableCellNavigation: true, editable: true });
+        jest.spyOn(dv, 'getItemMetadata').mockReturnValue({ focusable: false });
+        const result = grid.canCellBeActive(0, 0);
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when using DataView with a getItemMetadata() method available returning column focusable as true', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+        const dv = new SlickDataView();
+        dv.setItems(items);
+        grid = new SlickGrid<any, Column>(container, dv, columns, { ...options, enableCellNavigation: true, editable: true });
+        jest.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns } as any);
+        const result = grid.canCellBeActive(0, 0);
+
+        expect(result).toBe(true);
+      });
+
+      it('should return true when using DataView with a getItemMetadata() method available returning column focusable as false', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name', focusable: false }] as Column[];
+        const dv = new SlickDataView();
+        dv.setItems(items);
+        grid = new SlickGrid<any, Column>(container, dv, columns, { ...options, enableCellNavigation: true, editable: true });
+        jest.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns: { name: { focusable: false } } } as any);
+        const result = grid.canCellBeActive(0, 0);
+
+        expect(result).toBe(false);
+      });
+    });
+
+    describe('canCellBeSelected() method', () => {
+      const options = { enableCellNavigation: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
+
+      it('should return false when no items provided', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, [], columns, { ...options, enableCellNavigation: true, editable: true });
+        const result = grid.canCellBeSelected(0, 0);
+
+        expect(result).toBe(false);
+      });
+
+      it('should return false when column is hidden', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name', hidden: true }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, editable: true });
+        const result = grid.canCellBeSelected(0, 0);
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when cell is assign with default props', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, editable: true });
+        const result = grid.canCellBeSelected(0, 0);
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false when column has column selectable assigned as false', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name', selectable: false }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...options, enableCellNavigation: true, editable: true });
+        const result = grid.canCellBeSelected(0, 0);
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when using DataView with a getItemMetadata() method available returning column selectable as true', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+        const dv = new SlickDataView();
+        dv.setItems(items);
+        grid = new SlickGrid<any, Column>(container, dv, columns, { ...options, enableCellNavigation: true, editable: true });
+        jest.spyOn(dv, 'getItemMetadata').mockReturnValue({ selectable: true });
+        const result = grid.canCellBeSelected(0, 0);
+
+        expect(result).toBe(true);
+      });
+
+      it('should return true when using DataView with a getItemMetadata() method available returning column selectable as false', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+        const dv = new SlickDataView();
+        dv.setItems(items);
+        grid = new SlickGrid<any, Column>(container, dv, columns, { ...options, enableCellNavigation: true, editable: true });
+        jest.spyOn(dv, 'getItemMetadata').mockReturnValue({ selectable: false });
+        const result = grid.canCellBeSelected(0, 0);
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when using DataView with a getItemMetadata() method available returning column selectable as true', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }] as Column[];
+        const dv = new SlickDataView();
+        dv.setItems(items);
+        grid = new SlickGrid<any, Column>(container, dv, columns, { ...options, enableCellNavigation: true, editable: true });
+        jest.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns } as any);
+        const result = grid.canCellBeSelected(0, 0);
+
+        expect(result).toBe(true);
+      });
+
+      it('should return true when using DataView with a getItemMetadata() method available returning column selectable as false', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name', selectable: false }] as Column[];
+        const dv = new SlickDataView();
+        dv.setItems(items);
+        grid = new SlickGrid<any, Column>(container, dv, columns, { ...options, enableCellNavigation: true, editable: true });
+        jest.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns } as any);
+        const result = grid.canCellBeSelected(0, 0);
+
+        expect(result).toBe(false);
       });
     });
   });

@@ -5,6 +5,7 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   classNameToList,
   createDomElement,
+  destroyAllElementProps,
   emptyElement,
   extend,
   getInnerSize,
@@ -2553,7 +2554,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.clearAllTimers();
 
     if (shouldDestroyAllElements) {
-      this.destroyAllElements();
+      destroyAllElementProps(this);
     }
   }
 
@@ -2574,75 +2575,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // reset instance(s)
     inputInstances = (Array.isArray(inputInstances) ? [] : null);
     return inputInstances;
-  }
-
-  protected destroyAllElements() {
-    this._activeCanvasNode = null as any;
-    this._activeViewportNode = null as any;
-    this._boundAncestors = null as any;
-    this._canvas = null as any;
-    this._canvasTopL = null as any;
-    this._canvasTopR = null as any;
-    this._canvasBottomL = null as any;
-    this._canvasBottomR = null as any;
-    this._container = null as any;
-    this._focusSink = null as any;
-    this._focusSink2 = null as any;
-    this._groupHeaders = null as any;
-    this._groupHeadersL = null as any;
-    this._groupHeadersR = null as any;
-    this._headerL = null as any;
-    this._headerR = null as any;
-    this._headers = null as any;
-    this._headerRows = null as any;
-    this._headerRowL = null as any;
-    this._headerRowR = null as any;
-    this._headerRowSpacerL = null as any;
-    this._headerRowSpacerR = null as any;
-    this._headerRowScrollContainer = null as any;
-    this._headerRowScroller = null as any;
-    this._headerRowScrollerL = null as any;
-    this._headerRowScrollerR = null as any;
-    this._headerScrollContainer = null as any;
-    this._headerScroller = null as any;
-    this._headerScrollerL = null as any;
-    this._headerScrollerR = null as any;
-    this._hiddenParents = null as any;
-    this._footerRow = null as any;
-    this._footerRowL = null as any;
-    this._footerRowR = null as any;
-    this._footerRowSpacerL = null as any;
-    this._footerRowSpacerR = null as any;
-    this._footerRowScroller = null as any;
-    this._footerRowScrollerL = null as any;
-    this._footerRowScrollerR = null as any;
-    this._footerRowScrollContainer = null as any;
-    this._preHeaderPanel = null as any;
-    this._preHeaderPanelR = null as any;
-    this._preHeaderPanelScroller = null as any;
-    this._preHeaderPanelScrollerR = null as any;
-    this._preHeaderPanelSpacer = null as any;
-    this._preHeaderPanelSpacerR = null as any;
-    this._topPanels = null as any;
-    this._topPanelScrollers = null as any;
-    this._style = null as any;
-    this._topPanelScrollerL = null as any;
-    this._topPanelScrollerR = null as any;
-    this._topPanelL = null as any;
-    this._topPanelR = null as any;
-    this._paneHeaderL = null as any;
-    this._paneHeaderR = null as any;
-    this._paneTopL = null as any;
-    this._paneTopR = null as any;
-    this._paneBottomL = null as any;
-    this._paneBottomR = null as any;
-    this._viewport = null as any;
-    this._viewportTopL = null as any;
-    this._viewportTopR = null as any;
-    this._viewportBottomL = null as any;
-    this._viewportBottomR = null as any;
-    this._viewportScrollContainerX = null as any;
-    this._viewportScrollContainerY = null as any;
   }
 
   // Column Autosizing
@@ -3879,7 +3811,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * Update paging information status from the View
    * @param {PagingInfo} pagingInfo
    */
-  updatePagingStatusFromView(pagingInfo: PagingInfo) {
+  updatePagingStatusFromView(pagingInfo: Pick<PagingInfo, 'pageSize' | 'pageNum' | 'totalPages'>) {
     this.pagingActive = (pagingInfo.pageSize !== 0);
     this.pagingIsLastPage = (pagingInfo.pageNum === pagingInfo.totalPages - 1);
   }
@@ -6184,12 +6116,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Boolean} [forceEdit] If true, will attempt to initiate the edit dialogue for the field in the specified cell.
    */
   gotoCell(row: number, cell: number, forceEdit?: boolean, e?: Event | SlickEvent) {
-    if (!this.initialized) { return; }
-    if (!this.canCellBeActive(row, cell)) {
-      return;
-    }
-
-    if (!this.getEditorLock()?.commitCurrentEdit()) {
+    if (!this.initialized
+      || !this.canCellBeActive(row, cell)
+      || !this.getEditorLock()?.commitCurrentEdit()
+    ) {
       return;
     }
 
