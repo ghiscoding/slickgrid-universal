@@ -5,6 +5,7 @@ import { Column, Editor, FormatterResultWithHtml, FormatterResultWithText, GridO
 import { SlickEventData } from '../slickCore';
 import { SlickDataView } from '../slickDataview';
 import { SlickGrid } from '../slickGrid';
+import { createDomElement } from '@slickgrid-universal/utils';
 
 jest.useFakeTimers();
 
@@ -2393,6 +2394,15 @@ describe('SlickGrid core file', () => {
     });
 
     describe('getCellFromEvent() method', () => {
+      it('should throw when cell node is not found in the grid', () => {
+        const slickCell = createDomElement('div', { className: 'slick-cell' });
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
+        const event = new CustomEvent('click');
+        Object.defineProperty(event, 'target', { writable: true, value: slickCell });
+
+        expect(() => grid.getCellFromEvent(event)).toThrow('SlickGrid getCellFromNode: cannot get cell - slick-cell');
+      });
+
       it('should return null when clicked cell is not a slick-cell closest ancestor', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...options, enableCellNavigation: true });
         const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(1)');
