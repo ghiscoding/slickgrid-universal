@@ -778,7 +778,16 @@ describe('SlickGrid core file', () => {
       expect(cellNodeElm.outerHTML).toBe('<div class="slick-cell"><span>some content</span></div>');
     });
 
-    it('should be able to apply text, CSS classes and tooltip when Formatter is returnbing FormatterResultWithText', () => {
+    it('should be able to apply column header tooltip', () => {
+      const tooltipColumns = [{ id: 'firstName', field: 'firstName', name: 'First Name', toolTip: 'header tooltip' }] as Column[];
+
+      grid = new SlickGrid<any, Column>('#myGrid', dv, tooltipColumns, options);
+      const columnElms = container.querySelectorAll<HTMLDivElement>('.slick-header-columns .slick-header-column');
+
+      expect(columnElms[0].title).toBe('header tooltip');
+    });
+
+    it('should be able to apply cell text, CSS classes and tooltip when Formatter is returnbing FormatterResultWithText', () => {
       const formatterResult = { addClasses: 'some-class', toolTip: 'some tooltip', text: 'some content' } as FormatterResultWithText;
 
       grid = new SlickGrid<any, Column>('#myGrid', dv, columns, options);
