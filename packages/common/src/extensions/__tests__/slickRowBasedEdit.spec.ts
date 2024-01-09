@@ -301,14 +301,14 @@ describe('Row Based Edit Plugin', () => {
     expect(gridStub.getData().getItemMetadata).not.toBe('TEST');
   });
 
-  it('should all row re-renderers', () => {
+  it('should remove all stlyes of rows on re-render re-renderers and re-apply them', () => {
     gridStub.getOptions.mockReturnValue(optionsMock);
     gridStub.getData().onRowsOrCountChanged = 'onRowsOrCountChanged' as any;
     plugin.init(gridStub, gridService);
 
     gridStub.getData.mockReturnValue({
       getItem: () => mockColumns[1],
-      getRowById: () => 0
+      getRowById: () => 0,
     });
 
     jest
@@ -324,7 +324,11 @@ describe('Row Based Edit Plugin', () => {
     plugin.rowBasedEditCommandHandler(
       mockColumns[1],
       { id: 'test-column' } as Column,
-      { prevSerializedValue: 'foo', serializedValue: 'bar', execute: () => {} } as EditCommand
+      {
+        prevSerializedValue: 'foo',
+        serializedValue: 'bar',
+        execute: () => {},
+      } as EditCommand
     );
 
     const call = (
@@ -334,5 +338,89 @@ describe('Row Based Edit Plugin', () => {
     call();
 
     expect(gridStub.removeCellCssStyles).toHaveBeenCalledTimes(1);
+    expect(gridStub.setCellCssStyles).toHaveBeenCalledTimes(2);
+  });
+
+  it('should cleanup all handlers and pubsub when destroyed', () => {
+    plugin.init(gridStub, gridService);
+    plugin.destroy();
+
+    expect(plugin.eventHandler.unsubscribeAll).toHaveBeenCalled();
+    expect(pubSubServiceStub.unsubscribeAll).toHaveBeenCalled();
+  });
+
+  describe('when creating the plugin', () => {
+    it('should merge default options with user provided options', () => {
+      const options = { ...addonOptions, editable: false };
+      const cols = [...mockColumns];
+      plugin.create(cols, options);
+
+      expect(plugin.addonOptions).toEqual(
+        expect.objectContaining({ columnIndexPosition: -1 })
+      );
+    });
+
+    it('should add the actions column at the end if columnIndexPosition not provided', () => {
+      const options = { ...addonOptions, editable: false };
+
+      const cols = [...mockColumns];
+      plugin.create(cols, options);
+
+      const actionColumn = plugin.getColumnDefinition();
+      expect(cols.at(-1)?.name).toEqual(actionColumn.name);
+    });
+
+    [-1, 0, 2].forEach((position) => {
+      it(
+        'should position the actions column at the ' +
+          position +
+          ' position provided via columnIndexPosition',
+        () => {
+          const options = {
+            ...addonOptions,
+            rowBasedEditOptions: { columnIndexPosition: position },
+            editable: false,
+          } as GridOption;
+
+          const cols = [...mockColumns];
+          plugin.create(cols, options);
+
+          const actionColumn = plugin.getColumnDefinition();
+          expect(cols.at(position)?.name).toEqual(actionColumn.name);
+        }
+      );
+    });
+
+    [-10, 100, mockColumns.length].forEach((position) => {
+      it(
+        'should position the columns at the start if position out of bounds: ' +
+          position,
+        () => {
+          const options = {
+            ...addonOptions,
+            rowBasedEditOptions: { columnIndexPosition: position },
+            editable: false,
+          } as GridOption;
+
+          const cols = [...mockColumns];
+          plugin.create(cols, options);
+
+          const actionColumn = plugin.getColumnDefinition();
+          expect(cols.at(0)?.name).toEqual(actionColumn.name);
+        }
+      );
+    });
+
+    it('should publish an onPluginColumnsChanged event when creating the plugin', () => {
+      const spy = jest.spyOn(pubSubServiceStub, 'publish');
+      const options = { ...addonOptions, editable: false };
+      const cols = [...mockColumns];
+      plugin.create(cols, options);
+
+      expect(spy).toHaveBeenCalledWith(
+        'onPluginColumnsChanged',
+        expect.anything()
+      );
+    });
   });
 });

@@ -143,20 +143,6 @@ export class SlickRowBasedEdit {
     this._grid.render();
   }
 
-  checkOptionsRequirements(options: GridOption) {
-    if (!options?.enableCellNavigation) {
-      throw new Error(
-        `[Slickgrid-Universal] Row Based Edit Plugin requires the gridOption cell navigation (enableCellNavigation = true)`
-      );
-    }
-
-    if (!options?.editable) {
-      throw new Error(
-        `[Slickgrid-Universal] Row Based Edit Plugin requires the gridOption editable (editable = true)`
-      );
-    }
-  }
-
   destroy() {
     this.dispose();
   }
@@ -177,7 +163,6 @@ export class SlickRowBasedEdit {
     } as RowBasedEditOptions;
     if (Array.isArray(columnDefinitions) && gridOptions) {
       const selectionColumn: Column = this.getColumnDefinition();
-
       // add new action column unless it was already added
       if (!columnDefinitions.some((col) => col.id === selectionColumn.id)) {
         // column index position in the grid
@@ -185,7 +170,7 @@ export class SlickRowBasedEdit {
           gridOptions?.rowBasedEditOptions?.columnIndexPosition ?? -1;
         if (columnPosition === -1) {
           columnDefinitions.push(selectionColumn);
-        } else if (columnPosition > 0) {
+        } else if (columnPosition > 0 && columnPosition < columnDefinitions.length) {
           columnDefinitions.splice(columnPosition, 0, selectionColumn);
         } else {
           columnDefinitions.unshift(selectionColumn);
@@ -270,6 +255,20 @@ export class SlickRowBasedEdit {
       editCommands: newCommands,
       cssStyleKeys: editedRow?.cssStyleKeys || [],
     });
+  }
+
+  protected checkOptionsRequirements(options: GridOption) {
+    if (!options?.enableCellNavigation) {
+      throw new Error(
+        `[Slickgrid-Universal] Row Based Edit Plugin requires the gridOption cell navigation (enableCellNavigation = true)`
+      );
+    }
+
+    if (!options?.editable) {
+      throw new Error(
+        `[Slickgrid-Universal] Row Based Edit Plugin requires the gridOption editable (editable = true)`
+      );
+    }
   }
 
   protected undoRowEdit(item: any) {
