@@ -10,6 +10,7 @@ import {
   getFunctionDetails,
   hasData,
   isDefined,
+  isDefinedNumber,
   isEmptyObject,
   isNumber,
   isPrimitiveValue,
@@ -107,7 +108,7 @@ describe('Service/Utilies', () => {
         if (input.length > 1) {
           return true;
         }
-        return input['age'].toString().includes(args.searchString)
+        return input['age'].toString().includes(args.searchString);
       }
       const result = getFunctionDetails(fn);
 
@@ -126,7 +127,7 @@ describe('Service/Utilies', () => {
         if (input.length > 1) {
           return true;
         }
-        return input['age'].toString().includes(args.searchString)
+        return input['age'].toString().includes(args.searchString);
       }
       const result = getFunctionDetails(fn);
 
@@ -217,7 +218,7 @@ describe('Service/Utilies', () => {
           return true;
         }
         return input['age'].toString().includes(args.searchString);
-      }
+      };
       const result = getFunctionDetails(fn);
 
       expect(result.params).toEqual(['input', 'args']);
@@ -258,6 +259,38 @@ describe('Service/Utilies', () => {
       const result1 = isDefined('');
       const result2 = isDefined(null);
       const result3 = isDefined(undefined);
+
+      expect(result1).toBeFalsy();
+      expect(result2).toBeFalsy();
+      expect(result3).toBeFalsy();
+    });
+  });
+
+  describe('isDefinedNumber() method', () => {
+    it('should be truthy when comparing against valid number', () => {
+      const result1 = isDefinedNumber(123);
+      const result2 = isDefinedNumber('-2');
+
+      expect(result1).toBeTruthy();
+      expect(result2).toBeTruthy();
+    });
+
+    it('should be truthy when comparing against any defined variable', () => {
+      const result1 = isDefinedNumber({ firstName: 'John', lastName: 'Doe' });
+      const result2 = isDefinedNumber('hello');
+      const result3 = isDefinedNumber('hello123');
+      const result4 = isDefinedNumber('123hello123');
+
+      expect(result1).toBeFalsy();
+      expect(result2).toBeFalsy();
+      expect(result3).toBeFalsy();
+      expect(result4).toBeFalsy();
+    });
+
+    it('should be falsy when comparing against empty string, null or undefined', () => {
+      const result1 = isDefinedNumber('');
+      const result2 = isDefinedNumber(null);
+      const result3 = isDefinedNumber(undefined);
 
       expect(result1).toBeFalsy();
       expect(result2).toBeFalsy();

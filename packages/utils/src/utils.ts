@@ -213,6 +213,10 @@ export function isDefined<T>(value: T | undefined | null): value is T {
   return <T>value !== undefined && <T>value !== null && <T>value !== '';
 }
 
+export function isDefinedNumber<T>(value: T | undefined | null): value is T {
+  return <T>value !== null && !isNaN(value as any) && <T>value !== '';
+}
+
 /**
  * Simple object check.
  * @param item
