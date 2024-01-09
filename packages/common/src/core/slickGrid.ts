@@ -4977,7 +4977,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Returns a hash containing row and cell indexes. Coordinates are relative to the top left corner of the grid beginning with the first row (not including the column headers).
+   * Returns row and cell indexes by providing x,y coordinates.
+   * Coordinates are relative to the top left corner of the grid beginning with the first row (not including the column headers).
    * @param x An x coordinate.
    * @param y A y coordinate.
    */
@@ -5057,7 +5058,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Returns a hash containing row and cell indexes from a standard W3C event.
+   * Returns row and cell indexes by providing a standard W3C event.
    * @param {*} event A standard W3C event.
    */
   getCellFromEvent(evt: Event | SlickEventData) {
