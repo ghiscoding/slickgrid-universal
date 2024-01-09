@@ -3132,11 +3132,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._options[option] = visible as boolean;
       if (visible) {
         Utils.show(container);
-        this.resizeCanvas();
       } else {
         Utils.hide(container);
-        this.resizeCanvas();
       }
+      this.resizeCanvas();
     }
   }
 

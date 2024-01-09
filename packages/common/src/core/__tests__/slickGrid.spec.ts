@@ -423,6 +423,11 @@ describe('SlickGrid core file', () => {
       preheaderElms = container.querySelectorAll<HTMLDivElement>('.slick-preheader-panel');
       expect(preheaderElms[0].style.display).not.toBe('none');
       expect(preheaderElms[1].style.display).not.toBe('none');
+
+      grid.setPreHeaderPanelVisibility(false);
+      preheaderElms = container.querySelectorAll<HTMLDivElement>('.slick-preheader-panel');
+      expect(preheaderElms[0].style.display).toBe('none');
+      expect(preheaderElms[1].style.display).toBe('none');
     });
   });
 
@@ -457,6 +462,11 @@ describe('SlickGrid core file', () => {
       headerElms = container.querySelectorAll<HTMLDivElement>('.slick-header');
       expect(headerElms[0].style.display).not.toBe('none');
       expect(headerElms[1].style.display).not.toBe('none');
+
+      grid.setColumnHeaderVisibility(false);
+      headerElms = container.querySelectorAll<HTMLDivElement>('.slick-header');
+      expect(headerElms[0].style.display).toBe('none');
+      expect(headerElms[1].style.display).toBe('none');
     });
   });
 
@@ -545,6 +555,11 @@ describe('SlickGrid core file', () => {
       expect(footerElms[0].style.display).not.toBe('none');
       expect(footerElms[1].style.display).not.toBe('none');
       expect(grid.getFooterRowColumn(2)).toBeUndefined();
+
+      grid.setFooterRowVisibility(false);
+      footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      expect(footerElms[0].style.display).toBe('none');
+      expect(footerElms[1].style.display).toBe('none');
     });
 
     it('should hide column headers div when "showFooterRow" is disabled and return undefined footer row column', () => {
@@ -591,6 +606,11 @@ describe('SlickGrid core file', () => {
       topPanelElms = container.querySelectorAll<HTMLDivElement>('.slick-top-panel-scroller');
       expect(topPanelElms[0].style.display).not.toBe('none');
       expect(topPanelElms[1].style.display).not.toBe('none');
+
+      grid.setTopPanelVisibility(false);
+      topPanelElms = container.querySelectorAll<HTMLDivElement>('.slick-top-panel-scroller');
+      expect(topPanelElms[0].style.display).toBe('none');
+      expect(topPanelElms[1].style.display).toBe('none');
     });
   });
 
@@ -637,6 +657,11 @@ describe('SlickGrid core file', () => {
       expect(headerElm[0].style.display).not.toBe('none');
       expect(headerElm[1].style.display).not.toBe('none');
       expect(grid.getHeaderRowColumn('firstName')).toBeUndefined();
+
+      grid.setHeaderRowVisibility(false);
+      headerElm = container.querySelectorAll<HTMLDivElement>('.slick-headerrow');
+      expect(headerElm[0].style.display).toBe('none');
+      expect(headerElm[1].style.display).toBe('none');
     });
 
     it('should hide top panel div when "showHeaderRow" is disabled and return undefined header row column', () => {
