@@ -5256,12 +5256,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected isCellPotentiallyEditable(row: number, cell: number) {
     const dataLength = this.getDataLength();
-    // is the data for this row loaded?
+    // is the data for this row actually loaded?
     if (row < dataLength && !this.getDataItem(row)) {
       return false;
     }
 
-    // are we in the Add New row? Can we create new from this cell?
+    // are we in the Add New row? Can we actually and allowed to create new one from this cell?
     if (this.columns[cell].cannotTriggerInsert && row >= dataLength) {
       return false;
     }
