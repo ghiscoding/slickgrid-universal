@@ -2693,10 +2693,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   // General
 
   triggerEvent<ArgType = any>(evt: SlickEvent, args?: ArgType, e?: Event | SlickEventData) {
-    const event: SlickEventData = (e || new SlickEventData(e, args)) as SlickEventData;
+    const sed: SlickEventData = (e || new SlickEventData(e, args)) as SlickEventData;
     const eventArgs = (args || {}) as ArgType & { grid: SlickGrid<TData, C, O>; };
     eventArgs.grid = this;
-    return evt.notify(eventArgs, event, this);
+    return evt.notify(eventArgs, sed, this);
   }
 
   /** Get Editor lock */
@@ -4842,7 +4842,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     evt = this.triggerEvent(this.onClick, { row: cell.row, cell: cell.cell }, evt || e);
-    if ((evt as any).isImmediatePropagationStopped()) {
+    if ((evt as SlickEventData).isImmediatePropagationStopped() || e.defaultPrevented) {
       return;
     }
 
