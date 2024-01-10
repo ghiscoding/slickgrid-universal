@@ -5,10 +5,18 @@ import type {
   EditCommand,
   GridOption,
   OnBeforeEditCellEventArgs,
+  OnSetOptionsEventArgs,
   RowBasedEditOptions,
 } from '../../interfaces/index';
 import { SlickEvent, SlickGrid } from '../../core/index';
-import { SlickRowBasedEdit } from '../slickRowBasedEdit';
+import {
+  BTN_ACTION_CANCEL,
+  BTN_ACTION_DELETE,
+  BTN_ACTION_EDIT,
+  BTN_ACTION_UPDATE,
+  ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS,
+  SlickRowBasedEdit,
+} from '../slickRowBasedEdit';
 import { GridService } from '../../services';
 import { Editors } from '../../editors';
 
@@ -41,6 +49,7 @@ const mockColumns = [
 const gridStubBlueprint = {
   getData: jest.fn().mockReturnValue({
     getItemMetadata: jest.fn(),
+    getRowByItem: jest.fn(),
   }),
   setCellCssStyles: jest.fn(),
   removeCellCssStyles: jest.fn(),
@@ -85,6 +94,9 @@ describe('Row Based Edit Plugin', () => {
       columns: [...mockColumns],
     } as unknown as MockedSlickGrid;
     gridService = new GridService(_any, _any, _any, _any, _any, _any, _any);
+    jest
+      .spyOn(gridService, 'getAllColumnDefinitions')
+      .mockReturnValue(mockColumns);
     plugin = new SlickRowBasedEdit(pubSubServiceStub, addonOptions);
     (plugin as any)._eventHandler = {
       subscribe: jest.fn(),
@@ -120,10 +132,6 @@ describe('Row Based Edit Plugin', () => {
     const fakeItem = { id: 'test' };
 
     gridStub.getData.mockReturnValue({ getItem: () => fakeItem });
-    jest
-      .spyOn(gridService, 'getAllColumnDefinitions')
-      .mockReturnValue(mockColumns);
-
     gridStub.getOptions.mockReturnValue(optionsMock);
 
     plugin.init(gridStub, gridService);
@@ -196,6 +204,47 @@ describe('Row Based Edit Plugin', () => {
     });
   });
 
+  describe('when running the overriden edit command handler', () => {
+    it('should run original command handler first when running override edit command handler', () => {
+      const editCommandHandlerSpy = jest.fn();
+      gridStub.getOptions.mockReturnValue({
+        ...optionsMock,
+        editCommandHandler: editCommandHandlerSpy,
+      } as GridOption);
+
+      plugin.init(gridStub, gridService);
+      plugin.rowBasedEditCommandHandler(
+        {} as any,
+        {} as Column,
+        {} as EditCommand
+      );
+      expect(editCommandHandlerSpy).toHaveBeenCalled();
+    });
+
+    it('should early exit if no matching column found', () => {
+      const editCommandHandlerSpy = jest.fn();
+      gridStub.getOptions.mockReturnValue({
+        ...optionsMock,
+        editCommandHandler: editCommandHandlerSpy,
+      } as GridOption);
+
+      plugin.init(gridStub, gridService);
+      gridStub.invalidate.mockReset();
+
+      plugin.rowBasedEditCommandHandler(
+        {} as any,
+        undefined as unknown as Column,
+        {
+          prevSerializedValue: 'foo',
+          serializedValue: 'bar',
+          execute: () => {},
+        } as EditCommand
+      );
+
+      expect(gridStub.invalidate).not.toHaveBeenCalled();
+    });
+  });
+
   describe('when excel copy buffer is enabled', () => {
     const excelCopyBufferOptions = {
       ...optionsMock,
@@ -251,9 +300,6 @@ describe('Row Based Edit Plugin', () => {
       )[0] as GridOption;
 
       gridStub.getData.mockReturnValue({ getItem: () => fakeItem });
-      jest
-        .spyOn(gridService, 'getAllColumnDefinitions')
-        .mockReturnValue(mockColumns);
       plugin.rowBasedEditCommandHandler(
         fakeItem,
         { id: 'test-column' } as Column,
@@ -279,10 +325,6 @@ describe('Row Based Edit Plugin', () => {
         (c) => c[0].excelCopyBufferOptions
       )[0] as GridOption;
 
-      jest
-        .spyOn(gridService, 'getAllColumnDefinitions')
-        .mockReturnValue(mockColumns);
-
       const result = call.excelCopyBufferOptions!.onBeforePasteCell!.bind({
         existingBeforePasteCellHandler: () => false,
       })({} as any, {} as any);
@@ -301,6 +343,76 @@ describe('Row Based Edit Plugin', () => {
     expect(gridStub.getData().getItemMetadata).not.toBe('TEST');
   });
 
+  it('should apply previous itemMetadata if available', () => {
+    gridStub.getOptions.mockReturnValue(optionsMock);
+    const fakeItem = { id: 'test' };
+    gridStub.getData.mockReturnValue({ getItem: () => fakeItem });
+    const previousGetItemMetadataSpy = jest.fn();
+    gridStub.getData().getItemMetadata = previousGetItemMetadataSpy;
+    plugin.init(gridStub, gridService);
+
+    gridStub.getData().getItemMetadata(1);
+
+    expect(previousGetItemMetadataSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('should add the row highlight class if row is in editmode', () => {
+    gridStub.getOptions.mockReturnValue(optionsMock);
+    const fakeItem = { id: 'test' };
+    gridStub.getData.mockReturnValue({ getItem: () => fakeItem });
+    plugin.init(gridStub, gridService);
+
+    plugin.rowBasedEditCommandHandler(
+      fakeItem,
+      {} as Column,
+      {} as EditCommand
+    );
+    const meta = gridStub.getData().getItemMetadata(1);
+
+    expect(meta?.cssClasses).toContain(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS);
+  });
+
+  it('should remove the highlight class if row no longer in editmode', () => {
+    gridStub.getOptions.mockReturnValue({
+      ...optionsMock,
+      datasetIdPropertyName: 'id',
+    });
+    const fakeItem = { id: 'test' };
+    gridStub.getData.mockReturnValue({ getItem: () => fakeItem });
+    gridStub.getData().getItemMetadata = () => ({
+      cssClasses: ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS,
+    });
+    plugin.init(gridStub, gridService);
+
+    const meta = gridStub.getData().getItemMetadata(1);
+
+    expect(meta?.cssClasses).not.toContain(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS);
+  });
+
+  it('should set up a otions updated listener', () => {
+    gridStub.getOptions.mockReturnValue(optionsMock);
+    gridStub.onSetOptions = 'onSetOptions' as any;
+    plugin.init(gridStub, gridService);
+
+    const call = (
+      plugin.eventHandler.subscribe as jest.Mock<any, any>
+    ).mock.calls.find((c) => c[0] === 'onSetOptions')[1] as (
+      _e: Event,
+      args: OnSetOptionsEventArgs
+    ) => void;
+
+    call(
+      {} as Event,
+      {
+        optionsAfter: { rowBasedEditOptions: { foobar: true } },
+      } as unknown as OnSetOptionsEventArgs
+    );
+
+    expect(plugin.addonOptions).toEqual(
+      expect.objectContaining({ foobar: true })
+    );
+  });
+
   it('should remove all stlyes of rows on re-render re-renderers and re-apply them', () => {
     gridStub.getOptions.mockReturnValue(optionsMock);
     gridStub.getData().onRowsOrCountChanged = 'onRowsOrCountChanged' as any;
@@ -310,10 +422,6 @@ describe('Row Based Edit Plugin', () => {
       getItem: () => mockColumns[1],
       getRowById: () => 0,
     });
-
-    jest
-      .spyOn(gridService, 'getAllColumnDefinitions')
-      .mockReturnValue(mockColumns);
 
     plugin.rowBasedEditCommandHandler(
       mockColumns[1],
@@ -358,6 +466,28 @@ describe('Row Based Edit Plugin', () => {
       expect(plugin.addonOptions).toEqual(
         expect.objectContaining({ columnIndexPosition: -1 })
       );
+    });
+
+    it('should add a custom column formatter to the action column', () => {
+      plugin.init(gridStub, gridService);
+      const actionColumn = plugin.getColumnDefinition();
+
+      const fragment = actionColumn.formatter?.(
+        0,
+        0,
+        undefined,
+        {} as Column,
+        'test',
+        gridStub
+      );
+
+      expect(fragment).toBeDefined();
+      expect((fragment as DocumentFragment).hasChildNodes()).toBe(true);
+
+      const actionBtns = (fragment as DocumentFragment).querySelectorAll(
+        'span.action-btns'
+      );
+      expect(actionBtns.length).toBe(4);
     });
 
     it('should add the actions column at the end if columnIndexPosition not provided', () => {
@@ -421,6 +551,240 @@ describe('Row Based Edit Plugin', () => {
         'onPluginColumnsChanged',
         expect.anything()
       );
+    });
+  });
+
+  describe('the actions column', () => {
+    function arrange(addonOptions?: RowBasedEditOptions) {
+      const gridService = {
+        deleteItem: jest.fn(),
+        getAllColumnDefinitions: jest.fn().mockReturnValue(mockColumns),
+      } as unknown as GridService;
+      plugin = new SlickRowBasedEdit(pubSubServiceStub, addonOptions);
+      (plugin as any)._eventHandler = {
+        subscribe: jest.fn(),
+        unsubscribeAll: jest.fn(),
+      };
+      plugin.init(gridStub, gridService);
+      const actionColumn = plugin.getColumnDefinition();
+      gridStub.getData.mockReturnValue({
+        getRowByItem: () => 0,
+        getRowById: () => 0,
+      });
+
+      const confirmSpy = jest.fn().mockReturnValue(false);
+      window.confirm = confirmSpy;
+
+      return {
+        onCellClick: actionColumn.onCellClick!,
+        gridService,
+        confirmSpy,
+      };
+    }
+
+    function createFakeEvent(classToAdd: string) {
+      const fakeElement = document.createElement('span');
+      fakeElement.classList.add(classToAdd);
+      const event = { target: fakeElement } as unknown as Event;
+
+      return event;
+    }
+
+    it('should prompt before deletion if deleteButtonPrompt is defined and keep row if canceled', () => {
+      const { onCellClick, gridService, confirmSpy } = arrange({
+        actionButtons: { deleteButtonPrompt: 'TEST' },
+      });
+      const fakeItem = { id: 'test' };
+
+      onCellClick(createFakeEvent(BTN_ACTION_DELETE), {
+        row: 0,
+        cell: 0,
+        grid: gridStub,
+        columnDef: {} as Column,
+        dataContext: fakeItem,
+        dataView: gridStub.getData(),
+      });
+
+      expect(confirmSpy).toHaveBeenCalled();
+      expect(gridService.deleteItem).not.toHaveBeenCalled();
+    });
+
+    it('should exit editmode before deleting the item', () => {
+      const { onCellClick, gridService } = arrange();
+      const fakeItem = { id: 'test' };
+
+      onCellClick(createFakeEvent(BTN_ACTION_DELETE), {
+        row: 0,
+        cell: 0,
+        grid: gridStub,
+        columnDef: {} as Column,
+        dataContext: fakeItem,
+        dataView: gridStub.getData(),
+      });
+
+      expect(gridService.deleteItem).toHaveBeenCalled();
+    });
+
+    it('should enter editmode when clicking the edit button', () => {
+      const { onCellClick } = arrange();
+      const fakeItem = { id: 'test' };
+
+      gridStub.invalidate.mockClear();
+      onCellClick(createFakeEvent(BTN_ACTION_EDIT), {
+        row: 0,
+        cell: 0,
+        grid: gridStub,
+        columnDef: {} as Column,
+        dataContext: fakeItem,
+        dataView: gridStub.getData(),
+      });
+
+      expect(gridStub.invalidate).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not enter editmode when not in allowMultipleRows mode and a previous row is already in editmode', () => {
+      const { onCellClick } = arrange();
+      const fakeItem = { id: 'test' };
+
+      plugin.rowBasedEditCommandHandler(
+        fakeItem,
+        {} as Column,
+        {} as EditCommand
+      );
+      gridStub.invalidate.mockClear();
+      onCellClick(createFakeEvent(BTN_ACTION_EDIT), {
+        row: 0,
+        cell: 0,
+        grid: gridStub,
+        columnDef: {} as Column,
+        dataContext: fakeItem,
+        dataView: gridStub.getData(),
+      });
+
+      expect(gridStub.invalidate).not.toHaveBeenCalled();
+    });
+
+    it('should prompt before updating if updateButtonPrompt is defined and edits happened and keep row in editmode', () => {
+      const { onCellClick, confirmSpy } = arrange({
+        actionButtons: { updateButtonPrompt: 'TEST' },
+      });
+      const fakeItem = { id: 'test' };
+
+      plugin.rowBasedEditCommandHandler(
+        fakeItem,
+        {} as Column,
+        {
+          prevSerializedValue: 'foo',
+          serializedValue: 'bar',
+          execute: () => {},
+        } as EditCommand
+      );
+      gridStub.invalidate.mockClear();
+      onCellClick(createFakeEvent(BTN_ACTION_UPDATE), {
+        row: 0,
+        cell: 0,
+        grid: gridStub,
+        columnDef: {} as Column,
+        dataContext: fakeItem,
+        dataView: gridStub.getData(),
+      });
+
+      expect(confirmSpy).toHaveBeenCalled();
+      expect(gridStub.invalidate).not.toHaveBeenCalled();
+    });
+
+    it('should call onBeforeRowUpdated and cancel if a non-true result is returned', () => {
+      const { onCellClick } = arrange({
+        onBeforeRowUpdated: () => Promise.resolve(false),
+      });
+      const fakeItem = { id: 'test' };
+
+      gridStub.invalidate.mockClear();
+      onCellClick(createFakeEvent(BTN_ACTION_UPDATE), {
+        row: 0,
+        cell: 0,
+        grid: gridStub,
+        columnDef: {} as Column,
+        dataContext: fakeItem,
+        dataView: gridStub.getData(),
+      });
+
+      expect(gridStub.invalidate).not.toHaveBeenCalled();
+    });
+
+    it('should remove all cell css styles after updating', () => {
+      const { onCellClick } = arrange();
+      const fakeItem = { id: 'test' };
+
+      gridStub.getColumns.mockReturnValue(mockColumns);
+      gridStub.removeCellCssStyles.mockClear();
+      onCellClick(createFakeEvent(BTN_ACTION_UPDATE), {
+        row: 0,
+        cell: 0,
+        grid: gridStub,
+        columnDef: {} as Column,
+        dataContext: fakeItem,
+        dataView: gridStub.getData(),
+      });
+
+      expect(gridStub.removeCellCssStyles).toHaveBeenCalled();
+    });
+
+    it('should prompt before canceling if cancelButtonPrompt is defined and previous edits exist and keep row in editmode if canceled prompt', () => {
+      const { onCellClick, confirmSpy } = arrange({
+        actionButtons: { cancelButtonPrompt: 'TEST' },
+      });
+      const fakeItem = { id: 'test' };
+
+      plugin.rowBasedEditCommandHandler(
+        fakeItem,
+        {} as Column,
+        {
+          prevSerializedValue: 'foo',
+          serializedValue: 'bar',
+          execute: () => {},
+        } as EditCommand
+      );
+      gridStub.invalidate.mockClear();
+      onCellClick(createFakeEvent(BTN_ACTION_CANCEL), {
+        row: 0,
+        cell: 0,
+        grid: gridStub,
+        columnDef: {} as Column,
+        dataContext: fakeItem,
+        dataView: gridStub.getData(),
+      });
+
+      expect(confirmSpy).toHaveBeenCalled();
+      expect(gridStub.invalidate).not.toHaveBeenCalled();
+    });
+
+    it('should undo row edits', () => {
+      const { onCellClick, confirmSpy } = arrange();
+      const fakeItem = { id: 'test' };
+      const undoSpy = jest.fn();
+
+      plugin.rowBasedEditCommandHandler(
+        fakeItem,
+        {} as Column,
+        {
+          prevSerializedValue: 'foo',
+          serializedValue: 'bar',
+          execute: () => {},
+          undo: undoSpy
+        } as unknown as EditCommand
+      );
+      gridStub.invalidate.mockClear();
+      onCellClick(createFakeEvent(BTN_ACTION_CANCEL), {
+        row: 0,
+        cell: 0,
+        grid: gridStub,
+        columnDef: {} as Column,
+        dataContext: fakeItem,
+        dataView: gridStub.getData(),
+      });
+
+      expect(gridStub.invalidate).toHaveBeenCalled();
     });
   });
 });
