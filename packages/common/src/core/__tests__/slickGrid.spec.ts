@@ -3052,5 +3052,166 @@ describe('SlickGrid core file', () => {
         expect(onContextMenuSpy).toHaveBeenCalled();
       });
     });
+
+    describe('Cell Mouse Events', () => {
+      it('should trigger onMouseEnter notify when hovering a cell', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+        const onMouseEnterSpy = jest.spyOn(grid.onMouseEnter, 'notify');
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(new CustomEvent('mouseover'));
+
+        expect(onMouseEnterSpy).toHaveBeenCalled();
+      });
+
+      it('should trigger onHeaderMouseLeave notify when leaving the hovering of a cell', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+        const onMouseLeaveSpy = jest.spyOn(grid.onMouseLeave, 'notify');
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(new CustomEvent('mouseout'));
+
+        expect(onMouseLeaveSpy).toHaveBeenCalled();
+      });
+    });
+
+    describe('Header Click', () => {
+      // TODO: need to add another test when "columnResizeDragging"
+
+      it('should trigger onHeaderClick notify when not column resizing', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        jest.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
+        const onHeaderClickSpy = jest.spyOn(grid.onHeaderClick, 'notify');
+        const headerColumns = container.querySelectorAll('.slick-header-column');
+        const event = new CustomEvent('click');
+        Object.defineProperty(event, 'target', { writable: true, value: headerColumns[0] });
+        container.querySelector('.slick-header.slick-header-left')!.dispatchEvent(event);
+
+        expect(onHeaderClickSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
+      });
+    });
+
+    describe('Header Context Menu', () => {
+      it('should trigger onHeaderClick notify grid context menu event is triggered', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onContextSpy = jest.spyOn(grid.onHeaderContextMenu, 'notify');
+        const headerColumns = container.querySelectorAll('.slick-header-column');
+        const event = new CustomEvent('contextmenu');
+        Object.defineProperty(event, 'target', { writable: true, value: headerColumns[0] });
+        container.querySelector('.slick-header.slick-header-left')!.dispatchEvent(event);
+
+        expect(onContextSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
+      });
+    });
+
+    describe('Header Mouse Events', () => {
+      it('should trigger onHeaderMouseEnter notify when hovering a header', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+        const onHeaderMouseEnterSpy = jest.spyOn(grid.onHeaderMouseEnter, 'notify');
+        container.querySelector('.slick-header-column')!.dispatchEvent(new CustomEvent('mouseenter'));
+
+        expect(onHeaderMouseEnterSpy).toHaveBeenCalled();
+      });
+
+      it('should NOT trigger onHeaderMouseEnter notify when hovering a header when "slick-header-column" class is not found', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+        const onHeaderMouseEnterSpy = jest.spyOn(grid.onHeaderMouseEnter, 'notify');
+        const headerRowElm = container.querySelector('.slick-header-column');
+        headerRowElm!.classList.remove('slick-header-column');
+        headerRowElm!.dispatchEvent(new CustomEvent('mouseenter'));
+
+        expect(onHeaderMouseEnterSpy).not.toHaveBeenCalled();
+      });
+
+      it('should trigger onHeaderMouseLeave notify when leaving the hovering of a header when "slick-header-column" class is not found', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+        const onHeaderMouseLeaveSpy = jest.spyOn(grid.onHeaderMouseLeave, 'notify');
+        container.querySelector('.slick-header-column')!.dispatchEvent(new CustomEvent('mouseleave'));
+
+        expect(onHeaderMouseLeaveSpy).toHaveBeenCalled();
+      });
+
+      it('should NOT trigger onHeaderMouseLeave notify when leaving the hovering of a header', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+        const onHeaderMouseLeaveSpy = jest.spyOn(grid.onHeaderMouseLeave, 'notify');
+        const headerRowElm = container.querySelector('.slick-header-column');
+        headerRowElm!.classList.remove('slick-header-column');
+        headerRowElm!.dispatchEvent(new CustomEvent('mouseleave'));
+
+        expect(onHeaderMouseLeaveSpy).not.toHaveBeenCalled();
+      });
+
+      it('should trigger onHeaderRowMouseEnter notify when hovering a header', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+        const onHeaderRowMouseEnterSpy = jest.spyOn(grid.onHeaderRowMouseEnter, 'notify');
+        container.querySelector('.slick-headerrow-column')!.dispatchEvent(new CustomEvent('mouseenter'));
+
+        expect(onHeaderRowMouseEnterSpy).toHaveBeenCalled();
+      });
+
+      it('should NOT trigger onHeaderRowMouseEnter notify when hovering a header when "slick-headerrow-column" class is not found', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+        const onHeaderRowMouseEnterSpy = jest.spyOn(grid.onHeaderRowMouseEnter, 'notify');
+        const headerRowElm = container.querySelector('.slick-headerrow-column');
+        headerRowElm!.classList.remove('slick-headerrow-column');
+        headerRowElm!.dispatchEvent(new CustomEvent('mouseenter'));
+
+        expect(onHeaderRowMouseEnterSpy).not.toHaveBeenCalled();
+      });
+
+      it('should trigger onHeaderRowMouseLeave notify when leaving the hovering of a header', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+        const onHeaderRowMouseLeaveSpy = jest.spyOn(grid.onHeaderRowMouseLeave, 'notify');
+        container.querySelector('.slick-headerrow-column')!.dispatchEvent(new CustomEvent('mouseleave'));
+
+        expect(onHeaderRowMouseLeaveSpy).toHaveBeenCalled();
+      });
+
+      it('should NOT trigger onHeaderRowMouseLeave notify when leaving the hovering of a header when "slick-headerrow-column" class is not found', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+        const onHeaderRowMouseLeaveSpy = jest.spyOn(grid.onHeaderRowMouseLeave, 'notify');
+        const headerRowElm = container.querySelector('.slick-headerrow-column');
+        headerRowElm!.classList.remove('slick-headerrow-column');
+        headerRowElm!.dispatchEvent(new CustomEvent('mouseleave'));
+
+        expect(onHeaderRowMouseLeaveSpy).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('Footer Click', () => {
+      it('should trigger onFooterClick notify when not column resizing', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createFooterRow: true, enableCellNavigation: true });
+        const onFooterClickSpy = jest.spyOn(grid.onFooterClick, 'notify');
+        const FooterColumns = container.querySelectorAll('.slick-footerrow-column');
+        const event = new CustomEvent('click');
+        Object.defineProperty(event, 'target', { writable: true, value: FooterColumns[0] });
+        container.querySelector('.slick-footerrow-columns.slick-footerrow-columns-left')!.dispatchEvent(event);
+
+        expect(onFooterClickSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
+      });
+    });
+
+    describe('Footer Context Menu', () => {
+      it('should trigger onFooterClick notify grid context menu event is triggered', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createFooterRow: true, enableCellNavigation: true });
+        const onContextSpy = jest.spyOn(grid.onFooterContextMenu, 'notify');
+        const footerColumns = container.querySelectorAll('.slick-footerrow-column');
+        const event = new CustomEvent('contextmenu');
+        Object.defineProperty(event, 'target', { writable: true, value: footerColumns[0] });
+        container.querySelector('.slick-footerrow-columns.slick-footerrow-columns-left')!.dispatchEvent(event);
+
+        expect(onContextSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
+      });
+    });
   });
 });
