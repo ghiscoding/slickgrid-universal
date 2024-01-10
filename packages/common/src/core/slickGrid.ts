@@ -214,6 +214,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     asyncPostRenderDelay: 50,
     enableAsyncPostRenderCleanup: false,
     asyncPostRenderCleanupDelay: 40,
+    columnResizingDelay: 300,
     nonce: '',
     editorLock: SlickGlobalEditorLock,
     showColumnHeader: true,
@@ -2203,7 +2204,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             this.render();
             this.triggerEvent(this.onColumnsResized, { triggeredByColumn });
             clearTimeout(this._columnResizeTimer);
-            this._columnResizeTimer = setTimeout(() => { this.columnResizeDragging = false; }, 300);
+            this._columnResizeTimer = setTimeout(() => this.columnResizeDragging = false, this._options.columnResizingDelay);
           }
         })
       );

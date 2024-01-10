@@ -57,6 +57,12 @@ export interface CssStyleHash {
   [prop: number | string]: { [columnId: number | string]: any; }
 }
 
+/** Escape hatch geared towards testing Slickgrid in JSDOM based environments to circumvent the lack of stylesheet.ownerNode and clientWidth calculations */
+export type DevModeOption = {
+  ownerNodeIndex?: number;
+  containerClientWidth?: number;
+};
+
 export interface GridOption<C extends Column = Column> {
   /** Defaults to true, should we always allow the use of horizontal scrolling? */
   alwaysAllowHorizontalScroll?: boolean;
@@ -172,6 +178,9 @@ export interface GridOption<C extends Column = Column> {
   /** Column Picker Plugin options (columnTitle, forceFitTitle, syncResizeTitle) */
   columnPicker?: ColumnPicker;
 
+  /** Defaults to 300, Column Resize delay before UI is stable */
+  columnResizingDelay?: number;
+
   /**
    * Compound Filters alternate texts, there are 2 filter categories that can be changed
    * 1. text: CompoundInputFilter, CompoundInputPassword
@@ -257,7 +266,7 @@ export interface GridOption<C extends Column = Column> {
   defaultFormatter?: Formatter;
 
   /** Escape hatch geared towards testing Slickgrid in JSDOM based environments to circumvent the lack of stylesheet.ownerNode and clientWidth calculations */
-  devMode?: false | { ownerNodeIndex?: number; containerClientWidth?: number; };
+  devMode?: false | DevModeOption;
 
   /** Do we have paging enabled? */
   doPaging?: boolean;
