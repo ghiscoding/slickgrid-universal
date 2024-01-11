@@ -2670,7 +2670,6 @@ describe('SlickGrid core file', () => {
     describe('setActiveRow() method', () => {
       it('should do nothing when row to activate is greater than data length or cell is greater than available column length', () => {
         const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
-
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         const scrollViewSpy = jest.spyOn(grid, 'scrollCellIntoView');
         grid.setActiveRow(99, 1);
@@ -2887,6 +2886,580 @@ describe('SlickGrid core file', () => {
         const result = grid.canCellBeSelected(0, 0);
 
         expect(result).toBe(false);
+      });
+    });
+  });
+
+  describe('Grid Events', () => {
+    let items: Array<{ id: number; name: string; age: number; }> = [];
+
+    beforeEach(() => {
+      items = [
+        { id: 0, name: 'Avery', age: 44 },
+        { id: 1, name: 'Bob', age: 20 },
+        { id: 2, name: 'Rachel', age: 46 },
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 5, name: 'Arnold', age: 50 },
+        { id: 6, name: 'Carole', age: 40 },
+        { id: 7, name: 'Jason', age: 48 },
+        { id: 8, name: 'Julie', age: 42 },
+        { id: 9, name: 'Aaron', age: 23 },
+        { id: 10, name: 'Ariane', age: 43 },
+      ];
+    });
+
+    describe('Cell Click', () => {
+      it('should not scroll or do anything when getCellFromEvent() returns null', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        jest.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
+        const scrollViewSpy = jest.spyOn(grid, 'scrollRowIntoView');
+        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2)');
+        const event = new CustomEvent('click');
+        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(scrollViewSpy).not.toHaveBeenCalled();
+      });
+
+      it('should goto cell or do anything when event default is prevented', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const scrollViewSpy = jest.spyOn(grid, 'scrollRowIntoView');
+        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
+        const event = new CustomEvent('click');
+        Object.defineProperty(event, 'defaultPrevented', { writable: true, value: true });
+        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(scrollViewSpy).not.toHaveBeenCalled();
+      });
+
+      it('should scroll to cell when clicking on cell', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onClickSpy = jest.spyOn(grid.onClick, 'notify');
+        const scrollViewSpy = jest.spyOn(grid, 'scrollRowIntoView');
+        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
+        const event = new CustomEvent('click');
+        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(scrollViewSpy).toHaveBeenCalledWith(1, false);
+        expect(onClickSpy).toHaveBeenCalled();
+      });
+
+      it('should scroll to cell when clicking on cell and expect window.getSelection to call removeAllRanges() and addRange() which is a hack to keep text selection on IE/Firefox', () => {
+        const addRangeMock = jest.fn();
+        const removeRangeMock = jest.fn();
+        jest.spyOn(window, 'getSelection')
+          .mockReturnValueOnce({ rangeCount: 2, getRangeAt: () => items[1].name } as any)
+          .mockReturnValueOnce({ removeAllRanges: removeRangeMock, addRange: addRangeMock } as any);
+
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onClickSpy = jest.spyOn(grid.onClick, 'notify');
+        const scrollViewSpy = jest.spyOn(grid, 'scrollRowIntoView');
+        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
+        const event = new CustomEvent('click');
+        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(removeRangeMock).toHaveBeenCalled();
+        expect(addRangeMock).toHaveBeenCalledWith(items[1].name);
+        expect(scrollViewSpy).toHaveBeenCalledWith(1, false);
+        expect(onClickSpy).toHaveBeenCalled();
+      });
+    });
+
+    describe('Cell Double-Click', () => {
+      it('should goto cell or do anything when getCellFromEvent() returns null', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        jest.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
+        const gotoCellSpy = jest.spyOn(grid, 'gotoCell');
+        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2)');
+        const event = new CustomEvent('dblclick');
+        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(gotoCellSpy).not.toHaveBeenCalled();
+      });
+
+      it('should goto cell or do anything when event default is prevented', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const gotoCellSpy = jest.spyOn(grid, 'gotoCell');
+        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
+        const event = new CustomEvent('dblclick');
+        Object.defineProperty(event, 'defaultPrevented', { writable: true, value: true });
+        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(gotoCellSpy).not.toHaveBeenCalled();
+      });
+
+      it('should scroll to cell when clicking on cell', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const gotoCellSpy = jest.spyOn(grid, 'gotoCell');
+        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
+        const event = new CustomEvent('dblclick');
+        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(gotoCellSpy).toHaveBeenCalled();
+      });
+    });
+
+    describe('Cell Context Menu', () => {
+      it('should not trigger onContextMenu event when cannot find closest slick-cell', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onContextMenuSpy = jest.spyOn(grid.onContextMenu, 'notify');
+        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2)');
+        const event = new CustomEvent('contextmenu');
+        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[0] });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onContextMenuSpy).not.toHaveBeenCalled();
+      });
+
+      it('should not trigger onContextMenu event when current cell is active and is editable', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        grid.setActiveCell(1, 1);
+        const onContextMenuSpy = jest.spyOn(grid.onContextMenu, 'notify');
+        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
+        const event = new CustomEvent('contextmenu');
+        Object.defineProperty(event, 'defaultPrevented', { writable: true, value: true });
+        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onContextMenuSpy).not.toHaveBeenCalled();
+      });
+
+      it('should trigger onContextMenu event when current cell is not active and not editable', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onContextMenuSpy = jest.spyOn(grid.onContextMenu, 'notify');
+        const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
+        const event = new CustomEvent('contextmenu');
+        Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onContextMenuSpy).toHaveBeenCalled();
+      });
+    });
+
+    describe('Cell Mouse Events', () => {
+      it('should trigger onMouseEnter notify when hovering a cell', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+        const onMouseEnterSpy = jest.spyOn(grid.onMouseEnter, 'notify');
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(new CustomEvent('mouseover'));
+
+        expect(onMouseEnterSpy).toHaveBeenCalled();
+      });
+
+      it('should trigger onHeaderMouseLeave notify when leaving the hovering of a cell', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+        const onMouseLeaveSpy = jest.spyOn(grid.onMouseLeave, 'notify');
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(new CustomEvent('mouseout'));
+
+        expect(onMouseLeaveSpy).toHaveBeenCalled();
+      });
+    });
+
+    describe('Header Click', () => {
+      // TODO: need to add another test when "columnResizeDragging"
+
+      it('should trigger onHeaderClick notify when not column resizing', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        jest.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
+        const onHeaderClickSpy = jest.spyOn(grid.onHeaderClick, 'notify');
+        const headerColumns = container.querySelectorAll('.slick-header-column');
+        const event = new CustomEvent('click');
+        Object.defineProperty(event, 'target', { writable: true, value: headerColumns[0] });
+        container.querySelector('.slick-header.slick-header-left')!.dispatchEvent(event);
+
+        expect(onHeaderClickSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
+      });
+    });
+
+    describe('Header Context Menu', () => {
+      it('should trigger onHeaderClick notify grid context menu event is triggered', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onContextSpy = jest.spyOn(grid.onHeaderContextMenu, 'notify');
+        const headerColumns = container.querySelectorAll('.slick-header-column');
+        const event = new CustomEvent('contextmenu');
+        Object.defineProperty(event, 'target', { writable: true, value: headerColumns[0] });
+        container.querySelector('.slick-header.slick-header-left')!.dispatchEvent(event);
+
+        expect(onContextSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
+      });
+    });
+
+    describe('Header Mouse Events', () => {
+      it('should trigger onHeaderMouseEnter notify when hovering a header', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+        const onHeaderMouseEnterSpy = jest.spyOn(grid.onHeaderMouseEnter, 'notify');
+        container.querySelector('.slick-header-column')!.dispatchEvent(new CustomEvent('mouseenter'));
+
+        expect(onHeaderMouseEnterSpy).toHaveBeenCalled();
+      });
+
+      it('should NOT trigger onHeaderMouseEnter notify when hovering a header when "slick-header-column" class is not found', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+        const onHeaderMouseEnterSpy = jest.spyOn(grid.onHeaderMouseEnter, 'notify');
+        const headerRowElm = container.querySelector('.slick-header-column');
+        headerRowElm!.classList.remove('slick-header-column');
+        headerRowElm!.dispatchEvent(new CustomEvent('mouseenter'));
+
+        expect(onHeaderMouseEnterSpy).not.toHaveBeenCalled();
+      });
+
+      it('should trigger onHeaderMouseLeave notify when leaving the hovering of a header when "slick-header-column" class is not found', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+        const onHeaderMouseLeaveSpy = jest.spyOn(grid.onHeaderMouseLeave, 'notify');
+        container.querySelector('.slick-header-column')!.dispatchEvent(new CustomEvent('mouseleave'));
+
+        expect(onHeaderMouseLeaveSpy).toHaveBeenCalled();
+      });
+
+      it('should NOT trigger onHeaderMouseLeave notify when leaving the hovering of a header', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+        const onHeaderMouseLeaveSpy = jest.spyOn(grid.onHeaderMouseLeave, 'notify');
+        const headerRowElm = container.querySelector('.slick-header-column');
+        headerRowElm!.classList.remove('slick-header-column');
+        headerRowElm!.dispatchEvent(new CustomEvent('mouseleave'));
+
+        expect(onHeaderMouseLeaveSpy).not.toHaveBeenCalled();
+      });
+
+      it('should trigger onHeaderRowMouseEnter notify when hovering a header', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+        const onHeaderRowMouseEnterSpy = jest.spyOn(grid.onHeaderRowMouseEnter, 'notify');
+        container.querySelector('.slick-headerrow-column')!.dispatchEvent(new CustomEvent('mouseenter'));
+
+        expect(onHeaderRowMouseEnterSpy).toHaveBeenCalled();
+      });
+
+      it('should NOT trigger onHeaderRowMouseEnter notify when hovering a header when "slick-headerrow-column" class is not found', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+        const onHeaderRowMouseEnterSpy = jest.spyOn(grid.onHeaderRowMouseEnter, 'notify');
+        const headerRowElm = container.querySelector('.slick-headerrow-column');
+        headerRowElm!.classList.remove('slick-headerrow-column');
+        headerRowElm!.dispatchEvent(new CustomEvent('mouseenter'));
+
+        expect(onHeaderRowMouseEnterSpy).not.toHaveBeenCalled();
+      });
+
+      it('should trigger onHeaderRowMouseLeave notify when leaving the hovering of a header', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+        const onHeaderRowMouseLeaveSpy = jest.spyOn(grid.onHeaderRowMouseLeave, 'notify');
+        container.querySelector('.slick-headerrow-column')!.dispatchEvent(new CustomEvent('mouseleave'));
+
+        expect(onHeaderRowMouseLeaveSpy).toHaveBeenCalled();
+      });
+
+      it('should NOT trigger onHeaderRowMouseLeave notify when leaving the hovering of a header when "slick-headerrow-column" class is not found', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+        const onHeaderRowMouseLeaveSpy = jest.spyOn(grid.onHeaderRowMouseLeave, 'notify');
+        const headerRowElm = container.querySelector('.slick-headerrow-column');
+        headerRowElm!.classList.remove('slick-headerrow-column');
+        headerRowElm!.dispatchEvent(new CustomEvent('mouseleave'));
+
+        expect(onHeaderRowMouseLeaveSpy).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('Footer Click', () => {
+      it('should trigger onFooterClick notify when not column resizing', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createFooterRow: true, enableCellNavigation: true });
+        const onFooterClickSpy = jest.spyOn(grid.onFooterClick, 'notify');
+        const FooterColumns = container.querySelectorAll('.slick-footerrow-column');
+        const event = new CustomEvent('click');
+        Object.defineProperty(event, 'target', { writable: true, value: FooterColumns[0] });
+        container.querySelector('.slick-footerrow-columns.slick-footerrow-columns-left')!.dispatchEvent(event);
+
+        expect(onFooterClickSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
+      });
+    });
+
+    describe('Footer Context Menu', () => {
+      it('should trigger onFooterClick notify grid context menu event is triggered', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createFooterRow: true, enableCellNavigation: true });
+        const onContextSpy = jest.spyOn(grid.onFooterContextMenu, 'notify');
+        const footerColumns = container.querySelectorAll('.slick-footerrow-column');
+        const event = new CustomEvent('contextmenu');
+        Object.defineProperty(event, 'target', { writable: true, value: footerColumns[0] });
+        container.querySelector('.slick-footerrow-columns.slick-footerrow-columns-left')!.dispatchEvent(event);
+
+        expect(onContextSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
+      });
+    });
+
+    describe('Keydown Events', () => {
+      it('should call navigateRowStart() when triggering Home key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigateRowStartSpy = jest.spyOn(grid, 'navigateRowStart');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Home' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateRowStartSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateTop() when triggering Ctrl+Home key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigateTopSpy = jest.spyOn(grid, 'navigateTop');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Home' });
+        Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateTopSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateRowEnd() when triggering End key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigateRowEndSpy = jest.spyOn(grid, 'navigateRowEnd');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'End' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateRowEndSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateBottom() when triggering Ctrl+End key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigateBottomSpy = jest.spyOn(grid, 'navigateBottom');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'End' });
+        Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateBottomSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigatePageDown() when triggering PageDown key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigatePageDownSpy = jest.spyOn(grid, 'navigatePageDown');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'PageDown' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigatePageDownSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigatePageUp() when triggering PageDown key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigatePageUpSpy = jest.spyOn(grid, 'navigatePageUp');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'PageUp' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigatePageUpSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateLeft() when triggering PageDown key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigateLeftSpy = jest.spyOn(grid, 'navigateLeft');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowLeft' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateLeftSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateRight() when triggering PageDown key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigateRightSpy = jest.spyOn(grid, 'navigateRight');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowRight' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateRightSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateUp() when triggering PageDown key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigateUpSpy = jest.spyOn(grid, 'navigateUp');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowUp' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateUpSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateDown() when triggering PageDown key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigateDownSpy = jest.spyOn(grid, 'navigateDown');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowDown' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateDownSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateNext() when triggering PageDown key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigateNextSpy = jest.spyOn(grid, 'navigateNext');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Tab' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateNextSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigatePrev() when triggering Enter key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigatePrevSpy = jest.spyOn(grid, 'navigatePrev');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Tab' });
+        Object.defineProperty(event, 'shiftKey', { writable: true, value: true });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigatePrevSpy).toHaveBeenCalled();
+      });
+
+      it('should do nothing when triggering Escape key without any editor to cancel', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const event = new CustomEvent('keydown');
+        const cancelEditSpy = jest.spyOn(grid.getEditorLock(), 'cancelCurrentEdit');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Escape' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(cancelEditSpy).not.toHaveBeenCalled();
+      });
+
+      it('should cancel opened editor when triggering Escape key and editor is active', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const event = new CustomEvent('keydown');
+        jest.spyOn(grid.getEditorLock(), 'isActive').mockReturnValue(true);
+        const cancelEditSpy = jest.spyOn(grid.getEditorLock(), 'cancelCurrentEdit');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Escape' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(cancelEditSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateDown() when triggering Enter key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Enter' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+      });
+
+      it('should commit editor & set focus to next down cell when triggering Enter key with an active Editor', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        grid.setActiveCell(0, 1);
+        grid.editActiveCell(InputEditor as any, true);
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const event = new CustomEvent('keydown');
+        const stopPropagationSpy = jest.spyOn(event, 'stopPropagation');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Enter' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(stopPropagationSpy).toHaveBeenCalled();
+      });
+
+      it('should navigateDown() when triggering Enter key with an active Editor that is considered a new row', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        grid.setActiveCell(0, 1);
+        grid.editActiveCell(InputEditor as any, true);
+        jest.spyOn(grid, 'getDataLength').mockReturnValueOnce(0);
+        const navigateDownSpy = jest.spyOn(grid, 'navigateDown');
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const event = new CustomEvent('keydown');
+        const stopPropagationSpy = jest.spyOn(event, 'stopPropagation');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Enter' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(stopPropagationSpy).toHaveBeenCalled();
+        expect(navigateDownSpy).toHaveBeenCalled();
+      });
+
+      it('should do nothing when active Editor has multiple keyCaptureList and event is triggered is part of that list', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        grid.setActiveCell(0, 1);
+        grid.editActiveCell(InputEditor as any, true);
+        (InputEditor.prototype as any).keyCaptureList = ['1', '2', '3'];
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const event = new CustomEvent('keydown');
+        const stopPropagationSpy = jest.spyOn(event, 'stopPropagation');
+        Object.defineProperty(event, 'which', { writable: true, value: 2 });
+        Object.defineProperty(event, 'key', { writable: true, value: 'Enter' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(stopPropagationSpy).not.toHaveBeenCalled();
       });
     });
   });
