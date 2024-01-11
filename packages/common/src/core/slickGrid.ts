@@ -4767,12 +4767,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
     if (!handled) {
       if (!e.shiftKey && !e.altKey && !e.ctrlKey) {
-        // editor may specify an array of keys to bubble
-        if (this._options.editable && this.currentEditor?.keyCaptureList) {
-          if (this.currentEditor.keyCaptureList.indexOf(String(e.which)) > -1) {
-            return;
-          }
-        }
         if (e.key === 'Escape') {
           if (!this.getEditorLock()?.isActive()) {
             return; // no editing mode to cancel, allow bubbling and default processing (exit without cancelling the event)
