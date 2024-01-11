@@ -30,7 +30,9 @@ export const BTN_ACTION_UPDATE = 'action-btns--update';
 export const BTN_ACTION_CANCEL = 'action-btns--cancel';
 
 export interface EditedRowDetails {
+  // the affected columns by the edits of the row
   columns: Column[];
+  // the edit commands of the row. This is used to undo the edits
   editCommands: EditCommand[];
   // stores style keys for unsaved cells
   cssStyleKeys: string[];
@@ -80,6 +82,7 @@ export class SlickRowBasedEdit {
     this._grid = grid;
     this._gridService = gridService;
     this._addonOptions = { ...this._defaults, ...this.addonOptions };
+    const dataView = this._grid.getData();
     this._eventHandler.subscribe(
       this._grid.onBeforeEditCell,
       this.onBeforeEditCellHandler
@@ -117,7 +120,7 @@ export class SlickRowBasedEdit {
               }
             }
 
-            const item = this._grid.getData().getItem(args.row);
+            const item = dataView.getItem(args.row);
             const idProperty =
               this._grid.getOptions().datasetIdPropertyName ?? 'id';
 
@@ -131,15 +134,14 @@ export class SlickRowBasedEdit {
       });
     }
 
-    this._grid.getData().getItemMetadata = this.updateItemMetadata(
-      this._grid.getData().getItemMetadata
-    );
+    const originalGetItemMetadata = dataView.getItemMetadata;
+    dataView.getItemMetadata = this.updateItemMetadata(originalGetItemMetadata?.bind?.(dataView));
     this._eventHandler.subscribe(
       this._grid.onSetOptions,
       this.optionsUpdatedHandler.bind(this)
     );
     this._eventHandler.subscribe(
-      this._grid.getData().onRowsOrCountChanged,
+      dataView.onRowsOrCountChanged,
       this.handleAllRowRerender.bind(this)
     );
 
@@ -322,14 +324,11 @@ export class SlickRowBasedEdit {
     _e: SlickEvent,
     _args: OnRowsOrCountChangedEventArgs
   ) {
-    // iterate over all _editedRows and loop through their cssStyleKeys to remove them
     this._editedRows.forEach((editedRow, key) => {
       editedRow.cssStyleKeys.forEach((cssStyleKey) => {
         this._grid.removeCellCssStyles(cssStyleKey);
       });
       editedRow.cssStyleKeys = [];
-
-      // re-render the unsaved cell styling
       editedRow.columns.forEach((column) => {
         this.renderUnsavedCellStyling(key, column);
       });
