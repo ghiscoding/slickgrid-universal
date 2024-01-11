@@ -555,7 +555,10 @@ export class SlickRowBasedEdit {
         cssClasses: '',
       };
       if (typeof previousItemMetadata === 'function') {
-        meta = previousItemMetadata(rowNumber);
+        const previousMeta = previousItemMetadata(rowNumber);
+        if (previousMeta) {
+          meta = previousMeta;
+        }
       }
 
       if (meta && item) {
