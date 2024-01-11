@@ -50,6 +50,7 @@ const gridStubBlueprint = {
   getData: jest.fn().mockReturnValue({
     getItemMetadata: jest.fn(),
     getRowByItem: jest.fn(),
+    getRowById: jest.fn()
   }),
   setCellCssStyles: jest.fn(),
   removeCellCssStyles: jest.fn(),
@@ -237,6 +238,31 @@ describe('Row Based Edit Plugin', () => {
         {
           prevSerializedValue: 'foo',
           serializedValue: 'bar',
+          execute: () => {},
+        } as EditCommand
+      );
+
+      expect(gridStub.invalidate).not.toHaveBeenCalled();
+    });
+
+    it('should handle prev and current serialized values as arrays', () => {
+      const editCommandHandlerSpy = jest.fn();
+      gridStub.getOptions.mockReturnValue({
+        ...optionsMock,
+        editCommandHandler: editCommandHandlerSpy,
+      } as GridOption);
+
+      gridStub.getData().getRowById = () => 0;
+
+      plugin.init(gridStub, gridService);
+      gridStub.invalidate.mockReset();
+
+      plugin.rowBasedEditCommandHandler(
+        {} as any,
+        undefined as unknown as Column,
+        {
+          prevSerializedValue: [],
+          serializedValue: ['bar'],
           execute: () => {},
         } as EditCommand
       );
@@ -582,9 +608,17 @@ describe('Row Based Edit Plugin', () => {
       };
     }
 
-    function createFakeEvent(classToAdd: string) {
+    function createFakeEvent(classToAdd: string, simulateChildClick = false) {
       const fakeElement = document.createElement('span');
-      fakeElement.classList.add(classToAdd);
+
+      if (simulateChildClick) {
+        const fakeParent = document.createElement('div');
+        fakeParent.classList.add(classToAdd);
+        fakeParent.appendChild(fakeElement);
+      } else {
+        fakeElement.classList.add(classToAdd);
+      }
+
       const event = { target: fakeElement } as unknown as Event;
 
       return event;
@@ -760,7 +794,7 @@ describe('Row Based Edit Plugin', () => {
     });
 
     it('should undo row edits', () => {
-      const { onCellClick, confirmSpy } = arrange();
+      const { onCellClick } = arrange();
       const fakeItem = { id: 'test' };
       const undoSpy = jest.fn();
 
@@ -775,7 +809,7 @@ describe('Row Based Edit Plugin', () => {
         } as unknown as EditCommand
       );
       gridStub.invalidate.mockClear();
-      onCellClick(createFakeEvent(BTN_ACTION_CANCEL), {
+      onCellClick(createFakeEvent(BTN_ACTION_CANCEL, true), {
         row: 0,
         cell: 0,
         grid: gridStub,

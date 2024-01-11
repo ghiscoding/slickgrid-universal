@@ -336,6 +336,41 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     expect(component.isGridInitialized).toBeTruthy();
   });
 
+  it('should provide the gridService lazily', () => {
+    cellDiv = document.createElement('div');
+    divContainer.innerHTML = template;
+    divContainer.appendChild(cellDiv);
+
+    const instance = new SlickVanillaGridBundle(
+      divContainer,
+      columnDefinitions,
+      gridOptions,
+      dataset,
+      undefined,
+      {
+        backendUtilityService: backendUtilityServiceStub,
+        collectionService: collectionServiceStub,
+        eventPubSubService,
+        extensionService: undefined,
+        extensionUtility: mockExtensionUtility,
+        filterService: filterServiceStub,
+        gridEventService: gridEventServiceStub,
+        gridService: gridServiceStub,
+        gridStateService: gridStateServiceStub,
+        groupingAndColspanService: groupingAndColspanServiceStub,
+        paginationService: paginationServiceStub,
+        resizerService: resizerServiceStub,
+        sharedService,
+        sortService: sortServiceStub,
+        treeDataService: treeDataServiceStub,
+        translaterService: translateService as unknown as TranslaterService,
+        universalContainerService: container,
+      }
+    );
+
+    expect((instance.extensionService as any).lazyGridService()).toBeDefined();
+  });
+
   it('should load enabled mousewheel scrolling when using a frozen grid', () => {
     component.gridOptions.enableMouseWheelScrollHandler = undefined;
     component.gridOptions.frozenRow = 3;

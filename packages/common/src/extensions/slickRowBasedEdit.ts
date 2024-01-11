@@ -135,7 +135,9 @@ export class SlickRowBasedEdit {
     }
 
     const originalGetItemMetadata = dataView.getItemMetadata;
-    dataView.getItemMetadata = this.updateItemMetadata(originalGetItemMetadata?.bind?.(dataView));
+    dataView.getItemMetadata = this.updateItemMetadata(
+      originalGetItemMetadata?.bind?.(dataView)
+    );
     this._eventHandler.subscribe(
       this._grid.onSetOptions,
       this.optionsUpdatedHandler.bind(this)
@@ -288,7 +290,7 @@ export class SlickRowBasedEdit {
       (row !== undefined &&
         targetRow?.editCommands &&
         targetRow.editCommands.length) ||
-      (0 > 0 && SlickGlobalEditorLock.cancelCurrentEdit())
+      SlickGlobalEditorLock.cancelCurrentEdit()
     ) {
       while (targetRow!.editCommands.length > 0) {
         const lastEdit = targetRow!.editCommands.pop();
@@ -392,7 +394,9 @@ export class SlickRowBasedEdit {
         this._addonOptions?.actionButtons?.updateButtonPrompt &&
         (targetRow?.editCommands.length || 0) > 0
       ) {
-        if (!window.confirm(this._addonOptions.actionButtons.updateButtonPrompt)) {
+        if (
+          !window.confirm(this._addonOptions.actionButtons.updateButtonPrompt)
+        ) {
           return;
         }
       }
@@ -415,7 +419,9 @@ export class SlickRowBasedEdit {
         this._addonOptions?.actionButtons?.cancelButtonPrompt &&
         (targetRow?.editCommands.length || 0) > 0
       ) {
-        if (!window.confirm(this._addonOptions.actionButtons.cancelButtonPrompt)) {
+        if (
+          !window.confirm(this._addonOptions.actionButtons.cancelButtonPrompt)
+        ) {
           return;
         }
       }
@@ -441,10 +447,11 @@ export class SlickRowBasedEdit {
     actionFragment
       .appendChild(
         createDomElement('span', {
-          className: `${
-            options.rowBasedEditOptions?.actionButtons?.editButtonClassName ||
-            'button-style padding-1px mr-2'
-          } action-btns ` + BTN_ACTION_EDIT,
+          className:
+            `${
+              options.rowBasedEditOptions?.actionButtons?.editButtonClassName ||
+              'button-style padding-1px mr-2'
+            } action-btns ` + BTN_ACTION_EDIT,
           title:
             options.rowBasedEditOptions?.actionButtons?.editButtonTitle ||
             'Edit the Row',
@@ -482,10 +489,11 @@ export class SlickRowBasedEdit {
     actionFragment
       .appendChild(
         createDomElement('span', {
-          className: `${
-            options.rowBasedEditOptions?.actionButtons?.updateButtonClassName ||
-            'button-style padding-1px mr-2'
-          } action-btns ` + BTN_ACTION_UPDATE,
+          className:
+            `${
+              options.rowBasedEditOptions?.actionButtons
+                ?.updateButtonClassName || 'button-style padding-1px mr-2'
+            } action-btns ` + BTN_ACTION_UPDATE,
           title:
             options.rowBasedEditOptions?.actionButtons?.updateButtonTitle ||
             'Update the Row',
@@ -502,10 +510,11 @@ export class SlickRowBasedEdit {
     actionFragment
       .appendChild(
         createDomElement('span', {
-          className: `${
-            options.rowBasedEditOptions?.actionButtons?.cancelButtonClassName ||
-            'button-style padding-1px'
-          } action-btns ` + BTN_ACTION_CANCEL,
+          className:
+            `${
+              options.rowBasedEditOptions?.actionButtons
+                ?.cancelButtonClassName || 'button-style padding-1px'
+            } action-btns ` + BTN_ACTION_CANCEL,
           title:
             options.rowBasedEditOptions?.actionButtons?.cancelButtonTitle ||
             'Cancel changes of the Row',
