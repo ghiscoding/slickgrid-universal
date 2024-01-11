@@ -121,7 +121,7 @@ interface RowCaching {
 
 export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O extends BaseGridOption<C> = BaseGridOption<C>> {
   // Public API
-  slickGridVersion = '5.5.0';
+  slickGridVersion = '5.7.1';
 
   /** optional grid state clientId */
   cid = '';
@@ -6154,6 +6154,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           const prevSerializedValue = self.serializedEditorValue;
 
           if (self.activeRow < self.getDataLength()) {
+            // editing existing item found
             const editCommand = {
               row,
               cell,
@@ -6179,8 +6180,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               editCommand.execute();
               self.makeActiveCellNormal(true);
             }
-
           } else {
+            // editing new item to add to dataset
             const newItem = {};
             self.currentEditor.applyValue(newItem, self.currentEditor.serializeValue());
             self.makeActiveCellNormal(true);
@@ -6190,7 +6191,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           // check whether the lock has been re-acquired by event handlers
           return !self.getEditorLock()?.isActive();
         } else {
-          // Re-add the CSS class to trigger transitions, if any.
+          // invalid editing: Re-add the CSS class to trigger transitions, if any.
           if (self.activeCellNode) {
             self.activeCellNode.classList.remove('invalid');
             Utils.width(self.activeCellNode);// force layout
