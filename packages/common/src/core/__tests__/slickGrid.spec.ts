@@ -3213,5 +3213,254 @@ describe('SlickGrid core file', () => {
         expect(onContextSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
       });
     });
+
+    describe('Keydown Events', () => {
+      it('should call navigateRowStart() when triggering Home key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigateRowStartSpy = jest.spyOn(grid, 'navigateRowStart');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Home' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateRowStartSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateTop() when triggering Ctrl+Home key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigateTopSpy = jest.spyOn(grid, 'navigateTop');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Home' });
+        Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateTopSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateRowEnd() when triggering End key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigateRowEndSpy = jest.spyOn(grid, 'navigateRowEnd');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'End' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateRowEndSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateBottom() when triggering Ctrl+End key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigateBottomSpy = jest.spyOn(grid, 'navigateBottom');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'End' });
+        Object.defineProperty(event, 'ctrlKey', { writable: true, value: true });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateBottomSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigatePageDown() when triggering PageDown key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigatePageDownSpy = jest.spyOn(grid, 'navigatePageDown');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'PageDown' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigatePageDownSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigatePageUp() when triggering PageDown key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigatePageUpSpy = jest.spyOn(grid, 'navigatePageUp');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'PageUp' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigatePageUpSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateLeft() when triggering PageDown key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigateLeftSpy = jest.spyOn(grid, 'navigateLeft');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowLeft' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateLeftSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateRight() when triggering PageDown key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigateRightSpy = jest.spyOn(grid, 'navigateRight');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowRight' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateRightSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateUp() when triggering PageDown key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigateUpSpy = jest.spyOn(grid, 'navigateUp');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowUp' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateUpSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateDown() when triggering PageDown key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigateDownSpy = jest.spyOn(grid, 'navigateDown');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'ArrowDown' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateDownSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateNext() when triggering PageDown key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigateNextSpy = jest.spyOn(grid, 'navigateNext');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Tab' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigateNextSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigatePrev() when triggering Enter key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const navigatePrevSpy = jest.spyOn(grid, 'navigatePrev');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Tab' });
+        Object.defineProperty(event, 'shiftKey', { writable: true, value: true });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(navigatePrevSpy).toHaveBeenCalled();
+      });
+
+      it('should do nothing when triggering Escape key without any editor to cancel', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const event = new CustomEvent('keydown');
+        const cancelEditSpy = jest.spyOn(grid.getEditorLock(), 'cancelCurrentEdit');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Escape' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(cancelEditSpy).not.toHaveBeenCalled();
+      });
+
+      it('should cancel opened editor when triggering Escape key and editor is active', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const event = new CustomEvent('keydown');
+        jest.spyOn(grid.getEditorLock(), 'isActive').mockReturnValue(true);
+        const cancelEditSpy = jest.spyOn(grid.getEditorLock(), 'cancelCurrentEdit');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Escape' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(cancelEditSpy).toHaveBeenCalled();
+      });
+
+      it('should call navigateDown() when triggering Enter key', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Enter' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+      });
+
+      it('should commit editor & set focus to next down cell when triggering Enter key with an active Editor', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        grid.setActiveCell(0, 1);
+        grid.editActiveCell(InputEditor as any, true);
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const event = new CustomEvent('keydown');
+        const stopPropagationSpy = jest.spyOn(event, 'stopPropagation');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Enter' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(stopPropagationSpy).toHaveBeenCalled();
+      });
+
+      it('should navigateDown() when triggering Enter key with an active Editor that is considered a new row', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        grid.setActiveCell(0, 1);
+        grid.editActiveCell(InputEditor as any, true);
+        jest.spyOn(grid, 'getDataLength').mockReturnValueOnce(0);
+        const navigateDownSpy = jest.spyOn(grid, 'navigateDown');
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const event = new CustomEvent('keydown');
+        const stopPropagationSpy = jest.spyOn(event, 'stopPropagation');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Enter' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(stopPropagationSpy).toHaveBeenCalled();
+        expect(navigateDownSpy).toHaveBeenCalled();
+      });
+
+      it('should do nothing when active Editor has multiple keyCaptureList and event is triggered is part of that list', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        grid.setActiveCell(0, 1);
+        grid.editActiveCell(InputEditor as any, true);
+        (InputEditor.prototype as any).keyCaptureList = ['1', '2', '3'];
+        const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
+        const event = new CustomEvent('keydown');
+        const stopPropagationSpy = jest.spyOn(event, 'stopPropagation');
+        Object.defineProperty(event, 'which', { writable: true, value: 2 });
+        Object.defineProperty(event, 'key', { writable: true, value: 'Enter' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(stopPropagationSpy).not.toHaveBeenCalled();
+      });
+    });
   });
 });
