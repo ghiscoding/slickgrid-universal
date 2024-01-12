@@ -92,7 +92,7 @@ export default class Example12 {
   gridOptions: GridOption;
   dataset: any[] = [];
   isGridEditable = true;
-  editQueue: Array<{ item, columns: Column[], editCommand }> = [];
+  editQueue: Array<{ item, columns: Column[], editCommand; }> = [];
   editedItems = {};
   isCompositeDisabled = false;
   isMassSelectionDisabled = true;

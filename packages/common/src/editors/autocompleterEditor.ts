@@ -454,7 +454,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     }
     grid.onCompositeEditorChange.notify(
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
-      { ...new SlickEventData(), ...event as Event }
+      new SlickEventData(event)
     );
   }
 
