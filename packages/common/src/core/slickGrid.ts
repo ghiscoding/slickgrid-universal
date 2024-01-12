@@ -4989,12 +4989,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       w += this.columns[i].width as number;
       cell++;
     }
+    cell -= 1;
 
-    if (row < 0 || (cell - 1) < 0) {
+    if (row < 0 || cell < 0) {
       throw new Error('[SlickGrid] The coordinates provided to getCellFromPoint(x, y) returns invalid grid row and/or cell.');
     }
 
-    return { row, cell: (cell - 1) };
+    return { row, cell };
   }
 
   protected getCellFromNode(cellNode: HTMLElement) {
