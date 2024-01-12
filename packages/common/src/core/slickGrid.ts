@@ -5213,9 +5213,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
 
       if (this._options.editable && opt_editMode && this.isCellPotentiallyEditable(this.activeRow, this.activeCell)) {
-        clearTimeout(this.h_editorLoader);
-
         if (this._options.asyncEditorLoading) {
+          clearTimeout(this.h_editorLoader);
           this.h_editorLoader = setTimeout(() => {
             this.makeActiveCellEditable(undefined, preClickModeOn, e);
           }, this._options.asyncEditorLoadDelay);
@@ -5238,7 +5237,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected clearTextSelection() {
     if ((document as any).selection?.empty) {
       try {
-        // IE fails here if selected element is not in dom
+        // IE fails here if selected element is not in DOM
         (document as any).selection.empty();
         // eslint-disable-next-line no-empty
       } catch (e) { }
@@ -5365,7 +5364,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     if (item && this.currentEditor) {
       this.currentEditor.loadValue(item);
-      if (preClickModeOn && this.currentEditor?.preClick) {
+      if (preClickModeOn && typeof this.currentEditor?.preClick === 'function') {
         this.currentEditor.preClick();
       }
     }
@@ -5450,24 +5449,22 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected handleActiveCellPositionChange() {
-    if (!this.activeCellNode) {
-      return;
-    }
+    if (this.activeCellNode) {
+      this.triggerEvent(this.onActiveCellPositionChanged, {});
 
-    this.triggerEvent(this.onActiveCellPositionChanged, {});
-
-    if (this.currentEditor) {
-      const cellBox = this.getActiveCellPosition();
-      if (this.currentEditor.show && this.currentEditor.hide) {
-        if (!cellBox.visible) {
-          this.currentEditor.hide();
-        } else {
-          this.currentEditor.show();
+      if (this.currentEditor) {
+        const cellBox = this.getActiveCellPosition();
+        if (this.currentEditor.show && this.currentEditor.hide) {
+          if (!cellBox.visible) {
+            this.currentEditor.hide();
+          } else {
+            this.currentEditor.show();
+          }
         }
-      }
 
-      if (this.currentEditor.position) {
-        this.currentEditor.position(cellBox);
+        if (this.currentEditor.position) {
+          this.currentEditor.position(cellBox);
+        }
       }
     }
   }
