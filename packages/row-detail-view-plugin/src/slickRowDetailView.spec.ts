@@ -261,7 +261,11 @@ describe('SlickRowDetailView plugin', () => {
     plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, }, new SlickEventData());
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, { _detailContent: '<span>Post 123</span>', _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' });
-    expect(asyncEndUpdateSpy).toHaveBeenCalledWith({ grid: gridStub, item: itemMock, itemDetail: { _detailContent: '<span>Post 123</span>', _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } });
+    expect(asyncEndUpdateSpy).toHaveBeenCalledWith(
+      { grid: gridStub, item: itemMock, itemDetail: { _detailContent: '<span>Post 123</span>', _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } },
+      expect.anything(),
+      plugin
+    );
   });
 
   it('should trigger "onAsyncResponse" with Row Detail from post template with HTML Element when no detailView is provided and expect "updateItem" from DataView to be called with new template & data', () => {
@@ -275,7 +279,11 @@ describe('SlickRowDetailView plugin', () => {
     plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, }, new SlickEventData());
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, { _detailContent: createDomElement('span', { textContent: 'Post 123' }), _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' });
-    expect(asyncEndUpdateSpy).toHaveBeenCalledWith({ grid: gridStub, item: itemMock, itemDetail: { _detailContent: createDomElement('span', { textContent: 'Post 123' }), _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } });
+    expect(asyncEndUpdateSpy).toHaveBeenCalledWith(
+      { grid: gridStub, item: itemMock, itemDetail: { _detailContent: createDomElement('span', { textContent: 'Post 123' }), _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } },
+      expect.anything(),
+      plugin
+    );
   });
 
   it('should trigger "onAsyncResponse" with Row Detail template when detailView is provided and expect "updateItem" from DataView to be called with new template & data', () => {
@@ -288,7 +296,11 @@ describe('SlickRowDetailView plugin', () => {
     plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView, }, new SlickEventData());
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' });
-    expect(asyncEndUpdateSpy).toHaveBeenCalledWith({ grid: gridStub, item: itemMock, itemDetail: { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } });
+    expect(asyncEndUpdateSpy).toHaveBeenCalledWith(
+      { grid: gridStub, item: itemMock, itemDetail: { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } },
+      expect.anything(),
+      plugin
+    );
   });
 
   it('should trigger onClick and not call anything when "expandableOverride" returns False', () => {
@@ -310,7 +322,11 @@ describe('SlickRowDetailView plugin', () => {
     gridStub.onClick.notify({ row: 0, cell: 1, grid: gridStub }, clickEvent);
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' });
-    expect(asyncEndUpdateSpy).toHaveBeenCalledWith({ grid: gridStub, item: itemMock, itemDetail: { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } });
+    expect(asyncEndUpdateSpy).toHaveBeenCalledWith(
+      { grid: gridStub, item: itemMock, itemDetail: { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } },
+      expect.anything(),
+      plugin
+    );
     expect(preventDefaultSpy).not.toHaveBeenCalled();
     expect(stopPropagationSpy).not.toHaveBeenCalled();
   });
@@ -391,7 +407,11 @@ describe('SlickRowDetailView plugin', () => {
     const filteredItem = plugin.getFilterItem(itemMock);
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' });
-    expect(asyncEndUpdateSpy).toHaveBeenCalledWith({ grid: gridStub, item: itemMock, itemDetail: { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } });
+    expect(asyncEndUpdateSpy).toHaveBeenCalledWith(
+      { grid: gridStub, item: itemMock, itemDetail: { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } },
+      expect.anything(),
+      plugin
+    );
 
     const clickEvent = new Event('click');
     Object.defineProperty(clickEvent, 'target', { writable: true, configurable: true, value: document.createElement('div') });
@@ -424,7 +444,11 @@ describe('SlickRowDetailView plugin', () => {
     plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView, }, new SlickEventData());
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' });
-    expect(asyncEndUpdateSpy).toHaveBeenCalledWith({ grid: gridStub, item: itemMock, itemDetail: { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } });
+    expect(asyncEndUpdateSpy).toHaveBeenCalledWith(
+      { grid: gridStub, item: itemMock, itemDetail: { _detailContent: `<span>loading...</span>`, _detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' } },
+      expect.anything(),
+      plugin
+    );
 
     plugin.expandDetailView(itemMock);
 
@@ -451,14 +475,15 @@ describe('SlickRowDetailView plugin', () => {
         id: 123, firstName: 'John', lastName: 'Doe',
       }
     }, expect.anything(), expect.anything(), true);
-    expect(afterRowDetailToggleSpy).toHaveBeenCalledWith({
-      grid: gridStub,
-      item: {
-        _collapsed: true, _detailViewLoaded: true, _sizePadding: 0, _height: 150, _detailContent: '<span>loading...</span>',
-        id: 123, firstName: 'John', lastName: 'Doe',
+    expect(afterRowDetailToggleSpy).toHaveBeenCalledWith(
+      {
+        grid: gridStub,
+        item: { _collapsed: true, _detailViewLoaded: true, _sizePadding: 0, _height: 150, _detailContent: '<span>loading...</span>', id: 123, firstName: 'John', lastName: 'Doe', },
+        expandedRows: [],
       },
-      expandedRows: [],
-    });
+      expect.anything(),
+      plugin
+    );
     expect(insertItemSpy).toHaveBeenCalled();
     expect(beginUpdateSpy).toHaveBeenCalled();
     expect(deleteItemSpy).toHaveBeenCalledTimes(6); // panelRows(5) + 1

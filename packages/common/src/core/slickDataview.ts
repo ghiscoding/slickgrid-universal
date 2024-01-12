@@ -1409,7 +1409,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       }
     };
 
-    grid.onSelectedRowsChanged.subscribe((_e: SlickEventData, args: { rows: number[]; }) => {
+    grid.onSelectedRowsChanged.subscribe((_e, args) => {
       if (!inHandler) {
         const newSelectedRowIds = this.mapRowsToIds(args.rows);
         const selectedRowsChangedArgs = {

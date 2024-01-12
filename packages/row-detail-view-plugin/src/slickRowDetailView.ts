@@ -305,7 +305,8 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       this.onAsyncResponse.notify({
         item,
         itemDetail: item,
-        detailView: item[`${this._keyPrefix}detailContent`]
+        detailView: item[`${this._keyPrefix}detailContent`],
+        grid: this._grid
       });
       this.applyTemplateNewLineHeight(item);
       this.dataView.updateItem(item[this._dataViewIdProperty], item);
@@ -334,7 +335,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
    * subscribe to the onAsyncResponse so that the plugin knows when the user server side calls finished
    * the response has to be as "args.item" (or "args.itemDetail") with it's data back
    */
-  handleOnAsyncResponse(_e: SlickEventData, args: { item: any; itemDetail: any; detailView?: any; }) {
+  handleOnAsyncResponse(e: SlickEventData, args: { item: any; itemDetail: any; detailView?: any; }) {
     if (!args || (!args.item && !args.itemDetail)) {
       console.error('SlickRowDetailView plugin requires the onAsyncResponse() to supply "args.item" property.');
       return;
@@ -353,7 +354,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       grid: this._grid,
       item: itemDetail,
       itemDetail,
-    });
+    }, e, this);
   }
 
   /**
@@ -711,7 +712,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
           grid: this._grid,
           item: dataContext,
           expandedRows: this._expandedRows,
-        });
+        }, e, this);
 
         e.stopPropagation();
         e.stopImmediatePropagation();
@@ -737,7 +738,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       rowIndex,
       expandedRows: this._expandedRows,
       rowIdsOutOfViewport: this.syncOutOfViewportArray(rowId, true)
-    });
+    }, null, this);
   }
 
   protected notifyBackToViewportWhenDomExist(item: any, rowId: number | string) {
@@ -753,7 +754,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
           rowIndex,
           expandedRows: this._expandedRows,
           rowIdsOutOfViewport: this.syncOutOfViewportArray(rowId, false)
-        });
+        }, null, this);
       }
     }, 100);
   }
