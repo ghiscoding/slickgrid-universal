@@ -39,7 +39,7 @@ export interface OnRowDetailAsyncResponseArgs {
   detailView?: any;
 
   /** SlickGrid instance */
-  grid: SlickGrid;
+  grid?: SlickGrid;
 }
 
 /** Fired when the async response finished */

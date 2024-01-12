@@ -114,7 +114,6 @@ const columnsMock: Column[] = [
 ];
 
 describe('HeaderMenu Plugin', () => {
-  const consoleWarnSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
   let backendUtilityService: BackendUtilityService;
   let extensionUtility: ExtensionUtility;
   let translateService: TranslateServiceStub;
