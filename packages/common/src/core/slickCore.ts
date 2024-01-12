@@ -10,7 +10,7 @@
 import { MergeTypes } from '../enums/index';
 import type { CSSStyleDeclarationWritable, EditController } from '../interfaces';
 
-export type Handler<ArgType = any> = (e: SlickEventData, args: ArgType) => void;
+export type Handler<ArgType = any> = (e: SlickEventData<ArgType>, args: ArgType) => void;
 
 export interface BasePubSub {
   publish<ArgType = any>(_eventName: string | any, _data?: ArgType): any;
@@ -203,8 +203,8 @@ export class SlickEvent<ArgType = any> {
    * @param {Object} [scope] - The scope ("this") within which the handler will be executed.
    *      If not specified, the scope will be set to the <code>Event</code> instance.
    */
-  notify(args: ArgType, evt?: SlickEventData | Event | MergeTypes<SlickEventData, Event> | null, scope?: any, ignorePrevEventDataValue = false) {
-    const sed = evt instanceof SlickEventData ? evt : new SlickEventData(evt, args);
+  notify(args: ArgType, evt?: SlickEventData<ArgType> | Event | MergeTypes<SlickEventData, Event> | null, scope?: any, ignorePrevEventDataValue = false) {
+    const sed = evt instanceof SlickEventData ? evt : new SlickEventData<ArgType>(evt, args);
     if (ignorePrevEventDataValue) {
       sed.resetReturnValue();
     }
@@ -217,7 +217,7 @@ export class SlickEvent<ArgType = any> {
 
     // user can optionally add a global PubSub Service which makes it easy to publish/subscribe to events
     if (typeof this._pubSubService?.publish === 'function' && this.eventName) {
-      const ret = this._pubSubService.publish<{ args: ArgType; eventData?: SlickEventData; nativeEvent?: Event; }>(this.eventName, { args, eventData: sed });
+      const ret = this._pubSubService.publish<{ args: ArgType; eventData?: SlickEventData<ArgType>; nativeEvent?: Event; }>(this.eventName, { args, eventData: sed });
       sed.addReturnValue(ret);
     }
     return sed;
