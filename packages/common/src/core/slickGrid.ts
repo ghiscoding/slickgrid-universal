@@ -1095,18 +1095,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     if (includeScrollbar) {
       if ((this._options.frozenColumn!) > -1 && (i > this._options.frozenColumn!)) {
-        this.headersWidthR += this.scrollbarDimensions?.width ?? 0;
+        this.headersWidthR += this.scrollbarDimensions?.width || 0;
       } else {
-        this.headersWidthL += this.scrollbarDimensions?.width ?? 0;
+        this.headersWidthL += this.scrollbarDimensions?.width || 0;
       }
     }
 
     if (this.hasFrozenColumns()) {
       this.headersWidthL = this.headersWidthL + 1000;
       this.headersWidthR = Math.max(this.headersWidthR, this.viewportW) + this.headersWidthL;
-      this.headersWidthR += this.scrollbarDimensions?.width ?? 0;
+      this.headersWidthR += this.scrollbarDimensions?.width || 0;
     } else {
-      this.headersWidthL += this.scrollbarDimensions?.width ?? 0;
+      this.headersWidthL += this.scrollbarDimensions?.width || 0;
       this.headersWidthL = Math.max(this.headersWidthL, this.viewportW) + 1000;
     }
 
@@ -1116,7 +1116,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Get the grid canvas width */
   getCanvasWidth(): number {
-    const availableWidth = this.viewportHasVScroll ? this.viewportW - (this.scrollbarDimensions?.width ?? 0) : this.viewportW;
+    const availableWidth = this.viewportHasVScroll ? this.viewportW - (this.scrollbarDimensions?.width || 0) : this.viewportW;
     let i = this.columns.length;
 
     this.canvasWidthL = this.canvasWidthR = 0;
@@ -1229,14 +1229,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
     }
 
-    this.viewportHasHScroll = (this.canvasWidth >= this.viewportW - (this.scrollbarDimensions?.width ?? 0));
+    this.viewportHasHScroll = (this.canvasWidth >= this.viewportW - (this.scrollbarDimensions?.width || 0));
 
-    Utils.width(this._headerRowSpacerL, this.canvasWidth + (this.viewportHasVScroll ? (this.scrollbarDimensions?.width ?? 0) : 0));
-    Utils.width(this._headerRowSpacerR, this.canvasWidth + (this.viewportHasVScroll ? (this.scrollbarDimensions?.width ?? 0) : 0));
+    Utils.width(this._headerRowSpacerL, this.canvasWidth + (this.viewportHasVScroll ? (this.scrollbarDimensions?.width || 0) : 0));
+    Utils.width(this._headerRowSpacerR, this.canvasWidth + (this.viewportHasVScroll ? (this.scrollbarDimensions?.width || 0) : 0));
 
     if (this._options.createFooterRow) {
-      Utils.width(this._footerRowSpacerL, this.canvasWidth + (this.viewportHasVScroll ? (this.scrollbarDimensions?.width ?? 0) : 0));
-      Utils.width(this._footerRowSpacerR, this.canvasWidth + (this.viewportHasVScroll ? (this.scrollbarDimensions?.width ?? 0) : 0));
+      Utils.width(this._footerRowSpacerL, this.canvasWidth + (this.viewportHasVScroll ? (this.scrollbarDimensions?.width || 0) : 0));
+      Utils.width(this._footerRowSpacerR, this.canvasWidth + (this.viewportHasVScroll ? (this.scrollbarDimensions?.width || 0) : 0));
     }
 
     if (widthChanged || forceColumnWidthsUpdate) {
@@ -1295,8 +1295,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   /** Get the displayed scrollbar dimensions */
   getDisplayedScrollbarDimensions() {
     return {
-      width: this.viewportHasVScroll ? (this.scrollbarDimensions?.width ?? 0) : 0,
-      height: this.viewportHasHScroll ? (this.scrollbarDimensions?.height ?? 0) : 0
+      width: this.viewportHasVScroll ? (this.scrollbarDimensions?.width || 0) : 0,
+      height: this.viewportHasHScroll ? (this.scrollbarDimensions?.height || 0) : 0
     };
   }
 
@@ -1794,8 +1794,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     let columnScrollTimer: any = null;
 
-    const scrollColumnsRight = () => this._viewportScrollContainerX.scrollLeft = this._viewportScrollContainerX.scrollLeft + 10;
-    const scrollColumnsLeft = () => this._viewportScrollContainerX.scrollLeft = this._viewportScrollContainerX.scrollLeft - 10;
+    // add/remove extra scroll padding for calculation
+    const scrollColumnsRight = () => this._viewportScrollContainerX.scrollLeft += 10;
+    const scrollColumnsLeft = () => this._viewportScrollContainerX.scrollLeft -= 10;
 
     let canDragScroll;
     const sortableOptions = {
@@ -2009,7 +2010,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             let x;
             let newCanvasWidthL = 0;
             let newCanvasWidthR = 0;
-            const viewportWidth = this.viewportHasVScroll ? this.viewportW - (this.scrollbarDimensions?.width ?? 0) : this.viewportW;
+            const viewportWidth = this.viewportHasVScroll ? this.viewportW - (this.scrollbarDimensions?.width || 0) : this.viewportW;
 
             if (d < 0) { // shrink column
               x = d;
@@ -2596,7 +2597,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let total = 0;
     let prevTotal = 0;
     const widths: number[] = [];
-    const availWidth = this.viewportHasVScroll ? this.viewportW - (this.scrollbarDimensions?.width ?? 0) : this.viewportW;
+    const availWidth = this.viewportHasVScroll ? this.viewportW - (this.scrollbarDimensions?.width || 0) : this.viewportW;
 
     for (i = 0; i < this.columns.length; i++) {
       c = this.columns[i];
@@ -3090,7 +3091,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if ((this.data as CustomDataView<TData>).getLength) {
       return (this.data as CustomDataView<TData>).getLength();
     } else {
-      return (this.data as TData[])?.length ?? 0;
+      return (this.data as TData[])?.length || 0;
     }
   }
 
@@ -3200,7 +3201,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   scrollTo(y: number) {
     y = Math.max(y, 0);
-    y = Math.min(y, (this.th || 0) - (Utils.height(this._viewportScrollContainerY) as number) + ((this.viewportHasHScroll || this.hasFrozenColumns()) ? (this.scrollbarDimensions?.height ?? 0) : 0));
+    y = Math.min(y, (this.th || 0) - (Utils.height(this._viewportScrollContainerY) as number) + ((this.viewportHasHScroll || this.hasFrozenColumns()) ? (this.scrollbarDimensions?.height || 0) : 0));
 
     const oldOffset = this.offset;
     this.offset = Math.round(this.page * (this.cj || 0));
@@ -3654,7 +3655,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   getViewportRowCount() {
     const vh = this.getViewportHeight();
-    const scrollbarHeight = this.getScrollbarDimensions()?.height ?? 0;
+    const scrollbarHeight = this.getScrollbarDimensions()?.height || 0;
     return Math.floor((vh - scrollbarHeight) / this._options.rowHeight!);
   }
 
@@ -3669,7 +3670,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       let fullHeight = this._paneHeaderL.offsetHeight;
       fullHeight += (this._options.showHeaderRow) ? this._options.headerRowHeight! + this.getVBoxDelta(this._headerRowScroller[0]) : 0;
       fullHeight += (this._options.showFooterRow) ? this._options.footerRowHeight! + this.getVBoxDelta(this._footerRowScroller[0]) : 0;
-      fullHeight += (this.getCanvasWidth() > this.viewportW) ? (this.scrollbarDimensions?.height ?? 0) : 0;
+      fullHeight += (this.getCanvasWidth() > this.viewportW) ? (this.scrollbarDimensions?.height || 0) : 0;
 
       this.viewportH = this._options.rowHeight!
         * this.getDataLengthIncludingAddNew()
@@ -3712,8 +3713,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       // Account for Frozen Rows
       if (this.hasFrozenRows) {
         if (this._options.frozenBottom) {
-          this.paneTopH = this.viewportH - this.frozenRowsHeight - (this.scrollbarDimensions?.height ?? 0);
-          this.paneBottomH = this.frozenRowsHeight + (this.scrollbarDimensions?.height ?? 0);
+          this.paneTopH = this.viewportH - this.frozenRowsHeight - (this.scrollbarDimensions?.height || 0);
+          this.paneBottomH = this.frozenRowsHeight + (this.scrollbarDimensions?.height || 0);
         } else {
           this.paneTopH = this.frozenRowsHeight;
           this.paneBottomH = this.viewportH - this.frozenRowsHeight;
@@ -3726,7 +3727,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.paneTopH += this.topPanelH + this.headerRowH + this.footerRowH;
 
       if (this.hasFrozenColumns() && this._options.autoHeight) {
-        this.paneTopH += (this.scrollbarDimensions?.height ?? 0);
+        this.paneTopH += (this.scrollbarDimensions?.height || 0);
       }
 
       // The top viewport does not contain the top panel or header row
@@ -3860,7 +3861,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (this._options.autoHeight) {
         this.h = this._options.rowHeight! * numberOfRows;
       } else {
-        this.th = Math.max(this._options.rowHeight! * numberOfRows, tempViewportH - (this.scrollbarDimensions?.height ?? 0));
+        this.th = Math.max(this._options.rowHeight! * numberOfRows, tempViewportH - (this.scrollbarDimensions?.height || 0));
         if (this.th < this.maxSupportedCssHeight) {
           // just one page
           this.h = this.ph = this.th;
@@ -3900,7 +3901,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         this.scrollTo(this.scrollTop + this.offset);
       } else {
         // scroll to bottom
-        this.scrollTo(this.th - tempViewportH + (this.scrollbarDimensions?.height ?? 0));
+        this.scrollTo(this.th - tempViewportH + (this.scrollbarDimensions?.height || 0));
       }
 
       if (this.h !== oldH && this._options.autoHeight) {
@@ -5156,7 +5157,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected internalScrollColumnIntoView(left: number, right: number) {
-    const scrollRight = this.scrollLeft + (Utils.width(this._viewportScrollContainerX) as number) - (this.viewportHasVScroll ? (this.scrollbarDimensions?.width ?? 0) : 0);
+    const scrollRight = this.scrollLeft + (Utils.width(this._viewportScrollContainerX) as number) - (this.viewportHasVScroll ? (this.scrollbarDimensions?.width || 0) : 0);
 
     if (left < this.scrollLeft) {
       this._viewportScrollContainerX.scrollLeft = left;
@@ -5495,7 +5496,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let textSelection: Range | null = null;
     if (window.getSelection) {
       const selection = window.getSelection();
-      if ((selection?.rangeCount ?? 0) > 0) {
+      if ((selection?.rangeCount || 0) > 0) {
         textSelection = selection!.getRangeAt(0);
       }
     }
@@ -5531,7 +5532,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const rowAtTop = rowNumber * this._options.rowHeight!;
       const rowAtBottom = (rowNumber + 1) * this._options.rowHeight!
         - viewportScrollH
-        + (this.viewportHasHScroll ? (this.scrollbarDimensions?.height ?? 0) : 0);
+        + (this.viewportHasHScroll ? (this.scrollbarDimensions?.height || 0) : 0);
 
       // need to page down?
       if ((rowNumber + 1) * this._options.rowHeight! > this.scrollTop + viewportScrollH + this.offset) {
