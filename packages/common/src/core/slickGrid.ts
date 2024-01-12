@@ -4982,7 +4982,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let cell = 0;
 
     let w = 0;
-    for (let i = 0; i < this.columns.length && w < x; i++) {
+    for (let i = 0; i < this.columns.length && w <= x; i++) {
       if (!this.columns[i] || this.columns[i].hidden) {
         continue;
       }
@@ -4990,9 +4990,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       cell++;
     }
 
-    /* istanbul ignore if - TODO: need to investigate, this is technically unreachable */
-    if (cell < 0) {
-      cell = 0;
+    if (row < 0 || (cell - 1) < 0) {
+      throw new Error('[SlickGrid] The coordinates provided to getCellFromPoint(x, y) returns invalid grid row and/or cell.');
     }
 
     return { row, cell: (cell - 1) };
@@ -5077,7 +5076,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         rowOffset = (this._options.frozenBottom) ? Utils.height(this._canvasTopL) as number : this.frozenRowsHeight;
       }
 
-      row = this.getCellFromPoint(targetEvent.clientX - c!.left, targetEvent.clientY - c!.top + rowOffset + document.documentElement.scrollTop).row;
+      const x = targetEvent.clientX - c!.left;
+      const y = targetEvent.clientY - c!.top + rowOffset + document.documentElement.scrollTop;
+      row = this.getCellFromPoint(x, y).row;
     }
 
     const cell = this.getCellFromNode(cellNode as HTMLElement);

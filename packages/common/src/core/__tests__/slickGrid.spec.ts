@@ -2320,44 +2320,55 @@ describe('SlickGrid core file', () => {
     ];
 
     describe('getCellFromPoint() method', () => {
-      it('should return { row:0, cell:-1 } when x/y coordinates are 0,0', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'middleName', field: 'middleName', name: 'Middle Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+        { id: 'gender', field: 'gender', name: 'Gender' },
+        { id: 'doorNumber', field: 'doorNumber', name: 'Door Number', hidden: true },
+        { id: 'streetName', field: 'streetName', name: 'Street Name', hidden: true },
+      ] as Column[];
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30, gender: 'male' },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28, gender: 'female' },
+        { id: 2, firstName: 'Bob', lastName: 'Smith', age: 48, gender: 'male' },
+        { id: 3, firstName: 'Arnold', lastName: 'Smith', age: 37, gender: 'male' },
+      ];
+
+      it('should return correct row/cell when providing x,y coordinates', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
 
-        const result = grid.getCellFromPoint(0, 0);
+        const result1 = grid.getCellFromPoint(0, 0);
+        const result2 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH + 5, DEFAULT_COLUMN_HEIGHT + 5);
+        const result3 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 2) + 5, (DEFAULT_COLUMN_HEIGHT * 2) + 5);
+        const result4 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 3) + 5, (DEFAULT_COLUMN_HEIGHT * 3) + 5);
+        const result5 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 4) + 5, (DEFAULT_COLUMN_HEIGHT * 4) + 5);
 
-        expect(result).toEqual({ row: 0, cell: -1 });
+        expect(result1).toEqual({ row: 0, cell: 0 });
+        expect(result2).toEqual({ row: 1, cell: 1 });
+        expect(result3).toEqual({ row: 2, cell: 2 });
+        expect(result4).toEqual({ row: 3, cell: 3 });
+        expect(result5).toEqual({ row: 4, cell: 4 });
       });
 
-      it('should return { row:2, cell:2 } when x/y coordinates are 2x times offset with small buffer', () => {
+      it('should throw x,y coordinates returns invalid row and/or cell', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
 
-        const result = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 2) + 5, (DEFAULT_COLUMN_HEIGHT * 2) + 5);
-
-        expect(result).toEqual({ row: 2, cell: 2 }); // OK: guessed the same
+        expect(() => grid.getCellFromPoint(-(DEFAULT_COLUMN_WIDTH + 5), -(DEFAULT_COLUMN_HEIGHT + 5))).toThrow('[SlickGrid] The coordinates provided to getCellFromPoint(x, y) returns invalid grid row and/or cell.');
+        expect(() => grid.getCellFromPoint(-((DEFAULT_COLUMN_WIDTH * 2) + 5), -((DEFAULT_COLUMN_HEIGHT * 2) + 5))).toThrow('[SlickGrid] The coordinates provided to getCellFromPoint(x, y) returns invalid grid row and/or cell.');
+        expect(() => grid.getCellFromPoint(-((DEFAULT_COLUMN_WIDTH * 3) + 5), -((DEFAULT_COLUMN_HEIGHT * 3) + 5))).toThrow('[SlickGrid] The coordinates provided to getCellFromPoint(x, y) returns invalid grid row and/or cell.');
       });
 
-      it('should return { row:-2, cell:-1 } when x/y coordinates are both 2x times negative offset values with small buffer', () => {
+      it('should skip a cell when column found at x/y coordinates is hidden (Gender) so cell will the last known visible column', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
 
-        const result = grid.getCellFromPoint(-(DEFAULT_COLUMN_WIDTH * 2) + 5, -(DEFAULT_COLUMN_HEIGHT * 2) + 5);
+        const result1 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 5) + 5, (DEFAULT_COLUMN_HEIGHT * 5) + 5);
+        const result2 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 6) + 5, (DEFAULT_COLUMN_HEIGHT * 6) + 5);
 
-        expect(result).toEqual({ row: -2, cell: -1 });
-      });
-
-      it('should return { row:-3, cell:-1 } when x/y coordinates are both 3x times negative offset values with small buffer', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-
-        const result = grid.getCellFromPoint(-(DEFAULT_COLUMN_WIDTH * 3) + 5, -(DEFAULT_COLUMN_HEIGHT * 3) + 5);
-
-        expect(result).toEqual({ row: -3, cell: -1 });
-      });
-
-      it('should return { row: 4, cell: 2 } when column found at x/y coordinates is hidden (Gender) so cell will be -1 which is last known visible column', () => {
-        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
-
-        const result = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 4) + 5, (DEFAULT_COLUMN_HEIGHT * 4) + 5);
-
-        expect(result).toEqual({ row: 4, cell: 2 });
+        // last 2 columns are hidden and last visible column is cell:4
+        expect(result1).toEqual({ row: 5, cell: 4 });
+        expect(result2).toEqual({ row: 6, cell: 4 });
       });
     });
 
