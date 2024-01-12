@@ -16,6 +16,7 @@ import type {
   MultiColumnSort,
   OnHeaderCellRenderedEventArgs,
 } from '../interfaces/index';
+import type { SlickEventData } from '../core';
 import { getTranslationPrefix } from '../services/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import type { FilterService } from '../services/filter.service';
@@ -124,18 +125,18 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     this._activeHeaderColumnElm?.classList.remove('slick-header-column-active');
   }
 
-  repositionSubMenu(e: DOMMouseOrTouchEvent<HTMLElement>, item: MenuCommandItem, level: number, columnDef: Column) {
+  repositionSubMenu(e: DOMMouseOrTouchEvent<HTMLElement> | SlickEventData, item: MenuCommandItem, level: number, columnDef: Column) {
     // creating sub-menu, we'll also pass level & the item object since we might have "subMenuTitle" to show
     const subMenuElm = this.createCommandMenu(item.commandItems || [], columnDef, level + 1, item);
     document.body.appendChild(subMenuElm);
     this.repositionMenu(e, subMenuElm);
   }
 
-  repositionMenu(e: DOMMouseOrTouchEvent<HTMLElement>, menuElm: HTMLDivElement) {
+  repositionMenu(e: DOMMouseOrTouchEvent<HTMLElement> | SlickEventData, menuElm: HTMLDivElement) {
     const buttonElm = e.target as HTMLDivElement; // get header button createElement
     const isSubMenu = menuElm.classList.contains('slick-submenu');
     const parentElm = isSubMenu
-      ? e.target.closest('.slick-menu-item') as HTMLDivElement
+      ? (e.target as HTMLElement).closest('.slick-menu-item') as HTMLDivElement
       : buttonElm as HTMLElement;
 
     const relativePos = getOffsetRelativeToParent(this.sharedService.gridContainerElement, buttonElm);
@@ -216,7 +217,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
    * @param {Object} event - The event
    * @param {Object} args - object arguments
    */
-  protected handleHeaderCellRendered(_e: Event, args: OnHeaderCellRenderedEventArgs) {
+  protected handleHeaderCellRendered(_e: SlickEventData, args: OnHeaderCellRenderedEventArgs) {
     const column = args.column;
     const menu = column.header?.menu as HeaderMenuItems;
 
@@ -249,7 +250,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
    * @param {Object} event - The event
    * @param {Object} args.column - The column definition
    */
-  protected handleBeforeHeaderCellDestroy(_e: Event, args: { column: Column; node: HTMLElement; }) {
+  protected handleBeforeHeaderCellDestroy(_e: SlickEventData, args: { column: Column; node: HTMLElement; }) {
     const column = args.column;
 
     if (column.header?.menu) {
@@ -277,7 +278,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     }
   }
 
-  protected handleMenuItemCommandClick(event: DOMMouseOrTouchEvent<HTMLDivElement>, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level = 0, columnDef?: Column): boolean | void {
+  protected handleMenuItemCommandClick(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level = 0, columnDef?: Column): boolean | void {
     if (item !== 'divider' && !item.disabled && !(item as MenuCommandItem).divider) {
       const command = (item as MenuCommandItem).command || '';
 
@@ -316,7 +317,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     }
   }
 
-  protected handleMenuItemMouseOver(e: DOMMouseOrTouchEvent<HTMLElement>, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level = 0, columnDef?: Column) {
+  protected handleMenuItemMouseOver(e: DOMMouseOrTouchEvent<HTMLElement> | SlickEventData, _type: MenuType, item: ExtractMenuType<ExtendableItemTypes, MenuType>, level = 0, columnDef?: Column) {
     if (item !== 'divider' && !item.disabled && !(item as MenuCommandItem).divider) {
       if ((item as MenuCommandItem).commandItems) {
         this.repositionSubMenu(e, item as MenuCommandItem, level, columnDef as Column);
@@ -455,21 +456,21 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   }
 
   /** Clear the Filter on the current column (if it's actually filtered) */
-  protected clearColumnFilter(event: Event, args: MenuCommandItemCallbackArgs) {
+  protected clearColumnFilter(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: MenuCommandItemCallbackArgs) {
     if (args?.column) {
       this.filterService.clearFilterByColumnId(event, args.column.id);
     }
   }
 
   /** Clear the Sort on the current column (if it's actually sorted) */
-  protected clearColumnSort(event: Event, args: MenuCommandItemCallbackArgs) {
+  protected clearColumnSort(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: MenuCommandItemCallbackArgs) {
     if (args?.column && this.sharedService) {
       this.sortService.clearSortByColumnId(event, args.column.id);
     }
   }
 
   /** Execute the Header Menu Commands that was triggered by the onCommand subscribe */
-  protected executeHeaderMenuInternalCommands(event: Event, args: MenuCommandItemCallbackArgs) {
+  protected executeHeaderMenuInternalCommands(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: MenuCommandItemCallbackArgs) {
     if (args?.command) {
       switch (args.command) {
         case 'hide-column':
@@ -643,7 +644,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   }
 
   /** Sort the current column */
-  protected sortColumn(event: Event, args: MenuCommandItemCallbackArgs, isSortingAsc = true) {
+  protected sortColumn(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: MenuCommandItemCallbackArgs, isSortingAsc = true) {
     if (args?.column) {
       // get previously sorted columns
       const columnDef = args.column;

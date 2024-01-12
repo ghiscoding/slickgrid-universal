@@ -39,10 +39,12 @@ describe('SlickCore file', () => {
     it('should call isDefaultPrevented() and expect truthy when event propagation is stopped by calling preventDefault()', () => {
       const ed = new SlickEventData();
 
+      expect(ed.defaultPrevented).toBeFalsy();
       expect(ed.isDefaultPrevented()).toBeFalsy();
 
       ed.preventDefault();
 
+      expect(ed.defaultPrevented).toBeTruthy();
       expect(ed.isDefaultPrevented()).toBeTruthy();
     });
 
@@ -59,6 +61,7 @@ describe('SlickCore file', () => {
       const evtSpy = jest.spyOn(evt, 'preventDefault');
       const ed = new SlickEventData(evt);
 
+      expect(ed.defaultPrevented).toBeFalsy();
       expect(ed.isDefaultPrevented()).toBeFalsy();
 
       ed.preventDefault();
@@ -364,7 +367,7 @@ describe('SlickCore file', () => {
       const elock = new SlickEditorLock();
       elock.activate(ec);
 
-      expect(() => elock.activate(ec2)).toThrow(`SlickEditorLock.activate: an editController is still active, can't activate another editController`)
+      expect(() => elock.activate(ec2)).toThrow(`SlickEditorLock.activate: an editController is still active, can't activate another editController`);
     });
 
     it('should throw when trying to call activate() with an EditController that forgot to implement commitCurrentEdit() method', () => {
@@ -372,7 +375,7 @@ describe('SlickCore file', () => {
       const ec = { cancelCurrentEdit: cancelSpy, } as any;
 
       const elock = new SlickEditorLock();
-      expect(() => elock.activate(ec)).toThrow(`SlickEditorLock.activate: editController must implement .commitCurrentEdit()`)
+      expect(() => elock.activate(ec)).toThrow(`SlickEditorLock.activate: editController must implement .commitCurrentEdit()`);
     });
 
     it('should throw when trying to call activate() with an EditController that forgot to implement cancelCurrentEdit() method', () => {
@@ -380,7 +383,7 @@ describe('SlickCore file', () => {
       const ec = { commitCurrentEdit: commitSpy, } as any;
 
       const elock = new SlickEditorLock();
-      expect(() => elock.activate(ec)).toThrow(`SlickEditorLock.activate: editController must implement .cancelCurrentEdit()`)
+      expect(() => elock.activate(ec)).toThrow(`SlickEditorLock.activate: editController must implement .cancelCurrentEdit()`);
     });
 
     it('should deactivate an EditController and expect isActive() to be falsy', () => {
@@ -408,7 +411,7 @@ describe('SlickCore file', () => {
       const elock = new SlickEditorLock();
       elock.activate(ec);
 
-      expect(() => elock.deactivate(ec2)).toThrow(`SlickEditorLock.deactivate: specified editController is not the currently active one`)
+      expect(() => elock.deactivate(ec2)).toThrow(`SlickEditorLock.deactivate: specified editController is not the currently active one`);
     });
 
     it('should expect active EditController.commitCurrentEdit() being called when calling commitCurrentEdit() after it was activated', () => {

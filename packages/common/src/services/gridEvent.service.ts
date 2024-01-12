@@ -1,4 +1,4 @@
-import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
+import { type SlickDataView, SlickEventHandler, type SlickGrid, SlickEventData } from '../core/index';
 import type { Column, OnEventArgs } from './../interfaces/index';
 
 export class GridEventService {
@@ -40,7 +40,7 @@ export class GridEventService {
         };
 
         // finally call up the Slick column.onBeforeEditCells.... function
-        column.onBeforeEditCell(e, returnedArgs);
+        column.onBeforeEditCell(e instanceof SlickEventData ? e.getNativeEvent() : e, returnedArgs);
       }
     });
   }
@@ -69,7 +69,7 @@ export class GridEventService {
         };
 
         // finally call up the Slick column.onCellChanges.... function
-        column.onCellChange(e, returnedArgs);
+        column.onCellChange(e instanceof SlickEventData ? e.getNativeEvent() : e, returnedArgs);
       }
     });
   }
@@ -97,7 +97,7 @@ export class GridEventService {
         };
 
         // finally call up the Slick column.onCellClick.... function
-        column.onCellClick(e, returnedArgs);
+        column.onCellClick(e instanceof SlickEventData ? e.getNativeEvent() : e, returnedArgs);
       }
     });
   }

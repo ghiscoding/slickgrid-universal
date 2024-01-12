@@ -1,9 +1,8 @@
 import { createDomElement, extend } from '@slickgrid-universal/utils';
 
-import { SlickEventHandler, type SlickDataView, SlickGroup, type SlickGrid } from '../core/index';
+import { SlickEventHandler, type SlickDataView, SlickGroup, type SlickGrid, type SlickEventData } from '../core/index';
 import type {
   Column,
-  DOMEvent,
   GridOption,
   GroupingFormatterItem,
   GroupItemMetadataProviderOption,
@@ -101,7 +100,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     };
   }
 
-  getTotalsRowMetadata(item: { group: GroupingFormatterItem }) {
+  getTotalsRowMetadata(item: { group: GroupingFormatterItem; }) {
     return {
       selectable: false,
       focusable: this._options.totalsFocusable,
@@ -151,8 +150,8 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
   }
 
   /** Handle a grid cell clicked, it could be a Group that is being collapsed/expanded or do nothing when it's not */
-  protected handleGridClick(e: DOMEvent<HTMLDivElement>, args: OnClickEventArgs) {
-    const target = e.target;
+  protected handleGridClick(e: SlickEventData, args: OnClickEventArgs) {
+    const target = e.target as HTMLElement;
     const item = this._grid?.getDataItem(args.row);
     if (item instanceof SlickGroup && target.classList.contains(this._options.toggleCssClass || '')) {
       this.handleDataViewExpandOrCollapse(item);
@@ -165,7 +164,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
    * Handle a keyboard down event on a grouping cell.
    * TODO:  add -/+ handling
    */
-  protected handleGridKeyDown(e: KeyboardEvent) {
+  protected handleGridKeyDown(e: SlickEventData) {
     if (this._options.enableExpandCollapse && (e.key === ' ')) {
       const activeCell = this._grid?.getActiveCell();
       if (activeCell) {

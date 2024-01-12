@@ -163,7 +163,7 @@ export class SlickRowSelectionModel implements SelectionModel {
     }
   }
 
-  protected handleClick(e: MouseEvent): boolean | void {
+  protected handleClick(e: SlickEventData): boolean | void {
     const cell = this._grid.getCellFromEvent(e);
     if (!cell || !this._grid.canCellBeActive(cell.row, cell.cell)) {
       return false;
@@ -204,7 +204,7 @@ export class SlickRowSelectionModel implements SelectionModel {
     return true;
   }
 
-  protected handleKeyDown(e: KeyboardEvent) {
+  protected handleKeyDown(e: SlickEventData) {
     const activeRow = this._grid.getActiveCell();
 
     if (this.gridOptions.multiSelect && activeRow &&

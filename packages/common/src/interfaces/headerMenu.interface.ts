@@ -5,7 +5,7 @@ import type {
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
 } from './index';
-import { SlickGrid } from '../core/index';
+import { SlickGrid, type SlickEventData } from '../core/index';
 
 export interface HeaderMenuCommandItemCallbackArgs {
   /** Column definition */
@@ -27,11 +27,11 @@ export interface HeaderMenu extends HeaderMenuOption {
   onExtensionRegistered?: (plugin: SlickHeaderMenu) => void;
 
   /** Fired After the header menu shows up. */
-  onAfterMenuShow?: (e: Event, args: HeaderMenuCommandItemCallbackArgs) => boolean | void;
+  onAfterMenuShow?: (e: Event | SlickEventData, args: HeaderMenuCommandItemCallbackArgs) => boolean | void;
 
   /** Fired Before the header menu shows up. */
-  onBeforeMenuShow?: (e: Event, args: HeaderMenuCommandItemCallbackArgs) => boolean | void;
+  onBeforeMenuShow?: (e: Event | SlickEventData, args: HeaderMenuCommandItemCallbackArgs) => boolean | void;
 
   /** Fired when a command is clicked */
-  onCommand?: (e: Event, args: MenuCommandItemCallbackArgs) => void;
+  onCommand?: (e: Event | SlickEventData, args: MenuCommandItemCallbackArgs) => void;
 }

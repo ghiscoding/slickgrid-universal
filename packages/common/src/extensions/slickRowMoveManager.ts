@@ -160,12 +160,12 @@ export class SlickRowMoveManager {
   // protected functions
   // ------------------
 
-  protected handleDragInit(e: MouseEvent) {
+  protected handleDragInit(e: SlickEventData) {
     // prevent the grid from cancelling drag'n'drop by default
     e.stopImmediatePropagation();
   }
 
-  protected handleDragEnd(e: MouseEvent, dd: DragRowMove) {
+  protected handleDragEnd(e: SlickEventData, dd: DragRowMove) {
     if (!this._dragging) {
       return;
     }
@@ -184,7 +184,7 @@ export class SlickRowMoveManager {
       };
       // TODO:  this._grid.remapCellCssClasses ?
       if (typeof this._addonOptions.onMoveRows === 'function') {
-        this._addonOptions.onMoveRows(e, eventData);
+        this._addonOptions.onMoveRows(e instanceof SlickEventData ? e.getNativeEvent() : e, eventData);
       }
       this.onMoveRows.notify(eventData);
     }

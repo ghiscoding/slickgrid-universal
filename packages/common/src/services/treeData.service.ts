@@ -18,7 +18,7 @@ import {
 } from './utilities';
 import type { SharedService } from './shared.service';
 import type { SortService } from './sort.service';
-import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
+import { type SlickDataView, SlickEventHandler, type SlickGrid, type SlickEventData } from '../core/index';
 
 export class TreeDataService {
   protected _lastToggleStateChange!: Omit<TreeToggleStateChange, 'fromItemId'>;
@@ -287,7 +287,7 @@ export class TreeDataService {
    * @param {Object} gridOptions - grid options
    * @returns {Array<Object>} - tree dataset
    */
-  convertFlatParentChildToTreeDatasetAndSort<P, T extends P & { [childrenPropName: string]: T[] }>(flatDataset: P[], columnDefinitions: Column[], gridOptions: GridOption) {
+  convertFlatParentChildToTreeDatasetAndSort<P, T extends P & { [childrenPropName: string]: T[]; }>(flatDataset: P[], columnDefinitions: Column[], gridOptions: GridOption) {
     // 1- convert the flat array into a hierarchical array
     const datasetHierarchical = this.convertFlatParentChildToTreeDataset(flatDataset, gridOptions);
 
@@ -308,7 +308,7 @@ export class TreeDataService {
    * @param {Object} gridOptions - grid options
    * @returns {Array<Object>} - tree dataset
    */
-  convertFlatParentChildToTreeDataset<P, T extends P & { [childrenPropName: string]: P[] }>(flatDataset: P[], gridOptions: GridOption): T[] {
+  convertFlatParentChildToTreeDataset<P, T extends P & { [childrenPropName: string]: P[]; }>(flatDataset: P[], gridOptions: GridOption): T[] {
     const dataViewIdIdentifier = gridOptions?.datasetIdPropertyName ?? 'id';
     const treeDataOpt: TreeDataOption = gridOptions?.treeDataOptions ?? { columnId: 'id' };
     const treeDataOptions = {
@@ -408,7 +408,7 @@ export class TreeDataService {
   // protected functions
   // ------------------
 
-  protected handleOnCellClick(event: MouseEvent, args: OnClickEventArgs) {
+  protected handleOnCellClick(event: SlickEventData, args: OnClickEventArgs) {
     if (event && args) {
       const targetElm: any = event.target || {};
       const idPropName = this.gridOptions.datasetIdPropertyName ?? 'id';
