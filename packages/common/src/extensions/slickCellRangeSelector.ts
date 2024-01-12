@@ -2,7 +2,6 @@ import { deepMerge, emptyElement, getOffset, } from '@slickgrid-universal/utils'
 
 import type {
   CellRangeSelectorOption,
-  DOMMouseOrTouchEvent,
   DragPosition,
   DragRange,
   DragRowMove,
@@ -316,7 +315,7 @@ export class SlickCellRangeSelector {
     }
   }
 
-  protected handleDragInit(e: Event) {
+  protected handleDragInit(e: SlickEventData) {
     // Set the active canvas node because the decorator needs to append its
     // box to the correct canvas
     this._activeCanvas = this._grid.getActiveCanvasNode(e);
@@ -354,7 +353,7 @@ export class SlickCellRangeSelector {
     }
   }
 
-  protected handleDragStart(e: DOMMouseOrTouchEvent<HTMLDivElement>, dd: DragRowMove) {
+  protected handleDragStart(e: SlickEventData, dd: DragRowMove) {
     const cellObj = this._grid.getCellFromEvent(e);
     if (cellObj && this.onBeforeCellRangeSelected.notify(cellObj).getReturnValue() !== false && this._grid.canCellBeSelected(cellObj.row, cellObj.cell)) {
       this._dragging = true;
@@ -384,7 +383,7 @@ export class SlickCellRangeSelector {
     return this._decorator.show(new SlickRange(start.row, start.cell));
   }
 
-  protected handleScroll(_e: DOMMouseOrTouchEvent<HTMLDivElement>, args: OnScrollEventArgs) {
+  protected handleScroll(_e: SlickEventData, args: OnScrollEventArgs) {
     this._scrollTop = args.scrollTop;
     this._scrollLeft = args.scrollLeft;
   }

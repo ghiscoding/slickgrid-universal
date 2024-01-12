@@ -139,7 +139,7 @@ export class SlickCellExcelCopyManager {
     let newRowIds = 0;
 
     return {
-      clipboardCommandHandler: (editCommand: any) => {
+      clipboardCommandHandler: (editCommand: EditCommand) => {
         this._undoRedoBuffer.queueAndExecuteCommand.call(this._undoRedoBuffer, editCommand);
       },
       dataItemColumnValueExtractor: (item: any, columnDef: Column) => {

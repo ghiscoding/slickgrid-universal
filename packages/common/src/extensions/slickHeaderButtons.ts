@@ -14,7 +14,7 @@ import type {
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import type { SharedService } from '../services/shared.service';
 import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from './menuBaseClass';
-import { SlickEventHandler, type SlickGrid } from '../core/index';
+import { SlickEventHandler, type SlickEventData, type SlickGrid } from '../core/index';
 
 /**
  * A plugin to add custom buttons to column headers.
@@ -84,7 +84,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
    * @param {Object} event - The event
    * @param {Object} args - object arguments
    */
-  protected handleHeaderCellRendered(_e: Event, args: OnHeaderCellRenderedEventArgs) {
+  protected handleHeaderCellRendered(_e: SlickEventData, args: OnHeaderCellRenderedEventArgs) {
     const column = args.column;
 
     if (column.header?.buttons && Array.isArray(column.header.buttons)) {
@@ -112,7 +112,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
    * @param {Object} event - The event
    * @param {Object} args.column - The column definition
    */
-  protected handleBeforeHeaderCellDestroy(_e: Event, args: { column: Column; node: HTMLElement; }) {
+  protected handleBeforeHeaderCellDestroy(_e: SlickEventData, args: { column: Column; node: HTMLElement; }) {
     const column = args.column;
 
     if (column.header?.buttons && this._addonOptions?.buttonCssClass) {

@@ -2,7 +2,7 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, emptyElement } from '@slickgrid-universal/utils';
 
-import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index';
+import { type SlickDataView, type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
 import type { CheckboxSelectorOption, Column, DOMMouseOrTouchEvent, GridOption, OnHeaderClickEventArgs, SelectableOverrideCallback } from '../interfaces/index';
 import { SlickRowSelectionModel } from './slickRowSelectionModel';
 import { SelectionModel } from '../enums/index';
@@ -155,7 +155,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     } else {
       if (!this._addonOptions.hideInColumnTitleRow) {
         this.renderSelectAllCheckbox(this._isSelectAllChecked);
-        this._eventHandler.subscribe(this._grid.onHeaderClick, this.handleHeaderClick.bind(this) as EventListener);
+        this._eventHandler.subscribe(this._grid.onHeaderClick, this.handleHeaderClick.bind(this));
       } else {
         this.hideSelectAllFromColumnHeaderTitleRow();
       }
@@ -245,7 +245,7 @@ export class SlickCheckboxSelectColumn<T = any> {
    * @param {Number} row - grid row number to toggle
    * @returns
    */
-  toggleRowSelectionWithEvent(event: Event | null, row: number) {
+  toggleRowSelectionWithEvent(event: SlickEventData | null, row: number) {
     const dataContext = this._grid.getDataItem(row);
     if (!this.checkSelectableOverride(row, dataContext, this._grid)) {
       return;
@@ -365,10 +365,10 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
-  protected handleClick(e: DOMMouseOrTouchEvent<HTMLInputElement>, args: { row: number; cell: number; grid: SlickGrid; }) {
+  protected handleClick(e: SlickEventData, args: { row: number; cell: number; grid: SlickGrid; }) {
     // clicking on a row select checkbox
-    if (this._grid.getColumns()[args.cell].id === this._addonOptions.columnId && e.target.type === 'checkbox') {
-      e.target.ariaChecked = String(e.target.checked);
+    if (this._grid.getColumns()[args.cell].id === this._addonOptions.columnId && (e.target as HTMLInputElement).type === 'checkbox') {
+      (e.target as HTMLInputElement).ariaChecked = String((e.target as HTMLInputElement).checked);
 
       // if editing, try to commit
       if (this._grid.getEditorLock().isActive() && !this._grid.getEditorLock().commitCurrentEdit()) {
@@ -383,9 +383,9 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
-  protected handleHeaderClick(e: DOMMouseOrTouchEvent<HTMLInputElement>, args: OnHeaderClickEventArgs) {
-    if (args.column.id === this._addonOptions.columnId && e.target.type === 'checkbox') {
-      e.target.ariaChecked = String(e.target.checked);
+  protected handleHeaderClick(e: DOMMouseOrTouchEvent<HTMLInputElement> | SlickEventData, args: OnHeaderClickEventArgs) {
+    if (args.column.id === this._addonOptions.columnId && (e.target as HTMLInputElement).type === 'checkbox') {
+      (e.target as HTMLInputElement).ariaChecked = String((e.target as HTMLInputElement).checked);
 
       // if editing, try to commit
       if (this._grid.getEditorLock().isActive() && !this._grid.getEditorLock().commitCurrentEdit()) {
@@ -395,7 +395,7 @@ export class SlickCheckboxSelectColumn<T = any> {
       }
 
       // who called the selection?
-      let isAllSelected = e.target.checked;
+      let isAllSelected = (e.target as HTMLInputElement).checked;
       const caller = isAllSelected ? 'click.selectAll' : 'click.unselectAll';
 
       // trigger event before the real selection so that we have an event before & the next one after the change
@@ -446,7 +446,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
-  protected handleKeyDown(e: KeyboardEvent, args: any) {
+  protected handleKeyDown(e: SlickEventData, args: any) {
     if (e.key === ' ') {
       if (this._grid.getColumns()[args.cell].id === this._addonOptions.columnId) {
         // if editing, try to commit

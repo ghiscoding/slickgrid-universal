@@ -8,10 +8,12 @@ import type {
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
   MenuOptionItem,
+  OnClickEventArgs,
 } from '../interfaces/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
 import type { SharedService } from '../services/shared.service';
 import { MenuFromCellBaseClass } from './menuFromCellBaseClass';
+import type { SlickEventData } from '../core';
 
 /**
  * A plugin to add Menu on a Cell click (click on the cell that has the cellMenu object defined)
@@ -63,10 +65,10 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
     // sort all menu items by their position order when defined
     this.sortMenuItems(this.sharedService.allColumns);
 
-    this._eventHandler.subscribe(this.grid.onClick, this.handleCellClick.bind(this) as EventListener);
+    this._eventHandler.subscribe(this.grid.onClick, this.handleCellClick.bind(this));
 
     if (this._addonOptions.hideMenuOnScroll) {
-      this._eventHandler.subscribe(this.grid.onScroll, this.closeMenu.bind(this) as EventListener);
+      this._eventHandler.subscribe(this.grid.onScroll, this.closeMenu.bind(this));
     }
   }
 
@@ -102,7 +104,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   // event handlers
   // ------------------
 
-  protected handleCellClick(event: DOMMouseOrTouchEvent<HTMLDivElement>, args: MenuCommandItemCallbackArgs) {
+  protected handleCellClick(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: OnClickEventArgs) {
     this.disposeAllMenus(); // make there's only 1 parent menu opened at a time
     const cell = this.grid.getCellFromEvent(event);
 
@@ -119,11 +121,11 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
       this._addonOptions = { ...this._addonOptions, ...columnDef.cellMenu };
 
       // run the override function (when defined), if the result is false it won't go further
-      args = args || {};
-      args.column = columnDef;
-      args.dataContext = dataContext;
-      args.grid = this.grid;
-      if (!this.extensionUtility.runOverrideFunctionWhenExists(this._addonOptions.menuUsabilityOverride, args)) {
+      const menuArgs = (args || {}) as MenuCommandItemCallbackArgs;
+      menuArgs.column = columnDef;
+      menuArgs.dataContext = dataContext;
+      menuArgs.grid = this.grid;
+      if (!this.extensionUtility.runOverrideFunctionWhenExists(this._addonOptions.menuUsabilityOverride, menuArgs)) {
         return;
       }
 

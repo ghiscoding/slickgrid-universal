@@ -1,7 +1,6 @@
 import { createDomElement, SlickEvent, SlickEventHandler, Utils as SlickUtils } from '@slickgrid-universal/common';
 import type {
   Column,
-  DOMMouseOrTouchEvent,
   ExternalResource,
   FormatterResultWithHtml,
   GridOption,
@@ -152,9 +151,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     this.gridOptions.minRowBuffer = this._addonOptions.panelRows + 3;
 
     this._eventHandler
-      .subscribe(this._grid.onClick, this.handleClick.bind(this) as EventListener)
+      .subscribe(this._grid.onClick, this.handleClick.bind(this))
       .subscribe(this._grid.onBeforeEditCell, () => this.collapseAll())
-      .subscribe(this._grid.onScroll, this.handleScroll.bind(this) as EventListener);
+      .subscribe(this._grid.onScroll, this.handleScroll.bind(this));
 
     // Sort will, by default, Collapse all of the open items (unless user implements his own onSort which deals with open row and padding)
     if (this._addonOptions.collapseAllOnSort) {
@@ -335,7 +334,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
    * subscribe to the onAsyncResponse so that the plugin knows when the user server side calls finished
    * the response has to be as "args.item" (or "args.itemDetail") with it's data back
    */
-  handleOnAsyncResponse(_e: Event, args: { item: any; itemDetail: any; detailView?: any; }) {
+  handleOnAsyncResponse(_e: SlickEventData, args: { item: any; itemDetail: any; detailView?: any; }) {
     if (!args || (!args.item && !args.itemDetail)) {
       console.error('SlickRowDetailView plugin requires the onAsyncResponse() to supply "args.item" property.');
       return;
@@ -684,13 +683,13 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   /** Handle mouse click event */
-  protected handleClick(e: DOMMouseOrTouchEvent<HTMLDivElement>, args: { row: number; cell: number; }) {
+  protected handleClick(e: SlickEventData, args: { row: number; cell: number; }) {
     const dataContext = this._grid.getDataItem(args.row);
 
     if (this.checkExpandableOverride(args.row, dataContext, this._grid)) {
       // clicking on a row select checkbox
       const columnDef = this._grid.getColumns()[args.cell];
-      if (this._addonOptions.useRowClick || (columnDef.id === this._addonOptions.columnId && e.target.classList.contains(this._addonOptions.cssClass || ''))) {
+      if (this._addonOptions.useRowClick || (columnDef.id === this._addonOptions.columnId && e.target!.classList.contains(this._addonOptions.cssClass || ''))) {
         // if editing, try to commit
         if (this._grid.getEditorLock().isActive() && !this._grid.getEditorLock().commitCurrentEdit()) {
           e.preventDefault();

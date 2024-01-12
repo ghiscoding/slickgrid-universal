@@ -71,10 +71,10 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   protected items: TData[] = [];            // data by index
   protected rows: TData[] = [];             // data by row
   protected idxById = new Map<DataIdType, number>();   // indexes by id
-  protected rowsById: { [id: DataIdType]: number } | undefined = undefined;       // rows by id; lazy-calculated
+  protected rowsById: { [id: DataIdType]: number; } | undefined = undefined;       // rows by id; lazy-calculated
   protected filter: FilterFn<TData> | null = null;         // filter function
   protected filterCSPSafe: FilterFn<TData> | null = null;         // filter function
-  protected updated: ({ [id: DataIdType]: boolean }) | null = null;        // updated item ids
+  protected updated: ({ [id: DataIdType]: boolean; }) | null = null;        // updated item ids
   protected suspend = false;            // suspends the recalculation
   protected isBulkSuspend = false;      // delays protectedious operations like the
   // index update and delete to efficient
@@ -107,7 +107,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     displayTotalsRow: true,
     lazyTotalsCalculation: false
   };
-  protected groupingInfos: Array<Grouping & { aggregators: Aggregator[]; getterIsAFn?: boolean; compiledAccumulators: any[]; getter: GroupGetterFn | string }> = [];
+  protected groupingInfos: Array<Grouping & { aggregators: Aggregator[]; getterIsAFn?: boolean; compiledAccumulators: any[]; getter: GroupGetterFn | string; }> = [];
   protected groups: SlickGroup[] = [];
   protected toggledGroupsByLevel: any[] = [];
   protected groupingDelimiter = ':|:';
@@ -752,7 +752,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
 
     // overrides for totals rows
     if ((item as SlickGroupTotals).__groupTotals) {
-      return this._options.groupItemMetadataProvider!.getTotalsRowMetadata(item as { group: GroupingFormatterItem });
+      return this._options.groupItemMetadataProvider!.getTotalsRowMetadata(item as { group: GroupingFormatterItem; });
     }
 
     return null;
@@ -1409,7 +1409,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       }
     };
 
-    grid.onSelectedRowsChanged.subscribe((_e: Event, args: { rows: number[]; }) => {
+    grid.onSelectedRowsChanged.subscribe((_e: SlickEventData, args: { rows: number[]; }) => {
       if (!inHandler) {
         const newSelectedRowIds = this.mapRowsToIds(args.rows);
         const selectedRowsChangedArgs = {

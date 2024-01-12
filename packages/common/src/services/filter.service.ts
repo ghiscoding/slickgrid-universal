@@ -16,6 +16,7 @@ import type {
   Column,
   ColumnFilters,
   CurrentFilter,
+  DOMMouseOrTouchEvent,
   Filter,
   FilterArguments,
   FilterCallbackArg,
@@ -220,7 +221,7 @@ export class FilterService {
     this.subscribeToOnHeaderRowCellRendered(grid);
   }
 
-  async clearFilterByColumnId(event: Event, columnId: number | string): Promise<boolean> {
+  async clearFilterByColumnId(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, columnId: number | string): Promise<boolean> {
     await this.pubSubService.publish('onBeforeFilterClear', { columnId }, 0);
 
     const isBackendApi = this._gridOptions.backendServiceApi ?? false;
@@ -242,7 +243,7 @@ export class FilterService {
     // when using a backend service, we need to manually trigger a filter change but only if the filter was previously filled
     if (isBackendApi) {
       if (currentColFilter !== undefined) {
-        this.onBackendFilterChange(event as KeyboardEvent, { grid: this._grid, columnFilters: this._columnFilters } as unknown as OnSearchChangeEventArgs);
+        this.onBackendFilterChange(event, { grid: this._grid, columnFilters: this._columnFilters } as unknown as OnSearchChangeEventArgs);
       }
     }
 
@@ -719,7 +720,7 @@ export class FilterService {
     }
   }
 
-  async onBackendFilterChange(event: KeyboardEvent, args: OnSearchChangeEventArgs) {
+  async onBackendFilterChange(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: OnSearchChangeEventArgs) {
     const isTriggeringQueryEvent = args?.shouldTriggerQuery;
 
     if (isTriggeringQueryEvent) {
@@ -746,7 +747,7 @@ export class FilterService {
 
     // query backend, except when it's called by a ClearFilters then we won't
     if (isTriggeringQueryEvent) {
-      const query = await backendApi.service.processOnFilterChanged(event, args as FilterChangedArgs);
+      const query = await backendApi.service.processOnFilterChanged(event as Event, args as FilterChangedArgs);
       const totalItems = this._gridOptions.pagination?.totalItems ?? 0;
       this.backendUtilities?.executeBackendCallback(backendApi, query, args, startTime, totalItems, {
         errorCallback: this.resetToPreviousSearchFilters.bind(this),
@@ -1071,7 +1072,7 @@ export class FilterService {
   // -------------------
 
   /** Add all created filters (from their template) to the header row section area */
-  protected addFilterTemplateToHeaderRow(args: { column: Column; grid: SlickGrid; node: HTMLElement }, isFilterFirstRender = true) {
+  protected addFilterTemplateToHeaderRow(args: { column: Column; grid: SlickGrid; node: HTMLElement; }, isFilterFirstRender = true) {
     const columnDef = args.column;
     const columnId = columnDef?.id ?? '';
 
