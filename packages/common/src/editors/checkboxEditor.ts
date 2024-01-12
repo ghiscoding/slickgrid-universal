@@ -317,7 +317,7 @@ export class CheckboxEditor implements Editor {
     }
     grid.onCompositeEditorChange.notify(
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
-      { ...new SlickEventData(), ...event as Event }
+      new SlickEventData(event)
     );
   }
 }
