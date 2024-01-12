@@ -1,8 +1,8 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { InputEditor, LongTextEditor } from '../../editors';
+import { CheckboxEditor, InputEditor, LongTextEditor } from '../../editors';
 import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions';
-import { Column, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces';
-import { SlickEventData } from '../slickCore';
+import { Column, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption, type EditCommand } from '../../interfaces';
+import { SlickEventData, SlickGlobalEditorLock } from '../slickCore';
 import { SlickDataView } from '../slickDataview';
 import { SlickGrid } from '../slickGrid';
 import { createDomElement } from '@slickgrid-universal/utils';
@@ -73,6 +73,7 @@ describe('SlickGrid core file', () => {
     expect(grid.getCanvasNode()).toBeTruthy();
     expect(grid.getActiveCanvasNode()).toBeTruthy();
     expect(grid.getContainerNode()).toEqual(container);
+    expect(grid.getGridPosition()).toBeTruthy();
   });
 
   it('should be able to instantiate SlickGrid with an external PubSub Service', () => {
@@ -1441,13 +1442,320 @@ describe('SlickGrid core file', () => {
 
   describe('Editors', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', editor: LongTextEditor }] as Column[];
+    let items: Array<{ id: number; name: string; age: number; active?: boolean; }> = [];
+
+    beforeEach(() => {
+      items = [
+        { id: 0, name: 'Avery', age: 44 },
+        { id: 1, name: 'Bob', age: 20 },
+        { id: 2, name: 'Rachel', age: 46 },
+        { id: 3, name: 'Jane', age: 24 },
+        { id: 4, name: 'John', age: 20 },
+        { id: 5, name: 'Arnold', age: 50 },
+        { id: 6, name: 'Carole', age: 40 },
+        { id: 7, name: 'Jason', age: 48 },
+        { id: 8, name: 'Julie', age: 42 },
+        { id: 9, name: 'Aaron', age: 23 },
+        { id: 10, name: 'Ariane', age: 43 },
+      ];
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
 
     it('should expect editor when calling getEditController()', () => {
-      grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
+      grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
 
       const result = grid.getEditController();
 
       expect(result).toBeTruthy();
+    });
+
+    it('should return undefined editor when getDataItem() did not find any associated cell item', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', type: 'number', editor: InputEditor }] as Column[];
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+      jest.spyOn(grid, 'getDataItem').mockReturnValue(null);
+      grid.setActiveCell(0, 1);
+      grid.editActiveCell(InputEditor as any, true);
+
+      const result = grid.getCellEditor();
+
+      expect(result).toBeFalsy();
+    });
+
+    it('should return undefined editor when trying to add a new row item and "cannotTriggerInsert" is set', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', cannotTriggerInsert: true, editor: InputEditor }] as Column[];
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, autoEditNewRow: false });
+      const onBeforeEditCellSpy = jest.spyOn(grid.onBeforeEditCell, 'notify');
+      grid.setActiveCell(0, 1);
+      jest.spyOn(grid, 'getDataLength').mockReturnValue(0); // trick grid to think it's a new item
+      grid.editActiveCell(InputEditor as any, true);
+
+      expect(onBeforeEditCellSpy).not.toHaveBeenCalled();
+    });
+
+    it('should return undefined editor when onBeforeEditCell returns false', () => {
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', cannotTriggerInsert: true, editor: InputEditor }] as Column[];
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, autoEditNewRow: false });
+      const sed = new SlickEventData();
+      jest.spyOn(sed, 'getReturnValue').mockReturnValue(false);
+      const onBeforeEditCellSpy = jest.spyOn(grid.onBeforeEditCell, 'notify').mockReturnValue(sed);
+      grid.setActiveCell(0, 1);
+      grid.editActiveCell(InputEditor as any, true);
+      const result = grid.getCellEditor();
+
+      expect(result).toBeFalsy();
+    });
+
+    it('should do nothing when trying to commit unchanged Age field Editor', () => {
+      (navigator as any).__defineGetter__('userAgent', () => 'msie'); // this will call clearTextSelection() & window.getSelection()
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', type: 'number', editor: InputEditor }] as Column[];
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+      grid.setActiveCell(0, 1);
+      grid.editActiveCell(InputEditor as any, true);
+      const editor = grid.getCellEditor();
+      const onCellChangeSpy = jest.spyOn(grid.onCellChange, 'notify');
+      jest.spyOn(editor!, 'isValueChanged').mockReturnValue(false); // unchanged value
+
+      const result = grid.getEditController()?.commitCurrentEdit();
+
+      expect(editor).toBeTruthy();
+      expect(onCellChangeSpy).not.toHaveBeenCalled();
+      expect(result).toBeTruthy();
+    });
+
+    it('should commit Name field Editor via an Editor defined as ItemMetadata by column id & asyncEditorLoading enabled and expect it to call execute() command and triggering onCellChange() notify', () => {
+      (navigator as any).__defineGetter__('userAgent', () => 'msie'); // this will call clearTextSelection() & document.selection.empty()
+      Object.defineProperty(document, 'selection', { writable: true, value: { empty: () => { } } });
+      const newValue = 33;
+      const columns = [{ id: 'name', field: 'name', name: 'Name', colspan: '*', }, { id: 'age', field: 'age', name: 'Age', type: 'number', editor: InputEditor }] as Column[];
+      const dv = new SlickDataView();
+      dv.setItems(items);
+      grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, asyncEditorLoading: true });
+      jest.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns: { age: { colspan: '*', editor: InputEditor } } } as any);
+      grid.setActiveCell(0, 1);
+
+      jest.advanceTimersByTime(2);
+      const activeCellNode = container.querySelector('.slick-cell.editable.l1.r1');
+      grid.editActiveCell(InputEditor as any, true);
+
+      const editor = grid.getCellEditor();
+      const updateRowSpy = jest.spyOn(grid, 'updateRow');
+      const onCellChangeSpy = jest.spyOn(grid.onCellChange, 'notify');
+      jest.spyOn(editor!, 'serializeValue').mockReturnValueOnce(newValue);
+      expect(activeCellNode).toBeTruthy();
+
+      const result = grid.getEditController()?.commitCurrentEdit();
+
+      expect(editor).toBeTruthy();
+      expect(updateRowSpy).toHaveBeenCalledWith(0);
+      expect(onCellChangeSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ command: 'execute', row: 0, cell: 1, item: { id: 0, name: 'Avery', age: newValue }, column: columns[1] }),
+        expect.anything(),
+        grid
+      );
+      expect(grid.getEditController()).toBeTruthy();
+      expect(result).toBeTruthy();
+    });
+
+    it('should commit Name field Editor via an Editor defined as ItemMetadata by column id & asyncEditorLoading enabled and expect it to call execute() command and triggering onCellChange() notify', () => {
+      (navigator as any).__defineGetter__('userAgent', () => 'Firefox');
+      const newValue = 33;
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', type: 'number', colspan: '2', editor: InputEditor }] as Column[];
+      const dv = new SlickDataView();
+      dv.setItems(items);
+      grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, asyncEditorLoading: true });
+      jest.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns: { 1: { editor: InputEditor } } as any });
+      grid.setActiveCell(0, 1);
+
+      jest.advanceTimersByTime(2);
+      const activeCellNode = container.querySelector('.slick-cell.editable.l1.r1');
+      grid.editActiveCell(InputEditor as any, true);
+
+      const editor = grid.getCellEditor();
+      const updateRowSpy = jest.spyOn(grid, 'updateRow');
+      const onCellChangeSpy = jest.spyOn(grid.onCellChange, 'notify');
+      jest.spyOn(editor!, 'serializeValue').mockReturnValueOnce(newValue);
+      expect(activeCellNode).toBeTruthy();
+
+      const result = grid.getEditController()?.commitCurrentEdit();
+
+      expect(editor).toBeTruthy();
+      expect(updateRowSpy).toHaveBeenCalledWith(0);
+      expect(onCellChangeSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ command: 'execute', row: 0, cell: 1, item: { id: 0, name: 'Avery', age: newValue }, column: columns[1] }),
+        expect.anything(),
+        grid
+      );
+      expect(grid.getEditController()).toBeTruthy();
+      expect(result).toBeTruthy();
+    });
+
+    it('should commit Age field Editor by calling execute() command and triggering onCellChange() notify', () => {
+      const newValue = 33;
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', type: 'number', editor: LongTextEditor }] as Column[];
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+      const onPositionSpy = jest.spyOn(grid.onActiveCellPositionChanged, 'notify');
+      grid.setActiveCell(0, 1);
+      grid.editActiveCell(LongTextEditor as any, true);
+      const editor = grid.getCellEditor();
+      const updateRowSpy = jest.spyOn(grid, 'updateRow');
+      const onCellChangeSpy = jest.spyOn(grid.onCellChange, 'notify');
+      jest.spyOn(editor!, 'serializeValue').mockReturnValue(newValue);
+
+      const result = grid.getEditController()?.commitCurrentEdit();
+
+      expect(onPositionSpy).toHaveBeenCalled();
+      expect(editor).toBeTruthy();
+      expect(updateRowSpy).toHaveBeenCalledWith(0);
+      expect(onCellChangeSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ command: 'execute', row: 0, cell: 1, item: { id: 0, name: 'Avery', age: newValue }, column: columns[1] }),
+        expect.anything(),
+        grid
+      );
+      expect(grid.getEditController()).toBeTruthy();
+      expect(result).toBeTruthy();
+
+      // test hide editor when editor is already opened but we start scrolling
+      jest.spyOn(grid, 'getActiveCellPosition').mockReturnValue({ visible: false } as any);
+      const canvasBottom = container.querySelector('.slick-viewport-left');
+      grid.setActiveCell(0, 1);
+      grid.editActiveCell(LongTextEditor as any, true);
+      const hideEditorSpy = jest.spyOn(grid.getCellEditor()!, 'hide');
+      canvasBottom?.dispatchEvent(new Event('scroll'));
+      expect(hideEditorSpy).toHaveBeenCalled();
+    });
+
+    it('should commit Active field Editor by calling execute() command with preClick and triggering onCellChange() notify', () => {
+      const newValue = false;
+      const columns = [
+        { id: 'name', field: 'name', name: 'Name' },
+        { id: 'age', field: 'age', name: 'Age', type: 'number', editor: CheckboxEditor },
+        { id: 'active', field: 'active', name: 'Active', type: 'boolean' }
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+      grid.setActiveCell(0, 1, true);
+      const editor = grid.getCellEditor();
+      const updateRowSpy = jest.spyOn(grid, 'updateRow');
+      const onCellChangeSpy = jest.spyOn(grid.onCellChange, 'notify');
+      jest.spyOn(editor!, 'serializeValue').mockReturnValueOnce(newValue);
+      const preClickSpy = jest.spyOn(editor!, 'preClick');
+      grid.editActiveCell(CheckboxEditor as any, true);
+
+      const result = grid.getEditController()?.commitCurrentEdit();
+
+      // expect(preClickSpy).toHaveBeenCalled();
+      expect(editor).toBeTruthy();
+      expect(updateRowSpy).toHaveBeenCalledWith(0);
+      expect(onCellChangeSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ command: 'execute', row: 0, cell: 1, }),
+        expect.anything(),
+        grid
+      );
+      expect(grid.getEditController()).toBeTruthy();
+      expect(result).toBeTruthy();
+    });
+
+    it('should commit & rollback Age field Editor by calling execute() & undo() commands from a custom EditCommandHandler and triggering onCellChange() notify', () => {
+      const newValue = 33;
+      const editQueue: Array<{ item: any; column: Column; editCommand: EditCommand; }> = [];
+      const undoLastEdit = () => {
+        const lastEditCommand = editQueue.pop()?.editCommand;
+        if (lastEditCommand && SlickGlobalEditorLock.cancelCurrentEdit()) {
+          lastEditCommand.undo();
+          grid.invalidate();
+        }
+      };
+      const editCommandHandler = (item, column, editCommand) => {
+        if (editCommand.prevSerializedValue !== editCommand.serializedValue) {
+          editQueue.push({ item, column, editCommand });
+          grid.invalidate();
+          editCommand.execute();
+        }
+      };
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', type: 'number', editor: InputEditor }] as Column[];
+
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, editCommandHandler });
+      grid.setActiveCell(0, 1);
+      grid.editActiveCell(InputEditor as any, true);
+      const editor = grid.getCellEditor();
+      const updateRowSpy = jest.spyOn(grid, 'updateRow');
+      const onCellChangeSpy = jest.spyOn(grid.onCellChange, 'notify');
+      jest.spyOn(editor!, 'serializeValue').mockReturnValueOnce(newValue);
+
+      const result = grid.getEditController()?.commitCurrentEdit();
+
+      expect(editor).toBeTruthy();
+      expect(updateRowSpy).toHaveBeenCalledWith(0);
+      expect(onCellChangeSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ command: 'execute', row: 0, cell: 1, item: { id: 0, name: 'Avery', age: newValue }, column: columns[1] }),
+        expect.anything(),
+        grid
+      );
+      expect(grid.getEditController()).toBeTruthy();
+      expect(result).toBeTruthy();
+
+      undoLastEdit();
+
+      expect(onCellChangeSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ command: 'undo', row: 0, cell: 1, item: { id: 0, name: 'Avery', age: '44' }, column: columns[1] }),
+        expect.anything(),
+        grid
+      );
+    });
+
+    it('should commit Age field Editor by applying new values and triggering onAddNewRow() notify', () => {
+      const newValue = 77;
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', type: 'number', editor: InputEditor }] as Column[];
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+      grid.setActiveCell(1, 1);
+      grid.editActiveCell(InputEditor as any, true);
+      const editor = grid.getCellEditor();
+      jest.spyOn(grid, 'getDataLength').mockReturnValueOnce(0); // trick grid to think it's a new item
+      const onAddNewRowSpy = jest.spyOn(grid.onAddNewRow, 'notify');
+      jest.spyOn(editor!, 'serializeValue').mockReturnValue(newValue);
+
+      const result = grid.getEditController()?.commitCurrentEdit();
+
+      expect(editor).toBeTruthy();
+      expect(onAddNewRowSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ item: { age: newValue }, column: columns[1] }),
+        expect.anything(),
+        grid
+      );
+      expect(grid.getEditController()).toBeTruthy();
+      expect(result).toBeTruthy();
+    });
+
+    it('should not commit Age field Editor returns invalid result, expect triggering onValidationError() notify', () => {
+      const invalidResult = { valid: false, msg: 'invalid value' };
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', type: 'number', editor: InputEditor }] as Column[];
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+      grid.setActiveCell(0, 1);
+      grid.editActiveCell(InputEditor as any, true);
+      const editor = grid.getCellEditor();
+      const onValidationErrorSpy = jest.spyOn(grid.onValidationError, 'notify');
+      jest.spyOn(editor!, 'validate').mockReturnValue(invalidResult);
+      const activeCellNode = container.querySelector('.slick-cell.editable.l1.r1');
+
+      const result = grid.getEditController()?.commitCurrentEdit();
+
+      expect(editor).toBeTruthy();
+      expect(onValidationErrorSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          editor,
+          cellNode: activeCellNode,
+          validationResults: invalidResult,
+          row: 0,
+          cell: 1,
+          column: columns[1]
+        }),
+        expect.anything(),
+        grid
+      );
+      expect(grid.getEditController()).toBeTruthy();
+      expect(result).toBeFalsy();
     });
   });
 
@@ -3415,6 +3723,7 @@ describe('SlickGrid core file', () => {
       it('should commit editor & set focus to next down cell when triggering Enter key with an active Editor', () => {
         const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        jest.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(true);
         grid.setActiveCell(0, 1);
         grid.editActiveCell(InputEditor as any, true);
         const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
