@@ -115,7 +115,7 @@
         &:hover {
           background-color: var(--slick-row-based-edit-editmode-hover-bgcolor, $slick-row-based-edit-editmode-hover-bgcolor);
 
-          & .active {
+          .active {
             background-color: var(--slick-row-based-edit-editmode-active-hover-bgcolor, $slick-row-based-edit-editmode-active-hover-bgcolor) !important;
           }
         }
