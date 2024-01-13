@@ -12,7 +12,6 @@ import type {
   RowBasedEditOptions,
 } from '../interfaces/index';
 import {
-  SlickEvent,
   SlickEventData,
   SlickEventHandler,
   SlickGlobalEditorLock,
@@ -324,7 +323,7 @@ export class SlickRowBasedEdit {
   }
 
   protected handleAllRowRerender(
-    _e: SlickEvent,
+    _e: SlickEventData,
     _args: OnRowsOrCountChangedEventArgs
   ) {
     this._editedRows.forEach((editedRow, key) => {
@@ -351,7 +350,7 @@ export class SlickRowBasedEdit {
     });
   }
 
-  protected optionsUpdatedHandler(_e: Event, args: OnSetOptionsEventArgs) {
+  protected optionsUpdatedHandler(_e: SlickEventData, args: OnSetOptionsEventArgs) {
     this._addonOptions = {
       ...this._defaults,
       ...args.optionsAfter.rowBasedEditOptions,
@@ -527,7 +526,7 @@ export class SlickRowBasedEdit {
   }
 
   protected onBeforeEditCellHandler = (
-    _e: Event,
+    _e: SlickEventData,
     args: OnBeforeEditCellEventArgs
   ) => {
     return this._editedRows.has(
