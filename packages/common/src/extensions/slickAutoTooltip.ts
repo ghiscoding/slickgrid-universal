@@ -2,7 +2,7 @@
 import { stripTags } from '@slickgrid-universal/utils';
 
 import type { AutoTooltipOption, Column } from '../interfaces/index';
-import { SlickEventHandler, type SlickGrid } from '../core/index';
+import { SlickEventHandler, type SlickEventData, type SlickGrid } from '../core/index';
 
 /**
  * AutoTooltips plugin to show/hide tooltips when columns are too narrow to fit content.
@@ -65,9 +65,9 @@ export class SlickAutoTooltip {
 
   /**
    * Handle mouse entering grid cell to add/remove tooltip.
-   * @param {Object} event - The event
+   * @param {SlickEventData} event - The event
    */
-  protected handleMouseEnter(event: MouseEvent) {
+  protected handleMouseEnter(event: SlickEventData) {
     const cell = this._grid.getCellFromEvent(event);
     if (cell) {
       let node: HTMLElement | null = this._grid.getCellNode(cell.row, cell.cell);
@@ -89,10 +89,10 @@ export class SlickAutoTooltip {
 
   /**
    * Handle mouse entering header cell to add/remove tooltip.
-   * @param {Object} event - The event
+   * @param {SlickEventData} event - The event
    * @param {Object} args.column - The column definition
    */
-  protected handleHeaderMouseEnter(event: MouseEvent, args: { column: Column; }) {
+  protected handleHeaderMouseEnter(event: SlickEventData, args: { column: Column; }) {
     const column = args.column;
     let node: HTMLDivElement | null;
     const targetElm = (event.target as HTMLDivElement);

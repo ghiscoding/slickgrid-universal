@@ -12,7 +12,7 @@ import {
   populateColumnPicker,
   updateColumnPickerOrder
 } from '../extensions/extensionCommonUtils';
-import { SlickEvent, SlickEventHandler, type SlickGrid } from '../core/index';
+import { SlickEvent, type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
 
 /**
  * A control to add a Column Picker (right+click on any column header to reveal the column picker)
@@ -190,7 +190,7 @@ export class SlickColumnPicker {
   }
 
   /** Mouse header context handler when doing a right+click on any of the header column title */
-  protected handleHeaderContextMenu(e: DOMMouseOrTouchEvent<HTMLDivElement>) {
+  protected handleHeaderContextMenu(e: SlickEventData) {
     e.preventDefault();
     emptyElement(this._listElm);
     this._columnCheckboxes = [];
@@ -204,7 +204,7 @@ export class SlickColumnPicker {
     this.repositionMenu(e);
   }
 
-  protected repositionMenu(event: DOMMouseOrTouchEvent<HTMLDivElement>) {
+  protected repositionMenu(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData) {
     const targetEvent: MouseEvent | Touch = (event as TouchEvent)?.touches?.[0] ?? event;
     if (this._menuElm) {
       this._menuElm.style.top = `${targetEvent.pageY - 10}px`;

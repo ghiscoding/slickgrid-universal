@@ -416,10 +416,7 @@ export class SliderFilter implements Filter {
 
     // trigger mouse enter event on the filter for optionally hooked SlickCustomTooltip
     // the minimum requirements for tooltip to work are the columnDef and targetElement
-    this.grid.onHeaderRowMouseEnter.notify(
-      { column: this.columnDef, grid: this.grid },
-      { ...new SlickEventData(), ...{ target: this._argFilterContainerElm } as unknown as Event }
-    );
+    this.grid.onHeaderRowMouseEnter.notify({ column: this.columnDef, grid: this.grid }, new SlickEventData(e));
   }
 
   protected changeBothSliderFocuses(isAddingFocus: boolean) {
@@ -428,7 +425,7 @@ export class SliderFilter implements Filter {
     this._sliderRightInputElm?.classList[addRemoveCmd]('focus');
   }
 
-  protected slideLeftInputChanged() {
+  protected slideLeftInputChanged(e: Event) {
     const sliderLeftVal = parseInt(this._sliderLeftInputElm?.value ?? '', 10);
     const sliderRightVal = parseInt(this._sliderRightInputElm?.value ?? '', 10);
 
@@ -449,10 +446,10 @@ export class SliderFilter implements Filter {
       }
     }
 
-    this.sliderLeftOrRightChanged(sliderLeftVal, sliderRightVal);
+    this.sliderLeftOrRightChanged(e, sliderLeftVal, sliderRightVal);
   }
 
-  protected slideRightInputChanged() {
+  protected slideRightInputChanged(e: Event) {
     const sliderLeftVal = parseInt(this._sliderLeftInputElm?.value ?? '', 10);
     const sliderRightVal = parseInt(this._sliderRightInputElm?.value ?? '', 10);
 
@@ -460,10 +457,10 @@ export class SliderFilter implements Filter {
       this._sliderRightInputElm.value = String(sliderLeftVal + ((this.columnFilter.filterOptions as SliderRangeOption)?.stopGapBetweenSliderHandles ?? GAP_BETWEEN_SLIDER_HANDLES));
     }
 
-    this.sliderLeftOrRightChanged(sliderLeftVal, sliderRightVal);
+    this.sliderLeftOrRightChanged(e, sliderLeftVal, sliderRightVal);
   }
 
-  protected sliderLeftOrRightChanged(sliderLeftVal: number, sliderRightVal: number) {
+  protected sliderLeftOrRightChanged(e: Event, sliderLeftVal: number, sliderRightVal: number) {
     this.updateTrackFilledColorWhenEnabled();
     this.changeBothSliderFocuses(true);
     this._sliderRangeContainElm.title = this.sliderType === 'double' ? `${sliderLeftVal} - ${sliderRightVal}` : `${sliderRightVal}`;
@@ -479,10 +476,7 @@ export class SliderFilter implements Filter {
     }
 
     // also trigger mouse enter event on the filter in case a SlickCustomTooltip is attached
-    this.grid.onHeaderRowMouseEnter.notify(
-      { column: this.columnDef, grid: this.grid },
-      { ...new SlickEventData(), ...{ target: this._argFilterContainerElm } as unknown as Event }
-    );
+    this.grid.onHeaderRowMouseEnter.notify({ column: this.columnDef, grid: this.grid }, new SlickEventData(e));
   }
 
   protected sliderTrackClicked(e: MouseEvent) {

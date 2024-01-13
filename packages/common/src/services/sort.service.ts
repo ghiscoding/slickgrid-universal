@@ -7,6 +7,7 @@ import type {
   MultiColumnSort,
   SingleColumnSort,
   TreeDataOption,
+  DOMMouseOrTouchEvent,
 } from '../interfaces/index';
 import { EmitterType, FieldType, SortDirection, SortDirectionNumber, type SortDirectionString, } from '../enums/index';
 import type { BackendUtilityService } from './backendUtility.service';
@@ -72,7 +73,7 @@ export class SortService {
     this._dataView = grid?.getData<SlickDataView>();
 
     // subscribe to the SlickGrid event and call the backend execution
-    this._eventHandler.subscribe(grid.onSort, this.onBackendSortChanged.bind(this) as EventListener);
+    this._eventHandler.subscribe(grid.onSort, this.onBackendSortChanged.bind(this));
   }
 
   /**
@@ -118,7 +119,7 @@ export class SortService {
     this.emitSortChanged(EmitterType.local);
   }
 
-  clearSortByColumnId(event: Event | undefined, columnId: string | number) {
+  clearSortByColumnId(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData | undefined, columnId: string | number) {
     // get previously sorted columns
     const allSortedCols = this.getCurrentColumnSorts() as ColumnSort[];
     const sortedColsWithoutCurrent = this.getCurrentColumnSorts(`${columnId}`) as ColumnSort[];
@@ -350,7 +351,7 @@ export class SortService {
    * @param args - sort event arguments
    * @returns - False since we'll apply the sort icon(s) manually only after server responded
    */
-  onBackendSortChanged(event: Event | undefined, args: MultiColumnSort & { clearSortTriggered?: boolean; }) {
+  onBackendSortChanged(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData | undefined, args: (SingleColumnSort | MultiColumnSort) & { clearSortTriggered?: boolean; }) {
     if (!args || !args.grid) {
       throw new Error('Something went wrong when trying to bind the "onBackendSortChanged(event, args)" function, it seems that "args" is not populated correctly');
     }
@@ -369,7 +370,7 @@ export class SortService {
     }
 
     // query backend
-    const query = backendApi.service.processOnSortChanged(event, args);
+    const query = backendApi.service.processOnSortChanged(event as Event, args);
     const totalItems = gridOptions?.pagination?.totalItems || 0;
     this.backendUtilities?.executeBackendCallback(backendApi, query, args, startTime, totalItems, {
       emitActionChangedCallback: this.emitSortChanged.bind(this),

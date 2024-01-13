@@ -18,6 +18,7 @@ import type {
   OnErrorOption,
   PlainFunc,
   SlickDataView,
+  SlickEventData,
   SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
@@ -874,7 +875,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   }
 
   /** Anytime an input of the Composite Editor form changes, we'll add/remove a "modified" CSS className for styling purposes */
-  protected handleOnCompositeEditorChange(_e: Event, args: OnCompositeEditorChangeEventArgs) {
+  protected handleOnCompositeEditorChange(_e: SlickEventData, args: OnCompositeEditorChangeEventArgs) {
     const columnId = args.column?.id ?? '';
     this._formValues = { ...this._formValues, ...args.formValues };
     const editor = this._editors?.[columnId] as Editor;

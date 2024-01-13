@@ -220,7 +220,7 @@ export class InputEditor implements Editor {
   }
 
   loadValue(item: any) {
-    const fieldName = this.columnDef && this.columnDef.field;
+    const fieldName = this.columnDef?.field;
 
     if (item && fieldName !== undefined && this._input) {
       // is the field a complex object, "address.streetNumber"
@@ -325,7 +325,7 @@ export class InputEditor implements Editor {
     }
     grid.onCompositeEditorChange.notify(
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
-      { ...new SlickEventData(), ...event as Event }
+      new SlickEventData(event)
     );
   }
 

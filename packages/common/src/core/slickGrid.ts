@@ -5,12 +5,14 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   classNameToList,
   createDomElement,
+  destroyAllElementProps,
   emptyElement,
   extend,
   getInnerSize,
   getOffset,
   insertAfterElement,
   isDefined,
+  isDefinedNumber,
   isPrimitiveOrHTML,
 } from '@slickgrid-universal/utils';
 
@@ -85,7 +87,6 @@ import type {
   PagingInfo,
   SingleColumnSort,
   SlickPlugin,
-  SlickGridEventData,
 } from '../interfaces';
 import type { SlickDataView } from './slickDataview';
 
@@ -119,20 +120,20 @@ interface RowCaching {
 
 export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O extends BaseGridOption<C> = BaseGridOption<C>> {
   // Public API
-  slickGridVersion = '5.5.0';
+  slickGridVersion = '5.7.1';
 
   /** optional grid state clientId */
   cid = '';
 
   // Events
   onActiveCellChanged: SlickEvent<OnActiveCellChangedEventArgs>;
-  onActiveCellPositionChanged: SlickEvent<SlickGridEventData>;
+  onActiveCellPositionChanged: SlickEvent<{ grid: SlickGrid; }>;
   onAddNewRow: SlickEvent<OnAddNewRowEventArgs>;
   onAutosizeColumns: SlickEvent<OnAutosizeColumnsEventArgs>;
   onBeforeAppendCell: SlickEvent<OnBeforeAppendCellEventArgs>;
   onBeforeCellEditorDestroy: SlickEvent<OnBeforeCellEditorDestroyEventArgs>;
   onBeforeColumnsResize: SlickEvent<OnBeforeColumnsResizeEventArgs>;
-  onBeforeDestroy: SlickEvent<SlickGridEventData>;
+  onBeforeDestroy: SlickEvent<{ grid: SlickGrid; }>;
   onBeforeEditCell: SlickEvent<OnBeforeEditCellEventArgs>;
   onBeforeFooterRowCellDestroy: SlickEvent<OnBeforeFooterRowCellDestroyEventArgs>;
   onBeforeHeaderCellDestroy: SlickEvent<OnBeforeHeaderCellDestroyEventArgs>;
@@ -148,7 +149,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   onColumnsResized: SlickEvent<OnColumnsResizedEventArgs>;
   onColumnsResizeDblClick: SlickEvent<OnColumnsResizeDblClickEventArgs>;
   onCompositeEditorChange: SlickEvent<OnCompositeEditorChangeEventArgs>;
-  onContextMenu: SlickEvent<SlickGridEventData>;
+  onContextMenu: SlickEvent<{ grid: SlickGrid; }>;
   onDrag: SlickEvent<DragRowMove>;
   onDblClick: SlickEvent<OnDblClickEventArgs>;
   onDragInit: SlickEvent<DragRowMove>;
@@ -175,7 +176,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   onActivateChangedOptions: SlickEvent<OnActivateChangedOptionsEventArgs>;
   onSort: SlickEvent<SingleColumnSort | MultiColumnSort>;
   onValidationError: SlickEvent<OnValidationErrorEventArgs>;
-  onViewportChanged: SlickEvent<SlickGridEventData>;
+  onViewportChanged: SlickEvent<{ grid: SlickGrid; }>;
 
   // ---
   // protected variables
@@ -212,6 +213,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     asyncPostRenderDelay: 50,
     enableAsyncPostRenderCleanup: false,
     asyncPostRenderCleanupDelay: 40,
+    columnResizingDelay: 300,
     nonce: '',
     editorLock: SlickGlobalEditorLock,
     showColumnHeader: true,
@@ -482,13 +484,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     this._pubSubService = externalPubSub;
     this.onActiveCellChanged = new SlickEvent<OnActiveCellChangedEventArgs>('onActiveCellChanged', externalPubSub);
-    this.onActiveCellPositionChanged = new SlickEvent<SlickGridEventData>('onActiveCellPositionChanged', externalPubSub);
+    this.onActiveCellPositionChanged = new SlickEvent<{ grid: SlickGrid; }>('onActiveCellPositionChanged', externalPubSub);
     this.onAddNewRow = new SlickEvent<OnAddNewRowEventArgs>('onAddNewRow', externalPubSub);
     this.onAutosizeColumns = new SlickEvent<OnAutosizeColumnsEventArgs>('onAutosizeColumns', externalPubSub);
     this.onBeforeAppendCell = new SlickEvent<OnBeforeAppendCellEventArgs>('onBeforeAppendCell', externalPubSub);
     this.onBeforeCellEditorDestroy = new SlickEvent<OnBeforeCellEditorDestroyEventArgs>('onBeforeCellEditorDestroy', externalPubSub);
     this.onBeforeColumnsResize = new SlickEvent<OnBeforeColumnsResizeEventArgs>('onBeforeColumnsResize', externalPubSub);
-    this.onBeforeDestroy = new SlickEvent<SlickGridEventData>('onBeforeDestroy', externalPubSub);
+    this.onBeforeDestroy = new SlickEvent<{ grid: SlickGrid; }>('onBeforeDestroy', externalPubSub);
     this.onBeforeEditCell = new SlickEvent<OnBeforeEditCellEventArgs>('onBeforeEditCell', externalPubSub);
     this.onBeforeFooterRowCellDestroy = new SlickEvent<OnBeforeFooterRowCellDestroyEventArgs>('onBeforeFooterRowCellDestroy', externalPubSub);
     this.onBeforeHeaderCellDestroy = new SlickEvent<OnBeforeHeaderCellDestroyEventArgs>('onBeforeHeaderCellDestroy', externalPubSub);
@@ -504,7 +506,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.onColumnsResized = new SlickEvent<OnColumnsResizedEventArgs>('onColumnsResized', externalPubSub);
     this.onColumnsResizeDblClick = new SlickEvent<OnColumnsResizeDblClickEventArgs>('onColumnsResizeDblClick', externalPubSub);
     this.onCompositeEditorChange = new SlickEvent<OnCompositeEditorChangeEventArgs>('onCompositeEditorChange', externalPubSub);
-    this.onContextMenu = new SlickEvent<SlickGridEventData>('onContextMenu', externalPubSub);
+    this.onContextMenu = new SlickEvent<{ grid: SlickGrid; }>('onContextMenu', externalPubSub);
     this.onDrag = new SlickEvent<DragRowMove>('onDrag', externalPubSub);
     this.onDblClick = new SlickEvent<OnDblClickEventArgs>('onDblClick', externalPubSub);
     this.onDragInit = new SlickEvent<DragRowMove>('onDragInit', externalPubSub);
@@ -531,7 +533,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.onActivateChangedOptions = new SlickEvent<OnActivateChangedOptionsEventArgs>('onActivateChangedOptions', externalPubSub);
     this.onSort = new SlickEvent<SingleColumnSort | MultiColumnSort>('onSort', externalPubSub);
     this.onValidationError = new SlickEvent<OnValidationErrorEventArgs>('onValidationError', externalPubSub);
-    this.onViewportChanged = new SlickEvent<SlickGridEventData>('onViewportChanged', externalPubSub);
+    this.onViewportChanged = new SlickEvent<{ grid: SlickGrid; }>('onViewportChanged', externalPubSub);
 
     this.initialize(options);
   }
@@ -1011,7 +1013,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       e = e.getNativeEvent<Event>();
     }
 
-    this._activeCanvasNode = (e as Event & { target: HTMLElement })?.target?.closest('.grid-canvas') as HTMLDivElement;
+    this._activeCanvasNode = (e as Event & { target: HTMLElement; })?.target?.closest('.grid-canvas') as HTMLDivElement;
     return this._activeCanvasNode;
   }
 
@@ -1041,7 +1043,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (e instanceof SlickEventData) {
       e = e.getNativeEvent<Event>();
     }
-    this._activeViewportNode = (e as Event & { target: HTMLDivElement })?.target?.closest('.slick-viewport') as HTMLDivElement;
+    this._activeViewportNode = (e as Event & { target: HTMLDivElement; })?.target?.closest('.slick-viewport') as HTMLDivElement;
     return this._activeViewportNode;
   }
 
@@ -1093,18 +1095,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     if (includeScrollbar) {
       if ((this._options.frozenColumn!) > -1 && (i > this._options.frozenColumn!)) {
-        this.headersWidthR += this.scrollbarDimensions?.width ?? 0;
+        this.headersWidthR += this.scrollbarDimensions?.width || 0;
       } else {
-        this.headersWidthL += this.scrollbarDimensions?.width ?? 0;
+        this.headersWidthL += this.scrollbarDimensions?.width || 0;
       }
     }
 
     if (this.hasFrozenColumns()) {
       this.headersWidthL = this.headersWidthL + 1000;
       this.headersWidthR = Math.max(this.headersWidthR, this.viewportW) + this.headersWidthL;
-      this.headersWidthR += this.scrollbarDimensions?.width ?? 0;
+      this.headersWidthR += this.scrollbarDimensions?.width || 0;
     } else {
-      this.headersWidthL += this.scrollbarDimensions?.width ?? 0;
+      this.headersWidthL += this.scrollbarDimensions?.width || 0;
       this.headersWidthL = Math.max(this.headersWidthL, this.viewportW) + 1000;
     }
 
@@ -1114,7 +1116,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Get the grid canvas width */
   getCanvasWidth(): number {
-    const availableWidth = this.viewportHasVScroll ? this.viewportW - (this.scrollbarDimensions?.width ?? 0) : this.viewportW;
+    const availableWidth = this.viewportHasVScroll ? this.viewportW - (this.scrollbarDimensions?.width || 0) : this.viewportW;
     let i = this.columns.length;
 
     this.canvasWidthL = this.canvasWidthR = 0;
@@ -1227,14 +1229,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
     }
 
-    this.viewportHasHScroll = (this.canvasWidth >= this.viewportW - (this.scrollbarDimensions?.width ?? 0));
+    this.viewportHasHScroll = (this.canvasWidth >= this.viewportW - (this.scrollbarDimensions?.width || 0));
 
-    Utils.width(this._headerRowSpacerL, this.canvasWidth + (this.viewportHasVScroll ? (this.scrollbarDimensions?.width ?? 0) : 0));
-    Utils.width(this._headerRowSpacerR, this.canvasWidth + (this.viewportHasVScroll ? (this.scrollbarDimensions?.width ?? 0) : 0));
+    Utils.width(this._headerRowSpacerL, this.canvasWidth + (this.viewportHasVScroll ? (this.scrollbarDimensions?.width || 0) : 0));
+    Utils.width(this._headerRowSpacerR, this.canvasWidth + (this.viewportHasVScroll ? (this.scrollbarDimensions?.width || 0) : 0));
 
     if (this._options.createFooterRow) {
-      Utils.width(this._footerRowSpacerL, this.canvasWidth + (this.viewportHasVScroll ? (this.scrollbarDimensions?.width ?? 0) : 0));
-      Utils.width(this._footerRowSpacerR, this.canvasWidth + (this.viewportHasVScroll ? (this.scrollbarDimensions?.width ?? 0) : 0));
+      Utils.width(this._footerRowSpacerL, this.canvasWidth + (this.viewportHasVScroll ? (this.scrollbarDimensions?.width || 0) : 0));
+      Utils.width(this._footerRowSpacerR, this.canvasWidth + (this.viewportHasVScroll ? (this.scrollbarDimensions?.width || 0) : 0));
     }
 
     if (widthChanged || forceColumnWidthsUpdate) {
@@ -1263,6 +1265,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       Utils.height(div, test);
       const height = Utils.height(div);
 
+      /* istanbul ignore else */
       if (test > testUpTo! || height !== test) {
         break;
       } else {
@@ -1292,8 +1295,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   /** Get the displayed scrollbar dimensions */
   getDisplayedScrollbarDimensions() {
     return {
-      width: this.viewportHasVScroll ? (this.scrollbarDimensions?.width ?? 0) : 0,
-      height: this.viewportHasHScroll ? (this.scrollbarDimensions?.height ?? 0) : 0
+      width: this.viewportHasVScroll ? (this.scrollbarDimensions?.width || 0) : 0,
+      height: this.viewportHasHScroll ? (this.scrollbarDimensions?.height || 0) : 0
     };
   }
 
@@ -1302,7 +1305,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return this.absoluteColumnMinWidth;
   }
 
-  // TODO:  this is static.  need to handle page mutation.
+  // TODO:  this is static. we need to handle page mutation.
   protected bindAncestorScrollEvents() {
     let elem: HTMLElement | null = (this.hasFrozenRows && !this._options.frozenBottom) ? this._canvasBottomL : this._canvasTopL;
     while ((elem = elem!.parentNode as HTMLElement) !== document.body && elem) {
@@ -1475,7 +1478,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       for (let i = 0; i < this.columns.length; i++) {
         const m = this.columns[i];
-        if (!m || m.hidden) { continue; }
+        if (!m || m.hidden) {
+          continue;
+        }
 
         const footerRowCell = createDomElement('div', { className: `ui-state-default slick-state-default slick-footerrow-column l${i} r${i}` }, this.hasFrozenColumns() && (i > this._options.frozenColumn!) ? this._footerRowR : this._footerRowL);
         const className = this.hasFrozenColumns() && i <= this._options.frozenColumn! ? 'frozen' : null;
@@ -1577,7 +1582,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const headerTarget = this.hasFrozenColumns() ? ((i <= this._options.frozenColumn!) ? this._headerL : this._headerR) : this._headerL;
       const headerRowTarget = this.hasFrozenColumns() ? ((i <= this._options.frozenColumn!) ? this._headerRowL : this._headerRowR) : this._headerRowL;
 
-      const header = createDomElement('div', { id: `${this.uid + m.id}`, dataset: { id: String(m.id) }, className: 'ui-state-default slick-state-default slick-header-column', title: m.toolTip || '' }, headerTarget);
+      const header = createDomElement('div', { id: `${this.uid + m.id}`, dataset: { id: String(m.id) }, className: 'ui-state-default slick-state-default slick-header-column' }, headerTarget);
+      if (m.toolTip) {
+        header.title = m.toolTip;
+      }
       const colNameElm = createDomElement('span', { className: 'slick-column-name' }, header);
       this.applyHtmlCode(colNameElm, m.name as string);
 
@@ -1786,8 +1794,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     let columnScrollTimer: any = null;
 
-    const scrollColumnsRight = () => this._viewportScrollContainerX.scrollLeft = this._viewportScrollContainerX.scrollLeft + 10;
-    const scrollColumnsLeft = () => this._viewportScrollContainerX.scrollLeft = this._viewportScrollContainerX.scrollLeft - 10;
+    // add/remove extra scroll padding for calculation
+    const scrollColumnsRight = () => this._viewportScrollContainerX.scrollLeft += 10;
+    const scrollColumnsLeft = () => this._viewportScrollContainerX.scrollLeft -= 10;
 
     let canDragScroll;
     const sortableOptions = {
@@ -2001,7 +2010,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             let x;
             let newCanvasWidthL = 0;
             let newCanvasWidthR = 0;
-            const viewportWidth = this.viewportHasVScroll ? this.viewportW - (this.scrollbarDimensions?.width ?? 0) : this.viewportW;
+            const viewportWidth = this.viewportHasVScroll ? this.viewportW - (this.scrollbarDimensions?.width || 0) : this.viewportW;
 
             if (d < 0) { // shrink column
               x = d;
@@ -2195,7 +2204,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             this.render();
             this.triggerEvent(this.onColumnsResized, { triggeredByColumn });
             clearTimeout(this._columnResizeTimer);
-            this._columnResizeTimer = setTimeout(() => { this.columnResizeDragging = false; }, 300);
+            this._columnResizeTimer = setTimeout(() => this.columnResizeDragging = false, this._options.columnResizingDelay);
           }
         })
       );
@@ -2547,7 +2556,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.clearAllTimers();
 
     if (shouldDestroyAllElements) {
-      this.destroyAllElements();
+      destroyAllElementProps(this);
     }
   }
 
@@ -2570,75 +2579,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return inputInstances;
   }
 
-  protected destroyAllElements() {
-    this._activeCanvasNode = null as any;
-    this._activeViewportNode = null as any;
-    this._boundAncestors = null as any;
-    this._canvas = null as any;
-    this._canvasTopL = null as any;
-    this._canvasTopR = null as any;
-    this._canvasBottomL = null as any;
-    this._canvasBottomR = null as any;
-    this._container = null as any;
-    this._focusSink = null as any;
-    this._focusSink2 = null as any;
-    this._groupHeaders = null as any;
-    this._groupHeadersL = null as any;
-    this._groupHeadersR = null as any;
-    this._headerL = null as any;
-    this._headerR = null as any;
-    this._headers = null as any;
-    this._headerRows = null as any;
-    this._headerRowL = null as any;
-    this._headerRowR = null as any;
-    this._headerRowSpacerL = null as any;
-    this._headerRowSpacerR = null as any;
-    this._headerRowScrollContainer = null as any;
-    this._headerRowScroller = null as any;
-    this._headerRowScrollerL = null as any;
-    this._headerRowScrollerR = null as any;
-    this._headerScrollContainer = null as any;
-    this._headerScroller = null as any;
-    this._headerScrollerL = null as any;
-    this._headerScrollerR = null as any;
-    this._hiddenParents = null as any;
-    this._footerRow = null as any;
-    this._footerRowL = null as any;
-    this._footerRowR = null as any;
-    this._footerRowSpacerL = null as any;
-    this._footerRowSpacerR = null as any;
-    this._footerRowScroller = null as any;
-    this._footerRowScrollerL = null as any;
-    this._footerRowScrollerR = null as any;
-    this._footerRowScrollContainer = null as any;
-    this._preHeaderPanel = null as any;
-    this._preHeaderPanelR = null as any;
-    this._preHeaderPanelScroller = null as any;
-    this._preHeaderPanelScrollerR = null as any;
-    this._preHeaderPanelSpacer = null as any;
-    this._preHeaderPanelSpacerR = null as any;
-    this._topPanels = null as any;
-    this._topPanelScrollers = null as any;
-    this._style = null as any;
-    this._topPanelScrollerL = null as any;
-    this._topPanelScrollerR = null as any;
-    this._topPanelL = null as any;
-    this._topPanelR = null as any;
-    this._paneHeaderL = null as any;
-    this._paneHeaderR = null as any;
-    this._paneTopL = null as any;
-    this._paneTopR = null as any;
-    this._paneBottomL = null as any;
-    this._paneBottomR = null as any;
-    this._viewport = null as any;
-    this._viewportTopL = null as any;
-    this._viewportTopR = null as any;
-    this._viewportBottomL = null as any;
-    this._viewportBottomR = null as any;
-    this._viewportScrollContainerX = null as any;
-    this._viewportScrollContainerY = null as any;
-  }
-
   // Column Autosizing
 
   autosizeColumns() {
@@ -2657,7 +2597,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let total = 0;
     let prevTotal = 0;
     const widths: number[] = [];
-    const availWidth = this.viewportHasVScroll ? this.viewportW - (this.scrollbarDimensions?.width ?? 0) : this.viewportW;
+    const availWidth = this.viewportHasVScroll ? this.viewportW - (this.scrollbarDimensions?.width || 0) : this.viewportW;
 
     for (i = 0; i < this.columns.length; i++) {
       c = this.columns[i];
@@ -2753,10 +2693,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   // General
 
   triggerEvent<ArgType = any>(evt: SlickEvent, args?: ArgType, e?: Event | SlickEventData) {
-    const event: SlickEventData = (e || new SlickEventData(e, args)) as SlickEventData;
+    const sed: SlickEventData = (e || new SlickEventData(e, args)) as SlickEventData;
     const eventArgs = (args || {}) as ArgType & { grid: SlickGrid<TData, C, O>; };
     eventArgs.grid = this;
-    return evt.notify(eventArgs, event, this);
+    return evt.notify(eventArgs, sed, this);
   }
 
   /** Get Editor lock */
@@ -3151,7 +3091,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if ((this.data as CustomDataView<TData>).getLength) {
       return (this.data as CustomDataView<TData>).getLength();
     } else {
-      return (this.data as TData[])?.length ?? 0;
+      return (this.data as TData[])?.length || 0;
     }
   }
 
@@ -3193,11 +3133,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._options[option] = visible as boolean;
       if (visible) {
         Utils.show(container);
-        this.resizeCanvas();
       } else {
         Utils.hide(container);
-        this.resizeCanvas();
       }
+      this.resizeCanvas();
     }
   }
 
@@ -3262,7 +3201,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   scrollTo(y: number) {
     y = Math.max(y, 0);
-    y = Math.min(y, (this.th || 0) - (Utils.height(this._viewportScrollContainerY) as number) + ((this.viewportHasHScroll || this.hasFrozenColumns()) ? (this.scrollbarDimensions?.height ?? 0) : 0));
+    y = Math.min(y, (this.th || 0) - (Utils.height(this._viewportScrollContainerY) as number) + ((this.viewportHasHScroll || this.hasFrozenColumns()) ? (this.scrollbarDimensions?.height || 0) : 0));
 
     const oldOffset = this.offset;
     this.offset = Math.round(this.page * (this.cj || 0));
@@ -3503,7 +3442,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
       }
     }
-    if (this._options.enableAsyncPostRenderCleanup) { this.startPostProcessingCleanup(); }
+    if (this._options.enableAsyncPostRenderCleanup) {
+      this.startPostProcessingCleanup();
+    }
   }
 
   /** Invalidate all grid rows and re-render the grid rows */
@@ -3655,18 +3596,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   updateCell(row: number, cell: number) {
     const cellNode = this.getCellNode(row, cell);
-    if (!cellNode) {
-      return;
-    }
-
-    const m = this.columns[cell];
-    const d = this.getDataItem(row);
-    if (this.currentEditor && this.activeRow === row && this.activeCell === cell) {
-      this.currentEditor.loadValue(d);
-    } else {
-      const formatterResult = d ? this.getFormatter(row, m)(row, cell, this.getDataItemValueForColumn(d, m), m, d, this as unknown as SlickGrid) : '';
-      this.applyFormatResultToCellNode(formatterResult, cellNode);
-      this.invalidatePostProcessingResults(row);
+    if (cellNode) {
+      const m = this.columns[cell];
+      const d = this.getDataItem(row);
+      if (this.currentEditor && this.activeRow === row && this.activeCell === cell) {
+        this.currentEditor.loadValue(d);
+      } else {
+        const formatterResult = d ? this.getFormatter(row, m)(row, cell, this.getDataItemValueForColumn(d, m), m, d, this as unknown as SlickGrid) : '';
+        this.applyFormatResultToCellNode(formatterResult, cellNode);
+        this.invalidatePostProcessingResults(row);
+      }
     }
   }
 
@@ -3686,6 +3625,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const d = this.getDataItem(row);
 
     for (const colIdx in cacheEntry.cellNodesByColumnIdx) {
+      /* istanbul ignore next */
       if (!cacheEntry.cellNodesByColumnIdx.hasOwnProperty(colIdx)) {
         continue;
       }
@@ -3694,7 +3634,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const m = this.columns[columnIdx];
       const node = cacheEntry.cellNodesByColumnIdx[columnIdx];
 
-      if (row === this.activeRow && columnIdx === this.activeCell && this.currentEditor) {
+      if (this.currentEditor && row === this.activeRow && columnIdx === this.activeCell) {
         this.currentEditor.loadValue(d);
       } else if (d) {
         formatterResult = this.getFormatter(row, m)(row, columnIdx, this.getDataItemValueForColumn(d, m), m, d, this as unknown as SlickGrid);
@@ -3715,7 +3655,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   getViewportRowCount() {
     const vh = this.getViewportHeight();
-    const scrollbarHeight = this.getScrollbarDimensions()?.height ?? 0;
+    const scrollbarHeight = this.getScrollbarDimensions()?.height || 0;
     return Math.floor((vh - scrollbarHeight) / this._options.rowHeight!);
   }
 
@@ -3730,7 +3670,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       let fullHeight = this._paneHeaderL.offsetHeight;
       fullHeight += (this._options.showHeaderRow) ? this._options.headerRowHeight! + this.getVBoxDelta(this._headerRowScroller[0]) : 0;
       fullHeight += (this._options.showFooterRow) ? this._options.footerRowHeight! + this.getVBoxDelta(this._footerRowScroller[0]) : 0;
-      fullHeight += (this.getCanvasWidth() > this.viewportW) ? (this.scrollbarDimensions?.height ?? 0) : 0;
+      fullHeight += (this.getCanvasWidth() > this.viewportW) ? (this.scrollbarDimensions?.height || 0) : 0;
 
       this.viewportH = this._options.rowHeight!
         * this.getDataLengthIncludingAddNew()
@@ -3761,219 +3701,218 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Execute a Resize of the Grid Canvas */
   resizeCanvas() {
-    if (!this.initialized) {
-      return;
-    }
-    this.paneTopH = 0;
-    this.paneBottomH = 0;
-    this.viewportTopH = 0;
-    this.viewportBottomH = 0;
+    if (this.initialized) {
+      this.paneTopH = 0;
+      this.paneBottomH = 0;
+      this.viewportTopH = 0;
+      this.viewportBottomH = 0;
 
-    this.getViewportWidth();
-    this.getViewportHeight();
+      this.getViewportWidth();
+      this.getViewportHeight();
 
-    // Account for Frozen Rows
-    if (this.hasFrozenRows) {
-      if (this._options.frozenBottom) {
-        this.paneTopH = this.viewportH - this.frozenRowsHeight - (this.scrollbarDimensions?.height ?? 0);
-        this.paneBottomH = this.frozenRowsHeight + (this.scrollbarDimensions?.height ?? 0);
+      // Account for Frozen Rows
+      if (this.hasFrozenRows) {
+        if (this._options.frozenBottom) {
+          this.paneTopH = this.viewportH - this.frozenRowsHeight - (this.scrollbarDimensions?.height || 0);
+          this.paneBottomH = this.frozenRowsHeight + (this.scrollbarDimensions?.height || 0);
+        } else {
+          this.paneTopH = this.frozenRowsHeight;
+          this.paneBottomH = this.viewportH - this.frozenRowsHeight;
+        }
       } else {
-        this.paneTopH = this.frozenRowsHeight;
-        this.paneBottomH = this.viewportH - this.frozenRowsHeight;
+        this.paneTopH = this.viewportH;
       }
-    } else {
-      this.paneTopH = this.viewportH;
-    }
 
-    // The top pane includes the top panel and the header row
-    this.paneTopH += this.topPanelH + this.headerRowH + this.footerRowH;
+      // The top pane includes the top panel and the header row
+      this.paneTopH += this.topPanelH + this.headerRowH + this.footerRowH;
 
-    if (this.hasFrozenColumns() && this._options.autoHeight) {
-      this.paneTopH += (this.scrollbarDimensions?.height ?? 0);
-    }
+      if (this.hasFrozenColumns() && this._options.autoHeight) {
+        this.paneTopH += (this.scrollbarDimensions?.height || 0);
+      }
 
-    // The top viewport does not contain the top panel or header row
-    this.viewportTopH = this.paneTopH - this.topPanelH - this.headerRowH - this.footerRowH;
+      // The top viewport does not contain the top panel or header row
+      this.viewportTopH = this.paneTopH - this.topPanelH - this.headerRowH - this.footerRowH;
 
-    if (this._options.autoHeight) {
+      if (this._options.autoHeight) {
+        if (this.hasFrozenColumns()) {
+          const style = getComputedStyle(this._headerScrollerL);
+          Utils.height(this._container, this.paneTopH + Utils.toFloat(style.height));
+        }
+
+        this._paneTopL.style.position = 'relative';
+      }
+
+      Utils.setStyleSize(this._paneTopL, 'top', Utils.height(this._paneHeaderL) || (this._options.showHeaderRow ? this._options.headerRowHeight! : 0) + (this._options.showPreHeaderPanel ? this._options.preHeaderPanelHeight! : 0));
+      Utils.height(this._paneTopL, this.paneTopH);
+
+      const paneBottomTop = this._paneTopL.offsetTop + this.paneTopH;
+
+      if (!this._options.autoHeight) {
+        Utils.height(this._viewportTopL, this.viewportTopH);
+      }
+
       if (this.hasFrozenColumns()) {
-        const style = getComputedStyle(this._headerScrollerL);
-        Utils.height(this._container, this.paneTopH + Utils.toFloat(style.height));
-      }
+        Utils.setStyleSize(this._paneTopR, 'top', Utils.height(this._paneHeaderL) as number);
+        Utils.height(this._paneTopR, this.paneTopH);
+        Utils.height(this._viewportTopR, this.viewportTopH);
 
-      this._paneTopL.style.position = 'relative';
-    }
-
-    Utils.setStyleSize(this._paneTopL, 'top', Utils.height(this._paneHeaderL) || (this._options.showHeaderRow ? this._options.headerRowHeight! : 0) + (this._options.showPreHeaderPanel ? this._options.preHeaderPanelHeight! : 0));
-    Utils.height(this._paneTopL, this.paneTopH);
-
-    const paneBottomTop = this._paneTopL.offsetTop + this.paneTopH;
-
-    if (!this._options.autoHeight) {
-      Utils.height(this._viewportTopL, this.viewportTopH);
-    }
-
-    if (this.hasFrozenColumns()) {
-      Utils.setStyleSize(this._paneTopR, 'top', Utils.height(this._paneHeaderL) as number);
-      Utils.height(this._paneTopR, this.paneTopH);
-      Utils.height(this._viewportTopR, this.viewportTopH);
-
-      if (this.hasFrozenRows) {
-        Utils.setStyleSize(this._paneBottomL, 'top', paneBottomTop);
-        Utils.height(this._paneBottomL, this.paneBottomH);
-        Utils.setStyleSize(this._paneBottomR, 'top', paneBottomTop);
-        Utils.height(this._paneBottomR, this.paneBottomH);
-        Utils.height(this._viewportBottomR, this.paneBottomH);
-      }
-    } else {
-      if (this.hasFrozenRows) {
-        Utils.width(this._paneBottomL, '100%');
-        Utils.height(this._paneBottomL, this.paneBottomH);
-        Utils.setStyleSize(this._paneBottomL, 'top', paneBottomTop);
-      }
-    }
-
-    if (this.hasFrozenRows) {
-      Utils.height(this._viewportBottomL, this.paneBottomH);
-
-      if (this._options.frozenBottom) {
-        Utils.height(this._canvasBottomL, this.frozenRowsHeight);
-
-        if (this.hasFrozenColumns()) {
-          Utils.height(this._canvasBottomR, this.frozenRowsHeight);
+        if (this.hasFrozenRows) {
+          Utils.setStyleSize(this._paneBottomL, 'top', paneBottomTop);
+          Utils.height(this._paneBottomL, this.paneBottomH);
+          Utils.setStyleSize(this._paneBottomR, 'top', paneBottomTop);
+          Utils.height(this._paneBottomR, this.paneBottomH);
+          Utils.height(this._viewportBottomR, this.paneBottomH);
         }
       } else {
-        Utils.height(this._canvasTopL, this.frozenRowsHeight);
-
-        if (this.hasFrozenColumns()) {
-          Utils.height(this._canvasTopR, this.frozenRowsHeight);
+        if (this.hasFrozenRows) {
+          Utils.width(this._paneBottomL, '100%');
+          Utils.height(this._paneBottomL, this.paneBottomH);
+          Utils.setStyleSize(this._paneBottomL, 'top', paneBottomTop);
         }
       }
-    } else {
-      Utils.height(this._viewportTopR, this.viewportTopH);
-    }
 
-    if (!this.scrollbarDimensions || !this.scrollbarDimensions.width) {
-      this.scrollbarDimensions = this.measureScrollbar();
-    }
+      if (this.hasFrozenRows) {
+        Utils.height(this._viewportBottomL, this.paneBottomH);
 
-    if (this._options.forceFitColumns) {
-      this.legacyAutosizeColumns();
-    }
+        if (this._options.frozenBottom) {
+          Utils.height(this._canvasBottomL, this.frozenRowsHeight);
 
-    this.updateRowCount();
-    this.handleScroll();
-    // Since the width has changed, force the render() to reevaluate virtually rendered cells.
-    this.lastRenderedScrollLeft = -1;
-    this.render();
+          if (this.hasFrozenColumns()) {
+            Utils.height(this._canvasBottomR, this.frozenRowsHeight);
+          }
+        } else {
+          Utils.height(this._canvasTopL, this.frozenRowsHeight);
+
+          if (this.hasFrozenColumns()) {
+            Utils.height(this._canvasTopR, this.frozenRowsHeight);
+          }
+        }
+      } else {
+        Utils.height(this._viewportTopR, this.viewportTopH);
+      }
+
+      if (!this.scrollbarDimensions || !this.scrollbarDimensions.width) {
+        this.scrollbarDimensions = this.measureScrollbar();
+      }
+
+      if (this._options.forceFitColumns) {
+        this.legacyAutosizeColumns();
+      }
+
+      this.updateRowCount();
+      this.handleScroll();
+      // Since the width has changed, force the render() to reevaluate virtually rendered cells.
+      this.lastRenderedScrollLeft = -1;
+      this.render();
+    }
   }
 
   /**
    * Update paging information status from the View
    * @param {PagingInfo} pagingInfo
    */
-  updatePagingStatusFromView(pagingInfo: PagingInfo) {
+  updatePagingStatusFromView(pagingInfo: Pick<PagingInfo, 'pageSize' | 'pageNum' | 'totalPages'>) {
     this.pagingActive = (pagingInfo.pageSize !== 0);
     this.pagingIsLastPage = (pagingInfo.pageNum === pagingInfo.totalPages - 1);
   }
 
   /** Update the dataset row count */
   updateRowCount() {
-    if (!this.initialized) { return; }
+    if (this.initialized) {
+      const dataLength = this.getDataLength();
+      const dataLengthIncludingAddNew = this.getDataLengthIncludingAddNew();
+      let numberOfRows = 0;
+      let oldH = ((this.hasFrozenRows && !this._options.frozenBottom) ? Utils.height(this._canvasBottomL) : Utils.height(this._canvasTopL)) as number;
 
-    const dataLength = this.getDataLength();
-    const dataLengthIncludingAddNew = this.getDataLengthIncludingAddNew();
-    let numberOfRows = 0;
-    let oldH = ((this.hasFrozenRows && !this._options.frozenBottom) ? Utils.height(this._canvasBottomL) : Utils.height(this._canvasTopL)) as number;
-
-    if (this.hasFrozenRows) {
-      numberOfRows = this.getDataLength() - this._options.frozenRow!;
-    } else {
-      numberOfRows = dataLengthIncludingAddNew + (this._options.leaveSpaceForNewRows ? this.numVisibleRows - 1 : 0);
-    }
-
-    const tempViewportH = Utils.height(this._viewportScrollContainerY) as number;
-    const oldViewportHasVScroll = this.viewportHasVScroll;
-    // with autoHeight, we do not need to accommodate the vertical scroll bar
-    this.viewportHasVScroll = this._options.alwaysShowVerticalScroll || !this._options.autoHeight && (numberOfRows * this._options.rowHeight! > tempViewportH);
-
-    this.makeActiveCellNormal();
-
-    // remove the rows that are now outside of the data range
-    // this helps avoid redundant calls to .removeRow() when the size of the data decreased by thousands of rows
-    const r1 = dataLength - 1;
-    if (typeof this.rowsCache === 'object') {
-      Object.keys(this.rowsCache).forEach(row => {
-        const cachedRow = +row;
-        if (cachedRow > r1) {
-          this.removeRowFromCache(cachedRow);
-        }
-      });
-    }
-
-    if (this._options.enableAsyncPostRenderCleanup) {
-      this.startPostProcessingCleanup();
-    }
-
-    if (this.activeCellNode && this.activeRow > r1) {
-      this.resetActiveCell();
-    }
-
-    oldH = this.h;
-    if (this._options.autoHeight) {
-      this.h = this._options.rowHeight! * numberOfRows;
-    } else {
-      this.th = Math.max(this._options.rowHeight! * numberOfRows, tempViewportH - (this.scrollbarDimensions?.height ?? 0));
-      if (this.th < this.maxSupportedCssHeight) {
-        // just one page
-        this.h = this.ph = this.th;
-        this.n = 1;
-        this.cj = 0;
+      if (this.hasFrozenRows) {
+        numberOfRows = this.getDataLength() - this._options.frozenRow!;
       } else {
-        // break into pages
-        this.h = this.maxSupportedCssHeight;
-        this.ph = this.h / 100;
-        this.n = Math.floor(this.th / this.ph);
-        this.cj = (this.th - this.h) / (this.n - 1);
-      }
-    }
-
-    if (this.h !== oldH || this.enforceFrozenRowHeightRecalc) {
-      if (this.hasFrozenRows && !this._options.frozenBottom) {
-        Utils.height(this._canvasBottomL, this.h);
-
-        if (this.hasFrozenColumns()) {
-          Utils.height(this._canvasBottomR, this.h);
-        }
-      } else {
-        Utils.height(this._canvasTopL, this.h);
-        Utils.height(this._canvasTopR, this.h);
+        numberOfRows = dataLengthIncludingAddNew + (this._options.leaveSpaceForNewRows ? this.numVisibleRows - 1 : 0);
       }
 
-      this.scrollTop = this._viewportScrollContainerY.scrollTop;
-      this.enforceFrozenRowHeightRecalc = false; // reset enforce flag
-    }
+      const tempViewportH = Utils.height(this._viewportScrollContainerY) as number;
+      const oldViewportHasVScroll = this.viewportHasVScroll;
+      // with autoHeight, we do not need to accommodate the vertical scroll bar
+      this.viewportHasVScroll = this._options.alwaysShowVerticalScroll || !this._options.autoHeight && (numberOfRows * this._options.rowHeight! > tempViewportH);
 
-    const oldScrollTopInRange = (this.scrollTop + this.offset <= this.th - tempViewportH);
+      this.makeActiveCellNormal();
 
-    if (this.th === 0 || this.scrollTop === 0) {
-      this.page = this.offset = 0;
-    } else if (oldScrollTopInRange) {
-      // maintain virtual position
-      this.scrollTo(this.scrollTop + this.offset);
-    } else {
-      // scroll to bottom
-      this.scrollTo(this.th - tempViewportH + (this.scrollbarDimensions?.height ?? 0));
-    }
+      // remove the rows that are now outside of the data range
+      // this helps avoid redundant calls to .removeRow() when the size of the data decreased by thousands of rows
+      const r1 = dataLength - 1;
+      if (typeof this.rowsCache === 'object') {
+        Object.keys(this.rowsCache).forEach(row => {
+          const cachedRow = +row;
+          if (cachedRow > r1) {
+            this.removeRowFromCache(cachedRow);
+          }
+        });
+      }
 
-    if (this.h !== oldH && this._options.autoHeight) {
-      this.resizeCanvas();
-    }
+      if (this._options.enableAsyncPostRenderCleanup) {
+        this.startPostProcessingCleanup();
+      }
 
-    if (this._options.forceFitColumns && oldViewportHasVScroll !== this.viewportHasVScroll) {
-      this.legacyAutosizeColumns();
+      if (this.activeCellNode && this.activeRow > r1) {
+        this.resetActiveCell();
+      }
+
+      oldH = this.h;
+      if (this._options.autoHeight) {
+        this.h = this._options.rowHeight! * numberOfRows;
+      } else {
+        this.th = Math.max(this._options.rowHeight! * numberOfRows, tempViewportH - (this.scrollbarDimensions?.height || 0));
+        if (this.th < this.maxSupportedCssHeight) {
+          // just one page
+          this.h = this.ph = this.th;
+          this.n = 1;
+          this.cj = 0;
+        } else {
+          // break into pages
+          this.h = this.maxSupportedCssHeight;
+          this.ph = this.h / 100;
+          this.n = Math.floor(this.th / this.ph);
+          this.cj = (this.th - this.h) / (this.n - 1);
+        }
+      }
+
+      if (this.h !== oldH || this.enforceFrozenRowHeightRecalc) {
+        if (this.hasFrozenRows && !this._options.frozenBottom) {
+          Utils.height(this._canvasBottomL, this.h);
+
+          if (this.hasFrozenColumns()) {
+            Utils.height(this._canvasBottomR, this.h);
+          }
+        } else {
+          Utils.height(this._canvasTopL, this.h);
+          Utils.height(this._canvasTopR, this.h);
+        }
+
+        this.scrollTop = this._viewportScrollContainerY.scrollTop;
+        this.enforceFrozenRowHeightRecalc = false; // reset enforce flag
+      }
+
+      const oldScrollTopInRange = (this.scrollTop + this.offset <= this.th - tempViewportH);
+
+      if (this.th === 0 || this.scrollTop === 0) {
+        this.page = this.offset = 0;
+      } else if (oldScrollTopInRange) {
+        // maintain virtual position
+        this.scrollTo(this.scrollTop + this.offset);
+      } else {
+        // scroll to bottom
+        this.scrollTo(this.th - tempViewportH + (this.scrollbarDimensions?.height || 0));
+      }
+
+      if (this.h !== oldH && this._options.autoHeight) {
+        this.resizeCanvas();
+      }
+
+      if (this._options.forceFitColumns && oldViewportHasVScroll !== this.viewportHasVScroll) {
+        this.legacyAutosizeColumns();
+      }
+      this.updateCanvasWidth(false);
     }
-    this.updateCanvasWidth(false);
   }
 
   /** @alias `getVisibleRange` */
@@ -4315,57 +4254,57 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** (re)Render the grid */
   render() {
-    if (!this.initialized) { return; }
+    if (this.initialized) {
+      this.scrollThrottle.dequeue();
 
-    this.scrollThrottle.dequeue();
+      const visible = this.getVisibleRange();
+      const rendered = this.getRenderedRange();
 
-    const visible = this.getVisibleRange();
-    const rendered = this.getRenderedRange();
+      // remove rows no longer in the viewport
+      this.cleanupRows(rendered);
 
-    // remove rows no longer in the viewport
-    this.cleanupRows(rendered);
+      // add new rows & missing cells in existing rows
+      if (this.lastRenderedScrollLeft !== this.scrollLeft) {
+        if (this.hasFrozenRows) {
+          const renderedFrozenRows = extend(true, {}, rendered);
 
-    // add new rows & missing cells in existing rows
-    if (this.lastRenderedScrollLeft !== this.scrollLeft) {
-      if (this.hasFrozenRows) {
-        const renderedFrozenRows = extend(true, {}, rendered);
-
-        if (this._options.frozenBottom) {
-          renderedFrozenRows.top = this.actualFrozenRow;
-          renderedFrozenRows.bottom = this.getDataLength();
-        } else {
-          renderedFrozenRows.top = 0;
-          renderedFrozenRows.bottom = this._options.frozenRow;
+          if (this._options.frozenBottom) {
+            renderedFrozenRows.top = this.actualFrozenRow;
+            renderedFrozenRows.bottom = this.getDataLength();
+          } else {
+            renderedFrozenRows.top = 0;
+            renderedFrozenRows.bottom = this._options.frozenRow;
+          }
+          this.cleanUpAndRenderCells(renderedFrozenRows);
         }
-        this.cleanUpAndRenderCells(renderedFrozenRows);
+        this.cleanUpAndRenderCells(rendered);
       }
-      this.cleanUpAndRenderCells(rendered);
-    }
 
-    // render missing rows
-    this.renderRows(rendered);
+      // render missing rows
+      this.renderRows(rendered);
 
-    // Render frozen rows
-    if (this.hasFrozenRows) {
-      if (this._options.frozenBottom) {
-        this.renderRows({
-          top: this.actualFrozenRow, bottom: this.getDataLength() - 1, leftPx: rendered.leftPx, rightPx: rendered.rightPx
-        });
-      } else {
-        this.renderRows({
-          top: 0, bottom: this._options.frozenRow! - 1, leftPx: rendered.leftPx, rightPx: rendered.rightPx
-        });
+      // Render frozen rows
+      if (this.hasFrozenRows) {
+        if (this._options.frozenBottom) {
+          this.renderRows({
+            top: this.actualFrozenRow, bottom: this.getDataLength() - 1, leftPx: rendered.leftPx, rightPx: rendered.rightPx
+          });
+        } else {
+          this.renderRows({
+            top: 0, bottom: this._options.frozenRow! - 1, leftPx: rendered.leftPx, rightPx: rendered.rightPx
+          });
+        }
       }
+
+      this.postProcessFromRow = visible.top;
+      this.postProcessToRow = Math.min(this.getDataLengthIncludingAddNew() - 1, visible.bottom);
+      this.startPostProcessing();
+
+      this.lastRenderedScrollTop = this.scrollTop;
+      this.lastRenderedScrollLeft = this.scrollLeft;
+      this.h_render = null;
+      this.triggerEvent(this.onRendered, { startRow: visible.top, endRow: visible.bottom, grid: this });
     }
-
-    this.postProcessFromRow = visible.top;
-    this.postProcessToRow = Math.min(this.getDataLengthIncludingAddNew() - 1, visible.bottom);
-    this.startPostProcessing();
-
-    this.lastRenderedScrollTop = this.scrollTop;
-    this.lastRenderedScrollLeft = this.scrollLeft;
-    this.h_render = null;
-    this.triggerEvent(this.onRendered, { startRow: visible.top, endRow: visible.bottom, grid: this });
   }
 
   protected handleHeaderRowScroll() {
@@ -4813,6 +4752,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     if (!handled) {
       if (!e.shiftKey && !e.altKey) {
+        // editor may specify an array of keys to bubble
         if (this._options.editable && this.currentEditor?.keyCaptureList) {
           if (this.currentEditor.keyCaptureList.indexOf(String(e.which)) > -1) {
             return;
@@ -4827,12 +4767,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
     if (!handled) {
       if (!e.shiftKey && !e.altKey && !e.ctrlKey) {
-        // editor may specify an array of keys to bubble
-        if (this._options.editable && this.currentEditor?.keyCaptureList) {
-          if (this.currentEditor.keyCaptureList.indexOf(String(e.which)) > -1) {
-            return;
-          }
-        }
         if (e.key === 'Escape') {
           if (!this.getEditorLock()?.isActive()) {
             return; // no editing mode to cancel, allow bubbling and default processing (exit without cancelling the event)
@@ -4903,7 +4837,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     evt = this.triggerEvent(this.onClick, { row: cell.row, cell: cell.cell }, evt || e);
-    if ((evt as any).isImmediatePropagationStopped()) {
+    if ((evt as SlickEventData).isImmediatePropagationStopped() || e.defaultPrevented) {
       return;
     }
 
@@ -5038,7 +4972,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Returns a hash containing row and cell indexes. Coordinates are relative to the top left corner of the grid beginning with the first row (not including the column headers).
+   * Returns row and cell indexes by providing x,y coordinates.
+   * Coordinates are relative to the top left corner of the grid beginning with the first row (not including the column headers).
    * @param x An x coordinate.
    * @param y A y coordinate.
    */
@@ -5048,12 +4983,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     let w = 0;
     for (let i = 0; i < this.columns.length && w < x; i++) {
-      if (!this.columns[i] || this.columns[i].hidden) { continue; }
-
+      if (!this.columns[i] || this.columns[i].hidden) {
+        continue;
+      }
       w += this.columns[i].width as number;
       cell++;
     }
 
+    /* istanbul ignore if - TODO: need to investigate, this is technically unreachable */
     if (cell < 0) {
       cell = 0;
     }
@@ -5117,14 +5054,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Returns a hash containing row and cell indexes from a standard W3C event.
+   * Returns row and cell indexes by providing a standard W3C event.
    * @param {*} event A standard W3C event.
    */
   getCellFromEvent(evt: Event | SlickEventData) {
     const e = evt instanceof SlickEventData ? evt.getNativeEvent() : evt;
     const targetEvent: any = (e as TouchEvent).touches ? (e as TouchEvent).touches[0] : e;
 
-    const cellNode = (e as Event & { target: HTMLElement }).target.closest('.slick-cell');
+    const cellNode = (e as Event & { target: HTMLElement; }).target.closest('.slick-cell');
     if (!cellNode) {
       return null;
     }
@@ -5145,11 +5082,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     const cell = this.getCellFromNode(cellNode as HTMLElement);
 
-    if (!isDefined(row) || !isDefined(cell)) {
+    if (!isDefinedNumber(row) || !isDefinedNumber(cell)) {
       return null;
-    } else {
-      return { row, cell };
     }
+    return { row, cell };
   }
 
   /**
@@ -5221,7 +5157,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected internalScrollColumnIntoView(left: number, right: number) {
-    const scrollRight = this.scrollLeft + (Utils.width(this._viewportScrollContainerX) as number) - (this.viewportHasVScroll ? (this.scrollbarDimensions?.width ?? 0) : 0);
+    const scrollRight = this.scrollLeft + (Utils.width(this._viewportScrollContainerX) as number) - (this.viewportHasVScroll ? (this.scrollbarDimensions?.width || 0) : 0);
 
     if (left < this.scrollLeft) {
       this._viewportScrollContainerX.scrollLeft = left;
@@ -5277,9 +5213,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
 
       if (this._options.editable && opt_editMode && this.isCellPotentiallyEditable(this.activeRow, this.activeCell)) {
-        clearTimeout(this.h_editorLoader);
-
         if (this._options.asyncEditorLoading) {
+          clearTimeout(this.h_editorLoader);
           this.h_editorLoader = setTimeout(() => {
             this.makeActiveCellEditable(undefined, preClickModeOn, e);
           }, this._options.asyncEditorLoadDelay);
@@ -5302,7 +5237,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected clearTextSelection() {
     if ((document as any).selection?.empty) {
       try {
-        // IE fails here if selected element is not in dom
+        // IE fails here if selected element is not in DOM
         (document as any).selection.empty();
         // eslint-disable-next-line no-empty
       } catch (e) { }
@@ -5316,12 +5251,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected isCellPotentiallyEditable(row: number, cell: number) {
     const dataLength = this.getDataLength();
-    // is the data for this row loaded?
+    // is the data for this row actually loaded?
     if (row < dataLength && !this.getDataItem(row)) {
       return false;
     }
 
-    // are we in the Add New row? Can we create new from this cell?
+    // are we in the Add New row? Can we actually and allowed to create new one from this cell?
     if (this.columns[cell].cannotTriggerInsert && row >= dataLength) {
       return false;
     }
@@ -5429,7 +5364,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     if (item && this.currentEditor) {
       this.currentEditor.loadValue(item);
-      if (preClickModeOn && this.currentEditor?.preClick) {
+      if (preClickModeOn && typeof this.currentEditor?.preClick === 'function') {
         this.currentEditor.preClick();
       }
     }
@@ -5514,24 +5449,22 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected handleActiveCellPositionChange() {
-    if (!this.activeCellNode) {
-      return;
-    }
+    if (this.activeCellNode) {
+      this.triggerEvent(this.onActiveCellPositionChanged, {});
 
-    this.triggerEvent(this.onActiveCellPositionChanged, {});
-
-    if (this.currentEditor) {
-      const cellBox = this.getActiveCellPosition();
-      if (this.currentEditor.show && this.currentEditor.hide) {
-        if (!cellBox.visible) {
-          this.currentEditor.hide();
-        } else {
-          this.currentEditor.show();
+      if (this.currentEditor) {
+        const cellBox = this.getActiveCellPosition();
+        if (this.currentEditor.show && this.currentEditor.hide) {
+          if (!cellBox.visible) {
+            this.currentEditor.hide();
+          } else {
+            this.currentEditor.show();
+          }
         }
-      }
 
-      if (this.currentEditor.position) {
-        this.currentEditor.position(cellBox);
+        if (this.currentEditor.position) {
+          this.currentEditor.position(cellBox);
+        }
       }
     }
   }
@@ -5563,7 +5496,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let textSelection: Range | null = null;
     if (window.getSelection) {
       const selection = window.getSelection();
-      if ((selection?.rangeCount ?? 0) > 0) {
+      if ((selection?.rangeCount || 0) > 0) {
         textSelection = selection!.getRangeAt(0);
       }
     }
@@ -5599,7 +5532,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const rowAtTop = rowNumber * this._options.rowHeight!;
       const rowAtBottom = (rowNumber + 1) * this._options.rowHeight!
         - viewportScrollH
-        + (this.viewportHasHScroll ? (this.scrollbarDimensions?.height ?? 0) : 0);
+        + (this.viewportHasHScroll ? (this.scrollbarDimensions?.height || 0) : 0);
 
       // need to page down?
       if ((rowNumber + 1) * this._options.rowHeight! > this.scrollTop + viewportScrollH + this.offset) {
@@ -5854,7 +5787,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected gotoNext(row: number, cell: number, posX?: number) {
-    if (!isDefined(row) && !isDefined(cell)) {
+    if (!isDefinedNumber(row) && !isDefinedNumber(cell)) {
       row = cell = posX = 0;
       if (this.canCellBeActive(row, cell)) {
         return {
@@ -5892,7 +5825,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected gotoPrev(row: number, cell: number, posX?: number) {
-    if (!isDefined(row) && !isDefined(cell)) {
+    if (!isDefinedNumber(row) && !isDefinedNumber(cell)) {
       row = this.getDataLengthIncludingAddNew() - 1;
       cell = posX = this.columns.length - 1;
       if (this.canCellBeActive(row, cell)) {
@@ -6177,12 +6110,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Boolean} [forceEdit] If true, will attempt to initiate the edit dialogue for the field in the specified cell.
    */
   gotoCell(row: number, cell: number, forceEdit?: boolean, e?: Event | SlickEvent) {
-    if (!this.initialized) { return; }
-    if (!this.canCellBeActive(row, cell)) {
-      return;
-    }
-
-    if (!this.getEditorLock()?.commitCurrentEdit()) {
+    if (!this.initialized
+      || !this.canCellBeActive(row, cell)
+      || !this.getEditorLock()?.commitCurrentEdit()
+    ) {
       return;
     }
 
@@ -6220,6 +6151,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           const prevSerializedValue = self.serializedEditorValue;
 
           if (self.activeRow < self.getDataLength()) {
+            // editing existing item found
             const editCommand = {
               row,
               cell,
@@ -6245,8 +6177,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               editCommand.execute();
               self.makeActiveCellNormal(true);
             }
-
           } else {
+            // editing new item to add to dataset
             const newItem = {};
             self.currentEditor.applyValue(newItem, self.currentEditor.serializeValue());
             self.makeActiveCellNormal(true);
@@ -6256,7 +6188,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           // check whether the lock has been re-acquired by event handlers
           return !self.getEditorLock()?.isActive();
         } else {
-          // Re-add the CSS class to trigger transitions, if any.
+          // invalid editing: Re-add the CSS class to trigger transitions, if any.
           if (self.activeCellNode) {
             self.activeCellNode.classList.remove('invalid');
             Utils.width(self.activeCellNode);// force layout

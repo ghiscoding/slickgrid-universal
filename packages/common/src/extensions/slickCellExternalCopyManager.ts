@@ -115,7 +115,7 @@ export class SlickCellExternalCopyManager {
     return columnDef.name instanceof HTMLElement ? stripTags(columnDef.name.innerHTML) : columnDef.name;
   }
 
-  getDataItemValueForColumn(item: any, columnDef: Column, event: Event) {
+  getDataItemValueForColumn(item: any, columnDef: Column, event: SlickEventData) {
     if (typeof this._addonOptions.dataItemColumnValueExtractor === 'function') {
       const val = this._addonOptions.dataItemColumnValueExtractor(item, columnDef) as string | HTMLElement;
       if (val) {
@@ -287,7 +287,7 @@ export class SlickCellExternalCopyManager {
               const dt = this._grid.getDataItem(desty);
 
               if (this._grid.triggerEvent(this.onBeforePasteCell, { row: desty, cell: destx, dt, column: columns[destx], target: 'grid' }).getReturnValue() === false) {
-                 continue;
+                continue;
               }
 
               clipCommand.oldValues[y][x] = dt[columns[destx]['field']];
@@ -377,7 +377,7 @@ export class SlickCellExternalCopyManager {
     }
   }
 
-  protected handleKeyDown(e: any): boolean | void {
+  protected handleKeyDown(e: SlickEventData): boolean | void {
     let ranges: SlickRange[];
     if (!this._grid.getEditorLock().isActive() || this._grid.getOptions().autoEdit) {
       if (e.key === 'Escape') {

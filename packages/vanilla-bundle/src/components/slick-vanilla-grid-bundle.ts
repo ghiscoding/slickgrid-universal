@@ -497,7 +497,7 @@ export class SlickVanillaGridBundle<TData = any> {
         this.sharedService.groupItemMetadataProvider = this.groupItemMetadataProvider;
         dataViewOptions = { ...dataViewOptions, groupItemMetadataProvider: this.groupItemMetadataProvider };
       }
-      this.dataView = new SlickDataView<TData>(dataViewOptions as Partial<DataViewOption>, this._eventPubSubService);
+      this.dataView = new SlickDataView<TData>(dataViewOptions, this._eventPubSubService);
       this._eventPubSubService.publish('onDataviewCreated', this.dataView);
     }
 

@@ -378,7 +378,7 @@ export class SliderEditor implements Editor {
       if (!this.args?.compositeEditorOptions) {
         this.grid.onMouseEnter.notify(
           { column: this.columnDef, grid: this.grid },
-          { ...new SlickEventData(), ...{ target: event?.target } as Event }
+          new SlickEventData(event)
         );
       }
     }
@@ -405,7 +405,7 @@ export class SliderEditor implements Editor {
     }
     grid.onCompositeEditorChange.notify(
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
-      { ...new SlickEventData(), ...event as Event }
+      new SlickEventData(event)
     );
   }
 

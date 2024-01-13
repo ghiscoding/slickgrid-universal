@@ -148,7 +148,7 @@ export class SlickCellSelectionModel implements SelectionModel {
   // protected functions
   // ---------------------
 
-  protected handleActiveCellChange(_e: Event, args: OnActiveCellChangedEventArgs) {
+  protected handleActiveCellChange(_e: SlickEventData, args: OnActiveCellChangedEventArgs) {
     this._prevSelectedRow = undefined;
     const isCellDefined = isDefined(args.cell);
     const isRowDefined = isDefined(args.row);
@@ -161,14 +161,14 @@ export class SlickCellSelectionModel implements SelectionModel {
     }
   }
 
-  protected handleBeforeCellRangeSelected(e: any): boolean | void {
+  protected handleBeforeCellRangeSelected(e: SlickEventData): boolean | void {
     if (this._grid.getEditorLock().isActive()) {
       e.stopPropagation();
       return false;
     }
   }
 
-  protected handleCellRangeSelected(_e: any, args: { range: SlickRange; }) {
+  protected handleCellRangeSelected(_e: SlickEventData, args: { range: SlickRange; }) {
     this._grid.setActiveCell(args.range.fromRow, args.range.fromCell, false, false, true);
     this.setSelectedRanges([args.range]);
   }
@@ -177,7 +177,7 @@ export class SlickCellSelectionModel implements SelectionModel {
     return ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageDown', 'PageUp', 'Home', 'End'].some(k => k === key);
   }
 
-  protected handleKeyDown(e: KeyboardEvent) {
+  protected handleKeyDown(e: SlickEventData) {
     let ranges: SlickRange[];
     let last: SlickRange;
     const colLn = this._grid.getColumns().length;
@@ -190,7 +190,7 @@ export class SlickCellSelectionModel implements SelectionModel {
       dataLn = this._grid.getDataLength();
     }
 
-    if (active && (e.shiftKey || e.ctrlKey) && !e.altKey && this.isKeyAllowed(e.key)) {
+    if (active && (e.shiftKey || e.ctrlKey) && !e.altKey && this.isKeyAllowed(e.key as string)) {
       ranges = this.getSelectedRanges().slice();
       if (!ranges.length) {
         ranges.push(new SlickRange(active.row, active.cell));
@@ -209,7 +209,7 @@ export class SlickCellSelectionModel implements SelectionModel {
         // walking direction
         const dirRow = active.row === last.fromRow ? 1 : -1;
         const dirCell = active.cell === last.fromCell ? 1 : -1;
-        const isSingleKeyMove = e.key.startsWith('Arrow');
+        const isSingleKeyMove = e.key!.startsWith('Arrow');
         let toCell: undefined | number;
         let toRow = 0;
 
@@ -285,7 +285,7 @@ export class SlickCellSelectionModel implements SelectionModel {
 
         e.preventDefault();
         e.stopPropagation();
-        this._prevKeyDown = e.key;
+        this._prevKeyDown = e.key as string;
       }
     }
   }

@@ -4,7 +4,6 @@ import type {
   ContainerService,
   CustomDataView,
   CustomTooltipOption,
-  DOMEvent,
   Formatter,
   FormatterResultWithHtml,
   FormatterResultWithText,
@@ -12,6 +11,7 @@ import type {
   Observable,
   RxJsFacade,
   SharedService,
+  SlickEventData,
   SlickGrid,
   Subscription,
 } from '@slickgrid-universal/common';
@@ -127,12 +127,12 @@ export class SlickCustomTooltip {
     this._sharedService = containerService.get<SharedService>('SharedService');
     this._addonOptions = { ...this._defaultOptions, ...(this._sharedService?.gridOptions?.customTooltip) } as CustomTooltipOption;
     this._eventHandler
-      .subscribe(grid.onMouseEnter, this.handleOnMouseEnter.bind(this) as unknown as EventListener)
+      .subscribe(grid.onMouseEnter, this.handleOnMouseEnter.bind(this))
       .subscribe(grid.onHeaderMouseEnter, (e, args) => this.handleOnHeaderMouseEnterByType(e, args, 'slick-header-column'))
       .subscribe(grid.onHeaderRowMouseEnter, (e, args) => this.handleOnHeaderMouseEnterByType(e, args, 'slick-headerrow-column'))
-      .subscribe(grid.onMouseLeave, this.hideTooltip.bind(this) as unknown as EventListener)
-      .subscribe(grid.onHeaderMouseLeave, this.hideTooltip.bind(this) as unknown as EventListener)
-      .subscribe(grid.onHeaderRowMouseLeave, this.hideTooltip.bind(this) as unknown as EventListener);
+      .subscribe(grid.onMouseLeave, this.hideTooltip.bind(this))
+      .subscribe(grid.onHeaderMouseLeave, this.hideTooltip.bind(this))
+      .subscribe(grid.onHeaderRowMouseLeave, this.hideTooltip.bind(this));
   }
 
   dispose() {
@@ -169,7 +169,7 @@ export class SlickCustomTooltip {
    * Async process callback will hide any prior tooltip & then merge the new result with the item `dataContext` under a `__params` property
    * (unless a new prop name is provided) to provice as dataContext object to the asyncPostFormatter.
    */
-  protected asyncProcessCallback(asyncResult: any, cell: { row: number, cell: number }, value: any, columnDef: Column, dataContext: any) {
+  protected asyncProcessCallback(asyncResult: any, cell: { row: number, cell: number; }, value: any, columnDef: Column, dataContext: any) {
     this.hideTooltip();
     const itemWithAsyncData = { ...dataContext, [this.addonOptions?.asyncParamsPropName ?? '__params']: asyncResult };
     if (this._cellAddonOptions?.useRegularTooltip) {
@@ -180,7 +180,7 @@ export class SlickCustomTooltip {
   }
 
   /** depending on the selector type, execute the necessary handler code */
-  protected handleOnHeaderMouseEnterByType(event: DOMEvent<HTMLDivElement>, args: any, selector: CellType) {
+  protected handleOnHeaderMouseEnterByType(event: SlickEventData, args: any, selector: CellType) {
     this._cellType = selector;
 
     // before doing anything, let's remove any previous tooltip before
@@ -221,7 +221,7 @@ export class SlickCustomTooltip {
     }
   }
 
-  protected async handleOnMouseEnter(event: DOMEvent<HTMLDivElement>) {
+  protected async handleOnMouseEnter(event: SlickEventData) {
     this._cellType = 'slick-cell';
 
     // before doing anything, let's remove any previous tooltip before

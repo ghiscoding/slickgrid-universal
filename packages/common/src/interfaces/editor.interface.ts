@@ -11,6 +11,7 @@ export interface Editor {
   /** is the Editor disabled when we first open it? This could happen when we use "collectionAsync" and we wait for the "collection" to be filled before enabling the Editor. */
   disabled?: boolean;
 
+  /** editor may specify an array of keys to bubble */
   keyCaptureList?: string;
 
   /** Initialize the Editor */
