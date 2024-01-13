@@ -66,9 +66,7 @@ const gridStubBlueprint = {
   }),
   invalidate: jest.fn(),
   render: jest.fn(),
-  getColumns: jest
-    .fn()
-    .mockImplementation(() => (gridStubBlueprint as any).columns || []),
+  getColumns: jest.fn().mockImplementation(() => (gridStubBlueprint as any).columns || []),
 } as unknown as SlickGrid;
 
 const pubSubServiceStub = {
@@ -95,9 +93,7 @@ describe('Row Based Edit Plugin', () => {
       columns: [...mockColumns],
     } as unknown as MockedSlickGrid;
     gridService = new GridService(_any, _any, _any, _any, _any, _any, _any);
-    jest
-      .spyOn(gridService, 'getAllColumnDefinitions')
-      .mockReturnValue(mockColumns);
+    jest.spyOn(gridService, 'getAllColumnDefinitions').mockReturnValue(mockColumns);
     plugin = new SlickRowBasedEdit(pubSubServiceStub, addonOptions);
     (plugin as any)._eventHandler = {
       subscribe: jest.fn(),
@@ -137,47 +133,27 @@ describe('Row Based Edit Plugin', () => {
 
     plugin.init(gridStub, gridService);
 
-    const onBeforeEditCellHandler = (
-      plugin.eventHandler.subscribe as jest.Mock<any, any>
-    ).mock.calls[0][1] as (
+    const onBeforeEditCellHandler = (plugin.eventHandler.subscribe as jest.Mock<any, any>).mock.calls[0][1] as (
       e: Event,
       args: OnBeforeEditCellEventArgs
     ) => boolean;
-    expect(
-      onBeforeEditCellHandler(
-        {} as Event,
-        { item: fakeItem } as OnBeforeEditCellEventArgs
-      )
-    ).toBe(false);
+    expect(onBeforeEditCellHandler({} as Event, { item: fakeItem } as OnBeforeEditCellEventArgs)).toBe(false);
 
-    plugin.rowBasedEditCommandHandler(
-      fakeItem,
-      {} as Column,
-      {} as EditCommand
-    );
+    plugin.rowBasedEditCommandHandler(fakeItem, {} as Column, {} as EditCommand);
 
-    expect(
-      onBeforeEditCellHandler(
-        {} as Event,
-        { item: fakeItem } as OnBeforeEditCellEventArgs
-      )
-    ).toBe(true);
+    expect(onBeforeEditCellHandler({} as Event, { item: fakeItem } as OnBeforeEditCellEventArgs)).toBe(true);
   });
 
   it('should throw an error when "enableRowEdit" is set without "enableCellNavigation"', () => {
     gridStub.getOptions.mockReturnValue({});
 
-    expect(() => plugin.init(gridStub, gridService)).toThrow(
-      /(enableCellNavigation = true)/
-    );
+    expect(() => plugin.init(gridStub, gridService)).toThrow(/(enableCellNavigation = true)/);
   });
 
   it('should throw an error when "enableRowEdit" is set without "editable"', () => {
     gridStub.getOptions.mockReturnValue({ enableCellNavigation: true });
 
-    expect(() => plugin.init(gridStub, gridService)).toThrow(
-      /(editable = true)/
-    );
+    expect(() => plugin.init(gridStub, gridService)).toThrow(/(editable = true)/);
   });
 
   it('should warn the user when autoEdit is not set or false and turn it on', () => {
@@ -190,9 +166,7 @@ describe('Row Based Edit Plugin', () => {
 
     plugin.init(gridStub, gridService);
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      expect.stringContaining('"autoEdit"')
-    );
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('"autoEdit"'));
   });
 
   it('should override any existing edit command handler to keep track of changes performed on individual rows', () => {
@@ -214,11 +188,7 @@ describe('Row Based Edit Plugin', () => {
       } as GridOption);
 
       plugin.init(gridStub, gridService);
-      plugin.rowBasedEditCommandHandler(
-        {} as any,
-        {} as Column,
-        {} as EditCommand
-      );
+      plugin.rowBasedEditCommandHandler({} as any, {} as Column, {} as EditCommand);
       expect(editCommandHandlerSpy).toHaveBeenCalled();
     });
 
@@ -301,9 +271,7 @@ describe('Row Based Edit Plugin', () => {
 
       plugin.init(gridStub, gridService);
 
-      const call = gridStub.setOptions.mock.calls.find(
-        (c) => c[0].excelCopyBufferOptions
-      )[0] as GridOption;
+      const call = gridStub.setOptions.mock.calls.find((c) => c[0].excelCopyBufferOptions)[0] as GridOption;
 
       const result = call.excelCopyBufferOptions!.onBeforePasteCell!.bind({
         existingBeforePasteCellHandler: () => false,
@@ -321,16 +289,10 @@ describe('Row Based Edit Plugin', () => {
 
       plugin.init(gridStub, gridService);
 
-      const call = gridStub.setOptions.mock.calls.find(
-        (c) => c[0].excelCopyBufferOptions
-      )[0] as GridOption;
+      const call = gridStub.setOptions.mock.calls.find((c) => c[0].excelCopyBufferOptions)[0] as GridOption;
 
       gridStub.getData.mockReturnValue({ getItem: () => fakeItem });
-      plugin.rowBasedEditCommandHandler(
-        fakeItem,
-        { id: 'test-column' } as Column,
-        {} as EditCommand
-      );
+      plugin.rowBasedEditCommandHandler(fakeItem, { id: 'test-column' } as Column, {} as EditCommand);
 
       const result = call.excelCopyBufferOptions!.onBeforePasteCell!.bind({
         existingBeforePasteCellHandler: () => false,
@@ -347,9 +309,7 @@ describe('Row Based Edit Plugin', () => {
 
       plugin.init(gridStub, gridService);
 
-      const call = gridStub.setOptions.mock.calls.find(
-        (c) => c[0].excelCopyBufferOptions
-      )[0] as GridOption;
+      const call = gridStub.setOptions.mock.calls.find((c) => c[0].excelCopyBufferOptions)[0] as GridOption;
 
       const result = call.excelCopyBufferOptions!.onBeforePasteCell!.bind({
         existingBeforePasteCellHandler: () => false,
@@ -388,11 +348,7 @@ describe('Row Based Edit Plugin', () => {
     gridStub.getData.mockReturnValue({ getItem: () => fakeItem });
     plugin.init(gridStub, gridService);
 
-    plugin.rowBasedEditCommandHandler(
-      fakeItem,
-      {} as Column,
-      {} as EditCommand
-    );
+    plugin.rowBasedEditCommandHandler(fakeItem, {} as Column, {} as EditCommand);
     const meta = gridStub.getData().getItemMetadata(1);
 
     expect(meta?.cssClasses).toContain(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS);
@@ -420,12 +376,9 @@ describe('Row Based Edit Plugin', () => {
     gridStub.onSetOptions = 'onSetOptions' as any;
     plugin.init(gridStub, gridService);
 
-    const call = (
-      plugin.eventHandler.subscribe as jest.Mock<any, any>
-    ).mock.calls.find((c) => c[0] === 'onSetOptions')[1] as (
-      _e: Event,
-      args: OnSetOptionsEventArgs
-    ) => void;
+    const call = (plugin.eventHandler.subscribe as jest.Mock<any, any>).mock.calls.find(
+      (c) => c[0] === 'onSetOptions'
+    )[1] as (_e: Event, args: OnSetOptionsEventArgs) => void;
 
     call(
       {} as Event,
@@ -434,9 +387,7 @@ describe('Row Based Edit Plugin', () => {
       } as unknown as OnSetOptionsEventArgs
     );
 
-    expect(plugin.addonOptions).toEqual(
-      expect.objectContaining({ foobar: true })
-    );
+    expect(plugin.addonOptions).toEqual(expect.objectContaining({ foobar: true }));
   });
 
   it('should remove all styles of rows on re-render and re-apply them', () => {
@@ -449,11 +400,7 @@ describe('Row Based Edit Plugin', () => {
       getRowById: () => 0,
     });
 
-    plugin.rowBasedEditCommandHandler(
-      mockColumns[1],
-      { id: 'test-column' } as Column,
-      {} as EditCommand
-    );
+    plugin.rowBasedEditCommandHandler(mockColumns[1], { id: 'test-column' } as Column, {} as EditCommand);
 
     plugin.rowBasedEditCommandHandler(
       mockColumns[1],
@@ -465,9 +412,9 @@ describe('Row Based Edit Plugin', () => {
       } as EditCommand
     );
 
-    const call = (
-      plugin.eventHandler.subscribe as jest.Mock<any, any>
-    ).mock.calls.find((c) => c[0] === 'onRowsOrCountChanged')[1] as () => void;
+    const call = (plugin.eventHandler.subscribe as jest.Mock<any, any>).mock.calls.find(
+      (c) => c[0] === 'onRowsOrCountChanged'
+    )[1] as () => void;
 
     call();
 
@@ -489,30 +436,19 @@ describe('Row Based Edit Plugin', () => {
       const cols = [...mockColumns];
       plugin.create(cols, options);
 
-      expect(plugin.addonOptions).toEqual(
-        expect.objectContaining({ columnIndexPosition: -1 })
-      );
+      expect(plugin.addonOptions).toEqual(expect.objectContaining({ columnIndexPosition: -1 }));
     });
 
     it('should add a custom column formatter to the action column', () => {
       plugin.init(gridStub, gridService);
       const actionColumn = plugin.getColumnDefinition();
 
-      const fragment = actionColumn.formatter?.(
-        0,
-        0,
-        undefined,
-        {} as Column,
-        'test',
-        gridStub
-      );
+      const fragment = actionColumn.formatter?.(0, 0, undefined, {} as Column, 'test', gridStub);
 
       expect(fragment).toBeDefined();
       expect((fragment as DocumentFragment).hasChildNodes()).toBe(true);
 
-      const actionBtns = (fragment as DocumentFragment).querySelectorAll(
-        'span.action-btns'
-      );
+      const actionBtns = (fragment as DocumentFragment).querySelectorAll('span.action-btns');
       expect(actionBtns.length).toBe(4);
     });
 
@@ -527,44 +463,35 @@ describe('Row Based Edit Plugin', () => {
     });
 
     [-1, 0, 2].forEach((position) => {
-      it(
-        'should position the actions column at the ' +
-          position +
-          ' position provided via columnIndexPosition',
-        () => {
-          const options = {
-            ...addonOptions,
-            rowBasedEditOptions: { columnIndexPosition: position },
-            editable: false,
-          } as GridOption;
+      it('should position the actions column at the ' + position + ' position provided via columnIndexPosition', () => {
+        const options = {
+          ...addonOptions,
+          rowBasedEditOptions: { columnIndexPosition: position },
+          editable: false,
+        } as GridOption;
 
-          const cols = [...mockColumns];
-          plugin.create(cols, options);
+        const cols = [...mockColumns];
+        plugin.create(cols, options);
 
-          const actionColumn = plugin.getColumnDefinition();
-          expect(cols.at(position)?.name).toEqual(actionColumn.name);
-        }
-      );
+        const actionColumn = plugin.getColumnDefinition();
+        expect(cols.at(position)?.name).toEqual(actionColumn.name);
+      });
     });
 
     [-10, 100, mockColumns.length].forEach((position) => {
-      it(
-        'should position the columns at the start if position out of bounds: ' +
-          position,
-        () => {
-          const options = {
-            ...addonOptions,
-            rowBasedEditOptions: { columnIndexPosition: position },
-            editable: false,
-          } as GridOption;
+      it('should position the columns at the start if position out of bounds: ' + position, () => {
+        const options = {
+          ...addonOptions,
+          rowBasedEditOptions: { columnIndexPosition: position },
+          editable: false,
+        } as GridOption;
 
-          const cols = [...mockColumns];
-          plugin.create(cols, options);
+        const cols = [...mockColumns];
+        plugin.create(cols, options);
 
-          const actionColumn = plugin.getColumnDefinition();
-          expect(cols.at(0)?.name).toEqual(actionColumn.name);
-        }
-      );
+        const actionColumn = plugin.getColumnDefinition();
+        expect(cols.at(0)?.name).toEqual(actionColumn.name);
+      });
     });
 
     it('should publish an onPluginColumnsChanged event when creating the plugin', () => {
@@ -573,10 +500,7 @@ describe('Row Based Edit Plugin', () => {
       const cols = [...mockColumns];
       plugin.create(cols, options);
 
-      expect(spy).toHaveBeenCalledWith(
-        'onPluginColumnsChanged',
-        expect.anything()
-      );
+      expect(spy).toHaveBeenCalledWith('onPluginColumnsChanged', expect.anything());
     });
   });
 
@@ -698,11 +622,7 @@ describe('Row Based Edit Plugin', () => {
       const { onCellClick } = arrange();
       const fakeItem = { id: 'test' };
 
-      plugin.rowBasedEditCommandHandler(
-        fakeItem,
-        {} as Column,
-        {} as EditCommand
-      );
+      plugin.rowBasedEditCommandHandler(fakeItem, {} as Column, {} as EditCommand);
       gridStub.invalidate.mockClear();
       onCellClick(createFakeEvent(BTN_ACTION_EDIT), {
         row: 0,

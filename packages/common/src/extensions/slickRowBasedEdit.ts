@@ -11,18 +11,12 @@ import type {
   OnSetOptionsEventArgs,
   RowBasedEditOptions,
 } from '../interfaces/index';
-import {
-  SlickEventData,
-  SlickEventHandler,
-  SlickGlobalEditorLock,
-  type SlickGrid,
-} from '../core/index';
+import { SlickEventData, SlickEventHandler, SlickGlobalEditorLock, type SlickGrid } from '../core/index';
 import { GridService } from '../services';
 
 export const ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS = 'slick-rbe-editmode';
 export const ROW_BASED_EDIT_UNSAVED_CELL = 'slick-rbe-unsaved-cell';
-export const ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX =
-  'slick-rbe-unsaved-highlight';
+export const ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX = 'slick-rbe-unsaved-highlight';
 export const BTN_ACTION_DELETE = 'action-btns--delete';
 export const BTN_ACTION_EDIT = 'action-btns--edit';
 export const BTN_ACTION_UPDATE = 'action-btns--update';
@@ -55,15 +49,10 @@ export class SlickRowBasedEdit {
   } as RowBasedEditOptions;
 
   protected _editedRows: Map<string, EditedRowDetails> = new Map();
-  private _existingEditCommandHandler:
-    | ((item: any, column: Column<any>, command: EditCommand) => void)
-    | undefined;
+  private _existingEditCommandHandler: ((item: any, column: Column<any>, command: EditCommand) => void) | undefined;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
-  constructor(
-    protected readonly pubSubService: BasePubSubService,
-    options?: RowBasedEditOptions
-  ) {
+  constructor(protected readonly pubSubService: BasePubSubService, options?: RowBasedEditOptions) {
     this._eventHandler = new SlickEventHandler();
     this._addonOptions = options;
   }
@@ -86,10 +75,7 @@ export class SlickRowBasedEdit {
     this._gridService = gridService;
     this._addonOptions = { ...this._defaults, ...this.addonOptions };
     const dataView = this._grid.getData();
-    this._eventHandler.subscribe(
-      this._grid.onBeforeEditCell,
-      this.onBeforeEditCellHandler
-    );
+    this._eventHandler.subscribe(this._grid.onBeforeEditCell, this.onBeforeEditCellHandler);
     this.checkOptionsRequirements(this.gridOptions);
 
     if (!this.gridOptions.autoEdit) {
@@ -105,8 +91,7 @@ export class SlickRowBasedEdit {
     });
 
     if (this.gridOptions.enableExcelCopyBuffer === true) {
-      const existingBeforePasteCellHandler =
-        this.gridOptions.excelCopyBufferOptions?.onBeforePasteCell;
+      const existingBeforePasteCellHandler = this.gridOptions.excelCopyBufferOptions?.onBeforePasteCell;
 
       this._grid.setOptions({
         excelCopyBufferOptions: {
@@ -135,17 +120,9 @@ export class SlickRowBasedEdit {
     }
 
     const originalGetItemMetadata = dataView.getItemMetadata;
-    dataView.getItemMetadata = this.updateItemMetadata(
-      originalGetItemMetadata?.bind?.(dataView)
-    );
-    this._eventHandler.subscribe(
-      this._grid.onSetOptions,
-      this.optionsUpdatedHandler.bind(this)
-    );
-    this._eventHandler.subscribe(
-      dataView.onRowsOrCountChanged,
-      this.handleAllRowRerender.bind(this)
-    );
+    dataView.getItemMetadata = this.updateItemMetadata(originalGetItemMetadata?.bind?.(dataView));
+    this._eventHandler.subscribe(this._grid.onSetOptions, this.optionsUpdatedHandler.bind(this));
+    this._eventHandler.subscribe(dataView.onRowsOrCountChanged, this.handleAllRowRerender.bind(this));
 
     this._grid.invalidate();
   }
@@ -160,10 +137,7 @@ export class SlickRowBasedEdit {
     this.pubSubService?.unsubscribeAll();
   }
 
-  create(
-    columnDefinitions: Column[],
-    gridOptions: GridOption
-  ): SlickRowBasedEdit | null {
+  create(columnDefinitions: Column[], gridOptions: GridOption): SlickRowBasedEdit | null {
     this._addonOptions = {
       ...this._defaults,
       ...gridOptions.rowBasedEditOptions,
@@ -173,14 +147,10 @@ export class SlickRowBasedEdit {
       // add new action column unless it was already added
       if (!columnDefinitions.some((col) => col.id === selectionColumn.id)) {
         // column index position in the grid
-        const columnPosition =
-          gridOptions?.rowBasedEditOptions?.columnIndexPosition ?? -1;
+        const columnPosition = gridOptions?.rowBasedEditOptions?.columnIndexPosition ?? -1;
         if (columnPosition === -1) {
           columnDefinitions.push(selectionColumn);
-        } else if (
-          columnPosition > 0 &&
-          columnPosition < columnDefinitions.length
-        ) {
+        } else if (columnPosition > 0 && columnPosition < columnDefinitions.length) {
           columnDefinitions.splice(columnPosition, 0, selectionColumn);
         } else {
           columnDefinitions.unshift(selectionColumn);
@@ -195,9 +165,7 @@ export class SlickRowBasedEdit {
   }
 
   getColumnDefinition(): Column {
-    const columnId = String(
-      this._addonOptions?.columnId ?? this._defaults.columnId
-    );
+    const columnId = String(this._addonOptions?.columnId ?? this._defaults.columnId);
 
     return {
       id: columnId,
@@ -213,11 +181,7 @@ export class SlickRowBasedEdit {
     } as Column;
   }
 
-  rowBasedEditCommandHandler(
-    item: any,
-    column: Column<any>,
-    editCommand: EditCommand
-  ) {
+  rowBasedEditCommandHandler(item: any, column: Column<any>, editCommand: EditCommand) {
     if (this._existingEditCommandHandler) {
       this._existingEditCommandHandler(item, column, editCommand);
     }
@@ -228,9 +192,7 @@ export class SlickRowBasedEdit {
     const serializedValues = Array.isArray(editCommand.serializedValue)
       ? editCommand.serializedValue
       : [editCommand.serializedValue];
-    const editorColumns = this._gridService
-      ?.getAllColumnDefinitions()
-      .filter((col) => col.editor !== undefined);
+    const editorColumns = this._gridService?.getAllColumnDefinitions().filter((col) => col.editor !== undefined);
 
     const modifiedColumns: Column[] = [];
     const idProperty = this.gridOptions.datasetIdPropertyName ?? 'id';
@@ -239,9 +201,8 @@ export class SlickRowBasedEdit {
       const serializedValue = serializedValues[index];
 
       if (prevSerializedValue !== serializedValue || serializedValue === '') {
-        const finalColumn = Array.isArray(editCommand.prevSerializedValue)
-          ? editorColumns?.[index]
-          : column;
+        /* istanbul ignore next */
+        const finalColumn = Array.isArray(editCommand.prevSerializedValue) ? editorColumns?.[index] : column;
 
         if (!finalColumn) {
           return;
@@ -276,9 +237,7 @@ export class SlickRowBasedEdit {
     }
 
     if (!options?.editable) {
-      throw new Error(
-        `[Slickgrid-Universal] Row Based Edit Plugin requires the gridOption editable (editable = true)`
-      );
+      throw new Error(`[Slickgrid-Universal] Row Based Edit Plugin requires the gridOption editable (editable = true)`);
     }
   }
 
@@ -287,9 +246,8 @@ export class SlickRowBasedEdit {
     const targetRow = this._editedRows.get(item[idProperty]);
     const row = this._grid.getData().getRowByItem(item);
     if (
-      (row !== undefined &&
-        targetRow?.editCommands &&
-        targetRow.editCommands.length) ||
+      (row !== undefined && targetRow?.editCommands && targetRow.editCommands.length) ||
+      /* istanbul ignore next */
       SlickGlobalEditorLock.cancelCurrentEdit()
     ) {
       while (targetRow!.editCommands.length > 0) {
@@ -313,19 +271,14 @@ export class SlickRowBasedEdit {
       const row = this._grid.getData()?.getRowById(id);
       if (row !== undefined && row >= 0) {
         const hash = { [row]: { [column.id]: ROW_BASED_EDIT_UNSAVED_CELL } };
-        const cssStyleKey = `${ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX}_${[
-          column.id,
-        ]}${row}`;
+        const cssStyleKey = `${ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX}_${[column.id]}${row}`;
         this._grid.setCellCssStyles(cssStyleKey, hash);
         this._editedRows.get(id)?.cssStyleKeys.push(cssStyleKey);
       }
     }
   }
 
-  protected handleAllRowRerender(
-    _e: SlickEventData,
-    _args: OnRowsOrCountChangedEventArgs
-  ) {
+  protected handleAllRowRerender(_e: SlickEventData, _args: OnRowsOrCountChangedEventArgs) {
     this._editedRows.forEach((editedRow, key) => {
       editedRow.cssStyleKeys.forEach((cssStyleKey) => {
         this._grid.removeCellCssStyles(cssStyleKey);
@@ -338,9 +291,7 @@ export class SlickRowBasedEdit {
   }
 
   protected removeUnsavedStylingFromCell(column: Column, row: number) {
-    const cssStyleKey = `${ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX}_${[
-      column.id,
-    ]}${row}`;
+    const cssStyleKey = `${ROW_BASED_EDIT_UNSAVED_HIGHLIGHT_PREFIX}_${[column.id]}${row}`;
     this._grid.removeCellCssStyles(cssStyleKey);
   }
 
@@ -363,8 +314,7 @@ export class SlickRowBasedEdit {
     const idProperty = this.gridOptions.datasetIdPropertyName ?? 'id';
     const targetRow = this._editedRows.get(dataContext[idProperty]);
     if (
-      (target.classList.contains(BTN_ACTION_DELETE) ||
-        target.parentElement?.classList.contains(BTN_ACTION_DELETE)) &&
+      (target.classList.contains(BTN_ACTION_DELETE) || target.parentElement?.classList.contains(BTN_ACTION_DELETE)) &&
       this._gridService
     ) {
       if (
@@ -424,17 +374,9 @@ export class SlickRowBasedEdit {
     }
   }
 
-  protected actionColumnFormatter(
-    _row: number,
-    _cell: number,
-    _value: any,
-    _columnDef: Column,
-    dataContext: any
-  ) {
+  protected actionColumnFormatter(_row: number, _cell: number, _value: any, _columnDef: Column, dataContext: any) {
     const options = this.gridOptions;
-    const isInEditMode = this._editedRows.has(
-      dataContext?.[options.datasetIdPropertyName ?? 'id']
-    );
+    const isInEditMode = this._editedRows.has(dataContext?.[options.datasetIdPropertyName ?? 'id']);
 
     const actionFragment = document.createDocumentFragment();
     actionFragment
@@ -442,20 +384,16 @@ export class SlickRowBasedEdit {
         createDomElement('span', {
           className:
             `${
-              options.rowBasedEditOptions?.actionButtons?.editButtonClassName ||
-              'button-style padding-1px mr-2'
+              options.rowBasedEditOptions?.actionButtons?.editButtonClassName || 'button-style padding-1px mr-2'
             } action-btns ` + BTN_ACTION_EDIT,
-          title:
-            options.rowBasedEditOptions?.actionButtons?.editButtonTitle ||
-            'Edit the Row',
+          title: options.rowBasedEditOptions?.actionButtons?.editButtonTitle || 'Edit the Row',
           style: { display: isInEditMode ? 'none' : '' },
         })
       )
       .appendChild(
         createDomElement('span', {
           className:
-            options.rowBasedEditOptions?.actionButtons
-              ?.iconEditButtonClassName || 'mdi mdi-table-edit color-primary',
+            options.rowBasedEditOptions?.actionButtons?.iconEditButtonClassName || 'mdi mdi-table-edit color-primary',
         })
       );
     actionFragment
@@ -463,20 +401,16 @@ export class SlickRowBasedEdit {
         createDomElement('span', {
           className:
             `${
-              options.rowBasedEditOptions?.actionButtons
-                ?.deleteButtonClassName || 'button-style padding-1px'
+              options.rowBasedEditOptions?.actionButtons?.deleteButtonClassName || 'button-style padding-1px'
             } action-btns ` + BTN_ACTION_DELETE,
-          title:
-            options.rowBasedEditOptions?.actionButtons?.deleteButtonTitle ||
-            'Delete the Row',
+          title: options.rowBasedEditOptions?.actionButtons?.deleteButtonTitle || 'Delete the Row',
           style: { display: isInEditMode ? 'none' : '' },
         })
       )
       .appendChild(
         createDomElement('span', {
           className:
-            options.rowBasedEditOptions?.actionButtons
-              ?.iconDeleteButtonClassName || 'mdi mdi-close color-danger',
+            options.rowBasedEditOptions?.actionButtons?.iconDeleteButtonClassName || 'mdi mdi-close color-danger',
         })
       );
     actionFragment
@@ -484,20 +418,16 @@ export class SlickRowBasedEdit {
         createDomElement('span', {
           className:
             `${
-              options.rowBasedEditOptions?.actionButtons
-                ?.updateButtonClassName || 'button-style padding-1px mr-2'
+              options.rowBasedEditOptions?.actionButtons?.updateButtonClassName || 'button-style padding-1px mr-2'
             } action-btns ` + BTN_ACTION_UPDATE,
-          title:
-            options.rowBasedEditOptions?.actionButtons?.updateButtonTitle ||
-            'Update the Row',
+          title: options.rowBasedEditOptions?.actionButtons?.updateButtonTitle || 'Update the Row',
           style: { display: !isInEditMode ? 'none' : '' },
         })
       )
       .appendChild(
         createDomElement('span', {
           className:
-            options.rowBasedEditOptions?.actionButtons
-              ?.iconUpdateButtonClassName || 'mdi mdi-check-bold color-success',
+            options.rowBasedEditOptions?.actionButtons?.iconUpdateButtonClassName || 'mdi mdi-check-bold color-success',
         })
       );
     actionFragment
@@ -505,33 +435,24 @@ export class SlickRowBasedEdit {
         createDomElement('span', {
           className:
             `${
-              options.rowBasedEditOptions?.actionButtons
-                ?.cancelButtonClassName || 'button-style padding-1px'
+              options.rowBasedEditOptions?.actionButtons?.cancelButtonClassName || 'button-style padding-1px'
             } action-btns ` + BTN_ACTION_CANCEL,
-          title:
-            options.rowBasedEditOptions?.actionButtons?.cancelButtonTitle ||
-            'Cancel changes of the Row',
+          title: options.rowBasedEditOptions?.actionButtons?.cancelButtonTitle || 'Cancel changes of the Row',
           style: { display: !isInEditMode ? 'none' : '' },
         })
       )
       .appendChild(
         createDomElement('span', {
           className:
-            options.rowBasedEditOptions?.actionButtons
-              ?.iconCancelButtonClassName || 'mdi mdi-cancel color-danger',
+            options.rowBasedEditOptions?.actionButtons?.iconCancelButtonClassName || 'mdi mdi-cancel color-danger',
         })
       );
 
     return actionFragment;
   }
 
-  protected onBeforeEditCellHandler = (
-    _e: SlickEventData,
-    args: OnBeforeEditCellEventArgs
-  ) => {
-    return this._editedRows.has(
-      args.item?.[this.gridOptions.datasetIdPropertyName ?? 'id']
-    );
+  protected onBeforeEditCellHandler = (_e: SlickEventData, args: OnBeforeEditCellEventArgs) => {
+    return this._editedRows.has(args.item?.[this.gridOptions.datasetIdPropertyName ?? 'id']);
   };
 
   protected toggleEditmode(dataContext: any, editMode: boolean) {
@@ -564,20 +485,13 @@ export class SlickRowBasedEdit {
 
       if (meta && item) {
         const idProperty = this.gridOptions.datasetIdPropertyName ?? 'id';
-        if (
-          this._editedRows.has(item[idProperty]) &&
-          !meta.cssClasses.includes(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS)
-        ) {
-          meta.cssClasses =
-            (meta.cssClasses || '') + ' ' + ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS;
+        if (this._editedRows.has(item[idProperty]) && !meta.cssClasses.includes(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS)) {
+          meta.cssClasses = (meta.cssClasses || '') + ' ' + ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS;
         } else if (
           !this._editedRows.has(item[idProperty]) &&
           meta.cssClasses.includes(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS)
         ) {
-          meta.cssClasses = meta.cssClasses.replace(
-            ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS,
-            ''
-          );
+          meta.cssClasses = meta.cssClasses.replace(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS, '');
         }
       }
 

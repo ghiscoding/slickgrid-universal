@@ -97,6 +97,7 @@
     "url": "https://ko-fi.com/ghiscoding"
   },
   "prettier": {
-    "singleQuote": true
+    "singleQuote": true,
+    "printWidth": 120
   }
 }
