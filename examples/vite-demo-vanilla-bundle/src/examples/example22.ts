@@ -22,9 +22,6 @@ export default class Example22 {
   sgb!: SlickVanillaGridBundle;
 
   attached() {
-    // override CSS template to be Material Design
-    // await import('@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss');
-
     this.defineGrids();
 
     // mock some data (different in each dataset)
@@ -102,6 +99,7 @@ export default class Example22 {
         editor: { model: Editors.text },
       },
     ];
+
     this.gridOptions = {
       enableAutoResize: false,
       gridHeight: 225,
@@ -115,7 +113,9 @@ export default class Example22 {
           return args.cell > 0;
         },
       },
-      autoEdit: false, // NOTE: this will be automatically turned to true by the Row Based Edit Plugin
+      // NOTE: this will be automatically turned to true by the Row Based Edit Plugin.
+      // A console warning will be shown if you omit this flag
+      autoEdit: false,
       editable: true,
       enableCellNavigation: true,
       enableRowBasedEdit: true,
@@ -151,6 +151,11 @@ export default class Example22 {
             alert(json.message);
             return true;
           });
+        },
+        actionColumnConfig: { // override the defaults of the action column
+          width: 100,
+          minWidth: 100,
+          maxWidth: 100,
         },
         actionButtons: {
           editButtonClassName: 'button-style padding-1px mr-2',
@@ -200,7 +205,7 @@ export default class Example22 {
   }
 
   toggleSingleMultiRowEdit() {
-    this.sgb.gridOptions = this.sgb.gridOptions = {
+    this.sgb.gridOptions = {
       ...this.sgb.gridOptions,
       ...{
         rowBasedEditOptions: {
@@ -218,6 +223,7 @@ function fakeFetch(_input: string | URL | Request, _init?: RequestInit | undefin
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(new Response(JSON.stringify({ status: 200, message: 'success' })));
-    }, 500);
+    // reduces the delay for automated Cypress tests
+    }, (window as any).Cypress ? 10 : 500);
   });
 }

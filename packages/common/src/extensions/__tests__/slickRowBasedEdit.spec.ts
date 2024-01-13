@@ -50,7 +50,7 @@ const gridStubBlueprint = {
   getData: jest.fn().mockReturnValue({
     getItemMetadata: jest.fn(),
     getRowByItem: jest.fn(),
-    getRowById: jest.fn()
+    getRowById: jest.fn(),
   }),
   setCellCssStyles: jest.fn(),
   removeCellCssStyles: jest.fn(),
@@ -181,7 +181,7 @@ describe('Row Based Edit Plugin', () => {
   });
 
   it('should warn the user when autoEdit is not set or false and turn it on', () => {
-    const consoleSpy = jest.spyOn(console, 'warn');
+    const consoleSpy = jest.spyOn(console, 'warn').mockReturnValue();
     gridStub.getOptions.mockReturnValue({
       enableCellNavigation: true,
       editable: true,
@@ -339,7 +339,7 @@ describe('Row Based Edit Plugin', () => {
       expect(result).toBe(true);
     });
 
-    it('should deny paste if both user rule and edit mode is false', () => {
+    it('should deny paste if both user rules and edit mode is false', () => {
       gridStub.getOptions.mockReturnValue({
         ...excelCopyBufferOptions,
         excelCopyBufferOptions: { onBeforePasteCell: () => true },
@@ -439,7 +439,7 @@ describe('Row Based Edit Plugin', () => {
     );
   });
 
-  it('should remove all stlyes of rows on re-render re-renderers and re-apply them', () => {
+  it('should remove all styles of rows on re-render and re-apply them', () => {
     gridStub.getOptions.mockReturnValue(optionsMock);
     gridStub.getData().onRowsOrCountChanged = 'onRowsOrCountChanged' as any;
     plugin.init(gridStub, gridService);
@@ -624,6 +624,24 @@ describe('Row Based Edit Plugin', () => {
       return event;
     }
 
+    it('should have overrideable action column options', () => {
+      const { onCellClick, gridService, confirmSpy } = arrange({
+        actionColumnConfig: {
+          width: 100,
+          minWidth: 100,
+          maxWidth: 100,
+        },
+      });
+
+      expect(plugin.getColumnDefinition()).toEqual(
+        expect.objectContaining({
+          width: 100,
+          minWidth: 100,
+          maxWidth: 100,
+        })
+      );
+    });
+
     it('should prompt before deletion if deleteButtonPrompt is defined and keep row if canceled', () => {
       const { onCellClick, gridService, confirmSpy } = arrange({
         actionButtons: { deleteButtonPrompt: 'TEST' },
@@ -805,7 +823,7 @@ describe('Row Based Edit Plugin', () => {
           prevSerializedValue: 'foo',
           serializedValue: 'bar',
           execute: () => {},
-          undo: undoSpy
+          undo: undoSpy,
         } as unknown as EditCommand
       );
       gridStub.invalidate.mockClear();

@@ -1,4 +1,5 @@
 import { SlickRowBasedEdit } from '../extensions';
+import { Column } from './column.interface';
 import { OnEventArgs } from './onEventArgs.interface';
 
 export interface RowBasedEditOptions {
@@ -21,6 +22,11 @@ export interface RowBasedEditOptions {
    * it will add an offset to take into consideration (1.CheckboxSelector, 2.RowDetail, 3.RowMove)
    */
   columnIndexPosition?: number;
+
+  /**
+   * additional column configurations for the action column. You can override the defaults by passing your own Column definition.
+   */
+  actionColumnConfig?: Partial<Column<any>>;
 
   /** Allows to override the styling and titles of the actions buttons */
   actionButtons?: {

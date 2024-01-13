@@ -73,6 +73,10 @@ export class SlickRowBasedEdit {
     return this._addonOptions as RowBasedEditOptions;
   }
 
+  get gridOptions(): GridOption {
+    return this._grid.getOptions() || ({} as GridOption);
+  }
+
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
   }
@@ -87,29 +91,27 @@ export class SlickRowBasedEdit {
       this._grid.onBeforeEditCell,
       this.onBeforeEditCellHandler
     );
-    const options = this._grid.getOptions();
+    this.checkOptionsRequirements(this.gridOptions);
 
-    this.checkOptionsRequirements(options);
-
-    if (!options.autoEdit) {
+    if (!this.gridOptions.autoEdit) {
       this._grid.setOptions({ autoEdit: true });
       console.warn(
         '[Slickgrid-Universal] The Row Based Edit Plugin works best with the gridOption "autoEdit" enabled, the option has now been set automatically for you.'
       );
     }
 
-    this._existingEditCommandHandler = options.editCommandHandler;
+    this._existingEditCommandHandler = this.gridOptions.editCommandHandler;
     this._grid.setOptions({
       editCommandHandler: this.rowBasedEditCommandHandler.bind(this),
     });
 
-    if (options.enableExcelCopyBuffer === true) {
+    if (this.gridOptions.enableExcelCopyBuffer === true) {
       const existingBeforePasteCellHandler =
-        options.excelCopyBufferOptions?.onBeforePasteCell;
+        this.gridOptions.excelCopyBufferOptions?.onBeforePasteCell;
 
       this._grid.setOptions({
         excelCopyBufferOptions: {
-          ...options.excelCopyBufferOptions,
+          ...this.gridOptions.excelCopyBufferOptions,
           onBeforePasteCell: (e: SlickEventData<any>, args: OnEventArgs) => {
             let userResult = true;
             if (existingBeforePasteCellHandler) {
@@ -121,8 +123,7 @@ export class SlickRowBasedEdit {
             }
 
             const item = dataView.getItem(args.row);
-            const idProperty =
-              this._grid.getOptions().datasetIdPropertyName ?? 'id';
+            const idProperty = this.gridOptions.datasetIdPropertyName ?? 'id';
 
             if (this._editedRows.has(item[idProperty]) && userResult === true) {
               return true;
@@ -148,7 +149,6 @@ export class SlickRowBasedEdit {
     );
 
     this._grid.invalidate();
-    this._grid.render();
   }
 
   destroy() {
@@ -210,6 +210,7 @@ export class SlickRowBasedEdit {
       excludeFromExport: true,
       formatter: this.actionColumnFormatter.bind(this),
       onCellClick: this.onCellClickHandler.bind(this),
+      ...(this._addonOptions?.actionColumnConfig ?? {}),
     } as Column;
   }
 
@@ -233,7 +234,7 @@ export class SlickRowBasedEdit {
       .filter((col) => col.editor !== undefined);
 
     const modifiedColumns: Column[] = [];
-    const idProperty = this._grid.getOptions().datasetIdPropertyName ?? 'id';
+    const idProperty = this.gridOptions.datasetIdPropertyName ?? 'id';
     prevSerializedValues.forEach((_val, index) => {
       const prevSerializedValue = prevSerializedValues[index];
       const serializedValue = serializedValues[index];
@@ -283,7 +284,7 @@ export class SlickRowBasedEdit {
   }
 
   protected undoRowEdit(item: any) {
-    const idProperty = this._grid.getOptions().datasetIdPropertyName ?? 'id';
+    const idProperty = this.gridOptions.datasetIdPropertyName ?? 'id';
     const targetRow = this._editedRows.get(item[idProperty]);
     const row = this._grid.getData().getRowByItem(item);
     if (
@@ -360,19 +361,18 @@ export class SlickRowBasedEdit {
   protected async onCellClickHandler(event: Event, args: any) {
     const dataContext = args.dataContext;
     const target = event.target as HTMLElement;
-    const idProperty = this._grid.getOptions().datasetIdPropertyName ?? 'id';
+    const idProperty = this.gridOptions.datasetIdPropertyName ?? 'id';
     const targetRow = this._editedRows.get(dataContext[idProperty]);
     if (
       (target.classList.contains(BTN_ACTION_DELETE) ||
         target.parentElement?.classList.contains(BTN_ACTION_DELETE)) &&
       this._gridService
     ) {
-      if (this._addonOptions?.actionButtons?.deleteButtonPrompt) {
-        if (
-          !window.confirm(this._addonOptions.actionButtons.deleteButtonPrompt)
-        ) {
-          return;
-        }
+      if (
+        this._addonOptions?.actionButtons?.deleteButtonPrompt &&
+        !window.confirm(this._addonOptions.actionButtons.deleteButtonPrompt)
+      ) {
+        return;
       }
 
       this.toggleEditmode(dataContext, false);
@@ -392,13 +392,10 @@ export class SlickRowBasedEdit {
     ) {
       if (
         this._addonOptions?.actionButtons?.updateButtonPrompt &&
-        (targetRow?.editCommands.length || 0) > 0
+        (targetRow?.editCommands.length || 0) > 0 &&
+        !window.confirm(this._addonOptions.actionButtons.updateButtonPrompt)
       ) {
-        if (
-          !window.confirm(this._addonOptions.actionButtons.updateButtonPrompt)
-        ) {
-          return;
-        }
+        return;
       }
 
       if (this._addonOptions?.onBeforeRowUpdated) {
@@ -417,13 +414,10 @@ export class SlickRowBasedEdit {
     ) {
       if (
         this._addonOptions?.actionButtons?.cancelButtonPrompt &&
-        (targetRow?.editCommands.length || 0) > 0
+        (targetRow?.editCommands.length || 0) > 0 &&
+        !window.confirm(this._addonOptions.actionButtons.cancelButtonPrompt)
       ) {
-        if (
-          !window.confirm(this._addonOptions.actionButtons.cancelButtonPrompt)
-        ) {
-          return;
-        }
+        return;
       }
 
       this.undoRowEdit(dataContext);
@@ -438,7 +432,7 @@ export class SlickRowBasedEdit {
     _columnDef: Column,
     dataContext: any
   ) {
-    const options = this._grid.getOptions();
+    const options = this.gridOptions;
     const isInEditMode = this._editedRows.has(
       dataContext?.[options.datasetIdPropertyName ?? 'id']
     );
@@ -537,12 +531,12 @@ export class SlickRowBasedEdit {
     args: OnBeforeEditCellEventArgs
   ) => {
     return this._editedRows.has(
-      args.item?.[this._grid.getOptions().datasetIdPropertyName ?? 'id']
+      args.item?.[this.gridOptions.datasetIdPropertyName ?? 'id']
     );
   };
 
   protected toggleEditmode(dataContext: any, editMode: boolean) {
-    const idProperty = this._grid.getOptions().datasetIdPropertyName ?? 'id';
+    const idProperty = this.gridOptions.datasetIdPropertyName ?? 'id';
     if (editMode) {
       this._editedRows.set(dataContext[idProperty], {
         columns: [],
@@ -554,7 +548,6 @@ export class SlickRowBasedEdit {
     }
 
     this._grid.invalidate();
-    this._grid.render();
   }
 
   protected updateItemMetadata(previousItemMetadata: any) {
@@ -571,8 +564,7 @@ export class SlickRowBasedEdit {
       }
 
       if (meta && item) {
-        const idProperty =
-          this._grid.getOptions().datasetIdPropertyName ?? 'id';
+        const idProperty = this.gridOptions.datasetIdPropertyName ?? 'id';
         if (
           this._editedRows.has(item[idProperty]) &&
           !meta.cssClasses.includes(ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS)

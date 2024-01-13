@@ -171,7 +171,7 @@ export class ExtensionService {
         this._rowBasedEdit = this._rowBasedEdit || new SlickRowBasedEdit(this.pubSubService, this.gridOptions.rowBasedEditOptions);
         const gridService = this.lazyGridService?.();
         if (!gridService) {
-          throw new Error('[Slickgrid-Universal] requires a GridService to be configured and available');
+          throw new Error('[Slickgrid-Universal] the RowBasedEdit Plugin requires a GridService to be configured and available');
         }
 
         this._rowBasedEdit.init(this.sharedService.slickGrid, gridService);
