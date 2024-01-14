@@ -1840,7 +1840,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return a.concat(b) as HTMLElement[];
   }
 
-  protected handleResizeableHandleDoubleClick(evt: MouseEvent & { target: HTMLDivElement; }) {
+  protected handleResizeableDoubleClick(evt: MouseEvent & { target: HTMLDivElement; }) {
     const triggeredByColumn = evt.target.parentElement!.id.replace(this.uid, '');
     this.triggerEvent(this.onColumnsResizeDblClick, { triggeredByColumn });
   }
@@ -1894,7 +1894,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
 
       const resizeableHandle = createDomElement('div', { className: 'slick-resizable-handle', role: 'separator', ariaOrientation: 'horizontal' }, colElm);
-      this._bindingEventService.bind(resizeableHandle, 'dblclick', this.handleResizeableHandleDoubleClick.bind(this) as EventListener);
+      this._bindingEventService.bind(resizeableHandle, 'dblclick', this.handleResizeableDoubleClick.bind(this) as EventListener);
 
       this.slickResizableInstances.push(
         Resizable({
