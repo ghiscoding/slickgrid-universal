@@ -1767,27 +1767,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     });
   }
 
-  protected currentPositionInHeader(id: number | string) {
-    let currentPosition = 0;
-    this._headers.forEach((header) => {
-      header.querySelectorAll('.slick-header-column').forEach((column, i) => {
-        if (column.id === id) {
-          currentPosition = i;
-        }
-      });
-    });
-
-    return currentPosition;
-  }
-
-  protected remove(arr: any[], elem: HTMLElement) {
-    const index = arr.lastIndexOf(elem);
-    if (index > -1) {
-      arr.splice(index, 1);
-      this.remove(arr, elem);
-    }
-  }
-
   protected setupColumnReorder() {
     this.sortableSideLeftInstance?.destroy();
     this.sortableSideRightInstance?.destroy();
