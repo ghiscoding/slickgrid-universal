@@ -3737,6 +3737,11 @@ describe('SlickGrid core file', () => {
 
         const viewportTopLeft = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
         expect(viewportTopLeft.scrollLeft).toBe(25);
+
+        // when enableTextSelectionOnCells isn't enabled and trigger IE related code
+        const selectStartEvent = new CustomEvent('selectstart');
+        Object.defineProperty(selectStartEvent, 'target', { writable: true, value: document.createElement('TextArea') })
+        viewportTopLeft.dispatchEvent(selectStartEvent);
       });
 
       it('should NOT trigger onHeaderRowMouseEnter notify when hovering a header when "slick-headerrow-column" class is not found', () => {
