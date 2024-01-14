@@ -4443,7 +4443,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     this.triggerEvent(this.onScroll, { scrollLeft: this.scrollLeft, scrollTop: this.scrollTop });
 
-    if (hScrollDist || vScrollDist) { return true; }
+    if (hScrollDist || vScrollDist) {
+      return true;
+    }
     return false;
   }
 
