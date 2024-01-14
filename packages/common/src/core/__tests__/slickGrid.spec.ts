@@ -1979,7 +1979,7 @@ describe('SlickGrid core file', () => {
       columnsCopy[2].colspan = '1';
       const dv = new SlickDataView();
       dv.setItems(data);
-      grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, frozenColumn: 0 });
+      grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, frozenColumn: 0, enableMouseWheelScrollHandler: true });
       jest.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns: { lastName: { colspan: '*' } } } as any);
       const renderSpy = jest.spyOn(grid, 'render');
       grid.scrollCellIntoView(1, 1, true);
@@ -2014,6 +2014,246 @@ describe('SlickGrid core file', () => {
 
       expect(renderSpy).toHaveBeenCalledTimes(1);
       expect(viewportElm.scrollLeft).toBe(0);
+    });
+
+    it('should scroll all elements shown when triggered by mousewheel and preHeader/footer are enabled and without any Frozen rows/columns', () => {
+      const dv = new SlickDataView();
+      dv.setItems(data);
+      grid = new SlickGrid<any, Column>(container, dv, columns, {
+        ...defaultOptions, enableMouseWheelScrollHandler: true,
+        createFooterRow: true, createPreHeaderPanel: true,
+      });
+      grid.scrollCellIntoView(1, 2, true);
+
+      const mouseEvent = new Event('mousewheel');
+      const mousePreventSpy = jest.spyOn(mouseEvent, 'preventDefault');
+      const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
+      let viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      Object.defineProperty(viewportTopLeftElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
+      Object.defineProperty(viewportTopLeftElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
+      Object.defineProperty(viewportTopLeftElm, 'clientHeight', { writable: true, value: 125 });
+      Object.defineProperty(viewportTopLeftElm, 'clientWidth', { writable: true, value: 75 });
+
+      let viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      let preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
+      let footerRowElm = container.querySelectorAll('.slick-footerrow');
+      Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
+      viewportLeftElm.dispatchEvent(mouseEvent);
+
+      expect(preHeaderElm[1].scrollLeft).toBe(0);
+      expect(footerRowElm[1].scrollLeft).toBe(0);
+      expect(viewportLeftElm.scrollLeft).toBe(88);
+      expect(viewportLeftElm.scrollTop).toBe(25);
+      expect(viewportTopLeftElm.scrollTop).toBe(25);
+      expect(onViewportChangedSpy).toHaveBeenCalled();
+      expect(mousePreventSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll all elements shown when triggered by mousewheel and preHeader/footer are enabled and without any Frozen rows/columns', () => {
+      const dv = new SlickDataView();
+      dv.setItems(data);
+      grid = new SlickGrid<any, Column>(container, dv, columns, {
+        ...defaultOptions, enableMouseWheelScrollHandler: true,
+        createFooterRow: true, createPreHeaderPanel: true,
+      });
+      grid.scrollCellIntoView(1, 2, true);
+
+      const mouseEvent = new Event('mousewheel');
+      const mousePreventSpy = jest.spyOn(mouseEvent, 'preventDefault');
+      const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
+      let viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      Object.defineProperty(viewportTopLeftElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
+      Object.defineProperty(viewportTopLeftElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
+      Object.defineProperty(viewportTopLeftElm, 'clientHeight', { writable: true, value: 125 });
+      Object.defineProperty(viewportTopLeftElm, 'clientWidth', { writable: true, value: 75 });
+
+      let viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      let preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
+      let footerRowElm = container.querySelectorAll('.slick-footerrow');
+      Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
+      viewportLeftElm.dispatchEvent(mouseEvent);
+
+      expect(preHeaderElm[1].scrollLeft).toBe(0);
+      expect(footerRowElm[1].scrollLeft).toBe(0);
+      expect(viewportLeftElm.scrollLeft).toBe(88);
+      expect(viewportLeftElm.scrollTop).toBe(25);
+      expect(viewportTopLeftElm.scrollTop).toBe(25);
+      expect(onViewportChangedSpy).toHaveBeenCalled();
+      expect(mousePreventSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll all elements shown when triggered by mousewheel and preHeader/footer/frozenColumn are enabled', () => {
+      const dv = new SlickDataView();
+      dv.setItems(data);
+      grid = new SlickGrid<any, Column>(container, dv, columns, {
+        ...defaultOptions, frozenColumn: 0, enableMouseWheelScrollHandler: true,
+        createFooterRow: true, createPreHeaderPanel: true,
+      });
+      grid.scrollCellIntoView(1, 2, true);
+
+      const mouseEvent = new Event('mousewheel');
+      const mousePreventSpy = jest.spyOn(mouseEvent, 'preventDefault');
+      const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
+      let viewportTopRightElm = container.querySelector('.slick-viewport-top.slick-viewport-right') as HTMLDivElement;
+      Object.defineProperty(viewportTopRightElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
+      Object.defineProperty(viewportTopRightElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
+      Object.defineProperty(viewportTopRightElm, 'clientHeight', { writable: true, value: 125 });
+      Object.defineProperty(viewportTopRightElm, 'clientWidth', { writable: true, value: 75 });
+
+      let viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      let preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
+      let footerRowElm = container.querySelectorAll('.slick-footerrow');
+      Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
+      viewportLeftElm.dispatchEvent(mouseEvent);
+
+      expect(preHeaderElm[1].scrollLeft).toBe(80);
+      expect(footerRowElm[1].scrollLeft).toBe(80);
+      expect(viewportLeftElm.scrollLeft).toBe(88);
+      expect(viewportLeftElm.scrollTop).toBe(25);
+      expect(viewportTopRightElm.scrollTop).toBe(25);
+      expect(onViewportChangedSpy).toHaveBeenCalled();
+      expect(mousePreventSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll all elements shown when triggered by mousewheel and preHeader/footer/frozenRow are enabled', () => {
+      container.style.height = '25px';
+      const dv = new SlickDataView();
+      dv.setItems(data);
+      grid = new SlickGrid<any, Column>(container, dv, columns, {
+        ...defaultOptions, frozenRow: 0, enableMouseWheelScrollHandler: true,
+        createFooterRow: true, createPreHeaderPanel: true,
+      });
+      grid.scrollCellIntoView(1, 2, true);
+
+      const mouseEvent = new Event('mousewheel');
+      const mousePreventSpy = jest.spyOn(mouseEvent, 'preventDefault');
+      const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
+      let viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      let viewportBottomRightElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
+      Object.defineProperty(viewportBottomRightElm, 'scrollHeight', { writable: true, value: 25 });
+      Object.defineProperty(viewportBottomRightElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
+      Object.defineProperty(viewportBottomRightElm, 'clientHeight', { writable: true, value: 125 });
+      Object.defineProperty(viewportBottomRightElm, 'clientWidth', { writable: true, value: 75 });
+
+      let viewportLeftElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
+      let preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
+      let footerRowElm = container.querySelectorAll('.slick-footerrow');
+      Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
+      viewportLeftElm.dispatchEvent(mouseEvent);
+
+      expect(viewportTopLeftElm.scrollLeft).toBe(88);
+      expect(preHeaderElm[0].scrollLeft).toBe(88);
+      expect(footerRowElm[0].scrollLeft).toBe(88);
+      expect(viewportLeftElm.scrollLeft).toBe(88);
+      expect(viewportLeftElm.scrollTop).toBe(25);
+      expect(viewportBottomRightElm.scrollTop).toBe(25);
+      expect(onViewportChangedSpy).toHaveBeenCalled();
+      expect(mousePreventSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll all elements shown when triggered by mousewheel and preHeader/footer/frozenRow are enabled', () => {
+      container.style.height = '50px';
+      container.style.width = '88px';
+      const dv = new SlickDataView();
+      dv.setItems([data[0]]);
+      grid = new SlickGrid<any, Column>(container, dv, columns, {
+        ...defaultOptions, frozenRow: 0, enableMouseWheelScrollHandler: true,
+        createFooterRow: true, createPreHeaderPanel: true, rowHeight: 50,
+      });
+      let viewportBottomLeftElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
+      Object.defineProperty(viewportBottomLeftElm, 'scrollTop', { writable: true, value: 50 });
+      grid.scrollCellIntoView(1, 2, true);
+
+      const mouseEvent = new Event('mousewheel');
+      const mousePreventSpy = jest.spyOn(mouseEvent, 'preventDefault');
+      const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
+      let viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      viewportBottomLeftElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
+      Object.defineProperty(viewportBottomLeftElm, 'scrollHeight', { writable: true, value: 50 });
+      Object.defineProperty(viewportBottomLeftElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
+      Object.defineProperty(viewportBottomLeftElm, 'clientHeight', { writable: true, value: 125 });
+      Object.defineProperty(viewportBottomLeftElm, 'clientWidth', { writable: true, value: 75 });
+
+      // let viewportLeftElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
+      let preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
+      let footerRowElm = container.querySelectorAll('.slick-footerrow');
+      Object.defineProperty(viewportBottomLeftElm, 'scrollLeft', { writable: true, value: 88 });
+      viewportBottomLeftElm.dispatchEvent(mouseEvent);
+
+      expect(viewportTopLeftElm.scrollLeft).toBe(88);
+      expect(preHeaderElm[0].scrollLeft).toBe(88);
+      expect(footerRowElm[0].scrollLeft).toBe(88);
+      expect(viewportBottomLeftElm.scrollLeft).toBe(88);
+      expect(viewportBottomLeftElm.scrollTop).toBe(50);
+      expect(viewportBottomLeftElm.scrollTop).toBe(50);
+      expect(onViewportChangedSpy).toHaveBeenCalled();
+      expect(mousePreventSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll all elements shown when triggered by mousewheel and preHeader/footer/frozenColumn/frozenRow are enabled', () => {
+      const dv = new SlickDataView();
+      dv.setItems(data);
+      grid = new SlickGrid<any, Column>(container, dv, columns, {
+        ...defaultOptions, frozenColumn: 0, frozenRow: 1, enableMouseWheelScrollHandler: true,
+        createFooterRow: true, createPreHeaderPanel: true,
+      });
+      grid.scrollCellIntoView(1, 2, true);
+
+      const mouseEvent = new Event('mousewheel');
+      const mousePreventSpy = jest.spyOn(mouseEvent, 'preventDefault');
+      const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
+      let viewportBottomRightElm = container.querySelector('.slick-viewport-bottom.slick-viewport-right') as HTMLDivElement;
+      Object.defineProperty(viewportBottomRightElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
+      Object.defineProperty(viewportBottomRightElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
+      Object.defineProperty(viewportBottomRightElm, 'clientHeight', { writable: true, value: 125 });
+      Object.defineProperty(viewportBottomRightElm, 'clientWidth', { writable: true, value: 75 });
+
+      let viewportLeftElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
+      let preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
+      let footerRowElm = container.querySelectorAll('.slick-footerrow');
+      Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
+      viewportLeftElm.dispatchEvent(mouseEvent);
+
+      expect(preHeaderElm[1].scrollLeft).toBe(80);
+      expect(footerRowElm[1].scrollLeft).toBe(80);
+      expect(viewportLeftElm.scrollLeft).toBe(88);
+      expect(viewportLeftElm.scrollTop).toBe(0);
+      expect(viewportBottomRightElm.scrollTop).toBe(0);
+      expect(onViewportChangedSpy).toHaveBeenCalled();
+      expect(mousePreventSpy).toHaveBeenCalled();
+    });
+
+    it('should scroll all elements shown when triggered by mousewheel and preHeader/footer/frozenColumn are enabled', () => {
+      const dv = new SlickDataView();
+      dv.setItems(data);
+      grid = new SlickGrid<any, Column>(container, dv, columns, {
+        ...defaultOptions, frozenColumn: 0, frozenRow: 0, enableMouseWheelScrollHandler: true,
+        createFooterRow: true, createPreHeaderPanel: true,
+      });
+      grid.scrollCellIntoView(1, 2, true);
+
+      const mouseEvent = new Event('mousewheel');
+      const mousePreventSpy = jest.spyOn(mouseEvent, 'preventDefault');
+      const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
+      let viewportTopRightElm = container.querySelector('.slick-viewport-top.slick-viewport-right') as HTMLDivElement;
+      Object.defineProperty(viewportTopRightElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
+      Object.defineProperty(viewportTopRightElm, 'scrollWidth', { writable: true, value: DEFAULT_GRID_WIDTH });
+      Object.defineProperty(viewportTopRightElm, 'clientHeight', { writable: true, value: 125 });
+      Object.defineProperty(viewportTopRightElm, 'clientWidth', { writable: true, value: 75 });
+
+      let viewportLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      let preHeaderElm = container.querySelectorAll('.slick-preheader-panel');
+      let footerRowElm = container.querySelectorAll('.slick-footerrow');
+      Object.defineProperty(viewportLeftElm, 'scrollLeft', { writable: true, value: 88 });
+      viewportLeftElm.dispatchEvent(mouseEvent);
+
+      expect(preHeaderElm[1].scrollLeft).toBe(0);
+      expect(footerRowElm[1].scrollLeft).toBe(0);
+      expect(viewportLeftElm.scrollLeft).toBe(88);
+      expect(viewportLeftElm.scrollTop).toBe(25);
+      expect(viewportTopRightElm.scrollTop).toBe(0);
+      expect(onViewportChangedSpy).not.toHaveBeenCalled();
+      expect(mousePreventSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -3460,6 +3700,48 @@ describe('SlickGrid core file', () => {
         container.querySelector('.slick-headerrow-column')!.dispatchEvent(new CustomEvent('mouseenter'));
 
         expect(onHeaderRowMouseEnterSpy).toHaveBeenCalled();
+      });
+
+      it('should update viewport top/left scrollLeft when scrolling in headerRow DOM element', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
+        const headerRowElm = container.querySelector('.slick-headerrow') as HTMLDivElement;
+        Object.defineProperty(headerRowElm, 'scrollLeft', { writable: true, value: 25 })
+
+        headerRowElm.dispatchEvent(new CustomEvent('scroll'));
+
+        const viewportTopLeft = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+        expect(viewportTopLeft.scrollLeft).toBe(25);
+      });
+
+      it('should update viewport top/left scrollLeft when scrolling in footerRow DOM element', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createFooterRow: true, showFooterRow: true, enableCellNavigation: true });
+        const footerRowElm = container.querySelector('.slick-footerrow') as HTMLDivElement;
+        Object.defineProperty(footerRowElm, 'scrollLeft', { writable: true, value: 25 })
+
+        footerRowElm.dispatchEvent(new CustomEvent('scroll'));
+
+        const viewportTopLeft = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+        expect(viewportTopLeft.scrollLeft).toBe(25);
+      });
+
+      it('should update viewport top/left scrollLeft when scrolling in preHeader DOM element', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createPreHeaderPanel: true, preHeaderPanelHeight: 44, showPreHeaderPanel: true, enableCellNavigation: true });
+        const preheaderElm = container.querySelector('.slick-preheader-panel') as HTMLDivElement;
+        const preheaderElms = container.querySelectorAll<HTMLDivElement>('.slick-preheader-panel');
+        Object.defineProperty(preheaderElm, 'scrollLeft', { writable: true, value: 25 })
+
+        preheaderElm.dispatchEvent(new CustomEvent('scroll'));
+
+        const viewportTopLeft = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+        expect(viewportTopLeft.scrollLeft).toBe(25);
+
+        // when enableTextSelectionOnCells isn't enabled and trigger IE related code
+        const selectStartEvent = new CustomEvent('selectstart');
+        Object.defineProperty(selectStartEvent, 'target', { writable: true, value: document.createElement('TextArea') })
+        viewportTopLeft.dispatchEvent(selectStartEvent);
       });
 
       it('should NOT trigger onHeaderRowMouseEnter notify when hovering a header when "slick-headerrow-column" class is not found', () => {
