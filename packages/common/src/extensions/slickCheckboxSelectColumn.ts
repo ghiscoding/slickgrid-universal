@@ -553,10 +553,9 @@ export class SlickCheckboxSelectColumn<T = any> {
   }
 
   protected renderSelectAllCheckbox(isSelectAllChecked: boolean) {
-    const checkedStr = isSelectAllChecked ? ` checked="checked" aria-checked="true"` : ' aria-checked="false"';
     this._grid.updateColumnHeader(
       this._addonOptions.columnId || '',
-      `<input id="header-selector${this._selectAll_UID}" type="checkbox"${checkedStr}><label for="header-selector${this._selectAll_UID}"></label>`,
+      this.createCheckboxElement(`header-selector${this._selectAll_UID}`, !!isSelectAllChecked),
       this._addonOptions.toolTip
     );
   }
