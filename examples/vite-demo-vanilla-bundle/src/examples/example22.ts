@@ -12,6 +12,7 @@ import {
 import { ExampleGridOptions } from './example-grid-options';
 
 import './example22.scss';
+import { TranslateService } from '../translate.service';
 
 const NB_ITEMS = 20;
 
@@ -20,6 +21,15 @@ export default class Example22 {
   columnDefinitions!: Column[];
   dataset!: any[];
   sgb!: SlickVanillaGridBundle;
+  translateService: TranslateService;
+  selectedLanguage: string;
+  selectedLanguageFile: string;
+
+  constructor() {
+    this.translateService = (<any>window).TranslateService;
+    this.selectedLanguage = this.translateService.getCurrentLanguage();
+    this.selectedLanguageFile = `${this.selectedLanguage}.json`;
+  }
 
   attached() {
     this.defineGrids();
@@ -164,11 +174,13 @@ export default class Example22 {
 
           cancelButtonClassName: 'button-style padding-1px',
           cancelButtonTitle: 'Cancel row',
+          cancelButtonTitleKey: 'RBE_BTN_CANCEL',
           iconCancelButtonClassName: 'mdi mdi-undo color-danger',
           cancelButtonPrompt: 'Are you sure you want to cancel your changes?',
 
           updateButtonClassName: 'button-style padding-1px mr-2',
           updateButtonTitle: 'Update row',
+          updateButtonTitleKey: 'RBE_BTN_UPDATE',
           iconUpdateButtonClassName: 'mdi mdi-check color-success',
           updateButtonPrompt: 'Save changes?',
 
@@ -176,8 +188,10 @@ export default class Example22 {
           deleteButtonTitle: 'Delete row',
           iconDeleteButtonClassName: 'mdi mdi-trash-can color-danger',
           deleteButtonPrompt: 'Are you sure you want to delete this row?',
-        }
+        },
       },
+      enableTranslate: true,
+      translater: this.translateService
     };
   }
 
@@ -216,6 +230,13 @@ export default class Example22 {
     };
 
     this.gridOptions = this.sgb.gridOptions;
+  }
+
+  async switchLanguage() {
+    const nextLanguage = (this.selectedLanguage === 'en') ? 'fr' : 'en';
+    await this.translateService.use(nextLanguage);
+    this.selectedLanguage = nextLanguage;
+    this.selectedLanguageFile = `${this.selectedLanguage}.json`;
   }
 }
 

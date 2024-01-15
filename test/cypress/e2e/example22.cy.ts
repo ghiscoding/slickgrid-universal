@@ -1,13 +1,5 @@
 describe('Example 22 - Row Based Editing', () => {
-  const fullTitles = [
-    'Title',
-    'Duration (days)',
-    '% Complete',
-    'Start',
-    'Finish',
-    'Effort Driven',
-    'Actions',
-  ];
+  const fullTitles = ['Title', 'Duration (days)', '% Complete', 'Start', 'Finish', 'Effort Driven', 'Actions'];
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example22`);
@@ -23,9 +15,7 @@ describe('Example 22 - Row Based Editing', () => {
 
   it('should render edit and delete buttons in the actions column', () => {
     cy.get('.slick-cell.l6.r6').each(($child) => {
-      cy.wrap($child)
-        .find('.action-btns--edit, .action-btns--delete')
-        .should('have.length', 2);
+      cy.wrap($child).find('.action-btns--edit, .action-btns--delete').should('have.length', 2);
     });
   });
 
@@ -123,9 +113,41 @@ describe('Example 22 - Row Based Editing', () => {
 
     cy.on('window:confirm', () => true);
 
-    cy.get('.slick-row')
+    cy.get('.slick-row').first().find('.slick-cell.l0.r0').should('contain', 'Task 1');
+  });
+
+  it('should support translation keys on buttons', () => {
+    cy.get('.action-btns--update')
       .first()
-      .find('.slick-cell.l0.r0')
-      .should('contain', 'Task 1');
+      .invoke('attr', 'title')
+      .then((title) => {
+        expect(title).to.equal('Update the current row');
+      });
+
+    cy.get('.action-btns--cancel')
+      .first()
+      .invoke('attr', 'title')
+      .then((title) => {
+        expect(title).to.equal('Cancel changes of the current row');
+      });
+
+    cy.get('[data-test="toggle-language"]').click();
+    cy.get('[data-test="selected-locale"]').should('contain', 'fr.json');
+
+    // this seems to be a bug in Cypress, it doesn't seem to be able to click on the button
+    // but at least it triggers a rerender, which makes it refetch the actual button instead of a cached one
+    cy.get('.action-btns--update').first().click({ force: true });
+
+    cy.get('.action-btns--update')
+      .first()
+      .should(($btn) => {
+        expect($btn.attr('title')).to.equal('Mettre à jour la ligne actuelle');
+      });
+
+    cy.get('.action-btns--cancel')
+      .first()
+      .should(($btn) => {
+        expect($btn.attr('title')).to.equal('Annuler la ligne actuelle');
+      });
   });
 });

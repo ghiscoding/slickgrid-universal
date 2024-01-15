@@ -56,6 +56,16 @@
     >
       Toggle Single/Multi Row Edit
     </button>
+    <button
+      class="button is-small"
+      data-test="toggle-language"
+      onclick.delegate="switchLanguage()"
+    >
+      Switch Language for Action column buttons
+    </button>
+    <b>Locale:</b>
+    <span class="text-italic" data-test="selected-locale" textcontent.bind="selectedLanguageFile">
+    </span>
   </div>
 </section>
 
