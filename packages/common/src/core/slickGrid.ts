@@ -4944,24 +4944,28 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param y A y coordinate.
    */
   getCellFromPoint(x: number, y: number) {
-    const row = this.getRowFromPosition(y);
+    let row = this.getRowFromPosition(y);
     let cell = 0;
 
     let w = 0;
-    for (let i = 0; i < this.columns.length && w < x; i++) {
+    for (let i = 0; i < this.columns.length && w <= x; i++) {
       if (!this.columns[i] || this.columns[i].hidden) {
         continue;
       }
       w += this.columns[i].width as number;
       cell++;
     }
+    cell -= 1;
 
-    /* istanbul ignore if - TODO: need to investigate, this is technically unreachable */
-    if (cell < 0) {
-      cell = 0;
+    // we'll return -1 when coordinate falls outside the grid canvas
+    if (row < -1) {
+      row = -1;
+    }
+    if (cell < -1) {
+      cell = -1;
     }
 
-    return { row, cell: (cell - 1) };
+    return { row, cell };
   }
 
   protected getCellFromNode(cellNode: HTMLElement) {
@@ -5043,7 +5047,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         rowOffset = (this._options.frozenBottom) ? Utils.height(this._canvasTopL) as number : this.frozenRowsHeight;
       }
 
-      row = this.getCellFromPoint(targetEvent.clientX - c!.left, targetEvent.clientY - c!.top + rowOffset + document.documentElement.scrollTop).row;
+      const x = targetEvent.clientX - c!.left;
+      const y = targetEvent.clientY - c!.top + rowOffset + document.documentElement.scrollTop;
+      row = this.getCellFromPoint(x, y).row;
     }
 
     const cell = this.getCellFromNode(cellNode as HTMLElement);
