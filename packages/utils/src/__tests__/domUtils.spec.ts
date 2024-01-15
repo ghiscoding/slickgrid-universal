@@ -192,6 +192,12 @@ describe('Service/domUtilies', () => {
 
       expect(getHtmlStringOutput(div as any)).toEqual('<span>some text</span>');
     });
+
+    it('should return same string when input is already an HTML string', () => {
+      const input = '<span>some text</span>';
+
+      expect(getHtmlStringOutput(input)).toEqual(input);
+    });
   });
 
   describe('getElementOffsetRelativeToParent() method', () => {
