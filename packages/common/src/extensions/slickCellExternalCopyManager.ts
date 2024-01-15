@@ -1,4 +1,4 @@
-import { createDomElement, stripTags } from '@slickgrid-universal/utils';
+import { createDomElement, getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
 
 import type { Column, ExcelCopyBufferOption, ExternalCopyClipCommand, OnEventArgs } from '../interfaces/index';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange, SlickDataView, Utils as SlickUtils } from '../core/index';
@@ -105,14 +105,14 @@ export class SlickCellExternalCopyManager {
     this._grid.removeCellCssStyles(this._copiedCellStyleLayerKey);
   }
 
-  getHeaderValueForColumn(columnDef: Column) {
+  getHeaderValueForColumn(columnDef: Column): string {
     if (typeof this._addonOptions.headerColumnValueExtractor === 'function') {
-      const val = this._addonOptions.headerColumnValueExtractor(columnDef);
+      const val = getHtmlStringOutput(this._addonOptions.headerColumnValueExtractor(columnDef), 'innerHTML');
       if (val) {
-        return (val instanceof HTMLElement) ? stripTags(val.innerHTML) : val;
+        return stripTags(val);
       }
     }
-    return columnDef.name instanceof HTMLElement ? stripTags(columnDef.name.innerHTML) : columnDef.name;
+    return getHtmlStringOutput(columnDef.name || '', 'innerHTML');
   }
 
   getDataItemValueForColumn(item: any, columnDef: Column, event: SlickEventData) {

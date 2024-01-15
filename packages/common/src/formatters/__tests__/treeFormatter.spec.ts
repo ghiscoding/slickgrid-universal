@@ -1,4 +1,4 @@
-import { getHTMLFromFragment } from '@slickgrid-universal/utils';
+import { getHtmlStringOutput } from '@slickgrid-universal/utils';
 
 import { Column, FormatterResultWithHtml, GridOption } from '../../interfaces/index';
 import { treeFormatter } from '../treeFormatter';
@@ -54,7 +54,7 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, dataset[3]['firstName'], {} as Column, dataset[3], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');
-    expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
       .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara</span>`);
   });
 
@@ -71,7 +71,7 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, dataset[6]['firstName'], {} as Column, dataset[6], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-1');
-    expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
       .toEqual(`<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="1">Bobby</span>`);
   });
 
@@ -79,7 +79,7 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, dataset[5]['firstName'], {} as Column, dataset[5], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-3');
-    expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
       .toEqual(`<span style="display: inline-block; width: 45px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="3">Sponge</span>`);
   });
 
@@ -87,7 +87,7 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, dataset[1]['firstName'], {} as Column, dataset[1], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-1');
-    expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
       .toEqual(`<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle expanded" aria-expanded="true"></div><span class="slick-tree-title" level="1">Jane</span>`);
   });
 
@@ -95,7 +95,7 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, dataset[4]['firstName'], {} as Column, dataset[4], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');
-    expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
       .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle collapsed" aria-expanded="false"></div><span class="slick-tree-title" level="0">Anonymous</span>`);
   });
 
@@ -111,7 +111,7 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, { ...dataset[1]['firstName'], indent: 1 }, { field: 'firstName' } as Column, dataset[1], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-1');
-    expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
       .toEqual(`<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle expanded" aria-expanded="true"></div><span class="slick-tree-title" level="1"><span class="mdi mdi-subdirectory-arrow-right"></span>Jane</span>`);
   });
 
@@ -120,7 +120,7 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[3], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');
-    expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
       .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">Barbara Cane</span>`);
   });
 
@@ -129,7 +129,7 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[4], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');
-    expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
       .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle collapsed" aria-expanded="false"></div><span class="slick-tree-title" level="0">Anonymous &lt; Doe</span>`);
   });
 
@@ -138,7 +138,7 @@ describe('Tree Formatter', () => {
     const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[3], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');
-    expect(getHTMLFromFragment(output.html as DocumentFragment, 'outerHTML'))
+    expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
       .toEqual(`<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">444444</span>`);
   });
 });

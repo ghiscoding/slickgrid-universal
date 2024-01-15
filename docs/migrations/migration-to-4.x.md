@@ -174,7 +174,7 @@ The previous Formatters implementation were all returning HTML strings (or `Form
 
 **Since all Formatters were rewritten as HTML, you might get unexpected behavior in your UI, you will have to inspect your UI and make changes accordingly**. For example, I had to adjust [Example 12](https://ghiscoding.github.io/slickgrid-universal/#/example12) `customEditableInputFormatter` because it was expecting all Formatters to return an HTML string and I was concatenating them to an HTML string but that code was now resulting in `[object HTMLElement]`, so I had to update the code and detect if Formatter output is a native element then do something or else do something else... Below is the adjustment I had to do to fix my own demo (your use case may vary)
 
-> **Note** some Formatters now return `HTMLElement` or `DocumentFragment`, you can add a condition check with `instanceof HTMLElement` or `instanceof DocumentFragment`, however please also note that a `DocumentFragment` does not have `innerHTML`/`outerHTML` (you can write a simple function for loop to get them, see this [SO](https://stackoverflow.com/a/51017093/1212166) or use `getHTMLFromFragment(elm)` from Slickgrid-Universal)
+> **Note** some Formatters now return `HTMLElement` or `DocumentFragment`, you can add a condition check with `instanceof HTMLElement` or `instanceof DocumentFragment`, however please also note that a `DocumentFragment` does not have `innerHTML`/`outerHTML` (you can write a simple function for loop to get them, see this [SO](https://stackoverflow.com/a/51017093/1212166) or use `getHtmlStringOutput(elm)` from Slickgrid-Universal)
 
 ```diff
 const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, dataContext, grid) => {

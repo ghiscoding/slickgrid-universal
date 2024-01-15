@@ -2,7 +2,7 @@ import 'jest-extended';
 import type { Column, GridOption, GroupItemMetadataProviderOption } from '../../interfaces';
 import { SlickGroupItemMetadataProvider } from '../slickGroupItemMetadataProvider';
 import { type SlickDataView, SlickEvent, SlickGrid, SlickGroup } from '../../core/index';
-import { getHTMLFromFragment } from '@slickgrid-universal/utils';
+import { getHtmlStringOutput } from '@slickgrid-universal/utils';
 
 const gridOptionMock = {
   enablePagination: true,
@@ -138,7 +138,7 @@ describe('GroupItemMetadataProvider Service', () => {
       const spanElm = document.createElement('span');
       spanElm.textContent = 'Another Title';
       const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: spanElm }, gridStub) as DocumentFragment;
-      const htmlContent = getHTMLFromFragment(output, 'outerHTML');
+      const htmlContent = getHtmlStringOutput(output, 'outerHTML');
       expect(htmlContent).toBe('<span class="slick-group-toggle expanded" aria-expanded="true" style="margin-left: 0px;"></span><span class="slick-group-title" level="0"><span>Another Title</span></span>');
     });
 
@@ -148,7 +148,7 @@ describe('GroupItemMetadataProvider Service', () => {
       const fragment = document.createDocumentFragment();
       fragment.textContent = 'Fragment Title';
       const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: fragment }, gridStub) as DocumentFragment;
-      const htmlContent = getHTMLFromFragment(output, 'outerHTML');
+      const htmlContent = getHtmlStringOutput(output, 'outerHTML');
       expect(htmlContent).toBe('<span class="slick-group-toggle expanded" aria-expanded="true" style="margin-left: 0px;"></span><span class="slick-group-title" level="0">Fragment Title</span>');
     });
 
@@ -156,7 +156,7 @@ describe('GroupItemMetadataProvider Service', () => {
       service.init(gridStub);
       service.setOptions({ enableExpandCollapse: true, toggleCssClass: 'groupy-toggle', toggleExpandedCssClass: 'groupy-expanded' });
       const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { level: 2, title: 'Some Title' }, gridStub) as DocumentFragment;
-      const htmlContent = getHTMLFromFragment(output, 'outerHTML');
+      const htmlContent = getHtmlStringOutput(output, 'outerHTML');
       expect(htmlContent).toBe('<span class="groupy-toggle groupy-expanded" aria-expanded="true" style="margin-left: 30px;"></span><span class="slick-group-title" level="2">Some Title</span>');
     });
 
@@ -164,7 +164,7 @@ describe('GroupItemMetadataProvider Service', () => {
       service.init(gridStub);
       service.setOptions({ enableExpandCollapse: true, toggleCssClass: 'groupy-toggle', toggleCollapsedCssClass: 'groupy-collapsed' });
       const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { collapsed: true, level: 3, title: 'Some Title' }, gridStub) as DocumentFragment;
-      const htmlContent = [].map.call(output.childNodes, x => x.outerHTML).join('')
+      const htmlContent = [].map.call(output.childNodes, x => x.outerHTML).join('');
       expect(htmlContent).toBe('<span class="groupy-toggle groupy-collapsed" aria-expanded="false" style="margin-left: 45px;"></span><span class="slick-group-title" level="3">Some Title</span>');
     });
   });

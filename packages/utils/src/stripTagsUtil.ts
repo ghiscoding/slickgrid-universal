@@ -1,12 +1,13 @@
 /**
- * This stripTags function is a lib that already existed
- * but was not TypeScript and ESM friendly.
- * So I ported the code into the project and removed any old code like IE11 that we don't need for our project.
- * I also accept more input types without throwing, the code below accepts `string | number | boolean | HTMLElement` while original code only accepted string.
+ * This stripTags function is a lib that already existed on NPM
+ * but was not written as TypeScript and was not ESM friendly.
+ * So I ported the code into the project and removed any legacy browser code that we don't need for our project since we dropped IE browsers support.
+ * The function also accept more input types without throwing like the original one does,
+ * the code below accepts `string | number | boolean | HTMLElement` while original code only accepted string.
  *
  * The previous lib can be found here at this Github link:
  *     https://github.com/ericnorris/striptags/
- * With an MIT licence that and can be found at
+ * With an MIT licence that and can be found at this link:
  *     https://github.com/ericnorris/striptags/blob/main/LICENSE
  */
 

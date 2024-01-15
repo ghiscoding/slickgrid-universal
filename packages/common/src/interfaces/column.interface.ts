@@ -222,7 +222,7 @@ export interface Column<T = any> {
   originalWidth?: number;
 
   /** Column Title Name to be displayed in the Grid (UI) */
-  name?: string | HTMLElement;
+  name?: string | HTMLElement | DocumentFragment;
 
   /** Alternative Column Title Name that could be used by the Composite Editor Modal, it has precedence over the column "name" property. */
   nameCompositeEditor?: string;

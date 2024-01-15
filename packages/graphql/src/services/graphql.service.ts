@@ -27,7 +27,7 @@ import {
   OperatorType,
   SortDirection,
 } from '@slickgrid-universal/common';
-import { stripTags } from '@slickgrid-universal/utils';
+import { getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
 
 import {
   GraphqlCursorPaginationOption,
@@ -417,7 +417,7 @@ export class GraphqlService implements BackendService {
         }
 
         if (this.options?.useVerbatimSearchTerms || columnFilter.verbatimSearchTerms) {
-          searchByArray.push({ field: fieldName, operator: columnFilter.operator, value: JSON.stringify(columnFilter.searchTerms) });
+          searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: columnFilter.operator, value: JSON.stringify(columnFilter.searchTerms) });
           continue;
         }
 
@@ -488,8 +488,8 @@ export class GraphqlService implements BackendService {
         if (searchTerms && searchTerms.length > 1 && (operator === 'IN' || operator === 'NIN' || operator === 'NOT_IN')) {
           searchValue = searchTerms.join(',');
         } else if (searchTerms && searchTerms.length === 2 && (operator === OperatorType.rangeExclusive || operator === OperatorType.rangeInclusive)) {
-          searchByArray.push({ field: fieldName, operator: (operator === OperatorType.rangeInclusive ? 'GE' : 'GT'), value: searchTerms[0] });
-          searchByArray.push({ field: fieldName, operator: (operator === OperatorType.rangeInclusive ? 'LE' : 'LT'), value: searchTerms[1] });
+          searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: (operator === OperatorType.rangeInclusive ? 'GE' : 'GT'), value: searchTerms[0] });
+          searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: (operator === OperatorType.rangeInclusive ? 'LE' : 'LT'), value: searchTerms[1] });
           continue;
         }
 
@@ -499,7 +499,7 @@ export class GraphqlService implements BackendService {
         }
 
         // build the search array
-        searchByArray.push({ field: fieldName, operator: mapOperatorType(operator), value: searchValue });
+        searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: mapOperatorType(operator), value: searchValue });
       }
     }
 
