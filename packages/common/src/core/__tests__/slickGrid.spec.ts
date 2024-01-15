@@ -2477,7 +2477,7 @@ describe('SlickGrid core file', () => {
         const event = new CustomEvent('click');
         Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
 
-        const result = grid.getCellFromEvent(event);
+        const result = grid.getCellFromEvent(event); // not passing clientX/clientY will return NaN
 
         expect(result).toBeNull();
       });
