@@ -64,14 +64,6 @@ const gridStub = {
   onSelectedRowsChanged: new SlickEvent(),
 } as unknown as SlickGrid;
 
-const mockAddon = jest.fn().mockImplementation(() => ({
-  init: jest.fn(),
-  dispose: jest.fn(),
-  getColumnDefinition: jest.fn(),
-  onBeforeMoveRows: new SlickEvent(),
-  onMoveRows: new SlickEvent(),
-}));
-
 const mockRowSelectionModel = {
   constructor: jest.fn(),
   init: jest.fn(),
@@ -121,6 +113,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       cssClass: null,
       field: '_checkbox_selector',
       hideSelectAllCheckbox: false,
+      name: '',
       toolTip: 'Select/Deselect All',
       width: 30,
       hideInColumnTitleRow: false,
@@ -144,6 +137,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       cssClass: 'some-class',
       field: '_checkbox_selector',
       hideSelectAllCheckbox: true,
+      name: '',
       toolTip: 'Select/Deselect All',
       width: 30,
       hideInColumnTitleRow: true,
@@ -160,6 +154,17 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
 
     expect(plugin).toBeTruthy();
     expect(updateColHeaderSpy).toHaveBeenCalledWith('_checkbox_selector', '', '');
+  });
+
+  it('should create the plugin and call "setOptions" and expect options changed and call grid "updateColumnHeader()" when setting "hideInColumnTitleRow: true" and a column "name"', () => {
+    const colName = 'Selection';
+    const updateColHeaderSpy = jest.spyOn(gridStub, 'updateColumnHeader');
+
+    plugin.init(gridStub);
+    plugin.setOptions({ hideInColumnTitleRow: true, hideSelectAllCheckbox: false, cssClass: 'some-class', name: colName });
+
+    expect(plugin).toBeTruthy();
+    expect(updateColHeaderSpy).toHaveBeenCalledWith('_checkbox_selector', colName, '');
   });
 
   it('should create the plugin and call "setOptions" and expect options changed and render the Select All toggle when "hideInColumnTitleRow: false"', () => {
@@ -459,6 +464,30 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       resizable: false,
       sortable: false,
       toolTip: 'Select/Deselect All',
+      width: 30,
+    });
+  });
+
+  it('should add a "name" and "hideSelectAllCheckbox: true" and call the "create" method and expect plugin to be created with a column name and without a checkbox', () => {
+    const colName = 'Selection';
+    plugin.create(mockColumns, { checkboxSelector: { columnIndexPosition: 1, name: colName, hideSelectAllCheckbox: true } });
+
+    expect(plugin).toBeTruthy();
+    expect(mockColumns[1]).toEqual({
+      cssClass: null,
+      excludeFromColumnPicker: true,
+      excludeFromExport: true,
+      excludeFromGridMenu: true,
+      excludeFromHeaderMenu: true,
+      excludeFromQuery: true,
+      field: '_checkbox_selector',
+      formatter: expect.toBeFunction(),
+      hideSelectAllCheckbox: true,
+      id: '_checkbox_selector',
+      name: colName,
+      resizable: false,
+      sortable: false,
+      toolTip: '',
       width: 30,
     });
   });

@@ -207,8 +207,11 @@ export class ExtensionService {
         this._checkboxSelectColumn = this._checkboxSelectColumn || new SlickCheckboxSelectColumn(this.pubSubService, this.gridOptions.checkboxSelector);
         this._checkboxSelectColumn.init(this.sharedService.slickGrid);
         const createdExtension = this.getCreatedExtensionByName(ExtensionName.checkboxSelector); // get the instance from when it was really created earlier
-        const instance = createdExtension && createdExtension.instance;
+        const instance = createdExtension?.instance;
         if (instance) {
+          if (this.gridOptions.checkboxSelector?.onExtensionRegistered) {
+            this.gridOptions.checkboxSelector.onExtensionRegistered(instance);
+          }
           this._extensionList[ExtensionName.checkboxSelector] = { name: ExtensionName.checkboxSelector, instance: this._checkboxSelectColumn };
         }
       }

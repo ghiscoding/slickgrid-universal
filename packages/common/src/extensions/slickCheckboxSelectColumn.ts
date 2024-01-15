@@ -14,6 +14,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     cssClass: null,
     field: '_checkbox_selector',
     hideSelectAllCheckbox: false,
+    name: '',
     toolTip: 'Select/Deselect All',
     width: 30,
     applySelectOnAllPages: true, // when that is enabled the "Select All" will be applied to all pages (when using Pagination)
@@ -158,6 +159,9 @@ export class SlickCheckboxSelectColumn<T = any> {
         this._eventHandler.subscribe(this._grid.onHeaderClick, this.handleHeaderClick.bind(this));
       } else {
         this.hideSelectAllFromColumnHeaderTitleRow();
+        if (this._addonOptions.name) {
+          this._grid.updateColumnHeader(this._addonOptions.columnId || '', this._addonOptions.name, '');
+        }
       }
 
       if (!this._addonOptions.hideInFilterHeaderRow) {
@@ -203,7 +207,9 @@ export class SlickCheckboxSelectColumn<T = any> {
 
     return {
       id: columnId,
-      name: (this._addonOptions.hideSelectAllCheckbox || this._addonOptions.hideInColumnTitleRow) ? '' : `<input id="header-selector${this._selectAll_UID}" type="checkbox"><label for="header-selector${this._selectAll_UID}"></label>`,
+      name: (this._addonOptions.hideSelectAllCheckbox || this._addonOptions.hideInColumnTitleRow)
+        ? this._addonOptions.name || ''
+        : `<input id="header-selector${this._selectAll_UID}" type="checkbox"><label for="header-selector${this._selectAll_UID}"></label>`,
       toolTip: (this._addonOptions.hideSelectAllCheckbox || this._addonOptions.hideInColumnTitleRow) ? '' : this._addonOptions.toolTip,
       field: columnId,
       cssClass: this._addonOptions.cssClass,
@@ -221,7 +227,7 @@ export class SlickCheckboxSelectColumn<T = any> {
   }
 
   hideSelectAllFromColumnHeaderTitleRow() {
-    this._grid.updateColumnHeader(this._addonOptions.columnId || '', '', '');
+    this._grid.updateColumnHeader(this._addonOptions.columnId || '', this._addonOptions.name || '', '');
   }
 
   hideSelectAllFromColumnHeaderFilterRow() {

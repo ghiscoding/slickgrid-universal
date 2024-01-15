@@ -1,5 +1,6 @@
 import type { SlickEventData } from '../core';
 import type { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type';
+import type { SlickCheckboxSelectColumn } from '../extensions/slickCheckboxSelectColumn';
 
 export interface CheckboxSelectorOption {
   /**
@@ -33,6 +34,12 @@ export interface CheckboxSelectorOption {
   /** defaults to true, do we want to hide the "Select All" checkbox from the Column Header Filter Row? */
   hideInFilterHeaderRow?: boolean;
 
+  /**
+   * defaults to empty string, column name.
+   * This will only work when the "Select All" checkbox is NOT shown in the column header row (`hideInColumnTitleRow: true`)
+   */
+  name?: string;
+
   /** Defaults to "Select/Deselect All", provide a tooltip that will be shown over the "Select All" checkbox */
   toolTip?: string;
 
@@ -41,6 +48,12 @@ export interface CheckboxSelectorOption {
 
   /** Override the logic for showing (or not) the expand icon (use case example: only every 2nd row is expandable) */
   selectableOverride?: UsabilityOverrideFn;
+
+  // --
+  // Events
+
+  /** Fired after extension is registered by SlickGrid */
+  onExtensionRegistered?: (plugin: SlickCheckboxSelectColumn) => void;
 
   /** Optional callback method to be executed when the row checkbox gets clicked but prior to the actual toggling itself. */
   onRowToggleStart?: (e: SlickEventData | Event | null, args: { row: number; previousSelectedRows: number[]; }) => void;

@@ -11,6 +11,7 @@ import {
   type GridOption,
   OperatorType,
   type SlickDataView,
+  type SlickCheckboxSelectColumn,
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
@@ -61,6 +62,8 @@ export default class Example04 {
   frozenRowCount = 3;
   isFrozenBottom = false;
   sgb: SlickVanillaGridBundle;
+  checkboxSelectorInstance: SlickCheckboxSelectColumn;
+  isSelectAllShownAsColumnTitle = false;
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -372,6 +375,12 @@ export default class Example04 {
         selectActiveRow: false
       },
       enableCheckboxSelector: true,
+      checkboxSelector: {
+        hideInColumnTitleRow: !this.isSelectAllShownAsColumnTitle,
+        hideInFilterHeaderRow: this.isSelectAllShownAsColumnTitle,
+        name: 'Sel', // column name will only show when `hideInColumnTitleRow` is true
+        onExtensionRegistered: (instance) => this.checkboxSelectorInstance = instance,
+      },
       enableRowSelection: true,
       frozenColumn: this.frozenColumnCount,
       frozenRow: this.frozenRowCount,
@@ -544,6 +553,14 @@ export default class Example04 {
       });
       this.isFrozenBottom = !this.isFrozenBottom; // toggle the variable
     }
+  }
+
+  toggleWhichRowToShowSelectAll() {
+    this.isSelectAllShownAsColumnTitle = !this.isSelectAllShownAsColumnTitle;
+    this.checkboxSelectorInstance.setOptions({
+      hideInColumnTitleRow: !this.isSelectAllShownAsColumnTitle,
+      hideInFilterHeaderRow: this.isSelectAllShownAsColumnTitle,
+    });
   }
 
   executeCommand(_e, args) {

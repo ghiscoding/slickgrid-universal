@@ -1,7 +1,8 @@
 describe('Example 04 - Frozen Grid', () => {
   // NOTE:  everywhere there's a * 2 is because we have a top+bottom (frozen rows) containers even after Unfreeze Columns/Rows
 
-  const fullTitles = ['', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+  const withTitleRowTitles = ['Sel', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+  const withoutTitleRowTitles = ['', 'Title', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
   const GRID_ROW_HEIGHT = 45;
 
   it('should display Example title', () => {
@@ -13,14 +14,14 @@ describe('Example 04 - Frozen Grid', () => {
     cy.get('.grid4')
       .find('.slick-header-columns')
       .children()
-      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
   });
 
   it('should have exact Column Header Titles in the grid', () => {
     cy.get('.grid4')
       .find('.slick-header-columns:nth(0)')
       .children()
-      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
   });
 
   it('should have a frozen grid with 4 containers on page load with 3 columns on the left and 6 columns on the right', () => {
@@ -36,7 +37,7 @@ describe('Example 04 - Frozen Grid', () => {
   });
 
   it('should hide "Title" column from Grid Menu and expect last frozen column to be "% Complete"', () => {
-    const newColumnList = ['', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+    const newColumnList = ['Sel', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
 
     cy.get('.grid4')
       .find('button.slick-grid-menu-button')
@@ -81,7 +82,7 @@ describe('Example 04 - Frozen Grid', () => {
     cy.get('.grid4')
       .find('.slick-header-columns')
       .children()
-      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
 
     cy.get('.grid-canvas-left > [style="top: 0px;"]').children().should('have.length', 3 * 2);
     cy.get('.grid-canvas-right > [style="top: 0px;"]').children().should('have.length', 6 * 2);
@@ -94,7 +95,7 @@ describe('Example 04 - Frozen Grid', () => {
   });
 
   it('should hide "Title" column from Header Menu and expect last frozen column to be "% Complete"', () => {
-    const newColumnList = ['', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+    const newColumnList = ['Sel', '% Complete', 'Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
 
     cy.get('.grid4')
       .find('.slick-header-column:nth(1)')
@@ -146,7 +147,7 @@ describe('Example 04 - Frozen Grid', () => {
     cy.get('.grid4')
       .find('.slick-header-columns')
       .children()
-      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
 
     cy.get('.grid-canvas-left > [style="top: 0px;"]').children().should('have.length', 3 * 2);
     cy.get('.grid-canvas-right > [style="top: 0px;"]').children().should('have.length', 6 * 2);
@@ -176,7 +177,7 @@ describe('Example 04 - Frozen Grid', () => {
     cy.get('.grid4')
       .find('.slick-header-columns:nth(0)')
       .children()
-      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
   });
 
   it('should click on the "Set 3 Frozen Columns" button to switch frozen columns grid and expect 3 frozen columns on the left and 4 columns on the right', () => {
@@ -198,7 +199,7 @@ describe('Example 04 - Frozen Grid', () => {
     cy.get('.grid4')
       .find('.slick-header-columns:nth(0)')
       .children()
-      .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
   });
 
   it('should click on the Grid Menu command "Unfreeze Columns/Rows" to switch to a regular grid without frozen columns/rows', () => {
@@ -514,6 +515,46 @@ describe('Example 04 - Frozen Grid', () => {
       .then(() => expect(stub.getCall(0)).to.be.calledWith('Command: contact-chat'));
 
     cy.get('.slick-submenu').should('have.length', 0);
+  });
+
+  it('should toggle Select All checkbox and expect back "Sel" column title to show when Select All checkbox is shown in the header row', () => {
+    cy.get('.slick-header-column:nth(0)')
+      .find('.slick-column-name')
+      .should('contain', 'Sel');
+    cy.get('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
+
+    cy.get('[data-test="toggle-select-all-row"]').click();
+
+    cy.get('.slick-header-column:nth(0)')
+      .find('.slick-column-name')
+      .should('not.contain', 'Sel');
+
+    cy.get('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(withoutTitleRowTitles[index]));
+  });
+
+  it('should toggle back Select All checkbox and expect back "Sel" column title to show when Select All checkbox is shown in the header row', () => {
+    cy.get('[data-test="toggle-select-all-row"]').click();
+
+    cy.get('.slick-header-column:nth(0)')
+      .find('.slick-column-name')
+      .should('contain', 'Sel');
+    cy.get('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(withTitleRowTitles[index]));
+
+    cy.get('[data-test="toggle-select-all-row"]').click();
+
+    cy.get('.slick-header-column:nth(0)')
+      .find('.slick-column-name')
+      .should('not.contain', 'Sel');
+
+    cy.get('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(withoutTitleRowTitles[index]));
   });
 
   describe('Test UI rendering after Scrolling with large columns', () => {
