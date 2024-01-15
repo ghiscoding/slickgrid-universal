@@ -187,7 +187,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(plugin).toBeTruthy();
     expect(updateColHeaderSpy).toHaveBeenCalledWith(
       '_checkbox_selector',
-      `<input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><label for="header-selector${plugin.selectAllUid}"></label>`,
+      plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`),
       'Select/Deselect All'
     );
     expect(preventDefaultSpy).toHaveBeenCalled();
@@ -664,7 +664,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(setSelectedRowSpy).not.toHaveBeenCalled();
     expect(updateColumnHeaderSpy).toHaveBeenCalledWith(
       '_checkbox_selector',
-      `<input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><label for="header-selector${plugin.selectAllUid}"></label>`,
+      plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`),
       'Select/Deselect All'
     );
   });
@@ -690,7 +690,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(setSelectedRowSpy).not.toHaveBeenCalled();
     expect(updateColumnHeaderSpy).toHaveBeenCalledWith(
       '_checkbox_selector',
-      `<input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><label for="header-selector${plugin.selectAllUid}"></label>`,
+      plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`),
       'Select/Deselect All'
     );
   });
@@ -721,7 +721,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(setSelectedRowSpy).toHaveBeenCalled();
     expect(updateColumnHeaderSpy).toHaveBeenCalledWith(
       '_checkbox_selector',
-      `<input id="header-selector${plugin.selectAllUid}" type="checkbox" checked="checked" aria-checked="true"><label for="header-selector${plugin.selectAllUid}"></label>`,
+      plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`, true),
       'Select/Deselect All'
     );
   });
@@ -729,10 +729,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   it('should trigger "onSelectedRowIdsChanged" event and invalidate row and render to be called also with "setSelectedRows" when checkSelectableOverride returns False and input select checkbox is all checked', () => {
     const nodeElm = document.createElement('div');
     nodeElm.className = 'slick-headerrow-column';
-    const invalidateRowSpy = jest.spyOn(gridStub, 'invalidateRow');
-    const renderSpy = jest.spyOn(gridStub, 'render');
     const updateColumnHeaderSpy = jest.spyOn(gridStub, 'updateColumnHeader');
-    const setSelectedRowSpy = jest.spyOn(gridStub, 'setSelectedRows');
     jest.spyOn(dataViewStub, 'getAllSelectedFilteredIds').mockReturnValueOnce([1, 2]);
     jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
     jest.spyOn(dataViewStub, 'getFilteredItems').mockReturnValueOnce([{ id: 22, firstName: 'John', lastName: 'Doe', age: 30 }]);
@@ -753,7 +750,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(plugin).toBeTruthy();
     expect(updateColumnHeaderSpy).toHaveBeenCalledWith(
       '_checkbox_selector',
-      `<input id="header-selector${plugin.selectAllUid}" type="checkbox" checked="checked" aria-checked="true"><label for="header-selector${plugin.selectAllUid}"></label>`,
+      plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`, true),
       'Select/Deselect All'
     );
   });
