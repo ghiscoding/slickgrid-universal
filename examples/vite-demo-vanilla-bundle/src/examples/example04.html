@@ -35,13 +35,17 @@
       <span class="icon mdi mdi-close"></span>
       <span>Remove Frozen Columns</span>
     </button>
-    <button class="button is-small" onclick.delegate="setFrozenColumns(2)" data-test="set-3frozen-columns">
+    <button class="button is-small" data-test="set-3frozen-columns" onclick.delegate="setFrozenColumns(2)">
       <span class="icon mdi mdi-pin-outline"></span>
       <span>Set 3 Frozen Columns</span>
     </button>
-    <button class="button is-small" onclick.delegate="toggleFrozenBottomRows()">
+    <button class="button is-small" data-test="toggle-frozen-bottom" onclick.delegate="toggleFrozenBottomRows()">
       <span class="icon mdi mdi-flip-vertical"></span>
       <span>Toggle Pinned Rows (top/bottom)</span>
+    </button>
+    <button class="button is-small ml-3" data-test="toggle-select-all-row" onclick.delegate="toggleWhichRowToShowSelectAll()">
+      <span class="icon mdi mdi-swap-horizontal mdi-rotate-90"></span>
+      <span>Toggle which row to show "Select All" checkbox</span>
     </button>
   </span>
 </div>
