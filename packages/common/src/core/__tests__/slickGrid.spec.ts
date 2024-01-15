@@ -2340,16 +2340,20 @@ describe('SlickGrid core file', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
 
         const result1 = grid.getCellFromPoint(0, 0);
-        const result2 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH + 5, DEFAULT_COLUMN_HEIGHT + 5);
-        const result3 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 2) + 5, (DEFAULT_COLUMN_HEIGHT * 2) + 5);
-        const result4 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 3) + 5, (DEFAULT_COLUMN_HEIGHT * 3) + 5);
-        const result5 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 4) + 5, (DEFAULT_COLUMN_HEIGHT * 4) + 5);
+        const result2 = grid.getCellFromPoint(0, DEFAULT_COLUMN_HEIGHT + 5);
+        const result3 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH + 5, 0);
+        const result4 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH + 5, DEFAULT_COLUMN_HEIGHT + 5);
+        const result5 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 2) + 5, (DEFAULT_COLUMN_HEIGHT * 2) + 5);
+        const result6 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 3) + 5, (DEFAULT_COLUMN_HEIGHT * 3) + 5);
+        const result7 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 4) + 5, (DEFAULT_COLUMN_HEIGHT * 4) + 5);
 
         expect(result1).toEqual({ cell: 0, row: 0 });
-        expect(result2).toEqual({ cell: 1, row: 1 });
-        expect(result3).toEqual({ cell: 2, row: 2 });
-        expect(result4).toEqual({ cell: 3, row: 3 });
-        expect(result5).toEqual({ cell: 4, row: 4 });
+        expect(result2).toEqual({ cell: 0, row: 1 });
+        expect(result3).toEqual({ cell: 1, row: 0 });
+        expect(result4).toEqual({ cell: 1, row: 1 });
+        expect(result5).toEqual({ cell: 2, row: 2 });
+        expect(result6).toEqual({ cell: 3, row: 3 });
+        expect(result7).toEqual({ cell: 4, row: 4 });
       });
 
       it('should return negative row/cell when x,y coordinates is outside the grid canvas', () => {
