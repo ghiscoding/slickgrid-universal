@@ -2345,19 +2345,27 @@ describe('SlickGrid core file', () => {
         const result4 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 3) + 5, (DEFAULT_COLUMN_HEIGHT * 3) + 5);
         const result5 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 4) + 5, (DEFAULT_COLUMN_HEIGHT * 4) + 5);
 
-        expect(result1).toEqual({ row: 0, cell: 0 });
-        expect(result2).toEqual({ row: 1, cell: 1 });
-        expect(result3).toEqual({ row: 2, cell: 2 });
-        expect(result4).toEqual({ row: 3, cell: 3 });
-        expect(result5).toEqual({ row: 4, cell: 4 });
+        expect(result1).toEqual({ cell: 0, row: 0 });
+        expect(result2).toEqual({ cell: 1, row: 1 });
+        expect(result3).toEqual({ cell: 2, row: 2 });
+        expect(result4).toEqual({ cell: 3, row: 3 });
+        expect(result5).toEqual({ cell: 4, row: 4 });
       });
 
-      it('should throw x,y coordinates returns invalid row and/or cell', () => {
+      it('should return negative row/cell when x,y coordinates is outside the grid canvas', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
 
-        expect(() => grid.getCellFromPoint(-(DEFAULT_COLUMN_WIDTH + 5), -(DEFAULT_COLUMN_HEIGHT + 5))).toThrow('[SlickGrid] The coordinates provided to getCellFromPoint(x, y) returns invalid grid row and/or cell.');
-        expect(() => grid.getCellFromPoint(-((DEFAULT_COLUMN_WIDTH * 2) + 5), -((DEFAULT_COLUMN_HEIGHT * 2) + 5))).toThrow('[SlickGrid] The coordinates provided to getCellFromPoint(x, y) returns invalid grid row and/or cell.');
-        expect(() => grid.getCellFromPoint(-((DEFAULT_COLUMN_WIDTH * 3) + 5), -((DEFAULT_COLUMN_HEIGHT * 3) + 5))).toThrow('[SlickGrid] The coordinates provided to getCellFromPoint(x, y) returns invalid grid row and/or cell.');
+        const result1 = grid.getCellFromPoint(0, -999);
+        const result2 = grid.getCellFromPoint(-777, 0);
+        const result3 = grid.getCellFromPoint(-(DEFAULT_COLUMN_WIDTH + 5), -(DEFAULT_COLUMN_HEIGHT + 5));
+        const result4 = grid.getCellFromPoint(-((DEFAULT_COLUMN_WIDTH * 2) + 5), -((DEFAULT_COLUMN_HEIGHT * 2) + 5));
+        const result5 = grid.getCellFromPoint(-((DEFAULT_COLUMN_WIDTH * 3) + 5), -((DEFAULT_COLUMN_HEIGHT * 3) + 5));
+
+        expect(result1).toEqual({ cell: 0, row: -1 });
+        expect(result2).toEqual({ cell: -1, row: 0 });
+        expect(result3).toEqual({ cell: -1, row: -1 });
+        expect(result4).toEqual({ cell: -1, row: -1 });
+        expect(result5).toEqual({ cell: -1, row: -1 });
       });
 
       it('should skip a cell when column found at x/y coordinates is hidden (Gender) so cell will the last known visible column', () => {
@@ -2367,8 +2375,8 @@ describe('SlickGrid core file', () => {
         const result2 = grid.getCellFromPoint((DEFAULT_COLUMN_WIDTH * 6) + 5, (DEFAULT_COLUMN_HEIGHT * 6) + 5);
 
         // last 2 columns are hidden and last visible column is cell:4
-        expect(result1).toEqual({ row: 5, cell: 4 });
-        expect(result2).toEqual({ row: 6, cell: 4 });
+        expect(result1).toEqual({ cell: 4, row: 5 });
+        expect(result2).toEqual({ cell: 4, row: 6 });
       });
     });
 
@@ -2459,13 +2467,15 @@ describe('SlickGrid core file', () => {
         expect(result).toEqual({ row: 1, cell: 1 });
       });
 
-      it('should throw when using frozenRow that result into invalid row/cell number', () => {
+      it('should return null when using frozenRow that result into invalid row/cell number', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, frozenRow: 3, frozenBottom: true });
         const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(2) .slick-cell');
         const event = new CustomEvent('click');
         Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[1] });
 
-        expect(() => grid.getCellFromEvent(event)).toThrow(/returns invalid grid row and\/or cell/);
+        const result = grid.getCellFromEvent(event);
+
+        expect(result).toBeNull();
       });
     });
   });

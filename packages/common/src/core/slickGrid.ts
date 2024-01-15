@@ -4978,7 +4978,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param y A y coordinate.
    */
   getCellFromPoint(x: number, y: number) {
-    const row = this.getRowFromPosition(y);
+    let row = this.getRowFromPosition(y);
     let cell = 0;
 
     let w = 0;
@@ -4991,8 +4991,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
     cell -= 1;
 
-    if (row < 0 || cell < 0) {
-      throw new Error('[SlickGrid] The coordinates provided to getCellFromPoint(x, y) returns invalid grid row and/or cell.');
+    // we'll return -1 when coordinate falls outside the grid canvas
+    if (row < -1) {
+      row = -1;
+    }
+    if (cell < -1) {
+      cell = -1;
     }
 
     return { row, cell };
