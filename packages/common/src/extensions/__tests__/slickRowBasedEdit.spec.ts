@@ -19,6 +19,7 @@ import {
 } from '../slickRowBasedEdit';
 import { GridService } from '../../services';
 import { Editors } from '../../editors';
+import { ExtensionUtility } from '../extensionUtility';
 
 let addonOptions: RowBasedEditOptions = {
   actionsColumnLabel: 'MyActions',
@@ -57,6 +58,8 @@ const gridStubBlueprint = {
   getCellNode: jest.fn(),
   getCellFromEvent: jest.fn(),
   getOptions: jest.fn(),
+  getViewport: jest.fn().mockReturnValue({ top: 0, bottom: 0 }),
+  invalidateRows: jest.fn(),
   setOptions: jest.fn(),
   registerPlugin: jest.fn(),
   onSetOptions: new SlickEvent(),
@@ -68,6 +71,10 @@ const gridStubBlueprint = {
   render: jest.fn(),
   getColumns: jest.fn().mockImplementation(() => (gridStubBlueprint as any).columns || []),
 } as unknown as SlickGrid;
+
+const extensionUtilityStub = {
+
+} as ExtensionUtility;
 
 const pubSubServiceStub = {
   publish: jest.fn(),
@@ -94,7 +101,7 @@ describe('Row Based Edit Plugin', () => {
     } as unknown as MockedSlickGrid;
     gridService = new GridService(_any, _any, _any, _any, _any, _any, _any);
     jest.spyOn(gridService, 'getAllColumnDefinitions').mockReturnValue(mockColumns);
-    plugin = new SlickRowBasedEdit(pubSubServiceStub, addonOptions);
+    plugin = new SlickRowBasedEdit(extensionUtilityStub, pubSubServiceStub, addonOptions);
     (plugin as any)._eventHandler = {
       subscribe: jest.fn(),
       unsubscribeAll: jest.fn(),
@@ -510,7 +517,7 @@ describe('Row Based Edit Plugin', () => {
         deleteItem: jest.fn(),
         getAllColumnDefinitions: jest.fn().mockReturnValue(mockColumns),
       } as unknown as GridService;
-      plugin = new SlickRowBasedEdit(pubSubServiceStub, addonOptions);
+      plugin = new SlickRowBasedEdit(extensionUtilityStub, pubSubServiceStub, addonOptions);
       (plugin as any)._eventHandler = {
         subscribe: jest.fn(),
         unsubscribeAll: jest.fn(),

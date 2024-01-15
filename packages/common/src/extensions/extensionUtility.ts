@@ -9,7 +9,7 @@ export class ExtensionUtility {
   constructor(
     private readonly sharedService: SharedService,
     private readonly backendUtilities?: BackendUtilityService,
-    private readonly translaterService?: TranslaterService
+    public readonly translaterService?: TranslaterService
   ) { }
 
   /**

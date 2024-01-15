@@ -32,23 +32,35 @@ export interface RowBasedEditOptions {
   actionButtons?: {
     editButtonClassName?: string;
     iconEditButtonClassName?: string;
+    /** The tooltip to show on the edit button */
     editButtonTitle?: string;
+    /** Same as "editButtonTitle", except that it's a translation key which can be used on page load and/or when switching locale */
+    editButtonTitleKey?: string;
 
     deleteButtonClassName?: string;
     iconDeleteButtonClassName?: string;
+    /** The tooltip to show on the delete button */
     deleteButtonTitle?: string;
+    /** Same as "deleteButtonTitle", except that it's a translation key which can be used on page load and/or when switching locale */
+    deleteButtonTitleKey?: string;
     /** if defined, a confirm prompt will be shown before deleting a row */
     deleteButtonPrompt?: string;
 
     cancelButtonClassName?: string;
     iconCancelButtonClassName?: string;
+    /** The tooltip to show on the cancel button */
     cancelButtonTitle?: string;
+    /** Same as "cancelButtonTitle", except that it's a translation key which can be used on page load and/or when switching locale */
+    cancelButtonTitleKey?: string;
     /** if defined, a confirm prompt will be shown before canceling the changes of a row */
     cancelButtonPrompt?: string;
 
     updateButtonClassName?: string;
     iconUpdateButtonClassName?: string;
+    /** The tooltip to show on the update button */
     updateButtonTitle?: string;
+    /** Same as "updateButtonTitle", except that it's a translation key which can be used on page load and/or when switching locale */
+    updateButtonTitleKey?: string;
     /** if defined, a confirm prompt will be shown before saving the changes of a row */
     updateButtonPrompt?: string;
   }

@@ -168,7 +168,7 @@ export class ExtensionService {
 
       // Row Based Edit Plugin
       if (this.gridOptions.enableRowBasedEdit) {
-        this._rowBasedEdit = this._rowBasedEdit || new SlickRowBasedEdit(this.pubSubService, this.gridOptions.rowBasedEditOptions);
+        this._rowBasedEdit = this._rowBasedEdit || new SlickRowBasedEdit(this.extensionUtility, this.pubSubService, this.gridOptions.rowBasedEditOptions);
         const gridService = this.lazyGridService?.();
         if (!gridService) {
           throw new Error('[Slickgrid-Universal] the RowBasedEdit Plugin requires a GridService to be configured and available');
@@ -327,7 +327,7 @@ export class ExtensionService {
     }
     if (gridOptions.enableRowBasedEdit) {
       if (!this.getCreatedExtensionByName(ExtensionName.rowBasedEdit)) {
-        this._rowBasedEdit = new SlickRowBasedEdit(this.pubSubService);
+        this._rowBasedEdit = new SlickRowBasedEdit(this.extensionUtility, this.pubSubService);
         featureWithColumnIndexPositions.push({ name: ExtensionName.rowBasedEdit, extension: this._rowBasedEdit, columnIndexPosition: gridOptions?.rowMoveManager?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
       }
     }
@@ -380,6 +380,7 @@ export class ExtensionService {
     this.translateContextMenu();
     this.translateGridMenu();
     this.translateHeaderMenu();
+    this.translateRowEditPlugin();
   }
 
   /** Translate the Cell Menu titles, we need to loop through all column definition to re-translate them */
@@ -411,6 +412,13 @@ export class ExtensionService {
    */
   translateHeaderMenu() {
     this._headerMenuPlugin?.translateHeaderMenu?.();
+  }
+
+  /**
+   * Translate the action column buttons of the Row Based Edit Plugin
+   */
+  translateRowEditPlugin() {
+    this._rowBasedEdit?.translate?.();
   }
 
   /**

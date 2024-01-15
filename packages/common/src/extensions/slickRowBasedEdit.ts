@@ -13,6 +13,7 @@ import type {
 } from '../interfaces/index';
 import { SlickEventData, SlickEventHandler, SlickGlobalEditorLock, type SlickGrid } from '../core/index';
 import { GridService } from '../services';
+import { ExtensionUtility } from './extensionUtility';
 
 export const ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS = 'slick-rbe-editmode';
 export const ROW_BASED_EDIT_UNSAVED_CELL = 'slick-rbe-unsaved-cell';
@@ -47,12 +48,20 @@ export class SlickRowBasedEdit {
     columnId: '_slick_rowbasededit_action',
     columnIndexPosition: -1,
   } as RowBasedEditOptions;
-
   protected _editedRows: Map<string, EditedRowDetails> = new Map();
+
   private _existingEditCommandHandler: ((item: any, column: Column<any>, command: EditCommand) => void) | undefined;
+  private btnUpdateTitle: string = '';
+  private btnEditTitle: string = '';
+  private btnDeleteTitle: string = '';
+  private btnCancelTitle: string = '';
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
-  constructor(protected readonly pubSubService: BasePubSubService, options?: RowBasedEditOptions) {
+  constructor(
+    protected readonly extensionUtility: ExtensionUtility,
+    protected readonly pubSubService: BasePubSubService,
+    options?: RowBasedEditOptions
+  ) {
     this._eventHandler = new SlickEventHandler();
     this._addonOptions = options;
   }
@@ -124,6 +133,7 @@ export class SlickRowBasedEdit {
     this._eventHandler.subscribe(this._grid.onSetOptions, this.optionsUpdatedHandler.bind(this));
     this._eventHandler.subscribe(dataView.onRowsOrCountChanged, this.handleAllRowRerender.bind(this));
 
+    this.translate();
     this._grid.invalidate();
   }
 
@@ -227,6 +237,45 @@ export class SlickRowBasedEdit {
       editCommands: newCommands,
       cssStyleKeys: editedRow?.cssStyleKeys || [],
     });
+  }
+
+  translate() {
+    this.btnUpdateTitle =
+      (this.gridOptions.rowBasedEditOptions?.actionButtons?.updateButtonTitleKey &&
+        this.extensionUtility.translaterService?.translate?.(
+          this.gridOptions.rowBasedEditOptions?.actionButtons?.updateButtonTitleKey
+        )) ||
+      this.gridOptions.rowBasedEditOptions?.actionButtons?.updateButtonTitle ||
+      'Update the Row';
+
+    this.btnEditTitle =
+      (this.gridOptions.rowBasedEditOptions?.actionButtons?.updateButtonTitleKey &&
+        this.extensionUtility.translaterService?.translate?.(
+          this.gridOptions.rowBasedEditOptions?.actionButtons?.updateButtonTitleKey
+        )) ||
+      this.gridOptions.rowBasedEditOptions?.actionButtons?.editButtonTitle ||
+      'Edit the Row';
+
+    this.btnDeleteTitle =
+      (this.gridOptions.rowBasedEditOptions?.actionButtons?.deleteButtonTitleKey &&
+        this.extensionUtility.translaterService?.translate?.(
+          this.gridOptions.rowBasedEditOptions?.actionButtons?.deleteButtonTitleKey
+        )) ||
+      this.gridOptions.rowBasedEditOptions?.actionButtons?.deleteButtonTitle ||
+      'Delete the Row';
+
+    this.btnCancelTitle =
+      (this.gridOptions.rowBasedEditOptions?.actionButtons?.cancelButtonTitleKey &&
+        this.extensionUtility.translaterService?.translate?.(
+          this.gridOptions.rowBasedEditOptions?.actionButtons?.cancelButtonTitleKey
+        )) ||
+      this.gridOptions.rowBasedEditOptions?.actionButtons?.cancelButtonTitle ||
+      'Cancel changes of the Row';
+
+    const viewport = this._grid.getViewport();
+
+    this._grid.invalidateRows([...Array(viewport.bottom - viewport.top + 1).keys()].map((i) => i + viewport.top));
+    this._grid.render();
   }
 
   protected checkOptionsRequirements(options: GridOption) {
@@ -386,7 +435,7 @@ export class SlickRowBasedEdit {
             `${
               options.rowBasedEditOptions?.actionButtons?.editButtonClassName || 'button-style padding-1px mr-2'
             } action-btns ` + BTN_ACTION_EDIT,
-          title: options.rowBasedEditOptions?.actionButtons?.editButtonTitle || 'Edit the Row',
+          title: this.btnEditTitle,
           style: { display: isInEditMode ? 'none' : '' },
         })
       )
@@ -403,7 +452,7 @@ export class SlickRowBasedEdit {
             `${
               options.rowBasedEditOptions?.actionButtons?.deleteButtonClassName || 'button-style padding-1px'
             } action-btns ` + BTN_ACTION_DELETE,
-          title: options.rowBasedEditOptions?.actionButtons?.deleteButtonTitle || 'Delete the Row',
+          title: this.btnDeleteTitle,
           style: { display: isInEditMode ? 'none' : '' },
         })
       )
@@ -420,7 +469,7 @@ export class SlickRowBasedEdit {
             `${
               options.rowBasedEditOptions?.actionButtons?.updateButtonClassName || 'button-style padding-1px mr-2'
             } action-btns ` + BTN_ACTION_UPDATE,
-          title: options.rowBasedEditOptions?.actionButtons?.updateButtonTitle || 'Update the Row',
+          title: this.btnUpdateTitle,
           style: { display: !isInEditMode ? 'none' : '' },
         })
       )
@@ -437,7 +486,7 @@ export class SlickRowBasedEdit {
             `${
               options.rowBasedEditOptions?.actionButtons?.cancelButtonClassName || 'button-style padding-1px'
             } action-btns ` + BTN_ACTION_CANCEL,
-          title: options.rowBasedEditOptions?.actionButtons?.cancelButtonTitle || 'Cancel changes of the Row',
+          title: this.btnCancelTitle,
           style: { display: !isInEditMode ? 'none' : '' },
         })
       )
