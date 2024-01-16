@@ -1,30 +1,28 @@
-import type {
-  ContainerService,
-  EmptyWarning,
-  ExternalResource,
-  GridOption,
-  SlickGrid,
-  TranslaterService
+import {
+  classNameToList,
+  type ContainerService,
+  type EmptyWarning,
+  type ExternalResource,
+  type GridOption,
+  type SlickGrid,
+  type TranslaterService
 } from '@slickgrid-universal/common';
 
 export class SlickEmptyWarningComponent implements ExternalResource {
+  protected _grid!: SlickGrid;
+  protected _isPreviouslyShown = false;
+  protected _translaterService?: TranslaterService | null;
   protected _warningLeftElement: HTMLDivElement | null = null;
   protected _warningRightElement: HTMLDivElement | null = null;
-  protected grid!: SlickGrid;
-  protected isPreviouslyShown = false;
-  protected translaterService?: TranslaterService | null;
-
 
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
-    return this.grid?.getOptions() ?? {};
+    return this._grid?.getOptions() ?? {};
   }
 
-  constructor() { }
-
   init(grid: SlickGrid, containerService: ContainerService) {
-    this.grid = grid;
-    this.translaterService = containerService.get<TranslaterService>('TranslaterService');
+    this._grid = grid;
+    this._translaterService = containerService.get<TranslaterService>('TranslaterService');
   }
 
   dispose() {
@@ -41,14 +39,14 @@ export class SlickEmptyWarningComponent implements ExternalResource {
    * @param options - any styling options you'd like to pass like the text color
    */
   showEmptyDataMessage(isShowing = true, options?: EmptyWarning): boolean {
-    if (!this.grid || !this.gridOptions || this.isPreviouslyShown === isShowing) {
+    if (!this._grid || !this.gridOptions || this._isPreviouslyShown === isShowing) {
       return false;
     }
 
     // keep reference so that we won't re-render the warning if the status is the same
-    this.isPreviouslyShown = isShowing;
+    this._isPreviouslyShown = isShowing;
 
-    const gridUid = this.grid.getUID();
+    const gridUid = this._grid.getUID();
     const defaultMessage = 'No data to display.';
     const mergedOptions: EmptyWarning = { message: defaultMessage, ...this.gridOptions.emptyDataWarning, ...options };
     const emptyDataClassName = mergedOptions?.className ?? 'slick-empty-data-warning';
@@ -89,15 +87,15 @@ export class SlickEmptyWarningComponent implements ExternalResource {
 
     // warning message could come from a translation key or by the warning options
     let warningMessage = mergedOptions.message;
-    if (this.gridOptions.enableTranslate && this.translaterService && mergedOptions?.messageKey) {
-      warningMessage = this.translaterService.translate(mergedOptions.messageKey);
+    if (this.gridOptions.enableTranslate && this._translaterService && mergedOptions?.messageKey) {
+      warningMessage = this._translaterService.translate(mergedOptions.messageKey);
     }
 
     if (!this._warningLeftElement && gridCanvasLeftElm && gridCanvasRightElm) {
       this._warningLeftElement = document.createElement('div');
-      this._warningLeftElement.classList.add(emptyDataClassName);
+      this._warningLeftElement.classList.add(...classNameToList(emptyDataClassName));
       this._warningLeftElement.classList.add('left');
-      this.grid.applyHtmlCode(this._warningLeftElement, warningMessage);
+      this._grid.applyHtmlCode(this._warningLeftElement, warningMessage);
 
       // clone the warning element and add the "right" class to it so we can distinguish
       this._warningRightElement = this._warningLeftElement.cloneNode(true) as HTMLDivElement;

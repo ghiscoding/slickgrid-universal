@@ -1,5 +1,10 @@
-import type { GridOption } from '@slickgrid-universal/common';
+import { createDomElement, type GridOption } from '@slickgrid-universal/common';
 import { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
+
+// create empty warning message as Document Fragment to be CSP safe
+const emptyWarningElm = new DocumentFragment();
+emptyWarningElm.appendChild(createDomElement('span', { className: 'mdi mdi-alert color-warning' }));
+emptyWarningElm.appendChild(document.createTextNode(' No data to display.'));
 
 /** Global Grid Options Defaults for Salesforce */
 export const SalesforceGlobalGridOptions = {
@@ -20,7 +25,7 @@ export const SalesforceGlobalGridOptions = {
   },
   datasetIdPropertyName: 'Id',
   emptyDataWarning: {
-    message: `<span class="mdi mdi-alert color-warning"></span> No data to display.`,
+    message: emptyWarningElm
   },
   enableDeepCopyDatasetOnPageLoad: true,
   enableTextExport: true,

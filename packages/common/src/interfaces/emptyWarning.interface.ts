@@ -1,6 +1,6 @@
 export interface EmptyWarning {
   /** Empty data warning message, defaults to "No data to display." */
-  message: string;
+  message: string | HTMLElement | DocumentFragment;
 
   /** Empty data warning message translation key, defaults to "EMPTY_DATA_WARNING_MESSAGE" */
   messageKey?: string;

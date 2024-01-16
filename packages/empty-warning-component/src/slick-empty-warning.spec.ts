@@ -1,8 +1,7 @@
-import { EmptyWarning, GridOption, SlickGrid } from '@slickgrid-universal/common';
+import { createDomElement, type EmptyWarning, type GridOption, type SlickGrid } from '@slickgrid-universal/common';
 import { SlickEmptyWarningComponent } from './slick-empty-warning.component';
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
-import * as DOMPurify from 'dompurify';
 
 const GRID_UID = 'slickgrid_123456';
 
@@ -12,7 +11,13 @@ const mockGridOptions = {
 } as GridOption;
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => elm.innerHTML = DOMPurify.sanitize(val || ''),
+  applyHtmlCode: (elm, val) => {
+    if (val instanceof HTMLElement || val instanceof DocumentFragment) {
+      elm.appendChild(val)
+    } else {
+      elm.innerHTML = val || ''
+    }
+  },
   getGridPosition: () => mockGridOptions,
   getOptions: () => mockGridOptions,
   getUID: () => GRID_UID,
@@ -352,8 +357,12 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentElm.innerHTML).toBe('<span class="fa fa-warning"></span> No Record found.');
     });
 
-    it('should expect the Slick-Empty-Warning provide html text and expect script to be sanitized out of the final html', () => {
-      const mockOptions = { message: `<script>alert('test')></script><span class="fa fa-warning"></span> No Record found.`, className: 'custom-class', marginTop: 22, marginLeft: 11 };
+    it('should expect the Slick-Empty-Warning to change some options and display a different message is provided as a DocumentFragment', () => {
+      const emptyWarningElm = new DocumentFragment();
+      emptyWarningElm.appendChild(createDomElement('span', { className: 'fa fa-warning' }));
+      emptyWarningElm.appendChild(document.createTextNode(' No Record found.'));
+
+      const mockOptions = { message: emptyWarningElm, className: 'custom-class', marginTop: 22, marginLeft: 11 };
       component = new SlickEmptyWarningComponent();
       component.init(gridStub, container);
       component.showEmptyDataMessage(true, mockOptions);
@@ -366,6 +375,26 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentElm.style.display).toBe('block');
       expect(componentElm.classList.contains('custom-class')).toBeTruthy();
       expect(componentElm.innerHTML).toBe('<span class="fa fa-warning"></span> No Record found.');
+    });
+
+    it('should expect the Slick-Empty-Warning to change some options and display a different message is provided as an HTMLElement', () => {
+      const emptyWarningElm = createDomElement('div', { className: 'container' });
+      emptyWarningElm.appendChild(createDomElement('span', { className: 'fa fa-warning' }));
+      emptyWarningElm.appendChild(document.createTextNode(' No Record found.'));
+
+      const mockOptions = { message: emptyWarningElm, className: 'custom-class', marginTop: 22, marginLeft: 11 };
+      component = new SlickEmptyWarningComponent();
+      component.init(gridStub, container);
+      component.showEmptyDataMessage(true, mockOptions);
+
+      const componentElm = document.querySelector<HTMLSelectElement>('div.slickgrid_123456 .grid-canvas .custom-class') as HTMLSelectElement;
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(componentElm).toBeTruthy();
+      expect(componentElm.style.display).toBe('block');
+      expect(componentElm.classList.contains('custom-class')).toBeTruthy();
+      expect(componentElm.innerHTML).toBe('<div class="container"><span class="fa fa-warning"></span> No Record found.</div>');
     });
 
     it('should expect the Slick-Empty-Warning message to be translated to French when providing a Translater Service and "messageKey" property', () => {
