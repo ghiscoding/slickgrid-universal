@@ -28,7 +28,7 @@ import {
   getTranslationPrefix,
   isColumnDateType,
 } from '@slickgrid-universal/common';
-import { addWhiteSpaces, deepCopy, stripTags, titleCase } from '@slickgrid-universal/utils';
+import { addWhiteSpaces, deepCopy, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 
 import { ExcelCellFormat, ExcelMetadata, ExcelStylesheet, } from './interfaces/index';
 import {
@@ -439,7 +439,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         if ((columnDef.nameKey || columnDef.nameKey) && this._gridOptions.enableTranslate && this._translaterService?.translate) {
           headerTitle = this._translaterService.translate((columnDef.nameKey || columnDef.nameKey));
         } else {
-          headerTitle = (columnDef.name instanceof HTMLElement ? columnDef.name.innerHTML : columnDef.name) || titleCase(columnDef.field);
+          headerTitle = getHtmlStringOutput(columnDef.name || '', 'innerHTML') || titleCase(columnDef.field);
         }
         const skippedField = columnDef.excludeFromExport || false;
 

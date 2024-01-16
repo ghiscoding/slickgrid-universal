@@ -202,6 +202,25 @@ export class SlickCheckboxSelectColumn<T = any> {
     this._grid.setSelectedRows(newSelectedRows);
   }
 
+  /**
+   * use a DocumentFragment to return a fragment including an <input> then a <label> as siblings,
+   * the label is using `for` to link it to the input `id`
+   * @param {String} inputId - id to link the label
+   * @param {Boolean} checked - is the input checkbox checked?
+   * @returns
+   */
+  createCheckboxElement(inputId: string, checked = false) {
+    const fragmentElm = new DocumentFragment();
+    fragmentElm.appendChild(
+      createDomElement('input', { id: inputId, type: 'checkbox', checked, ariaChecked: String(checked) })
+    );
+    fragmentElm.appendChild(
+      createDomElement('label', { htmlFor: inputId })
+    );
+
+    return fragmentElm;
+  }
+
   getColumnDefinition(): Column {
     const columnId = String(this._addonOptions?.columnId ?? this._defaults.columnId);
 
@@ -209,7 +228,7 @@ export class SlickCheckboxSelectColumn<T = any> {
       id: columnId,
       name: (this._addonOptions.hideSelectAllCheckbox || this._addonOptions.hideInColumnTitleRow)
         ? this._addonOptions.name || ''
-        : `<input id="header-selector${this._selectAll_UID}" type="checkbox"><label for="header-selector${this._selectAll_UID}"></label>`,
+        : this.createCheckboxElement(`header-selector${this._selectAll_UID}`),
       toolTip: (this._addonOptions.hideSelectAllCheckbox || this._addonOptions.hideInColumnTitleRow) ? '' : this._addonOptions.toolTip,
       field: columnId,
       cssClass: this._addonOptions.cssClass,
@@ -311,7 +330,7 @@ export class SlickCheckboxSelectColumn<T = any> {
   protected checkboxSelectionFormatter(row: number, _cell: number, _val: any, _columnDef: Column, dataContext: any, grid: SlickGrid) {
     if (dataContext && this.checkSelectableOverride(row, dataContext, grid)) {
       const UID = this.createUID() + row;
-      return `<input id="selector${UID}" type="checkbox" ${this._selectedRowsLookup[row] ? `checked="checked" aria-checked="true"` : 'aria-checked="false"'}><label for="selector${UID}"></label>`;
+      return this.createCheckboxElement(`selector${UID}`, !!this._selectedRowsLookup[row]);
     }
     return null;
   }
@@ -534,10 +553,9 @@ export class SlickCheckboxSelectColumn<T = any> {
   }
 
   protected renderSelectAllCheckbox(isSelectAllChecked: boolean) {
-    const checkedStr = isSelectAllChecked ? ` checked="checked" aria-checked="true"` : ' aria-checked="false"';
     this._grid.updateColumnHeader(
       this._addonOptions.columnId || '',
-      `<input id="header-selector${this._selectAll_UID}" type="checkbox"${checkedStr}><label for="header-selector${this._selectAll_UID}"></label>`,
+      this.createCheckboxElement(`header-selector${this._selectAll_UID}`, !!isSelectAllChecked),
       this._addonOptions.toolTip
     );
   }

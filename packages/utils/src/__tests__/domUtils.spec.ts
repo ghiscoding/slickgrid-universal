@@ -9,6 +9,7 @@ import {
   findFirstAttribute,
   findWidthOrDefault,
   getHTMLFromFragment,
+  getHtmlStringOutput,
   getOffsetRelativeToParent,
   getStyleProp,
   getOffset,
@@ -104,8 +105,8 @@ describe('Service/domUtilies', () => {
       destroyAllElementProps(obj);
 
       expect(obj).toEqual({ age: 20, elm: null, elms: [null] });
-    })
-  })
+    });
+  });
 
   describe('emptyElement() method', () => {
     const div = document.createElement('div');
@@ -154,7 +155,7 @@ describe('Service/domUtilies', () => {
     });
   });
 
-  describe('getHTMLFromFragment() method', () => {
+  describe('getHtmlStringOutput() method', () => {
     it('should return innerHTML from fragment', () => {
       const div = document.createElement('div');
       const span = document.createElement('span');
@@ -163,9 +164,11 @@ describe('Service/domUtilies', () => {
       div.appendChild(span);
       fragment.appendChild(div);
 
-      const result = getHTMLFromFragment(fragment);
+      const result1 = getHTMLFromFragment(fragment); // deprecated
+      const result2 = getHtmlStringOutput(fragment);
 
-      expect(result).toBe('<span>some text</span>');
+      expect(result1).toBe('<span>some text</span>');
+      expect(result2).toBe('<span>some text</span>');
     });
 
     it('should return outerHTML from fragment', () => {
@@ -176,18 +179,24 @@ describe('Service/domUtilies', () => {
       div.appendChild(span);
       fragment.appendChild(div);
 
-      const result = getHTMLFromFragment(fragment, 'outerHTML');
+      const result = getHtmlStringOutput(fragment, 'outerHTML');
 
       expect(result).toBe('<div><span>some text</span></div>');
     });
 
-    it('should return same input when it is not an instance of DocumentFragment', () => {
+    it('should return innerHTML of input div when input is a div and no argument type is provided, defaults to innerHTML', () => {
       const div = document.createElement('div');
       const span = document.createElement('span');
       span.textContent = 'some text';
       div.appendChild(span);
 
-      expect(getHTMLFromFragment(div as any)).toEqual(div);
+      expect(getHtmlStringOutput(div as any)).toEqual('<span>some text</span>');
+    });
+
+    it('should return same string when input is already an HTML string', () => {
+      const input = '<span>some text</span>';
+
+      expect(getHtmlStringOutput(input)).toEqual(input);
     });
   });
 

@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { deepCopy, deepMerge, emptyObject, setDeepValue, classNameToList } from '@slickgrid-universal/utils';
+import { deepCopy, deepMerge, emptyObject, setDeepValue, classNameToList, getHtmlStringOutput } from '@slickgrid-universal/utils';
 import type {
   Column,
   CompositeEditorLabel,
@@ -814,7 +814,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     }
 
     const columnLabel = columnGroup ? `${columnGroup}${columnGroupSeparator}${columnName}` : columnName;
-    return columnLabel instanceof HTMLElement ? columnLabel.innerHTML : columnLabel || '';
+    return getHtmlStringOutput(columnLabel, 'innerHTML');
   }
 
   /** Get the correct label text depending, if we use a Translater Service then translate the text when possible else use default text */

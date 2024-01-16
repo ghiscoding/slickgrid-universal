@@ -1,5 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { calculateAvailableSpace, createDomElement, emptyElement, findWidthOrDefault, getOffset, classNameToList, } from '@slickgrid-universal/utils';
+import { calculateAvailableSpace, createDomElement, emptyElement, findWidthOrDefault, getOffset, classNameToList, getHtmlStringOutput, } from '@slickgrid-universal/utils';
 
 import type {
   Column,
@@ -70,7 +70,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     resizeOnShowHeaderRow: false,
     syncResizeTitle: 'Synchronous resize',
     subMenuOpenByEvent: 'mouseover',
-    headerColumnValueExtractor: (columnDef: Column) => columnDef.name
+    headerColumnValueExtractor: (columnDef: Column) => getHtmlStringOutput(columnDef.name || '', 'innerHTML')
   } as GridMenuOption;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */

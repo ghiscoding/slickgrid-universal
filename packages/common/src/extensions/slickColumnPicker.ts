@@ -1,6 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { createDomElement, emptyElement, findWidthOrDefault } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, findWidthOrDefault, getHtmlStringOutput } from '@slickgrid-universal/utils';
 
 import type { Column, ColumnPickerOption, DOMMouseOrTouchEvent, GridOption, OnColumnsChangedArgs } from '../interfaces/index';
 import type { ExtensionUtility } from '../extensions/extensionUtility';
@@ -46,7 +46,7 @@ export class SlickColumnPicker {
     forceFitTitle: 'Force fit columns',
     minHeight: 200,
     syncResizeTitle: 'Synchronous resize',
-    headerColumnValueExtractor: (columnDef: Column) => columnDef.name
+    headerColumnValueExtractor: (columnDef: Column) => getHtmlStringOutput(columnDef.name || '', 'innerHTML')
   } as ColumnPickerOption;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */

@@ -28,7 +28,7 @@ import {
   parseUtcDate,
   SortDirection,
 } from '@slickgrid-universal/common';
-import { stripTags, titleCase } from '@slickgrid-universal/utils';
+import { getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 import { OdataQueryBuilderService } from './odataQueryBuilder.service';
 import { OdataOption, OdataSortingOption } from '../interfaces/index';
 
@@ -353,7 +353,7 @@ export class GridOdataService implements BackendService {
 
         // no need to query if search value is empty
         if (fieldName && searchValue === '' && searchTerms.length <= 1) {
-          this.removeColumnFilter(fieldName);
+          this.removeColumnFilter(getHtmlStringOutput(fieldName));
           continue;
         }
 
@@ -399,7 +399,7 @@ export class GridOdataService implements BackendService {
         if (bypassOdataQuery) {
           // push to our temp array and also trim white spaces
           if (fieldName) {
-            this.saveColumnFilter(fieldName, fieldSearchValue, searchTerms);
+            this.saveColumnFilter(getHtmlStringOutput(fieldName), fieldSearchValue, searchTerms);
           }
         } else {
           // Normalize all search values
@@ -414,7 +414,7 @@ export class GridOdataService implements BackendService {
 
           // titleCase the fieldName so that it matches the WebApi names
           if (this._odataService.options.caseType === CaseType.pascalCase) {
-            fieldName = titleCase(fieldName || '');
+            fieldName = titleCase(getHtmlStringOutput(fieldName || ''));
           }
 
           if (searchTerms && searchTerms.length > 1 && (operator === 'IN' || operator === 'NIN' || operator === 'NOTIN' || operator === 'NOT IN' || operator === 'NOT_IN')) {
@@ -441,7 +441,7 @@ export class GridOdataService implements BackendService {
             searchBy = (operator === '*' || operator === '*z' || operator === OperatorType.endsWith) ? `endswith(${fieldName}, ${searchValue})` : `startswith(${fieldName}, ${searchValue})`;
           } else if (operator === OperatorType.rangeExclusive || operator === OperatorType.rangeInclusive) {
             // example:: (Name >= 'Bob' and Name <= 'Jane')
-            searchBy = this.filterBySearchTermRange(fieldName, operator, searchTerms);
+            searchBy = this.filterBySearchTermRange(getHtmlStringOutput(fieldName), operator, searchTerms);
           } else if ((operator === '' || operator === OperatorType.contains || operator === OperatorType.notContains) &&
             (fieldType === FieldType.string || fieldType === FieldType.text || fieldType === FieldType.readonly)) {
             searchBy = odataVersion >= 4 ? `contains(${fieldName}, ${searchValue})` : `substringof(${searchValue}, ${fieldName})`;
@@ -456,7 +456,7 @@ export class GridOdataService implements BackendService {
           // push to our temp array and also trim white spaces
           if (searchBy !== '') {
             searchByArray.push(searchBy.trim());
-            this.saveColumnFilter(fieldName || '', fieldSearchValue, searchValue);
+            this.saveColumnFilter(getHtmlStringOutput(fieldName || ''), fieldSearchValue, searchValue);
           }
         }
       }

@@ -22,7 +22,7 @@ import {
   getTranslationPrefix,
   htmlEntityDecode,
 } from '@slickgrid-universal/common';
-import { addWhiteSpaces, deepCopy, stripTags, titleCase } from '@slickgrid-universal/utils';
+import { addWhiteSpaces, deepCopy, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 
 const DEFAULT_EXPORT_OPTIONS: TextExportOption = {
   delimiter: DelimiterType.comma,
@@ -314,7 +314,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         if ((columnDef.nameKey || columnDef.nameKey) && this._gridOptions.enableTranslate && this._translaterService?.translate && this._translaterService?.getCurrentLanguage?.()) {
           headerTitle = this._translaterService.translate((columnDef.nameKey || columnDef.nameKey));
         } else {
-          headerTitle = (columnDef.name instanceof HTMLElement ? columnDef.name.innerHTML : columnDef.name) || titleCase(columnDef.field);
+          headerTitle = getHtmlStringOutput(columnDef.name || '', 'innerHTML') || titleCase(columnDef.field);
         }
         const skippedField = columnDef.excludeFromExport || false;
 
