@@ -4962,9 +4962,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (row < -1) {
       row = -1;
     }
-    if (cell < -1) {
-      cell = -1;
-    }
 
     return { row, cell };
   }
