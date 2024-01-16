@@ -2998,6 +2998,85 @@ describe('SlickGrid core file', () => {
       { id: 3, firstName: 'Arnold', lastName: 'Smith', age: 37, gender: 'male' },
     ];
 
+    describe('absBox() method', () => {
+      it('should expect abs box to be visible with unchanged abs box properties', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+
+        grid.setActiveCell(0, 1);
+        jest.spyOn(window, 'getComputedStyle').mockReturnValueOnce({ overflowX: 'hidden', overflowY: 'hidden' } as any);
+        const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+        Object.defineProperty(slickCellElm, 'parentNode', { writable: true, value: null });
+        Object.defineProperty(slickCellElm, 'offsetTop', { writable: true, value: 11 });
+        const result = grid.getActiveCellPosition();
+
+        expect(result).toEqual({
+          bottom: 11, height: 0, left: 0, right: 0, top: 11, width: 0, visible: true,
+        });
+      });
+
+      it('should expect abs box to not be visible when top position is lower than scrollTop', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+
+        grid.setActiveCell(0, 1);
+        jest.spyOn(window, 'getComputedStyle').mockReturnValueOnce({ overflowX: 'hidden', overflowY: 'hidden' } as any);
+        const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+        const slickRowElm = slickCellElm.parentNode as HTMLDivElement;
+        Object.defineProperty(slickRowElm, 'clientHeight', { writable: true, value: 8 });
+        Object.defineProperty(slickRowElm, 'offsetHeight', { writable: true, value: 11 });
+        Object.defineProperty(slickRowElm, 'scrollHeight', { writable: true, value: 23 });
+        Object.defineProperty(slickCellElm, 'offsetTop', { writable: true, value: 11 });
+        Object.defineProperty(slickRowElm, 'scrollTop', { writable: true, value: 44 });
+        const result = grid.getActiveCellPosition();
+
+        expect(result).toEqual({
+          bottom: -58, height: 0, left: -80, right: -80, top: -58, width: 0, visible: false,
+        });
+      });
+
+      it('should expect abs box to not be visible when left position is lower than scrollLeft', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+
+        grid.setActiveCell(0, 1);
+        jest.spyOn(window, 'getComputedStyle').mockReturnValueOnce({ overflowX: 'hidden', overflowY: 'hidden' } as any);
+        const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+        const slickRowElm = slickCellElm.parentNode as HTMLDivElement;
+        Object.defineProperty(slickCellElm, 'offsetLeft', { writable: true, value: 11 });
+        Object.defineProperty(slickRowElm, 'clientHeight', { writable: true, value: 8 });
+        Object.defineProperty(slickRowElm, 'offsetWidth', { writable: true, value: 11 });
+        Object.defineProperty(slickRowElm, 'scrollWidth', { writable: true, value: 23 });
+        Object.defineProperty(slickRowElm, 'offsetLeft', { writable: true, value: 6 });
+        Object.defineProperty(slickRowElm, 'offsetTop', { writable: true, value: 7 });
+        Object.defineProperty(slickRowElm, 'scrollLeft', { writable: true, value: 44 });
+        const result = grid.getActiveCellPosition();
+
+        expect(result).toEqual({
+          bottom: -25, height: 0, left: -113, right: -113, top: -25, width: 0, visible: false,
+        });
+      });
+
+      it('should expect abs box to not be visible when left position is lower than scrollLeft and also increase left/top position when offsetParent is same as slick-row element', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+
+        grid.setActiveCell(0, 1);
+        jest.spyOn(window, 'getComputedStyle').mockReturnValueOnce({ overflowX: 'hidden', overflowY: 'hidden' } as any);
+        const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+        const slickRowElm = slickCellElm.parentNode as HTMLDivElement;
+        Object.defineProperty(slickCellElm, 'offsetLeft', { writable: true, value: 11 });
+        Object.defineProperty(slickCellElm, 'offsetParent', { writable: true, value: slickRowElm });
+        Object.defineProperty(slickRowElm, 'clientHeight', { writable: true, value: 8 });
+        Object.defineProperty(slickRowElm, 'offsetWidth', { writable: true, value: 11 });
+        Object.defineProperty(slickRowElm, 'scrollWidth', { writable: true, value: 23 });
+        Object.defineProperty(slickRowElm, 'offsetLeft', { writable: true, value: 6 });
+        Object.defineProperty(slickRowElm, 'offsetTop', { writable: true, value: 7 });
+        Object.defineProperty(slickRowElm, 'scrollLeft', { writable: true, value: 44 });
+        const result = grid.getActiveCellPosition();
+
+        expect(result).toEqual({
+          bottom: -18, height: 0, left: -107, right: -107, top: -18, width: 0, visible: false,
+        });
+      });
+    });
+
     describe('getCellFromPoint() method', () => {
       const columns = [
         { id: 'firstName', field: 'firstName', name: 'First Name' },
