@@ -14,13 +14,10 @@ export class SlickEmptyWarningComponent implements ExternalResource {
   protected isPreviouslyShown = false;
   protected translaterService?: TranslaterService | null;
 
-
   /** Getter for the Grid Options pulled through the Grid Object */
   get gridOptions(): GridOption {
     return this.grid?.getOptions() ?? {};
   }
-
-  constructor() { }
 
   init(grid: SlickGrid, containerService: ContainerService) {
     this.grid = grid;
