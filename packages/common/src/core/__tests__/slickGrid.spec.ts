@@ -1890,13 +1890,81 @@ describe('SlickGrid core file', () => {
     });
   });
 
-  describe('Draggable', () => {
+  describe.only('Drag & Drop (Draggable)', () => {
     const columns = [
       { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
       { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
       { id: 'age', field: 'age', name: 'Age', sortable: true },
     ] as Column[];
     const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+
+    it('should not drag when cell is not in found in the grid', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+      const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify');
+      const slickCellElm = createDomElement('div', { className: 'slick-cell l0' });
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
+      container.dispatchEvent(cMouseDownEvent);
+
+      expect(onDragInitSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not drag when event has cancelled bubbling (immediatePropagationStopped)', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const sedMouseDown = new SlickEventData();
+      sedMouseDown.addReturnValue(false);
+      sedMouseDown.stopImmediatePropagation();
+      const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedMouseDown);
+      const onDragStartSpy = jest.spyOn(grid.onDragStart, 'notify');
+      const onDragSpy = jest.spyOn(grid.onDrag, 'notify');
+      const onDragEndSpy = jest.spyOn(grid.onDragEnd, 'notify');
+      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+      slickCellElm.classList.add('dnd', 'cell-reorder');
+      const bodyMouseMoveEvent = new CustomEvent('mousemove');
+      bodyMouseMoveEvent.stopImmediatePropagation(); // simulate bubbling stop from dragInit
+      const bodyMouseUpEvent = new CustomEvent('mouseup');
+      Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
+      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: slickCellElm });
+      container.dispatchEvent(cMouseDownEvent);
+      document.body.dispatchEvent(bodyMouseMoveEvent);
+      document.body.dispatchEvent(bodyMouseUpEvent);
+
+      expect(onDragInitSpy).toHaveBeenCalled();
+      expect(onDragStartSpy).not.toHaveBeenCalled();
+      expect(onDragSpy).not.toHaveBeenCalled();
+      expect(onDragEndSpy).not.toHaveBeenCalled();
+    });
+
+    it.only('should return value onDragStart when event has cancelled bubbling (immediatePropagationStopped)', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const sedMouseDown = new SlickEventData();
+      sedMouseDown.addReturnValue(false);
+      sedMouseDown.stopImmediatePropagation();
+      const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify');
+      const onDragStartSpy = jest.spyOn(grid.onDragStart, 'notify').mockReturnValue(sedMouseDown);
+      const onDragSpy = jest.spyOn(grid.onDrag, 'notify');
+      const onDragEndSpy = jest.spyOn(grid.onDragEnd, 'notify');
+      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+      slickCellElm.classList.add('dnd', 'cell-reorder');
+
+      const bodyMouseMoveEvent1 = new CustomEvent('mousemove');
+      const bodyMouseUpEvent = new CustomEvent('mouseup');
+      Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
+      Object.defineProperty(bodyMouseMoveEvent1, 'target', { writable: true, value: slickCellElm });
+
+      container.dispatchEvent(cMouseDownEvent);
+      document.body.dispatchEvent(bodyMouseMoveEvent1);
+      document.body.dispatchEvent(bodyMouseUpEvent);
+
+      expect(onDragInitSpy).toHaveBeenCalled();
+      expect(onDragStartSpy).toHaveBeenCalled();
+      expect(onDragSpy).toHaveBeenCalled();
+      expect(onDragEndSpy).toHaveBeenCalled();
+    });
 
     it('should drag from a cell and execute all onDrag events when a slick-cell is dragged', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
@@ -4003,7 +4071,7 @@ describe('SlickGrid core file', () => {
         const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, showHeaderRow: true, enableCellNavigation: true });
         const headerRowElm = container.querySelector('.slick-headerrow') as HTMLDivElement;
-        Object.defineProperty(headerRowElm, 'scrollLeft', { writable: true, value: 25 })
+        Object.defineProperty(headerRowElm, 'scrollLeft', { writable: true, value: 25 });
 
         headerRowElm.dispatchEvent(new CustomEvent('scroll'));
 
@@ -4015,7 +4083,7 @@ describe('SlickGrid core file', () => {
         const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age' }] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createFooterRow: true, showFooterRow: true, enableCellNavigation: true });
         const footerRowElm = container.querySelector('.slick-footerrow') as HTMLDivElement;
-        Object.defineProperty(footerRowElm, 'scrollLeft', { writable: true, value: 25 })
+        Object.defineProperty(footerRowElm, 'scrollLeft', { writable: true, value: 25 });
 
         footerRowElm.dispatchEvent(new CustomEvent('scroll'));
 
@@ -4028,7 +4096,7 @@ describe('SlickGrid core file', () => {
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, createPreHeaderPanel: true, preHeaderPanelHeight: 44, showPreHeaderPanel: true, enableCellNavigation: true });
         const preheaderElm = container.querySelector('.slick-preheader-panel') as HTMLDivElement;
         const preheaderElms = container.querySelectorAll<HTMLDivElement>('.slick-preheader-panel');
-        Object.defineProperty(preheaderElm, 'scrollLeft', { writable: true, value: 25 })
+        Object.defineProperty(preheaderElm, 'scrollLeft', { writable: true, value: 25 });
 
         preheaderElm.dispatchEvent(new CustomEvent('scroll'));
 
@@ -4037,7 +4105,7 @@ describe('SlickGrid core file', () => {
 
         // when enableTextSelectionOnCells isn't enabled and trigger IE related code
         const selectStartEvent = new CustomEvent('selectstart');
-        Object.defineProperty(selectStartEvent, 'target', { writable: true, value: document.createElement('TextArea') })
+        Object.defineProperty(selectStartEvent, 'target', { writable: true, value: document.createElement('TextArea') });
         viewportTopLeft.dispatchEvent(selectStartEvent);
       });
 
