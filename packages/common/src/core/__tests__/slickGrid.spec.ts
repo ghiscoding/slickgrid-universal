@@ -1890,7 +1890,7 @@ describe('SlickGrid core file', () => {
     });
   });
 
-  describe.only('Drag & Drop (Draggable)', () => {
+  describe('Drag & Drop (Draggable)', () => {
     const columns = [
       { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
       { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
@@ -1937,7 +1937,7 @@ describe('SlickGrid core file', () => {
       expect(onDragEndSpy).not.toHaveBeenCalled();
     });
 
-    it.only('should return value onDragStart when event has cancelled bubbling (immediatePropagationStopped)', () => {
+    it('should return value onDragStart when event has cancelled bubbling (immediatePropagationStopped)', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
 
       const cMouseDownEvent = new CustomEvent('mousedown');
