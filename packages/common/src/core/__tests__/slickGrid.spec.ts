@@ -1938,6 +1938,32 @@ describe('SlickGrid core file', () => {
       expect(onDragEndSpy).not.toHaveBeenCalled();
     });
 
+    it('should not execute any events after onDragInit when it returns false', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify');
+      const onDragStartSpy = jest.spyOn(grid.onDragStart, 'notify');
+      const onDragSpy = jest.spyOn(grid.onDrag, 'notify');
+      const onDragEndSpy = jest.spyOn(grid.onDragEnd, 'notify');
+      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+      slickCellElm.classList.add('dnd', 'cell-reorder');
+
+      const bodyMouseMoveEvent1 = new CustomEvent('mousemove');
+      const bodyMouseUpEvent = new CustomEvent('mouseup');
+      Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
+      Object.defineProperty(bodyMouseMoveEvent1, 'target', { writable: true, value: slickCellElm });
+
+      container.dispatchEvent(cMouseDownEvent);
+      document.body.dispatchEvent(bodyMouseMoveEvent1);
+      document.body.dispatchEvent(bodyMouseUpEvent);
+
+      expect(onDragInitSpy).toHaveBeenCalled();
+      expect(onDragStartSpy).not.toHaveBeenCalled();
+      expect(onDragSpy).not.toHaveBeenCalled();
+      expect(onDragEndSpy).not.toHaveBeenCalled();
+    });
+
     it('should not execute onDragStart or any other events when onDragStart event has cancelled bubbling (immediatePropagationStopped)', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
 
