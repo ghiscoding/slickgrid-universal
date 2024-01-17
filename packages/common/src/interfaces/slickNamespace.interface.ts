@@ -100,7 +100,7 @@ export interface SlickNamespace {
    * An event object for passing data to event handlers and letting them control propagation.
    * This is pretty much identical to how W3C implement events.
    */
-  EventData: new () => SlickEventData;
+  EventData: new (e?: Event, args?: any) => SlickEventData;
 
   /** EventHandler is a Pub/Sub SlickGrid Event Handler */
   EventHandler: new () => SlickEventHandler;
@@ -195,7 +195,7 @@ export interface SlickNamespace {
     innerSize: (elm: HTMLElement, type: 'height' | 'width') => number;
     height: (elm: HTMLElement, val?: number | string) => number | void;
     width: (elm: HTMLElement, val?: number | string) => number | void;
-    offset: (elm: HTMLElement) => undefined | { top: number, left: number };
+    offset: (elm: HTMLElement) => undefined | { top: number, left: number; };
     isEmptyObject: (obj: any) => boolean;
     parents: (elm: HTMLElement, selector: string) => HTMLElement[];
     setStyleSize: (elm: HTMLElement, style: string, val: string | (() => string)) => void;
@@ -203,5 +203,5 @@ export interface SlickNamespace {
     show: (elm: HTMLElement, type?: string) => void;
     toFloat: (val: number) => number;
     windowScrollPosition: () => { top: number; left: number; };
-  }
+  };
 }
