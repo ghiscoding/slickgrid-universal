@@ -230,18 +230,20 @@ export function Resizable(options: ResizableOption) {
 
   function executeResizeCallbackWhenDefined(callback?: (e: MouseEvent | TouchEvent, resizeElms: { resizeableElement: HTMLElement; resizeableHandleElement: HTMLElement; }) => boolean | void, e?: MouseEvent | TouchEvent | Touch) {
     if (typeof callback === 'function') {
-      callback(e as any, { resizeableElement, resizeableHandleElement });
+      return callback(e as any, { resizeableElement, resizeableHandleElement });
     }
   }
 
   function resizeStartHandler(e: MouseEvent | TouchEvent) {
     e.preventDefault();
     const event = (e as TouchEvent).touches ? (e as TouchEvent).changedTouches[0] : e;
-    executeResizeCallbackWhenDefined(onResizeStart, event);
-    document.body.addEventListener('mousemove', resizingHandler);
-    document.body.addEventListener('mouseup', resizeEndHandler);
-    document.body.addEventListener('touchmove', resizingHandler);
-    document.body.addEventListener('touchend', resizeEndHandler);
+    const result = executeResizeCallbackWhenDefined(onResizeStart, event);
+    if (result !== false) {
+      document.body.addEventListener('mousemove', resizingHandler);
+      document.body.addEventListener('mouseup', resizeEndHandler);
+      document.body.addEventListener('touchmove', resizingHandler);
+      document.body.addEventListener('touchend', resizeEndHandler);
+    }
   }
 
   function resizingHandler(e: MouseEvent | TouchEvent) {
