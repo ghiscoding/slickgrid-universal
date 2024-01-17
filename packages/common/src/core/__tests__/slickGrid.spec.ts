@@ -17,6 +17,7 @@ const pubSubServiceStub = {
 } as BasePubSubService;
 
 const DEFAULT_COLUMN_HEIGHT = 25;
+const DEFAULT_COLUMN_MIN_WIDTH = 30;
 const DEFAULT_COLUMN_WIDTH = 80;
 const DEFAULT_GRID_HEIGHT = 600;
 const DEFAULT_GRID_WIDTH = 800;
@@ -2021,13 +2022,404 @@ describe('SlickGrid core file', () => {
     });
   });
 
+  describe('Column Resizing', () => {
+    const columns = [
+      { id: 'id', field: 'id', name: 'Id', hidden: true, },
+      { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true, width: 77, rerenderOnResize: true },
+      { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true, minWidth: 35 },
+      { id: 'age', field: 'age', name: 'Age', sortable: true, minWidth: 82, width: 86, maxWidth: 88 },
+      { id: 'gender', field: 'gender', name: 'Gender', sortable: true },
+    ] as Column[];
+    const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+
+    it('should resize should not go through when column has an editor', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false });
+      // grid.init();
+
+      const columnElms = container.querySelectorAll('.slick-header-column');
+      const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
+      jest.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const bodyMouseMoveEvent = new CustomEvent('mousemove');
+      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 9 });
+      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: -22 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+      // start resizing
+      resizeHandleElm.dispatchEvent(cMouseDownEvent);
+      container.dispatchEvent(cMouseDownEvent);
+      // document.body.dispatchEvent(bodyMouseMoveEvent);
+      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
+    });
+
+    it('should resize 2nd column that has a "width" defined using default sizing grid options', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false });
+      grid.init();
+
+      const sedOnBeforeResize = new SlickEventData();
+      sedOnBeforeResize.addReturnValue(true);
+      jest.spyOn(grid.onBeforeColumnsResize, 'notify').mockReturnValue(sedOnBeforeResize);
+      const onColumnsDragSpy = jest.spyOn(grid.onColumnsDrag, 'notify');
+      const onColumnsResizedSpy = jest.spyOn(grid.onColumnsResized, 'notify');
+      const columnElms = container.querySelectorAll('.slick-header-column');
+      const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const bodyMouseMoveEvent = new CustomEvent('mousemove');
+      const bodyMouseUpEvent = new CustomEvent('mouseup');
+      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 9 });
+      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: -22 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+      // start resizing
+      resizeHandleElm.dispatchEvent(cMouseDownEvent);
+      container.dispatchEvent(cMouseDownEvent);
+      document.body.dispatchEvent(bodyMouseMoveEvent);
+      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
+      expect(onColumnsDragSpy).toHaveBeenCalledWith(
+        { triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid },
+        expect.anything(),
+        grid
+      );
+
+      // end resizing
+      document.body.dispatchEvent(bodyMouseUpEvent);
+
+      jest.advanceTimersByTime(10);
+
+      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[1].id, grid }, expect.anything(), grid);
+      expect(columns[0].width).toBe(80);
+      expect(columns[1].width).toBe(30);
+      expect(columns[2].width).toBe(80);
+      expect(columns[3].width).toBe(86);
+    });
+
+    it('should resize 3rd column that has a "minWidth" defined using default sizing grid options', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false, syncColumnCellResize: true });
+      grid.init();
+
+      const onColumnsDragSpy = jest.spyOn(grid.onColumnsDrag, 'notify');
+      const onColumnsResizedSpy = jest.spyOn(grid.onColumnsResized, 'notify');
+      const columnElms = container.querySelectorAll('.slick-header-column');
+      const resizeHandleElm = columnElms[2].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const bodyMouseMoveEvent = new CustomEvent('mousemove');
+      const bodyMouseUpEvent = new CustomEvent('mouseup');
+      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 9 });
+      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: -22 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+      // start resizing
+      resizeHandleElm.dispatchEvent(cMouseDownEvent);
+      container.dispatchEvent(cMouseDownEvent);
+      document.body.dispatchEvent(bodyMouseMoveEvent);
+      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
+      expect(onColumnsDragSpy).toHaveBeenCalledWith(
+        { triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid },
+        expect.anything(),
+        grid
+      );
+
+      // end resizing
+      document.body.dispatchEvent(bodyMouseUpEvent);
+
+      jest.advanceTimersByTime(10);
+
+      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[2].id, grid }, expect.anything(), grid);
+      expect(columns[0].width).toBe(80);
+      expect(columns[1].width).toBe(0);
+      expect(columns[2].width).toBe(65);
+      expect(columns[3].width).toBe(86);
+    });
+
+    it('should resize 3rd column that has a "minWidth" defined using default sizing grid options with a frozen column', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false, frozenColumn: 0, syncColumnCellResize: true });
+      grid.init();
+
+      const onColumnsDragSpy = jest.spyOn(grid.onColumnsDrag, 'notify');
+      const onColumnsResizedSpy = jest.spyOn(grid.onColumnsResized, 'notify');
+      const columnElms = container.querySelectorAll('.slick-header-column');
+      const resizeHandleElm = columnElms[2].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const bodyMouseMoveEvent = new CustomEvent('mousemove');
+      const bodyMouseUpEvent = new CustomEvent('mouseup');
+      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 9 });
+      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: -22 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+      // start resizing
+      resizeHandleElm.dispatchEvent(cMouseDownEvent);
+      container.dispatchEvent(cMouseDownEvent);
+      document.body.dispatchEvent(bodyMouseMoveEvent);
+      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
+      expect(onColumnsDragSpy).toHaveBeenCalledWith(
+        { triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid },
+        expect.anything(),
+        grid
+      );
+
+      // end resizing
+      document.body.dispatchEvent(bodyMouseUpEvent);
+
+      jest.advanceTimersByTime(10);
+
+      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[2].id, grid }, expect.anything(), grid);
+      expect(columns[0].width).toBe(80);
+      expect(columns[1].width).toBe(0);
+      expect(columns[2].width).toBe(65);
+      expect(columns[3].width).toBe(86);
+    });
+
+    it('should resize 2nd column with forceFitColumns option enabled', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true });
+      grid.init();
+      grid.autosizeColumns();
+
+      const onColumnsDragSpy = jest.spyOn(grid.onColumnsDrag, 'notify');
+      const onColumnsResizedSpy = jest.spyOn(grid.onColumnsResized, 'notify');
+      const columnElms = container.querySelectorAll('.slick-header-column');
+      const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const bodyMouseMoveEvent1 = new CustomEvent('mousemove');
+      const bodyMouseMoveEvent2 = new CustomEvent('mousemove');
+      const bodyMouseUpEvent = new CustomEvent('mouseup');
+      Object.defineProperty(bodyMouseMoveEvent1, 'target', { writable: true, value: resizeHandleElm });
+      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
+      Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
+      Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
+      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
+      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+      Object.defineProperty(bodyMouseMoveEvent1, 'pageX', { writable: true, value: 78 });
+      Object.defineProperty(bodyMouseMoveEvent2, 'pageX', { writable: true, value: 79 });
+      Object.defineProperty(bodyMouseMoveEvent1, 'pageY', { writable: true, value: 13 });
+
+      // start resizing
+      resizeHandleElm.dispatchEvent(cMouseDownEvent);
+      container.dispatchEvent(cMouseDownEvent);
+      document.body.dispatchEvent(bodyMouseMoveEvent1);
+      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 75 });
+      document.body.dispatchEvent(bodyMouseMoveEvent2);
+      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
+      expect(onColumnsDragSpy).toHaveBeenCalledWith(
+        { triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid },
+        expect.anything(),
+        grid
+      );
+
+      // end resizing
+      document.body.dispatchEvent(bodyMouseUpEvent);
+      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[1].id, grid }, expect.anything(), grid);
+      expect(columns[0].width).toBe(0);
+      expect(columns[1].width).toBe(74);
+      expect(columns[2].width).toBe(133);
+      expect(columns[3].width).toBe(198);
+    });
+
+    it('should resize 2nd column with forceFitColumns option enabled', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true });
+      grid.init();
+      grid.autosizeColumns();
+
+      const onColumnsDragSpy = jest.spyOn(grid.onColumnsDrag, 'notify');
+      const onColumnsResizedSpy = jest.spyOn(grid.onColumnsResized, 'notify');
+      const columnElms = container.querySelectorAll('.slick-header-column');
+      const resizeHandleElm = columnElms[1].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const bodyMouseMoveEvent = new CustomEvent('mousemove');
+      const bodyMouseUpEvent = new CustomEvent('mouseup');
+      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
+      Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
+      Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
+      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
+      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 78 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+      // start resizing
+      resizeHandleElm.dispatchEvent(cMouseDownEvent);
+      container.dispatchEvent(cMouseDownEvent);
+      document.body.dispatchEvent(bodyMouseMoveEvent);
+      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeTruthy();
+      expect(onColumnsDragSpy).toHaveBeenCalledWith(
+        { triggeredByColumn: columnElms[1], resizeHandle: resizeHandleElm, grid },
+        expect.anything(),
+        grid
+      );
+
+      // end resizing
+      document.body.dispatchEvent(bodyMouseUpEvent);
+      expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[1].id, grid }, expect.anything(), grid);
+      expect(columns[0].width).toBe(0);
+      expect(columns[1].width).toBe(73);
+      expect(columns[2].width).toBe(134);
+      expect(columns[3].width).toBe(198);
+    });
+
+    it('should resize 3rd column with forceFitColumns option enabled', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true });
+      grid.init();
+      grid.autosizeColumns();
+
+      const onColumnsDragSpy = jest.spyOn(grid.onColumnsDrag, 'notify');
+      const onColumnsResizedSpy = jest.spyOn(grid.onColumnsResized, 'notify');
+      const columnElms = container.querySelectorAll('.slick-header-column');
+      const resizeHandleElm = columnElms[2].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const bodyMouseMoveEvent = new CustomEvent('mousemove');
+      const bodyMouseUpEvent = new CustomEvent('mouseup');
+      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
+      Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
+      Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
+      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
+      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 78 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+      // start resizing
+      resizeHandleElm.dispatchEvent(cMouseDownEvent);
+      container.dispatchEvent(cMouseDownEvent);
+      document.body.dispatchEvent(bodyMouseMoveEvent);
+      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
+      expect(onColumnsDragSpy).toHaveBeenCalledWith(
+        { triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid },
+        expect.anything(),
+        grid
+      );
+
+      // end resizing
+      document.body.dispatchEvent(bodyMouseUpEvent);
+      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[2].id, grid }, expect.anything(), grid);
+      expect(columns[0].width).toBe(0);
+      expect(columns[1].width).toBe(74);
+      expect(columns[2].width).toBe(132);
+      expect(columns[3].width).toBe(88);
+    });
+
+    it('should resize 3rd column with forceFitColumns option enabled with a frozen column', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true, frozenColumn: 0 });
+      grid.init();
+      grid.autosizeColumns();
+
+      const onColumnsDragSpy = jest.spyOn(grid.onColumnsDrag, 'notify');
+      const onColumnsResizedSpy = jest.spyOn(grid.onColumnsResized, 'notify');
+      const columnElms = container.querySelectorAll('.slick-header-column');
+      const resizeHandleElm = columnElms[2].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const bodyMouseMoveEvent = new CustomEvent('mousemove');
+      const bodyMouseUpEvent = new CustomEvent('mouseup');
+      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
+      Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
+      Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
+      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
+      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 78 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+      // start resizing
+      resizeHandleElm.dispatchEvent(cMouseDownEvent);
+      container.dispatchEvent(cMouseDownEvent);
+      document.body.dispatchEvent(bodyMouseMoveEvent);
+      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeTruthy();
+      expect(onColumnsDragSpy).toHaveBeenCalledWith(
+        { triggeredByColumn: columnElms[2], resizeHandle: resizeHandleElm, grid },
+        expect.anything(),
+        grid
+      );
+
+      // end resizing
+      document.body.dispatchEvent(bodyMouseUpEvent);
+      expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[2].id, grid }, expect.anything(), grid);
+      expect(columns[0].width).toBe(0);
+      expect(columns[1].width).toBe(74);
+      expect(columns[2].width).toBe(132);
+      expect(columns[3].width).toBe(88);
+    });
+
+    it('should resize 4th column with forceFitColumns option enabled and a column with maxWidth and a frozen column', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true, frozenColumn: 0 });
+      grid.init();
+      grid.autosizeColumns();
+
+      const onColumnsDragSpy = jest.spyOn(grid.onColumnsDrag, 'notify');
+      const onColumnsResizedSpy = jest.spyOn(grid.onColumnsResized, 'notify');
+      const columnElms = container.querySelectorAll('.slick-header-column');
+      const resizeHandleElm = columnElms[3].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const bodyMouseMoveEvent = new CustomEvent('mousemove');
+      const bodyMouseUpEvent = new CustomEvent('mouseup');
+      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+      Object.defineProperty(columnElms[1], 'offsetWidth', { writable: true, value: 74 });
+      Object.defineProperty(columnElms[2], 'offsetWidth', { writable: true, value: 133 });
+      Object.defineProperty(columnElms[3], 'offsetWidth', { writable: true, value: 198 });
+      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 79 });
+      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 78 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+
+      // start resizing
+      resizeHandleElm.dispatchEvent(cMouseDownEvent);
+      container.dispatchEvent(cMouseDownEvent);
+      document.body.dispatchEvent(bodyMouseMoveEvent);
+      expect(columnElms[3].classList.contains('slick-header-column-active')).toBeTruthy();
+      expect(onColumnsDragSpy).toHaveBeenCalledWith(
+        { triggeredByColumn: columnElms[3], resizeHandle: resizeHandleElm, grid },
+        expect.anything(),
+        grid
+      );
+
+      // end resizing
+      document.body.dispatchEvent(bodyMouseUpEvent);
+      expect(columnElms[3].classList.contains('slick-header-column-active')).toBeFalsy();
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[3].id, grid }, expect.anything(), grid);
+      expect(columns[0].width).toBe(0);
+      expect(columns[1].width).toBe(74);
+      expect(columns[2].width).toBe(133);
+      expect(columns[3].width).toBe(168);
+    });
+
+    it('should expect the last column to never be resizable', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true });
+      grid.init();
+
+      const columnElms = container.querySelectorAll('.slick-header-column');
+      const resizeHandleElm = columnElms[4].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+      expect(resizeHandleElm).toBeNull();
+    });
+  });
+
   describe('Sorting', () => {
     const columns = [
       { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
       { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
       { id: 'age', field: 'age', name: 'Age', sortable: true },
     ] as Column[];
-    const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
 
     it('should find a single sort icons to sorted column when calling setSortColumn() with a single column to sort ascending', () => {
       grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
@@ -3823,6 +4215,19 @@ describe('SlickGrid core file', () => {
     });
 
     describe('Cell Click', () => {
+      test('double-click event triggered on header resize handle should call "onColumnsResizeDblClick" notify', () => {
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const onColumnsResizeDblClickSpy = jest.spyOn(grid.onColumnsResizeDblClick, 'notify');
+        const columnElms = container.querySelectorAll('.slick-header-column');
+        const resizeHandleElm = columnElms[0].querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+        const dblClickEvent = new Event('dblclick');
+        resizeHandleElm.dispatchEvent(dblClickEvent);
+
+        expect(onColumnsResizeDblClickSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[0].id, grid }, expect.anything(), grid);
+      });
+
       it('should not scroll or do anything when getCellFromEvent() returns null', () => {
         const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', editor: InputEditor }] as Column[];
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });

@@ -1,4 +1,5 @@
 import {
+  createDomElement,
   type Column,
   type EditCommand,
   Editors,
@@ -93,7 +94,8 @@ export default class Example16 {
         type: FieldType.number,
       },
       {
-        id: 'desc', name: `<span title='custom title tooltip text'>Description</span>`, field: 'description', width: 100, filterable: true,
+        // `name` can be a DOM element with a `title` to use as tooltip text
+        id: 'desc', name: createDomElement('span', { title: 'custom title tooltip text', textContent: 'Description' }), field: 'description', width: 100, filterable: true,
         editor: {
           model: Editors.longText,
           required: true,
