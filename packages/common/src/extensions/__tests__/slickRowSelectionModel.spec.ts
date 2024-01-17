@@ -18,7 +18,7 @@ const addVanillaEventPropagation = function (event, commandKey = '', keyName = '
     Object.defineProperty(event, 'key', { writable: true, configurable: true, value: keyName });
   }
   return event;
-}
+};
 
 const mockGridOptions = {
   frozenColumn: 1,
@@ -192,9 +192,18 @@ describe('SlickRowSelectionModel Plugin', () => {
 
     expect(onSelectedRangeSpy).toHaveBeenCalledWith(
       [{ fromCell: 0, fromRow: 0, toCell: 2, toRow: 0, }],
-      expect.objectContaining({
-        detail: { caller: 'SlickRowSelectionModel.setSelectedRanges' }
-      }));
+      expect.objectContaining({ event: expect.objectContaining({ detail: { caller: 'SlickRowSelectionModel.setSelectedRanges' } }) }));
+  });
+
+  it('should call "setSelectedRanges" with valid ranges input with a "caller" defined and expect to "onSelectedRangesChanged" to be triggered', () => {
+    const caller = 'click.toggle';
+    const onSelectedRangeSpy = jest.spyOn(plugin.onSelectedRangesChanged, 'notify');
+
+    plugin.setSelectedRanges([{ fromCell: 0, fromRow: 0, toCell: 2, toRow: 0, }], caller);
+
+    expect(onSelectedRangeSpy).toHaveBeenCalledWith(
+      [{ fromCell: 0, fromRow: 0, toCell: 2, toRow: 0, }],
+      expect.objectContaining({ event: expect.objectContaining({ detail: { caller } }) }));
   });
 
   it('should call "setSelectedRanges" with Slick Ranges when triggered by "onActiveCellChanged" and "selectActiveRow" is True', () => {

@@ -149,8 +149,9 @@ export class SlickCellSelectionModel {
 
     this._ranges = this.removeInvalidRanges(ranges);
     if (rangeHasChanged) {
-      const eventData = new Slick.EventData();
-      Object.defineProperty(eventData, 'detail', { writable: true, configurable: true, value: { caller } });
+      // provide extra "caller" argument through SlickEventData event to avoid breaking the previous pubsub event structure
+      // that only accepts an array of selected range `SlickRange[]`, the SlickEventData args will be merged and used later by `onSelectedRowsChanged`
+      const eventData = new Slick.EventData(new CustomEvent('click', { detail: { caller } }), this._ranges);
       this.onSelectedRangesChanged.notify(this._ranges, eventData);
     }
   }
