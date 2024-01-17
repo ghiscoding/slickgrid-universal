@@ -240,37 +240,10 @@ export class SlickRowBasedEdit {
   }
 
   translate() {
-    this.btnUpdateTitle =
-      (this.gridOptions.rowBasedEditOptions?.actionButtons?.updateButtonTitleKey &&
-        this.extensionUtility.translaterService?.translate?.(
-          this.gridOptions.rowBasedEditOptions?.actionButtons?.updateButtonTitleKey
-        )) ||
-      this.gridOptions.rowBasedEditOptions?.actionButtons?.updateButtonTitle ||
-      'Update the Row';
-
-    this.btnEditTitle =
-      (this.gridOptions.rowBasedEditOptions?.actionButtons?.updateButtonTitleKey &&
-        this.extensionUtility.translaterService?.translate?.(
-          this.gridOptions.rowBasedEditOptions?.actionButtons?.updateButtonTitleKey
-        )) ||
-      this.gridOptions.rowBasedEditOptions?.actionButtons?.editButtonTitle ||
-      'Edit the Row';
-
-    this.btnDeleteTitle =
-      (this.gridOptions.rowBasedEditOptions?.actionButtons?.deleteButtonTitleKey &&
-        this.extensionUtility.translaterService?.translate?.(
-          this.gridOptions.rowBasedEditOptions?.actionButtons?.deleteButtonTitleKey
-        )) ||
-      this.gridOptions.rowBasedEditOptions?.actionButtons?.deleteButtonTitle ||
-      'Delete the Row';
-
-    this.btnCancelTitle =
-      (this.gridOptions.rowBasedEditOptions?.actionButtons?.cancelButtonTitleKey &&
-        this.extensionUtility.translaterService?.translate?.(
-          this.gridOptions.rowBasedEditOptions?.actionButtons?.cancelButtonTitleKey
-        )) ||
-      this.gridOptions.rowBasedEditOptions?.actionButtons?.cancelButtonTitle ||
-      'Cancel changes of the Row';
+    this.btnUpdateTitle = this.getTitleOrDefault('updateButtonTitle', 'Update the row');
+    this.btnEditTitle = this.getTitleOrDefault('editButtonTitle', 'Edit the Row');
+    this.btnDeleteTitle = this.getTitleOrDefault('deleteButtonTitle', 'Delete the Row');
+    this.btnCancelTitle = this.getTitleOrDefault('cancelButtonTitle', 'Cancel changes of the Row');
 
     const viewport = this._grid.getViewport();
 
@@ -547,4 +520,24 @@ export class SlickRowBasedEdit {
       return meta;
     };
   }
+
+  protected getTitleOrDefault(key: ActionButtonTitles, defaultTitle: string) {
+    const actionBtnOptions = this.gridOptions.rowBasedEditOptions?.actionButtons;
+    return (
+      (actionBtnOptions?.[(key + 'Key') as ActionButtonTitleKeys] &&
+        this.extensionUtility.translaterService?.translate?.(
+          actionBtnOptions?.[(key + 'Key') as ActionButtonTitleKeys] || ''
+        )) ||
+      actionBtnOptions?.[key] ||
+      defaultTitle
+    );
+  }
 }
+
+type IsDefined<T> = T extends undefined ? never : T;
+type ActionButtonTitles = keyof {
+  [K in keyof IsDefined<RowBasedEditOptions['actionButtons']> as K extends `${string}Title` ? K : never]: IsDefined<
+    RowBasedEditOptions['actionButtons']
+  >[K];
+};
+type ActionButtonTitleKeys = `${ActionButtonTitles}Key`;

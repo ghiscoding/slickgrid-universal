@@ -170,7 +170,10 @@ export default class Example22 {
         actionButtons: {
           editButtonClassName: 'button-style padding-1px mr-2',
           iconEditButtonClassName: 'mdi mdi-pencil',
-          editButtonTitle: 'Edit row',
+          // since no title and no titleKey is provided, it will fallback to the default text provided by the plugin
+          // if the title is provided but no titleKey, it will override the default text
+          // last but not least if a titleKey is provided, it will use the translation key to translate the text
+          // editButtonTitle: 'Edit row',
 
           cancelButtonClassName: 'button-style padding-1px',
           cancelButtonTitle: 'Cancel row',
