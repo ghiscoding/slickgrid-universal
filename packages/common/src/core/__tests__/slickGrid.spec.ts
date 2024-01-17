@@ -1938,7 +1938,7 @@ describe('SlickGrid core file', () => {
       expect(onDragEndSpy).not.toHaveBeenCalled();
     });
 
-    it('should return value onDragStart when event has cancelled bubbling (immediatePropagationStopped)', () => {
+    it('should not execute onDragStart or any other events when onDragStart event has cancelled bubbling (immediatePropagationStopped)', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
 
       const cMouseDownEvent = new CustomEvent('mousedown');
@@ -1962,14 +1962,18 @@ describe('SlickGrid core file', () => {
       document.body.dispatchEvent(bodyMouseUpEvent);
 
       expect(onDragInitSpy).toHaveBeenCalled();
-      expect(onDragStartSpy).toHaveBeenCalled();
-      expect(onDragSpy).toHaveBeenCalled();
-      expect(onDragEndSpy).toHaveBeenCalled();
+      expect(onDragStartSpy).not.toHaveBeenCalled();
+      expect(onDragSpy).not.toHaveBeenCalled();
+      expect(onDragEndSpy).not.toHaveBeenCalled();
     });
 
-    it('should drag from a cell and execute all onDrag events when a slick-cell is dragged', () => {
+    it('should drag from a cell and execute all onDrag events when a slick-cell is dragged and its event is stopped', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify');
+
+      const sed = new SlickEventData();
+      sed.addReturnValue(true);
+      sed.stopImmediatePropagation();
+      const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify').mockReturnValue(sed);
       const onDragStartSpy = jest.spyOn(grid.onDragStart, 'notify');
       const onDragSpy = jest.spyOn(grid.onDrag, 'notify');
       const onDragEndSpy = jest.spyOn(grid.onDragEnd, 'notify');
@@ -2017,8 +2021,8 @@ describe('SlickGrid core file', () => {
 
       expect(onDragInitSpy).toHaveBeenCalled();
       expect(onDragStartSpy).not.toHaveBeenCalled();
-      expect(onDragSpy).toHaveBeenCalled();
-      expect(onDragEndSpy).toHaveBeenCalled();
+      expect(onDragSpy).not.toHaveBeenCalled();
+      expect(onDragEndSpy).not.toHaveBeenCalled();
     });
   });
 
