@@ -23,7 +23,7 @@ const addVanillaEventPropagation = function (event, commandKeys: string[] = [], 
     Object.defineProperty(event, 'key', { writable: true, configurable: true, value: keyName });
   }
   return event;
-}
+};
 
 const mockGridOptions = {
   frozenColumn: 1,
@@ -341,7 +341,14 @@ describe('CellSelectionModel Plugin', () => {
     expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
     expect(scrollCellSpy).toHaveBeenCalledWith(4, 2, false);
     expect(scrollRowSpy).toHaveBeenCalledWith(4);
-    expect(onSelectedRangeSpy).toHaveBeenCalledWith(expectedRangeCalled, expect.objectContaining({ detail: { caller: 'SlickCellSelectionModel.setSelectedRanges' } }));
+    expect(onSelectedRangeSpy).toHaveBeenCalledWith(
+      expectedRangeCalled,
+      expect.objectContaining({ event: expect.objectContaining({ detail: { caller: 'SlickCellSelectionModel.setSelectedRanges' } }) })
+    );
+    expect(onSelectedRangeSpy).toHaveBeenCalledWith(
+      expectedRangeCalled,
+      expect.objectContaining({ event: expect.objectContaining({ detail: { caller: 'SlickCellSelectionModel.setSelectedRanges' } }) })
+    );
   });
 
   it('should call "setSelectedRanges" with Slick Range from current position to a calculated size of a page down when using Shift+PageDown key combo when triggered by "onKeyDown"', () => {
