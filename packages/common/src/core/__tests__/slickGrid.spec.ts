@@ -1942,11 +1942,14 @@ describe('SlickGrid core file', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
 
       const cMouseDownEvent = new CustomEvent('mousedown');
-      const sedMouseDown = new SlickEventData();
-      sedMouseDown.addReturnValue(false);
-      sedMouseDown.stopImmediatePropagation();
-      const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify');
-      const onDragStartSpy = jest.spyOn(grid.onDragStart, 'notify').mockReturnValue(sedMouseDown);
+      const sedDragInit = new SlickEventData();
+      const sedDragStart = new SlickEventData();
+      sedDragInit.addReturnValue(true);
+      sedDragStart.addReturnValue(false);
+      sedDragInit.stopImmediatePropagation();
+      sedDragStart.stopImmediatePropagation();
+      const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
+      const onDragStartSpy = jest.spyOn(grid.onDragStart, 'notify').mockReturnValue(sedDragStart);
       const onDragSpy = jest.spyOn(grid.onDrag, 'notify');
       const onDragEndSpy = jest.spyOn(grid.onDragEnd, 'notify');
       const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
@@ -1962,18 +1965,18 @@ describe('SlickGrid core file', () => {
       document.body.dispatchEvent(bodyMouseUpEvent);
 
       expect(onDragInitSpy).toHaveBeenCalled();
-      expect(onDragStartSpy).not.toHaveBeenCalled();
-      expect(onDragSpy).not.toHaveBeenCalled();
-      expect(onDragEndSpy).not.toHaveBeenCalled();
+      expect(onDragStartSpy).toHaveBeenCalled();
+      expect(onDragSpy).toHaveBeenCalled();
+      expect(onDragEndSpy).toHaveBeenCalled();
     });
 
     it('should drag from a cell and execute all onDrag events when a slick-cell is dragged and its event is stopped', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
 
-      const sed = new SlickEventData();
-      sed.addReturnValue(true);
-      sed.stopImmediatePropagation();
-      const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify').mockReturnValue(sed);
+      const sedDragInit = new SlickEventData();
+      sedDragInit.addReturnValue(true);
+      sedDragInit.stopImmediatePropagation();
+      const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
       const onDragStartSpy = jest.spyOn(grid.onDragStart, 'notify');
       const onDragSpy = jest.spyOn(grid.onDrag, 'notify');
       const onDragEndSpy = jest.spyOn(grid.onDragEnd, 'notify');
@@ -2000,7 +2003,11 @@ describe('SlickGrid core file', () => {
 
     it('should drag from a cell and execute all onDrag events except onDragStart when mousemove event target is not a slick-cell', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify');
+
+      const sedDragInit = new SlickEventData();
+      sedDragInit.addReturnValue(true);
+      sedDragInit.stopImmediatePropagation();
+      const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
       const onDragStartSpy = jest.spyOn(grid.onDragStart, 'notify');
       const onDragSpy = jest.spyOn(grid.onDrag, 'notify');
       const onDragEndSpy = jest.spyOn(grid.onDragEnd, 'notify');
@@ -2021,8 +2028,8 @@ describe('SlickGrid core file', () => {
 
       expect(onDragInitSpy).toHaveBeenCalled();
       expect(onDragStartSpy).not.toHaveBeenCalled();
-      expect(onDragSpy).not.toHaveBeenCalled();
-      expect(onDragEndSpy).not.toHaveBeenCalled();
+      expect(onDragSpy).toHaveBeenCalled();
+      expect(onDragEndSpy).toHaveBeenCalled();
     });
   });
 
