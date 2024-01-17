@@ -1938,15 +1938,44 @@ describe('SlickGrid core file', () => {
       expect(onDragEndSpy).not.toHaveBeenCalled();
     });
 
-    it('should return value onDragStart when event has cancelled bubbling (immediatePropagationStopped)', () => {
+    it('should not execute any events after onDragInit when it returns false', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
 
       const cMouseDownEvent = new CustomEvent('mousedown');
-      const sedMouseDown = new SlickEventData();
-      sedMouseDown.addReturnValue(false);
-      sedMouseDown.stopImmediatePropagation();
       const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify');
-      const onDragStartSpy = jest.spyOn(grid.onDragStart, 'notify').mockReturnValue(sedMouseDown);
+      const onDragStartSpy = jest.spyOn(grid.onDragStart, 'notify');
+      const onDragSpy = jest.spyOn(grid.onDrag, 'notify');
+      const onDragEndSpy = jest.spyOn(grid.onDragEnd, 'notify');
+      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+      slickCellElm.classList.add('dnd', 'cell-reorder');
+
+      const bodyMouseMoveEvent1 = new CustomEvent('mousemove');
+      const bodyMouseUpEvent = new CustomEvent('mouseup');
+      Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
+      Object.defineProperty(bodyMouseMoveEvent1, 'target', { writable: true, value: slickCellElm });
+
+      container.dispatchEvent(cMouseDownEvent);
+      document.body.dispatchEvent(bodyMouseMoveEvent1);
+      document.body.dispatchEvent(bodyMouseUpEvent);
+
+      expect(onDragInitSpy).toHaveBeenCalled();
+      expect(onDragStartSpy).not.toHaveBeenCalled();
+      expect(onDragSpy).not.toHaveBeenCalled();
+      expect(onDragEndSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not execute onDragStart or any other events when onDragStart event has cancelled bubbling (immediatePropagationStopped)', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const sedDragInit = new SlickEventData();
+      const sedDragStart = new SlickEventData();
+      sedDragInit.addReturnValue(true);
+      sedDragStart.addReturnValue(false);
+      sedDragInit.stopImmediatePropagation();
+      sedDragStart.stopImmediatePropagation();
+      const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
+      const onDragStartSpy = jest.spyOn(grid.onDragStart, 'notify').mockReturnValue(sedDragStart);
       const onDragSpy = jest.spyOn(grid.onDrag, 'notify');
       const onDragEndSpy = jest.spyOn(grid.onDragEnd, 'notify');
       const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
@@ -1967,9 +1996,13 @@ describe('SlickGrid core file', () => {
       expect(onDragEndSpy).toHaveBeenCalled();
     });
 
-    it('should drag from a cell and execute all onDrag events when a slick-cell is dragged', () => {
+    it('should drag from a cell and execute all onDrag events when a slick-cell is dragged and its event is stopped', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify');
+
+      const sedDragInit = new SlickEventData();
+      sedDragInit.addReturnValue(true);
+      sedDragInit.stopImmediatePropagation();
+      const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
       const onDragStartSpy = jest.spyOn(grid.onDragStart, 'notify');
       const onDragSpy = jest.spyOn(grid.onDrag, 'notify');
       const onDragEndSpy = jest.spyOn(grid.onDragEnd, 'notify');
@@ -1996,7 +2029,11 @@ describe('SlickGrid core file', () => {
 
     it('should drag from a cell and execute all onDrag events except onDragStart when mousemove event target is not a slick-cell', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify');
+
+      const sedDragInit = new SlickEventData();
+      sedDragInit.addReturnValue(true);
+      sedDragInit.stopImmediatePropagation();
+      const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
       const onDragStartSpy = jest.spyOn(grid.onDragStart, 'notify');
       const onDragSpy = jest.spyOn(grid.onDrag, 'notify');
       const onDragEndSpy = jest.spyOn(grid.onDragEnd, 'notify');
