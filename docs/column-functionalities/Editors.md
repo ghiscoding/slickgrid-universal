@@ -372,5 +372,5 @@ For SalesForce it's nearly the same, the only difference is that we add our even
 </div>
 ```
 
-## Turning individual rows into editmode
-Using the [Row Based Editing Plugin](../grid-functionalities/Row-based-edit.md) you can let the user toggle either one or multiple rows into editmode, keep track of cell changes and either discard or save them on an individual basis using a custom onBeforeSave hook.
+## Turning individual rows into edit mode
+Using the [Row Based Editing Plugin](../grid-functionalities/Row-based-edit.md) you can let the user toggle either one or multiple rows into edit mode, keep track of cell changes and either discard or save them on an individual basis using a custom `onBeforeRowUpdated` hook.
