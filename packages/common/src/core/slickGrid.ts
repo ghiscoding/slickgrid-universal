@@ -2160,7 +2160,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             let newWidth;
             for (j = 0; j < this.columns.length; j++) {
               c = this.columns[j];
-              if (!c || c.hidden) { continue; }
+              if (!c || c.hidden || !children[j]) { continue; }
               newWidth = children[j].offsetWidth;
 
               if (c.previousWidth !== newWidth && c.rerenderOnResize) {
@@ -3166,7 +3166,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Scroll to an Y position in the grid
+   * Scroll to an Y coordinate position in the grid
    * @param {Number} y
    */
   scrollTo(y: number) {
