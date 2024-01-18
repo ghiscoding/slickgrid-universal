@@ -1067,6 +1067,7 @@ export class SlickVanillaGridBundle<TData = any> {
   setData(data: TData[], shouldAutosizeColumns = false) {
     if (shouldAutosizeColumns) {
       this._isAutosizeColsCalled = false;
+      this._currentDatasetLength = 0;
     }
     this.dataset = data || [];
   }
