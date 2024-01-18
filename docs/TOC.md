@@ -54,6 +54,7 @@
 * [Pinning (frozen) of Columns/Rows](grid-functionalities/frozen-columns-rows.md)
 * [Row Selection](grid-functionalities/Row-Selection.md)
 * [Tree Data Grid](grid-functionalities/Tree-Data-Grid.md)
+* [Row Based Editing Plugin](grid-functionalities/Row-based-edit.md)
 
 ## Backend Services
 

@@ -30,6 +30,7 @@ import type {
   OperatorDetailAlt,
   Pagination,
   ResizeByContentOption,
+  RowBasedEditOptions,
   RowDetailView,
   RowMoveManager,
   RowSelectionModelOption,
@@ -447,6 +448,12 @@ export interface GridOption<C extends Column = Column> {
 
   /** Do we want to enable Tree Data grid? */
   enableTreeData?: boolean;
+
+  /** Enable the row based editing plugin */
+  enableRowBasedEdit?: boolean;
+
+  /** Options for the row based editing plugin */
+  rowBasedEditOptions?: RowBasedEditOptions;
 
   /**
    * Event naming style for the exposed SlickGrid & Component Events

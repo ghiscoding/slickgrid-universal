@@ -107,6 +107,27 @@
           font-size: var(--slick-group-totals-formatter-font-size, $slick-group-totals-formatter-font-size);
         }
       }
+
+      &.slick-rbe-editmode.active .slick-cell,
+      &.slick-rbe-editmode .slick-cell {
+        background-color: var(--slick-row-based-edit-editmode-bgcolor, $slick-row-based-edit-editmode-bgcolor);
+
+        &:hover {
+          background-color: var(--slick-row-based-edit-editmode-hover-bgcolor, $slick-row-based-edit-editmode-hover-bgcolor);
+
+          .active {
+            background-color: var(--slick-row-based-edit-editmode-active-hover-bgcolor, $slick-row-based-edit-editmode-active-hover-bgcolor) !important;
+          }
+        }
+
+        .active {
+          background-color: var(--slick-row-based-edit-editmode-active-bgcolor, $slick-row-based-edit-editmode-active-bgcolor);
+
+          &:hover {
+            background-color: var(--slick-row-based-edit-editmode-active-hover-bgcolor, $slick-row-based-edit-editmode-active-hover-bgcolor);
+          }
+        }
+      }
     }
     .slick-cell, .slick-headerrow-column {
       border-top: var(--slick-cell-border-top, $slick-cell-border-top);
@@ -123,6 +144,10 @@
 
     .slick-cell {
       @include resetSlickCell();
+
+      &.slick-rbe-unsaved-cell {
+        background-color: var(--slick-row-based-edit-unsaved-cell-bgcolor, $slick-row-based-edit-unsaved-cell-bgcolor) !important;
+      }
 
       a, a:visited, .ui-widget-content a, .ui-widget-content a:visited {
         color: var(--slick-link-color, $slick-link-color);

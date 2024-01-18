@@ -17,17 +17,19 @@ import {
   SlickGroupItemMetadataProvider,
   SlickHeaderButtons,
   SlickHeaderMenu,
+  SlickRowBasedEdit,
   SlickRowMoveManager,
   SlickRowSelectionModel
 } from '../extensions/index';
 import type { FilterService } from './filter.service';
 import type { SortService } from './sort.service';
 import type { TreeDataService } from './treeData.service';
+import { GridService } from './grid.service';
 
 interface ExtensionWithColumnIndexPosition {
   name: ExtensionName;
   columnIndexPosition: number;
-  extension: SlickCheckboxSelectColumn | SlickRowDetailView | SlickRowMoveManager;
+  extension: SlickCheckboxSelectColumn | SlickRowDetailView | SlickRowMoveManager | SlickRowBasedEdit;
 }
 
 export class ExtensionService {
@@ -45,6 +47,7 @@ export class ExtensionService {
   protected _headerMenuPlugin?: SlickHeaderMenu;
   protected _rowMoveManagerPlugin?: SlickRowMoveManager;
   protected _rowSelectionModel?: SlickRowSelectionModel;
+  protected _rowBasedEdit?: SlickRowBasedEdit;
 
   get extensionList() {
     return this._extensionList;
@@ -62,6 +65,7 @@ export class ExtensionService {
     protected readonly sortService: SortService,
     protected readonly treeDataService: TreeDataService,
     protected readonly translaterService?: TranslaterService,
+    protected readonly lazyGridService?: () => GridService
   ) { }
 
   /** Dispose of all the controls & plugins */
@@ -160,6 +164,21 @@ export class ExtensionService {
       // this is to avoid having hidden columns not being translated on first load
       if (this.gridOptions.enableTranslate) {
         this.translateItems(this.sharedService.allColumns, 'nameKey', 'name');
+      }
+
+      // Row Based Edit Plugin
+      if (this.gridOptions.enableRowBasedEdit) {
+        this._rowBasedEdit = this._rowBasedEdit || new SlickRowBasedEdit(this.extensionUtility, this.pubSubService, this.gridOptions.rowBasedEditOptions);
+        const gridService = this.lazyGridService?.();
+        if (!gridService) {
+          throw new Error('[Slickgrid-Universal] the RowBasedEdit Plugin requires a GridService to be configured and available');
+        }
+
+        this._rowBasedEdit.init(this.sharedService.slickGrid, gridService);
+        if (this.gridOptions.rowBasedEditOptions?.onExtensionRegistered) {
+          this.gridOptions.rowBasedEditOptions.onExtensionRegistered(this._rowBasedEdit);
+        }
+        this._extensionList[ExtensionName.rowBasedEdit] = { name: ExtensionName.rowBasedEdit, instance: this._rowBasedEdit };
       }
 
       // Auto Tooltip Plugin
@@ -309,6 +328,12 @@ export class ExtensionService {
         featureWithColumnIndexPositions.push({ name: ExtensionName.rowMoveManager, extension: this._rowMoveManagerPlugin, columnIndexPosition: gridOptions?.rowMoveManager?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
       }
     }
+    if (gridOptions.enableRowBasedEdit) {
+      if (!this.getCreatedExtensionByName(ExtensionName.rowBasedEdit)) {
+        this._rowBasedEdit = new SlickRowBasedEdit(this.extensionUtility, this.pubSubService);
+        featureWithColumnIndexPositions.push({ name: ExtensionName.rowBasedEdit, extension: this._rowBasedEdit, columnIndexPosition: gridOptions?.rowMoveManager?.columnIndexPosition ?? featureWithColumnIndexPositions.length });
+      }
+    }
 
     // since some features could have a `columnIndexPosition`, we need to make sure these indexes are respected in the column definitions
     this.createExtensionByTheirColumnIndex(featureWithColumnIndexPositions, columnDefinitions, gridOptions);
@@ -358,6 +383,7 @@ export class ExtensionService {
     this.translateContextMenu();
     this.translateGridMenu();
     this.translateHeaderMenu();
+    this.translateRowEditPlugin();
   }
 
   /** Translate the Cell Menu titles, we need to loop through all column definition to re-translate them */
@@ -389,6 +415,13 @@ export class ExtensionService {
    */
   translateHeaderMenu() {
     this._headerMenuPlugin?.translateHeaderMenu?.();
+  }
+
+  /**
+   * Translate the action column buttons of the Row Based Edit Plugin
+   */
+  translateRowEditPlugin() {
+    this._rowBasedEdit?.translate?.();
   }
 
   /**

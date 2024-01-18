@@ -129,6 +129,7 @@ export * from './pagingInfo.interface';
 export * from './resizeByContentOption.interface';
 export * from './resizer.interface';
 export * from './resizerOption.interface';
+export * from './rowBasedEditOption.interface';
 export * from './rowDetailView.interface';
 export * from './rowDetailViewOption.interface';
 export * from './rowMoveManager.interface';

@@ -14,5 +14,6 @@ export * from './slickGridMenu';
 export * from './slickGroupItemMetadataProvider';
 export * from './slickHeaderButtons';
 export * from './slickHeaderMenu';
+export * from './slickRowBasedEdit';
 export * from './slickRowMoveManager';
 export * from './slickRowSelectionModel';
