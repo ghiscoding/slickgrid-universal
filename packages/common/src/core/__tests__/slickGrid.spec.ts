@@ -2473,7 +2473,88 @@ describe('SlickGrid core file', () => {
       expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: true }]);
     });
 
-    it('should find a single sorted icons when calling setSortColumn() with a single being sorted when multiSort is disabled', () => {
+    it('should not trigger onBeforeSort when clicking on column resize handle', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false });
+      grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
+      const onBeforeSortSpy = jest.spyOn(grid.onBeforeSort, 'notify');
+
+      const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
+      let sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+      const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
+      const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
+      const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
+
+      expect(sortIndicators.length).toBe(columns.length);
+      expect(sortAscIndicators.length).toBe(0);
+      expect(sortDescIndicators.length).toBe(1);
+      expect(sortedColElms.length).toBe(0);
+      expect(sortNumberedIndicators.length).toBe(0);
+      expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: false }]);
+
+      const firstColHeaderElm = container.querySelector('.slick-header-columns');
+      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]') as HTMLDivElement;
+      const firstResizeHandleElm = firstNameHeaderColumnElm.querySelector('.slick-resizable-handle');
+      const click = new CustomEvent('click');
+      Object.defineProperty(click, 'target', { writable: true, value: firstResizeHandleElm });
+      firstColHeaderElm?.dispatchEvent(click);
+
+      expect(onBeforeSortSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not trigger onBeforeSort when clicking on slick-header-columns div', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false });
+      grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
+      const onBeforeSortSpy = jest.spyOn(grid.onBeforeSort, 'notify');
+
+      const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
+      let sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+      const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
+      const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
+      const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
+
+      expect(sortIndicators.length).toBe(columns.length);
+      expect(sortAscIndicators.length).toBe(0);
+      expect(sortDescIndicators.length).toBe(1);
+      expect(sortedColElms.length).toBe(0);
+      expect(sortNumberedIndicators.length).toBe(0);
+      expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: false }]);
+
+      const firstColHeaderElm = container.querySelector('.slick-header-columns');
+      const click = new CustomEvent('click');
+      firstColHeaderElm?.dispatchEvent(click);
+
+      expect(onBeforeSortSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not trigger onBeforeSort when an open editor commit fails', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false });
+      grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
+      const onBeforeSortSpy = jest.spyOn(grid.onBeforeSort, 'notify');
+      jest.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
+
+      const sortIndicators = container.querySelectorAll('.slick-sort-indicator');
+      let sortAscIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-asc');
+      const sortDescIndicators = container.querySelectorAll('.slick-sort-indicator.slick-sort-indicator-desc');
+      const sortNumberedIndicators = container.querySelectorAll('.slick-sort-indicator-numbered');
+      const sortedColElms = container.querySelectorAll('.slick-sort-indicator.slick-header-column-sorted');
+
+      expect(sortIndicators.length).toBe(columns.length);
+      expect(sortAscIndicators.length).toBe(0);
+      expect(sortDescIndicators.length).toBe(1);
+      expect(sortedColElms.length).toBe(0);
+      expect(sortNumberedIndicators.length).toBe(0);
+      expect(grid.getSortColumns()).toEqual([{ columnId: 'firstName', sortAsc: false }]);
+
+      const firstColHeaderElm = container.querySelector('.slick-header-columns');
+      const click2 = new CustomEvent('click');
+      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
+      Object.defineProperty(click2, 'target', { writable: true, value: firstNameHeaderColumnElm });
+      firstColHeaderElm?.dispatchEvent(click2);
+
+      expect(onBeforeSortSpy).not.toHaveBeenCalled();
+    });
+
+    it('should find a single sorted icons when calling setSortColumn() with a single col being sorted when multiSort is disabled', () => {
       grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false });
       grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
       const onBeforeSortSpy = jest.spyOn(grid.onBeforeSort, 'notify');
@@ -2504,6 +2585,7 @@ describe('SlickGrid core file', () => {
       firstColHeaderElm?.dispatchEvent(click2);
 
       // clicking on firstName with legacy behavior
+      expect(onBeforeSortSpy).toHaveBeenCalledTimes(1);
       expect(onBeforeSortSpy).toHaveBeenCalledWith({
         grid,
         multiColumnSort: false,
@@ -2637,6 +2719,92 @@ describe('SlickGrid core file', () => {
         multiColumnSort: true,
         previousSortColumns: [{ columnId: 'firstName', sortAsc: true }, { columnId: 'lastName', sortAsc: true }],
         sortCols: [{ columnId: 'lastName', sortAsc: true, sortCol: columns[1] }]
+      }, click2, grid);
+    });
+
+    it('should remove current sort when the sorting is triggered and tristateMultiColumnSort is enabled but multiColumnSort is disabled', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false, numberedMultiColumnSort: true, tristateMultiColumnSort: true });
+      grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }, { columnId: 'lastName' }]);
+      const onBeforeSortSpy = jest.spyOn(grid.onBeforeSort, 'notify');
+
+      const firstColHeaderElm = container.querySelector('.slick-header-columns');
+      const colClick = new CustomEvent('click');
+      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
+      Object.defineProperty(colClick, 'target', { writable: true, value: firstNameHeaderColumnElm });
+      firstColHeaderElm?.dispatchEvent(colClick);
+
+      // only left with lastName since firstName is now sorted ascending because of tristate
+      expect(onBeforeSortSpy).toHaveBeenCalledWith({
+        grid,
+        multiColumnSort: false,
+        previousSortColumns: [{ columnId: 'firstName', sortAsc: true }, { columnId: 'lastName', sortAsc: true }],
+        columnId: null, sortAsc: true, sortCol: null
+      }, colClick, grid);
+    });
+
+    it('should sort by firstName when no previous sort exist and we triggered with tristateMultiColumnSort enabled but multiColumnSort is disabled', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false, numberedMultiColumnSort: true, tristateMultiColumnSort: true });
+      grid.setSortColumns([]);
+      const onBeforeSortSpy = jest.spyOn(grid.onBeforeSort, 'notify');
+
+      const firstColHeaderElm = container.querySelector('.slick-header-columns');
+      const click = new CustomEvent('click');
+      firstColHeaderElm?.dispatchEvent(click);
+
+      const colClick = new CustomEvent('click');
+      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
+      Object.defineProperty(colClick, 'target', { writable: true, value: firstNameHeaderColumnElm });
+      firstColHeaderElm?.dispatchEvent(colClick);
+
+      expect(onBeforeSortSpy).toHaveBeenCalledWith({
+        grid,
+        multiColumnSort: false,
+        previousSortColumns: [],
+        columnId: 'firstName', sortAsc: true, sortCol: columns[0]
+      }, colClick, grid);
+    });
+
+    it('should sort by firstName when no previous sort exist and we triggered with tristateMultiColumnSort & multiColumnSort both disabled', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false, numberedMultiColumnSort: true, tristateMultiColumnSort: false });
+      grid.setSortColumns([]);
+      const onBeforeSortSpy = jest.spyOn(grid.onBeforeSort, 'notify');
+
+      const firstColHeaderElm = container.querySelector('.slick-header-columns');
+      const click = new CustomEvent('click');
+      firstColHeaderElm?.dispatchEvent(click);
+
+      const colClick = new CustomEvent('click');
+      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
+      Object.defineProperty(colClick, 'target', { writable: true, value: firstNameHeaderColumnElm });
+      firstColHeaderElm?.dispatchEvent(colClick);
+
+      expect(onBeforeSortSpy).toHaveBeenCalledWith({
+        grid,
+        multiColumnSort: false,
+        previousSortColumns: [],
+        columnId: 'firstName', sortAsc: true, sortCol: columns[0]
+      }, colClick, grid);
+    });
+
+    it('should remove all sorting when multiSort is enabled and we clicked column with a metaKey (Ctrl/Win)', () => {
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: true });
+      grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
+      const onBeforeSortSpy = jest.spyOn(grid.onBeforeSort, 'notify');
+      const firstColHeaderElm = container.querySelector('.slick-header-columns');
+
+      const click2 = new CustomEvent('click');
+      Object.defineProperty(click2, 'metaKey', { writable: true, value: true });
+      const firstNameHeaderColumnElm = container.querySelector('.slick-header-column[data-id=firstName]');
+      Object.defineProperty(click2, 'target', { writable: true, value: firstNameHeaderColumnElm });
+      firstColHeaderElm?.dispatchEvent(click2);
+
+      // clicking on firstName with legacy behavior
+      expect(onBeforeSortSpy).toHaveBeenCalledTimes(1);
+      expect(onBeforeSortSpy).toHaveBeenCalledWith({
+        grid,
+        multiColumnSort: true,
+        previousSortColumns: [{ columnId: 'firstName', sortAsc: true }],
+        sortCols: []
       }, click2, grid);
     });
   });
