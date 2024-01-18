@@ -3,13 +3,9 @@ import { Column } from './column.interface';
 import { OnEventArgs } from './onEventArgs.interface';
 
 export interface RowBasedEditOptions {
-  /** Fired after extension (plugin) is registered by SlickGrid */
-  onExtensionRegistered?: (plugin: SlickRowBasedEdit) => void;
-
   /** the display name of the added actions column */
   actionsColumnLabel?: string;
-  /** method called before row gets updated. Needs to return a promised boolean. True will continue; False will halt the update */
-  onBeforeRowUpdated?: (args: OnEventArgs) => Promise<boolean>;
+
   /** whether multiple rows can be toggled into edit mode at the same itme (default: false) */
   allowMultipleRows?: boolean;
 
@@ -63,5 +59,14 @@ export interface RowBasedEditOptions {
     updateButtonTitleKey?: string;
     /** if defined, a confirm prompt will be shown before saving the changes of a row */
     updateButtonPrompt?: string;
-  }
+  };
+
+  // --
+  // Available Callbacks
+
+  /** Fired after extension (plugin) is registered by SlickGrid */
+  onExtensionRegistered?: (plugin: SlickRowBasedEdit) => void;
+
+  /** method called before row gets updated. Needs to return a promised boolean. True will continue; False will halt the update */
+  onBeforeRowUpdated?: (args: OnEventArgs) => Promise<boolean>;
 }

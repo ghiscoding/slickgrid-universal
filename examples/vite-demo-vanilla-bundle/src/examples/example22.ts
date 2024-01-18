@@ -136,7 +136,7 @@ export default class Example22 {
       rowBasedEditOptions: {
         allowMultipleRows: false,
         onBeforeRowUpdated: (args) => {
-          // this.clearStatus();
+          this.clearStatus();
           const { effortDriven, percentComplete, finish, start, duration, title } = args.dataContext;
 
           if (duration > 40) {
