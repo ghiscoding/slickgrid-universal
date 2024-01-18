@@ -383,7 +383,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
     this.initialization(this._gridContainerElm, eventHandler);
     if (!hierarchicalDataset && !this.gridOptions.backendServiceApi) {
-      this.dataset = dataset || [];
+      this.setData(dataset || []);
       this._currentDatasetLength = this.dataset.length;
     }
   }
@@ -1062,6 +1062,13 @@ export class SlickVanillaGridBundle<TData = any> {
       this.slickGrid.setColumns(this.columnDefinitions);
     }
     return showing;
+  }
+
+  setData(data: TData[], shouldAutosizeColumns = false) {
+    if (shouldAutosizeColumns) {
+      this._isAutosizeColsCalled = false;
+    }
+    this.dataset = data || [];
   }
 
   /**
