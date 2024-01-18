@@ -508,6 +508,20 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         sharedService.slickGrid = mockGrid as unknown as SlickGrid;
       });
 
+      it('should expect "autosizeColumns" being called when "autoFitColumnsOnFirstLoad" is set we udpated the dataset', () => {
+        const autosizeSpy = jest.spyOn(mockGrid, 'autosizeColumns');
+        const refreshSpy = jest.spyOn(component, 'refreshGridData');
+        const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
+        jest.spyOn(mockDataView, 'getLength').mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(mockData.length);
+
+        component.gridOptions = { autoFitColumnsOnFirstLoad: true };
+        component.initialization(divContainer, slickEventHandler);
+        component.setData(mockData, true); // manually force an autoresize
+
+        expect(autosizeSpy).toHaveBeenCalledTimes(2); // 1x by datasetChanged and 1x by bindResizeHook
+        expect(refreshSpy).toHaveBeenCalledWith(mockData);
+      });
+
       it('should expect "autosizeColumns" being called when "autoFitColumnsOnFirstLoad" is set and we are on first page load', () => {
         const autosizeSpy = jest.spyOn(mockGrid, 'autosizeColumns');
         const refreshSpy = jest.spyOn(component, 'refreshGridData');
@@ -518,7 +532,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockData;
 
-        expect(autosizeSpy).toHaveBeenCalledTimes(3); // 1x by datasetChanged and 2x by bindResizeHook
+        expect(autosizeSpy).toHaveBeenCalledTimes(1);
         expect(refreshSpy).toHaveBeenCalledWith(mockData);
       });
 
