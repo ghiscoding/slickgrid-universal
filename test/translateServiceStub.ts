@@ -31,7 +31,9 @@ export class TranslateServiceStub implements TranslaterService {
       case 'COLLAPSE_ALL_GROUPS': output = this._locale === 'en' ? 'Collapse all Groups' : 'Réduire tous les groupes'; break;
       case 'CONTAINS': output = this._locale === 'en' ? 'Contains' : 'Contient'; break;
       case 'COPY': output = this._locale === 'en' ? 'Copy' : 'Copier'; break;
+      case 'DELETE': output = this._locale === 'en' ? 'Delete' : 'Effacer'; break;
       case 'DURATION': output = this._locale === 'en' ? 'Duration' : 'Durée'; break;
+      case 'EDIT': output = this._locale === 'en' ? 'Edit' : 'Éditer'; break;
       case 'EMPTY_DATA_WARNING_MESSAGE': output = this._locale === 'en' ? 'No data to display.' : 'Aucune donnée à afficher.'; break;
       case 'ENDS_WITH': output = this._locale === 'en' ? 'Ends With' : 'Se termine par'; break;
       case 'EQUALS': output = this._locale === 'en' ? 'Equals' : 'Égale'; break;
@@ -83,6 +85,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'TOGGLE_FILTER_ROW': output = this._locale === 'en' ? 'Toggle Filter Row' : 'Basculer la ligne des filtres'; break;
       case 'TOGGLE_PRE_HEADER_ROW': output = this._locale === 'en' ? 'Toggle Pre-Header Row' : 'Basculer la ligne de pré-en-tête'; break;
       case 'TRUE': output = this._locale === 'en' ? 'True' : 'Vrai'; break;
+      case 'UPDATE': output = this._locale === 'en' ? 'Update' : 'Mettre a jour'; break;
       case 'USER_PROFILE': output = this._locale === 'en' ? 'User Profile' : `Profile d'usager`; break;
       case 'COMPANY_PROFILE': output = this._locale === 'en' ? 'Company Profile' : `Profile de compagnie`; break;
       case 'SALES': output = this._locale === 'en' ? 'Sales' : 'Ventes'; break;

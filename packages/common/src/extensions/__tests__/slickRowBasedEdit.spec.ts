@@ -20,6 +20,7 @@ import {
 import { GridService } from '../../services';
 import { Editors } from '../../editors';
 import { ExtensionUtility } from '../extensionUtility';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 
 let addonOptions: RowBasedEditOptions = {
   actionsColumnLabel: 'MyActions',
@@ -215,7 +216,7 @@ describe('Row Based Edit Plugin', () => {
         {
           prevSerializedValue: 'foo',
           serializedValue: 'bar',
-          execute: () => {},
+          execute: () => { },
         } as EditCommand
       );
 
@@ -240,7 +241,7 @@ describe('Row Based Edit Plugin', () => {
         {
           prevSerializedValue: [],
           serializedValue: ['bar'],
-          execute: () => {},
+          execute: () => { },
         } as EditCommand
       );
 
@@ -415,7 +416,7 @@ describe('Row Based Edit Plugin', () => {
       {
         prevSerializedValue: 'foo',
         serializedValue: 'bar',
-        execute: () => {},
+        execute: () => { },
       } as EditCommand
     );
 
@@ -655,7 +656,7 @@ describe('Row Based Edit Plugin', () => {
         {
           prevSerializedValue: 'foo',
           serializedValue: 'bar',
-          execute: () => {},
+          execute: () => { },
         } as EditCommand
       );
       gridStub.invalidate.mockClear();
@@ -721,7 +722,7 @@ describe('Row Based Edit Plugin', () => {
         {
           prevSerializedValue: 'foo',
           serializedValue: 'bar',
-          execute: () => {},
+          execute: () => { },
         } as EditCommand
       );
       gridStub.invalidate.mockClear();
@@ -749,7 +750,7 @@ describe('Row Based Edit Plugin', () => {
         {
           prevSerializedValue: 'foo',
           serializedValue: 'bar',
-          execute: () => {},
+          execute: () => { },
           undo: undoSpy,
         } as unknown as EditCommand
       );
@@ -764,6 +765,40 @@ describe('Row Based Edit Plugin', () => {
       });
 
       expect(gridStub.invalidate).toHaveBeenCalled();
+    });
+
+    it('should translate button titles to French when translation keys are provided with Translate Service available', () => {
+      const translateService = new TranslateServiceStub();
+      (extensionUtilityStub as any).translaterService = translateService;
+
+      translateService.use('fr');
+
+      gridStub.getOptions.mockReturnValue({
+        ...optionsMock, rowBasedEditOptions: {
+          actionButtons: {
+            updateButtonTitleKey: 'UPDATE',
+            editButtonTitleKey: 'EDIT',
+            deleteButtonTitleKey: 'DELETE',
+            cancelButtonTitleKey: 'CANCEL',
+          }
+        }
+      });
+
+      plugin.init(gridStub, gridService);
+      plugin.translate();
+      const actionColumn = plugin.getColumnDefinition();
+
+      const fragment = actionColumn.formatter?.(0, 0, undefined, {} as Column, 'test', gridStub);
+      const actionBtns = (fragment as DocumentFragment).querySelectorAll<HTMLSpanElement>('span.action-btns');
+      expect(actionBtns[0].title).toBe('Éditer');
+      expect(actionBtns[1].title).toBe('Effacer');
+      expect(actionBtns[2].title).toBe('Mettre a jour');
+      expect(actionBtns[3].title).toBe('Annuler');
+      expect(actionBtns.length).toBe(4);
+
+      expect(gridStub.setOptions).toHaveBeenCalledWith({
+        editCommandHandler: expect.anything(),
+      });
     });
   });
 });

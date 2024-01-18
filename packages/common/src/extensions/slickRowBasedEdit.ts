@@ -405,8 +405,7 @@ export class SlickRowBasedEdit {
       .appendChild(
         createDomElement('span', {
           className:
-            `${
-              options.rowBasedEditOptions?.actionButtons?.editButtonClassName || 'button-style padding-1px mr-2'
+            `${options.rowBasedEditOptions?.actionButtons?.editButtonClassName || 'button-style padding-1px mr-2'
             } action-btns ` + BTN_ACTION_EDIT,
           title: this.btnEditTitle,
           style: { display: isInEditMode ? 'none' : '' },
@@ -422,8 +421,7 @@ export class SlickRowBasedEdit {
       .appendChild(
         createDomElement('span', {
           className:
-            `${
-              options.rowBasedEditOptions?.actionButtons?.deleteButtonClassName || 'button-style padding-1px'
+            `${options.rowBasedEditOptions?.actionButtons?.deleteButtonClassName || 'button-style padding-1px'
             } action-btns ` + BTN_ACTION_DELETE,
           title: this.btnDeleteTitle,
           style: { display: isInEditMode ? 'none' : '' },
@@ -439,8 +437,7 @@ export class SlickRowBasedEdit {
       .appendChild(
         createDomElement('span', {
           className:
-            `${
-              options.rowBasedEditOptions?.actionButtons?.updateButtonClassName || 'button-style padding-1px mr-2'
+            `${options.rowBasedEditOptions?.actionButtons?.updateButtonClassName || 'button-style padding-1px mr-2'
             } action-btns ` + BTN_ACTION_UPDATE,
           title: this.btnUpdateTitle,
           style: { display: !isInEditMode ? 'none' : '' },
@@ -456,8 +453,7 @@ export class SlickRowBasedEdit {
       .appendChild(
         createDomElement('span', {
           className:
-            `${
-              options.rowBasedEditOptions?.actionButtons?.cancelButtonClassName || 'button-style padding-1px'
+            `${options.rowBasedEditOptions?.actionButtons?.cancelButtonClassName || 'button-style padding-1px'
             } action-btns ` + BTN_ACTION_CANCEL,
           title: this.btnCancelTitle,
           style: { display: !isInEditMode ? 'none' : '' },
