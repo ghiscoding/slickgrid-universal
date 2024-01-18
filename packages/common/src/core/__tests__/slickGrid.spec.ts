@@ -1,11 +1,12 @@
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { createDomElement } from '@slickgrid-universal/utils';
+
 import { CheckboxEditor, InputEditor, LongTextEditor } from '../../editors';
 import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions';
 import { Column, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption, type EditCommand } from '../../interfaces';
 import { SlickEventData, SlickGlobalEditorLock } from '../slickCore';
 import { SlickDataView } from '../slickDataview';
 import { SlickGrid } from '../slickGrid';
-import { createDomElement } from '@slickgrid-universal/utils';
 
 jest.useFakeTimers();
 

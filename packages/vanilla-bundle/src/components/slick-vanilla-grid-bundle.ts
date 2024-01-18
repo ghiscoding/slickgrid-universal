@@ -69,6 +69,7 @@ export class SlickVanillaGridBundle<TData = any> {
   protected _gridContainerElm!: HTMLElement;
   protected _gridParentContainerElm!: HTMLElement;
   protected _hideHeaderRowAfterPageLoad = false;
+  protected _isAutosizeColsCalled = false;
   protected _isDatasetInitialized = false;
   protected _isDatasetHierarchicalInitialized = false;
   protected _isGridInitialized = false;
@@ -140,10 +141,10 @@ export class SlickVanillaGridBundle<TData = any> {
     }
   }
 
-  get dataset(): any[] {
+  get dataset(): TData[] {
     return this.dataView?.getItems() || [];
   }
-  set dataset(newDataset: any[]) {
+  set dataset(newDataset: TData[]) {
     const prevDatasetLn = this._currentDatasetLength;
     const isDatasetEqual = dequal(newDataset, this.dataset || []);
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions?.enableDeepCopyDatasetOnPageLoad);
@@ -160,8 +161,9 @@ export class SlickVanillaGridBundle<TData = any> {
 
     // expand/autofit columns on first page load
     // we can assume that if the prevDataset was empty then we are on first load
-    if (this.slickGrid && this.gridOptions.autoFitColumnsOnFirstLoad && prevDatasetLn === 0) {
+    if (this.slickGrid && this.gridOptions.autoFitColumnsOnFirstLoad && prevDatasetLn === 0 && !this._isAutosizeColsCalled) {
       this.slickGrid.autosizeColumns();
+      this._isAutosizeColsCalled = true;
     }
   }
 
@@ -269,7 +271,7 @@ export class SlickVanillaGridBundle<TData = any> {
     gridParentContainerElm: HTMLElement,
     columnDefs?: Column<TData>[],
     options?: Partial<GridOption>,
-    dataset?: any[],
+    dataset?: TData[],
     hierarchicalDataset?: any[],
     services?: {
       backendUtilityService?: BackendUtilityService,
@@ -478,6 +480,7 @@ export class SlickVanillaGridBundle<TData = any> {
     this._gridContainerElm = gridContainerElm;
     this._eventPubSubService.publish('onBeforeGridCreate', true);
 
+    this._isAutosizeColsCalled = false;
     this._eventHandler = eventHandler;
     this._gridOptions = this.mergeGridOptions(this._gridOptions || {} as GridOption);
     this.backendServiceApi = this._gridOptions?.backendServiceApi;
@@ -904,11 +907,6 @@ export class SlickVanillaGridBundle<TData = any> {
       throw new Error(`[Slickgrid-Universal] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use. You can enable these 2 options ("autoFitColumnsOnFirstLoad" and "enableAutoSizeColumns") OR these other 2 options ("autosizeColumnsByCellContentOnFirstLoad" and "enableAutoResizeColumnsByCellContent").`);
     }
 
-    if (grid && options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && typeof grid.autosizeColumns === 'function') {
-      // expand/autofit columns on first page load
-      grid.autosizeColumns();
-    }
-
     // auto-resize grid on browser resize (optionally provide grid height or width)
     if (options.gridHeight || options.gridWidth) {
       this.resizerService.resizeGrid(0, { height: options.gridHeight, width: options.gridWidth });
@@ -916,10 +914,10 @@ export class SlickVanillaGridBundle<TData = any> {
       this.resizerService.resizeGrid();
     }
 
-    if (grid && options?.enableAutoResize) {
-      if (options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && typeof grid.autosizeColumns === 'function') {
-        grid.autosizeColumns();
-      }
+    // expand/autofit columns on first page load
+    if (grid && options?.enableAutoResize && options.autoFitColumnsOnFirstLoad && options.enableAutoSizeColumns && !this._isAutosizeColsCalled) {
+      grid.autosizeColumns();
+      this._isAutosizeColsCalled = true;
     }
   }
 
@@ -959,7 +957,7 @@ export class SlickVanillaGridBundle<TData = any> {
    * When dataset changes, we need to refresh the entire grid UI & possibly resize it as well
    * @param dataset
    */
-  refreshGridData(dataset: any[], totalCount?: number) {
+  refreshGridData(dataset: TData[], totalCount?: number) {
     // local grid, check if we need to show the Pagination
     // if so then also check if there's any presets and finally initialize the PaginationService
     // a local grid with Pagination presets will potentially have a different total of items, we'll need to get it from the DataView and update our total
@@ -1254,7 +1252,7 @@ export class SlickVanillaGridBundle<TData = any> {
    * if so then also check if there's any presets and finally initialize the PaginationService
    * a local grid with Pagination presets will potentially have a different total of items, we'll need to get it from the DataView and update our total
    */
-  protected loadLocalGridPagination(dataset?: any[]) {
+  protected loadLocalGridPagination(dataset?: TData[]) {
     if (this.gridOptions && this._paginationOptions) {
       this.totalItems = Array.isArray(dataset) ? dataset.length : 0;
       if (this._paginationOptions && this.dataView?.getPagingInfo) {

@@ -518,7 +518,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.initialization(divContainer, slickEventHandler);
         component.dataset = mockData;
 
-        expect(autosizeSpy).toHaveBeenCalledTimes(3); // 1x by datasetChanged and 2x by bindResizeHook
+        expect(autosizeSpy).toHaveBeenCalledTimes(1); // 1x by datasetChanged and 2x by bindResizeHook
         expect(refreshSpy).toHaveBeenCalledWith(mockData);
       });
 
