@@ -24,6 +24,9 @@ export default class Example22 {
   translateService: TranslateService;
   selectedLanguage: string;
   selectedLanguageFile: string;
+  fetchResult = '';
+  statusClass = 'is-success';
+  statusStyle = 'display: none';
 
   constructor() {
     this.translateService = (<any>window).TranslateService;
@@ -88,7 +91,7 @@ export default class Example22 {
         formatter: Formatters.dateIso,
         exportWithFormatter: true,
         filterable: true,
-        editor: { model: Editors.text },
+        editor: { model: Editors.date },
       },
       {
         id: 'finish',
@@ -97,7 +100,7 @@ export default class Example22 {
         formatter: Formatters.dateIso,
         exportWithFormatter: true,
         filterable: true,
-        editor: { model: Editors.text },
+        editor: { model: Editors.date },
       },
       {
         id: 'effort-driven',
@@ -106,13 +109,14 @@ export default class Example22 {
         sortable: true,
         minWidth: 100,
         filterable: true,
-        editor: { model: Editors.text },
+        type: 'boolean',
+        editor: { model: Editors.checkbox },
       },
     ];
 
     this.gridOptions = {
       enableAutoResize: false,
-      gridHeight: 225,
+      gridHeight: 350,
       gridWidth: 800,
       rowHeight: 33,
       enableExcelCopyBuffer: true,
@@ -131,7 +135,8 @@ export default class Example22 {
       enableRowBasedEdit: true,
       rowBasedEditOptions: {
         allowMultipleRows: false,
-        onBeforeRowUpdated(args) {
+        onBeforeRowUpdated: (args) => {
+          // this.clearStatus();
           const { effortDriven, percentComplete, finish, start, duration, title } = args.dataContext;
 
           if (duration > 40) {
@@ -149,18 +154,22 @@ export default class Example22 {
             console.error(err);
             return false;
           })
-          .then(response => {
-            if (response === false) {
-              return false;
-            }
-            if (typeof response === 'object') {
-              return response!.json();
-            }
-          })
-          .then(json => {
-            alert(json.message);
-            return true;
-          });
+            .then(response => {
+              if (response === false) {
+                this.statusClass = 'notification is-danger';
+                return false;
+              }
+              if (typeof response === 'object') {
+                return response!.json();
+              }
+            })
+            .then(json => {
+              // alert(json.message);
+              this.statusStyle = 'display: block';
+              this.statusClass = 'notification is-light is-success';
+              this.fetchResult = json.message;
+              return true;
+            });
         },
         actionColumnConfig: { // override the defaults of the action column
           width: 100,
@@ -221,6 +230,12 @@ export default class Example22 {
     return mockDataset;
   }
 
+  clearStatus() {
+    this.statusClass = '';
+    this.statusStyle = 'display: none';
+    this.fetchResult = '';
+  }
+
   toggleSingleMultiRowEdit() {
     this.sgb.gridOptions = {
       ...this.sgb.gridOptions,
@@ -247,7 +262,7 @@ function fakeFetch(_input: string | URL | Request, _init?: RequestInit | undefin
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(new Response(JSON.stringify({ status: 200, message: 'success' })));
-    // reduces the delay for automated Cypress tests
+      // reduces the delay for automated Cypress tests
     }, (window as any).Cypress ? 10 : 500);
   });
 }

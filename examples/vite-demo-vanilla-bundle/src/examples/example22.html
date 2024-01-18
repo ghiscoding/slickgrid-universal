@@ -69,4 +69,17 @@
   </div>
 </section>
 
-<div class="grid1"></div>
+<div class="columns mt-2">
+
+  <div class="column">
+    <div class="grid1"></div>
+
+  </div>
+
+  <div class="column">
+      <div class.bind="statusClass">
+        <strong style.bind="statusStyle">Status:</strong>
+        <span data-test="fetch-result" textcontent.bind="fetchResult"></span>
+      </div>
+    </div>
+</div>
