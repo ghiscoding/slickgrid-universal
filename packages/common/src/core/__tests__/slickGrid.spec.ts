@@ -190,10 +190,14 @@ describe('SlickGrid core file', () => {
   });
 
   it('should be able to instantiate SlickGrid and invalidate some rows', () => {
-    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', cellAttrs: { 'cell-attr': 22 }, }] as Column[];
+    const columns = [{
+      id: 'firstName', field: 'firstName', name: 'First Name',
+      cellAttrs: { 'cell-attr': 22 },
+      formatter: (r, c, val) => ({ text: val, addClasses: 'text-bold', toolTip: 'cell tooltip', insertElementAfterTarget: container.querySelector('.slick-header') as HTMLDivElement })
+    }] as Column[];
     const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
 
-    grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions);
+    grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
     const invalidSpy = jest.spyOn(grid, 'invalidateAllRows');
     const renderSpy = jest.spyOn(grid, 'render');
     const updateSpy = jest.spyOn(grid, 'updateRowCount');
@@ -203,6 +207,8 @@ describe('SlickGrid core file', () => {
     const cellElms = container.querySelectorAll('.slick-cell.l0.r0');
 
     expect(cellElms[0].getAttribute('cell-attr')).toBe('22');
+    expect(cellElms[0].getAttribute('title')).toBe('cell tooltip');
+    expect(cellElms[0].classList.contains('text-bold')).toBeTruthy();
     expect(invalidSpy).toHaveBeenCalled();
     expect(updateSpy).toHaveBeenCalled();
     expect(renderSpy).toHaveBeenCalled();
@@ -828,6 +834,92 @@ describe('SlickGrid core file', () => {
       grid.applyFormatResultToCellNode(formatterResult, cellNodeElm);
 
       expect(cellNodeElm.outerHTML).toBe('<div class="some-class" title="some tooltip">some content</div>');
+    });
+  });
+
+  describe('dataItemColumnValueExtractor', () => {
+    it('should use dataItemColumnValueExtractor when provided to retrieve value to show in grid cell', () => {
+      const columns = [
+        { id: 'title', name: 'Name', field: 'name' },
+        { id: 'field1', name: 'Field1', field: 'values', fieldIdx: 0 },
+        { id: 'field2', name: 'Field2', field: 'values', fieldIdx: 1 },
+        { id: 'field3', name: 'Field3', field: 'values', fieldIdx: 2 }
+      ];
+      const gridOptions = {
+        enableCellNavigation: true,
+        enableColumnReorder: false,
+        rowHeight: 2500,
+        dataItemColumnValueExtractor: (item, column: any) => {
+          const values = item[column.field];
+          if (column.fieldIdx !== undefined) {
+            return values?.[column.fieldIdx];
+          } else {
+            return values;
+          }
+        },
+      } as GridOption;
+      const data: any[] = [];
+      for (var i = 0; i < 500; i++) {
+        data[i] = {
+          name: 'Item ' + i,
+          values: [i + 8, i + 9, i + 11]
+        };
+      }
+
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, ...gridOptions });
+      grid.init;
+      grid.render();
+
+      // below is simply testing scrollTo() with different offset
+      let secondItemCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
+      expect(secondItemCell.textContent).toBe('8');
+
+      const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
+      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      jest.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, height: 223 } as DOMRect);
+      Object.defineProperty(viewportTopLeft, 'scrollTop', { writable: true, value: 3000 });
+      Object.defineProperty(viewportTopLeft, 'scrollLeft', { writable: true, value: 88 });
+      Object.defineProperty(viewportTopLeft, 'scrollHeight', { writable: true, value: 440 });
+      Object.defineProperty(viewportTopLeft, 'scrollWidth', { writable: true, value: 459 });
+      Object.defineProperty(viewportTopLeft, 'clientHeight', { writable: true, value: 223 });
+      Object.defineProperty(viewportTopLeft, 'clientWidth', { writable: true, value: 128 });
+      grid.updateRowCount();
+      grid.scrollCellIntoView(3000, 2);
+      grid.scrollTo(52);
+
+      expect(onViewportChangedSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('getItemMetadata', () => {
+    it('should expect slick-row to be taking full width when getItemMetadata() is returning cssClasses & colpan: *', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+      ] as Column[];
+      const gridOptions = {
+        enableCellNavigation: true,
+        enableColumnReorder: false,
+        rowHeight: 2500,
+
+      } as GridOption;
+      const mockItems = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 0, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+
+
+      const dv = new SlickDataView({});
+      jest.spyOn(dv, 'getItemMetadata').mockReturnValue({ cssClasses: 'text-bold', focusable: true, formatter: (r, c, val) => val, columns: { 0: { colspan: '*' } } });
+      grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, ...gridOptions });
+      dv.addItems(mockItems);
+      grid.init;
+      grid.render();
+
+      const firstRowElm = container.querySelector('.slick-row');
+      const firstCellElm = firstRowElm?.querySelector('.slick-cell');
+
+      expect(firstRowElm?.classList.contains('text-bold')).toBeTruthy();
+      expect(firstCellElm?.classList.contains('l0')).toBeTruthy();
+      expect(firstCellElm?.classList.contains(`r${columns.length - 1}`)).toBeTruthy();
     });
   });
 
@@ -4000,7 +4092,7 @@ describe('SlickGrid core file', () => {
   describe('Update UI', () => {
     describe('updateCell() method', () => {
       it('should change an item property then call updateCell() and expect it to be updated in the UI with Formatter result', () => {
-        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => `<strong>${val}</strong>` }];
+        const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => val > 20 ? `<strong>${val}</strong>` : null } as any];
         let items = [{ id: 0, name: 'Avery', age: 44 }, { id: 1, name: 'Bob', age: 20 }, { id: 2, name: 'Rachel', age: 46 },];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
