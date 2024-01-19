@@ -65,6 +65,12 @@ const gridStubBlueprint = {
   registerPlugin: jest.fn(),
   onSetOptions: new SlickEvent(),
   onBeforeEditCell: new SlickEvent(),
+  getEditController: jest.fn().mockReturnValue({
+    commitCurrentEdit: jest.fn(),
+    cancelCurrentEdit: jest.fn(),
+  }),
+  getCellEditor: jest.fn().mockReturnValue({}),
+  getActiveCell: jest.fn().mockReturnValue({ row: 0, cell: 0}),
   setColumns: jest.fn().mockImplementation((columns) => {
     (gridStubBlueprint as any).columns = columns;
   }),

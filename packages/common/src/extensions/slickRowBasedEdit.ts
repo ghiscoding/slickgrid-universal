@@ -373,6 +373,10 @@ export class SlickRowBasedEdit {
         return;
       }
 
+      if (this._grid.getCellEditor() && this._grid.getActiveCell()?.row === args.row) {
+        this._grid.getEditController()?.commitCurrentEdit();
+      }
+
       if (this._addonOptions?.onBeforeRowUpdated) {
         const result = await this._addonOptions.onBeforeRowUpdated(args);
 
