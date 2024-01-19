@@ -4,7 +4,7 @@ const config: Config.InitialOptions = {
   rootDir: '../',
   globalSetup: '<rootDir>/test/jest-global-setup.ts',
   cacheDirectory: '<rootDir>/test/.jest-cache',
-  collectCoverage: false,
+  collectCoverage: true,
   collectCoverageFrom: [
     'packages/**/*.ts',
     '!**/dist/**',
@@ -24,10 +24,11 @@ const config: Config.InitialOptions = {
     '<rootDir>/node_modules/'
   ],
   coverageReporters: [
+    'clover',
     'json',
     'lcov',
-    'text',
-    'html'
+    'html',
+    ['text', { skipFull: true }],
   ],
   moduleFileExtensions: [
     'json',

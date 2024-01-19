@@ -31,7 +31,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2 # codecov-bash seems to require this
+          fetch-depth: 0
 
       - name: Set NodeJS
         uses: actions/setup-node@v4
@@ -82,8 +82,13 @@ jobs:
 
       - name: Upload Jest coverage to Codecov
         if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
-        uses: codecov/codecov-action@v3
+        uses: wandalen/wretry.action@v1
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: test/jest-coverage
-          verbose: true
+          action: codecov/codecov-action@v3
+          with: |
+            fail_ci_if_error: true
+            verbose: true
+            directory: test/jest-coverage
+            token: ${{ secrets.CODECOV_TOKEN }}
+          attempt_limit: 5
+          attempt_delay: 10000
