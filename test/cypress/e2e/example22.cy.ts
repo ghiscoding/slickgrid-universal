@@ -96,6 +96,14 @@ describe('Example 22 - Row Based Editing', () => {
     cy.get('.slick-cell.l2.r2').first().should('contain', '30');
   });
 
+  it('should cleanup status when starting a new edit mode', () => {
+    cy.get('.action-btns--edit').first().click();
+
+    cy.get('[data-test="fetch-result"]').should('be.empty');
+
+    cy.get('.action-btns--cancel').first().click();
+  });
+
   it('should revert changes on cancel click', () => {
     cy.get('.action-btns--edit').first().click();
 

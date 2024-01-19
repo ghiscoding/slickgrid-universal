@@ -65,6 +65,12 @@ const gridStubBlueprint = {
   registerPlugin: jest.fn(),
   onSetOptions: new SlickEvent(),
   onBeforeEditCell: new SlickEvent(),
+  getEditController: jest.fn().mockReturnValue({
+    commitCurrentEdit: jest.fn(),
+    cancelCurrentEdit: jest.fn(),
+  }),
+  getCellEditor: jest.fn().mockReturnValue({}),
+  getActiveCell: jest.fn().mockReturnValue({ row: 0, cell: 0}),
   setColumns: jest.fn().mockImplementation((columns) => {
     (gridStubBlueprint as any).columns = columns;
   }),
@@ -624,6 +630,24 @@ describe('Row Based Edit Plugin', () => {
       });
 
       expect(gridStub.invalidate).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call an optionally registered onBeforeEditMode callback clicking the edit button', () => {
+      const spy = jest.fn();
+      const { onCellClick } = arrange({ onBeforeEditMode: () => spy() });
+      const fakeItem = { id: 'test' };
+
+      gridStub.invalidate.mockClear();
+      onCellClick(createFakeEvent(BTN_ACTION_EDIT), {
+        row: 0,
+        cell: 0,
+        grid: gridStub,
+        columnDef: {} as Column,
+        dataContext: fakeItem,
+        dataView: gridStub.getData(),
+      });
+
+      expect(spy).toHaveBeenCalled();
     });
 
     it('should not enter editmode when not in allowMultipleRows mode and a previous row is already in editmode', () => {

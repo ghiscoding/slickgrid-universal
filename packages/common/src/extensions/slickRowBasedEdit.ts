@@ -356,6 +356,10 @@ export class SlickRowBasedEdit {
         return;
       }
 
+      if (typeof this._addonOptions?.onBeforeEditMode === 'function') {
+        this._addonOptions.onBeforeEditMode!(args);
+      }
+
       this.toggleEditmode(dataContext, true);
     } else if (
       target.classList.contains(BTN_ACTION_UPDATE) ||
@@ -367,6 +371,10 @@ export class SlickRowBasedEdit {
         !window.confirm(this._addonOptions.actionButtons.updateButtonPrompt)
       ) {
         return;
+      }
+
+      if (this._grid.getCellEditor() && this._grid.getActiveCell()?.row === args.row) {
+        this._grid.getEditController()?.commitCurrentEdit();
       }
 
       if (this._addonOptions?.onBeforeRowUpdated) {
