@@ -63,9 +63,15 @@ export function createDomElement<T extends keyof HTMLElementTagNameMap, K extend
   return elm;
 }
 
-/** Takes an input string and splits it into an array of words (extra whitespaces are ignored). */
-export function classNameToList(s = ''): string[] {
-  return s.split(' ').filter(cls => cls); // filter will remove whitespace entries
+/**
+ * Accepts string containing the class or space-separated list of classes, and
+ * returns list of individual classes.
+ * Method properly takes into account extra whitespaces in the `className`
+ * e.g.: " class1    class2   " => will result in `['class1', 'class2']`.
+ * @param {String} className - space separated list of class names
+ */
+export function classNameToList(className = ''): string[] {
+  return className.split(' ').filter(cls => cls); // filter will remove whitespace entries
 }
 
 /**

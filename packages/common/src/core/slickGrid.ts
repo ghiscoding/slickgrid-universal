@@ -3357,11 +3357,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const appendCellResult = evt.getReturnValue();
     let addlCssClasses = typeof appendCellResult === 'string' ? appendCellResult : '';
     if ((formatterResult as FormatterResultObject)?.addClasses) {
-      addlCssClasses += (addlCssClasses ? ' ' : '') + (formatterResult as FormatterResultObject).addClasses;
+      addlCssClasses += classNameToList((addlCssClasses ? ' ' : '') + (formatterResult as FormatterResultObject).addClasses).join(' ');
     }
 
     const toolTipText = (formatterResult as FormatterResultObject)?.toolTip ? `${(formatterResult as FormatterResultObject).toolTip}` : '';
-    const cellDiv = createDomElement('div', { className: `${cellCss} ${addlCssClasses || ''}`.trim(), role: 'gridcell', tabIndex: -1 });
+    const cellDiv = createDomElement('div', {
+      className: classNameToList(`${cellCss} ${addlCssClasses || ''}`).join(' '),
+      role: 'gridcell',
+      tabIndex: -1
+    });
     cellDiv.setAttribute('aria-describedby', this.uid + m.id);
     if (toolTipText) {
       cellDiv.setAttribute('title', toolTipText);
@@ -3549,12 +3553,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.applyHtmlCode(cellNode, formatterVal);
 
     if ((formatterResult as FormatterResultObject).removeClasses && !suppressRemove) {
-      const classes = classNameToList((formatterResult as FormatterResultObject).removeClasses);
-      classes.forEach((c) => cellNode.classList.remove(c));
+      cellNode.classList.remove(...classNameToList((formatterResult as FormatterResultObject).removeClasses));
     }
     if ((formatterResult as FormatterResultObject).addClasses) {
-      const classes = classNameToList((formatterResult as FormatterResultObject).addClasses);
-      classes.forEach((c) => cellNode.classList.add(c));
+      cellNode.classList.add(...classNameToList((formatterResult as FormatterResultObject).addClasses));
     }
     if ((formatterResult as FormatterResultObject).toolTip) {
       cellNode.setAttribute('title', (formatterResult as FormatterResultObject).toolTip!);
@@ -4656,17 +4658,17 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   /**
    * Highlight a row for a certain duration (ms) of time.
    * @param {Number} row - grid row number
-   * @param {Number} [duration] - duration (ms), defaults to 500ms
+   * @param {Number} [duration] - duration (ms), defaults to 400ms
    */
   highlightRow(row: number, duration?: number) {
     const rowCache = this.rowsCache[row];
     duration ||= this._options.rowHighlightDuration;
 
     if (Array.isArray(rowCache?.rowNode) && this._options.rowHighlightCssClass) {
-      rowCache.rowNode.forEach(node => node.classList.add(this._options.rowHighlightCssClass || ''));
+      rowCache.rowNode.forEach(node => node.classList.add(...classNameToList(this._options.rowHighlightCssClass)));
       clearTimeout(this._highlightRowTimer);
       this._highlightRowTimer = setTimeout(() => {
-        rowCache.rowNode?.forEach(node => node.classList.remove(this._options.rowHighlightCssClass || ''));
+        rowCache.rowNode?.forEach(node => node.classList.remove(...classNameToList(this._options.rowHighlightCssClass)));
       }, duration);
     }
   }
