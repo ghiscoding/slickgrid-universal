@@ -74,7 +74,7 @@ export default class Example11 {
   isGridEditable = true;
   dropdownDeleteViewClass = 'dropdown-item dropdown-item-disabled';
   dropdownUpdateViewClass = 'dropdown-item dropdown-item-disabled';
-  editQueue: Array<{ item: any; column: Column; editCommand: EditCommand }> = [];
+  editQueue: Array<{ item: any; column: Column; editCommand: EditCommand; }> = [];
   editedItems = {};
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
@@ -116,7 +116,7 @@ export default class Example11 {
 
   attached() {
     this.initializeGrid();
-    this.dataset = this.loadData(500);
+    this.dataset = this.loadData(1000);
     this.gridContainerElm = document.querySelector(`.grid11`) as HTMLDivElement;
     this.viewSelectElm = document.querySelector('.selected-view') as HTMLSelectElement;
 
@@ -473,7 +473,7 @@ export default class Example11 {
     }
   }
 
-  remoteCallbackFn(args: { item: any, selectedIds: string[], updateType: 'selection' | 'mass' }) {
+  remoteCallbackFn(args: { item: any, selectedIds: string[], updateType: 'selection' | 'mass'; }) {
     const fields: Array<{ fieldName: string; value: any; }> = [];
     for (const key in args.item) {
       if (args.item.hasOwnProperty(key)) {

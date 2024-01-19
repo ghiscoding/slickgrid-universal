@@ -826,7 +826,7 @@ describe('Example 11 - Batch Editing', () => {
       .find('.slick-custom-footer')
       .find('.right-footer .item-count')
       .should($span => {
-        expect(Number($span.text())).to.eq(50);
+        expect(Number($span.text())).to.eq(100);
       });
   });
 });
