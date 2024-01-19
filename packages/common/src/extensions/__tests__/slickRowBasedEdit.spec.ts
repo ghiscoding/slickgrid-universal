@@ -626,6 +626,24 @@ describe('Row Based Edit Plugin', () => {
       expect(gridStub.invalidate).toHaveBeenCalledTimes(1);
     });
 
+    it('should call an optionally registered onBeforeEditMode callback clicking the edit button', () => {
+      const spy = jest.fn();
+      const { onCellClick } = arrange({ onBeforeEditMode: () => spy() });
+      const fakeItem = { id: 'test' };
+
+      gridStub.invalidate.mockClear();
+      onCellClick(createFakeEvent(BTN_ACTION_EDIT), {
+        row: 0,
+        cell: 0,
+        grid: gridStub,
+        columnDef: {} as Column,
+        dataContext: fakeItem,
+        dataView: gridStub.getData(),
+      });
+
+      expect(spy).toHaveBeenCalled();
+    });
+
     it('should not enter editmode when not in allowMultipleRows mode and a previous row is already in editmode', () => {
       const { onCellClick } = arrange();
       const fakeItem = { id: 'test' };

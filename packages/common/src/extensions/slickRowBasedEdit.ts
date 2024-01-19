@@ -356,6 +356,10 @@ export class SlickRowBasedEdit {
         return;
       }
 
+      if (typeof this._addonOptions?.onBeforeEditMode === 'function') {
+        this._addonOptions.onBeforeEditMode!(args);
+      }
+
       this.toggleEditmode(dataContext, true);
     } else if (
       target.classList.contains(BTN_ACTION_UPDATE) ||

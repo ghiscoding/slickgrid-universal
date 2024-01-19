@@ -69,4 +69,7 @@ export interface RowBasedEditOptions {
 
   /** method called before row gets updated. Needs to return a promised boolean. True will continue; False will halt the update */
   onBeforeRowUpdated?: (args: OnEventArgs) => Promise<boolean>;
+
+  /** method called before a row enters edit mode. */
+  onBeforeEditMode?: (args: OnEventArgs) => void;
 }

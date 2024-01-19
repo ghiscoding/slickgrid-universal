@@ -135,8 +135,8 @@ export default class Example22 {
       enableRowBasedEdit: true,
       rowBasedEditOptions: {
         allowMultipleRows: false,
+        onBeforeEditMode: () => this.clearStatus(),
         onBeforeRowUpdated: (args) => {
-          this.clearStatus();
           const { effortDriven, percentComplete, finish, start, duration, title } = args.dataContext;
 
           if (duration > 40) {
@@ -164,7 +164,6 @@ export default class Example22 {
               }
             })
             .then(json => {
-              // alert(json.message);
               this.statusStyle = 'display: block';
               this.statusClass = 'notification is-light is-success';
               this.fetchResult = json.message;
