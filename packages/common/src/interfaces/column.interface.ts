@@ -290,6 +290,12 @@ export interface Column<T = any> {
    */
   queryFieldSorter?: string;
 
+  /**
+   * Defaults to true, makes the column reorderable to another position in the grid.
+   * NOTE: Works best when used as first or last columns of the grid (e.g.: row selection checkbox as first column).
+   */
+  reorderable?: boolean;
+
   /** Is the column resizable, can we make it wider/thinner? A resize cursor icon will show on the right side of the column when enabled. */
   resizable?: boolean;
 

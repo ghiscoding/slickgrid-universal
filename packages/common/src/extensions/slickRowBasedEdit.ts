@@ -47,6 +47,7 @@ export class SlickRowBasedEdit {
     allowMultipleRows: false,
     columnId: '_slick_rowbasededit_action',
     columnIndexPosition: -1,
+    reorderable: false,
   } as RowBasedEditOptions;
   protected _editedRows: Map<string, EditedRowDetails> = new Map();
 
@@ -185,6 +186,7 @@ export class SlickRowBasedEdit {
       width: 75,
       maxWidth: 75,
       excludeFromExport: true,
+      reorderable: this._addonOptions?.reorderable,
       formatter: this.actionColumnFormatter.bind(this),
       onCellClick: this.onCellClickHandler.bind(this),
       ...(this._addonOptions?.actionColumnConfig ?? {}),

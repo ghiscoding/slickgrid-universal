@@ -343,6 +343,9 @@ export interface GridOption<C extends Column = Column> {
    */
   enableColumnReorder?: boolean | ColumnReorderFunction;
 
+  /** Defaults to "unorderable", a CSS class name that will be added to the column classes when the column cannot be reordered. */
+  unorderableColumnCssClass?: string;
+
   /**
    * Defaults to true, when doing a double-click in the column resize section (top right of a column when the mouse resize icon shows up),
    * do we want to automatically resize the column by its cell content?

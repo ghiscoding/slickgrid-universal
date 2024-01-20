@@ -35,6 +35,7 @@ $slick-container-border-left:                               0 none !default;
 $slick-grid-border-color:                                   fade(black, 3%) !default;
 $slick-grid-border-style:                                   solid !default;
 $slick-grid-header-background:                              rgba(255, 255, 255, .6) !default;
+$slick-grid-header-unorderable-bg-color:                    darken($slick-grid-header-background, 4%) !default;
 $slick-grid-cell-color:                                     rgb(255, 255, 255) !default;
 $slick-gray-dark:              			                        #333 !default;
 $slick-link-color:        				                          #08c !default;
