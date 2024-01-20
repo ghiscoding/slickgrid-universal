@@ -90,6 +90,7 @@ describe('SlickRowDetailView plugin', () => {
       keyPrefix: '::',
       loadOnce: true,
       collapseAllOnSort: true,
+      reorderable: false,
       saveDetailViewOnScroll: true,
       singleRowExpand: true,
       useSimpleViewportCalc: true,
@@ -203,7 +204,7 @@ describe('SlickRowDetailView plugin', () => {
       id: '_detail_', field: '_detail_', name: '', alwaysRenderColumn: true, cssClass: 'some-class',
       excludeFromExport: true, excludeFromColumnPicker: true, excludeFromGridMenu: true, excludeFromQuery: true, excludeFromHeaderMenu: true,
       formatter: expect.anything(),
-      resizable: false, sortable: false, toolTip: 'title', width: 30,
+      reorderable: false, resizable: false, sortable: false, toolTip: 'title', width: 30,
     };
 
     const output = plugin.create(mockColumns, { rowDetailView: { process: processMock, expandableOverride: overrideMock, panelRows: 4, columnId: '_detail_', cssClass: 'some-class', toolTip: 'title' } });
@@ -223,7 +224,7 @@ describe('SlickRowDetailView plugin', () => {
       id: '_detail_', field: '_detail_', name: '', alwaysRenderColumn: true, cssClass: 'some-class',
       excludeFromExport: true, excludeFromColumnPicker: true, excludeFromGridMenu: true, excludeFromQuery: true, excludeFromHeaderMenu: true,
       formatter: expect.anything(),
-      resizable: false, sortable: false, toolTip: 'title', width: 30,
+      reorderable: false, resizable: false, sortable: false, toolTip: 'title', width: 30,
     });
     expect(plugin.getExpandableOverride()).toBeFalsy();
     expect(output instanceof SlickRowDetailView).toBeTruthy();

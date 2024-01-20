@@ -17,6 +17,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     name: '',
     toolTip: 'Select/Deselect All',
     width: 30,
+    reorderable: false,
     applySelectOnAllPages: true, // when that is enabled the "Select All" will be applied to all pages (when using Pagination)
     hideInColumnTitleRow: false,
     hideInFilterHeaderRow: true
@@ -239,6 +240,7 @@ export class SlickCheckboxSelectColumn<T = any> {
       excludeFromHeaderMenu: true,
       hideSelectAllCheckbox: this._addonOptions.hideSelectAllCheckbox,
       resizable: false,
+      reorderable: this._addonOptions.reorderable,
       sortable: false,
       width: this._addonOptions.width || 30,
       formatter: this.checkboxSelectionFormatter.bind(this),

@@ -49,14 +49,17 @@ export interface RowDetailViewOption {
    */
   parent?: any;
 
-  /** Defaults to false, when True will open the row detail on a row click (from any column) */
-  useRowClick?: boolean;
+  /** Defaults to false, makes the column reorderable to another position in the grid. */
+  reorderable?: boolean;
 
   /** Defaults to true, which will save the row detail view in a cache when it detects that it will become out of the viewport buffer */
   saveDetailViewOnScroll?: boolean;
 
   /** Defaults to false, which will limit expanded row to only 1 at a time (it will close all other rows before opening new one). */
   singleRowExpand?: boolean;
+
+  /** Defaults to false, when True will open the row detail on a row click (from any column) */
+  useRowClick?: boolean;
 
   /**
    * Defaults to false, which will use a simpler way of calculating when rows become out (or back) of viewport range.

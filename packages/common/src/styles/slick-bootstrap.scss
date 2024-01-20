@@ -376,6 +376,9 @@
         top: var(--slick-header-resizable-hover-top, $slick-header-resizable-hover-top);
         opacity: var(--slick-header-resizable-hover-opacity, $slick-header-resizable-hover-opacity);
       }
+      &.unorderable {
+        background-color: var(--slick-grid-header-unorderable-bg-color, $slick-grid-header-unorderable-bg-color);
+      }
     }
   }
 

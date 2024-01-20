@@ -215,6 +215,16 @@ describe('SlickGrid core file', () => {
     expect(renderSpy).toHaveBeenCalled();
   });
 
+  it('should be able to disable column reorderable', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', reorderable: false }] as Column[];
+    const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
+
+    grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+    const headerElms = container.querySelectorAll('.slick-header-column');
+
+    expect(headerElms[0].classList.contains('unorderable')).toBeTruthy();
+  });
+
   it('should be able to edit when editable grid option is enabled and invalidate some rows', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', editor: InputEditor }] as Column[];
     const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }];
@@ -1920,12 +1930,14 @@ describe('SlickGrid core file', () => {
       const dragEvent = new CustomEvent('DragEvent');
       jest.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
       Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
+      Object.defineProperty(dragEvent, 'related', { writable: true, value: headerColumnElms[0] });
       Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
       Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
       Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
 
       expect(sortInstance).toBeTruthy();
       sortInstance.options.onStart(dragEvent);
+      sortInstance.options.onMove(dragEvent);
       expect(viewportTopLeft.scrollLeft).toBe(0);
 
       jest.advanceTimersByTime(100);
