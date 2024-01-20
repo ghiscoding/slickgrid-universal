@@ -4,7 +4,7 @@ const config: Config.InitialOptions = {
   rootDir: '../',
   globalSetup: '<rootDir>/test/jest-global-setup.ts',
   cacheDirectory: '<rootDir>/test/.jest-cache',
-  collectCoverage: true,
+  collectCoverage: false,
   collectCoverageFrom: [
     'packages/**/*.ts',
     '!**/dist/**',

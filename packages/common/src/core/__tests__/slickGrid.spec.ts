@@ -192,6 +192,7 @@ describe('SlickGrid core file', () => {
   it('should be able to instantiate SlickGrid and invalidate some rows', () => {
     const columns = [{
       id: 'firstName', field: 'firstName', name: 'First Name',
+      alwaysRenderColumn: true,
       cellAttrs: { 'cell-attr': 22 },
       formatter: (r, c, val) => ({ text: val, addClasses: 'text-bold', toolTip: 'cell tooltip', insertElementAfterTarget: container.querySelector('.slick-header') as HTMLDivElement })
     }] as Column[];
@@ -499,6 +500,7 @@ describe('SlickGrid core file', () => {
       expect(footerElms[0].style.display).toBe('none');
       expect(footerElms[1].style.display).toBe('none');
 
+      grid.setActiveCell(2, 1);
       grid.setFooterRowVisibility(true);
       grid.updateColumns(); // this will trigger onBeforeFooterRowCellDestroySpy
 
@@ -1310,6 +1312,20 @@ describe('SlickGrid core file', () => {
       expect(grid.getHeaderColumnWidthDiff()).toBe(0);
     });
 
+    it('should not call onBeforeCellEditorDestroy when mixinDefaults is enabled and commitCurrentEdit is returning false', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, editable: true, mixinDefaults: true });
+      const onBeforeCellEditorDestroySpy = jest.spyOn(grid.onBeforeCellEditorDestroy, 'notify');
+      jest.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
+      grid.activateChangedOptions();
+      const result = grid.getCanvasWidth();
+
+      expect(result).toBe(80);
+      expect(grid.getAbsoluteColumnMinWidth()).toBe(0);
+      expect(grid.getHeaderColumnWidthDiff()).toBe(0);
+      expect(onBeforeCellEditorDestroySpy).not.toHaveBeenCalled();
+    });
+
     it('should return default full grid width when column is not wider than grid but fullWidthRows is enabled', () => {
       const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
       grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, fullWidthRows: true });
@@ -1420,7 +1436,7 @@ describe('SlickGrid core file', () => {
 
     describe('getViewportHeight() method', () => {
       const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'firstName', field: 'firstName', name: 'First Name', alwaysRenderColumn: true },
         { id: 'lastName', field: 'lastName', name: 'Last Name' },
         { id: 'age', field: 'age', name: 'Age' },
       ] as Column[];
@@ -2217,6 +2233,11 @@ describe('SlickGrid core file', () => {
         grid
       );
 
+      // header click won't get through
+      const onHeaderClickSpy = jest.spyOn(grid.onHeaderClick, 'notify');
+      container.querySelector('.slick-header')!.dispatchEvent(new CustomEvent('click'));
+      expect(onHeaderClickSpy).not.toHaveBeenCalled();
+
       // end resizing
       document.body.dispatchEvent(bodyMouseUpEvent);
 
@@ -2975,6 +2996,8 @@ describe('SlickGrid core file', () => {
         ...defaultOptions, enableMouseWheelScrollHandler: true,
         createFooterRow: true, createPreHeaderPanel: true,
       });
+      grid.setOptions({ enableMouseWheelScrollHandler: false });
+      grid.setOptions({ enableMouseWheelScrollHandler: true });
       grid.scrollCellIntoView(1, 2, true);
 
       const mouseEvent = new Event('mousewheel');
@@ -3101,6 +3124,9 @@ describe('SlickGrid core file', () => {
       expect(viewportBottomRightElm.scrollTop).toBe(25);
       expect(onViewportChangedSpy).toHaveBeenCalled();
       expect(mousePreventSpy).toHaveBeenCalled();
+
+      jest.advanceTimersByTime(1);
+      viewportLeftElm.dispatchEvent(mouseEvent);
     });
 
     it('should scroll all elements shown when triggered by mousewheel and preHeader/footer/frozenRow are enabled', () => {
