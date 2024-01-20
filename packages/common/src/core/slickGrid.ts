@@ -2597,7 +2597,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         shrinkLeeway -= shrinkSize;
         widths[i] -= shrinkSize;
       }
-      if (prevTotal <= total) {  // avoid infinite loop
+      /* istanbul ignore if - avoid infinite loop */
+      if (prevTotal <= total) {
         break;
       }
       prevTotal = total;
@@ -2621,7 +2622,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         total += growSize;
         widths[i] += (total <= availWidth ? growSize : 0);
       }
-      if (prevTotal >= total) {  // avoid infinite loop
+      /* istanbul ignore if - avoid infinite loop */
+      if (prevTotal >= total) {
         break;
       }
       prevTotal = total;
