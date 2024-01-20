@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.2.0...v4.3.0) (2024-01-20)
+
+### Features
+
+* **plugin:** new Row Based Editor ([#1323](https://github.com/ghiscoding/slickgrid-universal/issues/1323)) ([64d464c](https://github.com/ghiscoding/slickgrid-universal/commit/64d464c2094c014024ddeaf49bd4f6ec898b1c25)) - by @zewa666
+
+### Performance Improvements
+
+* **resizer:** `autosizeColumns` is called too many times on page load ([#1343](https://github.com/ghiscoding/slickgrid-universal/issues/1343)) ([e02ac55](https://github.com/ghiscoding/slickgrid-universal/commit/e02ac550d9195ede2df58060fecc81b72c5011f9)) - by @ghiscoding
+
 # [4.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.1.0...v4.2.0) (2023-12-30)
 
 **Note:** Version bump only for package @slickgrid-universal/vanilla-bundle

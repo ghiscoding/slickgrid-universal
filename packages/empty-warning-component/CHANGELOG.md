@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.2.0...v4.3.0) (2024-01-20)
+
+### Bug Fixes
+
+* SlickEmptyWarningComponent should accept native HTML for CSP safe ([#1333](https://github.com/ghiscoding/slickgrid-universal/issues/1333)) ([4740f96](https://github.com/ghiscoding/slickgrid-universal/commit/4740f961813666cbae918cb4940e7c2ec57bec2d)) - by @ghiscoding
+
 # [4.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.1.0...v4.2.0) (2023-12-30)
 
 **Note:** Version bump only for package @slickgrid-universal/empty-warning-component

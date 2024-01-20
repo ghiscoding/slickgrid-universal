@@ -4,6 +4,42 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.2.0...v4.3.0) (2024-01-20)
+
+### Bug Fixes
+
+* `getCellFromPoint()` should return row/cell -1 outside grid canvas ([#1325](https://github.com/ghiscoding/slickgrid-universal/issues/1325)) ([b483e62](https://github.com/ghiscoding/slickgrid-universal/commit/b483e62fc3931f836c77677db67557adb2ca4edd)) - by @ghiscoding
+* add grid & cell `role` for screen ready accessibility ([#1337](https://github.com/ghiscoding/slickgrid-universal/issues/1337)) ([7309fa8](https://github.com/ghiscoding/slickgrid-universal/commit/7309fa8de4fc00f930e68af090010d91080b6213)) - by @ghiscoding
+* **core:** allow extra spaces in `headerCssClass` & other `cssClass` ([#1303](https://github.com/ghiscoding/slickgrid-universal/issues/1303)) ([59ebaa6](https://github.com/ghiscoding/slickgrid-universal/commit/59ebaa65b6882ed3274a3185f457ecef4b2c5b51)) - by @ghiscoding
+* **core:** allow extra spaces to be striped to any css classes ([#1352](https://github.com/ghiscoding/slickgrid-universal/issues/1352)) ([e5e29c0](https://github.com/ghiscoding/slickgrid-universal/commit/e5e29c063a9e018c2148685cfea5fc43c89426b9)) - by @ghiscoding
+* **core:** column resize handle could throw when invalid elm ([#1344](https://github.com/ghiscoding/slickgrid-universal/issues/1344)) ([41f6058](https://github.com/ghiscoding/slickgrid-universal/commit/41f60583831b7284cba56f2af9cfe45b4a09d617)) - by @ghiscoding
+* **core:** DataView `inlineFilters` should allow ES6 arrow functions ([#1304](https://github.com/ghiscoding/slickgrid-universal/issues/1304)) ([25b9a10](https://github.com/ghiscoding/slickgrid-universal/commit/25b9a10fdd14585f1b303361b2814e860c6e7031)) - by @ghiscoding
+* **core:** don't show column header empty title tooltip ([#1317](https://github.com/ghiscoding/slickgrid-universal/issues/1317)) ([8b20407](https://github.com/ghiscoding/slickgrid-universal/commit/8b2040754f1810191fb26f0a5a91a19eae13ebfd)) - by @ghiscoding
+* **core:** EventHandler subscribed event should be SlickEventData type ([#1327](https://github.com/ghiscoding/slickgrid-universal/issues/1327)) ([2573310](https://github.com/ghiscoding/slickgrid-universal/commit/25733102dbcefcbacc2ce5d6f4c07bd9d1cce6a1)) - by @ghiscoding
+* **core:** remove editor keydown keyCaptureList duplicate code ([#1322](https://github.com/ghiscoding/slickgrid-universal/issues/1322)) ([c5f6b85](https://github.com/ghiscoding/slickgrid-universal/commit/c5f6b8575513aa6eb0215a47a0365fdab0059c3e)) - by @ghiscoding
+* **core:** SlickEvent handler event should be type of ArgType ([#1328](https://github.com/ghiscoding/slickgrid-universal/issues/1328)) ([a9cb8ee](https://github.com/ghiscoding/slickgrid-universal/commit/a9cb8ee3f1a5da4249851e5b701b027b3f72ad26)), closes [#1327](https://github.com/ghiscoding/slickgrid-universal/issues/1327) - by @ghiscoding
+* **demo:** Unsaved Cell CSS Styling follow sort/filter/pagination ([#1313](https://github.com/ghiscoding/slickgrid-universal/issues/1313)) ([7619579](https://github.com/ghiscoding/slickgrid-universal/commit/761957987e85ed9829900739e659d8d02230ea12)) - by @ghiscoding
+* Editors/Filters should create SlickEventData with event arg ([#1326](https://github.com/ghiscoding/slickgrid-universal/issues/1326)) ([e008902](https://github.com/ghiscoding/slickgrid-universal/commit/e008902e6d85a7a424ed8c9e32786490daac66ce)) - by @ghiscoding
+* **plugin:** CustomDataView for CellSelectionModel & SlickCustomTooltip ([#1306](https://github.com/ghiscoding/slickgrid-universal/issues/1306)) ([3bdd300](https://github.com/ghiscoding/slickgrid-universal/commit/3bdd30038b93af2db1f2f4a8b7df72ca6a06a06e)) - by @ghiscoding
+* regression with `onSelectedRowsChanged` not receiving correct `caller` prop ([#1341](https://github.com/ghiscoding/slickgrid-universal/issues/1341)) ([03cad4a](https://github.com/ghiscoding/slickgrid-universal/commit/03cad4a34bf13a8e1342306f9210525f5025321f)) - by @ghiscoding
+* SlickEmptyWarningComponent should accept native HTML for CSP safe ([#1333](https://github.com/ghiscoding/slickgrid-universal/issues/1333)) ([4740f96](https://github.com/ghiscoding/slickgrid-universal/commit/4740f961813666cbae918cb4940e7c2ec57bec2d)) - by @ghiscoding
+* when `onDragInit` return false it should stop ([#1340](https://github.com/ghiscoding/slickgrid-universal/issues/1340)) ([d9c714c](https://github.com/ghiscoding/slickgrid-universal/commit/d9c714c042739d5cbdbe51b876f16a3152d200e6)), closes [#1339](https://github.com/ghiscoding/slickgrid-universal/issues/1339) - by @ghiscoding
+* when `onResizeStart` return false it should stop ([#1339](https://github.com/ghiscoding/slickgrid-universal/issues/1339)) ([5a3bd1c](https://github.com/ghiscoding/slickgrid-universal/commit/5a3bd1c0c6a19294fe6578766d6b2d56ac8e2cac)) - by @ghiscoding
+
+### Features
+
+* add `name` option to CheckboxSelectColumn plugin on columDef ([#1331](https://github.com/ghiscoding/slickgrid-universal/issues/1331)) ([abe344b](https://github.com/ghiscoding/slickgrid-universal/commit/abe344b025b385630077bfb63d5534a88b3b7d71)) - by @ghiscoding
+* add `onBeforePasteCell` event to excel copy buffer ([#1298](https://github.com/ghiscoding/slickgrid-universal/issues/1298)) ([22037ca](https://github.com/ghiscoding/slickgrid-universal/commit/22037ca7918fc4bfb55bb4bf619cd280b564a351)) - by @zewa666
+* add column `reorderable` option to optionally lock a column ([#1357](https://github.com/ghiscoding/slickgrid-universal/issues/1357)) ([44f6c08](https://github.com/ghiscoding/slickgrid-universal/commit/44f6c085f009ec41bec711aa14ae7fbb3fcbc156)) - by @ghiscoding
+* convert CheckSelectColumn plugin to native HTML for CSP safe code ([#1332](https://github.com/ghiscoding/slickgrid-universal/issues/1332)) ([2b9216d](https://github.com/ghiscoding/slickgrid-universal/commit/2b9216df3e1796ffb4081127cdaa9011e4d48b23)) - by @ghiscoding
+* **core:** expose all SlickEvent via internal PubSub Service ([#1311](https://github.com/ghiscoding/slickgrid-universal/issues/1311)) ([f56edef](https://github.com/ghiscoding/slickgrid-universal/commit/f56edef91b76ab044134ddf36d67599e6d80f39c)) - by @ghiscoding
+* **editor:** auto commit before save; add `onBeforeEditMode` callback ([#1353](https://github.com/ghiscoding/slickgrid-universal/issues/1353)) ([f33bf52](https://github.com/ghiscoding/slickgrid-universal/commit/f33bf5202e0db30121bf52ce184555f6524dde85)) - by @zewa666
+* **plugin:** new Row Based Editor ([#1323](https://github.com/ghiscoding/slickgrid-universal/issues/1323)) ([64d464c](https://github.com/ghiscoding/slickgrid-universal/commit/64d464c2094c014024ddeaf49bd4f6ec898b1c25)) - by @zewa666
+
+### Performance Improvements
+
+* **resizer:** `autosizeColumns` is called too many times on page load ([#1343](https://github.com/ghiscoding/slickgrid-universal/issues/1343)) ([e02ac55](https://github.com/ghiscoding/slickgrid-universal/commit/e02ac550d9195ede2df58060fecc81b72c5011f9)) - by @ghiscoding
+
 # [4.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.1.0...v4.2.0) (2023-12-30)
 
 ### Bug Fixes

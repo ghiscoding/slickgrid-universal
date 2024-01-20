@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.2.0...v4.3.0) (2024-01-20)
+
+### Bug Fixes
+
+* **core:** EventHandler subscribed event should be SlickEventData type ([#1327](https://github.com/ghiscoding/slickgrid-universal/issues/1327)) ([2573310](https://github.com/ghiscoding/slickgrid-universal/commit/25733102dbcefcbacc2ce5d6f4c07bd9d1cce6a1)) - by @ghiscoding
+* **plugin:** CustomDataView for CellSelectionModel & SlickCustomTooltip ([#1306](https://github.com/ghiscoding/slickgrid-universal/issues/1306)) ([3bdd300](https://github.com/ghiscoding/slickgrid-universal/commit/3bdd30038b93af2db1f2f4a8b7df72ca6a06a06e)) - by @ghiscoding
+
 # [4.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.1.0...v4.2.0) (2023-12-30)
 
 **Note:** Version bump only for package @slickgrid-universal/custom-tooltip-plugin

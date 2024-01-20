@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.2.0...v4.3.0) (2024-01-20)
+
+### Bug Fixes
+
+* **core:** allow extra spaces in `headerCssClass` & other `cssClass` ([#1303](https://github.com/ghiscoding/slickgrid-universal/issues/1303)) ([59ebaa6](https://github.com/ghiscoding/slickgrid-universal/commit/59ebaa65b6882ed3274a3185f457ecef4b2c5b51)) - by @ghiscoding
+* **core:** allow extra spaces to be striped to any css classes ([#1352](https://github.com/ghiscoding/slickgrid-universal/issues/1352)) ([e5e29c0](https://github.com/ghiscoding/slickgrid-universal/commit/e5e29c063a9e018c2148685cfea5fc43c89426b9)) - by @ghiscoding
+* **core:** DataView `inlineFilters` should allow ES6 arrow functions ([#1304](https://github.com/ghiscoding/slickgrid-universal/issues/1304)) ([25b9a10](https://github.com/ghiscoding/slickgrid-universal/commit/25b9a10fdd14585f1b303361b2814e860c6e7031)) - by @ghiscoding
+
+### Features
+
+* convert CheckSelectColumn plugin to native HTML for CSP safe code ([#1332](https://github.com/ghiscoding/slickgrid-universal/issues/1332)) ([2b9216d](https://github.com/ghiscoding/slickgrid-universal/commit/2b9216df3e1796ffb4081127cdaa9011e4d48b23)) - by @ghiscoding
+
 # [4.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.1.0...v4.2.0) (2023-12-30)
 
 ### Performance Improvements
