@@ -99,5 +99,7 @@
   "TASK_X": "Task {{x}}",
   "TITLE": "Title",
   "TRUE": "True",
-  "X_DAY_PLURAL": "{{x}} day{{plural}}"
+  "X_DAY_PLURAL": "{{x}} day{{plural}}",
+  "RBE_BTN_UPDATE": "Update the current row",
+  "RBE_BTN_CANCEL": "Cancel changes of the current row"
 }
