@@ -383,6 +383,7 @@ export class ExtensionService {
     this.translateRowEditPlugin();
 
     // translating column headers will also indirectly translate ColumnPicker & GridMenu since headers are updated
+    // also make this the last call since it will also indirectly call `grid.invalidate()` which we want to do at the end only
     this.translateColumnHeaders(lang);
   }
 
@@ -444,13 +445,11 @@ export class ExtensionService {
 
     // translate all column headers & header column group when defined
     this.translateItems(columnDefinitions, 'nameKey', 'name');
-    this.extensionUtility.translateItems(this.sharedService.allColumns, 'nameKey', 'name');
-    this.extensionUtility.translateItems(this.sharedService.allColumns, 'columnGroupKey', 'columnGroup');
+    this.translateItems(this.sharedService.allColumns, 'nameKey', 'name');
+    this.translateItems(this.sharedService.allColumns, 'columnGroupKey', 'columnGroup');
 
-    // re-render the column headers & then re-translate ColumnPicker/GridMenu
+    // re-render the column headers which will indirectly re-translate ColumnPicker/GridMenu
     this.renderColumnHeaders(columnDefinitions, Array.isArray(newColumnDefinitions));
-    this.translateColumnPicker();
-    this.translateGridMenu();
   }
 
   /**

@@ -686,9 +686,7 @@ describe('ExtensionService', () => {
       const cellMenuSpy = jest.spyOn(service, 'translateCellMenu');
       const contextMenuSpy = jest.spyOn(service, 'translateContextMenu');
       const colHeaderSpy = jest.spyOn(service, 'translateColumnHeaders');
-      const colPickerSpy = jest.spyOn(service, 'translateColumnPicker');
       const contextSpy = jest.spyOn(service, 'translateContextMenu');
-      const gridMenuSpy = jest.spyOn(service, 'translateGridMenu');
       const headerMenuSpy = jest.spyOn(service, 'translateHeaderMenu');
 
       service.translateAllExtensions();
@@ -696,9 +694,7 @@ describe('ExtensionService', () => {
       expect(cellMenuSpy).toHaveBeenCalled();
       expect(contextMenuSpy).toHaveBeenCalled();
       expect(colHeaderSpy).toHaveBeenCalled();
-      expect(colPickerSpy).toHaveBeenCalled();
       expect(contextSpy).toHaveBeenCalled();
-      expect(gridMenuSpy).toHaveBeenCalled();
       expect(headerMenuSpy).toHaveBeenCalled();
     });
 
