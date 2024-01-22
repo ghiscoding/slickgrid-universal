@@ -19,7 +19,7 @@ export class ExtensionUtility {
    * 3- else if nothing is provided use text defined as constants
    */
   getPickerTitleOutputString(propName: string, pickerName: 'gridMenu' | 'columnPicker') {
-    if (this.sharedService.gridOptions && this.sharedService.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
+    if (this.sharedService.gridOptions?.enableTranslate && (!this.translaterService?.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
 

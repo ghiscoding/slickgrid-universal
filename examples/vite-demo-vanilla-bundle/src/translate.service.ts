@@ -13,7 +13,7 @@ interface TranslateOptions {
 export class TranslateService implements TranslaterService {
   eventName = 'onLanguageChange' as TranslateServiceEventName;
   protected _currentLanguage = 'en';
-  protected _locales: { [language: string]: Locales } = {};
+  protected _locales: { [language: string]: Locales; } = {};
   protected _pubSubServices: PubSubService[] = [];
   protected _options;
   protected templateMatcher = /{{\s?([^{}\s]*)\s?}}/g;
@@ -82,17 +82,22 @@ export class TranslateService implements TranslaterService {
   }
 
   async use(newLang: string): Promise<Locales> {
+    const hasLangChanged = this._currentLanguage !== newLang;
     this._currentLanguage = newLang;
 
     // if it's already loaded in the cache, then resolve the locale set, else fetch it
     if (this._locales?.hasOwnProperty(newLang)) {
-      this.publishLanguageChangeEvent(newLang);
+      if (hasLangChanged) {
+        this.publishLanguageChangeEvent(newLang);
+      }
       return Promise.resolve(this._locales[newLang]);
     }
 
     const path = this._options.loadPath.replace(/{{lang}}/gi, newLang);
     const localeSet = await this.fetchLocales(path, newLang);
-    this.publishLanguageChangeEvent(newLang);
+    if (hasLangChanged) {
+      this.publishLanguageChangeEvent(newLang);
+    }
 
     return localeSet;
   }
