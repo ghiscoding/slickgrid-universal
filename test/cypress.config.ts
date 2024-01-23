@@ -30,4 +30,8 @@ export default defineConfig({
     specPattern: 'test/cypress/e2e/**/*.cy.{js,ts}',
     testIsolation: false,
   },
+  reporter: 'cypress-multi-reporters',
+  reporterOptions: {
+    configFile: 'test/cypress-reporter-config.json'
+  }
 });
