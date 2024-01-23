@@ -87,6 +87,20 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           Cypress_extended: true
 
+      - name: Upload Event File
+        uses: actions/upload-artifact@v4
+        with:
+          name: Event File
+          path: ${{ github.event_path }}
+
+      - name: Upload E2E Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Cypress E2E Test Results
+          path: |
+            test/cypress-report/**/*.xml
+
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
