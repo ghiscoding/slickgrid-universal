@@ -376,52 +376,51 @@ export class ExtensionService {
   }
 
   /** Translate all possible Extensions at once */
-  translateAllExtensions() {
+  translateAllExtensions(lang?: string) {
     this.translateCellMenu();
-    this.translateColumnHeaders();
-    this.translateColumnPicker();
     this.translateContextMenu();
-    this.translateGridMenu();
     this.translateHeaderMenu();
     this.translateRowEditPlugin();
+
+    // translating column headers will also indirectly translate ColumnPicker & GridMenu since headers are updated
+    // also make this the last call since it will also indirectly call `grid.invalidate()` which we want to do at the end only
+    this.translateColumnHeaders(lang);
   }
 
   /** Translate the Cell Menu titles, we need to loop through all column definition to re-translate them */
   translateCellMenu() {
-    this._cellMenuPlugin?.translateCellMenu?.();
+    this._cellMenuPlugin?.translateCellMenu();
   }
 
   /** Translate the Column Picker and it's last 2 checkboxes */
   translateColumnPicker() {
-    if (this._columnPickerControl?.translateColumnPicker) {
-      this._columnPickerControl.translateColumnPicker();
-    }
+    this._columnPickerControl?.translateColumnPicker();
   }
 
   /** Translate the Context Menu titles, we need to loop through all column definition to re-translate them */
   translateContextMenu() {
-    this._contextMenuPlugin?.translateContextMenu?.();
+    this._contextMenuPlugin?.translateContextMenu();
   }
 
   /**
    * Translate the Header Menu titles, we need to loop through all column definition to re-translate them
    */
   translateGridMenu() {
-    this._gridMenuControl?.translateGridMenu?.();
+    this._gridMenuControl?.translateGridMenu();
   }
 
   /**
    * Translate the Header Menu titles, we need to loop through all column definition to re-translate them
    */
   translateHeaderMenu() {
-    this._headerMenuPlugin?.translateHeaderMenu?.();
+    this._headerMenuPlugin?.translateHeaderMenu();
   }
 
   /**
    * Translate the action column buttons of the Row Based Edit Plugin
    */
   translateRowEditPlugin() {
-    this._rowBasedEdit?.translate?.();
+    this._rowBasedEdit?.translate();
   }
 
   /**
@@ -430,12 +429,12 @@ export class ExtensionService {
    * @param locale to use
    * @param new column definitions (optional)
    */
-  translateColumnHeaders(locale?: boolean | string, newColumnDefinitions?: Column[]) {
+  translateColumnHeaders(locale?: string, newColumnDefinitions?: Column[]) {
     if (this.sharedService && this.gridOptions && this.gridOptions.enableTranslate && (!this.translaterService || !this.translaterService.translate)) {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
 
-    if (locale && this.translaterService?.use) {
+    if (locale && this.translaterService?.use && this.translaterService.getCurrentLanguage() !== locale) {
       this.translaterService.use(locale as string);
     }
 
@@ -444,12 +443,13 @@ export class ExtensionService {
       columnDefinitions = this.sharedService.columnDefinitions;
     }
 
+    // translate all column headers & header column group when defined
     this.translateItems(columnDefinitions, 'nameKey', 'name');
     this.translateItems(this.sharedService.allColumns, 'nameKey', 'name');
+    this.translateItems(this.sharedService.allColumns, 'columnGroupKey', 'columnGroup');
 
-    // re-render the column headers
+    // re-render the column headers which will indirectly re-translate ColumnPicker/GridMenu
     this.renderColumnHeaders(columnDefinitions, Array.isArray(newColumnDefinitions));
-    this._gridMenuControl?.translateGridMenu?.();
   }
 
   /**
@@ -461,7 +461,7 @@ export class ExtensionService {
     if (!collection) {
       collection = this.sharedService.columnDefinitions;
     }
-    if (Array.isArray(collection) && this.sharedService.slickGrid && this.sharedService.slickGrid.setColumns) {
+    if (Array.isArray(collection) && this.sharedService.slickGrid?.setColumns) {
       if (collection.length > this.sharedService.allColumns.length || forceColumnDefinitionsOverwrite) {
         this.sharedService.allColumns = collection;
       }
@@ -471,12 +471,14 @@ export class ExtensionService {
     // replace Column Picker columns with newer data which includes new translations
     if (this.gridOptions.enableColumnPicker && this._columnPickerControl) {
       this._columnPickerControl.columns = this.sharedService.allColumns;
+      this._columnPickerControl.translateColumnPicker();
     }
 
     // replace the Grid Menu columns array list
     if (this.gridOptions.enableGridMenu && this._gridMenuControl) {
       this._gridMenuControl.columns = this.sharedService.allColumns ?? [];
       this._gridMenuControl.recreateGridMenu();
+      this._gridMenuControl.translateGridMenu();
     }
   }
 
@@ -511,12 +513,6 @@ export class ExtensionService {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
 
-    if (Array.isArray(items)) {
-      items.forEach(item => {
-        if (item[inputKey]) {
-          item[outputKey] = this.translaterService?.translate(item[inputKey]);
-        }
-      });
-    }
+    this.extensionUtility.translateItems(items, inputKey, outputKey);
   }
 }

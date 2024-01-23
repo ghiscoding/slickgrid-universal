@@ -737,17 +737,13 @@ export class SlickVanillaGridBundle<TData = any> {
     // translate them all on first load, then on each language change
     if (gridOptions.enableTranslate) {
       this.extensionService.translateAllExtensions();
-      this.translateColumnHeaderTitleKeys();
-      this.translateColumnGroupKeys();
     }
 
     // on locale change, we have to manually translate the Headers, GridMenu
     this.subscriptions.push(
-      this._eventPubSubService.subscribe('onLanguageChange', () => {
+      this._eventPubSubService.subscribe('onLanguageChange', (args: { language: string; }) => {
         if (gridOptions.enableTranslate) {
-          this.extensionService.translateAllExtensions();
-          this.translateColumnHeaderTitleKeys();
-          this.translateColumnGroupKeys();
+          this.extensionService.translateAllExtensions(args.language);
           if (gridOptions.createPreHeaderPanel && !gridOptions.enableDraggableGrouping) {
             this.groupingService.translateGroupingAndColSpan();
           }
@@ -1040,7 +1036,7 @@ export class SlickVanillaGridBundle<TData = any> {
       }
 
       if (this._gridOptions.enableTranslate) {
-        this.extensionService.translateColumnHeaders(false, newColumnDefinitions);
+        this.extensionService.translateColumnHeaders(undefined, newColumnDefinitions);
       } else {
         this.extensionService.renderColumnHeaders(newColumnDefinitions, true);
       }
@@ -1445,16 +1441,6 @@ export class SlickVanillaGridBundle<TData = any> {
 
       return { ...column, editor: columnEditor?.model, internalColumnEditor: { ...columnEditor } };
     });
-  }
-
-  /** translate all columns (including hidden columns) */
-  protected translateColumnHeaderTitleKeys() {
-    this.extensionUtility.translateItems(this.sharedService.allColumns, 'nameKey', 'name');
-  }
-
-  /** translate all column groups (including hidden columns) */
-  protected translateColumnGroupKeys() {
-    this.extensionUtility.translateItems(this.sharedService.allColumns, 'columnGroupKey', 'columnGroup');
   }
 
   /**
