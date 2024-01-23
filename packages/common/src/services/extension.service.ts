@@ -461,7 +461,7 @@ export class ExtensionService {
     if (!collection) {
       collection = this.sharedService.columnDefinitions;
     }
-    if (Array.isArray(collection) && this.sharedService.slickGrid && this.sharedService.slickGrid.setColumns) {
+    if (Array.isArray(collection) && this.sharedService.slickGrid?.setColumns) {
       if (collection.length > this.sharedService.allColumns.length || forceColumnDefinitionsOverwrite) {
         this.sharedService.allColumns = collection;
       }
@@ -477,6 +477,7 @@ export class ExtensionService {
     // replace the Grid Menu columns array list
     if (this.gridOptions.enableGridMenu && this._gridMenuControl) {
       this._gridMenuControl.columns = this.sharedService.allColumns ?? [];
+      this._gridMenuControl.recreateGridMenu();
       this._gridMenuControl.translateGridMenu();
     }
   }
@@ -512,12 +513,6 @@ export class ExtensionService {
       throw new Error('[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.');
     }
 
-    if (Array.isArray(items)) {
-      items.forEach(item => {
-        if (item[inputKey]) {
-          item[outputKey] = this.translaterService?.translate(item[inputKey]);
-        }
-      });
-    }
+    this.extensionUtility.translateItems(items, inputKey, outputKey);
   }
 }

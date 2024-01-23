@@ -28,15 +28,6 @@ import {
 jest.mock('flatpickr', () => { });
 const GRID_UID = 'slickgrid_12345';
 
-const extensionUtilityStub = {
-  getPickerTitleOutputString: jest.fn(),
-  refreshBackendDataset: jest.fn(),
-  sortItems: jest.fn(),
-  translateItems: jest.fn(),
-  translateMenuItemsFromTitleKey: jest.fn(),
-  translateWhenEnabledAndServiceExist: jest.fn(),
-} as unknown as ExtensionUtility;
-
 const mockCellSelectionModel = {
   pluginName: 'CellSelectionModel',
   constructor: jest.fn(),
@@ -172,6 +163,7 @@ const extensionColumnPickerStub = {
 };
 
 describe('ExtensionService', () => {
+  let extensionUtility: ExtensionUtility;
   let sharedService: SharedService;
   let service: ExtensionService;
   let translateService: TranslateServiceStub;
@@ -181,9 +173,10 @@ describe('ExtensionService', () => {
       sharedService = new SharedService();
       translateService = new TranslateServiceStub();
       translateService.use('fr');
+      extensionUtility = new ExtensionUtility(sharedService, undefined, translateService);
 
       service = new ExtensionService(
-        extensionUtilityStub,
+        extensionUtility,
         filterServiceStub,
         pubSubServiceStub,
         sharedService,
@@ -351,7 +344,7 @@ describe('ExtensionService', () => {
         const extSpy = jest.spyOn(SlickRowBasedEdit.prototype, 'init').mockImplementation();
 
         service = new ExtensionService(
-          extensionUtilityStub,
+          extensionUtility,
           filterServiceStub,
           pubSubServiceStub,
           sharedService,
@@ -672,7 +665,7 @@ describe('ExtensionService', () => {
 
     it('should call the refreshBackendDataset method on the GridMenu Extension when service with same method name is called', () => {
       const gridOptionsMock = { enableGridMenu: true } as GridOption;
-      const extSpy = jest.spyOn(extensionUtilityStub, 'refreshBackendDataset');
+      const extSpy = jest.spyOn(extensionUtility, 'refreshBackendDataset');
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
       service.refreshBackendDataset();
@@ -917,8 +910,9 @@ describe('ExtensionService', () => {
   describe('without Translate Service', () => {
     beforeEach(() => {
       translateService = undefined as any;
+      extensionUtility = new ExtensionUtility(sharedService, undefined, translateService);
       service = new ExtensionService(
-        extensionUtilityStub,
+        extensionUtility,
         filterServiceStub,
         pubSubServiceStub,
         sharedService,
