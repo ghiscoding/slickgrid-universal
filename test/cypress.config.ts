@@ -2,6 +2,7 @@ import { defineConfig } from 'cypress';
 
 export default defineConfig({
   video: false,
+  record: true,
   projectId: 'p5zxx6',
   viewportWidth: 1200,
   viewportHeight: 950,
