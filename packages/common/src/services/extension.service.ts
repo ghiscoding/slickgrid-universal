@@ -471,12 +471,13 @@ export class ExtensionService {
     // replace Column Picker columns with newer data which includes new translations
     if (this.gridOptions.enableColumnPicker && this._columnPickerControl) {
       this._columnPickerControl.columns = this.sharedService.allColumns;
+      this._columnPickerControl.translateColumnPicker();
     }
 
     // replace the Grid Menu columns array list
     if (this.gridOptions.enableGridMenu && this._gridMenuControl) {
       this._gridMenuControl.columns = this.sharedService.allColumns ?? [];
-      this._gridMenuControl.recreateGridMenu();
+      this._gridMenuControl.translateGridMenu();
     }
   }
 
