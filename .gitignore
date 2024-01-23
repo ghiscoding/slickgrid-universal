@@ -55,6 +55,7 @@ website
 **/coverage
 **/.jest-cache
 **/jest-coverage
+**/cypress-report
 **/dist
 **/*.tgz
 **/junit.xml

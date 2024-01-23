@@ -74,22 +74,23 @@ jobs:
         run: pnpm build:dev
 
       - name: Run Cypress E2E tests
-        uses: cypress-io/github-action@v6
-        with:
-          install: false
-          # working-directory: packages/dnd
-          start: pnpm serve:demo
-          # start: pnpm serve:vite
-          wait-on: 'http://localhost:8888'
-          config-file: test/cypress.config.ts
-          browser: chrome
-          record: true
-        env:
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # pass GitHub token to allow accurately detecting a build vs a re-run build
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          Cypress_extended: true
+        run: pnpm cypress:ci
+        # uses: cypress-io/github-action@v6
+        # with:
+        #   install: false
+        #   # working-directory: packages/dnd
+        #   start: pnpm serve:demo
+        #   # start: pnpm serve:vite
+        #   wait-on: 'http://localhost:8888'
+        #   config-file: test/cypress.config.ts
+        #   browser: chrome
+        #   record: true
+        # env:
+        #   # pass the Dashboard record key as an environment variable
+        #   CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+        #   # pass GitHub token to allow accurately detecting a build vs a re-run build
+        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        #   Cypress_extended: true
 
       - name: Upload Event File
         uses: actions/upload-artifact@v4
@@ -103,6 +104,7 @@ jobs:
         with:
           name: Cypress E2E Test Results
           path: |
+            test/cypress-report/**/*.json
             test/cypress-report/**/*.xml
 
       - uses: actions/upload-artifact@v4
