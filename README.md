@@ -80,15 +80,20 @@ Slickgrid-Universal has close to **100%** Unit Test Coverage, almost 5,000 Jest 
 ## Installation
 **NOTE:** the installation instructions below are **only** required if you want to contribute to this project, if on the other hand you just want to download a quick Slickgrid-Universal demo, then I would suggest to take a look at [Slickgrid-Universal Vite Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) or [Slickgrid-Universal WebPack Demo](https://github.com/ghiscoding/slickgrid-universal-webpack-demo).
 
-To get started and do development with this monorepo, you will need to clone the repo and follow the steps shown below. You must be at the root of the project to run the following commands. This project uses `pnpm`, you can install it via `npm i -g pnpm` or follow their [installation](https://pnpm.io/installation)
+To get started and do development with this monorepo, you will need to clone the repo and follow the steps shown below. You must be at the root of the project to run the following commands. This project also requires `pnpm`.
 
-1. Install pnpm workspace with [pnpm](https://pnpm.io/installation) or run it with `npx`
-```bash
-# from the root
-pnpm install
+1. pnpm installation
 
-# or with npx
-npx pnpm install
+This project uses [pnpm workspaces](https://pnpm.io/workspaces), you can install pnpm by picking 1 of these 2 choices:
+
+a. following their [installation](https://pnpm.io/installation)
+
+b. or install pnpm via Node corepack
+```sh
+corepack enable
+
+# optionally update pnpm to latest
+corepack prepare pnpm@latest --activate
 ```
 
 2. Run Dev (Vanilla Implementation)
