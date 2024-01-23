@@ -30,4 +30,9 @@ export default defineConfig({
     specPattern: 'test/cypress/e2e/**/*.cy.{js,ts}',
     testIsolation: false,
   },
+  reporter: 'junit',
+  reporterOptions: {
+    mochaFile: 'test/cypress-report/test-result-[hash].xml',
+    toConsole: true,
+  },
 });
