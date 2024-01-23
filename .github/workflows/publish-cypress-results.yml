@@ -36,4 +36,4 @@ jobs:
           event_file: artifacts/Event File/event.json
           event_name: ${{ github.event.workflow_run.event }}
           check_name: Cypress E2E Test Results
-          files: "artifacts/**/*.xml"
+          files: "artifacts/**/*.json"
