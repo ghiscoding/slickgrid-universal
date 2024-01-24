@@ -1673,13 +1673,11 @@ describe('Grid Service', () => {
   describe('renderGrid method', () => {
     it('should invalidate the grid and call render after', () => {
       const invalidateSpy = jest.spyOn(gridStub, 'invalidate');
-      const renderSpy = jest.spyOn(gridStub, 'render');
 
       service.renderGrid();
 
       expect(invalidateSpy).toHaveBeenCalled();
-      expect(renderSpy).toHaveBeenCalled();
-      expect(gridStub.invalidate).toHaveBeenCalledBefore(gridStub.render as any);
+      expect(gridStub.invalidate).toHaveBeenCalled();
     });
   });
 

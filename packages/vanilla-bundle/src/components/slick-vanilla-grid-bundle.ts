@@ -201,6 +201,10 @@ export class SlickVanillaGridBundle<TData = any> {
     this._eventPubSubService = pubSub;
   }
 
+  set isDatasetHierarchicalInitialized(isInitialized: boolean) {
+    this._isDatasetHierarchicalInitialized = isInitialized;
+  }
+
   get gridOptions(): GridOption {
     return this._gridOptions || {} as GridOption;
   }
@@ -382,11 +386,7 @@ export class SlickVanillaGridBundle<TData = any> {
     this.universalContainerService.registerInstance('TranslaterService', this.translaterService);
     this.universalContainerService.registerInstance('TreeDataService', this.treeDataService);
 
-    this.initialization(this._gridContainerElm, eventHandler);
-    if (!hierarchicalDataset && !this.gridOptions.backendServiceApi) {
-      this.setData(dataset || []);
-      this._currentDatasetLength = this.dataset.length;
-    }
+    this.initialization(this._gridContainerElm, eventHandler, dataset);
   }
 
   emptyGridContainerElm() {
@@ -471,7 +471,7 @@ export class SlickVanillaGridBundle<TData = any> {
     this._registeredResources = [];
   }
 
-  initialization(gridContainerElm: HTMLElement, eventHandler: SlickEventHandler) {
+  initialization(gridContainerElm: HTMLElement, eventHandler: SlickEventHandler, inputDataset?: TData[]) {
     // when detecting a frozen grid, we'll automatically enable the mousewheel scroll handler so that we can scroll from both left/right frozen containers
     if (this.gridOptions && ((this.gridOptions.frozenRow !== undefined && this.gridOptions.frozenRow >= 0) || this.gridOptions.frozenColumn !== undefined && this.gridOptions.frozenColumn >= 0) && this.gridOptions.enableMouseWheelScrollHandler === undefined) {
       this.gridOptions.enableMouseWheelScrollHandler = true;
@@ -576,9 +576,13 @@ export class SlickVanillaGridBundle<TData = any> {
     }
 
     // load the data in the DataView (unless it's a hierarchical dataset, if so it will be loaded after the initial tree sort)
-    if (Array.isArray(this.dataset)) {
-      const initialDataset = this.gridOptions?.enableTreeData ? this.sortTreeDataset(this.dataset) : this.dataset;
-      this.dataView?.setItems(initialDataset, this._gridOptions.datasetIdPropertyName);
+    if (this.dataView) {
+      inputDataset = inputDataset || [];
+      const initialDataset = this.gridOptions?.enableTreeData ? this.sortTreeDataset(inputDataset) : inputDataset;
+      this.dataView.beginUpdate();
+      this.dataView.setItems(initialDataset, this._gridOptions.datasetIdPropertyName);
+      this._currentDatasetLength = inputDataset.length;
+      this.dataView.endUpdate();
     }
 
     // if you don't want the items that are not visible (due to being filtered out or being on a different page)
@@ -604,14 +608,14 @@ export class SlickVanillaGridBundle<TData = any> {
       }
     }
 
-    this.slickGrid.invalidate();
-
     if ((this.dataView?.getLength() ?? 0) > 0) {
       if (!this._isDatasetInitialized && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
         this.loadRowSelectionPresetWhenExists();
       }
       this.loadFilterPresetsWhenDatasetInitialized();
       this._isDatasetInitialized = true;
+    } else {
+      this.displayEmptyDataWarning(true);
     }
 
     // user might want to hide the header row on page load but still have `enableFiltering: true`
@@ -642,6 +646,14 @@ export class SlickVanillaGridBundle<TData = any> {
 
     // bind resize ONLY after the dataView is ready
     this.bindResizeHook(this.slickGrid, this.gridOptions);
+
+    // local grid, check if we need to show the Pagination
+    // if so then also check if there's any presets and finally initialize the PaginationService
+    // a local grid with Pagination presets will potentially have a different total of items, we'll need to get it from the DataView and update our total
+    if (this.gridOptions?.enablePagination && this._isLocalGrid) {
+      this.showPagination = true;
+      this.loadLocalGridPagination(this.dataset);
+    }
 
     // once the grid is created, we'll return its instance (we do this to return Transient Services from DI)
     this._slickerGridInstances = {
@@ -963,11 +975,6 @@ export class SlickVanillaGridBundle<TData = any> {
     // if so then also check if there's any presets and finally initialize the PaginationService
     // a local grid with Pagination presets will potentially have a different total of items, we'll need to get it from the DataView and update our total
     if (this.slickGrid && this._gridOptions) {
-      if (this._gridOptions.enablePagination && this._isLocalGrid) {
-        this.showPagination = true;
-        this.loadLocalGridPagination(dataset);
-      }
-
       if (this._gridOptions.enableEmptyDataWarningMessage && Array.isArray(dataset)) {
         const finalTotalCount = totalCount || dataset.length;
         this.displayEmptyDataWarning(finalTotalCount < 1);
@@ -1098,7 +1105,9 @@ export class SlickVanillaGridBundle<TData = any> {
   }
 
   protected displayEmptyDataWarning(showWarning = true) {
-    this.slickEmptyWarning?.showEmptyDataMessage(showWarning);
+    if (this.gridOptions.enableEmptyDataWarningMessage) {
+      this.slickEmptyWarning?.showEmptyDataMessage(showWarning);
+    }
   }
 
   /** When data changes in the DataView, we'll refresh the metrics and/or display a warning if the dataset is empty */

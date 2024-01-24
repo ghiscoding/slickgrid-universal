@@ -1064,6 +1064,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const refreshSpy = jest.spyOn(component, 'refreshGridData');
 
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
+        jest.spyOn(mockDataView, 'getItems').mockReturnValueOnce(mockData);
         component.gridOptions = {
           enablePagination: true,
           presets: { pagination: { pageSize: 2, pageNumber: expectedPageNumber } }
@@ -1904,7 +1905,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should have custom footer with metrics when the DataView "onSetItemsCalled" event is triggered', () => {
-        const invalidateSpy = jest.spyOn(mockGrid, 'invalidate');
         const expectation = {
           startTime: expect.toBeDate(),
           endTime: expect.toBeDate(),
@@ -1918,7 +1918,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const footerSpy = jest.spyOn(component.slickFooter!, 'metrics', 'set');
         mockDataView.onSetItemsCalled.notify({ idProperty: 'id', itemCount: 0 });
 
-        expect(invalidateSpy).toHaveBeenCalled();
         expect(component.metrics).toEqual(expectation);
         expect(footerSpy).toHaveBeenCalledWith(expectation);
       });
@@ -2119,6 +2118,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = { enableTreeData: true, treeDataOptions: { columnId: 'file', initialSort: { columndId: 'file', direction: 'ASC' } } } as unknown as GridOption;
         component.datasetHierarchical = mockHierarchical;
         component.eventPubSubService = new EventPubSubService(divContainer);
+        component.isDatasetHierarchicalInitialized = true;
         component.initialization(divContainer, slickEventHandler);
 
         expect(hierarchicalSpy).toHaveBeenCalledWith(mockHierarchical);

@@ -200,8 +200,8 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
     cy.get(`.grid17-2 [style="top: ${CELL_HEIGHT * 0}px;"]`).should('have.length', 2 * 2);
     cy.get(`.grid17-1 .grid-canvas-left > [style="top: ${CELL_HEIGHT * 0}px;"]`).children().should('have.length', 2 * 2);
     cy.get(`.grid17-2 .grid-canvas-left > [style="top: ${CELL_HEIGHT * 0}px;"]`).children().should('have.length', 2 * 2);
-    cy.get('.grid17-1 .grid-canvas-top').children().should('have.length', 3 * 2 + 1); // +1 for "Empty Data" div
-    cy.get('.grid17-2 .grid-canvas-top').children().should('have.length', 3 * 2 + 1);
+    cy.get('.grid17-1 .grid-canvas-top').children().should('have.length', 3 * 2);
+    cy.get('.grid17-2 .grid-canvas-top').children().should('have.length', 3 * 2);
   });
 
   function resetScrollInFrozen() {
