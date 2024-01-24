@@ -135,7 +135,6 @@ export class SlickRowBasedEdit {
     this._eventHandler.subscribe(dataView.onRowsOrCountChanged, this.handleAllRowRerender.bind(this));
 
     this.translate();
-    this._grid.invalidate();
   }
 
   destroy() {
