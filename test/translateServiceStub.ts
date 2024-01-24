@@ -103,6 +103,6 @@ export class TranslateServiceStub implements TranslaterService {
   }
 
   use(locale: string) {
-    return new Promise(resolve => resolve(this._locale = locale));
+    return Promise.resolve(this._locale = locale);
   }
 }

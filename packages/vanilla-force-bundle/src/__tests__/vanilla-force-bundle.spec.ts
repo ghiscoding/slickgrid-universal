@@ -555,6 +555,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
         const refreshSpy = jest.spyOn(component, 'refreshGridData');
 
         const mockData = [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Smith' }];
+        jest.spyOn(mockDataView, 'getItems').mockReturnValueOnce(mockData);
         component.gridOptions = {
           enablePagination: true,
           presets: { pagination: { pageSize: 2, pageNumber: expectedPageNumber } }

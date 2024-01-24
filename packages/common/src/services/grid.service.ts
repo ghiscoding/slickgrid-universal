@@ -290,9 +290,8 @@ export class GridService {
 
   /** Re-Render the Grid */
   renderGrid() {
-    if (this._grid && typeof this._grid.invalidate === 'function') {
+    if (typeof this._grid?.invalidate === 'function') {
       this._grid.invalidate();
-      this._grid.render();
     }
   }
 
