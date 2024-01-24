@@ -155,7 +155,7 @@ describe('SelectEditor', () => {
 
     it('should initialize the editor with element being disabled in the DOM when passing a collectionAsync and an empty collection property', () => {
       const mockCollection = ['male', 'female'];
-      const promise = new Promise(resolve => resolve(mockCollection));
+      const promise = Promise.resolve(mockCollection);
       (mockColumn.internalColumnEditor as ColumnEditor).collection = null as any;
       (mockColumn.internalColumnEditor as ColumnEditor).collectionAsync = promise;
       gridOptionMock.translater = translateService;
