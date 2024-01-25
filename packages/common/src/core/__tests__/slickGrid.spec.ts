@@ -514,6 +514,9 @@ describe('SlickGrid core file', () => {
       grid.setFooterRowVisibility(true);
       grid.updateColumns(); // this will trigger onBeforeFooterRowCellDestroySpy
 
+      jest.spyOn(grid, 'getDataLength').mockReturnValueOnce(-1);
+      grid.updateRowCount();
+
       expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalledTimes(4); // 2x left and 2x right, because we have 2x columns
       footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
       expect(footerElms[0].style.display).not.toBe('none');
@@ -583,6 +586,43 @@ describe('SlickGrid core file', () => {
       expect(grid.getFooterRow()).toBeFalsy();
       expect(footerElm).toBeFalsy();
       expect(grid.getFooterRowColumn('firstName')).toBeUndefined();
+    });
+
+    it('should show footer when "showFooterRow" is enabled but not return any row when columns to the right are outside the range', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }, { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true }] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, createFooterRow: true, showFooterRow: true });
+      jest.spyOn(grid, 'getRenderedRange').mockReturnValue({ leftPx: 0, rightPx: -1, bottom: 230, top: 12 });
+
+      grid.init();
+      grid.render();
+      const headerElm = container.querySelector('.slick-footerrow') as HTMLDivElement;
+      const footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      const firstItemCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l0.r0') as HTMLDivElement;
+
+      expect(firstItemCell).toBeFalsy();
+      expect(headerElm).toBeTruthy();
+      expect(headerElm.style.display).not.toBe('none');
+      expect(footerElms[0].style.display).not.toBe('none');
+      expect(footerElms[1].style.display).not.toBe('none');
+      expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
+    });
+
+    it('should show footer when "showFooterRow" is enabled with frozen column', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', alwaysRenderColumn: true }, { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true }] as Column[];
+      grid = new SlickGrid<any, Column>(container, [{ id: 0, firstName: 'John', lastName: 'Doe' }], columns, { ...defaultOptions, createFooterRow: true, showFooterRow: true, frozenColumn: 1 });
+      jest.spyOn(grid, 'getRenderedRange').mockReturnValue({ leftPx: 200, rightPx: 12, bottom: 230, top: 12 });
+      grid.init();
+      grid.render();
+      const headerElm = container.querySelector('.slick-footerrow') as HTMLDivElement;
+      const footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      const firstItemCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l0.r0') as HTMLDivElement;
+
+      expect(headerElm).toBeTruthy();
+      expect(headerElm.style.display).not.toBe('none');
+      expect(footerElms[0].style.display).not.toBe('none');
+      expect(footerElms[1].style.display).not.toBe('none');
+      expect(firstItemCell.classList.contains('frozen')).toBeTruthy();
+      expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
     });
   });
 
@@ -1855,7 +1895,8 @@ describe('SlickGrid core file', () => {
     it('should commit Age field Editor by applying new values and triggering onAddNewRow() notify', () => {
       const newValue = 77;
       const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', type: 'number', editor: InputEditor }] as Column[];
-      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, enableAddRow: true, editable: true });
+
       grid.setActiveCell(1, 1);
       grid.editActiveCell(InputEditor as any, true);
       const editor = grid.getCellEditor();
@@ -1873,6 +1914,36 @@ describe('SlickGrid core file', () => {
       );
       expect(grid.getEditController()).toBeTruthy();
       expect(result).toBeTruthy();
+    });
+
+    it('should commit Age field Editor by applying new values and triggering onAddNewRow() notify with autoHeight enabled and expect different viewport height', () => {
+      const newValue = 77;
+      const columns = [{ id: 'name', field: 'name', name: 'Name' }, { id: 'age', field: 'age', name: 'Age', type: 'number', editor: InputEditor }] as Column[];
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, autoHeight: true, enableCellNavigation: true, enableAddRow: true, editable: true });
+      const prevHeight = grid.getViewportHeight();
+      grid.onAddNewRow.subscribe((e, args) => {
+        grid.setData([...grid.getData() as any[], args.item]);
+      });
+
+      grid.setActiveCell(1, 1);
+      grid.editActiveCell(InputEditor as any, true);
+      const editor = grid.getCellEditor();
+      jest.spyOn(grid, 'getDataLength').mockReturnValueOnce(0); // trick grid to think it's a new item
+      const onAddNewRowSpy = jest.spyOn(grid.onAddNewRow, 'notify');
+      jest.spyOn(editor!, 'serializeValue').mockReturnValue(newValue);
+
+      const result = grid.getEditController()?.commitCurrentEdit();
+      const newHeight = grid.getViewportHeight();
+
+      expect(editor).toBeTruthy();
+      expect(onAddNewRowSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ item: { age: newValue }, column: columns[1] }),
+        expect.anything(),
+        grid
+      );
+      expect(grid.getEditController()).toBeTruthy();
+      expect(result).toBeTruthy();
+      expect(prevHeight).not.toEqual(newHeight);
     });
 
     it('should not commit Age field Editor returns invalid result, expect triggering onValidationError() notify', () => {
@@ -3643,9 +3714,25 @@ describe('SlickGrid core file', () => {
       expect(onActiveCellSpy).toHaveBeenCalled();
     });
 
-    it('should navigate left but return false when calling navigateLeft and nothing is available on the left & right', () => {
+    it('should navigate left but return false when calling navigateLeft and nothing is available on the left & right with frozenRow/frozenBottom', () => {
       const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, frozenRow: 2, frozenBottom: true });
+      jest.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
+      const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
+      const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
+      grid.setActiveCell(2, 1);
+      // @ts-ignore
+      jest.spyOn(grid, 'gotoRight').mockReturnValueOnce(null);
+      const result = grid.navigateLeft();
+
+      expect(result).toBe(false);
+      expect(scrollCellSpy).toHaveBeenCalledWith(2, 1, false);
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate left but return false when calling navigateLeft and nothing is available on the left & right with frozenRow', () => {
+      const data = [{ id: 0, firstName: 'John' }, { id: 1, firstName: 'Jane' }, { id: 2, firstName: 'Bob' }];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true, frozenRow: 2, frozenBottom: false });
       jest.spyOn(grid, 'getCellFromPoint').mockReturnValueOnce({ row: 1, cell: 1 });
       const scrollCellSpy = jest.spyOn(grid, 'scrollCellIntoView');
       const onActiveCellSpy = jest.spyOn(grid.onActiveCellChanged, 'notify');
