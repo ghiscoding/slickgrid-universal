@@ -2,7 +2,7 @@ import { createDomElement, type GridOption } from '@slickgrid-universal/common';
 import { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
 
 // create empty warning message as Document Fragment to be CSP safe
-const emptyWarningElm = new DocumentFragment();
+const emptyWarningElm = document.createElement('div');
 emptyWarningElm.appendChild(createDomElement('span', { className: 'mdi mdi-alert color-warning' }));
 emptyWarningElm.appendChild(document.createTextNode(' No data to display.'));
 
