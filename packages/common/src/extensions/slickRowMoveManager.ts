@@ -316,13 +316,14 @@ export class SlickRowMoveManager {
     return true;
   }
 
-  protected moveIconFormatter(row: number, cell: number, value: any, column: Column, dataContext: any, grid: SlickGrid): FormatterResultWithHtml | string {
+  protected moveIconFormatter(row: number, _cell: number, _val: any, _col: Column, dataContext: any, grid: SlickGrid): FormatterResultWithHtml | string {
     if (!this.checkUsabilityOverride(row, dataContext, grid)) {
       return '';
     } else {
-      const iconElm = document.createElement('div');
-      iconElm.className = this._addonOptions.cssClass || '';
-      return { addClasses: `cell-reorder dnd ${this._addonOptions.cssClass || ''}`, html: iconElm };
+      return {
+        addClasses: `cell-reorder dnd ${this._addonOptions.cssClass || ''}`,
+        html: createDomElement('div', { className: this._addonOptions.cssClass || '' }),
+      };
     }
   }
 }

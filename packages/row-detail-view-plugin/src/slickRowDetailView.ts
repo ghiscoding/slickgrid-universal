@@ -19,7 +19,7 @@ import type {
   SlickEventData,
   UsabilityOverrideFn,
 } from '@slickgrid-universal/common';
-import { extend } from '@slickgrid-universal/utils';
+import { classNameToList, extend } from '@slickgrid-universal/utils';
 
 /**
  * A plugin to add Row Detail Panel View (for example providing order detail info when clicking on the order row in the grid)
@@ -631,7 +631,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         if (this._addonOptions.collapsedClass) {
           collapsedClasses += this._addonOptions.collapsedClass;
         }
-        return createDomElement('div', { className: collapsedClasses.trim() });
+        return createDomElement('div', { className: classNameToList(collapsedClasses).join(' ') });
       } else {
         const rowHeight = this.gridOptions.rowHeight || 0;
         let outterHeight = (dataContext[`${this._keyPrefix}sizePadding`] || 0) * this.gridOptions.rowHeight!;
@@ -664,7 +664,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         cellDetailContainerElm.appendChild(innerContainerElm);
 
         const result: FormatterResultWithHtml = {
-          html: createDomElement('div', { className: expandedClasses.trim() }),
+          html: createDomElement('div', { className: classNameToList(expandedClasses).join(' ') }),
           insertElementAfterTarget: cellDetailContainerElm,
         };
 
