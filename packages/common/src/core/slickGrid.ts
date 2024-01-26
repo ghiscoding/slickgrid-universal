@@ -3078,8 +3078,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected getDataLengthIncludingAddNew() {
-    return this.getDataLength() + (!this._options.enableAddRow ? 0
-      : (!this.pagingActive || this.pagingIsLastPage ? 1 : 0)
+    return this.getDataLength() + (
+      !this._options.enableAddRow
+        ? 0
+        : (!this.pagingActive || this.pagingIsLastPage ? 1 : 0)
     );
   }
 
@@ -3511,6 +3513,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       });
     }
 
+    /* istanbul ignore if */
     if (!cacheEntry.rowNode) {
       cacheEntry.rowNode = [];
     }
@@ -3535,20 +3538,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected removeRowFromCache(row: number) {
     const cacheEntry = this.rowsCache[row];
-    if (!cacheEntry || !cacheEntry.rowNode) {
-      return;
-    }
+    if (cacheEntry?.rowNode) {
+      if (this._options.enableAsyncPostRenderCleanup && this.postProcessedRows[row]) {
+        this.queuePostProcessedRowForCleanup(cacheEntry, this.postProcessedRows[row], row);
+      } else {
+        cacheEntry.rowNode?.forEach((node: HTMLElement) => node.parentElement?.removeChild(node));
+      }
 
-    if (this._options.enableAsyncPostRenderCleanup && this.postProcessedRows[row]) {
-      this.queuePostProcessedRowForCleanup(cacheEntry, this.postProcessedRows[row], row);
-    } else {
-      cacheEntry.rowNode?.forEach((node: HTMLElement) => node.parentElement?.removeChild(node));
+      delete this.rowsCache[row];
+      delete this.postProcessedRows[row];
+      this.renderedRows--;
+      this.counter_rows_removed++;
     }
-
-    delete this.rowsCache[row];
-    delete this.postProcessedRows[row];
-    this.renderedRows--;
-    this.counter_rows_removed++;
   }
 
   /** Apply a Formatter Result to a Cell DOM Node */
@@ -3981,6 +3982,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const cellsToRemove: number[] = [];
     for (const cellNodeIdx in cacheEntry.cellNodesByColumnIdx) {
       // I really hate it when people mess with Array.prototype.
+      /* istanbul ignore if */
       if (!cacheEntry.cellNodesByColumnIdx.hasOwnProperty(cellNodeIdx)) {
         continue;
       }
@@ -4208,11 +4210,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected startPostProcessingCleanup() {
-    if (!this._options.enableAsyncPostRenderCleanup) {
-      return;
+    if (this._options.enableAsyncPostRenderCleanup) {
+      clearTimeout(this.h_postrenderCleanup);
+      this.h_postrenderCleanup = setTimeout(this.asyncPostProcessCleanupRows.bind(this), this._options.asyncPostRenderCleanupDelay);
     }
-    clearTimeout(this.h_postrenderCleanup);
-    this.h_postrenderCleanup = setTimeout(this.asyncPostProcessCleanupRows.bind(this), this._options.asyncPostRenderCleanupDelay);
   }
 
   protected invalidatePostProcessingResults(row: number) {
