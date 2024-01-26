@@ -78,7 +78,7 @@
     "jest-cli": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-extended": "^4.0.2",
-    "jsdom": "^23.2.0",
+    "jsdom": "^24.0.0",
     "jsdom-global": "^3.0.2",
     "moment-mini": "^2.29.4",
     "npm-run-all2": "^6.1.1",
