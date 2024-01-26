@@ -4210,11 +4210,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected startPostProcessingCleanup() {
-    if (!this._options.enableAsyncPostRenderCleanup) {
-      return;
+    if (this._options.enableAsyncPostRenderCleanup) {
+      clearTimeout(this.h_postrenderCleanup);
+      this.h_postrenderCleanup = setTimeout(this.asyncPostProcessCleanupRows.bind(this), this._options.asyncPostRenderCleanupDelay);
     }
-    clearTimeout(this.h_postrenderCleanup);
-    this.h_postrenderCleanup = setTimeout(this.asyncPostProcessCleanupRows.bind(this), this._options.asyncPostRenderCleanupDelay);
   }
 
   protected invalidatePostProcessingResults(row: number) {

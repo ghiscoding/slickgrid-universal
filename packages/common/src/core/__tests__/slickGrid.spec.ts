@@ -497,7 +497,7 @@ describe('SlickGrid core file', () => {
     });
 
     it('should hide/show column headers div when "showFooterRow" is disabled (with frozenColumn/frozenRow) and expect footer row column exists', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }, { id: 'lastName', field: 'lastName', name: 'Last Name' }] as Column[];
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', colspan: 3 }, { id: 'lastName', field: 'lastName', name: 'Last Name' }] as Column[];
       const gridOptions = { ...defaultOptions, createFooterRow: true, showFooterRow: false, frozenColumn: 0, frozenRow: 0 } as GridOption;
       const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
       grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
@@ -892,7 +892,7 @@ describe('SlickGrid core file', () => {
   describe('dataItemColumnValueExtractor', () => {
     it('should use dataItemColumnValueExtractor when provided to retrieve value to show in grid cell', () => {
       const columns = [
-        { id: 'title', name: 'Name', field: 'name' },
+        { id: 'title', name: 'Name', field: 'name', asyncPostRender: (node) => node.textContent = 'Item ' + Math.random() },
         { id: 'field1', name: 'Field1', field: 'values', fieldIdx: 0 },
         { id: 'field2', name: 'Field2', field: 'values', fieldIdx: 1 },
         { id: 'field3', name: 'Field3', field: 'values', fieldIdx: 2 }
@@ -909,6 +909,7 @@ describe('SlickGrid core file', () => {
             return values;
           }
         },
+        enableAsyncPostRenderCleanup: true, asyncPostRenderDelay: 1, asyncPostRenderCleanupDelay: 1
       } as GridOption;
       const data: any[] = [];
       for (var i = 0; i < 500; i++) {
@@ -937,6 +938,7 @@ describe('SlickGrid core file', () => {
       Object.defineProperty(viewportTopLeft, 'clientWidth', { writable: true, value: 128 });
       grid.updateRowCount();
       grid.scrollCellIntoView(3000, 2);
+      grid.scrollCellIntoView(30, 2);
       grid.scrollTo(52);
 
       expect(onViewportChangedSpy).toHaveBeenCalled();
@@ -2117,6 +2119,14 @@ describe('SlickGrid core file', () => {
       { id: 'age', field: 'age', name: 'Age', sortable: true },
     ] as Column[];
     const data = [{ id: 0, firstName: 'John', lastName: 'Doe', age: 30 }, { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 }];
+    for (var i = 0; i < 500; i++) {
+      data[i] = {
+        id: i,
+        firstName: i % 2 ? 'John' : 'Jane',
+        lastName: 'Doe',
+        age: Math.random()
+      };
+    }
 
     it('should not drag when cell is not in found in the grid', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
@@ -2244,6 +2254,51 @@ describe('SlickGrid core file', () => {
       expect(onDragStartSpy).toHaveBeenCalled();
       expect(onDragSpy).toHaveBeenCalled();
       expect(onDragEndSpy).toHaveBeenCalled();
+    });
+
+    it('should drag from a cell and execute all onDrag events then cleanup async renderer when a slick-cell is dragged and its event is stopped', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, rowHeight: 2200, enableAsyncPostRender: true, enableAsyncPostRenderCleanup: true });
+      const onViewportChangedSpy = jest.spyOn(grid.onViewportChanged, 'notify');
+      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      jest.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, height: 223 } as DOMRect);
+      Object.defineProperty(viewportTopLeft, 'scrollTop', { writable: true, value: 3000 });
+      Object.defineProperty(viewportTopLeft, 'scrollLeft', { writable: true, value: 88 });
+      Object.defineProperty(viewportTopLeft, 'scrollHeight', { writable: true, value: 440 });
+      Object.defineProperty(viewportTopLeft, 'scrollWidth', { writable: true, value: 459 });
+      Object.defineProperty(viewportTopLeft, 'clientHeight', { writable: true, value: 223 });
+      Object.defineProperty(viewportTopLeft, 'clientWidth', { writable: true, value: 128 });
+
+      const sedDragInit = new SlickEventData();
+      sedDragInit.addReturnValue(true);
+      sedDragInit.stopImmediatePropagation();
+      const onDragInitSpy = jest.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
+      const onDragStartSpy = jest.spyOn(grid.onDragStart, 'notify');
+      const onDragSpy = jest.spyOn(grid.onDrag, 'notify');
+      const onDragEndSpy = jest.spyOn(grid.onDragEnd, 'notify');
+      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+      slickCellElm.classList.add('dnd', 'cell-reorder');
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const bodyMouseMoveEvent = new CustomEvent('mousemove');
+      const bodyMouseUpEvent = new CustomEvent('mouseup');
+      Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
+      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: slickCellElm });
+      Object.defineProperty(bodyMouseMoveEvent, 'clientX', { writable: true, value: 20 });
+      Object.defineProperty(bodyMouseMoveEvent, 'clientY', { writable: true, value: 18 });
+
+      container.dispatchEvent(cMouseDownEvent);
+      document.body.dispatchEvent(bodyMouseMoveEvent);
+      document.body.dispatchEvent(bodyMouseUpEvent);
+      expect(onDragInitSpy).toHaveBeenCalled();
+      expect(onDragStartSpy).toHaveBeenCalled();
+      expect(onDragSpy).toHaveBeenCalled();
+      expect(onDragEndSpy).toHaveBeenCalled();
+
+      grid.scrollRowIntoView(30);
+      grid.setActiveRow(30);
+      grid.scrollTo(33);
+
+      expect(onViewportChangedSpy).toHaveBeenCalled();
     });
 
     it('should drag from a cell and execute all onDrag events except onDragStart when mousemove event target is not a slick-cell', () => {
