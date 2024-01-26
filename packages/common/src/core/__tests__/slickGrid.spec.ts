@@ -1839,7 +1839,6 @@ describe('SlickGrid core file', () => {
       const updateRowSpy = jest.spyOn(grid, 'updateRow');
       const onCellChangeSpy = jest.spyOn(grid.onCellChange, 'notify');
       jest.spyOn(editor!, 'serializeValue').mockReturnValueOnce(newValue);
-      const preClickSpy = jest.spyOn(editor!, 'preClick');
       grid.editActiveCell(CheckboxEditor as any, true);
 
       const result = grid.getEditController()?.commitCurrentEdit();

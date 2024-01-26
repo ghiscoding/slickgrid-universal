@@ -4494,20 +4494,17 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       this.ensureCellNodesInRowsCache(row);
       Object.keys(cacheEntry.cellNodesByColumnIdx).forEach(colIdx => {
-        if (!cacheEntry.cellNodesByColumnIdx.hasOwnProperty(colIdx)) {
-          return;
-        }
-
-        const columnIdx = +colIdx;
-
-        const m = this.columns[columnIdx];
-        const processedStatus = this.postProcessedRows[row][columnIdx]; // C=cleanup and re-render, R=rendered
-        if (m.asyncPostRender && processedStatus !== 'R') {
-          const node = cacheEntry.cellNodesByColumnIdx[columnIdx];
-          if (node) {
-            m.asyncPostRender(node, row, this.getDataItem(row), m, (processedStatus === 'C'));
+        if (cacheEntry.cellNodesByColumnIdx.hasOwnProperty(colIdx)) {
+          const columnIdx = +colIdx;
+          const m = this.columns[columnIdx];
+          const processedStatus = this.postProcessedRows[row][columnIdx]; // C=cleanup and re-render, R=rendered
+          if (m.asyncPostRender && processedStatus !== 'R') {
+            const node = cacheEntry.cellNodesByColumnIdx[columnIdx];
+            if (node) {
+              m.asyncPostRender(node, row, this.getDataItem(row), m, (processedStatus === 'C'));
+            }
+            this.postProcessedRows[row][columnIdx] = 'R';
           }
-          this.postProcessedRows[row][columnIdx] = 'R';
         }
       });
 
