@@ -82,12 +82,12 @@ jobs:
 
       - name: Upload Jest coverage to Codecov
         if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
+        continue-on-error: true
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: test/jest-coverage
           verbose: true
-          fail_ci_if_error: false
 
       - name: Retry Codecov upload when 1st try failed
         if: ${{ !contains(github.event.head_commit.message, 'chore(release)') && failure() }}
