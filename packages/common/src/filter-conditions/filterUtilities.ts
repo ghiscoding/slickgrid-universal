@@ -15,7 +15,7 @@ export function compareObjects(o1: any, o2: any, compareKey?: string): boolean {
     return o1[compareKey] === o2 || o1 === o2[compareKey] || o1[compareKey] === o2[compareKey];
   }
 
-  if (typeof o1 !== 'object' && typeof o2 !== 'object' && Object.keys(o1).length !== Object.keys(o2).length) {
+  if (typeof o1 !== 'object' || typeof o2 !== 'object' || Object.keys(o1).length !== Object.keys(o2).length) {
     return false;
   }
   // loop through all object properties to compare the full content of the object
