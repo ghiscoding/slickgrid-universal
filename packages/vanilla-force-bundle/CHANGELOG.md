@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.3.0...v4.3.1) (2024-01-27)
+
+### Bug Fixes
+
+* Salesforce doesn't support Document Fragment ([#1365](https://github.com/ghiscoding/slickgrid-universal/issues/1365)) ([9e3fb5f](https://github.com/ghiscoding/slickgrid-universal/commit/9e3fb5f2f3220d6e57d2efc20fd85105a8a39454)) - by @ghiscoding
+
+### Performance Improvements
+
+* decrease calls to setItems & grid invalidate ([#1363](https://github.com/ghiscoding/slickgrid-universal/issues/1363)) ([cab6898](https://github.com/ghiscoding/slickgrid-universal/commit/cab68989ebd53178dfcee5ed293379dc8932a72f)) - by @ghiscoding
+
 # [4.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.2.0...v4.3.0) (2024-01-20)
 
 ### Bug Fixes

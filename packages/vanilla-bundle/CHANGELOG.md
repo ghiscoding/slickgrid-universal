@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.3.0...v4.3.1) (2024-01-27)
+
+### Performance Improvements
+
+* decrease calls to setItems & grid invalidate ([#1363](https://github.com/ghiscoding/slickgrid-universal/issues/1363)) ([cab6898](https://github.com/ghiscoding/slickgrid-universal/commit/cab68989ebd53178dfcee5ed293379dc8932a72f)) - by @ghiscoding
+* **plugins:** decrease number of calls to translate all extensions only once ([#1359](https://github.com/ghiscoding/slickgrid-universal/issues/1359)) ([3e002f1](https://github.com/ghiscoding/slickgrid-universal/commit/3e002f15a06abd06893783e0667798f5ff8893cf)) - by @ghiscoding
+
 # [4.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.2.0...v4.3.0) (2024-01-20)
 
 ### Features

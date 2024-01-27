@@ -4,6 +4,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.3.0...v4.3.1) (2024-01-27)
+
+### Bug Fixes
+
+* **core:** frozen grid w/hidden column should remove from DOM ([#1372](https://github.com/ghiscoding/slickgrid-universal/issues/1372)) ([2c1346e](https://github.com/ghiscoding/slickgrid-universal/commit/2c1346e53e0e5cba57c949f7b70d2b20d3dc1d22)) - by @ghiscoding
+* **styling:** remove different bg-color on unorderable column ([#1358](https://github.com/ghiscoding/slickgrid-universal/issues/1358)) ([91426d1](https://github.com/ghiscoding/slickgrid-universal/commit/91426d1f6801680a5c40b3b900ab1a64cd771277)) - by @ghiscoding
+
+### Performance Improvements
+
+* **core:** convert `for..in` to `Object.keys().forEach` for better perf ([#1370](https://github.com/ghiscoding/slickgrid-universal/issues/1370)) ([29111a9](https://github.com/ghiscoding/slickgrid-universal/commit/29111a94756c34a2e01f2431c14b7ed806349a94)) - by @ghiscoding
+* decrease calls to setItems & grid invalidate ([#1363](https://github.com/ghiscoding/slickgrid-universal/issues/1363)) ([cab6898](https://github.com/ghiscoding/slickgrid-universal/commit/cab68989ebd53178dfcee5ed293379dc8932a72f)) - by @ghiscoding
+* **plugins:** decrease number of calls to translate all extensions only once ([#1359](https://github.com/ghiscoding/slickgrid-universal/issues/1359)) ([3e002f1](https://github.com/ghiscoding/slickgrid-universal/commit/3e002f15a06abd06893783e0667798f5ff8893cf)) - by @ghiscoding
+* **plugins:** Row Base Editing tooltip title should be translated only once ([#1360](https://github.com/ghiscoding/slickgrid-universal/issues/1360)) ([ef4e8f9](https://github.com/ghiscoding/slickgrid-universal/commit/ef4e8f9f4bf491d670986c6dac8531274aaaa46b)) - by @ghiscoding
+
 # [4.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.2.0...v4.3.0) (2024-01-20)
 
 ### Bug Fixes
