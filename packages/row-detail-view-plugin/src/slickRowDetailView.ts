@@ -594,11 +594,11 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   protected getPaddingItem(parent: any, offset: any) {
     const item: any = {};
 
-    for (const prop in this.dataView) {
+    Object.keys(this.dataView).forEach(prop => {
       if (prop) {
         item[prop] = null;
       }
-    }
+    });
     item[this._dataViewIdProperty] = `${parent[this._dataViewIdProperty]}.${offset}`;
 
     // additional hidden padding metadata fields

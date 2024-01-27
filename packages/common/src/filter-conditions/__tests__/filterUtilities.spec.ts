@@ -31,6 +31,11 @@ describe('filterUtilities', () => {
       const output = compareObjects('John', obj3, 'id');
       expect(output).toBeFalsy();
     });
+
+    it('should return False when both objects have different properties count', () => {
+      const output = compareObjects(obj1, obj4);
+      expect(output).toBeFalsy();
+    });
   });
 
   describe('testFilterCondition method', () => {

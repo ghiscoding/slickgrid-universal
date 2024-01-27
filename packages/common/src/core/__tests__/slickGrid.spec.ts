@@ -362,12 +362,20 @@ describe('SlickGrid core file', () => {
         grid.setSelectionModel(rowSelectionModel);
         jest.spyOn(grid.getEditorLock(), 'isActive').mockReturnValueOnce(false);
 
+        grid.setSelectedRows([1]);
+        grid.invalidateRow(0);
+        grid.invalidateRow(1);
+        grid.render();
         grid.setSelectedRows([0, 1]);
+        const firstRowItemCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l0.r0') as HTMLDivElement;
+        const secondRowItemCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l0.r0') as HTMLDivElement;
 
         expect(setRangeSpy).toHaveBeenCalledWith([
           { fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 },
           { fromCell: 0, fromRow: 1, toCell: 0, toRow: 1 }
         ], 'SlickGrid.setSelectedRows');
+        expect(firstRowItemCell.classList.contains('selected')).toBeTruthy();
+        expect(secondRowItemCell.classList.contains('selected')).toBeTruthy();
       });
 
       it('should not call setSelectedRanges() when editor lock isActive() is define and is returning true', () => {
@@ -379,6 +387,7 @@ describe('SlickGrid core file', () => {
         jest.spyOn(grid.getEditorLock(), 'isActive').mockReturnValueOnce(true);
 
         grid.setSelectedRows([0, 1]);
+        grid.render();
 
         expect(setRangeSpy).not.toHaveBeenCalled();
       });
@@ -391,6 +400,7 @@ describe('SlickGrid core file', () => {
 
         jest.spyOn(grid, 'getEditorLock').mockReturnValue(undefined as any);
         grid.setSelectedRows([0, 1]);
+        grid.render();
 
         expect(grid.getEditorLock()).toBeUndefined();
         expect(setRangeSpy).not.toHaveBeenCalledWith([
@@ -1829,7 +1839,6 @@ describe('SlickGrid core file', () => {
       const updateRowSpy = jest.spyOn(grid, 'updateRow');
       const onCellChangeSpy = jest.spyOn(grid.onCellChange, 'notify');
       jest.spyOn(editor!, 'serializeValue').mockReturnValueOnce(newValue);
-      const preClickSpy = jest.spyOn(editor!, 'preClick');
       grid.editActiveCell(CheckboxEditor as any, true);
 
       const result = grid.getEditController()?.commitCurrentEdit();
@@ -4125,6 +4134,7 @@ describe('SlickGrid core file', () => {
 
       // 1. add CSS Cell Style
       grid.addCellCssStyles('age_greater30_highlight', hash);
+      grid.render();
 
       let firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
       let secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
