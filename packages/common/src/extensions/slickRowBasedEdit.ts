@@ -32,6 +32,13 @@ export interface EditedRowDetails {
   cssStyleKeys: string[];
 }
 
+interface ButtonTranslation {
+  btnUpdateTitle: string;
+  btnEditTitle: string;
+  btnDeleteTitle: string;
+  btnCancelTitle: string;
+}
+
 /**
  * Row based edit plugin to add edit/delete buttons to each row and only allow editing rows currently in editmode
  */
@@ -52,10 +59,8 @@ export class SlickRowBasedEdit {
   protected _editedRows: Map<string, EditedRowDetails> = new Map();
 
   private _existingEditCommandHandler: ((item: any, column: Column<any>, command: EditCommand) => void) | undefined;
-  private btnUpdateTitle: string = '';
-  private btnEditTitle: string = '';
-  private btnDeleteTitle: string = '';
-  private btnCancelTitle: string = '';
+  protected _currentLang = 'en';
+  private _translations: { [locale: string]: ButtonTranslation; } = {};
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
@@ -240,16 +245,26 @@ export class SlickRowBasedEdit {
     });
   }
 
-  translate() {
-    this.btnUpdateTitle = this.getTitleOrDefault('updateButtonTitle', 'Update the row');
-    this.btnEditTitle = this.getTitleOrDefault('editButtonTitle', 'Edit the Row');
-    this.btnDeleteTitle = this.getTitleOrDefault('deleteButtonTitle', 'Delete the Row');
-    this.btnCancelTitle = this.getTitleOrDefault('cancelButtonTitle', 'Cancel changes of the Row');
+  /**
+   * Translate with current locale when `enableTranslate` is set or use title texts provided by user.
+   * We want to translate only once to avoid having to translate on each dataset item, we'll just reuse the translations if it was already translated earlier.
+   * User could optionally force a retranslate even if it was already translated
+   * @param {Boolean} [forceRetranslate] - even if it was already translate, force a retranslate
+   */
+  translate(forceRetranslate = false) {
+    this._currentLang = this.extensionUtility.translaterService?.getCurrentLanguage() ?? 'en';
 
-    const viewport = this._grid.getViewport();
+    // translate only once or reuse what's in memory if it was translated
+    if (!this._translations[this._currentLang] || forceRetranslate) {
+      this._translations[this._currentLang] = {
+        btnUpdateTitle: this.getTitleOrDefault('updateButtonTitle', 'Update the row'),
+        btnEditTitle: this.getTitleOrDefault('editButtonTitle', 'Edit the Row'),
+        btnDeleteTitle: this.getTitleOrDefault('deleteButtonTitle', 'Delete the Row'),
+        btnCancelTitle: this.getTitleOrDefault('cancelButtonTitle', 'Cancel changes of the Row'),
+      } as ButtonTranslation;
+    }
 
-    this._grid.invalidateRows([...Array(viewport.bottom - viewport.top + 1).keys()].map((i) => i + viewport.top));
-    this._grid.render();
+    return this._translations[this._currentLang];
   }
 
   protected checkOptionsRequirements(options: GridOption) {
@@ -408,6 +423,7 @@ export class SlickRowBasedEdit {
   protected actionColumnFormatter(_row: number, _cell: number, _value: any, _columnDef: Column, dataContext: any) {
     const options = this.gridOptions;
     const isInEditMode = this._editedRows.has(dataContext?.[options.datasetIdPropertyName ?? 'id']);
+    const buttonTitles = this._translations[this._currentLang] ?? this.translate();
 
     const actionFragment = document.createDocumentFragment();
     actionFragment
@@ -416,7 +432,7 @@ export class SlickRowBasedEdit {
           className:
             `${options.rowBasedEditOptions?.actionButtons?.editButtonClassName || 'button-style padding-1px mr-2'
             } action-btns ` + BTN_ACTION_EDIT,
-          title: this.btnEditTitle,
+          title: buttonTitles.btnEditTitle,
           style: { display: isInEditMode ? 'none' : '' },
         })
       )
@@ -432,7 +448,7 @@ export class SlickRowBasedEdit {
           className:
             `${options.rowBasedEditOptions?.actionButtons?.deleteButtonClassName || 'button-style padding-1px'
             } action-btns ` + BTN_ACTION_DELETE,
-          title: this.btnDeleteTitle,
+          title: buttonTitles.btnDeleteTitle,
           style: { display: isInEditMode ? 'none' : '' },
         })
       )
@@ -448,7 +464,7 @@ export class SlickRowBasedEdit {
           className:
             `${options.rowBasedEditOptions?.actionButtons?.updateButtonClassName || 'button-style padding-1px mr-2'
             } action-btns ` + BTN_ACTION_UPDATE,
-          title: this.btnUpdateTitle,
+          title: buttonTitles.btnUpdateTitle,
           style: { display: !isInEditMode ? 'none' : '' },
         })
       )
@@ -464,7 +480,7 @@ export class SlickRowBasedEdit {
           className:
             `${options.rowBasedEditOptions?.actionButtons?.cancelButtonClassName || 'button-style padding-1px'
             } action-btns ` + BTN_ACTION_CANCEL,
-          title: this.btnCancelTitle,
+          title: buttonTitles.btnCancelTitle,
           style: { display: !isInEditMode ? 'none' : '' },
         })
       )
@@ -526,6 +542,15 @@ export class SlickRowBasedEdit {
     };
   }
 
+  /**
+   * Get button tooltip text 1 of these 3 options:
+   * 1. from `btnAbcTitleKey` when `enableTranslate` is set
+   * 2. from `btnAbcTitle` when no title Key is found and/or `enableTranslate` is disabled
+   * 3. or finally use default title fallback provided
+   * @param key - button title key
+   * @param defaultTitle - fallback title
+   * @returns - final tooltip title text
+   */
   protected getTitleOrDefault(key: ActionButtonTitles, defaultTitle: string) {
     const actionBtnOptions = this.gridOptions.rowBasedEditOptions?.actionButtons;
     return (
