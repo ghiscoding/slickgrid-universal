@@ -2424,11 +2424,12 @@ describe('SlickGrid core file', () => {
       jest.advanceTimersByTime(10);
 
       expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[1].id, grid }, expect.anything(), grid);
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
       expect(columns[0].width).toBe(80);
-      expect(columns[1].width).toBe(30);
-      expect(columns[2].width).toBe(80);
+      expect(columns[1].width).toBe(0);
+      expect(columns[2].width).toBe(65);
       expect(columns[3].width).toBe(86);
+      expect(columns[4].width).toBe(80);
     });
 
     it('should resize 3rd column that has a "minWidth" defined using default sizing grid options', () => {
@@ -2466,11 +2467,12 @@ describe('SlickGrid core file', () => {
       jest.advanceTimersByTime(10);
 
       expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[2].id, grid }, expect.anything(), grid);
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
       expect(columns[0].width).toBe(80);
       expect(columns[1].width).toBe(0);
-      expect(columns[2].width).toBe(65);
-      expect(columns[3].width).toBe(86);
+      expect(columns[2].width).toBe(59);
+      expect(columns[3].width).toBe(88);
+      expect(columns[4].width).toBe(80);
     });
 
     it('should resize 3rd column that has a "minWidth" defined using default sizing grid options with a frozen column', () => {
@@ -2508,11 +2510,12 @@ describe('SlickGrid core file', () => {
       jest.advanceTimersByTime(10);
 
       expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[2].id, grid }, expect.anything(), grid);
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
       expect(columns[0].width).toBe(80);
       expect(columns[1].width).toBe(0);
-      expect(columns[2].width).toBe(65);
-      expect(columns[3].width).toBe(86);
+      expect(columns[2].width).toBe(59);
+      expect(columns[3].width).toBe(88);
+      expect(columns[4].width).toBe(80);
     });
 
     it('should resize 3rd column that has a "minWidth" with a frozen column that is greater than available columns', () => {
@@ -2550,11 +2553,12 @@ describe('SlickGrid core file', () => {
       jest.advanceTimersByTime(10);
 
       expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[2].id, grid }, expect.anything(), grid);
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
       expect(columns[0].width).toBe(80);
       expect(columns[1].width).toBe(0);
-      expect(columns[2].width).toBe(65);
-      expect(columns[3].width).toBe(86);
+      expect(columns[2].width).toBe(59);
+      expect(columns[3].width).toBe(88);
+      expect(columns[4].width).toBe(80);
     });
 
     it('should resize 2nd column with forceFitColumns option enabled', () => {
@@ -2597,11 +2601,12 @@ describe('SlickGrid core file', () => {
       // end resizing
       document.body.dispatchEvent(bodyMouseUpEvent);
       expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[1].id, grid }, expect.anything(), grid);
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
       expect(columns[0].width).toBe(0);
-      expect(columns[1].width).toBe(74);
-      expect(columns[2].width).toBe(133);
-      expect(columns[3].width).toBe(198);
+      expect(columns[1].width).toBe(0);
+      expect(columns[2].width).toBe(74);
+      expect(columns[3].width).toBe(133);
+      expect(columns[4].width).toBe(198);
     });
 
     it('should resize 2nd column without forceFitColumns option', () => {
@@ -2644,11 +2649,12 @@ describe('SlickGrid core file', () => {
       // end resizing
       document.body.dispatchEvent(bodyMouseUpEvent);
       expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[1].id, grid }, expect.anything(), grid);
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
       expect(columns[0].width).toBe(0);
-      expect(columns[1].width).toBe(74);
-      expect(columns[2].width).toBe(399);
+      expect(columns[1].width).toBe(0);
+      expect(columns[2].width).toBe(74);
       expect(columns[3].width).toBe(88);
+      expect(columns[4].width).toBe(467);
     });
 
     it('should resize 2nd column with forceFitColumns option enabled', () => {
@@ -2687,11 +2693,12 @@ describe('SlickGrid core file', () => {
       // end resizing
       document.body.dispatchEvent(bodyMouseUpEvent);
       expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[1].id, grid }, expect.anything(), grid);
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
       expect(columns[0].width).toBe(0);
-      expect(columns[1].width).toBe(73);
-      expect(columns[2].width).toBe(134);
-      expect(columns[3].width).toBe(198);
+      expect(columns[1].width).toBe(0);
+      expect(columns[2].width).toBe(73);
+      expect(columns[3].width).toBe(88);
+      expect(columns[4].width).toBe(244);
     });
 
     it('should resize 3rd column with forceFitColumns option enabled', () => {
@@ -2730,11 +2737,12 @@ describe('SlickGrid core file', () => {
       // end resizing
       document.body.dispatchEvent(bodyMouseUpEvent);
       expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[2].id, grid }, expect.anything(), grid);
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
       expect(columns[0].width).toBe(0);
-      expect(columns[1].width).toBe(74);
-      expect(columns[2].width).toBe(132);
-      expect(columns[3].width).toBe(88);
+      expect(columns[1].width).toBe(0);
+      expect(columns[2].width).toBe(74);
+      expect(columns[3].width).toBe(132);
+      expect(columns[4].width).toBe(199);
     });
 
     it('should resize 3rd column with forceFitColumns option enabled with a frozen column', () => {
@@ -2773,11 +2781,12 @@ describe('SlickGrid core file', () => {
       // end resizing
       document.body.dispatchEvent(bodyMouseUpEvent);
       expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[2].id, grid }, expect.anything(), grid);
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
       expect(columns[0].width).toBe(0);
-      expect(columns[1].width).toBe(74);
-      expect(columns[2].width).toBe(132);
-      expect(columns[3].width).toBe(88);
+      expect(columns[1].width).toBe(0);
+      expect(columns[2].width).toBe(74);
+      expect(columns[3].width).toBe(132);
+      expect(columns[4].width).toBe(199);
     });
 
     it('should resize 3rd column without forceFitColumns option but with a frozen column', () => {
@@ -2816,11 +2825,12 @@ describe('SlickGrid core file', () => {
       // end resizing
       document.body.dispatchEvent(bodyMouseUpEvent);
       expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
-      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[2].id, grid }, expect.anything(), grid);
+      expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
       expect(columns[0].width).toBe(0);
-      expect(columns[1].width).toBe(74);
-      expect(columns[2].width).toBe(132);
-      expect(columns[3].width).toBe(88);
+      expect(columns[1].width).toBe(0);
+      expect(columns[2].width).toBe(74);
+      expect(columns[3].width).toBe(132);
+      expect(columns[4].width).toBe(468);
     });
 
     it('should resize 4th column with forceFitColumns option enabled and a column with maxWidth and a frozen column', () => {
@@ -2831,7 +2841,8 @@ describe('SlickGrid core file', () => {
       const onColumnsDragSpy = jest.spyOn(grid.onColumnsDrag, 'notify');
       const onColumnsResizedSpy = jest.spyOn(grid.onColumnsResized, 'notify');
       const columnElms = container.querySelectorAll('.slick-header-column');
-      const resizeHandleElm = columnElms[3].querySelector('.slick-resizable-handle') as HTMLDivElement;
+      const column3 = columnElms[3 - 1]; // -1 because hidden column is removed from DOM
+      const resizeHandleElm = column3.querySelector('.slick-resizable-handle') as HTMLDivElement;
 
       const cMouseDownEvent = new CustomEvent('mousedown');
       const bodyMouseMoveEvent = new CustomEvent('mousemove');
@@ -2849,21 +2860,22 @@ describe('SlickGrid core file', () => {
       resizeHandleElm.dispatchEvent(cMouseDownEvent);
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent);
-      expect(columnElms[3].classList.contains('slick-header-column-active')).toBeTruthy();
+      expect(column3.classList.contains('slick-header-column-active')).toBeTruthy();
       expect(onColumnsDragSpy).toHaveBeenCalledWith(
-        { triggeredByColumn: columnElms[3], resizeHandle: resizeHandleElm, grid },
+        { triggeredByColumn: column3, resizeHandle: resizeHandleElm, grid },
         expect.anything(),
         grid
       );
 
       // end resizing
       document.body.dispatchEvent(bodyMouseUpEvent);
-      expect(columnElms[3].classList.contains('slick-header-column-active')).toBeFalsy();
+      expect(column3.classList.contains('slick-header-column-active')).toBeFalsy();
       expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[3].id, grid }, expect.anything(), grid);
       expect(columns[0].width).toBe(0);
-      expect(columns[1].width).toBe(74);
-      expect(columns[2].width).toBe(133);
-      expect(columns[3].width).toBe(168);
+      expect(columns[1].width).toBe(0);
+      expect(columns[2].width).toBe(74);
+      expect(columns[3].width).toBe(132);
+      expect(columns[4].width).toBe(199);
     });
 
     it('should expect the last column to never be resizable', () => {
@@ -2871,7 +2883,8 @@ describe('SlickGrid core file', () => {
       grid.init();
 
       const columnElms = container.querySelectorAll('.slick-header-column');
-      const resizeHandleElm = columnElms[4].querySelector('.slick-resizable-handle') as HTMLDivElement;
+      const column4 = columnElms[4 - 1]; // -1 because hidden column is removed from DOM
+      const resizeHandleElm = column4.querySelector('.slick-resizable-handle') as HTMLDivElement;
 
       expect(resizeHandleElm).toBeNull();
     });
