@@ -1,2 +1,6 @@
+# Tests, Report & Coverage
 **/__tests__/*.*
 **/*.spec.ts
+
+# build
+tsconfig.tsbuildinfo

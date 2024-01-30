@@ -3,6 +3,9 @@
 # dependencies
 /node_modules
 
+# build
+tsconfig.tsbuildinfo
+
 # IDE - VSCode
 .vscode/*
 !.vscode/settings.json
