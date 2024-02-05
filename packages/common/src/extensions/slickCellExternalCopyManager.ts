@@ -115,9 +115,9 @@ export class SlickCellExternalCopyManager {
     return getHtmlStringOutput(columnDef.name || '', 'innerHTML');
   }
 
-  getDataItemValueForColumn(item: any, columnDef: Column, event: SlickEventData) {
+  getDataItemValueForColumn(item: any, columnDef: Column, row: number, cell: number, event: SlickEventData) {
     if (typeof this._addonOptions.dataItemColumnValueExtractor === 'function') {
-      const val = this._addonOptions.dataItemColumnValueExtractor(item, columnDef) as string | HTMLElement;
+      const val = this._addonOptions.dataItemColumnValueExtractor(item, columnDef, row, cell) as string | HTMLElement;
       if (val) {
         return (val instanceof HTMLElement) ? stripTags(val.innerHTML) : val;
       }
@@ -433,7 +433,7 @@ export class SlickCellExternalCopyManager {
                   ? stripTags((columns[j].name as HTMLElement).innerHTML)
                   : columns[j].name as string;
                 if (colName.length > 0 && !columns[j].hidden) {
-                  clipTextCells.push(this.getDataItemValueForColumn(dt, columns[j], e));
+                  clipTextCells.push(this.getDataItemValueForColumn(dt, columns[j], i, j, e));
                 }
               }
               clipTextRows.push(clipTextCells.join('\t'));

@@ -142,13 +142,13 @@ export class SlickCellExcelCopyManager {
       clipboardCommandHandler: (editCommand: EditCommand) => {
         this._undoRedoBuffer.queueAndExecuteCommand.call(this._undoRedoBuffer, editCommand);
       },
-      dataItemColumnValueExtractor: (item: any, columnDef: Column) => {
+      dataItemColumnValueExtractor: (item: any, columnDef: Column, row: number = 0, cell: number = 0) => {
         // when grid or cell is not editable, we will possibly evaluate the Formatter if it was passed
         // to decide if we evaluate the Formatter, we will use the same flag from Export which is "exportWithFormatter"
         if (!this.gridOptions.editable || !columnDef.editor) {
           const isEvaluatingFormatter = (columnDef.exportWithFormatter !== undefined) ? columnDef.exportWithFormatter : (this.gridOptions.textExportOptions?.exportWithFormatter);
           if (columnDef.formatter && isEvaluatingFormatter) {
-            const formattedOutput = columnDef.formatter(0, 0, item[columnDef.field], columnDef, item, this._grid);
+            const formattedOutput = columnDef.formatter(row, cell, item[columnDef.field], columnDef, item, this._grid);
             const cellResult = isPrimitiveOrHTML(formattedOutput) ? formattedOutput : (formattedOutput as FormatterResultWithHtml).html || (formattedOutput as FormatterResultWithText).text;
             if (columnDef.sanitizeDataExport || (this.gridOptions.textExportOptions?.sanitizeDataExport)) {
               const outputString = (cellResult instanceof HTMLElement) ? cellResult.innerHTML : cellResult as string;

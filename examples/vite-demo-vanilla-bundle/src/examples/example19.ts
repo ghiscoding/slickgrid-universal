@@ -91,6 +91,14 @@ export default class Example19 {
           : String.fromCharCode('A'.charCodeAt(0) + (Math.floor(i / 26)) - 1) + String.fromCharCode('A'.charCodeAt(0) + (i % 26)),
         field: String(i),
         minWidth: 60,
+        exportWithFormatter: true,
+        formatter: (row: number, cell: number, value: any) => {
+          if (value !== null && value !== undefined) {
+            return value;
+          }
+
+          return `${row + 1}:${cell + 1}`;
+        },
         width: 60,
         editor: { model: Editors.text }
       });
