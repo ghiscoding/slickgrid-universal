@@ -145,7 +145,10 @@ export class SlickCellExcelCopyManager {
       dataItemColumnValueExtractor: (item: any, columnDef: Column, row: number = 0, cell: number = 0) => {
         // when grid or cell is not editable, we will possibly evaluate the Formatter if it was passed
         // to decide if we evaluate the Formatter, we will use the same flag from Export which is "exportWithFormatter"
-        if (!this.gridOptions.editable || !columnDef.editor) {
+        const activeCell = this._grid.getActiveCell();
+        const isActiveEditorCurrentCell = this._grid.getCellEditor() && activeCell?.row === row && activeCell?.cell === cell;
+
+        if (!this.gridOptions.editable || !columnDef.editor || !isActiveEditorCurrentCell) {
           const isEvaluatingFormatter = (columnDef.exportWithFormatter !== undefined) ? columnDef.exportWithFormatter : (this.gridOptions.textExportOptions?.exportWithFormatter);
           if (columnDef.formatter && isEvaluatingFormatter) {
             const formattedOutput = columnDef.formatter(row, cell, item[columnDef.field], columnDef, item, this._grid);
