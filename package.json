@@ -95,9 +95,5 @@
   "funding": {
     "type": "ko_fi",
     "url": "https://ko-fi.com/ghiscoding"
-  },
-  "prettier": {
-    "singleQuote": true,
-    "printWidth": 120
   }
 }
