@@ -37,6 +37,17 @@ You could ⭐ the lib and perhaps support me with cafeine [☕](https://ko-fi.co
 
 <a href='https://ko-fi.com/ghiscoding' target='_blank'><img height='34' style='border:0px;height:34px;' src='https://az743702.vo.msecnd.net/cdn/kofi3.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' />
 
+## Sponsors
+
+Thanks :)
+
+<div>
+  <img class="circle avatar-user" src="https://avatars.githubusercontent.com/u/48218815?s=52&amp;v=4" width="40" height="40" alt="@kevinburkett" />
+  <a href="/kevinburkett" class="Link">
+    <span class="wb-break-word ml-2">kevinburkett</span>
+  </a>
+</div>
+
 ## Live Demos & Available Framework Ports
 The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2 different UI themes (Material Design / Salesforce), but you could also choose the Bootstrap theme which is demoed in other frameworks with available links shown in the table below. Also note that these live demos are using [Bootstrap](https://getbootstrap.com/) and [Bulma](https://bulma.io/), but in theory you could use any UI libraries. The project tries to be as much agnostic as possible and it does so by providing a ton of CSS/SASS variables which are available to customize it the way you want.
 
