@@ -143,7 +143,7 @@ pnpm run cypress:ci
 Thanks :)
 
 <div>
-  <img class="circle avatar-user" src="https://avatars.githubusercontent.com/u/48218815?s=52&amp;v=4" width="40" height="40" alt="@kevinburkett" />
+  <img class="circle avatar-user" src="https://avatars.githubusercontent.com/u/48218815?s=52&amp;v=4" width="45" height="45" alt="@kevinburkett" />
   <a href="/kevinburkett" class="Link">
     <span class="wb-break-word ml-2">kevinburkett</span>
   </a>
