@@ -92,7 +92,7 @@ export default class Example19 {
         field: String(i),
         minWidth: 60,
         exportWithFormatter: true,
-        formatter: (row: number, cell: number, value: any) => {
+        formatter: (row, cell, value) => {
           if (value !== null && value !== undefined) {
             return value;
           }

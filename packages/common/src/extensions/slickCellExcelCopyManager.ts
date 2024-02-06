@@ -142,7 +142,7 @@ export class SlickCellExcelCopyManager {
       clipboardCommandHandler: (editCommand: EditCommand) => {
         this._undoRedoBuffer.queueAndExecuteCommand.call(this._undoRedoBuffer, editCommand);
       },
-      dataItemColumnValueExtractor: (item: any, columnDef: Column, row: number = 0, cell: number = 0) => {
+      dataItemColumnValueExtractor: (item: any, columnDef: Column, row = 0, cell = 0) => {
         // when grid or cell is not editable, we will possibly evaluate the Formatter if it was passed
         // to decide if we evaluate the Formatter, we will use the same flag from Export which is "exportWithFormatter"
         const activeCell = this._grid.getActiveCell();
