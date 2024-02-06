@@ -140,8 +140,6 @@ pnpm run cypress:ci
 
 ## Sponsors
 
-Thanks :)
-
 <div>
   <img class="circle avatar-user" src="https://avatars.githubusercontent.com/u/48218815?s=52&amp;v=4" width="45" height="45" alt="@kevinburkett" />
   <a href="/kevinburkett" class="Link">
