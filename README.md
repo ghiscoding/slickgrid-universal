@@ -136,3 +136,13 @@ pnpm run cypress
 # or run it in the shell (like a CI/CD would)
 pnpm run cypress:ci
 ```
+
+
+## Sponsors
+
+<div>
+  <img class="circle avatar-user" src="https://avatars.githubusercontent.com/u/48218815?s=52&amp;v=4" width="45" height="45" alt="@kevinburkett" />
+  <a href="/kevinburkett" class="Link">
+    <span class="wb-break-word ml-2">kevinburkett</span>
+  </a>
+</div>
