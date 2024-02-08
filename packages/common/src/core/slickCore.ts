@@ -447,7 +447,7 @@ export class SlickGroup extends SlickNonDataItem {
    * @property groupingKey
    * @type {Object}
    */
-  groupingKey: string = '';
+  groupingKey = '';
 
   constructor() {
     super();

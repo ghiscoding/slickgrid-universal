@@ -1,10 +1,10 @@
 import type { EditCommand, Formatter, GridOption } from '../../interfaces/index';
-import { Formatters } from '../../formatters';
 import { SharedService } from '../../services/shared.service';
 import { SlickCellExcelCopyManager } from '../slickCellExcelCopyManager';
 import { SlickCellSelectionModel } from '../slickCellSelectionModel';
 import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager';
 import { SlickEvent, SlickEventData, SlickGrid, SlickRange } from '../../core/index';
+import { Editors } from '../../editors';
 
 jest.mock('flatpickr', () => { });
 
@@ -17,6 +17,8 @@ const gridStub = {
   getData: jest.fn(),
   getOptions: jest.fn(),
   getSelectionModel: jest.fn(),
+  getActiveCell: jest.fn(),
+  getCellEditor: jest.fn(),
   getEditorLock: () => getEditorLockMock,
   focus: jest.fn(),
   registerPlugin: jest.fn(),
@@ -356,14 +358,36 @@ describe('CellExcelCopyManager', () => {
       expect(output).toBe('John');
     });
 
-    it('should return null when calling "dataItemColumnValueExtractor" callback without editable', () => {
+    it('should return null when calling "dataItemColumnValueExtractor" callback with editable and editor, which is active on the current cell', () => {
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+      plugin.init(gridStub);
+      (gridStub.getCellEditor as jest.Mock).mockReturnValue({});
+      (gridStub.getActiveCell as jest.Mock).mockReturnValue({ row: 6, cell: 6 });
+
+      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true,  editor: { model: Editors.text }, formatter: myBoldFormatter}, 6, 6);
+
+      expect(output).toBeNull();
+    });
+
+    it('should forward provided row and cell to formatter when calling "dataItemColumnValueExtractor"', () => {
+      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      plugin.init(gridStub);
+
+      const rowCellFormatter: Formatter = (row, cell) => `${row}:${cell}`;
+      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, formatter: rowCellFormatter }, 6, 6);
+
+      expect(output).toBe('6:6');
+    });
+
+    it('should format output even if not editable and an editor is configured but a formatter is defined', () => {
       gridOptionsMock.editable = false;
       jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       plugin.init(gridStub);
 
-      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName' });
+      const rowCellFormatter: Formatter = (row, cell) => `${row}:${cell}`;
+      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, editor: { model: Editors.text }, formatter: rowCellFormatter }, 6, 6);
 
-      expect(output).toBeNull();
+      expect(output).toBe('6:6');
     });
   });
 });
