@@ -5,14 +5,24 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Chrome Debugger",
+      "request": "launch",
+      "type": "chrome",
+      "url": "http://localhost:8888",
+      "webRoot": "${workspaceFolder}/examples/vite-demo-vanilla-bundle",
+      "pathMapping": {
+        "/@fs/": ""
+      }
+    },
+    {
       "type": "msedge",
       "request": "launch",
-      "name": "Vite - Edge Debugger",
-      "url": "http://localhost:8888"
-      // "resolveSourceMapLocations": [
-      //   "${workspaceFolder}/",
-      //   "!/node_modules/**"
-      // ]
+      "name": "Ms Edge Debugger",
+      "url": "http://localhost:8888",
+      "webRoot": "${workspaceFolder}/examples/vite-demo-vanilla-bundle",
+      "pathMapping": {
+        "/@fs/": ""
+      }
     },
     {
       "type": "node",
