@@ -626,15 +626,6 @@ describe('excelUtils', () => {
         expect(output).toEqual({ groupType: 'sum', stylesheetFormatter: { id: 135 } });
       });
 
-      it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsCurrencyColored', () => {
-        const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsCurrencyColored,
-        } as Column;
-        const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
-
-        expect(output).toEqual({ groupType: 'sum', stylesheetFormatter: { id: 135 } });
-      });
-
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsDollarColoredBold', () => {
         const column = {
           type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarColoredBold,

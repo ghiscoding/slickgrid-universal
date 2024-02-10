@@ -706,7 +706,7 @@ describe('CellRangeSelector Plugin', () => {
     }, 7);
   });
 
-  it.only('should maintain propagation only if editor is on current cell', () => {
+  it('should maintain propagation only if editor is on current cell', () => {
     mockGridOptions.frozenRow = 2;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
