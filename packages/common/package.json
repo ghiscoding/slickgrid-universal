@@ -80,6 +80,7 @@
     "autocompleter": "^9.1.2",
     "dequal": "^2.0.3",
     "dompurify": "^3.0.8",
+    "excel-builder-vanilla": "3.0.0",
     "flatpickr": "^4.6.13",
     "moment-mini": "^2.29.4",
     "multiple-select-vanilla": "^1.2.5",

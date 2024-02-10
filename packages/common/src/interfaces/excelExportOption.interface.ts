@@ -1,6 +1,4 @@
-import type { ExcelCustomStyling } from './columnExcelExportOption.interface';
-import type { ExcelWorksheet } from './excelWorksheet.interface';
-import type { ExcelWorkbook } from './excelWorkbook.interface';
+import type { ExcelStyleInstruction, Worksheet, Workbook } from 'excel-builder-vanilla';
 import type { FileType } from '../enums/fileType.enum';
 
 export interface ExcelExportOption {
@@ -11,7 +9,7 @@ export interface ExcelExportOption {
   autoDetectCellFormat?: boolean;
 
   /** When defined, this will override header titles styling, when undefined the default will be a bold style */
-  columnHeaderStyle?: ExcelCustomStyling;
+  columnHeaderStyle?: ExcelStyleInstruction;
 
   /** If set then this will be used as column width for all columns */
   customColumnWidth?: number;
@@ -52,5 +50,5 @@ export interface ExcelExportOption {
   sheetName?: string;
 
   /** Add a Custom Excel Header on first row of the Excel Sheet */
-  customExcelHeader?: (workbook: ExcelWorkbook, sheet: ExcelWorksheet) => void;
+  customExcelHeader?: (workbook: Workbook, sheet: Worksheet) => void;
 }

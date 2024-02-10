@@ -58,7 +58,7 @@
   "dependencies": {
     "@slickgrid-universal/common": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
-    "excel-builder-webpacker": "^2.1.8",
+    "excel-builder-vanilla": "^3.0.0",
     "moment-mini": "^2.29.4"
   },
   "devDependencies": {

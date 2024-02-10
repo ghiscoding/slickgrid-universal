@@ -19,10 +19,10 @@ Simple Export to Excel Service that allows to exporting as `.xls` or `.xlsx`.
 - [@slickgrid-universal/utils](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/utils)
 
 ### External Dependencies
-This package requires [excel-builder-webpacker](https://www.npmjs.com/package/excel-builder-webpacker) which itself requires [jszip](https://www.npmjs.com/package/jszip) and [lodash](https://www.npmjs.com/package/lodash), the later not being a small lib, so make sure that you are fine with the bundle size. For our use case, the extra bundle size is totally worth the feature.
+This package requires [excel-builder-vanilla](https://www.npmjs.com/package/excel-builder-vanilla) which itself requires [fflate](https://www.npmjs.com/package/fflate).
 
 ### Installation
-Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://ghiscoding.github.io/slickgrid-universal) page and click on "Export to Excel" from the Grid Menu (aka hamburger menu).
+Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://ghiscoding.github.io/slickgrid-universal/#/example02) page and click on "Export to Excel" from the Context Menu or the Grid Menu (aka hamburger menu).
 
 ### Usage
 In order to use the Service, you will need to register it in your grid options via the `registerExternalResources` as shown below.

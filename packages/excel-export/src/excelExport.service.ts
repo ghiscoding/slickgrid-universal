@@ -1,12 +1,17 @@
-import ExcelBuilder from 'excel-builder-webpacker';
+import {
+  downloadExcelFile,
+  type ExcelColumnMetadata,
+  type ExcelMetadata,
+  type StyleSheet,
+  Workbook,
+  Worksheet,
+} from 'excel-builder-vanilla';
 import type {
   Column,
   ContainerService,
   ExcelExportService as BaseExcelExportService,
   ExcelExportOption,
   ExternalResource,
-  ExcelWorkbook,
-  ExcelWorksheet,
 
   GetDataValueCallback,
   GetGroupTotalValueCallback,
@@ -20,17 +25,16 @@ import type {
 } from '@slickgrid-universal/common';
 import {
   Constants,
-  FieldType,
-  FileType,
   // utility functions
   exportWithFormatterWhenDefined,
+  FieldType,
+  FileType,
   getColumnFieldType,
   getTranslationPrefix,
   isColumnDateType,
 } from '@slickgrid-universal/common';
 import { addWhiteSpaces, deepCopy, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 
-import { ExcelCellFormat, ExcelMetadata, ExcelStylesheet, } from './interfaces/index';
 import {
   ExcelFormatter,
   getGroupTotalValue,
@@ -52,12 +56,12 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   protected _hasColumnTitlePreHeader = false;
   protected _hasGroupedItems = false;
   protected _excelExportOptions!: ExcelExportOption;
-  protected _sheet!: ExcelWorksheet;
-  protected _stylesheet!: ExcelStylesheet;
+  protected _sheet!: Worksheet;
+  protected _stylesheet!: StyleSheet;
   protected _stylesheetFormats: any;
   protected _pubSubService: PubSubService | null = null;
   protected _translaterService: TranslaterService | undefined;
-  protected _workbook!: ExcelWorkbook;
+  protected _workbook!: Workbook;
 
   // references of each detected cell and/or group total formats
   protected _regularCellExcelFormats: { [fieldId: string]: { stylesheetFormatterId?: number; getDataValueParser: GetDataValueCallback; }; } = {};
@@ -144,8 +148,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       // prepare the Excel Workbook & Sheet
       // we can use ExcelBuilder constructor with WebPack but we need to use function calls with RequireJS/SystemJS
       const worksheetOptions = { name: this._excelExportOptions.sheetName || 'Sheet1' };
-      this._workbook = ExcelBuilder.Workbook ? new ExcelBuilder.Workbook() : ExcelBuilder.createWorkbook();
-      this._sheet = ExcelBuilder.Worksheet ? new ExcelBuilder.Worksheet(worksheetOptions) : this._workbook.createWorksheet(worksheetOptions);
+      this._workbook = new Workbook();
+      this._sheet = this._workbook.createWorksheet(worksheetOptions);
 
       // add any Excel Format/Stylesheet to current Workbook
       this._stylesheet = this._workbook.getStyleSheet();
@@ -183,26 +187,18 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         this._sheet.setData(finalOutput);
         this._workbook.addWorksheet(this._sheet);
 
-        // using ExcelBuilder.Builder.createFile with WebPack but ExcelBuilder.createFile with RequireJS/SystemJS
-        const createFileFn = ExcelBuilder.Builder?.createFile ?? ExcelBuilder.createFile;
-
         // MIME type could be undefined, if that's the case we'll detect the type by its file extension
         // user could also provide its own mime type, if however an empty string is provided we will consider to be without any MIME type)
         let mimeType = this._excelExportOptions?.mimeType;
         if (mimeType === undefined) {
           mimeType = this._fileFormat === FileType.xls ? 'application/vnd.ms-excel' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
         }
-        const createFileOptions = mimeType === '' ? { type: 'blob' } : { type: 'blob', mimeType };
-        const excelBlob = await createFileFn(this._workbook, createFileOptions);
-        const downloadOptions = {
-          filename: `${this._excelExportOptions.filename}.${this._fileFormat}`,
-          format: this._fileFormat
-        };
 
-        // start downloading but add the Blob property only on the start download not on the event itself
-        this.startDownloadFile({ ...downloadOptions, blob: excelBlob, data: this._sheet.data });
-        this._pubSubService?.publish(`onAfterExportToExcel`, downloadOptions);
-        resolve(true);
+        const filename = `${this._excelExportOptions.filename}.${this._fileFormat}`;
+        downloadExcelFile(this._workbook, filename, { mimeType }).then(() => {
+          this._pubSubService?.publish(`onAfterExportToExcel`, { filename, mimeType });
+          resolve(true);
+        });
       });
     });
   }
@@ -231,47 +227,15 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     return letters[lastPos] + '';
   }
 
-  /**
-   * Triggers download file with file format.
-   * IE(6-10) are not supported
-   * All other browsers will use plain javascript on client side to produce a file download.
-   * @param options
-   */
-  startDownloadFile(options: { filename: string, blob: Blob, data: any[]; }) {
-    // when using IE/Edge, then use different download call
-    if (typeof (navigator as any).msSaveOrOpenBlob === 'function') {
-      (navigator as any).msSaveOrOpenBlob(options.blob, options.filename);
-    } else {
-      // this trick will generate a temp <a /> tag
-      // the code will then trigger a hidden click for it to start downloading
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(options.blob);
-
-      if (link && document) {
-        link.textContent = 'download';
-        link.href = url;
-        link.setAttribute('download', options.filename);
-
-        // set the visibility to hidden so there is no effect on your web-layout
-        link.style.visibility = 'hidden';
-
-        // this part will append the anchor tag, trigger a click (for download to start) and finally remove the tag once completed
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-    }
-  }
-
   // -----------------------
   // protected functions
   // -----------------------
 
-  protected getDataOutput(): Array<string[] | ExcelCellFormat[]> {
+  protected getDataOutput(): Array<string[] | ExcelColumnMetadata[]> {
     const columns = this._grid?.getColumns() || [];
 
     // data variable which will hold all the fields data of a row
-    const outputData: Array<string[] | ExcelCellFormat[]> = [];
+    const outputData: Array<string[] | ExcelColumnMetadata[]> = [];
     const gridExportOptions = this._gridOptions?.excelExportOptions;
     const columnHeaderStyle = gridExportOptions?.columnHeaderStyle;
     let columnHeaderStyleId = this._stylesheetFormats.boldFormatter.id;
@@ -327,8 +291,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * @param {Object} metadata - Excel metadata
    * @returns {Object} array of Excel cell format
    */
-  protected getColumnGroupedHeaderTitlesData(columns: Column[], metadata: ExcelMetadata): Array<ExcelCellFormat> {
-    let outputGroupedHeaderTitles: Array<ExcelCellFormat> = [];
+  protected getColumnGroupedHeaderTitlesData(columns: Column[], metadata: ExcelMetadata): Array<ExcelColumnMetadata> {
+    let outputGroupedHeaderTitles: Array<ExcelColumnMetadata> = [];
 
     // get all Column Header Titles
     this._groupedColumnHeaders = this.getColumnGroupedHeaderTitles(columns) || [];
@@ -355,8 +319,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   }
 
   /** Get all column headers and format them in Bold */
-  protected getColumnHeaderData(columns: Column[], metadata: ExcelMetadata): Array<ExcelCellFormat> {
-    let outputHeaderTitles: Array<ExcelCellFormat> = [];
+  protected getColumnHeaderData(columns: Column[], metadata: ExcelMetadata): Array<ExcelColumnMetadata> {
+    let outputHeaderTitles: Array<ExcelColumnMetadata> = [];
 
     // get all Column Header Titles
     this._columnHeaders = this.getColumnHeaders(columns) || [];
@@ -458,7 +422,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   /**
    * Get all the grid row data and return that as an output string
    */
-  protected pushAllGridRowDataToArray(originalDaraArray: Array<Array<string | ExcelCellFormat | number>>, columns: Column[]): Array<Array<string | ExcelCellFormat | number>> {
+  protected pushAllGridRowDataToArray(originalDaraArray: Array<Array<string | ExcelColumnMetadata | number>>, columns: Column[]): Array<Array<string | ExcelColumnMetadata | number>> {
     const lineCount = this._dataView.getLength();
 
     // loop through all the grid rows of data
@@ -555,7 +519,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           colspan = prevColspan--;
         }
       } else {
-        let itemData: Date | number | string | ExcelCellFormat = '';
+        let itemData: Date | number | string | ExcelColumnMetadata = '';
         const fieldType = getColumnFieldType(columnDef);
 
         // -- Read Data & Push to Data Array
@@ -620,12 +584,12 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * For example if we grouped by "salesRep" and we have a Sum Aggregator on "sales", then the returned output would be:: ["Sum 123$"]
    * @param itemObj
    */
-  protected readGroupedTotalRows(columns: Column[], itemObj: any): Array<ExcelCellFormat | string | number> {
+  protected readGroupedTotalRows(columns: Column[], itemObj: any): Array<ExcelColumnMetadata | string | number> {
     const groupingAggregatorRowText = this._excelExportOptions.groupingAggregatorRowText || '';
-    const outputStrings: Array<ExcelCellFormat | string | number> = [groupingAggregatorRowText];
+    const outputStrings: Array<ExcelColumnMetadata | string | number> = [groupingAggregatorRowText];
 
     columns.forEach((columnDef) => {
-      let itemData: number | string | ExcelCellFormat = '';
+      let itemData: number | string | ExcelColumnMetadata = '';
       const fieldType = getColumnFieldType(columnDef);
       const skippedField = columnDef.excludeFromExport || false;
 

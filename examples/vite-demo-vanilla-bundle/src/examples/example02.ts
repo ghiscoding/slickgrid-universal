@@ -176,7 +176,8 @@ export default class Example02 {
           // collectionAsync: new Promise<any>(resolve => setTimeout(() => {
           //   resolve([{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }]);
           // }, 250)),
-        }
+        },
+        excelExportOptions: { width: 11 }
       }
     ];
 
@@ -198,7 +199,25 @@ export default class Example02 {
         columnHeaderStyle: {
           font: { color: 'FFFFFFFF' },
           fill: { type: 'pattern', patternType: 'solid', fgColor: 'FF4a6c91' }
-        }
+        },
+
+        // optionally pass a custom header to the Excel Sheet
+        // a lot of the info can be found on Web Archive of Excel-Builder
+        // https://ghiscoding.gitbook.io/excel-builder-vanilla/cookbook/fonts-and-colors
+        customExcelHeader: (workbook, sheet) => {
+          const formatterId = workbook.getStyleSheet().createFormat({
+            // every color is prefixed with FF, then regular HTML color
+            font: { size: 18, fontName: 'Calibri', bold: true, color: 'FFFFFFFF' },
+            alignment: { wrapText: true, horizontal: 'center' },
+            fill: { type: 'pattern', patternType: 'solid', fgColor: 'FF203764' },
+          });
+          sheet.setRowInstructions(0, { height: 50 }); // change height of row 0
+
+          // excel cells start with A1 which is upper left corner
+          const customTitle = 'Grouping and Aggregator - My header is too long enough, so it will wrap';
+          sheet.mergeCells('A1', 'H1');
+          sheet.data.push([{ value: customTitle, metadata: { style: formatterId.id } }]);
+        },
       },
       textExportOptions: { filename: 'my-export', sanitizeDataExport: true },
       externalResources: [this.excelExportService, new TextExportService()],
