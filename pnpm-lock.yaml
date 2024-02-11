@@ -238,8 +238,8 @@ importers:
         specifier: ^3.0.8
         version: 3.0.8
       excel-builder-vanilla:
-        specifier: 3.0.0
-        version: 3.0.0
+        specifier: 3.0.1
+        version: 3.0.1
       flatpickr:
         specifier: ^4.6.13
         version: 4.6.13
@@ -385,8 +385,8 @@ importers:
         specifier: workspace:~
         version: link:../utils
       excel-builder-vanilla:
-        specifier: ^3.0.0
-        version: 3.0.0
+        specifier: ^3.0.1
+        version: 3.0.1
       moment-mini:
         specifier: ^2.29.4
         version: 2.29.4
@@ -4586,8 +4586,8 @@ packages:
     engines: {node: '>=0.8.x'}
     dev: true
 
-  /excel-builder-vanilla@3.0.0:
-    resolution: {integrity: sha512-+ykUZZbJnV/DB/lV1ZFRgdVfg+uuXGtv8kbGyO52FrU+NCF4at9hRnlY0bk8IrS7aO3qAtcDv0g9vjA/KKCWlw==}
+  /excel-builder-vanilla@3.0.1:
+    resolution: {integrity: sha512-pVB10+81o16pB9ERoku0vjvPEQgVH3amKCAw8qU1hc2XiKKLn0gJS/cIb8/QzIsC/51gcRDswJLBSzfUzm1nfw==}
     dependencies:
       fflate: 0.8.2
     dev: false
