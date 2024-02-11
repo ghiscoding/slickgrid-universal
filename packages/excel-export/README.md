@@ -19,10 +19,12 @@ Simple Export to Excel Service that allows to exporting as `.xls` or `.xlsx`.
 - [@slickgrid-universal/utils](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/utils)
 
 ### External Dependencies
-This package requires [excel-builder-vanilla](https://www.npmjs.com/package/excel-builder-vanilla) which itself requires [fflate](https://www.npmjs.com/package/fflate).
+This package requires [excel-builder-vanilla](https://www.npmjs.com/package/excel-builder-vanilla) which itself also has a single dependency [fflate](https://www.npmjs.com/package/fflate) to compress the data before sending it to the browser.
 
 ### Installation
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation), you can see a demo by looking at the [GitHub Demo](https://ghiscoding.github.io/slickgrid-universal/#/example02) page and click on "Export to Excel" from the Context Menu or the Grid Menu (aka hamburger menu).
+
+You can also use nearly all Excel-Builder-Vanilla options, see their [Excel-Builder-Vanilla - Documentation](https://ghiscoding.gitbook.io/excel-builder-vanilla/) and also take a look at Slickgrid-Universal [Excel Export - Documentation](https://ghiscoding.gitbook.io/slickgrid-universal/grid-functionalities/export-to-excel) on how to use both.
 
 ### Usage
 In order to use the Service, you will need to register it in your grid options via the `registerExternalResources` as shown below.
@@ -69,4 +71,12 @@ export class MyExample {
     this.excelExportService.exportToExcel({ filename: 'export', format: FileType.xlsx });
   }
 }
+```
+
+### CSP (Content Security Policy)
+Please note that this Excel Export service is using `fflate` (it compresses the data before sending it to the browser) and for better performance it uses Web Workers and for that reason you might need to adjust your CSP rules. You simply need to add a CSP rule to avoid the error `worker-src 'self' blob:;`
+
+```html
+<meta http-equiv="Content-Security-Policy"
+  content="default-src 'self'; ...other rules...  worker-src 'self' blob:;" />
 ```
