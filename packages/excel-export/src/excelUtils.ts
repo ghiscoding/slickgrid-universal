@@ -1,6 +1,6 @@
+import type { StyleSheet } from 'excel-builder-vanilla';
 import type {
   Column,
-  ExcelStylesheet,
   Formatter,
   FormatterType,
   GetDataValueCallback,
@@ -41,7 +41,7 @@ export function parseNumberWithFormatterOptions(value: any, column: Column, grid
 }
 
 /** use different Excel Stylesheet Format as per the Field Type */
-export function useCellFormatByFieldType(stylesheet: ExcelStylesheet, stylesheetFormatters: any, columnDef: Column, grid: SlickGrid, autoDetect = true) {
+export function useCellFormatByFieldType(stylesheet: StyleSheet, stylesheetFormatters: any, columnDef: Column, grid: SlickGrid, autoDetect = true) {
   const fieldType = getColumnFieldType(columnDef);
   let stylesheetFormatterId: number | undefined;
   let callback: GetDataValueCallback = getExcelSameInputDataCallback;
@@ -131,7 +131,7 @@ export function getFormatterNumericDataType(formatter?: Formatter) {
   return dataType;
 }
 
-export function getExcelFormatFromGridFormatter(stylesheet: ExcelStylesheet, stylesheetFormatters: any, columnDef: Column, grid: SlickGrid, formatterType: FormatterType) {
+export function getExcelFormatFromGridFormatter(stylesheet: StyleSheet, stylesheetFormatters: any, columnDef: Column, grid: SlickGrid, formatterType: FormatterType) {
   let format = '';
   let groupType = '';
   let stylesheetFormatter: undefined | ExcelFormatter;
