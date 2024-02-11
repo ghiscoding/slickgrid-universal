@@ -1,7 +1,7 @@
 import { AppRouting } from './app-routing';
 import { Renderer } from './renderer';
 import { ElementEventListener, RouterConfig } from './interfaces';
-const pageLayoutGlobs = import.meta.glob('./examples/**/*.html', { as: 'raw', eager: true });
+const pageLayoutGlobs = import.meta.glob('./examples/**/*.html', { query: '?raw', eager: true, import: 'default' });
 
 export class App {
   private _boundedEventWithListeners: ElementEventListener[] = [];
@@ -110,7 +110,7 @@ export class App {
         }
 
         // then load the new View
-        const htmlModule = pageLayoutGlobs[mapRoute.view];
+        const htmlModule = pageLayoutGlobs[mapRoute.view] as string;
 
         if (htmlModule) {
           this.renderer.loadView(htmlModule);

@@ -7,12 +7,7 @@
       "../typings",
       "./node_modules/@types",
       "../../node_modules/@types"
-    ],
-    "paths": {
-      "jszip": [
-        "node_modules/jszip/dist/jszip.min.js"
-      ]
-    }
+    ]
   },
   "include": [
     "../typings",

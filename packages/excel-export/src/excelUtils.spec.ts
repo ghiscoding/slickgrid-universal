@@ -1,6 +1,6 @@
+import { StyleSheet } from 'excel-builder-vanilla';
 import {
   Column,
-  ExcelStylesheet,
   FieldType,
   Formatter,
   Formatters,
@@ -26,7 +26,7 @@ const gridStub = {
 
 const stylesheetStub = {
   createFormat: jest.fn(),
-} as unknown as ExcelStylesheet;
+} as unknown as StyleSheet;
 
 describe('excelUtils', () => {
   const mockedFormatId = 135;
