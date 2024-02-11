@@ -720,6 +720,7 @@ describe('CellRangeSelector Plugin', () => {
     jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 2, row: 3 });
     jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
     jest.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
+    jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
     const focusSpy = jest.spyOn(gridStub, 'focus');
     const scrollSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
     jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
