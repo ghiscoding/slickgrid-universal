@@ -77,8 +77,10 @@
     "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
-    "archiver": "^6.0.1",
     "cross-env": "^7.0.3",
+    "fflate": "^0.8.2",
+    "glob": "^10.3.10",
+    "normalize-path": "^3.0.0",
     "npm-run-all2": "^6.1.2",
     "vite": "^5.1.1",
     "yargs": "^17.7.2"
