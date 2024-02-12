@@ -13,9 +13,9 @@ const mockGridOptions = {
 const gridStub = {
   applyHtmlCode: (elm, val) => {
     if (val instanceof HTMLElement || val instanceof DocumentFragment) {
-      elm.appendChild(val)
+      elm.appendChild(val);
     } else {
-      elm.innerHTML = val || ''
+      elm.innerHTML = val || '';
     }
   },
   getGridPosition: () => mockGridOptions,

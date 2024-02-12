@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/vanilla-bundle",
-  "version": "4.3.1",
+  "version": "4.4.0",
   "description": "Vanilla Slick Grid Bundle - Framework agnostic the output is to be used in vanilla JS/TS - Written in TypeScript and we also use Vite to bundle everything into a single JS file.",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -74,7 +74,7 @@
     "@slickgrid-universal/graphql": "workspace:~",
     "@types/sortablejs": "^1.15.7",
     "cross-env": "^7.0.3",
-    "npm-run-all2": "^6.1.1"
+    "npm-run-all2": "^6.1.2"
   },
   "funding": {
     "type": "ko_fi",

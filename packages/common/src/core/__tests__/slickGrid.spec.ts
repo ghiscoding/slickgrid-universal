@@ -4341,6 +4341,13 @@ describe('SlickGrid core file', () => {
         expect(() => grid.getCellFromEvent(event)).toThrow('SlickGrid getCellFromNode: cannot get cell - slick-cell');
       });
 
+      it('should return null if either the native event or passed in event is not set', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+
+        expect(grid.getCellFromEvent(null as any)).toBeNull();
+        expect(grid.getCellFromEvent(new SlickEventData(null))).toBeNull();
+      })
+
       it('should return null when clicked cell is not a slick-cell closest ancestor', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
         const secondRowSlickCells = container.querySelectorAll('.slick-row:nth-child(1)');

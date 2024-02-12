@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/graphql",
-  "version": "4.3.1",
+  "version": "4.4.0",
   "description": "GraphQL Service to sync a grid with a GraphQL backend server",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -62,7 +62,7 @@
   "devDependencies": {
     "cross-env": "^7.0.3",
     "moment-mini": "^2.29.4",
-    "npm-run-all2": "^6.1.1"
+    "npm-run-all2": "^6.1.2"
   },
   "funding": {
     "type": "ko_fi",

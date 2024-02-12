@@ -4,6 +4,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.3.1...v4.4.0) (2024-02-12)
+
+### Bug Fixes
+
+* **core:** replace `any` types by valid types ([#1378](https://github.com/ghiscoding/slickgrid-universal/issues/1378)) ([02c4bc1](https://github.com/ghiscoding/slickgrid-universal/commit/02c4bc15e0da31c055c0fac9eecb7c4a17df3eb7)) - by @ghiscoding
+* **demo:** change trading demo full screen z-index lower than ms-select ([1f4a9ac](https://github.com/ghiscoding/slickgrid-universal/commit/1f4a9acd68bc9559420d48597f9214c16f48556e)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#1381](https://github.com/ghiscoding/slickgrid-universal/issues/1381)) ([2562352](https://github.com/ghiscoding/slickgrid-universal/commit/25623527d05dd713123e1031b682f0a80cca37de)) - by @renovate-bot
+* mouse cell selection with active editor ([#1382](https://github.com/ghiscoding/slickgrid-universal/issues/1382)) ([17549b8](https://github.com/ghiscoding/slickgrid-universal/commit/17549b89933b10688fe8d186ab18ab4c8b7e9f87)) - by @zewa666
+* **publish:** do not npm publish `tsconfig.tsbuildinfo` ([#1373](https://github.com/ghiscoding/slickgrid-universal/issues/1373)) ([9223338](https://github.com/ghiscoding/slickgrid-universal/commit/922333843852ae861015e4bbec053d4937222aa2)) - by @ghiscoding
+* **common:** make "ctrl + c" great again ([#1379](https://github.com/ghiscoding/slickgrid-universal/pull/1379)) ([3bf59e](3bf59e04f2fd9e234ca063b5827e6403a6fcd044)) - by @zewa666
+
+### Features
+
+* **ExcelExport:** migrate to Excel-Export-Vanilla (ESM) ([#1383](https://github.com/ghiscoding/slickgrid-universal/issues/1383)) ([f3838b3](https://github.com/ghiscoding/slickgrid-universal/commit/f3838b336659304988957ad933901645c5c243b7)) - by @ghiscoding
+
 ## [4.3.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.3.0...v4.3.1) (2024-01-27)
 
 ### Bug Fixes

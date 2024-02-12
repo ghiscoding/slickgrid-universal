@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/rxjs-observable",
-  "version": "4.3.1",
+  "version": "4.4.0",
   "description": "RxJS Observable Wrapper",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -61,6 +61,6 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "npm-run-all2": "^6.1.1"
+    "npm-run-all2": "^6.1.2"
   }
 }

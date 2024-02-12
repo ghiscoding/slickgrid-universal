@@ -45,7 +45,9 @@
     "lint": "eslint packages --ext .ts",
     "test": "jest --runInBand --coverage=true --config ./test/jest.config.ts",
     "test:ci": "jest --runInBand --coverage=true --ci --config ./test/jest.config.ts",
-    "test:watch": "cross-env TZ='America/New_York' jest --watch --config ./test/jest.config.ts"
+    "test:watch": "cross-env TZ='America/New_York' jest --watch --config ./test/jest.config.ts",
+    "prepare": "husky",
+    "commitlint": "commitlint --edit"
   },
   "comments": {
     "new-version": "To create a new version with Lerna-Lite, simply run the following script (1) 'roll-new-release'.",
@@ -54,26 +56,30 @@
   "engines": {
     "node": "^18.0.0 || >=20.0.0"
   },
-  "packageManager": "pnpm@8.14.3",
+  "packageManager": "pnpm@8.15.1",
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^2.2.5",
+    "@commitlint/cli": "^18.6.0",
+    "@commitlint/config-conventional": "^18.6.0",
     "@jest/types": "^29.6.3",
-    "@lerna-lite/cli": "^3.2.1",
-    "@lerna-lite/publish": "^3.2.1",
-    "@lerna-lite/run": "^3.2.1",
-    "@lerna-lite/watch": "^3.2.1",
-    "@types/jest": "^29.5.11",
-    "@types/node": "^20.11.7",
-    "@typescript-eslint/eslint-plugin": "^6.19.1",
-    "@typescript-eslint/parser": "^6.19.1",
+    "@lerna-lite/cli": "^3.3.0",
+    "@lerna-lite/publish": "^3.3.0",
+    "@lerna-lite/run": "^3.3.0",
+    "@lerna-lite/watch": "^3.3.0",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.17",
+    "@typescript-eslint/eslint-plugin": "^7.0.1",
+    "@typescript-eslint/parser": "^7.0.1",
     "cross-env": "^7.0.3",
-    "cypress": "^13.6.3",
-    "dotenv": "^16.4.1",
+    "cypress": "^13.6.4",
+    "dotenv": "^16.4.3",
     "eslint": "^8.56.0",
     "eslint-plugin-cypress": "^2.15.1",
     "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jest": "^27.6.3",
     "eslint-plugin-node": "^11.1.0",
     "flatpickr": "^4.6.13",
+    "husky": "^9.0.10",
     "jest": "^29.7.0",
     "jest-cli": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
@@ -81,8 +87,8 @@
     "jsdom": "^24.0.0",
     "jsdom-global": "^3.0.2",
     "moment-mini": "^2.29.4",
-    "npm-run-all2": "^6.1.1",
-    "pnpm": "^8.14.3",
+    "npm-run-all2": "^6.1.2",
+    "pnpm": "^8.15.1",
     "rimraf": "^5.0.5",
     "rxjs": "^7.8.1",
     "servor": "^4.0.2",
@@ -95,9 +101,5 @@
   "funding": {
     "type": "ko_fi",
     "url": "https://ko-fi.com/ghiscoding"
-  },
-  "prettier": {
-    "singleQuote": true,
-    "printWidth": 120
   }
 }

@@ -439,15 +439,15 @@ export class SlickGroup extends SlickNonDataItem {
    * @property groups
    * @type {Array}
    */
-  groups: any[] = null as any;
+  groups: SlickGroup[] = null as any;
 
   /**
-   * A unique key used to identify the group.  This key can be used in calls to DataView
-   * collapseGroup() or expandGroup().
+   * A unique key used to identify the group.
+   * This key can be used in calls to DataView `collapseGroup()` or `expandGroup()`.
    * @property groupingKey
    * @type {Object}
    */
-  groupingKey: any = null;
+  groupingKey = '';
 
   constructor() {
     super();
@@ -508,7 +508,7 @@ export class SlickGroupTotals extends SlickNonDataItem {
  * @constructor
  */
 export class SlickEditorLock {
-  activeEditController: any = null;
+  activeEditController: EditController | null = null;
 
   /**
    * Returns true if a specified edit controller is active (has the edit lock).

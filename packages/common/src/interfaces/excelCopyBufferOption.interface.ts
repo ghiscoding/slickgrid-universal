@@ -17,7 +17,7 @@ export interface ExcelCopyBufferOption<T = any> {
   copiedCellStyleLayerKey?: string;
 
   /** option to specify a custom column value extractor function */
-  dataItemColumnValueExtractor?: (item: any, columnDef: Column<T>) => string | HTMLElement | DocumentFragment | FormatterResultWithHtml | FormatterResultWithText | null;
+  dataItemColumnValueExtractor?: (item: any, columnDef: Column<T>, row?: number, cell?: number) => string | HTMLElement | DocumentFragment | FormatterResultWithHtml | FormatterResultWithText | null;
 
   /** option to specify a custom column value setter function */
   dataItemColumnValueSetter?: (item: any, columnDef: Column<T>, value: any) => string | FormatterResultWithHtml | FormatterResultWithText | null;

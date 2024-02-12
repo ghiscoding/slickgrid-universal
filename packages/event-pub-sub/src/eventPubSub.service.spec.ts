@@ -101,7 +101,7 @@ describe('EventPubSub Service', () => {
       expect(mockCallback).toHaveBeenCalledWith({ name: 'John' });
     });
 
-    it('should call subscribe method and expect "addEventListener" and "getEventNameByNamingConvention" to be called', () => {
+    it('should call subscribe method and expect "addEventListener" and "getEventNameByNamingConvention" to be called with kebabCase', () => {
       const addEventSpy = jest.spyOn(divContainer, 'addEventListener');
       const getEventNameSpy = jest.spyOn(service, 'getEventNameByNamingConvention');
       const mockCallback = jest.fn();
@@ -141,7 +141,7 @@ describe('EventPubSub Service', () => {
       // expect(mockCallback).toHaveBeenCalledWith({ detail: { name: 'John' } });
     });
 
-    it('should call subscribe method and expect "addEventListener" and "getEventNameByNamingConvention" to be called', () => {
+    it('should call subscribe method and expect "addEventListener" and "getEventNameByNamingConvention" to be called with kebabCase', () => {
       const addEventSpy = jest.spyOn(divContainer, 'addEventListener');
       const getEventNameSpy = jest.spyOn(service, 'getEventNameByNamingConvention');
       const mockCallback = jest.fn();

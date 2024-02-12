@@ -191,9 +191,11 @@ describe('CellSelectionModel Plugin', () => {
     ]);
   });
 
-  it('should return False when onBeforeCellRangeSelected is called and getEditorLock returns False', () => {
+  it('should return False when onBeforeCellRangeSelected is called, getEditorLock returns False and the current cell is the active cell (within editor)', () => {
     const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'));
     jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
+    jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: 3 });
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 2, row: 3 });
     const stopPropSpy = jest.spyOn(mouseEvent, 'stopPropagation');
 
     plugin.init(gridStub);

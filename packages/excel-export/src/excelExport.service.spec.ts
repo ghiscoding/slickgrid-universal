@@ -1,3 +1,10 @@
+// mocked modules
+const downloadExcelFileMock = jest.fn().mockResolvedValue(true);
+jest.mock('excel-builder-vanilla', () => ({
+  ...(jest.requireActual('excel-builder-vanilla') as any),
+  downloadExcelFile: downloadExcelFileMock,
+}));
+
 import 'jest-extended';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import {
@@ -16,7 +23,7 @@ import {
   SortComparers,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
-import ExcelBuilder from 'excel-builder-webpacker';
+
 import { ContainerServiceStub } from '../../../test/containerServiceStub';
 import { TranslateServiceStub } from '../../../test/translateServiceStub';
 import { ExcelExportService } from './excelExport.service';
@@ -80,8 +87,9 @@ describe('ExcelExportService', () => {
   let service: ExcelExportService;
   let translateService: TranslateServiceStub;
   let mockColumns: Column[];
-  let mockExcelBlob: Blob;
   let mockExportExcelOptions: ExcelExportOption;
+  const mimeTypeXLS = 'application/vnd.ms-excel';
+  const mimeTypeXLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
   describe('with Translater Service', () => {
     beforeEach(() => {
@@ -90,13 +98,8 @@ describe('ExcelExportService', () => {
       container.registerInstance('PubSubService', pubSubServiceStub);
       mockGridOptions.translater = translateService;
 
-      (navigator as any).__defineGetter__('appName', () => 'Netscape');
-      (navigator as any).msSaveOrOpenBlob = undefined as any;
-      mockExcelBlob = new Blob(['', ''], { type: `text/xlsx;charset=utf-8;` });
-
       mockExportExcelOptions = {
         filename: 'export',
-        format: FileType.xlsx,
       };
 
       service = new ExcelExportService();
@@ -115,19 +118,14 @@ describe('ExcelExportService', () => {
 
     it('should not have any output since there are no column definitions provided', async () => {
       const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-      const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-      const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-      const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
 
       service.init(gridStub, container);
       const result = await service.exportToExcel(mockExportExcelOptions);
 
       expect(result).toBeTruthy();
       expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onBeforeExportToExcel`, true);
-      expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-      expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-      expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, blob: new Blob(), data: [[]] });
+      expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+      expect(downloadExcelFileMock).toHaveBeenCalledWith(expect.objectContaining({ tables: [] }), 'export.xlsx', { mimeType: mimeTypeXLSX });
     });
 
     describe('exportToExcel method', () => {
@@ -178,98 +176,80 @@ describe('ExcelExportService', () => {
 
       });
 
-      it('should call "URL.createObjectURL" with a Blob and xlsx file when browser is not IE11 (basically any other browser) when exporting as xlsx', async () => {
-        const excelBuilderSpy = jest.spyOn(ExcelBuilder.Builder, 'createFile');
-        const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
+      it('should call download with a Blob and xlsx file when browser is not IE11 (basically any other browser) when exporting as xlsx', async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
 
         service.init(gridStub, container);
         const result = await service.exportToExcel(mockExportExcelOptions);
 
         expect(result).toBeTruthy();
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(excelBuilderSpy).toHaveBeenCalledWith(expect.anything(), { type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(expect.anything(), 'export.xlsx', { mimeType: mimeTypeXLSX });
       });
 
-      it('should call "URL.createObjectURL" with a Blob and xlsx file without any MIME type when providing an empty string as a mime type', async () => {
-        const excelBuilderSpy = jest.spyOn(ExcelBuilder.Builder, 'createFile');
+      it('should call download with a Blob and xlsx file without any MIME type when providing an empty string as a mime type', async () => {
         mockGridOptions.excelExportOptions = { mimeType: '' };
-        const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
 
         service.init(gridStub, container);
         const result = await service.exportToExcel(mockExportExcelOptions);
 
         expect(result).toBeTruthy();
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(excelBuilderSpy).toHaveBeenCalledWith(expect.anything(), { type: 'blob' });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: '' });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(expect.anything(), 'export.xlsx', { mimeType: '' });
       });
 
-      it('should call "URL.createObjectURL" with a Blob and expect same mime type when provided', async () => {
-        const excelBuilderSpy = jest.spyOn(ExcelBuilder.Builder, 'createFile');
-        mockGridOptions.excelExportOptions = { mimeType: 'application/some-excel-format' };
-        const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
+      it('should call download with a Blob and expect same mime type when provided', async () => {
+        mockGridOptions.excelExportOptions = { mimeType: mimeTypeXLS };
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
 
         service.init(gridStub, container);
         const result = await service.exportToExcel(mockExportExcelOptions);
 
         expect(result).toBeTruthy();
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(excelBuilderSpy).toHaveBeenCalledWith(expect.anything(), { type: 'blob', mimeType: 'application/some-excel-format' });
-      });
-
-      it('should call "msSaveOrOpenBlob" with a Blob and xlsx file when browser is IE11 when exporting as xlsx', async () => {
-        const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
-        (navigator as any).msSaveOrOpenBlob = jest.fn();
-        const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyMsSave = jest.spyOn(navigator as any, 'msSaveOrOpenBlob');
-
-        service.init(gridStub, container);
-        const result = await service.exportToExcel(mockExportExcelOptions);
-
-        expect(result).toBeTruthy();
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyMsSave).toHaveBeenCalledWith(mockExcelBlob, 'export.xlsx');
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLS });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(expect.anything(), 'export.xlsx', { mimeType: mimeTypeXLS });
       });
     });
 
     describe('startDownloadFile call after all private methods ran ', () => {
       let mockCollection: any[];
 
+      beforeEach(() => {
+        mockGridOptions.excelExportOptions = { mimeType: mimeTypeXLSX };
+        mockExportExcelOptions = {
+          filename: 'export',
+          format: FileType.xlsx
+        };
+      });
+
       it(`should have the Order exported correctly with multiple formatters which have 1 of them returning an object with a text property (instead of simple string)`, async () => {
         mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 }];
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 1, }, value: 'User Id', },
-              { metadata: { style: 1, }, value: 'FirstName', },
-              { metadata: { style: 1, }, value: 'LastName', },
-              { metadata: { style: 1, }, value: 'Position', },
-              { metadata: { style: 1, }, value: 'Order', },
-            ],
-            ['1E06', 'John', 'X', 'SALES_REP', '<b>10</b>'],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 1, }, value: 'User Id', },
+                  { metadata: { style: 1, }, value: 'FirstName', },
+                  { metadata: { style: 1, }, value: 'LastName', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                  { metadata: { style: 1, }, value: 'Order', },
+                ],
+                ['1E06', 'John', 'X', 'SALES_REP', '<b>10</b>'],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
       });
 
       it(`should have the LastName in uppercase when "formatter" is defined but also has "exportCustomFormatter" which will be used`, async () => {
@@ -277,28 +257,28 @@ describe('ExcelExportService', () => {
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 1, }, value: 'User Id', },
-              { metadata: { style: 1, }, value: 'FirstName', },
-              { metadata: { style: 1, }, value: 'LastName', },
-              { metadata: { style: 1, }, value: 'Position', },
-              { metadata: { style: 1, }, value: 'Order', },
-            ],
-            ['2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '<b>1</b>'],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 1, }, value: 'User Id', },
+                  { metadata: { style: 1, }, value: 'FirstName', },
+                  { metadata: { style: 1, }, value: 'LastName', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                  { metadata: { style: 1, }, value: 'Order', },
+                ],
+                ['2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '<b>1</b>'],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
       });
 
       it(`should have the LastName as empty string when item LastName is NULL and column definition "formatter" is defined but also has "exportCustomFormatter" which will be used`, async () => {
@@ -306,28 +286,28 @@ describe('ExcelExportService', () => {
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 1, }, value: 'User Id', },
-              { metadata: { style: 1, }, value: 'FirstName', },
-              { metadata: { style: 1, }, value: 'LastName', },
-              { metadata: { style: 1, }, value: 'Position', },
-              { metadata: { style: 1, }, value: 'Order', },
-            ],
-            ['3C2', 'Ava Luna', '', 'HUMAN_RESOURCES', '<b>3</b>'],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 1, }, value: 'User Id', },
+                  { metadata: { style: 1, }, value: 'FirstName', },
+                  { metadata: { style: 1, }, value: 'LastName', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                  { metadata: { style: 1, }, value: 'Order', },
+                ],
+                ['3C2', 'Ava Luna', '', 'HUMAN_RESOURCES', '<b>3</b>'],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
       });
 
       it(`should have the UserId as empty string even when UserId property is not found in the item object`, async () => {
@@ -335,28 +315,28 @@ describe('ExcelExportService', () => {
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 1, }, value: 'User Id', },
-              { metadata: { style: 1, }, value: 'FirstName', },
-              { metadata: { style: 1, }, value: 'LastName', },
-              { metadata: { style: 1, }, value: 'Position', },
-              { metadata: { style: 1, }, value: 'Order', },
-            ],
-            ['', 'Ava', 'LUNA', 'HUMAN_RESOURCES', '<b>3</b>'],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 1, }, value: 'User Id', },
+                  { metadata: { style: 1, }, value: 'FirstName', },
+                  { metadata: { style: 1, }, value: 'LastName', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                  { metadata: { style: 1, }, value: 'Order', },
+                ],
+                ['', 'Ava', 'LUNA', 'HUMAN_RESOURCES', '<b>3</b>'],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
       });
 
       it(`should have the Order as empty string when using multiple formatters and last one result in a null output because its value is bigger than 10`, async () => {
@@ -364,28 +344,28 @@ describe('ExcelExportService', () => {
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 1, }, value: 'User Id', },
-              { metadata: { style: 1, }, value: 'FirstName', },
-              { metadata: { style: 1, }, value: 'LastName', },
-              { metadata: { style: 1, }, value: 'Position', },
-              { metadata: { style: 1, }, value: 'Order', },
-            ],
-            ['3C2', 'Ava', 'LUNA', 'HUMAN_RESOURCES', ''],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 1, }, value: 'User Id', },
+                  { metadata: { style: 1, }, value: 'FirstName', },
+                  { metadata: { style: 1, }, value: 'LastName', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                  { metadata: { style: 1, }, value: 'Order', },
+                ],
+                ['3C2', 'Ava', 'LUNA', 'HUMAN_RESOURCES', ''],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
       });
 
       it(`should have the UserId as empty string when its input value is null`, async () => {
@@ -393,28 +373,28 @@ describe('ExcelExportService', () => {
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 1, }, value: 'User Id', },
-              { metadata: { style: 1, }, value: 'FirstName', },
-              { metadata: { style: 1, }, value: 'LastName', },
-              { metadata: { style: 1, }, value: 'Position', },
-              { metadata: { style: 1, }, value: 'Order', },
-            ],
-            ['', '', 'CASH', 'SALES_REP', '<b>3</b>'],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 1, }, value: 'User Id', },
+                  { metadata: { style: 1, }, value: 'FirstName', },
+                  { metadata: { style: 1, }, value: 'LastName', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                  { metadata: { style: 1, }, value: 'Order', },
+                ],
+                ['', '', 'CASH', 'SALES_REP', '<b>3</b>'],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
       });
 
       it(`should have the Order without html tags when the grid option has "sanitizeDataExport" is enabled`, async () => {
@@ -423,28 +403,28 @@ describe('ExcelExportService', () => {
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 1, }, value: 'User Id', },
-              { metadata: { style: 1, }, value: 'FirstName', },
-              { metadata: { style: 1, }, value: 'LastName', },
-              { metadata: { style: 1, }, value: 'Position', },
-              { metadata: { style: 1, }, value: 'Order', },
-            ],
-            ['2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '1'],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 1, }, value: 'User Id', },
+                  { metadata: { style: 1, }, value: 'FirstName', },
+                  { metadata: { style: 1, }, value: 'LastName', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                  { metadata: { style: 1, }, value: 'Order', },
+                ],
+                ['2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '1'],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
       });
 
       it(`should have different styling for header titles when the grid option has "columnHeaderStyle" provided with custom styles`, async () => {
@@ -453,28 +433,28 @@ describe('ExcelExportService', () => {
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 4, }, value: 'User Id', },
-              { metadata: { style: 4, }, value: 'FirstName', },
-              { metadata: { style: 4, }, value: 'LastName', },
-              { metadata: { style: 4, }, value: 'Position', },
-              { metadata: { style: 4, }, value: 'Order', },
-            ],
-            ['2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '<b>1</b>'],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 4, }, value: 'User Id', },
+                  { metadata: { style: 4, }, value: 'FirstName', },
+                  { metadata: { style: 4, }, value: 'LastName', },
+                  { metadata: { style: 4, }, value: 'Position', },
+                  { metadata: { style: 4, }, value: 'Order', },
+                ],
+                ['2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '<b>1</b>'],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
       });
 
       it(`should have a custom Title when "customExcelHeader" is provided`, async () => {
@@ -503,32 +483,32 @@ describe('ExcelExportService', () => {
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { value: '' },
-              { metadata: { style: 4, }, value: 'My header that is long enough to wrap', }
-            ],
-            [
-              { metadata: { style: 1, }, value: 'User Id', },
-              { metadata: { style: 1, }, value: 'FirstName', },
-              { metadata: { style: 1, }, value: 'LastName', },
-              { metadata: { style: 1, }, value: 'Position', },
-              { metadata: { style: 1, }, value: 'Order', },
-            ],
-            ['2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '1'],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { value: '' },
+                  { metadata: { style: 4, }, value: 'My header that is long enough to wrap', }
+                ],
+                [
+                  { metadata: { style: 1, }, value: 'User Id', },
+                  { metadata: { style: 1, }, value: 'FirstName', },
+                  { metadata: { style: 1, }, value: 'LastName', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                  { metadata: { style: 1, }, value: 'Order', },
+                ],
+                ['2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '1'],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
       });
     });
 
@@ -565,30 +545,30 @@ describe('ExcelExportService', () => {
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(service.stylesheet).toBeTruthy();
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 1, }, value: 'User Id', },
-              { metadata: { style: 1, }, value: 'FirstName', },
-              { metadata: { style: 1, }, value: 'LastName', },
-              { metadata: { style: 1, }, value: 'Position', },
-              { metadata: { style: 1, }, value: 'StartDate', },
-              { metadata: { style: 1, }, value: 'EndDate', },
-            ],
-            ['1E06', 'John', 'X', 'SALES_REP', '2005-12-20T18:19:19.992Z', ''],
-            ['1E09', 'Jane', 'Doe', 'HUMAN_RESOURCES', '2010-10-09T18:19:19.992Z', '2024-01-02'],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 1, }, value: 'User Id', },
+                  { metadata: { style: 1, }, value: 'FirstName', },
+                  { metadata: { style: 1, }, value: 'LastName', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                  { metadata: { style: 1, }, value: 'StartDate', },
+                  { metadata: { style: 1, }, value: 'EndDate', },
+                ],
+                ['1E06', 'John', 'X', 'SALES_REP', '2005-12-20T18:19:19.992Z', ''],
+                ['1E09', 'Jane', 'Doe', 'HUMAN_RESOURCES', '2010-10-09T18:19:19.992Z', '2024-01-02'],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
         expect(service.regularCellExcelFormats.position).toEqual({
           getDataValueParser: getExcelSameInputDataCallback,
           stylesheetFormatterId: 4,
@@ -616,26 +596,26 @@ describe('ExcelExportService', () => {
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 1, }, value: 'First Name', },
-              { metadata: { style: 1, }, value: 'Last Name', },
-              { metadata: { style: 1, }, value: 'Position', },
-            ],
-            ['John', 'X', { value: 'SALES_REP', metadata: { style: 3 } }],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 1, }, value: 'First Name', },
+                  { metadata: { style: 1, }, value: 'Last Name', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                ],
+                ['John', 'X', { value: 'SALES_REP', metadata: { style: 3 } }],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
       });
 
       it(`should skip lines that have an empty Slick DataView structure like "getItem" that is null and is part of the item object`, async () => {
@@ -646,26 +626,26 @@ describe('ExcelExportService', () => {
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 1, }, value: 'First Name', },
-              { metadata: { style: 1, }, value: 'Last Name', },
-              { metadata: { style: 1, }, value: 'Position', },
-            ],
-            ['John', 'X', { value: 'SALES_REP', metadata: { style: 3 } }],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 1, }, value: 'First Name', },
+                  { metadata: { style: 1, }, value: 'Last Name', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                ],
+                ['John', 'X', { value: 'SALES_REP', metadata: { style: 3 } }],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
       });
     });
 
@@ -693,28 +673,28 @@ describe('ExcelExportService', () => {
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 1, }, value: 'User Id', },
-              { metadata: { style: 1, }, value: 'First Name', },
-              { metadata: { style: 1, }, value: 'Last Name', },
-              { metadata: { style: 1, }, value: 'Position', },
-              { metadata: { style: 1, }, value: 'Order', },
-            ],
-            ['1E06', 'John', 'X', { metadata: { style: 3 }, value: 'Sales Rep.' }, '10'],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 1, }, value: 'User Id', },
+                  { metadata: { style: 1, }, value: 'First Name', },
+                  { metadata: { style: 1, }, value: 'Last Name', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                  { metadata: { style: 1, }, value: 'Order', },
+                ],
+                ['1E06', 'John', 'X', { metadata: { style: 3 }, value: 'Sales Rep.' }, '10'],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
       });
     });
 
@@ -728,7 +708,11 @@ describe('ExcelExportService', () => {
       beforeEach(() => {
         mockGridOptions.enableGrouping = true;
         mockGridOptions.enableTranslate = false;
-        mockGridOptions.excelExportOptions = { sanitizeDataExport: true, addGroupIndentation: true };
+        mockGridOptions.excelExportOptions = { sanitizeDataExport: true, addGroupIndentation: true, mimeType: mimeTypeXLSX };
+        mockExportExcelOptions = {
+          filename: 'export',
+          format: FileType.xlsx
+        };
 
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
@@ -784,32 +768,32 @@ describe('ExcelExportService', () => {
 
       it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 1, }, value: 'Group By', },
-              { metadata: { style: 1, }, value: 'User Id', },
-              { metadata: { style: 1, }, value: 'FirstName', },
-              { metadata: { style: 1, }, value: 'LastName', },
-              { metadata: { style: 1, }, value: 'Position', },
-              { metadata: { style: 1, }, value: 'Order', },
-            ],
-            ['⮟ Order: 20 (2 items)'],
-            ['', '1E06', 'John', 'X', 'SALES_REP', { metadata: { style: 3, type: 'number' }, value: 10 }],
-            ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', { metadata: { style: 3, type: 'number' }, value: 10 }],
-            ['', '', '', '', '', { metadata: { style: 4, type: 'number' }, value: 20 }],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 1, }, value: 'Group By', },
+                  { metadata: { style: 1, }, value: 'User Id', },
+                  { metadata: { style: 1, }, value: 'FirstName', },
+                  { metadata: { style: 1, }, value: 'LastName', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                  { metadata: { style: 1, }, value: 'Order', },
+                ],
+                ['⮟ Order: 20 (2 items)'],
+                ['', '1E06', 'John', 'X', 'SALES_REP', { metadata: { style: 3 }, value: 10 }],
+                ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', { metadata: { style: 3 }, value: 10 }],
+                ['', '', '', '', '', { metadata: { style: 4 }, value: 20 }],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
       });
     });
 
@@ -888,32 +872,32 @@ describe('ExcelExportService', () => {
         parserCallbackSpy.mockReturnValue(8888);
         groupTotalParserCallbackSpy.mockReturnValueOnce(9999);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 1, }, value: 'Group By', },
-              { metadata: { style: 1, }, value: 'User Id', },
-              { metadata: { style: 1, }, value: 'FirstName', },
-              { metadata: { style: 1, }, value: 'LastName', },
-              { metadata: { style: 1, }, value: 'Position', },
-              { metadata: { style: 1, }, value: 'Order', },
-              { metadata: { style: 1, }, value: 'Cost', },
-            ],
-            ['⮟ Order: 20 (2 items)'],
-            ['', '1E06', 'John', 'X', 'SALES_REP', { metadata: { style: 3, type: 'number', }, value: 10, }, 8888],
-            ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', { metadata: { style: 3, type: 'number', }, value: 10, }, 8888],
-            ['', '', '', '', '', { value: 20, metadata: { style: 5, type: 'number' } }, ''],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 1, }, value: 'Group By', },
+                  { metadata: { style: 1, }, value: 'User Id', },
+                  { metadata: { style: 1, }, value: 'FirstName', },
+                  { metadata: { style: 1, }, value: 'LastName', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                  { metadata: { style: 1, }, value: 'Order', },
+                  { metadata: { style: 1, }, value: 'Cost', },
+                ],
+                ['⮟ Order: 20 (2 items)'],
+                ['', '1E06', 'John', 'X', 'SALES_REP', { metadata: { style: 3 }, value: 10, }, 8888],
+                ['', '2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', { metadata: { style: 3 }, value: 10, }, 8888],
+                ['', '', '', '', '', { value: 20, metadata: { style: 5 } }, ''],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
         expect(service.groupTotalExcelFormats.order).toEqual({
           groupType: 'sum',
           stylesheetFormatter: {
@@ -991,32 +975,32 @@ describe('ExcelExportService', () => {
 
       it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 1, }, value: 'Grouped By', },
-              { metadata: { style: 1, }, value: 'User Id', },
-              { metadata: { style: 1, }, value: 'First Name', },
-              { metadata: { style: 1, }, value: 'Last Name', },
-              { metadata: { style: 1, }, value: 'Position', },
-              { metadata: { style: 1, }, value: 'Order', },
-            ],
-            ['⮟ Order: 20 (2 items)'],
-            ['', '1E06', 'John', 'X', { metadata: { style: 3 }, value: 'Sales Rep.' }, { metadata: { style: 3, type: 'number' }, value: 10 }],
-            ['', '2B02', 'Jane', 'DOE', { metadata: { style: 3 }, value: 'Finance Manager' }, { metadata: { style: 3, type: 'number' }, value: 10 }],
-            ['', '', '', '', '', { metadata: { style: 4, type: 'number', }, value: 20, }],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 1, }, value: 'Grouped By', },
+                  { metadata: { style: 1, }, value: 'User Id', },
+                  { metadata: { style: 1, }, value: 'First Name', },
+                  { metadata: { style: 1, }, value: 'Last Name', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                  { metadata: { style: 1, }, value: 'Order', },
+                ],
+                ['⮟ Order: 20 (2 items)'],
+                ['', '1E06', 'John', 'X', { metadata: { style: 3 }, value: 'Sales Rep.' }, { metadata: { style: 3 }, value: 10 }],
+                ['', '2B02', 'Jane', 'DOE', { metadata: { style: 3 }, value: 'Finance Manager' }, { metadata: { style: 3 }, value: 10 }],
+                ['', '', '', '', '', { metadata: { style: 4, }, value: 20, }],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
       });
     });
 
@@ -1117,50 +1101,48 @@ describe('ExcelExportService', () => {
 
       it(`should have a xlsx export with grouping (same as the grid, WYSIWYG) when "enableGrouping" is set in the grid options and grouping are defined`, async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(groupTotalParserCallbackSpy).toHaveBeenCalled();
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 1, }, value: 'Grouped By', },
-              { metadata: { style: 1, }, value: 'User Id', },
-              { metadata: { style: 1, }, value: 'First Name', },
-              { metadata: { style: 1, }, value: 'Last Name', },
-              { metadata: { style: 1, }, value: 'Position', },
-              { metadata: { style: 1, }, value: 'Order', },
-            ],
-            ['⮟ Order: 20 (2 items)'],
-            ['⮟      Last Name: X (1 items)'], // expanded
-            ['', '1E06', 'John', 'X', 'Sales Rep.', { metadata: { style: 3, type: 'number', }, 'value': 10, }],
-            ['⮟      Last Name: Doe (1 items)'], // expanded
-            ['', '2B02', 'Jane', 'DOE', 'Finance Manager', { metadata: { style: 3, type: 'number', }, 'value': 10, }],
-            ['⮞      Last Name: null (0 items)'], // collapsed
-            ['', '', '', '', '', { metadata: { style: 4, type: 'number', }, 'value': 9999, }],
-            ['', '', '', '', '', { metadata: { style: 4, type: 'number', }, 'value': 9999, }],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 1, }, value: 'Grouped By', },
+                  { metadata: { style: 1, }, value: 'User Id', },
+                  { metadata: { style: 1, }, value: 'First Name', },
+                  { metadata: { style: 1, }, value: 'Last Name', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                  { metadata: { style: 1, }, value: 'Order', },
+                ],
+                ['⮟ Order: 20 (2 items)'],
+                ['⮟      Last Name: X (1 items)'], // expanded
+                ['', '1E06', 'John', 'X', 'Sales Rep.', { metadata: { style: 3 }, 'value': 10, }],
+                ['⮟      Last Name: Doe (1 items)'], // expanded
+                ['', '2B02', 'Jane', 'DOE', 'Finance Manager', { metadata: { style: 3 }, 'value': 10, }],
+                ['⮞      Last Name: null (0 items)'], // collapsed
+                ['', '', '', '', '', { metadata: { style: 4 }, 'value': 9999, }],
+                ['', '', '', '', '', { metadata: { style: 4 }, 'value': 9999, }],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
       });
 
       it(`should not call group total value parser when column "exportAutoDetectCellFormat" is disabled`, async () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-
         mockGridOptions.excelExportOptions!.autoDetectCellFormat = false;
-        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
         expect(groupTotalParserCallbackSpy).not.toHaveBeenCalled();
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
       });
 
       it(`should have a xlsx export with grouping but without indentation when "addGroupIndentation" is set to False
@@ -1168,37 +1150,37 @@ describe('ExcelExportService', () => {
         mockColumns[5].exportWithFormatter = false; // "order" is a field of type number that will be exported as a number cell format metadata
         mockGridOptions.excelExportOptions!.addGroupIndentation = false;
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: 'xlsx' };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 1, }, value: 'Grouped By', },
-              { metadata: { style: 1, }, value: 'User Id', },
-              { metadata: { style: 1, }, value: 'First Name', },
-              { metadata: { style: 1, }, value: 'Last Name', },
-              { metadata: { style: 1, }, value: 'Position', },
-              { metadata: { style: 1, }, value: 'Order', },
-            ],
-            ['Order: 20 (2 items)'],
-            ['Last Name: X (1 items)'],
-            ['', '1E06', 'John', 'X', 'Sales Rep.', { metadata: { style: 3, type: 'number', }, value: 10 }],
-            ['Last Name: Doe (1 items)'],
-            ['', '2B02', 'Jane', 'DOE', 'Finance Manager', { metadata: { style: 3, type: 'number', }, value: 10 }],
-            ['Last Name: null (0 items)'],
-            ['', '', '', '', '', { metadata: { style: 4, type: 'number', }, value: 9999 }],
-            ['', '', '', '', '', { metadata: { style: 4, type: 'number', }, value: 9999 }
-            ],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 1, }, value: 'Grouped By', },
+                  { metadata: { style: 1, }, value: 'User Id', },
+                  { metadata: { style: 1, }, value: 'First Name', },
+                  { metadata: { style: 1, }, value: 'Last Name', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                  { metadata: { style: 1, }, value: 'Order', },
+                ],
+                ['Order: 20 (2 items)'],
+                ['Last Name: X (1 items)'],
+                ['', '1E06', 'John', 'X', 'Sales Rep.', { metadata: { style: 3 }, value: 10 }],
+                ['Last Name: Doe (1 items)'],
+                ['', '2B02', 'Jane', 'DOE', 'Finance Manager', { metadata: { style: 3 }, value: 10 }],
+                ['Last Name: null (0 items)'],
+                ['', '', '', '', '', { metadata: { style: 4 }, value: 9999 }],
+                ['', '', '', '', '', { metadata: { style: 4 }, value: 9999 }
+                ],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
       });
     });
 
@@ -1259,35 +1241,35 @@ describe('ExcelExportService', () => {
         jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection2.length);
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection2[0]);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 4, }, value: 'User Profile', },
-              { metadata: { style: 4, }, value: 'User Profile', },
-              { metadata: { style: 4, }, value: 'Company Profile', },
-              { metadata: { style: 4, }, value: 'Company Profile', },
-              { metadata: { style: 4, }, value: 'Sales', },
-            ],
-            [
-              { metadata: { style: 1, }, value: 'FirstName', },
-              { metadata: { style: 1, }, value: 'LastName', },
-              { metadata: { style: 1, }, value: 'User Id', },
-              { metadata: { style: 1, }, value: 'Position', },
-              { metadata: { style: 1, }, value: 'Order', },
-            ],
-            ['John', 'X', '1E06', 'SALES_REP', '10'],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 4, }, value: 'User Profile', },
+                  { metadata: { style: 4, }, value: 'User Profile', },
+                  { metadata: { style: 4, }, value: 'Company Profile', },
+                  { metadata: { style: 4, }, value: 'Company Profile', },
+                  { metadata: { style: 4, }, value: 'Sales', },
+                ],
+                [
+                  { metadata: { style: 1, }, value: 'FirstName', },
+                  { metadata: { style: 1, }, value: 'LastName', },
+                  { metadata: { style: 1, }, value: 'User Id', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                  { metadata: { style: 1, }, value: 'Order', },
+                ],
+                ['John', 'X', '1E06', 'SALES_REP', '10'],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
       });
 
       describe('with Translation', () => {
@@ -1318,35 +1300,35 @@ describe('ExcelExportService', () => {
           jest.spyOn(dataViewStub, 'getLength').mockReturnValue(mockTranslateCollection.length);
           jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockTranslateCollection[0]);
           const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-          const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-          const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-          const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
 
           service.init(gridStub, container);
           await service.exportToExcel(mockExportExcelOptions);
 
-          expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-          expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-          expect(spyDownload).toHaveBeenCalledWith({
-            ...optionExpectation, blob: new Blob(), data: [
-              [
-                { metadata: { style: 4, }, value: 'User Profile', },
-                { metadata: { style: 4, }, value: 'User Profile', },
-                { metadata: { style: 4, }, value: 'Company Profile', },
-                { metadata: { style: 4, }, value: 'Company Profile', },
-                { metadata: { style: 4, }, value: 'Sales', },
-              ],
-              [
-                { metadata: { style: 1, }, value: 'First Name', },
-                { metadata: { style: 1, }, value: 'Last Name', },
-                { metadata: { style: 1, }, value: 'User Id', },
-                { metadata: { style: 1, }, value: 'Position', },
-                { metadata: { style: 1, }, value: 'Order', },
-              ],
-              ['<b>John</b>', 'X', '1E06', 'Sales Rep.', '<b>10</b>'],
-            ]
-          });
+          expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+          expect(downloadExcelFileMock).toHaveBeenCalledWith(
+            expect.objectContaining({
+              worksheets: [expect.objectContaining({
+                data: [
+                  [
+                    { metadata: { style: 4, }, value: 'User Profile', },
+                    { metadata: { style: 4, }, value: 'User Profile', },
+                    { metadata: { style: 4, }, value: 'Company Profile', },
+                    { metadata: { style: 4, }, value: 'Company Profile', },
+                    { metadata: { style: 4, }, value: 'Sales', },
+                  ],
+                  [
+                    { metadata: { style: 1, }, value: 'First Name', },
+                    { metadata: { style: 1, }, value: 'Last Name', },
+                    { metadata: { style: 1, }, value: 'User Id', },
+                    { metadata: { style: 1, }, value: 'Position', },
+                    { metadata: { style: 1, }, value: 'Order', },
+                  ],
+                  ['<b>John</b>', 'X', '1E06', 'Sales Rep.', '<b>10</b>'],
+                ]
+              })]
+            }),
+            'export.xlsx', { mimeType: mimeTypeXLSX }
+          );
         });
       });
     });
@@ -1402,30 +1384,30 @@ describe('ExcelExportService', () => {
         jest.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]).mockReturnValueOnce(mockCollection[2]);
         jest.spyOn(dataViewStub, 'getItemMetadata').mockReturnValue(oddMetatadata).mockReturnValueOnce(evenMetatadata).mockReturnValueOnce(oddMetatadata).mockReturnValueOnce(evenMetatadata);
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = jest.spyOn(URL, 'createObjectURL');
-        const spyDownload = jest.spyOn(service, 'startDownloadFile');
-
-        const optionExpectation = { filename: 'export.xlsx', format: FileType.xlsx };
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, optionExpectation);
-        expect(spyUrlCreate).toHaveBeenCalledWith(mockExcelBlob);
-        expect(spyDownload).toHaveBeenCalledWith({
-          ...optionExpectation, blob: new Blob(), data: [
-            [
-              { metadata: { style: 1, }, value: 'User Id', },
-              { metadata: { style: 1, }, value: 'First Name', },
-              { metadata: { style: 1, }, value: 'Last Name', },
-              { metadata: { style: 1, }, value: 'Position', },
-              { metadata: { style: 1, }, value: 'Order', },
-            ],
-            ['1E06', '', '', ''],
-            ['1E09', 'Jane', 'DOE', '', 15],
-            ['2ABC', '', '', ''],
-          ]
-        });
+        expect(pubSubSpy).toHaveBeenCalledWith(`onAfterExportToExcel`, { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFileMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [expect.objectContaining({
+              data: [
+                [
+                  { metadata: { style: 1, }, value: 'User Id', },
+                  { metadata: { style: 1, }, value: 'First Name', },
+                  { metadata: { style: 1, }, value: 'Last Name', },
+                  { metadata: { style: 1, }, value: 'Position', },
+                  { metadata: { style: 1, }, value: 'Order', },
+                ],
+                ['1E06', '', '', ''],
+                ['1E09', 'Jane', 'DOE', '', 15],
+                ['2ABC', '', '', ''],
+              ]
+            })]
+          }),
+          'export.xlsx', { mimeType: mimeTypeXLSX }
+        );
       });
     });
   });

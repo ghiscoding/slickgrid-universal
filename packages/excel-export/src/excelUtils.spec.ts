@@ -1,6 +1,6 @@
+import { StyleSheet } from 'excel-builder-vanilla';
 import {
   Column,
-  ExcelStylesheet,
   FieldType,
   Formatter,
   Formatters,
@@ -26,7 +26,7 @@ const gridStub = {
 
 const stylesheetStub = {
   createFormat: jest.fn(),
-} as unknown as ExcelStylesheet;
+} as unknown as StyleSheet;
 
 describe('excelUtils', () => {
   const mockedFormatId = 135;
@@ -611,15 +611,6 @@ describe('excelUtils', () => {
       it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsColored', () => {
         const column = {
           type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsColored,
-        } as Column;
-        const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
-
-        expect(output).toEqual({ groupType: 'sum', stylesheetFormatter: { id: 135 } });
-      });
-
-      it('should get excel excel metadata style format for GroupTotalFormatters.sumTotalsCurrencyColored', () => {
-        const column = {
-          type: FieldType.number, formatter: Formatters.decimal, groupTotalsFormatter: GroupTotalFormatters.sumTotalsCurrencyColored,
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, {}, column, gridStub, 'group');
 
