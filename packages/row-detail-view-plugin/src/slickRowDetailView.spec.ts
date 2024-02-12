@@ -594,7 +594,7 @@ describe('SlickRowDetailView plugin', () => {
       });
     });
 
-    it('should call "resizeDetailView" and then calculate out of range detail views when calling on scroll', () => {
+    it('should call "resizeDetailView" and then calculate out of range detail views when calling on scroll (2)', () => {
       const itemMock = {
         id: 123, firstName: 'John', lastName: 'Doe',
         _collapsed: true, _detailViewLoaded: true, _sizePadding: 1, _height: 150, _detailContent: '<span>loading...</span>',

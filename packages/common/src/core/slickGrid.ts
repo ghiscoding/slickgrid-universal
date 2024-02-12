@@ -5048,6 +5048,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   getCellFromEvent(evt: Event | SlickEventData) {
     const e = evt instanceof SlickEventData ? evt.getNativeEvent() : evt;
+    if (!e) {
+      return null;
+    }
+
     const targetEvent: any = (e as TouchEvent).touches ? (e as TouchEvent).touches[0] : e;
 
     const cellNode = (e as Event & { target: HTMLElement; }).target.closest('.slick-cell');

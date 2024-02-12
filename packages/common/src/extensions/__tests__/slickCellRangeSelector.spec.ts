@@ -179,11 +179,14 @@ describe('CellRangeSelector Plugin', () => {
     jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 2, row: 3 });
     jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
     jest.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
+    jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 2, row: 3 });
     const focusSpy = jest.spyOn(gridStub, 'focus');
     const scrollSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
     jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
       getReturnValue: () => true
     } as any);
+    const initEvent = new Event('dragInit');
+    const popagationSpy = jest.spyOn(initEvent, 'stopImmediatePropagation');
 
     plugin.init(gridStub);
     const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
@@ -191,7 +194,7 @@ describe('CellRangeSelector Plugin', () => {
     const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
     gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
-    const dragEventInit = addVanillaEventPropagation(new Event('dragInit'));
+    const dragEventInit = addVanillaEventPropagation(initEvent);
     gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
 
     const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
@@ -206,6 +209,7 @@ describe('CellRangeSelector Plugin', () => {
     expect(decoratorShowSpy).toHaveBeenCalled();
     expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
     expect(scrollSpy).not.toHaveBeenCalled();
+    expect(popagationSpy).toHaveBeenCalled();
   });
 
   it('should handle drag in bottom right canvas with decorator showing dragging range', () => {
@@ -700,5 +704,103 @@ describe('CellRangeSelector Plugin', () => {
       });
       done();
     }, 7);
+  });
+
+  it('should maintain propagation only if editor is on current cell', () => {
+    mockGridOptions.frozenRow = 2;
+    const divCanvas = document.createElement('div');
+    const divViewport = document.createElement('div');
+    divViewport.className = 'slick-viewport';
+    divCanvas.className = 'grid-canvas-bottom grid-canvas-left';
+    divViewport.appendChild(divCanvas);
+    jest.spyOn(gridStub, 'getActiveViewportNode').mockReturnValue(divViewport);
+    jest.spyOn(gridStub, 'getActiveCanvasNode').mockReturnValue(divCanvas);
+    jest.spyOn(gridStub, 'getDisplayedScrollbarDimensions').mockReturnValue({ height: 200, width: 155 });
+    jest.spyOn(gridStub, 'getAbsoluteColumnMinWidth').mockReturnValue(47);
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 2, row: 3 });
+    jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+    jest.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
+    jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
+    const focusSpy = jest.spyOn(gridStub, 'focus');
+    const scrollSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
+    jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
+      getReturnValue: () => true
+    } as any);
+
+    jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ row: 3, cell: 2 });
+    plugin.init(gridStub);
+
+    const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
+
+    const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
+    gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
+
+    const initEvent = new Event('dragInit');
+    const propagationSpy = jest.spyOn(initEvent, 'stopImmediatePropagation');
+    const dragEventInit = addVanillaEventPropagation(initEvent);
+    gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
+
+    const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
+    gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
+
+    const dragEvent = addVanillaEventPropagation(new Event('drag'));
+    dragEvent.pageX = 0;
+    dragEvent.pageY = 0;
+    gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
+
+    expect(focusSpy).toHaveBeenCalled();
+    expect(decoratorShowSpy).toHaveBeenCalled();
+    expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
+    expect(scrollSpy).not.toHaveBeenCalled();
+    expect(propagationSpy).not.toHaveBeenCalled();
+  });
+
+  it('should stop propagation if the editor is not on the current cell', () => {
+    mockGridOptions.frozenRow = 2;
+    const divCanvas = document.createElement('div');
+    const divViewport = document.createElement('div');
+    divViewport.className = 'slick-viewport';
+    divCanvas.className = 'grid-canvas-bottom grid-canvas-left';
+    divViewport.appendChild(divCanvas);
+    jest.spyOn(gridStub, 'getActiveViewportNode').mockReturnValue(divViewport);
+    jest.spyOn(gridStub, 'getActiveCanvasNode').mockReturnValue(divCanvas);
+    jest.spyOn(gridStub, 'getDisplayedScrollbarDimensions').mockReturnValue({ height: 200, width: 155 });
+    jest.spyOn(gridStub, 'getAbsoluteColumnMinWidth').mockReturnValue(47);
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 3, row: 3 });
+    jest.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
+    jest.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
+    jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
+    const focusSpy = jest.spyOn(gridStub, 'focus');
+    const scrollSpy = jest.spyOn(gridStub, 'scrollCellIntoView');
+    jest.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
+      getReturnValue: () => true
+    } as any);
+
+    jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ row: 3, cell: 2 });
+    plugin.init(gridStub);
+
+    const decoratorShowSpy = jest.spyOn(plugin.getCellDecorator(), 'show');
+
+    const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
+    gridStub.onScroll.notify({ scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
+
+    const initEvent = new Event('dragInit');
+    const propagationSpy = jest.spyOn(initEvent, 'stopImmediatePropagation');
+    const dragEventInit = addVanillaEventPropagation(initEvent);
+    gridStub.onDragInit.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventInit, gridStub);
+
+    const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
+    gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
+
+    const dragEvent = addVanillaEventPropagation(new Event('drag'));
+    dragEvent.pageX = 0;
+    dragEvent.pageY = 0;
+    gridStub.onDrag.notify({ startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any, dragEvent, gridStub);
+
+    expect(focusSpy).toHaveBeenCalled();
+    expect(decoratorShowSpy).toHaveBeenCalled();
+    expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
+    expect(scrollSpy).not.toHaveBeenCalled();
+    expect(propagationSpy).toHaveBeenCalled();
   });
 });

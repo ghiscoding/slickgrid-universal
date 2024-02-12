@@ -346,8 +346,14 @@ export class SlickCellRangeSelector {
     }
 
     // prevent the grid from cancelling drag'n'drop by default
-    // unless an editor is open if so keep bubbling the event to avoid breaking editor inputs focusing/selecting
-    if (!this._grid.getEditorLock().isActive()) {
+    // unless an editor is open on the current cell.
+    // if so keep bubbling the event to avoid breaking editor inputs focusing/selecting
+    const cell = this._grid.getCellFromEvent(e);
+    const activeCell = this._grid.getActiveCell();
+
+    if (!this._grid.getEditorLock().isActive()
+      || !(activeCell && cell && activeCell.row === cell.row && activeCell.cell === cell.cell)
+    ) {
       e.stopImmediatePropagation();
       e.preventDefault();
     }

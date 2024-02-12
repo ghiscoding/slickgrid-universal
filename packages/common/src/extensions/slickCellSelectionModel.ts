@@ -163,7 +163,12 @@ export class SlickCellSelectionModel implements SelectionModel {
   }
 
   protected handleBeforeCellRangeSelected(e: SlickEventData): boolean | void {
-    if (this._grid.getEditorLock().isActive()) {
+    const cell = this._grid.getCellFromEvent(e);
+    const activeCell = this._grid.getActiveCell();
+
+    if (this._grid.getEditorLock().isActive()
+      && (activeCell && cell && activeCell.row === cell.row && activeCell.cell === cell.cell)
+    ) {
       e.stopPropagation();
       return false;
     }

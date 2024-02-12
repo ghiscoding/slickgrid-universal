@@ -11,7 +11,7 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:cypress/recommended"
   ],
-  "plugins": ["@typescript-eslint", "node"],
+  "plugins": ["@typescript-eslint", "node", "jest"],
   "root": true,
   "env": {
       "browser": true,
@@ -53,6 +53,8 @@
     "no-prototype-builtins": [0],
     "semi": "off",
     "keyword-spacing": "error",
-    "space-before-blocks": "error"
+    "space-before-blocks": "error",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error"
   }
 }

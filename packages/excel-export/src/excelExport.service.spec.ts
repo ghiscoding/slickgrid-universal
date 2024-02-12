@@ -220,7 +220,7 @@ describe('ExcelExportService', () => {
         mockExportExcelOptions = {
           filename: 'export',
           format: FileType.xlsx
-        }
+        };
       });
 
       it(`should have the Order exported correctly with multiple formatters which have 1 of them returning an object with a text property (instead of simple string)`, async () => {
