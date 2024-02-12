@@ -18,7 +18,7 @@ jobs:
         run_install: false
 
     - name: Install Dependencies
-      run: pnpm install -g @commitlint/config-conventional@v17
+      run: pnpm install -w @commitlint/config-conventional@v17
 
     - name: PR Linter
       uses: JulienKode/pull-request-name-linter-action@v0.5.0
