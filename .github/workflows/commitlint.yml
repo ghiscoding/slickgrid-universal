@@ -11,14 +11,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Install pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: 8
-        run_install: false
-
     - name: Install Dependencies
-      run: pnpm install -w @commitlint/config-conventional@v17
+      run: npm install --legacy-peer-deps @commitlint/config-conventional@v17
 
     - name: PR Linter
       uses: JulienKode/pull-request-name-linter-action@v0.5.0
