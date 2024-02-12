@@ -16,3 +16,5 @@ jobs:
 
     - name: PR Linter
       uses: JulienKode/pull-request-name-linter-action@v0.5.0
+      with:
+          configuration-path: ./commitlint.config.ts
