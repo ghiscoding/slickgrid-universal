@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.3.1...v4.4.0) (2024-02-12)
+
+### Bug Fixes
+
+* **demo:** change trading demo full screen z-index lower than ms-select ([1f4a9ac](https://github.com/ghiscoding/slickgrid-universal/commit/1f4a9acd68bc9559420d48597f9214c16f48556e)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#1381](https://github.com/ghiscoding/slickgrid-universal/issues/1381)) ([2562352](https://github.com/ghiscoding/slickgrid-universal/commit/25623527d05dd713123e1031b682f0a80cca37de)) - by @renovate-bot
+
+### Features
+
+* **ExcelExport:** migrate to Excel-Export-Vanilla (ESM) ([#1383](https://github.com/ghiscoding/slickgrid-universal/issues/1383)) ([f3838b3](https://github.com/ghiscoding/slickgrid-universal/commit/f3838b336659304988957ad933901645c5c243b7)) - by @ghiscoding
+
 ## [4.3.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.3.0...v4.3.1) (2024-01-27)
 
 ### Bug Fixes

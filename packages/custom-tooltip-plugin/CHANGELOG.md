@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.3.1...v4.4.0) (2024-02-12)
+
+### Bug Fixes
+
+* **publish:** do not npm publish `tsconfig.tsbuildinfo` ([#1373](https://github.com/ghiscoding/slickgrid-universal/issues/1373)) ([9223338](https://github.com/ghiscoding/slickgrid-universal/commit/922333843852ae861015e4bbec053d4937222aa2)) - by @ghiscoding
+
 ## [4.3.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.3.0...v4.3.1) (2024-01-27)
 
 **Note:** Version bump only for package @slickgrid-universal/custom-tooltip-plugin
