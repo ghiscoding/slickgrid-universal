@@ -46,7 +46,8 @@
     "test": "jest --runInBand --coverage=true --config ./test/jest.config.ts",
     "test:ci": "jest --runInBand --coverage=true --ci --config ./test/jest.config.ts",
     "test:watch": "cross-env TZ='America/New_York' jest --watch --config ./test/jest.config.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "commitlint": "commitlint --edit"
   },
   "comments": {
     "new-version": "To create a new version with Lerna-Lite, simply run the following script (1) 'roll-new-release'.",
@@ -58,6 +59,8 @@
   "packageManager": "pnpm@8.15.1",
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^2.2.5",
+    "@commitlint/cli": "^18.6.0",
+    "@commitlint/config-conventional": "^18.6.0",
     "@jest/types": "^29.6.3",
     "@lerna-lite/cli": "^3.3.0",
     "@lerna-lite/publish": "^3.3.0",
