@@ -67,15 +67,6 @@ jobs:
       - name: Build Library
         run: pnpm bundle
 
-      # - name: Archive common build artifacts
-      #   if: ${{ inputs.dryrun != true }}
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: dist-common
-      #     path: |
-      #       packages/common/dist
-      #     retention-days: 5
-
       - name: Lerna Version (build query)
         shell: bash
         run: |
