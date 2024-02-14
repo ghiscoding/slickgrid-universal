@@ -783,6 +783,7 @@ $slick-multiselect-select-all-text-color:                   darken($slick-primar
 $slick-multiselect-select-all-text-hover-color:             transparent !default;
 
 // override some multiple-select SASS variables
+$ms-choice-border:                                          $slick-multiselect-input-filter-border;
 $ms-drop-list-padding:                                      $slick-multiselect-dropdown-list-padding;
 $ms-drop-list-item-align-items:                             center;
 $ms-drop-list-item-display:                                 flex;
