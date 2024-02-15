@@ -1,3 +1,7 @@
+/* make sure to add the @import the SlickGrid Material Theme AFTER the variables changes */
+// @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material-with-font.scss';
+// @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
+
 :root {
   body.material-theme {
     $slick-primary-color: #009530;
@@ -62,6 +66,8 @@
     --slick-header-resizable-hover-border-right: 2px solid #83d9a0;
     --slick-slider-filter-filled-track-color: #9ac49c;
 
+    --ms-ok-button-text-color: #009530;
+    --ms-select-all-text-color: #007c28;
     --slick-multiselect-icon-border: none;
     --slick-multiselect-icon-radio-border: none;
     --slick-multiselect-ok-button-text-color: #009530;
@@ -105,7 +111,3 @@
     }
   }
 }
-
-/* make sure to add the @import the SlickGrid Material Theme AFTER the variables changes */
-// @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material-with-font.scss';
-@import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
