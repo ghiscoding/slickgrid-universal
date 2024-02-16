@@ -713,12 +713,15 @@ li.hidden {
   label {
     span {
       cursor: pointer;
+      display: inline-flex;
       margin-left: var(--slick-multiselect-checkbox-margin-left, $slick-multiselect-checkbox-margin-left);
       position: relative;
       top: 1px;
     }
   }
   .ms-select-all {
+    display: flex;
+    align-items: center;
     border-bottom: var(--slick-multiselect-select-all-border-bottom, $slick-multiselect-select-all-border-bottom);
     padding: var(--slick-multiselect-select-all-padding, $slick-multiselect-select-all-padding);
     line-height: var(--slick-multiselect-select-all-line-height, $slick-multiselect-select-all-line-height);
@@ -727,7 +730,7 @@ li.hidden {
     }
 
     label {
-      display: inline-block;
+      display: inline-flex;
       font-weight: normal;
       padding: var(--slick-multiselect-select-all-label-padding, $slick-multiselect-select-all-label-padding);
       border: var(--slick-multiselect-select-all-label-border, $slick-multiselect-select-all-label-border);

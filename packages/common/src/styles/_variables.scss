@@ -782,7 +782,7 @@ $slick-multiselect-select-all-padding:                      4px 6px !default;
 $slick-multiselect-select-all-text-color:                   darken($slick-primary-color, 5%) !default;
 $slick-multiselect-select-all-text-hover-color:             transparent !default;
 
-// override some multiple-select SASS variables
+// override some multiple-select SASS variables with our variables
 $ms-choice-border:                                          $slick-multiselect-input-filter-border;
 $ms-drop-list-padding:                                      $slick-multiselect-dropdown-list-padding;
 $ms-drop-list-item-align-items:                             center;
@@ -797,6 +797,7 @@ $ms-ok-button-text-hover-color:                             $slick-multiselect-o
 $ms-select-all-label-hover-border:                          $slick-multiselect-select-all-label-hover-border;
 $ms-select-all-label-padding:                               $slick-multiselect-select-all-padding;
 $ms-select-all-label-span-padding:                          $slick-multiselect-select-all-label-padding;
+$ms-select-all-line-height:                                 $slick-multiselect-select-all-line-height;
 $ms-select-all-text-color:                                  $slick-multiselect-select-all-text-color;
 
 /* pagination variables */
