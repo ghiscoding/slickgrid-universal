@@ -89,7 +89,7 @@
   },
   "devDependencies": {
     "@types/dompurify": "^3.0.5",
-    "@types/sortablejs": "^1.15.7",
+    "@types/sortablejs": "^1.15.8",
     "autoprefixer": "^10.4.17",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
