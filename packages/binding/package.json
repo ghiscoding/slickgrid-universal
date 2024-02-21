@@ -56,8 +56,6 @@
     "not dead"
   ],
   "devDependencies": {
-    "@types/dompurify": "^3.0.5",
-    "cross-env": "^7.0.3",
-    "npm-run-all2": "^6.1.2"
+    "@types/dompurify": "^3.0.5"
   }
 }

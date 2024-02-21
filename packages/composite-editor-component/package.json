@@ -59,9 +59,5 @@
     "@slickgrid-universal/binding": "workspace:~",
     "@slickgrid-universal/common": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~"
-  },
-  "devDependencies": {
-    "cross-env": "^7.0.3",
-    "npm-run-all2": "^6.1.2"
   }
 }

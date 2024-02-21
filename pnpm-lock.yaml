@@ -219,12 +219,6 @@ importers:
       '@types/dompurify':
         specifier: ^3.0.5
         version: 3.0.5
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
-      npm-run-all2:
-        specifier: ^6.1.2
-        version: 6.1.2
 
   packages/common:
     dependencies:
@@ -307,13 +301,6 @@ importers:
       '@slickgrid-universal/utils':
         specifier: workspace:~
         version: link:../utils
-    devDependencies:
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
-      npm-run-all2:
-        specifier: ^6.1.2
-        version: 6.1.2
 
   packages/custom-footer-component:
     dependencies:
@@ -330,12 +317,6 @@ importers:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:~
         version: link:../event-pub-sub
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
-      npm-run-all2:
-        specifier: ^6.1.2
-        version: 6.1.2
 
   packages/custom-tooltip-plugin:
     dependencies:
@@ -352,38 +333,18 @@ importers:
       '@types/dompurify':
         specifier: ^3.0.5
         version: 3.0.5
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
-      npm-run-all2:
-        specifier: ^6.1.2
-        version: 6.1.2
 
   packages/empty-warning-component:
     dependencies:
       '@slickgrid-universal/common':
         specifier: workspace:~
         version: link:../common
-    devDependencies:
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
-      npm-run-all2:
-        specifier: ^6.1.2
-        version: 6.1.2
 
   packages/event-pub-sub:
     dependencies:
       '@slickgrid-universal/utils':
         specifier: workspace:~
         version: link:../utils
-    devDependencies:
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
-      npm-run-all2:
-        specifier: ^6.1.2
-        version: 6.1.2
 
   packages/excel-export:
     dependencies:
@@ -403,12 +364,6 @@ importers:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:~
         version: link:../event-pub-sub
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
-      npm-run-all2:
-        specifier: ^6.1.2
-        version: 6.1.2
 
   packages/graphql:
     dependencies:
@@ -419,15 +374,9 @@ importers:
         specifier: workspace:~
         version: link:../utils
     devDependencies:
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
       moment-mini:
         specifier: ^2.29.4
         version: 2.29.4
-      npm-run-all2:
-        specifier: ^6.1.2
-        version: 6.1.2
 
   packages/odata:
     dependencies:
@@ -437,13 +386,6 @@ importers:
       '@slickgrid-universal/utils':
         specifier: workspace:~
         version: link:../utils
-    devDependencies:
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
-      npm-run-all2:
-        specifier: ^6.1.2
-        version: 6.1.2
 
   packages/pagination-component:
     dependencies:
@@ -457,12 +399,6 @@ importers:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:~
         version: link:../event-pub-sub
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
-      npm-run-all2:
-        specifier: ^6.1.2
-        version: 6.1.2
 
   packages/row-detail-view-plugin:
     dependencies:
@@ -476,12 +412,6 @@ importers:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:~
         version: link:../event-pub-sub
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
-      npm-run-all2:
-        specifier: ^6.1.2
-        version: 6.1.2
 
   packages/rxjs-observable:
     dependencies:
@@ -491,13 +421,6 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
-    devDependencies:
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
-      npm-run-all2:
-        specifier: ^6.1.2
-        version: 6.1.2
 
   packages/text-export:
     dependencies:
@@ -514,21 +437,8 @@ importers:
       '@types/text-encoding-utf-8':
         specifier: ^1.0.5
         version: 1.0.5
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
-      npm-run-all2:
-        specifier: ^6.1.2
-        version: 6.1.2
 
-  packages/utils:
-    devDependencies:
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
-      npm-run-all2:
-        specifier: ^6.1.2
-        version: 6.1.2
+  packages/utils: {}
 
   packages/vanilla-bundle:
     dependencies:
@@ -572,12 +482,6 @@ importers:
       '@types/sortablejs':
         specifier: ^1.15.8
         version: 1.15.8
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
-      npm-run-all2:
-        specifier: ^6.1.2
-        version: 6.1.2
 
   packages/vanilla-force-bundle:
     dependencies:
@@ -621,9 +525,6 @@ importers:
         specifier: ^3.6.20
         version: 3.6.20
     devDependencies:
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
       fflate:
         specifier: ^0.8.2
         version: 0.8.2
@@ -633,9 +534,6 @@ importers:
       normalize-path:
         specifier: ^3.0.0
         version: 3.0.0
-      npm-run-all2:
-        specifier: ^6.1.2
-        version: 6.1.2
       vite:
         specifier: ^5.1.3
         version: 5.1.3(@types/node@20.11.19)(sass@1.71.0)

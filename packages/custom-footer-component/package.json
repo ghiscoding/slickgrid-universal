@@ -61,8 +61,6 @@
     "moment-mini": "^2.29.4"
   },
   "devDependencies": {
-    "@slickgrid-universal/event-pub-sub": "workspace:~",
-    "cross-env": "^7.0.3",
-    "npm-run-all2": "^6.1.2"
+    "@slickgrid-universal/event-pub-sub": "workspace:~"
   }
 }
