@@ -54,9 +54,5 @@
     "last 2 version",
     "> 1%",
     "not dead"
-  ],
-  "devDependencies": {
-    "cross-env": "^7.0.3",
-    "npm-run-all2": "^6.1.2"
-  }
+  ]
 }

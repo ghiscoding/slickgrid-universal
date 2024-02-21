@@ -34,7 +34,7 @@
     "postbuild": "pnpm run bundle:cjs",
     "build:incremental": "tsc --incremental --declaration",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
-    "bundle": "npm-run-all bundle:cjs bundle:vite",
+    "bundle": "pnpm bundle:cjs && pnpm bundle:vite",
     "bundle:cjs": "tsc --project tsconfig.bundle.json --outDir dist/cjs --module commonjs",
     "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2021",
     "bundle:types": "tsc --emitDeclarationOnly --declarationMap --outDir dist/types",
@@ -77,11 +77,9 @@
     "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
-    "cross-env": "^7.0.3",
     "fflate": "^0.8.2",
     "glob": "^10.3.10",
     "normalize-path": "^3.0.0",
-    "npm-run-all2": "^6.1.2",
     "vite": "^5.1.3",
     "yargs": "^17.7.2"
   }

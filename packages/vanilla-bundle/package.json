@@ -72,9 +72,7 @@
   },
   "devDependencies": {
     "@slickgrid-universal/graphql": "workspace:~",
-    "@types/sortablejs": "^1.15.8",
-    "cross-env": "^7.0.3",
-    "npm-run-all2": "^6.1.2"
+    "@types/sortablejs": "^1.15.8"
   },
   "funding": {
     "type": "ko_fi",

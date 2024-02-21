@@ -61,9 +61,7 @@
     "text-encoding-utf-8": "^1.0.2"
   },
   "devDependencies": {
-    "@types/text-encoding-utf-8": "^1.0.5",
-    "cross-env": "^7.0.3",
-    "npm-run-all2": "^6.1.2"
+    "@types/text-encoding-utf-8": "^1.0.5"
   },
   "funding": {
     "type": "ko_fi",
