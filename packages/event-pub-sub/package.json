@@ -4,14 +4,7 @@
   "description": "Simple Vanilla Implementation of an Event PubSub Service to do simply publish/subscribe inter-communication while optionally providing data in the event",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
-  "types": "index.d.ts",
-  "typesVersions": {
-    ">=4.2": {
-      "*": [
-        "dist/types/*"
-      ]
-    }
-  },
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
