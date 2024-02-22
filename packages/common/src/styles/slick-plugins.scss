@@ -708,6 +708,10 @@ li.hidden {
       border: var(--slick-multiselect-item-hover-border, $slick-multiselect-item-hover-border);
       background-color: var(--slick-multiselect-checkbox-hover-bg-color, $slick-multiselect-checkbox-hover-bg-color);
     }
+    &.highlighted {
+      border: var(--slick-multiselect-option-highlight-border, $slick-multiselect-option-highlight-border);
+      background-color: var(--slick-multiselect-option-highlight-bg-color, $slick-multiselect-option-highlight-bg-color);
+    }
   }
 
   label {
@@ -727,6 +731,10 @@ li.hidden {
     line-height: var(--slick-multiselect-select-all-line-height, $slick-multiselect-select-all-line-height);
     &:hover {
       background-color: var(--slick-multiselect-select-all-text-hover-color, $slick-multiselect-select-all-text-hover-color);
+    }
+    &.highlighted label {
+      border: var(--slick-multiselect-option-highlight-border, $slick-multiselect-option-highlight-border);
+      background-color: var(--slick-multiselect-option-highlight-bg-color, $slick-multiselect-option-highlight-bg-color);
     }
 
     label {
