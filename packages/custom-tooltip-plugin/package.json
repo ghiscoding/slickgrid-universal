@@ -51,7 +51,7 @@
   "dependencies": {
     "@slickgrid-universal/common": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
-    "dompurify": "^3.0.8"
+    "dompurify": "^3.0.9"
   },
   "devDependencies": {
     "@types/dompurify": "^3.0.5"
