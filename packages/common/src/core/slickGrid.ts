@@ -1584,7 +1584,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     for (let i = 0; i < this.columns.length; i++) {
       const m: C = this.columns[i];
-      if (m.hidden) { continue; }
+      if (!m || m.hidden) {
+        continue;
+      }
 
       const headerTarget = this.hasFrozenColumns() ? ((i <= this._options.frozenColumn!) ? this._headerL : this._headerR) : this._headerL;
       const headerRowTarget = this.hasFrozenColumns() ? ((i <= this._options.frozenColumn!) ? this._headerRowL : this._headerRowR) : this._headerRowL;
@@ -2892,7 +2894,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected updateColumnProps() {
     this.columnsById = {};
     for (let i = 0; i < this.columns.length; i++) {
-      let m: C = this.columns[i];
+      let m: C = this.columns[i] || {};
       if (m.width) {
         m.widthRequest = m.width;
       }
@@ -3999,7 +4001,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
 
       // Ignore alwaysRenderedColumns
-      if (Array.isArray(this.columns) && this.columns[i] && this.columns[i].alwaysRenderColumn) {
+      if (Array.isArray(this.columns) && this.columns[i]?.alwaysRenderColumn) {
         return;
       }
 

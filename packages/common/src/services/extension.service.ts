@@ -102,7 +102,7 @@ export class ExtensionService {
     this._rowMoveManagerPlugin = null as any;
     this._rowSelectionModel = null as any;
     this._extensionCreatedList = null as any;
-    this._extensionList = null as any;
+    this._extensionList = {} as ExtensionList<any>;
   }
 
   /**
