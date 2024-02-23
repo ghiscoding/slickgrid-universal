@@ -754,7 +754,7 @@ $slick-multiselect-icon-radio-width:                        $slick-multiselect-i
 $slick-multiselect-icon-search-margin-right:                8px !default;
 $slick-multiselect-item-height:                             26px !default;
 $slick-multiselect-item-border:                             1px solid transparent !default;
-$slick-multiselect-item-hover-bg-color:                     transparent !default;
+$slick-multiselect-item-hover-bg-color:                     #fafafa !default;
 $slick-multiselect-item-hover-border:                       1px solid #d5d5d5 !default;
 $slick-multiselect-item-line-height:                        calc(#{$slick-multiselect-icon-font-size} + 2px) !default;
 $slick-multiselect-item-padding:                            2px 4px !default;
@@ -773,7 +773,7 @@ $slick-multiselect-ok-button-text-hover-color:              darken($slick-primar
 $slick-multiselect-ok-button-height:                        26px !default;
 $slick-multiselect-ok-button-width:                         100% !default;
 $slick-multiselect-ok-button-text-align:                    center !default;
-$slick-multiselect-option-highlight-bg-color:               rgba(#3a3a3a, 0.01) !default;
+$slick-multiselect-option-highlight-bg-color:               #fcfcfc !default;
 $slick-multiselect-option-highlight-border:                 1px solid #c9c9c9 !default;
 $slick-multiselect-select-all-border-bottom:                1px solid #ddd !default;
 $slick-multiselect-select-all-label-border:                 $slick-multiselect-item-border !default;
@@ -798,7 +798,7 @@ $ms-label-padding:                                          $slick-multiselect-i
 $ms-ok-button-bg-hover-color:                               $slick-multiselect-ok-button-bg-hover-color;
 $ms-ok-button-text-color:                                   $slick-multiselect-ok-button-text-color;
 $ms-ok-button-text-hover-color:                             $slick-multiselect-ok-button-text-hover-color;
-$ms-option-highlight-bg-color:                                       $slick-multiselect-option-highlight-bg-color;
+$ms-option-highlight-bg-color:                              $slick-multiselect-option-highlight-bg-color;
 $ms-select-all-label-hover-border:                          $slick-multiselect-select-all-label-hover-border;
 $ms-select-all-label-padding:                               $slick-multiselect-select-all-padding;
 $ms-select-all-label-span-padding:                          $slick-multiselect-select-all-label-padding;
