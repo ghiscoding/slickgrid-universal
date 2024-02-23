@@ -1,4 +1,5 @@
-@use './private';
+@use 'sass:math';
+
 $svg-icon-vertical-align: bottom !default;
 
 @function encodecolor($string) {
@@ -11,9 +12,9 @@ $svg-icon-vertical-align: bottom !default;
 }
 
 @mixin recolor($color: #000, $opacity: 1) {
-  $r: private.private-div(red($color), 255);
-  $g: private.private-div(green($color), 255);
-  $b: private.private-div(blue($color), 255);
+  $r: math.div(red($color), 255);
+  $g: math.div(green($color), 255);
+  $b: math.div(blue($color), 255);
   $a: $opacity;
 
   // grayscale fallback if SVG from data url is not supported
