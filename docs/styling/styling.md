@@ -3,7 +3,7 @@
 - [Using CSS Variables (CSS hooks in LWC)](#using-css-variables-instead-of-sass)
 - [Using SVG with SASS](#using-custom-svgs-with-sass)
 - [How to change SVG color?](#how-to-change-svg-color)
-- [List of included Material SVG Icons](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/material-svg-icons.scss)
+- [List of included Material SVG Icons](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/slickgrid-icons.scss)
   - We only included the most popular icons, about 100 out of the 5000+ available [Material Design icons](https://materialdesignicons.com/)
   - [Icon List & Utilities Demo](https://ghiscoding.github.io/slickgrid-universal/#/icons)
 - [SVG Colors CSS Classes](#svg-colors---css-classes)

@@ -37,6 +37,7 @@ $color-sf-highlight: #0070D2 !default;
 $color-sf-primary: #006DCC !default;
 $color-sf-primary-dark: #004487 !default;
 
+// @deprecated - colors using CSS filter
 .color-primary { @include recolor($color-primary, 1); }
 .color-secondary { @include recolor($color-secondary, 1); }
 .color-success { @include recolor($color-success, 1); }
@@ -90,3 +91,58 @@ $color-sf-primary-dark: #004487 !default;
 .color-alt-success-light { @include recolor(lighten($color-alt-success, $color-lighten-percentage), 1); }
 .color-alt-success-dark { @include recolor(darken($color-alt-success, $color-darken-percentage), 1); }
 .color-se-secondary-light { @include recolor(lighten($color-se-secondary, $color-lighten-percentage), 1); }
+
+// new simple
+.text-color-primary { color: $color-primary; }
+.text-color-secondary { color: $color-secondary; }
+.text-color-success { color: $color-success; }
+.text-color-danger { color: $color-danger; }
+.text-color-warning { color: $color-warning; }
+.text-color-info { color: $color-info; }
+.text-color-light { color: $color-light; }
+.text-color-dark { color: $color-dark; }
+.text-color-body { color: $color-body; }
+.text-color-muted { color: $color-muted; }
+.text-color-white { color: $color-white; }
+.text-color-disabled { color: $color-disabled; }
+.text-color-disabled-dark { color: $color-disabled-dark; }
+.text-color-alt-default { color: $color-alt-default; }
+.text-color-alt-warning { color: $color-alt-warning; }
+.text-color-alt-danger { color: $color-alt-danger; }
+.text-color-alt-success { color: $color-alt-success; }
+.text-color-se-primary { color: $color-se-primary; }
+.text-color-se-link { color: $color-se-link; }
+.text-color-se-link-dark { color: $color-se-link-dark; }
+.text-color-se-danger { color: $color-se-danger; }
+.text-color-se-secondary { color: $color-se-secondary; }
+.text-color-se-warning { color: $color-se-warning; }
+.text-color-se-warning-light { color: $color-se-warning-light; }
+.text-color-sf-highlight { color: $color-sf-highlight; }
+.text-color-sf-primary { color: $color-sf-primary; }
+.text-color-sf-primary-dark { color: $color-sf-primary-dark; }
+
+.text-color-primary-light { color: lighten($color-primary, $color-lighten-percentage); }
+.text-color-primary-dark { color: darken($color-primary, $color-darken-percentage); }
+.text-color-secondary-light { color: lighten($color-secondary, $color-lighten-percentage); }
+.text-color-secondary-dark { color: darken($color-secondary, $color-darken-percentage); }
+.text-color-success-light { color: lighten($color-success, $color-lighten-percentage); }
+.text-color-success-dark { color: darken($color-success, $color-darken-percentage); }
+.text-color-danger-light { color: lighten($color-danger, $color-lighten-percentage); }
+.text-color-danger-dark { color: darken($color-danger, $color-darken-percentage); }
+.text-color-warning-light { color: lighten($color-warning, $color-lighten-percentage); }
+.text-color-warning-dark { color: darken($color-warning, $color-darken-percentage); }
+.text-color-info-light { color: lighten($color-info, $color-lighten-percentage); }
+.text-color-info-dark { color: darken($color-info, $color-darken-percentage); }
+.text-color-body-light { color: lighten($color-body, $color-lighten-percentage); }
+.text-color-body-dark { color: darken($color-body, $color-darken-percentage); }
+.text-color-muted-light { color: lighten($color-muted, $color-lighten-percentage); }
+.text-color-muted-dark { color: darken($color-muted, $color-darken-percentage); }
+.text-color-alt-warning-light { color: lighten($color-alt-warning, $color-lighten-percentage); }
+.text-color-alt-warning-dark { color: darken($color-alt-warning, $color-darken-percentage); }
+.text-color-alt-default-light { color: lighten($color-alt-default, $color-lighten-percentage); }
+.text-color-alt-default-dark { color: darken($color-alt-default, $color-darken-percentage); }
+.text-color-alt-danger-light { color: lighten($color-alt-danger, $color-lighten-percentage); }
+.text-color-alt-danger-dark { color: darken($color-alt-danger, $color-darken-percentage); }
+.text-color-alt-success-light { color: lighten($color-alt-success, $color-lighten-percentage); }
+.text-color-alt-success-dark { color: darken($color-alt-success, $color-darken-percentage); }
+.text-color-se-secondary-light { color: lighten($color-se-secondary, $color-lighten-percentage); }

@@ -149,7 +149,7 @@ export default class Example12 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: '<span title="Task must always be followed by a number" class="color-info mdi mdi-alert-circle"></span> Title', field: 'title', sortable: true, type: FieldType.string, minWidth: 75,
+        id: 'title', name: '<span title="Task must always be followed by a number" class="color-info sgi sgi-alert-circle"></span> Title', field: 'title', sortable: true, type: FieldType.string, minWidth: 75,
         cssClass: 'text-bold text-uppercase',
         filterable: true, columnGroup: 'Common Factor',
         filter: { model: Filters.compoundInputText },
@@ -358,7 +358,7 @@ export default class Example12 {
       {
         id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
         excludeFromExport: true,
-        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-dots-vertical mdi-22px color-primary"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto action-btn"><span class="sgi sgi-dots-vertical mdi-22px color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           commandTitle: 'Commands',
@@ -366,21 +366,21 @@ export default class Example12 {
             {
               command: 'edit',
               title: 'Edit Row',
-              iconCssClass: 'mdi mdi-square-edit-outline',
+              iconCssClass: 'sgi sgi-square-edit-outline',
               positionOrder: 66,
               action: () => this.openCompositeModal('edit'),
             },
             {
               command: 'clone',
               title: 'Clone Row',
-              iconCssClass: 'mdi mdi-content-copy',
+              iconCssClass: 'sgi sgi-content-copy',
               positionOrder: 66,
               action: () => this.openCompositeModal('clone'),
             },
             'divider',
             {
               command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'mdi mdi-close color-danger', cssClass: 'red', textCssClass: 'text-italic color-danger-light',
+              iconCssClass: 'sgi sgi-close color-danger', cssClass: 'red', textCssClass: 'text-italic color-danger-light',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext?.completed;
