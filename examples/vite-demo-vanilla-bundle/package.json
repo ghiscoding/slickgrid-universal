@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@types/fnando__sparkline": "^0.3.7",
-    "@types/node": "^20.11.20",
+    "@types/node": "^20.11.24",
     "@types/whatwg-fetch": "^0.0.33",
     "sass": "^1.71.1",
     "typescript": "^5.3.3",
