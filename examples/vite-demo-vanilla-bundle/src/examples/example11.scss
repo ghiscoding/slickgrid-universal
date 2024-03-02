@@ -5,7 +5,7 @@ $slick-autocomplete-max-height: 250px;
 @import 'bulma/bulma';
 
 .unsaved-editable-field {
-  background-color: #fbfdd1;
+  background-color: #fbfdd1 !important;
 }
 .dropdown-item {
   cursor: pointer;
