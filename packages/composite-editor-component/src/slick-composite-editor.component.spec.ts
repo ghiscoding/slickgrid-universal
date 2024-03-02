@@ -569,6 +569,22 @@ describe('CompositeEditorService', () => {
       expect(compositeContainerElm).toBeTruthy();
     });
 
+    it('should execute "onRendered" callback after creating & rendering the composite modal window', () => {
+      const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      const mockOnRenderedCallback = jest.fn();
+
+      component = new SlickCompositeEditorComponent();
+      component.init(gridStub, container);
+      component.openDetails({ headerTitle: 'Details', onRendered: mockOnRenderedCallback });
+      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+
+      expect(mockOnRenderedCallback).toHaveBeenCalledWith(expect.any(HTMLDivElement));
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+    });
+
     it('should execute "onClose" callback when user confirms the closing of the modal when "onClose" callback is defined', (done) => {
       const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55, field2: 'Test' };
       jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);

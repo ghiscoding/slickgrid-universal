@@ -107,6 +107,9 @@ export interface CompositeEditorOpenDetailOption {
   /** onError callback allows user to override what the system does when an error (error message & type) is thrown, defaults to console.log */
   onError?: (error: OnErrorOption) => void;
 
+  /** onRendered callback allows the user to optionally execute something after the modal is created and rendered in the DOM (for example add Bootstrap `bs-data-theme="dark"` attribute to the modal element) */
+  onRendered?: (modalElm: HTMLDivElement) => void;
+
   /**
    * onSave callback will be triggered (when defined) after user clicked the save/apply button,
    * this callback is used when connecting a backend server with custom code to execute after clicking the save/apply button
