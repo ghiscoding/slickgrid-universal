@@ -137,6 +137,11 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     menuElm.className = menuClasses;
     if (level > 0) {
       menuElm.classList.add('slick-submenu');
+
+      // add dark mode CSS class when enabled
+      if (this.gridOptions?.darkMode) {
+        menuElm.classList.add('slick-dark-mode');
+      }
       if (subMenuId) {
         menuElm.dataset.subMenuParent = subMenuId;
       }

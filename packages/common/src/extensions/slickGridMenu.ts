@@ -478,6 +478,11 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       populateColumnPicker.call(this, addonOptions);
       document.body.appendChild(this._menuElm);
 
+      // add dark mode CSS class when enabled
+      if (this.gridOptions.darkMode) {
+        this._menuElm.classList.add('slick-dark-mode');
+      }
+
       // calculate the necessary menu height/width and reposition twice because if we do it only once and the grid menu is wider than the original width,
       // it will be offset the 1st time we open the menu but if we do it twice then it will be at the correct position every time
       this._menuElm.style.opacity = '0';
@@ -498,7 +503,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         buttonElm = (e.target as HTMLElement).parentElement as HTMLButtonElement; // external grid menu might fall in this last case if wrapped in a span/div
       }
 
-      this._menuElm.setAttribute('aria-expanded', 'true');
+      this._menuElm.ariaExpanded = 'true';
       this._menuElm.appendChild(this._listElm);
 
       // once we have both lists (commandItems + columnPicker), we are ready to reposition the menu since its height/width should be calculated by then

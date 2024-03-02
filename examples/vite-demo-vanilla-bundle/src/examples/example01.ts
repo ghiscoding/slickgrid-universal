@@ -11,6 +11,7 @@ import './example01.scss';
 const NB_ITEMS = 995;
 
 export default class Example01 {
+  private _darkModeGrid1 = false;
   gridOptions1!: GridOption;
   gridOptions2!: GridOption;
   columnDefinitions1!: Column[];
@@ -56,6 +57,7 @@ export default class Example01 {
     ];
     this.gridOptions1 = {
       enableAutoResize: false,
+      darkMode: this._darkModeGrid1,
       gridHeight: 225,
       gridWidth: 800,
       rowHeight: 33,
@@ -168,6 +170,16 @@ export default class Example01 {
     }
 
     return mockDataset;
+  }
+
+  toggleDarkModeGrid1() {
+    this._darkModeGrid1 = !this._darkModeGrid1;
+    if (this._darkModeGrid1) {
+      document.querySelector('.grid-container1')?.classList.add('dark-mode');
+    } else {
+      document.querySelector('.grid-container1')?.classList.remove('dark-mode');
+    }
+    this.sgb1.gridOptions = { darkMode: this._darkModeGrid1 };
   }
 
   // Toggle the Pagination of Grid2

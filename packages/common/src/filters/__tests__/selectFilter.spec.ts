@@ -667,6 +667,27 @@ describe('SelectFilter', () => {
     expect(filterParentElm.textContent).toBe('2 de 3 sélectionnés');
   });
 
+  it('should enable Dark Mode and expect ".ms-dark-mode" CSS class to be found on parent element', () => {
+    gridOptionMock.darkMode = true;
+    mockColumn.filter = {
+      enableTranslateLabel: true,
+      collection: [
+        { value: 'other', label: 'Other' },
+        { value: 'male', label: 'Male' },
+        { value: 'female', label: 'Female' }
+      ],
+      filterOptions: { minimumCountSelected: 1 }
+    };
+
+    filterArguments.searchTerms = ['male', 'female'];
+    filter.init(filterArguments);
+    jest.runAllTimers(); // fast-forward timer
+
+    const filterElm = divContainer.querySelector('.ms-parent') as HTMLButtonElement;
+
+    expect(filterElm.classList.contains('ms-dark-mode')).toBeTruthy();
+  });
+
   it('should create the multi-select filter with a default search term when using "collectionAsync" as a Promise', async () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];

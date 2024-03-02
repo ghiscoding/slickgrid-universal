@@ -239,6 +239,14 @@ describe('LongTextEditor', () => {
       expect(wrapperElm.style.display).toBe('block');
     });
 
+    it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element', () => {
+      gridOptionMock.darkMode = true;
+      editor = new LongTextEditor(editorArguments);
+      const wrapperElm = document.body.querySelector('.slick-large-editor-text.editor-title') as HTMLDivElement;
+
+      expect(wrapperElm.classList.contains('slick-dark-mode')).toBeTruthy();
+    });
+
     describe('isValueChanged method', () => {
       it('should return True when previously dispatched keyboard event is a new char "a" and it should also update the text counter accordingly', () => {
         const eventKeyDown = new (window.window as any).KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true });
@@ -568,7 +576,6 @@ describe('LongTextEditor', () => {
         mockItemData = { id: 1, title: 'task', isActive: true };
 
         editor = new LongTextEditor(editorArguments);
-        // const spySave = jest.spyOn(editor, 'save');
         const spySave = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
         editor.loadValue(mockItemData);
@@ -585,7 +592,6 @@ describe('LongTextEditor', () => {
 
         editor = new LongTextEditor(editorArguments);
         editor.loadValue(mockItemData);
-        // const spyCancel = jest.spyOn(editor, 'cancel');
         const spyCancel = jest.spyOn(editorArguments, 'cancelChanges');
 
         const editorFooterElm = document.body.querySelector('.slick-large-editor-text.editor-title .editor-footer') as HTMLDivElement;

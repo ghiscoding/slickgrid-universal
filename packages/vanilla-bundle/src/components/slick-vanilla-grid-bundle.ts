@@ -64,6 +64,7 @@ import { UniversalContainerService } from '../services/universalContainer.servic
 export class SlickVanillaGridBundle<TData = any> {
   protected _currentDatasetLength = 0;
   protected _eventPubSubService!: EventPubSubService;
+  protected _darkMode = false;
   protected _columnDefinitions?: Column<TData>[];
   protected _gridOptions?: GridOption;
   protected _gridContainerElm!: HTMLElement;
@@ -219,11 +220,16 @@ export class SlickVanillaGridBundle<TData = any> {
     } else {
       mergedOptions = this.mergeGridOptions(options);
     }
+
     if (this.sharedService?.gridOptions && this.slickGrid?.setOptions) {
       this.sharedService.gridOptions = mergedOptions;
       this.slickGrid.setOptions(mergedOptions as any, false, true); // make sure to supressColumnCheck (3rd arg) to avoid problem with changeColumnsArrangement() and custom grid view
       this.slickGrid.reRenderColumns(true); // then call a re-render since we did supressColumnCheck on previous setOptions
     }
+
+    // add/remove dark mode CSS class to parent container
+    this.setDarkMode(options.darkMode);
+
     this._gridOptions = mergedOptions;
   }
 
@@ -325,6 +331,11 @@ export class SlickVanillaGridBundle<TData = any> {
 
     this._gridOptions = this.mergeGridOptions(options || {});
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions?.enableDeepCopyDatasetOnPageLoad);
+
+    // add dark mode CSS class when enabled
+    if (this._gridOptions.darkMode) {
+      this.setDarkMode(true);
+    }
 
     this.universalContainerService = services?.universalContainerService ?? new UniversalContainerService();
 
@@ -827,6 +838,13 @@ export class SlickVanillaGridBundle<TData = any> {
         this.sharedService.visibleColumns = args.impactedColumns;
       });
 
+      this._eventHandler.subscribe(grid.onSetOptions, (_e, args) => {
+        // add/remove dark mode CSS class when enabled
+        if (args.optionsBefore.darkMode !== args.optionsAfter.darkMode) {
+          this.setDarkMode(args.optionsAfter.darkMode);
+        }
+      });
+
       // load any presets if any (after dataset is initialized)
       this.loadColumnPresetsWhenDatasetInitialized();
       this.loadFilterPresetsWhenDatasetInitialized();
@@ -1086,6 +1104,14 @@ export class SlickVanillaGridBundle<TData = any> {
       paginationOptions.pageNumber = gridOptions.presets.pagination.pageNumber;
     }
     return paginationOptions;
+  }
+
+  setDarkMode(dark = false) {
+    if (dark) {
+      this._gridParentContainerElm.classList.add('slick-dark-mode');
+    } else {
+      this._gridParentContainerElm.classList.remove('slick-dark-mode');
+    }
   }
 
   // --

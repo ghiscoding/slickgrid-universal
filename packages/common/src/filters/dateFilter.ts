@@ -272,6 +272,7 @@ export class DateFilter implements Filter {
       wrap: true,
       closeOnSelect: true,
       locale: currentLocale,
+      theme: this.gridOptions?.darkMode ? 'dark' : 'light',
       onChange: (selectedDates: Date[] | Date, dateStr: string) => {
         if (this.inputFilterType === 'compound') {
           this._currentValue = dateStr;
@@ -323,6 +324,11 @@ export class DateFilter implements Filter {
       })
     );
     this.flatInstance = flatpickr(filterDivInputElm, this._flatpickrOptions as unknown as Partial<FlatpickrBaseOptions>);
+
+    // add dark mode CSS class when enabled
+    if (this.gridOptions?.darkMode) {
+      this.flatInstance.calendarContainer.classList.add('slick-dark-mode');
+    }
 
     return filterDivInputElm;
   }

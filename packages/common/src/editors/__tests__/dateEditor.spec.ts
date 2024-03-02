@@ -196,6 +196,19 @@ describe('DateEditor', () => {
       expect(spy).toHaveBeenCalled();
     });
 
+    it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element', () => {
+      gridOptionMock.darkMode = true;
+      editor = new DateEditor(editorArguments);
+      const spy = jest.spyOn(editor.flatInstance, 'open');
+      const calendarElm = document.body.querySelector<HTMLDivElement>('.flatpickr-calendar');
+      editor.show();
+      editor.focus();
+
+      expect(gridStub.focus).toHaveBeenCalled();
+      expect(calendarElm?.classList.contains('slick-dark-mode')).toBeTruthy();
+      expect(spy).toHaveBeenCalled();
+    });
+
     it('should call the "changeEditorOption" method and expect new option to be merged with the previous Editor options and also expect to call Flatpickr "set" method', () => {
       editor = new DateEditor(editorArguments);
       const spy = jest.spyOn(editor.flatInstance, 'set');

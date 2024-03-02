@@ -246,6 +246,7 @@ const mockGrid = {
   onClick: new MockSlickEvent(),
   onClicked: new MockSlickEvent(),
   onColumnsReordered: new MockSlickEvent(),
+  onSetOptions: new MockSlickEvent(),
   onRendered: jest.fn(),
   onScroll: jest.fn(),
   onDataviewCreated: new MockSlickEvent(),
@@ -399,6 +400,24 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     expect(component.eventHandler).toEqual(slickEventHandler);
     expect(sharedHasColumnsReorderedSpy).toHaveBeenCalledWith(true);
     expect(sharedVisibleColumnsSpy).toHaveBeenCalledWith(newVisibleColumns);
+  });
+
+  it('should change Dark Mode by using "setOptions" when triggered with "onSetOptions" event', () => {
+    component.gridOptions = { darkMode: false };
+    component.initialization(divContainer, slickEventHandler);
+    mockGrid.onSetOptions.notify({ optionsBefore: { darkMode: false }, optionsAfter: { darkMode: true }, grid: mockGrid });
+
+    expect(component.eventHandler).toEqual(slickEventHandler);
+    expect(divContainer.classList.contains('slick-dark-mode')).toBeTruthy();
+  });
+
+  it('should change back to Light Mode by using "setOptions" when triggered with "onSetOptions" event', () => {
+    component.gridOptions = { darkMode: true };
+    component.initialization(divContainer, slickEventHandler);
+    mockGrid.onSetOptions.notify({ optionsBefore: { darkMode: true }, optionsAfter: { darkMode: false }, grid: mockGrid });
+
+    expect(component.eventHandler).toEqual(slickEventHandler);
+    expect(divContainer.classList.contains('slick-dark-mode')).toBeFalsy();
   });
 
   it('should create a grid and expect multiple event published', () => {
@@ -2186,6 +2205,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
     document.body.appendChild(divContainer);
     columnDefinitions = [{ id: 'name', field: 'name' }];
     gridOptions = {
+      darkMode: true,
       enableExcelExport: false,
       dataView: null,
       autoResize: {

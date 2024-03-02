@@ -130,6 +130,9 @@ export interface FlatpickrOption {
   /** defaults to false, position the calendar inside the wrapper and next to the input element*. */
   static?: boolean;
 
+  /** defaults to 'light', use a theme of your choice. */
+  theme?: 'dark' | 'light' | 'material_blue' | 'material_green' | 'material_red' | 'material_orange' | 'airbnb' | 'confetti';
+
   /** defaults to false, displays time picker in 24 hour mode without AM/PM selection when enabled. */
   time_24hr?: boolean;
 

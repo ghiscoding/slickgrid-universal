@@ -1,7 +1,7 @@
 import autocompleter from 'autocompleter';
 import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { createDomElement, isObject, isPrimitiveValue, setDeepValue, toKebabCase } from '@slickgrid-universal/utils';
+import { classNameToList, createDomElement, isObject, isPrimitiveValue, setDeepValue, toKebabCase } from '@slickgrid-universal/utils';
 
 import { Constants } from './../constants';
 import { FieldType } from '../enums/index';
@@ -617,6 +617,12 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       onSelect: this.handleSelect.bind(this),
       ...this.editorOptions,
     } as Partial<AutocompleteSettings<any>>;
+
+    // add dark mode CSS class when enabled
+    if (this.gridOptions?.darkMode) {
+      this._autocompleterOptions.className += ' slick-dark-mode';
+    }
+    this.autocompleterOptions.className = classNameToList(this.autocompleterOptions.className).join(' ');
 
     // "render" callback overriding
     if (this._autocompleterOptions.renderItem?.layout) {

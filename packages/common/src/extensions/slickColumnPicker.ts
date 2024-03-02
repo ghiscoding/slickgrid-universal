@@ -197,6 +197,11 @@ export class SlickColumnPicker {
 
     this._menuElm = this.createPickerMenu();
 
+    // add dark mode CSS class when enabled
+    if (this.gridOptions.darkMode) {
+      this._menuElm.classList.add('slick-dark-mode');
+    }
+
     // load the column & create column picker list
     populateColumnPicker.call(this, this.addonOptions);
     document.body.appendChild(this._menuElm);
@@ -212,7 +217,7 @@ export class SlickColumnPicker {
       this._menuElm.style.minHeight = findWidthOrDefault(this.addonOptions.minHeight, '');
       this._menuElm.style.maxHeight = findWidthOrDefault(this.addonOptions.maxHeight, `${window.innerHeight - targetEvent.clientY}px`);
       this._menuElm.style.display = 'block';
-      this._menuElm.setAttribute('aria-expanded', 'true');
+      this._menuElm.ariaExpanded = 'true';
       this._menuElm.appendChild(this._listElm);
     }
   }

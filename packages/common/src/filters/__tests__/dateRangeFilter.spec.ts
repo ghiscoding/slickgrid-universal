@@ -111,6 +111,7 @@ describe('DateRangeFilter', () => {
       locale: 'en',
       mode: 'range',
       onChange: expect.anything(),
+      theme: 'light',
       wrap: true,
     });
   });

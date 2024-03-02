@@ -22,6 +22,7 @@ import './example16.scss';
 
 export default class Example16 {
   private _bindingEventService: BindingEventService;
+  private _darkMode = false;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
@@ -47,6 +48,7 @@ export default class Example16 {
   dispose() {
     this.sgb?.dispose();
     this._bindingEventService.unbindAll();
+    document.querySelector('.demo-container')?.classList.remove('dark-mode');
   }
 
   initializeGrid() {
@@ -326,6 +328,7 @@ export default class Example16 {
       autoResize: {
         container: '.demo-container',
       },
+      darkMode: this._darkMode,
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableCellNavigation: true,
@@ -354,6 +357,7 @@ export default class Example16 {
         filters: [{ columnId: 'prerequisites', searchTerms: [1, 3, 5, 7, 9, 12, 15, 18, 21, 25, 28, 29, 30, 32, 34] }],
       },
       rowHeight: 33,
+      headerRowHeight: 35,
       enableFiltering: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
@@ -497,5 +501,15 @@ export default class Example16 {
       output += `<span class="mdi mdi-check-circle-outline ${iconColor}"></span>`;
     }
     return output;
+  }
+
+  toggleDarkMode() {
+    this._darkMode = !this._darkMode;
+    if (this._darkMode) {
+      document.querySelector('.demo-container')?.classList.add('dark-mode');
+    } else {
+      document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    }
+    this.sgb.gridOptions = { darkMode: this._darkMode };
   }
 }

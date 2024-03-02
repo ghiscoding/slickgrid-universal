@@ -362,6 +362,11 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         this._modalElm = createDomElement('div', { className: `slick-editor-modal ${gridUid}` });
         const modalContentElm = createDomElement('div', { className: 'slick-editor-modal-content' });
 
+        // add dark mode CSS class when enabled
+        if (this.gridOptions?.darkMode) {
+          modalContentElm.classList.add('slick-dark-mode');
+        }
+
         if ((!isNaN(viewColumnLayout as number) && +viewColumnLayout > 1) || (viewColumnLayout === 'auto' && layoutColCount > 1)) {
           const splitClassName = layoutColCount === 2 ? 'split-view' : 'triple-split-view';
           modalContentElm.classList.add(splitClassName);

@@ -67,3 +67,27 @@ input.is-narrow {
 .text-red {
   color: red;
 }
+.d-inline-flex {
+  display: inline-flex;
+}
+
+.demo-container {
+  background-color: #fff;
+  h3 {
+    color: #333;
+  }
+  .subtitle {
+    color: #727272;
+  }
+}
+.demo-container.dark-mode {
+  padding: 20px;
+  background-color: #33393e;
+  color: #dddddd;
+  h3 {
+    color: #dddddd;
+  }
+  .subtitle {
+    color: #cbcbcb;
+  }
+}

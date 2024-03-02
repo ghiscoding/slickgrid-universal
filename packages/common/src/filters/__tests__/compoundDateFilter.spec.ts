@@ -104,6 +104,20 @@ describe('CompoundDateFilter', () => {
     expect(spy).toHaveBeenCalled();
   });
 
+  it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element', () => {
+    jest.spyOn(gridStub, 'getOptions').mockReturnValue({
+      ...gridOptionMock, darkMode: true
+    });
+
+    filter.init(filterArguments);
+    const spy = jest.spyOn(filter.flatInstance, 'open');
+    const calendarElm = document.body.querySelector('.flatpickr-calendar') as HTMLDivElement;
+    filter.show();
+
+    expect(calendarElm.classList.contains('slick-dark-mode')).toBeTruthy();
+    expect(spy).toHaveBeenCalled();
+  });
+
   it('should be able to retrieve default flatpickr options through the Getter', () => {
     filter.init(filterArguments);
 
@@ -118,6 +132,7 @@ describe('CompoundDateFilter', () => {
       locale: 'en',
       mode: 'single',
       onChange: expect.anything(),
+      theme: 'light',
       wrap: true,
     });
   });
