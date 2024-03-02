@@ -244,6 +244,11 @@
       margin: var(--slick-editor-modal-editor-btn-reset-margin, $slick-editor-modal-editor-btn-reset-margin);
     }
 
+    .input-group-btn .btn-default:disabled {
+      background-color: var(--slick-editor-modal-default-btn-disabled-bg-color, $slick-editor-modal-default-btn-disabled-bg-color);
+      color: var(--slick-editor-modal-default-btn-disabled-color, $slick-editor-modal-default-btn-disabled-color);
+    }
+
     .close {
       cursor: pointer;
       position: absolute;
