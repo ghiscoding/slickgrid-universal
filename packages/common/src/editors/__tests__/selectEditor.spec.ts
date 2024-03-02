@@ -189,6 +189,16 @@ describe('SelectEditor', () => {
       expect(editorElm.innerHTML).toBe(testValue);
     });
 
+    it('should enable Dark Mode and expect ".ms-dark-mode" CSS class to be found on parent element', () => {
+      gridOptionMock.darkMode = true;
+      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+
+      editor = new SelectEditor(editorArguments, true);
+      const editorElm = divContainer.querySelector('.ms-parent.editor-gender') as HTMLSpanElement;
+
+      expect(editorElm.classList.contains('ms-dark-mode')).toBeTruthy();
+    });
+
     it('should call "columnEditor" GETTER and expect to equal the editor settings we provided', () => {
       (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
       (mockColumn.internalColumnEditor as ColumnEditor).placeholder = 'test placeholder';

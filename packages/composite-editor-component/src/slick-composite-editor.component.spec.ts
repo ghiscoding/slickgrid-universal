@@ -382,7 +382,7 @@ describe('CompositeEditorService', () => {
         { id: 'lastName', field: 'lastName', width: 100, name: 'Last Name', editor: { model: Editors.text, compositeEditorFormOrder: 1, } },
         { id: 'firstName', field: 'firstName', width: 100, name: 'First Name', editor: { model: Editors.text, compositeEditorFormOrder: 0, } },
       ] as Column[];
-      sortedColumnsMock.forEach(col => col.internalColumnEditor = col.editor); // do the editor swap that the lib does internally
+      sortedColumnsMock.forEach(col => col.internalColumnEditor = col.editor!); // do the editor swap that the lib does internally
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(sortedColumnsMock);
       jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
@@ -475,6 +475,27 @@ describe('CompositeEditorService', () => {
       expect(compositeBodyElm).toBeTruthy();
       expect(compositeFooterElm).toBeTruthy();
       expect(field1DetailContainerElm).toBeTruthy();
+    });
+
+    it('should add Dark Mode CSS classes to the modal when option is enabled in grid options', () => {
+      const newGridOptions = { ...gridOptionsMock, darkMode: true } as GridOption;
+      const copyColumnsMock: Column[] = createNewColumDefinitions(15);
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue(copyColumnsMock);
+      const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+
+      component = new SlickCompositeEditorComponent();
+      component.init(gridStub, container);
+      component.openDetails({ headerTitle: 'Details', viewColumnLayout: 'auto' });
+
+      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContentElm = compositeContainerElm.querySelector('.slick-editor-modal-content') as HTMLSelectElement;
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+      expect(compositeContentElm.classList.contains('slick-dark-mode')).toBeTruthy();
     });
 
     it('should activate next available cell with an Editor when current active cell does not have an Editor', () => {

@@ -134,10 +134,15 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
         event.preventDefault();
       }
 
+      // add dark mode CSS class when enabled
+      if (this._menuElm && this.gridOptions.darkMode) {
+        this._menuElm.classList.add('slick-dark-mode');
+      }
+
       // reposition the menu to where the user clicked
       if (this._menuElm) {
         this.repositionMenu(event, this._menuElm);
-        this._menuElm.setAttribute('aria-expanded', 'true');
+        this._menuElm.ariaExpanded = 'true';
         this._menuElm.style.display = 'block';
       }
 

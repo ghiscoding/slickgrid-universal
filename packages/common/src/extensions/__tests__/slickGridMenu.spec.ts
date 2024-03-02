@@ -359,6 +359,22 @@ describe('GridMenuControl', () => {
         expect(gridMenuElm.style.height).toBe('300px');
       });
 
+      it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element when opening Grid Menu', () => {
+        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+
+        gridOptionsMock.darkMode = true;
+        gridOptionsMock.gridMenu!.contentMinWidth = 200;
+        gridOptionsMock.gridMenu!.height = 300;
+        control.init();
+        const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
+        buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const gridMenuElm = document.querySelector('.slick-grid-menu') as HTMLDivElement;
+
+        expect(gridMenuElm.style.minWidth).toBe('200px');
+        expect(gridMenuElm.style.height).toBe('300px');
+        expect(gridMenuElm.classList.contains('slick-dark-mode')).toBeTruthy();
+      });
+
       it('should open the Grid Menu via "showGridMenu" method from an external button which has span inside it and expect the Grid Menu still work, with drop aligned on left when defined', () => {
         jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
         const repositionSpy = jest.spyOn(control, 'repositionMenu');

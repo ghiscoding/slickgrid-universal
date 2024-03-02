@@ -112,6 +112,7 @@ export class SelectEditor implements Editor {
       autoAdjustDropPosition: true,
       autoAdjustDropWidthByTextSize: true,
       container: 'body',
+      darkMode: !!this.gridOptions.darkMode,
       filter: false,
       maxHeight: 275,
       minHeight: 25,

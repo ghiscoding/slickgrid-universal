@@ -74,6 +74,7 @@
     --slick-multiselect-ok-button-text-hover-color: #00a736;
     --slick-multiselect-select-all-text-color: #007c28;
     --slick-column-picker-checkbox-icon-checked: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="%23009530" viewBox="0 0 24 24"><path d="M8.8 19.6L1.2 12c-.3-.3-.3-.8 0-1.1l1-1c.3-.3.8-.3 1 0L9 15.7c.1.2.5.2.6 0L20.9 4.4c.2-.3.7-.3 1 0l1 1c.3.3.3.7 0 1L9.8 19.6c-.2.3-.7.3-1 0z"></path></svg>');
+    --slick-column-picker-checkbox-icon-unchecked: var(--slick-column-picker-checkbox-icon-checked);
     --slick-multiselect-icon-checked: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="%23009530" viewBox="0 0 24 24"><path d="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z"></path></svg>');
     --slick-multiselect-icon-unchecked: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="%23009530" viewBox="0 0 24 24"><path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,5V19H5V5H19Z"></path></svg>');
     --slick-multiselect-icon-color: var(--slick-primary-color);
@@ -105,9 +106,38 @@
         border: 1px solid #55B876;
         span {
           font-weight: normal;
-          color: #555;
+          color: var(--slick-dark-text-color);
         }
       }
+    }
+
+    .ms-dark-mode,
+    .ms-drop.ms-dark-mode,
+    .slick-dark-mode .ms-dark-mode,
+    .slick-dark-mode {
+      --slick-base-dark-menu-bg-color: #212121;
+      --slick-primary-color: #4caf50;
+      --slick-button-primary-bg-color: var(--slick-primary-color);
+      --slick-column-picker-checkbox-color: #49a54e;
+      --slick-compound-filter-text-color: #66bb6a;
+      --slick-compound-filter-operator-select-border: 1px solid #66bb6a;
+      --slick-header-filter-row-border-bottom: 1px solid #505050;
+      --slick-container-border-right: 1px solid #505050;
+      --slick-container-border-top: 1px solid #505050;
+      --slick-container-border-left: 1px solid #505050;
+      --slick-container-border-bottom: 1px solid #505050;
+      --slick-pane-top-border-top: 1px solid #505050;
+      --slick-filled-filter-color: #00ab3b;
+      --slick-highlight-color: #49a54e;
+      --slick-pagination-icon-color: #49a54e;
+      --slick-checkbox-selector-checked-color: #4caf50;
+      --slick-row-mouse-hover-box-shadow: none;
+      --slick-row-mouse-hover-color: #575757;
+      --slick-checkbox-selector-opacity: 1;
+      --slick-checkbox-selector-icon-height: 22px;
+      --slick-checkbox-selector-icon-bg-color: transparent;
+      --slick-checkbox-selector-icon-border: none;
+      --ms-ok-button-text-color: #4caf50;
     }
   }
 }

@@ -35,6 +35,7 @@
   }
 
   .slick-viewport {
+    height: 100%;
     border-top: var(--slick-viewport-border-top, $slick-viewport-border-top);
     border-bottom: var(--slick-viewport-border-bottom, $slick-viewport-border-bottom);
     border-left: var(--slick-viewport-border-left, $slick-viewport-border-left);
@@ -72,16 +73,6 @@
         &:hover {
           background-color: var(--slick-row-mouse-hover-color, $slick-row-mouse-hover-color);
         }
-      }
-      &.odd .slick-cell {
-        &.selected {
-          background-color: var(--slick-row-selected-color, $slick-row-selected-color);
-        }
-        &.copied {
-          background: var(--slick-copied-cell-bg-color-transition, $slick-copied-cell-bg-color-transition);
-          transition: var(--slick-copied-cell-transition, $slick-copied-cell-transition);
-        }
-        background: inherit;
       }
       &.odd .slick-cell {
         &.selected {
@@ -245,7 +236,7 @@
   }
 
   .slick-header-columns {
-    background: $slick-grid-header-background;
+    background: var(--slick-grid-header-background, $slick-grid-header-background);
     background-color: var(--slick-header-background-color, $slick-header-background-color);
     width: calc(100% - #{var(--slick-header-scroll-width-to-remove, $slick-header-scroll-width-to-remove)});
 
@@ -276,7 +267,7 @@
         margin-right: var(--slick-header-column-name-margin-right, $slick-header-column-name-margin-right);
       }
 
-      $slick-hoverHeaderColor: var(--slick-text-color, $slick-text-color);
+      $slick-hover-header-color: var(--slick-text-color, $slick-text-color);
       $slick-sortingHeaderColor: var(--slick-text-color, $slick-text-color);
 
       @mixin ResetColumns () {
@@ -290,7 +281,7 @@
           color: var(--slick-text-color, $slick-text-color);
         }
         a:hover {
-          color: var(--slick-hoverHeaderColor, $slick-hoverHeaderColor);
+          color: var(--slick-hover-header-color, $slick-hover-header-color);
         }
       }
 
@@ -304,7 +295,7 @@
         color: var(--slick-sortingHeaderColor, $slick-sortingHeaderColor);
       }
       &:hover {
-        color: var(--slick-hoverHeaderColor, $slick-hoverHeaderColor);
+        color: var(--slick-hover-header-color, $slick-hover-header-color);
       }
 
       /* when sorting is possible and there's not yet a sort applied on the column

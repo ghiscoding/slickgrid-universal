@@ -87,6 +87,7 @@ const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, 
 
 export default class Example12 {
   private _bindingEventService: BindingEventService;
+  private _darkMode = false;
   compositeEditorInstance: SlickCompositeEditorComponent;
   columnDefinitions: Column[];
   gridOptions: GridOption;
@@ -144,6 +145,7 @@ export default class Example12 {
     this.sgb?.dispose();
     this._bindingEventService.unbindAll();
     this.gridContainerElm.remove();
+    document.querySelector('.demo-container')?.classList.remove('dark-mode');
   }
 
   initializeGrid() {
@@ -358,7 +360,7 @@ export default class Example12 {
       {
         id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
         excludeFromExport: true,
-        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-dots-vertical mdi-22px color-primary"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-dots-vertical mdi-22px color-alt-default-light"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           commandTitle: 'Commands',
@@ -401,6 +403,7 @@ export default class Example12 {
       useSalesforceDefaultGridOptions: true,
       autoFixResizeRequiredGoodCount: 1,
       datasetIdPropertyName: 'id',
+      darkMode: this._darkMode,
       eventNamingStyle: EventNamingStyle.lowerCase,
       autoAddCustomEditorFormatter: customEditableInputFormatter,
       enableAddRow: true, // <-- this flag is required to work with the (create & clone) modal types
@@ -742,6 +745,16 @@ export default class Example12 {
     }
     this.sgb.slickGrid?.invalidate(); // re-render the grid only after every cells got rolled back
     this.editQueue = [];
+  }
+
+  toggleDarkMode() {
+    this._darkMode = !this._darkMode;
+    if (this._darkMode) {
+      document.querySelector('.demo-container')?.classList.add('dark-mode');
+    } else {
+      document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    }
+    this.sgb.gridOptions = { darkMode: this._darkMode };
   }
 
   mockProducts() {

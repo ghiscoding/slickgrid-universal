@@ -24,6 +24,7 @@ li.hidden {
   border-radius: var(--slick-column-picker-border-radius, $slick-column-picker-border-radius);
   min-width: var(--slick-column-picker-min-width, $slick-column-picker-min-width);
   padding: var(--slick-column-picker-padding, $slick-column-picker-padding);
+  scrollbar-color: var(--slick-scrollbar-color, $slick-scrollbar-color);
   @-moz-document url-prefix() {
     /* add right padding to avoid scrollback showing over text, that is for Firefox since WebKit is ok */
     padding: var(--slick-column-picker-padding-firefox, $slick-column-picker-padding-firefox);
@@ -81,7 +82,9 @@ li.hidden {
   }
 }
 .slick-column-picker, .slick-grid-menu {
+  scrollbar-color: var(--slick-scrollbar-color, $slick-scrollbar-color);
   .slick-menu-title {
+    color: var(--slick-menu-title-color, $slick-menu-title-color);
     font-size: var(--slick-menu-title-font-size, $slick-menu-title-font-size);
     font-weight: var(--slick-menu-title-font-weight, $slick-menu-title-font-weight);
     border-bottom: var(--slick-column-picker-title-border-bottom, $slick-column-picker-title-border-bottom);
@@ -97,6 +100,7 @@ li.hidden {
   }
 
   li {
+    color: var(--slick-menu-color, $slick-menu-color);
     border: var(--slick-column-picker-item-border, $slick-column-picker-item-border);
     border-radius: var(--slick-column-picker-item-border-radius, $slick-column-picker-item-border-radius);
     font-size: var(--slick-column-picker-item-font-size, $slick-column-picker-item-font-size);
@@ -118,7 +122,8 @@ li.hidden {
   hr {
     margin: 6px 0;
     border: 0;
-    border-top: 1px solid #d5d5d5;
+    background-color: var(--slick-column-picker-hr-bg-color, $slick-column-picker-hr-bg-color);
+    border-top: var(--slick-column-picker-hr-divider-border, $slick-column-picker-hr-divider-border);
     width: var(--slick-column-picker-divider-width, $slick-column-picker-divider-width);
     margin-left: auto;
     margin-right: auto;
@@ -366,6 +371,7 @@ li.hidden {
   position: absolute;
   font-family: var(--slick-font-family, $slick-font-family);
   background: var(--slick-menu-bg-color, $slick-menu-bg-color);
+  color: var(--slick-menu-color, $slick-menu-color);
   border: var(--slick-menu-border, $slick-menu-border);
   border-radius: var(--slick-menu-border-radius, $slick-menu-border-radius);
   min-width: var(--slick-menu-min-width, $slick-menu-min-width);
@@ -731,6 +737,9 @@ li.hidden {
     line-height: var(--slick-multiselect-select-all-line-height, $slick-multiselect-select-all-line-height);
     &:hover {
       background-color: var(--slick-multiselect-select-all-text-hover-color, $slick-multiselect-select-all-text-hover-color);
+    }
+    &.highlighted {
+      background-color: transparent;
     }
     &.highlighted label {
       border: var(--slick-multiselect-option-highlight-border, $slick-multiselect-option-highlight-border);

@@ -7,6 +7,7 @@
  */
 
 $slick-primary-color:                                       #009530 !default;
+$slick-highlight-color:                                     #48c774 !default;
 $slick-font-family:                                         Roboto, "Helvetica Neue", sans-serif !default;
 $slick-font-size-base-value:                                14 !default;
 $slick-icon-color:                                           #3f3e3e !default;
@@ -153,3 +154,33 @@ $slick-pagination-icon-seek-end-width:                      $slick-icon-width !d
 $slick-pagination-button-padding:                           6px 9px !default;
 $slick-pagination-button-border-radius:                     2px !default;
 $slick-pagination-page-input-border-radius:                 3px !default;
+
+// Dark Mode
+// -----------
+.ms-dark-mode,
+.ms-drop.ms-dark-mode,
+.slick-dark-mode .ms-dark-mode,
+.slick-dark-mode {
+  --slick-base-dark-menu-bg-color:                #212121;
+  --slick-primary-color:                          #4caf50;
+  --slick-button-primary-bg-color:                var(--slick-primary-color);
+  --slick-column-picker-checkbox-color:           #49a54e;
+  --slick-compound-filter-text-color:             #66bb6a;
+  --slick-compound-filter-operator-select-border: 1px solid #66bb6a;
+  --slick-header-filter-row-border-bottom:        1px solid #505050;
+  --slick-container-border-right:                 1px solid #505050;
+  --slick-container-border-top:                   1px solid #505050;
+  --slick-container-border-left:                  1px solid #505050;
+  --slick-container-border-bottom:                1px solid #505050;
+  --slick-pane-top-border-top:                    1px solid #505050;
+  --slick-filled-filter-color:                    #00ab3b;
+  --slick-highlight-color:                        #49a54e;
+  --slick-pagination-icon-color:                  #49a54e;
+  --slick-checkbox-selector-opacity:              1;
+  --slick-checkbox-selector-checked-color:        #4caf50;
+  --slick-row-mouse-hover-box-shadow:             none;
+  --slick-row-mouse-hover-color:                  #575757;
+  --slick-checkbox-selector-icon-height:          22px;
+  --slick-checkbox-selector-icon-bg-color:        transparent;
+  --slick-checkbox-selector-icon-border:          none;
+}

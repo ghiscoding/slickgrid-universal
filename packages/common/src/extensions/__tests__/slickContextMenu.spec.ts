@@ -269,6 +269,20 @@ describe('ContextMenu Plugin', () => {
       expect(hideMenuSpy).toHaveBeenCalled();
     });
 
+    it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element when opening Context Menu', () => {
+      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, darkMode: true });
+      const actionBtnElm = document.createElement('button');
+      slickCellElm.appendChild(actionBtnElm);
+      const eventDataCopy = deepCopy(eventData);
+      gridStub.onContextMenu.notify({ grid: gridStub }, eventDataCopy as any, gridStub);
+
+      let contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
+      gridStub.onContextMenu.notify({ grid: gridStub }, eventDataCopy as any, gridStub);
+
+      expect(contextMenuElm).toBeTruthy();
+      expect(contextMenuElm.classList.contains('slick-dark-mode')).toBeTruthy();
+    });
+
     it('should "autoAlignSide" and expect menu to aligned left with a calculate offset when showing menu', () => {
       jest.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
       plugin.dispose();

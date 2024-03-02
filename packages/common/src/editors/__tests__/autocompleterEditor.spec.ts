@@ -731,9 +731,7 @@ describe('AutocompleterEditor', () => {
       mockColumn.internalColumnEditor = {
         editorOptions: {
           showOnFocus: true,
-          fetch: (searchText, updateCallback) => {
-            updateCallback(mockCollection);
-          }
+          fetch: (_, updateCallback) => updateCallback(mockCollection)
         } as AutocompleterOption
       };
       editor = new AutocompleterEditor(editorArguments);
@@ -748,6 +746,29 @@ describe('AutocompleterEditor', () => {
       expect(autocompleteListElms.length).toBe(2);
       expect(autocompleteListElms[0].textContent).toBe('Female');
       expect(autocompleteListElms[1].textContent).toBe('Undefined');
+    });
+
+    it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element', () => {
+      gridOptionMock.darkMode = true;
+      const mockCollection = [{ value: 'female', label: 'Female' }, { value: 'undefined', label: 'Undefined' }];
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'm', bubbles: true, cancelable: true });
+
+      mockColumn.internalColumnEditor = {
+        editorOptions: {
+          showOnFocus: true,
+          fetch: (_, updateCallback) => updateCallback(mockCollection)
+        } as AutocompleterOption
+      };
+      editor = new AutocompleterEditor(editorArguments);
+
+      const editorElm = divContainer.querySelector('input.editor-gender') as HTMLInputElement;
+      editorElm.focus();
+      editorElm.dispatchEvent(event);
+
+      jest.runAllTimers(); // fast-forward timer
+
+      const autocompleteElm = document.body.querySelector('.slick-autocomplete') as HTMLDivElement;
+      expect(autocompleteElm.classList.contains('slick-dark-mode')).toBeTruthy();
     });
   });
 

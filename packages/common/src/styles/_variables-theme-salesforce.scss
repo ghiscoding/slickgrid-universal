@@ -13,7 +13,7 @@ $slick-highlight-color:                                       #0070D2 !default;
 $slick-button-primary-bg-color:                               $slick-primary-color-dark !default;
 $slick-button-primary-color:                                  $slick-primary-color-dark !default;
 $slick-bare-color:                                            #b5b5b5 !default;
-$slick-icon-color:                                            #514f4d !default;
+$slick-icon-color:                                            #757575 !default;
 $slick-font-family:                                           var(--lwc-fontFamily,'Salesforce Sans', 'SalesforceSans-Regular', Arial, sans-serif) !default;
 $slick-cell-active-box-shadow:                                inset 0 0 0 1px #{$slick-highlight-color} !default;
 $slick-cell-border-top:                                       none !default;
@@ -29,7 +29,6 @@ $slick-frozen-border-bottom:                                  1px solid #{$slick
 $slick-frozen-border-right:                                   1px solid #{$slick-highlight-color} !default;
 $slick-group-totals-formatter-color:                          #666666 !default;
 $slick-header-background-color:                               #fafaf9 !default;
-$slick-header-border-bottom:                                  transparent !default;
 $slick-header-font-size:                                      13px !default;
 $slick-header-font-weight:                                    700 !default;
 $slick-header-text-color:                                     #514f4d !default;
@@ -168,7 +167,7 @@ $slick-editor-modal-close-btn-outside-right:                  -7px !default;
 $slick-editor-modal-close-btn-outside-top:                    -32px !default;
 $slick-editor-grid-cell-border-width-modified:                1px 7px 1px 1px !default;
 $slick-editor-modal-detail-container-border-width-modified:   1px 10px 1px 1px !default;
-$slick-editor-modal-footer-btn-height:                        28px;
+$slick-editor-modal-footer-btn-height:                        28px !default;
 $slick-editor-modal-header-border-bottom:                     var(--lwc-borderWidthThick, 2px) solid var(--lwc-colorBorder, rgb(221, 219, 218)) !default;
 $slick-editor-modal-title-font-size:                          var(--lwc-fontSize7, 1.25rem) !default;
 $slick-editor-modal-title-font-weight:                        var(--lwc-fontWeightLight, 300) !default;
@@ -197,3 +196,22 @@ $slick-pagination-icon-seek-end-width:                        $slick-icon-width 
 $slick-pagination-button-padding:                             6px 9px !default;
 $slick-pagination-button-border-radius:                       2px !default;
 $slick-pagination-page-input-border-radius:                   3px !default;
+
+// Dark Mode
+// -----------
+.ms-dark-mode,
+.ms-drop.ms-dark-mode,
+.slick-dark-mode .ms-dark-mode,
+.slick-dark-mode {
+  --slick-base-dark-menu-bg-color:          #212121;
+  --slick-cell-box-shadow: 0px 1px 0px      #888888, 0px -1px 0px #888888;
+  --slick-column-picker-checkbox-color:     #2292f4;
+  --slick-compound-filter-text-color:       #66b8ff;
+  --slick-filled-filter-color:              #66b8ff;
+  --slick-header-filter-row-border-bottom:   2px solid #0389ff;
+  --slick-highlight-color:                  #0389ff;
+  --slick-pagination-icon-color:            #1190ff;
+  --slick-row-mouse-hover-box-shadow:       0 0 0 2px #525252;
+  --slick-checkbox-selector-opacity:        1;
+  --slick-checkbox-selector-icon-border:    1px solid #838383;
+}

@@ -167,6 +167,11 @@ export class DateEditor implements Editor {
       this.args.container.appendChild(this._editorInputGroupElm);
       this.flatInstance = flatpickr(this._editorInputGroupElm, this._pickerMergedOptions as unknown as Partial<FlatpickrBaseOptions>);
 
+      // add dark mode CSS class when enabled
+      if (this.gridOptions?.darkMode) {
+        this.flatInstance.calendarContainer.classList.add('slick-dark-mode');
+      }
+
       // when we're using an alternate input to display data, we'll consider this input as the one to do the focus later on
       // else just use the top one
       this._inputWithDataElm = (this._pickerMergedOptions?.altInput) ? document.querySelector<HTMLInputElement>(`${inputCssClasses}.flatpickr-alt-input`) : this._inputElm;

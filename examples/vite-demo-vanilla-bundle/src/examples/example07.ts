@@ -19,6 +19,7 @@ import '../material-styles.scss';
 
 export default class Example07 {
   private _bindingEventService: BindingEventService;
+  private _darkMode = false;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
@@ -62,6 +63,7 @@ export default class Example07 {
     this.sgb?.dispose();
     this._bindingEventService.unbindAll();
     document.body.classList.remove('material-theme');
+    document.querySelector('.demo-container')?.classList.remove('dark-mode');
   }
 
   initializeGrid() {
@@ -294,6 +296,7 @@ export default class Example07 {
         container: '.demo-container',
         rightPadding: 10
       },
+      darkMode: this._darkMode,
       gridMenu: {
         commandTitleKey: 'CUSTOM_COMMANDS',
       },
@@ -646,6 +649,16 @@ export default class Example07 {
   disableSorting() {
     this.isSortingEnabled = false;
     this.sgb.sortService.disableSortFunctionality(true);
+  }
+
+  toggleDarkMode() {
+    this._darkMode = !this._darkMode;
+    if (this._darkMode) {
+      document.querySelector('.demo-container')?.classList.add('dark-mode');
+    } else {
+      document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    }
+    this.sgb.gridOptions = { darkMode: this._darkMode };
   }
 
   // or Toggle Filtering/Sorting functionalities

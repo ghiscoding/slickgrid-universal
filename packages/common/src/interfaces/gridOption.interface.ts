@@ -216,6 +216,13 @@ export interface GridOption<C extends Column = Column> {
    */
   customTooltip?: CustomTooltipOption;
 
+  /**
+   * Dark Mode Theme (disabled by default, which mean light mode).
+   * Enabling this option will add `.slick-dark-mode` CSS class to the grid parent elements
+   * and any other elements that are appended to the html body (e.g. Flatpickr, LongTextEditor, ...)
+   */
+  darkMode?: boolean;
+
   /** Data item column value extractor (getter) that can be used by the Excel like copy buffer plugin */
   dataItemColumnValueExtractor?: null | ((item: any, columnDef: C) => any);
 

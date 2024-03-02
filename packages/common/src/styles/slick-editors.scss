@@ -76,13 +76,16 @@
         }
       }
       .btn {
-        background-color: #eeeeee;
-        border: 1px solid #cccccc;
+        background-color: var(--slick-input-group-btn-bg-color, $slick-input-group-btn-bg-color);
+        border: var(--slick-input-group-btn-border, $slick-input-group-btn-border);
         padding: var(--slick-editor-input-group-clear-btn-icon-padding, $slick-editor-input-group-clear-btn-icon-padding);
         border-top-right-radius: var(--slick-text-editor-border-radius, $slick-text-editor-border-radius);
         border-bottom-right-radius: var(--slick-text-editor-border-radius, $slick-text-editor-border-radius);
         cursor: pointer;
         height: var(--slick-date-editor-height, $slick-date-editor-height);
+        &:hover:not([disabled]) {
+          background-color: var(--slick-input-group-btn-hover-bg-color, $slick-input-group-btn-hover-bg-color); // 1px solid #6c757d;
+        }
         &.icon-clear {
           display: flex;
           align-items: center;
@@ -123,6 +126,7 @@
   z-index: 10000;
   position: absolute;
   background: var(--slick-large-editor-background-color, $slick-large-editor-background-color);
+  color: var(--slick-large-editor-text-color, $slick-large-editor-text-color);
   padding: var(--slick-large-editor-text-padding, $slick-large-editor-text-padding);
   border: var(--slick-large-editor-border, $slick-large-editor-border);
   border-radius: var(--slick-large-editor-border-radius, $slick-large-editor-border-radius);
@@ -137,6 +141,7 @@
 
   textarea {
     background: var(--slick-large-editor-background-color, $slick-large-editor-background-color);
+    color: var(--slick-large-editor-text-color, $slick-large-editor-text-color);
     border: 0;
     outline: 0;
   }
@@ -209,7 +214,8 @@
     .reset-container {
       width: 100%;
       .reset-form.btn {
-        background-color: #ffffff;
+        color: var(--slick-editor-modal-reset-btn-color, $slick-editor-modal-reset-btn-color);
+        background-color: var(--slick-editor-modal-reset-btn-bg-color, $slick-editor-modal-reset-btn-bg-color);
         float: right;
       }
     }
@@ -223,6 +229,9 @@
       border-radius: var(--slick-editor-modal-footer-btn-radius, $slick-editor-modal-footer-btn-radius);
       &:hover {
         border-color: var(--slick-editor-modal-footer-btn-border-hover, $slick-editor-modal-footer-btn-border-hover);
+        &.btn-default {
+          color: var(--slick-editor-modal-footer-btn-text-color-hover, $slick-editor-modal-footer-btn-text-color-hover);
+        }
       }
       &:disabled {
         background-color: var(--slick-button-primary-bg-color-disabled, $slick-button-primary-bg-color-disabled);
@@ -290,6 +299,7 @@
       min-height: var(--slick-editor-modal-body-min-height, $slick-editor-modal-body-min-height);
       max-height: var(--slick-editor-modal-body-max-height, $slick-editor-modal-body-max-height);
       overflow: var(--slick-editor-modal-body-overflow, $slick-editor-modal-body-overflow);
+      scrollbar-color: var(--slick-scrollbar-color, $slick-scrollbar-color);
       display: flex;
       flex-wrap: wrap;
 
@@ -354,6 +364,7 @@
     .item-details-label {
       display: block;
       margin: var(--slick-editor-modal-detail-label-margin, $slick-editor-modal-detail-label-margin);
+      color: var(--slick-editor-modal-detail-label-color, $slick-editor-modal-detail-label-color);
       font-size: var(--slick-editor-modal-detail-label-font-size, $slick-editor-modal-detail-label-font-size);
       font-style: var(--slick-editor-modal-detail-label-font-style, $slick-editor-modal-detail-label-font-style);
       font-weight: var(--slick-editor-modal-detail-label-font-weight, $slick-editor-modal-detail-label-font-weight);

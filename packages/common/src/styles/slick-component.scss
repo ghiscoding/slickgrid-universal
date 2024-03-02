@@ -113,6 +113,7 @@
     .pagination {
       margin: 0;
       display: inline-flex;
+      background-color: var(--slick-pagination-button-bg-color, $slick-pagination-button-bg-color);
 
       .page-link {
         display: flex;
@@ -181,9 +182,9 @@
         font-weight: normal;
 
         a[class*="icon-seek-"] {
-          color: #b8b8b8;
-          background-color: rgb(249, 249, 249);
-          border-color: #dedede;
+          color: var(--slick-pagination-icon-seek-color, $slick-pagination-icon-seek-disabled-color);
+          background-color: var(--slick-pagination-icon-seek-background-color, $slick-pagination-icon-seek-disabled-bg-color);
+          border-color: var(--slick-pagination-icon-seek-border-color, $slick-pagination-icon-seek-disabled-border-color);
         }
       }
     }
@@ -195,6 +196,7 @@
     padding: 2px;
 
     select {
+      color: var(--slick-font-color, $slick-font-color);
       background-color: var(--slick-pagination-page-select-bg-color, $slick-pagination-page-select-bg-color);
       font-size: var(--slick-pagination-page-select-font-size, $slick-pagination-page-select-font-size);
       line-height: 1.5;
