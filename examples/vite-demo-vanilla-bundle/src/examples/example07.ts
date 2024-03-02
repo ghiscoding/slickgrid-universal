@@ -658,7 +658,7 @@ export default class Example07 {
     } else {
       document.querySelector('.demo-container')?.classList.remove('dark-mode');
     }
-    this.sgb.gridOptions = { darkMode: this._darkMode };
+    this.sgb.slickGrid.setOptions({ darkMode: this._darkMode });
   }
 
   // or Toggle Filtering/Sorting functionalities
