@@ -13,6 +13,7 @@
   border-right: var(--slick-container-border-right, $slick-container-border-right);
   position: relative;
   font-family: var(--slick-font-family, $slick-font-family);
+  width: 100%;
 
   @mixin resetSlickCell() {
     padding: var(--slick-cell-padding, $slick-cell-padding);
