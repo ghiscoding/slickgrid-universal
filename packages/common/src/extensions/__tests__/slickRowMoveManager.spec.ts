@@ -152,7 +152,6 @@ describe('SlickRowMoveManager Plugin', () => {
       behavior: 'selectAndMove',
       reorderable: false,
       resizable: false,
-      selectable: false,
       width: 40,
     };
 
@@ -201,7 +200,6 @@ describe('SlickRowMoveManager Plugin', () => {
       name: '',
       reorderable: false,
       resizable: false,
-      selectable: false,
       width: 40,
     });
   });
