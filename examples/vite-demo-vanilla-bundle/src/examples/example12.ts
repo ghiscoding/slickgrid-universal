@@ -986,6 +986,7 @@ export default class Example12 {
         // showResetButtonOnEachEditor: true,
         onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),
         onError: (error) => alert(error.message),
+        // onRendered: (modalElm) => console.log(modalElm),
         onSave: (formValues, _selection, dataContextOrUpdatedDatasetPreview) => {
           const serverResponseDelay = 50;
 

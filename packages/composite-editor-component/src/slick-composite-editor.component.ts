@@ -484,6 +484,11 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         document.body.classList.add('slick-modal-open'); // add backdrop to body
         this._bindEventService.bind(document.body, 'click', this.handleBodyClicked.bind(this));
 
+        // execute lifecycle callback after the modal window is created and rendered in the DOM
+        if (typeof this._options.onRendered === 'function') {
+          this._options.onRendered(this._modalElm);
+        }
+
         this._editors = {};
         this._editorContainers = modalColumns.map(col => modalBodyElm.querySelector<HTMLDivElement>(`[data-editorid=${col.id}]`)) || [];
         this._compositeOptions = { destroy: this.disposeComponent.bind(this), modalType, validationMsgPrefix: '* ', formValues: {}, editors: this._editors };
