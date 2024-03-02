@@ -139,7 +139,6 @@ export class SlickRowMoveManager {
       field: columnId,
       reorderable: this._addonOptions.reorderable,
       resizable: false,
-      selectable: false,
       width: this._addonOptions.width || 40,
       formatter: this.moveIconFormatter.bind(this),
     };
