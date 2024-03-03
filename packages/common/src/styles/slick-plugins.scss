@@ -231,6 +231,7 @@ li.hidden {
 // ----------------------------------------------
 
 .slick-cell-menu, .slick-context-menu, .slick-grid-menu, .slick-header-menu {
+  box-shadow: var(--slick-menu-box-shadow, $slick-menu-box-shadow);
   &.slick-submenu {
     box-shadow: var(--slick-submenu-box-shadow, $slick-submenu-box-shadow);
     min-width: var(--slick-submenu-min-width, $slick-submenu-min-width);

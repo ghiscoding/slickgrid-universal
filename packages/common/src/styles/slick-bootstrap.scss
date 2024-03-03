@@ -355,18 +355,18 @@
         width: 7px;
         right: 0;
         z-index: 1;
-      }
-      .slick-resizable-handle:hover {
-        border-bottom: var(--slick-header-resizable-hover-border-bottom, $slick-header-resizable-hover-border-bottom);
-        border-left: var(--slick-header-resizable-hover-border-left, $slick-header-resizable-hover-border-left);
-        border-right: var(--slick-header-resizable-hover-border-right, $slick-header-resizable-hover-border-right);
-        border-top: var(--slick-header-resizable-hover-border-top, $slick-header-resizable-hover-border-top);
-        width: var(--slick-header-resizable-hover-width, $slick-header-resizable-hover-width);
-        border-radius: var(--slick-header-resizable-hover-border-radius, $slick-header-resizable-hover-border-radius);
-        right: var(--slick-header-resizable-hover-right, $slick-header-resizable-hover-right);
-        height: var(--slick-header-resizable-hover-height, $slick-header-resizable-hover-height);
-        top: var(--slick-header-resizable-hover-top, $slick-header-resizable-hover-top);
-        opacity: var(--slick-header-resizable-hover-opacity, $slick-header-resizable-hover-opacity);
+        &:hover {
+          border-bottom: var(--slick-header-resizable-hover-border-bottom, $slick-header-resizable-hover-border-bottom);
+          border-left: var(--slick-header-resizable-hover-border-left, $slick-header-resizable-hover-border-left);
+          border-right: var(--slick-header-resizable-hover-border-right, $slick-header-resizable-hover-border-right);
+          border-top: var(--slick-header-resizable-hover-border-top, $slick-header-resizable-hover-border-top);
+          width: var(--slick-header-resizable-hover-width, $slick-header-resizable-hover-width);
+          border-radius: var(--slick-header-resizable-hover-border-radius, $slick-header-resizable-hover-border-radius);
+          right: var(--slick-header-resizable-hover-right, $slick-header-resizable-hover-right);
+          height: var(--slick-header-resizable-hover-height, $slick-header-resizable-hover-height);
+          top: var(--slick-header-resizable-hover-top, $slick-header-resizable-hover-top);
+          opacity: var(--slick-header-resizable-hover-opacity, $slick-header-resizable-hover-opacity);
+        }
       }
       &.unorderable {
         background-color: var(--slick-grid-header-unorderable-bg-color, $slick-grid-header-unorderable-bg-color);
