@@ -510,6 +510,6 @@ export default class Example16 {
     } else {
       document.querySelector('.demo-container')?.classList.remove('dark-mode');
     }
-    this.sgb.slickGrid.setOptions({ darkMode: this._darkMode });
+    this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });
   }
 }

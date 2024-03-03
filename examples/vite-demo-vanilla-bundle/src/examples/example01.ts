@@ -179,7 +179,7 @@ export default class Example01 {
     } else {
       document.querySelector('.grid-container1')?.classList.remove('dark-mode');
     }
-    this.sgb1.slickGrid.setOptions({ darkMode: this._darkModeGrid1 });
+    this.sgb1.slickGrid?.setOptions({ darkMode: this._darkModeGrid1 });
   }
 
   // Toggle the Pagination of Grid2
