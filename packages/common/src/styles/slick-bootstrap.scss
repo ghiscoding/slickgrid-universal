@@ -268,9 +268,6 @@
         margin-right: var(--slick-header-column-name-margin-right, $slick-header-column-name-margin-right);
       }
 
-      $slick-hover-header-color: var(--slick-text-color, $slick-text-color);
-      $slick-sortingHeaderColor: var(--slick-text-color, $slick-text-color);
-
       @mixin ResetColumns () {
         /* like TH  */
         background: var(--slick-header-background-color, $slick-header-background-color);
@@ -293,7 +290,7 @@
 
       &.slick-header-column-sorted {
         font-style: normal;
-        color: var(--slick-sortingHeaderColor, $slick-sortingHeaderColor);
+        color: var(--slick-sorting-header-color, $slick-sorting-header-color);
       }
       &:hover {
         color: var(--slick-hover-header-color, $slick-hover-header-color);

@@ -63,6 +63,8 @@ $slick-navbar-default-link-hover-color:	                    $slick-gray-dark !de
 $slick-text-color:             			                        $slick-gray-dark !default;
 $slick-table-background:                                    transparent !default;
 $slick-scrollbar-color:                                     #c1c1c1 #f1f1f1 !default;
+$slick-hover-header-color:                                  $slick-text-color;
+$slick-sorting-header-color:                                #333;
 
 /* cell */
 $slick-cell-active-border:                                  none !default;
@@ -139,7 +141,7 @@ $slick-header-padding-left:                                 4px !default;
 $slick-header-padding:                                      $slick-header-padding-top $slick-header-padding-right $slick-header-padding-bottom $slick-header-padding-left !default;
 $slick-header-row-background-color:                         #ffffff !default;
 $slick-header-row-filter-padding:                           4px !default;
-$slick-header-text-color:                                   #000000 !default;
+$slick-header-text-color:                                   #333 !default;
 $slick-header-resizable-width:                              7px !default;
 $slick-header-resizable-hover:                              1px solid #d0d0d0 !default;
 $slick-header-resizable-hover-border-bottom:                0 none !default;
@@ -986,6 +988,7 @@ $slick-empty-data-warning-z-index:                          10 !default;
   --slick-base-dark-menu-item-hover-color:                #363b40;
   --slick-base-dark-invalid-color:                        #ea868f;
   --slick-highlight-color:                                var(--primary-color);
+  --slick-text-color:                                     #cccccc;
 
   --slick-autocomplete-bg-color:                          var(--slick-base-dark-menu-bg-color);
   --slick-autocomplete-hover-bg-color:                    #2c3034;
@@ -1023,7 +1026,7 @@ $slick-empty-data-warning-z-index:                          10 !default;
   --slick-row-mouse-hover-color:                          #2c3034;
   --slick-header-background-color:                        #1c1c1c;
   --slick-header-text-color:                              var(--slick-base-dark-text-color);
-  --slick-hover-header-color:                             var(--slick-base-dark-text-color, #333);
+  --slick-hover-header-color:                             var(--slick-base-dark-text-color);
   --slick-header-row-background-color:                    #2d2d2d;
   --slick-preheader-border-right:                         1px solid #444444;
   --slick-pane-top-border-top:                            1px solid #606060;
@@ -1107,6 +1110,7 @@ $slick-empty-data-warning-z-index:                          10 !default;
   --slick-pagination-page-select-bg-color:                #1c1c1c;
   --slick-pagination-text-color:                          #b4b4b4;
   --slick-scrollbar-color:                                #828282 #424242;
+  --slick-sorting-header-color:                           var(--slick-base-dark-text-color);
   --slick-row-selected-color:                             #4f4f4f;
   --slick-container-border-top:                           var(--slick-base-dark-menu-border);
   --slick-container-border-bottom:                        var(--slick-base-dark-menu-border);

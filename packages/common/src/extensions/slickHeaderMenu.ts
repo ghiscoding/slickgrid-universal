@@ -122,7 +122,6 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     this.disposeSubMenus();
     this._menuElm?.remove();
     this._menuElm = undefined;
-    this._activeHeaderColumnElm?.classList.remove('slick-header-column-active');
   }
 
   repositionSubMenu(e: DOMMouseOrTouchEvent<HTMLElement> | SlickEventData, item: MenuCommandItem, level: number, columnDef: Column) {
@@ -193,12 +192,6 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     // ready to reposition the menu
     menuElm.style.top = `${menuOffsetTop}px`;
     menuElm.style.left = `${menuOffsetLeft}px`;
-
-    // mark the header as active to keep the highlighting.
-    this._activeHeaderColumnElm = this.grid.getContainerNode().querySelector(`:not(.slick-preheader-panel) >.slick-header-columns`);
-    if (this._activeHeaderColumnElm) {
-      this._activeHeaderColumnElm.classList.add('slick-header-column-active');
-    }
   }
 
   /** Translate the Header Menu titles, we need to loop through all column definition to re-translate them */
