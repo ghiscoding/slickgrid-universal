@@ -45,6 +45,10 @@ export default class Example01 {
     this.sgb2?.dispose();
   }
 
+  isBrowserDarkModeEnabled() {
+    return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
+  }
+
   /* Define grid Options and Columns */
   defineGrids() {
     this.columnDefinitions1 = [
@@ -55,6 +59,7 @@ export default class Example01 {
       { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso, exportWithFormatter: true, filterable: true },
       { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', sortable: true, minWidth: 100, filterable: true }
     ];
+    this._darkModeGrid1 = this.isBrowserDarkModeEnabled();
     this.gridOptions1 = {
       enableAutoResize: false,
       darkMode: this._darkModeGrid1,
@@ -69,6 +74,7 @@ export default class Example01 {
     this.gridOptions2 = {
       ...this.gridOptions1,
       ...{
+        darkMode: false,
         gridHeight: 255,
         headerRowHeight: 40,
         columnPicker: {
