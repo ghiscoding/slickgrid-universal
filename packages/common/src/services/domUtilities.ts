@@ -1,6 +1,6 @@
 import { createDomElement } from '@slickgrid-universal/utils';
 import { OptionRowData } from 'multiple-select-vanilla';
-import DOMPurify from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
 
 import type { SearchTerm } from '../enums/index';
 import type { Column, GridOption, SelectOption } from '../interfaces/index';
