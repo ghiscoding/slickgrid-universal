@@ -11,6 +11,9 @@ Click on the `zip` link and then the `Download` button on the top right to downl
 
 **Note** Slickgrid-Universal 3.0 dropped jQuery requirement, now the only requirement left is really the slickgrid bundle itself (see static resource below). Also note that if you come from an earlier version then make sure to follow [Migration Guide 3.0](../migrations/migration-to-3.x.md) to upgrade to 3.x
 
+**Note** Slickgrid-Universal 4.0 dropped SlickGrid external dependency (`6pac/slickgrid`) so that Slickgrid-Universal is now fully standalone. However with this change, it also indirectly dropped the `Slick` namespace. Also note that if you come from an earlier version then make sure to follow [Migration Guide 4.0](../migrations/migration-to-3.x.md) to upgrade to 4.x
+
+
 | Static Resource Name | Zip | Notes |
 | -------- | --- | ----------- |
 | `Sf_SlickGrid` | [zip](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/vanilla-force-bundle/dist-grid-bundle-zip/slickgrid-vanilla-bundle.zip) | the file name is `slickgrid-vanilla-bundle.zip` and we named our static resource as **`Sf_SlickGrid`** but it could be any name really |
@@ -148,6 +151,7 @@ export const GroupTotalFormatters = {};
 export const SortComparers = {};
 export const Utilities = {};
 export const GridBundle = {};
+export const SlickGlobalEditorLock = {}; // for 4.x only
 
 /** Load all necessary SlickGrid resources (css/scripts) */
 export async function loadResources(component) {
@@ -163,6 +167,7 @@ export async function loadResources(component) {
     SortComparers = Slicker.SortComparers;
     Utilities = Slicker.Utilities;
     GridBundle = Slicker.GridBundle;
+    SlickGlobalEditorLock = Slicker.SlickGlobalEditorLock; // for 4.x only
 }
 ```
 
