@@ -9,8 +9,8 @@
 
 ## Styling
 
-* [Styling CSS/SASS/Themes](styling/styling.md)
 * [Dark Mode](styling/dark-mode.md)
+* [Styling CSS/SASS/Themes](styling/styling.md)
 
 ## Column Functionalities
 
