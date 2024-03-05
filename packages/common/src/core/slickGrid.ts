@@ -1,6 +1,6 @@
 /* eslint-disable no-cond-assign */
 import Sortable, { SortableEvent } from 'sortablejs';
-import DOMPurify from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   classNameToList,
