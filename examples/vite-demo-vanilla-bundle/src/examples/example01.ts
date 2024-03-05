@@ -181,9 +181,9 @@ export default class Example01 {
   toggleDarkModeGrid1() {
     this._darkModeGrid1 = !this._darkModeGrid1;
     if (this._darkModeGrid1) {
-      document.querySelector('.grid-container1')?.classList.add('dark-mode');
+      document.querySelector('.grid1')?.classList.add('dark-mode');
     } else {
-      document.querySelector('.grid-container1')?.classList.remove('dark-mode');
+      document.querySelector('.grid1')?.classList.remove('dark-mode');
     }
     this.sgb1.slickGrid?.setOptions({ darkMode: this._darkModeGrid1 });
   }
