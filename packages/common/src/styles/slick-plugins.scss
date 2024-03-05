@@ -210,6 +210,7 @@ li.hidden {
   position: absolute;
   width: 22px;
   z-index: 2;
+  color: var(--slick-grid-menu-icon-btn-color, $slick-grid-menu-icon-btn-color);
   display: var(--slick-grid-menu-button-display, $slick-grid-menu-button-display);
   font-size: var(--slick-grid-menu-icon-font-size, $slick-grid-menu-icon-font-size);
   padding: var(--slick-grid-menu-button-padding, $slick-grid-menu-button-padding);
