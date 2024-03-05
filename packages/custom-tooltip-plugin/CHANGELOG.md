@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.4.1...v4.5.0) (2024-03-05)
+
+### Bug Fixes
+
+* **common:** switch to `isomorphic-dompurify` for SSR support ([#1413](https://github.com/ghiscoding/slickgrid-universal/issues/1413)) ([b619453](https://github.com/ghiscoding/slickgrid-universal/commit/b619453fd9825500f2d9589e31bdcf5e17ac412d)), closes [/github.com/ghiscoding/Angular-Slickgrid/discussions/838#discussioncomment-8574215](https://github.com//github.com/ghiscoding/Angular-Slickgrid/discussions/838/issues/discussioncomment-8574215) - by @ghiscoding
+
+### Features
+
+* **deps:** simplify package TS Types exports ([#1402](https://github.com/ghiscoding/slickgrid-universal/issues/1402)) ([19bac52](https://github.com/ghiscoding/slickgrid-universal/commit/19bac52e5fcb8e523a26ab1f6564f0b6a2b93ef4)) - by @ghiscoding
+
 ## [4.4.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.3.1...v4.4.1) (2024-02-13)
 
 ### Bug Fixes

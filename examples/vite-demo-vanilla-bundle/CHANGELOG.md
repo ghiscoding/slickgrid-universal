@@ -4,6 +4,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.4.1...v4.5.0) (2024-03-05)
+
+### Bug Fixes
+
+* **common:** switch to `isomorphic-dompurify` for SSR support ([#1413](https://github.com/ghiscoding/slickgrid-universal/issues/1413)) ([b619453](https://github.com/ghiscoding/slickgrid-universal/commit/b619453fd9825500f2d9589e31bdcf5e17ac412d)), closes [/github.com/ghiscoding/Angular-Slickgrid/discussions/838#discussioncomment-8574215](https://github.com//github.com/ghiscoding/Angular-Slickgrid/discussions/838/issues/discussioncomment-8574215) - by @ghiscoding
+* **styling:** ms-select filter should use same color as other filters ([#1396](https://github.com/ghiscoding/slickgrid-universal/issues/1396)) ([a30d590](https://github.com/ghiscoding/slickgrid-universal/commit/a30d59066419d2c3324718f1d5497e8e89ebf749)) - by @ghiscoding
+* **styling:** properly align flexbox ms-select icon+text vertically ([#1397](https://github.com/ghiscoding/slickgrid-universal/issues/1397)) ([e744d02](https://github.com/ghiscoding/slickgrid-universal/commit/e744d0256d25ba6ad5d538b827460828b6e0666f)) - by @ghiscoding
+* **styling:** remove header menu open class for Dark Mode ([6a2e7e1](https://github.com/ghiscoding/slickgrid-universal/commit/6a2e7e13a18921c2b70caeb2690298173310aece)) - by @ghiscoding
+
+### Features
+
+* **common:** upgrade `multiple-select-vanilla` to v2 ([#1401](https://github.com/ghiscoding/slickgrid-universal/issues/1401)) ([d6bb1d7](https://github.com/ghiscoding/slickgrid-universal/commit/d6bb1d7ef76100268456b2ab499c496a78debdd8)) - by @ghiscoding
+* **editor:** add `onRendered` lifecycle callback option ([#1410](https://github.com/ghiscoding/slickgrid-universal/issues/1410)) ([9d348d6](https://github.com/ghiscoding/slickgrid-universal/commit/9d348d6e4b693e23a2959917e02a7bcfa55a0c90)) - by @ghiscoding
+* **styling:** add Dark Mode grid option ([#1407](https://github.com/ghiscoding/slickgrid-universal/issues/1407)) ([855151b](https://github.com/ghiscoding/slickgrid-universal/commit/855151b9f47a5238e3069f8c85ba4ed8a5bf9bb6)) - by @ghiscoding
+
 ## [4.4.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.3.1...v4.4.1) (2024-02-13)
 
 ### Bug Fixes

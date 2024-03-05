@@ -4,6 +4,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.4.1...v4.5.0) (2024-03-05)
+
+### Bug Fixes
+
+* auto-resize not just grid but also headers for Salesforce tabs ([#1395](https://github.com/ghiscoding/slickgrid-universal/issues/1395)) ([6180461](https://github.com/ghiscoding/slickgrid-universal/commit/6180461b543cb7d4cc14d1504cb0db7d35990164)) - by @ghiscoding
+* **common:** switch to `isomorphic-dompurify` for SSR support ([#1413](https://github.com/ghiscoding/slickgrid-universal/issues/1413)) ([b619453](https://github.com/ghiscoding/slickgrid-universal/commit/b619453fd9825500f2d9589e31bdcf5e17ac412d)), closes [/github.com/ghiscoding/Angular-Slickgrid/discussions/838#discussioncomment-8574215](https://github.com//github.com/ghiscoding/Angular-Slickgrid/discussions/838/issues/discussioncomment-8574215) - by @ghiscoding
+* **core:** add extra checks for some objects to be a bit more strict ([#1404](https://github.com/ghiscoding/slickgrid-universal/issues/1404)) ([8b95c50](https://github.com/ghiscoding/slickgrid-universal/commit/8b95c505ed2409cde7b790f97b4fbc0d666ca459)) - by @ghiscoding
+* **plugin:** the RowMove plugin cell should be selectable ([#1408](https://github.com/ghiscoding/slickgrid-universal/issues/1408)) ([8c01a13](https://github.com/ghiscoding/slickgrid-universal/commit/8c01a1361898fe3f3b6cfdba3239f93f2e8acec9)) - by @ghiscoding
+* **styling:** add full width to grid container ([#1409](https://github.com/ghiscoding/slickgrid-universal/issues/1409)) ([eedc162](https://github.com/ghiscoding/slickgrid-universal/commit/eedc162e243b3c0bbf450bd404b199f5ee511926)) - by @ghiscoding
+* **styling:** add menu shadow & increase contrast for Dark Mode ([bff2da0](https://github.com/ghiscoding/slickgrid-universal/commit/bff2da0dd027103c30fa86635b9e45460b10e700)) - by @ghiscoding
+* **styling:** ms-select filter should use same color as other filters ([#1396](https://github.com/ghiscoding/slickgrid-universal/issues/1396)) ([a30d590](https://github.com/ghiscoding/slickgrid-universal/commit/a30d59066419d2c3324718f1d5497e8e89ebf749)) - by @ghiscoding
+* **styling:** ms-select highlight bg-color same as nav highlight ([fe77341](https://github.com/ghiscoding/slickgrid-universal/commit/fe77341645f72be6c03a8e210dc08e6d0ef131d4)) - by @ghiscoding-SE
+* **styling:** properly align flexbox ms-select icon+text vertically ([#1397](https://github.com/ghiscoding/slickgrid-universal/issues/1397)) ([e744d02](https://github.com/ghiscoding/slickgrid-universal/commit/e744d0256d25ba6ad5d538b827460828b6e0666f)) - by @ghiscoding
+* **styling:** remove header menu open class for Dark Mode ([6a2e7e1](https://github.com/ghiscoding/slickgrid-universal/commit/6a2e7e13a18921c2b70caeb2690298173310aece)) - by @ghiscoding
+* **styling:** tweak Composite Editor form disabled buttons style ([5052ba1](https://github.com/ghiscoding/slickgrid-universal/commit/5052ba19858ff2bced69f0846e00bbb36c9d0fde)) - by @ghiscoding
+
+### Features
+
+* **common:** upgrade `multiple-select-vanilla` to v2 ([#1401](https://github.com/ghiscoding/slickgrid-universal/issues/1401)) ([d6bb1d7](https://github.com/ghiscoding/slickgrid-universal/commit/d6bb1d7ef76100268456b2ab499c496a78debdd8)) - by @ghiscoding
+* **deps:** simplify package TS Types exports ([#1402](https://github.com/ghiscoding/slickgrid-universal/issues/1402)) ([19bac52](https://github.com/ghiscoding/slickgrid-universal/commit/19bac52e5fcb8e523a26ab1f6564f0b6a2b93ef4)) - by @ghiscoding
+* **editor:** add `onRendered` lifecycle callback option ([#1410](https://github.com/ghiscoding/slickgrid-universal/issues/1410)) ([9d348d6](https://github.com/ghiscoding/slickgrid-universal/commit/9d348d6e4b693e23a2959917e02a7bcfa55a0c90)) - by @ghiscoding
+* **styling:** add Dark Mode grid option ([#1407](https://github.com/ghiscoding/slickgrid-universal/issues/1407)) ([855151b](https://github.com/ghiscoding/slickgrid-universal/commit/855151b9f47a5238e3069f8c85ba4ed8a5bf9bb6)) - by @ghiscoding
+
 ## [4.4.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.3.1...v4.4.1) (2024-02-13)
 
 ### Bug Fixes
