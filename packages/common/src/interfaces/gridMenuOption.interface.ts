@@ -70,6 +70,9 @@ export interface GridMenuOption {
   /** Defaults to false, show/hide 1 of the last 2 checkbox at the end of the picker list */
   hideSyncResizeButton?: boolean;
 
+  /** Defaults to true, which will hide the "Toggle Dark Mode" command in the Grid Menu. */
+  hideToggleDarkModeCommand?: boolean;
+
   /** Defaults to false, which will hide the "Toggle Filter Row" command in the Grid Menu (Grid Option "enableFiltering: true" has to be enabled) */
   hideToggleFilterCommand?: boolean;
 
@@ -99,6 +102,9 @@ export interface GridMenuOption {
 
   /** icon for the "Refresh Dataset" command */
   iconRefreshDatasetCommand?: string;
+
+  /** icon for the "Toggle Dark Mode" command */
+  iconToggleDarkModeCommand?: string;
 
   /** icon for the "Toggle Filter Row" command */
   iconToggleFilterCommand?: string;

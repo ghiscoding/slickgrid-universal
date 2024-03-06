@@ -61,6 +61,7 @@
   "STARTS_WITH": "Commence par",
   "SYNCHRONOUS_RESIZE": "Redimension synchrone",
   "TOGGLE_ALL_GROUPS": "Basculer tous les groupes",
+  "TOGGLE_DARK_MODE": "Basculer le mode clair/sombre",
   "TOGGLE_FILTER_ROW": "Basculer la ligne des filtres",
   "TOGGLE_PRE_HEADER_ROW": "Basculer la ligne de pré-en-tête",
   "UNFREEZE_COLUMNS": "Dégeler les colonnes",

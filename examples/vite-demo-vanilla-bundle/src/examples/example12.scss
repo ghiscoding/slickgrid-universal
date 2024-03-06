@@ -3,3 +3,7 @@ $control-height: 2.4em;
 
 // @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
 @import 'bulma/bulma';
+
+.slick-dark-mode .slick-pagination {
+  background-color: #2d2d2d;
+}

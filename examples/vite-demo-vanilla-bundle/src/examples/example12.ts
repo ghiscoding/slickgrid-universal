@@ -475,6 +475,15 @@ export default class Example12 {
       },
       // when using the cellMenu, you can change some of the default options and all use some of the callback methods
       enableCellMenu: true,
+      gridMenu: {
+        hideToggleDarkModeCommand: false, // disabled command by default
+        onCommand: (_, args) => {
+          if (args.command === 'toggle-dark-mode') {
+            this._darkMode = !this._darkMode; // keep local toggle var in sync
+            this.toggleBodyBackground();
+          }
+        }
+      }
     };
   }
 
@@ -749,13 +758,17 @@ export default class Example12 {
 
   toggleDarkMode() {
     this._darkMode = !this._darkMode;
+    this.toggleBodyBackground();
+    this.sgb.gridOptions = { ...this.sgb.gridOptions, darkMode: this._darkMode };
+    this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });
+  }
+
+  toggleBodyBackground() {
     if (this._darkMode) {
       document.querySelector('.demo-container')?.classList.add('dark-mode');
     } else {
       document.querySelector('.demo-container')?.classList.remove('dark-mode');
     }
-    this.sgb.gridOptions = { ...this.sgb.gridOptions, darkMode: this._darkMode };
-    this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });
   }
 
   mockProducts() {

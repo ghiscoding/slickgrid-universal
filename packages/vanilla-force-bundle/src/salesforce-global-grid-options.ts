@@ -55,6 +55,7 @@ export const SalesforceGlobalGridOptions = {
     commandLabels: {
       clearFrozenColumnsCommandKey: 'UNFREEZE_COLUMNS',
     },
+    hideToggleDarkModeCommand: false,
     hideTogglePreHeaderCommand: true,
     hideRefreshDatasetCommand: true,
     hideClearFrozenColumnsCommand: false,
