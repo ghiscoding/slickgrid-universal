@@ -565,160 +565,158 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     const translationPrefix = getTranslationPrefix(gridOptions);
     const commandLabels = this._addonOptions?.commandLabels;
 
-    // show grid menu: Unfreeze Columns/Rows
-    if (this.gridOptions && this._addonOptions && !this._addonOptions.hideClearFrozenColumnsCommand) {
-      const commandName = 'clear-pinning';
-      if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
-        gridMenuCommandItems.push(
-          {
+    if (this._addonOptions && this.gridOptions) {
+      // show grid menu: Unfreeze Columns/Rows
+      if (!this._addonOptions.hideClearFrozenColumnsCommand) {
+        const commandName = 'clear-pinning';
+        if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+          gridMenuCommandItems.push({
             iconCssClass: this._addonOptions.iconClearFrozenColumnsCommand || 'fa fa-times',
             titleKey: `${translationPrefix}${commandLabels?.clearFrozenColumnsCommandKey ?? 'CLEAR_PINNING'}`,
             disabled: false,
             command: commandName,
             positionOrder: 52
-          }
-        );
+          });
+        }
       }
-    }
 
-    if (this.gridOptions && (this.gridOptions.enableFiltering && !this.sharedService.hideHeaderRowAfterPageLoad)) {
-      // show grid menu: Clear all Filters
-      if (this.gridOptions && this._addonOptions && !this._addonOptions.hideClearAllFiltersCommand) {
-        const commandName = 'clear-filter';
-        if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
-          gridMenuCommandItems.push(
-            {
+      if (this.gridOptions.enableFiltering && !this.sharedService.hideHeaderRowAfterPageLoad) {
+        // show grid menu: Clear all Filters
+        if (!this._addonOptions.hideClearAllFiltersCommand) {
+          const commandName = 'clear-filter';
+          if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+            gridMenuCommandItems.push({
               iconCssClass: this._addonOptions.iconClearAllFiltersCommand || 'fa fa-filter text-danger',
               titleKey: `${translationPrefix}${commandLabels?.clearAllFiltersCommandKey ?? 'CLEAR_ALL_FILTERS'}`,
               disabled: false,
               command: commandName,
               positionOrder: 50
-            }
-          );
+            });
+          }
         }
-      }
 
-      // show grid menu: toggle filter row
-      if (this.gridOptions && this._addonOptions && !this._addonOptions.hideToggleFilterCommand) {
-        const commandName = 'toggle-filter';
-        if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
-          gridMenuCommandItems.push(
-            {
+        // show grid menu: toggle filter row
+        if (!this._addonOptions.hideToggleFilterCommand) {
+          const commandName = 'toggle-filter';
+          if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+            gridMenuCommandItems.push({
               iconCssClass: this._addonOptions.iconToggleFilterCommand || 'fa fa-random',
               titleKey: `${translationPrefix}${commandLabels?.toggleFilterCommandKey ?? 'TOGGLE_FILTER_ROW'}`,
               disabled: false,
               command: commandName,
               positionOrder: 53
-            }
-          );
+            });
+          }
         }
-      }
 
-      // show grid menu: refresh dataset
-      if (backendApi && this.gridOptions && this._addonOptions && !this._addonOptions.hideRefreshDatasetCommand) {
-        const commandName = 'refresh-dataset';
-        if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
-          gridMenuCommandItems.push(
-            {
+        // show grid menu: refresh dataset
+        if (backendApi && !this._addonOptions.hideRefreshDatasetCommand) {
+          const commandName = 'refresh-dataset';
+          if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+            gridMenuCommandItems.push({
               iconCssClass: this._addonOptions.iconRefreshDatasetCommand || 'fa fa-refresh',
               titleKey: `${translationPrefix}${commandLabels?.refreshDatasetCommandKey ?? 'REFRESH_DATASET'}`,
               disabled: false,
               command: commandName,
-              positionOrder: 57
-            }
-          );
+              positionOrder: 58
+            });
+          }
         }
       }
-    }
 
-    if (this.gridOptions.showPreHeaderPanel) {
-      // show grid menu: toggle pre-header row
-      if (this.gridOptions && this._addonOptions && !this._addonOptions.hideTogglePreHeaderCommand) {
-        const commandName = 'toggle-preheader';
+      // show grid menu: toggle dark mode
+      if (!this._addonOptions.hideToggleDarkModeCommand) {
+        const commandName = 'toggle-dark-mode';
         if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
-          gridMenuCommandItems.push(
-            {
+          gridMenuCommandItems.push({
+            iconCssClass: this._addonOptions.iconToggleDarkModeCommand || 'fa fa-random',
+            titleKey: `${translationPrefix}${commandLabels?.toggleDarkModeCommandKey ?? 'TOGGLE_DARK_MODE'}`,
+            disabled: false,
+            command: commandName,
+            positionOrder: 54
+          });
+        }
+      }
+
+      if (this.gridOptions.showPreHeaderPanel) {
+        // show grid menu: toggle pre-header row
+        if (!this._addonOptions.hideTogglePreHeaderCommand) {
+          const commandName = 'toggle-preheader';
+          if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+            gridMenuCommandItems.push({
               iconCssClass: this._addonOptions.iconTogglePreHeaderCommand || 'fa fa-random',
               titleKey: `${translationPrefix}${commandLabels?.togglePreHeaderCommandKey ?? 'TOGGLE_PRE_HEADER_ROW'}`,
               disabled: false,
               command: commandName,
               positionOrder: 53
-            }
-          );
+            });
+          }
         }
       }
-    }
 
-    if (this.gridOptions.enableSorting) {
-      // show grid menu: Clear all Sorting
-      if (this.gridOptions && this._addonOptions && !this._addonOptions.hideClearAllSortingCommand) {
-        const commandName = 'clear-sorting';
-        if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
-          gridMenuCommandItems.push(
-            {
+      if (this.gridOptions.enableSorting) {
+        // show grid menu: Clear all Sorting
+        if (!this._addonOptions.hideClearAllSortingCommand) {
+          const commandName = 'clear-sorting';
+          if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+            gridMenuCommandItems.push({
               iconCssClass: this._addonOptions.iconClearAllSortingCommand || 'fa fa-unsorted text-danger',
               titleKey: `${translationPrefix}${commandLabels?.clearAllSortingCommandKey ?? 'CLEAR_ALL_SORTING'}`,
               disabled: false,
               command: commandName,
               positionOrder: 51
-            }
-          );
+            });
+          }
         }
       }
-    }
 
-    // show grid menu: Export to file
-    if (this.gridOptions?.enableTextExport && this._addonOptions && !this._addonOptions.hideExportCsvCommand) {
-      const commandName = 'export-csv';
-      if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
-        gridMenuCommandItems.push(
-          {
+      // show grid menu: Export to file
+      if (this.gridOptions.enableTextExport && !this._addonOptions.hideExportCsvCommand) {
+        const commandName = 'export-csv';
+        if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+          gridMenuCommandItems.push({
             iconCssClass: this._addonOptions.iconExportCsvCommand || 'fa fa-download',
             titleKey: `${translationPrefix}${commandLabels?.exportCsvCommandKey ?? 'EXPORT_TO_CSV'}`,
             disabled: false,
             command: commandName,
-            positionOrder: 54
-          }
-        );
+            positionOrder: 55
+          });
+        }
       }
-    }
 
-    // show grid menu: Export to Excel
-    if (this.gridOptions && this.gridOptions.enableExcelExport && this._addonOptions && !this._addonOptions.hideExportExcelCommand) {
-      const commandName = 'export-excel';
-      if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
-        gridMenuCommandItems.push(
-          {
+      // show grid menu: Export to Excel
+      if (this.gridOptions.enableExcelExport && !this._addonOptions.hideExportExcelCommand) {
+        const commandName = 'export-excel';
+        if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+          gridMenuCommandItems.push({
             iconCssClass: this._addonOptions.iconExportExcelCommand || 'fa fa-file-excel-o text-success',
             titleKey: `${translationPrefix}${commandLabels?.exportExcelCommandKey ?? 'EXPORT_TO_EXCEL'}`,
             disabled: false,
             command: commandName,
-            positionOrder: 55
-          }
-        );
+            positionOrder: 56
+          });
+        }
       }
-    }
 
-    // show grid menu: export to text file as tab delimited
-    if (this.gridOptions?.enableTextExport && this._addonOptions && !this._addonOptions.hideExportTextDelimitedCommand) {
-      const commandName = 'export-text-delimited';
-      if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
-        gridMenuCommandItems.push(
-          {
+      // show grid menu: export to text file as tab delimited
+      if (this.gridOptions.enableTextExport && !this._addonOptions.hideExportTextDelimitedCommand) {
+        const commandName = 'export-text-delimited';
+        if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+          gridMenuCommandItems.push({
             iconCssClass: this._addonOptions.iconExportTextDelimitedCommand || 'fa fa-download',
             titleKey: `${translationPrefix}${commandLabels?.exportTextDelimitedCommandKey ?? 'EXPORT_TO_TAB_DELIMITED'}`,
             disabled: false,
             command: commandName,
-            positionOrder: 56
-          }
-        );
+            positionOrder: 57
+          });
+        }
       }
-    }
 
-    // add the custom "Commands" title if there are any commands
-    const commandItems = this._addonOptions?.commandItems || [];
-    if (this.gridOptions && this._addonOptions && (Array.isArray(gridMenuCommandItems) && gridMenuCommandItems.length > 0 || (Array.isArray(commandItems) && commandItems.length > 0))) {
-      this._addonOptions.commandTitle = this._addonOptions.commandTitle || this.extensionUtility.getPickerTitleOutputString('commandTitle', 'gridMenu');
+      // add the custom "Commands" title if there are any commands
+      const commandItems = this._addonOptions?.commandItems || [];
+      if ((Array.isArray(gridMenuCommandItems) && gridMenuCommandItems.length > 0 || (Array.isArray(commandItems) && commandItems.length > 0))) {
+        this._addonOptions.commandTitle = this._addonOptions.commandTitle || this.extensionUtility.getPickerTitleOutputString('commandTitle', 'gridMenu');
+      }
     }
 
     return gridMenuCommandItems;
@@ -796,6 +794,11 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           } else {
             console.error(`[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`);
           }
+          break;
+        case 'toggle-dark-mode':
+          const currentDarkMode = this.sharedService.gridOptions.darkMode;
+          this.grid.setOptions({ darkMode: !currentDarkMode });
+          this.sharedService.gridOptions.darkMode = !currentDarkMode;
           break;
         case 'toggle-filter':
           let showHeaderRow = this.gridOptions?.showHeaderRow ?? false;

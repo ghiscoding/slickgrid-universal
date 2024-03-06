@@ -66,6 +66,14 @@ export default class Example01 {
       gridHeight: 225,
       gridWidth: 800,
       rowHeight: 33,
+      gridMenu: {
+        hideToggleDarkModeCommand: false, // disabled command by default
+        onCommand: (_, args) => {
+          if (args.command === 'toggle-dark-mode') {
+            this._darkModeGrid1 = !this._darkModeGrid1; // keep local toggle var in sync
+          }
+        }
+      }
     };
 
     // copy the same Grid Options and Column Definitions to 2nd grid
