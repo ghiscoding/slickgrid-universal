@@ -638,20 +638,6 @@ export default class Example12 {
     console.log('sortedSelectedIds', args.filteredIds.length, args.selectedRowIds.length);
   }
 
-  toggleGridEditReadonly() {
-    // first need undo all edits
-    this.undoAllEdits();
-
-    // then change a single grid options to make the grid non-editable (readonly)
-    this.isGridEditable = !this.isGridEditable;
-    this.sgb.gridOptions = { editable: this.isGridEditable };
-    this.gridOptions = this.sgb.gridOptions;
-    this.isCompositeDisabled = !this.isGridEditable;
-    if (!this.isGridEditable) {
-      this.isMassSelectionDisabled = true;
-    }
-  }
-
   removeUnsavedStylingFromCell(_item: any, column: Column, row: number) {
     // remove unsaved css class from that cell
     const cssStyleKey = `unsaved_highlight_${[column.id]}${row}`;
@@ -747,6 +733,20 @@ export default class Example12 {
     this.editQueue = [];
   }
 
+  toggleGridEditReadonly() {
+    // first need undo all edits
+    this.undoAllEdits();
+
+    // then change a single grid options to make the grid non-editable (readonly)
+    this.isGridEditable = !this.isGridEditable;
+    this.sgb.gridOptions = { ...this.sgb.gridOptions, editable: this.isGridEditable };
+    this.gridOptions = this.sgb.gridOptions;
+    this.isCompositeDisabled = !this.isGridEditable;
+    if (!this.isGridEditable) {
+      this.isMassSelectionDisabled = true;
+    }
+  }
+
   toggleDarkMode() {
     this._darkMode = !this._darkMode;
     if (this._darkMode) {
@@ -754,6 +754,7 @@ export default class Example12 {
     } else {
       document.querySelector('.demo-container')?.classList.remove('dark-mode');
     }
+    this.sgb.gridOptions = { ...this.sgb.gridOptions, darkMode: this._darkMode };
     this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });
   }
 
