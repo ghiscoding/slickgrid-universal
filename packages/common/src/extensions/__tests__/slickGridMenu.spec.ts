@@ -1469,6 +1469,20 @@ describe('GridMenuControl', () => {
           expect(exportSpy).toHaveBeenCalledWith({ delimiter: DelimiterType.tab, format: FileType.txt });
         });
 
+        it('should toggle the darkMode grid option when the command triggered is "toggle-dark-mode"', () => {
+          let copyGridOptionsMock = { ...gridOptionsMock, darkMode: false, gridMenu: { hideToggleDarkModeCommand: false } } as unknown as GridOption;
+          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+
+          control.init();
+          control.columns = columnsMock;
+          const clickEvent = new Event('click', { bubbles: true, cancelable: true, composed: false });
+          document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+          control.menuElement!.querySelector('.slick-menu-item[data-command=toggle-dark-mode]')!.dispatchEvent(clickEvent);
+
+          expect(copyGridOptionsMock.darkMode).toBeTruthy();
+        });
+
         it('should call the grid "setHeaderRowVisibility" method when the command triggered is "toggle-filter"', () => {
           let copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: false, hideToggleFilterCommand: false } as unknown as GridOption;
           jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
