@@ -178,6 +178,7 @@
     border-radius: var(--slick-editor-modal-container-radius, $slick-editor-modal-container-radius);
     font-family: var(--slick-font-family, $slick-font-family);
     border: var(--slick-editor-modal-container-border, $slick-editor-modal-container-border);
+    color: var(--slick-editor-modal-text-color, $slick-editor-modal-text-color);
     margin: var(--slick-editor-modal-container-margin, $slick-editor-modal-container-margin);
     background-color: var(--slick-editor-modal-container-bg-color, $slick-editor-modal-container-bg-color);
     box-shadow: var(--slick-editor-modal-container-box-shadow, $slick-editor-modal-container-box-shadow);
@@ -388,6 +389,7 @@
       padding: var(--slick-editor-modal-detail-container-padding, $slick-editor-modal-detail-container-padding);
 
       input {
+        color: var(--slick-editor-modal-text-color, $slick-editor-modal-text-color);
         height: var(--slick-editor-modal-input-editor-height, $slick-editor-modal-input-editor-height);
         margin: var(--slick-editor-modal-input-editor-margin, $slick-editor-modal-input-editor-margin);
         border: var(--slick-editor-modal-input-editor-border, $slick-editor-modal-input-editor-border);
