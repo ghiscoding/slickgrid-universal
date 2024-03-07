@@ -25,6 +25,7 @@ type Join<T extends any[], D extends string> =
   T extends [] ? never :
   T extends [infer F] ? F :
   T extends [infer F, ...infer R] ?
+  // @ts-ignore
   F extends string ? string extends F ? string : `${F}${D}${Join<R, D>}` : never : string;
 /* eslint-enable @typescript-eslint/indent */
 
