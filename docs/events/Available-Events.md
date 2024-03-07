@@ -112,6 +112,7 @@ handleOnHeaderMenuCommand(e) {
   - `onActiveCellChanged`
   - `onActiveCellPositionChanged`
   - `onAddNewRow`
+  - `onAfterSetColumns`
   - `onAutosizeColumns`
   - `onBeforeAppendCell`
   - `onBeforeCellEditorDestroy`

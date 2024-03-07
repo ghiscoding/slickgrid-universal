@@ -58,6 +58,7 @@ const gridStub = {
   setSelectionModel: jest.fn(),
   setSelectedRows: jest.fn(),
   updateColumnHeader: jest.fn(),
+  onAfterSetColumns: new SlickEvent(),
   onClick: new SlickEvent(),
   onHeaderClick: new SlickEvent(),
   onHeaderRowCellRendered: new SlickEvent(),
@@ -195,6 +196,27 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(preventDefaultSpy).toHaveBeenCalled();
     expect(stopImmediatePropagationSpy).toHaveBeenCalled();
     expect(setSelectedRowSpy).not.toHaveBeenCalled();
+  });
+
+  it('should recreate the Select All toggle whenever "onAfterSetColumns" grid event is triggered', () => {
+    const updateColHeaderSpy = jest.spyOn(gridStub, 'updateColumnHeader');
+    jest.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
+    jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(false);
+    jest.spyOn(dataViewStub, 'getAllSelectedFilteredIds').mockReturnValueOnce([]);
+    jest.spyOn(dataViewStub, 'getFilteredItems').mockReturnValue([]);
+
+    plugin.init(gridStub);
+    plugin.setOptions({ hideInColumnTitleRow: false, hideInFilterHeaderRow: true, hideSelectAllCheckbox: false });
+
+    gridStub.onAfterSetColumns.notify({ newColumns: [{ id: '_checkbox_selector', field: '_checkbox_selector' }], grid: gridStub });
+
+    expect(plugin).toBeTruthy();
+    expect(updateColHeaderSpy).toHaveBeenCalledTimes(2); // 1x for plugin creation, 1x for onAfterSetColumns trigger
+    expect(updateColHeaderSpy).toHaveBeenCalledWith(
+      '_checkbox_selector',
+      plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`),
+      'Select/Deselect All'
+    );
   });
 
   it('should create the plugin and expect "setSelectedRows" to called with all rows toggling to be selected when "applySelectOnAllPages" is disabled', () => {
