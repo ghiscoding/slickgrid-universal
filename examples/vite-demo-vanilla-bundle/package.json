@@ -29,7 +29,7 @@
     "flatpickr": "^4.6.13",
     "isomorphic-dompurify": "^2.4.0",
     "moment-mini": "^2.29.4",
-    "multiple-select-vanilla": "^2.2.0",
+    "multiple-select-vanilla": "^2.2.1",
     "rxjs": "^7.8.1",
     "whatwg-fetch": "^3.6.20"
   },
