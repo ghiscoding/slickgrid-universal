@@ -15,19 +15,15 @@ import type {
   SortComparer,
 } from './index';
 
-type PathsToStringProps<T> = T extends string | number | boolean | Date ? [] : {
+export type PathsToStringProps<T> = T extends string | number | boolean | Date ? [] : {
   [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>]
 }[Extract<keyof T, string>];
 
-/* eslint-disable @typescript-eslint/indent */
-// disable eslint indent rule until this issue is fixed: https://github.com/typescript-eslint/typescript-eslint/issues/1824
-type Join<T extends any[], D extends string> =
+export type Join<T extends (string | number | boolean | unknown )[], D extends string> =
   T extends [] ? never :
   T extends [infer F] ? F :
   T extends [infer F, ...infer R] ?
-  // @ts-ignore
-  F extends string ? string extends F ? string : `${F}${D}${Join<R, D>}` : never : string;
-/* eslint-enable @typescript-eslint/indent */
+  F extends (string | number | boolean ) ? string extends F ? string : `${F}${D}${Join<R, D>}` : never : string;
 
 export interface Column<T = any> {
   /** Defaults to false, should we always render the column? */
