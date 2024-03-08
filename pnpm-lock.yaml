@@ -36,7 +36,7 @@ importers:
         specifier: ^29.5.12
         version: 29.5.12
       '@types/node':
-        specifier: ^20.11.24
+        specifier: ^20.11.25
         version: 20.11.25
       '@typescript-eslint/eslint-plugin':
         specifier: ^7.1.1
@@ -120,7 +120,7 @@ importers:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@20.11.25)(typescript@5.4.2)
       typescript:
-        specifier: ^5.3.3
+        specifier: ^5.4.2
         version: 5.4.2
       whatwg-fetch:
         specifier: ^3.6.20
@@ -199,7 +199,7 @@ importers:
         specifier: ^0.3.7
         version: 0.3.7
       '@types/node':
-        specifier: ^20.11.24
+        specifier: ^20.11.25
         version: 20.11.25
       '@types/whatwg-fetch':
         specifier: ^0.0.33
@@ -208,7 +208,7 @@ importers:
         specifier: ^1.71.1
         version: 1.71.1
       typescript:
-        specifier: ^5.3.3
+        specifier: ^5.4.2
         version: 5.4.2
       vite:
         specifier: ^5.1.5
@@ -275,7 +275,7 @@ importers:
         specifier: ^7.0.3
         version: 7.0.3
       cssnano:
-        specifier: ^6.0.5
+        specifier: ^6.1.0
         version: 6.1.0(postcss@8.4.35)
       npm-run-all2:
         specifier: ^6.1.2
