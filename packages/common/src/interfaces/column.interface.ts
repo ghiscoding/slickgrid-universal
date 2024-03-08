@@ -19,11 +19,13 @@ export type PathsToStringProps<T> = T extends string | number | boolean | Date ?
   [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>]
 }[Extract<keyof T, string>];
 
-export type Join<T extends (string | number | boolean | unknown )[], D extends string> =
+type AllowedJoinTypes = string | number | boolean;
+
+export type Join<T extends (AllowedJoinTypes | unknown )[], D extends string> =
   T extends [] ? never :
   T extends [infer F] ? F :
   T extends [infer F, ...infer R] ?
-  F extends (string | number | boolean ) ? string extends F ? string : `${F}${D}${Join<R, D>}` : never : string;
+  F extends AllowedJoinTypes ? string extends F ? string : `${F}${D}${Join<Extract<R, AllowedJoinTypes[]>, D>}` : never : string;
 
 export interface Column<T = any> {
   /** Defaults to false, should we always render the column? */
