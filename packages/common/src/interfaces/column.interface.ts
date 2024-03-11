@@ -92,7 +92,7 @@ export interface Column<T = any> {
   disableTooltip?: boolean;
 
   /** Any inline editor function that implements Editor for the cell value or ColumnEditor */
-  editor?: ColumnEditor | EditorConstructor | null;
+  editor?: any;
 
   /** Editor number fixed decimal places */
   editorFixedDecimalPlaces?: number;
