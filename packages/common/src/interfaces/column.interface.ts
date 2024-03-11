@@ -5,7 +5,6 @@ import type {
   ColumnExcelExportOption,
   ColumnFilter,
   CustomTooltipOption,
-  EditorConstructor,
   EditorValidator,
   Formatter,
   Grouping,
