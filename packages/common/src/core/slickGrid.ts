@@ -40,6 +40,8 @@ import type {
   DragRowMove,
   EditController,
   Editor,
+  EditorArguments,
+  EditorConstructor,
   Formatter,
   FormatterResultObject,
   FormatterResultWithHtml,
@@ -3249,19 +3251,19 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._options.defaultFormatter) as Formatter;
   }
 
-  protected getEditor(row: number, cell: number): Editor | undefined {
+  protected getEditor(row: number, cell: number): Editor | EditorConstructor | null | undefined {
     const column = this.columns[cell];
     const rowMetadata = (this.data as CustomDataView<TData>)?.getItemMetadata?.(row);
     const columnMetadata = rowMetadata?.columns;
 
     if (columnMetadata?.[column.id]?.editor !== undefined) {
-      return columnMetadata[column.id].editor as Editor;
+      return columnMetadata[column.id].editor as Editor | EditorConstructor;
     }
     if (columnMetadata?.[cell]?.editor !== undefined) {
-      return columnMetadata[cell].editor as Editor;
+      return columnMetadata[cell].editor as Editor | EditorConstructor;
     }
 
-    return (column.editor || (this._options?.editorFactory?.getEditor(column))) as Editor;
+    return (column.editor || (this._options?.editorFactory?.getEditor(column))) as Editor | EditorConstructor;
   }
 
   protected getDataItemValueForColumn(item: TData, columnDef: C) {
@@ -5309,11 +5311,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
 
-  editActiveCell(editor: Editor, preClickModeOn?: boolean | null, e?: Event) {
+  editActiveCell(editor: EditorConstructor, preClickModeOn?: boolean | null, e?: Event) {
     this.makeActiveCellEditable(editor, preClickModeOn, e);
   }
 
-  protected makeActiveCellEditable(editor?: Editor, preClickModeOn?: boolean | null, e?: Event | SlickEvent) {
+  protected makeActiveCellEditable(editor?: EditorConstructor, preClickModeOn?: boolean | null, e?: Event | SlickEvent) {
     if (!this.activeCellNode) {
       return;
     }
@@ -5339,7 +5341,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.getEditorLock()?.activate(this.editController as EditController);
     this.activeCellNode.classList.add('editable');
 
-    const useEditor: any = editor || this.getEditor(this.activeRow, this.activeCell);
+    const useEditor = editor || this.getEditor(this.activeRow, this.activeCell);
+
+    // editor was null and columnMetadata and editorFactory returned null or undefined
+    // the editor must be constructable. Also makes sure that useEditor is of type EditorConstructor
+    if (!useEditor || typeof useEditor !== 'function') {
+      return;
+    }
 
     // don't clear the cell if a custom editor is passed through
     if (!editor && !useEditor.suppressClearOnEdit) {
@@ -5350,7 +5358,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     metadata = metadata?.columns as any;
     const columnMetaData = metadata && (metadata[columnDef.id as keyof ItemMetadata] || (metadata as any)[this.activeCell]);
 
-    this.currentEditor = new useEditor({
+    const editorArgs: EditorArguments<TData, C, O> = {
       grid: this,
       gridPosition: this.absBox(this._container),
       position: this.absBox(this.activeCellNode),
@@ -5358,10 +5366,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       column: columnDef,
       columnMetaData,
       item: item || {},
-      event: e,
+      event: e as Event,
       commitChanges: this.commitEditAndSetFocus.bind(this),
       cancelChanges: this.cancelEditAndSetFocus.bind(this)
-    });
+    };
+    this.currentEditor = new useEditor(editorArgs);
 
     if (item && this.currentEditor) {
       this.currentEditor.loadValue(item);

@@ -5,6 +5,7 @@ import type {
   ColumnExcelExportOption,
   ColumnFilter,
   CustomTooltipOption,
+  EditorConstructor,
   EditorValidator,
   Formatter,
   Grouping,
@@ -21,7 +22,7 @@ export type PathsToStringProps<T> = T extends string | number | boolean | Date ?
 
 type AllowedJoinTypes = string | number | boolean;
 
-export type Join<T extends (AllowedJoinTypes | unknown )[], D extends string> =
+export type Join<T extends (AllowedJoinTypes | unknown)[], D extends string> =
   T extends [] ? never :
   T extends [infer F] ? F :
   T extends [infer F, ...infer R] ?
@@ -91,7 +92,7 @@ export interface Column<T = any> {
   disableTooltip?: boolean;
 
   /** Any inline editor function that implements Editor for the cell value or ColumnEditor */
-  editor?: ColumnEditor | null;
+  editor?: ColumnEditor | EditorConstructor | null;
 
   /** Editor number fixed decimal places */
   editorFixedDecimalPlaces?: number;

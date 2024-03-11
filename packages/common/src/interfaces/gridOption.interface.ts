@@ -14,6 +14,7 @@ import type {
   CustomTooltipOption,
   DraggableGrouping,
   EditCommand,
+  EditorConstructor,
   EmptyWarning,
   ExcelCopyBufferOption,
   ExcelExportOption,
@@ -55,7 +56,7 @@ export interface CustomDataView<T = any> {
 }
 
 export interface CssStyleHash {
-  [prop: number | string]: { [columnId: number | string]: any; }
+  [prop: number | string]: { [columnId: number | string]: any; };
 }
 
 /** Escape hatch geared towards testing Slickgrid in JSDOM based environments to circumvent the lack of stylesheet.ownerNode and clientWidth calculations */
@@ -293,7 +294,7 @@ export interface GridOption<C extends Column = Column> {
   editCommandHandler?: (item: any, column: C, command: EditCommand) => void;
 
   /** Editor classes factory */
-  editorFactory?: any;
+  editorFactory?: null | { getEditor: (col: C) => EditorConstructor; };
 
   /** a global singleton editor lock. */
   editorLock?: SlickEditorLock;
