@@ -5345,44 +5345,42 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     // editor was null and columnMetadata and editorFactory returned null or undefined
     // the editor must be constructable. Also makes sure that useEditor is of type EditorConstructor
-    if (!useEditor || typeof useEditor !== 'function') {
-      return;
-    }
-
-    // don't clear the cell if a custom editor is passed through
-    if (!editor && !useEditor.suppressClearOnEdit) {
-      emptyElement(this.activeCellNode);
-    }
-
-    let metadata = (this.data as CustomDataView<TData>)?.getItemMetadata?.(this.activeRow);
-    metadata = metadata?.columns as any;
-    const columnMetaData = metadata && (metadata[columnDef.id as keyof ItemMetadata] || (metadata as any)[this.activeCell]);
-
-    const editorArgs: EditorArguments<TData, C, O> = {
-      grid: this,
-      gridPosition: this.absBox(this._container),
-      position: this.absBox(this.activeCellNode),
-      container: this.activeCellNode,
-      column: columnDef,
-      columnMetaData,
-      item: item || {},
-      event: e as Event,
-      commitChanges: this.commitEditAndSetFocus.bind(this),
-      cancelChanges: this.cancelEditAndSetFocus.bind(this)
-    };
-    this.currentEditor = new useEditor(editorArgs);
-
-    if (item && this.currentEditor) {
-      this.currentEditor.loadValue(item);
-      if (preClickModeOn && typeof this.currentEditor?.preClick === 'function') {
-        this.currentEditor.preClick();
+    if (typeof useEditor === 'function') {
+      // don't clear the cell if a custom editor is passed through
+      if (!editor && !useEditor.suppressClearOnEdit) {
+        emptyElement(this.activeCellNode);
       }
-    }
 
-    this.serializedEditorValue = this.currentEditor?.serializeValue();
+      let metadata = (this.data as CustomDataView<TData>)?.getItemMetadata?.(this.activeRow);
+      metadata = metadata?.columns as any;
+      const columnMetaData = metadata && (metadata[columnDef.id as keyof ItemMetadata] || (metadata as any)[this.activeCell]);
 
-    if (this.currentEditor?.position) {
-      this.handleActiveCellPositionChange();
+      const editorArgs: EditorArguments<TData, C, O> = {
+        grid: this,
+        gridPosition: this.absBox(this._container),
+        position: this.absBox(this.activeCellNode),
+        container: this.activeCellNode,
+        column: columnDef,
+        columnMetaData,
+        item: item || {},
+        event: e as Event,
+        commitChanges: this.commitEditAndSetFocus.bind(this),
+        cancelChanges: this.cancelEditAndSetFocus.bind(this)
+      };
+      this.currentEditor = new useEditor(editorArgs);
+
+      if (item && this.currentEditor) {
+        this.currentEditor.loadValue(item);
+        if (preClickModeOn && typeof this.currentEditor?.preClick === 'function') {
+          this.currentEditor.preClick();
+        }
+      }
+
+      this.serializedEditorValue = this.currentEditor?.serializeValue();
+
+      if (this.currentEditor?.position) {
+        this.handleActiveCellPositionChange();
+      }
     }
   }
 
