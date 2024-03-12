@@ -1732,7 +1732,7 @@ describe('SlickGrid core file', () => {
       const dv = new SlickDataView();
       dv.setItems(items);
       grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, enableCellNavigation: true, editable: true, asyncEditorLoading: true });
-      jest.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns: { age: { colspan: '*', editorClass: InputEditor } } } as any);
+      jest.spyOn(dv, 'getItemMetadata').mockReturnValue({ columns: { age: { colspan: '*', editor: InputEditor } } } as any);
       grid.setActiveCell(0, 1);
 
       jest.advanceTimersByTime(2);
