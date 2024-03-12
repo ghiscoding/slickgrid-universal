@@ -122,7 +122,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef?.internalColumnEditor || {} as ColumnEditor;
+    return this.columnDef?.editor || {} as ColumnEditor;
   }
 
   /** Getter for the Custom Structure if exist */

@@ -13,8 +13,8 @@ describe('the CollectionEditor Formatter', () => {
         model: Editors.singleSelect,
         collection: [{ value: 1, label: 'foo' }, { value: 2, label: 'bar' }]
       }
-    } as Column;
-    columnDef.internalColumnEditor = columnDef.editor;
+    } as unknown as Column;
+    columnDef.editorClass = columnDef.editor?.model;
   });
 
   it('should return same output when no value is passed', () => {

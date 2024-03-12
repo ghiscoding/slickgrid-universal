@@ -5,6 +5,8 @@ import type {
   ColumnExcelExportOption,
   ColumnFilter,
   CustomTooltipOption,
+  Editor,
+  EditorConstructor,
   EditorValidator,
   Formatter,
   Grouping,
@@ -90,8 +92,14 @@ export interface Column<T = any> {
    */
   disableTooltip?: boolean;
 
-  /** Any inline editor function that implements Editor for the cell value or ColumnEditor */
-  editor?: any;
+  /**
+   * Editor definition for an inline editor assigned to a cell value.
+   * Note, do not confuse this property with `editorClass`, because `editorClass` is used by SlickGrid and is a reference pointer to `editor.model`
+   */
+  editor?: ColumnEditor | null;
+
+  /** Any inline Editor class or Editor constructor, this is mostly used internally by SlickGrid */
+  editorClass?: Editor | EditorConstructor | null;
 
   /** Editor number fixed decimal places */
   editorFixedDecimalPlaces?: number;
@@ -198,7 +206,8 @@ export interface Column<T = any> {
   id: number | string;
 
   /**
-   * @reserved This is a RESERVED property and is used internally by the library to copy over the Column Editor Options.
+   * @deprecated @use `editor` for the editor definition or use `editorClass` for the SlickGrid editor class.
+   * This is a RESERVED property and is used internally by the library to copy over the Column Editor Options.
    * You can read this property if you wish, but DO NOT override it (unless you know what you're doing) since could cause serious problems with your editors.
    */
   internalColumnEditor?: ColumnEditor;

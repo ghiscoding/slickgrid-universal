@@ -440,8 +440,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   // TODO: revisit later, this is conflicting with Grid State & Presets
   it.skip('should update column definitions when onPluginColumnsChanged event is triggered with updated columns', () => {
     const columnsMock = [
-      { id: 'firstName', field: 'firstName', editor: undefined, internalColumnEditor: {} },
-      { id: 'lastName', field: 'lastName', editor: undefined, internalColumnEditor: {} }
+      { id: 'firstName', field: 'firstName', editor: undefined, editorClass: {} },
+      { id: 'lastName', field: 'lastName', editor: undefined, editorClass: {} }
     ];
     eventPubSubService.publish('onPluginColumnsChanged', {
       columns: columnsMock,

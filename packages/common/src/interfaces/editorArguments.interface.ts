@@ -1,8 +1,8 @@
-import type { Column, CompositeEditorOption, ElementPosition, GridOption } from './index';
+import type { Column, CompositeEditorOption, ElementPosition } from './index';
 import type { PositionMethod } from '../enums/positionMethod.type';
 import type { SlickDataView, SlickGrid } from '../core/index';
 
-export interface EditorArguments<TData = any, C extends Column<TData> = Column<TData>, O extends GridOption<C> = GridOption<C>> {
+export interface EditorArguments {
   /** Column Definition */
   column: Column;
 
@@ -19,7 +19,7 @@ export interface EditorArguments<TData = any, C extends Column<TData> = Column<T
   event: Event;
 
   /** Slick Grid object */
-  grid: SlickGrid<TData, C, O>;
+  grid: SlickGrid;
 
   /** Grid Position */
   gridPosition: ElementPosition;

@@ -80,9 +80,9 @@ describe('CellExternalCopyManager', () => {
   lastNameElm.textContent = 'Last Name';
   const mockEventCallback = () => { };
   const mockColumns = [
-    { id: 'firstName', field: 'firstName', name: 'First Name', editor: Editors.text, internalColumnEditor: Editors.text },
+    { id: 'firstName', field: 'firstName', name: 'First Name', editor: Editors.text, editorClass: Editors.text },
     { id: 'lastName', field: 'lastName', name: lastNameElm, },
-    { id: 'age', field: 'age', name: 'Age', editor: Editors.text, internalColumnEditor: Editors.text },
+    { id: 'age', field: 'age', name: 'Age', editor: Editors.text, editorClass: Editors.text },
   ] as Column[];
   let plugin: SlickCellExternalCopyManager;
   const gridOptionsMock = {
@@ -161,20 +161,20 @@ describe('CellExternalCopyManager', () => {
 
     it('should call "getDataItemValueForColumn" and expect the ouput to be what "dataItemColumnValueExtractor" returns when it is provided', () => {
       plugin.init(gridStub, { dataItemColumnValueExtractor: (item, col) => col.field === 'firstName' ? 'Full Name' : 'Last Name' });
-      const output = plugin.getDataItemValueForColumn({ firstName: 'John', lastName: 'Doe' }, mockColumns[0], new Event('mousedown'));
+      const output = plugin.getDataItemValueForColumn({ firstName: 'John', lastName: 'Doe' }, mockColumns[0], 0, 0, new SlickEventData());
       expect(output).toEqual('Full Name');
     });
 
     it('should call "getDataItemValueForColumn" and expect the editor serialized value returned when an Editor is provided', () => {
       jest.spyOn(mockTextEditor, 'serializeValue').mockReturnValue('serialized output');
       plugin.init(gridStub);
-      const output = plugin.getDataItemValueForColumn({ firstName: 'John', lastName: 'Doe' }, mockColumns[0], new Event('mousedown'));
+      const output = plugin.getDataItemValueForColumn({ firstName: 'John', lastName: 'Doe' }, mockColumns[0], 0, 0, new SlickEventData());
       expect(output).toEqual('serialized output');
     });
 
     it('should call "getDataItemValueForColumn" and expect the column "field" value returned when there is no Editor provided', () => {
       plugin.init(gridStub);
-      const output = plugin.getDataItemValueForColumn({ firstName: 'John', lastName: 'Doe' }, mockColumns[1], new Event('mousedown'));
+      const output = plugin.getDataItemValueForColumn({ firstName: 'John', lastName: 'Doe' }, mockColumns[1], 0, 0, new SlickEventData());
       expect(output).toEqual('Doe');
     });
 

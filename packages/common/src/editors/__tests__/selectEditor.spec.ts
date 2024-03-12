@@ -5,7 +5,7 @@ import { SlickEvent, type SlickDataView } from '../../core/index';
 import { Editors } from '../index';
 import { SelectEditor } from '../selectEditor';
 import { FieldType, OperatorType } from '../../enums/index';
-import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
+import { AutocompleterOption, Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { type SlickGrid } from '../../core/index';
 
@@ -58,7 +58,7 @@ describe('SelectEditor', () => {
     document.body.innerHTML = '';
     document.body.appendChild(divContainer);
 
-    mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, internalColumnEditor: {} } as Column;
+    mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, editorClass: {} as Editor } as Column;
 
     editorArguments = {
       grid: gridStub,
@@ -87,7 +87,7 @@ describe('SelectEditor', () => {
 
     it('should throw an error when there is no collection provided in the editor property', (done) => {
       try {
-        (mockColumn.internalColumnEditor as ColumnEditor).collection = undefined;
+        mockColumn.editor!.collection = undefined;
         editor = new SelectEditor(editorArguments, true);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") inside Column Definition Editor for the MultipleSelect/SingleSelect Editor to work correctly.`);
@@ -97,7 +97,7 @@ describe('SelectEditor', () => {
 
     it('should throw an error when collection is not a valid array', (done) => {
       try {
-        (mockColumn.internalColumnEditor as ColumnEditor).collection = { hello: 'world' } as any;
+        mockColumn.editor!.collection = { hello: 'world' } as any;
         editor = new SelectEditor(editorArguments, true);
       } catch (e) {
         expect(e.toString()).toContain(`The "collection" passed to the Select Editor is not a valid array.`);
@@ -107,7 +107,7 @@ describe('SelectEditor', () => {
 
     it('should throw an error when collection is not a valid value/label pair array', (done) => {
       try {
-        (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ hello: 'world' }];
+        mockColumn.editor!.collection = [{ hello: 'world' }];
         editor = new SelectEditor(editorArguments, true);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] Select Filter/Editor collection with value/label (or value/labelKey when using Locale) is required to populate the Select list`);
@@ -118,8 +118,8 @@ describe('SelectEditor', () => {
     it('should throw an error when "enableTranslateLabel" is set without a valid I18N Service', (done) => {
       try {
         translateService = undefined as any;
-        (mockColumn.internalColumnEditor as ColumnEditor).enableTranslateLabel = true;
-        (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+        mockColumn.editor!.enableTranslateLabel = true;
+        mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
         editor = new SelectEditor(editorArguments, true);
       } catch (e) {
         expect(e.toString()).toContain(`[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.`);
@@ -131,8 +131,8 @@ describe('SelectEditor', () => {
   describe('with valid Editor instance', () => {
     beforeEach(() => {
       mockItemData = { id: 1, gender: 'male', isActive: true };
-      mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, internalColumnEditor: {} } as Column;
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }, { value: 'other', label: 'other' }];
+      mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, editorClass: {} as Editor } as Column;
+      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }, { value: 'other', label: 'other' }];
 
       editorArguments.column = mockColumn;
       editorArguments.item = mockItemData;
@@ -143,7 +143,7 @@ describe('SelectEditor', () => {
     });
 
     it('should initialize the editor', () => {
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
       gridOptionMock.translater = translateService;
       editor = new SelectEditor(editorArguments, true);
       editor.focus();
@@ -156,8 +156,8 @@ describe('SelectEditor', () => {
     it('should initialize the editor with element being disabled in the DOM when passing a collectionAsync and an empty collection property', () => {
       const mockCollection = ['male', 'female'];
       const promise = Promise.resolve(mockCollection);
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = null as any;
-      (mockColumn.internalColumnEditor as ColumnEditor).collectionAsync = promise;
+      mockColumn.editor!.collection = null as any;
+      mockColumn.editor!.collectionAsync = promise;
       gridOptionMock.translater = translateService;
 
       editor = new SelectEditor(editorArguments, true);
@@ -171,7 +171,7 @@ describe('SelectEditor', () => {
     });
 
     it('should initialize the editor even when user define its own editor options', () => {
-      (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { minLength: 3 } as AutocompleterOption;
+      mockColumn.editor!.editorOptions = { minLength: 3 } as AutocompleterOption;
       editor = new SelectEditor(editorArguments, true);
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
 
@@ -180,8 +180,8 @@ describe('SelectEditor', () => {
 
     it('should have a placeholder when defined in its column definition', () => {
       const testValue = 'test placeholder';
-      (mockColumn.internalColumnEditor as ColumnEditor).placeholder = testValue;
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.placeholder = testValue;
+      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
       editor = new SelectEditor(editorArguments, true);
       const editorElm = divContainer.querySelector('.ms-filter.editor-gender .ms-placeholder') as HTMLSpanElement;
@@ -191,7 +191,7 @@ describe('SelectEditor', () => {
 
     it('should enable Dark Mode and expect ".ms-dark-mode" CSS class to be found on parent element', () => {
       gridOptionMock.darkMode = true;
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
       editor = new SelectEditor(editorArguments, true);
       const editorElm = divContainer.querySelector('.ms-parent.editor-gender') as HTMLSpanElement;
@@ -200,12 +200,12 @@ describe('SelectEditor', () => {
     });
 
     it('should call "columnEditor" GETTER and expect to equal the editor settings we provided', () => {
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-      (mockColumn.internalColumnEditor as ColumnEditor).placeholder = 'test placeholder';
+      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.placeholder = 'test placeholder';
 
       editor = new SelectEditor(editorArguments, true);
 
-      expect(editor.columnEditor).toEqual(mockColumn.internalColumnEditor);
+      expect(editor.columnEditor).toEqual(mockColumn.editor);
     });
 
     it('should call "setValue" with a single string and expect the string to be returned in a single string array when calling "getValue" when using single select', () => {
@@ -233,8 +233,8 @@ describe('SelectEditor', () => {
     });
 
     it('should create the multi-select editor with a blank entry at the beginning of the collection when "addBlankEntry" is set in the "collectionOptions" property', () => {
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-      (mockColumn.internalColumnEditor as ColumnEditor).collectionOptions = { addBlankEntry: true };
+      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collectionOptions = { addBlankEntry: true };
 
       editor = new SelectEditor(editorArguments, true, 0);
       const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
@@ -249,8 +249,8 @@ describe('SelectEditor', () => {
     });
 
     it('should create the multi-select editor with a custom entry at the beginning of the collection when "addCustomFirstEntry" is provided in the "collectionOptions" property', () => {
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-      (mockColumn.internalColumnEditor as ColumnEditor).collectionOptions = { addCustomFirstEntry: { value: null as any, label: '' } };
+      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collectionOptions = { addCustomFirstEntry: { value: null as any, label: '' } };
 
       editor = new SelectEditor(editorArguments, true, 0);
       const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
@@ -265,8 +265,8 @@ describe('SelectEditor', () => {
     });
 
     it('should create the multi-select editor with a custom entry at the end of the collection when "addCustomFirstEntry" is provided in the "collectionOptions" property', () => {
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
-      (mockColumn.internalColumnEditor as ColumnEditor).collectionOptions = { addCustomLastEntry: { value: null as any, label: '' } };
+      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collectionOptions = { addCustomLastEntry: { value: null as any, label: '' } };
 
       editor = new SelectEditor(editorArguments, true, 0);
       const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
@@ -375,7 +375,7 @@ describe('SelectEditor', () => {
 
     describe('applyValue method', () => {
       it('should apply the value to the gender property when it passes validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
+        mockColumn.editor!.validator = null as any;
         mockItemData = { id: 1, gender: 'male', isActive: true };
 
         editor = new SelectEditor(editorArguments, true);
@@ -385,7 +385,7 @@ describe('SelectEditor', () => {
       });
 
       it('should apply the value to the gender (last property) when field has a dot notation (complex object) that passes validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
+        mockColumn.editor!.validator = null as any;
         mockColumn.field = 'person.bio.gender';
         mockItemData = { id: 1, person: { bio: { gender: 'male' } }, isActive: true };
 
@@ -396,8 +396,8 @@ describe('SelectEditor', () => {
       });
 
       it('should apply the value to the bio property (second last) when field has a dot notation (complex object) value provided is an object and it that passes validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
-        (mockColumn.internalColumnEditor as ColumnEditor).complexObjectPath = 'person.bio';
+        mockColumn.editor!.validator = null as any;
+        mockColumn.editor!.complexObjectPath = 'person.bio';
         mockColumn.field = 'person.bio.gender';
         mockItemData = { id: 1, person: { bio: { gender: 'male' } }, isActive: true };
 
@@ -408,7 +408,7 @@ describe('SelectEditor', () => {
       });
 
       it('should return item data with an empty string in its value when it fails the custom validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = (value: any) => {
+        mockColumn.editor!.validator = (value: any) => {
           if (value.length < 10) {
             return { valid: false, msg: 'Must be at least 10 chars long.' };
           }
@@ -423,7 +423,7 @@ describe('SelectEditor', () => {
       });
 
       it('should apply the value to the gender property as an array with multiple when the input value is a CSV string', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
+        mockColumn.editor!.validator = null as any;
         mockItemData = { id: 1, gender: 'male', isActive: true };
 
         editor = new SelectEditor(editorArguments, true);
@@ -433,9 +433,9 @@ describe('SelectEditor', () => {
       });
 
       it('should parse the value as a float when field type is defined as float then apply the value', () => {
-        mockColumn = { id: 'age', field: 'age', type: FieldType.boolean, editable: true, editor: { model: Editors.multipleSelect }, internalColumnEditor: {} } as Column;
+        mockColumn = { id: 'age', field: 'age', type: FieldType.boolean, editable: true, editor: { model: Editors.multipleSelect }, editorClass: {} as Editor } as Column;
         mockItemData = { id: 1, gender: 'male', isActive: true, age: 26 };
-        (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 20, label: '20' }, { value: 25, label: '25' }];
+        mockColumn.editor!.collection = [{ value: 20, label: '20' }, { value: 25, label: '25' }];
 
         editorArguments.column = mockColumn;
         editor = new SelectEditor(editorArguments, true);
@@ -480,7 +480,7 @@ describe('SelectEditor', () => {
 
       it('should return value as a string when using a dot (.) notation for complex object with a collection of string values', () => {
         mockColumn.field = 'employee.gender';
-        (mockColumn.internalColumnEditor as ColumnEditor).collection = ['male', 'female'];
+        mockColumn.editor!.collection = ['male', 'female'];
         mockItemData = { id: 1, employee: { id: 24, gender: 'male' }, isActive: true };
 
         editor = new SelectEditor(editorArguments, true);
@@ -504,7 +504,7 @@ describe('SelectEditor', () => {
       it('should return all object values when using a dot (.) notation for complex object with a collection of option/label pair and using "serializeComplexValueFormat" as "object"', () => {
         mockColumn.field = 'employee.gender';
         mockItemData = { id: 1, employee: { id: 24, gender: ['male', 'other'] }, isActive: true };
-        (mockColumn.internalColumnEditor as ColumnEditor).serializeComplexValueFormat = 'object';
+        mockColumn.editor!.serializeComplexValueFormat = 'object';
         editor = new SelectEditor(editorArguments, true);
         editor.loadValue(mockItemData);
         const output = editor.serializeValue();
@@ -516,7 +516,7 @@ describe('SelectEditor', () => {
       it('should return a single object value when using a dot (.) notation for complex object with a collection of option/label pair and using "serializeComplexValueFormat" as "object"', () => {
         mockColumn.field = 'employee.gender';
         mockItemData = { id: 1, employee: { id: 24, gender: 'male' }, isActive: true };
-        (mockColumn.internalColumnEditor as ColumnEditor).serializeComplexValueFormat = 'object';
+        mockColumn.editor!.serializeComplexValueFormat = 'object';
         editor = new SelectEditor(editorArguments, false);
         editor.loadValue(mockItemData);
         const output = editor.serializeValue();
@@ -528,7 +528,7 @@ describe('SelectEditor', () => {
       it('should return flat value when using a dot (.) notation for complex object with a collection of option/label pair and using "serializeComplexValueFormat" as "flat"', () => {
         mockColumn.field = 'employee.gender';
         mockItemData = { id: 1, employee: { id: 24, gender: ['male', 'other'] }, isActive: true };
-        (mockColumn.internalColumnEditor as ColumnEditor).serializeComplexValueFormat = 'flat';
+        mockColumn.editor!.serializeComplexValueFormat = 'flat';
         editor = new SelectEditor(editorArguments, true);
         editor.loadValue(mockItemData);
         const output = editor.serializeValue();
@@ -540,7 +540,7 @@ describe('SelectEditor', () => {
       it('should return object value when using a dot (.) notation and we override the object path using "complexObjectPath" to find correct values', () => {
         mockColumn.field = 'employee.bio';
         mockItemData = { id: 1, employee: { id: 24, bio: { gender: ['male', 'other'] } }, isActive: true };
-        (mockColumn.internalColumnEditor as ColumnEditor).complexObjectPath = 'employee.bio.gender';
+        mockColumn.editor!.complexObjectPath = 'employee.bio.gender';
         editor = new SelectEditor(editorArguments, true);
         editor.loadValue(mockItemData);
         const output = editor.serializeValue();
@@ -628,7 +628,7 @@ describe('SelectEditor', () => {
 
     describe('validate method', () => {
       it('should return False when field is required and field is empty', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
+        mockColumn.editor!.required = true;
         editor = new SelectEditor(editorArguments, true);
         const validation = editor.validate(null as any, '');
 
@@ -636,7 +636,7 @@ describe('SelectEditor', () => {
       });
 
       it('should return True when field is required and input is a valid input value', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
+        mockColumn.editor!.required = true;
         editor = new SelectEditor(editorArguments, true);
         const validation = editor.validate(null as any, 'text');
 
@@ -646,7 +646,7 @@ describe('SelectEditor', () => {
 
     describe('initialize with collection', () => {
       it('should create the multi-select editor with a default search term when passed as a filter argument even with collection an array of strings', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).collection = ['male', 'female'];
+        mockColumn.editor!.collection = ['male', 'female'];
 
         editor = new SelectEditor(editorArguments, true, 0);
         const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
@@ -663,7 +663,7 @@ describe('SelectEditor', () => {
 
     describe('collectionSortBy setting', () => {
       it('should create the multi-select editor and sort the string collection when "collectionSortBy" is set', () => {
-        mockColumn.internalColumnEditor = {
+        mockColumn.editor = {
           collection: ['other', 'male', 'female'],
           collectionSortBy: {
             sortDesc: true,
@@ -683,7 +683,7 @@ describe('SelectEditor', () => {
       });
 
       it('should create the multi-select editor and sort the value/label pair collection when "collectionSortBy" is set', () => {
-        mockColumn.internalColumnEditor = {
+        mockColumn.editor = {
           collection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }],
           collectionSortBy: {
             property: 'value',
@@ -710,7 +710,7 @@ describe('SelectEditor', () => {
 
     describe('collectionFilterBy setting', () => {
       it('should create the multi-select editor and filter the string collection when "collectionFilterBy" is set', () => {
-        mockColumn.internalColumnEditor = {
+        mockColumn.editor = {
           collection: ['other', 'male', 'female'],
           collectionFilterBy: {
             operator: OperatorType.equal,
@@ -728,7 +728,7 @@ describe('SelectEditor', () => {
       });
 
       it('should create the multi-select editor and filter the value/label pair collection when "collectionFilterBy" is set', () => {
-        mockColumn.internalColumnEditor = {
+        mockColumn.editor = {
           collection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }],
           collectionFilterBy: [
             { property: 'value', operator: OperatorType.notEqual, value: 'other' },
@@ -750,7 +750,7 @@ describe('SelectEditor', () => {
       });
 
       it('should create the multi-select editor and filter the value/label pair collection when "collectionFilterBy" is set and "filterResultAfterEachPass" is set to "merge"', () => {
-        mockColumn.internalColumnEditor = {
+        mockColumn.editor = {
           collection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }],
           collectionFilterBy: [
             { property: 'value', operator: OperatorType.equal, value: 'other' },
@@ -778,7 +778,7 @@ describe('SelectEditor', () => {
 
     describe('collectionOverride callback option', () => {
       it('should create the multi-select editor and expect a different collection outputed when using the override', () => {
-        mockColumn.internalColumnEditor = {
+        mockColumn.editor = {
           collection: ['other', 'male', 'female'],
           collectionOverride: (inputCollection) => inputCollection.filter(item => item !== 'other')
         };
@@ -796,7 +796,7 @@ describe('SelectEditor', () => {
 
     describe('collectionInsideObjectProperty setting', () => {
       it('should create the multi-select editor with a value/label pair collection that is inside an object when "collectionInsideObjectProperty" is defined with a dot notation', () => {
-        mockColumn.internalColumnEditor = {
+        mockColumn.editor = {
           collection: { deep: { myCollection: [{ value: 'other', description: 'other' }, { value: 'male', description: 'male' }, { value: 'female', description: 'female' }] } } as any,
           collectionOptions: {
             collectionInsideObjectProperty: 'deep.myCollection'
@@ -821,7 +821,7 @@ describe('SelectEditor', () => {
 
     describe('enableRenderHtml property', () => {
       it('should create the multi-select editor with a default search term and have the HTML rendered when "enableRenderHtml" is set', () => {
-        mockColumn.internalColumnEditor = {
+        mockColumn.editor = {
           enableRenderHtml: true,
           collection: [{ value: true, label: 'True', labelPrefix: `<i class="fa fa-check"></i> ` }, { value: false, label: 'False' }],
           customStructure: {
@@ -841,7 +841,7 @@ describe('SelectEditor', () => {
       });
 
       it('should create the multi-select editor with a default search term and have the HTML rendered and sanitized when "enableRenderHtml" is set and has <script> tag', () => {
-        mockColumn.internalColumnEditor = {
+        mockColumn.editor = {
           enableRenderHtml: true,
           collection: [{ isEffort: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="fa fa-check"></i> ` }, { isEffort: false, label: 'False' }],
           collectionOptions: {
@@ -869,7 +869,7 @@ describe('SelectEditor', () => {
       });
 
       it('should create the multi-select editor with a default search term and have the HTML rendered and sanitized when using a custom "sanitizer" and "enableRenderHtml" flag is set and has <script> tag', () => {
-        mockColumn.internalColumnEditor = {
+        mockColumn.editor = {
           enableRenderHtml: true,
           collection: [{ isEffort: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="fa fa-check"></i> ` }, { isEffort: false, label: 'False' }],
           collectionOptions: {
@@ -907,8 +907,8 @@ describe('SelectEditor', () => {
       } as EditorArguments;
 
       mockItemData = { id: 1, gender: 'male', isActive: true };
-      mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, internalColumnEditor: {} } as Column;
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }, { value: 'other', label: 'other' }];
+      mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, editorClass: {} as Editor } as Column;
+      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }, { value: 'other', label: 'other' }];
 
       editorArguments.column = mockColumn;
       editorArguments.item = mockItemData;
@@ -1044,7 +1044,7 @@ describe('SelectEditor', () => {
         const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
           getReturnValue: () => false
         } as any);
-        mockColumn.internalColumnEditor = {
+        mockColumn.editor = {
           collection: [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }, { value: 'other', label: 'other' }],
           collectionOverride: (inputCollection) => inputCollection.filter(item => item.value !== 'other')
         };

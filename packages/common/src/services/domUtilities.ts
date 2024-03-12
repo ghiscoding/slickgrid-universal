@@ -21,7 +21,7 @@ import type { TranslaterService } from './translater.service';
 export function buildMsSelectCollectionList(type: 'editor' | 'filter', collection: any[], columnDef: Column, grid: SlickGrid, isMultiSelect = false, translaterService?: TranslaterService, searchTerms?: SearchTerm[]): { selectElement: HTMLSelectElement; dataCollection: OptionRowData[]; hasFoundSearchTerm: boolean; } {
   const columnId = columnDef?.id ?? '';
   const gridOptions = grid.getOptions();
-  const columnFilterOrEditor = (type === 'editor' ? columnDef?.internalColumnEditor : columnDef?.filter) ?? {};
+  const columnFilterOrEditor = (type === 'editor' ? columnDef?.editor : columnDef?.filter) ?? {};
   const collectionOptions = columnFilterOrEditor?.collectionOptions ?? {};
   const separatorBetweenLabels = collectionOptions?.separatorBetweenTextLabels ?? '';
   const enableTranslateLabel = columnFilterOrEditor?.enableTranslateLabel ?? false;

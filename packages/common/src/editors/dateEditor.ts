@@ -73,7 +73,7 @@ export class DateEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef?.internalColumnEditor || {} as ColumnEditor;
+    return this.columnDef?.editor || {} as ColumnEditor;
   }
 
   /** Getter for the item data context object */

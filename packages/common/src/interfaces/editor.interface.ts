@@ -1,4 +1,4 @@
-import type { Column, EditorArguments, EditorValidationResult, GridOption } from './index';
+import type { EditorArguments, EditorValidationResult } from './index';
 
 /**
  * SlickGrid Editor interface, more info can be found on the SlickGrid repo
@@ -123,7 +123,7 @@ export interface Editor {
 }
 
 export type EditorConstructor = {
-  new <TData = any, C extends Column<TData> = Column<TData>, O extends GridOption<C> = GridOption<C>>(args?: EditorArguments<TData, C, O>): Editor;
+  new(args: EditorArguments): Editor;
 
   /** Static flag used in makeActiveCellEditable. */
   suppressClearOnEdit?: boolean;

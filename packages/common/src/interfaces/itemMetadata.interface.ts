@@ -1,4 +1,4 @@
-import type { Column, Formatter, GroupTotalsFormatter } from './index';
+import type { Column, Editor, EditorConstructor, Formatter, GroupTotalsFormatter } from './index';
 
 /**
  * Provides a powerful way to specify additional informations of data item that can be used customize the grid appearance
@@ -23,6 +23,6 @@ export interface ItemMetadata {
   /** column-level metadata */
   columns?: {
     // properties describing metadata related to individual columns
-    [colIdOrIdx in string | number]: Pick<Column, 'colspan' | 'editor' | 'focusable' | 'formatter' | 'selectable'>;
+    [colIdOrIdx in string | number]: Pick<Column, 'colspan' | 'focusable' | 'formatter' | 'selectable'> & { editor?: Editor | EditorConstructor | null };
   }
 }

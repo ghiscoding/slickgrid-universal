@@ -611,16 +611,9 @@ export default class Example07 {
     this.sgb.columnDefinitions.pop();
     this.sgb.columnDefinitions = this.sgb.columnDefinitions.slice();
 
-    // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
-    // you MUST use the code below, first you must reassign the Editor facade (from the internalColumnEditor back to the editor)
-    // in other words, SlickGrid is not using the same as Slickgrid-Universal uses (editor with a "model" and other properties are a facade, SlickGrid only uses what is inside the model)
     /*
     const allColumns = this.slickerGridInstance.gridService.getAllColumnDefinitions();
-    const allOriginalColumns = allColumns.map((column) => {
-      column.editor = column.internalColumnEditor;
-      return column;
-    });
-    // remove your column the full set of columns
+    // remove your column from the full set of columns
     // and use slice or spread [...] to trigger a dirty change
     allOriginalColumns.pop();
     this.sgb.columnDefinitions = allOriginalColumns.slice();
