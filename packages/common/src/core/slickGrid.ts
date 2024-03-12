@@ -3256,11 +3256,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const rowMetadata = (this.data as CustomDataView<TData>)?.getItemMetadata?.(row);
     const columnMetadata = rowMetadata?.columns;
 
-    if (columnMetadata?.[column.id]?.editor !== undefined) {
-      return columnMetadata[column.id].editor;
+    if (columnMetadata?.[column.id]?.editorClass !== undefined) {
+      return columnMetadata[column.id].editorClass;
     }
-    if (columnMetadata?.[cell]?.editor !== undefined) {
-      return columnMetadata[cell].editor;
+    if (columnMetadata?.[cell]?.editorClass !== undefined) {
+      return columnMetadata[cell].editorClass;
     }
 
     return (column.editorClass || (this._options?.editorFactory?.getEditor(column)));
