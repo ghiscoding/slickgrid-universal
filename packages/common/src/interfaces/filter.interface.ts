@@ -1,6 +1,7 @@
 import type { Column, FilterArguments, FilterCallback } from './index';
 import type { OperatorType, OperatorString, SearchTerm, } from '../enums/index';
 import type { SlickGrid } from '../core/index';
+import type { CollectionService, RxJsFacade, TranslaterService } from '../services';
 
 // export type Filter = (searchTerms: string | number | string[] | number[], columnDef: Column, params?: any) => string;
 export interface Filter {
@@ -45,3 +46,7 @@ export interface Filter {
   /** Set value(s) on the DOM element */
   setValues: (values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString) => void;
 }
+
+export type FilterConstructor = {
+  new(translaterService?: TranslaterService, collectionService?: CollectionService, rxjs?: RxJsFacade): Filter;
+};

@@ -48,7 +48,7 @@ export class DateFilter implements Filter {
   callback!: FilterCallback;
   filterContainerElm!: HTMLDivElement;
 
-  constructor(protected readonly translaterService: TranslaterService) {
+  constructor(protected readonly translaterService?: TranslaterService) {
     this._bindEventService = new BindingEventService();
   }
 

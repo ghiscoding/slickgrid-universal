@@ -6,6 +6,7 @@ import type {
   CollectionSortBy,
   Column,
   Filter,
+  FilterConstructor,
   OperatorDetail,
 } from './index';
 import type { Observable, Subject } from '../services/rxjsFacade';
@@ -42,7 +43,7 @@ export interface ColumnFilter {
   minValue?: number | string;
 
   /** Filter to use (input, multipleSelect, singleSelect, select, custom) */
-  model?: any;
+  model?: FilterConstructor;
 
   /** A collection of items/options that will be loaded asynchronously (commonly used with a Select/Multi-Select Filter) */
   collectionAsync?: Promise<any> | Observable<any> | Subject<any>;

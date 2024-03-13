@@ -25,7 +25,7 @@ export class NativeSelectFilter implements Filter {
   callback!: FilterCallback;
   filterContainerElm!: HTMLDivElement;
 
-  constructor(protected readonly translater: TranslaterService) {
+  constructor(protected readonly translater?: TranslaterService) {
     this._bindEventService = new BindingEventService();
   }
 
@@ -171,7 +171,7 @@ export class NativeSelectFilter implements Filter {
         }
 
         const labelKey = option.labelKey || option[labelName];
-        const textLabel = ((option.labelKey || isEnabledTranslate) && typeof this.translater !== undefined && this.translater.getCurrentLanguage?.()) ? this.translater.translate(labelKey || ' ') : labelKey;
+        const textLabel = ((option.labelKey || isEnabledTranslate) && typeof this.translater !== undefined && this.translater?.getCurrentLanguage?.()) ? this.translater.translate(labelKey || ' ') : labelKey;
 
         selectElm.appendChild(
           createDomElement('option', { value: option[valueName], textContent: textLabel })
