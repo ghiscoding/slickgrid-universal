@@ -1,6 +1,6 @@
 import { Editors } from '../index';
 import { FloatEditor } from '../floatEditor';
-import { Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
+import { Column, ColumnEditor, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 
 const containerId = 'demo-container';
@@ -48,7 +48,7 @@ describe('FloatEditor', () => {
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
 
-    mockColumn = { id: 'price', field: 'price', editable: true, editor: { model: Editors.float }, internalColumnEditor: {} } as Column;
+    mockColumn = { id: 'price', field: 'price', editable: true, editor: { model: Editors.float }, editorClass: {} as Editor } as Column;
 
     editorArguments = {
       grid: gridStub,
@@ -79,7 +79,7 @@ describe('FloatEditor', () => {
   describe('with valid Editor instance', () => {
     beforeEach(() => {
       mockItemData = { id: 1, price: 213, isActive: true };
-      mockColumn = { id: 'price', field: 'price', editable: true, editor: { model: Editors.float }, internalColumnEditor: {} } as Column;
+      mockColumn = { id: 'price', field: 'price', editable: true, editor: { model: Editors.float }, editorClass: {} as Editor } as Column;
 
       editorArguments.column = mockColumn;
       editorArguments.item = mockItemData;
@@ -115,7 +115,7 @@ describe('FloatEditor', () => {
 
     it('should have a placeholder when defined in its column definition', () => {
       const testValue = 'test placeholder';
-      (mockColumn.internalColumnEditor as ColumnEditor).placeholder = testValue;
+      mockColumn.editor!.placeholder = testValue;
 
       editor = new FloatEditor(editorArguments);
       const editorElm = divContainer.querySelector('input.editor-text.editor-price') as HTMLInputElement;
@@ -125,7 +125,7 @@ describe('FloatEditor', () => {
 
     it('should have a title (tooltip) when defined in its column definition', () => {
       const testValue = 'test title';
-      (mockColumn.internalColumnEditor as ColumnEditor).title = testValue;
+      mockColumn.editor!.title = testValue;
 
       editor = new FloatEditor(editorArguments);
       const editorElm = divContainer.querySelector('input.editor-text.editor-price') as HTMLInputElement;
@@ -134,7 +134,7 @@ describe('FloatEditor', () => {
     });
 
     it('should call "columnEditor" GETTER and expect to equal the editor settings we provided', () => {
-      mockColumn.internalColumnEditor = {
+      mockColumn.editor = {
         placeholder: 'test placeholder',
         title: 'test title',
         alwaysSaveOnEnterKey: false,
@@ -142,7 +142,7 @@ describe('FloatEditor', () => {
 
       editor = new FloatEditor(editorArguments);
 
-      expect(editor.columnEditor).toEqual(mockColumn.internalColumnEditor);
+      expect(editor.columnEditor).toEqual(mockColumn.editor);
     });
 
     it('should call "setValue" and expect the DOM element value to be the same but as a string when calling "getValue"', () => {
@@ -238,7 +238,7 @@ describe('FloatEditor', () => {
 
       it('should return True when previously dispatched keyboard event as ENTER and "alwaysSaveOnEnterKey" is enabled', () => {
         const event = new (window.window as any).KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
-        (mockColumn.internalColumnEditor as ColumnEditor).alwaysSaveOnEnterKey = true;
+        mockColumn.editor!.alwaysSaveOnEnterKey = true;
 
         editor = new FloatEditor(editorArguments);
         const editorElm = divContainer.querySelector('input.editor-price') as HTMLInputElement;
@@ -252,7 +252,7 @@ describe('FloatEditor', () => {
 
     describe('applyValue method', () => {
       it('should apply the value to the price property when it passes validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
+        mockColumn.editor!.validator = null as any;
         mockItemData = { id: 1, price: 456, isActive: true };
 
         editor = new FloatEditor(editorArguments);
@@ -262,7 +262,7 @@ describe('FloatEditor', () => {
       });
 
       it('should apply the value to the price property with a field having dot notation (complex object) that passes validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
+        mockColumn.editor!.validator = null as any;
         mockColumn.field = 'part.price';
         mockItemData = { id: 1, part: { price: 456 }, isActive: true };
 
@@ -273,7 +273,7 @@ describe('FloatEditor', () => {
       });
 
       it('should return item data with an empty string in its value when it fails the custom validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = (value: any) => {
+        mockColumn.editor!.validator = (value: any) => {
           if (+value < 10) {
             return { valid: false, msg: 'Value must be over 10.' };
           }
@@ -302,7 +302,7 @@ describe('FloatEditor', () => {
 
       it('should return serialized value as a float number when "decimalPlaces" is set to 2', () => {
         mockItemData = { id: 1, price: 32.7, isActive: true };
-        (mockColumn.internalColumnEditor as ColumnEditor).params = { decimalPlaces: 2 };
+        mockColumn.editor!.params = { decimalPlaces: 2 };
 
         editor = new FloatEditor(editorArguments);
         editor.loadValue(mockItemData);
@@ -378,7 +378,7 @@ describe('FloatEditor', () => {
 
       it('should return decimal step as 0.1 increment when decimalPlaces is set to 1 decimal', () => {
         mockItemData = { id: 1, price: 32.7, isActive: true };
-        (mockColumn.internalColumnEditor as ColumnEditor).params = { decimalPlaces: 1 };
+        mockColumn.editor!.params = { decimalPlaces: 1 };
 
         editor = new FloatEditor(editorArguments);
         editor.loadValue(mockItemData);
@@ -388,7 +388,7 @@ describe('FloatEditor', () => {
 
       it('should return decimal step as 0.01 increment when decimalPlaces is set to 2 decimal', () => {
         mockItemData = { id: 1, price: 32.7, isActive: true };
-        (mockColumn.internalColumnEditor as ColumnEditor).params = { decimalPlaces: 2 };
+        mockColumn.editor!.params = { decimalPlaces: 2 };
 
         editor = new FloatEditor(editorArguments);
         editor.loadValue(mockItemData);
@@ -465,7 +465,7 @@ describe('FloatEditor', () => {
 
     describe('validate method', () => {
       it('should return False when field is required and field is empty', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
+        mockColumn.editor!.required = true;
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(null, '');
 
@@ -473,7 +473,7 @@ describe('FloatEditor', () => {
       });
 
       it('should return False when field is not a valid float number', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
+        mockColumn.editor!.required = true;
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(null, 'abc');
 
@@ -481,7 +481,7 @@ describe('FloatEditor', () => {
       });
 
       it('should return False when field is lower than a minValue defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minValue = 10.2;
+        mockColumn.editor!.minValue = 10.2;
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(null, 10);
 
@@ -489,8 +489,8 @@ describe('FloatEditor', () => {
       });
 
       it('should return False when field is lower than a minValue defined using exclusive operator', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minValue = 10.2;
-        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
+        mockColumn.editor!.minValue = 10.2;
+        mockColumn.editor!.operatorConditionalType = 'exclusive';
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(null, 10);
 
@@ -498,7 +498,7 @@ describe('FloatEditor', () => {
       });
 
       it('should return True when field is equal to the minValue defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minValue = 10.2;
+        mockColumn.editor!.minValue = 10.2;
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(null, 10.2);
 
@@ -506,7 +506,7 @@ describe('FloatEditor', () => {
       });
 
       it('should return False when field is greater than a maxValue defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 10.2;
+        mockColumn.editor!.maxValue = 10.2;
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(null, 10.22);
 
@@ -514,8 +514,8 @@ describe('FloatEditor', () => {
       });
 
       it('should return False when field is greater than a maxValue defined using exclusive operator', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 10.2;
-        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
+        mockColumn.editor!.maxValue = 10.2;
+        mockColumn.editor!.operatorConditionalType = 'exclusive';
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(null, 10.22);
 
@@ -523,7 +523,7 @@ describe('FloatEditor', () => {
       });
 
       it('should return True when field is equal to the maxValue defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 10.2;
+        mockColumn.editor!.maxValue = 10.2;
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(null, 10.2);
 
@@ -531,8 +531,8 @@ describe('FloatEditor', () => {
       });
 
       it('should return True when field is equal to the maxValue defined and "operatorType" is set to "inclusive"', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 10.2;
-        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'inclusive';
+        mockColumn.editor!.maxValue = 10.2;
+        mockColumn.editor!.operatorConditionalType = 'inclusive';
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(null, 10.2);
 
@@ -540,8 +540,8 @@ describe('FloatEditor', () => {
       });
 
       it('should return False when field is equal to the maxValue defined but "operatorType" is set to "exclusive"', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 10.2;
-        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
+        mockColumn.editor!.maxValue = 10.2;
+        mockColumn.editor!.operatorConditionalType = 'exclusive';
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(null, 10.2);
 
@@ -549,8 +549,8 @@ describe('FloatEditor', () => {
       });
 
       it('should return False when field is not between minValue & maxValue defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minValue = 10.5;
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 99.5;
+        mockColumn.editor!.minValue = 10.5;
+        mockColumn.editor!.maxValue = 99.5;
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(null, 99.6);
 
@@ -558,8 +558,8 @@ describe('FloatEditor', () => {
       });
 
       it('should return True when field is is equal to maxValue defined when both min/max values are defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minValue = 10.5;
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 99.5;
+        mockColumn.editor!.minValue = 10.5;
+        mockColumn.editor!.maxValue = 99.5;
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(null, 99.5);
 
@@ -567,9 +567,9 @@ describe('FloatEditor', () => {
       });
 
       it('should return True when field is is equal to minValue defined when "operatorType" is set to "inclusive" and both min/max values are defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minValue = 10.5;
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 99.5;
-        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'inclusive';
+        mockColumn.editor!.minValue = 10.5;
+        mockColumn.editor!.maxValue = 99.5;
+        mockColumn.editor!.operatorConditionalType = 'inclusive';
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(null, 10.5);
 
@@ -577,9 +577,9 @@ describe('FloatEditor', () => {
       });
 
       it('should return False when field is equal to maxValue but "operatorType" is set to "exclusive" when both min/max values are defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minValue = 10.5;
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 99.5;
-        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
+        mockColumn.editor!.minValue = 10.5;
+        mockColumn.editor!.maxValue = 99.5;
+        mockColumn.editor!.operatorConditionalType = 'exclusive';
         editor = new FloatEditor(editorArguments);
         const validation1 = editor.validate(null, 99.5);
         const validation2 = editor.validate(null, 10.5);
@@ -589,7 +589,7 @@ describe('FloatEditor', () => {
       });
 
       it('should return False when field has more decimals than the "decimalPlaces" which is the maximum decimal allowed', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).params = { decimalPlaces: 2 };
+        mockColumn.editor!.params = { decimalPlaces: 2 };
 
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(null, 99.6433);
@@ -598,7 +598,7 @@ describe('FloatEditor', () => {
       });
 
       it('should return True when field has less decimals than the "decimalPlaces" which is valid', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).params = { decimalPlaces: 2 };
+        mockColumn.editor!.params = { decimalPlaces: 2 };
 
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(null, 99.6);
@@ -607,7 +607,7 @@ describe('FloatEditor', () => {
       });
 
       it('should return True when field has same number of decimals than the "decimalPlaces" which is also valid', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).params = { decimalPlaces: 2 };
+        mockColumn.editor!.params = { decimalPlaces: 2 };
 
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(null, 99.65);
@@ -616,7 +616,7 @@ describe('FloatEditor', () => {
       });
 
       it('should return True when field is required and field is a valid input value', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
+        mockColumn.editor!.required = true;
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(null, 2.5);
 
@@ -624,7 +624,7 @@ describe('FloatEditor', () => {
       });
 
       it('should return True when field is required and field is a valid decimal value without 0 suffix', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
+        mockColumn.editor!.required = true;
         editor = new FloatEditor(editorArguments);
         const validation = editor.validate(null, '.5');
 

@@ -176,7 +176,7 @@ export class SelectEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor | undefined {
-    return this.columnDef?.internalColumnEditor ?? {} as ColumnEditor;
+    return this.columnDef?.editor ?? {} as ColumnEditor;
   }
 
   /** Getter for item data context object */
@@ -195,7 +195,7 @@ export class SelectEditor implements Editor {
 
   /** Getter for the Custom Structure if exist */
   protected get customStructure(): CollectionCustomStructure | undefined {
-    return this.columnDef?.internalColumnEditor?.customStructure;
+    return this.columnDef?.editor?.customStructure;
   }
 
   get hasAutoCommitEdit(): boolean {
@@ -307,7 +307,7 @@ export class SelectEditor implements Editor {
   }
 
   init() {
-    if (!this.columnDef || !this.columnDef.internalColumnEditor || (!this.columnDef.internalColumnEditor.collection && !this.columnDef.internalColumnEditor.collectionAsync)) {
+    if (!this.columnDef || !this.columnDef.editor || (!this.columnDef.editor.collection && !this.columnDef.editor.collectionAsync)) {
       throw new Error(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") inside Column Definition Editor for the MultipleSelect/SingleSelect Editor to work correctly.
       Also each option should include a value/label pair (or value/labelKey when using Locale).
       For example: { editor: { collection: [{ value: true, label: 'True' },{ value: false, label: 'False'}] } }`);
@@ -744,7 +744,7 @@ export class SelectEditor implements Editor {
     const placeholder = this.columnEditor?.placeholder ?? '';
     this.defaultOptions.placeholder = placeholder || '';
 
-    const editorOptions = this.columnDef?.internalColumnEditor?.editorOptions ?? {};
+    const editorOptions = this.columnDef?.editor?.editorOptions ?? {};
     this.editorElmOptions = { ...this.defaultOptions, ...editorOptions, data: dataCollection };
     this._msInstance = multipleSelect(selectElement, this.editorElmOptions) as MultipleSelectInstance;
     this.editorElm = this._msInstance.getParentElement();

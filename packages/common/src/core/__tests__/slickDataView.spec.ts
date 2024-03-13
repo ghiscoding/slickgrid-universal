@@ -915,7 +915,7 @@ describe('SlickDatView core file', () => {
         columns: {
           0: {
             colspan: '*',
-            editor: null,
+            editorClass: null,
             formatter: expect.anything(),
           },
         },
@@ -968,7 +968,7 @@ describe('SlickDatView core file', () => {
       });
       expect(dv.getItemMetadata(3)).toEqual({
         cssClasses: 'slick-group-totals slick-group-level-1',
-        editor: null,
+        editorClass: null,
         focusable: false,
         formatter: expect.anything(),
         selectable: false,
@@ -1058,7 +1058,7 @@ describe('SlickDatView core file', () => {
         columns: {
           0: {
             colspan: '*',
-            editor: null,
+            editorClass: null,
             formatter: expect.anything(),
           },
         },

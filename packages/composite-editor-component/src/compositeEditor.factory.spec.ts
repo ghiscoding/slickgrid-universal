@@ -56,10 +56,10 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 const columnsMock: Column[] = [
-  { id: 'productName', field: 'productName', width: 100, name: 'Product', nameKey: 'PRODUCT', editor: Editors.text as any },
+  { id: 'productName', field: 'productName', width: 100, name: 'Product', nameKey: 'PRODUCT', editorClass: Editors.text as any },
   { id: 'field2', field: 'field2', width: 75, name: 'Field 2' },
-  { id: 'field3', field: 'field3', width: 75, name: 'Field 3', nameKey: 'DURATION', editor: Editors.date as any, columnGroup: 'Group Name', columnGroupKey: 'GROUP_NAME' },
-  { id: 'zip', field: 'adress.zip', width: 75, name: 'Zip', editor: Editors.integer as any, columnGroup: 'Group Name', columnGroupKey: 'GROUP_NAME' }
+  { id: 'field3', field: 'field3', width: 75, name: 'Field 3', nameKey: 'DURATION', editorClass: Editors.date as any, columnGroup: 'Group Name', columnGroupKey: 'GROUP_NAME' },
+  { id: 'zip', field: 'adress.zip', width: 75, name: 'Zip', editorClass: Editors.integer as any, columnGroup: 'Group Name', columnGroupKey: 'GROUP_NAME' }
 ];
 const compositeEditorOptionsMock = {
   labels: {
@@ -123,7 +123,7 @@ describe('Composite Editor Factory', () => {
       cancelChanges: cancelChangeMock,
       commitChanges: commitChangeMock,
     };
-    editors = columnsMock.map(col => col.editor);
+    editors = columnsMock.map(col => col.editorClass);
     compositeOptions = { destroy: destroyMock, modalType: 'create', validationMsgPrefix: '* ', formValues: {}, editors };
 
     containers = [container1, container2, container3, container4];
@@ -291,7 +291,7 @@ describe('Composite Editor Factory', () => {
     modalElm.className = 'slick-editor-modal';
 
     for (const column of columnsMock) {
-      if (column.editor) {
+      if (column.editorClass) {
         const validationEditorElm = document.createElement('div');
         validationEditorElm.className = `item-details-validation editor-${column.id}`;
         const labelEditorElm = document.createElement('div');
@@ -327,7 +327,7 @@ describe('Composite Editor Factory', () => {
     modalElm.className = 'slick-editor-modal';
 
     for (const column of columnsMock) {
-      if (column.editor) {
+      if (column.editorClass) {
         const validationEditorElm = document.createElement('div');
         validationEditorElm.className = `item-details-validation editor-${column.id}`;
         const labelEditorElm = document.createElement('div');

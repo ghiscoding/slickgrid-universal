@@ -198,7 +198,7 @@ describe('GroupItemMetadataProvider Service', () => {
           0: {
             colspan: '1',
             formatter: service.getOptions().groupFormatter,
-            editor: null
+            editorClass: null
           }
         }
       });
@@ -218,7 +218,7 @@ describe('GroupItemMetadataProvider Service', () => {
           0: {
             colspan: '*',
             formatter: service.getOptions().groupFormatter,
-            editor: null
+            editorClass: null
           }
         }
       });
@@ -232,7 +232,7 @@ describe('GroupItemMetadataProvider Service', () => {
 
       const output = service.getTotalsRowMetadata({ group: { count: 12, level: undefined as any, groupingKey: 'age', value: 33 } });
       expect(output).toEqual({
-        editor: null,
+        editorClass: null,
         selectable: false,
         focusable: mockOptions.totalsFocusable,
         cssClasses: `groupy-totals slick-group-level-0`,
@@ -243,7 +243,7 @@ describe('GroupItemMetadataProvider Service', () => {
     it('should return a formatted Group Totals with defaults options when nothing is provided', () => {
       const output = service.getTotalsRowMetadata({ group: { count: 12, level: 3, groupingKey: 'age', value: 33 } });
       expect(output).toEqual({
-        editor: null,
+        editorClass: null,
         focusable: false,
         selectable: false,
         cssClasses: `slick-group-totals slick-group-level-3`,

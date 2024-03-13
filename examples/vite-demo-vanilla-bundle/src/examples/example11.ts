@@ -439,7 +439,7 @@ export default class Example11 {
         this.sgb.slickGrid?.getSelectedRows() || [];
         const modalContainerElm = document.querySelector('.modal-container') as HTMLDivElement;
         const columnDefinitionsClone = deepCopy(this.columnDefinitions);
-        const massUpdateColumnDefinitions = columnDefinitionsClone?.filter((col: Column) => col.editor?.massUpdate || col.internalColumnEditor?.massUpdate) || [];
+        const massUpdateColumnDefinitions = columnDefinitionsClone?.filter((col: Column) => col.editor?.massUpdate) || [];
         const selectedItems = this.sgb.gridService.getSelectedRowsDataItem();
         const selectedIds = selectedItems.map(selectedItem => selectedItem.id);
         loadComponent(modalContainerElm, exampleModal, Example11Modal, { columnDefinitions: massUpdateColumnDefinitions, selectedIds, remoteCallback: this.remoteCallbackFn.bind(this) });

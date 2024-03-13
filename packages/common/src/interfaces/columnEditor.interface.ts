@@ -6,7 +6,7 @@ import type {
   CollectionOption,
   CollectionOverrideArgs,
   CollectionSortBy,
-  // Editor,
+  EditorConstructor,
   EditorValidator,
 } from './index';
 
@@ -103,8 +103,8 @@ export interface ColumnEditor {
   /** Minimum value of the editor, works only with Editors supporting it (number, float, slider) */
   minValue?: number | string;
 
-  /** Any inline editor function that implements Editor for the cell */
-  model?: any;
+  /** SlickGrid Editor class or EditorConstructor function that implements Editor for the cell inline editing */
+  model?: EditorConstructor;
 
   /**
    * Placeholder text that can be used by some Editors.

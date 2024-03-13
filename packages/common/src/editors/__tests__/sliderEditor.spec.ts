@@ -1,6 +1,6 @@
 import { Editors } from '../index';
 import { SliderEditor } from '../sliderEditor';
-import { Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
+import { Column, ColumnEditor, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 
 jest.useFakeTimers();
@@ -49,7 +49,7 @@ describe('SliderEditor', () => {
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
 
-    mockColumn = { id: 'price', field: 'price', editable: true, editor: { model: Editors.float }, internalColumnEditor: {} } as Column;
+    mockColumn = { id: 'price', field: 'price', editable: true, editor: { model: Editors.float } } as Column;
 
     editorArguments = {
       grid: gridStub,
@@ -80,7 +80,7 @@ describe('SliderEditor', () => {
   describe('with valid Editor instance', () => {
     beforeEach(() => {
       mockItemData = { id: 1, price: 213, isActive: true };
-      mockColumn = { id: 'price', field: 'price', editable: true, editor: { model: Editors.float }, internalColumnEditor: {} } as Column;
+      mockColumn = { id: 'price', field: 'price', editable: true, editor: { model: Editors.float }, editorClass: {} as Editor } as Column;
 
       editorArguments.column = mockColumn;
       editorArguments.item = mockItemData;
@@ -105,7 +105,7 @@ describe('SliderEditor', () => {
 
     it('should have a title (tooltip) when defined in its column definition', () => {
       const testValue = 'test title';
-      (mockColumn.internalColumnEditor as ColumnEditor).title = testValue;
+      mockColumn.editor!.title = testValue;
 
       editor = new SliderEditor(editorArguments);
       const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;
@@ -114,17 +114,17 @@ describe('SliderEditor', () => {
     });
 
     it('should call "columnEditor" GETTER and expect to equal the editor settings we provided', () => {
-      mockColumn.internalColumnEditor = {
+      mockColumn.editor = {
         title: 'test title',
       };
 
       editor = new SliderEditor(editorArguments);
 
-      expect(editor.columnEditor).toEqual(mockColumn.internalColumnEditor);
+      expect(editor.columnEditor).toEqual(mockColumn.editor);
     });
 
     it('should create the input editor with defined value and a different step size when "valueStep" is provided', () => {
-      (mockColumn.internalColumnEditor as ColumnEditor).valueStep = 5;
+      mockColumn.editor!.valueStep = 5;
       mockItemData = { id: 1, price: 15, isActive: true };
 
       editor = new SliderEditor(editorArguments);
@@ -138,7 +138,7 @@ describe('SliderEditor', () => {
     });
 
     it('should create the input editor with min slider values being set by editor "minValue"', () => {
-      mockColumn.internalColumnEditor = {
+      mockColumn.editor = {
         minValue: 4,
         maxValue: 69,
       };
@@ -154,7 +154,7 @@ describe('SliderEditor', () => {
     });
 
     it('should create the input editor with min/max slider values being set by editor "sliderStartValue" through the editor editorOptions', () => {
-      mockColumn.internalColumnEditor = { editorOptions: { sliderStartValue: 4 } };
+      mockColumn.editor = { editorOptions: { sliderStartValue: 4 } };
       mockItemData = { id: 1, price: null, isActive: true };
 
       editor = new SliderEditor(editorArguments);
@@ -170,7 +170,7 @@ describe('SliderEditor', () => {
     });
 
     it('should create the input editor with default search terms range but without showing side numbers when "hideSliderNumber" is set in editorOptions', () => {
-      (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { hideSliderNumber: true };
+      mockColumn.editor!.editorOptions = { hideSliderNumber: true };
       mockItemData = { id: 1, price: null, isActive: true };
 
       editor = new SliderEditor(editorArguments);
@@ -205,7 +205,7 @@ describe('SliderEditor', () => {
     });
 
     it('should define an item datacontext containing a string as cell value and expect this value to be loaded in the editor when calling "loadValue"', () => {
-      mockColumn.internalColumnEditor = { maxValue: 500 };
+      mockColumn.editor = { maxValue: 500 };
       editor = new SliderEditor(editorArguments);
       editor.loadValue(mockItemData);
       const editorInputElm = editor.editorInputDomElement;
@@ -218,7 +218,7 @@ describe('SliderEditor', () => {
 
     it('should update slider number every time a change event happens on the input slider', () => {
       const cellMouseEnterSpy = jest.spyOn(gridStub.onMouseEnter, 'notify');
-      (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { hideSliderNumber: false };
+      mockColumn.editor!.editorOptions = { hideSliderNumber: false };
       mockItemData = { id: 1, price: 32, isActive: true };
       editor = new SliderEditor(editorArguments);
       editor.loadValue(mockItemData);
@@ -237,7 +237,7 @@ describe('SliderEditor', () => {
 
     describe('isValueChanged method', () => {
       it('should return True when previously dispatched change event is a different slider input number', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { sliderStartValue: 5 };
+        mockColumn.editor!.editorOptions = { sliderStartValue: 5 };
         mockItemData = { id: 1, price: 32, isActive: true };
         editor = new SliderEditor(editorArguments);
         editor.loadValue(mockItemData);
@@ -271,7 +271,7 @@ describe('SliderEditor', () => {
       });
 
       it('should return False when previously dispatched change event is the same input number as "sliderStartValue" provided by the user', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { sliderStartValue: 5 };
+        mockColumn.editor!.editorOptions = { sliderStartValue: 5 };
         mockItemData = { id: 1, price: 5, isActive: true };
         editor = new SliderEditor(editorArguments);
         editor.loadValue(mockItemData);
@@ -285,7 +285,7 @@ describe('SliderEditor', () => {
 
     describe('applyValue method', () => {
       it('should apply the value to the price property when it passes validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
+        mockColumn.editor!.validator = null as any;
         mockItemData = { id: 1, price: 456, isActive: true };
 
         editor = new SliderEditor(editorArguments);
@@ -295,7 +295,7 @@ describe('SliderEditor', () => {
       });
 
       it('should apply the value to the price property with a field having dot notation (complex object) that passes validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
+        mockColumn.editor!.validator = null as any;
         mockColumn.field = 'part.price';
         mockItemData = { id: 1, part: { price: 456 }, isActive: true };
 
@@ -306,7 +306,7 @@ describe('SliderEditor', () => {
       });
 
       it('should return item data with an empty string in its value when it fails the custom validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = (value: any) => {
+        mockColumn.editor!.validator = (value: any) => {
           if (+value < 10) {
             return { valid: false, msg: 'Value must be over 10.' };
           }
@@ -363,7 +363,7 @@ describe('SliderEditor', () => {
       });
 
       it('should return serialized value as the custom "sliderStartValue" number when item value is null', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { sliderStartValue: 5 };
+        mockColumn.editor!.editorOptions = { sliderStartValue: 5 };
         mockItemData = { id: 1, price: null, isActive: true };
 
         editor = new SliderEditor(editorArguments);
@@ -452,7 +452,7 @@ describe('SliderEditor', () => {
 
     describe('validate method', () => {
       it('should return False when field is required and field is empty', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
+        mockColumn.editor!.required = true;
         editor = new SliderEditor(editorArguments);
         const validation = editor.validate(null as any, '');
 
@@ -460,8 +460,8 @@ describe('SliderEditor', () => {
       });
 
       it('should return False when field is not between minValue & maxValue defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minValue = 10;
-        (mockColumn.internalColumnEditor as ColumnEditor).maxValue = 99;
+        mockColumn.editor!.minValue = 10;
+        mockColumn.editor!.maxValue = 99;
         editor = new SliderEditor(editorArguments);
         const validation = editor.validate(null as any, 100);
 
@@ -470,7 +470,7 @@ describe('SliderEditor', () => {
     });
 
     it('should enableSliderTrackColoring and trigger a change event and expect slider track to have background color', () => {
-      (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { sliderStartValue: 5, enableSliderTrackColoring: true };
+      mockColumn.editor!.editorOptions = { sliderStartValue: 5, enableSliderTrackColoring: true };
       mockItemData = { id: 1, price: 80, isActive: true };
       editor = new SliderEditor(editorArguments);
       editor.loadValue(mockItemData);
@@ -483,7 +483,7 @@ describe('SliderEditor', () => {
     });
 
     it('should click on the slider track and expect handle to move to the new position', () => {
-      (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { sliderStartValue: 5, enableSliderTrackColoring: true };
+      mockColumn.editor!.editorOptions = { sliderStartValue: 5, enableSliderTrackColoring: true };
       editor = new SliderEditor(editorArguments);
 
       const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;

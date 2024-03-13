@@ -3,7 +3,7 @@ import 'multiple-select-vanilla';
 
 import { Editors } from '../index';
 import { MultipleSelectEditor } from '../multipleSelectEditor';
-import { Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
+import { Column, ColumnEditor, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import type { SlickDataView } from '../../core';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { type SlickGrid } from '../../core/index';
@@ -53,7 +53,7 @@ describe('MultipleSelectEditor', () => {
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
 
-    mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, internalColumnEditor: {} } as Column;
+    mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, editorClass: {} as Editor } as Column;
 
     editorArguments = {
       grid: gridStub,
@@ -73,8 +73,8 @@ describe('MultipleSelectEditor', () => {
   describe('with valid Editor instance', () => {
     beforeEach(() => {
       mockItemData = { id: 1, gender: 'male', isActive: true };
-      mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, internalColumnEditor: {} } as Column;
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, editorClass: {} as Editor } as Column;
+      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
       editorArguments.column = mockColumn;
       editorArguments.item = mockItemData;
@@ -85,7 +85,7 @@ describe('MultipleSelectEditor', () => {
     });
 
     it('should initialize the editor', () => {
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
       gridOptionMock.translater = translateService;
       editor = new MultipleSelectEditor(editorArguments, 0);
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;

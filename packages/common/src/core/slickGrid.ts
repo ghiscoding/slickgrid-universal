@@ -3256,14 +3256,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const rowMetadata = (this.data as CustomDataView<TData>)?.getItemMetadata?.(row);
     const columnMetadata = rowMetadata?.columns;
 
-    if (columnMetadata?.[column.id]?.editor !== undefined) {
-      return columnMetadata[column.id].editor as Editor | EditorConstructor;
+    if (columnMetadata?.[column.id]?.editorClass !== undefined) {
+      return columnMetadata[column.id].editorClass;
     }
-    if (columnMetadata?.[cell]?.editor !== undefined) {
-      return columnMetadata[cell].editor as Editor | EditorConstructor;
+    if (columnMetadata?.[cell]?.editorClass !== undefined) {
+      return columnMetadata[cell].editorClass;
     }
 
-    return (column.editor || (this._options?.editorFactory?.getEditor(column))) as Editor | EditorConstructor;
+    return (column.editorClass || (this._options?.editorFactory?.getEditor(column)));
   }
 
   protected getDataItemValueForColumn(item: TData, columnDef: C) {
@@ -4845,7 +4845,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
         const preClickModeOn = ((e as DOMEvent<HTMLDivElement>).target?.className === preClickClassName);
         const column = this.columns[cell.cell];
-        const suppressActiveCellChangedEvent = !!(this._options.editable && column?.editor && this._options.suppressActiveCellChangeOnEdit);
+        const suppressActiveCellChangedEvent = !!(this._options.editable && column?.editorClass && this._options.suppressActiveCellChangeOnEdit);
         this.setActiveCellInternal(this.getCellNode(cell.row, cell.cell), null, preClickModeOn, suppressActiveCellChangedEvent, (e as DOMEvent<HTMLDivElement>));
       }
     }
@@ -5311,11 +5311,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
 
-  editActiveCell(editor: EditorConstructor, preClickModeOn?: boolean | null, e?: Event) {
+  editActiveCell(editor: Editor | EditorConstructor, preClickModeOn?: boolean | null, e?: Event) {
     this.makeActiveCellEditable(editor, preClickModeOn, e);
   }
 
-  protected makeActiveCellEditable(editor?: EditorConstructor, preClickModeOn?: boolean | null, e?: Event | SlickEvent) {
+  protected makeActiveCellEditable(editor?: Editor | EditorConstructor, preClickModeOn?: boolean | null, e?: Event | SlickEvent) {
     if (!this.activeCellNode) {
       return;
     }
@@ -5355,8 +5355,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       metadata = metadata?.columns as any;
       const columnMetaData = metadata && (metadata[columnDef.id as keyof ItemMetadata] || (metadata as any)[this.activeCell]);
 
-      const editorArgs: EditorArguments<TData, C, O> = {
-        grid: this,
+      const editorArgs: EditorArguments = {
+        grid: this as any,
         gridPosition: this.absBox(this._container),
         position: this.absBox(this.activeCellNode),
         container: this.activeCellNode,
@@ -6131,7 +6131,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     // if selecting the 'add new' row, start editing right away
     const column = this.columns[cell];
-    const suppressActiveCellChangedEvent = !!(this._options.editable && column?.editor && this._options.suppressActiveCellChangeOnEdit);
+    const suppressActiveCellChangedEvent = !!(this._options.editable && column?.editorClass && this._options.suppressActiveCellChangeOnEdit);
     this.setActiveCellInternal(newCell, (forceEdit || (row === this.getDataLength()) || this._options.autoEdit), null, suppressActiveCellChangedEvent, e);
 
     // if no editor was created, set the focus back on the grid

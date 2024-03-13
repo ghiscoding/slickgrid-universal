@@ -3,7 +3,7 @@ import 'multiple-select-vanilla';
 
 import { Editors } from '../index';
 import { SingleSelectEditor } from '../singleSelectEditor';
-import { Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
+import { Column, ColumnEditor, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import type { SlickDataView, SlickGrid } from '../../core';
 
@@ -50,7 +50,7 @@ describe('SingleSelectEditor', () => {
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
 
-    mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, internalColumnEditor: {} } as Column;
+    mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, editorClass: {} as Editor } as Column;
 
     editorArguments = {
       grid: gridStub,
@@ -70,8 +70,8 @@ describe('SingleSelectEditor', () => {
   describe('with valid Editor instance', () => {
     beforeEach(() => {
       mockItemData = { id: 1, gender: 'male', isActive: true };
-      mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, internalColumnEditor: {} } as Column;
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: '', label: '' }, { value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.multipleSelect }, editorClass: {} as Editor } as Column;
+      mockColumn.editor!.collection = [{ value: '', label: '' }, { value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
       editorArguments.column = mockColumn;
       editorArguments.item = mockItemData;
@@ -82,7 +82,7 @@ describe('SingleSelectEditor', () => {
     });
 
     it('should initialize the editor', () => {
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
       gridOptionMock.translater = translateService;
       editor = new SingleSelectEditor(editorArguments);
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
@@ -155,7 +155,7 @@ describe('SingleSelectEditor', () => {
       });
 
       it('should return False after re-selecting the same option as the one loaded', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).collection = ['male', 'female'];
+        mockColumn.editor!.collection = ['male', 'female'];
         mockItemData = { id: 1, gender: 'male', isActive: true };
 
         editor = new SingleSelectEditor(editorArguments, 0);
@@ -219,7 +219,7 @@ describe('SingleSelectEditor', () => {
 
       it('should return value as a string when using a dot (.) notation for complex object', () => {
         mockColumn.field = 'employee.gender';
-        (mockColumn.internalColumnEditor as ColumnEditor).collection = ['male', 'female'];
+        mockColumn.editor!.collection = ['male', 'female'];
         mockItemData = { id: 1, employee: { gender: 'male' }, isActive: true };
 
         editor = new SingleSelectEditor(editorArguments);
@@ -232,7 +232,7 @@ describe('SingleSelectEditor', () => {
 
     describe('enableRenderHtml property', () => {
       it('should create the multi-select editor with a default value and have the HTML rendered when "enableRenderHtml" is set', () => {
-        mockColumn.internalColumnEditor = {
+        mockColumn.editor = {
           enableRenderHtml: true,
           collection: [{ value: true, label: 'True', labelPrefix: `<i class="fa fa-check"></i> ` }, { value: false, label: 'False' }],
           customStructure: {
@@ -257,7 +257,7 @@ describe('SingleSelectEditor', () => {
 
       it('should create the multi-select editor with a default value and have the HTML rendered and sanitized when "enableRenderHtml" is set and has <script> tag', () => {
         mockColumn.field = 'isEffort';
-        mockColumn.internalColumnEditor = {
+        mockColumn.editor = {
           enableRenderHtml: true,
           collection: [{ isEffort: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="fa fa-check"></i> ` }, { isEffort: false, label: 'False' }],
           collectionOptions: {
