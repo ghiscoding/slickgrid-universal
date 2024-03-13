@@ -206,7 +206,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     iconExportExcelCommand: 'fa fa-file-excel-o mdi mdi-file-excel-outline',
     iconExportTextDelimitedCommand: 'fa fa-download mdi mdi-download',
     iconRefreshDatasetCommand: 'fa fa-refresh mdi mdi-sync',
-    iconToggleDarkModeCommand: 'fa fa-random mdi mdi-brightness-4',
+    iconToggleDarkModeCommand: 'fa fa-moon-o mdi mdi-brightness-4',
     iconToggleFilterCommand: 'fa fa-random mdi mdi-flip-vertical',
     iconTogglePreHeaderCommand: 'fa fa-random mdi mdi-flip-vertical',
     menuWidth: 16,
