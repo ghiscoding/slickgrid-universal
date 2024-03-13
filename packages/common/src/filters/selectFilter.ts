@@ -56,8 +56,8 @@ export class SelectFilter implements Filter {
    * Initialize the Filter
    */
   constructor(
-    protected readonly translaterService: TranslaterService,
-    protected readonly collectionService: CollectionService,
+    protected readonly translaterService?: TranslaterService,
+    protected readonly collectionService?: CollectionService,
     protected readonly rxjs?: RxJsFacade,
     isMultipleSelect = true) {
     this._isMultipleSelect = isMultipleSelect;
@@ -254,7 +254,7 @@ export class SelectFilter implements Filter {
     if (this.columnFilter && this.columnFilter.collectionFilterBy) {
       const filterBy = this.columnFilter.collectionFilterBy;
       const filterCollectionBy = this.columnFilter.collectionOptions?.filterResultAfterEachPass || null;
-      outputCollection = this.collectionService.filterCollection(outputCollection, filterBy, filterCollectionBy);
+      outputCollection = this.collectionService?.filterCollection(outputCollection, filterBy, filterCollectionBy) || [];
     }
 
     return outputCollection;
@@ -271,7 +271,7 @@ export class SelectFilter implements Filter {
     // user might want to sort the collection
     if (this.columnFilter && this.columnFilter.collectionSortBy) {
       const sortBy = this.columnFilter.collectionSortBy;
-      outputCollection = this.collectionService.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel);
+      outputCollection = this.collectionService?.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel) || [];
     }
 
     return outputCollection;

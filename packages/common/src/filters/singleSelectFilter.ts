@@ -7,7 +7,7 @@ export class SingleSelectFilter extends SelectFilter {
   /**
    * Initialize the Filter
    */
-  constructor(protected readonly translaterService: TranslaterService, protected readonly collectionService: CollectionService, protected readonly rxjs?: RxJsFacade) {
+  constructor(protected readonly translaterService?: TranslaterService, protected readonly collectionService?: CollectionService, protected readonly rxjs?: RxJsFacade) {
     super(translaterService, collectionService, rxjs, false);
   }
 }
