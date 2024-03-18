@@ -109,7 +109,7 @@ export default class Example03 {
           comparer: (a, b) => {
             return this.durationOrderByCount ? (a.count - b.count) : SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc);
           },
-          aggregators: [new Aggregators.Sum('cost')],
+          aggregators: [new Aggregators.Sum('duration'), new Aggregators.Sum('cost')],
           aggregateCollapsed: false,
           collapsed: false
         }
@@ -206,6 +206,7 @@ export default class Example03 {
           getter: 'effortDriven',
           formatter: (g) => `Effort-Driven: ${g.value ? 'True' : 'False'} <span class="text-green">(${g.count} items)</span>`,
           aggregators: [
+            new Aggregators.Sum('duration'),
             new Aggregators.Sum('cost')
           ],
           collapsed: false
@@ -466,6 +467,7 @@ export default class Example03 {
   }
 
   handleOnCellChange(event) {
+    this.sgb.dataView?.refresh();
     console.log('onCellChanged', event.detail);
   }
 
