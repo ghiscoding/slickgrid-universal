@@ -18,7 +18,7 @@ import type {
 
 import {
   autoAddEditorFormatterToColumnsWithEditor,
-  AutocompleterEditor,
+  type AutocompleterEditor,
   GlobalGridOptions,
   GridStateType,
   SlickGroupItemMetadataProvider,
@@ -34,13 +34,13 @@ import {
   GridService,
   GridStateService,
   GroupingAndColspanService,
-  Observable,
+  type Observable,
   PaginationService,
   ResizerService,
   SharedService,
   SortService,
   SlickgridConfig,
-  TranslaterService,
+  type TranslaterService,
   TreeDataService,
 
   // utilities
@@ -57,7 +57,7 @@ import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-compone
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
 import { extend } from '@slickgrid-universal/utils';
 
-import { SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
+import { type SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
 import { UniversalContainerService } from '../services/universalContainer.service';
 
 export class SlickVanillaGridBundle<TData = any> {

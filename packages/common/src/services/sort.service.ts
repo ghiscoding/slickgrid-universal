@@ -15,7 +15,7 @@ import { getDescendantProperty, flattenToParentChildArray } from './utilities';
 import { sortByFieldType } from '../sortComparers/sortUtilities';
 import type { SharedService } from './shared.service';
 import type { RxJsFacade, Subject } from './rxjsFacade';
-import { type SlickDataView, SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
+import { type SlickDataView, type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
 
 export class SortService {
   protected _currentLocalSorters: CurrentSorter[] = [];

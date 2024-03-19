@@ -1,14 +1,14 @@
 import 'jest-extended';
 import {
-  Column,
-  CompositeEditorOpenDetailOption,
-  Editor,
+  type Column,
+  type CompositeEditorOpenDetailOption,
+  type Editor,
   Editors,
-  GridOption,
-  GridService,
+  type GridOption,
+  type GridService,
   type SlickDataView,
   SlickEvent,
-  SlickRowSelectionModel,
+  type SlickRowSelectionModel,
   type SlickGrid,
 } from '@slickgrid-universal/common';
 

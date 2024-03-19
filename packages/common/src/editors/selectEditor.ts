@@ -1,6 +1,6 @@
 import { emptyElement, setDeepValue } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
-import { multipleSelect, MultipleSelectInstance, MultipleSelectOption, OptionRowData } from 'multiple-select-vanilla';
+import { multipleSelect, type MultipleSelectInstance, type MultipleSelectOption, type OptionRowData } from 'multiple-select-vanilla';
 
 import { Constants } from '../constants';
 import { FieldType } from './../enums/index';

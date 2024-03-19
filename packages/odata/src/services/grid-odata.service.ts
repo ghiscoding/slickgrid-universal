@@ -30,7 +30,7 @@ import {
 } from '@slickgrid-universal/common';
 import { getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 import { OdataQueryBuilderService } from './odataQueryBuilder.service';
-import { OdataOption, OdataSortingOption } from '../interfaces/index';
+import type { OdataOption, OdataSortingOption } from '../interfaces/index';
 
 const DEFAULT_ITEMS_PER_PAGE = 25;
 const DEFAULT_PAGE_SIZE = 20;

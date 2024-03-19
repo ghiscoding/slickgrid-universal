@@ -6,20 +6,20 @@ jest.mock('excel-builder-vanilla', () => ({
 }));
 
 import 'jest-extended';
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import {
-  Column,
-  ExcelExportOption,
+  type Column,
+  type ExcelExportOption,
   FieldType,
   FileType,
-  Formatter,
+  type Formatter,
   Formatters,
-  GridOption,
-  GroupTotalsFormatter,
+  type GridOption,
+  type GroupTotalsFormatter,
   GroupTotalFormatters,
-  ItemMetadata,
-  SlickDataView,
-  SlickGrid,
+  type ItemMetadata,
+  type SlickDataView,
+  type SlickGrid,
   SortComparers,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';

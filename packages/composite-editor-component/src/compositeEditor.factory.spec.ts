@@ -1,4 +1,13 @@
-import { Column, CompositeEditorOption, Editors, ElementPosition, GridOption, type SlickDataView, SlickEvent, type SlickGrid } from '@slickgrid-universal/common';
+import {
+  type Column,
+  type CompositeEditorOption,
+  Editors,
+  type ElementPosition,
+  type GridOption,
+  type SlickDataView,
+  SlickEvent,
+  type SlickGrid
+} from '@slickgrid-universal/common';
 
 import { SlickCompositeEditor } from './compositeEditor.factory';
 

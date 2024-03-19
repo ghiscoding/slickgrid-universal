@@ -45,4 +45,4 @@ export { Utilities };
 export { SlickgridConfig } from './slickgrid-config';
 
 // re-export MultipleSelectOption to avoid breaking previous code implementation
-export { MultipleSelectOption } from 'multiple-select-vanilla';
+export type { MultipleSelectOption } from 'multiple-select-vanilla';

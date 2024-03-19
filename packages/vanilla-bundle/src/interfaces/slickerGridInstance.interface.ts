@@ -14,7 +14,7 @@ import type {
   SortService,
   TreeDataService,
 } from '@slickgrid-universal/common';
-import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 export interface SlickerGridInstance<TData = any> {
   /** Slick DataView object */
