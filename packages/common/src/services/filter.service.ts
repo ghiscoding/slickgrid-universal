@@ -1,4 +1,4 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy, extend, stripTags } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 

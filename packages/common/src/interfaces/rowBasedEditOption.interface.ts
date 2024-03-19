@@ -1,6 +1,6 @@
-import { SlickRowBasedEdit } from '../extensions';
-import { Column } from './column.interface';
-import { OnEventArgs } from './onEventArgs.interface';
+import type { SlickRowBasedEdit } from '../extensions';
+import type { Column } from './column.interface';
+import type { OnEventArgs } from './onEventArgs.interface';
 
 export interface RowBasedEditOptions {
   /** the display name of the added actions column */

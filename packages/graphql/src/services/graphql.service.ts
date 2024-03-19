@@ -29,7 +29,7 @@ import {
 } from '@slickgrid-universal/common';
 import { getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
 
-import {
+import type {
   GraphqlCursorPaginationOption,
   GraphqlDatasetFilter,
   GraphqlFilteringOption,

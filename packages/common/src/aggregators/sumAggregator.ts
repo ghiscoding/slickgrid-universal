@@ -1,6 +1,6 @@
 import { isNumber } from '@slickgrid-universal/utils';
 
-import { SlickGroupTotals } from '../core/slickCore';
+import type { SlickGroupTotals } from '../core/slickCore';
 import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class SumAggregator implements Aggregator {

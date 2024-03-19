@@ -1,19 +1,19 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import {
-  Column,
+  type Column,
   DelimiterType,
   FieldType,
   FileType,
-  Formatter,
+  type Formatter,
   Formatters,
-  GridOption,
+  type GridOption,
   GroupTotalFormatters,
-  ItemMetadata,
-  SlickDataView,
-  SlickGrid,
+  type ItemMetadata,
+  type SlickDataView,
+  type SlickGrid,
   SortComparers,
   SortDirectionNumber,
-  TextExportOption,
+  type TextExportOption,
 } from '@slickgrid-universal/common';
 
 import { ContainerServiceStub } from '../../../test/containerServiceStub';

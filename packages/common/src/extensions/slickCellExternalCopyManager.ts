@@ -1,7 +1,7 @@
 import { createDomElement, getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
 
 import type { Column, ExcelCopyBufferOption, ExternalCopyClipCommand, OnEventArgs } from '../interfaces/index';
-import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange, SlickDataView, Utils as SlickUtils } from '../core/index';
+import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange, type SlickDataView, Utils as SlickUtils } from '../core/index';
 
 // using external SlickGrid JS libraries
 const CLEAR_COPY_SELECTION_DELAY = 2000;

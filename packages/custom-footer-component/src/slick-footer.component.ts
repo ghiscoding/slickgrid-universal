@@ -10,7 +10,7 @@ import type {
   TranslaterService,
 } from '@slickgrid-universal/common';
 import { Constants, createDomElement, SlickEventHandler, } from '@slickgrid-universal/common';
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { BindingHelper } from '@slickgrid-universal/binding';
 
 export class SlickFooterComponent {

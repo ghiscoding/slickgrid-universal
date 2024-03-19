@@ -1,5 +1,5 @@
 /* eslint-disable no-cond-assign */
-import Sortable, { SortableEvent } from 'sortablejs';
+import Sortable, { type SortableEvent } from 'sortablejs';
 import DOMPurify from 'isomorphic-dompurify';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
@@ -27,7 +27,7 @@ import {
   Utils,
 } from './slickCore';
 import { Draggable, MouseWheel, Resizable } from './slickInteractions';
-import { SelectionModel } from '../enums/index';
+import type { SelectionModel } from '../enums/index';
 import type {
   CellViewportRange,
   Column,

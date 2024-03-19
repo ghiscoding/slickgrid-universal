@@ -1,4 +1,4 @@
-import { multipleSelect, MultipleSelectInstance, MultipleSelectOption, OptionRowData } from 'multiple-select-vanilla';
+import { multipleSelect, type MultipleSelectInstance, type MultipleSelectOption, type OptionRowData } from 'multiple-select-vanilla';
 import { emptyElement, isPrimitiveValue } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants';

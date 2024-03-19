@@ -2,7 +2,7 @@
 // --
 // Slick Interactions
 
-import { DragPosition } from './drag.interface';
+import type { DragPosition } from './drag.interface';
 
 export interface InteractionBase {
   destroy: () => void;

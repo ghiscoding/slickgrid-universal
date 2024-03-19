@@ -8,10 +8,10 @@ export * from '@slickgrid-universal/utils';
 export {
   // export nearly everything except the EventPubSubService because we want to force users to import from '@slickgrid-universal/event-pub-sub
   // also export BasePubSubService as alias to avoid breaking users who might already use PubSubService from common
-  BasePubSubService as PubSubService,
+  type BasePubSubService as PubSubService,
   EventNamingStyle,
-  EventSubscription,
-  PubSubEvent
+  type EventSubscription,
+  type PubSubEvent
 } from '@slickgrid-universal/event-pub-sub';
 
 // Public classes.
@@ -45,4 +45,4 @@ export { Utilities };
 export { SlickgridConfig } from './slickgrid-config';
 
 // re-export MultipleSelectOption to avoid breaking previous code implementation
-export { MultipleSelectOption } from 'multiple-select-vanilla';
+export type { MultipleSelectOption } from 'multiple-select-vanilla';

@@ -18,14 +18,14 @@ import type {
   OnSetItemsCalledEventArgs,
   PagingInfo
 } from '../interfaces';
-import { CssStyleHash, CustomDataView } from '../interfaces/gridOption.interface';
+import type { CssStyleHash, CustomDataView } from '../interfaces/gridOption.interface';
 import {
   type BasePubSub,
   SlickEvent,
   SlickEventData,
   SlickGroup,
   SlickGroupTotals,
-  SlickNonDataItem,
+  type SlickNonDataItem,
 } from './slickCore';
 import type { SlickGrid } from './slickGrid';
 

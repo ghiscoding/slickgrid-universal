@@ -1,4 +1,4 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement } from '@slickgrid-universal/utils';
 
 import type {
@@ -11,9 +11,9 @@ import type {
   OnSetOptionsEventArgs,
   RowBasedEditOptions,
 } from '../interfaces/index';
-import { SlickEventData, SlickEventHandler, SlickGlobalEditorLock, type SlickGrid } from '../core/index';
-import { GridService } from '../services';
-import { ExtensionUtility } from './extensionUtility';
+import { type SlickEventData, SlickEventHandler, SlickGlobalEditorLock, type SlickGrid } from '../core/index';
+import type { GridService } from '../services';
+import type { ExtensionUtility } from './extensionUtility';
 
 export const ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS = 'slick-rbe-editmode';
 export const ROW_BASED_EDIT_UNSAVED_CELL = 'slick-rbe-unsaved-cell';

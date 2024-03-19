@@ -1,4 +1,4 @@
-import { AnyFunction } from './models/types';
+import type { AnyFunction } from './models/types';
 
 /**
  * Add an item to an array only when the item does not exists, when the item is an object we will be using their "id" to compare

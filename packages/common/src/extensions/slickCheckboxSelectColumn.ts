@@ -5,7 +5,7 @@ import { createDomElement, emptyElement } from '@slickgrid-universal/utils';
 import { type SlickDataView, type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
 import type { CheckboxSelectorOption, Column, DOMMouseOrTouchEvent, GridOption, OnHeaderClickEventArgs, OnKeyDownEventArgs, SelectableOverrideCallback } from '../interfaces/index';
 import { SlickRowSelectionModel } from './slickRowSelectionModel';
-import { SelectionModel } from '../enums/index';
+import type { SelectionModel } from '../enums/index';
 
 export interface RowLookup { [row: number]: boolean; }
 

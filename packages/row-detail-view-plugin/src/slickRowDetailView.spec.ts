@@ -1,5 +1,14 @@
 import 'jest-extended';
-import { Column, type FormatterResultWithHtml, GridOption, type SlickDataView, SlickEvent, SlickEventData, SlickGrid, createDomElement } from '@slickgrid-universal/common';
+import {
+  type Column,
+  type FormatterResultWithHtml,
+  type GridOption,
+  type SlickDataView,
+  SlickEvent,
+  SlickEventData,
+  type SlickGrid,
+  createDomElement
+} from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { SlickRowDetailView } from './slickRowDetailView';

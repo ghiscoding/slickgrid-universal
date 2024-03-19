@@ -1,12 +1,12 @@
-import { StyleSheet } from 'excel-builder-vanilla';
+import { type StyleSheet } from 'excel-builder-vanilla';
 import {
-  Column,
+  type Column,
   FieldType,
-  Formatter,
+  type Formatter,
   Formatters,
-  GridOption,
+  type GridOption,
   GroupTotalFormatters,
-  SlickGrid
+  type SlickGrid
 } from '@slickgrid-universal/common';
 
 import { getExcelFormatFromGridFormatter, getExcelNumberCallback, getNumericFormatterOptions, useCellFormatByFieldType } from './excelUtils';
