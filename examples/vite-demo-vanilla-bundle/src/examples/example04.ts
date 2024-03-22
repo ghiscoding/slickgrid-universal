@@ -1,5 +1,5 @@
 import {
-  AutocompleterOption,
+  type AutocompleterOption,
   type Column,
   type ColumnEditorDualInput,
   type EditCommand,
@@ -15,7 +15,7 @@ import {
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import fetchJsonp from 'fetch-jsonp';
 // import { fetch } from 'whatwg-fetch';
 

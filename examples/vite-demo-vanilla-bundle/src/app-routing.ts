@@ -1,4 +1,4 @@
-import { RouterConfig } from './interfaces';
+import type { RouterConfig } from './interfaces';
 
 import Icons from './examples/icons';
 import Example01 from './examples/example01';

@@ -9,11 +9,11 @@ import {
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import DOMPurify from 'isomorphic-dompurify';
 
 import { ExampleGridOptions } from './example-grid-options';
-import { TranslateService } from '../translate.service';
+import type { TranslateService } from '../translate.service';
 import './example07.scss';
 import '../material-styles.scss';
 

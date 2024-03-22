@@ -1,6 +1,6 @@
 import { AppRouting } from './app-routing';
 import { Renderer } from './renderer';
-import { ElementEventListener, RouterConfig } from './interfaces';
+import type { ElementEventListener, RouterConfig } from './interfaces';
 const pageLayoutGlobs = import.meta.glob('./examples/**/*.html', { query: '?raw', eager: true, import: 'default' });
 
 export class App {
