@@ -59,7 +59,7 @@
   "packageManager": "pnpm@8.15.5",
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^2.2.5",
-    "@commitlint/cli": "^19.2.0",
+    "@commitlint/cli": "^19.2.1",
     "@commitlint/config-conventional": "^19.1.0",
     "@jest/types": "^29.6.3",
     "@lerna-lite/cli": "^3.3.1",
@@ -67,11 +67,11 @@
     "@lerna-lite/run": "^3.3.1",
     "@lerna-lite/watch": "^3.3.1",
     "@types/jest": "^29.5.12",
-    "@types/node": "^20.11.28",
-    "@typescript-eslint/eslint-plugin": "^7.3.0",
-    "@typescript-eslint/parser": "^7.3.0",
+    "@types/node": "^20.11.30",
+    "@typescript-eslint/eslint-plugin": "^7.3.1",
+    "@typescript-eslint/parser": "^7.3.1",
     "cross-env": "^7.0.3",
-    "cypress": "^13.7.0",
+    "cypress": "^13.7.1",
     "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
     "eslint-plugin-cypress": "^2.15.1",
@@ -95,7 +95,7 @@
     "sortablejs": "^1.15.2",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.2",
+    "typescript": "^5.4.3",
     "whatwg-fetch": "^3.6.20"
   },
   "funding": {
