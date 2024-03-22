@@ -14,7 +14,7 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:cypress/recommended"
   ],
-  "plugins": ["@typescript-eslint", "node", "jest"],
+  "plugins": ["@typescript-eslint", "jest", "n"],
   "root": true,
   "env": {
       "browser": true,
