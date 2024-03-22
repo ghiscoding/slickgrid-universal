@@ -1,8 +1,8 @@
 // import { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
 import {
-  AutocompleterOption,
+  type AutocompleterOption,
   type Column,
-  CompositeEditorModalType,
+  type CompositeEditorModalType,
   type EditCommand,
   Editors,
   EventNamingStyle,
@@ -24,7 +24,7 @@ import {
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { type SlickerGridInstance } from '@slickgrid-universal/vanilla-bundle';
-import { VanillaForceGridBundle, Slicker } from '@slickgrid-universal/vanilla-force-bundle';
+import { Slicker, type VanillaForceGridBundle } from '@slickgrid-universal/vanilla-force-bundle';
 import { SlickCompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { ExampleGridOptions } from './example-grid-options';
 import countriesJson from './data/countries.json?raw';

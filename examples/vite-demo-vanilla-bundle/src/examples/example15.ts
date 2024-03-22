@@ -3,8 +3,8 @@ import { type Column, Editors, FieldType, Filters, type GridOption, type GridSta
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { GridOdataService, type OdataServiceApi, type OdataOption } from '@slickgrid-universal/odata';
 import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
-import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { delay, Observable, of, Subject } from 'rxjs';
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { delay, Observable, of, type Subject } from 'rxjs';
 
 import { ExampleGridOptions } from './example-grid-options';
 import Data from './data/customers_100.json';

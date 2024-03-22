@@ -1,6 +1,6 @@
 import {
   type AutocompleterOption,
-  DOMEvent,
+  type DOMEvent,
   type Column,
   type CurrentColumn,
   type CurrentFilter,
@@ -24,7 +24,7 @@ import {
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import moment from 'moment-mini';
 
 import exampleModal from './example11-modal.html?raw';
