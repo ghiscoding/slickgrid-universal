@@ -4,6 +4,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.5.0...v4.6.0) (2024-03-23)
+
+### Bug Fixes
+
+* `column.editor` and `gridOptions.editorFactory` type changed ([#1428](https://github.com/ghiscoding/slickgrid-universal/issues/1428)) ([bf8c5b9](https://github.com/ghiscoding/slickgrid-universal/commit/bf8c5b95aca22bced0d926d6ac118c9fa0e61411)) - by @ghiscoding
+* **build:** add ESLint-TS rules to enforce `type` imports and exports ([#1432](https://github.com/ghiscoding/slickgrid-universal/issues/1432)) ([cce4693](https://github.com/ghiscoding/slickgrid-universal/commit/cce4693556e01d7f664fbe832ae4e7fd5776dc6b)) - by @ghiscoding
+* **common:** add missing Filter `model` Type of `FilterConstructor` ([#1430](https://github.com/ghiscoding/slickgrid-universal/issues/1430)) ([3f3e952](https://github.com/ghiscoding/slickgrid-universal/commit/3f3e952b20b41dda5bf2cd1648c6d6f02e7c7943)) - by @ghiscoding
+* **common:** bump ms-select to fix compatibility problem in Salesforce ([#1425](https://github.com/ghiscoding/slickgrid-universal/issues/1425)) ([d3d2d39](https://github.com/ghiscoding/slickgrid-universal/commit/d3d2d390a8a1b17d0cd3699ddebfea855fdc5f77)) - by @ghiscoding
+* **common:** Select All checkbox shouldn't disappear w/Dark Mode toggle ([#1421](https://github.com/ghiscoding/slickgrid-universal/issues/1421)) ([5fab179](https://github.com/ghiscoding/slickgrid-universal/commit/5fab1792cfdf24172bd46556b6fe5513c93d19d1)) - by @ghiscoding
+* Join type ([#1427](https://github.com/ghiscoding/slickgrid-universal/issues/1427)) ([21c76cc](https://github.com/ghiscoding/slickgrid-universal/commit/21c76cc9d921ad34516bd38070afd791ff55de56)) - by @zewa666
+* **styling:** add border & box-shadow to Flatpickr in Dark Mode ([fdbb6ae](https://github.com/ghiscoding/slickgrid-universal/commit/fdbb6ae9de7069968af747240a9b2ad74b0c8184)) - by @ghiscoding
+* **styling:** add missing orange border for Salesforce modified inputs ([e830dd3](https://github.com/ghiscoding/slickgrid-universal/commit/e830dd3df4c6c0176ac88304247571f5ef05d4ef)) - by @ghiscoding
+* **styling:** add more visual cue for column picker uncheck row select ([b4712e9](https://github.com/ghiscoding/slickgrid-universal/commit/b4712e9a8c03b60457d9033f11affb7364231de2)) - by @ghiscoding
+* **styling:** don't add filled border all side for group-addon btn ([30be835](https://github.com/ghiscoding/slickgrid-universal/commit/30be8353101157a00440dba0357f88879bd3acda)) - by @ghiscoding-SE
+* **styling:** small Composite Editor fixes for Dark Mode ([#1417](https://github.com/ghiscoding/slickgrid-universal/issues/1417)) ([7e00087](https://github.com/ghiscoding/slickgrid-universal/commit/7e000877a85059e23d3aa4c00c04d0e4e1e0abc1)) - by @ghiscoding
+
+### Features
+
+* **common:** add optional "Toggle Dark Mode" in Grid Menu ([#1418](https://github.com/ghiscoding/slickgrid-universal/issues/1418)) ([990c1df](https://github.com/ghiscoding/slickgrid-universal/commit/990c1df2a39a6b5098c991b16f43c5679daf4bb5)) - by @ghiscoding
+* **core:** rename SG `editorClass` & deprecate `internalColumnEditor` ([#1429](https://github.com/ghiscoding/slickgrid-universal/issues/1429)) ([409115c](https://github.com/ghiscoding/slickgrid-universal/commit/409115cecb132556e88abf6e281f4fcb52414d71)) - by @ghiscoding
+* upgrade to ms-select-vanilla v3.x ([#1439](https://github.com/ghiscoding/slickgrid-universal/issues/1439)) ([8f2378e](https://github.com/ghiscoding/slickgrid-universal/commit/8f2378e6cfed3489ce487fe84947bdabd04e31d2)) - by @ghiscoding
+
 # [4.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.4.1...v4.5.0) (2024-03-05)
 
 ### Bug Fixes
