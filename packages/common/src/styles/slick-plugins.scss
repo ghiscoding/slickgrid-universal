@@ -623,13 +623,6 @@ li.hidden {
   font-size: var(--slick-header-font-size, $slick-header-font-size);
   height: var(--slick-header-input-height, $slick-header-input-height);
 
-  div {
-    &:before, &.open:before {
-      font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-      font-size: var(--slick-multiselect-icon-arrow-font-size, $slick-multiselect-icon-arrow-font-size);
-    }
-  }
-
   span {
     font-size: var(--slick-multiselect-input-filter-font-size, $slick-multiselect-input-filter-font-size);
     font-family: var(--slick-multiselect-input-filter-font-family, $slick-multiselect-input-filter-font-family);
@@ -659,52 +652,6 @@ li.hidden {
   border: var(--slick-multiselect-dropdown-border, $slick-multiselect-dropdown-border);
   z-index: var(--slick-multiselect-dropdown-z-index, $slick-multiselect-dropdown-z-index);
 
-  input[type="checkbox"],
-  input[type="radio"] {
-    /* make input checkbox invisible but don't hide it since multiple-select uses hide for something else */
-    opacity: 0;
-    width: 0;
-
-    & + span:before {
-      cursor: pointer;
-      color: var(--slick-multiselect-icon-unchecked-color, $slick-multiselect-icon-unchecked-color);
-      content: var(--slick-multiselect-icon-unchecked, $slick-multiselect-icon-unchecked);
-      display: inline-block;
-      font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-      font-size: var(--slick-multiselect-icon-font-size, $slick-multiselect-icon-font-size);
-      font-weight: normal;
-      opacity: var(--slick-multiselect-unchecked-opacity, $slick-multiselect-unchecked-opacity);
-      vertical-align: var(--slick-multiselect-icon-vertical-align, $slick-multiselect-icon-vertical-align);
-    }
-
-    &:checked + span:before {
-      content: var(--slick-multiselect-icon-checked, $slick-multiselect-icon-checked);
-      opacity: 1;
-    }
-    & + span:before, &:checked + span:before {
-      height: var(--slick-multiselect-icon-height, $slick-multiselect-icon-height);
-      width: var(--slick-multiselect-icon-width, $slick-multiselect-icon-width);
-      border: var(--slick-multiselect-icon-border, $slick-multiselect-icon-border);
-      border-radius: var(--slick-multiselect-icon-border-radius, $slick-multiselect-icon-border-radius);
-      margin: var(--slick-multiselect-icon-margin, $slick-multiselect-icon-margin);
-    }
-  }
-  input[type="radio"] {
-    & + span:before {
-      content: var(--slick-multiselect-icon-radio-unchecked, $slick-multiselect-icon-radio-unchecked);
-    }
-    &:checked + span:before {
-      content: var(--slick-multiselect-icon-radio-checked, $slick-multiselect-icon-radio-checked);
-      color: var(--slick-multiselect-icon-radio-color, $slick-multiselect-icon-radio-color);
-    }
-    & + span:before, &:checked + span:before {
-      height: var(--slick-multiselect-icon-radio-height, $slick-multiselect-icon-radio-height);
-      width: var(--slick-multiselect-icon-radio-width, $slick-multiselect-icon-radio-width);
-      border: var(--slick-multiselect-icon-radio-border, $slick-multiselect-icon-radio-border);
-      border-radius: var(--slick-multiselect-icon-radio-border-radius, $slick-multiselect-icon-radio-border-radius);
-      margin: var(--slick-multiselect-icon-radio-margin, $slick-multiselect-icon-radio-margin);
-    }
-  }
   li {
     margin: 0;
     height: var(--slick-multiselect-item-height, $slick-multiselect-item-height);
@@ -777,14 +724,6 @@ li.hidden {
     &:hover {
       background-color: var(--slick-multiselect-ok-button-bg-hover-color, $slick-multiselect-ok-button-bg-hover-color);
       color: var(--slick-multiselect-ok-button-text-hover-color, $slick-multiselect-ok-button-text-hover-color);
-    }
-  }
-  .ms-search {
-    &:before {
-      font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-      font-size: var(--slick-multiselect-icon-font-size, $slick-multiselect-icon-font-size);
-      right: var(--slick-multiselect-icon-search-margin-right, $slick-multiselect-icon-search-margin-right);
-      position: absolute;
     }
   }
 }

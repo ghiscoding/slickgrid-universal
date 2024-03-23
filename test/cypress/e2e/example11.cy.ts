@@ -314,7 +314,7 @@ describe('Example 11 - Batch Editing', () => {
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).click();
     cy.get('[data-name="editor-completed"]')
-      .find('li.hide-radio.selected')
+      .find('li.selected')
       .find('input[data-name=selectItemeditor-completed][value=true]')
       .should('exist');
 
@@ -798,7 +798,7 @@ describe('Example 11 - Batch Editing', () => {
       .trigger('click');
 
     cy.get('.ms-drop')
-      .find('span:nth(1)')
+      .find('li:nth(1)')
       .click();
 
     cy.get('.grid11')
@@ -814,7 +814,7 @@ describe('Example 11 - Batch Editing', () => {
       .trigger('click');
 
     cy.get('.ms-drop')
-      .find('span:nth(0)')
+      .find('li:nth(0)')
       .click();
 
     cy.get('.filter-title.filled').should('exist');

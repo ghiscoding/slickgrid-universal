@@ -13,6 +13,7 @@ import {
   Formatters,
   type GridOption,
   type LongTextEditorOption,
+  type MultipleSelectOption,
   type OnCompositeEditorChangeEventArgs,
   SlickGlobalEditorLock,
   type SliderOption,
@@ -230,7 +231,8 @@ export default class Example12 {
         exportCustomFormatter: (_row, _cell, value) => this.complexityLevelList[value]?.label,
         filter: {
           model: Filters.multipleSelect,
-          collection: this.complexityLevelList
+          collection: this.complexityLevelList,
+          filterOptions: { showClear: true } as MultipleSelectOption,
         },
         editor: {
           model: Editors.singleSelect,
@@ -253,7 +255,8 @@ export default class Example12 {
         exportWithFormatter: false,
         filter: {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
-          model: Filters.singleSelect
+          model: Filters.singleSelect,
+          filterOptions: { showClear: true } as MultipleSelectOption,
         },
         editor: { model: Editors.checkbox, massUpdate: true, },
         // editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'Yes' }, { value: false, label: 'No' }], },

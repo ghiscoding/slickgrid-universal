@@ -13,6 +13,7 @@ import {
   type Formatter,
   Formatters,
   type GridOption,
+  type MultipleSelectOption,
   OperatorType,
   SlickGlobalEditorLock,
   type SliderOption,
@@ -183,10 +184,16 @@ export default class Example11 {
       {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 80, maxWidth: 100,
         sortable: true, filterable: true,
-        editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], massUpdate: true },
+        editor: {
+          model: Editors.singleSelect,
+          collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }],
+          massUpdate: true,
+          editorOptions: { showClear: true } as MultipleSelectOption
+        },
         filter: {
+          model: Filters.singleSelect,
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
-          model: Filters.singleSelect
+          filterOptions: { showClear: true } as MultipleSelectOption
         },
         exportWithFormatter: false,
         formatter: Formatters.checkmarkMaterial,

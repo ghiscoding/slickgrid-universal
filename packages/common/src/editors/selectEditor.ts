@@ -118,6 +118,7 @@ export class SelectEditor implements Editor {
       minHeight: 25,
       name: this.elementName,
       single: true,
+      singleRadio: true,
       renderOptionLabelAsHtml: this.columnEditor?.enableRenderHtml ?? false,
       sanitizer: (dirtyHtml: string) => sanitizeTextByAvailableSanitizer(this.gridOptions, dirtyHtml),
       onClick: () => this._isValueTouched = true,
@@ -135,6 +136,7 @@ export class SelectEditor implements Editor {
 
     if (isMultipleSelect) {
       libOptions.single = false;
+      libOptions.singleRadio = false;
       libOptions.displayTitle = true;
       libOptions.showOkButton = true;
 

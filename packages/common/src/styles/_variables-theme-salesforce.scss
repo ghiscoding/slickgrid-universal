@@ -129,21 +129,8 @@ $slick-autocomplete-loading-icon-line-height:                 0px !default;
 $slick-autocomplete-loading-icon-vertical-align:              sub !default;
 $slick-compound-filter-operator-select-border:                1px solid #6cb6ff !default;
 $slick-compound-filter-text-color:                            $slick-primary-color-dark !default;
-$slick-multiselect-icon-arrow-font-size:                      calc(#{$slick-icon-font-size} - 4px) !default;
 $slick-multiselect-icon-checked-color:                        $slick-highlight-color !default;
-$slick-multiselect-icon-border:                               1px solid #d6d4d4 !default;
-$slick-multiselect-icon-height:                               15px !default;
-$slick-multiselect-icon-width:                                15px !default;
-$slick-multiselect-icon-margin:                               0px 4px 0 0 !default;
-$slick-multiselect-icon-border-radius:                        0.125rem !default;
-$slick-multiselect-icon-unchecked-color:                      $slick-bare-color !default;
 $slick-multiselect-icon-radio-color:                          $slick-highlight-color !default;
-$slick-multiselect-icon-checked:                              url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-multiselect-icon-checked-color)}" viewBox="0 0 24 24"><path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"></path></svg>') !default;
-$slick-multiselect-icon-unchecked:                            url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="transparent" viewBox="0 0 24 24"><path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,5V19H5V5H19Z"></path></svg>') !default;
-$slick-multiselect-icon-radio-checked:                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-multiselect-icon-radio-color)}" viewBox="0 0 24 24"><path d="M12 3.7c4.6 0 8.3 3.7 8.3 8.3s-3.7 8.3-8.3 8.3-8.3-3.7-8.3-8.3S7.4 3.7 12 3.7z"></path></svg>') !default;
-$slick-multiselect-icon-radio-unchecked:                      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="transparent" viewBox="0 0 24 24"><path d="M12 3.7c4.6 0 8.3 3.7 8.3 8.3s-3.7 8.3-8.3 8.3-8.3-3.7-8.3-8.3S7.4 3.7 12 3.7z"></path></svg>') !default;
-$slick-multiselect-icon-font-size:                            10px !default;
-$slick-multiselect-icon-radio-border-radius:                  50% !default;
 $slick-multiselect-option-highlight-bg-color:                 #fafafa !default;
 $slick-multiselect-unchecked-opacity:                         0.8 !default;
 $slick-preheader-border-right:                                1px solid #e8e8e8 !default;
@@ -205,9 +192,12 @@ $slick-pagination-page-input-border-radius:                   3px !default;
 .ms-drop.ms-dark-mode,
 .slick-dark-mode .ms-dark-mode,
 .slick-dark-mode {
+  --ms-checkbox-color:                      #3a9ef5;
+  --ms-ok-button-text-color:                #3a9ef5;
+  --slick-multiselect-icon-checked-color:   #3a9ef5;
   --slick-base-dark-menu-bg-color:          #212121;
   --slick-cell-box-shadow: 0px 1px 0px      #303030, 0px -1px 0px #303030;
-  --slick-column-picker-checkbox-color:     #2292f4;
+  --slick-column-picker-checkbox-color:     #3a9ef5;
   --slick-compound-filter-text-color:       #66b8ff;
   --slick-filled-filter-color:              #66b8ff;
   --slick-header-filter-row-border-bottom:   2px solid #0389ff;

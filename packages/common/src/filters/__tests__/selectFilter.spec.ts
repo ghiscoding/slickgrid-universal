@@ -180,6 +180,7 @@ describe('SelectFilter', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     mockColumn.filter!.collection = ['male', 'female'];
+    mockColumn.filter!.filterOptions = { showClear: true };
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
@@ -194,6 +195,23 @@ describe('SelectFilter', () => {
     expect(filterListElm.length).toBe(2);
     expect(filterFilledElms.length).toBe(1);
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['male'], shouldTriggerQuery: true });
+  });
+
+  it('should type a search filter and expect clear() method to be called when ms-select clear button is clicked', () => {
+    const spyClear = jest.spyOn(filter, 'clear');
+
+    mockColumn.filter!.collection = ['male', 'female'];
+    mockColumn.filter!.filterOptions = { showClear: true };
+    filter.init(filterArguments);
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
+    filterBtnElm.click();
+
+    filter.msInstance?.setSelects(['male']);
+    filter.msInstance?.close();
+
+    const filterClearElm = filterBtnElm.querySelector(`.ms-icon-close`) as HTMLButtonElement;
+    filterClearElm.click();
+    expect(spyClear).toHaveBeenCalled();
   });
 
   it('should pass a different operator then trigger an input change event and expect the callback to be called with the search terms we select from dropdown list', () => {
