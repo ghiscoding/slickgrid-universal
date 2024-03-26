@@ -70,6 +70,8 @@
     "@slickgrid-universal/binding": "workspace:~",
     "@slickgrid-universal/event-pub-sub": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
+    "@types/dompurify": "^3.0.5",
+    "@types/sortablejs": "^1.15.8",
     "autocompleter": "^9.1.2",
     "dequal": "^2.0.3",
     "excel-builder-vanilla": "3.0.1",
@@ -81,8 +83,6 @@
     "un-flatten-tree": "^2.0.12"
   },
   "devDependencies": {
-    "@types/dompurify": "^3.0.5",
-    "@types/sortablejs": "^1.15.8",
     "autoprefixer": "^10.4.19",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
