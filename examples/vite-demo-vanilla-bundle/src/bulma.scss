@@ -1,12 +1,29 @@
-// 1. Import the initial variables
-@import 'bulma/sass/utilities/initial-variables.sass';
-// 2. Set your own initial variables
-// Update the blue shade, used for links
-// $blue: #06bcef;
+@use 'bulma/bulma';
 
-// 3. Set the derived variables
-// Use the new pink as the primary color
-// $primary: $pink;
+[data-theme=light],
+.theme-light {
+  --bulma-body-color: black;
+}
 
-// 4. Import the rest of Bulma
-@import 'bulma/bulma';
+html, body {
+  --bulma-body-background-color: #fff !important;
+  --bulma-control-height: 30px;
+}
+:root {
+  --bulma-body-family: BlinkMacSystemFont,-apple-system,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,Helvetica,Arial,sans-serif;
+  --bulma-control-height: 30px;
+
+  .title {
+    --bulma-title-weight: 600;
+    margin-bottom: 24px;
+  }
+  .button {
+    --bulma-button-weight: 400;
+    box-shadow: none;
+    border-radius: 2px;
+    height: 30px;
+  }
+  .navbar-item, .navbar-link {
+    color: white;
+  }
+}
