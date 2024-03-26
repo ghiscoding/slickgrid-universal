@@ -1472,7 +1472,7 @@ export class SlickVanillaGridBundle<TData = any> {
         this.loadEditorCollectionAsync(column);
       }
 
-      // if there's already an internalColumnEditor we'll use it, else it would be inside the editor
+      // @deprecated `internalColumnEditor`, if there's already an internalColumnEditor we'll use it, else it would be inside the editor
       const columnEditor = column.internalColumnEditor || column.editor;
 
       return { ...column, editorClass: columnEditor?.model, internalColumnEditor: { ...columnEditor } };

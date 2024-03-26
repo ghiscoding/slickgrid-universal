@@ -231,6 +231,12 @@ importers:
       '@slickgrid-universal/utils':
         specifier: workspace:~
         version: link:../utils
+      '@types/dompurify':
+        specifier: ^3.0.5
+        version: 3.0.5
+      '@types/sortablejs':
+        specifier: ^1.15.8
+        version: 1.15.8
       autocompleter:
         specifier: ^9.1.2
         version: 9.1.2
@@ -259,12 +265,6 @@ importers:
         specifier: ^2.0.12
         version: 2.0.12
     devDependencies:
-      '@types/dompurify':
-        specifier: ^3.0.5
-        version: 3.0.5
-      '@types/sortablejs':
-        specifier: ^1.15.8
-        version: 1.15.8
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.19(postcss@8.4.38)
@@ -2557,7 +2557,6 @@ packages:
 
   /@types/sortablejs@1.15.8:
     resolution: {integrity: sha512-b79830lW+RZfwaztgs1aVPgbasJ8e7AXtZYHTELNXZPsERt4ymJdjV4OccDbHQAvHrCcFpbF78jkm0R6h/pZVg==}
-    dev: true
 
   /@types/stack-utils@2.0.3:
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
