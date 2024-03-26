@@ -18,7 +18,6 @@ import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
-import './example02.scss';
 import '../material-styles.scss';
 
 const NB_ITEMS = 500;

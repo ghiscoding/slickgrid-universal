@@ -22,7 +22,6 @@ import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
-import './example03.scss?inline';
 
 interface ReportItem {
   title: string;

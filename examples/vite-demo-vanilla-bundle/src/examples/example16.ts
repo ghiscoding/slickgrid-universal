@@ -49,6 +49,7 @@ export default class Example16 {
     this.sgb?.dispose();
     this._bindingEventService.unbindAll();
     document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    document.body.setAttribute('data-theme', 'light');
   }
 
   initializeGrid() {
@@ -506,8 +507,10 @@ export default class Example16 {
   toggleDarkMode() {
     this._darkMode = !this._darkMode;
     if (this._darkMode) {
+      document.body.setAttribute('data-theme', 'dark');
       document.querySelector('.demo-container')?.classList.add('dark-mode');
     } else {
+      document.body.setAttribute('data-theme', 'light');
       document.querySelector('.demo-container')?.classList.remove('dark-mode');
     }
     this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });

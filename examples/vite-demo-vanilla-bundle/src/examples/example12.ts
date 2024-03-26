@@ -147,6 +147,7 @@ export default class Example12 {
     this._bindingEventService.unbindAll();
     this.gridContainerElm.remove();
     document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    document.body.setAttribute('data-theme', 'light');
   }
 
   initializeGrid() {
@@ -768,8 +769,10 @@ export default class Example12 {
 
   toggleBodyBackground() {
     if (this._darkMode) {
+      document.body.setAttribute('data-theme', 'dark');
       document.querySelector('.demo-container')?.classList.add('dark-mode');
     } else {
+      document.body.setAttribute('data-theme', 'light');
       document.querySelector('.demo-container')?.classList.remove('dark-mode');
     }
   }

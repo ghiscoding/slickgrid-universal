@@ -24,7 +24,7 @@
     "@slickgrid-universal/text-export": "workspace:~",
     "@slickgrid-universal/vanilla-bundle": "workspace:~",
     "@slickgrid-universal/vanilla-force-bundle": "workspace:~",
-    "bulma": "^0.9.4",
+    "bulma": "^1.0.0",
     "fetch-jsonp": "^1.3.0",
     "flatpickr": "^4.6.13",
     "isomorphic-dompurify": "^2.6.0",
