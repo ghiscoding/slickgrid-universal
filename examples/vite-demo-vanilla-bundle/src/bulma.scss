@@ -1,15 +1,21 @@
 @use 'bulma/bulma';
 
-[data-theme=light],
-.theme-light {
+[data-theme=light], .theme-light {
   --bulma-body-color: black;
+  --bulma-body-background-color: white !important;
+}
+[data-theme=dark], .theme-dark {
+  --bulma-body-color: white;
+  --bulma-body-background-color: #33393e !important;
 }
 
 html, body {
-  --bulma-body-background-color: #fff !important;
+  --bulma-body-background-color: transparent !important;
   --bulma-control-height: 30px;
+  --bulma-hr-background-color: #d8d8d8;
 }
 :root {
+  --bulma-body-background-color: transparent;
   --bulma-body-family: BlinkMacSystemFont,-apple-system,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,Helvetica,Arial,sans-serif;
   --bulma-control-height: 30px;
 
