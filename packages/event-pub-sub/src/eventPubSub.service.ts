@@ -48,14 +48,19 @@ export class EventPubSubService implements BasePubSubService {
    * @param {*} data - optional data to include in the dispatching
    * @param {Boolean} isBubbling - is the event bubbling up?
    * @param {Boolean} isCancelable - is the event cancellable?
+   * @param {Function} externalizeEventCallback - user can optionally retrieve the CustomEvent used in the PubSub for its own usage via a callback (called just before the event dispatch)
    * @returns {Boolean} returns true if either event's cancelable attribute value is false or its preventDefault() method was not invoked, and false otherwise.
    */
-  dispatchCustomEvent<T = any>(eventName: string, data?: T, isBubbling = true, isCancelable = true) {
+  dispatchCustomEvent<T = any>(eventName: string, data?: T, isBubbling = true, isCancelable = true, externalizeEventCallback?: (e: Event) => void) {
     const eventInit: CustomEventInit<T> = { bubbles: isBubbling, cancelable: isCancelable };
     if (data) {
       eventInit.detail = data;
     }
-    return this._elementSource?.dispatchEvent(new CustomEvent<T>(eventName, eventInit));
+    const custEvent = new CustomEvent<T>(eventName, eventInit);
+    if (typeof externalizeEventCallback === 'function') {
+      externalizeEventCallback(custEvent);
+    }
+    return this._elementSource?.dispatchEvent(custEvent);
   }
 
   /**
@@ -93,18 +98,19 @@ export class EventPubSubService implements BasePubSubService {
    * @param {String} event - The event or channel to publish to.
    * @param {*} data - The data to publish on the channel.
    * @param {Number} delay - optional argument to delay the publish event
+   * @param {Function} externalizeEventCallback - user can optionally retrieve the CustomEvent used in the PubSub for its own usage via a callback (called just before the event dispatch)
    * @returns {Boolean | Promise} - return type will be a Boolean unless a `delay` is provided then a `Promise<Boolean>` will be returned
    */
-  publish<T = any>(eventName: string, data?: T, delay?: number): boolean | Promise<boolean> {
+  publish<T = any>(eventName: string, data?: T, delay?: number, externalizeEventCallback?: (e: Event) => void): boolean | Promise<boolean> {
     const eventNameByConvention = this.getEventNameByNamingConvention(eventName, '');
 
     if (delay) {
       return new Promise(resolve => {
         clearTimeout(this._timer);
-        this._timer = setTimeout(() => resolve(this.dispatchCustomEvent<T>(eventNameByConvention, data, true, true)), delay);
+        this._timer = setTimeout(() => resolve(this.dispatchCustomEvent<T>(eventNameByConvention, data, true, true, externalizeEventCallback)), delay);
       });
     } else {
-      return this.dispatchCustomEvent<T>(eventNameByConvention, data, true, true);
+      return this.dispatchCustomEvent<T>(eventNameByConvention, data, true, true, externalizeEventCallback);
     }
   }
 

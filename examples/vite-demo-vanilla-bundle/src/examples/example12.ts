@@ -567,8 +567,7 @@ export default class Example12 {
 
     if (column && item) {
       if (!checkItemIsEditable(item, column, grid)) {
-        event.preventDefault();
-        eventData.stopImmediatePropagation();
+        eventData.preventDefault();
         return false;
       }
     }

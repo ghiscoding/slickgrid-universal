@@ -6,8 +6,10 @@ export interface BasePubSubService {
    * Method to publish a message
    * @param event The event or channel to publish to.
    * @param data The data to publish on the channel.
+   * @param {Number} delay - optional argument to delay the publish event
+   * @param {Function} externalizeEventCallback - user can optionally retrieve the CustomEvent used in the PubSub for its own usage via a callback (called just before the event dispatch)
    */
-  publish<T = any>(_eventName: string | any, _data?: T, _delay?: number): void | boolean | Promise<boolean>;
+  publish<T = any>(_eventName: string | any, _data?: T, _delay?: number, externalizeEventCallback?: (e: Event) => void): void | boolean | Promise<boolean>;
 
   /**
    * Subscribes to a message channel or message type.
