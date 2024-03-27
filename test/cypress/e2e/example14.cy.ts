@@ -237,7 +237,7 @@ describe('Example 14 - Columns Resize by Content', () => {
         .click();
 
       cy.get('.slick-submenu').should('have.length', 1);
-      cy.get('.slick-header-menu.slick-menu-level-1.dropleft') // left align
+      cy.get('.slick-header-menu.slick-menu-level-1.dropright') // right align
         .should('exist')
         .find('.slick-menu-item')
         .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
