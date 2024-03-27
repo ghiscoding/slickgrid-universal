@@ -437,7 +437,7 @@ describe('SlickRowDetailView plugin', () => {
     expect(beforeRowDetailToggleSpy).not.toHaveBeenCalled();
   });
 
-  it('should trigger "onAsyncResponse" with Row Detail template with "useRowClick" enabled and then ', () => {
+  it('should trigger "onAsyncResponse" with Row Detail template with "useRowClick" enabled and then expect DataView to clear/delete rows in the UI when opening Row Detail', () => {
     const mockProcess = jest.fn();
     const updateItemSpy = jest.spyOn(dataviewStub, 'updateItem');
     const asyncEndUpdateSpy = jest.spyOn(plugin.onAsyncEndUpdate, 'notify');

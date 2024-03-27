@@ -224,7 +224,7 @@ export class SlickEvent<ArgType = any> {
         undefined,
         // assign the PubSub internal event to our SlickEventData.nativeEvent
         // so that we can call preventDefault() which would return a `returnValue = false`
-        (evt: Event) => sed.nativeEvent = evt
+        (evt: Event) => sed.nativeEvent ??= evt
       );
       sed.addReturnValue(ret);
     }
