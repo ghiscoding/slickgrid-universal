@@ -674,7 +674,7 @@ describe('Example 01 - Basic Grids', () => {
         .click();
 
       cy.get('.slick-submenu').should('have.length', 2);
-      cy.get('.slick-grid-menu.slick-menu-level-2.dropleft') // left align
+      cy.get('.slick-grid-menu.slick-menu-level-2.dropright') // right align
         .should('exist')
         .find('.slick-menu-item')
         .each(($command, index) => expect($command.text()).to.eq(subCommands2_1[index]));
