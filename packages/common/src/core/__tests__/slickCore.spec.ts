@@ -144,7 +144,7 @@ describe('SlickCore file', () => {
 
       onClick.notify({ hello: 'world' }, ed);
 
-      expect(pubSubServiceStub.publish).toHaveBeenCalledWith('onClick', { eventData: ed, args: { hello: 'world' } });
+      expect(pubSubServiceStub.publish).toHaveBeenCalledWith('onClick', { eventData: ed, args: { hello: 'world' } }, undefined, expect.any(Function));
     });
 
     it('should be able to mix a PubSub with regular SlickEvent subscribe and expect both to be triggered by the SlickEvent call notify()', () => {
@@ -160,7 +160,7 @@ describe('SlickCore file', () => {
       onClick.notify({ hello: 'world' }, ed);
 
       expect(spy1).toHaveBeenCalledWith(ed, { hello: 'world' });
-      expect(pubSubServiceStub.publish).toHaveBeenCalledWith('onClick', { eventData: ed, args: { hello: 'world' } });
+      expect(pubSubServiceStub.publish).toHaveBeenCalledWith('onClick', { eventData: ed, args: { hello: 'world' } }, undefined, expect.any(Function));
     });
 
     it('should be able to call addSlickEventPubSubWhenDefined() and expect PubSub to be available in SlickEvent', () => {
@@ -173,7 +173,21 @@ describe('SlickCore file', () => {
       onClick.notify({ hello: 'world' }, ed);
 
       expect(setPubSubSpy).toHaveBeenCalledWith(pubSubServiceStub);
-      expect(pubSubServiceStub.publish).toHaveBeenCalledWith('onClick', { eventData: ed, args: { hello: 'world' } });
+      expect(pubSubServiceStub.publish).toHaveBeenCalledWith('onClick', { eventData: ed, args: { hello: 'world' } }, undefined, expect.any(Function));
+    });
+
+    it('should be able to add a PubSub instance to the SlickEvent call notify() and expect PubSub .publish() to be called and the externalize event callback be called also', () => {
+      const ed = new SlickEventData();
+      const pubSubCopy = { ...pubSubServiceStub };
+      const onClick = new SlickEvent('onClick', pubSubCopy);
+      pubSubCopy.publish = (_evtName, _data, _delay, evtCallback) => {
+        evtCallback!(new CustomEvent('click'));
+      }
+
+      onClick.notify({ hello: 'world' }, ed);
+
+      expect(ed.nativeEvent).toBeDefined();
+      expect(pubSubServiceStub.publish).toHaveBeenCalledWith('onClick', { eventData: expect.any(Object), args: { hello: 'world' } }, undefined, expect.any(Function));
     });
   });
 
