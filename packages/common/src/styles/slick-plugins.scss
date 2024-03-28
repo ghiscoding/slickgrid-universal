@@ -1150,7 +1150,7 @@ input.flatpickr.form-control {
     }
   }
 
-  &.input-group .input-group-addon:first-child + .filter-input input {
+  .input-group-prepend.operator + .filter-input input.slider-filter-input {
     border-left: 0;
   }
   &:not(.input-group) {

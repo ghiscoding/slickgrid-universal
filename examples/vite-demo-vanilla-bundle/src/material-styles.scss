@@ -110,6 +110,9 @@
           color: var(--slick-dark-text-color);
         }
       }
+      .search-filter.filled .input-group-append {
+        border-left: 0;
+      }
     }
 
     .ms-dark-mode,
