@@ -624,8 +624,8 @@ handleOnBeforeEditCell(event) {
 
   if (column && item) {
     if (!checkItemIsEditable(item, column, grid)) {
-      event.preventDefault();
-      eventData.stopImmediatePropagation();
+      event.preventDefault(); // OR eventData.preventDefault();
+      return false;
     }
   }
   return false;

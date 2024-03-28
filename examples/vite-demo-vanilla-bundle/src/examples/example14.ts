@@ -578,14 +578,13 @@ export default class Example14 {
   }
 
   handleOnBeforeEditCell(event) {
-    const eventData = event.detail.eventData;
     const args = event && event.detail && event.detail.args;
     const { column, item, grid } = args;
 
     if (column && item) {
       if (!checkItemIsEditable(item, column, grid)) {
-        event.preventDefault();
-        eventData.stopImmediatePropagation();
+        event.preventDefault(); // OR eventData.preventDefault();
+        return false;
       }
     }
     return false;
