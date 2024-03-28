@@ -9,10 +9,40 @@ $slick-link-color: #006DCC;
 
 @import './bulma.scss';
 
-.demo-container.container {
-  padding-top: 20px;
-  margin-top: 50px;
+$navbar-height: 52px;
+body {
+  height: calc(100vh - $navbar-height);
 }
+[data-theme=light] {
+  background-color: white;
+}
+[data-theme=dark] {
+  background-color: #33393e;
+}
+.demo-container.container {
+  padding: 15px 20px;
+  margin-top: $navbar-height;
+}
+.demo-container {
+  background-color: #fff;
+  h3 {
+    color: #333;
+  }
+  .subtitle {
+    color: #727272;
+  }
+}
+.demo-container.dark-mode {
+  background-color: #33393e;
+  color: #dddddd;
+  h3 {
+    color: #dddddd;
+  }
+  .subtitle {
+    color: #cbcbcb;
+  }
+}
+
 .fake-hyperlink {
     cursor: pointer;
     color: $slick-link-color;
@@ -70,24 +100,6 @@ input.is-narrow {
 .d-inline-flex {
   display: inline-flex;
 }
-
-.demo-container {
-  background-color: #fff;
-  h3 {
-    color: #333;
-  }
-  .subtitle {
-    color: #727272;
-  }
-}
-.demo-container.dark-mode {
-  padding: 20px;
-  background-color: #33393e;
-  color: #dddddd;
-  h3 {
-    color: #dddddd;
-  }
-  .subtitle {
-    color: #cbcbcb;
-  }
+.columns:not(:last-child) {
+  margin-bottom: calc(1.5rem - 0.9rem);
 }

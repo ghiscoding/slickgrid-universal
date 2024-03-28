@@ -1,5 +1,5 @@
 import { type Column, type GridOption, SlickEventHandler, Editors } from '@slickgrid-universal/common';
-import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 import './example19.scss';
 
@@ -58,7 +58,7 @@ export default class Example19 {
         4: 'blocked-cell',
       }
     };
-    for ( let i = 0; i < NB_ITEMS; i++) {
+    for (let i = 0; i < NB_ITEMS; i++) {
       hash[0][i] = 'blocked-cell';
     }
 
@@ -122,9 +122,9 @@ export default class Example19 {
       // when using the ExcelCopyBuffer, you can see what the selection range is
       enableExcelCopyBuffer: true,
       excelCopyBufferOptions: {
-      //   onCopyCells: (e, args: { ranges: SelectedRange[] }) => console.log('onCopyCells', args.ranges),
-      //   onPasteCells: (e, args: { ranges: SelectedRange[] }) => console.log('onPasteCells', args.ranges),
-      //   onCopyCancelled: (e, args: { ranges: SelectedRange[] }) => console.log('onCopyCancelled', args.ranges),
+        //   onCopyCells: (e, args: { ranges: SelectedRange[] }) => console.log('onCopyCells', args.ranges),
+        //   onPasteCells: (e, args: { ranges: SelectedRange[] }) => console.log('onPasteCells', args.ranges),
+        //   onCopyCancelled: (e, args: { ranges: SelectedRange[] }) => console.log('onCopyCancelled', args.ranges),
         onBeforePasteCell: (_e, args) => {
           // deny the whole first row and the cells C-E of the second row
           return !(args.row === 0 || (args.row === 1 && args.cell > 2 && args.cell < 6));

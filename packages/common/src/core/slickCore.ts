@@ -13,9 +13,10 @@ import type { CSSStyleDeclarationWritable, EditController } from '../interfaces'
 export type Handler<ArgType = any> = (e: SlickEventData<ArgType>, args: ArgType) => void;
 
 export interface BasePubSub {
-  publish<ArgType = any>(_eventName: string | any, _data?: ArgType): any;
+  publish<ArgType = any>(_eventName: string | any, _data?: ArgType, delay?: number, assignEventCallback?: any): any;
   subscribe<ArgType = any>(_eventName: string | Function, _callback: (data: ArgType) => void): any;
 }
+type PubSubPublishType<ArgType = any> = { args: ArgType; eventData?: SlickEventData<ArgType>; nativeEvent?: Event; };
 
 /**
  * An event object for passing data to event handlers and letting them control propagation.
@@ -28,9 +29,9 @@ export class SlickEventData<ArgType = any> {
   protected _isPropagationStopped = false;
   protected _isImmediatePropagationStopped = false;
   protected _isDefaultPrevented = false;
-  protected nativeEvent?: Event | null;
   protected returnValue: any = undefined;
   protected _eventTarget?: EventTarget | null;
+  nativeEvent?: Event | null;
 
   // public props that can be optionally pulled from the provided Event in constructor
   // they are all optional props because it really depends on the type of Event provided (KeyboardEvent, MouseEvent, ...)
@@ -100,7 +101,7 @@ export class SlickEventData<ArgType = any> {
     if (this.nativeEvent) {
       this.nativeEvent.stopImmediatePropagation();
     }
-  };
+  }
 
   /**
    * Returns whether stopImmediatePropagation was called on this event object.\
@@ -109,7 +110,7 @@ export class SlickEventData<ArgType = any> {
    */
   isImmediatePropagationStopped() {
     return this._isImmediatePropagationStopped;
-  };
+  }
 
   getNativeEvent<E extends Event>() {
     return this.nativeEvent as E;
@@ -217,7 +218,14 @@ export class SlickEvent<ArgType = any> {
 
     // user can optionally add a global PubSub Service which makes it easy to publish/subscribe to events
     if (typeof this._pubSubService?.publish === 'function' && this.eventName) {
-      const ret = this._pubSubService.publish<{ args: ArgType; eventData?: SlickEventData<ArgType>; nativeEvent?: Event; }>(this.eventName, { args, eventData: sed });
+      const ret = this._pubSubService.publish<PubSubPublishType>(
+        this.eventName,
+        { args, eventData: sed },
+        undefined,
+        // assign the PubSub internal event to our SlickEventData.nativeEvent
+        // so that we can call preventDefault() which would return a `returnValue = false`
+        (evt: Event) => sed.nativeEvent ??= evt
+      );
       sed.addReturnValue(ret);
     }
     return sed;

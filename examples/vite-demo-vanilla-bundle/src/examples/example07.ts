@@ -9,11 +9,11 @@ import {
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import DOMPurify from 'isomorphic-dompurify';
 
 import { ExampleGridOptions } from './example-grid-options';
-import { TranslateService } from '../translate.service';
+import type { TranslateService } from '../translate.service';
 import './example07.scss';
 import '../material-styles.scss';
 
@@ -64,6 +64,7 @@ export default class Example07 {
     this._bindingEventService.unbindAll();
     document.body.classList.remove('material-theme');
     document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    document.body.setAttribute('data-theme', 'light');
   }
 
   initializeGrid() {
@@ -647,8 +648,10 @@ export default class Example07 {
   toggleDarkMode() {
     this._darkMode = !this._darkMode;
     if (this._darkMode) {
+      document.body.setAttribute('data-theme', 'dark');
       document.querySelector('.demo-container')?.classList.add('dark-mode');
     } else {
+      document.body.setAttribute('data-theme', 'light');
       document.querySelector('.demo-container')?.classList.remove('dark-mode');
     }
     this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });

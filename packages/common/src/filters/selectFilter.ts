@@ -424,15 +424,19 @@ export class SelectFilter implements Filter {
       filter: false,  // input search term on top of the select option list
       maxHeight: 275,
       single: true,
+      singleRadio: true,
+      showSearchClear: true,
       renderOptionLabelAsHtml: this.columnFilter?.enableRenderHtml ?? false,
       sanitizer: (dirtyHtml: string) => sanitizeTextByAvailableSanitizer(this.gridOptions, dirtyHtml),
       // we will subscribe to the onClose event for triggering our callback
       // also add/remove "filled" class for styling purposes
-      onClose: () => this.onTriggerEvent()
+      onClose: () => this.onTriggerEvent(),
+      onClear: () => this.clear(),
     } as MultipleSelectOption;
 
     if (this._isMultipleSelect) {
       options.single = false;
+      options.singleRadio = false;
       options.showOkButton = true;
       options.displayTitle = true; // show tooltip of all selected items while hovering the filter
       const translationPrefix = getTranslationPrefix(this.gridOptions);

@@ -244,7 +244,7 @@ export interface Column<T = any> {
   /** column offset width */
   offsetWidth?: number;
 
-  /** an event handler callback that can be used to execute code before the cell becomes editable (that event happens before the "onCellChange" event) */
+  /** an event handler callback that can be used to execute code or cancel the edit before the cell becomes editable (that event happens before the "onCellChange" event) */
   onBeforeEditCell?: (e: Event, args: OnEventArgs) => void;
 
   /** an event handler callback that can be used to execute code after a cell value changed */

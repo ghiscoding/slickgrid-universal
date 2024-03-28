@@ -15,7 +15,7 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
-import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
 import './example16.scss';
@@ -49,6 +49,7 @@ export default class Example16 {
     this.sgb?.dispose();
     this._bindingEventService.unbindAll();
     document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    document.body.setAttribute('data-theme', 'light');
   }
 
   initializeGrid() {
@@ -506,8 +507,10 @@ export default class Example16 {
   toggleDarkMode() {
     this._darkMode = !this._darkMode;
     if (this._darkMode) {
+      document.body.setAttribute('data-theme', 'dark');
       document.querySelector('.demo-container')?.classList.add('dark-mode');
     } else {
+      document.body.setAttribute('data-theme', 'light');
       document.querySelector('.demo-container')?.classList.remove('dark-mode');
     }
     this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });

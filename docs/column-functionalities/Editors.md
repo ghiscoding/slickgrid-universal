@@ -168,15 +168,15 @@ Instead of an inline editor, you might want to simply click on an edit icon that
 - The `Formatters.editIcon` will give you a pen icon, while a `Formatters.deleteIcon` is an "x" icon
 ```typescript
 this.columnDefinitions = [
-   {
-      id: 'edit', field: 'id',
-      formatter: Formatters.editIcon,
-      maxWidth: 30,
-      onCellClick: (args: OnEventArgs) => {
-        console.log(args);
-      }
-   },
-   // ...
+  {
+    id: 'edit', field: 'id',
+    formatter: Formatters.editIcon,
+    maxWidth: 30,
+    onCellClick: (args: OnEventArgs) => {
+      console.log(args);
+    }
+  },
+  // ...
 ];
 ```
 The `args` returned to the `onCellClick` callback is of type `OnEventArgs` which is the following:
@@ -279,17 +279,17 @@ This can be answered by searching on Stack Overflow Stack Overflow and this is t
   }
 
   handleOnBeforeEditVerifyCellIsEditable(event) {
-        const eventData = event?.detail?.eventData;
-        const args = event?.detail?.args;
-        const { column, item, grid } = args;
+    const eventData = event?.detail?.eventData;
+    const args = event?.detail?.args;
+    const { column, item, grid } = args;
 
-        if (column && item) {
-            if (!checkItemIsEditable(item, column, grid)) {
-                event.preventDefault();
-                eventData.stopImmediatePropagation();
-            }
-        }
+    if (column && item) {
+      if (!checkItemIsEditable(item, column, grid)) {
+        event.preventDefault(); // OR eventData.preventDefault();
         return false;
+      }
+    }
+    return false;
   }
 
   checkItemIsEditable(dataContext, columnDef, grid) {
@@ -318,9 +318,9 @@ For SalesForce it's nearly the same, the only difference is that we add our even
 ```html
 <div class="grid-container slds-p-horizontal" style="padding: 10px">
     <div class="grid1"
-            onvalidationerror={handleOnValidationError}
-            onbeforeeditcell={handleOnBeforeEditVerifyCellIsEditable}
-            onslickergridcreated={handleOnSlickerGridCreated}>
+         onvalidationerror={handleOnValidationError}
+         onbeforeeditcell={handleOnBeforeEditVerifyCellIsEditable}
+         onslickergridcreated={handleOnSlickerGridCreated}>
     </div>
 </div>
 ```

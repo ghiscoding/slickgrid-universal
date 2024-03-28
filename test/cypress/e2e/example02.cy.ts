@@ -95,7 +95,7 @@ describe('Example 02 - Grouping & Aggregators', () => {
       .trigger('click');
 
     cy.get('.ms-drop')
-      .find('span:nth(0)')
+      .find('li:nth(0)')
       .click();
 
     cy.get('.grid2')

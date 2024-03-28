@@ -22,7 +22,7 @@ import {
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import countriesJson from './data/countries.json?raw';
 import { ExampleGridOptions } from './example-grid-options';
@@ -578,14 +578,13 @@ export default class Example14 {
   }
 
   handleOnBeforeEditCell(event) {
-    const eventData = event.detail.eventData;
     const args = event && event.detail && event.detail.args;
     const { column, item, grid } = args;
 
     if (column && item) {
       if (!checkItemIsEditable(item, column, grid)) {
-        event.preventDefault();
-        eventData.stopImmediatePropagation();
+        event.preventDefault(); // OR eventData.preventDefault();
+        return false;
       }
     }
     return false;
