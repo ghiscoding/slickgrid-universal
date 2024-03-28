@@ -561,13 +561,13 @@ export default class Example12 {
   }
 
   handleOnBeforeEditCell(event) {
-    const eventData = event.detail?.eventData;
+    // const eventData = event.detail?.eventData;
     const args = event?.detail?.args;
     const { column, item, grid } = args;
 
     if (column && item) {
       if (!checkItemIsEditable(item, column, grid)) {
-        eventData.preventDefault();
+        event.preventDefault(); // OR eventData.preventDefault();
         return false;
       }
     }
