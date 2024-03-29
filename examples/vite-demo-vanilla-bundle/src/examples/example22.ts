@@ -5,6 +5,7 @@ import {
   type GridOption,
   Editors,
 } from '@slickgrid-universal/common';
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 
@@ -173,33 +174,34 @@ export default class Example22 {
           maxWidth: 100,
         },
         actionButtons: {
-          editButtonClassName: 'button-style padding-1px mr-2',
+          editButtonClassName: 'button-style padding-3px mr-2',
           iconEditButtonClassName: 'mdi mdi-pencil',
           // since no title and no titleKey is provided, it will fallback to the default text provided by the plugin
           // if the title is provided but no titleKey, it will override the default text
           // last but not least if a titleKey is provided, it will use the translation key to translate the text
           // editButtonTitle: 'Edit row',
 
-          cancelButtonClassName: 'button-style padding-1px',
+          cancelButtonClassName: 'button-style padding-3px',
           cancelButtonTitle: 'Cancel row',
           cancelButtonTitleKey: 'RBE_BTN_CANCEL',
           iconCancelButtonClassName: 'mdi mdi-undo color-danger',
           cancelButtonPrompt: 'Are you sure you want to cancel your changes?',
 
-          updateButtonClassName: 'button-style padding-1px mr-2',
+          updateButtonClassName: 'button-style padding-3px mr-2',
           updateButtonTitle: 'Update row',
           updateButtonTitleKey: 'RBE_BTN_UPDATE',
           iconUpdateButtonClassName: 'mdi mdi-check color-success',
           updateButtonPrompt: 'Save changes?',
 
-          deleteButtonClassName: 'button-style padding-1px',
+          deleteButtonClassName: 'button-style padding-3px',
           deleteButtonTitle: 'Delete row',
           iconDeleteButtonClassName: 'mdi mdi-trash-can color-danger',
           deleteButtonPrompt: 'Are you sure you want to delete this row?',
         },
       },
       enableTranslate: true,
-      translater: this.translateService
+      translater: this.translateService,
+      externalResources: [new SlickCustomTooltip()]
     };
   }
 
