@@ -57,6 +57,7 @@ describe('SlickCustomTooltip plugin', () => {
     plugin = new SlickCustomTooltip();
     divContainer.className = `slickgrid-container ${GRID_UID}`;
     document.body.appendChild(divContainer);
+    (document as any).elementFromPoint = jest.fn(); // document.elementFromPoint() doesn't exist in JSDOM but we can mock it
   });
 
   afterEach(() => {
