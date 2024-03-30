@@ -142,20 +142,26 @@ describe('Example 22 - Row Based Editing', () => {
     cy.get('[data-test="toggle-language"]').click();
     cy.get('[data-test="selected-locale"]').should('contain', 'fr.json');
 
-    // this seems to be a bug in Cypress, it doesn't seem to be able to click on the button
-    // but at least it triggers a rerender, which makes it refetch the actual button instead of a cached one
-    cy.get('.action-btns--update').first().click({ force: true });
+    cy.get('.action-btns--edit').first().click();
 
-    cy.get('.action-btns--update')
-      .first()
-      .should(($btn) => {
-        expect($btn.attr('title')).to.equal('Mettre à jour la ligne actuelle');
-      });
+    cy.get('.action-btns--cancel').first().as('cancel-btn');
+    cy.get('@cancel-btn').should(($btn) => {
+      expect($btn.attr('title')).to.equal('Annuler la ligne actuelle');
+    });
+    cy.get('@cancel-btn').trigger('mouseover');
+    cy.get('.slick-custom-tooltip').should('be.visible');
+    cy.get('.slick-custom-tooltip .tooltip-body').contains('Annuler la ligne actuelle');
 
-    cy.get('.action-btns--cancel')
-      .first()
-      .should(($btn) => {
-        expect($btn.attr('title')).to.equal('Annuler la ligne actuelle');
-      });
+    cy.get('.action-btns--update').first().as('update-btn');
+    cy.get('@update-btn').should(($btn) => {
+      expect($btn.attr('title')).to.equal('Mettre à jour la ligne actuelle');
+    });
+
+    cy.get('@update-btn').trigger('mouseover');
+
+    cy.get('.slick-custom-tooltip').should('be.visible');
+    cy.get('.slick-custom-tooltip .tooltip-body').contains('Mettre à jour la ligne actuelle');
+    cy.get('@update-btn').trigger('mouseout');
+    cy.get('@update-btn').first().click();
   });
 });

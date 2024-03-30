@@ -31,6 +31,23 @@ describe('Example 12 - Composite Editor Modal', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
+  it('should display 2 different tooltips when hovering icons on "Title" column', () => {
+    cy.get('.slick-column-name').as('title-column');
+    cy.get('@title-column')
+      .find('.mdi-alert-outline')
+      .trigger('mouseover');
+
+    cy.get('.slick-custom-tooltip').should('be.visible');
+    cy.get('.slick-custom-tooltip .tooltip-body').contains('Task must always be followed by a number');
+
+    cy.get('@title-column')
+      .find('.mdi-information-outline')
+      .trigger('mouseover');
+
+    cy.get('.slick-custom-tooltip').should('be.visible');
+    cy.get('.slick-custom-tooltip .tooltip-body').contains('Title is always rendered as UPPERCASE');
+  });
+
   it('should have "TASK 0" (uppercase) incremented by 1 after each row', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`)
       .contains('TASK 0', { matchCase: false })
@@ -372,7 +389,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.slick-editor-modal').should('not.exist');
   });
 
-  it('should have new TASK 8888 displayed on first row', () => {
+  it('should have new TASK 8899 displayed on first row', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).contains('TASK 8899', { matchCase: false });
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '33 days');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`).should('contain', '17');

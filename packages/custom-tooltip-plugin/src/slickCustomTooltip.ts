@@ -489,7 +489,7 @@ export class SlickCustomTooltip {
       }
 
       // when having multiple tooltips, we'll try to reposition tooltip to mouse position
-      if (this._tooltipElm && this._hasMultipleTooltips) {
+      if (this._tooltipElm && (this._hasMultipleTooltips || this.cellAddonOptions?.repositionByMouseOverTarget)) {
         const mouseElmOffset = getOffset(this._mouseTarget)!;
         if (finalTooltipPosition.includes('left') || finalTooltipPosition === 'top-center') {
           newPositionLeft = mouseElmOffset.left - (this._addonOptions?.offsetArrow ?? 3);
