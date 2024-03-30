@@ -43,6 +43,9 @@ export interface CustomTooltipOption<T = any> {
   /** optional maximum width number (in pixel) of the tooltip container */
   maxWidth?: number;
 
+  /** defaults to 3, arrow position offset that is also used in CSS (see `$slick-tooltip-arrow-side-margin` variable) */
+  offsetArrow?: number;
+
   /** defaults to 0, optional left offset, it must be a positive/negative number (in pixel) that will be added to the offset position calculation of the tooltip container. */
   offsetLeft?: number;
 

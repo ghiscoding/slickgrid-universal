@@ -166,10 +166,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   onHeaderClick: SlickEvent<OnHeaderClickEventArgs>;
   onHeaderContextMenu: SlickEvent<OnHeaderContextMenuEventArgs>;
   onHeaderMouseEnter: SlickEvent<OnHeaderMouseEventArgs>;
+  onHeaderMouseOver: SlickEvent<OnHeaderMouseEventArgs>;
+  onHeaderMouseOut: SlickEvent<OnHeaderMouseEventArgs>;
   onHeaderMouseLeave: SlickEvent<OnHeaderMouseEventArgs>;
   onHeaderRowCellRendered: SlickEvent<OnHeaderRowCellRenderedEventArgs>;
   onHeaderRowMouseEnter: SlickEvent<OnHeaderMouseEventArgs>;
   onHeaderRowMouseLeave: SlickEvent<OnHeaderMouseEventArgs>;
+  onHeaderRowMouseOver: SlickEvent<OnHeaderMouseEventArgs>;
+  onHeaderRowMouseOut: SlickEvent<OnHeaderMouseEventArgs>;
   onKeyDown: SlickEvent<OnKeyDownEventArgs>;
   onMouseEnter: SlickEvent<OnHeaderMouseEventArgs>;
   onMouseLeave: SlickEvent<OnHeaderMouseEventArgs>;
@@ -526,7 +530,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.onHeaderClick = new SlickEvent<OnHeaderClickEventArgs>('onHeaderClick', externalPubSub);
     this.onHeaderContextMenu = new SlickEvent<OnHeaderContextMenuEventArgs>('onHeaderContextMenu', externalPubSub);
     this.onHeaderMouseEnter = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderMouseEnter', externalPubSub);
+    this.onHeaderMouseOver = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderMouseOver', externalPubSub);
+    this.onHeaderMouseOut = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderMouseOut', externalPubSub);
     this.onHeaderMouseLeave = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderMouseLeave', externalPubSub);
+    this.onHeaderRowMouseOver = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderRowMouseOver', externalPubSub);
+    this.onHeaderRowMouseOut = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderRowMouseOut', externalPubSub);
     this.onHeaderRowCellRendered = new SlickEvent<OnHeaderRowCellRenderedEventArgs>('onHeaderRowCellRendered', externalPubSub);
     this.onHeaderRowMouseEnter = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderRowMouseEnter', externalPubSub);
     this.onHeaderRowMouseLeave = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderRowMouseLeave', externalPubSub);
@@ -1619,6 +1627,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       this._bindingEventService.bind(header, 'mouseenter', this.handleHeaderMouseEnter.bind(this) as EventListener);
       this._bindingEventService.bind(header, 'mouseleave', this.handleHeaderMouseLeave.bind(this) as EventListener);
+      this._bindingEventService.bind(header, 'mouseover', this.handleHeaderMouseOver.bind(this) as EventListener);
+      this._bindingEventService.bind(header, 'mouseout', this.handleHeaderMouseOut.bind(this) as EventListener);
 
       Utils.storage.put(header, 'column', m);
 
@@ -1658,6 +1668,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
         this._bindingEventService.bind(headerRowCell, 'mouseenter', this.handleHeaderRowMouseEnter.bind(this) as EventListener);
         this._bindingEventService.bind(headerRowCell, 'mouseleave', this.handleHeaderRowMouseLeave.bind(this) as EventListener);
+        this._bindingEventService.bind(headerRowCell, 'mouseover', this.handleHeaderRowMouseOver.bind(this) as EventListener);
+        this._bindingEventService.bind(headerRowCell, 'mouseout', this.handleHeaderRowMouseOut.bind(this) as EventListener);
 
         Utils.storage.put(headerRowCell, 'column', m);
 
@@ -2533,9 +2545,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     [].forEach.call(headerColumns, (column) => {
       this._bindingEventService.unbindByEventName(column, 'mouseenter');
       this._bindingEventService.unbindByEventName(column, 'mouseleave');
-
-      this._bindingEventService.unbindByEventName(column, 'mouseenter');
-      this._bindingEventService.unbindByEventName(column, 'mouseleave');
+      this._bindingEventService.unbindByEventName(column, 'mouseover');
+      this._bindingEventService.unbindByEventName(column, 'mouseout');
     });
 
     emptyElement(this._container);
@@ -4886,10 +4897,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!c) {
       return;
     }
-    this.triggerEvent(this.onHeaderMouseEnter, {
-      column: c,
-      grid: this
-    }, e);
+    this.triggerEvent(this.onHeaderMouseEnter, { column: c, grid: this }, e);
+  }
+
+  protected handleHeaderMouseOver(e: MouseEvent & { target: HTMLElement; }) {
+    const c = Utils.storage.get(e.target.closest('.slick-header-column'), 'column');
+    if (!c) {
+      return;
+    }
+    this.triggerEvent(this.onHeaderMouseOver, { column: c, grid: this }, e);
   }
 
   protected handleHeaderMouseLeave(e: MouseEvent & { target: HTMLElement; }) {
@@ -4897,10 +4913,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!c) {
       return;
     }
-    this.triggerEvent(this.onHeaderMouseLeave, {
-      column: c,
-      grid: this
-    }, e);
+    this.triggerEvent(this.onHeaderMouseLeave, { column: c, grid: this }, e);
+  }
+
+  protected handleHeaderMouseOut(e: MouseEvent & { target: HTMLElement; }) {
+    const c = Utils.storage.get(e.target.closest('.slick-header-column'), 'column');
+    if (!c) {
+      return;
+    }
+    this.triggerEvent(this.onHeaderMouseOut, { column: c, grid: this }, e);
   }
 
   protected handleHeaderRowMouseEnter(e: MouseEvent & { target: HTMLElement; }) {
@@ -4908,10 +4929,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!c) {
       return;
     }
-    this.triggerEvent(this.onHeaderRowMouseEnter, {
-      column: c,
-      grid: this
-    }, e);
+    this.triggerEvent(this.onHeaderRowMouseEnter, { column: c, grid: this }, e);
+  }
+
+  protected handleHeaderRowMouseOver(e: MouseEvent & { target: HTMLElement; }) {
+    const c = Utils.storage.get(e.target.closest('.slick-headerrow-column'), 'column');
+    if (!c) {
+      return;
+    }
+    this.triggerEvent(this.onHeaderRowMouseOver, { column: c, grid: this }, e);
   }
 
   protected handleHeaderRowMouseLeave(e: MouseEvent & { target: HTMLElement; }) {
@@ -4919,10 +4945,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!c) {
       return;
     }
-    this.triggerEvent(this.onHeaderRowMouseLeave, {
-      column: c,
-      grid: this
-    }, e);
+    this.triggerEvent(this.onHeaderRowMouseLeave, { column: c, grid: this }, e);
+  }
+
+  protected handleHeaderRowMouseOut(e: MouseEvent & { target: HTMLElement; }) {
+    const c = Utils.storage.get(e.target.closest('.slick-headerrow-column'), 'column');
+    if (!c) {
+      return;
+    }
+    this.triggerEvent(this.onHeaderRowMouseOut, { column: c, grid: this }, e);
   }
 
   protected handleHeaderContextMenu(e: MouseEvent & { target: HTMLElement; }) {
