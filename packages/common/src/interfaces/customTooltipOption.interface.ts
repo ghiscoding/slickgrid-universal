@@ -27,6 +27,9 @@ export interface CustomTooltipOption<T = any> {
   /** defaults to False, should we hide the tooltip pointer arrow? */
   hideArrow?: boolean;
 
+  /** defaults to "tooltip-body" class name */
+  bodyClassName?: string;
+
   /** defaults to "slick-custom-tooltip" */
   className?: string;
 
@@ -65,6 +68,9 @@ export interface CustomTooltipOption<T = any> {
 
   /** defaults to False, when set to True it will skip custom tooltip formatter and instead will parse through the regular cell formatter and try to find a `title` to show regular tooltip */
   useRegularTooltip?: boolean;
+
+  /** defaults to False, when set to True it will skip custom tooltip formatter and ONLY use the cell value as tooltip */
+  useRegularTooltipFromCellTextOnly?: boolean;
 
   /**
    * defaults to False, optionally force to retrieve the `title` from the Formatter result instead of the cell itself.

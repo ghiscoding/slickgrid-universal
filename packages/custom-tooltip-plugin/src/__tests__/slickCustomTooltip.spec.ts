@@ -72,6 +72,7 @@ describe('SlickCustomTooltip plugin', () => {
 
   it('should be able to change plugin options', () => {
     const mockOptions = {
+      bodyClassName: 'tooltip-body',
       className: 'some-class',
       offsetArrow: 3,
       offsetLeft: 5,

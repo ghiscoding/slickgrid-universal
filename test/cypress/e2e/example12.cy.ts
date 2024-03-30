@@ -2,7 +2,7 @@ import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
 describe('Example 12 - Composite Editor Modal', () => {
   const fullPreTitles = ['', 'Common Factor', 'Analysis', 'Period', 'Item', ''];
-  const fullTitles = ['', ' Title', 'Duration', 'Cost', '% Complete', 'Complexity', 'Start', 'Completed', 'Finish', 'Product', 'Country of Origin', 'Action'];
+  const fullTitles = ['', ' Title ', 'Duration', 'Cost', '% Complete', 'Complexity', 'Start', 'Completed', 'Finish', 'Product', 'Country of Origin', 'Action'];
 
   const GRID_ROW_HEIGHT = 33;
   const UNSAVED_RGB_COLOR = 'rgb(221, 219, 218)';

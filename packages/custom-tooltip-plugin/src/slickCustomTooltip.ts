@@ -67,11 +67,13 @@ export class SlickCustomTooltip {
   protected _observable$?: Subscription;
   protected _rxjs?: RxJsFacade | null = null;
   protected _sharedService?: SharedService | null = null;
+  protected _tooltipBodyElm?: HTMLDivElement;
   protected _tooltipElm?: HTMLDivElement;
   protected _mousePosition: { x: number; y: number; } = { x: 0, y: 0 };
   protected _mouseTarget?: HTMLElement | null;
   protected _hasMultipleTooltips = false;
   protected _defaultOptions = {
+    bodyClassName: 'tooltip-body',
     className: 'slick-custom-tooltip',
     offsetArrow: 3, // same as `$slick-tooltip-arrow-side-margin` CSS/SASS variable
     offsetLeft: 0,
@@ -100,6 +102,9 @@ export class SlickCustomTooltip {
     return this._cellAddonOptions;
   }
 
+  get bodyClassName(): string {
+    return this._cellAddonOptions?.bodyClassName ?? 'tooltip-body';
+  }
   get className(): string {
     return this._cellAddonOptions?.className ?? 'slick-custom-tooltip';
   }
@@ -331,10 +336,12 @@ export class SlickCustomTooltip {
     this._grid.applyHtmlCode(tmpDiv, this.parseFormatterAndSanitize(formatterOrText, cell, value, columnDef, item));
     this._hasMultipleTooltips = (this._cellNodeElm?.querySelectorAll(SELECTOR_CLOSEST_TOOLTIP_ATTR).length || 0) > 1;
 
-    let tooltipText = columnDef?.toolTip ?? '';
     let tmpTitleElm: HTMLElement | null | undefined;
-    const cellElm = this._mouseTarget ?? this._cellNodeElm as HTMLElement;
+    const cellElm = (this._cellAddonOptions?.useRegularTooltipFromCellTextOnly || !this._mouseTarget)
+      ? this._cellNodeElm as HTMLElement
+      : this._mouseTarget;
 
+    let tooltipText = columnDef?.toolTip ?? '';
     if (!tooltipText) {
       if (this._cellType === 'slick-cell' && cellElm && (cellElm.clientWidth < cellElm.scrollWidth) && !this._cellAddonOptions?.useRegularTooltipFromFormatterOnly) {
         tooltipText = cellElm.textContent?.trim() ?? '';
@@ -374,9 +381,11 @@ export class SlickCustomTooltip {
   protected renderTooltipFormatter(formatter: Formatter | string | undefined, cell: { row: number; cell: number; }, value: any, columnDef: Column, item: unknown, tooltipText?: string, inputTitleElm?: Element | null) {
     // create the tooltip DOM element with the text returned by the Formatter
     this._tooltipElm = createDomElement('div', { className: this.className });
+    this._tooltipBodyElm = createDomElement('div', { className: this.bodyClassName });
     this._tooltipElm.classList.add(this.gridUid);
     this._tooltipElm.classList.add('l' + cell.cell);
     this._tooltipElm.classList.add('r' + cell.cell);
+    this.tooltipElm?.appendChild(this._tooltipBodyElm);
 
     // when cell is currently lock for editing, we'll force a tooltip title search
     // that can happen when user has a formatter but is currently editing and in that case we want the new value
@@ -392,12 +401,12 @@ export class SlickCustomTooltip {
     let finalOutputText = '';
     if (!tooltipText || this._cellAddonOptions?.renderRegularTooltipAsHtml) {
       finalOutputText = sanitizeTextByAvailableSanitizer(this.gridOptions, outputText);
-      this._grid.applyHtmlCode(this._tooltipElm, finalOutputText);
-      this._tooltipElm.style.whiteSpace = this._cellAddonOptions?.whiteSpace ?? this._defaultOptions.whiteSpace as string;
+      this._grid.applyHtmlCode(this._tooltipBodyElm, finalOutputText);
+      this._tooltipBodyElm.style.whiteSpace = this._cellAddonOptions?.whiteSpace ?? this._defaultOptions.whiteSpace as string;
     } else {
       finalOutputText = outputText || '';
-      this._tooltipElm.textContent = finalOutputText;
-      this._tooltipElm.style.whiteSpace = this._cellAddonOptions?.regularTooltipWhiteSpace ?? this._defaultOptions.regularTooltipWhiteSpace as string; // use `pre` so that sequences of white space are collapsed. Lines are broken at newline characters
+      this._tooltipBodyElm.textContent = finalOutputText;
+      this._tooltipBodyElm.style.whiteSpace = this._cellAddonOptions?.regularTooltipWhiteSpace ?? this._defaultOptions.regularTooltipWhiteSpace as string; // use `pre` so that sequences of white space are collapsed. Lines are broken at newline characters
     }
 
     // optional max height/width of the tooltip container
@@ -502,6 +511,10 @@ export class SlickCustomTooltip {
   protected swapAndClearTitleAttribute(inputTitleElm?: Element | null, tooltipText?: string) {
     // the title attribute might be directly on the slick-cell container element (when formatter returns a result object)
     // OR in a child element (most commonly as a custom formatter)
+    let cellWithTitleElm: Element | null | undefined;
+    if (inputTitleElm) {
+      cellWithTitleElm = (this._cellNodeElm && ((this._cellNodeElm.hasAttribute('title') && this._cellNodeElm.getAttribute('title')) ? this._cellNodeElm : this._cellNodeElm?.querySelector('[title]')));
+    }
     const titleElm = inputTitleElm || (this._cellNodeElm && ((this._cellNodeElm.hasAttribute('title') && this._cellNodeElm.getAttribute('title')) ? this._cellNodeElm : this._cellNodeElm?.querySelector('[title]')));
 
     // flip tooltip text from `title` to `data-slick-tooltip`
@@ -509,6 +522,11 @@ export class SlickCustomTooltip {
       titleElm.setAttribute('data-slick-tooltip', tooltipText || '');
       if (titleElm.hasAttribute('title')) {
         titleElm.setAttribute('title', '');
+      }
+      // targeted element might actually not be the cell element,
+      // so let's also clear the cell element title attribute to avoid showing native + custom tooltips
+      if (cellWithTitleElm?.hasAttribute('title')) {
+        cellWithTitleElm.setAttribute('title', '');
       }
     }
   }
