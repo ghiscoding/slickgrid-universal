@@ -66,6 +66,9 @@ export interface CustomTooltipOption<T = any> {
    */
   position?: 'auto' | 'top' | 'bottom' | 'left-align' | 'right-align' | 'center';
 
+  /** should we reposition the tooltip by the mouse target on mouseover */
+  repositionByMouseOverTarget?: boolean;
+
   /** defaults to False, when set to True it will skip custom tooltip formatter and instead will parse through the regular cell formatter and try to find a `title` to show regular tooltip */
   useRegularTooltip?: boolean;
 
