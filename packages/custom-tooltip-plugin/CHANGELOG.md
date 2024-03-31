@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.6.0...v4.6.1) (2024-03-31)
+
+### Bug Fixes
+
+* revisit package `exports` to pass "are the types wrong" ([#1440](https://github.com/ghiscoding/slickgrid-universal/issues/1440)) ([20229f7](https://github.com/ghiscoding/slickgrid-universal/commit/20229f78adef51078f99fce3f5a46ac88280a048)) - by @ghiscoding
+* **tooltip:** allow multiple tooltips per grid cell ([#1448](https://github.com/ghiscoding/slickgrid-universal/issues/1448)) ([061c4a0](https://github.com/ghiscoding/slickgrid-universal/commit/061c4a087484238f7285eb27a1c238ac75972f19)) - by @ghiscoding
+
 # [4.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.5.0...v4.6.0) (2024-03-23)
 
 **Note:** Version bump only for package @slickgrid-universal/custom-tooltip-plugin

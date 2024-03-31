@@ -1,7 +1,7 @@
 {
   "name": "slickgrid-universal-vite-demo",
   "private": true,
-  "version": "4.6.0",
+  "version": "4.6.1",
   "scripts": {
     "build": "tsc && vite build",
     "preview": "vite preview",

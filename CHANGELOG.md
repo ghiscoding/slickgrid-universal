@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.6.0...v4.6.1) (2024-03-31)
+
+### Bug Fixes
+
+* **common:** move DOMPurify/SortableJS [@types](https://github.com/types) as dependencies ([51eaec7](https://github.com/ghiscoding/slickgrid-universal/commit/51eaec756120c93f0fbb9ed58b5784025b808e59)) - by @ghiscoding
+* **common:** switch to `autocompleter-es` to get ESM build ([#1449](https://github.com/ghiscoding/slickgrid-universal/issues/1449)) ([aa59334](https://github.com/ghiscoding/slickgrid-universal/commit/aa59334d280d76078bc9cf36e66daa0bd4c6fac1)) - by @ghiscoding
+* improve Dark Mode styling for icons barely visible in dark ([16b1a6e](https://github.com/ghiscoding/slickgrid-universal/commit/16b1a6e52bec83ed25bca077fe2ea30b5966f3ab)) - by @ghiscoding
+* **pubsub:** externalize PubSub event to SlickEventData to stop bubbling ([#1444](https://github.com/ghiscoding/slickgrid-universal/issues/1444)) ([973d0ab](https://github.com/ghiscoding/slickgrid-universal/commit/973d0abb0a4df050ad68a6c7e6493bf7ae4abd52)) - by @ghiscoding
+* revisit package `exports` to pass "are the types wrong" ([#1440](https://github.com/ghiscoding/slickgrid-universal/issues/1440)) ([20229f7](https://github.com/ghiscoding/slickgrid-universal/commit/20229f78adef51078f99fce3f5a46ac88280a048)) - by @ghiscoding
+* **styling:** missing/too many borders compound filters w/group addon ([#1446](https://github.com/ghiscoding/slickgrid-universal/issues/1446)) ([863933f](https://github.com/ghiscoding/slickgrid-universal/commit/863933f8cd1988f5ae1b387839a99532cd58d92d)) - by @ghiscoding
+* **tooltip:** allow multiple tooltips per grid cell ([#1448](https://github.com/ghiscoding/slickgrid-universal/issues/1448)) ([061c4a0](https://github.com/ghiscoding/slickgrid-universal/commit/061c4a087484238f7285eb27a1c238ac75972f19)) - by @ghiscoding
+
 # [4.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.5.0...v4.6.0) (2024-03-23)
 
 ### Bug Fixes

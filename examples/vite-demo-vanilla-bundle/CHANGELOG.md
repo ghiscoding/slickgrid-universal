@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.6.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.6.0...v4.6.1) (2024-03-31)
+
+### Bug Fixes
+
+* **pubsub:** externalize PubSub event to SlickEventData to stop bubbling ([#1444](https://github.com/ghiscoding/slickgrid-universal/issues/1444)) ([973d0ab](https://github.com/ghiscoding/slickgrid-universal/commit/973d0abb0a4df050ad68a6c7e6493bf7ae4abd52)) - by @ghiscoding
+* **styling:** missing/too many borders compound filters w/group addon ([#1446](https://github.com/ghiscoding/slickgrid-universal/issues/1446)) ([863933f](https://github.com/ghiscoding/slickgrid-universal/commit/863933f8cd1988f5ae1b387839a99532cd58d92d)) - by @ghiscoding
+* **tooltip:** allow multiple tooltips per grid cell ([#1448](https://github.com/ghiscoding/slickgrid-universal/issues/1448)) ([061c4a0](https://github.com/ghiscoding/slickgrid-universal/commit/061c4a087484238f7285eb27a1c238ac75972f19)) - by @ghiscoding
+
 # [4.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.5.0...v4.6.0) (2024-03-23)
 
 ### Bug Fixes
