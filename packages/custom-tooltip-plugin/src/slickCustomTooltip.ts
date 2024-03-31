@@ -458,7 +458,7 @@ export class SlickCustomTooltip {
       // or when using "auto" and we detect not enough available space then we'll position to the "left" of the cell
       // NOTE the class name is for the arrow and is inverse compare to the tooltip itself, so if user ask for "left-align", then the arrow will in fact be "arrow-right-align"
       const position = this._cellAddonOptions?.position ?? 'auto';
-      let finalTooltipPosition = 'right-top';
+      let finalTooltipPosition = '';
       if (position === 'center') {
         newPositionLeft += (cellContainerWidth / 2) - (calculatedTooltipWidth / 2) + (this._cellAddonOptions?.offsetRight ?? 0);
         finalTooltipPosition = 'top-center';

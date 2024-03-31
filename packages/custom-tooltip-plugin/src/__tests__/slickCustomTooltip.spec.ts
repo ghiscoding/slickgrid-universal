@@ -368,6 +368,132 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm).toBeFalsy();
   });
 
+  it('should create a tooltip with only the tooltip pulled from the cell text when enabling option "useRegularTooltip" & "useRegularTooltipFromCellTextOnly" and column definition has a regular formatter with a "title" attribute filled', () => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell l2 r2';
+    cellNode.setAttribute('title', 'tooltip text');
+    const mockColumns = [{ id: 'firstName', field: 'firstName', formatter: () => `<span title="formatter tooltip text">Hello World</span>` }] as Column[];
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: true, useRegularTooltipFromCellTextOnly: true, maxHeight: 100 });
+    (document as any).elementFromPoint.mockReturnValue(cellNode);
+
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeTruthy();
+    expect(tooltipElm.textContent).toBe('tooltip text');
+    expect(tooltipElm.style.maxHeight).toBe('100px');
+    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
+    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
+  });
+
+  it('should create a tooltip aligned left from a cell with multiple span and title attributes', () => {
+    const cellNode = document.createElement('div');
+    const icon1Elm = document.createElement('span');
+    const icon2Elm = document.createElement('span');
+    cellNode.className = 'slick-cell l2 r2';
+    icon1Elm.className = 'mdi mdi-check';
+    icon1Elm.title = 'Click here when successful';
+    icon2Elm.className = 'mdi mdi-cancel';
+    icon2Elm.title = 'Click here to cancel the action';
+    cellNode.appendChild(icon1Elm);
+    cellNode.appendChild(icon2Elm);
+
+    cellNode.setAttribute('title', 'tooltip text');
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+    (getOffset as jest.Mock)
+      .mockReturnValueOnce({ top: 100, left: 333, height: 75, width: 400 }) // mock cell position
+      .mockReturnValueOnce({ top: 100, left: 333, height: 75, width: 400 }); // mock cell position
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: true, maxHeight: 100 });
+    (document as any).elementFromPoint.mockReturnValue(icon2Elm);
+
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeTruthy();
+    expect(tooltipElm.textContent).toBe('Click here to cancel the action');
+    expect(tooltipElm.style.maxHeight).toBe('100px');
+    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
+    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
+  });
+
+  it('should create a tooltip aligned right from a cell with multiple span and title attributes', () => {
+    const cellNode = document.createElement('div');
+    const icon1Elm = document.createElement('span');
+    const icon2Elm = document.createElement('span');
+    cellNode.className = 'slick-cell l2 r2';
+    icon1Elm.className = 'mdi mdi-check';
+    icon1Elm.title = 'Click here when successful';
+    icon2Elm.className = 'mdi mdi-cancel';
+    icon2Elm.title = 'Click here to cancel the action';
+    cellNode.appendChild(icon1Elm);
+    cellNode.appendChild(icon2Elm);
+
+    cellNode.setAttribute('title', 'tooltip text');
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+    (getOffset as jest.Mock)
+      .mockReturnValueOnce({ top: 100, left: 1030, height: 75, width: 400 }) // mock cell position
+      .mockReturnValueOnce({ top: 100, left: 1030, height: 75, width: 400 }); // mock cell position
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: true, maxHeight: 100 });
+    (document as any).elementFromPoint.mockReturnValue(icon2Elm);
+
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeTruthy();
+    expect(tooltipElm.textContent).toBe('Click here to cancel the action');
+    expect(tooltipElm.style.maxHeight).toBe('100px');
+    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
+    expect(tooltipElm.classList.contains('arrow-right-align')).toBeTruthy();
+  });
+
+  it('should NOT create a tooltip from a cell with multiple span and title attributes but it is actually hidden', () => {
+    const cellNode = document.createElement('div');
+    const icon1Elm = document.createElement('span');
+    const icon2Elm = document.createElement('span');
+    cellNode.className = 'slick-cell l2 r2';
+    icon1Elm.className = 'mdi mdi-check';
+    icon1Elm.title = 'Click here when successful';
+    icon2Elm.className = 'mdi mdi-cancel';
+    icon2Elm.title = 'Click here to cancel the action';
+    icon2Elm.style.display = 'none';
+    cellNode.appendChild(icon1Elm);
+    cellNode.appendChild(icon2Elm);
+
+    cellNode.setAttribute('title', 'tooltip text');
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
+    jest.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    jest.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    jest.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    jest.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: true, maxHeight: 100 });
+    (document as any).elementFromPoint.mockReturnValue(icon2Elm);
+
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeFalsy();
+  });
+
   it('should create a tooltip with only the tooltip formatter output when tooltip option has "useRegularTooltip" & "useRegularTooltipFromFormatterOnly" enabled and column definition has a regular formatter with a "title" attribute filled', () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
