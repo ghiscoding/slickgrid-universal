@@ -1,4 +1,4 @@
-import type { AutocompleteItem, AutocompleteSettings } from 'autocompleter';
+import type { AutocompleteItem, AutocompleteSettings } from 'autocompleter-es';
 import type { Column } from './column.interface';
 
 export interface AutoCompleterRenderItemDefinition {
