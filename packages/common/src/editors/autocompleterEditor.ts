@@ -1,5 +1,5 @@
-import autocompleter from 'autocompleter';
-import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
+import autocompleter from 'autocompleter-es';
+import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter-es';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { classNameToList, createDomElement, isObject, isPrimitiveValue, setDeepValue, toKebabCase } from '@slickgrid-universal/utils';
 
