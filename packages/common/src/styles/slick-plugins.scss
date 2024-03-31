@@ -406,15 +406,18 @@ li.hidden {
   background-color: var(--slick-tooltip-background-color, $slick-tooltip-background-color);
   border: var(--slick-tooltip-border, $slick-tooltip-border);
   border-radius: var(--slick-tooltip-border-radius, $slick-tooltip-border-radius);
-  color: var(--slick-tooltip-color, $slick-tooltip-color);
   padding: var(--slick-tooltip-padding, $slick-tooltip-padding);
   font-size: var(--slick-tooltip-font-size, $slick-tooltip-font-size);
   height: var(--slick-tooltip-height, $slick-tooltip-height);
   width: var(--slick-tooltip-width, $slick-tooltip-width);
   z-index: var(--slick-tooltip-z-index, $slick-tooltip-z-index);
-  overflow: var(--slick-tooltip-overflow, $slick-tooltip-overflow);
-  text-overflow: var(--slick-tooltip-text-overflow, $slick-tooltip-text-overflow);
-  white-space: var(--slick-tooltip-white-space, $slick-tooltip-white-space);
+
+  .tooltip-body {
+    color: var(--slick-tooltip-color, $slick-tooltip-color);
+    overflow: var(--slick-tooltip-overflow, $slick-tooltip-overflow);
+    text-overflow: var(--slick-tooltip-text-overflow, $slick-tooltip-text-overflow);
+    white-space: var(--slick-tooltip-white-space, $slick-tooltip-white-space);
+  }
 
   &.tooltip-arrow::after {
     content: "";

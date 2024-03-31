@@ -495,7 +495,7 @@ describe('Example 11 - Batch Editing', () => {
       .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
   });
 
-  it('should click on "Clear Local Storage" and expect to be back to original grid with all the columns', () => {
+  it('should "Clear Local Storage" and expect to be back to original grid with all the columns', () => {
     cy.get('[data-test="clear-storage-btn"]')
       .click();
 
@@ -724,7 +724,7 @@ describe('Example 11 - Batch Editing', () => {
       .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
   });
 
-  it('should have 3 filters with "filled" css class when having values', () => {
+  it('should expect 3 filters with "filled" css class when having values', () => {
     cy.get('.filter-title.filled').should('exist');
     cy.get('.filter-duration.filled').should('exist');
     cy.get('.filter-countryOfOrigin.filled').should('exist');
@@ -828,5 +828,23 @@ describe('Example 11 - Batch Editing', () => {
       .should($span => {
         expect(Number($span.text())).to.eq(100);
       });
+  });
+
+  it('should display 2 different tooltips when hovering icons from "Action" column', () => {
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(10)`).as('first-row-action-cell');
+    cy.get('@first-row-action-cell').find('.action-btns .mdi-close').as('delete-row-btn');
+    cy.get('@first-row-action-cell').find('.action-btns .mdi-check-underline').as('mark-completed-btn');
+
+    cy.get('@delete-row-btn')
+      .trigger('mouseover');
+
+    cy.get('.slick-custom-tooltip').should('be.visible');
+    cy.get('.slick-custom-tooltip .tooltip-body').contains('Delete Current Row');
+
+    cy.get('@mark-completed-btn')
+      .trigger('mouseover');
+
+    cy.get('.slick-custom-tooltip').should('be.visible');
+    cy.get('.slick-custom-tooltip .tooltip-body').contains('Mark as Completed');
   });
 });

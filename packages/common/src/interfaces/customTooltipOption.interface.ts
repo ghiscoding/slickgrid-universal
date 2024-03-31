@@ -27,6 +27,9 @@ export interface CustomTooltipOption<T = any> {
   /** defaults to False, should we hide the tooltip pointer arrow? */
   hideArrow?: boolean;
 
+  /** defaults to "tooltip-body" class name */
+  bodyClassName?: string;
+
   /** defaults to "slick-custom-tooltip" */
   className?: string;
 
@@ -42,6 +45,9 @@ export interface CustomTooltipOption<T = any> {
 
   /** optional maximum width number (in pixel) of the tooltip container */
   maxWidth?: number;
+
+  /** defaults to 3, arrow position offset that is also used in CSS (see `$slick-tooltip-arrow-side-margin` variable) */
+  offsetArrow?: number;
 
   /** defaults to 0, optional left offset, it must be a positive/negative number (in pixel) that will be added to the offset position calculation of the tooltip container. */
   offsetLeft?: number;
@@ -60,8 +66,14 @@ export interface CustomTooltipOption<T = any> {
    */
   position?: 'auto' | 'top' | 'bottom' | 'left-align' | 'right-align' | 'center';
 
+  /** should we reposition the tooltip by the mouse target on mouseover */
+  repositionByMouseOverTarget?: boolean;
+
   /** defaults to False, when set to True it will skip custom tooltip formatter and instead will parse through the regular cell formatter and try to find a `title` to show regular tooltip */
   useRegularTooltip?: boolean;
+
+  /** defaults to False, when set to True it will skip custom tooltip formatter and ONLY use the cell value as tooltip */
+  useRegularTooltipFromCellTextOnly?: boolean;
 
   /**
    * defaults to False, optionally force to retrieve the `title` from the Formatter result instead of the cell itself.
