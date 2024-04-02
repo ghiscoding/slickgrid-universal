@@ -237,9 +237,9 @@ importers:
       '@types/sortablejs':
         specifier: ^1.15.8
         version: 1.15.8
-      autocompleter-es:
-        specifier: ^9.1.4
-        version: 9.1.4
+      autocompleter:
+        specifier: ^9.2.0
+        version: 9.2.0
       dequal:
         specifier: ^2.0.3
         version: 2.0.3
@@ -3096,8 +3096,8 @@ packages:
     engines: {node: '>= 4.0.0'}
     dev: true
 
-  /autocompleter-es@9.1.4:
-    resolution: {integrity: sha512-rC/EGS0lFLqDzpN1iOlwlNYSNjzPoK3E7Yq41ffaKuWHU3Dv4wtkxuxQMFMrV2JWrDCfu6l4zYZZkTPIjPSJrg==}
+  /autocompleter@9.2.0:
+    resolution: {integrity: sha512-kRc2TlD/zOeZ+C0MzDhRSZNDTIS3FEfyg37oqIDZr9u/9BrOqX2USEjTn3Kc3mMm5s3pJ9V6ugUO2MTpDdA9yw==}
     dev: false
 
   /autoprefixer@10.4.19(postcss@8.4.38):

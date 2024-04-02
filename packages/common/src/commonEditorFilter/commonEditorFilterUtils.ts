@@ -1,4 +1,4 @@
-import type { AutocompleteItem } from 'autocompleter-es';
+import type { AutocompleteItem } from 'autocompleter';
 
 import type { AutocompleterOption } from '../interfaces/index';
 
