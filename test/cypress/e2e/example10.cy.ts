@@ -1,4 +1,4 @@
-import moment from 'moment-mini';
+import moment from 'moment';
 
 function removeSpaces(textS) {
   return `${textS}`.replace(/\s+/g, '');

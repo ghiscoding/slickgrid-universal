@@ -1,4 +1,4 @@
-import moment from 'moment-mini';
+import moment from 'moment';
 import { removeExtraSpaces } from '../plugins/utilities';
 
 describe('Example 02 - Grouping & Aggregators', () => {

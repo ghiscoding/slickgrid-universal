@@ -1,4 +1,4 @@
-import * as moment_ from 'moment-mini';
+import * as moment_ from 'moment';
 const moment = (moment_ as any)['default'] || moment_;
 
 import { FieldType } from '../enums/fieldType.enum';

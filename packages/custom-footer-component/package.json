@@ -51,7 +51,7 @@
   "dependencies": {
     "@slickgrid-universal/binding": "workspace:~",
     "@slickgrid-universal/common": "workspace:~",
-    "moment-mini": "^2.29.4"
+    "moment": "^2.30.1"
   },
   "devDependencies": {
     "@slickgrid-universal/event-pub-sub": "workspace:~"

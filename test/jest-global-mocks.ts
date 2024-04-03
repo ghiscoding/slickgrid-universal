@@ -31,7 +31,7 @@ jest.mock('flatpickr', () => {
   const actual = jest.requireActual('flatpickr');
   return { __esModule: true, ...actual, default: actual };
 });
-jest.mock('moment-mini', () => {
-  const actual = jest.requireActual('moment-mini');
+jest.mock('moment', () => {
+  const actual = jest.requireActual('moment');
   return { __esModule: true, ...actual, default: actual };
 });
