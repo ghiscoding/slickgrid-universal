@@ -63,9 +63,6 @@ jobs:
 
       - run: pnpm --version
 
-      - name: TSC Build (esm)
-        run: pnpm build:esm:styles
-
       - name: Website Dev Build (served for Cypress)
         run: pnpm build:dev
 
