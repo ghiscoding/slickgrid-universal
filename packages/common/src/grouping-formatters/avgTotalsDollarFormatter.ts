@@ -1,3 +1,5 @@
+import { isNumber } from '@slickgrid-universal/utils';
+
 import type { Column, GroupTotalsFormatter } from './../interfaces/index';
 import { retrieveFormatterOptions } from '../formatters/formatterUtilities';
 import { formatNumber } from './../services/utilities';
@@ -17,7 +19,7 @@ export const avgTotalsDollarFormatter: GroupTotalsFormatter = (totals: any, colu
     wrapNegativeNumber
   } = retrieveFormatterOptions(columnDef, grid, 'currency', 'group');
 
-  if (val !== null && !isNaN(+val)) {
+  if (isNumber(val)) {
     const formattedNumber = formatNumber(val, minDecimal, maxDecimal, wrapNegativeNumber, '$', '', decimalSeparator, thousandSeparator);
     return `${prefix}${formattedNumber}${suffix}`;
   }

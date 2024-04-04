@@ -249,9 +249,9 @@ export function hasData(value: any): boolean {
 
 /**
  * Check if input value is a number, by default it won't be a strict checking
- * but optionally we could check for strict equality, for example in strict "3" will return False but without strict it will return True
+ * but optionally we could check for strict equality, for example "3" in strict mode would return False but True when non-strict.
  * @param value - input value of any type
- * @param strict - when using strict it also check for strict equality, for example in strict "3" would return False but without strict it would return True
+ * @param strict - when using strict it also check for strict equality, e.g "3" in strict mode would return False but True when non-strict
  */
 export function isNumber(value: any, strict = false) {
   if (strict) {
