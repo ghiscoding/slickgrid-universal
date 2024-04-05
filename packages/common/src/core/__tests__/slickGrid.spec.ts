@@ -4346,7 +4346,7 @@ describe('SlickGrid core file', () => {
 
         expect(grid.getCellFromEvent(null as any)).toBeNull();
         expect(grid.getCellFromEvent(new SlickEventData(null))).toBeNull();
-      })
+      });
 
       it('should return null when clicked cell is not a slick-cell closest ancestor', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
@@ -5568,7 +5568,7 @@ describe('SlickGrid core file', () => {
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
         grid.setActiveCell(0, 1);
         grid.editActiveCell(InputEditor as any, true);
-        (InputEditor.prototype as any).keyCaptureList = ['1', '2', '3'];
+        (InputEditor.prototype as any).keyCaptureList = [1, 2, 3];
         const onKeyDownSpy = jest.spyOn(grid.onKeyDown, 'notify');
         const event = new CustomEvent('keydown');
         const stopPropagationSpy = jest.spyOn(event, 'stopPropagation');
