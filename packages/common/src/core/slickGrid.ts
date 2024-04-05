@@ -4761,7 +4761,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (!e.shiftKey && !e.altKey) {
         // editor may specify an array of keys to bubble
         if (this._options.editable && this.currentEditor?.keyCaptureList) {
-          if (this.currentEditor.keyCaptureList.indexOf(String(e.which)) > -1) {
+          if (this.currentEditor.keyCaptureList.indexOf(e.which) > -1) {
             return;
           }
         }
