@@ -3,8 +3,7 @@ import { createDomElement, destroyAllElementProps, emptyElement, setDeepValue } 
 import flatpickr from 'flatpickr';
 import type { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
 import type { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
-import * as moment_ from 'moment';
-const moment = (moment_ as any)['default'] || moment_;
+import moment from 'moment-tiny';
 
 import { Constants } from './../constants';
 import { FieldType } from '../enums/index';

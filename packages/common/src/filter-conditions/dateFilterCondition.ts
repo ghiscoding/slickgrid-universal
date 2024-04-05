@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-tiny';
 
 import { FieldType, OperatorType, type SearchTerm } from '../enums/index';
 import type { FilterConditionOption } from '../interfaces/index';

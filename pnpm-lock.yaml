@@ -92,9 +92,9 @@ importers:
       jsdom-global:
         specifier: ^3.0.2
         version: 3.0.2(jsdom@24.0.0)
-      moment:
-        specifier: ^2.30.1
-        version: 2.30.1
+      moment-tiny:
+        specifier: ^2.30.2
+        version: 2.30.2
       npm-run-all2:
         specifier: ^6.1.2
         version: 6.1.2
@@ -182,9 +182,9 @@ importers:
       isomorphic-dompurify:
         specifier: ^2.6.0
         version: 2.6.0
-      moment:
-        specifier: ^2.30.1
-        version: 2.30.1
+      moment-tiny:
+        specifier: ^2.30.2
+        version: 2.30.2
       multiple-select-vanilla:
         specifier: ^3.1.0
         version: 3.1.0
@@ -252,9 +252,9 @@ importers:
       isomorphic-dompurify:
         specifier: ^2.6.0
         version: 2.6.0
-      moment:
-        specifier: ^2.30.1
-        version: 2.30.1
+      moment-tiny:
+        specifier: ^2.30.2
+        version: 2.30.2
       multiple-select-vanilla:
         specifier: ^3.1.0
         version: 3.1.0
@@ -310,9 +310,9 @@ importers:
       '@slickgrid-universal/common':
         specifier: workspace:~
         version: link:../common
-      moment:
-        specifier: ^2.30.1
-        version: 2.30.1
+      moment-tiny:
+        specifier: ^2.30.2
+        version: 2.30.2
     devDependencies:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:~
@@ -357,9 +357,9 @@ importers:
       excel-builder-vanilla:
         specifier: ^3.0.1
         version: 3.0.1
-      moment:
-        specifier: ^2.30.1
-        version: 2.30.1
+      moment-tiny:
+        specifier: ^2.30.2
+        version: 2.30.2
     devDependencies:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:~
@@ -374,9 +374,9 @@ importers:
         specifier: workspace:~
         version: link:../utils
     devDependencies:
-      moment:
-        specifier: ^2.30.1
-        version: 2.30.1
+      moment-tiny:
+        specifier: ^2.30.2
+        version: 2.30.2
 
   packages/odata:
     dependencies:
@@ -6976,8 +6976,8 @@ packages:
     hasBin: true
     dev: true
 
-  /moment@2.30.1:
-    resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
+  /moment-tiny@2.30.2:
+    resolution: {integrity: sha512-zt8N8xYu/hDGDQ3GuXLvqy+HUFqusPx6382gDkoc3QyQKw61WIt1yBWhPWm96mQfHt7LR6wtgQgf+GdS/OX32A==}
 
   /ms@2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}

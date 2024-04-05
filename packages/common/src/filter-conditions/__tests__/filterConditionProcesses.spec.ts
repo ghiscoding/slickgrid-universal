@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-tiny';
 
 import { getParsedSearchTermsByFieldType } from '../filterConditionProcesses';
 

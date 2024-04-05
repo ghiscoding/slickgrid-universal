@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-tiny';
 import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
 describe('Example 11 - Batch Editing', () => {

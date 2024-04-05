@@ -1,9 +1,9 @@
-import moment from 'moment';
+import moment from 'moment-tiny';
 
 import { Editors } from '../index';
 import { DateEditor } from '../dateEditor';
 import { FieldType } from '../../enums/index';
-import { Column, ColumnEditor, Editor, EditorArguments, GridOption } from '../../interfaces/index';
+import { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 

@@ -1,5 +1,5 @@
 import { getHtmlStringOutput, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
-import moment from 'moment';
+import moment from 'moment-tiny';
 
 import { FieldType } from '../enums/fieldType.enum';
 import type { Column, ExcelExportOption, Formatter, FormatterResultWithHtml, FormatterResultWithText, GridOption, TextExportOption } from '../interfaces/index';
