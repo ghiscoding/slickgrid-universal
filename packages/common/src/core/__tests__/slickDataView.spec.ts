@@ -38,7 +38,7 @@ describe('SlickDatView core file', () => {
     const mockData = [
       { id: 1, firstName: 'John', lastName: 'Doe' },
       { id: 2, firstName: 'Jane', lastName: 'Doe' },
-    ]
+    ];
     dv = new SlickDataView({});
     dv.addItem(mockData[0]);
     dv.addItem(mockData[1]);
@@ -521,7 +521,7 @@ describe('SlickDatView core file', () => {
       const mockData = [
         { id: 1, firstName: 'John', lastName: 'Doe' },
         { id: 2, firstName: 'Jane', lastName: 'Doe' },
-      ]
+      ];
       dv = new SlickDataView({});
       const refreshSpy = jest.spyOn(dv, 'refresh');
       dv.setItems(mockData);
@@ -563,7 +563,7 @@ describe('SlickDatView core file', () => {
       const mockData = [
         { id: 1, firstName: 'John', lastName: 'Doe' },
         { id: 2, firstName: 'Jane', lastName: 'Doe' },
-      ]
+      ];
       dv = new SlickDataView({});
       const refreshSpy = jest.spyOn(dv, 'refresh');
       dv.setItems(mockData);
@@ -612,7 +612,7 @@ describe('SlickDatView core file', () => {
         { id: 1, firstName: 'John', lastName: 'Doe' },
         { id: 2, firstName: 'Jane', lastName: 'Doe' },
         { id: 3, firstName: 'Bob', lastName: 'Smith' },
-      ]
+      ];
       dv = new SlickDataView({});
       const refreshSpy = jest.spyOn(dv, 'refresh');
       dv.setItems([...mockData]);
@@ -714,7 +714,7 @@ describe('SlickDatView core file', () => {
         { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
         { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 },
         { id: 3, firstName: 'John', lastName: 'Smith', age: 26 },
-      ]
+      ];
       dv = new SlickDataView({});
       const refreshSpy = jest.spyOn(dv, 'refresh');
       dv.setItems([...mockData]);
@@ -798,7 +798,7 @@ describe('SlickDatView core file', () => {
         { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
         { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 },
         { id: 3, firstName: 'John', lastName: 'Smith', age: 26 },
-      ]
+      ];
       dv = new SlickDataView({});
       const refreshSpy = jest.spyOn(dv, 'refresh');
       dv.setItems([...mockData]);
@@ -879,7 +879,7 @@ describe('SlickDatView core file', () => {
         { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
         { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 },
         { id: 3, firstName: 'John', lastName: 'Smith', age: 26 },
-      ]
+      ];
       dv = new SlickDataView({});
       const refreshSpy = jest.spyOn(dv, 'refresh');
       dv.setItems([...mockData]);
@@ -1022,7 +1022,7 @@ describe('SlickDatView core file', () => {
         { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
         { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 },
         { id: 3, firstName: 'John', lastName: 'Smith', age: 26 },
-      ]
+      ];
       dv = new SlickDataView({});
       dv.setItems([...mockData]);
       const refreshSpy = jest.spyOn(dv, 'refresh');
@@ -1130,7 +1130,7 @@ describe('SlickDatView core file', () => {
         { id: 1, firstName: 'John', lastName: 'Doe', age: 30 },
         { id: 2, firstName: 'Jane', lastName: 'Doe', age: 28 },
         { id: 3, firstName: 'John', lastName: 'Smith', age: 26 },
-      ]
+      ];
       dv = new SlickDataView({});
       const refreshSpy = jest.spyOn(dv, 'refresh');
       dv.setItems([...mockData]);
@@ -1468,6 +1468,7 @@ describe('SlickDatView core file', () => {
 
       expect(dv.getItemCount()).toBe(4);
       expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilterArgs()).toEqual({ searchString });
       expect(dv.getFilteredItemCount()).toBe(2);
       expect(dv.getFilteredItems()).toEqual([{ id: 1, name: 'Bob', age: 33 }, { id: 0, name: 'Hobby', age: 44 }]);
     });
@@ -1484,6 +1485,7 @@ describe('SlickDatView core file', () => {
 
       expect(dv.getItemCount()).toBe(4);
       expect(dv.getFilter()).toBeTruthy();
+      expect(dv.getFilterArgs()).toEqual({ searchString });
       expect(dv.getFilteredItemCount()).toBe(2);
       expect(dv.getFilteredItems()).toEqual([{ id: 1, name: 'Bob', age: 33 }, { id: 0, name: 'Hobby', age: 44 }]);
     });
@@ -1577,7 +1579,7 @@ describe('SlickDatView core file', () => {
       // change filter without changing pagination will result in 2 changes but only 1 defined as changed because we ignore diffs from 0-1
       dv.setRefreshHints({ ignoreDiffsBefore: 1, ignoreDiffsAfter: 3 });
       items[0].id = 8;
-      dv.setFilter(function (item) { return item.id >= 0 });
+      dv.setFilter(function (item) { return item.id >= 0; });
       expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 3, totalRows: 5 }, null, dv);
       expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
       expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
@@ -1615,7 +1617,7 @@ describe('SlickDatView core file', () => {
       dv.setPagingOptions({ dataView: dv, pageNum: 2, pageSize: 2 });
 
       // change filter without changing pagination & expect pageNum to be recalculated
-      dv.setFilter(function (item) { return item.id >= 10 });
+      dv.setFilter(function (item) { return item.id >= 10; });
       expect(onPagingInfoSpy).toHaveBeenCalledWith({ dataView: dv, pageNum: 0, pageSize: 2, totalPages: 1, totalRows: 1 }, null, dv);
       expect(onRowCountChangeSpy).toHaveBeenCalledWith({ dataView: dv, previous: 2, current: 1, itemCount: 5, callingOnRowsChanged: true }, null, dv);
       expect(onRowsChangeSpy).toHaveBeenCalledWith({ dataView: dv, rows: [0, 1], itemCount: 5, calledOnRowCountChanged: true }, null, dv);
