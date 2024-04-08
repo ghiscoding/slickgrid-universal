@@ -1,5 +1,3 @@
-/* eslint-disable no-new-func */
-/* eslint-disable no-bitwise */
 import { type AnyFunction, extend, getFunctionDetails, isDefined } from '@slickgrid-universal/utils';
 
 import { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider';

@@ -414,7 +414,7 @@ export class FilterService {
       // run regex to find possible filter operators unless the user disabled the feature
       const autoParseInputFilterOperator = columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
       matches = autoParseInputFilterOperator !== false
-        ? fieldSearchValue.match(/^([<>!=\*]{0,2})(.*[^<>!=\*])?([\*]?)$/) // group 1: Operator, 2: searchValue, 3: last char is '*' (meaning starts with, ex.: abc*)
+        ? fieldSearchValue.match(/^([<>!=*]{0,2})(.*[^<>!=*])?([*]?)$/) // group 1: Operator, 2: searchValue, 3: last char is '*' (meaning starts with, ex.: abc*)
         : [fieldSearchValue, '', fieldSearchValue, '']; // when parsing is disabled, we'll only keep the search value in the index 2 to make it easy for code reuse
     }
 
