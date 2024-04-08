@@ -23,12 +23,10 @@ import { SlickEventHandler, type SlickGrid } from '../core/index';
 export type MenuType = 'command' | 'option';
 export type ExtendableItemTypes = HeaderButtonItem | MenuCommandItem | MenuOptionItem | 'divider';
 
-/* eslint-disable @typescript-eslint/indent */
 export type ExtractMenuType<A, T> =
   T extends 'command' ? A :
   T extends 'option' ? A :
   A extends 'divider' ? A : never;
-/* eslint-enable @typescript-eslint/indent */
 
 export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderMenu | HeaderButton> {
   protected _addonOptions: M = {} as unknown as M;

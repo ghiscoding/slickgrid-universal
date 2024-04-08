@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { ExcelExportOption, ExternalResource } from '../interfaces/index';
 import type { ContainerService } from '../services/container.service';
 import type { SlickGrid } from '../core/index';

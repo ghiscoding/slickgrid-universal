@@ -405,6 +405,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
         if (typeof textToCopy === 'string') {
           finalTextToCopy = textToCopy
             .replace(/^([·|⮞|⮟]\s*)|([·|⮞|⮟])\s*/gi, '')
+            // eslint-disable-next-line
             .replace(/[\u00b7|\u034f]/gi, '')
             .trim();
         }

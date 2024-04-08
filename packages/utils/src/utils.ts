@@ -184,7 +184,7 @@ export function getFunctionDetails(fn: AnyFunction, addReturn = true) {
   };
 
   const getFunctionParams = (func: AnyFunction): string[] => {
-    const STRIP_COMMENTS = /(\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s*=[^,\)]*(('(?:\\'|[^'\r\n])*')|("(?:\\"|[^"\r\n])*"))|(\s*=[^,\)]*))/mg;
+    const STRIP_COMMENTS = /(\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s*=[^,)]*(('(?:\\'|[^'\r\n])*')|("(?:\\"|[^"\r\n])*"))|(\s*=[^,)]*))/mg;
     const ARG_NAMES = /([^\s,]+)/g;
     const fnStr = func.toString().replace(STRIP_COMMENTS, '');
     return fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(ARG_NAMES) ?? [];
@@ -328,9 +328,9 @@ export function titleCase(inputStr: string, shouldTitleCaseEveryWords = false): 
  */
 export function toCamelCase(inputStr: string): string {
   if (typeof inputStr === 'string') {
-    return inputStr.replace(/(?:^\w|[A-Z]|\b\w|[\s+\-_\/])/g, (match: string, offset: number) => {
+    return inputStr.replace(/(?:^\w|[A-Z]|\b\w|[\s+\-_/])/g, (match: string, offset: number) => {
       // remove white space or hypens or underscores
-      if (/[\s+\-_\/]/.test(match)) {
+      if (/[\s+\-_/]/.test(match)) {
         return '';
       }
 
@@ -359,7 +359,7 @@ export function toKebabCase(inputStr: string): string {
  */
 export function toSentenceCase(inputStr: string): string {
   if (typeof inputStr === 'string') {
-    const result = inputStr.replace(/([A-Z])|(\-)/g, ' $1').replace(/\s+/g, ' ').trim();
+    const result = inputStr.replace(/([A-Z])|(-)/g, ' $1').replace(/\s+/g, ' ').trim();
     return result.charAt(0).toUpperCase() + result.slice(1);
   }
   return inputStr;

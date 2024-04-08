@@ -150,7 +150,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     this._addonOptions.commandItems = [...originalCommandItems, ...this.addGridMenuCustomCommands(originalCommandItems)];
     this.extensionUtility.translateMenuItemsFromTitleKey(this._addonOptions.commandItems || [], 'commandItems');
     this.extensionUtility.sortItems(this._addonOptions.commandItems, 'positionOrder');
-    this._addonOptions.commandItems = this._addonOptions.commandItems;
 
     // create the Grid Menu DOM element
     this.createGridMenu();

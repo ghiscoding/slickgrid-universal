@@ -208,7 +208,7 @@ export class GraphqlService implements BackendService {
     const output = inputArray.reduce((o: any, a: string) => set(o, a.split('.')), {});
 
     return JSON.stringify(output)
-      .replace(/\"|\:|null/g, '')
+      .replace(/"|:|null/g, '')
       .replace(/^\{/, '')
       .replace(/\}$/, '');
   }
@@ -426,7 +426,7 @@ export class GraphqlService implements BackendService {
         // run regex to find possible filter operators unless the user disabled the feature
         const autoParseInputFilterOperator = columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
         const matches = autoParseInputFilterOperator !== false
-          ? fieldSearchValue.match(/^([<>!=\*]{0,2})(.*[^<>!=\*])([\*]?)$/) // group 1: Operator, 2: searchValue, 3: last char is '*' (meaning starts with, ex.: abc*)
+          ? fieldSearchValue.match(/^([<>!=*]{0,2})(.*[^<>!=*])([*]?)$/) // group 1: Operator, 2: searchValue, 3: last char is '*' (meaning starts with, ex.: abc*)
           : [fieldSearchValue, '', fieldSearchValue, '']; // when parsing is disabled, we'll only keep the search value in the index 2 to make it easy for code reuse
 
         let operator: OperatorString = columnFilter.operator || matches?.[1] || '';
@@ -526,7 +526,7 @@ export class GraphqlService implements BackendService {
       // but still handle the case where it's not (can happen when initial configuration not pre-configured (automatically corrects itself next setCursorPageInfo() call))
       if (cursorArgs && cursorArgs instanceof Object) {
         // remove pageSize and newPage from cursorArgs, otherwise they get put on the query input string
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-shadow
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { pageSize, newPage, ...cursorPaginationOptions } = cursorArgs;
         paginationOptions = cursorPaginationOptions;
       } else {
@@ -627,6 +627,7 @@ export class GraphqlService implements BackendService {
    * @returns outputStr output string
    */
   trimDoubleQuotesOnEnumField(inputStr: string, enumSearchWords: string[], keepArgumentFieldDoubleQuotes: boolean) {
+    // eslint-disable-next-line
     const patternWordInQuotes = `\s?((field:\s*)?".*?")`;
     let patternRegex = enumSearchWords.join(patternWordInQuotes + '|');
     patternRegex += patternWordInQuotes; // the last one should also have the pattern but without the pipe "|"
@@ -699,9 +700,9 @@ export class GraphqlService implements BackendService {
           // Prefix a leading dot with 0
           searchValue = searchValue.replace(/^\.+/g, '0.');
           // Prefix leading dash dot with -0.
-          searchValue = searchValue.replace(/^\-+\.+/g, '-0.');
+          searchValue = searchValue.replace(/^-+\.+/g, '-0.');
           // Remove any non valid decimal characters from the search string
-          searchValue = searchValue.replace(/(?!^\-)[^\d\.]/g, '');
+          searchValue = searchValue.replace(/(?!^-)[^\d.]/g, '');
 
           // if nothing left, search for 0
           if (searchValue === '' || searchValue === '-') {
