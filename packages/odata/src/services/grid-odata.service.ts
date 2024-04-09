@@ -386,7 +386,7 @@ export class GridOdataService implements BackendService {
         }
 
         // Range with 1 searchterm should lead to equals for a date field.
-        if ((operator === OperatorType.rangeInclusive || OperatorType.rangeExclusive) && Array.isArray(searchTerms) && searchTerms.length === 1 && fieldType === FieldType.date) {
+        if ((operator === OperatorType.rangeInclusive || operator === OperatorType.rangeExclusive) && Array.isArray(searchTerms) && searchTerms.length === 1 && fieldType === FieldType.date) {
           operator = OperatorType.equal;
         }
 
