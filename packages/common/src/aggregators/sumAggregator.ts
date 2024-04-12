@@ -53,7 +53,7 @@ export class SumAggregator implements Aggregator {
     // when dealing with Tree Data structure, we need keep only the new sum (without doing any addition)
     if (!this._isTreeAggregator) {
       // not a Tree structure, we'll do a regular summation
-      if (val !== null && val !== '' && !isNaN(val)) {
+      if (isNumber(val)) {
         this._sum += parseFloat(val);
       }
     } else {

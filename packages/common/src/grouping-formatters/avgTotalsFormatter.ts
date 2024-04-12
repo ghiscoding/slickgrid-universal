@@ -1,3 +1,5 @@
+import { isNumber } from '@slickgrid-universal/utils';
+
 import type { Column, GroupTotalsFormatter } from './../interfaces/index';
 import { decimalFormatted, thousandSeparatorFormatted } from '../services/utilities';
 import { retrieveFormatterOptions } from '../formatters/formatterUtilities';
@@ -17,7 +19,7 @@ export const avgTotalsFormatter: GroupTotalsFormatter = (totals: any, columnDef:
     wrapNegativeNumber
   } = retrieveFormatterOptions(columnDef, grid, 'regular', 'group');
 
-  if (val !== null && !isNaN(+val)) {
+  if (isNumber(val)) {
     if (val < 0) {
       val = Math.abs(val);
       if (!wrapNegativeNumber) {

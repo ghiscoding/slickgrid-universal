@@ -1,3 +1,5 @@
+import { isNumber } from '@slickgrid-universal/utils';
+
 import type { Column, GroupTotalsFormatter } from './../interfaces/index';
 import { formatNumber } from '../services/utilities';
 import { retrieveFormatterOptions } from '../formatters/formatterUtilities';
@@ -17,7 +19,7 @@ export const maxTotalsFormatter: GroupTotalsFormatter = (totals: any, columnDef:
     wrapNegativeNumber
   } = retrieveFormatterOptions(columnDef, grid, 'regular', 'group');
 
-  if (val !== null && !isNaN(+val)) {
+  if (isNumber(val)) {
     const formattedNumber = formatNumber(val, minDecimal, maxDecimal, wrapNegativeNumber, '', '', decimalSeparator, thousandSeparator);
     return `${prefix}${formattedNumber}${suffix}`;
   }

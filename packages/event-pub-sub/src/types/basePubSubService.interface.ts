@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
-import type { EventSubscription } from '.';
+import type { EventSubscription } from './eventSubscription.interface';
 
 export interface BasePubSubService {
   /**

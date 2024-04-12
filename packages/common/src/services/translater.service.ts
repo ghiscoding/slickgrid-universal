@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 export type TranslateServiceEventName = 'onLanguageChanged';

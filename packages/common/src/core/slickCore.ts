@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable guard-for-in */
 /* eslint-disable object-shorthand */
 
 /**

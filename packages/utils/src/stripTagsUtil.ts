@@ -17,7 +17,7 @@ const STATE_PLAINTEXT = Symbol('plaintext');
 const STATE_HTML = Symbol('html');
 const STATE_COMMENT = Symbol('comment');
 const ALLOWED_TAGS_REGEX = /<(\w*)>/g;
-const NORMALIZE_TAG_REGEX = /<\/?([^\s\/>]+)/;
+const NORMALIZE_TAG_REGEX = /<\/?([^\s/>]+)/;
 
 interface Context {
   allowable_tags: Set<string | null>;

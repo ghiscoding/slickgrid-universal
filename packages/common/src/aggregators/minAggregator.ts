@@ -87,7 +87,7 @@ export class MinAggregator implements Aggregator {
   }
 
   protected keepMinValueWhenFound(val: any) {
-    if (val !== null && val !== '' && !isNaN(val)) {
+    if (isNumber(val)) {
       if (this._min === null || val < this._min) {
         this._min = parseFloat(val);
       }

@@ -71,7 +71,7 @@ export function buildMsSelectCollectionList(type: 'editor' | 'filter', collectio
         let suffixText = option[labelSuffixName] || '';
         let selectOptionLabel = option.hasOwnProperty(optionLabel) ? option[optionLabel] : '';
         if (selectOptionLabel?.toString) {
-          selectOptionLabel = selectOptionLabel.toString().replace(/\"/g, '\''); // replace double quotes by single quotes to avoid interfering with regular html
+          selectOptionLabel = selectOptionLabel.toString().replace(/"/g, '\''); // replace double quotes by single quotes to avoid interfering with regular html
         }
 
         // also translate prefix/suffix if enableTranslateLabel is true and text is a string

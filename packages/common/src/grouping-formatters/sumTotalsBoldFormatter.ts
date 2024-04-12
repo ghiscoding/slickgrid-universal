@@ -1,4 +1,4 @@
-import { createDomElement } from '@slickgrid-universal/utils';
+import { createDomElement, isNumber } from '@slickgrid-universal/utils';
 
 import type { Column, GroupTotalsFormatter } from './../interfaces/index';
 import { formatNumber } from '../services/utilities';
@@ -19,7 +19,7 @@ export const sumTotalsBoldFormatter: GroupTotalsFormatter = (totals: any, column
     wrapNegativeNumber
   } = retrieveFormatterOptions(columnDef, grid, 'regular', 'group');
 
-  if (val !== null && !isNaN(+val)) {
+  if (isNumber(val)) {
     const formattedNumber = formatNumber(val, minDecimal, maxDecimal, wrapNegativeNumber, '', '', decimalSeparator, thousandSeparator);
     return createDomElement('span', { style: { fontWeight: 'bold' }, textContent: `${prefix}${formattedNumber}${suffix}` });
   }

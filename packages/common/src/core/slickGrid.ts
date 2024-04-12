@@ -1,4 +1,3 @@
-/* eslint-disable no-cond-assign */
 import Sortable, { type SortableEvent } from 'sortablejs';
 import DOMPurify from 'isomorphic-dompurify';
 import { BindingEventService } from '@slickgrid-universal/binding';
@@ -1277,13 +1276,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const testUpTo = navigator.userAgent.toLowerCase().match(/firefox/) ? this._options.ffMaxSupportedCssHeight : this._options.maxSupportedCssHeight;
     const div = createDomElement('div', { style: { display: 'hidden' } }, document.body);
 
-    while (true) {
+    let condition = true;
+    while (condition) {
       const test = supportedHeight * 2;
       Utils.height(div, test);
       const height = Utils.height(div);
 
       /* istanbul ignore else */
       if (test > testUpTo! || height !== test) {
+        condition = false;
         break;
       } else {
         supportedHeight = test;
@@ -2159,7 +2160,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
                   if (!c || c.hidden) { continue; }
 
                   if (this.hasFrozenColumns() && (j > this._options.frozenColumn!)) {
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    // eslint-disable-next-line
                     newCanvasWidthR += c.width || 0;
                   } else {
                     newCanvasWidthL += c.width || 0;
@@ -4047,7 +4048,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (this.postProcessedRows[row]) {
         delete this.postProcessedRows[row][cellToRemove];
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line
       totalCellsRemoved++;
     }
   }
@@ -4113,7 +4114,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
 
       if (cellsAdded) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line
         totalCellsAdded += cellsAdded;
         processedRows.push(row);
       }
@@ -4761,7 +4762,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (!e.shiftKey && !e.altKey) {
         // editor may specify an array of keys to bubble
         if (this._options.editable && this.currentEditor?.keyCaptureList) {
-          if (this.currentEditor.keyCaptureList.indexOf(String(e.which)) > -1) {
+          if (this.currentEditor.keyCaptureList.indexOf(e.which) > -1) {
             return;
           }
         }
@@ -5727,7 +5728,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return lastFocusableCell;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected gotoRight(row: number, cell: number, _posX?: number) {
     /* istanbul ignore if */
     if (cell >= this.columns.length) {
@@ -5749,8 +5749,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return null;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected gotoLeft(row: number, cell: number, _posX?: number) {
+  protected gotoLeft(row: number, cell: number, _posX?: number): void | null | { row: number; cell: number; posX: number; } {
     if (cell <= 0) {
       return null;
     }
@@ -5766,23 +5765,28 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       posX: firstFocusableCell
     };
     let pos;
-    while (true) {
+    let cond = true;
+    while (cond) {
       pos = this.gotoRight(prev.row, prev.cell, prev.posX);
       if (!pos) {
+        cond = false;
         return null;
       }
       if (pos.cell >= cell) {
+        cond = false;
         return prev;
       }
       prev = pos;
     }
   }
 
-  protected gotoDown(row: number, cell: number, posX: number) {
+  protected gotoDown(row: number, cell: number, posX: number): void | null | { row: number; cell: number; posX: number; } {
     let prevCell;
     const dataLengthIncludingAddNew = this.getDataLengthIncludingAddNew();
-    while (true) {
+    let condition = true;
+    while (condition) {
       if (++row >= dataLengthIncludingAddNew) {
+        condition = false;
         return null;
       }
 
@@ -5793,6 +5797,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
 
       if (this.canCellBeActive(row, prevCell)) {
+        condition = false;
         return {
           row,
           cell: prevCell,
@@ -5802,10 +5807,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
   }
 
-  protected gotoUp(row: number, cell: number, posX: number) {
+  protected gotoUp(row: number, cell: number, posX: number): void | null | { row: number; cell: number; posX: number; } {
     let prevCell;
-    while (true) {
+    let condition = true;
+    while (condition) {
       if (--row < 0) {
+        condition = false;
         return null;
       }
 
@@ -5816,6 +5823,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
 
       if (this.canCellBeActive(row, prevCell)) {
+        condition = false;
         return {
           row,
           cell: prevCell,
@@ -5900,7 +5908,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return pos;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected gotoRowStart(row: number, _cell: number, _posX?: number) {
     const newCell = this.findFirstFocusableCell(row);
     if (newCell === null) { return null; }
@@ -5912,7 +5919,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected gotoRowEnd(row: number, _cell: number, _posX?: number) {
     const newCell = this.findLastFocusableCell(row);
     if (newCell === null) { return null; }

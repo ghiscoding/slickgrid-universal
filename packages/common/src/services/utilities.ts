@@ -763,7 +763,7 @@ export function objectWithoutKey<T = any>(obj: T, omitKey: keyof T): T {
 export function parseUtcDate(inputDateString: any, useUtc?: boolean): string {
   let date = '';
 
-  if (typeof inputDateString === 'string' && /^[0-9\-\/]*$/.test(inputDateString)) {
+  if (typeof inputDateString === 'string' && /^[0-9\-/]*$/.test(inputDateString)) {
     // get the UTC datetime with moment.js but we need to decode the value so that it's valid text
     const dateString = decodeURIComponent(inputDateString);
     const dateMoment = moment(new Date(dateString));

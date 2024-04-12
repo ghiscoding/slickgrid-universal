@@ -33,8 +33,8 @@ export function parseNumberWithFormatterOptions(value: any, column: Column, grid
   if (typeof value === 'string' && value) {
     const decimalSeparator = getValueFromParamsOrFormatterOptions('decimalSeparator', column, gridOptions, Constants.DEFAULT_NUMBER_DECIMAL_SEPARATOR);
     const val: number | string = (decimalSeparator === ',')
-      ? parseFloat(value.replace(/[^0-9\,\-]+/g, '').replace(',', '.'))
-      : parseFloat(value.replace(/[^\d\.\-]/g, ''));
+      ? parseFloat(value.replace(/[^0-9,-]+/g, '').replace(',', '.'))
+      : parseFloat(value.replace(/[^\d.-]/g, ''));
     outValue = isNaN(val) ? value : val;
   }
   return outValue;
@@ -223,7 +223,6 @@ function createFormatFromNumber(formattedVal: string) {
   // full number syntax can have up to 7 sections, for example::
   // Total: ($10,420.55 USD) Expensed
   const [
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _,
     prefix,
     openBraquet,
@@ -232,7 +231,7 @@ function createFormatFromNumber(formattedVal: string) {
     symbolSuffix,
     closingBraquet,
     suffix
-  ] = formattedVal?.match(/^([^\d\(\-]*)([\(]?)([^\d]*)([\-]?[\w]]?[\d\s]*[.,\d]*[\d]*[^)\s\%]?)([^\d.,)]*)([\)]?)([^\d]*)$/i) || [];
+  ] = formattedVal?.match(/^([^\d(-]*)([(]?)([^\d]*)([-]?[\w]]?[\d\s]*[.,\d]*[\d]*[^)\s%]?)([^\d.,)]*)([)]?)([^\d]*)$/i) || [];
 
   // we use 1 so that they won't be removed when rounding numbers, however Excel uses 0 and # symbol
   // replace 1's by 0's (required numbers) and replace 2's by "#" (optional numbers)
@@ -247,7 +246,7 @@ function createFormatFromNumber(formattedVal: string) {
     closingBraquet ?? '',
     escapeQuotes(suffix ?? '')
   ].join('');
-  return format.replace(',', '\,');
+  return format.replace(',', ',');
 }
 
 function createExcelFormatFromGridFormatter(columnDef: Column, grid: SlickGrid, formatterType: FormatterType, groupType = '') {
