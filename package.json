@@ -97,5 +97,8 @@
   "funding": {
     "type": "ko_fi",
     "url": "https://ko-fi.com/ghiscoding"
+  },
+  "dependencies": {
+    "cypress-real-events": "^1.12.0"
   }
 }
