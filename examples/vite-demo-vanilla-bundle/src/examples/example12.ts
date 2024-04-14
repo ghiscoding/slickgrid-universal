@@ -33,7 +33,7 @@ import './example12.scss';
 
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator = (value, args) => {
-  if ((value === null || value === undefined || !value.length) || (args.compositeEditorOptions && args.compositeEditorOptions.modalType === 'create' || args.compositeEditorOptions.modalType === 'edit')) {
+  if ((value === null || value === undefined || !value.length) && (args.compositeEditorOptions && args.compositeEditorOptions.modalType === 'create' || args.compositeEditorOptions.modalType === 'edit')) {
     // we will only check if the field is supplied when it's an inline editing OR a composite editor of type create/edit
     return { valid: false, msg: 'This is a required field.' };
   } else if (!/^(task\s\d+)*$/i.test(value)) {
