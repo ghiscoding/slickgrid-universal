@@ -683,7 +683,6 @@ describe('excelUtils', () => {
       it('should get excel excel metadata style with regular number format when a custom GroupTotalFormatters is provided', () => {
         const columnDef = {
           type: FieldType.number, formatter: Formatters.decimal,
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           groupTotalsFormatter: (totals: any, _columnDef: Column, _grid: SlickGrid) => `Some Total: ${totals.sum}`,
         } as Column;
         const output = getExcelFormatFromGridFormatter(stylesheetStub, { numberFormatter: { id: 3 } }, columnDef, gridStub, 'group');

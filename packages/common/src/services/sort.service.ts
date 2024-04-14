@@ -593,7 +593,7 @@ export class SortService {
 
     // loop through column definition to hide/show header menu commands
     columnDefinitions.forEach((col) => {
-      if (typeof col.sortable !== undefined) {
+      if (col.sortable !== undefined) {
         col.sortable = !isDisabling;
       }
       if (col?.header?.menu) {

@@ -90,7 +90,7 @@ export class FloatEditor extends InputEditor {
 
         this._originalValue = value;
         const decPlaces = this.getDecimalPlaces();
-        if (decPlaces !== null && (this._originalValue || this._originalValue === 0) && typeof this._originalValue !== undefined) {
+        if (decPlaces !== null && (this._originalValue || this._originalValue === 0) && this._originalValue !== undefined) {
           this._originalValue = (+this._originalValue).toFixed(decPlaces);
         }
         this._input.value = `${this._originalValue}`;

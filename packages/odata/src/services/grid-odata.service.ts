@@ -343,7 +343,7 @@ export class GridOdataService implements BackendService {
         // run regex to find possible filter operators unless the user disabled the feature
         const autoParseInputFilterOperator = columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
         const matches = autoParseInputFilterOperator !== false
-          ? fieldSearchValue.match(/^([<>!=\*]{0,2})(.*[^<>!=\*])([\*]?)$/) // group 1: Operator, 2: searchValue, 3: last char is '*' (meaning starts with, ex.: abc*)
+          ? fieldSearchValue.match(/^([<>!=*]{0,2})(.*[^<>!=*])([*]?)$/) // group 1: Operator, 2: searchValue, 3: last char is '*' (meaning starts with, ex.: abc*)
           : [fieldSearchValue, '', fieldSearchValue, '']; // when parsing is disabled, we'll only keep the search value in the index 2 to make it easy for code reuse
 
         let operator = columnFilter.operator || matches?.[1];
@@ -386,7 +386,7 @@ export class GridOdataService implements BackendService {
         }
 
         // Range with 1 searchterm should lead to equals for a date field.
-        if ((operator === OperatorType.rangeInclusive || OperatorType.rangeExclusive) && Array.isArray(searchTerms) && searchTerms.length === 1 && fieldType === FieldType.date) {
+        if ((operator === OperatorType.rangeInclusive || operator === OperatorType.rangeExclusive) && Array.isArray(searchTerms) && searchTerms.length === 1 && fieldType === FieldType.date) {
           operator = OperatorType.equal;
         }
 
@@ -673,9 +673,9 @@ export class GridOdataService implements BackendService {
           // Prefix a leading dot with 0
           searchValue = searchValue.replace(/^\.+/g, '0.');
           // Prefix leading dash dot with -0.
-          searchValue = searchValue.replace(/^\-+\.+/g, '-0.');
+          searchValue = searchValue.replace(/^-+\.+/g, '-0.');
           // Remove any non valid decimal characters from the search string
-          searchValue = searchValue.replace(/(?!^\-)[^\d\.]/g, '');
+          searchValue = searchValue.replace(/(?!^-)[^\d.]/g, '');
 
           // if nothing left, search for 0
           if (searchValue === '' || searchValue === '-') {
