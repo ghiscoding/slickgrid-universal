@@ -67,6 +67,7 @@
     "@types/node": "^20.12.7",
     "cross-env": "^7.0.3",
     "cypress": "^13.7.3",
+    "cypress-real-events": "^1.12.0",
     "dotenv": "^16.4.5",
     "eslint": "^9.0.0",
     "eslint-plugin-cypress": "^2.15.1",
@@ -97,8 +98,5 @@
   "funding": {
     "type": "ko_fi",
     "url": "https://ko-fi.com/ghiscoding"
-  },
-  "dependencies": {
-    "cypress-real-events": "^1.12.0"
   }
 }

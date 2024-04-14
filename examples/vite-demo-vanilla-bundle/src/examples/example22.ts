@@ -7,10 +7,9 @@ import {
 } from '@slickgrid-universal/common';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { ExampleGridOptions } from './example-grid-options';
 import { BindingEventService } from '@slickgrid-universal/binding';
 
-
+import { ExampleGridOptions } from './example-grid-options';
 import './example22.scss';
 import type { TranslateService } from '../translate.service';
 
