@@ -7,7 +7,6 @@ import { SlickRowSelectionModel } from '../slickRowSelectionModel';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 const GRID_UID = 'slickgrid_12345';
-jest.mock('flatpickr', () => { });
 
 const addVanillaEventPropagation = function (event, commandKey = '', keyName = '') {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });

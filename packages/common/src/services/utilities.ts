@@ -400,6 +400,20 @@ export function isColumnDateType(fieldType: typeof FieldType[keyof typeof FieldT
   }
 }
 
+export function formatDateByFieldType(inputDate: Date | string | typeof moment, inputFieldType: typeof FieldType[keyof typeof FieldType] | undefined, outputFieldType: typeof FieldType[keyof typeof FieldType]): string {
+  const inputFormat = inputFieldType ? mapMomentDateFormatWithFieldType(inputFieldType) : undefined;
+  const outputFormat = mapMomentDateFormatWithFieldType(outputFieldType);
+  const momentDate = inputDate instanceof moment ? inputDate : moment(inputDate, inputFormat);
+
+  if (momentDate.isValid()) {
+    if (outputFieldType === FieldType.dateUtc) {
+      return momentDate.toISOString();
+    }
+    return momentDate.format(outputFormat);
+  }
+  return '';
+}
+
 /**
  * From a Date FieldType, return it's equivalent moment.js format
  * refer to moment.js for the format standard used: https://momentjs.com/docs/#/parsing/string-format/
@@ -484,109 +498,6 @@ export function mapMomentDateFormatWithFieldType(fieldType: typeof FieldType[key
     case FieldType.dateIso:
     default:
       map = 'YYYY-MM-DD';
-      break;
-  }
-  return map;
-}
-
-/**
- * From a Date FieldType, return it's equivalent Flatpickr format
- * refer to Flatpickr for the format standard used: https://chmln.github.io/flatpickr/formatting/#date-formatting-tokens
- * also note that they seem very similar to PHP format (except for am/pm): http://php.net/manual/en/function.date.php
- * @param fieldType
- */
-export function mapFlatpickrDateFormatWithFieldType(fieldType: typeof FieldType[keyof typeof FieldType]): string {
-  /*
-    d: Day of the month, 2 digits with leading zeros	01 to 31
-    D: A textual representation of a day	Mon through Sun
-    l: (lowercase 'L')	A full textual representation of the day of the week	Sunday through Saturday
-    j: Day of the month without leading zeros	1 to 31
-    J: Day of the month without leading zeros and ordinal suffix	1st, 2nd, to 31st
-    w: Numeric representation of the day of the week	0 (for Sunday) through 6 (for Saturday)
-    F: A full textual representation of a month	January through December
-    m: Numeric representation of a month, with leading zero	01 through 12
-    n: Numeric representation of a month, without leading zeros	1 through 12
-    M: A short textual representation of a month	Jan through Dec
-    U: The number of seconds since the Unix Epoch	1413704993
-    y: A two digit representation of a year	99 or 03
-    Y: A full numeric representation of a year, 4 digits	1999 or 2003
-    H: Hours (24 hours)	00 to 23
-    h: Hours	1 to 12
-    i: Minutes	00 to 59
-    S: Seconds, 2 digits	00 to 59
-    s: Seconds	0, 1 to 59
-    K: AM/PM	AM or PM
-  */
-  let map: string;
-  switch (fieldType) {
-    case FieldType.dateTime:
-    case FieldType.dateTimeIso:
-      map = 'Y-m-d H:i:S';
-      break;
-    case FieldType.dateTimeShortIso:
-      map = 'Y-m-d H:i';
-      break;
-    case FieldType.dateTimeIsoAmPm:
-    case FieldType.dateTimeIsoAM_PM:
-      map = 'Y-m-d h:i:S K'; // there is no lowercase in Flatpickr :(
-      break;
-    // all Euro Formats (date/month/year)
-    case FieldType.dateEuro:
-      map = 'd/m/Y';
-      break;
-    case FieldType.dateEuroShort:
-      map = 'd/m/y';
-      break;
-    case FieldType.dateTimeEuro:
-      map = 'd/m/Y H:i:S';
-      break;
-    case FieldType.dateTimeShortEuro:
-      map = 'd/m/y H:i';
-      break;
-    case FieldType.dateTimeEuroAmPm:
-      map = 'd/m/Y h:i:S K'; // there is no lowercase in Flatpickr :(
-      break;
-    case FieldType.dateTimeEuroAM_PM:
-      map = 'd/m/Y h:i:s K';
-      break;
-    case FieldType.dateTimeEuroShort:
-      map = 'd/m/y H:i:s';
-      break;
-    case FieldType.dateTimeEuroShortAmPm:
-      map = 'd/m/y h:i:s K'; // there is no lowercase in Flatpickr :(
-      break;
-    // all US Formats (month/date/year)
-    case FieldType.dateUs:
-      map = 'm/d/Y';
-      break;
-    case FieldType.dateUsShort:
-      map = 'm/d/y';
-      break;
-    case FieldType.dateTimeUs:
-      map = 'm/d/Y H:i:S';
-      break;
-    case FieldType.dateTimeShortUs:
-      map = 'm/d/y H:i';
-      break;
-    case FieldType.dateTimeUsAmPm:
-      map = 'm/d/Y h:i:S K'; // there is no lowercase in Flatpickr :(
-      break;
-    case FieldType.dateTimeUsAM_PM:
-      map = 'm/d/Y h:i:s K';
-      break;
-    case FieldType.dateTimeUsShort:
-      map = 'm/d/y H:i:s';
-      break;
-    case FieldType.dateTimeUsShortAmPm:
-      map = 'm/d/y h:i:s K'; // there is no lowercase in Flatpickr :(
-      break;
-    case FieldType.dateUtc:
-      map = 'Z';
-      break;
-    case FieldType.date:
-    case FieldType.dateIso:
-    default:
-      map = 'Y-m-d';
       break;
   }
   return map;

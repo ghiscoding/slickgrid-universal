@@ -26,9 +26,23 @@ Object.defineProperty(window, 'getComputedStyle', {
   })
 });
 
-// Jest has a hard time with Flatpickr/MomentJS because they export as default, to bypass this problem we can mock the require .default
-jest.mock('flatpickr', () => {
-  const actual = jest.requireActual('flatpickr');
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(), // Deprecated
+    removeListener: jest.fn(), // Deprecated
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
+
+// Jest has a hard time with MomentJS because they export as default, to bypass this problem we can mock the require .default
+jest.mock('vanilla-calendar-pro', () => {
+  const actual = jest.requireActual('vanilla-calendar-pro');
   return { __esModule: true, ...actual, default: actual };
 });
 jest.mock('moment-mini', () => {

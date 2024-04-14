@@ -4,8 +4,6 @@ import { BackendServiceApi, GridOption } from '../../interfaces/index';
 import { BackendUtilityService } from '../backendUtility.service';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 
-jest.mock('flatpickr', () => { });
-
 const graphqlServiceMock = {
   buildQuery: jest.fn(),
   updateFilters: jest.fn(),

@@ -3,7 +3,6 @@ import { SortDirectionNumber } from '../../enums';
 import { GridOption, Grouping } from '../../interfaces';
 import { SortComparers } from '../../sortComparers';
 import { SlickDataView } from '../slickDataview';
-import 'flatpickr';
 import { SlickGrid } from '../slickGrid';
 import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
 import { SlickEventData } from '../slickCore';

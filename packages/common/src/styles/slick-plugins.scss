@@ -787,9 +787,9 @@ input.search-filter {
     &.compound-input {
       border-radius: var(--slick-compound-filter-border-radius, $slick-compound-filter-border-radius) !important;
       border-left: none;
-      &::placeholder {
-        color: var(--slick-editor-placeholder-color, $slick-editor-placeholder-color);
-      }
+    }
+    &::placeholder {
+      color: var(--slick-placeholder-color, $slick-placeholder-color);
     }
   }
   input.compound-slider {
@@ -800,7 +800,7 @@ input.search-filter {
   .slick-headerrow {
     .slick-headerrow-columns {
       .slick-headerrow-column {
-        .input-group-prepend + .flatpickr {
+        .input-group-prepend + .date-picker {
           input.compound-input {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
@@ -815,50 +815,51 @@ input.search-filter {
 // Date Picker Filter
 // ----------------------------------------------
 
+.vanilla-calendar {
+  padding: 0.9rem;
+  z-index: 9999;
+}
+
 .search-filter.form-group {
-  .input-group.flatpickr  input.form-control {
+  .input-group.date-picker  input.form-control {
     border-bottom-left-radius: 0px;
     border-top-left-radius: 0px;
   }
 }
-.search-filter .flatpickr {
+.search-filter .date-picker {
   input.form-control {
     border-left: none;
     &::placeholder {
-      color: var(--slick-editor-placeholder-color, $slick-editor-placeholder-color);
+      color: var(--slick-placeholder-color, $slick-placeholder-color);
     }
   }
 }
-.search-filter.flatpickr,
-.search-filter .flatpickr {
+.search-filter .date-picker {
   flex: 1;
   cursor: pointer;
 
-  input.flatpickr.form-control,
-  .flatpickr-input.form-control {
-    background-color: var(--slick-flatpickr-bgcolor, $slick-flatpickr-bgcolor);
+  .date-picker input.form-control {
+    background-color: var(--slick-date-picker-bg-color, $slick-date-picker-bg-color);
     font-family: var(--slick-filter-placeholder-font-family, $slick-filter-placeholder-font-family);
     font-size: var(--slick-font-size-base, $slick-font-size-base);
     border-radius: var(--slick-compound-filter-border-radius, $slick-compound-filter-border-radius);
     width: 100%;
     &[readonly] {
-      background-color: var(--slick-flatpickr-bgcolor, $slick-flatpickr-bgcolor);
+      background-color: var(--slick-date-picker-bg-color, $slick-date-picker-bg-color);
     }
   }
-  .form-control[readonly],
-  .flatpickr.form-control[readonly] {
+  .form-control[readonly] {
     cursor: pointer;
-    background-color: var(--slick-flatpickr-bgcolor, $slick-flatpickr-bgcolor);
+    background-color: var(--slick-date-picker-bg-color, $slick-date-picker-bg-color);
   }
 }
-input.flatpickr-input.form-control,
-input.flatpickr.form-control {
+.date-picker input.form-control {
   cursor: pointer;
   font-family: var(--slick-filter-placeholder-font-family, $slick-filter-placeholder-font-family);
   font-size: var(--slick-font-size-base, $slick-font-size-base);
   border-radius: var(--slick-date-range-filter-border-radius, $slick-date-range-filter-border-radius);
   &[readonly] {
-    background-color: var(--slick-flatpickr-bgcolor, $slick-flatpickr-bgcolor);
+    background-color: var(--slick-date-picker-bg-color, $slick-date-picker-bg-color);
   }
 }
 
@@ -1119,7 +1120,7 @@ input.flatpickr.form-control {
   height: var(--slick-header-input-height, $slick-header-input-height);
 
   &::placeholder {
-    color: var(--slick-editor-placeholder-color, $slick-editor-placeholder-color);
+    color: var(--slick-placeholder-color, $slick-placeholder-color);
   }
 
   .input-group-text {

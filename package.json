@@ -75,7 +75,6 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jest": "^27.9.0",
     "eslint-plugin-n": "^16.6.2",
-    "flatpickr": "^4.6.13",
     "husky": "^9.0.11",
     "jest": "^29.7.0",
     "jest-cli": "^29.7.0",
@@ -93,6 +92,7 @@
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3",
+    "vanilla-calendar-pro": "^2.9.6",
     "whatwg-fetch": "^3.6.20"
   },
   "funding": {

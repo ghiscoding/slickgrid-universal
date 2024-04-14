@@ -18,7 +18,7 @@ export class BindingEventService {
   }
 
   /** Bind an event listener to any element */
-  bind(elementOrElements: Element | NodeListOf<Element> | Window, eventNameOrNames: string | string[], listener: EventListenerOrEventListenerObject, listenerOptions?: boolean | AddEventListenerOptions, groupName = '') {
+  bind(elementOrElements: Document | Element | NodeListOf<Element> | Window, eventNameOrNames: string | string[], listener: EventListenerOrEventListenerObject, listenerOptions?: boolean | AddEventListenerOptions, groupName = '') {
     // convert to array for looping in next task
     const eventNames = (Array.isArray(eventNameOrNames)) ? eventNameOrNames : [eventNameOrNames];
 

@@ -1,11 +1,10 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { createDomElement, destroyAllElementProps, emptyElement, } from '@slickgrid-universal/utils';
-import flatpickr from 'flatpickr';
+import { createDomElement, emptyElement, extend, } from '@slickgrid-universal/utils';
+import VanillaCalendar from 'vanilla-calendar-pro';
+import type { IOptions } from 'vanilla-calendar-pro/types';
 import * as moment_ from 'moment-mini';
 const moment = (moment_ as any)['default'] || moment_;
 
-import type { BaseOptions as FlatpickrBaseOptions } from 'flatpickr/dist/types/options';
-import type { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
 
 import {
   FieldType,
@@ -19,12 +18,11 @@ import type {
   Filter,
   FilterArguments,
   FilterCallback,
-  FlatpickrOption,
   GridOption,
   OperatorDetail,
 } from '../interfaces/index';
 import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities';
-import { mapFlatpickrDateFormatWithFieldType, mapMomentDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
+import { formatDateByFieldType, mapMomentDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import type { SlickGrid } from '../core/index';
 
@@ -32,16 +30,18 @@ export class DateFilter implements Filter {
   protected _bindEventService: BindingEventService;
   protected _clearFilterTriggered = false;
   protected _currentValue?: string;
-  protected _currentDateOrDates?: Date | Date[] | string[];
+  protected _currentDateOrDates?: Date | Date[] | string | string[];
   protected _currentDateStrings?: string[];
-  protected _flatpickrOptions!: FlatpickrOption;
+  protected _pickerOptions!: IOptions;
   protected _filterElm!: HTMLDivElement;
   protected _filterDivInputElm!: HTMLDivElement;
+  protected _dateInputElm!: HTMLInputElement;
   protected _operator!: OperatorType | OperatorString;
   protected _selectOperatorElm?: HTMLSelectElement;
   protected _shouldTriggerQuery = true;
+  hasTimePicker = false;
   inputFilterType: 'compound' | 'range' = 'range';
-  flatInstance!: FlatpickrInstance;
+  calendarInstance?: VanillaCalendar;
   grid!: SlickGrid;
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
@@ -74,9 +74,9 @@ export class DateFilter implements Filter {
       : (this.gridOptions.defaultFilterRangeOperator || OperatorType.rangeInclusive);
   }
 
-  /** Getter for the Flatpickr Options */
-  get flatpickrOptions(): FlatpickrOption {
-    return this._flatpickrOptions || {};
+  /** Getter for the date picker options */
+  get pickerOptions(): IOptions {
+    return this._pickerOptions || {};
   }
 
   /** Getter for the Filter Operator */
@@ -96,9 +96,7 @@ export class DateFilter implements Filter {
     }
   }
 
-  /**
-   * Initialize the Filter
-   */
+  /** Initialize the Filter */
   init(args: FilterArguments) {
     if (!args) {
       throw new Error('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
@@ -127,39 +125,39 @@ export class DateFilter implements Filter {
     if (this._selectOperatorElm) {
       this._bindEventService.bind(this._selectOperatorElm, 'change', this.onTriggerEvent.bind(this));
     }
+
+    // close picker on Esc/Tab keys
+    this._bindEventService.bind(document, 'keydown', ((e: KeyboardEvent) => {
+      if (e.key === 'Escape' || e.key === 'Tab') {
+        this.hide();
+      }
+    }) as EventListener);
   }
 
-  /**
-   * Clear the filter value
-   */
+  /** Clear the filter value */
   clear(shouldTriggerQuery = true) {
-    if (this.flatInstance) {
+    if (this.calendarInstance) {
       this._clearFilterTriggered = true;
       this._shouldTriggerQuery = shouldTriggerQuery;
       this.searchTerms = [];
       if (this._selectOperatorElm) {
         this._selectOperatorElm.selectedIndex = 0;
       }
-      if (this.flatInstance.input) {
-        this.flatInstance.clear();
+      if (this.calendarInstance.input) {
+        this.calendarInstance.settings.selected.dates = [];
+        this._dateInputElm.value = '';
       }
     }
+    this.onTriggerEvent(new Event('keyup'));
     this._filterElm.classList.remove('filled');
     this._filterDivInputElm.classList.remove('filled');
   }
 
-  /**
-   * destroy the filter
-   */
+  /** Destroy the filter */
   destroy() {
     this._bindEventService.unbindAll();
+    this.calendarInstance?.destroy();
 
-    if (typeof this.flatInstance?.destroy === 'function') {
-      this.flatInstance.destroy();
-      if (this.flatInstance.element) {
-        destroyAllElementProps(this.flatInstance);
-      }
-    }
     emptyElement(this.filterContainerElm);
     emptyElement(this._filterDivInputElm);
     this._filterDivInputElm?.remove();
@@ -169,14 +167,14 @@ export class DateFilter implements Filter {
   }
 
   hide() {
-    if (typeof this.flatInstance?.close === 'function') {
-      this.flatInstance.close();
+    if (typeof this.calendarInstance?.hide === 'function') {
+      this.calendarInstance.hide();
     }
   }
 
   show() {
-    if (typeof this.flatInstance?.open === 'function') {
-      this.flatInstance.open();
+    if (typeof this.calendarInstance?.show === 'function') {
+      this.calendarInstance.show();
     }
   }
 
@@ -193,7 +191,6 @@ export class DateFilter implements Filter {
 
     if (this.inputFilterType === 'compound') {
       pickerValues = Array.isArray(values) ? values[0] : values;
-
     } else {
       // get the picker values, if it's a string with the "..", we'll do the split else we'll use the array of search terms
       if (typeof values === 'string' || (Array.isArray(values) && typeof values[0] === 'string') && (values[0] as string).indexOf('..') > 0) {
@@ -203,9 +200,9 @@ export class DateFilter implements Filter {
       }
     }
 
-    if (this.flatInstance) {
+    if (this.calendarInstance && pickerValues !== undefined) {
+      this.setPickerDates(this.calendarInstance, pickerValues);
       this._currentDateOrDates = (values && pickerValues) ? pickerValues : undefined;
-      this.flatInstance.setDate(this._currentDateOrDates || '');
     }
 
     const currentValueOrValues = this.getValues() || [];
@@ -230,9 +227,17 @@ export class DateFilter implements Filter {
   // ------------------
   protected buildDatePickerInput(searchTerms?: SearchTerm | SearchTerm[]): HTMLDivElement {
     const columnId = this.columnDef?.id ?? '';
-    const inputFormat = mapFlatpickrDateFormatWithFieldType(this.columnFilter.type || this.columnDef.type || FieldType.dateIso);
-    const outputFormat = mapFlatpickrDateFormatWithFieldType(this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc);
-    const userFilterOptions = this.columnFilter?.filterOptions ?? {} as FlatpickrOption;
+    const columnFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
+    const outputFieldType = this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc;
+    const outputFormat = mapMomentDateFormatWithFieldType(outputFieldType);
+    const inputFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
+    const userFilterOptions = this.columnFilter?.filterOptions ?? {} as IOptions;
+
+    // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
+    if (outputFormat && this.inputFilterType !== 'range' && outputFormat.toLowerCase().includes('h')) {
+      this.hasTimePicker = true;
+    }
+    const pickerFormat = mapMomentDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);
 
     // get current locale, if user defined a custom locale just use or get it the Translate Service if it exist else just use English
     let currentLocale = (userFilterOptions?.locale ?? this.translaterService?.getCurrentLanguage?.()) || this.gridOptions.locale || 'en';
@@ -258,79 +263,162 @@ export class DateFilter implements Filter {
       // if we are preloading searchTerms, we'll keep them for reference
       if (Array.isArray(pickerValues)) {
         this._currentDateOrDates = pickerValues as Date[];
-        const outFormat = mapMomentDateFormatWithFieldType(this.columnFilter.type || this.columnDef.type || FieldType.dateIso);
-        this._currentDateStrings = pickerValues.map(date => moment(date).format(outFormat));
+        this._currentDateStrings = pickerValues.map(date => formatDateByFieldType(date, undefined, inputFieldType));
       }
     }
 
-    const pickerOptions: FlatpickrOption = {
-      defaultDate: (pickerValues || '') as string | string[],
-      altInput: true,
-      altFormat: outputFormat,
-      dateFormat: inputFormat,
-      mode: this.inputFilterType === 'range' ? 'range' : 'single',
-      wrap: true,
-      closeOnSelect: true,
-      locale: currentLocale,
-      theme: this.gridOptions?.darkMode ? 'dark' : 'light',
-      onChange: (selectedDates: Date[] | Date, dateStr: string) => {
-        if (this.inputFilterType === 'compound') {
-          this._currentValue = dateStr;
-          this._currentDateOrDates = Array.isArray(selectedDates) && selectedDates[0] || undefined;
-        } else {
-          if (Array.isArray(selectedDates)) {
-            this._currentDateOrDates = selectedDates;
-            const outFormat = mapMomentDateFormatWithFieldType(this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateIso);
-            this._currentDateStrings = selectedDates.map(date => moment(date).format(outFormat));
-            this._currentValue = this._currentDateStrings.join('..');
+    const pickerOptions: IOptions = {
+      input: true,
+      type: this.inputFilterType === 'range' ? 'multiple' : 'default',
+      actions: {
+        clickDay: (_e, self) => {
+          // if you want to hide the calendar after picking a date
+          if (this.inputFilterType === 'compound' || (this.inputFilterType === 'range' && self.selectedDates.length >= 2)) {
+            self.hide();
           }
-        }
+        },
+        changeToInput: (_e, self) => {
+          if (!self.HTMLInputElement) {
+            return;
+          }
 
-        // when using the time picker, we can simulate a keyup event to avoid multiple backend request
-        // since backend request are only executed after user start typing, changing the time should be treated the same way
-        const newEvent = pickerOptions.enableTime ? new Event('keyup') : undefined;
-        this.onTriggerEvent(newEvent);
+          let outDates: string[] = [];
+          let firstDate = '';
+          let lastDate = ''; // when using date range
+
+          if (self.selectedDates[1]) {
+            self.selectedDates.sort((a, b) => +new Date(a) - +new Date(b));
+            firstDate = self.selectedDates[0];
+            lastDate = self.selectedDates[self.selectedDates.length - 1];
+            const firstDisplayDate = moment(self.selectedDates[0]).format(outputFormat);
+            const lastDisplayDate = moment(lastDate).format(outputFormat);
+            self.HTMLInputElement.value = `${firstDisplayDate} — ${lastDisplayDate}`;
+            outDates = [firstDate, lastDate];
+          } else if (self.selectedDates[0]) {
+            firstDate = self.selectedDates[0];
+            self.HTMLInputElement.value = formatDateByFieldType(firstDate, undefined, outputFieldType);
+            outDates = self.selectedDates;
+          } else {
+            self.HTMLInputElement.value = '';
+          }
+
+          if (this.hasTimePicker && firstDate) {
+            const momentDate = moment(firstDate, pickerFormat);
+            momentDate.hours(self.selectedHours);
+            momentDate.minute(self.selectedMinutes);
+            self.HTMLInputElement.value = formatDateByFieldType(momentDate, undefined, outputFieldType);
+
+            outDates = [self.HTMLInputElement.value];
+          }
+
+          if (this.inputFilterType === 'compound') {
+            this._currentValue = formatDateByFieldType(outDates[0], undefined, columnFieldType);
+          } else {
+            if (Array.isArray(outDates)) {
+              this._currentDateStrings = outDates.map(date => formatDateByFieldType(date, undefined, columnFieldType));
+              this._currentValue = this._currentDateStrings.join('..');
+            }
+          }
+          this._currentDateOrDates = outDates.map(dateStr => new Date(dateStr));
+
+          // when using the time picker, we can simulate a keyup event to avoid multiple backend request
+          // since backend request are only executed after user start typing, changing the time should be treated the same way
+          const newEvent = this.hasTimePicker ? new Event('keyup') : undefined;
+          this.onTriggerEvent(newEvent);
+        },
       },
-      errorHandler: (error) => {
-        if (error.toString().includes('invalid locale')) {
-          console.warn(`[Slickgrid-Universal] Flatpickr missing locale imports (${currentLocale}), will revert to English as the default locale.
-          See Flatpickr Localization for more info, for example if we want to use French, then we can import it with:  import 'flatpickr/dist/l10n/fr';`);
-        }
+      settings: {
+        lang: currentLocale,
+        iso8601: false,
+        visibility: {
+          theme: this.gridOptions?.darkMode ? 'dark' : 'light',
+          positionToInput: 'center',
+        },
+      },
+      // change the weekend CSS classes to remove the default weekend styling
+      CSSClasses: {
+        weekDayWeekend: 'vc-weekend-day',
+        dayBtnWeekend: 'vc-weekend-btn'
       }
     };
 
+    if (this.inputFilterType === 'range') {
+      pickerOptions.type = 'multiple';
+      pickerOptions.months = 2;
+      pickerOptions.jumpMonths = 2;
+      pickerOptions.settings = {
+        ...pickerOptions.settings,
+        selection: {
+          day: 'multiple-ranged',
+        },
+        visibility: {
+          ...pickerOptions.settings?.visibility,
+          daysOutside: false,
+        },
+      };
+    }
+
     // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
-    if (outputFormat && (outputFormat === 'Z' || outputFormat.toLowerCase().includes('h'))) {
-      pickerOptions.enableTime = true;
+    if (this.hasTimePicker) {
+      pickerOptions.settings!.selection ??= {};
+      pickerOptions.settings!.selection.time = 24;
     }
 
     // merge options with optional user's custom options
-    this._flatpickrOptions = { ...pickerOptions, ...userFilterOptions };
+    this._pickerOptions = extend(true, {}, pickerOptions, { settings: userFilterOptions });
 
     let placeholder = this.gridOptions?.defaultFilterPlaceholder ?? '';
     if (this.columnFilter?.placeholder) {
       placeholder = this.columnFilter.placeholder;
     }
 
-    const filterDivInputElm = createDomElement('div', { className: 'flatpickr' });
+    const filterDivInputElm = createDomElement('div', { className: 'date-picker' });
     if (this.inputFilterType === 'range') {
       filterDivInputElm.classList.add('search-filter', `filter-${columnId}`);
     }
-    filterDivInputElm.appendChild(
-      createDomElement('input', {
-        type: 'text', className: 'form-control',
-        placeholder,
-        dataset: { input: '', columnid: `${columnId}` }
-      })
-    );
-    this.flatInstance = flatpickr(filterDivInputElm, this._flatpickrOptions as unknown as Partial<FlatpickrBaseOptions>);
+    this._dateInputElm = createDomElement('input', {
+      type: 'text', className: 'form-control date-picker',
+      placeholder,
+      readOnly: true,
+      dataset: { input: '', columnid: `${columnId}` }
+    });
+    filterDivInputElm.appendChild(this._dateInputElm);
 
-    // add dark mode CSS class when enabled
-    if (this.gridOptions?.darkMode) {
-      this.flatInstance.calendarContainer.classList.add('slick-dark-mode');
+    this.calendarInstance = new VanillaCalendar(this._dateInputElm, this._pickerOptions);
+    this.calendarInstance.init();
+
+    if (this._pickerOptions.settings?.selected?.dates) {
+      pickerValues = this._pickerOptions.settings.selected.dates;
+    }
+
+    if (pickerValues) {
+      this.setPickerDates(pickerOptions, pickerValues);
     }
 
     return filterDivInputElm;
+  }
+
+  protected setPickerDates(pickerOptions: IOptions, dateValues?: Date | Date[] | string | string[]) {
+    this._currentDateOrDates = dateValues;
+    const isoFormat = mapMomentDateFormatWithFieldType(FieldType.dateIso);
+    const inputFormat = mapMomentDateFormatWithFieldType(this.columnFilter.type || this.columnDef.type || FieldType.dateIso);
+    const outputFieldType = this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc;
+    const initialDates = Array.isArray(this._currentDateOrDates) ? this._currentDateOrDates : [(this._currentDateOrDates || '') as string];
+    if (initialDates.length) {
+      const pickerDates = [];
+      for (const initialDate of initialDates) {
+        const momentDate = moment(initialDate, inputFormat);
+        pickerDates.push(momentDate);
+      }
+
+      pickerOptions.settings!.selected = {
+        dates: [pickerDates.map(p => p.format(isoFormat)).join(':')],
+        month: pickerDates[0].month(),
+        year: pickerDates[0].year(),
+        time: inputFormat.toLowerCase().includes('h') ? pickerDates[0].format('HH:mm') : null,
+      };
+      this._dateInputElm.value = initialDates.length ? pickerDates.map(p => formatDateByFieldType(p, undefined, outputFieldType)).join(' — ') : '';
+    }
   }
 
   /** Get the available operator option values to populate the operator select dropdown list */
@@ -370,7 +458,7 @@ export class DateFilter implements Filter {
     } else {
       this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.grid);
       const filterContainerElm = createDomElement('div', { className: `form-group search-filter filter-${columnId}` });
-      const containerInputGroupElm = createDomElement('div', { className: 'input-group flatpickr' }, filterContainerElm);
+      const containerInputGroupElm = createDomElement('div', { className: 'input-group date-picker' }, filterContainerElm);
       const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' }, containerInputGroupElm);
 
       operatorInputGroupAddonElm.appendChild(this._selectOperatorElm);
@@ -407,7 +495,7 @@ export class DateFilter implements Filter {
         this.callback(e, { columnDef: this.columnDef, searchTerms: (this._currentDateStrings ? this._currentDateStrings : [this._currentValue as string]), operator: this.operator || '', shouldTriggerQuery: this._shouldTriggerQuery });
       } else if (this.inputFilterType === 'compound' && this._selectOperatorElm) {
         const selectedOperator = this._selectOperatorElm.value as OperatorString;
-        (this._currentValue) ? this._filterElm.classList.add('filled') : this._filterElm.classList.remove('filled');
+        this._currentValue ? this._filterElm.classList.add('filled') : this._filterElm.classList.remove('filled');
 
         // when changing compound operator, we don't want to trigger the filter callback unless the date input is also provided
         const skipCompoundOperatorFilterWithNullInput = this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput === undefined;
