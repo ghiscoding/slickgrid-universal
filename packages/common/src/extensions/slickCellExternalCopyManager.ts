@@ -127,9 +127,9 @@ export class SlickCellExternalCopyManager {
 
     // if a custom getter is not defined, we call serializeValue of the editor to serialize
     if (columnDef) {
-      if (columnDef.editor?.model) {
+      if (columnDef.editorClass) {
         const tmpP = document.createElement('p');
-        const editor = new (columnDef as any).editor.model({
+        const editor = new (columnDef as any).editorClass({
           container: tmpP,  // a dummy container
           column: columnDef,
           event,
@@ -155,9 +155,9 @@ export class SlickCellExternalCopyManager {
       }
 
       // if a custom setter is not defined, we call applyValue of the editor to unserialize
-      if (columnDef.editor?.model) {
+      if (columnDef.editorClass) {
         const tmpDiv = document.createElement('div');
-        const editor = new (columnDef as any).editor.model({
+        const editor = new (columnDef as any).editorClass({
           container: tmpDiv, // a dummy container
           column: columnDef,
           position: { top: 0, left: 0 },  // a dummy position required by some editors

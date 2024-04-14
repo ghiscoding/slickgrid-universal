@@ -204,6 +204,7 @@ describe('CellExternalCopyManager', () => {
       const applyValSpy = jest.spyOn(mockTextEditor, 'applyValue');
       const loadValSpy = jest.spyOn(mockTextEditor, 'loadValue');
       const validationSpy = jest.spyOn(mockTextEditor, 'validate').mockReturnValue(validationResults);
+      jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockCellSelectionModel as any);
       const notifySpy = jest.spyOn(gridStub.onValidationError, 'notify');
       const mockItem = { firstName: 'John', lastName: 'Doe' };
       plugin.init(gridStub);
