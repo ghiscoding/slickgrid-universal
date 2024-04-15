@@ -160,13 +160,9 @@ export class DateEditor implements Editor {
           visibility: {
             theme: this.gridOptions?.darkMode ? 'dark' : 'light',
             positionToInput: 'center',
+            weekend: false,
           },
         },
-        // change the weekend CSS classes to remove the default weekend styling
-        CSSClasses: {
-          weekDayWeekend: 'vc-weekend-day',
-          dayBtnWeekend: 'vc-weekend-btn'
-        }
       };
 
       // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
