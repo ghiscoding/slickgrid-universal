@@ -499,7 +499,7 @@ export class DateEditor implements Editor {
     const isoFormat = mapMomentDateFormatWithFieldType(FieldType.dateIso);
     const inputFormat = inputFieldType ? mapMomentDateFormatWithFieldType(inputFieldType) : '';
     const initialDates = Array.isArray(dateValues) ? dateValues as string[] : [(dateValues || '') as string];
-    if (initialDates.length) {
+    if (initialDates.length && initialDates[0]) {
       const momentDate = moment(initialDates[0], inputFormat);
 
       pickerOptions.settings!.selected = {

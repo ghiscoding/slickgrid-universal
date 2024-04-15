@@ -400,7 +400,7 @@ export class DateFilter implements Filter {
     const inputFormat = mapMomentDateFormatWithFieldType(this.columnFilter.type || this.columnDef.type || FieldType.dateIso);
     const outputFieldType = this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc;
     const initialDates = Array.isArray(this._currentDateOrDates) ? this._currentDateOrDates : [(this._currentDateOrDates || '') as string];
-    if (initialDates.length) {
+    if (initialDates.length && initialDates[0]) {
       const pickerDates = [];
       for (const initialDate of initialDates) {
         const momentDate = moment(initialDate, inputFormat);
