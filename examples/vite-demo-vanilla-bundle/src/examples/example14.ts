@@ -14,6 +14,7 @@ import {
   SlickGlobalEditorLock,
   type SliderRangeOption,
   SortComparers,
+  type VanillaCalendarOption,
 
   // utilities
   formatNumber,
@@ -92,7 +93,7 @@ export default class Example14 {
   isGridEditable = true;
   classDefaultResizeButton = 'button is-small';
   classNewResizeButton = 'button is-small is-selected is-primary';
-  editQueue: Array<{ item: any; columns: Column[]; editCommand: EditCommand }> = [];
+  editQueue: Array<{ item: any; columns: Column[]; editCommand: EditCommand; }> = [];
   editedItems = {};
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
@@ -219,7 +220,7 @@ export default class Example14 {
         exportCustomFormatter: Formatters.dateUs,
         type: FieldType.date, outputType: FieldType.dateUs, saveOutputType: FieldType.dateUtc,
         filterable: true, filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date, editorOptions: { hideClearButton: false } },
+        editor: { model: Editors.date, editorOptions: { hideClearButton: false } as VanillaCalendarOption },
       },
       {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 75, maxWidth: 100,

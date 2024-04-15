@@ -16,6 +16,7 @@ import {
   SlickGlobalEditorLock,
   type SliderOption,
   SortComparers,
+  type VanillaCalendarOption,
 
   // utilities
   formatNumber,
@@ -269,7 +270,7 @@ export default class Example12 {
         editor: {
           model: Editors.date,
           editorOptions: {
-            // range: { disablePast: true }, // set minimum date as today
+            range: { disablePast: true }, // set minimum date as today
 
             // if we want to preload the date picker with a different date,
             // we could do it by assigning settings.seleted.dates
@@ -279,7 +280,7 @@ export default class Example12 {
             //   month: 6 - 1, // Note: JS Date month (only) is zero index based, so June is 6-1 => 5
             //   year: 2021
             // }
-          },
+          } as VanillaCalendarOption,
           massUpdate: true,
           validator: (value, args) => {
             const dataContext = args && args.item;
