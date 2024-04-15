@@ -97,5 +97,10 @@
   "funding": {
     "type": "ko_fi",
     "url": "https://ko-fi.com/ghiscoding"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "vanilla-calendar-pro@2.9.6": "patches/vanilla-calendar-pro@2.9.6.patch"
+    }
   }
 }

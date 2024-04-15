@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  vanilla-calendar-pro@2.9.6:
+    hash: u2urdthorbxwynz5kpatffyf7m
+    path: patches/vanilla-calendar-pro@2.9.6.patch
+
 importers:
 
   .:
@@ -113,12 +118,12 @@ importers:
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
-      vanilla-calendar-pro:
-        specifier: ^2.9.6
-        version: 2.9.6
       typescript-eslint:
         specifier: ^7.6.0
         version: 7.6.0(eslint@9.0.0)(typescript@5.4.5)
+      vanilla-calendar-pro:
+        specifier: ^2.9.6
+        version: 2.9.6(patch_hash=u2urdthorbxwynz5kpatffyf7m)
       whatwg-fetch:
         specifier: ^3.6.20
         version: 3.6.20
@@ -187,7 +192,7 @@ importers:
         version: 7.8.1
       vanilla-calendar-pro:
         specifier: ^2.9.6
-        version: 2.9.6
+        version: 2.9.6(patch_hash=u2urdthorbxwynz5kpatffyf7m)
       whatwg-fetch:
         specifier: ^3.6.20
         version: 3.6.20
@@ -260,7 +265,7 @@ importers:
         version: 2.0.12
       vanilla-calendar-pro:
         specifier: ^2.9.6
-        version: 2.9.6
+        version: 2.9.6(patch_hash=u2urdthorbxwynz5kpatffyf7m)
     devDependencies:
       autoprefixer:
         specifier: ^10.4.19
@@ -468,7 +473,7 @@ importers:
         version: 1.15.2
       vanilla-calendar-pro:
         specifier: ^2.9.6
-        version: 2.9.6
+        version: 2.9.6(patch_hash=u2urdthorbxwynz5kpatffyf7m)
       whatwg-fetch:
         specifier: ^3.6.20
         version: 3.6.20
@@ -9233,8 +9238,9 @@ packages:
       builtins: 5.0.1
     dev: true
 
-  /vanilla-calendar-pro@2.9.6:
+  /vanilla-calendar-pro@2.9.6(patch_hash=u2urdthorbxwynz5kpatffyf7m):
     resolution: {integrity: sha512-0bkcRd27urEGxgqc/kbV1ndSnOhmp/4V1v/tUiw67nHzZKMWrcDB9nM42LEu/0qBptEVsBtuDvXeu+7hZ0WuhQ==}
+    patched: true
 
   /verror@1.10.0:
     resolution: {integrity: sha512-ZZKSmDAEFOijERBLkmYfJ+vmk3w+7hOLYDNkRCuRuMJGEmqYNCNLyBBFwWKVMhfwaEF3WOd0Zlw86U/WC/+nYw==}
