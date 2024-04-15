@@ -7,8 +7,9 @@ import {
 } from '@slickgrid-universal/common';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { ExampleGridOptions } from './example-grid-options';
+import { BindingEventService } from '@slickgrid-universal/binding';
 
+import { ExampleGridOptions } from './example-grid-options';
 import './example22.scss';
 import type { TranslateService } from '../translate.service';
 
@@ -25,11 +26,13 @@ export default class Example22 {
   fetchResult = '';
   statusClass = 'is-success';
   statusStyle = 'display: none';
+  private _bindingEventService: BindingEventService;
 
   constructor() {
     this.translateService = (<any>window).TranslateService;
     this.selectedLanguage = this.translateService.getCurrentLanguage();
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;
+    this._bindingEventService = new BindingEventService();
   }
 
   attached() {
@@ -44,10 +47,15 @@ export default class Example22 {
       { ...ExampleGridOptions, ...this.gridOptions },
       this.dataset
     );
+
+    this._bindingEventService.bind(document.querySelector(`.grid1`)!, 'onvalidationerror', (event) =>
+      alert((event as CustomEvent)?.detail.args.validationResults.msg)
+    );
   }
 
   dispose() {
     this.sgb?.dispose();
+    this._bindingEventService.unbindAll();
   }
 
   /* Define grid Options and Columns */
@@ -80,7 +88,7 @@ export default class Example22 {
         minWidth: 100,
         filterable: true,
         type: FieldType.number,
-        editor: { model: Editors.text },
+        editor: { model: Editors.text, validator: (val) => (val > 100 ? { msg: 'Max 100% allowed', valid: false} : { msg: '', valid: true}) },
       },
       {
         id: 'start',

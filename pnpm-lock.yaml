@@ -44,6 +44,9 @@ importers:
       cypress:
         specifier: ^13.7.3
         version: 13.7.3
+      cypress-real-events:
+        specifier: ^1.12.0
+        version: 1.12.0(cypress@13.7.3)
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -3943,6 +3946,14 @@ packages:
     engines: {node: '>=18'}
     dependencies:
       rrweb-cssom: 0.6.0
+
+  /cypress-real-events@1.12.0(cypress@13.7.3):
+    resolution: {integrity: sha512-oiy+4kGKkzc2PT36k3GGQqkGxNiVypheWjMtfyi89iIk6bYmTzeqxapaLHS3pnhZOX1IEbTDUVxh8T4Nhs1tyQ==}
+    peerDependencies:
+      cypress: ^4.x || ^5.x || ^6.x || ^7.x || ^8.x || ^9.x || ^10.x || ^11.x || ^12.x || ^13.x
+    dependencies:
+      cypress: 13.7.3
+    dev: true
 
   /cypress@13.7.3:
     resolution: {integrity: sha512-uoecY6FTCAuIEqLUYkTrxamDBjMHTYak/1O7jtgwboHiTnS1NaMOoR08KcTrbRZFCBvYOiS4tEkQRmsV+xcrag==}

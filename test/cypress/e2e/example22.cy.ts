@@ -62,7 +62,23 @@ describe('Example 22 - Row Based Editing', () => {
     cy.get('.slick-cell').first().should('have.class', 'slick-rbe-unsaved-cell');
   });
 
-  it('should stay in editmode if saving failed', () => {
+  it('should fire onvalidationerror event when pasting and resulting in invalid validation result', (done) => {
+    cy.reload();
+
+    cy.get('.action-btns--edit').first().click();
+
+    cy.get('.slick-cell.l1.r1').first().click().type('120{enter}');
+    cy.get('.slick-cell.l1.r1').first().click().realPress(['Control', 'C']);
+
+    cy.on('window:alert', (str) => {
+      expect(str).to.equal('Max 100% allowed');
+      done();
+    });
+    cy.get('.slick-cell.l2.r2').first().click().realPress(['Control', 'V']);
+    cy.get('.slick-cell.active').type('{enter}');
+  });
+
+  it('should stay in editmode if saving failed', (done) => {
     cy.reload();
 
     cy.get('.action-btns--edit').first().click();
@@ -74,6 +90,7 @@ describe('Example 22 - Row Based Editing', () => {
     cy.on('window:confirm', () => true);
     cy.on('window:alert', (str) => {
       expect(str).to.equal('Sorry, 40 is the maximum allowed duration.');
+      done();
     });
 
     cy.get('.slick-row.slick-rbe-editmode').should('have.length', 1);
