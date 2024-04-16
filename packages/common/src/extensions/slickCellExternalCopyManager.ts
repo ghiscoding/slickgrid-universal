@@ -136,10 +136,8 @@ export class SlickCellExternalCopyManager {
           position: { top: 0, left: 0 } as unknown as ElementPosition,  // a dummy position required by some editors
           gridPosition: { top: 0, left: 0 } as unknown as ElementPosition,  // a dummy position required by some editors
           grid: this._grid,
-          /* istanbul ignore next */
-          cancelChanges: () => { },
-          /* istanbul ignore next */
-          commitChanges: () => { },
+          cancelChanges: /* istanbul ignore next */ () => { },
+          commitChanges: /* istanbul ignore next */ () => { },
         });
         editor.loadValue(item);
         retVal = editor.serializeValue();
@@ -169,10 +167,8 @@ export class SlickCellExternalCopyManager {
           position: { top: 0, left: 0 } as unknown as ElementPosition,  // a dummy position required by some editors
           gridPosition: { top: 0, left: 0 } as unknown as ElementPosition,  // a dummy position required by some editors
           grid: this._grid,
-          /* istanbul ignore next */
-          cancelChanges: () => { },
-          /* istanbul ignore next */
-          commitChanges: () => { },
+          cancelChanges: /* istanbul ignore next */ () => { },
+          commitChanges: /* istanbul ignore next */ () => { },
         }) as Editor;
         editor.loadValue(item);
         const validationResults = editor.validate(undefined, value);
