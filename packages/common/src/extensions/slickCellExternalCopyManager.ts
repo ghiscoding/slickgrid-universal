@@ -7,6 +7,9 @@ import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRan
 const CLEAR_COPY_SELECTION_DELAY = 2000;
 const CLIPBOARD_PASTE_DELAY = 100;
 
+/* istanbul ignore next */
+const noop = () => { };
+
 /*
   This manager enables users to copy/paste data from/to an external Spreadsheet application
   such as MS-Excel® or OpenOffice-Spreadsheet.
@@ -136,8 +139,8 @@ export class SlickCellExternalCopyManager {
           position: { top: 0, left: 0 } as unknown as ElementPosition,  // a dummy position required by some editors
           gridPosition: { top: 0, left: 0 } as unknown as ElementPosition,  // a dummy position required by some editors
           grid: this._grid,
-          cancelChanges: /* istanbul ignore next */ () => { },
-          commitChanges: /* istanbul ignore next */ () => { },
+          cancelChanges: noop,
+          commitChanges: noop,
         });
         editor.loadValue(item);
         retVal = editor.serializeValue();
@@ -167,8 +170,8 @@ export class SlickCellExternalCopyManager {
           position: { top: 0, left: 0 } as unknown as ElementPosition,  // a dummy position required by some editors
           gridPosition: { top: 0, left: 0 } as unknown as ElementPosition,  // a dummy position required by some editors
           grid: this._grid,
-          cancelChanges: /* istanbul ignore next */ () => { },
-          commitChanges: /* istanbul ignore next */ () => { },
+          cancelChanges: noop,
+          commitChanges: noop,
         }) as Editor;
         editor.loadValue(item);
         const validationResults = editor.validate(undefined, value);
