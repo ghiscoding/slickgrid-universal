@@ -485,7 +485,7 @@ describe('DateEditor', () => {
         expect(spy).not.toHaveBeenCalled();
       });
 
-      it('should not throw any error when date is invalid when lower than required "minDate" defined in the "editorOptions" and "autoCommitEdit" is enabled', () => {
+      it('should not throw any error when date is lower than required "minDate" defined in the "editorOptions" and "autoCommitEdit" is enabled', () => {
         mockColumn.editor!.editorOptions = { range: { disablePast: true } };
         mockItemData = { id: 1, startDate: '500-01-02T11:02:02.000Z', isActive: true };
         gridOptionMock.autoCommitEdit = true;

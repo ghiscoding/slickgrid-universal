@@ -297,6 +297,27 @@ describe('CompoundDateFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T10:00:00.000Z'], shouldTriggerQuery: true });
   });
 
+  it('should create the input filter with a default input dates when passed as a filter options', () => {
+    mockColumn.filter!.operator = '<=';
+    mockColumn.filter!.filterOptions = {
+      selected: { dates: ['2001-01-02'] }
+
+    };
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+
+    filterInputElm.focus();
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-02'], hide: jest.fn() } as unknown as VanillaCalendar);
+    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
+
+    expect(filterFilledElms.length).toBe(1);
+    expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-02T00:00:00.000Z');
+    expect(filterInputElm.value).toBe('2000-01-02');
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-02'], shouldTriggerQuery: true });
+  });
+
   it('should trigger an operator change event and expect the callback to be called with the searchTerms and operator defined', () => {
     filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
     mockColumn.filter!.operator = '>';

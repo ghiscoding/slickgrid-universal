@@ -331,9 +331,6 @@ export class DateEditor implements Editor {
     const elmDateStr = this.getValue();
 
     if (this.columnDef) {
-      if (elmDateStr === 'Invalid date' || this._originalDate === 'Invalid date') {
-        return false;
-      }
       isChanged = this._lastTriggeredByClearDate || (!(elmDateStr === '' && this._originalDate === '')) && (elmDateStr !== this._originalDate);
     }
 
