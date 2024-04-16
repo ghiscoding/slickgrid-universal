@@ -21,6 +21,7 @@ import type {
 import { formatDateByFieldType, getDescendantProperty, mapMomentDateFormatWithFieldType, } from './../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import { SlickEventData, type SlickGrid } from '../core/index';
+import { setPickerDates } from '../commonEditorFilter';
 
 /*
  * An example of a date picker editor using Vanilla-Calendar-Pro
@@ -208,7 +209,7 @@ export class DateEditor implements Editor {
           this.focus();
         }
         if (this.calendarInstance) {
-          this.setPickerDates(this.calendarInstance, this.defaultDate);
+          setPickerDates(this._inputElm, this.calendarInstance, this.defaultDate, this.columnDef, this.columnEditor);
           this.calendarInstance.update({
             dates: true,
             month: true,
@@ -300,7 +301,7 @@ export class DateEditor implements Editor {
 
   setValue(val: string, isApplyingValue = false, triggerOnCompositeEditorChange = true) {
     if (this.calendarInstance) {
-      this.setPickerDates(this.calendarInstance, val);
+      setPickerDates(this._inputElm, this.calendarInstance, val, this.columnDef, this.columnEditor);
     }
 
     if (isApplyingValue) {
@@ -417,7 +418,7 @@ export class DateEditor implements Editor {
 
   validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor.required;
-    const elmValue = (inputValue !== undefined) ? inputValue : this._inputElm?.value;
+    const elmValue = inputValue ?? this._inputElm?.value;
     const errorMsg = this.columnEditor.errorMessage;
 
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
@@ -491,26 +492,5 @@ export class DateEditor implements Editor {
       { ...activeCell, item, grid, column, formValues: compositeEditorOptions.formValues, editors: compositeEditorOptions.editors, triggeredBy },
       new SlickEventData()
     );
-  }
-
-  protected setPickerDates(pickerOptions: IOptions, dateValues?: Date | Date[] | string | string[]) {
-    const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateUtc;
-    const inputFieldType = this.columnEditor.type || this.columnDef.type;
-    const isoFormat = mapMomentDateFormatWithFieldType(FieldType.dateIso);
-    const inputFormat = inputFieldType ? mapMomentDateFormatWithFieldType(inputFieldType) : '';
-    const initialDates = Array.isArray(dateValues) ? dateValues as string[] : [(dateValues || '') as string];
-    if (initialDates.length && initialDates[0]) {
-      const momentDate = moment(initialDates[0], inputFormat);
-
-      pickerOptions.settings!.selected = {
-        dates: [momentDate.format(isoFormat)],
-        month: momentDate.month(),
-        year: momentDate.year(),
-        time: (dateValues instanceof Date || inputFormat.toLowerCase().includes('h'))
-          ? momentDate.format('HH:mm')
-          : null,
-      };
-      this._inputElm.value = initialDates.length ? formatDateByFieldType(momentDate, inputFieldType, outputFieldType) : '';
-    }
   }
 }

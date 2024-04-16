@@ -25,6 +25,7 @@ import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities'
 import { formatDateByFieldType, mapMomentDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import type { SlickGrid } from '../core/index';
+import { setPickerDates } from '../commonEditorFilter';
 
 export class DateFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -201,7 +202,7 @@ export class DateFilter implements Filter {
     }
 
     if (this.calendarInstance && pickerValues !== undefined) {
-      this.setPickerDates(this.calendarInstance, pickerValues);
+      setPickerDates(this._dateInputElm, this.calendarInstance, pickerValues, this.columnDef, this.columnFilter);
       this._currentDateOrDates = (values && pickerValues) ? pickerValues : undefined;
     }
 
@@ -388,33 +389,10 @@ export class DateFilter implements Filter {
     }
 
     if (pickerValues) {
-      this.setPickerDates(pickerOptions, pickerValues);
+      setPickerDates(this._dateInputElm, pickerOptions, pickerValues, this.columnDef, this.columnFilter);
     }
 
     return filterDivInputElm;
-  }
-
-  protected setPickerDates(pickerOptions: IOptions, dateValues?: Date | Date[] | string | string[]) {
-    this._currentDateOrDates = dateValues;
-    const isoFormat = mapMomentDateFormatWithFieldType(FieldType.dateIso);
-    const inputFormat = mapMomentDateFormatWithFieldType(this.columnFilter.type || this.columnDef.type || FieldType.dateIso);
-    const outputFieldType = this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc;
-    const initialDates = Array.isArray(this._currentDateOrDates) ? this._currentDateOrDates : [(this._currentDateOrDates || '') as string];
-    if (initialDates.length && initialDates[0]) {
-      const pickerDates = [];
-      for (const initialDate of initialDates) {
-        const momentDate = moment(initialDate, inputFormat);
-        pickerDates.push(momentDate);
-      }
-
-      pickerOptions.settings!.selected = {
-        dates: [pickerDates.map(p => p.format(isoFormat)).join(':')],
-        month: pickerDates[0].month(),
-        year: pickerDates[0].year(),
-        time: inputFormat.toLowerCase().includes('h') ? pickerDates[0].format('HH:mm') : null,
-      };
-      this._dateInputElm.value = initialDates.length ? pickerDates.map(p => formatDateByFieldType(p, undefined, outputFieldType)).join(' — ') : '';
-    }
   }
 
   /** Get the available operator option values to populate the operator select dropdown list */
