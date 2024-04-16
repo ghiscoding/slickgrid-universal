@@ -27,7 +27,7 @@ export class SliderEditor implements Editor {
   protected _defaultValue = 0;
   protected _isValueTouched = false;
   protected _originalValue?: number | string;
-  protected _cellContainerElm!: HTMLDivElement;
+  protected _cellContainerElm!: HTMLElement;
   protected _editorElm!: HTMLDivElement;
   protected _inputElm!: HTMLInputElement;
   protected _sliderOptions!: CurrentSliderOption;

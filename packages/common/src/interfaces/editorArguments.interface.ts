@@ -1,22 +1,22 @@
 import type { Column, CompositeEditorOption, ElementPosition } from './index';
 import type { PositionMethod } from '../enums/positionMethod.type';
-import type { SlickDataView, SlickGrid } from '../core/index';
+import type { SlickDataView, SlickEventData, SlickGrid } from '../core/index';
 
 export interface EditorArguments {
   /** Column Definition */
   column: Column;
 
   /** Column MetaData */
-  columnMetaData: any;
+  columnMetaData?: any;
 
   /** Editor HTML DOM element container */
-  container: HTMLDivElement;
+  container: HTMLElement;
 
   /** Slick DataView */
   dataView?: SlickDataView;
 
   /** Event that was triggered */
-  event: Event;
+  event: Event | SlickEventData;
 
   /** Slick Grid object */
   grid: SlickGrid;
@@ -25,7 +25,7 @@ export interface EditorArguments {
   gridPosition: ElementPosition;
 
   /** Item DataContext */
-  item: any;
+  item?: any;
 
   /** Editor Position  */
   position: PositionMethod | ElementPosition;

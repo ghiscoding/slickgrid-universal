@@ -1,6 +1,6 @@
 import { createDomElement, getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
 
-import type { Column, Editor, ExcelCopyBufferOption, ExternalCopyClipCommand, OnEventArgs } from '../interfaces/index';
+import type { Column, Editor, EditorConstructor, ElementPosition, ExcelCopyBufferOption, ExternalCopyClipCommand, OnEventArgs } from '../interfaces/index';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange, type SlickDataView, Utils as SlickUtils } from '../core/index';
 
 // using external SlickGrid JS libraries
@@ -129,13 +129,16 @@ export class SlickCellExternalCopyManager {
     if (columnDef) {
       if (columnDef.editorClass) {
         const tmpP = document.createElement('p');
-        const editor = new (columnDef as any).editorClass({
+        const editor = new (columnDef.editorClass as EditorConstructor)({
           container: tmpP,  // a dummy container
           column: columnDef,
           event,
-          position: { top: 0, left: 0 },  // a dummy position required by some editors
+          position: { top: 0, left: 0 } as unknown as ElementPosition,  // a dummy position required by some editors
+          gridPosition: { top: 0, left: 0 } as unknown as ElementPosition,  // a dummy position required by some editors
           grid: this._grid,
-        }) as Editor;
+          /* istanbul ignore next */ cancelChanges: () => { },
+          /* istanbul ignore next */ commitChanges: () => { },
+        });
         editor.loadValue(item);
         retVal = editor.serializeValue();
         editor.destroy();
@@ -157,11 +160,15 @@ export class SlickCellExternalCopyManager {
       // if a custom setter is not defined, we call applyValue of the editor to unserialize
       if (columnDef.editorClass) {
         const tmpDiv = document.createElement('div');
-        const editor = new (columnDef as any).editorClass({
+        const editor = new (columnDef.editorClass as EditorConstructor)({
           container: tmpDiv, // a dummy container
           column: columnDef,
-          position: { top: 0, left: 0 },  // a dummy position required by some editors
-          grid: this._grid
+          event: null as any,
+          position: { top: 0, left: 0 } as unknown as ElementPosition,  // a dummy position required by some editors
+          gridPosition: { top: 0, left: 0 } as unknown as ElementPosition,  // a dummy position required by some editors
+          grid: this._grid,
+          /* istanbul ignore next */ cancelChanges: () => { },
+          /* istanbul ignore next */ commitChanges: () => { },
         }) as Editor;
         editor.loadValue(item);
         const validationResults = editor.validate(undefined, value);
