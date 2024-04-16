@@ -81,7 +81,7 @@ describe('DateRangeFilter', () => {
     filter.init(filterArguments);
     const spy = jest.spyOn(filter.calendarInstance!, 'hide');
     const inputElm = document.body.querySelector('input.date-picker') as HTMLInputElement;
-    inputElm.dispatchEvent(new Event('click'));
+    inputElm.dispatchEvent(new MouseEvent('click'));
     const calendarElm = document.body.querySelector('.vanilla-calendar') as HTMLDivElement;
     filter.hide();
 
@@ -149,7 +149,7 @@ describe('DateRangeFilter', () => {
 
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('div.date-picker.search-filter.filter-finish input.date-picker') as HTMLInputElement;
-    filter.calendarInstance!.actions!.changeToInput!(new Event('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
     filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.date-picker.search-filter.filter-finish.filled');
 
@@ -165,7 +165,7 @@ describe('DateRangeFilter', () => {
 
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('.date-picker.search-filter.filter-finish input.date-picker') as HTMLInputElement;
-    filter.calendarInstance!.actions!.changeToInput!(new Event('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
     filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.date-picker.search-filter.filter-finish.filled');
 
@@ -174,7 +174,7 @@ describe('DateRangeFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'RangeExclusive', searchTerms: ['2001-01-02', '2001-01-13'], shouldTriggerQuery: true });
   });
 
-  it('should create the input filter with a default search term when passed as a filter argument', () => {
+  it('should create the input filter with a default search terms when passed as a filter argument', () => {
     const selectedDates = ['2001-01-02', '2001-01-03', '2001-01-04', '2001-01-05', '2001-01-06', '2001-01-07', '2001-01-08', '2001-01-09', '2001-01-10', '2001-01-11', '2001-01-12', '2001-01-13'];
     filterArguments.searchTerms = ['2001-01-02', '2001-01-13'];
     mockColumn.filter!.operator = 'RangeInclusive';
@@ -184,7 +184,7 @@ describe('DateRangeFilter', () => {
     const filterInputElm = divContainer.querySelector('.date-picker.search-filter.filter-finish input.date-picker') as HTMLInputElement;
 
     filterInputElm.focus();
-    filter.calendarInstance!.actions!.changeToInput!(new Event('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
     filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.date-picker.search-filter.filter-finish.filled');
 
@@ -194,7 +194,8 @@ describe('DateRangeFilter', () => {
   });
 
   it('should create the input filter with a default search term when passed as a filter argument with 2 dots (..) notation', () => {
-    filterArguments.searchTerms = ['2001-01-02T05:00:00.000Z..2001-01-13T05:00:00.000Z'];
+    const selectedDates = ['2001-01-01', '2001-01-02', '2001-01-03'];
+    filterArguments.searchTerms = ['2001-01-01..2001-01-03'];
     mockColumn.filter!.operator = 'RangeInclusive';
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
@@ -202,12 +203,14 @@ describe('DateRangeFilter', () => {
     const filterInputElm = divContainer.querySelector('.date-picker.search-filter.filter-finish input.date-picker') as HTMLInputElement;
 
     filterInputElm.focus();
-    filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
+
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.date-picker.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(filterInputElm.value).toBe('2001-01-02 — 2001-01-13');
-    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: ['2001-01-02', '2001-01-13'], shouldTriggerQuery: true });
+    expect(filterInputElm.value).toBe('2001-01-01 — 2001-01-03');
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: ['2001-01-01', '2001-01-03'], shouldTriggerQuery: true });
   });
 
   it('should be able to call "setValues" and set empty values and the picker input to not have the "filled" css class', () => {
@@ -226,7 +229,8 @@ describe('DateRangeFilter', () => {
 
   it('should work with different locale when locale is changed', async () => {
     translateService.use('fr');
-    filterArguments.searchTerms = ['2001-01-01T05:00:00.000Z', '2001-01-31T05:00:00.000Z'];
+    const selectedDates = ['2001-01-01', '2001-01-02', '2001-01-03'];
+    filterArguments.searchTerms = ['2001-01-01', '2001-01-03'];
     mockColumn.filter!.operator = 'RangeInclusive';
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
@@ -239,19 +243,20 @@ describe('DateRangeFilter', () => {
     filter.show();
 
     filterInputElm.focus();
-    filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.date-picker.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(filterInputElm.value).toBe('2001-01-01 — 2001-01-31');
-    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: ['2001-01-01', '2001-01-31'], shouldTriggerQuery: true });
+    expect(filterInputElm.value).toBe('2001-01-01 — 2001-01-03');
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: ['2001-01-01', '2001-01-03'], shouldTriggerQuery: true });
     expect(calendarElm).toBeTruthy();
     expect(monthElm).toBeTruthy();
     // expect(monthElm.textContent).toBe('janvier');
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
-    filterArguments.searchTerms = ['2001-01-01', '2001-01-31'];
+    filterArguments.searchTerms = ['2001-01-01', '2001-01-03'];
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
@@ -287,7 +292,7 @@ describe('DateRangeFilter', () => {
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('.date-picker.search-filter.filter-finish input.date-picker') as HTMLInputElement;
     filterInputElm.value = '2001-01-02 — 2001-01-13';
-    filter.calendarInstance!.actions!.changeToInput!(new Event('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
     filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates, hide: jest.fn() } as unknown as VanillaCalendar);
 
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.date-picker.search-filter.filter-finish.filled');
@@ -298,24 +303,5 @@ describe('DateRangeFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(undefined, {
       columnDef: mockColumn, operator: '>', searchTerms: ['2001-01-02', '2001-01-13'], shouldTriggerQuery: true
     });
-  });
-
-  it('should have a value with date & time in the picker when using no "outputType" which will default to UTC date', () => {
-    mockColumn.outputType = null as any;
-    filterArguments.searchTerms = ['2001-01-01T05:00:00.000Z', '2001-01-31T05:00:00.000Z'];
-    mockColumn.filter!.operator = '<=';
-    const spyCallback = jest.spyOn(filterArguments, 'callback');
-
-    filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector('.date-picker.search-filter.filter-finish input.date-picker') as HTMLInputElement;
-
-    filterInputElm.focus();
-    filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
-    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.date-picker.search-filter.filter-finish.filled');
-
-    expect(filterFilledElms.length).toBe(1);
-    expect(filter.currentDateOrDates).toEqual(['2001-01-01T05:00:00.000Z', '2001-01-31T05:00:00.000Z']);
-    expect(filterInputElm.value).toBe('2001-01-01 — 2001-01-31');
-    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2001-01-01', '2001-01-31'], shouldTriggerQuery: true });
   });
 });

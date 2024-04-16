@@ -33,9 +33,9 @@ export class DateFilter implements Filter {
   protected _currentValue?: string;
   protected _currentDateOrDates?: Date | Date[] | string | string[];
   protected _currentDateStrings?: string[];
+  protected _lastDayClick = false;
   protected _pickerOptions!: IOptions;
   protected _filterElm!: HTMLDivElement;
-  protected _filterDivInputElm!: HTMLDivElement;
   protected _dateInputElm!: HTMLInputElement;
   protected _operator!: OperatorType | OperatorString;
   protected _selectOperatorElm?: HTMLSelectElement;
@@ -120,17 +120,28 @@ export class DateFilter implements Filter {
     // step 1, create the DOM Element of the filter which contain the compound Operator+Input
     this._filterElm = this.createDomFilterElement(searchValues);
 
+    // if there's a search term, we will add the "filled" class for styling purposes
+    if (this.searchTerms.length) {
+      this._filterElm.classList.add('filled');
+    }
+
     // step 3, subscribe to the keyup event and run the callback when that happens
     // also add/remove "filled" class for styling purposes
-    this._bindEventService.bind(this._filterDivInputElm, 'keyup', this.onTriggerEvent.bind(this));
     if (this._selectOperatorElm) {
       this._bindEventService.bind(this._selectOperatorElm, 'change', this.onTriggerEvent.bind(this));
     }
 
     // close picker on Esc/Tab keys
-    this._bindEventService.bind(document, 'keydown', ((e: KeyboardEvent) => {
+    this._bindEventService.bind(document.body, 'keydown', ((e: KeyboardEvent) => {
       if (e.key === 'Escape' || e.key === 'Tab') {
         this.hide();
+      }
+    }) as EventListener);
+
+    // clear date picker + compound operator when Backspace is pressed
+    this._bindEventService.bind(this._dateInputElm, 'keydown', ((e: KeyboardEvent) => {
+      if (e.key === 'Backspace') {
+        this.clear(true);
       }
     }) as EventListener);
   }
@@ -151,7 +162,6 @@ export class DateFilter implements Filter {
     }
     this.onTriggerEvent(new Event('keyup'));
     this._filterElm.classList.remove('filled');
-    this._filterDivInputElm.classList.remove('filled');
   }
 
   /** Destroy the filter */
@@ -160,8 +170,6 @@ export class DateFilter implements Filter {
     this.calendarInstance?.destroy();
 
     emptyElement(this.filterContainerElm);
-    emptyElement(this._filterDivInputElm);
-    this._filterDivInputElm?.remove();
     this.filterContainerElm?.remove();
     this._selectOperatorElm?.remove();
     this._filterElm?.remove();
@@ -209,10 +217,8 @@ export class DateFilter implements Filter {
     const currentValueOrValues = this.getValues() || [];
     if (this.getValues() || (Array.isArray(currentValueOrValues) && currentValueOrValues.length > 0 && values)) {
       this._filterElm.classList.add('filled');
-      this._filterDivInputElm.classList.add('filled');
     } else {
       this._filterElm.classList.remove('filled');
-      this._filterDivInputElm.classList.remove('filled');
     }
 
     // set the operator when defined
@@ -226,7 +232,7 @@ export class DateFilter implements Filter {
   //
   // protected functions
   // ------------------
-  protected buildDatePickerInput(searchTerms?: SearchTerm | SearchTerm[]): HTMLDivElement {
+  protected buildDatePickerInput(searchTerms?: SearchTerm | SearchTerm[]) {
     const columnId = this.columnDef?.id ?? '';
     const columnFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
     const outputFieldType = this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc;
@@ -241,10 +247,7 @@ export class DateFilter implements Filter {
     const pickerFormat = mapMomentDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);
 
     // get current locale, if user defined a custom locale just use or get it the Translate Service if it exist else just use English
-    let currentLocale = (userFilterOptions?.locale ?? this.translaterService?.getCurrentLanguage?.()) || this.gridOptions.locale || 'en';
-    if (currentLocale?.length > 2) {
-      currentLocale = currentLocale.substring(0, 2);
-    }
+    const currentLocale = (userFilterOptions?.locale ?? this.translaterService?.getCurrentLanguage?.()) || this.gridOptions.locale || 'en';
 
     let pickerValues: any | any[];
 
@@ -272,60 +275,62 @@ export class DateFilter implements Filter {
       input: true,
       type: this.inputFilterType === 'range' ? 'multiple' : 'default',
       actions: {
-        clickDay: (_e, self) => {
-          // if you want to hide the calendar after picking a date
-          if (this.inputFilterType === 'compound' || (this.inputFilterType === 'range' && self.selectedDates.length >= 2)) {
-            self.hide();
-          }
+        clickDay: (_e) => {
+          this._lastDayClick = true;
         },
         changeToInput: (_e, self) => {
-          if (!self.HTMLInputElement) {
-            return;
-          }
+          if (self.HTMLInputElement) {
+            let outDates: string[] = [];
+            let firstDate = '';
+            let lastDate = ''; // when using date range
 
-          let outDates: string[] = [];
-          let firstDate = '';
-          let lastDate = ''; // when using date range
+            if (self.selectedDates[1]) {
+              self.selectedDates.sort((a, b) => +new Date(a) - +new Date(b));
+              firstDate = self.selectedDates[0];
+              lastDate = self.selectedDates[self.selectedDates.length - 1];
+              const firstDisplayDate = moment(self.selectedDates[0]).format(outputFormat);
+              const lastDisplayDate = moment(lastDate).format(outputFormat);
+              self.HTMLInputElement.value = `${firstDisplayDate} — ${lastDisplayDate}`;
+              outDates = [firstDate, lastDate];
+            } else if (self.selectedDates[0]) {
+              firstDate = self.selectedDates[0];
+              self.HTMLInputElement.value = formatDateByFieldType(firstDate, undefined, outputFieldType);
+              outDates = self.selectedDates;
+            } else {
+              self.HTMLInputElement.value = '';
+            }
 
-          if (self.selectedDates[1]) {
-            self.selectedDates.sort((a, b) => +new Date(a) - +new Date(b));
-            firstDate = self.selectedDates[0];
-            lastDate = self.selectedDates[self.selectedDates.length - 1];
-            const firstDisplayDate = moment(self.selectedDates[0]).format(outputFormat);
-            const lastDisplayDate = moment(lastDate).format(outputFormat);
-            self.HTMLInputElement.value = `${firstDisplayDate} — ${lastDisplayDate}`;
-            outDates = [firstDate, lastDate];
-          } else if (self.selectedDates[0]) {
-            firstDate = self.selectedDates[0];
-            self.HTMLInputElement.value = formatDateByFieldType(firstDate, undefined, outputFieldType);
-            outDates = self.selectedDates;
-          } else {
-            self.HTMLInputElement.value = '';
-          }
+            if (this.hasTimePicker && firstDate) {
+              const momentDate = moment(firstDate, pickerFormat);
+              momentDate.hours(self.selectedHours);
+              momentDate.minute(self.selectedMinutes);
+              self.HTMLInputElement.value = formatDateByFieldType(momentDate, undefined, outputFieldType);
 
-          if (this.hasTimePicker && firstDate) {
-            const momentDate = moment(firstDate, pickerFormat);
-            momentDate.hours(self.selectedHours);
-            momentDate.minute(self.selectedMinutes);
-            self.HTMLInputElement.value = formatDateByFieldType(momentDate, undefined, outputFieldType);
+              outDates = [self.HTMLInputElement.value];
+            }
 
-            outDates = [self.HTMLInputElement.value];
-          }
+            if (this.inputFilterType === 'compound') {
+              this._currentValue = formatDateByFieldType(outDates[0], undefined, columnFieldType);
+            } else {
+              if (Array.isArray(outDates)) {
+                this._currentDateStrings = outDates.map(date => formatDateByFieldType(date, undefined, columnFieldType));
+                this._currentValue = this._currentDateStrings.join('..');
+              }
+            }
+            this._currentDateOrDates = outDates.map(dateStr => new Date(dateStr));
 
-          if (this.inputFilterType === 'compound') {
-            this._currentValue = formatDateByFieldType(outDates[0], undefined, columnFieldType);
-          } else {
-            if (Array.isArray(outDates)) {
-              this._currentDateStrings = outDates.map(date => formatDateByFieldType(date, undefined, columnFieldType));
-              this._currentValue = this._currentDateStrings.join('..');
+            // when using the time picker, we can simulate a keyup event to avoid multiple backend request
+            // since backend request are only executed after user start typing, changing the time should be treated the same way
+            if (this._currentValue) {
+              const newEvent = this.hasTimePicker ? new Event('keyup') : undefined;
+              this.onTriggerEvent(newEvent);
+            }
+
+            // if you want to hide the calendar after picking a date
+            if (this._lastDayClick) {
+              self.hide();
             }
           }
-          this._currentDateOrDates = outDates.map(dateStr => new Date(dateStr));
-
-          // when using the time picker, we can simulate a keyup event to avoid multiple backend request
-          // since backend request are only executed after user start typing, changing the time should be treated the same way
-          const newEvent = this.hasTimePicker ? new Event('keyup') : undefined;
-          this.onTriggerEvent(newEvent);
         },
       },
       settings: {
@@ -369,17 +374,12 @@ export class DateFilter implements Filter {
       placeholder = this.columnFilter.placeholder;
     }
 
-    const filterDivInputElm = createDomElement('div', { className: 'date-picker' });
-    if (this.inputFilterType === 'range') {
-      filterDivInputElm.classList.add('search-filter', `filter-${columnId}`);
-    }
     this._dateInputElm = createDomElement('input', {
       type: 'text', className: 'form-control date-picker',
       placeholder,
       readOnly: true,
       dataset: { input: '', columnid: `${columnId}` }
     });
-    filterDivInputElm.appendChild(this._dateInputElm);
 
     this.calendarInstance = new VanillaCalendar(this._dateInputElm, this._pickerOptions);
     this.calendarInstance.init();
@@ -391,8 +391,6 @@ export class DateFilter implements Filter {
     if (pickerValues) {
       setPickerDates(this._dateInputElm, pickerOptions, pickerValues, this.columnDef, this.columnFilter);
     }
-
-    return filterDivInputElm;
   }
 
   /** Get the available operator option values to populate the operator select dropdown list */
@@ -413,42 +411,40 @@ export class DateFilter implements Filter {
     emptyElement(this.filterContainerElm);
 
     // create the DOM element filter container
-    this._filterDivInputElm = this.buildDatePickerInput(searchTerms);
+    this.buildDatePickerInput(searchTerms);
 
     if (this.inputFilterType === 'range') {
       // if there's a search term, we will add the "filled" class for styling purposes
+      const inputContainerElm = createDomElement('div', { className: `date-picker form-group search-filter filter-${columnId}` });
+
       if (Array.isArray(searchTerms) && searchTerms.length > 0 && searchTerms[0] !== '') {
-        this._filterDivInputElm.classList.add('filled');
         this._currentDateOrDates = searchTerms as Date[];
         this._currentValue = searchTerms[0] as string;
       }
+      inputContainerElm.appendChild(this._dateInputElm);
 
       // append the new DOM element to the header row
-      if (this._filterDivInputElm) {
-        this.filterContainerElm.appendChild(this._filterDivInputElm);
+      if (inputContainerElm) {
+        this.filterContainerElm.appendChild(inputContainerElm);
       }
 
-      return this._filterDivInputElm;
+      return inputContainerElm;
     } else {
       this._selectOperatorElm = buildSelectOperator(this.getOperatorOptionValues(), this.grid);
-      const filterContainerElm = createDomElement('div', { className: `form-group search-filter filter-${columnId}` });
+      const filterContainerElm = createDomElement('div', { className: `date-picker form-group search-filter filter-${columnId}` });
       const containerInputGroupElm = createDomElement('div', { className: 'input-group date-picker' }, filterContainerElm);
       const operatorInputGroupAddonElm = createDomElement('div', { className: 'input-group-addon input-group-prepend operator' }, containerInputGroupElm);
 
       operatorInputGroupAddonElm.appendChild(this._selectOperatorElm);
-      containerInputGroupElm.appendChild(this._filterDivInputElm);
+      containerInputGroupElm.appendChild(this._dateInputElm);
 
       if (this.operator) {
         const operatorShorthand = mapOperatorToShorthandDesignation(this.operator);
         this._selectOperatorElm.value = operatorShorthand;
       }
 
-      // if there's a search term, we will add the "filled" class for styling purposes
-      if (searchTerms !== '') {
-        this._filterDivInputElm.classList.add('filled');
-        this._currentDateOrDates = searchTerms as Date;
-        this._currentValue = searchTerms as string;
-      }
+      this._currentDateOrDates = searchTerms as Date;
+      this._currentValue = searchTerms as string;
 
       // append the new DOM element to the header row
       if (filterContainerElm) {

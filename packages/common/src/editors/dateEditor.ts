@@ -33,13 +33,13 @@ export class DateEditor implements Editor {
   protected _inputElm!: HTMLInputElement;
   protected _inputWithDataElm!: HTMLInputElement | null;
   protected _isValueTouched = false;
+  protected _lastDayClick = false;
   protected _lastTriggeredByClearDate = false;
   protected _originalDate?: string;
   protected _pickerMergedOptions!: IOptions;
   calendarInstance?: VanillaCalendar;
   defaultDate?: string;
   hasTimePicker = false;
-  lastDayClick = false;
 
   /** is the Editor disabled? */
   disabled = false;
@@ -112,10 +112,7 @@ export class DateEditor implements Editor {
       this.defaultDate = this.args.item?.[this.columnDef.field];
       const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateUtc;
       const outputFormat = mapMomentDateFormatWithFieldType(outputFieldType);
-      let currentLocale = this._translaterService?.getCurrentLanguage?.() || gridOptions.locale || 'en';
-      if (currentLocale.length > 2) {
-        currentLocale = currentLocale.substring(0, 2);
-      }
+      const currentLocale = this._translaterService?.getCurrentLanguage?.() || gridOptions.locale || 'en';
 
       // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
       if (outputFormat && (outputFormat === 'Z' || outputFormat.toLowerCase().includes('h'))) {
@@ -127,31 +124,29 @@ export class DateEditor implements Editor {
         input: true,
         actions: {
           clickDay: () => {
-            this.lastDayClick = true;
+            this._lastDayClick = true;
           },
           changeToInput: (_e: Event, self: VanillaCalendar) => {
-            if (!self.HTMLInputElement) {
-              return;
-            }
+            if (self.HTMLInputElement) {
+              let chosenDate = '';
+              if (self.selectedDates[0]) {
+                chosenDate = self.selectedDates[0];
+                self.HTMLInputElement.value = formatDateByFieldType(self.selectedDates[0], undefined, outputFieldType);
+              } else {
+                self.HTMLInputElement.value = '';
+              }
 
-            let chosenDate = '';
-            if (self.selectedDates[0]) {
-              chosenDate = self.selectedDates[0];
-              self.HTMLInputElement.value = formatDateByFieldType(self.selectedDates[0], undefined, outputFieldType);
-            } else {
-              self.HTMLInputElement.value = '';
-            }
+              if (this.hasTimePicker) {
+                const momentDate = moment(chosenDate, pickerFormat);
+                momentDate.hours(self.selectedHours);
+                momentDate.minute(self.selectedMinutes);
+                self.HTMLInputElement.value = formatDateByFieldType(momentDate, undefined, outputFieldType);
+              }
 
-            if (this.hasTimePicker) {
-              const momentDate = moment(chosenDate, pickerFormat);
-              momentDate.hours(self.selectedHours);
-              momentDate.minute(self.selectedMinutes);
-              self.HTMLInputElement.value = formatDateByFieldType(momentDate, undefined, outputFieldType);
-            }
-
-            if (this.lastDayClick) {
-              this.handleOnDateChange();
-              self.hide();
+              if (this._lastDayClick) {
+                this.handleOnDateChange();
+                self.hide();
+              }
             }
           },
         },

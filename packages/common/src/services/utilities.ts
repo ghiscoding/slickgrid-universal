@@ -405,7 +405,7 @@ export function formatDateByFieldType(inputDate: Date | string | typeof moment, 
   const outputFormat = mapMomentDateFormatWithFieldType(outputFieldType);
   const momentDate = inputDate instanceof moment ? inputDate : moment(inputDate, inputFormat);
 
-  if (momentDate.isValid()) {
+  if (momentDate.isValid() && inputDate !== undefined) {
     if (outputFieldType === FieldType.dateUtc) {
       return momentDate.toISOString();
     }
