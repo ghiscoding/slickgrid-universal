@@ -174,6 +174,20 @@ describe('CompoundDateFilter', () => {
     });
   });
 
+  it('should trigger input change event with empty value and still expect the callback to be called with the date provided in the input', () => {
+    mockColumn.filter!.operator = '>';
+
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+    filterInputElm.value = '2001-01-02T16:02:02.239Z';
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: [], hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: [], hide: jest.fn() } as unknown as VanillaCalendar);
+    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
+
+    expect(filterFilledElms.length).toBe(0);
+    expect(filterInputElm.value).toBe('');
+  });
+
   it('should pass a different operator then trigger an input change event and expect the callback to be called with the date provided in the input', () => {
     mockColumn.filter!.operator = '>';
     const spyCallback = jest.spyOn(filterArguments, 'callback');
@@ -242,6 +256,24 @@ describe('CompoundDateFilter', () => {
 
     calendarElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }));
     expect(hideSpy).toHaveBeenCalled();
+  });
+
+  it('should clear picker when pressing Backspace key', () => {
+    filterArguments.searchTerms = ['2000-01-01'];
+    mockColumn.filter!.operator = '<=';
+    const clearSpy = jest.spyOn(filter, 'clear');
+
+    filter.init(filterArguments);
+    filter.show();
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+    const calendarElm = document.body.querySelector('.vanilla-calendar') as HTMLDivElement;
+
+    expect(calendarElm).toBeTruthy();
+    expect(filterInputElm.value).toBe('2000-01-01');
+
+    filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { key: 'Backspace', bubbles: true, cancelable: true }));
+    expect(clearSpy).toHaveBeenCalled();
+    expect(filterInputElm.value).toBe('');
   });
 
   it('should create the input filter with a default search terms when passed as a filter argument', () => {
@@ -362,9 +394,9 @@ describe('CompoundDateFilter', () => {
 
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
-    filterInputElm.value = '2001-01-02T16:02:02.000+05:00';
-    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2001-01-02 16:02:02.000+05:00'], hide: jest.fn() } as unknown as VanillaCalendar);
-    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2001-01-02 16:02:02.000+05:00'], hide: jest.fn() } as unknown as VanillaCalendar);
+    filterInputElm.value = '2001-01-02T16:02:02.000';
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2001-01-02 16:02:02.000'], hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2001-01-02 16:02:02.000'], hide: jest.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);

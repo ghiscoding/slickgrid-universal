@@ -158,6 +158,20 @@ describe('DateRangeFilter', () => {
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'RangeInclusive', searchTerms: ['2001-01-02', '2001-01-13'], shouldTriggerQuery: true });
   });
 
+  it('should trigger input change event with empty value and still expect the callback to be called with the date provided in the input', () => {
+    mockColumn.filter!.operator = 'RangeInclusive';
+
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+    filterInputElm.value = '2001-01-02T16:02:02.239Z';
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: [], hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new Event('click'), { HTMLInputElement: filterInputElm, selectedDates: [], hide: jest.fn() } as unknown as VanillaCalendar);
+    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
+
+    expect(filterFilledElms.length).toBe(0);
+    expect(filterInputElm.value).toBe('');
+  });
+
   it('should pass a different operator then trigger an input change event and expect the callback to be called with the date provided in the input', () => {
     mockColumn.filter!.operator = 'RangeExclusive';
     const spyCallback = jest.spyOn(filterArguments, 'callback');

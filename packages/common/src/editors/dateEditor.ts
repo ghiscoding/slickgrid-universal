@@ -31,7 +31,6 @@ export class DateEditor implements Editor {
   protected _clearButtonElm!: HTMLButtonElement;
   protected _editorInputGroupElm!: HTMLDivElement;
   protected _inputElm!: HTMLInputElement;
-  protected _inputWithDataElm!: HTMLInputElement | null;
   protected _isValueTouched = false;
   protected _lastDayClick = false;
   protected _lastTriggeredByClearDate = false;
@@ -222,10 +221,8 @@ export class DateEditor implements Editor {
     this.calendarInstance?.destroy();
 
     emptyElement(this._editorInputGroupElm);
-    emptyElement(this._inputWithDataElm);
     emptyElement(this._inputElm);
     this._editorInputGroupElm?.remove();
-    this._inputWithDataElm?.remove();
     this._inputElm?.remove();
   }
 
@@ -270,10 +267,6 @@ export class DateEditor implements Editor {
 
     this.show();
     this._inputElm?.focus();
-    if (this._inputWithDataElm?.focus) {
-      this._inputWithDataElm.focus();
-      this._inputWithDataElm.select();
-    }
   }
 
   hide() {
