@@ -1,3 +1,5 @@
+const STORAGE_KEY = 'slickgrid-universal-example09-gridstate';
+
 describe('Example 09 - OData Grid', () => {
   const GRID_ROW_HEIGHT = 45;
 
@@ -919,5 +921,32 @@ describe('Example 09 - OData Grid', () => {
         .contains('32');
     });
 
+  });
+
+  describe('persistance', () => {
+    it('should persist sorting and re-apply on refresh', () => {
+      cy.get('[data-test=clear-local-storage]')
+        .click();
+
+      cy.get('.slick-header-columns')
+        .children('.slick-header-column:nth(1)')
+        .click();
+
+      cy.reload();
+
+      cy.window().its('localStorage').invoke('getItem', STORAGE_KEY)
+        .should('not.be.null');
+
+      cy.get('.slick-header-columns')
+        .children('.slick-header-column:nth(1)')
+        .find('.slick-sort-indicator.slick-sort-indicator-asc')
+        .should('be.visible');
+
+      cy.get('[data-test=clear-local-storage]')
+        .click();
+
+      cy.window().its('localStorage').invoke('getItem', STORAGE_KEY)
+        .should('be.null');
+    });
   });
 });
