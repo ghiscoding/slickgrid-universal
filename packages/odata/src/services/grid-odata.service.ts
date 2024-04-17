@@ -543,12 +543,10 @@ export class GridOdataService implements BackendService {
                 queryField = titleCase(queryField);
               }
 
-              if (columnFieldName !== '') {
-                currentSorters.push({
-                  columnId: columnFieldName,
-                  direction: columnDef.sortAsc ? 'asc' : 'desc'
-                });
-              }
+              currentSorters.push({
+                columnId: columnDef.sortCol.id,
+                direction: columnDef.sortAsc ? SortDirection.asc : SortDirection.desc
+              });
 
               if (queryField !== '') {
                 odataSorters.push({
