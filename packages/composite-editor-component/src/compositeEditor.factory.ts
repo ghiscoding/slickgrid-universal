@@ -1,5 +1,5 @@
 import { emptyElement, getOffset, } from '@slickgrid-universal/common';
-import type { Column, CompositeEditorOption, Editor, EditorArguments, EditorValidationResult, ElementPosition, } from '@slickgrid-universal/common';
+import type { Column, CompositeEditorOption, Editor, EditorArguments, EditorConstructor, EditorValidationResult, ElementPosition, } from '@slickgrid-universal/common';
 import type { HtmlElementPosition } from '@slickgrid-universal/utils';
 
 export interface CompositeEditorArguments extends EditorArguments {
@@ -71,15 +71,15 @@ export function SlickCompositeEditor(this: any, columns: Column[], containers: A
   function editor(this: any, args: EditorArguments) {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const context: any = this;
-    let editors: Array<Editor & { args: EditorArguments }> = [];
+    let editors: Array<Editor & { args: EditorArguments; }> = [];
 
     function init() {
-      let newArgs: Partial<CompositeEditorArguments> = {};
+      let newArgs = {} as CompositeEditorArguments;
       let idx = 0;
       while (idx < columns.length) {
         if (columns[idx].editorClass) {
           const column = columns[idx];
-          newArgs = { ...args };
+          newArgs = { ...args } as CompositeEditorArguments;
           newArgs.container = containers[idx];
           newArgs.column = column;
           newArgs.position = getContainerBox(idx);
@@ -88,9 +88,9 @@ export function SlickCompositeEditor(this: any, columns: Column[], containers: A
           newArgs.compositeEditorOptions = options;
           newArgs.formValues = {};
 
-          const currentEditor = new (column.editorClass as any)(newArgs) as Editor & { args: EditorArguments };
+          const currentEditor = new (column.editorClass as EditorConstructor)(newArgs);
           options.editors[column.id] = currentEditor; // add every Editor instance refs
-          editors.push(currentEditor);
+          editors.push(currentEditor as Editor & { args: EditorArguments; });
         }
         idx++;
       }
