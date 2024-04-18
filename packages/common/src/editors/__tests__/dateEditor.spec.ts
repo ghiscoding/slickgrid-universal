@@ -16,7 +16,7 @@ const dataViewStub = {
   refresh: jest.fn(),
 } as unknown as SlickDataView;
 
-const gridOptionMock = {
+let gridOptionMock = {
   autoCommitEdit: false,
   editable: true,
   translater: null,
@@ -69,6 +69,11 @@ describe('DateEditor', () => {
       dataView: dataViewStub,
       gridPosition: { top: 0, left: 0, bottom: 10, right: 10, height: 100, width: 100, visible: true },
       position: { top: 0, left: 0, bottom: 10, right: 10, height: 100, width: 100, visible: true },
+    };
+    gridOptionMock = {
+      autoCommitEdit: false,
+      editable: true,
+      translater: null as any,
     };
   });
 
@@ -452,6 +457,26 @@ describe('DateEditor', () => {
       it('should not throw any error when date is invalid when lower than required "minDate" defined in the "editorOptions" and "autoCommitEdit" is enabled', () => {
         // change to allow input value only for testing purposes & use the regular flatpickr input to test that one too
         mockColumn.editor!.editorOptions = { minDate: 'today', altInput: true };
+        mockItemData = { id: 1, startDate: '500-01-02T11:02:02.000Z', isActive: true };
+        gridOptionMock.autoCommitEdit = true;
+        gridOptionMock.autoEdit = true;
+        gridOptionMock.editable = true;
+
+        editor = new DateEditor(editorArguments);
+        editor.loadValue(mockItemData);
+        editor.flatInstance.toggle();
+        const editorInputElm = divContainer.querySelector('.flatpickr input') as HTMLInputElement;
+
+        expect(editor.pickerOptions).toBeTruthy();
+        expect(editorInputElm.value).toBe('');
+        expect(editor.serializeValue()).toBe('');
+      });
+
+      it('should not throw any error when date is invalid when lower than required "minDate" defined in the global default editorOptions and "autoCommitEdit" is enabled', () => {
+        // change to allow input value only for testing purposes & use the regular flatpickr input to test that one too
+        gridOptionMock.defaultEditorOptions = {
+          date: { minDate: 'today', altInput: true }
+        };
         mockItemData = { id: 1, startDate: '500-01-02T11:02:02.000Z', isActive: true };
         gridOptionMock.autoCommitEdit = true;
         gridOptionMock.autoEdit = true;

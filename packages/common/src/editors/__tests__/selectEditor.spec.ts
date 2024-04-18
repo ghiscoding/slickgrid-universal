@@ -1,11 +1,12 @@
 // import 3rd party lib multiple-select for the tests
 import 'multiple-select-vanilla';
-import { SlickEvent, type SlickDataView } from '../../core/index';
+import type { MultipleSelectOption } from 'multiple-select-vanilla';
 
+import { SlickEvent, type SlickDataView } from '../../core/index';
 import { Editors } from '../index';
 import { SelectEditor } from '../selectEditor';
 import { FieldType, OperatorType } from '../../enums/index';
-import { AutocompleterOption, Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
+import { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { type SlickGrid } from '../../core/index';
 
@@ -171,11 +172,27 @@ describe('SelectEditor', () => {
     });
 
     it('should initialize the editor even when user define its own editor options', () => {
-      mockColumn.editor!.editorOptions = { minLength: 3 } as AutocompleterOption;
+      mockColumn.editor!.editorOptions = { minHeight: 300 } as MultipleSelectOption;
       editor = new SelectEditor(editorArguments, true);
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
 
       expect(editorCount).toBe(1);
+    });
+
+    it('should initialize the editor with minHeight define in user editor options', () => {
+      mockColumn.editor!.editorOptions = { minHeight: 255 } as MultipleSelectOption;
+      editor = new SelectEditor(editorArguments, true);
+
+      expect(editor.msInstance?.getOptions().minHeight).toBe(255);
+    });
+
+    it('should initialize the editor with minHeight define in global default user editor options', () => {
+      gridOptionMock.defaultEditorOptions = {
+        select: { minHeight: 243 }
+      };
+      editor = new SelectEditor(editorArguments, true);
+
+      expect(editor.msInstance?.getOptions().minHeight).toBe(243);
     });
 
     it('should have a placeholder when defined in its column definition', () => {

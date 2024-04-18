@@ -11,7 +11,7 @@ const containerId = 'demo-container';
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
 
-const gridOptionMock = {
+let gridOptionMock = {
   enableFiltering: true,
   enableFilterTrimWhiteSpace: true,
 } as GridOption;
@@ -45,6 +45,10 @@ describe('DateRangeFilter', () => {
       columnDef: mockColumn,
       callback: jest.fn(),
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
+    };
+    gridOptionMock = {
+      enableFiltering: true,
+      enableFilterTrimWhiteSpace: true,
     };
 
     filter = new DateRangeFilter(translateService);
@@ -292,6 +296,28 @@ describe('DateRangeFilter', () => {
 
   it('should have a value with date & time in the picker when "enableTime" option is set and we trigger a change', () => {
     mockColumn.filter!.filterOptions = { enableTime: true, allowInput: true }; // change to allow input value only for testing purposes
+    mockColumn.outputType = FieldType.dateTimeIsoAmPm;
+    mockColumn.filter!.operator = '>';
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.flatpickr.search-filter.filter-finish input.input') as HTMLInputElement;
+    filterInputElm.value = '2000-01-01T05:00:00.000+05:00 to 2000-01-31T05:00:00.000+05:00';
+    filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
+    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.flatpickr.search-filter.filter-finish.filled');
+
+    expect(filterFilledElms.length).toBe(1);
+    // expect(filter.currentDateOrDates.map((date) => date.toISOString())).toEqual(['2000-01-01T05:00:00.000Z', '2000-01-31T05:00:00.000Z']);
+    expect(filterInputElm.value).toBe('2000-01-01 5:00:00 AM to 2000-01-31 5:00:00 AM');
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), {
+      columnDef: mockColumn, operator: '>', searchTerms: ['2000-01-01 05:00:00 am', '2000-01-31 05:00:00 am'], shouldTriggerQuery: true
+    });
+  });
+
+  it('should have a value with date & time in the picker when "enableTime" option is set as a global default filter option and we trigger a change', () => {
+    gridOptionMock.defaultFilterOptions = {
+      date: { enableTime: true, allowInput: true }
+    };
     mockColumn.outputType = FieldType.dateTimeIsoAmPm;
     mockColumn.filter!.operator = '>';
     const spyCallback = jest.spyOn(filterArguments, 'callback');

@@ -8,6 +8,7 @@
 - [onClick Action Editor (icon click)](#onclick-action-editor-icon-click)
 - [AutoComplete Editor](editors/AutoComplete-Editor.md)
 - [Select (single/multi) Editors](editors/Select-Dropdown-Editor-(single,multiple).md)
+- [Editor Options](#editor-options)
 - [Validators](#validators)
    - [Custom Validator](#custom-validator)
 - [Disabling specific cell Edit](#disabling-specific-cell-edit)
@@ -192,6 +193,33 @@ export interface OnEventArgs {
 }
 ```
 
+## Editor Options
+
+#### Column Editor `editorOptions`
+Some of the Editors could receive extra options, which is mostly the case for Editors using external dependencies (e.g. `autocompleter`, `date`, `multipleSelect`, ...) you can provide options via the `editorOptions`, for example
+
+```ts
+this.columnDefinitions = [{
+  id: 'start', name: 'Start Date', field: 'start',
+  editor: { 
+    model: Editors.date,
+    editorOptions: { minDate: 'today' }
+  }
+}];
+```
+
+#### Grid Option `defaultEditorOptions
+You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultEditorOptions` Grid Option. Note that they are set via the editor type as a key name (`autocompleter`, `date`, ...) and then the content is the same as `editorOptions` (also note that each key is already typed with the correct editor option interface), for example
+
+```ts
+this.gridOptions = {
+  defaultEditorOptions: { 
+    autocompleter: { debounceWaitMs: 150 }, // typed as AutocompleterOption
+    date: { minDate: 'today' },
+    longText: { cols: 50, rows: 5 } 
+  }
+}
+```
 
 ## Validators
 Each Editor needs to implement the `validate()` method which will be executed and validated before calling the `save()` method. Most Editor will simply validate that the value passed is correctly formed. The Float Editor is one of the more complex one and will first check if the number is a valid float then also check if `minValue` or `maxValue` was passed and if so validate against them. If any errors is found it will return an object of type `EditorValidatorOutput` (see the signature on top).

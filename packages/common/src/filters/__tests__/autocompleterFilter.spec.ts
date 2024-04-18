@@ -94,6 +94,16 @@ describe('AutocompleterFilter', () => {
     expect(filterCount).toBe(1);
   });
 
+  it('should initialize the filter even when user define his own global filter options', () => {
+    gridOptionMock.defaultFilterOptions = {
+      autocompleter: { minLength: 3 }
+    };
+    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    filter.init(filterArguments);
+
+    expect(filter.autocompleterOptions.minLength).toEqual(3);
+  });
+
   it('should initialize the filter even when user define his own filter options', () => {
     mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     mockColumn.filter.filterOptions = { minLength: 3 } as AutocompleterOption;
@@ -499,7 +509,7 @@ describe('AutocompleterFilter', () => {
       expect(filterCollection[1]).toEqual({ value: 'male', description: 'male' });
       expect(filterCollection[2]).toEqual({ value: 'female', description: 'female' });
     } catch (e) {
-      console.log('ERROR', e)
+      console.log('ERROR', e);
     }
   });
 
