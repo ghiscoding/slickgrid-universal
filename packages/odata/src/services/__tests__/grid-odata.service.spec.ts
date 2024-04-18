@@ -1444,7 +1444,7 @@ describe('GridOdataService', () => {
       const currentSorters = service.getCurrentSorters();
 
       expect(query).toBe(expectation);
-      expect(currentSorters).toEqual([{ columnId: 'Gender', direction: 'desc' }, { columnId: 'FirstName', direction: 'asc' }]);
+      expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'desc' }, { columnId: 'firstName', direction: 'asc' }]);
     });
 
     it('should return a query string using a different field to query when the column has a "queryField" defined in its definition', () => {
@@ -1460,7 +1460,7 @@ describe('GridOdataService', () => {
       const currentSorters = service.getCurrentSorters();
 
       expect(query).toBe(expectation);
-      expect(currentSorters).toEqual([{ columnId: 'Gender', direction: 'desc' }, { columnId: 'Name', direction: 'asc' }]);
+      expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'desc' }, { columnId: 'name', direction: 'asc' }]);
     });
 
     it('should return a query string using a different field to query when the column has a "queryFieldSorter" defined in its definition', () => {
@@ -1476,7 +1476,7 @@ describe('GridOdataService', () => {
       const currentSorters = service.getCurrentSorters();
 
       expect(query).toBe(expectation);
-      expect(currentSorters).toEqual([{ columnId: 'Gender', direction: 'desc' }, { columnId: 'Name', direction: 'asc' }]);
+      expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'desc' }, { columnId: 'name', direction: 'asc' }]);
     });
 
     it('should return a query without the field sorter when its field property is missing', () => {
@@ -1492,7 +1492,7 @@ describe('GridOdataService', () => {
       const currentSorters = service.getCurrentSorters();
 
       expect(query).toBe(expectation);
-      expect(currentSorters).toEqual([{ columnId: 'Gender', direction: 'desc' }, { columnId: 'FirstName', direction: 'asc' }]);
+      expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'desc' }, { columnId: 'firstName', direction: 'asc' }]);
     });
 
     it('should return a query without any sorting after clearSorters was called', () => {
@@ -1546,7 +1546,7 @@ describe('GridOdataService', () => {
         const currentSorters = service.getCurrentSorters();
 
         expect(query).toBe(expectation);
-        expect(currentSorters).toEqual([{ columnId: 'Gender', direction: 'desc' }, { columnId: 'FirstName', direction: 'asc' }]);
+        expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'desc' }, { columnId: 'firstName', direction: 'asc' }]);
       });
 
       it('should return a query without any sorting after clearSorters was called but without pagination when "enablePagination" is set to False', () => {
