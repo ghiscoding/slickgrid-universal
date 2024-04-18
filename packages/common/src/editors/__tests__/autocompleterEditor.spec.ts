@@ -18,7 +18,7 @@ const dataViewStub = {
   refresh: jest.fn(),
 } as unknown as SlickDataView;
 
-const gridOptionMock = {
+let gridOptionMock = {
   autoCommitEdit: false,
   editable: true,
 } as GridOption;
@@ -68,6 +68,10 @@ describe('AutocompleterEditor', () => {
       dataView: dataViewStub,
       gridPosition: { top: 0, left: 0, bottom: 10, right: 10, height: 100, width: 100, visible: true },
       position: { top: 0, left: 0, bottom: 10, right: 10, height: 100, width: 100, visible: true },
+    };
+    gridOptionMock = {
+      autoCommitEdit: false,
+      editable: true,
     };
   });
 
@@ -128,6 +132,15 @@ describe('AutocompleterEditor', () => {
       const editorCount = divContainer.querySelectorAll('input.editor-text.editor-gender').length;
 
       expect(editorCount).toBe(1);
+    });
+
+    it('should initialize the editor even when user define his own global editor options', () => {
+      gridOptionMock.defaultEditorOptions = {
+        autocompleter: { minLength: 3 }
+      };
+      editor = new AutocompleterEditor(editorArguments);
+
+      expect(editor.autocompleterOptions.minLength).toEqual(3);
     });
 
     it('should have a placeholder when defined in its column definition', () => {
@@ -364,6 +377,20 @@ describe('AutocompleterEditor', () => {
 
       it('should return loaded value when "forceUserInput" is enabled and loaded value length is lower than minLength defined when calling "serializeValue"', () => {
         mockColumn.editor!.editorOptions = { forceUserInput: true, } as AutocompleterOption;
+        mockItemData = { id: 123, gender: { value: 'male', label: 'Male' }, isActive: true };
+
+        editor = new AutocompleterEditor(editorArguments);
+        editor.loadValue(mockItemData);
+        editor.setValue('F');
+        const output = editor.serializeValue();
+
+        expect(output).toBe('male');
+      });
+
+      it('should return loaded value when "forceUserInput" is enabled via global default editorOptions and loaded value length is lower than minLength defined when calling "serializeValue"', () => {
+        gridOptionMock.defaultEditorOptions = {
+          autocompleter: { forceUserInput: true }
+        };
         mockItemData = { id: 123, gender: { value: 'male', label: 'Male' }, isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);

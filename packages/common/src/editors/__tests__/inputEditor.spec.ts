@@ -1,6 +1,6 @@
 import { Editors } from '../index';
 import { InputEditor } from '../inputEditor';
-import { AutocompleterOption, Column, ColumnEditor, Editor, EditorArguments, GridOption } from '../../interfaces/index';
+import { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 
 jest.useFakeTimers();
@@ -115,7 +115,6 @@ describe('InputEditor (TextEditor)', () => {
     });
 
     it('should initialize the editor even when user define his own editor options', () => {
-      mockColumn.editor!.editorOptions = { minLength: 3 } as AutocompleterOption;
       editor = new InputEditor(editorArguments, 'text');
       const editorCount = divContainer.querySelectorAll('input.editor-text.editor-title').length;
 

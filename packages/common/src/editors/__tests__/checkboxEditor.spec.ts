@@ -1,6 +1,6 @@
 import { Editors } from '../index';
 import { CheckboxEditor } from '../checkboxEditor';
-import { AutocompleterOption, Column, ColumnEditor, Editor, EditorArguments, GridOption } from '../../interfaces/index';
+import { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 
 const containerId = 'demo-container';
@@ -100,7 +100,6 @@ describe('CheckboxEditor', () => {
     });
 
     it('should initialize the editor even when user define his own editor options', () => {
-      mockColumn.editor!.editorOptions = { minLength: 3 } as AutocompleterOption;
       editor = new CheckboxEditor(editorArguments);
       const editorCount = divContainer.querySelectorAll('input.editor-checkbox.editor-isActive').length;
 

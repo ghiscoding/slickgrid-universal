@@ -88,7 +88,7 @@ export class DateEditor implements Editor {
 
   /** Get Flatpickr options passed to the editor by the user */
   get editorOptions(): FlatpickrOption {
-    return this.columnEditor.editorOptions || {};
+    return { ...this.gridOptions.defaultEditorOptions?.date, ...this.columnEditor?.editorOptions };
   }
 
   get hasAutoCommitEdit(): boolean {
@@ -158,7 +158,7 @@ export class DateEditor implements Editor {
       );
 
       // show clear date button (unless user specifically doesn't want it)
-      if (!(this.columnEditor.editorOptions as FlatpickrOption)?.hideClearButton) {
+      if (!(this.editorOptions as FlatpickrOption)?.hideClearButton) {
         closeButtonGroupElm.appendChild(this._clearButtonElm);
         this._editorInputGroupElm.appendChild(closeButtonGroupElm);
         this._bindEventService.bind(this._clearButtonElm, 'click', () => this._lastTriggeredByClearDate = true);

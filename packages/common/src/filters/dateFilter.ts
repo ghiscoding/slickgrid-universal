@@ -74,6 +74,10 @@ export class DateFilter implements Filter {
       : (this.gridOptions.defaultFilterRangeOperator || OperatorType.rangeInclusive);
   }
 
+  get filterOptions(): FlatpickrOption {
+    return { ...this.gridOptions.defaultFilterOptions?.date, ...this.columnFilter?.filterOptions };
+  }
+
   /** Getter for the Flatpickr Options */
   get flatpickrOptions(): FlatpickrOption {
     return this._flatpickrOptions || {};
@@ -232,7 +236,7 @@ export class DateFilter implements Filter {
     const columnId = this.columnDef?.id ?? '';
     const inputFormat = mapFlatpickrDateFormatWithFieldType(this.columnFilter.type || this.columnDef.type || FieldType.dateIso);
     const outputFormat = mapFlatpickrDateFormatWithFieldType(this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc);
-    const userFilterOptions = this.columnFilter?.filterOptions ?? {} as FlatpickrOption;
+    const userFilterOptions = this.filterOptions as FlatpickrOption;
 
     // get current locale, if user defined a custom locale just use or get it the Translate Service if it exist else just use English
     let currentLocale = (userFilterOptions?.locale ?? this.translaterService?.getCurrentLanguage?.()) || this.gridOptions.locale || 'en';

@@ -1,5 +1,5 @@
 import { FieldType, OperatorType } from '../../enums/index';
-import { Column, FilterArguments, GridOption } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption, type SliderOption } from '../../interfaces/index';
 import { Filters } from '../index';
 import { CompoundSliderFilter } from '../compoundSliderFilter';
 import { SlickEvent, SlickGrid } from '../../core/index';
@@ -15,7 +15,7 @@ function removeExtraSpaces(text: string) {
   return `${text}`.replace(/\s+/g, ' ');
 }
 
-const gridOptionMock = {
+let gridOptionMock = {
   enableFiltering: true,
   enableFilterTrimWhiteSpace: true,
 } as GridOption;
@@ -52,6 +52,10 @@ describe('CompoundSliderFilter', () => {
       callback: jest.fn(),
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
+    gridOptionMock = {
+      enableFiltering: true,
+      enableFilterTrimWhiteSpace: true,
+    };
 
     filter = new CompoundSliderFilter(translateService);
   });
@@ -71,6 +75,26 @@ describe('CompoundSliderFilter', () => {
     expect(spyGetHeaderRow).toHaveBeenCalled();
     expect(filterCount).toBe(1);
     expect(filter.currentValue).toBeUndefined();
+  });
+
+  it('should initialize the filter with slider value define in user filter options', () => {
+    mockColumn.filter!.filterOptions = { sliderStartValue: 1 } as SliderOption;
+    filter.init(filterArguments);
+
+    const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
+    expect(filterElm.defaultValue).toBe('1');
+    expect(filterElm.value).toBe('1');
+  });
+
+  it('should initialize the filter with slider value define in global default user filter options', () => {
+    gridOptionMock.defaultFilterOptions = {
+      slider: { sliderStartValue: 2 }
+    };
+    filter.init(filterArguments);
+
+    const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
+    expect(filterElm.defaultValue).toBe('2');
+    expect(filterElm.value).toBe('2');
   });
 
   it('should have an aria-label when creating the filter', () => {
@@ -354,12 +378,10 @@ describe('CompoundSliderFilter', () => {
   it('should be able to change compound operator & description with alternate texts for the operator list showing up in the operator select dropdown options list', () => {
     mockColumn.outputType = null as any;
     filterArguments.searchTerms = ['9'];
-    jest.spyOn(gridStub, 'getOptions').mockReturnValueOnce({
-      ...gridOptionMock, compoundOperatorAltTexts: {
-        numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
-        text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
-      }
-    });
+    gridOptionMock.compoundOperatorAltTexts = {
+      numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
+      text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
+    };
 
     filter.init(filterArguments);
     const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
