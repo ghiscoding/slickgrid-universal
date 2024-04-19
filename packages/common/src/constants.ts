@@ -64,6 +64,7 @@ export class Constants {
     TEXT_SORT_DESCENDING: 'Sort Descending',
     TEXT_STARTS_WITH: 'Starts With',
     TEXT_TOGGLE_ALL_GROUPS: 'Toggle all Groups',
+    TEXT_TOGGLE_DARK_MODE: 'Toggle Dark Mode',
     TEXT_TOGGLE_FILTER_ROW: 'Toggle Filter Row',
     TEXT_TOGGLE_PRE_HEADER_ROW: 'Toggle Pre-Header Row',
     TEXT_UNFREEZE_COLUMNS: 'Unfreeze Columns',

@@ -1,6 +1,6 @@
 import { createDomElement } from '@slickgrid-universal/utils';
-import { OptionRowData } from 'multiple-select-vanilla';
-import DOMPurify from 'dompurify';
+import type { OptionRowData } from 'multiple-select-vanilla';
+import DOMPurify from 'isomorphic-dompurify';
 
 import type { SearchTerm } from '../enums/index';
 import type { Column, GridOption, SelectOption } from '../interfaces/index';
@@ -21,7 +21,7 @@ import type { TranslaterService } from './translater.service';
 export function buildMsSelectCollectionList(type: 'editor' | 'filter', collection: any[], columnDef: Column, grid: SlickGrid, isMultiSelect = false, translaterService?: TranslaterService, searchTerms?: SearchTerm[]): { selectElement: HTMLSelectElement; dataCollection: OptionRowData[]; hasFoundSearchTerm: boolean; } {
   const columnId = columnDef?.id ?? '';
   const gridOptions = grid.getOptions();
-  const columnFilterOrEditor = (type === 'editor' ? columnDef?.internalColumnEditor : columnDef?.filter) ?? {};
+  const columnFilterOrEditor = (type === 'editor' ? columnDef?.editor : columnDef?.filter) ?? {};
   const collectionOptions = columnFilterOrEditor?.collectionOptions ?? {};
   const separatorBetweenLabels = collectionOptions?.separatorBetweenTextLabels ?? '';
   const enableTranslateLabel = columnFilterOrEditor?.enableTranslateLabel ?? false;
@@ -71,7 +71,7 @@ export function buildMsSelectCollectionList(type: 'editor' | 'filter', collectio
         let suffixText = option[labelSuffixName] || '';
         let selectOptionLabel = option.hasOwnProperty(optionLabel) ? option[optionLabel] : '';
         if (selectOptionLabel?.toString) {
-          selectOptionLabel = selectOptionLabel.toString().replace(/\"/g, '\''); // replace double quotes by single quotes to avoid interfering with regular html
+          selectOptionLabel = selectOptionLabel.toString().replace(/"/g, '\''); // replace double quotes by single quotes to avoid interfering with regular html
         }
 
         // also translate prefix/suffix if enableTranslateLabel is true and text is a string

@@ -1,7 +1,7 @@
 import autocompleter from 'autocompleter';
 import type { AutocompleteItem, AutocompleteSettings } from 'autocompleter';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { createDomElement, emptyElement, isPrimitiveValue, toKebabCase, toSentenceCase } from '@slickgrid-universal/utils';
+import { classNameToList, createDomElement, emptyElement, isPrimitiveValue, toKebabCase, toSentenceCase } from '@slickgrid-universal/utils';
 
 import {
   FieldType,
@@ -78,8 +78,8 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
    * Initialize the Filter
    */
   constructor(
-    protected readonly translaterService: TranslaterService,
-    protected readonly collectionService: CollectionService,
+    protected readonly translaterService?: TranslaterService,
+    protected readonly collectionService?: CollectionService,
     protected readonly rxjs?: RxJsFacade
   ) {
     this._bindEventService = new BindingEventService();
@@ -110,8 +110,8 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     return this._filterElm;
   }
 
-  get filterOptions(): any {
-    return this.columnFilter?.filterOptions || {};
+  get filterOptions(): AutocompleterOption {
+    return { ...this.gridOptions.defaultFilterOptions?.autocompleter, ...this.columnFilter?.filterOptions };
   }
 
   /** Getter for the Custom Structure if exist */
@@ -283,7 +283,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     if (this.columnFilter && this.columnFilter.collectionFilterBy) {
       const filterBy = this.columnFilter.collectionFilterBy;
       const filterCollectionBy = this.columnFilter.collectionOptions && this.columnFilter.collectionOptions.filterResultAfterEachPass || null;
-      outputCollection = this.collectionService.filterCollection(outputCollection, filterBy, filterCollectionBy);
+      outputCollection = this.collectionService?.filterCollection(outputCollection, filterBy, filterCollectionBy) || [];
     }
 
     return outputCollection;
@@ -300,7 +300,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     // user might want to sort the collection
     if (this.columnFilter && this.columnFilter.collectionSortBy) {
       const sortBy = this.columnFilter.collectionSortBy;
-      outputCollection = this.collectionService.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel);
+      outputCollection = this.collectionService?.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel) || [];
     }
 
     return outputCollection;
@@ -431,6 +431,12 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       ...this.filterOptions,
     } as Partial<AutocompleteSettings<any>>;
 
+    // add dark mode CSS class when enabled
+    if (this.gridOptions?.darkMode) {
+      this._autocompleterOptions.className += ' slick-dark-mode';
+    }
+    this.autocompleterOptions.className = classNameToList(this.autocompleterOptions.className).join(' ');
+
     // "render" callback overriding
     if (this._autocompleterOptions.renderItem?.layout) {
       // when "renderItem" is defined, we need to add our custom style CSS classes & custom item renderer
@@ -502,7 +508,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
 
       // when the user defines a "renderItem" (or "_renderItem") template, then we assume the user defines his own custom structure of label/value pair
       // otherwise we know that the autocomplete lib always require a label/value pair, we can pull them directly
-      const hasCustomRenderItemCallback = this.columnFilter?.filterOptions?.renderItem ?? false;
+      const hasCustomRenderItemCallback = this.filterOptions?.renderItem ?? false;
 
       const itemLabel = typeof item === 'string' ? item : (hasCustomRenderItemCallback ? item[this.labelName] : item.label);
       let itemValue = typeof item === 'string' ? item : (hasCustomRenderItemCallback ? item[this.valueName] : item.value);

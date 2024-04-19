@@ -1,6 +1,6 @@
 import {
   type AutocompleterOption,
-  DOMEvent,
+  type DOMEvent,
   type Column,
   type CurrentColumn,
   type CurrentFilter,
@@ -13,6 +13,7 @@ import {
   type Formatter,
   Formatters,
   type GridOption,
+  type MultipleSelectOption,
   OperatorType,
   SlickGlobalEditorLock,
   type SliderOption,
@@ -23,8 +24,9 @@ import {
   formatNumber,
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import moment from 'moment-mini';
 
 import exampleModal from './example11-modal.html?raw';
@@ -183,10 +185,16 @@ export default class Example11 {
       {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 80, maxWidth: 100,
         sortable: true, filterable: true,
-        editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], massUpdate: true },
+        editor: {
+          model: Editors.singleSelect,
+          collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }],
+          massUpdate: true,
+          editorOptions: { showClear: true } as MultipleSelectOption
+        },
         filter: {
+          model: Filters.singleSelect,
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
-          model: Filters.singleSelect
+          filterOptions: { showClear: true } as MultipleSelectOption
         },
         exportWithFormatter: false,
         formatter: Formatters.checkmarkMaterial,
@@ -296,7 +304,7 @@ export default class Example11 {
       excelExportOptions: {
         exportWithFormatter: true
       },
-      externalResources: [new ExcelExportService()],
+      externalResources: [new ExcelExportService(), new SlickCustomTooltip()],
       enableFiltering: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
@@ -439,7 +447,7 @@ export default class Example11 {
         this.sgb.slickGrid?.getSelectedRows() || [];
         const modalContainerElm = document.querySelector('.modal-container') as HTMLDivElement;
         const columnDefinitionsClone = deepCopy(this.columnDefinitions);
-        const massUpdateColumnDefinitions = columnDefinitionsClone?.filter((col: Column) => col.editor?.massUpdate || col.internalColumnEditor?.massUpdate) || [];
+        const massUpdateColumnDefinitions = columnDefinitionsClone?.filter((col: Column) => col.editor?.massUpdate) || [];
         const selectedItems = this.sgb.gridService.getSelectedRowsDataItem();
         const selectedIds = selectedItems.map(selectedItem => selectedItem.id);
         loadComponent(modalContainerElm, exampleModal, Example11Modal, { columnDefinitions: massUpdateColumnDefinitions, selectedIds, remoteCallback: this.remoteCallbackFn.bind(this) });

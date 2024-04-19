@@ -1,5 +1,3 @@
-/* eslint-disable no-new-func */
-/* eslint-disable no-bitwise */
 import { type AnyFunction, extend, getFunctionDetails, isDefined } from '@slickgrid-universal/utils';
 
 import { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider';
@@ -18,14 +16,14 @@ import type {
   OnSetItemsCalledEventArgs,
   PagingInfo
 } from '../interfaces';
-import { CssStyleHash, CustomDataView } from '../interfaces/gridOption.interface';
+import type { CssStyleHash, CustomDataView } from '../interfaces/gridOption.interface';
 import {
   type BasePubSub,
   SlickEvent,
   SlickEventData,
   SlickGroup,
   SlickGroupTotals,
-  SlickNonDataItem,
+  type SlickNonDataItem,
 } from './slickCore';
 import type { SlickGrid } from './slickGrid';
 
@@ -194,8 +192,13 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.refreshHints = hints;
   }
 
+  /** get extra filter arguments of the filter method */
+  getFilterArgs() {
+    return this.filterArgs;
+  }
+
   /** add extra filter arguments to the filter method */
-  setFilterArgs(args: any) {
+  setFilterArgs(args: unknown) {
     this.filterArgs = args;
   }
 

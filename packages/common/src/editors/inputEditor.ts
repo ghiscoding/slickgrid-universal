@@ -37,14 +37,14 @@ export class InputEditor implements Editor {
   /** Grid options */
   gridOptions: GridOption;
 
-  constructor(protected readonly args: EditorArguments, inputType: string) {
+  constructor(protected readonly args: EditorArguments, inputType = 'text') {
     if (!args) {
       throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
     }
     this.grid = args.grid;
     this.gridOptions = args.grid && args.grid.getOptions() as GridOption;
     this._bindEventService = new BindingEventService();
-    this.inputType = inputType || 'text';
+    this.inputType = inputType;
     this.init();
   }
 
@@ -55,7 +55,7 @@ export class InputEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef?.internalColumnEditor || {} as ColumnEditor;
+    return this.columnDef?.editor || {} as ColumnEditor;
   }
 
   /** Getter for the item data context object */

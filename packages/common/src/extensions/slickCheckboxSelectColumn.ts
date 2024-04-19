@@ -5,7 +5,7 @@ import { createDomElement, emptyElement } from '@slickgrid-universal/utils';
 import { type SlickDataView, type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
 import type { CheckboxSelectorOption, Column, DOMMouseOrTouchEvent, GridOption, OnHeaderClickEventArgs, OnKeyDownEventArgs, SelectableOverrideCallback } from '../interfaces/index';
 import { SlickRowSelectionModel } from './slickRowSelectionModel';
-import { SelectionModel } from '../enums/index';
+import type { SelectionModel } from '../enums/index';
 
 export interface RowLookup { [row: number]: boolean; }
 
@@ -83,10 +83,15 @@ export class SlickCheckboxSelectColumn<T = any> {
       .subscribe(grid.onClick, this.handleClick.bind(this))
       .subscribe(grid.onKeyDown, this.handleKeyDown.bind(this));
 
-    if (this._isUsingDataView && this._dataView && this._addonOptions.applySelectOnAllPages) {
-      this._eventHandler
-        .subscribe(this._dataView.onSelectedRowIdsChanged, this.handleDataViewSelectedIdsChanged.bind(this))
-        .subscribe(this._dataView.onPagingInfoChanged, this.handleDataViewSelectedIdsChanged.bind(this));
+    if (this._isUsingDataView && this._dataView) {
+      // whenever columns changed, we need to rerender Select All, we can call handler to simulate that
+      this._eventHandler.subscribe(grid.onAfterSetColumns, this.handleDataViewSelectedIdsChanged.bind(this));
+
+      if (this._addonOptions.applySelectOnAllPages) {
+        this._eventHandler
+          .subscribe(this._dataView.onSelectedRowIdsChanged, this.handleDataViewSelectedIdsChanged.bind(this))
+          .subscribe(this._dataView.onPagingInfoChanged, this.handleDataViewSelectedIdsChanged.bind(this));
+      }
     }
 
     if (!this._addonOptions.hideInFilterHeaderRow) {

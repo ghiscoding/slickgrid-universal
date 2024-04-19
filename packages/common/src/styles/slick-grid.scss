@@ -33,14 +33,14 @@
    }
 
    .slick-header-column-active {
-     background: $slick-header-column-background-active !important;
+     background-color: var(--slick-header-column-background-active, $slick-header-column-background-active) !important;
    }
 
    .slick-headerrow {
-     background: $slick-grid-header-background;
+     background: var(--slick-grid-header-background, $slick-grid-header-background);
    }
    .grid-canvas {
-     background: white;
+     background: var(--slick-canvas-bg-color, $slick-canvas-bg-color);
    }
 
    .slick-row {
@@ -132,7 +132,7 @@
    .slick-sortable-placeholder {
      background: var(--slick-header-column-sortable-background-hover, $slick-header-column-sortable-background-hover);
    }
- }
+}
 
 // ----------------------------------------------
 // Slick Grid theme
@@ -183,6 +183,7 @@
     border-bottom-width: 0;
     margin: 0;
     outline: 0;
+    scrollbar-color: var(--slick-scrollbar-color, $slick-scrollbar-color);
   }
 
   .slick-top-panel-scroller {
@@ -385,7 +386,7 @@
     &.editable {
       z-index: 11;
       overflow: visible;
-      background: white;
+      background: var(--slick-editor-bg-color, $slick-editor-bg-color);
       border-color: black;
       border-style: solid;
     }

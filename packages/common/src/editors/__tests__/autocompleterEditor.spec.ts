@@ -3,7 +3,7 @@ import 'jest-extended';
 import { Editors } from '../index';
 import { AutocompleterEditor } from '../autocompleterEditor';
 import { FieldType } from '../../enums/index';
-import { AutocompleterOption, Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
+import { AutocompleterOption, Column, ColumnEditor, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SlickDataView, SlickEvent, type SlickGrid } from '../../core/index';
 
@@ -18,7 +18,7 @@ const dataViewStub = {
   refresh: jest.fn(),
 } as unknown as SlickDataView;
 
-const gridOptionMock = {
+let gridOptionMock = {
   autoCommitEdit: false,
   editable: true,
 } as GridOption;
@@ -54,7 +54,7 @@ describe('AutocompleterEditor', () => {
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
 
-    mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.autocompleter }, internalColumnEditor: {} } as Column;
+    mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.autocompleter }, editorClass: {} as Editor } as Column;
 
     editorArguments = {
       grid: gridStub,
@@ -68,6 +68,10 @@ describe('AutocompleterEditor', () => {
       dataView: dataViewStub,
       gridPosition: { top: 0, left: 0, bottom: 10, right: 10, height: 100, width: 100, visible: true },
       position: { top: 0, left: 0, bottom: 10, right: 10, height: 100, width: 100, visible: true },
+    };
+    gridOptionMock = {
+      autoCommitEdit: false,
+      editable: true,
     };
   });
 
@@ -85,8 +89,8 @@ describe('AutocompleterEditor', () => {
   describe('with valid Editor instance', () => {
     beforeEach(() => {
       mockItemData = { id: 123, gender: 'male', isActive: true };
-      mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.autocompleter }, internalColumnEditor: {} } as Column;
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+      mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.autocompleter }, editorClass: {} as Editor } as Column;
+      mockColumn.editor!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
 
       editorArguments.column = mockColumn;
       editorArguments.item = mockItemData;
@@ -109,8 +113,8 @@ describe('AutocompleterEditor', () => {
       gridOptionMock.enableTranslate = true;
       const mockCollection = ['male', 'female'];
       const promise = Promise.resolve(mockCollection);
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = null as any;
-      (mockColumn.internalColumnEditor as ColumnEditor).collectionAsync = promise;
+      mockColumn.editor!.collection = null as any;
+      mockColumn.editor!.collectionAsync = promise;
 
       editor = new AutocompleterEditor(editorArguments);
       const disableSpy = jest.spyOn(editor, 'disable');
@@ -123,16 +127,25 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should initialize the editor even when user define his own editor options', () => {
-      (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { minLength: 3 } as AutocompleterOption;
+      mockColumn.editor!.editorOptions = { minLength: 3 } as AutocompleterOption;
       editor = new AutocompleterEditor(editorArguments);
       const editorCount = divContainer.querySelectorAll('input.editor-text.editor-gender').length;
 
       expect(editorCount).toBe(1);
     });
 
+    it('should initialize the editor even when user define his own global editor options', () => {
+      gridOptionMock.defaultEditorOptions = {
+        autocompleter: { minLength: 3 }
+      };
+      editor = new AutocompleterEditor(editorArguments);
+
+      expect(editor.autocompleterOptions.minLength).toEqual(3);
+    });
+
     it('should have a placeholder when defined in its column definition', () => {
       const testValue = 'test placeholder';
-      (mockColumn.internalColumnEditor as ColumnEditor).placeholder = testValue;
+      mockColumn.editor!.placeholder = testValue;
 
       editor = new AutocompleterEditor(editorArguments);
       const editorElm = divContainer.querySelector('input.editor-text.editor-gender') as HTMLInputElement;
@@ -142,7 +155,7 @@ describe('AutocompleterEditor', () => {
 
     it('should have a title (tooltip) when defined in its column definition', () => {
       const testValue = 'test title';
-      (mockColumn.internalColumnEditor as ColumnEditor).title = testValue;
+      mockColumn.editor!.title = testValue;
 
       editor = new AutocompleterEditor(editorArguments);
       const editorElm = divContainer.querySelector('input.editor-text.editor-gender') as HTMLInputElement;
@@ -209,8 +222,8 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should render the DOM element with different key/value pair when user provide its own customStructure', () => {
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ option: 'male', text: 'Male' }, { option: 'female', text: 'Female' }];
-      (mockColumn.internalColumnEditor as ColumnEditor).customStructure = { value: 'option', label: 'text' };
+      mockColumn.editor!.collection = [{ option: 'male', text: 'Male' }, { option: 'female', text: 'Female' }];
+      mockColumn.editor!.customStructure = { value: 'option', label: 'text' };
       const event = new (window.window as any).KeyboardEvent('keydown', { key: 'm', bubbles: true, cancelable: true });
 
       editor = new AutocompleterEditor(editorArguments);
@@ -250,7 +263,7 @@ describe('AutocompleterEditor', () => {
 
     it('should return True when calling "isValueChanged()" method with previously dispatched keyboard event as ENTER and "alwaysSaveOnEnterKey" is enabled', () => {
       const event = new (window.window as any).KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
-      (mockColumn.internalColumnEditor as ColumnEditor).alwaysSaveOnEnterKey = true;
+      mockColumn.editor!.alwaysSaveOnEnterKey = true;
 
       editor = new AutocompleterEditor(editorArguments);
       const editorElm = divContainer.querySelector('input.editor-gender') as HTMLInputElement;
@@ -273,7 +286,7 @@ describe('AutocompleterEditor', () => {
 
     describe('collectionOverride callback option', () => {
       it('should create the editor and expect a different collection outputed when using the override', () => {
-        mockColumn.internalColumnEditor = {
+        mockColumn.editor = {
           collection: [{ value: 'other', label: 'Other' }, { value: 'male', label: 'Male' }, { value: 'female', label: 'Female' }],
           collectionOverride: (inputCollection) => inputCollection.filter(item => item.value !== 'other')
         };
@@ -290,7 +303,7 @@ describe('AutocompleterEditor', () => {
 
     describe('applyValue method', () => {
       it('should apply the value to the gender property when it passes validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
+        mockColumn.editor!.validator = null as any;
         mockItemData = { id: 123, gender: 'female', isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
@@ -300,7 +313,7 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should apply the value to the gender property with a field having dot notation (complex object) that passes validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
+        mockColumn.editor!.validator = null as any;
         mockColumn.field = 'user.gender';
         mockItemData = { id: 1, user: { gender: 'female' }, isActive: true };
 
@@ -311,8 +324,8 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return override the item data as a string found from the collection that passes validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
-        (mockColumn.internalColumnEditor as ColumnEditor).collection = ['male', 'female'];
+        mockColumn.editor!.validator = null as any;
+        mockColumn.editor!.collection = ['male', 'female'];
         mockItemData = { id: 123, gender: 'female', isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
@@ -322,7 +335,7 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return item data with an empty string in its value when calling "applyValue" which fails the custom validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = (value: any) => {
+        mockColumn.editor!.validator = (value: any) => {
           if (value.label.length < 10) {
             return { valid: false, msg: 'Must be at least 10 chars long.' };
           }
@@ -339,7 +352,7 @@ describe('AutocompleterEditor', () => {
 
     describe('forceUserInput flag', () => {
       it('should return DOM element value when "forceUserInput" is enabled and loaded value length is greater then minLength defined when calling "serializeValue"', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { forceUserInput: true, };
+        mockColumn.editor!.editorOptions = { forceUserInput: true, };
         mockItemData = { id: 123, gender: { value: 'male', label: 'Male' }, isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
@@ -351,7 +364,7 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return DOM element value when "forceUserInput" is enabled and loaded value length is greater then custom minLength defined when calling "serializeValue"', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { forceUserInput: true, minLength: 2 } as AutocompleterOption;
+        mockColumn.editor!.editorOptions = { forceUserInput: true, minLength: 2 } as AutocompleterOption;
         mockItemData = { id: 123, gender: { value: 'male', label: 'Male' }, isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
@@ -363,7 +376,21 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return loaded value when "forceUserInput" is enabled and loaded value length is lower than minLength defined when calling "serializeValue"', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { forceUserInput: true, } as AutocompleterOption;
+        mockColumn.editor!.editorOptions = { forceUserInput: true, } as AutocompleterOption;
+        mockItemData = { id: 123, gender: { value: 'male', label: 'Male' }, isActive: true };
+
+        editor = new AutocompleterEditor(editorArguments);
+        editor.loadValue(mockItemData);
+        editor.setValue('F');
+        const output = editor.serializeValue();
+
+        expect(output).toBe('male');
+      });
+
+      it('should return loaded value when "forceUserInput" is enabled via global default editorOptions and loaded value length is lower than minLength defined when calling "serializeValue"', () => {
+        gridOptionMock.defaultEditorOptions = {
+          autocompleter: { forceUserInput: true }
+        };
         mockItemData = { id: 123, gender: { value: 'male', label: 'Male' }, isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
@@ -377,8 +404,8 @@ describe('AutocompleterEditor', () => {
 
     describe('serializeValue method', () => {
       it('should return correct object value even when defining a "customStructure" when calling "serializeValue"', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ option: 'male', text: 'Male' }, { option: 'female', text: 'Female' }];
-        (mockColumn.internalColumnEditor as ColumnEditor).customStructure = { value: 'option', label: 'text' };
+        mockColumn.editor!.collection = [{ option: 'male', text: 'Male' }, { option: 'female', text: 'Female' }];
+        mockColumn.editor!.customStructure = { value: 'option', label: 'text' };
         mockItemData = { id: 123, gender: { option: 'female', text: 'Female' }, isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
@@ -390,7 +417,7 @@ describe('AutocompleterEditor', () => {
 
       it('should return an object output when calling "serializeValue" with its column definition set to "FieldType.object" with default label/value', () => {
         mockColumn.type = FieldType.object;
-        (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
+        mockColumn.editor!.collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
         mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
@@ -402,7 +429,7 @@ describe('AutocompleterEditor', () => {
 
       it('should return an object output when calling "serializeValue" with its column definition set to "FieldType.object" with custom dataKey/labelKey pair', () => {
         mockColumn.type = FieldType.object;
-        (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
+        mockColumn.editor!.collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
         mockColumn.dataKey = 'id';
         mockColumn.labelKey = 'name';
         mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
@@ -441,7 +468,7 @@ describe('AutocompleterEditor', () => {
 
     describe('validate method', () => {
       it('should return False when field is required and field is empty', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
+        mockColumn.editor!.required = true;
         editor = new AutocompleterEditor(editorArguments);
         const validation = editor.validate(null, '');
 
@@ -449,7 +476,7 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return True when field is required and input is a valid input value', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
+        mockColumn.editor!.required = true;
         editor = new AutocompleterEditor(editorArguments);
         const validation = editor.validate(null, 'text');
 
@@ -457,7 +484,7 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return False when field is lower than a minLength defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 5;
+        mockColumn.editor!.minLength = 5;
         editor = new AutocompleterEditor(editorArguments);
         const validation = editor.validate(null, 'text');
 
@@ -465,8 +492,8 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return False when field is lower than a minLength defined using exclusive operator', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 5;
-        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
+        mockColumn.editor!.minLength = 5;
+        mockColumn.editor!.operatorConditionalType = 'exclusive';
         editor = new AutocompleterEditor(editorArguments);
         const validation = editor.validate(null, 'text');
 
@@ -474,7 +501,7 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return True when field is equal to the minLength defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 4;
+        mockColumn.editor!.minLength = 4;
         editor = new AutocompleterEditor(editorArguments);
         const validation = editor.validate(null, 'text');
 
@@ -482,7 +509,7 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return False when field is greater than a maxLength defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 10;
+        mockColumn.editor!.maxLength = 10;
         editor = new AutocompleterEditor(editorArguments);
         const validation = editor.validate(null, 'text is 16 chars');
 
@@ -490,8 +517,8 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return False when field is greater than a maxLength defined using exclusive operator', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 10;
-        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
+        mockColumn.editor!.maxLength = 10;
+        mockColumn.editor!.operatorConditionalType = 'exclusive';
         editor = new AutocompleterEditor(editorArguments);
         const validation = editor.validate(null, 'text is 16 chars');
 
@@ -499,7 +526,7 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return True when field is equal to the maxLength defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 16;
+        mockColumn.editor!.maxLength = 16;
         editor = new AutocompleterEditor(editorArguments);
         const validation = editor.validate(null, 'text is 16 chars');
 
@@ -507,8 +534,8 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return True when field is equal to the maxLength defined and "operatorType" is set to "inclusive"', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 16;
-        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'inclusive';
+        mockColumn.editor!.maxLength = 16;
+        mockColumn.editor!.operatorConditionalType = 'inclusive';
         editor = new AutocompleterEditor(editorArguments);
         const validation = editor.validate(null, 'text is 16 chars');
 
@@ -516,8 +543,8 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return False when field is equal to the maxLength defined but "operatorType" is set to "exclusive"', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 16;
-        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
+        mockColumn.editor!.maxLength = 16;
+        mockColumn.editor!.operatorConditionalType = 'exclusive';
         editor = new AutocompleterEditor(editorArguments);
         const validation = editor.validate(null, 'text is 16 chars');
 
@@ -525,8 +552,8 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return False when field is not between minLength & maxLength defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 0;
-        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 10;
+        mockColumn.editor!.minLength = 0;
+        mockColumn.editor!.maxLength = 10;
         editor = new AutocompleterEditor(editorArguments);
         const validation = editor.validate(null, 'text is 16 chars');
 
@@ -534,8 +561,8 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return True when field is is equal to maxLength defined when both min/max values are defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 0;
-        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 16;
+        mockColumn.editor!.minLength = 0;
+        mockColumn.editor!.maxLength = 16;
         editor = new AutocompleterEditor(editorArguments);
         const validation = editor.validate(null, 'text is 16 chars');
 
@@ -543,9 +570,9 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return True when field is is equal to minLength defined when "operatorType" is set to "inclusive" and both min/max values are defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 4;
-        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 15;
-        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'inclusive';
+        mockColumn.editor!.minLength = 4;
+        mockColumn.editor!.maxLength = 15;
+        mockColumn.editor!.operatorConditionalType = 'inclusive';
         editor = new AutocompleterEditor(editorArguments);
         const validation = editor.validate(null, 'text');
 
@@ -553,9 +580,9 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return False when field is equal to maxLength but "operatorType" is set to "exclusive" when both min/max lengths are defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).minLength = 4;
-        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 16;
-        (mockColumn.internalColumnEditor as ColumnEditor).operatorConditionalType = 'exclusive';
+        mockColumn.editor!.minLength = 4;
+        mockColumn.editor!.maxLength = 16;
+        mockColumn.editor!.operatorConditionalType = 'exclusive';
         editor = new AutocompleterEditor(editorArguments);
         const validation1 = editor.validate(null, 'text is 16 chars');
         const validation2 = editor.validate(null, 'text');
@@ -565,7 +592,7 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return False when field is greater than a maxValue defined', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).maxLength = 10;
+        mockColumn.editor!.maxLength = 10;
         editor = new AutocompleterEditor(editorArguments);
         const validation = editor.validate(null, 'Task is longer than 10 chars');
 
@@ -593,7 +620,7 @@ describe('AutocompleterEditor', () => {
 
       it('should expect the "handleSelect" method to be called when the callback method is triggered', () => {
         gridOptionMock.autoCommitEdit = true;
-        (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
+        mockColumn.editor!.collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
         mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
@@ -608,8 +635,8 @@ describe('AutocompleterEditor', () => {
 
       it('should initialize the editor with editorOptions and expect the "handleSelect" method to be called when the callback method is triggered', () => {
         gridOptionMock.autoCommitEdit = true;
-        (mockColumn.internalColumnEditor as ColumnEditor).collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
-        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { minLength: 3 } as AutocompleterOption;
+        mockColumn.editor!.collection = [{ value: 'm', label: 'Male' }, { value: 'f', label: 'Female' }];
+        mockColumn.editor!.editorOptions = { minLength: 3 } as AutocompleterOption;
         mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
@@ -630,7 +657,7 @@ describe('AutocompleterEditor', () => {
         const mockOnSelect = jest.fn();
         const activeCellMock = { row: 1, cell: 0 };
         jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { minLength: 3, onSelectItem: mockOnSelect } as AutocompleterOption;
+        mockColumn.editor!.editorOptions = { minLength: 3, onSelectItem: mockOnSelect } as AutocompleterOption;
 
         const event = new CustomEvent('change');
         editor = new AutocompleterEditor(editorArguments);
@@ -649,7 +676,7 @@ describe('AutocompleterEditor', () => {
       it('should provide "renderItem" in the "filterOptions" and expect the autocomplete "render" to be overriden', () => {
         const mockTemplateString = `<div>Hello World</div>`;
         const mockTemplateCallback = () => mockTemplateString;
-        mockColumn.internalColumnEditor = {
+        mockColumn.editor = {
           collection: ['male', 'female'],
           editorOptions: {
             showOnFocus: true,
@@ -691,7 +718,7 @@ describe('AutocompleterEditor', () => {
       const mockCollection = [{ value: 'male', label: 'Male' }, { value: 'unknown', label: 'Unknown' }];
       const event = new (window.window as any).KeyboardEvent('keydown', { key: 'm', bubbles: true, cancelable: true });
 
-      mockColumn.internalColumnEditor = {
+      mockColumn.editor = {
         collection: mockCollection,
         editorOptions: { showOnFocus: true } as AutocompleterOption
       };
@@ -711,7 +738,7 @@ describe('AutocompleterEditor', () => {
 
     it('should call "clear" method when clear button is clicked', () => {
       const mockCollection = [{ value: 'male', label: 'Male' }, { value: 'unknown', label: 'Unknown' }];
-      mockColumn.internalColumnEditor = {
+      mockColumn.editor = {
         collection: mockCollection,
         editorOptions: { showOnFocus: true } as AutocompleterOption
       };
@@ -728,12 +755,10 @@ describe('AutocompleterEditor', () => {
       const mockCollection = [{ value: 'female', label: 'Female' }, { value: 'undefined', label: 'Undefined' }];
       const event = new (window.window as any).KeyboardEvent('keydown', { key: 'm', bubbles: true, cancelable: true });
 
-      mockColumn.internalColumnEditor = {
+      mockColumn.editor = {
         editorOptions: {
           showOnFocus: true,
-          fetch: (searchText, updateCallback) => {
-            updateCallback(mockCollection);
-          }
+          fetch: (_, updateCallback) => updateCallback(mockCollection)
         } as AutocompleterOption
       };
       editor = new AutocompleterEditor(editorArguments);
@@ -748,6 +773,29 @@ describe('AutocompleterEditor', () => {
       expect(autocompleteListElms.length).toBe(2);
       expect(autocompleteListElms[0].textContent).toBe('Female');
       expect(autocompleteListElms[1].textContent).toBe('Undefined');
+    });
+
+    it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element', () => {
+      gridOptionMock.darkMode = true;
+      const mockCollection = [{ value: 'female', label: 'Female' }, { value: 'undefined', label: 'Undefined' }];
+      const event = new (window.window as any).KeyboardEvent('keydown', { key: 'm', bubbles: true, cancelable: true });
+
+      mockColumn.editor = {
+        editorOptions: {
+          showOnFocus: true,
+          fetch: (_, updateCallback) => updateCallback(mockCollection)
+        } as AutocompleterOption
+      };
+      editor = new AutocompleterEditor(editorArguments);
+
+      const editorElm = divContainer.querySelector('input.editor-gender') as HTMLInputElement;
+      editorElm.focus();
+      editorElm.dispatchEvent(event);
+
+      jest.runAllTimers(); // fast-forward timer
+
+      const autocompleteElm = document.body.querySelector('.slick-autocomplete') as HTMLDivElement;
+      expect(autocompleteElm.classList.contains('slick-dark-mode')).toBeTruthy();
     });
   });
 
@@ -905,7 +953,7 @@ describe('AutocompleterEditor', () => {
         getReturnValue: () => false
       } as any);
       gridOptionMock.autoCommitEdit = true;
-      (mockColumn.internalColumnEditor as ColumnEditor).collection = ['male', 'female'];
+      mockColumn.editor!.collection = ['male', 'female'];
       mockItemData = { id: 123, gender: 'female', isActive: true };
 
       editor = new AutocompleterEditor(editorArguments);
@@ -929,7 +977,7 @@ describe('AutocompleterEditor', () => {
         const onCompositeEditorSpy = jest.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
           getReturnValue: () => false
         } as any);
-        mockColumn.internalColumnEditor = {
+        mockColumn.editor = {
           collection: ['Other', 'Male', 'Female'],
           collectionOverride: (inputCollection) => inputCollection.filter(item => item !== 'other')
         };

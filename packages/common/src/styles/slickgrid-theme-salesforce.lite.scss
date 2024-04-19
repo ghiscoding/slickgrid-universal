@@ -10,6 +10,7 @@
  * We also removed `slick-without-bootstrap-min-styling.scss` since that is causing issues with Bootstrap 4
  */
 
+@import './flatpickr-dark';
 @import './sass-utilities';
 @import './variables-theme-salesforce';
 @import './slick-grid';

@@ -1,4 +1,4 @@
-import { multipleSelect, MultipleSelectInstance, MultipleSelectOption, OptionRowData } from 'multiple-select-vanilla';
+import { multipleSelect, type MultipleSelectInstance, type MultipleSelectOption, type OptionRowData } from 'multiple-select-vanilla';
 import { emptyElement, isPrimitiveValue } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants';
@@ -56,8 +56,8 @@ export class SelectFilter implements Filter {
    * Initialize the Filter
    */
   constructor(
-    protected readonly translaterService: TranslaterService,
-    protected readonly collectionService: CollectionService,
+    protected readonly translaterService?: TranslaterService,
+    protected readonly collectionService?: CollectionService,
     protected readonly rxjs?: RxJsFacade,
     isMultipleSelect = true) {
     this._isMultipleSelect = isMultipleSelect;
@@ -86,6 +86,10 @@ export class SelectFilter implements Filter {
   /** Getter to know what would be the default operator when none is specified */
   get defaultOperator(): OperatorType | OperatorString {
     return this.isMultipleSelect ? OperatorType.in : OperatorType.equal;
+  }
+
+  get filterOptions(): MultipleSelectOption {
+    return { ...this.gridOptions.defaultFilterOptions?.select, ...this.columnFilter?.filterOptions };
   }
 
   /** Getter to know if the current filter is a multiple-select (false means it's a single select) */
@@ -254,7 +258,7 @@ export class SelectFilter implements Filter {
     if (this.columnFilter && this.columnFilter.collectionFilterBy) {
       const filterBy = this.columnFilter.collectionFilterBy;
       const filterCollectionBy = this.columnFilter.collectionOptions?.filterResultAfterEachPass || null;
-      outputCollection = this.collectionService.filterCollection(outputCollection, filterBy, filterCollectionBy);
+      outputCollection = this.collectionService?.filterCollection(outputCollection, filterBy, filterCollectionBy) || [];
     }
 
     return outputCollection;
@@ -271,7 +275,7 @@ export class SelectFilter implements Filter {
     // user might want to sort the collection
     if (this.columnFilter && this.columnFilter.collectionSortBy) {
       const sortBy = this.columnFilter.collectionSortBy;
-      outputCollection = this.collectionService.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel);
+      outputCollection = this.collectionService?.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel) || [];
     }
 
     return outputCollection;
@@ -404,8 +408,7 @@ export class SelectFilter implements Filter {
     this.filterContainerElm.appendChild(selectElement);
 
     // merge options & attach multiSelect
-    const filterOptions: MultipleSelectOption = (this.columnFilter) ? this.columnFilter.filterOptions : {};
-    this.filterElmOptions = { ...this.defaultOptions, ...(filterOptions as MultipleSelectOption), data: dataCollection };
+    this.filterElmOptions = { ...this.defaultOptions, ...this.filterOptions, data: dataCollection };
     this._msInstance = multipleSelect(selectElement, this.filterElmOptions) as MultipleSelectInstance;
   }
 
@@ -420,18 +423,23 @@ export class SelectFilter implements Filter {
       autoAdjustDropWidthByTextSize: true,
       name: `${columnId}`,
       container: 'body',
+      darkMode: !!this.gridOptions.darkMode,
       filter: false,  // input search term on top of the select option list
       maxHeight: 275,
       single: true,
+      singleRadio: true,
+      showSearchClear: true,
       renderOptionLabelAsHtml: this.columnFilter?.enableRenderHtml ?? false,
       sanitizer: (dirtyHtml: string) => sanitizeTextByAvailableSanitizer(this.gridOptions, dirtyHtml),
       // we will subscribe to the onClose event for triggering our callback
       // also add/remove "filled" class for styling purposes
-      onClose: () => this.onTriggerEvent()
+      onClose: () => this.onTriggerEvent(),
+      onClear: () => this.clear(),
     } as MultipleSelectOption;
 
     if (this._isMultipleSelect) {
       options.single = false;
+      options.singleRadio = false;
       options.showOkButton = true;
       options.displayTitle = true; // show tooltip of all selected items while hovering the filter
       const translationPrefix = getTranslationPrefix(this.gridOptions);

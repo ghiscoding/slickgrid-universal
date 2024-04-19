@@ -1,8 +1,8 @@
 // import { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
 import {
-  AutocompleterOption,
+  type AutocompleterOption,
   type Column,
-  CompositeEditorModalType,
+  type CompositeEditorModalType,
   type EditCommand,
   Editors,
   EventNamingStyle,
@@ -13,6 +13,7 @@ import {
   Formatters,
   type GridOption,
   type LongTextEditorOption,
+  type MultipleSelectOption,
   type OnCompositeEditorChangeEventArgs,
   SlickGlobalEditorLock,
   type SliderOption,
@@ -24,7 +25,7 @@ import {
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { type SlickerGridInstance } from '@slickgrid-universal/vanilla-bundle';
-import { VanillaForceGridBundle, Slicker } from '@slickgrid-universal/vanilla-force-bundle';
+import { Slicker, type VanillaForceGridBundle } from '@slickgrid-universal/vanilla-force-bundle';
 import { SlickCompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { ExampleGridOptions } from './example-grid-options';
 import countriesJson from './data/countries.json?raw';
@@ -87,6 +88,7 @@ const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, 
 
 export default class Example12 {
   private _bindingEventService: BindingEventService;
+  private _darkMode = false;
   compositeEditorInstance: SlickCompositeEditorComponent;
   columnDefinitions: Column[];
   gridOptions: GridOption;
@@ -144,12 +146,14 @@ export default class Example12 {
     this.sgb?.dispose();
     this._bindingEventService.unbindAll();
     this.gridContainerElm.remove();
+    document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    document.body.setAttribute('data-theme', 'light');
   }
 
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: '<span title="Task must always be followed by a number" class="color-info sgi sgi-alert-circle"></span> Title', field: 'title', sortable: true, type: FieldType.string, minWidth: 75,
+        id: 'title', name: '<span title="Task must always be followed by a number" class="color-warning-dark sgi sgi-alert-outline"></span> Title <span title="Title is always rendered as UPPERCASE" class="sgi sgi-information-outline"></span>', field: 'title', sortable: true, type: FieldType.string, minWidth: 75,
         cssClass: 'text-bold text-uppercase',
         filterable: true, columnGroup: 'Common Factor',
         filter: { model: Filters.compoundInputText },
@@ -228,7 +232,8 @@ export default class Example12 {
         exportCustomFormatter: (_row, _cell, value) => this.complexityLevelList[value]?.label,
         filter: {
           model: Filters.multipleSelect,
-          collection: this.complexityLevelList
+          collection: this.complexityLevelList,
+          filterOptions: { showClear: true } as MultipleSelectOption,
         },
         editor: {
           model: Editors.singleSelect,
@@ -251,7 +256,8 @@ export default class Example12 {
         exportWithFormatter: false,
         filter: {
           collection: [{ value: '', label: '' }, { value: true, label: 'True' }, { value: false, label: 'False' }],
-          model: Filters.singleSelect
+          model: Filters.singleSelect,
+          filterOptions: { showClear: true } as MultipleSelectOption,
         },
         editor: { model: Editors.checkbox, massUpdate: true, },
         // editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'Yes' }, { value: false, label: 'No' }], },
@@ -358,7 +364,7 @@ export default class Example12 {
       {
         id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
         excludeFromExport: true,
-        formatter: () => `<div class="button-style margin-auto action-btn"><span class="sgi sgi-dots-vertical mdi-22px color-primary"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto action-btn"><span class="sgi sgi-dots-vertical sgi-22px color-alt-default-light"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           commandTitle: 'Commands',
@@ -380,7 +386,7 @@ export default class Example12 {
             'divider',
             {
               command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'sgi sgi-close color-danger', cssClass: 'red', textCssClass: 'text-italic color-danger-light',
+              iconCssClass: 'sgi sgi-close', cssClass: 'has-text-danger', textCssClass: 'text-italic',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext?.completed;
@@ -401,6 +407,7 @@ export default class Example12 {
       useSalesforceDefaultGridOptions: true,
       autoFixResizeRequiredGoodCount: 1,
       datasetIdPropertyName: 'id',
+      darkMode: this._darkMode,
       eventNamingStyle: EventNamingStyle.lowerCase,
       autoAddCustomEditorFormatter: customEditableInputFormatter,
       enableAddRow: true, // <-- this flag is required to work with the (create & clone) modal types
@@ -472,6 +479,15 @@ export default class Example12 {
       },
       // when using the cellMenu, you can change some of the default options and all use some of the callback methods
       enableCellMenu: true,
+      gridMenu: {
+        hideToggleDarkModeCommand: false, // disabled command by default
+        onCommand: (_, args) => {
+          if (args.command === 'toggle-dark-mode') {
+            this._darkMode = !this._darkMode; // keep local toggle var in sync
+            this.toggleBodyBackground();
+          }
+        }
+      }
     };
   }
 
@@ -545,14 +561,13 @@ export default class Example12 {
   }
 
   handleOnBeforeEditCell(event) {
-    const eventData = event.detail?.eventData;
+    // const eventData = event.detail?.eventData;
     const args = event?.detail?.args;
     const { column, item, grid } = args;
 
     if (column && item) {
       if (!checkItemIsEditable(item, column, grid)) {
-        event.preventDefault();
-        eventData.stopImmediatePropagation();
+        event.preventDefault(); // OR eventData.preventDefault();
         return false;
       }
     }
@@ -575,9 +590,9 @@ export default class Example12 {
     const args = event?.detail?.args;
     const eventData = event?.detail?.eventData;
     console.log(eventData, args);
-    // if (eventData.target.classList.contains('mdi-help-circle-outline')) {
+    // if (eventData.target.classList.contains('sgi-help-circle-outline')) {
     //   alert('please HELP!!!');
-    // } else if (eventData.target.classList.contains('mdi-chevron-down')) {
+    // } else if (eventData.target.classList.contains('sgi-chevron-down')) {
     //   alert('do something else...');
     // }
   }
@@ -633,20 +648,6 @@ export default class Example12 {
     const args = event?.detail?.args;
     // const sortedSelectedIds = args.filteredIds.sort((a, b) => a - b);
     console.log('sortedSelectedIds', args.filteredIds.length, args.selectedRowIds.length);
-  }
-
-  toggleGridEditReadonly() {
-    // first need undo all edits
-    this.undoAllEdits();
-
-    // then change a single grid options to make the grid non-editable (readonly)
-    this.isGridEditable = !this.isGridEditable;
-    this.sgb.gridOptions = { editable: this.isGridEditable };
-    this.gridOptions = this.sgb.gridOptions;
-    this.isCompositeDisabled = !this.isGridEditable;
-    if (!this.isGridEditable) {
-      this.isMassSelectionDisabled = true;
-    }
   }
 
   removeUnsavedStylingFromCell(_item: any, column: Column, row: number) {
@@ -744,6 +745,37 @@ export default class Example12 {
     this.editQueue = [];
   }
 
+  toggleGridEditReadonly() {
+    // first need undo all edits
+    this.undoAllEdits();
+
+    // then change a single grid options to make the grid non-editable (readonly)
+    this.isGridEditable = !this.isGridEditable;
+    this.sgb.gridOptions = { ...this.sgb.gridOptions, editable: this.isGridEditable };
+    this.gridOptions = this.sgb.gridOptions;
+    this.isCompositeDisabled = !this.isGridEditable;
+    if (!this.isGridEditable) {
+      this.isMassSelectionDisabled = true;
+    }
+  }
+
+  toggleDarkMode() {
+    this._darkMode = !this._darkMode;
+    this.toggleBodyBackground();
+    this.sgb.gridOptions = { ...this.sgb.gridOptions, darkMode: this._darkMode };
+    this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });
+  }
+
+  toggleBodyBackground() {
+    if (this._darkMode) {
+      document.body.setAttribute('data-theme', 'dark');
+      document.querySelector('.demo-container')?.classList.add('dark-mode');
+    } else {
+      document.body.setAttribute('data-theme', 'light');
+      document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    }
+  }
+
   mockProducts() {
     return [
       {
@@ -833,57 +865,57 @@ export default class Example12 {
   /** List of icons that are supported in this lib Material Design Icons */
   getRandomIcon(iconIndex?: number) {
     const icons = [
-      'mdi-arrow-collapse',
-      'mdi-arrow-expand',
-      'mdi-cancel',
-      'mdi-check',
-      'mdi-checkbox-blank-outline',
-      'mdi-check-box-outline',
-      'mdi-checkbox-marked',
-      'mdi-close',
-      'mdi-close-circle',
-      'mdi-close-circle-outline',
-      'mdi-close-thick',
-      'mdi-content-copy',
-      'mdi-database-refresh',
-      'mdi-download',
-      'mdi-file-document-outline',
-      'mdi-file-excel-outline',
-      'mdi-file-music-outline',
-      'mdi-file-pdf-outline',
-      'mdi-filter-remove-outline',
-      'mdi-flip-vertical',
-      'mdi-folder',
-      'mdi-folder-open',
-      'mdi-help-circle',
-      'mdi-help-circle-outline',
-      'mdi-history',
-      'mdi-information',
-      'mdi-information-outline',
-      'mdi-link',
-      'mdi-link-variant',
-      'mdi-menu',
-      'mdi-microsoft-excel',
-      'mdi-minus',
-      'mdi-page-first',
-      'mdi-page-last',
-      'mdi-paperclip',
-      'mdi-pin-off-outline',
-      'mdi-pin-outline',
-      'mdi-playlist-plus',
-      'mdi-playlist-remove',
-      'mdi-plus',
-      'mdi-redo',
-      'mdi-refresh',
-      'mdi-shape-square-plus',
-      'mdi-sort-ascending',
-      'mdi-sort-descending',
-      'mdi-swap-horizontal',
-      'mdi-swap-vertical',
-      'mdi-sync',
-      'mdi-table-edit',
-      'mdi-table-refresh',
-      'mdi-undo',
+      'sgi-arrow-collapse',
+      'sgi-arrow-expand',
+      'sgi-cancel',
+      'sgi-check',
+      'sgi-checkbox-blank-outline',
+      'sgi-check-box-outline',
+      'sgi-checkbox-marked',
+      'sgi-close',
+      'sgi-close-circle',
+      'sgi-close-circle-outline',
+      'sgi-close-thick',
+      'sgi-content-copy',
+      'sgi-database-refresh',
+      'sgi-download',
+      'sgi-file-document-outline',
+      'sgi-file-excel-outline',
+      'sgi-file-music-outline',
+      'sgi-file-pdf-outline',
+      'sgi-filter-remove-outline',
+      'sgi-flip-vertical',
+      'sgi-folder',
+      'sgi-folder-open',
+      'sgi-help-circle',
+      'sgi-help-circle-outline',
+      'sgi-history',
+      'sgi-information',
+      'sgi-information-outline',
+      'sgi-link',
+      'sgi-link-variant',
+      'sgi-menu',
+      'sgi-microsoft-excel',
+      'sgi-minus',
+      'sgi-page-first',
+      'sgi-page-last',
+      'sgi-paperclip',
+      'sgi-pin-off-outline',
+      'sgi-pin-outline',
+      'sgi-playlist-plus',
+      'sgi-playlist-remove',
+      'sgi-plus',
+      'sgi-redo',
+      'sgi-refresh',
+      'sgi-shape-square-plus',
+      'sgi-sort-ascending',
+      'sgi-sort-descending',
+      'sgi-swap-horizontal',
+      'sgi-swap-vertical',
+      'sgi-sync',
+      'sgi-table-edit',
+      'sgi-table-refresh',
+      'sgi-undo',
     ];
     const randomNumber = Math.floor((Math.random() * icons.length - 1));
     return icons[iconIndex ?? randomNumber];
@@ -893,11 +925,11 @@ export default class Example12 {
     return `<div class="autocomplete-container-list">
       <div class="autocomplete-left">
         <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
-        <span class="mdi ${item.icon} mdi-26px"></span>
+        <span class="sgi ${item.icon} sgi-26px"></span>
       </div>
       <div>
         <span class="autocomplete-top-left">
-          <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
+          <span class="sgi ${item.itemTypeName === 'I' ? 'sgi-information-outline' : 'sgi-content-copy'} sgi-14px"></span>
           ${item.itemName}
         </span>
         <div>
@@ -911,11 +943,11 @@ export default class Example12 {
     return `<div class="autocomplete-container-list">
       <div class="autocomplete-left">
         <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
-        <span class="mdi ${item.icon} mdi-26px"></span>
+        <span class="sgi ${item.icon} sgi-26px"></span>
       </div>
       <div>
         <span class="autocomplete-top-left">
-          <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
+          <span class="sgi ${item.itemTypeName === 'I' ? 'sgi-information-outline' : 'sgi-content-copy'} sgi-14px"></span>
           ${item.itemName}
         </span>
         <span class="autocomplete-top-right">${formatNumber(item.listPrice, 2, 2, false, '$')}</span>
@@ -973,6 +1005,7 @@ export default class Example12 {
         // showResetButtonOnEachEditor: true,
         onClose: () => Promise.resolve(confirm('You have unsaved changes, are you sure you want to close this window?')),
         onError: (error) => alert(error.message),
+        // onRendered: (modalElm) => console.log(modalElm),
         onSave: (formValues, _selection, dataContextOrUpdatedDatasetPreview) => {
           const serverResponseDelay = 50;
 

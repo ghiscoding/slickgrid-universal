@@ -1,4 +1,4 @@
-import { AnyFunction } from './models/types';
+import type { AnyFunction } from './models/types';
 
 /**
  * Add an item to an array only when the item does not exists, when the item is an object we will be using their "id" to compare
@@ -184,7 +184,7 @@ export function getFunctionDetails(fn: AnyFunction, addReturn = true) {
   };
 
   const getFunctionParams = (func: AnyFunction): string[] => {
-    const STRIP_COMMENTS = /(\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s*=[^,\)]*(('(?:\\'|[^'\r\n])*')|("(?:\\"|[^"\r\n])*"))|(\s*=[^,\)]*))/mg;
+    const STRIP_COMMENTS = /(\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s*=[^,)]*(('(?:\\'|[^'\r\n])*')|("(?:\\"|[^"\r\n])*"))|(\s*=[^,)]*))/mg;
     const ARG_NAMES = /([^\s,]+)/g;
     const fnStr = func.toString().replace(STRIP_COMMENTS, '');
     return fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(ARG_NAMES) ?? [];
@@ -249,9 +249,9 @@ export function hasData(value: any): boolean {
 
 /**
  * Check if input value is a number, by default it won't be a strict checking
- * but optionally we could check for strict equality, for example in strict "3" will return False but without strict it will return True
+ * but optionally we could check for strict equality, for example "3" in strict mode would return False but True when non-strict.
  * @param value - input value of any type
- * @param strict - when using strict it also check for strict equality, for example in strict "3" would return False but without strict it would return True
+ * @param strict - when using strict it also check for strict equality, e.g "3" in strict mode would return False but True when non-strict
  */
 export function isNumber(value: any, strict = false) {
   if (strict) {
@@ -328,9 +328,9 @@ export function titleCase(inputStr: string, shouldTitleCaseEveryWords = false): 
  */
 export function toCamelCase(inputStr: string): string {
   if (typeof inputStr === 'string') {
-    return inputStr.replace(/(?:^\w|[A-Z]|\b\w|[\s+\-_\/])/g, (match: string, offset: number) => {
+    return inputStr.replace(/(?:^\w|[A-Z]|\b\w|[\s+\-_/])/g, (match: string, offset: number) => {
       // remove white space or hypens or underscores
-      if (/[\s+\-_\/]/.test(match)) {
+      if (/[\s+\-_/]/.test(match)) {
         return '';
       }
 
@@ -359,7 +359,7 @@ export function toKebabCase(inputStr: string): string {
  */
 export function toSentenceCase(inputStr: string): string {
   if (typeof inputStr === 'string') {
-    const result = inputStr.replace(/([A-Z])|(\-)/g, ' $1').replace(/\s+/g, ' ').trim();
+    const result = inputStr.replace(/([A-Z])|(-)/g, ' $1').replace(/\s+/g, ' ').trim();
     return result.charAt(0).toUpperCase() + result.slice(1);
   }
   return inputStr;

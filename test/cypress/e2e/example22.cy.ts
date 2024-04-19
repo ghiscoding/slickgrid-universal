@@ -62,7 +62,23 @@ describe('Example 22 - Row Based Editing', () => {
     cy.get('.slick-cell').first().should('have.class', 'slick-rbe-unsaved-cell');
   });
 
-  it('should stay in editmode if saving failed', () => {
+  it('should fire onvalidationerror event when pasting and resulting in invalid validation result', (done) => {
+    cy.reload();
+
+    cy.get('.action-btns--edit').first().click();
+
+    cy.get('.slick-cell.l1.r1').first().click().type('120{enter}');
+    cy.get('.slick-cell.l1.r1').first().click().realPress(['Control', 'C']);
+
+    cy.on('window:alert', (str) => {
+      expect(str).to.equal('Max 100% allowed');
+      done();
+    });
+    cy.get('.slick-cell.l2.r2').first().click().realPress(['Control', 'V']);
+    cy.get('.slick-cell.active').type('{enter}');
+  });
+
+  it('should stay in editmode if saving failed', (done) => {
     cy.reload();
 
     cy.get('.action-btns--edit').first().click();
@@ -74,6 +90,7 @@ describe('Example 22 - Row Based Editing', () => {
     cy.on('window:confirm', () => true);
     cy.on('window:alert', (str) => {
       expect(str).to.equal('Sorry, 40 is the maximum allowed duration.');
+      done();
     });
 
     cy.get('.slick-row.slick-rbe-editmode').should('have.length', 1);
@@ -142,20 +159,26 @@ describe('Example 22 - Row Based Editing', () => {
     cy.get('[data-test="toggle-language"]').click();
     cy.get('[data-test="selected-locale"]').should('contain', 'fr.json');
 
-    // this seems to be a bug in Cypress, it doesn't seem to be able to click on the button
-    // but at least it triggers a rerender, which makes it refetch the actual button instead of a cached one
-    cy.get('.action-btns--update').first().click({ force: true });
+    cy.get('.action-btns--edit').first().click();
 
-    cy.get('.action-btns--update')
-      .first()
-      .should(($btn) => {
-        expect($btn.attr('title')).to.equal('Mettre à jour la ligne actuelle');
-      });
+    cy.get('.action-btns--cancel').first().as('cancel-btn');
+    cy.get('@cancel-btn').should(($btn) => {
+      expect($btn.attr('title')).to.equal('Annuler la ligne actuelle');
+    });
+    cy.get('@cancel-btn').trigger('mouseover');
+    cy.get('.slick-custom-tooltip').should('be.visible');
+    cy.get('.slick-custom-tooltip .tooltip-body').contains('Annuler la ligne actuelle');
 
-    cy.get('.action-btns--cancel')
-      .first()
-      .should(($btn) => {
-        expect($btn.attr('title')).to.equal('Annuler la ligne actuelle');
-      });
+    cy.get('.action-btns--update').first().as('update-btn');
+    cy.get('@update-btn').should(($btn) => {
+      expect($btn.attr('title')).to.equal('Mettre à jour la ligne actuelle');
+    });
+
+    cy.get('@update-btn').trigger('mouseover');
+
+    cy.get('.slick-custom-tooltip').should('be.visible');
+    cy.get('.slick-custom-tooltip .tooltip-body').contains('Mettre à jour la ligne actuelle');
+    cy.get('@update-btn').trigger('mouseout');
+    cy.get('@update-btn').first().click();
   });
 });

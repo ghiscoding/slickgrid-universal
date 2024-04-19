@@ -9,13 +9,11 @@
  *     https://github.com/codemeasandwich/graphql-query-builder/blob/master/LICENSE
  */
 export default class GraphqlQueryBuilder {
-  // eslint-disable-next-line @typescript-eslint/ban-types
   alias!: string | Function;
   head: any[] = [];
   body: any;
 
   /* Constructor, query/mutator you wish to use, and an alias or filter arguments. */
-  // eslint-disable-next-line @typescript-eslint/ban-types
   constructor(protected queryFnName: string, aliasOrFilter?: string | object) {
     if (typeof aliasOrFilter === 'string') {
       this.alias = aliasOrFilter;

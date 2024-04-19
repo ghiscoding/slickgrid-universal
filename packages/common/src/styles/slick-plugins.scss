@@ -24,6 +24,7 @@ li.hidden {
   border-radius: var(--slick-column-picker-border-radius, $slick-column-picker-border-radius);
   min-width: var(--slick-column-picker-min-width, $slick-column-picker-min-width);
   padding: var(--slick-column-picker-padding, $slick-column-picker-padding);
+  scrollbar-color: var(--slick-scrollbar-color, $slick-scrollbar-color);
   @-moz-document url-prefix() {
     /* add right padding to avoid scrollback showing over text, that is for Firefox since WebKit is ok */
     padding: var(--slick-column-picker-padding-firefox, $slick-column-picker-padding-firefox);
@@ -81,7 +82,9 @@ li.hidden {
   }
 }
 .slick-column-picker, .slick-grid-menu {
+  scrollbar-color: var(--slick-scrollbar-color, $slick-scrollbar-color);
   .slick-menu-title {
+    color: var(--slick-menu-title-color, $slick-menu-title-color);
     font-size: var(--slick-menu-title-font-size, $slick-menu-title-font-size);
     font-weight: var(--slick-menu-title-font-weight, $slick-menu-title-font-weight);
     border-bottom: var(--slick-column-picker-title-border-bottom, $slick-column-picker-title-border-bottom);
@@ -97,6 +100,7 @@ li.hidden {
   }
 
   li {
+    color: var(--slick-menu-color, $slick-menu-color);
     border: var(--slick-column-picker-item-border, $slick-column-picker-item-border);
     border-radius: var(--slick-column-picker-item-border-radius, $slick-column-picker-item-border-radius);
     font-size: var(--slick-column-picker-item-font-size, $slick-column-picker-item-font-size);
@@ -118,7 +122,8 @@ li.hidden {
   hr {
     margin: 6px 0;
     border: 0;
-    border-top: 1px solid #d5d5d5;
+    background-color: var(--slick-column-picker-hr-bg-color, $slick-column-picker-hr-bg-color);
+    border-top: var(--slick-column-picker-hr-divider-border, $slick-column-picker-hr-divider-border);
     width: var(--slick-column-picker-divider-width, $slick-column-picker-divider-width);
     margin-left: auto;
     margin-right: auto;
@@ -205,6 +210,7 @@ li.hidden {
   position: absolute;
   width: 22px;
   z-index: 2;
+  color: var(--slick-grid-menu-icon-btn-color, $slick-grid-menu-icon-btn-color);
   display: var(--slick-grid-menu-button-display, $slick-grid-menu-button-display);
   font-size: var(--slick-grid-menu-icon-font-size, $slick-grid-menu-icon-font-size);
   padding: var(--slick-grid-menu-button-padding, $slick-grid-menu-button-padding);
@@ -226,6 +232,7 @@ li.hidden {
 // ----------------------------------------------
 
 .slick-cell-menu, .slick-context-menu, .slick-grid-menu, .slick-header-menu {
+  box-shadow: var(--slick-menu-box-shadow, $slick-menu-box-shadow);
   &.slick-submenu {
     box-shadow: var(--slick-submenu-box-shadow, $slick-submenu-box-shadow);
     min-width: var(--slick-submenu-min-width, $slick-submenu-min-width);
@@ -366,6 +373,7 @@ li.hidden {
   position: absolute;
   font-family: var(--slick-font-family, $slick-font-family);
   background: var(--slick-menu-bg-color, $slick-menu-bg-color);
+  color: var(--slick-menu-color, $slick-menu-color);
   border: var(--slick-menu-border, $slick-menu-border);
   border-radius: var(--slick-menu-border-radius, $slick-menu-border-radius);
   min-width: var(--slick-menu-min-width, $slick-menu-min-width);
@@ -398,15 +406,18 @@ li.hidden {
   background-color: var(--slick-tooltip-background-color, $slick-tooltip-background-color);
   border: var(--slick-tooltip-border, $slick-tooltip-border);
   border-radius: var(--slick-tooltip-border-radius, $slick-tooltip-border-radius);
-  color: var(--slick-tooltip-color, $slick-tooltip-color);
   padding: var(--slick-tooltip-padding, $slick-tooltip-padding);
   font-size: var(--slick-tooltip-font-size, $slick-tooltip-font-size);
   height: var(--slick-tooltip-height, $slick-tooltip-height);
   width: var(--slick-tooltip-width, $slick-tooltip-width);
   z-index: var(--slick-tooltip-z-index, $slick-tooltip-z-index);
-  overflow: var(--slick-tooltip-overflow, $slick-tooltip-overflow);
-  text-overflow: var(--slick-tooltip-text-overflow, $slick-tooltip-text-overflow);
-  white-space: var(--slick-tooltip-white-space, $slick-tooltip-white-space);
+
+  .tooltip-body {
+    color: var(--slick-tooltip-color, $slick-tooltip-color);
+    overflow: var(--slick-tooltip-overflow, $slick-tooltip-overflow);
+    text-overflow: var(--slick-tooltip-text-overflow, $slick-tooltip-text-overflow);
+    white-space: var(--slick-tooltip-white-space, $slick-tooltip-white-space);
+  }
 
   &.tooltip-arrow::after {
     content: "";
@@ -480,12 +491,11 @@ li.hidden {
 // ----------------------------------------------
 
 .slick-header-menu-button {
+  background-color: currentColor;
   background-position: center center;
   background-repeat: no-repeat;
   cursor: pointer;
-  display: none;
   position: absolute;
-  height: var(--slick-header-menu-button-height, $slick-header-menu-button-height);
   border: var(--slick-header-menu-button-border, $slick-header-menu-button-border);
   border-width: var(--slick-header-menu-button-border-width, $slick-header-menu-button-border-width);
   padding: var(--slick-header-menu-button-padding, $slick-header-menu-button-padding);
@@ -493,17 +503,12 @@ li.hidden {
 
   // The next few items are already defined in the slick-headermenu file and it should stay that way, *unless* you also replace the button image included there.
   bottom: 0;
-  right: var(--slick-header-menu-button-margin-right, $slick-header-menu-button-margin-right);
   top: 0;
-  width: var(--slick-header-menu-button-width, $slick-header-menu-button-width);
-}
-.slick-header-menu-button:before {
-  display: inline-block;
-  content: var(--slick-header-menu-button-icon, $slick-header-menu-button-icon);
-  font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-  font-size: var(--slick-header-menu-button-icon-font-size, $slick-header-menu-button-icon-font-size);
-  font-weight: var(--slick-header-menu-button-icon-font-weight, $slick-header-menu-button-icon-font-weight);
-  width: var(--slick-header-menu-button-icon-width, $slick-header-menu-button-icon-width);
+  right: var(--slick-header-menu-button-margin-right, $slick-header-menu-button-margin-right);
+  height: var(--slick-header-menu-button-icon-size, $slick-header-menu-button-icon-size);
+  width: var(--slick-header-menu-button-icon-size, $slick-header-menu-button-icon-size);
+
+  @include generateSvgStyle('slick-header-menu-button-icon-svg', $slick-header-menu-button-icon-svg-path);
 }
 
 .slick-header-column {
@@ -521,16 +526,19 @@ li.hidden {
 // ----------------------------------------------
 // Row Move Manager Plugin
 // ----------------------------------------------
-.slick-cell.cell-reorder:before {
-  display: inline-block;
-  font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-  font-size: var(--slick-row-move-plugin-size, $slick-row-move-plugin-size);
-  content: var(--slick-row-move-plugin-icon, $slick-row-move-plugin-icon);
-  width: var(--slick-row-move-plugin-icon-width, $slick-row-move-plugin-icon-width);
-  vertical-align: var(--slick-row-move-plugin-icon-vertical-align, $slick-row-move-plugin-icon-vertical-align);
-}
 .slick-cell.cell-reorder {
-  cursor: var(--slick-row-move-plugin-cursor, $slick-row-move-plugin-cursor);
+  display: flex;
+  align-items: center;
+
+  .slick-row-move-column {
+    background-color: currentColor;
+    display: inline-block;
+    color: var(--slick-row-move-plugin-icon-color, $slick-row-move-plugin-icon-color);
+    cursor: var(--slick-row-move-plugin-cursor, $slick-row-move-plugin-cursor);
+    height: var(--slick-row-move-plugin-icon-size, $slick-row-move-plugin-icon-size);
+    width: var(--slick-row-move-plugin-icon-size, $slick-row-move-plugin-icon-size);
+    @include generateSvgStyle('slick-row-move-plugin-icon-svg', $slick-row-move-plugin-icon-svg-path);
+  }
 }
 
 // ----------------------------------------------
@@ -615,13 +623,6 @@ li.hidden {
   font-size: var(--slick-header-font-size, $slick-header-font-size);
   height: var(--slick-header-input-height, $slick-header-input-height);
 
-  div {
-    &:before, &.open:before {
-      font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-      font-size: var(--slick-multiselect-icon-arrow-font-size, $slick-multiselect-icon-arrow-font-size);
-    }
-  }
-
   span {
     font-size: var(--slick-multiselect-input-filter-font-size, $slick-multiselect-input-filter-font-size);
     font-family: var(--slick-multiselect-input-filter-font-family, $slick-multiselect-input-filter-font-family);
@@ -651,52 +652,6 @@ li.hidden {
   border: var(--slick-multiselect-dropdown-border, $slick-multiselect-dropdown-border);
   z-index: var(--slick-multiselect-dropdown-z-index, $slick-multiselect-dropdown-z-index);
 
-  input[type="checkbox"],
-  input[type="radio"] {
-    /* make input checkbox invisible but don't hide it since multiple-select uses hide for something else */
-    opacity: 0;
-    width: 0;
-
-    & + span:before {
-      cursor: pointer;
-      color: var(--slick-multiselect-icon-unchecked-color, $slick-multiselect-icon-unchecked-color);
-      content: var(--slick-multiselect-icon-unchecked, $slick-multiselect-icon-unchecked);
-      display: inline-block;
-      font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-      font-size: var(--slick-multiselect-icon-font-size, $slick-multiselect-icon-font-size);
-      font-weight: normal;
-      opacity: var(--slick-multiselect-unchecked-opacity, $slick-multiselect-unchecked-opacity);
-      vertical-align: var(--slick-multiselect-icon-vertical-align, $slick-multiselect-icon-vertical-align);
-    }
-
-    &:checked + span:before {
-      content: var(--slick-multiselect-icon-checked, $slick-multiselect-icon-checked);
-      opacity: 1;
-    }
-    & + span:before, &:checked + span:before {
-      height: var(--slick-multiselect-icon-height, $slick-multiselect-icon-height);
-      width: var(--slick-multiselect-icon-width, $slick-multiselect-icon-width);
-      border: var(--slick-multiselect-icon-border, $slick-multiselect-icon-border);
-      border-radius: var(--slick-multiselect-icon-border-radius, $slick-multiselect-icon-border-radius);
-      margin: var(--slick-multiselect-icon-margin, $slick-multiselect-icon-margin);
-    }
-  }
-  input[type="radio"] {
-    & + span:before {
-      content: var(--slick-multiselect-icon-radio-unchecked, $slick-multiselect-icon-radio-unchecked);
-    }
-    &:checked + span:before {
-      content: var(--slick-multiselect-icon-radio-checked, $slick-multiselect-icon-radio-checked);
-      color: var(--slick-multiselect-icon-radio-color, $slick-multiselect-icon-radio-color);
-    }
-    & + span:before, &:checked + span:before {
-      height: var(--slick-multiselect-icon-radio-height, $slick-multiselect-icon-radio-height);
-      width: var(--slick-multiselect-icon-radio-width, $slick-multiselect-icon-radio-width);
-      border: var(--slick-multiselect-icon-radio-border, $slick-multiselect-icon-radio-border);
-      border-radius: var(--slick-multiselect-icon-radio-border-radius, $slick-multiselect-icon-radio-border-radius);
-      margin: var(--slick-multiselect-icon-radio-margin, $slick-multiselect-icon-radio-margin);
-    }
-  }
   li {
     margin: 0;
     height: var(--slick-multiselect-item-height, $slick-multiselect-item-height);
@@ -732,6 +687,9 @@ li.hidden {
     &:hover {
       background-color: var(--slick-multiselect-select-all-text-hover-color, $slick-multiselect-select-all-text-hover-color);
     }
+    &.highlighted {
+      background-color: transparent;
+    }
     &.highlighted label {
       border: var(--slick-multiselect-option-highlight-border, $slick-multiselect-option-highlight-border);
       background-color: var(--slick-multiselect-option-highlight-bg-color, $slick-multiselect-option-highlight-bg-color);
@@ -766,14 +724,6 @@ li.hidden {
     &:hover {
       background-color: var(--slick-multiselect-ok-button-bg-hover-color, $slick-multiselect-ok-button-bg-hover-color);
       color: var(--slick-multiselect-ok-button-text-hover-color, $slick-multiselect-ok-button-text-hover-color);
-    }
-  }
-  .ms-search {
-    &:before {
-      font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-      font-size: var(--slick-multiselect-icon-font-size, $slick-multiselect-icon-font-size);
-      right: var(--slick-multiselect-icon-search-margin-right, $slick-multiselect-icon-search-margin-right);
-      position: absolute;
     }
   }
 }
@@ -1200,7 +1150,7 @@ input.flatpickr.form-control {
     }
   }
 
-  &.input-group .input-group-addon:first-child + .filter-input input {
+  .input-group-prepend.operator + .filter-input input.slider-filter-input {
     border-left: 0;
   }
   &:not(.input-group) {

@@ -15,13 +15,14 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
-import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
 import './example16.scss';
 
 export default class Example16 {
   private _bindingEventService: BindingEventService;
+  private _darkMode = false;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
@@ -47,6 +48,8 @@ export default class Example16 {
   dispose() {
     this.sgb?.dispose();
     this._bindingEventService.unbindAll();
+    document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    document.body.setAttribute('data-theme', 'light');
   }
 
   initializeGrid() {
@@ -108,6 +111,7 @@ export default class Example16 {
         // define tooltip options here OR for the entire grid via the grid options (cell tooltip options will have precedence over grid options)
         customTooltip: {
           useRegularTooltip: true, // note regular tooltip will try to find a "title" attribute in the cell formatter (it won't work without a cell formatter)
+          useRegularTooltipFromCellTextOnly: true,
         },
       },
       {
@@ -165,7 +169,12 @@ export default class Example16 {
         formatter: Formatters.percentCompleteBar,
         sortable: true, filterable: true,
         filter: { model: Filters.sliderRange, operator: '>=', filterOptions: { hideSliderNumbers: true } as SliderRangeOption },
-        customTooltip: { position: 'center', formatter: (_row, _cell, value) => `${value}%`, headerFormatter: null as any, headerRowFormatter: null as any },
+        customTooltip: {
+          position: 'center',
+          formatter: (_row, _cell, value) => typeof value === 'string' && value.includes('%') ? value : `${value}%`,
+          headerFormatter: undefined,
+          headerRowFormatter: undefined
+        },
       },
       {
         id: 'start', name: 'Start', field: 'start', sortable: true,
@@ -326,6 +335,7 @@ export default class Example16 {
       autoResize: {
         container: '.demo-container',
       },
+      darkMode: this._darkMode,
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableCellNavigation: true,
@@ -354,6 +364,7 @@ export default class Example16 {
         filters: [{ columnId: 'prerequisites', searchTerms: [1, 3, 5, 7, 9, 12, 15, 18, 21, 25, 28, 29, 30, 32, 34] }],
       },
       rowHeight: 33,
+      headerRowHeight: 35,
       enableFiltering: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
@@ -454,12 +465,12 @@ export default class Example16 {
 
   tooltipFormatter(row, cell, _value, column, dataContext, grid) {
     const tooltipTitle = 'Custom Tooltip';
-    const effortDrivenHtml = Formatters.checkmarkMaterial(row, cell, dataContext.effortDriven, column, dataContext, grid);
+    const effortDrivenHtml = Formatters.checkmarkMaterial(row, cell, dataContext.effortDriven, column, dataContext, grid) as HTMLElement;
 
     return `<div class="header-tooltip-title">${tooltipTitle}</div>
     <div class="tooltip-2cols-row"><div>Id:</div> <div>${dataContext.id}</div></div>
     <div class="tooltip-2cols-row"><div>Title:</div> <div>${dataContext.title}</div></div>
-    <div class="tooltip-2cols-row"><div>Effort Driven:</div> <div>${effortDrivenHtml}</div></div>
+    <div class="tooltip-2cols-row"><div>Effort Driven:</div> <div>${effortDrivenHtml.outerHTML || ''}</div></div>
     <div class="tooltip-2cols-row"><div>Completion:</div> <div>${this.loadCompletionIcons(dataContext.percentComplete)}</div></div>
     `;
   }
@@ -469,9 +480,9 @@ export default class Example16 {
 
     // use a 2nd Formatter to get the percent completion
     // any properties provided from the `asyncPost` will end up in the `__params` property (unless a different prop name is provided via `asyncParamsPropName`)
-    const completionBar = Formatters.percentCompleteBarWithText(row, cell, dataContext.percentComplete, column, dataContext, grid);
+    const completionBar = Formatters.percentCompleteBarWithText(row, cell, dataContext.percentComplete, column, dataContext, grid) as HTMLElement;
     const out = `<div class="color-sf-primary-dark header-tooltip-title">${tooltipTitle}</div>
-      <div class="tooltip-2cols-row"><div>Completion:</div> <div>${completionBar}</div></div>
+      <div class="tooltip-2cols-row"><div>Completion:</div> <div>${completionBar.outerHTML || ''}</div></div>
       <div class="tooltip-2cols-row"><div>Lifespan:</div> <div>${dataContext.__params.lifespan.toFixed(2)}</div></div>
       <div class="tooltip-2cols-row"><div>Ratio:</div> <div>${dataContext.__params.ratio.toFixed(2)}</div></div>
     `;
@@ -497,5 +508,17 @@ export default class Example16 {
       output += `<span class="mdi mdi-check-circle-outline ${iconColor}"></span>`;
     }
     return output;
+  }
+
+  toggleDarkMode() {
+    this._darkMode = !this._darkMode;
+    if (this._darkMode) {
+      document.body.setAttribute('data-theme', 'dark');
+      document.querySelector('.demo-container')?.classList.add('dark-mode');
+    } else {
+      document.body.setAttribute('data-theme', 'light');
+      document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    }
+    this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });
   }
 }

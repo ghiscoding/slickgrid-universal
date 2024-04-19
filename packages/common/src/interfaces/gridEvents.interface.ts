@@ -1,9 +1,10 @@
-import type { Column, CompositeEditorOption, CssStyleHash, Editor, EditorValidationResult, GridOption } from './index';
+import type { Column, CompositeEditorOption, CssStyleHash, Editor, EditorConstructor, EditorValidationResult, GridOption } from './index';
 import type { SlickGrid } from '../core/index';
 
 export interface SlickGridArg { grid: SlickGrid; }
 export interface OnActiveCellChangedEventArgs extends SlickGridArg { cell: number; row: number; }
 export interface OnAddNewRowEventArgs extends SlickGridArg { item: any; column: Column; }
+export interface OnAfterSetColumnsEventArgs extends SlickGridArg { newColumns: Column[]; }
 export interface OnAutosizeColumnsEventArgs extends SlickGridArg { columns: Column[]; }
 export interface OnBeforeUpdateColumnsEventArgs extends SlickGridArg { columns: Column[]; }
 export interface OnBeforeAppendCellEventArgs extends SlickGridArg { row: number; cell: number; value: any; dataContext: any; }
@@ -20,7 +21,7 @@ export interface OnColumnsDragEventArgs extends SlickGridArg { triggeredByColumn
 export interface OnColumnsReorderedEventArgs extends SlickGridArg { impactedColumns: Column[]; }
 export interface OnColumnsResizedEventArgs extends SlickGridArg { triggeredByColumn: string; }
 export interface OnColumnsResizeDblClickEventArgs extends SlickGridArg { triggeredByColumn: string; }
-export interface OnCompositeEditorChangeEventArgs extends SlickGridArg { row?: number; cell?: number; item: any; column: Column; formValues: any; editors: { [columnId: string]: Editor; }; triggeredBy?: 'user' | 'system'; }
+export interface OnCompositeEditorChangeEventArgs extends SlickGridArg { row?: number; cell?: number; item: any; column: Column; formValues: any; editors: { [columnId: string]: Editor | EditorConstructor; }; triggeredBy?: 'user' | 'system'; }
 export interface OnClickEventArgs extends SlickGridArg { row: number; cell: number; }
 export interface OnDblClickEventArgs extends SlickGridArg { row: number; cell: number; }
 export interface OnFooterContextMenuEventArgs extends SlickGridArg { column: Column; }

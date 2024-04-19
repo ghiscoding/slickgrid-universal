@@ -40,16 +40,16 @@ export class ExtensionUtility {
     } else {
       switch (propName) {
         case 'commandTitle':
-          output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}COMMANDS` || ' ') || locales?.TEXT_COMMANDS;
+          output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}COMMANDS`) || locales?.TEXT_COMMANDS;
           break;
         case 'columnTitle':
-          output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}COLUMNS` || ' ') || locales?.TEXT_COLUMNS;
+          output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}COLUMNS`) || locales?.TEXT_COLUMNS;
           break;
         case 'forceFitTitle':
-          output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}FORCE_FIT_COLUMNS` || ' ') || locales?.TEXT_FORCE_FIT_COLUMNS;
+          output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}FORCE_FIT_COLUMNS`) || locales?.TEXT_FORCE_FIT_COLUMNS;
           break;
         case 'syncResizeTitle':
-          output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}SYNCHRONOUS_RESIZE` || ' ') || locales?.TEXT_SYNCHRONOUS_RESIZE;
+          output = title || enableTranslate && this.translaterService?.getCurrentLanguage && this.translaterService?.translate(`${translationPrefix}SYNCHRONOUS_RESIZE`) || locales?.TEXT_SYNCHRONOUS_RESIZE;
           break;
         default:
           output = title;

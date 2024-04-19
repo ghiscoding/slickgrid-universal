@@ -296,6 +296,19 @@ describe('ColumnPickerControl', () => {
       expect(setOptionSpy).toHaveBeenCalledWith({ syncColumnCellResize: true });
     });
 
+    it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element when opening column picker', () => {
+      jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+      jest.spyOn(control, 'getVisibleColumns').mockReturnValue(columnsMock.slice(1));
+
+      gridOptionsMock.darkMode = true;
+      control.columns = columnsMock;
+      control.init();
+
+      gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData as any, gridStub);
+
+      expect(control.menuElement?.classList.contains('slick-dark-mode')).toBeTruthy();
+    });
+
     describe('onColumnsReordered event', () => {
       it('should reorder some columns', () => {
         const columnsUnorderedMock: Column[] = [

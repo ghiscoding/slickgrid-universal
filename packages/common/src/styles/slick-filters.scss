@@ -18,9 +18,15 @@ $slick-filled-filter-font-weight:                           400 !default;
     font-weight: var(--slick-filled-filter-font-weight, $slick-filled-filter-font-weight);
     border: var(--slick-filled-filter-border, $slick-filled-filter-border);
     box-shadow: var(--slick-filled-filter-box-shadow, $slick-filled-filter-box-shadow);
+    &.input-group-prepend {
+      border-right: 0;
+    }
+    &.input-group-append {
+      border-left: 0;
+    }
   }
-  .search-filter.filled .input-group-addon select {
-    border-right: 0px;
+  .search-filter.filled .input-group-prepend select {
+    border-right: 0;
   }
   .search-filter.filled .ms-choice {
     box-shadow: var(--slick-filled-filter-box-shadow, $slick-filled-filter-box-shadow);

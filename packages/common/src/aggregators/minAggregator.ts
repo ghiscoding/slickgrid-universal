@@ -1,6 +1,6 @@
 import { isNumber } from '@slickgrid-universal/utils';
 
-import { SlickGroupTotals } from '../core/slickCore';
+import type { SlickGroupTotals } from '../core/slickCore';
 import type { Aggregator } from './../interfaces/aggregator.interface';
 
 export class MinAggregator implements Aggregator {
@@ -87,7 +87,7 @@ export class MinAggregator implements Aggregator {
   }
 
   protected keepMinValueWhenFound(val: any) {
-    if (val !== null && val !== '' && !isNaN(val)) {
+    if (isNumber(val)) {
       if (this._min === null || val < this._min) {
         this._min = parseFloat(val);
       }

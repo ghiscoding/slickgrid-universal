@@ -1,7 +1,7 @@
 import { isNumber } from '@slickgrid-universal/utils';
 
 import type { Aggregator } from './../interfaces/aggregator.interface';
-import { SlickGroupTotals } from '../core/slickCore';
+import type { SlickGroupTotals } from '../core/slickCore';
 
 export class MaxAggregator implements Aggregator {
   private _isInitialized = false;
@@ -87,7 +87,7 @@ export class MaxAggregator implements Aggregator {
   }
 
   protected keepMaxValueWhenFound(val: any) {
-    if (val !== null && val !== '' && !isNaN(val)) {
+    if (isNumber(val)) {
       if (this._max === null || val > this._max) {
         this._max = parseFloat(val);
       }

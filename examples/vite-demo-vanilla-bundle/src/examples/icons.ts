@@ -15,7 +15,11 @@ export default class Icons {
 
       const iconElm = document.createElement('span');
       iconElm.className = icon.replace(/\./gi, ' ');
-      iconElm.classList.add('sgi-24px');
+      if (icon.includes('sgi-change-record-type')) {
+        iconElm.classList.add('sgi-20px');
+      } else {
+        iconElm.classList.add('sgi-24px');
+      }
       iconElm.title = icon.replace('.sgi.', '');
       iconElm.style.marginRight = '5px';
       iconDivElm.appendChild(iconElm);
@@ -59,6 +63,7 @@ export default class Icons {
       '.sgi.sgi-arrow-expand',
       '.sgi.sgi-arrow-expand-horizontal',
       '.sgi.sgi-arrow-split-vertical',
+      '.sgi.sgi-brightness-4',
       '.sgi.sgi-calendar',
       '.sgi.sgi-calendar-check',
       '.sgi.sgi-calendar-clock',
@@ -218,6 +223,7 @@ export default class Icons {
       '.sgi.sgi-text-box-remove',
       '.sgi.sgi-text-box-remove-outline',
       '.sgi.sgi-text-box-search-outline',
+      '.sgi.sgi-theme-light-dark',
       '.sgi.sgi-toggle-switch',
       '.sgi.sgi-toggle-switch-off-outline',
       '.sgi.sgi-trash-can',

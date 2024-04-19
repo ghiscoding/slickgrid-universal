@@ -20,14 +20,14 @@ import type {
   TreeDataService,
 } from '@slickgrid-universal/common';
 import { GlobalGridOptions } from '@slickgrid-universal/common';
-import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { extend } from '@slickgrid-universal/utils';
-import { SlickVanillaGridBundle, UniversalContainerService } from '@slickgrid-universal/vanilla-bundle';
+import { SlickVanillaGridBundle, type UniversalContainerService } from '@slickgrid-universal/vanilla-bundle';
 
 import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options';
 

@@ -1,7 +1,4 @@
-$control-height: 2.4em;
-
 // @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
-@import 'bulma/bulma';
 
 // --
 // Custom Tooltips CSS Variables (or SASS equivalent)
@@ -30,25 +27,28 @@ $control-height: 2.4em;
 
 // it's preferable to use CSS Variables (or SASS) but if you want to change colors of your tooltip for 1 column in particular you can do it this way
 // e.g. change css of 5th column 4 (zero index: l4)
+.l4 {
+  --slick-tooltip-color: #fff;
+}
 .l4 .header-tooltip-title,
 .l4 .headerrow-tooltip-title {
   color: #ffffff;
 }
 .l4.slick-custom-tooltip {
   color: #ffffff;
-  background-color: #363636;
-  border: 2px solid #252525;
+  background-color: #696969;
+  border: 2px solid #545454;
 }
 .l4.slick-custom-tooltip.arrow-down::after,
 .l4.slick-custom-tooltip.arrow-up::after {
   border-width: 10px; // arrow size
 }
 .l4.slick-custom-tooltip.arrow-down::after {
-  border-top-color: #252525; // arrow down color
+  border-top-color: #464646; // arrow down color
 }
 .l4.slick-custom-tooltip.arrow-up::after {
   top: -20px; // arrow size * 2
-  border-bottom-color: #252525; // arrow up color
+  border-bottom-color: #464646; // arrow up color
 }
 .l4.slick-custom-tooltip.arrow-left-align::after {
   margin-left: 15px;

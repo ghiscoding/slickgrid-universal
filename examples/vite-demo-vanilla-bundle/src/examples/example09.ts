@@ -1,11 +1,12 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { type Column, FieldType, Filters, type GridOption, type GridStateChange, type Metrics, OperatorType, } from '@slickgrid-universal/common';
-import { GridOdataService, OdataServiceApi, type OdataOption } from '@slickgrid-universal/odata';
-import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { type Column, FieldType, Filters, type GridOption, type GridStateChange, type Metrics, OperatorType, type GridState, } from '@slickgrid-universal/common';
+import { GridOdataService, type OdataServiceApi, type OdataOption } from '@slickgrid-universal/odata';
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 import Data from './data/customers_100.json';
 import './example09.scss';
 
+const STORAGE_KEY = 'slickgrid-universal-example09-gridstate';
 const defaultPageSize = 20;
 
 export default class Example09 {
@@ -112,7 +113,7 @@ export default class Example09 {
         pageSizes: [10, 20, 50, 100, 500, 50000],
         pageSize: defaultPageSize,
       },
-      presets: {
+      presets: localStorage.getItem(STORAGE_KEY) ? JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') as GridState : {
         // you can also type operator as string, e.g.: operator: 'EQ'
         filters: [
           // { columnId: 'name', searchTerms: ['w'], operator: OperatorType.startsWith },
@@ -224,18 +225,18 @@ export default class Example09 {
         if (param.includes('$filter=')) {
           const filterBy = param.substring('$filter='.length).replace('%20', ' ');
           if (filterBy.includes('contains')) {
-            const filterMatch = filterBy.match(/contains\(([a-zA-Z\/]+),\s?'(.*?)'/);
+            const filterMatch = filterBy.match(/contains\(([a-zA-Z/]+),\s?'(.*?)'/);
             const fieldName = filterMatch[1].trim();
             columnFilters[fieldName] = { type: 'substring', term: filterMatch[2].trim() };
           }
           if (filterBy.includes('substringof')) {
-            const filterMatch = filterBy.match(/substringof\('(.*?)',\s([a-zA-Z\/]+)/);
+            const filterMatch = filterBy.match(/substringof\('(.*?)',\s([a-zA-Z/]+)/);
             const fieldName = filterMatch[2].trim();
             columnFilters[fieldName] = { type: 'substring', term: filterMatch[1].trim() };
           }
           for (const operator of ['eq', 'ne', 'le', 'lt', 'gt', 'ge']) {
             if (filterBy.includes(operator)) {
-              const re = new RegExp(`([a-zA-Z ]*) ${operator} \'(.*?)\'`);
+              const re = new RegExp(`([a-zA-Z ]*) ${operator} '(.*?)'`);
               const filterMatch = re.exec(filterBy);
               if (Array.isArray(filterMatch)) {
                 const fieldName = filterMatch[1].trim();
@@ -383,6 +384,8 @@ export default class Example09 {
       const gridStateChanges: GridStateChange = event.detail;
       // console.log('Client sample, Grid State changed:: ', gridStateChanges);
       console.log('Client sample, Grid State changed:: ', gridStateChanges.change);
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(gridStateChanges.gridState));
     }
   }
 
@@ -398,6 +401,10 @@ export default class Example09 {
     this.sgb?.sortService.updateSorting([
       { columnId: 'name', direction: 'DESC' },
     ]);
+  }
+
+  clearLocalStorage() {
+    localStorage.removeItem(STORAGE_KEY);
   }
 
   throwPageChangeError() {

@@ -73,7 +73,7 @@ export class DateEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef?.internalColumnEditor || {} as ColumnEditor;
+    return this.columnDef?.editor || {} as ColumnEditor;
   }
 
   /** Getter for the item data context object */
@@ -88,7 +88,7 @@ export class DateEditor implements Editor {
 
   /** Get Flatpickr options passed to the editor by the user */
   get editorOptions(): FlatpickrOption {
-    return this.columnEditor.editorOptions || {};
+    return { ...this.gridOptions.defaultEditorOptions?.date, ...this.columnEditor?.editorOptions };
   }
 
   get hasAutoCommitEdit(): boolean {
@@ -145,7 +145,8 @@ export class DateEditor implements Editor {
 
       this._editorInputGroupElm = createDomElement('div', { className: 'flatpickr input-group' });
       const closeButtonGroupElm = createDomElement('span', { className: 'input-group-btn input-group-append', dataset: { clear: '' } });
-      this._clearButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default icon-clear' });
+      this._clearButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default' });
+      this._clearButtonElm.appendChild(createDomElement('i', { className: 'icon-clear' }));
       this._inputElm = createDomElement(
         'input',
         {
@@ -158,7 +159,7 @@ export class DateEditor implements Editor {
       );
 
       // show clear date button (unless user specifically doesn't want it)
-      if (!(this.columnEditor.editorOptions as FlatpickrOption)?.hideClearButton) {
+      if (!(this.editorOptions as FlatpickrOption)?.hideClearButton) {
         closeButtonGroupElm.appendChild(this._clearButtonElm);
         this._editorInputGroupElm.appendChild(closeButtonGroupElm);
         this._bindEventService.bind(this._clearButtonElm, 'click', () => this._lastTriggeredByClearDate = true);
@@ -166,6 +167,11 @@ export class DateEditor implements Editor {
 
       this.args.container.appendChild(this._editorInputGroupElm);
       this.flatInstance = flatpickr(this._editorInputGroupElm, this._pickerMergedOptions as unknown as Partial<FlatpickrBaseOptions>);
+
+      // add dark mode CSS class when enabled
+      if (this.gridOptions?.darkMode) {
+        this.flatInstance.calendarContainer.classList.add('slick-dark-mode');
+      }
 
       // when we're using an alternate input to display data, we'll consider this input as the one to do the focus later on
       // else just use the top one

@@ -1,45 +1,51 @@
-<h3 class="title is-3">
+<h3 class="title is-size-3">
   Example 07 - Row Move &amp; Row Selections
+  <span class="d-inline-flex">
+    <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
+      <span class="icon sgi sgi-theme-light-dark"></span>
+      <span> Toggle Light/Dark</span>
+    </button>
+  </span>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a class="is-size-5" target="_blank"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example07.ts">
-      <span class="mdi mdi-link-variant mdi-v-align-sub"></span> code
+      <span class="sgi sgi-link-variant sgi-v-align-sub"></span> code
     </a>
   </div>
 </h3>
 
-<div class="row">
+<div class="row mb-3">
   <button class="button is-small" data-test="add-title-column-btn" onclick.delegate="dynamicallyAddTitleHeader()">
-    <span class="icon mdi mdi-plus"></span>
+    <span class="icon sgi sgi-plus"></span>
     <span>Dynamically Duplicate Title Column</span>
   </button>
   <button class="button is-small" data-test="remove-title-column-btn" onclick.delegate="dynamicallyRemoveLastColumn()">
-    <span class="icon mdi mdi-minus"></span>
+    <span class="icon sgi sgi-minus"></span>
     <span>Dynamically Remove Last Column</span>
   </button>
   <button class="button is-small" data-test="hide-finish-btn" onclick.delegate="hideFinishColumnDynamically()">
-    <span class="icon mdi mdi-eye-off-outline"></span>
+    <span class="icon sgi sgi-eye-off-outline"></span>
     <span>Dynamically Hide "Finish"</span>
   </button>
   <button class="button is-small" data-test="add-item-btn" onclick.delegate="addItem()"
     title="Clear Filters &amp; Sorting to see it better">
-    <span class="icon mdi mdi-plus"></span>
+    <span class="icon sgi sgi-plus"></span>
     <span>Add item</span>
   </button>
   <button class="button is-small" data-test="delete-item-btn" onclick.delegate="deleteItem()">
-    <span class="icon mdi mdi-minus"></span>
+    <span class="icon sgi sgi-minus"></span>
     <span>Delete item</span>
   </button>
 
   <div class="mx-2 my-1"></div>
 
   <button class="button is-small" data-test="disable-filters-btn" onclick.delegate="disableFilters()">
-    <span class="icon mdi mdi-filter-off-outline"></span>
+    <span class="icon sgi sgi-filter-off-outline"></span>
     <span>Disable Filters</span>
   </button>
   <button class="button is-small" data-test="disable-sorting-btn" onclick.delegate="disableSorting()">
-    <span class="icon mdi mdi-sort-variant-remove"></span>
+    <span class="icon sgi sgi-sort-variant-remove"></span>
     <span>Disable Sorting</span>
   </button>
   <button class="button is-small" data-test="toggle-filtering-btn" onclick.delegate="toggleFilter()">
@@ -51,11 +57,11 @@
     <span>Toggle Sorting</span>
   </button>
   <button class="button is-small" data-test="clear-filters-btn" onclick.delegate="clearFilters()">
-    <span class="icon mdi mdi-close"></span>
+    <span class="icon sgi sgi-close"></span>
     <span>Clear Filters</span>
   </button>
   <button class="button is-small" data-test="modal-filters-btn" onclick.delegate="allFilters()">
-    <span class="icon mdi mdi-text-box-search-outline"></span>
+    <span class="icon sgi sgi-text-box-search-outline"></span>
     <span>Modal Filters</span>
   </button>
   <span class="ml-4">
@@ -67,8 +73,6 @@
     </span>
   </span>
 </div>
-
-<br />
 
 <div class="grid7">
 </div>

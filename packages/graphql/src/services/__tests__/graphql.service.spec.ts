@@ -1102,6 +1102,22 @@ describe('GraphqlService', () => {
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
     });
 
+    it('should return a query with a date operator when only 1 searchTerms', () => {
+      const expectation = `query{users(first:10,offset:0,filterBy:[{field:company,operator:Contains,value:"abc"},{field:updatedDate,operator:GE,value:"2001-01-20"}]){totalCount,nodes{id,company,gender,name}}}`;
+      const mockColumnCompany = { id: 'company', field: 'company' } as Column;
+      const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: FieldType.date } as Column;
+      const mockColumnFilters = {
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20'], operator: '>=', type: FieldType.dateIso },
+      } as ColumnFilters;
+
+      service.init(serviceOptions, paginationOptions, gridStub);
+      service.updateFilters(mockColumnFilters, false);
+      const query = service.buildQuery();
+
+      expect(removeSpaces(query)).toBe(removeSpaces(expectation));
+    });
+
     it('should return a query without any date filtering when searchTerms is an empty array', () => {
       const expectation = `query{users(first:10,offset:0,filterBy:[{field:company,operator:Contains,value:"abc"}]){totalCount,nodes{id,company,gender,name}}}`;
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;

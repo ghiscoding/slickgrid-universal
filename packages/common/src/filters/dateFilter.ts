@@ -48,7 +48,7 @@ export class DateFilter implements Filter {
   callback!: FilterCallback;
   filterContainerElm!: HTMLDivElement;
 
-  constructor(protected readonly translaterService: TranslaterService) {
+  constructor(protected readonly translaterService?: TranslaterService) {
     this._bindEventService = new BindingEventService();
   }
 
@@ -72,6 +72,10 @@ export class DateFilter implements Filter {
     return this.inputFilterType === 'compound'
       ? OperatorType.empty
       : (this.gridOptions.defaultFilterRangeOperator || OperatorType.rangeInclusive);
+  }
+
+  get filterOptions(): FlatpickrOption {
+    return { ...this.gridOptions.defaultFilterOptions?.date, ...this.columnFilter?.filterOptions };
   }
 
   /** Getter for the Flatpickr Options */
@@ -232,7 +236,7 @@ export class DateFilter implements Filter {
     const columnId = this.columnDef?.id ?? '';
     const inputFormat = mapFlatpickrDateFormatWithFieldType(this.columnFilter.type || this.columnDef.type || FieldType.dateIso);
     const outputFormat = mapFlatpickrDateFormatWithFieldType(this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc);
-    const userFilterOptions = this.columnFilter?.filterOptions ?? {} as FlatpickrOption;
+    const userFilterOptions = this.filterOptions as FlatpickrOption;
 
     // get current locale, if user defined a custom locale just use or get it the Translate Service if it exist else just use English
     let currentLocale = (userFilterOptions?.locale ?? this.translaterService?.getCurrentLanguage?.()) || this.gridOptions.locale || 'en';
@@ -272,6 +276,7 @@ export class DateFilter implements Filter {
       wrap: true,
       closeOnSelect: true,
       locale: currentLocale,
+      theme: this.gridOptions?.darkMode ? 'dark' : 'light',
       onChange: (selectedDates: Date[] | Date, dateStr: string) => {
         if (this.inputFilterType === 'compound') {
           this._currentValue = dateStr;
@@ -323,6 +328,11 @@ export class DateFilter implements Filter {
       })
     );
     this.flatInstance = flatpickr(filterDivInputElm, this._flatpickrOptions as unknown as Partial<FlatpickrBaseOptions>);
+
+    // add dark mode CSS class when enabled
+    if (this.gridOptions?.darkMode) {
+      this.flatInstance.calendarContainer.classList.add('slick-dark-mode');
+    }
 
     return filterDivInputElm;
   }

@@ -72,7 +72,7 @@ export class LongTextEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef?.internalColumnEditor ?? {} as ColumnEditor;
+    return this.columnDef?.editor ?? {} as ColumnEditor;
   }
 
   /** Getter for the item data context object */
@@ -86,7 +86,7 @@ export class LongTextEditor implements Editor {
   }
 
   get editorOptions(): LongTextEditorOption {
-    return this.columnEditor?.editorOptions ?? {};
+    return { ...this.gridOptions.defaultEditorOptions?.longText, ...this.columnEditor?.editorOptions };
   }
 
   get hasAutoCommitEdit(): boolean {
@@ -122,6 +122,11 @@ export class LongTextEditor implements Editor {
       className: `slick-large-editor-text editor-${columnId}`,
       style: { position: compositeEditorOptions ? 'relative' : 'absolute' }
     });
+
+    // add dark mode CSS class when enabled
+    if (this.gridOptions?.darkMode) {
+      this._wrapperElm.classList.add('slick-dark-mode');
+    }
     containerElm.appendChild(this._wrapperElm);
 
     // use textarea row if defined but don't go over 3 rows with composite editor modal

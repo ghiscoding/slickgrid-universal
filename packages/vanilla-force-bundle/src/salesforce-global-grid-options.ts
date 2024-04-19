@@ -3,7 +3,7 @@ import { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
 
 // create empty warning message as Document Fragment to be CSP safe
 const emptyWarningElm = document.createElement('div');
-emptyWarningElm.appendChild(createDomElement('span', { className: 'mdi mdi-alert color-warning' }));
+emptyWarningElm.appendChild(createDomElement('span', { className: 'sgi sgi-alert color-warning' }));
 emptyWarningElm.appendChild(document.createTextNode(' No data to display.'));
 
 /** Global Grid Options Defaults for Salesforce */
@@ -19,8 +19,8 @@ export const SalesforceGlobalGridOptions = {
   },
   eventNamingStyle: EventNamingStyle.lowerCaseWithoutOnPrefix,
   compositeEditorOptions: {
-    resetEditorButtonCssClass: 'mdi mdi-refresh mdi-15px mdi-v-align-text-top',
-    resetFormButtonIconCssClass: 'mdi mdi-refresh mdi-16px mdi-flip-h mdi-v-align-text-top',
+    resetEditorButtonCssClass: 'sgi sgi-refresh sgi-15px',
+    resetFormButtonIconCssClass: 'sgi sgi-refresh sgi-16px sgi-flip-h',
     shouldPreviewMassChangeDataset: true,
   },
   datasetIdPropertyName: 'Id',
@@ -55,6 +55,7 @@ export const SalesforceGlobalGridOptions = {
     commandLabels: {
       clearFrozenColumnsCommandKey: 'UNFREEZE_COLUMNS',
     },
+    hideToggleDarkModeCommand: false,
     hideTogglePreHeaderCommand: true,
     hideRefreshDatasetCommand: true,
     hideClearFrozenColumnsCommand: false,
@@ -62,8 +63,8 @@ export const SalesforceGlobalGridOptions = {
   },
   headerMenu: {
     hideFreezeColumnsCommand: false,
-    iconSortAscCommand: 'fa fa-sort-amount-asc mdi mdi-arrow-up',
-    iconSortDescCommand: 'fa fa-sort-amount-desc mdi mdi-arrow-down',
+    iconSortAscCommand: 'fa fa-sort-amount-asc sgi sgi-arrow-up',
+    iconSortDescCommand: 'fa fa-sort-amount-desc sgi sgi-arrow-down',
   },
   preventDocumentFragmentUsage: true,
   sanitizer: (dirtyHtml: string) => typeof dirtyHtml === 'string' ? dirtyHtml.replace(/(\b)(on[a-z]+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi, '') : dirtyHtml,

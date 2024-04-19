@@ -218,6 +218,7 @@ const mockGrid = {
   onClick: new MockSlickEvent(),
   onClicked: new MockSlickEvent(),
   onColumnsReordered: new MockSlickEvent(),
+  onSetOptions: new MockSlickEvent(),
   onRendered: jest.fn(),
   onScroll: jest.fn(),
   onDataviewCreated: new MockSlickEvent(),
