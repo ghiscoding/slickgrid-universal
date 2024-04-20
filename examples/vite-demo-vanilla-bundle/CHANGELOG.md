@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.6.3...v4.7.0) (2024-04-20)
+
+### Bug Fixes
+
+* **OData:** sorting columns via `id` instead of field property name, fixes [#1467](https://github.com/ghiscoding/slickgrid-universal/issues/1467) ([#1469](https://github.com/ghiscoding/slickgrid-universal/issues/1469)) ([0a4d402](https://github.com/ghiscoding/slickgrid-universal/commit/0a4d40255e240bddf752a2e7bf39a99ae234cc6e)) - by @zewa666
+* **styling:** improve button & text colors for Dark Mode ([9414ab4](https://github.com/ghiscoding/slickgrid-universal/commit/9414ab4e24482d080f3113d32d96fe635856a871)) - by @ghiscoding-SE
+
+### Features
+
+* notify onValidationError on paste if validation failed ([#1462](https://github.com/ghiscoding/slickgrid-universal/issues/1462)) ([38b465c](https://github.com/ghiscoding/slickgrid-universal/commit/38b465cb8ebcdd6012b939677a4367c2dce010e9)) - by @zewa666
+
 ## [4.6.3](https://github.com/ghiscoding/slickgrid-universal/compare/v4.6.1...v4.6.3) (2024-03-31)
 
 **Note:** Version bump only for package slickgrid-universal-vite-demo

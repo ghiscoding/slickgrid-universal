@@ -4,6 +4,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.6.3...v4.7.0) (2024-04-20)
+
+### Bug Fixes
+
+* **common:** don't try to strip tags on object input to calc cell width ([#1453](https://github.com/ghiscoding/slickgrid-universal/issues/1453)) ([5ab671b](https://github.com/ghiscoding/slickgrid-universal/commit/5ab671bee805f7b7d9b139e9bf7a14b31b5aea56)) - by @ghiscoding
+* **common:** switch back to `autocompleter` with ESM build ([#1450](https://github.com/ghiscoding/slickgrid-universal/issues/1450)) ([ad66a12](https://github.com/ghiscoding/slickgrid-universal/commit/ad66a121b4a6b7718009948d873ceb8f5c66a32c)) - by @ghiscoding
+* **core:** Editor.keyCaptureList is an array of numbers ([#1458](https://github.com/ghiscoding/slickgrid-universal/issues/1458)) ([62a686e](https://github.com/ghiscoding/slickgrid-universal/commit/62a686e7db4dc4ef65d0c426c8623dc8f1e3f9d9)) - by @ghiscoding
+* **styling:** improve button & text colors for Dark Mode ([9414ab4](https://github.com/ghiscoding/slickgrid-universal/commit/9414ab4e24482d080f3113d32d96fe635856a871)) - by @ghiscoding-SE
+
+### Features
+
+* **common:** add global `defaultEditorOptions` & `defaultFilterOptions` ([#1470](https://github.com/ghiscoding/slickgrid-universal/issues/1470)) ([0462f17](https://github.com/ghiscoding/slickgrid-universal/commit/0462f17b215d5c1b88e1a9fe482877ed733486b3)) - by @ghiscoding
+* **core:** add `getFilterArgs()` to `SlickDataView` ([#1457](https://github.com/ghiscoding/slickgrid-universal/issues/1457)) ([7563126](https://github.com/ghiscoding/slickgrid-universal/commit/7563126cfbf792fc86a494850e5a3bad7d8991f7)) - by @ghiscoding
+* notify onValidationError on paste if validation failed ([#1462](https://github.com/ghiscoding/slickgrid-universal/issues/1462)) ([38b465c](https://github.com/ghiscoding/slickgrid-universal/commit/38b465cb8ebcdd6012b939677a4367c2dce010e9)) - by @zewa666
+
 ## [4.6.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.6.0...v4.6.1) (2024-03-31)
 
 ### Bug Fixes

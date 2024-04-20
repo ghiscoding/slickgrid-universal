@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.6.3...v4.7.0) (2024-04-20)
+
+### Bug Fixes
+
+* **OData:** sorting columns via `id` instead of field property name, fixes [#1467](https://github.com/ghiscoding/slickgrid-universal/issues/1467) ([#1469](https://github.com/ghiscoding/slickgrid-universal/issues/1469)) ([0a4d402](https://github.com/ghiscoding/slickgrid-universal/commit/0a4d40255e240bddf752a2e7bf39a99ae234cc6e)) - by @zewa666
+* wrong operator comparison ([#1461](https://github.com/ghiscoding/slickgrid-universal/issues/1461)) ([abe772b](https://github.com/ghiscoding/slickgrid-universal/commit/abe772b9ad9480688ef000dddfa86d2cdc6b7e52)) - by @zewa666
+
 ## [4.6.1](https://github.com/ghiscoding/slickgrid-universal/compare/v4.6.0...v4.6.1) (2024-03-31)
 
 ### Bug Fixes
