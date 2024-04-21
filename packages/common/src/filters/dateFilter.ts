@@ -24,7 +24,7 @@ import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities'
 import { formatDateByFieldType, mapMomentDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import type { SlickGrid } from '../core/index';
-import { findBestPickerPosition, setPickerDates } from '../commonEditorFilter';
+import { setPickerDates } from '../commonEditorFilter';
 
 export class DateFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -76,6 +76,10 @@ export class DateFilter implements Filter {
 
   /** Getter for the date picker options */
   get pickerOptions(): IOptions {
+    return this._pickerOptions || {};
+  }
+
+  get filterOptions(): IOptions {
     return { ...this.gridOptions.defaultFilterOptions?.date, ...this.columnFilter?.filterOptions };
   }
 
@@ -237,7 +241,6 @@ export class DateFilter implements Filter {
     const outputFieldType = this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc;
     const outputFormat = mapMomentDateFormatWithFieldType(outputFieldType);
     const inputFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
-    const userFilterOptions = this.columnFilter?.filterOptions ?? {} as IOptions;
 
     // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
     if (outputFormat && this.inputFilterType !== 'range' && outputFormat.toLowerCase().includes('h')) {
@@ -246,7 +249,7 @@ export class DateFilter implements Filter {
     const pickerFormat = mapMomentDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);
 
     // get current locale, if user defined a custom locale just use or get it the Translate Service if it exist else just use English
-    const currentLocale = (userFilterOptions?.locale ?? this.translaterService?.getCurrentLanguage?.()) || this.gridOptions.locale || 'en';
+    const currentLocale = ((this.filterOptions?.locale ?? this.translaterService?.getCurrentLanguage?.()) || this.gridOptions.locale || 'en') as string;
 
     let pickerValues: any | any[];
 
@@ -330,9 +333,6 @@ export class DateFilter implements Filter {
               self.hide();
             }
           }
-        },
-        initCalendar: (self) => {
-          self.settings.visibility!.positionToInput = findBestPickerPosition(self);
         }
       },
       settings: {
@@ -340,7 +340,7 @@ export class DateFilter implements Filter {
         iso8601: false,
         visibility: {
           theme: this.gridOptions?.darkMode ? 'dark' : 'light',
-          positionToInput: 'center',
+          positionToInput: 'auto',
           weekend: false,
         },
       },
@@ -369,7 +369,7 @@ export class DateFilter implements Filter {
     }
 
     // merge options with optional user's custom options
-    this._pickerOptions = extend(true, {}, pickerOptions, { settings: userFilterOptions });
+    this._pickerOptions = extend(true, {}, pickerOptions, { settings: this.filterOptions });
 
     let placeholder = this.gridOptions?.defaultFilterPlaceholder ?? '';
     if (this.columnFilter?.placeholder) {

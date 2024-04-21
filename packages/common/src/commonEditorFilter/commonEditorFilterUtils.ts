@@ -1,6 +1,5 @@
-import { getAvailablePosition } from '@slickgrid-universal/utils';
 import type { AutocompleteItem } from 'autocompleter';
-import type { IVanillaCalendar, IOptions } from 'vanilla-calendar-picker';
+import type { IOptions } from 'vanilla-calendar-picker';
 import * as moment_ from 'moment-mini';
 const moment = (moment_ as any)['default'] || moment_;
 
@@ -33,29 +32,6 @@ export function addAutocompleteLoadingByOverridingFetch<T extends AutocompleteIt
       previousFetch!(searchTerm, newUpdateCallback, trigger, cursorPos);
     };
   }
-}
-
-export function findBestPickerPosition({ HTMLElement, HTMLInputElement }: IVanillaCalendar): 'center' | 'left' | 'right' | ['bottom' | 'top', 'center' | 'left' | 'right'] {
-  let position: 'center' | 'left' | 'right' | ['bottom' | 'top', 'center' | 'left' | 'right'] = 'center';
-  if (HTMLElement && HTMLInputElement) {
-    const { canShow, parentPositions } = getAvailablePosition(HTMLInputElement, HTMLElement);
-
-    if (canShow.left && canShow.right) {
-      if (canShow.bottom) {
-        position = 'center';
-      } else if (canShow.top) {
-        position = ['top', 'center'];
-      }
-    } else {
-      if (Array.isArray(parentPositions)) {
-        parentPositions[0] = (parentPositions[0] === 'bottom') ? 'top' : 'bottom';
-        return parentPositions;
-      }
-      return parentPositions;
-    }
-  }
-
-  return position;
 }
 
 export function setPickerDates(dateInputElm: HTMLInputElement, pickerOptions: IOptions, dateValues: Date | Date[] | string | string[] | undefined, columnDef: Column, colEditorOrFilter: ColumnEditor | ColumnFilter) {

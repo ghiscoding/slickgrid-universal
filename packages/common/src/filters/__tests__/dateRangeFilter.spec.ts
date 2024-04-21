@@ -108,30 +108,29 @@ describe('DateRangeFilter', () => {
     filter.init(filterArguments);
 
     expect(filter.calendarInstance).toBeTruthy();
-    // expect(filter.pickerOptions).toEqual({
-    //   actions: {
-    //     changeToInput: expect.any(Function),
-    //     clickDay: expect.any(Function),
-    //     initCalendar: expect.any(Function),
-    //   },
-    //   input: true,
-    //   jumpMonths: 2,
-    //   months: 2,
-    //   settings: {
-    //     iso8601: false,
-    //     lang: 'en',
-    //     selection: {
-    //       day: 'multiple-ranged',
-    //     },
-    //     visibility: {
-    //       daysOutside: false,
-    //       positionToInput: 'center',
-    //       theme: 'light',
-    //       weekend: false,
-    //     },
-    //   },
-    //   type: 'multiple'
-    // });
+    expect(filter.pickerOptions).toEqual({
+      actions: {
+        changeToInput: expect.any(Function),
+        clickDay: expect.any(Function),
+      },
+      input: true,
+      jumpMonths: 2,
+      months: 2,
+      settings: {
+        iso8601: false,
+        lang: 'en',
+        selection: {
+          day: 'multiple-ranged',
+        },
+        visibility: {
+          daysOutside: false,
+          positionToInput: 'auto',
+          theme: 'light',
+          weekend: false,
+        },
+      },
+      type: 'multiple'
+    });
   });
 
   it('should be able to call "setValues" and have them set in the picker', () => {

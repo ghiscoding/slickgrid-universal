@@ -20,7 +20,7 @@ import type {
 import { formatDateByFieldType, getDescendantProperty, mapMomentDateFormatWithFieldType, } from './../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import { SlickEventData, type SlickGrid } from '../core/index';
-import { findBestPickerPosition, setPickerDates } from '../commonEditorFilter';
+import { setPickerDates } from '../commonEditorFilter';
 
 /*
  * An example of a date picker editor using Vanilla-Calendar-Picker
@@ -146,9 +146,6 @@ export class DateEditor implements Editor {
                 self.hide();
               }
             }
-          },
-          initCalendar: (self) => {
-            self.settings.visibility!.positionToInput = findBestPickerPosition(self);
           }
         },
         settings: {
@@ -156,7 +153,7 @@ export class DateEditor implements Editor {
           iso8601: false,
           visibility: {
             theme: this.gridOptions?.darkMode ? 'dark' : 'light',
-            positionToInput: 'center',
+            positionToInput: 'auto',
             weekend: false,
           },
         },

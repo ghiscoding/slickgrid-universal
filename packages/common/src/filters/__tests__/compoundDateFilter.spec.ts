@@ -118,24 +118,23 @@ describe('CompoundDateFilter', () => {
     filter.init(filterArguments);
 
     expect(filter.calendarInstance).toBeTruthy();
-    // expect(filter.pickerOptions).toEqual({
-    //   actions: {
-    //     changeToInput: expect.any(Function),
-    //     clickDay: expect.any(Function),
-    //     initCalendar: expect.any(Function),
-    //   },
-    //   input: true,
-    //   settings: {
-    //     iso8601: false,
-    //     lang: 'en',
-    //     visibility: {
-    //       positionToInput: 'center',
-    //       theme: 'light',
-    //       weekend: false,
-    //     },
-    //   },
-    //   type: 'default'
-    // });
+    expect(filter.pickerOptions).toEqual({
+      actions: {
+        changeToInput: expect.any(Function),
+        clickDay: expect.any(Function),
+      },
+      input: true,
+      settings: {
+        iso8601: false,
+        lang: 'en',
+        visibility: {
+          positionToInput: 'auto',
+          theme: 'light',
+          weekend: false,
+        },
+      },
+      type: 'default'
+    });
   });
 
   it('should be able to call "setValues" and have that value set in the picker', () => {

@@ -41,10 +41,6 @@ Object.defineProperty(window, 'matchMedia', {
 });
 
 // Jest has a hard time with MomentJS because they export as default, to bypass this problem we can mock the require .default
-jest.mock('vanilla-calendar-picker', () => {
-  const actual = jest.requireActual('vanilla-calendar-picker');
-  return { __esModule: true, ...actual, default: actual };
-});
 jest.mock('moment-mini', () => {
   const actual = jest.requireActual('moment-mini');
   return { __esModule: true, ...actual, default: actual };
