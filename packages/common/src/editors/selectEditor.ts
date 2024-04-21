@@ -191,6 +191,10 @@ export class SelectEditor implements Editor {
     return this.editorElm;
   }
 
+  get editorOptions(): MultipleSelectOption {
+    return { ...this.gridOptions.defaultEditorOptions?.select, ...this.columnEditor?.editorOptions };
+  }
+
   get isCompositeEditor(): boolean {
     return !!(this.args?.compositeEditorOptions);
   }
@@ -746,8 +750,7 @@ export class SelectEditor implements Editor {
     const placeholder = this.columnEditor?.placeholder ?? '';
     this.defaultOptions.placeholder = placeholder || '';
 
-    const editorOptions = this.columnDef?.editor?.editorOptions ?? {};
-    this.editorElmOptions = { ...this.defaultOptions, ...editorOptions, data: dataCollection };
+    this.editorElmOptions = { ...this.defaultOptions, ...this.editorOptions, data: dataCollection };
     this._msInstance = multipleSelect(selectElement, this.editorElmOptions) as MultipleSelectInstance;
     this.editorElm = this._msInstance.getParentElement();
     if (!this.isCompositeEditor) {

@@ -86,7 +86,7 @@ export class DateEditor implements Editor {
 
   /** Get options passed to the editor by the user */
   get editorOptions(): IOptions {
-    return this.columnEditor.editorOptions || {};
+    return { ...this.gridOptions.defaultEditorOptions?.date, ...this.columnEditor?.editorOptions };
   }
 
   get hasAutoCommitEdit(): boolean {

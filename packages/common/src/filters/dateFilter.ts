@@ -76,7 +76,7 @@ export class DateFilter implements Filter {
 
   /** Getter for the date picker options */
   get pickerOptions(): IOptions {
-    return this._pickerOptions || {};
+    return { ...this.gridOptions.defaultFilterOptions?.date, ...this.columnFilter?.filterOptions };
   }
 
   /** Getter for the Filter Operator */

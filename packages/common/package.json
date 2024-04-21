@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/common",
-  "version": "4.6.1",
+  "version": "4.7.0",
   "description": "SlickGrid-Universal Common Code",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -72,7 +72,7 @@
     "@slickgrid-universal/utils": "workspace:~",
     "@types/dompurify": "^3.0.5",
     "@types/sortablejs": "^1.15.8",
-    "autocompleter": "^9.2.0",
+    "autocompleter": "^9.2.1",
     "dequal": "^2.0.3",
     "excel-builder-vanilla": "3.0.1",
     "isomorphic-dompurify": "^2.7.0",

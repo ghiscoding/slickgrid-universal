@@ -11,6 +11,7 @@ import { SlickGrid } from '../../core/index';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import type { MultipleSelectOption } from 'multiple-select-vanilla';
 
 jest.useFakeTimers();
 
@@ -114,6 +115,24 @@ describe('SelectFilter', () => {
 
     expect(spyGetHeaderRow).toHaveBeenCalled();
     expect(filterCount).toBe(1);
+  });
+
+  it('should initialize the filter with minHeight define in user filter options', () => {
+    mockColumn.filter!.filterOptions = { minHeight: 255 } as MultipleSelectOption;
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    filter.init(filterArguments);
+
+    expect(filter.msInstance?.getOptions().minHeight).toBe(255);
+  });
+
+  it('should initialize the filter with minHeight define in global default user filter options', () => {
+    gridOptionMock.defaultFilterOptions = {
+      select: { minHeight: 243 }
+    };
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    filter.init(filterArguments);
+
+    expect(filter.msInstance?.getOptions().minHeight).toBe(243);
   });
 
   it('should be a multiple-select filter by default when it is not specified in the constructor', () => {

@@ -1,6 +1,6 @@
 import { Editors } from '../index';
 import { SliderEditor } from '../sliderEditor';
-import { Column, ColumnEditor, Editor, EditorArguments, GridOption } from '../../interfaces/index';
+import { Column, Editor, EditorArguments, GridOption, type SliderOption } from '../../interfaces/index';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 
 jest.useFakeTimers();
@@ -13,7 +13,7 @@ const dataViewStub = {
   refresh: jest.fn(),
 } as unknown as SlickDataView;
 
-const gridOptionMock = {
+let gridOptionMock = {
   autoCommitEdit: false,
   editable: true,
 } as GridOption;
@@ -64,6 +64,10 @@ describe('SliderEditor', () => {
       gridPosition: { top: 0, left: 0, bottom: 10, right: 10, height: 100, width: 100, visible: true },
       position: { top: 0, left: 0, bottom: 10, right: 10, height: 100, width: 100, visible: true },
     };
+    gridOptionMock = {
+      autoCommitEdit: false,
+      editable: true,
+    };
   });
 
   describe('with invalid Editor instance', () => {
@@ -94,6 +98,24 @@ describe('SliderEditor', () => {
       editor = new SliderEditor(editorArguments);
       const editorCount = divContainer.querySelectorAll('.slider-editor input.editor-price').length;
       expect(editorCount).toBe(1);
+    });
+
+    it('should initialize the editor with slider value define in user editor options', () => {
+      mockColumn.editor!.editorOptions = { sliderStartValue: 1 } as SliderOption;
+      editor = new SliderEditor(editorArguments);
+
+      expect(editor.editorInputDomElement.defaultValue).toBe('1');
+      expect(editor.editorInputDomElement.value).toBe('1');
+    });
+
+    it('should initialize the editor with slider value define in global default user editor options', () => {
+      gridOptionMock.defaultEditorOptions = {
+        slider: { sliderStartValue: 2 }
+      };
+      editor = new SliderEditor(editorArguments);
+
+      expect(editor.editorInputDomElement.defaultValue).toBe('2');
+      expect(editor.editorInputDomElement.value).toBe('2');
     });
 
     it('should have an aria-label when creating the editor', () => {

@@ -16,7 +16,6 @@
 
 * [Cell Menu (Action Menu)](column-functionalities/Cell-Menu.md)
 * [Editors](column-functionalities/Editors.md)
-  * [AutoComplete (jQueryUI)](column-functionalities/editors/AutoComplete-Editor.md)
   * [new Autocomplete (Kraaden-lib)](column-functionalities/editors/Autocomplete-Editor-(Kraaden-lib).md)
   * [Date Picker (flatpickr)](column-functionalities/editors/Date-Editor-(flatpickr).md)
   * [LongText (textarea)](column-functionalities/editors/LongText-Editor-(textarea).md)

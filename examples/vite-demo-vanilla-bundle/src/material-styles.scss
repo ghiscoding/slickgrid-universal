@@ -143,11 +143,24 @@
       --slick-checkbox-selector-icon-height: 22px;
       --slick-checkbox-selector-icon-bg-color: transparent;
       --slick-checkbox-selector-icon-border: none;
-      --slick-multiselect-icon-radio-color:           var(--slick-primary-color);
+      --slick-multiselect-icon-radio-color: var(--slick-primary-color);
       --ms-checkbox-color: var(--slick-primary-color);
       --ms-checkbox-hover-color: #{lighten(#49a54e, 13%)};
       --ms-ok-button-text-color: #66bb6a;
       --ms-ok-button-text-hover-color: #{lighten(#66bb6a, 5%)};
+
+      .slick-headerrow {
+        .search-filter.filled .input-group-addon.slider-value,
+        .search-filter.filled .input-group-addon.slider-range-value,
+        .search-filter.filled .input-group-addon select {
+          color: var(--slick-filled-filter-color);
+        }
+        input.search-filter.filled,
+        .search-filter.filled input,
+        .search-filter.filled input.flatpickr-input {
+          color: var(--slick-text-color);
+        }
+      }
     }
   }
 }

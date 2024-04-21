@@ -6,7 +6,7 @@ jest.mock('@slickgrid-universal/utils', () => ({
 
 import { Editors } from '../index';
 import { LongTextEditor } from '../longTextEditor';
-import { AutocompleterOption, Column, ColumnEditor, Editor, EditorArguments, GridOption } from '../../interfaces/index';
+import { Column, Editor, type EditorArguments, type LongTextEditorOption, GridOption } from '../../interfaces/index';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { getOffset } from '@slickgrid-universal/utils';
@@ -20,7 +20,7 @@ const dataViewStub = {
   refresh: jest.fn(),
 } as unknown as SlickDataView;
 
-const gridOptionMock = {
+let gridOptionMock = {
   autoCommitEdit: false,
   editable: true,
   translater: null,
@@ -79,6 +79,12 @@ describe('LongTextEditor', () => {
       dataView: dataViewStub,
       gridPosition: { top: 0, left: 0, bottom: 10, right: 10, height: 600, width: 800, visible: true },
       position: { top: 0, left: 0, bottom: 10, right: 10, height: 100, width: 100, visible: true },
+    };
+    gridOptionMock = {
+      autoCommitEdit: false,
+      editable: true,
+      translater: null as any,
+      editorTypingDebounce: 0,
     };
   });
 
@@ -152,11 +158,29 @@ describe('LongTextEditor', () => {
     });
 
     it('should initialize the editor even when user define his own editor options', () => {
-      mockColumn.editor!.editorOptions = { minLength: 3 } as AutocompleterOption;
+      mockColumn.editor!.editorOptions = { minLength: 3 } as LongTextEditorOption;
       editor = new LongTextEditor(editorArguments);
       const editorCount = document.body.querySelectorAll('.slick-large-editor-text.editor-title textarea').length;
 
       expect(editorCount).toBe(1);
+    });
+
+    it('should initialize the editor with cols & rows define in user editor options', () => {
+      mockColumn.editor!.editorOptions = { cols: 9, rows: 8 } as LongTextEditorOption;
+      editor = new LongTextEditor(editorArguments);
+
+      expect(editor.editorDomElement.cols).toBe(9);
+      expect(editor.editorDomElement.rows).toBe(8);
+    });
+
+    it('should initialize the editor with cols & rows define in global default user editor options', () => {
+      gridOptionMock.defaultEditorOptions = {
+        longText: { cols: 7, rows: 6 }
+      };
+      editor = new LongTextEditor(editorArguments);
+
+      expect(editor.editorDomElement.cols).toBe(7);
+      expect(editor.editorDomElement.rows).toBe(6);
     });
 
     it('should have a placeholder when defined in its column definition', () => {
@@ -574,7 +598,7 @@ describe('LongTextEditor', () => {
 
       it('should call "save" method when the save button is clicked', () => {
         mockItemData = { id: 1, title: 'task', isActive: true };
-
+        gridOptionMock.autoCommitEdit = true;
         editor = new LongTextEditor(editorArguments);
         const spySave = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 

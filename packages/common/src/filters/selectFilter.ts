@@ -88,6 +88,10 @@ export class SelectFilter implements Filter {
     return this.isMultipleSelect ? OperatorType.in : OperatorType.equal;
   }
 
+  get filterOptions(): MultipleSelectOption {
+    return { ...this.gridOptions.defaultFilterOptions?.select, ...this.columnFilter?.filterOptions };
+  }
+
   /** Getter to know if the current filter is a multiple-select (false means it's a single select) */
   get isMultipleSelect(): boolean {
     return this._isMultipleSelect;
@@ -404,8 +408,7 @@ export class SelectFilter implements Filter {
     this.filterContainerElm.appendChild(selectElement);
 
     // merge options & attach multiSelect
-    const filterOptions: MultipleSelectOption = (this.columnFilter) ? this.columnFilter.filterOptions : {};
-    this.filterElmOptions = { ...this.defaultOptions, ...(filterOptions as MultipleSelectOption), data: dataCollection };
+    this.filterElmOptions = { ...this.defaultOptions, ...this.filterOptions, data: dataCollection };
     this._msInstance = multipleSelect(selectElement, this.filterElmOptions) as MultipleSelectInstance;
   }
 
