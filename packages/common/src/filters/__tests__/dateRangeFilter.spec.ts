@@ -1,11 +1,12 @@
 import 'jest-extended';
+import { VanillaCalendar } from 'vanilla-calendar-picker';
+
 import { FieldType } from '../../enums/index';
 import { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { Filters } from '../filters.index';
 import { DateRangeFilter } from '../dateRangeFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SlickGrid } from '../../core/index';
-import VanillaCalendar from 'vanilla-calendar-pro';
 
 const containerId = 'demo-container';
 
@@ -106,7 +107,8 @@ describe('DateRangeFilter', () => {
     expect(filter.pickerOptions).toEqual({
       actions: {
         changeToInput: expect.any(Function),
-        clickDay: expect.any(Function)
+        clickDay: expect.any(Function),
+        initCalendar: expect.any(Function),
       },
       input: true,
       jumpMonths: 2,

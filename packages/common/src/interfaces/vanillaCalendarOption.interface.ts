@@ -1,4 +1,4 @@
-import type { IRange, ISelected, ISelection, IVisibility } from 'vanilla-calendar-pro/types';
+import type { IRange, ISelected, ISelection, IVisibility } from 'vanilla-calendar-picker';
 
 export interface VanillaCalendarOption {
   /** sets the language localization of the calendar */

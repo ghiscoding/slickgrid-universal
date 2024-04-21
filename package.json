@@ -91,16 +91,11 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.6.0",
-    "vanilla-calendar-pro": "^2.9.6",
+    "vanilla-calendar-picker": "^2.10.0",
     "whatwg-fetch": "^3.6.20"
   },
   "funding": {
     "type": "ko_fi",
     "url": "https://ko-fi.com/ghiscoding"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "vanilla-calendar-pro@2.9.6": "patches/vanilla-calendar-pro@2.9.6.patch"
-    }
   }
 }

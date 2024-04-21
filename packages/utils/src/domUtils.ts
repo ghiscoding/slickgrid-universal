@@ -103,6 +103,48 @@ export function emptyElement<T extends Element = Element>(element?: T | null): T
   return element;
 }
 
+export function getAvailablePosition(parentElm: HTMLElement, pickerElm: HTMLElement) {
+  const canShow = { top: true, bottom: true, left: true, right: true };
+  const parentPositions: ['bottom' | 'top', 'center' | 'left' | 'right'] = [] as any;
+
+  if (pickerElm && parentElm) {
+    const { bottom: spaceBottom, top: spaceTop } = calculateAvailableSpace(parentElm);
+    const { top: pickerOffsetTop, left: pickerOffsetLeft } = getOffset(parentElm) as HtmlElementPosition;
+    const { height: pickerHeight, width: pickerWidth } = pickerElm.getBoundingClientRect();
+    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+
+    const bodyCenterCoordinate = { x: vw / 2, y: vh / 2 };
+    if (pickerOffsetTop < bodyCenterCoordinate.y) {
+      parentPositions.push('top');
+    }
+    if (pickerOffsetTop > bodyCenterCoordinate.y) {
+      parentPositions.push('bottom');
+    }
+    if (pickerOffsetLeft < bodyCenterCoordinate.x) {
+      parentPositions.push('left');
+    }
+    if (pickerOffsetLeft > bodyCenterCoordinate.x) {
+      parentPositions.push('right');
+    }
+
+    if (pickerHeight > spaceTop) {
+      canShow.top = false;
+    }
+    if (pickerHeight > spaceBottom) {
+      canShow.bottom = false;
+    }
+    if (pickerWidth > pickerOffsetLeft) {
+      canShow.left = false;
+    }
+    if ((vw - pickerOffsetLeft) < pickerWidth) {
+      canShow.right = false;
+    }
+  }
+
+  return { canShow, parentPositions };
+}
+
 /**
  * @deprecated @see `getHtmlStringOutput()`
  * This function is now deprecated and is an alias to the new `getHtmlStringOutput()`, so please use this new function instead which works with various type of inputs.

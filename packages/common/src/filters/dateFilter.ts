@@ -1,7 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, extend, } from '@slickgrid-universal/utils';
-import VanillaCalendar from 'vanilla-calendar-pro';
-import type { IOptions } from 'vanilla-calendar-pro/types';
+import { VanillaCalendar, type IOptions } from 'vanilla-calendar-picker';
 import * as moment_ from 'moment-mini';
 const moment = (moment_ as any)['default'] || moment_;
 
@@ -25,7 +24,7 @@ import { buildSelectOperator, compoundOperatorNumeric } from './filterUtilities'
 import { formatDateByFieldType, mapMomentDateFormatWithFieldType, mapOperatorToShorthandDesignation } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import type { SlickGrid } from '../core/index';
-import { setPickerDates } from '../commonEditorFilter';
+import { findBestPickerPosition, setPickerDates } from '../commonEditorFilter';
 
 export class DateFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -332,6 +331,9 @@ export class DateFilter implements Filter {
             }
           }
         },
+        initCalendar: (self) => {
+          self.settings.visibility!.positionToInput = findBestPickerPosition(self);
+        }
       },
       settings: {
         lang: currentLocale,

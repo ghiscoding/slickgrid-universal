@@ -270,7 +270,9 @@ export default class Example12 {
         editor: {
           model: Editors.date,
           editorOptions: {
-            range: { disablePast: true }, // set minimum date as today
+            // range: { disablePast: true }, // set minimum date as today
+            range: { min: 'today' }, // set minimum date as today
+            // range: { min: new Date().toISOString().substring(0, 10) }, // set minimum date as today
 
             // if we want to preload the date picker with a different date,
             // we could do it by assigning settings.seleted.dates

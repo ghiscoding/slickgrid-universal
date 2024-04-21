@@ -1,11 +1,12 @@
 import 'jest-extended';
+import { VanillaCalendar } from 'vanilla-calendar-picker';
+
 import { Filters } from '../filters.index';
 import { FieldType, OperatorType } from '../../enums/index';
 import { Column, FilterArguments, GridOption } from '../../interfaces/index';
 import { CompoundDateFilter } from '../compoundDateFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SlickGrid } from '../../core/index';
-import VanillaCalendar from 'vanilla-calendar-pro';
 
 const containerId = 'demo-container';
 
@@ -116,7 +117,8 @@ describe('CompoundDateFilter', () => {
     expect(filter.pickerOptions).toEqual({
       actions: {
         changeToInput: expect.any(Function),
-        clickDay: expect.any(Function)
+        clickDay: expect.any(Function),
+        initCalendar: expect.any(Function),
       },
       input: true,
       settings: {

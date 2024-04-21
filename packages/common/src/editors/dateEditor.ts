@@ -1,7 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { type InferDOMType, createDomElement, emptyElement, extend, setDeepValue } from '@slickgrid-universal/utils';
-import VanillaCalendar from 'vanilla-calendar-pro';
-import type { IOptions } from 'vanilla-calendar-pro/types';
+import { VanillaCalendar, type IOptions } from 'vanilla-calendar-picker';
 import * as moment_ from 'moment-mini';
 const moment = (moment_ as any)['default'] || moment_;
 
@@ -21,10 +20,10 @@ import type {
 import { formatDateByFieldType, getDescendantProperty, mapMomentDateFormatWithFieldType, } from './../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import { SlickEventData, type SlickGrid } from '../core/index';
-import { setPickerDates } from '../commonEditorFilter';
+import { findBestPickerPosition, setPickerDates } from '../commonEditorFilter';
 
 /*
- * An example of a date picker editor using Vanilla-Calendar-Pro
+ * An example of a date picker editor using Vanilla-Calendar-Picker
  */
 export class DateEditor implements Editor {
   protected _bindEventService: BindingEventService;
@@ -125,7 +124,7 @@ export class DateEditor implements Editor {
           clickDay: () => {
             this._lastDayClick = true;
           },
-          changeToInput: (_e: Event, self: VanillaCalendar) => {
+          changeToInput: (_e, self) => {
             if (self.HTMLInputElement) {
               let chosenDate = '';
               if (self.selectedDates[0]) {
@@ -148,6 +147,9 @@ export class DateEditor implements Editor {
               }
             }
           },
+          initCalendar: (self) => {
+            self.settings.visibility!.positionToInput = findBestPickerPosition(self);
+          }
         },
         settings: {
           lang: currentLocale,

@@ -4,11 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  vanilla-calendar-pro@2.9.6:
-    hash: u2urdthorbxwynz5kpatffyf7m
-    path: patches/vanilla-calendar-pro@2.9.6.patch
-
 importers:
 
   .:
@@ -121,9 +116,9 @@ importers:
       typescript-eslint:
         specifier: ^7.6.0
         version: 7.6.0(eslint@9.0.0)(typescript@5.4.5)
-      vanilla-calendar-pro:
-        specifier: ^2.9.6
-        version: 2.9.6(patch_hash=u2urdthorbxwynz5kpatffyf7m)
+      vanilla-calendar-picker:
+        specifier: ^2.10.0
+        version: 2.10.0
       whatwg-fetch:
         specifier: ^3.6.20
         version: 3.6.20
@@ -190,9 +185,9 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
-      vanilla-calendar-pro:
-        specifier: ^2.9.6
-        version: 2.9.6(patch_hash=u2urdthorbxwynz5kpatffyf7m)
+      vanilla-calendar-picker:
+        specifier: ^2.10.0
+        version: 2.10.0
       whatwg-fetch:
         specifier: ^3.6.20
         version: 3.6.20
@@ -263,9 +258,9 @@ importers:
       un-flatten-tree:
         specifier: ^2.0.12
         version: 2.0.12
-      vanilla-calendar-pro:
-        specifier: ^2.9.6
-        version: 2.9.6(patch_hash=u2urdthorbxwynz5kpatffyf7m)
+      vanilla-calendar-picker:
+        specifier: ^2.10.0
+        version: 2.10.0
     devDependencies:
       autoprefixer:
         specifier: ^10.4.19
@@ -471,9 +466,9 @@ importers:
       sortablejs:
         specifier: ^1.15.2
         version: 1.15.2
-      vanilla-calendar-pro:
-        specifier: ^2.9.6
-        version: 2.9.6(patch_hash=u2urdthorbxwynz5kpatffyf7m)
+      vanilla-calendar-picker:
+        specifier: ^2.10.0
+        version: 2.10.0
       whatwg-fetch:
         specifier: ^3.6.20
         version: 3.6.20
@@ -9238,9 +9233,8 @@ packages:
       builtins: 5.0.1
     dev: true
 
-  /vanilla-calendar-pro@2.9.6(patch_hash=u2urdthorbxwynz5kpatffyf7m):
-    resolution: {integrity: sha512-0bkcRd27urEGxgqc/kbV1ndSnOhmp/4V1v/tUiw67nHzZKMWrcDB9nM42LEu/0qBptEVsBtuDvXeu+7hZ0WuhQ==}
-    patched: true
+  /vanilla-calendar-picker@2.10.0:
+    resolution: {integrity: sha512-qn1RYe2/FsXn6x6EA80/7Zv2Be4r6R3AF2xPTZCDlkItwYQOo0+pJ9CsmXg+XJfQypdMFH7j6mFlzBEe4B7Srg==}
 
   /verror@1.10.0:
     resolution: {integrity: sha512-ZZKSmDAEFOijERBLkmYfJ+vmk3w+7hOLYDNkRCuRuMJGEmqYNCNLyBBFwWKVMhfwaEF3WOd0Zlw86U/WC/+nYw==}

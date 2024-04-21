@@ -1,4 +1,5 @@
 import moment from 'moment-mini';
+import { VanillaCalendar } from 'vanilla-calendar-picker';
 
 import { Editors } from '../index';
 import { DateEditor } from '../dateEditor';
@@ -6,7 +7,6 @@ import { FieldType } from '../../enums/index';
 import { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
-import VanillaCalendar from 'vanilla-calendar-pro';
 
 const dataViewStub = {
   refresh: jest.fn(),
