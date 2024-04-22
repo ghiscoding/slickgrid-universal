@@ -34,14 +34,14 @@ describe('Example 12 - Composite Editor Modal', () => {
   it('should display 2 different tooltips when hovering icons on "Title" column', () => {
     cy.get('.slick-column-name').as('title-column');
     cy.get('@title-column')
-      .find('.mdi-alert-outline')
+      .find('.sgi-alert-outline')
       .trigger('mouseover');
 
     cy.get('.slick-custom-tooltip').should('be.visible');
     cy.get('.slick-custom-tooltip .tooltip-body').contains('Task must always be followed by a number');
 
     cy.get('@title-column')
-      .find('.mdi-information-outline')
+      .find('.sgi-information-outline')
       .trigger('mouseover');
 
     cy.get('.slick-custom-tooltip').should('be.visible');
@@ -130,15 +130,15 @@ describe('Example 12 - Composite Editor Modal', () => {
     // change Completed
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).click();
     cy.get('.editor-completed').check();
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).find('.sgi.sgi-check.checkmark-icon').should('have.length', 1);
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(7)`).click();
     cy.get('.editor-completed').check();
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(7)`).find('.sgi.sgi-check.checkmark-icon').should('have.length', 1);
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(7)`).click();
     cy.get('.editor-completed').check();
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(7)`).find('.sgi.sgi-check.checkmark-icon').should('have.length', 1);
   });
 
   it('should be able to change "Finish" values of row indexes 0-2', () => {
@@ -287,7 +287,7 @@ describe('Example 12 - Composite Editor Modal', () => {
       expect(win.console.log).to.be.calledWithMatch('create item data context', {
         id: 501, title: 'Task 7777', completed: false, complexity: '', duration: 33, finish: '',
         percentComplete: 44, start: '', origin: { name: 'Austria', code: 'AT' },
-        product: { id: 0, icon: 'mdi-arrow-collapse', itemName: 'Sleek Metal Computer', itemTypeName: 'I', listPrice: 2100.23 },
+        product: { id: 0, icon: 'sgi-arrow-collapse', itemName: 'Sleek Metal Computer', itemTypeName: 'I', listPrice: 2100.23 },
       });
     });
   });
@@ -297,7 +297,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '33 days');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`).should('contain', '44');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(5)`).find('.editing-field').should('have.length', 1);
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 0);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).find('.sgi.sgi-check.checkmark-icon').should('have.length', 0);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(8)`).should('be.empty');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(9)`).should('contain', 'Sleek Metal Computer');
 
@@ -348,7 +348,7 @@ describe('Example 12 - Composite Editor Modal', () => {
       expect(win.console.log).to.be.calledWithMatch('create item data context', {
         id: 502, title: 'Task 8888', completed: true, complexity: '', duration: 22, percentComplete: 5,
         start: '', origin: { name: 'Antarctica', code: 'AQ' },
-        product: { id: 1, icon: 'mdi-arrow-expand', itemName: 'Tasty Granite Table', itemTypeName: 'I', listPrice: 3200.12 },
+        product: { id: 1, icon: 'sgi-arrow-expand', itemName: 'Tasty Granite Table', itemTypeName: 'I', listPrice: 3200.12 },
       });
     });
   });
@@ -358,7 +358,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '22 days');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`).should('contain', '5');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(5)`).find('.editing-field').should('have.length', 1);
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).find('.sgi.sgi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(8)`).should('not.be.empty');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(9)`).should('contain', 'Tasty Granite Table');
 
@@ -394,7 +394,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '33 days');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`).should('contain', '17');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(5)`).find('.editing-field').should('have.length', 1);
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('not.exist');
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).find('.sgi.sgi-check.checkmark-icon').should('not.exist');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(8)`).should('be.empty');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(9)`).should('contain', 'Tasty Granite Table');
 
@@ -441,25 +441,25 @@ describe('Example 12 - Composite Editor Modal', () => {
   it('should have updated values in the entire grid', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`).should('contain', '51');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(5)`).should('contain', 'Straightforward');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).find('.sgi.sgi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(8)`).should('not.be.empty');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(10)`).should('contain', 'Belgium');
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(4)`).should('contain', '51');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(5)`).should('contain', 'Straightforward');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(7)`).find('.sgi.sgi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(8)`).should('not.be.empty');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(10)`).should('contain', 'Belgium');
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(4)`).should('contain', '51');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(5)`).should('contain', 'Straightforward');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(7)`).find('.sgi.sgi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(8)`).should('not.be.empty');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(10)`).should('contain', 'Belgium');
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(4)`).should('contain', '51');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(5)`).should('contain', 'Straightforward');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(7)`).find('.sgi.sgi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(8)`).should('not.be.empty');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(10)`).should('contain', 'Belgium');
   });
@@ -490,7 +490,7 @@ describe('Example 12 - Composite Editor Modal', () => {
 
   it('should be able to clear the "Country of Origin" autocomplete field in the modal form via the Clear button from the editor', () => {
     cy.get('.item-details-container.editor-origin .modified').should('have.length', 1);
-    cy.get('.item-details-container.editor-origin .autocomplete-container button.icon-clear').click();
+    cy.get('.item-details-container.editor-origin .autocomplete-container button.btn-clear').click();
     cy.get('.item-details-container.editor-origin .modified').should('have.length', 1);
     cy.get('.item-details-container.editor-origin .autocomplete').invoke('val').then(text => expect(text).to.eq(''));
   });
@@ -558,22 +558,22 @@ describe('Example 12 - Composite Editor Modal', () => {
 
   it('should have updated all the changed values BUT only on the 2 selected rows', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`).should('contain', '51');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).find('.sgi.sgi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(8)`).should('not.be.empty');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(10)`).should('contain', 'Belgium');
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(4)`).should('contain', '77');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(7)`).find('.sgi.sgi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(8)`).should('not.be.empty');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(10)`).should('contain', 'Belize');
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(4)`).should('contain', '77');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(7)`).find('.sgi.sgi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(8)`).should('not.be.empty');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(10)`).should('contain', 'Belize');
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(4)`).should('contain', '51');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(7)`).find('.sgi.sgi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(8)`).should('not.be.empty');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(10)`).should('contain', 'Belgium');
   });
@@ -639,7 +639,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).contains('TASK 8899', { matchCase: false });
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '33 days');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`).should('contain', '51');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).find('.sgi.sgi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(8)`).should('not.be.empty');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(10)`).should('contain', 'Belgium');
   });
@@ -673,7 +673,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).contains('TASK 9999', { matchCase: false });
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '44 days');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`).should('contain', '17');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 0);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).find('.sgi.sgi-check.checkmark-icon').should('have.length', 0);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(8)`).should('be.empty');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(10)`).should('contain', 'Belgium');
   });
@@ -682,7 +682,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', '8899');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(2)`).should('contain', '33 days');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(4)`).should('contain', '51');
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(7)`).find('.mdi.mdi-check.checkmark-icon').should('have.length', 1);
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(7)`).find('.sgi.sgi-check.checkmark-icon').should('have.length', 1);
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(8)`).should('not.be.empty');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(10)`).should('contain', 'Belgium');
   });
@@ -692,7 +692,7 @@ describe('Example 12 - Composite Editor Modal', () => {
 
     // clear Country
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(10)`).click();
-    cy.get('.autocomplete-container button.icon-clear').click();
+    cy.get('.autocomplete-container button.btn-clear').click();
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(10)`).should('contain', '');
   });

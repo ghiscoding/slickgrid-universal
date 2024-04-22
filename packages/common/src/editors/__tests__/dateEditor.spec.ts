@@ -249,7 +249,7 @@ describe('DateEditor', () => {
         editor = new DateEditor(editorArguments);
         editor.loadValue(mockItemData);
         editor.focus();
-        const clearBtnElm = divContainer.querySelector('.btn .icon-clear') as HTMLInputElement;
+        const clearBtnElm = divContainer.querySelector('.btn.btn-clear') as HTMLInputElement;
         const editorInputElm = divContainer.querySelector('.flatpickr input') as HTMLInputElement;
         clearBtnElm.click();
         editorInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
@@ -267,7 +267,7 @@ describe('DateEditor', () => {
         editor = new DateEditor(editorArguments);
         editor.loadValue(mockItemData);
         editor.focus();
-        const clearBtnElm = divContainer.querySelector('.btn .icon-clear') as HTMLInputElement;
+        const clearBtnElm = divContainer.querySelector('.btn.btn-clear') as HTMLInputElement;
         const editorInputElm = divContainer.querySelector('.flatpickr input') as HTMLInputElement;
         clearBtnElm.click();
 
