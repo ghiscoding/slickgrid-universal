@@ -56,7 +56,7 @@
     --slick-icon-group-collapsed: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="%23009530" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"></path></svg>');
     --slick-icon-group-expanded: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="%23009530" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"></path></svg>');
     --slick-icon-group-width: 22px;
-
+    --slick-pagination-icon-color: #009530;
     --slick-slider-filter-thumb-border: 2px solid rgba(0, 149, 48, .68);
     --slick-slider-filter-thumb-active-bg-color: #fff;
     --slick-slider-filter-thumb-active-color: rgba(#02bf3e, .88);
@@ -134,7 +134,7 @@
       --slick-pane-top-border-top: 1px solid #505050;
       --slick-filled-filter-color: #66bb6a;
       --slick-highlight-color: #49a54e;
-      --slick-pagination-icon-color: #49a54e;
+      --slick-pagination-icon-color: #66bb6a;
       --slick-checkbox-selector-checked-color: #66bb6a;
       --slick-row-mouse-hover-box-shadow: none;
       --slick-row-mouse-hover-color: #505050;

@@ -135,9 +135,6 @@
         padding: var(--slick-pagination-button-padding, $slick-pagination-button-padding);
         border-color: var(--slick-pagination-button-border-color, $slick-pagination-button-border-color);
 
-        a[class*="icon-seek-"] {
-            color: var(--slick-pagination-icon-color, $slick-pagination-icon-color);
-        }
         &:hover {
           background-color: var(--slick-pagination-button-hover-color, $slick-pagination-button-hover-color);
         }
@@ -179,11 +176,17 @@
           margin-left: -1px;
         }
 
+        a[class*="icon-seek-"] {
+          color: var(--slick-pagination-icon-color, $slick-pagination-icon-color);
+        }
+
         &.disabled {
           cursor: not-allowed;
-          color: var(--slick-pagination-icon-seek-color, $slick-pagination-icon-seek-disabled-color);
           background-color: var(--slick-pagination-icon-seek-background-color, $slick-pagination-icon-seek-disabled-bg-color);
           border-color: var(--slick-pagination-button-border-disabled-color, $slick-pagination-button-border-disabled-color);
+          a[class*="icon-seek-"] {
+            color: var(--slick-pagination-icon-seek-disabled-color, $slick-pagination-icon-seek-disabled-color);
+          }
         }
       }
     }
