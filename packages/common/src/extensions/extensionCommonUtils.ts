@@ -5,6 +5,9 @@ import type { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../in
 import { SlickColumnPicker } from './slickColumnPicker';
 import { SlickGridMenu } from './slickGridMenu';
 
+const PICKER_CHECK_ICON = 'sgi-icon-picker-check';
+const PICKER_UNCHECK_ICON = 'sgi-icon-picker-uncheck';
+
 /** Create a Close button element and add it to the Menu element */
 export function addCloseButtomElement(this: SlickColumnPicker | SlickGridMenu, menuElm: HTMLDivElement) {
   const context: any = this;
@@ -37,28 +40,28 @@ export function addColumnTitleElementWhenDefined(this: SlickColumnPicker | Slick
 export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridMenu, event: DOMEvent<HTMLInputElement>) {
   const context: any = this;
   const controlType = context instanceof SlickColumnPicker ? 'columnPicker' : 'gridMenu';
+  const iconContainerElm = event.target?.closest('.icon-checkbox-container') as HTMLDivElement;
+  const iconElm = iconContainerElm?.querySelector<HTMLDivElement>('.sgi');
+  const isChecked = !!(event.target.checked);
+  event.target.ariaChecked = String(isChecked);
+  togglePickerCheckbox(iconElm, isChecked);
 
   if (event.target.dataset.option === 'autoresize') {
     // when calling setOptions, it will resize with ALL Columns (even the hidden ones)
     // we can avoid this problem by keeping a reference to the visibleColumns before setOptions and then setColumns after
     const previousVisibleColumns = context.getVisibleColumns();
-    event.target.ariaChecked = String(event.target.checked);
-    const isChecked = event.target.checked;
     context.grid.setOptions({ forceFitColumns: isChecked });
     context.grid.setColumns(previousVisibleColumns);
     return;
   }
 
   if (event.target.dataset.option === 'syncresize') {
-    event.target.ariaChecked = String(event.target.checked);
-    context.grid.setOptions({ syncColumnCellResize: !!(event.target.checked) });
+    context.grid.setOptions({ syncColumnCellResize: isChecked });
     return;
   }
 
   if (event.target.type === 'checkbox') {
     context._areVisibleColumnDifferent = true;
-    event.target.ariaChecked = String(event.target.checked);
-    const isChecked = event.target.checked;
     const columnId = event.target.dataset.columnid || '';
     const visibleColumns: Column[] = [];
     context._columnCheckboxes.forEach((columnCheckbox: HTMLInputElement, idx: number) => {
@@ -69,6 +72,7 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
 
     if (!visibleColumns.length) {
       event.target.checked = true;
+      togglePickerCheckbox(iconElm, true);
       return;
     }
 
@@ -114,6 +118,32 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
   }
 }
 
+function togglePickerCheckbox(iconElm: HTMLDivElement | null, checked = false) {
+  if (iconElm) {
+    iconElm.className = `sgi ${checked ? PICKER_CHECK_ICON : PICKER_UNCHECK_ICON}`;
+  }
+}
+
+function generatePickerCheckbox(columnLiElm: HTMLLIElement, inputId: string, inputData: any, checked = false) {
+  const labelElm = createDomElement('label', { className: 'checkbox-picker-label', htmlFor: inputId });
+  const divElm = createDomElement('div', { className: 'icon-checkbox-container' });
+  const inputElm = createDomElement('input', { id: inputId, type: 'checkbox', dataset: inputData });
+  const colInputDivElm = createDomElement('div', { className: `sgi ${checked ? PICKER_CHECK_ICON : PICKER_UNCHECK_ICON}` });
+  const labelSpanElm = createDomElement('span', { className: 'checkbox-label' });
+  divElm.appendChild(inputElm);
+  divElm.appendChild(colInputDivElm);
+  labelElm.appendChild(divElm);
+  labelElm.appendChild(labelSpanElm);
+  columnLiElm.appendChild(labelElm);
+
+  if (checked) {
+    inputElm.ariaChecked = 'true';
+    inputElm.checked = true;
+  }
+
+  return { inputElm, labelElm, labelSpanElm };
+}
+
 export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, addonOptions: ColumnPickerOption | GridMenuOption) {
   const context: any = this;
   const menuPrefix = context instanceof SlickGridMenu ? 'gridmenu-' : '';
@@ -125,24 +155,15 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
       columnLiElm.className = 'hidden';
     }
 
-    const colInputElm = createDomElement('input', {
-      type: 'checkbox', id: `${context._gridUid}-${menuPrefix}colpicker-${columnId}`,
-      dataset: { columnid: `${columnId}` }
-    });
-    const colIndex = context.grid.getColumnIndex(columnId);
-    if (colIndex >= 0) {
-      colInputElm.ariaChecked = 'true';
-      colInputElm.checked = true;
-    }
-    columnLiElm.appendChild(colInputElm);
-    context._columnCheckboxes.push(colInputElm);
+    const inputId = `${context._gridUid}-${menuPrefix}colpicker-${columnId}`;
+    const isChecked = context.grid.getColumnIndex(columnId) >= 0;
+    const { inputElm, labelElm, labelSpanElm } = generatePickerCheckbox(columnLiElm, inputId, { columnid: `${columnId}` }, isChecked);
+    context._columnCheckboxes.push(inputElm);
 
     const headerColumnValueExtractorFn = typeof addonOptions?.headerColumnValueExtractor === 'function' ? addonOptions.headerColumnValueExtractor : context._defaults.headerColumnValueExtractor;
     const columnLabel = headerColumnValueExtractorFn!(column, context.gridOptions);
 
-    const labelElm = document.createElement('label');
-    labelElm.htmlFor = `${context._gridUid}-${menuPrefix}colpicker-${columnId}`;
-    this.grid.applyHtmlCode(labelElm, columnLabel);
+    this.grid.applyHtmlCode(labelSpanElm, columnLabel);
     columnLiElm.appendChild(labelElm);
     context._listElm.appendChild(columnLiElm);
   }
@@ -153,39 +174,17 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
 
   if (!(addonOptions?.hideForceFitButton)) {
     const fitLiElm = document.createElement('li');
-    fitLiElm.appendChild(
-      createDomElement('input', {
-        type: 'checkbox', id: `${context._gridUid}-${menuPrefix}colpicker-forcefit`,
-        ariaChecked: String(context.gridOptions.forceFitColumns),
-        checked: context.gridOptions.forceFitColumns,
-        dataset: { option: 'autoresize' }
-      })
-    );
-    fitLiElm.appendChild(
-      createDomElement('label', {
-        htmlFor: `${context._gridUid}-${menuPrefix}colpicker-forcefit`,
-        textContent: addonOptions?.forceFitTitle ?? '',
-      })
-    );
+    const inputId = `${context._gridUid}-${menuPrefix}colpicker-forcefit`;
+    const { labelSpanElm } = generatePickerCheckbox(fitLiElm, inputId, { option: 'autoresize' }, context.gridOptions.forceFitColumns);
+    labelSpanElm.textContent = addonOptions?.forceFitTitle ?? '';
     context._listElm.appendChild(fitLiElm);
   }
 
   if (!(addonOptions?.hideSyncResizeButton)) {
     const syncLiElm = document.createElement('li');
-    syncLiElm.appendChild(
-      createDomElement('input', {
-        type: 'checkbox', id: `${context._gridUid}-${menuPrefix}colpicker-syncresize`,
-        ariaChecked: String(context.gridOptions.syncColumnCellResize),
-        checked: context.gridOptions.syncColumnCellResize,
-        dataset: { option: 'syncresize' }
-      })
-    );
-    syncLiElm.appendChild(
-      createDomElement('label', {
-        htmlFor: `${context._gridUid}-${menuPrefix}colpicker-syncresize`,
-        textContent: addonOptions?.syncResizeTitle ?? ''
-      })
-    );
+    const inputId = `${context._gridUid}-${menuPrefix}colpicker-syncresize`;
+    const { labelSpanElm } = generatePickerCheckbox(syncLiElm, inputId, { option: 'syncresize' }, context.gridOptions.forceFitColumns);
+    labelSpanElm.textContent = addonOptions?.syncResizeTitle ?? '';
     context._listElm.appendChild(syncLiElm);
   }
 }

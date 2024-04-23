@@ -295,13 +295,13 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin.init(gridStub);
     gridStub.onHeaderRowCellRendered.notify({ column: { id: '_checkbox_selector', field: '_checkbox_selector' }, node: nodeElm, grid: gridStub });
     plugin.setOptions({ hideInColumnTitleRow: true, hideInFilterHeaderRow: false, hideSelectAllCheckbox: false, });
-    let filterSelectAll = plugin.headerRowNode!.querySelector(`#filter-checkbox-selectall-container`) as HTMLSpanElement;
+    let filterSelectAll = plugin.headerRowNode!.querySelector('#filter-checkbox-selectall-container') as HTMLSpanElement;
 
     expect(plugin).toBeTruthy();
     expect(updateColHeaderSpy).toHaveBeenCalledWith('_checkbox_selector', '', '');
     expect(filterSelectAll.style.display).toEqual('flex');
 
-    filterSelectAll = plugin.headerRowNode!.querySelector(`#filter-checkbox-selectall-container`) as HTMLSpanElement;
+    filterSelectAll = plugin.headerRowNode!.querySelector('#filter-checkbox-selectall-container') as HTMLSpanElement;
     plugin.hideSelectAllFromColumnHeaderFilterRow();
     expect(filterSelectAll.style.display).toEqual('none');
   });
@@ -424,10 +424,11 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       resizable: false,
       sortable: false,
       width: 30,
+      maxWidth: 30,
       name: expect.any(DocumentFragment),
       formatter: expect.toBeFunction(),
     });
-    expect(nameHtmlOutput).toBe(`<input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><label for="header-selector${plugin.selectAllUid}"></label>`);
+    expect(nameHtmlOutput).toBe(`<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><div class="sgi sgi-icon-uncheck"></div></div></label>`);
   });
 
   it('should create the plugin and add the Toggle All checkbox in the filter header row and expect toggle all to work when clicked', () => {
@@ -439,7 +440,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin.init(gridStub);
 
     gridStub.onHeaderRowCellRendered.notify({ column: { id: '_checkbox_selector', field: '_checkbox_selector' }, node: nodeElm, grid: gridStub });
-    const checkboxContainerElm = nodeElm.querySelector('span#filter-checkbox-selectall-container') as HTMLDivElement;
+    const checkboxContainerElm = nodeElm.querySelector('div.icon-checkbox-container') as HTMLDivElement;
     const inputCheckboxElm = checkboxContainerElm.querySelector('input[type=checkbox]') as HTMLDivElement;
     inputCheckboxElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
 
@@ -464,6 +465,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       sortable: false,
       toolTip: 'Select/Deselect All',
       width: 30,
+      maxWidth: 30,
     };
 
     plugin.create(mockColumns, { checkboxSelector: { columnId: 'chk-id' } });
@@ -475,7 +477,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     });
     expect(plugin).toBeTruthy();
     expect(mockColumns[0]).toEqual(expect.objectContaining({ ...checkboxColumnMock, formatter: expect.toBeFunction() }));
-    expect(nameHtmlOutput).toBe(`<input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><label for="header-selector${plugin.selectAllUid}"></label>`);
+    expect(nameHtmlOutput).toBe(`<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><div class="sgi sgi-icon-uncheck"></div></div></label>`);
   });
 
 
@@ -501,8 +503,9 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       sortable: false,
       toolTip: 'Select/Deselect All',
       width: 30,
+      maxWidth: 30,
     });
-    expect(nameHtmlOutput).toBe(`<input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><label for="header-selector${plugin.selectAllUid}"></label>`);
+    expect(nameHtmlOutput).toBe(`<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><div class="sgi sgi-icon-uncheck"></div></div></label>`);
   });
 
   it('should add a "name" and "hideSelectAllCheckbox: true" and call the "create" method and expect plugin to be created with a column name and without a checkbox', () => {
@@ -527,6 +530,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       sortable: false,
       toolTip: '',
       width: 30,
+      maxWidth: 30,
     });
   });
 

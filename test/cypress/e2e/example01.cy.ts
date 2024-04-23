@@ -258,10 +258,10 @@ describe('Example 01 - Basic Grids', () => {
         cy.get(`.slick-grid-menu.${gridUid}`)
           .find('.slick-column-picker-list')
           .children('li')
-          .each(($child, index) => {
+          .each(($li, index) => {
             if (index <= 5) {
-              const $input = $child.children('input');
-              const $label = $child.children('label');
+              const $input = $li.find('input');
+              const $label = $li.find('span.checkbox-label');
               expect($input.prop('checked')).to.eq(true);
               expect($label.text()).to.eq(fullTitles[index]);
             }
@@ -306,10 +306,10 @@ describe('Example 01 - Basic Grids', () => {
         cy.get(`.slick-grid-menu.${gridUid}`)
           .find('.slick-column-picker-list')
           .children('li')
-          .each(($child, index) => {
+          .each(($li, index) => {
             if (index <= 5) {
-              const $input = $child.children('input');
-              const $label = $child.children('label');
+              const $input = $li.find('input');
+              const $label = $li.find('label');
               expect($input.prop('checked')).to.eq(true);
               expect($label.text()).to.eq(fullTitles[index]);
             }
@@ -345,10 +345,10 @@ describe('Example 01 - Basic Grids', () => {
 
     cy.get('.slick-column-picker-list')
       .children('li')
-      .each(($child, index) => {
+      .each(($li, index) => {
         if (index <= 5) {
-          const $input = $child.children('input');
-          const $label = $child.children('label');
+          const $input = $li.find('input');
+          const $label = $li.find('label');
           if ($label.text() === 'Title') {
             expect($input.prop('checked')).to.eq(false);
           } else {
@@ -440,10 +440,10 @@ describe('Example 01 - Basic Grids', () => {
         cy.get(`.slick-grid-menu.${gridUid}`)
           .find('.slick-column-picker-list')
           .children('li')
-          .each(($child, index) => {
+          .each(($li, index) => {
             if (index <= 5) {
-              const $input = $child.children('input');
-              const $label = $child.children('label');
+              const $input = $li.find('input');
+              const $label = $li.find('label');
               expect($input.prop('checked')).to.eq(true);
               expect($label.text()).to.eq(fullTitles[index]);
             }
@@ -476,10 +476,10 @@ describe('Example 01 - Basic Grids', () => {
         cy.get(`.slick-grid-menu.${gridUid}`)
           .find('.slick-column-picker-list')
           .children('li')
-          .each(($child, index) => {
+          .each(($li, index) => {
             if (index <= 5) {
-              const $input = $child.children('input');
-              const $label = $child.children('label');
+              const $input = $li.find('input');
+              const $label = $li.find('label');
               if ($label.text() === 'Title' || $label.text() === 'Start') {
                 expect($input.prop('checked')).to.eq(false);
               } else {

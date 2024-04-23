@@ -131,36 +131,60 @@ li.hidden {
     width: auto;
   }
 
-  /* replace checkboxes by Font-Awesome icons */
+  label {
+    line-height: var(--slick-column-picker-icon-container-line-height, $slick-column-picker-icon-container-line-height);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &.disabled {
+    cursor: default;
+  }
   input[type=checkbox] {
-    display:none;  /* to hide the checkbox itself */
-    margin-left: 4px;
-    margin-top: 3px;
+    // hide original input checkbox since we use an SVG on top of it
+    opacity: 0;
+    width: 0;
+    margin-left: 0;
   }
 
-  input[type=checkbox] + label:before {
+  .icon-checkbox-container {
     cursor: pointer;
-    content: var(--slick-column-picker-checkbox-icon-unchecked, $slick-column-picker-checkbox-icon-unchecked);
-    color: var(--slick-column-picker-checkbox-color, $slick-column-picker-checkbox-color);
-    display: inline-block;
-    font-weight: var(--slick-column-picker-checkbox-font-weight, $slick-column-picker-checkbox-font-weight);
-    font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-    font-size: var(--slick-column-picker-checkbox-size, $slick-column-picker-checkbox-size);
-    line-height: var(--slick-column-picker-checkbox-icon-line-height, $slick-column-picker-checkbox-icon-line-height);
-    opacity: var(--slick-column-picker-checkbox-opacity, $slick-column-picker-checkbox-opacity); /* unchecked icon */
-    margin-right: 4px;
-    vertical-align: var(--slick-column-picker-checkbox-icon-vertical-align, $slick-column-picker-checkbox-icon-vertical-align);
-    width: var(--slick-column-picker-checkbox-width, $slick-column-picker-checkbox-width);
-  }
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--slick-column-picker-icon-container-bg-color, $slick-column-picker-icon-container-bg-color);
+    height: var(--slick-column-picker-icon-container-size, $slick-column-picker-icon-container-size);
+    width: var(--slick-column-picker-icon-container-size, $slick-column-picker-icon-container-size);
+    border: var(--slick-column-picker-icon-border, $slick-column-picker-icon-border);
+    border-radius: var(--slick-column-picker-icon-border-radius, $slick-column-picker-icon-border-radius);
 
-  input[type=checkbox] + label:hover:before {
-    opacity: var(--slick-column-picker-checkbox-opacity-hover, $slick-column-picker-checkbox-opacity-hover);
-  }
+    div.sgi {
+      opacity: 1;
+      font-size: var(--slick-column-picker-icon-font-size, $slick-column-picker-icon-font-size);
+      color: var(--slick-column-picker-icon-color, $slick-column-picker-icon-color);
 
-  input[type=checkbox]:checked + label:before {
-    opacity: 1; /* checked icon */
-    content: var(--slick-column-picker-checkbox-icon-checked, $slick-column-picker-checkbox-icon-checked);
-    width: var(--slick-column-picker-checkbox-width, $slick-column-picker-checkbox-width);
+      &.sgi-icon-picker-check {
+        @include generateSvgStyle('slick-column-picker-icon-checked-svg', $slick-column-picker-icon-checked-svg-path);
+      }
+      &.sgi-icon-picker-uncheck {
+        @include generateSvgStyle('slick-column-picker-icon-unchecked-svg', $slick-column-picker-icon-unchecked-svg-path);
+        opacity: var(--slick-column-picker-unchecked-opacity, $slick-column-picker-unchecked-opacity); /* unchecked icon */
+        &:hover {
+          opacity: var(--slick-column-picker-opacity-hover, $slick-column-picker-opacity-hover);
+        }
+
+        // since we use the div container with a border, we don't actually need an icon for unchecked
+        // BUT since we want to keep the same size, we can simply hide the mask to keep the same size
+        visibility: var(--slick-column-picker-icon-unchecked-color-visibility, $slick-column-picker-icon-unchecked-color-visibility);
+      }
+    }
+    & + span.checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding-left: var(--slick-column-picker-label-text-padding-left, $slick-column-picker-label-text-padding-left);
+    }
   }
 }
 
@@ -528,8 +552,7 @@ li.hidden {
 // Row Move Manager Plugin
 // ----------------------------------------------
 .slick-cell.cell-reorder {
-  display: flex;
-  align-items: center;
+  text-align: center;
 
   .slick-row-move-column {
     background-color: currentColor;
@@ -545,63 +568,73 @@ li.hidden {
 // ----------------------------------------------
 // Checkbox Selector Plugin
 // ----------------------------------------------
-.slick-headerrow-column,
+
+.slick-headerrow-column.checkbox-header {
+  display: inline-flex;
+  justify-content: center;
+}
+
 .slick-column-name,
+.slick-headerrow-column.checkbox-header,
 .slick-cell-checkboxsel {
   text-align: center;
+
+  label {
+    line-height: var(--slick-checkbox-icon-container-line-height, $slick-checkbox-icon-container-line-height);
+  }
   #filter-checkbox-selectall-container {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    // line-height: 0;
   }
 
-  input[type=checkbox],
-  #filter-checkbox-selectall-container > input[type=checkbox] {
-    display:none;  /* to hide the checkbox itself */
+  &.disabled {
+    cursor: default;
+  }
+  input[type=checkbox] {
+    // hide original input checkbox since we use an SVG on top of it
+    opacity: 0;
+    width: 0;
+    margin-left: 0;
   }
 
-  input[type=checkbox],
-  #filter-checkbox-selectall-container > input[type=checkbox] + label {
-    margin: 0;
-  }
-
-  input[type=checkbox] + label:before,
-  #filter-checkbox-selectall-container > input[type=checkbox] + label:before {
+  .icon-checkbox-container {
     cursor: pointer;
-    content: var(--slick-checkbox-selector-icon-unchecked, $slick-checkbox-selector-icon-unchecked);
-    background-color: var(--slick-checkbox-selector-icon-bg-color, $slick-checkbox-selector-icon-bg-color);
-    color: var(--slick-checkbox-selector-unchecked-color, $slick-checkbox-selector-unchecked-color);
-    display: inline-block;
-    font-weight: var(--slick-checkbox-selector-icon-font-weight, $slick-checkbox-selector-icon-font-weight);
-    font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-    font-size: var(--slick-checkbox-selector-size, $slick-checkbox-selector-size);
-    opacity: var(--slick-checkbox-selector-opacity, $slick-checkbox-selector-opacity); /* unchecked icon */
-    margin: var(--slick-checkbox-selector-icon-margin, $slick-checkbox-selector-icon-margin);
-  }
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--slick-checkbox-icon-container-bg-color, $slick-checkbox-icon-container-bg-color);
+    height: var(--slick-checkbox-icon-container-size, $slick-checkbox-icon-container-size);
+    width: var(--slick-checkbox-icon-container-size, $slick-checkbox-icon-container-size);
+    border: var(--slick-checkbox-icon-border, $slick-checkbox-icon-border);
+    border-radius: var(--slick-checkbox-icon-border-radius, $slick-checkbox-icon-border-radius);
 
-  input[type=checkbox] + label:hover:before,
-  #filter-checkbox-selectall-container > input[type=checkbox] + label:hover:before {
-    opacity: var(--slick-checkbox-selector-opacity-hover, $slick-checkbox-selector-opacity-hover);
-  }
+    div.sgi {
+      opacity: 1;
+      font-size: var(--slick-checkbox-icon-font-size, $slick-checkbox-icon-font-size);
+      color: var(--slick-checkbox-icon-color, $slick-checkbox-icon-color);
 
-  input[type=checkbox]:checked + label:before,
-  #filter-checkbox-selectall-container > input[type=checkbox]:checked + label:before {
-    content: var(--slick-checkbox-selector-icon-checked, $slick-checkbox-selector-icon-checked);
-    color: var(--slick-checkbox-selector-checked-color, $slick-checkbox-selector-checked-color);
-    opacity: 1; /* checked icon */
+      &.sgi-icon-check {
+        @include generateSvgStyle('slick-checkbox-icon-checked-svg', $slick-checkbox-icon-checked-svg-path);
+      }
+      &.sgi-icon-uncheck {
+        @include generateSvgStyle('slick-checkbox-icon-unchecked-svg', $slick-checkbox-icon-unchecked-svg-path);
+        opacity: var(--slick-checkbox-unchecked-opacity, $slick-checkbox-unchecked-opacity); /* unchecked icon */
+        &:hover {
+          opacity: var(--slick-checkbox-opacity-hover, $slick-checkbox-opacity-hover);
+        }
 
+        // since we use the div container with a border, we don't actually need an icon for unchecked
+        // BUT since we want to keep the same size, we can simply hide the mask to keep the same size
+        visibility: var(--slick-checkbox-icon-unchecked-color-visibility, $slick-checkbox-icon-unchecked-color-visibility);
+      }
+    }
   }
-  input[type=checkbox] + label:before,
-  input[type=checkbox]:checked + label:before,
-  #filter-checkbox-selectall-container > input[type=checkbox] + label:before,
-  #filter-checkbox-selectall-container > input[type=checkbox]:checked + label:before {
-    height: var(--slick-checkbox-selector-icon-height, $slick-checkbox-selector-icon-height);
-    width: var(--slick-checkbox-selector-icon-width, $slick-checkbox-selector-icon-width);
-    border: var(--slick-checkbox-selector-icon-border, $slick-checkbox-selector-icon-border);
-    border-radius: var(--slick-checkbox-selector-icon-border-radius, $slick-checkbox-selector-icon-border-radius);
-  }
+}
+
+.slick-header-column.header-checkbox-selectall .slick-column-name {
+  text-align: center;
+  margin-right: 0;
 }
 
 .slick-group {
@@ -625,6 +658,9 @@ li.hidden {
   height: var(--slick-header-input-height, $slick-header-input-height);
 
   span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     font-size: var(--slick-multiselect-input-filter-font-size, $slick-multiselect-input-filter-font-size);
     font-family: var(--slick-multiselect-input-filter-font-family, $slick-multiselect-input-filter-font-family);
   }

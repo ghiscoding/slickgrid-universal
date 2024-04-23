@@ -193,8 +193,8 @@ export default class Example07 {
           enableRenderHtml: true,
           collection: [
             { value: '', label: '' },
-            { value: true, label: 'True', labelSuffix: `<i class="sgi sgi-check sgi-v-align-middle sgi-16px"></i> ` },
-            { value: false, label: 'False', labelSuffix: `<i class="sgi sgi-close sgi-v-align-middle sgi-16px"></i> ` }
+            { value: true, label: 'True', labelSuffix: `<i class="sgi sgi-check sgi-16px"></i> ` },
+            { value: false, label: 'False', labelSuffix: `<i class="sgi sgi-close sgi-16px"></i> ` }
           ],
           model: Filters.singleSelect
         },
@@ -208,8 +208,8 @@ export default class Example07 {
           enableRenderHtml: true,
           collectionAsync: new Promise<any>(resolve => setTimeout(() => {
             resolve([
-              { value: true, label: 'True', labelSuffix: `<i class="sgi sgi-check sgi-v-align-middle sgi-16px"></i> ` },
-              { value: false, label: 'False', labelSuffix: `<i class="sgi sgi-close sgi-v-align-middle sgi-16px"></i> ` }
+              { value: true, label: 'True', labelSuffix: `<i class="sgi sgi-check sgi-16px"></i> ` },
+              { value: false, label: 'False', labelSuffix: `<i class="sgi sgi-close sgi-16px"></i> ` }
             ]);
           }, 250)),
         },
