@@ -491,7 +491,7 @@ describe('DateEditor', () => {
       });
 
       it('should not throw any error when date is lower than required "minDate" defined in the "editorOptions" and "autoCommitEdit" is enabled', () => {
-        mockColumn.editor!.editorOptions = { range: { disablePast: true } };
+        mockColumn.editor!.editorOptions = { range: { min: 'today' } };
         mockItemData = { id: 1, startDate: '500-01-02T11:02:02.000Z', isActive: true };
         gridOptionMock.autoCommitEdit = true;
         gridOptionMock.autoEdit = true;
@@ -513,7 +513,7 @@ describe('DateEditor', () => {
       it('should not throw any error when date is invalid when lower than required "minDate" defined in the global default editorOptions and "autoCommitEdit" is enabled', () => {
         // change to allow input value only for testing purposes & use the regular flatpickr input to test that one too
         gridOptionMock.defaultEditorOptions = {
-          date: { range: { disablePast: true } }
+          date: { range: { min: 'today' } }
         };
         mockItemData = { id: 1, startDate: '500-01-02T11:02:02.000Z', isActive: true };
         gridOptionMock.autoCommitEdit = true;
