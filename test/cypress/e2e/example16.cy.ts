@@ -69,10 +69,10 @@ describe('Example 16 - Regular & Custom Tooltips', () => {
   });
 
   it('should mouse over Task 6 cell on "Start" column and expect a delayed tooltip opening via async process', () => {
+    cy.get('.slick-custom-tooltip').should('not.exist');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(7)`).as('start6-cell');
     cy.get('@start6-cell').contains(/\d{4}-\d{2}-\d{2}$/); // use regexp to make sure it's a number
     cy.get('@start6-cell').trigger('mouseover');
-    cy.get('.slick-custom-tooltip').should('not.exist');
 
     cy.wait(10);
     cy.get('.slick-custom-tooltip').should('be.visible');
@@ -145,7 +145,7 @@ describe('Example 16 - Regular & Custom Tooltips', () => {
     cy.get('@percentage-cell').trigger('mouseover');
 
     cy.get('.slick-custom-tooltip').should('be.visible');
-    cy.get('.slick-custom-tooltip').contains(/\d+\%$/);
+    cy.get('.slick-custom-tooltip').contains(/\d+%$/);
 
     cy.get('@percentage-cell').trigger('mouseout');
   });

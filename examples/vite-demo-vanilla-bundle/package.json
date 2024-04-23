@@ -30,7 +30,7 @@
     "moment-mini": "^2.29.4",
     "multiple-select-vanilla": "^3.1.0",
     "rxjs": "^7.8.1",
-    "vanilla-calendar-picker": "^2.10.0",
+    "vanilla-calendar-picker": "^2.10.2",
     "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {

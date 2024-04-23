@@ -115,7 +115,10 @@ describe('DateRangeFilter', () => {
       },
       input: true,
       jumpMonths: 2,
+      jumpToSelectedDate: true,
       months: 2,
+      sanitizer: expect.any(Function),
+      toggleSelected: false,
       settings: {
         iso8601: false,
         lang: 'en',

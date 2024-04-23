@@ -120,8 +120,8 @@ importers:
         specifier: ^7.7.0
         version: 7.7.0(eslint@9.1.0)(typescript@5.4.5)
       vanilla-calendar-picker:
-        specifier: ^2.10.0
-        version: 2.10.0
+        specifier: ^2.10.2
+        version: 2.10.2
       whatwg-fetch:
         specifier: ^3.6.20
         version: 3.6.20
@@ -189,8 +189,8 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
       vanilla-calendar-picker:
-        specifier: ^2.10.0
-        version: 2.10.0
+        specifier: ^2.10.2
+        version: 2.10.2
       whatwg-fetch:
         specifier: ^3.6.20
         version: 3.6.20
@@ -262,8 +262,8 @@ importers:
         specifier: ^2.0.12
         version: 2.0.12
       vanilla-calendar-picker:
-        specifier: ^2.10.0
-        version: 2.10.0
+        specifier: ^2.10.2
+        version: 2.10.2
     devDependencies:
       autoprefixer:
         specifier: ^10.4.19
@@ -470,8 +470,8 @@ importers:
         specifier: ^1.15.2
         version: 1.15.2
       vanilla-calendar-picker:
-        specifier: ^2.10.0
-        version: 2.10.0
+        specifier: ^2.10.2
+        version: 2.10.2
       whatwg-fetch:
         specifier: ^3.6.20
         version: 3.6.20
@@ -9160,8 +9160,8 @@ packages:
       builtins: 5.0.1
     dev: true
 
-  /vanilla-calendar-picker@2.10.0:
-    resolution: {integrity: sha512-qn1RYe2/FsXn6x6EA80/7Zv2Be4r6R3AF2xPTZCDlkItwYQOo0+pJ9CsmXg+XJfQypdMFH7j6mFlzBEe4B7Srg==}
+  /vanilla-calendar-picker@2.10.2:
+    resolution: {integrity: sha512-nW6xFZjs+xPMHTnH5z7Dqh0ydyzwG5009CRpvL31LcDC+05YCEB2VkjTsOJzPcizZBPH9yQ1Vv4FoCyx2GZ7Gg==}
 
   /verror@1.10.0:
     resolution: {integrity: sha512-ZZKSmDAEFOijERBLkmYfJ+vmk3w+7hOLYDNkRCuRuMJGEmqYNCNLyBBFwWKVMhfwaEF3WOd0Zlw86U/WC/+nYw==}

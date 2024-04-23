@@ -25,6 +25,7 @@ import { formatDateByFieldType, mapMomentDateFormatWithFieldType, mapOperatorToS
 import type { TranslaterService } from '../services/translater.service';
 import type { SlickGrid } from '../core/index';
 import { setPickerDates } from '../commonEditorFilter';
+import { sanitizeTextByAvailableSanitizer } from '../services';
 
 export class DateFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -32,7 +33,7 @@ export class DateFilter implements Filter {
   protected _currentValue?: string;
   protected _currentDateOrDates?: Date | Date[] | string | string[];
   protected _currentDateStrings?: string[];
-  protected _lastDayClick = false;
+  protected _lastClickIsDate = false;
   protected _pickerOptions!: IOptions;
   protected _filterElm!: HTMLDivElement;
   protected _dateInputElm!: HTMLInputElement;
@@ -275,10 +276,13 @@ export class DateFilter implements Filter {
 
     const pickerOptions: IOptions = {
       input: true,
+      jumpToSelectedDate: true,
       type: this.inputFilterType === 'range' ? 'multiple' : 'default',
+      sanitizer: (dirtyHtml) => sanitizeTextByAvailableSanitizer(this.gridOptions, dirtyHtml),
+      toggleSelected: false,
       actions: {
         clickDay: (_e) => {
-          this._lastDayClick = true;
+          this._lastClickIsDate = true;
         },
         changeToInput: (_e, self) => {
           if (self.HTMLInputElement) {
@@ -328,9 +332,14 @@ export class DateFilter implements Filter {
               this.onTriggerEvent(newEvent);
             }
 
+            // when using date range and we're not yet having 2 dates, then don't close picker just yet
+            if (this.inputFilterType === 'range' && self.selectedDates.length < 2) {
+              this._lastClickIsDate = false;
+            }
             // if you want to hide the calendar after picking a date
-            if (this._lastDayClick) {
+            if (this._lastClickIsDate) {
               self.hide();
+              this._lastClickIsDate = false;
             }
           }
         }

@@ -21,6 +21,7 @@ import { formatDateByFieldType, getDescendantProperty, mapMomentDateFormatWithFi
 import type { TranslaterService } from '../services/translater.service';
 import { SlickEventData, type SlickGrid } from '../core/index';
 import { setPickerDates } from '../commonEditorFilter';
+import { sanitizeTextByAvailableSanitizer } from '../services';
 
 /*
  * An example of a date picker editor using Vanilla-Calendar-Picker
@@ -31,7 +32,7 @@ export class DateEditor implements Editor {
   protected _editorInputGroupElm!: HTMLDivElement;
   protected _inputElm!: HTMLInputElement;
   protected _isValueTouched = false;
-  protected _lastDayClick = false;
+  protected _lastClickIsDate = false;
   protected _lastTriggeredByClearDate = false;
   protected _originalDate?: string;
   protected _pickerMergedOptions!: IOptions;
@@ -120,9 +121,12 @@ export class DateEditor implements Editor {
 
       const pickerOptions: IOptions = {
         input: true,
+        jumpToSelectedDate: true,
+        sanitizer: (dirtyHtml) => sanitizeTextByAvailableSanitizer(this.gridOptions, dirtyHtml),
+        toggleSelected: false,
         actions: {
           clickDay: () => {
-            this._lastDayClick = true;
+            this._lastClickIsDate = true;
           },
           changeToInput: (_e, self) => {
             if (self.HTMLInputElement) {
@@ -141,7 +145,7 @@ export class DateEditor implements Editor {
                 self.HTMLInputElement.value = formatDateByFieldType(momentDate, undefined, outputFieldType);
               }
 
-              if (this._lastDayClick) {
+              if (this._lastClickIsDate) {
                 this.handleOnDateChange();
                 self.hide();
               }

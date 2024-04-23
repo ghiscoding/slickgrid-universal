@@ -124,6 +124,9 @@ describe('CompoundDateFilter', () => {
         clickDay: expect.any(Function),
       },
       input: true,
+      jumpToSelectedDate: true,
+      sanitizer: expect.any(Function),
+      toggleSelected: false,
       settings: {
         iso8601: false,
         lang: 'en',
