@@ -921,30 +921,33 @@ input.flatpickr.form-control {
     }
 
     .slick-group-toggle-all {
+      display: inline-flex;
+      align-items: center;
       cursor: pointer;
-      border: var(--draggable-group-toggle-all-border, $slick-draggable-group-toggle-all-border);
-      border-radius: var(--draggable-group-toggle-all-border-radius, $slick-draggable-group-toggle-all-border-radius);
-      display: var(--slick-draggable-group-toggle-all-display, $slick-draggable-group-toggle-all-display);
+      border: var(--slick-draggable-group-toggle-all-border, $slick-draggable-group-toggle-all-border);
+      border-radius: var(--slick-draggable-group-toggle-all-border-radius, $slick-draggable-group-toggle-all-border-radius);
       margin-right: var(--slick-draggable-group-toggle-all-margin-right, $slick-draggable-group-toggle-all-margin-right);
       padding: var(--slick-draggable-group-toggle-all-padding, $slick-draggable-group-toggle-all-padding);
       position: var(--draggable-group-toggle-all-position, $slick-draggable-group-toggle-all-position);
       top: var(--slick-draggable-group-toggle-all-top, $slick-draggable-group-toggle-all-top);
       right: var(--slick-draggable-group-toggle-all-right, $slick-draggable-group-toggle-all-right);
 
-      .slick-group-toggle-all-icon.expanded:before {
-        content: var(--slick-draggable-group-toggle-expanded-icon, $slick-draggable-group-toggle-expanded-icon);
-      }
-      .slick-group-toggle-all-icon.collapsed:before {
-        content: var(--slick-draggable-group-toggle-collapsed-icon, $slick-draggable-group-toggle-collapsed-icon);
-      }
-      .slick-group-toggle-all-icon:before {
+      .slick-group-toggle-all-icon {
+        cursor: pointer;
         display: inline-block;
-        color: var(--slick-draggable-group-toggle-all-color, $slick-draggable-group-toggle-all-color);
-        font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-        vertical-align: var(--slick-draggable-group-toggle-all-icon-vertical-align, $slick-draggable-group-toggle-all-icon-vertical-align);
-        height: var(--slick-draggable-group-toggle-all-icon-height, $slick-draggable-group-toggle-all-icon-height);
-        width: var(--slick-draggable-group-toggle-all-icon-width, $slick-draggable-group-toggle-all-icon-width);
+        background-color: currentColor;
+        width: 1em;
+        height: 1em;
+        color: var(--slick-draggable-group-toggle-all-icon-color, $slick-draggable-group-toggle-all-icon-color);
+        font-size: var(--slick-draggable-group-toggle-all-icon-font-size, $slick-draggable-group-toggle-all-icon-font-size);
+        &.expanded {
+          @include generateSvgStyle('slick-draggable-group-toggle-expanded-icon-svg', $slick-draggable-group-toggle-expanded-icon-svg-path);
+        }
+        &.collapsed {
+          @include generateSvgStyle('slick-draggable-group-toggle-collapsed-icon-svg', $slick-draggable-group-toggle-collapsed-icon-svg-path);
+        }
       }
+
       .slick-group-toggle-all-text {
         font-size: var(--slick-draggable-group-toggle-all-text-font-size, $slick-draggable-group-toggle-all-text-font-size);
         margin: var(--slick-draggable-group-toggle-all-text-margin, $slick-draggable-group-toggle-all-text-margin);

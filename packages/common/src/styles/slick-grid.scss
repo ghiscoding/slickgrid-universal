@@ -113,17 +113,6 @@
      border-bottom: var(--slick-group-border-bottom, $slick-group-border-bottom);
    }
 
-   .slick-group-toggle {
-    width: 9px;
-    height: 9px;
-    margin-right: 5px;
-  }
-
-  .slick-group-toggle.expanded,
-  .slick-group-toggle.collapsed {
-    background: none;
-  }
-
    .slick-group-totals {
      background: var(--slick-group-totals-text-background, $slick-group-totals-text-background);
      color: var(--slick-group-totals-text-color, $slick-group-totals-text-color);

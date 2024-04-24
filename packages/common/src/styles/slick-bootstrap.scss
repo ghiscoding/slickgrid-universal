@@ -174,31 +174,22 @@
         line-height: var(--slick-draggable-group-title-line-height, $slick-draggable-group-title-line-height);
         vertical-align: var(--slick-draggable-group-title-vertical-align, $slick-draggable-group-title-vertical-align);
       }
+
       .slick-group-toggle {
         cursor: pointer;
+        background-color: currentColor;
         display: inline-block;
+        width: 1em;
+        height: 1em;
         color: var(--slick-icon-group-color, $slick-icon-group-color);
-        font-weight: var(--slick-icon-group-font-weight, $slick-icon-group-font-weight);
-        width: var(--slick-icon-group-width, $slick-icon-group-width);
-        height: var(--slick-icon-group-height, $slick-icon-group-height);
+        font-size: var(--slick-icon-group-font-size, $slick-icon-group-font-size);
         margin-right: var(--slick-icon-group-margin-right, $slick-icon-group-margin-right);
 
-        &.expanded:before {
-          display: inline-block;
-          content: var(--slick-icon-group-expanded, $slick-icon-group-expanded);
-          font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-          font-size: var(--slick-icon-group-font-size, $slick-icon-group-font-size);
-          width: var(--slick-icon-group-width, $slick-icon-group-width);
-          vertical-align: var(--slick-icon-group-vertical-align, $slick-icon-group-vertical-align);
+        &.expanded {
+          @include generateSvgStyle('slick-icon-group-expanded-svg', $slick-icon-group-expanded-svg-path);
         }
-
-        &.collapsed:before {
-          display: inline-block;
-          content: var(--slick-icon-group-collapsed, $slick-icon-group-collapsed);
-          font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-          font-size: var(--slick-icon-group-font-size, $slick-icon-group-font-size);
-          width: var(--slick-icon-group-width, $slick-icon-group-width);
-          vertical-align: var(--slick-icon-group-vertical-align, $slick-icon-group-vertical-align);
+        &.collapsed {
+          @include generateSvgStyle('slick-icon-group-collapsed-svg', $slick-icon-group-collapsed-svg-path);
         }
       }
     }

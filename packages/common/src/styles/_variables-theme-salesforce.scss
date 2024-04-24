@@ -76,12 +76,6 @@ $slick-menu-icon-min-width:                                   18px !default;
 $slick-menu-icon-width:                                       18px !default;
 $slick-menu-title-font-size:                                  17px !default;
 $slick-icon-group-color:                                      $slick-primary-color !default;
-$slick-icon-group-collapsed:                                  url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-icon-group-color)}" viewBox="0 0 24 24"><path d="M8.3 2l9.5 9.5c.3.3.3.7 0 1L8.3 22c-.3.2-.8.2-1.1 0l-1-1c-.2-.3-.2-.8 0-1.1l7.6-7.4c.2-.3.2-.7 0-1L6.3 4.1C6 3.8 6 3.3 6.3 3l1-1c.3-.2.7-.2 1 0z"></path></svg>') !default;
-$slick-icon-group-expanded:                                   url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-icon-group-color)}" viewBox="0 0 24 24"><path d="M22 8.2l-9.5 9.6c-.3.2-.7.2-1 0L2 8.2c-.2-.3-.2-.7 0-1l1-1c.3-.3.8-.3 1.1 0l7.4 7.5c.3.3.7.3 1 0l7.4-7.5c.3-.2.8-.2 1.1 0l1 1c.2.3.2.7 0 1z"></path></svg>') !default;
-$slick-icon-group-font-weight:                                normal !default;
-$slick-icon-group-height:                                     auto !default;
-$slick-icon-group-vertical-align:                             bottom !default;
-$slick-icon-group-width:                                      15px !default;
 $slick-filled-filter-color:                                   $slick-primary-color-dark !default;
 $slick-filled-filter-border:                                  1px solid #{$slick-primary-color} !default;
 $slick-filled-filter-box-shadow:                              inset 0 0 0 1px #{lighten($slick-primary-color, 30%)} !default;
@@ -90,11 +84,6 @@ $slick-draggable-group-drop-border-top:                       0px !default;
 $slick-draggable-group-drop-width:                            100% !default;
 $slick-draggable-group-drop-radius:                           0px !default;
 $slick-draggable-group-delete-vertical-align:                 middle !default;
-$slick-draggable-group-toggle-all-icon-height:                $slick-icon-font-size !default;
-$slick-draggable-group-toggle-all-icon-width:                 $slick-icon-font-size !default;
-$slick-draggable-group-toggle-all-icon-vertical-align:        text-bottom !default;
-$slick-draggable-group-toggle-collapsed-icon:                 $slick-icon-group-collapsed !default;
-$slick-draggable-group-toggle-expanded-icon:                  $slick-icon-group-expanded !default;
 $slick-draggable-group-title-height:                          24px !default;
 $slick-draggable-group-title-line-height:                     24px !default;
 $slick-draggable-group-title-vertical-align:                  top !default;
@@ -160,6 +149,7 @@ $slick-pagination-page-input-border-radius:                   3px !default;
 .slick-dark-mode .ms-dark-mode,
 .slick-dark-mode .icon-checkbox-container,
 .slick-dark-mode {
+  --slick-primary-color:                    #66b8ff !important;
   --ms-checkbox-color:                      #66b8ff;
   --ms-ok-button-text-color:                #66b8ff;
   --slick-button-primary-bg-color:          #0064c9;

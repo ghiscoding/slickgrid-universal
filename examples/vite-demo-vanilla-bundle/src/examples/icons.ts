@@ -1,6 +1,8 @@
 import './icons.scss';
 
 export default class Icons {
+  private _darkMode = false;
+
   attached() {
     const iconContainerElm = document.querySelector(`.icons-container`) as HTMLDivElement;
     const iconCounter = document.querySelector(`.icon-counter`) as HTMLDivElement;
@@ -30,6 +32,22 @@ export default class Icons {
 
       iconContainerElm.appendChild(iconDivElm);
     });
+  }
+
+  dispose() {
+    document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    document.body.setAttribute('data-theme', 'light');
+  }
+
+  toggleDarkMode() {
+    this._darkMode = !this._darkMode;
+    if (this._darkMode) {
+      document.body.setAttribute('data-theme', 'dark');
+      document.querySelector('.demo-container')?.classList.add('dark-mode');
+    } else {
+      document.body.setAttribute('data-theme', 'light');
+      document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    }
   }
 
   getIcons() {

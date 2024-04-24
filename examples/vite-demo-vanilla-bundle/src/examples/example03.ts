@@ -35,6 +35,7 @@ interface ReportItem {
 
 export default class Example03 {
   private _bindingEventService: BindingEventService;
+  private _darkMode = false;
   columnDefinitions: Column<ReportItem & { action: string; }>[];
   gridOptions: GridOption;
   dataset: any[];
@@ -60,7 +61,7 @@ export default class Example03 {
     this._bindingEventService.bind(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onitemdeleted', this.handleItemDeleted.bind(this));
-    this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-22px');
+    this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => this.loadingClass = 'sgi sgi-load sgi-spin-1s sgi-22px');
     this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => this.loadingClass = '');
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
@@ -68,6 +69,8 @@ export default class Example03 {
   dispose() {
     this.sgb?.dispose();
     this._bindingEventService.unbindAll();
+    document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    document.body.setAttribute('data-theme', 'light');
   }
 
   initializeGrid() {
@@ -84,7 +87,7 @@ export default class Example03 {
         filterable: true,
         grouping: {
           getter: 'title',
-          formatter: (g) => `Title: ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g) => `Title: ${g.value} <span class="text-primary">(${g.count} items)</span>`,
           aggregators: [new Aggregators.Sum('cost')],
           aggregateCollapsed: false,
           collapsed: false
@@ -104,7 +107,7 @@ export default class Example03 {
         groupTotalsFormatter: GroupTotalFormatters.sumTotals,
         grouping: {
           getter: 'duration',
-          formatter: (g) => `Duration: ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g) => `Duration: ${g.value} <span class="text-primary">(${g.count} items)</span>`,
           comparer: (a, b) => {
             return this.durationOrderByCount ? (a.count - b.count) : SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc);
           },
@@ -125,7 +128,7 @@ export default class Example03 {
         type: FieldType.number,
         grouping: {
           getter: 'cost',
-          formatter: (g) => `Cost: ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g) => `Cost: ${g.value} <span class="text-primary">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -146,7 +149,7 @@ export default class Example03 {
         groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage,
         grouping: {
           getter: 'percentComplete',
-          formatter: (g) => `% Complete:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g) => `% Complete:  ${g.value} <span class="text-primary">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -164,7 +167,7 @@ export default class Example03 {
         editor: { model: Editors.date },
         grouping: {
           getter: 'start',
-          formatter: (g) => `Start: ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g) => `Start: ${g.value} <span class="text-primary">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -181,7 +184,7 @@ export default class Example03 {
         filterable: true, filter: { model: Filters.dateRange },
         grouping: {
           getter: 'finish',
-          formatter: (g) => `Finish: ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g) => `Finish: ${g.value} <span class="text-primary">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -203,7 +206,7 @@ export default class Example03 {
         formatter: Formatters.checkmarkMaterial,
         grouping: {
           getter: 'effortDriven',
-          formatter: (g) => `Effort-Driven: ${g.value ? 'True' : 'False'} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g) => `Effort-Driven: ${g.value ? 'True' : 'False'} <span class="text-primary">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('duration'),
             new Aggregators.Sum('cost')
@@ -215,7 +218,7 @@ export default class Example03 {
         id: 'action', name: 'Action', field: 'action', width: 100, maxWidth: 100,
         excludeFromExport: true,
         formatter: () => {
-          return `<div class="fake-hyperlink">Action <span class="font-12px">&#9660;</span></div>`;
+          return `<div class="fake-hyperlink text-primary">Action <span class="font-12px">&#9660;</span></div>`;
         },
         cellMenu: {
           hideCloseButton: false,
@@ -246,7 +249,7 @@ export default class Example03 {
             { command: 'command1', title: 'Command 1', cssClass: 'orange', positionOrder: 61 },
             {
               command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'mdi mdi-close', cssClass: 'red', textCssClass: 'bold',
+              iconCssClass: 'sgi sgi-close', cssClass: 'red', textCssClass: 'bold',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext.completed;
@@ -260,15 +263,15 @@ export default class Example03 {
             {
               command: 'help',
               title: 'Help',
-              iconCssClass: 'mdi mdi-help-circle-outline',
+              iconCssClass: 'sgi sgi-help-circle-outline',
               positionOrder: 66,
             },
             { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, }
           ],
           optionTitle: 'Change Effort-Driven Flag',
           optionItems: [
-            { option: true, title: 'True', iconCssClass: 'mdi mdi-check-box-outline' },
-            { option: false, title: 'False', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
+            { option: true, title: 'True', iconCssClass: 'sgi sgi-check-box-outline' },
+            { option: false, title: 'False', iconCssClass: 'sgi sgi-checkbox-blank-outline' },
           ]
         }
       },
@@ -310,12 +313,12 @@ export default class Example03 {
         dropPlaceHolderText: 'Drop a column header here to group by the column',
         // hideGroupSortIcons: true,
         // groupIconCssClass: 'fa fa-outdent',
-        deleteIconCssClass: 'mdi mdi-close color-danger',
-        sortAscIconCssClass: 'mdi mdi-arrow-up',
-        sortDescIconCssClass: 'mdi mdi-arrow-down',
+        deleteIconCssClass: 'sgi sgi-close color-danger',
+        sortAscIconCssClass: 'sgi sgi-arrow-up',
+        sortDescIconCssClass: 'sgi sgi-arrow-down',
         onGroupChanged: (_e, args) => this.onGroupChanged(args),
         onExtensionRegistered: (extension) => this.draggableGroupingPlugin = extension,
-        // groupIconCssClass: 'mdi mdi-drag-vertical',
+        // groupIconCssClass: 'sgi sgi-drag-vertical',
       },
       enableCheckboxSelector: true,
       enableRowSelection: true,
@@ -441,6 +444,18 @@ export default class Example03 {
 
   showPreHeader() {
     this.sgb?.slickGrid?.setPreHeaderPanelVisibility(true);
+  }
+
+  toggleDarkMode() {
+    this._darkMode = !this._darkMode;
+    if (this._darkMode) {
+      document.body.setAttribute('data-theme', 'dark');
+      document.querySelector('.demo-container')?.classList.add('dark-mode');
+    } else {
+      document.body.setAttribute('data-theme', 'light');
+      document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    }
+    this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });
   }
 
   toggleDraggableGroupingRow() {

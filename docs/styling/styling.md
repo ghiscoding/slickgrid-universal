@@ -97,37 +97,12 @@ $slick-icon-sort-width:       13px;
 
 ### How to change SVG color?
 #### The following works for both CSS and SASS
-So there's a known caveat with using embedded SVG (which is what this lib does), you can only add color once with the `fill` property and for that I added SASS variables for each icon (for example `$slick-icon-sort-color` for the Sort icon color, or `$slick-icon-color` for all icons) but once you do that it will apply that same color across the document (want it or not).
-
-##### for CSS and SASS
-After lot of research, I found a way to hack it via this SO answer [change any SVGs color via CSS `filter`](https://stackoverflow.com/a/53336754/1212166), for example if we wish to apply a red color on the `mdi-close` icon (for the Draggable Grouping feat), we'll have to do this `filter`
-```css
-.slick-groupby-remove.mdi-close {
-  /* close icon - red */
-  filter: invert(32%) sepia(96%) saturate(7466%) hue-rotate(356deg) brightness(97%) contrast(120%);
-}
-```
-You might be thinking, like I did, but how to get this long `filter` calculation???
-For that you can visit the following blog post and use its **[color filter converter](https://dev.to/jsm91/css-filter-generator-to-convert-from-black-to-target-hex-color-188h)** that was posted to answer this SO [question](https://stackoverflow.com/q/42966641/1212166)
-
-##### for SASS only
-There is also a SASS Mixin to convert the color using only SASS as posted [here](https://stackoverflow.com/a/62880368/1212166) in the same SO question. That will be part of the lib soon enough and we'll be able to use it this way (much cleaner):
-```scss
-.slick-groupby-remove.mdi-close {
-  /* close icon - red */
-  @include recolor(#ff0000, 0.8);
-}
-```
-Note that even though the code looks smaller and more human readable, in reality the code produced will still be a `filter`
-
-`@include recolor(#ff0000, 0.8);` will in fact be converted to `filter: invert(32%) sepia(96%) saturate(7466%) hue-rotate(356deg) brightness(97%) contrast(120%);`
+The new version of this project is now creating SVG icons as pure CSS, this mean that you can colorize the icons the same way that you would change a text color. We also provide a few different color CSS classes which start with the prefixes `$color-` or `$text-color-` (e.g. `$color-primary`).
 
 ### SVG Colors - CSS Classes
 To help with all of this, we added a few icon colors (basically took the same colors used by Bootstrap [here](https://getbootstrap.com/docs/4.5/utilities/colors/) using CSS `filter` and we also added a `light` and `dark` shades for of each colors (except `color-light`, `color-dark` since there's no need), they both use a 6% lighter/darker shades (you can override the shade with `$color-lighten-percentage` and the same for darken). These colors can be used with the `color-X` (for example `color-primary`), also note that the primary color will follow your `$slick-primary-color` that you might have override (it could also be different in each styling theme, shown below is the Salesforce theme colors). If you find that the colors are not exactly the colors you're looking for, we've also took some colors taken from [UiKit](https://getuikit.com/) and tagged them as `color-alt-X`.
 
-**NOTE:** You can use these colors on Icon and/or Text **but** remember that we're using CSS `filter` here which is very different compare to using regular CSS `color` or `background-color`.
-
-**NOTE 2:** The `colors.scss` is **only** included in the Material and Salesforce Themes since those are the only 2 themes currently using SVGs. If you wish to use these colors then simply add the necessary css/scss file.
+**NOTE 1:** The `colors.scss` is **only** included in the Material and Salesforce Themes since those are the only 2 themes currently using SVGs. If you wish to use these colors then simply add the necessary css/scss file.
 
 ![image](https://user-images.githubusercontent.com/643976/90913834-cce92b80-e3aa-11ea-8720-3be5b171288b.png)
 

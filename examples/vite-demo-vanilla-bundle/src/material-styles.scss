@@ -59,9 +59,6 @@
     --slick-checkbox-size: 22px;
     --slick-checkbox-unchecked-opacity: 1;
     --slick-icon-group-color: var(--slick-primary-color);
-    --slick-icon-group-collapsed: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="%23009530" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"></path></svg>');
-    --slick-icon-group-expanded: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="%23009530" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"></path></svg>');
-    --slick-icon-group-width: 22px;
     --slick-pagination-icon-color: #009530;
     --slick-slider-filter-thumb-border: 2px solid rgba(0, 149, 48, .68);
     --slick-slider-filter-thumb-active-bg-color: #fff;
@@ -132,10 +129,11 @@
     .ms-drop.ms-dark-mode,
     .slick-dark-mode .ms-dark-mode,
     .slick-dark-mode .icon-checkbox-container,
+    .ms-dark-mode .icon-checkbox-container,
     .slick-dark-mode {
       --slick-base-dark-menu-bg-color: #212121;
       --slick-primary-color: #66bb6a;
-      --slick-button-primary-bg-color: var(--slick-primary-color);
+      --slick-button-primary-bg-color:#66bb6a;
       --slick-cell-box-shadow: none;
       --slick-checkbox-icon-color: #66bb6a;
       --slick-checkbox-icon-height: 22px;
@@ -156,7 +154,7 @@
       --slick-row-mouse-hover-box-shadow: none;
       --slick-row-mouse-hover-color: #505050;
       --slick-row-selected-color: #474747;
-      --ms-checkbox-color: var(--slick-primary-color);
+      --ms-checkbox-color: #66bb6a;
       --ms-checkbox-hover-color: #{lighten(#49a54e, 13%)};
       --ms-ok-button-text-color: #66bb6a;
       --ms-ok-button-text-hover-color: #{lighten(#66bb6a, 5%)};

@@ -170,14 +170,10 @@ $slick-icon-color:                                          inherit !default;
 $slick-icon-font-family:                                    "FontAwesome" !default;               // or Glyphicons Halflings */
 $slick-icon-font-size:                                      14px !default;
 $slick-icon-group-color:                                    $slick-primary-color !default;
-$slick-icon-group-expanded:                                 "\f107" !default;
-$slick-icon-group-collapsed:                                "\f105" !default;
-$slick-icon-group-font-size:                                calc(#{$slick-icon-font-size} + 4px) !default;
-$slick-icon-group-font-weight:                              bold !default;
+$slick-icon-group-collapsed-svg-path:                       "M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" !default;
+$slick-icon-group-expanded-svg-path:                        "M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" !default;
+$slick-icon-group-font-size:                                calc(#{$slick-icon-font-size} + 8px) !default;
 $slick-icon-group-margin-right:                             2px !default;
-$slick-icon-group-height:                                   20px !default;
-$slick-icon-group-vertical-align:                           middle !default;
-$slick-icon-group-width:                                    14px !default;
 
 /* Kraaden AutoComplete */
 $slick-autocomplete-bg-color:	                            #ffffff !default;
@@ -661,8 +657,8 @@ $slick-draggable-group-column-border:                       1px solid #d3d3d3 !d
 $slick-draggable-group-column-border-radius:                20px !default;
 $slick-draggable-group-column-padding:                      0 10px !default;
 $slick-draggable-group-column-margin-right:                 8px !default;
-$slick-draggable-group-drop-border-hover:                   1px dashed #ff9e9e !default;
 $slick-draggable-group-drop-border:                         1px solid #e0e0e0 !default;
+$slick-draggable-group-drop-border-hover:                   1px dashed #ff9e9e !default;
 $slick-draggable-group-drop-border-top:                     $slick-draggable-group-drop-border !default;
 $slick-draggable-group-drop-border-bottom:                  $slick-draggable-group-drop-border !default;
 $slick-draggable-group-drop-border-right:                   $slick-draggable-group-drop-border !default;
@@ -699,22 +695,19 @@ $slick-draggable-group-delete-font-size:                    16px !default;
 $slick-draggable-group-delete-vertical-align:               baseline !default;
 $slick-draggable-group-toggle-all-border:                   1px solid #c7c7c7 !default;
 $slick-draggable-group-toggle-all-border-radius:            3px !default;
-$slick-draggable-group-toggle-all-color:                    $slick-icon-group-color !default;
-$slick-draggable-group-toggle-all-display:                  none !default;
+$slick-draggable-group-toggle-all-icon-color:                    $slick-icon-group-color !default;
 $slick-draggable-group-toggle-all-margin-right:             15px !default;
 $slick-draggable-group-toggle-all-padding:                  0 8px !default;
 $slick-draggable-group-toggle-all-position:                 relative !default;
 $slick-draggable-group-toggle-all-top:                      0px !default;
 $slick-draggable-group-toggle-all-right:                    unset !default;
-$slick-draggable-group-toggle-all-icon-vertical-align:      middle !default;
 $slick-draggable-group-toggle-all-text-font-size:           15px !default;
 $slick-draggable-group-toggle-all-text-margin:              0 0 0 2px !default;
-$slick-draggable-group-toggle-all-icon-height:              inherit !default;
-$slick-draggable-group-toggle-all-icon-width:               $slick-icon-font-size !default;
-$slick-draggable-group-toggle-collapsed-icon:               "\f0fe" !default;
-$slick-draggable-group-toggle-expanded-icon:                "\f146" !default;
-$slick-draggable-group-title-height:                        $slick-icon-group-height !default;
-$slick-draggable-group-title-line-height:                   $slick-icon-group-height !default;
+$slick-draggable-group-toggle-all-icon-font-size:           24px !default;
+$slick-draggable-group-toggle-collapsed-icon-svg-path:      $slick-icon-group-collapsed-svg-path !default;
+$slick-draggable-group-toggle-expanded-icon-svg-path:       $slick-icon-group-expanded-svg-path !default;
+$slick-draggable-group-title-height:                        20px !default;
+$slick-draggable-group-title-line-height:                   20px !default;
 $slick-draggable-group-title-vertical-align:                none !default;
 $slick-draggable-group-column-icon-font-weight:             normal !default;
 $slick-draggable-group-column-icon-color:                   #707070 !default;
@@ -980,14 +973,14 @@ $slick-empty-data-warning-z-index:                          10 !default;
 .slick-dark-mode {
   // Bootstrap --bs-body-bg: #212529
   // local common CSS vars for dark mode
-  --primary-color:                                        #{lighten($primary-color, 15%)};
+  --slick-primary-color:                                  #{lighten($primary-color, 15%)};
   --slick-base-dark-text-color:                           #cccccc;
   --slick-base-dark-menu-bg-color:                        #252525;
   --slick-base-dark-menu-border:                          1px solid #505050;
   --slick-base-dark-menu-item-border:                     1px solid #5a5a5a;
   --slick-base-dark-menu-item-hover-color:                #363b40;
   --slick-base-dark-invalid-color:                        #ea868f;
-  --slick-highlight-color:                                var(--primary-color);
+  --slick-highlight-color:                                var(--slick-primary-color);
   --slick-text-color:                                     #cccccc;
 
   --slick-autocomplete-bg-color:                          var(--slick-base-dark-menu-bg-color);
@@ -1063,6 +1056,19 @@ $slick-empty-data-warning-z-index:                          10 !default;
   --slick-footer-right-text-color:                        #acacac;
   --slick-grid-header-unorderable-bg-color:               #1c1c1c;
   --slick-slider-filter-runnable-track-bgcolor:           #787878;
+  --slick-draggable-group-placeholder-color:              #999;
+  --slick-draggable-group-drop-bgcolor:                   #2c3034;
+  --slick-draggable-group-drop-border:                    #3e3e3e;
+  --slick-draggable-group-drop-border-top:                var(--slick-draggable-group-drop-border);
+  --slick-draggable-group-drop-border-bottom:             var(--slick-draggable-group-drop-border);
+  --slick-draggable-group-drop-border-right:              var(--slick-draggable-group-drop-border);
+  --slick-draggable-group-drop-border-left:               var(--slick-draggable-group-drop-border);
+  --slick-draggable-group-toggle-all-border:              1px solid #626262;
+  --slick-draggable-group-toggle-all-icon-color:          var(--slick-primary-color);
+  --slick-draggable-group-column-border:                  1px solid #626262;
+  --slick-group-totals-formatter-bgcolor:                 #1f2225;
+  --slick-group-totals-formatter-color:                   #f3f3f3;
+  --slick-icon-group-color:                               var(--slick-primary-color);
   --slick-editing-field-bg-color:                         #333333;
   --slick-editing-field-border:                           1px solid #7c7c7c;
   --slick-editor-input-disabled-color:                    #404040;
@@ -1131,4 +1137,9 @@ $slick-empty-data-warning-z-index:                          10 !default;
   --ms-ok-button-bg-hover-color:                          #373c42;
   --ms-placeholder-color:                                 #999;
   --ms-select-all-label-hover-border:                     var(--slick-base-dark-menu-item-border);
+}
+.dark-mode {
+  --slick-button-border-color:   #626262;
+  --slick-button-primary-color:  #bababa;
+  --slick-button-style-bg-color: #252525;
 }
