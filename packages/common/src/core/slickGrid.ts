@@ -571,7 +571,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    *   `sanitizerOptions` is to provide extra options when using `innerHTML` and the sanitizer.
    *   `skipEmptyReassignment`, defaults to true, when enabled it will not try to reapply an empty value when the target is already empty
    */
-  applyHtmlCode(target: HTMLElement, val: string | boolean | number | HTMLElement | DocumentFragment = '', options?: { emptyTarget?: boolean; sanitizerOptions?: unknown; skipEmptyReassignment?: boolean; }) {
+  applyHtmlCode(target: HTMLElement, val: string | boolean | number | HTMLElement | DocumentFragment = '', options?: { emptyTarget?: boolean; sanitizerOptions?: unknown; skipEmptyReassignment?: boolean; cloneNode?: boolean; }) {
     if (target) {
       if (val instanceof HTMLElement || val instanceof DocumentFragment) {
         // first empty target and then append new HTML element
@@ -579,7 +579,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         if (emptyTarget) {
           emptyElement(target);
         }
-        target.appendChild(val);
+        const node = options?.cloneNode ? val.cloneNode(true) : val;
+        target.appendChild(node);
       } else {
         // when it's already empty and we try to reassign empty, it's probably ok to skip the assignment
         const skipEmptyReassignment = options?.skipEmptyReassignment !== false;
@@ -1613,7 +1614,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         header.classList.add(this._options.unorderableColumnCssClass!);
       }
       const colNameElm = createDomElement('span', { className: 'slick-column-name' }, header);
-      this.applyHtmlCode(colNameElm, m.name as string);
+      this.applyHtmlCode(colNameElm, m.name, { cloneNode: true });
 
       Utils.width(header, m.width! - this.headerColumnWidthDiff);
 
