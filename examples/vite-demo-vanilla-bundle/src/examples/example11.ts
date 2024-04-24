@@ -270,15 +270,15 @@ export default class Example11 {
       {
         id: 'action', name: 'Action', field: 'action', minWidth: 70, width: 75, maxWidth: 75,
         excludeFromExport: true,
-        formatter: () => `<span class="button-style padding-1px action-btns"title"Delete the Row"><span class="mdi mdi-close color-danger" title="Delete Current Row"></span></span>
-        &nbsp;<span class="button-style padding-1px action-btns" title="Mark as Completed"><span class="mdi mdi-check-underline"></span></span>`,
+        formatter: () => `<span class="button-style padding-1px action-btns"title"Delete the Row"><span class="sgi sgi-close color-danger" title="Delete Current Row"></span></span>
+        &nbsp;<span class="button-style padding-1px action-btns" title="Mark as Completed"><span class="sgi sgi-check-underline"></span></span>`,
         onCellClick: (event: Event, args) => {
           const dataContext = args.dataContext;
-          if ((event.target as HTMLElement).classList.contains('mdi-close')) {
+          if ((event.target as HTMLElement).classList.contains('sgi-close')) {
             if (confirm(`Do you really want to delete row (${args.row + 1}) with "${dataContext.title}"`)) {
               this.slickerGridInstance?.gridService.deleteItemById(dataContext.id);
             }
-          } else if ((event.target as HTMLElement).classList.contains('mdi-check-underline')) {
+          } else if ((event.target as HTMLElement).classList.contains('sgi-check-underline')) {
             this.slickerGridInstance?.gridService.updateItem({ ...dataContext, completed: true });
             alert(`The "${dataContext.title}" is now Completed`);
           }
@@ -336,7 +336,7 @@ export default class Example11 {
           {
             command: 'modal',
             title: 'Mass Update',
-            iconCssClass: 'mdi mdi-table-edit',
+            iconCssClass: 'sgi sgi-table-edit',
           },
         ],
         onCommand: (e, args) => this.executeCommand(e, args)
@@ -350,7 +350,7 @@ export default class Example11 {
           {
             command: 'modal',
             title: 'Mass Update',
-            iconCssClass: 'mdi mdi-table-edit',
+            iconCssClass: 'sgi sgi-table-edit',
             positionOrder: 66,
           },
         ],
@@ -746,7 +746,7 @@ export default class Example11 {
         listPrice: 2100.23,
         itemTypeName: 'I',
         image: 'http://i.stack.imgur.com/pC1Tv.jpg',
-        icon: `mdi ${this.getRandomIcon(0)}`,
+        icon: `sgi ${this.getRandomIcon(0)}`,
       },
       {
         id: 1,
@@ -755,7 +755,7 @@ export default class Example11 {
         listPrice: 3200.12,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/Fnm7j6h.jpg',
-        icon: `mdi ${this.getRandomIcon(1)}`,
+        icon: `sgi ${this.getRandomIcon(1)}`,
       },
       {
         id: 2,
@@ -764,7 +764,7 @@ export default class Example11 {
         listPrice: 15.00,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/RaVJuLr.jpg',
-        icon: `mdi ${this.getRandomIcon(2)}`,
+        icon: `sgi ${this.getRandomIcon(2)}`,
       },
       {
         id: 3,
@@ -773,7 +773,7 @@ export default class Example11 {
         listPrice: 25.76,
         itemTypeName: 'I',
         image: 'http://i.stack.imgur.com/pC1Tv.jpg',
-        icon: `mdi ${this.getRandomIcon(3)}`,
+        icon: `sgi ${this.getRandomIcon(3)}`,
       },
       {
         id: 4,
@@ -782,7 +782,7 @@ export default class Example11 {
         listPrice: 13.35,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/Fnm7j6h.jpg',
-        icon: `mdi ${this.getRandomIcon(4)}`,
+        icon: `sgi ${this.getRandomIcon(4)}`,
       },
       {
         id: 5,
@@ -791,7 +791,7 @@ export default class Example11 {
         listPrice: 23.33,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/RaVJuLr.jpg',
-        icon: `mdi ${this.getRandomIcon(5)}`,
+        icon: `sgi ${this.getRandomIcon(5)}`,
       },
       {
         id: 6,
@@ -800,7 +800,7 @@ export default class Example11 {
         listPrice: 71.21,
         itemTypeName: 'I',
         image: 'http://i.stack.imgur.com/pC1Tv.jpg',
-        icon: `mdi ${this.getRandomIcon(6)}`,
+        icon: `sgi ${this.getRandomIcon(6)}`,
       },
       {
         id: 7,
@@ -809,7 +809,7 @@ export default class Example11 {
         listPrice: 2.43,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/Fnm7j6h.jpg',
-        icon: `mdi ${this.getRandomIcon(7)}`,
+        icon: `sgi ${this.getRandomIcon(7)}`,
       },
       {
         id: 8,
@@ -818,7 +818,7 @@ export default class Example11 {
         listPrice: 31288.39,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/RaVJuLr.jpg',
-        icon: `mdi ${this.getRandomIcon(8)}`,
+        icon: `sgi ${this.getRandomIcon(8)}`,
       },
     ];
   }
@@ -826,57 +826,57 @@ export default class Example11 {
   /** List of icons that are supported in this lib Material Design Icons */
   getRandomIcon(iconIndex?: number) {
     const icons = [
-      'mdi-arrow-collapse',
-      'mdi-arrow-expand',
-      'mdi-cancel',
-      'mdi-check',
-      'mdi-checkbox-blank-outline',
-      'mdi-check-box-outline',
-      'mdi-checkbox-marked',
-      'mdi-close',
-      'mdi-close-circle',
-      'mdi-close-circle-outline',
-      'mdi-close-thick',
-      'mdi-content-copy',
-      'mdi-database-refresh',
-      'mdi-download',
-      'mdi-file-document-outline',
-      'mdi-file-excel-outline',
-      'mdi-file-music-outline',
-      'mdi-file-pdf-outline',
-      'mdi-filter-remove-outline',
-      'mdi-flip-vertical',
-      'mdi-folder',
-      'mdi-folder-open',
-      'mdi-help-circle',
-      'mdi-help-circle-outline',
-      'mdi-history',
-      'mdi-information',
-      'mdi-information-outline',
-      'mdi-link',
-      'mdi-link-variant',
-      'mdi-menu',
-      'mdi-microsoft-excel',
-      'mdi-minus',
-      'mdi-page-first',
-      'mdi-page-last',
-      'mdi-paperclip',
-      'mdi-pin-off-outline',
-      'mdi-pin-outline',
-      'mdi-playlist-plus',
-      'mdi-playlist-remove',
-      'mdi-plus',
-      'mdi-redo',
-      'mdi-refresh',
-      'mdi-shape-square-plus',
-      'mdi-sort-ascending',
-      'mdi-sort-descending',
-      'mdi-swap-horizontal',
-      'mdi-swap-vertical',
-      'mdi-sync',
-      'mdi-table-edit',
-      'mdi-table-refresh',
-      'mdi-undo',
+      'sgi-arrow-collapse',
+      'sgi-arrow-expand',
+      'sgi-cancel',
+      'sgi-check',
+      'sgi-checkbox-blank-outline',
+      'sgi-check-box-outline',
+      'sgi-checkbox-marked',
+      'sgi-close',
+      'sgi-close-circle',
+      'sgi-close-circle-outline',
+      'sgi-close-thick',
+      'sgi-content-copy',
+      'sgi-database-refresh',
+      'sgi-download',
+      'sgi-file-document-outline',
+      'sgi-file-excel-outline',
+      'sgi-file-music-outline',
+      'sgi-file-pdf-outline',
+      'sgi-filter-remove-outline',
+      'sgi-flip-vertical',
+      'sgi-folder',
+      'sgi-folder-open',
+      'sgi-help-circle',
+      'sgi-help-circle-outline',
+      'sgi-history',
+      'sgi-information',
+      'sgi-information-outline',
+      'sgi-link',
+      'sgi-link-variant',
+      'sgi-menu',
+      'sgi-microsoft-excel',
+      'sgi-minus',
+      'sgi-page-first',
+      'sgi-page-last',
+      'sgi-paperclip',
+      'sgi-pin-off-outline',
+      'sgi-pin-outline',
+      'sgi-playlist-plus',
+      'sgi-playlist-remove',
+      'sgi-plus',
+      'sgi-redo',
+      'sgi-refresh',
+      'sgi-shape-square-plus',
+      'sgi-sort-ascending',
+      'sgi-sort-descending',
+      'sgi-swap-horizontal',
+      'sgi-swap-vertical',
+      'sgi-sync',
+      'sgi-table-edit',
+      'sgi-table-refresh',
+      'sgi-undo',
     ];
     const randomNumber = Math.floor((Math.random() * icons.length - 1));
     return icons[iconIndex ?? randomNumber];
@@ -886,11 +886,11 @@ export default class Example11 {
     return `<div class="autocomplete-container-list">
       <div class="autocomplete-left">
         <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
-        <span class="mdi ${item.icon} mdi-26px"></span>
+        <span class="sgi ${item.icon} sgi-26px"></span>
       </div>
       <div>
         <span class="autocomplete-top-left">
-          <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
+          <span class="sgi ${item.itemTypeName === 'I' ? 'sgi-information-outline' : 'sgi-content-copy'} sgi-14px"></span>
           ${item.itemName}
         </span>
       <div>
@@ -904,11 +904,11 @@ export default class Example11 {
     return `<div class="autocomplete-container-list">
           <div class="autocomplete-left">
             <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
-            <span class="mdi ${item.icon} mdi-26px"></span>
+            <span class="sgi ${item.icon} sgi-26px"></span>
           </div>
           <div>
             <span class="autocomplete-top-left">
-              <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
+              <span class="sgi ${item.itemTypeName === 'I' ? 'sgi-information-outline' : 'sgi-content-copy'} sgi-14px"></span>
               ${item.itemName}
             </span>
             <span class="autocomplete-top-right">${formatNumber(item.listPrice, 2, 2, false, '$')}</span>

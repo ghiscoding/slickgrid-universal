@@ -5,6 +5,7 @@
 :root {
   body.material-theme,
   body.material-theme .icon-checkbox-container {
+    $dark-primary-color: #66bb6a;
     $slick-primary-color: #009530;
     --slick-primary-color: #009530;
     --slick-header-menu-display: inline-block;
@@ -40,11 +41,6 @@
     --slick-header-font-size: 12px;
     --slick-filled-filter-font-weight: normal;
     --slick-icon-sort-color: var(--slick-primary-color);
-    --slick-icon-sort-asc: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="%23009530" viewBox="0 0 24 24"><path d="M13,20H11V8L5.5,13.5L4.08,12.08L12,4.16L19.92,12.08L18.5,13.5L13,8V20Z"></path></svg>');
-    --slick-icon-sort-desc: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="%23009530" viewBox="0 0 24 24"><path d="M11,4H13V16L18.5,10.5L19.92,11.92L12,19.84L4.08,11.92L5.5,10.5L11,16V4Z"></path></svg>');
-    --slick-icon-sort-font-size: 18px;
-    --slick-icon-sort-width: 18px;
-    --slick-icon-sort-position-right: 14px;
     --slick-column-picker-icon-color: #009530;
     --slick-checkbox-icon-color: var(--slick-primary-color);
     --slick-checkbox-icon-border: none;
@@ -132,7 +128,7 @@
     .ms-dark-mode .icon-checkbox-container,
     .slick-dark-mode {
       --slick-base-dark-menu-bg-color: #212121;
-      --slick-primary-color: #66bb6a;
+      --slick-primary-color: #66bb6a !important;
       --slick-button-primary-bg-color:#66bb6a;
       --slick-cell-box-shadow: none;
       --slick-checkbox-icon-color: #66bb6a;
@@ -150,6 +146,7 @@
       --slick-pane-top-border-top: 1px solid #505050;
       --slick-filled-filter-color: #66bb6a;
       --slick-highlight-color: #49a54e;
+      --slick-icon-sort-color: #66bb6a;
       --slick-pagination-icon-color: #66bb6a;
       --slick-row-mouse-hover-box-shadow: none;
       --slick-row-mouse-hover-color: #505050;

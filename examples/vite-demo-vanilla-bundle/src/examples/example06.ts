@@ -41,12 +41,12 @@ export default class Example06 {
     this.datasetHierarchical = this.mockDataset();
     const gridContainerElm = document.querySelector('.grid6') as HTMLDivElement;
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, undefined, this.datasetHierarchical);
-    document.body.classList.add('material-theme');
+    document.body.classList.add('salesforce-theme');
   }
 
   dispose() {
     this.sgb?.dispose();
-    document.body.classList.remove('material-theme');
+    document.body.classList.remove('salesforce-theme');
   }
 
   initializeGrid() {
@@ -126,13 +126,13 @@ export default class Example06 {
         sanitizeDataExport: true
       },
       gridMenu: {
-        iconCssClass: 'mdi mdi-dots-grid',
+        iconCssClass: 'sgi sgi-dots-grid',
       },
       externalResources: [new ExcelExportService(), new TextExportService()],
       enableFiltering: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
-      rowHeight: 40,
+      rowHeight: 35,
       treeDataOptions: {
         columnId: 'file',
         childrenPropName: 'files',
@@ -247,7 +247,7 @@ export default class Example06 {
     const indentSpacer = addWhiteSpaces(5 * treeLevel);
 
     if (data[idx + 1]?.[treeLevelPropName] > data[idx][treeLevelPropName] || data[idx]['__hasChildren']) {
-      const folderPrefix = `<i class="mdi mdi-22px ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;
+      const folderPrefix = `<i class="sgi sgi-22px ${dataContext.__collapsed ? 'sgi-folder' : 'sgi-folder-open'}"></i>`;
       if (dataContext.__collapsed) {
         return `<span class="hidden">${exportIndentationLeadingChar}</span>${spacer}${indentSpacer} <span class="slick-group-toggle collapsed" level="${treeLevel}"></span>${folderPrefix} ${prefix} ${value}`;
       } else {
@@ -261,15 +261,15 @@ export default class Example06 {
   getFileIcon(value: string) {
     let prefix = '';
     if (value.includes('.pdf')) {
-      prefix = '<i class="mdi mdi-20px mdi-file-pdf-outline"></i>';
+      prefix = '<i class="sgi sgi-20px sgi-file-pdf-outline"></i>';
     } else if (value.includes('.txt')) {
-      prefix = '<i class="mdi mdi-20px mdi-file-document-outline"></i>';
+      prefix = '<i class="sgi sgi-20px sgi-file-document-outline"></i>';
     } else if (value.includes('.csv') || value.includes('.xls')) {
-      prefix = '<i class="mdi mdi-20px mdi-file-excel-outline"></i>';
+      prefix = '<i class="sgi sgi-20px sgi-file-excel-outline"></i>';
     } else if (value.includes('.mp3')) {
-      prefix = '<i class="mdi mdi-20px mdi-file-music-outline"></i>';
+      prefix = '<i class="sgi sgi-20px sgi-file-music-outline"></i>';
     } else if (value.includes('.')) {
-      prefix = '<i class="mdi mdi-20px mdi-file-question-outline"></i>';
+      prefix = '<i class="sgi sgi-20px sgi-file-question-outline"></i>';
     }
     return prefix;
   }

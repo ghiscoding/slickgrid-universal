@@ -499,16 +499,17 @@ li.hidden {
   background-repeat: no-repeat;
   background-position: center center;
   cursor: pointer;
+  visibility: visible;
 }
 
 .slick-header-button-hidden {
-  width: 0;
+  visibility: hidden;
   margin-right: var(--slick-header-button-hidden-margin-right, $slick-header-button-hidden-margin-right);
-  transition: 0.2s width;
+  transition: var(--slick-header-button-hidden-transition, $slick-header-button-hidden-transition);
 }
 
 .slick-header-column:hover > .slick-header-button {
-  width: var(--slick-header-button-width, $slick-header-button-width);
+  visibility: visible;
 }
 
 // ----------------------------------------------
@@ -517,8 +518,6 @@ li.hidden {
 
 .slick-header-menu-button {
   background-color: currentColor;
-  background-position: center center;
-  background-repeat: no-repeat;
   cursor: pointer;
   position: absolute;
   border: var(--slick-header-menu-button-border, $slick-header-menu-button-border);
@@ -992,24 +991,6 @@ input.flatpickr.form-control {
       &:hover {
         color: var(--slick-draggable-group-delete-hover-color, $slick-draggable-group-delete-hover-color);
       }
-    }
-
-    .slick-groupby-remove-icon::before {
-      font-size: var(--slick-draggable-group-by-remove-icon-size, $slick-draggable-group-by-remove-icon-size);
-      content: var(--slick-draggable-group-by-remove-icon, $slick-draggable-group-by-remove-icon);
-    }
-    .slick-groupby-sort-asc-icon::before {
-      font-size: var(--slick-draggable-group-sort-asc-icon-size, $slick-draggable-group-sort-asc-icon-size);
-      content: var(--slick-draggable-group-sort-asc-icon, $slick-draggable-group-sort-asc-icon);
-    }
-    .slick-groupby-sort-desc-icon::before {
-      font-size: var(--slick-draggable-group-sort-desc-icon-size, $slick-draggable-group-sort-desc-icon-size);
-      content: var(--slick-draggable-group-sort-desc-icon, $slick-draggable-group-sort-desc-icon);
-    }
-    .slick-groupby-remove-icon::before,
-    .slick-groupby-sort-asc-icon::before,
-    .slick-groupby-sort-desc-icon::before {
-      font-family: var(--slick-icon-font-family, $slick-icon-font-family);
     }
   }
   .slick-dropzone-hover {

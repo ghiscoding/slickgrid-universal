@@ -77,7 +77,7 @@ export default class Example05 {
 
   showSpinner() {
     if (this.isLargeDataset) {
-      this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-24px color-alt-success';
+      this.loadingClass = 'sgi sgi-load sgi-spin-1s sgi-24px color-alt-success';
     }
   }
 
@@ -222,7 +222,7 @@ export default class Example05 {
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {
         // optionally display some text on the left footer container
-        leftFooterText: 'Grid created with <a href="https://github.com/ghiscoding/slickgrid-universal" target="_blank">Slickgrid-Universal</a> <i class="mdi mdi-github"></i>',
+        leftFooterText: 'Grid created with <a href="https://github.com/ghiscoding/slickgrid-universal" target="_blank">Slickgrid-Universal</a> <i class="sgi sgi-github"></i>',
       },
       // enableCheckboxSelector: true,
       // enableRowSelection: true,
@@ -252,7 +252,7 @@ export default class Example05 {
         titleFormatter: (_row, _cell, value, _def, dataContext) => {
           let titleResult = '';
           if (dataContext.treeLevel > 0) {
-            titleResult = `<span class="mdi mdi-subdirectory-arrow-right mdi-v-align-sub color-se-secondary"></span>`;
+            titleResult = `<span class="sgi sgi-subdirectory-arrow-right sgi-v-align-sub color-se-secondary"></span>`;
           }
           titleResult += `<span class="bold">${value}</span>`;
           if (dataContext.parentId) {

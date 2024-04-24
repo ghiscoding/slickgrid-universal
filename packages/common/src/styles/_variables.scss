@@ -244,13 +244,12 @@ $slick-autocomplete-tpl4-top-right-font-weight:             bold !default;
 $slick-autocomplete-tpl4-top-right-max-width:               100px !default;
 
 /* Sorting */
-$slick-icon-sort-asc:                                       "\f0d8" !default;
-$slick-icon-sort-desc:                                      "\f0d7" !default;
+$slick-icon-sort-desc-icon-svg-path:                        "M16.707 13.293a.999.999 0 0 0-1.414 0L13 15.586V8a1 1 0 1 0-2 0v7.586l-2.293-2.293a.999.999 0 1 0-1.414 1.414L12 19.414l4.707-4.707a.999.999 0 0 0 0-1.414Z";
+$slick-icon-sort-asc-icon-svg-path:                         "M13 5.586l-4.707 4.707a.999.999 0 1 0 1.414 1.414L12 9.414V17a1 1 0 1 0 2 0V9.414l2.293 2.293a.997.997 0 0 0 1.414 0a.999.999 0 0 0 0-1.414Z";
 $slick-icon-sort-color:                                     $slick-primary-color !default;
-$slick-icon-sort-font-size:                                 $slick-icon-font-size !default;
-$slick-icon-sort-width:                                     $slick-icon-font-size !default;
-$slick-icon-sort-position-right:                            10px !default;
-$slick-icon-sort-position-top:                              calc((15px * #{$slick-header-row-count}) - 15px) !default;
+$slick-icon-sort-font-size:                                 23px !default;
+$slick-icon-sort-position-right:                            3px !default;
+$slick-icon-sort-position-top:                              calc((15px * #{$slick-header-row-count}) - 9px) !default;
 $slick-sort-indicator-number-font-size:                     10px !default;
 $slick-sort-indicator-number-width:                         8px !default;
 $slick-sort-indicator-number-left:                          auto !default;
@@ -426,7 +425,7 @@ $slick-header-button-margin:                                1px 0 100px 0 !defau
 $slick-header-button-height:                                15px !default;
 $slick-header-button-width:                                 15px !default;
 $slick-header-button-hidden-margin-right:                   -5px !default;
-$slick-header-button-hidden-transition:                     0.2s width !default;
+$slick-header-button-hidden-transition:                     0.2s visibility !default;
 $slick-header-button-vertical-align:                        top !default;
 
 /* Header Menu Plugin */
@@ -673,12 +672,6 @@ $slick-draggable-group-droppable-active-bgcolor:            #fafafa !default;
 $slick-draggable-group-droppable-hover-bgcolor:             #ffffff !default;
 $slick-draggable-group-placeholder-font-style:              italic !default;
 $slick-draggable-group-placeholder-color:                   #616161 !default;
-$slick-draggable-group-by-remove-icon:                      "\f00d" !default;
-$slick-draggable-group-by-remove-icon-size:                 calc(#{$slick-icon-font-size} + 2px) !default;
-$slick-draggable-group-sort-asc-icon:                       $slick-icon-sort-asc !default;
-$slick-draggable-group-sort-asc-icon-size:                  calc(#{$slick-icon-font-size} + 2px) !default;
-$slick-draggable-group-sort-desc-icon:                      $slick-icon-sort-desc !default;
-$slick-draggable-group-sort-desc-icon-size:                 calc(#{$slick-icon-font-size} + 2px) !default;
 $slick-draggable-group-sort-icon-color:                     $slick-icon-color !default;
 $slick-draggable-group-sort-icon-hover-color:               $slick-icon-color !default;
 $slick-draggable-group-sort-icon-margin-left:               2px !default;
@@ -1024,6 +1017,7 @@ $slick-empty-data-warning-z-index:                          10 !default;
   --slick-pane-top-border-top:                            1px solid #606060;
   --slick-empty-data-warning-color:                       var(--slick-base-dark-text-color);
   --slick-grid-header-background:                         #2d2d2d;
+  --slick-icon-sort-color:                                var(--slick-primary-color);
   --slick-header-column-background-active:                #535353;
   --slick-slider-filter-input-bgcolor:                    var(--slick-base-dark-menu-bg-color);
   --slick-menu-bg-color:                                  var(--slick-base-dark-menu-bg-color);
