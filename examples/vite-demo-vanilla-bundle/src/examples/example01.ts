@@ -89,12 +89,12 @@ export default class Example01 {
           onColumnsChanged: (_e, args) => console.log('onColumnPickerColumnsChanged - visible columns count', args.visibleColumns.length),
         },
         gridMenu: {
-          subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
+          subItemChevronClass: 'sgi sgi-chevron-down sgi-rotate-270',
           commandItems: [
             { command: '', divider: true, positionOrder: 98 },
             {
               // we can also have multiple nested sub-menus
-              command: 'export', title: 'Exports', iconCssClass: 'mdi mdi-download', positionOrder: 99,
+              command: 'export', title: 'Exports', iconCssClass: 'sgi sgi-download', positionOrder: 99,
               commandItems: [
                 { command: 'exports-txt', title: 'Text (tab delimited)' },
                 {
@@ -107,16 +107,16 @@ export default class Example01 {
               ]
             },
             {
-              command: 'feedback', title: 'Feedback', iconCssClass: 'mdi mdi-information-outline', positionOrder: 100,
+              command: 'feedback', title: 'Feedback', iconCssClass: 'sgi sgi-information-outline', positionOrder: 100,
               commandItems: [
-                { command: 'request-update', title: 'Request update from supplier', iconCssClass: 'mdi mdi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
+                { command: 'request-update', title: 'Request update from supplier', iconCssClass: 'sgi sgi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
                 'divider',
                 {
-                  command: 'sub-menu', title: 'Contact Us', iconCssClass: 'mdi mdi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
+                  command: 'sub-menu', title: 'Contact Us', iconCssClass: 'sgi sgi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
                   commandItems: [
-                    { command: 'contact-email', title: 'Email us', iconCssClass: 'mdi mdi-pencil-outline' },
-                    { command: 'contact-chat', title: 'Chat with us', iconCssClass: 'mdi mdi-message-text-outline' },
-                    { command: 'contact-meeting', title: 'Book an appointment', iconCssClass: 'mdi mdi-coffee' },
+                    { command: 'contact-email', title: 'Email us', iconCssClass: 'sgi sgi-pencil-outline' },
+                    { command: 'contact-chat', title: 'Chat with us', iconCssClass: 'sgi sgi-message-text-outline' },
+                    { command: 'contact-meeting', title: 'Book an appointment', iconCssClass: 'sgi sgi-coffee' },
                   ]
                 }
               ]

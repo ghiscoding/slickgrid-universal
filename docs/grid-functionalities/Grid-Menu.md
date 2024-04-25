@@ -85,7 +85,7 @@ gridMenu: {
   // commandItems: [
   //   { command: 'help', title: 'Help', positionOrder: 70, action: (e, args) => console.log(args) },
   //   { command: '', divider: true, positionOrder: 72 },
-  //   { command: 'hello', title: 'Hello', positionOrder: 69, action: (e, args) => alert('Hello World'), cssClass: 'red', tooltip: 'Hello World', iconCssClass: 'mdi mdi-close' },
+  //   { command: 'hello', title: 'Hello', positionOrder: 69, action: (e, args) => alert('Hello World'), cssClass: 'red', tooltip: 'Hello World', iconCssClass: 'sgi sgi-close' },
   // ],
   // menuUsabilityOverride: () => false,
   onBeforeMenuShow: () => {

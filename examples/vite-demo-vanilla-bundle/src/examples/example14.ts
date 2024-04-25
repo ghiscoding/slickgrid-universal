@@ -93,7 +93,7 @@ export default class Example14 {
   isGridEditable = true;
   classDefaultResizeButton = 'button is-small';
   classNewResizeButton = 'button is-small is-selected is-primary';
-  editQueue: Array<{ item: any; columns: Column[]; editCommand: EditCommand }> = [];
+  editQueue: Array<{ item: any; columns: Column[]; editCommand: EditCommand; }> = [];
   editedItems = {};
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
@@ -326,7 +326,7 @@ export default class Example14 {
       {
         id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
         excludeFromExport: true,
-        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto action-btn"><span class="sgi sgi-chevron-down sgi-22px color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           commandTitle: 'Commands',
@@ -334,14 +334,14 @@ export default class Example14 {
             {
               command: 'help',
               title: 'Help!',
-              iconCssClass: 'mdi mdi-circle-question',
+              iconCssClass: 'sgi sgi-circle-question',
               positionOrder: 66,
               action: () => alert('Please Help!'),
             },
             'divider',
             {
               command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'mdi mdi-close color-danger', cssClass: 'red', textCssClass: 'text-italic color-danger-light',
+              iconCssClass: 'sgi sgi-close color-danger', cssClass: 'red', textCssClass: 'text-italic color-danger-light',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext?.completed;
@@ -384,14 +384,14 @@ export default class Example14 {
             {
               command: 'feedback', title: 'Feedback', positionOrder: 100,
               commandItems: [
-                { command: 'request-update', title: 'Request update from supplier', iconCssClass: 'mdi mdi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
+                { command: 'request-update', title: 'Request update from supplier', iconCssClass: 'sgi sgi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
                 'divider',
                 {
-                  command: 'sub-menu', title: 'Contact Us', iconCssClass: 'mdi mdi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
+                  command: 'sub-menu', title: 'Contact Us', iconCssClass: 'sgi sgi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
                   commandItems: [
-                    { command: 'contact-email', title: 'Email us', iconCssClass: 'mdi mdi-pencil-outline' },
-                    { command: 'contact-chat', title: 'Chat with us', iconCssClass: 'mdi mdi-message-text-outline' },
-                    { command: 'contact-meeting', title: 'Book an appointment', iconCssClass: 'mdi mdi-coffee' },
+                    { command: 'contact-email', title: 'Email us', iconCssClass: 'sgi sgi-pencil-outline' },
+                    { command: 'contact-chat', title: 'Chat with us', iconCssClass: 'sgi sgi-message-text-outline' },
+                    { command: 'contact-meeting', title: 'Book an appointment', iconCssClass: 'sgi sgi-coffee' },
                   ]
                 }
               ]
@@ -486,7 +486,7 @@ export default class Example14 {
       // when using the cellMenu, you can change some of the default options and all use some of the callback methods
       enableCellMenu: true,
       headerMenu: {
-        subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
+        subItemChevronClass: 'sgi sgi-chevron-down sgi-rotate-270',
         onCommand: (_e, args) => {
           // e.preventDefault(); // preventing default event would keep the menu open after the execution
           const command = args.item?.command;
@@ -507,7 +507,7 @@ export default class Example14 {
   }
 
   showSpinner() {
-    this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-24px color-alt-success';
+    this.loadingClass = 'sgi sgi-load sgi-spin-1s sgi-24px color-alt-success';
   }
 
   loadData(count: number) {
@@ -760,7 +760,7 @@ export default class Example14 {
         listPrice: 2100.23,
         itemTypeName: 'I',
         image: 'http://i.stack.imgur.com/pC1Tv.jpg',
-        icon: `mdi ${this.getRandomIcon(0)}`,
+        icon: `sgi ${this.getRandomIcon(0)}`,
       },
       {
         id: 1,
@@ -769,7 +769,7 @@ export default class Example14 {
         listPrice: 3200.12,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/Fnm7j6h.jpg',
-        icon: `mdi ${this.getRandomIcon(1)}`,
+        icon: `sgi ${this.getRandomIcon(1)}`,
       },
       {
         id: 2,
@@ -778,7 +778,7 @@ export default class Example14 {
         listPrice: 15.00,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/RaVJuLr.jpg',
-        icon: `mdi ${this.getRandomIcon(2)}`,
+        icon: `sgi ${this.getRandomIcon(2)}`,
       },
       {
         id: 3,
@@ -787,7 +787,7 @@ export default class Example14 {
         listPrice: 25.76,
         itemTypeName: 'I',
         image: 'http://i.stack.imgur.com/pC1Tv.jpg',
-        icon: `mdi ${this.getRandomIcon(3)}`,
+        icon: `sgi ${this.getRandomIcon(3)}`,
       },
       {
         id: 4,
@@ -796,7 +796,7 @@ export default class Example14 {
         listPrice: 13.35,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/Fnm7j6h.jpg',
-        icon: `mdi ${this.getRandomIcon(4)}`,
+        icon: `sgi ${this.getRandomIcon(4)}`,
       },
       {
         id: 5,
@@ -805,7 +805,7 @@ export default class Example14 {
         listPrice: 23.33,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/RaVJuLr.jpg',
-        icon: `mdi ${this.getRandomIcon(5)}`,
+        icon: `sgi ${this.getRandomIcon(5)}`,
       },
       {
         id: 6,
@@ -814,7 +814,7 @@ export default class Example14 {
         listPrice: 71.21,
         itemTypeName: 'I',
         image: 'http://i.stack.imgur.com/pC1Tv.jpg',
-        icon: `mdi ${this.getRandomIcon(6)}`,
+        icon: `sgi ${this.getRandomIcon(6)}`,
       },
       {
         id: 7,
@@ -823,7 +823,7 @@ export default class Example14 {
         listPrice: 2.43,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/Fnm7j6h.jpg',
-        icon: `mdi ${this.getRandomIcon(7)}`,
+        icon: `sgi ${this.getRandomIcon(7)}`,
       },
       {
         id: 8,
@@ -832,7 +832,7 @@ export default class Example14 {
         listPrice: 31288.39,
         itemTypeName: 'I',
         image: 'https://i.imgur.com/RaVJuLr.jpg',
-        icon: `mdi ${this.getRandomIcon(8)}`,
+        icon: `sgi ${this.getRandomIcon(8)}`,
       },
     ];
   }
@@ -840,57 +840,57 @@ export default class Example14 {
   /** List of icons that are supported in this lib Material Design Icons */
   getRandomIcon(iconIndex?: number) {
     const icons = [
-      'mdi-arrow-collapse',
-      'mdi-arrow-expand',
-      'mdi-cancel',
-      'mdi-check',
-      'mdi-checkbox-blank-outline',
-      'mdi-check-box-outline',
-      'mdi-checkbox-marked',
-      'mdi-close',
-      'mdi-close-circle',
-      'mdi-close-circle-outline',
-      'mdi-close-thick',
-      'mdi-content-copy',
-      'mdi-database-refresh',
-      'mdi-download',
-      'mdi-file-document-outline',
-      'mdi-file-excel-outline',
-      'mdi-file-music-outline',
-      'mdi-file-pdf-outline',
-      'mdi-filter-remove-outline',
-      'mdi-flip-vertical',
-      'mdi-folder',
-      'mdi-folder-open',
-      'mdi-help-circle',
-      'mdi-help-circle-outline',
-      'mdi-history',
-      'mdi-information',
-      'mdi-information-outline',
-      'mdi-link',
-      'mdi-link-variant',
-      'mdi-menu',
-      'mdi-microsoft-excel',
-      'mdi-minus',
-      'mdi-page-first',
-      'mdi-page-last',
-      'mdi-paperclip',
-      'mdi-pin-off-outline',
-      'mdi-pin-outline',
-      'mdi-playlist-plus',
-      'mdi-playlist-remove',
-      'mdi-plus',
-      'mdi-redo',
-      'mdi-refresh',
-      'mdi-shape-square-plus',
-      'mdi-sort-ascending',
-      'mdi-sort-descending',
-      'mdi-swap-horizontal',
-      'mdi-swap-vertical',
-      'mdi-sync',
-      'mdi-table-edit',
-      'mdi-table-refresh',
-      'mdi-undo',
+      'sgi-arrow-collapse',
+      'sgi-arrow-expand',
+      'sgi-cancel',
+      'sgi-check',
+      'sgi-checkbox-blank-outline',
+      'sgi-check-box-outline',
+      'sgi-checkbox-marked',
+      'sgi-close',
+      'sgi-close-circle',
+      'sgi-close-circle-outline',
+      'sgi-close-thick',
+      'sgi-content-copy',
+      'sgi-database-refresh',
+      'sgi-download',
+      'sgi-file-document-outline',
+      'sgi-file-excel-outline',
+      'sgi-file-music-outline',
+      'sgi-file-pdf-outline',
+      'sgi-filter-remove-outline',
+      'sgi-flip-vertical',
+      'sgi-folder',
+      'sgi-folder-open',
+      'sgi-help-circle',
+      'sgi-help-circle-outline',
+      'sgi-history',
+      'sgi-information',
+      'sgi-information-outline',
+      'sgi-link',
+      'sgi-link-variant',
+      'sgi-menu',
+      'sgi-microsoft-excel',
+      'sgi-minus',
+      'sgi-page-first',
+      'sgi-page-last',
+      'sgi-paperclip',
+      'sgi-pin-off-outline',
+      'sgi-pin-outline',
+      'sgi-playlist-plus',
+      'sgi-playlist-remove',
+      'sgi-plus',
+      'sgi-redo',
+      'sgi-refresh',
+      'sgi-shape-square-plus',
+      'sgi-sort-ascending',
+      'sgi-sort-descending',
+      'sgi-swap-horizontal',
+      'sgi-swap-vertical',
+      'sgi-sync',
+      'sgi-table-edit',
+      'sgi-table-refresh',
+      'sgi-undo',
     ];
     const randomNumber = Math.floor((Math.random() * icons.length - 1));
     return icons[iconIndex ?? randomNumber];
@@ -900,11 +900,11 @@ export default class Example14 {
     return `<div class="autocomplete-container-list">
       <div class="autocomplete-left">
         <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
-        <span class="mdi ${item.icon} mdi-26px"></span>
+        <span class="sgi ${item.icon} sgi-26px"></span>
       </div>
       <div>
         <span class="autocomplete-top-left">
-          <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
+          <span class="sgi ${item.itemTypeName === 'I' ? 'sgi-information-outline' : 'sgi-content-copy'} sgi-14px"></span>
           ${item.itemName}
         </span>
       <div>
@@ -918,11 +918,11 @@ export default class Example14 {
     return `<div class="autocomplete-container-list">
           <div class="autocomplete-left">
             <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
-            <span class="mdi ${item.icon} mdi-26px"></span>
+            <span class="sgi ${item.icon} sgi-26px"></span>
           </div>
           <div>
             <span class="autocomplete-top-left">
-              <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
+              <span class="sgi ${item.itemTypeName === 'I' ? 'sgi-information-outline' : 'sgi-content-copy'} sgi-14px"></span>
               ${item.itemName}
             </span>
             <span class="autocomplete-top-right">${formatNumber(item.listPrice, 2, 2, false, '$')}</span>

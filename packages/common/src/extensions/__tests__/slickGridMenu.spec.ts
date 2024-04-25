@@ -849,7 +849,7 @@ describe('GridMenuControl', () => {
       });
 
       it('should add a custom Grid Menu item with "iconCssClass" and expect an icon to be included on the item DOM element', () => {
-        gridOptionsMock.gridMenu!.commandItems = [{ command: 'help', title: 'Help', iconCssClass: 'mdi   mdi-close' }];
+        gridOptionsMock.gridMenu!.commandItems = [{ command: 'help', title: 'Help', iconCssClass: 'sgi   sgi-close' }];
         control.columns = columnsMock;
         control.init();
         const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
@@ -860,9 +860,9 @@ describe('GridMenuControl', () => {
 
         expect(helpTextElm.textContent).toBe('Help');
         expect(helpIconElm.classList.contains('slick-menu-icon')).toBeTrue();
-        expect(helpIconElm.classList.contains('mdi')).toBeTrue();
-        expect(helpIconElm.classList.contains('mdi-close')).toBeTrue();
-        expect(helpIconElm.className).toBe('slick-menu-icon mdi mdi-close');
+        expect(helpIconElm.classList.contains('sgi')).toBeTrue();
+        expect(helpIconElm.classList.contains('sgi-close')).toBeTrue();
+        expect(helpIconElm.className).toBe('slick-menu-icon sgi sgi-close');
       });
 
       it('should add a custom Grid Menu item with "tooltip" and expect the item title attribute to be part of the item DOM element', () => {
@@ -931,7 +931,7 @@ describe('GridMenuControl', () => {
           const disposeSubMenuSpy = jest.spyOn(control, 'disposeSubMenus');
           Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
 
-          gridOptionsMock.gridMenu!.subItemChevronClass = 'mdi mdi-chevron-right';
+          gridOptionsMock.gridMenu!.subItemChevronClass = 'sgi sgi-chevron-right';
           gridOptionsMock.gridMenu!.dropSide = 'left';
           gridOptionsMock.gridMenu!.commandItems = mockCommandItems;
           control.columns = columnsMock;
@@ -964,7 +964,7 @@ describe('GridMenuControl', () => {
           expect(commandContentElm2.textContent).toBe('Sub Commands');
           expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
           expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
-          expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
+          expect(commandChevronElm.className).toBe('sub-item-chevron sgi sgi-chevron-right');
           expect(subCommand3Elm.textContent).toContain('Command 3');
           expect(subCommand5Elm.textContent).toContain('Command 5');
           expect(gridMenu1Elm.classList.contains('dropleft'));
@@ -990,7 +990,7 @@ describe('GridMenuControl', () => {
           const disposeSubMenuSpy = jest.spyOn(control, 'disposeSubMenus');
           Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
 
-          gridOptionsMock.gridMenu!.subItemChevronClass = 'mdi mdi-chevron-right';
+          gridOptionsMock.gridMenu!.subItemChevronClass = 'sgi sgi-chevron-right';
           gridOptionsMock.gridMenu!.dropSide = 'right';
           gridOptionsMock.gridMenu!.commandItems = mockCommandItems;
           control.columns = columnsMock;
@@ -1020,7 +1020,7 @@ describe('GridMenuControl', () => {
           expect(commandContentElm2.textContent).toBe('Sub Commands');
           expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
           expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
-          expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
+          expect(commandChevronElm.className).toBe('sub-item-chevron sgi sgi-chevron-right');
           expect(subCommand3Elm.textContent).toContain('Command 3');
           expect(subCommand5Elm.textContent).toContain('Command 5');
           expect(gridMenu1Elm.classList.contains('dropright'));

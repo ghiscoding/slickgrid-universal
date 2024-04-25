@@ -219,7 +219,7 @@ Demo
 ```ts
 export const iconFormatter: Formatter = (_row, _cell, _value, columnDef) => {
   const iconElm = document.createElement('span');
-  iconElm.className = 'mdi mdi-check';
+  iconElm.className = 'sgi sgi-check';
 
   return iconElm;
 };

@@ -18,7 +18,7 @@ const commandItemsMock = [
   { divider: true, command: '', positionOrder: 63 },
   {
     command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-    iconCssClass: 'mdi mdi-close', cssClass: 'red', textCssClass: 'bold',
+    iconCssClass: 'sgi sgi-close', cssClass: 'red', textCssClass: 'bold',
   },
   'divider',
   {
@@ -39,7 +39,7 @@ const optionItemsMock = [
   { divider: true, option: '', positionOrder: 63 },
   {
     option: 'delete-row', title: 'Delete Row', positionOrder: 64,
-    iconCssClass: 'mdi mdi-checked', cssClass: 'sky', textCssClass: 'underline',
+    iconCssClass: 'sgi sgi-checked', cssClass: 'sky', textCssClass: 'underline',
   },
   'divider',
   {
@@ -351,7 +351,7 @@ describe('ContextMenu Plugin', () => {
               </li>
               <li class="slick-menu-item slick-menu-item-divider" role="menuitem"></li>
               <li class="slick-menu-item red" role="menuitem" data-command="delete-row">
-                <div class="slick-menu-icon mdi mdi-close"></div>
+                <div class="slick-menu-icon sgi sgi-close"></div>
                 <span class="slick-menu-content bold">Delete Row</span>
               </li>
               <li class="slick-menu-item slick-menu-item-divider" role="menuitem"></li>
@@ -402,7 +402,7 @@ describe('ContextMenu Plugin', () => {
         expect(commandLabelElm1.textContent).toBe('Command 1');
         expect(commandItemElm2.classList.contains('slick-menu-item-divider')).toBeTruthy();
         expect(commandItemElm2.innerHTML).toBe('');
-        expect(commandIconElm3.classList.contains('mdi-close')).toBeTruthy();
+        expect(commandIconElm3.classList.contains('sgi-close')).toBeTruthy();
         expect(commandLabelElm3.textContent).toBe('Delete Row');
       });
 
@@ -677,7 +677,7 @@ describe('ContextMenu Plugin', () => {
         plugin.dispose();
         plugin.init({ commandItems: deepCopy(commandItemsMock) });
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).action = actionMock;
-        plugin.addonOptions.subItemChevronClass = 'mdi mdi-chevron-right';
+        plugin.addonOptions.subItemChevronClass = 'sgi sgi-chevron-right';
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         let contextMenu1Elm = document.body.querySelector('.slick-context-menu.slickgrid12345.slick-menu-level-0') as HTMLDivElement;
@@ -704,7 +704,7 @@ describe('ContextMenu Plugin', () => {
         expect(commandContentElm2.textContent).toBe('Sub Commands');
         expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
         expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
-        expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
+        expect(commandChevronElm.className).toBe('sub-item-chevron sgi sgi-chevron-right');
         expect(subCommand3Elm.textContent).toContain('Command 3');
         expect(subCommand5Elm.textContent).toContain('Command 5');
 
@@ -1364,7 +1364,7 @@ describe('ContextMenu Plugin', () => {
               </li>
               <li class="slick-menu-item slick-menu-item-divider" role="menuitem"></li>
               <li class="slick-menu-item sky" role="menuitem" data-option="delete-row">
-                <div class="slick-menu-icon mdi mdi-checked"></div>
+                <div class="slick-menu-icon sgi sgi-checked"></div>
                 <span class="slick-menu-content underline">Delete Row</span>
               </li>
               <li class="slick-menu-item slick-menu-item-divider" role="menuitem"></li>
@@ -1403,7 +1403,7 @@ describe('ContextMenu Plugin', () => {
         expect(optionLabelElm1.textContent).toBe('Option 1');
         expect(optionItemElm2.classList.contains('slick-menu-item-divider')).toBeTruthy();
         expect(optionItemElm2.innerHTML).toBe('');
-        expect(optionIconElm3.classList.contains('mdi-checked')).toBeTruthy();
+        expect(optionIconElm3.classList.contains('sgi-checked')).toBeTruthy();
         expect(optionLabelElm3.textContent).toBe('Delete Row');
       });
 
@@ -1611,7 +1611,7 @@ describe('ContextMenu Plugin', () => {
         plugin.dispose();
         plugin.init({ optionItems: deepCopy(optionItemsMock) });
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).action = actionMock;
-        plugin.addonOptions.subItemChevronClass = 'mdi mdi-chevron-right';
+        plugin.addonOptions.subItemChevronClass = 'sgi sgi-chevron-right';
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenu1Elm = document.body.querySelector('.slick-context-menu.slickgrid12345.slick-menu-level-0') as HTMLDivElement;
@@ -1632,7 +1632,7 @@ describe('ContextMenu Plugin', () => {
         expect(optionContentElm2.textContent).toBe('Sub Options');
         expect(subMenuTitleElm.textContent).toBe('Sub Option Title');
         expect(subMenuTitleElm.className).toBe('slick-menu-title bold italic');
-        expect(optionChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
+        expect(optionChevronElm.className).toBe('sub-item-chevron sgi sgi-chevron-right');
         expect(subOption3Elm.textContent).toContain('Option 3');
 
         document.body.dispatchEvent(new Event('mousedown'));

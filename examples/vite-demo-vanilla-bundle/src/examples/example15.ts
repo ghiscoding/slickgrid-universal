@@ -99,7 +99,7 @@ export default class Example15 {
           // example 2 (async w/Observable):
           // when using async, the `formatter` will contain the loading spinner
           // you will need to provide an `asyncPost` function returning a Promise and also `asyncPostFormatter` formatter to display the result once the Promise resolves
-          formatter: () => `<div><span class="mdi mdi-load mdi-spin-1s"></span> loading...</div>`,
+          formatter: () => `<div><span class="sgi sgi-load sgi-spin-1s"></span> loading...</div>`,
           asyncProcess: (_row, _cell, _value, _column, dataContext) => new Observable((observer) => {
             observer.next({
               // return random door number & zip code to simulare company address
@@ -279,7 +279,7 @@ export default class Example15 {
         if (param.includes('$filter=')) {
           const filterBy = param.substring('$filter='.length).replace('%20', ' ');
           if (filterBy.includes('contains')) {
-            const filterMatch = filterBy.match(/contains\(([a-zA-Z\/]+),\s?'(.*?)'/);
+            const filterMatch = filterBy.match(/contains\(([a-zA-Z/]+),\s?'(.*?)'/);
             const fieldName = filterMatch[1].trim();
             columnFilters[fieldName] = { type: 'substring', term: filterMatch[2].trim() };
           }
@@ -324,7 +324,7 @@ export default class Example15 {
           ? 'DESC'
           : '';
 
-      let data = Data as unknown as { name: string; gender: string; company: string; id: string, category: { id: string; name: string } }[];
+      let data = Data as unknown as { name: string; gender: string; company: string; id: string, category: { id: string; name: string; }; }[];
       switch (sort) {
         case 'ASC':
           data = data.sort((a, b) => a.name.localeCompare(b.name));

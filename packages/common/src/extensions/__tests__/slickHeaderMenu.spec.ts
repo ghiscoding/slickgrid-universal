@@ -25,7 +25,7 @@ const gridOptionsMock = {
     postProcess: jest.fn(),
   },
   headerMenu: {
-    buttonCssClass: 'mdi mdi-chevron-down',
+    buttonCssClass: 'sgi sgi-chevron-down',
     hideFreezeColumnsCommand: false,
     hideColumnResizeByContentCommand: false,
     hideForceFitButton: false,
@@ -95,11 +95,11 @@ const headerMock = {
   menu: {
     commandItems: [
       {
-        cssClass: 'mdi mdi-lightbulb-outline',
+        cssClass: 'sgi sgi-lightbulb-outline',
         command: 'show-positive-numbers',
       },
       {
-        cssClass: 'mdi mdi-lightbulb-on',
+        cssClass: 'sgi sgi-lightbulb-on',
         command: 'show-negative-numbers',
         tooltip: 'Highlight negative numbers.',
       },
@@ -177,7 +177,7 @@ describe('HeaderMenu Plugin', () => {
       jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
       columnsMock[0].header!.menu!.commandItems![1] = undefined as any;
       columnsMock[0].header!.menu!.commandItems![1] = {
-        cssClass: 'mdi mdi-lightbulb-on',
+        cssClass: 'sgi sgi-lightbulb-on',
         command: 'show-negative-numbers',
         tooltip: 'Highlight negative numbers.',
       } as MenuCommandItem;
@@ -200,14 +200,14 @@ describe('HeaderMenu Plugin', () => {
 
     it('should populate a Header Menu button with extra button css classes when header menu option "buttonCssClass" and cell is being rendered', () => {
       plugin.dispose();
-      plugin.init({ buttonCssClass: 'mdi mdi-chevron-down' });
+      plugin.init({ buttonCssClass: 'sgi sgi-chevron-down' });
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => undefined as any;
 
       const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-menu-button mdi mdi-chevron-down" aria-label="Header Menu"></div>`));
+        `<div class="slick-header-menu-button sgi sgi-chevron-down" aria-label="Header Menu"></div>`));
     });
 
     it('should populate a Header Menu button with extra tooltip title attribute when header menu option "tooltip" and cell is being rendered', () => {
@@ -268,7 +268,7 @@ describe('HeaderMenu Plugin', () => {
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item mdi mdi-lightbulb-outline" role="menuitem" data-command="show-positive-numbers">
+        `<li class="slick-menu-item sgi sgi-lightbulb-outline" role="menuitem" data-command="show-positive-numbers">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -290,7 +290,7 @@ describe('HeaderMenu Plugin', () => {
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+        `<li class="slick-menu-item slick-menu-item-disabled sgi sgi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -314,7 +314,7 @@ describe('HeaderMenu Plugin', () => {
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+        `<li class="slick-menu-item slick-menu-item-disabled sgi sgi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -334,7 +334,7 @@ describe('HeaderMenu Plugin', () => {
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item slick-menu-item-hidden mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+        `<li class="slick-menu-item slick-menu-item-hidden sgi sgi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -354,7 +354,7 @@ describe('HeaderMenu Plugin', () => {
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Some Tooltip">
+        `<li class="slick-menu-item sgi sgi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Some Tooltip">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -376,13 +376,13 @@ describe('HeaderMenu Plugin', () => {
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+        `<li class="slick-menu-item sgi sgi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
       ));
 
-      gridContainerDiv.querySelector('.slick-menu-item.mdi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+      gridContainerDiv.querySelector('.slick-menu-item.sgi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       expect(actionMock).toHaveBeenCalled();
       expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('');
     });
@@ -402,13 +402,13 @@ describe('HeaderMenu Plugin', () => {
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+        `<li class="slick-menu-item sgi sgi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
       ));
 
-      gridContainerDiv.querySelector('.slick-menu-item.mdi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+      gridContainerDiv.querySelector('.slick-menu-item.sgi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       expect(onCommandMock).toHaveBeenCalled();
       expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('');
     });
@@ -431,7 +431,7 @@ describe('HeaderMenu Plugin', () => {
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+        `<li class="slick-menu-item sgi sgi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -458,7 +458,7 @@ describe('HeaderMenu Plugin', () => {
       expect(menuElm.clientWidth).toBe(275);
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+        `<li class="slick-menu-item sgi sgi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -513,7 +513,7 @@ describe('HeaderMenu Plugin', () => {
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+        `<li class="slick-menu-item sgi sgi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -688,7 +688,7 @@ describe('HeaderMenu Plugin', () => {
         Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
         jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
 
-        plugin.init({ autoAlign: true, subItemChevronClass: 'mdi mdi-chevron-right' });
+        plugin.init({ autoAlign: true, subItemChevronClass: 'sgi sgi-chevron-right' });
         plugin.addonOptions.onCommand = onCommandMock;
 
         const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
@@ -718,7 +718,7 @@ describe('HeaderMenu Plugin', () => {
         expect(commandContentElm2.textContent).toBe('Sub Commands');
         expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
         expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
-        expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
+        expect(commandChevronElm.className).toBe('sub-item-chevron sgi sgi-chevron-right');
         expect(subCommand3Elm.textContent).toContain('Command 3');
         expect(subCommand5Elm.textContent).toContain('Command 5');
         expect(headerMenu1Elm.classList.contains('dropright'));

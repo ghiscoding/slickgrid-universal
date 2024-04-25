@@ -84,8 +84,8 @@ this.columnDefinitions = [
       // collectionAsync: this.http.get(URL_COUNTRIES_COLLECTION),
       collection: [
         { value: '', label: '' },
-        { value: true, label: 'True', labelPrefix: `<i class="mdi mdi-plus"></i> ` },
-        { value: false, label: 'False', labelPrefix: `<i class="mdi mdi-minus"></i> ` }
+        { value: true, label: 'True', labelPrefix: `<i class="sgi sgi-plus"></i> ` },
+        { value: false, label: 'False', labelPrefix: `<i class="sgi sgi-minus"></i> ` }
       ],
     }
   }
@@ -223,11 +223,11 @@ export class GridBasicComponent {
               layout: 'twoRows',
               templateCallback: (item: any) => `<div class="autocomplete-container-list">
                 <div class="autocomplete-left">
-                  <span class="mdi ${item.icon} mdi-26px"></span>
+                  <span class="sgi ${item.icon} sgi-26px"></span>
                 </div>
                 <div>
                   <span class="autocomplete-top-left">
-                    <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
+                    <span class="sgi ${item.itemTypeName === 'I' ? 'sgi-information-outline' : 'sgi-content-copy'} sgi-14px"></span>
                     ${item.itemName}
                   </span>
                 <div>
@@ -290,11 +290,11 @@ export class GridBasicComponent {
               layout: 'twoRows',
               templateCallback: (item: any) => `<div class="autocomplete-container-list">
                 <div class="autocomplete-left">
-                  <span class="mdi ${item.icon} mdi-26px"></span>
+                  <span class="sgi ${item.icon} sgi-26px"></span>
                 </div>
                 <div>
                   <span class="autocomplete-top-left">
-                    <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
+                    <span class="sgi ${item.itemTypeName === 'I' ? 'sgi-information-outline' : 'sgi-content-copy'} sgi-14px"></span>
                     ${item.itemName}
                   </span>
                 <div>
@@ -311,11 +311,11 @@ export class GridBasicComponent {
                   return `<div class="autocomplete-container-list">
                     <div class="autocomplete-left">
                       <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
-                      <span class="mdi ${item.icon} mdi-26px"></span>
+                      <span class="sgi ${item.icon} sgi-26px"></span>
                     </div>
                     <div>
                       <span class="autocomplete-top-left">
-                        <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
+                        <span class="sgi ${item.itemTypeName === 'I' ? 'sgi-information-outline' : 'sgi-content-copy'} sgi-14px"></span>
                         ${item.itemName}
                       </span>
                       <span class="autocomplete-top-right">${formatNumber(item.listPrice, 2, 2, false, '$')}</span>

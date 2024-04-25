@@ -149,7 +149,7 @@ this.gridOptions = {
     titleFormatter: (_row, _cell, value, _def, dataContext) => {
       let prefix = '';
       if (dataContext.treeLevel > 0) {
-        prefix = `<span class="mdi mdi-subdirectory-arrow-right"></span>`;
+        prefix = `<span class="sgi sgi-subdirectory-arrow-right"></span>`;
       }
       return `${prefix}<span class="bold">${value}</span><span style="font-size:11px; margin-left: 15px;">(parentId: ${dataContext.parentId})</span>`;
     },
@@ -179,7 +179,7 @@ treeFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
     const spacer = `<span style="display:inline-block; width:${(15 * dataContext[treeLevelPropName])}px;"></span>`;
 
     if (data[idx + 1] && data[idx + 1][treeLevelPropName] > data[idx][treeLevelPropName]) {
-      const folderPrefix = `<i class="mdi icon ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;
+      const folderPrefix = `<i class="sgi icon ${dataContext.__collapsed ? 'sgi-folder' : 'sgi-folder-open'}"></i>`;
       if (dataContext.__collapsed) {
         return `${spacer} <span class="slick-group-toggle collapsed" level="${dataContext[treeLevelPropName]}"></span>${folderPrefix} ${prefix}&nbsp;${value}`;
       } else {

@@ -88,7 +88,7 @@ export default class Example22 {
         minWidth: 100,
         filterable: true,
         type: FieldType.number,
-        editor: { model: Editors.text, validator: (val) => (val > 100 ? { msg: 'Max 100% allowed', valid: false} : { msg: '', valid: true}) },
+        editor: { model: Editors.text, validator: (val) => (val > 100 ? { msg: 'Max 100% allowed', valid: false } : { msg: '', valid: true }) },
       },
       {
         id: 'start',
@@ -183,7 +183,7 @@ export default class Example22 {
         },
         actionButtons: {
           editButtonClassName: 'button-style padding-3px mr-2',
-          iconEditButtonClassName: 'mdi mdi-pencil',
+          iconEditButtonClassName: 'sgi sgi-pencil',
           // since no title and no titleKey is provided, it will fallback to the default text provided by the plugin
           // if the title is provided but no titleKey, it will override the default text
           // last but not least if a titleKey is provided, it will use the translation key to translate the text
@@ -192,18 +192,18 @@ export default class Example22 {
           cancelButtonClassName: 'button-style padding-3px',
           cancelButtonTitle: 'Cancel row',
           cancelButtonTitleKey: 'RBE_BTN_CANCEL',
-          iconCancelButtonClassName: 'mdi mdi-undo color-danger',
+          iconCancelButtonClassName: 'sgi sgi-undo color-danger',
           cancelButtonPrompt: 'Are you sure you want to cancel your changes?',
 
           updateButtonClassName: 'button-style padding-3px mr-2',
           updateButtonTitle: 'Update row',
           updateButtonTitleKey: 'RBE_BTN_UPDATE',
-          iconUpdateButtonClassName: 'mdi mdi-check color-success',
+          iconUpdateButtonClassName: 'sgi sgi-check color-success',
           updateButtonPrompt: 'Save changes?',
 
           deleteButtonClassName: 'button-style padding-3px',
           deleteButtonTitle: 'Delete row',
-          iconDeleteButtonClassName: 'mdi mdi-trash-can color-danger',
+          iconDeleteButtonClassName: 'sgi sgi-trash-can color-danger',
           deleteButtonPrompt: 'Are you sure you want to delete this row?',
         },
       },
