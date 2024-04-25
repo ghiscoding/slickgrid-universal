@@ -3,7 +3,7 @@ import { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
 
 // create empty warning message as Document Fragment to be CSP safe
 const emptyWarningElm = document.createElement('div');
-emptyWarningElm.appendChild(createDomElement('span', { className: 'sgi sgi-alert color-warning' }));
+emptyWarningElm.appendChild(createDomElement('span', { className: 'sgi sgi-alert text-color-warning' }));
 emptyWarningElm.appendChild(document.createTextNode(' No data to display.'));
 
 /** Global Grid Options Defaults for Salesforce */

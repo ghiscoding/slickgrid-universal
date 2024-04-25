@@ -78,7 +78,7 @@ export default class Example07 {
       {
         id: 'action', name: 'Action', field: 'action', minWidth: 60, maxWidth: 60,
         excludeFromExport: true, excludeFromHeaderMenu: true,
-        formatter: () => `<div class="button-style margin-auto action-btn"><span class="sgi sgi-chevron-down sgi-22px color-primary"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto action-btn"><span class="sgi sgi-chevron-down sgi-22px text-color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           subItemChevronClass: 'sgi sgi-chevron-down sgi-rotate-270',

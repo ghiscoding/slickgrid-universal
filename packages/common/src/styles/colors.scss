@@ -37,61 +37,6 @@ $color-sf-highlight: #0070D2 !default;
 $color-sf-primary: #006DCC !default;
 $color-sf-primary-dark: #004487 !default;
 
-// @deprecated - colors using CSS filter
-.color-primary { @include recolor($color-primary, 1); }
-.color-secondary { @include recolor($color-secondary, 1); }
-.color-success { @include recolor($color-success, 1); }
-.color-danger { @include recolor($color-danger, 1); }
-.color-warning { @include recolor($color-warning, 1); }
-.color-info { @include recolor($color-info, 1); }
-.color-light { @include recolor($color-light, 1); }
-.color-dark { @include recolor($color-dark, 1); }
-.color-body { @include recolor($color-body, 1); }
-.color-muted { @include recolor($color-muted, 1); }
-.color-white { @include recolor($color-white, 1); }
-.color-disabled { @include recolor($color-disabled, 1); }
-.color-disabled-dark { @include recolor($color-disabled-dark, 1); }
-.color-alt-default { @include recolor($color-alt-default, 1); }
-.color-alt-warning { @include recolor($color-alt-warning, 1); }
-.color-alt-danger { @include recolor($color-alt-danger, 1); }
-.color-alt-success { @include recolor($color-alt-success, 1); }
-.color-se-primary { @include recolor($color-se-primary, 1); }
-.color-se-link { @include recolor($color-se-link, 1); }
-.color-se-link-dark { @include recolor($color-se-link-dark, 1); }
-.color-se-danger { @include recolor($color-se-danger, 1); }
-.color-se-secondary { @include recolor($color-se-secondary, 1); }
-.color-se-warning { @include recolor($color-se-warning, 1); }
-.color-se-warning-light { @include recolor($color-se-warning-light, 1); }
-.color-sf-highlight { @include recolor($color-sf-highlight, 1); }
-.color-sf-primary { @include recolor($color-sf-primary, 1); }
-.color-sf-primary-dark { @include recolor($color-sf-primary-dark, 1); }
-
-.color-primary-light { @include recolor(lighten($color-primary, $color-lighten-percentage), 1); }
-.color-primary-dark { @include recolor(darken($color-primary, $color-darken-percentage), 1); }
-.color-secondary-light { @include recolor(lighten($color-secondary, $color-lighten-percentage), 1); }
-.color-secondary-dark { @include recolor(darken($color-secondary, $color-darken-percentage), 1); }
-.color-success-light { @include recolor(lighten($color-success, $color-lighten-percentage), 1); }
-.color-success-dark { @include recolor(darken($color-success, $color-darken-percentage), 1); }
-.color-danger-light { @include recolor(lighten($color-danger, $color-lighten-percentage), 1); }
-.color-danger-dark { @include recolor(darken($color-danger, $color-darken-percentage), 1); }
-.color-warning-light { @include recolor(lighten($color-warning, $color-lighten-percentage), 1); }
-.color-warning-dark { @include recolor(darken($color-warning, $color-darken-percentage), 1); }
-.color-info-light { @include recolor(lighten($color-info, $color-lighten-percentage), 1); }
-.color-info-dark { @include recolor(darken($color-info, $color-darken-percentage), 1); }
-.color-body-light { @include recolor(lighten($color-body, $color-lighten-percentage), 1); }
-.color-body-dark { @include recolor(darken($color-body, $color-darken-percentage), 1); }
-.color-muted-light { @include recolor(lighten($color-muted, $color-lighten-percentage), 1); }
-.color-muted-dark { @include recolor(darken($color-muted, $color-darken-percentage), 1); }
-.color-alt-warning-light { @include recolor(lighten($color-alt-warning, $color-lighten-percentage), 1); }
-.color-alt-warning-dark { @include recolor(darken($color-alt-warning, $color-darken-percentage), 1); }
-.color-alt-default-light { @include recolor(lighten($color-alt-default, $color-lighten-percentage), 1); }
-.color-alt-default-dark { @include recolor(darken($color-alt-default, $color-darken-percentage), 1); }
-.color-alt-danger-light { @include recolor(lighten($color-alt-danger, $color-lighten-percentage), 1); }
-.color-alt-danger-dark { @include recolor(darken($color-alt-danger, $color-darken-percentage), 1); }
-.color-alt-success-light { @include recolor(lighten($color-alt-success, $color-lighten-percentage), 1); }
-.color-alt-success-dark { @include recolor(darken($color-alt-success, $color-darken-percentage), 1); }
-.color-se-secondary-light { @include recolor(lighten($color-se-secondary, $color-lighten-percentage), 1); }
-
 // new simple
 .text-color-primary { color: $color-primary; }
 .text-color-secondary { color: $color-secondary; }

@@ -153,7 +153,7 @@ export default class Example12 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: '<span title="Task must always be followed by a number" class="color-warning-dark sgi sgi-alert-outline"></span> Title <span title="Title is always rendered as UPPERCASE" class="sgi sgi-information-outline"></span>', field: 'title', sortable: true, type: FieldType.string, minWidth: 75,
+        id: 'title', name: '<span title="Task must always be followed by a number" class="text-color-warning-dark sgi sgi-alert-outline"></span> Title <span title="Title is always rendered as UPPERCASE" class="sgi sgi-information-outline"></span>', field: 'title', sortable: true, type: FieldType.string, minWidth: 75,
         cssClass: 'text-bold text-uppercase',
         filterable: true, columnGroup: 'Common Factor',
         filter: { model: Filters.compoundInputText },
@@ -364,7 +364,7 @@ export default class Example12 {
       {
         id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
         excludeFromExport: true,
-        formatter: () => `<div class="button-style margin-auto action-btn"><span class="sgi sgi-dots-vertical sgi-22px color-alt-default-light"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto action-btn"><span class="sgi sgi-dots-vertical sgi-22px text-color-alt-default-light"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           commandTitle: 'Commands',
@@ -972,7 +972,7 @@ export default class Example12 {
         modalTitle = 'Clone - {{title}}';
         break;
       case 'edit':
-        modalTitle = 'Editing - {{title}} (<span class="color-muted">id:</span> <span class="color-primary">{{id}}</span>)'; // 'Editing - {{title}} ({{product.itemName}})'
+        modalTitle = 'Editing - {{title}} (<span class="text-color-muted">id:</span> <span class="text-color-primary">{{id}}</span>)'; // 'Editing - {{title}} ({{product.itemName}})'
         break;
       case 'mass-update':
         modalTitle = 'Mass Update All Records';

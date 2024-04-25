@@ -312,7 +312,7 @@ export default class Example03 {
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by the column',
         // hideGroupSortIcons: true,
-        deleteIconCssClass: 'sgi sgi-close color-danger',
+        deleteIconCssClass: 'sgi sgi-close text-color-danger',
         sortAscIconCssClass: 'sgi sgi-arrow-up',
         sortDescIconCssClass: 'sgi sgi-arrow-down',
         onGroupChanged: (_e, args) => this.onGroupChanged(args),

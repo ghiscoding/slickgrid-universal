@@ -98,13 +98,13 @@ export default class Example13 {
     const command = args.command;
 
     if (command === 'toggle-highlight') {
-      if (button.cssClass === 'sgi sgi-lightbulb-on color-danger') {
+      if (button.cssClass === 'sgi sgi-lightbulb-on text-color-danger') {
         if (gridNo === 1) {
           delete columns1WithHighlightingById[column.id];
         } else {
           delete columns2WithHighlightingById[column.id];
         }
-        button.cssClass = 'sgi sgi-lightbulb-outline color-warning faded';
+        button.cssClass = 'sgi sgi-lightbulb-outline text-color-warning faded';
         button.tooltip = 'Highlight negative numbers.';
       } else {
         if (gridNo === 1) {
@@ -112,7 +112,7 @@ export default class Example13 {
         } else {
           columns2WithHighlightingById[column.id] = true;
         }
-        button.cssClass = 'sgi sgi-lightbulb-on color-danger';
+        button.cssClass = 'sgi sgi-lightbulb-on text-color-danger';
         button.tooltip = 'Remove highlight.';
       }
       this[`sgb${gridNo}`].slickGrid?.invalidate();
@@ -143,7 +143,7 @@ export default class Example13 {
         header: {
           buttons: [
             {
-              cssClass: 'sgi sgi-lightbulb-outline color-warning faded',
+              cssClass: 'sgi sgi-lightbulb-outline text-color-warning faded',
               command: 'toggle-highlight',
               tooltip: 'Highlight negative numbers.',
               itemVisibilityOverride: (args) => {

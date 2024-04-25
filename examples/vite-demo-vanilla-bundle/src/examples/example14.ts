@@ -326,7 +326,7 @@ export default class Example14 {
       {
         id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
         excludeFromExport: true,
-        formatter: () => `<div class="button-style margin-auto action-btn"><span class="sgi sgi-chevron-down sgi-22px color-primary"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto action-btn"><span class="sgi sgi-chevron-down sgi-22px text-color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           commandTitle: 'Commands',
@@ -341,7 +341,7 @@ export default class Example14 {
             'divider',
             {
               command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'sgi sgi-close color-danger', cssClass: 'red', textCssClass: 'text-italic color-danger-light',
+              iconCssClass: 'sgi sgi-close text-color-danger', cssClass: 'red', textCssClass: 'text-italic text-color-danger-light',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext?.completed;
@@ -507,7 +507,7 @@ export default class Example14 {
   }
 
   showSpinner() {
-    this.loadingClass = 'sgi sgi-load sgi-spin-1s sgi-24px color-alt-success';
+    this.loadingClass = 'sgi sgi-load sgi-spin-1s sgi-24px text-color-alt-success';
   }
 
   loadData(count: number) {

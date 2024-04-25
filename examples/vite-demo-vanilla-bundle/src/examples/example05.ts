@@ -77,7 +77,7 @@ export default class Example05 {
 
   showSpinner() {
     if (this.isLargeDataset) {
-      this.loadingClass = 'sgi sgi-load sgi-spin-1s sgi-24px color-alt-success';
+      this.loadingClass = 'sgi sgi-load sgi-spin-1s sgi-24px text-color-alt-success';
     }
   }
 
@@ -252,7 +252,7 @@ export default class Example05 {
         titleFormatter: (_row, _cell, value, _def, dataContext) => {
           let titleResult = '';
           if (dataContext.treeLevel > 0) {
-            titleResult = `<span class="sgi sgi-subdirectory-arrow-right sgi-v-align-sub color-se-secondary"></span>`;
+            titleResult = `<span class="sgi sgi-subdirectory-arrow-right sgi-v-align-sub text-color-se-secondary"></span>`;
           }
           titleResult += `<span class="bold">${value}</span>`;
           if (dataContext.parentId) {

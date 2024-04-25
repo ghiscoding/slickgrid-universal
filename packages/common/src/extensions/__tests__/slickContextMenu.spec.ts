@@ -703,7 +703,7 @@ describe('ContextMenu Plugin', () => {
         expect(commandList2Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
         expect(commandContentElm2.textContent).toBe('Sub Commands');
         expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
-        expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
+        expect(subMenuTitleElm.className).toBe('slick-menu-title text-color-warning');
         expect(commandChevronElm.className).toBe('sub-item-chevron sgi sgi-chevron-right');
         expect(subCommand3Elm.textContent).toContain('Command 3');
         expect(subCommand5Elm.textContent).toContain('Command 5');
