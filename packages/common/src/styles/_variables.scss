@@ -265,15 +265,13 @@ $slick-group-totals-formatter-font-size:                    14px !default;
 $slick-group-totals-text-background:                        white !default;
 $slick-group-totals-text-color:                             gray !default;
 
-/** Detail View Plugin */
-$slick-detail-view-icon-collapse:                           "\f056" !default;
-$slick-detail-view-icon-collapse-color:                     $slick-primary-color !default;
-$slick-detail-view-icon-collapse-color-hover:               darken($slick-detail-view-icon-collapse-color, 10%) !default;
-$slick-detail-view-icon-expand:                             "\f055" !default;
-$slick-detail-view-icon-expand-color:                       lighten($slick-primary-color, 25%) !default;
-$slick-detail-view-icon-expand-color-hover:                 darken($slick-detail-view-icon-expand-color, 10%) !default;
-$slick-detail-view-icon-size:                               calc(#{$slick-icon-font-size} + 2px) !default;
-$slick-detail-view-icon-width:                              18px !default;
+/** Row Detail View Plugin */
+$slick-detail-view-icon-color:                              $slick-primary-color !default;
+$slick-detail-view-icon-color-hover:                        darken($slick-detail-view-icon-color, 10%) !default;
+$slick-detail-view-icon-opacity-hover:                      1 !default;
+$slick-detail-view-icon-collapse-svg-path:                  "M17,13H7V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z";
+$slick-detail-view-icon-expand-svg-path:                    "M17,13H13V17H11V13H7V11H11V7H13V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z";
+$slick-detail-view-icon-font-size:                          18px !default;
 $slick-detail-view-container-bgcolor:                       #f7f7f7 !default;
 $slick-detail-view-container-border:                        1px solid #c0c0c0 !default;
 $slick-detail-view-container-left:                          0 !default;
@@ -1006,6 +1004,11 @@ $slick-empty-data-warning-z-index:                          10 !default;
   --slick-checkbox-icon-bg-color:                         transparent;
   --slick-checkbox-unchecked-color:                       #{lighten($primary-color, 10%)};
   --slick-checkbox-unchecked-opacity:                     0.4;
+  --slick-detail-view-icon-color:                         var(--slick-primary-color);
+  --slick-detail-view-icon-color-hover:                   var(--slick-primary-color);
+  --slick-detail-view-icon-opacity-hover:                 0.75;
+  --slick-detail-view-container-border:                   1px solid #525252;
+  --slick-detail-view-container-bgcolor:                  #3c4349;
   --slick-btn-default-border-color:                       #565656;
   --slick-grid-menu-icon-btn-color:                       #bbbbbb;
   --slick-row-mouse-hover-color:                          #2c3034;

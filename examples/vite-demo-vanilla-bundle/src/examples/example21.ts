@@ -24,12 +24,15 @@ interface ItemDetail extends Item {
 
 export default class Example21 {
   private _bindingEventService: BindingEventService;
+  private _darkMode = false;
   private _eventHandler: SlickEventHandler;
+  isGridEditable = false;
   detailViewRowCount = 7;
   gridOptions!: GridOption;
   columnDefinitions!: Column<Item>[];
   dataset!: Item[];
   sgb!: SlickVanillaGridBundle;
+  serverApiDelay = 400;
   status = '';
   statusClass = '';
   gridContainerElm: HTMLDivElement;
@@ -61,9 +64,12 @@ export default class Example21 {
   }
 
   dispose() {
+    console.log('dispose');
     this._eventHandler.unsubscribeAll();
     this._bindingEventService.unbindAll();
     this.sgb?.dispose();
+    document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    document.body.setAttribute('data-theme', 'light');
   }
 
   /* Define grid Options and Columns */
@@ -120,6 +126,25 @@ export default class Example21 {
     return true;
   }
 
+  toggleGridEditReadonly() {
+    // then change a single grid options to make the grid non-editable (readonly)
+    this.isGridEditable = !this.isGridEditable;
+    if (this.isGridEditable) {
+      this.rowDetail.collapseAll();
+      this.rowDetail.addonOptions.useRowClick = false;
+      this.gridOptions.autoCommitEdit = !this.gridOptions.autoCommitEdit;
+      this.sgb.slickGrid?.setOptions({
+        editable: true,
+        autoEdit: true,
+        enableCellNavigation: true,
+      });
+    } else {
+      this.rowDetail.addonOptions.useRowClick = true;
+      this.sgb.gridOptions = { ...this.sgb.gridOptions, editable: this.isGridEditable };
+      this.gridOptions = this.sgb.gridOptions;
+    }
+  }
+
   closeAllRowDetail() {
     this.rowDetail.collapseAll();
   }
@@ -151,8 +176,8 @@ export default class Example21 {
 
     this._eventHandler.subscribe(this.rowDetail.onAsyncEndUpdate, (_e, args) => {
       console.log('finished updating the post async template', args);
-      this.handleDeleteRowOnClick(args.item.id);
-      this.handleAssigneeOnClick(args.item.id);
+      this.addDeleteRowOnClickListener(args.item.id);
+      this.addAssigneeOnClickListener(args.item.id);
     });
 
     // the following subscribers can be useful to Save/Re-Render a View
@@ -162,21 +187,21 @@ export default class Example21 {
     });
 
     this._eventHandler.subscribe(this.rowDetail.onRowBackToViewportRange, (_e, args) => {
-      this.handleDeleteRowOnClick(args.item.id);
-      this.handleAssigneeOnClick(args.item.id);
+      this.addDeleteRowOnClickListener(args.item.id);
+      this.addAssigneeOnClickListener(args.item.id);
     });
   }
 
   /** Loading template, can be an HTML string or an HTML Element */
   loadingTemplate() {
     const headerElm = createDomElement('h5', { className: 'title is-5' });
-    headerElm.appendChild(createDomElement('i', { className: 'mdi mdi-load mdi-spin-1s mdi-v-align-middle mdi-40px' }));
+    headerElm.appendChild(createDomElement('i', { className: 'sgi sgi-load sgi-spin-1s sgi-40px' }));
     headerElm.appendChild(document.createTextNode('Loading...'));
 
     return headerElm;
   }
 
-  /** Row Detail View, can be an HTML string or an HTML Element */
+  /** Row Detail View, can be an HTML string or an HTML Element (we'll use HTML string for simplicity of the demo) */
   loadView(itemDetail: ItemDetail) {
     return `
       <div>
@@ -227,7 +252,7 @@ export default class Example21 {
 
         // resolve the data after delay specified
         resolve(itemDetail);
-      }, 1000);
+      }, this.serverApiDelay);
     });
   }
 
@@ -240,14 +265,14 @@ export default class Example21 {
     }, undefined, this);
   }
 
-  handleDeleteRowOnClick(itemId: string) {
+  addDeleteRowOnClickListener(itemId: string) {
     const deleteBtnElm = document.querySelector('#delete_row_' + itemId);
     if (deleteBtnElm) {
       this._bindingEventService.bind(deleteBtnElm, 'click', this.handleDeleteRow.bind(this, itemId), undefined, `event-detail-${itemId}`);
     }
   }
 
-  handleAssigneeOnClick(itemId: string) {
+  addAssigneeOnClickListener(itemId: string) {
     const assigneeBtnElm = document.querySelector('#who-is-assignee_' + itemId);
     if (assigneeBtnElm) {
       this._bindingEventService.bind(assigneeBtnElm, 'click', this.handleAssigneeClicked.bind(this, itemId), undefined, `event-detail-${itemId}`);
@@ -308,5 +333,19 @@ export default class Example21 {
 
   randomNumber(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
+  toggleDarkMode() {
+    this._darkMode = !this._darkMode;
+    if (this._darkMode) {
+      document.body.setAttribute('data-theme', 'dark');
+      document.querySelector('.demo-container')?.classList.add('dark-mode');
+    } else {
+      document.body.setAttribute('data-theme', 'light');
+      document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    }
+    // we must close all row details because the grid is invalidated and the events listeners will stop working because they are detached after re-rendering
+    this.closeAllRowDetail();
+    this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });
   }
 }

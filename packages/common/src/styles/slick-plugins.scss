@@ -1263,36 +1263,24 @@ input.flatpickr.form-control {
     display: inline-block;
 
     &.expand {
-      display: inline-block;
-      color: var(--slick-detail-view-icon-expand-color, $slick-detail-view-icon-expand-color);
-
-      &:hover {
-        color: var(--slick-detail-view-icon-expand-color-hover, $slick-detail-view-icon-expand-color-hover);
-      }
-      &:before {
-        content: var(--slick-detail-view-icon-expand, $slick-detail-view-icon-expand);
-      }
+      @include generateSvgStyle('slick-detail-view-icon-expand-svg', $slick-detail-view-icon-expand-svg-path);
     }
     &.collapse {
-      display: inline-block;
-      color: var(--slick-detail-view-icon-collapse-color, $slick-detail-view-icon-collapse-color);
-      &:hover {
-        color: var(--slick-detail-view-icon-collapse-color-hover, $slick-detail-view-icon-collapse-color-hover);
-      }
-      &:before {
-        content: var(--slick-detail-view-icon-collapse, $slick-detail-view-icon-collapse);
-      }
+      @include generateSvgStyle('slick-detail-view-icon-collapse-svg', $slick-detail-view-icon-collapse-svg-path);
     }
     &.expand,
     &.collapse {
       cursor: pointer;
-    }
-    &.expand:before,
-    &.collapse:before {
+      background-color: currentColor;
       display: inline-block;
-      font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-      font-size: var(--slick-detail-view-icon-size, $slick-detail-view-icon-size);
-      width: var(--slick-detail-view-icon-width, $slick-detail-view-icon-width);
+      height: 1em;
+      width: 1em;
+      color: var(--slick-detail-view-icon-color, $slick-detail-view-icon-color);
+      font-size: var(--slick-detail-view-icon-font-size, $slick-detail-view-icon-font-size);
+      &:hover {
+        color: var(--slick-detail-view-icon-color-hover, $slick-detail-view-icon-color-hover);
+        opacity: var(--slick-detail-view-icon-opacity-hover, $slick-detail-view-icon-opacity-hover);
+      }
     }
   }
 
