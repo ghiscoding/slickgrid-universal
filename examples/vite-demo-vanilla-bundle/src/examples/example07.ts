@@ -403,7 +403,7 @@ export default class Example07 {
         <section class="modal-card-body">
           <div class="slickgrid-container grid-pane">
             <div id="modal-allFilter-content">
-              <div id="modal-allFilter-table" class="slick-headerrow ui-state-default">
+              <div id="modal-allFilter-table" class="slick-headerrow slick-state-default">
               </div>
             </div>
           </div>
@@ -439,7 +439,7 @@ export default class Example07 {
         document.querySelector('#modal-allFilter-table')!.innerHTML = innerHtml +
           `<div class="row slick-headerrow-columns">
               <div class="column">${columnFilter.name}</div>
-              <div id="${filterElm}" class="column ui-state-default slick-headerrow-column"></div>
+              <div id="${filterElm}" class="column slick-state-default slick-headerrow-column"></div>
             </div>`;
         grid?.filterService.drawFilterTemplate(columnFilter, `#${filterElm}`);
       }

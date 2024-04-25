@@ -76,7 +76,7 @@ const template =
     <div id="slickGridContainer-${gridId}" class="grid-pane" style="width: 100%;">
       <div id="${gridId}" class="${gridUid}" style="width: 100%">
       <div class="slick-pane slick-pane-header slick-pane-left" tabindex="0" style="width: 100%;">
-        <div class="slick-preheader-panel ui-state-default slick-header" style="overflow:hidden;position:relative;">
+        <div class="slick-preheader-panel slick-state-default slick-header" style="overflow:hidden;position:relative;">
           <div style="width: 2815px; left: -1000px;" class="slick-header-columns">All your colums div here</div>
         </div>
       </div>
