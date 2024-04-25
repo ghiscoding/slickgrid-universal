@@ -173,7 +173,7 @@ export class DateEditor implements Editor {
       // merge options with optional user's custom options
       this._pickerMergedOptions = extend(true, {}, pickerOptions, { settings: this.editorOptions, type: 'default' });
 
-      const inputCssClasses = `.editor-text.date-picker.editor-${columnId}.form-control`;
+      const inputCssClasses = `.editor-text.date-picker.editor-${columnId}.form-control.input-group-editor`;
       this._editorInputGroupElm = createDomElement('div', { className: 'vanilla-picker input-group' });
       const closeButtonGroupElm = createDomElement('span', { className: 'input-group-btn input-group-append', dataset: { clear: '' } });
       this._clearButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default icon-clear' });

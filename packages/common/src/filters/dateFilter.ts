@@ -4,7 +4,6 @@ import { VanillaCalendar, type IOptions } from 'vanilla-calendar-picker';
 import * as moment_ from 'moment-mini';
 const moment = (moment_ as any)['default'] || moment_;
 
-
 import {
   FieldType,
   OperatorType,
@@ -286,7 +285,7 @@ export class DateFilter implements Filter {
         },
         changeToInput: (_e, self) => {
           if (self.HTMLInputElement) {
-            let outDates: string[] = [];
+            let outDates: Array<moment_.Moment | string> = [];
             let firstDate = '';
             let lastDate = ''; // when using date range
 
@@ -300,7 +299,7 @@ export class DateFilter implements Filter {
               outDates = [firstDate, lastDate];
             } else if (self.selectedDates[0]) {
               firstDate = self.selectedDates[0];
-              self.HTMLInputElement.value = formatDateByFieldType(firstDate, undefined, outputFieldType);
+              self.HTMLInputElement.value = formatDateByFieldType(firstDate, FieldType.dateIso, outputFieldType);
               outDates = self.selectedDates;
             } else {
               self.HTMLInputElement.value = '';
@@ -311,8 +310,7 @@ export class DateFilter implements Filter {
               momentDate.hours(self.selectedHours);
               momentDate.minute(self.selectedMinutes);
               self.HTMLInputElement.value = formatDateByFieldType(momentDate, undefined, outputFieldType);
-
-              outDates = [self.HTMLInputElement.value];
+              outDates = [momentDate];
             }
 
             if (this.inputFilterType === 'compound') {
@@ -323,7 +321,7 @@ export class DateFilter implements Filter {
                 this._currentValue = this._currentDateStrings.join('..');
               }
             }
-            this._currentDateOrDates = outDates.map(dateStr => new Date(dateStr));
+            this._currentDateOrDates = outDates.map(dateStr => dateStr instanceof moment ? (dateStr as moment_.Moment).toDate() : new Date(dateStr as string));
 
             // when using the time picker, we can simulate a keyup event to avoid multiple backend request
             // since backend request are only executed after user start typing, changing the time should be treated the same way
