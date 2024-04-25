@@ -96,7 +96,7 @@ const commandItemsMock = [
       { command: 'command3', title: 'Command 3', positionOrder: 70, },
       { command: 'command4', title: 'Command 4', positionOrder: 71, },
       {
-        command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'color-warning', commandItems: [
+        command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'text-color-warning', commandItems: [
           { command: 'command5', title: 'Command 5', positionOrder: 72, },
         ]
       }

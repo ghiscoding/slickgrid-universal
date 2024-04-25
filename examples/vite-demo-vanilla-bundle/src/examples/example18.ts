@@ -34,7 +34,7 @@ const priceFormatter: Formatter = (_cell, _row, value, _col, dataContext) => {
 };
 
 const transactionTypeFormatter: Formatter = (_row, _cell, value: string) =>
-  `<span class="sgi sgi-16px sgi-v-align-sub sgi-${value === 'Buy' ? 'plus' : 'minus'}-circle ${value === 'Buy' ? 'color-info' : 'color-warning'}"></span> ${value}`;
+  `<span class="sgi sgi-16px sgi-v-align-sub sgi-${value === 'Buy' ? 'plus' : 'minus'}-circle ${value === 'Buy' ? 'text-color-info' : 'text-color-warning'}"></span> ${value}`;
 
 const historicSparklineFormatter: Formatter = (_row, _cell, _value: string, _col, dataContext) => {
   const svgElem = document.createElementNS('http://www.w3.org/2000/svg', 'svg');

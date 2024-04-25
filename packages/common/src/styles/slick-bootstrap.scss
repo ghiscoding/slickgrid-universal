@@ -141,10 +141,10 @@
         background-color: var(--slick-row-based-edit-unsaved-cell-bgcolor, $slick-row-based-edit-unsaved-cell-bgcolor) !important;
       }
 
-      a, a:visited, .ui-widget-content a, .ui-widget-content a:visited {
+      a, a:visited, .slick-widget-content a, .slick-widget-content a:visited {
         color: var(--slick-link-color, $slick-link-color);
       }
-      a:hover, .ui-widget-content a:hover {
+      a:hover, .slick-widget-content a:hover {
         color: var(--slick-link-color-hover, $slick-link-color-hover);
         border-bottom: none;
       }
@@ -255,7 +255,7 @@
       border-bottom: var(--slick-header-column-border-bottom, $slick-header-column-border-bottom);
       border-left: var(--slick-header-column-border-left, $slick-header-column-border-left);
       white-space: normal;
-      &.ui-state-default {
+      &.slick-state-default {
         @include resetSlickCell();
       }
       .slick-column-name {
@@ -278,7 +278,7 @@
       }
 
       @include ResetColumns ();
-      &.ui-state-default {
+      &.slick-state-default {
         @include ResetColumns ();
       }
 
@@ -357,7 +357,7 @@
   }
 
   /** Header Grouping **/
-  .slick-preheader-panel.ui-state-default  {
+  .slick-preheader-panel.slick-state-default  {
     border-bottom: var(--slick-preheader-border-bottom, $slick-preheader-border-bottom);
 
     .slick-header-columns {
@@ -409,7 +409,7 @@
 
     > :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
       margin-left: 0;
-      &.ui-slider-horizontal {
+      &.slick-slider-horizontal {
         margin-left: 10px;
       }
     }

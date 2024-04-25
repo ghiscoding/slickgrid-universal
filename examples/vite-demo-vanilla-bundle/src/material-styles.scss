@@ -7,6 +7,7 @@
   body.material-theme .icon-checkbox-container {
     $dark-primary-color: #66bb6a;
     $slick-primary-color: #009530;
+    --text-color-primary: #009530;
     --slick-primary-color: #009530;
     --slick-header-menu-display: inline-block;
     --slick-compound-filter-operator-select-border: 1px solid #00c840;
@@ -42,6 +43,7 @@
     --slick-filled-filter-font-weight: normal;
     --slick-icon-sort-color: var(--slick-primary-color);
     --slick-column-picker-icon-color: #009530;
+    --slick-compound-filter-text-color: #009530;
     --slick-checkbox-icon-color: var(--slick-primary-color);
     --slick-checkbox-icon-border: none;
     --slick-checkbox-icon-width: 22px;

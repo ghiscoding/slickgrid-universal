@@ -644,7 +644,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._container.style.overflow = 'hidden';
     this._container.style.outline = String(0);
     this._container.classList.add(this.uid);
-    this._container.classList.add('ui-widget');
+    this._container.classList.add('slick-widget');
     this._container.setAttribute('role', 'grid');
 
     const containerStyles = window.getComputedStyle(this._container);
@@ -1521,11 +1521,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected handleHeaderMouseHoverOn(e: Event | SlickEventData) {
-    (e as any)?.target.classList.add('ui-state-hover', 'slick-state-hover');
+    (e as any)?.target.classList.add('slick-state-hover');
   }
 
   protected handleHeaderMouseHoverOff(e: Event | SlickEventData) {
-    (e as any)?.target.classList.remove('ui-state-hover', 'slick-state-hover');
+    (e as any)?.target.classList.remove('slick-state-hover');
   }
 
   protected createColumnHeaders() {
@@ -1607,7 +1607,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const headerTarget = this.hasFrozenColumns() ? ((i <= this._options.frozenColumn!) ? this._headerL : this._headerR) : this._headerL;
       const headerRowTarget = this.hasFrozenColumns() ? ((i <= this._options.frozenColumn!) ? this._headerRowL : this._headerRowR) : this._headerRowL;
 
-      const header = createDomElement('div', { id: `${this.uid + m.id}`, dataset: { id: String(m.id) }, role: 'columnheader', className: 'ui-state-default slick-state-default slick-header-column' }, headerTarget);
+      const header = createDomElement('div', { id: `${this.uid + m.id}`, dataset: { id: String(m.id) }, role: 'columnheader', className: 'slick-state-default slick-header-column' }, headerTarget);
       if (m.toolTip) {
         header.title = m.toolTip;
       }
@@ -2329,7 +2329,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.headerColumnWidthDiff = this.headerColumnHeightDiff = 0;
     this.cellWidthDiff = this.cellHeightDiff = 0;
 
-    let el = createDomElement('div', { className: 'ui-state-default slick-state-default slick-header-column', style: { visibility: 'hidden' }, textContent: '-' }, header);
+    let el = createDomElement('div', { className: 'slick-state-default slick-header-column', style: { visibility: 'hidden' }, textContent: '-' }, header);
     let style = getComputedStyle(el);
     if (style.boxSizing !== 'border-box') {
       h.forEach((val) => this.headerColumnWidthDiff += Utils.toFloat(style[val as any]));

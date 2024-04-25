@@ -504,7 +504,7 @@ export default class Example16 {
       iconCount = 5;
     }
     for (let i = 0; i < iconCount; i++) {
-      const iconColor = iconCount === 5 ? 'color-success' : iconCount >= 3 ? 'color-alt-warning' : 'color-se-secondary-light';
+      const iconColor = iconCount === 5 ? 'text-color-success' : iconCount >= 3 ? 'text-color-alt-warning' : 'text-color-se-secondary-light';
       output += `<span class="sgi sgi-check-circle-outline ${iconColor}"></span>`;
     }
     return output;

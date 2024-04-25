@@ -6,88 +6,88 @@
 
 // NOTE: remember that we are using CSS "filter" and that is NOT the same as a using regular color/background-color, it behaves differently
 
-$color-lighten-percentage: 6% !default;
-$color-darken-percentage: 6% !default;
+$text-color-lighten-percentage: 6% !default;
+$text-color-darken-percentage: 6% !default;
 
-$color-primary: $slick-primary-color !default;
-$color-secondary: #6c757d !default;
-$color-success: #28a745 !default;
-$color-danger: #dc3545 !default;
-$color-warning: #ffc107 !default;
-$color-info: #17a2b8 !default;
-$color-light: #f8f9fa !default;
-$color-dark: #343a40 !default;
-$color-body: #212529 !default;
-$color-muted: #6c757d !default;
-$color-white: #ffffff !default;
-$color-disabled: #DDDBDA !default;
-$color-disabled-dark: #cccccc !default;
-$color-alt-default: #1e87f0 !default;
-$color-alt-warning: #faa05a !default;
-$color-alt-danger: #f0506e !default;
-$color-alt-success: #32d296 !default;
-$color-se-primary: #3dcd58 !default;
-$color-se-link: #42b4e6 !default;
-$color-se-link-dark: #337ab7 !default;
-$color-se-danger: #b10043 !default;
-$color-se-secondary: #9fa0a4 !default;
-$color-se-warning: #e47f00 !default;
-$color-se-warning-light: #ffd100 !default;
-$color-sf-highlight: #0070D2 !default;
-$color-sf-primary: #006DCC !default;
-$color-sf-primary-dark: #004487 !default;
+$text-color-primary: $slick-primary-color !default;
+$text-color-secondary: #6c757d !default;
+$text-color-success: #28a745 !default;
+$text-color-danger: #dc3545 !default;
+$text-color-warning: #ffc107 !default;
+$text-color-info: #17a2b8 !default;
+$text-color-light: #f8f9fa !default;
+$text-color-dark: #343a40 !default;
+$text-color-body: #212529 !default;
+$text-color-muted: #6c757d !default;
+$text-color-white: #ffffff !default;
+$text-color-disabled: #DDDBDA !default;
+$text-color-disabled-dark: #cccccc !default;
+$text-color-alt-default: #1e87f0 !default;
+$text-color-alt-warning: #faa05a !default;
+$text-color-alt-danger: #f0506e !default;
+$text-color-alt-success: #32d296 !default;
+$text-color-se-primary: #3dcd58 !default;
+$text-color-se-link: #42b4e6 !default;
+$text-color-se-link-dark: #337ab7 !default;
+$text-color-se-danger: #b10043 !default;
+$text-color-se-secondary: #9fa0a4 !default;
+$text-color-se-warning: #e47f00 !default;
+$text-color-se-warning-light: #ffd100 !default;
+$text-color-sf-highlight: #0070D2 !default;
+$text-color-sf-primary: #006DCC !default;
+$text-color-sf-primary-dark: #004487 !default;
 
 // new simple
-.text-color-primary { color: $color-primary; }
-.text-color-secondary { color: $color-secondary; }
-.text-color-success { color: $color-success; }
-.text-color-danger { color: $color-danger; }
-.text-color-warning { color: $color-warning; }
-.text-color-info { color: $color-info; }
-.text-color-light { color: $color-light; }
-.text-color-dark { color: $color-dark; }
-.text-color-body { color: $color-body; }
-.text-color-muted { color: $color-muted; }
-.text-color-white { color: $color-white; }
-.text-color-disabled { color: $color-disabled; }
-.text-color-disabled-dark { color: $color-disabled-dark; }
-.text-color-alt-default { color: $color-alt-default; }
-.text-color-alt-warning { color: $color-alt-warning; }
-.text-color-alt-danger { color: $color-alt-danger; }
-.text-color-alt-success { color: $color-alt-success; }
-.text-color-se-primary { color: $color-se-primary; }
-.text-color-se-link { color: $color-se-link; }
-.text-color-se-link-dark { color: $color-se-link-dark; }
-.text-color-se-danger { color: $color-se-danger; }
-.text-color-se-secondary { color: $color-se-secondary; }
-.text-color-se-warning { color: $color-se-warning; }
-.text-color-se-warning-light { color: $color-se-warning-light; }
-.text-color-sf-highlight { color: $color-sf-highlight; }
-.text-color-sf-primary { color: $color-sf-primary; }
-.text-color-sf-primary-dark { color: $color-sf-primary-dark; }
+.text-color-primary { color: var(--text-color-primary, $text-color-primary); }
+.text-color-secondary { color: var(--text-color-secondary, $text-color-secondary); }
+.text-color-success { color: var(--text-color-success, $text-color-success); }
+.text-color-danger { color: var(--text-color-danger, $text-color-danger); }
+.text-color-warning { color: var(--text-color-warning, $text-color-warning); }
+.text-color-info { color: var(--text-color-info, $text-color-info); }
+.text-color-light { color: var(--text-color-light, $text-color-light); }
+.text-color-dark { color: var(--text-color-dark, $text-color-dark); }
+.text-color-body { color: var(--text-color-body, $text-color-body); }
+.text-color-muted { color: var(--text-color-muted, $text-color-muted); }
+.text-color-white { color: var(--text-color-white, $text-color-white); }
+.text-color-disabled { color: var(--text-color-disabled, $text-color-disabled); }
+.text-color-disabled-dark { color: var(--text-color-disabled-dark, $text-color-disabled-dark); }
+.text-color-alt-default { color: var(--text-color-alt-default, $text-color-alt-default); }
+.text-color-alt-warning { color: var(--text-color-alt-warning, $text-color-alt-warning); }
+.text-color-alt-danger { color: var(--text-color-alt-danger, $text-color-alt-danger); }
+.text-color-alt-success { color: var(--text-color-alt-success, $text-color-alt-success); }
+.text-color-se-primary { color: var(--text-color-se-primary, $text-color-se-primary); }
+.text-color-se-link { color: var(--text-color-se-link, $text-color-se-link); }
+.text-color-se-link-dark { color: var(--text-color-se-link-dark, $text-color-se-link-dark); }
+.text-color-se-danger { color: var(--text-color-se-danger, $text-color-se-danger); }
+.text-color-se-secondary { color: var(--text-color-se-secondary, $text-color-se-secondary); }
+.text-color-se-warning { color: var(--text-color-se-warning, $text-color-se-warning); }
+.text-color-se-warning-light { color: var(--text-color-se-warning-light, $text-color-se-warning-light); }
+.text-color-sf-highlight { color: var(--text-color-sf-highlight, $text-color-sf-highlight); }
+.text-color-sf-primary { color: var(--text-color-sf-primary, $text-color-sf-primary); }
+.text-color-sf-primary-dark { color: var(--text-color-sf-primary-dark, $text-color-sf-primary-dark); }
 
-.text-color-primary-light { color: lighten($color-primary, $color-lighten-percentage); }
-.text-color-primary-dark { color: darken($color-primary, $color-darken-percentage); }
-.text-color-secondary-light { color: lighten($color-secondary, $color-lighten-percentage); }
-.text-color-secondary-dark { color: darken($color-secondary, $color-darken-percentage); }
-.text-color-success-light { color: lighten($color-success, $color-lighten-percentage); }
-.text-color-success-dark { color: darken($color-success, $color-darken-percentage); }
-.text-color-danger-light { color: lighten($color-danger, $color-lighten-percentage); }
-.text-color-danger-dark { color: darken($color-danger, $color-darken-percentage); }
-.text-color-warning-light { color: lighten($color-warning, $color-lighten-percentage); }
-.text-color-warning-dark { color: darken($color-warning, $color-darken-percentage); }
-.text-color-info-light { color: lighten($color-info, $color-lighten-percentage); }
-.text-color-info-dark { color: darken($color-info, $color-darken-percentage); }
-.text-color-body-light { color: lighten($color-body, $color-lighten-percentage); }
-.text-color-body-dark { color: darken($color-body, $color-darken-percentage); }
-.text-color-muted-light { color: lighten($color-muted, $color-lighten-percentage); }
-.text-color-muted-dark { color: darken($color-muted, $color-darken-percentage); }
-.text-color-alt-warning-light { color: lighten($color-alt-warning, $color-lighten-percentage); }
-.text-color-alt-warning-dark { color: darken($color-alt-warning, $color-darken-percentage); }
-.text-color-alt-default-light { color: lighten($color-alt-default, $color-lighten-percentage); }
-.text-color-alt-default-dark { color: darken($color-alt-default, $color-darken-percentage); }
-.text-color-alt-danger-light { color: lighten($color-alt-danger, $color-lighten-percentage); }
-.text-color-alt-danger-dark { color: darken($color-alt-danger, $color-darken-percentage); }
-.text-color-alt-success-light { color: lighten($color-alt-success, $color-lighten-percentage); }
-.text-color-alt-success-dark { color: darken($color-alt-success, $color-darken-percentage); }
-.text-color-se-secondary-light { color: lighten($color-se-secondary, $color-lighten-percentage); }
+.text-color-primary-light { color: lighten($text-color-primary, $text-color-lighten-percentage); }
+.text-color-primary-dark { color: darken($text-color-primary, $text-color-darken-percentage); }
+.text-color-secondary-light { color: lighten($text-color-secondary, $text-color-lighten-percentage); }
+.text-color-secondary-dark { color: darken($text-color-secondary, $text-color-darken-percentage); }
+.text-color-success-light { color: lighten($text-color-success, $text-color-lighten-percentage); }
+.text-color-success-dark { color: darken($text-color-success, $text-color-darken-percentage); }
+.text-color-danger-light { color: lighten($text-color-danger, $text-color-lighten-percentage); }
+.text-color-danger-dark { color: darken($text-color-danger, $text-color-darken-percentage); }
+.text-color-warning-light { color: lighten($text-color-warning, $text-color-lighten-percentage); }
+.text-color-warning-dark { color: darken($text-color-warning, $text-color-darken-percentage); }
+.text-color-info-light { color: lighten($text-color-info, $text-color-lighten-percentage); }
+.text-color-info-dark { color: darken($text-color-info, $text-color-darken-percentage); }
+.text-color-body-light { color: lighten($text-color-body, $text-color-lighten-percentage); }
+.text-color-body-dark { color: darken($text-color-body, $text-color-darken-percentage); }
+.text-color-muted-light { color: lighten($text-color-muted, $text-color-lighten-percentage); }
+.text-color-muted-dark { color: darken($text-color-muted, $text-color-darken-percentage); }
+.text-color-alt-warning-light { color: lighten($text-color-alt-warning, $text-color-lighten-percentage); }
+.text-color-alt-warning-dark { color: darken($text-color-alt-warning, $text-color-darken-percentage); }
+.text-color-alt-default-light { color: lighten($text-color-alt-default, $text-color-lighten-percentage); }
+.text-color-alt-default-dark { color: darken($text-color-alt-default, $text-color-darken-percentage); }
+.text-color-alt-danger-light { color: lighten($text-color-alt-danger, $text-color-lighten-percentage); }
+.text-color-alt-danger-dark { color: darken($text-color-alt-danger, $text-color-darken-percentage); }
+.text-color-alt-success-light { color: lighten($text-color-alt-success, $text-color-lighten-percentage); }
+.text-color-alt-success-dark { color: darken($text-color-alt-success, $text-color-darken-percentage); }
+.text-color-se-secondary-light { color: lighten($text-color-se-secondary, $text-color-lighten-percentage); }
