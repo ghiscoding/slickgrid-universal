@@ -64,9 +64,9 @@ You can change any of the default command icon(s) by changing the `icon[X-comman
 this.gridOptions = {
    enableHeaderMenu: true,
    headerMenu: {
-     iconColumnHideCommand: 'fa fa-times'
-     iconSortAscCommand: 'fa fa-sort-asc'
-     iconSortDescCommand: 'fa fa-sort-desc',
+     iconColumnHideCommand: 'sgi sgi-close'
+     iconSortAscCommand: 'sgi sgi-sort-ascending'
+     iconSortDescCommand: 'sgi sgi-sort-descending',
    },
 };
 ```

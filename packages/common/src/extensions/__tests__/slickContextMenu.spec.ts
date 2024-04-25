@@ -832,7 +832,7 @@ describe('ContextMenu Plugin', () => {
         expect(closeBtnElm).toBeTruthy();
         expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(1);
         expect(commandItemElm1.classList.contains('slick-menu-item-disabled')).toBeFalsy();
-        expect(commandIconElm1.classList.contains('fa-clone')).toBeTruthy();
+        expect(commandIconElm1.classList.contains('sgi-content-copy')).toBeTruthy();
         expect(commandLabelElm1.textContent).toBe('Copy');
 
         commandItemElm1.dispatchEvent(new CustomEvent('click'));

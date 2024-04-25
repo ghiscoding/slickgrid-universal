@@ -33,7 +33,7 @@ const gridOptionMock = {
       command: 'clear-sorting',
       disabled: false,
       hidden: true,
-      iconCssClass: 'fa fa-unsorted mdi mdi-swap-vertical',
+      iconCssClass: 'sgi sgi-sort-variant-off',
       positionOrder: 51,
       title: 'Clear all Sorting'
     }]
@@ -139,7 +139,7 @@ describe('SortService', () => {
       const backendSortSpy = jest.spyOn(service, 'onBackendSortChanged');
       const setSortSpy = jest.spyOn(gridStub, 'setSortColumns');
 
-      const mockMouseEvent = new Event('mouseup');
+      const mockMouseEvent = new SlickEventData(new Event('mouseup'));
       service.bindBackendOnSort(gridStub);
       service.clearSortByColumnId(mockMouseEvent, 'firstName');
 
@@ -155,7 +155,7 @@ describe('SortService', () => {
       const emitSortChangedSpy = jest.spyOn(service, 'emitSortChanged');
       const setSortSpy = jest.spyOn(gridStub, 'setSortColumns');
 
-      const mockMouseEvent = new Event('mouseup');
+      const mockMouseEvent = new SlickEventData(new Event('mouseup'));
       service.bindLocalOnSort(gridStub);
       service.clearSortByColumnId(mockMouseEvent, 'firstName');
 
@@ -175,7 +175,7 @@ describe('SortService', () => {
       const emitSortChangedSpy = jest.spyOn(service, 'emitSortChanged');
       const setSortSpy = jest.spyOn(gridStub, 'setSortColumns');
 
-      const mockMouseEvent = new Event('mouseup');
+      const mockMouseEvent = new SlickEventData(new Event('mouseup'));
       service.bindLocalOnSort(gridStub);
       service.clearSortByColumnId(mockMouseEvent, 'lastName');
 
@@ -195,7 +195,7 @@ describe('SortService', () => {
       const gridSortSpy = jest.spyOn(gridStub.onSort, 'notify');
 
       gridStub.getData = () => null as any; // fake a custom dataview by removing the dataView in shared
-      const mockMouseEvent = new Event('mouseup');
+      const mockMouseEvent = new SlickEventData(new Event('mouseup'));
       service.bindLocalOnSort(gridStub);
       service.clearSortByColumnId(mockMouseEvent, 'firstName');
 
@@ -213,7 +213,7 @@ describe('SortService', () => {
       const sortDefaultSpy = jest.spyOn(service, 'sortLocalGridByDefaultSortFieldId');
       const setSortSpy = jest.spyOn(gridStub, 'setSortColumns');
 
-      const mockMouseEvent = new Event('mouseup');
+      const mockMouseEvent = new SlickEventData(new Event('mouseup'));
       service.bindLocalOnSort(gridStub);
       service.clearSortByColumnId(mockMouseEvent, 'firstName');
 
@@ -238,7 +238,7 @@ describe('SortService', () => {
       const sortDefaultSpy = jest.spyOn(service, 'sortLocalGridByDefaultSortFieldId');
       const setSortSpy = jest.spyOn(gridStub, 'setSortColumns');
 
-      const mockMouseEvent = new Event('mouseup');
+      const mockMouseEvent = new SlickEventData(new Event('mouseup'));
       service.bindLocalOnSort(gridStub);
       service.clearSortByColumnId(mockMouseEvent, 'firstName');
 

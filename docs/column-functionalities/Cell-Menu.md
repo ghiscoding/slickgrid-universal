@@ -38,7 +38,7 @@ this.columnDefinitions = [
             console.log(args.dataContext, args.column); // action callback.. do something
           }
         },
-        { command: 'help', title: 'HELP', iconCssClass: 'fa fa-question-circle', positionOrder: 62 },
+        { command: 'help', title: 'HELP', iconCssClass: 'sgi sgi-help-circle', positionOrder: 62 },
         // you can add sub-menus by adding nested `commandItems`
         {
          // we can also have multiple nested sub-menus
@@ -74,8 +74,8 @@ this.columnDefinitions = [
     cellMenu: {
       optionTitle: 'Change Effort Driven Flag', // optional, add title
       optionItems: [
-        { option: true, title: 'True', iconCssClass: 'fa fa-check-square-o' },
-        { option: false, title: 'False', iconCssClass: 'fa fa-square-o' },
+        { option: true, title: 'True', iconCssClass: 'sgi sgi-check-box-outline' },
+        { option: false, title: 'False', iconCssClass: 'sgi sgi-checkbox-blank-outline' },
         { divider: true, command: '', positionOrder: 60 },
       ],
       // subscribe to Context Menu onOptionSelected event (or use the "action" callback on each option)
@@ -153,7 +153,7 @@ this.columnDefinitions = [
   { id: 'action', field: 'action', name: 'Action',
     cellMenu: {
       menuUsabilityOverride: (args) => {
-        const dataContext = args && args.dataContext;
+        const dataContext = args?.dataContext;
         return (dataContext.id < 21); // say we want to display the menu only from Task 0 to 20
       },
     }
@@ -163,24 +163,22 @@ this.columnDefinitions = [
 
 To give another example, with Options this time, we could say that we enable the `n/a` option only when the row is Completed. So we could do it this way
 ```ts
-this.columnDefinitions = [
-  { id: 'action', field: 'action', name: 'Action',
-    cellMenu: {
-      optionItems: [
-      {
-        option: 0, title: 'n/a', textCssClass: 'italic',
-        // only enable this option when the task is Not Completed
-        itemUsabilityOverride: (args) => {
-          const dataContext = args && args.dataContext;
-          return !dataContext.completed;
-        },
-        { option: 1, iconCssClass: 'fa fa-star-o yellow', title: 'Low' },
-        { option: 2, iconCssClass: 'fa fa-star-half-o orange', title: 'Medium' },
-        { option: 3, iconCssClass: 'fa fa-star red', title: 'High' },
-      ]
-    }
+this.columnDefinitions = [{ 
+  id: 'action', field: 'action', name: 'Action',
+  cellMenu: {
+    optionItems: [{
+      option: 0, title: 'n/a', textCssClass: 'italic',
+      // only enable this option when the task is Not Completed
+      itemUsabilityOverride: (args) => {
+        const dataContext = args?.dataContext;
+        return !dataContext.completed;
+      },
+      { option: 1, iconCssClass: 'sgi sgi-star-outline yellow', title: 'Low' },
+      { option: 2, iconCssClass: 'sgi sgi-star orange', title: 'Medium' },
+      { option: 3, iconCssClass: 'sgi sgi-star red', title: 'High' },
+    }]
   }
-];
+}];
 ```
 
 ### How to add Translations?
@@ -191,9 +189,9 @@ this.columnDefinitions = [
     cellMenu: {
       optionTitleKey: 'COMMANDS', // optionally pass a title to show over the Options
       optionItems: [
-        { option: 1, titleKey: 'LOW', iconCssClass: 'fa fa-star-o yellow' },
-        { option: 2, titleKey: 'MEDIUM', iconCssClass: 'fa fa-star-half-o orange' },
-        { option: 3, titleKey: 'HIGH', iconCssClass: 'fa fa-star red' },
+        { option: 1, titleKey: 'LOW', iconCssClass: 'sgi sgi-star-outline yellow' },
+        { option: 2, titleKey: 'MEDIUM', iconCssClass: 'sgi sgi-star orange' },
+        { option: 3, titleKey: 'HIGH', iconCssClass: 'sgi sgi-star red' },
       ]
     }
   }

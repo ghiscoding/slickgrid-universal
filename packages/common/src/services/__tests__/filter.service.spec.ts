@@ -46,14 +46,14 @@ const gridOptionMock = {
     commandItems: [{
       command: 'clear-filter',
       disabled: false,
-      iconCssClass: 'fa fa-filter mdi mdi-filter-remove-outline',
+      iconCssClass: 'sgi sgi-filter-remove-outline',
       positionOrder: 50,
       title: 'Clear all Filters'
     }, {
       command: 'toggle-filter',
       disabled: false,
       hidden: true,
-      iconCssClass: 'fa fa-random mdi mdi-flip-vertical',
+      iconCssClass: 'sgi sgi-flip-vertical',
       positionOrder: 52,
       title: 'Toggle Filter Row'
     }]

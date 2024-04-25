@@ -95,8 +95,8 @@
           display: flex;
           align-items: center;
           background-color: currentColor;
-          height: var(--slick-editor-input-group-clear-btn-icon-size, $slick-editor-input-group-clear-btn-icon-size);
-          width: var(--slick-editor-input-group-clear-btn-icon-size, $slick-editor-input-group-clear-btn-icon-size);
+          height: 1em;
+          width: 1em;
 
           @include generateSvgStyle('slick-editor-input-group-clear-btn-icon-svg', $slick-editor-input-group-clear-btn-icon-svg-path);
         }

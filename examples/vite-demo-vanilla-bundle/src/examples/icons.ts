@@ -226,6 +226,7 @@ export default class Icons {
       '.sgi.sgi-snowflake',
       '.sgi.sgi-sort-ascending',
       '.sgi.sgi-sort-descending',
+      '.sgi.sgi-sort-variant-off',
       '.sgi.sgi-sort-variant-remove',
       '.sgi.sgi-square-edit-outline',
       '.sgi.sgi-star',

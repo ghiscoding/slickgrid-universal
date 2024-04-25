@@ -381,7 +381,7 @@ describe('GridMenuControl', () => {
         const repositionSpy = jest.spyOn(control, 'repositionMenu');
 
         control.init();
-        const spanEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false })
+        const spanEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false });
         const spanBtnElm = document.createElement('span');
         const buttonElm = document.createElement('button');
         spanBtnElm.textContent = 'Grid Menu';
@@ -400,7 +400,7 @@ describe('GridMenuControl', () => {
         const repositionSpy = jest.spyOn(control, 'repositionMenu');
 
         control.init();
-        const spanEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false })
+        const spanEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false });
         const spanBtnElm = document.createElement('span');
         const buttonElm = document.createElement('button');
         spanBtnElm.textContent = 'Grid Menu';
@@ -433,7 +433,7 @@ describe('GridMenuControl', () => {
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
         expect(inputForcefitElm.checked).toBeTruthy();
-        expect(inputForcefitElm.dataset.option).toBe('autoresize')
+        expect(inputForcefitElm.dataset.option).toBe('autoresize');
         expect(labelSyncElm.textContent).toBe('Force fit columns');
       });
 
@@ -1053,7 +1053,7 @@ describe('GridMenuControl', () => {
           const gridMenu2Elm = document.body.querySelector('.slick-grid-menu.slick-menu-level-1') as HTMLDivElement;
           Object.defineProperty(gridMenu2Elm, 'clientHeight', { writable: true, configurable: true, value: 320 });
 
-          const divEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false })
+          const divEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false });
           const subMenuElm = document.createElement('div');
           const menuItem = document.createElement('div');
           menuItem.className = 'slick-menu-item';
@@ -1094,7 +1094,7 @@ describe('GridMenuControl', () => {
           control.columns = columnsMock;
           control.init();
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-times', titleKey: 'CLEAR_PINNING', title: 'Dégeler les colonnes/rangées', disabled: false, command: 'clear-pinning', positionOrder: 52 },
+            { iconCssClass: 'sgi sgi-pin-off-outline', titleKey: 'CLEAR_PINNING', title: 'Dégeler les colonnes/rangées', disabled: false, command: 'clear-pinning', positionOrder: 52 },
           ]);
         });
 
@@ -1106,9 +1106,9 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-filter text-danger', titleKey: 'CLEAR_ALL_FILTERS', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 },
-            { iconCssClass: 'fa fa-random', titleKey: 'TOGGLE_FILTER_ROW', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
-            { iconCssClass: 'fa fa-refresh', titleKey: 'REFRESH_DATASET', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 58 }
+            { iconCssClass: 'sgi sgi-filter-remove-outline', titleKey: 'CLEAR_ALL_FILTERS', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 },
+            { iconCssClass: 'sgi sgi-flip-vertical', titleKey: 'TOGGLE_FILTER_ROW', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
+            { iconCssClass: 'sgi sgi-sync', titleKey: 'REFRESH_DATASET', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 58 }
           ]);
         });
 
@@ -1124,7 +1124,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-filter text-danger', titleKey: 'CLEAR_ALL_FILTERS', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 }
+            { iconCssClass: 'sgi sgi-filter-remove-outline', titleKey: 'CLEAR_ALL_FILTERS', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 }
           ]);
         });
 
@@ -1140,7 +1140,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-random', titleKey: 'TOGGLE_FILTER_ROW', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
+            { iconCssClass: 'sgi sgi-flip-vertical', titleKey: 'TOGGLE_FILTER_ROW', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
           ]);
         });
 
@@ -1157,7 +1157,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-random', titleKey: 'TOGGLE_DARK_MODE', title: 'Basculer le mode clair/sombre', disabled: false, command: 'toggle-dark-mode', positionOrder: 54 },
+            { iconCssClass: 'sgi sgi-brightness-4', titleKey: 'TOGGLE_DARK_MODE', title: 'Basculer le mode clair/sombre', disabled: false, command: 'toggle-dark-mode', positionOrder: 54 },
           ]);
         });
 
@@ -1173,7 +1173,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-refresh', titleKey: 'REFRESH_DATASET', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 58 }
+            { iconCssClass: 'sgi sgi-sync', titleKey: 'REFRESH_DATASET', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 58 }
           ]);
         });
 
@@ -1185,7 +1185,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-random', titleKey: 'TOGGLE_PRE_HEADER_ROW', title: 'Basculer la ligne de pré-en-tête', disabled: false, command: 'toggle-preheader', positionOrder: 53 }
+            { iconCssClass: 'sgi sgi-flip-vertical', titleKey: 'TOGGLE_PRE_HEADER_ROW', title: 'Basculer la ligne de pré-en-tête', disabled: false, command: 'toggle-preheader', positionOrder: 53 }
           ]);
         });
 
@@ -1211,7 +1211,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-unsorted text-danger', titleKey: 'CLEAR_ALL_SORTING', title: 'Supprimer tous les tris', disabled: false, command: 'clear-sorting', positionOrder: 51 }
+            { iconCssClass: 'sgi sgi-sort-variant-off', titleKey: 'CLEAR_ALL_SORTING', title: 'Supprimer tous les tris', disabled: false, command: 'clear-sorting', positionOrder: 51 }
           ]);
         });
 
@@ -1241,7 +1241,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-download', titleKey: 'EXPORT_TO_CSV', title: 'Exporter en format CSV', disabled: false, command: 'export-csv', positionOrder: 55 }
+            { iconCssClass: 'sgi sgi-download', titleKey: 'EXPORT_TO_CSV', title: 'Exporter en format CSV', disabled: false, command: 'export-csv', positionOrder: 55 }
           ]);
         });
 
@@ -1271,7 +1271,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-file-excel-o text-success', titleKey: 'EXPORT_TO_EXCEL', title: 'Exporter vers Excel', disabled: false, command: 'export-excel', positionOrder: 56 }
+            { iconCssClass: 'sgi sgi-file-excel-outline text-success', titleKey: 'EXPORT_TO_EXCEL', title: 'Exporter vers Excel', disabled: false, command: 'export-excel', positionOrder: 56 }
           ]);
         });
 
@@ -1287,7 +1287,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-download', titleKey: 'EXPORT_TO_TAB_DELIMITED', title: 'Exporter en format texte (délimité par tabulation)', disabled: false, command: 'export-text-delimited', positionOrder: 57 }
+            { iconCssClass: 'sgi sgi-download', titleKey: 'EXPORT_TO_TAB_DELIMITED', title: 'Exporter en format texte (délimité par tabulation)', disabled: false, command: 'export-text-delimited', positionOrder: 57 }
           ]);
         });
 

@@ -358,7 +358,6 @@ li.hidden {
       margin-right: var(--slick-menu-icon-margin-right, $slick-menu-icon-margin-right);
       vertical-align: middle;
       min-width: var(--slick-menu-icon-min-width, $slick-menu-icon-min-width);
-      width: var(--slick-menu-icon-width, $slick-menu-icon-width);
     }
 
     .slick-menu-content {
@@ -556,10 +555,11 @@ li.hidden {
   .slick-row-move-column {
     background-color: currentColor;
     display: inline-block;
+    height: 1em;
+    width: 1em;
+    font-size: var(--slick-row-move-plugin-icon-font-size, $slick-row-move-plugin-icon-font-size);
     color: var(--slick-row-move-plugin-icon-color, $slick-row-move-plugin-icon-color);
     cursor: var(--slick-row-move-plugin-cursor, $slick-row-move-plugin-cursor);
-    height: var(--slick-row-move-plugin-icon-size, $slick-row-move-plugin-icon-size);
-    width: var(--slick-row-move-plugin-icon-size, $slick-row-move-plugin-icon-size);
     @include generateSvgStyle('slick-row-move-plugin-icon-svg', $slick-row-move-plugin-icon-svg-path);
   }
 }

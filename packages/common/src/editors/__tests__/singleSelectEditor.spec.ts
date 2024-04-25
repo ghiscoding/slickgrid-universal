@@ -234,7 +234,7 @@ describe('SingleSelectEditor', () => {
       it('should create the multi-select editor with a default value and have the HTML rendered when "enableRenderHtml" is set', () => {
         mockColumn.editor = {
           enableRenderHtml: true,
-          collection: [{ value: true, label: 'True', labelPrefix: `<i class="fa fa-check"></i> ` }, { value: false, label: 'False' }],
+          collection: [{ value: true, label: 'True', labelPrefix: `<i class="sgi sgi-check"></i> ` }, { value: false, label: 'False' }],
           customStructure: {
             value: 'isEffort',
             label: 'label',
@@ -252,14 +252,14 @@ describe('SingleSelectEditor', () => {
         expect(editor.selectOptions.useSelectOptionLabelToHtml).toBeFalsy();
         expect(editor.getValue()).toEqual('');
         expect(editorListElm.length).toBe(2);
-        expect(editorListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> True');
+        expect(editorListElm[0].innerHTML).toBe('<i class="sgi sgi-check"></i> True');
       });
 
       it('should create the multi-select editor with a default value and have the HTML rendered and sanitized when "enableRenderHtml" is set and has <script> tag', () => {
         mockColumn.field = 'isEffort';
         mockColumn.editor = {
           enableRenderHtml: true,
-          collection: [{ isEffort: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="fa fa-check"></i> ` }, { isEffort: false, label: 'False' }],
+          collection: [{ isEffort: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="sgi sgi-check"></i> ` }, { isEffort: false, label: 'False' }],
           collectionOptions: {
             separatorBetweenTextLabels: ': ',
             includePrefixSuffixToSelectedValues: true,
@@ -281,9 +281,9 @@ describe('SingleSelectEditor', () => {
         editorListElm[0].click();
 
         expect(editorBtnElm).toBeTruthy();
-        expect(editor.getValue()).toEqual(`<script>alert('test')></script><i class="fa fa-check"></i> : true`);
+        expect(editor.getValue()).toEqual(`<script>alert('test')></script><i class="sgi sgi-check"></i> : true`);
         expect(editorListElm.length).toBe(2);
-        expect(editorListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> : True');
+        expect(editorListElm[0].innerHTML).toBe('<i class="sgi sgi-check"></i> : True');
       });
     });
   });

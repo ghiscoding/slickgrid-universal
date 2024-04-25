@@ -20,5 +20,5 @@ export const checkmarkFormatter: Formatter = (_row, _cell, value) => {
     isChecked = true;
   }
 
-  return isChecked ? createDomElement('i', { className: 'fa fa-check checkmark-icon', ariaHidden: 'true' }) : '';
+  return isChecked ? createDomElement('i', { className: 'sgi sgi-check checkmark-icon', ariaHidden: 'true' }) : '';
 };

@@ -570,7 +570,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         const commandName = 'clear-pinning';
         if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           gridMenuCommandItems.push({
-            iconCssClass: this._addonOptions.iconClearFrozenColumnsCommand || 'fa fa-times',
+            iconCssClass: this._addonOptions.iconClearFrozenColumnsCommand || 'sgi sgi-pin-off-outline',
             titleKey: `${translationPrefix}${commandLabels?.clearFrozenColumnsCommandKey ?? 'CLEAR_PINNING'}`,
             disabled: false,
             command: commandName,
@@ -585,7 +585,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           const commandName = 'clear-filter';
           if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
             gridMenuCommandItems.push({
-              iconCssClass: this._addonOptions.iconClearAllFiltersCommand || 'fa fa-filter text-danger',
+              iconCssClass: this._addonOptions.iconClearAllFiltersCommand || 'sgi sgi-filter-remove-outline',
               titleKey: `${translationPrefix}${commandLabels?.clearAllFiltersCommandKey ?? 'CLEAR_ALL_FILTERS'}`,
               disabled: false,
               command: commandName,
@@ -599,7 +599,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           const commandName = 'toggle-filter';
           if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
             gridMenuCommandItems.push({
-              iconCssClass: this._addonOptions.iconToggleFilterCommand || 'fa fa-random',
+              iconCssClass: this._addonOptions.iconToggleFilterCommand || 'sgi sgi-flip-vertical',
               titleKey: `${translationPrefix}${commandLabels?.toggleFilterCommandKey ?? 'TOGGLE_FILTER_ROW'}`,
               disabled: false,
               command: commandName,
@@ -613,7 +613,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           const commandName = 'refresh-dataset';
           if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
             gridMenuCommandItems.push({
-              iconCssClass: this._addonOptions.iconRefreshDatasetCommand || 'fa fa-refresh',
+              iconCssClass: this._addonOptions.iconRefreshDatasetCommand || 'sgi sgi-sync',
               titleKey: `${translationPrefix}${commandLabels?.refreshDatasetCommandKey ?? 'REFRESH_DATASET'}`,
               disabled: false,
               command: commandName,
@@ -628,7 +628,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         const commandName = 'toggle-dark-mode';
         if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           gridMenuCommandItems.push({
-            iconCssClass: this._addonOptions.iconToggleDarkModeCommand || 'fa fa-random',
+            iconCssClass: this._addonOptions.iconToggleDarkModeCommand || 'sgi sgi-brightness-4',
             titleKey: `${translationPrefix}${commandLabels?.toggleDarkModeCommandKey ?? 'TOGGLE_DARK_MODE'}`,
             disabled: false,
             command: commandName,
@@ -643,7 +643,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           const commandName = 'toggle-preheader';
           if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
             gridMenuCommandItems.push({
-              iconCssClass: this._addonOptions.iconTogglePreHeaderCommand || 'fa fa-random',
+              iconCssClass: this._addonOptions.iconTogglePreHeaderCommand || 'sgi sgi-flip-vertical',
               titleKey: `${translationPrefix}${commandLabels?.togglePreHeaderCommandKey ?? 'TOGGLE_PRE_HEADER_ROW'}`,
               disabled: false,
               command: commandName,
@@ -659,7 +659,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           const commandName = 'clear-sorting';
           if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
             gridMenuCommandItems.push({
-              iconCssClass: this._addonOptions.iconClearAllSortingCommand || 'fa fa-unsorted text-danger',
+              iconCssClass: this._addonOptions.iconClearAllSortingCommand || 'sgi sgi-sort-variant-off',
               titleKey: `${translationPrefix}${commandLabels?.clearAllSortingCommandKey ?? 'CLEAR_ALL_SORTING'}`,
               disabled: false,
               command: commandName,
@@ -674,7 +674,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         const commandName = 'export-csv';
         if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           gridMenuCommandItems.push({
-            iconCssClass: this._addonOptions.iconExportCsvCommand || 'fa fa-download',
+            iconCssClass: this._addonOptions.iconExportCsvCommand || 'sgi sgi-download',
             titleKey: `${translationPrefix}${commandLabels?.exportCsvCommandKey ?? 'EXPORT_TO_CSV'}`,
             disabled: false,
             command: commandName,
@@ -688,7 +688,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         const commandName = 'export-excel';
         if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           gridMenuCommandItems.push({
-            iconCssClass: this._addonOptions.iconExportExcelCommand || 'fa fa-file-excel-o text-success',
+            iconCssClass: this._addonOptions.iconExportExcelCommand || 'sgi sgi-file-excel-outline text-success',
             titleKey: `${translationPrefix}${commandLabels?.exportExcelCommandKey ?? 'EXPORT_TO_EXCEL'}`,
             disabled: false,
             command: commandName,
@@ -702,7 +702,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         const commandName = 'export-text-delimited';
         if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           gridMenuCommandItems.push({
-            iconCssClass: this._addonOptions.iconExportTextDelimitedCommand || 'fa fa-download',
+            iconCssClass: this._addonOptions.iconExportTextDelimitedCommand || 'sgi sgi-download',
             titleKey: `${translationPrefix}${commandLabels?.exportTextDelimitedCommandKey ?? 'EXPORT_TO_TAB_DELIMITED'}`,
             disabled: false,
             command: commandName,
@@ -830,7 +830,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       columnTitle: this.extensionUtility.getPickerTitleOutputString('columnTitle', 'gridMenu'),
       forceFitTitle: this.extensionUtility.getPickerTitleOutputString('forceFitTitle', 'gridMenu'),
       syncResizeTitle: this.extensionUtility.getPickerTitleOutputString('syncResizeTitle', 'gridMenu'),
-      iconCssClass: 'fa fa-bars',
+      iconCssClass: 'sgi sgi-menu',
       menuWidth: 18,
       commandItems: [],
       hideClearAllFiltersCommand: false,

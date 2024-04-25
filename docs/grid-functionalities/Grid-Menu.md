@@ -29,18 +29,18 @@ this.gridOptions = {
    gridMenu: {
      commandTitle: 'Custom Commands',
      columnTitle: 'Columns',
-     iconCssClass: 'fa fa-ellipsis-v',
+     iconCssClass: 'sgi sgi-dots-vertical',
      menuWidth: 17,
      resizeOnShowHeaderRow: true,
      commandItems: [
        {
-         iconCssClass: 'fa fa-filter text-danger',
+         iconCssClass: 'sgi sgi-filter-remove-outline',
          title: 'Clear All Filters',
          disabled: false,
          command: 'clear-filter'
        },
        {
-         iconCssClass: 'fa fa-random',
+         iconCssClass: 'sgi-flip-vertical',
          title: 'Toggle Filter Row',
          disabled: false,
          command: 'toggle-filter'
@@ -110,12 +110,12 @@ You can change any of the default command icon(s) by changing the `icon[X-comman
 this.gridOptions = {
    enableGridMenu: true,
    gridMenu: {
-     iconClearAllFiltersCommand: 'fa fa-filter text-danger'
-     iconClearAllSortingCommand: 'fa fa-unsorted text-danger',
-     iconExportCsvCommand: 'fa fa-download',
-     iconExportTextDelimitedCommand: 'fa fa-download',
-     iconRefreshDatasetCommand: 'fa fa-refresh',
-     iconToggleFilterCommand: 'fa fa-random',
+     iconClearAllFiltersCommand: 'sgi sgi-filter-remove-outline'
+     iconClearAllSortingCommand: 'sgi sgi-sort-variant-off',
+     iconExportCsvCommand: 'sgi sgi-download',
+     iconExportTextDelimitedCommand: 'sgi sgi-download',
+     iconRefreshDatasetCommand: 'sgi sgi-sync',
+     iconToggleFilterCommand: 'sgi-flip-vertical',
    },
 };
 ```

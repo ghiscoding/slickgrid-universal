@@ -63,8 +63,8 @@ export const SalesforceGlobalGridOptions = {
   },
   headerMenu: {
     hideFreezeColumnsCommand: false,
-    iconSortAscCommand: 'fa fa-sort-amount-asc sgi sgi-arrow-up',
-    iconSortDescCommand: 'fa fa-sort-amount-desc sgi sgi-arrow-down',
+    iconSortAscCommand: 'sgi sgi-arrow-up',
+    iconSortDescCommand: 'sgi sgi-arrow-down',
   },
   preventDocumentFragmentUsage: true,
   sanitizer: (dirtyHtml: string) => typeof dirtyHtml === 'string' ? dirtyHtml.replace(/(\b)(on[a-z]+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi, '') : dirtyHtml,
