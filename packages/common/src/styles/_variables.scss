@@ -780,29 +780,6 @@ $slick-multiselect-select-all-padding:                      6px 10px !default;
 $slick-multiselect-select-all-text-color:                   darken($slick-primary-color, 5%) !default;
 $slick-multiselect-select-all-text-hover-color:             transparent !default;
 
-// @deprecated, to be removed in next major
-// (they are actually no longer associated to anything but removing them now would possibly break user's usage)
-$slick-multiselect-icon-height:                             20px !default;
-$slick-multiselect-icon-margin:                             0 !default;
-$slick-multiselect-icon-width:                              20px !default;
-$slick-multiselect-icon-arrow-font-size:                    $slick-multiselect-icon-font-size !default;
-$slick-multiselect-icon-border:                             none !default;
-$slick-multiselect-icon-border-radius:                      none !default;
-$slick-multiselect-icon-radio-border:                       $slick-multiselect-icon-border !default;
-$slick-multiselect-icon-radio-border-radius:                $slick-multiselect-icon-border-radius !default;
-$slick-multiselect-icon-checked:                            "\f14a" !default;
-$slick-multiselect-icon-radio-color:                        $slick-primary-color !default;
-$slick-multiselect-icon-radio-checked:                      "\f192" !default;
-$slick-multiselect-icon-radio-height:                       $slick-multiselect-icon-height !default;
-$slick-multiselect-icon-radio-margin:                       $slick-multiselect-icon-margin !default;
-$slick-multiselect-icon-radio-unchecked:                    "\f10c" !default;
-$slick-multiselect-icon-radio-width:                        $slick-multiselect-icon-width !default;
-$slick-multiselect-icon-unchecked:                          "\f096" !default;
-$slick-multiselect-icon-unchecked-color:                    $slick-multiselect-icon-color !default;
-$slick-multiselect-icon-vertical-align:                     middle !default;
-$slick-multiselect-icon-search-margin-right:                8px !default;
-$slick-multiselect-unchecked-opacity:                       0.6 !default;
-
 // override some multiple-select SASS variables with our variables
 $ms-drop-color:                                             $slick-text-color;
 $ms-checkbox-color:                                         $slick-multiselect-icon-checked-color;

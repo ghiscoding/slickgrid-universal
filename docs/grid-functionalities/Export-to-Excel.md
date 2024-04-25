@@ -1,7 +1,6 @@
 #### index
 - [Grid Options](#grid-options)
 - [Column Definition & Options](#column-definition-and-options)
-- [Custom Column Width](#custom-column-width)
 - [Custom Cell Styling](#custom-cell-styling)
   - [Cell Value Parser](#cell-value-parser)
 - [Cell Format Auto-Detect Disable](#cell-format-auto-detect-disable)
@@ -117,21 +116,6 @@ initializeGrid() {
 ```
 
 What we can see from the example, is that it will use all Formatters (when exist) on this grid, except for the last column "Completed" since that column has explicitly defined `exportWithFormatter: false`
-
-### Custom Column Width
-
-**NOTE** now deprecated, please use [Custom Cell Styling](#custom-cell-styling) instead
-
-You can define a custom Excel column width (the width Excel's own width which is not in pixel). You can define a custom width per column (in your column definitions) and/or for the entire grid (in your grid options).
-
-#### Per Column
-You could set a custom width per column
-```ts
-this.columnDefinitions = [
-  { id: 'firstName', name: 'FirstName', exportColumnWidth: 10, },
-  // ...
-];
-```
 
 #### For the entire Grid
 You could also set a custom width for the entire grid export via the `excelExportOptions`
