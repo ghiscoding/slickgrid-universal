@@ -67,9 +67,13 @@
 
   .autocomplete-container.input-group,
   .flatpickr.input-group {
+    display: flex;
+    align-items: center;
     height: var(--slick-date-editor-height, $slick-date-editor-height);
     .input-group-btn {
       &.input-group-append {
+        height: 100%;
+
         .btn {
           border-top-left-radius: 0px;
           border-bottom-left-radius: 0px;
@@ -465,8 +469,11 @@
 
       .autocomplete-container.input-group,
       .flatpickr.input-group {
+        display: flex;
+        align-items: center;
         height: var(--slick-date-editor-height, $slick-date-editor-height);
         .input-group-btn {
+          height: 100%;
           min-width: 28px;
           .btn {
             min-width: 28px;

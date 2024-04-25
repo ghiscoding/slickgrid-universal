@@ -167,7 +167,6 @@ $slick-frozen-overflow-right:                               scroll !default;    
 
 /* icon font is using Font-Awesome by default but could be changed to any other icon package like Glyphicons, ... */
 $slick-icon-color:                                          inherit !default;
-$slick-icon-font-family:                                    "FontAwesome" !default;               // or Glyphicons Halflings */
 $slick-icon-font-size:                                      14px !default;
 $slick-icon-group-color:                                    $slick-primary-color !default;
 $slick-icon-group-collapsed-svg-path:                       "M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" !default;
@@ -176,22 +175,22 @@ $slick-icon-group-font-size:                                calc(#{$slick-icon-f
 $slick-icon-group-margin-right:                             2px !default;
 
 /* Kraaden AutoComplete */
-$slick-autocomplete-bg-color:	                            #ffffff !default;
-$slick-autocomplete-group-bg-color:	                      #eeeeee !default;
-$slick-autocomplete-border:	                              1px solid rgba(0, 0, 0, 0.15) !default;
-$slick-autocomplete-hover-bg-color:                       darken($slick-row-mouse-hover-color, 3%) !default;
-$slick-autocomplete-loading-input-bg-color:               transparent !default;
-$slick-autocomplete-loading-icon:                         "\f021" !default;
-$slick-autocomplete-loading-icon-color:                   $slick-icon-color !default;
-$slick-autocomplete-loading-icon-width:                   inherit !default;
-$slick-autocomplete-loading-icon-margin:                  0 0 0 -16px !default;
-$slick-autocomplete-loading-icon-line-height:             0px !default;
-$slick-autocomplete-loading-icon-vertical-align:          inherit !default;
-$slick-autocomplete-max-height:	                          25vh !default;
-$slick-autocomplete-min-height:	                          75px !default;
-$slick-autocomplete-min-width:	                          110px !default;
-$slick-autocomplete-text-color:	                          #333333 !default;
-$slick-autocomplete-z-index:	                            9999 !default;
+$slick-autocomplete-bg-color:	                              #ffffff !default;
+$slick-autocomplete-group-bg-color:	                        #eeeeee !default;
+$slick-autocomplete-border:	                                1px solid rgba(0, 0, 0, 0.15) !default;
+$slick-autocomplete-hover-bg-color:                         darken($slick-row-mouse-hover-color, 3%) !default;
+$slick-autocomplete-loading-input-bg-color:                 transparent !default;
+$slick-autocomplete-loading-icon-color:                     #777777 !default;
+$slick-autocomplete-loading-icon:                           url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-autocomplete-loading-icon-color)}" viewBox="0 0 24 24"><path d="M16,13V11H21V13H16M14.83,7.76L17.66,4.93L19.07,6.34L16.24,9.17L14.83,7.76M11,16H13V21H11V16M11,3H13V8H11V3M4.93,17.66L7.76,14.83L9.17,16.24L6.34,19.07L4.93,17.66M4.93,6.34L6.34,4.93L9.17,7.76L7.76,9.17L4.93,6.34M8,13H3V11H8V13M19.07,17.66L17.66,19.07L14.83,16.24L16.24,14.83L19.07,17.66Z"></path></svg>') !default;
+$slick-autocomplete-loading-icon-width:                     22px !default;
+$slick-autocomplete-loading-icon-margin:                    0 0 0 -26px !default;
+$slick-autocomplete-loading-icon-line-height:               0px !default;
+$slick-autocomplete-loading-icon-vertical-align:            sub !default;
+$slick-autocomplete-max-height:	                            25vh !default;
+$slick-autocomplete-min-height:	                            75px !default;
+$slick-autocomplete-min-width:	                            110px !default;
+$slick-autocomplete-text-color:	                            #333333 !default;
+$slick-autocomplete-z-index:	                              9999 !default;
 
 /** Kraaden AutoComplete with Custom Styling (2 rows) */
 $slick-autocomplete-tpl2-font-size:                         12px !default;

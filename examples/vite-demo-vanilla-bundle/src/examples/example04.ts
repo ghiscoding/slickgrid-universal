@@ -106,7 +106,7 @@ export default class Example04 {
           // We can also add HTML text to be rendered (any bad script will be sanitized) but we have to opt-in, else it will be sanitized
           enableRenderHtml: true,
           // collection: [{ value: '1', label: '1' }, { value: '2', label: '2' }, { value: '3', label: '3' }, { value: '4', label: '4' }, { value: '5', label: '5' }],
-          collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k, symbol: '<i class="mdi mdi-percent-outline color-info"></i>' })),
+          collection: Array.from(Array(101).keys()).map(k => ({ value: k, label: k, symbol: '<i class="sgi sgi-percent-outline color-info"></i>' })),
           customStructure: {
             value: 'value',
             label: 'label',
@@ -240,7 +240,7 @@ export default class Example04 {
         //   // collectionAsync: fetch(URL_COUNTRIES_COLLECTION),
 
         //   enableRenderHtml: true,
-        //   collection: [{ code: true, name: 'True', labelPrefix: `<i class="mdi mdi-pin-outline"></i> ` }, { code: false, name: 'False', labelSuffix: '<i class="mdi mdi-close"></i>' }],
+        //   collection: [{ code: true, name: 'True', labelPrefix: `<i class="sgi sgi-pin-outline"></i> ` }, { code: false, name: 'False', labelSuffix: '<i class="sgi sgi-close"></i>' }],
         //   editorOptions: { minLength: 1 }
         // },
         editor: {
@@ -267,7 +267,7 @@ export default class Example04 {
         //   collectionAsync: fetch(URL_COUNTRIES_COLLECTION),
 
         //   // enableRenderHtml: true,
-        //   // collection: [{ code: true, name: 'True', labelPrefix: `<i class="mdi mdi-pin-outline"></i> ` }, { code: false, name: 'False', labelSuffix: '<i class="mdi mdi-close"></i>' }],
+        //   // collection: [{ code: true, name: 'True', labelPrefix: `<i class="sgi sgi-pin-outline"></i> ` }, { code: false, name: 'False', labelSuffix: '<i class="sgi sgi-close"></i>' }],
         //   // filterOptions: { minLength: 1 }
         // },
         filter: {
@@ -326,7 +326,7 @@ export default class Example04 {
             { command: 'command1', title: 'Command 1', cssClass: 'orange', positionOrder: 61 },
             {
               command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'mdi mdi-close', cssClass: 'red', textCssClass: 'bold',
+              iconCssClass: 'sgi sgi-close', cssClass: 'red', textCssClass: 'bold',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext.completed;
@@ -337,13 +337,13 @@ export default class Example04 {
             { divider: true, command: '', positionOrder: 63 },
             // 'divider',
 
-            { command: 'help', title: 'Help', iconCssClass: 'mdi mdi-help-circle', positionOrder: 66, },
+            { command: 'help', title: 'Help', iconCssClass: 'sgi sgi-help-circle', positionOrder: 66, },
             { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, },
           ],
           optionTitle: 'Change Complete Flag',
           optionItems: [
-            { option: true, title: 'True', iconCssClass: 'mdi mdi-check-box-outline' },
-            { option: false, title: 'False', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
+            { option: true, title: 'True', iconCssClass: 'sgi sgi-check-box-outline' },
+            { option: false, title: 'False', iconCssClass: 'sgi sgi-checkbox-blank-outline' },
           ]
         }
       },
@@ -392,7 +392,7 @@ export default class Example04 {
       // when using the cellMenu, you can change some of the default options and all use some of the callback methods
       enableCellMenu: true,
       cellMenu: {
-        subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
+        subItemChevronClass: 'sgi sgi-chevron-down sgi-rotate-270',
         // all the Cell Menu callback methods (except the action callback)
         // are available under the grid options as shown below
         onCommand: (e, args) => this.executeCommand(e, args),
@@ -410,7 +410,7 @@ export default class Example04 {
       enableContextMenu: true,
       contextMenu: {
         optionShownOverColumnIds: ['percentComplete'],
-        subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
+        subItemChevronClass: 'sgi sgi-chevron-down sgi-rotate-270',
         hideCloseButton: true,
         optionTitle: 'Change Percent Complete',
         onOptionSelected: (_e, args) => {
@@ -424,16 +424,16 @@ export default class Example04 {
           }
         },
         optionItems: [
-          { option: 0, iconCssClass: 'mdi mdi-checkbox-blank-outline color-secondary', title: 'Not Started (0%)' },
-          { option: 50, iconCssClass: 'mdi mdi-flip-vertical', title: 'Half Completed (50%)' },
-          { option: 100, iconCssClass: 'mdi mdi-checkbox-marked color-success', title: 'Completed (100%)' },
+          { option: 0, iconCssClass: 'sgi sgi-checkbox-blank-outline color-secondary', title: 'Not Started (0%)' },
+          { option: 50, iconCssClass: 'sgi sgi-flip-vertical', title: 'Half Completed (50%)' },
+          { option: 100, iconCssClass: 'sgi sgi-checkbox-marked color-success', title: 'Completed (100%)' },
           'divider',
           {
             // we can also have multiple nested sub-menus
             option: null, title: 'Sub-Options (demo)', subMenuTitle: 'Set Percent Complete', optionItems: [
-              { option: 0, iconCssClass: 'mdi mdi-checkbox-blank-outline color-secondary', title: 'Not Started (0%)' },
-              { option: 50, iconCssClass: 'mdi mdi-flip-vertical', title: 'Half Completed (50%)' },
-              { option: 100, iconCssClass: 'mdi mdi-checkbox-marked color-success', title: 'Completed (100%)' },
+              { option: 0, iconCssClass: 'sgi sgi-checkbox-blank-outline color-secondary', title: 'Not Started (0%)' },
+              { option: 50, iconCssClass: 'sgi sgi-flip-vertical', title: 'Half Completed (50%)' },
+              { option: 100, iconCssClass: 'sgi sgi-checkbox-marked color-success', title: 'Completed (100%)' },
             ]
           }
         ],
@@ -441,7 +441,7 @@ export default class Example04 {
           { command: '', divider: true, positionOrder: 98 },
           {
             // we can also have multiple nested sub-menus
-            command: 'export', title: 'Exports', iconCssClass: 'mdi mdi-download', positionOrder: 99,
+            command: 'export', title: 'Exports', iconCssClass: 'sgi sgi-download', positionOrder: 99,
             commandItems: [
               { command: 'exports-txt', title: 'Text (tab delimited)' },
               {
@@ -454,16 +454,16 @@ export default class Example04 {
             ]
           },
           {
-            command: 'feedback', title: 'Feedback', iconCssClass: 'mdi mdi-information-outline', positionOrder: 100,
+            command: 'feedback', title: 'Feedback', iconCssClass: 'sgi sgi-information-outline', positionOrder: 100,
             commandItems: [
-              { command: 'request-update', title: 'Request update from supplier', iconCssClass: 'mdi mdi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
+              { command: 'request-update', title: 'Request update from supplier', iconCssClass: 'sgi sgi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
               'divider',
               {
-                command: 'sub-menu', title: 'Contact Us', iconCssClass: 'mdi mdi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
+                command: 'sub-menu', title: 'Contact Us', iconCssClass: 'sgi sgi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
                 commandItems: [
-                  { command: 'contact-email', title: 'Email us', iconCssClass: 'mdi mdi-pencil-outline' },
-                  { command: 'contact-chat', title: 'Chat with us', iconCssClass: 'mdi mdi-message-text-outline' },
-                  { command: 'contact-meeting', title: 'Book an appointment', iconCssClass: 'mdi mdi-coffee' },
+                  { command: 'contact-email', title: 'Email us', iconCssClass: 'sgi sgi-pencil-outline' },
+                  { command: 'contact-chat', title: 'Chat with us', iconCssClass: 'sgi sgi-message-text-outline' },
+                  { command: 'contact-meeting', title: 'Book an appointment', iconCssClass: 'sgi sgi-coffee' },
                 ]
               }
             ]
