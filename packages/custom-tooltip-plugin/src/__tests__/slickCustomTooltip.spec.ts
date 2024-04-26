@@ -398,9 +398,9 @@ describe('SlickCustomTooltip plugin', () => {
     const icon1Elm = document.createElement('span');
     const icon2Elm = document.createElement('span');
     cellNode.className = 'slick-cell l2 r2';
-    icon1Elm.className = 'sgi sgi-check';
+    icon1Elm.className = 'mdi mdi-check';
     icon1Elm.title = 'Click here when successful';
-    icon2Elm.className = 'sgi sgi-cancel';
+    icon2Elm.className = 'mdi mdi-cancel';
     icon2Elm.title = 'Click here to cancel the action';
     cellNode.appendChild(icon1Elm);
     cellNode.appendChild(icon2Elm);
@@ -434,9 +434,9 @@ describe('SlickCustomTooltip plugin', () => {
     const icon1Elm = document.createElement('span');
     const icon2Elm = document.createElement('span');
     cellNode.className = 'slick-cell l2 r2';
-    icon1Elm.className = 'sgi sgi-check';
+    icon1Elm.className = 'mdi mdi-check';
     icon1Elm.title = 'Click here when successful';
-    icon2Elm.className = 'sgi sgi-cancel';
+    icon2Elm.className = 'mdi mdi-cancel';
     icon2Elm.title = 'Click here to cancel the action';
     cellNode.appendChild(icon1Elm);
     cellNode.appendChild(icon2Elm);
@@ -470,9 +470,9 @@ describe('SlickCustomTooltip plugin', () => {
     const icon1Elm = document.createElement('span');
     const icon2Elm = document.createElement('span');
     cellNode.className = 'slick-cell l2 r2';
-    icon1Elm.className = 'sgi sgi-check';
+    icon1Elm.className = 'mdi mdi-check';
     icon1Elm.title = 'Click here when successful';
-    icon2Elm.className = 'sgi sgi-cancel';
+    icon2Elm.className = 'mdi mdi-cancel';
     icon2Elm.title = 'Click here to cancel the action';
     icon2Elm.style.display = 'none';
     cellNode.appendChild(icon1Elm);

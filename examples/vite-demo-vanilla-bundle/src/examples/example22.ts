@@ -183,7 +183,7 @@ export default class Example22 {
         },
         actionButtons: {
           editButtonClassName: 'button-style padding-3px mr-2',
-          iconEditButtonClassName: 'sgi sgi-pencil',
+          iconEditButtonClassName: 'mdi mdi-pencil',
           // since no title and no titleKey is provided, it will fallback to the default text provided by the plugin
           // if the title is provided but no titleKey, it will override the default text
           // last but not least if a titleKey is provided, it will use the translation key to translate the text
@@ -192,18 +192,18 @@ export default class Example22 {
           cancelButtonClassName: 'button-style padding-3px',
           cancelButtonTitle: 'Cancel row',
           cancelButtonTitleKey: 'RBE_BTN_CANCEL',
-          iconCancelButtonClassName: 'sgi sgi-undo text-color-danger',
+          iconCancelButtonClassName: 'mdi mdi-undo text-color-danger',
           cancelButtonPrompt: 'Are you sure you want to cancel your changes?',
 
           updateButtonClassName: 'button-style padding-3px mr-2',
           updateButtonTitle: 'Update row',
           updateButtonTitleKey: 'RBE_BTN_UPDATE',
-          iconUpdateButtonClassName: 'sgi sgi-check text-color-success',
+          iconUpdateButtonClassName: 'mdi mdi-check text-color-success',
           updateButtonPrompt: 'Save changes?',
 
           deleteButtonClassName: 'button-style padding-3px',
           deleteButtonTitle: 'Delete row',
-          iconDeleteButtonClassName: 'sgi sgi-trash-can text-color-danger',
+          iconDeleteButtonClassName: 'mdi mdi-trash-can text-color-danger',
           deleteButtonPrompt: 'Are you sure you want to delete this row?',
         },
       },

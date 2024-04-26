@@ -40,7 +40,7 @@ export default class Example16 {
     this.dataset = this.loadData(500);
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid16`) as HTMLDivElement;
 
-    this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => this.loadingClass = 'sgi sgi-load sgi-spin-1s sgi-22px');
+    this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-22px');
     this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => this.loadingClass = '');
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
@@ -73,7 +73,7 @@ export default class Example16 {
           // example 2 (async):
           // when using async, the `formatter` will contain the loading spinner
           // you will need to provide an `asyncPost` function returning a Promise and also `asyncPostFormatter` formatter to display the result once the Promise resolves
-          formatter: () => `<div><span class="sgi sgi-load sgi-spin-1s"></span> loading...</div>`,
+          formatter: () => `<div><span class="mdi mdi-load mdi-spin-1s"></span> loading...</div>`,
           asyncProcess: () => new Promise(resolve => {
             setTimeout(() => resolve({ ratio: Math.random() * 10 / 10, lifespan: Math.random() * 100 }), this.serverApiDelay);
           }),
@@ -280,7 +280,7 @@ export default class Example16 {
       },
       {
         id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
-        formatter: () => `<div class="button-style margin-auto action-btn"><span class="sgi sgi-chevron-down sgi-22px text-color-primary"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
         excludeFromExport: true,
         // customTooltip: {
         //   formatter: () => `Click to open Cell Menu`, // return empty so it won't show any pre-tooltip
@@ -306,7 +306,7 @@ export default class Example16 {
             { command: 'command1', title: 'Command 1', cssClass: 'orange', positionOrder: 61 },
             {
               command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'sgi sgi-close', cssClass: 'red', textCssClass: 'bold',
+              iconCssClass: 'mdi mdi-close', cssClass: 'red', textCssClass: 'bold',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext.completed;
@@ -319,7 +319,7 @@ export default class Example16 {
             {
               command: 'help',
               title: 'Help',
-              iconCssClass: 'sgi sgi-help-circle-outline',
+              iconCssClass: 'mdi mdi-help-circle-outline',
               positionOrder: 66,
             },
             { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, }
@@ -506,7 +506,7 @@ export default class Example16 {
     }
     for (let i = 0; i < iconCount; i++) {
       const iconColor = iconCount === 5 ? 'text-color-success' : iconCount >= 3 ? 'text-color-alt-warning' : 'text-color-se-secondary-light';
-      output += `<span class="sgi sgi-check-circle-outline ${iconColor}"></span>`;
+      output += `<span class="mdi mdi-check-circle-outline ${iconColor}"></span>`;
     }
     return output;
   }

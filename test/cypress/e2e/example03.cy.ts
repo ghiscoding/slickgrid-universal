@@ -46,7 +46,7 @@ describe('Example 03 - Draggable Grouping', () => {
     });
 
     it('should click on the group by Duration sort icon and expect data to become sorted as descending order with all rows being expanded', () => {
-      cy.get('.sgi-arrow-up:nth(0)').click();
+      cy.get('.mdi-arrow-up:nth(0)').click();
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
     });
 
@@ -59,7 +59,7 @@ describe('Example 03 - Draggable Grouping', () => {
     });
 
     it('should click on the group by Duration sort icon and now expect data to become sorted as ascending order with all rows being expanded', () => {
-      cy.get('.sgi-arrow-down:nth(0)').click();
+      cy.get('.mdi-arrow-down:nth(0)').click();
       cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should('have.length', 1);
     });
 

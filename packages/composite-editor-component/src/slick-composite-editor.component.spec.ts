@@ -336,7 +336,7 @@ describe('CompositeEditorService', () => {
     });
 
     it('should make sure Slick-Composite-Editor is being created and rendered with 1 column layout & also expect column name html to be rendered as well', () => {
-      columnsMock[2].name = '<span class="sgi sgi-alert-circle" title="tooltip text"></span> Field 3'; // add tooltip
+      columnsMock[2].name = '<span class="mdi mdi-alert-circle" title="tooltip text"></span> Field 3'; // add tooltip
       const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
       jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
@@ -361,7 +361,7 @@ describe('CompositeEditorService', () => {
       expect(compositeContainerElm).toBeTruthy();
       expect(compositeHeaderElm).toBeTruthy();
       expect(productNameLabelElm.textContent).toBe('Product'); // regular, without column group
-      expect(field3LabelElm.innerHTML).toBe('Group Name - <span class="sgi sgi-alert-circle" title="tooltip text"></span> Field 3'); // with column group
+      expect(field3LabelElm.innerHTML).toBe('Group Name - <span class="mdi mdi-alert-circle" title="tooltip text"></span> Field 3'); // with column group
       expect(compositeTitleElm).toBeTruthy();
       expect(compositeTitleElm.textContent).toBe('Details');
       expect(compositeBodyElm).toBeTruthy();
@@ -1089,7 +1089,7 @@ describe('CompositeEditorService', () => {
         jest.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
 
         const mockModalOptions = {
-          headerTitle: 'Details', modalType: 'create', showResetButtonOnEachEditor: true, resetEditorButtonCssClass: 'sgi sgi-refresh'
+          headerTitle: 'Details', modalType: 'create', showResetButtonOnEachEditor: true, resetEditorButtonCssClass: 'mdi mdi-refresh'
         } as CompositeEditorOpenDetailOption;
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);

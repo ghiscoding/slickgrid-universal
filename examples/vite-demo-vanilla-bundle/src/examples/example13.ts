@@ -98,13 +98,13 @@ export default class Example13 {
     const command = args.command;
 
     if (command === 'toggle-highlight') {
-      if (button.cssClass === 'sgi sgi-lightbulb-on text-color-danger') {
+      if (button.cssClass === 'mdi mdi-lightbulb-on text-color-danger') {
         if (gridNo === 1) {
           delete columns1WithHighlightingById[column.id];
         } else {
           delete columns2WithHighlightingById[column.id];
         }
-        button.cssClass = 'sgi sgi-lightbulb-outline text-color-warning faded';
+        button.cssClass = 'mdi mdi-lightbulb-outline text-color-warning faded';
         button.tooltip = 'Highlight negative numbers.';
       } else {
         if (gridNo === 1) {
@@ -112,7 +112,7 @@ export default class Example13 {
         } else {
           columns2WithHighlightingById[column.id] = true;
         }
-        button.cssClass = 'sgi sgi-lightbulb-on text-color-danger';
+        button.cssClass = 'mdi mdi-lightbulb-on text-color-danger';
         button.tooltip = 'Remove highlight.';
       }
       this[`sgb${gridNo}`].slickGrid?.invalidate();
@@ -143,7 +143,7 @@ export default class Example13 {
         header: {
           buttons: [
             {
-              cssClass: 'sgi sgi-lightbulb-outline text-color-warning faded',
+              cssClass: 'mdi mdi-lightbulb-outline text-color-warning faded',
               command: 'toggle-highlight',
               tooltip: 'Highlight negative numbers.',
               itemVisibilityOverride: (args) => {
@@ -170,25 +170,25 @@ export default class Example13 {
     this[`columnDefinitions${gridNo}`][0].header = {
       buttons: [
         {
-          cssClass: 'sgi sgi-message-text',
+          cssClass: 'mdi mdi-message-text',
           handler: () => {
             alert('Tag');
           }
         },
         {
-          cssClass: 'sgi sgi-forum-outline',
+          cssClass: 'mdi mdi-forum-outline',
           handler: () => {
             alert('Comment');
           }
         },
         {
-          cssClass: 'sgi sgi-information-outline',
+          cssClass: 'mdi mdi-information-outline',
           handler: () => {
             alert('Info');
           }
         },
         {
-          cssClass: 'sgi sgi-help-circle-outline',
+          cssClass: 'mdi mdi-help-circle-outline',
           handler: () => {
             alert('Help');
           }
@@ -206,7 +206,7 @@ export default class Example13 {
     this[`columnDefinitions${gridNo}`][1].header = {
       buttons: [
         {
-          cssClass: 'sgi sgi-help-circle-outline',
+          cssClass: 'mdi mdi-help-circle-outline',
           showOnHover: true,
           tooltip: 'This button only appears on hover.',
           handler: () => {

@@ -54,7 +54,7 @@ const gridOptionsMock = {
   enableDraggableGrouping: true,
   draggableGrouping: {
     hideToggleAllButton: false,
-    deleteIconCssClass: 'sgi sgi-close text-color-danger',
+    deleteIconCssClass: 'mdi mdi-close text-color-danger',
   },
   showHeaderRow: false,
   showTopPanel: false,
@@ -224,13 +224,13 @@ describe('Draggable Grouping Plugin', () => {
   it('should add an icon beside each column title when "groupIconCssClass" is provided', () => {
     jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, enableTranslate: true });
     translateService.use('fr');
-    plugin.init(gridStub, { ...addonOptions, groupIconCssClass: 'sgi sgi-drag' });
+    plugin.init(gridStub, { ...addonOptions, groupIconCssClass: 'mdi mdi-drag' });
     const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
     gridStub.onHeaderCellRendered.notify({ column: mockColumns[2], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
     const groupableElm = headerDiv.querySelector('.slick-column-groupable') as HTMLSpanElement;
 
     expect(headerDiv.style.cursor).toBe('pointer');
-    expect(groupableElm.classList.contains('sgi-drag')).toBeTruthy();
+    expect(groupableElm.classList.contains('mdi-drag')).toBeTruthy();
   });
 
   describe('setupColumnReorder definition', () => {
@@ -329,14 +329,14 @@ describe('Draggable Grouping Plugin', () => {
 
     it('should execute the "onEnd" callback of Sortable and expect sortable to be cancelled', () => {
       plugin.init(gridStub, { ...addonOptions });
-      plugin.setAddonOptions({ deleteIconCssClass: 'sgi sgi-close text-color-danger' });
+      plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close text-color-danger' });
       const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
 
       fn.sortableLeftInstance!.options.onStart!({} as any);
       plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
       fn.sortableLeftInstance.options.onEnd!(new CustomEvent('end') as any);
 
-      const groupByRemoveElm = document.querySelector('.slick-groupby-remove.sgi-close') as HTMLDivElement;
+      const groupByRemoveElm = document.querySelector('.slick-groupby-remove.mdi-close') as HTMLDivElement;
       expect(groupByRemoveElm).toBeTruthy();
 
       expect(setColumnsSpy).not.toHaveBeenCalled();
@@ -346,7 +346,7 @@ describe('Draggable Grouping Plugin', () => {
 
     it('should clear grouping and expect placeholder to be displayed when calling "onEnd" callback', () => {
       plugin.init(gridStub, { ...addonOptions });
-      plugin.setAddonOptions({ deleteIconCssClass: 'sgi sgi-close text-color-danger' });
+      plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close text-color-danger' });
       const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
 
       fn.sortableLeftInstance!.options.onStart!({} as any);
@@ -361,7 +361,7 @@ describe('Draggable Grouping Plugin', () => {
     it('should execute the "onEnd" callback of Sortable and expect css classes to be updated', () => {
       plugin.init(gridStub, { ...addonOptions });
       plugin.setColumns(mockColumns);
-      plugin.setAddonOptions({ deleteIconCssClass: 'sgi sgi-close' });
+      plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close' });
       jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
       getColumnIndexSpy.mockReturnValue(2);
       const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
@@ -370,7 +370,7 @@ describe('Draggable Grouping Plugin', () => {
       fn.sortableLeftInstance!.options.onStart!({} as any);
       plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
 
-      const groupByRemoveElm = document.querySelector('.slick-groupby-remove.sgi-close');
+      const groupByRemoveElm = document.querySelector('.slick-groupby-remove.mdi-close');
       expect(groupByRemoveElm).toBeTruthy();
 
       fn.sortableLeftInstance.options.onEnd!(new CustomEvent('end') as any);
@@ -382,7 +382,7 @@ describe('Draggable Grouping Plugin', () => {
 
     it('should drag over dropzone and expect hover css class be added and removed when dragging outside of dropzone', () => {
       plugin.init(gridStub, { ...addonOptions });
-      plugin.setAddonOptions({ deleteIconCssClass: 'sgi sgi-close text-color-danger' });
+      plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close text-color-danger' });
       const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
 
       fn.sortableLeftInstance!.options.onStart!({} as any);
@@ -428,8 +428,8 @@ describe('Draggable Grouping Plugin', () => {
           mockHeaderColumnDiv1.appendChild(mockDivPaneContainer1);
           mockHeaderColumnDiv2.appendChild(mockDivPaneContainer1);
 
-          plugin.init(gridStub, { ...addonOptions, deleteIconCssClass: 'sgi sgi-close', onGroupChanged: onGroupChangedCallbackSpy });
-          plugin.setAddonOptions({ deleteIconCssClass: 'sgi sgi-close' });
+          plugin.init(gridStub, { ...addonOptions, deleteIconCssClass: 'mdi mdi-close', onGroupChanged: onGroupChangedCallbackSpy });
+          plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close' });
 
           jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(false);
           const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
@@ -644,7 +644,7 @@ describe('Draggable Grouping Plugin', () => {
 
         it('should toggle ascending/descending order with different icons when original sort is ascending then user clicked the sorting icon twice', () => {
           const onGroupChangedCallbackSpy = jest.fn();
-          plugin.init(gridStub, { ...addonOptions, sortAscIconCssClass: 'sgi sgi-arrow-up', sortDescIconCssClass: 'sgi sgi-arrow-down', onGroupChanged: onGroupChangedCallbackSpy });
+          plugin.init(gridStub, { ...addonOptions, sortAscIconCssClass: 'mdi mdi-arrow-up', sortDescIconCssClass: 'mdi mdi-arrow-down', onGroupChanged: onGroupChangedCallbackSpy });
           const fn = plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
           jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['age', 'medals']);
           const invalidateSpy = jest.spyOn(gridStub, 'invalidate');
@@ -653,7 +653,7 @@ describe('Draggable Grouping Plugin', () => {
           plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
 
           let groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
-          let groupBySortAscIconElm = preHeaderDiv.querySelector('.sgi-arrow-up') as HTMLDivElement;
+          let groupBySortAscIconElm = preHeaderDiv.querySelector('.mdi-arrow-up') as HTMLDivElement;
 
           expect(fn.sortableLeftInstance).toEqual(plugin.sortableLeftInstance);
           expect(fn.sortableRightInstance).toEqual(plugin.sortableRightInstance);
@@ -662,16 +662,16 @@ describe('Draggable Grouping Plugin', () => {
           expect(groupBySortAscIconElm).toBeTruthy();
 
           groupBySortAscIconElm.dispatchEvent(new Event('click'));
-          groupBySortAscIconElm = preHeaderDiv.querySelector('.sgi-arrow-up') as HTMLDivElement;
-          let groupBySortDescIconElm = preHeaderDiv.querySelector('.sgi-arrow-down') as HTMLDivElement;
+          groupBySortAscIconElm = preHeaderDiv.querySelector('.mdi-arrow-up') as HTMLDivElement;
+          let groupBySortDescIconElm = preHeaderDiv.querySelector('.mdi-arrow-down') as HTMLDivElement;
 
           expect(setGroupingSpy).toHaveBeenCalledWith(expect.toBeArray());
           expect(groupBySortAscIconElm).toBeFalsy();
           expect(groupBySortDescIconElm).toBeTruthy();
 
           groupBySortDescIconElm.dispatchEvent(new Event('click'));
-          groupBySortAscIconElm = preHeaderDiv.querySelector('.sgi-arrow-up') as HTMLDivElement;
-          groupBySortDescIconElm = preHeaderDiv.querySelector('.sgi-arrow-down') as HTMLDivElement;
+          groupBySortAscIconElm = preHeaderDiv.querySelector('.mdi-arrow-up') as HTMLDivElement;
+          groupBySortDescIconElm = preHeaderDiv.querySelector('.mdi-arrow-down') as HTMLDivElement;
 
           expect(setGroupingSpy).toHaveBeenCalledWith(expect.toBeArray());
           expect(groupBySortAscIconElm).toBeTruthy();
@@ -704,7 +704,7 @@ describe('Draggable Grouping Plugin', () => {
 
       it('should execute the "onEnd" callback of Sortable and expect sortable to be cancelled', () => {
         plugin.init(gridStub, { ...addonOptions });
-        plugin.setAddonOptions({ deleteIconCssClass: 'sgi sgi-close text-color-danger' });
+        plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close text-color-danger' });
         const fn = plugin.setupColumnReorder(gridStub, [mockHeaderLeftDiv1, mockHeaderLeftDiv2], {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
         jest.spyOn(fn.sortableLeftInstance, 'toArray').mockReturnValue(['firstName', 'lastName', 'age']);
         jest.spyOn(fn.sortableRightInstance, 'toArray').mockReturnValue(['gender']);
@@ -713,7 +713,7 @@ describe('Draggable Grouping Plugin', () => {
         plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
         fn.sortableLeftInstance.options.onEnd!(new CustomEvent('end') as any);
 
-        const groupByRemoveElm = document.querySelector('.slick-groupby-remove.sgi-close') as HTMLDivElement;
+        const groupByRemoveElm = document.querySelector('.slick-groupby-remove.mdi-close') as HTMLDivElement;
         expect(groupByRemoveElm).toBeTruthy();
 
         mockColumns.pop(); // all original columns except last column which is what we returned on sortableRightInstance

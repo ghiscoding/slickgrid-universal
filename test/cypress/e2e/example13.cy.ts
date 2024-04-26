@@ -27,12 +27,12 @@ describe('Example 13 - Header Button Plugin', () => {
 
       cy.get('.grid13-1 .slick-header-columns')
         .children('.slick-header-column:nth(2)')
-        .find('.slick-header-button.sgi-lightbulb-outline.text-color-warning.faded')
+        .find('.slick-header-button.mdi-lightbulb-outline.text-color-warning.faded')
         .click();
 
       cy.get('.grid13-1 .slick-header-columns')
         .children('.slick-header-column:nth(2)')
-        .find('.slick-header-button.sgi-lightbulb-outline.text-color-warning.faded')
+        .find('.slick-header-button.mdi-lightbulb-outline.text-color-warning.faded')
         .should('not.exist'); // shouldn't be faded anymore
 
       cy.window().then((win) => {
@@ -83,13 +83,13 @@ describe('Example 13 - Header Button Plugin', () => {
 
       cy.get('.grid13-1 .slick-header-columns')
         .children('.slick-header-column:nth(9)')
-        .find('.slick-header-button.slick-header-button-disabled.sgi-lightbulb-outline.text-color-warning.faded')
+        .find('.slick-header-button.slick-header-button-disabled.mdi-lightbulb-outline.text-color-warning.faded')
         .should('exist')
         .click();
 
       cy.get('.grid13-1 .slick-header-columns')
         .children('.slick-header-column:nth(9)')
-        .find('.slick-header-button.slick-header-button-disabled.sgi-lightbulb-outline.text-color-warning.faded')
+        .find('.slick-header-button.slick-header-button-disabled.mdi-lightbulb-outline.text-color-warning.faded')
         .should('exist'); // should still be faded after previous click
 
       cy.get('.grid13-1 .slick-row')
@@ -206,7 +206,7 @@ describe('Example 13 - Header Button Plugin', () => {
         .should('have.css', 'visibility', 'hidden');
 
       cy.get('.grid13-1 .slick-header-columns')
-        .find('.slick-header-button-hidden.sgi-help-circle-outline')
+        .find('.slick-header-button-hidden.mdi-help-circle-outline')
         .realHover()
         .wait(200)
         .should('have.css', 'visibility', 'visible');
@@ -227,12 +227,12 @@ describe('Example 13 - Header Button Plugin', () => {
 
       cy.get('.grid13-2 .slick-header-columns')
         .children('.slick-header-column:nth(2)')
-        .find('.slick-header-button.sgi-lightbulb-outline.text-color-warning.faded')
+        .find('.slick-header-button.mdi-lightbulb-outline.text-color-warning.faded')
         .click({ force: true });
 
       cy.get('.grid13-2 .slick-header-columns')
         .children('.slick-header-column:nth(2)')
-        .find('.slick-header-button.sgi-lightbulb-outline.text-color-warning.faded')
+        .find('.slick-header-button.mdi-lightbulb-outline.text-color-warning.faded')
         .should('not.exist'); // shouldn't be faded anymore
 
       cy.window().then((win) => {
@@ -283,13 +283,13 @@ describe('Example 13 - Header Button Plugin', () => {
 
       cy.get('.grid13-2 .slick-header-columns')
         .children('.slick-header-column:nth(9)')
-        .find('.slick-header-button.slick-header-button-disabled.sgi-lightbulb-outline.text-color-warning.faded')
+        .find('.slick-header-button.slick-header-button-disabled.mdi-lightbulb-outline.text-color-warning.faded')
         .should('exist')
         .click({ force: true });
 
       cy.get('.grid13-2 .slick-header-columns')
         .children('.slick-header-column:nth(9)')
-        .find('.slick-header-button.slick-header-button-disabled.sgi-lightbulb-outline.text-color-warning.faded')
+        .find('.slick-header-button.slick-header-button-disabled.mdi-lightbulb-outline.text-color-warning.faded')
         .should('exist'); // should still be faded after previous click
 
       cy.get('.grid13-2 .slick-row')
@@ -405,7 +405,7 @@ describe('Example 13 - Header Button Plugin', () => {
         .should('have.css', 'visibility', 'hidden');
 
       cy.get('.grid13-2 .slick-header-columns')
-        .find('.slick-header-button-hidden.sgi-help-circle-outline')
+        .find('.slick-header-button-hidden.mdi-help-circle-outline')
         .realHover()
         .wait(200)
         .should('have.css', 'visibility', 'visible');

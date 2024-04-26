@@ -58,7 +58,7 @@ initializeGrid() {
   - So basically, if `exportWithFormatter` is set to True in the `excelExportOptions` of the Grid Options, but is set to False in the Column Definition, then the result will be False and will not evaluate it's Formatter.
 - `exportCustomFormatter` will let you choose a different Formatter when exporting
   - For example, you might have `formatter: Formatters.checkmark` but you want to see a boolean translated value, in this case you would define an extra property of `customFormatter: Formatters.translateBoolean`.
-- set `sanitizeDataExport` to remove any HTML/Script code from being export. For example if your value is `<span class="sgi sgi-check">True</span>` will export `True` without any HTML (data is sanitized).
+- set `sanitizeDataExport` to remove any HTML/Script code from being export. For example if your value is `<span class="mdi mdi-check">True</span>` will export `True` without any HTML (data is sanitized).
    - this flag can be used in the Grid Options (all columns) or in a Column Definition (per column).
 
 #### Grid Options
@@ -73,7 +73,7 @@ Inside the column definition there are couple of flags you can set in `excelExpo
 - `sheetName` allows you to change the Excel Sheet Name (defaults to "Sheet1")
 - `groupingColumnHeaderTitle` The column header title (at A0 in Excel) of the Group by. If nothing is provided it will use "Group By"
 - `groupingAggregatorRowText` The default text to display in 1st column of the File Export, which will identify that the current row is a Grouping Aggregator
-- set `sanitizeDataExport` to remove any HTML/Script code from being export. For example if your value is `<span class="sgi sgi-check">True</span>` will export `True` without any HTML (data is sanitized).
+- set `sanitizeDataExport` to remove any HTML/Script code from being export. For example if your value is `<span class="mdi mdi-check">True</span>` will export `True` without any HTML (data is sanitized).
    - this flag can be used in the Grid Options (all columns) or in a Column Definition (per column).
 - `customExcelHeader` is a callback method that can be used to provide a custom Header Title to your Excel File
 
@@ -222,7 +222,7 @@ If you have lots of data, you might want to show a spinner telling the user that
 ##### View
 ```html
 <span if.bind="!processing">
-   <i class="sgi sgi-load sgi-spin-1s sgi-22px"></i>
+   <i class="mdi mdi-load mdi-spin-1s mdi-22px"></i>
 </span>
 
 <div class="grid2">

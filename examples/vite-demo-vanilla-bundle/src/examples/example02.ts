@@ -42,7 +42,7 @@ export default class Example02 {
     this.dataset = this.loadData(NB_ITEMS);
     const gridContainerElm = document.querySelector<HTMLDivElement>('.grid2') as HTMLDivElement;
 
-    this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => this.loadingClass = 'sgi sgi-load sgi-spin-1s sgi-22px');
+    this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-22px');
     this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => this.loadingClass = '');
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 

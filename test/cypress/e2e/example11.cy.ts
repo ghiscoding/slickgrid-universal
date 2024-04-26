@@ -553,7 +553,7 @@ describe('Example 11 - Batch Editing', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 5}px;"] > .slick-cell:nth(1)`).contains('TASK 5', { matchCase: false });
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(10)`)
-      .find('.sgi-close')
+      .find('.mdi-close')
       .click();
 
     cy.on('window:confirm', () => true);
@@ -570,7 +570,7 @@ describe('Example 11 - Batch Editing', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).contains('TASK 2', { matchCase: false });
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(10)`)
-      .find('.sgi-check-underline')
+      .find('.mdi-check-underline')
       .click();
 
     cy.on('window:alert', (str) => {
@@ -833,8 +833,8 @@ describe('Example 11 - Batch Editing', () => {
 
   it('should display 2 different tooltips when hovering icons from "Action" column', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(10)`).as('first-row-action-cell');
-    cy.get('@first-row-action-cell').find('.action-btns .sgi-close').as('delete-row-btn');
-    cy.get('@first-row-action-cell').find('.action-btns .sgi-check-underline').as('mark-completed-btn');
+    cy.get('@first-row-action-cell').find('.action-btns .mdi-close').as('delete-row-btn');
+    cy.get('@first-row-action-cell').find('.action-btns .mdi-check-underline').as('mark-completed-btn');
 
     cy.get('@delete-row-btn')
       .trigger('mouseover');

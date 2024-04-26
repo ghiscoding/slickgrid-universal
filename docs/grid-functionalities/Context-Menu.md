@@ -39,7 +39,7 @@ this.gridOptions = {
           console.log(args.dataContext, args.column); // action callback.. do something
         }
       },
-      { command: 'help', title: 'HELP', iconCssClass: 'sgi sgi-help-circle', positionOrder: 62 },
+      { command: 'help', title: 'HELP', iconCssClass: 'mdi mdi-help-circle', positionOrder: 62 },
       // you can add sub-menus by adding nested `commandItems`
       {
          // we can also have multiple nested sub-menus
@@ -68,8 +68,8 @@ this.gridOptions = {
     hideCloseButton: false,
     optionTitle: 'Change Effort Driven Flag', // optional, add title
     optionItems: [
-      { option: true, title: 'True', iconCssClass: 'sgi sgi-check-box-outline' },
-      { option: false, title: 'False', iconCssClass: 'sgi sgi-checkbox-blank-outline' },
+      { option: true, title: 'True', iconCssClass: 'mdi mdi-check-box-outline' },
+      { option: false, title: 'False', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
       { divider: true, command: '', positionOrder: 60 },
     ],
     // subscribe to Context Menu onOptionSelected event (or use the "action" callback on each option)
@@ -148,9 +148,9 @@ contextMenu: {
       const dataContext = args?.dataContext;
       return !dataContext.completed;
     },
-    { option: 1, iconCssClass: 'sgi sgi-star-outline yellow', title: 'Low' },
-    { option: 2, iconCssClass: 'sgi sgi-star orange', title: 'Medium' },
-    { option: 3, iconCssClass: 'sgi sgi-star red', title: 'High' },
+    { option: 1, iconCssClass: 'mdi mdi-star-outline yellow', title: 'Low' },
+    { option: 2, iconCssClass: 'mdi mdi-star orange', title: 'Medium' },
+    { option: 3, iconCssClass: 'mdi mdi-star red', title: 'High' },
   }]
 }
 ```
@@ -161,9 +161,9 @@ It works exactly like the rest of the library when `enableTranslate` is set, all
 contextMenu: {
   optionTitleKey: 'COMMANDS', // optionally pass a title to show over the Options
   optionItems: [{
-    { option: 1, titleKey: 'LOW', iconCssClass: 'sgi sgi-star-outline yellow' },
-    { option: 2, titleKey: 'MEDIUM', iconCssClass: 'sgi sgi-star orange' },
-    { option: 3, titleKey: 'HIGH', iconCssClass: 'sgi sgi-star red' },
+    { option: 1, titleKey: 'LOW', iconCssClass: 'mdi mdi-star-outline yellow' },
+    { option: 2, titleKey: 'MEDIUM', iconCssClass: 'mdi mdi-star orange' },
+    { option: 3, titleKey: 'HIGH', iconCssClass: 'mdi mdi-star red' },
   }]
 }
 ```
@@ -197,10 +197,10 @@ contextMenu: {
     hideExportTextDelimitedCommand: true,
     hideMenuOnScroll: true,
     hideOptionSection: false,
-    iconCopyCellValueCommand: 'sgi sgi-content-copy',
-    iconExportCsvCommand: 'sgi sgi-download',
-    iconExportExcelCommand: 'sgi sgi-file-excel-outline text-success',
-    iconExportTextDelimitedCommand: 'sgi sgi-download',
+    iconCopyCellValueCommand: 'mdi mdi-content-copy',
+    iconExportCsvCommand: 'mdi mdi-download',
+    iconExportExcelCommand: 'mdi mdi-file-excel-outline text-success',
+    iconExportTextDelimitedCommand: 'mdi mdi-download',
     width: 200,
   },
 ```

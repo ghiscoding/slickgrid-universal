@@ -357,7 +357,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             hasFrozenOrResizeCommand = true;
             if (!columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'freeze-columns')) {
               columnHeaderMenuItems.push({
-                iconCssClass: headerMenuOptions.iconFreezeColumns || 'sgi sgi-pin-outline',
+                iconCssClass: headerMenuOptions.iconFreezeColumns || 'mdi mdi-pin-outline',
                 titleKey: `${translationPrefix}FREEZE_COLUMNS`,
                 command: 'freeze-columns',
                 positionOrder: 47
@@ -370,7 +370,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             hasFrozenOrResizeCommand = true;
             if (!columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'column-resize-by-content')) {
               columnHeaderMenuItems.push({
-                iconCssClass: headerMenuOptions.iconColumnResizeByContentCommand || 'sgi sgi-arrow-expand-horizontal',
+                iconCssClass: headerMenuOptions.iconColumnResizeByContentCommand || 'mdi mdi-arrow-expand-horizontal',
                 titleKey: `${translationPrefix}COLUMN_RESIZE_BY_CONTENT`,
                 command: 'column-resize-by-content',
                 positionOrder: 48
@@ -387,7 +387,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           if (gridOptions.enableSorting && columnDef.sortable && headerMenuOptions && !headerMenuOptions.hideSortCommands) {
             if (!columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'sort-asc')) {
               columnHeaderMenuItems.push({
-                iconCssClass: headerMenuOptions.iconSortAscCommand || 'sgi sgi-sort-ascending',
+                iconCssClass: headerMenuOptions.iconSortAscCommand || 'mdi mdi-sort-ascending',
                 titleKey: `${translationPrefix}SORT_ASCENDING`,
                 command: 'sort-asc',
                 positionOrder: 50
@@ -395,7 +395,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             }
             if (!columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'sort-desc')) {
               columnHeaderMenuItems.push({
-                iconCssClass: headerMenuOptions.iconSortDescCommand || 'sgi sgi-flip-v sgi-sort-descending',
+                iconCssClass: headerMenuOptions.iconSortDescCommand || 'mdi mdi-flip-v mdi-sort-descending',
                 titleKey: `${translationPrefix}SORT_DESCENDING`,
                 command: 'sort-desc',
                 positionOrder: 51
@@ -409,7 +409,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
             if (!headerMenuOptions.hideClearSortCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'clear-sort')) {
               columnHeaderMenuItems.push({
-                iconCssClass: headerMenuOptions.iconClearSortCommand || 'sgi sgi-sort-variant-off',
+                iconCssClass: headerMenuOptions.iconClearSortCommand || 'mdi mdi-sort-variant-off',
                 titleKey: `${translationPrefix}REMOVE_SORT`,
                 command: 'clear-sort',
                 positionOrder: 54
@@ -421,7 +421,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           if (gridOptions.enableFiltering && columnDef.filterable && headerMenuOptions && !headerMenuOptions.hideFilterCommand) {
             if (!headerMenuOptions.hideClearFilterCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'clear-filter')) {
               columnHeaderMenuItems.push({
-                iconCssClass: headerMenuOptions.iconClearFilterCommand || 'sgi sgi-filter-remove-outline',
+                iconCssClass: headerMenuOptions.iconClearFilterCommand || 'mdi mdi-filter-remove-outline',
                 titleKey: `${translationPrefix}REMOVE_FILTER`,
                 command: 'clear-filter',
                 positionOrder: 53
@@ -432,7 +432,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           // Hide Column Command
           if (headerMenuOptions && !headerMenuOptions.hideColumnHideCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'hide-column')) {
             columnHeaderMenuItems.push({
-              iconCssClass: headerMenuOptions.iconColumnHideCommand || 'sgi sgi-close',
+              iconCssClass: headerMenuOptions.iconColumnHideCommand || 'mdi mdi-close',
               titleKey: `${translationPrefix}HIDE_COLUMN`,
               command: 'hide-column',
               positionOrder: 55

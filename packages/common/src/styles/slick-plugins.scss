@@ -159,15 +159,15 @@ li.hidden {
     border: var(--slick-column-picker-icon-border, $slick-column-picker-icon-border);
     border-radius: var(--slick-column-picker-icon-border-radius, $slick-column-picker-icon-border-radius);
 
-    div.sgi {
+    div.mdi {
       opacity: 1;
       font-size: var(--slick-column-picker-icon-font-size, $slick-column-picker-icon-font-size);
       color: var(--slick-column-picker-icon-color, $slick-column-picker-icon-color);
 
-      &.sgi-icon-picker-check {
+      &.mdi-icon-picker-check {
         @include generateSvgStyle('slick-column-picker-icon-checked-svg', $slick-column-picker-icon-checked-svg-path);
       }
-      &.sgi-icon-picker-uncheck {
+      &.mdi-icon-picker-uncheck {
         @include generateSvgStyle('slick-column-picker-icon-unchecked-svg', $slick-column-picker-icon-unchecked-svg-path);
         opacity: var(--slick-column-picker-unchecked-opacity, $slick-column-picker-unchecked-opacity); /* unchecked icon */
         &:hover {
@@ -608,15 +608,15 @@ li.hidden {
     border: var(--slick-checkbox-icon-border, $slick-checkbox-icon-border);
     border-radius: var(--slick-checkbox-icon-border-radius, $slick-checkbox-icon-border-radius);
 
-    div.sgi {
+    div.mdi {
       opacity: 1;
       font-size: var(--slick-checkbox-icon-font-size, $slick-checkbox-icon-font-size);
       color: var(--slick-checkbox-icon-color, $slick-checkbox-icon-color);
 
-      &.sgi-icon-check {
+      &.mdi-icon-check {
         @include generateSvgStyle('slick-checkbox-icon-checked-svg', $slick-checkbox-icon-checked-svg-path);
       }
-      &.sgi-icon-uncheck {
+      &.mdi-icon-uncheck {
         @include generateSvgStyle('slick-checkbox-icon-unchecked-svg', $slick-checkbox-icon-unchecked-svg-path);
         opacity: var(--slick-checkbox-unchecked-opacity, $slick-checkbox-unchecked-opacity); /* unchecked icon */
         &:hover {

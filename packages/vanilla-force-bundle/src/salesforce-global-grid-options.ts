@@ -3,7 +3,7 @@ import { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
 
 // create empty warning message as Document Fragment to be CSP safe
 const emptyWarningElm = document.createElement('div');
-emptyWarningElm.appendChild(createDomElement('span', { className: 'sgi sgi-alert text-color-warning' }));
+emptyWarningElm.appendChild(createDomElement('span', { className: 'mdi mdi-alert text-color-warning' }));
 emptyWarningElm.appendChild(document.createTextNode(' No data to display.'));
 
 /** Global Grid Options Defaults for Salesforce */
@@ -19,8 +19,8 @@ export const SalesforceGlobalGridOptions = {
   },
   eventNamingStyle: EventNamingStyle.lowerCaseWithoutOnPrefix,
   compositeEditorOptions: {
-    resetEditorButtonCssClass: 'sgi sgi-refresh sgi-15px',
-    resetFormButtonIconCssClass: 'sgi sgi-refresh sgi-16px sgi-flip-h',
+    resetEditorButtonCssClass: 'mdi mdi-refresh mdi-15px',
+    resetFormButtonIconCssClass: 'mdi mdi-refresh mdi-16px mdi-flip-h',
     shouldPreviewMassChangeDataset: true,
   },
   datasetIdPropertyName: 'Id',
@@ -63,8 +63,8 @@ export const SalesforceGlobalGridOptions = {
   },
   headerMenu: {
     hideFreezeColumnsCommand: false,
-    iconSortAscCommand: 'sgi sgi-arrow-up',
-    iconSortDescCommand: 'sgi sgi-arrow-down',
+    iconSortAscCommand: 'mdi mdi-arrow-up',
+    iconSortDescCommand: 'mdi mdi-arrow-down',
   },
   preventDocumentFragmentUsage: true,
   sanitizer: (dirtyHtml: string) => typeof dirtyHtml === 'string' ? dirtyHtml.replace(/(\b)(on[a-z]+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi, '') : dirtyHtml,

@@ -195,7 +195,7 @@ For example, we will use `Font-Awesome` with a `boolean` as input data, and disp
 ```ts
 // create a custom Formatter with the Formatter type
 const myCustomCheckboxFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any) =>
-  value ? `<i class="sgi sgi-fire" aria-hidden="true"></i>` : '<i class="sgi sgi-snowflake" aria-hidden="true"></i>';
+  value ? `<i class="mdi mdi-fire" aria-hidden="true"></i>` : '<i class="mdi mdi-snowflake" aria-hidden="true"></i>';
 ```
 
 #### Example with `FormatterResultObject` instead of a string
@@ -203,7 +203,7 @@ Using this object return type will provide the user the same look and feel, it w
 ```ts
 // create a custom Formatter and returning a string and/or an object of type FormatterResultObject
 const myCustomCheckboxFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid?: any) =>
-  value ? { addClasses: 'sgi sgi-fire', text: '', tooltip: 'burning fire' } : '<i class="sgi sgi-snowflake" aria-hidden="true"></i>';
+  value ? { addClasses: 'mdi mdi-fire', text: '', tooltip: 'burning fire' } : '<i class="mdi mdi-snowflake" aria-hidden="true"></i>';
 ```
 
 ### Example of Custom Formatter with Native DOM Element
@@ -219,7 +219,7 @@ Demo
 ```ts
 export const iconFormatter: Formatter = (_row, _cell, _value, columnDef) => {
   const iconElm = document.createElement('span');
-  iconElm.className = 'sgi sgi-check';
+  iconElm.className = 'mdi mdi-check';
 
   return iconElm;
 };

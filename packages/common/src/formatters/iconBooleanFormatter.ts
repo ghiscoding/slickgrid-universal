@@ -8,7 +8,7 @@ export const iconBooleanFormatter: Formatter = (_row, _cell, value, columnDef) =
   const cssClasses = columnParams.cssClass;
 
   if (!cssClasses) {
-    throw new Error('[Slickgrid-Universal] When using `Formatters.iconBoolean`, you must provide You must provide the "cssClass", e.g.: { formatter: Formatters.iconBoolean, params: { cssClass: "sgi sgi-check" }}');
+    throw new Error('[Slickgrid-Universal] When using `Formatters.iconBoolean`, you must provide You must provide the "cssClass", e.g.: { formatter: Formatters.iconBoolean, params: { cssClass: "mdi mdi-check" }}');
   }
 
   let isTruthy = false;

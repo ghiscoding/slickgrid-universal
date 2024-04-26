@@ -38,7 +38,7 @@ this.columnDefinitions = [
             console.log(args.dataContext, args.column); // action callback.. do something
           }
         },
-        { command: 'help', title: 'HELP', iconCssClass: 'sgi sgi-help-circle', positionOrder: 62 },
+        { command: 'help', title: 'HELP', iconCssClass: 'mdi mdi-help-circle', positionOrder: 62 },
         // you can add sub-menus by adding nested `commandItems`
         {
          // we can also have multiple nested sub-menus
@@ -74,8 +74,8 @@ this.columnDefinitions = [
     cellMenu: {
       optionTitle: 'Change Effort Driven Flag', // optional, add title
       optionItems: [
-        { option: true, title: 'True', iconCssClass: 'sgi sgi-check-box-outline' },
-        { option: false, title: 'False', iconCssClass: 'sgi sgi-checkbox-blank-outline' },
+        { option: true, title: 'True', iconCssClass: 'mdi mdi-check-box-outline' },
+        { option: false, title: 'False', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
         { divider: true, command: '', positionOrder: 60 },
       ],
       // subscribe to Context Menu onOptionSelected event (or use the "action" callback on each option)
@@ -173,9 +173,9 @@ this.columnDefinitions = [{
         const dataContext = args?.dataContext;
         return !dataContext.completed;
       },
-      { option: 1, iconCssClass: 'sgi sgi-star-outline yellow', title: 'Low' },
-      { option: 2, iconCssClass: 'sgi sgi-star orange', title: 'Medium' },
-      { option: 3, iconCssClass: 'sgi sgi-star red', title: 'High' },
+      { option: 1, iconCssClass: 'mdi mdi-star-outline yellow', title: 'Low' },
+      { option: 2, iconCssClass: 'mdi mdi-star orange', title: 'Medium' },
+      { option: 3, iconCssClass: 'mdi mdi-star red', title: 'High' },
     }]
   }
 }];
@@ -189,9 +189,9 @@ this.columnDefinitions = [
     cellMenu: {
       optionTitleKey: 'COMMANDS', // optionally pass a title to show over the Options
       optionItems: [
-        { option: 1, titleKey: 'LOW', iconCssClass: 'sgi sgi-star-outline yellow' },
-        { option: 2, titleKey: 'MEDIUM', iconCssClass: 'sgi sgi-star orange' },
-        { option: 3, titleKey: 'HIGH', iconCssClass: 'sgi sgi-star red' },
+        { option: 1, titleKey: 'LOW', iconCssClass: 'mdi mdi-star-outline yellow' },
+        { option: 2, titleKey: 'MEDIUM', iconCssClass: 'mdi mdi-star orange' },
+        { option: 3, titleKey: 'HIGH', iconCssClass: 'mdi mdi-star red' },
       ]
     }
   }

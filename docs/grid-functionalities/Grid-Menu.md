@@ -29,18 +29,18 @@ this.gridOptions = {
    gridMenu: {
      commandTitle: 'Custom Commands',
      columnTitle: 'Columns',
-     iconCssClass: 'sgi sgi-dots-vertical',
+     iconCssClass: 'mdi mdi-dots-vertical',
      menuWidth: 17,
      resizeOnShowHeaderRow: true,
      commandItems: [
        {
-         iconCssClass: 'sgi sgi-filter-remove-outline',
+         iconCssClass: 'mdi mdi-filter-remove-outline',
          title: 'Clear All Filters',
          disabled: false,
          command: 'clear-filter'
        },
        {
-         iconCssClass: 'sgi-flip-vertical',
+         iconCssClass: 'mdi-flip-vertical',
          title: 'Toggle Filter Row',
          disabled: false,
          command: 'toggle-filter'
@@ -85,7 +85,7 @@ gridMenu: {
   // commandItems: [
   //   { command: 'help', title: 'Help', positionOrder: 70, action: (e, args) => console.log(args) },
   //   { command: '', divider: true, positionOrder: 72 },
-  //   { command: 'hello', title: 'Hello', positionOrder: 69, action: (e, args) => alert('Hello World'), cssClass: 'red', tooltip: 'Hello World', iconCssClass: 'sgi sgi-close' },
+  //   { command: 'hello', title: 'Hello', positionOrder: 69, action: (e, args) => alert('Hello World'), cssClass: 'red', tooltip: 'Hello World', iconCssClass: 'mdi mdi-close' },
   // ],
   // menuUsabilityOverride: () => false,
   onBeforeMenuShow: () => {
@@ -110,12 +110,12 @@ You can change any of the default command icon(s) by changing the `icon[X-comman
 this.gridOptions = {
    enableGridMenu: true,
    gridMenu: {
-     iconClearAllFiltersCommand: 'sgi sgi-filter-remove-outline'
-     iconClearAllSortingCommand: 'sgi sgi-sort-variant-off',
-     iconExportCsvCommand: 'sgi sgi-download',
-     iconExportTextDelimitedCommand: 'sgi sgi-download',
-     iconRefreshDatasetCommand: 'sgi sgi-sync',
-     iconToggleFilterCommand: 'sgi-flip-vertical',
+     iconClearAllFiltersCommand: 'mdi mdi-filter-remove-outline'
+     iconClearAllSortingCommand: 'mdi mdi-sort-variant-off',
+     iconExportCsvCommand: 'mdi mdi-download',
+     iconExportTextDelimitedCommand: 'mdi mdi-download',
+     iconRefreshDatasetCommand: 'mdi mdi-sync',
+     iconToggleFilterCommand: 'mdi-flip-vertical',
    },
 };
 ```

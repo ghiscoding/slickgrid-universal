@@ -33,7 +33,7 @@ const gridOptionMock = {
       command: 'clear-sorting',
       disabled: false,
       hidden: true,
-      iconCssClass: 'sgi sgi-sort-variant-off',
+      iconCssClass: 'mdi mdi-sort-variant-off',
       positionOrder: 51,
       title: 'Clear all Sorting'
     }]

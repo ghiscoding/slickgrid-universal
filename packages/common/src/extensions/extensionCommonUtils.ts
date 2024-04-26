@@ -5,8 +5,8 @@ import type { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../in
 import { SlickColumnPicker } from './slickColumnPicker';
 import { SlickGridMenu } from './slickGridMenu';
 
-const PICKER_CHECK_ICON = 'sgi-icon-picker-check';
-const PICKER_UNCHECK_ICON = 'sgi-icon-picker-uncheck';
+const PICKER_CHECK_ICON = 'mdi-icon-picker-check';
+const PICKER_UNCHECK_ICON = 'mdi-icon-picker-uncheck';
 
 /** Create a Close button element and add it to the Menu element */
 export function addCloseButtomElement(this: SlickColumnPicker | SlickGridMenu, menuElm: HTMLDivElement) {
@@ -41,7 +41,7 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
   const context: any = this;
   const controlType = context instanceof SlickColumnPicker ? 'columnPicker' : 'gridMenu';
   const iconContainerElm = event.target?.closest('.icon-checkbox-container') as HTMLDivElement;
-  const iconElm = iconContainerElm?.querySelector<HTMLDivElement>('.sgi');
+  const iconElm = iconContainerElm?.querySelector<HTMLDivElement>('.mdi');
   const isChecked = !!(event.target.checked);
   event.target.ariaChecked = String(isChecked);
   togglePickerCheckbox(iconElm, isChecked);
@@ -120,7 +120,7 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
 
 function togglePickerCheckbox(iconElm: HTMLDivElement | null, checked = false) {
   if (iconElm) {
-    iconElm.className = `sgi ${checked ? PICKER_CHECK_ICON : PICKER_UNCHECK_ICON}`;
+    iconElm.className = `mdi ${checked ? PICKER_CHECK_ICON : PICKER_UNCHECK_ICON}`;
   }
 }
 
@@ -128,7 +128,7 @@ function generatePickerCheckbox(columnLiElm: HTMLLIElement, inputId: string, inp
   const labelElm = createDomElement('label', { className: 'checkbox-picker-label', htmlFor: inputId });
   const divElm = createDomElement('div', { className: 'icon-checkbox-container' });
   const inputElm = createDomElement('input', { id: inputId, type: 'checkbox', dataset: inputData });
-  const colInputDivElm = createDomElement('div', { className: `sgi ${checked ? PICKER_CHECK_ICON : PICKER_UNCHECK_ICON}` });
+  const colInputDivElm = createDomElement('div', { className: `mdi ${checked ? PICKER_CHECK_ICON : PICKER_UNCHECK_ICON}` });
   const labelSpanElm = createDomElement('span', { className: 'checkbox-label' });
   divElm.appendChild(inputElm);
   divElm.appendChild(colInputDivElm);

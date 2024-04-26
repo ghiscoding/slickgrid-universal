@@ -163,7 +163,7 @@ this.columnDefinitions = [
     editor: {
       // display checkmark icon when True
       enableRenderHtml: true,
-      collection: [{ value: '', label: '' }, { value: true, label: 'True', labelPrefix: `<i class="sgi sgi-check"></i> ` }, { value: false, label: 'False' }],
+      collection: [{ value: '', label: '' }, { value: true, label: 'True', labelPrefix: `<i class="mdi mdi-check"></i> ` }, { value: false, label: 'False' }],
       model: Editors.singleSelect
     }
   }

@@ -25,7 +25,7 @@ const priceFormatter: Formatter = (_cell, _row, value, _col, dataContext) => {
   const direction = dataContext.priceChange >= 0 ? 'up' : 'down';
   const fragment = new DocumentFragment();
   const spanElm = document.createElement('span');
-  spanElm.className = `sgi sgi-arrow-${direction} text-color-${direction === 'up' ? 'success' : 'danger'}`;
+  spanElm.className = `mdi mdi-arrow-${direction} text-color-${direction === 'up' ? 'success' : 'danger'}`;
   fragment.appendChild(spanElm);
   if (value instanceof HTMLElement) {
     fragment.appendChild(value);
@@ -34,7 +34,7 @@ const priceFormatter: Formatter = (_cell, _row, value, _col, dataContext) => {
 };
 
 const transactionTypeFormatter: Formatter = (_row, _cell, value: string) =>
-  `<span class="sgi sgi-16px sgi-v-align-sub sgi-${value === 'Buy' ? 'plus' : 'minus'}-circle ${value === 'Buy' ? 'text-color-info' : 'text-color-warning'}"></span> ${value}`;
+  `<span class="mdi mdi-16px mdi-v-align-sub mdi-${value === 'Buy' ? 'plus' : 'minus'}-circle ${value === 'Buy' ? 'text-color-info' : 'text-color-warning'}"></span> ${value}`;
 
 const historicSparklineFormatter: Formatter = (_row, _cell, _value: string, _col, dataContext) => {
   const svgElem = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -57,7 +57,7 @@ export default class Example18 {
   maxChangePerCycle = 10;
   refreshRate = 75;
   timer: any;
-  toggleClassName = this.isFullScreen ? 'icon sgi sgi-arrow-collapse' : 'icon sgi sgi-arrow-expand';
+  toggleClassName = this.isFullScreen ? 'icon mdi mdi-arrow-collapse' : 'icon mdi mdi-arrow-expand';
   sgb: SlickVanillaGridBundle;
 
   attached() {
@@ -176,9 +176,9 @@ export default class Example18 {
       },
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by any of these available columns: Currency, Market or Type',
-        deleteIconCssClass: 'sgi sgi-close text-color-danger',
-        sortAscIconCssClass: 'sgi sgi-arrow-up',
-        sortDescIconCssClass: 'sgi sgi-arrow-down',
+        deleteIconCssClass: 'mdi mdi-close text-color-danger',
+        sortAscIconCssClass: 'mdi mdi-arrow-up',
+        sortDescIconCssClass: 'mdi mdi-arrow-down',
       },
       enableDraggableGrouping: true,
       createPreHeaderPanel: true,

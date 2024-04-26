@@ -9,9 +9,9 @@
 - [SVG Colors CSS Classes](#svg-colors---css-classes)
 
 ### Description
-Slickgrid-Universal was originally using Font-Awesome to display internal icons but we now use SVG only and the font was dropped completely. We now use SVG only and they are all pure CSS which mean that you can colorize them the same as any other text (which helps for dark mode).  Slickgrid-Universal now has 2-3 Styling Themes (Bootstrap, Material and Salesforce) and we also optionally provide extra SVG icons, which are a tiny a subset of [Material Design Icons](https://materialdesignicons.com/) SVGs. These extra SVG icons are optionals and can be imported manually (however, they do come by default in the Material and Salesforce themes), when imported you'll want to use the `.sgi` CSS classes which is a short name for SlickGrid Icons.
+Slickgrid-Universal was originally using Font-Awesome to display internal icons but we now use SVG only for icons and the font was dropped completely. Our SVG are now also using pure CSS which mean that you can colorize them the same way that you would change text color (which is also helpful in dark mode). Slickgrid-Universal has 3 Styling Themes (Bootstrap, Material and Salesforce) and we also optionally provide extra SVG icons, which are a tiny a subset of [Material Design Icons](https://materialdesignicons.com/) SVGs. These extra SVG icons are optionals and can be imported manually (note however, they are part of the Material and Salesforce themes by default), when imported you'll want to use the `.mdi` CSS classes.
 
-> **Note** some icons are built-ins (sorting, grouping, row selections, ...) while other icons are defined by CSS classes (grid menu, column picker, header menu, context menu, ...) and you could use `.sgi` icons or any other icons framework (you'll want to override global grid options).
+> **Note** some icons are built-ins (sorting, grouping, row selections, ...) while some other icons are defined by CSS classes (grid menu, column picker, header menu, context menu, ...) and you could use `.mdi` icons or any other icons framework (if you do, then you'll want to override global grid options).
 
 If you use SASS and you want to change some of the default SVGs, you will find out it super easy to simply replace the SVG path via associated SASS variable, more on further down.
 
@@ -135,83 +135,83 @@ $text-color-darken-percentage: 6%;
 ##### HTML Color Test
 ```html
 <div>
-  <span class="text-color-primary"> text-color-primary <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-primary-light"> text-color-primary-light <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-primary-dark"> text-color-primary-dark <i class="sgi sgi-help-circle"></i></span>
+  <span class="text-color-primary"> text-color-primary <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-primary-light"> text-color-primary-light <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-primary-dark"> text-color-primary-dark <i class="mdi mdi-help-circle"></i></span>
 </div>
 <div>
-  <span class="text-color-secondary"> text-color-secondary <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-secondary-light"> text-color-secondary-light <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-secondary-dark"> text-color-secondary-dark <i class="sgi sgi-help-circle"></i></span>
+  <span class="text-color-secondary"> text-color-secondary <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-secondary-light"> text-color-secondary-light <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-secondary-dark"> text-color-secondary-dark <i class="mdi mdi-help-circle"></i></span>
 </div>
 <div>
-  <span class="text-color-success"> text-color-success <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-success-light"> text-color-success-light <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-success-dark"> text-color-success-dark <i class="sgi sgi-help-circle"></i></span>
+  <span class="text-color-success"> text-color-success <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-success-light"> text-color-success-light <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-success-dark"> text-color-success-dark <i class="mdi mdi-help-circle"></i></span>
 </div>
 <div>
-  <span class="text-color-danger"> text-color-danger <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-danger-light"> text-color-danger-light <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-danger-dark"> text-color-danger-dark <i class="sgi sgi-help-circle"></i></span>
+  <span class="text-color-danger"> text-color-danger <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-danger-light"> text-color-danger-light <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-danger-dark"> text-color-danger-dark <i class="mdi mdi-help-circle"></i></span>
 </div>
 <div>
-  <span class="text-color-warning"> text-color-warning <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-warning-light"> text-color-warning-light <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-warning-dark"> text-color-warning-dark <i class="sgi sgi-help-circle"></i></span>
+  <span class="text-color-warning"> text-color-warning <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-warning-light"> text-color-warning-light <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-warning-dark"> text-color-warning-dark <i class="mdi mdi-help-circle"></i></span>
 </div>
 <div>
-  <span class="text-color-info"> text-color-info <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-info-light"> text-color-info-light <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-info-dark"> text-color-info-dark <i class="sgi sgi-help-circle"></i></span>
+  <span class="text-color-info"> text-color-info <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-info-light"> text-color-info-light <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-info-dark"> text-color-info-dark <i class="mdi mdi-help-circle"></i></span>
 </div>
 <div>
-  <span class="text-color-body"> text-color-body <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-body-light"> text-color-body-light <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-body-dark"> text-color-body-dark <i class="sgi sgi-help-circle"></i></span>
+  <span class="text-color-body"> text-color-body <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-body-light"> text-color-body-light <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-body-dark"> text-color-body-dark <i class="mdi mdi-help-circle"></i></span>
 </div>
 <div>
-  <span class="text-color-muted"> text-color-muted <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-muted-light"> text-color-muted-light <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-muted-dark"> text-color-muted-dark <i class="sgi sgi-help-circle"></i></span>
+  <span class="text-color-muted"> text-color-muted <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-muted-light"> text-color-muted-light <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-muted-dark"> text-color-muted-dark <i class="mdi mdi-help-circle"></i></span>
 </div>
 <div>
-  <span class="text-color-dark"> text-color-dark <i class="sgi sgi-help-circle"></i></span>
+  <span class="text-color-dark"> text-color-dark <i class="mdi mdi-help-circle"></i></span>
 </div>
 <div style="background-color: rgb(34, 34, 34)">
-  <span class="text-color-light"> text-color-light <i class="sgi sgi-help-circle"></i></span>
+  <span class="text-color-light"> text-color-light <i class="mdi mdi-help-circle"></i></span>
 </div>
 <div style="background-color: rgb(34, 34, 34)">
-  <span class="text-color-white"> text-color-white <i class="sgi sgi-help-circle"></i></span>
+  <span class="text-color-white"> text-color-white <i class="mdi mdi-help-circle"></i></span>
 </div>
 <div>
-  <span class="text-color-alt-default"> text-color-alt-default <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-alt-default-light"> text-color-alt-default-light <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-alt-default-dark"> text-color-alt-default-dark <i class="sgi sgi-help-circle"></i></span>
+  <span class="text-color-alt-default"> text-color-alt-default <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-alt-default-light"> text-color-alt-default-light <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-alt-default-dark"> text-color-alt-default-dark <i class="mdi mdi-help-circle"></i></span>
 </div>
 <div>
-  <span class="text-color-alt-warning"> text-color-alt-warning <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-alt-warning-light"> text-color-alt-warning-light <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-alt-warning-dark"> text-color-alt-warning-dark <i class="sgi sgi-help-circle"></i></span>
+  <span class="text-color-alt-warning"> text-color-alt-warning <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-alt-warning-light"> text-color-alt-warning-light <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-alt-warning-dark"> text-color-alt-warning-dark <i class="mdi mdi-help-circle"></i></span>
 </div>
 <div>
-  <span class="text-color-alt-success"> text-color-alt-success <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-alt-success-light"> text-color-alt-success-light <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-alt-success-dark"> text-color-alt-success-dark <i class="sgi sgi-help-circle"></i></span>
+  <span class="text-color-alt-success"> text-color-alt-success <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-alt-success-light"> text-color-alt-success-light <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-alt-success-dark"> text-color-alt-success-dark <i class="mdi mdi-help-circle"></i></span>
 </div>
 <div>
-  <span class="text-color-alt-danger"> text-color-alt-danger <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-alt-danger-light"> text-color-alt-danger-light <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-alt-danger-dark"> text-color-alt-danger-dark <i class="sgi sgi-help-circle"></i></span>
+  <span class="text-color-alt-danger"> text-color-alt-danger <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-alt-danger-light"> text-color-alt-danger-light <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-alt-danger-dark"> text-color-alt-danger-dark <i class="mdi mdi-help-circle"></i></span>
 </div>
-<div><span class="text-color-se-primary"> text-color-se-primary <i class="sgi sgi-help-circle"></i></span></div>
+<div><span class="text-color-se-primary"> text-color-se-primary <i class="mdi mdi-help-circle"></i></span></div>
 <div>
-  <span class="text-color-se-link"> text-color-se-link <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-se-link-dark"> text-color-se-link-dark <i class="sgi sgi-help-circle"></i></span>
+  <span class="text-color-se-link"> text-color-se-link <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-se-link-dark"> text-color-se-link-dark <i class="mdi mdi-help-circle"></i></span>
 </div>
-<div><span class="text-color-se-secondary"> text-color-se-secondary <i class="sgi sgi-help-circle"></i></span></div>
-<div><span class="text-color-se-danger"> text-color-se-danger <i class="sgi sgi-help-circle"></i></span></div>
+<div><span class="text-color-se-secondary"> text-color-se-secondary <i class="mdi mdi-help-circle"></i></span></div>
+<div><span class="text-color-se-danger"> text-color-se-danger <i class="mdi mdi-help-circle"></i></span></div>
 <div>
-  <span class="text-color-se-warning"> text-color-se-warning <i class="sgi sgi-help-circle"></i></span> -
-  <span class="text-color-se-warning-light"> text-color-se-warning-light <i class="sgi sgi-help-circle"></i></span>
+  <span class="text-color-se-warning"> text-color-se-warning <i class="mdi mdi-help-circle"></i></span> -
+  <span class="text-color-se-warning-light"> text-color-se-warning-light <i class="mdi mdi-help-circle"></i></span>
 </div>
 ```

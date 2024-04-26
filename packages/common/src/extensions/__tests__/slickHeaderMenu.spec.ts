@@ -25,7 +25,7 @@ const gridOptionsMock = {
     postProcess: jest.fn(),
   },
   headerMenu: {
-    buttonCssClass: 'sgi sgi-chevron-down',
+    buttonCssClass: 'mdi mdi-chevron-down',
     hideFreezeColumnsCommand: false,
     hideColumnResizeByContentCommand: false,
     hideForceFitButton: false,
@@ -95,11 +95,11 @@ const headerMock = {
   menu: {
     commandItems: [
       {
-        cssClass: 'sgi sgi-lightbulb-outline',
+        cssClass: 'mdi mdi-lightbulb-outline',
         command: 'show-positive-numbers',
       },
       {
-        cssClass: 'sgi sgi-lightbulb-on',
+        cssClass: 'mdi mdi-lightbulb-on',
         command: 'show-negative-numbers',
         tooltip: 'Highlight negative numbers.',
       },
@@ -177,7 +177,7 @@ describe('HeaderMenu Plugin', () => {
       jest.spyOn(SharedService.prototype, 'slickGrid', 'get').mockReturnValue(gridStub);
       columnsMock[0].header!.menu!.commandItems![1] = undefined as any;
       columnsMock[0].header!.menu!.commandItems![1] = {
-        cssClass: 'sgi sgi-lightbulb-on',
+        cssClass: 'mdi mdi-lightbulb-on',
         command: 'show-negative-numbers',
         tooltip: 'Highlight negative numbers.',
       } as MenuCommandItem;
@@ -200,14 +200,14 @@ describe('HeaderMenu Plugin', () => {
 
     it('should populate a Header Menu button with extra button css classes when header menu option "buttonCssClass" and cell is being rendered', () => {
       plugin.dispose();
-      plugin.init({ buttonCssClass: 'sgi sgi-chevron-down' });
+      plugin.init({ buttonCssClass: 'mdi mdi-chevron-down' });
       (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => undefined as any;
 
       const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(
-        `<div class="slick-header-menu-button sgi sgi-chevron-down" aria-label="Header Menu"></div>`));
+        `<div class="slick-header-menu-button mdi mdi-chevron-down" aria-label="Header Menu"></div>`));
     });
 
     it('should populate a Header Menu button with extra tooltip title attribute when header menu option "tooltip" and cell is being rendered', () => {
@@ -268,7 +268,7 @@ describe('HeaderMenu Plugin', () => {
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item sgi sgi-lightbulb-outline" role="menuitem" data-command="show-positive-numbers">
+        `<li class="slick-menu-item mdi mdi-lightbulb-outline" role="menuitem" data-command="show-positive-numbers">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -290,7 +290,7 @@ describe('HeaderMenu Plugin', () => {
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item slick-menu-item-disabled sgi sgi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+        `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -314,7 +314,7 @@ describe('HeaderMenu Plugin', () => {
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item slick-menu-item-disabled sgi sgi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+        `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -334,7 +334,7 @@ describe('HeaderMenu Plugin', () => {
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item slick-menu-item-hidden sgi sgi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+        `<li class="slick-menu-item slick-menu-item-hidden mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -354,7 +354,7 @@ describe('HeaderMenu Plugin', () => {
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item sgi sgi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Some Tooltip">
+        `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Some Tooltip">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -376,13 +376,13 @@ describe('HeaderMenu Plugin', () => {
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item sgi sgi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+        `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
       ));
 
-      gridContainerDiv.querySelector('.slick-menu-item.sgi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+      gridContainerDiv.querySelector('.slick-menu-item.mdi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       expect(actionMock).toHaveBeenCalled();
       expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('');
     });
@@ -402,13 +402,13 @@ describe('HeaderMenu Plugin', () => {
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item sgi sgi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+        `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
       ));
 
-      gridContainerDiv.querySelector('.slick-menu-item.sgi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+      gridContainerDiv.querySelector('.slick-menu-item.mdi-lightbulb-on')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       expect(onCommandMock).toHaveBeenCalled();
       expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('');
     });
@@ -431,7 +431,7 @@ describe('HeaderMenu Plugin', () => {
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item sgi sgi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+        `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -458,7 +458,7 @@ describe('HeaderMenu Plugin', () => {
       expect(menuElm.clientWidth).toBe(275);
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item sgi sgi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+        `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -513,7 +513,7 @@ describe('HeaderMenu Plugin', () => {
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(removeExtraSpaces(
-        `<li class="slick-menu-item sgi sgi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+        `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -688,7 +688,7 @@ describe('HeaderMenu Plugin', () => {
         Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
         jest.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
 
-        plugin.init({ autoAlign: true, subItemChevronClass: 'sgi sgi-chevron-right' });
+        plugin.init({ autoAlign: true, subItemChevronClass: 'mdi mdi-chevron-right' });
         plugin.addonOptions.onCommand = onCommandMock;
 
         const eventData = { ...new SlickEventData(), preventDefault: jest.fn() };
@@ -718,7 +718,7 @@ describe('HeaderMenu Plugin', () => {
         expect(commandContentElm2.textContent).toBe('Sub Commands');
         expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
         expect(subMenuTitleElm.className).toBe('slick-menu-title text-color-warning');
-        expect(commandChevronElm.className).toBe('sub-item-chevron sgi sgi-chevron-right');
+        expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
         expect(subCommand3Elm.textContent).toContain('Command 3');
         expect(subCommand5Elm.textContent).toContain('Command 5');
         expect(headerMenu1Elm.classList.contains('dropright'));
@@ -813,7 +813,7 @@ describe('HeaderMenu Plugin', () => {
 
         const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
         expect((originalColumnDefinitions[1] as any).header!.menu!.commandItems!).toEqual([
-          { iconCssClass: 'sgi sgi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
+          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
           { divider: true, command: '', positionOrder: 49 },
         ]);
         expect(commandDivElm).toBeFalsy();
@@ -834,12 +834,12 @@ describe('HeaderMenu Plugin', () => {
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const clearFilterSpy = jest.spyOn(filterServiceStub, 'clearFilterByColumnId');
 
-        const headerMenuExpected = [{ iconCssClass: 'sgi sgi-filter-remove-outline', title: 'Remove Filter', titleKey: 'REMOVE_FILTER', command: 'clear-filter', positionOrder: 53 }];
+        const headerMenuExpected = [{ iconCssClass: 'mdi mdi-filter-remove-outline', title: 'Remove Filter', titleKey: 'REMOVE_FILTER', command: 'clear-filter', positionOrder: 53 }];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="clear-filter"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual(headerMenuExpected);
-        expect(commandIconElm.classList.contains('sgi-filter-remove-outline')).toBeTruthy();
+        expect(commandIconElm.classList.contains('mdi-filter-remove-outline')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Remove Filter');
 
         const clickEvent = new Event('click');
@@ -870,15 +870,15 @@ describe('HeaderMenu Plugin', () => {
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
 
         const headerMenuExpected = [
-          { iconCssClass: 'sgi sgi-arrow-expand-horizontal', title: 'Resize by Content', titleKey: 'COLUMN_RESIZE_BY_CONTENT', command: 'column-resize-by-content', positionOrder: 48 },
+          { iconCssClass: 'mdi mdi-arrow-expand-horizontal', title: 'Resize by Content', titleKey: 'COLUMN_RESIZE_BY_CONTENT', command: 'column-resize-by-content', positionOrder: 48 },
           { divider: true, command: '', positionOrder: 49 },
-          { iconCssClass: 'sgi sgi-close', title: 'Hide Column', titleKey: 'HIDE_COLUMN', command: 'hide-column', positionOrder: 55 }
+          { iconCssClass: 'mdi mdi-close', title: 'Hide Column', titleKey: 'HIDE_COLUMN', command: 'hide-column', positionOrder: 55 }
         ];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="column-resize-by-content"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual(headerMenuExpected);
-        expect(commandIconElm.classList.contains('sgi-arrow-expand-horizontal')).toBeTruthy();
+        expect(commandIconElm.classList.contains('mdi-arrow-expand-horizontal')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Resize by Content');
 
         const clickEvent = new Event('click');
@@ -904,15 +904,15 @@ describe('HeaderMenu Plugin', () => {
         const autosizeSpy = jest.spyOn(gridStub, 'autosizeColumns');
 
         const headerMenuExpected = [
-          { iconCssClass: 'sgi sgi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
+          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
           { divider: true, command: '', positionOrder: 49 },
-          { iconCssClass: 'sgi sgi-close', title: 'Hide Column', titleKey: 'HIDE_COLUMN', command: 'hide-column', positionOrder: 55 }
+          { iconCssClass: 'mdi mdi-close', title: 'Hide Column', titleKey: 'HIDE_COLUMN', command: 'hide-column', positionOrder: 55 }
         ];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="hide-column"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual(headerMenuExpected);
-        expect(commandIconElm.classList.contains('sgi-close')).toBeTruthy();
+        expect(commandIconElm.classList.contains('mdi-close')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Hide Column');
 
         commandDivElm.dispatchEvent(new Event('click'));
@@ -933,12 +933,12 @@ describe('HeaderMenu Plugin', () => {
         headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
         const clearFilterSpy = jest.spyOn(filterServiceStub, 'clearFilterByColumnId');
 
-        const headerMenuExpected = [{ iconCssClass: 'sgi sgi-filter-remove-outline', title: 'Remove Filter', titleKey: 'REMOVE_FILTER', command: 'clear-filter', positionOrder: 53 }];
+        const headerMenuExpected = [{ iconCssClass: 'mdi mdi-filter-remove-outline', title: 'Remove Filter', titleKey: 'REMOVE_FILTER', command: 'clear-filter', positionOrder: 53 }];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="clear-filter"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual(headerMenuExpected);
-        expect(commandIconElm.classList.contains('sgi-filter-remove-outline')).toBeTruthy();
+        expect(commandIconElm.classList.contains('mdi-filter-remove-outline')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Remove Filter');
 
         const clickEvent = new Event('click');
@@ -964,21 +964,21 @@ describe('HeaderMenu Plugin', () => {
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
-          { iconCssClass: 'sgi sgi-sort-ascending', title: 'Sort Ascending', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
-          { iconCssClass: 'sgi sgi-flip-v sgi-sort-descending', title: 'Sort Descending', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
+          { iconCssClass: 'mdi mdi-sort-ascending', title: 'Sort Ascending', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
+          { iconCssClass: 'mdi mdi-flip-v mdi-sort-descending', title: 'Sort Descending', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
           { divider: true, command: '', positionOrder: 52 },
-          { iconCssClass: 'sgi sgi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 54 },
+          { iconCssClass: 'mdi mdi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 54 },
         ]);
-        expect(commandIconElm.classList.contains('sgi-sort-variant-off')).toBeTruthy();
+        expect(commandIconElm.classList.contains('mdi-sort-variant-off')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Remove Sort');
 
         translateService.use('fr');
         plugin.translateHeaderMenu();
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
-          { iconCssClass: 'sgi sgi-sort-ascending', title: 'Trier par ordre croissant', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
-          { iconCssClass: 'sgi sgi-flip-v sgi-sort-descending', title: 'Trier par ordre décroissant', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
+          { iconCssClass: 'mdi mdi-sort-ascending', title: 'Trier par ordre croissant', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
+          { iconCssClass: 'mdi mdi-flip-v mdi-sort-descending', title: 'Trier par ordre décroissant', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
           { divider: true, command: '', positionOrder: 52 },
-          { iconCssClass: 'sgi sgi-sort-variant-off', title: 'Supprimer le tri', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 54 },
+          { iconCssClass: 'mdi mdi-sort-variant-off', title: 'Supprimer le tri', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 54 },
         ]);
 
         const clickEvent = new Event('click');
@@ -1005,16 +1005,16 @@ describe('HeaderMenu Plugin', () => {
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
         const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
-          { iconCssClass: 'sgi sgi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
+          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
           { divider: true, command: '', positionOrder: 49 },
         ]);
-        expect(commandIconElm.classList.contains('sgi-pin-outline')).toBeTruthy();
+        expect(commandIconElm.classList.contains('mdi-pin-outline')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Freeze Columns');
 
         translateService.use('fr');
         plugin.translateHeaderMenu();
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
-          { iconCssClass: 'sgi sgi-pin-outline', title: 'Geler les colonnes', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
+          { iconCssClass: 'mdi mdi-pin-outline', title: 'Geler les colonnes', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
           { divider: true, command: '', positionOrder: 49 },
         ]);
 
@@ -1038,7 +1038,7 @@ describe('HeaderMenu Plugin', () => {
 
         const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
         expect(columnsMock[2].header!.menu!.commandItems!).toEqual([
-          { iconCssClass: 'sgi sgi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
+          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
           { divider: true, command: '', positionOrder: 49 },
         ]);
 
@@ -1066,7 +1066,7 @@ describe('HeaderMenu Plugin', () => {
 
         const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
         expect((originalColumnDefinitions[1] as any).header!.menu!.commandItems!).toEqual([
-          { iconCssClass: 'sgi sgi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
+          { iconCssClass: 'mdi mdi-pin-outline', title: 'Freeze Columns', titleKey: 'FREEZE_COLUMNS', command: 'freeze-columns', positionOrder: 47 },
           { divider: true, command: '', positionOrder: 49 },
         ]);
 
@@ -1093,10 +1093,10 @@ describe('HeaderMenu Plugin', () => {
 
         const commandDivElm = gridContainerDiv.querySelector('[data-command="sort-asc"]') as HTMLDivElement;
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
-          { iconCssClass: 'sgi sgi-sort-ascending', title: 'Sort Ascending', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
-          { iconCssClass: 'sgi sgi-flip-v sgi-sort-descending', title: 'Sort Descending', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
+          { iconCssClass: 'mdi mdi-sort-ascending', title: 'Sort Ascending', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
+          { iconCssClass: 'mdi mdi-flip-v mdi-sort-descending', title: 'Sort Descending', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
           { divider: true, command: '', positionOrder: 52 },
-          { iconCssClass: 'sgi sgi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 54 },
+          { iconCssClass: 'mdi mdi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 54 },
         ]);
 
         const clickEvent = new Event('click');
@@ -1125,10 +1125,10 @@ describe('HeaderMenu Plugin', () => {
 
         const commandDivElm = gridContainerDiv.querySelector('[data-command="sort-desc"]') as HTMLDivElement;
         expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
-          { iconCssClass: 'sgi sgi-sort-ascending', title: 'Sort Ascending', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
-          { iconCssClass: 'sgi sgi-flip-v sgi-sort-descending', title: 'Sort Descending', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
+          { iconCssClass: 'mdi mdi-sort-ascending', title: 'Sort Ascending', titleKey: 'SORT_ASCENDING', command: 'sort-asc', positionOrder: 50 },
+          { iconCssClass: 'mdi mdi-flip-v mdi-sort-descending', title: 'Sort Descending', titleKey: 'SORT_DESCENDING', command: 'sort-desc', positionOrder: 51 },
           { divider: true, command: '', positionOrder: 52 },
-          { iconCssClass: 'sgi sgi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 54 },
+          { iconCssClass: 'mdi mdi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 54 },
         ]);
 
         const clickEvent = new Event('click');

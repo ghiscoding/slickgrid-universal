@@ -849,7 +849,7 @@ describe('GridMenuControl', () => {
       });
 
       it('should add a custom Grid Menu item with "iconCssClass" and expect an icon to be included on the item DOM element', () => {
-        gridOptionsMock.gridMenu!.commandItems = [{ command: 'help', title: 'Help', iconCssClass: 'sgi   sgi-close' }];
+        gridOptionsMock.gridMenu!.commandItems = [{ command: 'help', title: 'Help', iconCssClass: 'mdi   mdi-close' }];
         control.columns = columnsMock;
         control.init();
         const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
@@ -860,9 +860,9 @@ describe('GridMenuControl', () => {
 
         expect(helpTextElm.textContent).toBe('Help');
         expect(helpIconElm.classList.contains('slick-menu-icon')).toBeTrue();
-        expect(helpIconElm.classList.contains('sgi')).toBeTrue();
-        expect(helpIconElm.classList.contains('sgi-close')).toBeTrue();
-        expect(helpIconElm.className).toBe('slick-menu-icon sgi sgi-close');
+        expect(helpIconElm.classList.contains('mdi')).toBeTrue();
+        expect(helpIconElm.classList.contains('mdi-close')).toBeTrue();
+        expect(helpIconElm.className).toBe('slick-menu-icon mdi mdi-close');
       });
 
       it('should add a custom Grid Menu item with "tooltip" and expect the item title attribute to be part of the item DOM element', () => {
@@ -931,7 +931,7 @@ describe('GridMenuControl', () => {
           const disposeSubMenuSpy = jest.spyOn(control, 'disposeSubMenus');
           Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
 
-          gridOptionsMock.gridMenu!.subItemChevronClass = 'sgi sgi-chevron-right';
+          gridOptionsMock.gridMenu!.subItemChevronClass = 'mdi mdi-chevron-right';
           gridOptionsMock.gridMenu!.dropSide = 'left';
           gridOptionsMock.gridMenu!.commandItems = mockCommandItems;
           control.columns = columnsMock;
@@ -964,7 +964,7 @@ describe('GridMenuControl', () => {
           expect(commandContentElm2.textContent).toBe('Sub Commands');
           expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
           expect(subMenuTitleElm.className).toBe('slick-menu-title text-color-warning');
-          expect(commandChevronElm.className).toBe('sub-item-chevron sgi sgi-chevron-right');
+          expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
           expect(subCommand3Elm.textContent).toContain('Command 3');
           expect(subCommand5Elm.textContent).toContain('Command 5');
           expect(gridMenu1Elm.classList.contains('dropleft'));
@@ -990,7 +990,7 @@ describe('GridMenuControl', () => {
           const disposeSubMenuSpy = jest.spyOn(control, 'disposeSubMenus');
           Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
 
-          gridOptionsMock.gridMenu!.subItemChevronClass = 'sgi sgi-chevron-right';
+          gridOptionsMock.gridMenu!.subItemChevronClass = 'mdi mdi-chevron-right';
           gridOptionsMock.gridMenu!.dropSide = 'right';
           gridOptionsMock.gridMenu!.commandItems = mockCommandItems;
           control.columns = columnsMock;
@@ -1020,7 +1020,7 @@ describe('GridMenuControl', () => {
           expect(commandContentElm2.textContent).toBe('Sub Commands');
           expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
           expect(subMenuTitleElm.className).toBe('slick-menu-title text-color-warning');
-          expect(commandChevronElm.className).toBe('sub-item-chevron sgi sgi-chevron-right');
+          expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
           expect(subCommand3Elm.textContent).toContain('Command 3');
           expect(subCommand5Elm.textContent).toContain('Command 5');
           expect(gridMenu1Elm.classList.contains('dropright'));
@@ -1094,7 +1094,7 @@ describe('GridMenuControl', () => {
           control.columns = columnsMock;
           control.init();
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'sgi sgi-pin-off-outline', titleKey: 'CLEAR_PINNING', title: 'Dégeler les colonnes/rangées', disabled: false, command: 'clear-pinning', positionOrder: 52 },
+            { iconCssClass: 'mdi mdi-pin-off-outline', titleKey: 'CLEAR_PINNING', title: 'Dégeler les colonnes/rangées', disabled: false, command: 'clear-pinning', positionOrder: 52 },
           ]);
         });
 
@@ -1106,9 +1106,9 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'sgi sgi-filter-remove-outline', titleKey: 'CLEAR_ALL_FILTERS', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 },
-            { iconCssClass: 'sgi sgi-flip-vertical', titleKey: 'TOGGLE_FILTER_ROW', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
-            { iconCssClass: 'sgi sgi-sync', titleKey: 'REFRESH_DATASET', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 58 }
+            { iconCssClass: 'mdi mdi-filter-remove-outline', titleKey: 'CLEAR_ALL_FILTERS', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 },
+            { iconCssClass: 'mdi mdi-flip-vertical', titleKey: 'TOGGLE_FILTER_ROW', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
+            { iconCssClass: 'mdi mdi-sync', titleKey: 'REFRESH_DATASET', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 58 }
           ]);
         });
 
@@ -1124,7 +1124,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'sgi sgi-filter-remove-outline', titleKey: 'CLEAR_ALL_FILTERS', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 }
+            { iconCssClass: 'mdi mdi-filter-remove-outline', titleKey: 'CLEAR_ALL_FILTERS', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 }
           ]);
         });
 
@@ -1140,7 +1140,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'sgi sgi-flip-vertical', titleKey: 'TOGGLE_FILTER_ROW', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
+            { iconCssClass: 'mdi mdi-flip-vertical', titleKey: 'TOGGLE_FILTER_ROW', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
           ]);
         });
 
@@ -1157,7 +1157,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'sgi sgi-brightness-4', titleKey: 'TOGGLE_DARK_MODE', title: 'Basculer le mode clair/sombre', disabled: false, command: 'toggle-dark-mode', positionOrder: 54 },
+            { iconCssClass: 'mdi mdi-brightness-4', titleKey: 'TOGGLE_DARK_MODE', title: 'Basculer le mode clair/sombre', disabled: false, command: 'toggle-dark-mode', positionOrder: 54 },
           ]);
         });
 
@@ -1173,7 +1173,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'sgi sgi-sync', titleKey: 'REFRESH_DATASET', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 58 }
+            { iconCssClass: 'mdi mdi-sync', titleKey: 'REFRESH_DATASET', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 58 }
           ]);
         });
 
@@ -1185,7 +1185,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'sgi sgi-flip-vertical', titleKey: 'TOGGLE_PRE_HEADER_ROW', title: 'Basculer la ligne de pré-en-tête', disabled: false, command: 'toggle-preheader', positionOrder: 53 }
+            { iconCssClass: 'mdi mdi-flip-vertical', titleKey: 'TOGGLE_PRE_HEADER_ROW', title: 'Basculer la ligne de pré-en-tête', disabled: false, command: 'toggle-preheader', positionOrder: 53 }
           ]);
         });
 
@@ -1211,7 +1211,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'sgi sgi-sort-variant-off', titleKey: 'CLEAR_ALL_SORTING', title: 'Supprimer tous les tris', disabled: false, command: 'clear-sorting', positionOrder: 51 }
+            { iconCssClass: 'mdi mdi-sort-variant-off', titleKey: 'CLEAR_ALL_SORTING', title: 'Supprimer tous les tris', disabled: false, command: 'clear-sorting', positionOrder: 51 }
           ]);
         });
 
@@ -1241,7 +1241,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'sgi sgi-download', titleKey: 'EXPORT_TO_CSV', title: 'Exporter en format CSV', disabled: false, command: 'export-csv', positionOrder: 55 }
+            { iconCssClass: 'mdi mdi-download', titleKey: 'EXPORT_TO_CSV', title: 'Exporter en format CSV', disabled: false, command: 'export-csv', positionOrder: 55 }
           ]);
         });
 
@@ -1271,7 +1271,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'sgi sgi-file-excel-outline text-success', titleKey: 'EXPORT_TO_EXCEL', title: 'Exporter vers Excel', disabled: false, command: 'export-excel', positionOrder: 56 }
+            { iconCssClass: 'mdi mdi-file-excel-outline text-success', titleKey: 'EXPORT_TO_EXCEL', title: 'Exporter vers Excel', disabled: false, command: 'export-excel', positionOrder: 56 }
           ]);
         });
 
@@ -1287,7 +1287,7 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'sgi sgi-download', titleKey: 'EXPORT_TO_TAB_DELIMITED', title: 'Exporter en format texte (délimité par tabulation)', disabled: false, command: 'export-text-delimited', positionOrder: 57 }
+            { iconCssClass: 'mdi mdi-download', titleKey: 'EXPORT_TO_TAB_DELIMITED', title: 'Exporter en format texte (délimité par tabulation)', disabled: false, command: 'export-text-delimited', positionOrder: 57 }
           ]);
         });
 

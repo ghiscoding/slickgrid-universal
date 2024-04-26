@@ -32,10 +32,10 @@ export default class Example07 {
   translateService: TranslateService;
 
   set isFilteringEnabled(enabled: boolean) {
-    this.filteringEnabledClass = enabled ? 'icon sgi sgi-toggle-switch' : 'icon sgi sgi-toggle-switch-off-outline';
+    this.filteringEnabledClass = enabled ? 'icon mdi mdi-toggle-switch' : 'icon mdi mdi-toggle-switch-off-outline';
   }
   set isSortingEnabled(enabled: boolean) {
-    this.sortingEnabledClass = enabled ? 'icon sgi sgi-toggle-switch' : 'icon sgi sgi-toggle-switch-off-outline';
+    this.sortingEnabledClass = enabled ? 'icon mdi mdi-toggle-switch' : 'icon mdi mdi-toggle-switch-off-outline';
   }
 
   constructor() {
@@ -78,15 +78,15 @@ export default class Example07 {
       {
         id: 'action', name: 'Action', field: 'action', minWidth: 60, maxWidth: 60,
         excludeFromExport: true, excludeFromHeaderMenu: true,
-        formatter: () => `<div class="button-style margin-auto action-btn"><span class="sgi sgi-chevron-down sgi-22px text-color-primary"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
-          subItemChevronClass: 'sgi sgi-chevron-down sgi-rotate-270',
+          subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
           commandTitleKey: 'COMMANDS',
           commandItems: [
             {
               command: 'command1', titleKey: 'DELETE_ROW',
-              iconCssClass: 'sgi sgi-close', cssClass: 'has-text-danger', textCssClass: 'bold',
+              iconCssClass: 'mdi mdi-close', cssClass: 'has-text-danger', textCssClass: 'bold',
               action: (_e, args) => {
                 if (confirm(`Do you really want to delete row (${args.row! + 1}) with "${args.dataContext.title}"?`)) {
                   this.sgb?.gridService.deleteItemById(args.dataContext.id);
@@ -95,13 +95,13 @@ export default class Example07 {
             },
             'divider',
             {
-              command: 'help', titleKey: 'HELP', iconCssClass: 'sgi sgi-help-circle',
+              command: 'help', titleKey: 'HELP', iconCssClass: 'mdi mdi-help-circle',
               action: () => alert('Please help!')
             },
             { command: '', divider: true, positionOrder: 98 },
             {
               // we can also have multiple nested sub-menus
-              command: 'export', title: 'Exports', iconCssClass: 'sgi sgi-download', positionOrder: 99,
+              command: 'export', title: 'Exports', iconCssClass: 'mdi mdi-download', positionOrder: 99,
               commandItems: [
                 { command: 'exports-txt', title: 'Text (tab delimited)' },
                 {
@@ -116,14 +116,14 @@ export default class Example07 {
             {
               command: 'feedback', title: 'Feedback', positionOrder: 100,
               commandItems: [
-                { command: 'request-update', title: 'Request update from supplier', iconCssClass: 'sgi sgi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
+                { command: 'request-update', title: 'Request update from supplier', iconCssClass: 'mdi mdi-star', tooltip: 'this will automatically send an alert to the shipping team to contact the user for an update' },
                 'divider',
                 {
-                  command: 'sub-menu', title: 'Contact Us', iconCssClass: 'sgi sgi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
+                  command: 'sub-menu', title: 'Contact Us', iconCssClass: 'mdi mdi-account', subMenuTitle: 'contact us...', subMenuTitleCssClass: 'italic',
                   commandItems: [
-                    { command: 'contact-email', title: 'Email us', iconCssClass: 'sgi sgi-pencil-outline' },
-                    { command: 'contact-chat', title: 'Chat with us', iconCssClass: 'sgi sgi-message-text-outline' },
-                    { command: 'contact-meeting', title: 'Book an appointment', iconCssClass: 'sgi sgi-coffee' },
+                    { command: 'contact-email', title: 'Email us', iconCssClass: 'mdi mdi-pencil-outline' },
+                    { command: 'contact-chat', title: 'Chat with us', iconCssClass: 'mdi mdi-message-text-outline' },
+                    { command: 'contact-meeting', title: 'Book an appointment', iconCssClass: 'mdi mdi-coffee' },
                   ]
                 }
               ]
@@ -150,13 +150,13 @@ export default class Example07 {
           },
           optionTitleKey: 'CHANGE_COMPLETED_FLAG',
           optionItems: [
-            { option: true, titleKey: 'TRUE', iconCssClass: 'sgi sgi-check-box-outline' },
-            { option: false, titleKey: 'FALSE', iconCssClass: 'sgi sgi-checkbox-blank-outline' },
+            { option: true, titleKey: 'TRUE', iconCssClass: 'mdi mdi-check-box-outline' },
+            { option: false, titleKey: 'FALSE', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
             {
               // we can also have multiple nested sub-menus
               option: null, title: 'Sub-Options (demo)', subMenuTitleKey: 'CHANGE_COMPLETED_FLAG', optionItems: [
-                { option: true, titleKey: 'TRUE', iconCssClass: 'sgi sgi-check-box-outline' },
-                { option: false, titleKey: 'FALSE', iconCssClass: 'sgi sgi-checkbox-blank-outline' },
+                { option: true, titleKey: 'TRUE', iconCssClass: 'mdi mdi-check-box-outline' },
+                { option: false, titleKey: 'FALSE', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
               ]
             }
           ],
@@ -193,8 +193,8 @@ export default class Example07 {
           enableRenderHtml: true,
           collection: [
             { value: '', label: '' },
-            { value: true, label: 'True', labelSuffix: `<i class="sgi sgi-check sgi-16px"></i> ` },
-            { value: false, label: 'False', labelSuffix: `<i class="sgi sgi-close sgi-16px"></i> ` }
+            { value: true, label: 'True', labelSuffix: `<i class="mdi mdi-check mdi-16px"></i> ` },
+            { value: false, label: 'False', labelSuffix: `<i class="mdi mdi-close mdi-16px"></i> ` }
           ],
           model: Filters.singleSelect
         },
@@ -208,8 +208,8 @@ export default class Example07 {
           enableRenderHtml: true,
           collectionAsync: new Promise<any>(resolve => setTimeout(() => {
             resolve([
-              { value: true, label: 'True', labelSuffix: `<i class="sgi sgi-check sgi-16px"></i> ` },
-              { value: false, label: 'False', labelSuffix: `<i class="sgi sgi-close sgi-16px"></i> ` }
+              { value: true, label: 'True', labelSuffix: `<i class="mdi mdi-check mdi-16px"></i> ` },
+              { value: false, label: 'False', labelSuffix: `<i class="mdi mdi-close mdi-16px"></i> ` }
             ]);
           }, 250)),
         },

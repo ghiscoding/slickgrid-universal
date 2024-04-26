@@ -169,7 +169,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         menuCommandItems.push(
           {
-            iconCssClass: contextMenu.iconCopyCellValueCommand || 'sgi sgi-content-copy',
+            iconCssClass: contextMenu.iconCopyCellValueCommand || 'mdi mdi-content-copy',
             titleKey: `${translationPrefix}COPY`,
             disabled: false,
             command: commandName,
@@ -202,7 +202,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         menuCommandItems.push(
           {
-            iconCssClass: contextMenu.iconExportCsvCommand || 'sgi sgi-download',
+            iconCssClass: contextMenu.iconExportCsvCommand || 'mdi mdi-download',
             titleKey: `${translationPrefix}EXPORT_TO_CSV`,
             disabled: false,
             command: commandName,
@@ -230,7 +230,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         menuCommandItems.push(
           {
-            iconCssClass: contextMenu.iconExportExcelCommand || 'sgi sgi-file-excel-outline text-success',
+            iconCssClass: contextMenu.iconExportExcelCommand || 'mdi mdi-file-excel-outline text-success',
             titleKey: `${translationPrefix}EXPORT_TO_EXCEL`,
             disabled: false,
             command: commandName,
@@ -255,7 +255,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         menuCommandItems.push(
           {
-            iconCssClass: contextMenu.iconExportTextDelimitedCommand || 'sgi sgi-download',
+            iconCssClass: contextMenu.iconExportTextDelimitedCommand || 'mdi mdi-download',
             titleKey: `${translationPrefix}EXPORT_TO_TAB_DELIMITED`,
             disabled: false,
             command: commandName,
@@ -290,7 +290,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
         if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           menuCommandItems.push(
             {
-              iconCssClass: contextMenu.iconClearGroupingCommand || 'sgi sgi-close',
+              iconCssClass: contextMenu.iconClearGroupingCommand || 'mdi mdi-close',
               titleKey: `${translationPrefix}CLEAR_ALL_GROUPING`,
               disabled: false,
               command: commandName,
@@ -315,7 +315,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
         if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           menuCommandItems.push(
             {
-              iconCssClass: contextMenu.iconCollapseAllGroupsCommand || 'sgi sgi-arrow-collapse',
+              iconCssClass: contextMenu.iconCollapseAllGroupsCommand || 'mdi mdi-arrow-collapse',
               titleKey: `${translationPrefix}COLLAPSE_ALL_GROUPS`,
               disabled: false,
               command: commandName,
@@ -347,7 +347,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
         if (!originalCommandItems.some(item => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           menuCommandItems.push(
             {
-              iconCssClass: contextMenu.iconExpandAllGroupsCommand || 'sgi sgi-arrow-expand',
+              iconCssClass: contextMenu.iconExpandAllGroupsCommand || 'mdi mdi-arrow-expand',
               titleKey: `${translationPrefix}EXPAND_ALL_GROUPS`,
               disabled: false,
               command: commandName,

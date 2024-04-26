@@ -88,7 +88,7 @@ describe('Example 16 - Regular & Custom Tooltips', () => {
     cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(1)').should('be.empty');
 
     cy.get('.tooltip-2cols-row:nth(3)').find('div:nth(0)').contains('Completion:');
-    cy.get('.tooltip-2cols-row:nth(3)').find('div:nth(1)').find('.sgi-check-circle-outline').should('exist');
+    cy.get('.tooltip-2cols-row:nth(3)').find('div:nth(1)').find('.mdi-check-circle-outline').should('exist');
 
     cy.get('@start6-cell').trigger('mouseout');
   });
@@ -134,7 +134,7 @@ describe('Example 16 - Regular & Custom Tooltips', () => {
     cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(1)').should('be.empty');
 
     cy.get('.tooltip-2cols-row:nth(3)').find('div:nth(0)').contains('Completion:');
-    cy.get('.tooltip-2cols-row:nth(3)').find('div:nth(1)').find('.sgi-check-circle-outline').should('exist');
+    cy.get('.tooltip-2cols-row:nth(3)').find('div:nth(1)').find('.mdi-check-circle-outline').should('exist');
 
     cy.get('@duration2-cell').trigger('mouseout');
   });

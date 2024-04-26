@@ -9,8 +9,8 @@ import type { SelectionModel } from '../enums/index';
 
 export interface RowLookup { [row: number]: boolean; }
 
-const CHECK_ICON = 'sgi-icon-check';
-const UNCHECK_ICON = 'sgi-icon-uncheck';
+const CHECK_ICON = 'mdi-icon-check';
+const UNCHECK_ICON = 'mdi-icon-uncheck';
 
 export class SlickCheckboxSelectColumn<T = any> {
   pluginName: 'CheckboxSelectColumn' = 'CheckboxSelectColumn' as const;
@@ -228,7 +228,7 @@ export class SlickCheckboxSelectColumn<T = any> {
       createDomElement('input', { id: inputId, type: 'checkbox', checked, ariaChecked: String(checked) })
     );
     divElm.appendChild(
-      createDomElement('div', { className: `sgi ${checked ? CHECK_ICON : UNCHECK_ICON}` })
+      createDomElement('div', { className: `mdi ${checked ? CHECK_ICON : UNCHECK_ICON}` })
     );
     labelElm.appendChild(divElm);
     fragmentElm.appendChild(labelElm);
@@ -335,7 +335,7 @@ export class SlickCheckboxSelectColumn<T = any> {
           createDomElement('input', { id: inputId, type: 'checkbox', ariaChecked: 'false' })
         );
         divElm.appendChild(
-          createDomElement('div', { className: 'sgi sgi-icon-uncheck' })
+          createDomElement('div', { className: 'mdi mdi-icon-uncheck' })
         );
 
         labelElm.appendChild(divElm);
@@ -404,13 +404,13 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
     if (!this._addonOptions.hideInFilterHeaderRow) {
       const selectAllElm = this.headerRowNode?.querySelector<HTMLInputElement>(`#header-filter-selector${this._selectAll_UID}`);
-      const selectAllIconElm = this.headerRowNode?.querySelector<HTMLInputElement>('.icon-checkbox-container .sgi');
+      const selectAllIconElm = this.headerRowNode?.querySelector<HTMLInputElement>('.icon-checkbox-container .mdi');
       if (selectAllElm) {
         selectAllElm.ariaChecked = String(this._isSelectAllChecked);
         selectAllElm.checked = this._isSelectAllChecked;
       }
       if (selectAllIconElm) {
-        selectAllIconElm.className = `sgi ${this._isSelectAllChecked ? CHECK_ICON : UNCHECK_ICON}`;
+        selectAllIconElm.className = `mdi ${this._isSelectAllChecked ? CHECK_ICON : UNCHECK_ICON}`;
       }
     }
   }

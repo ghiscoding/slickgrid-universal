@@ -103,7 +103,7 @@ describe('Tree Formatter', () => {
     mockGridOptions.treeDataOptions!.levelPropName = 'indent';
     mockGridOptions.treeDataOptions!.titleFormatter = (_row, _cell, value, _def, dataContext) => {
       if (dataContext.indent > 0) {
-        return `<span class="sgi sgi-subdirectory-arrow-right"></span>${value}`;
+        return `<span class="mdi mdi-subdirectory-arrow-right"></span>${value}`;
       }
       return value || '';
     };
@@ -112,7 +112,7 @@ describe('Tree Formatter', () => {
 
     expect(output.addClasses).toBe('slick-tree-level-1');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML'))
-      .toEqual(`<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle expanded" aria-expanded="true"></div><span class="slick-tree-title" level="1"><span class="sgi sgi-subdirectory-arrow-right"></span>Jane</span>`);
+      .toEqual(`<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle expanded" aria-expanded="true"></div><span class="slick-tree-title" level="1"><span class="mdi mdi-subdirectory-arrow-right"></span>Jane</span>`);
   });
 
   it('should execute "queryFieldNameGetterFn" callback to get field name to use when it is defined', () => {

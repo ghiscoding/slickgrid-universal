@@ -61,7 +61,7 @@ export default class Example03 {
     this._bindingEventService.bind(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onitemdeleted', this.handleItemDeleted.bind(this));
-    this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => this.loadingClass = 'sgi sgi-load sgi-spin-1s sgi-22px');
+    this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-22px');
     this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => this.loadingClass = '');
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
@@ -249,7 +249,7 @@ export default class Example03 {
             { command: 'command1', title: 'Command 1', cssClass: 'orange', positionOrder: 61 },
             {
               command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'sgi sgi-close', cssClass: 'red', textCssClass: 'bold',
+              iconCssClass: 'mdi mdi-close', cssClass: 'red', textCssClass: 'bold',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext.completed;
@@ -263,15 +263,15 @@ export default class Example03 {
             {
               command: 'help',
               title: 'Help',
-              iconCssClass: 'sgi sgi-help-circle-outline',
+              iconCssClass: 'mdi mdi-help-circle-outline',
               positionOrder: 66,
             },
             { command: 'something', title: 'Disabled Command', disabled: true, positionOrder: 67, }
           ],
           optionTitle: 'Change Effort-Driven Flag',
           optionItems: [
-            { option: true, title: 'True', iconCssClass: 'sgi sgi-check-box-outline' },
-            { option: false, title: 'False', iconCssClass: 'sgi sgi-checkbox-blank-outline' },
+            { option: true, title: 'True', iconCssClass: 'mdi mdi-check-box-outline' },
+            { option: false, title: 'False', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
           ]
         }
       },
@@ -312,12 +312,12 @@ export default class Example03 {
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by the column',
         // hideGroupSortIcons: true,
-        deleteIconCssClass: 'sgi sgi-close text-color-danger',
-        sortAscIconCssClass: 'sgi sgi-arrow-up',
-        sortDescIconCssClass: 'sgi sgi-arrow-down',
+        deleteIconCssClass: 'mdi mdi-close text-color-danger',
+        sortAscIconCssClass: 'mdi mdi-arrow-up',
+        sortDescIconCssClass: 'mdi mdi-arrow-down',
         onGroupChanged: (_e, args) => this.onGroupChanged(args),
         onExtensionRegistered: (extension) => this.draggableGroupingPlugin = extension,
-        // groupIconCssClass: 'sgi sgi-drag-vertical',
+        // groupIconCssClass: 'mdi mdi-drag-vertical',
       },
       enableCheckboxSelector: true,
       enableRowSelection: true,

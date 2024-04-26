@@ -428,7 +428,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       name: expect.any(DocumentFragment),
       formatter: expect.toBeFunction(),
     });
-    expect(nameHtmlOutput).toBe(`<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><div class="sgi sgi-icon-uncheck"></div></div></label>`);
+    expect(nameHtmlOutput).toBe(`<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><div class="mdi mdi-icon-uncheck"></div></div></label>`);
   });
 
   it('should create the plugin and add the Toggle All checkbox in the filter header row and expect toggle all to work when clicked', () => {
@@ -477,7 +477,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     });
     expect(plugin).toBeTruthy();
     expect(mockColumns[0]).toEqual(expect.objectContaining({ ...checkboxColumnMock, formatter: expect.toBeFunction() }));
-    expect(nameHtmlOutput).toBe(`<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><div class="sgi sgi-icon-uncheck"></div></div></label>`);
+    expect(nameHtmlOutput).toBe(`<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><div class="mdi mdi-icon-uncheck"></div></div></label>`);
   });
 
 
@@ -505,7 +505,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       width: 30,
       maxWidth: 30,
     });
-    expect(nameHtmlOutput).toBe(`<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><div class="sgi sgi-icon-uncheck"></div></div></label>`);
+    expect(nameHtmlOutput).toBe(`<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><div class="mdi mdi-icon-uncheck"></div></div></label>`);
   });
 
   it('should add a "name" and "hideSelectAllCheckbox: true" and call the "create" method and expect plugin to be created with a column name and without a checkbox', () => {

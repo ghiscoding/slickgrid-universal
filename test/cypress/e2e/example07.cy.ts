@@ -407,11 +407,11 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   it('should be able to toggle Sorting functionality (disable) and expect all header menu Sorting commands to be hidden and also not show Sort hint while hovering a column', () => {
     const expectedFullHeaderMenuCommands = ['Resize by Content', '', 'Sort Ascending', 'Sort Descending', '', 'Remove Filter', 'Remove Sort', 'Hide Column'];
 
-    cy.get('[data-test="toggle-sorting-btn"] .sgi-toggle-switch').should('exist');
+    cy.get('[data-test="toggle-sorting-btn"] .mdi-toggle-switch').should('exist');
     cy.get('.slick-sort-indicator').should('have.length.greaterThan', 0); // sort icon hints
     cy.get('[data-test="toggle-sorting-btn"]').click(); // disable it
     cy.get('.slick-sort-indicator').should('have.length', 0);
-    cy.get('[data-test="toggle-sorting-btn"] .sgi-toggle-switch-off-outline').should('exist');
+    cy.get('[data-test="toggle-sorting-btn"] .mdi-toggle-switch-off-outline').should('exist');
 
     cy.get('.grid7')
       .find('.slick-header-column:nth(8)')
@@ -457,10 +457,10 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   it('should be able to toggle Sorting functionality (re-enable) and expect all Sorting header menu commands to be visible and also Sort hints to show up also', () => {
     const expectedFullHeaderMenuCommands = ['Resize by Content', '', 'Sort Ascending', 'Sort Descending', '', 'Remove Filter', 'Remove Sort', 'Hide Column'];
 
-    cy.get('[data-test="toggle-sorting-btn"] .sgi-toggle-switch-off-outline').should('exist');
+    cy.get('[data-test="toggle-sorting-btn"] .mdi-toggle-switch-off-outline').should('exist');
     cy.get('.slick-sort-indicator').should('have.length', 0); // sort icon hints
     cy.get('[data-test="toggle-sorting-btn"]').click(); // enable it back
-    cy.get('[data-test="toggle-sorting-btn"] .sgi-toggle-switch').should('exist');
+    cy.get('[data-test="toggle-sorting-btn"] .mdi-toggle-switch').should('exist');
     cy.get('.slick-sort-indicator').should('have.length.greaterThan', 0);
 
     cy.get('.grid7')
@@ -503,11 +503,11 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   it('should be able to click disable Sorting functionality button and expect all Sorting commands to be hidden and also not show Sort hint while hovering a column', () => {
     const expectedFullHeaderMenuCommands = ['Resize by Content', '', 'Sort Ascending', 'Sort Descending', '', 'Remove Filter', 'Remove Sort', 'Hide Column'];
 
-    cy.get('[data-test="toggle-sorting-btn"] .sgi-toggle-switch').should('exist');
+    cy.get('[data-test="toggle-sorting-btn"] .mdi-toggle-switch').should('exist');
     cy.get('.slick-sort-indicator').should('have.length.greaterThan', 0); // sort icon hints
     cy.get('[data-test="disable-sorting-btn"]').click().click(); // even clicking twice should have same result
     cy.get('.slick-sort-indicator').should('have.length', 0);
-    cy.get('[data-test="toggle-sorting-btn"] .sgi-toggle-switch-off-outline').should('exist');
+    cy.get('[data-test="toggle-sorting-btn"] .mdi-toggle-switch-off-outline').should('exist');
 
     cy.get('.grid7')
       .find('.slick-header-column:nth(5)')

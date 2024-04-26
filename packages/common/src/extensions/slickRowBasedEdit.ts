@@ -439,7 +439,7 @@ export class SlickRowBasedEdit {
       .appendChild(
         createDomElement('span', {
           className:
-            options.rowBasedEditOptions?.actionButtons?.iconEditButtonClassName || 'sgi sgi-table-edit text-color-primary',
+            options.rowBasedEditOptions?.actionButtons?.iconEditButtonClassName || 'mdi mdi-table-edit text-color-primary',
         })
       );
     actionFragment
@@ -455,7 +455,7 @@ export class SlickRowBasedEdit {
       .appendChild(
         createDomElement('span', {
           className:
-            options.rowBasedEditOptions?.actionButtons?.iconDeleteButtonClassName || 'sgi sgi-close text-color-danger',
+            options.rowBasedEditOptions?.actionButtons?.iconDeleteButtonClassName || 'mdi mdi-close text-color-danger',
         })
       );
     actionFragment
@@ -471,7 +471,7 @@ export class SlickRowBasedEdit {
       .appendChild(
         createDomElement('span', {
           className:
-            options.rowBasedEditOptions?.actionButtons?.iconUpdateButtonClassName || 'sgi sgi-check-bold text-color-success',
+            options.rowBasedEditOptions?.actionButtons?.iconUpdateButtonClassName || 'mdi mdi-check-bold text-color-success',
         })
       );
     actionFragment
@@ -487,7 +487,7 @@ export class SlickRowBasedEdit {
       .appendChild(
         createDomElement('span', {
           className:
-            options.rowBasedEditOptions?.actionButtons?.iconCancelButtonClassName || 'sgi sgi-cancel text-color-danger',
+            options.rowBasedEditOptions?.actionButtons?.iconCancelButtonClassName || 'mdi mdi-cancel text-color-danger',
         })
       );
 
