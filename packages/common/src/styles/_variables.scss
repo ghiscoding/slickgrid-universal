@@ -1003,6 +1003,7 @@ $slick-empty-data-warning-z-index:                          10 !default;
   --slick-menu-close-btn-bg-color:                        transparent;
   --slick-menu-close-btn-color:                           #bbbbbb;
   --slick-menu-color:                                     #ededed;
+  --slick-menu-item-disabled-color:                       #686868;
   --slick-menu-divider-color:                             #606060;
   --slick-menu-item-hover-color:                          var(--slick-base-dark-menu-bg-color);
   --slick-menu-item-hover-color:                          var(--slick-base-dark-menu-item-hover-color);
@@ -1108,9 +1109,20 @@ $slick-empty-data-warning-z-index:                          10 !default;
   --ms-ok-button-bg-hover-color:                          #373c42;
   --ms-placeholder-color:                                 #999;
   --ms-select-all-label-hover-border:                     var(--slick-base-dark-menu-item-border);
+
+  .text-color-primary {
+    color:                                                var(--slick-primary-color);
+  }
 }
+
 .dark-mode {
-  --slick-button-border-color:   #626262;
-  --slick-button-primary-color:  #bababa;
-  --slick-button-style-bg-color: #252525;
+  --slick-button-border-color:                            #626262;
+  --slick-button-primary-color:                           #bababa;
+  --slick-button-style-bg-color:                          #252525;
+  .text-color-primary {
+    --text-color-primary:                                 var(--slick-primary-color, #{lighten($primary-color, 15%)});
+  }
+  .text-color-secondary {
+    --text-color-secondary:                               rgba(222, 226, 230, 0.75);
+  }
 }
