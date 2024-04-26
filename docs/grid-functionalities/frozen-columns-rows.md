@@ -81,7 +81,7 @@ You can change the number of pinned columns/rows and even the pinning of columns
     </span>
     <span style="margin-left: 15px">
       <button class="btn btn-default btn-sm" click.delegate="toggleFrozenBottomRows()">
-         <i class="fa fa-random fa-lg"></i> Toggle Pinned Rows
+         <i class="mdi-flip-vertical"></i> Toggle Pinned Rows
       </button>
       <span style="font-weight: bold;">: ${ isFrozenBottom ? 'Bottom' : 'Top' }</span>
     </span>

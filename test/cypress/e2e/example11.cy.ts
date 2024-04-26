@@ -581,6 +581,7 @@ describe('Example 11 - Batch Editing', () => {
   });
 
   it('should be able to filter "Country of Origin" with a text range filter "b..e" and expect to see only Canada showing up', () => {
+    cy.get('.slick-header-columns .slick-header-column:nth(9)').trigger('mouseover'); // mouseover column headers to get rid of cell tooltip
     cy.get('input.search-filter.filter-countryOfOrigin').type('b..e');
     cy.get('input.search-filter.filter-countryOfOrigin.filled').should('exist');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(9)`).should('contain', 'Canada');

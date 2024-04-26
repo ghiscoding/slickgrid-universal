@@ -78,7 +78,7 @@ export default class Example07 {
       {
         id: 'action', name: 'Action', field: 'action', minWidth: 60, maxWidth: 60,
         excludeFromExport: true, excludeFromHeaderMenu: true,
-        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
@@ -86,7 +86,7 @@ export default class Example07 {
           commandItems: [
             {
               command: 'command1', titleKey: 'DELETE_ROW',
-              iconCssClass: 'mdi mdi-close color-danger', cssClass: 'has-text-danger', textCssClass: 'bold',
+              iconCssClass: 'mdi mdi-close', cssClass: 'has-text-danger', textCssClass: 'bold',
               action: (_e, args) => {
                 if (confirm(`Do you really want to delete row (${args.row! + 1}) with "${args.dataContext.title}"?`)) {
                   this.sgb?.gridService.deleteItemById(args.dataContext.id);
@@ -193,8 +193,8 @@ export default class Example07 {
           enableRenderHtml: true,
           collection: [
             { value: '', label: '' },
-            { value: true, label: 'True', labelSuffix: `<i class="mdi mdi-check mdi-v-align-middle mdi-16px"></i> ` },
-            { value: false, label: 'False', labelSuffix: `<i class="mdi mdi-close mdi-v-align-middle mdi-16px"></i> ` }
+            { value: true, label: 'True', labelSuffix: `<i class="mdi mdi-check mdi-16px"></i> ` },
+            { value: false, label: 'False', labelSuffix: `<i class="mdi mdi-close mdi-16px"></i> ` }
           ],
           model: Filters.singleSelect
         },
@@ -208,8 +208,8 @@ export default class Example07 {
           enableRenderHtml: true,
           collectionAsync: new Promise<any>(resolve => setTimeout(() => {
             resolve([
-              { value: true, label: 'True', labelSuffix: `<i class="mdi mdi-check mdi-v-align-middle mdi-16px"></i> ` },
-              { value: false, label: 'False', labelSuffix: `<i class="mdi mdi-close mdi-v-align-middle mdi-16px"></i> ` }
+              { value: true, label: 'True', labelSuffix: `<i class="mdi mdi-check mdi-16px"></i> ` },
+              { value: false, label: 'False', labelSuffix: `<i class="mdi mdi-close mdi-16px"></i> ` }
             ]);
           }, 250)),
         },
@@ -403,7 +403,7 @@ export default class Example07 {
         <section class="modal-card-body">
           <div class="slickgrid-container grid-pane">
             <div id="modal-allFilter-content">
-              <div id="modal-allFilter-table" class="slick-headerrow ui-state-default">
+              <div id="modal-allFilter-table" class="slick-headerrow slick-state-default">
               </div>
             </div>
           </div>
@@ -439,7 +439,7 @@ export default class Example07 {
         document.querySelector('#modal-allFilter-table')!.innerHTML = innerHtml +
           `<div class="row slick-headerrow-columns">
               <div class="column">${columnFilter.name}</div>
-              <div id="${filterElm}" class="column ui-state-default slick-headerrow-column"></div>
+              <div id="${filterElm}" class="column slick-state-default slick-headerrow-column"></div>
             </div>`;
         grid?.filterService.drawFilterTemplate(columnFilter, `#${filterElm}`);
       }

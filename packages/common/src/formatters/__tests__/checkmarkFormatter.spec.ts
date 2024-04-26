@@ -26,20 +26,20 @@ describe('the Checkmark Formatter', () => {
     const value = 'True';
     const result1 = checkmarkFormatter(0, 0, value.toLowerCase(), {} as Column, {}, {} as any);
     const result2 = checkmarkFormatter(0, 0, value.toUpperCase(), {} as Column, {}, {} as any);
-    expect((result1 as HTMLElement).outerHTML).toBe('<i class="fa fa-check checkmark-icon" aria-hidden="true"></i>');
-    expect((result2 as HTMLElement).outerHTML).toBe('<i class="fa fa-check checkmark-icon" aria-hidden="true"></i>');
+    expect((result1 as HTMLElement).outerHTML).toBe('<i class="mdi mdi-check checkmark-icon" aria-hidden="true"></i>');
+    expect((result2 as HTMLElement).outerHTML).toBe('<i class="mdi mdi-check checkmark-icon" aria-hidden="true"></i>');
   });
 
   it('should return the Font Awesome Checkmark icon when input is True', () => {
     const value = true;
     const result = checkmarkFormatter(0, 0, value, {} as Column, {}, {} as any);
-    expect((result as HTMLElement).outerHTML).toBe('<i class="fa fa-check checkmark-icon" aria-hidden="true"></i>');
+    expect((result as HTMLElement).outerHTML).toBe('<i class="mdi mdi-check checkmark-icon" aria-hidden="true"></i>');
   });
 
   it('should return the Font Awesome Checkmark icon when input is a string even if it start with 0', () => {
     const value = '005A00ABC';
     const result1 = checkmarkFormatter(0, 0, value, {} as Column, {}, {} as any);
-    expect((result1 as HTMLElement).outerHTML).toBe('<i class="fa fa-check checkmark-icon" aria-hidden="true"></i>');
+    expect((result1 as HTMLElement).outerHTML).toBe('<i class="mdi mdi-check checkmark-icon" aria-hidden="true"></i>');
   });
 
   it('should return an empty string when the string "0" is provided', () => {
@@ -51,13 +51,13 @@ describe('the Checkmark Formatter', () => {
   it('should return the Font Awesome Checkmark icon when input is a number greater than 0', () => {
     const value = 0.000001;
     const result1 = checkmarkFormatter(0, 0, value, {} as Column, {}, {} as any);
-    expect((result1 as HTMLElement).outerHTML).toBe('<i class="fa fa-check checkmark-icon" aria-hidden="true"></i>');
+    expect((result1 as HTMLElement).outerHTML).toBe('<i class="mdi mdi-check checkmark-icon" aria-hidden="true"></i>');
   });
 
   it('should return the Font Awesome Checkmark icon when input is a number as a text greater than 0', () => {
     const value = '0.000001';
     const result1 = checkmarkFormatter(0, 0, value, {} as Column, {}, {} as any);
-    expect((result1 as HTMLElement).outerHTML).toBe('<i class="fa fa-check checkmark-icon" aria-hidden="true"></i>');
+    expect((result1 as HTMLElement).outerHTML).toBe('<i class="mdi mdi-check checkmark-icon" aria-hidden="true"></i>');
   });
 
   it('should return an empty string when input is a number lower or equal to 0', () => {
@@ -92,7 +92,7 @@ describe('the Checkmark Formatter', () => {
     const value2 = 'undefined';
     const result1 = checkmarkFormatter(0, 0, value1, {} as Column, {}, {} as any);
     const result2 = checkmarkFormatter(0, 0, value2, {} as Column, {}, {} as any);
-    expect((result1 as HTMLElement).outerHTML).toBe('<i class="fa fa-check checkmark-icon" aria-hidden="true"></i>');
-    expect((result2 as HTMLElement).outerHTML).toBe('<i class="fa fa-check checkmark-icon" aria-hidden="true"></i>');
+    expect((result1 as HTMLElement).outerHTML).toBe('<i class="mdi mdi-check checkmark-icon" aria-hidden="true"></i>');
+    expect((result2 as HTMLElement).outerHTML).toBe('<i class="mdi mdi-check checkmark-icon" aria-hidden="true"></i>');
   });
 });

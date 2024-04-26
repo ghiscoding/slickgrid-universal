@@ -48,7 +48,6 @@
   & + span:after {
     animation: md-spin 2s infinite linear;
     display: inline-block;
-    font-family: var(--slick-icon-font-family, $slick-icon-font-family);
     color: var(--slick-autocomplete-loading-icon-color, $slick-autocomplete-loading-icon-color);
     content: var(--slick-autocomplete-loading-icon, $slick-autocomplete-loading-icon);
     width: var(--slick-autocomplete-loading-icon-width, $slick-autocomplete-loading-icon-width);

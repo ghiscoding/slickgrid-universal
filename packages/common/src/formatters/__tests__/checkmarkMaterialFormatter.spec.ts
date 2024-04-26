@@ -22,7 +22,7 @@ describe('the Checkmark Formatter with Material Design Icon', () => {
     expect(result2).toBe('');
   });
 
-  it('should return the Font Awesome Checkmark icon when the string "True" (case insensitive) is provided', () => {
+  it('should return the Material Checkmark icon when the string "True" (case insensitive) is provided', () => {
     const value = 'True';
     const result1 = checkmarkMaterialFormatter(0, 0, value.toLowerCase(), {} as Column, {}, {} as any);
     const result2 = checkmarkMaterialFormatter(0, 0, value.toUpperCase(), {} as Column, {}, {} as any);
@@ -30,13 +30,13 @@ describe('the Checkmark Formatter with Material Design Icon', () => {
     expect((result2 as HTMLElement).outerHTML).toBe('<i class="mdi mdi-18px mdi-check checkmark-icon" aria-hidden="true"></i>');
   });
 
-  it('should return the Font Awesome Checkmark icon when input is True', () => {
+  it('should return the Material Checkmark icon when input is True', () => {
     const value = true;
     const result = checkmarkMaterialFormatter(0, 0, value, {} as Column, {}, {} as any);
     expect((result as HTMLElement).outerHTML).toBe('<i class="mdi mdi-18px mdi-check checkmark-icon" aria-hidden="true"></i>');
   });
 
-  it('should return the Font Awesome Checkmark icon when input is a string even if it start with 0', () => {
+  it('should return the Material Checkmark icon when input is a string even if it start with 0', () => {
     const value = '005A00ABC';
     const result1 = checkmarkMaterialFormatter(0, 0, value, {} as Column, {}, {} as any);
     expect((result1 as HTMLElement).outerHTML).toBe('<i class="mdi mdi-18px mdi-check checkmark-icon" aria-hidden="true"></i>');
@@ -48,13 +48,13 @@ describe('the Checkmark Formatter with Material Design Icon', () => {
     expect(result).toBe('');
   });
 
-  it('should return the Font Awesome Checkmark icon when input is a number greater than 0', () => {
+  it('should return the Material Checkmark icon when input is a number greater than 0', () => {
     const value = 0.000001;
     const result1 = checkmarkMaterialFormatter(0, 0, value, {} as Column, {}, {} as any);
     expect((result1 as HTMLElement).outerHTML).toBe('<i class="mdi mdi-18px mdi-check checkmark-icon" aria-hidden="true"></i>');
   });
 
-  it('should return the Font Awesome Checkmark icon when input is a number as a text greater than 0', () => {
+  it('should return the Material Checkmark icon when input is a number as a text greater than 0', () => {
     const value = '0.000001';
     const result1 = checkmarkMaterialFormatter(0, 0, value, {} as Column, {}, {} as any);
     expect((result1 as HTMLElement).outerHTML).toBe('<i class="mdi mdi-18px mdi-check checkmark-icon" aria-hidden="true"></i>');
@@ -87,7 +87,7 @@ describe('the Checkmark Formatter with Material Design Icon', () => {
     expect(result2).toBe('');
   });
 
-  it('should return the Font Awesome Checkmark icon when input is the "null" or "undefined"', () => {
+  it('should return the Material Checkmark icon when input is the "null" or "undefined"', () => {
     const value1 = 'null';
     const value2 = 'undefined';
     const result1 = checkmarkMaterialFormatter(0, 0, value1, {} as Column, {}, {} as any);

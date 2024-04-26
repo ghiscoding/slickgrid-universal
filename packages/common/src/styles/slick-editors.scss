@@ -1,5 +1,6 @@
 @import './variables';
 @import './slick.layout';
+@import './sass-utilities';
 
 .slick-cell  {
   input.dual-editor-text,
@@ -66,9 +67,13 @@
 
   .autocomplete-container.input-group,
   .flatpickr.input-group {
+    display: flex;
+    align-items: center;
     height: var(--slick-date-editor-height, $slick-date-editor-height);
     .input-group-btn {
       &.input-group-append {
+        height: 100%;
+
         .btn {
           border-top-left-radius: 0px;
           border-bottom-left-radius: 0px;
@@ -86,17 +91,14 @@
         &:hover:not([disabled]) {
           background-color: var(--slick-input-group-btn-hover-bg-color, $slick-input-group-btn-hover-bg-color); // 1px solid #6c757d;
         }
-        &.icon-clear {
+        .icon-clear {
           display: flex;
           align-items: center;
-        }
-        &.icon-clear:before {
-          font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-          font-size: var(--slick-editor-input-group-clear-btn-icon-size, $slick-editor-input-group-clear-btn-icon-size);
-          content: var(--slick-editor-input-group-clear-btn-icon, $slick-editor-input-group-clear-btn-icon);
-          display: inline-block;
-          height: var(--slick-editor-input-group-clear-btn-icon-height, $slick-editor-input-group-clear-btn-icon-height);
-          width: var(--slick-editor-input-group-clear-btn-icon-width, $slick-editor-input-group-clear-btn-icon-width);
+          background-color: currentColor;
+          height: 1em;
+          width: 1em;
+
+          @include generateSvgStyle('slick-editor-input-group-clear-btn-icon-svg', $slick-editor-input-group-clear-btn-icon-svg-path);
         }
       }
     }
@@ -218,12 +220,16 @@
         color: var(--slick-editor-modal-reset-btn-color, $slick-editor-modal-reset-btn-color);
         background-color: var(--slick-editor-modal-reset-btn-bg-color, $slick-editor-modal-reset-btn-bg-color);
         float: right;
+        span.mdi {
+          margin-right: 5px;
+        }
       }
     }
 
     .btn-editor-reset,
     .reset-form.btn,
     .footer-buttons .btn {
+      display: inline-flex;
       margin: var(--slick-editor-modal-footer-btn-margin, $slick-editor-modal-footer-btn-margin);
       height: var(--slick-editor-modal-footer-btn-height, $slick-editor-modal-footer-btn-height);
       border: var(--slick-editor-modal-footer-btn-border, $slick-editor-modal-footer-btn-border);
@@ -463,8 +469,11 @@
 
       .autocomplete-container.input-group,
       .flatpickr.input-group {
+        display: flex;
+        align-items: center;
         height: var(--slick-date-editor-height, $slick-date-editor-height);
         .input-group-btn {
+          height: 100%;
           min-width: 28px;
           .btn {
             min-width: 28px;
