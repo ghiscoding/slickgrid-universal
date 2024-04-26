@@ -11,12 +11,14 @@ Another noticeable UI change is the migration from [Flatpickr](https://flatpickr
   - ESM ready
   - modern styling and also include Dark Mode theme
   - date range becomes a lot more easy by displaying a picker with 2 months
-  - much smaller size (a decrease of 2.9% (17Kb) was found, expect even more decreate with gzip)
+  - much smaller size (a decrease of 2.9% (17Kb) was observed, expect even more decrease with gzip)
 - Vanilla-Calendar cons:
   - settings are named differently and are not using flat config (complex object settings)
     - for example Flatpickr `minDate: 'today'` is instead `range: { min: 'today' }` 
   - some settings were missing, like the `'today'` shortcut which is why I forked the project 
     - I did open a few PRs on the main project, so the hope is to drop the fork in the future while being a totally transparent change to the user (you)
+
+Similar to previous releases, I managed to decrease the project build size even more (about 5%). At this point, the project has a similar size to what it was in v2.x that is when we were using jQuery/jQueryUI but since we're no longer using jQuery the project is in fact much smaller than it was 2 years ago. This is really nice to see, that is even considering the fact that we keep adding new features to the project and the project size managed to decrease yet again :)
 
 #### Major Changes - Quick Summary
 - minimum requirements bump
