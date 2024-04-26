@@ -73,8 +73,8 @@ Since the SVG icons are now pure CSS, we can now colorize them the same way that
 ##### SASS variables
 A lot of SASS variables changed, we recommend you take a look at the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file to compare with yours SASS overrides and fix any SASS build issues. 
 
-##### SASS `math` utils removed
-When Dart-SASS released their version 1.33, it caused a lot of console warnings in projects that were using `/` (for math division) instead of their new `math.div` function. To avoid seeing all these warnings, I had created a temporary polyfill (that piece of code was actually copied from Bootstrap project). This change happened 3 years ago, so I'm assuming that most users have already upgraded their SASS and fix these warnings and I think it's time to remove this polyfill since it was always meant to be a temp patch. If you see these warnings coming back, you can use the SASS option `--quiet-upstream`.
+##### SASS `math` polyfills are removed
+When Dart-SASS released their version 1.33, it caused a lot of console warnings (and lot of unhappy users) in projects that were using `/` (for math division) instead of their new `math.div` function. To avoid seeing all these warnings, I had created a temporary polyfill (that piece of code was actually copied from Bootstrap project). This change happened 3 years ago, so I'm assuming that most users have already upgraded their SASS and fix these warnings and I think it's time to remove this polyfill since it was always meant to be a temp patch. If you see these warnings coming back, you can use the SASS option `--quiet-upstream`.
 
 For reference, below is an example of these old Math warnings when we were compiling SASS
 
@@ -86,8 +86,8 @@ More info and automated migrator: https://sass-lang.com/d/slash-div
 │ ^^^^^^^^^^^^^^^^^^
 ```
 
-##### CSS classes
-There were a few `.ui-state-default` and other jQueryUI CSS classes leftovers, they were all removed in this release. If you were using any of them for styling purposes, you can simply rename them to `.slick-state-`
+##### jQueryUI CSS class leftovers
+There were a few `.ui-state-default` and other jQueryUI CSS classes leftovers in the core lib, they were all removed in this release. If you were using any of them for styling purposes, you can simply rename them to `.slick-state-`
 
 ```diff
 - .ui-state-default, .ui-state-hover {
