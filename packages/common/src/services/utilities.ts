@@ -1,6 +1,6 @@
 import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { flatten } from 'un-flatten-tree';
-import moment from 'moment-tiny';
+import moment, { type Moment } from 'moment-tiny';
 
 import { Constants } from '../constants';
 import { FieldType, type OperatorString, OperatorType } from '../enums/index';
@@ -399,10 +399,10 @@ export function isColumnDateType(fieldType: typeof FieldType[keyof typeof FieldT
   }
 }
 
-export function formatDateByFieldType(inputDate: Date | string | typeof moment, inputFieldType: typeof FieldType[keyof typeof FieldType] | undefined, outputFieldType: typeof FieldType[keyof typeof FieldType]): string {
+export function formatDateByFieldType(inputDate: Date | string | Moment, inputFieldType: typeof FieldType[keyof typeof FieldType] | undefined, outputFieldType: typeof FieldType[keyof typeof FieldType]): string {
   const inputFormat = inputFieldType ? mapMomentDateFormatWithFieldType(inputFieldType) : undefined;
   const outputFormat = mapMomentDateFormatWithFieldType(outputFieldType);
-  const momentDate = inputDate instanceof moment ? inputDate : moment(inputDate, inputFormat);
+  const momentDate = (inputDate instanceof moment ? inputDate : moment(inputDate, inputFormat)) as Moment;
 
   if (momentDate.isValid() && inputDate !== undefined) {
     if (outputFieldType === FieldType.dateUtc) {

@@ -1,7 +1,6 @@
 import type { AutocompleteItem } from 'autocompleter';
 import type { IOptions } from 'vanilla-calendar-picker';
-import * as moment_ from 'moment-mini';
-const moment = (moment_ as any)['default'] || moment_;
+import moment from 'moment-tiny';
 
 import type { AutocompleterOption, Column, ColumnEditor, ColumnFilter } from '../interfaces/index';
 import { formatDateByFieldType, mapMomentDateFormatWithFieldType } from '../services';
@@ -52,7 +51,7 @@ export function setPickerDates(dateInputElm: HTMLInputElement, pickerOptions: IO
       dates: [pickerDates.map(p => p.format(isoFormat)).join(':')],
       month: pickerDates[0].month(),
       year: pickerDates[0].year(),
-      time: inputFormat.toLowerCase().includes('h') ? pickerDates[0].format('HH:mm') : null,
+      time: inputFormat.toLowerCase().includes('h') ? pickerDates[0].format('HH:mm') : undefined,
     };
     dateInputElm.value = initialDates.length ? pickerDates.map(p => formatDateByFieldType(p, undefined, outputFieldType)).join(' — ') : '';
   }

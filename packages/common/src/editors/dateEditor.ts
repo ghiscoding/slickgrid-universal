@@ -139,8 +139,8 @@ export class DateEditor implements Editor {
 
               if (this.hasTimePicker) {
                 const momentDate = moment(chosenDate, pickerFormat);
-                momentDate.hours(self.selectedHours);
-                momentDate.minute(self.selectedMinutes);
+                momentDate.hours(+(self.selectedHours || 0));
+                momentDate.minute(+(self.selectedMinutes || 0));
                 self.HTMLInputElement.value = formatDateByFieldType(momentDate, undefined, outputFieldType);
               }
 

@@ -1,7 +1,7 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, extend, } from '@slickgrid-universal/utils';
 import { VanillaCalendar, type IOptions } from 'vanilla-calendar-picker';
-import moment from 'moment-tiny';
+import moment, { type Moment } from 'moment-tiny';
 
 import {
   FieldType,
@@ -284,7 +284,7 @@ export class DateFilter implements Filter {
         },
         changeToInput: (_e, self) => {
           if (self.HTMLInputElement) {
-            let outDates: Array<moment_.Moment | string> = [];
+            let outDates: Array<Moment | string> = [];
             let firstDate = '';
             let lastDate = ''; // when using date range
 
@@ -306,8 +306,8 @@ export class DateFilter implements Filter {
 
             if (this.hasTimePicker && firstDate) {
               const momentDate = moment(firstDate, pickerFormat);
-              momentDate.hours(self.selectedHours);
-              momentDate.minute(self.selectedMinutes);
+              momentDate.hours(+(self.selectedHours || 0));
+              momentDate.minute(+(self.selectedMinutes || 0));
               self.HTMLInputElement.value = formatDateByFieldType(momentDate, undefined, outputFieldType);
               outDates = [momentDate];
             }
@@ -320,7 +320,7 @@ export class DateFilter implements Filter {
                 this._currentValue = this._currentDateStrings.join('..');
               }
             }
-            this._currentDateOrDates = outDates.map(dateStr => dateStr instanceof moment ? (dateStr as moment_.Moment).toDate() : new Date(dateStr as string));
+            this._currentDateOrDates = outDates.map(dateStr => dateStr instanceof moment ? (dateStr as Moment).toDate() : new Date(dateStr as string));
 
             // when using the time picker, we can simulate a keyup event to avoid multiple backend request
             // since backend request are only executed after user start typing, changing the time should be treated the same way
