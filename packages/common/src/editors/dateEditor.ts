@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { type InferDOMType, createDomElement, emptyElement, extend, setDeepValue } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, extend, setDeepValue } from '@slickgrid-universal/utils';
 import { VanillaCalendar, type IOptions } from 'vanilla-calendar-picker';
 import * as moment_ from 'moment-mini';
 const moment = (moment_ as any)['default'] || moment_;
@@ -256,7 +256,7 @@ export class DateEditor implements Editor {
    * @param {string} optionName
    * @param {newValue} newValue
    */
-  changeEditorOption<T extends keyof VanillaCalendarOption, K extends keyof VanillaCalendarOption[T]>(optionName: T, newValue: null | { [P in K]: InferDOMType<VanillaCalendarOption[T][P]> }) {
+  changeEditorOption<T extends keyof VanillaCalendarOption, K extends Partial<VanillaCalendarOption[T]>>(optionName: T, newValue: K) {
     if (!this.columnEditor.editorOptions) {
       this.columnEditor.editorOptions = {};
     }

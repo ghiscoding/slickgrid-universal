@@ -232,9 +232,17 @@ describe('DateEditor', () => {
       editor = new DateEditor(editorArguments);
       const calendarElm = document.body.querySelector<HTMLDivElement>('.vanilla-calendar');
       editor.changeEditorOption('range', { disablePast: true });
+      editor.changeEditorOption('selected', { dates: ['2001-02-04'], month: 2 });
 
       expect(calendarElm).toBeTruthy();
       expect(editor.pickerOptions.settings?.range?.disablePast).toBeTruthy();
+      expect(editor.pickerOptions.settings?.selected).toEqual({ dates: ['2001-02-04'], month: 2 });
+
+      editor.changeEditorOption('range', { edgesOnly: true });
+      editor.changeEditorOption('selected', { dates: ['2020-03-10', 'today'] });
+
+      expect(editor.pickerOptions.settings?.range).toEqual({ disablePast: true, edgesOnly: true });
+      expect(editor.pickerOptions.settings?.selected).toEqual({ dates: ['2020-03-10', 'today'], month: 2 });
     });
 
     describe('isValueChanged method', () => {

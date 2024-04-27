@@ -60,7 +60,7 @@
     "@slickgrid-universal/utils": "workspace:~",
     "dequal": "^2.0.3",
     "sortablejs": "^1.15.2",
-    "vanilla-calendar-picker": "^2.10.3",
+    "vanilla-calendar-picker": "^2.11.2",
     "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {

@@ -359,6 +359,9 @@ export class DateFilter implements Filter {
       pickerOptions.jumpMonths = 2;
       pickerOptions.settings = {
         ...pickerOptions.settings,
+        range: {
+          edgesOnly: true,
+        },
         selection: {
           day: 'multiple-ranged',
         },

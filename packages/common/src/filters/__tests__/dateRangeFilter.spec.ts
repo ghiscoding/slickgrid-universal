@@ -118,13 +118,11 @@ describe('DateRangeFilter', () => {
       jumpToSelectedDate: true,
       months: 2,
       sanitizer: expect.any(Function),
-      toggleSelected: false,
+      range: { edgesOnly: true },
       settings: {
         iso8601: false,
         lang: 'en',
-        selection: {
-          day: 'multiple-ranged',
-        },
+        selection: { day: 'multiple-ranged', },
         visibility: {
           daysOutside: false,
           positionToInput: 'auto',
@@ -132,6 +130,7 @@ describe('DateRangeFilter', () => {
           weekend: false,
         },
       },
+      toggleSelected: false,
       type: 'multiple'
     });
   });
