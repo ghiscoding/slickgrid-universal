@@ -104,14 +104,6 @@ export function emptyElement<T extends Element = Element>(element?: T | null): T
 }
 
 /**
- * @deprecated @see `getHtmlStringOutput()`
- * This function is now deprecated and is an alias to the new `getHtmlStringOutput()`, so please use this new function instead which works with various type of inputs.
- */
-export function getHTMLFromFragment(input: DocumentFragment | HTMLElement | string | number, type: 'innerHTML' | 'outerHTML' = 'innerHTML'): string {
-  return getHtmlStringOutput(input, type);
-}
-
-/**
  * From any input provided, return the HTML string (when a string is provided, it will be returned "as is" but when it's a number it will be converted to string)
  * When detecting HTMLElement/DocumentFragment, we can also specify which HTML type to retrieve innerHTML or outerHTML.
  * We can get the HTML by looping through all fragment `childNodes`
