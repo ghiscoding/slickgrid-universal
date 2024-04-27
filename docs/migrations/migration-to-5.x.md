@@ -109,6 +109,23 @@ const myCheckmarkFormatter: Formatter = (row: number, cell: number, value: any, 
 ```
 
 ## Grid Functionalities
+
+### Native Select Filter (removed)
+I would be surprised if anyone uses the `Filters.select` and so it was removed, you should simply use the `Filters.singleSelect` or `Filters.multipleSelect`
+
+```diff
+prepareGrid() {
+  this.columnDefinitions = [{
+    id: 'isActive', name: 'Active', field: 'isActive',
+    filter: {
+-      model: Filters.select,
++      model: Filters.singleSelect,
+       collection: [ { value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' } ],
+    }
+  }];
+}
+```
+
 ### Date Editor/Filter
 We migrated from Flatpicker to Vanilla-Calendar and this require some changes since the option names are different. The changes are the same for both the Filter and the Editor.
 
