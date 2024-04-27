@@ -508,7 +508,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.gridOptions = { autoAddCustomEditorFormatter: customEditableInputFormatter };
         component.initialization(divContainer, slickEventHandler);
 
-        expect(autoAddEditorFormatterToColumnsWithEditor).toHaveBeenCalledWith([{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }], customEditableInputFormatter);
+        expect(autoAddEditorFormatterToColumnsWithEditor).toHaveBeenCalledWith([{ id: 'name', field: 'name', editor: undefined }], customEditableInputFormatter);
       });
     });
 
@@ -519,7 +519,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const updateSpy = jest.spyOn(component, 'updateColumnDefinitionsList');
         const eventSpy = jest.spyOn(eventPubSubService, 'publish');
         const addPubSubSpy = jest.spyOn(component.translaterService as TranslaterService, 'addPubSubMessaging');
-        const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
+        const mockColDefs = [{ id: 'name', field: 'name', editor: undefined }];
 
         component.columnDefinitions = mockColDefs;
         component.gridOptions = { enableTranslate: true };
@@ -540,7 +540,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const renderSpy = jest.spyOn(extensionServiceStub, 'renderColumnHeaders');
         const eventSpy = jest.spyOn(eventPubSubService, 'publish');
         const addPubSubSpy = jest.spyOn(component.translaterService as TranslaterService, 'addPubSubMessaging');
-        const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
+        const mockColDefs = [{ id: 'name', field: 'name', editor: undefined }];
 
         component.gridOptions = { enableTranslate: false, autoAddCustomEditorFormatter: customEditableInputFormatter };
         component.columnDefinitions = mockColDefs;
@@ -552,7 +552,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(eventSpy).toHaveBeenCalledTimes(4);
         expect(updateSpy).toHaveBeenCalledWith(mockColDefs);
         expect(renderSpy).toHaveBeenCalledWith(mockColDefs, true);
-        expect(autoAddEditorFormatterToColumnsWithEditor).toHaveBeenCalledWith([{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }], customEditableInputFormatter);
+        expect(autoAddEditorFormatterToColumnsWithEditor).toHaveBeenCalledWith([{ id: 'name', field: 'name', editor: undefined }], customEditableInputFormatter);
       });
     });
 
@@ -739,10 +739,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.columnDefinitions = mockColDefs;
 
         setTimeout(() => {
-          expect(component.columnDefinitions[0].editor).toBeTruthy();
           expect(component.columnDefinitions[0].editor!.collection).toEqual(mockCollection);
-          expect(component.columnDefinitions[0].internalColumnEditor!.collection).toEqual(mockCollection);
-          expect(component.columnDefinitions[0].internalColumnEditor!.model).toEqual(Editors.text);
+          expect(component.columnDefinitions[0].editor!.model).toEqual(Editors.text);
           done();
         });
       });
@@ -764,10 +762,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.columnDefinitions = mockColDefs;
 
         setTimeout(() => {
-          expect(component.columnDefinitions[0].editor).toBeTruthy();
           expect(component.columnDefinitions[0].editor!.collection).toEqual(mockCollection);
-          expect(component.columnDefinitions[0].internalColumnEditor!.collection).toEqual(mockCollection);
-          expect(component.columnDefinitions[0].internalColumnEditor!.model).toEqual(Editors.text);
+          expect(component.columnDefinitions[0].editor!.model).toEqual(Editors.text);
           expect(disableSpy).toHaveBeenCalledWith(false);
           expect(destroySpy).toHaveBeenCalled();
           expect(renderSpy).toHaveBeenCalledWith(mockCollection);
@@ -784,8 +780,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         setTimeout(() => {
           expect(component.columnDefinitions[0].editor!.collection).toEqual(mockCollection);
-          expect(component.columnDefinitions[0].internalColumnEditor!.collection).toEqual(mockCollection);
-          expect(component.columnDefinitions[0].internalColumnEditor!.model).toEqual(Editors.text);
+          expect(component.columnDefinitions[0].editor!.model).toEqual(Editors.text);
           done();
         });
       });
@@ -804,8 +799,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         setTimeout(() => {
           expect(component.columnDefinitions[0].editor!.collection).toEqual(mockCollection);
-          expect(component.columnDefinitions[0].internalColumnEditor!.collection).toEqual(mockCollection);
-          expect(component.columnDefinitions[0].internalColumnEditor!.model).toEqual(Editors.text);
+          expect(component.columnDefinitions[0].editor!.model).toEqual(Editors.text);
           done();
         });
       });
@@ -817,13 +811,13 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const rxjsMock = new RxJsResourceStub();
         component.gridOptions = { externalResources: [rxjsMock] } as unknown as GridOption;
         component.registerExternalResources([rxjsMock], true);
-        component.initialization(divContainer, slickEventHandler);
         component.columnDefinitions = mockColDefs;
+        component.initialization(divContainer, slickEventHandler);
 
         setTimeout(() => {
           expect(component.columnDefinitions[0].editor!.collection).toEqual(mockCollection);
-          expect(component.columnDefinitions[0].internalColumnEditor!.collection).toEqual(mockCollection);
-          expect(component.columnDefinitions[0].internalColumnEditor!.model).toEqual(Editors.text);
+          expect(component.columnDefinitions[0].editor!.model).toEqual(Editors.text);
+          expect(component.columnDefinitions[0].editorClass).toEqual(Editors.text);
           done();
         });
       });
@@ -1473,7 +1467,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       it('should reflect columns with an extra checkbox selection column in the grid when "enableCheckboxSelector" is set', () => {
         const mockColsPresets = [{ columnId: 'firstName', width: 100 }];
         const mockCol = { id: 'firstName', field: 'firstName' };
-        const mockCols = [{ id: '_checkbox_selector', field: '_checkbox_selector', editor: undefined, internalColumnEditor: {} }, mockCol];
+        const mockCols = [{ id: '_checkbox_selector', field: '_checkbox_selector', editor: undefined }, mockCol];
         const getAssocColSpy = jest.spyOn(gridStateServiceStub, 'getAssociatedGridColumns').mockReturnValue([mockCol]);
         const setColSpy = jest.spyOn(mockGrid, 'setColumns');
 
@@ -1488,7 +1482,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       it('should reflect columns with an extra row detail column in the grid when "enableRowDetailView" is set', () => {
         const mockColsPresets = [{ columnId: 'firstName', width: 100 }];
         const mockCol = { id: 'firstName', field: 'firstName' };
-        const mockCols = [{ id: '_detail_selector', field: '_detail_selector', editor: undefined, internalColumnEditor: {} }, mockCol];
+        const mockCols = [{ id: '_detail_selector', field: '_detail_selector', editor: undefined }, mockCol];
         const getAssocColSpy = jest.spyOn(gridStateServiceStub, 'getAssociatedGridColumns').mockReturnValue([mockCol]);
         const setColSpy = jest.spyOn(mockGrid, 'setColumns');
 
@@ -1503,7 +1497,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       it('should reflect columns with an extra row move column in the grid when "enableRowMoveManager" is set', () => {
         const mockColsPresets = [{ columnId: 'firstName', width: 100 }];
         const mockCol = { id: 'firstName', field: 'firstName' };
-        const mockCols = [{ id: '_move', field: '_move', editor: undefined, internalColumnEditor: {} }, mockCol];
+        const mockCols = [{ id: '_move', field: '_move', editor: undefined }, mockCol];
         const getAssocColSpy = jest.spyOn(gridStateServiceStub, 'getAssociatedGridColumns').mockReturnValue([mockCol]);
         const setColSpy = jest.spyOn(mockGrid, 'setColumns');
 
@@ -1519,9 +1513,9 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const mockColsPresets = [{ columnId: 'firstName', width: 100 }];
         const mockCol = { id: 'firstName', field: 'firstName' };
         const mockCols = [
-          { id: '_move', field: '_move', editor: undefined, internalColumnEditor: {} },
-          { id: '_checkbox_selector', field: '_checkbox_selector', editor: undefined, internalColumnEditor: {} },
-          { id: '_detail_selector', field: '_detail_selector', editor: undefined, internalColumnEditor: {} },
+          { id: '_move', field: '_move', editor: undefined },
+          { id: '_checkbox_selector', field: '_checkbox_selector', editor: undefined },
+          { id: '_detail_selector', field: '_detail_selector', editor: undefined },
           mockCol
         ];
         const getAssocColSpy = jest.spyOn(gridStateServiceStub, 'getAssociatedGridColumns').mockReturnValue([mockCol]);
@@ -1804,7 +1798,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
     describe('Empty Warning Message', () => {
       it('should display an Empty Warning Message when "enableEmptyDataWarningMessage" is enabled and the dataset is empty', (done) => {
-        const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
+        const mockColDefs = [{ id: 'name', field: 'name', editor: undefined }];
         const mockGridOptions = { enableTranslate: true, enableEmptyDataWarningMessage: true, };
         jest.spyOn(mockGrid, 'getOptions').mockReturnValue(mockGridOptions);
         jest.spyOn(mockGrid, 'getGridPosition').mockReturnValue({ top: 10, left: 20 } as any);
@@ -1852,7 +1846,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
     describe('Custom Footer', () => {
       it('should have a Custom Footer when "showCustomFooter" is enabled and there are no Pagination used', (done) => {
-        const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
+        const mockColDefs = [{ id: 'name', field: 'name', editor: undefined }];
         const mockGridOptions = { enableTranslate: true, showCustomFooter: true, customFooterOptions: { hideRowSelectionCount: false, } } as GridOption;
         jest.spyOn(mockGrid, 'getOptions').mockReturnValue(mockGridOptions);
 
@@ -1887,7 +1881,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should NOT have a Custom Footer when "showCustomFooter" is enabled WITH Pagination in use', (done) => {
-        const mockColDefs = [{ id: 'name', field: 'name', editor: undefined, internalColumnEditor: {} }];
+        const mockColDefs = [{ id: 'name', field: 'name', editor: undefined }];
 
         component.gridOptions.enablePagination = true;
         component.gridOptions.showCustomFooter = true;
