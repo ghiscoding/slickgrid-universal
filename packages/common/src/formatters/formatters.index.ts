@@ -2,7 +2,6 @@ import { FieldType } from '../enums/index';
 import { getAssociatedDateFormatter } from './formatterUtilities';
 import { arrayObjectToCsvFormatter } from './arrayObjectToCsvFormatter';
 import { arrayToCsvFormatter } from './arrayToCsvFormatter';
-import { checkmarkFormatter } from './checkmarkFormatter';
 import { checkmarkMaterialFormatter } from './checkmarkMaterialFormatter';
 import { currencyFormatter } from './currencyFormatter';
 import { collectionFormatter } from './collectionFormatter';
@@ -41,14 +40,6 @@ export const Formatters = {
 
   /** Takes an array of string and converts it to a comma delimited string */
   arrayToCsv: arrayToCsvFormatter,
-
-  /**
-   * When value is filled, or if the value is a number and is bigger than 0, it will display a Font-Awesome icon (fa-check).
-   * The icon will NOT be displayed when the value is any of the following ("false", false, "0", 0, -0.5, null, undefined)
-   * Anything else than the condition specified will display the icon, so a text with "00123" will display the icon but "0" will not.
-   * Also note that a string ("null", "undefined") will display the icon but (null, undefined) will not, so the typeof is also important
-   */
-  checkmark: checkmarkFormatter,
 
   /**
    * When value is filled, or if the value is a number and is bigger than 0, it will display a Material Design check icon (mdi-check).
@@ -197,11 +188,11 @@ export const Formatters = {
    */
   hyperlink: hyperlinkFormatter,
 
-  /** Display whichever icon you want (library agnostic, it could be Font-Awesome or any other) */
+  /** Display whichever icon you want (library agnostic, it could be Font-Awesome, Material or any other icons set) */
   icon: iconFormatter,
 
   /**
-   * Display whichever icon but only for boolean truthy values (library agnostic, it could be Font-Awesome or any other)
+   * Display whichever icon but only for boolean truthy values (library agnostic, it could be Font-Awesome, Material or any other icons set)
    * Note: a value of "false", null, undefined, "1" or any number below 0 are all considered falsy and will not display the icon
    */
   iconBoolean: iconBooleanFormatter,

@@ -9,6 +9,17 @@ $slick-link-color: #006DCC;
 
 @import './bulma.scss';
 
+:root {
+  .ms-dark-mode,
+  .ms-drop.ms-dark-mode,
+  .slick-dark-mode .ms-dark-mode,
+  .slick-dark-mode,
+  .dark-mode .text-color-primary {
+    --slick-primary-color: #66b8ff;
+    --text-color-primary: #66b8ff;
+  }
+}
+
 $navbar-height: 52px;
 body {
   height: calc(100vh - $navbar-height);

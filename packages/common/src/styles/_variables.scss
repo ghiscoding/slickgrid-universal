@@ -166,7 +166,7 @@ $slick-frozen-header-row-border-right:                      $slick-frozen-border
 $slick-frozen-filter-row-border-right:                      $slick-frozen-border-right !default;
 $slick-frozen-overflow-right:                               scroll !default;                      // typically we would like to always have the scroll displayed when using hamburger menu (top right)
 
-/* icon font is using Font-Awesome by default but could be changed to any other icon package like Glyphicons, ... */
+/* icons */
 $slick-icon-color:                                          inherit !default;
 $slick-icon-font-size:                                      18px !default;
 $slick-icon-group-color:                                    $slick-primary-color !default;
@@ -984,7 +984,7 @@ $slick-empty-data-warning-z-index:                          10 !default;
   --slick-detail-view-container-border:                   1px solid #525252;
   --slick-detail-view-container-bgcolor:                  #3c4349;
   --slick-btn-default-border-color:                       #565656;
-  --slick-grid-menu-icon-btn-color:                       #bbbbbb;
+  --slick-grid-menu-icon-btn-color:                       #ededed;
   --slick-row-mouse-hover-color:                          #2c3034;
   --slick-header-background-color:                        #1c1c1c;
   --slick-header-text-color:                              var(--slick-base-dark-text-color);
