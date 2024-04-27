@@ -2,7 +2,7 @@ import { createDomElement } from '@slickgrid-universal/utils';
 
 import { type Formatter } from './../interfaces/index';
 
-/** Display whichever icon you want (library agnostic, it could be Font-Awesome or any other) */
+/** Display whichever icon you want (library agnostic, it could be Font-Awesome, Material or any other icons set) */
 export const iconFormatter: Formatter = (_row, _cell, _value, columnDef) => {
   const columnParams = columnDef?.params ?? {};
   const cssClasses = columnParams.iconCssClass || columnParams.icon || columnParams.formatterIcon;

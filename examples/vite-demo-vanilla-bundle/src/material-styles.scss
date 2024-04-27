@@ -125,8 +125,9 @@
     .ms-dark-mode .icon-checkbox-container,
     .slick-dark-mode {
       --slick-base-dark-menu-bg-color: #212121;
-      --slick-primary-color: #66bb6a !important;
+      --slick-primary-color: #66bb6a;
       --slick-button-primary-bg-color:#66bb6a;
+      --slick-cell-active-box-shadow: inset 0 0 0 1px #aaaaaa;
       --slick-cell-box-shadow: none;
       --slick-checkbox-icon-color: #66bb6a;
       --slick-checkbox-icon-height: 22px;
@@ -144,6 +145,7 @@
       --slick-filled-filter-color: #66bb6a;
       --slick-highlight-color: #49a54e;
       --slick-icon-sort-color: #66bb6a;
+      --slick-grid-menu-icon-btn-color: #bbb;
       --slick-pagination-icon-color: #66bb6a;
       --slick-row-mouse-hover-box-shadow: none;
       --slick-row-mouse-hover-color: #505050;
@@ -166,5 +168,13 @@
         }
       }
     }
+  }
+
+  body.material-theme .ms-dark-mode,
+  body.material-theme .ms-drop.ms-dark-mode,
+  body.material-theme .slick-dark-mode .ms-dark-mode,
+  body.material-theme .slick-dark-mode,
+  body.material-theme .dark-mode .text-color-primary {
+    --slick-primary-color: #66bb6a;
   }
 }
