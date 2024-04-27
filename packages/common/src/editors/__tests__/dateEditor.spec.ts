@@ -278,6 +278,7 @@ describe('DateEditor', () => {
         editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [] } as unknown as VanillaCalendar);
         editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: editorInputElm, selectedDates: [], hide: jest.fn() } as unknown as VanillaCalendar);
 
+        expect(editor.calendarInstance?.settings.selected.dates).toEqual([]);
         expect(editorInputElm.value).toBe('');
         expect(editor.isValueChanged()).toBe(true);
         expect(editor.isValueTouched()).toBe(true);
@@ -298,6 +299,7 @@ describe('DateEditor', () => {
         clearBtnElm.click();
 
         expect(editorInputElm.value).toBe('');
+        expect(editor.calendarInstance?.settings.selected.dates).toEqual([]);
         expect(editor.isValueChanged()).toBe(true);
         expect(editor.isValueTouched()).toBe(true);
       });

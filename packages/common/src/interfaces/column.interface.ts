@@ -205,13 +205,6 @@ export interface Column<T = any> {
   /** ID of the column, each column definition ID must be unique or else SlickGrid will throw an error. */
   id: number | string;
 
-  /**
-   * @deprecated @use `editor` for the editor definition or use `editorClass` for the SlickGrid editor class.
-   * This is a RESERVED property and is used internally by the library to copy over the Column Editor Options.
-   * You can read this property if you wish, but DO NOT override it (unless you know what you're doing) since could cause serious problems with your editors.
-   */
-  internalColumnEditor?: ColumnEditor;
-
   /** Label key, for example this could be used as a property key for complex object label display (e.g. labelKey: 'name') */
   labelKey?: string;
 

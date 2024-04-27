@@ -195,7 +195,10 @@ export class DateEditor implements Editor {
       if (!(this.columnEditor.editorOptions as any)?.hideClearButton) {
         closeButtonGroupElm.appendChild(this._clearButtonElm);
         this._editorInputGroupElm.appendChild(closeButtonGroupElm);
-        this._bindEventService.bind(this._clearButtonElm, 'click', () => this._lastTriggeredByClearDate = true);
+        this._bindEventService.bind(this._clearButtonElm, 'click', () => {
+          this.clear();
+          this.handleOnDateChange();
+        });
       }
 
       setTimeout(() => {
@@ -227,6 +230,14 @@ export class DateEditor implements Editor {
     emptyElement(this._inputElm);
     this._editorInputGroupElm?.remove();
     this._inputElm?.remove();
+  }
+
+  clear() {
+    this._lastTriggeredByClearDate = true;
+    if (this.calendarInstance) {
+      this.calendarInstance.settings.selected.dates = [];
+      this._inputElm.value = '';
+    }
   }
 
   disable(isDisabled = true) {

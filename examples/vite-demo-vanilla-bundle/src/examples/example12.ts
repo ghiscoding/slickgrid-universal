@@ -11,7 +11,6 @@ import {
   Formatters,
   type GridOption,
   type LongTextEditorOption,
-  type MultipleSelectOption,
   type OnCompositeEditorChangeEventArgs,
   SlickGlobalEditorLock,
   type SliderOption,
@@ -26,6 +25,8 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { type SlickerGridInstance } from '@slickgrid-universal/vanilla-bundle';
 import { Slicker, type VanillaForceGridBundle } from '@slickgrid-universal/vanilla-force-bundle';
 import { SlickCompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
+import { type MultipleSelectOption } from 'multiple-select-vanilla';
+
 import { ExampleGridOptions } from './example-grid-options';
 import countriesJson from './data/countries.json?raw';
 import './example12.scss';
