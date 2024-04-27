@@ -54,8 +54,6 @@ or move the class to the parent container and have both the icon and the text in
 </button>
 ```
 
-### Deprecated code removed/renamed
-
 ##### SASS variables
 A lot of SASS variables changed, we recommend you take a look at the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file to compare with yours SASS overrides and fix any SASS build issues.
 
@@ -81,7 +79,11 @@ There were a few `.ui-state-default` and other jQueryUI CSS classes leftovers in
 }
 ```
 
-### Formatters Cleanup & Removals
+### Deprecated code removed/renamed
+##### `getHTMLFromFragment()` removed
+The function `getHTMLFromFragment()` was removed in favor of `getHtmlStringOutput()`, the new function will auto-detect if it's a DocumentFragment, an HTMLElement or an HTML string and will execute the appropriate action.
+
+#### Formatters Cleanup & Removals
 
 Since we now only use SVG and we got rid of any Font usage (no more Font-Awesome code anywhere), the `checkmark` Formatter no longer has any reason to exist and was removed. If you were using and still use Font-Awesome in your project, you'll have to either recreate the Formatter yourself or use alternatives. You could use the `Formatters.icon` or `Formatters.iconBoolean` which require the CSS classes to be provided via `params`. As a last alternative, and if you are importing the optional SVG icons `.mdi`, then we recommend you simply use the `checkmarkMaterial` Formatter.
 

@@ -164,11 +164,9 @@ describe('Service/domUtilies', () => {
       div.appendChild(span);
       fragment.appendChild(div);
 
-      const result1 = getHTMLFromFragment(fragment); // deprecated
-      const result2 = getHtmlStringOutput(fragment);
+      const result = getHtmlStringOutput(fragment);
 
-      expect(result1).toBe('<span>some text</span>');
-      expect(result2).toBe('<span>some text</span>');
+      expect(result).toBe('<span>some text</span>');
     });
 
     it('should return outerHTML from fragment', () => {
