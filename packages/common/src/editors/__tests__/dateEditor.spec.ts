@@ -519,7 +519,7 @@ describe('DateEditor', () => {
       });
 
       it('should not throw any error when date is invalid when lower than required "minDate" defined in the global default editorOptions and "autoCommitEdit" is enabled', () => {
-        // change to allow input value only for testing purposes & use the regular flatpickr input to test that one too
+        // change to allow input value only for testing purposes & use the regular date picker input to test that one too
         gridOptionMock.defaultEditorOptions = {
           date: { range: { min: 'today' } }
         };

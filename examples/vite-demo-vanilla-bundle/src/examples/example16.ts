@@ -10,6 +10,7 @@ import {
   OperatorType,
   type SliderOption,
   type SliderRangeOption,
+  type VanillaCalendarOption,
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
@@ -197,7 +198,7 @@ export default class Example16 {
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true,
-        editor: { model: Editors.date, editorOptions: { minDate: 'today' }, },
+        editor: { model: Editors.date, editorOptions: { range: { min: 'today' } } as VanillaCalendarOption },
         // formatter: Formatters.dateIso,
         type: FieldType.date, outputType: FieldType.dateIso,
         formatter: Formatters.dateIso,

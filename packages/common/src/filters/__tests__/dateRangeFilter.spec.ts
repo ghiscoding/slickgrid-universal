@@ -118,10 +118,10 @@ describe('DateRangeFilter', () => {
       jumpToSelectedDate: true,
       months: 2,
       sanitizer: expect.any(Function),
-      range: { edgesOnly: true },
       settings: {
         iso8601: false,
         lang: 'en',
+        range: { edgesOnly: true },
         selection: { day: 'multiple-ranged', },
         visibility: {
           daysOutside: false,
