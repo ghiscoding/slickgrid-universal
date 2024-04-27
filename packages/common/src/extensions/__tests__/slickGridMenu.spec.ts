@@ -9,8 +9,6 @@ import { type SlickDataView, SlickEvent, SlickEventData, SlickGrid } from '../..
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { ExtensionUtility } from '../../extensions/extensionUtility';
 
-jest.mock('flatpickr', () => { });
-
 const gridId = 'grid1';
 const gridUid = 'slickgrid_124343';
 const containerId = 'demo-container';

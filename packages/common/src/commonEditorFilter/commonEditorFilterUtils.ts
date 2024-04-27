@@ -1,6 +1,11 @@
 import type { AutocompleteItem } from 'autocompleter';
+import type { IOptions } from 'vanilla-calendar-picker';
+import * as moment_ from 'moment-mini';
+const moment = (moment_ as any)['default'] || moment_;
 
-import type { AutocompleterOption } from '../interfaces/index';
+import type { AutocompleterOption, Column, ColumnEditor, ColumnFilter } from '../interfaces/index';
+import { formatDateByFieldType, mapMomentDateFormatWithFieldType } from '../services';
+import { FieldType } from '../enums';
 
 /**
  * add loading class ".slick-autocomplete-loading" to the Kraaden Autocomplete input element
@@ -26,5 +31,29 @@ export function addAutocompleteLoadingByOverridingFetch<T extends AutocompleteIt
       // call original fetch implementation
       previousFetch!(searchTerm, newUpdateCallback, trigger, cursorPos);
     };
+  }
+}
+
+export function setPickerDates(dateInputElm: HTMLInputElement, pickerOptions: IOptions, dateValues: Date | Date[] | string | string[] | undefined, columnDef: Column, colEditorOrFilter: ColumnEditor | ColumnFilter) {
+  const currentDateOrDates = dateValues;
+  const outputFieldType = columnDef.outputType || colEditorOrFilter.type || columnDef.type || FieldType.dateUtc;
+  const inputFieldType = colEditorOrFilter.type || columnDef.type;
+  const isoFormat = mapMomentDateFormatWithFieldType(FieldType.dateIso);
+  const inputFormat = inputFieldType ? mapMomentDateFormatWithFieldType(inputFieldType) : '';
+  const initialDates = Array.isArray(currentDateOrDates) ? currentDateOrDates : [(currentDateOrDates || '') as string];
+  if (initialDates.length && initialDates[0]) {
+    const pickerDates = [];
+    for (const initialDate of initialDates) {
+      const momentDate = moment(initialDate, inputFormat);
+      pickerDates.push(momentDate);
+    }
+
+    pickerOptions.settings!.selected = {
+      dates: [pickerDates.map(p => p.format(isoFormat)).join(':')],
+      month: pickerDates[0].month(),
+      year: pickerDates[0].year(),
+      time: inputFormat.toLowerCase().includes('h') ? pickerDates[0].format('HH:mm') : null,
+    };
+    dateInputElm.value = initialDates.length ? pickerDates.map(p => formatDateByFieldType(p, undefined, outputFieldType)).join(' — ') : '';
   }
 }

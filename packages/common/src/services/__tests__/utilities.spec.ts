@@ -22,7 +22,6 @@ import {
   getTranslationPrefix,
   isColumnDateType,
   mapMomentDateFormatWithFieldType,
-  mapFlatpickrDateFormatWithFieldType,
   mapOperatorByFieldType,
   mapOperatorToShorthandDesignation,
   mapOperatorType,
@@ -822,117 +821,6 @@ describe('Service/Utilies', () => {
       const output2 = mapMomentDateFormatWithFieldType(FieldType.dateIso);
       expect(output1).toBe('YYYY-MM-DD');
       expect(output2).toBe('YYYY-MM-DD');
-    });
-  });
-
-  describe('mapFlatpickrDateFormatWithFieldType method', () => {
-    it('should return a Flatpickr dateTime format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateTime);
-      expect(output).toBe('Y-m-d H:i:S');
-    });
-
-    it('should return a Flatpickr dateTimeShortIso format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateTimeShortIso);
-      expect(output).toBe('Y-m-d H:i');
-    });
-
-    it('should return a Flatpickr dateTimeIsoAmPm/dateTimeIsoAM_PM format', () => {
-      const output1 = mapFlatpickrDateFormatWithFieldType(FieldType.dateTimeIsoAmPm);
-      const output2 = mapFlatpickrDateFormatWithFieldType(FieldType.dateTimeIsoAM_PM);
-      expect(output1).toBe('Y-m-d h:i:S K');
-      expect(output2).toBe('Y-m-d h:i:S K');
-    });
-
-    it('should return a Flatpickr dateEuro format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateEuro);
-      expect(output).toBe('d/m/Y');
-    });
-
-    it('should return a Flatpickr dateEuroShort format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateEuroShort);
-      expect(output).toBe('d/m/y');
-    });
-
-    it('should return a Flatpickr dateTimeEuro format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateTimeEuro);
-      expect(output).toBe('d/m/Y H:i:S');
-    });
-
-    it('should return a Flatpickr dateTimeShortEuro format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateTimeShortEuro);
-      expect(output).toBe('d/m/y H:i');
-    });
-
-    it('should return a Flatpickr dateTimeEuroAmPm format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateTimeEuroAmPm);
-      expect(output).toBe('d/m/Y h:i:S K');
-    });
-
-    it('should return a Flatpickr dateTimeEuroAM_PM format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateTimeEuroAM_PM);
-      expect(output).toBe('d/m/Y h:i:s K');
-    });
-
-    it('should return a Flatpickr dateTimeEuroShort format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateTimeEuroShort);
-      expect(output).toBe('d/m/y H:i:s');
-    });
-
-    it('should return a Flatpickr dateTimeEuroShortAmPm format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateTimeEuroShortAmPm);
-      expect(output).toBe('d/m/y h:i:s K');
-    });
-
-    it('should return a Flatpickr dateUs format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateUs);
-      expect(output).toBe('m/d/Y');
-    });
-
-    it('should return a Flatpickr dateUsShort format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateUsShort);
-      expect(output).toBe('m/d/y');
-    });
-
-    it('should return a Flatpickr dateTimeUs format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateTimeUs);
-      expect(output).toBe('m/d/Y H:i:S');
-    });
-
-    it('should return a Flatpickr dateTimeShortUs format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateTimeShortUs);
-      expect(output).toBe('m/d/y H:i');
-    });
-
-    it('should return a Flatpickr dateTimeUsAmPm format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateTimeUsAmPm);
-      expect(output).toBe('m/d/Y h:i:S K');
-    });
-
-    it('should return a Flatpickr dateTimeUsAM_PM format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateTimeUsAM_PM);
-      expect(output).toBe('m/d/Y h:i:s K');
-    });
-
-    it('should return a Flatpickr dateTimeUsShort format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateTimeUsShort);
-      expect(output).toBe('m/d/y H:i:s');
-    });
-
-    it('should return a Flatpickr dateTimeUsShortAmPm format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateTimeUsShortAmPm);
-      expect(output).toBe('m/d/y h:i:s K');
-    });
-
-    it('should return a Flatpickr dateUtc format', () => {
-      const output = mapFlatpickrDateFormatWithFieldType(FieldType.dateUtc);
-      expect(output).toBe('Z');
-    });
-
-    it('should return a Flatpickr dateédateIso format', () => {
-      const output1 = mapFlatpickrDateFormatWithFieldType(FieldType.date);
-      const output2 = mapFlatpickrDateFormatWithFieldType(FieldType.dateIso);
-      expect(output1).toBe('Y-m-d');
-      expect(output2).toBe('Y-m-d');
     });
   });
 

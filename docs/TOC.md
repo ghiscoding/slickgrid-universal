@@ -18,6 +18,7 @@
 * [Editors](column-functionalities/Editors.md)
   * [new Autocomplete (Kraaden-lib)](column-functionalities/editors/Autocomplete-Editor-(Kraaden-lib).md)
   * [Date Picker (flatpickr)](column-functionalities/editors/Date-Editor-(flatpickr).md)
+  * [Date Picker (vanilla-calendar)](column-functionalities/editors/date-editor-(vanilla-calendar).md)
   * [LongText (textarea)](column-functionalities/editors/LongText-Editor-(textarea).md)
   * [Select Dropdown Editor (single/multiple)](column-functionalities/editors/Select-Dropdown-Editor-(single,multiple).md)
 * [Filters](column-functionalities/filters/README.md)

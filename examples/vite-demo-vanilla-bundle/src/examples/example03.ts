@@ -15,6 +15,7 @@ import {
   SlickGlobalEditorLock,
   SortComparers,
   SortDirectionNumber,
+  type VanillaCalendarOption,
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
@@ -177,7 +178,10 @@ export default class Example03 {
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true,
-        editor: { model: Editors.date, editorOptions: { minDate: 'today' }, },
+        editor: {
+          model: Editors.date,
+          editorOptions: { range: { min: 'today' } } as VanillaCalendarOption
+        },
         // formatter: Formatters.dateIso,
         type: FieldType.date, outputType: FieldType.dateIso,
         formatter: Formatters.dateIso,

@@ -18,6 +18,7 @@ import {
   SlickGlobalEditorLock,
   type SliderOption,
   SortComparers,
+  type VanillaCalendarOption,
 
   // utilities
   deepCopy,
@@ -177,7 +178,7 @@ export default class Example11 {
       },
       {
         id: 'finish', name: 'Finish', field: 'finish', sortable: true, minWidth: 80,
-        editor: { model: Editors.date, massUpdate: true, editorOptions: { minDate: 'today' }, },
+        editor: { model: Editors.date, massUpdate: true, editorOptions: { range: { min: 'today' } } as VanillaCalendarOption },
         formatter: Formatters.dateIso,
         type: FieldType.date, outputType: FieldType.dateIso,
         filterable: true, filter: { model: Filters.compoundDate },

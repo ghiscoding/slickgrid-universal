@@ -6,12 +6,11 @@
 
 /**
  * SlickGrid Salesforce Theme
- * (sames as `slickgrid-theme-salesforce.lite.scss` but includes all external 3rd party lib styling that is Flatpickr & Multiple-Select)
+ * (sames as `slickgrid-theme-salesforce.lite.scss` but includes all external 3rd party lib styling)
  */
 
-@import './flatpickr.min';
-@import './flatpickr-dark';
 @import './sass-utilities';
+@import 'vanilla-calendar-picker/build/vanilla-calendar.min.css';
 
 @import './variables-theme-salesforce';
 @import './slick-without-bootstrap-min-styling';

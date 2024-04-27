@@ -6,8 +6,6 @@ import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager';
 import { SlickEvent, SlickEventData, SlickGrid, SlickRange } from '../../core/index';
 import { Editors } from '../../editors';
 
-jest.mock('flatpickr', () => { });
-
 const getEditorLockMock = {
   isActive: jest.fn(),
   commitCurrentEdit: jest.fn(),
@@ -364,7 +362,7 @@ describe('CellExcelCopyManager', () => {
       (gridStub.getCellEditor as jest.Mock).mockReturnValue({});
       (gridStub.getActiveCell as jest.Mock).mockReturnValue({ row: 6, cell: 6 });
 
-      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true,  editor: { model: Editors.text }, formatter: myBoldFormatter}, 6, 6);
+      const output = plugin.addonOptions!.dataItemColumnValueExtractor!({ firstName: '<b>John</b>', lastName: 'Doe' }, { id: 'firstName', field: 'firstName', exportWithFormatter: true, editor: { model: Editors.text }, formatter: myBoldFormatter }, 6, 6);
 
       expect(output).toBeNull();
     });

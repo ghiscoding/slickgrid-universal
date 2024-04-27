@@ -4,35 +4,34 @@
 - See the [Editors - Wiki](../Editors.md) for more general info about Editors (validators, event handlers, ...)
 
 ### Information
-The Date Editor is provided through an external library named [Flatpickr](https://flatpickr.js.org/examples/) and all options from that library can be added to your `editorOptions` (see below), so in order to add things like minimum date, disabling dates, ... just review all the [Flatpickr Examples](https://flatpickr.js.org/examples/) and then add them into `editorOptions`. Also just so you know, `editorOptions` is use by all other editors as well to expose external library like Flatpickr, Multiple-Select.js, etc...
+The Date Editor is provided through an external library named [Vanilla-Calendar-Picker](https://github.com/ghiscoding/vanilla-calendar-picker) (a fork of [Vanilla-Calendar-Pro](https://vanilla-calendar.pro)) and all options from that library can be added to your `editorOptions` (see below), so in order to add things like minimum date, disabling dates, ... just review all the [Vanilla-Calendar-Pro](https://vanilla-calendar.pro/docs/reference/additionally/settings) and then add them into `editorOptions`. Also just so you know, `editorOptions` is use by all other editors as well to expose external library like Autocompleter, Multiple-Select, etc...
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example12) | [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example12.ts)
 
 ### Editor Options
-You can use any of the Flatpickr [options](https://flatpickr.js.org/options/) by adding them to `editorOptions` as shown below.
+You can use any of the Vanilla-Calendar [settings](https://vanilla-calendar.pro/docs/reference/additionally/settings) by adding them to `editorOptions` as shown below.
 
-#### [FlatpickrOption](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/flatpickrOption.interface.ts) Interface.
+> **Note** for easier implementation, you should import `VanillaCalendarOption` from Slickgrid-Universal common package.
 
 ```ts
-initializeGrid() {
+import { type VanillaCalendarOption } from '@slickgrid-universal/common';
+
+prepareGrid() {
   this.columnDefinitions = [
     {
       id: 'title', name: 'Title', field: 'title',
       editor: {
         model: Editors.date,
         editorOptions: {
-          minDate: 'today',
-          disable: [(date: Date) => this.isWeekendDay(date)], // disable weekend days (Sat, Sunday)
-        } as FlatpickrOption,
+          range: {
+            max: 'today',
+            disabled: ['2022-08-15', '2022-08-20'],
+          }
+        } as VanillaCalendarOption,
       },
     },
   ];
-}
-
-/** Returns true when it's a weekend day (Saturday, Sunday) */
-isWeekendDay(date: Date): boolean {
-  return (date.getDay() === 0 || date.getDay() === 6);
 }
 ```
 
@@ -42,7 +41,7 @@ You could also define certain options as a global level (for the entire grid or 
 ```ts
 this.gridOptions = {
   defaultEditorOptions: {
-    date: { range: { min: 'today' } }, // typed as FlatpickrOption
+    date: { range: { min: 'today' } }, // typed as VanillaCalendarOption
   }
 }
 ```

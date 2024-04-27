@@ -8,8 +8,6 @@ import { InputEditor } from '../../editors/inputEditor';
 import { SlickEvent, SlickEventData, SlickGrid, SlickRange } from '../../core/index';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-jest.mock('flatpickr', () => { });
-
 const pubSubServiceStub = {
   publish: jest.fn(),
   subscribe: jest.fn(),

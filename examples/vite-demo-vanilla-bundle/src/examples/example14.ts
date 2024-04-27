@@ -6,7 +6,6 @@ import {
   EventNamingStyle,
   FieldType,
   Filters,
-  type FlatpickrOption,
   type Formatter,
   Formatters,
   type GridOption,
@@ -15,6 +14,7 @@ import {
   SlickGlobalEditorLock,
   type SliderRangeOption,
   SortComparers,
+  type VanillaCalendarOption,
 
   // utilities
   formatNumber,
@@ -220,7 +220,7 @@ export default class Example14 {
         exportCustomFormatter: Formatters.dateUs,
         type: FieldType.date, outputType: FieldType.dateUs, saveOutputType: FieldType.dateUtc,
         filterable: true, filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date, editorOptions: { hideClearButton: false } as FlatpickrOption },
+        editor: { model: Editors.date, editorOptions: { hideClearButton: false } as VanillaCalendarOption },
       },
       {
         id: 'completed', name: 'Completed', field: 'completed', width: 80, minWidth: 75, maxWidth: 100,
@@ -242,7 +242,7 @@ export default class Example14 {
         exportCustomFormatter: Formatters.dateUs,
         editor: {
           model: Editors.date,
-          editorOptions: { minDate: 'today' },
+          editorOptions: { range: { min: 'today' } } as VanillaCalendarOption,
           validator: (value, args) => {
             const dataContext = args && args.item;
             if (dataContext && (dataContext.completed && !value)) {
@@ -578,7 +578,7 @@ export default class Example14 {
   }
 
   handleOnBeforeEditCell(event) {
-    const args = event && event.detail && event.detail.args;
+    const args = event?.detail?.args;
     const { column, item, grid } = args;
 
     if (column && item) {
@@ -591,7 +591,7 @@ export default class Example14 {
   }
 
   handleOnCellChange(event) {
-    const args = event && event.detail && event.detail.args;
+    const args = event?.detail?.args;
     const dataContext = args && args.item;
 
     // when the field "completed" changes to false, we also need to blank out the "finish" date

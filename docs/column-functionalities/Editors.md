@@ -108,7 +108,7 @@ this.columnDefinitions = [
 ];
 ```
 
-So to make it more clear, the `saveOutputType` is the format that will be sent to the `onCellChange` event, then the `outputType` is how the date will show up in the date picker (Flatpickr) and finally the `type` is basically the input format (coming from your dataset). Note however that each property are cascading, if 1 property is missing it will go to the next one until 1 is found... for example, on the `onCellChange` if you aren't defining `saveOutputType`, it will try to use `outputType`, if again none is provided it will try to use `type` and finally if none is provided it will use `FieldType.dateIso` as the default.
+So to make it more clear, the `saveOutputType` is the format that will be sent to the `onCellChange` event, then the `outputType` is how the date will show up in the date picker (Vanilla-Calendar) and finally the `type` is basically the input format (coming from your dataset). Note however that each property are cascading, if 1 property is missing it will go to the next one until 1 is found... for example, on the `onCellChange` if you aren't defining `saveOutputType`, it will try to use `outputType`, if again none is provided it will try to use `type` and finally if none is provided it will use `FieldType.dateIso` as the default.
 
 ## Perform an action After Inline Edit
 #### Recommended way
@@ -201,9 +201,9 @@ Some of the Editors could receive extra options, which is mostly the case for Ed
 ```ts
 this.columnDefinitions = [{
   id: 'start', name: 'Start Date', field: 'start',
-  editor: { 
+  editor: {
     model: Editors.date,
-    editorOptions: { minDate: 'today' }
+    editorOptions: { range: { min: 'today' } } as VanillaCalendarOption
   }
 }];
 ```
@@ -213,10 +213,10 @@ You could also define certain options as a global level (for the entire grid or 
 
 ```ts
 this.gridOptions = {
-  defaultEditorOptions: { 
+  defaultEditorOptions: {
     autocompleter: { debounceWaitMs: 150 }, // typed as AutocompleterOption
-    date: { minDate: 'today' },
-    longText: { cols: 50, rows: 5 } 
+    date: { range: { min: 'today' } },
+    longText: { cols: 50, rows: 5 }
   }
 }
 ```

@@ -25,9 +25,9 @@ $slick-button-primary-bg-color-disabled:                    #bebebe !default;
 $slick-button-primary-color:                                inherit !default;
 $slick-button-border-color:                                 #c7c7c7 !default;
 $slick-button-style-bg-color:                               #fff !default;
-$slick-flatpickr-bgcolor:                                   #ffffff !default;
 $slick-filter-placeholder-font-family:                      'Segoe UI Symbol' !default;
 $slick-focus-color:                                         rgb(115, 179, 229) !default;
+$slick-date-picker-bg-color:                                #fff !default;
 
 $slick-form-control-bg-color:                               #fff !default;
 $slick-form-control-border:                                  1px solid #ccc !default;
@@ -66,6 +66,7 @@ $slick-table-background:                                    transparent !default
 $slick-scrollbar-color:                                     #c1c1c1 #f1f1f1 !default;
 $slick-hover-header-color:                                  $slick-text-color;
 $slick-sorting-header-color:                                #333;
+$slick-placeholder-color:                                   #c9c9c9 !default;
 
 /* cell */
 $slick-cell-active-border:                                  none !default;
@@ -452,7 +453,6 @@ $slick-checkbox-unchecked-opacity:                          0.25 !default;
 
 /* Editors */
 $slick-editor-bg-color:                                     transparent !default;
-$slick-editor-placeholder-color:                            #c9c9c9 !default;
 $slick-editor-input-border-radius:                          3px !default;
 $slick-editor-input-disabled-color:                         #ececec !default;
 $slick-editor-input-height:                                 24px !default;
@@ -755,7 +755,7 @@ $slick-multiselect-item-hover-border:                       1px solid #d5d5d5 !d
 $slick-multiselect-item-line-height:                        calc(#{$slick-multiselect-icon-font-size} + 2px) !default;
 $slick-multiselect-item-padding:                            2px 4px !default;
 $slick-multiselect-placeholder-bg-color:                    transparent !default;
-$slick-multiselect-placeholder-color:                       $slick-editor-placeholder-color !default;
+$slick-multiselect-placeholder-color:                       $slick-placeholder-color !default;
 $slick-multiselect-placeholder-font-family:                 $slick-filter-placeholder-font-family !default;
 $slick-multiselect-ok-button-bg-color:                      #fff !default;
 $slick-multiselect-ok-button-bg-hover-color:                #f9f9f9 !default;
@@ -796,7 +796,7 @@ $ms-drop-hide-radio-selected-bgcolor:                       unset;
 $ms-icon-color:                                             $slick-icon-color;
 $ms-icon-size:                                              $slick-multiselect-icon-font-size;
 $ms-chevron-icon-size:                                      #{$slick-multiselect-icon-font-size + 3px};
-$ms-placeholder-color:                                      $slick-editor-placeholder-color;
+$ms-placeholder-color:                                      $slick-placeholder-color;
 $ms-label-padding:                                          $slick-multiselect-item-padding;
 $ms-ok-button-bg-color:                                     $slick-multiselect-ok-button-bg-color;
 $ms-ok-button-bg-hover-color:                               $slick-multiselect-ok-button-bg-hover-color;
@@ -1023,7 +1023,7 @@ $slick-empty-data-warning-z-index:                          10 !default;
   --slick-input-group-btn-border:                         var(--slick-base-dark-menu-item-border);
   --slick-input-group-append-bg-color:                    #383838;
   --slick-compound-filter-bgcolor:                        var(--slick-base-dark-menu-bg-color);
-  --slick-flatpickr-bgcolor:                              var(--slick-base-dark-menu-bg-color);
+  --slick-date-picker-bg-color:                           var(--slick-base-dark-menu-bg-color);
   --slick-footer-left-text-color:                         #acacac;
   --slick-footer-right-text-color:                        #acacac;
   --slick-grid-header-unorderable-bg-color:               #1c1c1c;
@@ -1044,7 +1044,7 @@ $slick-empty-data-warning-z-index:                          10 !default;
   --slick-editing-field-bg-color:                         #333333;
   --slick-editing-field-border:                           1px solid #7c7c7c;
   --slick-editor-input-disabled-color:                    #404040;
-  --slick-editor-placeholder-color:                       #999;
+  --slick-placeholder-color:                              #999;
   --slick-editor-modal-default-btn-disabled-bg-color:     #3f3f3f;
   --slick-editor-modal-default-btn-disabled-color:        #5b5b5b;
   --slick-editor-modal-detail-container-border-modified:  1px solid #cc8400;

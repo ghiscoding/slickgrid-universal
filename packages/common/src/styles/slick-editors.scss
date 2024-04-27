@@ -33,8 +33,11 @@
       margin-left: var(--slick-text-editor-right-input-margin-left, $slick-text-editor-right-input-margin-left);
     }
 
-    &[readonly] {
+    &[readonly]:not(.date-picker) {
       background-color: var(--slick-text-editor-readonly-color, $slick-text-editor-readonly-color);
+    }
+    &.date-picker {
+      cursor: pointer;
     }
   }
 
@@ -66,7 +69,7 @@
   }
 
   .autocomplete-container.input-group,
-  .flatpickr.input-group {
+  .vanilla-picker.input-group {
     display: flex;
     align-items: center;
     height: var(--slick-date-editor-height, $slick-date-editor-height);
@@ -100,24 +103,6 @@
 
           @include generateSvgStyle('slick-editor-input-group-clear-btn-icon-svg', $slick-editor-input-group-clear-btn-icon-svg-path);
         }
-      }
-    }
-  }
-  .flatpickr-alt-input {
-    cursor: pointer;
-    height: var(--slick-date-editor-height, $slick-date-editor-height);
-    border-top-left-radius: var(--slick-text-editor-border-radius, $slick-text-editor-border-radius) !important;
-    border-bottom-left-radius: var(--slick-text-editor-border-radius, $slick-text-editor-border-radius) !important;
-    padding: var(--slick-date-editor-input-padding, $slick-date-editor-input-padding);
-
-    &.editor-text {
-      cursor: pointer;
-      background-color: var(--slick-flatpickr-bgcolor, $slick-flatpickr-bgcolor);
-
-      &:focus {
-        outline: 0;
-        border-color: var(--slick-date-editor-focus-border-color, $slick-date-editor-focus-border-color);
-        box-shadow: var(--slick-date-editor-focus-box-shadow, $slick-date-editor-focus-box-shadow);
       }
     }
   }
@@ -468,7 +453,7 @@
       }
 
       .autocomplete-container.input-group,
-      .flatpickr.input-group {
+      .vanilla-picker.input-group {
         display: flex;
         align-items: center;
         height: var(--slick-date-editor-height, $slick-date-editor-height);
@@ -483,8 +468,9 @@
           }
         }
       }
-      .flatpickr-input.form-control, .flatpickr-alt-input[readonly] {
-        background-color: var(--slick-flatpickr-bgcolor, $slick-flatpickr-bgcolor);
+      .vanilla-picker.form-control {
+        cursor: pointer;
+        background-color: var(--slick-date-picker-bg-color, $slick-date-picker-bg-color);
         &:disabled {
           background-color: var(--slick-editor-input-disabled-color, $slick-editor-input-disabled-color);
           cursor: initial;

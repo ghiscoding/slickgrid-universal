@@ -20,7 +20,6 @@ import type {
   ExcelCopyBufferOption,
   ExcelExportOption,
   ExternalResource,
-  FlatpickrOption,
   Formatter,
   FormatterOption,
   GridMenu,
@@ -42,6 +41,7 @@ import type {
   SliderRangeOption,
   TextExportOption,
   TreeDataOption,
+  VanillaCalendarOption,
 } from './index';
 import type { ColumnReorderFunction, OperatorString, OperatorType, } from '../enums/index';
 import type { TranslaterService } from '../services/translater.service';
@@ -226,7 +226,7 @@ export interface GridOption<C extends Column = Column> {
   /**
    * Dark Mode Theme (disabled by default, which mean light mode).
    * Enabling this option will add `.slick-dark-mode` CSS class to the grid parent elements
-   * and any other elements that are appended to the html body (e.g. Flatpickr, LongTextEditor, ...)
+   * and any other elements that are appended to the html body (e.g. SlickCompositeEditor, LongTextEditor, ...)
    */
   darkMode?: boolean;
 
@@ -274,7 +274,7 @@ export interface GridOption<C extends Column = Column> {
     autocompleter?: AutocompleterOption,
 
     /** Default option(s) to use by both the CompoundDate and/or DateRange editors */
-    date?: FlatpickrOption,
+    date?: Partial<VanillaCalendarOption>,
 
     /** Default option(s) to use by the LongText editor */
     longText?: LongTextEditorOption,
@@ -292,7 +292,7 @@ export interface GridOption<C extends Column = Column> {
     autocompleter?: AutocompleterOption,
 
     /** Default option(s) to use by both the CompoundDate and/or DateRange filters */
-    date?: FlatpickrOption,
+    date?: Partial<VanillaCalendarOption>,
 
     /** Default option(s) to use by both the CompoundSelect and/or SelectRange filters */
     select?: Partial<MultipleSelectOption>,
@@ -304,7 +304,7 @@ export interface GridOption<C extends Column = Column> {
   /** The default filter model to use when none is specified (defaults to input text filter). */
   defaultFilter?: any;
 
-  /** Default placeholder to use in Filters that support placeholder (autocomplete, input, flatpickr, select, ...) */
+  /** Default placeholder to use in Filters that support placeholder (autocomplete, input, date picker, select, ...) */
   defaultFilterPlaceholder?: string;
 
   /** Defaults to 'RangeInclusive', allows to change the default filter range operator */

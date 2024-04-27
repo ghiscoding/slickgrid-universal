@@ -2,8 +2,6 @@ import { Column } from '../../interfaces/index';
 import { collectionEditorFormatter } from '../collectionEditorFormatter';
 import { Editors } from '../../editors';
 
-jest.mock('flatpickr', () => { });
-
 describe('the CollectionEditor Formatter', () => {
   let columnDef: Column;
 

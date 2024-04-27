@@ -6,7 +6,6 @@ import { SlickRowMoveManager } from '../slickRowMoveManager';
 import { SlickEvent, SlickGrid } from '../../core/index';
 
 const GRID_UID = 'slickgrid_12345';
-jest.mock('flatpickr', () => { });
 
 const addVanillaEventPropagation = function (event, target?: HTMLElement) {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });
