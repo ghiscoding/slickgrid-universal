@@ -13,7 +13,7 @@ import {
   MenuCommandItem,
   RowDetailView,
 } from '../../interfaces/index';
-import { Filters, InputFilter, NativeSelectFilter } from '../../filters';
+import { Filters, InputFilter, SingleSelectFilter } from '../../filters';
 import { FilterService } from '../filter.service';
 import { FilterFactory } from '../../filters/filterFactory';
 import { getParsedSearchTermsByFieldType } from '../../filter-conditions';
@@ -187,7 +187,7 @@ describe('FilterService', () => {
       const mockColumn = {
         id: 'isActive', field: 'isActive', filterable: true, type: FieldType.boolean,
         filter: {
-          model: Filters.select, searchTerms: [true], collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }],
+          model: Filters.singleSelect, searchTerms: [true], collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }],
         }
       } as Column;
       const mockArgs = { grid: gridStub, column: mockColumn, node: document.getElementById(DOM_ELEMENT_ID), };
@@ -205,7 +205,7 @@ describe('FilterService', () => {
         isActive: { columnDef: mockColumn, columnId: 'isActive', operator: 'EQ', searchTerms: [true], parsedSearchTerms: true, type: FieldType.boolean },
       });
       expect(filterMetadataArray.length).toBe(1);
-      expect(filterMetadataArray[0] instanceof NativeSelectFilter).toBeTruthy();
+      expect(filterMetadataArray[0] instanceof SingleSelectFilter).toBeTruthy();
       expect(filterMetadataArray[0]).toContainEntry(['searchTerms', [true]]);
 
       gridStub.onBeforeHeaderRowCellDestroy.notify(mockArgs as any, new SlickEventData(), gridStub);
@@ -217,7 +217,7 @@ describe('FilterService', () => {
       const mockColumn = {
         id: 'isActive', field: 'isActive', filterable: true,
         filter: {
-          model: Filters.select, searchTerms: [true], collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }],
+          model: Filters.singleSelect, searchTerms: [true], collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }],
         }
       } as Column;
       const mockSearchArgs = {
@@ -305,7 +305,7 @@ describe('FilterService', () => {
       const mockColumn = {
         id: 'firstName', field: 'firstName', filterable: true,
         filter: {
-          model: Filters.select, searchTerms: [true], collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }],
+          model: Filters.singleSelect, searchTerms: [true], collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }],
         }
       } as Column;
       const tmpDivElm = document.createElement('div');
@@ -497,7 +497,7 @@ describe('FilterService', () => {
     describe('clearFilterByColumnId method', () => {
       it('should clear the filter by passing a column id as argument on a backend grid', async () => {
         const filterExpectation = { columnDef: mockColumn2, columnId: 'lastName', operator: 'NE', searchTerms: ['Doe'], parsedSearchTerms: ['Doe'], targetSelector: '', type: FieldType.string };
-        const newEvent = new CustomEvent(`mouseup`);
+        const newEvent = new SlickEventData(new CustomEvent(`mouseup`));
         const spyClear = jest.spyOn(service.getFiltersMetadata()[0], 'clear');
         const spyFilterChange = jest.spyOn(service, 'onBackendFilterChange');
         const spyEmitter = jest.spyOn(service, 'emitFilterChanged');
@@ -519,7 +519,7 @@ describe('FilterService', () => {
       it('should not call "onBackendFilterChange" method when the filter is previously empty', async () => {
         const filterFirstExpectation = { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms: ['John'], parsedSearchTerms: ['John'], targetSelector: '', type: FieldType.string };
         const filterLastExpectation = { columnDef: mockColumn2, columnId: 'lastName', operator: 'NE', searchTerms: ['Doe'], parsedSearchTerms: ['Doe'], targetSelector: '', type: FieldType.string };
-        const newEvent = new Event('mouseup');
+        const newEvent = new SlickEventData(new CustomEvent(`mouseup`));
         const spyClear = jest.spyOn(service.getFiltersMetadata()[2], 'clear');
         const spyFilterChange = jest.spyOn(service, 'onBackendFilterChange');
         const spyEmitter = jest.spyOn(service, 'emitFilterChanged');
@@ -640,9 +640,9 @@ describe('FilterService', () => {
         const spyClear = jest.spyOn(service.getFiltersMetadata()[0], 'clear');
         const spyEmitter = jest.spyOn(service, 'emitFilterChanged');
         const pubSubSpy = jest.spyOn(pubSubServiceStub, 'publish');
-
+        const newEvent = new SlickEventData(new CustomEvent(`mouseup`));
         const filterCountBefore = Object.keys(service.getColumnFilters()).length;
-        await service.clearFilterByColumnId(new CustomEvent(`mouseup`), 'firstName');
+        await service.clearFilterByColumnId(newEvent, 'firstName');
         const filterCountAfter = Object.keys(service.getColumnFilters()).length;
 
         expect(pubSubSpy).toHaveBeenCalledWith(`onBeforeFilterClear`, { columnId: 'firstName' }, 0);
@@ -1210,7 +1210,7 @@ describe('FilterService', () => {
       gridOptionMock.enableTreeData = false;
       gridOptionMock.backendServiceApi = undefined;
       mockColumn1 = { id: 'firstName', name: 'firstName', field: 'firstName', filterable: true, filter: { model: Filters.inputText } };
-      mockColumn2 = { id: 'isActive', name: 'isActive', field: 'isActive', type: FieldType.boolean, filterable: true, filter: { model: Filters.select, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], } };
+      mockColumn2 = { id: 'isActive', name: 'isActive', field: 'isActive', type: FieldType.boolean, filterable: true, filter: { model: Filters.singleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], } };
       mockArgs1 = { grid: gridStub, column: mockColumn1, node: document.getElementById(DOM_ELEMENT_ID) };
       mockArgs2 = { grid: gridStub, column: mockColumn2, node: document.getElementById(DOM_ELEMENT_ID) };
       mockNewFilters = [
@@ -1674,7 +1674,7 @@ describe('FilterService', () => {
       gridOptionMock.enableTreeData = false;
       gridOptionMock.backendServiceApi = undefined;
       mockColumn1 = { id: 'firstName', name: 'firstName', field: 'firstName', filterable: true, filter: { model: Filters.inputText } };
-      mockColumn2 = { id: 'isActive', name: 'isActive', field: 'isActive', type: FieldType.boolean, filterable: true, filter: { model: Filters.select, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], } };
+      mockColumn2 = { id: 'isActive', name: 'isActive', field: 'isActive', type: FieldType.boolean, filterable: true, filter: { model: Filters.singleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], } };
       mockColumn3 = { id: 'name', field: 'name', filterable: true, filter: { model: Filters.inputText } };
       mockArgs1 = { grid: gridStub, column: mockColumn1, node: document.getElementById(DOM_ELEMENT_ID) };
       mockArgs2 = { grid: gridStub, column: mockColumn2, node: document.getElementById(DOM_ELEMENT_ID) };
@@ -1835,7 +1835,7 @@ describe('FilterService', () => {
         gridOptionMock.enableFiltering = true;
         gridOptionMock.backendServiceApi = undefined;
         mockColumn1 = { id: 'file', name: 'file', field: 'file', filterable: true, filter: { model: Filters.inputText } };
-        mockColumn2 = { id: 'dateModified', name: 'dateModified', field: 'dateModified', filterable: true, filter: { model: Filters.select, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], } };
+        mockColumn2 = { id: 'dateModified', name: 'dateModified', field: 'dateModified', filterable: true, filter: { model: Filters.singleSelect, collection: [{ value: true, label: 'True' }, { value: false, label: 'False' }], } };
         mockColumn3 = { id: 'size', name: 'size', field: 'size', filterable: true, filter: { model: Filters.inputText } };
         mockArgs1 = { grid: gridStub, column: mockColumn1, node: document.getElementById(DOM_ELEMENT_ID) };
         mockArgs2 = { grid: gridStub, column: mockColumn2, node: document.getElementById(DOM_ELEMENT_ID) };

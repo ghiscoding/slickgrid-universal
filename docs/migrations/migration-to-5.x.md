@@ -1,5 +1,5 @@
-## Version 5 - Better Dark Mode with Pure CSS SVG icons 
-This new release brings a lot of changes oriented towards better UI/UX, our SVG icons are now pure CSS and can be colorized like any other text via the `color` CSS property (which helps a lot for the Dark Mode Theme). 
+## Version 5 - Better Dark Mode with Pure CSS SVG icons
+This new release brings a lot of changes oriented towards better UI/UX, our SVG icons are now pure CSS and can be colorized like any other text via the `color` CSS property (which helps a lot for the Dark Mode Theme).
 
 Another noticeable UI change is the migration from [Flatpickr](https://flatpickr.js.org/) to [Vanilla-Calendar-Picker](https://github.com/ghiscoding/vanilla-calendar-picker) (which is in fact a fork of [Vanilla-Calendar-Pro](https://vanilla-calendar.pro/) and maybe one day we'll drop the fork if possible), there are multiple reasons to migrate our date picker to another library:
 - Flatpickr cons:
@@ -14,8 +14,8 @@ Another noticeable UI change is the migration from [Flatpickr](https://flatpickr
   - much smaller size (a decrease of 2.9% (17Kb) was observed, expect even more decrease with gzip)
 - Vanilla-Calendar cons:
   - settings are named differently and are not using flat config (complex object settings)
-    - for example Flatpickr `minDate: 'today'` is instead `range: { min: 'today' }` 
-  - some settings were missing, like the `'today'` shortcut which is why I forked the project 
+    - for example Flatpickr `minDate: 'today'` is instead `range: { min: 'today' }`
+  - some settings were missing, like the `'today'` shortcut which is why I forked the project
     - I did open a few PRs on the main project, so the hope is to drop the fork in the future while being a totally transparent change to the user (you)
 
 Similar to previous releases, I managed to decrease the project build size even more (about 5%). At this point, the project has a similar size to what it was in v2.x that is when we were using jQuery/jQueryUI separately. However, since we're no longer using jQuery in the project, our project build size is in fact much smaller than it was 2 years ago. This is really nice to see especially since we keep adding features (like Dark Mode and others), we still size managed to decrease the project size yet again :)
@@ -57,7 +57,7 @@ or move the class to the parent container and have both the icon and the text in
 ### Deprecated code removed/renamed
 
 ##### SASS variables
-A lot of SASS variables changed, we recommend you take a look at the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file to compare with yours SASS overrides and fix any SASS build issues. 
+A lot of SASS variables changed, we recommend you take a look at the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file to compare with yours SASS overrides and fix any SASS build issues.
 
 ##### SASS `math` polyfills are removed
 When Dart-SASS released their version 1.33, it caused a lot of console warnings (and lot of unhappy users) in projects that were using `/` (for math division) instead of their new `math.div` function. To avoid seeing all these warnings, I had created a temporary polyfill (that piece of code was actually copied from Bootstrap project). This change happened 3 years ago, so I'm assuming that most users have already upgraded their SASS and fix these warnings and I think it's time to remove this polyfill since it was always meant to be a temp patch. If you see these warnings coming back, you can use the SASS option `--quiet-upstream`.
@@ -82,6 +82,23 @@ There were a few `.ui-state-default` and other jQueryUI CSS classes leftovers in
 ```
 
 ## Grid Functionalities
+
+### Native Select Filter (removed)
+I would be surprised if anyone uses the `Filters.select` and so it was removed, you should simply use the `Filters.singleSelect` or `Filters.multipleSelect`
+
+```diff
+prepareGrid() {
+  this.columnDefinitions = [{
+    id: 'isActive', name: 'Active', field: 'isActive',
+    filter: {
+-      model: Filters.select,
++      model: Filters.singleSelect,
+       collection: [ { value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' } ],
+    }
+  }];
+}
+```
+
 ### Date Editor/Filter
 We migrated from Flatpicker to Vanilla-Calendar and this require some changes since the option names are different. The changes are the same for both the Filter and the Editor.
 

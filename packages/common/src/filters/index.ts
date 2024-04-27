@@ -13,7 +13,6 @@ export * from './inputMaskFilter';
 export * from './inputNumberFilter';
 export * from './inputPasswordFilter';
 export * from './multipleSelectFilter';
-export * from './nativeSelectFilter';
 export * from './selectFilter';
 export * from './singleSelectFilter';
 export * from './singleSliderFilter';
