@@ -101,9 +101,9 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
   it('should uncheck all rows', () => {
     // click twice to check then uncheck all
-    cy.get('.slick-column-name > input[type=checkbox]')
+    cy.get('.slick-column-name input[type=checkbox]')
       .click({ force: true });
-    cy.get('.slick-column-name > input[type=checkbox]')
+    cy.get('.slick-column-name input[type=checkbox]')
       .click({ force: true });
   });
 
@@ -170,7 +170,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     // change Finish date
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(7)`).should('contain', '2009-01-05').click();
-    cy.get('.flatpickr-calendar:visible .flatpickr-day').contains('22').click('bottom', { force: true });
+    cy.get('.vanilla-calendar:visible .vanilla-calendar-day').contains('22').click('bottom', { force: true });
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(7)`).should('contain', '2009-01-22');
 
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left')
@@ -217,10 +217,10 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
         cy.get(`.slick-grid-menu`)
           .find('.slick-column-picker-list')
           .children('li')
-          .each(($child, index) => {
+          .each(($li, index) => {
             if (index <= 5) {
-              const $input = $child.children('input');
-              const $label = $child.children('label');
+              const $input = $li.find('input');
+              const $label = $li.find('label');
               expect($input.prop('checked')).to.eq(true);
               expect($label.text()).to.eq(updatedTitles[index]);
             }
@@ -288,7 +288,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     // change Finish date
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).should('contain', '2009-01-05').click();
-    cy.get('.flatpickr-calendar:visible .flatpickr-day').contains('22').click('bottom', { force: true });
+    cy.get('.vanilla-calendar:visible .vanilla-calendar-day').contains('22').click('bottom', { force: true });
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).should('contain', '2009-01-22');
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(10)`).should('contain', 'Task 0000');
@@ -858,10 +858,10 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
         cy.get(`.slick-grid-menu`)
           .find('.slick-column-picker-list')
           .children('li')
-          .each(($child, index) => {
+          .each(($li, index) => {
             if (index <= 5) {
-              const $input = $child.children('input');
-              const $label = $child.children('label');
+              const $input = $li.find('input');
+              const $label = $li.find('label');
               if ($label.text() === 'Fin') {
                 expect($input.prop('checked')).to.eq(false);
               } else {

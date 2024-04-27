@@ -11,6 +11,7 @@ import { SlickGrid } from '../../core/index';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import type { MultipleSelectOption } from 'multiple-select-vanilla';
 
 jest.useFakeTimers();
 
@@ -114,6 +115,24 @@ describe('SelectFilter', () => {
 
     expect(spyGetHeaderRow).toHaveBeenCalled();
     expect(filterCount).toBe(1);
+  });
+
+  it('should initialize the filter with minHeight define in user filter options', () => {
+    mockColumn.filter!.filterOptions = { minHeight: 255 } as MultipleSelectOption;
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    filter.init(filterArguments);
+
+    expect(filter.msInstance?.getOptions().minHeight).toBe(255);
+  });
+
+  it('should initialize the filter with minHeight define in global default user filter options', () => {
+    gridOptionMock.defaultFilterOptions = {
+      select: { minHeight: 243 }
+    };
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    filter.init(filterArguments);
+
+    expect(filter.msInstance?.getOptions().minHeight).toBe(243);
   });
 
   it('should be a multiple-select filter by default when it is not specified in the constructor', () => {
@@ -483,7 +502,7 @@ describe('SelectFilter', () => {
   it('should create the multi-select filter with a default search term and have the HTML rendered when "enableRenderHtml" is set', () => {
     mockColumn.filter = {
       enableRenderHtml: true,
-      collection: [{ value: true, label: 'True', labelPrefix: `<i class="fa fa-check"></i> ` }, { value: false, label: 'False' }],
+      collection: [{ value: true, label: 'True', labelPrefix: `<i class="mdi mdi-check"></i> ` }, { value: false, label: 'False' }],
       customStructure: {
         value: 'isEffort',
         label: 'label',
@@ -500,13 +519,13 @@ describe('SelectFilter', () => {
     expect(filter.selectOptions.renderOptionLabelAsHtml).toBeTruthy();
     expect(filter.selectOptions.useSelectOptionLabelToHtml).toBeFalsy();
     expect(filterListElm.length).toBe(2);
-    expect(filterListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> True');
+    expect(filterListElm[0].innerHTML).toBe('<i class="mdi mdi-check"></i> True');
   });
 
   it('should create the multi-select filter with a default search term and have the HTML rendered and sanitized when "enableRenderHtml" is set and has <script> tag', () => {
     mockColumn.filter = {
       enableRenderHtml: true,
-      collection: [{ value: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="fa fa-check"></i> ` }, { value: false, label: 'False' }],
+      collection: [{ value: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="mdi mdi-check"></i> ` }, { value: false, label: 'False' }],
       customStructure: {
         value: 'isEffort',
         label: 'label',
@@ -520,7 +539,7 @@ describe('SelectFilter', () => {
     filterBtnElm.click();
 
     expect(filterListElm.length).toBe(2);
-    expect(filterListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> True');
+    expect(filterListElm[0].innerHTML).toBe('<i class="mdi mdi-check"></i> True');
   });
 
   it('should create the multi-select filter with a blank entry at the beginning of the collection when "addBlankEntry" is set in the "collectionOptions" property', () => {

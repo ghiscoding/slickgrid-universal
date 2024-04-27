@@ -5,7 +5,7 @@
     <a class="is-size-5"
        target="_blank"
        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example09.ts">
-      <span class="mdi mdi-link-variant mdi-v-align-sub"></span> code
+      <span class="mdi mdi-link-variant"></span> code
     </a>
   </div>
 </h3>
@@ -15,6 +15,7 @@
   error and its only purpose is to demo what would happen when you encounter a backend server error
   (the UI should rollback to previous state before you did the action).
   Also changing Page Size to 50,000 will also throw which again is for demo purposes.
+  Moreover, the example will persist changes in the local storage, so if you refresh the page, it will remember your last settings.
 </h6>
 
 <div class="row mb-2">
@@ -28,6 +29,9 @@
   </button>
   <button class="button is-small" data-test="set-dynamic-sorting" onclick.delegate="setSortingDynamically()">
     Set Sorting Dynamically
+  </button>
+  <button class="button is-small" data-test="clear-local-storage" onclick.delegate="clearLocalStorage()">
+    Clear Local Storage
   </button>
   <button class="button is-small is-danger is-outlined ml-6" data-test="throw-page-error-btn"
           onclick.delegate="throwPageChangeError()">

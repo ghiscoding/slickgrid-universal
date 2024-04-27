@@ -86,7 +86,7 @@ export class LongTextEditor implements Editor {
   }
 
   get editorOptions(): LongTextEditorOption {
-    return this.columnEditor?.editorOptions ?? {};
+    return { ...this.gridOptions.defaultEditorOptions?.longText, ...this.columnEditor?.editorOptions };
   }
 
   get hasAutoCommitEdit(): boolean {

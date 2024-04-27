@@ -110,8 +110,8 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
     return this._filterElm;
   }
 
-  get filterOptions(): any {
-    return this.columnFilter?.filterOptions || {};
+  get filterOptions(): AutocompleterOption {
+    return { ...this.gridOptions.defaultFilterOptions?.autocompleter, ...this.columnFilter?.filterOptions };
   }
 
   /** Getter for the Custom Structure if exist */
@@ -508,7 +508,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
 
       // when the user defines a "renderItem" (or "_renderItem") template, then we assume the user defines his own custom structure of label/value pair
       // otherwise we know that the autocomplete lib always require a label/value pair, we can pull them directly
-      const hasCustomRenderItemCallback = this.columnFilter?.filterOptions?.renderItem ?? false;
+      const hasCustomRenderItemCallback = this.filterOptions?.renderItem ?? false;
 
       const itemLabel = typeof item === 'string' ? item : (hasCustomRenderItemCallback ? item[this.labelName] : item.label);
       let itemValue = typeof item === 'string' ? item : (hasCustomRenderItemCallback ? item[this.valueName] : item.value);

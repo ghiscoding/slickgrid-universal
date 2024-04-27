@@ -1,5 +1,4 @@
 import { dequal } from 'dequal/lite';
-import 'flatpickr/dist/l10n/fr';
 import type {
   BackendServiceApi,
   BackendServiceOption,

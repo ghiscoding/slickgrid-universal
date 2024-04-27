@@ -416,7 +416,7 @@ this.columnDefinitions = [
     filter: {
       // display checkmark icon when True
       enableRenderHtml: true,
-      collection: [{ value: '', label: '' }, { value: true, label: 'True', labelPrefix: `<i class="fa fa-check"></i> ` }, { value: false, label: 'False' }],
+      collection: [{ value: '', label: '' }, { value: true, label: 'True', labelPrefix: `<i class="mdi mdi-check"></i> ` }, { value: false, label: 'False' }],
       model: Filters.singleSelect
     }
   }
@@ -562,6 +562,18 @@ filter: {
   filterOptions: {
     maxHeight: 400
   } as MultipleSelectOption
+}
+```
+
+#### Grid Option `defaultFilterOptions
+You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultFilterOptions` Grid Option. Note that they are set via the filter type as a key name (`autocompleter`, `date`, ...) and then the content is the same as `filterOptions` (also note that each key is already typed with the correct filter option interface), for example
+
+```ts
+this.gridOptions = {
+  defaultFilterOptions: { 
+    // Note: that `select` combines both multipleSelect & singleSelect
+    select: { minHeight: 350 }, // typed as MultipleSelectOption
+  }
 }
 ```
 

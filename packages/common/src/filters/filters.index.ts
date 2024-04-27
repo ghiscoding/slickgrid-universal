@@ -9,7 +9,6 @@ import { InputMaskFilter } from './inputMaskFilter';
 import { InputNumberFilter } from './inputNumberFilter';
 import { InputPasswordFilter } from './inputPasswordFilter';
 import { MultipleSelectFilter } from './multipleSelectFilter';
-import { NativeSelectFilter } from './nativeSelectFilter';
 import { DateRangeFilter } from './dateRangeFilter';
 import { SingleSelectFilter } from './singleSelectFilter';
 import { SingleSliderFilter } from './singleSliderFilter';
@@ -60,9 +59,6 @@ export const Filters = {
 
   /** Multiple Select filter, which uses 3rd party lib "multiple-select.js" */
   multipleSelect: MultipleSelectFilter,
-
-  /** Select filter, which uses native DOM element select */
-  select: NativeSelectFilter,
 
   /** Single Select filter, which uses 3rd party lib "multiple-select.js" */
   singleSelect: SingleSelectFilter,

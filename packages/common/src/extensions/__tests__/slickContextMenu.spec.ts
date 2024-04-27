@@ -26,7 +26,7 @@ const commandItemsMock = [
       { command: 'command3', title: 'Command 3', positionOrder: 70, },
       { command: 'command4', title: 'Command 4', positionOrder: 71, },
       {
-        command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'color-warning', commandItems: [
+        command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'text-color-warning', commandItems: [
           { command: 'command5', title: 'Command 5', positionOrder: 72, },
         ]
       }
@@ -703,7 +703,7 @@ describe('ContextMenu Plugin', () => {
         expect(commandList2Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
         expect(commandContentElm2.textContent).toBe('Sub Commands');
         expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
-        expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
+        expect(subMenuTitleElm.className).toBe('slick-menu-title text-color-warning');
         expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
         expect(subCommand3Elm.textContent).toContain('Command 3');
         expect(subCommand5Elm.textContent).toContain('Command 5');
@@ -832,7 +832,7 @@ describe('ContextMenu Plugin', () => {
         expect(closeBtnElm).toBeTruthy();
         expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(1);
         expect(commandItemElm1.classList.contains('slick-menu-item-disabled')).toBeFalsy();
-        expect(commandIconElm1.classList.contains('fa-clone')).toBeTruthy();
+        expect(commandIconElm1.classList.contains('mdi-content-copy')).toBeTruthy();
         expect(commandLabelElm1.textContent).toBe('Copy');
 
         commandItemElm1.dispatchEvent(new CustomEvent('click'));

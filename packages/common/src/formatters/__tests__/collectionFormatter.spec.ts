@@ -1,8 +1,6 @@
 import { Column } from '../../interfaces/index';
 import { collectionFormatter } from '../collectionFormatter';
 
-jest.mock('flatpickr', () => { });
-
 describe('the Collection Formatter', () => {
   it('should return same output when no value is passed', () => {
     const valueArray = null;

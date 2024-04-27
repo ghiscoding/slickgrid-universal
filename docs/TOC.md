@@ -16,9 +16,9 @@
 
 * [Cell Menu (Action Menu)](column-functionalities/Cell-Menu.md)
 * [Editors](column-functionalities/Editors.md)
-  * [AutoComplete (jQueryUI)](column-functionalities/editors/AutoComplete-Editor.md)
   * [new Autocomplete (Kraaden-lib)](column-functionalities/editors/Autocomplete-Editor-(Kraaden-lib).md)
   * [Date Picker (flatpickr)](column-functionalities/editors/Date-Editor-(flatpickr).md)
+  * [Date Picker (vanilla-calendar)](column-functionalities/editors/date-editor-(vanilla-calendar).md)
   * [LongText (textarea)](column-functionalities/editors/LongText-Editor-(textarea).md)
   * [Select Dropdown Editor (single/multiple)](column-functionalities/editors/Select-Dropdown-Editor-(single,multiple).md)
 * [Filters](column-functionalities/filters/README.md)
@@ -77,3 +77,4 @@
 * [Migration Guide to 2.x](migrations/migration-to-2.x.md)
 * [Migration Guide to 3.x](migrations/migration-to-3.x.md)
 * [Migration Guide to 4.x](migrations/migration-to-4.x.md)
+* [Migration Guide to 5.x](migrations/migration-to-5.x.md)

@@ -1,4 +1,3 @@
-// import { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
 import {
   type AutocompleterOption,
   type Column,
@@ -8,7 +7,6 @@ import {
   EventNamingStyle,
   FieldType,
   Filters,
-  type FlatpickrOption,
   type Formatter,
   Formatters,
   type GridOption,
@@ -18,6 +16,7 @@ import {
   SlickGlobalEditorLock,
   type SliderOption,
   SortComparers,
+  type VanillaCalendarOption,
 
   // utilities
   formatNumber,
@@ -153,7 +152,7 @@ export default class Example12 {
   initializeGrid() {
     this.columnDefinitions = [
       {
-        id: 'title', name: '<span title="Task must always be followed by a number" class="color-warning-dark mdi mdi-alert-outline"></span> Title <span title="Title is always rendered as UPPERCASE" class="mdi mdi-information-outline"></span>', field: 'title', sortable: true, type: FieldType.string, minWidth: 75,
+        id: 'title', name: '<span title="Task must always be followed by a number" class="text-color-warning-dark mdi mdi-alert-outline"></span> Title <span title="Title is always rendered as UPPERCASE" class="mdi mdi-information-outline"></span>', field: 'title', sortable: true, type: FieldType.string, minWidth: 75,
         cssClass: 'text-bold text-uppercase',
         filterable: true, columnGroup: 'Common Factor',
         filter: { model: Filters.compoundInputText },
@@ -271,16 +270,17 @@ export default class Example12 {
         editor: {
           model: Editors.date,
           editorOptions: {
-            minDate: 'today',
+            range: { min: 'today' }, // set minimum date as today
 
             // if we want to preload the date picker with a different date,
-            // we could toggle the `closeOnSelect: false`, set the date in the picker and re-toggle `closeOnSelect: true`
-            // closeOnSelect: false,
-            // onOpen: (selectedDates: Date[] | Date, dateStr: string, instance: FlatpickrInstance) => {
-            //   instance.setDate('2021-06-04', true);
-            //   instance.set('closeOnSelect', true);
-            // },
-          } as FlatpickrOption,
+            // we could do it by assigning settings.seleted.dates
+            // NOTE: vanilla-calendar doesn't automatically focus the picker to the year/month and you need to do it yourself
+            // selected: {
+            //   dates: ['2021-06-04'],
+            //   month: 6 - 1, // Note: JS Date month (only) is zero index based, so June is 6-1 => 5
+            //   year: 2021
+            // }
+          } as VanillaCalendarOption,
           massUpdate: true,
           validator: (value, args) => {
             const dataContext = args && args.item;
@@ -364,7 +364,7 @@ export default class Example12 {
       {
         id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
         excludeFromExport: true,
-        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-dots-vertical mdi-22px color-alt-default-light"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-dots-vertical mdi-22px text-color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           commandTitle: 'Commands',
@@ -386,7 +386,7 @@ export default class Example12 {
             'divider',
             {
               command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'mdi mdi-close color-danger', cssClass: 'red', textCssClass: 'text-italic color-danger-light',
+              iconCssClass: 'mdi mdi-close', cssClass: 'has-text-danger', textCssClass: 'text-italic',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext?.completed;
@@ -626,7 +626,7 @@ export default class Example12 {
     /*
     if (columnDef.id === 'completed') {
       this.compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', true); // multiple-select.js, show filter in dropdown
-      this.compositeEditorInstance.changeFormEditorOption('finish', 'minDate', 'today');      // flatpickr, change minDate to today
+      this.compositeEditorInstance.changeFormEditorOption('finish', 'range', { min: 'today' }); // calendar picker, change minDate to today
     }
     */
   }
@@ -972,7 +972,7 @@ export default class Example12 {
         modalTitle = 'Clone - {{title}}';
         break;
       case 'edit':
-        modalTitle = 'Editing - {{title}} (<span class="color-muted">id:</span> <span class="color-primary">{{id}}</span>)'; // 'Editing - {{title}} ({{product.itemName}})'
+        modalTitle = 'Editing - {{title}} (<span class="text-color-muted">id:</span> <span class="text-color-primary">{{id}}</span>)'; // 'Editing - {{title}} ({{product.itemName}})'
         break;
       case 'mass-update':
         modalTitle = 'Mass Update All Records';

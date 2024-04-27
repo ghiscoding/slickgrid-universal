@@ -4,8 +4,6 @@ import type { GridOption } from '../../interfaces/index';
 import { SlickCellRangeDecorator } from '../slickCellRangeDecorator';
 import { SlickGrid } from '../../core';
 
-jest.mock('flatpickr', () => { });
-
 const gridStub = {
   getActiveCell: jest.fn(),
   getActiveCanvasNode: jest.fn(),

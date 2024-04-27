@@ -27,35 +27,53 @@
 
 // it's preferable to use CSS Variables (or SASS) but if you want to change colors of your tooltip for 1 column in particular you can do it this way
 // e.g. change css of 5th column 4 (zero index: l4)
-.l4 {
-  --slick-tooltip-color: #fff;
+.grid16-tooltip {
+  &.l4 {
+    --slick-tooltip-color: #fff;
+  }
+  &.l4 .header-tooltip-title,
+  &.l4 .headerrow-tooltip-title {
+    color: #ffffff;
+  }
+  &.l4 {
+    color: #ffffff;
+    background-color: #696969;
+    border: 2px solid #545454;
+  }
+  &.l4.arrow-down::after,
+  &.l4.arrow-up::after {
+    border-width: 10px; // arrow size
+  }
+  &.l4.arrow-down::after {
+    border-top-color: #464646; // arrow down color
+  }
+  &.l4.arrow-up::after {
+    top: -20px; // arrow size * 2
+    border-bottom-color: #464646; // arrow up color
+  }
+  &.l4.arrow-left-align::after {
+    margin-left: 15px;
+  }
+  &.l4.arrow-right-align::after {
+    margin-left: calc(100% - 20px - 15px); // 20px is (arrow size * 2), 15px is your extra side margin
+  }
+  &.l6.arrow-left-align::after {
+    margin-left: 4px;
+  }
 }
-.l4 .header-tooltip-title,
-.l4 .headerrow-tooltip-title {
-  color: #ffffff;
-}
-.l4.slick-custom-tooltip {
-  color: #ffffff;
-  background-color: #696969;
-  border: 2px solid #545454;
-}
-.l4.slick-custom-tooltip.arrow-down::after,
-.l4.slick-custom-tooltip.arrow-up::after {
-  border-width: 10px; // arrow size
-}
-.l4.slick-custom-tooltip.arrow-down::after {
-  border-top-color: #464646; // arrow down color
-}
-.l4.slick-custom-tooltip.arrow-up::after {
-  top: -20px; // arrow size * 2
-  border-bottom-color: #464646; // arrow up color
-}
-.l4.slick-custom-tooltip.arrow-left-align::after {
-  margin-left: 15px;
-}
-.l4.slick-custom-tooltip.arrow-right-align::after {
-  margin-left: calc(100% - 20px - 15px); // 20px is (arrow size * 2), 15px is your extra side margin
-}
-.l6.slick-custom-tooltip.arrow-left-align::after {
-  margin-left: 4px;
+
+[data-theme=dark] .grid16-tooltip {
+  --slick-tooltip-color: #dadada;
+  --slick-tooltip-border: 1px solid #5a5a5a;
+  --slick-tooltip-background-color: #414141;
+  --slick-tooltip-arrow-color: #707070;
+
+  &.l4 {
+    --slick-tooltip-color: #dadada;
+    --slick-tooltip-background-color: #a7a7a7;
+    --slick-tooltip-border: 2px solid #999999;
+  }
+  .text-color-primary {
+    color: #83c5ff;
+  }
 }

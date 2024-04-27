@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v4.6.3...v4.7.0) (2024-04-20)
+
+### Bug Fixes
+
+* wrong operator comparison ([#1461](https://github.com/ghiscoding/slickgrid-universal/issues/1461)) ([abe772b](https://github.com/ghiscoding/slickgrid-universal/commit/abe772b9ad9480688ef000dddfa86d2cdc6b7e52)) - by @zewa666
+
 ## [4.6.3](https://github.com/ghiscoding/slickgrid-universal/compare/v4.6.1...v4.6.3) (2024-03-31)
 
 **Note:** Version bump only for package @slickgrid-universal/graphql

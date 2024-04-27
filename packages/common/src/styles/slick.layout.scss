@@ -1,9 +1,9 @@
-@use './private';
+@use 'sass:math';
 
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width : 768px) {
   @for $i from 1 through 12 {
-    $width: private.private-div($i, 12) * 100%;
+    $width: math.div($i, 12) * 100%;
     .slick-col-medium-#{$i} {
       flex-basis: $width;
     }
@@ -13,7 +13,7 @@
 /* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (min-width : 992px) {
   @for $i from 1 through 12 {
-    $width: private.private-div($i, 12) * 100%;
+    $width: math.div($i, 12) * 100%;
     .slick-col-large-#{$i} {
       flex-basis: $width;
     }
@@ -23,7 +23,7 @@
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1200px) {
   @for $i from 1 through 12 {
-    $width: private.private-div($i, 12) * 100%;
+    $width: math.div($i, 12) * 100%;
     .slick-col-xlarge-#{$i} {
       flex-basis: $width;
     }

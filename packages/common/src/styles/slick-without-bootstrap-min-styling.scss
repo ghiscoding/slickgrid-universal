@@ -18,9 +18,9 @@
   }
 
   .btn-default {
-    color: var(--slick-button-primary-color, $slick-button-primary-color);
+    color: var(--slick-cell-text-color, $slick-cell-text-color);
     background-color: var(--slick-btn-default-bg-color, $slick-btn-default-bg-color);
-    border-color: #ccc;
+    border-color: var(--slick-btn-default-border-color, $slick-btn-default-border-color);
   }
 
   .btn-primary {

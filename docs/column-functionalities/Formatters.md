@@ -13,7 +13,7 @@
 ### Definition
 `Formatters` are functions that can be used to change and format certain column(s) in the grid. Please note that it does not alter the input data, it simply changes the styling by formatting the data differently to the screen (what the user visually see).
 
-A good example of a `Formatter` could be a column name `isActive` which is a `boolean` field with input data as `True` or `False`. User would prefer to simply see a checkbox as a visual indication representing the `True` flag, for this behavior you can use `Formatters.checkmark` which will use [Font-Awesome](http://fontawesome.io/icons/) icon of `fa-check` when `True` or an empty string when `False`.
+A good example of a `Formatter` could be a column name `isActive` which is a `boolean` field with input data as `True` or `False`. User would prefer to simply see a checkbox as a visual indication representing the `True` flag, for this behavior you can use `Formatters.checkmarkMaterial` which will use optional SVG icons of `mdi-check` when `True` or an empty string when `False`.
 
 For a [UI sample](#ui-sample), scroll down below.
 
@@ -25,7 +25,6 @@ For a [UI sample](#ui-sample), scroll down below.
 #### List of provided `Formatters`
 - `arrayObjectToCsv`: Takes an array of complex objects converts it to a comma delimited string.
 - `arrayToCsv` : takes an array of text and returns it as CSV string
-- `checkmark` : uses Font-Awesome [(fa-check)](http://fontawesome.io/icon/check/)
 - `checkmarkMaterial` use Material Design to display a checkmark icon
 - `collection`: Looks up values from the columnDefinition.params.collection property and displays the label in CSV or string format
 - `complexObject`: takes a complex object (with a `field` that has a `.` notation) and pull correct value, there are multiple ways to use it
@@ -97,7 +96,7 @@ export class Example {
       { id: '%', name: '% Complete', field: 'percentComplete', formatter: Formatters.percentComplete },
       { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso },
       { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', formatter: Formatters.checkmark }
+      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', formatter: Formatters.checkmarkMaterial }
     ];
   }
 }
@@ -129,7 +128,7 @@ export class Example {
       { id: '%', name: '% Complete', field: 'percentComplete', formatter: Slicker.Formatters.percentComplete },
       { id: 'start', name: 'Start', field: 'start', formatter: Slicker.Formatters.dateIso },
       { id: 'finish', name: 'Finish', field: 'finish', formatter: Slicker.Formatters.dateIso },
-      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', formatter: Slicker.Formatters.checkmark }
+      { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', formatter: Slicker.Formatters.checkmarkMaterial }
     ];
   }
 }
@@ -191,11 +190,11 @@ export interface FormatterResultObject {
 ```
 
 ### Example of a Custom Formatter with HTML string
-For example, we will use `Font-Awesome` with a `boolean` as input data, and display a (fire) icon when `True` or a (snowflake) when `False`. This custom formatter is actually display in the [UI sample](#ui-sample) shown below.
+For example, we will use our optional SVG icons `.mdi` with a `boolean` as input data, and display a (fire) icon when `True` or a (snowflake) when `False`. This custom formatter is actually display in the [UI sample](#ui-sample) shown below.
 ```ts
 // create a custom Formatter with the Formatter type
 const myCustomCheckboxFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any) =>
-  value ? `<i class="fa fa-fire" aria-hidden="true"></i>` : '<i class="fa fa-snowflake-o" aria-hidden="true"></i>';
+  value ? `<i class="mdi mdi-fire" aria-hidden="true"></i>` : '<i class="mdi mdi-snowflake" aria-hidden="true"></i>';
 ```
 
 #### Example with `FormatterResultObject` instead of a string
@@ -203,7 +202,7 @@ Using this object return type will provide the user the same look and feel, it w
 ```ts
 // create a custom Formatter and returning a string and/or an object of type FormatterResultObject
 const myCustomCheckboxFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid?: any) =>
-  value ? { addClasses: 'fa fa-fire', text: '', tooltip: 'burning fire' } : '<i class="fa fa-snowflake-o" aria-hidden="true"></i>';
+  value ? { addClasses: 'mdi mdi-fire', text: '', tooltip: 'burning fire' } : '<i class="mdi mdi-snowflake" aria-hidden="true"></i>';
 ```
 
 ### Example of Custom Formatter with Native DOM Element

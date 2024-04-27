@@ -320,7 +320,7 @@ export class SlickRowMoveManager {
       return '';
     } else {
       return {
-        addClasses: `cell-reorder dnd ${this._addonOptions.cssClass || ''}`,
+        addClasses: `cell-reorder dnd`,
         html: createDomElement('div', { className: this._addonOptions.cssClass || '' }),
       };
     }

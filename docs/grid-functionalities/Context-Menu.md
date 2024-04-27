@@ -39,7 +39,7 @@ this.gridOptions = {
           console.log(args.dataContext, args.column); // action callback.. do something
         }
       },
-      { command: 'help', title: 'HELP', iconCssClass: 'fa fa-question-circle', positionOrder: 62 },
+      { command: 'help', title: 'HELP', iconCssClass: 'mdi mdi-help-circle', positionOrder: 62 },
       // you can add sub-menus by adding nested `commandItems`
       {
          // we can also have multiple nested sub-menus
@@ -68,14 +68,14 @@ this.gridOptions = {
     hideCloseButton: false,
     optionTitle: 'Change Effort Driven Flag', // optional, add title
     optionItems: [
-      { option: true, title: 'True', iconCssClass: 'fa fa-check-square-o' },
-      { option: false, title: 'False', iconCssClass: 'fa fa-square-o' },
+      { option: true, title: 'True', iconCssClass: 'mdi mdi-check-box-outline' },
+      { option: false, title: 'False', iconCssClass: 'mdi mdi-checkbox-blank-outline' },
       { divider: true, command: '', positionOrder: 60 },
     ],
     // subscribe to Context Menu onOptionSelected event (or use the "action" callback on each option)
     onOptionSelected: (e, args) => {
       // change Priority
-      const dataContext = args && args.dataContext;
+      const dataContext = args?.dataContext;
       if (dataContext && dataContext.hasOwnProperty('priority')) {
         dataContext.priority = args.item.option;
         this.sgb.gridService.updateItem(dataContext);
@@ -133,7 +133,7 @@ For example, say we want the Context Menu to only be available on the first 20 r
 ```ts
 contextMenu: {
   menuUsabilityOverride: (args) => {
-    const dataContext = args && args.dataContext;
+    const dataContext = args?.dataContext;
     return (dataContext.id < 21); // say we want to display the menu only from Task 0 to 20
   },
 ```
@@ -141,18 +141,17 @@ contextMenu: {
 To give another example, with Options this time, we could say that we enable the `n/a` option only when the row is Completed. So we could do it this way
 ```ts
 contextMenu: {
-  optionItems: [
-  {
+  optionItems: [{
     option: 0, title: 'n/a', textCssClass: 'italic',
     // only enable this option when the task is Not Completed
     itemUsabilityOverride: (args) => {
-      const dataContext = args && args.dataContext;
+      const dataContext = args?.dataContext;
       return !dataContext.completed;
     },
-    { option: 1, iconCssClass: 'fa fa-star-o yellow', title: 'Low' },
-    { option: 2, iconCssClass: 'fa fa-star-half-o orange', title: 'Medium' },
-    { option: 3, iconCssClass: 'fa fa-star red', title: 'High' },
-  ]
+    { option: 1, iconCssClass: 'mdi mdi-star-outline yellow', title: 'Low' },
+    { option: 2, iconCssClass: 'mdi mdi-star orange', title: 'Medium' },
+    { option: 3, iconCssClass: 'mdi mdi-star red', title: 'High' },
+  }]
 }
 ```
 
@@ -161,12 +160,11 @@ It works exactly like the rest of the library when `enableTranslate` is set, all
 ```ts
 contextMenu: {
   optionTitleKey: 'COMMANDS', // optionally pass a title to show over the Options
-  optionItems: [
-  {
-    { option: 1, titleKey: 'LOW', iconCssClass: 'fa fa-star-o yellow' },
-    { option: 2, titleKey: 'MEDIUM', iconCssClass: 'fa fa-star-half-o orange' },
-    { option: 3, titleKey: 'HIGH', iconCssClass: 'fa fa-star red' },
-  ]
+  optionItems: [{
+    { option: 1, titleKey: 'LOW', iconCssClass: 'mdi mdi-star-outline yellow' },
+    { option: 2, titleKey: 'MEDIUM', iconCssClass: 'mdi mdi-star orange' },
+    { option: 3, titleKey: 'HIGH', iconCssClass: 'mdi mdi-star red' },
+  }]
 }
 ```
 
@@ -199,10 +197,10 @@ contextMenu: {
     hideExportTextDelimitedCommand: true,
     hideMenuOnScroll: true,
     hideOptionSection: false,
-    iconCopyCellValueCommand: 'fa fa-clone',
-    iconExportCsvCommand: 'fa fa-download',
-    iconExportExcelCommand: 'fa fa-file-excel-o text-success',
-    iconExportTextDelimitedCommand: 'fa fa-download',
+    iconCopyCellValueCommand: 'mdi mdi-content-copy',
+    iconExportCsvCommand: 'mdi mdi-download',
+    iconExportExcelCommand: 'mdi mdi-file-excel-outline text-success',
+    iconExportTextDelimitedCommand: 'mdi mdi-download',
     width: 200,
   },
 ```

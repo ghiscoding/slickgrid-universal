@@ -18,3 +18,15 @@
 .bg-gray {
   background-color: #3F3E3E;
 }
+.icon-box {
+  display: flex;
+  align-items: center;
+}
+.button-style {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.mr-5px {
+  margin-right: 5px;
+}

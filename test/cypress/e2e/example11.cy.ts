@@ -132,17 +132,17 @@ describe('Example 11 - Batch Editing', () => {
 
     // change Finish date to today's date
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(6)`).should('contain', '').click(); // this date should also always be initially empty
-    cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
+    cy.get(`.vanilla-calendar-day__btn_today:visible`).click('bottom', { force: true });
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(6)`).should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`)
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(6)`).click();
-    cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
+    cy.get(`.vanilla-calendar-day__btn_today:visible`).click('bottom', { force: true });
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(6)`).should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`)
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(6)`).click();
-    cy.get(`.flatpickr-day.today:visible`).click('bottom', { force: true });
+    cy.get(`.vanilla-calendar-day__btn_today:visible`).click('bottom', { force: true });
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(6)`).should('contain', `${currentYear}-${zeroPadding(currentMonth)}-${zeroPadding(currentDate)}`)
       .should('have.css', 'background-color').and('eq', UNSAVED_RGB_COLOR);
 
@@ -156,7 +156,7 @@ describe('Example 11 - Batch Editing', () => {
   it('should undo last edit and expect the date editor to be opened as well when clicking the associated last undo with editor button', () => {
     cy.get('[data-test=undo-open-editor-btn]').click();
 
-    cy.get('.flatpickr-calendar.open')
+    cy.get('.vanilla-calendar')
       .should('exist');
 
     cy.get('.unsaved-editable-field')
@@ -169,7 +169,7 @@ describe('Example 11 - Batch Editing', () => {
   it('should undo last edit and expect the date editor to NOT be opened when clicking undo last edit button', () => {
     cy.get('[data-test=undo-last-edit-btn]').click();
 
-    cy.get('.flatpickr-calendar.open')
+    cy.get('.vanilla-calendar')
       .should('not.exist');
 
     cy.get('.unsaved-editable-field')
@@ -212,7 +212,7 @@ describe('Example 11 - Batch Editing', () => {
       .invoke('val')
       .then(text => expect(text).to.eq('0'));
 
-    cy.get('.search-filter.filter-finish .flatpickr-input')
+    cy.get('.search-filter.filter-finish .date-picker input')
       .invoke('val')
       .then(text => expect(text).to.eq(''));
 
@@ -236,7 +236,7 @@ describe('Example 11 - Batch Editing', () => {
     cy.get('.search-filter.filter-finish .operator .form-control')
       .should('have.value', '<=');
 
-    cy.get('.search-filter.filter-finish .flatpickr-input')
+    cy.get('.search-filter.filter-finish .date-picker input')
       .invoke('val')
       .then(text => expect(text).to.eq(`${currentYear}-01-01`));
 
@@ -341,7 +341,7 @@ describe('Example 11 - Batch Editing', () => {
     cy.get('.search-filter.filter-finish .operator .form-control')
       .should('have.value', '>=');
 
-    cy.get('.search-filter.filter-finish .flatpickr-input')
+    cy.get('.search-filter.filter-finish .date-picker input')
       .invoke('val')
       .then(text => expect(text).to.eq(`${currentYear + 1}-01-01`));
 
@@ -472,7 +472,7 @@ describe('Example 11 - Batch Editing', () => {
       .invoke('val')
       .then(text => expect(text).to.eq('0'));
 
-    cy.get('.search-filter.filter-finish .flatpickr-input')
+    cy.get('.search-filter.filter-finish .date-picker input')
       .invoke('val')
       .then(text => expect(text).to.eq(''));
 
@@ -520,7 +520,7 @@ describe('Example 11 - Batch Editing', () => {
       .invoke('val')
       .then(text => expect(text).to.eq('0'));
 
-    cy.get('.search-filter.filter-finish .flatpickr-input')
+    cy.get('.search-filter.filter-finish .date-picker input')
       .invoke('val')
       .then(text => expect(text).to.eq(''));
 
@@ -581,6 +581,7 @@ describe('Example 11 - Batch Editing', () => {
   });
 
   it('should be able to filter "Country of Origin" with a text range filter "b..e" and expect to see only Canada showing up', () => {
+    cy.get('.slick-header-columns .slick-header-column:nth(9)').trigger('mouseover'); // mouseover column headers to get rid of cell tooltip
     cy.get('input.search-filter.filter-countryOfOrigin').type('b..e');
     cy.get('input.search-filter.filter-countryOfOrigin.filled').should('exist');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(9)`).should('contain', 'Canada');
@@ -697,7 +698,7 @@ describe('Example 11 - Batch Editing', () => {
     cy.get('.search-filter.filter-finish .operator .form-control')
       .should('have.value', '<=');
 
-    cy.get('.search-filter.filter-finish .flatpickr-input')
+    cy.get('.search-filter.filter-finish .date-picker input')
       .invoke('val')
       .then(text => expect(text).to.eq(`${currentYear}-01-01`));
 

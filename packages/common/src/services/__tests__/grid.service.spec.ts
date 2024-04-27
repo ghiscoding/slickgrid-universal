@@ -6,8 +6,6 @@ import { GridOption, CellArgs, Column, OnEventArgs } from '../../interfaces/inde
 import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel';
 import { type SlickDataView, SlickEvent, type SlickGrid } from '../../core/index';
 
-jest.mock('flatpickr', () => { });
-
 const mockRowSelectionModel = {
   constructor: jest.fn(),
   init: jest.fn(),
@@ -23,7 +21,6 @@ const mockRowSelectionModel = {
 jest.mock('../../extensions/slickRowSelectionModel', () => ({
   SlickRowSelectionModel: jest.fn().mockImplementation(() => mockRowSelectionModel),
 }));
-jest.mock('flatpickr', () => { });
 
 const filterServiceStub = {
   clearFilters: jest.fn(),

@@ -141,10 +141,10 @@
         background-color: var(--slick-row-based-edit-unsaved-cell-bgcolor, $slick-row-based-edit-unsaved-cell-bgcolor) !important;
       }
 
-      a, a:visited, .ui-widget-content a, .ui-widget-content a:visited {
+      a, a:visited, .slick-widget-content a, .slick-widget-content a:visited {
         color: var(--slick-link-color, $slick-link-color);
       }
-      a:hover, .ui-widget-content a:hover {
+      a:hover, .slick-widget-content a:hover {
         color: var(--slick-link-color-hover, $slick-link-color-hover);
         border-bottom: none;
       }
@@ -174,31 +174,25 @@
         line-height: var(--slick-draggable-group-title-line-height, $slick-draggable-group-title-line-height);
         vertical-align: var(--slick-draggable-group-title-vertical-align, $slick-draggable-group-title-vertical-align);
       }
+
       .slick-group-toggle {
         cursor: pointer;
         display: inline-block;
+        width: 1em;
+        height: 1em;
         color: var(--slick-icon-group-color, $slick-icon-group-color);
-        font-weight: var(--slick-icon-group-font-weight, $slick-icon-group-font-weight);
-        width: var(--slick-icon-group-width, $slick-icon-group-width);
-        height: var(--slick-icon-group-height, $slick-icon-group-height);
+        font-size: var(--slick-icon-group-font-size, $slick-icon-group-font-size);
         margin-right: var(--slick-icon-group-margin-right, $slick-icon-group-margin-right);
 
-        &.expanded:before {
-          display: inline-block;
-          content: var(--slick-icon-group-expanded, $slick-icon-group-expanded);
-          font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-          font-size: var(--slick-icon-group-font-size, $slick-icon-group-font-size);
-          width: var(--slick-icon-group-width, $slick-icon-group-width);
-          vertical-align: var(--slick-icon-group-vertical-align, $slick-icon-group-vertical-align);
+        &.expanded {
+          @include generateSvgStyle('slick-icon-group-expanded-svg', $slick-icon-group-expanded-svg-path);
         }
-
-        &.collapsed:before {
-          display: inline-block;
-          content: var(--slick-icon-group-collapsed, $slick-icon-group-collapsed);
-          font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-          font-size: var(--slick-icon-group-font-size, $slick-icon-group-font-size);
-          width: var(--slick-icon-group-width, $slick-icon-group-width);
-          vertical-align: var(--slick-icon-group-vertical-align, $slick-icon-group-vertical-align);
+        &.collapsed {
+          @include generateSvgStyle('slick-icon-group-collapsed-svg', $slick-icon-group-collapsed-svg-path);
+        }
+        &.expanded,
+        &.collapsed {
+          background-color: currentColor;
         }
       }
     }
@@ -261,7 +255,7 @@
       border-bottom: var(--slick-header-column-border-bottom, $slick-header-column-border-bottom);
       border-left: var(--slick-header-column-border-left, $slick-header-column-border-left);
       white-space: normal;
-      &.ui-state-default {
+      &.slick-state-default {
         @include resetSlickCell();
       }
       .slick-column-name {
@@ -284,7 +278,7 @@
       }
 
       @include ResetColumns ();
-      &.ui-state-default {
+      &.slick-state-default {
         @include ResetColumns ();
       }
 
@@ -296,29 +290,14 @@
         color: var(--slick-hover-header-color, $slick-hover-header-color);
       }
 
-      /* when sorting is possible and there's not yet a sort applied on the column
-       we could display the sort ascending icon (with an opacity) as a hint */
-      &.ui-sortable-handle.ui-state-hover:not(.slick-header-column-sorted) {
-        .slick-sort-indicator:before {
-          content: var(--slick-icon-sort-asc, $slick-icon-sort-asc);
-          font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-          font-size: var(--slick-icon-sort-font-size, $slick-icon-sort-font-size);
-          opacity: var(--slick-sort-indicator-hint-opacity, $slick-sort-indicator-hint-opacity);
-          display: inline-block;
-          width: var(--slick-icon-sort-width, $slick-icon-sort-width);
-        }
-      }
-
       .slick-sort-indicator {
-        background: none;
-        font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-        font-size: var(--slick-icon-font-size, $slick-icon-font-size);
-        position: absolute;
         display: inline-block;
-        color: var(--slick-icon-sort-color, $slick-icon-sort-color);
-        width: 8px;
-        height: 5px;
+        height: 1em;
+        width: 1em;
         left: auto;
+        position: absolute;
+        color: var(--slick-icon-sort-color, $slick-icon-sort-color);
+        font-size: var(--slick-icon-sort-font-size, $slick-icon-sort-font-size);
         right: var(--slick-icon-sort-position-right, $slick-icon-sort-position-right);
         top: var(--slick-icon-sort-position-top, $slick-icon-sort-position-top);
       }
@@ -333,21 +312,27 @@
         right: var(--slick-sort-indicator-number-right, $slick-sort-indicator-number-right);
         top: var(--slick-sort-indicator-number-top, $slick-sort-indicator-number-top);
       }
-      .slick-sort-indicator-asc:before {
-          content: var(--slick-icon-sort-asc, $slick-icon-sort-asc);
-          font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-          font-size: var(--slick-icon-sort-font-size, $slick-icon-sort-font-size);
-          opacity: 1;
-          display: inline-block;
-          width: var(--slick-icon-sort-width, $slick-icon-sort-width);
+
+      // when sorting is possible and there's not yet a sort applied on the column
+      // we could display the sort ascending icon (with an opacity) as a hint */
+      &.slick-header-sortable.slick-state-hover:not(.slick-header-column-sorted) {
+        .slick-sort-indicator {
+          opacity: var(--slick-sort-indicator-hint-opacity, $slick-sort-indicator-hint-opacity);
+          @include generateSvgStyle('slick-icon-sort-asc-icon-svg', $slick-icon-sort-asc-icon-svg-path);
+        }
       }
-      .slick-sort-indicator-desc:before {
-        content: var(--slick-icon-sort-desc, $slick-icon-sort-desc);
-        display: inline-block;
+      .slick-sort-indicator-asc {
+        @include generateSvgStyle('slick-icon-sort-asc-icon-svg', $slick-icon-sort-asc-icon-svg-path);
+      }
+      .slick-sort-indicator-desc {
+        @include generateSvgStyle('slick-icon-sort-desc-icon-svg', $slick-icon-sort-desc-icon-svg-path);
+      }
+      .slick-sort-indicator-asc,
+      .slick-sort-indicator-desc {
         opacity: 1;
-        font-size: var(--slick-icon-sort-font-size, $slick-icon-sort-font-size);
-        width: var(--slick-icon-sort-width, $slick-icon-sort-width);
+        background-color: currentColor;
       }
+
       .slick-resizable-handle {
         width: 7px;
         right: 0;
@@ -372,7 +357,7 @@
   }
 
   /** Header Grouping **/
-  .slick-preheader-panel.ui-state-default  {
+  .slick-preheader-panel.slick-state-default  {
     border-bottom: var(--slick-preheader-border-bottom, $slick-preheader-border-bottom);
 
     .slick-header-columns {
@@ -424,7 +409,7 @@
 
     > :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
       margin-left: 0;
-      &.ui-slider-horizontal {
+      &.slick-slider-horizontal {
         margin-left: 10px;
       }
     }

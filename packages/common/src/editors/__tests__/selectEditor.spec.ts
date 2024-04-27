@@ -1,11 +1,12 @@
 // import 3rd party lib multiple-select for the tests
 import 'multiple-select-vanilla';
-import { SlickEvent, type SlickDataView } from '../../core/index';
+import type { MultipleSelectOption } from 'multiple-select-vanilla';
 
+import { SlickEvent, type SlickDataView } from '../../core/index';
 import { Editors } from '../index';
 import { SelectEditor } from '../selectEditor';
 import { FieldType, OperatorType } from '../../enums/index';
-import { AutocompleterOption, Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
+import { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { type SlickGrid } from '../../core/index';
 
@@ -171,11 +172,27 @@ describe('SelectEditor', () => {
     });
 
     it('should initialize the editor even when user define its own editor options', () => {
-      mockColumn.editor!.editorOptions = { minLength: 3 } as AutocompleterOption;
+      mockColumn.editor!.editorOptions = { minHeight: 300 } as MultipleSelectOption;
       editor = new SelectEditor(editorArguments, true);
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
 
       expect(editorCount).toBe(1);
+    });
+
+    it('should initialize the editor with minHeight define in user editor options', () => {
+      mockColumn.editor!.editorOptions = { minHeight: 255 } as MultipleSelectOption;
+      editor = new SelectEditor(editorArguments, true);
+
+      expect(editor.msInstance?.getOptions().minHeight).toBe(255);
+    });
+
+    it('should initialize the editor with minHeight define in global default user editor options', () => {
+      gridOptionMock.defaultEditorOptions = {
+        select: { minHeight: 243 }
+      };
+      editor = new SelectEditor(editorArguments, true);
+
+      expect(editor.msInstance?.getOptions().minHeight).toBe(243);
     });
 
     it('should have a placeholder when defined in its column definition', () => {
@@ -823,7 +840,7 @@ describe('SelectEditor', () => {
       it('should create the multi-select editor with a default search term and have the HTML rendered when "enableRenderHtml" is set', () => {
         mockColumn.editor = {
           enableRenderHtml: true,
-          collection: [{ value: true, label: 'True', labelPrefix: `<i class="fa fa-check"></i> ` }, { value: false, label: 'False' }],
+          collection: [{ value: true, label: 'True', labelPrefix: `<i class="mdi mdi-check"></i> ` }, { value: false, label: 'False' }],
           customStructure: {
             value: 'isEffort',
             label: 'label',
@@ -837,13 +854,13 @@ describe('SelectEditor', () => {
         editorBtnElm.click();
 
         expect(editorListElm.length).toBe(2);
-        expect(editorListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> True');
+        expect(editorListElm[0].innerHTML).toBe('<i class="mdi mdi-check"></i> True');
       });
 
       it('should create the multi-select editor with a default search term and have the HTML rendered and sanitized when "enableRenderHtml" is set and has <script> tag', () => {
         mockColumn.editor = {
           enableRenderHtml: true,
-          collection: [{ isEffort: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="fa fa-check"></i> ` }, { isEffort: false, label: 'False' }],
+          collection: [{ isEffort: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="mdi mdi-check"></i> ` }, { isEffort: false, label: 'False' }],
           collectionOptions: {
             separatorBetweenTextLabels: ': ',
             includePrefixSuffixToSelectedValues: true,
@@ -865,13 +882,13 @@ describe('SelectEditor', () => {
 
         expect(editor.getValue()).toEqual(['']);
         expect(editorListElm.length).toBe(2);
-        expect(editorListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> : True');
+        expect(editorListElm[0].innerHTML).toBe('<i class="mdi mdi-check"></i> : True');
       });
 
       it('should create the multi-select editor with a default search term and have the HTML rendered and sanitized when using a custom "sanitizer" and "enableRenderHtml" flag is set and has <script> tag', () => {
         mockColumn.editor = {
           enableRenderHtml: true,
-          collection: [{ isEffort: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="fa fa-check"></i> ` }, { isEffort: false, label: 'False' }],
+          collection: [{ isEffort: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="mdi mdi-check"></i> ` }, { isEffort: false, label: 'False' }],
           collectionOptions: {
             separatorBetweenTextLabels: ': ',
             includePrefixSuffixToSelectedValues: true,
@@ -894,7 +911,7 @@ describe('SelectEditor', () => {
 
         expect(editor.getValue()).toEqual(['']);
         expect(editorListElm.length).toBe(2);
-        expect(editorListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> : True');
+        expect(editorListElm[0].innerHTML).toBe('<i class="mdi mdi-check"></i> : True');
       });
     });
   });

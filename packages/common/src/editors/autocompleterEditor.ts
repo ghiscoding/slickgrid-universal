@@ -144,7 +144,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   }
 
   get editorOptions(): AutocompleterOption {
-    return this.columnEditor?.editorOptions || {};
+    return { ...this.gridOptions.defaultEditorOptions?.autocompleter, ...this.columnEditor?.editorOptions };
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
@@ -530,7 +530,8 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
     this._editorInputGroupElm = createDomElement('div', { className: 'autocomplete-container input-group' });
     const closeButtonGroupElm = createDomElement('span', { className: 'input-group-btn input-group-append', dataset: { clear: '' } });
-    this._clearButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default icon-clear' });
+    this._clearButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default btn-clear' });
+    this._clearButtonElm.appendChild(createDomElement('i', { className: 'icon-clear' }));
     this._inputElm = createDomElement(
       'input',
       {
@@ -546,7 +547,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     this._editorInputGroupElm.appendChild(document.createElement('span'));
 
     // show clear date button (unless user specifically doesn't want it)
-    if (!(this.columnEditor.editorOptions as AutocompleterOption)?.hideClearButton) {
+    if (!(this.editorOptions as AutocompleterOption)?.hideClearButton) {
       closeButtonGroupElm.appendChild(this._clearButtonElm);
       this._editorInputGroupElm.appendChild(closeButtonGroupElm);
       this._bindEventService.bind(this._clearButtonElm, 'click', () => this.clear());

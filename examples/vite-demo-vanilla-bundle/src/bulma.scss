@@ -3,10 +3,17 @@
 [data-theme=light], .theme-light {
   --bulma-body-color: black;
   --bulma-body-background-color: white !important;
+  .button {
+    // --bulma-scheme-main-l: 99%;
+    border-color: #acacac;
+  }
 }
 [data-theme=dark], .theme-dark {
   --bulma-body-color: white;
   --bulma-body-background-color: #33393e !important;
+  .button {
+    border-color: #585858;
+  }
 }
 
 html, body {
@@ -18,6 +25,7 @@ html, body {
   --bulma-body-background-color: transparent;
   --bulma-body-family: BlinkMacSystemFont,-apple-system,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,Helvetica,Arial,sans-serif;
   --bulma-control-height: 30px;
+  --bulma-radius-small: 6px;
 
   .title {
     --bulma-title-weight: 600;
@@ -31,5 +39,10 @@ html, body {
   }
   .navbar-item, .navbar-link {
     color: white;
+  }
+  .icon.mdi,
+  .icon .mdi {
+    height: 1em;
+    width: 1em;
   }
 }

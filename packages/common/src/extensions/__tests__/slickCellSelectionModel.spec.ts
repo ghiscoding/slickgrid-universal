@@ -9,7 +9,6 @@ import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 const GRID_UID = 'slickgrid_12345';
 const NB_ITEMS = 200;
 const CALCULATED_PAGE_ROW_COUNT = 23; // pageRowCount with our mocked sizes is 23 => ((600 - 17) / 25)
-jest.mock('flatpickr', () => { });
 
 const addVanillaEventPropagation = function (event, commandKeys: string[] = [], keyName = '') {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: jest.fn() });

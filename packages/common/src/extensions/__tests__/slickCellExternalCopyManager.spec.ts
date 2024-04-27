@@ -8,8 +8,6 @@ import { InputEditor } from '../../editors/inputEditor';
 import { SlickEvent, SlickEventData, SlickGrid, SlickRange } from '../../core/index';
 import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-jest.mock('flatpickr', () => { });
-
 const pubSubServiceStub = {
   publish: jest.fn(),
   subscribe: jest.fn(),
@@ -23,6 +21,7 @@ const mockGetSelectionModel = {
 const returnValueStub = jest.fn();
 const gridStub = {
   getActiveCell: jest.fn(),
+  getActiveCellNode: jest.fn(),
   getColumns: jest.fn().mockReturnValue([
     { id: 'firstName', field: 'firstName', name: 'First Name', },
     { id: 'lastName', field: 'lastName', name: 'Last Name' },
@@ -47,6 +46,7 @@ const gridStub = {
   triggerEvent: jest.fn().mockReturnValue({ getReturnValue: returnValueStub }),
   onCellChange: new SlickEvent(),
   onKeyDown: new SlickEvent(),
+  onValidationError: new SlickEvent(),
 } as unknown as SlickGrid;
 
 const mockCellSelectionModel = {
@@ -67,6 +67,7 @@ const mockTextEditor = {
   applyValue: jest.fn(),
   loadValue: jest.fn(),
   serializeValue: jest.fn(),
+  validate: jest.fn().mockReturnValue({ valid: true, msg: null }),
 } as unknown as InputEditor;
 
 const mockTextEditorImplementation = jest.fn().mockImplementation(() => mockTextEditor);
@@ -80,9 +81,9 @@ describe('CellExternalCopyManager', () => {
   lastNameElm.textContent = 'Last Name';
   const mockEventCallback = () => { };
   const mockColumns = [
-    { id: 'firstName', field: 'firstName', name: 'First Name', editor: Editors.text, editorClass: Editors.text },
+    { id: 'firstName', field: 'firstName', name: 'First Name', editor: { model: Editors.text }, editorClass: Editors.text },
     { id: 'lastName', field: 'lastName', name: lastNameElm, },
-    { id: 'age', field: 'age', name: 'Age', editor: Editors.text, editorClass: Editors.text },
+    { id: 'age', field: 'age', name: 'Age', editor: { model: Editors.text }, editorClass: Editors.text },
   ] as Column[];
   let plugin: SlickCellExternalCopyManager;
   const gridOptionsMock = {
@@ -194,6 +195,23 @@ describe('CellExternalCopyManager', () => {
 
       expect(loadValSpy).toHaveBeenCalledWith(mockItem);
       expect(applyValSpy).toHaveBeenCalledWith(mockItem, 'some value');
+    });
+
+    it('should call "setDataItemValueForColumn" and expect an onValidationError triggered if validation failed', () => {
+      const validationResults = { valid: false, msg: 'foobar' };
+      const applyValSpy = jest.spyOn(mockTextEditor, 'applyValue');
+      const loadValSpy = jest.spyOn(mockTextEditor, 'loadValue');
+      const validationSpy = jest.spyOn(mockTextEditor, 'validate').mockReturnValue(validationResults);
+      jest.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockCellSelectionModel as any);
+      const notifySpy = jest.spyOn(gridStub.onValidationError, 'notify');
+      const mockItem = { firstName: 'John', lastName: 'Doe' };
+      plugin.init(gridStub);
+      plugin.setDataItemValueForColumn(mockItem, mockColumns[0], 'some value');
+
+      expect(loadValSpy).toHaveBeenCalledWith(mockItem);
+      expect(applyValSpy).toHaveBeenCalledWith(mockItem, 'some value');
+      expect(validationSpy).toHaveBeenCalled();
+      expect(notifySpy).toHaveBeenCalledWith(expect.objectContaining({ validationResults }));
     });
 
     it('should call "setDataItemValueForColumn" and expect item last name to change with new value when no Editor is provided', () => {

@@ -67,7 +67,7 @@ const gridStub = {
 const columnsMock: Column[] = [
   { id: 'productName', field: 'productName', width: 100, name: 'Product', nameKey: 'PRODUCT', editorClass: Editors.text as any },
   { id: 'field2', field: 'field2', width: 75, name: 'Field 2' },
-  { id: 'field3', field: 'field3', width: 75, name: 'Field 3', nameKey: 'DURATION', editorClass: Editors.date as any, columnGroup: 'Group Name', columnGroupKey: 'GROUP_NAME' },
+  { id: 'field3', field: 'field3', width: 75, name: 'Field 3', nameKey: 'DURATION', editorClass: Editors.float as any, columnGroup: 'Group Name', columnGroupKey: 'GROUP_NAME' },
   { id: 'zip', field: 'adress.zip', width: 75, name: 'Zip', editorClass: Editors.integer as any, columnGroup: 'Group Name', columnGroupKey: 'GROUP_NAME' }
 ];
 const compositeEditorOptionsMock = {

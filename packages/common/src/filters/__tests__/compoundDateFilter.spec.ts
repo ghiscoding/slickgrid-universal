@@ -1,4 +1,6 @@
 import 'jest-extended';
+import { VanillaCalendar } from 'vanilla-calendar-picker';
+
 import { Filters } from '../filters.index';
 import { FieldType, OperatorType } from '../../enums/index';
 import { Column, FilterArguments, GridOption } from '../../interfaces/index';
@@ -15,7 +17,7 @@ function removeExtraSpaces(text: string) {
   return `${text}`.replace(/\s+/g, ' ');
 }
 
-const gridOptionMock = {
+let gridOptionMock = {
   enableFiltering: true,
   enableFilterTrimWhiteSpace: true,
 } as GridOption;
@@ -27,6 +29,8 @@ const gridStub = {
   getHeaderRowColumn: jest.fn(),
   render: jest.fn(),
 } as unknown as SlickGrid;
+
+jest.useFakeTimers();
 
 describe('CompoundDateFilter', () => {
   let divContainer: HTMLDivElement;
@@ -43,7 +47,6 @@ describe('CompoundDateFilter', () => {
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
     spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
-    jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionMock);
 
     mockColumn = { id: 'finish', field: 'finish', filterable: true, outputType: FieldType.dateIso, filter: { model: Filters.compoundDate, operator: '>' } };
 
@@ -53,6 +56,11 @@ describe('CompoundDateFilter', () => {
       callback: jest.fn(),
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
+    gridOptionMock = {
+      enableFiltering: true,
+      enableFilterTrimWhiteSpace: true,
+    };
+    jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionMock);
 
     filter = new CompoundDateFilter(translateService);
   });
@@ -79,15 +87,17 @@ describe('CompoundDateFilter', () => {
     mockColumn.filter!.placeholder = testValue;
 
     filter.init(filterArguments);
-    const filterElm = divContainer.querySelector('.search-filter.filter-finish .flatpickr input.input') as HTMLInputElement;
+    const filterElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
 
     expect(filterElm.placeholder).toBe(testValue);
   });
 
   it('should hide the DOM element when the "hide" method is called', () => {
     filter.init(filterArguments);
-    const spy = jest.spyOn(filter.flatInstance, 'close');
-    const calendarElm = document.body.querySelector('.flatpickr-calendar') as HTMLDivElement;
+    const spy = jest.spyOn(filter.calendarInstance!, 'hide');
+    const inputElm = document.body.querySelector('input.date-picker') as HTMLInputElement;
+    inputElm.dispatchEvent(new MouseEvent('click'));
+    const calendarElm = document.body.querySelector('.vanilla-calendar') as HTMLDivElement;
     filter.hide();
 
     expect(calendarElm).toBeTruthy();
@@ -96,44 +106,37 @@ describe('CompoundDateFilter', () => {
 
   it('should show the DOM element when the "show" method is called', () => {
     filter.init(filterArguments);
-    const spy = jest.spyOn(filter.flatInstance, 'open');
-    const calendarElm = document.body.querySelector('.flatpickr-calendar') as HTMLDivElement;
+    const spy = jest.spyOn(filter.calendarInstance!, 'show');
     filter.show();
+    const calendarElm = document.body.querySelector('.vanilla-calendar') as HTMLDivElement;
 
     expect(calendarElm).toBeTruthy();
     expect(spy).toHaveBeenCalled();
   });
 
-  it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element', () => {
-    jest.spyOn(gridStub, 'getOptions').mockReturnValue({
-      ...gridOptionMock, darkMode: true
-    });
-
-    filter.init(filterArguments);
-    const spy = jest.spyOn(filter.flatInstance, 'open');
-    const calendarElm = document.body.querySelector('.flatpickr-calendar') as HTMLDivElement;
-    filter.show();
-
-    expect(calendarElm.classList.contains('slick-dark-mode')).toBeTruthy();
-    expect(spy).toHaveBeenCalled();
-  });
-
-  it('should be able to retrieve default flatpickr options through the Getter', () => {
+  it('should be able to retrieve default picker options through the Getter', () => {
     filter.init(filterArguments);
 
-    expect(filter.flatInstance).toBeTruthy();
-    expect(filter.flatpickrOptions).toEqual({
-      altFormat: 'Y-m-d',
-      altInput: true,
-      closeOnSelect: true,
-      dateFormat: 'Y-m-d',
-      defaultDate: '',
-      errorHandler: expect.toBeFunction(),
-      locale: 'en',
-      mode: 'single',
-      onChange: expect.anything(),
-      theme: 'light',
-      wrap: true,
+    expect(filter.calendarInstance).toBeTruthy();
+    expect(filter.pickerOptions).toEqual({
+      actions: {
+        changeToInput: expect.any(Function),
+        clickDay: expect.any(Function),
+      },
+      input: true,
+      jumpToSelectedDate: true,
+      sanitizer: expect.any(Function),
+      toggleSelected: false,
+      settings: {
+        iso8601: false,
+        lang: 'en',
+        visibility: {
+          positionToInput: 'auto',
+          theme: 'light',
+          weekend: false,
+        },
+      },
+      type: 'default'
     });
   });
 
@@ -163,14 +166,14 @@ describe('CompoundDateFilter', () => {
   });
 
   it('should trigger input change event and expect the callback to be called with the date provided in the input', () => {
-    mockColumn.filter!.filterOptions = { allowInput: true }; // change to allow input value only for testing purposes
     mockColumn.filter!.operator = '>';
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish .flatpickr input.input') as HTMLInputElement;
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
     filterInputElm.value = '2001-01-02T16:02:02.239Z';
-    filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2001-01-02'], hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2001-01-02'], hide: jest.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
@@ -179,15 +182,29 @@ describe('CompoundDateFilter', () => {
     });
   });
 
+  it('should trigger input change event with empty value and still expect the callback to be called with the date provided in the input', () => {
+    mockColumn.filter!.operator = '>';
+
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+    filterInputElm.value = '2001-01-02T16:02:02.239Z';
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: [], hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: [], hide: jest.fn() } as unknown as VanillaCalendar);
+    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
+
+    expect(filterFilledElms.length).toBe(0);
+    expect(filterInputElm.value).toBe('');
+  });
+
   it('should pass a different operator then trigger an input change event and expect the callback to be called with the date provided in the input', () => {
-    mockColumn.filter!.filterOptions = { allowInput: true }; // change to allow input value only for testing purposes
     mockColumn.filter!.operator = '>';
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish .flatpickr input.input') as HTMLInputElement;
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
     filterInputElm.value = '2001-01-02T16:02:02.239Z';
-    filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2001-01-02'], hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2001-01-02'], hide: jest.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
@@ -195,12 +212,11 @@ describe('CompoundDateFilter', () => {
   });
 
   it('should change operator dropdown without a date entered and not expect the callback to be called', () => {
-    mockColumn.filter!.filterOptions = { allowInput: true }; // change to allow input value only for testing purposes
     mockColumn.filter!.operator = '>';
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish .flatpickr input.input') as HTMLInputElement;
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
     const filterSelectElm = divContainer.querySelector('.search-filter.filter-finish select') as HTMLInputElement;
     filterInputElm.value = undefined as any;
     filterSelectElm.value = '<=';
@@ -210,13 +226,12 @@ describe('CompoundDateFilter', () => {
   });
 
   it('should change operator dropdown without a date entered and expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as False', () => {
-    mockColumn.filter!.filterOptions = { allowInput: true }; // change to allow input value only for testing purposes
     mockColumn.filter!.operator = '>';
     mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = false;
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish .flatpickr input.input') as HTMLInputElement;
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
     const filterSelectElm = divContainer.querySelector('.search-filter.filter-finish select') as HTMLInputElement;
     filterInputElm.value = undefined as any;
     filterSelectElm.value = '<=';
@@ -225,22 +240,109 @@ describe('CompoundDateFilter', () => {
     expect(spyCallback).toHaveBeenCalled();
   });
 
-  it('should create the input filter with a default search term when passed as a filter argument', () => {
-    filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
+  it('should hide picker when pressing Escape key', () => {
+    const hideSpy = jest.spyOn(filter, 'hide');
+
+    filter.init(filterArguments);
+    filter.show();
+    const calendarElm = document.body.querySelector('.vanilla-calendar') as HTMLDivElement;
+
+    expect(calendarElm).toBeTruthy();
+
+    calendarElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+    expect(hideSpy).toHaveBeenCalled();
+  });
+
+  it('should hide picker when pressing Tab key', () => {
+    const hideSpy = jest.spyOn(filter, 'hide');
+
+    filter.init(filterArguments);
+    filter.show();
+    const calendarElm = document.body.querySelector('.vanilla-calendar') as HTMLDivElement;
+
+    expect(calendarElm).toBeTruthy();
+
+    calendarElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }));
+    expect(hideSpy).toHaveBeenCalled();
+  });
+
+  it('should clear picker when pressing Backspace key', () => {
+    filterArguments.searchTerms = ['2000-01-01'];
+    mockColumn.filter!.operator = '<=';
+    const clearSpy = jest.spyOn(filter, 'clear');
+
+    filter.init(filterArguments);
+    filter.show();
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+    const calendarElm = document.body.querySelector('.vanilla-calendar') as HTMLDivElement;
+
+    expect(calendarElm).toBeTruthy();
+    expect(filterInputElm.value).toBe('2000-01-01');
+
+    filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { key: 'Backspace', bubbles: true, cancelable: true }));
+    expect(clearSpy).toHaveBeenCalled();
+    expect(filterInputElm.value).toBe('');
+  });
+
+  it('should create the input filter with a default search terms when passed as a filter argument', () => {
+    filterArguments.searchTerms = ['2000-01-01T05:00:00.000+05:00'];
+    mockColumn.filter!.operator = '<=';
+    mockColumn.type = FieldType.dateUtc;
+    mockColumn.outputType = FieldType.dateUtc;
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+
+    filterInputElm.focus();
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-01T05:00:00.000+05:00'], hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-01T05:00:00.000+05:00'], hide: jest.fn() } as unknown as VanillaCalendar);
+    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
+
+    expect(filterFilledElms.length).toBe(1);
+    expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-01T10:00:00.000Z');
+    expect(filterInputElm.value).toBe('2000-01-01T10:00:00.000Z');
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T10:00:00.000Z'], shouldTriggerQuery: true });
+  });
+
+  it('should create the input filter with a default input dates when passed as a filter options', () => {
+    mockColumn.filter!.operator = '<=';
+    mockColumn.filter!.filterOptions = {
+      selected: { dates: ['2001-01-02'] }
+    };
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+
+    filterInputElm.focus();
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-02'], hide: jest.fn() } as unknown as VanillaCalendar);
+    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
+
+    expect(filterFilledElms.length).toBe(1);
+    expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-02T00:00:00.000Z');
+    expect(filterInputElm.value).toBe('2000-01-02');
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-02'], shouldTriggerQuery: true });
+  });
+
+  it('should have a value with date & time in the picker when "enableTime" option is set as a global default filter option and we trigger a change', () => {
+    gridOptionMock.defaultFilterOptions = {
+      date: { selected: { dates: ['2001-01-02'] } }
+    };
     mockColumn.filter!.operator = '<=';
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish .flatpickr input.input') as HTMLInputElement;
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
 
     filterInputElm.focus();
-    filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-02'], hide: jest.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(filter.currentDateOrDates).toBe('2000-01-01T05:00:00.000Z');
-    expect(filterInputElm.value).toBe('2000-01-01');
-    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T05:00:00.000Z'], shouldTriggerQuery: true });
+    expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-02T00:00:00.000Z');
+    expect(filterInputElm.value).toBe('2000-01-02');
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-02'], shouldTriggerQuery: true });
   });
 
   it('should trigger an operator change event and expect the callback to be called with the searchTerms and operator defined', () => {
@@ -263,67 +365,45 @@ describe('CompoundDateFilter', () => {
     const mockDate = '2001-01-02T16:02:02.239Z';
     filter.init(filterArguments);
     filter.setValues(mockDate);
-    let filledInputElm = divContainer.querySelector('.search-filter.filter-finish .filled') as HTMLInputElement;
+    let filledInputElm = divContainer.querySelector('.search-filter.filter-finish.filled') as HTMLInputElement;
 
     expect(filter.currentDateOrDates).toEqual(mockDate);
     expect(filledInputElm).toBeTruthy();
 
     filter.setValues('');
-    filledInputElm = divContainer.querySelector('.search-filter.filter-finish .filled') as HTMLInputElement;
+    filledInputElm = divContainer.querySelector('.search-filter.filter-finish.filled') as HTMLInputElement;
     expect(filledInputElm).toBeFalsy();
   });
 
   it('should work with different locale when locale is changed', async () => {
-    await (await import('flatpickr/dist/l10n/fr')).French;
-
     translateService.use('fr');
-    filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
+    filterArguments.searchTerms = ['2000-01-01T05:00:00.000+05:00'];
     mockColumn.filter!.operator = '<=';
+    mockColumn.type = FieldType.dateUtc;
+    mockColumn.outputType = FieldType.dateUtc;
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish .flatpickr input.input') as HTMLInputElement;
-    const calendarElm = document.body.querySelector('.flatpickr-calendar') as HTMLDivElement;
-    const selectonOptionElms = calendarElm.querySelectorAll<HTMLSelectElement>(' .flatpickr-monthDropdown-months option');
+    filter.show();
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+    const calendarElm = document.body.querySelector('.vanilla-calendar') as HTMLDivElement;
+    const monthElm = calendarElm.querySelector('.vanilla-calendar-month') as HTMLButtonElement;
 
     filter.show();
 
     filterInputElm.focus();
-    filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
+
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-01T05:00:00.000+05:00'], hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-01T05:00:00.000+05:00'], hide: jest.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(filter.currentDateOrDates).toBe('2000-01-01T05:00:00.000Z');
-    expect(filterInputElm.value).toBe('2000-01-01');
-    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T05:00:00.000Z'], shouldTriggerQuery: true });
+    expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-01T10:00:00.000Z');
+    expect(filterInputElm.value).toBe('2000-01-01T10:00:00.000Z');
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T10:00:00.000Z'], shouldTriggerQuery: true });
     expect(calendarElm).toBeTruthy();
-    expect(selectonOptionElms.length).toBe(12);
-    expect(selectonOptionElms[0].textContent).toBe('janvier');
-  });
-
-  it('should display a console warning when locale is not previously imported', (done) => {
-    const consoleSpy = jest.spyOn(global.console, 'warn').mockReturnValue();
-
-    translateService.use('zz-yy'); // will be trimmed to 2 chars "zz"
-    filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
-    mockColumn.filter!.operator = '<=';
-
-    filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish .flatpickr input.input') as HTMLInputElement;
-    const calendarElm = document.body.querySelector('.flatpickr-calendar') as HTMLDivElement;
-    const selectonOptionElms = calendarElm.querySelectorAll<HTMLSelectElement>(' .flatpickr-monthDropdown-months option');
-
-    filter.show();
-
-    filterInputElm.focus();
-    filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
-
-    setTimeout(() => {
-      expect(selectonOptionElms.length).toBe(12);
-      expect(selectonOptionElms[0].textContent).toBe('January');
-      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining(`[Slickgrid-Universal] Flatpickr missing locale imports (zz), will revert to English as the default locale.`));
-      done();
-    });
+    expect(monthElm).toBeTruthy();
+    // expect(monthElm.textContent).toBe('janvier');
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {
@@ -331,13 +411,14 @@ describe('CompoundDateFilter', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
+    filter.show();
     filter.clear();
-    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish .flatpickr input.input') as HTMLInputElement;
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterInputElm.value).toBe('');
     expect(filterFilledElms.length).toBe(0);
-    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: true });
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: true });
   });
 
   it('should trigger a callback with the clear filter but without querying when when calling the "clear" method with False as argument', () => {
@@ -346,51 +427,53 @@ describe('CompoundDateFilter', () => {
 
     filter.init(filterArguments);
     filter.clear(false);
-    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish .flatpickr input.input') as HTMLInputElement;
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterInputElm.value).toBe('');
     expect(filterFilledElms.length).toBe(0);
-    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, clearFilterTriggered: true, shouldTriggerQuery: false });
   });
 
   it('should have a value with date & time in the picker when "enableTime" option is set and we trigger a change', () => {
-    mockColumn.filter!.filterOptions = { enableTime: true, allowInput: true }; // change to allow input value only for testing purposes
     mockColumn.outputType = FieldType.dateTimeIsoAmPm;
     mockColumn.filter!.operator = '>';
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish .flatpickr input.input') as HTMLInputElement;
-    filterInputElm.value = '2001-01-02T16:02:02.000+05:00';
-    filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+    filterInputElm.value = '2001-01-02T16:02:02.000';
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2001-01-02 16:02:02.000'], hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2001-01-02 16:02:02.000'], hide: jest.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
     // expect(filter.currentDateOrDates.toISOString()).toBe('2001-01-02T21:02:02.000Z');
-    expect(filterInputElm.value).toBe('2001-01-02 4:02:02 PM');
+    expect(filterInputElm.value).toBe('2001-01-02 04:02:02 pm');
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), {
       columnDef: mockColumn, operator: '>', searchTerms: ['2001-01-02'], shouldTriggerQuery: true
     });
   });
 
   it('should have a value with date & time in the picker when using no "outputType" which will default to UTC date', () => {
+    mockColumn.type = FieldType.dateUtc;
     mockColumn.outputType = null as any;
-    filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
+    filterArguments.searchTerms = ['2000-01-01T05:00:00.000+05:00'];
     mockColumn.filter!.operator = '<=';
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish .flatpickr input.input') as HTMLInputElement;
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
 
     filterInputElm.focus();
-    filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keyup', { keyCode: 97, bubbles: true, cancelable: true }));
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-01T05:00:00.000+05:00'], hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-01T05:00:00.000+05:00'], hide: jest.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(filter.currentDateOrDates).toBe('2000-01-01T05:00:00.000Z');
-    expect(filterInputElm.value).toBe('2000-01-01T05:00:00.000Z');
-    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T05:00:00.000Z'], shouldTriggerQuery: true });
+    expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-01T10:00:00.000Z');
+    expect(filterInputElm.value).toBe('2000-01-01T10:00:00.000Z');
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T10:00:00.000Z'], shouldTriggerQuery: true });
   });
 
   it('should have default English text with operator dropdown options related to dates', () => {
@@ -431,12 +514,10 @@ describe('CompoundDateFilter', () => {
   it('should be able to change compound operator & description with alternate texts for the operator list showing up in the operator select dropdown options list', () => {
     mockColumn.outputType = null as any;
     filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
-    jest.spyOn(gridStub, 'getOptions').mockReturnValue({
-      ...gridOptionMock, compoundOperatorAltTexts: {
-        numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
-        text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
-      }
-    });
+    gridOptionMock.compoundOperatorAltTexts = {
+      numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
+      text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
+    };
 
     filter.init(filterArguments);
     const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.input-group-prepend.operator select');

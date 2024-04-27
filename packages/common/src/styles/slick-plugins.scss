@@ -1,5 +1,6 @@
 /* sass variables */
 @import './variables';
+@import './sass-utilities';
 @import 'multiple-select-vanilla/dist/styles/sass/multiple-select.scss';
 
 // ----------------------------------------------
@@ -130,36 +131,60 @@ li.hidden {
     width: auto;
   }
 
-  /* replace checkboxes by Font-Awesome icons */
+  label {
+    line-height: var(--slick-column-picker-icon-container-line-height, $slick-column-picker-icon-container-line-height);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &.disabled {
+    cursor: default;
+  }
   input[type=checkbox] {
-    display:none;  /* to hide the checkbox itself */
-    margin-left: 4px;
-    margin-top: 3px;
+    // hide original input checkbox since we use an SVG on top of it
+    opacity: 0;
+    width: 0;
+    margin-left: 0;
   }
 
-  input[type=checkbox] + label:before {
+  .icon-checkbox-container {
     cursor: pointer;
-    content: var(--slick-column-picker-checkbox-icon-unchecked, $slick-column-picker-checkbox-icon-unchecked);
-    color: var(--slick-column-picker-checkbox-color, $slick-column-picker-checkbox-color);
-    display: inline-block;
-    font-weight: var(--slick-column-picker-checkbox-font-weight, $slick-column-picker-checkbox-font-weight);
-    font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-    font-size: var(--slick-column-picker-checkbox-size, $slick-column-picker-checkbox-size);
-    line-height: var(--slick-column-picker-checkbox-icon-line-height, $slick-column-picker-checkbox-icon-line-height);
-    opacity: var(--slick-column-picker-checkbox-opacity, $slick-column-picker-checkbox-opacity); /* unchecked icon */
-    margin-right: 4px;
-    vertical-align: var(--slick-column-picker-checkbox-icon-vertical-align, $slick-column-picker-checkbox-icon-vertical-align);
-    width: var(--slick-column-picker-checkbox-width, $slick-column-picker-checkbox-width);
-  }
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--slick-column-picker-icon-container-bg-color, $slick-column-picker-icon-container-bg-color);
+    height: var(--slick-column-picker-icon-container-size, $slick-column-picker-icon-container-size);
+    width: var(--slick-column-picker-icon-container-size, $slick-column-picker-icon-container-size);
+    border: var(--slick-column-picker-icon-border, $slick-column-picker-icon-border);
+    border-radius: var(--slick-column-picker-icon-border-radius, $slick-column-picker-icon-border-radius);
 
-  input[type=checkbox] + label:hover:before {
-    opacity: var(--slick-column-picker-checkbox-opacity-hover, $slick-column-picker-checkbox-opacity-hover);
-  }
+    div.mdi {
+      opacity: 1;
+      font-size: var(--slick-column-picker-icon-font-size, $slick-column-picker-icon-font-size);
+      color: var(--slick-column-picker-icon-color, $slick-column-picker-icon-color);
 
-  input[type=checkbox]:checked + label:before {
-    opacity: 1; /* checked icon */
-    content: var(--slick-column-picker-checkbox-icon-checked, $slick-column-picker-checkbox-icon-checked);
-    width: var(--slick-column-picker-checkbox-width, $slick-column-picker-checkbox-width);
+      &.mdi-icon-picker-check {
+        @include generateSvgStyle('slick-column-picker-icon-checked-svg', $slick-column-picker-icon-checked-svg-path);
+      }
+      &.mdi-icon-picker-uncheck {
+        @include generateSvgStyle('slick-column-picker-icon-unchecked-svg', $slick-column-picker-icon-unchecked-svg-path);
+        opacity: var(--slick-column-picker-unchecked-opacity, $slick-column-picker-unchecked-opacity); /* unchecked icon */
+        &:hover {
+          opacity: var(--slick-column-picker-opacity-hover, $slick-column-picker-opacity-hover);
+        }
+
+        // since we use the div container with a border, we don't actually need an icon for unchecked
+        // BUT since we want to keep the same size, we can simply hide the mask to keep the same size
+        visibility: var(--slick-column-picker-icon-unchecked-color-visibility, $slick-column-picker-icon-unchecked-color-visibility);
+      }
+    }
+    & + span.checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding-left: var(--slick-column-picker-label-text-padding-left, $slick-column-picker-label-text-padding-left);
+    }
   }
 }
 
@@ -333,7 +358,6 @@ li.hidden {
       margin-right: var(--slick-menu-icon-margin-right, $slick-menu-icon-margin-right);
       vertical-align: middle;
       min-width: var(--slick-menu-icon-min-width, $slick-menu-icon-min-width);
-      width: var(--slick-menu-icon-width, $slick-menu-icon-width);
     }
 
     .slick-menu-content {
@@ -474,16 +498,17 @@ li.hidden {
   background-repeat: no-repeat;
   background-position: center center;
   cursor: pointer;
+  visibility: visible;
 }
 
 .slick-header-button-hidden {
-  width: 0;
+  visibility: hidden;
   margin-right: var(--slick-header-button-hidden-margin-right, $slick-header-button-hidden-margin-right);
-  transition: 0.2s width;
+  transition: var(--slick-header-button-hidden-transition, $slick-header-button-hidden-transition);
 }
 
 .slick-header-column:hover > .slick-header-button {
-  width: var(--slick-header-button-width, $slick-header-button-width);
+  visibility: visible;
 }
 
 // ----------------------------------------------
@@ -491,12 +516,9 @@ li.hidden {
 // ----------------------------------------------
 
 .slick-header-menu-button {
-  background-position: center center;
-  background-repeat: no-repeat;
+  background-color: currentColor;
   cursor: pointer;
-  display: none;
   position: absolute;
-  height: var(--slick-header-menu-button-height, $slick-header-menu-button-height);
   border: var(--slick-header-menu-button-border, $slick-header-menu-button-border);
   border-width: var(--slick-header-menu-button-border-width, $slick-header-menu-button-border-width);
   padding: var(--slick-header-menu-button-padding, $slick-header-menu-button-padding);
@@ -504,17 +526,12 @@ li.hidden {
 
   // The next few items are already defined in the slick-headermenu file and it should stay that way, *unless* you also replace the button image included there.
   bottom: 0;
-  right: var(--slick-header-menu-button-margin-right, $slick-header-menu-button-margin-right);
   top: 0;
-  width: var(--slick-header-menu-button-width, $slick-header-menu-button-width);
-}
-.slick-header-menu-button:before {
-  display: inline-block;
-  content: var(--slick-header-menu-button-icon, $slick-header-menu-button-icon);
-  font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-  font-size: var(--slick-header-menu-button-icon-font-size, $slick-header-menu-button-icon-font-size);
-  font-weight: var(--slick-header-menu-button-icon-font-weight, $slick-header-menu-button-icon-font-weight);
-  width: var(--slick-header-menu-button-icon-width, $slick-header-menu-button-icon-width);
+  right: var(--slick-header-menu-button-margin-right, $slick-header-menu-button-margin-right);
+  height: var(--slick-header-menu-button-icon-size, $slick-header-menu-button-icon-size);
+  width: var(--slick-header-menu-button-icon-size, $slick-header-menu-button-icon-size);
+
+  @include generateSvgStyle('slick-header-menu-button-icon-svg', $slick-header-menu-button-icon-svg-path);
 }
 
 .slick-header-column {
@@ -532,78 +549,91 @@ li.hidden {
 // ----------------------------------------------
 // Row Move Manager Plugin
 // ----------------------------------------------
-.slick-cell.cell-reorder:before {
-  display: inline-block;
-  font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-  font-size: var(--slick-row-move-plugin-size, $slick-row-move-plugin-size);
-  content: var(--slick-row-move-plugin-icon, $slick-row-move-plugin-icon);
-  width: var(--slick-row-move-plugin-icon-width, $slick-row-move-plugin-icon-width);
-  vertical-align: var(--slick-row-move-plugin-icon-vertical-align, $slick-row-move-plugin-icon-vertical-align);
-}
 .slick-cell.cell-reorder {
-  cursor: var(--slick-row-move-plugin-cursor, $slick-row-move-plugin-cursor);
+  text-align: center;
+
+  .slick-row-move-column {
+    background-color: currentColor;
+    display: inline-block;
+    height: 1em;
+    width: 1em;
+    font-size: var(--slick-row-move-plugin-icon-font-size, $slick-row-move-plugin-icon-font-size);
+    color: var(--slick-row-move-plugin-icon-color, $slick-row-move-plugin-icon-color);
+    cursor: var(--slick-row-move-plugin-cursor, $slick-row-move-plugin-cursor);
+    @include generateSvgStyle('slick-row-move-plugin-icon-svg', $slick-row-move-plugin-icon-svg-path);
+  }
 }
 
 // ----------------------------------------------
 // Checkbox Selector Plugin
 // ----------------------------------------------
-.slick-headerrow-column,
+
+.slick-headerrow-column.checkbox-header {
+  display: inline-flex;
+  justify-content: center;
+}
+
 .slick-column-name,
+.slick-headerrow-column.checkbox-header,
 .slick-cell-checkboxsel {
   text-align: center;
+
+  label {
+    line-height: var(--slick-checkbox-icon-container-line-height, $slick-checkbox-icon-container-line-height);
+  }
   #filter-checkbox-selectall-container {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    // line-height: 0;
   }
 
-  input[type=checkbox],
-  #filter-checkbox-selectall-container > input[type=checkbox] {
-    display:none;  /* to hide the checkbox itself */
+  &.disabled {
+    cursor: default;
+  }
+  input[type=checkbox] {
+    // hide original input checkbox since we use an SVG on top of it
+    opacity: 0;
+    width: 0;
+    margin-left: 0;
   }
 
-  input[type=checkbox],
-  #filter-checkbox-selectall-container > input[type=checkbox] + label {
-    margin: 0;
-  }
-
-  input[type=checkbox] + label:before,
-  #filter-checkbox-selectall-container > input[type=checkbox] + label:before {
+  .icon-checkbox-container {
     cursor: pointer;
-    content: var(--slick-checkbox-selector-icon-unchecked, $slick-checkbox-selector-icon-unchecked);
-    background-color: var(--slick-checkbox-selector-icon-bg-color, $slick-checkbox-selector-icon-bg-color);
-    color: var(--slick-checkbox-selector-unchecked-color, $slick-checkbox-selector-unchecked-color);
-    display: inline-block;
-    font-weight: var(--slick-checkbox-selector-icon-font-weight, $slick-checkbox-selector-icon-font-weight);
-    font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-    font-size: var(--slick-checkbox-selector-size, $slick-checkbox-selector-size);
-    opacity: var(--slick-checkbox-selector-opacity, $slick-checkbox-selector-opacity); /* unchecked icon */
-    margin: var(--slick-checkbox-selector-icon-margin, $slick-checkbox-selector-icon-margin);
-  }
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--slick-checkbox-icon-container-bg-color, $slick-checkbox-icon-container-bg-color);
+    height: var(--slick-checkbox-icon-container-size, $slick-checkbox-icon-container-size);
+    width: var(--slick-checkbox-icon-container-size, $slick-checkbox-icon-container-size);
+    border: var(--slick-checkbox-icon-border, $slick-checkbox-icon-border);
+    border-radius: var(--slick-checkbox-icon-border-radius, $slick-checkbox-icon-border-radius);
 
-  input[type=checkbox] + label:hover:before,
-  #filter-checkbox-selectall-container > input[type=checkbox] + label:hover:before {
-    opacity: var(--slick-checkbox-selector-opacity-hover, $slick-checkbox-selector-opacity-hover);
-  }
+    div.mdi {
+      opacity: 1;
+      font-size: var(--slick-checkbox-icon-font-size, $slick-checkbox-icon-font-size);
+      color: var(--slick-checkbox-icon-color, $slick-checkbox-icon-color);
 
-  input[type=checkbox]:checked + label:before,
-  #filter-checkbox-selectall-container > input[type=checkbox]:checked + label:before {
-    content: var(--slick-checkbox-selector-icon-checked, $slick-checkbox-selector-icon-checked);
-    color: var(--slick-checkbox-selector-checked-color, $slick-checkbox-selector-checked-color);
-    opacity: 1; /* checked icon */
+      &.mdi-icon-check {
+        @include generateSvgStyle('slick-checkbox-icon-checked-svg', $slick-checkbox-icon-checked-svg-path);
+      }
+      &.mdi-icon-uncheck {
+        @include generateSvgStyle('slick-checkbox-icon-unchecked-svg', $slick-checkbox-icon-unchecked-svg-path);
+        opacity: var(--slick-checkbox-unchecked-opacity, $slick-checkbox-unchecked-opacity); /* unchecked icon */
+        &:hover {
+          opacity: var(--slick-checkbox-opacity-hover, $slick-checkbox-opacity-hover);
+        }
 
+        // since we use the div container with a border, we don't actually need an icon for unchecked
+        // BUT since we want to keep the same size, we can simply hide the mask to keep the same size
+        visibility: var(--slick-checkbox-icon-unchecked-color-visibility, $slick-checkbox-icon-unchecked-color-visibility);
+      }
+    }
   }
-  input[type=checkbox] + label:before,
-  input[type=checkbox]:checked + label:before,
-  #filter-checkbox-selectall-container > input[type=checkbox] + label:before,
-  #filter-checkbox-selectall-container > input[type=checkbox]:checked + label:before {
-    height: var(--slick-checkbox-selector-icon-height, $slick-checkbox-selector-icon-height);
-    width: var(--slick-checkbox-selector-icon-width, $slick-checkbox-selector-icon-width);
-    border: var(--slick-checkbox-selector-icon-border, $slick-checkbox-selector-icon-border);
-    border-radius: var(--slick-checkbox-selector-icon-border-radius, $slick-checkbox-selector-icon-border-radius);
-  }
+}
+
+.slick-header-column.header-checkbox-selectall .slick-column-name {
+  text-align: center;
+  margin-right: 0;
 }
 
 .slick-group {
@@ -627,6 +657,9 @@ li.hidden {
   height: var(--slick-header-input-height, $slick-header-input-height);
 
   span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     font-size: var(--slick-multiselect-input-filter-font-size, $slick-multiselect-input-filter-font-size);
     font-family: var(--slick-multiselect-input-filter-font-family, $slick-multiselect-input-filter-font-family);
   }
@@ -787,9 +820,9 @@ input.search-filter {
     &.compound-input {
       border-radius: var(--slick-compound-filter-border-radius, $slick-compound-filter-border-radius) !important;
       border-left: none;
-      &::placeholder {
-        color: var(--slick-editor-placeholder-color, $slick-editor-placeholder-color);
-      }
+    }
+    &::placeholder {
+      color: var(--slick-placeholder-color, $slick-placeholder-color);
     }
   }
   input.compound-slider {
@@ -800,7 +833,7 @@ input.search-filter {
   .slick-headerrow {
     .slick-headerrow-columns {
       .slick-headerrow-column {
-        .input-group-prepend + .flatpickr {
+        .input-group-prepend + .date-picker {
           input.compound-input {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
@@ -815,50 +848,51 @@ input.search-filter {
 // Date Picker Filter
 // ----------------------------------------------
 
+.vanilla-calendar {
+  padding: 0.9rem;
+  z-index: 9999;
+}
+
 .search-filter.form-group {
-  .input-group.flatpickr  input.form-control {
+  .input-group.date-picker  input.form-control {
     border-bottom-left-radius: 0px;
     border-top-left-radius: 0px;
   }
 }
-.search-filter .flatpickr {
+.search-filter .date-picker {
   input.form-control {
     border-left: none;
     &::placeholder {
-      color: var(--slick-editor-placeholder-color, $slick-editor-placeholder-color);
+      color: var(--slick-placeholder-color, $slick-placeholder-color);
     }
   }
 }
-.search-filter.flatpickr,
-.search-filter .flatpickr {
+.search-filter .date-picker {
   flex: 1;
   cursor: pointer;
 
-  input.flatpickr.form-control,
-  .flatpickr-input.form-control {
-    background-color: var(--slick-flatpickr-bgcolor, $slick-flatpickr-bgcolor);
+  .date-picker input.form-control {
+    background-color: var(--slick-date-picker-bg-color, $slick-date-picker-bg-color);
     font-family: var(--slick-filter-placeholder-font-family, $slick-filter-placeholder-font-family);
     font-size: var(--slick-font-size-base, $slick-font-size-base);
     border-radius: var(--slick-compound-filter-border-radius, $slick-compound-filter-border-radius);
     width: 100%;
     &[readonly] {
-      background-color: var(--slick-flatpickr-bgcolor, $slick-flatpickr-bgcolor);
+      background-color: var(--slick-date-picker-bg-color, $slick-date-picker-bg-color);
     }
   }
-  .form-control[readonly],
-  .flatpickr.form-control[readonly] {
+  .form-control[readonly] {
     cursor: pointer;
-    background-color: var(--slick-flatpickr-bgcolor, $slick-flatpickr-bgcolor);
+    background-color: var(--slick-date-picker-bg-color, $slick-date-picker-bg-color);
   }
 }
-input.flatpickr-input.form-control,
-input.flatpickr.form-control {
+.date-picker input.form-control {
   cursor: pointer;
   font-family: var(--slick-filter-placeholder-font-family, $slick-filter-placeholder-font-family);
   font-size: var(--slick-font-size-base, $slick-font-size-base);
   border-radius: var(--slick-date-range-filter-border-radius, $slick-date-range-filter-border-radius);
   &[readonly] {
-    background-color: var(--slick-flatpickr-bgcolor, $slick-flatpickr-bgcolor);
+    background-color: var(--slick-date-picker-bg-color, $slick-date-picker-bg-color);
   }
 }
 
@@ -887,30 +921,33 @@ input.flatpickr.form-control {
     }
 
     .slick-group-toggle-all {
+      display: inline-flex;
+      align-items: center;
       cursor: pointer;
-      border: var(--draggable-group-toggle-all-border, $slick-draggable-group-toggle-all-border);
-      border-radius: var(--draggable-group-toggle-all-border-radius, $slick-draggable-group-toggle-all-border-radius);
-      display: var(--slick-draggable-group-toggle-all-display, $slick-draggable-group-toggle-all-display);
+      border: var(--slick-draggable-group-toggle-all-border, $slick-draggable-group-toggle-all-border);
+      border-radius: var(--slick-draggable-group-toggle-all-border-radius, $slick-draggable-group-toggle-all-border-radius);
       margin-right: var(--slick-draggable-group-toggle-all-margin-right, $slick-draggable-group-toggle-all-margin-right);
       padding: var(--slick-draggable-group-toggle-all-padding, $slick-draggable-group-toggle-all-padding);
       position: var(--draggable-group-toggle-all-position, $slick-draggable-group-toggle-all-position);
       top: var(--slick-draggable-group-toggle-all-top, $slick-draggable-group-toggle-all-top);
       right: var(--slick-draggable-group-toggle-all-right, $slick-draggable-group-toggle-all-right);
 
-      .slick-group-toggle-all-icon.expanded:before {
-        content: var(--slick-draggable-group-toggle-expanded-icon, $slick-draggable-group-toggle-expanded-icon);
-      }
-      .slick-group-toggle-all-icon.collapsed:before {
-        content: var(--slick-draggable-group-toggle-collapsed-icon, $slick-draggable-group-toggle-collapsed-icon);
-      }
-      .slick-group-toggle-all-icon:before {
+      .slick-group-toggle-all-icon {
+        cursor: pointer;
         display: inline-block;
-        color: var(--slick-draggable-group-toggle-all-color, $slick-draggable-group-toggle-all-color);
-        font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-        vertical-align: var(--slick-draggable-group-toggle-all-icon-vertical-align, $slick-draggable-group-toggle-all-icon-vertical-align);
-        height: var(--slick-draggable-group-toggle-all-icon-height, $slick-draggable-group-toggle-all-icon-height);
-        width: var(--slick-draggable-group-toggle-all-icon-width, $slick-draggable-group-toggle-all-icon-width);
+        background-color: currentColor;
+        width: 1em;
+        height: 1em;
+        color: var(--slick-draggable-group-toggle-all-icon-color, $slick-draggable-group-toggle-all-icon-color);
+        font-size: var(--slick-draggable-group-toggle-all-icon-font-size, $slick-draggable-group-toggle-all-icon-font-size);
+        &.expanded {
+          @include generateSvgStyle('slick-draggable-group-toggle-expanded-icon-svg', $slick-draggable-group-toggle-expanded-icon-svg-path);
+        }
+        &.collapsed {
+          @include generateSvgStyle('slick-draggable-group-toggle-collapsed-icon-svg', $slick-draggable-group-toggle-collapsed-icon-svg-path);
+        }
       }
+
       .slick-group-toggle-all-text {
         font-size: var(--slick-draggable-group-toggle-all-text-font-size, $slick-draggable-group-toggle-all-text-font-size);
         margin: var(--slick-draggable-group-toggle-all-text-margin, $slick-draggable-group-toggle-all-text-margin);
@@ -955,24 +992,6 @@ input.flatpickr.form-control {
       &:hover {
         color: var(--slick-draggable-group-delete-hover-color, $slick-draggable-group-delete-hover-color);
       }
-    }
-
-    .slick-groupby-remove-icon::before {
-      font-size: var(--slick-draggable-group-by-remove-icon-size, $slick-draggable-group-by-remove-icon-size);
-      content: var(--slick-draggable-group-by-remove-icon, $slick-draggable-group-by-remove-icon);
-    }
-    .slick-groupby-sort-asc-icon::before {
-      font-size: var(--slick-draggable-group-sort-asc-icon-size, $slick-draggable-group-sort-asc-icon-size);
-      content: var(--slick-draggable-group-sort-asc-icon, $slick-draggable-group-sort-asc-icon);
-    }
-    .slick-groupby-sort-desc-icon::before {
-      font-size: var(--slick-draggable-group-sort-desc-icon-size, $slick-draggable-group-sort-desc-icon-size);
-      content: var(--slick-draggable-group-sort-desc-icon, $slick-draggable-group-sort-desc-icon);
-    }
-    .slick-groupby-remove-icon::before,
-    .slick-groupby-sort-asc-icon::before,
-    .slick-groupby-sort-desc-icon::before {
-      font-family: var(--slick-icon-font-family, $slick-icon-font-family);
     }
   }
   .slick-dropzone-hover {
@@ -1119,7 +1138,7 @@ input.flatpickr.form-control {
   height: var(--slick-header-input-height, $slick-header-input-height);
 
   &::placeholder {
-    color: var(--slick-editor-placeholder-color, $slick-editor-placeholder-color);
+    color: var(--slick-placeholder-color, $slick-placeholder-color);
   }
 
   .input-group-text {
@@ -1245,36 +1264,24 @@ input.flatpickr.form-control {
     display: inline-block;
 
     &.expand {
-      display: inline-block;
-      color: var(--slick-detail-view-icon-expand-color, $slick-detail-view-icon-expand-color);
-
-      &:hover {
-        color: var(--slick-detail-view-icon-expand-color-hover, $slick-detail-view-icon-expand-color-hover);
-      }
-      &:before {
-        content: var(--slick-detail-view-icon-expand, $slick-detail-view-icon-expand);
-      }
+      @include generateSvgStyle('slick-detail-view-icon-expand-svg', $slick-detail-view-icon-expand-svg-path);
     }
     &.collapse {
-      display: inline-block;
-      color: var(--slick-detail-view-icon-collapse-color, $slick-detail-view-icon-collapse-color);
-      &:hover {
-        color: var(--slick-detail-view-icon-collapse-color-hover, $slick-detail-view-icon-collapse-color-hover);
-      }
-      &:before {
-        content: var(--slick-detail-view-icon-collapse, $slick-detail-view-icon-collapse);
-      }
+      @include generateSvgStyle('slick-detail-view-icon-collapse-svg', $slick-detail-view-icon-collapse-svg-path);
     }
     &.expand,
     &.collapse {
       cursor: pointer;
-    }
-    &.expand:before,
-    &.collapse:before {
+      background-color: currentColor;
       display: inline-block;
-      font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-      font-size: var(--slick-detail-view-icon-size, $slick-detail-view-icon-size);
-      width: var(--slick-detail-view-icon-width, $slick-detail-view-icon-width);
+      height: 1em;
+      width: 1em;
+      color: var(--slick-detail-view-icon-color, $slick-detail-view-icon-color);
+      font-size: var(--slick-detail-view-icon-font-size, $slick-detail-view-icon-font-size);
+      &:hover {
+        color: var(--slick-detail-view-icon-color-hover, $slick-detail-view-icon-color-hover);
+        opacity: var(--slick-detail-view-icon-opacity-hover, $slick-detail-view-icon-opacity-hover);
+      }
     }
   }
 

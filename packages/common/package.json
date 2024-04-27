@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/common",
-  "version": "4.6.1",
+  "version": "4.7.0",
   "description": "SlickGrid-Universal Common Code",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -72,21 +72,21 @@
     "@slickgrid-universal/utils": "workspace:~",
     "@types/dompurify": "^3.0.5",
     "@types/sortablejs": "^1.15.8",
-    "autocompleter": "^9.2.0",
+    "autocompleter": "^9.2.1",
     "dequal": "^2.0.3",
     "excel-builder-vanilla": "3.0.1",
-    "flatpickr": "^4.6.13",
     "isomorphic-dompurify": "^2.7.0",
     "moment-tiny": "^2.30.3",
     "multiple-select-vanilla": "^3.1.0",
     "sortablejs": "^1.15.2",
-    "un-flatten-tree": "^2.0.12"
+    "un-flatten-tree": "^2.0.12",
+    "vanilla-calendar-picker": "^2.11.2"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.19",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
-    "cssnano": "^6.1.2",
+    "cssnano": "^7.0.1",
     "npm-run-all2": "^6.1.2",
     "postcss": "^8.4.38",
     "postcss-cli": "^11.0.0",

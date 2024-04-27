@@ -18,7 +18,7 @@ export const Editors = {
   /** Checkbox Editor (uses native checkbox DOM element) */
   checkbox: CheckboxEditor,
 
-  /** Date Picker Editor (which uses 3rd party lib "flatpickr") */
+  /** Date Picker Editor (which uses 3rd party lib "vanilla-calendar-picker") */
   date: DateEditor,
 
   /** Dual Input Editor, default input type is text but it could be (integer/float/number/password/text) */
