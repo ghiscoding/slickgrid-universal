@@ -68,7 +68,8 @@ export interface ColumnEditor {
   /**
    * Options that could be provided to the Editor, example: { container: 'body', maxHeight: 250}
    *
-   * Please note that if you use options that have existed model interfaces, you should cast with "as X",
+   * Please note that if you use options that have existed model interfaces,
+   * you should always cast it with the "as X" (where X is the external lib options interface),
    * for example { editorOptions: {maxHeight: 250} as MultipleSelectOption }
    */
   editorOptions?: any;

@@ -13,7 +13,6 @@ import {
   type Formatter,
   Formatters,
   type GridOption,
-  type MultipleSelectOption,
   OperatorType,
   SlickGlobalEditorLock,
   type SliderOption,
@@ -29,6 +28,7 @@ import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import moment from 'moment-mini';
+import { type MultipleSelectOption } from 'multiple-select-vanilla';
 
 import exampleModal from './example11-modal.html?raw';
 import Example11Modal from './example11-modal';

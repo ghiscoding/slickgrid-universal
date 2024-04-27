@@ -554,14 +554,21 @@ this.columnDefinitions = [
 ```
 
 ### Filter Options (`MultipleSelectOption` interface)
-All the available options that can be provided as `filterOptions` to your column definitions can be found under this [multipleSelectOption interface](/ghiscoding/slickgrid-universal/tree/master/packages/common/src/interfaces/multipleSelectOption.interface.ts) and you should cast your `filterOptions` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
+All the available options that can be provided as `filterOptions` to your column definitions via the `MultipleSelectOption` interface of the external library and so you should cast your `filterOptions` to that interface to make sure that you use only valid options of the `Multiple-Select-Vanilla` library.
 
 ```ts
-filter: {
-  model: Filters.singleSelect,
-  filterOptions: {
-    maxHeight: 400
-  } as MultipleSelectOption
+import { MultipleSelectOption } from 'multiple-select-vanilla';
+
+prepareGrid() {
+  this.columnDefinitions = [{
+    id: 'isActive', name: 'Active', field: 'isActive',
+    filter: {
+      model: Filters.singleSelect,
+      filterOptions: {
+        maxHeight: 400
+      } as MultipleSelectOption
+    }
+  }];
 }
 ```
 
@@ -570,7 +577,7 @@ You could also define certain options as a global level (for the entire grid or 
 
 ```ts
 this.gridOptions = {
-  defaultFilterOptions: { 
+  defaultFilterOptions: {
     // Note: that `select` combines both multipleSelect & singleSelect
     select: { minHeight: 350 }, // typed as MultipleSelectOption
   }
@@ -598,53 +605,61 @@ Couple of small options were added to suit SlickGrid-Universal needs, which is w
 
 ##### Code
 ```typescript
-this.columnDefinitions = [
-  {
-    id: 'isActive', name: 'Is Active', field: 'isActive',
-    filterable: true,
-    filter: {
-      collection: [{ value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' }],
-      model: Filters.singleSelect,
-      filterOptions: {
-        // add any multiple-select.js options (from original or custom version)
-        autoAdjustDropPosition: false, // by default set to True, but you can disable it
-        position: 'top'
-      } as MultipleSelectOption
+import { MultipleSelectOption } from 'multiple-select-vanilla';
+
+prepareGrid() {
+  this.columnDefinitions = [
+    {
+      id: 'isActive', name: 'Is Active', field: 'isActive',
+      filterable: true,
+      filter: {
+        collection: [{ value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' }],
+        model: Filters.singleSelect,
+        filterOptions: {
+          // add any multiple-select.js options (from original or custom version)
+          autoAdjustDropPosition: false, // by default set to True, but you can disable it
+          position: 'top'
+        } as MultipleSelectOption
+      }
     }
-  }
-];
+  ];
+}
 ```
 
 #### Display shorter selected label text
 If we find that our text shown as selected text is too wide, we can choose change that by using `optionLabel` in Custom Structure.
 ```typescript
-this.columnDefinitions = [
-  {
-    id: 'isActive', name: 'Is Active', field: 'isActive',
-    filterable: true,
-    filter: {
-      collection: [
-        { value: 1, label: '1', suffix: 'day' },
-        { value: 2, label: '2', suffix: 'days' },
-        { value: 3, label: '3', suffix: 'days' },
-        // ...
-      ],
-      model: Filters.multipleSelect,
-      customStructure: {
-        label: 'label',
-        labelSuffix: 'suffix',
-        value: 'value',
-        optionLabel: 'value', // use value instead to show "1, 2" instead of "1 day, 2 days"
-      },
-      filterOptions: {
-        // use different label to show as selected text
-        // please note the Custom Structure with optionLabel defined
-        // or use "useSelectOptionLabelToHtml" to render HTML
-        useSelectOptionLabel: true
-      } as MultipleSelectOption
+import { MultipleSelectOption } from 'multiple-select-vanilla';
+
+prepareGrid() {
+  this.columnDefinitions = [
+    {
+      id: 'isActive', name: 'Is Active', field: 'isActive',
+      filterable: true,
+      filter: {
+        collection: [
+          { value: 1, label: '1', suffix: 'day' },
+          { value: 2, label: '2', suffix: 'days' },
+          { value: 3, label: '3', suffix: 'days' },
+          // ...
+        ],
+        model: Filters.multipleSelect,
+        customStructure: {
+          label: 'label',
+          labelSuffix: 'suffix',
+          value: 'value',
+          optionLabel: 'value', // use value instead to show "1, 2" instead of "1 day, 2 days"
+        },
+        filterOptions: {
+          // use different label to show as selected text
+          // please note the Custom Structure with optionLabel defined
+          // or use "useSelectOptionLabelToHtml" to render HTML
+          useSelectOptionLabel: true
+        } as MultipleSelectOption
+      }
     }
-  }
-];
+  ];
+}
 ```
 
 ### Query against another field property
