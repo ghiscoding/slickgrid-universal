@@ -15,7 +15,7 @@ import { getDescendantProperty, flattenToParentChildArray } from './utilities';
 import { sortByFieldType } from '../sortComparers/sortUtilities';
 import type { SharedService } from './shared.service';
 import type { RxJsFacade, Subject } from './rxjsFacade';
-import { type SlickDataView, SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
+import { type SlickDataView, type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
 
 export class SortService {
   protected _currentLocalSorters: CurrentSorter[] = [];
@@ -593,7 +593,7 @@ export class SortService {
 
     // loop through column definition to hide/show header menu commands
     columnDefinitions.forEach((col) => {
-      if (typeof col.sortable !== undefined) {
+      if (col.sortable !== undefined) {
         col.sortable = !isDisabling;
       }
       if (col?.header?.menu) {

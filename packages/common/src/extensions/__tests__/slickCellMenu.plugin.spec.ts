@@ -96,7 +96,7 @@ const commandItemsMock = [
       { command: 'command3', title: 'Command 3', positionOrder: 70, },
       { command: 'command4', title: 'Command 4', positionOrder: 71, },
       {
-        command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'color-warning', commandItems: [
+        command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'text-color-warning', commandItems: [
           { command: 'command5', title: 'Command 5', positionOrder: 72, },
         ]
       }
@@ -246,6 +246,18 @@ describe('CellMenu Plugin', () => {
       expect(cellMenuElm).toBeNull();
       expect(closeSpy).toHaveBeenCalled();
       expect(hideMenuSpy).toHaveBeenCalled();
+    });
+
+    it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element when opening Cell Menu', () => {
+      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, darkMode: true });
+
+      plugin.dispose();
+      plugin.init();
+      gridStub.onClick.notify(null as any, eventData, gridStub);
+
+      let cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
+      expect(cellMenuElm).toBeTruthy();
+      expect(cellMenuElm.classList.contains('slick-dark-mode')).toBeTruthy();
     });
 
     it('should "autoAlignSide" and expect menu to aligned left with a calculate offset when showing menu', () => {
@@ -643,7 +655,7 @@ describe('CellMenu Plugin', () => {
         expect(commandList2Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
         expect(commandContentElm2.textContent).toBe('Sub Commands');
         expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
-        expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
+        expect(subMenuTitleElm.className).toBe('slick-menu-title text-color-warning');
         expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
         expect(subCommand3Elm.textContent).toContain('Command 3');
         expect(subCommand5Elm.textContent).toContain('Command 5');
@@ -694,7 +706,7 @@ describe('CellMenu Plugin', () => {
         expect(commandList2Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
         expect(commandContentElm2.textContent).toBe('Sub Commands');
         expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
-        expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
+        expect(subMenuTitleElm.className).toBe('slick-menu-title text-color-warning');
         expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
         expect(subCommand3Elm.textContent).toContain('Command 3');
         expect(subCommand5Elm.textContent).toContain('Command 5');
@@ -772,6 +784,7 @@ describe('CellMenu Plugin', () => {
       });
 
       it('should create a Cell Menu to be create and show up when item visibility & usability callbacks returns true', () => {
+        gridOptionsMock.darkMode = true;
         plugin.dispose();
         plugin.init();
         (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).itemVisibilityOverride = () => true;
@@ -784,7 +797,7 @@ describe('CellMenu Plugin', () => {
         expect(optionListElm.querySelectorAll('.slick-menu-item').length).toBe(6);
         expect(document.body.querySelector('button.close')!.ariaLabel).toBe('Close'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(removeExtraSpaces(
-          `<div class="slick-cell-menu slick-menu-level-0 slickgrid12345 dropdown dropright" style="top: 0px; display: block; left: 0px;" aria-expanded="true">
+          `<div class="slick-cell-menu slick-menu-level-0 slickgrid12345 dropdown dropright slick-dark-mode" style="top: 0px; display: block; left: 0px;" aria-expanded="true">
             <div class="slick-menu-option-list" role="menu">
               <div class="slick-option-header no-title with-close">
                 <button aria-label="Close" class="close" type="button" data-dismiss="slick-menu">×</button>

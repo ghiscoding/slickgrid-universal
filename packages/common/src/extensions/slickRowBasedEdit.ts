@@ -1,4 +1,4 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement } from '@slickgrid-universal/utils';
 
 import type {
@@ -11,9 +11,9 @@ import type {
   OnSetOptionsEventArgs,
   RowBasedEditOptions,
 } from '../interfaces/index';
-import { SlickEventData, SlickEventHandler, SlickGlobalEditorLock, type SlickGrid } from '../core/index';
-import { GridService } from '../services';
-import { ExtensionUtility } from './extensionUtility';
+import { type SlickEventData, SlickEventHandler, SlickGlobalEditorLock, type SlickGrid } from '../core/index';
+import type { GridService } from '../services';
+import type { ExtensionUtility } from './extensionUtility';
 
 export const ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS = 'slick-rbe-editmode';
 export const ROW_BASED_EDIT_UNSAVED_CELL = 'slick-rbe-unsaved-cell';
@@ -439,7 +439,7 @@ export class SlickRowBasedEdit {
       .appendChild(
         createDomElement('span', {
           className:
-            options.rowBasedEditOptions?.actionButtons?.iconEditButtonClassName || 'mdi mdi-table-edit color-primary',
+            options.rowBasedEditOptions?.actionButtons?.iconEditButtonClassName || 'mdi mdi-table-edit text-color-primary',
         })
       );
     actionFragment
@@ -455,7 +455,7 @@ export class SlickRowBasedEdit {
       .appendChild(
         createDomElement('span', {
           className:
-            options.rowBasedEditOptions?.actionButtons?.iconDeleteButtonClassName || 'mdi mdi-close color-danger',
+            options.rowBasedEditOptions?.actionButtons?.iconDeleteButtonClassName || 'mdi mdi-close text-color-danger',
         })
       );
     actionFragment
@@ -471,7 +471,7 @@ export class SlickRowBasedEdit {
       .appendChild(
         createDomElement('span', {
           className:
-            options.rowBasedEditOptions?.actionButtons?.iconUpdateButtonClassName || 'mdi mdi-check-bold color-success',
+            options.rowBasedEditOptions?.actionButtons?.iconUpdateButtonClassName || 'mdi mdi-check-bold text-color-success',
         })
       );
     actionFragment
@@ -487,7 +487,7 @@ export class SlickRowBasedEdit {
       .appendChild(
         createDomElement('span', {
           className:
-            options.rowBasedEditOptions?.actionButtons?.iconCancelButtonClassName || 'mdi mdi-cancel color-danger',
+            options.rowBasedEditOptions?.actionButtons?.iconCancelButtonClassName || 'mdi mdi-cancel text-color-danger',
         })
       );
 

@@ -1,5 +1,14 @@
 import 'jest-extended';
-import { Column, type FormatterResultWithHtml, GridOption, type SlickDataView, SlickEvent, SlickEventData, SlickGrid, createDomElement } from '@slickgrid-universal/common';
+import {
+  type Column,
+  type FormatterResultWithHtml,
+  type GridOption,
+  type SlickDataView,
+  SlickEvent,
+  SlickEventData,
+  type SlickGrid,
+  createDomElement
+} from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { SlickRowDetailView } from './slickRowDetailView';
@@ -428,7 +437,7 @@ describe('SlickRowDetailView plugin', () => {
     expect(beforeRowDetailToggleSpy).not.toHaveBeenCalled();
   });
 
-  it('should trigger "onAsyncResponse" with Row Detail template with "useRowClick" enabled and then ', () => {
+  it('should trigger "onAsyncResponse" with Row Detail template with "useRowClick" enabled and then expect DataView to clear/delete rows in the UI when opening Row Detail', () => {
     const mockProcess = jest.fn();
     const updateItemSpy = jest.spyOn(dataviewStub, 'updateItem');
     const asyncEndUpdateSpy = jest.spyOn(plugin.onAsyncEndUpdate, 'notify');
@@ -802,7 +811,7 @@ describe('SlickRowDetailView plugin', () => {
       plugin.expandableOverride(() => true);
       const formattedVal = plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub);
       expect(((formattedVal as FormatterResultWithHtml).html as HTMLElement).outerHTML).toBe(`<div class="detailView-toggle collapse some-expanded"></div>`);
-      expect((formattedVal as FormatterResultWithHtml).insertElementAfterTarget!.outerHTML).toBe(`<div class=\"dynamic-cell-detail cellDetailView_123\" style=\"height: 50px; top: 25px;\"><div class=\"detail-container detailViewContainer_123\"><div class=\"innerDetailView_123\"><div>Loading...</div></div></div></div>`);
+      expect((formattedVal as FormatterResultWithHtml).insertElementAfterTarget!.outerHTML).toBe(`<div class="dynamic-cell-detail cellDetailView_123" style="height: 50px; top: 25px;"><div class="detail-container detailViewContainer_123"><div class="innerDetailView_123"><div>Loading...</div></div></div></div>`);
     });
 
     it('should execute formatter and expect it to render detail content from HTML Element', () => {
@@ -812,7 +821,7 @@ describe('SlickRowDetailView plugin', () => {
       plugin.expandableOverride(() => true);
       const formattedVal = plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub);
       expect(((formattedVal as FormatterResultWithHtml).html as HTMLElement).outerHTML).toBe(`<div class="detailView-toggle collapse some-expanded"></div>`);
-      expect((formattedVal as FormatterResultWithHtml).insertElementAfterTarget!.outerHTML).toBe(`<div class=\"dynamic-cell-detail cellDetailView_123\" style=\"height: 50px; top: 25px;\"><div class=\"detail-container detailViewContainer_123\"><div class=\"innerDetailView_123\"><div>Loading...</div></div></div></div>`);
+      expect((formattedVal as FormatterResultWithHtml).insertElementAfterTarget!.outerHTML).toBe(`<div class="dynamic-cell-detail cellDetailView_123" style="height: 50px; top: 25px;"><div class="detail-container detailViewContainer_123"><div class="innerDetailView_123"><div>Loading...</div></div></div></div>`);
     });
   });
 });

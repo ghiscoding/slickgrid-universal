@@ -5,6 +5,8 @@ import type {
   ColumnExcelExportOption,
   ColumnFilter,
   CustomTooltipOption,
+  Editor,
+  EditorConstructor,
   EditorValidator,
   Formatter,
   Grouping,
@@ -15,18 +17,17 @@ import type {
   SortComparer,
 } from './index';
 
-type PathsToStringProps<T> = T extends string | number | boolean | Date ? [] : {
+export type PathsToStringProps<T> = T extends string | number | boolean | Date ? [] : {
   [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>]
 }[Extract<keyof T, string>];
 
-/* eslint-disable @typescript-eslint/indent */
-// disable eslint indent rule until this issue is fixed: https://github.com/typescript-eslint/typescript-eslint/issues/1824
-type Join<T extends any[], D extends string> =
+type AllowedJoinTypes = string | number | boolean;
+
+export type Join<T extends (AllowedJoinTypes | unknown)[], D extends string> =
   T extends [] ? never :
   T extends [infer F] ? F :
   T extends [infer F, ...infer R] ?
-  F extends string ? string extends F ? string : `${F}${D}${Join<R, D>}` : never : string;
-/* eslint-enable @typescript-eslint/indent */
+  F extends AllowedJoinTypes ? string extends F ? string : `${F}${D}${Join<Extract<R, AllowedJoinTypes[]>, D>}` : never : string;
 
 export interface Column<T = any> {
   /** Defaults to false, should we always render the column? */
@@ -91,8 +92,14 @@ export interface Column<T = any> {
    */
   disableTooltip?: boolean;
 
-  /** Any inline editor function that implements Editor for the cell value or ColumnEditor */
+  /**
+   * Editor definition for an inline editor assigned to a cell value.
+   * Note, do not confuse this property with `editorClass`, because `editorClass` is used by SlickGrid and is a reference pointer to `editor.model`
+   */
   editor?: ColumnEditor | null;
+
+  /** Any inline Editor class or Editor constructor, this is mostly used internally by SlickGrid */
+  editorClass?: Editor | EditorConstructor | null;
 
   /** Editor number fixed decimal places */
   editorFixedDecimalPlaces?: number;
@@ -199,7 +206,8 @@ export interface Column<T = any> {
   id: number | string;
 
   /**
-   * @reserved This is a RESERVED property and is used internally by the library to copy over the Column Editor Options.
+   * @deprecated @use `editor` for the editor definition or use `editorClass` for the SlickGrid editor class.
+   * This is a RESERVED property and is used internally by the library to copy over the Column Editor Options.
    * You can read this property if you wish, but DO NOT override it (unless you know what you're doing) since could cause serious problems with your editors.
    */
   internalColumnEditor?: ColumnEditor;
@@ -236,7 +244,7 @@ export interface Column<T = any> {
   /** column offset width */
   offsetWidth?: number;
 
-  /** an event handler callback that can be used to execute code before the cell becomes editable (that event happens before the "onCellChange" event) */
+  /** an event handler callback that can be used to execute code or cancel the edit before the cell becomes editable (that event happens before the "onCellChange" event) */
   onBeforeEditCell?: (e: Event, args: OnEventArgs) => void;
 
   /** an event handler callback that can be used to execute code after a cell value changed */

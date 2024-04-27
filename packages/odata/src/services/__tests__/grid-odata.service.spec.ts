@@ -1338,6 +1338,22 @@ describe('GridOdataService', () => {
       expect(query).toBe(expectation);
     });
 
+    it('should return a query with a date operator when only 1 searchTerms', () => {
+      const expectation = `$top=10&$filter=(contains(Company, 'abc') and UpdatedDate ge 2001-01-20T00:00:00Z)`;
+      const mockColumnCompany = { id: 'company', field: 'company' } as Column;
+      const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: FieldType.date } as Column;
+      const mockColumnFilters = {
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Contains', type: FieldType.string },
+        updatedDate: { columnId: 'updatedDate', columnDef: mockColumnUpdated, searchTerms: ['2001-01-20'], operator: '>=', type: FieldType.dateIso },
+      } as ColumnFilters;
+
+      service.init(serviceOptions, paginationOptions, gridStub);
+      service.updateFilters(mockColumnFilters, false);
+      const query = service.buildQuery();
+
+      expect(query).toBe(expectation);
+    });
+
     it('should return a query without any date filtering when searchTerms is an empty array', () => {
       const expectation = `$top=10&$filter=(contains(Company, 'abc'))`;
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
@@ -1428,7 +1444,7 @@ describe('GridOdataService', () => {
       const currentSorters = service.getCurrentSorters();
 
       expect(query).toBe(expectation);
-      expect(currentSorters).toEqual([{ columnId: 'Gender', direction: 'desc' }, { columnId: 'FirstName', direction: 'asc' }]);
+      expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'desc' }, { columnId: 'firstName', direction: 'asc' }]);
     });
 
     it('should return a query string using a different field to query when the column has a "queryField" defined in its definition', () => {
@@ -1444,7 +1460,7 @@ describe('GridOdataService', () => {
       const currentSorters = service.getCurrentSorters();
 
       expect(query).toBe(expectation);
-      expect(currentSorters).toEqual([{ columnId: 'Gender', direction: 'desc' }, { columnId: 'Name', direction: 'asc' }]);
+      expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'desc' }, { columnId: 'name', direction: 'asc' }]);
     });
 
     it('should return a query string using a different field to query when the column has a "queryFieldSorter" defined in its definition', () => {
@@ -1460,7 +1476,7 @@ describe('GridOdataService', () => {
       const currentSorters = service.getCurrentSorters();
 
       expect(query).toBe(expectation);
-      expect(currentSorters).toEqual([{ columnId: 'Gender', direction: 'desc' }, { columnId: 'Name', direction: 'asc' }]);
+      expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'desc' }, { columnId: 'name', direction: 'asc' }]);
     });
 
     it('should return a query without the field sorter when its field property is missing', () => {
@@ -1476,7 +1492,7 @@ describe('GridOdataService', () => {
       const currentSorters = service.getCurrentSorters();
 
       expect(query).toBe(expectation);
-      expect(currentSorters).toEqual([{ columnId: 'Gender', direction: 'desc' }, { columnId: 'FirstName', direction: 'asc' }]);
+      expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'desc' }, { columnId: 'firstName', direction: 'asc' }]);
     });
 
     it('should return a query without any sorting after clearSorters was called', () => {
@@ -1530,7 +1546,7 @@ describe('GridOdataService', () => {
         const currentSorters = service.getCurrentSorters();
 
         expect(query).toBe(expectation);
-        expect(currentSorters).toEqual([{ columnId: 'Gender', direction: 'desc' }, { columnId: 'FirstName', direction: 'asc' }]);
+        expect(currentSorters).toEqual([{ columnId: 'gender', direction: 'desc' }, { columnId: 'firstName', direction: 'asc' }]);
       });
 
       it('should return a query without any sorting after clearSorters was called but without pagination when "enablePagination" is set to False', () => {

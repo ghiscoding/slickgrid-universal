@@ -1,39 +1,45 @@
 <h3 class="title is-3">
   Example 12 - Composite Editor Modal
-  <span class="subtitle is-size-5 has-text-grey-dark">(with Salesforce Theme)</span>
+  <span class="subtitle is-size-5">(with Salesforce Theme)</span>
+  <span class="d-inline-flex">
+    <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
+      <span class="icon"><i class="mdi mdi-theme-light-dark"></i></span>
+      <span> Toggle Light/Dark</span>
+    </button>
+  </span>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a class="is-size-5"
        target="_blank"
        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example12.ts">
-      <span class="mdi mdi-link-variant mdi-v-align-sub"></span> code
+      <span class="mdi mdi-link-variant"></span> code
     </a>
   </div>
 </h3>
 
-<section class="columns is-desktop">
+<section class="columns is-desktop mb-3">
   <div class="column field has-addons is-narrow">
     <p class="control">
       <button class="button is-small" onclick.delegate="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
-        <span class="icon mdi mdi-table-edit"></span>
+        <span class="icon"><i class="mdi mdi-table-edit"></i></span>
         <span>Toggle Edit/Readonly Grid</span>
       </button>
     </p>
     <p class="control">
       <button class="button is-small" onclick.delegate="undoLastEdit()" data-test="undo-last-edit-btn">
-        <span class="icon mdi mdi-undo"></span>
+        <span class="icon"><i class="mdi mdi-undo"></i></span>
         <span>Undo Last Edit</span>
       </button>
     </p>
     <p class="control">
       <button class="button is-small" onclick.delegate="undoLastEdit(true)" data-test="undo-open-editor-btn">
-        <span class="icon mdi mdi-undo"></span>
+        <span class="icon"><i class="mdi mdi-undo"></i></span>
         <span>Undo Last Edit &amp; Open Editor</span>
       </button>
     </p>
     <p class="control">
       <button class="button is-small" onclick.delegate="undoAllEdits()" data-test="undo-all-edits-btn">
-        <span class="icon mdi mdi-history"></span>
+        <span class="icon"><i class="mdi mdi-history"></i></span>
         <span>Undo All Edits</span>
       </button>
     </p>
@@ -49,42 +55,40 @@
     <p class="control">
       <button class="button is-small" onclick.delegate="openCompositeModal('create')"
               data-test="open-modal-create-btn" disabled.bind="isCompositeDisabled">
-        <span class="icon mdi mdi-shape-square-plus"></span>
+        <span class="icon"><i class="mdi mdi-shape-square-plus"></i></span>
         <span>Item Create</span>
       </button>
     </p>
     <p class="control">
       <button class="button is-small" onclick.delegate="openCompositeModal('clone')"
               data-test="open-modal-clone-btn" disabled.bind="isCompositeDisabled">
-        <span class="icon mdi mdi-content-copy"></span>
+        <span class="icon"><i class="mdi mdi-content-copy"></i></span>
         <span>Item Clone</span>
       </button>
     </p>
     <p class="control">
       <button class="button is-small" onclick.delegate="openCompositeModal('edit')"
               data-test="open-modal-edit-btn" disabled.bind="isCompositeDisabled">
-        <span class="icon mdi mdi-square-edit-outline"></span>
+        <span class="icon"><i class="mdi mdi-square-edit-outline"></i></span>
         <span>Item Edit Modal</span>
       </button>
     </p>
     <p class="control">
       <button class="button is-small" onclick.delegate="openCompositeModal('mass-update')"
               data-test="open-modal-mass-update-btn" disabled.bind="isCompositeDisabled">
-        <span class="icon mdi mdi-pencil-box-multiple-outline"></span>
+        <span class="icon"><i class="mdi mdi-pencil-box-multiple-outline"></i></span>
         <span>Mass Update</span>
       </button>
     </p>
     <p class="control">
       <button class="button is-small" onclick.delegate="openCompositeModal('mass-selection')"
               data-test="open-modal-mass-selection-btn" disabled.bind="isMassSelectionDisabled">
-        <span class="icon mdi mdi-order-bool-ascending-variant"></span>
+        <span class="icon"><i class="mdi mdi-order-bool-ascending-variant"></i></span>
         <span>Update Selected</span>
       </button>
     </p>
   </div>
 </section>
-
-<br>
 
 <div class="grid12">
 </div>

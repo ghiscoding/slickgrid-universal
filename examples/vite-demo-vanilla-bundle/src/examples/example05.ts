@@ -12,7 +12,7 @@ import {
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import { ExampleGridOptions } from './example-grid-options';
 import './example05.scss';
@@ -77,7 +77,7 @@ export default class Example05 {
 
   showSpinner() {
     if (this.isLargeDataset) {
-      this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-24px color-alt-success';
+      this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-24px text-color-alt-success';
     }
   }
 
@@ -252,7 +252,7 @@ export default class Example05 {
         titleFormatter: (_row, _cell, value, _def, dataContext) => {
           let titleResult = '';
           if (dataContext.treeLevel > 0) {
-            titleResult = `<span class="mdi mdi-subdirectory-arrow-right mdi-v-align-sub color-se-secondary"></span>`;
+            titleResult = `<span class="mdi mdi-subdirectory-arrow-right mdi-v-align-sub text-color-se-secondary"></span>`;
           }
           titleResult += `<span class="bold">${value}</span>`;
           if (dataContext.parentId) {

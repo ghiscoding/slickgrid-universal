@@ -246,6 +246,7 @@ const mockGrid = {
   onClick: new MockSlickEvent(),
   onClicked: new MockSlickEvent(),
   onColumnsReordered: new MockSlickEvent(),
+  onSetOptions: new MockSlickEvent(),
   onRendered: jest.fn(),
   onScroll: jest.fn(),
   onDataviewCreated: new MockSlickEvent(),
@@ -401,6 +402,24 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     expect(sharedVisibleColumnsSpy).toHaveBeenCalledWith(newVisibleColumns);
   });
 
+  it('should change Dark Mode by using "setOptions" when triggered with "onSetOptions" event', () => {
+    component.gridOptions = { darkMode: false };
+    component.initialization(divContainer, slickEventHandler);
+    mockGrid.onSetOptions.notify({ optionsBefore: { darkMode: false }, optionsAfter: { darkMode: true }, grid: mockGrid });
+
+    expect(component.eventHandler).toEqual(slickEventHandler);
+    expect(divContainer.classList.contains('slick-dark-mode')).toBeTruthy();
+  });
+
+  it('should change back to Light Mode by using "setOptions" when triggered with "onSetOptions" event', () => {
+    component.gridOptions = { darkMode: true };
+    component.initialization(divContainer, slickEventHandler);
+    mockGrid.onSetOptions.notify({ optionsBefore: { darkMode: true }, optionsAfter: { darkMode: false }, grid: mockGrid });
+
+    expect(component.eventHandler).toEqual(slickEventHandler);
+    expect(divContainer.classList.contains('slick-dark-mode')).toBeFalsy();
+  });
+
   it('should create a grid and expect multiple event published', () => {
     const pubSubSpy = jest.spyOn(eventPubSubService, 'publish');
 
@@ -421,8 +440,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   // TODO: revisit later, this is conflicting with Grid State & Presets
   it.skip('should update column definitions when onPluginColumnsChanged event is triggered with updated columns', () => {
     const columnsMock = [
-      { id: 'firstName', field: 'firstName', editor: undefined, internalColumnEditor: {} },
-      { id: 'lastName', field: 'lastName', editor: undefined, internalColumnEditor: {} }
+      { id: 'firstName', field: 'firstName', editor: undefined, editorClass: {} },
+      { id: 'lastName', field: 'lastName', editor: undefined, editorClass: {} }
     ];
     eventPubSubService.publish('onPluginColumnsChanged', {
       columns: columnsMock,
@@ -2186,6 +2205,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
     document.body.appendChild(divContainer);
     columnDefinitions = [{ id: 'name', field: 'name' }];
     gridOptions = {
+      darkMode: true,
       enableExcelExport: false,
       dataView: null,
       autoResize: {

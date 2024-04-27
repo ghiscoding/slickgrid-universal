@@ -1,5 +1,5 @@
 import { Filters } from '../filters.index';
-import { Column, FilterArguments, GridOption } from '../../interfaces/index';
+import { Column, FilterArguments, GridOption, type SliderRangeOption } from '../../interfaces/index';
 import { SlickEvent, SlickGrid } from '../../core/index';
 import { SliderRangeFilter } from '../sliderRangeFilter';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
@@ -10,7 +10,7 @@ jest.useFakeTimers();
 // define a <div> container to simulate the grid container
 const template = `<div id="${containerId}"></div>`;
 
-const gridOptionMock = {
+let gridOptionMock = {
   enableFiltering: true,
   enableFilterTrimWhiteSpace: true,
 } as GridOption;
@@ -48,6 +48,10 @@ describe('SliderRangeFilter', () => {
       callback: jest.fn(),
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
+    gridOptionMock = {
+      enableFiltering: true,
+      enableFilterTrimWhiteSpace: true,
+    };
 
     filter = new SliderRangeFilter(translateService);
   });
@@ -66,6 +70,26 @@ describe('SliderRangeFilter', () => {
 
     expect(spyGetHeaderRow).toHaveBeenCalled();
     expect(filterCount).toBe(1);
+  });
+
+  it('should initialize the filter with slider value define in user filter options', () => {
+    mockColumn.filter!.filterOptions = { sliderStartValue: 1 } as SliderRangeOption;
+    filter.init(filterArguments);
+
+    const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
+    expect(filterElm.defaultValue).toBe('1');
+    expect(filterElm.value).toBe('1');
+  });
+
+  it('should initialize the filter with slider value define in global default user filter options', () => {
+    gridOptionMock.defaultFilterOptions = {
+      slider: { sliderStartValue: 2 }
+    };
+    filter.init(filterArguments);
+
+    const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
+    expect(filterElm.defaultValue).toBe('2');
+    expect(filterElm.value).toBe('2');
   });
 
   it('should be able to retrieve default slider options through the Getter', () => {

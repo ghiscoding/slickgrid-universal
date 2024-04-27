@@ -15,7 +15,7 @@ function removeExtraSpaces(text: string) {
   return `${text}`.replace(/\s+/g, ' ');
 }
 
-const gridOptionMock = {
+let gridOptionMock = {
   enableFiltering: true,
   enableFilterTrimWhiteSpace: true,
 } as GridOption;
@@ -43,7 +43,6 @@ describe('CompoundDateFilter', () => {
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
     spyGetHeaderRow = jest.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
-    jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionMock);
 
     mockColumn = { id: 'finish', field: 'finish', filterable: true, outputType: FieldType.dateIso, filter: { model: Filters.compoundDate, operator: '>' } };
 
@@ -53,6 +52,11 @@ describe('CompoundDateFilter', () => {
       callback: jest.fn(),
       filterContainerElm: gridStub.getHeaderRowColumn(mockColumn.id)
     };
+    gridOptionMock = {
+      enableFiltering: true,
+      enableFilterTrimWhiteSpace: true,
+    };
+    jest.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionMock);
 
     filter = new CompoundDateFilter(translateService);
   });
@@ -104,6 +108,20 @@ describe('CompoundDateFilter', () => {
     expect(spy).toHaveBeenCalled();
   });
 
+  it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element', () => {
+    jest.spyOn(gridStub, 'getOptions').mockReturnValue({
+      ...gridOptionMock, darkMode: true
+    });
+
+    filter.init(filterArguments);
+    const spy = jest.spyOn(filter.flatInstance, 'open');
+    const calendarElm = document.body.querySelector('.flatpickr-calendar') as HTMLDivElement;
+    filter.show();
+
+    expect(calendarElm.classList.contains('slick-dark-mode')).toBeTruthy();
+    expect(spy).toHaveBeenCalled();
+  });
+
   it('should be able to retrieve default flatpickr options through the Getter', () => {
     filter.init(filterArguments);
 
@@ -118,6 +136,7 @@ describe('CompoundDateFilter', () => {
       locale: 'en',
       mode: 'single',
       onChange: expect.anything(),
+      theme: 'light',
       wrap: true,
     });
   });
@@ -359,6 +378,28 @@ describe('CompoundDateFilter', () => {
     });
   });
 
+  it('should have a value with date & time in the picker when "enableTime" option is set as a global default filter option and we trigger a change', () => {
+    gridOptionMock.defaultFilterOptions = {
+      date: { enableTime: true, allowInput: true }
+    };
+    mockColumn.outputType = FieldType.dateTimeIsoAmPm;
+    mockColumn.filter!.operator = '>';
+    const spyCallback = jest.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish .flatpickr input.input') as HTMLInputElement;
+    filterInputElm.value = '2001-01-02T16:02:02.000+05:00';
+    filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
+    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
+
+    expect(filterFilledElms.length).toBe(1);
+    // expect(filter.currentDateOrDates.toISOString()).toBe('2001-01-02T21:02:02.000Z');
+    expect(filterInputElm.value).toBe('2001-01-02 4:02:02 PM');
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), {
+      columnDef: mockColumn, operator: '>', searchTerms: ['2001-01-02'], shouldTriggerQuery: true
+    });
+  });
+
   it('should have a value with date & time in the picker when using no "outputType" which will default to UTC date', () => {
     mockColumn.outputType = null as any;
     filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
@@ -416,12 +457,10 @@ describe('CompoundDateFilter', () => {
   it('should be able to change compound operator & description with alternate texts for the operator list showing up in the operator select dropdown options list', () => {
     mockColumn.outputType = null as any;
     filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
-    jest.spyOn(gridStub, 'getOptions').mockReturnValue({
-      ...gridOptionMock, compoundOperatorAltTexts: {
-        numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
-        text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
-      }
-    });
+    gridOptionMock.compoundOperatorAltTexts = {
+      numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
+      text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
+    };
 
     filter.init(filterArguments);
     const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.input-group-prepend.operator select');

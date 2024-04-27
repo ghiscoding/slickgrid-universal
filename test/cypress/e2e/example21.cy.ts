@@ -15,10 +15,14 @@ describe('Example 21 - Row Detail View', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
+  it('should change server delay to 10ms for faster testing', () => {
+    cy.get('[data-test="server-delay"]').type('{backspace}');
+  });
+
   it('should open the 1st Row Detail of the 2nd row and expect to find some details', () => {
     cy.get('.slick-cell.detail-view-toggle:nth(1)')
       .click()
-      .wait(50);
+      .wait(40);
 
     cy.get('.slick-cell + .dynamic-cell-detail')
       .find('h4')
@@ -34,7 +38,7 @@ describe('Example 21 - Row Detail View', () => {
   it('should open the 2nd Row Detail of the 4th row and expect to find some details', () => {
     cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * 9}px;"] .slick-cell:nth(1)`)
       .click()
-      .wait(50);
+      .wait(40);
 
     cy.get('.slick-cell + .dynamic-cell-detail')
       .find('h4')
@@ -56,7 +60,7 @@ describe('Example 21 - Row Detail View', () => {
   it('should open the Task 3 Row Detail and still expect same detail', () => {
     cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * 3}px;"] .slick-cell:nth(1)`)
       .click()
-      .wait(50);
+      .wait(40);
 
     cy.get('.dynamic-cell-detail').should('have.length', 1);
 
@@ -111,7 +115,7 @@ describe('Example 21 - Row Detail View', () => {
 
     cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * 4}px;"] .slick-cell:nth(1)`)
       .click()
-      .wait(50);
+      .wait(40);
 
     cy.get('.grid21')
       .find('.slick-cell + .dynamic-cell-detail .innerDetailView_5')
@@ -123,7 +127,7 @@ describe('Example 21 - Row Detail View', () => {
 
     cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * 1}px;"] .slick-cell:nth(1)`)
       .click()
-      .wait(50);
+      .wait(40);
 
     cy.get('.grid21')
       .find('.slick-cell + .dynamic-cell-detail .innerDetailView_1')
@@ -164,7 +168,7 @@ describe('Example 21 - Row Detail View', () => {
 
     cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * 1}px;"] .slick-cell:nth(1)`)
       .click()
-      .wait(50);
+      .wait(40);
 
     cy.get('.grid21')
       .find('.slick-cell + .dynamic-cell-detail .innerDetailView_1')
@@ -307,7 +311,7 @@ describe('Example 21 - Row Detail View', () => {
 
   it('should close all row details & make grid editable', () => {
     cy.get('[data-test="collapse-all-btn"]').click();
-    cy.get('[data-test="editable-grid-btn"]').click();
+    cy.get('[data-test="toggle-readonly-btn"]').click();
   });
 
   it('should click on 5th row detail open icon and expect it to open', () => {
@@ -336,5 +340,56 @@ describe('Example 21 - Row Detail View', () => {
     cy.get('.grid21')
       .find('.slick-cell + .dynamic-cell-detail .innerDetailView_5')
       .should('not.exist');
+
+    cy.get('[data-test="toggle-readonly-btn"]').click();
+  });
+
+  it('should open two Row Details and expect 2 detail panels opened', () => {
+    cy.get('.slick-viewport-top.slick-viewport-left')
+      .scrollTo('top');
+
+    cy.get(`.slick-row[style="top: ${GRID_ROW_HEIGHT * 8}px;"] .slick-cell:nth(1)`)
+      .click()
+      .wait(40);
+
+    cy.get('.slick-cell.detail-view-toggle:nth(1)')
+      .click()
+      .wait(40);
+
+    cy.get('.dynamic-cell-detail')
+      .should('have.length', 2);
+  });
+
+  it('should toggle to Dark Mode and expect all row details to get closed', () => {
+    cy.get('[data-test="toggle-dark-mode"]').click();
+
+    cy.get('.dynamic-cell-detail')
+      .should('have.length', 0);
+  });
+
+  it('should open 1st row detail again and be able to delete the row detail', () => {
+    cy.get('.slick-viewport-top.slick-viewport-left')
+      .scrollTo('top');
+
+    cy.get('.slick-cell.detail-view-toggle:nth(1)')
+      .click()
+      .wait(40);
+
+    cy.get('.dynamic-cell-detail')
+      .should('have.length', 1);
+
+    cy.get('.grid21')
+      .find('.slick-cell + .dynamic-cell-detail .innerDetailView_1')
+      .as('detailContainer1');
+
+    cy.get('@detailContainer1')
+      .find('[data-test=delete-btn]')
+      .click();
+
+    cy.get('.notification.is-danger[data-test=status]')
+      .contains('Deleted row with Task 1');
+
+    cy.get('.dynamic-cell-detail')
+      .should('have.length', 0);
   });
 });

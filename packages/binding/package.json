@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/binding",
-  "version": "4.4.1",
+  "version": "4.7.0",
   "description": "Simple Vanilla Implementation of a Binding Engine & Helper to add properties/events 2 way bindings",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -9,8 +9,8 @@
     ".": {
       "types": "./dist/types/index.d.ts",
       "node": "./dist/cjs/index.js",
-      "require": "./dist/cjs/index.js",
-      "default": "./dist/esm/index.js"
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
     },
     "./package.json": "./package.json"
   },

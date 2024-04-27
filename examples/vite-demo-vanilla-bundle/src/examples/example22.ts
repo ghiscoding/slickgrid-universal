@@ -5,14 +5,13 @@ import {
   type GridOption,
   Editors,
 } from '@slickgrid-universal/common';
-import {
-  Slicker,
-  SlickVanillaGridBundle,
-} from '@slickgrid-universal/vanilla-bundle';
-import { ExampleGridOptions } from './example-grid-options';
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { BindingEventService } from '@slickgrid-universal/binding';
 
+import { ExampleGridOptions } from './example-grid-options';
 import './example22.scss';
-import { TranslateService } from '../translate.service';
+import type { TranslateService } from '../translate.service';
 
 const NB_ITEMS = 20;
 
@@ -27,11 +26,13 @@ export default class Example22 {
   fetchResult = '';
   statusClass = 'is-success';
   statusStyle = 'display: none';
+  private _bindingEventService: BindingEventService;
 
   constructor() {
     this.translateService = (<any>window).TranslateService;
     this.selectedLanguage = this.translateService.getCurrentLanguage();
     this.selectedLanguageFile = `${this.selectedLanguage}.json`;
+    this._bindingEventService = new BindingEventService();
   }
 
   attached() {
@@ -46,10 +47,15 @@ export default class Example22 {
       { ...ExampleGridOptions, ...this.gridOptions },
       this.dataset
     );
+
+    this._bindingEventService.bind(document.querySelector(`.grid1`)!, 'onvalidationerror', (event) =>
+      alert((event as CustomEvent)?.detail.args.validationResults.msg)
+    );
   }
 
   dispose() {
     this.sgb?.dispose();
+    this._bindingEventService.unbindAll();
   }
 
   /* Define grid Options and Columns */
@@ -82,7 +88,7 @@ export default class Example22 {
         minWidth: 100,
         filterable: true,
         type: FieldType.number,
-        editor: { model: Editors.text },
+        editor: { model: Editors.text, validator: (val) => (val > 100 ? { msg: 'Max 100% allowed', valid: false } : { msg: '', valid: true }) },
       },
       {
         id: 'start',
@@ -176,33 +182,34 @@ export default class Example22 {
           maxWidth: 100,
         },
         actionButtons: {
-          editButtonClassName: 'button-style padding-1px mr-2',
+          editButtonClassName: 'button-style padding-3px mr-2',
           iconEditButtonClassName: 'mdi mdi-pencil',
           // since no title and no titleKey is provided, it will fallback to the default text provided by the plugin
           // if the title is provided but no titleKey, it will override the default text
           // last but not least if a titleKey is provided, it will use the translation key to translate the text
           // editButtonTitle: 'Edit row',
 
-          cancelButtonClassName: 'button-style padding-1px',
+          cancelButtonClassName: 'button-style padding-3px',
           cancelButtonTitle: 'Cancel row',
           cancelButtonTitleKey: 'RBE_BTN_CANCEL',
-          iconCancelButtonClassName: 'mdi mdi-undo color-danger',
+          iconCancelButtonClassName: 'mdi mdi-undo text-color-danger',
           cancelButtonPrompt: 'Are you sure you want to cancel your changes?',
 
-          updateButtonClassName: 'button-style padding-1px mr-2',
+          updateButtonClassName: 'button-style padding-3px mr-2',
           updateButtonTitle: 'Update row',
           updateButtonTitleKey: 'RBE_BTN_UPDATE',
-          iconUpdateButtonClassName: 'mdi mdi-check color-success',
+          iconUpdateButtonClassName: 'mdi mdi-check text-color-success',
           updateButtonPrompt: 'Save changes?',
 
-          deleteButtonClassName: 'button-style padding-1px',
+          deleteButtonClassName: 'button-style padding-3px',
           deleteButtonTitle: 'Delete row',
-          iconDeleteButtonClassName: 'mdi mdi-trash-can color-danger',
+          iconDeleteButtonClassName: 'mdi mdi-trash-can text-color-danger',
           deleteButtonPrompt: 'Are you sure you want to delete this row?',
         },
       },
       enableTranslate: true,
-      translater: this.translateService
+      translater: this.translateService,
+      externalResources: [new SlickCustomTooltip()]
     };
   }
 

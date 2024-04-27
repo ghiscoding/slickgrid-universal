@@ -5,9 +5,12 @@ import { createDomElement, emptyElement } from '@slickgrid-universal/utils';
 import { type SlickDataView, type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index';
 import type { CheckboxSelectorOption, Column, DOMMouseOrTouchEvent, GridOption, OnHeaderClickEventArgs, OnKeyDownEventArgs, SelectableOverrideCallback } from '../interfaces/index';
 import { SlickRowSelectionModel } from './slickRowSelectionModel';
-import { SelectionModel } from '../enums/index';
+import type { SelectionModel } from '../enums/index';
 
 export interface RowLookup { [row: number]: boolean; }
+
+const CHECK_ICON = 'mdi-icon-check';
+const UNCHECK_ICON = 'mdi-icon-uncheck';
 
 export class SlickCheckboxSelectColumn<T = any> {
   pluginName: 'CheckboxSelectColumn' = 'CheckboxSelectColumn' as const;
@@ -83,10 +86,15 @@ export class SlickCheckboxSelectColumn<T = any> {
       .subscribe(grid.onClick, this.handleClick.bind(this))
       .subscribe(grid.onKeyDown, this.handleKeyDown.bind(this));
 
-    if (this._isUsingDataView && this._dataView && this._addonOptions.applySelectOnAllPages) {
-      this._eventHandler
-        .subscribe(this._dataView.onSelectedRowIdsChanged, this.handleDataViewSelectedIdsChanged.bind(this))
-        .subscribe(this._dataView.onPagingInfoChanged, this.handleDataViewSelectedIdsChanged.bind(this));
+    if (this._isUsingDataView && this._dataView) {
+      // whenever columns changed, we need to rerender Select All, we can call handler to simulate that
+      this._eventHandler.subscribe(grid.onAfterSetColumns, this.handleDataViewSelectedIdsChanged.bind(this));
+
+      if (this._addonOptions.applySelectOnAllPages) {
+        this._eventHandler
+          .subscribe(this._dataView.onSelectedRowIdsChanged, this.handleDataViewSelectedIdsChanged.bind(this))
+          .subscribe(this._dataView.onPagingInfoChanged, this.handleDataViewSelectedIdsChanged.bind(this));
+      }
     }
 
     if (!this._addonOptions.hideInFilterHeaderRow) {
@@ -214,12 +222,16 @@ export class SlickCheckboxSelectColumn<T = any> {
    */
   createCheckboxElement(inputId: string, checked = false) {
     const fragmentElm = new DocumentFragment();
-    fragmentElm.appendChild(
+    const labelElm = createDomElement('label', { className: 'checkbox-selector-label', htmlFor: inputId });
+    const divElm = createDomElement('div', { className: 'icon-checkbox-container' });
+    divElm.appendChild(
       createDomElement('input', { id: inputId, type: 'checkbox', checked, ariaChecked: String(checked) })
     );
-    fragmentElm.appendChild(
-      createDomElement('label', { htmlFor: inputId })
+    divElm.appendChild(
+      createDomElement('div', { className: `mdi ${checked ? CHECK_ICON : UNCHECK_ICON}` })
     );
+    labelElm.appendChild(divElm);
+    fragmentElm.appendChild(labelElm);
 
     return fragmentElm;
   }
@@ -245,6 +257,7 @@ export class SlickCheckboxSelectColumn<T = any> {
       reorderable: this._addonOptions.reorderable,
       sortable: false,
       width: this._addonOptions.width || 30,
+      maxWidth: this._addonOptions.width || 30,
       formatter: this.checkboxSelectionFormatter.bind(this),
     } as Column;
   }
@@ -282,7 +295,7 @@ export class SlickCheckboxSelectColumn<T = any> {
 
     // user can optionally execute a callback defined in its grid options prior to toggling the row
     const previousSelectedRows = this._grid.getSelectedRows();
-    if (this._addonOptions.onRowToggleStart) {
+    if (typeof this._addonOptions.onRowToggleStart === 'function') {
       this._addonOptions.onRowToggleStart(event, { row, previousSelectedRows });
     }
 
@@ -315,18 +328,22 @@ export class SlickCheckboxSelectColumn<T = any> {
       if (args.column.field === (this._addonOptions.field || '_checkbox_selector')) {
         emptyElement(args.node);
 
-        // <span class="container"><input type="checkbox"><label for="checkbox"></label></span>
-        const spanElm = createDomElement('span', { id: 'filter-checkbox-selectall-container', ariaChecked: 'false' });
-        spanElm.appendChild(
-          createDomElement('input', { type: 'checkbox', id: `header-filter-selector${this._selectAll_UID}` })
+        const inputId = `header-filter-selector${this._selectAll_UID}`;
+        const labelElm = createDomElement('label', { id: 'filter-checkbox-selectall-container', htmlFor: inputId });
+        const divElm = createDomElement('div', { className: 'icon-checkbox-container' });
+        divElm.appendChild(
+          createDomElement('input', { id: inputId, type: 'checkbox', ariaChecked: 'false' })
         );
-        spanElm.appendChild(
-          createDomElement('label', { htmlFor: `header-filter-selector${this._selectAll_UID}` })
+        divElm.appendChild(
+          createDomElement('div', { className: 'mdi mdi-icon-uncheck' })
         );
-        args.node.appendChild(spanElm);
-        this._headerRowNode = args.node;
 
-        this._bindEventService.bind(spanElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLInputElement>) => this.handleHeaderClick(e, args)) as EventListener);
+        labelElm.appendChild(divElm);
+        args.node.appendChild(labelElm);
+        this._headerRowNode = args.node;
+        this._headerRowNode.classList.add('checkbox-header');
+
+        this._bindEventService.bind(labelElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLInputElement>) => this.handleHeaderClick(e, args)) as EventListener);
       }
     });
   }
@@ -387,9 +404,13 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
     if (!this._addonOptions.hideInFilterHeaderRow) {
       const selectAllElm = this.headerRowNode?.querySelector<HTMLInputElement>(`#header-filter-selector${this._selectAll_UID}`);
+      const selectAllIconElm = this.headerRowNode?.querySelector<HTMLInputElement>('.icon-checkbox-container .mdi');
       if (selectAllElm) {
         selectAllElm.ariaChecked = String(this._isSelectAllChecked);
         selectAllElm.checked = this._isSelectAllChecked;
+      }
+      if (selectAllIconElm) {
+        selectAllIconElm.className = `mdi ${this._isSelectAllChecked ? CHECK_ICON : UNCHECK_ICON}`;
       }
     }
   }
@@ -557,10 +578,11 @@ export class SlickCheckboxSelectColumn<T = any> {
   }
 
   protected renderSelectAllCheckbox(isSelectAllChecked: boolean) {
-    this._grid.updateColumnHeader(
+    const colHeaderElm = this._grid.updateColumnHeader(
       this._addonOptions.columnId || '',
       this.createCheckboxElement(`header-selector${this._selectAll_UID}`, !!isSelectAllChecked),
       this._addonOptions.toolTip
     );
+    colHeaderElm?.classList.add('header-checkbox-selectall');
   }
 }

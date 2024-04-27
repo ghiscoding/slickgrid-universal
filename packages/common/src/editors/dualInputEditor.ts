@@ -66,7 +66,7 @@ export class DualInputEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
-    return this.columnDef?.internalColumnEditor || {} as ColumnEditor;
+    return this.columnDef?.editor || {} as ColumnEditor;
   }
 
   /** Getter for the item data context object */
@@ -329,7 +329,7 @@ export class DualInputEditor implements Editor {
       this[originalValuePosition] = itemValue;
       if (this.editorParams[position].type === 'float') {
         const decimalPlaces = this.getDecimalPlaces(position);
-        if (decimalPlaces !== null && (this[originalValuePosition] || this[originalValuePosition] === 0) && typeof this[originalValuePosition] !== undefined) {
+        if (decimalPlaces !== null && (this[originalValuePosition] || this[originalValuePosition] === 0) && this[originalValuePosition] !== undefined) {
           this[originalValuePosition] = (+this[originalValuePosition]).toFixed(decimalPlaces);
         }
       }

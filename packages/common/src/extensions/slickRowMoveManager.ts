@@ -139,7 +139,6 @@ export class SlickRowMoveManager {
       field: columnId,
       reorderable: this._addonOptions.reorderable,
       resizable: false,
-      selectable: false,
       width: this._addonOptions.width || 40,
       formatter: this.moveIconFormatter.bind(this),
     };
@@ -321,7 +320,7 @@ export class SlickRowMoveManager {
       return '';
     } else {
       return {
-        addClasses: `cell-reorder dnd ${this._addonOptions.cssClass || ''}`,
+        addClasses: `cell-reorder dnd`,
         html: createDomElement('div', { className: this._addonOptions.cssClass || '' }),
       };
     }

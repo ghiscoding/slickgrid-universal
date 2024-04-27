@@ -8,6 +8,7 @@
 - [onClick Action Editor (icon click)](#onclick-action-editor-icon-click)
 - [AutoComplete Editor](editors/AutoComplete-Editor.md)
 - [Select (single/multi) Editors](editors/Select-Dropdown-Editor-(single,multiple).md)
+- [Editor Options](#editor-options)
 - [Validators](#validators)
    - [Custom Validator](#custom-validator)
 - [Disabling specific cell Edit](#disabling-specific-cell-edit)
@@ -168,15 +169,15 @@ Instead of an inline editor, you might want to simply click on an edit icon that
 - The `Formatters.editIcon` will give you a pen icon, while a `Formatters.deleteIcon` is an "x" icon
 ```typescript
 this.columnDefinitions = [
-   {
-      id: 'edit', field: 'id',
-      formatter: Formatters.editIcon,
-      maxWidth: 30,
-      onCellClick: (args: OnEventArgs) => {
-        console.log(args);
-      }
-   },
-   // ...
+  {
+    id: 'edit', field: 'id',
+    formatter: Formatters.editIcon,
+    maxWidth: 30,
+    onCellClick: (args: OnEventArgs) => {
+      console.log(args);
+    }
+  },
+  // ...
 ];
 ```
 The `args` returned to the `onCellClick` callback is of type `OnEventArgs` which is the following:
@@ -192,6 +193,33 @@ export interface OnEventArgs {
 }
 ```
 
+## Editor Options
+
+#### Column Editor `editorOptions`
+Some of the Editors could receive extra options, which is mostly the case for Editors using external dependencies (e.g. `autocompleter`, `date`, `multipleSelect`, ...) you can provide options via the `editorOptions`, for example
+
+```ts
+this.columnDefinitions = [{
+  id: 'start', name: 'Start Date', field: 'start',
+  editor: { 
+    model: Editors.date,
+    editorOptions: { minDate: 'today' }
+  }
+}];
+```
+
+#### Grid Option `defaultEditorOptions
+You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultEditorOptions` Grid Option. Note that they are set via the editor type as a key name (`autocompleter`, `date`, ...) and then the content is the same as `editorOptions` (also note that each key is already typed with the correct editor option interface), for example
+
+```ts
+this.gridOptions = {
+  defaultEditorOptions: { 
+    autocompleter: { debounceWaitMs: 150 }, // typed as AutocompleterOption
+    date: { minDate: 'today' },
+    longText: { cols: 50, rows: 5 } 
+  }
+}
+```
 
 ## Validators
 Each Editor needs to implement the `validate()` method which will be executed and validated before calling the `save()` method. Most Editor will simply validate that the value passed is correctly formed. The Float Editor is one of the more complex one and will first check if the number is a valid float then also check if `minValue` or `maxValue` was passed and if so validate against them. If any errors is found it will return an object of type `EditorValidatorOutput` (see the signature on top).
@@ -279,17 +307,17 @@ This can be answered by searching on Stack Overflow Stack Overflow and this is t
   }
 
   handleOnBeforeEditVerifyCellIsEditable(event) {
-        const eventData = event?.detail?.eventData;
-        const args = event?.detail?.args;
-        const { column, item, grid } = args;
+    const eventData = event?.detail?.eventData;
+    const args = event?.detail?.args;
+    const { column, item, grid } = args;
 
-        if (column && item) {
-            if (!checkItemIsEditable(item, column, grid)) {
-                event.preventDefault();
-                eventData.stopImmediatePropagation();
-            }
-        }
+    if (column && item) {
+      if (!checkItemIsEditable(item, column, grid)) {
+        event.preventDefault(); // OR eventData.preventDefault();
         return false;
+      }
+    }
+    return false;
   }
 
   checkItemIsEditable(dataContext, columnDef, grid) {
@@ -318,9 +346,9 @@ For SalesForce it's nearly the same, the only difference is that we add our even
 ```html
 <div class="grid-container slds-p-horizontal" style="padding: 10px">
     <div class="grid1"
-            onvalidationerror={handleOnValidationError}
-            onbeforeeditcell={handleOnBeforeEditVerifyCellIsEditable}
-            onslickergridcreated={handleOnSlickerGridCreated}>
+         onvalidationerror={handleOnValidationError}
+         onbeforeeditcell={handleOnBeforeEditVerifyCellIsEditable}
+         onslickergridcreated={handleOnSlickerGridCreated}>
     </div>
 </div>
 ```

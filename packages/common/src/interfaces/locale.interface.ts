@@ -191,6 +191,9 @@ export interface Locale {
   /** Text "Toggle all Groups" which can optionally show in a button inside the Draggable Grouping pre-header row */
   TEXT_TOGGLE_ALL_GROUPS?: string;
 
+  /** Text "Toggle Dark Mode" shown in Grid Menu (when enabled) */
+  TEXT_TOGGLE_DARK_MODE?: string;
+
   /** Text "Toggle Filter Row" shown in Grid Menu (when enabled) */
   TEXT_TOGGLE_FILTER_ROW?: string;
 

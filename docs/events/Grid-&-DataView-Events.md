@@ -45,11 +45,11 @@ For SalesForce it's nearly the same, the only difference is that we add our even
 ```html
 <div class="grid-container">
     <div class="grid1"
-            onvalidationerror={handleOnValidationError}
-            oncellchange={handleOnCellChange}
-            onclick={handleOnCellClick}
-            onbeforeeditcell={handleOnBeforeEditVerifyCellIsEditable}
-            onslickergridcreated={handleOnSlickerGridCreated}>
+         onvalidationerror={handleOnValidationError}
+         oncellchange={handleOnCellChange}
+         onclick={handleOnCellClick}
+         onbeforeeditcell={handleOnBeforeEditVerifyCellIsEditable}
+         onslickergridcreated={handleOnSlickerGridCreated}>
     </div>
 </div>
 ```

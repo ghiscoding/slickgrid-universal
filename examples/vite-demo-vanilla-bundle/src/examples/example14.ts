@@ -22,7 +22,7 @@ import {
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import countriesJson from './data/countries.json?raw';
 import { ExampleGridOptions } from './example-grid-options';
@@ -93,7 +93,7 @@ export default class Example14 {
   isGridEditable = true;
   classDefaultResizeButton = 'button is-small';
   classNewResizeButton = 'button is-small is-selected is-primary';
-  editQueue: Array<{ item: any; columns: Column[]; editCommand: EditCommand }> = [];
+  editQueue: Array<{ item: any; columns: Column[]; editCommand: EditCommand; }> = [];
   editedItems = {};
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
@@ -326,7 +326,7 @@ export default class Example14 {
       {
         id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
         excludeFromExport: true,
-        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           commandTitle: 'Commands',
@@ -341,7 +341,7 @@ export default class Example14 {
             'divider',
             {
               command: 'delete-row', title: 'Delete Row', positionOrder: 64,
-              iconCssClass: 'mdi mdi-close color-danger', cssClass: 'red', textCssClass: 'text-italic color-danger-light',
+              iconCssClass: 'mdi mdi-close text-color-danger', cssClass: 'red', textCssClass: 'text-italic text-color-danger-light',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext?.completed;
@@ -507,7 +507,7 @@ export default class Example14 {
   }
 
   showSpinner() {
-    this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-24px color-alt-success';
+    this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-24px text-color-alt-success';
   }
 
   loadData(count: number) {
@@ -578,14 +578,13 @@ export default class Example14 {
   }
 
   handleOnBeforeEditCell(event) {
-    const eventData = event.detail.eventData;
     const args = event && event.detail && event.detail.args;
     const { column, item, grid } = args;
 
     if (column && item) {
       if (!checkItemIsEditable(item, column, grid)) {
-        event.preventDefault();
-        eventData.stopImmediatePropagation();
+        event.preventDefault(); // OR eventData.preventDefault();
+        return false;
       }
     }
     return false;

@@ -1,10 +1,17 @@
 <h3 class="title is-3">
   Example 10 - Grid with GraphQL Backend Service
+  <span class="d-inline-flex">
+    <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
+      <span class="icon"><i class="mdi mdi-theme-light-dark"></i></span>
+      <span> Toggle Light/Dark</span>
+    </button>
+  </span>
+
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a class="is-size-5" target="_blank"
        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example10.ts">
-      <span class="mdi mdi-link-variant mdi-v-align-sub"></span> code
+      <span class="mdi mdi-link-variant"></span> code
     </a>
   </div>
 </h3>
@@ -33,11 +40,11 @@
   </button>
 
   <label for="serverdelay" class="ml-4">Server Delay: </label>
-  <input id="serverdelay" type="number" data-test="server-delay" class="is-narrow"
+  <input id="serverdelay" type="number" data-test="server-delay" class="is-narrow input is-small"
         value.bind="serverWaitDelay"
         title="input a fake timer delay to simulate slow server response" />
 
-  <div class="row col-md-12">
+  <div class="row col-md-12 mt-2">
     <span>
       <label>Programmatically go to first/last page:</label>
       <button class="button is-small" data-test="goto-first-page" onclick.delegate="goToFirstPage()">
@@ -87,8 +94,6 @@
     </div>
   </div>
 </div>
-
-<hr />
 
 <div class="grid10">
 </div>

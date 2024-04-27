@@ -41,6 +41,12 @@ export interface GridMenuLabel {
   /** Defaults to "REFRESH_DATASET" translation key */
   refreshDatasetCommandKey?: string;
 
+  /** Defaults to "Toggle Dark Mode" */
+  toggleDarkModeCommand?: string;
+
+  /** Defaults to "TOGGLE_DARK_MODE" translation key */
+  toggleDarkModeCommandKey?: string;
+
   /** Defaults to "Toggle Filter Row" */
   toggleFilterCommand?: string;
 

@@ -1,6 +1,6 @@
 import { emptyElement, setDeepValue } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
-import { multipleSelect, MultipleSelectInstance, MultipleSelectOption, OptionRowData } from 'multiple-select-vanilla';
+import { multipleSelect, type MultipleSelectInstance, type MultipleSelectOption, type OptionRowData } from 'multiple-select-vanilla';
 
 import { Constants } from '../constants';
 import { FieldType } from './../enums/index';
@@ -112,11 +112,13 @@ export class SelectEditor implements Editor {
       autoAdjustDropPosition: true,
       autoAdjustDropWidthByTextSize: true,
       container: 'body',
+      darkMode: !!this.gridOptions.darkMode,
       filter: false,
       maxHeight: 275,
       minHeight: 25,
       name: this.elementName,
       single: true,
+      singleRadio: true,
       renderOptionLabelAsHtml: this.columnEditor?.enableRenderHtml ?? false,
       sanitizer: (dirtyHtml: string) => sanitizeTextByAvailableSanitizer(this.gridOptions, dirtyHtml),
       onClick: () => this._isValueTouched = true,
@@ -134,6 +136,7 @@ export class SelectEditor implements Editor {
 
     if (isMultipleSelect) {
       libOptions.single = false;
+      libOptions.singleRadio = false;
       libOptions.displayTitle = true;
       libOptions.showOkButton = true;
 
@@ -175,7 +178,7 @@ export class SelectEditor implements Editor {
 
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor | undefined {
-    return this.columnDef?.internalColumnEditor ?? {} as ColumnEditor;
+    return this.columnDef?.editor ?? {} as ColumnEditor;
   }
 
   /** Getter for item data context object */
@@ -188,13 +191,17 @@ export class SelectEditor implements Editor {
     return this.editorElm;
   }
 
+  get editorOptions(): MultipleSelectOption {
+    return { ...this.gridOptions.defaultEditorOptions?.select, ...this.columnEditor?.editorOptions };
+  }
+
   get isCompositeEditor(): boolean {
     return !!(this.args?.compositeEditorOptions);
   }
 
   /** Getter for the Custom Structure if exist */
   protected get customStructure(): CollectionCustomStructure | undefined {
-    return this.columnDef?.internalColumnEditor?.customStructure;
+    return this.columnDef?.editor?.customStructure;
   }
 
   get hasAutoCommitEdit(): boolean {
@@ -306,7 +313,7 @@ export class SelectEditor implements Editor {
   }
 
   init() {
-    if (!this.columnDef || !this.columnDef.internalColumnEditor || (!this.columnDef.internalColumnEditor.collection && !this.columnDef.internalColumnEditor.collectionAsync)) {
+    if (!this.columnDef || !this.columnDef.editor || (!this.columnDef.editor.collection && !this.columnDef.editor.collectionAsync)) {
       throw new Error(`[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") inside Column Definition Editor for the MultipleSelect/SingleSelect Editor to work correctly.
       Also each option should include a value/label pair (or value/labelKey when using Locale).
       For example: { editor: { collection: [{ value: true, label: 'True' },{ value: false, label: 'False'}] } }`);
@@ -743,8 +750,7 @@ export class SelectEditor implements Editor {
     const placeholder = this.columnEditor?.placeholder ?? '';
     this.defaultOptions.placeholder = placeholder || '';
 
-    const editorOptions = this.columnDef?.internalColumnEditor?.editorOptions ?? {};
-    this.editorElmOptions = { ...this.defaultOptions, ...editorOptions, data: dataCollection };
+    this.editorElmOptions = { ...this.defaultOptions, ...this.editorOptions, data: dataCollection };
     this._msInstance = multipleSelect(selectElement, this.editorElmOptions) as MultipleSelectInstance;
     this.editorElm = this._msInstance.getParentElement();
     if (!this.isCompositeEditor) {

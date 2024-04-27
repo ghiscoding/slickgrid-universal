@@ -1,5 +1,5 @@
 import { Aggregators, type Column, Formatters, type GridOption, type Grouping, GroupTotalFormatters, SlickCellRangeSelector, SlickCellSelectionModel, SlickRowSelectionModel } from '@slickgrid-universal/common';
-import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options';
 
 // use any of the Styling Theme
@@ -46,7 +46,7 @@ export default class Example17 {
   /* Define grid Options and Columns */
   defineGrids() {
     this.columnDefinitions1 = [
-      { id: 'sel', name: '#', field: 'id', cssClass: 'cell-unselectable', resizable: false, selectable: false, focusable: false, width: 40 },
+      { id: 'sel', name: '#', field: 'id', cssClass: 'cell-unselectable', resizable: false, selectable: false, focusable: false, width: 40, excludeFromHeaderMenu: true },
       { id: 'title', name: 'Title', field: 'title', cssClass: 'cell-title', sortable: true, width: 90, filterable: true },
       { id: 'duration', name: 'Duration', field: 'duration', width: 90, sortable: true, filterable: true, groupTotalsFormatter: GroupTotalFormatters.sumTotals },
       { id: '%', name: '% Complete', field: 'percentComplete', width: 90, sortable: true, filterable: true, formatter: Formatters.percentCompleteBar },

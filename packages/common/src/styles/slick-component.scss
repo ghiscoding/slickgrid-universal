@@ -1,5 +1,6 @@
 /* pagination/pagination variables */
 @import './variables';
+@import './sass-utilities';
 
 // ----------------------------------------------
 // Slick Footer Component
@@ -80,7 +81,7 @@
     padding: 6px;
   }
 
-  .ui-icon-container {
+  .slick-icon-container {
     display: inline-block;
     border-color: var(--slick-pagination-border-color, $slick-pagination-border-color);
   }
@@ -96,9 +97,11 @@
 
     .slick-page-number {
       vertical-align: top;
-      margin-top: 6px;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
       padding: 0 5px;
+      height: inherit;
 
       input {
         background-color: var(--slick-pagination-page-input-bgcolor, $slick-pagination-page-input-bgcolor);
@@ -113,6 +116,7 @@
     .pagination {
       margin: 0;
       display: inline-flex;
+      background-color: var(--slick-pagination-button-bg-color, $slick-pagination-button-bg-color);
 
       .page-link {
         display: flex;
@@ -124,66 +128,65 @@
 
       .page-item {
         cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid;
+        padding: var(--slick-pagination-button-padding, $slick-pagination-button-padding);
+        border-color: var(--slick-pagination-button-border-color, $slick-pagination-button-border-color);
 
-        a[class*="icon-seek-"] {
-            border-color: var(--slick-pagination-button-border-color, $slick-pagination-button-border-color);
-            color: var(--slick-pagination-icon-color, $slick-pagination-icon-color);
-            text-decoration: none;
-            font-family: var(--slick-icon-font-family, $slick-icon-font-family);
-            line-height: var(--slick-pagination-icon-line-height, $slick-pagination-icon-line-height);
-            -webkit-text-stroke: var(--slick-pagination-icon-seek-text-stroke, $slick-pagination-icon-seek-text-stroke);
-            padding: var(--slick-pagination-button-padding, $slick-pagination-button-padding);
-        }
-        a[class*="icon-seek-"]:hover {
+        &:hover {
           background-color: var(--slick-pagination-button-hover-color, $slick-pagination-button-hover-color);
         }
 
         &:first-child {
-          a, span {
-            border-top-left-radius: var(--slick-pagination-button-border-radius, $slick-pagination-button-border-radius);
-            border-bottom-left-radius: var(--slick-pagination-button-border-radius, $slick-pagination-button-border-radius);
-          }
+          border-top-left-radius: var(--slick-pagination-button-border-radius, $slick-pagination-button-border-radius);
+          border-bottom-left-radius: var(--slick-pagination-button-border-radius, $slick-pagination-button-border-radius);
         }
         &:last-child {
-          a, span {
-            border-top-right-radius: var(--slick-pagination-button-border-radius, $slick-pagination-button-border-radius);
-            border-bottom-right-radius: var(--slick-pagination-button-border-radius, $slick-pagination-button-border-radius);
-          }
+          border-top-right-radius: var(--slick-pagination-button-border-radius, $slick-pagination-button-border-radius);
+          border-bottom-right-radius: var(--slick-pagination-button-border-radius, $slick-pagination-button-border-radius);
         }
 
-        .icon-seek-first:before {
-          content: var(--slick-pagination-icon-seek-first, $slick-pagination-icon-seek-first);
-          width: var(--slick-pagination-icon-seek-first-width, $slick-pagination-icon-seek-first-width);
+        // to make button borders overlap
+        &.seek-prev, &.seek-end {
+          margin-left: -1px;
         }
-        .icon-seek-prev:before {
-          content: var(--slick-pagination-icon-seek-prev, $slick-pagination-icon-seek-prev);
-          width: var(--slick-pagination-icon-seek-prev-width, $slick-pagination-icon-seek-prev-width);
-        }
-        .icon-seek-next:before {
-          content: var(--slick-pagination-icon-seek-next, $slick-pagination-icon-seek-next);
-          width: var(--slick-pagination-icon-seek-next-width, $slick-pagination-icon-seek-next-width);
-        }
-        .icon-seek-end:before {
-          content: var(--slick-pagination-icon-seek-end, $slick-pagination-icon-seek-end);
 
-          width: var(--slick-pagination-icon-seek-end-width, $slick-pagination-icon-seek-end-width);
+        a.icon-seek-first,
+        a.icon-seek-prev,
+        a.icon-seek-next,
+        a.icon-seek-end {
+          background-color: currentColor;
+          height: var(--slick-pagination-icon-size, $slick-pagination-icon-size);
+          width: var(--slick-pagination-icon-size, $slick-pagination-icon-size);
         }
-        .icon-seek-first:before,
-        .icon-seek-prev:before,
-        .icon-seek-next:before,
-        .icon-seek-end:before {
-          display: block;
-          height: var(--slick-pagination-icon-height, $slick-pagination-icon-height);
+        a.icon-seek-first {
+          @include generateSvgStyle('slick-pagination-icon-seek-first-svg', $slick-pagination-icon-seek-first-svg-path);
         }
-      }
-      .page-item.disabled {
-        cursor: not-allowed;
-        font-weight: normal;
+        a.icon-seek-prev {
+          @include generateSvgStyle('slick-pagination-icon-seek-prev-svg', $slick-pagination-icon-seek-prev-svg-path);
+          margin-left: -1px;
+        }
+        a.icon-seek-next {
+          @include generateSvgStyle('slick-pagination-icon-seek-next-svg', $slick-pagination-icon-seek-next-svg-path);
+        }
+        a.icon-seek-end {
+          @include generateSvgStyle('slick-pagination-icon-seek-end-svg', $slick-pagination-icon-seek-end-svg-path);
+          margin-left: -1px;
+        }
 
         a[class*="icon-seek-"] {
-          color: #b8b8b8;
-          background-color: rgb(249, 249, 249);
-          border-color: #dedede;
+          color: var(--slick-pagination-icon-color, $slick-pagination-icon-color);
+        }
+
+        &.disabled {
+          cursor: not-allowed;
+          background-color: var(--slick-pagination-icon-seek-background-color, $slick-pagination-icon-seek-disabled-bg-color);
+          border-color: var(--slick-pagination-button-border-disabled-color, $slick-pagination-button-border-disabled-color);
+          a[class*="icon-seek-"] {
+            color: var(--slick-pagination-icon-seek-disabled-color, $slick-pagination-icon-seek-disabled-color);
+          }
         }
       }
     }
@@ -195,6 +198,7 @@
     padding: 2px;
 
     select {
+      color: var(--slick-font-color, $slick-font-color);
       background-color: var(--slick-pagination-page-select-bg-color, $slick-pagination-page-select-bg-color);
       font-size: var(--slick-pagination-page-select-font-size, $slick-pagination-page-select-font-size);
       line-height: 1.5;

@@ -42,8 +42,6 @@ export type SlickPluginList =
   SlickRowMoveManager |
   SlickRowSelectionModel;
 
-/* eslint-disable @typescript-eslint/indent */
-// disable eslint indent rule until this issue is fixed: https://github.com/typescript-eslint/typescript-eslint/issues/1824
 export type InferExtensionByName<T extends ExtensionName> =
   T extends ExtensionName.autoTooltip ? SlickAutoTooltip :
   T extends ExtensionName.cellExternalCopyManager ? SlickCellExcelCopyManager :
@@ -59,4 +57,3 @@ export type InferExtensionByName<T extends ExtensionName> =
   T extends ExtensionName.rowDetailView ? SlickRowDetailView :
   T extends ExtensionName.rowMoveManager ? SlickRowMoveManager :
   T extends ExtensionName.rowSelection ? SlickRowSelectionModel : any;
-/* eslint-enable @typescript-eslint/indent */

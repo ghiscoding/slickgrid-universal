@@ -11,8 +11,8 @@ export interface Editor {
   /** is the Editor disabled when we first open it? This could happen when we use "collectionAsync" and we wait for the "collection" to be filled before enabling the Editor. */
   disabled?: boolean;
 
-  /** editor may specify an array of keys to bubble */
-  keyCaptureList?: string;
+  /** List of key codes, which will not be captured by default slickgrid hotkeys listeners */
+  keyCaptureList?: number[];
 
   /** Initialize the Editor */
   init: (args?: EditorArguments) => void;
@@ -121,3 +121,10 @@ export interface Editor {
    */
   validate: (targetElm?: HTMLElement, options?: any) => EditorValidationResult;
 }
+
+export type EditorConstructor = {
+  new(args: EditorArguments): Editor;
+
+  /** Static flag used in makeActiveCellEditable. */
+  suppressClearOnEdit?: boolean;
+};

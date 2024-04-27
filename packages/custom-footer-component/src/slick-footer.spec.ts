@@ -1,5 +1,5 @@
 import 'jest-extended';
-import { CustomFooterOption, GridOption, SlickEvent, type SlickGrid } from '@slickgrid-universal/common';
+import { type CustomFooterOption, type GridOption, SlickEvent, type SlickGrid } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { SlickFooterComponent } from './slick-footer.component';

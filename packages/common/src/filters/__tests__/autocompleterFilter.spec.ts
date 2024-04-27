@@ -94,6 +94,16 @@ describe('AutocompleterFilter', () => {
     expect(filterCount).toBe(1);
   });
 
+  it('should initialize the filter even when user define his own global filter options', () => {
+    gridOptionMock.defaultFilterOptions = {
+      autocompleter: { minLength: 3 }
+    };
+    mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    filter.init(filterArguments);
+
+    expect(filter.autocompleterOptions.minLength).toEqual(3);
+  });
+
   it('should initialize the filter even when user define his own filter options', () => {
     mockColumn.filter.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     mockColumn.filter.filterOptions = { minLength: 3 } as AutocompleterOption;
@@ -310,9 +320,7 @@ describe('AutocompleterFilter', () => {
     mockColumn.filter = {
       filterOptions: {
         showOnFocus: true,
-        fetch: (searchText, updateCallback) => {
-          updateCallback(mockDataResponse);
-        }
+        fetch: (_, updateCallback) => updateCallback(mockDataResponse)
       }
     };
 
@@ -329,6 +337,28 @@ describe('AutocompleterFilter', () => {
     expect(autocompleteListElms[0].textContent).toBe('Female');
     expect(autocompleteListElms[1].textContent).toBe('Undefined');
     expect(filterFilledElms.length).toBe(1);
+  });
+
+  it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element', async () => {
+    gridOptionMock.darkMode = true;
+    const mockDataResponse = [{ value: 'female', label: 'Female' }, { value: 'undefined', label: 'Undefined' }];
+
+    mockColumn.filter = {
+      filterOptions: {
+        showOnFocus: true,
+        fetch: (_, updateCallback) => updateCallback(mockDataResponse)
+      }
+    };
+
+    filterArguments.searchTerms = ['female'];
+    await filter.init(filterArguments);
+    const filterElm = divContainer.querySelector('input.filter-gender') as HTMLInputElement;
+    filterElm.focus();
+
+    jest.runAllTimers(); // fast-forward timer
+
+    const autocompleteElm = document.body.querySelector('.slick-autocomplete') as HTMLDivElement;
+    expect(autocompleteElm.classList.contains('slick-dark-mode')).toBeTruthy();
   });
 
   it('should create the filter with a default search term when using "collectionAsync" as a Promise with content to simulate http-client and triggerOnEveryKeyStroke is enabled', async () => {
@@ -479,7 +509,7 @@ describe('AutocompleterFilter', () => {
       expect(filterCollection[1]).toEqual({ value: 'male', description: 'male' });
       expect(filterCollection[2]).toEqual({ value: 'female', description: 'female' });
     } catch (e) {
-      console.log('ERROR', e)
+      console.log('ERROR', e);
     }
   });
 

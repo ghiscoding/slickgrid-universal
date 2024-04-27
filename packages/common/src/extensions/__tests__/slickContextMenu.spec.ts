@@ -26,7 +26,7 @@ const commandItemsMock = [
       { command: 'command3', title: 'Command 3', positionOrder: 70, },
       { command: 'command4', title: 'Command 4', positionOrder: 71, },
       {
-        command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'color-warning', commandItems: [
+        command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'text-color-warning', commandItems: [
           { command: 'command5', title: 'Command 5', positionOrder: 72, },
         ]
       }
@@ -267,6 +267,20 @@ describe('ContextMenu Plugin', () => {
       expect(contextMenuElm).toBeNull();
       expect(closeSpy).toHaveBeenCalled();
       expect(hideMenuSpy).toHaveBeenCalled();
+    });
+
+    it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element when opening Context Menu', () => {
+      jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, darkMode: true });
+      const actionBtnElm = document.createElement('button');
+      slickCellElm.appendChild(actionBtnElm);
+      const eventDataCopy = deepCopy(eventData);
+      gridStub.onContextMenu.notify({ grid: gridStub }, eventDataCopy as any, gridStub);
+
+      let contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
+      gridStub.onContextMenu.notify({ grid: gridStub }, eventDataCopy as any, gridStub);
+
+      expect(contextMenuElm).toBeTruthy();
+      expect(contextMenuElm.classList.contains('slick-dark-mode')).toBeTruthy();
     });
 
     it('should "autoAlignSide" and expect menu to aligned left with a calculate offset when showing menu', () => {
@@ -689,7 +703,7 @@ describe('ContextMenu Plugin', () => {
         expect(commandList2Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
         expect(commandContentElm2.textContent).toBe('Sub Commands');
         expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
-        expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
+        expect(subMenuTitleElm.className).toBe('slick-menu-title text-color-warning');
         expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
         expect(subCommand3Elm.textContent).toContain('Command 3');
         expect(subCommand5Elm.textContent).toContain('Command 5');
@@ -818,7 +832,7 @@ describe('ContextMenu Plugin', () => {
         expect(closeBtnElm).toBeTruthy();
         expect(commandListElm.querySelectorAll('.slick-menu-item').length).toBe(1);
         expect(commandItemElm1.classList.contains('slick-menu-item-disabled')).toBeFalsy();
-        expect(commandIconElm1.classList.contains('fa-clone')).toBeTruthy();
+        expect(commandIconElm1.classList.contains('mdi-content-copy')).toBeTruthy();
         expect(commandLabelElm1.textContent).toBe('Copy');
 
         commandItemElm1.dispatchEvent(new CustomEvent('click'));

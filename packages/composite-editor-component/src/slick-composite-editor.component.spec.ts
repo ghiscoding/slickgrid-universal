@@ -1,14 +1,14 @@
 import 'jest-extended';
 import {
-  Column,
-  CompositeEditorOpenDetailOption,
-  Editor,
+  type Column,
+  type CompositeEditorOpenDetailOption,
+  type Editor,
   Editors,
-  GridOption,
-  GridService,
+  type GridOption,
+  type GridService,
   type SlickDataView,
   SlickEvent,
-  SlickRowSelectionModel,
+  type SlickRowSelectionModel,
   type SlickGrid,
 } from '@slickgrid-universal/common';
 
@@ -121,7 +121,7 @@ const rowSelectionModelStub = {
 function createNewColumDefinitions(count: number) {
   const columnsMock: Column[] = [];
   for (let i = 0; i < count; i++) {
-    columnsMock.push({ id: `field${i}`, field: `field${i}`, name: `Field ${i}`, editor: { model: Editors.text, massUpdate: true }, width: 75 });
+    columnsMock.push({ id: `field${i}`, field: `field${i}`, name: `Field ${i}`, editorClass: Editors.text, editor: { model: Editors.text, massUpdate: true }, width: 75 });
   }
   return columnsMock;
 }
@@ -132,10 +132,10 @@ describe('CompositeEditorService', () => {
   let div: HTMLDivElement;
   let translateService: TranslateServiceStub;
   const columnsMock: Column[] = [
-    { id: 'productName', field: 'productName', width: 100, name: 'Product', nameKey: 'PRODUCT', editor: { model: Editors.text } },
+    { id: 'productName', field: 'productName', width: 100, name: 'Product', nameKey: 'PRODUCT', editorClass: Editors.text, editor: { model: Editors.text } },
     { id: 'field2', field: 'field2', width: 75, name: 'Field 2' },
-    { id: 'field3', field: 'field3', width: 75, name: 'Field 3', nameKey: 'DURATION', editor: { model: Editors.date, massUpdate: true }, columnGroup: 'Group Name', columnGroupKey: 'GROUP_NAME' },
-    { id: 'zip', field: 'adress.zip', width: 75, name: 'Zip', editor: { model: Editors.integer, massUpdate: true }, columnGroup: 'Group Name', columnGroupKey: 'GROUP_NAME' }
+    { id: 'field3', field: 'field3', width: 75, name: 'Field 3', nameKey: 'DURATION', editorClass: Editors.date, editor: { model: Editors.date, massUpdate: true }, columnGroup: 'Group Name', columnGroupKey: 'GROUP_NAME' },
+    { id: 'zip', field: 'adress.zip', width: 75, name: 'Zip', editorClass: Editors.integer, editor: { model: Editors.integer, massUpdate: true }, columnGroup: 'Group Name', columnGroupKey: 'GROUP_NAME' }
   ];
 
   beforeEach(() => {
@@ -377,12 +377,11 @@ describe('CompositeEditorService', () => {
     it('should make sure Slick-Composite-Editor is being created and expect form inputs to be in specific order when user provides column def "compositeEditorFormOrder"', () => {
       const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
       const sortedColumnsMock = [
-        { id: 'age', field: 'age', width: 100, name: 'Age', editor: { model: Editors.float, compositeEditorFormOrder: 2, } },
-        { id: 'middleName', field: 'middleName', width: 100, name: 'Middle Name', editor: { model: Editors.text } },
-        { id: 'lastName', field: 'lastName', width: 100, name: 'Last Name', editor: { model: Editors.text, compositeEditorFormOrder: 1, } },
-        { id: 'firstName', field: 'firstName', width: 100, name: 'First Name', editor: { model: Editors.text, compositeEditorFormOrder: 0, } },
+        { id: 'age', field: 'age', width: 100, name: 'Age', editorClass: Editors.float, editor: { model: Editors.float, compositeEditorFormOrder: 2, } },
+        { id: 'middleName', field: 'middleName', width: 100, name: 'Middle Name', editorClass: Editors.text, editor: { model: Editors.text } },
+        { id: 'lastName', field: 'lastName', width: 100, name: 'Last Name', editorClass: Editors.text, editor: { model: Editors.text, compositeEditorFormOrder: 1, } },
+        { id: 'firstName', field: 'firstName', width: 100, name: 'First Name', editorClass: Editors.text, editor: { model: Editors.text, compositeEditorFormOrder: 0, } },
       ] as Column[];
-      sortedColumnsMock.forEach(col => col.internalColumnEditor = col.editor); // do the editor swap that the lib does internally
       jest.spyOn(gridStub, 'getColumns').mockReturnValue(sortedColumnsMock);
       jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
 
@@ -477,6 +476,27 @@ describe('CompositeEditorService', () => {
       expect(field1DetailContainerElm).toBeTruthy();
     });
 
+    it('should add Dark Mode CSS classes to the modal when option is enabled in grid options', () => {
+      const newGridOptions = { ...gridOptionsMock, darkMode: true } as GridOption;
+      const copyColumnsMock: Column[] = createNewColumDefinitions(15);
+      jest.spyOn(gridStub, 'getColumns').mockReturnValue(copyColumnsMock);
+      const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      jest.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
+
+      component = new SlickCompositeEditorComponent();
+      component.init(gridStub, container);
+      component.openDetails({ headerTitle: 'Details', viewColumnLayout: 'auto' });
+
+      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContentElm = compositeContainerElm.querySelector('.slick-editor-modal-content') as HTMLSelectElement;
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+      expect(compositeContentElm.classList.contains('slick-dark-mode')).toBeTruthy();
+    });
+
     it('should activate next available cell with an Editor when current active cell does not have an Editor', () => {
       const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
       jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
@@ -543,6 +563,22 @@ describe('CompositeEditorService', () => {
       const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
 
       expect(mockOnBeforeCallback).toHaveBeenCalled();
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerElm).toBeTruthy();
+    });
+
+    it('should execute "onRendered" callback after creating & rendering the composite modal window', () => {
+      const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+      jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+      const mockOnRenderedCallback = jest.fn();
+
+      component = new SlickCompositeEditorComponent();
+      component.init(gridStub, container);
+      component.openDetails({ headerTitle: 'Details', onRendered: mockOnRenderedCallback });
+      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+
+      expect(mockOnRenderedCallback).toHaveBeenCalledWith(expect.any(HTMLDivElement));
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(compositeContainerElm).toBeTruthy();
@@ -1554,7 +1590,7 @@ describe('CompositeEditorService', () => {
 
       it('should activate next available cell with an Editor when current active cell does not have an Editor', () => {
         const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-        columnsMock[2].internalColumnEditor = { massUpdate: true };
+        columnsMock[2].editor = { massUpdate: true };
         jest.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
         jest.spyOn(gridStub, 'getActiveCell').mockReturnValue({ row: 4, cell: 1 }); // column index 1 has no Editor
         const setActiveSpy = jest.spyOn(gridStub, 'setActiveCell');

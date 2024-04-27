@@ -122,7 +122,6 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     this.disposeSubMenus();
     this._menuElm?.remove();
     this._menuElm = undefined;
-    this._activeHeaderColumnElm?.classList.remove('slick-header-column-active');
   }
 
   repositionSubMenu(e: DOMMouseOrTouchEvent<HTMLElement> | SlickEventData, item: MenuCommandItem, level: number, columnDef: Column) {
@@ -193,12 +192,6 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     // ready to reposition the menu
     menuElm.style.top = `${menuOffsetTop}px`;
     menuElm.style.left = `${menuOffsetLeft}px`;
-
-    // mark the header as active to keep the highlighting.
-    this._activeHeaderColumnElm = this.grid.getContainerNode().querySelector(`:not(.slick-preheader-panel) >.slick-header-columns`);
-    if (this._activeHeaderColumnElm) {
-      this._activeHeaderColumnElm.classList.add('slick-header-column-active');
-    }
   }
 
   /** Translate the Header Menu titles, we need to loop through all column definition to re-translate them */
@@ -364,7 +357,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             hasFrozenOrResizeCommand = true;
             if (!columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'freeze-columns')) {
               columnHeaderMenuItems.push({
-                iconCssClass: headerMenuOptions.iconFreezeColumns || 'fa fa-thumb-tack',
+                iconCssClass: headerMenuOptions.iconFreezeColumns || 'mdi mdi-pin-outline',
                 titleKey: `${translationPrefix}FREEZE_COLUMNS`,
                 command: 'freeze-columns',
                 positionOrder: 47
@@ -377,7 +370,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             hasFrozenOrResizeCommand = true;
             if (!columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'column-resize-by-content')) {
               columnHeaderMenuItems.push({
-                iconCssClass: headerMenuOptions.iconColumnResizeByContentCommand || 'fa fa-arrows-h',
+                iconCssClass: headerMenuOptions.iconColumnResizeByContentCommand || 'mdi mdi-arrow-expand-horizontal',
                 titleKey: `${translationPrefix}COLUMN_RESIZE_BY_CONTENT`,
                 command: 'column-resize-by-content',
                 positionOrder: 48
@@ -394,7 +387,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           if (gridOptions.enableSorting && columnDef.sortable && headerMenuOptions && !headerMenuOptions.hideSortCommands) {
             if (!columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'sort-asc')) {
               columnHeaderMenuItems.push({
-                iconCssClass: headerMenuOptions.iconSortAscCommand || 'fa fa-sort-asc',
+                iconCssClass: headerMenuOptions.iconSortAscCommand || 'mdi mdi-sort-ascending',
                 titleKey: `${translationPrefix}SORT_ASCENDING`,
                 command: 'sort-asc',
                 positionOrder: 50
@@ -402,7 +395,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             }
             if (!columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'sort-desc')) {
               columnHeaderMenuItems.push({
-                iconCssClass: headerMenuOptions.iconSortDescCommand || 'fa fa-sort-desc',
+                iconCssClass: headerMenuOptions.iconSortDescCommand || 'mdi mdi-flip-v mdi-sort-descending',
                 titleKey: `${translationPrefix}SORT_DESCENDING`,
                 command: 'sort-desc',
                 positionOrder: 51
@@ -416,7 +409,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
             if (!headerMenuOptions.hideClearSortCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'clear-sort')) {
               columnHeaderMenuItems.push({
-                iconCssClass: headerMenuOptions.iconClearSortCommand || 'fa fa-unsorted',
+                iconCssClass: headerMenuOptions.iconClearSortCommand || 'mdi mdi-sort-variant-off',
                 titleKey: `${translationPrefix}REMOVE_SORT`,
                 command: 'clear-sort',
                 positionOrder: 54
@@ -428,7 +421,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           if (gridOptions.enableFiltering && columnDef.filterable && headerMenuOptions && !headerMenuOptions.hideFilterCommand) {
             if (!headerMenuOptions.hideClearFilterCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'clear-filter')) {
               columnHeaderMenuItems.push({
-                iconCssClass: headerMenuOptions.iconClearFilterCommand || 'fa fa-filter',
+                iconCssClass: headerMenuOptions.iconClearFilterCommand || 'mdi mdi-filter-remove-outline',
                 titleKey: `${translationPrefix}REMOVE_FILTER`,
                 command: 'clear-filter',
                 positionOrder: 53
@@ -439,7 +432,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           // Hide Column Command
           if (headerMenuOptions && !headerMenuOptions.hideColumnHideCommand && !columnHeaderMenuItems.some(item => item !== 'divider' && item?.command === 'hide-column')) {
             columnHeaderMenuItems.push({
-              iconCssClass: headerMenuOptions.iconColumnHideCommand || 'fa fa-times',
+              iconCssClass: headerMenuOptions.iconColumnHideCommand || 'mdi mdi-close',
               titleKey: `${translationPrefix}HIDE_COLUMN`,
               command: 'hide-column',
               positionOrder: 55

@@ -189,7 +189,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     if (columnDef && fieldName?.includes('.')) {
       // when it's a complex object, user could override the object path (where the editable object is located)
       // else we use the path provided in the Field Column Definition
-      const objectPath = columnDef.internalColumnEditor?.complexObjectPath ?? fieldName ?? '';
+      const objectPath = columnDef.editor?.complexObjectPath ?? fieldName ?? '';
       setDeepValue(this._formValues ?? {}, objectPath, newValue);
     } else {
       this._formValues = { ...this._formValues, [columnId]: outputValue };
@@ -212,7 +212,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     if (fieldName?.includes('.')) {
       // when it's a complex object, user could override the object path (where the editable object is located)
       // else we use the path provided in the Field Column Definition
-      const objectPath = columnDef?.internalColumnEditor?.complexObjectPath ?? fieldName ?? '';
+      const objectPath = columnDef?.editor?.complexObjectPath ?? fieldName ?? '';
       setDeepValue(this._formValues, objectPath, newValue);
     } else {
       this._formValues = { ...this._formValues, [columnId]: newValue };
@@ -340,16 +340,16 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         let modalColumns: Column[] = [];
         if (isWithMassChange) {
           // when using Mass Update, we only care about the columns that have the "massUpdate: true", we disregard anything else
-          modalColumns = this._columnDefinitions.filter(col => col.editor && col.internalColumnEditor?.massUpdate === true);
+          modalColumns = this._columnDefinitions.filter(col => col.editorClass && col.editor?.massUpdate === true);
         } else {
-          modalColumns = this._columnDefinitions.filter(col => col.editor);
+          modalColumns = this._columnDefinitions.filter(col => col.editorClass);
         }
 
         // user could optionally show the form inputs in a specific order instead of using default column definitions order
-        if (modalColumns.some(col => col.internalColumnEditor?.compositeEditorFormOrder !== undefined)) {
+        if (modalColumns.some(col => col.editor?.compositeEditorFormOrder !== undefined)) {
           modalColumns.sort((col1: Column, col2: Column) => {
-            const val1 = col1?.internalColumnEditor?.compositeEditorFormOrder ?? Infinity;
-            const val2 = col2?.internalColumnEditor?.compositeEditorFormOrder ?? Infinity;
+            const val1 = col1?.editor?.compositeEditorFormOrder ?? Infinity;
+            const val2 = col2?.editor?.compositeEditorFormOrder ?? Infinity;
             return numericSortComparer(val1, val2, SortDirectionNumber.asc);
           });
         }
@@ -361,6 +361,11 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
         this._modalElm = createDomElement('div', { className: `slick-editor-modal ${gridUid}` });
         const modalContentElm = createDomElement('div', { className: 'slick-editor-modal-content' });
+
+        // add dark mode CSS class when enabled
+        if (this.gridOptions?.darkMode) {
+          modalContentElm.classList.add('slick-dark-mode');
+        }
 
         if ((!isNaN(viewColumnLayout as number) && +viewColumnLayout > 1) || (viewColumnLayout === 'auto' && layoutColCount > 1)) {
           const splitClassName = layoutColCount === 2 ? 'split-view' : 'triple-split-view';
@@ -437,7 +442,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         this._modalElm.appendChild(modalContentElm);
 
         for (const columnDef of modalColumns) {
-          if (columnDef.editor) {
+          if (columnDef.editorClass) {
             const itemContainer = createDomElement('div', { className: `item-details-container editor-${columnDef.id}` });
 
             if (layoutColCount === 1) {
@@ -478,6 +483,11 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         document.body.appendChild(this._modalElm);
         document.body.classList.add('slick-modal-open'); // add backdrop to body
         this._bindEventService.bind(document.body, 'click', this.handleBodyClicked.bind(this));
+
+        // execute lifecycle callback after the modal window is created and rendered in the DOM
+        if (typeof this._options.onRendered === 'function') {
+          this._options.onRendered(this._modalElm);
+        }
 
         this._editors = {};
         this._editorContainers = modalColumns.map(col => modalBodyElm.querySelector<HTMLDivElement>(`[data-editorid=${col.id}]`)) || [];
@@ -730,7 +740,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     const activeCellIndex = (isWithMassChange && !this.gridOptions.enableAddRow && (rowIndex >= this.dataViewLength)) ? this.dataViewLength - 1 : rowIndex;
 
     let columnIndexWithEditor = columnIndex;
-    const cellEditor = columns[columnIndex].editor;
+    const cellEditor = columns[columnIndex].editorClass;
     let activeEditorCellNode = this.grid.getCellNode(activeCellIndex, columnIndex);
 
     if (!cellEditor || !activeEditorCellNode || !this.getActiveCellEditor(activeCellIndex, columnIndex)) {
@@ -760,7 +770,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
     for (let colIndex = 0; colIndex < columns.length; colIndex++) {
       const col = columns[colIndex];
-      if (col.editor && (!isWithMassUpdate || (isWithMassUpdate && col.internalColumnEditor?.massUpdate))) {
+      if (col.editorClass && (!isWithMassUpdate || (isWithMassUpdate && col.editor?.massUpdate))) {
         // we can check that the cell is really editable by checking the onBeforeEditCell event not returning false (returning undefined, null also mean it is editable)
         const isCellEditable = this.grid.onBeforeEditCell.notify({ row: rowIndex, cell: colIndex, item: dataContext, column: col, grid: this.grid, target: 'composite', compositeEditorOptions: this._compositeOptions }).getReturnValue();
         this.grid.setActiveCell(rowIndex, colIndex, false);

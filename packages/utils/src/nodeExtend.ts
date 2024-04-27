@@ -1,4 +1,3 @@
-/* eslint-disable guard-for-in */
 /**
  * This extend function is a reimplementation of the npm package `extend` (also named `node-extend`).
  * The reason for the reimplementation was mostly because the original project is not ESM compatible

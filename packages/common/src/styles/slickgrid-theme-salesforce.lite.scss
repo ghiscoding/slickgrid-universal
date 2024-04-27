@@ -10,6 +10,7 @@
  * We also removed `slick-without-bootstrap-min-styling.scss` since that is causing issues with Bootstrap 4
  */
 
+@import './flatpickr-dark';
 @import './sass-utilities';
 @import './variables-theme-salesforce';
 @import './slick-grid';
@@ -19,8 +20,8 @@
 @import './slickgrid-examples';
 @import './slick-bootstrap';
 @import './slick-autocomplete';
-@import './material-svg-icons';
-@import './material-svg-utilities';
+@import './slickgrid-icons';
+@import './slickgrid-icons-svg-utils';
 
 $link-color: var(--slick-primary-color, $slick-primary-color) !default;
 @import './colors.scss';

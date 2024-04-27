@@ -82,6 +82,7 @@ export class TranslateServiceStub implements TranslaterService {
       case 'STARTS_WITH': output = this._locale === 'en' ? 'Starts With' : 'Commence par'; break;
       case 'SYNCHRONOUS_RESIZE': output = this._locale === 'en' ? 'Synchronous resize' : 'Redimension synchrone'; break;
       case 'TITLE': output = this._locale === 'en' ? 'Title' : 'Titre'; break;
+      case 'TOGGLE_DARK_MODE': output = this._locale === 'en' ? 'Toggle Dark Mode' : 'Basculer le mode clair/sombre'; break;
       case 'TOGGLE_FILTER_ROW': output = this._locale === 'en' ? 'Toggle Filter Row' : 'Basculer la ligne des filtres'; break;
       case 'TOGGLE_PRE_HEADER_ROW': output = this._locale === 'en' ? 'Toggle Pre-Header Row' : 'Basculer la ligne de pré-en-tête'; break;
       case 'TRUE': output = this._locale === 'en' ? 'True' : 'Vrai'; break;

@@ -116,6 +116,7 @@ describe('GridMenuControl', () => {
     hideClearFrozenColumnsCommand: true,
     hideForceFitButton: false,
     hideSyncResizeButton: true,
+    hideToggleDarkModeCommand: true,
     onExtensionRegistered: jest.fn(),
     onCommand: () => { },
     onColumnsChanged: () => { },
@@ -359,12 +360,28 @@ describe('GridMenuControl', () => {
         expect(gridMenuElm.style.height).toBe('300px');
       });
 
+      it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element when opening Grid Menu', () => {
+        jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
+
+        gridOptionsMock.darkMode = true;
+        gridOptionsMock.gridMenu!.contentMinWidth = 200;
+        gridOptionsMock.gridMenu!.height = 300;
+        control.init();
+        const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
+        buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const gridMenuElm = document.querySelector('.slick-grid-menu') as HTMLDivElement;
+
+        expect(gridMenuElm.style.minWidth).toBe('200px');
+        expect(gridMenuElm.style.height).toBe('300px');
+        expect(gridMenuElm.classList.contains('slick-dark-mode')).toBeTruthy();
+      });
+
       it('should open the Grid Menu via "showGridMenu" method from an external button which has span inside it and expect the Grid Menu still work, with drop aligned on left when defined', () => {
         jest.spyOn(gridStub, 'getColumnIndex').mockReturnValue(undefined as any).mockReturnValue(1);
         const repositionSpy = jest.spyOn(control, 'repositionMenu');
 
         control.init();
-        const spanEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false })
+        const spanEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false });
         const spanBtnElm = document.createElement('span');
         const buttonElm = document.createElement('button');
         spanBtnElm.textContent = 'Grid Menu';
@@ -383,7 +400,7 @@ describe('GridMenuControl', () => {
         const repositionSpy = jest.spyOn(control, 'repositionMenu');
 
         control.init();
-        const spanEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false })
+        const spanEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false });
         const spanBtnElm = document.createElement('span');
         const buttonElm = document.createElement('button');
         spanBtnElm.textContent = 'Grid Menu';
@@ -416,7 +433,7 @@ describe('GridMenuControl', () => {
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
         expect(inputForcefitElm.checked).toBeTruthy();
-        expect(inputForcefitElm.dataset.option).toBe('autoresize')
+        expect(inputForcefitElm.dataset.option).toBe('autoresize');
         expect(labelSyncElm.textContent).toBe('Force fit columns');
       });
 
@@ -896,7 +913,7 @@ describe('GridMenuControl', () => {
                 { command: 'command3', title: 'Command 3', positionOrder: 70, },
                 { command: 'command4', title: 'Command 4', positionOrder: 71, },
                 {
-                  command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'color-warning', commandItems: [
+                  command: 'more-sub-commands', title: 'More Sub Commands', subMenuTitle: 'Sub Command Title 2', subMenuTitleCssClass: 'text-color-warning', commandItems: [
                     { command: 'command5', title: 'Command 5', positionOrder: 72, },
                   ]
                 }
@@ -946,7 +963,7 @@ describe('GridMenuControl', () => {
           expect(commandList2Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
           expect(commandContentElm2.textContent).toBe('Sub Commands');
           expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
-          expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
+          expect(subMenuTitleElm.className).toBe('slick-menu-title text-color-warning');
           expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
           expect(subCommand3Elm.textContent).toContain('Command 3');
           expect(subCommand5Elm.textContent).toContain('Command 5');
@@ -1002,7 +1019,7 @@ describe('GridMenuControl', () => {
           expect(commandList2Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
           expect(commandContentElm2.textContent).toBe('Sub Commands');
           expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
-          expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
+          expect(subMenuTitleElm.className).toBe('slick-menu-title text-color-warning');
           expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
           expect(subCommand3Elm.textContent).toContain('Command 3');
           expect(subCommand5Elm.textContent).toContain('Command 5');
@@ -1036,7 +1053,7 @@ describe('GridMenuControl', () => {
           const gridMenu2Elm = document.body.querySelector('.slick-grid-menu.slick-menu-level-1') as HTMLDivElement;
           Object.defineProperty(gridMenu2Elm, 'clientHeight', { writable: true, configurable: true, value: 320 });
 
-          const divEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false })
+          const divEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false });
           const subMenuElm = document.createElement('div');
           const menuItem = document.createElement('div');
           menuItem.className = 'slick-menu-item';
@@ -1072,12 +1089,12 @@ describe('GridMenuControl', () => {
         });
 
         it('should expect menu related to "Unfreeze Columns/Rows"', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: false, } } as unknown as GridOption;
+          const copyGridOptionsMock = { ...gridOptionsMock, gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: false, hideToggleDarkModeCommand: true, } } as unknown as GridOption;
           jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-times', titleKey: 'CLEAR_PINNING', title: 'Dégeler les colonnes/rangées', disabled: false, command: 'clear-pinning', positionOrder: 52 },
+            { iconCssClass: 'mdi mdi-pin-off-outline', titleKey: 'CLEAR_PINNING', title: 'Dégeler les colonnes/rangées', disabled: false, command: 'clear-pinning', positionOrder: 52 },
           ]);
         });
 
@@ -1089,45 +1106,74 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-filter text-danger', titleKey: 'CLEAR_ALL_FILTERS', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 },
-            { iconCssClass: 'fa fa-random', titleKey: 'TOGGLE_FILTER_ROW', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
-            { iconCssClass: 'fa fa-refresh', titleKey: 'REFRESH_DATASET', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 57 }
+            { iconCssClass: 'mdi mdi-filter-remove-outline', titleKey: 'CLEAR_ALL_FILTERS', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 },
+            { iconCssClass: 'mdi mdi-flip-vertical', titleKey: 'TOGGLE_FILTER_ROW', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
+            { iconCssClass: 'mdi mdi-sync', titleKey: 'REFRESH_DATASET', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 58 }
           ]);
         });
 
         it('should have only 1 menu "clear-filter" when all other menus are defined as hidden & when "enableFilering" is set', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideToggleFilterCommand: true, hideRefreshDatasetCommand: true } } as unknown as GridOption;
+          const copyGridOptionsMock = {
+            ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideToggleFilterCommand: true, hideRefreshDatasetCommand: true, hideToggleDarkModeCommand: true
+            }
+          } as unknown as GridOption;
           jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-filter text-danger', titleKey: 'CLEAR_ALL_FILTERS', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 }
+            { iconCssClass: 'mdi mdi-filter-remove-outline', titleKey: 'CLEAR_ALL_FILTERS', title: 'Supprimer tous les filtres', disabled: false, command: 'clear-filter', positionOrder: 50 }
           ]);
         });
 
         it('should have only 1 menu "toggle-filter" when all other menus are defined as hidden & when "enableFilering" is set', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideClearAllFiltersCommand: true, hideRefreshDatasetCommand: true } } as unknown as GridOption;
+          const copyGridOptionsMock = {
+            ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideClearAllFiltersCommand: true, hideToggleDarkModeCommand: true, hideRefreshDatasetCommand: true
+            }
+          } as unknown as GridOption;
           jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-random', titleKey: 'TOGGLE_FILTER_ROW', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
+            { iconCssClass: 'mdi mdi-flip-vertical', titleKey: 'TOGGLE_FILTER_ROW', title: 'Basculer la ligne des filtres', disabled: false, command: 'toggle-filter', positionOrder: 53 },
+          ]);
+        });
+
+        it('should have only 1 menu "toggle-dark-mode" when all other menus are defined as hidden', () => {
+          const copyGridOptionsMock = {
+            ...gridOptionsMock, gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true,
+              hideClearAllFiltersCommand: true, hideToggleFilterCommand: true, hideToggleDarkModeCommand: false, hideRefreshDatasetCommand: true
+            }
+          } as unknown as GridOption;
+          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          control.columns = columnsMock;
+          control.init();
+          control.init(); // calling 2x register to make sure it doesn't duplicate commands
+          expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
+            { iconCssClass: 'mdi mdi-brightness-4', titleKey: 'TOGGLE_DARK_MODE', title: 'Basculer le mode clair/sombre', disabled: false, command: 'toggle-dark-mode', positionOrder: 54 },
           ]);
         });
 
         it('should have only 1 menu "refresh-dataset" when all other menus are defined as hidden & when "enableFilering" is set', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideClearAllFiltersCommand: true, hideToggleFilterCommand: true } } as unknown as GridOption;
+          const copyGridOptionsMock = {
+            ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideClearAllFiltersCommand: true, hideToggleDarkModeCommand: true, hideToggleFilterCommand: true
+            }
+          } as unknown as GridOption;
           jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-refresh', titleKey: 'REFRESH_DATASET', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 57 }
+            { iconCssClass: 'mdi mdi-sync', titleKey: 'REFRESH_DATASET', title: 'Rafraîchir les données', disabled: false, command: 'refresh-dataset', positionOrder: 58 }
           ]);
         });
 
@@ -1139,12 +1185,16 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-random', titleKey: 'TOGGLE_PRE_HEADER_ROW', title: 'Basculer la ligne de pré-en-tête', disabled: false, command: 'toggle-preheader', positionOrder: 53 }
+            { iconCssClass: 'mdi mdi-flip-vertical', titleKey: 'TOGGLE_PRE_HEADER_ROW', title: 'Basculer la ligne de pré-en-tête', disabled: false, command: 'toggle-preheader', positionOrder: 53 }
           ]);
         });
 
         it('should not have the "toggle-preheader" menu command when "showPreHeaderPanel" and "hideTogglePreHeaderCommand" are set', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, showPreHeaderPanel: true, gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideTogglePreHeaderCommand: true } } as unknown as GridOption;
+          const copyGridOptionsMock = {
+            ...gridOptionsMock, showPreHeaderPanel: true, gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideTogglePreHeaderCommand: true, hideToggleDarkModeCommand: true
+            }
+          } as unknown as GridOption;
           jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
@@ -1161,12 +1211,16 @@ describe('GridMenuControl', () => {
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-unsorted text-danger', titleKey: 'CLEAR_ALL_SORTING', title: 'Supprimer tous les tris', disabled: false, command: 'clear-sorting', positionOrder: 51 }
+            { iconCssClass: 'mdi mdi-sort-variant-off', titleKey: 'CLEAR_ALL_SORTING', title: 'Supprimer tous les tris', disabled: false, command: 'clear-sorting', positionOrder: 51 }
           ]);
         });
 
         it('should not have the "clear-sorting" menu command when "enableSorting" and "hideClearAllSortingCommand" are set', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, enableSorting: true, gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideClearAllSortingCommand: true } } as unknown as GridOption;
+          const copyGridOptionsMock = {
+            ...gridOptionsMock, enableSorting: true, gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideClearAllSortingCommand: true, hideToggleDarkModeCommand: true
+            }
+          } as unknown as GridOption;
           jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
@@ -1176,19 +1230,27 @@ describe('GridMenuControl', () => {
         });
 
         it('should have the "export-csv" menu command when "enableTextExport" is set', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportTextDelimitedCommand: true } } as unknown as GridOption;
+          const copyGridOptionsMock = {
+            ...gridOptionsMock, enableTextExport: true, gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportTextDelimitedCommand: true, hideToggleDarkModeCommand: true
+            }
+          } as unknown as GridOption;
           jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-download', titleKey: 'EXPORT_TO_CSV', title: 'Exporter en format CSV', disabled: false, command: 'export-csv', positionOrder: 54 }
+            { iconCssClass: 'mdi mdi-download', titleKey: 'EXPORT_TO_CSV', title: 'Exporter en format CSV', disabled: false, command: 'export-csv', positionOrder: 55 }
           ]);
         });
 
         it('should not have the "export-csv" menu command when "enableTextExport" and "hideExportCsvCommand" are set', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportCsvCommand: true, hideExportTextDelimitedCommand: true } } as unknown as GridOption;
+          const copyGridOptionsMock = {
+            ...gridOptionsMock, enableTextExport: true, gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportCsvCommand: true, hideExportTextDelimitedCommand: true, hideToggleDarkModeCommand: true
+            }
+          } as unknown as GridOption;
           jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
@@ -1198,31 +1260,43 @@ describe('GridMenuControl', () => {
         });
 
         it('should have the "export-excel" menu command when "enableTextExport" is set', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: true, enableTextExport: false, gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: false } } as unknown as GridOption;
+          const copyGridOptionsMock = {
+            ...gridOptionsMock, enableExcelExport: true, enableTextExport: false, gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: false, hideToggleDarkModeCommand: true
+            }
+          } as unknown as GridOption;
           jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-file-excel-o text-success', titleKey: 'EXPORT_TO_EXCEL', title: 'Exporter vers Excel', disabled: false, command: 'export-excel', positionOrder: 55 }
+            { iconCssClass: 'mdi mdi-file-excel-outline text-success', titleKey: 'EXPORT_TO_EXCEL', title: 'Exporter vers Excel', disabled: false, command: 'export-excel', positionOrder: 56 }
           ]);
         });
 
         it('should have the "export-text-delimited" menu command when "enableTextExport" is set', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: true } } as unknown as GridOption;
+          const copyGridOptionsMock = {
+            ...gridOptionsMock, enableTextExport: true, gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: true, hideToggleDarkModeCommand: true
+            }
+          } as unknown as GridOption;
           jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
           control.init();
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
-            { iconCssClass: 'fa fa-download', titleKey: 'EXPORT_TO_TAB_DELIMITED', title: 'Exporter en format texte (délimité par tabulation)', disabled: false, command: 'export-text-delimited', positionOrder: 56 }
+            { iconCssClass: 'mdi mdi-download', titleKey: 'EXPORT_TO_TAB_DELIMITED', title: 'Exporter en format texte (délimité par tabulation)', disabled: false, command: 'export-text-delimited', positionOrder: 57 }
           ]);
         });
 
         it('should not have the "export-text-delimited" menu command when "enableTextExport" and "hideExportCsvCommand" are set', () => {
-          const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, gridMenu: { commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportCsvCommand: true, hideExportTextDelimitedCommand: true } } as unknown as GridOption;
+          const copyGridOptionsMock = {
+            ...gridOptionsMock, enableTextExport: true, gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels, hideClearFrozenColumnsCommand: true, hideExportExcelCommand: true, hideExportCsvCommand: true, hideExportTextDelimitedCommand: true, hideToggleDarkModeCommand: true
+            }
+          } as unknown as GridOption;
           jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           control.columns = columnsMock;
@@ -1393,6 +1467,20 @@ describe('GridMenuControl', () => {
           control.menuElement!.querySelector('.slick-menu-item[data-command=export-text-delimited]')!.dispatchEvent(clickEvent);
 
           expect(exportSpy).toHaveBeenCalledWith({ delimiter: DelimiterType.tab, format: FileType.txt });
+        });
+
+        it('should toggle the darkMode grid option when the command triggered is "toggle-dark-mode"', () => {
+          let copyGridOptionsMock = { ...gridOptionsMock, darkMode: false, gridMenu: { hideToggleDarkModeCommand: false } } as unknown as GridOption;
+          jest.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          jest.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+
+          control.init();
+          control.columns = columnsMock;
+          const clickEvent = new Event('click', { bubbles: true, cancelable: true, composed: false });
+          document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+          control.menuElement!.querySelector('.slick-menu-item[data-command=toggle-dark-mode]')!.dispatchEvent(clickEvent);
+
+          expect(copyGridOptionsMock.darkMode).toBeTruthy();
         });
 
         it('should call the grid "setHeaderRowVisibility" method when the command triggered is "toggle-filter"', () => {

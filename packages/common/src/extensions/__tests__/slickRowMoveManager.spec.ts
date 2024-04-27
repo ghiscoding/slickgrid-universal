@@ -152,7 +152,6 @@ describe('SlickRowMoveManager Plugin', () => {
       behavior: 'selectAndMove',
       reorderable: false,
       resizable: false,
-      selectable: false,
       width: 40,
     };
 
@@ -201,7 +200,6 @@ describe('SlickRowMoveManager Plugin', () => {
       name: '',
       reorderable: false,
       resizable: false,
-      selectable: false,
       width: 40,
     });
   });
@@ -232,7 +230,7 @@ describe('SlickRowMoveManager Plugin', () => {
     const output = plugin.getColumnDefinition().formatter!(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
 
     expect(plugin).toBeTruthy();
-    expect(output).toEqual({ addClasses: 'cell-reorder dnd slick-row-move-column', html: iconElm });
+    expect(output).toEqual({ addClasses: 'cell-reorder dnd', html: iconElm });
   });
 
   it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return regular formatter when usabilityOverride is not a function', () => {
@@ -244,7 +242,7 @@ describe('SlickRowMoveManager Plugin', () => {
     const output = plugin.getColumnDefinition().formatter!(0, 0, null, { id: '_move', field: '' } as Column, { firstName: 'John', lastName: 'Doe', age: 33 }, gridStub);
 
     expect(plugin).toBeTruthy();
-    expect(output).toEqual({ addClasses: 'cell-reorder dnd slick-row-move-column', html: iconElm });
+    expect(output).toEqual({ addClasses: 'cell-reorder dnd', html: iconElm });
   });
 
   it('should create the plugin and trigger "dragInit" event and expect "stopImmediatePropagation" to be called', () => {

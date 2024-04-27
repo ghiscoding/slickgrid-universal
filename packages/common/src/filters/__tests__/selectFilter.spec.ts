@@ -11,6 +11,7 @@ import { SlickGrid } from '../../core/index';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
+import type { MultipleSelectOption } from 'multiple-select-vanilla';
 
 jest.useFakeTimers();
 
@@ -116,6 +117,24 @@ describe('SelectFilter', () => {
     expect(filterCount).toBe(1);
   });
 
+  it('should initialize the filter with minHeight define in user filter options', () => {
+    mockColumn.filter!.filterOptions = { minHeight: 255 } as MultipleSelectOption;
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    filter.init(filterArguments);
+
+    expect(filter.msInstance?.getOptions().minHeight).toBe(255);
+  });
+
+  it('should initialize the filter with minHeight define in global default user filter options', () => {
+    gridOptionMock.defaultFilterOptions = {
+      select: { minHeight: 243 }
+    };
+    mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
+    filter.init(filterArguments);
+
+    expect(filter.msInstance?.getOptions().minHeight).toBe(243);
+  });
+
   it('should be a multiple-select filter by default when it is not specified in the constructor', () => {
     mockColumn.filter!.collection = [{ value: 'male', label: 'male' }, { value: 'female', label: 'female' }];
     filter = new SelectFilter(translateService, collectionService);
@@ -180,6 +199,7 @@ describe('SelectFilter', () => {
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
     mockColumn.filter!.collection = ['male', 'female'];
+    mockColumn.filter!.filterOptions = { showClear: true };
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
@@ -194,6 +214,23 @@ describe('SelectFilter', () => {
     expect(filterListElm.length).toBe(2);
     expect(filterFilledElms.length).toBe(1);
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['male'], shouldTriggerQuery: true });
+  });
+
+  it('should type a search filter and expect clear() method to be called when ms-select clear button is clicked', () => {
+    const spyClear = jest.spyOn(filter, 'clear');
+
+    mockColumn.filter!.collection = ['male', 'female'];
+    mockColumn.filter!.filterOptions = { showClear: true };
+    filter.init(filterArguments);
+    const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
+    filterBtnElm.click();
+
+    filter.msInstance?.setSelects(['male']);
+    filter.msInstance?.close();
+
+    const filterClearElm = filterBtnElm.querySelector(`.ms-icon-close`) as HTMLButtonElement;
+    filterClearElm.click();
+    expect(spyClear).toHaveBeenCalled();
   });
 
   it('should pass a different operator then trigger an input change event and expect the callback to be called with the search terms we select from dropdown list', () => {
@@ -465,7 +502,7 @@ describe('SelectFilter', () => {
   it('should create the multi-select filter with a default search term and have the HTML rendered when "enableRenderHtml" is set', () => {
     mockColumn.filter = {
       enableRenderHtml: true,
-      collection: [{ value: true, label: 'True', labelPrefix: `<i class="fa fa-check"></i> ` }, { value: false, label: 'False' }],
+      collection: [{ value: true, label: 'True', labelPrefix: `<i class="mdi mdi-check"></i> ` }, { value: false, label: 'False' }],
       customStructure: {
         value: 'isEffort',
         label: 'label',
@@ -482,13 +519,13 @@ describe('SelectFilter', () => {
     expect(filter.selectOptions.renderOptionLabelAsHtml).toBeTruthy();
     expect(filter.selectOptions.useSelectOptionLabelToHtml).toBeFalsy();
     expect(filterListElm.length).toBe(2);
-    expect(filterListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> True');
+    expect(filterListElm[0].innerHTML).toBe('<i class="mdi mdi-check"></i> True');
   });
 
   it('should create the multi-select filter with a default search term and have the HTML rendered and sanitized when "enableRenderHtml" is set and has <script> tag', () => {
     mockColumn.filter = {
       enableRenderHtml: true,
-      collection: [{ value: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="fa fa-check"></i> ` }, { value: false, label: 'False' }],
+      collection: [{ value: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="mdi mdi-check"></i> ` }, { value: false, label: 'False' }],
       customStructure: {
         value: 'isEffort',
         label: 'label',
@@ -502,7 +539,7 @@ describe('SelectFilter', () => {
     filterBtnElm.click();
 
     expect(filterListElm.length).toBe(2);
-    expect(filterListElm[0].innerHTML).toBe('<i class="fa fa-check"></i> True');
+    expect(filterListElm[0].innerHTML).toBe('<i class="mdi mdi-check"></i> True');
   });
 
   it('should create the multi-select filter with a blank entry at the beginning of the collection when "addBlankEntry" is set in the "collectionOptions" property', () => {
@@ -665,6 +702,27 @@ describe('SelectFilter', () => {
     expect(filterOkElm.textContent).toBe('Terminé');
     expect(filterSelectAllElm.textContent).toBe('Sélectionner tout');
     expect(filterParentElm.textContent).toBe('2 de 3 sélectionnés');
+  });
+
+  it('should enable Dark Mode and expect ".ms-dark-mode" CSS class to be found on parent element', () => {
+    gridOptionMock.darkMode = true;
+    mockColumn.filter = {
+      enableTranslateLabel: true,
+      collection: [
+        { value: 'other', label: 'Other' },
+        { value: 'male', label: 'Male' },
+        { value: 'female', label: 'Female' }
+      ],
+      filterOptions: { minimumCountSelected: 1 }
+    };
+
+    filterArguments.searchTerms = ['male', 'female'];
+    filter.init(filterArguments);
+    jest.runAllTimers(); // fast-forward timer
+
+    const filterElm = divContainer.querySelector('.ms-parent') as HTMLButtonElement;
+
+    expect(filterElm.classList.contains('ms-dark-mode')).toBeTruthy();
   });
 
   it('should create the multi-select filter with a default search term when using "collectionAsync" as a Promise', async () => {

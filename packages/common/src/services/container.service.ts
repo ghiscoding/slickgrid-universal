@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 export interface ContainerInstance {
   key: any;
   instance: any;

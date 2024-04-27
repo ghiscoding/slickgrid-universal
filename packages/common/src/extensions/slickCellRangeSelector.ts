@@ -10,7 +10,7 @@ import type {
   OnScrollEventArgs,
 } from '../interfaces/index';
 import { SlickCellRangeDecorator } from './index';
-import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange, Utils as SlickUtils } from '../core/index';
+import { SlickEvent, type SlickEventData, SlickEventHandler, type SlickGrid, SlickRange, Utils as SlickUtils } from '../core/index';
 
 export class SlickCellRangeSelector {
   pluginName: 'CellRangeSelector' = 'CellRangeSelector' as const;

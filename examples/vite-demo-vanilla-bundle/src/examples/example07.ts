@@ -9,16 +9,17 @@ import {
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import DOMPurify from 'dompurify';
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import DOMPurify from 'isomorphic-dompurify';
 
 import { ExampleGridOptions } from './example-grid-options';
-import { TranslateService } from '../translate.service';
+import type { TranslateService } from '../translate.service';
 import './example07.scss';
 import '../material-styles.scss';
 
 export default class Example07 {
   private _bindingEventService: BindingEventService;
+  private _darkMode = false;
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
@@ -62,6 +63,8 @@ export default class Example07 {
     this.sgb?.dispose();
     this._bindingEventService.unbindAll();
     document.body.classList.remove('material-theme');
+    document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    document.body.setAttribute('data-theme', 'light');
   }
 
   initializeGrid() {
@@ -75,7 +78,7 @@ export default class Example07 {
       {
         id: 'action', name: 'Action', field: 'action', minWidth: 60, maxWidth: 60,
         excludeFromExport: true, excludeFromHeaderMenu: true,
-        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-chevron-down mdi-22px color-primary"></span></div>`,
+        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
@@ -83,7 +86,7 @@ export default class Example07 {
           commandItems: [
             {
               command: 'command1', titleKey: 'DELETE_ROW',
-              iconCssClass: 'mdi mdi-close color-danger', cssClass: 'has-text-danger', textCssClass: 'bold',
+              iconCssClass: 'mdi mdi-close', cssClass: 'has-text-danger', textCssClass: 'bold',
               action: (_e, args) => {
                 if (confirm(`Do you really want to delete row (${args.row! + 1}) with "${args.dataContext.title}"?`)) {
                   this.sgb?.gridService.deleteItemById(args.dataContext.id);
@@ -190,8 +193,8 @@ export default class Example07 {
           enableRenderHtml: true,
           collection: [
             { value: '', label: '' },
-            { value: true, label: 'True', labelSuffix: `<i class="mdi mdi-check mdi-v-align-middle mdi-16px"></i> ` },
-            { value: false, label: 'False', labelSuffix: `<i class="mdi mdi-close mdi-v-align-middle mdi-16px"></i> ` }
+            { value: true, label: 'True', labelSuffix: `<i class="mdi mdi-check mdi-16px"></i> ` },
+            { value: false, label: 'False', labelSuffix: `<i class="mdi mdi-close mdi-16px"></i> ` }
           ],
           model: Filters.singleSelect
         },
@@ -205,8 +208,8 @@ export default class Example07 {
           enableRenderHtml: true,
           collectionAsync: new Promise<any>(resolve => setTimeout(() => {
             resolve([
-              { value: true, label: 'True', labelSuffix: `<i class="mdi mdi-check mdi-v-align-middle mdi-16px"></i> ` },
-              { value: false, label: 'False', labelSuffix: `<i class="mdi mdi-close mdi-v-align-middle mdi-16px"></i> ` }
+              { value: true, label: 'True', labelSuffix: `<i class="mdi mdi-check mdi-16px"></i> ` },
+              { value: false, label: 'False', labelSuffix: `<i class="mdi mdi-close mdi-16px"></i> ` }
             ]);
           }, 250)),
         },
@@ -294,6 +297,7 @@ export default class Example07 {
         container: '.demo-container',
         rightPadding: 10
       },
+      darkMode: this._darkMode,
       gridMenu: {
         commandTitleKey: 'CUSTOM_COMMANDS',
       },
@@ -399,7 +403,7 @@ export default class Example07 {
         <section class="modal-card-body">
           <div class="slickgrid-container grid-pane">
             <div id="modal-allFilter-content">
-              <div id="modal-allFilter-table" class="slick-headerrow ui-state-default">
+              <div id="modal-allFilter-table" class="slick-headerrow slick-state-default">
               </div>
             </div>
           </div>
@@ -435,7 +439,7 @@ export default class Example07 {
         document.querySelector('#modal-allFilter-table')!.innerHTML = innerHtml +
           `<div class="row slick-headerrow-columns">
               <div class="column">${columnFilter.name}</div>
-              <div id="${filterElm}" class="column ui-state-default slick-headerrow-column"></div>
+              <div id="${filterElm}" class="column slick-state-default slick-headerrow-column"></div>
             </div>`;
         grid?.filterService.drawFilterTemplate(columnFilter, `#${filterElm}`);
       }
@@ -608,16 +612,9 @@ export default class Example07 {
     this.sgb.columnDefinitions.pop();
     this.sgb.columnDefinitions = this.sgb.columnDefinitions.slice();
 
-    // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
-    // you MUST use the code below, first you must reassign the Editor facade (from the internalColumnEditor back to the editor)
-    // in other words, SlickGrid is not using the same as Slickgrid-Universal uses (editor with a "model" and other properties are a facade, SlickGrid only uses what is inside the model)
     /*
     const allColumns = this.slickerGridInstance.gridService.getAllColumnDefinitions();
-    const allOriginalColumns = allColumns.map((column) => {
-      column.editor = column.internalColumnEditor;
-      return column;
-    });
-    // remove your column the full set of columns
+    // remove your column from the full set of columns
     // and use slice or spread [...] to trigger a dirty change
     allOriginalColumns.pop();
     this.sgb.columnDefinitions = allOriginalColumns.slice();
@@ -646,6 +643,18 @@ export default class Example07 {
   disableSorting() {
     this.isSortingEnabled = false;
     this.sgb.sortService.disableSortFunctionality(true);
+  }
+
+  toggleDarkMode() {
+    this._darkMode = !this._darkMode;
+    if (this._darkMode) {
+      document.body.setAttribute('data-theme', 'dark');
+      document.querySelector('.demo-container')?.classList.add('dark-mode');
+    } else {
+      document.body.setAttribute('data-theme', 'light');
+      document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    }
+    this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });
   }
 
   // or Toggle Filtering/Sorting functionalities

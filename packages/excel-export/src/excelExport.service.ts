@@ -4,7 +4,7 @@ import {
   type ExcelMetadata,
   type StyleSheet,
   Workbook,
-  Worksheet,
+  type Worksheet,
 } from 'excel-builder-vanilla';
 import type {
   Column,
@@ -36,7 +36,7 @@ import {
 import { addWhiteSpaces, deepCopy, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 
 import {
-  ExcelFormatter,
+  type ExcelFormatter,
   getGroupTotalValue,
   getExcelFormatFromGridFormatter,
   useCellFormatByFieldType,

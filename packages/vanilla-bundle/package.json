@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/vanilla-bundle",
-  "version": "4.4.1",
+  "version": "4.7.0",
   "description": "Vanilla Slick Grid Bundle - Framework agnostic the output is to be used in vanilla JS/TS - Written in TypeScript and we also use Vite to bundle everything into a single JS file.",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -9,8 +9,8 @@
     ".": {
       "types": "./dist/types/index.d.ts",
       "node": "./dist/cjs/index.js",
-      "require": "./dist/cjs/index.js",
-      "default": "./dist/esm/index.js"
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
     },
     "./package.json": "./package.json"
   },

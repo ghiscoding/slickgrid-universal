@@ -3,7 +3,7 @@ import moment from 'moment-mini';
 import { Editors } from '../index';
 import { DateEditor } from '../dateEditor';
 import { FieldType } from '../../enums/index';
-import { Column, ColumnEditor, EditorArguments, GridOption } from '../../interfaces/index';
+import { Column, ColumnEditor, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index';
 
@@ -16,7 +16,7 @@ const dataViewStub = {
   refresh: jest.fn(),
 } as unknown as SlickDataView;
 
-const gridOptionMock = {
+let gridOptionMock = {
   autoCommitEdit: false,
   editable: true,
   translater: null,
@@ -55,7 +55,7 @@ describe('DateEditor', () => {
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
 
-    mockColumn = { id: 'startDate', field: 'startDate', editable: true, editor: { model: Editors.date }, internalColumnEditor: {} } as Column;
+    mockColumn = { id: 'startDate', field: 'startDate', editable: true, editor: { model: Editors.date }, editorClass: {} as Editor } as Column;
 
     editorArguments = {
       grid: gridStub,
@@ -69,6 +69,11 @@ describe('DateEditor', () => {
       dataView: dataViewStub,
       gridPosition: { top: 0, left: 0, bottom: 10, right: 10, height: 100, width: 100, visible: true },
       position: { top: 0, left: 0, bottom: 10, right: 10, height: 100, width: 100, visible: true },
+    };
+    gridOptionMock = {
+      autoCommitEdit: false,
+      editable: true,
+      translater: null as any,
     };
   });
 
@@ -86,7 +91,7 @@ describe('DateEditor', () => {
   describe('with valid Editor instance', () => {
     beforeEach(() => {
       mockItemData = { id: 1, startDate: '2001-01-02T11:02:02.000Z', isActive: true };
-      mockColumn = { id: 'startDate', field: 'startDate', editable: true, editor: { model: Editors.date }, internalColumnEditor: {} } as Column;
+      mockColumn = { id: 'startDate', field: 'startDate', editable: true, editor: { model: Editors.date }, editorClass: {} as Editor } as Column;
 
       editorArguments.column = mockColumn;
       editorArguments.item = mockItemData;
@@ -119,7 +124,7 @@ describe('DateEditor', () => {
 
     it('should have a placeholder when defined in its column definition', () => {
       const testValue = 'test placeholder';
-      (mockColumn.internalColumnEditor as ColumnEditor).placeholder = testValue;
+      mockColumn.editor!.placeholder = testValue;
 
       editor = new DateEditor(editorArguments);
       const editorElm = divContainer.querySelector('input.editor-text.editor-startDate') as HTMLTextAreaElement;
@@ -129,7 +134,7 @@ describe('DateEditor', () => {
 
     it('should have a title (tooltip) when defined in its column definition', () => {
       const testValue = 'test title';
-      (mockColumn.internalColumnEditor as ColumnEditor).title = testValue;
+      mockColumn.editor!.title = testValue;
 
       editor = new DateEditor(editorArguments);
       const editorElm = divContainer.querySelector('input.editor-text.editor-startDate') as HTMLTextAreaElement;
@@ -138,14 +143,14 @@ describe('DateEditor', () => {
     });
 
     it('should call "columnEditor" GETTER and expect to equal the editor settings we provided', () => {
-      mockColumn.internalColumnEditor = {
+      mockColumn.editor = {
         placeholder: 'test placeholder',
         title: 'test title',
       };
 
       editor = new DateEditor(editorArguments);
 
-      expect(editor.columnEditor).toEqual(mockColumn.internalColumnEditor);
+      expect(editor.columnEditor).toEqual(mockColumn.editor);
     });
 
     it('should call "setValue" and expect the DOM element value to be the same string when calling "getValue"', () => {
@@ -196,6 +201,19 @@ describe('DateEditor', () => {
       expect(spy).toHaveBeenCalled();
     });
 
+    it('should enable Dark Mode and expect ".slick-dark-mode" CSS class to be found on parent element', () => {
+      gridOptionMock.darkMode = true;
+      editor = new DateEditor(editorArguments);
+      const spy = jest.spyOn(editor.flatInstance, 'open');
+      const calendarElm = document.body.querySelector<HTMLDivElement>('.flatpickr-calendar');
+      editor.show();
+      editor.focus();
+
+      expect(gridStub.focus).toHaveBeenCalled();
+      expect(calendarElm?.classList.contains('slick-dark-mode')).toBeTruthy();
+      expect(spy).toHaveBeenCalled();
+    });
+
     it('should call the "changeEditorOption" method and expect new option to be merged with the previous Editor options and also expect to call Flatpickr "set" method', () => {
       editor = new DateEditor(editorArguments);
       const spy = jest.spyOn(editor.flatInstance, 'set');
@@ -209,7 +227,7 @@ describe('DateEditor', () => {
     describe('isValueChanged method', () => {
       it('should return True when date is changed in the picker', () => {
         // change to allow input value only for testing purposes & use the regular flatpickr input to test that one too
-        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { allowInput: true, altInput: false };
+        mockColumn.editor!.editorOptions = { allowInput: true, altInput: false };
         mockItemData = { id: 1, startDate: '2001-01-02T11:02:02.000Z', isActive: true };
 
         editor = new DateEditor(editorArguments);
@@ -225,13 +243,13 @@ describe('DateEditor', () => {
 
       it('should return True when date is reset by the clear date button', () => {
         // change to allow input value only for testing purposes & use the regular flatpickr input to test that one too
-        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { allowInput: true, altInput: false };
+        mockColumn.editor!.editorOptions = { allowInput: true, altInput: false };
         mockItemData = { id: 1, startDate: '2001-01-02T11:02:02.000Z', isActive: true };
 
         editor = new DateEditor(editorArguments);
         editor.loadValue(mockItemData);
         editor.focus();
-        const clearBtnElm = divContainer.querySelector('.btn.icon-clear') as HTMLInputElement;
+        const clearBtnElm = divContainer.querySelector('.btn.btn-clear') as HTMLInputElement;
         const editorInputElm = divContainer.querySelector('.flatpickr input') as HTMLInputElement;
         clearBtnElm.click();
         editorInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { keyCode: 13, bubbles: true, cancelable: true }));
@@ -243,13 +261,13 @@ describe('DateEditor', () => {
 
       it('should also return True when date is reset by the clear date button even if the previous date was empty', () => {
         // change to allow input value only for testing purposes & use the regular flatpickr input to test that one too
-        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { allowInput: true, altInput: false };
+        mockColumn.editor!.editorOptions = { allowInput: true, altInput: false };
         mockItemData = { id: 1, startDate: '', isActive: true };
 
         editor = new DateEditor(editorArguments);
         editor.loadValue(mockItemData);
         editor.focus();
-        const clearBtnElm = divContainer.querySelector('.btn.icon-clear') as HTMLInputElement;
+        const clearBtnElm = divContainer.querySelector('.btn.btn-clear') as HTMLInputElement;
         const editorInputElm = divContainer.querySelector('.flatpickr input') as HTMLInputElement;
         clearBtnElm.click();
 
@@ -260,7 +278,7 @@ describe('DateEditor', () => {
 
       it('should return False when date in the picker is the same as the current date', () => {
         mockItemData = { id: 1, startDate: '2001-01-02T11:02:02.000Z', isActive: true };
-        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { allowInput: true }; // change to allow input value only for testing purposes
+        mockColumn.editor!.editorOptions = { allowInput: true }; // change to allow input value only for testing purposes
 
         editor = new DateEditor(editorArguments);
         editor.loadValue(mockItemData);
@@ -275,7 +293,7 @@ describe('DateEditor', () => {
       it('should return False when input date is invalid', () => {
         mockItemData = { id: 1, startDate: '1900-02-32', isActive: true };
         mockColumn.type = FieldType.dateUs;
-        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { allowInput: true }; // change to allow input value only for testing purposes
+        mockColumn.editor!.editorOptions = { allowInput: true }; // change to allow input value only for testing purposes
 
         editor = new DateEditor(editorArguments);
         editor.loadValue(mockItemData);
@@ -290,7 +308,7 @@ describe('DateEditor', () => {
 
     describe('applyValue method', () => {
       it('should apply the value to the startDate property with ISO format when no "outputType" is defined and when it passes validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
+        mockColumn.editor!.validator = null as any;
         mockColumn.type = FieldType.date;
         mockItemData = { id: 1, startDate: '2001-04-05T11:33:42.000Z', isActive: true };
 
@@ -303,7 +321,7 @@ describe('DateEditor', () => {
       });
 
       it('should apply the value to the startDate property with "outputType" format with a field having dot notation (complex object) that passes validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
+        mockColumn.editor!.validator = null as any;
         mockColumn.type = FieldType.date;
         mockColumn.outputType = FieldType.dateTimeIsoAmPm;
         mockColumn.field = 'employee.startDate';
@@ -318,7 +336,7 @@ describe('DateEditor', () => {
       });
 
       it('should apply the value to the startDate property with output format defined by "saveOutputType" when it passes validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = null as any;
+        mockColumn.editor!.validator = null as any;
         mockColumn.type = FieldType.date;
         mockColumn.saveOutputType = FieldType.dateTimeIsoAmPm;
         mockItemData = { id: 1, startDate: '2001-04-05T11:33:42.000Z', isActive: true };
@@ -332,7 +350,7 @@ describe('DateEditor', () => {
       });
 
       it('should return item data with an empty string in its value when it fails the custom validation', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).validator = (value: any) => {
+        mockColumn.editor!.validator = (value: any) => {
           if (value.length > 10) {
             return { valid: false, msg: 'Must be at least 10 chars long.' };
           }
@@ -425,7 +443,7 @@ describe('DateEditor', () => {
 
       it('should not call anything when the input value is empty but is required', () => {
         mockItemData = { id: 1, startDate: '', isActive: true };
-        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
+        mockColumn.editor!.required = true;
         gridOptionMock.autoCommitEdit = true;
         const spy = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
@@ -438,7 +456,27 @@ describe('DateEditor', () => {
 
       it('should not throw any error when date is invalid when lower than required "minDate" defined in the "editorOptions" and "autoCommitEdit" is enabled', () => {
         // change to allow input value only for testing purposes & use the regular flatpickr input to test that one too
-        (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { minDate: 'today', altInput: true };
+        mockColumn.editor!.editorOptions = { minDate: 'today', altInput: true };
+        mockItemData = { id: 1, startDate: '500-01-02T11:02:02.000Z', isActive: true };
+        gridOptionMock.autoCommitEdit = true;
+        gridOptionMock.autoEdit = true;
+        gridOptionMock.editable = true;
+
+        editor = new DateEditor(editorArguments);
+        editor.loadValue(mockItemData);
+        editor.flatInstance.toggle();
+        const editorInputElm = divContainer.querySelector('.flatpickr input') as HTMLInputElement;
+
+        expect(editor.pickerOptions).toBeTruthy();
+        expect(editorInputElm.value).toBe('');
+        expect(editor.serializeValue()).toBe('');
+      });
+
+      it('should not throw any error when date is invalid when lower than required "minDate" defined in the global default editorOptions and "autoCommitEdit" is enabled', () => {
+        // change to allow input value only for testing purposes & use the regular flatpickr input to test that one too
+        gridOptionMock.defaultEditorOptions = {
+          date: { minDate: 'today', altInput: true }
+        };
         mockItemData = { id: 1, startDate: '500-01-02T11:02:02.000Z', isActive: true };
         gridOptionMock.autoCommitEdit = true;
         gridOptionMock.autoEdit = true;
@@ -457,7 +495,7 @@ describe('DateEditor', () => {
 
     describe('validate method', () => {
       it('should return False when field is required and field is empty', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
+        mockColumn.editor!.required = true;
         editor = new DateEditor(editorArguments);
         const validation = editor.validate(null, '');
 
@@ -465,7 +503,7 @@ describe('DateEditor', () => {
       });
 
       it('should return True when field is required and input is a valid input value', () => {
-        (mockColumn.internalColumnEditor as ColumnEditor).required = true;
+        mockColumn.editor!.required = true;
         editor = new DateEditor(editorArguments);
         const validation = editor.validate(null, 'text');
 
@@ -631,7 +669,7 @@ describe('DateEditor', () => {
 
     it('should expect "onCompositeEditorChange" to have been triggered with the new value showing up in its "formValues" object', () => {
       const activeCellMock = { row: 0, cell: 0 };
-      (mockColumn.internalColumnEditor as ColumnEditor).editorOptions = { allowInput: true, altInput: false };
+      mockColumn.editor!.editorOptions = { allowInput: true, altInput: false };
       mockColumn.type = FieldType.dateIso;
       const getCellSpy = jest.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = jest.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({

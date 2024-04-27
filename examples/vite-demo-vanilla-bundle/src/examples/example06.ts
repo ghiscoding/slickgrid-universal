@@ -16,7 +16,7 @@ import {
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
-import { Slicker, SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 
 import './example06.scss';
 import { ExampleGridOptions } from './example-grid-options';
@@ -41,12 +41,12 @@ export default class Example06 {
     this.datasetHierarchical = this.mockDataset();
     const gridContainerElm = document.querySelector('.grid6') as HTMLDivElement;
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, undefined, this.datasetHierarchical);
-    document.body.classList.add('material-theme');
+    document.body.classList.add('salesforce-theme');
   }
 
   dispose() {
     this.sgb?.dispose();
-    document.body.classList.remove('material-theme');
+    document.body.classList.remove('salesforce-theme');
   }
 
   initializeGrid() {
@@ -97,10 +97,10 @@ export default class Example06 {
 
             if (avgVal !== undefined && sumVal !== undefined) {
               // when found Avg & Sum, we'll display both
-              return isNaN(sumVal) ? '' : `<span class="color-primary bold">sum: ${decimalFormatted(sumVal, 0, 2)} MB</span> / <span class="avg-total">avg: ${decimalFormatted(avgVal, 0, 2)} MB</span> <span class="total-suffix">(${treeLevel === 0 ? 'total' : 'sub-total'})</span>`;
+              return isNaN(sumVal) ? '' : `<span class="text-color-primary bold">sum: ${decimalFormatted(sumVal, 0, 2)} MB</span> / <span class="avg-total">avg: ${decimalFormatted(avgVal, 0, 2)} MB</span> <span class="total-suffix">(${treeLevel === 0 ? 'total' : 'sub-total'})</span>`;
             } else if (sumVal !== undefined) {
               // or when only Sum is aggregated, then just show Sum
-              return isNaN(sumVal) ? '' : `<span class="color-primary bold">sum: ${decimalFormatted(sumVal, 0, 2)} MB</span> <span class="total-suffix">(${treeLevel === 0 ? 'total' : 'sub-total'})</span>`;
+              return isNaN(sumVal) ? '' : `<span class="text-color-primary bold">sum: ${decimalFormatted(sumVal, 0, 2)} MB</span> <span class="total-suffix">(${treeLevel === 0 ? 'total' : 'sub-total'})</span>`;
             }
           }
           // reaching this line means it's a regular dataContext without totals, so regular formatter output will be used
@@ -132,7 +132,7 @@ export default class Example06 {
       enableFiltering: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       multiColumnSort: false, // multi-column sorting is not supported with Tree Data, so you need to disable it
-      rowHeight: 40,
+      rowHeight: 35,
       treeDataOptions: {
         columnId: 'file',
         childrenPropName: 'files',

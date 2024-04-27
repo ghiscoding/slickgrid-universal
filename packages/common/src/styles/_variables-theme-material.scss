@@ -2,16 +2,15 @@
 
 /**
  * This is a bare version of "slickgrid-theme-material.scss",
- * Few files were removed and aren't included in this styling theme (while they are in original theme)
- * - (colors, extra-styling, material-svg-icons, material-svg-utilities, slick-without-bootstrap-min-styling)
+ * A few files were removed and aren't included in this styling theme (while they are in original theme)
+ * - (colors, extra-styling, slickgrid-icons, slickgrid-icons-svg-utils, slick-without-bootstrap-min-styling)
  */
 
 $slick-primary-color:                                       #009530 !default;
+$slick-highlight-color:                                     #48c774 !default;
 $slick-font-family:                                         Roboto, "Helvetica Neue", sans-serif !default;
 $slick-font-size-base-value:                                14 !default;
-$slick-icon-color:                                           #3f3e3e !default;
-$slick-icon-font-family:                                    "Material Design Icons" !default;
-$slick-icon-font-size:                                      18px !default;
+$slick-icon-color:                                          inherit !default;
 $slick-icon-width:                                          18px !default;
 $slick-group-totals-formatter-color:                        #666666 !default;
 $slick-cell-border-top:                                     none !default;
@@ -24,6 +23,7 @@ $slick-header-row-filter-padding:                           8px 4px !default;
 $slick-header-font-size:                                    12px !default;
 $slick-header-font-weight:                                  700 !default;
 $slick-header-text-color:                                   rgba(0, 0, 0, 0.87) !default;
+$slick-sorting-header-color:                                rgba(0, 0, 0, 0.87) !default;
 $slick-header-border-bottom:                                transparent !default;
 $slick-header-filter-row-border-bottom:                     1px solid #d0d0d0 !default;
 $slick-header-resizable-hover:                              2px solid lighten(#48c774, 15%) !default;
@@ -41,28 +41,14 @@ $slick-container-border-bottom:                             1px solid #ccc !defa
 $slick-container-border-left:                               1px solid #ccc !default;
 $slick-container-border-right:                              1px solid #ccc !default;
 $slick-icon-sort-color:                                     $slick-primary-color !default;
-$slick-icon-sort-asc:                                       url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-icon-sort-color)}" viewBox="0 0 24 24"><path d="M13,20H11V8L5.5,13.5L4.08,12.08L12,4.16L19.92,12.08L18.5,13.5L13,8V20Z"></path></svg>') !default;
-$slick-icon-sort-desc:                                      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-icon-sort-color)}" viewBox="0 0 24 24"><path d="M11,4H13V16L18.5,10.5L19.92,11.92L12,19.84L4.08,11.92L5.5,10.5L11,16V4Z"></path></svg>') !default;
-$slick-icon-sort-font-size:                                 $slick-icon-width !default;
-$slick-icon-sort-position-right:                            14px !default;
-$slick-icon-sort-width:                                     $slick-icon-width !default;
-$slick-checkbox-selector-size:                              22px !default;
-$slick-checkbox-selector-color:                             $slick-primary-color !default;
-$slick-checkbox-selector-icon-width:                        $slick-checkbox-selector-size !default;
-$slick-checkbox-selector-icon-checked:                      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-checkbox-selector-color)}" viewBox="0 0 24 24"><path d="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z"></path></svg>') !default;
-$slick-checkbox-selector-icon-unchecked:                    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-checkbox-selector-color)}" viewBox="0 0 24 24"><path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,5V19H5V5H19Z"></path></svg>') !default;
-$slick-checkbox-selector-opacity:                           1 !default;
-$slick-checkbox-selector-opacity-hover:                     0.9 !default;
-$slick-column-picker-checkbox-color:                        $slick-primary-color !default;
-$slick-column-picker-checkbox-size:                         $slick-icon-width !default;
-$slick-column-picker-checkbox-font-weight:                  normal !default;
-$slick-column-picker-checkbox-icon-checked:                 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-column-picker-checkbox-color)}" viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg>') !default;
-$slick-column-picker-checkbox-icon-unchecked:               $slick-column-picker-checkbox-icon-checked !default;
-$slick-column-picker-checkbox-width:                        $slick-icon-width !default;
+$slick-checkbox-icon-color:                                 $slick-primary-color !default;
+$slick-checkbox-icon-container-bg-color:                    transparent !default;
+$slick-checkbox-icon-checked-svg-path:                      "M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" !default;
+$slick-checkbox-icon-unchecked-svg-path:                    "M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,5V19H5V5H19Z" !default;
+$slick-checkbox-opacity-hover:                              0.9 !default;
+$slick-checkbox-unchecked-opacity:                          1 !default;
 $slick-column-picker-close-btn-font-size:                   23px !default;
 $slick-column-picker-item-font-size:                        14px !default;
-$slick-column-picker-checkbox-icon-line-height:             16px !default;
-$slick-column-picker-checkbox-icon-vertical-align:          middle !default;
 $slick-column-picker-item-height:                           26px !default;
 $slick-column-picker-item-line-height:                      16px !default;
 $slick-column-picker-title-font-size:                       17px !default;
@@ -72,24 +58,13 @@ $slick-menu-icon-line-height:                               18px !default;
 $slick-menu-icon-min-width:                                 18px !default;
 $slick-menu-icon-width:                                     18px !default;
 $slick-menu-title-font-size:                                17px !default;
-$slick-icon-group-width:                                    22px !default;
 $slick-icon-group-color:                                    $slick-primary-color !default;
-$slick-icon-group-collapsed:                                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-icon-group-color)}" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"></path></svg>') !default;
-$slick-icon-group-expanded:                                 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-icon-group-color)}" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"></path></svg>') !default;
-$slick-icon-group-font-weight:                              normal !default;
-$slick-icon-group-height:                                   auto !default;
-$slick-icon-group-vertical-align:                           bottom !default;
 $slick-draggable-group-drop-border-top:                     0px !default;
 $slick-draggable-group-drop-border-left:                    0px !default;
 $slick-draggable-group-drop-border-right:                   0px !default;
 $slick-draggable-group-drop-width:                          100% !default;
 $slick-draggable-group-drop-radius:                         0 !default;
 $slick-draggable-group-delete-vertical-align:               middle !default;
-$slick-draggable-group-toggle-all-icon-height:              $slick-icon-font-size !default;
-$slick-draggable-group-toggle-all-icon-width:               $slick-icon-font-size !default;
-$slick-draggable-group-toggle-all-icon-vertical-align:      text-bottom !default;
-$slick-draggable-group-toggle-collapsed-icon:               $slick-icon-group-collapsed !default;
-$slick-draggable-group-toggle-expanded-icon:                $slick-icon-group-expanded !default;
 $slick-draggable-group-title-height:                        24px !default;
 $slick-draggable-group-title-line-height:                   24px !default;
 $slick-draggable-group-title-vertical-align:                top !default;
@@ -97,59 +72,56 @@ $slick-header-button-hidden-margin-right:                   -6px !default;
 $slick-header-button-height:                                18px !default;
 $slick-header-button-width:                                 18px !default;
 $slick-header-button-margin:                                -4px 0 100px 0 !default;
-$slick-header-menu-button-height:                           25px !default;
-$slick-header-menu-button-icon-font-size:                   24px !default;
-$slick-header-menu-button-icon-width:                       24px !default;
 $slick-header-menu-button-icon-color:                       $slick-icon-color !default;
-$slick-header-menu-button-icon:                             url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-header-menu-button-icon-color)}" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"></path></svg>') !default;
-$slick-header-menu-button-margin-right:                     8px !default;
 $slick-header-menu-display:                                 inline-block !default;
-$slick-autocomplete-loading-icon-color:                     $slick-icon-color !default;
-$slick-autocomplete-loading-icon:                           url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-autocomplete-loading-icon-color)}" viewBox="0 0 24 24"><path d="M16,13V11H21V13H16M14.83,7.76L17.66,4.93L19.07,6.34L16.24,9.17L14.83,7.76M11,16H13V21H11V16M11,3H13V8H11V3M4.93,17.66L7.76,14.83L9.17,16.24L6.34,19.07L4.93,17.66M4.93,6.34L6.34,4.93L9.17,7.76L7.76,9.17L4.93,6.34M8,13H3V11H8V13M19.07,17.66L17.66,19.07L14.83,16.24L16.24,14.83L19.07,17.66Z"></path></svg>') !default;
-$slick-autocomplete-loading-icon-width:                     22px !default;
-$slick-autocomplete-loading-icon-margin:                    2px 0 0 -26px !default;
-$slick-autocomplete-loading-icon-line-height:               0px !default;
-$slick-autocomplete-loading-icon-vertical-align:            sub !default;
 $slick-compound-filter-operator-select-border:              1px solid #{lighten($slick-primary-color, 10%)} !default;
 $slick-compound-filter-text-color:                          darken($slick-primary-color, 20%) !default;
-$slick-multiselect-icon-arrow-font-size:                    16px !default;
-$slick-multiselect-icon-color:                              $slick-primary-color !default;
-$slick-multiselect-icon-font-size:                          14px !default;
-$slick-multiselect-icon-height:                             15px !default;
-$slick-multiselect-icon-width:                              15px !default;
-$slick-multiselect-icon-margin:                             0px 4px 0 0 !default;
-$slick-multiselect-icon-checked:                            $slick-checkbox-selector-icon-checked !default;
-$slick-multiselect-icon-unchecked:                          $slick-checkbox-selector-icon-unchecked !default;
-$slick-multiselect-icon-radio-checked:                      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-multiselect-icon-color)}" viewBox="0 0 24 24"><path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7Z"></path></svg>') !default;
-$slick-multiselect-icon-radio-unchecked:                    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-multiselect-icon-color)}" viewBox="0 0 24 24"><path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"></path></svg>') !default;
-$slick-multiselect-unchecked-opacity:                       0.8 !default;
 $slick-preheader-border-right:                              1px solid #e2e2e2 !default;
 $slick-row-move-plugin-cursor:                              grab !default;
 $slick-row-move-plugin-icon-color:                          $slick-icon-color !default;
-$slick-row-move-plugin-icon-vertical-align:                 -webkit-baseline-middle !default;
-$slick-row-move-plugin-icon:                                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-row-move-plugin-icon-color)}" viewBox="0 0 24 24"><path d="M11,18 C11,19.1 10.1,20 9,20 C7.9,20 7,19.1 7,18 C7,16.9 7.9,16 9,16 C10.1,16 11,16.9 11,18 Z M9,10 C7.9,10 7,10.9 7,12 C7,13.1 7.9,14 9,14 C10.1,14 11,13.1 11,12 C11,10.9 10.1,10 9,10 Z M9,4 C7.9,4 7,4.9 7,6 C7,7.1 7.9,8 9,8 C10.1,8 11,7.1 11,6 C11,4.9 10.1,4 9,4 Z M15,8 C16.1,8 17,7.1 17,6 C17,4.9 16.1,4 15,4 C13.9,4 13,4.9 13,6 C13,7.1 13.9,8 15,8 Z M15,10 C13.9,10 13,10.9 13,12 C13,13.1 13.9,14 15,14 C16.1,14 17,13.1 17,12 C17,10.9 16.1,10 15,10 Z M15,16 C13.9,16 13,16.9 13,18 C13,19.1 13.9,20 15,20 C16.1,20 17,19.1 17,18 C17,16.9 16.1,16 15,16 Z"></path></svg>') !default;
 $slick-editor-input-height:                                 100% !default;
 $slick-editor-input-group-clear-btn-icon-color:             $slick-icon-color !default;
-$slick-editor-input-group-clear-btn-icon:                   url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-editor-input-group-clear-btn-icon-color)}" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"></path></svg>') !default;
 $slick-editor-input-group-clear-btn-icon-padding:           1px 6px !default;
-$slick-editor-input-group-clear-btn-icon-size:              calc(#{$slick-icon-font-size} + 2px) !default;
-$slick-editor-input-group-clear-btn-icon-width:             14px !default;
 $slick-row-mouse-hover-color:                               #ebfaef !default;
 $slick-row-selected-color:                                  #d4f6d7 !default;
-$slick-detail-view-icon-collapse-color:                     $slick-primary-color !default;
-$slick-detail-view-icon-expand-color:                       $slick-primary-color !default;
-$slick-detail-view-icon-collapse:                           url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-detail-view-icon-collapse-color)}" viewBox="0 0 24 24"><path d="M17,13H7V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"></path></svg>') !default;
-$slick-detail-view-icon-expand:                             url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-detail-view-icon-expand-color)}" viewBox="0 0 24 24"><path d="M17,13H13V17H11V13H7V11H11V7H13V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"></path></svg>') !default;
 $slick-pagination-icon-color:                               $slick-primary-color !default;
-$slick-pagination-icon-height:                              $slick-icon-width !default;
-$slick-pagination-icon-seek-first:                          url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-pagination-icon-color)}" viewBox="0 0 24 24"><path d="M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z"/><path d="M24 24H0V0h24v24z" fill="none"/></svg>') !default;
-$slick-pagination-icon-seek-end:                            url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-pagination-icon-color)}" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M5.59 7.41L10.18 12l-4.59 4.59L7 18l6-6-6-6zM16 6h2v12h-2z"/></svg>') !default;
-$slick-pagination-icon-seek-next:                           url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-pagination-icon-color)}" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"></path></svg>') !default;
-$slick-pagination-icon-seek-prev:                           url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="#{encodecolor($slick-pagination-icon-color)}" viewBox="0 0 24 24"> <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"></path></svg>') !default;
-$slick-pagination-icon-seek-first-width:                    $slick-icon-width !default;
-$slick-pagination-icon-seek-prev-width:                     $slick-icon-width !default;
-$slick-pagination-icon-seek-next-width:                     $slick-icon-width !default;
-$slick-pagination-icon-seek-end-width:                      $slick-icon-width !default;
-$slick-pagination-button-padding:                           6px 9px !default;
 $slick-pagination-button-border-radius:                     2px !default;
 $slick-pagination-page-input-border-radius:                 3px !default;
+
+// Dark Mode
+// -----------
+.ms-dark-mode,
+.ms-drop.ms-dark-mode,
+.slick-dark-mode .ms-dark-mode,
+.slick-dark-mode .icon-checkbox-container,
+.slick-dark-mode {
+  --slick-primary-color:                          #66bb6a !important;
+  --slick-base-dark-menu-bg-color:                #212121;
+  --slick-button-primary-bg-color:                #66bb6a;
+  --slick-cell-box-shadow:                        none;
+  --slick-compound-filter-text-color:             #66bb6a;
+  --slick-compound-filter-operator-select-border: 1px solid #66bb6a;
+  --slick-header-filter-row-border-bottom:        1px solid #505050;
+  --slick-container-border-right:                 1px solid #505050;
+  --slick-container-border-top:                   1px solid #505050;
+  --slick-container-border-left:                  1px solid #505050;
+  --slick-container-border-bottom:                1px solid #505050;
+  --slick-pane-top-border-top:                    1px solid #505050;
+  --slick-filled-filter-color:                    #66bb6a;
+  --slick-highlight-color:                        #49a54e;
+  --slick-pagination-icon-color:                  #49a54e;
+  --slick-checkbox-icon-color:                    #4dae52;
+  --slick-row-mouse-hover-box-shadow:             none;
+  --slick-row-mouse-hover-color:                  #575757;
+  --slick-row-selected-color:                     #4b4b4b;
+  --slick-checkbox-icon-color:                    #59c55f;
+  --slick-checkbox-icon-height:                   22px;
+  --slick-checkbox-icon-bg-color:                 transparent;
+  --slick-checkbox-icon-border:                   none;
+  --slick-icon-sort-color:                        #66bb6a;
+  --slick-multiselect-icon-radio-color:           #66bb6a;
+  --ms-checkbox-color:                            #66bb6a;
+  --ms-checkbox-hover-color:                      #{lighten(#49a54e, 13%)};
+  --ms-ok-button-text-color:                      #66bb6a;
+  --ms-ok-button-text-hover-color:                #{lighten(#66bb6a, 5%)};
+}

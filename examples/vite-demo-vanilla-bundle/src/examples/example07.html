@@ -1,15 +1,21 @@
-<h3 class="title is-3">
+<h3 class="title is-size-3">
   Example 07 - Row Move &amp; Row Selections
+  <span class="d-inline-flex">
+    <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
+      <span class="icon mdi mdi-theme-light-dark"></span>
+      <span> Toggle Light/Dark</span>
+    </button>
+  </span>
   <div class="subtitle code-link">
     <span class="is-size-6">see</span>
     <a class="is-size-5" target="_blank"
       href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example07.ts">
-      <span class="mdi mdi-link-variant mdi-v-align-sub"></span> code
+      <span class="mdi mdi-link-variant"></span> code
     </a>
   </div>
 </h3>
 
-<div class="row">
+<div class="row mb-3">
   <button class="button is-small" data-test="add-title-column-btn" onclick.delegate="dynamicallyAddTitleHeader()">
     <span class="icon mdi mdi-plus"></span>
     <span>Dynamically Duplicate Title Column</span>
@@ -67,8 +73,6 @@
     </span>
   </span>
 </div>
-
-<br />
 
 <div class="grid7">
 </div>

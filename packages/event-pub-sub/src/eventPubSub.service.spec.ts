@@ -42,7 +42,7 @@ describe('EventPubSub Service', () => {
 
       expect(publishResult).toBeTruthy();
       expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');
-      expect(dispatchSpy).toHaveBeenCalledWith('onClick', { name: 'John' }, true, true);
+      expect(dispatchSpy).toHaveBeenCalledWith('onClick', { name: 'John' }, true, true, undefined);
     });
 
     it('should call publish method and expect it to return it a simple boolean (without delay argument provided)', () => {
@@ -53,7 +53,7 @@ describe('EventPubSub Service', () => {
 
       expect(publishResult).toBeTruthy();
       expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');
-      expect(dispatchSpy).toHaveBeenCalledWith('onClick', { name: 'John' }, true, true);
+      expect(dispatchSpy).toHaveBeenCalledWith('onClick', { name: 'John' }, true, true, undefined);
     });
 
     it('should call publish method and expect it to return it a boolean in a Promise when a delay is provided', async () => {
@@ -64,7 +64,7 @@ describe('EventPubSub Service', () => {
 
       expect(publishResult).toBeTruthy();
       expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');
-      expect(dispatchSpy).toHaveBeenCalledWith('onClick', { name: 'John' }, true, true);
+      expect(dispatchSpy).toHaveBeenCalledWith('onClick', { name: 'John' }, true, true, undefined);
     });
 
     it('should define a different event name styling and expect "dispatchCustomEvent" and "getEventNameByNamingConvention" to be called', () => {
@@ -76,7 +76,20 @@ describe('EventPubSub Service', () => {
 
       expect(publishResult).toBeTruthy();
       expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');
-      expect(dispatchSpy).toHaveBeenCalledWith('onclick', { name: 'John' }, true, true);
+      expect(dispatchSpy).toHaveBeenCalledWith('onclick', { name: 'John' }, true, true, undefined);
+    });
+
+    it('should call publish method with an externalize event callback and expect it to receive the custom event used by the pubsub', () => {
+      const dispatchSpy = jest.spyOn(service, 'dispatchCustomEvent');
+      const getEventNameSpy = jest.spyOn(service, 'getEventNameByNamingConvention');
+
+      const obj: any = { nativeEvent: null };
+      const publishResult = service.publish('onClick', { name: 'John' }, undefined, (evt) => obj.nativeEvent = evt);
+
+      expect(obj.nativeEvent).toBeInstanceOf(CustomEvent);
+      expect(publishResult).toBeTruthy();
+      expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');
+      expect(dispatchSpy).toHaveBeenCalledWith('onClick', { name: 'John' }, true, true, expect.any(Function));
     });
   });
 

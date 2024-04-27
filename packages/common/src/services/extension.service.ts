@@ -1,11 +1,11 @@
-import { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import type { Column, ExtensionModel, GridOption, SlickRowDetailView, } from '../interfaces/index';
 import { type ColumnReorderFunction, type ExtensionList, ExtensionName, type InferExtensionByName, type SlickControlList, type SlickPluginList } from '../enums/index';
 import type { SharedService } from './shared.service';
 import type { TranslaterService } from './translater.service';
 import {
-  ExtensionUtility,
+  type ExtensionUtility,
   SlickAutoTooltip,
   SlickCellExcelCopyManager,
   SlickCellMenu,
@@ -14,7 +14,7 @@ import {
   SlickContextMenu,
   SlickDraggableGrouping,
   SlickGridMenu,
-  SlickGroupItemMetadataProvider,
+  type SlickGroupItemMetadataProvider,
   SlickHeaderButtons,
   SlickHeaderMenu,
   SlickRowBasedEdit,
@@ -24,7 +24,7 @@ import {
 import type { FilterService } from './filter.service';
 import type { SortService } from './sort.service';
 import type { TreeDataService } from './treeData.service';
-import { GridService } from './grid.service';
+import type { GridService } from './grid.service';
 
 interface ExtensionWithColumnIndexPosition {
   name: ExtensionName;

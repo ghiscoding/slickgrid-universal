@@ -4,7 +4,6 @@ import type {
   BackendServiceApi,
   BackendServiceOption,
   Column,
-  ColumnEditor,
   DataViewOption,
   ExtensionList,
   ExternalResource,
@@ -19,7 +18,7 @@ import type {
 
 import {
   autoAddEditorFormatterToColumnsWithEditor,
-  AutocompleterEditor,
+  type AutocompleterEditor,
   GlobalGridOptions,
   GridStateType,
   SlickGroupItemMetadataProvider,
@@ -35,13 +34,13 @@ import {
   GridService,
   GridStateService,
   GroupingAndColspanService,
-  Observable,
+  type Observable,
   PaginationService,
   ResizerService,
   SharedService,
   SortService,
   SlickgridConfig,
-  TranslaterService,
+  type TranslaterService,
   TreeDataService,
 
   // utilities
@@ -58,12 +57,13 @@ import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-compone
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
 import { extend } from '@slickgrid-universal/utils';
 
-import { SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
+import { type SlickerGridInstance } from '../interfaces/slickerGridInstance.interface';
 import { UniversalContainerService } from '../services/universalContainer.service';
 
 export class SlickVanillaGridBundle<TData = any> {
   protected _currentDatasetLength = 0;
   protected _eventPubSubService!: EventPubSubService;
+  protected _darkMode = false;
   protected _columnDefinitions?: Column<TData>[];
   protected _gridOptions?: GridOption;
   protected _gridContainerElm!: HTMLElement;
@@ -219,11 +219,16 @@ export class SlickVanillaGridBundle<TData = any> {
     } else {
       mergedOptions = this.mergeGridOptions(options);
     }
+
     if (this.sharedService?.gridOptions && this.slickGrid?.setOptions) {
       this.sharedService.gridOptions = mergedOptions;
       this.slickGrid.setOptions(mergedOptions as any, false, true); // make sure to supressColumnCheck (3rd arg) to avoid problem with changeColumnsArrangement() and custom grid view
       this.slickGrid.reRenderColumns(true); // then call a re-render since we did supressColumnCheck on previous setOptions
     }
+
+    // add/remove dark mode CSS class to parent container
+    this.setDarkMode(options.darkMode);
+
     this._gridOptions = mergedOptions;
   }
 
@@ -325,6 +330,11 @@ export class SlickVanillaGridBundle<TData = any> {
 
     this._gridOptions = this.mergeGridOptions(options || {});
     const isDeepCopyDataOnPageLoadEnabled = !!(this._gridOptions?.enableDeepCopyDatasetOnPageLoad);
+
+    // add dark mode CSS class when enabled
+    if (this._gridOptions.darkMode) {
+      this.setDarkMode(true);
+    }
 
     this.universalContainerService = services?.universalContainerService ?? new UniversalContainerService();
 
@@ -827,6 +837,13 @@ export class SlickVanillaGridBundle<TData = any> {
         this.sharedService.visibleColumns = args.impactedColumns;
       });
 
+      this._eventHandler.subscribe(grid.onSetOptions, (_e, args) => {
+        // add/remove dark mode CSS class when enabled
+        if (args.optionsBefore.darkMode !== args.optionsAfter.darkMode) {
+          this.setDarkMode(args.optionsAfter.darkMode);
+        }
+      });
+
       // load any presets if any (after dataset is initialized)
       this.loadColumnPresetsWhenDatasetInitialized();
       this.loadFilterPresetsWhenDatasetInitialized();
@@ -1088,6 +1105,14 @@ export class SlickVanillaGridBundle<TData = any> {
     return paginationOptions;
   }
 
+  setDarkMode(dark = false) {
+    if (dark) {
+      this._gridParentContainerElm.classList.add('slick-dark-mode');
+    } else {
+      this._gridParentContainerElm.classList.remove('slick-dark-mode');
+    }
+  }
+
   // --
   // protected functions
   // ------------------
@@ -1173,34 +1198,36 @@ export class SlickVanillaGridBundle<TData = any> {
 
   /** Load the Editor Collection asynchronously and replace the "collection" property when Promise resolves */
   protected loadEditorCollectionAsync(column: Column<TData>) {
-    const collectionAsync = (column?.editor as ColumnEditor).collectionAsync;
-    (column?.editor as ColumnEditor).disabled = true; // disable the Editor DOM element, we'll re-enable it after receiving the collection with "updateEditorCollection()"
+    if (column?.editor) {
+      const collectionAsync = column.editor.collectionAsync;
+      column.editor.disabled = true; // disable the Editor DOM element, we'll re-enable it after receiving the collection with "updateEditorCollection()"
 
-    if (collectionAsync instanceof Promise) {
-      // wait for the "collectionAsync", once resolved we will save it into the "collection"
-      // the collectionAsync can be of 3 types HttpClient, HttpFetch or a Promise
-      collectionAsync.then((response: any | any[]) => {
-        if (Array.isArray(response)) {
-          this.updateEditorCollection(column, response); // from Promise
-        } else if (response?.status >= 200 && response.status < 300 && typeof response.json === 'function') {
-          if (response.bodyUsed) {
-            console.warn(`[SlickGrid-Universal] The response body passed to collectionAsync was already read.`
-              + `Either pass the dataset from the Response or clone the response first using response.clone()`);
-          } else {
-            // from Fetch
-            (response as Response).json().then(data => this.updateEditorCollection(column, data));
+      if (collectionAsync instanceof Promise) {
+        // wait for the "collectionAsync", once resolved we will save it into the "collection"
+        // the collectionAsync can be of 3 types HttpClient, HttpFetch or a Promise
+        collectionAsync.then((response: any | any[]) => {
+          if (Array.isArray(response)) {
+            this.updateEditorCollection(column, response); // from Promise
+          } else if (response?.status >= 200 && response.status < 300 && typeof response.json === 'function') {
+            if (response.bodyUsed) {
+              console.warn(`[SlickGrid-Universal] The response body passed to collectionAsync was already read.`
+                + `Either pass the dataset from the Response or clone the response first using response.clone()`);
+            } else {
+              // from Fetch
+              (response as Response).json().then(data => this.updateEditorCollection(column, data));
+            }
+          } else if (response?.content) {
+            this.updateEditorCollection(column, response['content']); // from http-client
           }
-        } else if (response?.content) {
-          this.updateEditorCollection(column, response['content']); // from http-client
-        }
-      });
-    } else if (this.rxjs?.isObservable(collectionAsync)) {
-      // wrap this inside a setTimeout to avoid timing issue since updateEditorCollection requires to call SlickGrid getColumns() method
-      setTimeout(() => {
-        this.subscriptions.push(
-          (collectionAsync as Observable<any>).subscribe((resolvedCollection) => this.updateEditorCollection(column, resolvedCollection))
-        );
-      });
+        });
+      } else if (this.rxjs?.isObservable(collectionAsync)) {
+        // wrap this inside a setTimeout to avoid timing issue since updateEditorCollection requires to call SlickGrid getColumns() method
+        setTimeout(() => {
+          this.subscriptions.push(
+            (collectionAsync as Observable<any>).subscribe((resolvedCollection) => this.updateEditorCollection(column, resolvedCollection))
+          );
+        });
+      }
     }
   }
 
@@ -1441,14 +1468,14 @@ export class SlickVanillaGridBundle<TData = any> {
 
     return columns.map((column) => {
       // on every Editor that have a "collectionAsync", resolve the data and assign it to the "collection" property
-      if ((column.editor as ColumnEditor)?.collectionAsync) {
+      if (column.editor?.collectionAsync) {
         this.loadEditorCollectionAsync(column);
       }
 
-      // if there's already an internalColumnEditor we'll use it, else it would be inside the editor
-      const columnEditor = column.internalColumnEditor || column.editor as ColumnEditor;
+      // @deprecated `internalColumnEditor`, if there's already an internalColumnEditor we'll use it, else it would be inside the editor
+      const columnEditor = column.internalColumnEditor || column.editor;
 
-      return { ...column, editor: columnEditor?.model, internalColumnEditor: { ...columnEditor } };
+      return { ...column, editorClass: columnEditor?.model, internalColumnEditor: { ...columnEditor } };
     });
   }
 
@@ -1458,15 +1485,15 @@ export class SlickVanillaGridBundle<TData = any> {
    * Once we found the new pointer, we will reassign the "editor" and "collection" to the "internalColumnEditor" so it has newest collection
    */
   protected updateEditorCollection<U extends TData = any>(column: Column<U>, newCollection: U[]) {
-    (column.editor as ColumnEditor).collection = newCollection;
-    (column.editor as ColumnEditor).disabled = false;
+    if (this.slickGrid && column.editor) {
+      column.editor.collection = newCollection;
+      column.editor.disabled = false;
 
-    if (this.slickGrid) {
       // find the new column reference pointer & re-assign the new editor to the internalColumnEditor
       if (Array.isArray(this.columnDefinitions)) {
         const columnRef = this.columnDefinitions.find((col: Column) => col.id === column.id);
         if (columnRef) {
-          columnRef.internalColumnEditor = column.editor as ColumnEditor;
+          columnRef.internalColumnEditor = column.editor;
         }
       }
 

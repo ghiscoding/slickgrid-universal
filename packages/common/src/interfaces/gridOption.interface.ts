@@ -3,6 +3,7 @@ import type { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
 import type {
   AutoResizeOption,
   AutoTooltipOption,
+  AutocompleterOption,
   BackendServiceApi,
   CellMenu,
   CheckboxSelectorOption,
@@ -14,10 +15,12 @@ import type {
   CustomTooltipOption,
   DraggableGrouping,
   EditCommand,
+  EditorConstructor,
   EmptyWarning,
   ExcelCopyBufferOption,
   ExcelExportOption,
   ExternalResource,
+  FlatpickrOption,
   Formatter,
   FormatterOption,
   GridMenu,
@@ -27,6 +30,7 @@ import type {
   HeaderMenu,
   ItemMetadata,
   Locale,
+  LongTextEditorOption,
   OperatorDetailAlt,
   Pagination,
   ResizeByContentOption,
@@ -34,12 +38,15 @@ import type {
   RowDetailView,
   RowMoveManager,
   RowSelectionModelOption,
+  SliderOption,
+  SliderRangeOption,
   TextExportOption,
   TreeDataOption,
 } from './index';
 import type { ColumnReorderFunction, OperatorString, OperatorType, } from '../enums/index';
 import type { TranslaterService } from '../services/translater.service';
 import type { DataViewOption, SlickEditorLock } from '../core/index';
+import type { MultipleSelectOption } from 'multiple-select-vanilla';
 
 export interface CellViewportRange {
   bottom: number;
@@ -55,7 +62,7 @@ export interface CustomDataView<T = any> {
 }
 
 export interface CssStyleHash {
-  [prop: number | string]: { [columnId: number | string]: any; }
+  [prop: number | string]: { [columnId: number | string]: any; };
 }
 
 /** Escape hatch geared towards testing Slickgrid in JSDOM based environments to circumvent the lack of stylesheet.ownerNode and clientWidth calculations */
@@ -216,6 +223,13 @@ export interface GridOption<C extends Column = Column> {
    */
   customTooltip?: CustomTooltipOption;
 
+  /**
+   * Dark Mode Theme (disabled by default, which mean light mode).
+   * Enabling this option will add `.slick-dark-mode` CSS class to the grid parent elements
+   * and any other elements that are appended to the html body (e.g. Flatpickr, LongTextEditor, ...)
+   */
+  darkMode?: boolean;
+
   /** Data item column value extractor (getter) that can be used by the Excel like copy buffer plugin */
   dataItemColumnValueExtractor?: null | ((item: any, columnDef: C) => any);
 
@@ -254,7 +268,40 @@ export interface GridOption<C extends Column = Column> {
   /** Default column width, is set to 80 when null */
   defaultColumnWidth?: number;
 
-  /** The default filter model to use when none is specified */
+  /** Provide default options to be used by the editor(s) for the entire grid column */
+  defaultEditorOptions?: {
+    /** Default option(s) to use by the Autocompleter editor */
+    autocompleter?: AutocompleterOption,
+
+    /** Default option(s) to use by both the CompoundDate and/or DateRange editors */
+    date?: FlatpickrOption,
+
+    /** Default option(s) to use by the LongText editor */
+    longText?: LongTextEditorOption,
+
+    /** Default option(s) to use by both the CompoundSelect and/or SelectRange editors */
+    select?: Partial<MultipleSelectOption>,
+
+    /** Default option(s) to use by both the CompoundSlider and/or SliderRange editors */
+    slider?: SliderOption | SliderRangeOption,
+  };
+
+  /** Provide default options to be used by the filter(s) for the entire grid column */
+  defaultFilterOptions?: {
+    /** Default option(s) to use by the Autocompleter filter */
+    autocompleter?: AutocompleterOption,
+
+    /** Default option(s) to use by both the CompoundDate and/or DateRange filters */
+    date?: FlatpickrOption,
+
+    /** Default option(s) to use by both the CompoundSelect and/or SelectRange filters */
+    select?: Partial<MultipleSelectOption>,
+
+    /** Default option(s) to use by both the CompoundSlider and/or SliderRange filters */
+    slider?: SliderOption | SliderRangeOption,
+  };
+
+  /** The default filter model to use when none is specified (defaults to input text filter). */
   defaultFilter?: any;
 
   /** Default placeholder to use in Filters that support placeholder (autocomplete, input, flatpickr, select, ...) */
@@ -286,7 +333,7 @@ export interface GridOption<C extends Column = Column> {
   editCommandHandler?: (item: any, column: C, command: EditCommand) => void;
 
   /** Editor classes factory */
-  editorFactory?: any;
+  editorFactory?: null | { getEditor: (col: C) => EditorConstructor; };
 
   /** a global singleton editor lock. */
   editorLock?: SlickEditorLock;

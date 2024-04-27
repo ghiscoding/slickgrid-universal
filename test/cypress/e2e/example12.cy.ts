@@ -2,7 +2,7 @@ import { changeTimezone, zeroPadding } from '../plugins/utilities';
 
 describe('Example 12 - Composite Editor Modal', () => {
   const fullPreTitles = ['', 'Common Factor', 'Analysis', 'Period', 'Item', ''];
-  const fullTitles = ['', ' Title', 'Duration', 'Cost', '% Complete', 'Complexity', 'Start', 'Completed', 'Finish', 'Product', 'Country of Origin', 'Action'];
+  const fullTitles = ['', ' Title ', 'Duration', 'Cost', '% Complete', 'Complexity', 'Start', 'Completed', 'Finish', 'Product', 'Country of Origin', 'Action'];
 
   const GRID_ROW_HEIGHT = 33;
   const UNSAVED_RGB_COLOR = 'rgb(221, 219, 218)';
@@ -29,6 +29,23 @@ describe('Example 12 - Composite Editor Modal', () => {
       .find('.slick-header-columns:nth(1)')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+  });
+
+  it('should display 2 different tooltips when hovering icons on "Title" column', () => {
+    cy.get('.slick-column-name').as('title-column');
+    cy.get('@title-column')
+      .find('.mdi-alert-outline')
+      .trigger('mouseover');
+
+    cy.get('.slick-custom-tooltip').should('be.visible');
+    cy.get('.slick-custom-tooltip .tooltip-body').contains('Task must always be followed by a number');
+
+    cy.get('@title-column')
+      .find('.mdi-information-outline')
+      .trigger('mouseover');
+
+    cy.get('.slick-custom-tooltip').should('be.visible');
+    cy.get('.slick-custom-tooltip .tooltip-body').contains('Title is always rendered as UPPERCASE');
   });
 
   it('should have "TASK 0" (uppercase) incremented by 1 after each row', () => {
@@ -372,7 +389,7 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.slick-editor-modal').should('not.exist');
   });
 
-  it('should have new TASK 8888 displayed on first row', () => {
+  it('should have new TASK 8899 displayed on first row', () => {
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).contains('TASK 8899', { matchCase: false });
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`).should('contain', '33 days');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`).should('contain', '17');
@@ -473,7 +490,7 @@ describe('Example 12 - Composite Editor Modal', () => {
 
   it('should be able to clear the "Country of Origin" autocomplete field in the modal form via the Clear button from the editor', () => {
     cy.get('.item-details-container.editor-origin .modified').should('have.length', 1);
-    cy.get('.item-details-container.editor-origin .autocomplete-container button.icon-clear').click();
+    cy.get('.item-details-container.editor-origin .autocomplete-container button.btn-clear').click();
     cy.get('.item-details-container.editor-origin .modified').should('have.length', 1);
     cy.get('.item-details-container.editor-origin .autocomplete').invoke('val').then(text => expect(text).to.eq(''));
   });
@@ -675,7 +692,7 @@ describe('Example 12 - Composite Editor Modal', () => {
 
     // clear Country
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(10)`).click();
-    cy.get('.autocomplete-container button.icon-clear').click();
+    cy.get('.autocomplete-container button.btn-clear').click();
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(10)`).should('contain', '');
   });

@@ -314,7 +314,7 @@ describe('Example 11 - Batch Editing', () => {
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(7)`).click();
     cy.get('[data-name="editor-completed"]')
-      .find('li.hide-radio.selected')
+      .find('li.selected')
       .find('input[data-name=selectItemeditor-completed][value=true]')
       .should('exist');
 
@@ -495,7 +495,7 @@ describe('Example 11 - Batch Editing', () => {
       .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
   });
 
-  it('should click on "Clear Local Storage" and expect to be back to original grid with all the columns', () => {
+  it('should "Clear Local Storage" and expect to be back to original grid with all the columns', () => {
     cy.get('[data-test="clear-storage-btn"]')
       .click();
 
@@ -581,6 +581,7 @@ describe('Example 11 - Batch Editing', () => {
   });
 
   it('should be able to filter "Country of Origin" with a text range filter "b..e" and expect to see only Canada showing up', () => {
+    cy.get('.slick-header-columns .slick-header-column:nth(9)').trigger('mouseover'); // mouseover column headers to get rid of cell tooltip
     cy.get('input.search-filter.filter-countryOfOrigin').type('b..e');
     cy.get('input.search-filter.filter-countryOfOrigin.filled').should('exist');
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(9)`).should('contain', 'Canada');
@@ -724,7 +725,7 @@ describe('Example 11 - Batch Editing', () => {
       .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
   });
 
-  it('should have 3 filters with "filled" css class when having values', () => {
+  it('should expect 3 filters with "filled" css class when having values', () => {
     cy.get('.filter-title.filled').should('exist');
     cy.get('.filter-duration.filled').should('exist');
     cy.get('.filter-countryOfOrigin.filled').should('exist');
@@ -798,7 +799,7 @@ describe('Example 11 - Batch Editing', () => {
       .trigger('click');
 
     cy.get('.ms-drop')
-      .find('span:nth(1)')
+      .find('li:nth(1)')
       .click();
 
     cy.get('.grid11')
@@ -814,7 +815,7 @@ describe('Example 11 - Batch Editing', () => {
       .trigger('click');
 
     cy.get('.ms-drop')
-      .find('span:nth(0)')
+      .find('li:nth(0)')
       .click();
 
     cy.get('.filter-title.filled').should('exist');
@@ -828,5 +829,23 @@ describe('Example 11 - Batch Editing', () => {
       .should($span => {
         expect(Number($span.text())).to.eq(100);
       });
+  });
+
+  it('should display 2 different tooltips when hovering icons from "Action" column', () => {
+    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(10)`).as('first-row-action-cell');
+    cy.get('@first-row-action-cell').find('.action-btns .mdi-close').as('delete-row-btn');
+    cy.get('@first-row-action-cell').find('.action-btns .mdi-check-underline').as('mark-completed-btn');
+
+    cy.get('@delete-row-btn')
+      .trigger('mouseover');
+
+    cy.get('.slick-custom-tooltip').should('be.visible');
+    cy.get('.slick-custom-tooltip .tooltip-body').contains('Delete Current Row');
+
+    cy.get('@mark-completed-btn')
+      .trigger('mouseover');
+
+    cy.get('.slick-custom-tooltip').should('be.visible');
+    cy.get('.slick-custom-tooltip .tooltip-body').contains('Mark as Completed');
   });
 });

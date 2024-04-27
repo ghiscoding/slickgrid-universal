@@ -11,14 +11,14 @@ import { findOrDefault } from '../services/index';
  * const dataset = [1, 2];
  */
 export const collectionEditorFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
-  if (!value || !columnDef || !columnDef.internalColumnEditor || !columnDef.internalColumnEditor.collection
-    || !columnDef.internalColumnEditor.collection.length) {
+  if (!value || !columnDef || !columnDef.editor || !columnDef.editor.collection
+    || !columnDef.editor.collection.length) {
     return value;
   }
 
-  const { internalColumnEditor, internalColumnEditor: { collection } } = columnDef;
-  const labelName = (internalColumnEditor.customStructure) ? internalColumnEditor.customStructure.label : 'label';
-  const valueName = (internalColumnEditor.customStructure) ? internalColumnEditor.customStructure.value : 'value';
+  const { editor, editor: { collection } } = columnDef;
+  const labelName = (editor.customStructure) ? editor.customStructure.label : 'label';
+  const valueName = (editor.customStructure) ? editor.customStructure.value : 'value';
 
   if (Array.isArray(value)) {
     if (collection.every((x: any) => typeof x === 'string')) {

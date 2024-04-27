@@ -23,6 +23,6 @@ export interface ItemMetadata {
   /** column-level metadata */
   columns?: {
     // properties describing metadata related to individual columns
-    [colIdOrIdx in string | number]: Pick<Column, 'colspan' | 'editor' | 'focusable' | 'formatter' | 'selectable'>;
+    [colIdOrIdx in string | number]: Pick<Column, 'colspan' | 'editorClass' | 'focusable' | 'formatter' | 'selectable'>;
   }
 }

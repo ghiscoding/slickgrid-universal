@@ -112,6 +112,7 @@ handleOnHeaderMenuCommand(e) {
   - `onActiveCellChanged`
   - `onActiveCellPositionChanged`
   - `onAddNewRow`
+  - `onAfterSetColumns`
   - `onAutosizeColumns`
   - `onBeforeAppendCell`
   - `onBeforeCellEditorDestroy`
@@ -146,9 +147,13 @@ handleOnHeaderMenuCommand(e) {
   - `onHeaderContextMenu`
   - `onHeaderMouseEnter`
   - `onHeaderMouseLeave`
+  - `onHeaderMouseOver`
+  - `onHeaderMouseOut`
   - `onHeaderRowCellRendered`
   - `onHeaderRowMouseEnter`
   - `onHeaderRowMouseLeave`
+  - `onHeaderRowMouseOver`
+  - `onHeaderRowMouseOut`
   - `onKeyDown`
   - `onMouseEnter`
   - `onMouseLeave`

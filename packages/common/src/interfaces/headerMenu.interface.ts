@@ -5,7 +5,7 @@ import type {
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
 } from './index';
-import { SlickGrid, type SlickEventData } from '../core/index';
+import type { SlickGrid, SlickEventData } from '../core/index';
 
 export interface HeaderMenuCommandItemCallbackArgs {
   /** Column definition */

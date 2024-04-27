@@ -5,7 +5,7 @@
     <a class="is-size-5"
        target="_blank"
        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/src/examples/example04.ts">
-      <span class="mdi mdi-link-variant mdi-v-align-sub"></span> code
+      <span class="mdi mdi-link-variant"></span> code
     </a>
   </div>
   <h6 class="title is-6 italic">
@@ -14,18 +14,18 @@
   </h6>
 </h3>
 
-<div class="row">
+<div class="row mb-3">
   <span>
     <label for="">Pinned Rows: </label>
-    <input type="number" class="frozen-row-count" value.bind="frozenRowCount">
-    <button class="btn btn-default btn-xs" onclick.delegate="changeFrozenRowCount()">
+    <input type="number" class="frozen-row-count is-narrow input is-small" value.bind="frozenRowCount">
+    <button class="button is-small" onclick.delegate="changeFrozenRowCount()">
       Set
     </button>
   </span>
   <span class="ml-1">
     <label for="">Pinned Columns: </label>
-    <input type="number" class="frozen-column-count" value.bind="frozenColumnCount">
-    <button class="btn btn-default btn-xs" onclick.delegate="changeFrozenColumnCount()">
+    <input type="number" class="frozen-column-count is-narrow input is-small" value.bind="frozenColumnCount">
+    <button class="button is-small" onclick.delegate="changeFrozenColumnCount()">
       Set
     </button>
   </span>
@@ -49,8 +49,6 @@
     </button>
   </span>
 </div>
-
-<br>
 
 <div class="grid4">
 </div>
