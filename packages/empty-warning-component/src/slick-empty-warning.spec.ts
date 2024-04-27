@@ -342,7 +342,7 @@ describe('Slick-Empty-Warning Component', () => {
     });
 
     it('should expect the Slick-Empty-Warning to change some options and display a different message when provided as an option', () => {
-      const mockOptions = { message: '<span class="fa fa-warning"></span> No Record found.', className: 'custom-class', marginTop: 22, marginLeft: 11 };
+      const mockOptions = { message: '<span class="mdi mdi-alert text-color-warning"></span> No Record found.', className: 'custom-class', marginTop: 22, marginLeft: 11 };
       component = new SlickEmptyWarningComponent();
       component.init(gridStub, container);
       component.showEmptyDataMessage(true, mockOptions);
@@ -354,12 +354,12 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentElm).toBeTruthy();
       expect(componentElm.style.display).toBe('block');
       expect(componentElm.classList.contains('custom-class')).toBeTruthy();
-      expect(componentElm.innerHTML).toBe('<span class="fa fa-warning"></span> No Record found.');
+      expect(componentElm.innerHTML).toBe('<span class="mdi mdi-alert text-color-warning"></span> No Record found.');
     });
 
     it('should expect the Slick-Empty-Warning to change some options and display a different message is provided as a DocumentFragment', () => {
       const emptyWarningElm = new DocumentFragment();
-      emptyWarningElm.appendChild(createDomElement('span', { className: 'fa fa-warning' }));
+      emptyWarningElm.appendChild(createDomElement('span', { className: 'mdi mdi-alert text-color-warning' }));
       emptyWarningElm.appendChild(document.createTextNode(' No Record found.'));
 
       const mockOptions = { message: emptyWarningElm, className: 'custom-class', marginTop: 22, marginLeft: 11 };
@@ -374,12 +374,12 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentElm).toBeTruthy();
       expect(componentElm.style.display).toBe('block');
       expect(componentElm.classList.contains('custom-class')).toBeTruthy();
-      expect(componentElm.innerHTML).toBe('<span class="fa fa-warning"></span> No Record found.');
+      expect(componentElm.innerHTML).toBe('<span class="mdi mdi-alert text-color-warning"></span> No Record found.');
     });
 
     it('should expect the Slick-Empty-Warning to change some options and display a different message is provided as an HTMLElement', () => {
       const emptyWarningElm = createDomElement('div', { className: 'container' });
-      emptyWarningElm.appendChild(createDomElement('span', { className: 'fa fa-warning' }));
+      emptyWarningElm.appendChild(createDomElement('span', { className: 'mdi mdi-alert text-color-warning' }));
       emptyWarningElm.appendChild(document.createTextNode(' No Record found.'));
 
       const mockOptions = { message: emptyWarningElm, className: 'custom-class', marginTop: 22, marginLeft: 11 };
@@ -394,7 +394,7 @@ describe('Slick-Empty-Warning Component', () => {
       expect(componentElm).toBeTruthy();
       expect(componentElm.style.display).toBe('block');
       expect(componentElm.classList.contains('custom-class')).toBeTruthy();
-      expect(componentElm.innerHTML).toBe('<div class="container"><span class="fa fa-warning"></span> No Record found.</div>');
+      expect(componentElm.innerHTML).toBe('<div class="container"><span class="mdi mdi-alert text-color-warning"></span> No Record found.</div>');
     });
 
     it('should expect the Slick-Empty-Warning message to be translated to French when providing a Translater Service and "messageKey" property', () => {

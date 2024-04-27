@@ -36,6 +36,7 @@ interface ReportItem {
 
 export default class Example03 {
   private _bindingEventService: BindingEventService;
+  private _darkMode = false;
   columnDefinitions: Column<ReportItem & { action: string; }>[];
   gridOptions: GridOption;
   dataset: any[];
@@ -69,6 +70,8 @@ export default class Example03 {
   dispose() {
     this.sgb?.dispose();
     this._bindingEventService.unbindAll();
+    document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    document.body.setAttribute('data-theme', 'light');
   }
 
   initializeGrid() {
@@ -85,7 +88,7 @@ export default class Example03 {
         filterable: true,
         grouping: {
           getter: 'title',
-          formatter: (g) => `Title: ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g) => `Title: ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
           aggregators: [new Aggregators.Sum('cost')],
           aggregateCollapsed: false,
           collapsed: false
@@ -105,7 +108,7 @@ export default class Example03 {
         groupTotalsFormatter: GroupTotalFormatters.sumTotals,
         grouping: {
           getter: 'duration',
-          formatter: (g) => `Duration: ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g) => `Duration: ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
           comparer: (a, b) => {
             return this.durationOrderByCount ? (a.count - b.count) : SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc);
           },
@@ -126,7 +129,7 @@ export default class Example03 {
         type: FieldType.number,
         grouping: {
           getter: 'cost',
-          formatter: (g) => `Cost: ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g) => `Cost: ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -147,7 +150,7 @@ export default class Example03 {
         groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage,
         grouping: {
           getter: 'percentComplete',
-          formatter: (g) => `% Complete:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g) => `% Complete:  ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -165,7 +168,7 @@ export default class Example03 {
         editor: { model: Editors.date },
         grouping: {
           getter: 'start',
-          formatter: (g) => `Start: ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g) => `Start: ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -185,7 +188,7 @@ export default class Example03 {
         filterable: true, filter: { model: Filters.dateRange },
         grouping: {
           getter: 'finish',
-          formatter: (g) => `Finish: ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g) => `Finish: ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('cost')
           ],
@@ -207,7 +210,7 @@ export default class Example03 {
         formatter: Formatters.checkmarkMaterial,
         grouping: {
           getter: 'effortDriven',
-          formatter: (g) => `Effort-Driven: ${g.value ? 'True' : 'False'} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g) => `Effort-Driven: ${g.value ? 'True' : 'False'} <span class="text-color-primary">(${g.count} items)</span>`,
           aggregators: [
             new Aggregators.Sum('duration'),
             new Aggregators.Sum('cost')
@@ -219,7 +222,7 @@ export default class Example03 {
         id: 'action', name: 'Action', field: 'action', width: 100, maxWidth: 100,
         excludeFromExport: true,
         formatter: () => {
-          return `<div class="fake-hyperlink">Action <span class="font-12px">&#9660;</span></div>`;
+          return `<div class="fake-hyperlink text-color-primary">Action <span class="font-12px">&#9660;</span></div>`;
         },
         cellMenu: {
           hideCloseButton: false,
@@ -313,8 +316,7 @@ export default class Example03 {
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by the column',
         // hideGroupSortIcons: true,
-        // groupIconCssClass: 'fa fa-outdent',
-        deleteIconCssClass: 'mdi mdi-close color-danger',
+        deleteIconCssClass: 'mdi mdi-close text-color-danger',
         sortAscIconCssClass: 'mdi mdi-arrow-up',
         sortDescIconCssClass: 'mdi mdi-arrow-down',
         onGroupChanged: (_e, args) => this.onGroupChanged(args),
@@ -445,6 +447,18 @@ export default class Example03 {
 
   showPreHeader() {
     this.sgb?.slickGrid?.setPreHeaderPanelVisibility(true);
+  }
+
+  toggleDarkMode() {
+    this._darkMode = !this._darkMode;
+    if (this._darkMode) {
+      document.body.setAttribute('data-theme', 'dark');
+      document.querySelector('.demo-container')?.classList.add('dark-mode');
+    } else {
+      document.body.setAttribute('data-theme', 'light');
+      document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    }
+    this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });
   }
 
   toggleDraggableGroupingRow() {

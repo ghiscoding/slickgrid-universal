@@ -271,7 +271,7 @@ export default class Example11 {
       {
         id: 'action', name: 'Action', field: 'action', minWidth: 70, width: 75, maxWidth: 75,
         excludeFromExport: true,
-        formatter: () => `<span class="button-style padding-1px action-btns"title"Delete the Row"><span class="mdi mdi-close color-danger" title="Delete Current Row"></span></span>
+        formatter: () => `<span class="button-style padding-1px action-btns"title"Delete the Row"><span class="mdi mdi-close text-color-danger" title="Delete Current Row"></span></span>
         &nbsp;<span class="button-style padding-1px action-btns" title="Mark as Completed"><span class="mdi mdi-check-underline"></span></span>`,
         onCellClick: (event: Event, args) => {
           const dataContext = args.dataContext;

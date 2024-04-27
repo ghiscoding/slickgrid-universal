@@ -34,9 +34,9 @@ body {
 }
 .demo-container.dark-mode {
   background-color: #33393e;
-  color: #dddddd;
+  color: #e6e6e6;
   h3 {
-    color: #dddddd;
+    color: #e4e4e4;
   }
   .subtitle {
     color: #cbcbcb;
@@ -85,8 +85,15 @@ input.is-narrow {
   width: 35px;
   margin-top: -1px;
 }
+.d-inline-flex {
+  display: inline-flex;
+}
+.columns:not(:last-child) {
+  margin-bottom: calc(1.5rem - 0.9rem);
+}
+
 .text-green {
-  color: green;
+  color: #009e00;
 }
 .text-violet {
   color: #659bff;
@@ -96,10 +103,4 @@ input.is-narrow {
 }
 .text-red {
   color: red;
-}
-.d-inline-flex {
-  display: inline-flex;
-}
-.columns:not(:last-child) {
-  margin-bottom: calc(1.5rem - 0.9rem);
 }

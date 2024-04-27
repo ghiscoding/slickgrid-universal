@@ -32,6 +32,8 @@ $slick-filled-filter-font-weight:                           400 !default;
     box-shadow: var(--slick-filled-filter-box-shadow, $slick-filled-filter-box-shadow);
     border: var(--slick-filled-filter-border, $slick-filled-filter-border);
     span {
+      display: inline-flex;
+      align-items: center;
       font-weight: var(--slick-filled-filter-font-weight, $slick-filled-filter-font-weight);
       color: var(--slick-filled-filter-color, $slick-filled-filter-color);
     }

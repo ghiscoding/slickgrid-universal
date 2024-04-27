@@ -1,0 +1,59 @@
+$slick-icon-width-min-size: 8;
+$slick-icon-width-max-size: 50;
+
+@-webkit-keyframes sg-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes sg-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@mixin sg-icon-rotate($degrees, $rotation) {
+  transform: rotate($degrees);
+}
+
+.mdi {
+  &.mdi-flip-h {
+    transform: scaleX(-1);
+  }
+  &.mdi-flip-v {
+    transform: scaleY(-1);
+  }
+  &.mdi-pulse {
+    animation: sg-spin 1s infinite steps(8);
+  }
+  /* use mdi-spin or mdi-spin-1s to change the speed */
+  &.mdi-spin {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    animation: sg-spin 2s infinite linear;
+  }
+  @for $i from 1 through 5 {
+    &.mdi-spin-#{$i}s {
+      align-items: center;
+      display: inline-flex;
+      justify-content: center;
+      animation: sg-spin #{$i}s infinite linear;
+    }
+  }
+  &.mdi-rotate-45  { @include sg-icon-rotate(45deg, 1);  }
+  &.mdi-rotate-90  { @include sg-icon-rotate(90deg, 1);  }
+  &.mdi-rotate-135 { @include sg-icon-rotate(135deg, 2); }
+  &.mdi-rotate-180 { @include sg-icon-rotate(180deg, 2); }
+  &.mdi-rotate-220 { @include sg-icon-rotate(220deg, 3); }
+  &.mdi-rotate-270 { @include sg-icon-rotate(270deg, 3); }
+  &.mdi-rotate-315 { @include sg-icon-rotate(315deg, 3); }
+  &.mdi-rotate-45, .mdi-rotate-90, .mdi-rotate-135, .mdi-rotate-180, .mdi-rotate-220 .mdi-rotate-270, .mdi-rotate-315 {
+    filter: none;
+  }
+
+  @for $i from $slick-icon-width-min-size through $slick-icon-width-max-size {
+    &.mdi-#{$i}px {
+      font-size: #{$i}px;
+      height: #{$i}px;
+        width: #{$i}px;
+    }
+  }
+}

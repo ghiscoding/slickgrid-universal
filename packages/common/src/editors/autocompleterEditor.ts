@@ -530,7 +530,8 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
     this._editorInputGroupElm = createDomElement('div', { className: 'autocomplete-container input-group' });
     const closeButtonGroupElm = createDomElement('span', { className: 'input-group-btn input-group-append', dataset: { clear: '' } });
-    this._clearButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default icon-clear' });
+    this._clearButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default btn-clear' });
+    this._clearButtonElm.appendChild(createDomElement('i', { className: 'icon-clear' }));
     this._inputElm = createDomElement(
       'input',
       {

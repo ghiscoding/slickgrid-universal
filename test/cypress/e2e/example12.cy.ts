@@ -491,7 +491,7 @@ describe('Example 12 - Composite Editor Modal', () => {
 
   it('should be able to clear the "Country of Origin" autocomplete field in the modal form via the Clear button from the editor', () => {
     cy.get('.item-details-container.editor-origin .modified').should('have.length', 1);
-    cy.get('.item-details-container.editor-origin .autocomplete-container button.icon-clear').click();
+    cy.get('.item-details-container.editor-origin .autocomplete-container button.btn-clear').click();
     cy.get('.item-details-container.editor-origin .modified').should('have.length', 1);
     cy.get('.item-details-container.editor-origin .autocomplete').invoke('val').then(text => expect(text).to.eq(''));
   });
@@ -693,7 +693,7 @@ describe('Example 12 - Composite Editor Modal', () => {
 
     // clear Country
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(10)`).click();
-    cy.get('.autocomplete-container button.icon-clear').click();
+    cy.get('.autocomplete-container button.btn-clear').click();
 
     cy.get(`[style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(10)`).should('contain', '');
   });

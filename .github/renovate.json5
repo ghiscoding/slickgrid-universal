@@ -11,6 +11,10 @@
       depTypeList: ['peerDependencies'],
       enabled: false,
     },
+    {
+      packageNames: ['pnpm'],
+      allowedVersions: '<9.0.0',
+    },
   ],
   ignoreDeps: [
     'node',

@@ -1,6 +1,8 @@
 import './icons.scss';
 
 export default class Icons {
+  private _darkMode = false;
+
   attached() {
     const iconContainerElm = document.querySelector(`.icons-container`) as HTMLDivElement;
     const iconCounter = document.querySelector(`.icon-counter`) as HTMLDivElement;
@@ -10,14 +12,18 @@ export default class Icons {
 
     icons.forEach((icon) => {
       const iconDivElm = document.createElement('div');
-      iconDivElm.className = 'slick-col-medium-2';
-      iconDivElm.style.paddingBottom = '5px';
+      iconDivElm.className = 'slick-col-medium-2 icon-box';
+      iconDivElm.style.marginBottom = '5px';
 
       const iconElm = document.createElement('span');
       iconElm.className = icon.replace(/\./gi, ' ');
-      iconElm.classList.add('mdi-24px');
+      if (icon.includes('mdi-change-record-type')) {
+        iconElm.classList.add('mdi-20px');
+      } else {
+        iconElm.classList.add('mdi-24px');
+      }
       iconElm.title = icon.replace('.mdi.', '');
-      iconElm.style.marginRight = '2px';
+      iconElm.style.marginRight = '5px';
       iconDivElm.appendChild(iconElm);
 
       const iconNameElm = document.createElement('span');
@@ -26,6 +32,22 @@ export default class Icons {
 
       iconContainerElm.appendChild(iconDivElm);
     });
+  }
+
+  dispose() {
+    document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    document.body.setAttribute('data-theme', 'light');
+  }
+
+  toggleDarkMode() {
+    this._darkMode = !this._darkMode;
+    if (this._darkMode) {
+      document.body.setAttribute('data-theme', 'dark');
+      document.querySelector('.demo-container')?.classList.add('dark-mode');
+    } else {
+      document.body.setAttribute('data-theme', 'light');
+      document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    }
   }
 
   getIcons() {
@@ -204,6 +226,7 @@ export default class Icons {
       '.mdi.mdi-snowflake',
       '.mdi.mdi-sort-ascending',
       '.mdi.mdi-sort-descending',
+      '.mdi.mdi-sort-variant-off',
       '.mdi.mdi-sort-variant-remove',
       '.mdi.mdi-square-edit-outline',
       '.mdi.mdi-star',

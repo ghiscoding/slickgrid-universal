@@ -25,7 +25,7 @@ import {
   sanitizeTextByAvailableSanitizer,
   SlickEventHandler,
 } from '@slickgrid-universal/common';
-import { isPrimitiveOrHTML } from '@slickgrid-universal/utils';
+import { classNameToList, isPrimitiveOrHTML } from '@slickgrid-universal/utils';
 
 type CellType = 'slick-cell' | 'slick-header-column' | 'slick-headerrow-column';
 
@@ -56,6 +56,10 @@ const SELECTOR_CLOSEST_TOOLTIP_ATTR = '[title], [data-slick-tooltip]';
  *    },
  *  };
  */
+
+// add a default CSS class name that is used and required by SlickGrid Theme
+const DEFAULT_CLASS_NAME = 'slick-custom-tooltip';
+
 export class SlickCustomTooltip {
   name: 'CustomTooltip' = 'CustomTooltip' as const;
 
@@ -74,7 +78,7 @@ export class SlickCustomTooltip {
   protected _hasMultipleTooltips = false;
   protected _defaultOptions = {
     bodyClassName: 'tooltip-body',
-    className: 'slick-custom-tooltip',
+    className: '',
     offsetArrow: 3, // same as `$slick-tooltip-arrow-side-margin` CSS/SASS variable
     offsetLeft: 0,
     offsetRight: 0,
@@ -106,7 +110,13 @@ export class SlickCustomTooltip {
     return this._cellAddonOptions?.bodyClassName ?? 'tooltip-body';
   }
   get className(): string {
-    return this._cellAddonOptions?.className ?? 'slick-custom-tooltip';
+    // we'll always add our default class name for the CSS style to display as intended
+    // and then append any custom CSS class to default when provided
+    let className = DEFAULT_CLASS_NAME;
+    if (this._addonOptions?.className) {
+      className += ` ${this._addonOptions.className}`;
+    }
+    return className;
   }
   get dataView(): CustomDataView {
     return this._grid.getData<CustomDataView>() || {};
@@ -161,7 +171,8 @@ export class SlickCustomTooltip {
   hideTooltip() {
     this._cancellablePromise?.cancel();
     this._observable$?.unsubscribe();
-    const prevTooltip = document.body.querySelector(`.${this.className}${this.gridUidSelector}`);
+    const cssClasses = classNameToList(this.className).join('.');
+    const prevTooltip = document.body.querySelector(`.${cssClasses}${this.gridUidSelector}`);
     prevTooltip?.remove();
   }
 

@@ -145,7 +145,7 @@ export class GroupingAndColspanService {
         } else {
           widthTotal = colDef.width || 0;
           headerElm = createDomElement('div', {
-            className: `ui-state-default slick-header-column ${isFrozenGrid ? 'frozen' : ''}`,
+            className: `slick-state-default slick-header-column ${isFrozenGrid ? 'frozen' : ''}`,
             style: { width: `${widthTotal - headerColumnWidthDiff}px` }
           });
 

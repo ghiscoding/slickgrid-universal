@@ -98,7 +98,7 @@ describe('HeaderButton Plugin', () => {
     plugin.init();
     plugin.addonOptions = {
       buttonCssClass: 'some-class'
-    }
+    };
 
     expect(plugin.addonOptions).toEqual({
       buttonCssClass: 'some-class',

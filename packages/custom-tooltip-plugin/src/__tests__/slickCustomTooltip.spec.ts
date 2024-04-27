@@ -86,6 +86,7 @@ describe('SlickCustomTooltip plugin', () => {
     plugin.setOptions(mockOptions);
 
     expect(plugin.addonOptions).toEqual(mockOptions);
+    expect(plugin.className).toEqual('slick-custom-tooltip some-class');
     expect(plugin.getOptions()).toEqual(mockOptions);
   });
 
@@ -315,7 +316,7 @@ describe('SlickCustomTooltip plugin', () => {
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm).toEqual(plugin.tooltipElm);
-    expect(plugin.cellAddonOptions).toBeTruthy();
+    expect(plugin.addonOptions).toBeTruthy();
     expect(tooltipElm.style.maxWidth).toBe('85px');
     expect(tooltipElm.textContent).toBe('some text content');
     expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();

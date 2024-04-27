@@ -10,13 +10,20 @@ import type {
   TranslaterService,
 } from '@slickgrid-universal/common';
 import { Constants, createDomElement, getTranslationPrefix } from '@slickgrid-universal/common';
-import { BindingHelper } from '@slickgrid-universal/binding';
+import { BindingEventService, BindingHelper } from '@slickgrid-universal/binding';
 
 export class SlickPaginationComponent {
   protected _bindingHelper: BindingHelper;
+  protected _bindingEventService: BindingEventService;
   protected _paginationElement!: HTMLDivElement;
   protected _enableTranslate = false;
   protected _gridParentContainerElm?: HTMLElement;
+  protected _itemPerPageElm!: HTMLSelectElement;
+  protected _spanInfoFromToElm!: HTMLSpanElement;
+  protected _seekFirstElm!: HTMLLIElement;
+  protected _seekPrevElm!: HTMLLIElement;
+  protected _seekNextElm!: HTMLLIElement;
+  protected _seekEndElm!: HTMLLIElement;
   protected _subscriptions: Subscription[] = [];
   currentPagination: ServicePagination;
   firstButtonClasses = '';
@@ -32,6 +39,7 @@ export class SlickPaginationComponent {
 
   constructor(protected readonly paginationService: PaginationService, protected readonly pubSubService: PubSubService, protected readonly sharedService: SharedService, protected readonly translaterService?: TranslaterService) {
     this._bindingHelper = new BindingHelper();
+    this._bindingEventService = new BindingEventService();
     this._bindingHelper.querySelectorPrefix = `.${this.gridUid} `;
     this.currentPagination = this.paginationService.getFullPagination();
     this._enableTranslate = this.gridOptions?.enableTranslate ?? false;
@@ -56,9 +64,8 @@ export class SlickPaginationComponent {
           (this.currentPagination as any)[key] = (paginationChanges as any)[key];
         }
         this.updatePageButtonsUsability();
-        const pageFromToElm = document.querySelector<HTMLSpanElement>(`.${this.gridUid} span.page-info-from-to`);
-        if (pageFromToElm?.style) {
-          pageFromToElm.style.display = (this.currentPagination.totalItems === 0) ? 'none' : '';
+        if (this._spanInfoFromToElm?.style) {
+          this._spanInfoFromToElm.style.display = (this.currentPagination.totalItems === 0) ? 'none' : '';
         }
       }),
       this.pubSubService.subscribe('onPaginationSetCursorBased', () => {
@@ -127,6 +134,7 @@ export class SlickPaginationComponent {
   dispose() {
     // also dispose of all Subscriptions
     this.pubSubService.unsubscribeAll(this._subscriptions);
+    this._bindingEventService.unbindAll();
 
     this._bindingHelper.dispose();
     this._paginationElement.remove();
@@ -136,19 +144,32 @@ export class SlickPaginationComponent {
     this._gridParentContainerElm = gridParentContainerElm;
     const paginationElm = this.createPaginationContainer();
     const divNavContainerElm = createDomElement('div', { className: 'slick-pagination-nav' });
-    const leftNavigationElm = this.createPageNavigation('Page navigation', [
-      { liClass: 'page-item seek-first', aClass: 'page-link icon-seek-first', ariaLabel: 'First Page' },
-      { liClass: 'page-item seek-prev', aClass: 'page-link icon-seek-prev', ariaLabel: 'Previous Page' },
-    ]);
+
+    // left nav
+    const leftNavElm = createDomElement('nav', { ariaLabel: 'Page navigation' });
+    const leftUlElm = createDomElement('ul', { className: 'pagination' });
+    this._seekFirstElm = createDomElement('li', { className: 'page-item seek-first' }, leftUlElm);
+    this._seekFirstElm.appendChild(createDomElement('a', { className: 'page-link icon-seek-first', ariaLabel: 'First Page', role: 'button' }));
+    this._seekPrevElm = createDomElement('li', { className: 'page-item seek-prev' }, leftUlElm);
+    this._seekPrevElm.appendChild(createDomElement('a', { className: 'page-link icon-seek-prev', ariaLabel: 'Previous Page', role: 'button' }));
+    leftNavElm.appendChild(leftUlElm);
+
     const pageNumberSectionElm = this.createPageNumberSection();
-    const rightNavigationElm = this.createPageNavigation('Page navigation', [
-      { liClass: 'page-item seek-next', aClass: 'page-link icon-seek-next', ariaLabel: 'Next Page' },
-      { liClass: 'page-item seek-end', aClass: 'page-link icon-seek-end', ariaLabel: 'Last Page' },
-    ]);
+
+    // right nav
+    const rightNavElm = createDomElement('nav', { ariaLabel: 'Page navigation' });
+    const rightUlElm = createDomElement('ul', { className: 'pagination' });
+    this._seekNextElm = createDomElement('li', { className: 'page-item seek-next' }, rightUlElm);
+    this._seekNextElm.appendChild(createDomElement('a', { className: 'page-link icon-seek-next', ariaLabel: 'Next Page', role: 'button' }));
+    this._seekEndElm = createDomElement('li', { className: 'page-item seek-end' }, rightUlElm);
+    this._seekEndElm.appendChild(createDomElement('a', { className: 'page-link icon-seek-end', ariaLabel: 'Last Page', role: 'button' }));
+    rightNavElm.appendChild(rightUlElm);
+
+    // append both navs to container
     paginationElm.appendChild(divNavContainerElm);
-    divNavContainerElm.appendChild(leftNavigationElm);
+    divNavContainerElm.appendChild(leftNavElm);
     divNavContainerElm.appendChild(pageNumberSectionElm);
-    divNavContainerElm.appendChild(rightNavigationElm);
+    divNavContainerElm.appendChild(rightNavElm);
 
     const paginationSettingsElm = this.createPaginationSettingsSection();
     paginationElm.appendChild(divNavContainerElm);
@@ -166,10 +187,9 @@ export class SlickPaginationComponent {
 
   /** Render and fill the Page Sizes <select> element */
   renderPageSizes() {
-    const selectElm = document.querySelector<HTMLSelectElement>(`.${this.gridUid} .items-per-page`);
-    if (selectElm && Array.isArray(this.availablePageSizes)) {
+    if (this._itemPerPageElm && Array.isArray(this.availablePageSizes)) {
       for (const option of this.availablePageSizes) {
-        selectElm.appendChild(createDomElement('option', { value: `${option}`, text: `${option}` }));
+        this._itemPerPageElm.appendChild(createDomElement('option', { value: `${option}`, text: `${option}` }));
       }
     }
   }
@@ -198,11 +218,11 @@ export class SlickPaginationComponent {
 
   /** Add some DOM Element event listeners */
   addEventListeners() {
-    this._bindingHelper.bindEventHandler('.icon-seek-first', 'click', this.changeToFirstPage.bind(this) as EventListener);
-    this._bindingHelper.bindEventHandler('.icon-seek-end', 'click', this.changeToLastPage.bind(this) as EventListener);
-    this._bindingHelper.bindEventHandler('.icon-seek-next', 'click', this.changeToNextPage.bind(this) as EventListener);
-    this._bindingHelper.bindEventHandler('.icon-seek-prev', 'click', this.changeToPreviousPage.bind(this) as EventListener);
-    this._bindingHelper.bindEventHandler('select.items-per-page', 'change', (event: & { target: any; }) => this.itemsPerPage = +(event?.target?.value ?? 0));
+    this._bindingEventService.bind(this._seekFirstElm, 'click', this.changeToFirstPage.bind(this) as EventListener);
+    this._bindingEventService.bind(this._seekEndElm, 'click', this.changeToLastPage.bind(this) as EventListener);
+    this._bindingEventService.bind(this._seekNextElm, 'click', this.changeToNextPage.bind(this) as EventListener);
+    this._bindingEventService.bind(this._seekPrevElm, 'click', this.changeToPreviousPage.bind(this) as EventListener);
+    this._bindingEventService.bind(this._itemPerPageElm, 'change', this.updateItemsPerPage.bind(this));
   }
 
   changeToFirstPage(event: MouseEvent) {
@@ -231,6 +251,10 @@ export class SlickPaginationComponent {
 
   changeToCurrentPage(pageNumber: number) {
     this.paginationService.goToPageNumber(+pageNumber);
+  }
+
+  updateItemsPerPage(event: & { target: any; }) {
+    this.itemsPerPage = +(event?.target?.value ?? 0);
   }
 
   /** Translate all the texts shown in the UI, use ngx-translate service when available or custom locales when service is null */
@@ -267,19 +291,6 @@ export class SlickPaginationComponent {
     return paginationElm;
   }
 
-  protected createPageNavigation(navAriaLabel: string, liElements: Array<{ liClass: string, aClass: string, ariaLabel: string; }>) {
-    const navElm = createDomElement('nav', { ariaLabel: navAriaLabel });
-    const ulElm = createDomElement('ul', { className: 'pagination' });
-
-    for (const li of liElements) {
-      createDomElement('li', { className: li.liClass }, ulElm)
-        .appendChild(createDomElement('a', { className: li.aClass, ariaLabel: li.ariaLabel, role: 'button' }));
-    }
-    navElm.appendChild(ulElm);
-
-    return navElm;
-  }
-
   protected createPageNumberSection() {
     const divElm = createDomElement('div', { className: 'slick-page-number' });
     createDomElement('span', { className: 'text-page', textContent: 'Page' }, divElm);
@@ -313,19 +324,19 @@ export class SlickPaginationComponent {
 
   protected createPaginationSettingsSection() {
     const spanContainerElm = createDomElement('span', { className: 'slick-pagination-settings' });
-    createDomElement('select', { id: 'items-per-page-label', ariaLabel: 'Items per Page', className: 'items-per-page' }, spanContainerElm);
+    this._itemPerPageElm = createDomElement('select', { id: 'items-per-page-label', ariaLabel: 'Items per Page', className: 'items-per-page' }, spanContainerElm);
     spanContainerElm.appendChild(document.createTextNode(' '));
     createDomElement('span', { className: 'text-item-per-page', textContent: 'items per page' }, spanContainerElm);
     spanContainerElm.appendChild(document.createTextNode(', '));
 
     const spanPaginationCount = createDomElement('span', { className: 'slick-pagination-count' }, spanContainerElm);
-    const spanInfoFromToElm = createDomElement('span', { className: 'page-info-from-to' }, spanPaginationCount);
-    createDomElement('span', { className: 'item-from', ariaLabel: 'Page Item From', dataset: { test: 'item-from' } }, spanInfoFromToElm);
-    spanInfoFromToElm.appendChild(document.createTextNode('-'));
-    createDomElement('span', { className: 'item-to', ariaLabel: 'Page Item To', dataset: { test: 'item-to' } }, spanInfoFromToElm);
-    spanInfoFromToElm.appendChild(document.createTextNode(' '));
-    createDomElement('span', { className: 'text-of', textContent: 'of' }, spanInfoFromToElm);
-    spanInfoFromToElm.appendChild(document.createTextNode(' '));
+    this._spanInfoFromToElm = createDomElement('span', { className: 'page-info-from-to' }, spanPaginationCount);
+    createDomElement('span', { className: 'item-from', ariaLabel: 'Page Item From', dataset: { test: 'item-from' } }, this._spanInfoFromToElm);
+    this._spanInfoFromToElm.appendChild(document.createTextNode('-'));
+    createDomElement('span', { className: 'item-to', ariaLabel: 'Page Item To', dataset: { test: 'item-to' } }, this._spanInfoFromToElm);
+    this._spanInfoFromToElm.appendChild(document.createTextNode(' '));
+    createDomElement('span', { className: 'text-of', textContent: 'of' }, this._spanInfoFromToElm);
+    this._spanInfoFromToElm.appendChild(document.createTextNode(' '));
     const spanInfoTotalElm = createDomElement('span', { className: 'page-info-total-items' }, spanPaginationCount);
     createDomElement('span', { className: 'total-items', ariaLabel: 'Total Items', dataset: { test: 'total-items' } }, spanInfoTotalElm);
     spanInfoTotalElm.appendChild(document.createTextNode(' '));

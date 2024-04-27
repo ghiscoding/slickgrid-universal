@@ -276,11 +276,6 @@ export class GridBasicComponent {
           editorOptions: {
             showOnFocus: true,
             minLength: 1,
-            classes: {
-              // choose a custom style layout
-              // 'ui-autocomplete': 'autocomplete-custom-two-rows',
-              'ui-autocomplete': 'autocomplete-custom-four-corners',
-            },
             fetch: (searchText, updateCallback) => {
               yourAsyncApiCall(searchText) // typically you'll want to return no more than 10 results
                  .then(result => updateCallback((results.length > 0) ? results : [{ label: 'No match found.', value: '' }]); })

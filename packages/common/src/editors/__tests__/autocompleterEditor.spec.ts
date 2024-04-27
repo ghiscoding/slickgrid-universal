@@ -745,7 +745,7 @@ describe('AutocompleterEditor', () => {
       editor = new AutocompleterEditor(editorArguments);
       const clearSpy = jest.spyOn(editor, 'clear');
 
-      const clearBtnElm = divContainer.querySelector('.btn.icon-clear') as HTMLButtonElement;
+      const clearBtnElm = divContainer.querySelector('.btn.btn-clear') as HTMLButtonElement;
       clearBtnElm.dispatchEvent(new Event('click'));
 
       expect(clearSpy).toHaveBeenCalled();
