@@ -1,4 +1,5 @@
 import type { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
+import type { MultipleSelectOption } from 'multiple-select-vanilla';
 
 import type {
   AutoResizeOption,
@@ -46,7 +47,6 @@ import type {
 import type { ColumnReorderFunction, OperatorString, OperatorType, } from '../enums/index';
 import type { TranslaterService } from '../services/translater.service';
 import type { DataViewOption, SlickEditorLock } from '../core/index';
-import type { MultipleSelectOption } from 'multiple-select-vanilla';
 
 export interface CellViewportRange {
   bottom: number;

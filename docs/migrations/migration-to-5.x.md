@@ -149,3 +149,21 @@ prepareGrid() {
 
 > **Note** the `'today'` shortcut currently only exist in `Vanilla-Calendar-Picker` fork, however the rest of the settings should be similar, visit `Vanilla-Calendar-Pro` [settings](https://vanilla-calendar.pro/docs/reference/additionally/settings) website for all other options. The hope is to drop the fork whenever the original project receives all missing features.
 
+### Multiple-Select
+Please note that in previous version we were re-exporting the `MultipleSelectOption` interface from the `Multiple-Select-Vanilla` library, however re-exporting is typically discouraged by the TypeScript team and so it was removed. The change is quite simple, you simply need to import the `MultipleSelectOption` interface from the `multiple-select-vanilla` external library.
+
+```diff
+- import { MultipleSelectOption } from '@slickgrid-universal/common';
++ import { MultipleSelectOption } from 'multiple-select-vanilla';
+
+prepareGrid() {
+  this.columnDefinitions = [{
+    id: 'isActive', name: 'Active', field: 'isActive',
+    editor: {
+      model: Editors.singleSelect,
+      collection: [ { value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' } ],
+      editorOptions: { maxHeight: 400 } as MultipleSelectOption
+    }
+  }];
+}
+```

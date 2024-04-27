@@ -1,5 +1,6 @@
 // import 3rd party lib multiple-select for the tests
 import 'multiple-select-vanilla';
+import type { MultipleSelectOption } from 'multiple-select-vanilla';
 import { of, Subject } from 'rxjs';
 
 import { FieldType, OperatorType } from '../../enums/index';
@@ -11,7 +12,6 @@ import { SlickGrid } from '../../core/index';
 import { HttpStub } from '../../../../../test/httpClientStub';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
-import type { MultipleSelectOption } from 'multiple-select-vanilla';
 
 jest.useFakeTimers();
 
