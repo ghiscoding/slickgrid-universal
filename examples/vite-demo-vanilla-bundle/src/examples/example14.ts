@@ -326,7 +326,8 @@ export default class Example14 {
       {
         id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
         excludeFromExport: true,
-        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
+        cssClass: 'justify-center flex',
+        formatter: () => `<div class="button-style action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           commandTitle: 'Commands',

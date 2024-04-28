@@ -281,7 +281,8 @@ export default class Example16 {
       },
       {
         id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
-        formatter: () => `<div class="button-style margin-auto action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
+        cssClass: 'justify-center flex',
+        formatter: () => `<div class="button-style action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
         excludeFromExport: true,
         // customTooltip: {
         //   formatter: () => `Click to open Cell Menu`, // return empty so it won't show any pre-tooltip
