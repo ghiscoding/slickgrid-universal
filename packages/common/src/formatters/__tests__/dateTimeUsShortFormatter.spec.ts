@@ -17,18 +17,18 @@ describe('the DateTimeUsShort Formatter', () => {
   it('should provide a dateIso formatted input and return a formatted date value without time when valid date value is provided', () => {
     const value = '2019-05-01 02:36:07';
     const result = Formatters.dateTimeUsShort(0, 0, value, { type: 'dateIso' } as unknown as Column, {}, {} as any);
-    expect(result).toBe('5/1/19 2:36:7');
+    expect(result).toBe('05/01/19 2:36:7');
   });
 
   it('should return a formatted date value in the morning when valid date value is provided', () => {
     const value = new Date('2019-05-01T02:36:07');
     const result = Formatters.dateTimeUsShort(0, 0, value, {} as Column, {}, {} as any);
-    expect(result).toBe('5/1/19 2:36:7');
+    expect(result).toBe('05/01/19 2:36:7');
   });
 
   it('should return a formatted date value in the afternoon when valid date value is provided', () => {
     const value = new Date('2019-05-01T20:36:07');
     const result = Formatters.dateTimeUsShort(0, 0, value, {} as Column, {}, {} as any);
-    expect(result).toBe('5/1/19 20:36:7');
+    expect(result).toBe('05/01/19 20:36:7');
   });
 });

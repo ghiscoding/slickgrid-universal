@@ -738,7 +738,7 @@ describe('Service/Utilies', () => {
 
     it('should return a moment.js dateEuroShort format', () => {
       const output = mapMomentDateFormatWithFieldType(FieldType.dateEuroShort);
-      expect(output).toBe('D/M/YY');
+      expect(output).toEqual(['DD/MM/YY', 'D/M/YY']);
     });
 
     it('should return a moment.js dateTimeEuro format', () => {
@@ -748,7 +748,7 @@ describe('Service/Utilies', () => {
 
     it('should return a moment.js dateTimeShortEuro format', () => {
       const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeShortEuro);
-      expect(output).toBe('DD/MM/YYYY HH:mm');
+      expect(output).toEqual(['DD/MM/YYYY HH:mm', 'D/M/YYYY HH:mm']);
     });
 
     it('should return a moment.js dateTimeEuroAmPm format', () => {
@@ -763,12 +763,12 @@ describe('Service/Utilies', () => {
 
     it('should return a moment.js dateTimeEuroShort format', () => {
       const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeEuroShort);
-      expect(output).toBe('D/M/YY H:m:s');
+      expect(output).toEqual(['DD/MM/YY H:m:s', 'D/M/YY H:m:s']);
     });
 
     it('should return a moment.js dateTimeEuroShortAmPm format', () => {
       const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeEuroShortAmPm);
-      expect(output).toBe('D/M/YY h:m:s a');
+      expect(output).toEqual(['DD/MM/YY h:m:s a', 'D/M/YY h:m:s a']);
     });
 
     it('should return a moment.js dateUs format', () => {
@@ -778,7 +778,7 @@ describe('Service/Utilies', () => {
 
     it('should return a moment.js dateUsShort format', () => {
       const output = mapMomentDateFormatWithFieldType(FieldType.dateUsShort);
-      expect(output).toBe('M/D/YY');
+      expect(output).toEqual(['MM/DD/YY', 'M/D/YY']);
     });
 
     it('should return a moment.js dateTimeUs format', () => {
@@ -788,7 +788,7 @@ describe('Service/Utilies', () => {
 
     it('should return a moment.js dateTimeShortUs format', () => {
       const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeShortUs);
-      expect(output).toBe('MM/DD/YYYY HH:mm');
+      expect(output).toEqual(['MM/DD/YYYY HH:mm', 'M/D/YYYY HH:mm']);
     });
 
     it('should return a moment.js dateTimeUsAmPm format', () => {
@@ -803,12 +803,12 @@ describe('Service/Utilies', () => {
 
     it('should return a moment.js dateTimeUsShort format', () => {
       const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeUsShort);
-      expect(output).toBe('M/D/YY H:m:s');
+      expect(output).toEqual(['MM/DD/YY H:m:s', 'M/D/YY H:m:s']);
     });
 
     it('should return a moment.js dateTimeUsShortAmPm format', () => {
       const output = mapMomentDateFormatWithFieldType(FieldType.dateTimeUsShortAmPm);
-      expect(output).toBe('M/D/YY h:m:s a');
+      expect(output).toEqual(['MM/DD/YY h:m:s a', 'M/D/YY h:m:s a']);
     });
 
     it('should return a moment.js dateUtc format', () => {

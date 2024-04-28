@@ -4,7 +4,7 @@ import { FieldType } from '../enums/fieldType.enum';
 import type { SortComparer } from '../interfaces/index';
 import { mapMomentDateFormatWithFieldType } from '../services/utilities';
 
-export function compareDates(value1: any, value2: any, sortDirection: number, format?: string | MomentBuiltinFormat, strict?: boolean) {
+export function compareDates(value1: any, value2: any, sortDirection: number, format?: string | string[] | MomentBuiltinFormat, strict?: boolean) {
   let diff = 0;
 
   if (value1 === value2) {

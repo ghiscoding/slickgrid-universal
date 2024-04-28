@@ -96,7 +96,10 @@ export function getValueFromParamsOrFormatterOptions(optionName: string, columnD
 
 /** From a FieldType, return the associated date Formatter */
 export function getAssociatedDateFormatter(fieldType: typeof FieldType[keyof typeof FieldType], defaultSeparator: string): Formatter {
-  const defaultDateFormat = mapMomentDateFormatWithFieldType(fieldType);
+  let defaultDateFormat = mapMomentDateFormatWithFieldType(fieldType);
+  if (Array.isArray(defaultDateFormat)) {
+    defaultDateFormat = defaultDateFormat[0];
+  }
 
   return (_row: number, _cell: number, value: any, columnDef: Column, _dataContext: any, grid: SlickGrid) => {
     const gridOptions = ((grid && typeof grid.getOptions === 'function') ? grid.getOptions() : {}) as GridOption;

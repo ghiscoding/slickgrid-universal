@@ -238,7 +238,10 @@ export class DateFilter implements Filter {
     const columnId = this.columnDef?.id ?? '';
     const columnFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
     const outputFieldType = this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc;
-    const outputFormat = mapMomentDateFormatWithFieldType(outputFieldType);
+    let outputFormat = mapMomentDateFormatWithFieldType(outputFieldType);
+    if (Array.isArray(outputFormat)) {
+      outputFormat = outputFormat[0];
+    }
     const inputFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
 
     // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
