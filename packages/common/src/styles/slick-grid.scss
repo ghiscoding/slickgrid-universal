@@ -283,7 +283,9 @@
   .slick-cell {
     box-sizing: border-box;
     border-style: var(--slick-grid-border-style, $slick-grid-border-style);
-    padding: 1px 2px 1px 2px;
+    display: var(--slick-cell-display, $slick-cell-display);
+    padding: 1px 2px;
+    align-items: center;
   }
 
   .slick-header-column {
