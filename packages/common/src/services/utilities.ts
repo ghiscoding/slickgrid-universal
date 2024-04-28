@@ -1,7 +1,6 @@
 import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { flatten } from 'un-flatten-tree';
-import * as moment_ from 'moment-mini';
-const moment = (moment_ as any)['default'] || moment_;
+import moment, { type Moment } from 'moment-tiny';
 
 import { Constants } from '../constants';
 import { FieldType, type OperatorString, OperatorType } from '../enums/index';
@@ -400,16 +399,16 @@ export function isColumnDateType(fieldType: typeof FieldType[keyof typeof FieldT
   }
 }
 
-export function formatDateByFieldType(inputDate: Date | string | typeof moment, inputFieldType: typeof FieldType[keyof typeof FieldType] | undefined, outputFieldType: typeof FieldType[keyof typeof FieldType]): string {
+export function formatDateByFieldType(inputDate: Date | string | Moment, inputFieldType: typeof FieldType[keyof typeof FieldType] | undefined, outputFieldType: typeof FieldType[keyof typeof FieldType]): string {
   const inputFormat = inputFieldType ? mapMomentDateFormatWithFieldType(inputFieldType) : undefined;
   const outputFormat = mapMomentDateFormatWithFieldType(outputFieldType);
-  const momentDate = inputDate instanceof moment ? inputDate : moment(inputDate, inputFormat);
+  const momentDate = (inputDate instanceof moment ? inputDate : moment(inputDate, inputFormat)) as Moment;
 
   if (momentDate.isValid() && inputDate !== undefined) {
     if (outputFieldType === FieldType.dateUtc) {
       return momentDate.toISOString();
     }
-    return momentDate.format(outputFormat);
+    return momentDate.format(Array.isArray(outputFormat) ? outputFormat[0] : outputFormat);
   }
   return '';
 }
@@ -419,8 +418,8 @@ export function formatDateByFieldType(inputDate: Date | string | typeof moment, 
  * refer to moment.js for the format standard used: https://momentjs.com/docs/#/parsing/string-format/
  * @param fieldType
  */
-export function mapMomentDateFormatWithFieldType(fieldType: typeof FieldType[keyof typeof FieldType]): string {
-  let map: string;
+export function mapMomentDateFormatWithFieldType(fieldType: typeof FieldType[keyof typeof FieldType]): string | string[] {
+  let map: string | string[];
   switch (fieldType) {
     case FieldType.dateTime:
     case FieldType.dateTimeIso:
@@ -440,13 +439,13 @@ export function mapMomentDateFormatWithFieldType(fieldType: typeof FieldType[key
       map = 'DD/MM/YYYY';
       break;
     case FieldType.dateEuroShort:
-      map = 'D/M/YY';
+      map = ['DD/MM/YY', 'D/M/YY'];
       break;
     case FieldType.dateTimeEuro:
       map = 'DD/MM/YYYY HH:mm:ss';
       break;
     case FieldType.dateTimeShortEuro:
-      map = 'DD/MM/YYYY HH:mm';
+      map = ['DD/MM/YYYY HH:mm', 'D/M/YYYY HH:mm'];
       break;
     case FieldType.dateTimeEuroAmPm:
       map = 'DD/MM/YYYY hh:mm:ss a';
@@ -455,20 +454,20 @@ export function mapMomentDateFormatWithFieldType(fieldType: typeof FieldType[key
       map = 'DD/MM/YYYY hh:mm:ss A';
       break;
     case FieldType.dateTimeEuroShort:
-      map = 'D/M/YY H:m:s';
+      map = ['DD/MM/YY H:m:s', 'D/M/YY H:m:s'];
       break;
     case FieldType.dateTimeEuroShortAmPm:
-      map = 'D/M/YY h:m:s a';
+      map = ['DD/MM/YY h:m:s a', 'D/M/YY h:m:s a'];
       break;
     case FieldType.dateTimeEuroShortAM_PM:
-      map = 'D/M/YY h:m:s A';
+      map = ['DD/MM/YY h:m:s A', 'D/M/YY h:m:s A'];
       break;
     // all US Formats (month/date/year)
     case FieldType.dateUs:
       map = 'MM/DD/YYYY';
       break;
     case FieldType.dateUsShort:
-      map = 'M/D/YY';
+      map = ['MM/DD/YY', 'M/D/YY'];
       break;
     case FieldType.dateTimeUs:
       map = 'MM/DD/YYYY HH:mm:ss';
@@ -480,16 +479,16 @@ export function mapMomentDateFormatWithFieldType(fieldType: typeof FieldType[key
       map = 'MM/DD/YYYY hh:mm:ss A';
       break;
     case FieldType.dateTimeUsShort:
-      map = 'M/D/YY H:m:s';
+      map = ['MM/DD/YY H:m:s', 'M/D/YY H:m:s'];
       break;
     case FieldType.dateTimeUsShortAmPm:
-      map = 'M/D/YY h:m:s a';
+      map = ['MM/DD/YY h:m:s a', 'M/D/YY h:m:s a'];
       break;
     case FieldType.dateTimeUsShortAM_PM:
-      map = 'M/D/YY h:m:s A';
+      map = ['MM/DD/YY h:m:s A', 'M/D/YY h:m:s A'];
       break;
     case FieldType.dateTimeShortUs:
-      map = 'MM/DD/YYYY HH:mm';
+      map = ['MM/DD/YYYY HH:mm', 'M/D/YYYY HH:mm'];
       break;
     case FieldType.dateUtc:
       map = 'YYYY-MM-DDTHH:mm:ss.SSSZ';

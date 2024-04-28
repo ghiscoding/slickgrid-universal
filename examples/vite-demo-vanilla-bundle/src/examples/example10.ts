@@ -13,8 +13,8 @@ import {
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi, type GraphqlServiceOption, } from '@slickgrid-universal/graphql';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import moment from 'moment-mini';
 import { type MultipleSelectOption } from 'multiple-select-vanilla';
+import moment from 'moment-tiny';
 
 import { ExampleGridOptions } from './example-grid-options';
 import type { TranslateService } from '../translate.service';

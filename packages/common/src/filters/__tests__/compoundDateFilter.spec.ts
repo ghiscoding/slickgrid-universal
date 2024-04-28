@@ -285,7 +285,7 @@ describe('CompoundDateFilter', () => {
   });
 
   it('should create the input filter with a default search terms when passed as a filter argument', () => {
-    filterArguments.searchTerms = ['2000-01-01T05:00:00.000+05:00'];
+    filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
     mockColumn.filter!.operator = '<=';
     mockColumn.type = FieldType.dateUtc;
     mockColumn.outputType = FieldType.dateUtc;
@@ -295,14 +295,14 @@ describe('CompoundDateFilter', () => {
     const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
 
     filterInputElm.focus();
-    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-01T05:00:00.000+05:00'], hide: jest.fn() } as unknown as VanillaCalendar);
-    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-01T05:00:00.000+05:00'], hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-01T05:00:00.000Z'], hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-01T05:00:00.000Z'], hide: jest.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-01T10:00:00.000Z');
-    expect(filterInputElm.value).toBe('2000-01-01T10:00:00.000Z');
-    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T10:00:00.000Z'], shouldTriggerQuery: true });
+    expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-01T05:00:00.000Z');
+    expect(filterInputElm.value).toBe('2000-01-01T05:00:00.000Z');
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T05:00:00.000Z'], shouldTriggerQuery: true });
   });
 
   it('should create the input filter with a default input dates when passed as a filter options', () => {
@@ -377,7 +377,7 @@ describe('CompoundDateFilter', () => {
 
   it('should work with different locale when locale is changed', async () => {
     translateService.use('fr');
-    filterArguments.searchTerms = ['2000-01-01T05:00:00.000+05:00'];
+    filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
     mockColumn.filter!.operator = '<=';
     mockColumn.type = FieldType.dateUtc;
     mockColumn.outputType = FieldType.dateUtc;
@@ -393,14 +393,14 @@ describe('CompoundDateFilter', () => {
 
     filterInputElm.focus();
 
-    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-01T05:00:00.000+05:00'], hide: jest.fn() } as unknown as VanillaCalendar);
-    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-01T05:00:00.000+05:00'], hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-01T05:00:00.000Z'], hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-01T05:00:00.000Z'], hide: jest.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-01T10:00:00.000Z');
-    expect(filterInputElm.value).toBe('2000-01-01T10:00:00.000Z');
-    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T10:00:00.000Z'], shouldTriggerQuery: true });
+    expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-01T05:00:00.000Z');
+    expect(filterInputElm.value).toBe('2000-01-01T05:00:00.000Z');
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T05:00:00.000Z'], shouldTriggerQuery: true });
     expect(calendarElm).toBeTruthy();
     expect(monthElm).toBeTruthy();
     // expect(monthElm.textContent).toBe('janvier');
@@ -442,14 +442,14 @@ describe('CompoundDateFilter', () => {
 
     filter.init(filterArguments);
     const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
-    filterInputElm.value = '2001-01-02T16:02:02.000';
-    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2001-01-02 16:02:02.000'], hide: jest.fn() } as unknown as VanillaCalendar);
-    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2001-01-02 16:02:02.000'], hide: jest.fn() } as unknown as VanillaCalendar);
+    filterInputElm.value = '2001-01-02T16:02:00.000Z';
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2001-01-02'], hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2001-01-02'], selectedHours: 16, selectedMinutes: 2, hide: jest.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    // expect(filter.currentDateOrDates.toISOString()).toBe('2001-01-02T21:02:02.000Z');
-    expect(filterInputElm.value).toBe('2001-01-02 04:02:02 pm');
+    // expect(filter.currentDateOrDates.toISOString()).toBe('2001-01-02T21:02');
+    expect(filterInputElm.value).toBe('2001-01-02 04:02:00 pm');
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), {
       columnDef: mockColumn, operator: '>', searchTerms: ['2001-01-02'], shouldTriggerQuery: true
     });
@@ -458,7 +458,7 @@ describe('CompoundDateFilter', () => {
   it('should have a value with date & time in the picker when using no "outputType" which will default to UTC date', () => {
     mockColumn.type = FieldType.dateUtc;
     mockColumn.outputType = null as any;
-    filterArguments.searchTerms = ['2000-01-01T05:00:00.000+05:00'];
+    filterArguments.searchTerms = ['2000-01-01T05:00'];
     mockColumn.filter!.operator = '<=';
     const spyCallback = jest.spyOn(filterArguments, 'callback');
 
@@ -466,14 +466,14 @@ describe('CompoundDateFilter', () => {
     const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
 
     filterInputElm.focus();
-    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-01T05:00:00.000+05:00'], hide: jest.fn() } as unknown as VanillaCalendar);
-    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-01T05:00:00.000+05:00'], hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-01'], hide: jest.fn() } as unknown as VanillaCalendar);
+    filter.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), { HTMLInputElement: filterInputElm, selectedDates: ['2000-01-01'], hide: jest.fn() } as unknown as VanillaCalendar);
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-01T10:00:00.000Z');
-    expect(filterInputElm.value).toBe('2000-01-01T10:00:00.000Z');
-    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T10:00:00.000Z'], shouldTriggerQuery: true });
+    expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-01T05:00:00.000Z');
+    expect(filterInputElm.value).toBe('2000-01-01T05:00:00.000Z');
+    expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-01T05:00:00.000Z'], shouldTriggerQuery: true });
   });
 
   it('should have default English text with operator dropdown options related to dates', () => {

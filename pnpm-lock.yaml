@@ -86,9 +86,9 @@ importers:
       jsdom-global:
         specifier: ^3.0.2
         version: 3.0.2(jsdom@24.0.0)
-      moment-mini:
-        specifier: ^2.29.4
-        version: 2.29.4
+      moment-tiny:
+        specifier: ^2.30.3
+        version: 2.30.3
       npm-run-all2:
         specifier: ^6.1.2
         version: 6.1.2
@@ -179,9 +179,9 @@ importers:
       isomorphic-dompurify:
         specifier: ^2.7.0
         version: 2.7.0
-      moment-mini:
-        specifier: ^2.29.4
-        version: 2.29.4
+      moment-tiny:
+        specifier: ^2.30.3
+        version: 2.30.3
       multiple-select-vanilla:
         specifier: ^3.1.0
         version: 3.1.0
@@ -249,9 +249,9 @@ importers:
       isomorphic-dompurify:
         specifier: ^2.7.0
         version: 2.7.0
-      moment-mini:
-        specifier: ^2.29.4
-        version: 2.29.4
+      moment-tiny:
+        specifier: ^2.30.3
+        version: 2.30.3
       multiple-select-vanilla:
         specifier: ^3.1.0
         version: 3.1.0
@@ -310,9 +310,9 @@ importers:
       '@slickgrid-universal/common':
         specifier: workspace:~
         version: link:../common
-      moment-mini:
-        specifier: ^2.29.4
-        version: 2.29.4
+      moment-tiny:
+        specifier: ^2.30.3
+        version: 2.30.3
     devDependencies:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:~
@@ -357,9 +357,9 @@ importers:
       excel-builder-vanilla:
         specifier: ^3.0.1
         version: 3.0.1
-      moment-mini:
-        specifier: ^2.29.4
-        version: 2.29.4
+      moment-tiny:
+        specifier: ^2.30.3
+        version: 2.30.3
     devDependencies:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:~
@@ -374,9 +374,9 @@ importers:
         specifier: workspace:~
         version: link:../utils
     devDependencies:
-      moment-mini:
-        specifier: ^2.29.4
-        version: 2.29.4
+      moment-tiny:
+        specifier: ^2.30.3
+        version: 2.30.3
 
   packages/odata:
     dependencies:
@@ -6894,8 +6894,8 @@ packages:
     hasBin: true
     dev: true
 
-  /moment-mini@2.29.4:
-    resolution: {integrity: sha512-uhXpYwHFeiTbY9KSgPPRoo1nt8OxNVdMVoTBYHfSEKeRkIkwGpO+gERmhuhBtzfaeOyTkykSrm2+noJBgqt3Hg==}
+  /moment-tiny@2.30.3:
+    resolution: {integrity: sha512-FgTYWVw+j63lHaUex7u1W0ix+2K5r4xEpGkLwkdIfuvl4g1v7NJgCQMHCi7BsSp3IcFdXOnCoroRUPRPlJGr5w==}
 
   /ms@2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}

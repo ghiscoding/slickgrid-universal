@@ -1,8 +1,7 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, extend, setDeepValue } from '@slickgrid-universal/utils';
 import { VanillaCalendar, type IOptions } from 'vanilla-calendar-picker';
-import * as moment_ from 'moment-mini';
-const moment = (moment_ as any)['default'] || moment_;
+import moment from 'moment-tiny';
 
 import { Constants } from './../constants';
 import { FieldType } from '../enums/index';
@@ -110,7 +109,10 @@ export class DateEditor implements Editor {
       const gridOptions = (this.args.grid.getOptions() || {}) as GridOption;
       this.defaultDate = this.args.item?.[this.columnDef.field];
       const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateUtc;
-      const outputFormat = mapMomentDateFormatWithFieldType(outputFieldType);
+      let outputFormat = mapMomentDateFormatWithFieldType(outputFieldType);
+      if (Array.isArray(outputFormat)) {
+        outputFormat = outputFormat[0];
+      }
       const currentLocale = this._translaterService?.getCurrentLanguage?.() || gridOptions.locale || 'en';
 
       // add the time picker when format is UTC (Z) or has the 'h' (meaning hours)
@@ -140,8 +142,8 @@ export class DateEditor implements Editor {
 
               if (this.hasTimePicker) {
                 const momentDate = moment(chosenDate, pickerFormat);
-                momentDate.hours(self.selectedHours);
-                momentDate.minute(self.selectedMinutes);
+                momentDate.hours(+(self.selectedHours || 0));
+                momentDate.minute(+(self.selectedMinutes || 0));
                 self.HTMLInputElement.value = formatDateByFieldType(momentDate, undefined, outputFieldType);
               }
 

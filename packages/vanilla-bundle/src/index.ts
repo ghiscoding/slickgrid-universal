@@ -5,7 +5,7 @@ import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-c
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
 import { SlickVanillaGridBundle } from './components/slick-vanilla-grid-bundle';
 
-const Slicker = {
+const Slicker: any = {
   GridBundle: SlickVanillaGridBundle,
   Aggregators,
   BindingService,

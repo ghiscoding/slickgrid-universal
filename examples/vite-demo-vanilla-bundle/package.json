@@ -27,7 +27,7 @@
     "bulma": "^1.0.0",
     "fetch-jsonp": "^1.3.0",
     "isomorphic-dompurify": "^2.7.0",
-    "moment-mini": "^2.29.4",
+    "moment-tiny": "^2.30.3",
     "multiple-select-vanilla": "^3.1.0",
     "rxjs": "^7.8.1",
     "vanilla-calendar-picker": "^2.11.2",

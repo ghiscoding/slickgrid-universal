@@ -1,4 +1,4 @@
-import moment from 'moment-mini';
+import moment from 'moment-tiny';
 
 import { FieldType, OperatorType, type SearchTerm } from '../enums/index';
 import type { FilterConditionOption } from '../interfaces/index';
@@ -11,6 +11,7 @@ import { testFilterCondition } from './filterUtilities';
 export function executeDateFilterCondition(options: FilterConditionOption, parsedSearchDates: any[]): boolean {
   const filterSearchType = options && (options.filterSearchType || options.fieldType) || FieldType.dateIso;
   const FORMAT = mapMomentDateFormatWithFieldType(filterSearchType);
+  const SINGLE_FORMAT = Array.isArray(FORMAT) ? FORMAT[0] : FORMAT;
   const [searchDate1, searchDate2] = parsedSearchDates;
 
   // cell value in moment format
@@ -23,7 +24,7 @@ export function executeDateFilterCondition(options: FilterConditionOption, parse
 
   // when comparing with Dates only (without time), we need to disregard the time portion, we can do so by setting our time to start at midnight
   // ref, see https://stackoverflow.com/a/19699447/1212166
-  const dateCellTimestamp = FORMAT.toLowerCase().includes('h') ? dateCell.valueOf() : dateCell.clone().startOf('day').valueOf();
+  const dateCellTimestamp = SINGLE_FORMAT.toLowerCase().includes('h') ? dateCell.valueOf() : dateCell.clone().startOf('day').valueOf();
 
   // having 2 search dates, we assume that it's a date range filtering and we'll compare against both dates
   if (searchDate1 && searchDate2) {
@@ -38,7 +39,7 @@ export function executeDateFilterCondition(options: FilterConditionOption, parse
   }
 
   // comparing against a single search date
-  const dateSearchTimestamp1 = FORMAT.toLowerCase().includes('h') ? searchDate1.valueOf() : searchDate1.clone().startOf('day').valueOf();
+  const dateSearchTimestamp1 = SINGLE_FORMAT.toLowerCase().includes('h') ? searchDate1.valueOf() : searchDate1.clone().startOf('day').valueOf();
   return testFilterCondition(options.operator || '==', dateCellTimestamp, dateSearchTimestamp1);
 }
 

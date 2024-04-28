@@ -1,7 +1,6 @@
 import type { AutocompleteItem } from 'autocompleter';
 import type { IOptions } from 'vanilla-calendar-picker';
-import * as moment_ from 'moment-mini';
-const moment = (moment_ as any)['default'] || moment_;
+import moment from 'moment-tiny';
 
 import type { AutocompleterOption, Column, ColumnEditor, ColumnFilter } from '../interfaces/index';
 import { formatDateByFieldType, mapMomentDateFormatWithFieldType } from '../services';
@@ -38,7 +37,7 @@ export function setPickerDates(dateInputElm: HTMLInputElement, pickerOptions: IO
   const currentDateOrDates = dateValues;
   const outputFieldType = columnDef.outputType || colEditorOrFilter.type || columnDef.type || FieldType.dateUtc;
   const inputFieldType = colEditorOrFilter.type || columnDef.type;
-  const isoFormat = mapMomentDateFormatWithFieldType(FieldType.dateIso);
+  const isoFormat = mapMomentDateFormatWithFieldType(FieldType.dateIso) as string;
   const inputFormat = inputFieldType ? mapMomentDateFormatWithFieldType(inputFieldType) : '';
   const initialDates = Array.isArray(currentDateOrDates) ? currentDateOrDates : [(currentDateOrDates || '') as string];
   if (initialDates.length && initialDates[0]) {
@@ -48,11 +47,12 @@ export function setPickerDates(dateInputElm: HTMLInputElement, pickerOptions: IO
       pickerDates.push(momentDate);
     }
 
+    const singleinputFormat = Array.isArray(inputFormat) ? inputFormat[0] : inputFormat;
     pickerOptions.settings!.selected = {
       dates: [pickerDates.map(p => p.format(isoFormat)).join(':')],
       month: pickerDates[0].month(),
       year: pickerDates[0].year(),
-      time: inputFormat.toLowerCase().includes('h') ? pickerDates[0].format('HH:mm') : null,
+      time: singleinputFormat.toLowerCase().includes('h') ? pickerDates[0].format('HH:mm') : undefined,
     };
     dateInputElm.value = initialDates.length ? pickerDates.map(p => formatDateByFieldType(p, undefined, outputFieldType)).join(' — ') : '';
   }

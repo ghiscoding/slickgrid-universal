@@ -53,7 +53,7 @@
     "@slickgrid-universal/utils": "workspace:~"
   },
   "devDependencies": {
-    "moment-mini": "^2.29.4"
+    "moment-tiny": "^2.30.3"
   },
   "funding": {
     "type": "ko_fi",

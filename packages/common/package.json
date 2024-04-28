@@ -76,7 +76,7 @@
     "dequal": "^2.0.3",
     "excel-builder-vanilla": "3.0.1",
     "isomorphic-dompurify": "^2.7.0",
-    "moment-mini": "^2.29.4",
+    "moment-tiny": "^2.30.3",
     "multiple-select-vanilla": "^3.1.0",
     "sortablejs": "^1.15.2",
     "un-flatten-tree": "^2.0.12",
