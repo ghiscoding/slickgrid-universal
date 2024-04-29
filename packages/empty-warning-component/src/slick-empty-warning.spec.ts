@@ -100,8 +100,8 @@ describe('Slick-Empty-Warning Component', () => {
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(componentLeftElm).toBeTruthy();
-      expect(componentLeftElm.style.display).toBe('block');
-      expect(componentRightElm.style.display).toBe('block');
+      expect(componentLeftElm.style.display).toBe('flex');
+      expect(componentRightElm.style.display).toBe('flex');
       expect(componentLeftElm.textContent).toBe('No data to display.');
       expect(componentRightElm.textContent).toBe('No data to display.');
     });
@@ -139,7 +139,7 @@ describe('Slick-Empty-Warning Component', () => {
       expect(component.constructor).toBeDefined();
       expect(componentLeftElm).toBeTruthy();
       expect(componentLeftElm.style.display).toBe('none');
-      expect(componentRightElm.style.display).toBe('block');
+      expect(componentRightElm.style.display).toBe('flex');
       expect(componentLeftElm.style.marginLeft).toBe('0px');
       expect(componentRightElm.style.marginLeft).toBe('0px');
       expect(componentLeftElm.textContent).toBe('No data to display.');
@@ -159,8 +159,8 @@ describe('Slick-Empty-Warning Component', () => {
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(componentLeftElm).toBeTruthy();
-      expect(componentLeftElm.style.display).toBe('block');
-      expect(componentRightElm.style.display).toBe('block');
+      expect(componentLeftElm.style.display).toBe('flex');
+      expect(componentRightElm.style.display).toBe('flex');
       expect(componentLeftElm.style.marginLeft).toBe('40%');
       expect(componentRightElm.style.marginLeft).toBe('0px');
       expect(componentLeftElm.textContent).toBe('No data to display.');
@@ -183,8 +183,8 @@ describe('Slick-Empty-Warning Component', () => {
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(componentLeftElm).toBeTruthy();
-      expect(componentLeftElm.style.display).toBe('block');
-      expect(componentRightElm.style.display).toBe('block');
+      expect(componentLeftElm.style.display).toBe('flex');
+      expect(componentRightElm.style.display).toBe('flex');
       expect(componentLeftElm.style.marginLeft).toBe('40%');
       expect(componentRightElm.style.marginLeft).toBe('0px');
       expect(componentLeftElm.textContent).toBe('No data to display.');
@@ -215,8 +215,8 @@ describe('Slick-Empty-Warning Component', () => {
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(componentLeftElm).toBeTruthy();
-      expect(componentLeftElm.style.display).toBe('block');
-      expect(componentRightElm.style.display).toBe('block');
+      expect(componentLeftElm.style.display).toBe('flex');
+      expect(componentRightElm.style.display).toBe('flex');
       expect(componentLeftElm.style.marginLeft).toBe('40%');
       expect(componentRightElm.style.marginLeft).toBe('0px');
       expect(componentLeftElm.textContent).toBe('No data to display.');
@@ -269,8 +269,8 @@ describe('Slick-Empty-Warning Component', () => {
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(componentLeftElm).toBeTruthy();
-      expect(componentLeftElm.style.display).toBe('block');
-      expect(componentRightElm.style.display).toBe('block');
+      expect(componentLeftElm.style.display).toBe('flex');
+      expect(componentRightElm.style.display).toBe('flex');
       expect(componentLeftElm.style.marginLeft).toBe('0px');
       expect(componentRightElm.style.marginLeft).toBe('40%');
       expect(componentLeftElm.textContent).toBe('No data to display.');
@@ -291,8 +291,8 @@ describe('Slick-Empty-Warning Component', () => {
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(componentLeftElm).toBeTruthy();
-      expect(componentLeftElm.style.display).toBe('block');
-      expect(componentRightElm.style.display).toBe('block');
+      expect(componentLeftElm.style.display).toBe('flex');
+      expect(componentRightElm.style.display).toBe('flex');
       expect(componentLeftElm.style.marginLeft).toBe('15px');
       expect(componentRightElm.style.marginLeft).toBe('0px');
       expect(componentLeftElm.textContent).toBe('No data to display.');
@@ -313,8 +313,8 @@ describe('Slick-Empty-Warning Component', () => {
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(componentLeftElm).toBeTruthy();
-      expect(componentLeftElm.style.display).toBe('block');
-      expect(componentRightElm.style.display).toBe('block');
+      expect(componentLeftElm.style.display).toBe('flex');
+      expect(componentRightElm.style.display).toBe('flex');
       expect(componentLeftElm.style.marginLeft).toBe('0px');
       expect(componentRightElm.style.marginLeft).toBe('22px');
       expect(componentLeftElm.textContent).toBe('No data to display.');
@@ -335,7 +335,7 @@ describe('Slick-Empty-Warning Component', () => {
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(componentLeftElm).toBeTruthy();
-      expect(componentLeftElm.style.display).toBe('block');
+      expect(componentLeftElm.style.display).toBe('flex');
       expect(componentRightElm.style.display).toBe('none');
       expect(componentLeftElm.textContent).toBe('No data to display.');
       expect(componentRightElm.textContent).toBe('No data to display.');
@@ -352,7 +352,7 @@ describe('Slick-Empty-Warning Component', () => {
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(componentElm).toBeTruthy();
-      expect(componentElm.style.display).toBe('block');
+      expect(componentElm.style.display).toBe('flex');
       expect(componentElm.classList.contains('custom-class')).toBeTruthy();
       expect(componentElm.innerHTML).toBe('<span class="mdi mdi-alert text-color-warning"></span> No Record found.');
     });
@@ -372,7 +372,7 @@ describe('Slick-Empty-Warning Component', () => {
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(componentElm).toBeTruthy();
-      expect(componentElm.style.display).toBe('block');
+      expect(componentElm.style.display).toBe('flex');
       expect(componentElm.classList.contains('custom-class')).toBeTruthy();
       expect(componentElm.innerHTML).toBe('<span class="mdi mdi-alert text-color-warning"></span> No Record found.');
     });
@@ -392,7 +392,7 @@ describe('Slick-Empty-Warning Component', () => {
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(componentElm).toBeTruthy();
-      expect(componentElm.style.display).toBe('block');
+      expect(componentElm.style.display).toBe('flex');
       expect(componentElm.classList.contains('custom-class')).toBeTruthy();
       expect(componentElm.innerHTML).toBe('<div class="container"><span class="mdi mdi-alert text-color-warning"></span> No Record found.</div>');
     });
@@ -410,7 +410,7 @@ describe('Slick-Empty-Warning Component', () => {
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(componentElm).toBeTruthy();
-      expect(componentElm.style.display).toBe('block');
+      expect(componentElm.style.display).toBe('flex');
       expect(componentElm.textContent).toBe('Aucune donnée à afficher.');
     });
   });
