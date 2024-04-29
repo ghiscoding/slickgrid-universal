@@ -12,6 +12,7 @@ $slick-button-primary-color:                                  $slick-primary-col
 $slick-bare-color:                                            #b5b5b5 !default;
 $slick-icon-color:                                            inherit !default;
 $slick-font-family:                                           var(--lwc-fontFamily,'Salesforce Sans', 'SalesforceSans-Regular', Arial, sans-serif) !default;
+$slick-icon-font-size:                                        18px !default;
 $slick-cell-active-box-shadow:                                inset 0 0 0 1px #{$slick-highlight-color} !default;
 $slick-cell-border-top:                                       none !default;
 $slick-cell-border-bottom:                                    none !default;
@@ -19,7 +20,6 @@ $slick-cell-box-shadow:                                       0px 1px 0px #dddbd
 $slick-cell-font-weight:                                      400 !default;
 $slick-cell-odd-background-color:                             #f3f2f2 !default;
 $slick-cell-text-color:                                       #333 !default;
-$slick-icon-width:                                            18px !default;
 $slick-frozen-border-bottom:                                  1px solid #{$slick-highlight-color} !default;
 $slick-frozen-border-right:                                   1px solid #{$slick-highlight-color} !default;
 $slick-group-totals-formatter-color:                          #666666 !default;
