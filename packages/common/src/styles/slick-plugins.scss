@@ -1,7 +1,6 @@
 /* sass variables */
 @import './variables';
 @import './sass-utilities';
-@import 'multiple-select-vanilla/dist/styles/sass/multiple-select.scss';
 
 // ----------------------------------------------
 // Column Picker & Grid Menu Controls
@@ -554,7 +553,7 @@ li.hidden {
 
   .slick-row-move-column {
     background-color: currentColor;
-    display: inline-block;
+    display: block;
     height: 1em;
     width: 1em;
     font-size: var(--slick-row-move-plugin-icon-font-size, $slick-row-move-plugin-icon-font-size);
