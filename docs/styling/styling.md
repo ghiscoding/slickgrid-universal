@@ -91,6 +91,37 @@ the SASS equivalent is a lot easier to override
 $slick-checkbox-icon-checked-svg-path: "M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z"
 ```
 
+### SVG icons
+The project has a few built-in icons (sort, grouping, row detail, row move, row selection) and you can change them via SASS (or CSS with a bit more work). For that reason, all Styling Themes  Since this release now has pure CSS SVG icons, I decided to delete any Font-Awesome references (mostly in the Bootstrap Theme) because all the built-in icons are now all SVG icons (sort, grouping, row detail, row move) (you can change them using SASS). However, there are a few plugins that use external icons via CSS classes (mostly all menu plugins like Header Menu, Grid Menu, Content Menu, ...) and for that reason **all Styling Themes now include default SVG icons** (even the Bootstrap Theme). 
+
+What if you want to use your own font/SVG library? 
+This can be answered in 2 parts:
+1. the built-in icons can only be changed via SASS (or CSS with extra work), see above on how to change them.
+2. for all other area using icons via CSS classes (e.g. all menu plugins), you can use the "lite" Themes and then make sure to update all the menu plugins with the correct CSS classes, for example the global grid options of the Grid Menu is configured with the following CSS classes and you'll want to remap them with the correct CSS classes to fit your need:
+
+```ts
+// default global grid options
+export const GlobalGridOptions = {
+  gridMenu: {
+    iconCssClass: 'mdi mdi-menu',
+    iconClearAllFiltersCommand: 'mdi mdi-filter-remove-outline',
+    iconClearAllSortingCommand: 'mdi mdi-sort-variant-off',
+    iconClearFrozenColumnsCommand: 'mdi mdi-pin-off-outline',
+    iconExportCsvCommand: 'mdi mdi-download',
+    iconExportExcelCommand: 'mdi mdi-file-excel-outline',
+    iconExportTextDelimitedCommand: 'mdi mdi-download',
+    iconRefreshDatasetCommand: 'mdi mdi-sync',
+    iconToggleDarkModeCommand: 'mdi mdi-brightness-4',
+    iconToggleFilterCommand: 'mdi mdi-flip-vertical',
+    iconTogglePreHeaderCommand: 'mdi mdi-flip-vertical',
+  }
+}
+```
+
+and here's the file size difference with the "lite" version
+
+![image](https://github.com/ghiscoding/slickgrid-universal/assets/643976/0edc9962-d881-49d2-bc47-1f698213ad5e)
+
 ### How to change SVG color?
 #### The following works for both CSS and SASS
 The new version 5.x of this project is now creating SVG icons as pure CSS, this mean that you can colorize the icons the same way that you would change a text color. We also provide a few different color CSS classes which start with the prefixes `$color-` or `$text-color-` (e.g. `$color-primary`).

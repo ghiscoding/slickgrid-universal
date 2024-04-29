@@ -54,7 +54,7 @@ or move the class to the parent container and have both the icon and the text in
 </button>
 ```
 
-##### SASS variables
+#### SASS variables
 A lot of SASS variables changed, we recommend you take a look at the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file to compare with yours SASS overrides and fix any SASS build issues.
 
 ##### SASS `math` polyfills are removed
@@ -70,8 +70,36 @@ More info and automated migrator: https://sass-lang.com/d/slash-div
 │ ^^^^^^^^^^^^^^^^^^
 ```
 
+#### No more Font-Awesome references
+Since this release now has pure CSS SVG icons, I decided to delete any Font-Awesome references (mostly in the Bootstrap Theme) because all the built-in icons are now all SVG icons (sort, grouping, row detail, row move, row selection) (you can change them using SASS). However, there are a few plugins that use external icons via CSS classes (mostly all menu plugins like Header Menu, Grid Menu, Content Menu, ...) and for that reason **all Styling Themes now include default SVG icons** (even the Bootstrap Theme). 
+
+What if you want to use your own font/SVG library? In that case you can use the "lite" Themes and then make sure to update all the menu plugins with the correct CSS classes, for example the global grid options of the Grid Menu is now configured with the following (notice there's no more Font-Awesome "fa" icons reference):
+
+```ts
+// default global grid options
+export const GlobalGridOptions = {
+  gridMenu: {
+    iconCssClass: 'mdi mdi-menu',
+    iconClearAllFiltersCommand: 'mdi mdi-filter-remove-outline',
+    iconClearAllSortingCommand: 'mdi mdi-sort-variant-off',
+    iconClearFrozenColumnsCommand: 'mdi mdi-pin-off-outline',
+    iconExportCsvCommand: 'mdi mdi-download',
+    iconExportExcelCommand: 'mdi mdi-file-excel-outline',
+    iconExportTextDelimitedCommand: 'mdi mdi-download',
+    iconRefreshDatasetCommand: 'mdi mdi-sync',
+    iconToggleDarkModeCommand: 'mdi mdi-brightness-4',
+    iconToggleFilterCommand: 'mdi mdi-flip-vertical',
+    iconTogglePreHeaderCommand: 'mdi mdi-flip-vertical',
+  }
+}
+```
+
+and here's the file size difference with the "lite" version
+
+![image](https://github.com/ghiscoding/slickgrid-universal/assets/643976/0edc9962-d881-49d2-bc47-1f698213ad5e)
+
 ##### jQueryUI CSS class leftovers
-There were a few `.ui-state-default` and other jQueryUI CSS classes leftovers in the core lib, they were all removed in this release. If you were using any of them for styling purposes, you can simply rename them to `.slick-state-`
+There were a few `.ui-state-default` and other jQueryUI CSS classes leftovers in the core lib, they were all removed in this release. If you were querying any of them for styling purposes, you can simply rename them to `.slick-state-*`
 
 ```diff
 - .ui-state-default, .ui-state-hover {
