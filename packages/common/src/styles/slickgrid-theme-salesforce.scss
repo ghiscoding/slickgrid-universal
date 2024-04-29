@@ -9,7 +9,6 @@
  * (sames as `slickgrid-theme-salesforce.lite.scss` but includes all external 3rd party lib styling)
  */
 
-@import './sass-utilities';
 @import './variables-theme-salesforce';
 @import './slick-without-bootstrap-min-styling';
 @import './slick-grid';
@@ -20,8 +19,8 @@
 @import './slick-bootstrap';
 @import './slick-filters';
 @import './slick-autocomplete';
-@import './slickgrid-icons';
 @import './slickgrid-icons-svg-utils';
+@import './slickgrid-icons';
 
 $slick-editing-field-bg-color: #fff !default;
 $slick-editing-field-border: 1px solid #dddbda !default;

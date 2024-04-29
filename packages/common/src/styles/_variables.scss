@@ -1,6 +1,9 @@
 // import external lib CSS files (without the .css extension)
 @import 'vanilla-calendar-picker/build/vanilla-calendar.min';
 
+// SASS utils to generate SVGs
+@import './sass-utilities';
+
 /*
  * SlickGrid-Universal theming variables, used by all Themes
  * Lib Website (https://github.com/ghiscoding/slickgrid-universal)
