@@ -45,6 +45,9 @@
 // ----------------------------------------------
 
 .slick-empty-data-warning {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   position: relative;
   color: var(--slick-empty-data-warning-color, $slick-empty-data-warning-color);
   font-family: var(--slick-empty-data-warning-font-family, $slick-empty-data-warning-font-family);
@@ -54,6 +57,11 @@
   margin: var(--slick-empty-data-warning-margin, $slick-empty-data-warning-margin);
   padding: var(--slick-empty-data-warning-padding, $slick-empty-data-warning-padding);
   z-index: var(--slick-empty-data-warning-z-index, $slick-empty-data-warning-z-index);
+  div {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
 }
 
 
