@@ -11,14 +11,14 @@ Another noticeable UI change is the migration from [Flatpickr](https://flatpickr
   - ESM ready
   - modern styling and also include Dark Mode theme
   - date range becomes a lot more easy by displaying a picker with 2 months
-- Vanilla-Calendar cons:
+- Vanilla-Calendar (VC) cons:
   - build size is slightly larger but its UI/UX is awesome
-  - settings are named differently and are not using flat config (complex object settings)
-    - for example Flatpickr `minDate: 'today'` is instead `range: { min: 'today' }`
-  - some settings were missing, like the `'today'` shortcut which is why I forked the project
+  - settings are named differently and are not using flat config (complex object settings) and requires code change
+    - for example Flatpickr `minDate: 'today'` is instead `range: { min: 'today' }` in VC
+  - some settings were missing, like the `'today'` shortcut which is why I forked the VC project
     - I did open a few PRs on the main project, so the hope is to drop the fork in the future while being a totally transparent change to you when it happens.
 
-With this release, I believe that I have achieved all goals and even more than I originally expected to accomplish (I'm not expecting to roll new major releases as often anymore). The recent goals was to improve UI/UX but also make it full ESM ready and this release is improving on that goal. Also, at this point, the project has a smaller size in comparison to what it was in v2.x (that is when the user had to install jQuery/jQueryUI separately). So, considering that we're no longer using jQuery/jQueryUI in the project, and also considering that these 2 dependencies were well over a total of 200Kb, then our project build size is in fact a lot smaller than it was 2 years ago in v2.x. This is really nice to see especially since we keep adding features (like Dark Mode and others) while still maintainging or slightly decreasing its size :)
+With this release, I believe that I have achieved all goals and even more than I originally expected to accomplish (I'm not expecting to roll new major releases as often anymore). This release goal was to improve UI/UX but also to make it fully ESM ready and we improved towards that goal. Also, at this point, the project has a similar or smaller size in comparison to what it was in v2.x (that was when the user had to install jQuery/jQueryUI separately). So, considering that we're no longer using jQuery/jQueryUI in the project, and also considering that these 2 dependencies combined were well over a total of 200Kb, then our project build size is in fact a lot smaller than it was 2 years ago. This is really nice to see especially since we keep adding features (like Dark Mode and others) while still maintainging, or slightly decreasing, its size :)
 
 #### Major Changes - Quick Summary
 - minimum requirements bump
@@ -60,7 +60,7 @@ or move the class to the parent container and have both the icon & the text inhe
 A lot of SASS variables were changed, we recommend that you take a look at the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file to compare them with yours SASS overrides and fix any SASS build issues. For example a lot of the ms-select variables and all Flatpickr related variables were deleted. Also a lot of the icon related variables got updated (icons now have the suffix `-icon-svg-path` for the SVG vector path). If you want create your own SVGs in pure CSS, you can use the `generateSvgStyle()` function from our [`sass-utilities.scss`](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/sass-utilities.scss) (take a look at the [`slickgrid-icons.scss`](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/slickgrid-icons.scss) on its usage)
 
 #### SASS (dart-sass) `math` polyfills are removed
-When Dart-SASS released their version 1.33, it caused a lot of console warnings (and lot of unhappy users) in projects that were using `/` in their SASS files (for math division) instead of their new `math.div` function. To avoid seeing all these warnings, I added a temporary polyfill at the time (that piece of code was actually copied from the Bootstrap project). This change happened 3 years ago, so I'm assuming that most users have already upgraded their SASS version and already fixed all of these warnings. So, I think it's time to remove this polyfill because it was always meant to be a temp patch. If you see these warnings coming back, you can use the SASS option `--quiet-upstream`.
+When SASS (dart-sass) released their version 1.33 (~3 years ago), it caused a ton of console warnings (and a lot of unhappy users) in projects that were using `/` in their SASS files (for math division) instead of their new `math.div()` function. To avoid seeing all these warnings, I added a temporary polyfill at the time (that piece of code was actually copied from the Bootstrap project). That polyfill patch was put in place about 3 years ago, so I'm assuming that most users have already upgraded their SASS version and already fixed all of these warnings. So, I think it's time to remove this polyfill because it was really meant to be a temp patch. If you see these warnings coming back, then a suggestion would be to use the SASS option `--quiet-upstream`.
 
 For reference, below is an example of these old Math warnings when we used to compile it with SASS CLI
 
@@ -72,8 +72,8 @@ More info and automated migrator: https://sass-lang.com/d/slash-div
 │ ^^^^^^^^^^^^^^^^^^
 ```
 
-#### No more Font-Awesome references
-Since this release now has pure CSS SVG icons, I decided to delete any Font-Awesome references (mostly in the Bootstrap Theme) because all the built-in icons are now all SVG icons (sort, grouping, row detail, row move, row selection) (you can change them using SASS). However, there are a few plugins that use external icons via CSS classes (mostly all menu plugins like Header Menu, Grid Menu, Content Menu, ...) and for that reason **all Styling Themes now include default SVG icons** (even the Bootstrap Theme). 
+#### Font-Awesome references are removed
+Since this release introduces pure CSS SVG icons, I went ahead and deleted all Font-Awesome references (mostly in the Bootstrap Theme), that is because all the built-in icons are now all SVG icons (sort, grouping, row detail, row move, row selection). You can also change these icons via SASS (or CSS variables with a bit more work). However, there are a few plugins that use external icons via CSS classes (mostly all menu plugins like Header Menu, Grid Menu, Content Menu, ...) and for that reason **all Styling Themes** now include the Slickgrid-Universal Material subset icons by default (not just Material & Salesforce but now the Bootstrap Theme as well). In short, the grid now uses SVG icons by default and Font-Awesome icons will no longer be used (you can still use them in your project but it won't be used by the grid unless you set them the grid options).
 
 If you no longer need Font-Awesome, then consider removing it completely
 
@@ -86,7 +86,7 @@ If you no longer need Font-Awesome, then consider removing it completely
 }
 ```
 
-What if you don't want to use the Slickgrid-Universal icons subset and want to use a different font/SVG library? In that case, it's suggested to use the "lite" Theme(s) and then make sure to update all the menu plugins with the correct CSS classes, for example the global grid options of the Grid Menu is now configured with the following (notice that we no longer provide any Font-Awesome "fa" icon references in our global grid options):
+What if you don't want to use the Slickgrid-Universal icons subset and want to use a different font/SVG library? In that case, it's suggested to use the "lite" Theme(s) and then make sure to update all the menu plugins with the correct CSS classes, for example the global grid options of the Grid Menu is now configured with the following (notice that we no longer provide any Font-Awesome "fa" icon references in our global grid options). Also note that below is just 1 of the menu plugins to configure, make sure to review them all (you can review the [global-grid-options.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/global-grid-options.ts) file).
 
 ```ts
 // default global grid options
@@ -107,22 +107,22 @@ export const GlobalGridOptions = {
 }
 ```
 
-and here's the file size difference with the "lite" version
+and here's the file size differences with the "lite" (without icons) version vs the default themes (with icons subset)
 
 ![image](https://github.com/ghiscoding/slickgrid-universal/assets/643976/0edc9962-d881-49d2-bc47-1f698213ad5e)
 
-##### jQueryUI CSS class leftovers
-We had a few `.ui-state-default` and other jQueryUI CSS classes leftovers in the core lib, they were all removed in this release. If you were querying any of them for styling purposes, you can simply rename them to `.slick-state-*`
+### Deprecated code removed/renamed
+##### `getHTMLFromFragment()` removed
+The function `getHTMLFromFragment()` was removed in favor of `getHtmlStringOutput()`, the new function will auto-detect if it's a DocumentFragment, an HTMLElement or an HTML string and will execute the appropriate action.
+
+##### jQueryUI CSS classes leftovers
+There were a few `.ui-state-default`, and any other jQueryUI classes, remaining in the core lib and they were all removed in this release. If you were querying any of them for styling purposes, you can simply rename them to `.slick-state-*`
 
 ```diff
 - .ui-state-default, .ui-state-hover {
 + .slick-state-default, .slick-state-hover {
 }
 ```
-
-### Deprecated code removed/renamed
-##### `getHTMLFromFragment()` removed
-The function `getHTMLFromFragment()` was removed in favor of `getHtmlStringOutput()`, the new function will auto-detect if it's a DocumentFragment, an HTMLElement or an HTML string and will execute the appropriate action.
 
 #### Formatters Cleanup & Removals
 
@@ -154,7 +154,7 @@ const myCheckmarkFormatter: Formatter = (row: number, cell: number, value: any, 
 ## Grid Functionalities
 
 ### Native Select Filter (removed)
-I would be surprised if anyone uses the `Filters.select` and so it was removed, you should simply use the `Filters.singleSelect` or `Filters.multipleSelect`
+I would be very surprised if anyone have ever used the `Filters.select` and so it was removed in this release. You should simply use the `Filters.singleSelect` or `Filters.multipleSelect`
 
 ```diff
 prepareGrid() {
@@ -190,10 +190,10 @@ prepareGrid() {
 }
 ```
 
-> **Note** the `'today'` shortcut currently only exist in `Vanilla-Calendar-Picker` fork, however the rest of the settings should be similar, visit `Vanilla-Calendar-Pro` [settings](https://vanilla-calendar.pro/docs/reference/additionally/settings) website for all other options. The hope is to drop the fork whenever the original project receives all missing features.
+> **Note** the `'today'` shortcut currently only exist in `Vanilla-Calendar-Picker` fork, however the rest of the settings should be similar, visit `Vanilla-Calendar-Pro` [settings](https://vanilla-calendar.pro/docs/reference/additionally/settings) website for all other options. The hope is to hopefully drop the fork whenever the original project receives all missing features.
 
 ### Multiple-Select
-Please note that in previous version we were simply re-exporting the `MultipleSelectOption` interface from the `Multiple-Select-Vanilla` library for convenience, however re-exporting is typically discouraged by the TypeScript team and so it was removed in this release. The change is quite simple, you simply need to import the `MultipleSelectOption` interface from the `multiple-select-vanilla` external library.
+Please note that in previous versions we were simply re-exporting the `MultipleSelectOption` interface from the `Multiple-Select-Vanilla` library for convenience, however re-exporting is typically discouraged by the TypeScript team and so it was removed in this release. The change is quite simple, you simply need to import the `MultipleSelectOption` interface from the `multiple-select-vanilla` external library.
 
 ```diff
 - import { MultipleSelectOption } from '@slickgrid-universal/common';
@@ -204,7 +204,7 @@ prepareGrid() {
     id: 'isActive', name: 'Active', field: 'isActive',
     editor: {
       model: Editors.singleSelect,
-      collection: [ { value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' } ],
+      collection: [{ value: true, label: 'true' }, { value: false, label: 'false' }],
       editorOptions: { maxHeight: 400 } as MultipleSelectOption
     }
   }];
