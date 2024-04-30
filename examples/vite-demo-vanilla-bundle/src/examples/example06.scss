@@ -47,7 +47,7 @@
   display: inline-block;
 }
 
-// font-5px up to font-50px
+// create a few 15px indentation multiplied by level number
 @for $i from 1 through 6 {
   .width-#{$i*15}px { width: #{$i * 15}px; }
 }
