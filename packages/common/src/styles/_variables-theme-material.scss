@@ -1,5 +1,3 @@
-@import './sass-utilities';
-
 /**
  * This is a bare version of "slickgrid-theme-material.scss",
  * A few files were removed and aren't included in this styling theme (while they are in original theme)
@@ -11,7 +9,7 @@ $slick-highlight-color:                                     #48c774 !default;
 $slick-font-family:                                         Roboto, "Helvetica Neue", sans-serif !default;
 $slick-font-size-base-value:                                14 !default;
 $slick-icon-color:                                          inherit !default;
-$slick-icon-width:                                          18px !default;
+$slick-icon-font-size:                                      18px !default;
 $slick-group-totals-formatter-color:                        #666666 !default;
 $slick-cell-border-top:                                     none !default;
 $slick-cell-font-weight:                                    400 !default;

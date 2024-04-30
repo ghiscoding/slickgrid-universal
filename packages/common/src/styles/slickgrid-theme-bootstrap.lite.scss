@@ -4,7 +4,12 @@
  * @author: Ghislain B. (ghiscoding)
  */
 
-/** SlickGrid Bootstrap Theme */
+/**
+ * SlickGrid Bootstrap Theme (lite)
+ * sames as `slickgrid-theme-bootstrap.scss` but without: 
+ *   colors, extra-styling, slickgrid-icons and slickgrid-icons-svg-utils
+ */
+
 @import './slick-grid';
 @import './slick-editors';
 @import './slick-plugins';
@@ -12,5 +17,3 @@
 @import './slickgrid-examples';
 @import './slick-bootstrap';
 @import './slick-autocomplete';
-@import './slickgrid-icons-svg-utils';
-@import './slickgrid-icons';

@@ -258,10 +258,10 @@ describe('Example 01 - Basic Grids', () => {
         cy.get(`.slick-grid-menu.${gridUid}`)
           .find('.slick-column-picker-list')
           .children('li')
-          .each(($li, index) => {
+          .each(($child, index) => {
             if (index <= 5) {
-              const $input = $li.find('input');
-              const $label = $li.find('span.checkbox-label');
+              const $input = $child.find('input');
+              const $label = $child.find('span.checkbox-label');
               expect($input.prop('checked')).to.eq(true);
               expect($label.text()).to.eq(fullTitles[index]);
             }
