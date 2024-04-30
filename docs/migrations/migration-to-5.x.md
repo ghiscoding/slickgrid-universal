@@ -2,25 +2,28 @@
 This new release brings a lot of changes oriented towards better UI/UX, our SVG icons are now pure CSS and can be colorized like any other text via the native CSS `color` property (which helps a lot improving the Dark Mode Theme).
 
 Another noticeable UI change is the migration from [Flatpickr](https://flatpickr.js.org/) to [Vanilla-Calendar-Picker](https://github.com/ghiscoding/vanilla-calendar-picker) (which is in fact a fork of [Vanilla-Calendar-Pro](https://vanilla-calendar.pro/) and we'll hopefully drop the fork in the near future if possible), there are multiple reasons to migrate our date picker to another library:
+
 - Flatpickr cons:
   - barely supported (lots of opened PR but nothing merged for the past 2 years)
   - not fully ESM ready (it's only partially ESM, for example it is detected as CJS in Angular-Slickgrid and requires to be added to `allowedCommonJsDependencies`)
   - styling could be a bit more modern (the use of native select/input to change year/month/time is a bit outdated and rudimentary)
   - date range selection is not very user friendly (UX)
-- Vanilla-Calendar pros:
-  - ESM ready
-  - modern styling and also include Dark Mode theme
-  - date range becomes a lot more easy by displaying a picker with 2 months
-- Vanilla-Calendar (VC) cons:
-  - build size is slightly larger but its UI/UX is awesome
-  - settings are named differently and are not using flat config (complex object settings) and requires code change
-    - for example Flatpickr `minDate: 'today'` is instead `range: { min: 'today' }` in VC
-  - some settings were missing, like the `'today'` shortcut which is why I forked the VC project
-    - I did open a few PRs on the main project, so the hope is to drop the fork in the future while being a totally transparent change to you when it happens.
 
-With this release, I believe that I have achieved all goals and even more than I originally expected to accomplish (I'm not expecting to roll new major releases as often anymore). This release goal was to improve UI/UX but also to make it fully ESM ready and we improved towards that goal. Also, at this point, the project has a similar or smaller size in comparison to what it was in v2.x (that was when the user had to install jQuery/jQueryUI separately). So, considering that we're no longer using jQuery/jQueryUI in the project, and also considering that these 2 dependencies combined were well over a total of 200Kb, then our project build size is in fact a lot smaller than it was 2 years ago. This is really nice to see especially since we keep adding features (like Dark Mode and others) while still maintainging, or slightly decreasing, its size :)
+- Vanilla-Calendar (VC)
+  - pros:
+    - ESM ready
+    - modern styling and also include Dark Mode theme
+    - date range becomes a lot more easy by displaying a picker with 2 months
+  - cons:
+    - build size is slightly larger but its UI/UX is awesome
+    - settings are named differently and are not using flat config (complex object settings) and requires code change
+      - for example Flatpickr `minDate: 'today'` is instead `range: { min: 'today' }` in VC
+    - some settings were missing, like the `'today'` shortcut which is why I forked the VC project
+      - I did open a few PRs on the main project, so the hope is to drop the fork in the future while being a totally transparent change to you when it happens.
 
-For most breaking changes, a search & replace in your code editor should suffice. 
+With this release, and after 7 years of development with a 1 man show (myself @ghiscoding), I believe that I have achieved all goals and even more than I originally planned to accomplish. I am not expecting to roll that many new major releases for the foreseable future because most goals of this project have been accomplished. The biggest transition and challenge was the removal of jQuery/jQueryUI which took couple years to accomplish and which I am very proud to have achieved.
+
+The goal of this new release was mainly to improve UI/UX (mostly for Dark Mode) and also to make it fully ESM ready. Also noteworthy, the project now has a similar or slightly smaller size in comparison to what it was in v2.x (that was when the user had to install jQuery/jQueryUI separately). So, considering that we're no longer requiring jQuery/jQueryUI to be installed, and also considering that these 2 dependencies combined were well over 200kb. We can safely assume that our project build size is in fact a lot smaller than it was 2 years ago, that is really nice to know considering that we kept adding features (like Dark Mode and others) while still maintainging, or slightly decreasing, its size :)
 
 #### Major Changes - Quick Summary
 - minimum requirements bump
@@ -32,6 +35,8 @@ For most breaking changes, a search & replace in your code editor should suffice
 > **Note** for the entire list of tasks & code changes applied in this release, you may want to take a look at the [Roadmap to 5.0](https://github.com/ghiscoding/slickgrid-universal/discussions/1482) Discussion.
 
 > **NOTE:** if you come from an earlier version, please make sure to follow each migrations in their respected order (review previous migration guides)
+
+For most breaking changes, a quick Search & Replace in your code editor should suffice. 
 
 ## Changes
 
@@ -88,7 +93,7 @@ If you no longer need Font-Awesome, then consider removing it completely
 }
 ```
 
-What if you don't want to use the Slickgrid-Universal icons subset and want to use a different font/SVG library? In that case, it's suggested to use the "lite" Theme(s) and then make sure to update all the menu plugins with the correct CSS classes, for example the global grid options of the Grid Menu is now configured with the following (notice that we no longer provide any Font-Awesome "fa" icon references in our global grid options). Also note that below is just 1 of the menu plugins to configure, make sure to review them all (you can review the [global-grid-options.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/global-grid-options.ts) file).
+What if you don't want to use the [Slickgrid-Universal icons](https://ghiscoding.github.io/slickgrid-universal/#/icons) (`.mdi`) subset and would rather use a different font/SVG library? In that case, it's suggested to use the "lite" Theme(s) and then make sure to update all the menu plugins with the correct CSS classes, for example the global grid options of the Grid Menu is now configured with the following (notice that we no longer provide any Font-Awesome "fa" icon references in our global grid options). Also note that below is just 1 of the menu plugins to configure, make sure to review them all (you can review the [global-grid-options.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/global-grid-options.ts) file).
 
 ```ts
 // default global grid options
@@ -182,7 +187,7 @@ The biggest change that you will have to do is the min/max date setting when usi
 
 prepareGrid() {
   this.columnDefinitions = [{
-    id: 'finish', name: 'Finish', field: 'finish',
+    id: 'finish', field: 'finish', name: 'Finish', 
     editor: {
       model: Editors.date,
 -      editorOptions: { minDate: 'today' } as FlatpickrOption,
@@ -214,9 +219,9 @@ prepareGrid() {
 ```
 
 ### `internalColumnEditor` is completely removed
-The work on this subject started over a month ago in version [v4.6.0](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.6.0) to progressively remove `internalColumnEditor` because it was confusing and it is now completely removed. This mean that the column `editor` property will remain untouch (in previous version the `editor` was moved to `internalColumnEditor` and then overriden with the `editor.model`)... in short, the `internalColumnEditor` is removed and the associated confusion is also gone with it.
+The work on this subject started over a month ago in version [v4.6.0](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.6.0) to progressively remove `internalColumnEditor` because it was confusing and with this new release, it is now completely removed. This mean that the column `editor` property will remain untouch (in previous version the `editor` was moved to `internalColumnEditor` and then overriden with the `editor.model` for SlickGrid to work but that was confusing to the user)... in short, the `internalColumnEditor` is removed and the associated confusion is also gone with it.
 
-An example of the previous `internalColumnEditor` usage was when you wanted to modify or push a new item to the editor collection array (see below). In the past, you could not simply push directly to `collection.editor.collection`, you really had to use `collection.internalColumnEditor.collection`... this is thankfully gone, you can now use `collection.editor.collection` 🎉
+An example of the previous `internalColumnEditor` usage was when you wanted to modify or push a new item to the editor collection array (see below). In the past, you could not simply push directly to `collection.editor.collection`, you really had to use the mapping of `collection.internalColumnEditor.collection`... this is thankfully gone, you can now use the same and original `collection.editor.collection` 🎉
 
 For example, previously, to add an item to the editor/filter collection 
 ```diff
