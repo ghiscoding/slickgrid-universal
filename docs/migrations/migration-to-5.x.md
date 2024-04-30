@@ -1,4 +1,4 @@
-## Version 5 - Better UI and Dark Mode with Pure CSS SVG icons
+## Version 5 - Better UI and Dark Mode with Pure CSS SVG icons ✨
 This new release brings a lot of changes oriented towards better UI/UX, our SVG icons are now pure CSS and can be colorized like any other text via the native CSS `color` property (which helps a lot improving the Dark Mode Theme).
 
 Another noticeable UI change is the migration from [Flatpickr](https://flatpickr.js.org/) to [Vanilla-Calendar-Picker](https://github.com/ghiscoding/vanilla-calendar-picker) (which is in fact a fork of [Vanilla-Calendar-Pro](https://vanilla-calendar.pro/) and we'll hopefully drop the fork in the near future if possible), there are multiple reasons to migrate our date picker to another library:
@@ -19,6 +19,8 @@ Another noticeable UI change is the migration from [Flatpickr](https://flatpickr
     - I did open a few PRs on the main project, so the hope is to drop the fork in the future while being a totally transparent change to you when it happens.
 
 With this release, I believe that I have achieved all goals and even more than I originally expected to accomplish (I'm not expecting to roll new major releases as often anymore). This release goal was to improve UI/UX but also to make it fully ESM ready and we improved towards that goal. Also, at this point, the project has a similar or smaller size in comparison to what it was in v2.x (that was when the user had to install jQuery/jQueryUI separately). So, considering that we're no longer using jQuery/jQueryUI in the project, and also considering that these 2 dependencies combined were well over a total of 200Kb, then our project build size is in fact a lot smaller than it was 2 years ago. This is really nice to see especially since we keep adding features (like Dark Mode and others) while still maintainging, or slightly decreasing, its size :)
+
+For most breaking changes, a search & replace in your code editor should suffice. 
 
 #### Major Changes - Quick Summary
 - minimum requirements bump
@@ -151,7 +153,7 @@ const myCheckmarkFormatter: Formatter = (row: number, cell: number, value: any, 
 }
 ```
 
-## Grid Functionalities
+## Column Functionalities
 
 ### Native Select Filter (removed)
 I would be very surprised if anyone have ever used the `Filters.select` and so it was removed in this release. You should simply use the `Filters.singleSelect` or `Filters.multipleSelect`
@@ -210,3 +212,24 @@ prepareGrid() {
   }];
 }
 ```
+
+### `internalColumnEditor` is completely removed
+The work on this subject started over a month ago in version [v4.6.0](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.6.0) to progressively remove `internalColumnEditor` because it was confusing and it is now completely removed. This mean that the column `editor` property will remain untouch (in previous version the `editor` was moved to `internalColumnEditor` and then overriden with the `editor.model`)... in short, the `internalColumnEditor` is removed and the associated confusion is also gone with it.
+
+An example of the previous `internalColumnEditor` usage was when you wanted to modify or push a new item to the editor collection array (see below). In the past, you could not simply push directly to `collection.editor.collection`, you really had to use `collection.internalColumnEditor.collection`... this is thankfully gone, you can now use `collection.editor.collection` 🎉
+
+For example, previously, to add an item to the editor/filter collection 
+```diff
+this.columnDefinitions = [{ id: 'complexity', editor: { model: Editors.singleSelect, collection: [{ value: 1, label: 'Simple' }, /*...*/ ] } }];
+
+// then adding an item would previously require to use `internalColumnEditor` 
+// after grid init, our `editor` became `internalColumnEditor
+- const complexityEditor = this.columnDefinitions[0].internalColumnEditor; 
+complexityEditor.collection.push({ value: 9, label: 'Hard' });
+
+// NOW with this new release, adding a new item to the collection is as simple as referencing the original object
++ const complexityEditor = this.columnDefinitions[0].editor; 
+complexityEditor.collection.push({ value: 9, label: 'Hard' });
+```
+
+if you want to read the Editor class (e.g. `Editors.longText`), you can now reference it via `column.editor.model` or via `column.editorClass`
