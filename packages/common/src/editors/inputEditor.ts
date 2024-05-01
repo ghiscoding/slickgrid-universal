@@ -15,6 +15,8 @@ import { getDescendantProperty } from '../services/utilities';
 import { textValidator } from '../editorValidators/textValidator';
 import { SlickEventData, type SlickGrid } from '../core/index';
 
+const DEFAULT_DECIMAL_PLACES = 0;
+
 /*
  * An example of a 'detached' editor.
  * KeyDown events are also handled to provide handling for Tab, Shift-Tab, Esc and Ctrl-Enter.
@@ -92,13 +94,18 @@ export class InputEditor implements Editor {
     const compositeEditorOptions = this.args.compositeEditorOptions;
 
     this._input = createDomElement('input', {
-      type: this._inputType || 'text',
-      autocomplete: 'off', ariaAutoComplete: 'none',
+      type: this._inputType || 'text', autocomplete: 'off', ariaAutoComplete: 'none',
       ariaLabel: this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Input Editor`,
+      className: `editor-text editor-${columnId}`,
       placeholder: this.columnEditor?.placeholder ?? '',
       title: this.columnEditor?.title ?? '',
-      className: `editor-text editor-${columnId}`,
     });
+
+    // add "step" attribute when editor type is integer/float
+    if (this.inputType === 'number') {
+      this._input.step = `${(this.columnEditor.valueStep !== undefined) ? this.columnEditor.valueStep : this.getInputDecimalSteps()}`;
+    }
+
     const cellContainer = this.args.container;
     if (cellContainer && typeof cellContainer.appendChild === 'function') {
       cellContainer.appendChild(this._input);
@@ -113,10 +120,9 @@ export class InputEditor implements Editor {
       }
     }) as EventListener);
 
-    // the lib does not get the focus out event for some reason
-    // so register it here
+    // listen to focusout or blur to automatically call a save
     if (this.hasAutoCommitEdit && !compositeEditorOptions) {
-      this._bindEventService.bind(this._input, 'focusout', () => {
+      this._bindEventService.bind(this._input, ['focusout', 'blur'], () => {
         this._isValueTouched = true;
         this.save();
       });
@@ -124,6 +130,11 @@ export class InputEditor implements Editor {
 
     if (compositeEditorOptions) {
       this._bindEventService.bind(this._input, ['input', 'paste'], this.handleOnInputChange.bind(this) as EventListener);
+
+      // add an extra mousewheel listener when editor type is integer/float
+      if (this.inputType === 'number') {
+        this._bindEventService.bind(this._input, 'wheel', this.handleOnMouseWheel.bind(this) as EventListener, { passive: true });
+      }
     }
   }
 
@@ -155,6 +166,30 @@ export class InputEditor implements Editor {
     // always set focus on grid first so that plugin to copy range (SlickCellExternalCopyManager) would still be able to paste at that position
     this.grid.focus();
     this._input?.focus();
+  }
+
+  getDecimalPlaces(): number {
+    // returns the number of fixed decimal places or null
+    let rtn = this.columnEditor?.decimal ?? this.columnEditor?.params?.decimalPlaces ?? undefined;
+
+    if (rtn === undefined) {
+      rtn = DEFAULT_DECIMAL_PLACES;
+    }
+    return (!rtn && rtn !== 0 ? null : rtn);
+  }
+
+  /** when editor is a float input editor, we'll want to know how many decimals to show */
+  getInputDecimalSteps(): string {
+    const decimals = this.getDecimalPlaces();
+    let zeroString = '';
+    for (let i = 1; i < decimals; i++) {
+      zeroString += '0';
+    }
+
+    if (decimals > 0) {
+      return `0.${zeroString}1`;
+    }
+    return '1';
   }
 
   show() {
@@ -336,6 +371,15 @@ export class InputEditor implements Editor {
       const typingDelay = this.gridOptions?.editorTypingDebounce ?? 500;
       clearTimeout(this._timer as NodeJS.Timeout);
       this._timer = setTimeout(() => this.handleChangeOnCompositeEditor(event, compositeEditorOptions), typingDelay);
+    }
+  }
+
+  /** When the input value changes (this will cover the input spinner arrows on the right) */
+  protected handleOnMouseWheel(event: KeyboardEvent) {
+    this._isValueTouched = true;
+    const compositeEditorOptions = this.args.compositeEditorOptions;
+    if (compositeEditorOptions) {
+      this.handleChangeOnCompositeEditor(event, compositeEditorOptions);
     }
   }
 }
