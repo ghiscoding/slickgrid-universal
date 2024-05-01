@@ -57,7 +57,7 @@ export default class Example18 {
   maxChangePerCycle = 10;
   refreshRate = 75;
   timer: any;
-  toggleClassName = this.isFullScreen ? 'icon mdi mdi-arrow-collapse' : 'icon mdi mdi-arrow-expand';
+  toggleClassName = this.isFullScreen ? 'mdi mdi-arrow-collapse' : 'mdi mdi-arrow-expand';
   sgb: SlickVanillaGridBundle;
 
   attached() {
