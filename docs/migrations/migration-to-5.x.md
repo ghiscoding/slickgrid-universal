@@ -49,18 +49,18 @@ Since the SVG icons are now pure CSS, we can now colorize any of them the same w
 
 ```diff
 <button class="button is-small">
-- <span class="icon"><i class="mdi mdi-undo color-primary"></i></span>
-+ <span class="icon"><i class="mdi mdi-undo text-color-primary"></i></span>
-  <span class="text-color-primary">Undo Last Edit</span>
+-  <span class="mdi mdi-undo color-primary"></span>
++  <span class="mdi mdi-undo text-color-primary"></span>
+   <span class="text-color-primary">Undo Last Edit</span>
 </button>
 ```
 or move the class to the parent container and have both the icon & the text inherit the color :)
 ```diff
 + <button class="button is-small text-color-primary">
-- <span class="icon"><i class="mdi mdi-undo color-primary"></i></span>
-+ <span class="icon"><i class="mdi mdi-undo"></i></span>
-- <span class="text-color-primary">Undo Last Edit</span>
-</button>
+-   <span class="mdi mdi-undo color-primary"></span>
++   <span class="mdi mdi-undo"></span>
+-   <span class="text-color-primary">Undo Last Edit</span>
+  </button>
 ```
 
 #### SASS variables
