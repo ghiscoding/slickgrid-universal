@@ -15,6 +15,11 @@ $slick-padding-max-count: 30;
   }
 }
 
+.slick-cell {
+  .button-style {
+    height: 100%;
+  }
+}
 .button-style {
   cursor: pointer;
   background-color: var(--slick-button-style-bg-color, $slick-button-style-bg-color);
@@ -37,6 +42,10 @@ $slick-padding-max-count: 30;
   &:hover {
       color: rgb(0, 153, 255);
   }
+}
+
+@for $percent from 1 through 10 {
+  .height-#{$percent * 10} { height: #{$percent * 10%} !important; }
 }
 
 // margin-0px up to margin-30px

@@ -280,7 +280,7 @@ export default class Example16 {
         },
       },
       {
-        id: 'action', name: 'Action', field: 'action', width: 70, minWidth: 70, maxWidth: 70,
+        id: 'action', name: 'Action', field: 'action', width: 55, minWidth: 55, maxWidth: 55,
         cssClass: 'justify-center flex',
         formatter: () => `<div class="button-style action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
         excludeFromExport: true,

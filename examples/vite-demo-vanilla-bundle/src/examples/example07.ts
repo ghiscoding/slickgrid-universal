@@ -76,10 +76,10 @@ export default class Example07 {
         // params: { useFormatterOuputToFilter: true }
       },
       {
-        id: 'action', name: 'Action', field: 'action', minWidth: 60, maxWidth: 60,
+        id: 'action', name: 'Action', field: 'action', minWidth: 55, maxWidth: 55,
         excludeFromExport: true, excludeFromHeaderMenu: true,
         cssClass: 'justify-center',
-        formatter: () => `<div class="button-style action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
+        formatter: () => `<div class="button-style action-btn height-80"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
