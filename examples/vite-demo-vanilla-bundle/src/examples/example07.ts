@@ -32,10 +32,10 @@ export default class Example07 {
   translateService: TranslateService;
 
   set isFilteringEnabled(enabled: boolean) {
-    this.filteringEnabledClass = enabled ? 'icon mdi mdi-toggle-switch' : 'icon mdi mdi-toggle-switch-off-outline';
+    this.filteringEnabledClass = enabled ? 'mdi mdi-toggle-switch' : 'mdi mdi-toggle-switch-off-outline';
   }
   set isSortingEnabled(enabled: boolean) {
-    this.sortingEnabledClass = enabled ? 'icon mdi mdi-toggle-switch' : 'icon mdi mdi-toggle-switch-off-outline';
+    this.sortingEnabledClass = enabled ? 'mdi mdi-toggle-switch' : 'mdi mdi-toggle-switch-off-outline';
   }
 
   constructor() {
