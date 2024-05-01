@@ -52,7 +52,7 @@
     "@slickgrid-universal/common": "workspace:~",
     "@slickgrid-universal/utils": "workspace:~",
     "excel-builder-vanilla": "^3.0.1",
-    "moment-tiny": "^2.30.3"
+    "moment-tiny": "^2.30.4"
   },
   "devDependencies": {
     "@slickgrid-universal/event-pub-sub": "workspace:~"
