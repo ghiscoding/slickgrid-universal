@@ -127,10 +127,12 @@ export function buildMsSelectCollectionList(type: 'editor' | 'filter', collectio
  */
 export function sanitizeTextByAvailableSanitizer(gridOptions: GridOption, dirtyHtml: string, sanitizerOptions?: DOMPurify.Config): string {
   let sanitizedText = dirtyHtml;
-  if (typeof gridOptions?.sanitizer === 'function') {
-    sanitizedText = gridOptions.sanitizer(dirtyHtml || '');
-  } else if (typeof DOMPurify?.sanitize === 'function') {
-    sanitizedText = (DOMPurify.sanitize(dirtyHtml || '', sanitizerOptions || { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }) || '') as string;
+  if (dirtyHtml) {
+    if (typeof gridOptions?.sanitizer === 'function') {
+      sanitizedText = gridOptions.sanitizer(dirtyHtml || '');
+    } else if (typeof DOMPurify?.sanitize === 'function') {
+      sanitizedText = (DOMPurify.sanitize(dirtyHtml || '', sanitizerOptions || { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }) || '') as string;
+    }
   }
 
   return sanitizedText;
