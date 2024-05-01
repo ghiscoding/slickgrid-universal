@@ -81,6 +81,7 @@ export default class Icons {
       '.mdi.mdi-arrow-expand',
       '.mdi.mdi-arrow-expand-horizontal',
       '.mdi.mdi-arrow-split-vertical',
+      '.mdi.mdi-book-open-blank-variant-outline',
       '.mdi.mdi-brightness-4',
       '.mdi.mdi-calendar',
       '.mdi.mdi-calendar-check',
