@@ -81,7 +81,7 @@
     "jest-extended": "^4.0.2",
     "jsdom": "^24.0.0",
     "jsdom-global": "^3.0.2",
-    "moment-tiny": "^2.30.3",
+    "moment-tiny": "^2.30.4",
     "npm-run-all2": "^6.1.2",
     "pnpm": "^8.15.7",
     "rimraf": "^5.0.5",
