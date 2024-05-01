@@ -199,25 +199,6 @@ prepareGrid() {
 
 > **Note** the `'today'` shortcut currently only exist in `Vanilla-Calendar-Picker` fork, however the rest of the settings should be similar, visit `Vanilla-Calendar-Pro` [settings](https://vanilla-calendar.pro/docs/reference/additionally/settings) website for all other options. The hope is to hopefully drop the fork whenever the original project receives all missing features.
 
-### Multiple-Select
-Please note that in previous versions we were simply re-exporting the `MultipleSelectOption` interface from the `Multiple-Select-Vanilla` library for convenience, however re-exporting is typically discouraged by the TypeScript team and so it was removed in this release. The change is quite simple, you simply need to import the `MultipleSelectOption` interface from the `multiple-select-vanilla` external library.
-
-```diff
-- import { MultipleSelectOption } from '@slickgrid-universal/common';
-+ import { MultipleSelectOption } from 'multiple-select-vanilla';
-
-prepareGrid() {
-  this.columnDefinitions = [{
-    id: 'isActive', name: 'Active', field: 'isActive',
-    editor: {
-      model: Editors.singleSelect,
-      collection: [{ value: true, label: 'true' }, { value: false, label: 'false' }],
-      editorOptions: { maxHeight: 400 } as MultipleSelectOption
-    }
-  }];
-}
-```
-
 ### `internalColumnEditor` is completely removed
 The work on this subject started over a month ago in version [v4.6.0](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.6.0) to progressively remove `internalColumnEditor` because it was confusing and with this new release, it is now completely removed. This mean that the column `editor` property will remain untouch (in previous version the `editor` was moved to `internalColumnEditor` and then overriden with the `editor.model` for SlickGrid to work but that was confusing to the user)... in short, the `internalColumnEditor` is removed and the associated confusion is also gone with it.
 
