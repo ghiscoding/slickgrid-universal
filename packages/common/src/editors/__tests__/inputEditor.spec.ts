@@ -390,6 +390,24 @@ describe('InputEditor (TextEditor)', () => {
         expect(spyCommit).toHaveBeenCalled();
         expect(spySave).toHaveBeenCalled();
       });
+
+      it('should call "getEditorLock" and "save" methods when "hasAutoCommitEdit" is enabled and the event "blur" is triggered', () => {
+        mockItemData = { id: 1, title: 'task', isActive: true };
+        gridOptionMock.autoCommitEdit = true;
+        const spyCommit = jest.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+
+        editor = new InputEditor(editorArguments, 'text');
+        editor.loadValue(mockItemData);
+        editor.setValue('task 21');
+        const spySave = jest.spyOn(editor, 'save');
+        const editorElm = editor.editorDomElement;
+
+        editorElm.dispatchEvent(new (window.window as any).Event('blur'));
+        jest.runAllTimers(); // fast-forward timer
+
+        expect(spyCommit).toHaveBeenCalled();
+        expect(spySave).toHaveBeenCalled();
+      });
     });
 
     describe('validate method', () => {
