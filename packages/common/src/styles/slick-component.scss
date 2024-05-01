@@ -47,7 +47,7 @@
 .slick-empty-data-warning {
   display: flex;
   align-items: center;
-  gap: 5px;
+  column-gap: 5px;
   position: relative;
   color: var(--slick-empty-data-warning-color, $slick-empty-data-warning-color);
   font-family: var(--slick-empty-data-warning-font-family, $slick-empty-data-warning-font-family);
@@ -60,7 +60,7 @@
   div {
     display: flex;
     align-items: center;
-    gap: 5px;
+    column-gap: 5px;
   }
 }
 
@@ -107,7 +107,7 @@
       vertical-align: top;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      column-gap: 4px;
       padding: 0 5px;
       height: inherit;
 

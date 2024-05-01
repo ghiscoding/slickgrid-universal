@@ -656,9 +656,6 @@ li.hidden {
   height: var(--slick-header-input-height, $slick-header-input-height);
 
   span {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
     font-size: var(--slick-multiselect-input-filter-font-size, $slick-multiselect-input-filter-font-size);
     font-family: var(--slick-multiselect-input-filter-font-family, $slick-multiselect-input-filter-font-family);
   }
@@ -707,10 +704,7 @@ li.hidden {
   label {
     span {
       cursor: pointer;
-      display: inline-flex;
       margin-left: var(--slick-multiselect-checkbox-margin-left, $slick-multiselect-checkbox-margin-left);
-      position: relative;
-      top: 1px;
     }
   }
   .ms-select-all {
@@ -1026,6 +1020,7 @@ input.search-filter {
 .slider-container {
   display: flex;
   height: 100%;
+  flex: 1;
 
   input[type=range] {
     /*removes default webkit styles*/
