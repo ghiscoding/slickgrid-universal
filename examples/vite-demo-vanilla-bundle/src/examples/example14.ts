@@ -335,7 +335,7 @@ export default class Example14 {
             {
               command: 'help',
               title: 'Help!',
-              iconCssClass: 'mdi mdi-circle-question',
+              iconCssClass: 'mdi mdi-help-circle',
               positionOrder: 66,
               action: () => alert('Please Help!'),
             },
