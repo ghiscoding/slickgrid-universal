@@ -448,7 +448,7 @@ $slick-checkbox-icon-color:                                      $slick-primary-
 $slick-checkbox-icon-border:                                none !default;
 $slick-checkbox-icon-border-radius:                         none !default;
 $slick-checkbox-icon-container-bg-color:                    transparent !default;
-$slick-checkbox-icon-font-size:                             20px !default;
+$slick-checkbox-icon-font-size:                             16px !default;
 $slick-checkbox-icon-container-line-height:                 12px !default;
 $slick-checkbox-icon-container-size:                        1.2rem !default;
 $slick-checkbox-icon-checked-svg-path:                      "M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z" !default;
@@ -486,7 +486,7 @@ $slick-large-editor-text-color:                             #333 !default;
 $slick-text-editor-border:                                  1px solid #e2e2e2 !default;
 $slick-text-editor-border-radius:                           $slick-editor-input-border-radius !default;
 $slick-text-editor-background:                              #ffffff !default;
-$slick-text-editor-margin-bottom:                           2px !default;
+$slick-text-editor-margin-bottom:                           0 !default;
 $slick-text-editor-margin-left:                             -2px !default; /* negative number to cancel inside padding */
 $slick-text-editor-right-input-margin-left:                 calc(#{$slick-text-editor-margin-left} + 9px) !default;
 $slick-text-editor-margin-right:                            0px !default;
