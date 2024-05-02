@@ -2,7 +2,7 @@
   Example 10 - Grid with GraphQL Backend Service
   <span class="d-inline-flex">
     <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
-      <span class="icon"><i class="mdi mdi-theme-light-dark"></i></span>
+      <span class="mdi mdi-theme-light-dark"></span>
       <span> Toggle Light/Dark</span>
     </button>
   </span>
@@ -23,7 +23,7 @@
 <div class="row">
   <button class="button is-small" data-test="clear-filters-sorting"
           onclick.delegate="clearAllFiltersAndSorts()" title="Clear all Filters & Sorts">
-    <span class="icon mdi mdi-close"></span>
+    <span class="mdi mdi-close"></span>
     <span>Clear all Filter &amp; Sorts</span>
   </button>
   <button class="button is-small" data-test="set-dynamic-filter"
@@ -57,7 +57,8 @@
 
     <span class="ml-4">
       <button class="button is-small" onclick.delegate="switchLanguage()" data-test="language-button">
-        Switch Language
+        <span class="mdi mdi-translate"></span>
+        <span>Switch Language</span>
       </button>
       <b>Locale:</b>
       <span class="text-italic" data-test="selected-locale" textcontent.bind="selectedLanguageFile">

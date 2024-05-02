@@ -72,6 +72,7 @@
   .vanilla-picker.input-group {
     display: flex;
     align-items: center;
+    flex: 1;
     height: var(--slick-date-editor-height, $slick-date-editor-height);
     .input-group-btn {
       &.input-group-append {

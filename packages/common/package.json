@@ -75,8 +75,8 @@
     "dequal": "^2.0.3",
     "excel-builder-vanilla": "3.0.1",
     "isomorphic-dompurify": "^2.7.0",
-    "moment-tiny": "^2.30.3",
-    "multiple-select-vanilla": "^3.1.0",
+    "moment-tiny": "^2.30.4",
+    "multiple-select-vanilla": "^3.1.2",
     "sortablejs": "^1.15.2",
     "un-flatten-tree": "^2.0.12",
     "vanilla-calendar-picker": "^2.11.4"

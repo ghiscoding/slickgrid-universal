@@ -2,7 +2,7 @@
   Example 07 - Row Move &amp; Row Selections
   <span class="d-inline-flex">
     <button class="button is-small" onclick.delegate="toggleDarkMode()" data-test="toggle-dark-mode">
-      <span class="icon mdi mdi-theme-light-dark"></span>
+      <span class="mdi mdi-theme-light-dark"></span>
       <span> Toggle Light/Dark</span>
     </button>
   </span>
@@ -17,35 +17,35 @@
 
 <div class="row mb-3">
   <button class="button is-small" data-test="add-title-column-btn" onclick.delegate="dynamicallyAddTitleHeader()">
-    <span class="icon mdi mdi-plus"></span>
+    <span class="mdi mdi-plus"></span>
     <span>Dynamically Duplicate Title Column</span>
   </button>
   <button class="button is-small" data-test="remove-title-column-btn" onclick.delegate="dynamicallyRemoveLastColumn()">
-    <span class="icon mdi mdi-minus"></span>
+    <span class="mdi mdi-minus"></span>
     <span>Dynamically Remove Last Column</span>
   </button>
   <button class="button is-small" data-test="hide-finish-btn" onclick.delegate="hideFinishColumnDynamically()">
-    <span class="icon mdi mdi-eye-off-outline"></span>
+    <span class="mdi mdi-eye-off-outline"></span>
     <span>Dynamically Hide "Finish"</span>
   </button>
   <button class="button is-small" data-test="add-item-btn" onclick.delegate="addItem()"
     title="Clear Filters &amp; Sorting to see it better">
-    <span class="icon mdi mdi-plus"></span>
+    <span class="mdi mdi-plus"></span>
     <span>Add item</span>
   </button>
   <button class="button is-small" data-test="delete-item-btn" onclick.delegate="deleteItem()">
-    <span class="icon mdi mdi-minus"></span>
+    <span class="mdi mdi-minus"></span>
     <span>Delete item</span>
   </button>
 
   <div class="mx-2 my-1"></div>
 
   <button class="button is-small" data-test="disable-filters-btn" onclick.delegate="disableFilters()">
-    <span class="icon mdi mdi-filter-off-outline"></span>
+    <span class="mdi mdi-filter-off-outline"></span>
     <span>Disable Filters</span>
   </button>
   <button class="button is-small" data-test="disable-sorting-btn" onclick.delegate="disableSorting()">
-    <span class="icon mdi mdi-sort-variant-remove"></span>
+    <span class="mdi mdi-sort-variant-remove"></span>
     <span>Disable Sorting</span>
   </button>
   <button class="button is-small" data-test="toggle-filtering-btn" onclick.delegate="toggleFilter()">
@@ -57,16 +57,17 @@
     <span>Toggle Sorting</span>
   </button>
   <button class="button is-small" data-test="clear-filters-btn" onclick.delegate="clearFilters()">
-    <span class="icon mdi mdi-close"></span>
+    <span class="mdi mdi-close"></span>
     <span>Clear Filters</span>
   </button>
   <button class="button is-small" data-test="modal-filters-btn" onclick.delegate="allFilters()">
-    <span class="icon mdi mdi-text-box-search-outline"></span>
+    <span class="mdi mdi-text-box-search-outline"></span>
     <span>Modal Filters</span>
   </button>
   <span class="ml-4">
     <button class="button is-small" onclick.delegate="switchLanguage()" data-test="language-button">
-      Switch Language
+      <span class="mdi mdi-translate"></span>
+      <span>Switch Language</span>
     </button>
     <b>Locale:</b>
     <span class="text-italic" data-test="selected-locale" textcontent.bind="selectedLanguageFile">
