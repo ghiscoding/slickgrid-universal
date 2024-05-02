@@ -467,6 +467,7 @@ export class GridExample {
     if (columnDef.id === 'completed') {
       this.compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', formValues.completed);
       this.compositeEditorInstance.changeFormEditorOption('product', 'minLength', 3);
+      this.compositeEditorInstance.changeFormEditorOption('finish', 'range', { min: 'today' });
     }
   }
 }
