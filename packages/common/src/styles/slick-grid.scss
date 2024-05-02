@@ -527,7 +527,7 @@
       // fix alignment when slick-cell includes slickgrid icons (align bottom will in fact center the icon & text), for example Tree Data/Grouping
       .slick-group-toggle,
       .mdi {
-        vertical-align: bottom;
+        vertical-align: var(--slick-icon-with-text-valign, $slick-icon-with-text-valign);
       }
     }
   }

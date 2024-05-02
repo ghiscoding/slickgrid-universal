@@ -15,11 +15,6 @@ $slick-padding-max-count: 30;
   }
 }
 
-.slick-cell {
-  .button-style {
-    height: 100%;
-  }
-}
 .button-style {
   cursor: pointer;
   background-color: var(--slick-button-style-bg-color, $slick-button-style-bg-color);
