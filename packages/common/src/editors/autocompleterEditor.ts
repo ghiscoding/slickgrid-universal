@@ -554,7 +554,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     }
 
     this._bindEventService.bind(this._inputElm, 'focus', () => this._inputElm?.select());
-    this._bindEventService.bind(this._inputElm, 'keydown', ((event: KeyboardEvent) => {
+    this._bindEventService.bind(this._inputElm, 'keydown', ((event: KeyboardEvent & { target: HTMLInputElement; }) => {
       this._lastInputKeyEvent = event;
       if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
         event.stopImmediatePropagation();
@@ -562,10 +562,8 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
       // in case the user wants to save even an empty value,
       // we need to subscribe to the onKeyDown event for that use case and clear the current value
-      if (this.columnEditor.alwaysSaveOnEnterKey) {
-        if (event.key === 'Enter') {
-          this._currentValue = null;
-        }
+      if (event.key === 'Enter' && event.target.value === '' && this.columnEditor.alwaysSaveOnEnterKey) {
+        this._currentValue = null;
       }
     }) as EventListener);
 
