@@ -183,8 +183,8 @@ importers:
         specifier: ^2.30.4
         version: 2.30.4
       multiple-select-vanilla:
-        specifier: ^3.1.2
-        version: 3.1.2
+        specifier: ^3.1.3
+        version: 3.1.3
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -253,8 +253,8 @@ importers:
         specifier: ^2.30.4
         version: 2.30.4
       multiple-select-vanilla:
-        specifier: ^3.1.2
-        version: 3.1.2
+        specifier: ^3.1.3
+        version: 3.1.3
       sortablejs:
         specifier: ^1.15.2
         version: 1.15.2
@@ -6913,8 +6913,8 @@ packages:
       minimatch: 9.0.4
     dev: true
 
-  /multiple-select-vanilla@3.1.2:
-    resolution: {integrity: sha512-NeZn6j5UY+yvs+/V6LsQ4sGtSmqVLwe+CAqEJKaX6wFQm1UbXzF+90WJViIeqc76dchBHitEXBmm3y2yp3ET5Q==}
+  /multiple-select-vanilla@3.1.3:
+    resolution: {integrity: sha512-EcnBCgI/j5ilM3w+TcB3HhVixsN4yncXKi/Wv9EZnPy9PeLMasD0doyj/wxrlvmH0omaS0y9y1rdIZt2nbJaaw==}
     dependencies:
       '@types/trusted-types': 2.0.7
     dev: false
