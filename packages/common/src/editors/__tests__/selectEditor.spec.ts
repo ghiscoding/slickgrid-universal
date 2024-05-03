@@ -41,6 +41,7 @@ const gridStub = {
   render: jest.fn(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
+  sanitizeHtmlString: (str) => str,
 } as unknown as SlickGrid;
 
 describe('SelectEditor', () => {
@@ -857,10 +858,10 @@ describe('SelectEditor', () => {
         expect(editorListElm[0].innerHTML).toBe('<i class="mdi mdi-check"></i> True');
       });
 
-      it('should create the multi-select editor with a default search term and have the HTML rendered and sanitized when "enableRenderHtml" is set and has <script> tag', () => {
+      it('should create the multi-select editor with a default search term and have the HTML rendered when "enableRenderHtml" is set and has <script> tag', () => {
         mockColumn.editor = {
           enableRenderHtml: true,
-          collection: [{ isEffort: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="mdi mdi-check"></i> ` }, { isEffort: false, label: 'False' }],
+          collection: [{ isEffort: true, label: 'True', labelPrefix: `<i class="mdi mdi-check"></i> ` }, { isEffort: false, label: 'False' }],
           collectionOptions: {
             separatorBetweenTextLabels: ': ',
             includePrefixSuffixToSelectedValues: true,
@@ -872,35 +873,6 @@ describe('SelectEditor', () => {
           },
         };
         mockItemData = { id: 1, gender: 'male', isEffort: false };
-
-        editor = new SelectEditor(editorArguments, true, 0);
-        editor.loadValue(mockItemData);
-        editor.setValue([false]);
-        const editorBtnElm = divContainer.querySelector('.ms-parent.ms-filter.editor-gender button.ms-choice') as HTMLButtonElement;
-        const editorListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=editor-gender].ms-drop ul>li span`);
-        editorBtnElm.click();
-
-        expect(editor.getValue()).toEqual(['']);
-        expect(editorListElm.length).toBe(2);
-        expect(editorListElm[0].innerHTML).toBe('<i class="mdi mdi-check"></i> : True');
-      });
-
-      it('should create the multi-select editor with a default search term and have the HTML rendered and sanitized when using a custom "sanitizer" and "enableRenderHtml" flag is set and has <script> tag', () => {
-        mockColumn.editor = {
-          enableRenderHtml: true,
-          collection: [{ isEffort: true, label: 'True', labelPrefix: `<script>alert('test')></script><i class="mdi mdi-check"></i> ` }, { isEffort: false, label: 'False' }],
-          collectionOptions: {
-            separatorBetweenTextLabels: ': ',
-            includePrefixSuffixToSelectedValues: true,
-          },
-          customStructure: {
-            value: 'isEffort',
-            label: 'label',
-            labelPrefix: 'labelPrefix',
-          },
-        };
-        mockItemData = { id: 1, gender: 'male', isEffort: false };
-        gridOptionMock.sanitizer = (dirtyHtml) => dirtyHtml.replace(/(<script>.*?<\/script>)/gi, '');
 
         editor = new SelectEditor(editorArguments, true, 0);
         editor.loadValue(mockItemData);

@@ -219,3 +219,18 @@ complexityEditor.collection.push({ value: 9, label: 'Hard' });
 ```
 
 if you want to read the Editor class (e.g. `Editors.longText`), you can now reference it via `column.editor.model` or via `column.editorClass`
+
+## Grid Functionalities
+
+DOMPurify is now optional via the `sanitizer` grid option and you must now provide it yourself. The main reason to make it optional was because some users might want to use `dompurify` while others might want to use `isomorphic-dompurify` instead for SSR support (or even no `sanitizer` at all, but that is **not recommended**).
+
+> **Note** even if the `sanitizer` is optional, we **strongly suggest** you to configure it as a global grid option and avoid possible XSS attacks from your data and also be CSP compliant. Note that for Salesforce users, you do not have to configure it since Salesforce already use DOMPurify internally.
+
+```diff
+// prefer the global grid options if possible
+this.gridOptions = {
+  sanitizer: (dirtyHtml) => DOMPurify.sanitize(dirtyHtml, { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true })
+};
+```
+
+> **Note** If you're wondering about the `ADD_ATTR: ['level']`, well the "level" is a custom attribute used by SlickGrid Grouping/Draggable Grouping to track the grouping level depth and it must be kept.

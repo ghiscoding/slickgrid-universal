@@ -5,6 +5,7 @@ import { SlickGrid } from '../../core/index';
 const gridStub = {
   getData: jest.fn(),
   getOptions: jest.fn(),
+  sanitizeHtmlString: (str) => str
 } as unknown as SlickGrid;
 
 describe('the Hyperlink Formatter', () => {
@@ -27,13 +28,6 @@ describe('the Hyperlink Formatter', () => {
     const inputValue = 'Company Name';
     const result1 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl1 } } as Column, {}, gridStub);
     expect(result1).toBe(inputValue);
-  });
-
-  it('should not permit sanitize/remove any bad script code', () => {
-    const inputValue = 'http://<script>alert("test")</script>company.com';
-    const sanitizedValue = 'http://company.com';
-    const result = hyperlinkFormatter(0, 0, inputValue, {} as Column, {}, gridStub);
-    expect((result as HTMLElement).outerHTML).toBe(`<a href="${sanitizedValue}">${sanitizedValue}</a>`);
   });
 
   it('should return original value when value is not a valid hyperlink', () => {

@@ -22,7 +22,6 @@ import type {
 } from '../interfaces/index';
 import { textValidator } from '../editorValidators/textValidator';
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter';
-import { sanitizeTextByAvailableSanitizer, } from '../services/domUtilities';
 import { findOrDefault, getDescendantProperty, } from '../services/utilities';
 import type { TranslaterService } from '../services/translater.service';
 import { SlickEventData, type SlickGrid } from '../core/index';
@@ -516,7 +515,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
     // sanitize any unauthorized html tags like script and others
     // for the remaining allowed tags we'll permit all attributes
-    const sanitizedText = sanitizeTextByAvailableSanitizer(this.gridOptions, finalText) || '';
+    const sanitizedText = this.grid.sanitizeHtmlString<string>(finalText) || '';
 
     const div = document.createElement('div');
     div[isRenderHtmlEnabled ? 'innerHTML' : 'textContent'] = sanitizedText;

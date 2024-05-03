@@ -3,7 +3,7 @@ import 'jest-extended';
 import { Editors } from '../index';
 import { AutocompleterEditor } from '../autocompleterEditor';
 import { FieldType } from '../../enums/index';
-import { AutocompleterOption, Column, ColumnEditor, Editor, EditorArguments, GridOption } from '../../interfaces/index';
+import { AutocompleterOption, Column, Editor, EditorArguments, GridOption } from '../../interfaces/index';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub';
 import { SlickDataView, SlickEvent, type SlickGrid } from '../../core/index';
 
@@ -38,6 +38,7 @@ const gridStub = {
   render: jest.fn(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
+  sanitizeHtmlString: (str) => str,
 } as unknown as SlickGrid;
 
 describe('AutocompleterEditor', () => {

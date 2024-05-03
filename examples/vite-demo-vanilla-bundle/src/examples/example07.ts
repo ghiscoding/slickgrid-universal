@@ -10,7 +10,7 @@ import {
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import DOMPurify from 'isomorphic-dompurify';
+import DOMPurify from 'dompurify';
 
 import { ExampleGridOptions } from './example-grid-options';
 import type { TranslateService } from '../translate.service';
