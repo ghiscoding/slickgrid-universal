@@ -1,7 +1,19 @@
 ## CSP Compliance
-The library is now, at least mostly, CSP (Content Security Policy) compliant since `v4.0`, however there are some exceptions to be aware of. When using any html string as template (for example with Custom Formatter returning an html string), you will not be fully compliant unless you return `TrustedHTML`. You can achieve this by using the `sanitizer` method in combo with [DOMPurify](https://github.com/cure53/DOMPurify) to return `TrustedHTML` as shown below and with that in place you should be CSP compliant.
+The library is for the most part CSP (Content Security Policy) compliant since `v4.0` **but** only if you configure the `sanitizer` grid option. DOMPurify used to be included in the project but was made optional in version 5 and higher. The main reason to make the `sanitizer` optional is mostly because some users might want to use `dompurify` while others might prefer to use `isomorphic-dompurify` for SSR support (or even any other sanitizer).
 
-> **Note** the default sanitizer in Slickgrid-Universal is actually already configured to return `TrustedHTML` but the CSP safe in the DataView is opt-in via `useCSPSafeFilter`
+> **Note** as mentioned above the `sanitizer` is optional **but** it is **strongly suggested** to configure it to avoid XSS attacks and also be CSP compliant.
+
+As mentioned above, the project is mostly CSP compliant, however there are some exceptions to be aware of. When using any html string as template (for example with Custom Formatter returning an html string), you will not be fully compliant unless you return `TrustedHTML`. You can achieve this by using the `sanitizer` method in combo with [DOMPurify](https://github.com/cure53/DOMPurify) to return `TrustedHTML` as shown below and with that in place you should be CSP compliant.
+
+```diff
+this.gridOptions = {
+  sanitizer: (dirtyHtml) => DOMPurify.sanitize(dirtyHtml, { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true })
+};
+```
+
+> **Note** If you're wondering about the `ADD_ATTR: ['level']`, the "level" is a custom attribute used by Grouping/Draggable Grouping to track the grouping level depth.
+
+> **Note** the DataView is not CSP safe by default, it is opt-in via the `useCSPSafeFilter` option.
 
 ```typescript
 import DOMPurify from 'dompurify';
@@ -15,7 +27,9 @@ this.gridOptions = {
 }
 this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, this.dataset);
 ```
+
 with this code in place, we can use the following CSP meta tag (which is what we use in the lib demo, ref: [index.html](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/index.html#L8-L14))
+
 ```html
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'nonce-random-string'; require-trusted-types-for 'script'; trusted-types dompurify">
 ```

@@ -219,3 +219,17 @@ complexityEditor.collection.push({ value: 9, label: 'Hard' });
 ```
 
 if you want to read the Editor class (e.g. `Editors.longText`), you can now reference it via `column.editor.model` or via `column.editorClass`
+
+## Grid Functionalities
+
+DOMPurify is now optional via the `sanitizer` grid option and you must now provide it yourself. The main reason to make it optional was because some users might want to use `dompurify` while others might prefer to use `isomorphic-dompurify` for SSR support.
+
+> **Note** as mentioned above the `sanitizer` is optional **but** it is **strongly suggested** to configure it to avoid XSS attacks and also be CSP compliant.
+
+```diff
+this.gridOptions = {
+  sanitizer: (dirtyHtml) => DOMPurify.sanitize(dirtyHtml, { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true })
+};
+```
+
+If you're wondering about the `ADD_ATTR: ['level']`, the "level" is a custom attribute used by Grouping/Draggable Grouping to track the grouping level depth.
