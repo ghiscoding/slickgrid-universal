@@ -35,10 +35,10 @@
   },
   "devDependencies": {
     "@types/fnando__sparkline": "^0.3.7",
-    "@types/node": "^20.12.7",
+    "@types/node": "^20.12.8",
     "@types/whatwg-fetch": "^0.0.33",
-    "sass": "^1.75.0",
+    "sass": "^1.76.0",
     "typescript": "^5.4.5",
-    "vite": "^5.2.10"
+    "vite": "^5.2.11"
   }
 }
